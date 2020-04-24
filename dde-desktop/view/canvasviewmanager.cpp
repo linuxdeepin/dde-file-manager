@@ -174,8 +174,10 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
         bool enable = var.toBool();
         for (CanvasViewPointer view : m_canvasMap.values()){
             view->setAutoMerge(enable);
-            view->update();
         }
+
+        if (!enable)
+            GridManager::instance()->initGridItemsInfos();
         break;
     }
     case GridManager::soRename:{ //处理自动排列时右键新建文件，编辑框显示问题

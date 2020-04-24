@@ -1702,6 +1702,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
 #endif
     if(GridManager::instance()->doneInit() && GridManager::instance()->autoMerge())
         GridManager::instance()->setCurrentVirtualExpandUrl(url);
+
     DUrl fileUrl = url;
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
     if (!info) {
@@ -1735,13 +1736,15 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         d->filesystemWatcher->deleteLater();
     }
 
-//    if(m_screenName == ScreenMrg->primaryScreen()->name() && GridManager::instance()->doneInit())
-//    {
-//        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
-//                                                                                         QStringList(), model()->filters());
-//        GridManager::instance()->initAutoMerge(infoList);
-//        GridManager::instance()->setCurrentAllItems(infoList);
-//    }
+#if 0
+    if(m_screenName == ScreenMrg->primaryScreen()->name() && GridManager::instance()->doneInit())
+    {
+        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
+                                                                                         QStringList(), model()->filters());
+        GridManager::instance()->initAutoMerge(infoList);
+        GridManager::instance()->setCurrentAllItems(infoList);
+    }
+#else
     if(fileUrl.scheme() == DFMMD_SCHEME && GridManager::instance()->doneInit())
     {
         QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
@@ -1749,6 +1752,8 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         GridManager::instance()->initAutoMerge(infoList);
         GridManager::instance()->setCurrentAllItems(infoList);
     }
+#endif
+
 //    QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
 //                                                                                     QStringList(), model()->filters());
 //    if (autoMerge()) {
@@ -2469,7 +2474,7 @@ openEditor:
                 model()->refresh();
             }
         }
-        else if (GridManager::instance()->autoArrange()){ //重新排列
+        if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();
         }
 
@@ -2548,9 +2553,10 @@ openEditor:
     });
     connect(this, &CanvasGridView::autoMergeToggled,[](){
         bool enable = !GridManager::instance()->autoMerge();
-        emit GridManager::instance()->sigSyncOperation(GridManager::soAutoMerge,enable);
         GridManager::instance()->setAutoMerge(enable);
         Presenter::instance()->onAutoMergeToggled();
+
+        emit GridManager::instance()->sigSyncOperation(GridManager::soAutoMerge,enable);
     });
 
     connect(this, &CanvasGridView::sortRoleChanged,
