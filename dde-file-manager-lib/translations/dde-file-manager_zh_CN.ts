@@ -103,9 +103,14 @@
         <translation>磁盘</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="202"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="205"/>
         <source>Bit</source>
         <translation>位</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="207"/>
+        <source>Available</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2011,21 +2016,21 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1014"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="549"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="203"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="223"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1034"/>
         <location filename="../dialogs/propertydialog.cpp" line="1177"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="212"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="232"/>
         <source>Contains</source>
         <translation>文件个数</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1015"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="550"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="204"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="224"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
@@ -2033,7 +2038,7 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
         <location filename="../dialogs/propertydialog.cpp" line="1018"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="552"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="303"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="323"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
@@ -2289,7 +2294,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1019"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="562"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="317"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="337"/>
         <source>Source path</source>
         <translation>原始路径</translation>
     </message>
@@ -2388,7 +2393,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="582"/>
         <source>Add to disc</source>
-        <translation>添加至光盘刻录</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="354"/>
@@ -2457,7 +2462,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="548"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="193"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="213"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -2755,7 +2760,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1046"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="288"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="308"/>
         <location filename="../views/drenamebar.cpp" line="261"/>
         <source>Location</source>
         <translation>位置</translation>
@@ -2766,12 +2771,12 @@
         <translation>文件名</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="269"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="289"/>
         <source>Dimension</source>
         <translation>尺寸</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="257"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="277"/>
         <source>Duration</source>
         <translation>时长</translation>
     </message>
@@ -2825,7 +2830,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
         <location filename="../dialogs/propertydialog.cpp" line="1017"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="302"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="322"/>
         <source>Time accessed</source>
         <translation>访问时间</translation>
     </message>
@@ -3388,13 +3393,13 @@
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="450"/>
-        <source>For security, this file can not be shared!</source>
+        <source>To protect the files, you cannot share this folder.</source>
         <translation>为了文件安全，无法共享此文件夹。</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="451"/>
-        <source>Got it.</source>
-        <translation>我知道了</translation>
+        <source>OK</source>
+        <translation>确定</translation>
     </message>
 </context>
 <context>

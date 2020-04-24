@@ -447,8 +447,8 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             DDialog dialog;
 
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-            dialog.setTitle(tr("For security, this file can not be shared!"));
-            dialog.addButton(tr("Got it."), true);
+            dialog.setTitle(tr("To protect the files, you cannot share this folder."));
+            dialog.addButton(tr("OK"), true);
 
             if (dialog.exec() == DDialog::Accepted) {
                 return false;

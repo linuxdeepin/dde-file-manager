@@ -180,17 +180,20 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     }
 
     //部分数据优先从dbus读取，如果dbus没有，则从dtk读数据
+    QString memoryInstallStr;
     QString memoryStr;
     QString diskStr;
     QString processor;
     QString systemType;
     if (m_systemInfo->memoryCap() <= 0 || m_systemInfo->diskCap() <= 0) {
+        memoryInstallStr = QString::number(DSysInfo::memoryInstalledSize());
         memoryStr = QString::number(DSysInfo::memoryInstalledSize());
         diskStr = QString::number(DSysInfo::systemDiskSize());
         processor = DSysInfo::cpuModelName();
         systemType = "64";
     }
     else {
+        memoryInstallStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1000 * 1000 * 1000), 'f', 0);
         memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 1);
         diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
         processor = m_systemInfo->processor();
@@ -201,7 +204,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     datas.insert(data.at(1), version);
     datas.insert(data.at(2), QString::number(m_systemInfo->systemType()) + tr("Bit"));
     datas.insert(data.at(3), processor);
-    datas.insert(data.at(4), memoryStr + " GB");
+    datas.insert(data.at(4), memoryInstallStr + " GB (" +  memoryStr + " GB " + tr("Available") + ")");
     datas.insert(data.at(5), diskStr + " GB");
 
     return datas;

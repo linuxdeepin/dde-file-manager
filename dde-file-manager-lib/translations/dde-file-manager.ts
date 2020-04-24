@@ -103,9 +103,14 @@
         <translation>Disk</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="202"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="205"/>
         <source>Bit</source>
         <translation>Bit</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="207"/>
+        <source>Available</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2011,21 +2016,21 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1014"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="549"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="203"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="223"/>
         <source>Size</source>
         <translation>Size</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1034"/>
         <location filename="../dialogs/propertydialog.cpp" line="1177"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="212"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="232"/>
         <source>Contains</source>
         <translation>Contains</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1015"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="550"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="204"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="224"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
@@ -2033,7 +2038,7 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
         <location filename="../dialogs/propertydialog.cpp" line="1018"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="552"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="303"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="323"/>
         <source>Time modified</source>
         <translation>Time modified</translation>
     </message>
@@ -2289,7 +2294,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1019"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="562"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="317"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="337"/>
         <source>Source path</source>
         <translation>Source path</translation>
     </message>
@@ -2457,7 +2462,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="548"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="193"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="213"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -2755,7 +2760,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1046"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="288"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="308"/>
         <location filename="../views/drenamebar.cpp" line="261"/>
         <source>Location</source>
         <translation>Location</translation>
@@ -2766,12 +2771,12 @@
         <translation>File name</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="269"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="289"/>
         <source>Dimension</source>
         <translation>Dimension</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="257"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="277"/>
         <source>Duration</source>
         <translation>Duration</translation>
     </message>
@@ -2825,7 +2830,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
         <location filename="../dialogs/propertydialog.cpp" line="1017"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="302"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="322"/>
         <source>Time accessed</source>
         <translation>Time accessed</translation>
     </message>
@@ -3388,13 +3393,13 @@
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="450"/>
-        <source>For security, this file can not be shared!</source>
+        <source>To protect the files, you cannot share this folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="451"/>
-        <source>Got it.</source>
-        <translation type="unfinished"></translation>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
     </message>
 </context>
 <context>
