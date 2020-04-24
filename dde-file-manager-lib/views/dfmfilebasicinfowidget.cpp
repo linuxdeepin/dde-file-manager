@@ -69,10 +69,14 @@ bool SectionValueLabel::event(QEvent *e)
     return QLabel::event(e);
 }
 
-void SectionValueLabel::paintEvent(QPaintEvent * e)
+void SectionValueLabel::showEvent(QShowEvent *e)
 {
-    setFixedWidth(this->fontMetrics().horizontalAdvance(this->text()));
-    QLabel::paintEvent(e);
+    QString txt = this->text();
+    if(!txt.isEmpty())
+    {
+        setFixedWidth(this->fontMetrics().horizontalAdvance(txt));
+    }
+    QLabel::showEvent(e);
 }
 //! lixiang change
 
