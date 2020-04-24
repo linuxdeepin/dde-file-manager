@@ -2782,7 +2782,6 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
             }
 //            result.waitForFinished();
             while (!result.isFinished()) {
-                qDebug() << "~~~~~ processevent";
                 qApp->processEvents();
             }
 //            qDebug() << "~~~~~ processevent finished";
