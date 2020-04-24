@@ -124,11 +124,10 @@ public:
     WId winId() const;
     bool autoMerge() const;
     void setAutoMerge(bool enabled = false);
-    void toggleAutoMerge(bool enabled = true);
     void toggleEntryExpandedState(const DUrl &url);
     void updateEntryExpandedState(const DUrl &url);
     void setGeometry(const QRect &rect);
-    void delayArrage(int ms = 10);
+    void delayArrage(int ms = 50);
     DUrl currentCursorFile() const;
     inline int screenNum() const {return m_screenNum;}
     void syncIconLevel(int level);

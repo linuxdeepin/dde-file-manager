@@ -170,6 +170,14 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
     qDebug() << "sync type" << type << "data" << var;
 
     switch (type) {
+    case GridManager::soAutoMerge:{
+        bool enable = var.toBool();
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->setAutoMerge(enable);
+            view->update();
+        }
+        break;
+    }
     case GridManager::soRename:{ //处理自动排列时右键新建文件，编辑框显示问题
         QString file = var.toString();
         arrageEditDeal(file);
