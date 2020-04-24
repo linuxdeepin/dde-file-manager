@@ -465,6 +465,7 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
     DMD_TYPES typeInfo = checkUrlArrangedType(url);
     if (arrangedFileUrls[typeInfo].contains(url)) {
         qWarning() << url << "existed, it must be a bug!!!!!!!!";
+        return; //不return会崩溃，不知道为什么 todo
         arrangedFileUrls[typeInfo].removeAll(url);
     }
     arrangedFileUrls[typeInfo].append(url);
