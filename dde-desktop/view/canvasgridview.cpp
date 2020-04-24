@@ -1928,7 +1928,7 @@ void CanvasGridView::initUI()
     DFMSocketInterface::instance();
 
     DGioSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
-    if (desktopSettings.value("water-mask").toBool()) {
+    if (desktopSettings.keys().contains("water-mask") && desktopSettings.value("water-mask").toBool()) {
         d->waterMaskFrame = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
         d->waterMaskFrame->lower();
         d->waterMaskFrame->updatePosition();
