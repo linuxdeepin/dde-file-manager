@@ -98,11 +98,14 @@ void DFMRightDetailView::initUI()
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(d->scrollArea);
+    //! lixiang start
+    layout->setContentsMargins(0, 0, 0, 0);
+    //! lixiang end
     setLayout(layout);
 
     d->mainLayout = new QVBoxLayout;
     d->mainLayout->setAlignment(Qt::AlignCenter | Qt::AlignTop);
-    d->mainLayout->setSpacing(10);
+    d->mainLayout->setSpacing(5);
 
     QFrame *mainFrame = new QFrame;
     mainFrame->setLayout(d->mainLayout);

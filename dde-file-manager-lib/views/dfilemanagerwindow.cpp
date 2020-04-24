@@ -1090,14 +1090,18 @@ void DFileManagerWindow::initCentralWidget()
     QWidget *midWidget = new QWidget;
     QHBoxLayout *midLayout = new QHBoxLayout;
     midWidget->setLayout(midLayout);
+    //! lixiang start 设置后显示空间会大些 
     midLayout->setContentsMargins(0, 0, 0, 0);
+    //! lixiang end
     midLayout->addWidget(d->splitter);
 
     d->rightDetailViewHolder = new QFrame;
     d->rightDetailViewHolder->setObjectName("rightviewHolder");
     d->rightDetailViewHolder->setAutoFillBackground(true);
     d->rightDetailViewHolder->setBackgroundRole(QPalette::ColorRole::Base);
-    d->rightDetailViewHolder->setFixedWidth(300);
+    //! lixiang
+    d->rightDetailViewHolder->setFixedWidth(320);
+    //! lixiang end
     QHBoxLayout *rvLayout = new QHBoxLayout(d->rightDetailViewHolder);
     rvLayout->setMargin(0);
 
@@ -1105,8 +1109,8 @@ void DFileManagerWindow::initCentralWidget()
     QFrame *rightDetailVLine = new QFrame;
     rightDetailVLine->setFrameShape(QFrame::VLine);
     rvLayout->addWidget(rightDetailVLine);
-    rvLayout->addWidget(d->detailView);
-    midLayout->addWidget(d->rightDetailViewHolder);
+    rvLayout->addWidget(d->detailView, 1);
+    midLayout->addWidget(d->rightDetailViewHolder, 1);
     d->rightDetailViewHolder->setVisible(false); //不显示先
 
     mainLayout->addWidget(midWidget);
@@ -1162,6 +1166,7 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [d](){
         if(d->rightDetailViewHolder){
             d->rightDetailViewHolder->setVisible(!d->rightDetailViewHolder->isVisible());
+            qDebug() << "File information window on the right";
         }
     });
 
