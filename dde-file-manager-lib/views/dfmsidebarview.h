@@ -38,8 +38,11 @@ public:
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
     QModelIndex indexAt(const QPoint &p) const Q_DECL_OVERRIDE;
-
+    QModelIndex getPreviousIndex() const;
+    QModelIndex getCurrentIndex() const;
+    void currentChanged(const QModelIndex &previous);
     DFMSideBarItem *itemAt(const QPoint &pt);
+
 protected:
     bool onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction action) const;
     Qt::DropAction canDropMimeData(DFMSideBarItem *item,const QMimeData *data, Qt::DropActions actions) const;
@@ -56,6 +59,8 @@ private:
     QPoint dropPos;
     QString dragItemName;
     int dragRow;
+    QModelIndex m_previous;
+    QModelIndex m_current;
 
     QList<QUrl> m_urlsForDragEvent;
 };

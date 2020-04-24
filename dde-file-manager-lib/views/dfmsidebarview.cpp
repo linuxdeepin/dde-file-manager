@@ -47,6 +47,7 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
     setDragDropOverwriteMode(false);
     //QListView拖拽时会先插入后删除，于是可以通过rowCountChanged()信号来判断拖拽操作是否结束
     connect(this, SIGNAL(rowCountChanged()), this, SLOT(onRowCountChanged()));
+    connect(this, static_cast<void (DListView::*)(const QModelIndex &)>(&DListView::currentChanged), this, &DFMSideBarView::currentChanged);
 }
 
 void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
@@ -144,6 +145,22 @@ QModelIndex DFMSideBarView::indexAt(const QPoint &p) const
     }
 
     return index;
+}
+
+QModelIndex DFMSideBarView::getPreviousIndex() const
+{
+    return  m_previous;
+}
+
+QModelIndex DFMSideBarView::getCurrentIndex() const
+{
+    return  m_current;
+}
+
+void DFMSideBarView::currentChanged(const QModelIndex &previous)
+{
+    m_current = currentIndex();
+    m_previous = previous;
 }
 
 bool DFMSideBarView::onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction action) const
