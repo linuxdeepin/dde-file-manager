@@ -48,7 +48,7 @@ public:
 protected:
     virtual bool event(QEvent *e) override;
     //! Set the width of the label after the selected file changes
-    virtual void paintEvent(QPaintEvent * e) override;
+    virtual void showEvent(QShowEvent * e) override;
 //! lixiang change
 };
 
