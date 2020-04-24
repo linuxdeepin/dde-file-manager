@@ -394,8 +394,9 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
         UDiskDeviceInfoPointer info = m_list.at(i);
         if (info && !info->getMountPointUrl().isEmpty()) {
 
+            bool t_ok = info->getId().contains("/dev/sr");
             //获取空白光盘路径有问题，fix
-            if (info->getMountPointUrl().toString() == "burn:///") {
+            if (info->getMountPointUrl().toString() == "burn:///" || info->getId().contains("/dev/sr")) {
                 return UDiskDeviceInfoPointer();
             }
             //获取空白光盘路径有问题，fix
