@@ -1693,8 +1693,6 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     });
     return true;
 #endif
-    if(GridManager::instance()->doneInit() && GridManager::instance()->autoMerge())
-        GridManager::instance()->setCurrentVirtualExpandUrl(url);
 
     DUrl fileUrl = url;
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
