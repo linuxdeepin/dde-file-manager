@@ -64,7 +64,9 @@ public:
     bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
     bool isActionShouldShow(QAction *action, bool onDesktop);
     bool isSchemeSupport(QAction *action, const DUrl &url);
-    bool isSuffixSupport(QAction *action, const DUrl &url);
+    bool isSuffixSupport(QAction *action, const DUrl &url,const bool ballEx7z = false);
+    //都是7z分卷压缩文件
+    bool isAllEx7zFile(const QStringList &url);
     QList<QAction *> emptyAreaActoins(const QString &currentDir, bool onDesktop);
 private:
     QList<QAction *> actionList;
@@ -170,12 +172,15 @@ bool DFMAdditionalMenuPrivate::isSchemeSupport(QAction *action, const DUrl &url)
     return supportList.contains(url.scheme(), Qt::CaseInsensitive);
 }
 
-bool DFMAdditionalMenuPrivate::isSuffixSupport(QAction *action, const DUrl &url)
+bool DFMAdditionalMenuPrivate::isSuffixSupport(QAction *action, const DUrl &url, const bool ballEx7z)
 {
     Q_Q(DFMAdditionalMenu);
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(q, url);
     // X-DFM-SupportSuffix not exist
     if (!fileInfo || fileInfo->isDir() || !action || !action->property(SUPPORT_SUFFIX_KEY.data()).isValid()) {
+        if (ballEx7z) {
+            return false;
+        }
         return true;
     }
 
@@ -196,6 +201,24 @@ bool DFMAdditionalMenuPrivate::isSuffixSupport(QAction *action, const DUrl &url)
         }
     }
     return match;
+}
+
+//都是7z分卷压缩文件
+bool DFMAdditionalMenuPrivate::isAllEx7zFile(const QStringList &files)
+{
+    if(files.size() <= 1)
+    {
+        return false;
+    }
+    for (const QString &f : files) {
+        QFileInfo info(f);
+        // 7z.001,7z.002, 7z.003 ... 7z.xxx
+        QString cs = info.completeSuffix();
+        if(!cs.startsWith(QString("7z."))) {
+            return false;
+        }
+    }
+    return true;
 }
 
 QList<QAction *>DFMAdditionalMenuPrivate::emptyAreaActoins(const QString &currentDir, bool onDesktop)
@@ -337,7 +360,7 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
         menuType = "MultiFileDirs";
     }
     QList<QAction *> actions = d->actionListByType[menuType];
-
+    bool bex7z = d->isAllEx7zFile(files);
     for (const QString &f : files) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(f));
         if (!fileInfo) {
@@ -362,7 +385,7 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
             QAction * action = *it;
             if(!action || !d->isActionShouldShow(action, onDesktop) ||
                     !d->isSchemeSupport(action, DUrl(f)) ||
-                    !d->isSuffixSupport(action, DUrl(f))) {
+                    !d->isSuffixSupport(action, DUrl(f),bex7z)) {
                 it = actions.erase(it);
                 continue;
             }
