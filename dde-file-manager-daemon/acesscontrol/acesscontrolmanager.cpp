@@ -42,6 +42,8 @@ bool AcessControlManager::checkAuthentication()
 
     if (!ret) {
         qDebug() << "Authentication failed !!";
+        qDebug() << "failed pid: " << pid;
+        qDebug() << "failed policy id:" << PolicyKitActionId;
     }
     return ret;
 }

@@ -43,6 +43,7 @@
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
+#include "../dde-file-manager-daemon/dbusservice/dbusinterface/acesscontrol_interface.h"
 
 #include "interfaces/dfmglobal.h"
 #include "interfaces/diconitemdelegate.h"
@@ -174,6 +175,9 @@ public:
     QPoint lastTouchBeginPos;
     int touchTapDistance = -1;
 
+    // u盘访问控制
+    AcessControlInterface *m_acessControlInterface = nullptr;
+
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -194,6 +198,11 @@ DFileView::DFileView(QWidget *parent)
 #else
     d_ptr->touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 #endif
+
+    d->m_acessControlInterface = new AcessControlInterface("com.deepin.filemanager.daemon",
+                                                           "/com/deepin/filemanager/daemon/AcessControlManager",
+                                                           QDBusConnection::systemBus(),
+                                                           this);
 
     initUI();
     initModel();
@@ -1448,6 +1457,45 @@ void DFileView::setRootIndex(const QModelIndex &index)
     DListView::setRootIndex(index);
 }
 
+void DFileView::requireAuthentication(const DUrl &url)
+{
+    Q_D(const DFileView);
+
+    QString localPath(url.toLocalFile());
+    bool isUDiskDev = false;
+    for (const UDiskDeviceInfoPointer &dev : deviceListener->getMountList()) {
+         DUrl devUrl(dev->getDiskInfo().mounted_root_uri());
+         if (localPath == devUrl.toLocalFile())
+             isUDiskDev = true;
+    }
+
+
+    if (isUDiskDev) {
+        QFileInfo mediaFile(localPath);
+        QString fileOwner = mediaFile.owner();
+        QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+        QString userName = userPath.section("/", -1, -1);
+        // 检测当前用户有没有写权限，没有写权限则需要认证
+        bool authFlag = false;
+        if (userName == fileOwner) {
+            if (!mediaFile.permission(QFileDevice::WriteOwner)) {
+                authFlag = true;
+            }
+        } else {
+            if (!mediaFile.permission(QFileDevice::WriteUser) || !mediaFile.permission(QFileDevice::WriteGroup)) {
+                authFlag = true;
+            }
+        }
+
+        // 需要认证
+        if (authFlag) {
+            QTimer::singleShot(500, this, [d, userName, localPath](){
+                d->m_acessControlInterface->acquireFullAuthentication(userName, localPath);
+            });
+        }
+    }
+}
+
 void DFileView::focusInEvent(QFocusEvent *event)
 {
     Q_D(const DFileView);
@@ -2086,6 +2134,7 @@ void DFileView::initConnects()
 
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &DFileView::viewStateChanged);
     connect(this, &DFileView::rootUrlChanged, this, &DFileView::loadViewState);
+    connect(this, &DFileView::rootUrlChanged, this, &DFileView::requireAuthentication);
     connect(this, &DFileView::viewStateChanged, this, &DFileView::saveViewState);
 
     connect(d->toolbarActionGroup, &QActionGroup::triggered, this, [this] {
