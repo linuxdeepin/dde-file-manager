@@ -59,6 +59,22 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
     setFixedWidth(150);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 }
+//! lixiang changed
+bool SectionValueLabel::event(QEvent *e)
+{
+    if(e->type() == QEvent::FontChange)
+    {
+        setFixedWidth(this->fontMetrics().horizontalAdvance(this->text()));
+    }
+    return QLabel::event(e);
+}
+
+void SectionValueLabel::paintEvent(QPaintEvent * e)
+{
+    setFixedWidth(this->fontMetrics().horizontalAdvance(this->text()));
+    QLabel::paintEvent(e);
+}
+//! lixiang change
 
 LinkSectionValueLabel::LinkSectionValueLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
     SectionValueLabel(text, parent, f)
@@ -205,7 +221,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
-    SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
+    SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName().split(" (")[0]);
 
     if (info->isDir()) {
         if (!m_showSummaryOnly) {
@@ -320,6 +336,9 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 
     //layout->setContentsMargins(0, 0, 40, 0);
     q->setFixedHeight(frameHeight);
+    //! lixiang change
+    layoutWidget->update();
+    //! lixiang change
 }
 
 DFMFileBasicInfoWidget::DFMFileBasicInfoWidget(QWidget *parent)
