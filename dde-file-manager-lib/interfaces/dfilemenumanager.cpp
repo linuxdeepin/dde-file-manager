@@ -577,7 +577,9 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::RenameTag] = QObject::tr("Rename");
 
     actionKeys[MenuAction::MountImage] = QObject::tr("Mount");
-    actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Burn");
+    //fix: 调整右键菜单中的"刻录"为"添加至光盘刻录"
+    //actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Burn");
+    actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Add to disc");
 
     // Action Icons:
     DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
