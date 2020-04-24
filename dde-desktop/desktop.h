@@ -35,10 +35,9 @@ public:
     void showZoneSettings();
 
     void initDebugDBus(QDBusConnection &conn);
-
-    CanvasGridView *getView();
-
 public slots:
+    void EnableUIDebug(bool enable);
+    void Reset();
     void Show();
     void ShowWallpaperChooser(const QString &screen = QString());
     void ShowScreensaverChooser(const QString &screen = QString());

@@ -123,7 +123,7 @@ public:
     bool autoArrange() const;
     bool autoMerge() const;
     bool doneInit()const;
-    void toggleArrange(int screenNum);
+    void toggleArrange();
     void setAutoMerge(bool enable = true);
     void toggleAutoMerge();
     void reArrange(int screenNum);

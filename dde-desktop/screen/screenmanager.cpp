@@ -142,3 +142,15 @@ AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
     AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
     return ret;
 }
+
+void ScreenManager::reset()
+{
+    if (m_display)
+    {
+        delete m_display;
+        m_display = nullptr;
+    }
+
+    m_display = new DBusDisplay(this);
+    init();
+}

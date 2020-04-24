@@ -150,7 +150,7 @@ public slots:
 
 // Debug interface
 public Q_SLOTS:
-    Q_SCRIPTABLE void EnableUIDebug();
+    Q_SCRIPTABLE void EnableUIDebug(bool enable);
     Q_SCRIPTABLE QString Size();
     Q_SCRIPTABLE QString Dump();
     Q_SCRIPTABLE QString DumpPos(qint32 x, qint32 y);

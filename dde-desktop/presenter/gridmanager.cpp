@@ -1748,39 +1748,33 @@ DUrl GridManager::getInitRootUrl()
 
 void GridManager::initGridItemsInfos()
 {
-
-    DUrl fileUrl = getInitRootUrl();;
+    DUrl fileUrl = getInitRootUrl();
     QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl, QStringList(), tempModel->filters());
     d->clear();
+
+    //设置排序
+    DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)Config::instance()->getConfig(Config::groupGeneral,Config::keySortBy).toInt();
+    Qt::SortOrder sortOrder = Config::instance()->getConfig(Config::groupGeneral,Config::keySortOrder).toInt() == Qt::AscendingOrder ?
+                Qt::AscendingOrder : Qt::DescendingOrder;
+
+    qDebug() << "sort rules" << sortRole << sortOrder;
+    {
+        QPoint sort(sortRole,sortOrder);
+        emit sigSyncOperation(soSort, sort);
+    }
+
     if(GridManager::instance()->autoMerge()){
-//        if(!d->m_doneInit){
-//            d->m_doneInit = true;
-//            d->m_allItems = infoList;
-
-//        }
-//        else {
-
-//        }
-        GridManager::instance()->initAutoMerge(infoList);
+        if(!d->m_doneInit){
+            d->m_doneInit = true;
+            d->m_allItems = infoList;
+            GridManager::instance()->initAutoMerge(infoList);
+        }else {
+            GridManager::instance()->initAutoMerge(d->m_allItems);
+        }
     }
     else if (GridManager::instance()->autoArrange())
     {
-//        auto settings = Config::instance()->settings();
-//        settings->beginGroup(Config::groupGeneral);
-//        DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)settings->value(Config::keySortBy).toInt();
-//        Qt::SortOrder sortOrder = settings->value(Config::keySortOrder).toInt() == Qt::AscendingOrder ?
-//                    Qt::DescendingOrder : Qt::AscendingOrder;;
-//        settings->endGroup();
-        DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)Config::instance()->getConfig(Config::groupGeneral,Config::keySortBy).toInt();
-        Qt::SortOrder sortOrder = Config::instance()->getConfig(Config::groupGeneral,Config::keySortOrder).toInt() == Qt::AscendingOrder ?
-                    Qt::DescendingOrder : Qt::AscendingOrder;
-
-        qDebug() << "auto arrage" << sortRole << sortOrder;
-        {
-        QPoint sort(sortRole,sortOrder);
-        emit sigSyncOperation(soSort,sort);
-        }
         QModelIndex index = tempModel->setRootUrl(fileUrl);
         DAbstractFileInfoPointer root = tempModel->fileInfo(index);
         QTime t;
@@ -1805,24 +1799,6 @@ void GridManager::initGridItemsInfos()
     else {
         initProfile(infoList);
     }
-
-//    else {
-//        d->clear();
-//        if(GridManager::instance()->autoMerge()){
-//            GridManager::instance()->initAutoMerge(d->m_allItems);
-//        }
-//        else if (GridManager::instance()->autoArrange())
-//        {
-//            QStringList list;
-//            for (const DAbstractFileInfoPointer &df : infoList) {
-//                list << df->fileUrl().toString();
-//            }
-//            initArrage(list);
-//        }
-//        else {
-//            initProfile(infoList);
-//        }
-//    }
 }
 
 void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
@@ -2106,7 +2082,8 @@ bool GridManager::remove(int screenNum, QPoint pos, const QString &id)
 
 bool GridManager::clear()
 {
-    d->createProfile();
+    d->clear();
+    //d->createProfile();
     //此处暂时删除所有即d->positionProfiles,不知对否，后续调整
     //emit Presenter::instance()->removeConfigList(Config::keyProfile, QStringList());
 
@@ -2256,15 +2233,9 @@ bool GridManager::doneInit() const
     return d->m_doneInit;
 }
 
-void GridManager::toggleArrange(int screenNum)
+void GridManager::toggleArrange()
 {
     d->autoArrange = !d->autoArrange;
-
-    if (!d->autoArrange) {
-        return;
-    }
-
-    reArrange(screenNum);
 }
 
 void GridManager::setAutoMerge(bool enable)

@@ -72,6 +72,12 @@
 std::atomic<bool> CanvasGridView::m_flag{ false };
 QMap<DMD_TYPES, bool> CanvasGridView::virtualEntryExpandState;
 
+static const QMap<int, int> kSortActions = {{MenuAction::Name, DFileSystemModel::FileDisplayNameRole}
+                                            ,{MenuAction::Size, DFileSystemModel::FileSizeRole}
+                                            ,{MenuAction::Type, DFileSystemModel::FileMimeTypeRole}
+                                            ,{MenuAction::LastModifiedDate, DFileSystemModel::FileLastModifiedRole}
+                                           };
+
 void startProcessDetached(const QString &program,
                           const QStringList &arguments = QStringList(),
                           QIODevice::OpenMode mode = QIODevice::ReadWrite)
@@ -117,8 +123,6 @@ QModelIndex CanvasGridView::indexAt(const QPoint &point) const
 {
     auto gridPos = gridAt(point);
     auto localFile =  GridManager::instance()->itemId(m_screenNum, gridPos.x(), gridPos.y());
-    if(localFile.isEmpty())
-        return QModelIndex();
     auto rowIndex = model()->index(DUrl(localFile));
     QPoint pos = QPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
     auto list = itemPaintGeomertys(rowIndex);
@@ -253,8 +257,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 }
                 if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
                     auto localFile = GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
-                    if(localFile.isEmpty())
-                        return QModelIndex();
+//                    if(localFile.isEmpty())
+//                        return QModelIndex();
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -278,8 +282,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 }
                 if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
                     auto localFile = GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
-                    if(localFile.isEmpty())
-                        return QModelIndex();
+//                    if(localFile.isEmpty())
+//                        return QModelIndex();
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -298,8 +302,6 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
     }
 
     auto localFile =  GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
-    if(localFile.isEmpty())
-        return QModelIndex();
     auto newIndex = model()->index(DUrl(localFile));
     if (newIndex.isValid()) {
         return newIndex;
@@ -1497,9 +1499,6 @@ void CanvasGridView::rowsInserted(const QModelIndex &parent, int first, int last
 
     for (int index = first; index <= last; ++index) {
         const QModelIndex &child = parent.child(index, 0);
-        if(!child.isValid()){
-            continue;
-        }
         DAbstractFileInfoPointer info = model()->fileInfo(child);
         if (info) {
             info->makeToActive();
@@ -1947,10 +1946,10 @@ void CanvasGridView::setDodgeDuration(double dodgeDuration)
     emit dodgeDurationChanged(d->dodgeDuration);
 }
 
-void CanvasGridView::EnableUIDebug()
+void CanvasGridView::EnableUIDebug(bool enable)
 {
-    d->_debug_log = true;
-    d->_debug_show_grid = true;
+    d->_debug_log = enable;
+    d->_debug_show_grid = enable;
 }
 
 QString CanvasGridView::Size()
@@ -2133,7 +2132,7 @@ static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldG
 void CanvasGridView::initUI()
 {
 #ifdef QT_DEBUG
-    EnableUIDebug();
+    EnableUIDebug(true);
 #endif
     //d->dbusDock = DockIns::instance();//new DBusDock(this);
 
@@ -2494,13 +2493,12 @@ openEditor:
 
     connect(this->model(), &QAbstractItemModel::dataChanged,
     this, [ = ](const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> &roles) {
-        qDebug() << "dataChanged";
+        qDebug() << "dataChanged" << roles;
         if (d->resortCount > 0) {
             qDebug() << "dataChanged" << topLeft << bottomRight << roles;
             qDebug() << "resort desktop icons";
             model()->setEnabledSort(false);
             d->resortCount--;
-            GridManager::instance()->clear();
             QStringList list;
             for (int i = 0; i < model()->rowCount(); ++i) {
                 auto index = model()->index(i, 0);
@@ -2514,12 +2512,13 @@ openEditor:
                 return ;
             }
 
+            GridManager::instance()->clear();
             //自动整理 todo
             //自定义
             for (auto lf : list) {
                 GridManager::instance()->add(m_screenNum, lf);
             }
-            GridManager::instance()->reArrange(m_screenNum);
+//            /GridManager::instance()->reArrange(m_screenNum);
         }
     });
 
@@ -2530,8 +2529,12 @@ openEditor:
     }, Qt::QueuedConnection);
 
 
-    connect(this, &CanvasGridView::autoAlignToggled,
-            Presenter::instance(), &Presenter::onAutoAlignToggled);
+    connect(this, &CanvasGridView::autoAlignToggled,[this](){
+        Presenter::instance()->onAutoAlignToggled();
+        if (GridManager::instance()->autoArrange()){
+            this->delayArrage();
+        }
+    });
     connect(this, &CanvasGridView::autoMergeToggled,
             Presenter::instance(), &Presenter::onAutoMergeToggled);
     connect(this, &CanvasGridView::sortRoleChanged,
@@ -2746,16 +2749,16 @@ inline QRect CanvasGridView::itemIconGeomerty(const QModelIndex &index) const
 inline QModelIndex CanvasGridView::firstIndex()
 {
     auto localFile = GridManager::instance()->firstItemId(m_screenNum);
-    if(localFile.isEmpty())
-        return QModelIndex();
+//    if(localFile.isEmpty())
+//        return QModelIndex();
     return model()->index(DUrl(localFile));
 }
 
 inline QModelIndex CanvasGridView::lastIndex()
 {
     auto localFile = GridManager::instance()->lastItemId(m_screenNum);
-    if(localFile.isEmpty())
-        return QModelIndex();
+//    if(localFile.isEmpty())
+//        return QModelIndex();
     return model()->index(DUrl(localFile));
 }
 
@@ -2955,7 +2958,6 @@ void CanvasGridView::handleContextMenuAction(int action)
     case AutoSort:
         emit autoAlignToggled();
         break;
-
     case IconSize0:
     case IconSize1:
     case IconSize2:
@@ -2978,15 +2980,17 @@ void CanvasGridView::handleContextMenuAction(int action)
     if (changeSort) {
         model()->setEnabledSort(true);
         d->resortCount++;
-        QMap<int, int> sortActions;
-        sortActions.insert(MenuAction::Name, DFileSystemModel::FileDisplayNameRole);
-        sortActions.insert(MenuAction::Size, DFileSystemModel::FileSizeRole);
-        sortActions.insert(MenuAction::Type, DFileSystemModel::FileMimeTypeRole);
-        sortActions.insert(MenuAction::LastModifiedDate, DFileSystemModel::FileLastModifiedRole);
+//        QMap<int, int> sortActions;
+//        sortActions.insert(MenuAction::Name, DFileSystemModel::FileDisplayNameRole);
+//        sortActions.insert(MenuAction::Size, DFileSystemModel::FileSizeRole);
+//        sortActions.insert(MenuAction::Type, DFileSystemModel::FileMimeTypeRole);
+//        sortActions.insert(MenuAction::LastModifiedDate, DFileSystemModel::FileLastModifiedRole);
 
-        int             sortRole    = sortActions.value(action);
-        Qt::SortOrder   sortOrder   = model()->sortOrder() == Qt::AscendingOrder ?
-                                      Qt::DescendingOrder : Qt::AscendingOrder;
+        int sortRole = kSortActions.value(action);
+        Qt::SortOrder sortOrder = model()->sortOrder();
+        //若排序模式一样，则改变升降
+        if (sortRole == model()->sortRole())
+                sortOrder = sortOrder == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
 
         model()->setSortRole(sortRole, sortOrder);
         model()->sort();
@@ -3224,6 +3228,24 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     autoSort.setChecked(GridManager::instance()->autoArrange());
     if (!autoMerge()) {
         menu->insertAction(pasteAction, &autoSort);
+
+        //勾选当前使用的排序
+        QAction *sortAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::SortBy));
+        if (sortAction != nullptr && sortAction->menu() != nullptr){
+            QMenu *roleMenu = sortAction->menu();
+            int datetype = kSortActions.key(model()->sortRole());
+            qDebug() << model()->sortRole() << datetype << model()->sortOrder();
+            for (QAction *action : roleMenu->actions()){
+                if (action->data().toInt() == datetype && autoSort.isChecked()){
+                    action->setCheckable(true);
+                    action->setChecked(true);
+                }
+                else {
+                    action->setCheckable(false);
+                    action->setChecked(false);
+                }
+            }
+        }
     }
 
     auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
