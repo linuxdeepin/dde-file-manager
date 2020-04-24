@@ -727,11 +727,10 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
             QStorageInfo partition(url.path());
             if (partition.isValid() && partition.rootPath() == url.path() && !DDiskManager::resolveDeviceNode(partition.device(), {}).isEmpty()) {
                 QString dev(partition.device());
-                dev = dev.mid(dev.lastIndexOf('/') + 1);
-                url = DUrl(DFMROOT_ROOT + dev + "." + SUFFIX_UDISKS);
-
+                QString newDev = dev.mid(dev.lastIndexOf('/') + 1);
+                url = DUrl(DFMROOT_ROOT + newDev + "." + SUFFIX_UDISKS);
                 //fix lvm分区下的逻辑目录打开属性需要对url做转换
-                if (urlSrcPath.startsWith("/media")) {
+                if (dev.contains("/mapper/")) {
                     QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
                     for (auto chi : ch) {
                         if (chi.data()->checkMpsStr(urlSrcPath)) {

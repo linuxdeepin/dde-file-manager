@@ -441,6 +441,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             return false;
         }
 
+        //root权限文件分享会报这个错误信息
         if (err.contains("as we are restricted to only sharing directories we own."))
         {
             DDialog dialog;
