@@ -453,13 +453,6 @@ void CanvasGridView::setAutoMerge(bool enabled)
     }
 }
 
-void CanvasGridView::toggleAutoMerge(bool enabled)
-{
-    if (enabled == GridManager::instance()->autoMerge()) return;
-
-    setAutoMerge(enabled);
-}
-
 // please make sure the passed \a url argument is a valid virtual entry url.
 void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
 {
@@ -2546,8 +2539,13 @@ openEditor:
             this->delayArrage();
         }
     });
-    connect(this, &CanvasGridView::autoMergeToggled,
-            Presenter::instance(), &Presenter::onAutoMergeToggled);
+    connect(this, &CanvasGridView::autoMergeToggled,[](){
+        bool enable = !GridManager::instance()->autoMerge();
+        emit GridManager::instance()->sigSyncOperation(GridManager::soAutoMerge,enable);
+        GridManager::instance()->setAutoMerge(enable);
+        Presenter::instance()->onAutoMergeToggled();
+    });
+
     connect(this, &CanvasGridView::sortRoleChanged,
             Presenter::instance(), &Presenter::onSortRoleChanged);
     connect(this, &CanvasGridView::changeIconLevel,
@@ -2963,7 +2961,6 @@ void CanvasGridView::handleContextMenuAction(int action)
 //        break;
 //    }
     case AutoMerge:
-        this->toggleAutoMerge(!autoMerge());
         emit autoMergeToggled();
         break;
     case AutoSort:
