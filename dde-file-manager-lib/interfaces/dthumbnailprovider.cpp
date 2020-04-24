@@ -331,6 +331,8 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
         const QSize &imageSize = reader.size();
 
+        //fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
+        //这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
         if(!imageSize.isValid()){
             d->errorString = "Fail to read image file attribute data:" + info.absoluteFilePath();
             goto _return;
