@@ -43,6 +43,13 @@ class SectionValueLabel: public QLabel
 
 public:
     explicit SectionValueLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
+
+//! lixiang changed
+protected:
+    virtual bool event(QEvent *e) override;
+    //! Set the width of the label after the selected file changes
+    virtual void paintEvent(QPaintEvent * e) override;
+//! lixiang change
 };
 
 class LinkSectionValueLabel: public SectionValueLabel
