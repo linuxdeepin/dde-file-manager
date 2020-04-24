@@ -292,13 +292,23 @@ void Desktop::initDebugDBus(QDBusConnection &conn)
 #endif
 }
 
-CanvasGridView *Desktop::getView()
+void Desktop::EnableUIDebug(bool enable)
 {
-#if USINGOLD
-    return (&(d->screenFrame));
-#endif
-    return  nullptr;
-    //return  d->m_canvas->primaryCanvas().get();//nullptr;
+    for (CanvasViewPointer view: d->m_canvas->canvas().values()){
+        view->EnableUIDebug(enable);
+        view->update();
+    }
+}
+
+void Desktop::Reset()
+{
+    ScreenMrg->reset();
+    if (d->m_background->isEnabled()){
+        d->m_background->onBackgroundBuild();
+    }
+    else {
+        d->m_background->onSkipBackgroundBuild();
+    }
 }
 
 void Desktop::Show()

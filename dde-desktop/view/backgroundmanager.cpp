@@ -86,9 +86,8 @@ void BackgroundManager::onRestBackgroundManager()
             wmInter = nullptr;
         }
 
-        //currentWallpaper.clear();
         currentWorkspaceIndex = 0;
-        //backgroundPixmap = QPixmap();
+
         //屏幕改变
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
                 this, &BackgroundManager::onSkipBackgroundBuild);

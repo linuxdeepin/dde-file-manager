@@ -19,6 +19,7 @@ public:
     virtual ScreenPointer screen(const QString &name) const = 0;
     virtual qreal devicePixelRatio() const = 0;
     virtual DisplayMode displayMode() const = 0;
+    virtual void reset() = 0;
 signals:
     void sigScreenChanged();    //屏幕接入，移除
     void sigDisplayModeChanged();   //显示模式改变

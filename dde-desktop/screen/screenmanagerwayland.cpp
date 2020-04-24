@@ -90,6 +90,17 @@ AbstractScreenManager::DisplayMode ScreenManagerWayland::displayMode() const
     return ret;
 }
 
+void ScreenManagerWayland::reset()
+{
+    if (m_display){
+        delete m_display;
+        m_display = nullptr;
+    }
+
+    m_display = new DBusDisplay(this);
+    init();
+}
+
 void ScreenManagerWayland::onMonitorChanged()
 {
     QStringList monitors;
