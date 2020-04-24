@@ -1795,7 +1795,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
                 GridManager::instance()->remove(m_screenNum, oriUrl.toString());
                 GridManager::instance()->add(m_screenNum, oldPos, dstUrl.toString());
             } else {
-                Q_EMIT itemCreated(dstUrl);
+                //Q_EMIT itemCreated(dstUrl);
             }
         }
 
