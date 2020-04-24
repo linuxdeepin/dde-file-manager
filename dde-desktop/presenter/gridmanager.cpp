@@ -1020,8 +1020,8 @@ public:
         m_overlapItems = sortedItems;
     }
 
-    void arrange()
-    {
+//    void arrange()
+//    {
 //        QStringList sortItems;
 
 //        auto inUsePos = m_gridItems.value(screenNum).keys();
@@ -1050,7 +1050,7 @@ public:
 //        }
 
 //        m_overlapItems = overlapItems;
-    }
+//    }
 
     void createProfile()
     {
@@ -1137,10 +1137,10 @@ public:
             QPair<int, QPoint> empty_pos{ takeEmptyPos() };
             add(empty_pos.first, empty_pos.second, info->fileUrl().toString());
         }
-
-        if (autoArrange || autoMerge) {
-            arrange();
-        }
+//to deletes
+//        if (autoArrange || autoMerge) {
+//            arrange();
+//        }
     }
 
     void syncAllProfile()
@@ -2249,15 +2249,15 @@ void GridManager::toggleAutoMerge()
     setAutoMerge(!d->autoMerge);
 }
 
-void GridManager::reArrange(int screenNum)
+void GridManager::reArrange()
 {
     if (autoArrange()){
         d->reAutoArrage();
         emit sigSyncOperation(soUpdate);
         return;
     }
-    else
-        d->arrange();
+//    else  //to deletes
+//        d->arrange();
 
     if (autoMerge()) {
         return;

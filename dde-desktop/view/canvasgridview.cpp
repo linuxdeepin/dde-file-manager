@@ -337,7 +337,7 @@ void CanvasGridView::updateHiddenItems()
     }
 
     if (GridManager::instance()->shouldArrange()) {
-        GridManager::instance()->reArrange(m_screenNum);
+        GridManager::instance()->reArrange();
     }
 }
 
@@ -2456,11 +2456,10 @@ openEditor:
                 model()->refresh();
             }
         }
-
-        //重新排列
-        if (GridManager::instance()->autoArrange()){
+        else if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();
         }
+
         /***************************************************************/
     });
 
@@ -2483,9 +2482,9 @@ openEditor:
         }
 
         //自动整理
-        if (GridManager::instance()->autoMerge()) {
-            GridManager::instance()->reArrange(m_screenNum);
-        }
+//        if (GridManager::instance()->autoMerge()) {
+//            GridManager::instance()->reArrange();
+//        }
     });
 
     connect(this->model(), &DFileSystemModel::requestSelectFiles,
@@ -2518,7 +2517,6 @@ openEditor:
             for (auto lf : list) {
                 GridManager::instance()->add(m_screenNum, lf);
             }
-//            /GridManager::instance()->reArrange(m_screenNum);
         }
     });
 

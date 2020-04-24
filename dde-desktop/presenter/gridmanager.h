@@ -126,7 +126,7 @@ public:
     void toggleArrange();
     void setAutoMerge(bool enable = true);
     void toggleAutoMerge();
-    void reArrange(int screenNum);
+    void reArrange();
 
     int gridCount() const;
     QPair<int, QPoint> forwardFindEmpty(int screenNum, QPoint start) const;
