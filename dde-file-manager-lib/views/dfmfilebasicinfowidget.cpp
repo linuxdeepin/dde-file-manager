@@ -59,26 +59,6 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
     setFixedWidth(150);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 }
-//! lixiang changed
-bool SectionValueLabel::event(QEvent *e)
-{
-    if(e->type() == QEvent::FontChange)
-    {
-        setFixedWidth(this->fontMetrics().horizontalAdvance(this->text()));
-    }
-    return QLabel::event(e);
-}
-
-void SectionValueLabel::showEvent(QShowEvent *e)
-{
-    QString txt = this->text();
-    if(!txt.isEmpty())
-    {
-        setFixedWidth(this->fontMetrics().horizontalAdvance(txt));
-    }
-    QLabel::showEvent(e);
-}
-//! lixiang change
 
 bool SectionValueLabel::event(QEvent *e)
 {
