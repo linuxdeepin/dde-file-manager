@@ -2040,11 +2040,11 @@ bool GridManager::remove(int screenNum, const QString &id)
     return false;
 }
 
-bool GridManager::remove(int screenNum, int x, int y, const QString &id)
-{
-    auto pos = QPoint(x, y);
-    return remove(screenNum, pos, id);
-}
+//bool GridManager::remove(int screenNum, int x, int y, const QString &id)
+//{
+//    auto pos = QPoint(x, y);
+//    return remove(screenNum, pos, id);
+//}
 
 bool GridManager::remove(int screenNum, QPoint pos, const QString &id)
 {
