@@ -51,6 +51,7 @@
 #include <QTimer>
 #include <QJsonArray>
 #include <QProcess>
+#include <QStandardPaths>
 
 #include <views/windowmanager.h>
 
@@ -78,6 +79,8 @@ QPointer<QEventLoop> GvfsMountManager::eventLoop;
 //fix: 探测光盘推进,弹出和挂载状态机标识
 bool GvfsMountManager::g_burnVolumeFlag = false;
 bool GvfsMountManager::g_burnMountFlag = false;
+//fix: 每次弹出光驱时需要删除临时缓存数据文件
+QString GvfsMountManager::g_qVolumeId = "sr0";
 
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr")
@@ -588,6 +591,10 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
 
     qCDebug(mountManager()) << "===================" << qVolume.unix_device() << "=======================";
 
+    //fix: 每次弹出光驱时需要删除临时缓存数据文件
+    //id="/dev/sr1" -> tempId="sr1"
+    GvfsMountManager::g_qVolumeId = qVolume.unix_device().mid(5);
+
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qVolume.icons().contains("media-optical")) { //CD/DVD
         GvfsMountManager::g_burnVolumeFlag = true;
@@ -637,6 +644,15 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qVolume.name().contains("CD/DVD") || qVolume.name().contains("CD") || qVolume.icons().contains("media-optical")) { //CD/DVD
         GvfsMountManager::g_burnVolumeFlag = false;
+    }
+
+    //fix: 每次弹出光驱时需要删除临时缓存数据文件
+    if ((qVolume.activation_root_uri().contains("burn:///") && qVolume.unix_device().contains("")) || \
+            (qVolume.activation_root_uri().contains("") || qVolume.unix_device().contains("/dev/sr"))) {
+        //fix: 临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
+        QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+        QString tempMediaPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + GvfsMountManager::g_qVolumeId;
+        QDir(tempMediaPath).removeRecursively();
     }
 
     GDrive *drive = g_volume_get_drive(volume);

@@ -65,6 +65,8 @@ public:
     //fix: 探测光盘推进,弹出和挂载状态机标识
     static bool g_burnVolumeFlag;
     static bool g_burnMountFlag;
+    //fix: 每次弹出光驱时需要删除临时缓存数据文件
+    static QString g_qVolumeId;
 
     static GvfsMountManager* instance();
     static MountSecretDiskAskPasswordDialog* mountSecretDiskAskPasswordDialog;
