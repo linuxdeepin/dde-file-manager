@@ -80,6 +80,27 @@ void SectionValueLabel::showEvent(QShowEvent *e)
 }
 //! lixiang change
 
+bool SectionValueLabel::event(QEvent *e)
+{
+    if(e->type() == QEvent::FontChange)
+    {
+        //! 根据字体大小来设置label的宽度
+        setFixedWidth(this->fontMetrics().horizontalAdvance(this->text()));
+    }
+    return QLabel::event(e);
+}
+
+void SectionValueLabel::showEvent(QShowEvent *e)
+{
+    QString txt = this->text();
+    if(!txt.isEmpty())
+    {
+        //! 根据字体大小来设置label的宽度
+        setFixedWidth(this->fontMetrics().horizontalAdvance(txt));
+    }
+    QLabel::showEvent(e);
+}
+
 LinkSectionValueLabel::LinkSectionValueLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
     SectionValueLabel(text, parent, f)
 {
