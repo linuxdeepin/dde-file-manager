@@ -882,9 +882,6 @@ void DFileView::onRowCountChanged()
 
     delayUpdateStatusBar();
     updateContentLabel();
-    QEventLoop eventloop;
-    QTimer::singleShot(1, &eventloop, SLOT(quit()));
-    eventloop.exec();
     updateModelActiveIndex();
 }
 
