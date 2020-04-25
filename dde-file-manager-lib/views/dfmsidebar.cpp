@@ -352,8 +352,6 @@ void DFMSideBar::onItemActivated(const QModelIndex &index)
 
 void DFMSideBar::onContextMenuRequested(const QPoint &pos)
 {
-    //修复7201，这里还原了打开右键菜单导致的选中项目的改变
-    m_sidebarView->setCurrentIndex(m_sidebarView->getPreviousIndex());
     if (!m_contextMenuEnabled) return;
     //判断是否有之前的menu还在exec
     if(m_bmenuexec) {
