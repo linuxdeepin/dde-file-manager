@@ -1263,16 +1263,19 @@ QString DAbstractFileInfo::suffix() const
     if (isDir()) {
         return QString();
     }
-
-    // blumia: we should keep the letter case (chris: daxiaowrite) of suffix.
-    const QString &fileName = this->fileName();
-    const QString &suffix = d->mimeDatabase.suffixForFileName(fileName);
-
-    if (suffix.isEmpty()) {
-        return suffix;
+    // xushitong 20200424 修改后缀名获取策略为小数点后非空字符串
+    const QString &strFileName = this->fileName();
+    QString tmpName  = strFileName;
+    int nIdx = 0;
+    QString strSuffix;
+    while (strSuffix.isEmpty()) {
+        nIdx = tmpName.lastIndexOf(".");
+        if (nIdx == -1)
+            return QString();
+        strSuffix = tmpName.mid(nIdx + 1);
+        tmpName = tmpName.mid(0, nIdx);
     }
-
-    return fileName.right(suffix.length());
+    return strFileName.mid(nIdx + 1);
 }
 
 QString DAbstractFileInfo::suffixOfRename() const
