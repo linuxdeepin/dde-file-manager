@@ -1109,6 +1109,18 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
                 //同屏移动
                 if (sourceView == this){
+
+                    //移除其他屏的同名文件,用于修复drag在多屏之间拖动触发动画后的bug
+                    QPair<int,QPoint> orgpos;
+                    for(QUrl durl : selectLocalFiles){
+                        if (GridManager::instance()->find(durl.toString(),orgpos)
+                                && orgpos.first != screenNum()){
+                            qWarning() << "remove" << durl.toString() << "from" << orgpos
+                                       << "current screen" << screenNum();
+                            GridManager::instance()->remove(orgpos.first,durl.toString());
+                        }
+                    }
+
                     //获取焦点
                     QString current = currentCursorFile().toString();
                     qDebug() << "move " << m_screenNum << "focus" << current << "count" << selectLocalFiles.size();
@@ -1127,6 +1139,8 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
                 setState(NoState);
                 itemDelegate()->hideNotEditingIndexWidget();
+
+                emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
                 return;
             }
 
@@ -2259,25 +2273,42 @@ void CanvasGridView::initConnection()
         connect(animation, &QPropertyAnimation::finished,
         this, [ = ]() {
             DUrlList selecteds = selectedUrls();
-            DUrlList removed; //记录移除的
+            QMap<DUrl,QPair<int, QPoint>> removed; //记录移除的
             for (auto relocateItem : selecteds) {
                 auto localFile = relocateItem.toString();
-                //处理跨屏，如果是跨屏的remove会失败，后面就无需再add
-                if (GridManager::instance()->remove(m_screenNum, localFile))
-                    removed << relocateItem;
+                QPair<int, QPoint> pos;
+                bool ret = GridManager::instance()->find(localFile,pos);
+                //处理跨屏，如果是跨屏的remove失败，后面就无需再add
+                if (ret && GridManager::instance()->remove(pos.first, localFile))
+                    removed.insert(relocateItem,pos);
             }
 
             // commit dodgeTargetGrid
             for (auto relocateItem : d->dodgeItems) {
-                GridManager::instance()->remove(m_screenNum, relocateItem);
-                auto pos = d->dodgeTargetGrid->pos(m_screenNum, relocateItem);
-                GridManager::instance()->add(m_screenNum, pos, relocateItem);
+                QPoint orgPos = GridManager::instance()->position(m_screenNum,relocateItem);
+                bool rmRet = GridManager::instance()->remove(m_screenNum,relocateItem);
+                auto pos = d->dodgeTargetGrid->pos(m_screenNum,relocateItem);
+                bool addRet = GridManager::instance()->add(m_screenNum,pos, relocateItem);
+                //add失败，还原。修复bug#21943
+                if (!addRet && rmRet){
+                    qWarning() << "error move!!!" << relocateItem << "from" << orgPos
+                               << "to" << pos << "fail." << "put it on" << orgPos;
+                    GridManager::instance()->add(m_screenNum,orgPos, relocateItem);
+                }
             }
 
             //只有被remove的才add。用于处理跨屏拖动
-            for (auto relocateItem : removed) {
-                auto localFile = relocateItem.toString();
-                GridManager::instance()->add(m_screenNum, d->dodgeTargetGrid->pos(m_screenNum, localFile), localFile);
+            for (auto relocateItem : removed.keys()) {
+                QString localFile = relocateItem.toString();
+                QPoint tarPos = d->dodgeTargetGrid->pos(m_screenNum, localFile);
+                bool ret = GridManager::instance()->add(m_screenNum, tarPos, localFile);
+                //用于修复drag在多屏之间拖动触发动画后的bug
+                if (!ret){
+                    auto orgPos = removed.value(relocateItem);
+                    qWarning() << "error move!!!" << localFile << "from" << orgPos
+                               << "to" << tarPos << "fail." << "put it on" << orgPos;
+                    GridManager::instance()->add(orgPos.first, orgPos.second, localFile);
+                }
             }
             d->dodgeAnimationing = false;
             delete d->dodgeTargetGrid;
