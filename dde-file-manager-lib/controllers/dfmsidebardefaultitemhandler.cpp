@@ -32,6 +32,7 @@
 #include "views/windowmanager.h"
 #include "trashmanager.h"
 #include "durl.h"
+#include "interfaces/dfilemenu.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -76,7 +77,7 @@ QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMSideBar *sidebar, cons
 //        return DFMSideBarItemInterface::contextMenu(sidebar, item);
 //    }
 
-    QMenu *menu = new QMenu();
+    DFileMenu *menu = new DFileMenu();
 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());

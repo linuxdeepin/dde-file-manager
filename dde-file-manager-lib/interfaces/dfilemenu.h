@@ -46,6 +46,7 @@ public:
     QAction *actionAt(const QString &text) const;
 
     QAction *exec();
+    QAction *exec(const QPoint &pos, QAction *at = nullptr);
     using QMenu::exec;
 
     quint64 eventId() const;
@@ -55,8 +56,13 @@ public:
 
     DUrlList selectedUrls() const;
 
-//    void mouseReleaseEvent(QMouseEvent *event) override;
-//    void mousePressEvent(QMouseEvent *event) override;
+    bool event(QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void actionEvent(QActionEvent *event) override;
+
+    void setCanUse(const bool canuse);
 
 private:
     DUrl m_currentUrl;
@@ -64,6 +70,7 @@ private:
     quint64 m_eventId = 0;
     const QObject *m_sender = Q_NULLPTR;
     QSet<DFMGlobal::MenuAction> m_ignoreMenuActions; //Don't handle MenuAction list in libdde-file-manager in m_ignoreMenuActions;
+    bool m_canuse = true;
 };
 
 #endif // DFILEMENU_H

@@ -27,6 +27,7 @@
 #include <QTimer>
 #include <XdgDesktopFile>
 #include <dabstractfilewatcher.h>
+#include "interfaces/dfilemenu.h"
 DFM_BEGIN_NAMESPACE
 
 #define MENUEXTENSIONS_PATH  "/usr/share/deepin/dde-file-manager/oem-menuextensions/"
@@ -72,7 +73,7 @@ private:
     QList<QAction *> actionList;
     QMap<QString, QList<QAction *> > actionListByType;
     QObject *menuActionHolder {nullptr};
-    QList<QMenu *> menuList;
+    QList<DFileMenu *> menuList;
     QTimer *m_delayedLoadFileTimer;
 
     DFMAdditionalMenu *q_ptr;
@@ -256,7 +257,7 @@ void DFMAdditionalMenu::loadDesktopFile()
     if (d->menuActionHolder) {
         d->menuActionHolder->deleteLater();
     }
-    for (QMenu *menu : d->menuList) {
+    for (DFileMenu *menu : d->menuList) {
         menu->deleteLater();
     }
 
@@ -286,7 +287,7 @@ void DFMAdditionalMenu::loadDesktopFile()
             QAction *action = new QAction(iconStr.isEmpty() ? QIcon() : file.icon(), file.name(), d->menuActionHolder);
             QStringList entryActionList = file.actions();
             if (!entryActionList.isEmpty()) {
-                QMenu *menu = new QMenu();
+                DFileMenu *menu = new DFileMenu();
                 d->menuList.append(menu);
                 for (const QString &actionName : entryActionList) {
                     QAction *subAction = new QAction(file.actionIcon(actionName), file.actionName(actionName), d->menuActionHolder);

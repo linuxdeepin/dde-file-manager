@@ -27,6 +27,7 @@
 #include "views/dfmsidebar.h"
 #include "views/windowmanager.h"
 #include "interfaces/dfmsidebaritem.h"
+#include "interfaces/dfilemenu.h"
 
 
 DFMSideBarItemInterface::DFMSideBarItemInterface(QObject *parent) : QObject(parent)
@@ -38,13 +39,14 @@ void DFMSideBarItemInterface::cdAction(const DFMSideBar *sidebar, const DFMSideB
 {
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     if (item->itemType() != DFMSideBarItem::Separator) {
+        qDebug() << " item->url() " << item->url();
         wnd->cd(item->url()); // don't `setChecked` here, wait for a signal.
     }
 }
 
 QMenu *DFMSideBarItemInterface::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
-    QMenu *menu = new QMenu();
+    DFileMenu *menu = new DFileMenu();
 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
