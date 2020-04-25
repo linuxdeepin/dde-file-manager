@@ -40,6 +40,7 @@
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
 #include "app/filesignalmanager.h"
+#include "interfaces/dfilemenu.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -381,7 +382,15 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
         if (menu) {
             qDebug() << "menu->exec  =  " << identifierStr << menu;
             m_bmenuexec = true;
-            menu->exec(this->mapToGlobal(pos));
+            DFileMenu *fmenu = static_cast<DFileMenu *>(menu);
+            if (fmenu) {
+                fmenu->exec(this->mapToGlobal(pos));
+            }
+            else {
+                menu->exec(this->mapToGlobal(pos));
+            }
+
+            qDebug() << "menu->exec  =  " << identifierStr << menu;
             connect(menu,&QMenu::destroyed,this,[ = ](){
                 m_timer->setInterval(250);
                 m_timer->start();

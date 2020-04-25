@@ -23,6 +23,7 @@
  */
 
 #include "showfileplugin.h"
+#include "interfaces/dfilemenu.h"
 #include <QUrl>
 #include <QMenu>
 #include <QFileInfo>
@@ -111,7 +112,7 @@ QList<QAction *> ShowFilePlugin::additionalMenu(const QStringList &files, const 
             return QActionList();
         }
             // 显示二级菜单
-        QMenu* subMenu = new QMenu;
+        DFileMenu* subMenu = new DFileMenu;
         QActionList subActions;
         for( int i = 0; i <= a; i++ )
         {

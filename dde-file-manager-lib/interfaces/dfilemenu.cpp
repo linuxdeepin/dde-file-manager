@@ -24,6 +24,7 @@
 
 #include "dfilemenu.h"
 #include "dfmevent.h"
+#include <QTimer>
 
 DFileMenu::DFileMenu(QWidget *parent)
     : QMenu(parent)
@@ -66,7 +67,21 @@ QAction *DFileMenu::actionAt(const QString &text) const
 
 QAction *DFileMenu::exec()
 {
+    setCanUse(false);
+    QTimer::singleShot(200,this,[this]{
+
+        setCanUse(true);
+    });
     return QMenu::exec(QCursor::pos());
+}
+
+QAction *DFileMenu::exec(const QPoint &pos, QAction *at)
+{
+    setCanUse(false);
+    QTimer::singleShot(200,this,[this]{
+        setCanUse(true);
+    });
+    return QMenu::exec(pos,at);
 }
 
 quint64 DFileMenu::eventId() const
@@ -89,12 +104,48 @@ DUrlList DFileMenu::selectedUrls() const
     return m_selectedUrls;
 }
 
-//void DFileMenu::mouseReleaseEvent(QMouseEvent *event)
-//{
-//    if(show())
-//}
+bool DFileMenu::event(QEvent *event)
+{
+    return QMenu::event(event);
+}
 
-//void DFileMenu::mousePressEvent(QMouseEvent *event)
-//{
+void DFileMenu::keyPressEvent(QKeyEvent *event)
+{
+    if (!m_canuse) {
+        return;
+    }
 
-//}
+    QMenu::keyPressEvent(event);
+}
+
+void DFileMenu::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (!m_canuse) {
+        return;
+    }
+
+    QMenu::mouseReleaseEvent(event);
+}
+
+void DFileMenu::mousePressEvent(QMouseEvent *event)
+{
+    if (!m_canuse) {
+        return;
+    }
+
+    QMenu::mousePressEvent(event);
+}
+
+void DFileMenu::actionEvent(QActionEvent *event)
+{
+    if (!m_canuse) {
+        return;
+    }
+
+    QMenu::actionEvent(event);
+}
+
+void DFileMenu::setCanUse(const bool canuse)
+{
+    m_canuse = canuse;
+}

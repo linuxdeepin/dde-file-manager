@@ -21,6 +21,7 @@
 #include "dfmvaultfileview.h"
 #include "controllers/vaultcontroller.h"
 
+
 #include <QHBoxLayout>
 #include <QLabel>
 #include <DIconButton>
@@ -47,15 +48,15 @@ VaultHeaderView::VaultHeaderView(QWidget *parent)
     layout->addWidget(menuBtn);
 
     connect(menuBtn, &QAbstractButton::clicked, this, [=](){
-        QMenu * menu = createMenu();
+        DFileMenu * menu = createMenu();
         menu->exec(menuBtn->mapToGlobal(menuBtn->rect().center()));
         menu->deleteLater();
     });
 }
 
-QMenu *VaultHeaderView::createMenu()
+DFileMenu *VaultHeaderView::createMenu()
 {
-    QMenu * menu = new QMenu;
+    DFileMenu * menu = new DFileMenu;
 
     menu->addAction(tr("Lock vault"), this, &VaultHeaderView::requestLockVault);
     menu->addAction(tr("Generate key"), this, &VaultHeaderView::requestGenerateRecoveryKey);

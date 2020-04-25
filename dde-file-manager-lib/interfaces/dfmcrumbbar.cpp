@@ -47,6 +47,7 @@
 #include "singleton.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "controllers/pathmanager.h"
+#include "interfaces/dfilemenu.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -556,7 +557,7 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
     if (!index.isValid())
         return ;
 
-    QMenu *menu = new QMenu();
+    DFileMenu *menu = new DFileMenu();
     DUrl url = index.data(DFMCrumbListviewModel::FileUrlRole).toUrl();
     DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     bool displayIcon = settings.value("context-menu-icons").toBool();

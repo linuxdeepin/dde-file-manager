@@ -2837,7 +2837,7 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
 {
     D_D(DFileView);
     const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
-    QMenu *menu = new QMenu();
+    DFileMenu *menu = new DFileMenu();
 
     if (fileInfo && fileInfo->columnIsCompact()) {
         /*contextmenu of headview for sort function*/
