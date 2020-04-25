@@ -100,6 +100,10 @@ Frame::Frame(Mode mode, QWidget *parent)
     initUI();
     initSize();
 
+    connect(Display::instance()->primaryScreen(), &QScreen::virtualGeometryChanged, this, [=]{
+        disconnect(Display::instance()->primaryScreen());
+        QTimer::singleShot(100, this , &Frame::hide);
+    });
     connect(m_mouseArea, &DRegionMonitor::buttonPress, [this](const QPoint & p, const int button) {
         if (button == 4) {
             m_wallpaperList->prevPage();
@@ -747,7 +751,6 @@ void Frame::refreshList()
                     item->addButton(DESKTOP_BUTTON_ID, tr("Only desktop"));
                     item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Only lock screen"));
                     item->show();
-
                     connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
                 }
 
