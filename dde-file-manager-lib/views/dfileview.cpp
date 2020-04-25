@@ -292,8 +292,13 @@ QList<DUrl> DFileView::selectedUrls() const
         if (url.scheme() == SEARCH_SCHEME) {
             //搜索目录需要特殊处理
             list << url.searchedFileUrl();
-        }
-        else {
+        } else if (url.scheme() == RECENT_SCHEME) {
+            // TODO
+            // xust 20200426 为解决在最近列表中框选多个文件后右键打开不能成功打开文件的问题，暂时在入口处处理 url (recent:// -> file://）,
+            // 单个文件可以正常打开，路径是通过 recent scheme 获取 RecentController 再转 FileController ，不过到多个文件打开就不走
+            // 这个路径，获取不到 RecentController 的原因还没查清楚。目前暂时从入口处理 url ，有时间再排查问题。
+            list << DUrl::fromLocalFile(url.path());
+        } else {
             list << model()->getUrlByIndex(index);
         }
     }
@@ -1461,9 +1466,9 @@ void DFileView::requireAuthentication(const DUrl &url)
     QString localPath(url.toLocalFile());
     bool isUDiskDev = false;
     for (const UDiskDeviceInfoPointer &dev : deviceListener->getMountList()) {
-         DUrl devUrl(dev->getDiskInfo().mounted_root_uri());
-         if (localPath == devUrl.toLocalFile())
-             isUDiskDev = true;
+        DUrl devUrl(dev->getDiskInfo().mounted_root_uri());
+        if (localPath == devUrl.toLocalFile())
+            isUDiskDev = true;
     }
 
 
@@ -1486,7 +1491,7 @@ void DFileView::requireAuthentication(const DUrl &url)
 
         // 需要认证
         if (authFlag) {
-            QTimer::singleShot(500, this, [d, userName, localPath](){
+            QTimer::singleShot(500, this, [d, userName, localPath]() {
                 d->m_acessControlInterface->acquireFullAuthentication(userName, localPath);
             });
         }
@@ -1662,8 +1667,7 @@ void DFileView::dropEvent(QDropEvent *event)
         if (fileInfo && fileInfo->fileUrl().isLocalFile()) {
             if (fileInfo->isDir()) {
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->fileUrl());
-            }
-            else {
+            } else {
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->parentUrl());
             }
         }
@@ -3033,7 +3037,7 @@ bool DFileView::fetchDragEventUrlsFromSharedMemory()
 
     sm.lock();
     //用缓冲区得到共享内存关联后得到的数据和数据大小
-    buffer.setData((char*)sm.constData(), sm.size());
+    buffer.setData((char *)sm.constData(), sm.size());
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
     in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
     sm.unlock();    //解锁

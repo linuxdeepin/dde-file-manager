@@ -142,7 +142,7 @@ public:
     void setSearchKeyword(const QString &keyword);
     void setSearchTargetUrl(const DUrl &url);
     void setSearchedFileUrl(const DUrl &url);
-    void setTaggedFileUrl(const QString& localFilePath) noexcept;
+    void setTaggedFileUrl(const QString &localFilePath) noexcept;
     void setBookmarkName(const QString &name);
 
     static DUrl fromLocalFile(const QString &filePath);
@@ -157,8 +157,8 @@ public:
     static DUrl fromAFCFile(const QString &filePath);
     static DUrl fromMTPFile(const QString &filePath);
     static DUrl fromUserShareFile(const QString &filePath);
-    static DUrl fromAVFSFile(const QString& filePath);
-    static DUrl fromUserTaggedFile(const QString& tag_name, const QString& localFilePath) noexcept;
+    static DUrl fromAVFSFile(const QString &filePath);
+    static DUrl fromUserTaggedFile(const QString &tag_name, const QString &localFilePath) noexcept;
     static DUrl fromDeviceId(const QString &deviceId);
     static DUrl fromBurnFile(const QString &filePath);
 
