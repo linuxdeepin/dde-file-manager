@@ -126,6 +126,7 @@ public:
     void toggleEntryExpandedState(const DUrl &url);
     void updateEntryExpandedState(const DUrl &url);
     void setGeometry(const QRect &rect);
+    void delayModelRefresh(int ms = 50);
     void delayArrage(int ms = 50);
     DUrl currentCursorFile() const;
     inline int screenNum() const {return m_screenNum;}
@@ -145,6 +146,8 @@ public slots:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) Q_DECL_OVERRIDE;
 
     void setDodgeDuration(double dragMoveTime);
+
+    void delayAutoMerge();
 
 // Debug interface
 public Q_SLOTS:
@@ -196,6 +199,8 @@ private:
 
     QString m_screenName;
     int     m_screenNum{1};
+
+    QTimer *m_refreshTimer = nullptr;
 };
 
 
