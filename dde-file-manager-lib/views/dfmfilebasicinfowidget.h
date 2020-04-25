@@ -45,6 +45,7 @@ public:
     explicit SectionValueLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 
 protected:
+    //! Set the width of the label after the font is changed
     virtual bool event(QEvent *e) override;
     //! Set the width of the label after the selected file changes
     virtual void showEvent(QShowEvent * e) override;
