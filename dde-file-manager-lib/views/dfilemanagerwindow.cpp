@@ -415,7 +415,7 @@ void DFileManagerWindowPrivate::initRenameBar()
 
 bool DFileManagerWindowPrivate::isRenameBarVisible() const
 {
-    return advanceSearchBar ? advanceSearchBar->isVisible() : false;
+    return renameBar ? renameBar->isVisible() : false;
 }
 
 void DFileManagerWindowPrivate::setRenameBarVisible(bool visible)
