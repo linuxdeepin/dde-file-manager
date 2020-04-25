@@ -523,6 +523,13 @@ QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfo *sourceF
     DAbstractFileInfoPointer target_file_info;
     QString file_base_name = sourceFileInfo->baseName();
     QString suffix = sourceFileInfo->suffix();
+    QString filename = sourceFileInfo->fileName();
+    //在7z分卷压缩后的名称特殊处理7z.003
+    if(filename.contains(QRegularExpression("\.7z\.[0-9]{3,10}$")))
+    {
+        file_base_name = filename.left(file_base_name.length() - suffix.length());
+        suffix = QString("7z") + suffix;
+    }
     int number = 0;
 
     QString new_file_name;
