@@ -2011,9 +2011,16 @@ void CanvasGridView::initConnection()
 
             // commit dodgeTargetGrid
             for (auto relocateItem : d->dodgeItems) {
-                GridManager::instance()->remove(relocateItem);
+                QPoint orgPos = GridManager::instance()->position(relocateItem);
+                bool rmRet = GridManager::instance()->remove(relocateItem);
                 auto pos = d->dodgeTargetGrid->pos(relocateItem);
-                GridManager::instance()->add(pos, relocateItem);
+                bool addRet = GridManager::instance()->add(pos, relocateItem);
+                //add失败，还原。修复bug#21943
+                if (!addRet && rmRet){
+                    qWarning() << "error move!!!" << relocateItem << "from" << orgPos
+                               << "to" << pos << "fail." << "put it on" << orgPos;
+                    GridManager::instance()->add(orgPos, relocateItem);
+                }
             }
 
             for (auto relocateItem : selecteds) {
