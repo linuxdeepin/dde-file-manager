@@ -30,7 +30,7 @@ DFMStyledItemDelegate::~DFMStyledItemDelegate()
 
 DFileViewHelper *DFMStyledItemDelegate::parent() const
 {
-    return static_cast<DFileViewHelper*>(QStyledItemDelegate::parent());
+    return static_cast<DFileViewHelper *>(QStyledItemDelegate::parent());
 }
 
 QModelIndex DFMStyledItemDelegate::editingIndex() const
@@ -109,7 +109,7 @@ void DFMStyledItemDelegate::commitDataAndCloseActiveEditor()
         return;
 
     QMetaObject::invokeMethod(this, "_q_commitDataAndCloseEditor",
-                              Qt::DirectConnection, Q_ARG(QWidget*, editor));
+                              Qt::DirectConnection, Q_ARG(QWidget *, editor));
 }
 
 QRect DFMStyledItemDelegate::fileNameRect(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -154,8 +154,8 @@ int DFMStyledItemDelegate::setIconSizeByIconSizeLevel(int level)
 }
 
 QList<QRectF> DFMStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout, const QRectF &boundingRect,
-                                            qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap,
-                                            Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
+                                              qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap,
+                                              Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
 {
     initTextLayout(index, layout);
 
@@ -168,8 +168,8 @@ QList<QRectF> DFMStyledItemDelegate::drawText(const QModelIndex &index, QPainter
 }
 
 QList<QRectF> DFMStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, const QString &text, const QRectF &boundingRect,
-                                            qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap,
-                                            Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
+                                              qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap,
+                                              Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
 {
     QTextLayout layout;
 
@@ -224,12 +224,20 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
     bool useHighDpiPixmaps = qApp->testAttribute(Qt::AA_UseHighDpiPixmaps);
     qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, false);
 
+    if (icon.isNull())
+        return QPixmap();
+
     QSize icon_size = icon.actualSize(size, mode, state);
     //取出icon的真实大小
     QList<QSize> iconSizeList = icon.availableSizes();
-    QSize iconRealSize = iconSizeList.first();
+    QSize iconRealSize;
+    if (iconSizeList.count() > 0)
+        iconRealSize = iconSizeList.first();
+    else
+        iconRealSize = icon_size;
     if (iconRealSize.width() == 0 || iconRealSize.height() == 0) {
-        return icon.pixmap(iconRealSize);
+//        return icon.pixmap(iconRealSize);
+        return icon.pixmap(icon_size);
     }
 
     //确保特殊比例icon的高或宽不为0
@@ -269,8 +277,7 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
     if (isSpecialSize) {
         if (px.width() > size.width() * pixelRatio) {
             px = px.scaled(size.width() * pixelRatio, px.height(), Qt::IgnoreAspectRatio);
-        }
-        else if (px.height() > size.height() * pixelRatio) {
+        } else if (px.height() > size.height() * pixelRatio) {
             px = px.scaled(px.width(), size.height() * pixelRatio, Qt::IgnoreAspectRatio);
         }
     }
@@ -309,7 +316,7 @@ void DFMStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, cons
     if (DEEPIN_QT_THEME::followColorScheme
             && (*DEEPIN_QT_THEME::followColorScheme)()
             && painter->device()->devType() == QInternal::Widget) {
-        const QWidget *widget = dynamic_cast<QWidget*>(painter->device());
+        const QWidget *widget = dynamic_cast<QWidget *>(painter->device());
         const QPalette &pal = widget->palette();
         DEEPIN_QT_THEME::colorScheme.setLocalData(mode == QIcon::Selected ? pal.highlightedText().color().name() : pal.windowText().color().name());
     }
@@ -365,8 +372,8 @@ void DFMStyledItemDelegatePrivate::init()
     QAbstractItemModel *model = q->parent()->parent()->model();
     Q_ASSERT(model);
 
-    q->connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), SLOT(_q_onRowsInserted(QModelIndex,int,int)));
-    q->connect(model, SIGNAL(rowsRemoved(QModelIndex,int,int)), SLOT(_q_onRowsRemoved(QModelIndex,int,int)));
+    q->connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), SLOT(_q_onRowsInserted(QModelIndex, int, int)));
+    q->connect(model, SIGNAL(rowsRemoved(QModelIndex, int, int)), SLOT(_q_onRowsRemoved(QModelIndex, int, int)));
 
     textLineHeight = q->parent()->parent()->fontMetrics().height();
 }
