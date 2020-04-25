@@ -248,14 +248,21 @@ void Desktop::showWallpaperSettings(QString name, int mode)
     }, Qt::DirectConnection);
 
     //屏幕有改变直接退出壁纸设置
-    connect(ScreenMrg, &AbstractScreenManager::sigScreenChanged,[this](){
+    auto close = [this](){
         qDebug() << "screen changed , wallpaperSettings is exiting";
         if (d->wallpaperSettings) {
             d->wallpaperSettings->close();
             d->wallpaperSettings->deleteLater();
             d->wallpaperSettings = nullptr;
         }
+    };
+    connect(ScreenMrg, &AbstractScreenManager::sigScreenChanged,[close](){
+            close();
     });
+    connect(ScreenMrg, &AbstractScreenManager::sigScreenGeometryChanged,[close](){
+            close();
+    });
+    //end
 
     d->wallpaperSettings->show();
     d->wallpaperSettings->grabKeyboard();
