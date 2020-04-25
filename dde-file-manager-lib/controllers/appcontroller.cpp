@@ -501,11 +501,14 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
                 //fix:对于磁盘这块，主要由于光驱不会自动挂载，只有加载成功后鼠标左键双击才会执行此步，现在这样容易导致用户一系列误操作，故关闭。
                 //QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(drvs));
                 //drv->eject({});
+                Q_UNUSED(drvs)
             }, blk->drive());
+            dialogManager->showMessageDialog(1, tr("Disk device is invalid"));
             return;
         }
         // 断网时mount Samba无效
         if (blk->device().isEmpty()) {
+            dialogManager->showMessageDialog(1, tr("Block device is invalid, cannot mount now"));
             qWarning() << "blockDevice is invalid, fileurl is " << fileUrl;
             return;
         }
