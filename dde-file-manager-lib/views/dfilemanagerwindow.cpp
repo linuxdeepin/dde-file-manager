@@ -1099,9 +1099,7 @@ void DFileManagerWindow::initCentralWidget()
     d->rightDetailViewHolder->setObjectName("rightviewHolder");
     d->rightDetailViewHolder->setAutoFillBackground(true);
     d->rightDetailViewHolder->setBackgroundRole(QPalette::ColorRole::Base);
-    //! lixiang
     d->rightDetailViewHolder->setFixedWidth(320);
-    //! lixiang end
     QHBoxLayout *rvLayout = new QHBoxLayout(d->rightDetailViewHolder);
     rvLayout->setMargin(0);
 

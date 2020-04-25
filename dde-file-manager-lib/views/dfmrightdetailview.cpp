@@ -98,9 +98,8 @@ void DFMRightDetailView::initUI()
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(d->scrollArea);
-    //! lixiang start
     layout->setContentsMargins(0, 0, 0, 0);
-    //! lixiang end
+
     setLayout(layout);
 
     d->mainLayout = new QVBoxLayout;
