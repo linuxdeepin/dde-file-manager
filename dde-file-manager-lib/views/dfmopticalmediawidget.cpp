@@ -7,6 +7,8 @@
 #include <DPushButton>
 
 #include <QHBoxLayout>
+//fix: 根据光盘选择文件状态实时更新状态
+#include <QTimer>
 
 DWIDGET_USE_NAMESPACE
 
@@ -15,6 +17,8 @@ using namespace DISOMasterNS;
 //fixed:CD display size error
 quint64 DFMOpticalMediaWidget::g_totalSize = 0;
 quint64 DFMOpticalMediaWidget::g_usedSize = 0;
+//fix: 动态获取刻录选中文件的字节大小
+qint64 DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
 
 class DFMOpticalMediaWidgetPrivate
 {
@@ -25,7 +29,15 @@ public:
     void setDeviceProperty(DeviceProperty dp);
     void setCurrentDevice(const QString &dev);
     QString getCurrentDevice() const;
+    void updateBurnInfo();
+
+    //fix: 根据光盘选择文件状态实时更新状态
+    QTimer *updateBurnStatusTimer;
+
 private:
+    //fix: 根据光盘选择文件状态实时更新状态
+    qint64 m_selectBurnFilesSize = 0;
+
     QLabel *lb_mediatype;
     QLabel *lb_available;
     DPushButton *pb_burn;
@@ -42,7 +54,24 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     Q_D(DFMOpticalMediaWidget);
     d->setupUi();
 
+    //fix: 根据光盘选择文件状态实时更新状态
+    DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
+    d->updateBurnStatusTimer = new QTimer(this);
+    d->updateBurnStatusTimer->start(100);
+    connect(d->updateBurnStatusTimer, &QTimer::timeout, this, &DFMOpticalMediaWidget::selectBurnFilesOptionUpdate);
     connect(d->pb_burn, &DPushButton::clicked, this, [=] {
+            //fix: 光盘容量小于刻录项目，对话框提示：目标磁盘剩余空间不足，无法进行刻录！
+            DeviceProperty dp = ISOMaster->getDevicePropertyCached(d->getCurrentDevice());
+            //qDebug() << d->m_selectBurnFilesSize / 1024 / 1024 << "MB" << dp.avail / 1024 / 1024 << "MB";
+            if (d->m_selectBurnFilesSize > dp.avail) {
+                DDialog dialog(this);
+                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+                dialog.setTitle(tr("Unable to burn. Not enough free space on the target disk."));
+                dialog.addButton(tr("OK"), true);
+                dialog.exec();
+                return;
+            }
+
             QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
             bd->setJobWindowId(this->window()->winId());
             bd->exec();
@@ -52,12 +81,28 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
 DFMOpticalMediaWidget::~DFMOpticalMediaWidget()
 {
+    Q_D(DFMOpticalMediaWidget);
+    d->updateBurnStatusTimer->stop();
+    DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
+    d->m_selectBurnFilesSize = 0;
 }
 
 void DFMOpticalMediaWidget::updateDiscInfo(QString dev)
 {
     Q_D(DFMOpticalMediaWidget);
     d->setCurrentDevice(dev);
+}
+
+//fix: 根据光盘选择文件状态实时更新状态
+void DFMOpticalMediaWidget::selectBurnFilesOptionUpdate()
+{
+    Q_D(DFMOpticalMediaWidget);
+    d->m_selectBurnFilesSize = DFMOpticalMediaWidget::g_selectBurnFilesSize;
+    if (d->m_selectBurnFilesSize > 0) {
+        d->pb_burn->setEnabled(true);
+    } else {
+        d->pb_burn->setEnabled(false);
+    }
 }
 
 DFMOpticalMediaWidgetPrivate::DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q) :
@@ -103,7 +148,9 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
         {MediaType::BD_R         , "BD-R"    },
         {MediaType::BD_RE        , "BD-RE"   }
     };
-    pb_burn->setEnabled(dp.avail > 0);
+    //fix: 没有选择文件时防止误操作,故默认禁止操作
+    //pb_burn->setEnabled(dp.avail > 0);
+    pb_burn->setEnabled(false);
     lb_available->setText(QObject::tr("Free Space %1").arg(FileUtils::formatSize(dp.avail)));
     lb_mediatype->setText(rtypemap[dp.media]);
 }

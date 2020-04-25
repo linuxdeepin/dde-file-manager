@@ -258,6 +258,19 @@
     </message>
 </context>
 <context>
+    <name>DFMOpticalMediaWidget</name>
+    <message>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="70"/>
+        <source>Unable to burn. Not enough free space on the target disk.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="71"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+</context>
+<context>
     <name>DFMTagCrumbController</name>
     <message>
         <location filename="../controllers/dfmtagcrumbcontroller.cpp" line="51"/>
@@ -594,62 +607,62 @@
 <context>
     <name>DStatusBar</name>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="63"/>
+        <location filename="../views/dstatusbar.cpp" line="66"/>
         <source>%1 item</source>
         <translation>%1 item</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="64"/>
+        <location filename="../views/dstatusbar.cpp" line="67"/>
         <source>%1 items</source>
         <translation>%1 items</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="65"/>
+        <location filename="../views/dstatusbar.cpp" line="68"/>
         <source>%1 item selected</source>
         <translation>%1 item selected</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="66"/>
+        <location filename="../views/dstatusbar.cpp" line="69"/>
         <source>%1 items selected</source>
         <translation>%1 items selected</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="67"/>
+        <location filename="../views/dstatusbar.cpp" line="70"/>
         <source>%1 folder selected (contains %2)</source>
         <translation>%1 folder selected (contains %2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="68"/>
+        <location filename="../views/dstatusbar.cpp" line="71"/>
         <source>%1 folders selected (contains %2)</source>
         <translation>%1 folders selected (contains %2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="69"/>
+        <location filename="../views/dstatusbar.cpp" line="72"/>
         <source>%1 file selected (%2)</source>
         <translation>%1 file selected (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="70"/>
+        <location filename="../views/dstatusbar.cpp" line="73"/>
         <source>%1 files selected (%2)</source>
         <translation>%1 files selected (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="71"/>
+        <location filename="../views/dstatusbar.cpp" line="74"/>
         <source>%1 folder selected</source>
         <translation>%1 folder selected</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="163"/>
+        <location filename="../views/dstatusbar.cpp" line="166"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="173"/>
+        <location filename="../views/dstatusbar.cpp" line="176"/>
         <source>Save as:</source>
         <translation>Save as:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="485"/>
+        <location filename="../views/dstatusbar.cpp" line="501"/>
         <source>Loading...</source>
         <translation>Loading...</translation>
     </message>
@@ -2419,7 +2432,7 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="143"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="80"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="126"/>
         <source>Burn</source>
         <translation>Burn</translation>
     </message>
@@ -2900,7 +2913,7 @@
         <translation>Edit address</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="107"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="155"/>
         <source>Free Space %1</source>
         <translation>Free Space %1</translation>
     </message>
