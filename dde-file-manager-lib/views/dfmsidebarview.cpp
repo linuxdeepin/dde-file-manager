@@ -46,8 +46,21 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
     setDragDropMode(QAbstractItemView::InternalMove);
     setDragDropOverwriteMode(false);
     //QListView拖拽时会先插入后删除，于是可以通过rowCountChanged()信号来判断拖拽操作是否结束
-    connect(this, SIGNAL(rowCountChanged()), this, SLOT(onRowCountChanged()));
+    connect(this, &DFMSideBarView::rowCountChanged, this, &DFMSideBarView::onRowCountChanged);  //Qt5风格
     connect(this, static_cast<void (DListView::*)(const QModelIndex &)>(&DListView::currentChanged), this, &DFMSideBarView::currentChanged);
+}
+
+void DFMSideBarView::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::RightButton)
+    {
+        if(m_current != indexAt(event->pos()))
+        {
+            DListView::mousePressEvent(event);
+            return  setCurrentIndex(m_previous);
+        }
+    }
+    DListView::mousePressEvent(event);
 }
 
 void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
