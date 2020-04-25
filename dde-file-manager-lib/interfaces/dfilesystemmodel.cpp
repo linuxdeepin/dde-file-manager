@@ -1013,11 +1013,11 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     }
 
 //    rootNodeManager->addFile(info);
-    if (!_q_processFileEvent_runing) {
-        fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
-        qDebug() << "fileEventQueue enqueue finished";
-        q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::DirectConnection);
-    }
+//    if (!_q_processFileEvent_runing) {
+    fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+    qDebug() << "fileEventQueue enqueue finished";
+    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+//    }
 }
 
 void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
@@ -1032,10 +1032,10 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
         flf.remove(fileUrl.fileName());
         flf.save();
     }
-    if (!_q_processFileEvent_runing) {
-        fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
-        q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::DirectConnection);
-    }
+//   if (!_q_processFileEvent_runing) {
+    fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
+    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+//    }
 }
 
 void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
@@ -1096,6 +1096,10 @@ void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 
 void DFileSystemModelPrivate::_q_processFileEvent()
 {
+    if (_q_processFileEvent_runing) {
+        return;
+    }
+
     _q_processFileEvent_runing = true;
     qDebug() << "_q_processFileEvent";
 
@@ -2800,7 +2804,7 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
             return;
         }
 
-        qDebug() << "insert node row = " << QString::number(row);
+        //qDebug() << "insert node row = " << QString::number(row);
         beginInsertRows(createIndex(parentNode, 0), row, row);
 
 //        FileSystemNodePointer node = d->urlToNode.value(fileUrl);
