@@ -22,6 +22,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//fix: 动态获取刻录选中文件的字节大小
+#include "dfmopticalmediawidget.h"
+
 #include "dstatusbar.h"
 #include "windowmanager.h"
 
@@ -329,6 +332,9 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
     m_folderCount = 0;
     m_folderContains = 0;
 
+    //fix: 动态获取刻录选中文件的字节大小
+    DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
+
     if (number > 1) {
         DUrl fileUrl;
         if (event.fileUrlList().count() > 0){
@@ -389,6 +395,9 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                     } else /*if (fileInfo->isFile())*/ {
                         m_fileCount = 1;
                         m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
+
+                        //fix: 动态获取刻录选中文件的字节大小
+                        DFMOpticalMediaWidget::g_selectBurnFilesSize = fileInfo->size();
                     }
                 }
             } else{
@@ -418,8 +427,12 @@ void DStatusBar::updateStatusMessage()
 
     if (m_fileCount == 1) {
         selectedFiles = m_selectOnlyOneFile.arg(QString::number(m_fileCount), FileUtils::formatSize(m_fileSize));
+        //fix: 动态获取刻录选中文件的字节大小
+        DFMOpticalMediaWidget::g_selectBurnFilesSize = m_fileSize;
     } else if (m_fileCount > 1 ) {
         selectedFiles = m_selectFiles.arg(QString::number(m_fileCount), FileUtils::formatSize(m_fileSize));
+        //fix: 动态获取刻录选中文件的字节大小
+        DFMOpticalMediaWidget::g_selectBurnFilesSize = m_fileSize;
     } else {
         selectedFiles = "";
     }
@@ -469,6 +482,9 @@ void DStatusBar::itemCounted(const DFMEvent &event, int number)
     } else {
         m_label->setText(m_OnlyOneItemCounted.arg(QString::number(number)));
     }
+
+    //fix: 动态获取刻录选中文件的字节大小
+    DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
 }
 
 void DStatusBar::setLoadingIncatorVisible(bool visible, const QString &tipText)
