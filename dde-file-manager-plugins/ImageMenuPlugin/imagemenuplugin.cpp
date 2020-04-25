@@ -23,6 +23,7 @@
  */
 
 #include "imagemenuplugin.h"
+#include "interfaces/dfilemenu.h"
 #include <QIcon>
 #include <QAction>
 #include <QMenu>
@@ -53,7 +54,7 @@ QList<QAction *> ImageMenuPlugin::additionalMenu(const QStringList &files, const
     actions << formatAction << testAction << sublAction;
 
 
-    QMenu* subsubmenu = new QMenu;
+    DFileMenu* subsubmenu = new DFileMenu;
     QList<QAction *> subsublActions;
     for (int i=0; i <10;  i++) {
         QAction* action = new QAction(QString::number(i), this);
@@ -65,7 +66,7 @@ QList<QAction *> ImageMenuPlugin::additionalMenu(const QStringList &files, const
     subsubmenu->addActions(subsublActions);
 
 
-    QMenu* menu = new QMenu;
+    DFileMenu* menu = new DFileMenu;
     QList<QAction *> sublActions;
     for (int i=0; i <10;  i++) {
         QAction* action = new QAction(QString::number(i), this);

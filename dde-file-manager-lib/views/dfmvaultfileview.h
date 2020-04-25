@@ -21,6 +21,7 @@
 #pragma once
 
 #include "dfileview.h"
+#include "interfaces/dfilemenu.h"
 
 class VaultHeaderView : public QWidget
 {
@@ -33,7 +34,7 @@ signals:
     void requestGenerateRecoveryKey();
 
 private:
-    QMenu * createMenu();
+    DFileMenu * createMenu();
 };
 
 class DFMVaultFileView : public DFileView

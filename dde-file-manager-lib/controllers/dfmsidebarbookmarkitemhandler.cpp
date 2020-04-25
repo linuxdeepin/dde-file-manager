@@ -32,6 +32,7 @@
 #include "interfaces/dfmsidebaritem.h"
 #include "dialogs/dialogmanager.h"
 #include "dfmsidebarmanager.h"
+#include "interfaces/dfilemenu.h"
 
 #include <DDialog>
 
@@ -81,7 +82,7 @@ QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMSideBar *sidebar, con
     // a new window/tab option and a properties option. maybe we need a menu manager
     // or other workaround?
 
-    QMenu *menu = new QMenu();
+    DFileMenu *menu = new DFileMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     bool shouldEnable = WindowManager::tabAddableByWinId(wnd->windowId());
     const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(nullptr, item->url());
