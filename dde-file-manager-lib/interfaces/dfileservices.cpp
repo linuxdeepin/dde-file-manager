@@ -222,8 +222,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         // 解决撤销操作后文件删除不提示问题
         for (const DUrl &url : event->fileUrlList()) {
             //书签保存已删除目录，在这里剔除对书签文件是否存在的判断
-            if (url.scheme() == "bookmark")
-            {
+            if (url.scheme() == "bookmark") {
                 result = CALL_CONTROLLER(deleteFiles);
 
                 if (result.toBool()) {
