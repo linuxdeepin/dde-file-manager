@@ -1447,7 +1447,7 @@ public:
         setCellStatus(screenNum, usageIndex, false);
 
         if (!m_overlapItems.isEmpty()
-                && (pos == overlapPos(screenNum))) {
+                /*&& (pos == overlapPos(screenNum))*/) {
             auto itemId = m_overlapItems.takeFirst();
             add(screenNum, pos, itemId);
         }
