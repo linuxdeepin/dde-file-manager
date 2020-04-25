@@ -273,7 +273,7 @@ bool MergedDesktopController::writeFilesToClipboard(const QSharedPointer<DFMWrit
 
 DUrlList MergedDesktopController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
-    return DUrlList(); // disabled for now.
+//    return DUrlList(); // disabled for now.
 
     return DFileService::instance()->pasteFile(event->sender(), event->action(),
                                                DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)),

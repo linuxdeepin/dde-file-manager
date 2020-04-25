@@ -359,6 +359,31 @@ void CanvasGridView::setGeometry(const QRect &rect)
     }
 }
 
+void CanvasGridView::delayModelRefresh(int ms)
+{
+    if (m_refreshTimer != nullptr){
+        m_refreshTimer->stop();
+        delete m_refreshTimer;
+        m_refreshTimer = nullptr;
+        qDebug() << "reset refresh timer";
+    }
+
+    if (ms < 1){
+        qDebug() << "beging refresh " << m_refreshTimer << m_screenNum;
+        model()->refresh();
+        return;
+    }
+
+    m_refreshTimer = new QTimer(this);
+    connect(m_refreshTimer,&QTimer::timeout,[=](){
+        m_refreshTimer->stop();
+        qDebug() << "beging refresh " << m_refreshTimer << m_screenNum;
+        model()->refresh();
+    });
+
+    m_refreshTimer->start(ms);
+}
+
 void CanvasGridView::delayArrage(int ms)
 {
     static QTimer *arrangeTimer = nullptr;
@@ -387,6 +412,36 @@ void CanvasGridView::delayArrage(int ms)
         model()->sort();
     });
     arrangeTimer->start(ms);
+}
+
+void CanvasGridView::delayAutoMerge()
+{
+    if (!GridManager::instance()->autoMerge())
+        return;
+
+    static QTimer *arrangeTimer = nullptr;
+    if (arrangeTimer != nullptr){
+        arrangeTimer->stop();
+        delete arrangeTimer;
+        arrangeTimer = nullptr;
+        qDebug() << "reset autoMerge timer" << m_screenNum;
+    }
+
+    arrangeTimer = new QTimer;
+    connect(arrangeTimer,&QTimer::timeout,[=](){
+        arrangeTimer->stop();
+        QStringList list;
+        for (int i = 0; i < model()->rowCount(); ++i) {
+            auto index = model()->index(i, 0);
+            auto localFile = model()->getUrlByIndex(index).toString();
+            list << localFile;
+        }
+        qDebug() << "dssssssssssssssssssss"
+                 << currentUrl().fragment()
+                 << list;
+        GridManager::instance()->initArrage(list);
+    });
+    arrangeTimer->start(50);
 }
 
 DUrl CanvasGridView::currentCursorFile() const
@@ -1813,6 +1868,9 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             if (findOldPos) {
                 GridManager::instance()->remove(m_screenNum, oriUrl.toString());
                 GridManager::instance()->add(m_screenNum, oldPos, dstUrl.toString());
+
+                if (GridManager::instance()->shouldArrange())
+                    this->delayArrage();
             } else {
                 //Q_EMIT itemCreated(dstUrl);
             }
@@ -2414,6 +2472,9 @@ void CanvasGridView::initConnection()
         });
     });
 #endif
+    //model刷新完毕
+    connect(model(),&DFileSystemModel::sigJobFinished,this,&CanvasGridView::delayAutoMerge);
+
     connect(this->model(), &DFileSystemModel::newFileByInternal,
     this, [ = ](const DUrl & fileUrl) {
         if (GridManager::instance()->shouldArrange()){
@@ -2478,25 +2539,29 @@ openEditor:
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
         qDebug() << "CanvasGridView::itemCreated" << url << m_screenNum;
         d->lastMenuNewFilepath = url.toString();
-        bool ret = GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
 
         /***************************************************************/
         //创建或者粘贴时保持之前的状态
         if(GridManager::instance()->autoMerge()){
-            DMD_TYPES toggleType = MergedDesktopController::checkUrlArrangedType(url);
-            bool isExpand = virtualEntryExpandState[toggleType];
-            if(isExpand){
-                DUrl autoMergeUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
-                autoMergeUrl.setFragment(QString());
-                this->setRootUrl(autoMergeUrl);
-                autoMergeUrl.setFragment(MergedDesktopController::entryNameByEnum(toggleType));
-                this->setRootUrl(autoMergeUrl);
-            }
-            else {
-                model()->refresh();
-            }
+            qDebug() << "begin ***********"
+                     << currentUrl().fragment();
+            this->delayModelRefresh();
+            return ;
+//            DMD_TYPES toggleType = MergedDesktopController::checkUrlArrangedType(url);
+//            bool isExpand = virtualEntryExpandState[toggleType];
+//            if(isExpand){
+//                DUrl autoMergeUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
+//                autoMergeUrl.setFragment(QString());
+//                this->setRootUrl(autoMergeUrl);
+//                autoMergeUrl.setFragment(MergedDesktopController::entryNameByEnum(toggleType));
+//                this->setRootUrl(autoMergeUrl);
+//            }
+//            else {
+//                model()->refresh();
+//            }
         }
-        else if (GridManager::instance()->autoArrange()){ //重新排列
+        bool ret = GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
+        if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();
         }
 
@@ -2504,7 +2569,6 @@ openEditor:
     });
 
     connect(this, &CanvasGridView::itemDeleted, [ = ](const DUrl & url) {
-
         if (!GridManager::instance()->remove(m_screenNum, url.toString()))
             return;
 
@@ -2517,7 +2581,8 @@ openEditor:
 
         //自动整理
         if (GridManager::instance()->autoMerge()) {
-            GridManager::instance()->reArrange();
+            delayModelRefresh();
+            return ;
         }
         else if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();

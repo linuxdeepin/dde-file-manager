@@ -952,6 +952,30 @@ public:
         return sortItems;
     }
 
+    QStringList rangeItems(const int screenNum, const QStringList itemList)
+    {
+        QStringList sortItems;
+        QList<QPoint> itemPosList;
+        QStringList unknownItemList;
+        foreach (auto item, itemList) {
+            if(m_itemGrids.contains(screenNum) && m_itemGrids.value(screenNum).contains(item)){
+                itemPosList.append(m_itemGrids.value(screenNum).value(item));
+            }else {
+                unknownItemList.append(item);
+            }
+        }
+
+        qSort(itemPosList.begin(), itemPosList.end(), qQPointLessThanKey);
+
+        for (int index = 0; index < itemPosList.length(); ++index) {
+            auto gridPos = itemPosList.value(index);
+            auto item = m_gridItems.value(screenNum).value(gridPos);
+            sortItems << item;
+        }
+        sortItems << unknownItemList;
+        return sortItems;
+    }
+
     void autoMergeItems(QStringList items)
     {
         arrange(items);
@@ -1952,8 +1976,10 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
     QMap<QString, QPoint> &orgItemMap = d->m_itemGrids[fromScreen];
     QVector<bool> &orgUsedGrids = d->m_cellStatus[fromScreen];
 
+    QStringList overflowItemList;
+    QStringList sortItems = d->rangeItems(fromScreen, selectedIds);
     //移除源
-    for (const QString &id : selectedIds) {
+    for (const QString &id : sortItems) {
         QPoint oldPos = orgItemMap.value(id);
         originPosList << oldPos;
         orgPosMap.remove(oldPos);
@@ -1966,7 +1992,7 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
 
     bool conflict = false;
     for (auto pos : destPosList) {
-        if (destPosMap.contains(pos) || !d->isValid(fromScreen, pos)) {
+        if (destPosMap.contains(pos) || !d->isValid(toScreen, pos)) {
             conflict = true;
             break;
         }
@@ -1974,7 +2000,7 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
 
     // no need to resize
     if (conflict) {
-        auto selectedHeadCount = selectedIds.indexOf(itemId);
+        auto selectedHeadCount = sortItems.indexOf(itemId);
         // find free grid before destPos
         auto destIndex = d->indexOfGridPos(toScreen, destPos);
 
@@ -1987,16 +2013,22 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
         }
         auto destGridHeadCount = emptyIndexList.indexOf(destIndex);
 
-        Q_ASSERT(emptyIndexList.length() >= selectedIds.length());
+        if(emptyIndexList.length() < sortItems.length()){
+            int overflowCnt = sortItems.length() - emptyIndexList.length();
+            for(int index = 0; index < overflowCnt; ++index){
+                overflowItemList.append(sortItems.takeLast());
+            }
+        }
 
+        Q_ASSERT(emptyIndexList.length() >= sortItems.length());
         auto startIndex = emptyIndexList.indexOf(destIndex) - selectedHeadCount;
         if (destGridHeadCount < selectedHeadCount) {
             startIndex = 0;
         }
         auto destTailCount = emptyIndexList.length() - destGridHeadCount;
-        auto selectedTailCount = selectedIds.length() - selectedHeadCount;
+        auto selectedTailCount = sortItems.length() - selectedHeadCount;
         if (destTailCount <= selectedTailCount) {
-            startIndex = emptyIndexList.length() - selectedIds.length();
+            startIndex = emptyIndexList.length() - sortItems.length();
         }
 
         destPosList.clear();
@@ -2009,15 +2041,21 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
         }
     }
 
-    for (int i = 0; i < selectedIds.length(); ++i) {
-        if (contains(toScreen, selectedIds.value(i))) {
-            remove(toScreen, selectedIds.value(i));
+    for (int i = 0; i < sortItems.length(); ++i) {
+        if (contains(toScreen, sortItems.value(i))) {
+            remove(toScreen, sortItems.value(i));
         }
     }
-    for (int i = 0; i < selectedIds.length(); ++i) {
+
+    for (int i = 0; i < sortItems.length(); ++i) {
         QPoint point{ destPosList.value(i) };
-        add(toScreen, point, selectedIds.value(i));
+        add(toScreen, point, sortItems.value(i));
     }
+
+    for (int i = 0; i < overflowItemList.length(); ++i) {
+        add(toScreen, overflowItemList.value(i));
+    }
+
 
     //保存源屏配置
     if(!autoMerge() && !autoArrange()){
@@ -2040,11 +2078,11 @@ bool GridManager::remove(int screenNum, const QString &id)
     return false;
 }
 
-bool GridManager::remove(int screenNum, int x, int y, const QString &id)
-{
-    auto pos = QPoint(x, y);
-    return remove(screenNum, pos, id);
-}
+//bool GridManager::remove(int screenNum, int x, int y, const QString &id)
+//{
+//    auto pos = QPoint(x, y);
+//    return remove(screenNum, pos, id);
+//}
 
 bool GridManager::remove(int screenNum, QPoint pos, const QString &id)
 {

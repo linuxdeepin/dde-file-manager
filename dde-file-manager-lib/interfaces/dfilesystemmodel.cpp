@@ -2670,6 +2670,8 @@ void DFileSystemModel::onJobFinished()
     if (job) {
         job->deleteLater();
     }
+
+    emit sigJobFinished();
 }
 
 void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
