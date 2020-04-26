@@ -66,6 +66,11 @@ bool DFileDevice::syncToDisk()
     return false;
 }
 
+void DFileDevice::closeWriteReadFailed(const bool bwrite)
+{
+    Q_UNUSED(bwrite);
+}
+
 DFileDevice::DFileDevice(QObject *parent)
     : DFileDevice(*new DFileDevicePrivate(this), parent)
 {
