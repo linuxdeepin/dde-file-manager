@@ -360,6 +360,45 @@ bool DGIOFileDevice::syncToDisk()
     //end
 }
 
+void DGIOFileDevice::closeWriteReadFailed(const bool bwrite)
+{
+    if (!isOpen())
+        return;
+
+    DFileDevice::close();
+
+
+    Q_D(DGIOFileDevice);
+
+    if (d->total_stream) {
+        g_io_stream_close(d->total_stream, nullptr, nullptr);
+        g_object_unref(d->total_stream);
+
+        d->total_stream = nullptr;
+        d->input_stream = nullptr;
+        d->output_stream = nullptr;
+    } else {
+        if (d->input_stream) {
+            if (bwrite) {
+                g_input_stream_close(d->input_stream, nullptr, nullptr);
+                g_object_unref(d->input_stream);
+            }
+
+            d->input_stream = nullptr;
+        }
+
+        if (d->output_stream) {
+            //todo vfat文件格式的U盘在close的时候耗时很长,卡死的根源
+            if (!bwrite) {
+                g_output_stream_close(d->output_stream, nullptr, nullptr);
+                g_object_unref(d->output_stream);
+            }
+
+            d->output_stream = nullptr;
+        }
+    }
+}
+
 qint64 DGIOFileDevice::readData(char *data, qint64 maxlen)
 {
     Q_D(DGIOFileDevice);
