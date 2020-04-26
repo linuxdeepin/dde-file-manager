@@ -520,7 +520,10 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
     // construct fragment which indicated the expanded entries
     QStringList expandedEntries;
     int possibleChildCount = 0;
-    bool onlyExpandShowClickedEntry = false;
+
+    //新需求要求仅扩展显示鼠标点击的分类，所以直接置为true
+    //bool onlyExpandShowClickedEntry = false;
+    bool onlyExpandShowClickedEntry = true;
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
         if (oneType != DMD_FOLDER && virtualEntryExpandState[oneType]) {
@@ -535,10 +538,12 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
                 possibleChildCount += info->filesCount();
             }
         }
-        if (possibleChildCount > GridManager::instance()->gridCount()) {
-            onlyExpandShowClickedEntry = true;
-            break;
-        }
+
+        //新需求要求仅扩展显示鼠标点击的分类，所以都不需要判定是否低于个数
+        //        if (possibleChildCount > GridManager::instance()->gridCount()) {
+        //            onlyExpandShowClickedEntry = true;
+        //            break;
+        //        }
     }
 
     // prepare root url
