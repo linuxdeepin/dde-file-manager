@@ -1363,13 +1363,23 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         }
     }
 
+    //最后一个绘制项目先取出来
+    QString lastTopItem;
+    if (!repaintLocalFiles.isEmpty())
+        lastTopItem = repaintLocalFiles.takeLast();
+
+    //放入堆叠
     auto overlayItems = GridManager::instance()->overlapItems(m_screenNum);
-    for (int i = 0; i < 10 && i < overlayItems.length(); ++i) {
+    for (int i = 0;i < overlayItems.length(); ++i) {
         auto localFile = overlayItems.value(i);
         if (!localFile.isEmpty()) {
             repaintLocalFiles << localFile;
         }
     }
+
+    //再将最后一个放进去，这样就可以保证最后一个项目可见。修复bug#23005
+    if (!lastTopItem.isEmpty())
+        repaintLocalFiles << lastTopItem;
 
 //    int drawCount = 0;
     for (auto &localFile : repaintLocalFiles) {

@@ -196,6 +196,7 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
         QPoint sort = var.toPoint();
         for (CanvasViewPointer view : m_canvasMap.values()){
             view->model()->setSortRole(sort.x(),(Qt::SortOrder)sort.y());
+            view->update();
         }
         break;
     }
