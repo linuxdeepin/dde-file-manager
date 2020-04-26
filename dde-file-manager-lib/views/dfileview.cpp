@@ -1464,11 +1464,19 @@ void DFileView::requireAuthentication(const DUrl &url)
     Q_D(const DFileView);
 
     QString localPath(url.toLocalFile());
+
+    if (localPath.isEmpty() || !QDir(localPath).exists())
+        return;
+
+    // 仅限移动设备需要认证
     bool isUDiskDev = false;
     for (const UDiskDeviceInfoPointer &dev : deviceListener->getMountList()) {
-        DUrl devUrl(dev->getDiskInfo().mounted_root_uri());
-        if (localPath == devUrl.toLocalFile())
-            isUDiskDev = true;
+        auto type = dev->getMediaType();
+        if (type == UDiskDeviceInfo::removable || type == UDiskDeviceInfo::unknown) {
+            DUrl devUrl(dev->getDiskInfo().mounted_root_uri());
+            if (localPath == devUrl.toLocalFile())
+                isUDiskDev = true;
+        }
     }
 
 
