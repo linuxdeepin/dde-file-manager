@@ -1090,6 +1090,11 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
 
 void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 {
+    if (from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString())
+    {
+        return;
+    }
+
     _q_onFileDeleted(from);
     _q_onFileCreated(to);
 }
