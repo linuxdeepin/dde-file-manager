@@ -737,6 +737,11 @@ void DRenameBar::onVisibleChanged(bool value)noexcept
             break;
         }
         }
-
+    }
+    else {
+        //还原焦点
+        if (parentWidget()) {
+            parentWidget()->setFocus();
+        }
     }
 }
