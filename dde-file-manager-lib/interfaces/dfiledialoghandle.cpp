@@ -362,8 +362,8 @@ void DFileDialogHandle::show()
 {
     D_D(DFileDialogHandle);
 
-    //d->dialog->show();
-    d->dialog->exec(); //修复6923，解决文件对话框弹出后不能获取焦点问题，使用show()方法时通过activateWindow()、setFocus()均无法使窗口默认获得焦点
+    d->dialog->show(); //wine软件调用有问题，回退，找其它方法解决
+    //d->dialog->exec(); //修复6923，解决文件对话框弹出后不能获取焦点问题，使用show()方法时通过activateWindow()、setFocus()均无法使窗口默认获得焦点
 }
 
 void DFileDialogHandle::hide()
