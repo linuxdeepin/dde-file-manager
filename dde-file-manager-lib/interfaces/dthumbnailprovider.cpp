@@ -248,7 +248,11 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
     }
 
     QImageReader ir(thumbnail, QByteArray(FORMAT).mid(1));
-
+    if (!ir.canRead()) {
+      QFile::remove(thumbnail);
+      emit thumbnailChanged(absoluteFilePath, QString());
+      return QString();
+    }
     ir.setAutoDetectImageFormat(false);
 
     const QImage image = ir.read();
