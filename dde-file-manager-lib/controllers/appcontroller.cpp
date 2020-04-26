@@ -503,12 +503,10 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
                 //drv->eject({});
                 Q_UNUSED(drvs)
             }, blk->drive());
-            dialogManager->showMessageDialog(1, tr("Disk device is invalid"));
             return;
         }
         // 断网时mount Samba无效
         if (blk->device().isEmpty()) {
-            dialogManager->showMessageDialog(1, tr("Block device is invalid, cannot mount now"));
             qWarning() << "blockDevice is invalid, fileurl is " << fileUrl;
             return;
         }
