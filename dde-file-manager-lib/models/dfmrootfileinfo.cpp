@@ -633,7 +633,7 @@ bool DFMRootFileInfo::checkMpsStr(const QString &path) const
     for (QByteArray ba : d->mps)
     {
         QString baStr(ba.data());
-        if (baStr.startsWith(path))
+        if (baStr == path)
             return true;
     }
 
