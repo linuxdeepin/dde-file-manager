@@ -1067,7 +1067,17 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
     }
 
     if (!GridManager::instance()->shouldArrange()) {   //自定义
-        startDodgeAnimation();
+        //old
+        //startDodgeAnimation();
+        //跨屏拖动，空间不足时先禁止拖动，todo 寻找更好的解决办法
+        if (event->source() == this){
+            startDodgeAnimation();
+        }
+        else if (event->mimeData() &&
+                 GridManager::instance()->emptyPostionCount(m_screenNum) >= event->mimeData()->urls().size()){
+            startDodgeAnimation();
+        }
+        //end
     }
     else if (GridManager::instance()->autoArrange()){ //自动排列的drag处理
         d->fileViewHelper->preproccessDropEvent(event);
@@ -2385,21 +2395,20 @@ void CanvasGridView::initConnection()
             delete d->dodgeTargetGrid;
             d->dodgeTargetGrid = nullptr;
 
-            update();
+            emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
         });
         animation->start();
         d->dodgeDelayTimer.stop();
 
-        d->dodgeTargetGrid = GridManager::instance()->core();
-        auto grid = d->dodgeTargetGrid;
-
         auto selURLs = selectedUrls();
         QStringList selLocalFiles;
+
+        d->dodgeTargetGrid = GridManager::instance()->core();
+        auto grid = d->dodgeTargetGrid;
 
         int emptyBefore = 0;
         int emptyAfter = 0;
         GIndex targetIndex = grid->toIndex(m_screenNum, d->dragTargetGrid);
-
         for (auto sel : selURLs) {
             QString localFile = sel.toString();
             selLocalFiles << localFile;

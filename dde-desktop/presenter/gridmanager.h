@@ -103,6 +103,7 @@ public:
     bool move(int fromScreen, int toScreen, const QStringList &selectedIds, const QString &itemId, int x, int y);
     bool remove(int screenNum, const QString &itemId);
     void popOverlap(); //弹出堆叠
+    int emptyPostionCount(int screenNum) const;
 
     bool clear();
     void restCoord();

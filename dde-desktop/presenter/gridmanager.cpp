@@ -2092,6 +2092,11 @@ void GridManager::popOverlap()
     }
 }
 
+int GridManager::emptyPostionCount(int screenNum) const
+{
+    return d->m_cellStatus.value(screenNum).size() - d->m_gridItems.value(screenNum).size();
+}
+
 bool GridManager::remove(int screenNum, QPoint pos, const QString &id)
 {
     auto ret = d->remove(screenNum, pos, id);
