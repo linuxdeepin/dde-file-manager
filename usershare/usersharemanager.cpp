@@ -453,6 +453,8 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             if (dialog.exec() == DDialog::Accepted) {
                 return false;
             }
+
+            return false;
         }
 
         if (process.exitCode() != 0) {
