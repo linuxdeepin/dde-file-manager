@@ -657,6 +657,11 @@ void FileJob::doOpticalBlank(const DUrl &device)
         jobRemoved();
     emit finished();
     delete job_isomaster;
+
+    //fix: 空白光盘擦除处理完后需要对当前刻录的全局状态机置恢复位，便于其它地方调用状态机完整性
+    m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+    FileJob::g_opticalBurnStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+    FileJob::g_opticalBurnEjectCount = 0;
 }
 
 /*
