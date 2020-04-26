@@ -1962,8 +1962,8 @@ void CanvasGridView::updateGeometry(const QRect &geometry)
         qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
     }
 
-
-    d->waterMaskFrame->updatePosition();
+    if (d->waterMaskFrame)
+        d->waterMaskFrame->updatePosition();
 
     /*
      * For some reason, BackgroundHelper fails to resize the wallpaper when switching
