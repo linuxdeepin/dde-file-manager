@@ -1486,19 +1486,7 @@ void DFileView::requireAuthentication(const DUrl &url)
         QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         QString userName = userPath.section("/", -1, -1);
         // 检测当前用户有没有写权限，没有写权限则需要认证
-        bool authFlag = false;
-        if (userName == fileOwner) {
-            if (!mediaFile.permission(QFileDevice::WriteOwner)) {
-                authFlag = true;
-            }
-        } else {
-            if (!mediaFile.permission(QFileDevice::WriteUser) || !mediaFile.permission(QFileDevice::WriteGroup)) {
-                authFlag = true;
-            }
-        }
-
-        // 需要认证
-        if (authFlag) {
+        if (!mediaFile.isWritable()) {
             QTimer::singleShot(500, this, [d, userName, localPath]() {
                 d->m_acessControlInterface->acquireFullAuthentication(userName, localPath);
             });
