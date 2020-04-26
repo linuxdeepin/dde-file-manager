@@ -27,7 +27,7 @@ signals:
 
 public slots:
     bool acquireFullAuthentication(const QString &userName, const QString &path);
-    void chmodMountpoints();
+    void chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint);
 
 private:
     AcessControlAdaptor* m_acessControlAdaptor = nullptr;

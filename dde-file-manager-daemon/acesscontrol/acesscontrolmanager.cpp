@@ -85,17 +85,13 @@ bool AcessControlManager::acquireFullAuthentication(const QString &userName, con
     return ret;
 }
 
-void AcessControlManager::chmodMountpoints()
+void AcessControlManager::chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint)
 {
-    for (const QString &dev : DDiskManager::blockDevices({})) {
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(dev));
-        for(auto &mp : blk->mountPoints()) {
-            struct stat fileStat;
-            qDebug() << "chmod ==> " << mp;
-            stat(mp.data(), &fileStat);
-            chmod(mp.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH));
-        }
-    }
+    Q_UNUSED(blockDevicePath);
+    qDebug() << "chmod ==>" << mountPoint;
+    struct stat fileStat;
+    stat(mountPoint.data(), &fileStat);
+    chmod(mountPoint.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH));
 #if 0
     // system call
     struct mntent *ent = NULL;
