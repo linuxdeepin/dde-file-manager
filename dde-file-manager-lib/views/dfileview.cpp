@@ -1459,42 +1459,6 @@ void DFileView::setRootIndex(const QModelIndex &index)
     DListView::setRootIndex(index);
 }
 
-void DFileView::requireAuthentication(const DUrl &url)
-{
-    Q_D(const DFileView);
-
-    QString localPath(url.toLocalFile());
-
-    if (localPath.isEmpty() || !QDir(localPath).exists())
-        return;
-
-    // 仅限移动设备需要认证
-    bool isUDiskDev = false;
-    for (const UDiskDeviceInfoPointer &dev : deviceListener->getMountList()) {
-        auto type = dev->getMediaType();
-        if (type == UDiskDeviceInfo::removable || type == UDiskDeviceInfo::unknown) {
-            DUrl devUrl(dev->getDiskInfo().mounted_root_uri());
-            if (localPath == devUrl.toLocalFile())
-                isUDiskDev = true;
-        }
-    }
-
-
-    if (isUDiskDev) {
-        QFileInfo mediaFile(localPath);
-        QString fileOwner = mediaFile.owner();
-        QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        QString userName = userPath.section("/", -1, -1);
-        // 检测当前用户有没有写权限，没有写权限则需要认证
-        if (!mediaFile.isWritable()) {
-            d->m_acessControlInterface->acquireFullAuthentication(userName, localPath);
-//            QTimer::singleShot(500, this, [d, userName, localPath]() {
-//                d->m_acessControlInterface->acquireFullAuthentication(userName, localPath);
-//            });
-        }
-    }
-}
-
 void DFileView::focusInEvent(QFocusEvent *event)
 {
     Q_D(const DFileView);
@@ -2132,7 +2096,6 @@ void DFileView::initConnects()
 
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &DFileView::viewStateChanged);
     connect(this, &DFileView::rootUrlChanged, this, &DFileView::loadViewState);
-    connect(this, &DFileView::rootUrlChanged, this, &DFileView::requireAuthentication);
     connect(this, &DFileView::viewStateChanged, this, &DFileView::saveViewState);
 
     connect(d->toolbarActionGroup, &QActionGroup::triggered, this, [this] {

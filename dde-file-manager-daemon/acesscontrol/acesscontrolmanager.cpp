@@ -4,9 +4,15 @@
 #include <QProcess>
 #include <QDebug>
 
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <mntent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
 
 #include "app/policykithelper.h"
 #include "dbusservice/dbusadaptor/acesscontrol_adaptor.h"
@@ -23,13 +29,23 @@ AcessControlManager::AcessControlManager(QObject *parent)
         qFatal("=======AcessControlManager Register Object Failed.");
     }
     m_acessControlAdaptor = new AcessControlAdaptor(this);
+    m_diskMnanager = new DDiskManager(this);
+    m_diskMnanager->setWatchChanges(true);
     qDebug() << "=======AcessControlManager() ";
+
+    initConnect();
 
 }
 
 AcessControlManager::~AcessControlManager()
 {
+    qDebug() << "~AcessControlManager()";
+}
 
+void AcessControlManager::initConnect()
+{
+    qDebug() << "AcessControlManager::initConnect()";
+    connect(m_diskMnanager, &DDiskManager::mountAdded, this, &AcessControlManager::chmodMountpoints);
 }
 
 bool AcessControlManager::checkAuthentication()
@@ -53,6 +69,7 @@ bool AcessControlManager::checkAuthentication()
     return ret;
 }
 
+// 废弃
 bool AcessControlManager::acquireFullAuthentication(const QString &userName, const QString &path)
 {
     Q_UNUSED(userName)
@@ -64,24 +81,45 @@ bool AcessControlManager::acquireFullAuthentication(const QString &userName, con
     if (chmod(pathBytes.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH)) == 0) {
         qDebug() << "chmod() success!";
         ret = true;
-    } else {
-        qDebug() << "chmod() failed";
-        if (!checkAuthentication()) {
-            qDebug() << "acquireFullAuthentication failed";
-            return false;
-        }
-        qDebug() << "acquireFullAuthentication success";
-        QProcess p;
-        QString cmd = QString("chmod 777 %1").arg(path);
-        qDebug() << "cmd1==========" << cmd;
-        p.start(cmd);
-        ret = p.waitForFinished();
-        if (!ret) {
-            qDebug() << "exec cmd1 failed";
-        }
-
-        qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
     }
-
     return ret;
+}
+
+void AcessControlManager::chmodMountpoints()
+{
+    for (const QString &dev : DDiskManager::blockDevices({})) {
+        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(dev));
+        for(auto &mp : blk->mountPoints()) {
+            struct stat fileStat;
+            qDebug() << "chmod ==> " << mp;
+            stat(mp.data(), &fileStat);
+            chmod(mp.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH));
+        }
+    }
+#if 0
+    // system call
+    struct mntent *ent = NULL;
+    FILE *aFile = NULL;
+
+    aFile = setmntent("/proc/mounts", "r");
+    if (aFile == NULL) {
+      perror("setmntent()");
+      return;
+    }
+    while (NULL != (ent = getmntent(aFile))) {
+        QString fsName(ent->mnt_fsname);
+        QString mntDir(ent->mnt_dir);
+        if (fsName.startsWith("/")) {
+            qDebug() << "mount fs name: " << fsName << ", mount path:" << mntDir;
+            struct stat fileStat;
+            stat(ent->mnt_dir, &fileStat);
+            if (chmod(ent->mnt_dir, (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH)) == 0) {
+                qDebug() << "chmod " << mntDir << "success";
+            } else {
+                qDebug() << "chmod " << mntDir << "faild";
+            }
+        }
+    }
+    endmntent(aFile);
+#endif
 }

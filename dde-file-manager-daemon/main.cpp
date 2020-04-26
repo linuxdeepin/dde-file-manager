@@ -32,8 +32,14 @@
 #include "app/filemanagerdaemon.h"
 #include "client/filemanagerclient.h"
 
+#include "ddiskmanager.h"
+
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <pwd.h>
+#include <sys/types.h>
+
 
 int main(int argc, char *argv[])
 {
