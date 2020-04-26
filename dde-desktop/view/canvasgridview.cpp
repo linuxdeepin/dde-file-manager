@@ -378,6 +378,7 @@ void CanvasGridView::delayModelRefresh(int ms)
     connect(m_refreshTimer,&QTimer::timeout,[=](){
         m_refreshTimer->stop();
         qDebug() << "beging refresh " << m_refreshTimer << m_screenNum;
+        m_rt.start();
         model()->refresh();
     });
 
@@ -419,6 +420,7 @@ void CanvasGridView::delayAutoMerge()
     if (!GridManager::instance()->autoMerge())
         return;
 
+    qDebug() << "fresh ending spend " << m_rt.elapsed() << m_screenNum;
     static QTimer *arrangeTimer = nullptr;
     if (arrangeTimer != nullptr){
         arrangeTimer->stop();
@@ -436,9 +438,8 @@ void CanvasGridView::delayAutoMerge()
             auto localFile = model()->getUrlByIndex(index).toString();
             list << localFile;
         }
-        qDebug() << "dssssssssssssssssssss"
-                 << currentUrl().fragment()
-                 << list;
+        qDebug() << "initArrage file count" << list.size()
+                 << "expend" << currentUrl().fragment();
         GridManager::instance()->initArrage(list);
     });
     arrangeTimer->start(50);
@@ -1779,11 +1780,6 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     QModelIndex index = model()->setRootUrl(fileUrl);
     setRootIndex(index);
 
-    if (!model()->canFetchMore(index)) {
-        // TODO: updateContentLabel
-        qDebug() << "TODO: updateContentLabel()";
-    }
-
     if (focusWidget() && focusWidget()->window() == window() && fileUrl.isLocalFile()) {
         QDir::setCurrent(fileUrl.toLocalFile());
     }
@@ -1796,6 +1792,17 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         d->filesystemWatcher->deleteLater();
     }
 
+    if (!model()->canFetchMore(index)) {
+
+        // TODO: updateContentLabel
+        qDebug() << "TODO: updateContentLabel()";
+    }
+    else if (GridManager::instance()->autoMerge()){
+        m_rt.restart();
+        model()->refresh();
+        qDebug() << "autoMerge refresh" << m_screenNum << fileUrl;
+    }
+
 #if 0
     if(m_screenName == ScreenMrg->primaryScreen()->name() && GridManager::instance()->doneInit())
     {
@@ -1805,13 +1812,13 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         GridManager::instance()->setCurrentAllItems(infoList);
     }
 #else
-    if(fileUrl.scheme() == DFMMD_SCHEME && GridManager::instance()->doneInit())
-    {
-        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
-                                                                                         QStringList(), model()->filters());
-        GridManager::instance()->initAutoMerge(infoList);
-        GridManager::instance()->setCurrentAllItems(infoList);
-    }
+//    if(fileUrl.scheme() == DFMMD_SCHEME && GridManager::instance()->doneInit())
+//    {
+//        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
+//                                                                                         QStringList(), model()->filters());
+//        GridManager::instance()->initAutoMerge(infoList);
+//        GridManager::instance()->setCurrentAllItems(infoList);
+//    }
 #endif
 
 //    QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,

@@ -34,6 +34,7 @@
 #include <QList>
 #include <QStandardPaths>
 
+
 class MergedDesktopWatcherPrivate;
 class MergedDesktopWatcher : public DAbstractFileWatcher
 {
@@ -171,8 +172,15 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
 //        dataInitialized = true;
 //    }
     // blumia: 文件监听占用完了的时候有可能桌面会监听不到文件变动,此时即便 F5 也不会刷新该 Controller 存储的整理桌面数据,故改为每次都重新初始化整理数据
-    static QMutex mtx; //多线程调用时出问题，加锁，禁止多线程
-    mtx.lock();
+
+    //加锁失败，说明有线程在跑后面的算法
+    if (!m_runMtx.tryLock(0)){
+        m_childrenLock.lock();
+        m_cv.wait(&m_childrenLock);
+        QList<DAbstractFileInfoPointer> infoList = m_childrenList;
+        m_childrenLock.unlock();
+        return infoList;
+    }
 
     initData();
     currentUrl = event->url();
@@ -240,7 +248,11 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
         }
     }
 
-    mtx.unlock();
+    m_runMtx.unlock();
+    m_childrenLock.lock();
+    m_childrenList = infoList;
+    m_childrenLock.unlock();
+    m_cv.wakeAll();
     return infoList;
 }
 

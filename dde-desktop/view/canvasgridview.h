@@ -13,6 +13,7 @@
 #include <QAbstractItemView>
 #include <QScopedPointer>
 #include <dfilemenumanager.h>
+#include <QTime>
 
 #define DesktopCanvasPath           "/com/deepin/dde/desktop/canvas"
 #define DesktopCanvasInterface      "com.deepin.dde.desktop.Canvas"
@@ -201,6 +202,7 @@ private:
     int     m_screenNum{1};
 
     QTimer *m_refreshTimer = nullptr;
+    QTime m_rt; //刷新计时，可以删除
 };
 
 

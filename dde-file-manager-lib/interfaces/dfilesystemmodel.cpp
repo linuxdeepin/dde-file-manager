@@ -2319,7 +2319,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        if (fileHash.contains(fileInfo->fileUrl())) {
 //            continue;
 //        }
-        qDebug() << "update node url = " << fileInfo->filePath();
+//        qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
 
         if (!chileNode->shouldHideByFilterRule(advanceSearchFilter())) {

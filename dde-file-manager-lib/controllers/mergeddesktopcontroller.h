@@ -23,6 +23,8 @@
 #define MERGEDDESKTOPCONTROLLER_H
 
 #include "dabstractfilecontroller.h"
+#include <QWaitCondition>
+#include <QMutex>
 
 enum DMD_TYPES : unsigned int {
     DMD_PICTURE, DMD_MUSIC, DMD_APPLICATION, DMD_VIDEO, DMD_DOCUMENT, DMD_OTHER, DMD_FOLDER,
@@ -89,6 +91,11 @@ private:
     mutable DUrl currentUrl;
 //    mutable bool dataInitialized = false;
     mutable QMap<DMD_TYPES, QList<DUrl> > arrangedFileUrls;
+
+    mutable QMutex m_childrenLock;
+    mutable QList<DAbstractFileInfoPointer> m_childrenList;
+    mutable QMutex m_runMtx; //多线程调用时出问题，加锁，禁止多线程
+    mutable QWaitCondition m_cv;
 };
 
 #endif // MERGEDDESKTOPCONTROLLER_H
