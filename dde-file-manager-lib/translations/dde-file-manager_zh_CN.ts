@@ -2406,7 +2406,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="582"/>
         <source>Add to disc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">添加至光盘刻录</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="354"/>
