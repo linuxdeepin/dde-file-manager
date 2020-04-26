@@ -133,13 +133,20 @@ void UDiskListener::addDevice(UDiskDeviceInfoPointer device)
             UDiskDeviceInfoPointer info = m_list.at(i);
 //            qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
             QString t_device = info->getDiskInfo().drive_unix_device();
+            if (t_device.contains("/dev/sr")) {
+                QStringList t_arglst;
 
-            QStringList t_arglst;
+                t_arglst << "-t";
+                t_arglst << t_device;
 
-            t_arglst << "-t";
-            t_arglst << t_device;
+                QProcess::execute("eject", t_arglst);
+            }
 
-            QProcess::execute("eject", t_arglst);
+            else {
+                continue;
+            }
+
+
         }
     });
 
