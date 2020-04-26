@@ -288,7 +288,7 @@ bool UDiskListener::isInDeviceFolder(const QString &path) const
 {
     for (int i = 0; i < m_list.size(); i++) {
         UDiskDeviceInfoPointer info = m_list.at(i);
-        if (info && !info->getMountPointUrl().isEmpty()) {
+        if (info && !info->getMountPointUrl().toLocalFile().isEmpty()) {
             if (path.startsWith(info->getMountPointUrl().toLocalFile())) {
                 return true;
             }
