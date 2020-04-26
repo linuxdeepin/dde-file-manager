@@ -3,6 +3,11 @@
 #include <QDBusVariant>
 #include <QProcess>
 #include <QDebug>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "app/policykithelper.h"
 #include "dbusservice/dbusadaptor/acesscontrol_adaptor.h"
 
@@ -50,28 +55,33 @@ bool AcessControlManager::checkAuthentication()
 
 bool AcessControlManager::acquireFullAuthentication(const QString &userName, const QString &path)
 {
-    if (!checkAuthentication()) {
-        qDebug() << "acquireFullAuthentication failed";
-        return false;
-    }
-    qDebug() << "acquireFullAuthentication success";
-    QProcess p;
-    QString cmd = QString("chmod 777 %1").arg(path);
-    qDebug() << "cmd1==========" << cmd;
-    p.start(cmd);
-    bool ret = p.waitForFinished();
-    if (!ret) {
-        qDebug() << "exec cmd1 failed";
+    Q_UNUSED(userName)
+
+    bool ret = false;
+    QByteArray pathBytes(path.toLocal8Bit());
+    struct stat fileStat;
+    stat(pathBytes.data(), &fileStat);
+    if (chmod(pathBytes.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH)) == 0) {
+        qDebug() << "chmod() success!";
+        ret = true;
+    } else {
+        qDebug() << "chmod() failed";
+        if (!checkAuthentication()) {
+            qDebug() << "acquireFullAuthentication failed";
+            return false;
+        }
+        qDebug() << "acquireFullAuthentication success";
+        QProcess p;
+        QString cmd = QString("chmod 777 %1").arg(path);
+        qDebug() << "cmd1==========" << cmd;
+        p.start(cmd);
+        ret = p.waitForFinished();
+        if (!ret) {
+            qDebug() << "exec cmd1 failed";
+        }
+
+        qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
     }
 
-    cmd = QString("chown %1:%2 %3").arg(userName).arg(userName).arg(path);
-    qDebug() << "cmd2==========" << cmd;
-    p.start(cmd);
-    ret = p.waitForFinished();
-    if (!ret) {
-        qDebug() << "exec cmd2 failed";
-    }
-
-    qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
     return ret;
 }

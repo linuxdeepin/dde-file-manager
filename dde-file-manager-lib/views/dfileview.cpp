@@ -1487,9 +1487,10 @@ void DFileView::requireAuthentication(const DUrl &url)
         QString userName = userPath.section("/", -1, -1);
         // 检测当前用户有没有写权限，没有写权限则需要认证
         if (!mediaFile.isWritable()) {
-            QTimer::singleShot(500, this, [d, userName, localPath]() {
-                d->m_acessControlInterface->acquireFullAuthentication(userName, localPath);
-            });
+            d->m_acessControlInterface->acquireFullAuthentication(userName, localPath);
+//            QTimer::singleShot(500, this, [d, userName, localPath]() {
+//                d->m_acessControlInterface->acquireFullAuthentication(userName, localPath);
+//            });
         }
     }
 }
