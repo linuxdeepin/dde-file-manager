@@ -193,6 +193,13 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
             if (!displayEmptyEntry && arrangedFileUrls[oneType].isEmpty()) {
                 continue;
             }
+            //屏蔽掉2个以下文件的分类图标
+            if(arrangedFileUrls[oneType].size() < 2){
+                for(auto temp : arrangedFileUrls[oneType]){
+                    appendEntryFiles(infoList, oneType);
+                }
+                continue;
+            }
             QString entryName = entryNameByEnum(oneType);
             DUrl url(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType));
             DAbstractFileInfoPointer infoPtr {
