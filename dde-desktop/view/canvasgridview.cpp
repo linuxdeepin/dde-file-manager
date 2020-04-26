@@ -2655,6 +2655,8 @@ openEditor:
         Presenter::instance()->onAutoAlignToggled();
         if (GridManager::instance()->autoArrange()){
             this->delayArrage();
+        }else {
+            GridManager::instance()->delaySyncAllProfile(0);
         }
     });
     connect(this, &CanvasGridView::autoMergeToggled,[](){
