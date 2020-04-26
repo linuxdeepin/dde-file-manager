@@ -192,7 +192,6 @@ private slots:
     void onDriveOpticalChanged(const QString& path);
     void reset() override;
     void setRootIndex(const QModelIndex &index) override;
-    void requireAuthentication(const DUrl &url);
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;

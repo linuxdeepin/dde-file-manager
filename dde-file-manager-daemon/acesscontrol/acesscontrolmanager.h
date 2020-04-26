@@ -5,6 +5,7 @@
 #include <QObject>
 
 class AcessControlAdaptor;
+class DDiskManager;
 
 class AcessControlManager : public QObject, public QDBusContext
 {
@@ -15,6 +16,8 @@ public:
     explicit AcessControlManager(QObject *parent = nullptr);
     ~AcessControlManager();
 
+    void initConnect();
+
     static QString ObjectPath;
     static QString PolicyKitActionId;
 
@@ -24,9 +27,11 @@ signals:
 
 public slots:
     bool acquireFullAuthentication(const QString &userName, const QString &path);
+    void chmodMountpoints();
 
 private:
     AcessControlAdaptor* m_acessControlAdaptor = nullptr;
+    DDiskManager* m_diskMnanager = nullptr;
 };
 
 #endif // ACESSCONTROLMANAGER_H
