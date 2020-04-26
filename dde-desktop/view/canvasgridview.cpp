@@ -1794,6 +1794,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     model()->setFilters(model()->filters());
 
     if (d->filesystemWatcher) {
+        disconnect(d->filesystemWatcher,0,this,0);
         d->filesystemWatcher->deleteLater();
     }
 
@@ -2395,15 +2396,15 @@ void CanvasGridView::initConnection()
         auto selURLs = selectedUrls();
         QStringList selLocalFiles;
 
-        auto emptyBefore = 0;
-        auto emptyAfter = 0;
-        auto targetIndex = grid->toIndex(m_screenNum, d->dragTargetGrid);
+        int emptyBefore = 0;
+        int emptyAfter = 0;
+        GIndex targetIndex = grid->toIndex(m_screenNum, d->dragTargetGrid);
 
         for (auto sel : selURLs) {
-            auto localFile = sel.toString();
+            QString localFile = sel.toString();
             selLocalFiles << localFile;
-            auto pos = grid->pos(m_screenNum, localFile);
-            auto index = grid->toIndex(m_screenNum, pos);
+            GPos pos = grid->pos(m_screenNum, localFile);
+            GIndex index = grid->toIndex(m_screenNum, pos);
             grid->removeItem(m_screenNum, localFile);
 
             if (index < targetIndex) {
@@ -2581,8 +2582,6 @@ openEditor:
     });
 
     connect(this, &CanvasGridView::itemDeleted, [ = ](const DUrl & url) {
-        if (!GridManager::instance()->remove(m_screenNum, url.toString()))
-            return;
 
         auto index = model()->index(url);
         if (d->currentCursorIndex == index) {
@@ -2591,16 +2590,19 @@ openEditor:
             setCurrentIndex(QModelIndex());
         }
 
+        if (!GridManager::instance()->remove(m_screenNum, url.toString()))
+            return;
+
         //自动整理
         if (GridManager::instance()->autoMerge()) {
             delayModelRefresh();
-            return ;
         }
         else if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();
-            return;
         }
-
+        else {
+            GridManager::instance()->popOverlap(); //弹出堆叠
+        }
     });
 
     connect(this->model(), &DFileSystemModel::requestSelectFiles,

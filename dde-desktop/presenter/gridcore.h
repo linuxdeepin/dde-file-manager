@@ -261,7 +261,7 @@ public:
 public:
     GridCore();
 
-    inline void addItem(int screenNum, GIndex index, const QString &item)
+    void addItem(int screenNum, GIndex index, const QString &item)
     {
         Q_ASSERT(index < m_cellStatus.value(screenNum).length());
         if (!m_cellStatus.contains(screenNum)) {
@@ -283,7 +283,7 @@ public:
         tempGridItemsItor->insert(pos,item);
     }
 
-    inline void removeItem(int screenNum, GPos pos)
+    void removeItem(int screenNum, GPos pos)
     {
         if(!gridItems.contains(screenNum) || !itemGrids.contains(screenNum) ){
             qDebug()<< "can not find num :" << screenNum;
@@ -305,7 +305,7 @@ public:
         cellStatusItor.value()[index] = false;
     }
 
-    inline void removeItem(int screenNum, GIndex index)
+    void removeItem(int screenNum, GIndex index)
     {
         if(!gridItems.contains(screenNum) || !itemGrids.contains(screenNum) ){
             qDebug()<< "can not find num :" << screenNum;
@@ -329,7 +329,7 @@ public:
         cellStatusItor.value()[index] = false;
     }
 
-    inline void removeItem(int screenNum, const QString &item)
+    void removeItem(int screenNum, const QString &item)
     {
         if(!gridItems.contains(screenNum) || !itemGrids.contains(screenNum) ){
             qDebug()<< "can not find num :" << screenNum;

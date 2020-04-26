@@ -1243,7 +1243,7 @@ public:
         }
 
         if(!m_cellStatus.isEmpty()){
-            posPair.first = m_cellStatus.lastKey();
+            posPair.first = screenCode().last();
             posPair.second = overlapPos(posPair.first);
         }
         return  posPair;
@@ -1362,6 +1362,7 @@ public:
             } else {
                 if (!m_overlapItems.contains(itemId)) {
                     m_overlapItems << itemId;
+                    return true;
                 }
                 return false;
             }
@@ -1470,11 +1471,11 @@ public:
 
         setCellStatus(screenNum, usageIndex, false);
 
-        if (!m_overlapItems.isEmpty()
-                /*&& (pos == overlapPos(screenNum))*/) {
-            auto itemId = m_overlapItems.takeFirst();
-            add(screenNum, pos, itemId);
-        }
+//        if (!m_overlapItems.isEmpty()
+//                && (pos == overlapPos(screenNum))) {
+//            auto itemId = m_overlapItems.takeFirst();
+//            add(screenNum, pos, itemId);
+//        }
         return true;
     }
 
@@ -2075,14 +2076,21 @@ bool GridManager::remove(int screenNum, const QString &id)
         qDebug() << screenNum << id  << pos << ret;
         return ret;
     }
+    else if (d->m_overlapItems.contains(id)){
+        d->m_overlapItems.removeAll(id);
+        return true;
+    }
     return false;
 }
 
-//bool GridManager::remove(int screenNum, int x, int y, const QString &id)
-//{
-//    auto pos = QPoint(x, y);
-//    return remove(screenNum, pos, id);
-//}
+void GridManager::popOverlap()
+{
+    if (!d->m_overlapItems.isEmpty()){
+        auto itemId = d->m_overlapItems.takeFirst();
+        auto pos = d->takeEmptyPos();
+        add(pos.first, pos.second, itemId);
+    }
+}
 
 bool GridManager::remove(int screenNum, QPoint pos, const QString &id)
 {
