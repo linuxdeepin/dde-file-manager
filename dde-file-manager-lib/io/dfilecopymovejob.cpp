@@ -30,6 +30,7 @@
 #include "dlocalfiledevice.h"
 #include "models/trashfileinfo.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "shutil/fileutils.h"
 
 #include <QMutex>
 #include <QTimer>
@@ -324,6 +325,11 @@ void DFileCopyMoveJobPrivate::unsetError()
 DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFileInfo *sourceInfo,
         const DAbstractFileInfo *targetInfo)
 {
+    //当任务对话框结束返回cancel
+    if(btaskdailogclose)
+    {
+        return DFileCopyMoveJob::CancelAction;
+    }
     if (actionOfError[error] != DFileCopyMoveJob::NoAction) {
         lastErrorHandleAction = actionOfError[error];
         unsetError();
@@ -1047,9 +1053,53 @@ open_file: {
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
-
         qint64 size_write = toDevice->write(data, size_read);
+        //如果写失败了，直接推出
+        if (size_write < 0) {
+            if(!stateCheck())
+            {
+                //临时处理 fix
+                //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+                //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+                if (FileUtils::isGvfsMountFile(toInfo->path())) {
+                    toDevice->closeWriteReadFailed(true);
+                }
+                return false;
+            }
+           setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
+           switch (handleError(fromInfo, toInfo)) {
+           case DFileCopyMoveJob::RetryAction: {
+               if (!toDevice->seek(current_pos)) {
+                   setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
+                   //临时处理 fix
+                   //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+                   //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+                   if (FileUtils::isGvfsMountFile(toInfo->path())) {
+                       toDevice->closeWriteReadFailed(true);
+                   }
+                   return false;
+               }
 
+               goto write_data;
+           }
+           case DFileCopyMoveJob::SkipAction:
+               //临时处理 fix
+               //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+               //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+               if (FileUtils::isGvfsMountFile(toInfo->path())) {
+                   toDevice->closeWriteReadFailed(true);
+               }
+               return true;
+           default:
+               //临时处理 fix
+               //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+               //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+               if (FileUtils::isGvfsMountFile(toInfo->path())) {
+                   toDevice->closeWriteReadFailed(true);
+               }
+               return false;
+           }
+        }
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
         const DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
         if (targetStorageInfo.isValid()) {
@@ -1752,6 +1802,13 @@ void DFileCopyMoveJob::setFileHints(FileHints fileHints)
 
     d->fileHints = fileHints;
     d->fileStatistics->setFileHints(fileHints.testFlag(FollowSymlink) ? DFileStatisticsJob::FollowSymlink : DFileStatisticsJob::FileHints());
+}
+
+void DFileCopyMoveJob::taskDailogClose()
+{
+    Q_D(DFileCopyMoveJob);
+
+    d->btaskdailogclose = true;
 }
 
 DFileCopyMoveJob::DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent)

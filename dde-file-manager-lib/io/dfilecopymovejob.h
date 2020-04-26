@@ -159,6 +159,7 @@ public Q_SLOTS:
 
     void setMode(Mode mode);
     void setFileHints(FileHints fileHints);
+    void taskDailogClose();
 
 Q_SIGNALS:
     // 此类工作在一个新的线程中，信号不要以引用的方式传递参数，容易出现一些较为诡异的崩溃问题

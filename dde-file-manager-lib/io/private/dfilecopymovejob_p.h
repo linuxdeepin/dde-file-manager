@@ -159,6 +159,8 @@ public:
 
     qreal lastProgress = 0.01; // 上次刷新的进度
 
+    bool btaskdailogclose = false;
+
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
 

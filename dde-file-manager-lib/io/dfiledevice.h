@@ -42,6 +42,7 @@ public:
     virtual bool resize(qint64 size);
     virtual bool flush();
     virtual bool syncToDisk();
+    virtual void closeWriteReadFailed(const bool bwrite);
 
 protected:
     virtual bool setFileUrl(const DUrl &url);
