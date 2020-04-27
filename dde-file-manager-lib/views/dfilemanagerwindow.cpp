@@ -259,9 +259,10 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 {
     DFMBaseView *current_view = tab->fileView();
 
-    if (current_view && current_view->rootUrl() == fileUrl) {
-        return false;
-    }
+// fix 6942 取消判断先后请求地址差异判断
+//    if (current_view && current_view->rootUrl() == fileUrl) {
+//        return false;
+//    }
 
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
