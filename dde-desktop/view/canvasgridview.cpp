@@ -2653,11 +2653,15 @@ openEditor:
             }
 
             //自动排列
-            if (GridManager::instance()->autoArrange()){
+//            if (GridManager::instance()->autoArrange()){
+//                GridManager::instance()->initArrage(list);
+//                return ;
+//            }
+            //自动排列和整理
+            if (GridManager::instance()->shouldArrange()){
                 GridManager::instance()->initArrage(list);
                 return ;
             }
-
             GridManager::instance()->clear();
             //自动整理 todo
             //自定义
@@ -3506,8 +3510,27 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         unusedList << MenuAction::SendToDesktop;
     }
 
-    //totally use dde file manager libs for menu actions
-    auto *menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId(), true);
+    /********************************************/
+        //桌面的菜单action有些是通过filemanager lis管理的
+        //里面的判断都是i基于真实路径，所以在自动整理的虚拟路径就不适用
+        //故重新更改成真实路径传递，可能对action后续的操作是否有影响
+        auto curUrl = info->fileUrl();
+        DUrlList realList;
+        DFileMenu *menu;
+        if(curUrl.scheme() == DFMMD_SCHEME){
+            curUrl = MergedDesktopController::convertToRealPath(curUrl);
+            for(auto url : list){
+                realList.append(MergedDesktopController::convertToRealPath(url));
+            }
+            menu = DFileMenuManager::createNormalMenu(curUrl, realList, disableList, unusedList, winId(), true);
+        }
+        else {
+             menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId(), true);
+        }
+
+        //totally use dde file manager libs for menu actions
+    //    auto *menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId(), true);
+        /********************************************/
 
     QSet<MenuAction> ignoreActions;
     ignoreActions  << MenuAction::Open;
