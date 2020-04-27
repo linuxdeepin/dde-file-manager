@@ -157,7 +157,7 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
     return genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
 }
 
-DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop)
+DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop)
 {
     // remove compress/decompress action
     unusedList << MenuAction::Compress << MenuAction::Decompress << MenuAction::DecompressHere;
@@ -308,7 +308,15 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             if (urlList.length() == 1) {
                 action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
             } else {
-                action->setProperty("urls", QVariant::fromValue(urlList));
+                DUrlList redirectedUrlList;
+                for (auto url : urlList) {
+                    DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, url);
+                    auto redirectedUrl = info->redirectedFileUrl();
+                    if (redirectedUrl.isValid()) {
+                        redirectedUrlList << redirectedUrl;
+                    }
+                }
+                action->setProperty("urls", QVariant::fromValue(redirectedUrlList));
             }
             openWithMenu->addAction(action);
             connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
