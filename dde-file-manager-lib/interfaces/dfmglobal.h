@@ -249,6 +249,8 @@ public:
     static bool installTranslator();
 
     static void setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action, QMimeData *mimeData = nullptr);
+    static const QList<QUrl> fetchUrlsFromClipboard();
+    static DFMGlobal::ClipboardAction fetchClipboardAction();
     static void clearClipboard();
     static void clearTrash();
 
