@@ -1508,9 +1508,21 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
     if (!succeeded) {
         qCDebug(mountManager()) << "Error mounting: " << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)
                                 << error->message << silent << error->code;
-        if (!silent && !errorCodeNeedSilent(error->code)) {
-            fileSignalManager->requestShowErrorDialog(QString::fromLocal8Bit(error->message), QString(" "));
+
+        //! 下面这样做只是为了字符串翻译，因为错误信息是底层返回的
+        QString err = QString::fromLocal8Bit(error->message);
+         switch(error->code)
+        {
+         case 0:
+            err = QString(tr("No key available to unlock device"));
+            break;
+         default:
+             break;
         }
+        if (!silent && !errorCodeNeedSilent(error->code)) {
+            fileSignalManager->requestShowErrorDialog(err, QString(" "));
+        }
+
     } else {
         GMount *mount;
         GFile *root;
