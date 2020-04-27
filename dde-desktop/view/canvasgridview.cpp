@@ -1066,10 +1066,14 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
     if (!GridManager::instance()->shouldArrange()) {   //自定义
         //old
         //startDodgeAnimation();
-        //跨屏拖动，空间不足时先禁止拖动，todo 寻找更好的解决办法
         if (event->source() == this){
-            startDodgeAnimation();
-        }
+            if (event->mimeData() &&
+                    event->mimeData()->urls().size() >= GridManager::instance()->gridCount(m_screenNum)){
+                //放不下，不做处理，不然会崩溃 todo 优化让位算法
+            }
+            else
+                startDodgeAnimation();
+        }        //跨屏拖动，空间不足时先禁止拖动，todo 寻找更好的解决办法
         else if (event->mimeData() &&
                  GridManager::instance()->emptyPostionCount(m_screenNum) >= event->mimeData()->urls().size()){
             startDodgeAnimation();

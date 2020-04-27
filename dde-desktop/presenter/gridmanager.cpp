@@ -2306,6 +2306,16 @@ int GridManager::gridCount() const
     return  totalCount;
 }
 
+int GridManager::gridCount(int screenNum) const
+{
+    int totalCount = 0;
+    if (d->screensCoordInfo.contains(screenNum)){
+        auto coordInfo = d->screensCoordInfo.value(screenNum);
+        totalCount = coordInfo.first * coordInfo.second;
+    }
+    return totalCount;
+}
+
 QPair<int, QPoint> GridManager::forwardFindEmpty(int screenNum, QPoint start) const
 {
     QPair<int, QPoint> emptyPos;

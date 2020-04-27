@@ -131,6 +131,7 @@ public:
     void reArrange();
 
     int gridCount() const;
+    int gridCount(int screenNum) const;
     QPair<int, QPoint> forwardFindEmpty(int screenNum, QPoint start) const;
     QSize gridSize(int screenNum) const;
     void updateGridSize(int screenNum, int w, int h);
