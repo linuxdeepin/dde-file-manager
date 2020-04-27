@@ -69,7 +69,8 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                         d->cb_eject->isChecked() && (flag |= 2);
                         !d->cb_iclose->isChecked() && (flag |= 1);
 
-                        job->doOpticalBurn(dev, d->le_volname->text(), d->speedmap[d->cb_writespeed->currentText()], flag);
+                        // fix: use fork() burn files
+                        job->doOpticalBurnByChildProcess(dev, d->le_volname->text(), d->speedmap[d->cb_writespeed->currentText()], flag);
                         dialogManager->removeJob(job->getJobId());
                         job->deleteLater();
                     });
