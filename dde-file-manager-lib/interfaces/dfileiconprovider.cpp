@@ -100,6 +100,8 @@ QIcon DFileIconProviderPrivate::fromTheme(QString iconName) const
         iconName = "application-zip";
     } else if (iconName == "application-vnd.ms-htmlhelp") {
         iconName = "chmsee";
+    } else if (iconName == "Zoom.png") 
+        iconName = "application-x-zoom";         
     } else {
         return icon;
     }
