@@ -33,9 +33,6 @@
 #define WIDGET_SCHEME "widget"
 
 class ComputerView;
-namespace DFM_NAMESPACE {
-    class DStorageInfo;
-}
 
 struct ComputerModelItemData
 {
@@ -99,7 +96,6 @@ Q_SIGNALS:
 private:
     ComputerView* par;
     QScopedPointer<DDiskManager> m_diskm;
-    QScopedPointer<DFM_NAMESPACE::DStorageInfo> m_storageInfo;
     QList<ComputerModelItemData> m_items;
     DAbstractFileWatcher* m_watcher;
     int m_nitems;
