@@ -33,6 +33,9 @@
 #define WIDGET_SCHEME "widget"
 
 class ComputerView;
+namespace DFM_NAMESPACE {
+    class DStorageInfo;
+}
 
 struct ComputerModelItemData
 {
@@ -66,7 +69,7 @@ public:
         OpenUrlRole = Qt::UserRole + 6,     //DUrl
         MountOpenUrlRole = Qt::UserRole + 7,//DUrl
         ActionVectorRole = Qt::UserRole + 8,//QVector<MenuAction>
-        DFMRootUrlRole = Qt::UserRole + 9   //DUrl
+        DFMRootUrlRole = Qt::UserRole + 9,   //DUrls
     };
     Q_ENUM(DataRoles)
 
@@ -96,6 +99,7 @@ Q_SIGNALS:
 private:
     ComputerView* par;
     QScopedPointer<DDiskManager> m_diskm;
+    QScopedPointer<DFM_NAMESPACE::DStorageInfo> m_storageInfo;
     QList<ComputerModelItemData> m_items;
     DAbstractFileWatcher* m_watcher;
     int m_nitems;

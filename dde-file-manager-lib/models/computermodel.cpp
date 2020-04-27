@@ -29,8 +29,7 @@
 #include "app/define.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
-
-#include <QStorageInfo>
+#include "dstorageinfo.h" // 用于获取文件系统类型
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
@@ -38,7 +37,8 @@
 
 ComputerModel::ComputerModel(QObject *parent) :
     QAbstractItemModel(parent),
-    m_diskm(new DDiskManager(this))
+    m_diskm(new DDiskManager(this)),
+    m_storageInfo(new DStorageInfo())
 {
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
@@ -154,7 +154,16 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     }
 
     if (role == DataRoles::FileSystemRole) {
-        //!!TODO: ?
+        QString fs_type = "";
+        if (pitmdata->fi) {
+            //! 添加文件系统格式数据
+            QString strPath = pitmdata->fi->redirectedFileUrl().toLocalFile();
+            m_storageInfo->setPath(strPath);
+
+            fs_type = m_storageInfo->fileSystemType().toUpper();
+        }
+
+        return fs_type;
     }
 
     if (role == DataRoles::SizeInUseRole) {
