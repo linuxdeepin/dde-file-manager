@@ -26,6 +26,7 @@ protected slots:
     void onScreenRemoved(QScreen *screen);
     void onScreenGeometryChanged(const QRect &);
     void onScreenAvailableGeometryChanged(const QRect &);
+    void onDockChanged();
 private:
     void init();
     void connectScreen(ScreenPointer);

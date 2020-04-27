@@ -144,6 +144,10 @@ void ScreenManagerWayland::onMonitorChanged()
 void ScreenManagerWayland::onDockChanged()
 {
     auto screen = primaryScreen();
+    if (screen == nullptr){
+        qCritical() << "primaryScreen() return nullptr!!!";
+        return;
+    }
     emit sigScreenAvailableGeometryChanged(screen, screen->availableGeometry());
 }
 

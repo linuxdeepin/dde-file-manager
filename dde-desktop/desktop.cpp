@@ -223,8 +223,14 @@ void Desktop::loadView()
 void Desktop::showWallpaperSettings(QString name, int mode)
 {
     if(name.isNull() || name.isEmpty()){
+        if (ScreenHelper::screenManager()->primaryScreen() == nullptr){
+            qCritical() << "get primary screen failed! stop show wallpaper";
+            return;
+        }
+
         name = ScreenHelper::screenManager()->primaryScreen()->name();
     }
+
     if (d->wallpaperSettings) {
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;

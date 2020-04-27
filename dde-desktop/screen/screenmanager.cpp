@@ -1,6 +1,8 @@
 #include "screenmanager.h"
 #include "screenobject.h"
 #include "dbus/dbusdisplay.h"
+#include "dbus/dbusdock.h"
+
 #include <QGuiApplication>
 
 #define SCREENOBJECT(screen) dynamic_cast<ScreenObject*>(screen)
@@ -53,12 +55,33 @@ void ScreenManager::onScreenAvailableGeometryChanged(const QRect &rect)
     }
 }
 
+void ScreenManager::onDockChanged()
+{
+    int dockHideMode = DockInfoIns->hideMode();
+    if (3 != dockHideMode) //只处理智能隐藏
+        return ;
+
+    auto primary = primaryScreen();
+    if (primary == nullptr){
+        qCritical() << "get primary screen failed";
+        return;
+    }
+    else {
+        emit sigScreenAvailableGeometryChanged(primary, primary->availableGeometry());
+    }
+}
+
 void ScreenManager::init()
 {
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManager::onScreenAdded);
     connect(qApp, &QGuiApplication::screenRemoved, this, &ScreenManager::onScreenRemoved);
     connect(qApp, &QGuiApplication::primaryScreenChanged, this, &AbstractScreenManager::sigScreenChanged);
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
+
+    //dock区处理
+    connect(DockInfoIns,&DBusDock::FrontendWindowRectChanged,this, &ScreenManager::onDockChanged);
+    connect(DockInfoIns,&DBusDock::HideModeChanged,this, &ScreenManager::onDockChanged);
+    connect(DockInfoIns,&DBusDock::PositionChanged,this, &ScreenManager::onDockChanged);
 
     m_screens.clear();
     for (QScreen *sc : qApp->screens()){
