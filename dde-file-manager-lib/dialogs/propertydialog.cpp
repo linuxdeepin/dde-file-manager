@@ -95,11 +95,52 @@
 #define ArrowLineExpand_HIGHT   30
 #define ArrowLineExpand_SPACING 10
 
+DFM_BEGIN_NAMESPACE
+static QString ElideText(const QString &text, const QSize &size,
+                         QTextOption::WrapMode wordWrap, const QFont &font,
+                         Qt::TextElideMode mode, int lineHeight, int lastLineWidth)
+{
+    int height = 0;
+    QTextLayout textLayout(text);
+    QString str;
+    QFontMetrics fontMetrics(font);
+
+    textLayout.setFont(font);
+    const_cast<QTextOption *>(&textLayout.textOption())->setWrapMode(wordWrap);
+
+    textLayout.beginLayout();
+    QTextLine line = textLayout.createLine();
+    line.setLineWidth(size.width());
+
+    QString tmp_str = nullptr;
+    if (fontMetrics.boundingRect(text).width() <= line.width()) {
+        tmp_str = text.mid(line.textStart(), line.textLength());
+        str = tmp_str;
+    } else {
+        while (line.isValid()) {
+            //height += lineHeight;
+            line.setLineWidth(size.width());
+            tmp_str = text.mid(line.textStart(), line.textLength());
+            if (tmp_str.indexOf('\n'))
+                height += lineHeight;
+            str += tmp_str;
+            line = textLayout.createLine();
+            if (line.isValid())
+                str.append("\n");
+        }
+    }
+
+    textLayout.endLayout();
+
+    return str;
+}
+DFM_END_NAMESPACE
+
 bool DFMRoundBackground::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == parent() && event->type() == QEvent::Paint) {
         QWidget *w = dynamic_cast<QWidget *>(watched);
-        if(!w) {
+        if (!w) {
             return false;
         }
         int radius = property("radius").toInt();
@@ -230,7 +271,7 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     setObjectName("SectionKeyLabel");
     setFixedWidth(120);
     QFont font = this->font();
-    font.setWeight(QFont::Bold-8);
+    font.setWeight(QFont::Bold - 8);
     font.setPixelSize(13);
     setFont(font);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
@@ -303,7 +344,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_icon->setPixmap(icon.pixmap(128, 128));
         m_edit->setPlainText(name);
         m_editDisbaled = true;
-        const QList<QPair<QString, QString> > & properties = createLocalDeviceInfoWidget(fi);
+        const QList<QPair<QString, QString> > &properties = createLocalDeviceInfoWidget(fi);
         m_deviceInfoFrame = createInfoFrame(properties);
 
         QStringList titleList;
@@ -319,7 +360,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             devid.clear();
         }
 
-        DColoredProgressBar* progbdf = new DTK_WIDGET_NAMESPACE::DColoredProgressBar();
+        DColoredProgressBar *progbdf = new DTK_WIDGET_NAMESPACE::DColoredProgressBar();
         QLinearGradient lg(0, 0.5, 1, 0.5);
         lg.setCoordinateMode(QGradient::CoordinateMode::ObjectBoundingMode);
 
@@ -347,14 +388,14 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         QString text = devid.isEmpty() ? tr("%1").arg(name) : tr("%1 (%2)").arg(name).arg(devid);
         //end
 
-        QLabel* lbdf_l = new SectionKeyLabel();
+        QLabel *lbdf_l = new SectionKeyLabel();
         QString fullText(text);
         text = lbdf_l->fontMetrics().elidedText(text, Qt::ElideMiddle, 150);
         lbdf_l->setText(text);
         if (text != fullText) {
             lbdf_l->setToolTip(fullText);
         }
-        QLabel* lbdf_r = new SectionKeyLabel(tr("%1 / %2").arg(FileUtils::formatSize(dskinuse)).arg(FileUtils::formatSize(dskspace)));
+        QLabel *lbdf_r = new SectionKeyLabel(tr("%1 / %2").arg(FileUtils::formatSize(dskinuse)).arg(FileUtils::formatSize(dskspace)));
         if (!~dskinuse) {
             lbdf_r->setText(FileUtils::formatSize(dskspace));
         }
@@ -362,7 +403,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         lbdf_r->setAlignment(Qt::AlignRight);
         lbdf_l->setMaximumWidth(QWIDGETSIZE_MAX);
         lbdf_r->setMaximumWidth(QWIDGETSIZE_MAX);
-        QWidget* wdfl = new QWidget();
+        QWidget *wdfl = new QWidget();
         wdfl->setLayout(new QHBoxLayout);
         wdfl->layout()->setMargin(0);
         wdfl->layout()->addWidget(lbdf_l);
@@ -375,7 +416,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_wdf->layout()->addWidget(wdfl);
         m_wdf->layout()->addWidget(progbdf);
         new DFMRoundBackground(m_wdf, 8);
-        qobject_cast<QVBoxLayout*>(m_scrollArea->widget()->layout())->insertWidget(0, m_wdf);
+        qobject_cast<QVBoxLayout *>(m_scrollArea->widget()->layout())->insertWidget(0, m_wdf);
 
     } else {
         // tagged file basicinfo not complete??
@@ -496,7 +537,7 @@ void PropertyDialog::initUI()
     palette.setBrush(QPalette::Background, Qt::NoBrush);
     m_scrollArea->viewport()->setPalette(palette);
     m_scrollArea->setFrameShape(QFrame::Shape::NoFrame);
-    QFrame *infoframe= new QFrame;
+    QFrame *infoframe = new QFrame;
     QVBoxLayout *scrollWidgetLayout = new QVBoxLayout;
     scrollWidgetLayout->setContentsMargins(15, 0, 15, 0);
     scrollWidgetLayout->setSpacing(ArrowLineExpand_SPACING);
@@ -652,7 +693,7 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
         return;
     }
     if (fileUrl == m_url) {
-        QTimer::singleShot(100,this, [=]{
+        QTimer::singleShot(100, this, [ = ] {
             this->close();
         });
 //        close();
@@ -695,7 +736,7 @@ void PropertyDialog::flickFolderToSidebar()
         angle = -45;
     }
 
-   // QVariantAnimation *xani = new QVariantAnimation(this);
+    // QVariantAnimation *xani = new QVariantAnimation(this);
     m_xani = new QVariantAnimation (this);
     m_xani->setStartValue(m_aniLabel->pos());
     m_xani->setEndValue(QPoint(targetPos.x(), angle));
@@ -728,7 +769,7 @@ void PropertyDialog::flickFolderToSidebar()
 
     connect(m_gani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
         m_aniLabel->move(QPoint(m_aniLabel->x(),
-                              val.toRect().y() - val.toRect().width() / 2));
+                                val.toRect().y() - val.toRect().width() / 2));
         m_aniLabel->setFixedSize(val.toRect().size() * 2);
     });
     connect(m_gani, &QVariantAnimation::finished, [ = ] {
@@ -742,7 +783,7 @@ void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
 {
     if (w) {
         MimesAppsManager::setDefautlAppForTypeByGio(w->property("mimeTypeName").toString(),
-                w->property("appPath").toString());
+                                                    w->property("appPath").toString());
     }
 }
 
@@ -822,15 +863,15 @@ void PropertyDialog::raise()
 
 void PropertyDialog::hideEvent(QHideEvent *event)
 {
-    if(m_xani){
+    if (m_xani) {
         m_xani->stop();
         delete m_xani;
     }
-    if(m_gani){
+    if (m_gani) {
         m_gani->stop();
         delete m_gani;
     }
-    if(m_aniLabel)
+    if (m_aniLabel)
         delete  m_aniLabel;
     emit aboutToClosed(m_url);
     DDialog::hideEvent(event);
@@ -853,7 +894,7 @@ const QList<DDrawer *> &PropertyDialog::expandGroup() const
 int PropertyDialog::contentHeight() const
 {
     int expandsHeight = ArrowLineExpand_SPACING;
-    for (const DDrawer* expand : m_expandGroup) {
+    for (const DDrawer *expand : m_expandGroup) {
         expandsHeight += expand->height();
     }
 #define DIALOG_TITLEBAR_HEIGHT 50
@@ -863,8 +904,8 @@ int PropertyDialog::contentHeight() const
             expandsHeight +
             contentsMargins().top() +
             contentsMargins().bottom() +
-            (m_wdf ? m_wdf->height() : 0)+
-            (m_tagInfoFrame ? m_tagInfoFrame->height() : 0)+
+            (m_wdf ? m_wdf->height() : 0) +
+            (m_tagInfoFrame ? m_tagInfoFrame->height() : 0) +
             40);
 }
 
@@ -872,8 +913,8 @@ int PropertyDialog::getDialogHeight() const
 {
     int totalHeight = this->size().height() + contentHeight() ;
 
-    for (const DDrawer* expand : m_expandGroup) {
-       if(expand->expand())
+    for (const DDrawer *expand : m_expandGroup) {
+        if (expand->expand())
             totalHeight += expand->window()->height();
     }
 
@@ -909,15 +950,15 @@ void PropertyDialog::initExpand(QVBoxLayout *layout, DDrawer *expand)
     expand->setFixedHeight(ArrowLineExpand_HIGHT);
     QMargins cm = layout->contentsMargins();
     QRect rc = contentsRect();
-    expand->setFixedWidth(rc.width()-cm.left()-cm.right());
+    expand->setFixedWidth(rc.width() - cm.left() - cm.right());
     expand->setExpandedSeparatorVisible(false);
     expand->setSeparatorVisible(false);
     layout->addWidget(expand, 0, Qt::AlignTop);
 
     DEnhancedWidget *hanceedWidget = new DEnhancedWidget(expand, expand);
-    connect(hanceedWidget, &DEnhancedWidget::heightChanged, hanceedWidget, [=](){
+    connect(hanceedWidget, &DEnhancedWidget::heightChanged, hanceedWidget, [ = ]() {
         QRect rc = geometry();
-        rc.setHeight(contentHeight()+ArrowLineExpand_SPACING*2);
+        rc.setHeight(contentHeight() + ArrowLineExpand_SPACING * 2);
         setGeometry(rc);
     });
 }
@@ -1042,18 +1083,26 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(typeSectionLabel, typeLabel);
     }
 
+    SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
+    QLabel *locationPathLabel = nullptr;
     if (info->isSymLink()) {
-        SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
-
         LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->symlinkTargetPath());
-        linkPathLabel->setToolTip(info->symlinkTargetPath());
         linkPathLabel->setLinkTargetUrl(info->redirectedFileUrl());
         linkPathLabel->setOpenExternalLinks(true);
-        linkPathLabel->setWordWrap(false);
-        QString t = linkPathLabel->fontMetrics().elidedText(info->symlinkTargetPath(), Qt::ElideMiddle, 150);
-        linkPathLabel->setText(t);
-        layout->addRow(linkPathSectionLabel, linkPathLabel);
+        linkPathLabel->setWordWrap(true);
+        locationPathLabel = linkPathLabel;
+    } else {
+        locationPathLabel = new SectionValueLabel();
     }
+    locationPathLabel->setWordWrap(true);
+    locationPathLabel->setText(info->absoluteFilePath());
+    QFontMetrics fm = linkPathSectionLabel->fontMetrics();
+    locationPathLabel->setMinimumWidth(qMin(160, 250 - fm.boundingRect(linkPathSectionLabel->text()).width()));
+    auto fp = ElideText(locationPathLabel->text(), {locationPathLabel->width(), fm.height()}, QTextOption::WrapAnywhere,
+                        locationPathLabel->font(), Qt::ElideRight, fm.height(), locationPathLabel->width());
+
+    locationPathLabel->setText(fp);
+    layout->addRow(linkPathSectionLabel, locationPathLabel);
 
     if (!info->isVirtualEntry()) {
         layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
@@ -1086,7 +1135,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())) {
         DFMFileListFile flf(QFileInfo(info->filePath()).absolutePath());
         QString fileName = info->fileName();
-        QCheckBox * hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
+        QCheckBox *hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
 //        hideThisFile->setToolTip("TODO: hint message?");
         hideThisFile->setEnabled(DFMFileListFile::canHideByFile(info->filePath()));
         hideThisFile->setChecked(flf.contains(fileName));
@@ -1103,7 +1152,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPointer &info)
 {
     DAbstractFileInfoPointer infoPtr = info->canRedirectionFileUrl() ? DFileService::instance()->createFileInfo(nullptr, info->redirectedFileUrl())
-                                                                     : info;
+                                       : info;
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
     connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
@@ -1144,15 +1193,13 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     //fix GvfsGPhoto2协议对Apple mobile device判断有问题，再增加一层判断
     {
         auto itemtype = static_cast<DFMRootFileInfo::ItemType>(info->fileType());
-        if (itemtype == DFMRootFileInfo::ItemType::GvfsGPhoto2)
-        {
+        if (itemtype == DFMRootFileInfo::ItemType::GvfsGPhoto2) {
             QString devicePath = info->redirectedFileUrl().path();
 
             qInfo() << "Deivce Type: DFMRootFileInfo::ItemType::GvfsGPhoto2 Device Path:" << devicePath;
 
             //判断host中是否有"Apple_Inc"，没有且不为空则改为安卓
-            if (!devicePath.isEmpty() && !devicePath.contains("Apple_Inc"))
-            {
+            if (!devicePath.isEmpty() && !devicePath.contains("Apple_Inc")) {
                 qWarning() << "Deivce Type is DFMRootFileInfo::ItemType::GvfsGPhoto2. Not find Apple_Inc in device path"
                            << devicePath << "Set Deivce Type [GvfsGPhoto2] to [GvfsMTP]";
                 itemtype = DFMRootFileInfo::ItemType::GvfsMTP;
@@ -1180,7 +1227,7 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     return results;
 }
 
-QFrame *PropertyDialog::createInfoFrame(const QList<QPair<QString, QString> >& properties)
+QFrame *PropertyDialog::createInfoFrame(const QList<QPair<QString, QString> > &properties)
 {
     QFrame *widget = new QFrame(this);
 
@@ -1189,7 +1236,7 @@ QFrame *PropertyDialog::createInfoFrame(const QList<QPair<QString, QString> >& p
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
 
-    for (const QPair<QString, QString> & kv : properties) {
+    for (const QPair<QString, QString> &kv : properties) {
         SectionKeyLabel *keyLabel = new SectionKeyLabel(kv.first, widget);
         SectionValueLabel *valLabel = new SectionValueLabel(kv.second, widget);
         layout->addRow(keyLabel, valLabel);
