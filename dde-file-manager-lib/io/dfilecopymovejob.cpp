@@ -250,8 +250,12 @@ qint64 DFileCopyMoveJobPrivate::getWriteBytes() const
 qint64 DFileCopyMoveJobPrivate::getSectorsWritten() const
 {
     const QByteArray data = fileReadAll(targetSysDevPath + "/stat");
-
-    return data.simplified().split(' ').value(6).toLongLong();
+    //fix: 删除文件时出现报错(回收箱和光驱处理删除文件)，获取data为空指针
+    if (data == nullptr) {
+        return 0;
+    } else {
+        return data.simplified().split(' ').value(6).toLongLong();
+    }
 }
 
 qint64 DFileCopyMoveJobPrivate::getCompletedDataSize() const
@@ -261,7 +265,11 @@ qint64 DFileCopyMoveJobPrivate::getCompletedDataSize() const
     }
 
     if (targetDeviceStartSectorsWritten >= 0) {
-        return (getSectorsWritten() - targetDeviceStartSectorsWritten) * targetLogSecionSize;
+        if ((getSectorsWritten() == 0) && (targetDeviceStartSectorsWritten > 0)) {
+            return 0;
+        } else {
+            return (getSectorsWritten() - targetDeviceStartSectorsWritten) * targetLogSecionSize;
+        }
     }
 
     return completedDataSize;
@@ -1504,7 +1512,12 @@ void DFileCopyMoveJobPrivate::updateProgress()
 {
     const qint64 total_size = fileStatistics->totalSize();
     const qint64 data_size = getCompletedDataSize();
-    completedDataSizeOnBlockDevice = data_size;
+    //fix: 删除文件时出现报错(回收箱和光驱处理删除文件)
+    if (data_size == 0) {
+        completedDataSizeOnBlockDevice = total_size;
+    } else {
+        completedDataSizeOnBlockDevice = data_size;
+    }
 
     if (total_size == 0)
         return;
@@ -1999,6 +2012,10 @@ end:
         //校验是否完全同步到了移动设备
         const qint64 total_size = d->fileStatistics->totalSize();
         qDebug() << "total_size " << total_size << d->completedDataSizeOnBlockDevice;
+        //fix: 删除文件时出现报错(回收箱和光驱处理删除文件)
+        if ((total_size > d->completedDataSizeOnBlockDevice) && (d->completedDataSizeOnBlockDevice == 0)) {
+            d->completedDataSizeOnBlockDevice = total_size;
+        }
         if (total_size > d->completedDataSizeOnBlockDevice)
         {
             d->setError(DFileCopyMoveJob::OpenError, "Failed to synchronize to disk u!");
