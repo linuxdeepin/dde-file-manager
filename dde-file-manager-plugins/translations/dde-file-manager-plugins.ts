@@ -4,13 +4,23 @@
 <context>
     <name>MusicMessageView</name>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="64"/>
-        <source>Artist：</source>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="53"/>
+        <source>Artist:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="67"/>
-        <source>Album：</source>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="58"/>
+        <source>Album:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="139"/>
+        <source>unknown artist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="143"/>
+        <source>unknown album</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
