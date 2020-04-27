@@ -26,7 +26,7 @@
 #define MUSICMESSAGEVIEW_H
 
 #include <QFrame>
-
+#include <QMediaPlayer>
 class QLabel;
 class MusicMessageView : public QFrame
 {
@@ -39,6 +39,9 @@ public:
 signals:
 
 public slots:
+    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void metaDataAvailableChanged(bool available);
+    void durationChanged(qint64 duration);
 
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
@@ -49,6 +52,11 @@ private:
     QLabel* m_artistLabel;
     QLabel* m_albumLabel;
     QLabel* m_imgLabel;
+    QLabel* m_artistValue;
+    QLabel* m_albumValue;
+
+
+    QMediaPlayer * m_player;
 
     QString m_title;
     QString m_artist;
