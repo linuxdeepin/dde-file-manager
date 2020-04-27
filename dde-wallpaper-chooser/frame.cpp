@@ -108,7 +108,8 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
             //old
             //const QRect sRect = this->windowHandle()->screen()->geometry();
             if(!ScreenHelper::screenManager()->screen(m_screenName)){
-                return;
+                qCritical() << "lost screen " << m_screenName << "closed";
+                return ;
             }
             const QRect sRect = ScreenHelper::screenManager()->screen(m_screenName)->geometry();
             QRect nativeRect = geometry();
@@ -121,6 +122,15 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
                 hide();
             }
         }
+    });
+
+    connect(ScreenMrg, &AbstractScreenManager::sigScreenGeometryChanged,this,[this](){
+        initSize();
+        if (!isHidden())
+            m_wallpaperList->updateItemThumb();
+
+        qDebug() << "reset geometry" << this->isVisible() << this->geometry();
+        this->activateWindow();
     });
 
     m_closeButton->hide();
@@ -146,6 +156,8 @@ Frame::~Frame()
             qDebug() << "delete background" << path;
         }
     });
+
+    disconnect(ScreenMrg, 0,this,0);
 }
 
 void Frame::show()
@@ -165,6 +177,8 @@ void Frame::show()
 /*** old code end ***/
         if (!m_backgroundManager) {
             m_backgroundManager = new BackgroundManager(true, this);
+
+            connect(m_backgroundManager, SIGNAL(sigBackgroundBuilded(int)),this,SLOT(onRest()));
         }
     } else if (!m_dbusDeepinWM) {
 /*** old code begin ***/
@@ -253,6 +267,28 @@ void Frame::handleNeedCloseButton(QString path, QPoint pos)
     } else {
         m_closeButton->hide();
     }
+}
+
+void Frame::onRest()
+{
+    ScreenPointer screen = ScreenMrg->screen(m_screenName);
+    if (m_backgroundManager){
+        BackgroundWidgetPointer bwp = m_backgroundManager->backgroundWidget(screen);
+        if (bwp){
+            m_screenName = screen->name();
+            bwp->lower();
+            initSize();
+            if (!isHidden())
+                m_wallpaperList->updateItemThumb();
+            raise();
+            qDebug() << "onRest frame" << this->isVisible() << this->geometry();
+            this->activateWindow();
+            return;
+        }
+    }
+
+    qDebug() << m_screenName << "lost exit!";
+    close();
 }
 
 void Frame::showEvent(QShowEvent *event)
@@ -694,6 +730,7 @@ void Frame::initSize()
     //old
     //const QRect primaryRect = qApp->primaryScreen()->geometry();
     if(!ScreenHelper::screenManager()->screen(m_screenName)){
+        qCritical() << "lost screen " << m_screenName;
         return;
     }
     const QRect screenRect = ScreenHelper::screenManager()->screen(m_screenName)->geometry();

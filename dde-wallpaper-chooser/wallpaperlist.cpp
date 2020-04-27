@@ -260,6 +260,7 @@ void WallpaperList::clear()
 
 void WallpaperList::updateItemThumb()
 {
+    qDebug() << "items" << m_items.size();
     m_contentWidget->adjustSize();
 
     showDeleteButtonForItem(static_cast<WallpaperItem *>(itemAt(mapFromGlobal(QCursor::pos()))));

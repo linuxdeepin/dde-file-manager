@@ -74,7 +74,7 @@ signals:
 
 public slots:
     void handleNeedCloseButton(QString path, QPoint pos);
-
+    void onRest();
 protected:
     void showEvent(QShowEvent *) override;
     void hideEvent(QHideEvent *) override;

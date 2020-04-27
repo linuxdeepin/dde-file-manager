@@ -246,7 +246,7 @@ void Desktop::showWallpaperSettings(QString name, int mode)
             d->m_background->setBackgroundImage(screenImage.first, screenImage.second);
 #endif
     }, Qt::DirectConnection);
-
+#if 0
     //屏幕有改变直接退出壁纸设置
     auto close = [this](){
         qDebug() << "screen changed , wallpaperSettings is exiting";
@@ -263,7 +263,7 @@ void Desktop::showWallpaperSettings(QString name, int mode)
             close();
     });
     //end
-
+#endif
     d->wallpaperSettings->show();
     d->wallpaperSettings->grabKeyboard();
 }

@@ -355,7 +355,8 @@ void CanvasGridView::setGeometry(const QRect &rect)
     else {
         QAbstractItemView::setGeometry(rect);
         updateCanvas();
-        d->waterMaskFrame->updatePosition();
+        if (d->waterMaskFrame)
+            d->waterMaskFrame->updatePosition();
     }
 }
 
