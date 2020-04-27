@@ -9,17 +9,17 @@
         <translation>歌手:</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="58"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="59"/>
         <source>Album:</source>
         <translation>专辑:</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="139"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="149"/>
         <source>unknown artist</source>
         <translation>未知歌手</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="143"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="153"/>
         <source>unknown album</source>
         <translation>未知专辑</translation>
     </message>
