@@ -234,6 +234,37 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
     qApp->clipboard()->setMimeData(mimeData);
 }
 
+const QList<QUrl> DFMGlobal::fetchUrlsFromClipboard()
+{
+    if (qApp->clipboard()) {
+        const QMimeData *mimeData = qApp->clipboard()->mimeData();
+        if (mimeData) {
+            return mimeData->urls();
+        }
+    }
+
+    return QList<QUrl>();
+}
+
+DFMGlobal::ClipboardAction DFMGlobal::fetchClipboardAction()
+{
+    if (qApp->clipboard()) {
+        const QMimeData *mimeData = qApp->clipboard()->mimeData();
+        if (mimeData) {
+            QByteArray ba = mimeData->data("x-special/gnome-copied-files");
+            QString tStr(ba);
+            if (tStr.startsWith("cut")) {
+                return DFMGlobal::CutAction;
+            }
+            if (tStr.startsWith("copy")) {
+                return DFMGlobal::CopyAction;
+            }
+        }
+    }
+
+    return DFMGlobal::UnknowAction;
+}
+
 void DFMGlobal::clearClipboard()
 {
     qApp->clipboard()->setText(QString());

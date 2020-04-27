@@ -564,6 +564,20 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 
         if (result) {
             DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRenameEvent>(nullptr, newUrl, oldUrl));
+
+            //重命名成功时需要判断该文件原路径是否被添加到了剪贴版，如果是，就需要替换剪贴板路径。
+            QList<QUrl> clipUrls = DFMGlobal::fetchUrlsFromClipboard();
+            bool needReset = false;
+            for (QUrl &clipUrl : clipUrls) {
+                if (clipUrl.path() == oldUrl.path()) {
+                    clipUrl.setUrl(newUrl.url());
+                    needReset = true;
+                }
+            }
+
+            if (needReset) {
+                DFMGlobal::setUrlsToClipboard(clipUrls, DFMGlobal::fetchClipboardAction());
+            }
         }
     }
 
