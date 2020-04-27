@@ -120,6 +120,7 @@ QModelIndex CanvasGridView::indexAt(const QPoint &point) const
     QPoint pos = QPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
     auto list = itemPaintGeomertys(rowIndex);
 
+
     for (QModelIndex &index : itemDelegate()->hasWidgetIndexs()) {
         if (index == itemDelegate()->editingIndex()) {
             QWidget *widget = itemDelegate()->editingIndexWidget();
@@ -557,7 +558,6 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     d->lastPos = event->pos();
 
     bool isEmptyArea = !index.isValid();
-
     itemDelegate()->commitDataAndCloseActiveEditor();
 
     if (isEmptyArea) {
@@ -580,7 +580,6 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
 
     if (leftButtonPressed) {
         d->currentCursorIndex = index;
-
         if (!isEmptyArea) {
             const DUrl &url = model()->getUrlByIndex(index);
             DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
@@ -2412,7 +2411,6 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     } else {
         d->beginPos = QPoint(-1, -1);
     }
-
     // select by  key board, so mouse not pressed
     if (!d->mousePressed && d->currentCursorIndex.isValid()) {
         QItemSelectionRange selectionRange(d->currentCursorIndex);
@@ -2427,7 +2425,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     QPoint currentPoint(-1, -1);
     if (d->mousePressed) {
         auto clickIndex = indexAt(d->lastPos);
-        if (clickIndex.isValid()) {
+        if (clickIndex.isValid() && !d->showSelectRect) {
             QPoint tempClickIndex = visualRect(clickIndex).center();
             QPoint tempLastPoint = visualRect(d->currentCursorIndex).center();
             if (!d->currentCursorIndex.isValid())
