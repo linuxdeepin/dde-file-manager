@@ -453,7 +453,21 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
 
 bool FileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
-    return FileUtils::openFilesByApp(event->appName(), {event->url().toString()});
+    //处理快捷方式，还原成原路径
+    DUrl fileUrl = event->url();
+
+    const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
+
+    if (pfile->isSymLink()) {
+        const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
+
+        if (linkInfo && !linkInfo->exists()) {
+            dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+            return false;
+        }
+        const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
+    }
+    return FileUtils::openFilesByApp(event->appName(), {fileUrl.toString()});
 }
 
 bool FileController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
