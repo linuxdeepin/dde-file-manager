@@ -52,11 +52,13 @@ void MusicMessageView::initUI()
     m_artistLabel->setObjectName("Artist");
     m_artistLabel->setText(tr("Artist:"));
     m_artistValue = new QLabel(this);
+    m_artistValue->setObjectName("artistValue");
 
     m_albumLabel = new QLabel(this);
     m_albumLabel->setObjectName("Album");
     m_albumLabel->setText(tr("Album:"));
     m_albumValue = new QLabel(this);
+    m_albumValue->setObjectName("albumValue");
 
     m_imgLabel = new QLabel(this);
     m_imgLabel->setFixedSize(QSize(240, 240));
@@ -103,6 +105,14 @@ void MusicMessageView::initUI()
                   "font-size: 12px;"
                   "}"
                   "QLabel#Album{"
+                  "color: #5b5b5b;"
+                  "font-size: 12px;"
+                  "}"
+                  "QLabel#artistValue{"
+                  "color: #5b5b5b;"
+                  "font-size: 12px;"
+                  "}"
+                  "QLabel#albumValue{"
                   "color: #5b5b5b;"
                   "font-size: 12px;"
                   "}");
