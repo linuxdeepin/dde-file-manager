@@ -808,7 +808,8 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
         new_file_name += QString{"."};
         new_file_name += suffix_str_as_var;
     } else if (DFMApplication::genericObtuselySetting()->value("FileName", "non-allowableEmptyCharactersOfEnd").toBool()) {
-        new_file_name = new_file_name.trimmed();
+        //保留文件名称中的空格符号
+        //new_file_name = new_file_name.trimmed();
 
         if (new_file_name.isEmpty()) {
             return;
