@@ -44,4 +44,3 @@ file_filter = dde-desktop/translations/dde-trash-desktop/desktop_<lang>.ts
 source_file = dde-desktop/translations/dde-trash-desktop/desktop.ts
 source_lang = en
 type = QT
-

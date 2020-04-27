@@ -31,6 +31,8 @@
 #include <QResizeEvent>
 #include <QMediaPlayer>
 #include <QMediaMetaData>
+#include <QTime>
+#include <QFileInfo>
 
 MusicMessageView::MusicMessageView(const QString &uri, QWidget *parent) :
     QFrame(parent),
@@ -48,45 +50,39 @@ void MusicMessageView::initUI()
 
     m_artistLabel = new QLabel(this);
     m_artistLabel->setObjectName("Artist");
+    m_artistLabel->setText(tr("Artist:"));
+    m_artistValue = new QLabel(this);
 
     m_albumLabel = new QLabel(this);
-    m_albumLabel->setObjectName("Albumn");
+    m_albumLabel->setObjectName("Album");
+    m_albumLabel->setText(tr("Album:"));
+    m_albumValue = new QLabel(this);
 
     m_imgLabel = new QLabel(this);
     m_imgLabel->setFixedSize(QSize(240, 240));
 
-    QMediaPlayer *player = new QMediaPlayer(this);
-    connect(player, &QMediaPlayer::mediaStatusChanged, this, [ = ] (const QMediaPlayer::MediaStatus & status) {
-        if (status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia) {
-            qDebug() << player->isMetaDataAvailable();
-            m_title = player->metaData(QMediaMetaData::Title).toString();
+    m_player = new QMediaPlayer(this);
+    connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &MusicMessageView::mediaStatusChanged);
 
-            m_artist = QString(tr("Artist："));
-            m_artist += player->metaData(QMediaMetaData::AlbumArtist).toString();
+    m_player->setMedia(QUrl::fromUserInput(m_uri));
 
-            m_album = QString(tr("Album："));
-            m_album += player->metaData(QMediaMetaData::AlbumTitle).toString();
-            QImage img = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
-            if (img.isNull()) {
-                img = QImage(":/icons/icons/default_music_cover.png");
-            }
-            m_imgLabel->setPixmap(QPixmap::fromImage(img).scaled(m_imgLabel->size(), Qt::KeepAspectRatio));
-            player->deleteLater();
+    QHBoxLayout *artistLayout = new QHBoxLayout;
+    artistLayout->addWidget(m_artistLabel);
+    artistLayout->addSpacing(5);
+    artistLayout->addWidget(m_artistValue,1);
 
-            updateElidedText();
-        }
-    });
-
-
-    player->setMedia(QUrl::fromUserInput(m_uri));
+    QHBoxLayout *albumLayout = new QHBoxLayout;
+    albumLayout->addWidget(m_albumLabel);
+    albumLayout->addSpacing(5);
+    albumLayout->addWidget(m_albumValue,1);
 
     QVBoxLayout *messageLayout = new QVBoxLayout;
     messageLayout->setSpacing(0);
-    messageLayout->addWidget(m_titleLabel, 0, Qt::AlignLeft);
+    messageLayout->addWidget(m_titleLabel);
     messageLayout->addSpacing(10);
-    messageLayout->addWidget(m_artistLabel, 0, Qt::AlignLeft);
+    messageLayout->addLayout(artistLayout);
     messageLayout->addSpacing(3);
-    messageLayout->addWidget(m_albumLabel, 0, Qt::AlignLeft);
+    messageLayout->addLayout(albumLayout);
     messageLayout->addStretch();
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
@@ -106,7 +102,7 @@ void MusicMessageView::initUI()
                   "color: #5b5b5b;"
                   "font-size: 12px;"
                   "}"
-                  "QLabel#Albumn{"
+                  "QLabel#Album{"
                   "color: #5b5b5b;"
                   "font-size: 12px;"
                   "}");
@@ -122,9 +118,40 @@ void MusicMessageView::updateElidedText()
 
     font.setPixelSize(12);
     fm = QFontMetrics(font);
-    m_artistLabel->setText(fm.elidedText(m_artist, Qt::ElideRight, width() - m_imgLabel->width() - 40 - m_margins));
-    m_albumLabel->setText(fm.elidedText(m_album, Qt::ElideRight, width() - m_imgLabel->width() - 40 - m_margins));
+    m_artistValue->setText(fm.elidedText(m_artist, Qt::ElideRight, width() - m_imgLabel->width() - 40 - m_margins));
+    m_albumValue->setText(fm.elidedText(m_album, Qt::ElideRight, width() - m_imgLabel->width() - 40 - m_margins));
+}
 
+void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
+{
+    if (status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia)
+    {
+        qDebug() << m_player->isMetaDataAvailable();
+        m_title = m_player->metaData(QMediaMetaData::Title).toString();
+        if(m_title.isEmpty())
+        {
+            QFileInfo file(m_uri);
+            QString fileName = file.baseName();
+            m_title = fileName;
+        }
+        m_artist = m_player->metaData(QMediaMetaData::AlbumArtist).toString();
+        if(m_artist.isEmpty())
+            m_artist = QString(tr("unknown artist"));
+
+        m_album = m_player->metaData(QMediaMetaData::AlbumTitle).toString();
+        if(m_album.isEmpty())
+            m_album = QString(tr("unknown album"));
+
+        QImage img = m_player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
+        if (img.isNull()) {
+            img = QImage(":/icons/icons/default_music_cover.png");
+        }
+        m_imgLabel->setPixmap(QPixmap::fromImage(img).scaled(m_imgLabel->size(), Qt::KeepAspectRatio));
+
+        m_player->deleteLater();
+
+        updateElidedText();
+    }
 }
 
 void MusicMessageView::resizeEvent(QResizeEvent *event)
