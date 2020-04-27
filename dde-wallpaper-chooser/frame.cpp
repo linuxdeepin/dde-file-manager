@@ -81,6 +81,7 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
                                                               AppearancePath,
                                                               QDBusConnection::sessionBus(),
                                                               this))
+    , m_dbusWmInter (new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
     , m_mouseArea(new DRegionMonitor(this))
 {
     // 截止到dtkwidget 2.0.10版本，在多个屏幕设置不同缩放比时
@@ -276,8 +277,11 @@ void Frame::hideEvent(QHideEvent *event)
     m_mouseArea->unregisterRegion();
 
     if (m_mode == WallpaperMode) {
-        if (!m_desktopWallpaper.isEmpty())
+        if (!m_desktopWallpaper.isEmpty()){
             m_dbusAppearance->Set("background", m_desktopWallpaper);
+            //m_dbusWmInter->SetCurrentWorkspaceBackgroundForMonitor(m_screenName, m_desktopWallpaper);
+        }
+
         else if (m_dbusDeepinWM)
             m_dbusDeepinWM->SetTransientBackground("");
 

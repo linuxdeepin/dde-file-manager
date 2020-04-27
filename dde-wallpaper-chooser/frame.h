@@ -113,6 +113,7 @@ private:
     DButtonBox *m_wallpaperCarouselControl;
 #endif
 
+    WMInter *m_dbusWmInter = nullptr;
     ComDeepinDaemonAppearanceInterface * m_dbusAppearance = nullptr;
 #ifndef DISABLE_SCREENSAVER
     ComDeepinScreenSaverInterface *m_dbusScreenSaver = nullptr;

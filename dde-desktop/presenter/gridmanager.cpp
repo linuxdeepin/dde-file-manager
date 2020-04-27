@@ -1276,8 +1276,8 @@ public:
         }
 
         if(!m_cellStatus.isEmpty()){
-            emptyPosPair.first = m_cellStatus.lastKey();
-            emptyPosPair.second = overlapPos(m_cellStatus.lastKey());
+            emptyPosPair.first = screenCode().last();
+            emptyPosPair.second = overlapPos(screenCode().last());
         }
         return  emptyPosPair;
     }
