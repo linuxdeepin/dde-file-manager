@@ -202,6 +202,11 @@ void BackgroundManager::onBackgroundBuild()
             || (ScreenMrg->screens().count() == 1)){   //单屏模式
 
         ScreenPointer primary = ScreenMrg->primaryScreen();
+        if (primary){
+            qCritical() << "get screen failed return";
+            return;
+        }
+
         BackgroundWidgetPointer bwp = createBackgroundWidget(primary);
         m_backgroundMap.insert(primary,bwp);
 

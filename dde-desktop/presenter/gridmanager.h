@@ -89,7 +89,9 @@ class GridManager: public QObject, public Singleton<GridManager>
 {
     Q_OBJECT
 public:
-    enum SyncOperation{soAutoMerge,soRename,soIconSize,soSort,soHideEditing,soUpdate,soAutoMergeUpdate};
+    enum SyncOperation{soAutoMerge,soRename,soIconSize,soSort
+                       ,soHideEditing,soUpdate,soAutoMergeUpdate
+                      };
     DUrl getInitRootUrl();
     void initGridItemsInfos();
     void initProfile(const QList<DAbstractFileInfoPointer> &items);
@@ -155,7 +157,7 @@ public:
     void dump();
 signals:
     void sigSyncOperation(int so,QVariant var = QVariant());
-    void sigAutoMergeUpdateExpandDate(QString screenName, DUrl url);
+    void sigSyncSelection(class CanvasGridView *, DUrlList url);
 protected:
     //bool remove(int screenNum, int x, int y, const QString &itemId);
     bool remove(int screenNum, QPoint pos, const QString &itemId);

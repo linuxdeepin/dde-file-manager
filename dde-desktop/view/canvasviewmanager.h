@@ -21,6 +21,7 @@ private slots:
     void onBackgroundEnableChanged();
     void onScreenGeometryChanged(ScreenPointer);
     void onSyncOperation(int so, QVariant var);
+    void onSyncSelection(CanvasGridView *v, DUrlList selected);
 private:
     void init();
     void arrageEditDeal(const QString &);

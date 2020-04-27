@@ -307,7 +307,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         return newIndex;
     }
 
-    qDebug() << selectedUrls();
+    //qDebug() << selectedUrls();
     return current;
 }
 
@@ -976,15 +976,15 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 
     if (event->source()) {
         //drag进入后，源是view的话设置this view的选择为drag数据，用于处理多个view之间的drag
-        CanvasGridView *sourceView = dynamic_cast<CanvasGridView *>(event->source());
-        if(sourceView){
-            QList<DUrl> urls;
-            if (event->mimeData()){
-                for (const QUrl &qurl : event->mimeData()->urls())
-                    urls << qurl;
-            }
-            this->select(urls);
-        }
+//        CanvasGridView *sourceView = dynamic_cast<CanvasGridView *>(event->source());
+//        if(sourceView){
+//            QList<DUrl> urls;
+//            if (event->mimeData()){
+//                for (const QUrl &qurl : event->mimeData()->urls())
+//                    urls << qurl;
+//            }
+//            this->select(urls);
+//        }
 
         if (!GridManager::instance()->shouldArrange()) {
             d->startDodge = true;
@@ -1098,9 +1098,6 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
 void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     CanvasGridView::m_flag.store(false, std::memory_order_release);
-    //drag离开后，设置this view的选择为空，用于处理多个view之间的drag
-    select({});
-
     d->dodgeDelayTimer.stop();
     d->startDodge = false;
     d->dragTargetGrid = QPoint(-1, -1);
@@ -1182,22 +1179,25 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
                 //同屏移动
                 if (sourceView == this){
-
-                    //移除其他屏的同名文件,用于修复drag在多屏之间拖动触发动画后的bug
+                    //判断drag是不是去过别的屏并触发了让位动画
                     QPair<int,QPoint> orgpos;
-                    for(QUrl durl : selectLocalFiles){
-                        if (GridManager::instance()->find(durl.toString(),orgpos)
-                                && orgpos.first != screenNum()){
-                            qWarning() << "remove" << durl.toString() << "from" << orgpos
-                                       << "current screen" << screenNum();
-                            GridManager::instance()->remove(orgpos.first,durl.toString());
-                        }
-                    }
+                    if (!selectLocalFiles.isEmpty()
+                            && GridManager::instance()->find(*selectLocalFiles.begin(),orgpos)
+                            && orgpos.first != m_screenNum){ //drag从A屏移到B屏，触发动画后又移会A屏的
 
-                    //获取焦点
-                    QString current = currentCursorFile().toString();
-                    qDebug() << "move " << m_screenNum << "focus" << current << "count" << selectLocalFiles.size();
-                    GridManager::instance()->move(m_screenNum, selectLocalFiles.toList(), current, row, col);
+                        //获取源屏幕的焦点
+                        QString current = currentCursorFile().toString();
+                        qDebug() << "move from" << orgpos.first << "back to" << m_screenNum
+                                 << "focus" << current << selectLocalFiles.size();
+                        GridManager::instance()->move(orgpos.first,m_screenNum, selectLocalFiles.toList(), current, row, col);
+
+                    }
+                    else{
+                        //获取焦点
+                        QString current = currentCursorFile().toString();
+                        qDebug() << "move " << m_screenNum << "focus" << current << "count" << selectLocalFiles.size();
+                        GridManager::instance()->move(m_screenNum, selectLocalFiles.toList(), current, row, col);
+                    }
                 }
                 else {  //夸屏移动
                     //获取源屏幕的焦点
@@ -1205,9 +1205,6 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                     qDebug() << "move form" << sourceView->screenNum() << "to" << m_screenNum
                              << "focus" << current << selectLocalFiles.size();
                     GridManager::instance()->move(sourceView->screenNum(),m_screenNum, selectLocalFiles.toList(), current, row, col);
-
-                    //清除源view的选中状态
-                    sourceView->select({});
                 }
 
                 setState(NoState);
@@ -1987,10 +1984,14 @@ void CanvasGridView::select(const QList<DUrl> &list)
         if (!selection.contains(index)) {
             selection.push_back(selectionRange);
         }
-        auto selectModel = static_cast<DFileSelectionModel *>(selectionModel());
-        selectModel->select(selection, QItemSelectionModel::Select);
         lastIndex = index;
     }
+
+    if (!selection.isEmpty()){
+        auto selectModel = static_cast<DFileSelectionModel *>(selectionModel());
+        selectModel->select(selection, QItemSelectionModel::Select);
+    }
+
     if (lastIndex.isValid()) {
         selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
     }
@@ -2350,7 +2351,11 @@ void CanvasGridView::initConnection()
         if (index.isValid() && deselected.contains(index)) {
             setProperty("lastPressedIndex", QModelIndex());
         }
+
+        //同步选择状态
+        emit GridManager::instance()->sigSyncSelection(this,selectedUrls());
     });
+
     connect(&d->dodgeDelayTimer, &QTimer::timeout,
     this, [ = ]() {
 //        qDebug() << "start animation";

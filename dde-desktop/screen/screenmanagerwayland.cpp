@@ -26,6 +26,9 @@ ScreenManagerWayland::~ScreenManagerWayland()
 ScreenPointer ScreenManagerWayland::primaryScreen()
 {
     QString primaryName = m_display->primary();
+    if (primaryName.isEmpty())
+        qCritical() << "get primary name failed";
+
     ScreenPointer ret;
     for ( ScreenPointer sp : m_screens.values()) {
         if (sp->name() == primaryName){
@@ -49,12 +52,23 @@ QVector<ScreenPointer> ScreenManagerWayland::screens() const
 QVector<ScreenPointer> ScreenManagerWayland::logicScreens() const
 {
     QVector<ScreenPointer> order;
-    QString primaryName = m_display->primary();;
+    QString primaryName = m_display->primary();
+    if (primaryName.isEmpty())
+        qCritical() << "get primary name failed";
 
     //调整主屏幕到第一
     for (const QDBusObjectPath &path : m_display->monitors()){
+        if (path.path().isEmpty()){
+            qWarning() << "monitor: QDBusObjectPath is empty";
+            continue;
+        }
+
         if (m_screens.contains(path.path())){
             ScreenPointer sp = m_screens.value(path.path());
+            if (sp == nullptr){
+                qCritical() << "get scrreen failed path" << path.path();
+                continue;
+            }
             if (sp->name() == primaryName){
                 order.push_front(sp);
             }

@@ -232,6 +232,21 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
     }
 }
 
+void CanvasViewManager::onSyncSelection(CanvasGridView *v, DUrlList selected)
+{
+    disconnect(GridManager::instance(), &GridManager::sigSyncSelection,
+            this,&CanvasViewManager::onSyncSelection);
+    //qDebug() << "sync selection" << v->canvansScreenName() << selected.size();
+    for (CanvasViewPointer view : m_canvasMap.values()) {
+        if (view == v)
+            continue;
+        view->select(selected);
+        view->update();
+    }
+    connect(GridManager::instance(), &GridManager::sigSyncSelection,
+            this,&CanvasViewManager::onSyncSelection,Qt::DirectConnection);
+}
+
 void CanvasViewManager::arrageEditDeal(const QString &file)
 {
     QPair<int, QPoint> orgPos;
@@ -276,6 +291,10 @@ void CanvasViewManager::init()
     //grid改变
     connect(GridManager::instance(), &GridManager::sigSyncOperation,
             this, &CanvasViewManager::onSyncOperation,Qt::QueuedConnection);
+
+    //同步选中状态
+    connect(GridManager::instance(), &GridManager::sigSyncSelection,
+            this,&CanvasViewManager::onSyncSelection,Qt::DirectConnection);
 
     onCanvasViewBuild(ScreenMrg->displayMode());
 }

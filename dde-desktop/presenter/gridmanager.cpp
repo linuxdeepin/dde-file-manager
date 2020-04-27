@@ -1949,13 +1949,12 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
     }
     for (int i = 0; i < selecteds.length(); ++i) {
         QPoint point{ destPosList.value(i) };
-        add(screenNum, point, selecteds.value(i));
+        bool ret = add(screenNum, point, selecteds.value(i));
+//        if (!ret){
+//            auto fPos = forwardFindEmpty(screenNum,point);
+//            add(fPos.first, fPos.second, selecteds.value(i));
+//        }
     }
-
-    //多屏下的重新排列需要重新考虑一下设计
-//    if (shouldArrange()) {
-//        reArrange(screenNum);
-//    }
 
     return true;
 }
