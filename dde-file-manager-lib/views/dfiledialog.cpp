@@ -952,12 +952,17 @@ bool DFileDialog::fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstra
 
     if (event->type() == DFMEvent::OpenFile) {
         onAcceptButtonClicked();
-
+        return true;
+    }
+    //当打开多文件时要吞噬按键消息（解决字体安装器，选择多个文件的时候，文件管理器的对话框未关闭）
+    if (event->type() == DFMEvent::OpenFiles) {
+        onAcceptButtonClicked();
         return true;
     }
 
     switch (event->type()) {
     case DFMEvent::OpenFile:
+    case DFMEvent::OpenFiles:
     case DFMEvent::OpenFileByApp:
     case DFMEvent::CompressFiles:
     case DFMEvent::DecompressFile:
