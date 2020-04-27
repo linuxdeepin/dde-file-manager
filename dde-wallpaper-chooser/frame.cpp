@@ -100,10 +100,34 @@ Frame::Frame(Mode mode, QWidget *parent)
     initUI();
     initSize();
 
-    connect(Display::instance()->primaryScreen(), &QScreen::virtualGeometryChanged, this, [=]{
-        disconnect(Display::instance()->primaryScreen());
-        QTimer::singleShot(100, this , &Frame::hide);
-    });
+    DesktopInfo desktoInfo;
+    if (desktoInfo.waylandDectected()) {
+        connect(Display::instance(), &Display::primaryScreenChanged, this, [=]{
+            if(!isHidden()) close();
+        });
+        connect(Display::instance(), &Display::primaryChanged, this, [=]{
+            if(!isHidden()) close();
+        });
+        connect(Display::instance(), &Display::sigDisplayModeChanged, this, [=]{
+            if(!isHidden()) close();
+        });
+        connect(Display::instance(), &Display::sigMonitorsChanged, this, [=]{
+            if(!isHidden()) close();
+        });
+    } else {
+        connect(qGuiApp, &QGuiApplication::screenAdded, this, [=]{
+            if(!isHidden()) close();
+        });
+        connect(qGuiApp, &QGuiApplication::screenRemoved, this, [=]{
+            if(!isHidden()) close();
+        });
+        connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, [=]{
+            if(!isHidden()) close();
+        });
+        connect(qGuiApp->primaryScreen(), &QScreen::availableGeometryChanged, this, [=]{
+            if(!isHidden()) close();
+        });
+    }
     connect(m_mouseArea, &DRegionMonitor::buttonPress, [this](const QPoint & p, const int button) {
         if (button == 4) {
             m_wallpaperList->prevPage();
