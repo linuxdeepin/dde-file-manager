@@ -355,6 +355,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     if (menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
         QAction *stageAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning));
 
+        QMap<QString, DUrl> diskUrlsMap;
         QStringList odrv;
         DDiskManager diskm;
         for (auto &blks : diskm.blockDevices()) {
@@ -364,13 +365,17 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 if ((currentUrl.scheme() == BURN_SCHEME && QString(blk->device()) == currentUrl.burnDestDevice()) || odrv.contains(drv->path())) {
                     continue;
                 }
+                DUrl rootUrl(DFMROOT_ROOT + QString(blk->device()).mid(QString("/dev/").length()) + ".localdisk");
                 odrv.push_back(drv->path());
+                diskUrlsMap[drv->path()] = rootUrl;
             }
         }
 
         if (odrv.empty()) {
             stageAction->setEnabled(false);
         } else if (odrv.size() == 1) {
+            QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(odrv.front()));
+            QString devID = dev->id();
             stageAction->setProperty("dest_drive", odrv.front());
             stageAction->setProperty("urlList", DUrl::toStringList(urlList));
             connect(stageAction, &QAction::triggered, appController, &AppController::actionStageFileForBurning, Qt::UniqueConnection);
@@ -384,7 +389,18 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             if (stageMenu) {
                 for (auto &devs : odrv) {
                     QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
-                    QAction *action = new QAction(dev->id(), stageMenu);
+                    //右键菜单 发送文件到光驱 选项需要展示光驱目录的displayName
+                    DAbstractFileInfoPointer fi;
+                    QString devName(dev->id());
+                    if (diskUrlsMap.contains(devs)) {
+                        fi = fileService->createFileInfo(nullptr, diskUrlsMap[devs]);
+                        if (fi) {
+                            if (!fi->fileDisplayName().isEmpty()) {
+                                devName = fi->fileDisplayName();
+                            }
+                        }
+                    }
+                    QAction *action = new QAction(devName, stageMenu);
                     action->setProperty("dest_drive", devs);
                     action->setProperty("urlList", DUrl::toStringList(urlList));
                     stageMenu->addAction(action);
