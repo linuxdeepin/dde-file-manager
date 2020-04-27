@@ -111,23 +111,33 @@ void WindowManager::loadWindowState(DFileManagerWindow *window)
 
     int width = state.value("width").toInt();
     int height = state.value("height").toInt();
-    int windowState = state.value("state").toInt();
-    window->resize(width, height);
-    window->setWindowState(static_cast<Qt::WindowState>(windowState));
+    NetWmStates windowState = static_cast<NetWmStates>(state.value("state").toInt());
+    if ((m_windows.size() == 0) && ((windowState & (NetWmStateMaximizedHorz | NetWmStateMaximizedVert)) != 0))
+    {
+            window->showMaximized();
+    }
+    else {
+        window->resize(width, height);
+    }
 }
 
 
 void WindowManager::saveWindowState(DFileManagerWindow *window)
 {
     /// The power by dxcb platform plugin
-    NetWmStates states = (NetWmStates)window->window()->windowHandle()->property("_d_netWmStates").toInt();
-
+    NetWmStates states = static_cast<NetWmStates>(window->window()->windowHandle()->property("_d_netWmStates").toInt());
+    QVariantMap state;
     if ((states & (NetWmStateMaximizedHorz | NetWmStateMaximizedVert)) == 0) {
-        QVariantMap state;
         state["width"] = window->size().width();
         state["height"] = window->size().height();
-        DFMApplication::appObtuselySetting()->setValue("WindowManager", "WindowState", state);
     }
+    else {
+        const QVariantMap &state1 = DFMApplication::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
+        state["width"] = state1.value("width").toInt();
+        state["height"] = state1.value("height").toInt();
+        state["state"] = static_cast<int>(states);
+    }
+    DFMApplication::appObtuselySetting()->setValue("WindowManager", "WindowState", state);
 }
 
 DUrl WindowManager::getUrlByWindowId(quint64 windowId)
