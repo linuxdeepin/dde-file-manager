@@ -57,10 +57,13 @@
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
+#define SessionManagerService "com.deepin.SessionManager"
+#define SessionManagerPath "/com/deepin/SessionManager"
 
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 DCORE_USE_NAMESPACE
+using namespace com::deepin;
 
 static bool previewBackground()
 {
@@ -81,6 +84,7 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
                                                               AppearancePath,
                                                               QDBusConnection::sessionBus(),
                                                               this))
+    , m_sessionManagerInter(new SessionManager(SessionManagerService, SessionManagerPath, QDBusConnection::sessionBus(), this))
     , m_dbusWmInter (new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
     , m_mouseArea(new DRegionMonitor(this))
 {
@@ -138,6 +142,9 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
             this, &Frame::handleNeedCloseButton);
     connect(m_wallpaperList, &WallpaperList::itemPressed,
             this, &Frame::onItemPressed);
+    connect(m_sessionManagerInter, &SessionManager::LockedChanged, this, [this](bool locked){
+        this->setVisible(!locked);
+    });
 
     QTimer::singleShot(0, this, &Frame::initListView);
 }
@@ -466,7 +473,7 @@ void Frame::adjustModeSwitcherPoint()
     // 防止在低分辨率情况下切换控件和左边的工具栏重叠
     int x = width() / 2 - m_switchModeControl->width() / 2;
     if (x < tools_width) {
-        x = tools_width ;
+        x = width() - m_switchModeControl->width() - 5;
     }
 
     m_switchModeControl->move(x, (m_wallpaperList->y() - m_switchModeControl->height()) / 2);

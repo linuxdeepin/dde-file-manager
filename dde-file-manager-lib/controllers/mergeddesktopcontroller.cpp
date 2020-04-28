@@ -271,6 +271,11 @@ bool MergedDesktopController::openFile(const QSharedPointer<DFMOpenFileEvent> &e
     return DFileService::instance()->openFile(event->sender(), convertToRealPath(event->url()));
 }
 
+bool MergedDesktopController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
+{
+    return DFileService::instance()->openFiles(event->sender(), convertToRealPaths(event->urlList()));
+}
+
 bool MergedDesktopController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
     return DFileService::instance()->openFileByApp(event->sender(), event->appName(), convertToRealPath(event->url()));

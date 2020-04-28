@@ -1733,6 +1733,18 @@ void CanvasGridView::openUrl(const DUrl &url)
     DFileService::instance()->openFile(this, url);
 }
 
+void CanvasGridView::openUrls(const QList<DUrl> &urls)
+{
+    if(urls.isEmpty())
+        return;
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, urls.at(0));
+    if (!info || info->isVirtualEntry()) {
+        return;
+    }
+
+    DFileService::instance()->openFiles(this, urls);
+}
+
 bool CanvasGridView::setCurrentUrl(const DUrl &url)
 {
     DUrl fileUrl = url;
@@ -3098,16 +3110,31 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 
     d->fileViewHelper->handleMenu(menu);
 
-    //todo 处理缩放
     if (DesktopInfo().waylandDectected()) {
 
         QPoint t_tmpPoint = QCursor::pos();
-        if (t_tmpPoint.x() + menu->sizeHint().width() > width())
-            t_tmpPoint.setX(t_tmpPoint.x() - menu->sizeHint().width());
+        QRect t_tmpRect;
+        if(parentWidget())
+            t_tmpRect = parentWidget()->geometry();
+        else
+            t_tmpRect = Display::instance()->primaryRect();
 
-        if (t_tmpPoint.y() + menu->sizeHint().height() > height())
-            t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
-        menu->exec(t_tmpPoint);
+        if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > t_tmpRect.right())
+            t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
+
+        if (t_tmpPoint.y() + int(menu->sizeHint().height()/devicePixelRatioF()) > t_tmpRect.bottom())
+            t_tmpPoint.setY(t_tmpPoint.y() - int(menu->sizeHint().height()/devicePixelRatioF()));
+//        menu->exec(t_tmpPoint);
+        QEventLoop eventLoop;
+        d->menuLoop = &eventLoop;
+        connect(menu, &QMenu::aboutToHide, this, [=]{
+            if(d->menuLoop)
+                d->menuLoop->exit();
+        });
+        menu->popup(t_tmpPoint);
+        menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
+        eventLoop.exec();
+        d->menuLoop = nullptr;
         menu->deleteLater();
         return;
     }
@@ -3208,10 +3235,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
         switch (action->data().toInt()) {
         case MenuAction::Open: {
-            // TODO: Workaround todo 修改为openfiles
-            for (auto &url : list) {
-                openUrl(url);
-            }
+//            for (auto &url : list) {
+//                openUrl(url);
+//            }
+            openUrls(list);
         }
         break;
         case FileManagerProperty: {
@@ -3237,16 +3264,31 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
     d->fileViewHelper->handleMenu(menu);
 
-    //todo 处理缩放
     if (DesktopInfo().waylandDectected()) {
 
         QPoint t_tmpPoint = QCursor::pos();
-        if (t_tmpPoint.x() + menu->sizeHint().width() > width())
-            t_tmpPoint.setX(t_tmpPoint.x() - menu->sizeHint().width());
+        QRect t_tmpRect;
+        if(parentWidget())
+            t_tmpRect = parentWidget()->geometry();
+        else
+            t_tmpRect = Display::instance()->primaryRect();
 
-        if (t_tmpPoint.y() + menu->sizeHint().height() > height())
-            t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
-        menu->exec(t_tmpPoint);
+        if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > t_tmpRect.right())
+            t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
+
+        if (t_tmpPoint.y() + int(menu->sizeHint().height()/devicePixelRatioF()) > t_tmpRect.bottom())
+            t_tmpPoint.setY(t_tmpPoint.y() - int(menu->sizeHint().height()/devicePixelRatioF()));
+//        menu->exec(t_tmpPoint);
+        QEventLoop eventLoop;
+        d->menuLoop = &eventLoop;
+        connect(menu, &QMenu::aboutToHide, this, [=]{
+            if(d->menuLoop)
+                d->menuLoop->exit();
+        });
+        menu->popup(t_tmpPoint);
+        menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
+        eventLoop.exec();
+        d->menuLoop = nullptr;
         menu->deleteLater();
         return;
     }

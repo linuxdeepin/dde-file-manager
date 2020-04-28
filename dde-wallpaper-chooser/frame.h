@@ -28,6 +28,7 @@
 #include "view/backgroundmanager.h"
 #include <DBlurEffectWidget>
 #include <dregionmonitor.h>
+#include <com_deepin_sessionmanager.h>
 
 DWIDGET_BEGIN_NAMESPACE
 class DIconButton;
@@ -115,6 +116,7 @@ private:
 
     WMInter *m_dbusWmInter = nullptr;
     ComDeepinDaemonAppearanceInterface * m_dbusAppearance = nullptr;
+    com::deepin::SessionManager *m_sessionManagerInter = nullptr;
 #ifndef DISABLE_SCREENSAVER
     ComDeepinScreenSaverInterface *m_dbusScreenSaver = nullptr;
 #endif
