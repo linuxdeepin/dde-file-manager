@@ -334,6 +334,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
 
     //fix: 动态获取刻录选中文件的字节大小
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
+    DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 
     if (number > 1) {
         DUrl fileUrl;
@@ -392,6 +393,8 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                         m_folderCount = 1;
                         m_label->setText(m_selectOnlyOneFolder.arg(number).arg(m_counted.arg(0)));
                         m_fileStatisticsJob->start(event.fileUrlList());
+
+
                     } else /*if (fileInfo->isFile())*/ {
                         m_fileCount = 1;
                         m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
@@ -405,6 +408,9 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
             }
         }
     }
+
+    //fix: 动态获取刻录选中文件夹的个数
+    DFMOpticalMediaWidget::g_selectBurnDirFileCount = m_folderCount;
 }
 
 void DStatusBar::updateStatusMessage()
@@ -485,6 +491,7 @@ void DStatusBar::itemCounted(const DFMEvent &event, int number)
 
     //fix: 动态获取刻录选中文件的字节大小
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
+    DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 }
 
 void DStatusBar::setLoadingIncatorVisible(bool visible, const QString &tipText)
