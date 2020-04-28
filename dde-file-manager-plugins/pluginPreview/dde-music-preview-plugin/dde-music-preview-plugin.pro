@@ -32,21 +32,10 @@ PLUGIN_INSTALL_DIR = $$PLUGINDIR/previews
 
 DESTDIR = $$top_srcdir/plugins/previews
 
-#TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
-#    $$PWD/translations/$${TARGET}_zh_CN.ts
-
-#CONFIG(release, debug|release) {
-#    !system($$PWD/generate_translations.sh): error("Failed to generate translation")
-#    !system($$PWD/update_translations.sh): error("Failed to generate translation")
-#}
-
-#unix {
-#    target.path = $$PLUGIN_INSTALL_DIR
-
-#    translations.path = $${PREFIX}/share/dde-file-manager/translations
-#    translations.files = $$PWD/translations/*.qm
-#    INSTALLS += target translations
-#}
+unix {
+    target.path = $$PLUGIN_INSTALL_DIR
+    INSTALLS += target
+}
 
 RESOURCES += \
     dde-music-preview-plugin.qrc
