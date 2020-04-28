@@ -571,11 +571,15 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     d->beforeMoveSelection = selectionModel()->selection();
 
     bool isselected = isSelected(index);
-    QAbstractItemView::mousePressEvent(event);
+//    QAbstractItemView::mousePressEvent(event);
 
+    //fix 修改ctrl+左键取消选中状态导致所有选中文件被取消选中的问题。
     if (leftButtonPressed && isselected && event->modifiers() == Qt::ControlModifier) {
         setProperty("lastPressedIndex", index);
-        selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Select);
+        selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Deselect);
+    }
+    else {
+        QAbstractItemView::mousePressEvent(event);
     }
 
     if (leftButtonPressed) {
@@ -603,8 +607,9 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
 
     QModelIndex index = property("lastPressedIndex").toModelIndex();
     if (index.isValid() && DFMGlobal::keyCtrlIsPressed() && index == indexAt(event->pos()) && isSelected(index)) {
-        selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Deselect);
-        setProperty("lastPressedIndex", QModelIndex());
+        //fix 修改ctrl+左键取消选中状态导致所有选中文件被取消选中的问题。
+//        selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Deselect);
+        setProperty("lastPressedIndex", index);
     }
 
     update();
