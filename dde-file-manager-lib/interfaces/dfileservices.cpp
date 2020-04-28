@@ -37,6 +37,7 @@
 #include "app/define.h"
 #include "controllers/jobcontroller.h"
 #include "controllers/appcontroller.h"
+#include "controllers/mergeddesktopcontroller.h"
 #include "views/windowmanager.h"
 #include "dfileinfo.h"
 #include "models/trashfileinfo.h"
@@ -533,12 +534,12 @@ void DFileService::clearFileUrlHandler(const QString &scheme, const QString &hos
 
 bool DFileService::openFile(const QObject *sender, const DUrl &url) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileEvent>(sender, url)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileEvent>(sender, MergedDesktopController::convertToRealPath(url))).toBool();
 }
 
 bool DFileService::openFiles(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFilesEvent>(sender, list)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFilesEvent>(sender, MergedDesktopController::convertToRealPaths(list))).toBool();
 }
 
 bool DFileService::openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const
@@ -987,4 +988,3 @@ bool DFileService::checkMultiSelectionFilesCache()
 
     return true;
 }
-
