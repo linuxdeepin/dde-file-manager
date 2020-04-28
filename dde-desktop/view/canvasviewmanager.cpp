@@ -227,6 +227,12 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
         }
         break;
     }
+    case GridManager::soHidenSwitch:{
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->updateHiddenItems();
+        }
+        break;
+    }
     default:
         break;
     }

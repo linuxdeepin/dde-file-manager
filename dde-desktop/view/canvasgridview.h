@@ -128,10 +128,10 @@ public:
     void updateEntryExpandedState(const DUrl &url);
     void setGeometry(const QRect &rect);
     void delayModelRefresh(int ms = 50);
-    void delayArrage(int ms = 50);
     DUrl currentCursorFile() const;
     inline int screenNum() const {return m_screenNum;}
     void syncIconLevel(int level);
+    void updateHiddenItems();
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
@@ -145,11 +145,9 @@ signals:
 
 public slots:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) Q_DECL_OVERRIDE;
-
     void setDodgeDuration(double dragMoveTime);
-
-    void delayAutoMerge();
-
+protected slots:
+    void onRefreshFinished();
 // Debug interface
 public Q_SLOTS:
     Q_SCRIPTABLE void EnableUIDebug(bool enable);
@@ -157,7 +155,10 @@ public Q_SLOTS:
     Q_SCRIPTABLE QString Dump();
     Q_SCRIPTABLE QString DumpPos(qint32 x, qint32 y);
     Q_SCRIPTABLE void Refresh(); // 刷新桌面图标
-
+protected:
+    void delayAutoMerge(int ms = 50);
+    void delayArrage(int ms = 50);
+    void delayCustom(int ms = 50);
 private:
     Q_DISABLE_COPY(CanvasGridView)
 
@@ -165,7 +166,6 @@ private:
 
     void initUI();
     void initConnection();
-    void updateGeometry(const QRect &geometry);
     void updateCanvas();
 
     void setIconByLevel(int level);
@@ -190,8 +190,6 @@ private:
     void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
     bool isIndexEmpty();
     QModelIndex moveCursorGrid(CursorAction cursorAction, Qt::KeyboardModifiers modifiers);
-
-    void updateHiddenItems();
 
     void setGeometry(int, int, int, int) = delete;
 

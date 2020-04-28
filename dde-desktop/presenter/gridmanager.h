@@ -91,13 +91,13 @@ class GridManager: public QObject, public Singleton<GridManager>
 public:
     enum SyncOperation{soAutoMerge,soRename,soIconSize,soSort
                        ,soHideEditing,soUpdate,soAutoMergeUpdate
-                      };
+                       ,soHidenSwitch};
     DUrl getInitRootUrl();
     void initGridItemsInfos();
     void initProfile(const QList<DAbstractFileInfoPointer> &items);
-    void initWithoutProfile(const QList<DAbstractFileInfoPointer> &items);
     void initAutoMerge(const QList<DAbstractFileInfoPointer> &items);
     void initArrage(const QStringList &items);
+    void initCustom(const QStringList &items);
 
     bool add(int screenNum, QPoint pos, const QString &itemId);
     bool add(int screenNum, const QString &itemId);

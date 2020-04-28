@@ -16,6 +16,7 @@
 #include <QTimer>
 
 #include <dfilesystemmodel.h>
+#include <dfmapplication.h>
 #include "apppresenter.h"
 #include "dfileservices.h"
 #include "../config/config.h"
@@ -1053,24 +1054,8 @@ public:
         createProfileTime++;
     }
 
-    void loadProfile(const QList<DAbstractFileInfoPointer> &fileInfoList)
+    void loadProfile(QMap<QString, int> existItems)
     {
-        //加载配置文件位置信息，此加载应当加载所有，通过add来将不同屏幕图标信息加载到m_gridItems和m_itemGrids
-        QMap<QString, int> existItems;//实际存在的文件
-        for (const DAbstractFileInfoPointer &info : fileInfoList) {
-            existItems.insert(info->fileUrl().toString(), 0);
-        }
-
-        //获取对应屏幕分组信息
-//        auto settings = Config::instance()->settings();
-//        settings->beginGroup(Config::keyProfile);
-//        QStringList screenNumbers = settings->allKeys();
-//        QMap<int, QString> screenNumProfiles;
-//        for(auto &key : screenNumbers){
-//            screenNumProfiles.insert(key.toInt(), settings->value(key).toString());
-//        }
-//        settings->endGroup();
-
         QMap<int, QString> screenNumProfiles;
         if(m_bSingleMode){
             screenNumProfiles.insert(1, QString("SingleScreen"));
@@ -1120,20 +1105,6 @@ public:
             QPair<int, QPoint> empty_pos{ takeEmptyPos() };
             add(empty_pos.first,empty_pos.second, item);
         }
-    }
-
-    void loadWithoutProfile(const QList<DAbstractFileInfoPointer> &fileInfoList)
-    {
-        QMap<QString, int> existItems;
-        //无profile文件加载时按照屏幕顺序进行方式
-        for (const DAbstractFileInfoPointer &info : fileInfoList) {
-            QPair<int, QPoint> empty_pos{ takeEmptyPos() };
-            add(empty_pos.first, empty_pos.second, info->fileUrl().toString());
-        }
-//to deletes
-//        if (autoArrange || autoMerge) {
-//            arrange();
-//        }
     }
 
     void syncAllProfile()
@@ -1712,7 +1683,8 @@ public:
 
 GridManager::GridManager(): d(new GridManagerPrivate)
 {
-
+    bool showHidden = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool();
+    setWhetherShowHiddenFiles(showHidden);
 }
 
 GridManager::~GridManager()
@@ -1752,6 +1724,13 @@ void GridManager::initGridItemsInfos()
     DUrl fileUrl = getInitRootUrl();
     QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
 
+    //设置是否显示隐藏文件
+    auto filters = tempModel->filters();
+    filters = GridManager::instance()->getWhetherShowHiddenFiles() ?
+                filters | QDir::Hidden : filters & ~QDir::Hidden;
+    tempModel->setFilters(filters);
+    qDebug() << "desktop init filters " << filters;
+
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl, QStringList(), tempModel->filters());
     d->clear();
 
@@ -1765,6 +1744,7 @@ void GridManager::initGridItemsInfos()
         QPoint sort(sortRole,sortOrder);
         emit sigSyncOperation(soSort, sort);
     }
+
     if(!d->m_doneInit){
         d->m_doneInit = true;
         //todo：考虑用此变量做刷新时的自动整理优化的，不太理想，后续优化看能否有更好的方式
@@ -1805,15 +1785,15 @@ void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
 {
     //初始化Profile,用实际地址的文件去匹配图标位置（自动整理则图标顺延展开，自定义则按照配置文件对应顺序）
     d->createProfile();
-    d->loadProfile(items);
-    delaySyncAllProfile();
-}
 
-// init WITHOUT grid item position data from the config file.
-void GridManager::initWithoutProfile(const QList<DAbstractFileInfoPointer> &items)
-{
-    d->createProfile(); // nothing with profile.
-    d->loadWithoutProfile(items);
+    //加载配置文件位置信息，此加载应当加载所有，通过add来将不同屏幕图标信息加载到m_gridItems和m_itemGrids
+    QMap<QString, int> existItems;//实际存在的文件
+    for (const DAbstractFileInfoPointer &info : items) {
+        existItems.insert(info->fileUrl().toString(), 0);
+    }
+
+    d->loadProfile(existItems);
+    delaySyncAllProfile();
 }
 
 void GridManager::initAutoMerge(const QList<DAbstractFileInfoPointer> &items)
@@ -1835,27 +1815,19 @@ void GridManager::initArrage(const QStringList &items)
     emit sigSyncOperation(soUpdate);
 }
 
+void GridManager::initCustom(const QStringList &items)
+{
+    clear();
+    QMap<QString, int> existItem;
+    for(const QString &item : items){
+        existItem.insert(item, 0);
+    }
+    d->loadProfile(existItem);
+    delaySyncAllProfile();
+}
+
 bool GridManager::add(int screenNum, const QString &id)
 {
-#ifdef QT_DEBUG
-    qDebug() << "show hidden files: " << d->getWhetherShowHiddenFiles() << id;
-#endif //QT_DEBUG
-    DUrl url(id);
-
-    if (!d->getWhetherShowHiddenFiles()) {
-        const DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-
-        if (info->isHidden()) {
-            return false;
-        }
-    }
-
-    //old
-//    if (d->m_itemGrids.value(screenNum).contains(id)) {
-////        qDebug() << "item exist item" << d->itemGrids.value(id) << id;
-//        return false;
-//    }
-
     for (int screenNum : d->screenCode()) {
         if (d->m_itemGrids.value(screenNum).contains(id)){
             qDebug() << "item exist item" << screenNum << id;
