@@ -527,7 +527,8 @@ void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl
     DMD_TYPES typeInfo = checkUrlArrangedType(dstUrl);
     arrangedFileUrls[typeInfo].append(dstUrl);
 
-    DUrl vOriUrl = convertToDFMMDPath(oriUrl, typeInfo);
+    DMD_TYPES dstUrlTypeInfo = checkUrlArrangedType(oriUrl);
+    DUrl vOriUrl = convertToDFMMDPath(oriUrl, dstUrlTypeInfo);
     DUrl vDstUrl = convertToDFMMDPath(dstUrl, typeInfo);
 
     DUrl parentUrl = getVirtualEntryPath(typeInfo);
@@ -573,14 +574,15 @@ DUrl MergedDesktopController::convertToDFMMDPath(const DUrl &oriUrl, DMD_TYPES o
 {
     DUrl vUrl;
 
-    /*********************************************************************************************/
-    //oriUrl.fileName()自动整理时在获取带有特殊不规范字符的名字时不准确，改为‘/’获取
+
+#if 0
     //    if (oneType == DMD_FOLDER) {
     //        vUrl = DUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER + oriUrl.fileName());
     //    } else {
     //        vUrl = DUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType) + QDir::separator() + oriUrl.fileName());
     //    }
-
+#else
+    //oriUrl.fileName()自动整理时在获取带有特殊不规范字符的名字时不准确，改为‘/’获取
     auto str = oriUrl.toString();
     auto idxPos = str.indexOf("/");
     auto fileNameStartPos = str.length() - idxPos - 1;
@@ -590,7 +592,7 @@ DUrl MergedDesktopController::convertToDFMMDPath(const DUrl &oriUrl, DMD_TYPES o
     } else {
         vUrl = DUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType) + QDir::separator() + fileName);
     }
-    /*********************************************************************************************/
+#endif
 
     return vUrl;
 }
