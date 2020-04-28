@@ -152,7 +152,6 @@ public:
     DUrl getCurrentVirtualExpandUrl();
     void setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList);
 
-
 public:
     void dump();
 signals:

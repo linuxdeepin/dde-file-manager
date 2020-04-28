@@ -398,9 +398,6 @@ void CanvasGridView::delayModelRefresh(int ms)
 
 void CanvasGridView::delayArrage(int ms)
 {
-    if (!GridManager::instance()->autoArrange())
-        return;
-
     static QTimer *arrangeTimer = nullptr;
     if (arrangeTimer != nullptr){
         arrangeTimer->stop();
@@ -431,7 +428,7 @@ void CanvasGridView::delayArrage(int ms)
 
 void CanvasGridView::delayCustom(int ms)
 {
-    if (!GridManager::instance()->shouldArrange()){
+    if (GridManager::instance()->shouldArrange()){
         return;
     }
 
@@ -452,6 +449,8 @@ void CanvasGridView::delayCustom(int ms)
         }
         qDebug() << "initCustom file count" << list.size();
         GridManager::instance()->initCustom(list);
+
+        emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
         return;
     }
 
@@ -466,6 +465,8 @@ void CanvasGridView::delayCustom(int ms)
         }
         qDebug() << "initCustom file count" << list.size();
         GridManager::instance()->initCustom(list);
+
+        emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
     });
     arrangeTimer->start(ms);
 }
@@ -3252,4 +3253,21 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
     menu->exec();
     menu->deleteLater();
+}
+
+void CanvasGridView::startDrag(Qt::DropActions supportedActions)
+{
+    //drag优化，只抓起本屏幕上的图标
+    DUrlList selected = selectedUrls();
+    DUrlList vaildSel;
+    for ( const DUrl &temp : selected){
+        if (GridManager::instance()->contains(m_screenNum, temp.toString())){
+            vaildSel << temp;
+        }
+    }
+    select(vaildSel);
+    //end
+
+    QAbstractItemView::startDrag(supportedActions);
+    return;
 }

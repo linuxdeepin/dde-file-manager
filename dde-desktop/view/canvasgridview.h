@@ -94,6 +94,10 @@ public:
     virtual void rowsInserted(const QModelIndex &index, int first, int last) override;
     virtual void keyboardSearch(const QString &search) override;
 
+#if QT_CONFIG(draganddrop)
+    virtual void startDrag(Qt::DropActions supportedActions) override;
+#endif
+
 
     void fakeDropEvent()noexcept;
 
