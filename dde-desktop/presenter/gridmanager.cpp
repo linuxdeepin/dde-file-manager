@@ -2370,21 +2370,21 @@ void GridManager::updateGridSize(int screenNum, int w, int h)
 
     QStringList items = d->allItems(); //必须在resetGridSize前获取
     d->resetGridSize(screenNum, w, h);
-    if (autoArrange()) {
+
+    if (shouldArrange()) {
         d->clear();
         d->arrange(items);
-        emit sigSyncOperation(soUpdate);
-    }else if(!autoMerge()){
-        DUrl fileUrl = getInitRootUrl();
-        d->clear();
-        //todo 优化，是否可以直接使用 items
-        QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
-        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
-                                                                                         QStringList(), tempModel->filters());
-        initProfile(infoList);
-        emit sigSyncOperation(soUpdate);
-        qDebug() << "GridManager::updateGridSize() is call,screenNum:" << screenNum;
+    }else {
+//        DUrl fileUrl = getInitRootUrl();
+//        d->clear();
+//        //todo 优化，是否可以直接使用 items
+//        QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
+//        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
+//                                                                                         QStringList(), tempModel->filters());
+//        initProfile(infoList);
+        initCustom(items);
     }
+    emit sigSyncOperation(soUpdate);
 }
 
 GridCore *GridManager::core()
