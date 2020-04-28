@@ -195,9 +195,7 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
             }
             //屏蔽掉2个以下文件的分类图标
             if(arrangedFileUrls[oneType].size() < 2){
-                for(auto temp : arrangedFileUrls[oneType]){
-                    appendEntryFiles(infoList, oneType);
-                }
+                appendEntryFiles(infoList, oneType);
                 continue;
             }
             QString entryName = entryNameByEnum(oneType);
@@ -570,11 +568,24 @@ DUrl MergedDesktopController::convertToDFMMDPath(const DUrl &oriUrl, DMD_TYPES o
 {
     DUrl vUrl;
 
+    /*********************************************************************************************/
+    //oriUrl.fileName()自动整理时在获取带有特殊不规范字符的名字时不准确，改为‘/’获取
+    //    if (oneType == DMD_FOLDER) {
+    //        vUrl = DUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER + oriUrl.fileName());
+    //    } else {
+    //        vUrl = DUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType) + QDir::separator() + oriUrl.fileName());
+    //    }
+
+    auto str = oriUrl.toString();
+    auto idxPos = str.indexOf("/");
+    auto fileNameStartPos = str.length() - idxPos - 1;
+    auto fileName = str.right(fileNameStartPos);
     if (oneType == DMD_FOLDER) {
-        vUrl = DUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER + oriUrl.fileName());
+        vUrl = DUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER + fileName);
     } else {
-        vUrl = DUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType) + QDir::separator() + oriUrl.fileName());
+        vUrl = DUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType) + QDir::separator() + fileName);
     }
+    /*********************************************************************************************/
 
     return vUrl;
 }
