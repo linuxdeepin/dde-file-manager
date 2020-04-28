@@ -22,6 +22,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//fix: 设置光盘容量属性
+#include "../views/dfmopticalmediawidget.h"
+
 #include "gvfsmountmanager.h"
 #include "qdrive.h"
 #include "qvolume.h"
@@ -477,6 +480,8 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
     if (qMount.icons().contains("media-optical")) { //CD/DVD
         GvfsMountManager::g_burnVolumeFlag = true;
         GvfsMountManager::g_burnMountFlag = true;
+        //fix: 设置光盘容量属性
+        //DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAddMount);
     }
 
     GVolume *volume = g_mount_get_volume(mount);
@@ -599,6 +604,8 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
     if (qVolume.icons().contains("media-optical")) { //CD/DVD
         GvfsMountManager::g_burnVolumeFlag = true;
         GvfsMountManager::g_burnMountFlag = false;
+        //fix: 设置光盘容量属性
+        DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAdd);
     }
 
     GDrive *drive = g_volume_get_drive(volume);
@@ -653,6 +660,11 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
         QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         QString tempMediaPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + GvfsMountManager::g_qVolumeId;
         QDir(tempMediaPath).removeRecursively();
+
+        //fix: 设置光盘容量属性
+        DFMOpticalMediaWidget::g_totalSize = 0;
+        DFMOpticalMediaWidget::g_usedSize = 0;
+        DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct);
     }
 
     GDrive *drive = g_volume_get_drive(volume);
