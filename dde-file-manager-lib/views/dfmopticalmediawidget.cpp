@@ -30,6 +30,7 @@ quint64 DFMOpticalMediaWidget::g_totalSize = 0;
 quint64 DFMOpticalMediaWidget::g_usedSize = 0;
 //fix: 动态获取刻录选中文件的字节大小
 qint64 DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
+qint64 DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 
 class DFMOpticalMediaWidgetPrivate
 {
@@ -48,6 +49,7 @@ public:
 private:
     //fix: 根据光盘选择文件状态实时更新状态
     qint64 m_selectBurnFilesSize = 0;
+    qint64 m_selectBurnDirCount = 0;
 
     QLabel *lb_mediatype;
     QLabel *lb_available;
@@ -67,6 +69,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
     //fix: 根据光盘选择文件状态实时更新状态
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
+    DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
     d->updateBurnStatusTimer = new QTimer(this);
     d->updateBurnStatusTimer->start(100);
     connect(d->updateBurnStatusTimer, &QTimer::timeout, this, &DFMOpticalMediaWidget::selectBurnFilesOptionUpdate);
@@ -95,7 +98,9 @@ DFMOpticalMediaWidget::~DFMOpticalMediaWidget()
     Q_D(DFMOpticalMediaWidget);
     d->updateBurnStatusTimer->stop();
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
+    DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
     d->m_selectBurnFilesSize = 0;
+    d->m_selectBurnDirCount = 0;
 }
 
 //fix: 设置光盘容量属性
@@ -162,8 +167,9 @@ void DFMOpticalMediaWidget::updateDiscInfo(QString dev)
 void DFMOpticalMediaWidget::selectBurnFilesOptionUpdate()
 {
     Q_D(DFMOpticalMediaWidget);
+    d->m_selectBurnDirCount = DFMOpticalMediaWidget::g_selectBurnDirFileCount;
     d->m_selectBurnFilesSize = DFMOpticalMediaWidget::g_selectBurnFilesSize;
-    if (d->m_selectBurnFilesSize > 0) {
+    if ((d->m_selectBurnFilesSize > 0) || (d->m_selectBurnDirCount > 0)) {
         d->pb_burn->setEnabled(true);
     } else {
         d->pb_burn->setEnabled(false);

@@ -23,6 +23,7 @@ public:
     static quint64 g_usedSize;
     //fix: 动态获取刻录选中文件的字节大小
     static qint64 g_selectBurnFilesSize;
+    static qint64 g_selectBurnDirFileCount;
 
     explicit DFMOpticalMediaWidget(QWidget* parent);
     ~DFMOpticalMediaWidget();
