@@ -1276,8 +1276,15 @@ void FileUtils::umountAVFS()
     QProcess::startDetached("/usr/bin/umountavfs");
 }
 
-bool FileUtils::isDesktopFile(const QString &filePath)
+bool FileUtils::isDesktopFileOptmise(const QString &filePath)
 {
+    QMimeType mt = DMimeDatabase().mimeTypeForFileOptimise(filePath);
+    return mt.name() == "application/x-desktop" &&
+           mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+}
+//优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
+bool FileUtils::isDesktopFile(const QString &filePath)
+{  
     QMimeType mt = DMimeDatabase().mimeTypeForFile(filePath);
     return mt.name() == "application/x-desktop" &&
            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
