@@ -1057,19 +1057,23 @@ public:
     void loadProfile(QMap<QString, int> existItems)
     {
         QMap<int, QString> screenNumProfiles;
-        if(m_bSingleMode){
-            screenNumProfiles.insert(1, QString("SingleScreen"));
-        }else {
-            QList<int> screens = screenCode();
-            foreach(int index, screens){
-                screenNumProfiles.insert(index, QString("Screen_%1").arg(index));
-            }
-        }
 
         //获取个屏幕分组信息对应的图标信息
         QMap<int, QStringList> moreIcon;
         auto settings = Config::instance()->settings();
-        for (auto &screenKey : screenNumProfiles.keys()) {
+
+        if(m_bSingleMode){
+            screenNumProfiles.insert(1, QString("SingleScreen"));
+        }else {
+//            QList<int> screens = screenCode();
+//            foreach(int index, screens){
+//                screenNumProfiles.insert(index, QString("Screen_%1").arg(index));
+//            }
+            readProfiles();
+            screenNumProfiles = positionProfiles;
+        }
+
+        for (int &screenKey : screenNumProfiles.keys()) {
             settings->beginGroup(screenNumProfiles.value(screenKey));
             for (auto &key : settings->allKeys()) {
                 auto coords = key.split("_");
@@ -1078,7 +1082,7 @@ public:
                 QString item = settings->value(key).toString();
                 if (existItems.contains(item)) {
                     QPoint pos{x, y};
-                    if(m_screenFullStatus.value(screenKey) || !isValid(screenKey, pos)){
+                    if(!screenCode().contains(screenKey) || m_screenFullStatus.value(screenKey) || !isValid(screenKey, pos)){
                         if(moreIcon.contains(screenKey)) {
                             moreIcon.find(screenKey)->append(item);
                         }else {
@@ -1112,11 +1116,45 @@ public:
         if(m_bSingleMode){
             syncProfile(1);
         }else {
-            QList<int> screens = screenCode();
-            foreach(int screenNum, screens){
+            foreach(int screenNum, positionProfiles.keys()){
                syncProfile(screenNum);
             }
+
+            updateProfiles();
+
+//            QList<int> screens = screenCode();
+//            foreach(int screenNum, screens){
+//               syncProfile(screenNum);
+//            }
         }
+    }
+
+    void readProfiles()
+    {
+        positionProfiles.clear();
+        auto settings = Config::instance()->settings();
+        settings->beginGroup(Config::keyProfile);
+        for (QString &key : settings->allKeys()) {
+            positionProfiles.insert(key.toInt(), settings->value(key).toString());
+        }
+        settings->endGroup();
+    }
+
+    void updateProfiles()
+    {
+        positionProfiles.clear();
+        QStringList keys;
+        QVariantList values;
+
+        QList<int> screens = screenCode();
+        foreach(int index, screens){
+            positionProfiles.insert(index, QString("Screen_%1").arg(index));
+            keys.append(QString::fromStdString(std::to_string(index)));
+            values.append(QString("Screen_%1").arg(index));
+        }
+
+        emit Presenter::instance()->removeConfig(Config::keyProfile, "");
+        emit Presenter::instance()->setConfigList(Config::keyProfile,keys, values);
     }
 
     inline bool isValid(int screenNum, QPoint pos) const
@@ -1223,7 +1261,7 @@ public:
     QPair<int, QPoint> getEmptyPos(int screenNum)
     {
         QPair<int, QPoint> emptyPosPair;
-        if(screenNum <= 0 || screenNum > screenCode().size()){
+        if(screenNum <= 0){
             return emptyPosPair;
         }
 
@@ -1670,7 +1708,7 @@ public:
     //newer
     QMap<int, bool>                                     m_screenFullStatus;//屏幕图标状态
     QMap<int, QVector<bool>>                            m_cellStatus;//<screenNum, QVector<bool>>
-    //QMap<int,QString>           positionProfiles;
+    QMap<int,QString>           positionProfiles;
     QMap<int,QPair<int, int>>                           screensCoordInfo;//<screenNum,<coordWidth,coordHeight>>
     bool                                                autoArrange;
     bool                                                autoMerge = false;
