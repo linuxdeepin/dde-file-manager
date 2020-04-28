@@ -119,6 +119,7 @@ public:
     static void umountAVFS();
 
     static bool isDesktopFile(const QString& filePath);
+    static bool isDesktopFileOptmise(const QString& filePath);
 };
 
 #endif // FILEUTILS_H

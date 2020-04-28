@@ -37,7 +37,8 @@ public:
     ~DFileInfo();
 
     static bool exists(const DUrl &fileUrl);
-    static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
+    static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
+                              const bool boptimise = false);
 
     bool exists() const Q_DECL_OVERRIDE;
     bool isPrivate() const Q_DECL_OVERRIDE;

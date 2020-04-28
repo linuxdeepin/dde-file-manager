@@ -124,6 +124,21 @@ public:
 
         return DAbstractFileInfoPointer(new DFileInfo(info));
     }
+    //判读ios手机，传输慢，需要特殊处理优化
+    const DAbstractFileInfoPointer optimiseFileInfo() const override
+    {
+        const QFileInfo &info = iterator.fileInfo();
+        DUrl url = DUrl::fromLocalFile(info.absoluteFilePath());
+        url.setOptimise(true);
+        QString abfilepath = info.absoluteFilePath();
+        if(info.isDir())
+            abfilepath += QString("/");
+        if (!info.isSymLink() && FileUtils::isDesktopFileOptmise(abfilepath)) {
+            return DAbstractFileInfoPointer(new DesktopFileInfo(url));
+        }
+
+        return DAbstractFileInfoPointer(new DFileInfo(url));
+    }
 
     DUrl url() const override
     {
@@ -309,6 +324,8 @@ public:
     QString fileName() const Q_DECL_OVERRIDE;
     DUrl fileUrl() const override;
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
+    //判读ios手机，传输慢，需要特殊处理优化
+    const DAbstractFileInfoPointer optimiseFileInfo() const Q_DECL_OVERRIDE;
     DUrl url() const Q_DECL_OVERRIDE;
 
     bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
@@ -334,11 +351,25 @@ bool FileController::findExecutable(const QString &executableName, const QString
 
 const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
-    QString localFile = event->url().toLocalFile();
+    DUrl url = event->url();
+    QString localFile = url.toLocalFile();
     QFileInfo info(localFile);
-    if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
-        return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
+    //处理苹果文件是否优化
+    bool boptimise = url.isOptimise();
+    if (boptimise) {
+        QString abfilepath = info.absoluteFilePath();
+        if(info.isDir())
+            abfilepath += QString("/");
+        if (!info.isSymLink() && FileUtils::isDesktopFileOptmise(abfilepath)) {
+            return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
+        }
     }
+    else {
+        if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
+            return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
+        }
+    }
+
 
     return DAbstractFileInfoPointer(new DFileInfo(event->url()));
 }
@@ -1235,12 +1266,17 @@ bool FileDirIterator::hasNext() const
 
     do {
         const_cast<FileDirIterator *>(this)->iterator->next();
-        info = iterator->fileInfo();
-
-        if (!info->isPrivate() && (showHidden || (!info->isHidden() && !hiddenFiles->contains(info->fileName())))) {
+        if(m_boptimise){
+            info = iterator->optimiseFileInfo();
+        }
+        if (!info) {
+            info = iterator->fileInfo();
+        }
+        //特殊判断苹果.AAEAAE文件是iPhone编辑照片时留下的缓存文件。 它记录了编辑照片时用了什么滤镜,图片裁了多少等等编辑步骤和效果。可以说AAE文件就是一堆操作的记录文件。直接隐藏
+        bool bhide = info->fileName().endsWith(QString(".AAE"));
+        if (!bhide && !info->isPrivate() && (showHidden || (!info->isHidden() && !hiddenFiles->contains(info->fileName())))) {
             break;
         }
-
         info.reset();
     } while (iterator->hasNext());
 
@@ -1267,6 +1303,11 @@ DUrl FileDirIterator::fileUrl() const
 const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
     return iterator->fileInfo();
+}
+//判读ios手机，传输慢，需要特殊处理优化
+const DAbstractFileInfoPointer FileDirIterator::optimiseFileInfo() const
+{
+    return iterator->optimiseFileInfo();
 }
 
 DUrl FileDirIterator::url() const
