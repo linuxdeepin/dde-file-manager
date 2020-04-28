@@ -152,6 +152,18 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP);
         bool bsame = false;
+        //判断是否是苹果手机
+        //判读ios手机，传输他慢，需要特殊处理优化
+        if(gvfsmp->name().startsWith("iPhone")) {
+            url.setOptimise(true);
+        }
+        for (QString str : gvfsmp->themedIconNames()) {
+            if(str.startsWith("phone-apple"))
+            {
+                url.setOptimise(true);
+                break;
+            }
+        }
         foreach(const QString &str,urllist)
         {
             if(str == QString("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP))
@@ -281,6 +293,17 @@ bool DFMRootFileWatcherPrivate::start()
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
+        //判读ios手机，传输他慢，需要特殊处理优化
+        if(mnt->name().startsWith("iPhone")) {
+            url.setOptimise(true);
+        }
+        for (QString str : mnt->themedIconNames()) {
+            if(str.startsWith("phone-apple"))
+            {
+                url.setOptimise(true);
+                break;
+            }
+        }
         Q_EMIT wpar->subfileCreated(url);
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {

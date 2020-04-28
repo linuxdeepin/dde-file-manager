@@ -59,12 +59,14 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
 
 DUrl::DUrl()
     : QUrl()
+    , m_boptimise(false)
 {
 
 }
 
 DUrl::DUrl(const QUrl &copy)
-    : QUrl(copy)
+    : QUrl(copy),
+      m_boptimise(false)
 {
     updateVirtualPath();
 }
@@ -72,7 +74,8 @@ DUrl::DUrl(const QUrl &copy)
 
 DUrl::DUrl(const DUrl &other)
     : QUrl{other},
-      m_virtualPath{other.m_virtualPath}
+      m_virtualPath{other.m_virtualPath},
+      m_boptimise(other.m_boptimise)
 
 {
     //###copy constructor
@@ -81,7 +84,8 @@ DUrl::DUrl(const DUrl &other)
 
 DUrl::DUrl(DUrl &&other)
     : QUrl{ std::move(other) },
-      m_virtualPath{ std::move(other.m_virtualPath) }
+      m_virtualPath{ std::move(other.m_virtualPath) },
+      m_boptimise(other.m_boptimise)
 {
     //###move constructor
 }
@@ -92,6 +96,7 @@ DUrl &DUrl::operator=(const DUrl &other)
 {
     QUrl::operator=(other);
     m_virtualPath = other.m_virtualPath;
+    m_boptimise = other.m_boptimise;
 
     return *this;
 }
@@ -102,7 +107,7 @@ DUrl &DUrl::operator=(DUrl &&other)
 {
     QUrl::operator=(std::move(other));
     m_virtualPath = std::move(other.m_virtualPath);
-
+    m_boptimise = other.m_boptimise;
     return *this;
 }
 
@@ -128,6 +133,7 @@ QDataStream &DUrl::operator>>(QDataStream &in)
 
 DUrl::DUrl(const QString &url, QUrl::ParsingMode mode)
     : QUrl(url, mode)
+    , m_boptimise(false)
 {
     updateVirtualPath();
 }
@@ -235,6 +241,11 @@ bool DUrl::isSFTPFile() const
 bool DUrl::isTaggedFile() const
 {
     return (this->scheme() == QString{TAG_SCHEME});
+}
+
+bool DUrl::isOptimise() const
+{
+    return m_boptimise;
 }
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
@@ -422,6 +433,11 @@ void DUrl::setBookmarkName(const QString &name)
         return;
 
     setFragment(name, DecodedMode);
+}
+
+void DUrl::setOptimise(const bool bOptimise)
+{
+    m_boptimise = bOptimise;
 }
 
 DUrl DUrl::fromLocalFile(const QString &filePath)

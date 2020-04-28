@@ -1015,8 +1015,9 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
 //    rootNodeManager->addFile(info);
 //    if (!_q_processFileEvent_runing) {
     fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
-    qDebug() << "fileEventQueue enqueue finished";
+
     q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+
 //    }
 }
 
@@ -2376,6 +2377,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        if (fileHash.contains(fileInfo->fileUrl())) {
 //            continue;
 //        }
+
         qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
         //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
@@ -2710,7 +2712,6 @@ void DFileSystemModel::onJobAddChildren(const DAbstractFileInfoPointer &fileInfo
 
 //    mutex.unlock();
     Q_D(DFileSystemModel);
-
     d->rootNodeManager->addFile(fileInfo, FileNodeManagerThread::AppendFile);
 }
 
