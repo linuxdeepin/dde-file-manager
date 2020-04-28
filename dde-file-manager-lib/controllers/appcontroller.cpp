@@ -507,6 +507,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         }
         // 断网时mount Samba无效
         if (blk->device().isEmpty()) {
+            dialogManager->showErrorDialog(tr("Mounting device error"), QString());
             qWarning() << "blockDevice is invalid, fileurl is " << fileUrl;
             return;
         }
