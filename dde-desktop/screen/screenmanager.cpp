@@ -112,7 +112,7 @@ ScreenPointer ScreenManager::primaryScreen()
 {
     QScreen *primary = qApp->primaryScreen();
     ScreenPointer ret = m_screens.value(primary);
-    Q_ASSERT(ret.get() != nullptr);
+    //Q_ASSERT(ret.get() != nullptr);
     return ret;
 }
 

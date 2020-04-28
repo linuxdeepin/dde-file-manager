@@ -192,7 +192,7 @@ void BackgroundManager::onBackgroundBuild()
 {
     //屏幕模式判断
     AbstractScreenManager::DisplayMode mode = ScreenMrg->displayMode();
-    qDebug() << "11111111111111111111111screen mode" << mode;
+    qDebug() << "screen mode" << mode << "screen count" << ScreenMrg->screens().size();
 
     //删除不存在的屏
     m_backgroundMap.clear();
@@ -202,7 +202,7 @@ void BackgroundManager::onBackgroundBuild()
             || (ScreenMrg->screens().count() == 1)){   //单屏模式
 
         ScreenPointer primary = ScreenMrg->primaryScreen();
-        if (primary){
+        if (primary == nullptr){
             qCritical() << "get screen failed return";
             return;
         }
