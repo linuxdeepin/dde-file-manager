@@ -104,56 +104,56 @@ void UDiskListener::initDiskManager()
     }
 
 
-    connect(m_diskTimer, &QTimer::timeout, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
-        for (int i = 0; i < m_list.size(); i++) {
-            UDiskDeviceInfoPointer info = m_list.at(i);
-            qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
-            QString t_device = info->getDiskInfo().drive_unix_device();
+//    connect(m_diskTimer, &QTimer::timeout, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
+//        for (int i = 0; i < m_list.size(); i++) {
+//            UDiskDeviceInfoPointer info = m_list.at(i);
+//            qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
+//            QString t_device = info->getDiskInfo().drive_unix_device();
 
-            //监测光驱托盘是否被弹出
-            if (t_device.contains("/dev/sr")) {
+//            //监测光驱托盘是否被弹出
+//            if (t_device.contains("/dev/sr")) {
 
-                int t_cdromfd;
-                /* only try to open read/write if not root, since it doesn't seem
-                 * to make a difference for root and can have negative side-effects
-                 */
-                if (geteuid()) {
-                    t_cdromfd = open(t_device.toLatin1().data(), O_RDWR | O_NONBLOCK);
-                    if (t_cdromfd != -1) {
+//                int t_cdromfd;
+//                /* only try to open read/write if not root, since it doesn't seem
+//                 * to make a difference for root and can have negative side-effects
+//                 */
+//                if (geteuid()) {
+//                    t_cdromfd = open(t_device.toLatin1().data(), O_RDWR | O_NONBLOCK);
+//                    if (t_cdromfd != -1) {
 
-                        t_cdromfd = open(t_device.toLatin1().data(), O_RDONLY | O_NONBLOCK);
-                        if (t_cdromfd == -1) {
-                            qDebug() << "unable to open" << t_device.toLatin1().data();
-                        }
+//                        t_cdromfd = open(t_device.toLatin1().data(), O_RDONLY | O_NONBLOCK);
+//                        if (t_cdromfd == -1) {
+//                            qDebug() << "unable to open" << t_device.toLatin1().data();
+//                        }
 
-                        int t_status;
-                        t_status = ioctl(t_cdromfd, CDROM_DRIVE_STATUS);
-                        qDebug() << "t_cdromfd " << t_status;
-                        if (t_status == CDS_TRAY_OPEN) {
-                            unmount(t_device);
-                            close(t_cdromfd);
-                        }
+//                        int t_status;
+//                        t_status = ioctl(t_cdromfd, CDROM_DRIVE_STATUS);
+//                        qDebug() << "t_cdromfd " << t_status;
+//                        if (t_status == CDS_TRAY_OPEN) {
+//                            unmount(t_device);
+//                            close(t_cdromfd);
+//                        }
 
-                        close(t_cdromfd);
-                    }
-                }
-
-
-//                QStringList t_arglst;
-
-//                t_arglst << "-t";
-//                t_arglst << t_device;
-
-//                QProcess::execute("eject", t_arglst);
-            }
-
-            else {
-                continue;
-            }
+//                        close(t_cdromfd);
+//                    }
+//                }
 
 
-        }
-    });
+////                QStringList t_arglst;
+
+////                t_arglst << "-t";
+////                t_arglst << t_device;
+
+////                QProcess::execute("eject", t_arglst);
+//            }
+
+//            else {
+//                continue;
+//            }
+
+
+//        }
+//    });
 }
 
 void UDiskListener::initConnect()
