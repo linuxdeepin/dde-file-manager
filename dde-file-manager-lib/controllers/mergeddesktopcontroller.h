@@ -42,6 +42,7 @@ public:
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &) const override;
 
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const override;
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
