@@ -42,6 +42,15 @@
 #include <DGuiApplicationHelper>
 #include <DIconButton>
 
+//fix: 设置光盘容量属性
+#include <dfmstandardpaths.h>
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QFile>
+
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 
@@ -191,8 +200,49 @@ void DiskControlItem::showEvent(QShowEvent *e)
         quint64 bytesTotal = freeAndTotal.second;
 
         if (iconName.simplified().toLower() == "media-optical") { // 光驱无法读取容量
-            bytesTotal = 0;
-            m_diskCapacity->setText(tr("Unknown"));
+            //fix: 设置光盘容量属性
+            quint64 burnCapacityTotalSize =  0;
+            quint64 burnCapacityUsedSize =  0;
+            int burnStatus = 0;//光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
+            int burnExt = 0;
+            QFile burnCapacityFile(QString("%1/.config/deepin/dde-file-manager/dde-file-manager.json").arg(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)));
+            if (!burnCapacityFile.open(QIODevice::ReadOnly)) {
+                qDebug() << "Couldn't open dde-file-manager.json burnCapacityFile!";
+                return;
+            }
+            QByteArray burnCapacityData = burnCapacityFile.readAll();
+            burnCapacityFile.close();
+
+            QJsonParseError parseJsonErr;
+            QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData, &parseJsonErr));
+            if(!(parseJsonErr.error == QJsonParseError::NoError)) {
+                qDebug() << "decode json file error！";
+                return;
+            }
+            QJsonObject tempBurnObjs = jsonDoc.object();
+            qDebug() << "tempBurnObjs==" << tempBurnObjs;
+            if (tempBurnObjs.contains(QStringLiteral("BurnCapacityAttribute"))) {
+                QJsonValue jsonBurnValueList = tempBurnObjs.value(QStringLiteral("BurnCapacityAttribute"));
+                QJsonObject burnItem = jsonBurnValueList.toObject();
+//                qDebug() << "burnItem[BurnCapacityTotalSize]==" << burnItem["BurnCapacityTotalSize"].toDouble();
+//                qDebug() << "burnItem[BurnCapacityUsedSize]==" << burnItem["BurnCapacityUsedSize"].toDouble();
+//                qDebug() << "burnItem[BurnCapacityStatus]==" << burnItem["BurnCapacityStatus"].toInt();
+//                qDebug() << "burnItem[BurnCapacityExt]==" << burnItem["BurnCapacityExt"].toInt();
+                burnCapacityTotalSize =  burnItem["BurnCapacityTotalSize"].toDouble();
+                burnCapacityUsedSize =  burnItem["BurnCapacityUsedSize"].toDouble();
+                burnStatus = burnItem["BurnCapacityStatus"].toInt();
+                burnExt = burnItem["BurnCapacityExt"].toInt();
+            }
+
+            bytesFree = burnCapacityTotalSize - burnCapacityUsedSize;
+            bytesTotal = burnCapacityTotalSize;
+            if (burnStatus == 2) {
+                m_diskCapacity->setText(QString("%1 / %2")
+                                        .arg(formatDiskSize(burnCapacityUsedSize))
+                                        .arg(formatDiskSize(burnCapacityTotalSize)));
+            } else {
+                m_diskCapacity->setText(tr("Unknown"));
+            }
         } else {
             m_diskCapacity->setText(QString("%1 / %2")
                                     .arg(formatDiskSize(bytesTotal - bytesFree))
