@@ -321,7 +321,8 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
                 nextPage();
             break;
         case Qt::Key_Space:{
-            m_preview->stop();
+            if (m_preview) //保护，不然会crash bug#23107
+                m_preview->stop();
             close();
             return true;
         }

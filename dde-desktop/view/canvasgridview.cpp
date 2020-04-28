@@ -2599,7 +2599,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     QPoint currentPoint(-1, -1);
     if (d->mousePressed) {
         auto clickIndex = indexAt(d->lastPos);
-        if (clickIndex.isValid()) {
+        if (clickIndex.isValid() && !d->showSelectRect) { //如果在框选就不进去
             QPoint tempClickIndex = visualRect(clickIndex).center();
             QPoint tempLastPoint = visualRect(d->currentCursorIndex).center();
             if (!d->currentCursorIndex.isValid())
