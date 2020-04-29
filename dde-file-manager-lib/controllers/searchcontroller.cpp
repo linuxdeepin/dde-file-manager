@@ -399,7 +399,7 @@ bool SearchDiriterator::hasNext() const
 
             //隐藏文件不支持索引和搜索
             if (fileInfo->isHidden() == true) {
-                return false;
+                continue;
             }
 
             if (m_hasIteratorByKeywordOfCurrentIt) {
