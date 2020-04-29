@@ -115,42 +115,55 @@ void DFMOpticalMediaWidget::setBurnCapacity(int status)
     burnCapacityFile.close();
 
     QJsonParseError parseJsonErr;
-    QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData,&parseJsonErr));
+    QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData, &parseJsonErr));
     if(!(parseJsonErr.error == QJsonParseError::NoError)) {
-        qDebug() << "decode json file error！";
-        return;
-    }
-    QJsonObject tempBurnObjs = jsonDoc.object();
-//    qDebug() << "tempBurnObjs1==" << tempBurnObjs;
-    if (tempBurnObjs.contains(QStringLiteral("BurnCapacityAttribute"))) {
-        QJsonValue jsonBurnValueList = tempBurnObjs.value(QStringLiteral("BurnCapacityAttribute"));
-        QJsonObject burnItem = jsonBurnValueList.toObject();
-        qDebug() << "burnItem[BurnCapacityTotalSize]==" << burnItem["BurnCapacityTotalSize"].toDouble();
-        qDebug() << "burnItem[BurnCapacityUsedSize]==" << burnItem["BurnCapacityUsedSize"].toDouble();
-        qDebug() << "burnItem[BurnCapacityStatus]==" << burnItem["BurnCapacityStatus"].toInt();
-        qDebug() << "burnItem[BurnCapacityExt]==" << burnItem["BurnCapacityExt"].toInt();
+        qDebug() << "decode json file error, create new json data！";
+        //第一次如果没有这个属性需要创建
+        QJsonObject burnItem;
+        QJsonObject rootBurnObjs;
+        QJsonDocument jsonDoc1;
         double burnTotalSize = DFMOpticalMediaWidget::g_totalSize;
         double burnUsedSize = DFMOpticalMediaWidget::g_usedSize;
-//        burnItem.insert("BurnCapacityTotalSize", burnTotalSize); //光盘容量总大小字节
-//        burnItem.insert("BurnCapacityUsedSize", burnUsedSize); //光盘容量已使用大小字节
-//        burnItem.insert("BurnCapacityStatus", BCSA_BurnCapacityStatusAddMount); //光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
-//        burnItem.insert("BurnCapacityExt", 0); //光盘容量扩展预留属性
-//        tempBurnObjs.insert("BurnCapacityAttribute", burnItem);
-        burnItem["BurnCapacityTotalSize"] = burnTotalSize; //光盘容量总大小字节
-        burnItem["BurnCapacityUsedSize"] = burnUsedSize; //光盘容量已使用大小字节
-        burnItem["BurnCapacityStatus"] = status; //光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
-        burnItem["BurnCapacityExt"] = 0; //光盘容量扩展预留属性
-        tempBurnObjs["BurnCapacityAttribute"] = burnItem;
-        jsonDoc.setObject(tempBurnObjs);
-//        qDebug() << "tempBurnObjs2==" << tempBurnObjs;
+        burnItem.insert("BurnCapacityTotalSize", burnTotalSize); //光盘容量总大小字节
+        burnItem.insert("BurnCapacityUsedSize", burnUsedSize); //光盘容量已使用大小字节
+        burnItem.insert("BurnCapacityStatus", BCSA_BurnCapacityStatusAddMount); //光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
+        burnItem.insert("BurnCapacityExt", 0); //光盘容量扩展预留属性
+        rootBurnObjs.insert("BurnCapacityAttribute", burnItem);
+        jsonDoc1.setObject(rootBurnObjs);
 
-        QFile burnCapacityFile1(QString("%1/dde-file-manager.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath)));
-        if (!burnCapacityFile1.open(QIODevice::WriteOnly)) {
-            qDebug() << "Couldn't open dde-file-manager.json burnCapacityFile1!";
+        QFile burnCapacityFile2(QString("%1/dde-file-manager.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath)));
+        if (!burnCapacityFile2.open(QIODevice::WriteOnly)) {
+            qDebug() << "Couldn't open dde-file-manager.json burnCapacityFile2!";
             return;
         }
-        burnCapacityFile1.write(jsonDoc.toJson());
-        burnCapacityFile1.close();
+        burnCapacityFile2.write(jsonDoc1.toJson());
+        burnCapacityFile2.close();
+    } else {
+        QJsonObject tempBurnObjs = jsonDoc.object();
+        if (tempBurnObjs.contains(QStringLiteral("BurnCapacityAttribute"))) {
+            QJsonValue jsonBurnValueList = tempBurnObjs.value(QStringLiteral("BurnCapacityAttribute"));
+            QJsonObject burnItem = jsonBurnValueList.toObject();
+//            qDebug() << "burnItem[BurnCapacityTotalSize]==" << burnItem["BurnCapacityTotalSize"].toDouble();
+//            qDebug() << "burnItem[BurnCapacityUsedSize]==" << burnItem["BurnCapacityUsedSize"].toDouble();
+//            qDebug() << "burnItem[BurnCapacityStatus]==" << burnItem["BurnCapacityStatus"].toInt();
+//            qDebug() << "burnItem[BurnCapacityExt]==" << burnItem["BurnCapacityExt"].toInt();
+            double burnTotalSize = DFMOpticalMediaWidget::g_totalSize;
+            double burnUsedSize = DFMOpticalMediaWidget::g_usedSize;
+            burnItem["BurnCapacityTotalSize"] = burnTotalSize; //光盘容量总大小字节
+            burnItem["BurnCapacityUsedSize"] = burnUsedSize; //光盘容量已使用大小字节
+            burnItem["BurnCapacityStatus"] = status; //光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
+            burnItem["BurnCapacityExt"] = 0; //光盘容量扩展预留属性
+            tempBurnObjs["BurnCapacityAttribute"] = burnItem;
+            jsonDoc.setObject(tempBurnObjs);
+
+            QFile burnCapacityFile1(QString("%1/dde-file-manager.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath)));
+            if (!burnCapacityFile1.open(QIODevice::WriteOnly)) {
+                qDebug() << "Couldn't open dde-file-manager.json burnCapacityFile1!";
+                return;
+            }
+            burnCapacityFile1.write(jsonDoc.toJson());
+            burnCapacityFile1.close();
+        }
     }
 }
 
