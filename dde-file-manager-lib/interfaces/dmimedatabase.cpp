@@ -24,6 +24,7 @@
 
 #include "dmimedatabase.h"
 #include "shutil/fileutils.h"
+#include "dstorageinfo.h"
 
 #include <QFileInfo>
 
@@ -50,7 +51,13 @@ QMimeType DMimeDatabase::mimeTypeForFileOptimise(const QString &fileName, QMimeD
 
 QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode) const
 {
-    QMimeType result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
+    // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
+    QMimeType result;
+    if (DStorageInfo(fileInfo.path()).isLowSpeedDevice()) {
+        result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
+    } else {
+        result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
+    }
 
     // temporary dirty fix, once WPS get installed, the whole mimetype database thing get fscked up.
     // we used to patch our Qt to fix this issue but the patch no longer works, we don't have time to
