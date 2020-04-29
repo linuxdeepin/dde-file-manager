@@ -121,9 +121,12 @@ QRect CanvasGridView::visualRect(const QModelIndex &index) const
 
 QModelIndex CanvasGridView::indexAt(const QPoint &point) const
 {
-    auto gridPos = gridAt(point);
-    auto localFile =  GridManager::instance()->itemId(m_screenNum, gridPos.x(), gridPos.y());
-    auto rowIndex = model()->index(DUrl(localFile));
+    QPoint gridPos = gridAt(point);
+    //如果本屏有堆叠就，并且point为堆叠点，那么修改点击的项目为堆叠项目的最后一个 for优先在最后一个网格显示堆叠的最后一个项目
+    QString localFile = GridManager::instance()->itemTop(m_screenNum, gridPos.x(), gridPos.y());
+    //GridManager::instance()->itemId(m_screenNum, gridPos.x(), gridPos.y());
+
+    QModelIndex rowIndex = model()->index(DUrl(localFile));
     QPoint pos = QPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
     auto list = itemPaintGeomertys(rowIndex);
 
@@ -256,7 +259,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                     pos = newCoord.position();
                 }
                 if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
-                    auto localFile = GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
+                    auto localFile = GridManager::instance()->itemTop(m_screenNum, pos.x(), pos.y());
+                    //GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -279,7 +283,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                     pos = newCoord.position();
                 }
                 if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
-                    auto localFile = GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
+                    auto localFile = GridManager::instance()->itemTop(m_screenNum, pos.x(), pos.y());
+                    //GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -297,7 +302,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         return current;
     }
 
-    auto localFile =  GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
+    auto localFile = GridManager::instance()->itemTop(m_screenNum, pos.x(), pos.y());
+    //GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
     auto newIndex = model()->index(DUrl(localFile));
     if (newIndex.isValid()) {
         return newIndex;
@@ -1130,7 +1136,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         }
         //end
     }
-    else if (GridManager::instance()->autoArrange()){ //自动排列的drag处理
+    else { //自动排列和自动整理的drag处理
         d->fileViewHelper->preproccessDropEvent(event);
         if (!hoverIndex.isValid()) {
             if (DFileDragClient::checkMimeData(event->mimeData())) {
@@ -1414,11 +1420,6 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         }
     }
 
-    //最后一个绘制项目先取出来
-    QString lastTopItem;
-    if (!repaintLocalFiles.isEmpty())
-        lastTopItem = repaintLocalFiles.takeLast();
-
     //放入堆叠
     auto overlayItems = GridManager::instance()->overlapItems(m_screenNum);
     for (int i = 0;i < overlayItems.length(); ++i) {
@@ -1427,10 +1428,6 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
             repaintLocalFiles << localFile;
         }
     }
-
-    //再将最后一个放进去，这样就可以保证最后一个项目可见。修复bug#23005
-    if (!lastTopItem.isEmpty())
-        repaintLocalFiles << lastTopItem;
 
 //    int drawCount = 0;
     for (auto &localFile : repaintLocalFiles) {
@@ -2066,7 +2063,7 @@ QString CanvasGridView::DumpPos(qint32 x, qint32 y)
     debug.insert("checkPoint:", QJsonValue::fromVariant(QList<QVariant>({px, py})));
     debug.insert("index", QJsonValue::fromVariant(QList<QVariant>({index.row(), index.column()})));
     debug.insert("url", model()->getUrlByIndex(index).toString());
-    debug.insert("grid content", GridManager::instance()->itemId(m_screenNum, x, y));
+    debug.insert("grid content", GridManager::instance()->itemTop(m_screenNum, x, y));
 
     return QJsonDocument(debug).toJson();
 }
@@ -2596,7 +2593,8 @@ inline QModelIndex CanvasGridView::firstIndex()
 
 inline QModelIndex CanvasGridView::lastIndex()
 {
-    auto localFile = GridManager::instance()->lastItemId(m_screenNum);
+    //使用堆叠
+    auto localFile = GridManager::instance()->lastItemTop(m_screenNum);//lastItemId(m_screenNum);
 //    if(localFile.isEmpty())
 //        return QModelIndex();
     return model()->index(DUrl(localFile));
@@ -2660,11 +2658,13 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             QItemSelection toRemoveSelection;
             for (auto x = topLeftGridPos.x(); x <= bottomRightGridPos.x(); ++x) {
                 for (auto y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
-                    auto localFile = GridManager::instance()->itemId(m_screenNum, x, y);
+                    auto localFile = GridManager::instance()->itemTop(m_screenNum, x, y);
+                    //GridManager::instance()->itemId(m_screenNum, x, y);
                     if (localFile.isEmpty()) {
                         continue;
                     }
                     auto index = model()->index(DUrl(localFile));
+
                     auto list = QList<QRect>() << itemPaintGeomertys(index);
                     for (const QRect &r : list) {
                         if (selectRect.intersects(r)) {
@@ -2718,7 +2718,9 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                     continue;
                 if (x > bottomRightGridPos.x() && y == bottomRightGridPos.y())
                     break;
-                auto localFile = GridManager::instance()->itemId(m_screenNum, x, y);
+
+                auto localFile = GridManager::instance()->itemTop(m_screenNum, x, y);
+                //GridManager::instance()->itemId(m_screenNum, x, y);
                 if (localFile.isEmpty()) {
                     continue;
                 }
@@ -2734,7 +2736,8 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         QAbstractItemView::selectionModel()->select(rectSelection, command);
     } else if (DFMGlobal::keyCtrlIsPressed()) {
         //just Ctrl
-        auto localFile = GridManager::instance()->itemId(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
+        auto localFile = GridManager::instance()->itemTop(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
+        //GridManager::instance()->itemId(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
         if (localFile.isEmpty()) {
             return;
         }
@@ -2749,11 +2752,14 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         d->beginPos = topLeftGridPos;
     } else {
         //just click or mouseleft select
-        auto localFile = GridManager::instance()->itemId(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
+        auto localFile = GridManager::instance()->itemTop(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
+        //GridManager::instance()->itemId(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
         if (localFile.isEmpty()) {
             return;
         }
         auto index = model()->index(DUrl(localFile));
+
+        //end
         QItemSelectionRange selectionRange(index);
         QItemSelection rectSelection;
         rectSelection.push_back(selectionRange);

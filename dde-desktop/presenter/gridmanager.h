@@ -113,6 +113,7 @@ public:
     void addCoord(int screenNum, QPair<int, int> coordInfo);
     QString firstItemId(int screenNum);
     QString lastItemId(int screenNum);
+    QString lastItemTop(int screenNum);
     QStringList itemIds(int screenNum);
 
     bool contains(int screebNum, const QString &itemId);
@@ -120,6 +121,8 @@ public:
     bool find(const QString &itemId, QPair<int,QPoint> &pos);
     QString itemId(int screenNum, int x, int y);
     QString itemId(int screenNum, QPoint pos);
+    QString itemTop(int screenNum, int x, int y); //调整显示方式，如果是堆叠，则将最后一个pos的换成堆叠的最后一个项目
+    QString itemTop(int screenNum, QPoint pos);
     bool isEmpty(int screenNum, int x, int y);
 
     QStringList overlapItems(int screen) const;

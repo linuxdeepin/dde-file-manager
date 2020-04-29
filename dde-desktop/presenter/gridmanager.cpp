@@ -2175,7 +2175,19 @@ QString GridManager::lastItemId(int screenNum)
     for (int i = 0; i < len; ++i) {
         if (d->m_cellStatus.value(screenNum).value(len - 1 - i)) {
             auto pos = d->gridPosAt(screenNum, len - 1 - i);
-            return  itemId(screenNum, pos);
+            return itemId(screenNum, pos);
+        }
+    }
+    return "";
+}
+
+QString GridManager::lastItemTop(int screenNum)
+{
+    auto len = d->m_cellStatus.value(screenNum).length();
+    for (int i = 0; i < len; ++i) {
+        if (d->m_cellStatus.value(screenNum).value(len - 1 - i)) {
+            auto pos = d->gridPosAt(screenNum, len - 1 - i);
+            return itemTop(screenNum, pos);
         }
     }
     return "";
@@ -2232,6 +2244,22 @@ QString GridManager::itemId(int screenNum, int x, int y)
 QString GridManager::itemId(int screenNum, QPoint pos)
 {
     return d->m_gridItems.value(screenNum).value(pos);
+}
+
+QString GridManager::itemTop(int screenNum, int x, int y)
+{
+    return itemTop(screenNum,QPoint(x,y));
+}
+
+QString GridManager::itemTop(int screenNum, QPoint pos)
+{
+    if (screenNum == d->screenCode().last()
+            && pos == d->overlapPos(screenNum)
+            && !d->m_overlapItems.isEmpty()){
+        return d->m_overlapItems.last();
+    }
+
+    return itemId(screenNum,pos);
 }
 
 bool GridManager::isEmpty(int screenNum, int x, int y)
