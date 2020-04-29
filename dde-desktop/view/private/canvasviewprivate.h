@@ -74,8 +74,9 @@ public:
         colCount = (szSceeen.width() - dockReserveArea.width()) / miniCellWidth;
 
         if (colCount < 1){
-            qCritical() << "!!!!! colCount is 0!!!" ;
-            cellWidth = 0;
+            qCritical() << "!!!!! colCount is 0!!! set it 1 and set cellWidth to " << szCanvas.width();
+            cellWidth = szCanvas.width();
+            colCount = 1;
         }
         else {
             cellWidth = szCanvas.width() / colCount;
@@ -84,8 +85,9 @@ public:
         auto miniCellHeigh = szItem.height() + miniMargin.top() + miniMargin.bottom();
         rowCount = (szSceeen.height() - dockReserveArea.height()) / miniCellHeigh;
         if (rowCount < 1){
-            qCritical() << "!!!!! rowCount is 0!!!" ;
-            cellHeight = 0;
+            qCritical() << "!!!!! rowCount is 0!!! set it and set cellHeight to" << szCanvas.height();
+            cellHeight = szCanvas.height();
+            rowCount = 1;
         }else {
             cellHeight = szCanvas.height() / rowCount;
         }
