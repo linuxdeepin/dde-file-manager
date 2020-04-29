@@ -68,18 +68,28 @@ public:
 
     void updateCanvasSize(const QSize &szSceeen, const QSize &szCanvas, const QMargins &geometryMargins, const QSize &szItem)
     {
+        qInfo() << "screen size" << szSceeen << "canvas" << szCanvas << "item size" << szItem;
         QMargins miniMargin = QMargins(2, 2, 2, 2);
         auto miniCellWidth = szItem.width() + miniMargin.left() + miniMargin.right();
         colCount = (szSceeen.width() - dockReserveArea.width()) / miniCellWidth;
-        cellWidth = szCanvas.width() / colCount;
+
+        if (colCount < 1){
+            qCritical() << "!!!!! colCount is 0!!!" ;
+            cellWidth = 0;
+        }
+        else {
+            cellWidth = szCanvas.width() / colCount;
+        }
 
         auto miniCellHeigh = szItem.height() + miniMargin.top() + miniMargin.bottom();
-//        qDebug() << szItem.height() << miniCellHeigh;
         rowCount = (szSceeen.height() - dockReserveArea.height()) / miniCellHeigh;
+        if (rowCount < 1){
+            qCritical() << "!!!!! rowCount is 0!!!" ;
+            cellHeight = 0;
+        }else {
+            cellHeight = szCanvas.height() / rowCount;
+        }
 
-        cellHeight = szCanvas.height() / rowCount;
-//        qDebug() << szSceeen.height() << dockReserveArea.height()
-//                 << rowCount << cellHeight;
         updateCellMargins(szItem, QSize(cellWidth, cellHeight));
 
         auto horizontalMargin = (szCanvas.width() - cellWidth * colCount);
@@ -89,12 +99,6 @@ public:
         auto topMargin = verticalMargin / 2;
         auto bottom = verticalMargin - topMargin;
         viewMargins = geometryMargins + QMargins(leftMargin, topMargin, rightMargin, bottom);
-
-//        qDebug() << "------------------------------";
-//        qDebug() << miniCellWidth << miniCellHeigh;
-//        qDebug() << szCanvas << colCount << rowCount;
-//        qDebug() << viewMargins << cellWidth << cellHeight;
-//        qDebug() << "------------------------------";
     }
 
     Coordinate indexCoordinate(int index)
