@@ -40,6 +40,9 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
         QObject::connect(m_licenseInterface.get(), &ComDeepinLicenseInterface::LicenseStateChange, this, &WaterMaskFrame::updateAuthorizationState);
     }
 
+    m_logoLabel = new QLabel(this);
+    m_textLabel = new QLabel(this);
+
     bool isConfigFileExist = checkConfigFile(m_configFile);
     if (isConfigFileExist) {
         loadConfig(m_configFile);
@@ -50,7 +53,15 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
 
 WaterMaskFrame::~WaterMaskFrame()
 {
+    if(m_logoLabel){
+        m_logoLabel->deleteLater();
+        m_logoLabel = nullptr;
+    }
 
+    if(m_textLabel){
+        m_textLabel->deleteLater();
+        m_textLabel = nullptr;
+    }
 }
 
 bool WaterMaskFrame::checkConfigFile(const QString &fileName)
@@ -213,8 +224,6 @@ void WaterMaskFrame::initUI()
     QString maskTextAlign = "left";
     m_maskWidth = maskLogoWidth + maskTextWidth;
 
-    m_logoLabel = new QLabel(this);
-
     {
         QImageReader mask_image_reader(maskLogoUri);
         const QSize &mask_size = QSize(maskLogoWidth, maskLogoHeight) * m_logoLabel->devicePixelRatioF();
@@ -233,7 +242,6 @@ void WaterMaskFrame::initUI()
         m_logoLabel->setPixmap(mask_pixmap);
     }
 
-    m_textLabel = new QLabel(this);
     if(isNeedState()){
         ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
         switch (stateType) {
