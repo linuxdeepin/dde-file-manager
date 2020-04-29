@@ -365,14 +365,20 @@ void TagManager::init_connect()noexcept
     QObject::connect(DFileService::instance(), &DFileService::fileMovedToTrash, [this](const DUrl & from, const DUrl & to) {
         (void)from;
 
-//        if (from.isLocalFile()) {
-//            deleteFiles({from});
-//        }
+        if (from.isLocalFile()) {
+            deleteFiles({from});
+        }
 
         // clean the "to" file tag info
         QTimer::singleShot(1000, this, [to, this] {
             DFileService::instance()->setFileTags(this, to, {});
         });
+    });
+
+    QObject::connect(DFileService::instance(), &DFileService::fileDeleted, this, [this](const DUrl & from) {
+        if (from.isLocalFile()) {
+            deleteFiles({from});
+        }
     });
 
     QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::addNewTags, [this](const QVariant & new_tags) {
