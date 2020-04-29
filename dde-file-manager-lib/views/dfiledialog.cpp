@@ -1162,7 +1162,7 @@ void DFileDialog::onAcceptButtonClicked()
                 DDialog dialog(this);
 
                 dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-                dialog.setTitle(tr("The file will be hide when the file's name start with '.', confirm that?"));
+                dialog.setTitle(tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
                 dialog.addButton(tr("Cancel"), true);
                 dialog.addButton(tr("Confirm"), false, DDialog::ButtonWarning);
 

@@ -491,6 +491,11 @@
         <translation>保存</translation>
     </message>
     <message>
+        <location filename="../views/dfiledialog.cpp" line="1165"/>
+        <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
+        <translation>文件名以“.”开始将会隐藏此文件，请确认是否继续?</translation>
+    </message>
+    <message>
         <location filename="../views/dfiledialog.cpp" line="1206"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>“%1”已存在，您是否要替换？</translation>
@@ -500,11 +505,6 @@
         <location filename="../views/dfiledialog.cpp" line="1207"/>
         <source>Cancel</source>
         <translation>取消</translation>
-    </message>
-    <message>
-        <location filename="../views/dfiledialog.cpp" line="1165"/>
-        <source>The file will be hide when the file&apos;s name start with &apos;.&apos;, confirm that?</source>
-        <translation>文件名以&apos;.&apos;开头的文件会被隐藏，是否确认？</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1167"/>
@@ -2929,17 +2929,6 @@
         <location filename="../shutil/fileutils.cpp" line="444"/>
         <source>Unknown</source>
         <translation>未知</translation>
-    </message>
-    <message>
-        <location filename="../shutil/fileutils.cpp" line="446"/>
-        <location filename="../shutil/fileutils.cpp" line="448"/>
-        <source>0M</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../shutil/fileutils.cpp" line="450"/>
-        <source>%1/%2</source>
-        <translation>%1/%2</translation>
     </message>
 </context>
 <context>

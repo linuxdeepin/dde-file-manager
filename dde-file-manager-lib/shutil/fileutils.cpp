@@ -443,11 +443,11 @@ QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize)
     if (GvfsMountManager::g_burnVolumeFlag && (totalSize == 0)) { //CD/DVD
         return QObject::tr("Unknown");
     } else if (!GvfsMountManager::g_burnVolumeFlag && !GvfsMountManager::g_burnMountFlag  && (totalSize == 0)) { //CD/DVD
-        return QObject::tr("0M");
+        return QString("0M");
     } else if (!GvfsMountManager::g_burnVolumeFlag && !GvfsMountManager::g_burnMountFlag  && (totalSize > 0) && (usedSize == 0)) { //blank CD/DVD
-        return QObject::tr("0M");
+        return QString("0M");
     } else {
-        return QObject::tr("%1/%2").arg(FileUtils::formatSize(usedSize, true, 0, usedSize < mb ? 2 : -1, unitDisplayText),
+        return QString("%1/%2").arg(FileUtils::formatSize(usedSize, true, 0, usedSize < mb ? 2 : -1, unitDisplayText),
                                         FileUtils::formatSize(totalSize, true, 0, totalSize < mb ? 2 : -1, unitDisplayText));
     }
 }
