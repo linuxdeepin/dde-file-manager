@@ -1884,6 +1884,30 @@ const DUrlList CanvasGridView::selectedUrls() const
     DUrlList urls;
     for (auto index : selects) {
         auto info = model()->fileInfo(index);
+
+        //为了满足自定义模式下对多个文件的重命名时的replaceText里的判断
+        //这里提前改成对应的Durl
+        if (!info)
+            continue;
+        if (GridManager::instance()->autoMerge()){
+            if (!info)
+                continue ;
+            QString fileBaseName{ info->baseName() };
+            const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
+            if (fileBaseName.trimmed().isEmpty()) {
+                qWarning() << "replace fileBaseName(not include suffix) trimmed is empty string";
+                continue;
+            }
+            int max_length = MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size();
+            if (fileBaseName.toLocal8Bit().size() > max_length) {
+                fileBaseName = DFMGlobal::cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
+            }
+            DUrl vUrl{ info->getUrlByNewFileName(fileBaseName + suffix) };
+
+            urls << vUrl;
+            continue;
+        }
+
         if (info && !info->isVirtualEntry()) {
             urls << info->fileUrl();
         }
