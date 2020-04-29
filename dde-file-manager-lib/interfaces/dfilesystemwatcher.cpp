@@ -534,7 +534,7 @@ QStringList DFileSystemWatcher::addPaths(const QStringList &paths)
     }
 
     if (p.isEmpty()) {
-        qWarning("DFileSystemWatcher::addPaths: list is empty");
+        //qWarning("DFileSystemWatcher::addPaths: list is empty");
         return QStringList();
     }
 
@@ -590,7 +590,7 @@ QStringList DFileSystemWatcher::removePaths(const QStringList &paths)
     }
 
     if (p.isEmpty()) {
-        qWarning("DFileSystemWatcher::removePaths: list is empty");
+        //qWarning("DFileSystemWatcher::removePaths: list is empty");
         return QStringList();
     }
 
