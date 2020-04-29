@@ -151,6 +151,13 @@ DFileDialog::DFileDialog(QWidget *parent)
     connect(statusBar()->comboBox(),
             static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
             this, &DFileDialog::selectedNameFilterChanged);
+
+    statusBar()->lineEdit()->setMaxLength(255);
+    connect(statusBar()->lineEdit(), &QLineEdit::textChanged, [=]{
+        while (statusBar()->lineEdit()->text().toLocal8Bit().length() > 250) {  //预留5个字符用于后缀
+            statusBar()->lineEdit()->setText(statusBar()->lineEdit()->text().chopped(1));
+        }
+    });
 }
 
 DFileDialog::~DFileDialog()
@@ -1165,19 +1172,20 @@ void DFileDialog::onAcceptButtonClicked()
             }
 
             //linux文件名长度不能超过255
-            int nameLength = file_name.toLocal8Bit().length();
-            if (nameLength > 255)
-            {
-                DDialog dialog(this);
+            //转到输入时对文本长度进行校验
+//            int nameLength = file_name.toLocal8Bit().length();
+//            if (nameLength > 255)
+//            {
+//                DDialog dialog(this);
 
-                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-                dialog.setTitle(tr("The file name length is too long!"));
-                dialog.addButton(tr("Confirm"), true);
+//                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+//                dialog.setTitle(tr("The file name length is too long!"));
+//                dialog.addButton(tr("Confirm"), true);
 
-                dialog.exec();
+//                dialog.exec();
 
-                return;
-            }
+//                return;
+//            }
 
             if (!d->options.testFlag(QFileDialog::DontConfirmOverwrite)) {
                 QFileInfo info(directory().absoluteFilePath(file_name));
