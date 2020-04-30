@@ -29,10 +29,12 @@
 #include "app/define.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
+#include "deviceinfoparser.h"
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
 #include "computermodel.h"
+
 
 ComputerModel::ComputerModel(QObject *parent) :
     QAbstractItemModel(parent),
@@ -95,6 +97,8 @@ ComputerModel::ComputerModel(QObject *parent) :
         static_cast<DFMRootFileInfo*>(m_items[p].fi.data())->checkCache();
         emit dataChanged(idx, idx, {Qt::ItemDataRole::DisplayRole});
     });
+
+    connect(deviceListener, SIGNAL(volumeAdded(UDiskDeviceInfoPointer)), this, SLOT(onVolumeAdded(UDiskDeviceInfoPointer)));
 }
 
 ComputerModel::~ComputerModel()
@@ -147,6 +151,19 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DecorationRole) {
         if (pitmdata->fi) {
+
+            DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
+            if (itemType == DFMRootFileInfo::UDisksOptical) {
+                QString udisk = pitmdata->fi->extraProperties()["udisksblk"].toString();
+                QStringList strList = udisk.split("/");
+                QString device = strList.back();
+
+                bool isInternal = DeviceInfoParser::Instance().isInternalDevice(device);
+                if (!isInternal) {
+                    return QIcon::fromTheme("media-external");
+                }
+            }
+
             return QIcon::fromTheme(pitmdata->fi->iconName());
         }
     }
@@ -343,6 +360,21 @@ void ComputerModel::removeItem(const DUrl &url)
     endRemoveRows();
     if (url.scheme() != SPLITTER_SCHEME && url.scheme() != WIDGET_SCHEME) {
         Q_EMIT itemCountChanged(--m_nitems);
+    }
+}
+
+// 用于读取新增设备信息
+void ComputerModel::onVolumeAdded(UDiskDeviceInfoPointer diskDeivceInfo)
+{
+    if (diskDeivceInfo->optical()) {
+
+        std::thread thread(
+                []()
+                {
+                    DeviceInfoParser::Instance().refreshDabase();
+                }
+        );
+        thread.detach();
     }
 }
 

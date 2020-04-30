@@ -274,7 +274,8 @@ HEADERS += \
     dialogs/connecttoserverdialog.h \
     shutil/dfmfilelistfile.h \
     views/dfmsplitter.h \
-    dbus/dbussysteminfo.h
+    dbus/dbussysteminfo.h \
+    models/deviceinfoparser.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -464,7 +465,8 @@ SOURCES += \
     dialogs/connecttoserverdialog.cpp \
     shutil/dfmfilelistfile.cpp \
     views/dfmsplitter.cpp \
-    dbus/dbussysteminfo.cpp
+    dbus/dbussysteminfo.cpp \
+    models/deviceinfoparser.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

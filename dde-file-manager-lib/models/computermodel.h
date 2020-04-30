@@ -22,6 +22,7 @@
 #define COMPUTERMODEL_H
 
 #include "ddiskmanager.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <QAbstractItemModel>
 
@@ -89,6 +90,8 @@ public Q_SLOTS:
     void insertAfter(const DUrl &url, const DUrl &ref, QWidget *w = nullptr);
     void insertBefore(const DUrl &url, const DUrl &ref, QWidget *w = nullptr);
     void removeItem(const DUrl &url);
+
+    void onVolumeAdded(UDiskDeviceInfoPointer diskDeivceInfo);
 
 Q_SIGNALS:
     void itemCountChanged(int nitems);
