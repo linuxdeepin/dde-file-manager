@@ -71,6 +71,10 @@ void BackgroundManager::onRestBackgroundManager()
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenGeometryChanged,
                 this, &BackgroundManager::onScreenGeometryChanged);
 
+        //可用区改变
+        connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenAvailableGeometryChanged,
+                this, &BackgroundManager::onScreenGeometryChanged);
+
         //创建背景
         onBackgroundBuild();
     } else {
@@ -102,6 +106,8 @@ void BackgroundManager::onRestBackgroundManager()
 
         //没有背景所以不用关心
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenGeometryChanged,
+                this, &BackgroundManager::onScreenGeometryChanged);
+        disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenAvailableGeometryChanged,
                 this, &BackgroundManager::onScreenGeometryChanged);
 
         //销毁窗口
