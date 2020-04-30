@@ -173,12 +173,14 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     QString version;
 
     if (DSysInfo::isDeepin()) {
-        version = DSysInfo::deepinVersion();
+        version = DSysInfo::deepinVersion().split(" ").first() + " " + DSysInfo::deepinTypeDisplayName();
     } else {
         version = QString("%1 %2").arg(DSysInfo::productTypeString())
                   .arg(DSysInfo::productVersion());
     }
 
+//    qDebug() << "1111" << DSysInfo::deepinEdition() << "222" << DSysInfo::deepinCopyright() << "333" << DSysInfo::deepinTypeDisplayName()
+//             << "444" << DSysInfo::productTypeString() << "555" << DSysInfo::productVersion() << "666" << DSysInfo::operatingSystemName();
     //部分数据优先从dbus读取，如果dbus没有，则从dtk读数据
     QString memoryInstallStr;
     QString memoryStr;
