@@ -2265,7 +2265,11 @@ QString GridManager::itemTop(int screenNum, QPoint pos)
 bool GridManager::isEmpty(int screenNum, int x, int y)
 {
     auto cellStatus = d->m_cellStatus.value(screenNum);
-    return !cellStatus.value(d->indexOfGridPos(screenNum, QPoint(x, y)));
+    int pos = d->indexOfGridPos(screenNum, QPoint(x, y));
+    if (pos >= cellStatus.size())
+        return false;
+
+    return !cellStatus.value(pos);
 }
 
 QStringList GridManager::overlapItems(int screen) const

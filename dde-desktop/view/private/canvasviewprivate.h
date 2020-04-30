@@ -119,6 +119,12 @@ public:
                && (coord.position().y() >= 0 && coord.position().y() < rowCount);
     }
 
+//    static QPair<int,QPoint> *lastMenuPos()
+//    {
+//        static QPair<int,QPoint> pos = qMakePair(0,QPoint(0,0));
+//        return &pos;
+//    }
+
 public:
     QRect    dockReserveArea = QRect(0, 0, 80, 80);
     QMargins viewMargins;

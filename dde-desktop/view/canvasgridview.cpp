@@ -1609,6 +1609,7 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     if (isEmptyArea) {
         itemDelegate()->hideNotEditingIndexWidget();
         clearSelection();
+        //*d->lastMenuPos() = qMakePair(m_screenNum,gridAt(event->pos()));
         d->lastMenuPos = event->pos();
         showEmptyAreaMenu(flags);
     } else {
@@ -2305,22 +2306,52 @@ openEditor:
 
     connect(this, &CanvasGridView::itemCreated, this,[ = ](const DUrl & url) {
         qDebug() << "CanvasGridView::itemCreated" << url << m_screenNum;
+#if 1
         d->lastMenuNewFilepath = url.toString();
         GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
 
-        /***************************************************************/
         //创建或者粘贴时保持之前的状态
         if(GridManager::instance()->autoMerge()){
             this->delayModelRefresh(100);
-            return ;
-        }
-
-        if (GridManager::instance()->autoArrange()){ //重新排列
+        } else if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();
-            return;
         }
 
-        /***************************************************************/
+#else
+        QString localFile = url.toString();
+        bool ret = GridManager::instance()->add(m_screenNum, localFile);
+        //创建或者粘贴时保持之前的状态
+        if(GridManager::instance()->autoMerge()){
+            GridManager::instance()->add(m_screenNum, localFile);
+            this->delayModelRefresh(100);
+        } else if (GridManager::instance()->autoArrange()){ //重新排列
+            GridManager::instance()->add(m_screenNum, localFile);
+            this->delayArrage();
+        }else if (ret){
+            QPair<int, QPoint> orgPos;
+            if (!GridManager::instance()->find(localFile,orgPos)){
+                qCritical() << "cannot find item" << localFile << "screen" <<m_screenNum;
+                return ;
+            }
+
+            QPair<int, QPoint> gridPos = *d->lastMenuPos();
+            qDebug() << "try to put" << localFile << "on screen" << gridPos.first << "pos" << gridPos.second;
+            gridPos = GridManager::instance()->forwardFindEmpty(gridPos.first, gridPos.second);
+            qDebug() << "put it on screen" << gridPos.first << "pos" << gridPos.second;
+            if (orgPos == gridPos)
+                return;
+
+            //同屏
+            if (orgPos.first == gridPos.first){
+                GridManager::instance()->move(orgPos.first, QStringList() << localFile,
+                                              localFile, gridPos.second.x(), gridPos.second.y());
+            }
+            else{ //跨屏
+                GridManager::instance()->move(orgPos.first,gridPos.first, QStringList() << localFile,
+                                              localFile, gridPos.second.x(), gridPos.second.y());
+            }
+        }
+#endif
     });
 
     connect(this, &CanvasGridView::itemDeleted, this, [ = ](const DUrl & url) {
