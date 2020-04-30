@@ -1773,7 +1773,7 @@ void GridManager::initGridItemsInfos()
     d->clear();
 
     //设置排序
-    DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)Config::instance()->getConfig(Config::groupGeneral,Config::keySortBy).toInt();
+    DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)Config::instance()->getConfig(Config::groupGeneral,Config::keySortBy, DFileSystemModel::FileDisplayNameRole).toInt();
     Qt::SortOrder sortOrder = Config::instance()->getConfig(Config::groupGeneral,Config::keySortOrder).toInt() == Qt::AscendingOrder ?
                 Qt::AscendingOrder : Qt::DescendingOrder;
 
