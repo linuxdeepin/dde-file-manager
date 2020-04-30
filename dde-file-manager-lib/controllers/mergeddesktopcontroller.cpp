@@ -527,9 +527,23 @@ void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl
     DMD_TYPES typeInfo = checkUrlArrangedType(dstUrl);
     arrangedFileUrls[typeInfo].append(dstUrl);
 
-    DMD_TYPES dstUrlTypeInfo = checkUrlArrangedType(oriUrl);
+#if 1
+    DUrl vOriUrl = convertToDFMMDPath(oriUrl, typeInfo);
+    DUrl vDstUrl = convertToDFMMDPath(dstUrl, typeInfo);
+#else
+    //自动整理下重命名typeInfo的不同自动整理的不刷新问题
+    //重命名时文件不刷新问题,还有部分代码不理解，可能没改到根本，临时这样处理
+    DMD_TYPES dstUrlTypeInfo;
+    if(DMD_FOLDER != typeInfo){
+        dstUrlTypeInfo = checkUrlArrangedType(oriUrl);
+    }
+    else {
+        dstUrlTypeInfo = typeInfo;
+    }
+
     DUrl vOriUrl = convertToDFMMDPath(oriUrl, dstUrlTypeInfo);
     DUrl vDstUrl = convertToDFMMDPath(dstUrl, typeInfo);
+#endif
 
     DUrl parentUrl = getVirtualEntryPath(typeInfo);
     DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileMoved, vOriUrl, vDstUrl);
