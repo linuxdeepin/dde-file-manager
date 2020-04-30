@@ -181,8 +181,7 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
         m_childrenLock.unlock();
         return infoList;
     }
-
-    initData();
+    initData(event->filters());
     currentUrl = event->url();
     QString path { currentUrl.path() };
     QList<DAbstractFileInfoPointer> infoList;
@@ -551,12 +550,18 @@ void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl
     DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileMoved, vOriUrl, vDstUrl);
 }
 
-void MergedDesktopController::initData() const
+void MergedDesktopController::initData(QDir::Filters ftrs) const
 {
     arrangedFileUrls.clear();
 
     QDir desktopDir(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
+#if 0
     const QStringList &fileList = desktopDir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
+#else
+    //自动整理下需要显示隐藏文件,故新加QDir::Filters ftrs
+    const QStringList &fileList = desktopDir.entryList(ftrs);
+#endif
+
     for (const QString &oneFile : fileList) {
         DUrl oneUrl = DUrl::fromLocalFile(desktopDir.filePath(oneFile));
         DMD_TYPES typeInfo = checkUrlArrangedType(oneUrl);

@@ -106,6 +106,7 @@ public:
     bool setCurrentUrl(const DUrl &url);
     void initRootUrl();
     bool setRootUrl(const DUrl &url);
+    const DUrlList autoMergeSelectedUrls() const;
     const DUrlList selectedUrls() const;
     void setScreenNum(int num);
     bool isSelected(const QModelIndex &index) const;

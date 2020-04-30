@@ -85,7 +85,7 @@ public slots:
     void desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl);
 
 private:
-    void initData() const;
+    void initData(QDir::Filters ftrs) const;
     void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
 
     DFileWatcher* m_desktopFileWatcher;

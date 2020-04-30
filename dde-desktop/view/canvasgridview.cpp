@@ -1876,7 +1876,7 @@ bool CanvasGridView::setRootUrl(const DUrl &url)
     return setCurrentUrl(url);
 }
 
-const DUrlList CanvasGridView::selectedUrls() const
+const DUrlList CanvasGridView::autoMergeSelectedUrls() const
 {
     auto selects = selectionModel()->selectedIndexes();
     DUrlList urls;
@@ -1906,6 +1906,19 @@ const DUrlList CanvasGridView::selectedUrls() const
             continue;
         }
 
+        if (info && !info->isVirtualEntry()) {
+            urls << info->fileUrl();
+        }
+    }
+    return urls;
+}
+
+const DUrlList CanvasGridView::selectedUrls() const
+{
+    auto selects = selectionModel()->selectedIndexes();
+    DUrlList urls;
+    for (auto index : selects) {
+        auto info = model()->fileInfo(index);
         if (info && !info->isVirtualEntry()) {
             urls << info->fileUrl();
         }
@@ -3312,8 +3325,12 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
                 QAbstractItemView::edit(index); //###: select one file on desktop.
 
             } else { //###: select more than one files.
-
-                QList<DUrl> selectedUrls{ this->selectedUrls() };                
+                QList<DUrl> selectedUrls{};
+                if(GridManager::instance()->autoMerge()){
+                    selectedUrls = this->autoMergeSelectedUrls();
+                }else {
+                    selectedUrls = this->selectedUrls();
+                }
                 DFMGlobal::showMultiFilesRenameDialog(selectedUrls);
             }
             break;
