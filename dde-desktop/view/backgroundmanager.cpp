@@ -115,7 +115,10 @@ void BackgroundManager::onRestBackgroundManager()
 void BackgroundManager::onScreenGeometryChanged(ScreenPointer sp)
 {
     BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
+    qInfo() << "screen geometry changed" << sp.get() << bw.get();
     if (bw.get() != nullptr){
+        qInfo() << "background geometry change from" << bw->geometry() << "to" << sp->geometry()
+                << "screen name" << sp->name();
         //bw->windowHandle()->handle()->setGeometry(sp->handleGeometry()); //不能设置，设置了widget的geometry会被乱改
         bw->setGeometry(sp->geometry());
 
@@ -144,7 +147,7 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     bwp->createWinId();
     //bwp->windowHandle()->handle()->setGeometry(screen->handleGeometry()); //不能设置，设置了widget的geometry会被乱改//分辨率原始大小
     bwp->setGeometry(screen->geometry()); //经过缩放的区域
-    qInfo() << "screen name" << screen->name() << "geometry" << screen->geometry();
+    qInfo() << "screen name" << screen->name() << "geometry" << screen->geometry() << bwp.get();
 
     if (m_preview) {
         bwp->setWindowFlags(bwp->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);

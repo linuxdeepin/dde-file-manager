@@ -38,7 +38,7 @@ public:
 public slots:
     void EnableUIDebug(bool enable);
     void Reset();
-    void Show();
+    void ShowInfo();
     void ShowWallpaperChooser(const QString &screen = QString());
     void ShowScreensaverChooser(const QString &screen = QString());
 protected:

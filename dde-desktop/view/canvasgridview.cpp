@@ -381,11 +381,11 @@ void CanvasGridView::delayModelRefresh(int ms)
         m_refreshTimer->stop();
         delete m_refreshTimer;
         m_refreshTimer = nullptr;
-        qDebug() << "reset refresh timer";
+        qDebug() << "reset refresh timer" << m_screenNum;
     }
 
     if (ms < 1){
-        qDebug() << "beging refresh " << m_refreshTimer << m_screenNum;
+        qDebug() << "now refresh " << m_refreshTimer << m_screenNum;
         m_rt.start();
         model()->refresh();
         return;
@@ -498,7 +498,7 @@ void CanvasGridView::delayAutoMerge(int ms)
             auto localFile = model()->getUrlByIndex(index).toString();
             list << localFile;
         }
-        qDebug() << "initArrage file count" << list.size()
+        qDebug() << "now initArrage file count" << list.size()
                  << "expend" << currentUrl().fragment();
         GridManager::instance()->initArrage(list);
         return;
@@ -514,7 +514,7 @@ void CanvasGridView::delayAutoMerge(int ms)
             list << localFile;
         }
         qDebug() << "initArrage file count" << list.size()
-                 << "expend" << currentUrl().fragment();
+                 << "expend" << currentUrl().fragment() << "screen" << m_screenNum;
         GridManager::instance()->initArrage(list);
     });
     arrangeTimer->start(ms);
@@ -2306,18 +2306,18 @@ openEditor:
     connect(this, &CanvasGridView::itemCreated, this,[ = ](const DUrl & url) {
         qDebug() << "CanvasGridView::itemCreated" << url << m_screenNum;
         d->lastMenuNewFilepath = url.toString();
+        GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
 
         /***************************************************************/
         //创建或者粘贴时保持之前的状态
         if(GridManager::instance()->autoMerge()){
-            qDebug() << "begin ***********"
-                     << currentUrl().fragment();
-            this->delayModelRefresh();
+            this->delayModelRefresh(100);
             return ;
         }
-        bool ret = GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
+
         if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();
+            return;
         }
 
         /***************************************************************/
@@ -3282,7 +3282,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
             } else { //###: select more than one files.
 
-                QList<DUrl> selectedUrls{ this->selectedUrls() };
+                QList<DUrl> selectedUrls{ this->selectedUrls() };                
                 DFMGlobal::showMultiFilesRenameDialog(selectedUrls);
             }
             break;

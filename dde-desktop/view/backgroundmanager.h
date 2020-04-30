@@ -25,6 +25,7 @@ public:
     void setVisible(bool visible);
     bool isVisible() const;
     BackgroundWidgetPointer backgroundWidget(ScreenPointer) const;
+    inline QMap<ScreenPointer,BackgroundWidgetPointer> allbackgroundWidgets() const{return m_backgroundMap;}
     //自定义背景，临时方案
     void setBackgroundImage(const QString &screen,const QString &path);
 signals:

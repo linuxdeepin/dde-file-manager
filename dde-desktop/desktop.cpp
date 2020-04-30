@@ -34,6 +34,7 @@
 #include "backgroundmanager.h"
 #include "canvasviewmanager.h"
 #include "screen/screenhelper.h"
+#include "presenter/gridmanager.h"
 
 using WallpaperSettings = Frame;
 
@@ -324,11 +325,66 @@ void Desktop::Reset()
     }
 }
 
-void Desktop::Show()
+void Desktop::ShowInfo()
 {
-#if    USINGOLD
-    d->screenFrame.show();
-#endif
+    ScreenPointer primary = ScreenMrg->primaryScreen();
+    qInfo() << "**************Desktop Info" << qApp->applicationVersion()
+            << "*****************";
+    if (primary)
+        qInfo() << "primary screen :" << primary->name()
+                << "available geometry" << primary->availableGeometry()
+                << "screen count" << ScreenMrg->screens().count();
+    else
+        qCritical() << "primary screen error! not found";
+
+    qInfo() << "*****************Screens  Mode " << ScreenMrg->displayMode()
+            << "********************";
+    int num = 1;
+    for (ScreenPointer screen : ScreenMrg->logicScreens()){
+        if (screen){
+            qInfo() << screen.get() << "screen name " << screen->name()
+                    << "num" << num << "geometry" << screen->geometry();
+            ++num;
+        }else {
+            qCritical() << "error! empty screen pointer!";
+        }
+    }
+
+    qInfo() << "*****************Background Eable" << d->m_background->isEnabled()
+            << "**********************";
+    auto backgronds = d->m_background->allbackgroundWidgets();
+    for (auto iter = backgronds.begin(); iter != backgronds.end(); ++iter) {
+        qInfo() << "Background" << iter.value().get() << "on screen" << iter.key()->name() << iter.key().get()
+                << "geometry" << iter.value()->geometry() << "visable" << iter.value()->isVisible();
+    }
+
+    qInfo() << "*****************Canvas Grid" << "**********************";
+    if (d->m_canvas){
+        auto canvas = d->m_canvas->canvas();
+        GridCore *core = GridManager::instance()->core();
+        for (auto iter = canvas.begin(); iter != canvas.end(); ++iter){
+            int num = iter.value()->screenNum();
+            qInfo() << "canvas" << iter.value().get() << "on screen" << iter.value()->canvansScreenName()
+                    << "num" << num << "geometry" << iter.value()->geometry()
+                    << "background" << iter.value()->parentWidget() << "screen" << iter.key().get();
+            if (core->screensCoordInfo.contains(num)){
+                auto coord = core->screensCoordInfo.value(num);
+                qInfo() << "coord " << coord.first << "*" << coord.second
+                        << "display items count" << core->itemGrids.value(num).size();
+            }
+            else {
+                qCritical() << "Grid" << iter.value()->screenNum() << "not find coordinfo";
+            }
+
+        }
+
+        qInfo() << "overlap items count" << core->overlapItems.size();
+        delete core;
+    }
+    else {
+        qWarning() << "not load canvasgridview";
+    }
+    qInfo() << "************Desktop Infomation End **************";
 }
 
 void Desktop::ShowWallpaperChooser(const QString &screen)

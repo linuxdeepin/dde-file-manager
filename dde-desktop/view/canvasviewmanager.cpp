@@ -157,9 +157,9 @@ void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)
             avRect = sp == ScreenMrg->primaryScreen() ? sp->availableGeometry() : sp->geometry();
         }
 
-        qDebug() << "dddddddddddddd" << ScreenMrg->primaryScreen()->name()
-                 << mView->geometry() << sp->name()
-                 << sp->geometry() << sp->availableGeometry() << avRect;
+        qDebug() << "primary Screen" << ScreenMrg->primaryScreen()->name()
+                 << "view geometry change from" << mView->geometry() << "to" << avRect
+                 << "view screen" << sp->name() << sp->geometry() << sp->availableGeometry();
         mView->setGeometry(avRect);
     }
 }
@@ -242,7 +242,7 @@ void CanvasViewManager::onSyncSelection(CanvasGridView *v, DUrlList selected)
 {
     disconnect(GridManager::instance(), &GridManager::sigSyncSelection,
             this,&CanvasViewManager::onSyncSelection);
-    //qDebug() << "sync selection" << v->canvansScreenName() << selected.size();
+    //qDebug() << "sync selection " << v->canvansScreenName() << selected.size();
     for (CanvasViewPointer view : m_canvasMap.values()) {
         if (view == v)
             continue;
