@@ -860,9 +860,6 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         if (m_isJobAdded)
             jobRemoved();
         emit finished();
-
-        m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished; // muset finish
-
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
             if (flag & 4) {
                 emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
@@ -882,6 +879,14 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
 
             if (rst) {
                 doDelete({DUrl::fromLocalFile(stagingurl.path())});
+            }
+        } else {
+            // 刻录失败提示
+            emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
+            //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
+            sleep(1);
+            if (FileJob::g_opticalBurnEjectCount > 0) {
+                FileJob::g_opticalBurnEjectCount = 0;
             }
         }
 
@@ -1110,7 +1115,6 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             jobRemoved();
         emit finished();
 
-        m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished; // muset finish
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
             if ((flag & 4)) {
                 emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
@@ -1126,6 +1130,14 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
                 if (FileJob::g_opticalBurnEjectCount > 0) {
                     FileJob::g_opticalBurnEjectCount = 0;
                 }
+            }
+        } else {
+            // 刻录失败提示
+            emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
+            //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
+            sleep(1);
+            if (FileJob::g_opticalBurnEjectCount > 0) {
+                FileJob::g_opticalBurnEjectCount = 0;
             }
         }
 
