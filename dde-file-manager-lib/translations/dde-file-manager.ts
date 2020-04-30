@@ -782,8 +782,8 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="388"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1009"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1024"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1008"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1023"/>
         <source>Operation failed!</source>
         <translation>Operation failed!</translation>
     </message>
@@ -794,15 +794,15 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="391"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="600"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="930"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="943"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="952"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="970"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1016"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1027"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1056"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1376"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="599"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="929"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="942"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="951"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="969"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1015"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1026"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1055"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1375"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -822,12 +822,12 @@
         <location filename="../dialogs/dialogmanager.cpp" line="458"/>
         <location filename="../dialogs/dialogmanager.cpp" line="488"/>
         <location filename="../dialogs/dialogmanager.cpp" line="514"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="617"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="675"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="822"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="851"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1094"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1174"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="674"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="821"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="850"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1093"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1173"/>
         <source>Cancel</source>
         <translation>Cancel</translation>
     </message>
@@ -866,10 +866,10 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="473"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="582"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="851"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1196"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1317"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="581"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="850"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1195"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1316"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -914,119 +914,119 @@
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="571"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="581"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="570"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="580"/>
         <source>Show details</source>
         <translation>Show details</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="575"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="574"/>
         <source>Hide details</source>
         <translation>Hide details</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="576"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="575"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="590"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="589"/>
         <source>%1/%2</source>
         <translation type="unfinished">%1/%2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="610"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="609"/>
         <source>Permanently delete %1?</source>
         <translation>Permanently delete %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="611"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="610"/>
         <source>Permanently delete %1 items?</source>
         <translation>Permanently delete %1 items?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="617"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
         <source>Delete</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="628"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="627"/>
         <source>Empty</source>
         <translation>Empty</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="672"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="671"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Sorry, unable to locate your bookmark directory, remove it?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="675"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="674"/>
         <source>Remove</source>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="820"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="819"/>
         <source>Name: </source>
         <translation>Name: </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="822"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="821"/>
         <source>Force unmount</source>
         <translation>Force unmount</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="845"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="844"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 that this shortcut refers to has been changed or moved</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="849"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="848"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Do you want to delete this shortcut？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="941"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="940"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Failed, file size must be less than 4GB.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="950"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="949"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Fail to create symlink, cause:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="968"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="967"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>The selected files contain system file/directory, and it cannot be deleted</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1025"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1047"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1024"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1046"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>You do not have permission to operate file/folder!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1067"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1066"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1157"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1156"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
         <translation>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1158"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1157"/>
         <source>3. Reboot and enter %1</source>
         <translation>3. Reboot and enter %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1374"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Share folder can&apos;t be named after the current username</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1095"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1094"/>
         <source>View</source>
         <translation>View</translation>
     </message>
@@ -1036,63 +1036,63 @@
         <translation>Do you want to run %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="608"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="607"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Are you sure you want to empty %1 item?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="609"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="608"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Are you sure you want to empty %1 items?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="497"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="659"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="658"/>
         <source>This action cannot be undone</source>
         <translation>This action cannot be undone</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="819"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="818"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disk is busy, cannot unmount now</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="929"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="928"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Unable to copy. Not enough free space on the target disk.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1011"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1010"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Failed to restore %1 file, the target folder is read-only</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1013"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1012"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Failed to restore %1 files, the target folder is read-only</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1141"/>
         <source>Mount partition%1 to be read only</source>
         <translation>Mount partition%1 to be read only</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1146"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1145"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1150"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation>Please restore by the following steps to normally access Windows disk</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1156"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1155"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Reboot to enter Windows</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1175"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1174"/>
         <source>Reboot</source>
         <translation>Reboot</translation>
     </message>
@@ -1161,75 +1161,81 @@
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="720"/>
-        <location filename="../../fileoperations/filejob.cpp" line="868"/>
-        <location filename="../../fileoperations/filejob.cpp" line="949"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1116"/>
+        <location filename="../../fileoperations/filejob.cpp" line="866"/>
+        <location filename="../../fileoperations/filejob.cpp" line="955"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1121"/>
         <source>Data verification successful.</source>
         <translation>Data verification successful.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="720"/>
-        <location filename="../../fileoperations/filejob.cpp" line="868"/>
-        <location filename="../../fileoperations/filejob.cpp" line="949"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1116"/>
+        <location filename="../../fileoperations/filejob.cpp" line="866"/>
+        <location filename="../../fileoperations/filejob.cpp" line="955"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1121"/>
         <source>Data verification failed.</source>
         <translation>Data verification failed.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="727"/>
-        <location filename="../../fileoperations/filejob.cpp" line="875"/>
-        <location filename="../../fileoperations/filejob.cpp" line="956"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1123"/>
+        <location filename="../../fileoperations/filejob.cpp" line="873"/>
+        <location filename="../../fileoperations/filejob.cpp" line="962"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1128"/>
         <source>Burn process completed</source>
         <translation>Burn process completed</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1276"/>
+        <location filename="../../fileoperations/filejob.cpp" line="886"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1137"/>
+        <source>Burn process failed</source>
+        <translation>Burn process failed</translation>
+    </message>
+    <message>
+        <location filename="../../fileoperations/filejob.cpp" line="1289"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1280"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1293"/>
         <source>%1 m %2 s</source>
         <translation>%1 m %2 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1286"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1299"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 h %2 m %3 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1295"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1308"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 d %2 h %3 m %4 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3043"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3056"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1 is a duplicate file.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3046"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3059"/>
         <source>Insufficient disc space.</source>
         <translation>Insufficient disc space.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3049"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3062"/>
         <source>Lost connection to drive.</source>
         <translation>Lost connection to drive.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3052"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3065"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>The CD/DVD drive is not ready. Try another disc.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3055"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3068"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3062"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3075"/>
         <source>Unknown error</source>
         <translation>Unknown error</translation>
     </message>
@@ -2435,7 +2441,7 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="144"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="196"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="209"/>
         <source>Burn</source>
         <translation>Burn</translation>
     </message>
@@ -2814,7 +2820,7 @@
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1340"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1339"/>
         <source>Rename %1 Files</source>
         <translation>Rename %1 Files</translation>
     </message>
@@ -2916,7 +2922,7 @@
         <translation>Edit address</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="225"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="238"/>
         <source>Free Space %1</source>
         <translation>Free Space %1</translation>
     </message>
