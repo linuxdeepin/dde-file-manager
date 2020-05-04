@@ -161,12 +161,19 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         if (pitmdata->fi) {
             //fixed:CD display size error
             if (static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
+                DFMRootFileInfo *pFileInfo = dynamic_cast<DFMRootFileInfo *>(pitmdata->fi.data());
+                QString strVolTag;
+                if (pFileInfo)
+                    strVolTag = pFileInfo->getVolTag();
                 //fix: 探测光盘推进,弹出和挂载状态机标识
-                if (!GvfsMountManager::g_burnVolumeFlag && !GvfsMountManager::g_burnMountFlag) { //CD/DVD
+                bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
+                bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
+                if (!bVolFlag && !bMntFlag) { //CD/DVD
                     DFMOpticalMediaWidget::g_usedSize = 0;
-                    return DFMOpticalMediaWidget::g_usedSize;
+                    DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first = 0;
+                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
                 } else {
-                    return DFMOpticalMediaWidget::g_usedSize;
+                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
                 }
             } else {
                 return pitmdata->fi->extraProperties()["fsUsed"];
@@ -178,12 +185,19 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         if (pitmdata->fi) {
             //fixed:CD display size error
             if (static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
+                DFMRootFileInfo *pFileInfo = dynamic_cast<DFMRootFileInfo *>(pitmdata->fi.data());
+                QString strVolTag;
+                if (pFileInfo)
+                    strVolTag = pFileInfo->getVolTag();
                 //fix: 探测光盘推进,弹出和挂载状态机标识
-                if (!GvfsMountManager::g_burnVolumeFlag && !GvfsMountManager::g_burnMountFlag) { //CD/DVD
+                bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
+                bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
+                if (!bVolFlag && !bMntFlag) { //CD/DVD
                     DFMOpticalMediaWidget::g_totalSize = 0;
-                    return DFMOpticalMediaWidget::g_totalSize;
+                    DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second = 0;
+                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
                 } else {
-                    return DFMOpticalMediaWidget::g_totalSize;
+                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
                 }
             } else {
                 return pitmdata->fi->extraProperties()["fsSize"];
@@ -221,6 +235,12 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         if (pitmdata->fi) {
             return QVariant::fromValue(pitmdata->fi->fileUrl());
         }
+    }
+
+    if (role == DataRoles::VolumeTagRole) {
+        DFMRootFileInfo *file = dynamic_cast<DFMRootFileInfo *>(pitmdata->fi.data());
+        if (file)
+            return file->getVolTag();
     }
 
     return QVariant();

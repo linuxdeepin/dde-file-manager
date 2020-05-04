@@ -32,6 +32,7 @@ using namespace DISOMasterNS;
 //fixed:CD display size error
 quint64 DFMOpticalMediaWidget::g_totalSize = 0;
 quint64 DFMOpticalMediaWidget::g_usedSize = 0;
+QMap<QString, QPair<quint64, quint64>> DFMOpticalMediaWidget::g_mapCDUsage;
 //fix: 动态获取刻录选中文件的字节大小
 qint64 DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
 qint64 DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
@@ -46,6 +47,7 @@ public:
     void setCurrentDevice(const QString &dev);
     QString getCurrentDevice() const;
     void updateBurnInfo();
+    QString getVolTag();
 
     //fix: 根据光盘选择文件状态实时更新状态
     QTimer *updateBurnStatusTimer;
@@ -162,7 +164,7 @@ DFMOpticalMediaWidget::~DFMOpticalMediaWidget()
 }
 
 //fix: 设置光盘容量属性
-void DFMOpticalMediaWidget::setBurnCapacity(int status)
+void DFMOpticalMediaWidget::setBurnCapacity(int status, QString strVolTag)
 {
     QFile burnCapacityFile(QString("%1/dde-file-manager.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath)));
     if (!burnCapacityFile.open(QIODevice::ReadOnly)) {
@@ -182,6 +184,8 @@ void DFMOpticalMediaWidget::setBurnCapacity(int status)
         QJsonDocument jsonDoc1;
         double burnTotalSize = DFMOpticalMediaWidget::g_totalSize;
         double burnUsedSize = DFMOpticalMediaWidget::g_usedSize;
+        burnTotalSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
+        burnUsedSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
         burnItem.insert("BurnCapacityTotalSize", burnTotalSize); //光盘容量总大小字节
         burnItem.insert("BurnCapacityUsedSize", burnUsedSize); //光盘容量已使用大小字节
         burnItem.insert("BurnCapacityStatus", BCSA_BurnCapacityStatusAddMount); //光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
@@ -207,6 +211,8 @@ void DFMOpticalMediaWidget::setBurnCapacity(int status)
 //            qDebug() << "burnItem[BurnCapacityExt]==" << burnItem["BurnCapacityExt"].toInt();
             double burnTotalSize = DFMOpticalMediaWidget::g_totalSize;
             double burnUsedSize = DFMOpticalMediaWidget::g_usedSize;
+            burnTotalSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
+            burnUsedSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
             burnItem["BurnCapacityTotalSize"] = burnTotalSize; //光盘容量总大小字节
             burnItem["BurnCapacityUsedSize"] = burnUsedSize; //光盘容量已使用大小字节
             burnItem["BurnCapacityStatus"] = status; //光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
@@ -251,7 +257,7 @@ void DFMOpticalMediaWidget::updateDiscInfo(QString dev)
     d->setCurrentDevice(dev);
 
     //fix: 设置光盘容量属性
-    DFMOpticalMediaWidget::setBurnCapacity(BCSA_BurnCapacityStatusAddMount);
+    DFMOpticalMediaWidget::setBurnCapacity(BCSA_BurnCapacityStatusAddMount, d->getVolTag());
 }
 
 //fix: 根据光盘选择文件状态实时更新状态
@@ -323,13 +329,24 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
     DeviceProperty dp = ISOMaster->getDevicePropertyCached(dev);
     setDeviceProperty(dp);
 
+    QString strKey = getVolTag();
     //fixed:CD display size error
     DFMOpticalMediaWidget::g_usedSize = dp.data;
     DFMOpticalMediaWidget::g_totalSize = dp.data + dp.avail;
+    DFMOpticalMediaWidget::g_mapCDUsage[strKey] = QPair<quint64, quint64>(dp.data, dp.data + dp.avail);
     //qDebug() << dp.datablocks << "Sectors" << DFMOpticalMediaWidget::g_usedSize / 1024 / 1024 << "MB" << (DFMOpticalMediaWidget::g_totalSize - DFMOpticalMediaWidget::g_usedSize) / 1024 / 1024 << "MB";
 }
 
 QString DFMOpticalMediaWidgetPrivate::getCurrentDevice() const
 {
     return curdev;
+}
+
+QString DFMOpticalMediaWidgetPrivate::getVolTag()
+{
+    QString strKey;
+    QStringList lst = curdev.split("/", QString::SkipEmptyParts); // /dev/sr0 -> { dev, sr0 }
+    if (lst.count() >= 2)
+        strKey = lst[1]; // strKey =
+    return strKey;
 }
