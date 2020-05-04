@@ -1898,6 +1898,21 @@ DUrlList DFileSystemModel::sortedUrls()
     return d->rootNode->getChildrenUrlList();
 }
 
+DUrlList DFileSystemModel::getNoTransparentUrls()
+{
+    DUrlList lst = sortedUrls();
+    DUrlList lstValid;
+    for (DUrl url: lst) {
+        QModelIndex idx = index(url);
+        if (!idx.isValid())
+            continue;
+        if (parent()->isTransparent(idx))
+            continue;
+        lstValid << url;
+    }
+    return lstValid;
+}
+
 DUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
 {
     const FileSystemNodePointer &node = getNodeByIndex(index);

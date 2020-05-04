@@ -354,6 +354,13 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                 DFileMenuManager::g_deleteDirPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
                 //获取用户名有问题，fix
 
+                // 禁用发送到列表中的本设备项
+                if (urlList.count() > 0) {
+                    DUrl url = urlList[0];
+                    if (url.path().contains(pDeviceinfo->getDiskInfo().id()))
+                        action->setEnabled(false);
+                }
+
                 sendToMountedRemovableDiskMenu->addAction(action);
                 connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk);
             }
