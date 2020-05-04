@@ -5,6 +5,9 @@
 #include "disomaster.h"
 #include "shutil/fileutils.h"
 #include "dialogs/burnoptdialog.h"
+#include "dfilestatisticsjob.h"
+#include "dfileview.h"
+#include "dfilesystemmodel.h"
 
 #include <QLabel>
 #include <DPushButton>
@@ -18,6 +21,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QStandardPaths>
 
 #include <QFile>
 
@@ -67,36 +71,85 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     Q_D(DFMOpticalMediaWidget);
     d->setupUi();
 
+    m_pStatisticWorker = new DFileStatisticsJob(this);
     //fix: 根据光盘选择文件状态实时更新状态
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
-    d->updateBurnStatusTimer = new QTimer(this);
-    d->updateBurnStatusTimer->start(100);
-    connect(d->updateBurnStatusTimer, &QTimer::timeout, this, &DFMOpticalMediaWidget::selectBurnFilesOptionUpdate);
-    connect(d->pb_burn, &DPushButton::clicked, this, [=] {
-            //fix: 光盘容量小于刻录项目，对话框提示：目标磁盘剩余空间不足，无法进行刻录！
-            DeviceProperty dp = ISOMaster->getDevicePropertyCached(d->getCurrentDevice());
-            //qDebug() << d->m_selectBurnFilesSize / 1024 / 1024 << "MB" << dp.avail / 1024 / 1024 << "MB";
-            if (d->m_selectBurnFilesSize > dp.avail) {
-                DDialog dialog(this);
-                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-                dialog.setTitle(tr("Unable to burn. Not enough free space on the target disk."));
-                dialog.addButton(tr("OK"), true);
-                dialog.exec();
-                return;
-            }
 
-            QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
-            bd->setJobWindowId(this->window()->winId());
-            bd->exec();
+//    d->updateBurnStatusTimer = new QTimer(this);
+//    d->updateBurnStatusTimer->start(100);
+//    connect(d->updateBurnStatusTimer, &QTimer::timeout, this, &DFMOpticalMediaWidget::selectBurnFilesOptionUpdate);
+    connect(d->pb_burn, &DPushButton::clicked, this, [ = ] {
+        DUrl url = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
+                                       + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/','_') + "/");
+        // 1、获取暂存区内文件列表信息，去除与当前光盘中有交集的部分（当前 isomaster 库不提供覆盖写入的选项，后或可优化）
+        DFileView *pParent = dynamic_cast<DFileView *>(parent);
+        if (!pParent)
+            return;
+        DUrlList lstCurr = pParent->model()->getNoTransparentUrls();
+
+        QDir dir(url.path());
+        if (!dir.exists())
+            return;
+        QFileInfoList lstFiles = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        if (lstFiles.count() == 0) {
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(tr("No file to burn."));
+            dialog.addButton(tr("OK"), true);
+            dialog.exec();
+            return;
         }
-    );
+
+        for (QFileInfo f: lstFiles) {
+            for (DUrl u: lstCurr) {
+                qDebug() << f.fileName() << QFileInfo(u.path()).fileName();
+                if (f.fileName() == QFileInfo(u.path()).fileName())
+                    dir.remove(f.fileName());
+            }
+        }
+        lstFiles = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        if (lstFiles.count() == 0) {
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(tr("No file to burn. Duplicated files will be ignore."));
+            dialog.addButton(tr("OK"), true);
+            dialog.exec();
+            return;
+        }
+
+        // 2、启动worker线程计算缓存区文件大小
+        if (!m_pStatisticWorker)
+            return;
+        QList<DUrl> urls;
+        urls << url;
+        m_pStatisticWorker->start(urls);
+    });
+
+    connect(m_pStatisticWorker, &DFileStatisticsJob::finished, this, [=] {
+        DeviceProperty dp = ISOMaster->getDevicePropertyCached(d->getCurrentDevice());
+
+        if (m_pStatisticWorker->totalSize() > dp.avail) {
+            //fix: 光盘容量小于刻录项目，对话框提示：目标磁盘剩余空间不足，无法进行刻录！
+            //qDebug() << d->m_selectBurnFilesSize / 1024 / 1024 << "MB" << dp.avail / 1024 / 1024 << "MB";
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(tr("Unable to burn. Not enough free space on the target disk."));
+            dialog.addButton(tr("OK"), true);
+            dialog.exec();
+            return;
+        }
+
+        QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
+        bd->setJobWindowId(this->window()->winId());
+        bd->exec();
+    });
 }
 
 DFMOpticalMediaWidget::~DFMOpticalMediaWidget()
 {
     Q_D(DFMOpticalMediaWidget);
-    d->updateBurnStatusTimer->stop();
+//    d->updateBurnStatusTimer->stop();
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
     d->m_selectBurnFilesSize = 0;
@@ -234,7 +287,7 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
     };
     //fix: 没有选择文件时防止误操作,故默认禁止操作
     //pb_burn->setEnabled(dp.avail > 0);
-    pb_burn->setEnabled(false);
+//    pb_burn->setEnabled(false);
     lb_available->setText(QObject::tr("Free Space %1").arg(FileUtils::formatSize(dp.avail)));
     lb_mediatype->setText(rtypemap[dp.media]);
 }
