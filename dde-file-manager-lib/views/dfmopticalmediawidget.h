@@ -6,6 +6,11 @@
 
 #include <QWidget>
 
+DFM_BEGIN_NAMESPACE
+class DFileStatisticsJob;
+DFM_END_NAMESPACE
+DFM_USE_NAMESPACE
+
 class DFMOpticalMediaWidgetPrivate;
 class DFMOpticalMediaWidget : public QWidget
 {
@@ -39,6 +44,7 @@ private slots:
 private:
     QScopedPointer<DFMOpticalMediaWidgetPrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFMOpticalMediaWidget)
+    DFileStatisticsJob *m_pStatisticWorker = nullptr;
 };
 
 #endif // DFMOPTICALMEDIAWIDGET_H

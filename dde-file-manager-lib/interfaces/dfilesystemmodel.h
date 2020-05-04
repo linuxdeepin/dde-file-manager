@@ -158,6 +158,7 @@ public:
     QModelIndex setRootUrl(const DUrl &fileUrl);
     DUrl rootUrl() const;
     DUrlList sortedUrls();
+    DUrlList getNoTransparentUrls();
 
     DUrl getUrlByIndex(const QModelIndex &index) const;
 

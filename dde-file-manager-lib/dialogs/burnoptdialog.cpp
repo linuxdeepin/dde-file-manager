@@ -192,6 +192,7 @@ void BurnOptDialogPrivate::setupUi()
     cb_eject = new QCheckBox(QObject::tr("Eject"));
     cb_eject->setChecked(true);
     wpostburn->layout()->addWidget(cb_eject);
+    cb_eject->setVisible(false); // 20200430 xust 与产品沟通后决定隐藏弹出的配置项，默认刻录完成后弹出光盘仓
 }
 
 void BurnOptDialogPrivate::setDevice(const QString &device)
