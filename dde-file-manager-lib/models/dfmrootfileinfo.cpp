@@ -626,6 +626,13 @@ QString DFMRootFileInfo::udisksDisplayName()
     return d->label;
 }
 
+QString DFMRootFileInfo::getVolTag()
+{
+    Q_D(DFMRootFileInfo);
+    int nIdx = d->backer_url.lastIndexOf("/");
+    return nIdx < 0 ? QString() : d->backer_url.mid(nIdx + 1);
+}
+
 bool DFMRootFileInfo::checkMpsStr(const QString &path) const
 {
     Q_D(const DFMRootFileInfo);

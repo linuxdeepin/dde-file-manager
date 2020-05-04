@@ -138,9 +138,9 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
 
     quint64 sizeinuse = index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong();
     quint64 sizetotal = index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong();
-
+    QString strVolTag = index.data(ComputerModel::DataRoles::VolumeTagRole).toString();
     painter->setPen(pl.color(DPalette::TextTips));
-    painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
+    painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal, strVolTag));
 
     QRect usgplrect(option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize), QSize(text_max_width, 6));
     QStyle *sty = option.widget && option.widget->style() ? option.widget->style() : qApp->style();

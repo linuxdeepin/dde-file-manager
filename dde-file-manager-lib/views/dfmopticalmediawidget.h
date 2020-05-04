@@ -26,6 +26,7 @@ public:
     //fixed:CD display size error
     static quint64 g_totalSize;
     static quint64 g_usedSize;
+    static QMap<QString, QPair<quint64, quint64>> g_mapCDUsage; // sr0, (usage, total)
     //fix: 动态获取刻录选中文件的字节大小
     static qint64 g_selectBurnFilesSize;
     static qint64 g_selectBurnDirFileCount;
@@ -35,7 +36,7 @@ public:
 
     void updateDiscInfo(QString dev);
     //fix: 设置光盘容量属性
-    static void setBurnCapacity(int status);
+    static void setBurnCapacity(int status, QString strVolTag = "");
 
     //fix: 动态更新光驱磁盘状态
 private slots:
