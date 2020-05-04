@@ -334,8 +334,14 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 
         //fixed:CD display size error
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
-            dskspace = DFMOpticalMediaWidget::g_totalSize;
-            dskinuse = DFMOpticalMediaWidget::g_usedSize;
+            DFMRootFileInfo *pFileInfo = dynamic_cast<DFMRootFileInfo *>(fi.data());
+            QString strVolTag;
+            if (pFileInfo)
+                strVolTag = pFileInfo->getVolTag();
+            dskspace = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
+            dskinuse = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
+//            dskspace = DFMOpticalMediaWidget::g_totalSize;
+//            dskinuse = DFMOpticalMediaWidget::g_usedSize;
         }
 
         progbdf->setMaximum(10000);
@@ -1166,8 +1172,14 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
 
     //fixed:CD display size error
     if (static_cast<DFMRootFileInfo::ItemType>(info->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
+        DFMRootFileInfo *pFileInfo = dynamic_cast<DFMRootFileInfo *>(info.data());
+        QString strVolTag;
+        if (pFileInfo)
+            strVolTag = pFileInfo->getVolTag();
         fsSize = DFMOpticalMediaWidget::g_totalSize;
         fsUsed = DFMOpticalMediaWidget::g_usedSize;
+        fsSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
+        fsUsed = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
     }
 
     results.append({QObject::tr("Total space"), FileUtils::formatSize(fsSize)});

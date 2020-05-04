@@ -82,6 +82,7 @@ QPointer<QEventLoop> GvfsMountManager::eventLoop;
 //fix: 探测光盘推进,弹出和挂载状态机标识
 bool GvfsMountManager::g_burnVolumeFlag = false;
 bool GvfsMountManager::g_burnMountFlag = false;
+QMap<QString, QPair<bool, bool>> GvfsMountManager::g_mapCdStatus;
 //fix: 每次弹出光驱时需要删除临时缓存数据文件
 QString GvfsMountManager::g_qVolumeId = "sr0";
 
@@ -480,6 +481,7 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
     if (qMount.icons().contains("media-optical")) { //CD/DVD
         GvfsMountManager::g_burnVolumeFlag = true;
         GvfsMountManager::g_burnMountFlag = true;
+        GvfsMountManager::g_mapCdStatus[getVolTag(mount)] = QPair<bool, bool>(true, true);
         //fix: 设置光盘容量属性
         //DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAddMount);
     }
@@ -529,6 +531,7 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qMount.name().contains("CD/DVD") || qMount.name().contains("CD") || qMount.icons().contains("media-optical")) { //CD/DVD
         GvfsMountManager::g_burnMountFlag = false;
+        GvfsMountManager::g_mapCdStatus[getVolTag(mount)].second = false;
     }
 
     qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << "=======================";
@@ -604,8 +607,9 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
     if (qVolume.icons().contains("media-optical")) { //CD/DVD
         GvfsMountManager::g_burnVolumeFlag = true;
         GvfsMountManager::g_burnMountFlag = false;
+        GvfsMountManager::g_mapCdStatus[getVolTag(volume)] = QPair<bool, bool>(true, false);
         //fix: 设置光盘容量属性
-        DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAdd);
+        DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAdd, getVolTag(volume));
     }
 
     GDrive *drive = g_volume_get_drive(volume);
@@ -651,6 +655,7 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qVolume.name().contains("CD/DVD") || qVolume.name().contains("CD") || qVolume.icons().contains("media-optical")) { //CD/DVD
         GvfsMountManager::g_burnVolumeFlag = false;
+        GvfsMountManager::g_mapCdStatus[getVolTag(volume)].first = false;
     }
 
     //fix: 每次弹出光驱时需要删除临时缓存数据文件
@@ -658,13 +663,14 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
             (qVolume.activation_root_uri().contains("") || qVolume.unix_device().contains("/dev/sr"))) {
         //fix: 临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
         QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        QString tempMediaPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + GvfsMountManager::g_qVolumeId;
+        QString tempMediaPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + getVolTag(volume);
         QDir(tempMediaPath).removeRecursively();
 
         //fix: 设置光盘容量属性
         DFMOpticalMediaWidget::g_totalSize = 0;
         DFMOpticalMediaWidget::g_usedSize = 0;
-        DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct);
+        DFMOpticalMediaWidget::g_mapCDUsage[getVolTag(volume)] = QPair<quint64, quint64>(0, 0);
+        DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct, getVolTag(volume));
     }
 
     GDrive *drive = g_volume_get_drive(volume);
@@ -1293,6 +1299,21 @@ DUrl GvfsMountManager::getRealMountUrl(const QDiskInfo &info)
     }
 
     return MountPointUrl;
+}
+
+QString GvfsMountManager::getVolTag(GMount *m)
+{
+    if (!m) return QString();
+    GVolume *volume = g_mount_get_volume(m);
+    QVolume qVolume = gVolumeToqVolume(volume);
+    return qVolume.unix_device().mid(5);
+}
+
+QString GvfsMountManager::getVolTag(GVolume *v)
+{
+    if (!v) return QString();
+    QVolume qVolume = gVolumeToqVolume(v);
+    return qVolume.unix_device().mid(5);
 }
 
 void GvfsMountManager::autoMountAllDisks()

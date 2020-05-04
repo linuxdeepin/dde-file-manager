@@ -86,6 +86,7 @@ public:
 
     void checkCache();
     QString udisksDisplayName();
+    QString getVolTag(); // ....../dev/sr0 -> sr0
 
     bool checkMpsStr(const QString &path) const override;
 

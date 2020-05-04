@@ -429,7 +429,7 @@ QString FileUtils::formatSize(qint64 num, bool withUnitVisible, int precision, i
     return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', precision)), unitString);
 }
 
-QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize)
+QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize, QString strVolTag)
 {
     const qint64 kb = 1024;
     const qint64 mb = 1024 * kb;
@@ -440,11 +440,13 @@ QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize)
     }
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
-    if (GvfsMountManager::g_burnVolumeFlag && (totalSize == 0)) { //CD/DVD
+    bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
+    bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
+    if (bVolFlag && (totalSize == 0)) { //CD/DVD
         return QObject::tr("Unknown");
-    } else if (!GvfsMountManager::g_burnVolumeFlag && !GvfsMountManager::g_burnMountFlag  && (totalSize == 0)) { //CD/DVD
+    } else if (!bVolFlag && !bMntFlag  && (totalSize == 0)) { //CD/DVD
         return QString("0M");
-    } else if (!GvfsMountManager::g_burnVolumeFlag && !GvfsMountManager::g_burnMountFlag  && (totalSize > 0) && (usedSize == 0)) { //blank CD/DVD
+    } else if (!bVolFlag && !bMntFlag  && (totalSize > 0) && (usedSize == 0)) { //blank CD/DVD
         return QString("0M");
     } else {
         return QString("%1/%2").arg(FileUtils::formatSize(usedSize, true, 0, usedSize < mb ? 2 : -1, unitDisplayText),
