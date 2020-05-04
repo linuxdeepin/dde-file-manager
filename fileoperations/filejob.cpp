@@ -812,6 +812,10 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         close(badPipefd[1]);
         close(progressPipefd[1]);
 
+        // fake:
+        QDateTime fakeStartTime;
+        QDateTime fakeEndTime;
+
         int status;
         waitpid(-1, &status, WNOHANG);
         qDebug() << "start read child process data";
@@ -835,8 +839,11 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
                 for (int i = 0; i < jsonArray.size(); i++) {
                     msgList.append(jsonArray[i].toString());
                 }
-                qDebug() << "update dialog......." << status << progress << speed;
                 opticalJobUpdatedByParentProcess(status, progress, speed, msgList);
+
+                if (m_opticalJobPhase == 2 && progress == 0) {
+                    fakeStartTime = QDateTime::currentDateTime();
+                }
             }
         }
 
@@ -844,6 +851,26 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         if ((flag & 4) && (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed)) {
             m_opticalJobPhase = 2;
             read(badPipefd[0], &globalBad, sizeof(globalBad));
+        }
+
+        // make fake progress when child process crashed
+        if ((flag & 4) && (m_opticalJobPhase == 2) && (m_opticalJobProgress > 0 && m_opticalJobProgress < 100)) {
+            fakeEndTime = QDateTime::currentDateTime();
+            qint64 totalSeconds = fakeStartTime.secsTo(fakeEndTime);
+            qint64 averageMSeconds = totalSeconds *1000 / m_opticalJobProgress;
+            qint64 maxMSeconds = 60 * 1000;
+            averageMSeconds = averageMSeconds < 0 ? maxMSeconds : averageMSeconds;
+            averageMSeconds = averageMSeconds < maxMSeconds ? averageMSeconds : maxMSeconds;
+            m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Running; // keep running status
+            qDebug() << "rescan progress start:";
+            qDebug() << "last checkmedia process: " << m_opticalJobProgress;
+            qDebug() << "last speed:" << m_opticalOpSpeed;
+            qDebug() << "sleep time:" << averageMSeconds;
+            for (int i = m_opticalJobProgress; i <= 100; i++) {
+                opticalJobUpdatedByParentProcess(m_opticalJobStatus, i, m_opticalOpSpeed, QStringList());
+                QThread::msleep(static_cast<unsigned int>(averageMSeconds));
+            }
+            m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
         }
 
         // last handle
@@ -1098,6 +1125,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
                 opticalJobUpdatedByParentProcess(m_opticalJobStatus, i, m_opticalOpSpeed, QStringList());
                 QThread::msleep(static_cast<unsigned int>(averageMSeconds));
             }
+            m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
         }
 
         // last handle
