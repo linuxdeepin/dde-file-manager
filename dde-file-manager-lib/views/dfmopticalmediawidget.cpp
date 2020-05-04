@@ -101,11 +101,16 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             return;
         }
 
+        // 如果光盘根目录与暂存区中文件有同名文件或文件夹，则移除暂存区中的相关文件或文件夹；
         for (QFileInfo f: lstFiles) {
             for (DUrl u: lstCurr) {
-                qDebug() << f.fileName() << QFileInfo(u.path()).fileName();
-                if (f.fileName() == QFileInfo(u.path()).fileName())
-                    dir.remove(f.fileName());
+                if (f.fileName() == QFileInfo(u.path()).fileName()) {
+                    if (f.isFile())
+                        dir.remove(f.fileName());
+                    else
+                        QDir(f.path()).removeRecursively();
+                    continue;
+                }
             }
         }
         lstFiles = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
