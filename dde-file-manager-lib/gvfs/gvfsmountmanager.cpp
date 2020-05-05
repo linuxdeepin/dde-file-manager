@@ -1304,9 +1304,9 @@ DUrl GvfsMountManager::getRealMountUrl(const QDiskInfo &info)
 QString GvfsMountManager::getVolTag(GMount *m)
 {
     if (!m) return QString();
-    GVolume *volume = g_mount_get_volume(m);
-    QVolume qVolume = gVolumeToqVolume(volume);
-    return qVolume.unix_device().mid(5);
+    QMount qMount = gMountToqMount(m);
+    QVolume volume = getVolumeByMountedRootUri(qMount.mounted_root_uri());
+    return volume.unix_device().mid(5);
 }
 
 QString GvfsMountManager::getVolTag(GVolume *v)
