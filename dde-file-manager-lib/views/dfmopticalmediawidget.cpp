@@ -166,7 +166,6 @@ DFMOpticalMediaWidget::~DFMOpticalMediaWidget()
 //fix: 设置光盘容量属性
 void DFMOpticalMediaWidget::setBurnCapacity(int status, QString strVolTag)
 {
-    Q_UNUSED(status)
     QFile burnCapacityFile(QString("%1/dde-file-manager.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath)));
     if (!burnCapacityFile.open(QIODevice::ReadOnly)) {
         qDebug() << "Couldn't open dde-file-manager.json burnCapacityFile!";
@@ -183,7 +182,7 @@ void DFMOpticalMediaWidget::setBurnCapacity(int status, QString strVolTag)
     QJsonObject burnItem;
     burnItem.insert("BurnCapacityTotalSize", burnTotalSize); //光盘容量总大小字节
     burnItem.insert("BurnCapacityUsedSize", burnUsedSize); //光盘容量已使用大小字节
-    burnItem.insert("BurnCapacityStatus", BCSA_BurnCapacityStatusAddMount); //光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
+    burnItem.insert("BurnCapacityStatus", status); //光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
     burnItem.insert("BurnCapacityExt", 0); //光盘容量扩展预留属性
 
     QJsonParseError parseJsonErr;
