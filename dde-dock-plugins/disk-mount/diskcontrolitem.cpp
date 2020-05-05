@@ -139,6 +139,16 @@ void DiskControlItem::refreshIcon()
     m_unmountButton->setIcon(QIcon::fromTheme("dfm_unmount"));
 }
 
+QString DiskControlItem::tagName() const
+{
+    return m_tagName;
+}
+
+void DiskControlItem::setTagName(const QString &tagName)
+{
+    m_tagName = tagName;
+}
+
 QString DiskControlItem::sizeString(const QString &str)
 {
     int begin_pos = str.indexOf('.');
@@ -223,15 +233,14 @@ void DiskControlItem::showEvent(QShowEvent *e)
             qDebug() << "tempBurnObjs==" << tempBurnObjs;
             if (tempBurnObjs.contains(QStringLiteral("BurnCapacityAttribute"))) {
                 QJsonValue jsonBurnValueList = tempBurnObjs.value(QStringLiteral("BurnCapacityAttribute"));
-                QJsonObject burnItem = jsonBurnValueList.toObject();
-//                qDebug() << "burnItem[BurnCapacityTotalSize]==" << burnItem["BurnCapacityTotalSize"].toDouble();
-//                qDebug() << "burnItem[BurnCapacityUsedSize]==" << burnItem["BurnCapacityUsedSize"].toDouble();
-//                qDebug() << "burnItem[BurnCapacityStatus]==" << burnItem["BurnCapacityStatus"].toInt();
-//                qDebug() << "burnItem[BurnCapacityExt]==" << burnItem["BurnCapacityExt"].toInt();
-                burnCapacityTotalSize =  burnItem["BurnCapacityTotalSize"].toDouble();
-                burnCapacityUsedSize =  burnItem["BurnCapacityUsedSize"].toDouble();
-                burnStatus = burnItem["BurnCapacityStatus"].toInt();
-                burnExt = burnItem["BurnCapacityExt"].toInt();
+                QJsonObject tagItem = jsonBurnValueList.toObject();
+                if (tagItem.contains(m_tagName)) {
+                    QJsonObject burnItem = tagItem[m_tagName].toObject();
+                    burnCapacityTotalSize =  burnItem["BurnCapacityTotalSize"].toDouble();
+                    burnCapacityUsedSize =  burnItem["BurnCapacityUsedSize"].toDouble();
+                    burnStatus = burnItem["BurnCapacityStatus"].toInt();
+                    burnExt = burnItem["BurnCapacityExt"].toInt();
+                }
             }
 
             bytesFree = burnCapacityTotalSize - burnCapacityUsedSize;

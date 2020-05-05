@@ -306,8 +306,11 @@ void DiskControlWidget::onDiskListChanged()
             if (isProtectedDevice(blDev.data())) continue;
             QByteArray mountPoint = blDev->mountPoints().first();
             mountedCount++;
+            QString tagName = blDevStr.split(QDir::separator()).last();
             DAttachedUdisks2Device *dad = new DAttachedUdisks2Device(blDev.data());
+            qDebug() << "create new item, tagname is" << tagName;
             DiskControlItem *item = new DiskControlItem(dad, this);
+            item->setTagName(tagName);
 
             class ErrHandle : public ErrorHandleInfc, public QObject {
             public:

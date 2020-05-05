@@ -53,6 +53,9 @@ public:
 
     static QString formatDiskSize(const quint64 num);
 
+    QString tagName() const;
+    void setTagName(const QString &tagName);
+
 private slots:
     static QString sizeString(const QString &str);
 private:
@@ -69,6 +72,8 @@ private:
     QProgressBar *m_capacityValueBar;
     DIconButton *m_unmountButton;
     QScopedPointer<DAttachedDeviceInterface> attachedDevice;
+
+    QString m_tagName;
 };
 
 DFM_NAMESPACE::DFMSettings* getGsGlobal();
