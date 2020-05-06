@@ -2028,6 +2028,13 @@ void CanvasGridView::setDodgeDuration(double dodgeDuration)
     emit dodgeDurationChanged(d->dodgeDuration);
 }
 
+void CanvasGridView::selectAll()
+{
+    //全选按桌面显示顺序对文件进行选择
+    DUrlList all = DUrl::fromStringList(GridManager::instance()->allItems());
+    select(all);
+}
+
 void CanvasGridView::onRefreshFinished()
 {
     qDebug() << "fresh ending spend " << m_rt.elapsed() << m_screenNum;

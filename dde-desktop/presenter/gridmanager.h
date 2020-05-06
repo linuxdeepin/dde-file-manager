@@ -115,6 +115,7 @@ public:
     QString lastItemId(int screenNum);
     QString lastItemTop(int screenNum);
     QStringList itemIds(int screenNum);
+    QStringList allItems() const;
 
     bool contains(int screebNum, const QString &itemId);
     QPoint position(int screenNum, const QString &itemId);

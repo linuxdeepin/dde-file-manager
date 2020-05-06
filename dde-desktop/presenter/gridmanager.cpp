@@ -2207,6 +2207,11 @@ QStringList GridManager::itemIds(int screenNum)
     return ids;
 }
 
+QStringList GridManager::allItems() const
+{
+    return d->allItems();
+}
+
 bool GridManager::contains(int screebNum, const QString &id)
 {
     return d->m_itemGrids.value(screebNum).contains(id) ||
