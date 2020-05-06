@@ -163,7 +163,6 @@ void UDiskListener::initConnect()
 
     connect(fileSignalManager, &FileSignalManager::stopCdScanTimer, this, [ = ](const QString &strDev) {
         Q_UNUSED(strDev)
-        m_nCDRomCount--;
         if (m_diskTimer->isActive()) {
             m_diskTimer->stop();
             qDebug() << "timer stop, curr cdrom:" << m_nCDRomCount;
@@ -213,6 +212,14 @@ void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
 {
     m_list.removeOne(device);
     m_map.remove(device->getDiskInfo().id());
+
+    if (device->getDiskInfo().drive_unix_device().contains("/dev/sr")) {
+        m_nCDRomCount--;
+        if (m_nCDRomCount == 0) {
+            m_diskTimer->stop();
+            qDebug() << "timer stop, curr cdrom: " << m_nCDRomCount;
+        }
+    }
 
     DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
                                       &DAbstractFileWatcher::fileDeleted,
