@@ -107,7 +107,7 @@ void UDiskListener::initDiskManager()
     connect(m_diskTimer, &QTimer::timeout, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
         for (int i = 0; i < m_list.size(); i++) {
             UDiskDeviceInfoPointer info = m_list.at(i);
-            qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
+            //qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
             QString t_device = info->getDiskInfo().drive_unix_device();
 
             //监测光驱托盘是否被弹出
