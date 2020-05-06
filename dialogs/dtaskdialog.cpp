@@ -550,7 +550,7 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
         if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
             wid->setProgressValue(-1);// stop
         }
-        else if (status != QString::number(DISOMasterNS::DISOMaster::JobStatus::Failed)) {
+        else if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Running)) {
             //wid->onProgressChanged(progress.toInt(), 0);
             wid->onBurnProgressChanged(progress.toInt(), 0);
         }
