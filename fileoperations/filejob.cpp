@@ -660,7 +660,6 @@ void FileJob::doOpticalBlank(const DUrl &device)
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
-    delete job_isomaster;
 
     //fix: 空白光盘擦除处理完后需要对当前刻录的全局状态机置恢复位，便于其它地方调用状态机完整性
     m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
@@ -823,6 +822,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         int status;
         waitpid(-1, &status, WNOHANG);
         qDebug() << "start read child process data";
+        QThread::msleep(1000);
 
         // read progress
         while (true) {
@@ -913,13 +913,14 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
                 doDelete({DUrl::fromLocalFile(stagingurl.path())});
             }
         } else {
-            // 刻录失败提示
-            emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
+            //emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
             QThread::msleep(1000);
             if (FileJob::g_opticalBurnEjectCount > 0) {
                 FileJob::g_opticalBurnEjectCount = 0;
             }
+            // 刻录失败提示
+            emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
         }
 
         close(badPipefd[0]);
@@ -1079,6 +1080,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         int status;
         waitpid(-1, &status, WNOHANG);
         qDebug() << "start read child process data";
+        QThread::msleep(1000);
 
         // read progress
         while (true) {
@@ -1167,12 +1169,14 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             }
         } else {
             // 刻录失败提示
-            emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
+            //emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
             QThread::msleep(1000);
             if (FileJob::g_opticalBurnEjectCount > 0) {
                 FileJob::g_opticalBurnEjectCount = 0;
             }
+            // 刻录失败提示
+            emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
         }
 
         close(badPipefd[0]);
@@ -1213,11 +1217,13 @@ void FileJob::opticalJobUpdatedByParentProcess(int status, int progress, const Q
     m_opticalJobStatus = status;
     m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
-        QStringList msg(msgs);
+        m_lastSrcError = msgs;
+        m_lastError = FileJob::getXorrisoErrorMsg(msgs);
         // tmp : 暂不处理失败
         //dialogManager->showOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msgs), msgs);
         //emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
         qDebug() << "encounter failed";
+        qDebug() << msgs;
         return;
     }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
