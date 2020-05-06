@@ -883,6 +883,14 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
         }
 
+        // must show %100
+        if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
+            for (int i = 0; i < 15; i++) {
+                opticalJobUpdatedByParentProcess(m_opticalJobStatus, 100, m_opticalOpSpeed, m_lastSrcError);
+                QThread::msleep(100);
+            }
+        }
+
         // last handle
         if (flag & 2) {
             QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
@@ -1145,6 +1153,14 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
                 QThread::msleep(static_cast<unsigned int>(averageMSeconds));
             }
             m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+        }
+
+        // must show %100
+        if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
+            for (int i = 0; i < 15; i++) {
+                opticalJobUpdatedByParentProcess(m_opticalJobStatus, 100, m_opticalOpSpeed, m_lastSrcError);
+                QThread::msleep(100);
+            }
         }
 
         // last handle
