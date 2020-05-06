@@ -154,7 +154,7 @@ signals:
     /*tip dialog show when move file which size is large than of 1GB to trash*/
     void requestCanNotMoveToTrashDialogShowed(const DUrlList& urls);
 
-    void requestOpticalJobFailureDialog(JobType type, const QString& err, const QStringList& details);
+    void requestOpticalJobFailureDialog(int type, const QString& err, const QStringList& details);
     void requestOpticalJobCompletionDialog(const QString& msg, const QString& icon);
 
     void progressPercent(int value);
@@ -235,6 +235,8 @@ private:
     bool m_isInSameDisk = true;
     bool m_isFinished = false;
     bool m_isManualRemoveJob = false; // 手动外部调用removejob，回收站回收多个文件作为一个任务时，处理完手动调用jobRemoved()
+    QString m_lastError; // 最后一个刻录失败的错误原因
+    QStringList m_lastSrcError; // 底层抛出的原始错误原因
 
     GCancellable* m_abortGCancellable = NULL;
 
