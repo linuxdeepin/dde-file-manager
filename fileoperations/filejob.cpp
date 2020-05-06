@@ -884,12 +884,14 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         }
 
         // must show %100
+        auto tmpStatus = m_opticalJobStatus;
         if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
             for (int i = 0; i < 15; i++) {
-                opticalJobUpdatedByParentProcess(m_opticalJobStatus, 100, m_opticalOpSpeed, m_lastSrcError);
+                opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
                 QThread::msleep(100);
             }
         }
+        m_opticalJobStatus = tmpStatus;
 
         // last handle
         if (flag & 2) {
@@ -1156,12 +1158,14 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         }
 
         // must show %100
+        auto tmpStatus = m_opticalJobStatus;
         if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
             for (int i = 0; i < 15; i++) {
-                opticalJobUpdatedByParentProcess(m_opticalJobStatus, 100, m_opticalOpSpeed, m_lastSrcError);
+                opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
                 QThread::msleep(100);
             }
         }
+        m_opticalJobStatus = tmpStatus;
 
         // last handle
         if (flag & 2) {
