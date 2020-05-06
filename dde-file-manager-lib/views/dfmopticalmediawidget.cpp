@@ -152,10 +152,11 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
         QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
         bd->setJobWindowId(this->window()->winId());
-        if (bd->exec() == DDialog::Accepted) {
-            // 发送信号停止扫描光驱的计时器
-            emit fileSignalManager->stopCdScanTimer(d->getCurrentDevice());
-        }
+        bd->exec();
+//        if (bd->exec() == DDialog::Accepted) {
+//            // 发送信号停止扫描光驱的计时器
+//            emit fileSignalManager->stopCdScanTimer(d->getCurrentDevice());
+//        }
     });
 }
 

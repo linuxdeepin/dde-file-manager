@@ -333,6 +333,11 @@ bool DStorageInfo::isLowSpeedDevice(const QString &path)
     return DStorageInfo(path).isLowSpeedDevice();
 }
 
+bool DStorageInfo::isCdRomDevice(const QString &path)
+{
+    return DStorageInfo(path).device().startsWith("/dev/sr");
+}
+
 DFM_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE

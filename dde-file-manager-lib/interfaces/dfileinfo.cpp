@@ -906,7 +906,7 @@ QIcon DFileInfo::fileIcon() const
     d->hasThumbnail = 0;
 #else
     if (d->hasThumbnail < 0)
-        d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
+        d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
 #endif
     if (d->needThumbnail || d->hasThumbnail > 0) {
         d->needThumbnail = true;
