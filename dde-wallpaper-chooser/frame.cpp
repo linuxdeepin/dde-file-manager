@@ -776,6 +776,10 @@ void Frame::refreshList()
                     item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Only lock screen"));
                     item->show();
                     connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
+                    if(path == QString("file://").append(m_backgroundHelper->background()))
+                    {
+                        emit item->pressed(); //选中当前屏保
+                    }
                 }
 
                 m_wallpaperList->setFixedWidth(width());
@@ -806,8 +810,11 @@ void Frame::refreshList()
             item->setDeletable(false);
             item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply"));
             item->show();
-
             connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
+            if(cover_path == m_dbusScreenSaver->GetScreenSaverCover(m_dbusScreenSaver->currentScreenSaver()))
+            {
+                emit item->pressed();  //选中当前壁纸
+            }
         }
 
         m_wallpaperList->setFixedWidth(width());
