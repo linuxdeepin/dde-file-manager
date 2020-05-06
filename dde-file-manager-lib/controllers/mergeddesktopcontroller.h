@@ -23,6 +23,7 @@
 #define MERGEDDESKTOPCONTROLLER_H
 
 #include "dabstractfilecontroller.h"
+#include "shutil/dfmfilelistfile.h"
 #include <QWaitCondition>
 #include <QMutex>
 
@@ -88,6 +89,7 @@ private:
     void initData(QDir::Filters ftrs) const;
     void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
 
+    DFMFileListFile *hiddenFiles = nullptr;
     DFileWatcher* m_desktopFileWatcher;
     mutable DUrl currentUrl;
 //    mutable bool dataInitialized = false;

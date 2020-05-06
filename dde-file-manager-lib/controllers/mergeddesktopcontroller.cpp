@@ -158,6 +158,7 @@ MergedDesktopController::MergedDesktopController(QObject *parent)
     connect(m_desktopFileWatcher, &DFileWatcher::subfileCreated, this, &MergedDesktopController::desktopFilesCreated);
     connect(m_desktopFileWatcher, &DFileWatcher::fileMoved, this, &MergedDesktopController::desktopFilesRenamed);
     m_desktopFileWatcher->startWatcher();
+    hiddenFiles = new DFMFileListFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
 }
 
 const DAbstractFileInfoPointer MergedDesktopController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
@@ -556,8 +557,11 @@ void MergedDesktopController::initData(QDir::Filters ftrs) const
     };
     qSort(fileList.begin(),fileList.end(),compateFunc);
     //end
-
+    bool showHidden = ftrs.testFlag(QDir::Hidden);
     for (const QString &oneFile : fileList) {
+        if (!showHidden && hiddenFiles->contains(oneFile)){
+            continue;
+        }
         DUrl oneUrl = DUrl::fromLocalFile(desktopDir.filePath(oneFile));
         DMD_TYPES typeInfo = checkUrlArrangedType(oneUrl);
         arrangedFileUrls[typeInfo].append(oneUrl);
