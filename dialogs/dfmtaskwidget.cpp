@@ -28,6 +28,7 @@
 #include <QPushButton>
 #include <DIconButton>
 #include <DGuiApplicationHelper>
+#include <QTimer>
 
 #include "app/define.h"
 #include "dfileservices.h"
@@ -103,6 +104,9 @@ private:
     QPushButton* m_btnCoexist;
     QPushButton* m_btnSkip;
     QPushButton* m_btnReplace;
+
+    QTimer* m_timer;
+    bool m_isSettingValue;
 
     DFMTaskWidget *q_ptr;
     Q_DECLARE_PUBLIC(DFMTaskWidget)
@@ -287,6 +291,9 @@ void DFMTaskWidgetPrivate::initUI()
     m_btnStop->setVisible(false);
     m_widConfict->setVisible(false);
     m_widButton->setVisible(false);
+
+    m_timer = new QTimer(q);
+    m_isSettingValue = false;
 }
 
 void DFMTaskWidgetPrivate::initConnection()
@@ -321,6 +328,10 @@ void DFMTaskWidgetPrivate::initConnection()
         q->showConflictButtons(false);
         emit q->butonClicked(DFMTaskWidget::STOP);
     },Qt::DirectConnection);
+
+    QObject::connect(m_timer, &QTimer::timeout, [this](){
+       m_isSettingValue = false;
+    });
 }
 
 
@@ -366,16 +377,33 @@ void DFMTaskWidget::setSpeedText(const QString &speed, const QString &rmtime)
 void DFMTaskWidget::setProgressValue(int value)
 {
     Q_D(DFMTaskWidget);
+
+    //大量快速的设置进度条会导致进度数值不刷新
+    //这里通过对相等值判断和定时器降低刷新频率
+    //并且手动调用update强制刷新界面
+    if (d->m_isSettingValue) {
+        return;
+    }
+
+    if (value > 0 && value == d->m_progress->value()) {
+        return;
+    }
+
+    d->m_timer->start(100);
+    d->m_isSettingValue = true;
     if (value>=0 && d->m_progress->value()==0) {
         d->m_progress->start();
         d->m_progress->setValue(value);
+        return;
     }
 
     if (value < 0) {
         d->m_progress->stop();
+        d->m_isSettingValue = false;
+        d->m_timer->stop();
     } else {
         d->m_progress->setValue(value);
-        //d->m_progress->update();
+        d->m_progress->update();
     }
 }
 
