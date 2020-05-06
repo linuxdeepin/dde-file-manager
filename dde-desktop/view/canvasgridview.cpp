@@ -1829,7 +1829,9 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
                 GridManager::instance()->remove(m_screenNum, oriUrl.toString());
                 GridManager::instance()->add(m_screenNum, oldPos, dstUrl.toString());
 
-                if (GridManager::instance()->shouldArrange())
+                if (GridManager::instance()->autoMerge())
+                    this->delayModelRefresh();
+                else if (GridManager::instance()->autoArrange())
                     this->delayArrage();
             } else {
                 //Q_EMIT itemCreated(dstUrl);
@@ -2406,9 +2408,9 @@ openEditor:
         qDebug() << "dataChanged" << roles;
         if (d->resortCount > 0) {
             qDebug() << "dataChanged" << topLeft << bottomRight << roles;
-            qDebug() << "resort desktop icons";
+            qDebug() << "resort desktop icons " << d->resortCount;
             model()->setEnabledSort(false);
-            d->resortCount--;
+            d->resortCount = 0;
             QStringList list;
             for (int i = 0; i < model()->rowCount(); ++i) {
                 auto index = model()->index(i, 0);

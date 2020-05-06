@@ -150,7 +150,7 @@ signals:
 public slots:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) Q_DECL_OVERRIDE;
     void setDodgeDuration(double dragMoveTime);
-    virtual void selectAll();
+    virtual void selectAll() override;
 protected slots:
     void onRefreshFinished();
 // Debug interface
