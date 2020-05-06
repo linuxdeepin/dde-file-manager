@@ -412,9 +412,8 @@ void CanvasGridView::delayArrage(int ms)
         qDebug() << "reset timer" << m_screenNum;
     }
     if (ms < 1){
-        d->resortCount++;
-        qDebug() << "beging sort " << arrangeTimer << m_screenNum
-                 << "resortCount" << d->resortCount;
+        d->bReloadItem = true;
+        qDebug() << "beging sort " << arrangeTimer << m_screenNum;
         model()->setEnabledSort(true);
         model()->sort();
         return;
@@ -423,9 +422,8 @@ void CanvasGridView::delayArrage(int ms)
     arrangeTimer = new QTimer;
     connect(arrangeTimer,&QTimer::timeout,this,[=](){
         arrangeTimer->stop();
-        d->resortCount++;
-        qDebug() << "beging sort " << arrangeTimer << m_screenNum
-                 << "resortCount" << d->resortCount;
+        d->bReloadItem = true;
+        qDebug() << "beging sort " << arrangeTimer << m_screenNum;
         model()->setEnabledSort(true);
         model()->sort();
     });
@@ -2377,7 +2375,6 @@ openEditor:
     });
 
     connect(this, &CanvasGridView::itemDeleted, this, [ = ](const DUrl & url) {
-
         auto index = model()->index(url);
         if (d->currentCursorIndex == index) {
             d->currentCursorIndex  = QModelIndex();
@@ -2406,11 +2403,12 @@ openEditor:
     connect(this->model(), &QAbstractItemModel::dataChanged,
     this, [ = ](const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> &roles) {
         qDebug() << "dataChanged" << roles;
-        if (d->resortCount > 0) {
+        if (d->bReloadItem) {
+            d->bReloadItem = false;
             qDebug() << "dataChanged" << topLeft << bottomRight << roles;
-            qDebug() << "resort desktop icons " << d->resortCount;
+            qDebug() << "resort desktop icons ";
             model()->setEnabledSort(false);
-            d->resortCount = 0;
+
             QStringList list;
             for (int i = 0; i < model()->rowCount(); ++i) {
                 auto index = model()->index(i, 0);
@@ -2877,7 +2875,7 @@ void CanvasGridView::handleContextMenuAction(int action)
 
     if (changeSort) {
         model()->setEnabledSort(true);
-        d->resortCount++;
+        d->bReloadItem = true;
 //        QMap<int, int> sortActions;
 //        sortActions.insert(MenuAction::Name, DFileSystemModel::FileDisplayNameRole);
 //        sortActions.insert(MenuAction::Size, DFileSystemModel::FileSizeRole);

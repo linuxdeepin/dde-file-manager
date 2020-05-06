@@ -559,8 +559,14 @@ void MergedDesktopController::initData(QDir::Filters ftrs) const
     const QStringList &fileList = desktopDir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
 #else
     //自动整理下需要显示隐藏文件,故新加QDir::Filters ftrs
-    const QStringList &fileList = desktopDir.entryList(ftrs);
+    QStringList fileList = desktopDir.entryList(ftrs, QDir::Name);
 #endif
+    //文件名排序
+    auto compateFunc = [](const QString &str1, const QString &str2) -> bool{
+        return FileSortFunction::compareByString(str1,str2);
+    };
+    qSort(fileList.begin(),fileList.end(),compateFunc);
+    //end
 
     for (const QString &oneFile : fileList) {
         DUrl oneUrl = DUrl::fromLocalFile(desktopDir.filePath(oneFile));

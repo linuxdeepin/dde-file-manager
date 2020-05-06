@@ -53,7 +53,7 @@ public:
         cellMargins = QMargins(2, 2, 2, 2);
         selectRect = QRect(-1, -1, 1, 1);
         mousePressed = false;
-        resortCount = 0;
+        bReloadItem = false;
         dodgeDelayTimer.setInterval(200);
 
         if (qgetenv("_DDE_DESKTOP_DEBUG_SHOW_GRID") == "TRUE") {
@@ -163,7 +163,7 @@ public:
     QRect               canvasRect;
     CanvasViewHelper    *fileViewHelper = nullptr;
 
-    int                 resortCount;
+    bool                 bReloadItem;
 
     // secice system up
 //    QTimer              *syncTimer          = nullptr;
