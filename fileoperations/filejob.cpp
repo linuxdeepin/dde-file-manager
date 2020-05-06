@@ -635,6 +635,8 @@ void FileJob::doOpticalBlank(const DUrl &device)
     rdevice = DUrl(blkdev->device());
     m_tarPath = rdevice.path();
 
+    emit fileSignalManager->stopCdScanTimer(m_tarPath);
+
     if (drive->opticalBlank()) {
         DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(rdevice.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
     } else {
@@ -649,6 +651,8 @@ void FileJob::doOpticalBlank(const DUrl &device)
     job_isomaster->acquireDevice(rdevice.path());
     job_isomaster->erase();
     job_isomaster->releaseDevice();
+
+    emit fileSignalManager->restartCdScanTimer(m_tarPath);
 
     blkdev->rescan({});
     ISOMaster->nullifyDevicePropertyCache(rdevice.path());
@@ -887,6 +891,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         if (m_isJobAdded)
             jobRemoved();
         emit finished();
+        emit fileSignalManager->restartCdScanTimer(""); // 刻录完成后可能需要重启定时器（如果当前只有一个光驱，定时器不会被重启）
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
             if (flag & 4) {
                 emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
@@ -1142,6 +1147,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         if (m_isJobAdded)
             jobRemoved();
         emit finished();
+        emit fileSignalManager->restartCdScanTimer(""); // 刻录完成后可能需要重启定时器（如果当前只有一个光驱，定时器不会被重启）
 
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
             if ((flag & 4)) {
