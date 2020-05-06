@@ -42,6 +42,7 @@
 #include "shutil/fileutils.h"
 #include "dialogs/dialogmanager.h"
 #include "private/dabstractfilewatcher_p.h"
+#include "app/define.h"
 #include <linux/cdrom.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -159,6 +160,22 @@ void UDiskListener::initConnect()
     connect(gvfsMountManager, &GvfsMountManager::volume_added, this, &UDiskListener::addVolumeDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::volume_removed, this, &UDiskListener::removeVolumeDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::volume_changed, this, &UDiskListener::changeVolumeDiskInfo);
+
+    connect(fileSignalManager, &FileSignalManager::stopCdScanTimer, this, [ = ](const QString &strDev) {
+        Q_UNUSED(strDev)
+        m_nCDRomCount--;
+        if (m_diskTimer->isActive()) {
+            m_diskTimer->stop();
+            qDebug() << "timer stop, curr cdrom:" << m_nCDRomCount;
+        }
+    });
+    connect(fileSignalManager, &FileSignalManager::restartCdScanTimer, this, [ = ](const QString &strDev) {
+        Q_UNUSED(strDev)
+        if (m_nCDRomCount > 0 && !m_diskTimer->isActive()) {
+            m_diskTimer->start(3000);
+            qDebug() << "timer restart, curr cdrom:" << m_nCDRomCount;
+        }
+    });
 }
 
 UDiskDeviceInfoPointer UDiskListener::getDevice(const QString &id)
@@ -186,7 +203,7 @@ void UDiskListener::addDevice(UDiskDeviceInfoPointer device)
             m_diskTimer = new QTimer;
         if (!m_diskTimer->isActive()) {
             m_diskTimer->start(3000);
-            qDebug() << "timer start";
+            qDebug() << "timer start, curr cdrom:" << m_nCDRomCount;
         }
     }
     emit volumeAdded(device);
@@ -196,16 +213,6 @@ void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
 {
     m_list.removeOne(device);
     m_map.remove(device->getDiskInfo().id());
-
-    if (device->getDiskInfo().drive_unix_device().contains("/dev/sr")) {
-        m_nCDRomCount--;
-        if (m_nCDRomCount == 0) {
-            if (m_diskTimer) {
-                m_diskTimer->stop();
-                qDebug() << "timer stop";
-            }
-        }
-    }
 
     DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
                                       &DAbstractFileWatcher::fileDeleted,

@@ -204,6 +204,12 @@ signals:
     /*rename a tag*/
     void requestRenameTag(const DUrl& oldTagUrl);
 
+    /*stop cd scan timer，擦除光盘、刻录光盘时停止定时器*/
+    void stopCdScanTimer(const QString &strDevice);
+
+    // 在擦除光盘完成后重启定时器
+    void restartCdScanTimer(const QString &strDevice);
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);
