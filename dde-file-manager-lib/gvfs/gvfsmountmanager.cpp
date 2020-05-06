@@ -476,17 +476,17 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
     Q_UNUSED(volume_monitor)
     qCDebug(mountManager()) << "==============================monitor_mount_added==============================";
     QMount qMount = gMountToqMount(mount);
+    GVolume *volume = g_mount_get_volume(mount);
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qMount.icons().contains("media-optical")) { //CD/DVD
         GvfsMountManager::g_burnVolumeFlag = true;
         GvfsMountManager::g_burnMountFlag = true;
-        GvfsMountManager::g_mapCdStatus[getVolTag(mount)] = QPair<bool, bool>(true, true);
+        GvfsMountManager::g_mapCdStatus[getVolTag(volume)] = QPair<bool, bool>(true, true);
         //fix: 设置光盘容量属性
         //DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAddMount);
     }
 
-    GVolume *volume = g_mount_get_volume(mount);
     qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << volume << "=======================";
     qCDebug(mountManager()) << "===================" << qMount << "=======================";
     if (volume != nullptr){
@@ -671,6 +671,9 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
         DFMOpticalMediaWidget::g_usedSize = 0;
         DFMOpticalMediaWidget::g_mapCDUsage[getVolTag(volume)] = QPair<quint64, quint64>(0, 0);
         DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct, getVolTag(volume));
+        QWidget *pWid = qApp->focusWidget();
+        if (pWid)
+            pWid->update();
     }
 
     GDrive *drive = g_volume_get_drive(volume);

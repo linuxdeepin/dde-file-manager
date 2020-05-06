@@ -169,9 +169,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
                 bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
                 if (!bVolFlag && !bMntFlag) { //CD/DVD
-                    DFMOpticalMediaWidget::g_usedSize = 0;
-                    DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first = 0;
-                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
+                    return 0;
+//                    DFMOpticalMediaWidget::g_usedSize = 0;
+//                    DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first = 0;
+//                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
                 } else {
                     return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
                 }
@@ -193,6 +194,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
                 bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
                 if (!bVolFlag && !bMntFlag) { //CD/DVD
+                    return 0;
                     DFMOpticalMediaWidget::g_totalSize = 0;
                     DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second = 0;
                     return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
