@@ -15,6 +15,8 @@
 #include "app/define.h"
 #include "fileoperations/filejob.h"
 #include "dialogmanager.h"
+#include "singleton.h"
+#include "app/filesignalmanager.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -55,6 +57,7 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
         [=](int index, const QString &text) {
             Q_UNUSED(text);
             if (index == 1) {
+                emit fileSignalManager->stopCdScanTimer(device);
                 if (d->image_file.path().length() == 0) {
                     QtConcurrent::run([=] {
                         FileJob *job = new FileJob(FileJob::OpticalBurn);
