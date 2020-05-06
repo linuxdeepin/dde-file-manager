@@ -53,14 +53,14 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="43"/>
+        <location filename="../models/computermodel.cpp" line="45"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="49"/>
-        <location filename="../models/computermodel.cpp" line="53"/>
-        <location filename="../models/computermodel.cpp" line="74"/>
+        <location filename="../models/computermodel.cpp" line="51"/>
+        <location filename="../models/computermodel.cpp" line="55"/>
+        <location filename="../models/computermodel.cpp" line="76"/>
         <source>Disks</source>
         <translation>磁盘</translation>
     </message>
@@ -787,6 +787,14 @@
         <location filename="../models/dfmrootfileinfo.cpp" line="622"/>
         <source>%1 Encrypted</source>
         <translation>%1 已加密</translation>
+    </message>
+</context>
+<context>
+    <name>DeviceInfoParser</name>
+    <message>
+        <location filename="../models/deviceinfoparser.cpp" line="58"/>
+        <source>Unknown</source>
+        <translation type="unfinished">未知</translation>
     </message>
 </context>
 <context>
@@ -1975,6 +1983,11 @@
         <location filename="../controllers/pathmanager.cpp" line="67"/>
         <source>Recent</source>
         <translation>最近使用</translation>
+    </message>
+    <message>
+        <location filename="../controllers/pathmanager.cpp" line="68"/>
+        <source>Vault</source>
+        <translation>保险柜</translation>
     </message>
 </context>
 <context>

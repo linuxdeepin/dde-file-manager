@@ -706,6 +706,9 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                 DFMEvent event(this);
                 event.setData(url);
                 showTrashPropertyDialog(event);
+            } else if (url == DUrl::fromVaultFile("/")) {
+                // 显示保险柜属性对话框
+                showVaultPropertyDialog();
             } else {
                 if (urlList.count() >= 2) {
                     m_closeIndicatorDialog->show();
@@ -790,7 +793,12 @@ void DialogManager::showComputerPropertyDialog()
 
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
-    }, this)
+                     }, this)
+}
+
+void DialogManager::showVaultPropertyDialog()
+{
+    // Something to do.
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)

@@ -53,14 +53,14 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="43"/>
+        <location filename="../models/computermodel.cpp" line="45"/>
         <source>My Directories</source>
         <translation>My Directories</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="49"/>
-        <location filename="../models/computermodel.cpp" line="53"/>
-        <location filename="../models/computermodel.cpp" line="74"/>
+        <location filename="../models/computermodel.cpp" line="51"/>
+        <location filename="../models/computermodel.cpp" line="55"/>
+        <location filename="../models/computermodel.cpp" line="76"/>
         <source>Disks</source>
         <translation>Disks</translation>
     </message>
@@ -787,6 +787,14 @@
         <location filename="../models/dfmrootfileinfo.cpp" line="622"/>
         <source>%1 Encrypted</source>
         <translation>%1 Encrypted</translation>
+    </message>
+</context>
+<context>
+    <name>DeviceInfoParser</name>
+    <message>
+        <location filename="../models/deviceinfoparser.cpp" line="58"/>
+        <source>Unknown</source>
+        <translation type="unfinished">Unknown</translation>
     </message>
 </context>
 <context>
@@ -1975,6 +1983,11 @@
         <location filename="../controllers/pathmanager.cpp" line="67"/>
         <source>Recent</source>
         <translation>Recent</translation>
+    </message>
+    <message>
+        <location filename="../controllers/pathmanager.cpp" line="68"/>
+        <source>Vault</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

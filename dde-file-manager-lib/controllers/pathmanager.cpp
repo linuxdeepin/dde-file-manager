@@ -65,6 +65,7 @@ void PathManager::initPaths()
     m_systemPathDisplayNamesMap["UserShare"] = tr("My Shares");
     m_systemPathDisplayNamesMap["Computer"] = tr("Computer");
     m_systemPathDisplayNamesMap["Recent"] = tr("Recent");
+    m_systemPathDisplayNamesMap["Vault"] = tr("Vault");
 
     if (DFMApplication::instance()->genericObtuselySetting()->value("Disk/Options", "windowsStyle").toBool()) {
         m_systemPathDisplayNamesMap["System Disk"] = m_systemPathDisplayNamesMap["System Disk"].append(" (C:)");
@@ -83,6 +84,7 @@ void PathManager::initPaths()
     m_systemPathIconNamesMap["System Disk"] = "drive-harddisk-root";
     m_systemPathIconNamesMap["Network"] = "network-server"; // folder-remote ?
     m_systemPathIconNamesMap["UserShare"] = "folder-publicshare";
+    m_systemPathIconNamesMap["Vault"] = "drive-harddisk-encrypted"; // 保险柜,图标还未确定
 }
 
 QString PathManager::getSystemPath(QString key)
@@ -175,6 +177,7 @@ void PathManager::loadSystemPaths()
     m_systemPathsMap["UserShare"] = DFMStandardPaths::location(DFMStandardPaths::UserShareRootPath);
     m_systemPathsMap["Computer"] = DFMStandardPaths::location(DFMStandardPaths::ComputerRootPath);
     m_systemPathsMap["Recent"] = DFMStandardPaths::location(DFMStandardPaths::RecentPath);
+    m_systemPathsMap["Vault"] = DFMVAULT_ROOT; // 保险库路径
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 

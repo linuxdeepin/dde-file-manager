@@ -772,6 +772,10 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         if (!m_disableUrlSchemes.contains(COMPUTER_SCHEME)) {
             appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
         }
+        // 添加保险库
+        if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
+            appendItem(DFMSideBarDefaultItemHandler::createItem("Vault"), groupNameStr);
+        }
         break;
     case GroupName::Bookmark: {
         if (m_disableUrlSchemes.contains(BOOKMARK_SCHEME))  {
