@@ -2217,6 +2217,8 @@ bool DFileView::setRootUrl(const DUrl &url)
                     QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
                     blkdev->unmount({});
                     QThread::msleep(1000);
+                    QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+                    diskdev->eject({});
                     getOpticalDriveMutex()->unlock();
                     return false;
                 }
