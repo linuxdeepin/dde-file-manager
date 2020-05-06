@@ -27,6 +27,7 @@
 #include "dfileservices.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "disomaster.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -592,6 +593,7 @@ void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
         DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
                                           &DAbstractFileWatcher::fileAttributeChanged,
                                           DUrl::fromDeviceId(device->getId()));
+        ISOMaster->nullifyDevicePropertyCache(QString(diskInfo.drive_unix_device()));
         m_mountList.removeOne(device);
         emit mountRemoved(device);
     }
@@ -636,6 +638,8 @@ void UDiskListener::removeVolumeDiskInfo(const QDiskInfo &diskInfo)
             }
         }
     }
+
+    ISOMaster->nullifyDevicePropertyCache(QString(diskInfo.drive_unix_device()));
 
     if (device) {
         qDebug() << device->getDiskInfo();
