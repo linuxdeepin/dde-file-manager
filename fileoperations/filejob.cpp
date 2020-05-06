@@ -760,7 +760,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
                     + "/" DISCBURN_STAGING "/" + device.path().replace('/','_') + "/");
 
 /////////////////////////////
-    constexpr int BUFFERSIZE = 1024;
+    constexpr int BUFFERSIZE = 4096;
     int progressPipefd[2];
     if (pipe(progressPipefd) < 0)
         return;
@@ -785,8 +785,11 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             obj["progress"] = progress;
             obj["speed"] = job_isomaster->getCurrentSpeed();
             obj["msg"] = QJsonArray::fromStringList(job_isomaster->getInfoMessages());
-            strncpy(progressBuf, QJsonDocument(obj).toJson().data(), BUFFERSIZE);
-            write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
+            QByteArray bytes = QJsonDocument(obj).toJson();
+            if (bytes.size() < BUFFERSIZE) {
+                strncpy(progressBuf, bytes.data(), BUFFERSIZE);
+                write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
+            }
         });
 
         job_isomaster->acquireDevice(device.path());
@@ -833,20 +836,23 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             } else {
                 QByteArray bufByes(buf);
                 qDebug() << "burn files, read bytes json:" << bufByes;
-                QJsonObject obj = QJsonDocument::fromJson(bufByes).object();
-                m_opticalJobPhase = obj["phase"].toInt();
-                int status = obj["status"].toInt();
-                int progress = obj["progress"].toInt();
-                QString speed = obj["speed"].toString();
-                QJsonArray jsonArray = obj["msg"].toArray();
-                QStringList msgList;
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    msgList.append(jsonArray[i].toString());
-                }
-                opticalJobUpdatedByParentProcess(status, progress, speed, msgList);
+                QJsonParseError jsonError;
+                QJsonObject obj = QJsonDocument::fromJson(bufByes, &jsonError).object();
+                if (jsonError.error == QJsonParseError::NoError) {
+                    m_opticalJobPhase = obj["phase"].toInt();
+                    int status = obj["status"].toInt();
+                    int progress = obj["progress"].toInt();
+                    QString speed = obj["speed"].toString();
+                    QJsonArray jsonArray = obj["msg"].toArray();
+                    QStringList msgList;
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        msgList.append(jsonArray[i].toString());
+                    }
+                    opticalJobUpdatedByParentProcess(status, progress, speed, msgList);
 
-                if (m_opticalJobPhase == 2 && progress == 0) {
-                    fakeStartTime = QDateTime::currentDateTime();
+                    if (m_opticalJobPhase == 2 && progress == 0) {
+                        fakeStartTime = QDateTime::currentDateTime();
+                    }
                 }
             }
         }
@@ -1018,7 +1024,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
     jobPrepared();
 
 /////////////////////////////
-    constexpr int BUFFERSIZE = 1024;
+    constexpr int BUFFERSIZE = 4096;
     int progressPipefd[2];
     if (pipe(progressPipefd) < 0)
         return;
@@ -1043,8 +1049,11 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             obj["progress"] = progress;
             obj["speed"] = job_isomaster->getCurrentSpeed();
             obj["msg"] = QJsonArray::fromStringList(job_isomaster->getInfoMessages());
-            strncpy(progressBuf, QJsonDocument(obj).toJson().data(), BUFFERSIZE);
-            write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
+            QByteArray bytes = QJsonDocument(obj).toJson();
+            if (bytes.size() < BUFFERSIZE) {
+                strncpy(progressBuf, bytes.data(), BUFFERSIZE);
+                write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
+            }
         });
 
         job_isomaster->acquireDevice(device.path());
@@ -1091,20 +1100,23 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             } else {
                 QByteArray bufByes(buf);
                 qDebug() << "burn image, read bytes json:" << bufByes;
-                QJsonObject obj = QJsonDocument::fromJson(bufByes).object();
-                m_opticalJobPhase = obj["phase"].toInt();
-                int status = obj["status"].toInt();
-                int progress = obj["progress"].toInt();
-                QString speed = obj["speed"].toString();
-                QJsonArray jsonArray = obj["msg"].toArray();
-                QStringList msgList;
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    msgList.append(jsonArray[i].toString());
-                }
-                opticalJobUpdatedByParentProcess(status, progress, speed, msgList);
+                QJsonParseError jsonError;
+                QJsonObject obj = QJsonDocument::fromJson(bufByes, &jsonError).object();
+                if (jsonError.error == QJsonParseError::NoError) {
+                    m_opticalJobPhase = obj["phase"].toInt();
+                    int status = obj["status"].toInt();
+                    int progress = obj["progress"].toInt();
+                    QString speed = obj["speed"].toString();
+                    QJsonArray jsonArray = obj["msg"].toArray();
+                    QStringList msgList;
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        msgList.append(jsonArray[i].toString());
+                    }
+                    opticalJobUpdatedByParentProcess(status, progress, speed, msgList);
 
-                if (m_opticalJobPhase == 2 && progress == 0) {
-                    fakeStartTime = QDateTime::currentDateTime();
+                    if (m_opticalJobPhase == 2 && progress == 0) {
+                        fakeStartTime = QDateTime::currentDateTime();
+                    }
                 }
             }
         }
