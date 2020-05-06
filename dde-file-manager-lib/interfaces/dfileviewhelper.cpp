@@ -23,6 +23,7 @@
 #include "dfmgenericfactory.h"
 #include "dialogs/filepreviewdialog.h"
 #include "controllers/appcontroller.h"
+#include "controllers/mergeddesktopcontroller.h"
 #include "dfmeventdispatcher.h"
 #include "dfilemenu.h"
 #include "tag/tagmanager.h"
@@ -351,6 +352,9 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
     if (currentUrl().scheme() == BURN_SCHEME && fileUrl.scheme() == BURN_SCHEME && !fileUrl.burnIsOnDisc()) {
         return true;
     }
+
+    if (fileUrl.scheme() == DFMMD_SCHEME)
+        fileUrl = MergedDesktopController::convertToRealPath(fileUrl);
 
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
