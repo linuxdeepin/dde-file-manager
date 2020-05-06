@@ -30,6 +30,7 @@
 #include "models/mergeddesktopfileinfo.h"
 #include "interfaces/private/mergeddesktop_common_p.h"
 #include "private/dabstractfilewatcher_p.h"
+#include "shutil/dfmfilelistfile.h"
 
 #include <QList>
 #include <QStandardPaths>
@@ -158,7 +159,6 @@ MergedDesktopController::MergedDesktopController(QObject *parent)
     connect(m_desktopFileWatcher, &DFileWatcher::subfileCreated, this, &MergedDesktopController::desktopFilesCreated);
     connect(m_desktopFileWatcher, &DFileWatcher::fileMoved, this, &MergedDesktopController::desktopFilesRenamed);
     m_desktopFileWatcher->startWatcher();
-    hiddenFiles = new DFMFileListFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
 }
 
 const DAbstractFileInfoPointer MergedDesktopController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
@@ -557,7 +557,11 @@ void MergedDesktopController::initData(QDir::Filters ftrs) const
     };
     qSort(fileList.begin(),fileList.end(),compateFunc);
     //end
+
+    //解决自动整理时的文件隐藏显示问题
     bool showHidden = ftrs.testFlag(QDir::Hidden);
+    DFMFileListFile *hiddenFiles = new DFMFileListFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
+
     for (const QString &oneFile : fileList) {
         if (!showHidden && hiddenFiles->contains(oneFile)){
             continue;

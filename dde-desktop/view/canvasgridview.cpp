@@ -3329,8 +3329,21 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         }
         break;
         case FileManagerProperty: {
+            //解决自动整理修改文件属性不生效问题
+            QList<DUrl> selectedUrlLst{};
+            if(GridManager::instance()->autoMerge()){
+                QList<DUrl> t_selectedUrls{};
+                t_selectedUrls = this->autoMergeSelectedUrls();
+                for(auto temp : t_selectedUrls){
+                    if(DFMMD_SCHEME == temp.scheme())
+                        selectedUrlLst.append(MergedDesktopController::convertToRealPath(temp));
+                }
+            }else {
+                selectedUrlLst = this->selectedUrls();
+            }
 
-            DFMGlobal::showPropertyDialog(this, this->selectedUrls());
+            DFMGlobal::showPropertyDialog(this, selectedUrlLst);
+            //DFMGlobal::showPropertyDialog(this, this->selectedUrls());
             break;
         }
         case MenuAction::Rename: {
