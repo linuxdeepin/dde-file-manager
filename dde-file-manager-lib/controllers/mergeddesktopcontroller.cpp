@@ -514,11 +514,15 @@ void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
     }
 }
 
-void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl)
+void
+MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl)
 {
+    //获取原文件的类型
+    DMD_TYPES orgTypeInfo = checkUrlArrangedType(oriUrl);
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(oriUrl)) {
+            orgTypeInfo = typeInfo;
             break;
         }
     }
@@ -526,23 +530,8 @@ void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl
     DMD_TYPES typeInfo = checkUrlArrangedType(dstUrl);
     arrangedFileUrls[typeInfo].append(dstUrl);
 
-#if 1
-    DUrl vOriUrl = convertToDFMMDPath(oriUrl, typeInfo);
+    DUrl vOriUrl = convertToDFMMDPath(oriUrl, orgTypeInfo);
     DUrl vDstUrl = convertToDFMMDPath(dstUrl, typeInfo);
-#else
-    //自动整理下重命名typeInfo的不同自动整理的不刷新问题
-    //重命名时文件不刷新问题,还有部分代码不理解，可能没改到根本，临时这样处理
-    DMD_TYPES dstUrlTypeInfo;
-    if(DMD_FOLDER != typeInfo){
-        dstUrlTypeInfo = checkUrlArrangedType(oriUrl);
-    }
-    else {
-        dstUrlTypeInfo = typeInfo;
-    }
-
-    DUrl vOriUrl = convertToDFMMDPath(oriUrl, dstUrlTypeInfo);
-    DUrl vDstUrl = convertToDFMMDPath(dstUrl, typeInfo);
-#endif
 
     DUrl parentUrl = getVirtualEntryPath(typeInfo);
     DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileMoved, vOriUrl, vDstUrl);

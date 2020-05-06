@@ -2402,7 +2402,7 @@ openEditor:
 
     connect(this->model(), &QAbstractItemModel::dataChanged,
     this, [ = ](const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> &roles) {
-        qDebug() << "dataChanged" << roles;
+        qDebug() << "dataChanged" << roles << d->bReloadItem;
         if (d->bReloadItem) {
             d->bReloadItem = false;
             qDebug() << "dataChanged" << topLeft << bottomRight << roles;
