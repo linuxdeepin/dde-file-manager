@@ -2285,7 +2285,7 @@ void CanvasGridView::initConnection()
         gridPos.first = m_screenNum;
         gridPos.second = gridAt(d->lastMenuPos);
         if (d->lastMenuNewFilepath == localFile) {
-            if (gridPos.second == GridManager::instance()->position(m_screenNum, localFile)) {
+            if (gridPos == orgPos) {
                 //开启编辑框
                 goto openEditor;
             }
