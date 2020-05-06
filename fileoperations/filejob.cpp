@@ -650,7 +650,19 @@ void FileJob::doOpticalBlank(const DUrl &device)
     connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
     job_isomaster->acquireDevice(rdevice.path());
     job_isomaster->erase();
+
+    // must show %100
+    auto tmpStatus = m_opticalJobStatus;
+    if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
+        for (int i = 0; i < 20; i++) {
+            opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
+            QThread::msleep(100);
+        }
+    }
+    m_opticalJobStatus = tmpStatus;
+
     job_isomaster->releaseDevice();
+
 
     emit fileSignalManager->restartCdScanTimer(m_tarPath);
 
@@ -886,7 +898,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         // must show %100
         auto tmpStatus = m_opticalJobStatus;
         if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
-            for (int i = 0; i < 15; i++) {
+            for (int i = 0; i < 20; i++) {
                 opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
                 QThread::msleep(100);
             }
@@ -1160,7 +1172,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         // must show %100
         auto tmpStatus = m_opticalJobStatus;
         if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
-            for (int i = 0; i < 15; i++) {
+            for (int i = 0; i < 20; i++) {
                 opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
                 QThread::msleep(100);
             }
