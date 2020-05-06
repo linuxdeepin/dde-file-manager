@@ -813,7 +813,7 @@ void CanvasGridView::wheelEvent(QWheelEvent *event)
         } else {
             decreaseIcon();
         }
-        QThread::msleep(200);
+        //QThread::msleep(100);
         event->accept();
     }
 }

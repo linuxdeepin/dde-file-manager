@@ -1058,10 +1058,6 @@ public:
     {
         QMap<int, QString> screenNumProfiles;
 
-        //获取个屏幕分组信息对应的图标信息
-        QMap<int, QStringList> moreIcon;
-        auto settings = Config::instance()->settings();
-
         if(m_bSingleMode){
             screenNumProfiles.insert(1, QString("SingleScreen"));
         }else {
@@ -1073,6 +1069,9 @@ public:
             screenNumProfiles = positionProfiles;
         }
 
+        //获取个屏幕分组信息对应的图标信息
+        QMap<int, QStringList> moreIcon;
+        auto settings = Config::instance()->settings();
         for (int &screenKey : screenNumProfiles.keys()) {
             settings->beginGroup(screenNumProfiles.value(screenKey));
             for (auto &key : settings->allKeys()) {
@@ -1090,7 +1089,9 @@ public:
                         }
                     }
                     else{
-                        add(screenKey, pos, item);
+                        if(!add(screenKey, pos, item)){
+                            continue;
+                        }
                     }
                     existItems.remove(item);
                 }
@@ -1153,8 +1154,12 @@ public:
             values.append(QString("Screen_%1").arg(index));
         }
 
-        emit Presenter::instance()->removeConfig(Config::keyProfile, "");
-        emit Presenter::instance()->setConfigList(Config::keyProfile,keys, values);
+        auto settings = Config::instance()->settings();
+        Config::instance()->removeConfig(Config::keyProfile, "");
+        Config::instance()->setConfigList(Config::keyProfile, keys, values);
+
+//        emit Presenter::instance()->removeConfig(Config::keyProfile, "");
+//        emit Presenter::instance()->setConfigList(Config::keyProfile,keys, values);
     }
 
     inline bool isValid(int screenNum, QPoint pos) const
@@ -1450,8 +1455,11 @@ public:
         }
 
         //auto screenPositionProfile = positionProfiles.value(screenNum);
-        emit Presenter::instance()->removeConfig(screenPositionProfile, "");
-        emit Presenter::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
+        auto settings = Config::instance()->settings();
+        Config::instance()->removeConfig(screenPositionProfile, "");
+        Config::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
+        //emit Presenter::instance()->removeConfig(screenPositionProfile, "");
+        //emit Presenter::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
     }
 
     bool remove(int screenNum, QPoint pos, const QString &id)
