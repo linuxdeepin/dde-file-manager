@@ -2095,6 +2095,7 @@ bool GridManager::remove(int screenNum, const QString &id)
     }
     else if (d->m_overlapItems.contains(id)){
         d->m_overlapItems.removeAll(id);
+        qDebug() << screenNum << id  << "overlapItems" << true;
         return true;
     }
     return false;

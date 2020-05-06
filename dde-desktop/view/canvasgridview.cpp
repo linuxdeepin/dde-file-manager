@@ -2637,8 +2637,6 @@ inline QRect CanvasGridView::itemIconGeomerty(const QModelIndex &index) const
 inline QModelIndex CanvasGridView::firstIndex()
 {
     auto localFile = GridManager::instance()->firstItemId(m_screenNum);
-//    if(localFile.isEmpty())
-//        return QModelIndex();
     return model()->index(DUrl(localFile));
 }
 
@@ -2646,8 +2644,6 @@ inline QModelIndex CanvasGridView::lastIndex()
 {
     //使用堆叠
     auto localFile = GridManager::instance()->lastItemTop(m_screenNum);//lastItemId(m_screenNum);
-//    if(localFile.isEmpty())
-//        return QModelIndex();
     return model()->index(DUrl(localFile));
 }
 
@@ -3198,7 +3194,17 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         if(parentWidget())
             t_tmpRect = parentWidget()->geometry();
         else
-            t_tmpRect = Display::instance()->primaryRect();
+        {
+            auto screen = ScreenMrg->primaryScreen();
+            if (screen)
+                t_tmpRect = screen->geometry();
+            else {
+                qCritical() << "get primary geometry fail" << m_screenName << m_screenNum;
+                menu->exec();
+                menu->deleteLater();
+                return;
+            }
+        }
 
         if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > t_tmpRect.right())
             t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
@@ -3355,8 +3361,17 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         QRect t_tmpRect;
         if(parentWidget())
             t_tmpRect = parentWidget()->geometry();
-        else
-            t_tmpRect = Display::instance()->primaryRect();
+        else {
+            auto screen = ScreenMrg->primaryScreen();
+            if (screen)
+                t_tmpRect = screen->geometry();
+            else {
+                qCritical() << "get primary geometry fail" << m_screenName << m_screenNum;
+                menu->exec();
+                menu->deleteLater();
+                return;
+            }
+        }
 
         if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > t_tmpRect.right())
             t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
