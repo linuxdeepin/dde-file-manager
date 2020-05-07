@@ -46,7 +46,6 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <DDBusSender>
-
 #define WIDTH           300
 
 DWIDGET_USE_NAMESPACE
@@ -83,9 +82,9 @@ DiskControlWidget::~DiskControlWidget()
 
 void DiskControlWidget::initConnect()
 {
-    connect(m_diskManager, &DDiskManager::diskDeviceAdded, this, [this](const QString &path) {
+    connect(m_diskManager, &DDiskManager::diskDeviceAdded, this, [this](const QString & path) {
         // blumia: Workaround. Wait for udisks2 add new device to device list.
-        QTimer::singleShot(500, this, [=](){
+        QTimer::singleShot(500, this, [ = ]() {
             onDriveConnected(path);
         });
     });
@@ -123,7 +122,7 @@ QMap<QString, QString> getKernelParameters()
     QMap<QString, QString> result;
     result.insert("_ori_proc_cmdline", content);
 
-    for (const QByteArray& onePara : paraList) {
+    for (const QByteArray &onePara : paraList) {
         int equalsIdx = onePara.indexOf('=');
         QString key = equalsIdx == -1 ? onePara.trimmed() : onePara.left(equalsIdx).trimmed();
         QString value = equalsIdx == -1 ? QString() : onePara.right(equalsIdx).trimmed();
@@ -159,11 +158,11 @@ void DiskControlWidget::doStartupAutoMount()
 
     QStringList blDevList = m_diskManager->blockDevices();
 
-    for (const QString& blDevStr : blDevList) {
+    for (const QString &blDevStr : blDevList) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
 
         if (iswWayland && blDevStr.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
-              continue;
+            continue;
         }
 
         if (blDev->isEncrypted()) continue;
@@ -178,17 +177,18 @@ void DiskControlWidget::doStartupAutoMount()
     qDebug() << "call desktop.canvas.reFresh";
     // call desktop.canvas.reFresh
     DDBusSender()
-        .service("com.deepin.dde.desktop")
-        .path("/com/deepin/dde/desktop/canvas")
-        .interface("com.deepin.dde.desktop.Canvas")
-        .method(QString("Refresh")).call();
+    .service("com.deepin.dde.desktop")
+    .path("/com/deepin/dde/desktop/canvas")
+    .interface("com.deepin.dde.desktop.Canvas")
+    .method(QString("Refresh")).call();
 }
 
-bool isProtectedDevice(DBlockDevice * blk) {
+bool isProtectedDevice(DBlockDevice *blk)
+{
     DGioSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
     if (gsettings.value("protect-non-media-mounts").toBool()) {
         QList<QByteArray> mountPoints = blk->mountPoints();
-        for (auto & mountPoint : mountPoints) {
+        for (auto &mountPoint : mountPoints) {
             if (!mountPoint.startsWith("/media/")) {
                 return true;
             }
@@ -213,20 +213,20 @@ void DiskControlWidget::unmountAll()
     QStringList blockDevices = m_diskManager->blockDevices();
 
     QtConcurrent::run([blockDevices, this]() {
-        for (const QString & blDevStr : blockDevices) {
+        for (const QString &blDevStr : blockDevices) {
             QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
             if (isProtectedDevice(blDev.data())) continue;
             if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->hintSystem()) {
                 QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
                 blDev->unmount({});
-                qDebug()<<"unmountAll" << "removable" <<  diskDev->removable() <<
-                          "optical" << diskDev->optical() <<
-                          "canPowerOff" << diskDev->canPowerOff() <<
-                          "ejectable" << diskDev->ejectable();
+                qDebug() << "unmountAll" << "removable" <<  diskDev->removable() <<
+                         "optical" << diskDev->optical() <<
+                         "canPowerOff" << diskDev->canPowerOff() <<
+                         "ejectable" << diskDev->ejectable();
 
                 if (diskDev->removable()) {
                     diskDev->eject({});
-                    qDebug()<<"unmountAll";
+                    qDebug() << "unmountAll";
                     if (diskDev->lastError().isValid()) {
                         qWarning() << diskDev->lastError().name() << blockDevices;
                         NotifyMsg(tr("Disk is busy, cannot eject now"));
@@ -259,7 +259,7 @@ void DiskControlWidget::unmountAll()
         QString path = rootFile->path();
         DAttachedVfsDevice *dad = new DAttachedVfsDevice(path);
         if (dad->isValid()) {
-           dad->detach();
+            dad->detach();
         } else {
             qDebug() << "dad->isValid()" << mount->name();
         }
@@ -300,22 +300,24 @@ void DiskControlWidget::onDiskListChanged()
     int mountedCount = 0;
 
     QStringList blDevList = DDiskManager::blockDevices({});
-    for (const QString& blDevStr : blDevList) {
+    for (const QString &blDevStr : blDevList) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
         if (blDev->hasFileSystem() && !blDev->mountPoints().isEmpty() && !blDev->hintSystem() && !blDev->hintIgnore()) {
             if (isProtectedDevice(blDev.data())) continue;
-            QByteArray mountPoint = blDev->mountPoints().first();
             mountedCount++;
-            QString tagName = blDevStr.split(QDir::separator()).last();
+            QStringList blDevStrArray = blDevStr.split(QDir::separator());
+            QString tagName = blDevStrArray.isEmpty() ? "" : blDevStrArray.last();
             DAttachedUdisks2Device *dad = new DAttachedUdisks2Device(blDev.data());
             qDebug() << "create new item, tagname is" << tagName;
             DiskControlItem *item = new DiskControlItem(dad, this);
             item->setTagName(tagName);
 
-            class ErrHandle : public ErrorHandleInfc, public QObject {
+            class ErrHandle : public ErrorHandleInfc, public QObject
+            {
             public:
-                ErrHandle(QObject *parent): QObject(parent){}
-                virtual void onError(DAttachedDeviceInterface * device){
+                ErrHandle(QObject *parent): QObject(parent) {}
+                virtual void onError(DAttachedDeviceInterface *device)
+                {
                     DAttachedUdisks2Device *drv = dynamic_cast<DAttachedUdisks2Device *>(device);
                     if (drv) {
                         qWarning() << drv->blockDevice()->lastError().name() << device->displayName();
@@ -397,7 +399,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
 
         // Do auto mount stuff..
         QStringList blDevList = DDiskManager::blockDevices({});
-        for (const QString& blDevStr : blDevList) {
+        for (const QString &blDevStr : blDevList) {
             QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
 
             if (isProtectedDevice(blDev.data())) continue;
@@ -482,14 +484,14 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
 
 void DiskControlWidget::unmountDisk(const QString &diskId) const
 {
-    QtConcurrent::run([diskId, this](){
+    QtConcurrent::run([diskId, this]() {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(diskId));
         QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
         blDev->unmount({});
         if (diskDev->optical()) { // is optical
             if (diskDev->ejectable()) {
                 diskDev->eject({});
-                qDebug()<<"unmountDisk " << diskId;
+                qDebug() << "unmountDisk " << diskId;
                 if (diskDev->lastError().isValid()) {
                     qWarning() << diskDev->lastError().name() << diskId;
                     NotifyMsg(tr("Disk is busy, cannot eject now"));
@@ -502,16 +504,16 @@ void DiskControlWidget::unmountDisk(const QString &diskId) const
 void DiskControlWidget::NotifyMsg(QString msg)
 {
     DDBusSender()
-        .service("org.freedesktop.Notifications")
-        .path("/org/freedesktop/Notifications")
-        .interface("org.freedesktop.Notifications")
-        .method(QString("Notify"))
-        .arg(tr("dde-file-manager"))
-        .arg(static_cast<uint>(0))
-        .arg(QString("media-eject"))
-        .arg(msg)
-        .arg(QString())
-        .arg(QStringList())
-        .arg(QVariantMap())
-        .arg(5000).call();
+    .service("org.freedesktop.Notifications")
+    .path("/org/freedesktop/Notifications")
+    .interface("org.freedesktop.Notifications")
+    .method(QString("Notify"))
+    .arg(tr("dde-file-manager"))
+    .arg(static_cast<uint>(0))
+    .arg(QString("media-eject"))
+    .arg(msg)
+    .arg(QString())
+    .arg(QStringList())
+    .arg(QVariantMap())
+    .arg(5000).call();
 }

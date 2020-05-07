@@ -39,7 +39,8 @@ DFM_USE_NAMESPACE
 
 DAttachedUdisks2Device::DAttachedUdisks2Device(const DBlockDevice *blockDevicePointer)
 {
-    mountPoint = blockDevicePointer->mountPoints().first();
+    QByteArrayList mountPoints = blockDevicePointer->mountPoints();
+    mountPoint = mountPoints.isEmpty() ? "" : mountPoints.first();
     deviceDBusId = blockDevicePointer->path();
     c_blockDevice.reset(DDiskManager::createBlockDevice(deviceDBusId)); // not take the ownership of the passed pointer.
 }
