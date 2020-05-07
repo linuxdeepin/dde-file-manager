@@ -333,6 +333,7 @@ void Desktop::ShowInfo()
     if (primary)
         qInfo() << "primary screen :" << primary->name()
                 << "available geometry" << primary->availableGeometry()
+                << "handle geometry"   << primary->handleGeometry()
                 << "screen count" << ScreenMrg->screens().count();
     else
         qCritical() << "primary screen error! not found";
@@ -343,7 +344,8 @@ void Desktop::ShowInfo()
     for (ScreenPointer screen : ScreenMrg->logicScreens()){
         if (screen){
             qInfo() << screen.get() << "screen name " << screen->name()
-                    << "num" << num << "geometry" << screen->geometry();
+                    << "num" << num << "geometry" << screen->geometry()
+                    << "handle geometry"   << screen->handleGeometry();
             ++num;
         }else {
             qCritical() << "error! empty screen pointer!";
@@ -355,7 +357,13 @@ void Desktop::ShowInfo()
     auto backgronds = d->m_background->allbackgroundWidgets();
     for (auto iter = backgronds.begin(); iter != backgronds.end(); ++iter) {
         qInfo() << "Background" << iter.value().get() << "on screen" << iter.key()->name() << iter.key().get()
-                << "geometry" << iter.value()->geometry() << "visable" << iter.value()->isVisible();
+                << "geometry" << iter.value()->geometry() << "visable" << iter.value()->isVisible()
+                << "rect" << iter.value()->rect() << "pixmap" << iter.value()->pixmap();
+
+        if (iter.value()->windowHandle()){
+            qInfo() << "window geometry" << iter.value()->windowHandle()->geometry()
+                << iter.value()->windowHandle()->screen()->geometry();
+        }
     }
 
     qInfo() << "*****************Canvas Grid" << "**********************";

@@ -150,7 +150,7 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     BackgroundWidgetPointer bwp(new BackgroundWidget);
     bwp->setProperty("isPreview", m_preview);
     bwp->setProperty("myScreen", screen->name()); // assert screen->name is unique
-    bwp->createWinId();
+    //bwp->createWinId();   //不创建，4k下有bug
     //bwp->windowHandle()->handle()->setGeometry(screen->handleGeometry()); //不能设置，设置了widget的geometry会被乱改//分辨率原始大小
     bwp->setGeometry(screen->geometry()); //经过缩放的区域
     qInfo() << "screen name" << screen->name() << "geometry" << screen->geometry() << bwp.get();
@@ -312,6 +312,8 @@ void BackgroundManager::onResetBackgroundImage()
                                  trueSize.height()));
         }
 
+        qDebug() << "background truesize" << trueSize <<"devicePixelRatio"
+                 << bw->devicePixelRatioF() << pix << "widget" << bw.get();
         pix.setDevicePixelRatio(bw->devicePixelRatioF());
         bw->setPixmap(pix);
     }
