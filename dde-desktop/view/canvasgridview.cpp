@@ -911,7 +911,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             foreach (QString url, urls) {
                 entryUrls << DUrl(url);
             }
-            DFMGlobal::showFilePreviewDialog(selectUrls, entryUrls);
+            DUrlList selectUrlsActual = MergedDesktopController::convertToRealPaths(selectUrls);
+            DFMGlobal::showFilePreviewDialog(selectUrlsActual, entryUrls);
         }
         break;
         default:
