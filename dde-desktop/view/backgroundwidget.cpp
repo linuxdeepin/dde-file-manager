@@ -10,7 +10,7 @@
 #include <QPainter>
 #include <QImage>
 #include <qdebug.h>
-#include <QScreen>
+
 BackgroundWidget::BackgroundWidget(QWidget *parent)
     : QWidget(parent)
 {

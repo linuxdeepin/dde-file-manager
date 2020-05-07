@@ -40,7 +40,7 @@ public slots:
     void SetVisible(int screenNum,bool);
     void FixGeometry(int screenNum);
     void Reset();
-    void ShowInfo();
+    void PrintInfo();
     void ShowWallpaperChooser(const QString &screen = QString());
     void ShowScreensaverChooser(const QString &screen = QString());
 protected:

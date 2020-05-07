@@ -318,7 +318,7 @@ void Desktop::SetVisible(int screenNum, bool v)
 {
     --screenNum;
     QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
-    if (screens.size() > screenNum){
+    if (screens.size() > screenNum && screenNum >= 0){
         ScreenPointer sp = screens[screenNum];
         BackgroundWidgetPointer bw = d->m_background->allbackgroundWidgets().value(sp);
         if (bw)
@@ -334,7 +334,7 @@ void Desktop::FixGeometry(int screenNum)
 {
     --screenNum;
     QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
-    if (screens.size() > screenNum){
+    if (screens.size() > screenNum && screenNum >= 0){
         ScreenPointer sp = screens[screenNum];
         emit ScreenMrg->sigScreenGeometryChanged(sp,sp->geometry());
     }
@@ -351,7 +351,7 @@ void Desktop::Reset()
     }
 }
 
-void Desktop::ShowInfo()
+void Desktop::PrintInfo()
 {
     ScreenPointer primary = ScreenMrg->primaryScreen();
     qInfo() << "**************Desktop Info" << qApp->applicationVersion()

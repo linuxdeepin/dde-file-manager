@@ -2859,14 +2859,14 @@ void CanvasGridView::handleContextMenuAction(int action)
     case IconSize2:
     case IconSize3:
     case IconSize4:
-        setIconByLevel(action - IconSize0); //todo 多屏同步
+        setIconByLevel(action - IconSize0);
         break;
 
     case MenuAction::Name:
     case MenuAction::Size:
     case MenuAction::Type:
     case MenuAction::LastModifiedDate:
-        changeSort = true; //todo 多屏同步
+        changeSort = true;
         break;
 
     default:
