@@ -151,7 +151,6 @@ DFileCopyMoveJobPrivate::DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq)
     : q_ptr(qq)
     , updateSpeedElapsedTimer(new ElapsedTimer())
 {
-
 }
 
 DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
@@ -1511,7 +1510,8 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, con
 void DFileCopyMoveJobPrivate::updateProgress()
 {
     const qint64 total_size = fileStatistics->totalSize();
-    const qint64 data_size = getCompletedDataSize();
+    //通过getCompletedDataSize取出的已传输的数据大小后期会远超实际数据大小，这种情况下直接使用completedDataSize
+    const qint64 data_size = getCompletedDataSize() > completedDataSize ? completedDataSize : getCompletedDataSize();
     //fix: 删除文件时出现报错(回收箱和光驱处理删除文件)
     if (data_size == 0) {
         completedDataSizeOnBlockDevice = total_size;
@@ -1527,10 +1527,12 @@ void DFileCopyMoveJobPrivate::updateProgress()
         if (real_progress > lastProgress)
             lastProgress = real_progress;
         qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", data_size, fileStatistics->totalSize());
-    } else {        
-     if (data_size < total_size && total_size > 0) {
+    } else {
+        //预设一个总大小，让前期进度平滑一些（目前阈值取1mb）
+        qreal virtualSize = total_size < 1000000 ? 1000000 : total_size;
+        if (data_size < virtualSize /*&& total_size > 0*/) {
          // 取一个时时的总大小来计算一个模糊进度
-         qreal fuzzy_progress = qreal(data_size) / total_size;
+         qreal fuzzy_progress = qreal(data_size) / virtualSize;
          if (fuzzy_progress < 0.3 && fuzzy_progress > lastProgress)
              lastProgress = fuzzy_progress;
         }
