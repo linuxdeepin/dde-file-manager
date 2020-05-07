@@ -66,6 +66,9 @@ DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const D
 DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
 {
     const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
+    if(!infoPointer->exists()) {
+        return nullptr;
+    }
     QVariantHash info = infoPointer->extraProperties();
     QString displayName = infoPointer->fileDisplayName();
     QString iconName = infoPointer->iconName() + "-symbolic";

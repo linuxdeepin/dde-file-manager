@@ -55,6 +55,7 @@
 #include "deviceinfo/udisklistener.h"
 #include "interfaces/dfmglobal.h"
 #include "singleton.h"
+#include "models/dfmrootfileinfo.h"
 
 #include <ddialog.h>
 
@@ -76,11 +77,15 @@ public:
     static QMultiHash<const HandlerType, DAbstractFileController *> controllerHash;
     static QHash<const DAbstractFileController *, HandlerType> handlerHash;
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
+    static QHash<QUrl,DAbstractFileInfoPointer> rootfileHash;
+    JobController *m_jobcontroller = nullptr;
+    bool bstartonce = false;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
 QHash<const DAbstractFileController *, HandlerType> DFileServicePrivate::handlerHash;
 QMultiHash<const HandlerType, HandlerCreatorType> DFileServicePrivate::controllerCreatorHash;
+QHash<QUrl,DAbstractFileInfoPointer> DFileServicePrivate::rootfileHash;//本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
 
 DFileService::DFileService(QObject *parent)
     : QObject(parent)
@@ -88,7 +93,6 @@ DFileService::DFileService(QObject *parent)
 {
     /// init url handler register
     AppController::registerUrlHandle();
-
     // register plugins
     for (const QString &key : DFMFileControllerFactory::keys()) {
         const QUrl url(key);
@@ -97,6 +101,7 @@ DFileService::DFileService(QObject *parent)
             return DFMFileControllerFactory::create(key);
         }));
     }
+
 }
 
 DFileService::~DFileService()
@@ -811,9 +816,9 @@ const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender,
 }
 
 const QList<DAbstractFileInfoPointer> DFileService::getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                                                QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
+                                                                QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent,bool canconst) const
 {
-    const auto &&event = dMakeEventPointer<DFMGetChildrensEvent>(sender, fileUrl, nameFilters, filters, flags, silent);
+    const auto &&event = dMakeEventPointer<DFMGetChildrensEvent>(sender, fileUrl, nameFilters, filters, flags, silent,canconst);
 
     return qvariant_cast<QList<DAbstractFileInfoPointer>>(DFMEventDispatcher::instance()->processEvent(event));
 }
@@ -863,6 +868,111 @@ DStorageInfo *DFileService::createStorageInfo(const QObject *sender, const DUrl 
     const auto &&event = dMakeEventPointer<DFMUrlBaseEvent>(DFMEvent::CreateStorageInfo, sender, url);
 
     return qvariant_cast<DStorageInfo *>(DFMEventDispatcher::instance()->processEvent(event));
+}
+
+QList<DAbstractFileInfoPointer> DFileService::getRootFile() const
+{
+    QList<DAbstractFileInfoPointer> ret;
+    QMutex mex;
+    mex.lock();
+    foreach (auto key,d_ptr->rootfileHash.keys()){
+        ret.push_back(d_ptr->rootfileHash.value(key));
+    }
+    mex.unlock();
+    return ret;
+}
+
+void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
+{
+    QMutex mex;
+    if (bcreate) {
+        mex.lock();
+        if(!d_ptr->rootfileHash.contains(fileurl)){
+            DAbstractFileInfoPointer info(new DFMRootFileInfo(fileurl));
+            if(info->exists()) {
+                d_ptr->rootfileHash.insert(fileurl,DAbstractFileInfoPointer(new DFMRootFileInfo(fileurl)));
+                qDebug() << "  insert   " << fileurl;
+            }
+        }
+        mex.unlock();
+    }
+    else {
+        mex.lock();
+        qDebug() << "  remove   " << d_ptr->rootfileHash.keys();
+        if(d_ptr->rootfileHash.contains(fileurl)){
+            qDebug() << "  remove   " << fileurl;
+            d_ptr->rootfileHash.remove(fileurl);
+        }
+        mex.unlock();
+    }
+}
+
+void DFileService::startQuryRootFile()
+{
+    if(!d_ptr->bstartonce) {
+        d_ptr->bstartonce = true;
+    }
+    else {
+        return;
+    }
+    qDebug() << "start thread    startQuryRootFile   ===== ";
+    //先读本地的
+    QList<DAbstractFileInfoPointer> ch1 = fileService->getChildren(this, DUrl(DFMROOT_ROOT),  QStringList(), QDir::AllEntries,QDirIterator::NoIteratorFlags,false, true);
+    QMutex mex;
+    mex.lock();
+    for (auto _ch : ch1) {
+        if (!d_ptr->rootfileHash.contains(_ch->fileUrl())) {
+            d_ptr->rootfileHash.insert(_ch->fileUrl(),_ch);
+        }
+    }
+    mex.unlock();
+    //启用异步线程去读取
+    d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
+    connect(d_ptr->m_jobcontroller,&JobController::addChildren,this ,[this](const DAbstractFileInfoPointer &chi){
+        QMutex mex;
+        mex.lock();
+        if (!d_ptr->rootfileHash.contains(chi->fileUrl()) && chi->exists()) {
+            d_ptr->rootfileHash.insert(chi->fileUrl(),chi);
+            qDebug() << "  addChildren " << chi->fileUrl();
+            emit rootFileChange(chi);
+        }
+        mex.unlock();
+    });
+
+    connect(d_ptr->m_jobcontroller,&JobController::addChildrenList,this ,[this](QList<DAbstractFileInfoPointer> ch){
+        QMutex mex;
+        mex.lock();
+        for (auto chi : ch) {
+            if (!d_ptr->rootfileHash.contains(chi->fileUrl()) && chi->exists()) {
+                d_ptr->rootfileHash.insert(chi->fileUrl(),chi);
+                emit rootFileChange(chi);
+            }
+        }
+        mex.unlock();
+    });
+    connect(d_ptr->m_jobcontroller,&JobController::finished,this,[this](){
+        d_ptr->m_jobcontroller->deleteLater();
+        qDebug() << "获取 m_jobcontroller  finished  " << QThread::currentThreadId();
+        d_ptr->m_jobcontroller = nullptr;
+        emit queryRootFileFinsh();
+    });
+    d_ptr->m_jobcontroller->start();
+}
+
+void DFileService::clearThread()
+{
+    if (d_ptr->m_jobcontroller && !d_ptr->m_jobcontroller->isFinished()) {
+        d_ptr->m_jobcontroller->stop();
+        d_ptr->m_jobcontroller->quit();
+        QEventLoop eventLoop;
+
+        connect(d_ptr->m_jobcontroller, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+        if (!d_ptr->m_jobcontroller->isFinished()) {
+            eventLoop.exec();
+        }
+        d_ptr->m_jobcontroller = nullptr;
+    }
+
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
