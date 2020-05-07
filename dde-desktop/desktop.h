@@ -37,7 +37,7 @@ public:
     void initDebugDBus(QDBusConnection &conn);
 public slots:
     void EnableUIDebug(bool enable);
-    void SetVisable(int screenNum,bool);
+    void SetVisible(int screenNum,bool);
     void FixGeometry(int screenNum);
     void Reset();
     void ShowInfo();

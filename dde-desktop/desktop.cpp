@@ -314,7 +314,7 @@ void Desktop::EnableUIDebug(bool enable)
     }
 }
 
-void Desktop::SetVisable(int screenNum, bool v)
+void Desktop::SetVisible(int screenNum, bool v)
 {
     --screenNum;
     QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
