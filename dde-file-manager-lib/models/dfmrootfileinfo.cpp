@@ -316,6 +316,9 @@ QString DFMRootFileInfo::iconName() const
     if (suffix() == SUFFIX_USRDIR) {
         return systemPathManager->getSystemPathIconNameByPath(redirectedFileUrl().path());
     } else if (suffix() == SUFFIX_GVFSMP) {
+        if(!d->gmnt || d->gmnt->themedIconNames().size() == 0) {
+            return "";
+        }
         return d->gmnt ? d->gmnt->themedIconNames().front() : "";
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->blk) {
