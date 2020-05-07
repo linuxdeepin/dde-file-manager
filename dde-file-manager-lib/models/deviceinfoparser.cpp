@@ -55,7 +55,7 @@ void DeviceInfoParser::refreshDabase()
 
 const QString &DeviceInfoParser::queryData(const QString &toolname, const QString &firstKey, const QString &secondKey)
 {
-    static QString result = tr("Unknown");
+    static QString result("");
     if (false == m_toolDatabase.contains(toolname)) {
         return result;
     }

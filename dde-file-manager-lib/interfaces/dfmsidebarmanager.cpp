@@ -26,6 +26,7 @@
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
+#include "controllers/dfmsidebarvaultitemhandler.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -92,6 +93,7 @@ DFMSideBarManager::DFMSideBarManager(QObject *parent)
     dRegisterSideBarInterface<DFMSideBarDeviceItemHandler>(QStringLiteral(SIDEBAR_ID_DEVICE));
     dRegisterSideBarInterface<DFMSideBarTagItemHandler>(QStringLiteral(SIDEBAR_ID_TAG));
     dRegisterSideBarInterface<DFMSideBarBookmarkItemHandler>(QStringLiteral(SIDEBAR_ID_BOOKMARK));
+    dRegisterSideBarInterface<DFMSideBarVaultItemHandler>(QStringLiteral(SIDEBAR_ID_VAULT));
 }
 
 DFMSideBarManager::~DFMSideBarManager()

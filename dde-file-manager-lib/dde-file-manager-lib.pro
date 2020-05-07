@@ -275,7 +275,8 @@ HEADERS += \
     shutil/dfmfilelistfile.h \
     views/dfmsplitter.h \
     dbus/dbussysteminfo.h \
-    models/deviceinfoparser.h
+    models/deviceinfoparser.h \
+    controllers/dfmsidebarvaultitemhandler.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -466,7 +467,8 @@ SOURCES += \
     shutil/dfmfilelistfile.cpp \
     views/dfmsplitter.cpp \
     dbus/dbussysteminfo.cpp \
-    models/deviceinfoparser.cpp
+    models/deviceinfoparser.cpp \
+    controllers/dfmsidebarvaultitemhandler.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

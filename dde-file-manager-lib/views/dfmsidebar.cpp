@@ -39,6 +39,7 @@
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
+#include "controllers/dfmsidebarvaultitemhandler.h" // 保险柜
 #include "app/filesignalmanager.h"
 #include "interfaces/dfilemenu.h"
 
@@ -774,7 +775,7 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         }
         // 添加保险库
         if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
-            appendItem(DFMSideBarDefaultItemHandler::createItem("Vault"), groupNameStr);
+            appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
         }
         break;
     case GroupName::Bookmark: {
