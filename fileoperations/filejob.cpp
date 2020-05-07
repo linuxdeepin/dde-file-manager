@@ -927,10 +927,15 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             if (FileJob::g_opticalBurnEjectCount > 0) {
                 FileJob::g_opticalBurnEjectCount = 0;
             }
-            // 刻录失败提示
-            emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
+            if ((flag & 4)) {
+                // 校验必须成功
+                emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
+            } else {
+                // 刻录失败提示
+                emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
+            }
         } else {
-            if (flag & 4) {
+            if ((flag & 4)) {
                 emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
                 //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
                 QThread::msleep(1000);
@@ -1203,8 +1208,13 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             if (FileJob::g_opticalBurnEjectCount > 0) {
                 FileJob::g_opticalBurnEjectCount = 0;
             }
-            // 刻录失败提示
-            emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
+            if ((flag & 4)) {
+                // 校验必须成功
+                emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
+            } else {
+                // 刻录失败提示
+                emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
+            }
         } else {
             if ((flag & 4)) {
                 emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
@@ -1237,7 +1247,8 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
     FileJob::g_opticalBurnStatus = status;
 
     m_opticalJobStatus = status;
-    m_opticalJobProgress = progress;
+    if (progress >= 0 && progress <= 100) // DISOMaster 可能抛负值
+        m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed && jobisom) {
         QStringList msg = jobisom->getInfoMessages();
         emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
@@ -1259,7 +1270,8 @@ void FileJob::opticalJobUpdatedByParentProcess(int status, int progress, const Q
     FileJob::g_opticalBurnStatus = status;
 
     m_opticalJobStatus = status;
-    m_opticalJobProgress = progress;
+    if (progress >= 0 && progress <= 100) // DISOMaster 可能抛负值
+        m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
         m_lastSrcError = msgs;
         m_lastError = FileJob::getXorrisoErrorMsg(msgs);
