@@ -23,6 +23,9 @@
 #include "dfmapplication.h"
 #include "models/dfmrootfileinfo.h"
 #include "private/dabstractfilewatcher_p.h"
+#include "utils/singleton.h"
+#include "app/define.h"
+#include "app/filesignalmanager.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -86,6 +89,7 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
 const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
     QList<DAbstractFileInfoPointer> ret;
+
     if (event->url().scheme() != DFMROOT_SCHEME || event->url().path() != "/") {
         return ret;
     }
@@ -127,6 +131,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
             continue;
         }
+
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QString(blk->device()).mid(QString("/dev/").length()) + "." SUFFIX_UDISKS)));
         ret.push_back(fp);
     }
@@ -135,6 +140,10 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (gvfsvol->volumeMonitorName().contains(QRegularExpression("(MTP|GPhoto2|Afc)$")) && !gvfsvol->getMount()) {
             gvfsvol->mount();
         }
+    }
+    if (event->canconst())
+    {
+        return ret;
     }
     //寻找所有的移动设备（移动硬盘，手机，U盘等）
     QStringList urllist;
@@ -182,7 +191,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             ret.push_back(fp);
         }
     }
-
+    qDebug() << "获取mountfile  exists  jieshu" << QThread::currentThreadId();
     return ret;
 }
 
@@ -313,9 +322,16 @@ bool DFMRootFileWatcherPrivate::start()
 
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
-        url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
+        QString path = mnt->getRootFile()->path();
+        if (path.isNull() || path.isEmpty()) {
+            QStringList qq = mnt->getRootFile()->uri().replace("/","").split(":");
+            if (qq.size() >= 3) {
+                path = QString("/run/user/1000/gvfs/"+ qq.at(0)+ QString(":host=" + qq.at(1) + QString(",port=")+qq.at(2)));
+            }
+        }
+        qDebug() << path;
+        url.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
         Q_EMIT wpar->fileDeleted(url);
-
         QString uri = mnt->getRootFile()->uri();
         qDebug() << uri << "mount removed";
         if (uri.contains("smb-share://") || uri.contains("smb://")) {

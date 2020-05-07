@@ -149,7 +149,7 @@ public:
             QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
 
     const QList<DAbstractFileInfoPointer> getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
+                                                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false,bool canconst = false) const;
 
     JobController *getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
@@ -160,6 +160,10 @@ public:
     DFileDevice *createFileDevice(const QObject *sender, const DUrl &url);
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
     DStorageInfo *createStorageInfo(const QObject *sender, const DUrl &url);
+    QList<DAbstractFileInfoPointer> getRootFile() const;
+    void changeRootFile(const DUrl &fileurl,const bool bcreate = true);
+    void startQuryRootFile();
+    void clearThread();
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;
@@ -167,6 +171,8 @@ signals:
     void fileDeleted(const DUrl &fileUrl) const;
     void fileMovedToTrash(const DUrl &from, const DUrl &to) const;
     void fileRenamed(const DUrl &from, const DUrl &to) const;
+    void rootFileChange(const DAbstractFileInfoPointer &chi) const;
+    void queryRootFileFinsh() const;
 
 private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;

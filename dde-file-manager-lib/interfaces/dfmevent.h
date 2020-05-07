@@ -517,14 +517,15 @@ class DFMGetChildrensEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false);
+                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false,bool canconst = false);
     explicit DFMGetChildrensEvent(const QObject *sender, const DUrl &url,
-                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false);
+                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false,bool canconst = false);
 
     QStringList nameFilters() const;
     QDir::Filters filters() const;
     QDirIterator::IteratorFlags flags() const;
     bool silent() const;
+    bool canconst() const;
 
     static QSharedPointer<DFMGetChildrensEvent> fromJson(const QJsonObject &json);
 };

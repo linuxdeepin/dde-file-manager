@@ -84,12 +84,15 @@ public:
 
     QModelIndex findIndex(const DUrl &url) const;
     int itemCount() const;
+    void getRootFile();
 
 public Q_SLOTS:
     void addItem(const DUrl &url, QWidget *w = nullptr);
     void insertAfter(const DUrl &url, const DUrl &ref, QWidget *w = nullptr);
     void insertBefore(const DUrl &url, const DUrl &ref, QWidget *w = nullptr);
     void removeItem(const DUrl &url);
+    void onGetRootFile(const DAbstractFileInfoPointer &chi);
+
 
 Q_SIGNALS:
     void itemCountChanged(int nitems);

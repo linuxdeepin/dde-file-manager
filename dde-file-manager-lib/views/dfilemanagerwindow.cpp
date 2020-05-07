@@ -773,6 +773,7 @@ void DFileManagerWindow::moveTopRightByRect(QRect rect)
 void DFileManagerWindow::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose();
+
     DMainWindow::closeEvent(event);
 }
 

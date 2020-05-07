@@ -1023,11 +1023,11 @@ void GvfsMountManager::startMonitor()
 #ifdef DFM_MINIMUM
     qDebug() << "Don't auto mount disk";
 #else
-    if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess){
-        TIMER_SINGLESHOT_OBJECT(this, 1000, {
-                                    this->autoMountAllDisks();
-                                }, this)
-    }
+//    if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess){
+//        TIMER_SINGLESHOT_OBJECT(this, 1000, {
+//                                    this->autoMountAllDisks();
+//                                }, this)
+//    }
 #endif
     initConnect();
     emit loadDiskInfoFinished();

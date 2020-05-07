@@ -656,18 +656,19 @@ QSharedPointer<DFMOpenInTerminalEvent> DFMOpenInTerminalEvent::fromJson(const QJ
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient)
+        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient,bool canconst)
     : DFMUrlBaseEvent(GetChildrens, sender, url)
 {
     setProperty(QT_STRINGIFY(DFMGetChildrensEvent::nameFilters), nameFilters);
     setProperty(QT_STRINGIFY(DFMGetChildrensEvent::filters), filters);
     setProperty(QT_STRINGIFY(DFMGetChildrensEvent::flags), flags);
     setProperty(QT_STRINGIFY(DFMGetChildrensEvent::slient), slient);
+    setProperty(QT_STRINGIFY(DFMGetChildrensEvent::canconst), canconst);
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-        QDir::Filters filters, bool slient)
-    : DFMGetChildrensEvent(sender, url, nameFilters, filters, QDirIterator::NoIteratorFlags, slient)
+        QDir::Filters filters, bool slient,bool canconst)
+    : DFMGetChildrensEvent(sender, url, nameFilters, filters, QDirIterator::NoIteratorFlags, slient,canconst)
 {
 
 }
@@ -690,6 +691,11 @@ QDirIterator::IteratorFlags DFMGetChildrensEvent::flags() const
 bool DFMGetChildrensEvent::silent() const
 {
     return property(QT_STRINGIFY(DFMGetChildrensEvent::silent), false);
+}
+
+bool DFMGetChildrensEvent::canconst() const
+{
+    return property(QT_STRINGIFY(DFMGetChildrensEvent::canconst), false);
 }
 
 QSharedPointer<DFMGetChildrensEvent> DFMGetChildrensEvent::fromJson(const QJsonObject &json)

@@ -42,29 +42,12 @@ ComputerModel::ComputerModel(QObject *parent) :
 {
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
-    addItem(makeSplitterUrl(tr("My Directories")));
-    QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
-    bool splt = false;
     m_nitems = 0;
-    for (auto chi : ch) {
-        if (chi->suffix() != SUFFIX_USRDIR && !splt) {
-            addItem(makeSplitterUrl(tr("Disks")));
-            splt = true;
-        }
-        if (splt) {
-            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
-                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
-                                          return DFMRootFileInfo::typeCompare(a, b.fi);
-                                      });
-            if (r == m_items.end()) {
-                addItem(chi->fileUrl());
-            } else {
-                insertBefore(chi->fileUrl(), r->url);
-            }
-        } else {
-            addItem(chi->fileUrl());
-        }
-    }
+    addItem(makeSplitterUrl(tr("My Directories")));
+    getRootFile();
+
+    connect(fileService,&DFileService::rootFileChange,this,&ComputerModel::onGetRootFile,Qt::QueuedConnection);
+
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
     m_watcher->startWatcher();
     connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
@@ -355,12 +338,65 @@ void ComputerModel::removeItem(const DUrl &url)
     if (p == -1) {
         return;
     }
-
     beginRemoveRows(QModelIndex(), p, p);
     m_items.removeAt(p);
     endRemoveRows();
     if (url.scheme() != SPLITTER_SCHEME && url.scheme() != WIDGET_SCHEME) {
         Q_EMIT itemCountChanged(--m_nitems);
+    }
+}
+
+void ComputerModel::onGetRootFile(const DAbstractFileInfoPointer &chi)
+{
+    bool splt = false;
+    if(!chi->exists())
+    {
+        return;
+    }
+    if (chi->suffix() != SUFFIX_USRDIR && !splt) {
+        addItem(makeSplitterUrl(tr("Disks")));
+        splt = true;
+    }
+    if (splt) {
+        auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
+                                  [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+                                      return DFMRootFileInfo::typeCompare(a, b.fi);
+                                  });
+        if (r == m_items.end()) {
+            addItem(chi->fileUrl());
+        } else {
+            insertBefore(chi->fileUrl(), r->url);
+        }
+    } else {
+        addItem(chi->fileUrl());
+    }
+}
+
+void ComputerModel::getRootFile()
+{
+    QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+    qDebug() << "获取 ComputerModel  getRootFile start" << ch.size() << QThread::currentThreadId();
+    std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompare);
+    bool splt = false;
+    m_nitems = 0;
+    for (auto chi : ch) {
+        if (chi->suffix() != SUFFIX_USRDIR && !splt) {
+            addItem(makeSplitterUrl(tr("Disks")));
+            splt = true;
+        }
+        if (splt) {
+            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
+                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+                                          return DFMRootFileInfo::typeCompare(a, b.fi);
+                                      });
+            if (r == m_items.end()) {
+                addItem(chi->fileUrl());
+            } else {
+                insertBefore(chi->fileUrl(), r->url);
+            }
+        } else {
+            addItem(chi->fileUrl());
+        }
     }
 }
 

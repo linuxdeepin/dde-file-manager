@@ -26,6 +26,7 @@
 
 #include "durl.h"
 #include "dfmglobal.h"
+#include "interfaces/dabstractfileinfo.h"
 #include <ddiskmanager.h>
 
 DFM_BEGIN_NAMESPACE
@@ -76,11 +77,12 @@ public:
 
     static const int minimumWidth = 120;
     static const int maximumWidth = 200;
+    void rootFileChange();
 
 signals:
     void disableUrlSchemesChanged();
 public slots:
-
+    void onRootFileChange(const DAbstractFileInfoPointer &fi);
 private slots:
     void onItemActivated(const QModelIndex &index);
     void onContextMenuRequested(const QPoint &pos);

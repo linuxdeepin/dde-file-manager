@@ -287,14 +287,19 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
     } else if (d->label == "_dde_data") {
         ret = ItemType::UDisksData;
     } else {
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
-        if (d->isod) {
-            ret = ItemType::UDisksOptical;
-        } else {
-            ret = ItemType::UDisksFixed;
-            if (drv->media() == "thumb" || drv->removable() || drv->mediaRemovable() || drv->ejectable()) {
-                ret = ItemType::UDisksRemovable;
+        if (d->blk) {
+            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
+            if (d->isod) {
+                ret = ItemType::UDisksOptical;
+            } else {
+                ret = ItemType::UDisksFixed;
+                if (drv->media() == "thumb" || drv->removable() || drv->mediaRemovable() || drv->ejectable()) {
+                    ret = ItemType::UDisksRemovable;
+                }
             }
+        }
+        else {
+            ret = ItemType::UDisksRemovable;
         }
     }
     return static_cast<FileType>(ret);
@@ -473,7 +478,12 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["fsType"] = d->fs;
         ret["encrypted"] = d->encrypted;
         ret["unlocked"] = !d->encrypted || d->ctblk;
-        ret["udisksblk"] = d->ctblk ? d->ctblk->path() : d->blk->path();
+        if(d->ctblk) {
+            ret["udisksblk"] = d->ctblk->path();
+        }
+        else if (d->blk) {
+            ret["udisksblk"] = d->blk->path();
+        }
         ret["mounted"] = !d->mps.empty();
     }
     return ret;
