@@ -1971,8 +1971,10 @@ int CanvasGridView::selectedIndexCount() const
 bool CanvasGridView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     DUrl fileUrl = model()->getUrlByIndex(index);
-
-    if (fileUrl.isEmpty() || selectedIndexCount() > 1 || (trigger == SelectedClicked && DFMGlobal::keyShiftIsPressed())) {
+    //解决自动整理只包含一个有效图标时全选重命名无效问题
+    auto validSelectCount = selectedUrls().size();
+//    if (fileUrl.isEmpty() || selectedIndexCount() > 1 || (trigger == SelectedClicked && DFMGlobal::keyShiftIsPressed())) {
+    if (fileUrl.isEmpty() || validSelectCount > 1 || (trigger == SelectedClicked && DFMGlobal::keyShiftIsPressed())) {
         return false;
     }
 
