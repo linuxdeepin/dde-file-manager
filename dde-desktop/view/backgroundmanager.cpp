@@ -212,7 +212,7 @@ void BackgroundManager::onBackgroundBuild()
 
         ScreenPointer primary = ScreenMrg->primaryScreen();
         if (primary == nullptr){
-            qCritical() << "get screen failed return";
+            qCritical() << "get primary screen failed return";
             return;
         }
 

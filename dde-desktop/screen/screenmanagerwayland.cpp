@@ -121,6 +121,8 @@ void ScreenManagerWayland::onMonitorChanged()
     //检查新增的屏幕
     for (auto objectPath : m_display->monitors()){
         QString path = objectPath.path();
+        if (path.isEmpty())
+            continue;
 
         //新增的
         if (!m_screens.contains(path)){

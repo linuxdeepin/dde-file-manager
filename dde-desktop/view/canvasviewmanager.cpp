@@ -38,6 +38,11 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
             || (ScreenMrg->screens().count() == 1)){
 
         ScreenPointer primary = ScreenMrg->primaryScreen();
+        if (primary == nullptr){
+            qCritical() << "get primary screen failed return";
+            return;
+        }
+
         CanvasViewPointer mView = m_canvasMap.value(primary);
 
         //删除其他

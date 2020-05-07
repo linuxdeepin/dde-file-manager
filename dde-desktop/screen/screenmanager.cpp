@@ -20,7 +20,7 @@ ScreenManager::~ScreenManager()
 
 void ScreenManager::onScreenAdded(QScreen *screen)
 {
-    if (m_screens.contains(screen))
+    if (screen == nullptr || m_screens.contains(screen))
         return;
 
     ScreenObjectPointer psc(new ScreenObject(screen));

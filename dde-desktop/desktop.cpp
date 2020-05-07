@@ -314,6 +314,32 @@ void Desktop::EnableUIDebug(bool enable)
     }
 }
 
+void Desktop::SetVisable(int screenNum, bool v)
+{
+    --screenNum;
+    QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
+    if (screens.size() > screenNum){
+        ScreenPointer sp = screens[screenNum];
+        BackgroundWidgetPointer bw = d->m_background->allbackgroundWidgets().value(sp);
+        if (bw)
+            bw->setVisible(v);
+
+        CanvasViewPointer view = d->m_canvas->canvas().value(sp);
+        if (view)
+            view->setVisible(v);
+    }
+}
+
+void Desktop::FixGeometry(int screenNum)
+{
+    --screenNum;
+    QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
+    if (screens.size() > screenNum){
+        ScreenPointer sp = screens[screenNum];
+        emit ScreenMrg->sigScreenGeometryChanged(sp,sp->geometry());
+    }
+}
+
 void Desktop::Reset()
 {
     ScreenMrg->reset();
@@ -334,6 +360,7 @@ void Desktop::ShowInfo()
         qInfo() << "primary screen :" << primary->name()
                 << "available geometry" << primary->availableGeometry()
                 << "handle geometry"   << primary->handleGeometry()
+                << "devicePixelRatio" << ScreenMrg->devicePixelRatio()
                 << "screen count" << ScreenMrg->screens().count();
     else
         qCritical() << "primary screen error! not found";
