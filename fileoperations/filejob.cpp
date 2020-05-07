@@ -927,7 +927,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             if (FileJob::g_opticalBurnEjectCount > 0) {
                 FileJob::g_opticalBurnEjectCount = 0;
             }
-            if ((flag & 4)) {
+            if ((flag & 4) && (m_opticalJobPhase == 2)) {
                 // 校验必须成功
                 emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
             } else {
@@ -936,7 +936,8 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             }
         } else {
             if ((flag & 4)) {
-                emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
+                // 校验必须成功
+                emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
                 //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
                 QThread::msleep(1000);
                 if ((FileJob::g_opticalBurnEjectCount > 0) && rst) {
@@ -1208,7 +1209,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             if (FileJob::g_opticalBurnEjectCount > 0) {
                 FileJob::g_opticalBurnEjectCount = 0;
             }
-            if ((flag & 4)) {
+            if ((flag & 4) && (m_opticalJobPhase == 2)) {
                 // 校验必须成功
                 emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
             } else {
@@ -1217,7 +1218,8 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             }
         } else {
             if ((flag & 4)) {
-                emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
+                // 校验必须成功
+                emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
                 //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
                 QThread::msleep(1000);
                 if ((FileJob::g_opticalBurnEjectCount > 0) && rst) {
