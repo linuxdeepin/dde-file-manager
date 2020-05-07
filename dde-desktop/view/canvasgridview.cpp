@@ -2226,7 +2226,8 @@ void CanvasGridView::initConnection()
             delete d->dodgeTargetGrid;
             d->dodgeTargetGrid = nullptr;
 
-            emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
+            //隐藏选中框
+            emit GridManager::instance()->sigSyncOperation(GridManager::soHideEditing);
         });
         animation->start();
         d->dodgeDelayTimer.stop();

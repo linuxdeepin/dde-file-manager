@@ -225,8 +225,8 @@ int main(int argc, char *argv[])
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.
     // ---------------------------------------------------------------------------
 
-    DEventFilter *event_filter{ new DEventFilter{&app} };
-    app.installEventFilter(event_filter);
+//    DEventFilter *event_filter{ new DEventFilter{&app} };
+//    app.installEventFilter(event_filter);
 
 
     return app.exec();
