@@ -102,8 +102,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
         if (pathList.size() == 0) {
             qWarning() << url << "not existed";
             //fix 临时解决方案，彻底解决需要DDiskManager::resolveDeviceNode往下追踪
-            for (int i = 0;i < 20; ++i)
-            {
+            for (int i = 0; i < 20; ++i) {
                 QThread::msleep(50);
 
                 pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
@@ -305,8 +304,7 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
                     ret = ItemType::UDisksRemovable;
                 }
             }
-        }
-        else {
+        } else {
             ret = ItemType::UDisksRemovable;
         }
     }
@@ -324,7 +322,7 @@ QString DFMRootFileInfo::iconName() const
     if (suffix() == SUFFIX_USRDIR) {
         return systemPathManager->getSystemPathIconNameByPath(redirectedFileUrl().path());
     } else if (suffix() == SUFFIX_GVFSMP) {
-        if(!d->gmnt || d->gmnt->themedIconNames().size() == 0) {
+        if (!d->gmnt || d->gmnt->themedIconNames().size() == 0) {
             return "";
         }
         return d->gmnt ? d->gmnt->themedIconNames().front() : "";
@@ -489,10 +487,9 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["fsType"] = d->fs;
         ret["encrypted"] = d->encrypted;
         ret["unlocked"] = !d->encrypted || d->ctblk;
-        if(d->ctblk) {
+        if (d->ctblk) {
             ret["udisksblk"] = d->ctblk->path();
-        }
-        else if (d->blk) {
+        } else if (d->blk) {
             ret["udisksblk"] = d->blk->path();
         }
         ret["mounted"] = !d->mps.empty();
@@ -523,13 +520,10 @@ void DFMRootFileInfo::checkCache()
     //FAT32的卷标编码为ascii，idLabel中取不到中文，这里需要从symlink中取出label
     //symlink中的label编码有问题，这里做进一步处理
     QString idVersion = blk->idVersion().toUpper();
-    if(idVersion == "FAT32")
-    {
-        for (QByteArray ba : blk->symlinks())
-        {
+    if (idVersion == "FAT32") {
+        for (QByteArray ba : blk->symlinks()) {
             QString link(ba);
-            if (link.contains("/by-label/"))
-            {
+            if (link.contains("/by-label/") && link.contains("\\x")) {
                 QByteArray t_destByteArray;
                 QByteArray t_tmpByteArray;
                 for (int i = 0; i < ba.size(); i++) {
@@ -653,8 +647,7 @@ bool DFMRootFileInfo::checkMpsStr(const QString &path) const
 {
     Q_D(const DFMRootFileInfo);
 
-    for (QByteArray ba : d->mps)
-    {
+    for (QByteArray ba : d->mps) {
         QString baStr(ba.data());
         if (baStr == path)
             return true;
