@@ -296,17 +296,20 @@ void BookMarkManager::onFileEdited(const QString &group, const QString &key, con
 
 void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
 {
-    //转换为书签设置标签???
     //make bookMarkDUrl
-    QString fromPath = from.scheme() + "://" + from.path();
-    DUrl bookMarkFrom(from);
-    bookMarkFrom.setScheme(BOOKMARK_SCHEME);
-    bookMarkFrom.setPath(fromPath);
+//    QString fromPath = from.scheme() + "://" + from.path();
+//    DUrl bookMarkFrom(from);
+//    bookMarkFrom.setScheme(BOOKMARK_SCHEME);
+//    bookMarkFrom.setPath(fromPath);
+    //采用durl标准的转bookmarkurl接口,否则转出的URL可能isValid = false
+    DUrl bookMarkFrom = DUrl::fromBookMarkFile(from, from.fileName());
 
-    QString toPath = to.scheme() + "://" + to.path();
-    DUrl bookMarkTo(to);
-    bookMarkTo.setScheme(BOOKMARK_SCHEME);
-    bookMarkTo.setPath(toPath);
+//    QString toPath = to.scheme() + "://" + to.path();
+//    DUrl bookMarkTo(to);
+//    bookMarkTo.setScheme(BOOKMARK_SCHEME);
+//    bookMarkTo.setPath(toPath);
+    //采用durl标准的转bookmarkurl接口,否则转出的URL可能isValid = false
+    DUrl bookMarkTo = DUrl::fromBookMarkFile(to, to.fileName());
 
     BookMarkPointer item = findBookmark(bookMarkFrom);
     if (!item)
@@ -319,7 +322,7 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
         QVariantMap map = list.at(i).toMap();
 
         if (map.value("name").toString() == item->getName()) {
-            QString fromQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + map.value("locateUrl").toString();
+//            QString fromQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + map.value("locateUrl").toString();
 //            bookMarkFrom.setQuery(fromQueryStr);
             bookMarkFrom.setFragment(map.value("name").toString());
 
@@ -334,12 +337,12 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             }
             locateUrl = locateUrl.mid(indexOfFirstDir);
 
-            QString toQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + locateUrl;
+//            QString toQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + locateUrl;
 //            bookMarkTo.setQuery(toQueryStr);
             bookMarkTo.setFragment(map.value("name").toString());
 
             map["locateUrl"] = locateUrl;
-            map["url"] = toPath;
+            map["url"] = bookMarkTo.path();
             list[i] = map;
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
 
