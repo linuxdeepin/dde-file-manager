@@ -876,7 +876,9 @@ QList<DAbstractFileInfoPointer> DFileService::getRootFile() const
     QMutex mex;
     mex.lock();
     foreach (auto key,d_ptr->rootfileHash.keys()){
-        ret.push_back(d_ptr->rootfileHash.value(key));
+        if (d_ptr->rootfileHash.value(key)->exists()) {
+            ret.push_back(d_ptr->rootfileHash.value(key));
+        }
     }
     mex.unlock();
     return ret;
