@@ -1039,6 +1039,15 @@ void AppController::actionSendToRemovableDisk()
     DUrl targetUrl = DUrl(action->property("mounted_root_uri").toString());
     DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
 
+    // 如果从光驱内发送文件到其他移动设备，将光驱路径转换成本地挂载路径
+    for (DUrl &u : urlList) {
+        if (u.scheme() == BURN_SCHEME) {
+            DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, u);
+            if (fi)
+                u = fi->mimeDataUrl();
+        }
+    }
+
     //fix:修正临时拷贝文件到光盘的路径问题，不是挂载目录，而是临时缓存目录
     QString iconName = action->property("iconName").toString();
     if (iconName.contains("media-optical")) { //notice: dvd/cd/bd
