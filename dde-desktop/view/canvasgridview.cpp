@@ -3360,7 +3360,13 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         menu->addAction(&property);
     }
 
-    menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+    //menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+    if(info->fileUrl().scheme() == DFMMD_SCHEME){
+        menu->setEventData(curUrl, realList, winId(), this);
+    }
+    else {
+        menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+    }
 
     connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
         if (!action->data().isValid()) {
