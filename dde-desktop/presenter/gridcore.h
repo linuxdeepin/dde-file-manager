@@ -472,6 +472,21 @@ public:
         return items;
     }
 
+    QList<GIndex> emptyPostion(int screenNum) const {
+        QList<GIndex> ret;
+        if (!m_cellStatus.contains(screenNum)) {
+            qDebug() << "can not find num :" << screenNum;
+            return ret;
+        }
+
+        auto cellStatusItor = m_cellStatus.find(screenNum);
+        for (GIndex i = 0; i < m_cellStatus.value(screenNum).length(); ++i) {
+            if (!cellStatusItor.value()[i]) {
+                ret.append(i);
+            }
+        }
+        return ret;
+    }
 
     QStringList reloacle(int screenNum, GIndex index, int emptyBefore, int emptyAfter);
 };
