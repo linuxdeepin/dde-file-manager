@@ -33,12 +33,21 @@
 #include <QMediaMetaData>
 #include <QTime>
 #include <QFileInfo>
+#include <QTextCodec>
+
+#include <unicode/ucnv.h>
+#include <unicode/ucsdet.h>
+#include <taglib/tag.h>
+#include <taglib/fileref.h>
+#include <taglib/taglib.h>
+#include <taglib/tpropertymap.h>
 
 MusicMessageView::MusicMessageView(const QString &uri, QWidget *parent) :
     QFrame(parent),
     m_uri(uri)
 {
     initUI();
+    localeCodes.insert("zh_CN", "GB18030");
 }
 
 void MusicMessageView::initUI()
@@ -173,4 +182,166 @@ void MusicMessageView::resizeEvent(QResizeEvent *event)
     }
     setContentsMargins(m_margins, m_margins, 0, m_margins);
     updateElidedText();
+}
+
+QList<QByteArray> MusicMessageView::detectEncodings(const QByteArray &rawData)
+{
+    QList<QByteArray> charsets;
+    QByteArray charset = QTextCodec::codecForLocale()->name();
+    charsets << charset;
+
+    const char *data = rawData.data();
+    int32_t len = rawData.size();
+
+    UCharsetDetector *csd;
+    const UCharsetMatch **csm;
+    int32_t matchCount = 0;
+
+    UErrorCode status = U_ZERO_ERROR;
+
+    csd = ucsdet_open(&status);
+    if (status != U_ZERO_ERROR) {
+        return charsets;
+    }
+
+    ucsdet_setText(csd, data, len, &status);
+    if (status != U_ZERO_ERROR) {
+        return charsets;
+    }
+
+    csm = ucsdet_detectAll(csd, &matchCount, &status);
+    if (status != U_ZERO_ERROR) {
+        return charsets;
+    }
+
+    if (matchCount > 0) {
+        charsets.clear();
+    }
+
+    for (int32_t match = 0; match < matchCount; match += 1)
+    {
+        const char *name = ucsdet_getName(csm[match], &status);
+        const char *lang = ucsdet_getLanguage(csm[match], &status);
+        if (lang == nullptr || strlen(lang) == 0) {
+            lang = "**";
+        }
+        charsets << name;
+    }
+
+    ucsdet_close(csd);
+    return charsets;
+}
+
+bool MusicMessageView::isChinese(const QChar &c)
+{
+    return c.unicode() <= 0x9FBF && c.unicode() >= 0x4E00;
+}
+
+MediaMeta MusicMessageView::tagOpenMusicFile(const QString &path)
+{
+    QUrl url(path);
+    TagLib::FileRef f(url.toLocalFile().toLocal8Bit());
+
+    TagLib::Tag *tag = f.tag();
+
+    if (!f.file())
+    {
+        qCritical() << "TagLib: open file failed:" << path << f.file();
+    }
+
+    if (!tag)
+    {
+       qWarning() << "TagLib: no tag for media file" << path;
+       return MediaMeta();
+    }
+
+    MediaMeta meta;
+    characterEncodingTransform(meta, (void*)tag);
+    return meta;
+}
+
+void MusicMessageView::characterEncodingTransform(MediaMeta & meta, void * obj)
+{
+    TagLib::Tag *tag = (TagLib::Tag *)obj;
+    bool encode = true;
+    encode &= tag->title().isNull() ? true : tag->title().isLatin1();
+    encode &= tag->artist().isNull() ? true : tag->artist().isLatin1();
+    encode &= tag->album().isNull() ? true : tag->album().isLatin1();
+
+    QByteArray detectByte;
+    QByteArray detectCodec;
+    if (encode)
+    {
+        if (detectCodec.isEmpty())
+        {
+            detectByte += tag->title().toCString();
+            detectByte += tag->artist().toCString();
+            detectByte += tag->album().toCString();
+            auto allDetectCodecs = detectEncodings(detectByte);
+            auto localeCode = localeCodes.value(QLocale::system().name());
+
+            for (auto curDetext : allDetectCodecs)
+            {
+                if (curDetext == "Big5" || curDetext == localeCode)
+                {
+                    detectCodec = curDetext;
+                    break;
+                }
+            }
+            if (detectCodec.isEmpty())
+                detectCodec = allDetectCodecs.value(0);
+
+            QString curStr = QString::fromLocal8Bit(tag->title().toCString());
+            if (curStr.isEmpty())
+                curStr = QString::fromLocal8Bit(tag->artist().toCString());
+            if (curStr.isEmpty())
+                curStr = QString::fromLocal8Bit(tag->album().toCString());
+            for (auto ch : curStr)
+            {
+                if (isChinese(ch))
+                {
+                    detectCodec = "GB18030";
+                    break;
+                }
+            }
+        }
+
+        QString detectCodecStr(detectCodec);
+        if (detectCodecStr.compare("utf-8", Qt::CaseInsensitive) == 0)
+        {
+            meta.album = TStringToQString(tag->album());
+            meta.artist = TStringToQString(tag->artist());
+            meta.title = TStringToQString(tag->title());
+            meta.codec = "UTF-8";  //info codec
+        }
+        else
+        {
+            QTextCodec *codec = QTextCodec::codecForName(detectCodec);
+            if (codec == nullptr)
+            {
+                meta.album = TStringToQString(tag->album());
+                meta.artist = TStringToQString(tag->artist());
+                meta.title = TStringToQString(tag->title());
+            }
+            else
+            {
+                meta.album = codec->toUnicode(tag->album().toCString());
+                meta.artist = codec->toUnicode(tag->artist().toCString());
+                meta.title = codec->toUnicode(tag->title().toCString());
+            }
+            meta.codec = detectCodec;
+        }
+    }
+    else
+    {
+        meta.album = TStringToQString(tag->album());
+        meta.artist = TStringToQString(tag->artist());
+        meta.title = TStringToQString(tag->title());
+        meta.codec = "UTF-8";
+    }
+
+    //empty str
+    meta.album = meta.album.simplified();
+    meta.artist = meta.artist.simplified();
+    meta.title = meta.title.simplified();
 }
