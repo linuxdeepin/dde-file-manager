@@ -2013,11 +2013,15 @@ end:
         QProcess::execute("sync", {"-f", d->targetRootPath});
         //校验是否完全同步到了移动设备
         const qint64 total_size = d->fileStatistics->totalSize();
-        qDebug() << "total_size " << total_size << d->completedDataSizeOnBlockDevice;
         //fix: 删除文件时出现报错(回收箱和光驱处理删除文件)
         if ((total_size > d->completedDataSizeOnBlockDevice) && (d->completedDataSizeOnBlockDevice == 0)) {
             d->completedDataSizeOnBlockDevice = total_size;
         }
+        if (total_size != d->completedDataSizeOnBlockDevice) {
+            d->completedDataSizeOnBlockDevice = d->getCompletedDataSize();
+        }
+        qDebug() << "total_size " << total_size << d->completedDataSizeOnBlockDevice;
+
         if (total_size > d->completedDataSizeOnBlockDevice)
         {
             d->setError(DFileCopyMoveJob::OpenError, "Failed to synchronize to disk u!");
@@ -2030,7 +2034,6 @@ end:
         // 恢复状态
         if (d->state == IOWaitState) {
             d->setState(RunningState);
-
         }
     }
 
