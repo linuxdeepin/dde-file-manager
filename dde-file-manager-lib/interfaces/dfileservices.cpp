@@ -890,9 +890,9 @@ void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
     if (bcreate) {
         mex.lock();
         if(!d_ptr->rootfileHash.contains(fileurl)){
-            DAbstractFileInfoPointer info(new DFMRootFileInfo(fileurl));
+            DAbstractFileInfoPointer info = createFileInfo(nullptr, fileurl);
             if(info->exists()) {
-                d_ptr->rootfileHash.insert(fileurl,DAbstractFileInfoPointer(new DFMRootFileInfo(fileurl)));
+                d_ptr->rootfileHash.insert(fileurl,info);
                 qDebug() << "  insert   " << fileurl;
             }
         }
