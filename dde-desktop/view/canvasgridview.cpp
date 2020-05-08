@@ -1768,25 +1768,21 @@ static inline QRect fix_available_geometry()
     //auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
     //else
 
-    QRect virtualGeometry;
-
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-//        virtualGeometry = Display::instance()->primaryScreen()->virtualGeometry();
+    QRect primaryGeometry;
+    if (DesktopInfo().waylandDectected()) {
         qDebug()<<"Display::instance()->primaryScreen()->virtualGeometry():" << Display::instance()->primaryScreen()->virtualGeometry();
         qDebug()<<"Display::instance()->primaryRect():" << Display::instance()->primaryRect();
-        virtualGeometry = Display::instance()->primaryRect();}
+        primaryGeometry = Display::instance()->primaryRect();}
     else {
-        virtualGeometry = qApp->screens().value(0)->virtualGeometry();
+        primaryGeometry = qApp->primaryScreen()->geometry();
     }
 
     int dockHideMode = DockIns::instance()->hideMode();
-    if ( 1 == dockHideMode || 3 == dockHideMode) //隐藏与智能隐藏
-        return virtualGeometry;
+    if ( 1 == dockHideMode) {//隐藏
+        qDebug() << "primarygeometry:" << primaryGeometry << "\n"
+                  << "availableRect:" << primaryGeometry << "\n";
+        return primaryGeometry;
+    }
 
     DockRect dockrect = DockIns::instance()->frontendWindowRect();
     qDebug()<<"fix_available_geometry dockrect"<< (QRect)dockrect;
@@ -1797,7 +1793,7 @@ static inline QRect fix_available_geometry()
 
     dockrect.width = dockrect.width / t_devicePixelRatio;
     dockrect.height = dockrect.height / t_devicePixelRatio;
-    QRect primaryGeometry = Display::instance()->primaryRect();
+
     QRect ret = primaryGeometry;
     switch (DockIns::instance()->position()) {
     case 0: //上
@@ -1819,7 +1815,7 @@ static inline QRect fix_available_geometry()
     qDebug() << "\n"
              << "dump dock info begin ---------------------------" << "\n"
              << "dockGeometry:" << dockrect << "\n"
-             << "virtualGeometry:" << virtualGeometry << "\n"
+ //            << "virtualGeometry:" << virtualGeometry << "\n"
              << "primarygeometry:" << primaryGeometry << "\n"
              << "availableRect:" << ret << "\n"
              << "dump dock info end ---------------------------" << "\n";
