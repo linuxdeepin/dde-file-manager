@@ -26,8 +26,8 @@ public:
     bool isVisible() const;
     BackgroundWidgetPointer backgroundWidget(ScreenPointer) const;
     inline QMap<ScreenPointer,BackgroundWidgetPointer> allbackgroundWidgets() const{return m_backgroundMap;}
-    //自定义背景，临时方案
     void setBackgroundImage(const QString &screen,const QString &path);
+    inline QMap<QString,QString> backgroundImages() const {return m_backgroundImagePath;}
 signals:
     void sigBackgroundBuilded(int mode); //通知canvasview
 public slots:
@@ -39,6 +39,8 @@ protected slots:
     void onScreenGeometryChanged(ScreenPointer);    //响应屏幕大小改变
 private:
     void init();
+    void pullImageSettings();
+    QString getBackgroundFromWm(const QString &screen);
     BackgroundWidgetPointer createBackgroundWidget(ScreenPointer);
 protected:
     DGioSettings *gsettings = nullptr;
@@ -51,9 +53,8 @@ private:
 
     QMap<ScreenPointer,BackgroundWidgetPointer> m_backgroundMap;
 
-    //记录设置的背景的壁纸，临时解决方案
+    //记录设置的背景的壁纸
     QMap<QString, QString> m_backgroundImagePath;
-
 };
 
 #endif // BACKGROUNDMANAGER_H

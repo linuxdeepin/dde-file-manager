@@ -44,12 +44,14 @@ void BackgroundManager::onRestBackgroundManager()
         if (!m_preview) {
             connect(wmInter, &WMInter::WorkspaceSwitched, this, [this] (int, int to) {
                 currentWorkspaceIndex = to;
+                pullImageSettings();
                 onResetBackgroundImage(); //todo
             });
 
             connect(gsettings, &DGioSettings::valueChanged, this, [this] (const QString & key, const QVariant & value) {
                 Q_UNUSED(value);
                 if (key == "background-uris") {
+                    pullImageSettings();
                     onResetBackgroundImage(); //todo
                 }
             });
@@ -76,6 +78,7 @@ void BackgroundManager::onRestBackgroundManager()
                 this, &BackgroundManager::onScreenGeometryChanged);
 
         //创建背景
+        pullImageSettings();
         onBackgroundBuild();
     } else {
 
@@ -145,6 +148,49 @@ void BackgroundManager::init()
     onRestBackgroundManager();
 }
 
+void BackgroundManager::pullImageSettings()
+{
+    m_backgroundImagePath.clear();
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter){
+        for (ScreenPointer sc : ScreenMrg->logicScreens()){
+            QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackground(sc->name());
+            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())){
+                 qCritical() << "get background fail path :" << path << "screen" << sc->name();
+                 continue;
+            }
+            m_backgroundImagePath.insert(sc->name(), path);
+        }
+    }
+
+
+//    if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())
+//            // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
+//            // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
+//            || (!path.startsWith("/") && !path.startsWith("file:"))) {
+//        path = gsettings->value("background-uris").toStringList().value(currentWorkspaceIndex);
+
+//        if (path.isEmpty()) {
+//            qWarning() << "invalid path, will not setbackground";
+//            //return;
+//        }
+    //    }
+}
+
+QString BackgroundManager::getBackgroundFromWm(const QString &screen)
+{
+    QString ret;
+    if (!screen.isEmpty() && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter){
+            QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackground(screen);
+            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())){
+                 qCritical() << "get background fail path :" << path << "screen" << screen;
+            }
+            else {
+                ret = path;
+            }
+    }
+    return ret;
+}
+
 BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer screen)
 {
     BackgroundWidgetPointer bwp(new BackgroundWidget);
@@ -196,6 +242,7 @@ void BackgroundManager::setBackgroundImage(const QString &screen, const QString 
     m_backgroundImagePath[screen] = path;
     onResetBackgroundImage();
 }
+
 
 void BackgroundManager::onBackgroundBuild()
 {
@@ -260,7 +307,7 @@ void BackgroundManager::onResetBackgroundImage()
         if (path.isEmpty())
             return defalutPixmap;
 
-        auto currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
+        QString currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
         QPixmap backgroundPixmap = QPixmap(currentWallpaper);
         // fix whiteboard shows when a jpeg file with filename xxx.png
         // content formart not epual to extension
@@ -273,31 +320,26 @@ void BackgroundManager::onResetBackgroundImage()
     };
 
     QPixmap defaultImage;
-    //todo 获取每个屏幕的壁纸
-    {
-        QString path = QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm")
-                ? wmInter->GetCurrentWorkspaceBackground() : QString();
 
-        if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())
-                // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
-                // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
-                || (!path.startsWith("/") && !path.startsWith("file:"))) {
-            path = gsettings->value("background-uris").toStringList().value(currentWorkspaceIndex);
-
-            if (path.isEmpty()) {
-                qWarning() << "invalid path, will not setbackground";
-                //return;
-            }
+    QMap<QString, QString> recorder; //记录有效的壁纸
+    for (ScreenPointer sp : m_backgroundMap.keys()){
+        QString userPath;
+        if (!m_backgroundImagePath.contains(sp->name())){
+            userPath = getBackgroundFromWm(sp->name());
+        }
+        else {
+            userPath = m_backgroundImagePath.value(sp->name());
         }
 
-        defaultImage = getPix(path, defaultImage);
-    }
+        if (!userPath.isEmpty())
+            recorder.insert(sp->name(),userPath);
 
-    for (ScreenPointer sp : m_backgroundMap.keys()){
-        QString userPath = m_backgroundImagePath.value(sp->name());
         QPixmap backgroundPixmap = getPix(userPath, defaultImage);
-        if (backgroundPixmap.isNull())
+        if (backgroundPixmap.isNull()){
+            qCritical() << "screen " << sp->name() << "backfround path" << userPath
+                        << "can not read!";
             continue;
+        }
 
         BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
         QSize trueSize = sp->handleGeometry().size(); //使用屏幕缩放前的分辨率
@@ -312,9 +354,12 @@ void BackgroundManager::onResetBackgroundImage()
                                  trueSize.height()));
         }
 
-        qDebug() << "background truesize" << trueSize <<"devicePixelRatio"
+        qDebug() << sp->name() << "background path" << userPath << "truesize" << trueSize <<"devicePixelRatio"
                  << bw->devicePixelRatioF() << pix << "widget" << bw.get();
         pix.setDevicePixelRatio(bw->devicePixelRatioF());
         bw->setPixmap(pix);
     }
+
+    //更新壁纸
+    m_backgroundImagePath = recorder;
 }

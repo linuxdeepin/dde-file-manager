@@ -1122,20 +1122,26 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         //old
         //startDodgeAnimation();
         if (event->source() == this){
-            if (event->mimeData() &&
-                    event->mimeData()->urls().size() >= GridManager::instance()->gridCount(m_screenNum)){
+/*            if (event->mimeData() &&
+                    event->mimeData()->urls().size() > GridManager::instance()->emptyPostionCount(m_screenNum)){
                 //放不下，不做处理，不然会崩溃 todo 优化让位算法
             }
-            else
+            else */{
                 startDodgeAnimation();
+                update();
+                return;
+            }
         }        //跨屏拖动，空间不足时先禁止拖动，todo 寻找更好的解决办法
         else if (event->mimeData() &&
                  GridManager::instance()->emptyPostionCount(m_screenNum) >= event->mimeData()->urls().size()){
             startDodgeAnimation();
+            update();
+            return;
         }
         //end
     }
-    else { //自动排列和自动整理的drag处理
+
+    { //自动排列和自动整理以及不触发让位的drag处理
         d->fileViewHelper->preproccessDropEvent(event);
         if (!hoverIndex.isValid()) {
             if (DFileDragClient::checkMimeData(event->mimeData())) {
@@ -2244,6 +2250,8 @@ void CanvasGridView::initConnection()
         for (auto sel : selURLs) {
             QString localFile = sel.toString();
             selLocalFiles << localFile;
+            if(!GridManager::instance()->contains(m_screenNum, localFile))
+                continue;
             GPos pos = grid->pos(m_screenNum, localFile);
             GIndex index = grid->toIndex(m_screenNum, pos);
             grid->removeItem(m_screenNum, localFile);
