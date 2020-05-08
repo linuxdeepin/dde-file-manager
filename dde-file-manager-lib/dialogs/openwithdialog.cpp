@@ -208,6 +208,8 @@ void OpenWithDialog::initUI()
     setTitle(tr("Open with"));
 
     m_scrollArea = new QScrollArea(this);
+    m_scrollArea->setObjectName("OpenWithDialog-QScrollArea");
+
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scrollArea->setFrameShape(QFrame::NoFrame);
     m_scrollArea->setWidgetResizable(true);

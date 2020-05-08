@@ -31,7 +31,23 @@ using WMInter = com::deepin::wm;
 
 DGUI_USE_NAMESPACE
 
-class BackgroundLabel;
+
+class BackgroundLabel : public QWidget
+{
+public:
+    using QWidget::QWidget;
+
+    void setPixmap(const QPixmap &pixmap);
+
+    void paintEvent(QPaintEvent *event) override;
+
+    virtual void setVisible(bool visible) override;
+
+private:
+    QPixmap m_pixmap;
+    QPixmap m_noScalePixmap;
+};
+
 class DBusMonitor;
 class BackgroundHelper : public QObject
 {

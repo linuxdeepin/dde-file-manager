@@ -45,6 +45,7 @@ WallpaperList::WallpaperList(QWidget *parent)
                                   ":/images/next_press.svg", this))
     , m_updateTimer(new QTimer(this))
 {
+    this->setObjectName("WallpaperList-QScrollArea");
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setAttribute(Qt::WA_TranslucentBackground);

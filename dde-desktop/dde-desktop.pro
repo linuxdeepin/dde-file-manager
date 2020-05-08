@@ -82,7 +82,9 @@ HEADERS += \
     deventfilter.h \
     config/dfmdesktopsettings.h \
     view/backgroundhelper.h \
-    dbus/dbusmonitor.h
+    dbus/dbusmonitor.h \
+    accessible/accessiblelist.h \
+    accessible/frameaccessibledefine.h
 
 RESOURCES +=
 

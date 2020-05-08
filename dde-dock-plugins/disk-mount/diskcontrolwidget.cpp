@@ -57,6 +57,8 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
       m_centralLayout(new QVBoxLayout),
       m_centralWidget(new QWidget)
 {
+    this->setObjectName("DiskControlWidget-QScrollArea");
+
     m_centralWidget->setLayout(m_centralLayout);
     m_centralWidget->setFixedWidth(WIDTH);
 

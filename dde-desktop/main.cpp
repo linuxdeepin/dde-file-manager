@@ -35,7 +35,7 @@
 #include "dbusfiledialogmanager.h"
 #include "filemanager1_adaptor.h"
 #include "dbusfilemanager1.h"
-
+#include "accessible/accessiblelist.h"
 
 using namespace Dtk::Core;
 using namespace Dtk::Widget;
@@ -104,6 +104,8 @@ int main(int argc, char *argv[])
     DApplication app(argc, argv);
 
     AppController::instance();
+
+    QAccessible::installFactory(accessibleFactory);
 
     bool preload = false;
     bool fileDialogOnly = false;
@@ -227,7 +229,6 @@ int main(int argc, char *argv[])
 
     DEventFilter *event_filter{ new DEventFilter{&app} };
     app.installEventFilter(event_filter);
-
 
     return app.exec();
 }

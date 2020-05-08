@@ -22,6 +22,7 @@
 #include "presenter/display.h"
 #include "util/xcb/xcb.h"
 #include "dbus/dbusmonitor.h"
+#include "accessible/frameaccessibledefine.h"
 #include "../util/dde/desktopinfo.h"
 
 #include <QScreen>
@@ -37,56 +38,46 @@
 #include <QImageReader>
 #undef private
 
-class BackgroundLabel : public QWidget
+void BackgroundLabel::setPixmap(const QPixmap &pixmap)
 {
-public:
-    using QWidget::QWidget;
+    m_pixmap = pixmap;
+    m_noScalePixmap = pixmap;
+    m_noScalePixmap.setDevicePixelRatio(1);
+    update();
+}
 
-    void setPixmap(const QPixmap &pixmap)
-    {
-        m_pixmap = pixmap;
-        m_noScalePixmap = pixmap;
-        m_noScalePixmap.setDevicePixelRatio(1);
-        update();
-    }
+void BackgroundLabel::paintEvent(QPaintEvent *event)
+{
+    qreal scale = devicePixelRatioF();
 
-    void paintEvent(QPaintEvent *event) override
-    {
-        qreal scale = devicePixelRatioF();
-
-        if (scale > 1.0 && event->rect() == rect()) {
-            if (backingStore()->handle()->paintDevice()->devType() != QInternal::Image) {
-                return;
-            }
-
-            QImage *image = static_cast<QImage *>(backingStore()->handle()->paintDevice());
-            QPainter pa(image);
-            pa.drawPixmap(0, 0, m_noScalePixmap);
+    if (scale > 1.0 && event->rect() == rect()) {
+        if (backingStore()->handle()->paintDevice()->devType() != QInternal::Image) {
             return;
         }
 
-        QPainter pa(this);
-        pa.drawPixmap(event->rect().topLeft(), m_pixmap, QRect(event->rect().topLeft() * scale, event->rect().size() * scale));
+        QImage *image = static_cast<QImage *>(backingStore()->handle()->paintDevice());
+        QPainter pa(image);
+        pa.drawPixmap(0, 0, m_noScalePixmap);
+        return;
     }
 
-    virtual void setVisible(bool visible) override
-    {
-        if (!visible && !property("isPreview").toBool()) {
-            // 暂时（紧急）解决arm64双屏切换复制模式容易出现无法显示桌面的问题，禁止隐藏任何桌面。
-            // 后续有较好的解决方案可以删除此代码
-            qDebug() << "not allow to hide desktop(screen is " << property("myScreen").toString() <<
-                     ") primaryScreen is " << qApp->primaryScreen()->name();
-            return ;
-        }
-        qInfo() << this->geometry() << visible << "(screen is " << property("myScreen").toString() <<
+    QPainter pa(this);
+    pa.drawPixmap(event->rect().topLeft(), m_pixmap, QRect(event->rect().topLeft() * scale, event->rect().size() * scale));
+}
+
+void BackgroundLabel::setVisible(bool visible)
+{
+    if (!visible && !property("isPreview").toBool()) {
+        // 暂时（紧急）解决arm64双屏切换复制模式容易出现无法显示桌面的问题，禁止隐藏任何桌面。
+        // 后续有较好的解决方案可以删除此代码
+        qDebug() << "not allow to hide desktop(screen is " << property("myScreen").toString() <<
                  ") primaryScreen is " << qApp->primaryScreen()->name();
-        QWidget::setVisible(visible);
+        return ;
     }
-
-private:
-    QPixmap m_pixmap;
-    QPixmap m_noScalePixmap;
-};
+    qInfo() << this->geometry() << visible << "(screen is " << property("myScreen").toString() <<
+             ") primaryScreen is " << qApp->primaryScreen()->name();
+    QWidget::setVisible(visible);
+}
 
 BackgroundHelper *BackgroundHelper::desktop_instance = nullptr;
 
@@ -454,6 +445,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
                 DBusMonitor *monitor = new DBusMonitor(path);
                 waylandScreen.insert(path, monitor);
                 BackgroundLabel *l = new BackgroundLabel();
+                l->setObjectName(QString("%1_%2").arg(SCREEN_BACKGROUND).arg(monitor->name()));
                 waylandbackgroundMap.insert(monitor->name(), l);
 
                 l->setProperty("isPreview", m_previuew);
@@ -527,6 +519,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     BackgroundLabel *l = new BackgroundLabel();
     l->setProperty("isPreview", m_previuew);
     l->setProperty("myScreen", screen->name()); // assert screen->name is unique
+    l->setObjectName(QString("%1_%2").arg(SCREEN_BACKGROUND).arg(screen->name()));
 
     backgroundMap[screen] = l;
 
