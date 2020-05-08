@@ -592,7 +592,7 @@ void DFMSideBar::initBookmarkConnection()
 
     connect(bookmarkWatcher, &DAbstractFileWatcher::subfileCreated, this,
     [this](const DUrl & url) {
-        DFileService::instance()->changeRootFile(url);
+//        DFileService::instance()->changeRootFile(url);
         const QString &groupNameStr = groupName(Bookmark);
         this->addItem(DFMSideBarBookmarkItemHandler::createItem(url), groupNameStr);
         this->saveItemOrder(groupNameStr);
@@ -603,7 +603,7 @@ void DFMSideBar::initBookmarkConnection()
         qDebug() << url;
         int index = findItem(url, groupName(Bookmark));
         if (index >= 0) {
-            DFileService::instance()->changeRootFile(url,false);
+//            DFileService::instance()->changeRootFile(url,false);
             m_sidebarModel->removeRow(index);
             this->saveItemOrder(groupName(Bookmark));
         }
@@ -648,6 +648,7 @@ void DFMSideBar::initDeviceConnection()
     }
 
     DFileService::instance()->startQuryRootFile();
+    rootFileChange();
     connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
 
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
@@ -731,14 +732,14 @@ void DFMSideBar::initTagsConnection()
 
     // New tag added.
     connect(tagsWatcher, &DAbstractFileWatcher::subfileCreated, this, [this, groupNameStr](const DUrl & url) {
-        DFileService::instance()->changeRootFile(url);
+//        DFileService::instance()->changeRootFile(url);
         this->addItem(DFMSideBarTagItemHandler::createItem(url), groupNameStr);
         this->saveItemOrder(groupNameStr);
     });
 
     // Tag get removed.
     connect(tagsWatcher, &DAbstractFileWatcher::fileDeleted, this, [this, groupNameStr](const DUrl & url) {
-        DFileService::instance()->changeRootFile(url,false);
+//        DFileService::instance()->changeRootFile(url,false);
         this->removeItem(url, groupNameStr);
         this->saveItemOrder(groupNameStr);
     });
