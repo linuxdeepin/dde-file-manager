@@ -27,13 +27,13 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmsidebar.h"
 #include "views/windowmanager.h"
 #include "trashmanager.h"
 #include "durl.h"
 #include "interfaces/dfilemenu.h"
-#include "controllers/vaultcontroller.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -46,11 +46,11 @@ DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey)
 
     QString pathStr = systemPathManager->getSystemPath(pathKey);
 
-    DFMSideBarItem * item = new DFMSideBarItem(
-                    QIcon::fromTheme(iconName),
-                    systemPathManager->getSystemPathDisplayName(pathKey),
-                    DUrl::fromUserInput(pathStr)
-                );
+    DFMSideBarItem *item = new DFMSideBarItem(
+        QIcon::fromTheme(iconName),
+        systemPathManager->getSystemPathDisplayName(pathKey),
+        DUrl::fromUserInput(pathStr)
+    );
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
     item->setData(SIDEBAR_ID_VAULT, DFMSideBarItem::ItemUseRegisteredHandlerRole);
@@ -59,7 +59,7 @@ DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey)
 }
 
 DFMSideBarVaultItemHandler::DFMSideBarVaultItemHandler(QObject *parent)
-    : DFMSideBarItemInterface (parent)
+    : DFMSideBarItemInterface(parent)
 {
 
 }
@@ -100,21 +100,21 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
         QAction *autoLockAction = menu->addAction(QObject::tr("Auto lock"));
 
         DFileMenu *autoLockMenu = new DFileMenu();
-        autoLockMenu->addAction(QObject::tr("Never"), [this](){
+        autoLockMenu->addAction(QObject::tr("Never"), [this]() {
             autoLock(0);
         })->setCheckable(true);
 
         autoLockMenu->addSeparator();
 
-        autoLockMenu->addAction(QObject::tr("5 minutes"), [this](){
+        autoLockMenu->addAction(QObject::tr("5 minutes"), [this]() {
             autoLock(5);
         })->setCheckable(true);
 
-        autoLockMenu->addAction(QObject::tr("10 minutes"), [this](){
+        autoLockMenu->addAction(QObject::tr("10 minutes"), [this]() {
             autoLock(10);
         })->setCheckable(true);
 
-        autoLockMenu->addAction(QObject::tr("20 minutes"), [this](){
+        autoLockMenu->addAction(QObject::tr("20 minutes"), [this]() {
             autoLock(20);
         })->setCheckable(true);
 
@@ -164,22 +164,19 @@ bool DFMSideBarVaultItemHandler::autoLock(uint minutes)
     return true;
 }
 
-bool DFMSideBarVaultItemHandler::showDeleteVaultView()
+void DFMSideBarVaultItemHandler::showDeleteVaultView()
 {
     // Something to do.
-    return true;
 }
 
-bool DFMSideBarVaultItemHandler::showUnLockView()
+void DFMSideBarVaultItemHandler::showUnLockView()
 {
     // Something to do.
-    return true;
 }
 
-bool DFMSideBarVaultItemHandler::showCertificateView()
+void DFMSideBarVaultItemHandler::showCertificateView()
 {
     // Something to do.
-    return true;
 }
 
 DFM_END_NAMESPACE

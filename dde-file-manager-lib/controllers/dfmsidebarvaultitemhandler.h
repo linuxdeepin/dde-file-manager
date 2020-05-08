@@ -27,32 +27,68 @@
 
 DFM_BEGIN_NAMESPACE
 
-// 实现侧边栏保险箱Item
+/**
+ * @brief 实现侧边栏保险箱
+ */
 class DFMSideBarVaultItemHandler : public DFMSideBarItemInterface
 {
 public:
-    static DFMSideBarItem * createItem(const QString &pathKey);
+    /**
+     * @brief 创建该类实例
+     * @param pathKey
+     * @return 创建的实例指针
+     */
+    static DFMSideBarItem *createItem(const QString &pathKey);
 
+    /**
+     * @brief 构造函数
+     * @param parent
+     */
     DFMSideBarVaultItemHandler(QObject *parent = nullptr);
 
-    void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
-    QMenu *contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
+    /**
+     * @brief 打开操作
+     * @param sidebar
+     * @param item
+     */
+    void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem *item) override;
+
+    /**
+     * @brief 返回右键菜单
+     * @param sidebar
+     * @param item
+     * @return 右键菜单
+     */
+    QMenu *contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item) override;
 
 private:
-    // 立即上锁
+    /**
+     * @brief 立即上锁
+     * @return 上锁是否成功
+     */
     bool lockNow();
 
-    // 自动上锁
+    /**
+     * @brief 自动上锁
+     * @param minutes 倒计时（分钟）
+     * @return 自动上锁是否成功
+     */
     bool autoLock(uint minutes);
 
-    // 显示删除保险箱页面
-    bool showDeleteVaultView();
+    /**
+     * @brief 显示删除保险箱页面
+     */
+    void showDeleteVaultView();
 
-    // 显示解锁页面
-    bool showUnLockView();
+    /**
+     * @brief 显示解锁页面
+     */
+    void showUnLockView();
 
-    // 显示凭证页面
-    bool showCertificateView();
+    /**
+     * @brief 显示凭证页面
+     */
+    void showCertificateView();
 };
 
 DFM_END_NAMESPACE
