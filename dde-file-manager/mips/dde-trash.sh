@@ -6,5 +6,5 @@ processd=`ps ax -o 'cmd' |grep 'dde-file-manager -d$'`;
 if [[ "$process" == ""&&"$processd" == "" ]]; then
     dde-file-manager trash:///
 else
-    ./file-manager.sh "{\"paths\":[\"trash:///\"]}"
+    file-manager.sh trash:///
 fi
