@@ -29,11 +29,14 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include "shutil/fileutils.h"
+#include "accessible/libframenamedefine.h"
 
 CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : DAbstractDialog(parent)
 {
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     setFocusPolicy(Qt::NoFocus);
+    setObjectName(DIALOGS_CLOSE_ALL_DIALOG_INDICATOR);
+
     initUI();
     initConnect();
 }
@@ -48,8 +51,10 @@ void CloseAllDialogIndicator::initUI()
     resize(QSize(400, 50));
 
     m_messageLabel = new QLabel(this);
+    m_messageLabel->setObjectName(DIALOGS_CLOSE_ALL_DIALOG_INDICATOR_MSG_LABEL);
+
     m_closeButton = new QPushButton(tr("Close all"), this);
-    m_closeButton->setObjectName("AllCloseButton");
+    m_closeButton->setObjectName(DIALOGS_CLOSE_ALL_DIALOG_INDICATOR_CLOSE_BUTTON);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_messageLabel, Qt::AlignCenter);

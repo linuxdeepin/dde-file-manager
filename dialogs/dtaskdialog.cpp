@@ -46,6 +46,7 @@
 #include "dialogs/dialogmanager.h"
 #include "dfmtaskwidget.h"
 #include "singleton.h"
+#include "accessible/libframenamedefine.h"
 
 
 ErrorHandle::~ErrorHandle()
@@ -152,14 +153,17 @@ void DTaskDialog::initUI()
 
     setWindowFlags((windowFlags() & ~ Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window | Qt::WindowMinMaxButtonsHint);
     setFixedWidth(m_defaultWidth);
+    setObjectName(DIALOGS_TASK_DIALOG);
 
     m_titlebar = new DTitlebar(this);
+    m_titlebar->setObjectName(DIALOGS_TASK_DIALOG_TITLE_BAR);
     m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
     m_titlebar->setMenuVisible(false);
     m_titlebar->setIcon(QIcon::fromTheme("dde-file-manager"));
     m_titlebar->setStyleSheet("background-color:rgba(0, 0, 0, 0)");
 
     m_taskListWidget = new QListWidget;
+    m_taskListWidget->setObjectName(DIALOGS_TASK_DIALOG_TASK_LIST_WIDGET);
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
     m_taskListWidget->viewport()->setAutoFillBackground(false);
     m_taskListWidget->setFrameShape(QFrame::NoFrame);
@@ -276,6 +280,8 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
     m_taskListWidget->addItem(item);
     m_taskListWidget->setItemWidget(item, wid);
     m_jobIdItems.insert(wid->taskId(), item);
+
+    wid->setObjectName(QString("%1_%2").arg(DIALOGS_TASK_DIALOG_TASK_LIST_ITEM).arg(m_taskListWidget->count()));
 
     setTitle(m_taskListWidget->count());
     adjustSize();

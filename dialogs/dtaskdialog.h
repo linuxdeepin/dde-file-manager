@@ -106,9 +106,9 @@ protected:
 private:
     int m_defaultWidth = 700;
     int m_defaultHeight = 120;
-    QLabel* m_titleLabel=NULL;
-    QPushButton* m_titlebarMinimizeButton;
-    QPushButton* m_titlebarCloseButton;
+    //QLabel* m_titleLabel=NULL;
+    //QPushButton* m_titlebarMinimizeButton;
+    //QPushButton* m_titlebarCloseButton;
     QListWidget* m_taskListWidget=NULL;
     QMap<QString, QListWidgetItem*> m_jobIdItems;
     DTitlebar* m_titlebar;

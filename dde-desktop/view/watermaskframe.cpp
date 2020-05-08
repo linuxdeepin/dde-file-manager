@@ -19,6 +19,7 @@
 #include <QImageReader>
 
 #include "util/xcb/xcb.h"
+#include "accessible/frameaccessibledefine.h"
 
 WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     QFrame(parent),
@@ -202,9 +203,11 @@ void WaterMaskFrame::initUI()
         mask_pixmap.setDevicePixelRatio(m_logoLabel->devicePixelRatioF());
 
         m_logoLabel->setPixmap(mask_pixmap);
+        m_logoLabel->setObjectName(WATER_MASK_LOGO_LABEL);
     }
 
     m_textLabel = new QLabel(this);
+    m_textLabel->setObjectName(WATER_MASK_TEXT_LABEL);
     m_textLabel->setText(maskText);
     m_textLabel->setFixedSize(maskTextWidth, maskTextHeight);
 

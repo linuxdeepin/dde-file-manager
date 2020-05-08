@@ -274,7 +274,9 @@ HEADERS += \
     dialogs/connecttoserverdialog.h \
     shutil/dfmfilelistfile.h \
     views/dfmsplitter.h \
-    dbus/dbussysteminfo.h
+    dbus/dbussysteminfo.h \
+    accessible/accessibledefine.h \
+    accessible/libframenamedefine.h
 
 SOURCES += \
     controllers/appcontroller.cpp \

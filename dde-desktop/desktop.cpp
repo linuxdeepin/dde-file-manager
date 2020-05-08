@@ -151,6 +151,7 @@ void Desktop::onBackgroundEnableChanged()
                 WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
 
             background = d->background->backgroundForScreen(GetPrimaryScreen());
+
         } else {
             background = d->background->backgroundForScreen(qApp->primaryScreen());
         }

@@ -91,6 +91,7 @@ void DFMRightDetailView::initUI()
 {
     Q_D(DFMRightDetailView);
     d->scrollArea = new QScrollArea(this);
+    d->scrollArea->setObjectName("DFMRightDetailView-QScrollArea");
     d->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     d->scrollArea->setAlignment(Qt::AlignTop);
     d->scrollArea->setFrameShape(Shape::NoFrame);

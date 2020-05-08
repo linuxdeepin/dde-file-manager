@@ -498,6 +498,7 @@ void PropertyDialog::initUI()
     addContent(frame);
 
     m_scrollArea = new QScrollArea();
+    m_scrollArea->setObjectName("PropertyDialog-QScrollArea");
     QPalette palette = m_scrollArea->viewport()->palette();
     palette.setBrush(QPalette::Background, Qt::NoBrush);
     m_scrollArea->viewport()->setPalette(palette);
