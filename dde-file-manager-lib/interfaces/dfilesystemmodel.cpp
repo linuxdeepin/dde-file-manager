@@ -1822,7 +1822,22 @@ bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
 QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 {
     Q_D(DFileSystemModel);
-
+    //首次进入目录记录过滤规则
+    if(isFirstRun)
+    {
+        m_filters = d->filters;
+        isFirstRun = false;
+    }
+    //非回收站还原规则
+    if (!fileUrl.isTrashFile())
+    {
+        d->filters = m_filters;
+    }
+    //回收站设置规则
+    else
+    {
+        d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+    }
     // Restore state
     setState(Idle);
 
@@ -1955,6 +1970,7 @@ void DFileSystemModel::setFilters(QDir::Filters filters)
 {
     Q_D(DFileSystemModel);
 
+    m_filters = filters; //记录文件过滤规则
     if (d->filters == filters) {
         return;
     }
