@@ -1858,7 +1858,12 @@ void GridManager::initArrage(const QStringList &items)
 {
     d->clear();
     d->arrange(items);
-    emit sigSyncOperation(soUpdate);
+    if (m_needRenameItem.isEmpty()) //经过排序后，需要打开重命名
+        emit sigSyncOperation(soUpdate);
+    else {
+        emit sigSyncOperation(soRename,m_needRenameItem);
+        m_needRenameItem.clear(); //处理后清除
+    }
 }
 
 void GridManager::initCustom(const QStringList &items)

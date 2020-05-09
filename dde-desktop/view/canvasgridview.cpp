@@ -2313,11 +2313,8 @@ void CanvasGridView::initConnection()
     connect(this->model(), &DFileSystemModel::newFileByInternal,
     this, [ = ](const DUrl & fileUrl) {
         if (GridManager::instance()->shouldArrange()){
-            //交由viewmanager设置自动排序后的item的编辑框
-            QTimer::singleShot(200,[fileUrl](){
-                //需等待排列完成在打开editor
-                emit GridManager::instance()->sigSyncOperation(GridManager::soRename,fileUrl.toString());
-            });
+            //排完序后交由GridManager::initArrage触发重命名
+            GridManager::instance()->m_needRenameItem = fileUrl.toString();
             return ;
         }
 

@@ -36,6 +36,8 @@
 #include "controllers/jobcontroller.h"
 #include "controllers/appcontroller.h"
 #include "shutil/desktopfile.h"
+//处理自动整理的路径问题
+#include "controllers/mergeddesktopcontroller.h"
 
 #include "interfaces/durl.h"
 #include "interfaces/dfileviewhelper.h"
@@ -2789,7 +2791,21 @@ void DFileSystemModel::emitAllDataChanged()
 void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
 {
     /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
-    if (AppController::selectionAndRenameFile.first == fileUrl) {
+    if (fileUrl.scheme() == DFMMD_SCHEME){ //自动整理路径特殊实现，fix bug#24715
+        auto realFileUrl = MergedDesktopController::convertToRealPath(fileUrl);
+        if (AppController::selectionAndRenameFile.first == realFileUrl) {
+            quint64 windowId = AppController::selectionAndRenameFile.second;
+            if (windowId != parent()->windowId()) {
+                return;
+            }
+
+            AppController::selectionAndRenameFile = qMakePair(DUrl(), 0);
+            DFMUrlBaseEvent event(this, fileUrl);
+            event.setWindowId(windowId);
+            emit newFileByInternal(fileUrl);
+        }
+    }
+     else if (AppController::selectionAndRenameFile.first == fileUrl) {
         quint64 windowId = AppController::selectionAndRenameFile.second;
 
         if (windowId != parent()->windowId()) {
