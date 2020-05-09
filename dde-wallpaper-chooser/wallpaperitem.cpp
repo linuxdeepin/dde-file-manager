@@ -144,6 +144,7 @@ QPushButton *WallpaperItem::addButton(const QString &id, const QString &text)
     Button *button = new Button(this);
     button->setText(text);
     button->setAttract(false);
+    button->setFocusPolicy(Qt::NoFocus);
 
     connect(button, &Button::clicked, this, [this, id] {
         emit buttonClicked(id);
@@ -162,6 +163,13 @@ void WallpaperItem::slideUp()
     m_upAnim->setStartValue(QPoint(0, 0));
     m_upAnim->setEndValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));
     m_upAnim->start();
+    //当按钮浮起，设置按钮可获得焦点
+    for(int i=0; i<m_buttonLayout->count(); i++)
+    {
+        m_buttonLayout->itemAt(i)->widget()->setFocusPolicy(Qt::StrongFocus);
+    }
+    //设置第一个按钮为焦点
+    m_buttonLayout->itemAt(0)->widget()->setFocus();
 }
 
 void WallpaperItem::slideDown()
@@ -172,6 +180,11 @@ void WallpaperItem::slideDown()
     m_downAnim->setStartValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));
     m_downAnim->setEndValue(QPoint(0, 0));
     m_downAnim->start();
+    //当按钮下沉，设置按钮不可获得焦点
+    for(int i=0; i<m_buttonLayout->count(); i++)
+    {
+        m_buttonLayout->itemAt(i)->widget()->setFocusPolicy(Qt::NoFocus);
+    }
 }
 
 QString WallpaperItem::getPath() const
@@ -204,6 +217,32 @@ void WallpaperItem::mousePressEvent(QMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton)
         emit pressed();
+}
+
+void WallpaperItem::keyPressEvent(QKeyEvent *event)
+{
+    QWidgetList widgetList; //记录按钮
+    for(int i=0; i<m_buttonLayout->count(); i++)
+    {
+        widgetList << m_buttonLayout->itemAt(i)->widget();
+    }
+    switch(event->key())
+    {
+    case Qt::Key_Up:
+    //选中上一按钮
+        if(widgetList.indexOf(focusWidget()) > 0)
+            widgetList.at(widgetList.indexOf(focusWidget())-1)->setFocus();
+        break;
+    case Qt::Key_Down:
+    //选中下一按钮
+        if(widgetList.indexOf(focusWidget()) < widgetList.count()-1)
+            widgetList.at(widgetList.indexOf(focusWidget())+1)->setFocus();
+        break;
+    default:
+    //保持按键事件传递
+        event->ignore();
+        break;
+    }
 }
 
 void WallpaperItem::enterEvent(QEvent *event)
