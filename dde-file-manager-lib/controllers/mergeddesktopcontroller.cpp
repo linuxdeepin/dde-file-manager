@@ -182,12 +182,24 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
         m_childrenLock.unlock();
         return infoList;
     }
-    initData(event->filters());
+
+    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
+
+    arrangedFileUrls = initData(event->filters());
     currentUrl = event->url();
     QString path { currentUrl.path() };
     QList<DAbstractFileInfoPointer> infoList;
 
-    auto appendVirtualEntries = [this, &infoList](bool displayEmptyEntry = false, const QStringList & expandedEntries = {}) {
+    auto appendEntryFiles = [this](QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType){
+        for (const DUrl & url : arrangedFileUrls[entryType]) {
+            DAbstractFileInfoPointer info {
+                new MergedDesktopFileInfo(convertToDFMMDPath(url), currentUrl)
+            };
+            infoList.append(info);
+        }
+    };
+
+    auto appendVirtualEntries = [this, &infoList,appendEntryFiles](bool displayEmptyEntry = false, const QStringList & expandedEntries = {}) {
         for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_ENTRY; i++) {
             DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
             if (!displayEmptyEntry && arrangedFileUrls[oneType].isEmpty()) {
@@ -484,6 +496,8 @@ DMD_TYPES MergedDesktopController::checkUrlArrangedType(const DUrl url)
 
 void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 {
+    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
+
     DMD_TYPES typeInfo = checkUrlArrangedType(url);
     if (arrangedFileUrls[typeInfo].contains(url)) {
         qWarning() << url << "existed, it must be a bug!!!!!!!!";
@@ -491,8 +505,9 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
         arrangedFileUrls[typeInfo].removeAll(url);
     }
     arrangedFileUrls[typeInfo].append(url);
-    DUrl vUrl = convertToDFMMDPath(url, typeInfo);
+    aful.unlock();
 
+    DUrl vUrl = convertToDFMMDPath(url, typeInfo);
     DUrl parentUrl = getVirtualEntryPath(typeInfo);
     DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::subfileCreated, vUrl);
     DUrl parentUrl2(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
@@ -501,9 +516,13 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 
 void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 {
+    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
+
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(url)) {
+            aful.unlock();
+
             DUrl vUrl = convertToDFMMDPath(url, typeInfo);
 
             DUrl parentUrl = getVirtualEntryPath(typeInfo);
@@ -518,6 +537,8 @@ void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 void
 MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl)
 {
+    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
+
     //获取原文件的类型
     DMD_TYPES orgTypeInfo = checkUrlArrangedType(oriUrl);
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
@@ -530,6 +551,7 @@ MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dst
 
     DMD_TYPES typeInfo = checkUrlArrangedType(dstUrl);
     arrangedFileUrls[typeInfo].append(dstUrl);
+    aful.unlock();
 
     DUrl vOriUrl = convertToDFMMDPath(oriUrl, orgTypeInfo);
     DUrl vDstUrl = convertToDFMMDPath(dstUrl, typeInfo);
@@ -540,9 +562,9 @@ MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dst
     DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileMoved, vOriUrl, vDstUrl);
 }
 
-void MergedDesktopController::initData(QDir::Filters ftrs) const
+QMap<DMD_TYPES, QList<DUrl> > MergedDesktopController::initData(QDir::Filters ftrs)
 {
-    arrangedFileUrls.clear();
+    QMap<DMD_TYPES, QList<DUrl> > tArrangedFileUrls;
 
     QDir desktopDir(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
 #if 0
@@ -568,20 +590,10 @@ void MergedDesktopController::initData(QDir::Filters ftrs) const
         }
         DUrl oneUrl = DUrl::fromLocalFile(desktopDir.filePath(oneFile));
         DMD_TYPES typeInfo = checkUrlArrangedType(oneUrl);
-        arrangedFileUrls[typeInfo].append(oneUrl);
+        tArrangedFileUrls[typeInfo].append(oneUrl);
     }
 
-    return;
-}
-
-void MergedDesktopController::appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const
-{
-    for (const DUrl & url : arrangedFileUrls[entryType]) {
-        DAbstractFileInfoPointer info {
-            new MergedDesktopFileInfo(convertToDFMMDPath(url), currentUrl)
-        };
-        infoList.append(info);
-    }
+    return tArrangedFileUrls;
 }
 
 DUrl MergedDesktopController::convertToDFMMDPath(const DUrl &oriUrl)
