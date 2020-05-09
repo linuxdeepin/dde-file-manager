@@ -26,6 +26,7 @@
 #include "views/dfiledialog.h"
 
 #include <QPointer>
+#include <QWindow>
 
 DWIDGET_USE_NAMESPACE
 
@@ -362,8 +363,24 @@ void DFileDialogHandle::show()
 {
     D_D(DFileDialogHandle);
 
-    d->dialog->show(); //wine软件调用有问题，回退，找其它方法解决
-    //d->dialog->exec(); //修复6923，解决文件对话框弹出后不能获取焦点问题，使用show()方法时通过activateWindow()、setFocus()均无法使窗口默认获得焦点
+    d->dialog->show();
+    //解决打开文件对话框无焦点问题
+    QWindow *window = d->dialog->windowHandle();
+    bool isFirst = true; //仅首次激活
+    connect(window, &QWindow::activeChanged, this, [=]()
+    mutable{ //matable使isFisrt可修改
+        if(!isFirst)
+            return;
+        isFirst = false; //仅首次激活
+        //激活窗口
+        d->dialog->activateWindow();
+        //50毫秒后再次检测
+        QTimer::singleShot(50,this,[=]()
+        {
+            if (!d->dialog->isActiveWindow())
+                d->dialog->activateWindow();
+        });
+    });
 }
 
 void DFileDialogHandle::hide()

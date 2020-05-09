@@ -172,6 +172,25 @@ void WallpaperList::nextPage()
     scrollList((c - 2) * (m_contentLayout->spacing() + ItemWidth), 500);
 }
 
+void WallpaperList::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Right:
+    //选中下一壁纸
+        setCurrentIndex(m_index+1);
+        break;
+    case Qt::Key_Left:
+    //选中上一壁纸
+        setCurrentIndex(m_index-1);
+        break;
+    default:
+    //保持按键事件传递
+        event->ignore();
+        break;
+    }
+}
+
 void WallpaperList::resizeEvent(QResizeEvent *event)
 {
     QFrame::resizeEvent(event);
@@ -274,12 +293,11 @@ void WallpaperList::updateItemThumb()
     updateBothEndsItem();
 }
 
-void WallpaperList::wallpaperItemPressed()
+void WallpaperList::setCurrentIndex(int index)
 {
-    WallpaperItem *item = qobject_cast<WallpaperItem *>(sender());
-
-    if (item == prevItem || item == nextItem)
+    if(index<0 || index>=count())
         return;
+    WallpaperItem *item = m_items.at(index);
 
     for (int i = 0; i < count(); i++) {
         WallpaperItem *wallpaper = qobject_cast<WallpaperItem *>(this->item(i));
@@ -294,6 +312,22 @@ void WallpaperList::wallpaperItemPressed()
             }
         }
     }
+
+    //动画，保持被选中壁纸、屏保居中
+    int visualCount = width() / (ItemWidth + m_contentLayout->spacing()); //计算显示壁纸数
+    scrollAnimation.setDuration(500);
+    int prevIndex = m_items.indexOf(qobject_cast<WallpaperItem *>(itemAt(ItemWidth / 2, ItemHeight / 2)),0);
+    int nextIndex = m_items.indexOf(qobject_cast<WallpaperItem *>(itemAt(width() - ItemWidth / 2, ItemHeight / 2)),0);
+    scrollAnimation.setStartValue(((prevIndex+nextIndex)/2-visualCount/2) * (ItemWidth+m_contentLayout->spacing()));
+    scrollAnimation.setEndValue((index-visualCount/2) * (ItemWidth+m_contentLayout->spacing()));
+    scrollAnimation.start();
+    m_index = m_items.indexOf(item, 0);
+}
+
+void WallpaperList::wallpaperItemPressed()
+{
+    WallpaperItem *item = qobject_cast<WallpaperItem *>(sender());
+    setCurrentIndex(m_items.indexOf(item,0));
 }
 
 void WallpaperList::wallpaperItemHoverIn()

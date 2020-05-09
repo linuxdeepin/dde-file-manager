@@ -109,6 +109,7 @@ public:
     bool openFile(const QObject *sender, const DUrl &url) const;
     bool openFiles(const QObject *sender, const DUrlList &list) const;
     bool openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const;
+    bool openFilesByApp(const QObject *sender, const QString &appName, const QList<DUrl> &urllist) const;
     bool compressFiles(const QObject *sender, const DUrlList &list) const;
     bool decompressFile(const QObject *sender, const DUrlList &list) const;
     bool decompressFileHere(const QObject *sender, const DUrlList &list) const;

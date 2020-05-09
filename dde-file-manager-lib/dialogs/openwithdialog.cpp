@@ -184,6 +184,19 @@ OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title,
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
+OpenWithDialog::OpenWithDialog(const QList<DUrl> &urllist, QWidget *parent) :
+    BaseDialog(parent)
+{
+    m_urllist = urllist;
+    setWindowFlags(windowFlags()
+                           &~ Qt::WindowMaximizeButtonHint
+                           &~ Qt::WindowMinimizeButtonHint
+                           &~ Qt::WindowSystemMenuHint);
+    initUI();
+    initConnect();
+    initData();
+}
+
 OpenWithDialog::OpenWithDialog(const DUrl &url, QWidget *parent) :
     BaseDialog(parent)
 {
@@ -273,15 +286,41 @@ void OpenWithDialog::initConnect()
 
 void OpenWithDialog::initData()
 {
-    const DAbstractFileInfoPointer &file_info = DFileService::instance()->createFileInfo(this, m_url);
+    //在选择默认程序时，有多个url，要传多个url
+    if (m_url.isValid() && m_urllist.size() == 0) {
+        const DAbstractFileInfoPointer &file_info = DFileService::instance()->createFileInfo(this, m_url);
 
-    if (!file_info)
-        return;
+        if (!file_info)
+            return;
 
-    m_mimeType = file_info->mimeType();
+        m_mimeType = file_info->mimeType();
 
-    if (file_info->isDesktopFile())
-        m_setToDefaultCheckBox->hide();
+        if (file_info->isDesktopFile())
+            m_setToDefaultCheckBox->hide();
+    }
+    else if (!m_url.isValid() && m_urllist.size() > 0 ) {
+        QList<DUrl> openlist;
+        bool bhide = true;
+        for (auto url : m_urllist) {
+            const DAbstractFileInfoPointer &file_info = DFileService::instance()->createFileInfo(this, url);
+
+            if (!file_info) {
+                continue;
+            }
+            m_mimeType = file_info->mimeType();
+            if (!file_info->isDesktopFile()) {
+                bhide = false;
+            }
+            openlist.push_back(url);
+        }
+
+        if ( 0 == openlist.size())
+            return;
+
+        if (bhide)
+            m_setToDefaultCheckBox->hide();
+    }
+
 
     const QString &default_app = mimeAppsManager->getDefaultAppByMimeType(m_mimeType);
     const QStringList &recommendApps = mimeAppsManager->getRecommendedAppsByQio(m_mimeType);
@@ -431,8 +470,22 @@ void OpenWithDialog::openFileByApp()
     if (m_setToDefaultCheckBox->isChecked())
         mimeAppsManager->setDefautlAppForTypeByGio(m_mimeType.name(), app);
 
-    if (DFileService::instance()->openFileByApp(this, app, m_url))
+    if (m_url.isValid() && DFileService::instance()->openFileByApp(this, app, m_url)) {
         close();
+        return;
+    }
+    if (m_urllist.size() == 0) {
+        close();
+        return;
+    }
+    if (m_urllist.size() == 1 && DFileService::instance()->openFileByApp(this, app, m_urllist.first())){
+        close();
+        return;
+    }
+    if (m_urllist.size() > 1 && DFileService::instance()->openFilesByApp(this, app, m_urllist)){
+        close();
+        return;
+    }
 }
 
 void OpenWithDialog::showEvent(QShowEvent *event)

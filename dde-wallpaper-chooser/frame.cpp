@@ -264,7 +264,6 @@ void Frame::setMode(Frame::Mode mode)
     }
 
     m_mode = mode;
-
     reLayoutTools();
     refreshList();
 }
@@ -348,11 +347,75 @@ void Frame::hideEvent(QHideEvent *event)
 
 void Frame::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Escape) {
-        qDebug() << "escape key pressed, quit.";
-        hide();
+    QWidgetList widgetList; //记录页面上可选中控件
+    //设置壁纸模式
+    if(m_mode == Mode::WallpaperMode)
+    {
+        widgetList << m_wallpaperCarouselCheckBox; //自动更换壁纸按钮
+        //更换周期按钮组
+        for(QAbstractButton *button: m_wallpaperCarouselControl->buttonList())
+        {
+                widgetList << qobject_cast<QWidget *>(button);
+        }
+    }
+    //设置屏保模式
+    else
+    {
+        //闲置时间按钮组
+        for(QAbstractButton *button: m_waitControl->buttonList())
+        {
+                widgetList << qobject_cast<QWidget *>(button);
+        }
+        //是否需要密码按钮
+        widgetList << m_lockScreenBox;
+    }
+    //模式切换按钮组
+    for(QAbstractButton *button: m_switchModeControl->buttonList())
+    {
+            widgetList << qobject_cast<QWidget *>(button);
     }
 
+    switch(event->key())
+    {
+    case Qt::Key_Escape:
+        hide();
+        qDebug() << "escape key pressed, quit.";
+        break;
+    case Qt::Key_Down:
+        focusNextChild();
+        break;
+    case Qt::Key_Right:
+        //位于列首选中页面上一控件
+        if(widgetList.indexOf(focusWidget(),0) == -1)
+        {
+            focusNextChild();
+        }
+        //选中列表上一控件
+        else if(widgetList.indexOf(focusWidget(),0) < widgetList.count()-1)
+        {
+            qDebug() << widgetList.indexOf(focusWidget(),0) << widgetList.count();
+            widgetList.at(widgetList.indexOf(focusWidget(),0)+1)->setFocus();
+        }
+        break;
+    case Qt::Key_Up:
+        focusPreviousChild();
+        break;
+    case Qt::Key_Left:
+        //位于列尾选中页面下一控件
+        if(widgetList.indexOf(focusWidget(),0) == -1)
+        {
+            focusPreviousChild();
+        }
+        //选中列表下一控件
+        else if(widgetList.indexOf(focusWidget(),0) > 0)
+        {
+            qDebug() << widgetList.indexOf(focusWidget(),0) << widgetList.count();
+            widgetList.at(widgetList.indexOf(focusWidget(),0)-1)->setFocus();
+        }
+        break;
+    default:
+        break;
+    }
     DBlurEffectWidget::keyPressEvent(event);
 }
 
@@ -687,7 +750,7 @@ void Frame::initUI()
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     DButtonBoxButton *wallpaperBtn = new DButtonBoxButton(tr("Wallpaper"), this);
     wallpaperBtn->setMinimumWidth(40);
-    wallpaperBtn->setFocusPolicy(Qt::NoFocus);
+    //wallpaperBtn->setFocusPolicy(Qt::NoFocus);
     m_switchModeControl = new DButtonBox(this);
 
     if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
@@ -698,7 +761,7 @@ void Frame::initUI()
     } else {
         DButtonBoxButton *screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
         screensaverBtn->setMinimumWidth(40);
-        screensaverBtn->setFocusPolicy(Qt::NoFocus);
+        //screensaverBtn->setFocusPolicy(Qt::NoFocus);
         m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
         wallpaperBtn->setChecked(true);
     }
@@ -752,7 +815,6 @@ void Frame::refreshList()
     m_wallpaperList->hide();
     m_wallpaperList->clear();
     m_wallpaperList->show();
-
     if (m_mode == WallpaperMode) {
         QDBusPendingCall call = m_dbusAppearance->List("background");
         QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
@@ -776,9 +838,10 @@ void Frame::refreshList()
                     item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Only lock screen"));
                     item->show();
                     connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
+                    //首次进入时，选中当前设置壁纸
                     if(path == QString("file://").append(m_backgroundHelper->background()))
                     {
-                        emit item->pressed(); //选中当前屏保
+                        item->pressed();
                     }
                 }
 
@@ -811,9 +874,10 @@ void Frame::refreshList()
             item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply"));
             item->show();
             connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
+            //首次进入时，选中当前设置屏保
             if(cover_path == m_dbusScreenSaver->GetScreenSaverCover(m_dbusScreenSaver->currentScreenSaver()))
             {
-                emit item->pressed();  //选中当前壁纸
+                item->pressed();
             }
         }
 
@@ -862,7 +926,7 @@ void Frame::onItemPressed(const QString &data)
         qDebug() << "screensaver start " << data;
         // 防止壁纸背景盖住屏保预览窗口
         if (m_backgroundHelper && m_backgroundHelper->visible()) {
-            QThread::msleep(300); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
+            //QThread::msleep(300); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
             m_backgroundHelper->setVisible(false);
         }
     }
