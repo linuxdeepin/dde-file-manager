@@ -136,7 +136,7 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
             list.append(item->url());
             Singleton<FileSignalManager>::instance()->requestShowPropertyDialog(DFMUrlListBaseEvent(nullptr, list));
         });
-    } else {
+    } else if (vaultState == VaultController::Encrypted) {
         // 解锁
         menu->addAction(QObject::tr("Unlock"), [this]() {
             showUnLockView();

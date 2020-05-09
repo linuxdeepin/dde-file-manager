@@ -31,6 +31,8 @@
 #include <QDebug>
 #include <QDir>
 
+#include "controllers/vaultcontroller.h"
+
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 
@@ -177,7 +179,7 @@ void PathManager::loadSystemPaths()
     m_systemPathsMap["UserShare"] = DFMStandardPaths::location(DFMStandardPaths::UserShareRootPath);
     m_systemPathsMap["Computer"] = DFMStandardPaths::location(DFMStandardPaths::ComputerRootPath);
     m_systemPathsMap["Recent"] = DFMStandardPaths::location(DFMStandardPaths::RecentPath);
-    m_systemPathsMap["Vault"] = DFMVAULT_ROOT; // 保险库路径
+    m_systemPathsMap["Vault"] = DFMStandardPaths::location(DFMStandardPaths::Vault); // 保险库路径
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 
