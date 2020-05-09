@@ -355,7 +355,6 @@ void Frame::keyPressEvent(QKeyEvent *event)
         //更换周期按钮组
         for(QAbstractButton *button: m_wallpaperCarouselControl->buttonList())
         {
-            if(qobject_cast<QWidget *>(button)->focusPolicy() != Qt::NoFocus)
                 widgetList << qobject_cast<QWidget *>(button);
         }
     }
@@ -365,7 +364,6 @@ void Frame::keyPressEvent(QKeyEvent *event)
         //闲置时间按钮组
         for(QAbstractButton *button: m_waitControl->buttonList())
         {
-            if(qobject_cast<QWidget *>(button)->focusPolicy() != Qt::NoFocus)
                 widgetList << qobject_cast<QWidget *>(button);
         }
         //是否需要密码按钮
@@ -374,7 +372,6 @@ void Frame::keyPressEvent(QKeyEvent *event)
     //模式切换按钮组
     for(QAbstractButton *button: m_switchModeControl->buttonList())
     {
-        if(qobject_cast<QWidget *>(button)->focusPolicy() != Qt::NoFocus)
             widgetList << qobject_cast<QWidget *>(button);
     }
 
