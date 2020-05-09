@@ -43,6 +43,8 @@ public:
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
+    bool canRename() const override;
+
 private:
     Q_DECLARE_PRIVATE(VaultFileInfo)
 };

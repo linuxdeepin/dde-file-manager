@@ -133,7 +133,8 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
         // 显示属性对话框
         menu->addAction(QObject::tr("Properties"), [item]() {
             DUrlList list;
-            list.append(item->url());
+            DUrl url = VaultController::vaultToLocalUrl(item->url());
+            list.append(url);
             Singleton<FileSignalManager>::instance()->requestShowPropertyDialog(DFMUrlListBaseEvent(nullptr, list));
         });
     } else if (vaultState == VaultController::Encrypted) {
@@ -142,7 +143,7 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
             showUnLockView();
         })->setCheckable(true);
 
-        //使用恢复凭证
+        // 使用恢复凭证
         menu->addAction(QObject::tr("Unlock by key"), [this]() {
             showCertificateView();
         })->setCheckable(true);

@@ -125,3 +125,8 @@ DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     url.setPath(url.path() + QDir::separator() + fileName);
     return url;
 }
+
+bool VaultFileInfo::canRename() const
+{
+    return false;
+}
