@@ -13,6 +13,7 @@
 
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
+#include "dfilesystemwatcher.h"
 
 #include "app/policykithelper.h"
 #include "dbusservice/dbusadaptor/acesscontrol_adaptor.h"
@@ -22,7 +23,8 @@ QString AcessControlManager::PolicyKitActionId = "com.deepin.filemanager.daemon.
 
 AcessControlManager::AcessControlManager(QObject *parent)
     : QObject(parent)
-    , QDBusContext()
+    , QDBusContext(),
+      m_watcher(new DFileSystemWatcher(this))
 {
     qDebug() << "register:" << ObjectPath;
     if (!QDBusConnection::systemBus().registerObject(ObjectPath, this)) {
@@ -33,8 +35,9 @@ AcessControlManager::AcessControlManager(QObject *parent)
     m_diskMnanager->setWatchChanges(true);
     qDebug() << "=======AcessControlManager() ";
 
+    m_watcher->addPath("/home");
+    onFileCreated("/home", "root");
     initConnect();
-
 }
 
 AcessControlManager::~AcessControlManager()
@@ -42,10 +45,12 @@ AcessControlManager::~AcessControlManager()
     qDebug() << "~AcessControlManager()";
 }
 
+
 void AcessControlManager::initConnect()
 {
     qDebug() << "AcessControlManager::initConnect()";
     connect(m_diskMnanager, &DDiskManager::mountAdded, this, &AcessControlManager::chmodMountpoints);
+    connect(m_watcher, &DFileSystemWatcher::fileCreated, this, &AcessControlManager::onFileCreated);
 }
 
 bool AcessControlManager::checkAuthentication()
@@ -118,4 +123,28 @@ void AcessControlManager::chmodMountpoints(const QString &blockDevicePath, const
     }
     endmntent(aFile);
 #endif
+}
+
+
+void AcessControlManager::onFileCreated(const QString &path, const QString &name)
+{
+    Q_UNUSED(path)
+    Q_UNUSED(name)
+
+    QDir homeDir("/home");
+    for (const QString &dirName : homeDir.entryList(QDir::NoDotAndDotDot | QDir::Dirs)) {
+        // /media/[UserName] 为默认挂载的基路径，预先从创建此目录，目的是为了确保该路径其他用户能够访问
+        QString mountBaseName = QString("/media/%1").arg(dirName);
+        QDir mountDir(mountBaseName);
+        if (!mountDir.exists()) {
+            qDebug() << mountBaseName << "not exists";
+            if (QDir().mkpath(mountBaseName)) {
+                qDebug() << "create" << mountBaseName << "success";
+                struct stat fileStat;
+                stat(mountBaseName.toUtf8().data(), &fileStat);
+                chmod(mountBaseName.toUtf8().data(), (fileStat.st_mode | S_IRUSR | S_IRGRP | S_IROTH));
+            }
+        }
+    }
+
 }
