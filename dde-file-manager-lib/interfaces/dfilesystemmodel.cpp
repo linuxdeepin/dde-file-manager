@@ -1777,6 +1777,7 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
     }
 
     QMimeData *data = new QMimeData();
+
     data->setUrls(urls);
 //    data->setText(urls.first().path());
 //    data->setData("forDragEvent", urls.first().toEncoded());
@@ -1795,14 +1796,19 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
     QDataStream out(&buffer);
     out << urls;
     int size = static_cast<int>(buffer.size());
-    if (m_smForDragEvent->create(size))
-    {
+    //fix task 21485 分配一个固定的5M内存
+    bool bcanwrite = m_smForDragEvent->create(5 * 1024 * 1024);
+    if (bcanwrite || (!bcanwrite && QSharedMemory::AlreadyExists)) {
+        //因为创建失败，就没有连接内存，所以写失败
+        if(!bcanwrite) {
+            m_smForDragEvent->attach();
+        }
         m_smForDragEvent->lock();
         char *to = static_cast<char*>(m_smForDragEvent->data());
         const char *from = buffer.data().data();
-        memcpy(to, from, m_smForDragEvent->size());
+        memcpy(to, from, qMin(static_cast<size_t>(buffer.size()), static_cast<size_t>(m_smForDragEvent->size())));
         m_smForDragEvent->unlock();
-        qDebug() << "write mem finish.";
+        qDebug() << " write mem finish. " << m_smForDragEvent->errorString() << m_smForDragEvent->size();
     }
 
     return data;
