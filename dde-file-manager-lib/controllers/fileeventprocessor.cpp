@@ -183,7 +183,13 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         AppController::instance()->actionOpenAsAdmin(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().isEmpty() ? event->currentUrl() : event->selectedUrls().first()));
         break;
     case DFMGlobal::OpenWithCustom:
-        AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        if (event->selectedUrls().size() == 1) {
+            AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        }
+        else {
+            AppController::instance()->actionOpenFilesWithCustom(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        }
+
         break;
     case DFMGlobal::OpenFileLocation:
         AppController::instance()->actionOpenFileLocation(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));

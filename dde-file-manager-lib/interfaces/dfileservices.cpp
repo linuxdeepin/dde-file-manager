@@ -441,6 +441,14 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 //            emit fileOpened(event->fileUrl());
 //        }
         break;
+    case DFMEvent::OpenFilesByApp:
+        result = CALL_CONTROLLER(openFilesByApp);
+
+//        if (result.toBool()) {
+//            emit fileOpened(event->fileUrl());
+//        }
+
+        break;
     default:
         return false;
     }
@@ -550,6 +558,11 @@ bool DFileService::openFiles(const QObject *sender, const DUrlList &list) const
 bool DFileService::openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const
 {
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileByAppEvent>(sender, appName, url)).toBool();
+}
+
+bool DFileService::openFilesByApp(const QObject *sender, const QString &appName, const QList<DUrl> &urllist) const
+{
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFilesByAppEvent>(sender, appName, urllist)).toBool();
 }
 
 bool DFileService::compressFiles(const QObject *sender, const DUrlList &list) const

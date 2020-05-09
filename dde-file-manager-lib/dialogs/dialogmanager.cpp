@@ -145,6 +145,7 @@ void DialogManager::initConnect()
 
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowOpenWithDialog, this, &DialogManager::showOpenWithDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowOpenFilesWithDialog, this, &DialogManager::showOpenFilesWithDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowPropertyDialog, this, &DialogManager::showPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowShareOptionsInPropertyDialog, this, &DialogManager::showShareOptionsInPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowComputerPropertyDialog, this, &DialogManager::showComputerPropertyDialog);
@@ -685,6 +686,16 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
     QWidget *w = WindowManager::getWindowById(event.windowId());
     if (w) {
         OpenWithDialog *d = new OpenWithDialog(event.fileUrl());
+        d->setDisplayPosition(OpenWithDialog::Center);
+        d->exec();
+    }
+}
+
+void DialogManager::showOpenFilesWithDialog(const DFMEvent &event)
+{
+    QWidget *w = WindowManager::getWindowById(event.windowId());
+    if (w) {
+        OpenWithDialog *d = new OpenWithDialog(event.fileUrlList());
         d->setDisplayPosition(OpenWithDialog::Center);
         d->exec();
     }
