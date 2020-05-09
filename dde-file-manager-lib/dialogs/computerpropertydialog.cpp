@@ -200,6 +200,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
         processor = m_systemInfo->processor();
         systemType = QString::number(m_systemInfo->systemType());
+        version = m_systemInfo->version();
     }
 
     datas.insert(data.at(0), DSysInfo::computerName());

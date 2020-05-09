@@ -105,6 +105,9 @@ signals:
     /*request show PropertyDialog*/
     void requestShowOpenWithDialog(const DFMEvent &event);
 
+    /*request show OpenFiles PropertyDialog*/
+    void requestShowOpenFilesWithDialog(const DFMUrlListBaseEvent &event);
+
     /*request show PropertyDialog*/
     void requestShowPropertyDialog(const DFMUrlListBaseEvent &event);
 

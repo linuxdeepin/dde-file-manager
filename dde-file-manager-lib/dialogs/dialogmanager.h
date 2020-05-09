@@ -101,6 +101,7 @@ public slots:
     int showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event);
     int showRemoveBookMarkDialog(const DFMEvent &event);
     void showOpenWithDialog(const DFMEvent &event);
+    void showOpenFilesWithDialog(const DFMEvent &event);
     void showPropertyDialog(const DFMUrlListBaseEvent &event);
     void showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &event);
     void showTrashPropertyDialog(const DFMEvent &event);

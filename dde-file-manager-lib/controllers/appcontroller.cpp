@@ -338,6 +338,12 @@ void AppController::actionOpenWithCustom(const QSharedPointer<DFMUrlBaseEvent> &
     emit fileSignalManager->requestShowOpenWithDialog(DFMUrlBaseEvent(event->sender(), event->url()));
 }
 
+//新加app打开多个url
+void AppController::actionOpenFilesWithCustom(const QSharedPointer<DFMUrlListBaseEvent> &event)
+{
+    emit fileSignalManager->requestShowOpenFilesWithDialog(DFMUrlListBaseEvent(event->sender(), event->urlList()));
+}
+
 void AppController::actionOpenFileLocation(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
     const DUrlList &urls = event->urlList();
@@ -345,6 +351,7 @@ void AppController::actionOpenFileLocation(const QSharedPointer<DFMUrlListBaseEv
         fileService->openFileLocation(event->sender(), url);
     }
 }
+
 
 void AppController::actionCompress(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {

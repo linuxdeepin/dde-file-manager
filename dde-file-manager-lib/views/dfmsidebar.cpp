@@ -701,11 +701,11 @@ void DFMSideBar::initDeviceConnection()
 
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
         DViewItemActionList actionList = item->actionList(Qt::RightEdge);
-        auto actionlist = fi->menuActionList();
-        if (!actionlist.isEmpty()) {
-            actionList.front()->setVisible(actionlist.contains(MenuAction::Eject) ||
-                                           actionlist.contains(MenuAction::Unmount) ||
-                                           actionlist.contains(MenuAction::SafelyRemoveDrive));
+        auto list = fi->menuActionList();
+        if (!actionList.isEmpty()) {
+            actionList.front()->setVisible(list.contains(MenuAction::Eject) ||
+                                           list.contains(MenuAction::Unmount) ||
+                                           list.contains(MenuAction::SafelyRemoveDrive));
         }
 
         item->setText(fi->fileDisplayName());

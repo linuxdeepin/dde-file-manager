@@ -67,6 +67,7 @@ public slots:
     void actionOpenAsAdmin(const QSharedPointer<DFMUrlBaseEvent> &event);
 
     void actionOpenWithCustom(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionOpenFilesWithCustom(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionOpenFileLocation(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionCompress(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionDecompress(const QSharedPointer<DFMUrlListBaseEvent> &event);
