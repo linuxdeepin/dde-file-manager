@@ -3005,6 +3005,7 @@ bool DFileView::fetchDragEventUrlsFromSharedMemory()
     buffer.setData((char *)sm.constData(), sm.size());
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
     in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
+    qDebug() << m_urlsForDragEvent;
     sm.unlock();    //解锁
     sm.detach();//与共享内存空间分离
 

@@ -436,14 +436,22 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     case DFMEvent::OpenFiles:
         result = CALL_CONTROLLER(openFiles);
-
+        if (result.toBool()) {
+            for( auto url : event->fileUrlList()) {
+                emit fileOpened(url);
+            }
+        }
 //        if (result.toBool()) {
 //            emit fileOpened(event->fileUrl());
 //        }
         break;
     case DFMEvent::OpenFilesByApp:
         result = CALL_CONTROLLER(openFilesByApp);
-
+        if (result.toBool()) {
+            for( auto url : event->fileUrlList()) {
+                emit fileOpened(url);
+            }
+        }
 //        if (result.toBool()) {
 //            emit fileOpened(event->fileUrl());
 //        }
