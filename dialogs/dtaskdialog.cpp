@@ -623,7 +623,9 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
         } else if (status == "conflict") {
             msg1 = QString(tr("%1 already exists in target folder")).arg(file);
             msg2 = QString(tr("Original path %1 Target path %2")).arg(QFileInfo(srcPath).absolutePath(), QFileInfo(targetPath).absolutePath());
-            //wid->setConflictMsg(DUrl::fromLocalFile(srcPath), DUrl::fromLocalFile(targetPath));
+
+            //fix 回收站还原文件时 若目标目录存在同名文件 需要展示 “合并” “替换” 等按钮
+            wid->setConflictMsg(DUrl::fromLocalFile(srcPath), DUrl::fromLocalFile(targetPath));
 
             if (QFileInfo(srcPath).isDir() &&
                     QFileInfo(targetPath).isDir()) {
