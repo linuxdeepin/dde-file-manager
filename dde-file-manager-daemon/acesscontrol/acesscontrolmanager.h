@@ -6,6 +6,7 @@
 
 class AcessControlAdaptor;
 class DDiskManager;
+class DFileSystemWatcher;
 
 class AcessControlManager : public QObject, public QDBusContext
 {
@@ -29,9 +30,13 @@ public slots:
     bool acquireFullAuthentication(const QString &userName, const QString &path);
     void chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint);
 
+private slots:
+    void onFileCreated(const QString &path, const QString &name);
+
 private:
-    AcessControlAdaptor* m_acessControlAdaptor = nullptr;
-    DDiskManager* m_diskMnanager = nullptr;
+    AcessControlAdaptor *m_acessControlAdaptor = nullptr;
+    DDiskManager *m_diskMnanager = nullptr;
+    DFileSystemWatcher *m_watcher = nullptr;
 };
 
 #endif // ACESSCONTROLMANAGER_H

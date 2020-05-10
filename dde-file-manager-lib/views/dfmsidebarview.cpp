@@ -128,26 +128,49 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         return DListView::dropEvent(event);
     }
 
-    DUrlList urls;
+    // bug case 24499, 这里需要区分哪些是可读的文件 或文件夹，因为其权限是不一样的，所以需要对不同权限的文件进行区分处理
+    // 主要有4种场景：1.都是可读写的场景; 2.文件夹是只读属性，子集是可读写的; 3.文件夹或文件是可读写的; 4.拖动的包含 可读写的和只读的
+    DUrlList urls, copyUrls;
     for (const QUrl &url : event->mimeData()->urls()) {
         if (DUrl(url).parentUrl() == item->url()) {
             qDebug() << "skip the same dir file..." << url;
         } else {
-            urls << url;
+            QFileInfo folderinfo(DUrl(url).parentUrl().path()); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
+            QFileInfo fileinfo(url.path());
+            if(!fileinfo.isWritable() || !folderinfo.isWritable()){
+                copyUrls << url;
+                qDebug() << "this is a unwriteable case:" << url;
+            } else {
+                urls << url;
+            }
         }
     }
 
-    Qt::DropAction action = canDropMimeData(item, event->mimeData(), Qt::MoveAction);
-    if (action == Qt::IgnoreAction) {
-        action = canDropMimeData(item, event->mimeData(), event->possibleActions());
+    bool isActionDone = false;
+    if (!urls.isEmpty()){
+        Qt::DropAction action = canDropMimeData(item, event->mimeData(), Qt::MoveAction);
+        if (action == Qt::IgnoreAction) {
+            action = canDropMimeData(item, event->mimeData(), event->possibleActions());
+        }
+
+        if (urls.size() > 0 && onDropData(urls, item->url(), action)) {
+            event->setDropAction(action);
+            isActionDone = true;
+        }
+    }
+    if (!copyUrls.isEmpty()) {
+        if (onDropData(copyUrls, item->url(), Qt::CopyAction) ) { // 对于只读权限的，只能进行 copy动作
+            event->setDropAction(Qt::CopyAction);
+            isActionDone = true;
+        }
     }
 
-    if (urls.size() > 0 && onDropData(urls, item->url(), action)) {
-        event->setDropAction(action);
+    if(isActionDone) {
         event->accept();
-        return;
     }
-    DListView::dropEvent(event);
+    else {
+        DListView::dropEvent(event);
+    }
 }
 
 QModelIndex DFMSideBarView::indexAt(const QPoint &p) const
