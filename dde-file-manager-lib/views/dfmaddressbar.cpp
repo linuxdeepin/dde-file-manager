@@ -231,6 +231,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     switch (e->key()) {
     case Qt::Key_Escape:
         emit escKeyPressed();
+        completerView->hide();
         e->accept();
         return;
     default:
