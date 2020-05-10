@@ -218,6 +218,7 @@ DFileView::DFileView(QWidget *parent)
     d->diskmgr = new DDiskManager(this);
     connect(d->diskmgr, &DDiskManager::opticalChanged, this, &DFileView::onDriveOpticalChanged);
     d->diskmgr->setWatchChanges(true);
+
 }
 
 DFileView::~DFileView()
@@ -707,6 +708,11 @@ void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
     d->defaultViewMode = mode;
 
     const DUrl &root_url = rootUrl();
+
+    //fix task klu 21328 当切换到列表显示时自动适应列宽度
+    if (d->allowedAdjustColumnSize) {
+        setResizeMode(QListView::Adjust);
+    }
 
     if (!root_url.isValid())
         return;
@@ -2518,8 +2524,11 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             horizontalScrollBar()->parentWidget()->installEventFilter(this);
             // 初始化列宽调整
             d->cachedViewWidth = this->width();
-            d->adjustFileNameCol = d->headerView->width() == this->width();
+            //fix task klu 21328 当切换到列表显示时自动适应列宽度
+            d->adjustFileNameCol = d->headerView->width() <= this->width();
+            updateListHeaderViewProperty();
         }
+
         break;
     }
     case ExtendMode: {
