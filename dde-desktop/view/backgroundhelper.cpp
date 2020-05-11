@@ -445,7 +445,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
                 DBusMonitor *monitor = new DBusMonitor(path);
                 waylandScreen.insert(path, monitor);
                 BackgroundLabel *l = new BackgroundLabel();
-                l->setObjectName(QString("%1_%2").arg(SCREEN_BACKGROUND).arg(monitor->name()));
+                l->setObjectName(SCREEN_BACKGROUND);//QString("%1_%2").arg(SCREEN_BACKGROUND).arg(monitor->name()));
                 waylandbackgroundMap.insert(monitor->name(), l);
 
                 l->setProperty("isPreview", m_previuew);
@@ -519,7 +519,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     BackgroundLabel *l = new BackgroundLabel();
     l->setProperty("isPreview", m_previuew);
     l->setProperty("myScreen", screen->name()); // assert screen->name is unique
-    l->setObjectName(QString("%1_%2").arg(SCREEN_BACKGROUND).arg(screen->name()));
+    l->setObjectName(SCREEN_BACKGROUND);//QString("%1_%2").arg(SCREEN_BACKGROUND).arg(screen->name()));
 
     backgroundMap[screen] = l;
 
