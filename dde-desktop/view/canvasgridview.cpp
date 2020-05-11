@@ -2212,10 +2212,10 @@ void CanvasGridView::initConnection()
     this, [ = ]() {
           updateGeometry(Display::instance()->primaryRect());
     });
-    connect(d->dbusDock, &DBusDock::PositionChanged,
-    this, [ = ]() {
-         updateGeometry(Display::instance()->primaryRect());
-    });
+//    connect(d->dbusDock, &DBusDock::PositionChanged,
+//    this, [ = ]() {
+//         updateGeometry(Display::instance()->primaryRect());
+//    }); //不关心位子改变，有bug#25148，全部由区域改变触发
 
     connect(d->dbusDock, &DBusDock::FrontendWindowRectChanged,
     this, [ = ]() {
