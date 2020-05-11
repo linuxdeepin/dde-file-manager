@@ -3282,6 +3282,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
     bool showProperty = true;
     DUrlList list = selectedUrls();
+    qDebug() << "selectedUrls" << list;
 
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     if (!info || info->isVirtualEntry()) {
@@ -3375,6 +3376,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 //            for (auto &url : list) {
 //                openUrl(url);
 //            }
+            qDebug() << "open urls" << list;
             openUrls(list);
         }
         break;
