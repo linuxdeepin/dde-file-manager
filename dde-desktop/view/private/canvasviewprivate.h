@@ -72,13 +72,34 @@ public:
         QMargins miniMargin = QMargins(2, 2, 2, 2);
         auto miniCellWidth = szItem.width() + miniMargin.left() + miniMargin.right();
         colCount = (szSceeen.width() - dockReserveArea.width()) / miniCellWidth;
-        cellWidth = szCanvas.width() / colCount;
+
+        //数据保护
+        if (colCount < 1){
+            qCritical() << "!!!!! colCount is 0!!! set it 1 and set cellWidth to " << szCanvas.width();
+            cellWidth = szCanvas.width();
+            colCount = 1;
+        }
+        else {
+            cellWidth = szCanvas.width() / colCount;
+        }
+        if (cellWidth < 1)
+            cellWidth = 1;
 
         auto miniCellHeigh = szItem.height() + miniMargin.top() + miniMargin.bottom();
 //        qDebug() << szItem.height() << miniCellHeigh;
         rowCount = (szSceeen.height() - dockReserveArea.height()) / miniCellHeigh;
 
-        cellHeight = szCanvas.height() / rowCount;
+        //数据保护
+        if (rowCount < 1){
+            qCritical() << "!!!!! rowCount is 0!!! set it and set cellHeight to" << szCanvas.height();
+            cellHeight = szCanvas.height();
+            rowCount = 1;
+        }else {
+            cellHeight = szCanvas.height() / rowCount;
+        }
+        if (cellHeight < 1)
+            cellHeight = 1;
+
 //        qDebug() << szSceeen.height() << dockReserveArea.height()
 //                 << rowCount << cellHeight;
         updateCellMargins(szItem, QSize(cellWidth, cellHeight));
