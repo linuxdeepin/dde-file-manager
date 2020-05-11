@@ -589,6 +589,8 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::TenMinutes] = QObject::tr("10 minutes");
     actionKeys[MenuAction::TwentyMinutes] = QObject::tr("20 minutes");
     actionKeys[MenuAction::DeleteVault] = QObject::tr("Remove File Vault");
+    actionKeys[MenuAction::UnLock] = QObject::tr("Unlock");
+    actionKeys[MenuAction::UnLockByKey] = QObject::tr("Unlock by key");
 
     // Action Icons:
     DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");

@@ -43,7 +43,8 @@ public:
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
-    bool canRename() const override;
+    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
+    QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const override;
 
 private:
     Q_DECLARE_PRIVATE(VaultFileInfo)

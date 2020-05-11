@@ -241,6 +241,9 @@ public:
         TwentyMinutes,
         DeleteVault,
 
+        UnLock,
+        UnLockByKey,
+
         UserMenuAction = Unknow + 2000
     };
 

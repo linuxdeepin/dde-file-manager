@@ -25,6 +25,7 @@
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "controllers/dfmrootcontroller.h"
+#include "controllers/vaultcontroller.h"
 #include "dfmrootfileinfo.h"
 #include "app/define.h"
 #include "dfileservices.h"
@@ -97,6 +98,10 @@ ComputerModel::ComputerModel(QObject *parent) :
         static_cast<DFMRootFileInfo*>(m_items[p].fi.data())->checkCache();
         emit dataChanged(idx, idx, {Qt::ItemDataRole::DisplayRole});
     });
+
+    // 保险柜
+    addItem(makeSplitterUrl(QObject::tr("File Vault")));
+    addItem(VaultController::makeVaultUrl());
 
     connect(deviceListener, SIGNAL(volumeAdded(UDiskDeviceInfoPointer)), this, SLOT(onVolumeAdded(UDiskDeviceInfoPointer)));
 }

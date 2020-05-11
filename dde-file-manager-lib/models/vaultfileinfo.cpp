@@ -126,7 +126,54 @@ DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     return url;
 }
 
-bool VaultFileInfo::canRename() const
+QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    return false;
+    QString fileDisplayName = this->fileDisplayName();
+    if (fileDisplayName == "vault_unlocked") {
+
+        VaultController::VaultState vaultState = VaultController::state();
+
+        QVector<MenuAction> actions;
+        if (vaultState == VaultController::Unlocked) {
+
+            actions << MenuAction::Open
+                    << MenuAction::OpenInNewWindow
+                    << MenuAction::Separator
+                    << MenuAction::LockNow
+                    << MenuAction::AutoLock
+                    << MenuAction::Separator
+                    << MenuAction::DeleteVault
+                    << MenuAction::Separator
+                    << MenuAction::Property;
+        } else if (vaultState == VaultController::Encrypted) {
+            actions << MenuAction::UnLock
+                    << MenuAction::UnLockByKey;
+        }
+
+        return actions;
+    }
+
+    return DAbstractFileInfo::menuActionList(type);
+}
+
+QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList() const
+{
+     QString fileDisplayName = this->fileDisplayName();
+     if (fileDisplayName == "vault_unlocked") {
+
+         QMap<MenuAction, QVector<MenuAction> > actions;
+         QVector<MenuAction> vecActions;
+
+         vecActions << MenuAction::Never
+                    << MenuAction::Separator
+                    << MenuAction::FiveMinutes
+                    << MenuAction::TenMinutes
+                    << MenuAction::TwentyMinutes;
+
+         actions.insert(MenuAction::AutoLock, vecActions);
+
+         return actions;
+     }
+
+     return DAbstractFileInfo::subMenuActionList();
 }

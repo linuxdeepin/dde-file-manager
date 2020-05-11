@@ -23,6 +23,8 @@
 
 #include "dfmsidebaritem.h"
 
+#include "dfilemenumanager.h"
+
 #include "singleton.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -71,82 +73,68 @@ void DFMSideBarVaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSi
 
 QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
-    DFileMenu *menu = new DFileMenu();
+    DFileMenu *menu = nullptr;
 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
-    bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
 
     VaultController::VaultState vaultState = VaultController::getVaultController()->state();
 
+    const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(this, item->url());
+    QSet<MenuAction> disableList;
+    menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList());
+    menu->setEventData(DUrl(), {item->url()}, WindowManager::getWindowId(wnd), sidebar);
+
     if (vaultState == VaultController::Unlocked) {
-        // 打开
-        menu->addAction(QObject::tr("Open"), [wnd, item]() {
-            wnd->cd(item->url());
-        })->setDisabled(shouldDisable);
-
-        // 在新窗口打开
-        menu->addAction(QObject::tr("Open in new window"), [item]() {
-            WindowManager::instance()->showNewWindow(item->url(), true);
-        });
-
-        menu->addSeparator();
 
         // 立即上锁
-        menu->addAction(QObject::tr("Lock"), [this]() {
+        QAction *action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::LockNow));
+        QObject::connect(action, &QAction::triggered, action, [this](){
             lockNow();
         });
 
         // 自动上锁
-        QAction *autoLockAction = menu->addAction(QObject::tr("Auto lock"));
-
-        DFileMenu *autoLockMenu = new DFileMenu();
-        autoLockMenu->addAction(QObject::tr("Never"), [this]() {
+        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Never));
+        QObject::connect(action, &QAction::triggered, action, [this](){
             autoLock(0);
-        })->setCheckable(true);
+        });
 
-        autoLockMenu->addSeparator();
-
-        autoLockMenu->addAction(QObject::tr("5 minutes"), [this]() {
+        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::FiveMinutes));
+        QObject::connect(action, &QAction::triggered, action, [this](){
             autoLock(5);
-        })->setCheckable(true);
+        });
 
-        autoLockMenu->addAction(QObject::tr("10 minutes"), [this]() {
+        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::TenMinutes));
+        QObject::connect(action, &QAction::triggered, action, [this](){
             autoLock(10);
-        })->setCheckable(true);
+        });
 
-        autoLockMenu->addAction(QObject::tr("20 minutes"), [this]() {
+        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::TwentyMinutes));
+        QObject::connect(action, &QAction::triggered, action, [this](){
             autoLock(20);
-        })->setCheckable(true);
+        });
 
-        autoLockMenu->QObject::setParent(menu);
-        autoLockAction->setMenu(autoLockMenu);
-
-        menu->addSeparator();
-
-        // 删除保险箱
-        menu->addAction(QObject::tr("Remove File Vault"), [this]() {
+        // 删除保险柜
+        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::DeleteVault));
+        QObject::connect(action, &QAction::triggered, action, [this](){
             showDeleteVaultView();
         });
-
-        menu->addSeparator();
-
-        // 显示属性对话框
-        menu->addAction(QObject::tr("Properties"), [item]() {
-            DUrlList list;
-            DUrl url = VaultController::vaultToLocalUrl(item->url());
-            list.append(url);
-            Singleton<FileSignalManager>::instance()->requestShowPropertyDialog(DFMUrlListBaseEvent(nullptr, list));
-        });
     } else if (vaultState == VaultController::Encrypted) {
+
         // 解锁
-        menu->addAction(QObject::tr("Unlock"), [this]() {
+        QAction *action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::UnLock));
+        QObject::connect(action, &QAction::triggered, action, [this](){
             showUnLockView();
-        })->setCheckable(true);
+        });
 
         // 使用恢复凭证
-        menu->addAction(QObject::tr("Unlock by key"), [this]() {
+        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::UnLockByKey));
+        QObject::connect(action, &QAction::triggered, action, [this](){
             showCertificateView();
-        })->setCheckable(true);
+        });
+    }
+
+    if (menu == nullptr) {
+        menu = new DFileMenu();
     }
 
     return menu;
