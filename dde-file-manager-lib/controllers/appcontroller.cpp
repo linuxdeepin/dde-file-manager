@@ -538,13 +538,15 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
                 if (blkdev->mountPoints().size()) {
                     blkdev->unmount({});
                 }
+                qDebug() << "============>fileUrl.query():" << fileUrl.query();
                 if (!ISOMaster->acquireDevice(fileUrl.query())) {
                     ISOMaster->releaseDevice();
-                    QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
                     blkdev->unmount({});
                     QThread::msleep(1000);
                     QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
                     diskdev->eject({});
+                    if (diskdev->optical())
+                        QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
                     getOpticalDriveMutex()->unlock();
                     return;
                 }
