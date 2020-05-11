@@ -11,6 +11,14 @@ class DFileStatisticsJob;
 DFM_END_NAMESPACE
 DFM_USE_NAMESPACE
 
+struct CdStatusInfo {
+    bool bVolFlag = false;
+    bool bMntFlag = false;
+    quint64 nUsage = 0;
+    quint64 nTotal = 0;
+    bool bBurningOrErasing = false;
+};
+
 class DFMOpticalMediaWidgetPrivate;
 class DFMOpticalMediaWidget : public QWidget
 {
@@ -21,12 +29,10 @@ public:
         BCSA_BurnCapacityStatusEjct =  0, //光盘容量状态：0,光驱弹出状态
         BCSA_BurnCapacityStatusAdd, //光盘容量状态：1,光驱弹入处于添加未挂载状态
         BCSA_BurnCapacityStatusAddMount //光盘容量状态：2,光驱弹入处于添加后并挂载的状态
-    };
+    }; 
 
     //fixed:CD display size error
-    static quint64 g_totalSize;
-    static quint64 g_usedSize;
-    static QMap<QString, QPair<quint64, quint64>> g_mapCDUsage; // sr0, (usage, total)
+    static QMap<QString, CdStatusInfo> g_mapCdStatusInfo;
     //fix: 动态获取刻录选中文件的字节大小
     static qint64 g_selectBurnFilesSize;
     static qint64 g_selectBurnDirFileCount;

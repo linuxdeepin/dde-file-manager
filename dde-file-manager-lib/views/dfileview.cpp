@@ -2198,6 +2198,16 @@ bool DFileView::setRootUrl(const DUrl &url)
     // TODO: drop this special case when we switch away from UDiskListener::addSubscriber in AppController.
     if (fileUrl.scheme() == BURN_SCHEME) {
         Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
+
+        // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
+        QString strVolTag = fileUrl.path().split("/", QString::SkipEmptyParts).count() >= 2
+                ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
+                : "";
+        if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
+            emit fileSignalManager->activeTaskDlg();
+            return false;
+        }
+
         QString devpath = fileUrl.burnDestDevice();
         QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
         getOpticalDriveMutex()->lock();
@@ -2231,7 +2241,7 @@ bool DFileView::setRootUrl(const DUrl &url)
                 }
                 ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
-                blkdev->mount({});
+                qDebug() << blkdev->mount({});
                 getOpticalDriveMutex()->unlock();
                 return true;
             }));
