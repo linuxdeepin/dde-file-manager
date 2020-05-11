@@ -131,7 +131,7 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
     QString fileDisplayName = this->fileDisplayName();
     if (fileDisplayName == "vault_unlocked") {
 
-        VaultController::VaultState vaultState = VaultController::state();
+        VaultController::VaultState vaultState = VaultController::getVaultController()->state();
 
         QVector<MenuAction> actions;
         if (vaultState == VaultController::Unlocked) {
