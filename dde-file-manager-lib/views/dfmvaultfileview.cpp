@@ -73,11 +73,15 @@ DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     int index = this->addHeaderWidget(headerView);
     Q_UNUSED(index);
 
-    connect(headerView, &VaultHeaderView::requestLockVault, this, [this](){
-        if (VaultController::lockVault()) {
-            cd(VaultController::makeVaultUrl("/", "unlock"));
-        }
-    });
+//    connect(headerView, &VaultHeaderView::requestLockVault, this, [this](){
+//        if (VaultController::lockVault()) {
+//            cd(VaultController::makeVaultUrl("/", "unlock"));
+//        }
+//    });
+
+    connect(headerView, &VaultHeaderView::sRequestLockVault, VaultController::getVaultController(), &VaultController::lockVault);
+
+    connect(VaultController::getVaultController(), &VaultController::signalLockVault, this, &DFMVaultFileView::lockVault);
 
     connect(headerView, &VaultHeaderView::requestGenerateRecoveryKey, this, [this](){
         cd(VaultController::makeVaultUrl("/verify", "recovery_key"));
@@ -86,7 +90,7 @@ DFMVaultFileView::DFMVaultFileView(QWidget *parent)
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
 {
-    VaultController::VaultState state = VaultController::state();
+    VaultController::VaultState state = VaultController::getVaultController()->state();
 
     if (state != VaultController::Unlocked) {
         switch (state) {
@@ -102,4 +106,12 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     }
 
     return DFileView::setRootUrl(url);
+}
+
+void DFMVaultFileView::lockVault(int state)
+{
+    if(state == 0)
+    {
+        cd(VaultController::makeVaultUrl("/", "unlock"));
+    }
 }

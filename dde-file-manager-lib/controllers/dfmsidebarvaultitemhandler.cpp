@@ -76,7 +76,7 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
 
-    VaultController::VaultState vaultState = VaultController::state();
+    VaultController::VaultState vaultState = VaultController::getVaultController()->state();
 
     if (vaultState == VaultController::Unlocked) {
         // 打开
@@ -155,7 +155,8 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
 bool DFMSideBarVaultItemHandler::lockNow()
 {
     // Something to do.
-    return VaultController::lockVault();
+    VaultController::getVaultController()->lockVault();
+    return false;
 }
 
 bool DFMSideBarVaultItemHandler::autoLock(uint minutes)

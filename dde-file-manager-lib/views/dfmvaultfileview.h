@@ -32,6 +32,7 @@ public:
 signals:
     void requestLockVault();
     void requestGenerateRecoveryKey();
+    void sRequestLockVault(QString unlockdir = "");
 
 private:
     DFileMenu * createMenu();
@@ -44,4 +45,7 @@ public:
     explicit DFMVaultFileView(QWidget *parent = nullptr);
 
     bool setRootUrl(const DUrl &url) override;
+
+public slots:
+    void lockVault(int state);
 };

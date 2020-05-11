@@ -84,7 +84,7 @@ bool DFMVaultView::setRootUrl(const DUrl &url)
 {
     m_rootUrl = url;
 
-    VaultController::VaultState state = VaultController::state();
+    VaultController::VaultState state = VaultController::getVaultController()->state();
     QString contentKey = url.host();
 
     if (!m_contentMap.contains(contentKey)) {

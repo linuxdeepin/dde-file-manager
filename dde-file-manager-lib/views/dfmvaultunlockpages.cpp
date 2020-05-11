@@ -69,6 +69,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(m_retrievePasswordButton, &QAbstractButton::clicked, this, [=](){
         emit requestRedirect(VaultController::makeVaultUrl("/retrieve_password", "recovery_key"));
     });
+    connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::slotFinishUnlock);
 }
 
 QPair<DUrl, bool> DFMVaultUnlockPages::requireRedirect(VaultController::VaultState state)
@@ -96,12 +97,21 @@ void DFMVaultUnlockPages::unlock()
 {
     m_unlockButton->setDisabled(true);
     DSecureString passwordString(m_passwordEdit->text());
-    bool succ = VaultController::unlockVault(passwordString);
-    if (succ) {
+    VaultController::getVaultController()->unlockVault(passwordString);
+//    if (succ) {
+//        m_passwordEdit->clear();
+//        emit requestRedirect(VaultController::makeVaultUrl("/"));
+//    }
+    m_unlockButton->setDisabled(false);
+}
+
+void DFMVaultUnlockPages::slotFinishUnlock(int state)
+{
+    if(state == 0)
+    {
         m_passwordEdit->clear();
         emit requestRedirect(VaultController::makeVaultUrl("/"));
     }
-    m_unlockButton->setDisabled(false);
 }
 
 DFM_END_NAMESPACE

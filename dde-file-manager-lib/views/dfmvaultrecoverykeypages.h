@@ -73,6 +73,8 @@ signals:
 private slots:
     void unlock();
 
+    void unlockVault(int state);
+
 private:
     DPasswordEdit * m_passwordEdit;
     DFloatingButton * m_unlockButton;

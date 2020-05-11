@@ -116,6 +116,8 @@ VaultVerifyUserPage::VaultVerifyUserPage(QWidget *parent)
     layout->setAlignment(m_unlockButton, Qt::AlignHCenter);
 
     connect(m_unlockButton, &QAbstractButton::clicked, this, &VaultVerifyUserPage::unlock);
+
+    connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &VaultVerifyUserPage::unlockVault);
 }
 
 VaultVerifyUserPage::~VaultVerifyUserPage()
@@ -126,16 +128,26 @@ VaultVerifyUserPage::~VaultVerifyUserPage()
 void VaultVerifyUserPage::unlock()
 {
     m_unlockButton->setDisabled(true);
-    VaultController::lockVault();
     DSecureString passwordString(m_passwordEdit->text());
-    bool succ = VaultController::unlockVault(passwordString);
-    if (succ) {
-        // save password to GNOME keyring so we can use it later.
+    VaultController::getVaultController()->unlockVault(passwordString);
+//    if (succ) {
+//        // save password to GNOME keyring so we can use it later.
+//        Singleton<SecretManager>::instance()->storeVaultPassword(passwordString);
+//        m_passwordEdit->clear();
+//        emit requestRedirect(VaultController::makeVaultUrl("/generated_key", "recovery_key"));
+//    }
+    m_unlockButton->setDisabled(false);
+}
+
+void VaultVerifyUserPage::unlockVault(int state)
+{
+    if(state == 0)
+    {
+        DSecureString passwordString(m_passwordEdit->text());
         Singleton<SecretManager>::instance()->storeVaultPassword(passwordString);
         m_passwordEdit->clear();
         emit requestRedirect(VaultController::makeVaultUrl("/generated_key", "recovery_key"));
     }
-    m_unlockButton->setDisabled(false);
 }
 
 // ----------------------------------------------

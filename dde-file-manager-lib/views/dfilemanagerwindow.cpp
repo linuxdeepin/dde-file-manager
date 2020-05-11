@@ -915,7 +915,7 @@ void DFileManagerWindow::initTitleBar()
     initTitleFrame();
 
     QSet<MenuAction> disableList;
-    VaultController::VaultState state = VaultController::state();
+    VaultController::VaultState state = VaultController::getVaultController()->state();
     if (state == VaultController::NotAvailable) {
         disableList << MenuAction::Vault;
     }

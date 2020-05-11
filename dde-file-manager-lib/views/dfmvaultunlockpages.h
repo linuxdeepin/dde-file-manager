@@ -46,6 +46,8 @@ public:
 private slots:
     void unlock();
 
+    void slotFinishUnlock(int state);
+
 private:
     DPasswordEdit * m_passwordEdit;
     DFloatingButton * m_unlockButton;
