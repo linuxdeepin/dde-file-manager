@@ -158,6 +158,7 @@ public:
 
 public:
     void dump();
+    QString m_needRenameItem; //用于排完顺序后打开编辑框
 signals:
     void sigSyncOperation(int so,QVariant var = QVariant());
     void sigSyncSelection(class CanvasGridView *, DUrlList url);

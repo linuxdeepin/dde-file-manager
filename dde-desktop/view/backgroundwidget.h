@@ -14,7 +14,6 @@ public:
     ~BackgroundWidget();
     void setPixmap(const QPixmap &pixmap);
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
-    void setVisible(bool visible) Q_DECL_OVERRIDE;
     void setView(const QSharedPointer<CanvasGridView> &);
     inline QPixmap pixmap() const{return m_pixmap;}
 private:
