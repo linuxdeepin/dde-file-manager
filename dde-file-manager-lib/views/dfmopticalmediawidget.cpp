@@ -33,9 +33,7 @@ DWIDGET_USE_NAMESPACE
 using namespace DISOMasterNS;
 
 //fixed:CD display size error
-quint64 DFMOpticalMediaWidget::g_totalSize = 0;
-quint64 DFMOpticalMediaWidget::g_usedSize = 0;
-QMap<QString, QPair<quint64, quint64>> DFMOpticalMediaWidget::g_mapCDUsage;
+QMap<QString, CdStatusInfo> DFMOpticalMediaWidget::g_mapCdStatusInfo;
 //fix: 动态获取刻录选中文件的字节大小
 qint64 DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
 qint64 DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
@@ -181,8 +179,8 @@ void DFMOpticalMediaWidget::setBurnCapacity(int status, QString strVolTag)
     QByteArray burnCapacityData = burnCapacityFile.readAll();
     burnCapacityFile.close();
 
-    double burnTotalSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
-    double burnUsedSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
+    double burnTotalSize = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
+    double burnUsedSize = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
 
     QJsonObject rootObj;
     QJsonObject tagItem;
@@ -296,9 +294,8 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
 
     QString strKey = getVolTag();
     //fixed:CD display size error
-    DFMOpticalMediaWidget::g_usedSize = dp.data;
-    DFMOpticalMediaWidget::g_totalSize = dp.data + dp.avail;
-    DFMOpticalMediaWidget::g_mapCDUsage[strKey] = QPair<quint64, quint64>(dp.data, dp.data + dp.avail);
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nTotal = dp.data + dp.avail;
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nUsage = dp.data;
     //qDebug() << dp.datablocks << "Sectors" << DFMOpticalMediaWidget::g_usedSize / 1024 / 1024 << "MB" << (DFMOpticalMediaWidget::g_totalSize - DFMOpticalMediaWidget::g_usedSize) / 1024 / 1024 << "MB";
 }
 

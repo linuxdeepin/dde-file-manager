@@ -149,15 +149,12 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 if (pFileInfo)
                     strVolTag = pFileInfo->getVolTag();
                 //fix: 探测光盘推进,弹出和挂载状态机标识
-                bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
-                bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
+                bool bVolFlag = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag;
+                bool bMntFlag = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bMntFlag;
                 if (!bVolFlag && !bMntFlag) { //CD/DVD
                     return 0;
-//                    DFMOpticalMediaWidget::g_usedSize = 0;
-//                    DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first = 0;
-//                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
                 } else {
-                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
+                    return DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
                 }
             } else {
                 return pitmdata->fi->extraProperties()["fsUsed"];
@@ -174,15 +171,12 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 if (pFileInfo)
                     strVolTag = pFileInfo->getVolTag();
                 //fix: 探测光盘推进,弹出和挂载状态机标识
-                bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
-                bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
+                bool bVolFlag = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag;
+                bool bMntFlag = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bMntFlag;
                 if (!bVolFlag && !bMntFlag) { //CD/DVD
                     return 0;
-                    DFMOpticalMediaWidget::g_totalSize = 0;
-                    DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second = 0;
-                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
                 } else {
-                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
+                    return DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
                 }
             } else {
                 return pitmdata->fi->extraProperties()["fsSize"];

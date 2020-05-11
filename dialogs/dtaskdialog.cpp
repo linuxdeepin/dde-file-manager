@@ -209,6 +209,9 @@ void DTaskDialog::setTitle(int taskCount)
 void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
 {
     if (jobDetail.contains("jobId")) {
+        QString strTaskId = jobDetail.value("jobId");
+        if (m_jobIdItems.contains(strTaskId))
+            return;
         DFMTaskWidget *wid = new DFMTaskWidget;
         wid->setTaskId(jobDetail.value("jobId"));
         connect(wid, &DFMTaskWidget::heightChanged, this, &DTaskDialog::adjustSize);

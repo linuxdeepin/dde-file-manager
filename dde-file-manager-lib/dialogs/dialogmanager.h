@@ -131,6 +131,7 @@ public slots:
     void updateCloseIndicator();
     void raiseAllPropertyDialog();
     void handleFocusChanged(QWidget* old, QWidget* now);
+    void showTaskProgressDlgOnActive();
 
     void refreshPropertyDialogs(const DUrl& oldUrl, const DUrl& newUrl);
 
