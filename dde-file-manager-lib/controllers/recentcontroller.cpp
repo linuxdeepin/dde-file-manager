@@ -429,12 +429,17 @@ void RecentController::handleFileChanged()
                     urlList << recentUrl;
 
                     DThreadUtil::runInMainThread([=]() {
+                        RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
                         if (!recentNodes.contains(recentUrl)) {
-                            RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
                             recentNodes[recentUrl] = fileInfo;
-
                             DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
                                                               &DAbstractFileWatcher::subfileCreated,
+                                                              recentUrl);
+                        }
+                        //如果readtime变更了，需要通知filesystemmodel重新排序
+                        else if (recentNodes[recentUrl]->readDateTime().toSecsSinceEpoch() != fileInfo->readDateTime().toSecsSinceEpoch()) {
+                            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                                              &DAbstractFileWatcher::fileModified,
                                                               recentUrl);
                         }
                     });

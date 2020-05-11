@@ -1055,12 +1055,22 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
         return;
     }
 
+    //最近使用文件更新最后访问时间后需要重新排序，这里需要先重新设定model中存储的fileinfo对应的readtime。
+    DAbstractFileInfoPointer newFileInfo = fileService->createFileInfo(nullptr, fileUrl);
     if (const DAbstractFileInfoPointer &fileInfo = q->fileInfo(index)) {
         fileInfo->refresh();
+        if (fileUrl.scheme() == RECENT_SCHEME) {
+            fileInfo->updateReadTime(newFileInfo->getReadTime());
+        }
     }
 
     q->parent()->parent()->update(index);
 //    emit q->dataChanged(index, index);
+    //这里调用refresh重刷界面
+    if (fileUrl.scheme() == RECENT_SCHEME)
+    {
+        q->refresh(node->fileInfo->fileUrl());
+    }
 }
 
 void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &isExternalSource)

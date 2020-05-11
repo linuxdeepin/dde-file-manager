@@ -308,6 +308,10 @@ public:
 
     virtual bool checkMpsStr(const QString &) const;
 
+    //为recentInfo提供接口
+    virtual const QDateTime getReadTime() const;
+    virtual void updateReadTime(const QDateTime &);
+
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);
     void setProxy(const DAbstractFileInfoPointer &proxy);
