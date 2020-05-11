@@ -2241,7 +2241,7 @@ bool DFileView::setRootUrl(const DUrl &url)
                 }
                 ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
-                qDebug() << blkdev->mount({});
+                blkdev->mount({});
                 getOpticalDriveMutex()->unlock();
                 return true;
             }));

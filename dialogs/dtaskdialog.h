@@ -75,8 +75,6 @@ public:
 
     void updateData(DFMTaskWidget *wid, const QMap<QString, QString> &data);
 
-    bool hasTask() const { return m_jobIdItems.count() > 0; }
-
 signals:
     void abortTask(const QMap<QString, QString>& jobDetail);
     void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
