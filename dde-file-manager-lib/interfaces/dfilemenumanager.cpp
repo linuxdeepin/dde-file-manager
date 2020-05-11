@@ -581,6 +581,15 @@ void DFileMenuData::initData()
     //actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Burn");
     actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Add to disc");
 
+    // Vault
+    actionKeys[MenuAction::LockNow] = QObject::tr("Lock");
+    actionKeys[MenuAction::AutoLock] = QObject::tr("Auto lock");
+    actionKeys[MenuAction::Never] = QObject::tr("Never");
+    actionKeys[MenuAction::FiveMinutes] = QObject::tr("5 minutes");
+    actionKeys[MenuAction::TenMinutes] = QObject::tr("10 minutes");
+    actionKeys[MenuAction::TwentyMinutes] = QObject::tr("20 minutes");
+    actionKeys[MenuAction::DeleteVault] = QObject::tr("Remove File Vault");
+
     // Action Icons:
     DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     if (settings.value("context-menu-icons").toBool()) {

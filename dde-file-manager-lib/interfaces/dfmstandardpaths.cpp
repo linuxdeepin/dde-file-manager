@@ -124,7 +124,7 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
     case Root:
         return "/";
     case Vault:
-        return DFMVAULT_ROOT;
+        return "dfmvault://files/";
     default:
         return QStringLiteral("bug://dde-file-manager-lib/interface/dfmstandardpaths.cpp#") + QT_STRINGIFY(type);
     }

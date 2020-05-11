@@ -232,6 +232,15 @@ public:
         MountImage,
         StageFileForBurning,
 
+        // Vault
+        LockNow,
+        AutoLock,
+        Never,
+        FiveMinutes,
+        TenMinutes,
+        TwentyMinutes,
+        DeleteVault,
+
         UserMenuAction = Unknow + 2000
     };
 
