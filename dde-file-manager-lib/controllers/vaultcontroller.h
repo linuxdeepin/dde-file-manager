@@ -26,6 +26,7 @@
 
 DCORE_USE_NAMESPACE
 
+class VaultControllerPrivate;
 class VaultController : public DAbstractFileController
 {
     Q_OBJECT
@@ -40,6 +41,9 @@ public:
     };
 
     explicit VaultController(QObject *parent = nullptr);
+public:
+
+    static VaultController * getVaultController();
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
@@ -50,18 +54,117 @@ public:
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
 
-    static void prepareVaultDirs();
-    static bool runVaultProcess(QStringList arguments, const DSecureString &stdinString);
     static DUrl makeVaultUrl(QString path = "", QString host = "files");
-    static QString makeVaultLocalPath(QString path = "", QString base = "vault_unlocked");
     static DUrl localUrlToVault(const DUrl &vaultUrl);
     static DUrl localToVault(QString localPath);
     static QString vaultToLocal(const DUrl &vaultUrl);
     static DUrl vaultToLocalUrl(const DUrl &vaultUrl);
     static DUrlList vaultToLocalUrls(DUrlList vaultUrls);
-    static VaultState state();
 
-    static bool createVault(const DSecureString &password);
-    static bool unlockVault(const DSecureString &password);
-    static bool lockVault();
+    /**
+     * @brief state         获取当前保险箱状态
+     * @param lockBaseDir   挂载的目录
+     * @return              返回VaultState枚举值
+     */
+    VaultState state(QString lockBaseDir = "");
+
+public slots:
+
+    /**
+     * @brief createVault       创建保险箱
+     * @param lockBaseDir       保险箱加密文件夹 默认值内部自动创建
+     * @param unlockFileDir     保险箱解密文件夹 默认值内部自动创建
+     * @param passWord          保险箱密码
+
+     */
+    void createVault(const DSecureString &password, QString lockBaseDir = "", QString unlockFileDir = "");
+
+    /**
+     * @brief unlockVault       解锁保险箱
+     * @param lockBaseDir       保险箱加密文件夹 默认值内部自动创建
+     * @param unlockFileDir     保险箱解密文件夹 默认值内部自动创建
+     * @param passWord          保险箱密码
+     */
+    void unlockVault(const DSecureString &password, QString lockBaseDir = "", QString unlockFileDir = "");
+
+    /**
+     * @brief lockVault         加锁保险箱
+     * @param unlockFileDir     保险箱解密文件夹 默认值内部自动创建
+     */
+    void lockVault(QString unlockFileDir = "");
+
+    /**
+     * @brief makeVaultLocalPath    创建本地路径
+     * @param path                  子目录(文件或文件路径)
+     * @param base                  父目录
+     * @return                      返回新路径
+     */
+    static QString makeVaultLocalPath(QString path = "", QString base = "");
+
+
+signals:
+    /**
+     * @brief readError 错误输出
+     * @param error     错误信息
+     */
+    void signalReadError(QString error);
+
+    /**
+     * @brief signalReadOutput  标准输出
+     * @param msg               输出信息
+     */
+    void signalReadOutput(QString msg);
+
+    /**
+     * @brief signalCreateVault 创建保险箱是否成功的信号
+     * @param state             返回ErrorCode枚举值
+     */
+    void signalCreateVault(int state);
+
+    /**
+     * @brief singalUnlockVault 解锁保险箱是否成功的信号
+     * @param state             返回ErrorCode枚举值
+     */
+    void signalUnlockVault(int state);
+
+    /**
+     * @brief signalLockVault   加锁保险箱是否成功的信号
+     * @param state             返回ErrorCode枚举值
+     */
+    void signalLockVault(int state);
+
+signals:
+    /**
+    * @brief 下列信号为本类内部使用，请勿外用
+    */
+
+    /**
+     * @brief sigCreateVault    创建保险箱信号
+     * @param lockBaseDir       保险箱加密文件夹
+     * @param unlockFileDir     保险箱解密文件夹
+     * @param passWord          保险箱密码
+     */
+    void sigCreateVault(QString lockBaseDir, QString unlockFileDir, QString passWord);
+
+    /**
+     * @brief sigUnlockVault    解锁保险箱信号
+     * @param lockBaseDir       保险箱加密文件夹
+     * @param unlockFileDir     保险箱解密文件夹
+     * @param passWord          保险箱密码
+     */
+    void sigUnlockVault(QString lockBaseDir, QString unlockFileDir, QString passWord);
+
+    /**
+     * @brief sigLockVault      加锁保险箱信号
+     * @param unlockFileDir     保险箱解密文件夹
+     */
+    void sigLockVault(QString unlockFileDir);
+
+private:
+    VaultControllerPrivate * d_ptr;
+
+    static VaultController * cryfs;
+
+    Q_DECLARE_PRIVATE(VaultController)
+
 };

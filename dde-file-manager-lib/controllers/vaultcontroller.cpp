@@ -23,12 +23,33 @@
 #include "dfileservices.h"
 #include "dfilewatcher.h"
 #include "dfileproxywatcher.h"
+#include "vaulthandle.h"
+#include "vaulterrorcode.h"
 
 #include "dfmevent.h"
 
 #include <QProcess>
 #include <QStandardPaths>
 #include <QStorageInfo>
+
+VaultController * VaultController::cryfs = nullptr;
+
+class VaultControllerPrivate
+{
+public:
+    explicit VaultControllerPrivate(VaultController * CryFs);
+
+    CryFsHandle *m_cryFsHandle;
+
+private:
+    VaultController * q_ptr;
+    Q_DECLARE_PUBLIC(VaultController)
+};
+
+VaultControllerPrivate::VaultControllerPrivate(VaultController *CryFs):q_ptr(CryFs)
+{
+
+}
 
 class VaultDirIterator : public DDirIterator
 {
@@ -88,9 +109,33 @@ DUrl VaultDirIterator::url() const
 }
 
 VaultController::VaultController(QObject *parent)
-    : DAbstractFileController(parent)
+    : DAbstractFileController(parent),d_ptr(new VaultControllerPrivate(this))
 {
-    prepareVaultDirs();
+    Q_D(VaultController);
+    d->m_cryFsHandle = new CryFsHandle;
+    connect(this, &VaultController::sigCreateVault, d->m_cryFsHandle, &CryFsHandle::createVault);
+    connect(this, &VaultController::sigUnlockVault, d->m_cryFsHandle, &CryFsHandle::unlockVault);
+    connect(this, &VaultController::sigLockVault, d->m_cryFsHandle, &CryFsHandle::lockVault);
+
+    connect(d->m_cryFsHandle, &CryFsHandle::signalCreateVault, this, &VaultController::signalCreateVault);
+    connect(d->m_cryFsHandle, &CryFsHandle::signalUnlockVault, this, &VaultController::signalUnlockVault);
+    connect(d->m_cryFsHandle, &CryFsHandle::signalLockVault, this, &VaultController::signalLockVault);
+    connect(d->m_cryFsHandle, &CryFsHandle::signalReadError, this, &VaultController::signalReadError);
+    connect(d->m_cryFsHandle, &CryFsHandle::signalReadOutput, this, &VaultController::signalReadOutput);
+}
+
+VaultController *VaultController::getVaultController()
+{
+    if(!cryfs)
+    {
+        DUrl url(DFMVAULT_ROOT);
+        url.setHost("files");
+        url.setScheme(DFMVAULT_SCHEME);
+        QList<DAbstractFileController *> vaultObjlist = DFileService::getHandlerTypeByUrl(url);
+        if(vaultObjlist.size() > 0)
+            cryfs = static_cast<VaultController *>(vaultObjlist.first());
+    }
+    return cryfs;
 }
 
 const DAbstractFileInfoPointer VaultController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
@@ -138,41 +183,6 @@ bool VaultController::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
                                                 vaultToLocalUrl(event->toUrl()));
 }
 
-void VaultController::prepareVaultDirs()
-{
-    auto createIfNotExist = [](const QString & path){
-        if (!QFile::exists(path)) {
-            QDir().mkpath(path);
-        }
-    };
-    static QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QDir::separator();
-    createIfNotExist(appDataLocation + "vault_encrypted");
-    createIfNotExist(appDataLocation + "vault_unlocked");
-}
-
-bool VaultController::runVaultProcess(QStringList arguments, const DSecureString &stdinString)
-{
-    QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
-    if (cryfsBinary.isEmpty()) return false;
-
-    QByteArray passwordByteArray = stdinString.toUtf8();
-    passwordByteArray.append('\n');
-
-    QProcess cryfsExec;
-    cryfsExec.setEnvironment({"CRYFS_FRONTEND=noninteractive"});
-    cryfsExec.start(cryfsBinary, arguments);
-    cryfsExec.waitForStarted();
-    cryfsExec.write(passwordByteArray);
-    cryfsExec.waitForBytesWritten();
-    cryfsExec.closeWriteChannel();
-    cryfsExec.waitForFinished();
-    cryfsExec.terminate();
-
-    // about cryfs exitcode please refer to:
-    // https://github.com/cryfs/cryfs/blob/develop/src/cryfs/impl/ErrorCodes.h
-    return (cryfsExec.exitStatus() == QProcess::NormalExit && cryfsExec.exitCode() == 0);
-}
-
 DUrl VaultController::makeVaultUrl(QString path, QString host)
 {
     // blumia: if path is not start with a `/`, QUrl::setPath will destory the whole QUrl
@@ -186,12 +196,6 @@ DUrl VaultController::makeVaultUrl(QString path, QString host)
     newUrl.setHost(host);
     newUrl.setPath(path);
     return newUrl;
-}
-
-QString VaultController::makeVaultLocalPath(QString path, QString base)
-{
-    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
-            + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
 }
 
 DUrl VaultController::localUrlToVault(const DUrl &vaultUrl)
@@ -236,16 +240,30 @@ DUrlList VaultController::vaultToLocalUrls(DUrlList vaultUrls)
     return vaultUrls;
 }
 
-VaultController::VaultState VaultController::state()
+VaultController::VaultState VaultController::state(QString lockBaseDir)
 {
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) {
         return NotAvailable;
     }
 
-    if (QFile::exists(makeVaultLocalPath("cryfs.config", "vault_encrypted"))) {
+    if(lockBaseDir.isEmpty())
+    {
+        lockBaseDir = makeVaultLocalPath("cryfs.config", "vault_encrypted");
+    }
+    else
+    {
+        if(lockBaseDir.endsWith("/"))
+            lockBaseDir += "cryfs.config";
+        else
+            lockBaseDir += "/cryfs.config";
+    }
+    if (QFile::exists(lockBaseDir))
+    {
         QStorageInfo info(makeVaultLocalPath(""));
-        if (info.isValid() && info.fileSystemType() == "fuse.cryfs") {
+        QString temp = info.fileSystemType();
+        if (info.isValid() && temp == "fuse.cryfs")
+        {
             return Unlocked;
         }
 
@@ -255,32 +273,98 @@ VaultController::VaultState VaultController::state()
     }
 }
 
-bool VaultController::createVault(const DSecureString &password)
+void VaultController::createVault(const DSecureString & passWord, QString lockBaseDir, QString unlockFileDir)
 {
-    return VaultController::runVaultProcess({
-                                                makeVaultLocalPath("", "vault_encrypted"),
-                                                makeVaultLocalPath("", "vault_unlocked")
-                                            }, password);
+    auto createIfNotExist = [](const QString & path){
+        if (!QFile::exists(path)) {
+            QDir().mkpath(path);
+        }
+    };
+
+    if(lockBaseDir.isEmpty() || unlockFileDir.isEmpty())
+    {
+        if(state() != NotExisted)
+        {
+            emit signalCreateVault(static_cast<int>(ErrorCode::EncryptedExist));
+            return;
+        }
+
+        createIfNotExist(makeVaultLocalPath("", "vault_encrypted"));
+        createIfNotExist(makeVaultLocalPath("", "vault_unlocked"));
+
+        emit sigCreateVault(makeVaultLocalPath("", "vault_encrypted"),
+                            makeVaultLocalPath("", "vault_unlocked"),
+                            passWord);
+    }
+    else
+    {
+        if(state(unlockFileDir) != NotExisted)
+        {
+            emit signalCreateVault(static_cast<int>(ErrorCode::EncryptedExist));
+            return;
+        }
+
+        createIfNotExist(lockBaseDir);
+        createIfNotExist(unlockFileDir);
+        emit sigCreateVault(lockBaseDir, unlockFileDir, passWord);
+    }
 }
 
-bool VaultController::unlockVault(const DSecureString &password)
+void VaultController::unlockVault(const DSecureString &passWord, QString lockBaseDir, QString unlockFileDir)
 {
-    return VaultController::runVaultProcess({
-                                                makeVaultLocalPath("", "vault_encrypted"),
-                                                makeVaultLocalPath("", "vault_unlocked")
-                                            }, password);
+    if(lockBaseDir.isEmpty() || unlockFileDir.isEmpty())
+    {
+        if(state() != Encrypted)
+        {
+            emit signalUnlockVault(static_cast<int>(ErrorCode::MountpointNotEmpty));
+            return;
+        }
+
+        emit sigUnlockVault(makeVaultLocalPath("", "vault_encrypted"),
+                            makeVaultLocalPath("", "vault_unlocked"),
+                            passWord);
+    }
+    else
+    {
+        if(state(unlockFileDir) != Encrypted)
+        {
+            emit signalUnlockVault(static_cast<int>(ErrorCode::MountpointNotEmpty));
+            return;
+        }
+        emit sigUnlockVault(lockBaseDir, unlockFileDir, passWord);
+    }
 }
 
-bool VaultController::lockVault()
+void VaultController::lockVault(QString unlockFileDir)
 {
-    QString fusermountBinary = QStandardPaths::findExecutable("fusermount");
-    if (fusermountBinary.isEmpty()) return false;
-
-    QProcess fusermountExec;
-    fusermountExec.start(fusermountBinary, {"-u", makeVaultLocalPath("")});
-    fusermountExec.waitForStarted();
-    fusermountExec.waitForFinished();
-    fusermountExec.terminate();
-
-    return fusermountExec.exitStatus() == QProcess::NormalExit;
+    if(unlockFileDir.isEmpty())
+    {
+        if(state() != Unlocked)
+        {
+            emit signalLockVault(static_cast<int>(ErrorCode::MountdirEncrypted));
+            return;
+        }
+        emit sigLockVault(makeVaultLocalPath("", "vault_unlocked"));
+    }
+    else
+    {
+        if(state(unlockFileDir) != Unlocked)
+        {
+            emit signalLockVault(static_cast<int>(ErrorCode::MountdirEncrypted));
+            return;
+        }
+        emit sigLockVault(unlockFileDir);
+    }
 }
+
+QString VaultController::makeVaultLocalPath(QString path, QString base)
+{
+    if(base.isEmpty())
+    {
+        base = "vault_unlocked";
+    }
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+            + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
+}
+
+
