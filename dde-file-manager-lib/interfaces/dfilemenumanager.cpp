@@ -331,42 +331,45 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 
     if (deviceListener->isMountedRemovableDiskExits()) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
+        if (currentUrl.path().contains("/dev/sr"))
+            menu->removeAction(sendToMountedRemovableDiskAction);
+        else {
+            DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
+            if (sendToMountedRemovableDiskMenu) {
+                foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
+                    QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
+                    action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
+                    action->setProperty("urlList", DUrl::toStringList(urlList));
+                    //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
+                    action->setProperty("iconName", pDeviceinfo->getDiskInfo().iconName());
+                    //id="/dev/sr1" -> tempId="sr1"
+                    QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
+                    //mounted_root_uri="file:///media/union/***" -> tempMediaAddr="union"
+                    QString tempMountedRootUrl = pDeviceinfo->getDiskInfo().mounted_root_uri();
+                    int tempAddrIndex = tempMountedRootUrl.lastIndexOf("/");
 
-        DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
-        if (sendToMountedRemovableDiskMenu) {
-            foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
-                QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
-                action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
-                action->setProperty("urlList", DUrl::toStringList(urlList));
-                //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
-                action->setProperty("iconName", pDeviceinfo->getDiskInfo().iconName());
-                //id="/dev/sr1" -> tempId="sr1"
-                QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
-                //mounted_root_uri="file:///media/union/***" -> tempMediaAddr="union"
-                QString tempMountedRootUrl = pDeviceinfo->getDiskInfo().mounted_root_uri();
-                int tempAddrIndex = tempMountedRootUrl.lastIndexOf("/");
+                    //获取用户名有问题，fix
+                    //                QString tempMediaAddr= tempMountedRootUrl.mid(14, tempAddrIndex - 14);
+                    QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+                    //g_deleteDirPath="/home/union/.cache/deepin/discburn/_dev_sr1"
+                    //                DFileMenuManager::g_deleteDirPath = "/home/" + tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
+                    DFileMenuManager::g_deleteDirPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
+                    //获取用户名有问题，fix
 
-                //获取用户名有问题，fix
-//                QString tempMediaAddr= tempMountedRootUrl.mid(14, tempAddrIndex - 14);
-                QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-                //g_deleteDirPath="/home/union/.cache/deepin/discburn/_dev_sr1"
-//                DFileMenuManager::g_deleteDirPath = "/home/" + tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
-                DFileMenuManager::g_deleteDirPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
-                //获取用户名有问题，fix
+                    // 禁用发送到列表中的本设备项
+                    if (urlList.count() > 0) {
+                        DUrl url = urlList[0];
+                        if (url.path().contains(pDeviceinfo->getDiskInfo().id()))
+                            action->setEnabled(false);
+                    }
 
-                // 禁用发送到列表中的本设备项
-                if (urlList.count() > 0) {
-                    DUrl url = urlList[0];
-                    if (url.path().contains(pDeviceinfo->getDiskInfo().id()))
-                        action->setEnabled(false);
+                    sendToMountedRemovableDiskMenu->addAction(action);
+                    connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk);
                 }
-
-                sendToMountedRemovableDiskMenu->addAction(action);
-                connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk);
             }
+
         }
     }
-
     if (menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
         QAction *stageAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning));
 
