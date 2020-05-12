@@ -69,7 +69,8 @@ public:
         Restore,
         OpticalBurn,
         OpticalBlank,
-        OpticalImageBurn
+        OpticalImageBurn,
+        OpticalCheck
     };
     Q_ENUM(JobType)
 
@@ -279,6 +280,8 @@ private:
     static QStorageInfo getStorageInfo(const QString &file);
     static bool canMove(const QString &filePath);
     static QString getXorrisoErrorMsg(const QStringList& msg);
+
+    const QString TR_CONN_ERROR = tr("Device disconnected");
 
 #ifdef SW_LABEL
 public:
