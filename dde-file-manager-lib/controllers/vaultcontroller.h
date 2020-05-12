@@ -63,7 +63,7 @@ public:
 
     /**
      * @brief state         获取当前保险箱状态
-     * @param lockBaseDir   挂载的目录
+     * @param lockBaseDir   保险箱加密文件夹
      * @return              返回VaultState枚举值
      */
     VaultState state(QString lockBaseDir = "");
@@ -89,9 +89,10 @@ public slots:
 
     /**
      * @brief lockVault         加锁保险箱
+     * @param lockBaseDir       保险箱加密文件夹 默认值内部自动创建
      * @param unlockFileDir     保险箱解密文件夹 默认值内部自动创建
      */
-    void lockVault(QString unlockFileDir = "");
+    void lockVault(QString lockBaseDir = "", QString unlockFileDir = "");
 
     /**
      * @brief makeVaultLocalPath    创建本地路径
@@ -100,6 +101,18 @@ public slots:
      * @return                      返回新路径
      */
     static QString makeVaultLocalPath(QString path = "", QString base = "");
+
+    /**
+     * @brief vaultLockPath   返回默认保险箱加密文件夹路径，如路径是外部传入暂时无法获取
+     * @return                默认保险箱加密文件夹路径
+     */
+    static QString vaultLockPath();
+
+    /**
+     * @brief vaultLockPath   返回默认保险箱解密文件夹路径，如路径是外部传入暂时无法获取
+     * @return                默认保险箱解密文件夹路径
+     */
+    static QString vaultUnlockPath();
 
 
 signals:

@@ -32,7 +32,7 @@ public:
 signals:
     void requestLockVault();
     void requestGenerateRecoveryKey();
-    void sRequestLockVault(QString unlockdir = "");
+    void sRequestLockVault(QString lockdir = "", QString unlockdir = "");
 
 private:
     DFileMenu * createMenu();

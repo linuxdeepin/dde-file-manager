@@ -298,7 +298,7 @@ void VaultController::createVault(const DSecureString & passWord, QString lockBa
     }
     else
     {
-        if(state(unlockFileDir) != NotExisted)
+        if(state(lockBaseDir) != NotExisted)
         {
             emit signalCreateVault(static_cast<int>(ErrorCode::EncryptedExist));
             return;
@@ -326,7 +326,7 @@ void VaultController::unlockVault(const DSecureString &passWord, QString lockBas
     }
     else
     {
-        if(state(unlockFileDir) != Encrypted)
+        if(state(lockBaseDir) != Encrypted)
         {
             emit signalUnlockVault(static_cast<int>(ErrorCode::MountpointNotEmpty));
             return;
@@ -335,9 +335,9 @@ void VaultController::unlockVault(const DSecureString &passWord, QString lockBas
     }
 }
 
-void VaultController::lockVault(QString unlockFileDir)
+void VaultController::lockVault(QString lockBaseDir, QString unlockFileDir)
 {
-    if(unlockFileDir.isEmpty())
+    if(lockBaseDir.isEmpty() || unlockFileDir.isEmpty())
     {
         if(state() != Unlocked)
         {
@@ -348,7 +348,7 @@ void VaultController::lockVault(QString unlockFileDir)
     }
     else
     {
-        if(state(unlockFileDir) != Unlocked)
+        if(state(lockBaseDir) != Unlocked)
         {
             emit signalLockVault(static_cast<int>(ErrorCode::MountdirEncrypted));
             return;
@@ -365,6 +365,16 @@ QString VaultController::makeVaultLocalPath(QString path, QString base)
     }
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
             + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
+}
+
+QString VaultController::vaultLockPath()
+{
+    return makeVaultLocalPath("", "vault_encrypted");
+}
+
+QString VaultController::vaultUnlockPath()
+{
+    return makeVaultLocalPath("", "vault_unlocked");
 }
 
 
