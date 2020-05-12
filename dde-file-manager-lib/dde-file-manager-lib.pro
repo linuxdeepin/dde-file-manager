@@ -533,6 +533,9 @@ isEqual(BUILD_MINIMUM, YES){
     templateFiles.files = skin/templates/newDoc.doc \
         skin/templates/newExcel.xls \
         skin/templates/newPowerPoint.ppt \
+        skin/templates/newDoc.et \
+        skin/templates/newExcel.ppt \
+        skin/templates/newPowerPoint.dps \
         skin/templates/newTxt.txt
 }
 
