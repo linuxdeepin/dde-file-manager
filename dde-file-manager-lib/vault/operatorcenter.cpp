@@ -365,3 +365,15 @@ QString OperatorCenter::getdecryptDirPath()
 {
     return makeVaultLocalPath(VAULT_DECRYPT_DIR_NAME);
 }
+
+QStringList OperatorCenter::getConfigFilePath()
+{
+    QStringList lstPath;
+
+    lstPath << makeVaultLocalPath(PASSWORD_FILE_NAME);
+    lstPath << makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
+    lstPath << makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
+    lstPath << makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
+
+    return lstPath;
+}

@@ -42,6 +42,21 @@ bool InterfaceActiveVault::checkUserKey(const QString &userKey, QString &cliper)
     return OperatorCenter::getInstance().checkUserKey(userKey, cliper);
 }
 
+QString InterfaceActiveVault::getEncryptDir()
+{
+    return OperatorCenter::getInstance().getEncryptDirPath();
+}
+
+QString InterfaceActiveVault::getDecryptDir()
+{
+    return OperatorCenter::getInstance().getdecryptDirPath();
+}
+
+QStringList InterfaceActiveVault::getConfigFilePath()
+{
+    return OperatorCenter::getInstance().getConfigFilePath();
+}
+
 EN_VaultState InterfaceActiveVault::vaultState()
 {
     return OperatorCenter::getInstance().vaultState();

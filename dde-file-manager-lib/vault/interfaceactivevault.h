@@ -20,7 +20,7 @@ public:
     QDialog *getActiveVaultWidget();
 
     /**
-     * @brief getPassword
+     * @brief getPassword 获取密码
      * @return
      */
     static QString getPassword();
@@ -48,6 +48,24 @@ public:
      */
     static bool checkUserKey(const QString &userKey, QString &cliper);
 
+
+    /**
+     * @brief getEncryptedDir 获得加密文件夹路径
+     * @return
+     */
+    static QString getEncryptDir();
+
+    /**
+     * @brief getDecryptDir 获得解密文件夹路径
+     * @return
+     */
+    static QString getDecryptDir();
+
+    /**
+     * @brief getConfigFilePath
+     * @return
+     */
+    static QStringList getConfigFilePath();
 
     /**
      * @brief vaultState // 获得保险箱状态

@@ -84,6 +84,9 @@ public:
     // 获得解密文件夹路径
     QString getdecryptDirPath();
 
+    // 获得配置文件路径
+    QStringList getConfigFilePath();
+
 signals:
 
 public slots:
