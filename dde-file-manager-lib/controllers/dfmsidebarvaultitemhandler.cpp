@@ -37,6 +37,10 @@
 #include "durl.h"
 #include "interfaces/dfilemenu.h"
 
+#include "vault/interfaceactivevault.h"
+
+#include <QDialog>
+
 DFM_BEGIN_NAMESPACE
 
 DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey)
@@ -68,7 +72,44 @@ DFMSideBarVaultItemHandler::DFMSideBarVaultItemHandler(QObject *parent)
 
 void DFMSideBarVaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
-    return DFMSideBarItemInterface::cdAction(sidebar, item);
+    InterfaceActiveVault activeVault;
+    EN_VaultState enState = activeVault.vaultState();
+    switch (enState) {
+    case EN_VaultState::NotAvailable:{  // 没有安装cryfs
+        qDebug() << "Don't setup cryfs, can't use vault, please setup cryfs!";
+        break;
+    }
+    case EN_VaultState::NotExisted:{    // 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
+        QDialog *dlg = activeVault.getActiveVaultWidget();
+        if(QDialog::Accepted == dlg->exec()){
+            // todo 进入保险箱主界面
+            DFMSideBarItemInterface::cdAction(sidebar, item);
+        }
+        dlg = nullptr;
+        break;
+    }
+    case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
+        // todo
+
+        DFMSideBarItemInterface::cdAction(sidebar, item);
+
+
+        break;
+    }
+    case EN_VaultState::Unlocked:{  // 保险箱处于开锁状态，直接进入主界面
+//        DUrl newUrl;
+//        newUrl.setScheme(DFMVAULT_SCHEME);
+//        newUrl.setHost("files");
+//        newUrl.setPath("/");
+        DFMSideBarItemInterface::cdAction(sidebar, item);
+
+        break;
+    }
+    default:{   // 未考虑
+        break;
+    }
+    }
+//    return DFMSideBarItemInterface::cdAction(sidebar, item);
 }
 
 QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)

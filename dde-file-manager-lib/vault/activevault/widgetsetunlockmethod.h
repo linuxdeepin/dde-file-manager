@@ -1,0 +1,99 @@
+#ifndef WIDGETSETUNLOCKMETHOD_H
+#define WIDGETSETUNLOCKMETHOD_H
+
+#include <QWidget>
+#include <dtkwidget_global.h>
+
+#define PASSWORD_LENGHT_MAX     24
+
+QT_BEGIN_NAMESPACE
+class QLineEdit;
+class QPushButton;
+class QCheckBox;
+class QLabel;
+class OperatorCenter;
+class QSlider;
+class QComboBox;
+class QGridLayout;
+QT_END_NAMESPACE
+
+class WidgetToolTips;
+
+DWIDGET_BEGIN_NAMESPACE
+class DPasswordEdit;
+DWIDGET_END_NAMESPACE
+
+class customPassword;
+
+DWIDGET_USE_NAMESPACE
+
+class WidgetSetUnlockMethod : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit WidgetSetUnlockMethod(QWidget *parent = nullptr);
+    ~WidgetSetUnlockMethod();
+
+signals:
+    void sigAccepted();
+    // 抛出二维码显示的内容
+    void qrcodeContant(const QString &qrcode);
+
+public slots:
+
+private slots:
+    void slotIsShowPassword();
+    void slotIshowRepeatPassword();
+    void slotPasswordEditFinished();
+    void slotRepeatPasswordEditFinished();
+    // 下一步按钮点击
+    void slotNextBtnClicked();
+    // 类型切换
+    void slotTypeChanged(int index);
+    // 随即密码长度改变
+    void slotLengthChanged(int length);
+    // 限制密码的长度
+    void slotLimiPasswordLength(const QString &password);
+
+private:
+    // 校验密码是否符合规则
+    bool checkPassword(const QString& password);
+    // 校验重复密码框是否符合规则
+    bool checkRepeatPassword();
+    // 校验界面输入信息是否符合规则
+    bool checkInputInfo();
+
+private:
+    QComboBox           *m_pTypeCombo;
+
+    QLabel              *m_pPasswordLabel;
+//    QLineEdit           *m_pPassword;
+//    QPushButton         *m_pIsShowPassword;
+    DPasswordEdit       *m_pPassword;
+
+    QLabel              *m_pLengthLabel;
+    QSlider             *m_pLengthSlider;
+    QLineEdit           *m_pLengthEdit;
+    QLabel              *m_pStrengthLabel;
+
+    QLabel              *m_pRepeatPasswordLabel;
+//    QLineEdit           *m_pRepeatPassword;
+//    QPushButton         *m_pIsShowRepeatPassword;
+    DPasswordEdit       *m_pRepeatPassword;
+
+    QLabel              *m_pResultLabel;
+    QLineEdit           *m_pResultEdit;
+
+    QLabel              *m_pPasswordHintLabel;
+    QLineEdit           *m_pTips;
+
+    QCheckBox           *m_pOtherMethod;
+
+    QPushButton         *m_pNext;
+
+    QGridLayout         *play;
+
+    WidgetToolTips      *m_pToolTip;
+};
+
+#endif // WIDGETSETUNLOCKMETHOD_H

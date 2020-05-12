@@ -41,14 +41,17 @@ FallbackDispatcher::FallbackDispatcher(QWidget *parent)
 
 QPair<DUrl, bool> FallbackDispatcher::requireRedirect(VaultController::VaultState state)
 {
-    switch (state) {
-    case VaultController::Unlocked:
-        return {VaultController::makeVaultUrl(), true};
-    case VaultController::Encrypted:
-        return {VaultController::makeVaultUrl("/", "unlock"), true};
-    default:
-        return {VaultController::makeVaultUrl("/", "setup"), true};
-    }
+    // gongheng测试
+    return {VaultController::makeVaultUrl(), true};
+
+//    switch (state) {
+//    case VaultController::Unlocked:
+//        return {VaultController::makeVaultUrl(), true};
+//    case VaultController::Encrypted:
+//        return {VaultController::makeVaultUrl("/", "unlock"), true};
+//    default:
+//        return {VaultController::makeVaultUrl("/", "setup"), true};
+//    }
 }
 
 // --------------------------------------------------------

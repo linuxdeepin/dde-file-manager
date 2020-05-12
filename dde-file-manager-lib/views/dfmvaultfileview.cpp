@@ -95,10 +95,10 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     if (state != VaultController::Unlocked) {
         switch (state) {
         case VaultController::NotExisted:
-            cd(VaultController::makeVaultUrl("/", "setup"));
+//            cd(VaultController::makeVaultUrl("/", "setup"));
             return false;
         case VaultController::Encrypted:
-            cd(VaultController::makeVaultUrl("/", "unlock"));
+//            cd(VaultController::makeVaultUrl("/", "unlock"));
             return false;
         default:
             return false;
