@@ -463,7 +463,7 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
         m_bRemoveVault = true;
         // 验证成功，先对保险箱进行上锁
         VaultController::getVaultController()->lockVault();
-        this->setVisible(false);
+//        this->setVisible(false);
     }
         break;
     default:
@@ -475,8 +475,8 @@ void DFMVaultRemovePages::onLockVault(int state)
 {
     if (state == 0 && m_bRemoveVault){
         QString rmPath = VaultController::getVaultController()->vaultLockPath();
-        m_rmFileDialog->removeVault(rmPath);
-        m_rmFileDialog->exec();
+//        m_rmFileDialog->removeVault(rmPath);
+//        m_rmFileDialog->exec();
         accept();
     }
 }

@@ -44,6 +44,8 @@
 
 #include <QDialog>
 
+
+
 DFM_BEGIN_NAMESPACE
 
 DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey)
@@ -136,8 +138,8 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
 
         // 立即上锁
         QAction *action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::LockNow));
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            lockNow();
+        QObject::connect(action, &QAction::triggered, action, [this, sidebar](){
+            lockNow(sidebar);
         });
 
         // 自动上锁
@@ -163,21 +165,21 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
 
         // 删除保险柜
         action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::DeleteVault));
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            showDeleteVaultView();
+        QObject::connect(action, &QAction::triggered, action, [this, sidebar](){
+            showDeleteVaultView(sidebar);
         });
     } else if (vaultState == VaultController::Encrypted) {
 
         // 解锁
         QAction *action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::UnLock));
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            showUnLockView();
+        QObject::connect(action, &QAction::triggered, action, [this, sidebar, item](){
+            showUnLockView(sidebar, item);
         });
 
         // 使用恢复凭证
         action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::UnLockByKey));
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            showCertificateView();
+        QObject::connect(action, &QAction::triggered, action, [this, sidebar, item](){
+            showCertificateView(sidebar, item);
         });
     }
 
@@ -188,7 +190,7 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
     return menu;
 }
 
-bool DFMSideBarVaultItemHandler::lockNow()
+bool DFMSideBarVaultItemHandler::lockNow(const DFMSideBar *sidebar)
 {
     // Something to do.
     VaultController::getVaultController()->lockVault();
@@ -202,22 +204,30 @@ bool DFMSideBarVaultItemHandler::autoLock(uint minutes)
     return true;
 }
 
-void DFMSideBarVaultItemHandler::showDeleteVaultView()
+void DFMSideBarVaultItemHandler::showDeleteVaultView(const DFMSideBar *sidebar)
 {
     // Something to do.
-    DFMVaultRemovePages::instance()->exec();
+    if(DDialog::Accepted == DFMVaultRemovePages::instance()->exec()){
+            // 切换到home目录下
+            DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
+            wnd->cd(DUrl(COMPUTER_ROOT));
+    }
 }
 
-void DFMSideBarVaultItemHandler::showUnLockView()
+void DFMSideBarVaultItemHandler::showUnLockView(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     // Something to do.
-    DFMVaultUnlockPages::instance()->exec();
+    if(QDialog::Accepted == DFMVaultUnlockPages::instance()->exec()){
+            DFMSideBarItemInterface::cdAction(sidebar, item);
+        }
 }
 
-void DFMSideBarVaultItemHandler::showCertificateView()
+void DFMSideBarVaultItemHandler::showCertificateView(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     // Something to do.
-    DFMVaultRecoveryKeyPages::instance()->exec();
+    if(QDialog::Accepted == DFMVaultRecoveryKeyPages::instance()->exec()){
+            DFMSideBarItemInterface::cdAction(sidebar, item);
+        }
 }
 
 DFM_END_NAMESPACE

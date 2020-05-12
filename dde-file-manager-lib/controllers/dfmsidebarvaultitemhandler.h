@@ -25,8 +25,9 @@
 
 #define SIDEBAR_ID_VAULT "__vault"
 
-DFM_BEGIN_NAMESPACE
+class DFileManagerWindow;
 
+DFM_BEGIN_NAMESPACE
 /**
  * @brief 实现侧边栏保险箱
  */
@@ -66,7 +67,7 @@ private:
      * @brief 立即上锁
      * @return 上锁是否成功
      */
-    bool lockNow();
+    bool lockNow(const DFMSideBar *sidebar);
 
     /**
      * @brief 自动上锁
@@ -78,17 +79,17 @@ private:
     /**
      * @brief 显示删除保险箱页面
      */
-    void showDeleteVaultView();
+    void showDeleteVaultView(const DFMSideBar *sidebar);
 
     /**
      * @brief 显示解锁页面
      */
-    void showUnLockView();
+    void showUnLockView(const DFMSideBar *sidebar, const DFMSideBarItem *item);
 
     /**
      * @brief 显示凭证页面
      */
-    void showCertificateView();
+    void showCertificateView(const DFMSideBar *sidebar, const DFMSideBarItem *item);
 };
 
 DFM_END_NAMESPACE
