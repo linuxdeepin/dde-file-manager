@@ -139,8 +139,8 @@ void DialogManager::initConnect()
 
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
 
-    connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
-    connect(m_taskDialog, &DTaskDialog::closed, this, &DialogManager::removeAllJobs);
+//    connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
+//    connect(m_taskDialog, &DTaskDialog::closed, this, &DialogManager::removeAllJobs);
     connect(m_closeIndicatorDialog, &CloseAllDialogIndicator::allClosed, this, &DialogManager::closeAllPropertyDialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
@@ -167,6 +167,7 @@ void DialogManager::initConnect()
 
     connect(fileSignalManager, &FileSignalManager::requestShowFilePreviewDialog, this, &DialogManager::showFilePreviewDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowErrorDialog, this, &DialogManager::showErrorDialog);
+    connect(fileSignalManager, &FileSignalManager::activeTaskDlg, this, &DialogManager::showTaskProgressDlgOnActive);
 
     if (getGvfsMountManager(false)) {
         connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &DialogManager::showNtfsWarningDialog);
@@ -1271,6 +1272,26 @@ void DialogManager::handleFocusChanged(QWidget *old, QWidget *now)
         raiseAllPropertyDialog();
     } else if (m_closeIndicatorDialog == qobject_cast<CloseAllDialogIndicator *>(qApp->activeWindow())) {
         raiseAllPropertyDialog();
+    }
+}
+
+void DialogManager::showTaskProgressDlgOnActive()
+{
+    if (!m_taskDialog)
+        return;
+
+    m_taskDialog->show();
+    m_taskDialog->raise();
+    m_taskDialog->activateWindow();
+
+    QMapIterator<QString, FileJob *> iter(m_jobs);
+    while (iter.hasNext()) {
+        iter.next();
+        if (iter.value()->getIsFinished())
+            continue;
+        QMap<QString, QString> mapJobDetail;
+        mapJobDetail.insert("jobId", iter.value()->getJobId());
+        m_taskDialog->addTask(mapJobDetail);
     }
 }
 

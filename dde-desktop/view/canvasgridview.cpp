@@ -1779,13 +1779,14 @@ static inline QRect fix_available_geometry()
 
     int dockHideMode = DockIns::instance()->hideMode();
     if ( 1 == dockHideMode) {//隐藏
-        qDebug() << "primarygeometry:" << primaryGeometry << "\n"
-                  << "availableRect:" << primaryGeometry << "\n";
+        qDebug() << "dock hidden" << "primarygeometry:" << primaryGeometry
+                  << "availableRect:" << primaryGeometry;
         return primaryGeometry;
     }
 
     DockRect dockrect = DockIns::instance()->frontendWindowRect();
-    qDebug()<<"fix_available_geometry dockrect"<< (QRect)dockrect;
+    const int positon = DockIns::instance()->position();
+    qDebug()<<"dock postion" << positon << " dockrect"<< (QRect)dockrect;
     qreal t_devicePixelRatio = Display::instance()->getScaleFactor();
     //        if (!QHighDpiScaling::m_active) {
     //            t_devicePixelRatio = 1;
@@ -1795,7 +1796,7 @@ static inline QRect fix_available_geometry()
     dockrect.height = dockrect.height / t_devicePixelRatio;
 
     QRect ret = primaryGeometry;
-    switch (DockIns::instance()->position()) {
+    switch (positon) {
     case 0: //上
         ret.setY(dockrect.height);
         break;
@@ -2211,10 +2212,10 @@ void CanvasGridView::initConnection()
     this, [ = ]() {
           updateGeometry(Display::instance()->primaryRect());
     });
-    connect(d->dbusDock, &DBusDock::PositionChanged,
-    this, [ = ]() {
-         updateGeometry(Display::instance()->primaryRect());
-    });
+//    connect(d->dbusDock, &DBusDock::PositionChanged,
+//    this, [ = ]() {
+//         updateGeometry(Display::instance()->primaryRect());
+//    }); //不关心位子改变，有bug#25148，全部由区域改变触发
 
     connect(d->dbusDock, &DBusDock::FrontendWindowRectChanged,
     this, [ = ]() {

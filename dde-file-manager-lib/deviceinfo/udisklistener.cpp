@@ -213,7 +213,6 @@ void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
 {
     m_list.removeOne(device);
     m_map.remove(device->getDiskInfo().id());
-
     if (device->getDiskInfo().drive_unix_device().contains("/dev/sr")) {
         m_nCDRomCount--;
         if (m_nCDRomCount == 0) {

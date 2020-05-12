@@ -282,6 +282,16 @@ bool RecentFileInfo::isVirtualEntry() const
     return d->proxy->isVirtualEntry();
 }
 
+const QDateTime RecentFileInfo::getReadTime() const
+{
+    return m_lastReadTime;
+}
+
+void RecentFileInfo::updateReadTime(const QDateTime &date)
+{
+    setReadDateTime(date.toString(Qt::ISODate));
+}
+
 void RecentFileInfo::updateInfo()
 {
     QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");

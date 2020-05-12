@@ -213,6 +213,9 @@ signals:
     // 在擦除光盘完成后重启定时器
     void restartCdScanTimer(const QString &strDevice);
 
+    // 激活任务进度对话框
+    void activeTaskDlg();
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);

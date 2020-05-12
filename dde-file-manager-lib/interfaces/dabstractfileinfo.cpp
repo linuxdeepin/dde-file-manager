@@ -1410,6 +1410,16 @@ bool DAbstractFileInfo::checkMpsStr(const QString &) const
     return false;
 }
 
+const QDateTime DAbstractFileInfo::getReadTime() const
+{
+    return QDateTime();
+}
+
+void DAbstractFileInfo::updateReadTime(const QDateTime &)
+{
+
+}
+
 void DAbstractFileInfo::makeToActive()
 {
     Q_D(DAbstractFileInfo);
