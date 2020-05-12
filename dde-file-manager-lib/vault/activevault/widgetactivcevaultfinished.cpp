@@ -74,8 +74,8 @@ void WidgetActivceVaultFinished::slotEncryptComplete(int nState)
         m_pWaterProgress->setVisible(false);
         play->removeWidget(m_pWaterProgress);
         m_pEncryVaultImage->setIcon(QIcon::fromTheme("dfm_safebox"));
-        play->addWidget(m_pTips3, 5, 0, 1, 4, Qt::AlignHCenter);
         m_pEncryVaultImage->setVisible(true);
+        play->addWidget(m_pTips3, 5, 0, 1, 4, Qt::AlignHCenter);
         m_pTips3->setVisible(true);
         m_pFinishedBtn->setText(tr("ok"));
     }else{
@@ -100,11 +100,11 @@ void WidgetActivceVaultFinished::slotEncryptVault()
         // 调用创建保险箱接口
         // 拿到密码
         QString strPassword = OperatorCenter::getInstance().getSaltAndPasswordClipher();
-        // 拿到解密文件夹
-        QString strDecryptDir = OperatorCenter::getInstance().getdecryptDirPath();
-        // 拿到加密文件夹
-        QString strEncryptDir = OperatorCenter::getInstance().getEncryptDirPath();
-        VaultController::getVaultController()->createVault(strPassword, strEncryptDir, strDecryptDir);
+//        // 拿到解密文件夹
+//        QString strDecryptDir = OperatorCenter::getInstance().getdecryptDirPath();
+//        // 拿到加密文件夹
+//        QString strEncryptDir = OperatorCenter::getInstance().getEncryptDirPath();
+        VaultController::getVaultController()->createVault(strPassword/*, strEncryptDir, strDecryptDir*/);
 
     }else{
         // todo

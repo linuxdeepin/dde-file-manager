@@ -40,7 +40,6 @@ bool OperatorCenter::createDirAndFile()
     QString strWorkDirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
     // 创建配置文件目录
-//    QString strConfigDir = strWorkDirPath + QDir::separator() + CONFIG_DIR_NAME;
     QString strConfigDir = makeVaultLocalPath();
     QDir configDir(strConfigDir);
     if(!configDir.exists()){
@@ -52,7 +51,6 @@ bool OperatorCenter::createDirAndFile()
     }
 
     // 创建保险箱解密目录
-//    QString strDecryptDir = strConfigDir + QDir::separator() + VAULT_DECRYPT_DIR_NAME;
     QString strDecryptDir = makeVaultLocalPath(VAULT_DECRYPT_DIR_NAME);
     QDir decrypyDir(strDecryptDir);
     if(!decrypyDir.exists()){
@@ -64,7 +62,6 @@ bool OperatorCenter::createDirAndFile()
     }
 
     // 创建保险箱加密目录
-//    QString strEncryptDir = strConfigDir + QDir::separator() + VAULT_ENCRYPY_DIR_NAME;
     QString strEncryptDir = makeVaultLocalPath(VAULT_ENCRYPY_DIR_NAME);
     QDir encryptDir(strEncryptDir);
     if(!encryptDir.exists()){
@@ -76,7 +73,6 @@ bool OperatorCenter::createDirAndFile()
     }
 
     // 创建密码文件
-//    QString strPasswordFile = strConfigDir + QDir::separator() + PASSWORD_FILE_NAME;
     QString strPasswordFile = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile passwordFile(strPasswordFile);
     if(!passwordFile.open(QIODevice::WriteOnly | QIODevice::Append)){
@@ -86,7 +82,6 @@ bool OperatorCenter::createDirAndFile()
     passwordFile.close();
 
     // 创建存放rsa公钥的文件
-//    QString strPriKeyFile = strConfigDir + QDir::separator() + RSA_PUB_KEY_FILE_NAME;
     QString strPriKeyFile = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile prikeyFile(strPriKeyFile);
     if(!prikeyFile.open(QIODevice::WriteOnly | QIODevice::Append)){
@@ -96,7 +91,6 @@ bool OperatorCenter::createDirAndFile()
     prikeyFile.close();
 
     // 创建存放rsa公钥加密后密文的文件
-//    QString strRsaClipher = strConfigDir + QDir::separator() + RSA_CLIPHERTEXT_FILE_NAME;
     QString strRsaClipher = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
     QFile rsaClipherFile(strRsaClipher);
     if(!rsaClipherFile.open(QIODevice::WriteOnly | QIODevice::Append)){
@@ -106,7 +100,6 @@ bool OperatorCenter::createDirAndFile()
     rsaClipherFile.close();
 
     // 创建密码提示信息文件
-//    QString strPasswordHintFilePath = strConfigDir + QDir::separator() + PASSWORD_HINT_FILE_NAME;
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
     if(!passwordHintFile.open(QIODevice::WriteOnly | QIODevice:: Append)){
@@ -120,9 +113,6 @@ bool OperatorCenter::createDirAndFile()
 
 bool OperatorCenter::saveSaltAndClipher(const QString &password, const QString &passwordHint)
 {
-//    QString strConfigDirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
-//            + QDir::separator() + CONFIG_DIR_NAME;
-
     // 加密密码，并将盐和密文写入密码文件
     // 随机盐
     QString strRandomSalt = pbkdf2::createRandomSalt(RANDOM_SALT_LENGTH);
@@ -130,7 +120,6 @@ bool OperatorCenter::saveSaltAndClipher(const QString &password, const QString &
     QString strClipherText = pbkdf2::pbkdf2EncrypyPassword(password, strRandomSalt, ITERATION, PASSWORD_CLIPHER_LENGTH);
     // 写入文件
     QString strSaltAndClipherText = strRandomSalt + strClipherText;
-//    QString strPasswordFile = strConfigDirPath + QDir::separator() + PASSWORD_FILE_NAME;
     QString strPasswordFile = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile passwordFile(strPasswordFile);
     if(!passwordFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
@@ -142,7 +131,6 @@ bool OperatorCenter::saveSaltAndClipher(const QString &password, const QString &
     passwordFile.close();
 
     // 保存密码提示信息
-//    QString strPasswordHintFilePath = strConfigDirPath + QDir::separator() + PASSWORD_HINT_FILE_NAME;
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
     if(!passwordHintFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
@@ -166,9 +154,6 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     QString strPubKey("");
     rsam::createRsaKey(strPubKey, strPriKey);
 
-//    QString strWorkPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
-//            + QDir::separator() + CONFIG_DIR_NAME;
-
     // 私钥加密
     QString strClipher = rsam::rsa_pri_encrypt_base64(password, strPriKey);
 
@@ -185,7 +170,6 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     strSaveToLocal = strPart1 + strPart3;
 
     // 保存部分公钥
-//    QString publicFilePath = strWorkPath + QDir::separator() + RSA_PUB_KEY_FILE_NAME;
     QString publicFilePath = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile publicFile(publicFilePath);
     if(!publicFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
@@ -197,7 +181,6 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     publicFile.close();
 
     // 保存密文
-//    QString strClipherFilePath = strWorkPath + QDir::separator() + RSA_CLIPHERTEXT_FILE_NAME;
     QString strClipherFilePath = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
     QFile clipherFile(strClipherFilePath);
     if(!clipherFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
@@ -214,8 +197,6 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
 bool OperatorCenter::checkPassword(const QString &password, QString &clipher)
 {
     // 获得本地盐及密文
-//    QString strfilePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
-//            + QDir::separator() + CONFIG_DIR_NAME + QDir::separator() + PASSWORD_FILE_NAME;
     QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile file(strfilePath);
     if(!file.open(QIODevice::Text | QIODevice::ReadOnly)){
@@ -247,11 +228,7 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
         return  false;
     }
 
-//    QString strConfigDirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
-//            + QDir::separator() + CONFIG_DIR_NAME;
-
     // 结合本地公钥和用户密钥，还原完整公钥
-//    QString strLocalPubKeyFilePath = strConfigDirPath + QDir::separator() + RSA_PUB_KEY_FILE_NAME;
     QString strLocalPubKeyFilePath = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile localPubKeyfile(strLocalPubKeyFilePath);
     if(!localPubKeyfile.open(QIODevice::Text | QIODevice::ReadOnly)){
@@ -264,7 +241,6 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
     QString strNewPubKey = strLocalPubKey.insert(USER_KEY_INTERCEPT_INDEX, userKey);
 
     // 利用完整公钥解密密文，得到密码
-//    QString strRSAClipherFilePath = strConfigDirPath + QDir::separator() + RSA_CLIPHERTEXT_FILE_NAME;
     QString strRSAClipherFilePath = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
     QFile rsaClipherfile(strRSAClipherFilePath);
     if(!rsaClipherfile.open(QIODevice::Text | QIODevice::ReadOnly)){
@@ -292,8 +268,6 @@ QString OperatorCenter::getUserKey()
 
 bool OperatorCenter::getPasswordHint(QString &passwordHint)
 {
-//    QString strPasswordHintFilePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
-//            + QDir::separator() + CONFIG_DIR_NAME + QDir::separator() + PASSWORD_HINT_FILE_NAME;
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
     if(!passwordHintFile.open(QIODevice::Text | QIODevice::ReadOnly)){

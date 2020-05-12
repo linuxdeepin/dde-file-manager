@@ -22,6 +22,11 @@ QDialog *InterfaceActiveVault::getActiveVaultWidget()
     return m_pWidget;
 }
 
+QString InterfaceActiveVault::getPassword()
+{
+    return OperatorCenter::getInstance().getSaltAndPasswordClipher();
+}
+
 bool InterfaceActiveVault::getPasswordHint(QString &passwordHint)
 {
     return OperatorCenter::getInstance().getPasswordHint(passwordHint);

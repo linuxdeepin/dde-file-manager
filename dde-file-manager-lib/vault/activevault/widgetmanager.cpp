@@ -23,10 +23,6 @@ WidgetManager::WidgetManager(QWidget *parent)
 {
     this->setIcon(QIcon::fromTheme("dfm_safebox"));
 
-//    QHBoxLayout *play = new QHBoxLayout(this);
-//    play->setMargin(1);
-//    play->setSpacing(1);
-
     // 初始化试图容器
     m_pStackedWidget = new QStackedWidget(this);
 
@@ -50,8 +46,6 @@ WidgetManager::WidgetManager(QWidget *parent)
     m_pStackedWidget->addWidget(m_ActiveVaultFinishedWidget);
 
     this->addContent(m_pStackedWidget);
-
-//    play->addWidget(m_pStackedWidget);
 }
 
 void WidgetManager::slotNextWidget()
