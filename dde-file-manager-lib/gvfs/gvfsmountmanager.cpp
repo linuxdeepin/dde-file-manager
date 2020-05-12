@@ -79,10 +79,6 @@ QJsonObject GvfsMountManager::SMBLoginObj = {};
 DFMUrlBaseEvent GvfsMountManager::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl());
 QPointer<QEventLoop> GvfsMountManager::eventLoop;
 
-//fix: 探测光盘推进,弹出和挂载状态机标识
-bool GvfsMountManager::g_burnVolumeFlag = false;
-bool GvfsMountManager::g_burnMountFlag = false;
-QMap<QString, QPair<bool, bool>> GvfsMountManager::g_mapCdStatus;
 //fix: 每次弹出光驱时需要删除临时缓存数据文件
 QString GvfsMountManager::g_qVolumeId = "sr0";
 
@@ -480,9 +476,8 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qMount.icons().contains("media-optical")) { //CD/DVD
-        GvfsMountManager::g_burnVolumeFlag = true;
-        GvfsMountManager::g_burnMountFlag = true;
-        GvfsMountManager::g_mapCdStatus[getVolTag(volume)] = QPair<bool, bool>(true, true);
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bMntFlag = true;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bVolFlag = true;
         //fix: 设置光盘容量属性
         //DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAddMount);
     }
@@ -530,8 +525,7 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qMount.name().contains("CD/DVD") || qMount.name().contains("CD") || qMount.icons().contains("media-optical")) { //CD/DVD
-        GvfsMountManager::g_burnMountFlag = false;
-        GvfsMountManager::g_mapCdStatus[getVolTag(mount)].second = false;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(mount)].bMntFlag = false;
     }
 
     qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << "=======================";
@@ -605,9 +599,8 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qVolume.icons().contains("media-optical")) { //CD/DVD
-        GvfsMountManager::g_burnVolumeFlag = true;
-        GvfsMountManager::g_burnMountFlag = false;
-        GvfsMountManager::g_mapCdStatus[getVolTag(volume)] = QPair<bool, bool>(true, false);
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bMntFlag = false;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bVolFlag = true;
         //fix: 设置光盘容量属性
         DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAdd, getVolTag(volume));
     }
@@ -654,8 +647,8 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qVolume.name().contains("CD/DVD") || qVolume.name().contains("CD") || qVolume.icons().contains("media-optical")) { //CD/DVD
-        GvfsMountManager::g_burnVolumeFlag = false;
-        GvfsMountManager::g_mapCdStatus[getVolTag(volume)].first = false;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bVolFlag = false;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bBurningOrErasing = false;
     }
 
     //fix: 每次弹出光驱时需要删除临时缓存数据文件
@@ -667,9 +660,8 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
         QDir(tempMediaPath).removeRecursively();
 
         //fix: 设置光盘容量属性
-        DFMOpticalMediaWidget::g_totalSize = 0;
-        DFMOpticalMediaWidget::g_usedSize = 0;
-        DFMOpticalMediaWidget::g_mapCDUsage[getVolTag(volume)] = QPair<quint64, quint64>(0, 0);
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nTotal = 0;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nUsage = 0;;
         DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct, getVolTag(volume));
         QWidget *pWid = qApp->focusWidget();
         if (pWid)

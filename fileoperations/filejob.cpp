@@ -41,6 +41,7 @@
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "disomaster.h"
+#include "views/dfmopticalmediawidget.h"
 
 #include "tag/tagmanager.h"
 
@@ -636,12 +637,12 @@ void FileJob::doOpticalBlank(const DUrl &device)
     m_tarPath = rdevice.path();
 
     emit fileSignalManager->stopCdScanTimer(m_tarPath);
-
+    // 执行擦除的时候设置光驱相关标志位为true
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[m_tarPath.mid(5)].bBurningOrErasing = true;
     if (drive->opticalBlank()) {
         DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(rdevice.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
-    } else {
-        blkdev->unmount({});
     }
+    blkdev->unmount({});
 
     m_opticalOpSpeed.clear();
     jobPrepared();
@@ -672,6 +673,8 @@ void FileJob::doOpticalBlank(const DUrl &device)
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[dev.mid(5)].bBurningOrErasing = false;
+
 
     //fix: 空白光盘擦除处理完后需要对当前刻录的全局状态机置恢复位，便于其它地方调用状态机完整性
     m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
@@ -761,9 +764,8 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {
         DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
-    } else {
-        blkdev->unmount({});
     }
+    blkdev->unmount({});
     m_opticalJobPhase = 0;
     m_opticalOpSpeed.clear();
     jobPrepared();
@@ -829,6 +831,11 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
     } else if (pid > 0) { // parent process: wait and notify
         close(badPipefd[1]);
         close(progressPipefd[1]);
+
+        // 开始执行刻录的时候把当前光驱的刻录状态置位true，好在刻录的时候，如果双击加载光驱可以做是否加载的判定
+        // 刻录结束后置位false
+        QString strDevice = device.path().mid(5);
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = true;
 
         // fake:
         QDateTime fakeStartTime;
@@ -920,6 +927,8 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             jobRemoved();
         emit finished();
         emit fileSignalManager->restartCdScanTimer(""); // 刻录完成后可能需要重启定时器（如果当前只有一个光驱，定时器不会被重启）
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = false; // 刻录结束，把刻录标志置位false
+
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Failed) {
             //emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
@@ -1044,9 +1053,8 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {
         DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
-    } else {
-        blkdev->unmount({});
     }
+    blkdev->unmount({});
     m_opticalJobPhase = 0;
     m_opticalOpSpeed.clear();
     jobPrepared();
@@ -1109,6 +1117,11 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
     } else if (pid > 0) { // parent process: wait and notify
         close(badPipefd[1]);
         close(progressPipefd[1]);
+
+        // 开始执行刻录的时候把当前光驱的刻录状态置位true，好在刻录的时候，如果双击加载光驱可以做是否加载的判定
+        // 刻录结束后置位false
+        QString strDevice = device.path().mid(5);
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = true;
 
         // fake:
         QDateTime fakeStartTime;
@@ -1200,6 +1213,9 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             jobRemoved();
         emit finished();
         emit fileSignalManager->restartCdScanTimer(""); // 刻录完成后可能需要重启定时器（如果当前只有一个光驱，定时器不会被重启）
+        // 开始执行刻录的时候把当前光驱的刻录状态置位true，好在刻录的时候，如果双击加载光驱可以做是否加载的判定
+        // 刻录结束后置位false
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = false;
 
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Failed) {
             // 刻录失败提示

@@ -338,10 +338,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             QString strVolTag;
             if (pFileInfo)
                 strVolTag = pFileInfo->getVolTag();
-            dskspace = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
-            dskinuse = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
-//            dskspace = DFMOpticalMediaWidget::g_totalSize;
-//            dskinuse = DFMOpticalMediaWidget::g_usedSize;
+            dskspace = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
+            dskinuse = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
         }
 
         progbdf->setMaximum(10000);
@@ -1184,10 +1182,8 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
         QString strVolTag;
         if (pFileInfo)
             strVolTag = pFileInfo->getVolTag();
-        fsSize = DFMOpticalMediaWidget::g_totalSize;
-        fsUsed = DFMOpticalMediaWidget::g_usedSize;
-        fsSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
-        fsUsed = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
+        fsSize = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
+        fsUsed = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
     }
 
     results.append({QObject::tr("Total space"), FileUtils::formatSize(fsSize)});

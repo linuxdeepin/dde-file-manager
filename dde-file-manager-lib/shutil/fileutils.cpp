@@ -39,6 +39,7 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "controllers/appcontroller.h"
 #include "dbusinterface/startmanager_interface.h"
+#include "views/dfmopticalmediawidget.h"
 
 #include <dstorageinfo.h>
 
@@ -440,8 +441,12 @@ QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize, QString 
     }
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
-    bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
-    bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
+    bool bVolFlag = strVolTag.startsWith("sr") // 避免因传入非光驱挂载点而插入 CdStatusInfo 对象
+            ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag
+            : false;
+    bool bMntFlag = strVolTag.startsWith("sr")
+            ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bMntFlag
+            : false;
     if (bVolFlag && (totalSize == 0)) { //CD/DVD
         return QObject::tr("Unknown");
     } else if (!bVolFlag && !bMntFlag  && (totalSize == 0)) { //CD/DVD
