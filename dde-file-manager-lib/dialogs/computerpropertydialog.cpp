@@ -203,6 +203,8 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         version = m_systemInfo->version();
     }
 
+    version = version.replace("Personal", "Home");
+
     datas.insert(data.at(0), DSysInfo::computerName());
     datas.insert(data.at(1), version);
     datas.insert(data.at(2), QString::number(m_systemInfo->systemType()) + tr("Bit"));
