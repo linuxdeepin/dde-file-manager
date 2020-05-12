@@ -41,7 +41,16 @@ VaultFileInfo::VaultFileInfo(const DUrl &url)
         setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, actualUrl)));
     }
 
-    m_sizeWorker = new DFileStatisticsJob();
+    if (isRootDirectory()) {
+        m_sizeWorker = new DFileStatisticsJob();
+
+        VaultController *controller = VaultController::getVaultController();
+
+        DUrlList urlList;
+        urlList << controller->vaultToLocalUrl(controller->makeVaultUrl());
+
+        m_sizeWorker->start(urlList);
+    }
 }
 
 VaultFileInfo::~VaultFileInfo()
@@ -216,7 +225,12 @@ bool VaultFileInfo::canRename() const
 
 qint64 VaultFileInfo::size() const
 {
-    // Something to do.
+    if (isRootDirectory() && m_sizeWorker) {
+
+        qint64 totoalSize = m_sizeWorker->totalSize();
+        return totoalSize;
+    }
+
     return DAbstractFileInfo::size();
 }
 
