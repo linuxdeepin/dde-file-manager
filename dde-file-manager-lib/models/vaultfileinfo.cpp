@@ -67,11 +67,17 @@ DUrl VaultFileInfo::parentUrl() const
 QString VaultFileInfo::iconName() const
 {
     Q_D(const VaultFileInfo);
-    if (d->proxy) {
-        return d->proxy->iconName();
+
+    QString iconName = "dfm_safebox"; // 如果是根目录，用保险柜图标
+
+    QString localFilePath = VaultController::getVaultController()->makeVaultLocalPath();
+    if (localFilePath != filePath()) {
+        if (d->proxy) {
+            iconName = d->proxy->iconName();
+        }
     }
 
-    return "drive-harddisk-encrypted"; // it's not really a harddisk.. maybe we should use a dfm scope vault icon.
+    return iconName;
 }
 
 QString VaultFileInfo::genericIconName() const
