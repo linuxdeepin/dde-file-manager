@@ -175,7 +175,14 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     quint64 sizetotal = index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong();
 
     painter->setPen(pl.color(DPalette::TextTips));
-    painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
+
+    QString scheme = index.data(ComputerModel::DataRoles::Scheme).toString();
+    if (scheme == DFMVAULT_SCHEME) {
+        // 保险柜只显示大小
+        painter->drawText(textrect, Qt::AlignLeft, QString::number(sizeinuse));
+    } else {
+        painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
+    }
 
     QRect usgplrect(option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize), QSize(text_max_width, 6));
     QStyle *sty = option.widget && option.widget->style() ? option.widget->style() : qApp->style();
@@ -199,8 +206,12 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     plopt.palette = option.widget ? option.widget->palette() : qApp->palette();
     plopt.palette.setColor(QPalette::ColorRole::Highlight, plcolor);
     painter->setPen(Qt::PenStyle::NoPen);
-    sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
-    sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
+
+    // 保险柜只显示大小
+    if (scheme != DFMVAULT_SCHEME) {
+        sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
+        sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
+    }
 
     painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 }
