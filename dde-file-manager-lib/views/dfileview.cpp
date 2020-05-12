@@ -1325,6 +1325,10 @@ void DFileView::updateStatusBar()
     event.setWindowId(windowId());
     event.setData(selectedUrls());
     int count = selectedIndexCount();
+    //判断网络文件是否可以到达
+    if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+        return;
+    }
 
     emit notifySelectUrlChanged(selectedUrls());
 
@@ -1499,20 +1503,25 @@ void DFileView::resizeEvent(QResizeEvent *event)
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     D_DC(DFileView);
-
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = isIconViewMode() ? index.isValid() : this->isSelected(index);
     bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
     Qt::ItemFlags flags;
 
     if (isEmptyArea) {
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+            return;
+        }
         flags = model()->flags(rootIndex());
-
         if (!flags.testFlag(Qt::ItemIsEnabled))
             return;
     } else {
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+            return;
+        }
         flags = model()->flags(index);
-
         if (!flags.testFlag(Qt::ItemIsEnabled)) {
             isEmptyArea = true;
             flags = rootIndex().flags();
@@ -1712,6 +1721,7 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return;
     }
 
+
     if (flags == (QItemSelectionModel::Current | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect)) {
         QRect tmp_rect = rect;
         //修改远程时，文件选择框内容选中后被取消问题
@@ -1742,7 +1752,6 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return selectionModel()->select(selection, flags);
 #endif
     }
-
     DListView::setSelection(rect, flags);
 }
 
@@ -2135,7 +2144,10 @@ void DFileView::decreaseIcon()
 void DFileView::openIndex(const QModelIndex &index)
 {
     const DUrl &url = model()->getUrlByIndex(index);
-
+    //判断网络文件是否可以到达
+    if (!DFileService::instance()->checkGvfsMountfileBusy(url)) {
+        return;
+    }
     DFMOpenUrlEvent::DirOpenMode mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()
                                         ? DFMOpenUrlEvent::ForceOpenNewWindow
                                         : DFMOpenUrlEvent::OpenInCurrentWindow;

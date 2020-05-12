@@ -161,10 +161,16 @@ public:
     DFileDevice *createFileDevice(const QObject *sender, const DUrl &url);
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
     DStorageInfo *createStorageInfo(const QObject *sender, const DUrl &url);
-    QList<DAbstractFileInfoPointer> getRootFile() const;
+    QList<DAbstractFileInfoPointer> getRootFile();
     void changeRootFile(const DUrl &fileurl,const bool bcreate = true);
     void startQuryRootFile();
     void clearThread();
+
+    //set cursor busy status
+    void setCursorBusyState(const bool bbusy);
+    //check networkfile is busy(or network is unline)
+    bool checkGvfsMountfileBusy(const DUrl &url);
+
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;
