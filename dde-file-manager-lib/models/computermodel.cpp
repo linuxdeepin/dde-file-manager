@@ -195,6 +195,9 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                     return DFMOpticalMediaWidget::g_usedSize;
                 }
             } else {
+                if (pitmdata->fi->fileUrl().scheme() == DFMVAULT_SCHEME) {
+                    return QString::number(pitmdata->fi->size());
+                }
                 return pitmdata->fi->extraProperties()["fsUsed"];
             }
         }
@@ -246,6 +249,12 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     if (role == DataRoles::DFMRootUrlRole) {
         if (pitmdata->fi) {
             return QVariant::fromValue(pitmdata->fi->fileUrl());
+        }
+    }
+
+    if (role == DataRoles::Scheme) {
+        if (pitmdata->fi) {
+            return QVariant::fromValue(pitmdata->fi->fileUrl().scheme());
         }
     }
 
