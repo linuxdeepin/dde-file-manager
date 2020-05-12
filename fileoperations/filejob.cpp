@@ -661,6 +661,11 @@ void FileJob::doOpticalBlank(const DUrl &device)
     auto tmpStatus = m_opticalJobStatus;
     if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
         for (int i = 0; i < 20; i++) {
+            if (!drive->mediaChangeDetected()) {
+                m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
+                emit requestOpticalJobFailureDialog(JobType::OpticalBlank, TR_CONN_ERROR, QStringList());
+                break;
+            }
             opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
             QThread::msleep(100);
         }
