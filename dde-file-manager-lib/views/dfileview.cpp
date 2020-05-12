@@ -2541,7 +2541,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     if (actions.isEmpty())
         return;
 
-    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList(DAbstractFileInfo::SpaceArea);
 
     QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
 

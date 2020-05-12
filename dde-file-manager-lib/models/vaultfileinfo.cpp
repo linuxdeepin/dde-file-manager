@@ -70,8 +70,7 @@ QString VaultFileInfo::iconName() const
 
     QString iconName = "dfm_safebox"; // 如果是根目录，用保险柜图标
 
-    QString localFilePath = VaultController::getVaultController()->makeVaultLocalPath();
-    if (localFilePath != filePath()) {
+    if (!isRootDirectory()) {
         if (d->proxy) {
             iconName = d->proxy->iconName();
         }
@@ -134,38 +133,39 @@ DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
 
 QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    QString fileDisplayName = this->fileDisplayName();
-    if (fileDisplayName == "vault_unlocked") {
+    if(type != SpaceArea) {
+        if (isRootDirectory()) {
 
-        VaultController::VaultState vaultState = VaultController::getVaultController()->state();
+            VaultController::VaultState vaultState = VaultController::getVaultController()->state();
 
-        QVector<MenuAction> actions;
-        if (vaultState == VaultController::Unlocked) {
+            QVector<MenuAction> actions;
+            if (vaultState == VaultController::Unlocked) {
 
-            actions << MenuAction::Open
-                    << MenuAction::OpenInNewWindow
-                    << MenuAction::Separator
-                    << MenuAction::LockNow
-                    << MenuAction::AutoLock
-                    << MenuAction::Separator
-                    << MenuAction::DeleteVault
-                    << MenuAction::Separator
-                    << MenuAction::Property;
-        } else if (vaultState == VaultController::Encrypted) {
-            actions << MenuAction::UnLock
-                    << MenuAction::UnLockByKey;
+                actions << MenuAction::Open
+                        << MenuAction::OpenInNewWindow
+                        << MenuAction::Separator
+                        << MenuAction::LockNow
+                        << MenuAction::AutoLock
+                        << MenuAction::Separator
+                        << MenuAction::DeleteVault
+                        << MenuAction::Separator
+                        << MenuAction::Property;
+            } else if (vaultState == VaultController::Encrypted) {
+                actions << MenuAction::UnLock
+                        << MenuAction::UnLockByKey;
+            }
+
+            return actions;
         }
-
-        return actions;
     }
 
     return DAbstractFileInfo::menuActionList(type);
 }
 
-QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList() const
+QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList(MenuType type) const
 {
-     QString fileDisplayName = this->fileDisplayName();
-     if (fileDisplayName == "vault_unlocked") {
+    if(type != SpaceArea) {
+        if (isRootDirectory()) {
 
          QMap<MenuAction, QVector<MenuAction> > actions;
          QVector<MenuAction> vecActions;
@@ -179,7 +179,27 @@ QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList() const
          actions.insert(MenuAction::AutoLock, vecActions);
 
          return actions;
+        }
      }
 
      return DAbstractFileInfo::subMenuActionList();
+}
+
+QString VaultFileInfo::fileDisplayName() const
+{
+    if (isRootDirectory()) {
+        return QObject::tr("File Vault");
+    }
+
+    return DAbstractFileInfo::fileDisplayName();
+}
+
+bool VaultFileInfo::isRootDirectory() const
+{
+    bool bRootDir = false;
+    QString localFilePath = VaultController::getVaultController()->makeVaultLocalPath();
+    if (localFilePath == filePath()) {
+        bRootDir = true;
+    }
+    return bRootDir;
 }

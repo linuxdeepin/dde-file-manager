@@ -44,8 +44,12 @@ public:
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
-    QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const override;
+    QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const override;
+
+    QString fileDisplayName() const override;
 
 private:
+    bool isRootDirectory() const;
+
     Q_DECLARE_PRIVATE(VaultFileInfo)
 };
