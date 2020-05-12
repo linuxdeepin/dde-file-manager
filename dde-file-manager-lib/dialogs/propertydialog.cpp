@@ -1132,13 +1132,24 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     DUrl redirectedFileUrl = info->redirectedFileUrl();
     if (!redirectedFileUrl.isEmpty()) {
         if (redirectedFileUrl.burnIsOnDisc()) {
+            if (!redirectedFileUrl.burnDestDevice().isEmpty()) {
+                DUrl stagingUrl = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                                                      + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
+                                                      + redirectedFileUrl.burnDestDevice().replace('/', '_'));
+                QString stagingFilePath = stagingUrl.toLocalFile();
+                if (!stagingFilePath.isEmpty()) {
+                    fileCount = FileUtils::filesCount(stagingFilePath);
+                }
+            }
+
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, redirectedFileUrl);
             DUrl url = DUrl::fromLocalFile(fi->extraProperties()["mm_backer"].toString());
             redirectedFileUrl = url;
         }
+
         QString localFilePath = redirectedFileUrl.toLocalFile();
         if (!localFilePath.isEmpty()) {
-            fileCount = FileUtils::filesCount(localFilePath);
+            fileCount += FileUtils::filesCount(localFilePath);
         }
     }
 
