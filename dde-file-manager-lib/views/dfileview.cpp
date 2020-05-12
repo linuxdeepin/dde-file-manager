@@ -2213,15 +2213,19 @@ bool DFileView::setRootUrl(const DUrl &url)
 
         // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
         QString strVolTag = fileUrl.path().split("/", QString::SkipEmptyParts).count() >= 2
-                ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
-                : "";
+                            ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
+                            : "";
         if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
             emit fileSignalManager->activeTaskDlg();
             return false;
         }
 
         QString devpath = fileUrl.burnDestDevice();
-        QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
+        QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(devpath, {});
+        if (rootDeviceNode.isEmpty()) {
+            return false;
+        }
+        QString udiskspath = rootDeviceNode.first();
         getOpticalDriveMutex()->lock();
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
         getOpticalDriveMutex()->unlock();
