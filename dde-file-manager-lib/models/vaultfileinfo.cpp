@@ -22,6 +22,7 @@
 #include "private/dabstractfileinfo_p.h"
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
+#include "dfilestatisticsjob.h"
 
 #include <QStandardPaths>
 
@@ -38,6 +39,17 @@ VaultFileInfo::VaultFileInfo(const DUrl &url)
         // normal file map to..
         DUrl actualUrl = DUrl::fromLocalFile(VaultController::vaultToLocal(url));
         setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, actualUrl)));
+    }
+
+    m_sizeWorker = new DFileStatisticsJob();
+}
+
+VaultFileInfo::~VaultFileInfo()
+{
+    if (m_sizeWorker) {
+        m_sizeWorker->stop();
+        delete m_sizeWorker;
+        m_sizeWorker = nullptr;
     }
 }
 
@@ -201,6 +213,13 @@ bool VaultFileInfo::canRename() const
     }
     return DAbstractFileInfo::canRename();
 }
+
+qint64 VaultFileInfo::size() const
+{
+    // Something to do.
+    return DAbstractFileInfo::size();
+}
+
 
 bool VaultFileInfo::isRootDirectory() const
 {

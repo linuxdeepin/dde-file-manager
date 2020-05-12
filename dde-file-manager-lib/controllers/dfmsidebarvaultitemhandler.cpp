@@ -129,7 +129,7 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
 
     const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(this, item->url());
     QSet<MenuAction> disableList;
-    menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList());
+    menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList(), false);
     menu->setEventData(DUrl(), {item->url()}, WindowManager::getWindowId(wnd), sidebar);
 
     if (vaultState == VaultController::Unlocked) {
