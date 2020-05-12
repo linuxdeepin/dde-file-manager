@@ -194,6 +194,14 @@ QString VaultFileInfo::fileDisplayName() const
     return DAbstractFileInfo::fileDisplayName();
 }
 
+bool VaultFileInfo::canRename() const
+{
+    if (isRootDirectory()) {
+        return false;
+    }
+    return DAbstractFileInfo::canRename();
+}
+
 bool VaultFileInfo::isRootDirectory() const
 {
     bool bRootDir = false;

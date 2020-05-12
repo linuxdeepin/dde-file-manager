@@ -43,10 +43,13 @@ public:
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
+    // 右键菜单
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const override;
 
     QString fileDisplayName() const override;
+
+    bool canRename() const override;
 
 private:
     bool isRootDirectory() const;
