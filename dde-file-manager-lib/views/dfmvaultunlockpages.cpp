@@ -118,6 +118,8 @@ void DFMVaultUnlockPages::onPasswordChanged(const QString &pwd)
 void DFMVaultUnlockPages::onVaultUlocked(int state)
 {
     if (state == 0){
+        // 清除密码
+        m_passwordEdit->clear();
         emit accept();
     }
 }

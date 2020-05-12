@@ -36,11 +36,12 @@ class DFMVaultRecoveryKeyPages : public DDialog
 public:
     static DFMVaultRecoveryKeyPages *instance();
 
-public slots:
+private slots:
     void onButtonClicked(const int &index);
 
     void recoveryKeyChanged();
 
+    void onUnlockVault(int state);
 private:
     explicit DFMVaultRecoveryKeyPages(QWidget * parent = nullptr);
     ~DFMVaultRecoveryKeyPages() override {}

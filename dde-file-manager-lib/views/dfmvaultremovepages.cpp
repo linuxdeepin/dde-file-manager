@@ -1,4 +1,6 @@
 #include "dfmvaultremovepages.h"
+#include "vault/interfaceactivevault.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -127,11 +129,10 @@ void VaultRemoveFileDialog::removeFileInDir(const QString &path)
     m_removeProgress->setValue(100 * (m_iRmFiles + m_iRmDir - 1) / m_iFiles);
 }
 
-void VaultRemoveFileDialog::removeVault()
+void VaultRemoveFileDialog::removeVault(const QString &rmPath)
 {
-    QString path(tr("/home/liuzhangjian/Documents/new_person(副本)"));
-    if (statisticsFiles(path)){
-        removeFileInDir(path);
+    if (statisticsFiles(rmPath)){
+        removeFileInDir(rmPath);
         this->setMessage(tr("Removed successfully"));
     }else {
         this->setMessage(tr("Failed to remove"));
@@ -160,7 +161,7 @@ VaultPasswordPage::VaultPasswordPage(QWidget *parent)
 
 VaultPasswordPage::~VaultPasswordPage()
 {
-    m_pwdEdit->clear();
+
 }
 
 void VaultPasswordPage::initUI()
@@ -197,7 +198,7 @@ VaultKeyPage::VaultKeyPage(QWidget *parent)
 
 VaultKeyPage::~VaultKeyPage()
 {
-    m_keyEdit->clear();
+
 }
 
 void VaultKeyPage::initUI()
@@ -291,8 +292,9 @@ void DFMVaultRemovePages::initUI()
 void DFMVaultRemovePages::initConnect()
 {
     QAbstractButton *removeBtn = getButton(2);
-    connect(removeBtn, &QAbstractButton::clicked, m_rmFileDialog, &VaultRemoveFileDialog::removeVault);
+    //connect(removeBtn, &QAbstractButton::clicked, m_rmFileDialog, &VaultRemoveFileDialog::removeVault);
     connect(this, &DFMVaultRemovePages::buttonClicked, this, &DFMVaultRemovePages::onButtonClicked);
+    connect(VaultController::getVaultController(), &VaultController::signalLockVault, this, &DFMVaultRemovePages::onLockVault);
 }
 
 void DFMVaultRemovePages::insertPage(const PageType &pageType, QWidget *widget)
@@ -329,8 +331,9 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
             // 密码验证
             VaultPasswordPage *passwordPage = qobject_cast<VaultPasswordPage *>(m_pages[PageType::Password]);
             QString strPwd = passwordPage->getPassword();
+            QString strClipher("");
 
-            if (!false){
+            if (!InterfaceActiveVault::checkPassword(strPwd, strClipher)){
                 //设置QToolTip颜色
                 QPalette palette = QToolTip::palette();
                 palette.setColor(QPalette::Inactive,QPalette::ToolTipBase,Qt::white);   //设置ToolTip背景色
@@ -345,8 +348,10 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
             // 密钥验证
             VaultKeyPage *keyPage = qobject_cast<VaultKeyPage *>(m_pages[PageType::Key]);
             QString strKey = keyPage->getKey();
+            strKey.replace(tr("-"), tr(""));
+            QString strClipher("");
 
-            if (!false){
+            if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
                 if (!false){
                     //设置QToolTip颜色
                     QPalette palette = QToolTip::palette();
@@ -361,14 +366,24 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
             }
         }
 
+        m_bRemoveVault = true;
+        // 验证成功，先对保险箱进行上锁
+        VaultController::getVaultController()->lockVault();
         this->setVisible(false);
-        m_rmFileDialog->removeVault();
-        m_rmFileDialog->exec();
-        this->close();
     }
         break;
     default:
         break;
+    }
+}
+
+void DFMVaultRemovePages::onLockVault(int state)
+{
+    if (state == 0 && m_bRemoveVault){
+        QString rmPath = VaultController::getVaultController()->vaultLockPath();
+        m_rmFileDialog->removeVault(rmPath);
+        m_rmFileDialog->exec();
+        this->close();
     }
 }
 
@@ -379,6 +394,5 @@ void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
     qobject_cast<VaultPasswordPage *>(m_pages[PageType::Password])->clear();
     qobject_cast<VaultKeyPage *>(m_pages[PageType::Key])->clear();
     m_rmFileDialog->clear();
-
-    event->accept();
+    m_bRemoveVault = false;
 }

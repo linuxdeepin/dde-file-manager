@@ -36,8 +36,7 @@ public:
     */
     void clear();
 
-public slots:
-    void removeVault();
+    void removeVault(const QString &rmPath);
 
 signals:
     void removeFinished();
@@ -150,6 +149,8 @@ public:
 public slots:
     void onButtonClicked(int index, const QString &text);
 
+    void onLockVault(int state);
+
 private:
     explicit DFMVaultRemovePages(QWidget *parent = nullptr);
     ~DFMVaultRemovePages() override {}
@@ -170,6 +171,7 @@ private:
     QMap<PageType, QWidget*> m_pages;    //存储页面
     QStackedLayout * m_stackedLayout;   //用于页面切换
     PageType m_currentPage; // 当前显示页面类型
+    bool m_bRemoveVault = false;
 };
 
 #endif // DFMVAULTREMOVEPAGES_H

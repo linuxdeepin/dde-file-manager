@@ -205,19 +205,19 @@ bool DFMSideBarVaultItemHandler::autoLock(uint minutes)
 void DFMSideBarVaultItemHandler::showDeleteVaultView()
 {
     // Something to do.
-    DFMVaultRemovePages::instance()->open();
+    DFMVaultRemovePages::instance()->exec();
 }
 
 void DFMSideBarVaultItemHandler::showUnLockView()
 {
     // Something to do.
-    DFMVaultUnlockPages::instance()->open();
+    DFMVaultUnlockPages::instance()->exec();
 }
 
 void DFMSideBarVaultItemHandler::showCertificateView()
 {
     // Something to do.
-    DFMVaultRecoveryKeyPages::instance()->open();
+    DFMVaultRecoveryKeyPages::instance()->exec();
 }
 
 DFM_END_NAMESPACE

@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmvaultrecoverykeypages.h"
+#include "vault/interfaceactivevault.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QPlainTextEdit>
 #include <QAbstractButton>
@@ -49,6 +51,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
 
     connect(this, &DFMVaultRecoveryKeyPages::buttonClicked, this, &DFMVaultRecoveryKeyPages::onButtonClicked);
     connect(m_recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &DFMVaultRecoveryKeyPages::recoveryKeyChanged);
+    connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultRecoveryKeyPages::onUnlockVault);
 }
 
 DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
@@ -60,7 +63,15 @@ DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
 void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
 {
     if (index == 1){
+        QString strKey = m_recoveryKeyEdit->toPlainText();
+        strKey.replace(tr("-"), tr(""));
 
+        QString strClipher("");
+        if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
+            VaultController::getVaultController()->unlockVault(strClipher);
+        }
+
+        return;
     }
 
     // 重置所有控件状态
@@ -143,6 +154,14 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
         m_recoveryKeyEdit->setTextCursor(textCursor);
     } else {
         isEdited = false;
+    }
+}
+
+void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
+{
+    if (state == 0){
+        m_recoveryKeyEdit->clear();
+        emit accept();
     }
 }
 
