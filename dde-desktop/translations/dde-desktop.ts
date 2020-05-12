@@ -4,43 +4,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2683"/>
+        <location filename="../view/canvasgridview.cpp" line="2684"/>
         <source>Icon size</source>
         <translation>Icon size</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2689"/>
+        <location filename="../view/canvasgridview.cpp" line="2690"/>
         <source>Auto merge</source>
         <translation>Auto merge</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2704"/>
+        <location filename="../view/canvasgridview.cpp" line="2705"/>
         <source>Auto arrange</source>
         <translation>Auto arrange</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2761"/>
-        <location filename="../view/canvasgridview.cpp" line="2764"/>
+        <location filename="../view/canvasgridview.cpp" line="2762"/>
+        <location filename="../view/canvasgridview.cpp" line="2765"/>
         <source>Set Wallpaper</source>
         <translation>Set Wallpaper</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2766"/>
+        <location filename="../view/canvasgridview.cpp" line="2767"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Wallpaper and Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2878"/>
+        <location filename="../view/canvasgridview.cpp" line="2879"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2744"/>
+        <location filename="../view/canvasgridview.cpp" line="2745"/>
         <source>Display Settings</source>
         <translation>Display Settings</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2753"/>
+        <location filename="../view/canvasgridview.cpp" line="2754"/>
         <source>Corner Settings</source>
         <translation>Corner Settings</translation>
     </message>
@@ -142,27 +142,27 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="13"/>
+        <location filename="../accessible/frameaccessibledefine.h" line="15"/>
         <source>screen_background</source>
         <translation>Screen background</translation>
     </message>
     <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="14"/>
+        <location filename="../accessible/frameaccessibledefine.h" line="16"/>
         <source>screen_frame</source>
         <translation>Screen frame</translation>
     </message>
     <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="15"/>
+        <location filename="../accessible/frameaccessibledefine.h" line="17"/>
         <source>water_mask_frame</source>
         <translation>Water mask frame</translation>
     </message>
     <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="17"/>
+        <location filename="../accessible/frameaccessibledefine.h" line="19"/>
         <source>water_mask_logo</source>
         <translation>Water mask logo</translation>
     </message>
     <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="18"/>
+        <location filename="../accessible/frameaccessibledefine.h" line="20"/>
         <source>water_mask_text</source>
         <translation>Water mask text</translation>
     </message>
