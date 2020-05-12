@@ -177,6 +177,7 @@ void Desktop::onBackgroundEnableChanged()
                 //由于之前的BackgroundLabel::setVisible中有做特殊情况下强制显示的操作，所以这里暂时这样处理
                 //不是是否会会有i其他影响
                 l->QWidget::setVisible(!background->geometry().contains(l->geometry()));
+                qDebug() << "sssssssssssssssssssssssss"<< l << l->isVisible();
             } else {
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
                 l->show();
