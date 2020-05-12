@@ -161,7 +161,7 @@ void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
 {
     if (state == 0){
         m_recoveryKeyEdit->clear();
-        emit accept();
+        accept();
     }
 }
 

@@ -157,6 +157,8 @@ VaultPasswordPage::VaultPasswordPage(QWidget *parent)
     : QWidget (parent)
 {
     initUI();
+
+    connect(m_pwdEdit->lineEdit(), &QLineEdit::textChanged, this, &VaultPasswordPage::onPasswordChanged);
 }
 
 VaultPasswordPage::~VaultPasswordPage()
@@ -186,7 +188,26 @@ QString VaultPasswordPage::getPassword()
 
 void VaultPasswordPage::clear()
 {
+    // 重置状态
     m_pwdEdit->clear();
+    QLineEdit edit;
+    QPalette palette = edit.palette();
+    m_pwdEdit->lineEdit()->setPalette(palette);
+    m_pwdEdit->setEchoMode(QLineEdit::Password);
+}
+
+QLineEdit *VaultPasswordPage::lineEdit()
+{
+    return m_pwdEdit->lineEdit();
+}
+
+void VaultPasswordPage::onPasswordChanged(const QString &password)
+{
+    if (!password.isEmpty()){
+        QLineEdit edit;
+        QPalette palette = edit.palette();
+        m_pwdEdit->lineEdit()->setPalette(palette);
+    }
 }
 /*****************************************************************/
 
@@ -194,6 +215,8 @@ VaultKeyPage::VaultKeyPage(QWidget *parent)
     : QWidget (parent)
 {
     initUI();
+
+    connect(m_keyEdit, &QPlainTextEdit::textChanged, this, &VaultKeyPage::onRecoveryKeyChanged);
 }
 
 VaultKeyPage::~VaultKeyPage()
@@ -217,6 +240,44 @@ void VaultKeyPage::initUI()
     this->setLayout(layout);
 }
 
+int VaultKeyPage::afterRecoveryKeyChanged(QString &str)
+{
+    if (str.isEmpty()){
+        return -1;
+    }
+
+    int location = m_keyEdit->textCursor().position(); // 计算当前光标位置
+    int srcLength = str.length();   // 用于计算原有字符串中的“-”数量
+    //清除所有的“-”
+    str.replace(tr("-"), tr(""));
+    int minusNumber = srcLength - str.length(); // 原有字符串中的“-”数量
+
+    int index = 4;
+    int minusNum = 0;
+
+    int length = str.length();
+    while (index < length) {
+        if (index % 4 == 0){
+            str.insert(index + minusNum, tr("-"));
+            minusNum++;
+        }
+        index++;
+    }
+
+    //计算添加“-”后，重新计算下光标的位置，
+    if (minusNum > minusNumber) {
+        location += minusNum - minusNumber;
+    }
+
+    if (location > str.length()) {
+        location = str.length();
+    } else if (location < 0) {
+        location = 0;
+    }
+
+    return location;
+}
+
 QString VaultKeyPage::getKey()
 {
     QString strKey = m_keyEdit->toPlainText();
@@ -229,6 +290,38 @@ void VaultKeyPage::clear()
     m_keyEdit->clear();
 }
 
+void VaultKeyPage::onRecoveryKeyChanged()
+{
+    QString key = m_keyEdit->toPlainText();
+    int length = key.length();
+    int maxLength = MAX_KEY_LENGTH + 7;
+
+    // 限制输入的最大长度
+    if (length > maxLength){
+        int position = m_keyEdit->textCursor().position();
+        QTextCursor textCursor = m_keyEdit->textCursor();
+        key.remove(position-(length - maxLength), length - maxLength);
+        m_keyEdit->setPlainText(key);
+        textCursor.setPosition(position - (length-maxLength));
+        m_keyEdit->setTextCursor(textCursor);
+
+        return;
+    }
+
+    static bool isEdited = false;
+    if (!isEdited){
+        isEdited = true;
+        int position = afterRecoveryKeyChanged(key);
+        m_keyEdit->setPlainText(key);
+
+        QTextCursor textCursor = m_keyEdit->textCursor();
+        textCursor.setPosition(position);
+        m_keyEdit->setTextCursor(textCursor);
+    } else {
+        isEdited = false;
+    }
+}
+
 bool VaultKeyPage::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress){
@@ -236,8 +329,10 @@ bool VaultKeyPage::eventFilter(QObject *watched, QEvent *event)
         if (edit == m_keyEdit) {
             QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
 
-            // 过滤换行操作
-            if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return){
+            // 过滤换行操作以及“-”
+            if (keyEvent->key() == Qt::Key_Enter
+                    || keyEvent->key() == Qt::Key_Return
+                    || keyEvent->key() == Qt::Key_Minus){
                 return true;
             }
         }
@@ -291,8 +386,6 @@ void DFMVaultRemovePages::initUI()
 
 void DFMVaultRemovePages::initConnect()
 {
-    QAbstractButton *removeBtn = getButton(2);
-    //connect(removeBtn, &QAbstractButton::clicked, m_rmFileDialog, &VaultRemoveFileDialog::removeVault);
     connect(this, &DFMVaultRemovePages::buttonClicked, this, &DFMVaultRemovePages::onButtonClicked);
     connect(VaultController::getVaultController(), &VaultController::signalLockVault, this, &DFMVaultRemovePages::onLockVault);
 }
@@ -334,6 +427,9 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
             QString strClipher("");
 
             if (!InterfaceActiveVault::checkPassword(strPwd, strClipher)){
+                // 设置密码输入框颜色
+                passwordPage->lineEdit()->setStyleSheet(tr("background-color:rgb(245, 218, 217)"));
+
                 //设置QToolTip颜色
                 QPalette palette = QToolTip::palette();
                 palette.setColor(QPalette::Inactive,QPalette::ToolTipBase,Qt::white);   //设置ToolTip背景色
@@ -351,18 +447,16 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
             strKey.replace(tr("-"), tr(""));
             QString strClipher("");
 
-            if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
-                if (!false){
-                    //设置QToolTip颜色
-                    QPalette palette = QToolTip::palette();
-                    palette.setColor(QPalette::Inactive,QPalette::ToolTipBase,Qt::white);   //设置ToolTip背景色
-                    palette.setColor(QPalette::Inactive,QPalette::ToolTipText,QColor(255, 85, 0, 255)); 	//设置ToolTip字体色
-                    QToolTip::setPalette(palette);
-                    QRect rect(pos(), geometry().size());
-                    QToolTip::showText(keyPage->mapToGlobal(QPoint(0, 50 )), tr("Wrong password"));
+            if (!InterfaceActiveVault::checkUserKey(strKey, strClipher)){
+                //设置QToolTip颜色
+                QPalette palette = QToolTip::palette();
+                palette.setColor(QPalette::Inactive,QPalette::ToolTipBase,Qt::white);   //设置ToolTip背景色
+                palette.setColor(QPalette::Inactive,QPalette::ToolTipText,QColor(255, 85, 0, 255)); 	//设置ToolTip字体色
+                QToolTip::setPalette(palette);
+                QRect rect(pos(), geometry().size());
+                QToolTip::showText(keyPage->mapToGlobal(QPoint(0, 50 )), tr("Wrong recovery key"));
 
-                    return;
-                }
+                return;
             }
         }
 
@@ -383,16 +477,18 @@ void DFMVaultRemovePages::onLockVault(int state)
         QString rmPath = VaultController::getVaultController()->vaultLockPath();
         m_rmFileDialog->removeVault(rmPath);
         m_rmFileDialog->exec();
-        this->close();
+        accept();
     }
 }
 
 void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
 {
+    // 重置界面状态
     m_stackedLayout->setCurrentWidget(m_pages[PageType::Password]);
-
     qobject_cast<VaultPasswordPage *>(m_pages[PageType::Password])->clear();
     qobject_cast<VaultKeyPage *>(m_pages[PageType::Key])->clear();
+    getButton(1)->setText(tr("Use Key"));
     m_rmFileDialog->clear();
     m_bRemoveVault = false;
+    m_currentPage = PageType::Password;
 }

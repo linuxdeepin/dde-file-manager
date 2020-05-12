@@ -94,6 +94,11 @@ public:
     * @brief    清空密码
     */
     void clear();
+
+    QLineEdit *lineEdit();
+public slots:
+    void onPasswordChanged(const QString &password);
+
 private:
     /**
     * @brief    初始化UI界面
@@ -125,11 +130,17 @@ public:
     * @brief    清空凭证
     */
     void clear();
+public slots:
+    void onRecoveryKeyChanged();
+
 private:
     /**
     * @brief    初始化UI界面
     */
     void initUI();
+
+    // 输入凭证后，对凭证添加“-”
+    int afterRecoveryKeyChanged(QString &str);
 
     bool eventFilter(QObject *watched, QEvent *event) override;
 private:
