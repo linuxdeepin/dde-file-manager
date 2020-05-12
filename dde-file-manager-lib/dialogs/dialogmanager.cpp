@@ -545,12 +545,15 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));
     QString failure_type;
     switch (type) {
-        case FileJob::OpticalBlank:
-            failure_type = tr("Disc erase failed");
+    case FileJob::OpticalBlank:
+        failure_type = tr("Disc erase failed");
         break;
-        case FileJob::OpticalBurn:
-        case FileJob::OpticalImageBurn:
-            failure_type = tr("Burn process failed");
+    case FileJob::OpticalBurn:
+    case FileJob::OpticalImageBurn:
+        failure_type = tr("Burn process failed");
+        break;
+    case FileJob::OpticalCheck:
+        failure_type = tr("Checking process failed");
         break;
     }
     QString failure_str = QString(tr("%1: %2")).arg(failure_type).arg(err);

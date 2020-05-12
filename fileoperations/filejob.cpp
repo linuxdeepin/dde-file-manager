@@ -652,6 +652,11 @@ void FileJob::doOpticalBlank(const DUrl &device)
     job_isomaster->acquireDevice(rdevice.path());
     job_isomaster->erase();
 
+    if (!drive->mediaChangeDetected()) {
+        m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
+        emit requestOpticalJobFailureDialog(JobType::OpticalBlank, TR_CONN_ERROR, QStringList());
+    }
+
     // must show %100
     auto tmpStatus = m_opticalJobStatus;
     if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
@@ -874,6 +879,12 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
                     }
                 }
             }
+
+            if (!drive->mediaChangeDetected()) {
+                m_lastError = TR_CONN_ERROR;
+                m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
+                break;
+            }
         }
 
         // read bad
@@ -896,10 +907,17 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             qDebug() << "last speed:" << m_opticalOpSpeed;
             qDebug() << "sleep time:" << averageMSeconds;
             for (int i = m_opticalJobProgress; i <= 100; i++) {
+                if (!drive->mediaChangeDetected()) {
+                    m_lastError = TR_CONN_ERROR;
+                    m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
+                    break;
+                }
+
                 opticalJobUpdatedByParentProcess(m_opticalJobStatus, i, m_opticalOpSpeed, QStringList());
                 QThread::msleep(static_cast<unsigned int>(averageMSeconds));
             }
-            m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+            if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed)
+                m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
         }
 
         // must show %100
@@ -937,8 +955,13 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
                 FileJob::g_opticalBurnEjectCount = 0;
             }
             if ((flag & 4) && (m_opticalJobPhase == 2)) {
-                // 校验必须成功
-                emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
+                if (!drive->mediaChangeDetected()) {
+                    m_lastError = TR_CONN_ERROR;
+                    emit requestOpticalJobFailureDialog(FileJob::OpticalCheck, m_lastError, m_lastSrcError);
+                } else {
+                    // 校验必须成功
+                    emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
+                }
             } else {
                 // 刻录失败提示
                 emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
@@ -1160,6 +1183,12 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
                     }
                 }
             }
+
+            if (!drive->mediaChangeDetected()) {
+                m_lastError = TR_CONN_ERROR;
+                m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
+                break;
+            }
         }
 
         // read bad
@@ -1182,10 +1211,17 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             qDebug() << "last speed:" << m_opticalOpSpeed;
             qDebug() << "sleep time:" << averageMSeconds;
             for (int i = m_opticalJobProgress; i <= 100; i++) {
+                if (!drive->mediaChangeDetected()) {
+                    m_lastError = TR_CONN_ERROR;
+                    m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
+                    break;
+                }
+
                 opticalJobUpdatedByParentProcess(m_opticalJobStatus, i, m_opticalOpSpeed, QStringList());
                 QThread::msleep(static_cast<unsigned int>(averageMSeconds));
             }
-            m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+            if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed)
+                m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
         }
 
         // must show %100
@@ -1226,8 +1262,13 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
                 FileJob::g_opticalBurnEjectCount = 0;
             }
             if ((flag & 4) && (m_opticalJobPhase == 2)) {
-                // 校验必须成功
-                emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
+                if (!drive->mediaChangeDetected()) {
+                    m_lastError = TR_CONN_ERROR;
+                    emit requestOpticalJobFailureDialog(FileJob::OpticalCheck, m_lastError, m_lastSrcError);
+                } else {
+                    // 校验必须成功
+                    emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
+                }
             } else {
                 // 刻录失败提示
                 emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
