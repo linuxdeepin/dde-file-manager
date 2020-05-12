@@ -20,38 +20,33 @@
  */
 #pragma once
 
-#include "interface/dfmvaultcontentinterface.h"
+//#include "interface/dfmvaultcontentinterface.h"
 #include "dtkwidget_global.h"
+#include <DDialog>
 
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
-class DFloatingButton;
-class DCommandLinkButton;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
-DFM_BEGIN_NAMESPACE
-
-class DFMVaultUnlockPages : public DFMVaultContentInterface
+class DFMVaultUnlockPages : public DDialog
 {
     Q_OBJECT
-public:
+public:        
+    static DFMVaultUnlockPages *instance();
+
+public slots:
+    void onButtonClicked(const int &index);
+
+    void onPasswordChanged(const QString &pwd);
+
+    void onVaultUlocked(int state);
+private:
     DFMVaultUnlockPages(QWidget * parent = nullptr);
     ~DFMVaultUnlockPages() override {}
 
-    QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
-    void setRootUrl(const DUrl & url) override;
-
-private slots:
-    void unlock();
-
-    void slotFinishUnlock(int state);
-
 private:
     DPasswordEdit * m_passwordEdit;
-    DFloatingButton * m_unlockButton;
-    DCommandLinkButton * m_retrievePasswordButton;
+    QPushButton * m_helpButton;
 };
-
-DFM_END_NAMESPACE

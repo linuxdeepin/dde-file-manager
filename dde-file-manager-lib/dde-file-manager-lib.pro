@@ -279,7 +279,8 @@ HEADERS += \
     models/deviceinfoparser.h \
     controllers/dfmsidebarvaultitemhandler.h \
     controllers/vaulthandle.h \
-    controllers/vaulterrorcode.h
+    controllers/vaulterrorcode.h \
+    views/dfmvaultremovepages.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -472,7 +473,8 @@ SOURCES += \
     dbus/dbussysteminfo.cpp \
     models/deviceinfoparser.cpp \
     controllers/dfmsidebarvaultitemhandler.cpp \
-    controllers/vaulthandle.cpp
+    controllers/vaulthandle.cpp \
+    views/dfmvaultremovepages.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

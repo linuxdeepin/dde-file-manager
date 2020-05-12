@@ -38,6 +38,9 @@
 #include "interfaces/dfilemenu.h"
 
 #include "vault/interfaceactivevault.h"
+#include "views/dfmvaultunlockpages.h"
+#include "views/dfmvaultrecoverykeypages.h"
+#include "views/dfmvaultremovepages.h"
 
 #include <QDialog>
 
@@ -90,8 +93,12 @@ void DFMSideBarVaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSi
     }
     case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
         // todo
+        if(QDialog::Accepted == DFMVaultUnlockPages::instance()->exec()){
+            // 进入保险箱
+            DFMSideBarItemInterface::cdAction(sidebar, item);
+        }
 
-        DFMSideBarItemInterface::cdAction(sidebar, item);
+
 
 
         break;
@@ -198,16 +205,19 @@ bool DFMSideBarVaultItemHandler::autoLock(uint minutes)
 void DFMSideBarVaultItemHandler::showDeleteVaultView()
 {
     // Something to do.
+    DFMVaultRemovePages::instance()->open();
 }
 
 void DFMSideBarVaultItemHandler::showUnLockView()
 {
     // Something to do.
+    DFMVaultUnlockPages::instance()->open();
 }
 
 void DFMSideBarVaultItemHandler::showCertificateView()
 {
     // Something to do.
+    DFMVaultRecoveryKeyPages::instance()->open();
 }
 
 DFM_END_NAMESPACE

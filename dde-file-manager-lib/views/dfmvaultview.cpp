@@ -63,8 +63,8 @@ DFMVaultView::DFMVaultView(QWidget *parent)
     , m_contentWidget(nullptr)
 {
     registerContentWidget("setup", new DFMVaultSetupPages(this));
-    registerContentWidget("unlock", new DFMVaultUnlockPages(this));
-    registerContentWidget("recovery_key", new DFMVaultRecoveryKeyPages(this));
+    //registerContentWidget("unlock", new DFMVaultUnlockPages(this));
+    //registerContentWidget("recovery_key", new DFMVaultRecoveryKeyPages(this));
     registerContentWidget("_fallback_", new FallbackDispatcher(this));
 }
 
