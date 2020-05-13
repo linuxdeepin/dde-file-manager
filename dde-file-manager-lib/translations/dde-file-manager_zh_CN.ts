@@ -4,35 +4,35 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="429"/>
+        <location filename="../controllers/appcontroller.cpp" line="430"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="510"/>
+        <location filename="../controllers/appcontroller.cpp" line="511"/>
         <source>Mounting device error</source>
         <translation>挂载设备出错</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="534"/>
+        <location filename="../controllers/appcontroller.cpp" line="535"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>此光盘中的镜像已损坏，无法挂载，请擦除后使用</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="564"/>
+        <location filename="../controllers/appcontroller.cpp" line="565"/>
         <source>Mount error: unsupported image format</source>
         <translation>挂载错误，镜像文件格式不支持</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="593"/>
+        <location filename="../controllers/appcontroller.cpp" line="594"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="639"/>
-        <location filename="../controllers/appcontroller.cpp" line="656"/>
-        <location filename="../controllers/appcontroller.cpp" line="672"/>
-        <location filename="../controllers/appcontroller.cpp" line="691"/>
+        <location filename="../controllers/appcontroller.cpp" line="640"/>
+        <location filename="../controllers/appcontroller.cpp" line="657"/>
+        <location filename="../controllers/appcontroller.cpp" line="673"/>
+        <location filename="../controllers/appcontroller.cpp" line="692"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>磁盘文件被占用，无法弹出</translation>
     </message>
@@ -53,14 +53,14 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="45"/>
+        <location filename="../models/computermodel.cpp" line="46"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="51"/>
-        <location filename="../models/computermodel.cpp" line="55"/>
-        <location filename="../models/computermodel.cpp" line="76"/>
+        <location filename="../models/computermodel.cpp" line="52"/>
+        <location filename="../models/computermodel.cpp" line="56"/>
+        <location filename="../models/computermodel.cpp" line="77"/>
         <source>Disks</source>
         <translation>磁盘</translation>
     </message>
@@ -358,17 +358,353 @@
     </message>
 </context>
 <context>
-    <name>DFMVaultUnlockPages</name>
+    <name>DFMVaultActiveFinishedView</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="39"/>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="54"/>
-        <source>Enter the vault password</source>
-        <translation>请输入保险柜密码</translation>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="20"/>
+        <source>Encrypt File Vault</source>
+        <translation type="unfinished">加密保险箱</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="53"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="24"/>
+        <source>Click &apos;Encrypt&apos; and input the user password to finish the setup wizard.</source>
+        <translation type="unfinished">点击“加密保险箱”后，输入用户密码完成设置。</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="25"/>
+        <source>It will take several minutes, please wait...</source>
+        <translation type="unfinished">此过程可能需要几分钟</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="44"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="87"/>
+        <source>Encrypt</source>
+        <translation type="unfinished">加密保险箱</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="77"/>
+        <source>The setup is complete</source>
+        <translation type="unfinished">加密已完成</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="78"/>
+        <source>ok</source>
+        <translation type="unfinished">确定</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="81"/>
+        <source>create vault failure, the error code is %1!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="101"/>
+        <source>Encrypted...</source>
+        <translation type="unfinished">加密中...</translation>
+    </message>
+</context>
+<context>
+    <name>DFMVaultActiveSaveKeyView</name>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="20"/>
+        <source>Recovery Key</source>
+        <translation type="unfinished">文件保险箱回复密钥</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="24"/>
+        <source>Generate a recovery key in case that you forget the password</source>
+        <translation type="unfinished">如果忘记密码，可以使用该密钥回复访问</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="28"/>
+        <source>Key</source>
+        <translation type="unfinished">密钥</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="36"/>
+        <source>QR code</source>
+        <translation type="unfinished">二维码</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="49"/>
+        <source>Scan QR code and save the key to another device</source>
+        <translation type="unfinished">扫描二维码，保存至其它设备</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="53"/>
+        <source>Next</source>
+        <translation type="unfinished">下一步</translation>
+    </message>
+</context>
+<context>
+    <name>DFMVaultActiveSetUnlockMethodView</name>
+    <message>
+        <source>Type</source>
+        <translation type="obsolete">类型</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="31"/>
+        <source>Set Vault Password</source>
+        <translation type="unfinished">设置解锁方式</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="35"/>
+        <source>Method</source>
+        <translation type="unfinished">类型</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="38"/>
+        <source>Manual</source>
+        <translation type="unfinished">手动</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="44"/>
+        <source>Password</source>
+        <translation type="unfinished">设置密码</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="46"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="166"/>
+        <source>At least 8 characters, and contain A-Z, a-z, 0-9, and symbols</source>
+        <translation type="unfinished">密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="54"/>
+        <source>Repeat password</source>
+        <translation type="unfinished">重复密码</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="56"/>
+        <source>Input the password again</source>
+        <translation type="unfinished">再次输入密码</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="63"/>
+        <source>Hint</source>
+        <translation type="unfinished">提示信息</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="66"/>
+        <source>Password Hint</source>
+        <translation type="unfinished">避免忘记密码的信息（选填）</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="69"/>
+        <source>Fingerprint</source>
+        <translation type="unfinished">指纹解锁</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="73"/>
+        <source>Next</source>
+        <translation type="unfinished">下一步</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="80"/>
+        <source>Length</source>
+        <translation type="unfinished">长度</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="89"/>
+        <source>8Bit</source>
+        <translation type="unfinished">8位</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="90"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="278"/>
+        <source>Week</source>
+        <translation type="unfinished">强度低</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="99"/>
+        <source>Result</source>
+        <translation type="unfinished">结果</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="107"/>
+        <source>Generate</source>
+        <translation type="unfinished">生成</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="178"/>
+        <source>Passwords do not match</source>
+        <translation type="unfinished">输入密码不一致</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="276"/>
+        <source>Bit</source>
+        <translation type="unfinished">位</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="281"/>
+        <source>Medium</source>
+        <translation type="unfinished">强度中</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="284"/>
+        <source>Strong</source>
+        <translation type="unfinished">强度高</translation>
+    </message>
+</context>
+<context>
+    <name>DFMVaultActiveStartView</name>
+    <message>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="16"/>
+        <source>File Vault</source>
+        <translation type="unfinished">保险箱</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="18"/>
+        <source>Create your secure private space</source>
+        <translation type="unfinished">专属于个人的安全空间</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="19"/>
+        <source>Advanced encryption technology</source>
+        <translation type="unfinished">先进的加密技术，隐私安全有保障</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="20"/>
+        <source>Convenient and easy to use</source>
+        <translation type="unfinished">使用更便捷，操作更简单</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="30"/>
+        <source>Create</source>
+        <translation type="unfinished">开启</translation>
+    </message>
+</context>
+<context>
+    <name>DFMVaultRecoveryKeyPages</name>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="34"/>
+        <source>Unlock by Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="38"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="38"/>
+        <source>Unlock</source>
+        <translation type="unfinished">解锁</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="44"/>
+        <source>Input the 32-digit recovery key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="67"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="93"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="102"/>
+        <source>-</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DFMVaultRemovePages</name>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="349"/>
+        <source>Remove File Vault</source>
+        <translation type="unfinished">删除保险箱</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="350"/>
+        <source>Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="416"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="490"/>
+        <source>Use Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
+        <source>Remove</source>
+        <translation type="unfinished">移除</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="374"/>
+        <source>color: rgb(255, 85, 0);</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="413"/>
+        <source>Use Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="431"/>
+        <source>background-color:rgb(245, 218, 217)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="439"/>
+        <source>Wrong password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="447"/>
+        <source>-</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="457"/>
+        <source>Wrong recovery key</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DFMVaultUnlockPages</name>
+    <message>
+        <source>Enter the vault password</source>
+        <translation type="vanished">请输入保险柜密码</translation>
+    </message>
+    <message>
         <source>Retrieve password</source>
-        <translation>找回密码</translation>
+        <translation type="vanished">找回密码</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="37"/>
+        <source>Unlock File Vault</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="39"/>
+        <source>Verify your fingerprint or password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="42"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="42"/>
+        <source>Unlock</source>
+        <translation type="unfinished">解锁</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="48"/>
+        <source>Password</source>
+        <translation type="unfinished">密码</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="83"/>
+        <source>background-color:rgb(245, 218, 217)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="90"/>
+        <source>Wrong password</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -792,9 +1128,8 @@
 <context>
     <name>DeviceInfoParser</name>
     <message>
-        <location filename="../models/deviceinfoparser.cpp" line="58"/>
         <source>Unknown</source>
-        <translation type="unfinished">未知</translation>
+        <translation type="obsolete">未知</translation>
     </message>
 </context>
 <context>
@@ -1916,76 +2251,175 @@
     </message>
 </context>
 <context>
+    <name>OperatorCenter</name>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="50"/>
+        <source>create config dir failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="61"/>
+        <source>create decrypt dir failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="72"/>
+        <source>create encrypt dir failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="81"/>
+        <source>create password file failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="90"/>
+        <source>create rsa private key file failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="99"/>
+        <source>create rsa clipher file failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="108"/>
+        <source>create password hint file failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="128"/>
+        <source>write cliphertext failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="139"/>
+        <source>write password hint failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="165"/>
+        <source>USER_KEY_LENGTH is to long!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="178"/>
+        <source>open public key file failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="189"/>
+        <source>open rsa clipher file failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="205"/>
+        <location filename="../vault/operatorcenter.cpp" line="353"/>
+        <source>open pbkdf2clipher file failure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="217"/>
+        <source>password error!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="229"/>
+        <source>user key length error!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="237"/>
+        <source>cant&apos;t open local public key file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="259"/>
+        <source>user key error!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="276"/>
+        <source>open password hint file failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vault/operatorcenter.cpp" line="288"/>
+        <source>QR code width or height error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PathManager</name>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="55"/>
+        <location filename="../controllers/pathmanager.cpp" line="57"/>
         <source>Home</source>
         <translation>主目录</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="56"/>
+        <location filename="../controllers/pathmanager.cpp" line="58"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="57"/>
+        <location filename="../controllers/pathmanager.cpp" line="59"/>
         <source>Videos</source>
         <translation>视频</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="58"/>
+        <location filename="../controllers/pathmanager.cpp" line="60"/>
         <source>Music</source>
         <translation>音乐</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="59"/>
+        <location filename="../controllers/pathmanager.cpp" line="61"/>
         <source>Pictures</source>
         <translation>图片</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="60"/>
+        <location filename="../controllers/pathmanager.cpp" line="62"/>
         <source>Documents</source>
         <translation>文档</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="61"/>
+        <location filename="../controllers/pathmanager.cpp" line="63"/>
         <source>Downloads</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="62"/>
+        <location filename="../controllers/pathmanager.cpp" line="64"/>
         <location filename="../models/trashfileinfo.cpp" line="104"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="63"/>
+        <location filename="../controllers/pathmanager.cpp" line="65"/>
         <location filename="../models/dfmrootfileinfo.cpp" line="604"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="64"/>
+        <location filename="../controllers/pathmanager.cpp" line="66"/>
         <source>Computers in LAN</source>
         <translation>网络邻居</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="65"/>
+        <location filename="../controllers/pathmanager.cpp" line="67"/>
         <source>My Shares</source>
         <translation>我的共享</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="66"/>
+        <location filename="../controllers/pathmanager.cpp" line="68"/>
         <source>Computer</source>
         <translation>计算机</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="67"/>
+        <location filename="../controllers/pathmanager.cpp" line="69"/>
         <source>Recent</source>
         <translation>最近使用</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="68"/>
+        <location filename="../controllers/pathmanager.cpp" line="70"/>
         <source>Vault</source>
         <translation>保险柜</translation>
     </message>
@@ -1993,52 +2427,52 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="330"/>
+        <location filename="../dialogs/propertydialog.cpp" line="289"/>
         <source>Basic info</source>
         <translation>基本信息</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="331"/>
+        <location filename="../dialogs/propertydialog.cpp" line="290"/>
         <source>Open with</source>
         <translation>打开方式</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="332"/>
+        <location filename="../dialogs/propertydialog.cpp" line="291"/>
         <source>Sharing</source>
         <translation>共享管理</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="333"/>
+        <location filename="../dialogs/propertydialog.cpp" line="292"/>
         <source>Permissions</source>
         <translation>权限管理</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="388"/>
+        <location filename="../dialogs/propertydialog.cpp" line="347"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="388"/>
+        <location filename="../dialogs/propertydialog.cpp" line="347"/>
         <source>%1</source>
         <translation type="unfinished">%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="398"/>
+        <location filename="../dialogs/propertydialog.cpp" line="357"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1138"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1098"/>
         <source>Hide this folder</source>
         <translation>隐藏此文件夹</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1138"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1098"/>
         <source>Hide this file</source>
         <translation>隐藏此文件</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1416"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1376"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
@@ -2046,21 +2480,21 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1055"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1014"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="549"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="224"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1075"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1224"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1034"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1184"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="233"/>
         <source>Contains</source>
         <translation>文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1056"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1015"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="550"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="225"/>
         <source>Type</source>
@@ -2068,78 +2502,77 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1059"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1018"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="552"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="324"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1225"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1185"/>
         <source>Free space</source>
         <translation>可用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1220"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1180"/>
         <source>Total space</source>
         <translation>总容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1329"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1289"/>
         <source>Access denied</source>
         <translation>不可读不可写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1330"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1340"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1290"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1300"/>
         <source>Executable</source>
         <translation>可执行</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1331"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1332"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1291"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1292"/>
         <source>Write only</source>
         <translation>可写不可读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1333"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1334"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1293"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1294"/>
         <source>Read only</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1335"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1336"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1295"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1296"/>
         <source>Read-write</source>
         <translation>读写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1412"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1372"/>
         <source>Others</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1410"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1370"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1208"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1168"/>
         <source>Device type</source>
         <translation>设备类型</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1222"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1182"/>
         <source>File system</source>
         <translation>文件系统</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1411"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1371"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="83"/>
         <location filename="../dialogs/filepreviewdialog.cpp" line="82"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="501"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="504"/>
@@ -2147,47 +2580,47 @@
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="95"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="585"/>
         <source>Lock</source>
         <translation>立即上锁</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="100"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="586"/>
         <source>Auto lock</source>
         <translation>自动上锁</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="103"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="587"/>
         <source>Never</source>
         <translation>不使用</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="109"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="588"/>
         <source>5 minutes</source>
         <translation>5分钟</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="113"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="589"/>
         <source>10 minutes</source>
         <translation>10分钟</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="117"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="590"/>
         <source>20 minutes</source>
         <translation>20分钟</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="127"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="591"/>
         <source>Remove File Vault</source>
         <translation>删除保险箱</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="141"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="592"/>
         <source>Unlock</source>
         <translation>解锁</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="146"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="593"/>
         <source>Unlock by key</source>
         <translation>使用恢复凭证...</translation>
     </message>
@@ -2216,7 +2649,6 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="85"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="65"/>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="88"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="502"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="505"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="579"/>
@@ -2311,7 +2743,6 @@
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="114"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="118"/>
-        <location filename="../controllers/dfmsidebarvaultitemhandler.cpp" line="134"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="526"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="64"/>
         <source>Properties</source>
@@ -2361,7 +2792,7 @@
         <translation>新建文档</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1057"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1016"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="551"/>
         <source>Time created</source>
         <translation>创建时间</translation>
@@ -2372,7 +2803,7 @@
         <translation>退出登录并卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1060"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1019"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="562"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="338"/>
         <source>Source path</source>
@@ -2467,6 +2898,8 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="566"/>
+        <location filename="../models/computermodel.cpp" line="103"/>
+        <location filename="../models/vaultfileinfo.cpp" line="212"/>
         <source>File Vault</source>
         <translation>文件保险柜</translation>
     </message>
@@ -2578,65 +3011,65 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="295"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1181"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1182"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1183"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1141"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1142"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1143"/>
         <source>Local disk</source>
         <translation>本地磁盘</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="297"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1184"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1144"/>
         <source>Removable disk</source>
         <translation>可移动磁盘</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="299"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1186"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1187"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1146"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1147"/>
         <source>Network shared directory</source>
         <translation>网络共享目录</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="301"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1188"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1148"/>
         <source>Android mobile device</source>
         <translation>安卓移动设备</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="303"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1189"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1149"/>
         <source>Apple mobile device</source>
         <translation>苹果移动设备</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="305"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1190"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1150"/>
         <source>Camera</source>
         <translation>相机</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="307"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1185"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1145"/>
         <source>DVD</source>
         <translation>光驱设备</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="309"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1208"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1168"/>
         <source>Unknown device</source>
         <translation>未知设备</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1224"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1184"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="651"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1224"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1184"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="653"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
@@ -2684,7 +3117,7 @@
         <location filename="../interfaces/dfileinfo.cpp" line="811"/>
         <location filename="../models/recentfileinfo.cpp" line="247"/>
         <location filename="../models/trashfileinfo.cpp" line="377"/>
-        <location filename="../models/vaultfileinfo.cpp" line="119"/>
+        <location filename="../models/vaultfileinfo.cpp" line="145"/>
         <source>Folder is empty</source>
         <translation>文件夹为空</translation>
     </message>
@@ -2711,23 +3144,23 @@
         <translation>原始路径</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="466"/>
+        <location filename="../controllers/appcontroller.cpp" line="467"/>
         <source>Document</source>
         <translation>新建Word文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="473"/>
+        <location filename="../controllers/appcontroller.cpp" line="474"/>
         <source>Spreadsheet</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="480"/>
+        <location filename="../controllers/appcontroller.cpp" line="481"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="538"/>
         <source>Presentation</source>
         <translation>演示文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="487"/>
+        <location filename="../controllers/appcontroller.cpp" line="488"/>
         <source>Text</source>
         <translation>新建文本</translation>
     </message>
@@ -2839,7 +3272,7 @@
         <translation>添加</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1086"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="309"/>
         <location filename="../views/drenamebar.cpp" line="261"/>
         <source>Location</source>
@@ -2909,7 +3342,7 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1058"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1017"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="323"/>
         <source>Time accessed</source>
         <translation>访问时间</translation>
@@ -3503,88 +3936,71 @@
 <context>
     <name>VaultAskCreateKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
         <source>Do you want to generate a key in case that you forgot the password?</source>
-        <translation>是否需要生成一个密钥以防止您忘记密码？</translation>
+        <translation type="vanished">是否需要生成一个密钥以防止您忘记密码？</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="44"/>
         <source>Generate key</source>
-        <translation>生成密钥</translation>
+        <translation type="vanished">生成密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="45"/>
         <source>Skip</source>
-        <translation>跳过</translation>
+        <translation type="vanished">跳过</translation>
     </message>
 </context>
 <context>
     <name>VaultGeneratedKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="156"/>
         <source>Find your recovery key below</source>
-        <translation>您的恢复密钥如下</translation>
+        <translation type="vanished">您的恢复密钥如下</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="157"/>
         <source>Take good care of the recovery key by printing, writing down or saving it to a USB flash drive</source>
-        <translation>请考虑通过打印、抄写记录、保存到U盘等形式妥当保存您的恢复密钥</translation>
+        <translation type="vanished">请考虑通过打印、抄写记录、保存到U盘等形式妥当保存您的恢复密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="158"/>
         <source>Your recovery key is as important as your password. Do not save the key file on this computer</source>
-        <translation>恢复密钥和您的密码有着同等级的安全程度，建议不要将安全密钥文件保存到本计算机</translation>
+        <translation type="vanished">恢复密钥和您的密码有着同等级的安全程度，建议不要将安全密钥文件保存到本计算机</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="222"/>
         <source>Save your vault recovery key</source>
-        <translation>保存您的保险柜恢复密钥</translation>
+        <translation type="vanished">保存您的保险柜恢复密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="223"/>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="248"/>
         <source>File Vault Recovery Key</source>
-        <translation>文件保险柜恢复密钥</translation>
+        <translation type="vanished">文件保险柜恢复密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="224"/>
         <source>File Vault Recovery Key (*.txt)</source>
-        <translation>文件保险柜恢复密钥(*.txt)</translation>
+        <translation type="vanished">文件保险柜恢复密钥(*.txt)</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="249"/>
         <source>To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.</source>
-        <translation>若要验证这是否为正确的恢复密钥，请将以下标识符与电脑上显示的标识符值进行比较。</translation>
+        <translation type="vanished">若要验证这是否为正确的恢复密钥，请将以下标识符与电脑上显示的标识符值进行比较。</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="250"/>
         <source>Key ID: %1</source>
-        <translation>密钥标识符：%1</translation>
+        <translation type="vanished">密钥标识符：%1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="251"/>
         <source>If they are identical, then use the following key to retrieve your vault password.</source>
-        <translation>如果以上标识符与电脑显示的标识符匹配，则使用以下密钥找回您的保险柜密码。</translation>
+        <translation type="vanished">如果以上标识符与电脑显示的标识符匹配，则使用以下密钥找回您的保险柜密码。</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="252"/>
         <source>Recovery Key: %1</source>
-        <translation>恢复密钥：%1</translation>
+        <translation type="vanished">恢复密钥：%1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="253"/>
         <source>If they do not match, then this is not the right key, please try another recovery key.</source>
-        <translation>如果以上标识符与电脑显示的标识符不匹配，则该密钥不是解锁您的保险柜的正确密钥，请尝试其他恢复密钥。</translation>
+        <translation type="vanished">如果以上标识符与电脑显示的标识符不匹配，则该密钥不是解锁您的保险柜的正确密钥，请尝试其他恢复密钥。</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="170"/>
         <source>Save</source>
-        <translation>保存</translation>
+        <translation type="vanished">保存</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="171"/>
         <source>Done</source>
-        <translation>完成</translation>
+        <translation type="vanished">完成</translation>
     </message>
 </context>
 <context>
@@ -3606,16 +4022,63 @@
     </message>
 </context>
 <context>
-    <name>VaultPasswordPage</name>
+    <name>VaultKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="362"/>
-        <source>Here is your vault password</source>
-        <translation>您的保险柜密码如下</translation>
+        <location filename="../views/dfmvaultremovepages.cpp" line="232"/>
+        <source>Input the 32-digit recovery key</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="365"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="252"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="261"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="285"/>
+        <source>-</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VaultPasswordPage</name>
+    <message>
+        <source>Here is your vault password</source>
+        <translation type="vanished">您的保险柜密码如下</translation>
+    </message>
+    <message>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="172"/>
+        <source>Verify your fingerprint or password</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VaultRemoveFileDialog</name>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="31"/>
+        <source>Remove File Vault</source>
+        <translation type="unfinished">删除保险箱</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="32"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="152"/>
+        <source>Removing...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="48"/>
+        <source>Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="136"/>
+        <source>Removed successfully</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="138"/>
+        <source>Failed to remove</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3682,27 +4145,23 @@
 <context>
     <name>VaultVerifyRecoveryKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="271"/>
         <source>Compare the following text with the key ID in your recovery key file</source>
-        <translation>请核对下方文字与您恢复密钥中所记录的文字完全一致</translation>
+        <translation type="vanished">请核对下方文字与您恢复密钥中所记录的文字完全一致</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="272"/>
         <source>If they are identical, input the recovery key below to retrieve your vault password</source>
-        <translation>确认无误后，请在下方输入32位恢复密钥，以便找回原始密码</translation>
+        <translation type="vanished">确认无误后，请在下方输入32位恢复密钥，以便找回原始密码</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="284"/>
         <source>Retrieve password</source>
-        <translation>找回密码</translation>
+        <translation type="vanished">找回密码</translation>
     </message>
 </context>
 <context>
     <name>VaultVerifyUserPage</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="94"/>
         <source>Enter the vault password</source>
-        <translation>请输入保险柜密码</translation>
+        <translation type="vanished">请输入保险柜密码</translation>
     </message>
 </context>
 </TS>
