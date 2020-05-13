@@ -437,14 +437,18 @@
 <context>
     <name>DFMVaultActiveSetUnlockMethodView</name>
     <message>
+        <source>Type</source>
+        <translation type="obsolete">Type</translation>
+    </message>
+    <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="31"/>
-        <source>Unlock Method</source>
+        <source>Set Vault Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="35"/>
-        <source>Type</source>
-        <translation type="unfinished">Type</translation>
+        <source>Method</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="38"/>
@@ -591,8 +595,8 @@
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="67"/>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="89"/>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="98"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="93"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="102"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -600,59 +604,59 @@
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="350"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="349"/>
         <source>Remove File Vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="351"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="350"/>
         <source>Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="371"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
         <source>Cancel</source>
         <translation type="unfinished">Cancel</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="371"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="406"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="428"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="416"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="490"/>
         <source>Use Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="371"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
         <source>Remove</source>
         <translation type="unfinished">Remove</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="375"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="374"/>
         <source>color: rgb(255, 85, 0);</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="425"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="413"/>
         <source>Use Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="443"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="431"/>
         <source>background-color:rgb(245, 218, 217)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="451"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="439"/>
         <source>Wrong password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="459"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="447"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="469"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="457"/>
         <source>Wrong recovery key</source>
         <translation type="unfinished"></translation>
     </message>
@@ -693,12 +697,12 @@
         <translation type="unfinished">Password</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="92"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="83"/>
         <source>background-color:rgb(245, 218, 217)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="99"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="90"/>
         <source>Wrong password</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4020,14 +4024,14 @@
 <context>
     <name>VaultKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="233"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="232"/>
         <source>Input the 32-digit recovery key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="253"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="262"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="286"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="252"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="261"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="285"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4043,7 +4047,7 @@
         <translation type="vanished">OK</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="173"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="172"/>
         <source>Verify your fingerprint or password</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4057,7 +4061,7 @@
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="32"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="141"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="152"/>
         <source>Removing...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4067,12 +4071,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="148"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="136"/>
         <source>Removed successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="150"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="138"/>
         <source>Failed to remove</source>
         <translation type="unfinished"></translation>
     </message>

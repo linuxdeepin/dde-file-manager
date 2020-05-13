@@ -28,11 +28,11 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     , m_pNext(nullptr)
 {
     // 设置开锁方式标签
-    QLabel *pLabel = new QLabel(tr("Unlock Method"), this);
+    QLabel *pLabel = new QLabel(tr("Set Vault Password"), this);
     pLabel->setStyleSheet("font: 16pt 'CESI黑体-GB13000'");
 
     // 类型
-    QLabel *pTypeLabel = new QLabel(tr("Type"), this);
+    QLabel *pTypeLabel = new QLabel(tr("Method"), this);
     m_pTypeCombo = new QComboBox(this);
     QStringList lstItems;
     lstItems << tr("Manual")/* << tr("Random")*/;
