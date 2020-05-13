@@ -36,6 +36,7 @@
 #include <QTimer>
 #include <QLoggingCategory>
 #include <QProcess>
+#include <QtConcurrent/QtConcurrent>
 
 #include <unistd.h>
 #include <zlib.h>
@@ -2013,7 +2014,17 @@ end:
                            << ", state:" << d->state;
         // 任务完成后执行 sync 同步数据到硬盘, 同时将状态改为 SleepState，用于定时器更新进度和速度信息
         d->setState(IOWaitState);
-        QProcess::execute("sync", {"-f", d->targetRootPath});
+        auto result = QtConcurrent::run([&d]() {
+            QProcess::execute("sync", {"-f", d->targetRootPath});
+        });
+        // 检测同步时是否被停止，若停止则立即跳出
+        while (!result.isFinished()) {
+            if (d->state == DFileCopyMoveJob::StoppedState) {
+                qDebug() << "stop sync";
+                goto end;
+            }
+            QThread::msleep(10);
+        }
         //校验是否完全同步到了移动设备
         const qint64 total_size = d->fileStatistics->totalSize();
         //fix: 删除文件时出现报错(回收箱和光驱处理删除文件)
