@@ -179,7 +179,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     QString scheme = index.data(ComputerModel::DataRoles::Scheme).toString();
     if (scheme == DFMVAULT_SCHEME) {
         // 保险柜只显示大小
-        painter->drawText(textrect, Qt::AlignLeft, QString::number(sizeinuse));
+        painter->drawText(textrect, Qt::AlignLeft, FileUtils::formatSize(static_cast<qint64>(sizeinuse)));
     } else {
         painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
     }

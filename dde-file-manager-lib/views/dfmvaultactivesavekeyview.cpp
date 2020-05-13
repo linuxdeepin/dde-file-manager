@@ -1,4 +1,4 @@
-#include "widgetsavekey.h"
+#include "dfmvaultactivesavekeyview.h"
 #include "operatorcenter.h"
 
 #include <QLabel>
@@ -10,9 +10,7 @@
 #include <QHBoxLayout>
 #include <DButtonBox>
 
-
-
-WidgetSaveKey::WidgetSaveKey(QWidget *parent)
+DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     : QWidget(parent)
     , m_pTipsLabel(nullptr)
     , m_pQRCodeImage(nullptr)
@@ -30,14 +28,14 @@ WidgetSaveKey::WidgetSaveKey(QWidget *parent)
     m_pKeyBtn = new DButtonBoxButton(tr("Key"), this);
     m_pKeyBtn->setFocus();
     connect(m_pKeyBtn, &DButtonBoxButton::clicked,
-            this, &WidgetSaveKey::slotKeyBtnClicked);
+            this, &DFMVaultActiveSaveKeyView::slotKeyBtnClicked);
     m_pKeyText = new QTextEdit(this);
     m_pKeyText->setReadOnly(true);
 
     // 二维码
     m_pQRCodeBtn = new DButtonBoxButton(tr("QR code"), this);
     connect(m_pQRCodeBtn, &DButtonBoxButton::clicked,
-            this, &WidgetSaveKey::slotQRCodeBtnClicked);
+            this, &DFMVaultActiveSaveKeyView::slotQRCodeBtnClicked);
     m_pQRCodeImage = new QLabel(this);
     m_pQRCodeImage->setFixedSize(150, 150);
     m_pQRCodeImage->setVisible(false);
@@ -55,7 +53,7 @@ WidgetSaveKey::WidgetSaveKey(QWidget *parent)
     m_pNext = new QPushButton(tr("Next"), this);
     m_pNext->setMinimumWidth(450);
     connect(m_pNext, &QPushButton::clicked,
-            this, &WidgetSaveKey::slotNextBtnClicked);
+            this, &DFMVaultActiveSaveKeyView::slotNextBtnClicked);
 
     // 布局
     play = new QGridLayout();
@@ -72,7 +70,7 @@ WidgetSaveKey::WidgetSaveKey(QWidget *parent)
     play2->addWidget(m_pNext, 0, Qt::AlignCenter);
 }
 
-void WidgetSaveKey::showEvent(QShowEvent *event)
+void DFMVaultActiveSaveKeyView::showEvent(QShowEvent *event)
 {
     QString strUserKey = OperatorCenter::getInstance().getUserKey();
     qDebug() << "user key: " << strUserKey;
@@ -91,18 +89,16 @@ void WidgetSaveKey::showEvent(QShowEvent *event)
         m_pQRCodeImage->setPixmap(QRCodePix);
     m_pKeyText->setText(strKeyShow);
 
-
     QWidget::showEvent(event);
 }
 
-void WidgetSaveKey::slotNextBtnClicked()
+void DFMVaultActiveSaveKeyView::slotNextBtnClicked()
 {
     emit sigAccepted();
 }
 
-void WidgetSaveKey::slotKeyBtnClicked()
+void DFMVaultActiveSaveKeyView::slotKeyBtnClicked()
 {
-
     play->removeWidget(m_pQRCodeImage);
     m_pQRCodeImage->setVisible(false);
     play->removeWidget(m_pScanTipsLabel);
@@ -112,7 +108,7 @@ void WidgetSaveKey::slotKeyBtnClicked()
     m_pKeyText->setVisible(true);
 }
 
-void WidgetSaveKey::slotQRCodeBtnClicked()
+void DFMVaultActiveSaveKeyView::slotQRCodeBtnClicked()
 {
     m_pKeyText->setVisible(false);
     play->removeWidget(m_pKeyText);

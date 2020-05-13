@@ -1,5 +1,5 @@
-#ifndef WIDGETACTIVCEVAULTFINISHED_H
-#define WIDGETACTIVCEVAULTFINISHED_H
+#ifndef DFMVAULTACTIVEFINISHEDVIEW_H
+#define DFMVAULTACTIVEFINISHEDVIEW_H
 
 #include <QWidget>
 #include <dtkwidget_global.h>
@@ -17,11 +17,11 @@ DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
-class WidgetActivceVaultFinished : public QWidget
+class DFMVaultActiveFinishedView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit WidgetActivceVaultFinished(QWidget *parent = nullptr);
+    explicit DFMVaultActiveFinishedView(QWidget *parent = nullptr);
 
 signals:
     void sigAccepted();
@@ -45,4 +45,4 @@ private:
     QGridLayout         *play;
 };
 
-#endif // WIDGETACTIVCEVAULTFINISHED_H
+#endif // DFMVAULTACTIVEFINISHEDVIEW_H

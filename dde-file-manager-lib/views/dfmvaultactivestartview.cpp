@@ -1,4 +1,4 @@
-#include "widgetstartvault.h"
+#include "dfmvaultactivestartview.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -9,7 +9,9 @@
 
 DWIDGET_USE_NAMESPACE
 
-WidgetStartVault::WidgetStartVault(QWidget *parent) : QWidget(parent)
+DFMVaultActiveStartView::DFMVaultActiveStartView(QWidget *parent)
+    : QWidget(parent)
+    , m_pStartBtn(nullptr)
 {
     QLabel *pLabel1 = new QLabel(tr("File Vault"), this);
     pLabel1->setStyleSheet("font: 16pt 'CESI黑体-GB13000'");
@@ -19,16 +21,16 @@ WidgetStartVault::WidgetStartVault(QWidget *parent) : QWidget(parent)
 
     DIconButton * icon = new DIconButton(this);
     icon->setFlat(true);
-    icon->setIcon(QIcon::fromTheme("dfm_safebox"));
-    icon->setIconSize(QSize(64, 64));
+    icon->setIcon(QIcon::fromTheme("dfm_vault"));
+    icon->setIconSize(QSize(210, 210));
     icon->setWindowFlags(Qt::WindowTransparentForInput);
     icon->setFocusPolicy(Qt::NoFocus);
-    icon->setMinimumHeight(64);
+    icon->setMinimumHeight(210);
 
     m_pStartBtn = new QPushButton(tr("Create"), this);
     m_pStartBtn->setMinimumWidth(450);
     connect(m_pStartBtn, &QPushButton::clicked,
-            this, &WidgetStartVault::slotStartBtnClicked);
+            this, &DFMVaultActiveStartView::slotStartBtnClicked);
 
     // 布局
     QVBoxLayout *play3 = new QVBoxLayout(this);
@@ -47,12 +49,7 @@ WidgetStartVault::WidgetStartVault(QWidget *parent) : QWidget(parent)
     play3->addWidget(m_pStartBtn, 0, Qt::AlignCenter);
 }
 
-WidgetStartVault::~WidgetStartVault()
-{
-
-}
-
-void WidgetStartVault::slotStartBtnClicked()
+void DFMVaultActiveStartView::slotStartBtnClicked()
 {
     emit sigAccepted();
 }

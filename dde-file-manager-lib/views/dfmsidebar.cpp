@@ -79,6 +79,8 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initUserShareItem();
     initRecentItem();
 
+ //   DFMSideBarManager::instance();
+
 
     m_timer = new QTimer(this);
     connect(m_timer,&QTimer::timeout,[ = ](){
@@ -775,7 +777,7 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         }
         // 添加保险库
         if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
-            appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
+            appendItem(DFMSideBarVaultItemHandler::createItem("Vault", this->topLevelWidget()), groupNameStr);
         }
         break;
     case GroupName::Bookmark: {

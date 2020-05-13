@@ -1,5 +1,5 @@
-#ifndef WIDGETSETUNLOCKMETHOD_H
-#define WIDGETSETUNLOCKMETHOD_H
+#ifndef DFMVAULTSETUNLOCKMETHODVIEW_H
+#define DFMVAULTSETUNLOCKMETHODVIEW_H
 
 #include <QWidget>
 #include <dtkwidget_global.h>
@@ -17,22 +17,17 @@ class QComboBox;
 class QGridLayout;
 QT_END_NAMESPACE
 
-class WidgetToolTips;
-
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
 DWIDGET_END_NAMESPACE
 
-class customPassword;
-
 DWIDGET_USE_NAMESPACE
 
-class WidgetSetUnlockMethod : public QWidget
+class DFMVaultActiveSetUnlockMethodView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit WidgetSetUnlockMethod(QWidget *parent = nullptr);
-    ~WidgetSetUnlockMethod();
+    explicit DFMVaultActiveSetUnlockMethodView(QWidget *parent = nullptr);
 
 signals:
     void sigAccepted();
@@ -46,6 +41,7 @@ private slots:
     void slotIshowRepeatPassword();
     void slotPasswordEditFinished();
     void slotRepeatPasswordEditFinished();
+    void slotGenerateEditChanged(const QString &str);
     // 下一步按钮点击
     void slotNextBtnClicked();
     // 类型切换
@@ -54,6 +50,8 @@ private slots:
     void slotLengthChanged(int length);
     // 限制密码的长度
     void slotLimiPasswordLength(const QString &password);
+    // 随即生成密码按钮点击
+    void slotGeneratePasswordBtnClicked();
 
 private:
     // 校验密码是否符合规则
@@ -67,8 +65,6 @@ private:
     QComboBox           *m_pTypeCombo;
 
     QLabel              *m_pPasswordLabel;
-//    QLineEdit           *m_pPassword;
-//    QPushButton         *m_pIsShowPassword;
     DPasswordEdit       *m_pPassword;
 
     QLabel              *m_pLengthLabel;
@@ -77,8 +73,6 @@ private:
     QLabel              *m_pStrengthLabel;
 
     QLabel              *m_pRepeatPasswordLabel;
-//    QLineEdit           *m_pRepeatPassword;
-//    QPushButton         *m_pIsShowRepeatPassword;
     DPasswordEdit       *m_pRepeatPassword;
 
     QLabel              *m_pResultLabel;
@@ -89,11 +83,11 @@ private:
 
     QCheckBox           *m_pOtherMethod;
 
+    QPushButton         *m_pGenerateBtn;
+
     QPushButton         *m_pNext;
 
     QGridLayout         *play;
-
-    WidgetToolTips      *m_pToolTip;
 };
 
-#endif // WIDGETSETUNLOCKMETHOD_H
+#endif // DFMVAULTSETUNLOCKMETHODVIEW_H

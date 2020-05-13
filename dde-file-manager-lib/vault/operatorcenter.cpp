@@ -9,6 +9,8 @@
 #include <QPainter>
 #include <QStandardPaths>
 #include <QStorageInfo>
+#include <QTime>
+#include <QtGlobal>
 
 OperatorCenter::OperatorCenter(QObject *parent)
     : QObject(parent)
@@ -376,4 +378,29 @@ QStringList OperatorCenter::getConfigFilePath()
     lstPath << makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
 
     return lstPath;
+}
+
+QString OperatorCenter::autoGeneratePassword(int length)
+{
+    if(length < 3) return "";
+    qsrand(uint(QTime(0, 0, 0).secsTo(QTime::currentTime())));
+
+    QString strPassword("");
+
+    QString strNum("0123456789");
+    strPassword += strNum.at(qrand()%10);
+
+    QString strSpecialChar("`~!@#$%^&*");
+    strPassword += strSpecialChar.at(qrand()%10);
+
+    QString strABC("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    strPassword += strABC.at(qrand()%10);
+
+    QString strAllChar = strNum + strSpecialChar + strABC;
+    int nCount = length - 3;
+    for(int i = 0; i < nCount; ++i)
+    {
+        strPassword += strAllChar.at(qrand()%52);
+    }
+    return strPassword;
 }

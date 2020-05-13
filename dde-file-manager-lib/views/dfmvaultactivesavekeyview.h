@@ -1,5 +1,5 @@
-#ifndef WIDGETSAVEKEY_H
-#define WIDGETSAVEKEY_H
+#ifndef DFMVAULTACTIVESAVEKEYVIEW_H
+#define DFMVAULTACTIVESAVEKEYVIEW_H
 
 #include <QWidget>
 #include "dtkwidget_global.h"
@@ -17,11 +17,11 @@ class DButtonBoxButton;
 DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
-class WidgetSaveKey : public QWidget
+class DFMVaultActiveSaveKeyView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit WidgetSaveKey(QWidget *parent = nullptr);
+    explicit DFMVaultActiveSaveKeyView(QWidget *parent = nullptr);
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -47,8 +47,6 @@ private:
     QLabel              *m_pScanTipsLabel;
     QPushButton         *m_pNext;
     QGridLayout         *play;
-
-
 };
 
-#endif // WIDGETSAVEKEY_H
+#endif // DFMVAULTACTIVESAVEKEYVIEW_H

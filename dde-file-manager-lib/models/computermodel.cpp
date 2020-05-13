@@ -226,6 +226,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == DataRoles::OpenUrlRole) {
         if (pitmdata->fi) {
+            // 用保险柜根目录
+            if (pitmdata->fi->scheme() == DFMVAULT_SCHEME) {
+                return QVariant::fromValue(VaultController::getVaultController()->makeVaultUrl());
+            }
             return QVariant::fromValue(pitmdata->fi->redirectedFileUrl());
         }
     }

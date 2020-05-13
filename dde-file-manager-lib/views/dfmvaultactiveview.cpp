@@ -1,8 +1,8 @@
-#include "widgetmanager.h"
-#include "widgetstartvault.h"
-#include "widgetsetunlockmethod.h"
-#include "widgetsavekey.h"
-#include "widgetactivcevaultfinished.h"
+#include "dfmvaultactiveview.h"
+#include "dfmvaultactivestartview.h"
+#include "dfmvaultactivesetunlockmethodview.h"
+#include "dfmvaultactivesavekeyview.h"
+#include "dfmvaultactivefinishedview.h"
 
 #include <QDebug>
 #include <QStackedWidget>
@@ -12,8 +12,7 @@
 #include <QHBoxLayout>
 #include <QMouseEvent>
 
-
-WidgetManager::WidgetManager(QWidget *parent)
+DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     : DDialog(parent)
     , m_pStackedWidget(nullptr)
     , m_pStartVaultWidget(nullptr)
@@ -27,18 +26,18 @@ WidgetManager::WidgetManager(QWidget *parent)
     m_pStackedWidget = new QStackedWidget(this);
 
     // 初始化内部窗体
-    m_pStartVaultWidget = new WidgetStartVault(this);
-    connect(m_pStartVaultWidget, &WidgetStartVault::sigAccepted,
-            this, &WidgetManager::slotNextWidget);
-    m_pSetUnclockMethodWidget = new WidgetSetUnlockMethod(this);
-    connect(m_pSetUnclockMethodWidget, &WidgetSetUnlockMethod::sigAccepted,
-            this, &WidgetManager::slotNextWidget);
-    m_SaveKeyWidget = new WidgetSaveKey(this);
-    connect(m_SaveKeyWidget, &WidgetSaveKey::sigAccepted,
-            this, &WidgetManager::slotNextWidget);
-    m_ActiveVaultFinishedWidget = new WidgetActivceVaultFinished(this);
-    connect(m_ActiveVaultFinishedWidget, &WidgetActivceVaultFinished::sigAccepted,
-            this, &WidgetManager::slotNextWidget);
+    m_pStartVaultWidget = new DFMVaultActiveStartView(this);
+    connect(m_pStartVaultWidget, &DFMVaultActiveStartView::sigAccepted,
+            this, &DFMVaultActiveView::slotNextWidget);
+    m_pSetUnclockMethodWidget = new DFMVaultActiveSetUnlockMethodView(this);
+    connect(m_pSetUnclockMethodWidget, &DFMVaultActiveSetUnlockMethodView::sigAccepted,
+            this, &DFMVaultActiveView::slotNextWidget);
+    m_SaveKeyWidget = new DFMVaultActiveSaveKeyView(this);
+    connect(m_SaveKeyWidget, &DFMVaultActiveSaveKeyView::sigAccepted,
+            this, &DFMVaultActiveView::slotNextWidget);
+    m_ActiveVaultFinishedWidget = new DFMVaultActiveFinishedView(this);
+    connect(m_ActiveVaultFinishedWidget, &DFMVaultActiveFinishedView::sigAccepted,
+            this, &DFMVaultActiveView::slotNextWidget);
 
     m_pStackedWidget->addWidget(m_pStartVaultWidget);
     m_pStackedWidget->addWidget(m_pSetUnclockMethodWidget);
@@ -48,7 +47,7 @@ WidgetManager::WidgetManager(QWidget *parent)
     this->addContent(m_pStackedWidget);
 }
 
-void WidgetManager::slotNextWidget()
+void DFMVaultActiveView::slotNextWidget()
 {
     if(m_pStackedWidget){
         int nIndex = m_pStackedWidget->currentIndex();

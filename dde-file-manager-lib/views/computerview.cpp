@@ -47,6 +47,8 @@
 #include "models/computermodel.h"
 #include "computerviewitemdelegate.h"
 #include "models/deviceinfoparser.h"
+#include "dfmvaultunlockpages.h"
+#include "vault/interfaceactivevault.h"
 
 #include <dslider.h>
 
@@ -170,7 +172,40 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
         if (url.path().endsWith(SUFFIX_USRDIR)) {
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
         } else if (url.scheme() == DFMVAULT_SCHEME) { // 保险柜
-            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+            // 判断保险箱状态
+            InterfaceActiveVault activeVault;
+            EN_VaultState enState = activeVault.vaultState();
+            switch (enState) {
+            case EN_VaultState::NotAvailable:{  // 没有安装cryfs
+                qDebug() << "Don't setup cryfs, can't use vault, please setup cryfs!";
+                break;
+            }
+            case EN_VaultState::NotExisted:{    // 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
+                QDialog *dlg = activeVault.getActiveVaultWidget();
+                if(QDialog::Accepted == dlg->exec()){
+                    // todo 进入保险箱主界面
+                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+                }
+                dlg = nullptr;
+                break;
+            }
+            case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
+                // todo
+                if(QDialog::Accepted == DFMVaultUnlockPages::instance()->exec()){
+                    // 进入保险箱
+                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+                }
+                break;
+            }
+            case EN_VaultState::Unlocked:{  // 保险箱处于开锁状态，直接进入主界面
+                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+                break;
+            }
+            default:{   // 未考虑
+                break;
+            }
+            }
+
         } else {
             appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
         }
