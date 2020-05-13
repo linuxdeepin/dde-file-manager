@@ -595,6 +595,8 @@ INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations
  icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile
 
 DISTFILES += \
-    mimetypeassociations/mimetypeassociations.json
+    mimetypeassociations/mimetypeassociations.json \
+    confirm/deepin-vault-authenticateProxy \
+    confirm/policy/com.deepin.pkexec.deepin-vault-authenticateProxy.policy
 
 include($$PWD/settings_dialog_json.pri)

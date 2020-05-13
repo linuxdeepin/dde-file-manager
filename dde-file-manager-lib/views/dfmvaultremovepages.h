@@ -32,6 +32,8 @@ public:
     ~VaultRemoveFileDialog() override;
 
     void removeVault(const QString &rmPath);
+
+    void clear();
 private:
     /**
     * @brief    初始化UI界面
@@ -55,7 +57,6 @@ private:
     */
     void removeFileInDir(const QString &path);
 
-    void showEvent(QShowEvent *event) override;
 private:
     QProgressBar *m_removeProgress;
 
