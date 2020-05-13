@@ -620,12 +620,10 @@ void DFileViewHelper::keyboardSearch(char key)
     Q_D(DFileViewHelper);
     QByteArray indexChar;
     d->keyboardSearchKeys.append(key);
-    qDebug() << "d->keyboardSearchKeys: " << d->keyboardSearchKeys << "key:" << key <<"indexKey: " << indexChar ;
     bool reverse_order = qApp->keyboardModifiers() == Qt::ShiftModifier;
     const QModelIndex &current_index = parent()->currentIndex();
 
     QModelIndex index = d->findIndex(d->keyboardSearchKeys, true, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
-    qDebug()<< "reverse_order " << reverse_order << "current_index" << current_index << "index: " << index;
 //    if (!index.isValid()) {
 //        // 使用 QString::contains 模式再次匹配
 //        index = d->findIndex(d->keyboardSearchKeys, false, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
