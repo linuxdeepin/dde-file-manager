@@ -26,6 +26,7 @@
 #define SIDEBAR_ID_VAULT "__vault"
 
 class DFileManagerWindow;
+class DFileMenu;
 
 DFM_BEGIN_NAMESPACE
 /**
@@ -39,7 +40,7 @@ public:
      * @param pathKey
      * @return 创建的实例指针
      */
-    static DFMSideBarItem *createItem(const QString &pathKey, QWidget *topWidget);
+    static DFMSideBarItem *createItem(const QString &pathKey);
 
     /**
      * @brief 构造函数
@@ -63,10 +64,12 @@ public:
     QMenu *contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item) override;
 
     /**
-     * @brief 初始化菜单
+     * @brief 产生菜单
      * @param topWidget
+     * @param sender
+     * @return 菜单项目
      */
-    QMenu *generateMenu(QWidget *topWidget, const DFMSideBar *sender = nullptr);
+    DFileMenu *generateMenu(QWidget *topWidget, const DFMSideBar *sender = nullptr);
 
 private:
     /**

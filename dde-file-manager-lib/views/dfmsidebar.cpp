@@ -777,7 +777,7 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         }
         // 添加保险库
         if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
-            appendItem(DFMSideBarVaultItemHandler::createItem("Vault", this->topLevelWidget()), groupNameStr);
+            appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
         }
         break;
     case GroupName::Bookmark: {

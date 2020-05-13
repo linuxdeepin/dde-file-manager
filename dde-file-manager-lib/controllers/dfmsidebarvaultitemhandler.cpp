@@ -45,10 +45,10 @@
 #include <QDialog>
 
 
-
 DFM_BEGIN_NAMESPACE
 
-DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey, QWidget *topWidget)
+
+DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey)
 {
     QString iconName = systemPathManager->getSystemPathIconName(pathKey);
     if (!iconName.contains("-symbolic")) {
@@ -65,10 +65,6 @@ DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey, Q
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
     item->setData(SIDEBAR_ID_VAULT, DFMSideBarItem::ItemUseRegisteredHandlerRole);
-
-    // 初始化菜单
-    DFMSideBarVaultItemHandler handler;
-    handler.generateMenu(topWidget);
 
     return item;
 }
@@ -121,7 +117,7 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
     return generateMenu(sidebar->topLevelWidget(), sidebar);
 }
 
-QMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DFMSideBar *sender)
+DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DFMSideBar *sender)
 {
     DFileMenu *menu = nullptr;
 
@@ -184,10 +180,6 @@ QMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DFMSid
         });
     }
 
-    if (menu == nullptr) {
-        menu = new DFileMenu();
-    }
-
     return menu;
 }
 
@@ -195,7 +187,7 @@ bool DFMSideBarVaultItemHandler::lockNow()
 {
     // Something to do.
     VaultController::getVaultController()->lockVault();
-    return false;
+    return true;
 }
 
 bool DFMSideBarVaultItemHandler::autoLock(uint minutes)
