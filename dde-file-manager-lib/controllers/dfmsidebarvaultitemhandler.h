@@ -39,7 +39,7 @@ public:
      * @param pathKey
      * @return 创建的实例指针
      */
-    static DFMSideBarItem *createItem(const QString &pathKey);
+    static DFMSideBarItem *createItem(const QString &pathKey, QWidget *topWidget);
 
     /**
      * @brief 构造函数
@@ -62,12 +62,18 @@ public:
      */
     QMenu *contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item) override;
 
+    /**
+     * @brief 初始化菜单
+     * @param topWidget
+     */
+    QMenu *generateMenu(QWidget *topWidget, const DFMSideBar *sender = nullptr);
+
 private:
     /**
      * @brief 立即上锁
      * @return 上锁是否成功
      */
-    bool lockNow(const DFMSideBar *sidebar);
+    bool lockNow();
 
     /**
      * @brief 自动上锁
@@ -79,17 +85,17 @@ private:
     /**
      * @brief 显示删除保险箱页面
      */
-    void showDeleteVaultView(const DFMSideBar *sidebar);
+    void showDeleteVaultView(DFileManagerWindow *wnd);
 
     /**
      * @brief 显示解锁页面
      */
-    void showUnLockView(const DFMSideBar *sidebar, const DFMSideBarItem *item);
+    void showUnLockView(DFileManagerWindow *wnd);
 
     /**
      * @brief 显示凭证页面
      */
-    void showCertificateView(const DFMSideBar *sidebar, const DFMSideBarItem *item);
+    void showCertificateView(DFileManagerWindow *wnd);
 };
 
 DFM_END_NAMESPACE
