@@ -99,26 +99,16 @@ void DFMSideBarVaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSi
             // 进入保险箱
             DFMSideBarItemInterface::cdAction(sidebar, item);
         }
-
-
-
-
         break;
     }
     case EN_VaultState::Unlocked:{  // 保险箱处于开锁状态，直接进入主界面
-//        DUrl newUrl;
-//        newUrl.setScheme(DFMVAULT_SCHEME);
-//        newUrl.setHost("files");
-//        newUrl.setPath("/");
         DFMSideBarItemInterface::cdAction(sidebar, item);
-
         break;
     }
     default:{   // 未考虑
         break;
     }
     }
-//    return DFMSideBarItemInterface::cdAction(sidebar, item);
 }
 
 QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
@@ -207,11 +197,14 @@ bool DFMSideBarVaultItemHandler::autoLock(uint minutes)
 void DFMSideBarVaultItemHandler::showDeleteVaultView(const DFMSideBar *sidebar)
 {
     // Something to do.
-    if(DDialog::Accepted == DFMVaultRemovePages::instance()->exec()){
-            // 切换到home目录下
-            DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
-            wnd->cd(DUrl(COMPUTER_ROOT));
-    }
+//    if(DDialog::Accepted == DFMVaultRemovePages::instance()->exec()){
+//        // 切换到home目录下
+//        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
+//        wnd->cd(DUrl(COMPUTER_ROOT));
+//    }
+    DFMVaultRemovePages::instance()->exec();
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
+    wnd->cd(DUrl(COMPUTER_ROOT));
 }
 
 void DFMSideBarVaultItemHandler::showUnLockView(const DFMSideBar *sidebar, const DFMSideBarItem *item)
