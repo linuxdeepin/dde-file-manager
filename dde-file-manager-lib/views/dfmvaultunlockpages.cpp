@@ -64,6 +64,15 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
 }
 
+void DFMVaultUnlockPages::showEvent(QShowEvent *event)
+{
+    // 重置所有控件状态
+    m_passwordEdit->lineEdit()->clear();
+    QLineEdit edit;
+    QPalette palette = edit.palette();
+    m_passwordEdit->lineEdit()->setPalette(palette);
+}
+
 DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
 {
     static DFMVaultUnlockPages s_instance;
@@ -92,14 +101,6 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
         return;
     }
 
-    // 重置所有控件状态
-    {
-        m_passwordEdit->lineEdit()->clear();
-        QLineEdit edit;
-        QPalette palette = edit.palette();
-        m_passwordEdit->lineEdit()->setPalette(palette);
-    }
-
     close();
 }
 
@@ -118,9 +119,9 @@ void DFMVaultUnlockPages::onPasswordChanged(const QString &pwd)
 void DFMVaultUnlockPages::onVaultUlocked(int state)
 {
     if (state == 0){
-        // 清除密码
-        m_passwordEdit->clear();
         accept();
+    }else {
+        //others
     }
 }
 

@@ -49,6 +49,8 @@ private:
     bool eventFilter(QObject *watched, QEvent *event) override;
 
     int afterRecoveryKeyChanged(QString &str);
+
+    void showEvent(QShowEvent *event) override;
 private:
     QPlainTextEdit *m_recoveryKeyEdit;
 };

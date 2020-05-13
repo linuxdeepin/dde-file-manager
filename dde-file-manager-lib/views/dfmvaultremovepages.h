@@ -31,18 +31,7 @@ public:
     explicit VaultRemoveFileDialog(QWidget *parent = nullptr);
     ~VaultRemoveFileDialog() override;
 
-    /**
-    * @brief    恢复到初始状态
-    */
-    void clear();
-
     void removeVault(const QString &rmPath);
-
-signals:
-    void removeFinished();
-
-    void removeResult(bool res);
-
 private:
     /**
     * @brief    初始化UI界面
@@ -66,6 +55,7 @@ private:
     */
     void removeFileInDir(const QString &path);
 
+    void showEvent(QShowEvent *event) override;
 private:
     QProgressBar *m_removeProgress;
 
@@ -155,14 +145,14 @@ class DFMVaultRemovePages : public DDialog
 {
     Q_OBJECT
 public:   
-    static DFMVaultRemovePages *instance();
+    static DFMVaultRemovePages* instance();
 
 public slots:
     void onButtonClicked(int index, const QString &text);
 
     void onLockVault(int state);
 
-private:
+private:    
     explicit DFMVaultRemovePages(QWidget *parent = nullptr);
     ~DFMVaultRemovePages() override {}
 
@@ -175,8 +165,7 @@ private:
 
     void insertPage(const PageType &pageType, QWidget * widget);
 
-    void closeEvent(QCloseEvent *event) override;
-
+    void showEvent(QShowEvent *event) override;
 private:
     VaultRemoveFileDialog *m_rmFileDialog;
     QMap<PageType, QWidget*> m_pages;    //存储页面

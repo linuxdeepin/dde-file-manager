@@ -74,10 +74,6 @@ void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
         return;
     }
 
-    // 重置所有控件状态
-    {
-        m_recoveryKeyEdit->clear();
-    }
     close();
 }
 
@@ -117,6 +113,11 @@ int DFMVaultRecoveryKeyPages::afterRecoveryKeyChanged(QString &str)
     }
 
     return location;
+}
+
+void DFMVaultRecoveryKeyPages::showEvent(QShowEvent *event)
+{
+    m_recoveryKeyEdit->clear();
 }
 
 void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
@@ -160,8 +161,9 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
 void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
 {
     if (state == 0){
-        m_recoveryKeyEdit->clear();
         accept();
+    }else {
+        // others
     }
 }
 

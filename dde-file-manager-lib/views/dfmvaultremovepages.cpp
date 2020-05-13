@@ -129,6 +129,18 @@ void VaultRemoveFileDialog::removeFileInDir(const QString &path)
     m_removeProgress->setValue(100 * (m_iRmFiles + m_iRmDir - 1) / m_iFiles);
 }
 
+void VaultRemoveFileDialog::showEvent(QShowEvent *event)
+{
+    //将相应的值赋0
+    m_iFiles = 0;
+    m_iRmDir = 0;
+    m_iRmFiles = 0;
+
+    m_removeProgress->setValue(0);
+    getButton(0)->setEnabled(false);
+    this->setMessage(tr("Removing..."));
+}
+
 void VaultRemoveFileDialog::removeVault(const QString &rmPath)
 {
     if (statisticsFiles(rmPath)){
@@ -139,17 +151,6 @@ void VaultRemoveFileDialog::removeVault(const QString &rmPath)
     }
 
     getButton(0)->setEnabled(true);
-}
-
-void VaultRemoveFileDialog::clear()
-{
-    //将相应的值赋0
-    m_iFiles = 0;
-    m_iRmDir = 0;
-    m_iRmFiles = 0;
-
-    getButton(0)->setEnabled(false);
-    this->setMessage(tr("Removing..."));
 }
 /*****************************************************************/
 
@@ -360,7 +361,7 @@ void DFMVaultRemovePages::initUI()
 {
     VaultPasswordPage *pwdPage = new VaultPasswordPage(this);
     VaultKeyPage *keyPage = new VaultKeyPage(this);
-    m_rmFileDialog = new VaultRemoveFileDialog(this);
+    m_rmFileDialog = new VaultRemoveFileDialog();
 
     insertPage(PageType::Password, pwdPage);
     insertPage(PageType::Key, keyPage);
@@ -396,6 +397,17 @@ void DFMVaultRemovePages::insertPage(const PageType &pageType, QWidget *widget)
     m_stackedLayout->addWidget(widget);
 }
 
+void DFMVaultRemovePages::showEvent(QShowEvent *event)
+{
+    // 重置界面状态
+    m_stackedLayout->setCurrentWidget(m_pages[PageType::Password]);
+    qobject_cast<VaultPasswordPage *>(m_pages[PageType::Password])->clear();
+    qobject_cast<VaultKeyPage *>(m_pages[PageType::Key])->clear();
+    getButton(1)->setText(tr("Use Key"));
+    m_bRemoveVault = false;
+    m_currentPage = PageType::Password;
+}
+
 DFMVaultRemovePages *DFMVaultRemovePages::instance()
 {
     static DFMVaultRemovePages s_instance;
@@ -406,7 +418,7 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
 {
     switch (index) {
     case 0: //点击取消按钮
-        this->close();
+        close();
         break;
     case 1:{ // 切换验证方式
         if (m_currentPage == PageType::Password){
@@ -463,7 +475,7 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
         m_bRemoveVault = true;
         // 验证成功，先对保险箱进行上锁
         VaultController::getVaultController()->lockVault();
-        this->setVisible(false);
+        //this->hide();
     }
         break;
     default:
@@ -478,17 +490,7 @@ void DFMVaultRemovePages::onLockVault(int state)
         m_rmFileDialog->removeVault(rmPath);
         m_rmFileDialog->exec();
         accept();
+    }else if (state != 0 && m_bRemoveVault) {
+        // something to do
     }
-}
-
-void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
-{
-    // 重置界面状态
-    m_stackedLayout->setCurrentWidget(m_pages[PageType::Password]);
-    qobject_cast<VaultPasswordPage *>(m_pages[PageType::Password])->clear();
-    qobject_cast<VaultKeyPage *>(m_pages[PageType::Key])->clear();
-    getButton(1)->setText(tr("Use Key"));
-    m_rmFileDialog->clear();
-    m_bRemoveVault = false;
-    m_currentPage = PageType::Password;
 }

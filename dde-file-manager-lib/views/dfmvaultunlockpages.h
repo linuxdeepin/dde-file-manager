@@ -46,6 +46,7 @@ private:
     DFMVaultUnlockPages(QWidget * parent = nullptr);
     ~DFMVaultUnlockPages() override {}
 
+    void showEvent(QShowEvent *event) override;
 private:
     DPasswordEdit * m_passwordEdit;
     QPushButton * m_helpButton;
