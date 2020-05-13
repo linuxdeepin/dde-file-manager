@@ -193,6 +193,10 @@ protected:
     void initExpand(QVBoxLayout *layout, DDrawer *expand);
 
 private:
+    QFrame * initTagFrame(const DUrl& url);
+    void updateInfo(); // when any property has been changed should update the linked properties ASAP, bug 25419
+
+private:
     DFMEvent m_fmevent{};
     DUrl m_url{};
     QString m_absolutePath{};
