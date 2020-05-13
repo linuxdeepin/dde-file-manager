@@ -293,12 +293,6 @@ QList<DUrl> DFileView::selectedUrls() const
         if (url.scheme() == SEARCH_SCHEME) {
             //搜索目录需要特殊处理
             list << url.searchedFileUrl();
-        } else if (url.scheme() == RECENT_SCHEME) {
-            // TODO
-            // xust 20200426 为解决在最近列表中框选多个文件后右键打开不能成功打开文件的问题，暂时在入口处处理 url (recent:// -> file://）,
-            // 单个文件可以正常打开，路径是通过 recent scheme 获取 RecentController 再转 FileController ，不过到多个文件打开就不走
-            // 这个路径，获取不到 RecentController 的原因还没查清楚。目前暂时从入口处理 url ，有时间再排查问题。
-            list << DUrl::fromLocalFile(url.path());
         } else {
             list << model()->getUrlByIndex(index);
         }
