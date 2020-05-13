@@ -216,6 +216,9 @@ signals:
     // 激活任务进度对话框
     void activeTaskDlg();
 
+    // 强制刷新计算机页面
+    void requestUpdateComputerView();
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);
