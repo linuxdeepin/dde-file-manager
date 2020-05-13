@@ -31,6 +31,7 @@
 #endif
 
 #include "util/xcb/xcb.h"
+#include <malloc.h>
 
 using WallpaperSettings = Frame;
 
@@ -72,6 +73,11 @@ Desktop::Desktop()
     // 任意控件改变位置都可能会引起主窗口被其它屏幕上的窗口所遮挡
     connect(d->background, &BackgroundHelper::backgroundGeometryChanged, this, &Desktop::onBackgroundGeometryChanged);
     onBackgroundEnableChanged();
+
+    //周期归还内存
+    QTimer *realseTimer = new QTimer;
+    connect(realseTimer,&QTimer::timeout,this,[](){malloc_trim(0);});
+    realseTimer->start(5000);
 }
 
 Desktop::~Desktop()
@@ -143,18 +149,12 @@ void Desktop::onBackgroundEnableChanged()
         //else
         QWidget *background;
 
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-
-            background = d->background->backgroundForScreen(GetPrimaryScreen());
-
+        if (DesktopInfo().waylandDectected()) {
+            background = d->background->waylandBackground(Display::instance()->primaryName());
         } else {
             background = d->background->backgroundForScreen(qApp->primaryScreen());
         }
+
         if(!background)
         {
             qWarning()<<"Warning:cannot find paimary widget and screen name:"<<Display::instance()->primaryName();
@@ -171,17 +171,18 @@ void Desktop::onBackgroundEnableChanged()
         QMetaObject::invokeMethod(background, "raise", Qt::QueuedConnection);
 
         // 隐藏完全重叠的窗口
+        qDebug() << "primary background" << background << background->isVisible() << background->geometry();
         for (QWidget *l : d->background->allBackgrounds()) {
             if (l != background) {
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
                 //由于之前的BackgroundLabel::setVisible中有做特殊情况下强制显示的操作，所以这里暂时这样处理
                 //不是是否会会有i其他影响
                 l->QWidget::setVisible(!background->geometry().contains(l->geometry()));
-                qDebug() << "sssssssssssssssssssssssss"<< l << l->isVisible();
             } else {
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
                 l->show();
             }
+            qDebug() << "hide overlap widget" << l << l->isVisible() << l->geometry();
         }
 
         //if X11
@@ -196,16 +197,9 @@ void Desktop::onBackgroundEnableChanged()
         //d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
         //else
 
-
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        if (DesktopInfo().waylandDectected()) {
             d->screenFrame.QWidget::setGeometry(Display::instance()->primaryRect());
         }
-
         else {
             d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
         }
