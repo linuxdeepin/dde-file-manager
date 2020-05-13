@@ -280,7 +280,12 @@ HEADERS += \
     controllers/dfmsidebarvaultitemhandler.h \
     controllers/vaulthandle.h \
     controllers/vaulterrorcode.h \
-    views/dfmvaultremovepages.h
+    views/dfmvaultremovepages.h \
+    views/dfmvaultactiveview.h \
+    views/dfmvaultactivestartview.h \
+    views/dfmvaultactivesavekeyview.h \
+    views/dfmvaultactivefinishedview.h \
+    views/dfmvaultactivesetunlockmethodview.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -474,7 +479,12 @@ SOURCES += \
     models/deviceinfoparser.cpp \
     controllers/dfmsidebarvaultitemhandler.cpp \
     controllers/vaulthandle.cpp \
-    views/dfmvaultremovepages.cpp
+    views/dfmvaultremovepages.cpp \
+    views/dfmvaultactiveview.cpp \
+    views/dfmvaultactivestartview.cpp \
+    views/dfmvaultactivesavekeyview.cpp \
+    views/dfmvaultactivefinishedview.cpp \
+    views/dfmvaultactivesetunlockmethodview.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

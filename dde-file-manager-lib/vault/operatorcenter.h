@@ -87,6 +87,9 @@ public:
     // 获得配置文件路径
     QStringList getConfigFilePath();
 
+    // 随即生成密码
+    QString autoGeneratePassword(int minLength);
+
 signals:
 
 public slots:

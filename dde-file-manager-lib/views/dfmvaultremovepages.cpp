@@ -475,7 +475,7 @@ void DFMVaultRemovePages::onLockVault(int state)
 {
     if (state == 0 && m_bRemoveVault){
         QString rmPath = VaultController::getVaultController()->vaultLockPath();
-//        m_rmFileDialog->removeVault(rmPath);
+        m_rmFileDialog->removeVault(rmPath);
 //        m_rmFileDialog->exec();
         accept();
     }

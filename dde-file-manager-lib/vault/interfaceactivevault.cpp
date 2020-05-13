@@ -1,12 +1,12 @@
 #include "interfaceactivevault.h"
-#include "activevault/widgetmanager.h"
+#include "views/dfmvaultactiveview.h"
 #include "operatorcenter.h"
 
 InterfaceActiveVault::InterfaceActiveVault(QObject *parent)
     : QObject(parent)
     , m_pWidget(nullptr)
 {
-    m_pWidget = new WidgetManager();
+    m_pWidget = new DFMVaultActiveView();
 }
 
 InterfaceActiveVault::~InterfaceActiveVault()
