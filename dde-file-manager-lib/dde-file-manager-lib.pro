@@ -591,9 +591,6 @@ defaultConfig.files = configure/default-view-states.json
 readmefile.path = $$PREFIX/share/deepin/$$TARGET/oem-menuextensions
 readmefile.files = plugins/.readme
 
-policy.path = /usr/share/polkit-1/actions
-policy.files = $$PWD/policy/com.deepin.pkexec.deepin-vault-authenticateProxy.policy
-
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations \
  icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile policy
 
@@ -602,5 +599,3 @@ DISTFILES += \
     confirm/deepin-vault-authenticateProxy
 
 include($$PWD/settings_dialog_json.pri)
-
-QMAKE_POST_LINK += cp /Y &&PWD/confirm/deepin-vault-authenticateProxy &&PWD/confirm/policy/
