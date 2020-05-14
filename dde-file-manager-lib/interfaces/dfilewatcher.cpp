@@ -247,7 +247,9 @@ void DFileWatcherPrivate::_q_handleFileCreated(const QString &path, const QStrin
 
 void DFileWatcherPrivate::_q_handleFileModified(const QString &path, const QString &parentPath)
 {
-    if (path != this->path && parentPath != this->path)
+    //if (path != this->path && parentPath != this->path)
+    // bug 25533: some path add some external path when modified, so use the contain function
+    if (!path.contains(this->path) && parentPath != this->path)
         return;
 
     Q_Q(DFileWatcher);
