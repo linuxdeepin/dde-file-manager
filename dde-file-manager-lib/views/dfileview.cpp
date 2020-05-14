@@ -289,13 +289,7 @@ QList<DUrl> DFileView::selectedUrls() const
         if (index.parent() != rootIndex)
             continue;
 
-        DUrl url = model()->getUrlByIndex(index);
-        if (url.scheme() == SEARCH_SCHEME) {
-            //搜索目录需要特殊处理
-            list << url.searchedFileUrl();
-        } else {
-            list << model()->getUrlByIndex(index);
-        }
+        list << model()->getUrlByIndex(index);
     }
 
     return list;
@@ -1317,14 +1311,26 @@ void DFileView::updateStatusBar()
 
     DFMEvent event(this);
     event.setWindowId(windowId());
-    event.setData(selectedUrls());
+    //来自搜索目录的url需要处理转换为localfile，否则statusBar上的展示会不正确
+    QList<DUrl> sourceUrls = selectedUrls();
+    QList<DUrl> corectUrls;
+    for (DUrl srcUrl : sourceUrls) {
+        if (srcUrl.scheme() == SEARCH_SCHEME) {
+            corectUrls << srcUrl.searchedFileUrl();
+        }
+        else {
+            corectUrls << srcUrl;
+        }
+    }
+
+    event.setData(corectUrls);
     int count = selectedIndexCount();
     //判断网络文件是否可以到达
     if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
         return;
     }
 
-    emit notifySelectUrlChanged(selectedUrls());
+    emit notifySelectUrlChanged(corectUrls);
 
     if (count == 0) {
         d->statusBar->itemCounted(event, this->count());
