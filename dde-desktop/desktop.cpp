@@ -262,10 +262,12 @@ void Desktop::showWallpaperSettings(int mode)
         d->wallpaperSettings = nullptr;
     });
     connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
-        const QString &desktopImage = d->wallpaperSettings->desktopBackground();
-
-        if (!desktopImage.isEmpty())
-            d->background->setBackground(desktopImage);
+        WallpaperSettings *set = dynamic_cast<WallpaperSettings *>(sender());
+        if (set){
+            QString desktopImage = set->desktopBackground();
+            if (!desktopImage.isEmpty())
+                d->background->setBackground(desktopImage);
+        }
     }, Qt::DirectConnection);
 
     d->wallpaperSettings->show();
@@ -280,7 +282,7 @@ void Desktop::showWallpaperSettings(int mode)
         //10毫秒后再次检测
         QTimer::singleShot(10,d->wallpaperSettings,[=]()
         {
-            if (!d->wallpaperSettings->isActiveWindow())
+            if (d->wallpaperSettings && !d->wallpaperSettings->isActiveWindow())
                 d->wallpaperSettings->activateWindow();
         });
     });
