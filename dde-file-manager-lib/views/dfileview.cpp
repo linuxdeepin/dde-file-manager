@@ -293,12 +293,6 @@ QList<DUrl> DFileView::selectedUrls() const
         if (url.scheme() == SEARCH_SCHEME) {
             //搜索目录需要特殊处理
             list << url.searchedFileUrl();
-        } else if (url.scheme() == RECENT_SCHEME) {
-            // TODO
-            // xust 20200426 为解决在最近列表中框选多个文件后右键打开不能成功打开文件的问题，暂时在入口处处理 url (recent:// -> file://）,
-            // 单个文件可以正常打开，路径是通过 recent scheme 获取 RecentController 再转 FileController ，不过到多个文件打开就不走
-            // 这个路径，获取不到 RecentController 的原因还没查清楚。目前暂时从入口处理 url ，有时间再排查问题。
-            list << DUrl::fromLocalFile(url.path());
         } else {
             list << model()->getUrlByIndex(index);
         }
@@ -1325,6 +1319,10 @@ void DFileView::updateStatusBar()
     event.setWindowId(windowId());
     event.setData(selectedUrls());
     int count = selectedIndexCount();
+    //判断网络文件是否可以到达
+    if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+        return;
+    }
 
     emit notifySelectUrlChanged(selectedUrls());
 
@@ -1499,20 +1497,25 @@ void DFileView::resizeEvent(QResizeEvent *event)
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     D_DC(DFileView);
-
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = isIconViewMode() ? index.isValid() : this->isSelected(index);
     bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
     Qt::ItemFlags flags;
 
     if (isEmptyArea) {
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+            return;
+        }
         flags = model()->flags(rootIndex());
-
         if (!flags.testFlag(Qt::ItemIsEnabled))
             return;
     } else {
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+            return;
+        }
         flags = model()->flags(index);
-
         if (!flags.testFlag(Qt::ItemIsEnabled)) {
             isEmptyArea = true;
             flags = rootIndex().flags();
@@ -1712,6 +1715,7 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return;
     }
 
+
     if (flags == (QItemSelectionModel::Current | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect)) {
         QRect tmp_rect = rect;
         //修改远程时，文件选择框内容选中后被取消问题
@@ -1742,7 +1746,6 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return selectionModel()->select(selection, flags);
 #endif
     }
-
     DListView::setSelection(rect, flags);
 }
 
@@ -2135,7 +2138,10 @@ void DFileView::decreaseIcon()
 void DFileView::openIndex(const QModelIndex &index)
 {
     const DUrl &url = model()->getUrlByIndex(index);
-
+    //判断网络文件是否可以到达
+    if (!DFileService::instance()->checkGvfsMountfileBusy(url)) {
+        return;
+    }
     DFMOpenUrlEvent::DirOpenMode mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()
                                         ? DFMOpenUrlEvent::ForceOpenNewWindow
                                         : DFMOpenUrlEvent::OpenInCurrentWindow;
@@ -2201,15 +2207,19 @@ bool DFileView::setRootUrl(const DUrl &url)
 
         // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
         QString strVolTag = fileUrl.path().split("/", QString::SkipEmptyParts).count() >= 2
-                ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
-                : "";
+                            ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
+                            : "";
         if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
             emit fileSignalManager->activeTaskDlg();
             return false;
         }
 
         QString devpath = fileUrl.burnDestDevice();
-        QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
+        QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(devpath, {});
+        if (rootDeviceNode.isEmpty()) {
+            return false;
+        }
+        QString udiskspath = rootDeviceNode.first();
         getOpticalDriveMutex()->lock();
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
         getOpticalDriveMutex()->unlock();

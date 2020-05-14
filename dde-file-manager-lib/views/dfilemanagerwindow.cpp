@@ -102,6 +102,7 @@ public:
 
     void setCurrentView(DFMBaseView *view);
     bool processKeyPressEvent(QKeyEvent *event);
+    bool processTitleBarEvent(QMouseEvent *event);
     bool cdForTab(Tab *tab, const DUrl &fileUrl);
     void initAdvanceSearchBar();
     bool isAdvanceSearchBarVisible() const;
@@ -135,6 +136,10 @@ public:
     DFMAdvanceSearchBar *advanceSearchBar = nullptr;
 
     QMap<DUrl, QWidget *> views;
+
+    bool move;
+    QPoint startPoint;
+    QPoint windowPoint;
 
     DFileManagerWindow *q_ptr{ nullptr };
 
@@ -253,6 +258,57 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     }
 
     return false;
+}
+
+bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
+{
+    if (!event)
+        return false;
+
+    Q_Q(DFileManagerWindow);
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        auto mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            move = true;
+            /*记录鼠标的全局坐标.*/
+            startPoint = mouseEvent->globalPos();
+            /*记录窗体的全局坐标.*/
+            windowPoint = q->frameGeometry().topLeft();
+            return true;
+        }
+        return false;
+    }
+
+    if (event->type() == QEvent::MouseButtonRelease) {
+        auto mouseEvent = static_cast<QMouseEvent *>(event);
+        /*改变移动状态.*/
+        if (mouseEvent->buttons() & Qt::LeftButton) {
+            move = false;
+            return true;
+        }
+        return false;
+    }
+
+    if (event->type() == QEvent::MouseButtonDblClick) {
+        move = false;
+        return false;
+    }
+
+    if (event->type() == QEvent::MouseMove) {
+        if (move) {
+            auto mouseEvent = static_cast<QMouseEvent *>(event);
+            /*移动中的鼠标位置相对于初始位置的相对位置.*/
+            QPoint relativePos = mouseEvent->globalPos() - startPoint;
+            /*然后移动窗体即可.*/
+            if (event->buttons() == Qt::LeftButton) {
+                q->move(windowPoint + relativePos);
+            }
+        }
+        return false;
+    }
+
+    return  false;
 }
 
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
@@ -819,6 +875,12 @@ void DFileManagerWindow::keyPressEvent(QKeyEvent *event)
 
 bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 {
+    Q_D(DFileManagerWindow);
+
+    if (watched == titlebar()) {
+        return d->processTitleBarEvent(static_cast<QMouseEvent *>(event));
+    }
+
     if (!getFileView() || watched != getFileView()->widget()) {
         return false;
     }
@@ -826,8 +888,6 @@ bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
     if (event->type() != QEvent::KeyPress) {
         return false;
     }
-
-    Q_D(DFileManagerWindow);
 
     return d->processKeyPressEvent(static_cast<QKeyEvent *>(event));
 }
@@ -939,6 +999,9 @@ void DFileManagerWindow::initTitleBar()
     titlebar()->setContentsMargins(0, 0, 0, 0);
     titlebar()->setCustomWidget(d->titleFrame, false);
     titlebar()->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+
+    // fix: titlebar的move事件在自定义的耗时异步事件时会失效，因此自行处理titlebar的事件
+    titlebar()->installEventFilter(this);
 }
 
 void DFileManagerWindow::initSplitter()

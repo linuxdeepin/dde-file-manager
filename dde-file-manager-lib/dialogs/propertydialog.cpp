@@ -515,9 +515,25 @@ void PropertyDialog::initUI()
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
     layout->addLayout(scrolllayout, 1);
 
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
+    QFrame* tagFrame = initTagFrame(m_url);
+    if(tagFrame != nullptr)
+    {
+        scrollWidgetLayout->addWidget(tagFrame);
+    }
+
+    setFixedWidth(350);
+}
+
+QFrame * PropertyDialog::initTagFrame(const DUrl& url)
+{
+    if(m_tagInfoFrame != nullptr){
+        ((DFMTagWidget *)m_tagInfoFrame)->loadTags(url);
+        return m_tagInfoFrame;
+    }
+
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
     if (fileInfo && fileInfo->canTag()) {
-        DFMTagWidget *tagInfoFrame = new DFMTagWidget(m_url, this);
+        DFMTagWidget *tagInfoFrame = new DFMTagWidget(url, this);
         new DFMRoundBackground(tagInfoFrame, 8);
         m_tagInfoFrame = tagInfoFrame;
 
@@ -526,10 +542,18 @@ void PropertyDialog::initUI()
         font.setPixelSize(17);
         tagInfoFrame->tagTitle()->setFont(font);
         m_tagInfoFrame->setMaximumHeight(150);
-        scrollWidgetLayout->addWidget(m_tagInfoFrame);
+
+        qDebug() << "tag frame is created for: " << url;
+
+        return m_tagInfoFrame;
     }
 
-    setFixedWidth(350);
+    return nullptr;
+}
+
+void PropertyDialog::updateInfo()
+{
+    initTagFrame(m_url);
 }
 
 void PropertyDialog::initConnect()
@@ -636,6 +660,7 @@ void PropertyDialog::showTextShowFrame()
         if (fileService->renameFile(this, oldUrl, newUrl)) {
             if (!fileInfo->isDesktopFile()) { // this is a dirty fix.
                 m_url = newUrl;
+                updateInfo();//bug 25419
                 dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
             }
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
@@ -1132,13 +1157,24 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     DUrl redirectedFileUrl = info->redirectedFileUrl();
     if (!redirectedFileUrl.isEmpty()) {
         if (redirectedFileUrl.burnIsOnDisc()) {
+            if (!redirectedFileUrl.burnDestDevice().isEmpty()) {
+                DUrl stagingUrl = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                                                      + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
+                                                      + redirectedFileUrl.burnDestDevice().replace('/', '_'));
+                QString stagingFilePath = stagingUrl.toLocalFile();
+                if (!stagingFilePath.isEmpty()) {
+                    fileCount = FileUtils::filesCount(stagingFilePath);
+                }
+            }
+
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, redirectedFileUrl);
             DUrl url = DUrl::fromLocalFile(fi->extraProperties()["mm_backer"].toString());
             redirectedFileUrl = url;
         }
+
         QString localFilePath = redirectedFileUrl.toLocalFile();
         if (!localFilePath.isEmpty()) {
-            fileCount = FileUtils::filesCount(localFilePath);
+            fileCount += FileUtils::filesCount(localFilePath);
         }
     }
 

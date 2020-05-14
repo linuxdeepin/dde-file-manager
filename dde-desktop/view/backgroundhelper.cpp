@@ -526,6 +526,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     l->createWinId();
     l->windowHandle()->setScreen(screen);
     l->setGeometry(screen->geometry());
+    qDebug() << "new screen" << screen << screen->geometry() << "backwidget" <<l->geometry();
     // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
     bool hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
@@ -591,12 +592,18 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
     // 因为接下来会发出backgroundGeometryChanged信号，
     // 所以此处必须保证QWidget::geometry的值和接下来对其windowHandle()对象设置的geometry一致
     l->setGeometry(screen->geometry());
+    qDebug() << screen->name() << "set background geo to " << screen->geometry() << l->geometry();
 
     // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
     bool hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
     if (Display::instance()->primaryScreen() == screen) {
-        l->setGeometry(Display::instance()->primaryRect());
+        QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : screen->geometry();
+        if (grect.width() == 0 || grect.height() == 0){
+            qCritical() << "error!!!!!!!!!!!" << "set DBUS primaryRect background geometry" << grect;
+        }
+        qDebug() << grect << "primaryScreen" << screen->name() << screen->geometry() << Display::instance()->primaryRect();
+        l->setGeometry(grect);
     }
     QHighDpiScaling::m_active = hi_active;
 
@@ -606,9 +613,12 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
     QHighDpiScaling::m_active = false;
     l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
     if (Display::instance()->primaryScreen() == screen) {
-        l->windowHandle()->handle()->setGeometry(Display::instance()->primaryRect());
+        QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : screen->geometry();
+        l->windowHandle()->handle()->setGeometry(grect);
     }
 
+    qDebug() << screen->name() << "background geo" << l->geometry()
+             << (Display::instance()->primaryScreen() == screen) << Display::instance()->primaryRect();
     QHighDpiScaling::m_active = hi_active;
     updateBackground(l);
 }
@@ -730,7 +740,8 @@ void BackgroundHelper::printLog()
         qDebug() << "\r\n" << l << "l->isvisible" << l->isVisible() <<
                  "property.myScreen" << l->property("myScreen") <<
                  "\r\nlabel.screen" << l->windowHandle()->handle()->screen()->name() <<
-                 "label geo" << l->windowHandle()->handle()->geometry();
+                 "label geo" << l->windowHandle()->handle()->geometry()
+                 << "widget geo" << l->geometry();
 
     }
     qDebug() << "\n************************\n";

@@ -61,8 +61,7 @@ DFM_BEGIN_NAMESPACE
 DFMSideBar::DFMSideBar(QWidget *parent)
     : QWidget(parent),
       m_sidebarView(new DFMSideBarView(this)),
-      m_sidebarModel(new DFMSideBarModel(this)),
-      m_bmenuexec(false)
+      m_sidebarModel(new DFMSideBarModel(this))
 {
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
@@ -77,14 +76,6 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initConnection();
     initUserShareItem();
     initRecentItem();
-
-
-    m_timer = new QTimer(this);
-    connect(m_timer,&QTimer::timeout,[ = ](){
-        m_bmenuexec = false;
-        qDebug() << "m_bmenuexec  ====== ==   " << m_bmenuexec;
-        m_timer->stop();
-    });
 }
 
 QWidget *DFMSideBar::sidebarView()
@@ -379,18 +370,19 @@ void DFMSideBar::onItemActivated(const QModelIndex &index)
 
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     if (interface) {
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(item->url())) {
+            return;
+        }
+        DFileService::instance()->setCursorBusyState(true);
         interface->cdAction(this, item);
+        DFileService::instance()->setCursorBusyState(false);
     }
 }
 
 void DFMSideBar::onContextMenuRequested(const QPoint &pos)
 {
     if (!m_contextMenuEnabled) return;
-    //判断是否有之前的menu还在exec
-    if(m_bmenuexec) {
-        qDebug()<< "m_bmenuexec = " << m_bmenuexec << pos;
-        return;
-    }
     QModelIndex modelIndex = m_sidebarView->indexAt(pos);
     if (!modelIndex.isValid()) {
         return;
@@ -401,35 +393,25 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
         return ; // separator should not show menu
     }
     QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
-
+    DFileService::instance()->setCursorBusyState(true);
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     QMenu *menu = nullptr;
-
     if (interface) {
         menu = interface->contextMenu(this, item);
-        //临时解决方案，在处理onContextMenuRequested信号时，处理时间很长，在左边栏一直点击鼠标右键-鼠标左键，就会一直触发onContextMenuRequested信号
-        //这时再次创建menu和执行menu->exec，释放menu就崩溃
-        //要忽略掉在处理onContextMenuRequested信号时，在收到onContextMenuRequested信号
         if (menu) {
-            qDebug() << "menu->exec  =  " << identifierStr << menu;
-            m_bmenuexec = true;
             DFileMenu *fmenu = static_cast<DFileMenu *>(menu);
+            DFileService::instance()->setCursorBusyState(false);
             if (fmenu) {
                 fmenu->exec(this->mapToGlobal(pos));
             }
             else {
                 menu->exec(this->mapToGlobal(pos));
             }
-
-            qDebug() << "menu->exec  =  " << identifierStr << menu;
-            connect(menu,&QMenu::destroyed,this,[ = ](){
-                m_timer->setInterval(250);
-                m_timer->start();
-                qDebug() << " destroyed ====================================="<<menu;
-            });
             menu->deleteLater();
         }
+        DFileService::instance()->setCursorBusyState(false);
     }
+    DFileService::instance()->setCursorBusyState(false);
     return;
 }
 

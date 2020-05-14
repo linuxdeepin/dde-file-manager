@@ -39,11 +39,15 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
     if (url.burnDestDevice().length() == 0) {
         return;
     }
-    QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
+    QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
+    if (rootDeviceNode.isEmpty()) {
+        return;
+    }
+    QString udiskspath = rootDeviceNode.first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
 
-    if(url.burnIsOnDisc()) {
+    if (url.burnIsOnDisc()) {
         if (diskdev->opticalBlank()) {
             //blank media contains no files on disc, duh!
             return;
@@ -56,8 +60,7 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
             }
 
             m_backerUrl = DUrl::fromLocalFile(mntpoint + url.burnFilePath());
-        }
-        else m_backerUrl = DUrl();
+        } else m_backerUrl = DUrl();
     } else {
         m_backerUrl = MasteredMediaController::getStagingFolder(url);
     }
@@ -177,7 +180,11 @@ bool MasteredMediaFileInfo::canRedirectionFileUrl() const
 DUrl MasteredMediaFileInfo::redirectedFileUrl() const
 {
     Q_D(const DAbstractFileInfo);
-    return d->proxy->fileUrl();
+    if (d->proxy) {
+        return d->proxy->fileUrl();
+    }
+
+    return DAbstractFileInfo::fileUrl();
 }
 
 DUrl MasteredMediaFileInfo::mimeDataUrl() const
@@ -258,3 +265,45 @@ QSet<MenuAction> MasteredMediaFileInfo::disableMenuActionList() const
 
     return list;
 }
+
+void MasteredMediaFileInfo::refresh()
+{
+    Q_D(const DAbstractFileInfo);
+
+    DAbstractFileInfo::refresh();
+    if (d->proxy) {
+        return;
+    }
+
+    DUrl url = fileUrl();
+    if (url.burnDestDevice().length() == 0) {
+        return;
+    }
+    QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
+    if (rootDeviceNode.isEmpty()) {
+        return;
+    }
+    QString udiskspath = rootDeviceNode.first();
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+
+    if (url.burnIsOnDisc()) {
+        if (diskdev->opticalBlank()) {
+            //blank media contains no files on disc, duh!
+            return;
+        }
+
+        if (blkdev->mountPoints().size() > 0) {
+            QString mntpoint = QString(blkdev->mountPoints().front());
+            while (*mntpoint.rbegin() == '/') {
+                mntpoint.chop(1);
+            }
+
+            m_backerUrl = DUrl::fromLocalFile(mntpoint + url.burnFilePath());
+        } else m_backerUrl = DUrl();
+    } else {
+        m_backerUrl = MasteredMediaController::getStagingFolder(url);
+    }
+    setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
+}
+
