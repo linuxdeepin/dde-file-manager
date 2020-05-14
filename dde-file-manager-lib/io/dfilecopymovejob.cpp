@@ -1017,16 +1017,19 @@ open_file: {
 
     Q_FOREVER {
         qint64 current_pos = fromDevice->pos();
+        qDebug() << "Q_FOREVER  " << current_pos;
     read_data:
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
 
         char data[blockSize + 1];
+        //if read error read will return -1,success wil return 0
         qint64 size_read = fromDevice->read(data, blockSize);
 
         if (Q_UNLIKELY(size_read <= 0)) {
-            if (fromDevice->atEnd()) {
+            //if size_read == 0,but atEnd will return true
+            if (size_read == 0 && fromDevice->atEnd()) {
                 break;
             }
 
