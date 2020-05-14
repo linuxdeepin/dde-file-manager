@@ -909,7 +909,7 @@ QList<DAbstractFileInfoPointer> DFileService::getRootFile()
     static const QList<QString> udir = {"desktop", "videos", "music", "pictures", "documents", "downloads"};
     for (int i = 0; i < udir.count(); i++) {
         for (int j = 0; j < ret.count(); j++) {
-            if (ret[j]->fileUrl().path().contains(udir[i]) && i != j) {
+            if (ret[j]->fileUrl().path().contains(udir[i]) && ret[j]->suffix() == SUFFIX_USRDIR && i != j) {
                 ret.move(j, i);
                 break;
             }
