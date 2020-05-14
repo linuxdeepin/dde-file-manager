@@ -145,25 +145,25 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
         QAction *actionNever = DFileMenuManager::getAction(MenuAction::Never);
         QObject::connect(actionNever, &QAction::triggered, actionNever, [this](){
-            autoLock(0);
+            autoLock(VaultController::Never);
         });
         actionNever->setChecked(lockState == VaultController::Never ? true : false);
 
         QAction *actionFiveMins = DFileMenuManager::getAction(MenuAction::FiveMinutes);
         QObject::connect(actionFiveMins, &QAction::triggered, actionFiveMins, [this](){
-            autoLock(5);
+            autoLock(VaultController::FiveMinutes);
         });
         actionFiveMins->setChecked(lockState == VaultController::FiveMinutes ? true : false);
 
         QAction *actionTenMins = DFileMenuManager::getAction(MenuAction::TenMinutes);
         QObject::connect(actionTenMins, &QAction::triggered, actionTenMins, [this](){
-            autoLock(10);
+            autoLock(VaultController::TenMinutes);
         });
         actionTenMins->setChecked(lockState == VaultController::TenMinutes ? true : false);
 
         QAction *actionTwentyMins = DFileMenuManager::getAction(MenuAction::TwentyMinutes);
         QObject::connect(actionTwentyMins, &QAction::triggered, actionTwentyMins, [this](){
-            autoLock(20);
+            autoLock(VaultController::TweentyMinutes);
         });
         actionTwentyMins->setChecked(lockState == VaultController::TweentyMinutes ? true : false);
 
@@ -197,9 +197,10 @@ bool DFMSideBarVaultItemHandler::lockNow()
     return true;
 }
 
-bool DFMSideBarVaultItemHandler::autoLock(uint minutes)
+bool DFMSideBarVaultItemHandler::autoLock(int lockState)
 {
-    return VaultController::getVaultController()->autoLock(minutes);
+    return VaultController::getVaultController()->autoLock(
+                static_cast<VaultController::AutoLockState>(lockState));
 }
 
 void DFMSideBarVaultItemHandler::showDeleteVaultView(DFileManagerWindow *wnd)

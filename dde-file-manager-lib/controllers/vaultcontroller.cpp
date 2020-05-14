@@ -113,6 +113,7 @@ DUrl VaultDirIterator::url() const
 
 VaultController::VaultController(QObject *parent)
     : DAbstractFileController(parent),d_ptr(new VaultControllerPrivate(this))
+    , m_lockState(VaultController::Never)
 {
     Q_D(VaultController);
     d->m_cryFsHandle = new CryFsHandle;
@@ -309,12 +310,13 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
 VaultController::AutoLockState VaultController::autoLockState() const
 {
     // Something to do.
-    return VaultController::Never;
+    return m_lockState;
 }
 
-bool VaultController::autoLock(uint minutes)
+bool VaultController::autoLock(AutoLockState lockState)
 {
     // Something to do.
+    m_lockState = lockState;
     return true;
 }
 

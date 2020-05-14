@@ -88,11 +88,11 @@ public:
     AutoLockState autoLockState() const;
 
     /**
-     * @brief autoLock  设置自动上锁延迟时间
-     * @param minutes   延迟上锁间隔
+     * @brief autoLock    设置自动锁状态
+     * @param lockState   状态值
      * @return
      */
-    bool autoLock(uint minutes);
+    bool autoLock(AutoLockState lockState);
 
 public slots:
 
@@ -211,6 +211,8 @@ private:
     QTimer m_refreshTimer;
 
     DAbstractFileInfoPointer m_rootFileInfo;
+
+    AutoLockState m_lockState; // 自动锁状态
 
     Q_DECLARE_PRIVATE(VaultController)
 

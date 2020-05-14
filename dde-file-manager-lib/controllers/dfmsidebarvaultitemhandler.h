@@ -80,10 +80,10 @@ private:
 
     /**
      * @brief 自动上锁
-     * @param minutes 倒计时（分钟）
+     * @param lockState 加锁状态
      * @return 自动上锁是否成功
      */
-    bool autoLock(uint minutes);
+    bool autoLock(int lockState);
 
     /**
      * @brief 显示删除保险箱页面
