@@ -196,6 +196,7 @@ void DFMAddressBar::stopAnimation()
 void DFMAddressBar::hide()
 {
     QLineEdit::hide();
+    completerView->hideMe();
 }
 
 void DFMAddressBar::focusInEvent(QFocusEvent *e)
@@ -220,6 +221,7 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
         setFocus();
         return;
     }
+    completerView->hideMe();
     emit lostFocus();
 
     return QLineEdit::focusOutEvent(e);
@@ -231,7 +233,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     switch (e->key()) {
     case Qt::Key_Escape:
         emit escKeyPressed();
-        completerView->hide();
+        completerView->hideMe();
         e->accept();
         return;
     default:
@@ -257,7 +259,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Return:
             e->accept();
             emit returnPressed();
-            completerView->hide();
+            completerView->hideMe();
             return;
         case Qt::Key_Tab:
             if (completer()->completionCount() > 0) {
@@ -470,13 +472,14 @@ void DFMAddressBar::doComplete()
     } else {
         urlCompleter->metaObject()->invokeMethod(urlCompleter, "_q_autoResizePopup");
     }
-
     if (completer()->completionCount() == 1
             && lastPressedKey != Qt::Key_Backspace
             && lastPressedKey != Qt::Key_Delete
             && cursorPosition() == text().length()) {
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
     }
+    completerView->showMe();
+    completerView->activateWindow();
 
     return;
 }
@@ -552,7 +555,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
                     if (urlCompleter->popup()->isHidden())
                         doComplete();
                 } else {
-                    completerView->hide();
+                    completerView->hideMe();
                     setFocus(); // Hide will cause lost focus (weird..), so setFocus() here.
                 }
             });
@@ -615,7 +618,7 @@ void DFMAddressBar::onCompletionHighlighted(const QString &highlightedCompletion
 void DFMAddressBar::onCompletionModelCountChanged()
 {
     if (completer()->completionCount() <= 0) {
-        completerView->hide();
+        completerView->hideMe();
         setFocus();
         return;
     }
