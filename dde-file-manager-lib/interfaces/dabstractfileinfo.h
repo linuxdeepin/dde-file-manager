@@ -47,6 +47,10 @@ bool compareFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstr
     bool isFile1 = info1->isFile();\
     bool isFile2 = info2->isFile();\
     \
+    if (!static_cast<const Type*>(info1.data())) \
+        return false; \
+    if (!static_cast<const Type*>(info2.data())) \
+        return false; \
     auto value1 = static_cast<const Type*>(info1.data())->Value();\
     auto value2 = static_cast<const Type*>(info2.data())->Value();\
     \
