@@ -62,6 +62,11 @@ public:
     static DUrlList vaultToLocalUrls(DUrlList vaultUrls);
 
     /**
+    * @brief checkAuthentication    权限校验
+    */
+    static bool checkAuthentication();
+
+    /**
      * @brief state         获取当前保险箱状态
      * @param lockBaseDir   保险箱加密文件夹
      * @return              返回VaultState枚举值

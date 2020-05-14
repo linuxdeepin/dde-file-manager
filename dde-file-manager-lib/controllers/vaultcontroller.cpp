@@ -240,6 +240,22 @@ DUrlList VaultController::vaultToLocalUrls(DUrlList vaultUrls)
     return vaultUrls;
 }
 
+bool VaultController::checkAuthentication()
+{
+    QString cmd("pkexec deepin-devicemanager-authenticateProxy");
+    QProcess process_;
+    process_.start(cmd);
+
+    bool res = process_.waitForFinished(-1);
+    QString standOutput_ = process_.readAllStandardOutput();
+    int exitCode = process_.exitCode();
+    if ( cmd.startsWith("pkexec deepin-devicemanager-authenticateProxy") && (exitCode == 127 || exitCode == 126) ) {
+        return false;
+    }
+
+    return res;
+}
+
 VaultController::VaultState VaultController::state(QString lockBaseDir)
 {
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");

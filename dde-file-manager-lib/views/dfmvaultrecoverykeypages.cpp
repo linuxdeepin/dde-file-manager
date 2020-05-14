@@ -24,6 +24,7 @@
 
 #include <QPlainTextEdit>
 #include <QAbstractButton>
+#include <QToolTip>
 
 // 密钥最大长度
 #define MAX_KEY_LENGTH (32)
@@ -68,7 +69,18 @@ void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
 
         QString strClipher("");
         if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
-            VaultController::getVaultController()->unlockVault(strClipher);
+            // 管理员权限认证
+            if (VaultController::checkAuthentication()){
+                VaultController::getVaultController()->unlockVault(strClipher);
+            }
+        } else {
+            //设置QToolTip颜色
+            QPalette palette = QToolTip::palette();
+            palette.setColor(QPalette::Inactive,QPalette::ToolTipBase,Qt::white);   //设置ToolTip背景色
+            palette.setColor(QPalette::Inactive,QPalette::ToolTipText,QColor(255, 85, 0, 255)); 	//设置ToolTip字体色
+            QToolTip::setPalette(palette);
+            QRect rect(pos(), geometry().size());
+            QToolTip::showText(m_recoveryKeyEdit->mapToGlobal(m_recoveryKeyEdit->pos()), tr("Wrong recovery key"));
         }
 
         return;
@@ -131,6 +143,17 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
     } else {
         getButton(1)->setEnabled(true);
     }
+
+    // 限制密钥输入框只能输入数字、字母、以及+/-
+    QRegExp rx("[a-zA-Z0-9-+/]+");
+    QString res("");
+    int pos = 0;
+    while ((pos = rx.indexIn(key, pos)) != -1)
+    {
+        res += rx.cap(0);
+        pos += rx.matchedLength();
+    }
+    key = res;
 
     // 限制输入的最大长度
     if (length > maxLength){

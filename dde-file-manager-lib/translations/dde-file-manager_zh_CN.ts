@@ -574,91 +574,96 @@
 <context>
     <name>DFMVaultRecoveryKeyPages</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="34"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="35"/>
         <source>Unlock by Key</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复密钥解锁</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="38"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="39"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="38"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="39"/>
         <source>Unlock</source>
-        <translation type="unfinished">解锁</translation>
+        <translation>解锁</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="44"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="45"/>
         <source>Input the 32-digit recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入32位恢复密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="67"/>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="93"/>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="102"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="68"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="101"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="110"/>
         <source>-</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="83"/>
+        <source>Wrong recovery key</source>
+        <translation type="unfinished">密钥错误</translation>
     </message>
 </context>
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="349"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="243"/>
         <source>Remove File Vault</source>
-        <translation type="unfinished">删除保险箱</translation>
+        <translation>删除保险箱</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="350"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="244"/>
         <source>Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue.</source>
-        <translation type="unfinished"></translation>
+        <translation>删除保险箱后，其中的所有内容将会被永久删除，请确认后继续。</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="263"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="416"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="490"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="263"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="326"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="348"/>
         <source>Use Key</source>
-        <translation type="unfinished"></translation>
+        <translation>密钥验证</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="263"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>删除</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="374"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="267"/>
         <source>color: rgb(255, 85, 0);</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="413"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="345"/>
         <source>Use Password</source>
-        <translation type="unfinished"></translation>
+        <translation>密码验证</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="431"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="363"/>
         <source>background-color:rgb(245, 218, 217)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="439"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="364"/>
         <source>Wrong password</source>
-        <translation type="unfinished"></translation>
+        <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="447"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="372"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="457"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="382"/>
         <source>Wrong recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>密钥错误</translation>
     </message>
 </context>
 <context>
@@ -674,37 +679,42 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="37"/>
         <source>Unlock File Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>打开保险箱</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="39"/>
         <source>Verify your fingerprint or password</source>
-        <translation type="unfinished"></translation>
+        <translation>请验证指纹或输入密码</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="42"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="42"/>
         <source>Unlock</source>
-        <translation type="unfinished">解锁</translation>
+        <translation>解锁</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="48"/>
         <source>Password</source>
-        <translation type="unfinished">密码</translation>
+        <translation>请输入解锁密码</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="83"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
+        <source>At least 8 characters, and contain A-Z, a-z, 0-9, and symbols</source>
+        <translation>密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="100"/>
         <source>background-color:rgb(245, 218, 217)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="90"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="102"/>
         <source>Wrong password</source>
-        <translation type="unfinished"></translation>
+        <translation>密码错误</translation>
     </message>
 </context>
 <context>
@@ -4024,14 +4034,14 @@
 <context>
     <name>VaultKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="232"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="112"/>
         <source>Input the 32-digit recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入32位恢复密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="252"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="261"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="285"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="130"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="139"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="163"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4047,38 +4057,37 @@
         <translation type="vanished">确定</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="172"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="44"/>
         <source>Verify your fingerprint or password</source>
-        <translation type="unfinished"></translation>
+        <translation>请验证指纹或输入密码</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="57"/>
+        <source>At least 8 characters, and contain A-Z, a-z, 0-9, and symbols</source>
+        <translation>密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
     </message>
 </context>
 <context>
     <name>VaultRemoveFileDialog</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="31"/>
         <source>Remove File Vault</source>
-        <translation type="unfinished">删除保险箱</translation>
+        <translation type="vanished">删除保险箱</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="32"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="152"/>
         <source>Removing...</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">正在删除...</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="48"/>
         <source>Ok</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">好的</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="136"/>
         <source>Removed successfully</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">删除成功</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="138"/>
         <source>Failed to remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">删除失败</translation>
     </message>
 </context>
 <context>

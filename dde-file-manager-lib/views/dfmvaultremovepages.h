@@ -21,50 +21,6 @@ DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 #define MAX_KEY_LENGTH (32) //凭证最大值，4的倍数
-/**
-* @brief    保险箱删除完成界面
-*/
-class VaultRemoveFileDialog : public DDialog
-{
-    Q_OBJECT
-public:
-    explicit VaultRemoveFileDialog(QWidget *parent = nullptr);
-    ~VaultRemoveFileDialog() override;
-
-    void removeVault(const QString &rmPath);
-
-    void clear();
-private:
-    /**
-    * @brief    初始化UI界面
-    */
-    void initUI();
-
-    /**
-    * @brief    初始化信号槽
-    */
-    void initConnect();
-
-    /**
-    * @brief    统计文件数量
-    * @param    文件夹路径
-    */
-    bool statisticsFiles(const QString &path);
-
-    /**
-    * @brief    删除文件及文件夹
-    * @param    文件夹路径
-    */
-    void removeFileInDir(const QString &path);
-
-private:
-    QProgressBar *m_removeProgress;
-
-    int m_iFiles = 0;   //文件、文件夹数量
-    int m_iRmFiles = 0; //删除文件数量
-    int m_iRmDir = 0;   //删除文件夹数量
-};
-//-----------------------------------------------------------
 
 /**
 * @brief    密码输入界面
@@ -87,6 +43,8 @@ public:
     void clear();
 
     QLineEdit *lineEdit();
+
+    void showAlertMessage(const QString &text, int duration = 3000);
 public slots:
     void onPasswordChanged(const QString &password);
 
@@ -121,6 +79,8 @@ public:
     * @brief    清空凭证
     */
     void clear();
+
+    QPlainTextEdit *plainTextEdit();
 public slots:
     void onRecoveryKeyChanged();
 
@@ -166,9 +126,14 @@ private:
 
     void insertPage(const PageType &pageType, QWidget * widget);
 
+    /**
+    * @brief    删除文件及文件夹
+    * @param    文件夹路径
+    */
+    void removeFileInDir(const QString &path);
+
     void showEvent(QShowEvent *event) override;
 private:
-    VaultRemoveFileDialog *m_rmFileDialog;
     QMap<PageType, QWidget*> m_pages;    //存储页面
     QStackedLayout * m_stackedLayout;   //用于页面切换
     PageType m_currentPage; // 当前显示页面类型

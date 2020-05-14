@@ -48,20 +48,26 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_passwordEdit->lineEdit()->installEventFilter(this);
     m_helpButton = new QPushButton(this);
+    m_helpButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     QFrame *mainFrame = new QFrame(this);
     QHBoxLayout *mainLayout = new QHBoxLayout();
     mainLayout->addWidget(m_passwordEdit);
     mainLayout->addWidget(m_helpButton);
+    mainLayout->setContentsMargins(0, 10, 0, 25);
     mainFrame->setLayout(mainLayout);
 
     addContent(mainFrame);
+    setSpacing(0);
     // 防止点击按钮后界面隐藏
     setOnButtonClickedClose(false);
 
     connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
+    connect(m_helpButton, &QPushButton::clicked, [this]{
+        m_passwordEdit->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
+    });
 }
 
 void DFMVaultUnlockPages::showEvent(QShowEvent *event)
@@ -86,17 +92,14 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
 
         QString strClipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strClipher)){
-            VaultController::getVaultController()->unlockVault(strClipher);
-        }else {
+            if (VaultController::checkAuthentication()){
+                VaultController::getVaultController()->unlockVault(strClipher);
+            }
+        }else {            
             // 设置密码输入框颜色
             m_passwordEdit->lineEdit()->setStyleSheet(tr("background-color:rgb(245, 218, 217)"));
 
-            //设置QToolTip颜色
-            QPalette palette = QToolTip::palette();
-            palette.setColor(QPalette::Inactive,QPalette::ToolTipBase,Qt::white);   //设置ToolTip背景色
-            palette.setColor(QPalette::Inactive,QPalette::ToolTipText,QColor(255, 85, 0, 255)); 	//设置ToolTip字体色
-            QToolTip::setPalette(palette);
-            QToolTip::showText(m_passwordEdit->mapToGlobal(QPoint(0, 33)), tr("Wrong password"));
+            m_passwordEdit->showAlertMessage(tr("Wrong password"));
         }
         return;
     }
