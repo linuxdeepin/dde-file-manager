@@ -272,14 +272,13 @@ void Desktop::showWallpaperSettings(int mode)
     //d->wallpaperSettings->grabKeyboard(); //设计按键交互功能QWindow *window = d->wallpaperSettings->windowHandle();
     //监控窗口状态
     QWindow *window = d->wallpaperSettings->windowHandle();
-    connect(window, &QWindow::activeChanged, this, [=]()
-    {
-        if(d->wallpaperSettings->isActiveWindow())
+    connect(window, &QWindow::activeChanged, d->wallpaperSettings, [=]() {
+        if(d->wallpaperSettings == nullptr || d->wallpaperSettings->isActiveWindow())
             return;
         //激活窗口
         d->wallpaperSettings->activateWindow();
         //10毫秒后再次检测
-        QTimer::singleShot(10,this,[=]()
+        QTimer::singleShot(10,d->wallpaperSettings,[=]()
         {
             if (!d->wallpaperSettings->isActiveWindow())
                 d->wallpaperSettings->activateWindow();
