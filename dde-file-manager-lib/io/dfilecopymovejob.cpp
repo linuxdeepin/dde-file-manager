@@ -2024,7 +2024,8 @@ end:
             QThread::msleep(10);
         }
 
-        if (syncRet != 0) {
+        // 同步结果检查只针对拷贝
+        if (d->mode == CopyMode && syncRet != 0) {
             d->setError(DFileCopyMoveJob::OpenError, "Failed to synchronize to disk u!");
             DFileCopyMoveJob::Action action = d->handleError(target_info.constData(), nullptr);
 
