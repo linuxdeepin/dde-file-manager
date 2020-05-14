@@ -23,6 +23,7 @@
 #include "dabstractfilecontroller.h"
 
 #include <DSecureString>
+#include <QTimer>
 
 DCORE_USE_NAMESPACE
 
@@ -38,6 +39,13 @@ public:
         UnderProcess,
         Broken,
         NotAvailable
+    };
+
+    enum AutoLockState {
+        Never,
+        FiveMinutes,
+        TenMinutes,
+        TweentyMinutes
     };
 
     explicit VaultController(QObject *parent = nullptr);
@@ -72,6 +80,19 @@ public:
      * @return              返回VaultState枚举值
      */
     VaultState state(QString lockBaseDir = "");
+
+    /**
+     * @brief autoLockState    自动上锁状态
+     * @return                 返回状态值
+     */
+    AutoLockState autoLockState() const;
+
+    /**
+     * @brief autoLock  设置自动上锁延迟时间
+     * @param minutes   延迟上锁间隔
+     * @return
+     */
+    bool autoLock(uint minutes);
 
 public slots:
 
@@ -119,6 +140,10 @@ public slots:
      */
     static QString vaultUnlockPath();
 
+    /**
+     * @brief printAccessTime
+     */
+    void refreshAccessTime();
 
 signals:
     /**
@@ -182,6 +207,10 @@ private:
     VaultControllerPrivate * d_ptr;
 
     static VaultController * cryfs;
+
+    QTimer m_refreshTimer;
+
+    DAbstractFileInfoPointer m_rootFileInfo;
 
     Q_DECLARE_PRIVATE(VaultController)
 

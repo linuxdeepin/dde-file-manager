@@ -32,6 +32,9 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 
+#include <QDBusInterface>
+#include <QDBusPendingCall>
+
 VaultController * VaultController::cryfs = nullptr;
 
 class VaultControllerPrivate
@@ -122,6 +125,11 @@ VaultController::VaultController(QObject *parent)
     connect(d->m_cryFsHandle, &CryFsHandle::signalLockVault, this, &VaultController::signalLockVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadError, this, &VaultController::signalReadError);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadOutput, this, &VaultController::signalReadOutput);
+
+    // 定时器
+    connect(&m_refreshTimer, &QTimer::timeout, this, &VaultController::refreshAccessTime);
+    m_refreshTimer.setInterval(1000);
+    m_refreshTimer.start();
 }
 
 VaultController *VaultController::getVaultController()
@@ -298,6 +306,18 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
     }
 }
 
+VaultController::AutoLockState VaultController::autoLockState() const
+{
+    // Something to do.
+    return VaultController::Never;
+}
+
+bool VaultController::autoLock(uint minutes)
+{
+    // Something to do.
+    return true;
+}
+
 void VaultController::createVault(const DSecureString & passWord, QString lockBaseDir, QString unlockFileDir)
 {
     auto createIfNotExist = [](const QString & path){
@@ -400,6 +420,15 @@ QString VaultController::vaultLockPath()
 QString VaultController::vaultUnlockPath()
 {
     return makeVaultLocalPath("", "vault_unlocked");
+}
+
+void VaultController::refreshAccessTime()
+{
+    if (m_rootFileInfo.data() == nullptr) {
+        m_rootFileInfo = DFileService::instance()->createFileInfo(nullptr, makeVaultUrl());
+    }
+
+    // Something to do.
 }
 
 

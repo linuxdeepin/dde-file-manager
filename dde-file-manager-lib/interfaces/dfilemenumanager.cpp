@@ -710,6 +710,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                 DFileMenuData::actionToMenuAction[action] = key;
             }
 
+            action->setCheckable(checkable);
             action->setDisabled(disableList.contains(key));
             action->setProperty("_dfm_menu", QVariant::fromValue(menu));
 

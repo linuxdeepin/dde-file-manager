@@ -122,10 +122,11 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
     DFileMenu *menu = nullptr;
 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topWidget);
+    VaultController *controller = VaultController::getVaultController();
 
-    VaultController::VaultState vaultState = VaultController::getVaultController()->state();
+    VaultController::VaultState vaultState = controller->state();
 
-    DUrl url = VaultController::getVaultController()->makeVaultUrl();
+    DUrl url = controller->makeVaultUrl();
     const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(this, url);
     QSet<MenuAction> disableList;
     menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList(), false);
@@ -134,47 +135,53 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
     if (vaultState == VaultController::Unlocked) {
 
         // 立即上锁
-        QAction *action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::LockNow));
+        QAction *action = DFileMenuManager::getAction(MenuAction::LockNow);
         QObject::connect(action, &QAction::triggered, action, [this](){
             lockNow();
         });
 
         // 自动上锁
-        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Never));
-        QObject::connect(action, &QAction::triggered, action, [this](){
+        VaultController::AutoLockState lockState = controller->autoLockState();
+
+        QAction *actionNever = DFileMenuManager::getAction(MenuAction::Never);
+        QObject::connect(actionNever, &QAction::triggered, actionNever, [this](){
             autoLock(0);
         });
+        actionNever->setChecked(lockState == VaultController::Never ? true : false);
 
-        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::FiveMinutes));
-        QObject::connect(action, &QAction::triggered, action, [this](){
+        QAction *actionFiveMins = DFileMenuManager::getAction(MenuAction::FiveMinutes);
+        QObject::connect(actionFiveMins, &QAction::triggered, actionFiveMins, [this](){
             autoLock(5);
         });
+        actionFiveMins->setChecked(lockState == VaultController::FiveMinutes ? true : false);
 
-        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::TenMinutes));
-        QObject::connect(action, &QAction::triggered, action, [this](){
+        QAction *actionTenMins = DFileMenuManager::getAction(MenuAction::TenMinutes);
+        QObject::connect(actionTenMins, &QAction::triggered, actionTenMins, [this](){
             autoLock(10);
         });
+        actionTenMins->setChecked(lockState == VaultController::TenMinutes ? true : false);
 
-        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::TwentyMinutes));
-        QObject::connect(action, &QAction::triggered, action, [this](){
+        QAction *actionTwentyMins = DFileMenuManager::getAction(MenuAction::TwentyMinutes);
+        QObject::connect(actionTwentyMins, &QAction::triggered, actionTwentyMins, [this](){
             autoLock(20);
         });
+        actionTwentyMins->setChecked(lockState == VaultController::TweentyMinutes ? true : false);
 
         // 删除保险柜
-        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::DeleteVault));
+        action = DFileMenuManager::getAction(MenuAction::DeleteVault);
         QObject::connect(action, &QAction::triggered, action, [this, wnd](){
             showDeleteVaultView(wnd);
         });
     } else if (vaultState == VaultController::Encrypted) {
 
         // 解锁
-        QAction *action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::UnLock));
+        QAction *action = DFileMenuManager::getAction(MenuAction::UnLock);
         QObject::connect(action, &QAction::triggered, action, [this, wnd](){
             showUnLockView(wnd);
         });
 
         // 使用恢复凭证
-        action = menu->actionAt(DFileMenuManager::getActionString(MenuAction::UnLockByKey));
+        action = DFileMenuManager::getAction(MenuAction::UnLockByKey);
         QObject::connect(action, &QAction::triggered, action, [this, wnd](){
             showCertificateView(wnd);
         });
@@ -192,9 +199,7 @@ bool DFMSideBarVaultItemHandler::lockNow()
 
 bool DFMSideBarVaultItemHandler::autoLock(uint minutes)
 {
-    Q_UNUSED(minutes)
-    // Something to do.
-    return true;
+    return VaultController::getVaultController()->autoLock(minutes);
 }
 
 void DFMSideBarVaultItemHandler::showDeleteVaultView(DFileManagerWindow *wnd)
