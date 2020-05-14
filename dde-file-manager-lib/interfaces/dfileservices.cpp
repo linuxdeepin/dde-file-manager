@@ -74,18 +74,20 @@ DWIDGET_USE_NAMESPACE
 class DFileServicePrivate
 {
 public:
+
     static QMultiHash<const HandlerType, DAbstractFileController *> controllerHash;
     static QHash<const DAbstractFileController *, HandlerType> handlerHash;
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
-    static QHash<QUrl,DAbstractFileInfoPointer> rootfileHash;
-    JobController *m_jobcontroller = nullptr;
+    static QHash<DUrl,DAbstractFileInfoPointer> rootfileHash;
     bool bstartonce = false;
+    bool m_bcursorbusy = false;
+    JobController *m_jobcontroller = nullptr;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
 QHash<const DAbstractFileController *, HandlerType> DFileServicePrivate::handlerHash;
 QMultiHash<const HandlerType, HandlerCreatorType> DFileServicePrivate::controllerCreatorHash;
-QHash<QUrl,DAbstractFileInfoPointer> DFileServicePrivate::rootfileHash;//本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
+QHash<DUrl,DAbstractFileInfoPointer> DFileServicePrivate::rootfileHash;//本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
 
 DFileService::DFileService(QObject *parent)
     : QObject(parent)
@@ -891,16 +893,30 @@ DStorageInfo *DFileService::createStorageInfo(const QObject *sender, const DUrl 
     return qvariant_cast<DStorageInfo *>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
-QList<DAbstractFileInfoPointer> DFileService::getRootFile() const
+QList<DAbstractFileInfoPointer> DFileService::getRootFile()
 {
     QList<DAbstractFileInfoPointer> ret;
     QMutex mex;
     mex.lock();
+    setCursorBusyState(true);
     foreach (auto key,d_ptr->rootfileHash.keys()){
         if (d_ptr->rootfileHash.value(key)->exists()) {
             ret.push_back(d_ptr->rootfileHash.value(key));
         }
     }
+
+    // fix 25778 每次打开文管，"我的目录" 顺序随机排列
+    static const QList<QString> udir = {"desktop", "videos", "music", "pictures", "documents", "downloads"};
+    for (int i = 0; i < udir.count(); i++) {
+        for (int j = 0; j < ret.count(); j++) {
+            if (ret[j]->fileUrl().path().contains(udir[i]) && ret[j]->suffix() == SUFFIX_USRDIR && i != j) {
+                ret.move(j, i);
+                break;
+            }
+        }
+    }
+
+    setCursorBusyState(false);
     mex.unlock();
     return ret;
 }
@@ -995,6 +1011,95 @@ void DFileService::clearThread()
         }
         d_ptr->m_jobcontroller = nullptr;
     }
+
+}
+
+void DFileService::setCursorBusyState(const bool bbusy)
+{
+    if (d_ptr->m_bcursorbusy == bbusy) {
+        return;
+    }
+    d_ptr->m_bcursorbusy = bbusy;
+    if (d_ptr->m_bcursorbusy) {
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    }
+    else {
+        QApplication::restoreOverrideCursor();
+    }
+
+}
+
+bool DFileService::checkGvfsMountfileBusy(const DUrl &url)
+{
+    //找出url的rootfile路径，判断rootfile是否存在
+    qDebug() << url << QThread::currentThreadId();
+    if (!url.isValid()) {
+        return true;
+    }
+    DUrl rootfile;
+    QString urlpath = url.path();
+    QString rootfilename;
+    if (url.scheme() == DFMROOT_SCHEME && urlpath.endsWith(SUFFIX_GVFSMP))
+    {
+        rootfilename = QUrl::fromPercentEncoding( url.path().toUtf8());
+        QStringList rootstrlist = rootfilename.split(QRegularExpression("^//run/user/\\d+/gvfs/"));
+        if (rootstrlist.size() >= 2) {
+            rootfilename = rootstrlist.at(1);
+            rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP),"");
+        }
+        rootfile = url;
+    }
+    else {
+        static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
+                                         QRegularExpression::DotMatchesEverythingOption
+                                         | QRegularExpression::DontCaptureOption
+                                         | QRegularExpression::OptimizeOnFirstUsageOption);
+
+        if (!regExp.match(urlpath, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch()) {
+            return true;
+        }
+        int qi = 0;
+        QStringList urlpathlist = urlpath.split(QRegularExpression("^/run/user/\\d+/gvfs/"));
+        QString urlstr;
+        QString urllast;
+        if (urlpathlist.size() >= 2) {
+            urllast = urlpathlist[1];
+            urlstr = urlpath.left(urlpath.indexOf(urllast));
+        }
+
+        qi = urllast.indexOf("/");
+        QString path;
+        if (0 >= qi) {
+            path = urlpath;
+            QStringList rootstrlist = path.split(QRegularExpression("^/run/user/\\d+/gvfs/"));
+            if (rootstrlist.size() >= 2) {
+                rootfilename = rootstrlist.at(1);
+                rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP),"");
+            }
+        }
+        else {
+            rootfilename = urllast.left(qi);
+            path = urlstr + urllast.left(qi);
+        }
+        if (path.isNull() || path.isEmpty()) {
+            return true;
+        }
+        rootfile.setScheme(DFMROOT_SCHEME);
+        rootfile.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
+    }
+
+    //设置鼠标状态，查看文件状态是否存在
+    setCursorBusyState(true);
+    DAbstractFileInfoPointer rootptr = d_ptr->rootfileHash.contains(rootfile) ?
+                d_ptr->rootfileHash.value(rootfile) : createFileInfo(nullptr, rootfile);
+    bool fileexit = d_ptr->rootfileHash.value(rootfile)->exists();
+    setCursorBusyState(false);
+    //文件不存在弹提示框
+    if (!fileexit) {
+        dialogManager->showUnableToLocateDir(rootfilename);
+    }
+    return fileexit;
+
 
 }
 

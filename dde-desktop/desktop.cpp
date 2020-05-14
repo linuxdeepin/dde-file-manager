@@ -31,6 +31,7 @@
 #endif
 
 #include "util/xcb/xcb.h"
+#include <malloc.h>
 
 using WallpaperSettings = Frame;
 
@@ -72,6 +73,11 @@ Desktop::Desktop()
     // 任意控件改变位置都可能会引起主窗口被其它屏幕上的窗口所遮挡
     connect(d->background, &BackgroundHelper::backgroundGeometryChanged, this, &Desktop::onBackgroundGeometryChanged);
     onBackgroundEnableChanged();
+
+    //周期归还内存
+    QTimer *realseTimer = new QTimer;
+    connect(realseTimer,&QTimer::timeout,this,[](){malloc_trim(0);});
+    realseTimer->start(5000);
 }
 
 Desktop::~Desktop()
@@ -143,18 +149,12 @@ void Desktop::onBackgroundEnableChanged()
         //else
         QWidget *background;
 
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-
-            background = d->background->backgroundForScreen(GetPrimaryScreen());
-
+        if (DesktopInfo().waylandDectected()) {
+            background = d->background->waylandBackground(Display::instance()->primaryName());
         } else {
             background = d->background->backgroundForScreen(qApp->primaryScreen());
         }
+
         if(!background)
         {
             qWarning()<<"Warning:cannot find paimary widget and screen name:"<<Display::instance()->primaryName();
@@ -171,6 +171,7 @@ void Desktop::onBackgroundEnableChanged()
         QMetaObject::invokeMethod(background, "raise", Qt::QueuedConnection);
 
         // 隐藏完全重叠的窗口
+        qDebug() << "primary background" << background << background->isVisible() << background->geometry();
         for (QWidget *l : d->background->allBackgrounds()) {
             if (l != background) {
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
@@ -181,6 +182,7 @@ void Desktop::onBackgroundEnableChanged()
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
                 l->show();
             }
+            qDebug() << "hide overlap widget" << l << l->isVisible() << l->geometry();
         }
 
         //if X11
@@ -195,16 +197,9 @@ void Desktop::onBackgroundEnableChanged()
         //d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
         //else
 
-
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        if (DesktopInfo().waylandDectected()) {
             d->screenFrame.QWidget::setGeometry(Display::instance()->primaryRect());
         }
-
         else {
             d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
         }
@@ -262,26 +257,28 @@ void Desktop::showWallpaperSettings(int mode)
         d->wallpaperSettings = nullptr;
     });
     connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
-        const QString &desktopImage = d->wallpaperSettings->desktopBackground();
+        WallpaperSettings *set = dynamic_cast<WallpaperSettings *>(sender());
+        if (set){
+            QString desktopImage = set->desktopBackground();
+            if (!desktopImage.isEmpty())
+                d->background->setBackground(desktopImage);
+        }
 
-        if (!desktopImage.isEmpty())
-            d->background->setBackground(desktopImage);
     }, Qt::DirectConnection);
 
     d->wallpaperSettings->show();
     //d->wallpaperSettings->grabKeyboard(); //设计按键交互功能QWindow *window = d->wallpaperSettings->windowHandle();
     //监控窗口状态
     QWindow *window = d->wallpaperSettings->windowHandle();
-    connect(window, &QWindow::activeChanged, this, [=]()
-    {
-        if(d->wallpaperSettings->isActiveWindow())
+    connect(window, &QWindow::activeChanged, d->wallpaperSettings, [=]() {
+        if(d->wallpaperSettings == nullptr || d->wallpaperSettings->isActiveWindow())
             return;
         //激活窗口
         d->wallpaperSettings->activateWindow();
         //10毫秒后再次检测
-        QTimer::singleShot(10,this,[=]()
+        QTimer::singleShot(10,d->wallpaperSettings,[=]()
         {
-            if (!d->wallpaperSettings->isActiveWindow())
+            if (d->wallpaperSettings && !d->wallpaperSettings->isActiveWindow())
                 d->wallpaperSettings->activateWindow();
         });
     });

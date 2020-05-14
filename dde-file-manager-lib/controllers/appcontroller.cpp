@@ -167,7 +167,17 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
     }
 
     if (urls.size() > 1 || DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()) {
-        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::ForceOpenNewWindow);
+        // TODO: xust 20200513 为解决在最近列表中框选多个文件后右键打开不能成功打开文件的问题，暂时在入口处处理 url (recent:// -> file://）,
+        // 单个文件可以正常打开，路径是通过 recent scheme 获取 RecentController 再转 FileController ，不过到多个文件打开就不走
+        // 这个路径，获取不到 RecentController 的原因还没查清楚。目前暂时从入口处理 url ，有时间再排查问题。
+        DUrlList lstUrls;
+        for (DUrl u: urls) {
+            if (u.scheme() == RECENT_SCHEME) {
+                u = DUrl::fromLocalFile(u.path());
+            }
+            lstUrls << u;
+        }
+        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
     } else {
         DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
     }
