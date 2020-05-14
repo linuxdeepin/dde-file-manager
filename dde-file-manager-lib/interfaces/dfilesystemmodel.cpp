@@ -929,7 +929,7 @@ public:
     bool readOnly = false;
 
     /// add/rm file event
-    QAtomicInteger<bool> _q_processFileEvent_runing = false;
+    bool _q_processFileEvent_runing = false;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
 
     bool enabledSort = true;
@@ -1018,12 +1018,10 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     }
 
 //    rootNodeManager->addFile(info);
-//    if (!_q_processFileEvent_runing) {
-    fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
-
-    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
-
-//    }
+    if (!_q_processFileEvent_runing) {
+        fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+        q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+    }
 }
 
 void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
@@ -1038,10 +1036,10 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
         flf.remove(fileUrl.fileName());
         flf.save();
     }
-//   if (!_q_processFileEvent_runing) {
-    fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
-    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
-//    }
+   if (!_q_processFileEvent_runing) {
+        fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
+        q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+   }
 }
 
 void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
