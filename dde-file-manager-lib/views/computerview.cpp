@@ -274,7 +274,9 @@ void ComputerView::contextMenu(const QPoint &pos)
         disabled.insert(MenuAction::OpenInNewTab);
         disabled.insert(MenuAction::OpenDiskInNewTab);
     }
-    if (!idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()) {
+
+    if (idx.data(ComputerModel::DataRoles::IconNameRole).value<QString>() == "media-optical" // fix bug#25921 仅针对光驱设备实行禁用操作
+            && !idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()) {
         //fix:光驱还没有加载成功前，右键点击光驱“挂载”，光驱自动弹出。
         disabled.insert(MenuAction::OpenDiskInNewWindow);
         disabled.insert(MenuAction::OpenDiskInNewTab);
