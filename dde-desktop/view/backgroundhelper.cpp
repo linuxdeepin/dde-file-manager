@@ -302,6 +302,7 @@ void BackgroundHelper::updateBackground(QWidget *l)
 //        QSize trueSize = l->size();
         //修复背景图片被缩放问题
         QSize trueSize = l->size() * Display::instance()->getScaleFactor();
+        qDebug() << "background true size" << trueSize;
         QPixmap pix = backgroundPixmap;
 
         pix = pix.scaled(trueSize,
@@ -355,12 +356,14 @@ void BackgroundHelper::updateBackground(QWidget *l)
     QHighDpiScaling::m_active = false;
     if (Display::instance()->primaryScreen() == s) {
         trueSize = Display::instance()->primaryRect().size();
+        qDebug() << "background true size by dbus" << trueSize
+                 << "set handle geometry" << Display::instance()->primaryRect();
         l->windowHandle()->handle()->setGeometry(Display::instance()->primaryRect());
     }
     QHighDpiScaling::m_active = hi_active;
 
     QPixmap pix = backgroundPixmap;
-
+    qDebug() << "background true size" << trueSize;
     pix = pix.scaled(trueSize,
                      Qt::KeepAspectRatioByExpanding,
                      Qt::SmoothTransformation);
@@ -375,7 +378,7 @@ void BackgroundHelper::updateBackground(QWidget *l)
     pix.setDevicePixelRatio(l->devicePixelRatioF());
     dynamic_cast<BackgroundLabel *>(l)->setPixmap(pix);
 
-    qInfo() << l->windowHandle()->screen() << currentWallpaper << pix;
+    qInfo() << l->windowHandle()->screen() << currentWallpaper << pix << l->geometry();
 
     if (checkTimer) {
         checkTimer->start();
@@ -431,6 +434,8 @@ void BackgroundHelper::monitorRectChanged()
         l->setGeometry(screenRect);
         l->windowHandle()->setGeometry(screenRect);
         l->windowHandle()->handle()->setGeometry(otherRect);
+        qDebug() <<"setted background " << l->geometry() << "screen" << screenRect
+                << "windowHandle" << l->windowHandle()->geometry();
         updateBackground(l);
         //todo mode changed        
     }
@@ -531,6 +536,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     bool hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
     if (Display::instance()->primaryScreen() == screen) {
+        qDebug() << screen->name() << "set geometry by dbus" << Display::instance()->primaryRect();
         l->setGeometry(Display::instance()->primaryRect());
     }
     QHighDpiScaling::m_active = hi_active;
@@ -542,6 +548,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
         l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
         if (Display::instance()->primaryScreen() == screen)
         {
+            qDebug() << screen->name() << "set handle geometry by dbus" << Display::instance()->primaryRect();
             l->windowHandle()->handle()->setGeometry(Display::instance()->primaryRect());
         }
 
@@ -602,7 +609,7 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
         if (grect.width() == 0 || grect.height() == 0){
             qCritical() << "error!!!!!!!!!!!" << "set DBUS primaryRect background geometry" << grect;
         }
-        qDebug() << grect << "primaryScreen" << screen->name() << screen->geometry() << Display::instance()->primaryRect();
+        qDebug() << "set" << grect << "primaryScreen" << screen->name() << screen->geometry() << "dbus:"<< Display::instance()->primaryRect();
         l->setGeometry(grect);
     }
     QHighDpiScaling::m_active = hi_active;
@@ -617,8 +624,9 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
         l->windowHandle()->handle()->setGeometry(grect);
     }
 
-    qDebug() << screen->name() << "background geo" << l->geometry()
-             << (Display::instance()->primaryScreen() == screen) << Display::instance()->primaryRect();
+    qDebug() << screen->name() << "background geo" << l->geometry() << "primary screen:"
+             << (Display::instance()->primaryScreen() == screen)
+             << "dbus " <<Display::instance()->primaryRect();
     QHighDpiScaling::m_active = hi_active;
     updateBackground(l);
 }
