@@ -504,7 +504,7 @@ void UserShareManager::deleteUserShareByShareName(const QString &shareName)
         QMap<QString,ShareInfo> shareInfoCache = m_shareInfos;
         if (shareInfoCache.contains(shareName)) {
             const QString& filePath = shareInfoCache.value(shareName).path();
-            emit userShareDeleted(filePath);
+            emit userShareDeletedFailed(filePath);
         }
         return;
     }
