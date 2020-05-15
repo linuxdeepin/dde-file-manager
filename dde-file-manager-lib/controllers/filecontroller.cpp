@@ -118,7 +118,7 @@ public:
     {
         const QFileInfo &info = iterator.fileInfo();
 
-        if (!info.isSymLink() && FileUtils::isDesktopFile(info.absoluteFilePath())) {
+        if (!info.isSymLink() && FileUtils::isDesktopFile(info)) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(info));
         }
 
