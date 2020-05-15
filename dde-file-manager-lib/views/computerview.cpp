@@ -46,6 +46,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "models/computermodel.h"
 #include "computerviewitemdelegate.h"
+#include "views/dfmopticalmediawidget.h"
 
 #include <dslider.h>
 
@@ -272,7 +273,8 @@ void ComputerView::contextMenu(const QPoint &pos)
         disabled.insert(MenuAction::OpenDiskInNewTab);
     }
 
-    if (idx.data(ComputerModel::DataRoles::IconNameRole).value<QString>() == "media-optical" // fix bug#25921 仅针对光驱设备实行禁用操作
+    const QString &strVolTag = idx.data(ComputerModel::DataRoles::VolumeTagRole).value<QString>();
+    if (strVolTag.startsWith("sr") // fix bug#25921 仅针对光驱设备实行禁用操作
             && !idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()) {
         //fix:光驱还没有加载成功前，右键点击光驱“挂载”，光驱自动弹出。
         disabled.insert(MenuAction::OpenDiskInNewWindow);
@@ -284,6 +286,11 @@ void ComputerView::contextMenu(const QPoint &pos)
 
         disabled.insert(MenuAction::Property);
     }
+    if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) { // 如果当前光驱设备正在执行擦除/刻录，则禁用所有右键菜单选项
+        for (MenuAction act: av)
+            disabled.insert(act);
+    }
+
     DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
     menu->setEventData(DUrl(), {idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>()}, WindowManager::getWindowId(this), this);
     menu->exec(this->mapToGlobal(pos));

@@ -535,12 +535,6 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
 
 void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
 {
-    //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
-    if (FileJob::g_opticalBurnEjectCount > 0) {
-        FileJob::g_opticalBurnEjectCount = 0;
-        return;
-    }
-
     DDialog d;
     d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));
     QString failure_type;
