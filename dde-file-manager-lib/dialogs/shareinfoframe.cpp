@@ -109,6 +109,7 @@ void ShareInfoFrame::initConnect()
     connect(m_jobTimer, &QTimer::timeout, this, &ShareInfoFrame::doShareInfoSetting);
     connect(userShareManager, &UserShareManager::userShareAdded, this, &ShareInfoFrame::updateShareInfo);
     connect(userShareManager, &UserShareManager::userShareDeleted, this, &ShareInfoFrame::updateShareInfo);
+    connect(userShareManager, &UserShareManager::userShareDeletedFailed, this, &ShareInfoFrame::updateShareInfo);
 }
 
 void ShareInfoFrame::handleCheckBoxChanged(const bool& checked)
