@@ -68,18 +68,12 @@ QAction *DFileMenu::actionAt(const QString &text) const
 QAction *DFileMenu::exec()
 {
     setCanUse(false);
-    QTimer::singleShot(300,this,[this]{
-        setCanUse(true);
-    });
     return QMenu::exec(QCursor::pos());
 }
 
 QAction *DFileMenu::exec(const QPoint &pos, QAction *at)
 {
     setCanUse(false);
-    QTimer::singleShot(300,this,[this]{
-        setCanUse(true);
-    });
     return QMenu::exec(pos,at);
 }
 
@@ -105,7 +99,11 @@ DUrlList DFileMenu::selectedUrls() const
 
 bool DFileMenu::event(QEvent *event)
 {
-    return QMenu::event(event);
+    bool ret = QMenu::event(event);
+    if (event->type() == QEvent::Paint) {
+        setCanUse(true);
+    }
+    return ret;
 }
 
 void DFileMenu::keyPressEvent(QKeyEvent *event)
