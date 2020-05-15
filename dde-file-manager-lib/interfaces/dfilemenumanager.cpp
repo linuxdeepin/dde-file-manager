@@ -394,8 +394,9 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         }
     }
 
-    if (currentUrl == DesktopFileInfo::computerDesktopFileUrl() ||
-            currentUrl == DesktopFileInfo::trashDesktopFileUrl()) {
+    if (currentUrl == DesktopFileInfo::computerDesktopFileUrl()
+            || currentUrl == DesktopFileInfo::trashDesktopFileUrl()
+            || currentUrl == DesktopFileInfo::homeDesktopFileUrl()) {
         return menu;
     }
 
