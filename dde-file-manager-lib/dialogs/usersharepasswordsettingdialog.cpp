@@ -56,12 +56,19 @@ void UserSharePasswordSettingDialog::initUI()
     connect(m_passwordEdit,&DPasswordEdit::textChanged,this,[this]{
         getButton(1)->setEnabled(!m_passwordEdit->text().isEmpty());
     });
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
 
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        this->setFixedSize(QSize(390, 210));
+    }
 }
 
 void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
 {
-    if(index == 1) {
+    if (index == 1) {
         // set usershare password
         QString password = m_passwordEdit->text();
         if (password.isEmpty()) {
