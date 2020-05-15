@@ -2792,7 +2792,8 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
 
             QFuture<void> result;
 
-            if (fileInfo->hasOrderly()) {
+            // tmp: 暂时不排序
+            if (fileInfo->hasOrderly() && 0) {
                 DAbstractFileInfo::CompareFunction compareFun = fileInfo->compareFunByColumn(d->sortRole);
 
                 if (compareFun) {
