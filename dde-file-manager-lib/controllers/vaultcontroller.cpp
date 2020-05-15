@@ -164,6 +164,15 @@ bool VaultController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) co
     return DFileService::instance()->openFile(event->sender(), vaultToLocalUrl(event->url()));
 }
 
+bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
+{
+    DUrlList urlList = vaultToLocalUrls(event->urlList());
+    DUrlList urlList1 = DFileService::instance()->moveToTrash(event->sender(), urlList);
+    if(urlList == urlList1)
+        return true;
+    return false;
+}
+
 DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
