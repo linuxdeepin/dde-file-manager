@@ -347,6 +347,11 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
         fileUrl = fileInfo->fileUrl().searchedFileUrl();
     }
 
+    //如果在tag的view下，获取的url是tag的，需要转为localfile的url
+    if (fileInfo->fileUrl().isTaggedFile()) {
+        fileUrl = DUrl::fromLocalFile(fileInfo->fileUrl().taggedLocalFilePath());
+    }
+
     //staging files are transparent
     if (currentUrl().scheme() == BURN_SCHEME && fileUrl.scheme() == BURN_SCHEME && !fileUrl.burnIsOnDisc()) {
         return true;
