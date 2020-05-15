@@ -22,39 +22,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef APPCONTROLLER_H
-#define APPCONTROLLER_H
+#ifndef VAULTMANAGER_H
+#define VAULTMANAGER_H
 
+#include <QDBusContext>
 #include <QObject>
 
-class FileOperation;
-class UserShareManager;
-class UsbFormatter;
-class CommandManager;
-class DeviceInfoManager;
-class TagManagerDaemon;
-class AcessControlManager;
-class VaultManager;
+class VaultAdaptor;
 
-class AppController : public QObject
+/**
+ * @brief The VaultManager class 保险箱管理类
+ */
+class VaultManager : public QObject, public QDBusContext
 {
     Q_OBJECT
 public:
-    explicit AppController(QObject *parent = nullptr);
-    ~AppController();
+    explicit VaultManager(QObject *parent = 0);
+    ~VaultManager();
 
-    void initControllers();
-    void initConnect();
-
-signals:
+    static QString ObjectPath;
+    static QString PolicyKitActionId;
 
 public slots:
+    /**
+     * @brief setRefreshTime 设置保险箱刷新时间
+     * @param time
+     */
+    void setRefreshTime(quint64 time);
+
+    /**
+     * @brief getLastestTime 获取保险柜计时
+     * @return
+     */
+    quint64 getLastestTime() const;
 
 private:
-    UserShareManager *m_userShareManager = nullptr;
-    TagManagerDaemon *m_tagManagerDaemon = nullptr;
-    AcessControlManager *m_acessController = nullptr;
-    VaultManager *m_vaultManager = nullptr;
+    VaultAdaptor* m_vaultAdaptor = nullptr;
+    quint64 m_lastestTime = 0; // 保险箱最新计时
 };
 
-#endif // APPCONTROLLER_H
+#endif // VAULTMANAGER_H

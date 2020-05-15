@@ -23,11 +23,11 @@
 #include "dabstractfilecontroller.h"
 
 #include <DSecureString>
-#include <QTimer>
 
 DCORE_USE_NAMESPACE
 
 class VaultControllerPrivate;
+class VaultInterface;
 class VaultController : public DAbstractFileController
 {
     Q_OBJECT
@@ -39,13 +39,6 @@ public:
         UnderProcess,
         Broken,
         NotAvailable
-    };
-
-    enum AutoLockState {
-        Never,
-        FiveMinutes,
-        TenMinutes,
-        TweentyMinutes
     };
 
     explicit VaultController(QObject *parent = nullptr);
@@ -80,19 +73,6 @@ public:
      * @return              返回VaultState枚举值
      */
     VaultState state(QString lockBaseDir = "");
-
-    /**
-     * @brief autoLockState    自动上锁状态
-     * @return                 返回状态值
-     */
-    AutoLockState autoLockState() const;
-
-    /**
-     * @brief autoLock    设置自动锁状态
-     * @param lockState   状态值
-     * @return
-     */
-    bool autoLock(AutoLockState lockState);
 
 public slots:
 
@@ -139,11 +119,6 @@ public slots:
      * @return                默认保险箱解密文件夹路径
      */
     static QString vaultUnlockPath();
-
-    /**
-     * @brief printAccessTime
-     */
-    void refreshAccessTime();
 
 signals:
     /**
@@ -208,12 +183,5 @@ private:
 
     static VaultController * cryfs;
 
-    QTimer m_refreshTimer;
-
-    DAbstractFileInfoPointer m_rootFileInfo;
-
-    AutoLockState m_lockState; // 自动锁状态
-
     Q_DECLARE_PRIVATE(VaultController)
-
 };

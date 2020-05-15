@@ -22,39 +22,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef APPCONTROLLER_H
-#define APPCONTROLLER_H
+#include "vault/vaultmanager.h"
+#include "dbusservice/dbusadaptor/vault_adaptor.h"
+#include <QDBusConnection>
+#include <QDBusVariant>
+#include <QProcess>
+#include <QDebug>
+#include "app/policykithelper.h"
 
-#include <QObject>
+QString VaultManager::ObjectPath = "/com/deepin/filemanager/daemon/VaultManager";
 
-class FileOperation;
-class UserShareManager;
-class UsbFormatter;
-class CommandManager;
-class DeviceInfoManager;
-class TagManagerDaemon;
-class AcessControlManager;
-class VaultManager;
-
-class AppController : public QObject
+VaultManager::VaultManager(QObject *parent)
+    : QObject(parent)
+    , QDBusContext()
 {
-    Q_OBJECT
-public:
-    explicit AppController(QObject *parent = nullptr);
-    ~AppController();
+    QDBusConnection::systemBus().registerObject(ObjectPath, this);
+    m_vaultAdaptor = new VaultAdaptor(this);
+}
 
-    void initControllers();
-    void initConnect();
+VaultManager::~VaultManager()
+{
 
-signals:
+}
 
-public slots:
+void VaultManager::setRefreshTime(quint64 time)
+{
+    m_lastestTime = time;
+}
 
-private:
-    UserShareManager *m_userShareManager = nullptr;
-    TagManagerDaemon *m_tagManagerDaemon = nullptr;
-    AcessControlManager *m_acessController = nullptr;
-    VaultManager *m_vaultManager = nullptr;
-};
-
-#endif // APPCONTROLLER_H
+quint64 VaultManager::getLastestTime() const
+{
+    return m_lastestTime;
+}

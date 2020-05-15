@@ -25,6 +25,7 @@
 #include "dfileproxywatcher.h"
 #include "vaulthandle.h"
 #include "vaulterrorcode.h"
+#include "vaultmanager.h"
 
 #include "dfmevent.h"
 
@@ -34,6 +35,8 @@
 
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+
+#include "vault/vaultmanager.h"
 
 VaultController * VaultController::cryfs = nullptr;
 
@@ -113,7 +116,6 @@ DUrl VaultDirIterator::url() const
 
 VaultController::VaultController(QObject *parent)
     : DAbstractFileController(parent),d_ptr(new VaultControllerPrivate(this))
-    , m_lockState(VaultController::Never)
 {
     Q_D(VaultController);
     d->m_cryFsHandle = new CryFsHandle;
@@ -127,10 +129,9 @@ VaultController::VaultController(QObject *parent)
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadError, this, &VaultController::signalReadError);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadOutput, this, &VaultController::signalReadOutput);
 
-    // 定时器
-    connect(&m_refreshTimer, &QTimer::timeout, this, &VaultController::refreshAccessTime);
-    m_refreshTimer.setInterval(1000);
-    m_refreshTimer.start();
+
+    // 测试
+    VaultManager::getInstance();
 }
 
 VaultController *VaultController::getVaultController()
@@ -307,19 +308,6 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
     }
 }
 
-VaultController::AutoLockState VaultController::autoLockState() const
-{
-    // Something to do.
-    return m_lockState;
-}
-
-bool VaultController::autoLock(AutoLockState lockState)
-{
-    // Something to do.
-    m_lockState = lockState;
-    return true;
-}
-
 void VaultController::createVault(const DSecureString & passWord, QString lockBaseDir, QString unlockFileDir)
 {
     auto createIfNotExist = [](const QString & path){
@@ -422,15 +410,6 @@ QString VaultController::vaultLockPath()
 QString VaultController::vaultUnlockPath()
 {
     return makeVaultLocalPath("", "vault_unlocked");
-}
-
-void VaultController::refreshAccessTime()
-{
-    if (m_rootFileInfo.data() == nullptr) {
-        m_rootFileInfo = DFileService::instance()->createFileInfo(nullptr, makeVaultUrl());
-    }
-
-    // Something to do.
 }
 
 

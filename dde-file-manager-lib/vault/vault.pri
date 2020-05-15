@@ -14,7 +14,8 @@ SOURCES += \
     $$PWD/openssl/pbkdf2.cpp \
     $$PWD/openssl/rsam.cpp \
     $$PWD/interfaceactivevault.cpp \
-    $$PWD/operatorcenter.cpp
+    $$PWD/operatorcenter.cpp \
+    $$PWD/vaultmanager.cpp
 
 HEADERS += \
     $$PWD/activevault/dialogautocreatepassword.h \
@@ -33,7 +34,8 @@ HEADERS += \
     $$PWD/openssl/rsam.h \
     $$PWD/interfaceactivevault.h \
     $$PWD/operatorcenter.h \
-    $$PWD/vaultglobaldefine.h
+    $$PWD/vaultglobaldefine.h \
+    $$PWD/vaultmanager.h
 
 LIBS += /usr/lib/x86_64-linux-gnu/libssl.so \
         /usr/lib/x86_64-linux-gnu/libcrypto.so
