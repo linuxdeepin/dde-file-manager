@@ -25,6 +25,7 @@
 #include "dfilemenu.h"
 #include "dfmevent.h"
 #include <QTimer>
+#include <QApplication>
 
 DFileMenu::DFileMenu(QWidget *parent)
     : QMenu(parent)
@@ -67,13 +68,11 @@ QAction *DFileMenu::actionAt(const QString &text) const
 
 QAction *DFileMenu::exec()
 {
-    setCanUse(false);
     return QMenu::exec(QCursor::pos());
 }
 
 QAction *DFileMenu::exec(const QPoint &pos, QAction *at)
 {
-    setCanUse(false);
     return QMenu::exec(pos,at);
 }
 
@@ -97,52 +96,11 @@ DUrlList DFileMenu::selectedUrls() const
     return m_selectedUrls;
 }
 
-bool DFileMenu::event(QEvent *event)
+void DFileMenu::deleteLater()
 {
-    bool ret = QMenu::event(event);
-    if (event->type() == QEvent::Paint) {
-        setCanUse(true);
-    }
-    return ret;
+    qApp->setActiveWindow(nullptr);
+    QMenu::deleteLater();
 }
 
-void DFileMenu::keyPressEvent(QKeyEvent *event)
-{
-    if (!m_canuse) {
-        return;
-    }
 
-    QMenu::keyPressEvent(event);
-}
 
-void DFileMenu::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (!m_canuse) {
-        return;
-    }
-
-    QMenu::mouseReleaseEvent(event);
-}
-
-void DFileMenu::mousePressEvent(QMouseEvent *event)
-{
-    if (!m_canuse) {
-        return;
-    }
-
-    QMenu::mousePressEvent(event);
-}
-
-void DFileMenu::actionEvent(QActionEvent *event)
-{
-    if (!m_canuse) {
-        return;
-    }
-
-    QMenu::actionEvent(event);
-}
-
-void DFileMenu::setCanUse(const bool canuse)
-{
-    m_canuse = canuse;
-}
