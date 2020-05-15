@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo rm /usr/bin/testVault;
+sudo rm /usr/share/polkit-1/actions/testVault.policy;

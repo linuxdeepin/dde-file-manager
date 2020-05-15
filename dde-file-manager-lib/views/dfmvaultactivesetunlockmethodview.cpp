@@ -304,7 +304,8 @@ bool DFMVaultActiveSetUnlockMethodView::checkPassword(const QString &password)
 {
     QString strPassword = password;
 
-    QRegExp rx("^(?![^a-zA-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
+//    QRegExp rx("^(?![^a-zA-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
+    QRegExp rx("^(?![^a-z]+$)(?![^A-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
     QRegExpValidator v(rx);
     int pos = 0;
     QValidator::State res;

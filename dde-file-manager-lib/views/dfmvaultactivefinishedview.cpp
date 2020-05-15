@@ -72,7 +72,7 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
         m_pWaterProgress->stop();
         m_pWaterProgress->setVisible(false);
         play->removeWidget(m_pWaterProgress);
-        m_pEncryVaultImage->setIcon(QIcon::fromTheme("dfm_safebox"));
+        m_pEncryVaultImage->setIcon(QIcon::fromTheme("dfm_vault_active_finish"));
         m_pEncryVaultImage->setVisible(true);
         m_pTips3->setText(tr("The setup is complete"));
         m_pFinishedBtn->setText(tr("ok"));
@@ -84,6 +84,11 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 
 void DFMVaultActiveFinishedView::slotEncryptVault()
 {
+    // 管理员认证
+    if(!OperatorCenter::getInstance().getRootPassword()){
+        return;
+    }
+
     if(m_pFinishedBtn->text() == tr("Encrypt")){
         // 按钮灰化
         m_pFinishedBtn->setEnabled(false);

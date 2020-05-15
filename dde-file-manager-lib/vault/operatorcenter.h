@@ -90,6 +90,9 @@ public:
     // 随即生成密码
     QString autoGeneratePassword(int minLength);
 
+    // 管理员权限认证
+    bool getRootPassword();
+
 signals:
 
 public slots:
@@ -98,9 +101,13 @@ private:
     OperatorCenter(QObject *parent = nullptr);
     // 组织保险箱本地文件路径
     QString makeVaultLocalPath(const QString &before = "", const QString &behind = "");
+    bool runCmd(const QString &cmd);
+    bool executeProcess(const QString &cmd);
+
 
 private:
     QString             m_strUserKey;
+    QString             standOutput_;
 };
 
 #endif // OPERATORCENTER_H

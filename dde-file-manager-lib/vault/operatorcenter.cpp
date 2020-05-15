@@ -11,6 +11,7 @@
 #include <QStorageInfo>
 #include <QTime>
 #include <QtGlobal>
+#include <QProcess>
 
 OperatorCenter::OperatorCenter(QObject *parent)
     : QObject(parent)
@@ -24,6 +25,50 @@ QString OperatorCenter::makeVaultLocalPath(const QString &before, const QString 
 //            + QDir::separator() + CONFIG_DIR_NAME
             + (before.isEmpty() ? QString("") : QDir::separator()) + before
             + (behind.isEmpty() ? QString("") : QDir::separator()) + behind;
+}
+
+bool OperatorCenter::runCmd(const QString &cmd)
+{
+    QProcess process_;
+    int mescs = 10000;
+    if(cmd.startsWith(ROOT_PROXY)){
+        mescs = -1;
+    }
+    process_.start(cmd);
+
+    bool res = process_.waitForFinished(mescs);
+    standOutput_ = process_.readAllStandardOutput();
+    int exitCode = process_.exitCode();
+    if(cmd.startsWith(ROOT_PROXY) && (exitCode == 127 || exitCode == 126)){
+        QString strOut = "Run \'" + cmd + "\' fauled: Password Error! " + QString::number(exitCode) + "\n";
+        qDebug() << strOut;
+        return false;
+    }
+
+    if(res == false){
+        QString strOut = "Run \'" + cmd + "\' failed\n";
+        qDebug() << strOut;
+    }
+
+    return res;
+}
+
+bool OperatorCenter::executeProcess(const QString &cmd)
+{
+    if ( false == cmd.startsWith("sudo") ) {
+        return runCmd(cmd);
+    }
+
+    runCmd("id -un");
+    if (standOutput_.trimmed() == "root") {
+        return runCmd(cmd);
+    }
+
+    QString newCmd = "pkexec deepin-devicemanager-authenticateProxy \"";
+    newCmd += cmd;
+    newCmd += "\"";
+    newCmd.remove("sudo");
+    return runCmd(newCmd);
 }
 
 OperatorCenter &OperatorCenter::getInstance()
@@ -403,4 +448,15 @@ QString OperatorCenter::autoGeneratePassword(int length)
         strPassword += strAllChar.at(qrand()%52);
     }
     return strPassword;
+}
+
+bool OperatorCenter::getRootPassword()
+{
+    // 判断当前是否是管理员登陆
+    bool res = runCmd("id -un");
+    if(res == true && standOutput_.trimmed() == "root"){
+        return true;
+    }else {
+        return runCmd(ROOT_PROXY);
+    }
 }

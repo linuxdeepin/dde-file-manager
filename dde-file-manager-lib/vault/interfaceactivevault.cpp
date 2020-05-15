@@ -61,3 +61,8 @@ EN_VaultState InterfaceActiveVault::vaultState()
 {
     return OperatorCenter::getInstance().vaultState();
 }
+
+bool InterfaceActiveVault::getRootPassword()
+{
+    return OperatorCenter::getInstance().getRootPassword();
+}

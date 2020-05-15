@@ -73,6 +73,12 @@ public:
      */
     static EN_VaultState vaultState();
 
+    /**
+     * @brief getRootPassword 管理员权限认证
+     * @return
+     */
+    static bool getRootPassword();
+
 signals:
 
 public slots:

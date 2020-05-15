@@ -76,13 +76,24 @@ ComputerModel::ComputerModel(QObject *parent) :
             }
             auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
                                       [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
-                                          return DFMRootFileInfo::typeCompare(a, b.fi);
+                if(b.fi.data() == nullptr)
+                    return true;
+                return DFMRootFileInfo::typeCompare(a, b.fi);
                                       });
             if (r == m_items.end()) {
                 addItem(url);
             } else {
                 insertBefore(url, r->url);
             }
+            // 修改判断条件
+//            int index = findItem(makeSplitterUrl(tr("File Vault")));
+//            if(findNextItem(makeSplitterUrl(tr("Disks")), nstart, nend)){
+//                auto r = std::upper_bound(m_items.begin() + nstart + 1, m_items.begin() + nend, fi,
+//                                          [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+//                                              return DFMRootFileInfo::typeCompare(a, b.fi);
+//                                          });
+//                insertBefore(url, r->url);
+//            }
     });
     connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, [this](const DUrl &url) {
         int p;
