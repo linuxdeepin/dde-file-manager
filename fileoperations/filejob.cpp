@@ -994,6 +994,9 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             }
         }
 
+        FileJob::g_opticalBurnStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+        FileJob::g_opticalBurnEjectCount = 0;
+
         close(badPipefd[0]);
         close(progressPipefd[0]);
     } else {
@@ -1297,6 +1300,8 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             }
         }
 
+        FileJob::g_opticalBurnStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+        FileJob::g_opticalBurnEjectCount = 0;
         close(badPipefd[0]);
         close(progressPipefd[0]);
     } else {

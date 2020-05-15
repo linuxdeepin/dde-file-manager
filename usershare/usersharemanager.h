@@ -73,6 +73,7 @@ signals:
     void userShareCountChanged(const int& count);
     void userShareAdded(const QString& path);
     void userShareDeleted(const QString& path);
+    void userShareDeletedFailed(const QString &path);
 
 public slots:
     void initSamaServiceSettings();
