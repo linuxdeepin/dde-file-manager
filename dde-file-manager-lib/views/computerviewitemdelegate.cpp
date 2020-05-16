@@ -114,11 +114,19 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     font.setWeight(66);
     painter->setFont(font);
     painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
-    QString text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
+
+    QString fileSysType = index.data(ComputerModel::DataRoles::FileSystemRole).toString();
+    int fstw = par->fontMetrics().width(fileSysType);
+    QString text;
+    if (!fileSysType.isEmpty()) {
+        text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width - fstw - 7);
+    } else {
+        text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
+    }
+
     painter->drawText(textrect, Qt::TextWrapAnywhere, text, &otextrect);
 
     // 添加对文件系统格式的显示
-    QString fileSysType = index.data(ComputerModel::DataRoles::FileSystemRole).toString();
     if (!fileSysType.isEmpty()) {
 
         // 使用细线进行绘制
@@ -127,7 +135,6 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
 
         otextrect.moveLeft(otextrect.right() + 12);
         otextrect.moveBottom(otextrect.bottom() + 2);
-        int fstw = par->fontMetrics().width(fileSysType);
         otextrect.setWidth(fstw);
         otextrect.setHeight(fontpixelsize + 4);
         otextrect.adjust(-5, 0, 5, 0);
