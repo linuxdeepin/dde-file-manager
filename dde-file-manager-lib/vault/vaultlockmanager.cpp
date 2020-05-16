@@ -1,27 +1,3 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "vaultlockmanager.h"
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
@@ -35,7 +11,8 @@ VaultLockManager &VaultLockManager::getInstance()
 }
 
 VaultLockManager::VaultLockManager(QObject *parent) : QObject(parent)
-  , m_lockState(VaultLockManager::Never)
+  , m_autoLockState(VaultLockManager::Never)
+  , m_isCacheTimeReloaded(false)
 {
     m_vaultInterface = new VaultInterface("com.deepin.filemanager.daemon",
                                           "/com/deepin/filemanager/daemon/VaultManager",
@@ -46,16 +23,12 @@ VaultLockManager::VaultLockManager(QObject *parent) : QObject(parent)
         qDebug() << m_vaultInterface->lastError().message();
     }
 
-    // 定时刷新访问时间
-    connect(&m_refreshTimer, &QTimer::timeout, this, &VaultLockManager::refreshAccessTime);
-    m_refreshTimer.setInterval(1000);
-
-    // 自动锁
+    // 自动锁计时处理
     connect(&m_alarmClock, &QTimer::timeout, this, &VaultLockManager::processAutoLock);
     m_alarmClock.setInterval(1000);
 
-    // 用于测试，后面删除
-    autoLock(FiveMinutes);
+    connect(VaultController::getVaultController(), &VaultController::sigLockVault, this,  &VaultLockManager::slotLockVault);
+    connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this,  &VaultLockManager::slotUnlockVault);
 }
 
 VaultLockManager::~VaultLockManager()
@@ -63,22 +36,31 @@ VaultLockManager::~VaultLockManager()
 
 }
 
+void VaultLockManager::loadConfig()
+{
+    // Somthing to do.
+}
+
 VaultLockManager::AutoLockState VaultLockManager::autoLockState() const
 {
-    return m_lockState;
+    return m_autoLockState;
 }
 
 bool VaultLockManager::autoLock(VaultLockManager::AutoLockState lockState)
 {
-    m_lockState = lockState;
+    m_autoLockState = lockState;
 
-    if (m_lockState == Never) {
-        m_refreshTimer.stop();
+    if (m_autoLockState == Never) {
         m_alarmClock.stop();
     } else {
-        m_refreshTimer.start();
+        if (m_isCacheTimeReloaded) {
+            refreshAccessTime();
+        }
+
         m_alarmClock.start();
     }
+    m_isCacheTimeReloaded = true;
+
     return true;
 }
 
@@ -95,24 +77,39 @@ void VaultLockManager::refreshAccessTime()
 void VaultLockManager::processAutoLock()
 {
     VaultController *controller = VaultController::getVaultController();
-    if (controller->state() != VaultController::Unlocked)
+    if (controller->state() != VaultController::Unlocked
+            || m_autoLockState == Never) {
+
         return;
-
-    if (m_lockState == Never) {
-
-    } else {
-        quint64 lastAccessTime = dbusGetLastestTime();
-
-        QDateTime local(QDateTime::currentDateTime());
-        quint64 curTime = static_cast<quint64>(local.toSecsSinceEpoch());
-
-        quint64 interval = curTime - lastAccessTime;
-        quint32 threshold = m_lockState * 60;
-
-        if (interval > threshold) {
-            controller->lockVault();
-        }
     }
+
+    quint64 lastAccessTime = dbusGetLastestTime();
+
+    QDateTime local(QDateTime::currentDateTime());
+    quint64 curTime = static_cast<quint64>(local.toSecsSinceEpoch());
+
+    quint64 interval = curTime - lastAccessTime;
+    quint32 threshold = m_autoLockState * 60;
+
+    qDebug() << "vault autolock countdown > " << interval;
+
+    if (interval > threshold) {
+        controller->lockVault();
+    }
+
+    refreshAccessTime();
+}
+
+void VaultLockManager::slotLockVault(QString msg)
+{
+    if (msg.contains("vault_unlocked")) {
+        m_alarmClock.stop();
+    }
+}
+
+void VaultLockManager::slotUnlockVault()
+{
+    autoLock(m_autoLockState);
 }
 
 bool VaultLockManager::isValid() const

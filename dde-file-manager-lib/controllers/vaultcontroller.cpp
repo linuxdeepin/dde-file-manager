@@ -128,10 +128,6 @@ VaultController::VaultController(QObject *parent)
     connect(d->m_cryFsHandle, &CryFsHandle::signalLockVault, this, &VaultController::signalLockVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadError, this, &VaultController::signalReadError);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadOutput, this, &VaultController::signalReadOutput);
-
-
-    // 测试
-    VaultLockManager::getInstance();
 }
 
 VaultController *VaultController::getVaultController()

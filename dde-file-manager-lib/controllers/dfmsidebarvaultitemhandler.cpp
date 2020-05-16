@@ -68,6 +68,9 @@ DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey)
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
     item->setData(SIDEBAR_ID_VAULT, DFMSideBarItem::ItemUseRegisteredHandlerRole);
 
+    // Initalize vault manager.
+    VaultLockManager::getInstance();
+
     return item;
 }
 
@@ -130,7 +133,14 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
     DUrl url = controller->makeVaultUrl();
     const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(this, url);
+
     QSet<MenuAction> disableList;
+    if (!VaultLockManager::getInstance().isValid()) {
+        disableList << MenuAction::FiveMinutes
+                    << MenuAction::TenMinutes
+                    << MenuAction::TwentyMinutes;
+    }
+
     menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList(), false);
     menu->setEventData(DUrl(), {url}, WindowManager::getWindowId(wnd), sender);
 
@@ -165,9 +175,9 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
         QAction *actionTwentyMins = DFileMenuManager::getAction(MenuAction::TwentyMinutes);
         QObject::connect(actionTwentyMins, &QAction::triggered, actionTwentyMins, [this](){
-            autoLock(VaultLockManager::TweentyMinutes);
+            autoLock(VaultLockManager::TwentyMinutes);
         });
-        actionTwentyMins->setChecked(lockState == VaultLockManager::TweentyMinutes ? true : false);
+        actionTwentyMins->setChecked(lockState == VaultLockManager::TwentyMinutes ? true : false);
 
         // 删除保险柜
         action = DFileMenuManager::getAction(MenuAction::DeleteVault);
