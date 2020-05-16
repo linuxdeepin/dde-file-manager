@@ -417,6 +417,11 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
     return lastErrorHandleAction;
 }
 
+bool DFileCopyMoveJobPrivate::isRunning()
+{
+    return (this->state == DFileCopyMoveJob::RunningState);
+}
+
 bool DFileCopyMoveJobPrivate::jobWait()
 {
     QMutex lock;
@@ -950,7 +955,7 @@ open_file: {
 
                 action = handleError(fromInfo, nullptr);
             }
-        } while (action == DFileCopyMoveJob::RetryAction);
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() ); // bug: 26333, while set the stop status shoule break the process!
 
         if (action == DFileCopyMoveJob::SkipAction) {
             return true;
