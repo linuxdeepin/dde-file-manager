@@ -25,7 +25,7 @@
 #include "dfileproxywatcher.h"
 #include "vaulthandle.h"
 #include "vaulterrorcode.h"
-#include "vaultmanager.h"
+#include "vaultlockmanager.h"
 
 #include "dfmevent.h"
 
@@ -36,7 +36,7 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 
-#include "vault/vaultmanager.h"
+#include "vault/vaultlockmanager.h"
 
 VaultController * VaultController::cryfs = nullptr;
 
@@ -131,7 +131,7 @@ VaultController::VaultController(QObject *parent)
 
 
     // 测试
-    VaultManager::getInstance();
+    VaultLockManager::getInstance();
 }
 
 VaultController *VaultController::getVaultController()

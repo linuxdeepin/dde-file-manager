@@ -22,20 +22,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "vaultmanager.h"
+#include "vaultlockmanager.h"
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
 
 #include "../dde-file-manager-daemon/dbusservice/dbusinterface/vault_interface.h"
 
-VaultManager &VaultManager::getInstance()
+VaultLockManager &VaultLockManager::getInstance()
 {
-    static VaultManager instance;
+    static VaultLockManager instance;
     return instance;
 }
 
-VaultManager::VaultManager(QObject *parent) : QObject(parent)
-  , m_lockState(VaultManager::Never)
+VaultLockManager::VaultLockManager(QObject *parent) : QObject(parent)
+  , m_lockState(VaultLockManager::Never)
 {
     m_vaultInterface = new VaultInterface("com.deepin.filemanager.daemon",
                                           "/com/deepin/filemanager/daemon/VaultManager",
@@ -47,28 +47,28 @@ VaultManager::VaultManager(QObject *parent) : QObject(parent)
     }
 
     // 定时刷新访问时间
-    connect(&m_refreshTimer, &QTimer::timeout, this, &VaultManager::refreshAccessTime);
+    connect(&m_refreshTimer, &QTimer::timeout, this, &VaultLockManager::refreshAccessTime);
     m_refreshTimer.setInterval(1000);
 
     // 自动锁
-    connect(&m_alarmClock, &QTimer::timeout, this, &VaultManager::processAutoLock);
+    connect(&m_alarmClock, &QTimer::timeout, this, &VaultLockManager::processAutoLock);
     m_alarmClock.setInterval(1000);
 
     // 用于测试，后面删除
     autoLock(FiveMinutes);
 }
 
-VaultManager::~VaultManager()
+VaultLockManager::~VaultLockManager()
 {
 
 }
 
-VaultManager::AutoLockState VaultManager::autoLockState() const
+VaultLockManager::AutoLockState VaultLockManager::autoLockState() const
 {
     return m_lockState;
 }
 
-bool VaultManager::autoLock(VaultManager::AutoLockState lockState)
+bool VaultLockManager::autoLock(VaultLockManager::AutoLockState lockState)
 {
     m_lockState = lockState;
 
@@ -82,7 +82,7 @@ bool VaultManager::autoLock(VaultManager::AutoLockState lockState)
     return true;
 }
 
-void VaultManager::refreshAccessTime()
+void VaultLockManager::refreshAccessTime()
 {
     if (m_rootFileInfo.data() == nullptr) {
         m_rootFileInfo = DFileService::instance()->createFileInfo(
@@ -92,7 +92,7 @@ void VaultManager::refreshAccessTime()
     dbusSetRefreshTime(static_cast<quint64>(time));
 }
 
-void VaultManager::processAutoLock()
+void VaultLockManager::processAutoLock()
 {
     VaultController *controller = VaultController::getVaultController();
     if (controller->state() != VaultController::Unlocked)
@@ -115,12 +115,12 @@ void VaultManager::processAutoLock()
     }
 }
 
-bool VaultManager::isValid() const
+bool VaultLockManager::isValid() const
 {
     return m_vaultInterface->isValid();
 }
 
-void VaultManager::dbusSetRefreshTime(quint64 time)
+void VaultLockManager::dbusSetRefreshTime(quint64 time)
 {
     if (m_vaultInterface->isValid()) {
         QDBusPendingReply<> reply = m_vaultInterface->setRefreshTime(time);
@@ -131,7 +131,7 @@ void VaultManager::dbusSetRefreshTime(quint64 time)
     }
 }
 
-quint64 VaultManager::dbusGetLastestTime() const
+quint64 VaultLockManager::dbusGetLastestTime() const
 {
     quint64 latestTime = 0;
     if (m_vaultInterface->isValid()) {

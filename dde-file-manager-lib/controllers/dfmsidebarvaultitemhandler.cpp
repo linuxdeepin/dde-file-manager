@@ -38,7 +38,7 @@
 #include "interfaces/dfilemenu.h"
 
 #include "vault/interfaceactivevault.h"
-#include "vault/vaultmanager.h"
+#include "vault/vaultlockmanager.h"
 
 #include "views/dfmvaultunlockpages.h"
 #include "views/dfmvaultrecoverykeypages.h"
@@ -143,31 +143,31 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
         });
 
         // 自动上锁
-        VaultManager::AutoLockState lockState = VaultManager::getInstance().autoLockState();
+        VaultLockManager::AutoLockState lockState = VaultLockManager::getInstance().autoLockState();
 
         QAction *actionNever = DFileMenuManager::getAction(MenuAction::Never);
         QObject::connect(actionNever, &QAction::triggered, actionNever, [this](){
-            autoLock(VaultManager::Never);
+            autoLock(VaultLockManager::Never);
         });
-        actionNever->setChecked(lockState == VaultManager::Never ? true : false);
+        actionNever->setChecked(lockState == VaultLockManager::Never ? true : false);
 
         QAction *actionFiveMins = DFileMenuManager::getAction(MenuAction::FiveMinutes);
         QObject::connect(actionFiveMins, &QAction::triggered, actionFiveMins, [this](){
-            autoLock(VaultManager::FiveMinutes);
+            autoLock(VaultLockManager::FiveMinutes);
         });
-        actionFiveMins->setChecked(lockState == VaultManager::FiveMinutes ? true : false);
+        actionFiveMins->setChecked(lockState == VaultLockManager::FiveMinutes ? true : false);
 
         QAction *actionTenMins = DFileMenuManager::getAction(MenuAction::TenMinutes);
         QObject::connect(actionTenMins, &QAction::triggered, actionTenMins, [this](){
-            autoLock(VaultManager::TenMinutes);
+            autoLock(VaultLockManager::TenMinutes);
         });
-        actionTenMins->setChecked(lockState == VaultManager::TenMinutes ? true : false);
+        actionTenMins->setChecked(lockState == VaultLockManager::TenMinutes ? true : false);
 
         QAction *actionTwentyMins = DFileMenuManager::getAction(MenuAction::TwentyMinutes);
         QObject::connect(actionTwentyMins, &QAction::triggered, actionTwentyMins, [this](){
-            autoLock(VaultManager::TweentyMinutes);
+            autoLock(VaultLockManager::TweentyMinutes);
         });
-        actionTwentyMins->setChecked(lockState == VaultManager::TweentyMinutes ? true : false);
+        actionTwentyMins->setChecked(lockState == VaultLockManager::TweentyMinutes ? true : false);
 
         // 删除保险柜
         action = DFileMenuManager::getAction(MenuAction::DeleteVault);
@@ -201,7 +201,7 @@ bool DFMSideBarVaultItemHandler::lockNow()
 
 bool DFMSideBarVaultItemHandler::autoLock(int lockState)
 {
-    return VaultManager::getInstance().autoLock(static_cast<VaultManager::AutoLockState>(lockState));
+    return VaultLockManager::getInstance().autoLock(static_cast<VaultLockManager::AutoLockState>(lockState));
 }
 
 void DFMSideBarVaultItemHandler::showDeleteVaultView(DFileManagerWindow *wnd)

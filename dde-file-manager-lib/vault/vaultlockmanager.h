@@ -32,7 +32,7 @@
 #include <QTimer>
 
 class VaultInterface;
-class VaultManager : public QObject
+class VaultLockManager : public QObject
 {
     Q_OBJECT
 
@@ -45,7 +45,7 @@ public:
         TweentyMinutes = 20
     };
 
-    static VaultManager &getInstance();
+    static VaultLockManager &getInstance();
 
     /**
      * @brief autoLockState    自动上锁状态
@@ -92,8 +92,8 @@ protected slots:
     void processAutoLock();
 
 private:
-    explicit VaultManager(QObject *parent = nullptr);
-    ~VaultManager();
+    explicit VaultLockManager(QObject *parent = nullptr);
+    ~VaultLockManager();
 
 private:
     VaultInterface* m_vaultInterface = nullptr; // 交互接口
