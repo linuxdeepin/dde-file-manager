@@ -136,6 +136,8 @@ public:
 
     void setNodeVisible(const FileSystemNodePointer &node, bool visible)
     {
+        if (isUpdate) return;
+
         if (visible) {
             if (!visibleChildren.contains(node.data())) {
                 visibleChildren.append(node.data());
@@ -150,6 +152,7 @@ public:
     void applyFileFilter(std::shared_ptr<FileFilter> filter)
     {
         if (!filter) return;
+        if (isUpdate) return;
 
         visibleChildren.clear();
 
@@ -196,6 +199,7 @@ public:
 
     void noLockInsertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
     {
+        if (isUpdate) return;
         children[url] = node;
         visibleChildren.insert(index, node.data());
     }
@@ -209,6 +213,7 @@ public:
 
     void noLockAppendChildren(const DUrl &url, const FileSystemNodePointer &node)
     {
+        if (isUpdate) return;
         children[url] = node;
         visibleChildren.append(node.data());
     }
@@ -245,6 +250,7 @@ public:
 
     FileSystemNodePointer takeNodeByUrl(const DUrl &url)
     {
+         if (isUpdate) return FileSystemNodePointer();
         rwLock->lockForWrite();
         FileSystemNodePointer node = children.take(url);
         visibleChildren.removeOne(node.data());
@@ -257,6 +263,7 @@ public:
     {
         rwLock->lockForWrite();
         FileSystemNodePointer node;
+        if (isUpdate) return node;
         if (index >= 0 && visibleChildren.size() > index) {
             node = visibleChildren.takeAt(index);
             children.remove(node->fileInfo->fileUrl());
@@ -317,6 +324,7 @@ public:
 
     void setChildrenList(const QList<FileSystemNode *> &list)
     {
+        if (isUpdate) return;
         rwLock->lockForWrite();
         visibleChildren = list;
         rwLock->unlock();
@@ -331,6 +339,7 @@ public:
 
     void clearChildren()
     {
+        if (isUpdate) return;
         rwLock->lockForWrite();
         visibleChildren.clear();
         children.clear();
@@ -410,7 +419,20 @@ public:
     }
 
 
+    bool getIsUpdate() const
+    {
+        return isUpdate;
+    }
+
+    void setIsUpdate(bool value)
+    {
+        isUpdate = value;
+    }
+
 private:
+    // tmp: 获取visibleChildren更新时，visibleChildren可能会改变，导致崩溃，因此临时锁住
+    // todo: 后期全面优化，暂不改动此处基本逻辑
+    bool isUpdate = false;
     QHash<DUrl, FileSystemNodePointer> children;
     QList<FileSystemNode *> visibleChildren;
     QReadWriteLock *rwLock = nullptr;
@@ -938,7 +960,7 @@ public:
     bool readOnly = false;
 
     /// add/rm file event
-    bool _q_processFileEvent_runing = false;
+    QAtomicInteger<bool> _q_processFileEvent_runing = false;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
 
     bool enabledSort = true;
@@ -1128,6 +1150,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
 
     _q_processFileEvent_runing = true;
     qDebug() << "_q_processFileEvent";
+    qApp->processEvents();
 
     Q_Q(DFileSystemModel);
     while (!fileEventQueue.isEmpty()) {
@@ -2241,7 +2264,9 @@ bool DFileSystemModel::sort(bool emitDataChange)
 
     QList<FileSystemNode *> list = node->getChildrenList();
 
+    d->rootNode->setIsUpdate(true);
     bool ok = sort(node->fileInfo, list);
+    d->rootNode->setIsUpdate(false);
 
     if (ok) {
         node->setChildrenList(list);
@@ -2351,9 +2376,11 @@ bool DFileSystemModel::setColumnCompact(bool compact)
             d->rootNode->fileInfo->setColumnCompact(compact);
         }
 
+        d->rootNode->setIsUpdate(true);
         for (const FileSystemNode *child : d->rootNode->getChildrenList()) {
             child->fileInfo->setColumnCompact(compact);
         }
+        d->rootNode->setIsUpdate(false);
     }
 
     return true;
@@ -2520,9 +2547,11 @@ void DFileSystemModel::update()
 
     const QModelIndex &rootIndex = createIndex(d->rootNode, 0);
 
+    d->rootNode->setIsUpdate(true);
     for (const FileSystemNode *node : d->rootNode->getChildrenList()) {
         node->fileInfo->refresh();
     }
+    d->rootNode->setIsUpdate(false);
 
     emit dataChanged(rootIndex.child(0, 0), rootIndex.child(rootIndex.row() - 1, 0));
 }
@@ -2992,3 +3021,5 @@ void DFileSystemModel::endRemoveRows()
 }
 
 #include "moc_dfilesystemmodel.cpp"
+
+
