@@ -959,8 +959,14 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             }
         }
 
-        actionKeys << MenuAction::Delete
-                   << MenuAction::Separator
+        if (FileUtils::isGvfsMountFile(absoluteFilePath()) || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())) {
+            if (!isVirtualEntry()) {
+                actionKeys << MenuAction::CompleteDeletion;
+            }
+        } else {
+            actionKeys << MenuAction::Delete;
+        }
+        actionKeys << MenuAction::Separator
                    << MenuAction::Property;
 
         ///###: tag protocol.
