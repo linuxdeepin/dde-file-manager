@@ -262,26 +262,27 @@ void Desktop::showWallpaperSettings(int mode)
         d->wallpaperSettings = nullptr;
     });
     connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
-        const QString &desktopImage = d->wallpaperSettings->desktopBackground();
-
-        if (!desktopImage.isEmpty())
-            d->background->setBackground(desktopImage);
+        WallpaperSettings *set = dynamic_cast<WallpaperSettings *>(sender());
+        if (set){
+            QString desktopImage = set->desktopBackground();
+            if (!desktopImage.isEmpty())
+                d->background->setBackground(desktopImage);
+        }
     }, Qt::DirectConnection);
 
     d->wallpaperSettings->show();
     //d->wallpaperSettings->grabKeyboard(); //设计按键交互功能QWindow *window = d->wallpaperSettings->windowHandle();
     //监控窗口状态
     QWindow *window = d->wallpaperSettings->windowHandle();
-    connect(window, &QWindow::activeChanged, this, [=]()
-    {
-        if(d->wallpaperSettings->isActiveWindow())
+    connect(window, &QWindow::activeChanged, d->wallpaperSettings, [=]() {
+        if(d->wallpaperSettings == nullptr || d->wallpaperSettings->isActiveWindow())
             return;
         //激活窗口
         d->wallpaperSettings->activateWindow();
         //10毫秒后再次检测
-        QTimer::singleShot(10,this,[=]()
+        QTimer::singleShot(10,d->wallpaperSettings,[=]()
         {
-            if (!d->wallpaperSettings->isActiveWindow())
+            if (d->wallpaperSettings && !d->wallpaperSettings->isActiveWindow())
                 d->wallpaperSettings->activateWindow();
         });
     });
