@@ -401,8 +401,16 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
 void DFMVaultRemovePages::onLockVault(int state)
 {
     if (state == 0 && m_bRemoveVault){
-        QString rmPath = VaultController::getVaultController()->vaultLockPath();
-        removeFileInDir(rmPath);
+        // 开启线程进行文件删除
+        std::thread thread(
+                [this]()
+                {
+                    QString rmPath = VaultController::getVaultController()->vaultLockPath();
+                    removeFileInDir(rmPath);
+                }
+        );
+        thread.detach();
+
         accept();
     }else if (state != 0 && m_bRemoveVault) {
         // something to do

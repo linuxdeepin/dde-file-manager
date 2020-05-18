@@ -596,6 +596,7 @@ INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
-    confirm/deepin-vault-authenticateProxy
+    confirm/deepin-vault-authenticateProxy \
+    policy/com.deepin.pkexec.deepin-vault-authenticateProxy.policy
 
 include($$PWD/settings_dialog_json.pri)

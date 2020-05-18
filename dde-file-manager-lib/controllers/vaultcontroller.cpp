@@ -257,18 +257,13 @@ DUrlList VaultController::vaultToLocalUrls(DUrlList vaultUrls)
 
 bool VaultController::checkAuthentication()
 {
-    QString cmd("pkexec deepin-devicemanager-authenticateProxy");
-    QProcess process_;
-    process_.start(cmd);
-
-    bool res = process_.waitForFinished(-1);
-    QString standOutput_ = process_.readAllStandardOutput();
-    int exitCode = process_.exitCode();
-    if ( cmd.startsWith("pkexec deepin-devicemanager-authenticateProxy") && (exitCode == 127 || exitCode == 126) ) {
-        return false;
+    QString standOutput("");
+    bool res = runCmd("id -un", standOutput);
+    if (res && standOutput.trimmed() == "root"){
+        return true;
     }
 
-    return res;
+    return runCmd("pkexec deepin-devicemanager-authenticateProxy", standOutput);
 }
 
 VaultController::VaultState VaultController::state(QString lockBaseDir)
@@ -406,6 +401,41 @@ QString VaultController::vaultLockPath()
 QString VaultController::vaultUnlockPath()
 {
     return makeVaultLocalPath("", "vault_unlocked");
+}
+
+bool VaultController::runCmd(const QString &cmd, QString &standOutput)
+{
+    QProcess process_;
+    int msecs = 10000;
+    if (cmd.startsWith("pkexec deepin-devicemanager-authenticateProxy") ) {
+        msecs = -1;
+    }
+
+    process_.start(cmd);
+
+    bool res = process_.waitForFinished(msecs);
+    standOutput = process_.readAllStandardOutput();
+    int exitCode = process_.exitCode();
+    if ( cmd.startsWith("pkexec deepin-devicemanager-authenticateProxy") && (exitCode == 127 || exitCode == 126) ) {
+        //dError( "Run \'" + cmd + "\' failed: Password Error! " + QString::number(exitCode) + "\n");
+
+        if (cmd.contains("whoami")) {
+            //if(exitCode == 126)
+            //{
+            //DMessageBox::critical(nullptr, "", tr("Password Error!" ));
+            //}
+
+            //exit(-1);
+        }
+
+        return false;
+    }
+
+    if (res == false) {
+        //dError( "Run \'" + cmd + "\' failed\n" );
+    }
+
+    return res;
 }
 
 

@@ -180,6 +180,9 @@ signals:
     void sigLockVault(QString unlockFileDir);
 
 private:
+    static bool runCmd(const QString &cmd, QString &standOutput);
+
+private:
     VaultControllerPrivate * d_ptr;
 
     static VaultController * cryfs;

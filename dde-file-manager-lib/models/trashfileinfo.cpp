@@ -235,6 +235,7 @@ QVector<MenuAction> TrashFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
         }
         actionKeys << MenuAction::Restore
                    << MenuAction::CompleteDeletion
+                   << MenuAction::Cut   // 添加回收站剪切菜单
                    << MenuAction::Copy
                    << MenuAction::Separator
                    << MenuAction::Property;
@@ -248,6 +249,7 @@ QVector<MenuAction> TrashFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
         }
         actionKeys << MenuAction::Restore
                    << MenuAction::CompleteDeletion
+                   << MenuAction::Cut   // 添加回收站剪切菜单
                    << MenuAction::Copy
                    << MenuAction::Separator
                    << MenuAction::Property;
