@@ -81,12 +81,10 @@ bool VaultLockManager::autoLock(VaultLockManager::AutoLockState lockState)
 
 void VaultLockManager::refreshAccessTime()
 {
-    if (m_rootFileInfo.data() == nullptr) {
-        m_rootFileInfo = DFileService::instance()->createFileInfo(
-                    nullptr, VaultController::getVaultController()->makeVaultUrl());
-    }
-    qint64 time = m_rootFileInfo->lastRead().toSecsSinceEpoch();
-    dbusSetRefreshTime(static_cast<quint64>(time));
+    QDateTime local(QDateTime::currentDateTime());
+    quint64 curTime = static_cast<quint64>(local.toSecsSinceEpoch());
+
+    dbusSetRefreshTime(static_cast<quint64>(curTime));
 }
 
 void VaultLockManager::processAutoLock()
@@ -111,8 +109,6 @@ void VaultLockManager::processAutoLock()
     if (interval > threshold) {
         controller->lockVault();
     }
-
-    refreshAccessTime();
 }
 
 void VaultLockManager::slotLockVault(QString msg)

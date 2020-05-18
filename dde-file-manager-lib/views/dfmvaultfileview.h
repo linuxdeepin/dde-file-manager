@@ -46,6 +46,9 @@ public:
 
     bool setRootUrl(const DUrl &url) override;
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
 public slots:
     void lockVault(int state);
 };

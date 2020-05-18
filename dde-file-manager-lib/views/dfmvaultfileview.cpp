@@ -20,6 +20,7 @@
  */
 #include "dfmvaultfileview.h"
 #include "controllers/vaultcontroller.h"
+#include "vault/vaultlockmanager.h"
 
 
 #include <QHBoxLayout>
@@ -106,6 +107,19 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     }
 
     return DFileView::setRootUrl(url);
+}
+
+bool DFMVaultFileView::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::HoverMove
+            || event->type() == QEvent::MouseButtonPress
+            || event->type() == QEvent::KeyRelease) {
+
+        VaultLockManager::getInstance().refreshAccessTime();
+        qDebug() << "type == " << event->type();
+    }
+
+    return DFileView::eventFilter(obj, event);
 }
 
 void DFMVaultFileView::lockVault(int state)

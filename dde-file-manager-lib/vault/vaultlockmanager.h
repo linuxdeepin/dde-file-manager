@@ -42,6 +42,11 @@ public:
      */
     bool isValid() const;
 
+    /**
+     * @brief refreshAccessTime 刷新保险箱访问时间
+     */
+    void refreshAccessTime();
+
 protected slots:
     /**
      * @brief processAutoLock 处理自动加锁
@@ -66,11 +71,6 @@ private:
      * @brief loadConfig 加载配置文件
      */
     void loadConfig();
-
-    /**
-     * @brief refreshAccessTime 刷新保险箱访问时间
-     */
-    void refreshAccessTime();
 
     /**
      * @brief setRefreshTime 刷新保险柜最新计时
