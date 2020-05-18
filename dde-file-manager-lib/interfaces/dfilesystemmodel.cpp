@@ -1844,11 +1844,12 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     }
 
     if (d->rootNode) {
-        const DUrl rootFileUrl = d->rootNode->fileInfo->fileUrl();
+        //! 注释下列代码是为了当前路径能重复访问
+//        const DUrl rootFileUrl = d->rootNode->fileInfo->fileUrl();
 
-        if (fileUrl == rootFileUrl) {
-            return createIndex(d->rootNode, 0);
-        }
+//        if (fileUrl == rootFileUrl) {
+//            return createIndex(d->rootNode, 0);
+//        }
 
         clear();
     }

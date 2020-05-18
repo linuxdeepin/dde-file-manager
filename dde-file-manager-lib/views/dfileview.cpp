@@ -2239,8 +2239,9 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     qDebug() << "cd: current url:" << rootUrl << "to url:" << fileUrl;
 
-    if (rootUrl == fileUrl)
-        return true;
+    //! 注释下列代码是为了当前路径能重复访问
+//    if (rootUrl == fileUrl)
+//        return true;
 
     const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl", QUrl::FullyEncoded));
 
