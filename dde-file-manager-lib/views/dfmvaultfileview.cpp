@@ -116,7 +116,9 @@ bool DFMVaultFileView::eventFilter(QObject *obj, QEvent *event)
             || event->type() == QEvent::KeyRelease) {
 
         VaultLockManager::getInstance().refreshAccessTime();
+#ifdef AUTOLOCK_TEST
         qDebug() << "type == " << event->type();
+#endif
     }
 
     return DFileView::eventFilter(obj, event);

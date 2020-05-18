@@ -27,6 +27,7 @@
 
 #include <QDBusContext>
 #include <QObject>
+#include <QTimer>
 
 class VaultAdaptor;
 
@@ -56,9 +57,21 @@ public slots:
      */
     quint64 getLastestTime() const;
 
+    /**
+     * @brief getSelfTime 获取自定义时间
+     * @return
+     */
+    quint64 getSelfTime() const;
+
+protected:
+    void tick();
+
 private:
     VaultAdaptor* m_vaultAdaptor = nullptr;
     quint64 m_lastestTime = 0; // 保险箱最新计时
+
+    QTimer m_selfTimer; // 自定义计时器
+    quint64 m_selfTime;  // 自定义时间
 };
 
 #endif // VAULTMANAGER_H

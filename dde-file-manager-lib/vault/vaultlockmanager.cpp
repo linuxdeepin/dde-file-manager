@@ -81,8 +81,7 @@ bool VaultLockManager::autoLock(VaultLockManager::AutoLockState lockState)
 
 void VaultLockManager::refreshAccessTime()
 {
-    QDateTime local(QDateTime::currentDateTime());
-    quint64 curTime = static_cast<quint64>(local.toSecsSinceEpoch());
+    quint64 curTime = dbusGetSelfTime();
 
     dbusSetRefreshTime(static_cast<quint64>(curTime));
 }
@@ -99,12 +98,14 @@ void VaultLockManager::processAutoLock()
     quint64 lastAccessTime = dbusGetLastestTime();
 
     QDateTime local(QDateTime::currentDateTime());
-    quint64 curTime = static_cast<quint64>(local.toSecsSinceEpoch());
+    quint64 curTime = dbusGetSelfTime();
 
     quint64 interval = curTime - lastAccessTime;
     quint32 threshold = m_autoLockState * 60;
 
+#ifdef AUTOLOCK_TEST
     qDebug() << "vault autolock countdown > " << interval;
+#endif
 
     if (interval > threshold) {
         controller->lockVault();
@@ -159,4 +160,19 @@ quint64 VaultLockManager::dbusGetLastestTime() const
         }
     }
     return latestTime;
+}
+
+quint64 VaultLockManager::dbusGetSelfTime() const
+{
+    quint64 selfTime = 0;
+    if (m_vaultInterface->isValid()) {
+        QDBusPendingReply<quint64> reply = m_vaultInterface->getSelfTime();
+        reply.waitForFinished();
+        if (reply.isError()) {
+            qDebug() << reply.error().message();
+        } else {
+            selfTime = reply.value();
+        }
+    }
+    return selfTime;
 }

@@ -35,14 +35,19 @@ QString VaultManager::ObjectPath = "/com/deepin/filemanager/daemon/VaultManager"
 VaultManager::VaultManager(QObject *parent)
     : QObject(parent)
     , QDBusContext()
+    , m_selfTime(0)
 {
     QDBusConnection::systemBus().registerObject(ObjectPath, this);
     m_vaultAdaptor = new VaultAdaptor(this);
+
+    connect(&m_selfTimer, &QTimer::timeout, this, &VaultManager::tick);
+    m_selfTimer.setInterval(1000);
+    m_selfTimer.start();
 }
 
 VaultManager::~VaultManager()
 {
-
+    m_selfTimer.stop();
 }
 
 void VaultManager::setRefreshTime(quint64 time)
@@ -53,4 +58,14 @@ void VaultManager::setRefreshTime(quint64 time)
 quint64 VaultManager::getLastestTime() const
 {
     return m_lastestTime;
+}
+
+quint64 VaultManager::getSelfTime() const
+{
+    return m_selfTime;
+}
+
+void VaultManager::tick()
+{
+    m_selfTime++;
 }

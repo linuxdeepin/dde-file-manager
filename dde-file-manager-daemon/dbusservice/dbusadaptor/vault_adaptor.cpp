@@ -39,6 +39,12 @@ qulonglong VaultAdaptor::getLastestTime()
     return parent()->getLastestTime();
 }
 
+qulonglong VaultAdaptor::getSelfTime()
+{
+    // handle method call com.deepin.filemanager.daemon.VaultManager.getSelfTime
+    return parent()->getSelfTime();
+}
+
 void VaultAdaptor::setRefreshTime(qulonglong time)
 {
     // handle method call com.deepin.filemanager.daemon.VaultManager.setRefreshTime

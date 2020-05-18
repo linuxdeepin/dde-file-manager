@@ -42,6 +42,12 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("getLastestTime"), argumentList);
     }
 
+    inline QDBusPendingReply<qulonglong> getSelfTime()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("getSelfTime"), argumentList);
+    }
+
     inline QDBusPendingReply<> setRefreshTime(qulonglong time)
     {
         QList<QVariant> argumentList;

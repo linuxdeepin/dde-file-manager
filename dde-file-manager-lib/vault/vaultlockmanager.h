@@ -7,6 +7,7 @@
 
 #include <QTimer>
 
+//#define AUTOLOCK_TEST
 class VaultInterface;
 class VaultLockManager : public QObject
 {
@@ -84,6 +85,12 @@ private:
      * @return
      */
     quint64 dbusGetLastestTime() const;
+
+    /**
+     * @brief dbusGetSelfTime 获取自定义时间
+     * @return
+     */
+    quint64 dbusGetSelfTime() const;
 
 private:
     VaultInterface* m_vaultInterface = nullptr; // 交互接口

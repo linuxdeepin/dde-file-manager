@@ -39,6 +39,9 @@ class VaultAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"getLastestTime\">\n"
 "      <arg direction=\"out\" type=\"t\"/>\n"
 "    </method>\n"
+"    <method name=\"getSelfTime\">\n"
+"      <arg direction=\"out\" type=\"t\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -51,6 +54,7 @@ public:
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     qulonglong getLastestTime();
+    qulonglong getSelfTime();
     void setRefreshTime(qulonglong time);
 Q_SIGNALS: // SIGNALS
 };
