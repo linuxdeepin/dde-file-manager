@@ -83,7 +83,7 @@ void DFMVaultActiveSaveKeyView::showEvent(QShowEvent *event)
     strKeyShow.insert(12, '-');
     strKeyShow.insert(8, '-');
     strKeyShow.insert(4, '-');
-    QString strContent = QString("文件保险箱回复密钥：%1").arg(strKeyShow);
+    QString strContent = QString(tr("Recovery Key:")) + strKeyShow;
     QPixmap QRCodePix;
     if(OperatorCenter::getInstance().createQRCode(strContent, m_pQRCodeImage->width(), m_pQRCodeImage->height(), QRCodePix))
         m_pQRCodeImage->setPixmap(QRCodePix);
