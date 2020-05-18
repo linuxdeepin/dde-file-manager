@@ -432,6 +432,10 @@ QPair<QString, QString> DDesktopRenameDialog::getModeThreeContent()const noexcep
     QString fileName{ std::get<1>(d->m_modeThreeItemsForFileName)->text() };
     QString numberStr{ std::get<1>(d->m_modeThreeItemsForSNNumber)->text() };
 
+    if(numberStr.isEmpty()){ // if the number is empty should set one default value
+        numberStr = QString{"1"};
+    }
+
     return QPair<QString, QString>{ fileName, numberStr};
 }
 
@@ -491,7 +495,10 @@ void DDesktopRenameDialog::onContentChangedForCustomzedSN(const QString &content
         lineEditForSNNumber->setText(QString{"1"});
 
     }catch(...){
-        lineEditForSNNumber->setText(QString{"1"});
+        if(!numberStr.empty()) // bug 26538: can edit the number
+        {
+            lineEditForSNNumber->setText(QString{"1"});
+        }
     }
 }
 
