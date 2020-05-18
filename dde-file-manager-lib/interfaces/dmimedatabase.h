@@ -39,8 +39,6 @@ public:
     DMimeDatabase();
 
     QMimeType mimeTypeForFile(const QString &fileName, MatchMode mode = MatchDefault) const;
-    //判读ios手机，传输慢，需要特殊处理优化
-    QMimeType mimeTypeForFileOptimise(const QString &fileName, MatchMode mode = MatchDefault) const;
     QMimeType mimeTypeForFile(const QFileInfo &fileInfo, MatchMode mode = MatchDefault) const;
     QMimeType mimeTypeForUrl(const QUrl &url) const;
 };
