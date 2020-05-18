@@ -315,7 +315,17 @@ QString DFMRootFileInfo::iconName() const
     if (suffix() == SUFFIX_USRDIR) {
         return systemPathManager->getSystemPathIconNameByPath(redirectedFileUrl().path());
     } else if (suffix() == SUFFIX_GVFSMP) {
-        return d->gmnt ? d->gmnt->themedIconNames().front() : "";
+        //        return d->gmnt ? d->gmnt->themedIconNames().front() : "";
+        // 修改获取图片时崩溃
+        if(d->gmnt){
+            const QStringList &iconList = d->gmnt->themedIconNames();
+            if(iconList.count() > 0){
+                return iconList.front();
+            }
+            return "";
+        }
+        return "";
+
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->blk) {
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));

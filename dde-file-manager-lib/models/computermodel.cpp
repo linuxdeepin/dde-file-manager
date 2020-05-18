@@ -37,9 +37,10 @@
 #include "computermodel.h"
 
 
-ComputerModel::ComputerModel(QObject *parent) :
-    QAbstractItemModel(parent),
-    m_diskm(new DDiskManager(this))
+ComputerModel::ComputerModel(QObject *parent)
+    : QAbstractItemModel(parent)
+    , m_diskm(new DDiskManager(this))
+    , m_nDiskNumber(0)
 {
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
@@ -59,13 +60,19 @@ ComputerModel::ComputerModel(QObject *parent) :
                                       });
             if (r == m_items.end()) {
                 addItem(chi->fileUrl());
+                m_nDiskNumber++;
             } else {
                 insertBefore(chi->fileUrl(), r->url);
+                m_nDiskNumber++;
             }
         } else {
             addItem(chi->fileUrl());
         }
     }
+    // 保险柜
+    addItem(makeSplitterUrl(QObject::tr("File Vault")));
+    addItem(VaultController::makeVaultUrl());
+
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
     m_watcher->startWatcher();
     connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
@@ -74,26 +81,36 @@ ComputerModel::ComputerModel(QObject *parent) :
             if (!fi->exists()) {
                 return;
             }
-            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
-                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
-                if(b.fi.data() == nullptr)
-                    return true;
-                return DFMRootFileInfo::typeCompare(a, b.fi);
-                                      });
-            if (r == m_items.end()) {
-                addItem(url);
-            } else {
-                insertBefore(url, r->url);
-            }
-            // 修改判断条件
-//            int index = findItem(makeSplitterUrl(tr("File Vault")));
-//            if(findNextItem(makeSplitterUrl(tr("Disks")), nstart, nend)){
-//                auto r = std::upper_bound(m_items.begin() + nstart + 1, m_items.begin() + nend, fi,
-//                                          [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
-//                                              return DFMRootFileInfo::typeCompare(a, b.fi);
-//                                          });
+//            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
+//                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+//                                            return DFMRootFileInfo::typeCompare(a, b.fi);
+//                                      });
+//            if (r == m_items.end()) {
+//                addItem(url);
+//            } else {
 //                insertBefore(url, r->url);
 //            }
+            // 修改判断条件
+            int nIndex = findItem(makeSplitterUrl(tr("Disks")));
+            if(nIndex != -1){   // 找到了
+                nIndex = nIndex + m_nDiskNumber + 1;
+                if(m_items.count() > nIndex){
+                    insertBefore(url, m_items[nIndex].url);
+                }else {
+                    addItem(url);
+                }
+            }
+            else {  // 没找到
+                auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
+                                          [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+                                                return DFMRootFileInfo::typeCompare(a, b.fi);
+                                          });
+                if (r == m_items.end()) {
+                    addItem(url);
+                } else {
+                    insertBefore(url, r->url);
+                }
+            }
     });
     connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, [this](const DUrl &url) {
         int p;
@@ -109,10 +126,6 @@ ComputerModel::ComputerModel(QObject *parent) :
         static_cast<DFMRootFileInfo*>(m_items[p].fi.data())->checkCache();
         emit dataChanged(idx, idx, {Qt::ItemDataRole::DisplayRole});
     });
-
-    // 保险柜
-    addItem(makeSplitterUrl(QObject::tr("File Vault")));
-    addItem(VaultController::makeVaultUrl());
 
     connect(deviceListener, SIGNAL(volumeAdded(UDiskDeviceInfoPointer)), this, SLOT(onVolumeAdded(UDiskDeviceInfoPointer)));
 }
