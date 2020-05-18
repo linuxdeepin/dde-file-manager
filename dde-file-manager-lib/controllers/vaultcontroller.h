@@ -55,7 +55,6 @@ public:
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
-    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
 
     static DUrl makeVaultUrl(QString path = "", QString host = "files");
     static DUrl localUrlToVault(const DUrl &vaultUrl);
