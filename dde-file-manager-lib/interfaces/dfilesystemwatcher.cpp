@@ -489,7 +489,7 @@ DFileSystemWatcher::~DFileSystemWatcher()
 bool DFileSystemWatcher::addPath(const QString &path)
 {
     if (path.isEmpty()) {
-        qWarning("DFileSystemWatcher::addPath: path is empty");
+        //qWarning("DFileSystemWatcher::addPath: path is empty");
         return true;
     }
 
@@ -557,7 +557,7 @@ QStringList DFileSystemWatcher::addPaths(const QStringList &paths)
 bool DFileSystemWatcher::removePath(const QString &path)
 {
     if (path.isEmpty()) {
-        qWarning("DFileSystemWatcher::removePath: path is empty");
+      //  qWarning("DFileSystemWatcher::removePath: path is empty");
         return true;
     }
 
