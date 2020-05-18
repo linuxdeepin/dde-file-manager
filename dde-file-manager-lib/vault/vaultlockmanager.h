@@ -1,5 +1,5 @@
-#ifndef VAULTMANAGER_H
-#define VAULTMANAGER_H
+#ifndef VAULTLOCKMANAGER_H
+#define VAULTLOCKMANAGER_H
 
 #include "dabstractfilecontroller.h"
 
@@ -42,22 +42,7 @@ public:
      */
     bool isValid() const;
 
-protected:
-    /**
-     * @brief setRefreshTime 刷新保险柜最新计时
-     * @param time 时间
-     * @return
-     */
-    void dbusSetRefreshTime(quint64 time);
-
-    /**
-     * @brief getLastestTime 获取最新计时
-     * @return
-     */
-    quint64 dbusGetLastestTime() const;
-
 protected slots:
-
     /**
      * @brief processAutoLock 处理自动加锁
      */
@@ -87,6 +72,19 @@ private:
      */
     void refreshAccessTime();
 
+    /**
+     * @brief setRefreshTime 刷新保险柜最新计时
+     * @param time 时间
+     * @return
+     */
+    void dbusSetRefreshTime(quint64 time);
+
+    /**
+     * @brief getLastestTime 获取最新计时
+     * @return
+     */
+    quint64 dbusGetLastestTime() const;
+
 private:
     VaultInterface* m_vaultInterface = nullptr; // 交互接口
 
@@ -101,4 +99,4 @@ private:
     bool m_isCacheTimeReloaded; // 访问时间是否已经重新加载
 };
 
-#endif // VAULTMANAGER_H
+#endif // VAULTLOCKMANAGER_H

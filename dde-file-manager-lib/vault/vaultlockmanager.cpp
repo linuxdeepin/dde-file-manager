@@ -1,8 +1,13 @@
 #include "vaultlockmanager.h"
 #include "dfileservices.h"
+#include "dfmsettings.h"
+#include "dfmapplication.h"
 #include "controllers/vaultcontroller.h"
 
 #include "../dde-file-manager-daemon/dbusservice/dbusinterface/vault_interface.h"
+
+#define VAULT_AUTOLOCK_KEY      "AutoLock"
+#define VAULT_GROUP             "Vault/AutoLock"
 
 VaultLockManager &VaultLockManager::getInstance()
 {
@@ -19,8 +24,9 @@ VaultLockManager::VaultLockManager(QObject *parent) : QObject(parent)
                                           QDBusConnection::systemBus(),
                                           this);
 
-    if (!m_vaultInterface->isValid()) {
+    if (!isValid()) {
         qDebug() << m_vaultInterface->lastError().message();
+        return;
     }
 
     // 自动锁计时处理
@@ -29,6 +35,8 @@ VaultLockManager::VaultLockManager(QObject *parent) : QObject(parent)
 
     connect(VaultController::getVaultController(), &VaultController::sigLockVault, this,  &VaultLockManager::slotLockVault);
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this,  &VaultLockManager::slotUnlockVault);
+
+    loadConfig();
 }
 
 VaultLockManager::~VaultLockManager()
@@ -38,7 +46,12 @@ VaultLockManager::~VaultLockManager()
 
 void VaultLockManager::loadConfig()
 {
-    // Somthing to do.
+    VaultLockManager::AutoLockState state = VaultLockManager::Never;
+    QVariant var = DFMApplication::genericSetting()->value(VAULT_GROUP, VAULT_AUTOLOCK_KEY);
+    if (var.isValid()) {
+        state = static_cast<VaultLockManager::AutoLockState>(var.toInt());
+    }
+    autoLock(state);
 }
 
 VaultLockManager::AutoLockState VaultLockManager::autoLockState() const
@@ -60,6 +73,8 @@ bool VaultLockManager::autoLock(VaultLockManager::AutoLockState lockState)
         m_alarmClock.start();
     }
     m_isCacheTimeReloaded = true;
+
+    DFMApplication::genericSetting()->setValue(VAULT_GROUP, VAULT_AUTOLOCK_KEY, lockState);
 
     return true;
 }
@@ -114,7 +129,14 @@ void VaultLockManager::slotUnlockVault()
 
 bool VaultLockManager::isValid() const
 {
-    return m_vaultInterface->isValid();
+    bool bValid = false;
+
+    if (m_vaultInterface->isValid()) {
+        QDBusPendingReply<quint64> reply = m_vaultInterface->getLastestTime();
+        reply.waitForFinished();
+        bValid = !reply.isError();
+    }
+    return bValid;
 }
 
 void VaultLockManager::dbusSetRefreshTime(quint64 time)
