@@ -298,7 +298,9 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
     QScopedPointer<FileJob, ScopedPointerCustomDeleter> job(new FileJob(FileJob::Restore));
     job->setProperty("pathlist", pathlist);
     job->setManualRemoveJob(true);
+    job->moveToThread(qApp->thread());
     dialogManager->addJob(job.data());
+    job->jobPrepared();
     for (const DUrl &url : urlist) {
 
         if (url == DUrl::fromTrashFile("/")) {
