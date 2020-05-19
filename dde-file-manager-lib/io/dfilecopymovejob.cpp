@@ -1962,6 +1962,11 @@ void DFileCopyMoveJob::run()
             goto end;
         }
 
+        // fix: 搜索列表中的文件路径需要转化为原始路径
+        if (source.isSearchFile()) {
+            source = source.searchedFileUrl();
+        }
+
         const DAbstractFileInfoPointer &source_info = DFileService::instance()->createFileInfo(nullptr, source);
         if (!source_info) {
             qWarning() << "Url not yet supported: " << source;
