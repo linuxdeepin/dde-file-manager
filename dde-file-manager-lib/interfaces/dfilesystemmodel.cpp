@@ -773,9 +773,10 @@ private:
                                 }
 
                                 const FileSystemNodePointer &node = rootNode->getNodeByIndex(row);
-
-                                if (compareFun(fileInfo, node->fileInfo, model()->sortOrder())) {
-                                    break;
+                                if (node) {
+                                    if (compareFun(fileInfo, node->fileInfo, model()->sortOrder())) {
+                                        break;
+                                    }
                                 }
 
                                 ++row;
@@ -2843,9 +2844,10 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
                             }
 
                             const FileSystemNodePointer &node = parentNode->getNodeByIndex(row);
-
-                            if (compareFun(fileInfo, node->fileInfo, d->srotOrder)) {
-                                break;
+                            if (node) {
+                                if (compareFun(fileInfo, node->fileInfo, d->srotOrder)) {
+                                    break;
+                                }
                             }
 
                             ++row;
@@ -2865,9 +2867,11 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
                         }
 
                         const FileSystemNodePointer &node = parentNode->getNodeByIndex(row);
+                        if (node) {
+                            if (node->fileInfo->isFile()) {
+                                break;
+                            }
 
-                        if (node->fileInfo->isFile()) {
-                            break;
                         }
 
                         ++row;
