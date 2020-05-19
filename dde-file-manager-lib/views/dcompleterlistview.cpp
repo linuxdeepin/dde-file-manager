@@ -53,17 +53,36 @@ DCompleterListView::DCompleterListView(QWidget *parent)
     m_timer = new QTimer(this);
     m_timer->setInterval(1);
     connect(this,&QListView::hide,this,&DCompleterListView::hideMe);
-    connect(m_timer,&QTimer::timeout,this,[this](){
+    connect(m_timer,&QTimer::timeout,this,[this,parent](){
         //判断鼠标位置在当前的view内就不截获鼠标，不在就截获鼠标
         QPoint point = this->mapFromGlobal(QApplication::overrideCursor()->pos());
-        if (!isHidden() && isVisible())
-        {
+        if (!isHidden() && isVisible()) {
             m_bshow = true;
         }
         if (m_bshow && (isHidden() || !isVisible()))
         {
             hideMe();
             return;
+        }
+        //获取主窗口位置，位置发生改变就隐藏
+        if (m_bshow) {
+            QWidget *parentnew = parent;
+            QWidget *window = nullptr;
+            while (parent){
+                window = parentnew;
+                parentnew = parentnew->parentWidget();
+            }
+            if (window) {
+                if (m_windowpos.isNull()) {
+                    m_windowpos = window->pos();
+                }
+                else {
+                    if (m_windowpos != window->pos()) {
+                        hideMe();
+                        return;
+                    }
+                }
+            }
         }
         if (rect().contains(point))
         {
@@ -91,6 +110,7 @@ void DCompleterListView::showMe()
     m_timer->start();
     m_bshow = false;
     m_bgrabmouse = false;
+    m_windowpos = QPoint();
     QListView::show();
 }
 //隐藏、停止计时器、释放鼠标
@@ -99,6 +119,7 @@ void DCompleterListView::hideMe()
     m_timer->stop();
     releaseMouse();
     m_bshow = false;
+    m_windowpos = QPoint();
     m_bgrabmouse = false;
     QListView::hide();
 }
