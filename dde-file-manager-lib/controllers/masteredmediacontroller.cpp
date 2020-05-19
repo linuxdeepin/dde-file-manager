@@ -433,7 +433,7 @@ bool MasteredMediaController::createSymlink(const QSharedPointer<DFMCreateSymlin
     }
 
     DUrl local_url = DUrl::fromLocalFile(MasteredMediaFileInfo(event->fileUrl()).extraProperties()["mm_backer"].toString());
-    return fileService->createSymlink(event->sender(), local_url, event->toUrl());
+    return fileService->createSymlink(event->sender(), local_url, event->toUrl(), true);
 }
 
 bool MasteredMediaController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
