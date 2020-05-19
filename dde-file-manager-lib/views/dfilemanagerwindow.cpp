@@ -308,7 +308,8 @@ bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
         return false;
     }
 
-    return  false;
+    move = false;
+    return false;
 }
 
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
