@@ -119,6 +119,7 @@ public:
     static void umountAVFS();
 
     static bool isDesktopFile(const QString& filePath);
+    static bool isDesktopFile(const QFileInfo &fileInfo);
     static bool isDesktopFileOptmise(const QString& filePath);
 };
 

@@ -1317,8 +1317,7 @@ void DFileView::updateStatusBar()
     for (DUrl srcUrl : sourceUrls) {
         if (srcUrl.scheme() == SEARCH_SCHEME) {
             corectUrls << srcUrl.searchedFileUrl();
-        }
-        else {
+        } else {
             corectUrls << srcUrl;
         }
     }
@@ -2076,11 +2075,11 @@ void DFileView::initConnects()
 {
     D_D(DFileView);
 
-    connect(this, &DFileView::clicked, [ = ] (const QModelIndex & index) {
+    connect(this, &DFileView::clicked, [ = ](const QModelIndex & index) {
         openIndexByOpenAction(0, index);
     });
 
-    connect(this, &DFileView::doubleClicked, [ = ] (const QModelIndex & index) {
+    connect(this, &DFileView::doubleClicked, [ = ](const QModelIndex & index) {
         openIndexByOpenAction(1, index);
     });
 
@@ -2277,8 +2276,9 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     qDebug() << "cd: current url:" << rootUrl << "to url:" << fileUrl;
 
-    if (rootUrl == fileUrl)
-        return true;
+//    if (rootUrl == fileUrl)
+//        return true;
+//    对于相同路径也要走同样的流程
 
     const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl", QUrl::FullyEncoded));
 
@@ -2526,7 +2526,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                 DFMApplication::appObtuselySetting()->setValue("WindowManager", "ViewColumnState", state);
             });
             connect(horizontalScrollBar(), &QScrollBar::valueChanged, d->headerView,
-            [d] (int value) {
+            [d](int value) {
                 if (d->headerView) {
                     d->headerView->move(-value, d->headerView->y());
                 }

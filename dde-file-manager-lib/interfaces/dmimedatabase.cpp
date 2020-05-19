@@ -53,7 +53,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
 {
     // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
     QMimeType result;
-    if (DStorageInfo(fileInfo.path()).isLowSpeedDevice()) {
+    if (DStorageInfo::isLowSpeedDevice(fileInfo.path())) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);

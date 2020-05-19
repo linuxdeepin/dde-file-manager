@@ -75,9 +75,9 @@ public:
     ~RequestEP();
 
     // Request get the file extra properties
-    QQueue<QPair<DUrl, DFileInfoPrivate*>> requestEPFiles;
+    QQueue<QPair<DUrl, DFileInfoPrivate *>> requestEPFiles;
     QReadWriteLock requestEPFilesLock;
-    QSet<DFileInfoPrivate*> dirtyFileInfos;
+    QSet<DFileInfoPrivate *> dirtyFileInfos;
 
     void run() override;
     void requestEP(const DUrl &url, DFileInfoPrivate *info);
@@ -86,7 +86,7 @@ public:
 Q_SIGNALS:
     void requestEPFinished(const DUrl &url, const QVariantHash &ep);
 
- private Q_SLOTS:
+private Q_SLOTS:
     void processEPChanged(const DUrl &url, DFileInfoPrivate *info, const QVariantHash &ep);
 
 private:
@@ -97,7 +97,7 @@ RequestEP::RequestEP(QObject *parent)
     : QThread(parent)
 {
     QMetaType::registerEqualsComparator<QList<QColor>>();
-    qRegisterMetaType<DFileInfoPrivate*>();
+    qRegisterMetaType<DFileInfoPrivate *>();
 
     connect(this, &RequestEP::finished, this, [this] {
         dirtyFileInfos.clear();
@@ -159,7 +159,7 @@ void RequestEP::run()
         }
 
         QMetaObject::invokeMethod(this, "processEPChanged", Qt::QueuedConnection,
-                                  Q_ARG(DUrl, url), Q_ARG(DFileInfoPrivate*, file_info.second), Q_ARG(QVariantHash, ep));
+                                  Q_ARG(DUrl, url), Q_ARG(DFileInfoPrivate *, file_info.second), Q_ARG(QVariantHash, ep));
     }
 }
 
@@ -235,7 +235,7 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
 }
 
 DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache)
-    : DAbstractFileInfoPrivate (url, qq, hasCache)
+    : DAbstractFileInfoPrivate(url, qq, hasCache)
 {
     fileInfo.setFile(url.toLocalFile());
     gvfsMountFile = FileUtils::isGvfsMountFile(url.toLocalFile());
@@ -467,11 +467,11 @@ bool DFileInfo::canShare() const
         UDiskDeviceInfoPointer info = deviceListener->getDeviceByFilePath(filePath());
 
         if (info) {
-            if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() !=UDiskDeviceInfo::network)
+            if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() != UDiskDeviceInfo::network)
                 return true;
         } else {
             QStringList udiskspathes = DDiskManager::resolveDeviceNode(stInfo.device(), {});
-            return udiskspathes.size()>0;
+            return udiskspathes.size() > 0;
         }
     }
 
@@ -483,8 +483,8 @@ bool DFileInfo::canFetch() const
     if (isPrivate())
         return false;
 
-    return ( isDir() ||
-            (FileUtils::isArchive(absoluteFilePath()) && DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()) );
+    return (isDir() ||
+            (FileUtils::isArchive(absoluteFilePath()) && DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()));
 }
 
 bool DFileInfo::canTag() const
@@ -631,7 +631,7 @@ bool DFileInfo::isSymLink() const
     }
 
     if (d->cacheIsSymLink >= 0)
-        return d->cacheIsSymLink!=0;
+        return d->cacheIsSymLink != 0;
 
     return d->fileInfo.isSymLink();
 }
@@ -641,7 +641,7 @@ QString DFileInfo::symlinkTargetPath() const
     Q_D(const DFileInfo);
 
     if (d->fileInfo.isSymLink()) {
-        char s[PATH_MAX+1];
+        char s[PATH_MAX + 1];
         int len = readlink(d->fileInfo.absoluteFilePath().toLocal8Bit().constData(), s, PATH_MAX);
 
         return QString::fromLocal8Bit(s, len);
@@ -806,7 +806,7 @@ QString DFileInfo::subtitleForEmptyFloder() const
         //         a 700 permission with your username on it, but you can't do readdir
         //         at all.
         struct dirent *next;
-        DIR* dirp = opendir(absoluteFilePath().toUtf8().constData());
+        DIR *dirp = opendir(absoluteFilePath().toUtf8().constData());
         if (!dirp) return QObject::tr("You do not have permission to access this folder");
         errno = 0;
         next = readdir(dirp);
@@ -930,7 +930,7 @@ QIcon DFileInfo::fileIcon() const
             QMetaObject::invokeMethod(d->getIconTimer, "start", Qt::QueuedConnection);
         } else if (isActive()) {
             QTimer *timer = new QTimer();
-            const QExplicitlySharedDataPointer<DFileInfo> me(const_cast<DFileInfo*>(this));
+            const QExplicitlySharedDataPointer<DFileInfo> me(const_cast<DFileInfo *>(this));
 
             d->getIconTimer = timer;
             timer->setSingleShot(true);
@@ -939,15 +939,19 @@ QIcon DFileInfo::fileIcon() const
 
             QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, me] {
                 DThumbnailProvider::instance()->appendToProduceQueue(me->d_func()->fileInfo, DThumbnailProvider::Large,
-                                                                     [me] (const QString &path) {
-                    if (path.isEmpty()) {
-                        me->d_func()->iconFromTheme = true;
-                    } else {
-                        // clean old icon
-                        me->d_func()->icon = QIcon();
-                    }
+                                                                     [me](const QString & path)
+                {
+                    DThreadUtil::runInMainThread([me, path]() {
+                        if (path.isEmpty()) {
+                            me->d_func()->iconFromTheme = true;
+                        } else {
+                            // clean old icon
+                            me->d_func()->icon = QIcon();
+                        }
 
-                    me->d_func()->needThumbnail = false;
+                        me->d_func()->needThumbnail = false;
+                    });
+
                 });
                 me->d_func()->requestingThumbnail = true;
                 timer->deleteLater();
@@ -970,7 +974,7 @@ QIcon DFileInfo::fileIcon() const
         if (symLinkTarget != fileUrl) {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, symLinkTarget);
 
-            if (fileInfo){
+            if (fileInfo) {
                 d->icon = fileInfo->fileIcon();
                 d->iconFromTheme = false;
 
@@ -1024,7 +1028,7 @@ QVariantHash DFileInfo::extraProperties() const
 
         QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url, this] {
             d->requestEP = RequestEP::instance();
-            d->requestEP->requestEP(url, const_cast<DFileInfoPrivate*>(d));
+            d->requestEP->requestEP(url, const_cast<DFileInfoPrivate *>(d));
             d->getEPTimer->deleteLater();
         });
 

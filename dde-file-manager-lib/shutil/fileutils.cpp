@@ -1294,5 +1294,12 @@ bool FileUtils::isDesktopFile(const QString &filePath)
 {  
     QMimeType mt = DMimeDatabase().mimeTypeForFile(filePath);
     return mt.name() == "application/x-desktop" &&
-           mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+}
+
+bool FileUtils::isDesktopFile(const QFileInfo &fileInfo)
+{
+    QMimeType mt = DMimeDatabase().mimeTypeForFile(fileInfo);
+    return mt.name() == "application/x-desktop" &&
+            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
 }
