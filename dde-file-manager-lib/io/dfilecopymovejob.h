@@ -175,12 +175,23 @@ Q_SIGNALS:
     void currentFileProgressChanged(qreal progress, qint64 writeData);
     void speedUpdated(qint64 speed);
 
+    // 通知当前任务中是否含有保险箱任务
+    void sigHaveVaultTask(bool bHave);
+
 protected:
     DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent);
 
     void run() override;
 
     QScopedPointer<DFileCopyMoveJobPrivate> d_d_ptr;
+
+private:
+    // 判断传入的任务表中是否含有保险箱任务，发送信号sigHaveVaultTask(bool)
+    void checkHaveVaultTask(const QMap<DUrl, DUrl> &mapTasks);
+
+private:
+    // 记录当前未完成任务(key: sourceDUrl  value: targetDUrl)
+    QMap<DUrl, DUrl> m_mapNoCompleteTasks;
 
 private:
     using QThread::start;

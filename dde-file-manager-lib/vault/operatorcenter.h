@@ -104,7 +104,6 @@ private:
     bool runCmd(const QString &cmd);
     bool executeProcess(const QString &cmd);
 
-
 private:
     QString             m_strUserKey;
     QString             standOutput_;

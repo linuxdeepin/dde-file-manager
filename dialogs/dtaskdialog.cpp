@@ -142,6 +142,8 @@ DTaskDialog::DTaskDialog(QWidget *parent) :
 {
     initUI();
     initConnect();
+
+    mapNotCompleteVaultTask.clear();
 }
 
 void DTaskDialog::initUI()
@@ -283,8 +285,28 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
     QTimer::singleShot(100, this, &DTaskDialog::raise);
 }
 
+bool DTaskDialog::isHaveVaultTask(const DUrlList &sourceUrls, const DUrl &targetUrl)
+{
+    DUrlList::const_iterator itr = sourceUrls.begin();
+    for(; itr != sourceUrls.end(); ++itr)
+    {
+        QString str = (*itr).toString() + targetUrl.toString();
+        if(str.contains("vault_unlocked")
+                || str.contains("dfmvault://")){
+            return true;
+        }
+    }
+    return false;
+}
+
 DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
 {
+    // 判断任务是否属于保险箱任务,如果是，记录容器
+    if(isHaveVaultTask(job->sourceUrlList(), job->targetUrl())){
+        mapNotCompleteVaultTask.insert(job);
+    }
+
+
     DFMTaskWidget *wid = new DFMTaskWidget;
     wid->setTaskId(QString::number(quintptr(job), 16));
 
@@ -363,6 +385,13 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
         if(job->isFinished())
         {
             this->removeTaskJob(job);
+
+            // 判断当前任务是否是保险箱任务，如果是，则消除记录
+            if(isHaveVaultTask(job->sourceUrlList(), job->targetUrl())){
+                if(mapNotCompleteVaultTask.contains(job))
+                    mapNotCompleteVaultTask.remove(job);
+            }
+
             return;
         }
         QMap<QString, QString> data;
@@ -405,6 +434,12 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
         if(job->isFinished())
         {
             this->removeTaskJob(job);
+
+            // 判断当前任务是否是保险箱任务，如果是，则消除记录
+            if(isHaveVaultTask(job->sourceUrlList(), job->targetUrl())){
+                if(mapNotCompleteVaultTask.contains(job))
+                    mapNotCompleteVaultTask.remove(job);
+            }
         }
     });
     connect(job, &DFileCopyMoveJob::errorChanged, wid, [wid](DFileCopyMoveJob::Error error) {
@@ -456,6 +491,11 @@ void DTaskDialog::moveYCenter()
     }
     qr.moveCenter(cp);
     move(x(), qr.y());
+}
+
+void DTaskDialog::slotSetNotCompletedVaultTask(bool bHave)
+{
+    m_bHaveVaultTask = bHave;
 }
 
 void DTaskDialog::removeTaskByPath(QString jobId)
@@ -644,6 +684,23 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
 
     if (!progress.isEmpty()) {
         wid->onProgressChanged(progress.toInt(), 0);
+    }
+}
+
+void DTaskDialog::showDialogOnTop()
+{
+    this->activateWindow();
+    dialogManager->taskDialog()->showNormal();
+}
+
+void DTaskDialog::stopVaultTask()
+{
+    QSet<DFileCopyMoveJob*>::const_iterator itr = mapNotCompleteVaultTask.begin();
+    for(; itr != mapNotCompleteVaultTask.end(); ++itr)
+    {
+        if((*itr)){
+//            emit (*itr)->stop();
+        }
     }
 }
 

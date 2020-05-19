@@ -1569,7 +1569,7 @@ void DFileCopyMoveJobPrivate::_q_updateProgress()
 DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
     : DFileCopyMoveJob(*new DFileCopyMoveJobPrivate(this), parent)
 {
-
+    m_mapNoCompleteTasks.clear();
 }
 
 DFileCopyMoveJob::~DFileCopyMoveJob()
@@ -1741,6 +1741,16 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 {
     Q_ASSERT(!isRunning());
     Q_D(DFileCopyMoveJob);
+
+    // 记录未完成任务
+    DUrlList::const_iterator itr = sourceUrls.begin();
+    for(; itr != sourceUrls.end(); ++itr)
+    {
+        m_mapNoCompleteTasks.insert((*itr), targetUrl);
+    }
+
+    // 检测是否有保险箱任务
+    checkHaveVaultTask(m_mapNoCompleteTasks);
 
     d->sourceUrlList = sourceUrls;
     d->targetUrl = targetUrl;
@@ -1983,7 +1993,16 @@ void DFileCopyMoveJob::run()
 
         d->targetUrlList << target_url;
 
+        // 记录未完成任务
+        if(m_mapNoCompleteTasks.contains(source)){
+            m_mapNoCompleteTasks.remove(source);
+        }
+
+        // 检测是否有保险箱任务
+        checkHaveVaultTask(m_mapNoCompleteTasks);
+
         Q_EMIT finished(source, target_url);
+
     }
 
     d->setError(NoError);
@@ -2023,6 +2042,30 @@ end:
     }
 
     qCDebug(fileJob()) << "job finished, error:" << error() << ", message:" << errorString();
+}
+
+void DFileCopyMoveJob::checkHaveVaultTask(const QMap<DUrl, DUrl> &mapTasks)
+{
+    QMap<DUrl, DUrl>::const_iterator itrSrc = mapTasks.begin();
+    bool bHave = false;
+    QString str("");
+    for(; itrSrc != mapTasks.end(); ++itrSrc)
+    {
+        QString strDest("");
+        if(itrSrc.value().isValid()){
+            strDest = itrSrc.value().toString();
+        }
+        QString strSrc = itrSrc.key().toString();
+
+        str = strSrc + "-" + strDest;
+
+        if(str.contains("vault_unlocked")
+                || str.contains("dfmvault://")){
+            bHave = true;
+            break;
+        }
+    }
+    emit sigHaveVaultTask(bHave);
 }
 
 QString DFileCopyMoveJob::Handle::getNewFileName(DFileCopyMoveJob *job, const DAbstractFileInfo *sourceInfo)

@@ -75,6 +75,13 @@ public:
 
     void updateData(DFMTaskWidget *wid, const QMap<QString, QString> &data);
 
+    // 是否有未完成的保险箱任务
+    inline bool bHaveNotCompletedVaultTask(){return m_bHaveVaultTask;}
+    // 置顶显示任务对话框
+    void showDialogOnTop();
+    // 结束当前未完成的保险箱任务
+    void stopVaultTask();
+
 signals:
     void abortTask(const QMap<QString, QString>& jobDetail);
     void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
@@ -94,7 +101,11 @@ public slots:
     void handleUpdateTaskWidget(const QMap<QString, QString>& jobDetail,
                                 const QMap<QString, QString>& data);
     void adjustSize();
-    void moveYCenter();
+    void moveYCenter(); 
+
+    // 设置是否具有未完成的保险箱任务
+    void slotSetNotCompletedVaultTask(bool bHave);
+
 
 protected:
     void closeEvent(QCloseEvent* event);
@@ -102,6 +113,10 @@ protected:
 
     void blockShutdown();
     void addTaskWidget(DFMTaskWidget *wid);
+
+private:
+    // 检测是否存在保险箱任务
+    bool isHaveVaultTask(const DUrlList &sourceUrls, const DUrl &targetUrl);
 
 private:
     int m_defaultWidth = 700;
@@ -113,6 +128,11 @@ private:
     QMap<QString, QListWidgetItem*> m_jobIdItems;
     DTitlebar* m_titlebar;
     QDBusReply<QDBusUnixFileDescriptor> m_reply; // ~QDBusUnixFileDescriptor() will disposes of the Unix file descriptor that it contained.
+
+    // 判断当前是否有未完成的保险箱任务
+    bool m_bHaveVaultTask = false;
+    // 记录当前未完成的保险箱任务
+    QSet<DFileCopyMoveJob*> mapNotCompleteVaultTask;
 };
 
 #endif // DTASKDIALOG_H
