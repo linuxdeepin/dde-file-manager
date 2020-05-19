@@ -69,7 +69,7 @@
 #include "controllers/mergeddesktopcontroller.h"
 
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
-
+extern QTime gTime;
 std::atomic<bool> CanvasGridView::m_flag{ false };
 QMap<DMD_TYPES, bool> CanvasGridView::virtualEntryExpandState;
 
@@ -93,8 +93,10 @@ DWIDGET_USE_NAMESPACE
 CanvasGridView::CanvasGridView(QWidget *parent)
     : QAbstractItemView(parent), d(new CanvasViewPrivate)
 {
+    qDebug() << "begin init CanvasGridView" <<  gTime.elapsed();
     initUI();
     initConnection();
+    qDebug() << "end CanvasGridView init" << gTime.elapsed();
 }
 
 CanvasGridView::~CanvasGridView()
@@ -884,6 +886,7 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         return;
     }
 
+    update(); // bug 23351: while draging it, refresh it ASAP to remove the older icon
     QAbstractItemView::dragEnterEvent(event);
 }
 
@@ -947,7 +950,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
     if (!autoMerge()) {
         startDodgeAnimation();
     }
-    update();
+    //update(); // bug 23351: this action will paint the whole items so not do it that affects the painting performance
 }
 
 void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
@@ -1512,16 +1515,17 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     if (d->filesystemWatcher) {
         d->filesystemWatcher->deleteLater();
     }
-
+    qDebug() << "begin getChildren" << gTime.elapsed();
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                      QStringList(), model()->filters());
 
+   qDebug() << "end getChildren" << gTime.elapsed();
     if (autoMerge()) {
         GridManager::instance()->initWithoutProfile(infoList);
     } else {
         GridManager::instance()->initProfile(infoList);
     }
-
+    qDebug() << "end GridManager::init" << gTime.elapsed();
     d->filesystemWatcher = model()->fileWatcher();
 
     connect(d->filesystemWatcher, &DAbstractFileWatcher::subfileCreated,
@@ -1783,9 +1787,10 @@ static inline QRect fix_available_geometry()
                   << "availableRect:" << primaryGeometry;
         return primaryGeometry;
     }
-
+    qDebug() << "begin get dock" << gTime.elapsed();
     DockRect dockrect = DockIns::instance()->frontendWindowRect();
     const int positon = DockIns::instance()->position();
+    qDebug() << "end get dock" << gTime.elapsed();
     qDebug()<<"dock postion" << positon << " dockrect"<< (QRect)dockrect;
     qreal t_devicePixelRatio = Display::instance()->getScaleFactor();
     //        if (!QHighDpiScaling::m_active) {
@@ -1887,6 +1892,7 @@ void CanvasGridView::initUI()
     EnableUIDebug();
 #endif
     d->dbusDock = DockIns::instance();//new DBusDock(this);
+    qDebug() << "dock dbus " <<  gTime.elapsed();
 
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
@@ -1926,7 +1932,9 @@ void CanvasGridView::initUI()
     }
     settings->endGroup();
 
+    qDebug() << "model inited " <<  gTime.elapsed();
     DFMSocketInterface::instance();
+    qDebug() << "DFMSocketInterface::instance() " <<  gTime.elapsed();
 
     DGioSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
     if (desktopSettings.keys().contains("water-mask") && desktopSettings.value("water-mask").toBool()) {

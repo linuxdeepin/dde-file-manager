@@ -61,17 +61,17 @@ void ShareInfoFrame::initUI()
     QHBoxLayout *centerAlignLayout = new QHBoxLayout(centerAlignContainer);
     centerAlignLayout->addWidget(m_shareCheckBox);
     centerAlignLayout->setAlignment(Qt::AlignCenter);
-    centerAlignLayout->setContentsMargins(0,0,0,0);
+    centerAlignLayout->setContentsMargins(0, 0, 0, 0);
     centerAlignContainer->setLayout(centerAlignLayout);
 
-    SectionKeyLabel* shareNameLabel = new SectionKeyLabel(tr("Share name:"));
+    SectionKeyLabel *shareNameLabel = new SectionKeyLabel(tr("Share name:"));
     shareNameLabel->setFixedWidth(labelWidth);
     m_shareNamelineEdit = new QLineEdit(this);
     m_shareNamelineEdit->setObjectName("ShareNameEdit");
     m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
     m_shareNamelineEdit->setFixedWidth(fieldWidth);
 
-    SectionKeyLabel* permissionLabel = new SectionKeyLabel(tr("Permission:"));
+    SectionKeyLabel *permissionLabel = new SectionKeyLabel(tr("Permission:"));
     permissionLabel->setFixedWidth(labelWidth);
     m_permissoComBox = new QComboBox(this);
     m_permissoComBox->setFixedWidth(fieldWidth);
@@ -79,7 +79,7 @@ void ShareInfoFrame::initUI()
     permissions << tr("Read and write") << tr("Read only");
     m_permissoComBox->addItems(permissions);
 
-    SectionKeyLabel* anonymityLabel = new SectionKeyLabel(tr("Anonymous:"));
+    SectionKeyLabel *anonymityLabel = new SectionKeyLabel(tr("Anonymous:"));
     anonymityLabel->setFixedWidth(labelWidth);
     m_anonymityCombox = new QComboBox(this);
     m_anonymityCombox->setFixedWidth(fieldWidth);
@@ -87,7 +87,7 @@ void ShareInfoFrame::initUI()
     anonymityChoices << tr("Not allow") << tr("Allow");
     m_anonymityCombox->addItems(anonymityChoices);
 
-    QFormLayout* mainLayoyt = new QFormLayout(this);
+    QFormLayout *mainLayoyt = new QFormLayout(this);
 
     mainLayoyt->addRow(centerAlignContainer);
     mainLayoyt->addRow(shareNameLabel, m_shareNamelineEdit);
@@ -112,16 +112,37 @@ void ShareInfoFrame::initConnect()
     connect(userShareManager, &UserShareManager::userShareDeletedFailed, this, &ShareInfoFrame::updateShareInfo);
 }
 
-void ShareInfoFrame::handleCheckBoxChanged(const bool& checked)
+void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
 {
+    if (checked) { //判断是否添加共享
+        QProcess process;
+        process.setProgram("net");
+        process.setArguments(QStringList() << "usershare" << "info" << m_shareNamelineEdit->text());
+        process.start();
+        process.waitForFinished(-1);
+        QString shareState = process.readAll();
+        if (!shareState.isEmpty()) { //判断共享名是否重复
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(tr("Share name %1 already exists, do you want to replace it?").arg(m_shareNamelineEdit->text()));
+            dialog.addButton(tr("Cancel"), true);
+            dialog.addButton(tr("Replace"), false, DDialog::ButtonWarning);
+            if (dialog.exec() != DDialog::Accepted) {
+                m_shareCheckBox->setChecked(false);
+                m_shareNamelineEdit->setFocus(); //进入编辑
+                return;
+            }
+        }
+    }
+
     bool ret = doShareInfoSetting();
 
     if (ret) {
-        if(checked){
+        if (checked) {
             emit folderShared(m_fileinfo->absoluteFilePath());
             activateWidgets();
         }
-    }else{
+    } else {
         m_shareCheckBox->setChecked(false);
         disactivateWidgets();
     }
@@ -129,7 +150,7 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool& checked)
 
 void ShareInfoFrame::handleShareNameChanged(const QString &name)
 {
-    if(name.isEmpty() || name == ""){
+    if (name.isEmpty() || name == "") {
         m_jobTimer->stop();
         return;
     }
@@ -159,7 +180,7 @@ bool ShareInfoFrame::doShareInfoSetting()
         return DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
     }
 
-    if (m_permissoComBox->currentIndex() == 0 && m_anonymityCombox->currentIndex() != 0){
+    if (m_permissoComBox->currentIndex() == 0 && m_anonymityCombox->currentIndex() != 0) {
         QString cmd = "chmod";
         QStringList args;
         args << "777" << m_fileinfo->fileUrl().toLocalFile();
@@ -168,8 +189,8 @@ bool ShareInfoFrame::doShareInfoSetting()
     }
 
     bool ret = DFileService::instance()->shareFolder(this, m_fileinfo->fileUrl(), m_shareNamelineEdit->text(),
-                                          m_permissoComBox->currentIndex() == 0,
-                                          m_anonymityCombox->currentIndex() != 0);
+                                                     m_permissoComBox->currentIndex() == 0,
+                                                     m_anonymityCombox->currentIndex() != 0);
     return ret;
 }
 

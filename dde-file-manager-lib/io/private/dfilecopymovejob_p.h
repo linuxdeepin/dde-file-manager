@@ -76,6 +76,8 @@ public:
     void setError(DFileCopyMoveJob::Error e, const QString &es = QString());
     void unsetError();
     DFileCopyMoveJob::Action handleError(const DAbstractFileInfo *sourceInfo, const DAbstractFileInfo *targetInfo);
+
+    bool isRunning(); // bug 26333, add state function to check the job status
     bool jobWait();
     bool stateCheck();
     bool checkFileSize(qint64 size) const;

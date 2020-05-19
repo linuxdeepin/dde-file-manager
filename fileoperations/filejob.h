@@ -74,10 +74,6 @@ public:
     };
     Q_ENUM(JobType)
 
-    //fix: 获取当前刻录的全局状态机，便于其它地方调用
-    static int g_opticalBurnStatus;
-    static int g_opticalBurnEjectCount;
-
     static int FileJobCount;
     static DUrlList CopyingFiles;
 
@@ -218,7 +214,7 @@ private:
     QString m_srcPath;
     QString m_tarPath;
     QElapsedTimer m_timer;
-    qint64 m_lastMsec;
+    qint64 m_lastMsec = 0;
     bool m_applyToAll  = false;
     bool m_isReplaced = false;
     bool m_isSkip = false;

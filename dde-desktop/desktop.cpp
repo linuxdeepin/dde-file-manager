@@ -41,6 +41,8 @@ extern QScreen *GetPrimaryScreen();
 using ZoneSettings = ZoneMainWindow;
 #endif
 
+QTime gTime;
+
 class DesktopPrivate
 {
 public:
