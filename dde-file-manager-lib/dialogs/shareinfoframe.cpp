@@ -70,11 +70,6 @@ void ShareInfoFrame::initUI()
     m_shareNamelineEdit->setObjectName("ShareNameEdit");
     m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
     m_shareNamelineEdit->setFixedWidth(fieldWidth);
-    connect(m_shareNamelineEdit, &QLineEdit::cursorPositionChanged, this,  [ = ]() {
-        QPalette palette;
-        palette.setColor(QPalette::Text, Qt::black);
-        m_shareNamelineEdit->setPalette(palette); //将字体设置为黑色
-    });
 
     SectionKeyLabel *permissionLabel = new SectionKeyLabel(tr("Permission:"));
     permissionLabel->setFixedWidth(labelWidth);
@@ -134,9 +129,7 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
             dialog.addButton(tr("Replace"), false, DDialog::ButtonWarning);
             if (dialog.exec() != DDialog::Accepted) {
                 m_shareCheckBox->setChecked(false);
-                QPalette palette;
-                palette.setColor(QPalette::Text, Qt::red);
-                m_shareNamelineEdit->setPalette(palette); //将字体设置为红色
+                m_shareNamelineEdit->setFocus(); //进入编辑
                 return;
             }
         }
