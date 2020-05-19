@@ -81,9 +81,10 @@ bool VaultLockManager::autoLock(VaultLockManager::AutoLockState lockState)
 
 void VaultLockManager::refreshAccessTime()
 {
-    quint64 curTime = dbusGetSelfTime();
-
-    dbusSetRefreshTime(static_cast<quint64>(curTime));
+    if (isValid()) {
+        quint64 curTime = dbusGetSelfTime();
+        dbusSetRefreshTime(static_cast<quint64>(curTime));
+    }
 }
 
 void VaultLockManager::processAutoLock()

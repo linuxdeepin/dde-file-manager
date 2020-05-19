@@ -442,10 +442,6 @@
 <context>
     <name>DFMVaultActiveSetUnlockMethodView</name>
     <message>
-        <source>Type</source>
-        <translation type="obsolete">类型</translation>
-    </message>
-    <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="31"/>
         <source>Set Vault Password</source>
         <translation type="unfinished">设置解锁方式</translation>
@@ -600,13 +596,13 @@
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="68"/>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="101"/>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="110"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="98"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="107"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="83"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="80"/>
         <source>Wrong recovery key</source>
         <translation type="unfinished">密钥错误</translation>
     </message>
@@ -614,68 +610,60 @@
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="247"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="248"/>
         <source>Remove File Vault</source>
         <translation>删除保险箱</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="248"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="249"/>
         <source>Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue.</source>
         <translation>删除保险箱后，其中的所有内容将会被永久删除，请确认后继续。</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="267"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="268"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="267"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="330"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="352"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="268"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="331"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="353"/>
         <source>Use Key</source>
         <translation>密钥验证</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="267"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="268"/>
         <source>Remove</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="271"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="272"/>
         <source>color: rgb(255, 85, 0);</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="349"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="350"/>
         <source>Use Password</source>
         <translation>密码验证</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="368"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="369"/>
         <source>Wrong password</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="376"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="377"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="386"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="387"/>
         <source>Wrong recovery key</source>
         <translation>密钥错误</translation>
     </message>
 </context>
 <context>
     <name>DFMVaultUnlockPages</name>
-    <message>
-        <source>Enter the vault password</source>
-        <translation type="vanished">请输入保险柜密码</translation>
-    </message>
-    <message>
-        <source>Retrieve password</source>
-        <translation type="vanished">找回密码</translation>
-    </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="37"/>
         <source>Unlock File Vault</source>
@@ -702,16 +690,12 @@
         <translation>请输入解锁密码</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="71"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
         <source>Password hint:</source>
         <translation>提示信息：</translation>
     </message>
     <message>
-        <source>At least 8 characters, and contain A-Z, a-z, 0-9, and symbols</source>
-        <translation type="vanished">密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="105"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="106"/>
         <source>Wrong password</source>
         <translation>密码错误</translation>
     </message>
@@ -1132,13 +1116,6 @@
         <location filename="../models/dfmrootfileinfo.cpp" line="628"/>
         <source>%1 Encrypted</source>
         <translation>%1 已加密</translation>
-    </message>
-</context>
-<context>
-    <name>DeviceInfoParser</name>
-    <message>
-        <source>Unknown</source>
-        <translation type="obsolete">未知</translation>
     </message>
 </context>
 <context>
@@ -2429,8 +2406,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="70"/>
-        <source>Vault</source>
-        <translation>保险柜</translation>
+        <source>File Vault</source>
+        <translation type="unfinished">保险箱</translation>
     </message>
 </context>
 <context>
@@ -2908,9 +2885,8 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="567"/>
         <location filename="../models/computermodel.cpp" line="73"/>
-        <location filename="../models/vaultfileinfo.cpp" line="212"/>
         <source>File Vault</source>
-        <translation>文件保险柜</translation>
+        <translation>保险箱</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="583"/>
@@ -3126,7 +3102,7 @@
         <location filename="../interfaces/dfileinfo.cpp" line="811"/>
         <location filename="../models/recentfileinfo.cpp" line="247"/>
         <location filename="../models/trashfileinfo.cpp" line="379"/>
-        <location filename="../models/vaultfileinfo.cpp" line="145"/>
+        <location filename="../models/vaultfileinfo.cpp" line="151"/>
         <source>Folder is empty</source>
         <translation>文件夹为空</translation>
     </message>
@@ -3446,6 +3422,11 @@
         <location filename="../shutil/fileutils.cpp" line="450"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
+    </message>
+    <message>
+        <location filename="../models/vaultfileinfo.cpp" line="218"/>
+        <source>My File Vault</source>
+        <translation>我的保险箱</translation>
     </message>
 </context>
 <context>
@@ -3943,89 +3924,19 @@
     </message>
 </context>
 <context>
-    <name>VaultAskCreateKeyPage</name>
-    <message>
-        <source>Do you want to generate a key in case that you forgot the password?</source>
-        <translation type="vanished">是否需要生成一个密钥以防止您忘记密码？</translation>
-    </message>
-    <message>
-        <source>Generate key</source>
-        <translation type="vanished">生成密钥</translation>
-    </message>
-    <message>
-        <source>Skip</source>
-        <translation type="vanished">跳过</translation>
-    </message>
-</context>
-<context>
-    <name>VaultGeneratedKeyPage</name>
-    <message>
-        <source>Find your recovery key below</source>
-        <translation type="vanished">您的恢复密钥如下</translation>
-    </message>
-    <message>
-        <source>Take good care of the recovery key by printing, writing down or saving it to a USB flash drive</source>
-        <translation type="vanished">请考虑通过打印、抄写记录、保存到U盘等形式妥当保存您的恢复密钥</translation>
-    </message>
-    <message>
-        <source>Your recovery key is as important as your password. Do not save the key file on this computer</source>
-        <translation type="vanished">恢复密钥和您的密码有着同等级的安全程度，建议不要将安全密钥文件保存到本计算机</translation>
-    </message>
-    <message>
-        <source>Save your vault recovery key</source>
-        <translation type="vanished">保存您的保险柜恢复密钥</translation>
-    </message>
-    <message>
-        <source>File Vault Recovery Key</source>
-        <translation type="vanished">文件保险柜恢复密钥</translation>
-    </message>
-    <message>
-        <source>File Vault Recovery Key (*.txt)</source>
-        <translation type="vanished">文件保险柜恢复密钥(*.txt)</translation>
-    </message>
-    <message>
-        <source>To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.</source>
-        <translation type="vanished">若要验证这是否为正确的恢复密钥，请将以下标识符与电脑上显示的标识符值进行比较。</translation>
-    </message>
-    <message>
-        <source>Key ID: %1</source>
-        <translation type="vanished">密钥标识符：%1</translation>
-    </message>
-    <message>
-        <source>If they are identical, then use the following key to retrieve your vault password.</source>
-        <translation type="vanished">如果以上标识符与电脑显示的标识符匹配，则使用以下密钥找回您的保险柜密码。</translation>
-    </message>
-    <message>
-        <source>Recovery Key: %1</source>
-        <translation type="vanished">恢复密钥：%1</translation>
-    </message>
-    <message>
-        <source>If they do not match, then this is not the right key, please try another recovery key.</source>
-        <translation type="vanished">如果以上标识符与电脑显示的标识符不匹配，则该密钥不是解锁您的保险柜的正确密钥，请尝试其他恢复密钥。</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="vanished">保存</translation>
-    </message>
-    <message>
-        <source>Done</source>
-        <translation type="vanished">完成</translation>
-    </message>
-</context>
-<context>
     <name>VaultHeaderView</name>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="35"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="36"/>
         <source>File Vault</source>
-        <translation>文件保险柜</translation>
+        <translation>保险箱</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="61"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="62"/>
         <source>Lock vault</source>
         <translation>锁定保险柜</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="62"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="63"/>
         <source>Generate key</source>
         <translation>生成密钥</translation>
     </message>
@@ -4033,14 +3944,14 @@
 <context>
     <name>VaultKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="116"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="117"/>
         <source>Input the 32-digit recovery key</source>
         <translation>请输入32位恢复密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="134"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="143"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="167"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="135"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="144"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="168"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4048,49 +3959,14 @@
 <context>
     <name>VaultPasswordPage</name>
     <message>
-        <source>Here is your vault password</source>
-        <translation type="vanished">您的保险柜密码如下</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="vanished">确定</translation>
-    </message>
-    <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="44"/>
         <source>Verify your fingerprint or password</source>
         <translation>请验证指纹或输入密码</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="59"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="60"/>
         <source>Password hint:</source>
         <translation>提示信息：</translation>
-    </message>
-    <message>
-        <source>At least 8 characters, and contain A-Z, a-z, 0-9, and symbols</source>
-        <translation type="vanished">密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
-    </message>
-</context>
-<context>
-    <name>VaultRemoveFileDialog</name>
-    <message>
-        <source>Remove File Vault</source>
-        <translation type="vanished">删除保险箱</translation>
-    </message>
-    <message>
-        <source>Removing...</source>
-        <translation type="vanished">正在删除...</translation>
-    </message>
-    <message>
-        <source>Ok</source>
-        <translation type="vanished">好的</translation>
-    </message>
-    <message>
-        <source>Removed successfully</source>
-        <translation type="vanished">删除成功</translation>
-    </message>
-    <message>
-        <source>Failed to remove</source>
-        <translation type="vanished">删除失败</translation>
     </message>
 </context>
 <context>
@@ -4131,7 +4007,7 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="49"/>
         <source>File Vault</source>
-        <translation>文件保险柜</translation>
+        <translation>保险箱</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="50"/>
@@ -4152,28 +4028,6 @@
         <location filename="../views/dfmvaultsetuppages.cpp" line="53"/>
         <source>Convenient and easy to use</source>
         <translation>使用更便捷，操作更简单</translation>
-    </message>
-</context>
-<context>
-    <name>VaultVerifyRecoveryKeyPage</name>
-    <message>
-        <source>Compare the following text with the key ID in your recovery key file</source>
-        <translation type="vanished">请核对下方文字与您恢复密钥中所记录的文字完全一致</translation>
-    </message>
-    <message>
-        <source>If they are identical, input the recovery key below to retrieve your vault password</source>
-        <translation type="vanished">确认无误后，请在下方输入32位恢复密钥，以便找回原始密码</translation>
-    </message>
-    <message>
-        <source>Retrieve password</source>
-        <translation type="vanished">找回密码</translation>
-    </message>
-</context>
-<context>
-    <name>VaultVerifyUserPage</name>
-    <message>
-        <source>Enter the vault password</source>
-        <translation type="vanished">请输入保险柜密码</translation>
     </message>
 </context>
 </TS>

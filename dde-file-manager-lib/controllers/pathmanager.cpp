@@ -67,7 +67,7 @@ void PathManager::initPaths()
     m_systemPathDisplayNamesMap["UserShare"] = tr("My Shares");
     m_systemPathDisplayNamesMap["Computer"] = tr("Computer");
     m_systemPathDisplayNamesMap["Recent"] = tr("Recent");
-    m_systemPathDisplayNamesMap["Vault"] = tr("Vault");
+    m_systemPathDisplayNamesMap["Vault"] = tr("File Vault");
 
     if (DFMApplication::instance()->genericObtuselySetting()->value("Disk/Options", "windowsStyle").toBool()) {
         m_systemPathDisplayNamesMap["System Disk"] = m_systemPathDisplayNamesMap["System Disk"].append(" (C:)");
