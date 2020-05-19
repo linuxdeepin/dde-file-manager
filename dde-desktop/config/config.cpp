@@ -27,9 +27,10 @@ const QString Config::keyIconLevel = "IconLevel";
 const QString Config::keyQuickHide = "QuickHide";
 const QString Config::keyAutoMerge = "AutoMerge";
 
-
+extern QTime gTime;
 Config::Config()
 {
+    qDebug() << "begin init config" <<  gTime.elapsed();
     auto configPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
     configPath = configPath
                  + "/" + QApplication::organizationName()
@@ -58,6 +59,7 @@ Config::Config()
         }
     }, Qt::QueuedConnection);
     syncTimer->start();
+    qDebug() << "end init config" <<  gTime.elapsed();
 }
 
 void Config::setConfig(const QString &group, const QString &key, const QVariant &value)
