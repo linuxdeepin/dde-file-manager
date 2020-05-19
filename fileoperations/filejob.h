@@ -213,7 +213,7 @@ private:
     QString m_srcPath;
     QString m_tarPath;
     QElapsedTimer m_timer;
-    qint64 m_lastMsec;
+    qint64 m_lastMsec = 0;
     bool m_applyToAll  = false;
     bool m_isReplaced = false;
     bool m_isSkip = false;

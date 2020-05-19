@@ -565,7 +565,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     DUrlList files;
     files << QUrl::fromLocalFile(srcFilePath);
     m_totalSize = FileUtils::totalSize(files);
-    jobPrepared();
+   // jobPrepared();
 
     QStorageInfo srcStorageInfo = getStorageInfo(srcFilePath);
     QString tarDir = DUrl::fromLocalFile(tarFilePath).parentUrl().toLocalFile();
