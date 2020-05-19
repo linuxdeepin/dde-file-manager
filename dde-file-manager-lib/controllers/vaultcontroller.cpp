@@ -407,7 +407,7 @@ bool VaultController::runCmd(const QString &cmd, QString &standOutput)
 {
     QProcess process_;
     int msecs = 10000;
-    if (cmd.startsWith("pkexec deepin-devicemanager-authenticateProxy") ) {
+    if (cmd.startsWith("pkexec deepin-vaultRemove-authenticateProxy") ) {
         msecs = -1;
     }
 

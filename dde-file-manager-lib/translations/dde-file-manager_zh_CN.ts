@@ -406,37 +406,37 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="20"/>
         <source>Recovery Key</source>
-        <translation type="unfinished">文件保险箱回复密钥</translation>
+        <translation>文件保险箱恢复密钥</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="24"/>
         <source>Generate a recovery key in case that you forget the password</source>
-        <translation type="unfinished">如果忘记密码，可以使用该密钥回复访问</translation>
+        <translation>如果忘记密码，可以使用该密钥恢复访问</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="28"/>
         <source>Key</source>
-        <translation type="unfinished">密钥</translation>
+        <translation>密钥</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="36"/>
         <source>QR code</source>
-        <translation type="unfinished">二维码</translation>
+        <translation>二维码</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="49"/>
         <source>Scan QR code and save the key to another device</source>
-        <translation type="unfinished">扫描二维码，保存至其它设备</translation>
+        <translation>扫描二维码，保存至其它设备</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="53"/>
         <source>Next</source>
-        <translation type="unfinished">下一步</translation>
+        <translation>下一步</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="86"/>
         <source>Recovery Key:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件保险箱恢复密钥：</translation>
     </message>
 </context>
 <context>
@@ -469,7 +469,7 @@
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="46"/>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="166"/>
         <source>At least 8 characters, and contain A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished">密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
+        <translation type="unfinished">密码至少8位，且同时包含小写字母、大写字母、数字和符号</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="54"/>
@@ -614,59 +614,54 @@
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="243"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="247"/>
         <source>Remove File Vault</source>
         <translation>删除保险箱</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="244"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="248"/>
         <source>Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue.</source>
         <translation>删除保险箱后，其中的所有内容将会被永久删除，请确认后继续。</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="263"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="267"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="263"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="326"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="348"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="267"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="330"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="352"/>
         <source>Use Key</source>
         <translation>密钥验证</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="263"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="267"/>
         <source>Remove</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="267"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="271"/>
         <source>color: rgb(255, 85, 0);</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="345"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="349"/>
         <source>Use Password</source>
         <translation>密码验证</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="363"/>
-        <source>background-color:rgb(245, 218, 217)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="364"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="368"/>
         <source>Wrong password</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="372"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="376"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="382"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="386"/>
         <source>Wrong recovery key</source>
         <translation>密钥错误</translation>
     </message>
@@ -707,21 +702,16 @@
         <translation>请输入解锁密码</translation>
     </message>
     <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="71"/>
         <source>Password hint:</source>
-        <translation type="vanished">提示信息：</translation>
+        <translation>提示信息：</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
         <source>At least 8 characters, and contain A-Z, a-z, 0-9, and symbols</source>
-        <translation>密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
+        <translation type="vanished">密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="100"/>
-        <source>background-color:rgb(245, 218, 217)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="102"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="105"/>
         <source>Wrong password</source>
         <translation>密码错误</translation>
     </message>
@@ -4043,14 +4033,14 @@
 <context>
     <name>VaultKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="112"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="116"/>
         <source>Input the 32-digit recovery key</source>
         <translation>请输入32位恢复密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="130"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="139"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="163"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="134"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="143"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="167"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4071,13 +4061,13 @@
         <translation>请验证指纹或输入密码</translation>
     </message>
     <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="59"/>
         <source>Password hint:</source>
-        <translation type="vanished">提示信息：</translation>
+        <translation>提示信息：</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="57"/>
         <source>At least 8 characters, and contain A-Z, a-z, 0-9, and symbols</source>
-        <translation>密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
+        <translation type="vanished">密码至少8位，且同时包含小写字母、大些字母、数字和符号</translation>
     </message>
 </context>
 <context>

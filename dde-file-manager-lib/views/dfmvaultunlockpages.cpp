@@ -46,6 +46,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
 
     m_passwordEdit = new DPasswordEdit(this);
     m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
+    m_passwordEdit->lineEdit()->setMaxLength(24);
     m_passwordEdit->lineEdit()->installEventFilter(this);
     m_helpButton = new QPushButton(this);
     m_helpButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
@@ -66,7 +67,11 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
     connect(m_helpButton, &QPushButton::clicked, [this]{
-        m_passwordEdit->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
+        QString strPwdHint("");
+        if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
+            strPwdHint.insert(0, tr("Password hint:"));
+            m_passwordEdit->showAlertMessage(strPwdHint);
+        }
     });
 }
 
@@ -77,6 +82,7 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
     QLineEdit edit;
     QPalette palette = edit.palette();
     m_passwordEdit->lineEdit()->setPalette(palette);
+    m_passwordEdit->setEchoMode(QLineEdit::Password);
 }
 
 DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
@@ -92,12 +98,10 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
 
         QString strClipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strClipher)){
-            if (VaultController::checkAuthentication()){
-                VaultController::getVaultController()->unlockVault(strClipher);
-            }
-        }else {            
+            VaultController::getVaultController()->unlockVault(strClipher);
+        }else {
             // 设置密码输入框颜色
-            m_passwordEdit->lineEdit()->setStyleSheet(tr("background-color:rgb(245, 218, 217)"));
+            m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
 
             m_passwordEdit->showAlertMessage(tr("Wrong password"));
         }

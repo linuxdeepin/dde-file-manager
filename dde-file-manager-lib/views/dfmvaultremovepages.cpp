@@ -42,6 +42,7 @@ void VaultPasswordPage::initUI()
 {
     m_pwdEdit = new DPasswordEdit(this);
     m_pwdEdit->lineEdit()->setPlaceholderText(tr("Verify your fingerprint or password"));
+    m_pwdEdit->lineEdit()->setMaxLength(24);
 
     m_helpBtn = new QPushButton(this);
     m_helpBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
@@ -54,7 +55,11 @@ void VaultPasswordPage::initUI()
     this->setLayout(layout);
 
     connect(m_helpBtn, &QPushButton::clicked, [this]{
-        m_pwdEdit->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
+        QString strPwdHint("");
+        if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
+            strPwdHint.insert(0, tr("Password hint:"));
+            m_pwdEdit->showAlertMessage(strPwdHint);
+        }
     });
 }
 
@@ -360,7 +365,7 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
 
             if (!InterfaceActiveVault::checkPassword(strPwd, strClipher)){
                 // 设置密码输入框颜色
-                passwordPage->lineEdit()->setStyleSheet(tr("background-color:rgb(245, 218, 217)"));
+                passwordPage->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
                 passwordPage->showAlertMessage(tr("Wrong password"));
 
                 return;

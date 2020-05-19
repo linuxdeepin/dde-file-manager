@@ -69,10 +69,7 @@ void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
 
         QString strClipher("");
         if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
-            // 管理员权限认证
-            if (VaultController::checkAuthentication()){
-                VaultController::getVaultController()->unlockVault(strClipher);
-            }
+            VaultController::getVaultController()->unlockVault(strClipher);
         } else {
             //设置QToolTip颜色
             QPalette palette = QToolTip::palette();

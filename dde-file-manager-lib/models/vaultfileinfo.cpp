@@ -140,6 +140,12 @@ DUrl VaultFileInfo::redirectedFileUrl() const
     return DAbstractFileInfo::redirectedFileUrl();
 }
 
+// 解决保险箱无法搜索的问题
+bool VaultFileInfo::canIteratorDir() const
+{
+    return true;
+}
+
 QString VaultFileInfo::subtitleForEmptyFloder() const
 {
     return QObject::tr("Folder is empty");

@@ -116,7 +116,7 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
 
-        urlToFileInfoMap[url] = qq;
+        urlToFileInfoMap[url] = qq;        
     }
 
     FileSortFunction::sortCollator.setNumericMode(true);

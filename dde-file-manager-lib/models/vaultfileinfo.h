@@ -43,6 +43,7 @@ public:
 
     bool canRedirectionFileUrl() const override;
     DUrl redirectedFileUrl() const override;
+    bool canIteratorDir() const Q_DECL_OVERRIDE;
 
     QString subtitleForEmptyFloder() const override;
 
