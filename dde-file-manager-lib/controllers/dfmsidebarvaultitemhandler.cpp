@@ -216,15 +216,6 @@ bool DFMSideBarVaultItemHandler::lockNow()
         }
     }
     VaultController::getVaultController()->lockVault();
-
-    // 如果正在有保险箱的移动、粘贴、删除操作，强行结束任务
-//    DTaskDialog *pTaskDlg = dialogManager->taskDialog();
-//    if(pTaskDlg){
-//        if(pTaskDlg->bHaveNotCompletedVaultTask()){
-//            pTaskDlg->stopVaultTask();
-//        }
-//    }
-//    VaultController::getVaultController()->lockVault();
     return true;
 }
 

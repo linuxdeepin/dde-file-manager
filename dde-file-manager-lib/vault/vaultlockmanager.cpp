@@ -3,6 +3,9 @@
 #include "dfmsettings.h"
 #include "dfmapplication.h"
 #include "controllers/vaultcontroller.h"
+#include "../app/define.h"
+#include "dialogs/dialogmanager.h"
+#include "dialogs/dtaskdialog.h"
 
 #include "../dde-file-manager-daemon/dbusservice/dbusinterface/vault_interface.h"
 
@@ -109,6 +112,15 @@ void VaultLockManager::processAutoLock()
 #endif
 
     if (interval > threshold) {
+
+        // 如果正在有保险箱的移动、粘贴、删除操作，强行结束任务
+        DTaskDialog *pTaskDlg = dialogManager->taskDialog();
+        if(pTaskDlg){
+            if(pTaskDlg->bHaveNotCompletedVaultTask()){
+                pTaskDlg->stopVaultTask();
+            }
+        }
+
         controller->lockVault();
     }
 }
