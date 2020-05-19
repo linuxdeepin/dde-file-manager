@@ -77,9 +77,9 @@ Desktop::Desktop()
     onBackgroundEnableChanged();
 
     //周期归还内存
-    QTimer *realseTimer = new QTimer;
-    connect(realseTimer,&QTimer::timeout,this,[](){malloc_trim(0);});
-    realseTimer->start(5000);
+//    QTimer *realseTimer = new QTimer;
+//    connect(realseTimer,&QTimer::timeout,this,[](){malloc_trim(0);});
+//    realseTimer->start(5000);
 }
 
 Desktop::~Desktop()

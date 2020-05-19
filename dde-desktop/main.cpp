@@ -223,12 +223,10 @@ int main(int argc, char *argv[])
         QTimer::singleShot(1000, &app, &QCoreApplication::quit);
     } else {
         if (!fileDialogOnly) {
-            QTimer::singleShot(1,[](){
-                qDebug() << "begin load view" <<  gTime.elapsed();
-                Desktop::instance()->Show();
-                Desktop::instance()->loadView();
-                qDebug() << "end load view" <<  gTime.elapsed();
-            });
+            qDebug() << "begin load view" <<  gTime.elapsed();
+            Desktop::instance()->Show();
+            Desktop::instance()->loadView();
+            qDebug() << "end load view" <<  gTime.elapsed();
         }
     }
 
