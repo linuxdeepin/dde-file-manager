@@ -56,6 +56,69 @@ public:
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
 
+    /**
+     * @brief shareFolder 设置文件夹共享
+     * @param event       共享的信息事件
+     * @return            是否共享成功
+     */
+    bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const Q_DECL_OVERRIDE;
+
+    /**
+     * @brief unShareFolder 取消文件夹共享
+     * @param event         关闭共享信息事件
+     * @return              是否取消成功
+     */
+    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;
+
+    /**
+     * @brief openInTerminal  右键菜单打开当前路径终端
+     * @param event           打开终端信息事件
+     * @return                是否打开终端成功
+     */
+    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const Q_DECL_OVERRIDE;
+
+    /**
+     * @brief addToBookmark   添加当前文件夹书签
+     * @param event           添加书签信息事件
+     * @return                是否添加成功
+     */
+    bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const override;
+
+    /**
+     * @brief removeBookmark  移除当前文件夹书签
+     * @param event           移除书签信息事件
+     * @return                是否移除成功
+     */
+    bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const override;
+
+    /**
+     * @brief createSymlink  创建快捷方式
+     * @param event          创建快捷方式信息事件
+     * @return               是否创建成功
+     */
+    bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const Q_DECL_OVERRIDE;
+
+    /**
+     * @brief setFileTags    设置文件标记信息
+     * @param event          设置文件标记信息事件
+     * @return               是否标记成功
+     */
+    bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const Q_DECL_OVERRIDE;
+
+    /**
+     * @brief removeTagsOfFile  移除文件标记信息
+     * @param event             移除文件标记信息事件
+     * @return                  是否移除文件标记
+     */
+    bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const Q_DECL_OVERRIDE;
+
+    /**
+     * @brief getTagsThroughFiles   获取文件标记信息
+     * @param event                 获取文件标记信息事件
+     * @return                      标记信息列表
+     */
+    QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
+
     static DUrl makeVaultUrl(QString path = "", QString host = "files");
     static DUrl localUrlToVault(const DUrl &vaultUrl);
     static DUrl localToVault(QString localPath);
@@ -65,6 +128,7 @@ public:
 
     /**
     * @brief checkAuthentication    权限校验
+    * @return                       是否成功
     */
     static bool checkAuthentication();
 

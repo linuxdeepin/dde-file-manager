@@ -21,6 +21,7 @@
 #pragma once
 
 #include "dabstractfileinfo.h"
+//#include "dfileinfo.h"
 
 DFM_BEGIN_NAMESPACE
 class DFileStatisticsJob;

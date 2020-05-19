@@ -27,6 +27,17 @@
 #include "vaulterrorcode.h"
 #include "vaultlockmanager.h"
 
+#include "appcontroller.h"
+#include "singleton.h"
+#include "dstorageinfo.h"
+
+#include "tag/tagmanager.h"
+#include "shutil/fileutils.h"
+#include "usershare/shareinfo.h"
+#include "app/define.h"
+#include "usershare/usersharemanager.h"
+#include "dialogs/dialogmanager.h"
+
 #include "dfmevent.h"
 
 #include <QProcess>
@@ -35,6 +46,7 @@
 
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+#include <unistd.h>
 
 #include "vault/vaultlockmanager.h"
 
@@ -196,6 +208,139 @@ bool VaultController::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
     return DFileService::instance()->renameFile(event->sender(),
                                                 vaultToLocalUrl(event->fromUrl()),
                                                 vaultToLocalUrl(event->toUrl()));
+}
+
+bool VaultController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
+{
+    ShareInfo info;
+    info.setPath(makeVaultLocalPath(event->name()));
+
+    info.setShareName(event->name());
+    info.setIsGuestOk(event->allowGuest());
+    info.setIsWritable(event->isWritable());
+
+    bool ret = userShareManager->addUserShare(info);
+
+    return ret;
+}
+
+bool VaultController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
+{
+    QString path = vaultToLocalUrl(event->fileUrl()).path();
+    userShareManager->deleteUserShareByPath(path);
+
+    return true;
+}
+
+bool VaultController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
+{
+    const QString &current_dir = QDir::currentPath();
+
+    QDir::setCurrent(vaultToLocalUrl(event->url()).toLocalFile());
+
+    bool ok = QProcess::startDetached(FileUtils::defaultTerminalPath());
+
+    QDir::setCurrent(current_dir);
+
+    return ok;
+}
+
+bool VaultController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
+{
+    DUrl destUrl = event->url();
+
+    const DAbstractFileInfoPointer &p = fileService->createFileInfo(nullptr, destUrl);
+    DUrl bookmarkUrl = DUrl::fromBookMarkFile(destUrl, p->fileDisplayName());
+    DStorageInfo info(destUrl.path());
+    QString filePath = destUrl.path();
+    QString rootPath = info.rootPath();
+    if (rootPath != QStringLiteral("/") || rootPath != QStringLiteral("/home")) {
+        QString devStr = info.device();
+        QString locateUrl;
+        int endPos = filePath.indexOf(rootPath);
+        if (endPos != -1) {
+            endPos += rootPath.length();
+            locateUrl = filePath.mid(endPos);
+        }
+        if (devStr.startsWith(QStringLiteral("/dev/"))) {
+            devStr = DUrl::fromDeviceId(info.device()).toString();
+        }
+
+        QUrlQuery query;
+        query.addQueryItem("mount_point", devStr);
+        query.addQueryItem("locate_url", locateUrl);
+        bookmarkUrl.setQuery(query);
+    }
+
+    return DFileService::instance()->touchFile(event->sender(), bookmarkUrl);
+}
+
+bool VaultController::removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const
+{
+    return DFileService::instance()->deleteFiles(nullptr, {DUrl::fromBookMarkFile(event->url(), QString())}, false);
+}
+
+bool VaultController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
+{
+    QString path = vaultToLocalUrl(event->fileUrl()).path();
+    QFile file(path);
+
+    QUrl url = event->toUrl().toLocalFile();
+
+    bool ok = file.link(event->toUrl().toLocalFile());
+
+    if (ok) {
+        return true;
+    }
+
+    if (event->force()) {
+        // replace symlink, remove if target was existed
+        QFileInfo toLink(event->toUrl().toLocalFile());
+        if (toLink.isSymLink() || toLink.exists()) {
+            QFile::remove(event->toUrl().toLocalFile());
+        }
+    }
+
+    int code = ::symlink(event->fileUrl().toLocalFile().toLocal8Bit().constData(),
+                         event->toUrl().toLocalFile().toLocal8Bit().constData());
+    if (code == -1) {
+        ok = false;
+        QString errorString = strerror(errno);
+        dialogManager->showFailToCreateSymlinkDialog(errorString);
+    } else {
+        ok = true;
+    }
+
+    return ok;
+}
+
+bool VaultController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
+{
+    DUrl url = event->url();
+    DUrl durl = vaultToLocalUrl(url);
+    QList<QString> taglist = event->tags();
+    if (taglist.isEmpty()) {
+        const QStringList &tags = TagManager::instance()->getTagsThroughFiles({durl});
+
+        return tags.isEmpty() || TagManager::instance()->removeTagsOfFiles(tags, {durl});
+    }
+
+    return TagManager::instance()->makeFilesTags(taglist, {durl});
+}
+
+bool VaultController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const
+{
+    DUrl url = event->url();
+    DUrl durl = vaultToLocalUrl(url);
+    QList<QString> taglist = event->tags();
+    return TagManager::instance()->removeTagsOfFiles(taglist, {durl});
+}
+
+QList<QString> VaultController::getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const
+{
+    DUrlList urllist = event->urlList();
+    DUrlList tempList = vaultToLocalUrls(urllist);
+    return TagManager::instance()->getTagsThroughFiles(tempList);
 }
 
 DUrl VaultController::makeVaultUrl(QString path, QString host)

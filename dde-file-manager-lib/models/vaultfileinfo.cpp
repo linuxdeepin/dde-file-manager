@@ -33,7 +33,7 @@ public:
 };
 
 VaultFileInfo::VaultFileInfo(const DUrl &url)
-    : DAbstractFileInfo(url)
+    : DAbstractFileInfo(url, false)
 {
     if (url.host() == "files") {
         // normal file map to..
@@ -41,16 +41,16 @@ VaultFileInfo::VaultFileInfo(const DUrl &url)
         setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, actualUrl)));
     }
 
-    if (isRootDirectory()) {
-        m_sizeWorker = new DFileStatisticsJob();
+//    if (isRootDirectory()) {
+//        m_sizeWorker = new DFileStatisticsJob();
 
-        VaultController *controller = VaultController::getVaultController();
+//        VaultController *controller = VaultController::getVaultController();
 
-        DUrlList urlList;
-        urlList << controller->vaultToLocalUrl(controller->makeVaultUrl());
+//        DUrlList urlList;
+//        urlList << controller->vaultToLocalUrl(controller->makeVaultUrl());
 
-        m_sizeWorker->start(urlList);
-    }
+//        m_sizeWorker->start(urlList);
+//    }
 }
 
 VaultFileInfo::~VaultFileInfo()
@@ -69,20 +69,20 @@ bool VaultFileInfo::exists() const
         return d->proxy->exists();
     }
 
-    return true;
+    return DAbstractFileInfo::exists();
 }
 
 DUrl VaultFileInfo::parentUrl() const
 {
     Q_D(const VaultFileInfo);
 
-    if (fileUrl().path() == "/") return DUrl();
+    if (fileUrl().path() == "/") return DAbstractFileInfo::parentUrl();
 
     if (d->proxy) {
         return VaultController::localUrlToVault(d->proxy->parentUrl());
     }
 
-    return DUrl();
+    return DAbstractFileInfo::parentUrl();
 }
 
 QString VaultFileInfo::iconName() const
@@ -96,8 +96,12 @@ QString VaultFileInfo::iconName() const
             iconName = d->proxy->iconName();
         }
     }
+    else if(!iconName.isEmpty())
+    {
+        return iconName;
+    }
 
-    return iconName;
+    return DAbstractFileInfo::iconName();
 }
 
 QString VaultFileInfo::genericIconName() const
@@ -127,7 +131,7 @@ bool VaultFileInfo::canRedirectionFileUrl() const
         return !d->proxy->isDir();
     }
 
-    return false;
+    return DAbstractFileInfo::canRedirectionFileUrl();
 }
 
 DUrl VaultFileInfo::redirectedFileUrl() const
@@ -231,11 +235,11 @@ bool VaultFileInfo::canRename() const
 
 qint64 VaultFileInfo::size() const
 {
-    if (isRootDirectory() && m_sizeWorker) {
+//    if (isRootDirectory() && m_sizeWorker) {
 
-        qint64 totoalSize = m_sizeWorker->totalSize();
-        return totoalSize;
-    }
+//        qint64 totoalSize = m_sizeWorker->totalSize();
+//        return totoalSize;
+//    }
 
     return DAbstractFileInfo::size();
 }
@@ -245,7 +249,7 @@ bool VaultFileInfo::isRootDirectory() const
 {
     bool bRootDir = false;
     QString localFilePath = VaultController::getVaultController()->makeVaultLocalPath();
-    if (localFilePath == filePath()) {
+    if (localFilePath == DAbstractFileInfo::filePath()) {
         bRootDir = true;
     }
     return bRootDir;
