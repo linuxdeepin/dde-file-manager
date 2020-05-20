@@ -100,8 +100,11 @@ bool UserShareManager::setUserSharePassword(const QString &username, const QStri
     return ret;
 }
 
-bool UserShareManager::closeSmbShareByShareName(const QString &sharename)
+bool UserShareManager::closeSmbShareByShareName(const QString &sharename, const bool bshow)
 {
+    if (!bshow) {
+        return true;
+    }
     if (!checkAuthentication()) {
         qDebug() << "closeSmbShareByShareName failed" <<  sharename;
         return false;

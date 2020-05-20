@@ -478,12 +478,27 @@ void UserShareManager::deleteUserShareByPath(const QString &path)
     }
 }
 
+void UserShareManager::removeFiledeleteUserShareByPath(const QString &path)
+{
+    QString shareName = getShareNameByPath(path);
+    if (shareName.isEmpty()){
+        return;
+    }
+    QString cmd = "net";
+    QStringList args;
+    args << "usershare" << "delete"
+         << shareName;
+    QProcess p;
+    p.start(cmd, args);
+    p.waitForFinished();
+}
+
 void UserShareManager::onFileDeleted(const QString &filePath)
 {
     if(filePath.contains(UserSharePath()))
         handleShareChanged(filePath);
     else
-        deleteUserShareByPath(filePath);
+        removeFiledeleteUserShareByPath(filePath);
 }
 
 void UserShareManager::usershareCountchanged()
@@ -494,9 +509,7 @@ void UserShareManager::usershareCountchanged()
 
 void UserShareManager::deleteUserShareByShareName(const QString &shareName)
 {
-
-
-    QDBusReply<bool> reply = m_userShareInterface->closeSmbShareByShareName(shareName);
+    QDBusReply<bool> reply = m_userShareInterface->closeSmbShareByShareName(shareName,true);
     if(reply.isValid() && reply.value()){
         qDebug() << "closeSmbShareByShareName:" << reply.value();
     }else{
