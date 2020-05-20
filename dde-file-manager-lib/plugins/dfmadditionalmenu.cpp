@@ -20,6 +20,7 @@
  */
 #include "dfmadditionalmenu.h"
 #include "dfileservices.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QDir>
 #include <QMenu>
@@ -168,7 +169,10 @@ bool DFMAdditionalMenuPrivate::isSchemeSupport(QAction *action, const DUrl &url)
     if (!action || !action->property(SUPPORT_SCHEMES_KEY.data()).isValid()) {
         return true;
     }
-
+    if(url.scheme() == "dfmvault")
+    {
+        return true;
+    }
     QStringList supportList =  action->property(SUPPORT_SCHEMES_KEY.data()).toStringList();
     return supportList.contains(url.scheme(), Qt::CaseInsensitive);
 }
@@ -302,6 +306,16 @@ void DFMAdditionalMenu::loadDesktopFile()
 
             connect(action, &QAction::triggered, this, [action, file](){
                 QStringList files = action->data().toStringList();
+                for(int i = 0; i < files.size(); ++i)
+                {
+                    if(files[i].contains("dfmvault://files"))
+                    {
+                       DUrl url = VaultController::makeVaultUrl(files[i].split("dfmvault://files")[1]);
+                       QString path = VaultController::vaultToLocal(url);
+                       path = "file://" + path;
+                       files.replace(i, path);
+                    }
+                }
                 file.startDetached(files);
             });
 
@@ -363,7 +377,19 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
     QList<QAction *> actions = d->actionListByType[menuType];
     bool bex7z = d->isAllEx7zFile(files);
     for (const QString &f : files) {
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(f));
+        DAbstractFileInfoPointer fileInfo;
+        DUrl url;
+        if(f.contains("dfmvault://files"))
+        {
+            url = VaultController::makeVaultUrl(f.split("dfmvault://files")[1]);
+            fileInfo = DFileService::instance()->createFileInfo(this, url);
+        }
+        else
+        {
+            url = DUrl(f);
+            fileInfo = DFileService::instance()->createFileInfo(this, url);
+        }
+
         if (!fileInfo) {
             qWarning() << "createFileInfo failed: " << f;
             continue;
@@ -385,8 +411,8 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
         for (auto it = actions.begin(); it != actions.end(); ) {
             QAction * action = *it;
             if(!action || !d->isActionShouldShow(action, onDesktop) ||
-                    !d->isSchemeSupport(action, DUrl(f)) ||
-                    !d->isSuffixSupport(action, DUrl(f),bex7z)) {
+                    !d->isSchemeSupport(action, url) ||
+                    !d->isSuffixSupport(action, url,bex7z)) {
                 it = actions.erase(it);
                 continue;
             }

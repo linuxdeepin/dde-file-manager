@@ -130,7 +130,8 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
         accept();
     }else {
         //others
-        DMessageBox::information(this, tr("tips"), tr("Unlock failed,the error code is %1").arg(state));
+        QString msg = tr("Unlock failed,the error code is ") + QString::number(state);
+        DMessageBox::information(this, tr("tips"), msg);
     }
 }
 

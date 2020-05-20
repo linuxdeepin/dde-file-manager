@@ -67,7 +67,7 @@ void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
 {
     if (index == 1){
         QString strKey = m_recoveryKeyEdit->toPlainText();
-        strKey.replace(tr("-"), tr(""));
+        strKey.replace("-", "");
 
         QString strClipher("");
         if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
@@ -97,7 +97,7 @@ int DFMVaultRecoveryKeyPages::afterRecoveryKeyChanged(QString &str)
     int location = m_recoveryKeyEdit->textCursor().position(); // 计算当前光标位置
     int srcLength = str.length();   // 用于计算原有字符串中的“-”数量
     //清除所有的“-”
-    str.replace(tr("-"), tr(""));
+    str.replace("-", "");
     int minusNumber = srcLength - str.length(); // 原有字符串中的“-”数量
 
     int index = 4;
@@ -106,7 +106,7 @@ int DFMVaultRecoveryKeyPages::afterRecoveryKeyChanged(QString &str)
     int length = str.length();
     while (index < length) {
         if (index % 4 == 0){
-            str.insert(index + minusNum, tr("-"));
+            str.insert(index + minusNum, "-");
             minusNum++;
         }
         index++;
@@ -187,7 +187,8 @@ void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
         accept();
     }else {
         // others
-        DMessageBox::information(this, tr("tips"), tr("Unlock failed,the error code is %1").arg(state));
+        QString msg = tr("Unlock failed,the error code is ") + QString::number(state);
+        DMessageBox::information(this, tr("tips"), msg);
     }
 }
 
