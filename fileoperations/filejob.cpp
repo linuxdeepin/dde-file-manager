@@ -298,6 +298,10 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     qDebug() << "Do file operation is started" << m_jobDetail;
     jobPrepared();
 
+    // 用于统计 movetotrash 进度
+    m_allCount = files.size();
+    m_finishedCount = 0;
+
     m_isGvfsFileOperationUsed = checkUseGvfsFileOperation(files, destination);
 
     DUrlList list;
@@ -448,11 +452,15 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             }
         }
 
-        if (!targetPath.isEmpty())
+        if (!targetPath.isEmpty()) {
             list << DUrl::fromLocalFile(targetPath);
-        else
+        } else {
             list << DUrl();
+        }
+        ++m_finishedCount;
     }
+    m_finishedCount = 0;
+    m_allCount = 1;
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
@@ -1342,7 +1350,6 @@ void FileJob::handleJobFinished()
 
 void FileJob::jobUpdated()
 {
-
     if (m_status == FileJob::Paused){
         return;
     }
@@ -1360,8 +1367,7 @@ void FileJob::jobUpdated()
         jobDataDetail["optical_op_phase"] = QString::number(m_opticalJobPhase);
         jobDataDetail["optical_op_speed"] = m_opticalOpSpeed;
         jobDataDetail["optical_op_dest"] = m_tarPath;
-    }
-    else if (m_jobType == Restore && m_isInSameDisk){
+    } else if (m_jobType == Restore && m_isInSameDisk){
         jobDataDetail.insert("file", m_srcFileName);
         jobDataDetail.insert("destination", m_tarDirName);
         if (!m_isFinished){
@@ -1377,7 +1383,17 @@ void FileJob::jobUpdated()
                 jobDataDetail.insert("progress", "100");
             }
         }
-    }else{
+    } else if (m_jobType == Trash && m_isInSameDisk) {
+        jobDataDetail.insert("type", "delete");
+        jobDataDetail.insert("file", m_srcFileName);
+        jobDataDetail.insert("destination", m_tarDirName);
+        if (m_isFinished) {
+            jobDataDetail.insert("progress", QString::number(1));
+        } else {
+            if (m_finishedCount > 0 && m_finishedCount < m_allCount && m_allCount > 0)
+                jobDataDetail.insert("progress", QString::number((double)m_finishedCount / m_allCount));
+        }
+    } else {
         if (!m_isFinished){
 
             qint64 currentMsec = m_timer.elapsed();
