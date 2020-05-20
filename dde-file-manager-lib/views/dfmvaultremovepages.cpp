@@ -392,7 +392,7 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
         }
 
         // 管理员权限认证
-        if (VaultController::checkAuthentication()){
+        if (InterfaceActiveVault::getRootPassword()){
             m_bRemoveVault = true;
             // 验证成功，先对保险箱进行上锁
             VaultController::getVaultController()->lockVault();

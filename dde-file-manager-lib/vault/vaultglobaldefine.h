@@ -19,7 +19,7 @@
 #define USER_KEY_LENGTH                 32              // 用户密钥长度
 #define USER_KEY_INTERCEPT_INDEX        50              // 用户密钥从公钥中截取的起始点索引
 
-#define ROOT_PROXY                      "pkexec testVault"
+#define ROOT_PROXY                      "pkexec deepin-vault-authenticateProxy"
 
 enum EN_VaultState {
     NotExisted = 0,

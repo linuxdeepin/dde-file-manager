@@ -126,12 +126,6 @@ public:
     static DUrlList vaultToLocalUrls(DUrlList vaultUrls);
 
     /**
-    * @brief checkAuthentication    权限校验
-    * @return                       是否成功
-    */
-    static bool checkAuthentication();
-
-    /**
      * @brief state         获取当前保险箱状态
      * @param lockBaseDir   保险箱加密文件夹
      * @return              返回VaultState枚举值
@@ -241,9 +235,6 @@ signals:
      * @param unlockFileDir     保险箱解密文件夹
      */
     void sigLockVault(QString unlockFileDir);
-
-private:
-    static bool runCmd(const QString &cmd, QString &standOutput);
 
 private:
     VaultControllerPrivate * d_ptr;
