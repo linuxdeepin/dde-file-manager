@@ -2263,6 +2263,9 @@ bool DFileSystemModel::sort(bool emitDataChange)
 
 bool DFileSystemModel::doSortBusiness(bool emitDataChange)
 {
+    if(isSortRunning)
+        return  false;
+
     Q_D(const DFileSystemModel);
 
     QMutexLocker locker(&m_mutex);
@@ -2272,9 +2275,6 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
     if (!node) {
         return false;
     }
-
-    if(isSortRunning)
-        return  false;
 
     isSortRunning = true;
 
