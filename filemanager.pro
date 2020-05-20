@@ -10,8 +10,7 @@ SUBDIRS  += \
     dde-dock-plugins\
     dde-desktop \
     dde-file-thumbnail-tool \
-    gschema \
-    dde-file-manager-authenticate
+    gschema
 
 !CONFIG(DISABLE_ANYTHING) {
     message("Deepin Anything server plugin enabled for" $$ARCH)

@@ -1,3 +1,0 @@
-#!/bin/bash
-sudo rm /usr/bin/deepin-vault-authenticateProxy;
-sudo rm policy/deepin-vault-authenticateProxy.policy /usr/share/polkit-1/actions/;

@@ -1,6 +1,8 @@
 #include "dfmvaultactivefinishedview.h"
 #include "operatorcenter.h"
 #include "../../controllers/vaultcontroller.h"
+#include "vault/vaultlockmanager.h"
+#include "app/define.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -85,7 +87,10 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 void DFMVaultActiveFinishedView::slotEncryptVault()
 {
     // 管理员认证
-    if(!OperatorCenter::getInstance().getRootPassword()){
+//    if(!OperatorCenter::getInstance().getRootPassword()){
+//        return;
+//    }
+    if (!VaultLockManager::getInstance().checkAuthentication(VAULT_CREATE)){
         return;
     }
 
