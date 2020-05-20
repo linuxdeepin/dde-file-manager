@@ -961,7 +961,7 @@ public:
     bool readOnly = false;
 
     /// add/rm file event
-    QAtomicInteger<bool> _q_processFileEvent_runing = false;
+    bool _q_processFileEvent_runing = false;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
 
     bool enabledSort = true;
