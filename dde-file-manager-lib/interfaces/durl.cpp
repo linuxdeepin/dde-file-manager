@@ -238,6 +238,11 @@ bool DUrl::isTaggedFile() const
     return (this->scheme() == QString{TAG_SCHEME});
 }
 
+bool DUrl::isVaultFile() const
+{
+    return (this->scheme() == DFMVAULT_SCHEME);
+}
+
 QString DUrl::toString(QUrl::FormattingOptions options) const
 {
     if (!isValid()) {
@@ -794,7 +799,9 @@ QString DUrl::toLocalFile() const
         return taggedLocalFilePath();
     } else if (isUserShareFile()) {
         return QString(path()).remove(USERSHARE_ROOT);
-    } else {
+    } else if (isVaultFile()){        
+        return path().remove(DFMVAULT_ROOT);
+    }else {
         return QUrl::toLocalFile();
     }
 }

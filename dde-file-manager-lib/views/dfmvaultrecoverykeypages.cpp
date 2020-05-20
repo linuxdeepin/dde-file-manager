@@ -26,6 +26,8 @@
 #include <QAbstractButton>
 #include <QToolTip>
 
+#include <DMessageBox>
+
 // 密钥最大长度
 #define MAX_KEY_LENGTH (32)
 
@@ -181,9 +183,11 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
 void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
 {
     if (state == 0){
+        // success
         accept();
     }else {
         // others
+        DMessageBox::information(this, tr("tips"), tr("Unlock failed,the error code is %1").arg(state));
     }
 }
 
