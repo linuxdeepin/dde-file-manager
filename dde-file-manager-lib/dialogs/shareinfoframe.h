@@ -50,6 +50,7 @@ public:
 
 signals:
     void folderShared(const QString &filePath);
+    void unfolderShared();
 
 public slots:
     void handleCheckBoxChanged(const bool &checked);

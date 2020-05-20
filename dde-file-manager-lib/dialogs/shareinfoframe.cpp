@@ -164,6 +164,8 @@ bool ShareInfoFrame::doShareInfoSetting()
             return false;
         }
     } else {
+        emit unfolderShared();
+        hide();
         return DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
     }
 

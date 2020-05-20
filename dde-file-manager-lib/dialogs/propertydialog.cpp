@@ -884,6 +884,9 @@ int PropertyDialog::contentHeight() const
 {
     int expandsHeight = ArrowLineExpand_SPACING;
     for (const DDrawer *expand : m_expandGroup) {
+        if (m_shareinfoFrame->isHidden()) {
+            m_shareinfoFrame->show();
+        }
         expandsHeight += expand->height();
     }
 #define DIALOG_TITLEBAR_HEIGHT 50
@@ -1137,6 +1140,9 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
     connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
+    connect(frame, &ShareInfoFrame::unfolderShared, this, [this](){
+        m_expandGroup.at(1)->setExpand(false);
+    });
 
     return frame;
 }
