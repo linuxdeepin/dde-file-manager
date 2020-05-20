@@ -201,7 +201,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         QString fs_type = "";
         if (pitmdata->fi) {
             //! 添加文件系统格式数据
-            fs_type = pitmdata->fi->extraProperties()["fsType"].toString().toUpper();
+            bool bMounted = pitmdata->fi->extraProperties()["mounted"].toBool();
+            if (bMounted) {
+                fs_type = pitmdata->fi->extraProperties()["fsType"].toString().toUpper();
+            }
         }
 
         return fs_type;
@@ -280,10 +283,47 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         }
     }
 
-    if (role == DataRoles::Scheme) {
+    if (role == DataRoles::SchemeRole) {
         if (pitmdata->fi) {
             return QVariant::fromValue(pitmdata->fi->fileUrl().scheme());
         }
+    }
+
+    if (role == DataRoles::ProgressRole) {
+
+        bool bProgressVisible = true;
+        if (pitmdata->fi) {
+            QString scheme = pitmdata->fi->fileUrl().scheme();
+            if (scheme == DFMVAULT_SCHEME) {
+                // vault not show progress.
+                bProgressVisible = false;
+            } else {
+                // optical and removable device not show progress when unmounted.
+                DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
+                if (itemType == DFMRootFileInfo::ItemType::UDisksOptical
+                        || itemType == DFMRootFileInfo::ItemType::UDisksRemovable) {
+
+                    bProgressVisible = pitmdata->fi->extraProperties()["mounted"].toBool();
+                }
+            }
+        }
+        return QVariant::fromValue(bProgressVisible);
+    }
+
+    if (role == DataRoles::SizeRole) {
+
+        bool bSizeVisible = true;
+        if (pitmdata->fi) {
+            // optical and removable device not show size when unmounted.
+            DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
+            if (itemType == DFMRootFileInfo::ItemType::UDisksOptical
+                    || itemType == DFMRootFileInfo::ItemType::UDisksRemovable) {
+
+                bSizeVisible = pitmdata->fi->extraProperties()["mounted"].toBool();
+            }
+        }
+
+        return QVariant::fromValue(bSizeVisible);
     }
 
     return QVariant();
