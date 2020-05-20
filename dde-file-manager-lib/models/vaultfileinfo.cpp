@@ -220,7 +220,7 @@ QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList(MenuType
 QString VaultFileInfo::fileDisplayName() const
 {
     if (isRootDirectory()) {
-        return QObject::tr("My File Vault");
+        return QObject::tr("My Vault");
     }
 
     return DAbstractFileInfo::fileDisplayName();
