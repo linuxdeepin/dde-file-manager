@@ -53,7 +53,7 @@ signals:
 
 public slots:
     void handleCheckBoxChanged(const bool &checked);
-    void handleShareNameChanged(const QString &name);
+    void handleShareNameChanged();
     void handlePermissionComboxChanged(const int &index);
     void handleAnonymityComboxChanged(const int &index);
     void handShareInfoChanged();
@@ -64,11 +64,11 @@ public slots:
 
 private:
     DAbstractFileInfoPointer m_fileinfo;
-    QCheckBox *m_shareCheckBox = NULL;
-    QLineEdit *m_shareNamelineEdit = NULL;
-    QComboBox *m_permissoComBox = NULL;
-    QComboBox *m_anonymityCombox = NULL;
-    QTimer *m_jobTimer;
+    QCheckBox *m_shareCheckBox = nullptr;
+    QLineEdit *m_shareNamelineEdit = nullptr;
+    QComboBox *m_permissoComBox = nullptr;
+    QComboBox *m_anonymityCombox = nullptr;
+    //QTimer *m_jobTimer;
 };
 
 #endif // SHAREINFOFRAME_H
