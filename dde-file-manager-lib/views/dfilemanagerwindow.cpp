@@ -916,24 +916,11 @@ void DFileManagerWindow::initTitleBar()
 
     initTitleFrame();
 
-    QSet<MenuAction> disableList;
-    VaultController::VaultState state = VaultController::getVaultController()->state();
-    if (state == VaultController::NotAvailable) {
-        disableList << MenuAction::Vault;
-    }
-
-    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu(disableList);
+    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu();
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
-
-    QAction * vaultAction = menu->actionAt(DFileMenuManager::getActionText(MenuAction::Vault));
-    if (vaultAction) {
-        connect(vaultAction, &QAction::triggered, this, [=](){
-            cd(VaultController::makeVaultUrl("/", "setup"));
-        });
-    }
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
