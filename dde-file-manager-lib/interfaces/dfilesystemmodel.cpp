@@ -1152,8 +1152,6 @@ void DFileSystemModelPrivate::_q_processFileEvent()
 
     _q_processFileEvent_runing = true;
     qDebug() << "_q_processFileEvent";
-    qApp->processEvents();
-
     Q_Q(DFileSystemModel);
     while (!fileEventQueue.isEmpty()) {
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
