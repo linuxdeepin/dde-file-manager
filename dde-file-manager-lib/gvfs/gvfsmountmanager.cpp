@@ -1392,6 +1392,8 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         case G_IO_ERROR_FAILED:
             if (AskingPassword) {
                 status = MOUNT_PASSWORD_WRONG;
+            } else {
+                 showWarnDlg = true;
             }
             break;
 
