@@ -620,7 +620,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     // 回收站恢复文件将多个fileJob合并为一个job，所以单个任务完成时不移除（会导致taskdialog被关闭）,在外部手动调用jobRemoved();
     if(m_isJobAdded && !m_isManualRemoveJob)
         jobRemoved();
-    emit finished();
+    //emit finished();
     qDebug() << "Do restore trash file is done!";
 
     return ok;
@@ -1351,14 +1351,14 @@ void FileJob::jobUpdated()
         jobDataDetail["optical_op_speed"] = m_opticalOpSpeed;
         jobDataDetail["optical_op_dest"] = m_tarPath;
     } else if (m_jobType == Restore && m_isInSameDisk){
-        jobDataDetail.insert("file", m_srcFileName);
+        jobDataDetail.insert("type", "restore");
+        jobDataDetail.insert("file", m_restoreFileName);
         jobDataDetail.insert("destination", m_tarDirName);
+        jobDataDetail.insert("progress", QString::number(m_restoreProgress));
         if (!m_isFinished){
             if (m_status == Run){
-                jobDataDetail.insert("file", m_srcFileName);
+                jobDataDetail.insert("file", m_restoreFileName);
                 jobDataDetail.insert("status", "restoring");
-            }else{
-                return;
             }
         }else{
             if (m_status != Cancelled){
@@ -1508,6 +1508,16 @@ void FileJob::jobConflicted()
 
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
     m_status = Paused;
+}
+
+qreal FileJob::getRestoreProgress() const
+{
+    return m_restoreProgress;
+}
+
+void FileJob::setRestoreProgress(qreal restoreProgress)
+{
+    m_restoreProgress = restoreProgress;
 }
 
 bool FileJob::getIsFinished() const
@@ -2637,6 +2647,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
     QFile to(tarFile);
 
     QFileInfo toInfo(tarFile);
+    m_restoreFileName = toInfo.fileName();
     m_srcFileName = toInfo.fileName();
     m_srcPath = srcFile;
     m_tarPath = toInfo.absoluteFilePath();

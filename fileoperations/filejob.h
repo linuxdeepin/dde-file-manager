@@ -120,6 +120,9 @@ public:
 
     bool getIsFinished() const;
 
+    void setRestoreProgress(qreal restoreProgress);
+    qreal getRestoreProgress() const;
+
 signals:
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
@@ -210,7 +213,9 @@ private:
     QString m_progress;
     float m_factor;
     bool m_isJobAdded = false;
+    qreal m_restoreProgress = 0; // 0~1
     QString m_trashFileName;
+    QString m_restoreFileName;
     QString m_srcFileName;
     QString m_tarDirName;
     QString m_srcPath;
