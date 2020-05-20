@@ -2258,11 +2258,27 @@ bool DFileSystemModel::sort(bool emitDataChange)
         return false;
     }
 
+    return  doSortBusiness(emitDataChange);
+}
+
+bool DFileSystemModel::doSortBusiness(bool emitDataChange)
+{
+    Q_D(const DFileSystemModel);
+
+    QMutexLocker locker(&m_mutex);
+
     const FileSystemNodePointer &node = d->rootNode;
 
     if (!node) {
         return false;
     }
+
+    if(isSortRunning)
+        return  false;
+
+    isSortRunning = true;
+
+    qDebug()<<"start the sort business";
 
     QList<FileSystemNode *> list = node->getChildrenList();
 
@@ -2277,6 +2293,9 @@ bool DFileSystemModel::sort(bool emitDataChange)
         }
     }
 
+    isSortRunning = false;
+
+    qDebug()<<"end the sort business";
     return ok;
 }
 
@@ -2752,12 +2771,18 @@ void DFileSystemModel::clear()
         return;
     }
 
+    QMutexLocker locker(&m_mutex); // bug 26972, while the sort case is ruuning, there should be crashed ASAP, so add locker here!
+
+    qDebug() << "enter the clear items process";
+
     const QModelIndex &index = createIndex(d->rootNode, 0);
 
     if (beginRemoveRows(index, 0, d->rootNode->childrenCount() - 1)) {
         deleteNode(d->rootNode);
         endRemoveRows();
     }
+
+    qWarning() << "done the clear items process";
 }
 
 void DFileSystemModel::setState(DFileSystemModel::State state)
