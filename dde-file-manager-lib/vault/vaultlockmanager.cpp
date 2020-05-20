@@ -90,6 +90,21 @@ void VaultLockManager::refreshAccessTime()
     }
 }
 
+bool VaultLockManager::checkAuthentication(QString type)
+{
+    bool res = false;
+    if (m_vaultInterface->isValid()) {
+        QDBusPendingReply<bool> reply = m_vaultInterface->checkAuthentication(type);
+        reply.waitForFinished();
+        if (reply.isError()) {
+            qDebug() << reply.error().message();
+        } else {
+            res = reply.value();
+        }
+    }
+    return res;
+}
+
 void VaultLockManager::processAutoLock()
 {
     VaultController *controller = VaultController::getVaultController();

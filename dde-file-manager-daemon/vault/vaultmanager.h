@@ -42,7 +42,8 @@ public:
     ~VaultManager();
 
     static QString ObjectPath;
-    static QString PolicyKitActionId;
+    static QString PolicyKitCreateActionId;
+    static QString PolicyKitRemoveActionId;
 
 public slots:
     /**
@@ -62,6 +63,13 @@ public slots:
      * @return
      */
     quint64 getSelfTime() const;
+
+    /**
+    * @brief checkAuthentication 权限验证
+    * @param type
+    * @return
+    */
+    bool checkAuthentication(QString type);
 
 protected:
     void tick();

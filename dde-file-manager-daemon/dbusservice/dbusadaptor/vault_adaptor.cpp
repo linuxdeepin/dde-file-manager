@@ -51,3 +51,8 @@ void VaultAdaptor::setRefreshTime(qulonglong time)
     parent()->setRefreshTime(time);
 }
 
+bool VaultAdaptor::checkAuthentication(QString type)
+{
+    return parent()->checkAuthentication(type);
+}
+

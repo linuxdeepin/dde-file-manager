@@ -1,6 +1,8 @@
 #include "dfmvaultremovepages.h"
 #include "vault/interfaceactivevault.h"
+#include "vault/vaultlockmanager.h"
 #include "controllers/vaultcontroller.h"
+#include "app/define.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -392,7 +394,7 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
         }
 
         // 管理员权限认证
-        if (InterfaceActiveVault::getRootPassword()){
+        if (VaultLockManager::getInstance().checkAuthentication(VAULT_REMOVE)){
             m_bRemoveVault = true;
             // 验证成功，先对保险箱进行上锁
             VaultController::getVaultController()->lockVault();
