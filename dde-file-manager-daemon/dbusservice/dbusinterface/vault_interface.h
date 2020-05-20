@@ -55,6 +55,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("setRefreshTime"), argumentList);
     }
 
+    inline QDBusPendingReply<bool> checkAuthentication(QString type)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(type);
+        return asyncCallWithArgumentList(QStringLiteral("checkAuthentication"), argumentList);
+    }
+
 Q_SIGNALS: // SIGNALS
 };
 

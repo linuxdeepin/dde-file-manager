@@ -48,6 +48,11 @@ public:
      */
     void refreshAccessTime();
 
+    /**
+    * @brief checkAuthentication 保险箱权限认证
+    */
+    bool checkAuthentication(QString type);
+
 protected slots:
     /**
      * @brief processAutoLock 处理自动加锁

@@ -31,6 +31,8 @@
 #include "app/policykithelper.h"
 
 QString VaultManager::ObjectPath = "/com/deepin/filemanager/daemon/VaultManager";
+QString VaultManager::PolicyKitCreateActionId = "com.deepin.filemanager.daemon.VaultManager.Create";
+QString VaultManager::PolicyKitRemoveActionId = "com.deepin.filemanager.daemon.VaultManager.Remove";
 
 VaultManager::VaultManager(QObject *parent)
     : QObject(parent)
@@ -68,4 +70,27 @@ quint64 VaultManager::getSelfTime() const
 void VaultManager::tick()
 {
     m_selfTime++;
+}
+
+bool VaultManager::checkAuthentication(QString type)
+{
+    bool ret = false;
+    qint64 pid = 0;
+    QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
+    if(c.isConnected()) {
+        pid = c.interface()->servicePid(message().service()).value();
+    }
+
+    if (pid){
+        if (type.compare("Create") == 0) {
+            ret = PolicyKitHelper::instance()->checkAuthorization(PolicyKitCreateActionId, pid);
+        }else if (type.compare("Remove") == 0){
+            ret = PolicyKitHelper::instance()->checkAuthorization(PolicyKitRemoveActionId, pid);
+        }
+    }
+
+    if (!ret) {
+        qDebug() << "Authentication failed !!";
+    }
+    return ret;
 }
