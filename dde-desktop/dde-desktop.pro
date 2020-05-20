@@ -11,7 +11,7 @@ include($$PWD/dbus/dbus.pri)
 include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
 include($$PWD/../dde-zone/dde-zone.pri)
 
-QT       += core gui widgets svg dbus x11extras network concurrent multimediawidgets multimedia
+QT       += core gui widgets dbus x11extras network concurrent multimedia #multimediawidgets svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 greaterThan(QT_MINOR_VERSION, 7): QT += gui-private
@@ -100,4 +100,3 @@ TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
 
 
 include($$PWD/development.pri)
-
