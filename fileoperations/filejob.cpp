@@ -454,6 +454,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
 
         if (!targetPath.isEmpty()) {
             list << DUrl::fromLocalFile(targetPath);
+            m_trashFileName = srcPath;
         } else {
             list << DUrl();
         }
@@ -1373,7 +1374,6 @@ void FileJob::jobUpdated()
         if (!m_isFinished){
             if (m_status == Run){
                 jobDataDetail.insert("file", m_srcFileName);
-                jobDataDetail.insert("destination", m_tarDirName);
                 jobDataDetail.insert("status", "restoring");
             }else{
                 return;
@@ -1385,8 +1385,7 @@ void FileJob::jobUpdated()
         }
     } else if (m_jobType == Trash && m_isInSameDisk) {
         jobDataDetail.insert("type", "delete");
-        jobDataDetail.insert("file", m_srcFileName);
-        jobDataDetail.insert("destination", m_tarDirName);
+        jobDataDetail.insert("file", m_trashFileName);
         if (m_isFinished) {
             jobDataDetail.insert("progress", QString::number(1));
         } else {

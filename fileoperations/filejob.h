@@ -211,6 +211,7 @@ private:
     QString m_progress;
     float m_factor;
     bool m_isJobAdded = false;
+    QString m_trashFileName;
     QString m_srcFileName;
     QString m_tarDirName;
     QString m_srcPath;
