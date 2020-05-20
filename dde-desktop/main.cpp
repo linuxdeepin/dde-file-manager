@@ -107,8 +107,8 @@ int main(int argc, char *argv[])
     DApplication app(argc, argv);
     tmp += QString(" end DApplication %0").arg(gTime.elapsed());
 
-    AppController::instance();
-    tmp += QString(" end AppController::instance %0").arg(gTime.elapsed());
+//    AppController::instance();
+//    tmp += QString(" end AppController::instance %0").arg(gTime.elapsed());
     QAccessible::installFactory(accessibleFactory);
     tmp += QString(" end installFactory %0").arg(gTime.elapsed());
 
@@ -223,17 +223,19 @@ int main(int argc, char *argv[])
         QTimer::singleShot(1000, &app, &QCoreApplication::quit);
     } else {
         if (!fileDialogOnly) {
-            QTimer::singleShot(1,[](){
-                qDebug() << "begin load view" <<  gTime.elapsed();
-                Desktop::instance()->Show();
-                Desktop::instance()->loadView();
-                qDebug() << "end load view" <<  gTime.elapsed();
-            });
+            qDebug() << "begin load view" <<  gTime.elapsed();
+            Desktop::instance()->Show();
+            Desktop::instance()->loadView();
+            qDebug() << "end load view" <<  gTime.elapsed();
         }
     }
 
     QTimer::singleShot(100,[](){
         qDebug() << "begin load plugin " <<  gTime.elapsed();
+
+        AppController::instance();
+        qDebug() << "end AppController::instance "<< gTime.elapsed();
+
         DFMGlobal::autoLoadDefaultPlugins();
         qDebug() << "end autoLoadDefaultPlugins" <<  gTime.elapsed();
         DFMGlobal::initPluginManager();

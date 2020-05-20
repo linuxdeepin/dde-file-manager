@@ -71,6 +71,7 @@ private slots:
     void onContentChangedForAdding(const QString& content);
     void onContentChangedForCustomzedSN(const QString& content);
     void onVisibleChanged(bool visible)noexcept;
+    void onReplaceTextChanged()noexcept;
 
 private:
     using DDialog::setWindowTitle;

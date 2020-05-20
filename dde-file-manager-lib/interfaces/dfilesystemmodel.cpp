@@ -961,7 +961,7 @@ public:
     bool readOnly = false;
 
     /// add/rm file event
-    QAtomicInteger<bool> _q_processFileEvent_runing = false;
+    bool _q_processFileEvent_runing = false;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
 
     bool enabledSort = true;
@@ -1135,7 +1135,8 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
 
 void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 {
-    if (from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
+    //如果被重命名的目录是root目录，则不刷新该目录,而是直接退回到上层目录
+    if (from.isLocalFile() && from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
         return;
     }
 
@@ -1151,8 +1152,6 @@ void DFileSystemModelPrivate::_q_processFileEvent()
 
     _q_processFileEvent_runing = true;
     qDebug() << "_q_processFileEvent";
-    qApp->processEvents();
-
     Q_Q(DFileSystemModel);
     while (!fileEventQueue.isEmpty()) {
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
@@ -2257,11 +2256,27 @@ bool DFileSystemModel::sort(bool emitDataChange)
         return false;
     }
 
+    return  doSortBusiness(emitDataChange);
+}
+
+bool DFileSystemModel::doSortBusiness(bool emitDataChange)
+{
+    if(isSortRunning)
+        return  false;
+
+    Q_D(const DFileSystemModel);
+
+    QMutexLocker locker(&m_mutex);
+
     const FileSystemNodePointer &node = d->rootNode;
 
     if (!node) {
         return false;
     }
+
+    isSortRunning = true;
+
+    qDebug()<<"start the sort business";
 
     QList<FileSystemNode *> list = node->getChildrenList();
 
@@ -2276,6 +2291,9 @@ bool DFileSystemModel::sort(bool emitDataChange)
         }
     }
 
+    isSortRunning = false;
+
+    qDebug()<<"end the sort business";
     return ok;
 }
 
@@ -2751,12 +2769,18 @@ void DFileSystemModel::clear()
         return;
     }
 
+    QMutexLocker locker(&m_mutex); // bug 26972, while the sort case is ruuning, there should be crashed ASAP, so add locker here!
+
+    qDebug() << "enter the clear items process";
+
     const QModelIndex &index = createIndex(d->rootNode, 0);
 
     if (beginRemoveRows(index, 0, d->rootNode->childrenCount() - 1)) {
         deleteNode(d->rootNode);
         endRemoveRows();
     }
+
+    qWarning() << "done the clear items process";
 }
 
 void DFileSystemModel::setState(DFileSystemModel::State state)
@@ -2831,8 +2855,8 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
 
             QFuture<void> result;
 
-            // tmp: 暂时不排序
-            if (fileInfo->hasOrderly() && 0) {
+            // tmp: 暂时不排序 排序的宏在大量添加文件操作时会崩（最近访问目录不存在大量文件添加的情况 可放开）
+            if (fileInfo->hasOrderly() && fileUrl.isRecentFile()) {
                 DAbstractFileInfo::CompareFunction compareFun = fileInfo->compareFunByColumn(d->sortRole);
 
                 if (compareFun) {

@@ -1057,7 +1057,7 @@ void AppController::actionSendToRemovableDisk()
 
     // 如果从光驱内发送文件到其他移动设备，将光驱路径转换成本地挂载路径
     for (DUrl &u : urlList) {
-        if (u.scheme() == BURN_SCHEME) {
+        if (u.scheme() == BURN_SCHEME || u.scheme() == TAG_SCHEME || u.scheme() == SEARCH_SCHEME || u.scheme() == RECENT_SCHEME) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, u);
             if (fi)
                 u = fi->mimeDataUrl();

@@ -1092,7 +1092,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url)
     setCursorBusyState(true);
     DAbstractFileInfoPointer rootptr = d_ptr->rootfileHash.contains(rootfile) ?
                 d_ptr->rootfileHash.value(rootfile) : createFileInfo(nullptr, rootfile);
-    bool fileexit = d_ptr->rootfileHash.value(rootfile)->exists();
+    bool fileexit = rootptr->exists();
     setCursorBusyState(false);
     //文件不存在弹提示框
     if (!fileexit) {

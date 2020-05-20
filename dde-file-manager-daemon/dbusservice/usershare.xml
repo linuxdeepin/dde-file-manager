@@ -11,8 +11,9 @@
             <arg type="b" name="result" direction="out"/>
         </method>
         <method name="closeSmbShareByShareName">
-            <arg type="b" direction="out"/>
-            <arg name="sharename" type="s" direction="in"/>
+            <arg type="s" name="sharename" direction="in"/>
+            <arg type="b" name="bshow" direction="in"/>
+            <arg type="b" name="result" direction="out"/>
         </method>
     </interface>
 </node>
