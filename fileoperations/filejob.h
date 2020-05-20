@@ -204,6 +204,8 @@ private:
     qint64 m_totalSize = 1;
     qint64 m_bytesPerSec = 0;
     qint64 m_last_current_num_bytes = 0;
+    qint64 m_allCount = 1;
+    qint64 m_finishedCount = 0;
 
     QString m_progress;
     float m_factor;

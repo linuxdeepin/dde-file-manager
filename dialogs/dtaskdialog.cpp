@@ -653,7 +653,7 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
     }
 
     if (!progress.isEmpty()) {
-        wid->onProgressChanged(progress.toInt(), 0);
+        wid->onProgressChanged(progress.toDouble(), 0);
     }
 }
 
