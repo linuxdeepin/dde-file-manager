@@ -536,8 +536,13 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     bool hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
     if (Display::instance()->primaryScreen() == screen) {
-        qDebug() << screen->name() << "set geometry by dbus" << Display::instance()->primaryRect();
-        l->setGeometry(Display::instance()->primaryRect());
+        QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : screen->geometry();
+        if (grect.width() == 0 || grect.height() == 0){
+            qCritical() << "error!!!!!!!!!!!" << "set DBUS primaryRect background geometry" << grect;
+        }
+        qDebug() << "set" << grect << "primaryScreen" << screen->name() << screen->geometry()
+                 << "dbus:"<< Display::instance()->primaryRect();
+        l->setGeometry(grect);
     }
     QHighDpiScaling::m_active = hi_active;
 
@@ -548,8 +553,13 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
         l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
         if (Display::instance()->primaryScreen() == screen)
         {
-            qDebug() << screen->name() << "set handle geometry by dbus" << Display::instance()->primaryRect();
-            l->windowHandle()->handle()->setGeometry(Display::instance()->primaryRect());
+            QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : screen->geometry();
+            if (grect.width() == 0 || grect.height() == 0){
+                qCritical() << "error!!!!!!!!!!!" << "set DBUS primaryRect background geometry" << grect;
+            }
+            qDebug() << "set" << grect << "primaryScreen" << screen->name() << screen->geometry()
+                     << "dbus:"<< Display::instance()->primaryRect();
+            l->windowHandle()->handle()->setGeometry(grect);
         }
 
         QHighDpiScaling::m_active = hi_active;
@@ -609,7 +619,8 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
         if (grect.width() == 0 || grect.height() == 0){
             qCritical() << "error!!!!!!!!!!!" << "set DBUS primaryRect background geometry" << grect;
         }
-        qDebug() << "set" << grect << "primaryScreen" << screen->name() << screen->geometry() << "dbus:"<< Display::instance()->primaryRect();
+        qDebug() << "set" << grect << "primaryScreen" << screen->name() << screen->geometry()
+                 << "dbus:"<< Display::instance()->primaryRect();
         l->setGeometry(grect);
     }
     QHighDpiScaling::m_active = hi_active;
