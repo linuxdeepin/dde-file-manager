@@ -575,129 +575,159 @@
 <context>
     <name>DFMVaultRecoveryKeyPages</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="35"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="37"/>
         <source>Unlock by Key</source>
         <translation>恢复密钥解锁</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="39"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="39"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
         <source>Unlock</source>
         <translation>解锁</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="45"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="47"/>
         <source>Input the 32-digit recovery key</source>
         <translation>请输入32位恢复密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="68"/>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="98"/>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="107"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="70"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="100"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="109"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="80"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="82"/>
         <source>Wrong recovery key</source>
-        <translation type="unfinished">密钥错误</translation>
+        <translation>密钥错误</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="190"/>
+        <source>Unlock failed,the error code is </source>
+        <translation>保险箱上锁失败，错误码为 </translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="191"/>
+        <source>tips</source>
+        <translation>提示</translation>
     </message>
 </context>
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="248"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="249"/>
         <source>Remove File Vault</source>
         <translation>删除保险箱</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="249"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="250"/>
         <source>Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue.</source>
         <translation>删除保险箱后，其中的所有内容将会被永久删除，请确认后继续。</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="268"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="269"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="268"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="331"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="353"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="269"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="332"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="354"/>
         <source>Use Key</source>
         <translation>密钥验证</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="268"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="269"/>
         <source>Remove</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="272"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="273"/>
         <source>color: rgb(255, 85, 0);</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="350"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="351"/>
         <source>Use Password</source>
         <translation>密码验证</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="369"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="370"/>
         <source>Wrong password</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="377"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="378"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="387"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="388"/>
         <source>Wrong recovery key</source>
         <translation>密钥错误</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="423"/>
+        <source>Remove failed,the error code is </source>
+        <translation>保险箱删除失败，错误码为 </translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="424"/>
+        <source>tips</source>
+        <translation>提示</translation>
     </message>
 </context>
 <context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="37"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="38"/>
         <source>Unlock File Vault</source>
         <translation>打开保险箱</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="39"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="40"/>
         <source>Verify your fingerprint or password</source>
         <translation>请验证指纹或输入密码</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="42"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="43"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="42"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="43"/>
         <source>Unlock</source>
         <translation>解锁</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="48"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="49"/>
         <source>Password</source>
         <translation>请输入解锁密码</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="73"/>
         <source>Password hint:</source>
         <translation>提示信息：</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="106"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="107"/>
         <source>Wrong password</source>
         <translation>密码错误</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="133"/>
+        <source>Unlock failed,the error code is </source>
+        <translation>保险箱上锁失败，错误码为 </translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="134"/>
+        <source>tips</source>
+        <translation>提示</translation>
     </message>
 </context>
 <context>
@@ -1010,79 +1040,79 @@
         <translation>不支持此操作</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="536"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="582"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>正在擦除%1，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="537"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="583"/>
         <source>Burning disc %1, please wait...</source>
         <translation>正在刻录到%1，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="542"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="588"/>
         <source>Writing data...</source>
         <translation>正在写入数据...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="543"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="589"/>
         <source>Verifying data...</source>
         <translation>正在校验数据...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="594"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="640"/>
         <source>Copying %1</source>
         <translation>正在复制%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="595"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="599"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="602"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="641"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="648"/>
         <source>to %2</source>
         <translation>到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="618"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="664"/>
         <source>%1 already exists in target folder</source>
         <translation>目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="619"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="665"/>
         <source>Original path %1 Target path %2</source>
         <translation>原路径%1 目标路径%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="598"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="644"/>
         <source>Moving %1</source>
         <translation>正在移动%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="601"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="647"/>
         <source>Restoring %1</source>
         <translation>正在恢复%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="604"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="650"/>
         <source>Deleting %1</source>
         <translation>正在删除%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="607"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="653"/>
         <source>Trashing %1</source>
         <translation>正在移动 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="615"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="661"/>
         <source>Calculating space, please wait</source>
         <translation>正在计算大小，请稍候</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="624"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="670"/>
         <source>Merge</source>
         <translation>合并</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="627"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="673"/>
         <source>Replace</source>
         <translation>替换</translation>
     </message>
@@ -3102,7 +3132,7 @@
         <location filename="../interfaces/dfileinfo.cpp" line="811"/>
         <location filename="../models/recentfileinfo.cpp" line="247"/>
         <location filename="../models/trashfileinfo.cpp" line="379"/>
-        <location filename="../models/vaultfileinfo.cpp" line="151"/>
+        <location filename="../models/vaultfileinfo.cpp" line="156"/>
         <source>Folder is empty</source>
         <translation>文件夹为空</translation>
     </message>
@@ -3150,12 +3180,12 @@
         <translation>新建文本</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="198"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="200"/>
         <source>1 task in progress</source>
         <translation>有1个任务正在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="200"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="202"/>
         <source>%1 tasks in progress</source>
         <translation>有%1个任务正在进行</translation>
     </message>
@@ -3403,7 +3433,7 @@
         <translation>可用空间 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="251"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="253"/>
         <source>Files are being processed</source>
         <translation>正在处理文件</translation>
     </message>
@@ -3424,7 +3454,7 @@
         <translation>%1/%2</translation>
     </message>
     <message>
-        <location filename="../models/vaultfileinfo.cpp" line="218"/>
+        <location filename="../models/vaultfileinfo.cpp" line="223"/>
         <source>My File Vault</source>
         <translation>我的保险箱</translation>
     </message>
@@ -3944,14 +3974,14 @@
 <context>
     <name>VaultKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="117"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="118"/>
         <source>Input the 32-digit recovery key</source>
         <translation>请输入32位恢复密钥</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="135"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="144"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="168"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="136"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="145"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="169"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3959,12 +3989,12 @@
 <context>
     <name>VaultPasswordPage</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="44"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="45"/>
         <source>Verify your fingerprint or password</source>
         <translation>请验证指纹或输入密码</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="60"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="61"/>
         <source>Password hint:</source>
         <translation>提示信息：</translation>
     </message>

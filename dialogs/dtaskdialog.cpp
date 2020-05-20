@@ -301,7 +301,7 @@ bool DTaskDialog::isHaveVaultTask(const DUrlList &sourceUrls, const DUrl &target
 
 DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
 {
-    // 判断任务是否属于保险箱任务,如果是，记录容器
+    // 判断任务是否属于保险箱任务,如果是，记录到容器
     if(isHaveVaultTask(job->sourceUrlList(), job->targetUrl())){
         mapNotCompleteVaultTask.insert(job);
     }
@@ -317,6 +317,12 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
     connect(wid, &DFMTaskWidget::heightChanged, this, &DTaskDialog::adjustSize);
     connect(this, &DTaskDialog::closed,job,&DFileCopyMoveJob::taskDailogClose);
 
+    // 结束当前所有任务时，将保险箱任务记录清空
+    connect(this, &DTaskDialog::sigStopJob, job, [job, this](){
+        mapNotCompleteVaultTask.clear();
+        emit job->stop();
+    });
+
     connect(wid, &DFMTaskWidget::butonClicked, job, [job, wid, handle, this](DFMTaskWidget::BUTTON bt) {
         DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
         QCloseEvent event;
@@ -327,7 +333,14 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             case DFMTaskWidget::STOP:
 
 //                this->closeEvent(&event);
+
+            // 结束当前指定任务时，如果该任务属于保险箱未完成任务，则删除记录
+            if(mapNotCompleteVaultTask.contains(job)){
+                mapNotCompleteVaultTask.remove(job);
+            }
+
             emit job->stop();
+
                 break;
             case DFMTaskWidget::SKIP:
                 action = DFileCopyMoveJob::SkipAction;
@@ -387,9 +400,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             this->removeTaskJob(job);
 
             // 判断当前任务是否是保险箱任务，如果是，则消除记录
-            if(isHaveVaultTask(job->sourceUrlList(), job->targetUrl())){
-                if(mapNotCompleteVaultTask.contains(job))
-                    mapNotCompleteVaultTask.remove(job);
+            if(mapNotCompleteVaultTask.contains(job)){
+                mapNotCompleteVaultTask.remove(job);
             }
 
             return;
@@ -436,9 +448,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             this->removeTaskJob(job);
 
             // 判断当前任务是否是保险箱任务，如果是，则消除记录
-            if(isHaveVaultTask(job->sourceUrlList(), job->targetUrl())){
-                if(mapNotCompleteVaultTask.contains(job))
-                    mapNotCompleteVaultTask.remove(job);
+            if(mapNotCompleteVaultTask.contains(job)){
+                mapNotCompleteVaultTask.remove(job);
             }
         }
     });
@@ -491,11 +502,6 @@ void DTaskDialog::moveYCenter()
     }
     qr.moveCenter(cp);
     move(x(), qr.y());
-}
-
-void DTaskDialog::slotSetNotCompletedVaultTask(bool bHave)
-{
-    m_bHaveVaultTask = bHave;
 }
 
 void DTaskDialog::removeTaskByPath(QString jobId)
@@ -687,6 +693,11 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
     }
 }
 
+bool DTaskDialog::bHaveNotCompletedVaultTask()
+{
+    return (mapNotCompleteVaultTask.count() > 0) ? true : false;
+}
+
 void DTaskDialog::showDialogOnTop()
 {
     this->activateWindow();
@@ -695,13 +706,7 @@ void DTaskDialog::showDialogOnTop()
 
 void DTaskDialog::stopVaultTask()
 {
-    QSet<DFileCopyMoveJob*>::const_iterator itr = mapNotCompleteVaultTask.begin();
-    for(; itr != mapNotCompleteVaultTask.end(); ++itr)
-    {
-        if((*itr)){
-//            emit (*itr)->stop();
-        }
-    }
+    emit sigStopJob();
 }
 
 void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail,
@@ -733,6 +738,9 @@ void DTaskDialog::closeEvent(QCloseEvent *event)
             m_jobIdItems.remove(m_jobIdItems.key(item));
         }
     }
+
+    // 任务对话框关闭时，清空未完成保险箱任务记录
+    mapNotCompleteVaultTask.clear();
 
     QDialog::closeEvent(event);
     emit closed();

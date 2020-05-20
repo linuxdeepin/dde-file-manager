@@ -574,9 +574,6 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
 {
     DFileCopyMoveJob *job = new DFileCopyMoveJob();
 
-    // 关联信号，判断当前是否有未完成的保险箱任务
-    QObject::connect(job, &DFileCopyMoveJob::sigHaveVaultTask, dialogManager->taskDialog(), &DTaskDialog::slotSetNotCompletedVaultTask);
-
     //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
 
     if (force) {

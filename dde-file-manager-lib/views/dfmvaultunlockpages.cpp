@@ -30,6 +30,7 @@
 
 #include <DPushButton>
 #include <DPasswordEdit>
+#include <DMessageBox>
 
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DDialog (parent)
@@ -129,6 +130,8 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
         accept();
     }else {
         //others
+        QString msg = tr("Unlock failed,the error code is ") + QString::number(state);
+        DMessageBox::information(this, tr("tips"), msg);
     }
 }
 
