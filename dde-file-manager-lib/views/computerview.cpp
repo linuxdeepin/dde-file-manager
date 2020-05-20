@@ -324,7 +324,7 @@ void ComputerView::contextMenu(const QPoint &pos)
     }
 
     DFileMenu *menu = nullptr;
-    if (idx.data(ComputerModel::DataRoles::Scheme) == DFMVAULT_SCHEME) {
+    if (idx.data(ComputerModel::DataRoles::SchemeRole) == DFMVAULT_SCHEME) {
         // 重新创建右键菜单
         DFMSideBarVaultItemHandler handler;
         quint64 wndId = WindowManager::getWindowId(this);

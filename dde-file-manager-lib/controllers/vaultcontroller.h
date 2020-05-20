@@ -55,7 +55,6 @@ public:
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
-
     /**
      * @brief shareFolder 设置文件夹共享
      * @param event       共享的信息事件

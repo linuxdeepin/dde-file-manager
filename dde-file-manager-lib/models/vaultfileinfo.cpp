@@ -23,6 +23,7 @@
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
 #include "dfilestatisticsjob.h"
+#include "dfilesystemmodel.h"
 
 #include <QStandardPaths>
 

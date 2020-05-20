@@ -68,7 +68,9 @@ public:
         MountOpenUrlRole = Qt::UserRole + 7,//DUrl
         ActionVectorRole = Qt::UserRole + 8,//QVector<MenuAction>
         DFMRootUrlRole = Qt::UserRole + 9,   //DUrls
-        Scheme = Qt::UserRole + 10, //QString
+        SchemeRole = Qt::UserRole + 10, //QString
+        ProgressRole = Qt::UserRole + 11, // Bool(Progress visible)
+        SizeRole = Qt::UserRole + 12, // Bool(Size visible)
     };
     Q_ENUM(DataRoles)
 

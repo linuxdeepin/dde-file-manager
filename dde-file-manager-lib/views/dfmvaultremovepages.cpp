@@ -22,6 +22,7 @@
 #include <DPasswordEdit>
 #include <DTextEdit>
 #include <DProgressBar>
+#include <DMessageBox>
 
 DWIDGET_USE_NAMESPACE
 
@@ -419,6 +420,7 @@ void DFMVaultRemovePages::onLockVault(int state)
         accept();
     }else if (state != 0 && m_bRemoveVault) {
         // something to do
+        DMessageBox::information(this, tr("tips"), tr("Remove failed,the error code is %1").arg(state));
     }
     m_bRemoveVault = false;
 }
