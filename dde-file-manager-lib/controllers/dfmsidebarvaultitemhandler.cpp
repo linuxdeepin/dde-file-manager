@@ -162,24 +162,28 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
         QObject::connect(actionNever, &QAction::triggered, actionNever, [this](){
             autoLock(VaultLockManager::Never);
         });
+        actionNever->setCheckable(true);
         actionNever->setChecked(lockState == VaultLockManager::Never ? true : false);
 
         QAction *actionFiveMins = DFileMenuManager::getAction(MenuAction::FiveMinutes);
         QObject::connect(actionFiveMins, &QAction::triggered, actionFiveMins, [this](){
             autoLock(VaultLockManager::FiveMinutes);
         });
+        actionFiveMins->setCheckable(true);
         actionFiveMins->setChecked(lockState == VaultLockManager::FiveMinutes ? true : false);
 
         QAction *actionTenMins = DFileMenuManager::getAction(MenuAction::TenMinutes);
         QObject::connect(actionTenMins, &QAction::triggered, actionTenMins, [this](){
             autoLock(VaultLockManager::TenMinutes);
         });
+        actionTenMins->setCheckable(true);
         actionTenMins->setChecked(lockState == VaultLockManager::TenMinutes ? true : false);
 
         QAction *actionTwentyMins = DFileMenuManager::getAction(MenuAction::TwentyMinutes);
         QObject::connect(actionTwentyMins, &QAction::triggered, actionTwentyMins, [this](){
             autoLock(VaultLockManager::TwentyMinutes);
         });
+        actionTwentyMins->setCheckable(true);
         actionTwentyMins->setChecked(lockState == VaultLockManager::TwentyMinutes ? true : false);
 
         // 删除保险柜
