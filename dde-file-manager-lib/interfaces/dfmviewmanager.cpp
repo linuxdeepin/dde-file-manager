@@ -133,7 +133,6 @@ DFMViewManager::DFMViewManager(QObject *parent)
     , d_ptr(new DFMViewManagerPrivate(this))
 {
     dRegisterUrlView<ComputerView>(COMPUTER_SCHEME, QString());
-    dRegisterUrlView<DFMVaultView>(DFMVAULT_SCHEME, QString());
     dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "files");
 
     // register plugins

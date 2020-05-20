@@ -157,8 +157,10 @@ bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &e
 }
 
 bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
-{
-    if (event->action() != DFMGlobal::CopyAction) {
+{    
+    if (event->action() != DFMGlobal::CopyAction &&
+            // 取消对剪切操作的屏蔽
+            event->action() != DFMGlobal::CutAction) {
         event->ignore();
         return false;
     }

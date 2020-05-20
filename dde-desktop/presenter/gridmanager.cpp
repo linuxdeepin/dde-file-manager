@@ -115,7 +115,8 @@ public:
 
             //避免第一次启动的时候，没有执行dde-first-run脚本，因此没有计算机和回收站文件产生
             if (info->fileUrl().fileName() == "dde-computer.desktop"
-                    || info->fileUrl().fileName() == "dde-trash.desktop") {
+                    || info->fileUrl().fileName() == "dde-trash.desktop"
+                    || info->fileUrl().fileName() == "dde-home.desktop") {
                 QString t_filePath = info->fileUrl().path();
                 qDebug() << "desktop file judge:" << t_filePath;
 

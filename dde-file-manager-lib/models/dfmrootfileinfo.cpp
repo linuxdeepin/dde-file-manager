@@ -102,8 +102,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
         if (pathList.size() == 0) {
             qWarning() << url << "not existed";
             //fix 临时解决方案，彻底解决需要DDiskManager::resolveDeviceNode往下追踪
-            for (int i = 0;i < 20; ++i)
-            {
+            for (int i = 0; i < 20; ++i) {
                 QThread::msleep(50);
 
                 pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
@@ -316,7 +315,17 @@ QString DFMRootFileInfo::iconName() const
     if (suffix() == SUFFIX_USRDIR) {
         return systemPathManager->getSystemPathIconNameByPath(redirectedFileUrl().path());
     } else if (suffix() == SUFFIX_GVFSMP) {
-        return d->gmnt ? d->gmnt->themedIconNames().front() : "";
+        //        return d->gmnt ? d->gmnt->themedIconNames().front() : "";
+        // 修改获取图片时崩溃
+        if(d->gmnt){
+            const QStringList &iconList = d->gmnt->themedIconNames();
+            if(iconList.count() > 0){
+                return iconList.front();
+            }
+            return "";
+        }
+        return "";
+
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->blk) {
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
@@ -507,13 +516,10 @@ void DFMRootFileInfo::checkCache()
     //FAT32的卷标编码为ascii，idLabel中取不到中文，这里需要从symlink中取出label
     //symlink中的label编码有问题，这里做进一步处理
     QString idVersion = blk->idVersion().toUpper();
-    if(idVersion == "FAT32")
-    {
-        for (QByteArray ba : blk->symlinks())
-        {
+    if (idVersion == "FAT32") {
+        for (QByteArray ba : blk->symlinks()) {
             QString link(ba);
-            if (link.contains("/by-label/"))
-            {
+            if (link.contains("/by-label/")) {
                 QByteArray t_destByteArray;
                 QByteArray t_tmpByteArray;
                 for (int i = 0; i < ba.size(); i++) {
@@ -630,8 +636,7 @@ bool DFMRootFileInfo::checkMpsStr(const QString &path) const
 {
     Q_D(const DFMRootFileInfo);
 
-    for (QByteArray ba : d->mps)
-    {
+    for (QByteArray ba : d->mps) {
         QString baStr(ba.data());
         if (baStr == path)
             return true;
@@ -655,10 +660,10 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
         {ItemType::GvfsGPhoto2,  6},
         {ItemType::GvfsGeneric,  7}
     };
-    if (!a->exists()) {
+    if (!a || !a->exists()) {
         return false;
     }
-    if (!b->exists()) {
+    if (!b || !b->exists()) {
         return true;
     }
     return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];

@@ -1,0 +1,6 @@
+#!/bin/bash
+sudo rm /usr/bin/testVault;
+sudo rm /usr/share/polkit-1/actions/testVault.policy;
+
+sudo rm deepin-vaultRemove-authenticateProxy /usr/bin/;
+sudo rm policy/com.deepin.pkexec.deepin-vaultRemove-authenticateProxy.policy /usr/share/polkit-1/actions/;

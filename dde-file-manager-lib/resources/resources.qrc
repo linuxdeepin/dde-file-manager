@@ -46,5 +46,8 @@
         <file>icons/deepin/builtin/texts/dfm_rightview_detail_16px.svg</file>
         <file>icons/deepin/builtin/dark/icons/media-external-256px.svg</file>
         <file>icons/deepin/builtin/light/icons/media-external-256px.svg</file>
+        <file>icons/deepin/builtin/icons/dfm_vault_210px.svg</file>
+        <file>icons/deepin/builtin/icons/dfm_vault_active_finish_30px.svg</file>
+        <file>icons/deepin/builtin/icons/dfm_vault_active_finish_128px.svg</file>
     </qresource>
 </RCC>

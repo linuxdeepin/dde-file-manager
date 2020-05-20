@@ -260,7 +260,9 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     DFMBaseView *current_view = tab->fileView();
 
     if (current_view && current_view->rootUrl() == fileUrl) {
-        return false;
+        //! 重新获取当前路径信息
+        bool ok = current_view->setRootUrl(fileUrl);
+        return ok;
     }
 
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
@@ -915,7 +917,7 @@ void DFileManagerWindow::initTitleBar()
     initTitleFrame();
 
     QSet<MenuAction> disableList;
-    VaultController::VaultState state = VaultController::state();
+    VaultController::VaultState state = VaultController::getVaultController()->state();
     if (state == VaultController::NotAvailable) {
         disableList << MenuAction::Vault;
     }

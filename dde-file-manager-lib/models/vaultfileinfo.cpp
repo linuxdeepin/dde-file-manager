@@ -22,6 +22,7 @@
 #include "private/dabstractfileinfo_p.h"
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
+#include "dfilestatisticsjob.h"
 
 #include <QStandardPaths>
 
@@ -32,12 +33,32 @@ public:
 };
 
 VaultFileInfo::VaultFileInfo(const DUrl &url)
-    : DAbstractFileInfo(url)
+    : DAbstractFileInfo(url, false)
 {
     if (url.host() == "files") {
         // normal file map to..
         DUrl actualUrl = DUrl::fromLocalFile(VaultController::vaultToLocal(url));
         setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, actualUrl)));
+    }
+
+//    if (isRootDirectory()) {
+//        m_sizeWorker = new DFileStatisticsJob();
+
+//        VaultController *controller = VaultController::getVaultController();
+
+//        DUrlList urlList;
+//        urlList << controller->vaultToLocalUrl(controller->makeVaultUrl());
+
+//        m_sizeWorker->start(urlList);
+//    }
+}
+
+VaultFileInfo::~VaultFileInfo()
+{
+    if (m_sizeWorker) {
+        m_sizeWorker->stop();
+        delete m_sizeWorker;
+        m_sizeWorker = nullptr;
     }
 }
 
@@ -48,30 +69,39 @@ bool VaultFileInfo::exists() const
         return d->proxy->exists();
     }
 
-    return true;
+    return DAbstractFileInfo::exists();
 }
 
 DUrl VaultFileInfo::parentUrl() const
 {
     Q_D(const VaultFileInfo);
 
-    if (fileUrl().path() == "/") return DUrl();
+    if (fileUrl().path() == "/") return DAbstractFileInfo::parentUrl();
 
     if (d->proxy) {
         return VaultController::localUrlToVault(d->proxy->parentUrl());
     }
 
-    return DUrl();
+    return DAbstractFileInfo::parentUrl();
 }
 
 QString VaultFileInfo::iconName() const
 {
     Q_D(const VaultFileInfo);
-    if (d->proxy) {
-        return d->proxy->iconName();
+
+    QString iconName = "dfm_safebox"; // 如果是根目录，用保险柜图标
+
+    if (!isRootDirectory()) {
+        if (d->proxy) {
+            iconName = d->proxy->iconName();
+        }
+    }
+    else if(!iconName.isEmpty())
+    {
+        return iconName;
     }
 
-    return "drive-harddisk-encrypted"; // it's not really a harddisk.. maybe we should use a dfm scope vault icon.
+    return DAbstractFileInfo::iconName();
 }
 
 QString VaultFileInfo::genericIconName() const
@@ -101,7 +131,7 @@ bool VaultFileInfo::canRedirectionFileUrl() const
         return !d->proxy->isDir();
     }
 
-    return false;
+    return DAbstractFileInfo::canRedirectionFileUrl();
 }
 
 DUrl VaultFileInfo::redirectedFileUrl() const
@@ -114,6 +144,12 @@ DUrl VaultFileInfo::redirectedFileUrl() const
     return DAbstractFileInfo::redirectedFileUrl();
 }
 
+// 解决保险箱无法搜索的问题
+bool VaultFileInfo::canIteratorDir() const
+{
+    return true;
+}
+
 QString VaultFileInfo::subtitleForEmptyFloder() const
 {
     return QObject::tr("Folder is empty");
@@ -124,4 +160,97 @@ DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     DUrl url(parentUrl());
     url.setPath(url.path() + QDir::separator() + fileName);
     return url;
+}
+
+QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
+{
+    if(type != SpaceArea) {
+        if (isRootDirectory()) {
+
+            VaultController::VaultState vaultState = VaultController::getVaultController()->state();
+
+            QVector<MenuAction> actions;
+            if (vaultState == VaultController::Unlocked) {
+
+                actions << MenuAction::Open
+                        << MenuAction::OpenInNewWindow
+                        << MenuAction::Separator
+                        << MenuAction::LockNow
+                        << MenuAction::AutoLock
+                        << MenuAction::Separator
+                        << MenuAction::DeleteVault
+                        << MenuAction::Separator
+                        << MenuAction::Property;
+            } else if (vaultState == VaultController::Encrypted) {
+                actions << MenuAction::UnLock
+                        << MenuAction::UnLockByKey;
+            }
+
+            return actions;
+        }
+    }
+
+    return DAbstractFileInfo::menuActionList(type);
+}
+
+QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList(MenuType type) const
+{
+    if(type != SpaceArea) {
+        if (isRootDirectory()) {
+
+         QMap<MenuAction, QVector<MenuAction> > actions;
+         QVector<MenuAction> vecActions;
+
+         vecActions << MenuAction::Never
+                    << MenuAction::Separator
+                    << MenuAction::FiveMinutes
+                    << MenuAction::TenMinutes
+                    << MenuAction::TwentyMinutes;
+
+         actions.insert(MenuAction::AutoLock, vecActions);
+
+         return actions;
+        }
+     }
+
+     return DAbstractFileInfo::subMenuActionList();
+}
+
+QString VaultFileInfo::fileDisplayName() const
+{
+    if (isRootDirectory()) {
+        return QObject::tr("My File Vault");
+    }
+
+    return DAbstractFileInfo::fileDisplayName();
+}
+
+bool VaultFileInfo::canRename() const
+{
+    if (isRootDirectory()) {
+        return false;
+    }
+    return DAbstractFileInfo::canRename();
+}
+
+qint64 VaultFileInfo::size() const
+{
+//    if (isRootDirectory() && m_sizeWorker) {
+
+//        qint64 totoalSize = m_sizeWorker->totalSize();
+//        return totoalSize;
+//    }
+
+    return DAbstractFileInfo::size();
+}
+
+
+bool VaultFileInfo::isRootDirectory() const
+{
+    bool bRootDir = false;
+    QString localFilePath = VaultController::getVaultController()->makeVaultLocalPath();
+    if (localFilePath == DAbstractFileInfo::filePath()) {
+        bRootDir = true;
+    }
+    return bRootDir;
 }

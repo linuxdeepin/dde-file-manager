@@ -61,6 +61,7 @@ include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
+include(vault/vault.pri)
 
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
@@ -276,7 +277,15 @@ HEADERS += \
     views/dfmsplitter.h \
     dbus/dbussysteminfo.h \
     models/deviceinfoparser.h \
-    controllers/dfmsidebarvaultitemhandler.h
+    controllers/dfmsidebarvaultitemhandler.h \
+    controllers/vaulthandle.h \
+    controllers/vaulterrorcode.h \
+    views/dfmvaultremovepages.h \
+    views/dfmvaultactiveview.h \
+    views/dfmvaultactivestartview.h \
+    views/dfmvaultactivesavekeyview.h \
+    views/dfmvaultactivefinishedview.h \
+    views/dfmvaultactivesetunlockmethodview.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -468,7 +477,14 @@ SOURCES += \
     views/dfmsplitter.cpp \
     dbus/dbussysteminfo.cpp \
     models/deviceinfoparser.cpp \
-    controllers/dfmsidebarvaultitemhandler.cpp
+    controllers/dfmsidebarvaultitemhandler.cpp \
+    controllers/vaulthandle.cpp \
+    views/dfmvaultremovepages.cpp \
+    views/dfmvaultactiveview.cpp \
+    views/dfmvaultactivestartview.cpp \
+    views/dfmvaultactivesavekeyview.cpp \
+    views/dfmvaultactivefinishedview.cpp \
+    views/dfmvaultactivesetunlockmethodview.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
@@ -576,9 +592,11 @@ readmefile.path = $$PREFIX/share/deepin/$$TARGET/oem-menuextensions
 readmefile.files = plugins/.readme
 
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations \
- icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile
+ icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile policy
 
 DISTFILES += \
-    mimetypeassociations/mimetypeassociations.json
+    mimetypeassociations/mimetypeassociations.json \
+    confirm/deepin-vault-authenticateProxy \
+    policy/com.deepin.pkexec.deepin-vault-authenticateProxy.policy
 
 include($$PWD/settings_dialog_json.pri)

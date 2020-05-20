@@ -573,6 +573,7 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false, bool force = false)
 {
     DFileCopyMoveJob *job = new DFileCopyMoveJob();
+
     //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
 
     if (force) {

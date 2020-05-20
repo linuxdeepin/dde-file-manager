@@ -114,11 +114,19 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     font.setWeight(66);
     painter->setFont(font);
     painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
-    QString text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
+
+    QString fileSysType = index.data(ComputerModel::DataRoles::FileSystemRole).toString();
+    int fstw = par->fontMetrics().width(fileSysType);
+    QString text;
+    if (!fileSysType.isEmpty()) {
+        text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width - fstw - 7);
+    } else {
+        text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
+    }
+
     painter->drawText(textrect, Qt::TextWrapAnywhere, text, &otextrect);
 
     // 添加对文件系统格式的显示
-    QString fileSysType = index.data(ComputerModel::DataRoles::FileSystemRole).toString();
     if (!fileSysType.isEmpty()) {
 
         // 使用细线进行绘制
@@ -127,7 +135,6 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
 
         otextrect.moveLeft(otextrect.right() + 12);
         otextrect.moveBottom(otextrect.bottom() + 2);
-        int fstw = par->fontMetrics().width(fileSysType);
         otextrect.setWidth(fstw);
         otextrect.setHeight(fontpixelsize + 4);
         otextrect.adjust(-5, 0, 5, 0);
@@ -175,7 +182,14 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     quint64 sizetotal = index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong();
 
     painter->setPen(pl.color(DPalette::TextTips));
-    painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
+
+    QString scheme = index.data(ComputerModel::DataRoles::Scheme).toString();
+    if (scheme == DFMVAULT_SCHEME) {
+        // 保险柜只显示大小
+        painter->drawText(textrect, Qt::AlignLeft, FileUtils::formatSize(static_cast<qint64>(sizeinuse)));
+    } else {
+        painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
+    }
 
     QRect usgplrect(option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize), QSize(text_max_width, 6));
     QStyle *sty = option.widget && option.widget->style() ? option.widget->style() : qApp->style();
@@ -199,8 +213,12 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     plopt.palette = option.widget ? option.widget->palette() : qApp->palette();
     plopt.palette.setColor(QPalette::ColorRole::Highlight, plcolor);
     painter->setPen(Qt::PenStyle::NoPen);
-    sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
-    sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
+
+    // 保险柜只显示大小
+    if (scheme != DFMVAULT_SCHEME) {
+        sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
+        sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
+    }
 
     painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 }

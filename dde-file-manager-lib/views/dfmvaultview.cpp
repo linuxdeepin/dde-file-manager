@@ -41,14 +41,17 @@ FallbackDispatcher::FallbackDispatcher(QWidget *parent)
 
 QPair<DUrl, bool> FallbackDispatcher::requireRedirect(VaultController::VaultState state)
 {
-    switch (state) {
-    case VaultController::Unlocked:
-        return {VaultController::makeVaultUrl(), true};
-    case VaultController::Encrypted:
-        return {VaultController::makeVaultUrl("/", "unlock"), true};
-    default:
-        return {VaultController::makeVaultUrl("/", "setup"), true};
-    }
+    // gongheng测试
+    return {VaultController::makeVaultUrl(), true};
+
+//    switch (state) {
+//    case VaultController::Unlocked:
+//        return {VaultController::makeVaultUrl(), true};
+//    case VaultController::Encrypted:
+//        return {VaultController::makeVaultUrl("/", "unlock"), true};
+//    default:
+//        return {VaultController::makeVaultUrl("/", "setup"), true};
+//    }
 }
 
 // --------------------------------------------------------
@@ -60,8 +63,8 @@ DFMVaultView::DFMVaultView(QWidget *parent)
     , m_contentWidget(nullptr)
 {
     registerContentWidget("setup", new DFMVaultSetupPages(this));
-    registerContentWidget("unlock", new DFMVaultUnlockPages(this));
-    registerContentWidget("recovery_key", new DFMVaultRecoveryKeyPages(this));
+    //registerContentWidget("unlock", new DFMVaultUnlockPages(this));
+    //registerContentWidget("recovery_key", new DFMVaultRecoveryKeyPages(this));
     registerContentWidget("_fallback_", new FallbackDispatcher(this));
 }
 
@@ -84,7 +87,7 @@ bool DFMVaultView::setRootUrl(const DUrl &url)
 {
     m_rootUrl = url;
 
-    VaultController::VaultState state = VaultController::state();
+    VaultController::VaultState state = VaultController::getVaultController()->state();
     QString contentKey = url.host();
 
     if (!m_contentMap.contains(contentKey)) {

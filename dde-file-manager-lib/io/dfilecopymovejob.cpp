@@ -1569,7 +1569,6 @@ void DFileCopyMoveJobPrivate::_q_updateProgress()
 DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
     : DFileCopyMoveJob(*new DFileCopyMoveJobPrivate(this), parent)
 {
-
 }
 
 DFileCopyMoveJob::~DFileCopyMoveJob()
@@ -1984,6 +1983,7 @@ void DFileCopyMoveJob::run()
         d->targetUrlList << target_url;
 
         Q_EMIT finished(source, target_url);
+
     }
 
     d->setError(NoError);

@@ -79,6 +79,8 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initUserShareItem();
     initRecentItem();
 
+ //   DFMSideBarManager::instance();
+
 
     m_timer = new QTimer(this);
     connect(m_timer,&QTimer::timeout,[ = ](){

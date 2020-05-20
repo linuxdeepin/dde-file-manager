@@ -95,47 +95,6 @@
 #define ArrowLineExpand_HIGHT   30
 #define ArrowLineExpand_SPACING 10
 
-DFM_BEGIN_NAMESPACE
-static QString ElideText(const QString &text, const QSize &size,
-                         QTextOption::WrapMode wordWrap, const QFont &font,
-                         Qt::TextElideMode mode, int lineHeight, int lastLineWidth)
-{
-    int height = 0;
-    QTextLayout textLayout(text);
-    QString str;
-    QFontMetrics fontMetrics(font);
-
-    textLayout.setFont(font);
-    const_cast<QTextOption *>(&textLayout.textOption())->setWrapMode(wordWrap);
-
-    textLayout.beginLayout();
-    QTextLine line = textLayout.createLine();
-    line.setLineWidth(size.width());
-
-    QString tmp_str = nullptr;
-    if (fontMetrics.boundingRect(text).width() <= line.width()) {
-        tmp_str = text.mid(line.textStart(), line.textLength());
-        str = tmp_str;
-    } else {
-        while (line.isValid()) {
-            //height += lineHeight;
-            line.setLineWidth(size.width());
-            tmp_str = text.mid(line.textStart(), line.textLength());
-            if (tmp_str.indexOf('\n'))
-                height += lineHeight;
-            str += tmp_str;
-            line = textLayout.createLine();
-            if (line.isValid())
-                str.append("\n");
-        }
-    }
-
-    textLayout.endLayout();
-
-    return str;
-}
-DFM_END_NAMESPACE
-
 bool DFMRoundBackground::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == parent() && event->type() == QEvent::Paint) {
@@ -1087,23 +1046,24 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     QLabel *locationPathLabel = nullptr;
     if (info->isSymLink()) {
         LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->symlinkTargetPath());
+        linkPathLabel->setToolTip(info->symlinkTargetPath());
         linkPathLabel->setLinkTargetUrl(info->redirectedFileUrl());
         linkPathLabel->setOpenExternalLinks(true);
-        linkPathLabel->setWordWrap(true);
+        linkPathLabel->setWordWrap(false);
+        QString t = linkPathLabel->fontMetrics().elidedText(info->symlinkTargetPath(), Qt::ElideMiddle, 150);
+        linkPathLabel->setText(t);
         locationPathLabel = linkPathLabel;
     } else {
         locationPathLabel = new SectionValueLabel();
+        QString absoluteFilePath = info->absoluteFilePath();
+        locationPathLabel->setText(absoluteFilePath);
+        locationPathLabel->setToolTip(absoluteFilePath);
+        QString t = locationPathLabel->fontMetrics().elidedText(absoluteFilePath, Qt::ElideMiddle, 150);
+        locationPathLabel->setWordWrap(false);
+        locationPathLabel->setText(t);
     }
-    locationPathLabel->setWordWrap(true);
-    locationPathLabel->setText(info->absoluteFilePath());
-    QFontMetrics fm = linkPathSectionLabel->fontMetrics();
-    locationPathLabel->setMinimumWidth(qMin(160, 250 - fm.boundingRect(linkPathSectionLabel->text()).width()));
-    auto fp = ElideText(locationPathLabel->text(), {locationPathLabel->width(), fm.height()}, QTextOption::WrapAnywhere,
-                        locationPathLabel->font(), Qt::ElideRight, fm.height(), locationPathLabel->width());
 
-    locationPathLabel->setText(fp);
     layout->addRow(linkPathSectionLabel, locationPathLabel);
-
     if (!info->isVirtualEntry()) {
         layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
         layout->addRow(TimeReadSectionLabel, timeReadLabel);

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128px" height="128px" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.2 (81672) - https://sketch.com -->
+    <title>success</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#55C600" offset="0%"></stop>
+            <stop stop-color="#00C3B6" offset="100%"></stop>
+        </linearGradient>
+        <path d="M64,113 C91.0619527,113 113,91.0619527 113,64 C113,36.9380473 91.0619527,15 64,15 C36.9380473,15 15,36.9380473 15,64 C15,91.0619527 36.9380473,113 64,113 Z" id="path-2"></path>
+        <filter x="-12.2%" y="-6.1%" width="124.5%" height="124.5%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="6" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0.835294118   0 0 0 0 0.270588235  0 0 0 0.3 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="按钮规范" transform="translate(-43.000000, -288.000000)">
+            <g id="success" transform="translate(43.000000, 288.000000)">
+                <g id="icon/success" transform="translate(0.000000, -0.000000)">
+                    <g id="Combined-Shape">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                        <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    </g>
+                    <path d="M53.4382219,78.9845183 C56.4382919,82.229833 61.2950661,82.2138646 64.2746411,78.9613939 L90.7817734,50.0265056 C91.9009716,48.8048014 91.8178741,46.9071249 90.5961698,45.7879267 C89.3744656,44.6687284 87.4767891,44.751826 86.3575909,45.9735302 L60.2285673,74.5671381 C59.4864832,75.3792183 58.2797624,75.3829284 57.5206665,74.5617792 L43.2029373,59.0736281 C42.0782368,57.8569873 40.1802046,57.7824551 38.9635639,58.9071557 C37.7469232,60.0318563 37.672391,61.9298884 38.7970915,63.1465291 L53.4382219,78.9845183 Z" id="Path-119" fill="#FFFFFF" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

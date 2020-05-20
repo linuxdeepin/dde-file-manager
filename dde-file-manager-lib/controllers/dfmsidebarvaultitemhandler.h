@@ -25,8 +25,10 @@
 
 #define SIDEBAR_ID_VAULT "__vault"
 
-DFM_BEGIN_NAMESPACE
+class DFileManagerWindow;
+class DFileMenu;
 
+DFM_BEGIN_NAMESPACE
 /**
  * @brief 实现侧边栏保险箱
  */
@@ -61,6 +63,14 @@ public:
      */
     QMenu *contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item) override;
 
+    /**
+     * @brief 产生菜单
+     * @param topWidget
+     * @param sender
+     * @return 菜单项目
+     */
+    DFileMenu *generateMenu(QWidget *topWidget, const DFMSideBar *sender = nullptr);
+
 private:
     /**
      * @brief 立即上锁
@@ -70,25 +80,25 @@ private:
 
     /**
      * @brief 自动上锁
-     * @param minutes 倒计时（分钟）
+     * @param lockState 加锁状态
      * @return 自动上锁是否成功
      */
-    bool autoLock(uint minutes);
+    bool autoLock(int lockState);
 
     /**
      * @brief 显示删除保险箱页面
      */
-    void showDeleteVaultView();
+    void showDeleteVaultView(DFileManagerWindow *wnd);
 
     /**
      * @brief 显示解锁页面
      */
-    void showUnLockView();
+    void showUnLockView(DFileManagerWindow *wnd);
 
     /**
      * @brief 显示凭证页面
      */
-    void showCertificateView();
+    void showCertificateView(DFileManagerWindow *wnd);
 };
 
 DFM_END_NAMESPACE
