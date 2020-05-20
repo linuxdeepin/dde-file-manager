@@ -417,9 +417,11 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
     return lastErrorHandleAction;
 }
 
+#define TASK_RUNNING_MAX_COUNT 5
+
 bool DFileCopyMoveJobPrivate::isRunning()
 {
-    return (this->state == DFileCopyMoveJob::RunningState);
+    return (this->state == DFileCopyMoveJob::RunningState);//&& (m_taskRunningCount <= TASK_RUNNING_MAX_COUNT ) ;
 }
 
 bool DFileCopyMoveJobPrivate::jobWait()
@@ -858,7 +860,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
 
                 action = handleError(fromInfo, toInfo);
             }
-        } while (action == DFileCopyMoveJob::RetryAction);
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
 
         if (action != DFileCopyMoveJob::NoAction) {
             return action == DFileCopyMoveJob::SkipAction;
@@ -977,7 +979,7 @@ open_file: {
 
                 action = handleError(toInfo, nullptr);
             }
-        } while (action == DFileCopyMoveJob::RetryAction);
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
 
         if (action == DFileCopyMoveJob::SkipAction) {
             return true;
@@ -993,7 +995,7 @@ open_file: {
                     setError(DFileCopyMoveJob::ResizeError, toDevice->errorString());
                     action = handleError(toInfo, nullptr);
                 }
-            } while (action == DFileCopyMoveJob::RetryAction);
+            } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
 
             if (action == DFileCopyMoveJob::SkipAction) {
                 return true;
@@ -1211,7 +1213,7 @@ open_file: {
             setError(DFileCopyMoveJob::OpenError, "Unable to open file for integrity check, , cause: " + toDevice->errorString());
             action = handleError(toInfo, nullptr);
         }
-    } while (action == DFileCopyMoveJob::RetryAction);
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
     if (action == DFileCopyMoveJob::SkipAction) {
         return true;
@@ -1305,7 +1307,7 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
         }
 
         action = handleError(fileInfo, nullptr);
-    } while (action == DFileCopyMoveJob::RetryAction);
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
 
     return action == DFileCopyMoveJob::SkipAction;
 }
@@ -1361,7 +1363,7 @@ bool DFileCopyMoveJobPrivate::doLinkFile(DFileHandler *handler, const DAbstractF
 
         setError(DFileCopyMoveJob::SymlinkError, qApp->translate("DFileCopyMoveJob", "Fail to create symlink, cause: %1").arg(handler->errorString()));
         action = handleError(fileInfo, nullptr);
-    } while (action == DFileCopyMoveJob::RetryAction);
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
     return action == DFileCopyMoveJob::SkipAction;
 }
@@ -1433,6 +1435,7 @@ bool DFileCopyMoveJobPrivate::linkFile(DFileHandler *handler, const DAbstractFil
 void DFileCopyMoveJobPrivate::beginJob(JobInfo::Type type, const DUrl &from, const DUrl &target)
 {
     qCDebug(fileJob(), "job begin, Type: %d, from: %s, to: %s", type, qPrintable(from.toString()), qPrintable(target.toString()));
+
     jobStack.push({type, QPair<DUrl, DUrl>(from, target)});
     currentJobDataSizeInfo = qMakePair(-1, 0);
     currentJobFileHandle = -1;
