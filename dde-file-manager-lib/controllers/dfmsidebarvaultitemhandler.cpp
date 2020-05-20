@@ -211,11 +211,12 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
 bool DFMSideBarVaultItemHandler::lockNow()
 {
-    // Something to do.
     // 如果正在有保险箱的移动、粘贴、删除操作，置顶弹出任务框
     DTaskDialog *pTaskDlg = dialogManager->taskDialog();
     if(pTaskDlg){
         if(pTaskDlg->bHaveNotCompletedVaultTask()){
+            // Flashing alert
+            pTaskDlg->hide();
             pTaskDlg->showDialogOnTop();
         }
     }
