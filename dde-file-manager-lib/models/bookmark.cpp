@@ -62,6 +62,11 @@ QString BookMark::getName() const
     return fileUrl().bookmarkName();
 }
 
+QString BookMark::getMountPoint() const
+{
+    return udisksMountPoint;
+}
+
 /*!
  * \brief Check if bookmark target file exist
  *
@@ -124,13 +129,17 @@ DUrl BookMark::redirectedFileUrl() const
     if (!mountPoint.isEmpty() && !locateUrl.isEmpty()) {
         DUrl mountPointUrl(mountPoint);
         QString schemeStr = mountPointUrl.scheme();
+        //为防止locateUrl传入QUrl被转码，locateUrl统一保存为base64,这里需要从base64转回来。
+        QByteArray ba = QByteArray::fromBase64(locateUrl.toLocal8Bit());
 
         if (!udisksDBusPath.isEmpty() && !udisksMountPoint.isEmpty()) {
-            return DUrl::fromLocalFile(udisksMountPoint + locateUrl);
+//            return DUrl::fromLocalFile(udisksMountPoint + locateUrl);
+            return DUrl::fromLocalFile(udisksMountPoint + QString(ba));
         }
 
         if (schemeStr == SMB_SCHEME || schemeStr == FTP_SCHEME || schemeStr == SFTP_SCHEME) {
-            mountPointUrl.setPath(mountPointUrl.path() + locateUrl);
+//            mountPointUrl.setPath(mountPointUrl.path() + locateUrl);
+            mountPointUrl.setPath(mountPointUrl.path() + QString(ba));
             return mountPointUrl;
         }
     }
