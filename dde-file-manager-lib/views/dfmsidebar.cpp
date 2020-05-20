@@ -623,7 +623,9 @@ void DFMSideBar::initDeviceConnection()
 
     QList<DAbstractFileInfoPointer> filist = DFileService::instance()->getChildren(this, DUrl(DFMROOT_ROOT),
                                                                                    QStringList(), QDir::AllEntries,QDirIterator::NoIteratorFlags,false, true);
+
     std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
+    DFileService::instance()->changRootFile(filist);
 
     for (const DAbstractFileInfoPointer &fi : filist) {
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
