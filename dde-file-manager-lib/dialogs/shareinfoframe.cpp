@@ -114,23 +114,28 @@ void ShareInfoFrame::initConnect()
 
 void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
 {
-    if (checked) { //判断是否添加共享
-        QProcess process;
-        process.setProgram("net");
-        process.setArguments(QStringList() << "usershare" << "info" << m_shareNamelineEdit->text());
-        process.start();
-        process.waitForFinished(-1);
-        QString shareState = process.readAll();
-        if (!shareState.isEmpty()) { //判断共享名是否重复
-            DDialog dialog(this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-            dialog.setTitle(tr("Share name %1 already exists, do you want to replace it?").arg(m_shareNamelineEdit->text()));
-            dialog.addButton(tr("Cancel"), true);
-            dialog.addButton(tr("Replace"), false, DDialog::ButtonWarning);
-            if (dialog.exec() != DDialog::Accepted) {
-                m_shareCheckBox->setChecked(false);
-                m_shareNamelineEdit->setFocus(); //进入编辑
-                return;
+    if (checked) { //判断是否为添加共享
+        QDir d("/var/lib/samba/usershares"); //该目录存放了通过程序net共享的共享信息，文件名是共享名,文件名统一小写
+        QFileInfoList infolist = d.entryInfoList(QDir::Files); //读取/var/lib/samba/usershares目录下文件信息
+        for (QFileInfo info : infolist) {
+            if (m_shareNamelineEdit->text().toLower() == info.fileName()) { //查询共享名是否重复，因为程序net保存的文件名统一小写，所以先将共享名转为小写判断
+                DDialog dialog(this);
+                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+                dialog.addButton(tr("Cancel"), true);
+
+                if (!info.isWritable()) { //不可则无法替换
+                    dialog.setTitle(tr("Share name %1 is already taken by other users, please modify the share name.").arg(m_shareNamelineEdit->text()));
+                } else { //可写则添加替换按钮
+                    dialog.setTitle(tr("Share name %1 already exists, do you want to replace it?").arg(m_shareNamelineEdit->text()));
+                    dialog.addButton(tr("Replace"), false, DDialog::ButtonWarning);
+                }
+
+                if (dialog.exec() != DDialog::Accepted) {
+                    m_shareCheckBox->setChecked(false);
+                    m_shareNamelineEdit->setFocus(); //进入编辑
+                    return;
+                }
+                break; //终止循环
             }
         }
     }
