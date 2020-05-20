@@ -133,7 +133,7 @@ int VaultKeyPage::afterRecoveryKeyChanged(QString &str)
     int location = m_keyEdit->textCursor().position(); // 计算当前光标位置
     int srcLength = str.length();   // 用于计算原有字符串中的“-”数量
     //清除所有的“-”
-    str.replace(tr("-"), tr(""));
+    str.replace("-", "");
     int minusNumber = srcLength - str.length(); // 原有字符串中的“-”数量
 
     int index = 4;
@@ -142,7 +142,7 @@ int VaultKeyPage::afterRecoveryKeyChanged(QString &str)
     int length = str.length();
     while (index < length) {
         if (index % 4 == 0){
-            str.insert(index + minusNum, tr("-"));
+            str.insert(index + minusNum, "-");
             minusNum++;
         }
         index++;
@@ -166,7 +166,7 @@ QString VaultKeyPage::getKey()
 {
     QString strKey = m_keyEdit->toPlainText();
 
-    return strKey.replace(tr("-"), tr(""));
+    return strKey.replace("-", "");
 }
 
 void VaultKeyPage::clear()
@@ -270,7 +270,7 @@ void DFMVaultRemovePages::initUI()
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], true);
     addButton(buttonTexts[2], true);
-    getButton(2)->setStyleSheet(tr("color: rgb(255, 85, 0);"));
+    getButton(2)->setStyleSheet("color: rgb(255, 85, 0);");
     setDefaultButton(2);
 
     QFrame *mianFrame = new QFrame(this);
@@ -375,7 +375,7 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
             // 密钥验证
             VaultKeyPage *keyPage = qobject_cast<VaultKeyPage *>(m_pages[PageType::Key]);
             QString strKey = keyPage->getKey();
-            strKey.replace(tr("-"), tr(""));
+            strKey.replace("-", "");
             QString strClipher("");
 
             if (!InterfaceActiveVault::checkUserKey(strKey, strClipher)){
@@ -420,7 +420,8 @@ void DFMVaultRemovePages::onLockVault(int state)
         accept();
     }else if (state != 0 && m_bRemoveVault) {
         // something to do
-        DMessageBox::information(this, tr("tips"), tr("Remove failed,the error code is %1").arg(state));
+        QString msg = tr("Remove failed,the error code is ") + QString::number(state);
+        DMessageBox::information(this, tr("tips"), msg);
     }
     m_bRemoveVault = false;
 }
