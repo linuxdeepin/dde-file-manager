@@ -38,6 +38,6 @@ void Dde::Session::RegisterDdeSession()
                              "/com/deepin/SessionManager",
                              "com.deepin.SessionManager",
                              QDBusConnection::sessionBus());
-        iface.asyncCall("Register", QString(cookie));
+        iface.call("Register", QString(cookie));
     }
 }

@@ -418,6 +418,7 @@ void RecentController::handleFileChanged()
             }
 
             const QStringRef &location = reader.attributes().value("href");
+            const QStringRef &readTime = reader.attributes().value("modified");
 
             if (!location.isEmpty()) {
                 DUrl url = DUrl(location.toString());
@@ -429,15 +430,15 @@ void RecentController::handleFileChanged()
                     urlList << recentUrl;
 
                     DThreadUtil::runInMainThread([=]() {
-                        RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
+//                        RecentPointer fileInfo();
                         if (!recentNodes.contains(recentUrl)) {
-                            recentNodes[recentUrl] = fileInfo;
+                            recentNodes[recentUrl] = new RecentFileInfo(recentUrl);
                             DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
                                                               &DAbstractFileWatcher::subfileCreated,
                                                               recentUrl);
                         }
                         //如果readtime变更了，需要通知filesystemmodel重新排序
-                        else if (recentNodes[recentUrl]->readDateTime().toSecsSinceEpoch() != fileInfo->readDateTime().toSecsSinceEpoch()) {
+                        else if (recentNodes[recentUrl]->readDateTime().toSecsSinceEpoch() != QDateTime::fromString(readTime.toString()).toSecsSinceEpoch()) {
                             DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
                                                               &DAbstractFileWatcher::fileModified,
                                                               recentUrl);

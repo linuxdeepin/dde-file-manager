@@ -4,43 +4,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2684"/>
+        <location filename="../view/canvasgridview.cpp" line="2692"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2690"/>
+        <location filename="../view/canvasgridview.cpp" line="2698"/>
         <source>Auto merge</source>
         <translation>自动整理</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2705"/>
+        <location filename="../view/canvasgridview.cpp" line="2713"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2762"/>
-        <location filename="../view/canvasgridview.cpp" line="2765"/>
+        <location filename="../view/canvasgridview.cpp" line="2770"/>
+        <location filename="../view/canvasgridview.cpp" line="2773"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2767"/>
+        <location filename="../view/canvasgridview.cpp" line="2775"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁纸与屏保</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2879"/>
+        <location filename="../view/canvasgridview.cpp" line="2887"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2745"/>
+        <location filename="../view/canvasgridview.cpp" line="2753"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2754"/>
+        <location filename="../view/canvasgridview.cpp" line="2762"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>
@@ -76,7 +76,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="136"/>
+        <location filename="../main.cpp" line="142"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
