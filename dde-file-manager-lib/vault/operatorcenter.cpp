@@ -64,7 +64,7 @@ bool OperatorCenter::executeProcess(const QString &cmd)
         return runCmd(cmd);
     }
 
-    QString newCmd = "pkexec deepin-devicemanager-authenticateProxy \"";
+    QString newCmd = QString(ROOT_PROXY) + " \"";
     newCmd += cmd;
     newCmd += "\"";
     newCmd.remove("sudo");
@@ -453,10 +453,14 @@ QString OperatorCenter::autoGeneratePassword(int length)
 bool OperatorCenter::getRootPassword()
 {
     // 判断当前是否是管理员登陆
-    bool res = runCmd("id -un");
-    if(res == true && standOutput_.trimmed() == "root"){
+    bool res = runCmd("id -un");  // file path is fixed. So write cmd direct
+    if ( res == true && standOutput_.trimmed() == "root" ) {
         return true;
-    }else {
-        return runCmd(ROOT_PROXY);
     }
+
+    if ( false == executeProcess("sudo whoami")) {
+        return false;
+    }
+
+    return true;
 }
