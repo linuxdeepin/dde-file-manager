@@ -397,6 +397,8 @@ void ComputerModel::removeItem(const DUrl &url)
         return;
     }
 
+    m_nDiskNumber--;
+
     beginRemoveRows(QModelIndex(), p, p);
     m_items.removeAt(p);
     endRemoveRows();
