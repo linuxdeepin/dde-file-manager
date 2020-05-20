@@ -1135,7 +1135,8 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
 
 void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 {
-    if (from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
+    //如果被重命名的目录是root目录，则不刷新该目录,而是直接退回到上层目录
+    if (from.isLocalFile() && from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
         return;
     }
 
