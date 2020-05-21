@@ -20,48 +20,60 @@
 *
 * This program is the full text search at dde-file-manager.
 */
+//#include <gtk/gtk.h>
+//#include <glib/gi18n.h>
 #include <locale.h>
 #include "fsearch_config.h"
 #include "fsearch.h"
 #include <stdlib.h>
 #include <string.h>
-#define DEBUG_SEARCH    1
-bool m_searchState=FALSE;
+void fsearch_Close(void);
 typedef void (*callbackFunc)(void *);
 
+callbackFunc callBackFunc = NULL;
 FsearchApplication* app = NULL;
 static GPtrArray *results;
 static unsigned int  num_results = 0;
 static char keyworld[256]={0};
-/*
- *搜索初始化
-*/
-void fsearch_Init(void)
+
+void fsearch_Init(const char*path)
 {
     app=(FsearchApplication *) calloc(1,sizeof(FsearchApplication));
     app->config = (FsearchConfig *)calloc (1, sizeof (FsearchConfig));
     if (!config_load_default (app->config)) {
     }
-    app->config->locations = g_list_append (app->config->locations, "/");//默认初始化根目录
     app->db = NULL;
     app->search = NULL;
+    app->config->locations=NULL;
     g_mutex_init (&app->mutex);
+    app->config->locations = g_list_append (app->config->locations, path);//默认初始化根目录
     load_database(app);//更新数据库
     app->pool = fsearch_thread_pool_init ();//初始化线程池
-    app->search = db_search_new (fsearch_application_get_thread_pool (app));//开启线程池
-    m_searchState=TRUE;
+    app->search = db_search_new (fsearch_application_get_thread_pool (app));
+}
+void fsearch_DeInit(char*path)
+{
+    app=(FsearchApplication *) calloc(1,sizeof(FsearchApplication));
+    app->config = (FsearchConfig *)calloc (1, sizeof (FsearchConfig));
+    if (!config_load_default (app->config)) {
+    }
+    app->db = NULL;
+    app->search = NULL;
+    app->config->locations=NULL;
+    g_mutex_init (&app->mutex);
+    app->config->locations = g_list_append (app->config->locations, path);//默认初始化根目录
+    load_database(app);//更新数据库
+    app->pool = fsearch_thread_pool_init ();//初始化线程池
+    app->search = db_search_new (fsearch_application_get_thread_pool (app));
 }
 /*
  * 更新数据库
 */
 void fsearch_UpdateDb(char*path)
 {
-    if(m_searchState==TRUE)
-    {
-        app->config->locations = g_list_append (app->config->locations, path);
-        load_database(app);
-    }
-
+    fsearch_Close();
+    app->config->locations = g_list_append (app->config->locations, path);
+    load_database(app);
 }
 /*
  *fsearch_Find 的回调函数，用于把数据用回调的方式传送给fsearch_Find的callback
@@ -70,16 +82,16 @@ gboolean
 update_model_cb (gpointer user_data)
 {
     DatabaseSearchResult *result = user_data;
-    results=NULL;
     db_search_results_clear (app->search);
+    results=NULL;
     num_results = 0;
-
     results = result->results;
     if (results) {
         app->search->results = results;
         app->search->num_folders = result->num_folders;;
         app->search->num_files = result->num_files;
         num_results = results->len;
+        callBackFunc(app->search);
     }
     else {
         app->search->results = NULL;
@@ -93,25 +105,16 @@ update_model_cb (gpointer user_data)
 }
 GPtrArray * get_Result(void)
 {
-    if(m_searchState==TRUE){
+    if(results!=NULL)
         return results;
-    }
     else {
         return NULL;
     }
 }
 unsigned int get_ResultLen(void)
 {
-    if(m_searchState==TRUE){
-       return num_results;
-    }
-    else {
-        return 0;
-    }
-}
-char*  get_keyworld(void)
-{
-    return keyworld;
+  return num_results;
+
 }
 /*
  *  fsearch_Find的回调函数
@@ -125,63 +128,81 @@ fsearch_application_window_update_results (void *data)
 /*
  *用于在线程池里面查找text
 */
+#if 0
 void fsearch_Find(const char*text)
 {
-    if(m_searchState==TRUE){
-        Database *db = app->db;
-        memcpy(keyworld,text,strlen(text));
-        if (!db_try_lock (db)) {
-            return ;
-        }
-        if (app->search) {
-                db_search_update (app->search,
-                      db_get_entries (db),
-                      db_get_num_entries (db),
-                      1000,
-                      0,
-                      text,
-                      app->config->hide_results_on_empty_search,
-                      app->config->match_case,
-                      app->config->enable_regex,
-                      app->config->auto_search_in_path,
-                      app->config->search_in_path);
-
-                db_perform_search (app->search, fsearch_application_window_update_results, app);
-            }
-       db_unlock (db);
+    db_search_results_clear (app->search);
+//    fsearch_UpdateDb(path);
+    Database *db = app->db;
+    if (!db_try_lock (db)) {
+        return ;
     }
-    return ;
-}
+    if (app->search) {
+            db_search_update (app->search,
+                  db_get_entries (db),
+                  db_get_num_entries (db),
+                  1000,
+                  0,
+                  text,
+                  app->config->hide_results_on_empty_search,
+                  app->config->match_case,
+                  app->config->enable_regex,
+                  app->config->auto_search_in_path,
+                  app->config->search_in_path);
 
+            db_perform_search (app->search, fsearch_application_window_update_results, app);
+        }
+        db_unlock (db);
+        return ;
+}
+#else
+void fsearch_Find(const char*text,void (*callback)(void *))
+{
+    db_search_results_clear (app->search);
+    Database *db = app->db;
+    if (!db_try_lock (db)) {
+        return ;
+    }
+    if (app->search) {
+            db_search_update (app->search,
+                  db_get_entries (db),
+                  db_get_num_entries (db),
+                  5000,
+                  0,
+                  text,
+                  app->config->hide_results_on_empty_search,
+                  app->config->match_case,
+                  app->config->enable_regex,
+                  app->config->auto_search_in_path,
+                  app->config->search_in_path);
+
+            db_perform_search (app->search, fsearch_application_window_update_results, app);
+        }
+        db_unlock (db);
+        callBackFunc = callback;
+        return ;
+}
+#endif
 /*
- *搜索不使用，要销毁不必要的内存
+ *不再使用以后销毁不必要的内存
  *
 */
 void fsearch_Close(void)
 {
-    if(m_searchState==TRUE){
-        if(app){
-            FsearchApplication *fsearch = app;
-
-            if (fsearch->db) {
-                db_save_locations (fsearch->db);
-                db_clear (fsearch->db);
-            }
-            if (fsearch->pool) {
-                fsearch_thread_pool_free (fsearch->pool);
-            }
-            config_free (fsearch->config);
-            g_mutex_clear (&fsearch->mutex);
-            app=0;
-        }
+    FsearchApplication *fsearch = app;
+    if(app==NULL)
+    {
+        return;
     }
 
-    m_searchState=FALSE;
-}
-/*
- * 返回搜索引擎状态，用于在搜索和不搜索状态间的切换
-*/
-bool get_search_state(void)
-{
-    return m_searchState;
+    if (fsearch->db) {
+        db_save_locations (fsearch->db);
+        db_clear (fsearch->db);
+    }
+    if (fsearch->pool) {
+        fsearch_thread_pool_free (fsearch->pool);
+    }
+    config_save (fsearch->config);
+    config_free (fsearch->config);
+    g_mutex_clear (&fsearch->mutex);
 }

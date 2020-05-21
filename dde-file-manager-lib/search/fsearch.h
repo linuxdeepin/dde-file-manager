@@ -15,6 +15,7 @@
 #include "database.h"
 #include "fsearch_config.h"
 #include "fsearch_thread_pool.h"
+//#include "glib_support.h"
 #include "database_search.h"
 
 struct _FsearchApplication{

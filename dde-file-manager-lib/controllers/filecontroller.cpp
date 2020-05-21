@@ -36,7 +36,7 @@
 #include "dlocalfilehandler.h"
 #include "dfilecopymovejob.h"
 #include "dstorageinfo.h"
-
+#include <sys/stat.h>
 #include "models/desktopfileinfo.h"
 #include "models/trashfileinfo.h"
 
@@ -80,6 +80,9 @@
 #include "dfmapplication.h"
 #ifndef DISABLE_QUICK_SEARCH
 #include "anything_interface.h"
+#endif
+#ifdef DISABLE_QUICK_SEARCH
+    #include "./search/myfsearch.h"
 #endif
 
 class DFMQDirIterator : public DDirIterator
@@ -293,6 +296,176 @@ private:
     QFileInfo currentFileInfo;
 };
 #endif // DISABLE_QUICK_SEARCH
+
+#ifdef DISABLE_QUICK_SEARCH
+//#if 0
+void Delay_MSec(unsigned int msec)
+{
+    QTime dieTime = QTime::currentTime().addMSecs(msec);
+
+    while( QTime::currentTime() < dieTime )
+
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+
+}
+QString printList(BTreeNode *pNode){
+
+    QString fullPath("");
+    int i=0;
+    if (pNode == nullptr) {
+
+    }else{
+        while (pNode != nullptr) {
+            if(pNode->name!=nullptr)
+            {
+                fullPath.insert(0, pNode->name);
+                if(strcmp(pNode->name,"")!=0){
+                    fullPath.insert(0, "/");
+                }
+            }
+            pNode = pNode->parent;
+            i++;
+        }
+    }
+
+    QString t_prefix = fullPath.split('/').at(1);
+
+    if(t_prefix == "boot" || t_prefix == "dev" || t_prefix == "proc" || t_prefix == "sys"
+            || t_prefix == "root" || t_prefix == "run"|| t_prefix == "home")
+    {
+        return "";
+    }
+
+    return fullPath;
+}
+QStringList searchResult;
+bool mDone=false;
+class DFMAnythingDirIterator : public DDirIterator
+{
+public:
+    DFMAnythingDirIterator(const QString &path, const QString &k)
+        : keyword(k)
+            , dir(path)
+    {
+        fsearch_Close();
+        fsearch_Init(path.toLocal8Bit().data());
+//        QTimer::singleShot(1000, [this] {
+//            fsearch_Find(keyword.toStdString().c_str(),callbackFunc);
+//        });
+
+//        keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(keyword);
+    }
+
+    ~DFMAnythingDirIterator() override
+    {
+//       fsearch_Close();
+    }
+    static void callbackFunc(void *back)
+    {
+        uint32_t num_folders;
+        uint32_t num_files;
+        uint32_t num_results = 0;
+        searchResult.clear();
+        DatabaseSearch *result =static_cast<DatabaseSearch*>(back);
+        GPtrArray *results = result->results;
+        if (results) {
+            num_folders = result->num_folders;;
+            num_files = result->num_files;
+            num_results = results->len;
+            for(uint32_t j=0;j<num_results;j++)
+            {
+                DatabaseSearchEntry *entry=static_cast<DatabaseSearchEntry*>(g_ptr_array_index(results,j));
+//                searchResult.append(printList(entry->node));
+                if(printList(entry->node) != "")
+                {
+                    searchResult.append(printList(entry->node));
+                }
+            }
+            mDone=true;
+            qDebug()<<"-------callback:"<<num_results;
+        }
+    }
+    DUrl next() override
+    {
+        currentFileInfo.setFile(searchResults.takeFirst());
+
+        return fileUrl();
+    }
+
+    bool hasNext() const override
+    {
+        if (!initialized) {
+            const QString &dir_path = dir.absolutePath();
+
+            if (searchDirList.isEmpty() || searchDirList.first() != dir_path) {
+                searchDirList.prepend(dir_path);
+                fsearch_Find(keyword.toStdString().c_str(),callbackFunc);
+                qDebug()<<"*******************************find";
+                mDone=false;
+            }
+            searchResult.clear();
+            searchResults.clear();
+            initialized = true;
+        }
+        if(!resultinit)
+        {
+
+//            while(1)
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+                if (mDone)
+                {
+//                    break;
+                }
+            }
+        }
+
+        if(searchResult.size())
+        {
+            if(searchResults.isEmpty() && !resultinit)
+            {
+                searchResults=searchResult;
+
+                resultinit = true;
+                searchDirList.removeAt(0);
+                return !searchResults.isEmpty();
+            }
+        }
+
+        return !searchResults.isEmpty();
+    }
+
+    QString fileName() const override
+    {
+        return currentFileInfo.fileName();
+    }
+
+    DUrl fileUrl() const override
+    {
+        return DUrl::fromLocalFile(currentFileInfo.filePath());
+    }
+
+    const DAbstractFileInfoPointer fileInfo() const override
+    {
+        return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
+    }
+
+    DUrl url() const override
+    {
+        return DUrl::fromLocalFile(dir.absolutePath());
+    }
+private:
+    QString keyword;
+    mutable bool resultinit = false;
+    mutable bool initialized = false;
+    mutable QStringList searchDirList;
+    mutable quint32 searchStartOffset = 0, searchEndOffset = 0;
+    mutable QStringList searchResults;
+
+    QDir dir;
+    QFileInfo currentFileInfo;
+};
+#endif // DISABLE_FSEARCH
 
 class FileDirIterator : public DDirIterator
 {
@@ -1312,7 +1485,7 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
 #ifdef DISABLE_QUICK_SEARCH
     Q_UNUSED(keyword);
-    return false;
+//    return false;
 #else // !DISABLE_QUICK_SEARCH
     const QString pathForSearching = iterator->url().toLocalFile();
 
@@ -1332,4 +1505,14 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 
     return true;
 #endif // DISABLE_QUICK_SEARCH
+
+#ifdef DISABLE_QUICK_SEARCH
+    const QString pathForSearching = iterator->url().toLocalFile();
+    if (iterator)
+        delete iterator;
+
+    iterator = new DFMAnythingDirIterator(pathForSearching, keyword);
+
+    return true;
+#endif
 }

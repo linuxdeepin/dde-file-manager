@@ -115,9 +115,16 @@ darray_remove_item (DynamicArray *array, uint32_t idx)
 void *
 darray_get_item (DynamicArray *array, uint32_t idx)
 {
-    assert (array != NULL);
-    assert (array->data != NULL);
-
+//    assert (array != NULL);
+//    assert (array->data != NULL);
+    if(array==NULL)
+    {
+        return NULL;
+    }
+    if(array->data==NULL)
+    {
+        return NULL;
+    }
     if (idx >= array->max_items) {
         return NULL;
     }

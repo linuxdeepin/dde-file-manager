@@ -14,6 +14,7 @@
 
 #include "fsearch_config.h"
 #include "fsearch_limits.h"
+//#include "debug.h"
 
 const char *config_file_name = "fsearch.conf";
 const char *config_folder_name = "fsearch";
@@ -549,13 +550,13 @@ config_free (FsearchConfig *config)
         config->folder_open_cmd = NULL;
     }
     if (config->locations) {
-       // g_list_free_full (config->locations, (GDestroyNotify)free);
         g_list_free(config->locations);
+//        g_list_free_full (config->locations, (GDestroyNotify)free);
         config->locations = NULL;
     }
     if (config->exclude_locations) {
-        //g_list_free_full (config->exclude_locations, (GDestroyNotify)free);
         g_list_free(config->exclude_locations);
+//        g_list_free_full (config->exclude_locations, (GDestroyNotify)free);
         config->exclude_locations = NULL;
     }
     if (config->exclude_files) {
