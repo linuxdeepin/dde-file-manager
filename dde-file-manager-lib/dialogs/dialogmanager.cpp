@@ -641,13 +641,6 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
         } else {
             d.setTitle(DeleteFileItems.arg(urlList.size()));
         }
-    } else if (urlList.first().isTrashFile()) {
-        if (urlList.size() == 1) {
-            TrashFileInfo f(urlList.first());
-            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(), Qt::ElideMiddle, maxFileNameWidth)));
-        } else {
-            d.setTitle(DeleteFileItems.arg(urlList.size()));
-        }
     } else {
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }
