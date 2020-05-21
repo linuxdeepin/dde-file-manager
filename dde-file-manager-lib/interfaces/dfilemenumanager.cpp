@@ -66,6 +66,7 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QWidgetAction>
+#include <unistd.h>
 
 #include <plugins/dfmadditionalmenu.h>
 
@@ -178,6 +179,11 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         //所以这里要把MenuAction::CompleteDeletion权限不能用
         if (FileUtils::isGvfsMountFile(info->absoluteFilePath()) && !info->canRename()) {
             disableList << MenuAction::CompleteDeletion;
+        }
+        if (info->isDir()) { //判断是否目录
+            if (info->ownerId() != getuid() && getuid() != 0) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
+                disableList << MenuAction::UnShare << MenuAction::Share; //设置取消共享、取消共享不可选
+            }
         }
         foreach (MenuAction action, unusedList) {
             if (actions.contains(action)) {
