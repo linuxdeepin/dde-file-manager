@@ -2242,6 +2242,13 @@ bool DFileView::setRootUrl(const DUrl &url)
             fw->setFuture(QtConcurrent::run([ = ] {
                 getOpticalDriveMutex()->lock();
                 blkdev->unmount({});
+                // fix bug 27211 用户操作其他用户挂载的设备的时候，需要先卸载，卸载得提权，如果用户直接关闭了对话框，会返回错误代码 QDbusError::Other
+                // 需要对错误进行处理，出错的时候就不再执行后续操作了。
+                QDBusError err = blkdev->lastError();
+                if (err.isValid()) {
+                    getOpticalDriveMutex()->unlock();
+                    return false;
+                }
                 if (!ISOMaster->acquireDevice(devpath))
                 {
                     ISOMaster->releaseDevice();
