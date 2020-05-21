@@ -1332,6 +1332,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     QComboBox *groupBox = new QComboBox;
     QComboBox *otherBox = new QComboBox;
 
+    DUrl parentUrl = info->parentUrl();
+    QString parentScheme = parentUrl.scheme();
+
     // these are for file or folder, folder will with executable index.
     int readWriteIndex = 0, readOnlyIndex = 0;
 
@@ -1431,6 +1434,12 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         }
         if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
             m_executableCheckBox->setChecked(true);
+        }
+        if (parentScheme == BURN_SCHEME) {
+            m_executableCheckBox->setDisabled(true);
+            ownerBox->setDisabled(true);
+            groupBox->setDisabled(true);
+            otherBox->setDisabled(true);
         }
         layout->addRow(m_executableCheckBox);
     }
