@@ -26,6 +26,7 @@
 
 DCORE_USE_NAMESPACE
 
+class VaultCalculation;
 class VaultControllerPrivate;
 class VaultInterface;
 class VaultController : public DAbstractFileController

@@ -536,4 +536,3 @@ QString VaultController::vaultUnlockPath()
 {
     return makeVaultLocalPath("", "vault_unlocked");
 }
-

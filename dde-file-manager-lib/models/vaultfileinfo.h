@@ -21,12 +21,8 @@
 #pragma once
 
 #include "dabstractfileinfo.h"
-//#include "dfileinfo.h"
 
-DFM_BEGIN_NAMESPACE
-class DFileStatisticsJob;
-DFM_END_NAMESPACE
-
+class QStorageInfo;
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DAbstractFileInfo
 {
@@ -60,10 +56,12 @@ public:
 
     qint64 size() const override;
 
+    static void setVaultSize(qint64 size);
+
 private:
     bool isRootDirectory() const;
 
-    DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
+    static qint64 m_vaultSize;
 
     Q_DECLARE_PRIVATE(VaultFileInfo)
 };

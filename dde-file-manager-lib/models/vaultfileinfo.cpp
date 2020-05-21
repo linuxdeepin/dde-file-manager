@@ -26,6 +26,9 @@
 #include "dfilesystemmodel.h"
 
 #include <QStandardPaths>
+#include <QStorageInfo>
+
+qint64 VaultFileInfo::m_vaultSize = 0;
 
 class VaultFileInfoPrivate : public DAbstractFileInfoPrivate
 {
@@ -41,26 +44,11 @@ VaultFileInfo::VaultFileInfo(const DUrl &url)
         DUrl actualUrl = DUrl::fromLocalFile(VaultController::vaultToLocal(url));
         setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, actualUrl)));
     }
-
-//    if (isRootDirectory()) {
-//        m_sizeWorker = new DFileStatisticsJob();
-
-//        VaultController *controller = VaultController::getVaultController();
-
-//        DUrlList urlList;
-//        urlList << controller->vaultToLocalUrl(controller->makeVaultUrl());
-
-//        m_sizeWorker->start(urlList);
-//    }
 }
 
 VaultFileInfo::~VaultFileInfo()
 {
-    if (m_sizeWorker) {
-        m_sizeWorker->stop();
-        delete m_sizeWorker;
-        m_sizeWorker = nullptr;
-    }
+
 }
 
 bool VaultFileInfo::exists() const
@@ -236,15 +224,21 @@ bool VaultFileInfo::canRename() const
 
 qint64 VaultFileInfo::size() const
 {
-//    if (isRootDirectory() && m_sizeWorker) {
-
-//        qint64 totoalSize = m_sizeWorker->totalSize();
-//        return totoalSize;
-//    }
-
+    if (isRootDirectory() && VaultController::getVaultController()->state() == VaultController::Unlocked)
+    {
+        return m_vaultSize;
+    }
+    else if(isRootDirectory())
+    {
+        return 0;
+    }
     return DAbstractFileInfo::size();
 }
 
+void VaultFileInfo::setVaultSize(qint64 size)
+{
+    m_vaultSize = size;
+}
 
 bool VaultFileInfo::isRootDirectory() const
 {
