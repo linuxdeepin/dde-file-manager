@@ -190,7 +190,7 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
         }
     }
 
-    removeWatcher(fromUrl);
+//    removeWatcher(fromUrl); // fix task 21431 临时解决方案。
 
     emit fileMoved(newFromUrl, newToUrl);
 }
