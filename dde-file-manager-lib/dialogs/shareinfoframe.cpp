@@ -100,10 +100,11 @@ void ShareInfoFrame::initUI()
     mainLayoyt->setContentsMargins(10, 10, 10, 10);
     setLayout(mainLayoyt);
     if (m_fileinfo->ownerId() != getuid() && getuid() != 0) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
-        m_shareCheckBox->setEnabled(false);
-        m_shareNamelineEdit->setEnabled(false);
-        m_permissoComBox->setEnabled(false);
-        m_anonymityCombox->setEnabled(false);
+        this->setEnabled(false);
+//        m_shareCheckBox->setEnabled(false);
+//        m_shareNamelineEdit->setEnabled(false);
+//        m_permissoComBox->setEnabled(false);
+//        m_anonymityCombox->setEnabled(false);
     }
 }
 
