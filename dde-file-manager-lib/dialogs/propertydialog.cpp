@@ -884,7 +884,7 @@ int PropertyDialog::contentHeight() const
 {
     int expandsHeight = ArrowLineExpand_SPACING;
     for (const DDrawer *expand : m_expandGroup) {
-        if (m_shareinfoFrame->isHidden()) {
+        if (m_shareinfoFrame && m_shareinfoFrame->isHidden()) {
             m_shareinfoFrame->show();
         }
         expandsHeight += expand->height();
