@@ -824,6 +824,12 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     }
 
     DUrl old_url = fileInfo->fileUrl();
+    //处理tag目录重命名了逻辑
+    if (old_url.isTaggedFile() && old_url.taggedLocalFilePath().isEmpty()) {
+        TagManager::instance()->changeTagName(qMakePair(old_url.tagName(), new_file_name));
+        return;
+    }
+
     DUrl new_url = fileInfo->getUrlByNewFileName(new_file_name);
 
     const DAbstractFileInfoPointer &newFileInfo = DFileService::instance()->createFileInfo(this, new_url);
