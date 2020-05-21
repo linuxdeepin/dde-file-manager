@@ -60,7 +60,7 @@ public:
 public Q_SLOTS:
     // 重定义，防止崩溃
     // 必须调用它，否则高强度exec会有崩溃风险
-    void deleteLater();
+    void deleteLater(QWidget *w = nullptr);
 
 private:
     DUrl m_currentUrl;

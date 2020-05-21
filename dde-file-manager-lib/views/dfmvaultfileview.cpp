@@ -50,7 +50,7 @@ VaultHeaderView::VaultHeaderView(QWidget *parent)
     connect(menuBtn, &QAbstractButton::clicked, this, [=](){
         DFileMenu * menu = createMenu();
         menu->exec(menuBtn->mapToGlobal(menuBtn->rect().center()));
-        menu->deleteLater();
+        menu->deleteLater(this);
     });
 }
 
