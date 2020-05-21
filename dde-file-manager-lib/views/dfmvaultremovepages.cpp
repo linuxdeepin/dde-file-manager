@@ -3,6 +3,7 @@
 #include "vault/vaultlockmanager.h"
 #include "controllers/vaultcontroller.h"
 #include "app/define.h"
+#include "dfmvaultremoveprogressview.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -297,34 +298,6 @@ void DFMVaultRemovePages::insertPage(const PageType &pageType, QWidget *widget)
     m_stackedLayout->addWidget(widget);
 }
 
-void DFMVaultRemovePages::removeFileInDir(const QString &path)
-{
-    QDir dir(path);
-    QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs);
-
-    if(dir.exists()){
-        dir.setFilter(QDir::Files | QDir::NoSymLinks);
-        QFileInfoList list = dir.entryInfoList();
-    }
-
-    //遍历文件信息列表，进行文件删除
-    foreach(QFileInfo fileInfo, infoList){
-        if (fileInfo.isDir()){
-            //递归
-            removeFileInDir(fileInfo.absoluteFilePath());
-        }else if (fileInfo.isFile()){
-            QFile file(fileInfo.absoluteFilePath());
-
-            //删除文件
-            file.remove();
-        }
-    }
-
-    QDir temp_dir;
-    //删除文件夹
-    temp_dir.rmdir(path);
-}
-
 void DFMVaultRemovePages::showEvent(QShowEvent *event)
 {
     // 重置界面状态
@@ -408,18 +381,14 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
 
 void DFMVaultRemovePages::onLockVault(int state)
 {
-    if (state == 0 && m_bRemoveVault){
-        // 开启线程进行文件删除
-        std::thread thread(
-                [this]()
-                {
-                    QString rmPath = VaultController::getVaultController()->vaultLockPath();
-                    removeFileInDir(rmPath);
-                }
-        );
-        thread.detach();
+    if (state == 0 && m_bRemoveVault){        
+        this->hide();
+        QString vaultPath = VaultController::getVaultController()->vaultLockPath();
+        DFMVaultRemoveProgressView pro;
+        pro.removeVault(vaultPath);
+        pro.exec();
 
-        accept();
+        emit accepted();
     }else if (state != 0 && m_bRemoveVault) {
         // something to do
         QString msg = tr("Remove failed,the error code is ") + QString::number(state);
