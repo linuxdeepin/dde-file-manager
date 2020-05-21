@@ -1329,7 +1329,7 @@ void DFileView::updateStatusBar()
         return;
     }
 
-    emit notifySelectUrlChanged(corectUrls);
+    notifySelectUrlChanged(corectUrls);
 
     if (count == 0) {
         d->statusBar->itemCounted(event, this->count());
@@ -2242,6 +2242,13 @@ bool DFileView::setRootUrl(const DUrl &url)
             fw->setFuture(QtConcurrent::run([ = ] {
                 getOpticalDriveMutex()->lock();
                 blkdev->unmount({});
+                // fix bug 27211 用户操作其他用户挂载的设备的时候，需要先卸载，卸载得提权，如果用户直接关闭了对话框，会返回错误代码 QDbusError::Other
+                // 需要对错误进行处理，出错的时候就不再执行后续操作了。
+                QDBusError err = blkdev->lastError();
+                if (err.isValid()) {
+                    getOpticalDriveMutex()->unlock();
+                    return false;
+                }
                 if (!ISOMaster->acquireDevice(devpath))
                 {
                     ISOMaster->releaseDevice();
@@ -2660,7 +2667,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     fileViewHelper()->handleMenu(menu);
 
     menu->exec();
-    menu->deleteLater();
+    menu->deleteLater(this);
 }
 
 
@@ -2700,9 +2707,16 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         }
     }
 
+    static bool lock = false;
+    if (lock) {
+        qDebug() << "reject show menu";
+        return;
+    }
     menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, windowId(), false);
+    lock = true;
 
     if (!menu) {
+        lock = false;
         return;
     }
 
@@ -2711,7 +2725,8 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     fileViewHelper()->handleMenu(menu);
 
     menu->exec();
-    menu->deleteLater();
+    menu->deleteLater(this);
+    lock = false;
 }
 
 void DFileView::updateListHeaderViewProperty()
@@ -2848,7 +2863,7 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
         const QList<int> &childRoles = fileInfo->userColumnChildRoles(column);
 
         if (childRoles.isEmpty()) {
-            menu->deleteLater();
+            menu->deleteLater(this);
 
             return;
         }
@@ -2908,7 +2923,7 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
     }
 
     menu->exec(QCursor::pos());
-    menu->deleteLater();
+    menu->deleteLater(this);
 }
 
 void DFileView::onModelStateChanged(int state)

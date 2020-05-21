@@ -591,7 +591,7 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
     });
 
     menu->exec(QCursor::pos());
-    menu->deleteLater();
+    menu->deleteLater(this);
 }
 
 /*!

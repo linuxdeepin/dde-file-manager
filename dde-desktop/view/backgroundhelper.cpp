@@ -355,10 +355,17 @@ void BackgroundHelper::updateBackground(QWidget *l)
     bool hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
     if (Display::instance()->primaryScreen() == s) {
-        trueSize = Display::instance()->primaryRect().size();
-        qDebug() << "background true size by dbus" << trueSize
-                 << "set handle geometry" << Display::instance()->primaryRect();
-        l->windowHandle()->handle()->setGeometry(Display::instance()->primaryRect());
+        QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : s->geometry();
+        if (grect.width() == 0 || grect.height() == 0){
+            qCritical() << "error!!!!!!!!!!!" << "set DBUS primaryRect background geometry" << grect;
+        }
+        if (DesktopInfo().waylandDectected()){
+            trueSize = grect.size();
+        }
+        qDebug() << "set" << grect << "primaryScreen" << s->name() << s->geometry()
+                 << "trueSize handle()->geometry()" << s->handle()->geometry().size()
+                 << "dbus:"<< Display::instance()->primaryRect() << "display true size" << trueSize;
+        l->windowHandle()->handle()->setGeometry(grect);
     }
     QHighDpiScaling::m_active = hi_active;
 

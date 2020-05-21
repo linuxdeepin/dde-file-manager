@@ -963,6 +963,7 @@ public:
     /// add/rm file event
     bool _q_processFileEvent_runing = false;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
+    QQueue<QPair<EventType, DUrl>> laterFileEventQueue;
 
     bool enabledSort = true;
 
@@ -1052,7 +1053,12 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
 //    rootNodeManager->addFile(info);
     if (!_q_processFileEvent_runing) {
         fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+        while (!laterFileEventQueue.isEmpty()) {
+            laterFileEventQueue.enqueue(laterFileEventQueue.dequeue());
+        }
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+    } else {
+        laterFileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
     }
 }
 
@@ -1070,7 +1076,12 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
     }
     if (!_q_processFileEvent_runing) {
         fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
+        while (!laterFileEventQueue.isEmpty()) {
+            laterFileEventQueue.enqueue(laterFileEventQueue.dequeue());
+        }
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+    } else {
+        laterFileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
     }
 }
 

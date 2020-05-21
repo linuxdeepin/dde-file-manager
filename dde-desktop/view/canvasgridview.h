@@ -95,7 +95,7 @@ public:
 
 
     void fakeDropEvent()noexcept;
-
+    void initCanvas();
     // list view function
     QRect rectForIndex(const QModelIndex &index) const;
     DUrl currentUrl() const;

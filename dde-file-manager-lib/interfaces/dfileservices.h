@@ -170,6 +170,8 @@ public:
     void setCursorBusyState(const bool bbusy);
     //check networkfile is busy(or network is unline)
     bool checkGvfsMountfileBusy(const DUrl &url);
+    //chang rootfile
+    void changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo);
 
 
 signals:

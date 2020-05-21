@@ -884,6 +884,9 @@ int PropertyDialog::contentHeight() const
 {
     int expandsHeight = ArrowLineExpand_SPACING;
     for (const DDrawer *expand : m_expandGroup) {
+        if (m_shareinfoFrame && m_shareinfoFrame->isHidden()) {
+            m_shareinfoFrame->show();
+        }
         expandsHeight += expand->height();
     }
 #define DIALOG_TITLEBAR_HEIGHT 50
@@ -1137,6 +1140,9 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
     connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
+    connect(frame, &ShareInfoFrame::unfolderShared, this, [this](){
+        m_expandGroup.at(1)->setExpand(false);
+    });
 
     return frame;
 }
@@ -1326,6 +1332,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     QComboBox *groupBox = new QComboBox;
     QComboBox *otherBox = new QComboBox;
 
+    DUrl parentUrl = info->parentUrl();
+    QString parentScheme = parentUrl.scheme();
+
     // these are for file or folder, folder will with executable index.
     int readWriteIndex = 0, readOnlyIndex = 0;
 
@@ -1425,6 +1434,12 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         }
         if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
             m_executableCheckBox->setChecked(true);
+        }
+        if (parentScheme == BURN_SCHEME) {
+            m_executableCheckBox->setDisabled(true);
+            ownerBox->setDisabled(true);
+            groupBox->setDisabled(true);
+            otherBox->setDisabled(true);
         }
         layout->addRow(m_executableCheckBox);
     }
