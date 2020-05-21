@@ -126,12 +126,6 @@ private:
 
     void insertPage(const PageType &pageType, QWidget * widget);
 
-    /**
-    * @brief    删除文件及文件夹
-    * @param    文件夹路径
-    */
-    void removeFileInDir(const QString &path);
-
     void showEvent(QShowEvent *event) override;
 private:
     QMap<PageType, QWidget*> m_pages;    //存储页面

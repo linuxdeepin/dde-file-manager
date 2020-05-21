@@ -86,37 +86,42 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 
 void DFMVaultActiveFinishedView::slotEncryptVault()
 {
-    // 管理员认证
-//    if(!OperatorCenter::getInstance().getRootPassword()){
-//        return;
-//    }
-    if (!VaultLockManager::getInstance().checkAuthentication(VAULT_CREATE)){
-        return;
-    }
+    m_pFinishedBtn->setEnabled(false);
 
-    if(m_pFinishedBtn->text() == tr("Encrypt")){
-        // 按钮灰化
-        m_pFinishedBtn->setEnabled(false);
+    // Use thread to avoid repeat enter
+    std::thread thread( [&]() {
 
-        // 进度条
-        m_pTips->setVisible(false);
-        m_pTips2->setVisible(false);
-        m_pEncryVaultImage->setVisible(false);
-        play->removeWidget(m_pEncryVaultImage);
-        play->addWidget(m_pWaterProgress, 3, 0, 2, 4, Qt::AlignCenter);
-        m_pWaterProgress->setVisible(true);
-        m_pWaterProgress->start();
-        play->addWidget(m_pTips3, 5, 0, 1, 4, Qt::AlignHCenter);
-        m_pTips3->setVisible(true);
-        m_pTips3->setText(tr("Encrypted..."));
+        if (!VaultLockManager::getInstance().checkAuthentication(VAULT_CREATE)){
+            m_pFinishedBtn->setEnabled(true);
+            return;
+        }
 
-        // 调用创建保险箱接口
-        // 拿到密码
-        QString strPassword = OperatorCenter::getInstance().getSaltAndPasswordClipher();
-        VaultController::getVaultController()->createVault(strPassword);
+        if(m_pFinishedBtn->text() == tr("Encrypt")){
+            // 按钮灰化
+            m_pFinishedBtn->setEnabled(false);
 
-    }else{
-        // 切换到保险箱主页面
-        emit sigAccepted();
-    }
+            // 进度条
+            m_pTips->setVisible(false);
+            m_pTips2->setVisible(false);
+            m_pEncryVaultImage->setVisible(false);
+            play->removeWidget(m_pEncryVaultImage);
+            play->addWidget(m_pWaterProgress, 3, 0, 2, 4, Qt::AlignCenter);
+            m_pWaterProgress->setVisible(true);
+            m_pWaterProgress->start();
+            play->addWidget(m_pTips3, 5, 0, 1, 4, Qt::AlignHCenter);
+            m_pTips3->setVisible(true);
+            m_pTips3->setText(tr("Encrypted..."));
+
+            // 调用创建保险箱接口
+            // 拿到密码
+            QString strPassword = OperatorCenter::getInstance().getSaltAndPasswordClipher();
+            VaultController::getVaultController()->createVault(strPassword);
+
+        }else{
+            // 切换到保险箱主页面
+            emit sigAccepted();
+        }
+    });
+
+    thread.detach();
 }
