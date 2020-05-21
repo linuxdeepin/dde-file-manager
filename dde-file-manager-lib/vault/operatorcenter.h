@@ -10,7 +10,10 @@ class OperatorCenter : public QObject
 {
     Q_OBJECT
 public:
-    static OperatorCenter &getInstance();
+    inline static OperatorCenter &getInstance(){
+        static OperatorCenter instance;
+        return instance;
+    }
     ~OperatorCenter();
 
     /**

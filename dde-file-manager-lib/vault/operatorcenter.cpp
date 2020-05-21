@@ -71,12 +71,6 @@ bool OperatorCenter::executeProcess(const QString &cmd)
     return runCmd(newCmd);
 }
 
-OperatorCenter &OperatorCenter::getInstance()
-{
-    static OperatorCenter instance;
-    return instance;
-}
-
 OperatorCenter::~OperatorCenter()
 {
 
