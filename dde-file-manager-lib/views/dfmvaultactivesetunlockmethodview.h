@@ -39,8 +39,10 @@ public slots:
 private slots:
     void slotIsShowPassword();
     void slotIshowRepeatPassword();
+    void slotPasswordEditing();
     void slotPasswordEditFinished();
     void slotRepeatPasswordEditFinished();
+    void slotRepeatPasswordEditing();
     void slotGenerateEditChanged(const QString &str);
     // 下一步按钮点击
     void slotNextBtnClicked();
