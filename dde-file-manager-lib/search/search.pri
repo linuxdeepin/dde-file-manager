@@ -49,4 +49,3 @@ SOURCES += \
     $$PWD/string_utils.c
 
 CONFIG += link_pkgconfig
-PKGCONFIG += gtk+-3.0
