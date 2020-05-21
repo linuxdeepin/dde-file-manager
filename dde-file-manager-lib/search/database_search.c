@@ -20,6 +20,7 @@
 #include "database_search.h"
 #include "string_utils.h"
 #include "query.h"
+//#include "debug.h"
 #include "utf8.h"
 
 #define OVECCOUNT 3
@@ -66,6 +67,7 @@ fsearch_search_thread (gpointer user_data)
     g_mutex_lock (&search->query_mutex);
     while (true) {
         g_cond_wait (&search->search_thread_start_cond, &search->query_mutex);
+        printf("---------------------------g_cond_wait (&search->search_thread_start_cond)\n");
         if (search->search_thread_terminate) {
             break;
         }
@@ -88,9 +90,11 @@ fsearch_search_thread (gpointer user_data)
             }
             else {
                 result = db_search (search, query);
-            }
+            }            
             result->cb_data = query->callback_data;
-            query->callback (result);
+            query->callback (result);          
+            usleep(100);
+            printf("+++++++++++++++++++++++++++++++++++++++++++query->callback\n");
             fsearch_query_free (query);
             g_mutex_lock (&search->query_mutex);
         }
@@ -145,9 +149,16 @@ static void *
 search_thread (void * user_data)
 {
     search_thread_context_t *ctx = (search_thread_context_t *)user_data;
-    assert (ctx != NULL);
-    assert (ctx->results != NULL);
-
+//    assert (ctx != NULL);
+//    assert (ctx->results != NULL);
+    if(ctx==NULL)
+    {
+        return NULL;
+    }
+    if(ctx->results==NULL)
+    {
+        return NULL;
+    }
     const uint32_t start = ctx->start_pos;
     const uint32_t end = ctx->end_pos;
     const uint32_t max_results = ctx->search->max_results;
@@ -456,7 +467,6 @@ db_search (DatabaseSearch *search, FsearchQuery *q)
     }
     uint32_t start_pos = 0;
     uint32_t end_pos = num_items_per_thread - 1;
-
     timer_start ();
     GList *temp = fsearch_thread_pool_get_threads (search->pool);
     for (uint32_t i = 0; i < num_threads; i++) {
@@ -476,7 +486,6 @@ db_search (DatabaseSearch *search, FsearchQuery *q)
                                        thread_data[i]);
         temp = temp->next;
     }
-
     temp = fsearch_thread_pool_get_threads (search->pool);
     while (temp) {
         fsearch_thread_pool_wait_for_thread (search->pool, temp);
@@ -491,10 +500,8 @@ db_search (DatabaseSearch *search, FsearchQuery *q)
     for (uint32_t i = 0; i < num_threads; ++i) {
         num_results += thread_data[i]->num_results;
     }
-
     GPtrArray *results = g_ptr_array_sized_new (MIN (num_results, max_results));
     g_ptr_array_set_free_func (results, (GDestroyNotify)db_search_entry_free);
-
     uint32_t num_folders = 0;
     uint32_t num_files = 0;
 
@@ -530,14 +537,12 @@ db_search (DatabaseSearch *search, FsearchQuery *q)
             ctx = NULL;
         }
     }
-
     for (uint32_t i = 0; i < num_queries; ++i) {
         search_query_free (queries[i]);
         queries[i] = NULL;
     }
     free (queries);
     queries = NULL;
-
     DatabaseSearchResult *result_ctx = calloc (1, sizeof (DatabaseSearchResult));
     assert (result_ctx != NULL);
     result_ctx->results = results;
@@ -746,8 +751,12 @@ db_search_queue (DatabaseSearch *search, FsearchQuery *query)
         fsearch_query_free (search->query_ctx);
     }
     search->query_ctx = query;
+
     g_mutex_unlock (&search->query_mutex);
+    usleep(1000);
     g_cond_signal (&search->search_thread_start_cond);
+
+    printf("---------------------------g_cond_signal (&search->search_thread_start_cond)\n");
 }
 
 void

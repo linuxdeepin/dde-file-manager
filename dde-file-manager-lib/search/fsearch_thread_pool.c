@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 #include "fsearch_thread_pool.h"
-extern bool m_searchState;
+#include <sys/time.h>
 struct _FsearchThreadPool {
     GList *threads;
     uint32_t num_threads;
@@ -68,9 +68,12 @@ thread_context_free (thread_context_t *ctx)
     if (!ctx) {
         return;
     }
+
     g_mutex_lock (&ctx->mutex);
     if (ctx->thread_data) {
+//        trace ("search data still there\n");
     }
+
     // terminate thread
     ctx->terminate = true;
     g_cond_signal (&ctx->start_cond);
@@ -203,9 +206,11 @@ fsearch_thread_pool_wait_for_thread (FsearchThreadPool *pool, GList *thread)
 {
     thread_context_t *ctx = thread->data;
     g_mutex_lock (&ctx->mutex);
-    while (fsearch_thread_pool_task_is_busy (pool, thread)) {
-        g_cond_wait (&ctx->finished_cond, &ctx->mutex);
-    }
+//    while (fsearch_thread_pool_task_is_busy (pool, thread)) {
+//printf("+++++++++++++++++++++++++++++++++++++++++++wait finish0\n");
+//        g_cond_wait (&ctx->finished_cond, &ctx->mutex);
+//        printf("+++++++++++++++++++++++++++++++++++++++++++wait finish1\n");
+//    }
     g_mutex_unlock (&ctx->mutex);
     return true;
 }
@@ -238,6 +243,7 @@ fsearch_thread_pool_push_data (FsearchThreadPool *pool,
     ctx->status = THREAD_BUSY;
 
     g_cond_signal (&ctx->start_cond);
+    usleep(100);
     g_mutex_unlock (&ctx->mutex);
     return true;
 }

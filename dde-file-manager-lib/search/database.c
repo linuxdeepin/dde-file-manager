@@ -26,6 +26,7 @@
 #include "database.h"
 #include "fsearch_config.h"
 #include "fsearch.h"
+//#include "debug.h"
 
 //#define WS_FOLLOWLINK	(1 << 1)	/* follow symlinks */
 #define WS_DOTFILES	(1 << 2)	/* per unix convention, .file is hidden */

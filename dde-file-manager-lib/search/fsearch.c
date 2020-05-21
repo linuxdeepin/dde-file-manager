@@ -22,8 +22,10 @@
 #include "fsearch.h"
 #include "fsearch_config.h"
 #include "fsearch_limits.h"
+//#include "utils.h"
 #include "database.h"
 #include "database_search.h"
+//#include "debug.h"
 enum {
     DATABASE_UPDATE,
     DATABASE_UPDATED,

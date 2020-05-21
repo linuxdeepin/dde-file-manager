@@ -20,21 +20,16 @@
 */
 #ifndef __MYFSEARCH_H__
 #define __MYFSEARCH_H__
-#define DEBUG_SEARCH    1
-
 extern "C"
 {
 #include "database_search.h"
-#include <glib.h>
-
-
-    void fsearch_Init(void);
-    void fsearch_Find(const char*text);
+    void fsearch_Init(const char*path);
+//    void fsearch_DeInit(char*path);
+    void fsearch_Find(const char*text,void (*callback)(void *));
+//    void fsearch_Find(const char*text);
     void fsearch_Close(void);
     void fsearch_UpdateDb(char*path);
     GPtrArray * get_Result(void);
     unsigned int get_ResultLen(void);
-    char*  get_keyworld(void);
-    bool get_search_state(void);
 }
 #endif
