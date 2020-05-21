@@ -615,7 +615,9 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
             }
             blkdev->unmount({});
             QDBusError err = blkdev->lastError();
-            if (err.isValid())
+            // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
+            // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
+            if (err.isValid() && err.type() != QDBusError::Other)
                 dialogManager->showErrorDialog(tr("Disk is busy, cannot unmount now"), QString());
         } else if (fi->suffix() == SUFFIX_GVFSMP) {
             QString path = fi->extraProperties()["rooturi"].toString();

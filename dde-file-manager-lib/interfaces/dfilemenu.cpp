@@ -96,9 +96,10 @@ DUrlList DFileMenu::selectedUrls() const
     return m_selectedUrls;
 }
 
-void DFileMenu::deleteLater()
+void DFileMenu::deleteLater(QWidget *w)
 {
-    qApp->setActiveWindow(nullptr);
+    if (w)
+        qApp->setActiveWindow(w);
     QMenu::deleteLater();
 }
 

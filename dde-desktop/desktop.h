@@ -27,6 +27,7 @@ class Desktop : public QObject, public Singleton<Desktop>
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", DesktopServiceInterface)
 public:
+    void preInit();
     void loadData();
     void loadView();
 

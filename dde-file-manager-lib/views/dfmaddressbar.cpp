@@ -56,7 +56,7 @@ void DCompleterStyledItemDelegate::paint(QPainter *painter, const QStyleOptionVi
 {
     // prepare
     QPalette::ColorGroup cg = option.state & QStyle::State_Enabled
-            ? QPalette::Normal : QPalette::Disabled;
+                              ? QPalette::Normal : QPalette::Disabled;
     if (cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
         cg = QPalette::Inactive;
     }
@@ -227,6 +227,11 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
 
 void DFMAddressBar::keyPressEvent(QKeyEvent *e)
 {
+    isKeyPressed = true;
+    QTimer::singleShot(100, this, [ = ]() { //设定100ms，若有问题可视情况改变
+        isKeyPressed = false;
+    });
+    lastPreviousKey = lastPressedKey;
     lastPressedKey = e->key();
     switch (e->key()) {
     case Qt::Key_Escape:
@@ -239,14 +244,14 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     }
 
     if (urlCompleter && urlCompleter->popup()->isVisible()) {
-        if (isHistoryInCompleterModel && e->modifiers() == Qt::ShiftModifier && e->key()==Qt::Key_Delete) {
-             QString completeResult = completerView->currentIndex().data().toString();
-             bool ret = Singleton<SearchHistroyManager>::instance()->removeSearchHistory(completeResult);
-             if (ret) {
-                 historyList.clear();
-                 historyList.append(Singleton<SearchHistroyManager>::instance()->toStringList());
-                 completerModel.setStringList(historyList);
-             }
+        if (isHistoryInCompleterModel && e->modifiers() == Qt::ShiftModifier && e->key() == Qt::Key_Delete) {
+            QString completeResult = completerView->currentIndex().data().toString();
+            bool ret = Singleton<SearchHistroyManager>::instance()->removeSearchHistory(completeResult);
+            if (ret) {
+                historyList.clear();
+                historyList.append(Singleton<SearchHistroyManager>::instance()->toStringList());
+                completerModel.setStringList(historyList);
+            }
         }
         // The following keys are forwarded by the completer to the widget
         switch (e->key()) {
@@ -278,7 +283,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
             completerView->keyPressEvent(e);
             break;
         default:
-           break;
+            break;
         }
         setFocus();
     } else {
@@ -346,7 +351,7 @@ void DFMAddressBar::showEvent(QShowEvent *event)
 //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
 void DFMAddressBar::inputMethodEvent(QInputMethodEvent *e)
 {
-    if(hasSelectedText())
+    if (hasSelectedText())
         setText(lastEditedString);
     QLineEdit::inputMethodEvent(e);
 }
@@ -405,7 +410,7 @@ void DFMAddressBar::initConnections()
     });
     connect(this, &DFMAddressBar::textEdited, this, &DFMAddressBar::onTextEdited);
 
-    QAction *clear_action = findChild<QAction*>("_q_qlineeditclearaction");
+    QAction *clear_action = findChild<QAction *>("_q_qlineeditclearaction");
 
     if (clear_action) {
         connect(clear_action, &QAction::triggered, this, &DFMAddressBar::clearButtonPressed);
@@ -474,10 +479,11 @@ void DFMAddressBar::doComplete()
     if (completer()->completionCount() == 1
             && lastPressedKey != Qt::Key_Backspace
             && lastPressedKey != Qt::Key_Delete
+            && isKeyPressed //判断是否按键按下，时间设定的时100ms
+            && !(lastPressedKey == Qt::Key_X && lastPreviousKey == Qt::Key_Control) //键盘剪切事件
             && cursorPosition() == text().length()) {
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
     }
-
     return;
 }
 
@@ -500,7 +506,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
     bool hasSlash = (slashIndex != -1);
 
     DUrl url = DUrl::fromUserInput(hasSlash ? text.left(slashIndex + 1) : text, false);
-    const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(this, url);
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
     // Check if the entered text is a string to search or a url to complete.
     if (hasSlash && url.isValid() && !url.scheme().isEmpty()) {
@@ -514,7 +520,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 
         // Check if we should start a new completion transmission.
         if (!isHistoryInCompleterModel && (this->completerBaseString == text.left(slashIndex + 1)
-                || DUrl::fromUserInput(this->completerBaseString) == DUrl::fromUserInput(text.left(slashIndex + 1)))) {
+                                           || DUrl::fromUserInput(this->completerBaseString) == DUrl::fromUserInput(text.left(slashIndex + 1)))) {
             urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1)); // set completion prefix first
             onCompletionModelCountChanged(); // will call complete()
             return;
@@ -533,7 +539,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
                 crumbController->disconnect();
                 crumbController->deleteLater();
             }
-            DFMCrumbBar* crumbBar = qobject_cast<DFMCrumbBar*>(this->parent());
+            DFMCrumbBar *crumbBar = qobject_cast<DFMCrumbBar *>(this->parent());
             Q_CHECK_PTR(crumbBar);
             crumbController = DFMCrumbManager::instance()->createControllerByUrl(url, crumbBar);
             // Still not found? Then nothing here...
@@ -543,11 +549,11 @@ void DFMAddressBar::updateCompletionState(const QString &text)
                 return;
             }
             // connections
-            connect(crumbController, &DFMCrumbInterface::completionFound, this, [this](const QStringList &list){
+            connect(crumbController, &DFMCrumbInterface::completionFound, this, [this](const QStringList & list) {
                 // append list to completion list.
                 appendToCompleterModel(list);
             });
-            connect(crumbController, &DFMCrumbInterface::completionListTransmissionCompleted, this, [this](){
+            connect(crumbController, &DFMCrumbInterface::completionListTransmissionCompleted, this, [this]() {
                 if (urlCompleter->completionCount() > 0) {
                     if (urlCompleter->popup()->isHidden())
                         doComplete();
@@ -585,7 +591,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 
 void DFMAddressBar::appendToCompleterModel(const QStringList &stringList)
 {
-    for (const QString &str: stringList) {
+    for (const QString &str : stringList) {
         if (completerModel.insertRow(completerModel.rowCount())) {
             QModelIndex index = completerModel.index(completerModel.rowCount() - 1, 0);
             completerModel.setData(index, str);
@@ -654,7 +660,7 @@ bool DFMAddressBar::event(QEvent *e)
     }
 
     if (e->type() == QEvent::KeyPress) {
-        keyPressEvent(static_cast<QKeyEvent*>(e));
+        keyPressEvent(static_cast<QKeyEvent *>(e));
         return true;
     }
 

@@ -35,6 +35,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QLineEdit>
+#include <unistd.h>
 
 ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *parent) :
     QFrame(parent),
@@ -98,6 +99,13 @@ void ShareInfoFrame::initUI()
     mainLayoyt->setFormAlignment(Qt::AlignVCenter | Qt::AlignCenter);
     mainLayoyt->setContentsMargins(10, 10, 10, 10);
     setLayout(mainLayoyt);
+    if (m_fileinfo->ownerId() != getuid() && getuid() != 0) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
+        this->setEnabled(false);
+//        m_shareCheckBox->setEnabled(false);
+//        m_shareNamelineEdit->setEnabled(false);
+//        m_permissoComBox->setEnabled(false);
+//        m_anonymityCombox->setEnabled(false);
+    }
 }
 
 void ShareInfoFrame::initConnect()
@@ -164,6 +172,8 @@ bool ShareInfoFrame::doShareInfoSetting()
             return false;
         }
     } else {
+        emit unfolderShared();
+        hide();
         return DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
     }
 

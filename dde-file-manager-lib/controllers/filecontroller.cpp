@@ -661,7 +661,10 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 
 static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false, bool force = false)
 {
-    DFileCopyMoveJob *job = new DFileCopyMoveJob();
+    // fix bug 27109 在某种情况下，存在 FileCopyMoveJob 还没被析构，但其中的成员 StatisticJob 已经被析构，又在 FileCopyMoveJob 的函数中调用了 StatisticJob 的对象，导致崩溃
+    // 所以这里将原来的普通指针以 deleteLater 析构的内存管理方式交给智能指针去判定。测试百次左右没有再发生崩溃的现象。
+    // 该现象发生于从搜索列表中往光驱中发送文件夹还不被支持的时候。现已可以从搜索列表、最近列表、标签列表中往光驱中发送文件
+    QSharedPointer<DFileCopyMoveJob> job = QSharedPointer<DFileCopyMoveJob>(new DFileCopyMoveJob());
     //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
 
     if (force) {
@@ -764,7 +767,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
         QPair<DUrl, DUrl> currentJob;
     };
 
-    ErrorHandle *error_handle = new ErrorHandle(job, slient);
+    ErrorHandle *error_handle = new ErrorHandle(job.data(), slient);
 
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
     job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);
@@ -772,7 +775,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
     job->wait();
 
     QTimer::singleShot(200, dialogManager->taskDialog(), [job] {
-        dialogManager->taskDialog()->removeTaskJob(job);
+        dialogManager->taskDialog()->removeTaskJob(job.data());
     });
     //当前线程不要去处理error_handle所在的线程资源
 //    error_handle->currentJob = nullptr;
@@ -784,7 +787,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
         QMetaObject::invokeMethod(error_handle, "deleteLater");
     }
 
-    QMetaObject::invokeMethod(job, "deleteLater");
+//    QMetaObject::invokeMethod(job, "deleteLater");
 
     return job->targetUrlList();
 }
