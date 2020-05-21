@@ -93,10 +93,7 @@ DWIDGET_USE_NAMESPACE
 CanvasGridView::CanvasGridView(QWidget *parent)
     : QAbstractItemView(parent), d(new CanvasViewPrivate)
 {
-    qDebug() << "begin init CanvasGridView" <<  gTime.elapsed();
-    initUI();
-    initConnection();
-    qDebug() << "end CanvasGridView init" << gTime.elapsed();
+
 }
 
 CanvasGridView::~CanvasGridView()
@@ -1405,6 +1402,13 @@ void CanvasGridView::fakeDropEvent() noexcept
     d->dragTargetGrid = QPoint(-1, -1);
 }
 
+void CanvasGridView::initCanvas()
+{
+    qDebug() << "begin init CanvasGridView" <<  gTime.elapsed();
+    initUI();
+    initConnection();
+    qDebug() << "end CanvasGridView init" << gTime.elapsed();
+}
 
 QRect CanvasGridView::rectForIndex(const QModelIndex &index) const
 {
