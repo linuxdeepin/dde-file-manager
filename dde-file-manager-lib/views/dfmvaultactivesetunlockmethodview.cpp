@@ -49,6 +49,9 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     connect(m_pPassword, &DPasswordEdit::editingFinished,
             this, &DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished);
 
+    connect(m_pPassword, &DPasswordEdit::textChanged,
+            this, &DFMVaultActiveSetUnlockMethodView::slotPasswordEditing);
+
 
     // 重复密码
     m_pRepeatPasswordLabel = new QLabel(tr("Repeat password"), this);
@@ -58,6 +61,9 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
             this, &DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength);
     connect(m_pRepeatPassword, &DPasswordEdit::editingFinished,
             this, &DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished);
+
+    connect(m_pRepeatPassword, &DPasswordEdit::textChanged,
+            this, &DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditing);
 
     // 提示信息
     m_pPasswordHintLabel = new QLabel(tr("Hint"), this);
@@ -159,10 +165,22 @@ void DFMVaultActiveSetUnlockMethodView::slotIshowRepeatPassword()
     }
 }
 
+void DFMVaultActiveSetUnlockMethodView::slotPasswordEditing()
+{
+    bool ok = checkPassword(m_pPassword->text());
+    if (ok) {
+        if(checkInputInfo()){
+            m_pNext->setEnabled(true);
+        }
+    }
+    m_pNext->setEnabled(false);
+}
+
 void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
 {
     bool ok = checkPassword(m_pPassword->text());
     if(!ok){
+        m_pNext->setEnabled(false);
         m_pPassword->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
     } else {
         if(checkInputInfo()){
@@ -176,11 +194,26 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished()
     bool ok = checkRepeatPassword();
     if(!ok){
         m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"));
-    } else {
-        if(checkInputInfo()){
-            m_pNext->setEnabled(true);
+    }
+}
+
+void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditing()
+{
+    const QString &strRepeatPassword = m_pRepeatPassword->text();
+    const QString &strPassword = m_pPassword->text();
+
+    bool bSizeMatch = strRepeatPassword.size() == strPassword.size();
+    if (bSizeMatch) {
+        if (checkPassword(m_pPassword->text())) {
+            if (checkRepeatPassword()) {
+                m_pNext->setEnabled(true);
+                return;
+            } else {
+                 m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"));
+            }
         }
     }
+    m_pNext->setEnabled(false);
 }
 
 void DFMVaultActiveSetUnlockMethodView::slotGenerateEditChanged(const QString &str)
