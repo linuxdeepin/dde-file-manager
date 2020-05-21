@@ -109,8 +109,8 @@ int main(int argc, char *argv[])
 
 //    AppController::instance();
 //    tmp += QString(" end AppController::instance %0").arg(gTime.elapsed());
-    QAccessible::installFactory(accessibleFactory);
-    tmp += QString(" end installFactory %0").arg(gTime.elapsed());
+    //QAccessible::installFactory(accessibleFactory);
+ // tmp += QString(" end installFactory %0").arg(gTime.elapsed());
 
     bool preload = false;
     bool fileDialogOnly = false;
@@ -160,9 +160,6 @@ int main(int argc, char *argv[])
     Q_UNUSED(fmApp)
 
     qDebug() << "start " << app.applicationName() << app.applicationVersion() << gTime.elapsed();
-    Desktop::instance();
-    qDebug() << "Desktop inited" << gTime.elapsed();
-
     if (!preload && !fileDialogOnly) {
         QDBusConnection conn = QDBusConnection::sessionBus();
 
@@ -204,6 +201,10 @@ int main(int argc, char *argv[])
     }
 #endif
     qDebug() << "register desktop" <<  gTime.elapsed();
+
+    Desktop::instance()->preInit();
+    qDebug() << "Desktop inited" << gTime.elapsed();
+
     // init pixmap cache size limit, 20MB * devicePixelRatio
     QPixmapCache::setCacheLimit(20 * 1024 * app.devicePixelRatio());
 
