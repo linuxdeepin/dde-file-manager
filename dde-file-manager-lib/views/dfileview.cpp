@@ -1329,7 +1329,7 @@ void DFileView::updateStatusBar()
         return;
     }
 
-    emit notifySelectUrlChanged(corectUrls);
+    notifySelectUrlChanged(corectUrls);
 
     if (count == 0) {
         d->statusBar->itemCounted(event, this->count());

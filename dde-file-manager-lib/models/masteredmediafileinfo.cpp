@@ -200,8 +200,8 @@ DUrl MasteredMediaFileInfo::mimeDataUrl() const
 bool MasteredMediaFileInfo::canIteratorDir() const
 {
     Q_D(const DAbstractFileInfo);
-
-    return !d->proxy;
+    return true; // fix 27116 光驱中使用搜索无效。通过这种方式，点击搜索结果中的文件夹将会跳转到文件的实际挂载目录，如果要回到刻录页面，需要点击返回或者侧边栏，点击顶部的面包屑导航也只能到挂载根目录
+//    return !d->proxy;
 }
 
 DUrl MasteredMediaFileInfo::parentUrl() const

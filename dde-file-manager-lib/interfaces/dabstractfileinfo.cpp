@@ -161,7 +161,7 @@ DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
 {
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
     if (QThread::currentThread() && qApp && qApp->thread() && QThread::currentThread() != qApp->thread()) {
-        return 0;
+        return nullptr;
     }
 
     if (!fileUrl.isValid()) {

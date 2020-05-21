@@ -70,7 +70,6 @@
 #include "models/dfmrootfileinfo.h"
 #include "controllers/vaultcontroller.h"
 #include "dfmsplitter.h"
-#include "models/masteredmediafileinfo.h"
 
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
@@ -359,8 +358,6 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
             if (!fileInfo || !fileInfo->exists()) {
                 DUrl searchUrl = current_view ? current_view->rootUrl() : DUrl::fromLocalFile(QDir::homePath());
-                if (searchUrl.scheme() == BURN_SCHEME) // fix bug 27116
-                    searchUrl = DUrl::fromLocalFile(MasteredMediaFileInfo(searchUrl).extraProperties()["mm_backer"].toString());
 
                 if (searchUrl.isComputerFile()) {
                     searchUrl = DUrl::fromLocalFile("/");
