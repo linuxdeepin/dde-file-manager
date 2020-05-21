@@ -22,7 +22,6 @@
 
 #include "dabstractfileinfo.h"
 
-class QStorageInfo;
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DAbstractFileInfo
 {

@@ -50,6 +50,7 @@
 #include "models/deviceinfoparser.h"
 #include "dfmvaultunlockpages.h"
 #include "vault/interfaceactivevault.h"
+#include "controllers/vaultcontroller.h"
 
 #include <dslider.h>
 
@@ -270,6 +271,9 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);
 
     connect(&DeviceInfoParser::Instance(), SIGNAL(loadFinished()), this, SLOT(repaint()));
+
+    //! 用于保险箱大小更新
+    connect(VaultController::getVaultController(), &VaultController::signalCalculationVaultFinish, this, &ComputerView::vaultCalculationFinish);
 }
 
 ComputerView::~ComputerView()
@@ -347,6 +351,12 @@ void ComputerView::onRenameRequested(const DFMUrlBaseEvent &event)
     if (idx.isValid()) {
         m_view->edit(idx);
     }
+}
+
+void ComputerView::vaultCalculationFinish() const
+{
+    ComputerView * view = (ComputerView*)this;
+    view->repaint();
 }
 
 void ComputerView::resizeEvent(QResizeEvent *event)
