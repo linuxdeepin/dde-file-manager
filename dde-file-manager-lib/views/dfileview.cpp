@@ -2660,7 +2660,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     fileViewHelper()->handleMenu(menu);
 
     menu->exec();
-    menu->deleteLater();
+    menu->deleteLater(this);
 }
 
 
@@ -2700,9 +2700,16 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         }
     }
 
+    static bool lock = false;
+    if (lock) {
+        qDebug() << "reject show menu";
+        return;
+    }
     menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, windowId(), false);
+    lock = true;
 
     if (!menu) {
+        lock = false;
         return;
     }
 
@@ -2711,7 +2718,8 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     fileViewHelper()->handleMenu(menu);
 
     menu->exec();
-    menu->deleteLater();
+    menu->deleteLater(this);
+    lock = false;
 }
 
 void DFileView::updateListHeaderViewProperty()
@@ -2848,7 +2856,7 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
         const QList<int> &childRoles = fileInfo->userColumnChildRoles(column);
 
         if (childRoles.isEmpty()) {
-            menu->deleteLater();
+            menu->deleteLater(this);
 
             return;
         }
@@ -2908,7 +2916,7 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
     }
 
     menu->exec(QCursor::pos());
-    menu->deleteLater();
+    menu->deleteLater(this);
 }
 
 void DFileView::onModelStateChanged(int state)
