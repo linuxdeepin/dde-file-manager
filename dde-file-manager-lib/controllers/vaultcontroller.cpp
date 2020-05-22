@@ -189,6 +189,65 @@ bool VaultController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) co
     return DFileService::instance()->openFile(event->sender(), vaultToLocalUrl(event->url()));
 }
 
+bool VaultController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
+{
+//    return DFileService::instance()->openFiles(event->sender(), vaultToLocalUrls(event->urlList()));
+    DUrlList fileUrls = event->urlList();
+    DUrlList packUrl;
+    QStringList pathList;
+    bool result = false;
+
+    for(DUrl fileUrl : fileUrls){
+        const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
+
+        if (pfile->isSymLink()) {
+            const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
+
+            if (linkInfo && !linkInfo->exists()) {
+                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+                continue;
+            }
+            fileUrl = linkInfo->redirectedFileUrl();
+        }
+
+        if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
+            int code = dialogManager->showRunExcutableScriptDialog(fileUrl, event->windowId());
+            result = FileUtils::openExcutableScriptFile(fileUrl.toLocalFile(), code) || result;
+            continue;
+        }
+
+        if (FileUtils::isFileRunnable(fileUrl.toLocalFile()) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showRunExcutableFileDialog(fileUrl, event->windowId());
+            result = FileUtils::openExcutableFile(fileUrl.toLocalFile(), code) || result;
+            continue;
+        }
+
+        if (FileUtils::shouldAskUserToAddExecutableFlag(fileUrl.toLocalFile()) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showAskIfAddExcutableFlagAndRunDialog(fileUrl, event->windowId());
+            result = FileUtils::addExecutableFlagAndExecuse(fileUrl.toLocalFile(), code) || result;
+            continue;
+        }
+
+        packUrl << fileUrl;
+        QString url = vaultToLocal(fileUrl);
+        if (FileUtils::isFileWindowsUrlShortcut(url)) {
+            url = FileUtils::getInternetShortcutUrl(url);
+        }
+        pathList << url;
+    }
+
+    if (!pathList.empty()) {
+        result = FileUtils::openFiles(pathList);
+        if (!result) {
+            for (const DUrl &fileUrl : packUrl){
+                AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(),fileUrl)); // requestShowOpenWithDialog
+            }
+        }
+    }
+
+    return result;
+}
+
 bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
