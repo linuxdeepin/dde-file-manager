@@ -338,7 +338,8 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 
     if (deviceListener->isMountedRemovableDiskExits()) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
-        if (currentUrl.path().contains("/dev/sr"))
+        if (currentUrl.path().contains("/dev/sr")
+                || (currentUrl.scheme() == SEARCH_SCHEME && currentUrl.query().contains("/dev/sr"))) // 禁用光盘搜索列表中的发送到选项
             menu->removeAction(sendToMountedRemovableDiskAction);
         else {
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
@@ -387,7 +388,8 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
             if (drv->mediaCompatibility().join(' ').contains("_r")) {
-                if ((currentUrl.scheme() == BURN_SCHEME && QString(blk->device()) == currentUrl.burnDestDevice()) || odrv.contains(drv->path())) {
+                if ((currentUrl.scheme() == BURN_SCHEME && QString(blk->device()) == currentUrl.burnDestDevice()) || odrv.contains(drv->path())
+                        || (currentUrl.scheme() == SEARCH_SCHEME && currentUrl.query().contains("/dev/sr"))) { // 禁用光盘搜索列表中的“添加到光盘刻录”选项
                     continue;
                 }
                 DUrl rootUrl(DFMROOT_ROOT + QString(blk->device()).mid(QString("/dev/").length()) + ".localdisk");
