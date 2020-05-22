@@ -3,6 +3,7 @@
 #include "dfmsettings.h"
 #include "dfmapplication.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/vaulterrorcode.h"
 #include "../app/define.h"
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
@@ -36,7 +37,7 @@ VaultLockManager::VaultLockManager(QObject *parent) : QObject(parent)
     connect(&m_alarmClock, &QTimer::timeout, this, &VaultLockManager::processAutoLock);
     m_alarmClock.setInterval(1000);
 
-    connect(VaultController::getVaultController(), &VaultController::sigLockVault, this,  &VaultLockManager::slotLockVault);
+    connect(VaultController::getVaultController(), &VaultController::signalLockVault, this,  &VaultLockManager::slotLockVault);
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this,  &VaultLockManager::slotUnlockVault);
 
     loadConfig();
@@ -145,16 +146,20 @@ void VaultLockManager::processAutoLock()
     }
 }
 
-void VaultLockManager::slotLockVault(QString msg)
+void VaultLockManager::slotLockVault(int msg)
 {
-    if (msg.contains("vault_unlocked")) {
+    if (static_cast<ErrorCode>(msg) == ErrorCode::Success) {
         m_alarmClock.stop();
+    } else {
+        qDebug() << "vault cannot lock";
     }
 }
 
-void VaultLockManager::slotUnlockVault()
+void VaultLockManager::slotUnlockVault(int msg)
 {
-    autoLock(m_autoLockState);
+    if (static_cast<ErrorCode>(msg) == ErrorCode::Success) {
+        autoLock(m_autoLockState);
+    }
 }
 
 bool VaultLockManager::isValid() const

@@ -67,12 +67,12 @@ protected slots:
     /**
      * @brief slotLockVault 加锁状态槽函数
      */
-    void slotLockVault(QString msg);
+    void slotLockVault(int msg);
 
     /**
      * @brief slotUnlockVault 解锁状态槽函数
      */
-    void slotUnlockVault();
+    void slotUnlockVault(int msg);
 
 private:
     explicit VaultLockManager(QObject *parent = nullptr);
