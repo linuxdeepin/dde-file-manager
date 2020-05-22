@@ -79,6 +79,9 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
         m_pTips3->setText(tr("The setup is complete"));
         m_pFinishedBtn->setText(tr("ok"));
         m_pFinishedBtn->setEnabled(true);
+
+        // Reset autolock time config.
+        VaultLockManager::getInstance().resetConfig();
     }else{
         qDebug() << QString(tr("create vault failure, the error code is %1!").arg(nState));
     }

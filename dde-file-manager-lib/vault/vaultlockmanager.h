@@ -53,6 +53,11 @@ public:
     */
     bool checkAuthentication(QString type);
 
+    /**
+     * @brief resetConfig 重置保险箱配置
+     */
+    void resetConfig();
+
 protected slots:
     /**
      * @brief processAutoLock 处理自动加锁

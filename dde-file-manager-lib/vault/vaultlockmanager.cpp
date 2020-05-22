@@ -57,6 +57,11 @@ void VaultLockManager::loadConfig()
     autoLock(state);
 }
 
+void VaultLockManager::resetConfig()
+{
+    autoLock(VaultLockManager::Never);
+}
+
 VaultLockManager::AutoLockState VaultLockManager::autoLockState() const
 {
     return m_autoLockState;
