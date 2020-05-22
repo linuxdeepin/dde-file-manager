@@ -438,9 +438,11 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
     } else if (suffix() == SUFFIX_GVFSMP) {
         return DUrl::fromLocalFile(d->backer_url);
     } else if (suffix() == SUFFIX_UDISKS) {
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
-        if (drv->optical()) {
-            return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
+        if (d->blk) {
+            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
+            if (drv->optical()) {
+                return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
+            }
         }
         if (d->mps.size()) {
             return DUrl::fromLocalFile(d->mps.first());
