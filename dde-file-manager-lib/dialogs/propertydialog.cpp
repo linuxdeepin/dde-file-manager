@@ -1056,6 +1056,11 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     } else {
         locationPathLabel = new SectionValueLabel();
         QString absoluteFilePath = info->absoluteFilePath();
+        //! 在属性窗口中不显示保险箱中的文件真实路径
+        if(info->fileUrl().isVaultFile())
+        {
+            absoluteFilePath = info->fileUrl().toString();
+        }
         locationPathLabel->setText(absoluteFilePath);
         locationPathLabel->setToolTip(absoluteFilePath);
         QString t = locationPathLabel->fontMetrics().elidedText(absoluteFilePath, Qt::ElideMiddle, 150);
