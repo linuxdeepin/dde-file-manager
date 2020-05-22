@@ -51,6 +51,8 @@
 #include "dfileinfo.h"
 #include "models/trashfileinfo.h"
 
+#include "controllers/vaultcontroller.h"
+
 #include "views/windowmanager.h"
 
 #include "xutil.h"
@@ -685,7 +687,12 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
     QWidget *w = WindowManager::getWindowById(event.windowId());
     if (w) {
-        OpenWithDialog *d = new OpenWithDialog(event.fileUrl());
+        DUrl url = event.fileUrl();
+        if(event.fileUrl().scheme() == DFMVAULT_SCHEME)
+        {
+            url = VaultController::vaultToLocalUrl(url);
+        }
+        OpenWithDialog *d = new OpenWithDialog(url);
         d->setDisplayPosition(OpenWithDialog::Center);
         d->exec();
     }
