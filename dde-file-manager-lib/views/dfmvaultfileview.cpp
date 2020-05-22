@@ -128,6 +128,7 @@ void DFMVaultFileView::lockVault(int state)
 {
     if(state == 0)
     {
-        cd(VaultController::makeVaultUrl("/", "unlock"));
+        DUrl url(COMPUTER_ROOT);
+        cd(url);
     }
 }
