@@ -1146,9 +1146,14 @@ void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorE
     TagManager::instance()->changeTagColor(tagName, newColor);
 }
 
-void AppController::showTagEdit(const QPoint &globalPos, const DUrlList &fileList)
+void AppController::showTagEdit(const QRect &parentRect, const QPoint &globalPos, const DUrlList &fileList)
 {
     DTagEdit *tagEdit = new DTagEdit();
+
+    auto subValue = parentRect.height() - globalPos.y();
+    if(subValue < 98){
+        tagEdit->setArrowDirection(DArrowRectangle::ArrowDirection::ArrowBottom);
+    }
 
     tagEdit->setBaseSize(160, 98);
     tagEdit->setFilesForTagging(fileList);

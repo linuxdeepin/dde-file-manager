@@ -25,6 +25,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 
+#include "view/backgroundmanager.h"
 #include <DBlurEffectWidget>
 #include <dregionmonitor.h>
 #include <com_deepin_sessionmanager.h>
@@ -59,13 +60,14 @@ public:
         ScreenSaverMode
     };
 
-    Frame(Mode mode = WallpaperMode, QWidget *parent = nullptr);
+    Frame(QString screenName, Mode mode = WallpaperMode, QWidget *parent = nullptr);
     ~Frame() override;
 
     void show();
     void hide();
 
-    QString desktopBackground() const;
+    //QString desktopBackground() const; /*** old code ***/
+    QPair<QString,QString> desktopBackground() const;
 
 signals:
     void aboutHide();
@@ -73,7 +75,7 @@ signals:
 
 public slots:
     void handleNeedCloseButton(QString path, QPoint pos);
-
+    void onRest();
 protected:
     void showEvent(QShowEvent *) override;
     void hideEvent(QHideEvent *) override;
@@ -113,6 +115,7 @@ private:
     DButtonBox *m_wallpaperCarouselControl;
 #endif
 
+    WMInter *m_dbusWmInter = nullptr;
     ComDeepinDaemonAppearanceInterface * m_dbusAppearance = nullptr;
 #ifndef DISABLE_SCREENSAVER
     ComDeepinScreenSaverInterface *m_dbusScreenSaver = nullptr;
@@ -122,8 +125,12 @@ private:
 
     QString m_formerWallpaper;
     QMap<QString, bool> m_deletableInfo;
-
+#if 0
     BackgroundHelper *m_backgroundHelper = nullptr;
+#endif
+    BackgroundManager *m_backgroundManager = nullptr;
+
+    bool m_isExistFeatureInterface;
 
     void initUI();
     void initSize();
@@ -132,6 +139,15 @@ private:
     void onItemPressed(const QString &data);
     void onItemButtonClicked(const QString &buttonID);
     QStringList processListReply(const QString &reply);
+
+    void featureInterface();
+
+    QString getWallpaperSlideShow();
+    void setWallpaperSlideShow(QString slideShow);
+    void setBackground();
+    bool existScreensaverService();
+
+    QString m_screenName;
 };
 
 #endif // FRAME_H

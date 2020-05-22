@@ -19,6 +19,8 @@
 #define DesktopServicePath          "/com/deepin/dde/desktop"
 #define DesktopServiceInterface     "com.deepin.dde.desktop"
 
+#define USINGOLD 0
+
 class QDBusConnection;
 class CanvasGridView;
 class DesktopPrivate;
@@ -31,30 +33,33 @@ public:
     void loadData();
     void loadView();
 
-    void showWallpaperSettings(int mode = 0);
     void showZoneSettings();
 
     void initDebugDBus(QDBusConnection &conn);
-
-    CanvasGridView *getView();
-
 public slots:
-    void Show();
-    void ShowWallpaperChooser();
-    void ShowScreensaverChooser();
+    void EnableUIDebug(bool enable);
+    void SetVisible(int screenNum,bool);
+    void FixGeometry(int screenNum);
+    void Reset();
+    void PrintInfo();
+    void ShowWallpaperChooser(const QString &screen = QString());
+    void ShowScreensaverChooser(const QString &screen = QString());
+protected:
+    void showWallpaperSettings(QString name, int mode = 0);
+#if USINGOLD
 #ifdef QT_DEBUG
     void logAllScreenLabel();
     void logScreenLabel(int index);
     void mapLabelScreen(int labelIndex, int screenIndex);
 #endif // QT_DEBUG
-
+#endif
 private:
     explicit Desktop();
     ~Desktop();
-
+#if USINGOLD
     void onBackgroundEnableChanged();
     void onBackgroundGeometryChanged(QWidget *l);
-
+#endif
     friend class Singleton<Desktop>;
     Q_DISABLE_COPY(Desktop)
 

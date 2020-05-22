@@ -36,12 +36,15 @@
 #include "controllers/jobcontroller.h"
 #include "controllers/appcontroller.h"
 #include "shutil/desktopfile.h"
+//处理自动整理的路径问题
+#include "controllers/mergeddesktopcontroller.h"
 #include "shutil/dfmfilelistfile.h"
 
 #include "interfaces/durl.h"
 #include "interfaces/dfileviewhelper.h"
 #include "shutil/fileutils.h"
 #include "deviceinfo/udisklistener.h"
+#include "shutil/dfmfilelistfile.h"
 
 #include <memory>
 #include <QList>
@@ -915,6 +918,11 @@ public:
             {
                 qq->setState(DFileSystemModel::Idle);
             }
+
+            //当遍历文件的耗时超过JobController::m_timeCeiling时，
+            //onJobFinished函数中拿到的文件不足，因为rootNodeManager还要处理剩余文件
+            //因此在这里rootNodeManager处理完后，再次发送信号 关联bug#24863
+            emit qq->sigJobFinished();
         });
     }
 
@@ -2847,6 +2855,8 @@ void DFileSystemModel::onJobFinished()
     if (job) {
         job->deleteLater();
     }
+
+    emit sigJobFinished();
 }
 
 void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
@@ -2969,7 +2979,21 @@ void DFileSystemModel::emitAllDataChanged()
 void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
 {
     /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
-    if (AppController::selectionAndRenameFile.first == fileUrl) {
+    if (fileUrl.scheme() == DFMMD_SCHEME){ //自动整理路径特殊实现，fix bug#24715
+        auto realFileUrl = MergedDesktopController::convertToRealPath(fileUrl);
+        if (AppController::selectionAndRenameFile.first == realFileUrl) {
+            quint64 windowId = AppController::selectionAndRenameFile.second;
+            if (windowId != parent()->windowId()) {
+                return;
+            }
+
+            AppController::selectionAndRenameFile = qMakePair(DUrl(), 0);
+            DFMUrlBaseEvent event(this, fileUrl);
+            event.setWindowId(windowId);
+            emit newFileByInternal(fileUrl);
+        }
+    }
+     else if (AppController::selectionAndRenameFile.first == fileUrl) {
         quint64 windowId = AppController::selectionAndRenameFile.second;
 
         if (windowId != parent()->windowId()) {

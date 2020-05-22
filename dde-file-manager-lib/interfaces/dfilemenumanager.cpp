@@ -371,7 +371,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     }
 
                     sendToMountedRemovableDiskMenu->addAction(action);
-                    connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk);
+                    connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk,Qt::QueuedConnection);//改为队列，防止exec无法退出，关联bug#25613
                 }
             }
 
@@ -658,29 +658,32 @@ void DFileMenuData::initActions()
         ///###: MenuAction::ChangeTagColor represents that you change the color of a present tag.
         ///###: They are different event.
         if (key == MenuAction::TagFilesUseColor || key == MenuAction::ChangeTagColor) {
-            DTagActionWidget *tagWidget{ new DTagActionWidget };
-            QWidgetAction *tagAction{ new QWidgetAction{ nullptr } };
+//为了解决在自动整理模式下，选择多个文件发送到一个没有空间的光驱上，在桌面上打开任意文件，
+//弹出很多文件的窗口并且右键菜单颜色标记出现英文问题。临时方案
+//将里面color相关的代码到外面初始化时重新加载
+//            DTagActionWidget *tagWidget{ new DTagActionWidget };
+//            QWidgetAction *tagAction{ new QWidgetAction{ nullptr } };
 
-            tagAction->setDefaultWidget(tagWidget);
+//            tagAction->setDefaultWidget(tagWidget);
 
-            switch (key) {
-            case MenuAction::TagFilesUseColor: {
-                tagAction->setText("Add color tags");
-                break;
-            }
-            case MenuAction::ChangeTagColor: {
-                tagAction->setText("Change color of present tag");
-                tagWidget->setExclusive(true);
-                tagWidget->setToolTipVisible(false);
-                break;
-            }
-            default:
-                break;
-            }
+//            switch (key) {
+//            case MenuAction::TagFilesUseColor: {
+//                tagAction->setText("Add color tags");
+//                break;
+//            }
+//            case MenuAction::ChangeTagColor: {
+//                tagAction->setText("Change color of present tag");
+//                tagWidget->setExclusive(true);
+//                tagWidget->setToolTipVisible(false);
+//                break;
+//            }
+//            default:
+//                break;
+//            }
 
-            tagAction->setData(key);
-            actions.insert(key, tagAction);
-            actionToMenuAction.insert(tagAction, key);
+//            tagAction->setData(key);
+//            actions.insert(key, tagAction);
+//            actionToMenuAction.insert(tagAction, key);
             continue;
         }
 
@@ -726,7 +729,46 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         if (!isAvailableAction(key)) {
             continue;
         }
+        /****************************************************************************/
+        //为了解决在自动整理模式下，选择多个文件发送到一个没有空间的光驱上，在桌面上打开任意文件，
+        //弹出很多文件的窗口并且右键菜单颜色标记出现英文问题。临时方案
+        //将里面color相关的代码到外面初始化时重新加载
+        if(key == MenuAction::TagFilesUseColor || key == MenuAction::ChangeTagColor){
+            DTagActionWidget *tagWidget{ new DTagActionWidget };
+            QWidgetAction *tagAction{ new QWidgetAction{ nullptr } };
 
+            tagAction->setDefaultWidget(tagWidget);
+
+            switch (key) {
+            case MenuAction::TagFilesUseColor: {
+                tagAction->setText("Add color tags");
+                break;
+            }
+            case MenuAction::ChangeTagColor: {
+                tagAction->setText("Change color of present tag");
+                tagWidget->setExclusive(true);
+                tagWidget->setToolTipVisible(false);
+                break;
+            }
+            default:
+                break;
+            }
+
+            tagAction->setData(key);
+            auto keyAction = DFileMenuData::actions.take(key);
+            if(keyAction){
+                QWidgetAction *widAction = dynamic_cast<QWidgetAction *>(keyAction);
+                if (widAction && widAction->defaultWidget()){
+                    widAction->defaultWidget()->deleteLater();
+                }
+
+                DFileMenuData::actionToMenuAction.remove(keyAction);
+                keyAction->deleteLater();
+            }
+            DFileMenuData::actions.insert(key, tagAction);
+            DFileMenuData::actionToMenuAction.insert(tagAction, key);
+        }
+        /****************************************************************************/
         if (key == MenuAction::Separator) {
             menu->addSeparator();
         } else {
