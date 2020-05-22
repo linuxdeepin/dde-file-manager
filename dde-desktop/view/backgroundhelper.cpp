@@ -355,7 +355,7 @@ void BackgroundHelper::updateBackground(QWidget *l)
     bool hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
     if (Display::instance()->primaryScreen() == s) {
-        QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : s->geometry();
+        QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : s->handle()->geometry();
         if (grect.width() == 0 || grect.height() == 0){
             qCritical() << "error!!!!!!!!!!!" << "set DBUS primaryRect background geometry" << grect;
         }
@@ -364,7 +364,7 @@ void BackgroundHelper::updateBackground(QWidget *l)
         }
         qDebug() << "set" << grect << "primaryScreen" << s->name() << s->geometry()
                  << "trueSize handle()->geometry()" << s->handle()->geometry().size()
-                 << "dbus:"<< Display::instance()->primaryRect() << "display true size" << trueSize;
+                 << "dbus:"<< Display::instance()->primaryRect() << "display truesize" << trueSize;
         l->windowHandle()->handle()->setGeometry(grect);
     }
     QHighDpiScaling::m_active = hi_active;
@@ -560,7 +560,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
         l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
         if (Display::instance()->primaryScreen() == screen)
         {
-            QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : screen->geometry();
+            QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : screen->handle()->geometry();
             if (grect.width() == 0 || grect.height() == 0){
                 qCritical() << "error!!!!!!!!!!!" << "set DBUS primaryRect background geometry" << grect;
             }
@@ -638,7 +638,7 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
     QHighDpiScaling::m_active = false;
     l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
     if (Display::instance()->primaryScreen() == screen) {
-        QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : screen->geometry();
+        QRect grect = DesktopInfo().waylandDectected() ? Display::instance()->primaryRect() : screen->handle()->geometry();
         l->windowHandle()->handle()->setGeometry(grect);
     }
 
