@@ -80,7 +80,8 @@ SOURCES += main.cpp \
     dbusservice/dbusinterface/acesscontrol_interface.cpp \
     vault/vaultmanager.cpp \
     dbusservice/dbusadaptor/vault_adaptor.cpp \
-    dbusservice/dbusinterface/vault_interface.cpp
+    dbusservice/dbusinterface/vault_interface.cpp \
+    vault/vaultclock.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -122,7 +123,8 @@ HEADERS += \
     dbusservice/dbusinterface/acesscontrol_interface.h \
     vault/vaultmanager.h \
     dbusservice/dbusadaptor/vault_adaptor.h \
-    dbusservice/dbusinterface/vault_interface.h
+    dbusservice/dbusinterface/vault_interface.h \
+    vault/vaultclock.h
 
 target.path = /usr/bin
 
