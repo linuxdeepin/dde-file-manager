@@ -34,6 +34,9 @@
 #include <QDir>
 #include <QDebug>
 
+#include <unistd.h>
+#include <pwd.h>
+
 #include "shareinfo.h"
 #include "../dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
 
@@ -63,9 +66,9 @@ UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
 
 
     m_userShareInterface = new UserShareInterface("com.deepin.filemanager.daemon",
-                                                                    "/com/deepin/filemanager/daemon/UserShareManager",
-                                                                    QDBusConnection::systemBus(),
-                                                                    this);
+                                                  "/com/deepin/filemanager/daemon/UserShareManager",
+                                                  QDBusConnection::systemBus(),
+                                                  this);
     initConnect();
     updateUserShareInfo();
     initMonitorPath();
@@ -82,8 +85,8 @@ UserShareManager::~UserShareManager()
 
 void UserShareManager::initMonitorPath()
 {
-    const ShareInfoList& infoList = shareInfoList();
-    for(auto info : infoList){
+    const ShareInfoList &infoList = shareInfoList();
+    for (auto info : infoList) {
         m_fileMonitor->add(info.path());
     }
 }
@@ -92,11 +95,11 @@ void UserShareManager::initConnect()
 {
     connect(m_fileMonitor, &DFileWatcherManager::fileDeleted, this, &UserShareManager::onFileDeleted);
     connect(m_fileMonitor, &DFileWatcherManager::subfileCreated, this, &UserShareManager::handleShareChanged);
-    connect(m_fileMonitor, &DFileWatcherManager::fileMoved, this, [this](const QString &from, const QString &to) {
+    connect(m_fileMonitor, &DFileWatcherManager::fileMoved, this, [this](const QString & from, const QString & to) {
         onFileDeleted(from);
         handleShareChanged(to);
     });
-    connect(m_shareInfosChangedTimer, &QTimer::timeout, this, [this](){emit updateUserShareInfo(true);});
+    connect(m_shareInfosChangedTimer, &QTimer::timeout, this, [this]() {emit updateUserShareInfo(true);});
 //    connect(m_lazyStartSambaServiceTimer, &QTimer::timeout, this, &UserShareManager::initSamaServiceSettings);
 }
 
@@ -118,8 +121,8 @@ ShareInfo UserShareManager::getOldShareInfoByNewInfo(const ShareInfo &newInfo) c
 ShareInfo UserShareManager::getShareInfoByPath(const QString &path) const
 {
     QString shareName = getShareNameByPath(path);
-    if (!shareName.isEmpty()){
-        if (m_shareInfos.contains(shareName)){
+    if (!shareName.isEmpty()) {
+        if (m_shareInfos.contains(shareName)) {
             return m_shareInfos.value(shareName);
         }
     }
@@ -134,9 +137,9 @@ ShareInfo UserShareManager::getsShareInfoByShareName(const QString &shareName) c
 QString UserShareManager::getShareNameByPath(const QString &path) const
 {
     QString shareName;
-    if (m_sharePathToNames.contains(path)){
+    if (m_sharePathToNames.contains(path)) {
         QStringList shareNames = m_sharePathToNames.value(path);
-        if (shareNames.count() > 0){
+        if (shareNames.count() > 0) {
             shareName = shareNames.last();
         }
     }
@@ -146,15 +149,15 @@ QString UserShareManager::getShareNameByPath(const QString &path) const
 void UserShareManager::loadUserShareInfoPathNames()
 {
     QString cache = readCacheFromFile(getCacehPath());
-    if (!cache.isEmpty()){
+    if (!cache.isEmpty()) {
         QJsonParseError error;
-        QJsonDocument doc=QJsonDocument::fromJson(cache.toLocal8Bit(),&error);
-        if (error.error == QJsonParseError::NoError){
+        QJsonDocument doc = QJsonDocument::fromJson(cache.toLocal8Bit(), &error);
+        if (error.error == QJsonParseError::NoError) {
             QJsonObject obj = doc.object();
             foreach (QString key, obj.keys()) {
                 m_sharePathByFilePath.insert(key, obj.value(key).toString());
             }
-        }else{
+        } else {
             qDebug() << "load cache file: " << getCacehPath() << error.errorString();
         }
     }
@@ -163,7 +166,7 @@ void UserShareManager::loadUserShareInfoPathNames()
 void UserShareManager::saveUserShareInfoPathNames()
 {
     QVariantMap cache;
-    foreach (const QString& path, m_sharePathByFilePath.keys()) {
+    foreach (const QString &path, m_sharePathByFilePath.keys()) {
         cache.insert(path, m_sharePathByFilePath.value(path));
     }
 
@@ -186,7 +189,7 @@ void UserShareManager::updateFileAttributeInfo(const QString &filePath) const
 void UserShareManager::writeCacheToFile(const QString &path, const QString &content)
 {
     QFile file(path);
-    if (file.open(QFile::WriteOnly)){
+    if (file.open(QFile::WriteOnly)) {
         file.write(content.toLocal8Bit());
     }
     file.close();
@@ -195,8 +198,7 @@ void UserShareManager::writeCacheToFile(const QString &path, const QString &cont
 QString UserShareManager::readCacheFromFile(const QString &path)
 {
     QFile file(path);
-    if(!file.open(QFile::ReadOnly))
-    {
+    if (!file.open(QFile::ReadOnly)) {
         qDebug() << path << "isn't exists!";
         return QString();
     }
@@ -207,15 +209,16 @@ QString UserShareManager::readCacheFromFile(const QString &path)
 
 QString UserShareManager::getCurrentUserName()
 {
-    if(CurrentUser.isEmpty()){
-        QProcess up;
-        up.start("id",QStringList() << "-u" << "-n");
-        up.waitForFinished();
-        QByteArray data = up.readAll();
-        QString userName = data.data();
-        // throw out '\n' string
-        CurrentUser = userName.trimmed();
-    }
+//    if(CurrentUser.isEmpty()){
+//        QProcess up;
+//        up.start("id",QStringList() << "-u" << "-n");
+//        up.waitForFinished();
+//        QByteArray data = up.readAll();
+//        QString userName = data.data();
+//        // throw out '\n' string
+//        CurrentUser = userName.trimmed();
+//    }
+    CurrentUser = getpwuid(getuid())->pw_name;
     return CurrentUser;
 }
 
@@ -239,8 +242,8 @@ ShareInfoList UserShareManager::shareInfoList() const
 int UserShareManager::validShareInfoCount() const
 {
     int counter = 0;
-    for (auto info: shareInfoList()){
-        if(info.isValid())
+    for (auto info : shareInfoList()) {
+        if (info.isValid())
             counter ++;
     }
     return counter;
@@ -248,8 +251,8 @@ int UserShareManager::validShareInfoCount() const
 
 bool UserShareManager::hasValidShareFolders() const
 {
-    foreach (const ShareInfo& info, shareInfoList()) {
-        if(QFile::exists(info.path()))
+    foreach (const ShareInfo &info, shareInfoList()) {
+        if (QFile::exists(info.path()))
             return true;
     }
     return false;
@@ -271,7 +274,7 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
 {
     //cache
     QStringList oldShareInfos = m_shareInfos.keys();
-    QMap<QString,ShareInfo> shareInfoCache = m_shareInfos;
+    QMap<QString, ShareInfo> shareInfoCache = m_shareInfos;
     ShareInfoList newInfos;
 
     m_shareInfos.clear();
@@ -279,7 +282,7 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
 
     QDir d(UserSharePath());
     QFileInfoList infolist = d.entryInfoList(QDir::Files);
-    foreach (const QFileInfo& f, infolist) {
+    foreach (const QFileInfo &f, infolist) {
         ShareInfo shareInfo;
         QMap<QString, QString> info;
         QString fpath = f.absoluteFilePath();
@@ -292,14 +295,14 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
         while (!in.atEnd()) {
             // Read new line
             QString line = in.readLine();
-              // Skip empty line or line with invalid format
+            // Skip empty line or line with invalid format
             if (line.trimmed().isEmpty()) {
                 continue;
             }
-            if (line.contains("=")){
+            if (line.contains("=")) {
                 int index = line.indexOf("=");
                 QString key = line.mid(0, index);
-                QString value = line.mid(index+1);
+                QString value = line.mid(index + 1);
                 info.insert(key, value);
             }
         }
@@ -309,15 +312,15 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
         if (!shareName.isEmpty() &&
                 !sharePath.isEmpty() &&
                 QFile(sharePath).exists() &&
-                !share_acl.isEmpty()){
+                !share_acl.isEmpty()) {
             shareInfo.setShareName(shareName);
             shareInfo.setPath(sharePath);
             shareInfo.setComment(info.value("comment"));
             shareInfo.setGuest_ok(info.value("guest_ok"));
             shareInfo.setUsershare_acl(info.value("usershare_acl"));
-            if (share_acl.contains("r") || share_acl.contains("R")){
+            if (share_acl.contains("r") || share_acl.contains("R")) {
                 shareInfo.setIsWritable(false);
-            }else if (share_acl.contains("f") || share_acl.contains("F")){
+            } else if (share_acl.contains("f") || share_acl.contains("F")) {
                 shareInfo.setIsWritable(true);
             }
             m_shareInfos.insert(shareInfo.shareName(), shareInfo);
@@ -337,20 +340,20 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
     foreach (ShareInfo info, m_shareInfos.values()) {
         if (info.isValid() && !oldShareInfos.contains(info.shareName())) {
             newInfos << info;
-        }else if(info.isValid() && oldShareInfos.contains(info.shareName())){
+        } else if (info.isValid() && oldShareInfos.contains(info.shareName())) {
             oldShareInfos.removeOne(info.shareName());
         }
     }
 
     // emit deleted usershare
-    for (const QString &shareName : oldShareInfos){
-        const QString& filePath = shareInfoCache.value(shareName).path();
+    for (const QString &shareName : oldShareInfos) {
+        const QString &filePath = shareInfoCache.value(shareName).path();
         emit userShareDeleted(filePath);
         m_fileMonitor->remove(filePath);
     }
 
     //emit new encoming shared info
-    foreach (const ShareInfo& info, newInfos) {
+    foreach (const ShareInfo &info, newInfos) {
         emit userShareAdded(info.path());
         m_fileMonitor->add(info.path());
     }
@@ -370,7 +373,7 @@ void UserShareManager::testUpdateUserShareInfo()
 {
     QProcess net_usershare_info;
     net_usershare_info.start("net usershare info");
-    if (net_usershare_info.waitForFinished()){
+    if (net_usershare_info.waitForFinished()) {
         QString content(net_usershare_info.readAll());
         writeCacheToFile(getCacehPath(), content);
         qDebug() << content;
@@ -388,10 +391,10 @@ void UserShareManager::testUpdateUserShareInfo()
 void UserShareManager::setSambaPassword(const QString &userName, const QString &password)
 {
     QDBusReply<bool> reply = m_userShareInterface->setUserSharePassword(userName, password);
-    if(reply.isValid()){
+    if (reply.isValid()) {
         qDebug() << "set usershare password:" << reply.value();
-    }else{
-        qDebug() <<"set usershare password:" << reply.error();
+    } else {
+        qDebug() << "set usershare password:" << reply.error();
     }
 }
 
@@ -407,16 +410,16 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
     // handle old info
     ShareInfo oldInfo = getOldShareInfoByNewInfo(info);
     qDebug() << oldInfo << info;
-    if(oldInfo.isValid()){
+    if (oldInfo.isValid()) {
         deleteUserShareByPath(oldInfo.path());
     }
-    if (!info.shareName().isEmpty() && QFile(info.path()).exists()){
+    if (!info.shareName().isEmpty() && QFile(info.path()).exists()) {
 
 
         QString cmd = "net";
         QStringList args;
         ShareInfo _info = info;
-        if(_info.isWritable()){
+        if (_info.isWritable()) {
             _info.setUsershare_acl("Everyone:f");
         } else {
             _info.setUsershare_acl("Everyone:R");
@@ -442,8 +445,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
         }
 
         //root权限文件分享会报这个错误信息
-        if (err.contains("as we are restricted to only sharing directories we own."))
-        {
+        if (err.contains("as we are restricted to only sharing directories we own.")) {
             DDialog dialog;
 
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
@@ -473,7 +475,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
 void UserShareManager::deleteUserShareByPath(const QString &path)
 {
     QString shareName = getShareNameByPath(path);
-    if (!shareName.isEmpty()){
+    if (!shareName.isEmpty()) {
         deleteUserShareByShareName(shareName);
     }
 }
@@ -481,7 +483,7 @@ void UserShareManager::deleteUserShareByPath(const QString &path)
 void UserShareManager::removeFiledeleteUserShareByPath(const QString &path)
 {
     QString shareName = getShareNameByPath(path);
-    if (shareName.isEmpty()){
+    if (shareName.isEmpty()) {
         return;
     }
     QString cmd = "net";
@@ -495,7 +497,7 @@ void UserShareManager::removeFiledeleteUserShareByPath(const QString &path)
 
 void UserShareManager::onFileDeleted(const QString &filePath)
 {
-    if(filePath.contains(UserSharePath()))
+    if (filePath.contains(UserSharePath()))
         handleShareChanged(filePath);
     else
         removeFiledeleteUserShareByPath(filePath);
@@ -509,14 +511,14 @@ void UserShareManager::usershareCountchanged()
 
 void UserShareManager::deleteUserShareByShareName(const QString &shareName)
 {
-    QDBusReply<bool> reply = m_userShareInterface->closeSmbShareByShareName(shareName,true);
-    if(reply.isValid() && reply.value()){
+    QDBusReply<bool> reply = m_userShareInterface->closeSmbShareByShareName(shareName, true);
+    if (reply.isValid() && reply.value()) {
         qDebug() << "closeSmbShareByShareName:" << reply.value();
-    }else{
-        qDebug() <<"closeSmbShareByShareName:" << reply.error();
-        QMap<QString,ShareInfo> shareInfoCache = m_shareInfos;
+    } else {
+        qDebug() << "closeSmbShareByShareName:" << reply.error();
+        QMap<QString, ShareInfo> shareInfoCache = m_shareInfos;
         if (shareInfoCache.contains(shareName)) {
-            const QString& filePath = shareInfoCache.value(shareName).path();
+            const QString &filePath = shareInfoCache.value(shareName).path();
             emit userShareDeletedFailed(filePath);
         }
         return;
