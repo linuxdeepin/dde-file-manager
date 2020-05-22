@@ -75,9 +75,10 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
 
                         // fix: use fork() burn files
                         qDebug() << "start burn files";
-                        const QString &strVolName = d->le_volname->text().trimmed().isEmpty()
-                                ? d->strLastVolName
-                                : d->le_volname->text().trimmed();
+//                        const QString &strVolName = d->le_volname->text().trimmed().isEmpty()
+//                                ? d->strLastVolName
+//                                : d->le_volname->text().trimmed();
+                        const QString &strVolName = d->le_volname->text().trimmed();
                         job->doOpticalBurnByChildProcess(dev, strVolName, d->speedmap[d->cb_writespeed->currentText()], flag);
                         dialogManager->removeJob(job->getJobId());
                         job->deleteLater();
