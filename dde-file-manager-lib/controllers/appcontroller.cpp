@@ -176,6 +176,10 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
             if (u.scheme() == RECENT_SCHEME) {
                 u = DUrl::fromLocalFile(u.path());
             }
+            //搜索结果也存在右键批量打卡不成功的问题，这里做类似处理
+            else if (u.scheme() == SEARCH_SCHEME) {
+                u = u.searchedFileUrl();
+            }
             lstUrls << u;
         }
         DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
