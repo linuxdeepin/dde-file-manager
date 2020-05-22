@@ -556,6 +556,15 @@ void PropertyDialog::updateInfo()
     initTagFrame(m_url);
 }
 
+const DUrl PropertyDialog::getRealUrl()
+{
+    if (m_url.isRecentFile()) {
+        return DUrl::fromLocalFile(m_url.path());
+    }
+
+    return m_url;
+}
+
 void PropertyDialog::initConnect()
 {
     connect(m_edit, &NameTextEdit::editFinished, this, &PropertyDialog::showTextShowFrame);
@@ -778,7 +787,8 @@ void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
 
 void PropertyDialog::onHideFileCheckboxChecked(bool checked)
 {
-    QFileInfo info(m_url.toLocalFile());
+    //如果是最近使用文件目录 需要取出其真实的文件url。
+    QFileInfo info(getRealUrl().toLocalFile());
     if (!info.exists()) return;
 
     DFMFileListFile flf(info.absolutePath());
@@ -823,9 +833,9 @@ void PropertyDialog::toggleFileExecutable(bool isChecked)
 {
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, m_url);
     if (isChecked) {
-        DFileService::instance()->setPermissions(this, m_url, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
+        DFileService::instance()->setPermissions(this, getRealUrl(), info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
     } else {
-        DFileService::instance()->setPermissions(this, m_url, info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
+        DFileService::instance()->setPermissions(this, getRealUrl(), info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
     }
 }
 
@@ -1392,7 +1402,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     // when change the index...
     auto onComboBoxChanged = [ = ]() {
-        DFileService::instance()->setPermissions(this, m_url,
+        DFileService::instance()->setPermissions(this, getRealUrl(),
                                                  QFileDevice::Permissions(ownerBox->currentData().toInt()) |
                                                  /*(info->permissions() & 0x0700) |*/
                                                  QFileDevice::Permissions(groupBox->currentData().toInt()) |
