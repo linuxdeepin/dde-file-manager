@@ -158,6 +158,13 @@ VaultController *VaultController::getVaultController()
 
 const DAbstractFileInfoPointer VaultController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
+    //! 打开文管对保险箱大小进行计算（每次开打只进行一次）
+    DUrl url("dfmvault://files/");
+    if(url == event->url() && VaultCalculation::Initialize()->m_flg)
+    {
+        VaultCalculation::Initialize()->m_flg = false;
+        VaultCalculation::Initialize()->calculationVault();
+    }
     return DAbstractFileInfoPointer(new VaultFileInfo(event->url()));
 }
 
@@ -187,14 +194,31 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DUrlList urlList1 = DFileService::instance()->moveToTrash(event->sender(), urlList);
     if(urlList == urlList1)
+    {
+        VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
+        emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
         return true;
+    }
     return false;
 }
 
 DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
-    return DFileService::instance()->moveToTrash(event->sender(), urlList);
+    DUrlList ulist = DFileService::instance()->moveToTrash(event->sender(), urlList);
+    VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
+    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
+    return ulist;
+}
+
+DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
+{
+    DUrlList urlList = vaultToLocalUrls(event->urlList());
+    DUrl url = vaultToLocalUrl(event->targetUrl());
+    DUrlList ulist = DFileService::instance()->pasteFile(event->sender(), event->action(), url, urlList);
+    VaultCalculation::Initialize()->calculationVault();     //! 复制文件后计算保险箱大小
+    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
+    return ulist;
 }
 
 bool VaultController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
@@ -385,7 +409,7 @@ QString VaultController::vaultToLocal(const DUrl &vaultUrl)
 
 DUrl VaultController::vaultToLocalUrl(const DUrl &vaultUrl)
 {
-    Q_ASSERT(vaultUrl.scheme() == DFMVAULT_SCHEME);
+//    Q_ASSERT(vaultUrl.scheme() == DFMVAULT_SCHEME);
     if (vaultUrl.scheme() != DFMVAULT_SCHEME) return vaultUrl;
     return DUrl::fromLocalFile(vaultToLocal(vaultUrl));
 }
@@ -535,4 +559,31 @@ QString VaultController::vaultLockPath()
 QString VaultController::vaultUnlockPath()
 {
     return makeVaultLocalPath("", "vault_unlocked");
+}
+
+/********************************************************/
+
+VaultCalculation * VaultCalculation::m_vaultCalculation = nullptr;
+
+VaultCalculation::VaultCalculation(QObject * parent):QObject (parent),m_flg(true)
+{
+
+}
+
+VaultCalculation * VaultCalculation::Initialize()
+{
+    if(m_vaultCalculation == nullptr)
+    {
+        m_vaultCalculation = new VaultCalculation;
+    }
+    return m_vaultCalculation;
+}
+
+void VaultCalculation::calculationVault()
+{
+    VaultController *controller = VaultController::getVaultController();
+
+    DUrl url = controller->vaultToLocalUrl(controller->makeVaultUrl());
+    QStorageInfo storageInfo(url.toLocalFile());
+    VaultFileInfo::setVaultSize(storageInfo.bytesTotal() - storageInfo.bytesFree());
 }
