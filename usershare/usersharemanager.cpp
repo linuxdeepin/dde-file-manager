@@ -218,7 +218,7 @@ QString UserShareManager::getCurrentUserName()
 //        // throw out '\n' string
 //        CurrentUser = userName.trimmed();
 //    }
-    CurrentUser = getpwuid(getuid())->pw_name;
+    CurrentUser = getpwuid(getuid())->pw_name; //getpwuid get password uid，pw_name password name，这个用来获取uid对应的用户名
     return CurrentUser;
 }
 
