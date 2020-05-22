@@ -44,6 +44,8 @@
 #include "models/dfmrootfileinfo.h"
 #include "deviceinfo/udisklistener.h"
 
+#include "controllers/vaultcontroller.h"
+
 #include "utils.h"
 
 #include "singleton.h"
@@ -511,8 +513,15 @@ void PropertyDialog::initUI()
     layout->addLayout(scrolllayout, 1);
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
+    DUrl url = m_url;
+    //! 保险箱中属性窗口中要获取标记需要真实路径，需要将虚拟路径转换为真实路径
+    if(m_url.isVaultFile())
+    {
+        url = VaultController::vaultToLocalUrl(m_url);
+    }
     if (fileInfo && fileInfo->canTag()) {
-        DFMTagWidget *tagInfoFrame = new DFMTagWidget(m_url, this);
+
+        DFMTagWidget *tagInfoFrame = new DFMTagWidget(url, this);
         new DFMRoundBackground(tagInfoFrame, 8);
         m_tagInfoFrame = tagInfoFrame;
 
