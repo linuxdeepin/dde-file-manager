@@ -799,7 +799,7 @@ QString DUrl::toLocalFile() const
         return taggedLocalFilePath();
     } else if (isUserShareFile()) {
         return QString(path()).remove(USERSHARE_ROOT);
-    } else if (isVaultFile()){        
+    } else if (isVaultFile()){
         return path().remove(DFMVAULT_ROOT);
     }else {
         return QUrl::toLocalFile();

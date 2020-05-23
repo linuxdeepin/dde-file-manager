@@ -45,20 +45,20 @@ VaultPasswordPage::~VaultPasswordPage()
 void VaultPasswordPage::initUI()
 {
     m_pwdEdit = new DPasswordEdit(this);
-    m_pwdEdit->lineEdit()->setPlaceholderText(tr("Verify your fingerprint or password"));
+    m_pwdEdit->lineEdit()->setPlaceholderText(tr("Verify your password"));
     m_pwdEdit->lineEdit()->setMaxLength(24);
 
-    m_helpBtn = new QPushButton(this);
-    m_helpBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
-    m_helpBtn->setFixedSize(40, 36);
+    m_tipsBtn = new QPushButton(this);
+    m_tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
+    m_tipsBtn->setFixedSize(40, 36);
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(m_pwdEdit);
-    layout->addWidget(m_helpBtn);
+    layout->addWidget(m_tipsBtn);
     layout->setContentsMargins(0, 0, 0, 0);
     this->setLayout(layout);
 
-    connect(m_helpBtn, &QPushButton::clicked, [this]{
+    connect(m_tipsBtn, &QPushButton::clicked, [this]{
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
             strPwdHint.insert(0, tr("Password hint:"));
@@ -90,6 +90,11 @@ QLineEdit *VaultPasswordPage::lineEdit()
 void VaultPasswordPage::showAlertMessage(const QString &text, int duration)
 {
     m_pwdEdit->showAlertMessage(text, duration);
+}
+
+void VaultPasswordPage::setTipsButtonVisible(bool visible)
+{
+    m_tipsBtn->setVisible(visible);
 }
 
 void VaultPasswordPage::onPasswordChanged(const QString &password)
@@ -307,6 +312,16 @@ void DFMVaultRemovePages::showEvent(QShowEvent *event)
     getButton(1)->setText(tr("Use Key"));
     m_bRemoveVault = false;
     m_currentPage = PageType::Password;
+
+    // 如果密码提示信息为空，则隐藏提示按钮
+    QString strPwdHint("");
+    if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
+        if (strPwdHint.isEmpty()){
+            qobject_cast<VaultPasswordPage *>(m_pages[PageType::Password])->setTipsButtonVisible(false);
+        } else {
+            qobject_cast<VaultPasswordPage *>(m_pages[PageType::Password])->setTipsButtonVisible(true);
+        }
+    }
 }
 
 DFMVaultRemovePages *DFMVaultRemovePages::instance()
@@ -390,9 +405,8 @@ void DFMVaultRemovePages::onLockVault(int state)
 
         emit accepted();
     }else if (state != 0 && m_bRemoveVault) {
-        // something to do
-        QString msg = tr("Remove failed,the error code is ") + QString::number(state);
-        DMessageBox::information(this, tr("tips"), msg);
+        // error tips
+        DMessageBox::information(this, tr("tips"), tr("Remove failed,the File Vault is busy."));
     }
     m_bRemoveVault = false;
 }

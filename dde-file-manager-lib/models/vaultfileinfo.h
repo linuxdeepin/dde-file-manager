@@ -45,6 +45,8 @@ public:
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
+    QFile::Permissions permissions() const override;
+
     // 右键菜单
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const override;

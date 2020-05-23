@@ -37,7 +37,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
 {
     this->setTitle(tr("Unlock File Vault"));
     this->setIcon(QIcon::fromTheme("dfm_safebox"));
-    this->setMessage(tr("Verify your fingerprint or password"));
+    this->setMessage(tr("Verify your password"));
     this->setFixedSize(438, 260);
 
     QStringList btnList({tr("Cancel"), tr("Unlock")});
@@ -49,13 +49,13 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_passwordEdit->lineEdit()->setMaxLength(24);
     m_passwordEdit->lineEdit()->installEventFilter(this);
-    m_helpButton = new QPushButton(this);
-    m_helpButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
+    m_tipsButton = new QPushButton(this);
+    m_tipsButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     QFrame *mainFrame = new QFrame(this);
     QHBoxLayout *mainLayout = new QHBoxLayout();
     mainLayout->addWidget(m_passwordEdit);
-    mainLayout->addWidget(m_helpButton);
+    mainLayout->addWidget(m_tipsButton);
     mainLayout->setContentsMargins(0, 10, 0, 25);
     mainFrame->setLayout(mainLayout);
 
@@ -67,7 +67,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
-    connect(m_helpButton, &QPushButton::clicked, [this]{
+    connect(m_tipsButton, &QPushButton::clicked, [this]{
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
             strPwdHint.insert(0, tr("Password hint:"));
@@ -84,6 +84,16 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
     QPalette palette = edit.palette();
     m_passwordEdit->lineEdit()->setPalette(palette);
     m_passwordEdit->setEchoMode(QLineEdit::Password);
+
+    // 如果密码提示信息为空，则隐藏提示按钮
+    QString strPwdHint("");
+    if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
+        if (strPwdHint.isEmpty()){
+            m_tipsButton->hide();
+        } else {
+            m_tipsButton->show();
+        }
+    }
 }
 
 DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
@@ -129,9 +139,8 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
     if (state == 0){
         accept();
     }else {
-        //others
-        QString msg = tr("Unlock failed,the error code is ") + QString::number(state);
-        DMessageBox::information(this, tr("tips"), msg);
+        // error tips
+        DMessageBox::information(this, tr("tips"), tr("Unlock failed,the directory of the File Vault doesn't exist."));
     }
 }
 

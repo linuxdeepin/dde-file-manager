@@ -151,6 +151,18 @@ DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     return url;
 }
 
+QFileDevice::Permissions VaultFileInfo::permissions() const
+{
+    if (fileUrl().scheme() == DFMVAULT_SCHEME) {
+        return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
+               | QFile::WriteOwner | QFile::WriteUser;
+    }
+
+    QFileDevice::Permissions p = DAbstractFileInfo::permissions();
+
+    return p;
+}
+
 QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     if(type != SpaceArea) {

@@ -281,7 +281,7 @@ DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) 
 }
 
 bool VaultController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
-{
+{    
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), urlList);
 }
@@ -424,6 +424,13 @@ QList<QString> VaultController::getTagsThroughFiles(const QSharedPointer<DFMGetT
     DUrlList urllist = event->urlList();
     DUrlList tempList = vaultToLocalUrls(urllist);
     return TagManager::instance()->getTagsThroughFiles(tempList);
+}
+
+bool VaultController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    DUrl url = event->url();
+    DUrl durl = vaultToLocalUrl(url);
+    return DFileService::instance()->setPermissions(event->sender(), durl, event->permissions());
 }
 
 DUrl VaultController::makeVaultUrl(QString path, QString host)

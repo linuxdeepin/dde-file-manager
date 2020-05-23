@@ -179,9 +179,7 @@ bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClip
 //        }
     }
 
-    fileService->writeFilesToClipboard(event->sender(), event->action(), localList);
-
-    return true;
+    return fileService->writeFilesToClipboard(event->sender(), event->action(), localList);
 }
 
 DUrlList TrashManager::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
