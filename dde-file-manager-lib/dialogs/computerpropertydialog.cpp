@@ -167,6 +167,27 @@ void ComputerPropertyDialog::initUI()
     addContent(contentFrame);
 }
 
+static QString formatCap(qulonglong cap, const int size = 1024, quint8 precision = 1)
+{
+    static QString type[] = {" B", " KB", " MB", " GB", " TB"};
+
+    qulonglong lc = cap;
+    double dc = cap;
+    double ds = size;
+
+    for (size_t p = 0; p < sizeof(type); ++p) {
+        if (cap < pow(size, p + 1) || p == sizeof(type) - 1) {
+            if (!precision) {
+                return QString::number(round(lc / pow(size, p))) + type[p];
+            }
+
+            return QString::number(dc / pow(ds, p), 'f', precision) + type[p];
+        }
+    }
+
+    return "";
+}
+
 QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &data)
 {
     QHash<QString, QString> datas;
@@ -193,10 +214,11 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         diskStr = QString::number(DSysInfo::systemDiskSize());
         processor = DSysInfo::cpuModelName();
         systemType = "64";
-    }
-    else {
-        memoryInstallStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1000 * 1000 * 1000), 'f', 0);
-        memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 1);
+    } else {
+//        memoryInstallStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1000 * 1000 * 1000), 'f', 0);
+//        memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 1);
+        memoryInstallStr = formatCap(DSysInfo::memoryInstalledSize(), 1024, 0);
+        memoryStr = formatCap(static_cast<unsigned long long>(m_systemInfo->memoryCap()));
         diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
         processor = m_systemInfo->processor();
         systemType = QString::number(m_systemInfo->systemType());
@@ -207,7 +229,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     datas.insert(data.at(1), version);
     datas.insert(data.at(2), QString::number(m_systemInfo->systemType()) + tr("Bit"));
     datas.insert(data.at(3), processor);
-    datas.insert(data.at(4), memoryInstallStr + " GB (" +  memoryStr + " GB " + tr("Available") + ")");
+    datas.insert(data.at(4), memoryInstallStr + "(" +  memoryStr + tr("Available") + ")");
     datas.insert(data.at(5), diskStr + " GB");
 
     return datas;
