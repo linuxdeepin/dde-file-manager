@@ -1185,7 +1185,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             QString rxp_after(QString("\\1/%1\\3").arg(rootUrl.burnIsOnDisc() ? BURN_SEG_ONDISC : BURN_SEG_STAGING));
             nfileUrl.setPath(nfileUrl.path().replace(burn_rxp, rxp_after));
             nparentUrl.setPath(nparentUrl.path().replace(burn_rxp, rxp_after));
-            if (!nparentUrl.path().endsWith('/')) {
+            if (!nparentUrl.path().endsWith('/') && rootUrl.path().endsWith("/")) {
                 nparentUrl.setPath(nparentUrl.path() + "/");
             }
         }
@@ -1231,6 +1231,8 @@ DFileSystemModel::~DFileSystemModel()
 {
     Q_D(DFileSystemModel);
 
+    isNeedToBreakBusyCase = true; // 清场的时候，必须让其他资源线程跳出相关流程
+
     if (m_smForDragEvent) {
         delete m_smForDragEvent;
         m_smForDragEvent = nullptr;
@@ -1252,6 +1254,10 @@ DFileSystemModel::~DFileSystemModel()
     if (d->rootNodeManager->isRunning()) {
         d->rootNodeManager->stop();
     }
+
+    QMutexLocker locker(&m_mutex); // 必须等待其他 资源性线程结束，否则 要崩溃
+
+    qDebug() << "DFileSystemModel is released soon!";
 }
 
 DFileViewHelper *DFileSystemModel::parent() const
@@ -1601,6 +1607,8 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     if (d->eventLoop || !d->rootNode) {
         return;
     }
+
+    isNeedToBreakBusyCase = false; // 这是fileview 切换的入口，切换的时候 置 flag，不要停止正常流程
 
     const FileSystemNodePointer &parentNode = getNodeByIndex(parent);
 
@@ -2272,20 +2280,21 @@ bool DFileSystemModel::sort(bool emitDataChange)
 
 bool DFileSystemModel::doSortBusiness(bool emitDataChange)
 {
-    if(isSortRunning)
-        return  false;
+    if(isNeedToBreakBusyCase) // 有清场流程来了,其他线程无需进行处理了
+        return false;
 
     Q_D(const DFileSystemModel);
 
     QMutexLocker locker(&m_mutex);
+
+    if(isNeedToBreakBusyCase) // bug 27384: 有清场流程来了,其他线程无需进行处理了， 这里做处理是 其他线程可能获取 锁，那么这里做及时处理
+        return false;
 
     const FileSystemNodePointer &node = d->rootNode;
 
     if (!node) {
         return false;
     }
-
-    isSortRunning = true;
 
     qDebug()<<"start the sort business";
 
@@ -2301,8 +2310,6 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
             emitAllDataChanged();
         }
     }
-
-    isSortRunning = false;
 
     qDebug()<<"end the sort business";
     return ok;
@@ -2705,7 +2712,11 @@ bool DFileSystemModel::sort(const DAbstractFileInfoPointer &parentInfo, QList<Fi
         return false;
     }
 
-    qSort(list.begin(), list.end(), [sortFun, d](const FileSystemNode * node1, const FileSystemNode * node2) {
+    qSort(list.begin(), list.end(), [sortFun, d, this](const FileSystemNode * node1, const FileSystemNode * node2) {
+
+        if(this->isNeedToBreakBusyCase) //bug 27384: 当是网络文件的时候，这里奇慢，需要快速跳出 qSort操作，目前我只想到这种方案：不做比较，或者 直接跳出sort 更好
+            return false;
+
         return sortFun(node1->fileInfo, node2->fileInfo, d->srotOrder);
     });
 
@@ -2780,9 +2791,11 @@ void DFileSystemModel::clear()
         return;
     }
 
-    QMutexLocker locker(&m_mutex); // bug 26972, while the sort case is ruuning, there should be crashed ASAP, so add locker here!
-
     qDebug() << "enter the clear items process";
+
+    isNeedToBreakBusyCase = true; // 清场的时候，必须进口跳出相关流程
+
+    QMutexLocker locker(&m_mutex); // bug 26972, while the sort case is ruuning, there should be crashed ASAP, so add locker here!
 
     const QModelIndex &index = createIndex(d->rootNode, 0);
 
