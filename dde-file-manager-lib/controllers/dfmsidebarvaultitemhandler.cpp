@@ -43,6 +43,7 @@
 #include "views/dfmvaultunlockpages.h"
 #include "views/dfmvaultrecoverykeypages.h"
 #include "views/dfmvaultremovepages.h"
+#include "views/dfmvaultactiveview.h"
 
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
@@ -85,20 +86,14 @@ DFMSideBarVaultItemHandler::DFMSideBarVaultItemHandler(QObject *parent)
 
 void DFMSideBarVaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
-    InterfaceActiveVault activeVault;
-    EN_VaultState enState = activeVault.vaultState();
+    EN_VaultState enState = InterfaceActiveVault::vaultState();
     switch (enState) {
     case EN_VaultState::NotAvailable:{  // 没有安装cryfs
         qDebug() << "Don't setup cryfs, can't use vault, please setup cryfs!";
         break;
     }
     case EN_VaultState::NotExisted:{    // 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
-        QDialog *dlg = activeVault.getActiveVaultWidget();
-        if(QDialog::Accepted == dlg->exec()){
-            // todo 进入保险箱主界面
-            DFMSideBarItemInterface::cdAction(sidebar, item);
-        }
-        dlg = nullptr;
+        DFMVaultActiveView::getInstance().showTop();
         break;
     }
     case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
@@ -151,8 +146,8 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
         // 立即上锁
         QAction *action = DFileMenuManager::getAction(MenuAction::LockNow);
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            lockNow();
+        QObject::connect(action, &QAction::triggered, action, [this, wnd](){
+            lockNow(wnd);
         });
 
         // 自动上锁
@@ -209,7 +204,7 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
     return menu;
 }
 
-bool DFMSideBarVaultItemHandler::lockNow()
+bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
 {
     // 如果正在有保险箱的移动、粘贴、删除操作，置顶弹出任务框
     DTaskDialog *pTaskDlg = dialogManager->taskDialog();
@@ -220,6 +215,11 @@ bool DFMSideBarVaultItemHandler::lockNow()
             pTaskDlg->showDialogOnTop();
         }
     }
+
+    // 关闭当前的标签页面
+    emit fileSignalManager->requestCloseAllTabOfVault(wnd->windowId());
+
+    // 保险箱上锁
     VaultController::getVaultController()->lockVault();
     return true;
 }

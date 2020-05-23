@@ -51,6 +51,7 @@
 #include "dfmvaultunlockpages.h"
 #include "vault/interfaceactivevault.h"
 #include "controllers/vaultcontroller.h"
+#include "views/dfmvaultactiveview.h"
 
 #include <dslider.h>
 
@@ -139,6 +140,12 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     event.setWindowId(window()->internalWinId());
     m_statusbar->itemCounted(event, m_model->itemCount());
 
+    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, this, [this](){
+        // todo 进入保险箱主界面
+        DUrl vaultUrl = VaultController::makeVaultUrl();
+        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
+    });
+
     connect(m_model, &ComputerModel::itemCountChanged, this, [this](int count) {
         DFMEvent event(this);
         event.setWindowId(this->window()->internalWinId());
@@ -183,12 +190,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
                 break;
             }
             case EN_VaultState::NotExisted:{    // 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
-                QDialog *dlg = activeVault.getActiveVaultWidget();
-                if(QDialog::Accepted == dlg->exec()){
-                    // todo 进入保险箱主界面
-                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
-                }
-                dlg = nullptr;
+                DFMVaultActiveView::getInstance().showTop();
                 break;
             }
             case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面

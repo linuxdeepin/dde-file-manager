@@ -23,6 +23,8 @@ class DFMVaultActiveFinishedView : public QWidget
 public:
     explicit DFMVaultActiveFinishedView(QWidget *parent = nullptr);
 
+    void setFinishedBtnEnabled(bool b);
+
 signals:
     void sigAccepted();
 

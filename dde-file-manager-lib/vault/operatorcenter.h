@@ -108,8 +108,8 @@ private:
     bool executeProcess(const QString &cmd);
 
 private:
-    QString             m_strUserKey;
-    QString             standOutput_;
+    QString                 m_strUserKey;
+    QString                 standOutput_;
 };
 
 #endif // OPERATORCENTER_H

@@ -73,7 +73,6 @@ bool OperatorCenter::executeProcess(const QString &cmd)
 
 OperatorCenter::~OperatorCenter()
 {
-
 }
 
 bool OperatorCenter::createDirAndFile()
@@ -458,3 +457,4 @@ bool OperatorCenter::getRootPassword()
 
     return true;
 }
+

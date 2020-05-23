@@ -19,10 +19,25 @@ class DFMVaultActiveView  : public DDialog
 {
     Q_OBJECT
 public:
-    DFMVaultActiveView(QWidget *parent = nullptr);
+    static DFMVaultActiveView &getInstance(){
+        static DFMVaultActiveView dlg;
+        return dlg;
+    }
+
+    // 置顶显示
+    void showTop();
+
+protected:
+    void closeEvent(QCloseEvent *) override;
 
 private slots:
     void slotNextWidget();
+
+private:
+    DFMVaultActiveView(QWidget *parent = nullptr);
+
+    // 复原操作
+    void setBeginingState();
 
 private:
     // 窗口容器

@@ -1,25 +1,15 @@
 #include "interfaceactivevault.h"
-#include "views/dfmvaultactiveview.h"
 #include "operatorcenter.h"
 
 InterfaceActiveVault::InterfaceActiveVault(QObject *parent)
     : QObject(parent)
-    , m_pWidget(nullptr)
 {
-    m_pWidget = new DFMVaultActiveView();
+
 }
 
 InterfaceActiveVault::~InterfaceActiveVault()
 {
-    if(m_pWidget){
-        delete m_pWidget;
-        m_pWidget = nullptr;
-    }
-}
 
-QDialog *InterfaceActiveVault::getActiveVaultWidget()
-{
-    return m_pWidget;
 }
 
 QString InterfaceActiveVault::getPassword()

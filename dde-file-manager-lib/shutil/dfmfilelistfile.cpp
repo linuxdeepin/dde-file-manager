@@ -109,7 +109,8 @@ bool DFMFileListFilePrivate::write(QIODevice &device) const
 
 QString DFMFileListFilePrivate::filePath() const
 {
-    return QDir(dirPath).absoluteFilePath(".hidden");
+    QString strPath = QDir(dirPath).absoluteFilePath(".hidden");
+    return strPath;
 }
 
 bool DFMFileListFilePrivate::loadFile()

@@ -66,6 +66,18 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
             this, &DFMVaultActiveFinishedView::slotEncryptComplete);
 }
 
+void DFMVaultActiveFinishedView::setFinishedBtnEnabled(bool b)
+{
+    m_pFinishedBtn->setEnabled(b);
+    m_pFinishedBtn->setText(tr("Encrypt"));
+    m_pEncryVaultImage->setIcon(QIcon::fromTheme("dfm_vault"));
+    play->addWidget(m_pEncryVaultImage, 3, 0, 2, 4, Qt::AlignCenter);
+    m_pTips->setVisible(true);
+    m_pTips2->setVisible(true);
+    m_pTips3->setVisible(false);
+    play->removeWidget(m_pTips3);
+}
+
 void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 {
     if(nState == 0){    // 创建保险箱成功
