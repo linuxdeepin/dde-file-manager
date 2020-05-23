@@ -203,22 +203,29 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
 //    qDebug() << "1111" << DSysInfo::deepinEdition() << "222" << DSysInfo::deepinCopyright() << "333" << DSysInfo::deepinTypeDisplayName()
 //             << "444" << DSysInfo::productTypeString() << "555" << DSysInfo::productVersion() << "666" << DSysInfo::operatingSystemName();
     //部分数据优先从dbus读取，如果dbus没有，则从dtk读数据
+
+    QDBusInterface *t_systemInfo = new QDBusInterface("com.deepin.system.SystemInfo",
+                                                      "/com/deepin/system/SystemInfo",
+                                                      "com.deepin.system.SystemInfo",
+                                                      QDBusConnection::systemBus(), this);
     QString memoryInstallStr;
     QString memoryStr;
     QString diskStr;
     QString processor;
     QString systemType;
-    if (m_systemInfo->memoryCap() <= 0 || m_systemInfo->diskCap() <= 0) {
-        memoryInstallStr = QString::number(DSysInfo::memoryInstalledSize());
-        memoryStr = QString::number(DSysInfo::memoryInstalledSize());
-        diskStr = QString::number(DSysInfo::systemDiskSize());
-        processor = DSysInfo::cpuModelName();
-        systemType = "64";
+    if (!t_systemInfo->isValid()) {
+        memoryInstallStr = formatCap(DSysInfo::memoryInstalledSize(), 1024, 0);
+        memoryStr = formatCap(DSysInfo::memoryTotalSize());
+
+        diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
+        processor = m_systemInfo->processor();
+        systemType = QString::number(m_systemInfo->systemType());
+        version = m_systemInfo->version();
     } else {
 //        memoryInstallStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1000 * 1000 * 1000), 'f', 0);
 //        memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 1);
 
-        memoryInstallStr = formatCap(static_cast<unsigned long long>(m_systemInfo->memoryCap()), 1024, 0);
+        memoryInstallStr = formatCap(t_systemInfo->property("MemorySize").toULongLong(), 1024, 0);
         memoryStr = formatCap(DSysInfo::memoryTotalSize());
 
         diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
