@@ -217,8 +217,10 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     } else {
 //        memoryInstallStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1000 * 1000 * 1000), 'f', 0);
 //        memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 1);
-        memoryInstallStr = formatCap(DSysInfo::memoryInstalledSize(), 1024, 0);
-        memoryStr = formatCap(static_cast<unsigned long long>(m_systemInfo->memoryCap()));
+
+        memoryInstallStr = formatCap(static_cast<unsigned long long>(m_systemInfo->memoryCap()), 1024, 0);
+        memoryStr = formatCap(DSysInfo::memoryTotalSize());
+
         diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
         processor = m_systemInfo->processor();
         systemType = QString::number(m_systemInfo->systemType());
