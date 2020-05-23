@@ -2245,7 +2245,7 @@ bool DFileView::setRootUrl(const DUrl &url)
                 // fix bug 27211 用户操作其他用户挂载的设备的时候，需要先卸载，卸载得提权，如果用户直接关闭了对话框，会返回错误代码 QDbusError::Other
                 // 需要对错误进行处理，出错的时候就不再执行后续操作了。
                 QDBusError err = blkdev->lastError();
-                if (err.isValid()) {
+                if (err.isValid() && !err.name().toLower().contains("notmounted")) { // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
                     getOpticalDriveMutex()->unlock();
                     return false;
                 }

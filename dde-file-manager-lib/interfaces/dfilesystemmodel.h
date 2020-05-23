@@ -252,7 +252,7 @@ private:
     void endRemoveRows();
     QDir::Filters m_filters; //仅记录非回收站文件过滤规则
     bool isFirstRun = true; //判断是否首次运行
-    bool isSortRunning = false; // 判断是否进行排序的流程 // bug 26972
+    bool isNeedToBreakBusyCase = false; // 停止那些忙的流程 // bug 26972, 27384
     QMutex   m_mutex; // 对当前文件资源进行单操作 // bug 26972
 
 private:

@@ -366,7 +366,7 @@ void Desktop::ShowScreensaverChooser()
     showWallpaperSettings(Frame::ScreenSaverMode);
 }
 
-
+#ifdef QT_DEBUG
 void Desktop::logAllScreenLabel()
 {
     if (d->background)
@@ -384,4 +384,4 @@ void Desktop::mapLabelScreen(int labelIndex, int screenIndex)
     if (d->background)
         d->background->mapLabelScreen(labelIndex, screenIndex);
 }
-
+#endif
