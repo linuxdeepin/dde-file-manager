@@ -122,6 +122,8 @@ public:
      */
     QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
 
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const Q_DECL_OVERRIDE;
+
     static DUrl makeVaultUrl(QString path = "", QString host = "files");
     static DUrl localUrlToVault(const DUrl &vaultUrl);
     static DUrl localToVault(QString localPath);
@@ -135,6 +137,12 @@ public:
      * @return              返回VaultState枚举值
      */
     VaultState state(QString lockBaseDir = "");
+
+    /**
+     * @brief VaultFileInfo::isRootDirectory 是否为保险箱根目录
+     * @return
+     */
+    bool isRootDirectory(QString path) const;
 
 public slots:
 

@@ -281,7 +281,7 @@ DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) 
 }
 
 bool VaultController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
-{
+{    
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), urlList);
 }
@@ -426,6 +426,13 @@ QList<QString> VaultController::getTagsThroughFiles(const QSharedPointer<DFMGetT
     return TagManager::instance()->getTagsThroughFiles(tempList);
 }
 
+bool VaultController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    DUrl url = event->url();
+    DUrl durl = vaultToLocalUrl(url);
+    return DFileService::instance()->setPermissions(event->sender(), durl, event->permissions());
+}
+
 DUrl VaultController::makeVaultUrl(QString path, QString host)
 {
     // blumia: if path is not start with a `/`, QUrl::setPath will destory the whole QUrl
@@ -514,6 +521,16 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
     } else {
         return NotExisted;
     }
+}
+
+bool VaultController::isRootDirectory(QString path) const
+{
+    bool bRootDir = false;
+    QString localFilePath = makeVaultLocalPath();
+    if (localFilePath == path || makeVaultUrl().toString() == path) {
+        bRootDir = true;
+    }
+    return bRootDir;
 }
 
 void VaultController::createVault(const DSecureString & passWord, QString lockBaseDir, QString unlockFileDir)

@@ -21,6 +21,7 @@
 #pragma once
 
 #include "dabstractfileinfo.h"
+#include <QIcon>
 
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DAbstractFileInfo
@@ -45,17 +46,23 @@ public:
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
+    QFile::Permissions permissions() const override;
+
     // 右键菜单
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const override;
 
     QString fileDisplayName() const override;
 
-    bool canRename() const override;
-
     qint64 size() const override;
 
     static void setVaultSize(qint64 size);
+
+protected:
+    bool canRename() const override;
+    bool canShare() const override;
+    bool canTag() const override;
+    QIcon fileIcon() const override;
 
 private:
     bool isRootDirectory() const;

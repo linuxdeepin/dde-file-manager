@@ -49,5 +49,5 @@ private:
     void showEvent(QShowEvent *event) override;
 private:
     DPasswordEdit * m_passwordEdit;
-    QPushButton * m_helpButton;
+    QPushButton * m_tipsButton;
 };

@@ -29,6 +29,8 @@
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 #include "dstorageinfo.h"
+#include "controllers/vaultcontroller.h"
+#include "dfmstandardpaths.h"
 
 #include "deviceinfo/udisklistener.h"
 
@@ -352,8 +354,19 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
         return true;
     }
 
+    // 解决在保险箱中执行剪切时，图标不灰显的问题
+    if (fileUrl.scheme() == DFMVAULT_SCHEME){
+        fileUrl = VaultController::vaultToLocalUrl(fileUrl);
+    }
+
+    // 解决在回收站中执行剪切时，图标不灰显的问题
+    if (fileUrl.scheme() == TRASH_SCHEME){
+        const QString &path = fileUrl.path();
+        fileUrl = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);
+    }
+
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-           && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
+            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
 }
 
 /*!

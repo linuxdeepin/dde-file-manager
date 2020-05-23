@@ -409,7 +409,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             if (fileInfo->canShare()) {
                 titleList << shareManager;
             }
-            if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile()) {
+            if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() &&
+                    !VaultController::getVaultController()->isRootDirectory(m_url.toString())) {
                 titleList << authManager;
             }
         }
@@ -1106,7 +1107,8 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 
     DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
 
-    if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())) {
+    if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())
+            && !VaultController::getVaultController()->isRootDirectory(info->filePath())) {
         DFMFileListFile flf(QFileInfo(info->filePath()).absolutePath());
         QString fileName = info->fileName();
         QCheckBox *hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));

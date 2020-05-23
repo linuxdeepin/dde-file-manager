@@ -151,6 +151,18 @@ DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     return url;
 }
 
+QFileDevice::Permissions VaultFileInfo::permissions() const
+{
+    if (fileUrl().scheme() == DFMVAULT_SCHEME) {
+        return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
+               | QFile::WriteOwner | QFile::WriteUser;
+    }
+
+    QFileDevice::Permissions p = DAbstractFileInfo::permissions();
+
+    return p;
+}
+
 QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     if(type != SpaceArea) {
@@ -220,6 +232,34 @@ bool VaultFileInfo::canRename() const
         return false;
     }
     return DAbstractFileInfo::canRename();
+}
+
+bool VaultFileInfo::canShare() const
+{
+    if (isRootDirectory()) {
+        return false;
+    }
+    return DAbstractFileInfo::canShare();
+}
+
+bool VaultFileInfo::canTag() const
+{
+    if (isRootDirectory()) {
+        return false;
+    }
+    return DAbstractFileInfo::canTag();
+}
+
+QIcon VaultFileInfo::fileIcon() const
+{
+     QIcon icon;
+     if (isRootDirectory()) {
+         icon = QIcon::fromTheme(iconName());
+     } else {
+         icon = DAbstractFileInfo::fileIcon();
+     }
+
+     return icon;
 }
 
 qint64 VaultFileInfo::size() const
