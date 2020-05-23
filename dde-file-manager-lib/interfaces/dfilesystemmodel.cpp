@@ -1185,7 +1185,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             QString rxp_after(QString("\\1/%1\\3").arg(rootUrl.burnIsOnDisc() ? BURN_SEG_ONDISC : BURN_SEG_STAGING));
             nfileUrl.setPath(nfileUrl.path().replace(burn_rxp, rxp_after));
             nparentUrl.setPath(nparentUrl.path().replace(burn_rxp, rxp_after));
-            if (!nparentUrl.path().endsWith('/')) {
+            if (!nparentUrl.path().endsWith('/') && rootUrl.path().endsWith("/")) {
                 nparentUrl.setPath(nparentUrl.path() + "/");
             }
         }
