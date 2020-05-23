@@ -67,6 +67,7 @@ public slots:
     */
     bool checkAuthentication(QString type);
 
+private slots:
     /**
      * @brief checkUserChanged 检查当前用户是否改变
      */
