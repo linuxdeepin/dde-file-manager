@@ -21,6 +21,7 @@
 #pragma once
 
 #include "dabstractfileinfo.h"
+#include <QIcon>
 
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DAbstractFileInfo
@@ -53,11 +54,15 @@ public:
 
     QString fileDisplayName() const override;
 
-    bool canRename() const override;
-
     qint64 size() const override;
 
     static void setVaultSize(qint64 size);
+
+protected:
+    bool canRename() const override;
+    bool canShare() const override;
+    bool canTag() const override;
+    QIcon fileIcon() const override;
 
 private:
     bool isRootDirectory() const;

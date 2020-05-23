@@ -523,6 +523,16 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
     }
 }
 
+bool VaultController::isRootDirectory(QString path) const
+{
+    bool bRootDir = false;
+    QString localFilePath = makeVaultLocalPath();
+    if (localFilePath == path || makeVaultUrl().toString() == path) {
+        bRootDir = true;
+    }
+    return bRootDir;
+}
+
 void VaultController::createVault(const DSecureString & passWord, QString lockBaseDir, QString unlockFileDir)
 {
     auto createIfNotExist = [](const QString & path){

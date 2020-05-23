@@ -138,6 +138,12 @@ public:
      */
     VaultState state(QString lockBaseDir = "");
 
+    /**
+     * @brief VaultFileInfo::isRootDirectory 是否为保险箱根目录
+     * @return
+     */
+    bool isRootDirectory(QString path) const;
+
 public slots:
 
     /**

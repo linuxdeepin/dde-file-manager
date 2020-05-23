@@ -234,6 +234,34 @@ bool VaultFileInfo::canRename() const
     return DAbstractFileInfo::canRename();
 }
 
+bool VaultFileInfo::canShare() const
+{
+    if (isRootDirectory()) {
+        return false;
+    }
+    return DAbstractFileInfo::canShare();
+}
+
+bool VaultFileInfo::canTag() const
+{
+    if (isRootDirectory()) {
+        return false;
+    }
+    return DAbstractFileInfo::canTag();
+}
+
+QIcon VaultFileInfo::fileIcon() const
+{
+     QIcon icon;
+     if (isRootDirectory()) {
+         icon = QIcon::fromTheme(iconName());
+     } else {
+         icon = DAbstractFileInfo::fileIcon();
+     }
+
+     return icon;
+}
+
 qint64 VaultFileInfo::size() const
 {
     if (isRootDirectory() && VaultController::getVaultController()->state() == VaultController::Unlocked)
