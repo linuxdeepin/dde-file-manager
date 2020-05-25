@@ -41,6 +41,7 @@ public slots:
     void Show();
     void ShowWallpaperChooser();
     void ShowScreensaverChooser();
+    void Refresh();
 #ifdef QT_DEBUG
     void logAllScreenLabel();
     void logScreenLabel(int index);

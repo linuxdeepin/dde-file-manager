@@ -97,6 +97,10 @@ void Desktop::onBackgroundEnableChanged()
     if (DesktopInfo().waylandDectected()) {
         qInfo() << "Primary Screen:" << Display::instance()->primaryName();
         if (d->background->isEnabled()) {
+
+            //更新显示区域
+            d->background->monitorRectChanged();
+
             QWidget *background = d->background->waylandBackground(Display::instance()->primaryName());
             if(!background)
             {
@@ -325,6 +329,11 @@ void Desktop::ShowWallpaperChooser()
 void Desktop::ShowScreensaverChooser()
 {
     showWallpaperSettings(Frame::ScreenSaverMode);
+}
+
+void Desktop::Refresh()
+{
+    d->screenFrame.Refresh();
 }
 
 #ifdef QT_DEBUG
