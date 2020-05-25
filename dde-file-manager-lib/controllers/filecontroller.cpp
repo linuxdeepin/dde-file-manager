@@ -637,6 +637,17 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
             result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
         }
 
+        // mtp 目录无法删除，因此采用复制再删除的模式
+        if (!result && QFileInfo(file).isDir()) {
+            result = QProcess::execute("cp -r \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
+
+            if (result) {
+                QProcess::execute("rm -r \"" + file.fileName().toUtf8() + "\"");
+            } else {
+                QProcess::execute("rm -r \"" + newFilePath.toUtf8() + "\"");
+            }
+        }
+
         if (result) {
             DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRenameEvent>(nullptr, newUrl, oldUrl));
 
