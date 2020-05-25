@@ -758,7 +758,12 @@ void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
 
 void PropertyDialog::onHideFileCheckboxChecked(bool checked)
 {
-    QFileInfo info(m_url.toLocalFile());
+    DUrl url = m_url;
+    // 将保险箱文件路径装换成真实路径
+    if (url.scheme() == DFMVAULT_SCHEME){
+        url = VaultController::vaultToLocalUrl(url);
+    }
+    QFileInfo info(url.toLocalFile());
     if (!info.exists()) return;
 
     DFMFileListFile flf(info.absolutePath());
