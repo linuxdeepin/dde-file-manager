@@ -1156,7 +1156,8 @@ void DFileDialog::onAcceptButtonClicked()
         }
 
         QString file_name = statusBar()->lineEdit()->text();
-        if (file_name.right(d->nameFilters.at(0).length() - 1) != d->nameFilters.at(0).mid(1)) { //判断文件名是否含有后缀，若无，加上
+        if (!d->nameFilters.isEmpty() &&
+                (file_name.right(d->nameFilters.at(0).length() - 1) != d->nameFilters.at(0).mid(1))) { //判断文件名是否含有后缀，若无，加上
             file_name.append(d->nameFilters.at(0).mid(1));
         }
 
