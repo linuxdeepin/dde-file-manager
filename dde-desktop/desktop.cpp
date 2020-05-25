@@ -146,9 +146,10 @@ void Desktop::onBackgroundEnableChanged()
         //QWidget *background = d->background->backgroundForScreen(qApp->primaryScreen());
         //else
         QWidget *background;
-
         if (DesktopInfo().waylandDectected()) {
-            background = d->background->waylandBackground(Display::instance()->primaryName());
+
+            background = d->background->backgroundForScreen(GetPrimaryScreen());
+
         } else {
             background = d->background->backgroundForScreen(qApp->primaryScreen());
         }

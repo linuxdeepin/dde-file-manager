@@ -61,7 +61,7 @@ include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
-
+include(search/search.pri)
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL
@@ -533,6 +533,9 @@ isEqual(BUILD_MINIMUM, YES){
     templateFiles.files = skin/templates/newDoc.doc \
         skin/templates/newExcel.xls \
         skin/templates/newPowerPoint.ppt \
+        skin/templates/newDoc.wps \
+        skin/templates/newExcel.et \
+        skin/templates/newPowerPoint.dps \
         skin/templates/newTxt.txt
 }
 

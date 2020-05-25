@@ -196,8 +196,6 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
         if (fi && fi->scheme() == DFMROOT_SCHEME) {
             newUrl = fi->redirectedFileUrl();
         }
-        //处理是否优化
-        newUrl.setOptimise(fileUrl.isOptimise());
 
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), newUrl);
         if (newUrl.scheme() == BURN_SCHEME) {
@@ -472,21 +470,21 @@ void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     int windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
-    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Document"), "doc", windowId);
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Document"), "wps", windowId);
 }
 
 void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     int windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
-    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Spreadsheet"), "xls", windowId);
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Spreadsheet"), "et", windowId);
 }
 
 void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     int windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
-    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Presentation"), "ppt", windowId);
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Presentation"), "dps", windowId);
 }
 
 void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
