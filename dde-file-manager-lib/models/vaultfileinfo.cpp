@@ -27,6 +27,7 @@
 
 #include <QStandardPaths>
 #include <QStorageInfo>
+#include <QIcon>
 
 qint64 VaultFileInfo::m_vaultSize = 0;
 
