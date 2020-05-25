@@ -28,6 +28,7 @@
 #include "propertydialog.h"
 #include "dabstractfilewatcher.h"
 #include "dfileinfo.h"
+#include <sys/stat.h>
 
 #include "app/define.h"
 
@@ -1399,9 +1400,20 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         if (info->ownerId() != getuid()) {
             m_executableCheckBox->setDisabled(true);
         }
-        if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
-            m_executableCheckBox->setChecked(true);
+        if (info->scheme() == DFMVAULT_SCHEME) { // Vault file need to use stat function to read file permission.
+            QString filePath = info->toLocalFile();
+            struct stat buf;
+            std::string stdStr = filePath.toStdString();
+            stat(stdStr.c_str(), &buf);
+            if ((buf.st_mode & S_IXUSR) || (buf.st_mode & S_IXGRP) || (buf.st_mode & S_IXOTH)) {
+                m_executableCheckBox->setChecked(true);
+            }
+        } else {
+            if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
+                m_executableCheckBox->setChecked(true);
+            }
         }
+
         layout->addRow(m_executableCheckBox);
     }
 
