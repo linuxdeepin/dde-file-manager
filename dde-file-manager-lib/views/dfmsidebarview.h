@@ -56,6 +56,8 @@ private slots:
 
 private:
     bool fetchDragEventUrlsFromSharedMemory();
+    //检查当前操作与上次操作的时间间隔
+    bool checkOpTime();
     int previousRowCount;
     QPoint dropPos;
     QString dragItemName;
@@ -64,6 +66,9 @@ private:
     QModelIndex m_current;
 
     QList<QUrl> m_urlsForDragEvent;
+
+    //上次操作的时间（ms）
+    qint64 m_lastOpTime;
 };
 
 DFM_END_NAMESPACE
