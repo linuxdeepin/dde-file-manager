@@ -1637,10 +1637,11 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
             d->eventLoop = Q_NULLPTR;
 
             if (code != 0) {
-                d->jobController->terminate();
-                d->jobController->quit();
-                d->jobController.clear();
-
+                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+                    d->jobController->terminate();
+                    d->jobController->quit();
+                    d->jobController.clear();
+                }
                 return;
             }
 
