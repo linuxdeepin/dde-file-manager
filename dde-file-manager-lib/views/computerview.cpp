@@ -229,6 +229,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(re, &ViewReturnEater::entered, std::bind(enterfunc, std::placeholders::_1, -1));
     connect(m_statusbar->scalingSlider(), &QSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);
+    connect(fileSignalManager, &FileSignalManager::requestUpdateComputerView, this, static_cast<void (ComputerView::*)()>(&ComputerView::update));
 }
 
 ComputerView::~ComputerView()
@@ -270,7 +271,9 @@ void ComputerView::contextMenu(const QPoint &pos)
         disabled.insert(MenuAction::OpenInNewTab);
         disabled.insert(MenuAction::OpenDiskInNewTab);
     }
-    if (!idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()) {
+
+    if (idx.data(ComputerModel::DataRoles::IconNameRole).value<QString>() == "media-optical" // fix bug#25921 仅针对光驱设备实行禁用操作
+            && !idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()) {
         //fix:光驱还没有加载成功前，右键点击光驱“挂载”，光驱自动弹出。
         disabled.insert(MenuAction::OpenDiskInNewWindow);
         disabled.insert(MenuAction::OpenDiskInNewTab);

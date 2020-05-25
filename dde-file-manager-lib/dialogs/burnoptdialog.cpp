@@ -42,6 +42,7 @@ private:
     QHash<QString, int> speedmap;
     DUrl image_file;
     int window_id;
+    QString strLastVolName; // 当前光盘名称，用于如果用户删除了光盘名称输入框的内容，默认使用之前的名称做盘符名
 
     Q_DECLARE_PUBLIC(BurnOptDialog)
 };
@@ -74,7 +75,11 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
 
                         // fix: use fork() burn files
                         qDebug() << "start burn files";
-                        job->doOpticalBurnByChildProcess(dev, d->le_volname->text(), d->speedmap[d->cb_writespeed->currentText()], flag);
+//                        const QString &strVolName = d->le_volname->text().trimmed().isEmpty()
+//                                ? d->strLastVolName
+//                                : d->le_volname->text().trimmed();
+                        const QString &strVolName = d->le_volname->text().trimmed();
+                        job->doOpticalBurnByChildProcess(dev, strVolName, d->speedmap[d->cb_writespeed->currentText()], flag);
                         dialogManager->removeJob(job->getJobId());
                         job->deleteLater();
                     });
@@ -124,6 +129,16 @@ void BurnOptDialog::setJobWindowId(int wid)
 {
     Q_D(BurnOptDialog);
     d->window_id = wid;
+}
+
+void BurnOptDialog::setDefaultVolName(const QString &strVolName)
+{
+    Q_D(BurnOptDialog);
+    d->le_volname->clear();
+    d->le_volname->setText(strVolName);
+    d->le_volname->setSelection(0, strVolName.length());
+    d->le_volname->setFocus();
+    d->strLastVolName = strVolName;
 }
 
 BurnOptDialog::~BurnOptDialog()

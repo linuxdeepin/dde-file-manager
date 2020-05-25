@@ -36,6 +36,7 @@
 #include <QTimer>
 #include <QLoggingCategory>
 #include <QProcess>
+#include <QtConcurrent/QtConcurrent>
 
 #include <unistd.h>
 #include <zlib.h>
@@ -1017,16 +1018,19 @@ open_file: {
 
     Q_FOREVER {
         qint64 current_pos = fromDevice->pos();
+        qDebug() << "Q_FOREVER  " << current_pos;
     read_data:
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
 
         char data[blockSize + 1];
+        //if read error read will return -1,success wil return 0
         qint64 size_read = fromDevice->read(data, blockSize);
 
         if (Q_UNLIKELY(size_read <= 0)) {
-            if (fromDevice->atEnd()) {
+            //if size_read == 0,but atEnd will return true
+            if (size_read == 0 && fromDevice->atEnd()) {
                 break;
             }
 
@@ -2010,20 +2014,20 @@ end:
                            << ", state:" << d->state;
         // 任务完成后执行 sync 同步数据到硬盘, 同时将状态改为 SleepState，用于定时器更新进度和速度信息
         d->setState(IOWaitState);
-        QProcess::execute("sync", {"-f", d->targetRootPath});
-        //校验是否完全同步到了移动设备
-        const qint64 total_size = d->fileStatistics->totalSize();
-        //fix: 删除文件时出现报错(回收箱和光驱处理删除文件)
-        if ((total_size > d->completedDataSizeOnBlockDevice) && (d->completedDataSizeOnBlockDevice == 0)) {
-            d->completedDataSizeOnBlockDevice = total_size;
+        int syncRet = 0;
+        auto result = QtConcurrent::run([&d, &syncRet]() {
+            syncRet = QProcess::execute("sync", {"-f", d->targetRootPath});
+        });
+        // 检测同步时是否被停止，若停止则立即跳出
+        while (!result.isFinished()) {
+            if (d->state == DFileCopyMoveJob::StoppedState) {
+                qDebug() << "stop sync";
+                goto end;
+            }
+            QThread::msleep(10);
         }
-        if (total_size != d->completedDataSizeOnBlockDevice) {
-            d->completedDataSizeOnBlockDevice = d->getCompletedDataSize();
-        }
-        qDebug() << "total_size " << total_size << d->completedDataSizeOnBlockDevice;
 
-        if (total_size > d->completedDataSizeOnBlockDevice)
-        {
+        if (syncRet != 0) {
             d->setError(DFileCopyMoveJob::OpenError, "Failed to synchronize to disk u!");
             DFileCopyMoveJob::Action action = d->handleError(target_info.constData(), nullptr);
 

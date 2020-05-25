@@ -136,6 +136,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         }
     }
 
+    if (role == DataRoles::IconNameRole) {
+        return pitmdata->fi->iconName();
+    }
+
     if (role == DataRoles::FileSystemRole) {
         //!!TODO: ?
     }

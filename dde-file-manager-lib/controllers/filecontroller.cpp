@@ -75,6 +75,7 @@
 
 #include <QQueue>
 #include <QMutex>
+#include <QTextCodec>
 
 #include "dfmsettings.h"
 #include "dfmapplication.h"
@@ -1195,7 +1196,11 @@ bool FileController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &
 
         QUrlQuery query;
         query.addQueryItem("mount_point", devStr);
-        query.addQueryItem("locate_url", locateUrl);
+//        query.addQueryItem("locate_url", locateUrl);
+        //为防止locateUrl传入QUrl被转码，locateUrl统一保存为base64
+        QByteArray ba = locateUrl.toLocal8Bit().toBase64();
+        query.addQueryItem("locate_url", ba);
+
         bookmarkUrl.setQuery(query);
     }
 

@@ -368,12 +368,6 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
     wid->setProperty("totalDataSize" ,job->totalDataSize());
 
     connect(job, &DFileCopyMoveJob::currentJobChanged, this, [this, job, wid](const DUrl from, const DUrl to){
-        //正在执行当前槽函数时，job线程一结束，判断job线程是否结束
-        if(job->isFinished())
-        {
-            this->removeTaskJob(job);
-            return;
-        }
         QMap<QString, QString> data;
         if (job->mode() == DFileCopyMoveJob::CopyMode) {
             data["type"] = "copy";

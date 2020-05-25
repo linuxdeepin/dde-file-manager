@@ -67,7 +67,8 @@ public:
         MountOpenUrlRole = Qt::UserRole + 7,//DUrl
         ActionVectorRole = Qt::UserRole + 8,//QVector<MenuAction>
         DFMRootUrlRole = Qt::UserRole + 9,  //DUrl
-        VolumeTagRole = Qt::UserRole + 10   //卷标 sr0
+        VolumeTagRole = Qt::UserRole + 10,  //卷标 sr0
+        IconNameRole = Qt::UserRole + 11,   //图标名称
     };
     Q_ENUM(DataRoles)
 

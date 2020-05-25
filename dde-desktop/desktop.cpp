@@ -153,6 +153,7 @@ void Desktop::onBackgroundEnableChanged()
         } else {
             background = d->background->backgroundForScreen(qApp->primaryScreen());
         }
+
         if(!background)
         {
             qWarning()<<"Warning:cannot find paimary widget and screen name:"<<Display::instance()->primaryName();
@@ -169,6 +170,7 @@ void Desktop::onBackgroundEnableChanged()
         QMetaObject::invokeMethod(background, "raise", Qt::QueuedConnection);
 
         // 隐藏完全重叠的窗口
+        qDebug() << "primary background" << background << background->isVisible() << background->geometry();
         for (QWidget *l : d->background->allBackgrounds()) {
             if (l != background) {
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
@@ -179,6 +181,7 @@ void Desktop::onBackgroundEnableChanged()
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
                 l->show();
             }
+            qDebug() << "hide overlap widget" << l << l->isVisible() << l->geometry();
         }
 
         //if X11
@@ -196,7 +199,6 @@ void Desktop::onBackgroundEnableChanged()
         if (DesktopInfo().waylandDectected()) {
             d->screenFrame.QWidget::setGeometry(Display::instance()->primaryRect());
         }
-
         else {
             d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
         }
@@ -260,6 +262,7 @@ void Desktop::showWallpaperSettings(int mode)
             if (!desktopImage.isEmpty())
                 d->background->setBackground(desktopImage);
         }
+
     }, Qt::DirectConnection);
 
     d->wallpaperSettings->show();

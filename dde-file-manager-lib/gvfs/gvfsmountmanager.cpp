@@ -663,9 +663,7 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
         DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nTotal = 0;
         DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nUsage = 0;;
         DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct, getVolTag(volume));
-        QWidget *pWid = qApp->focusWidget();
-        if (pWid)
-            pWid->update();
+        emit fileSignalManager->requestUpdateComputerView();
     }
 
     GDrive *drive = g_volume_get_drive(volume);
