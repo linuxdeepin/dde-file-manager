@@ -36,14 +36,24 @@
 #include "fileitem.h"
 #include "dfmglobal.h"
 #include "app/define.h"
+#include <private/qtextedit_p.h>
 
 DWIDGET_USE_NAMESPACE
+
+class CanSetDragTextEdit : public DTextEdit
+{
+public:
+    explicit CanSetDragTextEdit(QWidget *parent = nullptr);
+    explicit CanSetDragTextEdit(const QString& text, QWidget* parent = nullptr);
+    //set QTextEdit can drag
+    void setDragEnabled(const bool &bdrag);
+};
 
 FileIconItem::FileIconItem(QWidget *parent) :
     QFrame(parent)
 {
     icon = new QLabel(this);
-    edit = new DTextEdit(this);
+    edit = new CanSetDragTextEdit(this);
 
     icon->setAlignment(Qt::AlignCenter);
     icon->setFrameShape(QFrame::NoFrame);
@@ -57,6 +67,8 @@ FileIconItem::FileIconItem(QWidget *parent) :
     edit->installEventFilter(this);
     edit->setAcceptRichText(false);
     edit->setContextMenuPolicy(Qt::CustomContextMenu);
+    edit->setAcceptDrops(false);
+    static_cast<CanSetDragTextEdit *>(edit)->setDragEnabled(false);
 
     auto vlayout = new QVBoxLayout;
     vlayout->setContentsMargins(0, 0, 0, 0);
@@ -341,4 +353,22 @@ void FileIconItem::pushItemToEditTextStack(const QString &item)
     editTextStack.remove(editTextStackCurrentIndex + 1, editTextStack.count() - editTextStackCurrentIndex - 1);
     editTextStack.push(item);
     ++editTextStackCurrentIndex;
+}
+
+CanSetDragTextEdit::CanSetDragTextEdit(QWidget *parent) :
+    DTextEdit (parent)
+{
+
+}
+
+CanSetDragTextEdit::CanSetDragTextEdit(const QString &text, QWidget *parent) :
+    DTextEdit (text, parent)
+{
+
+}
+
+void CanSetDragTextEdit::setDragEnabled(const bool &bdrag)
+{
+    QTextEditPrivate *dd = reinterpret_cast<QTextEditPrivate *>(qGetPtrHelper(d_ptr));
+    dd->control->setDragEnabled(bdrag);
 }
