@@ -316,7 +316,7 @@ bool DStorageInfo::isLocalDevice(const QString &path)
 
 bool DStorageInfo::isLowSpeedDevice(const QString &path)
 {
-    static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):.+/",
+    static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                      QRegularExpression::DotMatchesEverythingOption
                                      | QRegularExpression::DontCaptureOption
                                      | QRegularExpression::OptimizeOnFirstUsageOption);
