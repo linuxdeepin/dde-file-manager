@@ -1071,8 +1071,7 @@ void AppController::actionSendToRemovableDisk()
     }
 
     //fix:修正临时拷贝文件到光盘的路径问题，不是挂载目录，而是临时缓存目录
-    QString iconName = action->property("iconName").toString();
-    if (iconName.contains("media-optical")) { //notice: dvd/cd/bd
+    if (action->property("isOpticalDevice").toBool()) { // fix bug#27909
         DUrl tempTargetUrl = DUrl::fromLocalFile(DFileMenuManager::g_deleteDirPath);
         fileService->pasteFile(action, DFMGlobal::CopyAction, tempTargetUrl, urlList);
     } else { // other: usb storage and so on
