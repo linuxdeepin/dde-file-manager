@@ -97,6 +97,10 @@ void Desktop::onBackgroundEnableChanged()
     if (DesktopInfo().waylandDectected()) {
         qInfo() << "Primary Screen:" << Display::instance()->primaryName();
         if (d->background->isEnabled()) {
+
+            //更新显示区域
+            d->background->monitorRectChanged();
+
             QWidget *background = d->background->waylandBackground(Display::instance()->primaryName());
             if(!background)
             {
@@ -142,13 +146,7 @@ void Desktop::onBackgroundEnableChanged()
         //QWidget *background = d->background->backgroundForScreen(qApp->primaryScreen());
         //else
         QWidget *background;
-
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        if (DesktopInfo().waylandDectected()) {
 
             background = d->background->backgroundForScreen(GetPrimaryScreen());
 
@@ -195,13 +193,7 @@ void Desktop::onBackgroundEnableChanged()
         //d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
         //else
 
-
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        if (DesktopInfo().waylandDectected()) {
             d->screenFrame.QWidget::setGeometry(Display::instance()->primaryRect());
         }
 
@@ -335,6 +327,11 @@ void Desktop::ShowWallpaperChooser()
 void Desktop::ShowScreensaverChooser()
 {
     showWallpaperSettings(Frame::ScreenSaverMode);
+}
+
+void Desktop::Refresh()
+{
+    d->screenFrame.Refresh();
 }
 
 #ifdef QT_DEBUG
