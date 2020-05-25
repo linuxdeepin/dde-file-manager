@@ -23,6 +23,7 @@
 #include "dfmgenericfactory.h"
 #include "dialogs/filepreviewdialog.h"
 #include "controllers/appcontroller.h"
+#include "controllers/mergeddesktopcontroller.h"
 #include "dfmeventdispatcher.h"
 #include "dfilemenu.h"
 #include "tag/tagmanager.h"
@@ -86,9 +87,12 @@ public:
         int iconTopOffset = isCanvas ? 0 : (option.rect.height() - icon_rect.height()) / 3.0;
 
         const QPoint &edit_pos = QPoint(icon_rect.x() + icon_rect.width() / 2, icon_rect.bottom() + iconTopOffset);
-
-        appController->showTagEdit(viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
-
+        /****************************************************************************************************************************/
+        //在靠近边框底部不够显示编辑框时，编辑框的箭头出现在底部
+        //appController->showTagEdit(viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
+        const QRect &parentRect = viewHelper->parent()->geometry();
+        appController->showTagEdit(parentRect,viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
+        /****************************************************************************************************************************/
         return true;
     }
 
@@ -356,6 +360,11 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
     if (currentUrl().scheme() == BURN_SCHEME && fileUrl.scheme() == BURN_SCHEME && !fileUrl.burnIsOnDisc()) {
         return true;
     }
+
+    //为了防止自动整理下剪切与分类名相同的文件夹,如果是分类就不转真实路径了
+    auto isVPath = MergedDesktopController::isVirtualEntryPaths(fileUrl);
+    if (fileUrl.scheme() == DFMMD_SCHEME && !isVPath)
+        fileUrl = MergedDesktopController::convertToRealPath(fileUrl);
 
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
@@ -695,16 +704,26 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
         if (urls.empty())
             return;
 
-        const DUrl from = urls.first();
-        const DUrl to = info->fileUrl();
         Qt::DropAction default_action = Qt::CopyAction;
+        {
+            const DUrl from = urls.first();
+            DUrl to = info->fileUrl();
 
-        if (qApp->keyboardModifiers() == Qt::AltModifier) {
-            default_action = Qt::MoveAction;
-        } else if (!DFMGlobal::keyCtrlIsPressed()) {
-            // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
-            if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
+            //fix bug#23703勾选自动整理，拖拽其他目录文件到桌面做得是复制操作
+            //因为自动整理的路径被DStorageInfo::inSameDevice判断为false，这里做转化
+            if (to.scheme() == DFMMD_SCHEME){
+                to = DUrl(info->absoluteFilePath());
+                to.setScheme(FILE_SCHEME);
+            }
+            //end
+
+            if (qApp->keyboardModifiers() == Qt::AltModifier) {
                 default_action = Qt::MoveAction;
+            } else if (!DFMGlobal::keyCtrlIsPressed()) {
+                // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
+                if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
+                    default_action = Qt::MoveAction;
+                }
             }
         }
 

@@ -57,6 +57,8 @@
 #include <QSettings>
 #include <QX11Info>
 #include <dabstractfilewatcher.h>
+#include <QApplication>
+#include <QScreen>
 
 #include <sys/vfs.h>
 
@@ -540,7 +542,19 @@ bool FileUtils::openFile(const QString &filePath)
         return result;
     }
 
-    QString mimetype = getFileMimetype(filePath);
+    /*********************************************************/
+    //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
+    //QString mimetype = getFileMimetype(filePath);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
+    QString mimetype = QString();
+    if (info && info->size() == 0) {
+        mimetype = info->mimeType().name();
+    }
+    else {
+        mimetype = getFileMimetype(filePath);
+    }
+    /*********************************************************/
+
     QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
     if (defaultDesktopFile.isEmpty()) {
         qDebug() << "no default application for" << filePath;
@@ -597,7 +611,20 @@ bool FileUtils::openFiles(const QStringList &filePaths)
         return ret;
 
     const QString filePath = rePath.first();
-    QString mimetype = getFileMimetype(filePath);
+
+    /*********************************************************/
+    //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
+    //QString mimetype = getFileMimetype(filePath);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
+    QString mimetype = QString();
+    if (info && info->size() == 0) {
+        mimetype = info->mimeType().name();
+    }
+    else {
+        mimetype = getFileMimetype(filePath);
+    }
+    /*********************************************************/
+
     QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
     if (defaultDesktopFile.isEmpty()) {
         qDebug() << "no default application for" << rePath;
@@ -772,9 +799,27 @@ QString FileUtils::defaultTerminalPath()
 
 bool FileUtils::setBackground(const QString &pictureFilePath)
 {
+    QDBusMessage msgIntrospect = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", "org.freedesktop.DBus.Introspectable", "Introspect");
+    QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(msgIntrospect);
+    call.waitForFinished();
+    if(call.isFinished()){
+         QDBusReply<QString> reply = call.reply();
+         QString value = reply.value();
+
+         if (value.contains("SetMonitorBackground")){
+             QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", "com.deepin.daemon.Appearance", "SetMonitorBackground");
+             msg.setArguments({qApp->primaryScreen()->name(), pictureFilePath});
+             QDBusConnection::sessionBus().asyncCall(msg);
+
+             qDebug() << "FileUtils::setBackground call Appearance SetMonitorBackground";
+             return true;
+         }
+    }
+
     QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", "com.deepin.daemon.Appearance", "Set");
     msg.setArguments({"Background", pictureFilePath});
     QDBusConnection::sessionBus().asyncCall(msg);
+    qDebug() << "FileUtils::setBackground call Appearance Set";
 
     return true;
 }

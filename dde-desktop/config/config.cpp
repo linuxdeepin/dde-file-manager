@@ -26,11 +26,10 @@ const QString Config::keyAutoAlign = "AutoSort";
 const QString Config::keyIconLevel = "IconLevel";
 const QString Config::keyQuickHide = "QuickHide";
 const QString Config::keyAutoMerge = "AutoMerge";
+const QString Config::keyWaterMask = "WaterMaskUseJson";
 
-extern QTime gTime;
 Config::Config()
 {
-    qDebug() << "begin init config" <<  gTime.elapsed();
     auto configPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
     configPath = configPath
                  + "/" + QApplication::organizationName()
@@ -59,7 +58,6 @@ Config::Config()
         }
     }, Qt::QueuedConnection);
     syncTimer->start();
-    qDebug() << "end init config" <<  gTime.elapsed();
 }
 
 void Config::setConfig(const QString &group, const QString &key, const QVariant &value)
@@ -96,4 +94,12 @@ void Config::removeConfigList(const QString &group, const QStringList &keys)
     }
     m_settings->endGroup();
     needSync = true;
+}
+
+QVariant Config::getConfig(const QString &group, const QString &key, const QVariant &defaultValue)
+{
+    m_settings->beginGroup(group);
+    QVariant result = m_settings->value(key, defaultValue);
+    m_settings->endGroup();
+    return result;
 }
