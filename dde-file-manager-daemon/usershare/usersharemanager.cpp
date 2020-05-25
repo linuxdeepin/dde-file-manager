@@ -119,7 +119,7 @@ bool UserShareManager::closeSmbShareByShareName(const QString &sharename, const 
 
     QString filename = sharename.toLower(); //文件名小写
     QFileInfo info("/var/lib/samba/usershares/" + filename);
-    if (suid != info.ownerId()) { //对比文件属主与调用总线进程属主
+    if (suid != info.ownerId() && suid != 0) { //对比文件属主与调用总线进程属主
         qDebug() << "非属主用户" << info.path();
         return  false;
     }
