@@ -48,10 +48,17 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
     //QListView拖拽时会先插入后删除，于是可以通过rowCountChanged()信号来判断拖拽操作是否结束
     connect(this, &DFMSideBarView::rowCountChanged, this, &DFMSideBarView::onRowCountChanged);  //Qt5风格
     connect(this, static_cast<void (DListView::*)(const QModelIndex &)>(&DListView::currentChanged), this, &DFMSideBarView::currentChanged);
+
+    m_lastOpTime = 0;
 }
 
 void DFMSideBarView::mousePressEvent(QMouseEvent *event)
 {
+    //频繁点击操作与网络或挂载设备的加载效率低两个因素的共同作用下 会导致侧边栏可能出现显示错误
+    //暂时抛去部分频繁点击来规避这个问题
+    if (!checkOpTime())
+        return;
+
     if(event->button() == Qt::RightButton)
     {
         if(m_current != indexAt(event->pos()))
@@ -367,6 +374,17 @@ bool DFMSideBarView::fetchDragEventUrlsFromSharedMemory()
     sm.detach();//与共享内存空间分离
 
     return true;
+}
+
+bool DFMSideBarView::checkOpTime()
+{
+    //如果两次操作时间间隔足够长，则返回true
+    if (QDateTime::currentDateTime().toMSecsSinceEpoch() - m_lastOpTime > 200) {
+        m_lastOpTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        return true;
+    }
+
+    return false;
 }
 
 DFM_END_NAMESPACE
