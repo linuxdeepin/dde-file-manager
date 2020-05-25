@@ -50,7 +50,12 @@
 #include <QSharedPointer>
 #include <QAbstractItemView>
 #include <QtConcurrent/QtConcurrent>
+#include <QtGlobal>
 
+#ifdef __arm__
+// arm
+    #include "./search/myfsearch.h"
+#endif
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 0
 class FileSystemNode : public QSharedData
@@ -924,7 +929,7 @@ public:
     bool readOnly = false;
 
     /// add/rm file event
-    bool _q_processFileEvent_runing = false;
+    QAtomicInteger<bool> _q_processFileEvent_runing = false;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
 
     bool enabledSort = true;
@@ -2390,7 +2395,27 @@ int DFileSystemModel::columnActiveRole(int column) const
 
     return d->columnActiveRole.value(column, roles.first());
 }
+#ifdef __arm__
+// arm
+static QString printList(BTreeNode *pNode){
 
+    QString fullPath("");
+    int i=0;
+    if (pNode == nullptr) {
+
+    }else{
+        while (pNode != nullptr) {
+            fullPath.insert(0, pNode->name);
+            if(strcmp(pNode->name,"")!=0){
+                fullPath.insert(0, "/");
+            }
+            pNode = pNode->parent;
+            i++;
+        }
+    }
+    return fullPath;
+}
+#endif
 void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
@@ -2415,7 +2440,50 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 
     fileHash.reserve(list.size());
     fileList.reserve(list.size());
+#ifdef __arm__
+// arm
+    /*该修改方案是临时修改方案，只为验证fsearch在arm平台上的可行性。
+     *
+    */
+    if(get_search_state())//fsearch状态
+    {
+        unsigned int length=get_ResultLen();
+        GPtrArray *results=get_Result();
+        for (unsigned int i=0;i<length;i++) {
+            DatabaseSearchEntry *entry=static_cast<DatabaseSearchEntry*>(g_ptr_array_index(results,i));
+            DUrl url =QUrl(printList(entry->node));
+            url.setFragment("file://"+printList(entry->node));
+            DAbstractFileInfoPointer fileInfo=DAbstractFileInfoPointer(new DFileInfo(url));
+            const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
+            //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
+            if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
+                fileHash[fileInfo->fileUrl()] = chileNode;
+                fileList << chileNode.data();
+            }
+        }
+        qDebug()<<"fsearch added node to list";
+    }
+    else {//默认状态
+        for (const DAbstractFileInfoPointer &fileInfo : list) {
+            if (d->needQuitUpdateChildren) {
+                break;
+            }
 
+    //        if (fileHash.contains(fileInfo->fileUrl())) {
+    //            continue;
+    //        }
+
+            qDebug() << "update node url = " << fileInfo->filePath();
+
+            const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
+            //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
+            if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
+                fileHash[fileInfo->fileUrl()] = chileNode;
+                fileList << chileNode.data();
+            }
+        }
+    }
+#else
     for (const DAbstractFileInfoPointer &fileInfo : list) {
         if (d->needQuitUpdateChildren) {
             break;
@@ -2433,7 +2501,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
             fileList << chileNode.data();
         }
     }
-
+#endif
     if (enabledSort())
         sort(node->fileInfo, fileList);
 

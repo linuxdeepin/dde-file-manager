@@ -145,6 +145,10 @@ void AcessControlManager::onFileCreated(const QString &path, const QString &name
                 chmod(mountBaseName.toUtf8().data(), (fileStat.st_mode | S_IRUSR | S_IRGRP | S_IROTH));
             }
         }
+        // ACL
+        QString aclCmd = QString("setfacl -m o:rwx %1").arg(mountBaseName);
+        QProcess::execute(aclCmd);
+        qDebug() << "acl:" << aclCmd;
     }
 
 }

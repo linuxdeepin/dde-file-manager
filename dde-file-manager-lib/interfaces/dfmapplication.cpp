@@ -182,7 +182,7 @@ QVariant DFMApplication::genericAttribute(DFMApplication::GenericAttribute ga)
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexInternal();
 #else
-        return false;
+        return true;
 #endif
     } else if (ga == GA_IndexExternal) {
 #ifndef DISABLE_QUICK_SEARCH

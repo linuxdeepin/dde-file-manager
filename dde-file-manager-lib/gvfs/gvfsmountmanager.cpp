@@ -863,6 +863,7 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
 
     } else {
         qCDebug(mountManager()) << "cancel connect";
+        AskingPassword = false;
         g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ABORTED));
         g_mount_operation_reply (op, G_MOUNT_OPERATION_ABORTED);
     }
@@ -1387,7 +1388,11 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 
         switch (error->code) {
         case G_IO_ERROR_FAILED:
-            status = MOUNT_PASSWORD_WRONG;
+            if (AskingPassword) {
+                status = MOUNT_PASSWORD_WRONG;
+            } else {
+                 showWarnDlg = true;
+            }
             break;
 
         case G_IO_ERROR_FAILED_HANDLED: // Operation failed and a helper program has already interacted with the user. Do not display any error dialog.
