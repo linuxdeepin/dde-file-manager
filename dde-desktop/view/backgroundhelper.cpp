@@ -656,13 +656,7 @@ void BackgroundHelper::checkBlackScreen()
     //QScreen *ps = qApp->primaryScreen();
     //else
     QScreen *ps;
-
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+    if (DesktopInfo().waylandDectected()) {
         ps = Display::instance()->primaryScreen();
     }
     else {
