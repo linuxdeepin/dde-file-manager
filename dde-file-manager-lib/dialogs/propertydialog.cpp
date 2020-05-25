@@ -560,8 +560,13 @@ void PropertyDialog::updateFolderSize(qint64 size)
 {
     m_size = size;
     m_fileCount = m_sizeWorker->filesCount() + m_sizeWorker->directorysCount(false);
-    m_folderSizeLabel->setText(FileUtils::formatSize(size));
-    m_containSizeLabel->setText(QString::number(m_fileCount));
+    if (m_folderSizeLabel) {
+        m_folderSizeLabel->setText(FileUtils::formatSize(size));
+    }
+    if (m_containSizeLabel) {
+        m_containSizeLabel->setText(QString::number(m_fileCount));
+    }
+
 }
 
 void PropertyDialog::renameFile()
@@ -686,7 +691,7 @@ void PropertyDialog::flickFolderToSidebar()
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
     //QLabel *aniLabel = new QLabel(window);
-    m_aniLabel = new QLabel (window);
+    m_aniLabel = new QLabel(window);
     m_aniLabel->raise();
     m_aniLabel->setFixedSize(m_icon->size());
     m_aniLabel->setAttribute(Qt::WA_TranslucentBackground);
@@ -701,13 +706,13 @@ void PropertyDialog::flickFolderToSidebar()
     }
 
     // QVariantAnimation *xani = new QVariantAnimation(this);
-    m_xani = new QVariantAnimation (this);
+    m_xani = new QVariantAnimation(this);
     m_xani->setStartValue(m_aniLabel->pos());
     m_xani->setEndValue(QPoint(targetPos.x(), angle));
     m_xani->setDuration(440);
 
     //QVariantAnimation *gani = new QVariantAnimation(this);
-    m_gani = new QVariantAnimation (this);
+    m_gani = new QVariantAnimation(this);
     m_gani->setStartValue(m_aniLabel->geometry());
     m_gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
     m_gani->setEasingCurve(QEasingCurve::InBack);
@@ -780,12 +785,25 @@ void PropertyDialog::mousePressEvent(QMouseEvent *event)
 void PropertyDialog::startComputerFolderSize(const DUrl &url)
 {
     DUrl validUrl = url;
+    DUrlList urls;
+
     if (url.isUserShareFile()) {
         validUrl.setScheme(FILE_SCHEME);
-    }
-    DUrlList urls;
-    urls << validUrl;
+    } else if (url.burnIsOnDisc()) {
+        if (!url.burnDestDevice().isEmpty()) {
+            DUrl stagingUrl = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                                                  + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
+                                                  + url.burnDestDevice().replace('/', '_'));
+            QString stagingFilePath = stagingUrl.toLocalFile();
+            urls << stagingUrl;
+        }
 
+        DAbstractFileInfoPointer info = fileService->createFileInfo(this, url);
+        DUrl url = DUrl::fromLocalFile(info->extraProperties()["mm_backer"].toString());
+        validUrl = url;
+    }
+
+    urls << validUrl;
     if (!m_sizeWorker)
         m_sizeWorker = new DFileStatisticsJob(this);
 
@@ -1141,17 +1159,53 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
                     fileCount = FileUtils::filesCount(stagingFilePath);
                 }
             }
-
-            DAbstractFileInfoPointer fi = fileService->createFileInfo(this, redirectedFileUrl);
-            DUrl url = DUrl::fromLocalFile(fi->extraProperties()["mm_backer"].toString());
+            DAbstractFileInfoPointer info = fileService->createFileInfo(this, redirectedFileUrl);
+            DUrl url = DUrl::fromLocalFile(info->extraProperties()["mm_backer"].toString());
+            if (info && info->isDir()) {
+                startComputerFolderSize(info->fileUrl());
+                m_fileCount = info->filesCount();
+            } else {
+                m_fileCount = 1;
+            }
             redirectedFileUrl = url;
+        } else {
+            DAbstractFileInfoPointer info = fileService->createFileInfo(this, redirectedFileUrl);
+            if (info && info->isDir()) {
+                if (info->toLocalFile().isEmpty()) {
+                    startComputerFolderSize(m_url);
+                } else if (info->isSymLink()) {
+                    startComputerFolderSize(info->redirectedFileUrl());
+                } else {
+                    startComputerFolderSize(DUrl::fromLocalFile(info->toLocalFile()));
+                }
+
+                m_fileCount = info->filesCount();
+            } else {
+                m_fileCount = 1;
+            }
         }
 
         QString localFilePath = redirectedFileUrl.toLocalFile();
         if (!localFilePath.isEmpty()) {
             fileCount += FileUtils::filesCount(localFilePath);
         }
+    } else {
+        if (info->isDir()) {
+            if (info->toLocalFile().isEmpty()) {
+                startComputerFolderSize(m_url);
+            } else if (info->isSymLink()) {
+                startComputerFolderSize(info->redirectedFileUrl());
+            } else {
+                startComputerFolderSize(DUrl::fromLocalFile(info->toLocalFile()));
+            }
+
+            m_fileCount = info->filesCount();
+        } else {
+            m_fileCount = 1;
+        }
     }
+
+
 
     static QHash<DFMRootFileInfo::ItemType, QString> devtypemap = {
         {DFMRootFileInfo::ItemType::UDisksRoot, QObject::tr("Local disk")},
@@ -1217,8 +1271,13 @@ QFrame *PropertyDialog::createInfoFrame(const QList<QPair<QString, QString> > &p
     layout->setLabelAlignment(Qt::AlignRight);
 
     for (const QPair<QString, QString> &kv : properties) {
+        qDebug() << "kv.first;" << kv.first;
         SectionKeyLabel *keyLabel = new SectionKeyLabel(kv.first, widget);
+
         SectionValueLabel *valLabel = new SectionValueLabel(kv.second, widget);
+        if (kv.first == QObject::tr("Contains")) {
+            m_containSizeLabel = valLabel;
+        }
         layout->addRow(keyLabel, valLabel);
     }
 
