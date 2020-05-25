@@ -52,17 +52,14 @@ public:
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const override;
 
-    QString fileDisplayName() const override;
-
-    qint64 size() const override;
-
-    static void setVaultSize(qint64 size);
-
-protected:
     bool canRename() const override;
     bool canShare() const override;
     bool canTag() const override;
     QIcon fileIcon() const override;
+    QString fileDisplayName() const override;
+    qint64 size() const override;
+
+    static void setVaultSize(qint64 size);
 
 private:
     bool isRootDirectory() const;
