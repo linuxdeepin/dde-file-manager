@@ -137,7 +137,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     connect(m_pStatisticWorker, &DFileStatisticsJob::finished, this, [=] {
         DeviceProperty dp = ISOMaster->getDevicePropertyCached(d->getCurrentDevice());
 
-        if (m_pStatisticWorker->totalSize() > dp.avail) {
+        if (quint64(m_pStatisticWorker->totalSize()) > dp.avail) {
             //fix: 光盘容量小于刻录项目，对话框提示：目标磁盘剩余空间不足，无法进行刻录！
             //qDebug() << d->m_selectBurnFilesSize / 1024 / 1024 << "MB" << dp.avail / 1024 / 1024 << "MB";
             DDialog dialog(this);
@@ -150,11 +150,8 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
         QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
         bd->setJobWindowId(this->window()->winId());
+        bd->setDefaultVolName(dp.volid); // fix task 22858 默认填充当前盘符名称作为新的盘符名称
         bd->exec();
-//        if (bd->exec() == DDialog::Accepted) {
-//            // 发送信号停止扫描光驱的计时器
-//            emit fileSignalManager->stopCdScanTimer(d->getCurrentDevice());
-//        }
     });
 }
 
@@ -309,6 +306,6 @@ QString DFMOpticalMediaWidgetPrivate::getVolTag()
     QString strKey;
     QStringList lst = curdev.split("/", QString::SkipEmptyParts); // /dev/sr0 -> { dev, sr0 }
     if (lst.count() >= 2)
-        strKey = lst[1]; // strKey =
+        strKey = lst[1]; // strKey = sr0
     return strKey;
 }

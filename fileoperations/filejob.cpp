@@ -758,14 +758,27 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
 
 void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, int speed, int flag)
 {
+    qDebug() << "doOpticalBurnByChildProcess";
+    if (device.path().isEmpty()) {
+        qDebug() << "devpath is empty";
+        return;
+    }
     m_tarPath = device.path();
-    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
+    QStringList devicePaths = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (devicePaths.isEmpty()) {
+        qDebug() << "devicePaths isempty";
+        return;
+    }
+    QString udiskspath = devicePaths.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {
-        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
+        QString filePath = device.path() + "/" BURN_SEG_STAGING;
+        qDebug() << "ghostSignal path" << filePath;
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(filePath), &DAbstractFileWatcher::fileDeleted, DUrl());
+    } else {
+        blkdev->unmount({});
     }
-    blkdev->unmount({});
     m_opticalJobPhase = 0;
     m_opticalOpSpeed.clear();
     jobPrepared();
@@ -787,6 +800,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
 
     pid_t pid = fork();
     if (pid == 0) { // child process: burn files
+        qDebug() << "start child process";
         close(badPipefd[0]);
         close(progressPipefd[0]);
 
@@ -1047,14 +1061,27 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
 
 void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &image, int speed, int flag)
 {
+    qDebug() << "doOpticalImageBurnByChildProcess";
+    if (device.path().isEmpty()) {
+        qDebug() << "devpath is empty";
+        return;
+    }
     m_tarPath = device.path();
-    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
+    QStringList devicePaths = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (devicePaths.isEmpty()) {
+        qDebug() << "devicePaths isempty";
+        return;
+    }
+    QString udiskspath = devicePaths.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {
-        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
+        QString filePath = device.path() + "/" BURN_SEG_STAGING;
+        qDebug() << "ghostSignal path" << filePath;
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(filePath), &DAbstractFileWatcher::fileDeleted, DUrl());
+    } else {
+        blkdev->unmount({});
     }
-    blkdev->unmount({});
     m_opticalJobPhase = 0;
     m_opticalOpSpeed.clear();
     jobPrepared();
@@ -1073,6 +1100,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
 
     pid_t pid = fork();
     if (pid == 0) { // child process: burn image;
+        qDebug() << "start child process";
         close(badPipefd[0]);
         close(progressPipefd[0]);
 

@@ -884,6 +884,7 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         return;
     }
 
+    update(); // bug 23351: while draging it, refresh it ASAP to remove the older icon
     QAbstractItemView::dragEnterEvent(event);
 }
 
@@ -947,7 +948,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
     if (!autoMerge()) {
         startDodgeAnimation();
     }
-    update();
+    //update(); // bug 23351: this action will paint the whole items so not do it that affects the painting performance
 }
 
 void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
