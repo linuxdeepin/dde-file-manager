@@ -124,6 +124,8 @@ void ShareInfoFrame::initConnect()
 
 void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
 {
+    //为了避免在高速点击时引发ui错乱，只有在share流程完全结束后才允许用户再次修改共享状态
+    m_shareCheckBox->setEnabled(false);
     bool ret = doShareInfoSetting();
 
     if (ret) {
@@ -173,7 +175,7 @@ bool ShareInfoFrame::doShareInfoSetting()
         }
     } else {
         emit unfolderShared();
-        hide();
+//        hide();
         return DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
     }
 
@@ -193,6 +195,8 @@ bool ShareInfoFrame::doShareInfoSetting()
 
 void ShareInfoFrame::updateShareInfo(const QString &filePath)
 {
+    //为了避免在高速点击时引发ui错乱，只有在share流程完全结束后才允许用户再次修改共享状态
+    m_shareCheckBox->setEnabled(true);
     if (filePath != m_fileinfo->absoluteFilePath())
         return;
 
