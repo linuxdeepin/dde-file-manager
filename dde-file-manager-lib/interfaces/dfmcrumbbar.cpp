@@ -47,6 +47,7 @@
 #include "singleton.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 #include "interfaces/dfilemenu.h"
 
 DWIDGET_USE_NAMESPACE
@@ -408,7 +409,14 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
         return;
     }
 
-    QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
+    // 将保险箱的真实路径转化成虚拟路径
+    DUrl fileUrl = url;
+    if(fileUrl.toLocalFile().contains(VaultController::makeVaultLocalPath()))
+    {
+        fileUrl = VaultController::localUrlToVault(url);
+    }
+
+    QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(fileUrl);
     for (const CrumbData& c : crumbDataList) {
         if (d->crumbListviewModel) {
             QString iconName = getIconName(c);

@@ -359,7 +359,7 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
         fileUrl = VaultController::vaultToLocalUrl(fileUrl);
     }
 
-    // 解决在回收站中执行剪切时，图标不灰显的问题
+    // 将回收站路径转化成真实路径，解决在回收站中执行剪切时，图标不灰显的问题
     if (fileUrl.scheme() == TRASH_SCHEME){
         const QString &path = fileUrl.path();
         fileUrl = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);

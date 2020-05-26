@@ -2168,10 +2168,10 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     DUrl fileUrl = url;
     //! 快捷方式打开路径需要转换，把真是路径转换成虚拟路径
-    if(url.toLocalFile().contains(VaultController::makeVaultLocalPath()))
-    {
-        fileUrl = VaultController::localUrlToVault(url);
-    }
+//    if(url.toLocalFile().contains(VaultController::makeVaultLocalPath()))
+//    {
+//        fileUrl = VaultController::localUrlToVault(url);
+//    }
 
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, fileUrl);
 
@@ -2189,10 +2189,10 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     //! 书签方式打开路径需要转换，把真是路径转换成虚拟路径
-    if(fileUrl.toLocalFile().contains(VaultController::makeVaultLocalPath()))
-    {
-        fileUrl = VaultController::localUrlToVault(fileUrl);
-    }
+//    if(fileUrl.toLocalFile().contains(VaultController::makeVaultLocalPath()))
+//    {
+//        fileUrl = VaultController::localUrlToVault(fileUrl);
+//    }
 
     if (!info) {
         qDebug() << "This scheme isn't support, url" << fileUrl;
