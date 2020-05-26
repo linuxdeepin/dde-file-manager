@@ -1513,6 +1513,19 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, con
 
 void DFileCopyMoveJobPrivate::updateProgress()
 {
+    switch (mode) {
+    case DFileCopyMoveJob::CopyMode:
+        updateCopyProgress();
+        break;
+    case DFileCopyMoveJob::MoveMode:
+        updateMoveProgress();
+        break;
+    }
+
+}
+
+void DFileCopyMoveJobPrivate::updateCopyProgress()
+{
     const qint64 total_size = fileStatistics->totalSize();
     //通过getCompletedDataSize取出的已传输的数据大小后期会远超实际数据大小，这种情况下直接使用completedDataSize
     const qint64 data_size = getCompletedDataSize() > completedDataSize ? completedDataSize : getCompletedDataSize();
@@ -1551,6 +1564,14 @@ void DFileCopyMoveJobPrivate::updateProgress()
 
     if (currentJobDataSizeInfo.first > 0) {
         Q_EMIT q_ptr->currentFileProgressChanged(qMin(qreal(currentJobDataSizeInfo.second) / currentJobDataSizeInfo.first, 1.0), currentJobDataSizeInfo.second);
+    }
+}
+
+void DFileCopyMoveJobPrivate::updateMoveProgress()
+{
+    if (totalUrlCount > 0) {
+        qreal real_progress = qreal(fnishedUrlCount) / totalUrlCount;
+        Q_EMIT q_ptr->progressChanged(qMin(real_progress, 1.0), 0);
     }
 }
 
@@ -1955,7 +1976,10 @@ void DFileCopyMoveJob::run()
         qCDebug(fileJob(), "remove mode");
     }
 
+    d->fnishedUrlCount = 0;
+    d->totalUrlCount = d->sourceUrlList.size() > 0 ? d->sourceUrlList.size() : 1;
     for (DUrl &source : d->sourceUrlList) {
+        ++d->fnishedUrlCount;
         if (!d->stateCheck()) {
             goto end;
         }
