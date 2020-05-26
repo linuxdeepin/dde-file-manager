@@ -41,6 +41,7 @@
 #include "controllers/dfmsidebartagitemhandler.h"
 #include "app/filesignalmanager.h"
 #include "interfaces/dfilemenu.h"
+#include "dfmopticalmediawidget.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -413,6 +414,12 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
         if (menu) {
             qDebug() << "menu->exec  =  " << identifierStr << menu;
             m_bmenuexec = true;
+            // 如果光驱正在执行刻录/擦除操作，禁用光驱的右键菜单
+            QString strVolTag = item->url().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾
+            if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
+                for (QAction *act: menu->actions())
+                    act->setEnabled(false);
+            }
             DFileMenu *fmenu = static_cast<DFileMenu *>(menu);
             if (fmenu) {
                 fmenu->exec(this->mapToGlobal(pos));

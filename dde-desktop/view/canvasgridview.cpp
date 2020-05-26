@@ -1027,6 +1027,15 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                 auto point = event->pos();
                 auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
+
+                //若落点在网格外则不处理，关联task#23770
+                QSize range = GridManager::instance()->gridSize();
+                if (col >= range.height() || row >= range.width() || row < 0 || col < 0){ //同屏拖动超出范围，不处理
+                    event->accept();
+                    return;
+                }
+                //end
+
                 auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
                 GridManager::instance()->move(selectLocalFiles, current, row, col);
                 setState(NoState);
