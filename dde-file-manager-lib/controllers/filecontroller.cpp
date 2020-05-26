@@ -971,7 +971,6 @@ DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &
     FileJob job(FileJob::Trash);
     job.setWindowId(event->windowId());
     dialogManager->addJob(&job);
-
     DUrlList list = job.doMoveToTrash(event->urlList());
     dialogManager->removeJob(job.getJobId());
 
