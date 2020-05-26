@@ -409,14 +409,7 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
         return;
     }
 
-    // 将保险箱的真实路径转化成虚拟路径
-    DUrl fileUrl = url;
-    if(fileUrl.toLocalFile().contains(VaultController::makeVaultLocalPath()))
-    {
-        fileUrl = VaultController::localUrlToVault(url);
-    }
-
-    QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(fileUrl);
+    QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
     for (const CrumbData& c : crumbDataList) {
         if (d->crumbListviewModel) {
             QString iconName = getIconName(c);
@@ -463,10 +456,17 @@ void DFMCrumbBar::updateCurrentUrl(const DUrl &url)
 {
     Q_D(DFMCrumbBar);
 
-    d->updateController(url);
+    // 将保险箱的真实路径转化成虚拟路径
+    DUrl fileUrl = url;
+    if(fileUrl.toLocalFile().contains(VaultController::makeVaultLocalPath()))
+    {
+        fileUrl = VaultController::localUrlToVault(url);
+    }
+
+    d->updateController(fileUrl);
 
     if (d->crumbController) {
-        d->crumbController->crumbUrlChangedBehavior(url);
+        d->crumbController->crumbUrlChangedBehavior(fileUrl);
     }
 }
 
