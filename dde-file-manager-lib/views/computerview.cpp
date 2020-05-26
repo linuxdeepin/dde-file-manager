@@ -47,6 +47,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "models/computermodel.h"
 #include "computerviewitemdelegate.h"
+#include "views/dfmopticalmediawidget.h"
 #include "models/deviceinfoparser.h"
 #include "dfmvaultunlockpages.h"
 #include "vault/interfaceactivevault.h"

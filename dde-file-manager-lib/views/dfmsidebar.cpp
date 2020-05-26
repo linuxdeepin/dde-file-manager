@@ -63,8 +63,7 @@ DFM_BEGIN_NAMESPACE
 DFMSideBar::DFMSideBar(QWidget *parent)
     : QWidget(parent),
       m_sidebarView(new DFMSideBarView(this)),
-      m_sidebarModel(new DFMSideBarModel(this)),
-      m_bmenuexec(false)
+      m_sidebarModel(new DFMSideBarModel(this))
 {
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
@@ -81,14 +80,6 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initRecentItem();
 
  //   DFMSideBarManager::instance();
-
-
-    m_timer = new QTimer(this);
-    connect(m_timer,&QTimer::timeout,[ = ](){
-        m_bmenuexec = false;
-        qDebug() << "m_bmenuexec  ====== ==   " << m_bmenuexec;
-        m_timer->stop();
-    });
 }
 
 QWidget *DFMSideBar::sidebarView()

@@ -62,14 +62,6 @@ public Q_SLOTS:
     // 必须调用它，否则高强度exec会有崩溃风险
     void deleteLater(QWidget *w = nullptr);
 
-    bool event(QEvent *event) override;
-    void keyPressEvent(QKeyEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void actionEvent(QActionEvent *event) override;
-
-    void setCanUse(const bool canuse);
-
 private:
     DUrl m_currentUrl;
     DUrlList m_selectedUrls;
