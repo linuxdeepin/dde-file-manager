@@ -135,8 +135,7 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
                 break;
             }
             //skip os file Shortcut
-            if (info->isSymLink() && info->symlinkTargetPath() == QString("/proc/kcore"))
-            {
+            if (info->isSymLink() && info->symlinkTargetPath() == QString("/proc/kcore")) {
                 break;
             }
 
@@ -157,8 +156,7 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
             if (type == DAbstractFileInfo::SocketFile && !fileHints.testFlag(DFileStatisticsJob::DontSkipSocketFile)) {
                 break;
             }
-            if (type == DAbstractFileInfo::Unknown)
-            {
+            if (type == DAbstractFileInfo::Unknown) {
                 break;
             }
 
@@ -272,7 +270,7 @@ int DFileStatisticsJob::directorysCount(bool includeSelf) const
     if (includeSelf) {
         return d->directoryCount.load();
     } else {
-        return qMax(d->directoryCount.load() - 1, 0);
+        return qMax(d->directoryCount.load() - d->sourceUrlList.count(), 0);
     }
 }
 
@@ -384,7 +382,7 @@ void DFileStatisticsJob::run()
     while (!directory_queue.isEmpty()) {
         const DUrl &directory_url = directory_queue.dequeue();
         const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(nullptr, directory_url, QStringList(),
-                                              QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot, 0, true);
+                                                                                          QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot, 0, true);
 
         if (!iterator) {
             qWarning() << "Failed on create dir iterator, for url:" << directory_url;
