@@ -35,6 +35,7 @@
 #include <QPair>
 #include <QDir>
 #include <QDebug>
+#include <QtNetwork/qnetworkreply.h>
 
 #include <functional>
 
@@ -170,8 +171,13 @@ public:
     void setCursorBusyState(const bool bbusy);
     //check networkfile is busy(or network is unline)
     bool checkGvfsMountfileBusy(const DUrl &url);
+    bool checkGvfsMountfileBusy(const DUrl &rootUrl,const QString &rootfilename);
     //chang rootfile
     void changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo);
+    //judge me net work is online
+    bool isNetWorkOnline();
+    //judge network can visit host
+    bool checkNetWorkToVistHost(const QString &host);
 
 
 signals:
@@ -182,6 +188,8 @@ signals:
     void fileRenamed(const DUrl &from, const DUrl &to) const;
     void rootFileChange(const DAbstractFileInfoPointer &chi) const;
     void queryRootFileFinsh() const;
+public Q_SLOTS:
+    void slotError(QNetworkReply::NetworkError err);
 
 private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;

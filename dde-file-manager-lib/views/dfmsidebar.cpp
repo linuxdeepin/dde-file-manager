@@ -372,7 +372,7 @@ void DFMSideBar::onItemActivated(const QModelIndex &index)
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     if (interface) {
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(item->url())) {
+        if (DFileService::instance()->checkGvfsMountfileBusy(item->url())) {
             return;
         }
         DFileService::instance()->setCursorBusyState(true);
