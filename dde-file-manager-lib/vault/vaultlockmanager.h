@@ -23,16 +23,14 @@
 
 #include "dfmglobal.h"
 
-#include <QTimer>
-
 //#define AUTOLOCK_TEST
 class VaultInterface;
+class VaultLockManagerPrivate;
 class VaultLockManager : public QObject
 {
     Q_OBJECT
 
 public:
-
     enum AutoLockState {
         Never = 0,
         FiveMinutes = 5,
@@ -92,10 +90,7 @@ protected slots:
      */
     void slotUnlockVault(int msg);
 
-private:
-    explicit VaultLockManager(QObject *parent = nullptr);
-    ~VaultLockManager();
-
+protected:
     /**
      * @brief loadConfig 加载配置文件
      */
@@ -121,17 +116,10 @@ private:
     quint64 dbusGetSelfTime() const;
 
 private:
-    VaultInterface* m_vaultInterface = nullptr; // 交互接口
+    explicit VaultLockManager(QObject *parent = nullptr);
+    QSharedPointer<VaultLockManagerPrivate> d_ptr;
 
-    qulonglong m_lastestTime; // 最新计时
-
-    AutoLockState m_autoLockState; // 自动锁状态
-
-    DAbstractFileInfoPointer m_rootFileInfo; // 根目录文件信息
-
-    QTimer m_alarmClock; // 自动锁计时器
-
-    bool m_isCacheTimeReloaded; // 访问时间是否已经重新加载
+    Q_DECLARE_PRIVATE(VaultLockManager)
 };
 
 #endif // VAULTLOCKMANAGER_H
