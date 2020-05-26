@@ -92,15 +92,17 @@ ComputerModel::ComputerModel(QObject *parent)
 //            }
             // 修改判断条件
             int nIndex = findItem(makeSplitterUrl(tr("Disks")));
-            if(nIndex != -1){   // 找到了
+            if(nIndex != -1){   // 找到了磁盘盘符
                 nIndex = nIndex + m_nDiskNumber + 1;
                 if(m_items.count() > nIndex){
                     insertBefore(url, m_items[nIndex].url);
+                    m_nDiskNumber++;
                 }else {
                     addItem(url);
+                    m_nDiskNumber++;
                 }
             }
-            else {  // 没找到
+            else {  // 没找到磁盘盘符
                 auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
                                           [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                                                 return DFMRootFileInfo::typeCompare(a, b.fi);
