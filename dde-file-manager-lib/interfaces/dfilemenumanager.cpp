@@ -301,7 +301,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 
     if (openWithMenu && openWithMenu->isEnabled()) {
         QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->redirectedFileUrl());
-        recommendApps.removeOne("/usr/share/applications/open-with-dialog.desktop"); //在右键菜单打开方式中屏蔽/usr/share/applications/open-with-dialog.desktop，在此处更改不影响打开效果
+        recommendApps.removeOne("/usr/share/applications/dde-open.desktop"); //在右键菜单打开方式中屏蔽/usr/share/applications/dde-open.desktop，在此处更改不影响打开效果
 
         foreach (QString app, recommendApps) {
 //            const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);

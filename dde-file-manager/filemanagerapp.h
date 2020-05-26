@@ -60,6 +60,7 @@ public:
 public slots:
     void show(const DUrl& url);
     void showPropertyDialog(const QStringList paths);
+    void openWithDialog(const QStringList files);
 
 protected:
     explicit FileManagerApp(QObject *parent = 0);
