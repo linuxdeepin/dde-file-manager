@@ -667,6 +667,8 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
     QSharedPointer<DFileCopyMoveJob> job = QSharedPointer<DFileCopyMoveJob>(new DFileCopyMoveJob());
     //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
 
+    //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
+
     if (force) {
         job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
     }

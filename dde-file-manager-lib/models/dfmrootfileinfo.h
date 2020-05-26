@@ -90,6 +90,8 @@ public:
 
     bool checkMpsStr(const QString &path) const override;
 
+    bool checkMpsStr(const QString &path) const override;
+
     static bool typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b);
 private:
     QScopedPointer<DFMRootFileInfoPrivate> d_ptr;

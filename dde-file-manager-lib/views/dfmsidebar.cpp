@@ -39,6 +39,7 @@
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
+#include "controllers/dfmsidebarvaultitemhandler.h" // 保险柜
 #include "app/filesignalmanager.h"
 #include "interfaces/dfilemenu.h"
 #include "dfmopticalmediawidget.h"
@@ -62,7 +63,8 @@ DFM_BEGIN_NAMESPACE
 DFMSideBar::DFMSideBar(QWidget *parent)
     : QWidget(parent),
       m_sidebarView(new DFMSideBarView(this)),
-      m_sidebarModel(new DFMSideBarModel(this))
+      m_sidebarModel(new DFMSideBarModel(this)),
+      m_bmenuexec(false)
 {
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
@@ -77,6 +79,16 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initConnection();
     initUserShareItem();
     initRecentItem();
+
+ //   DFMSideBarManager::instance();
+
+
+    m_timer = new QTimer(this);
+    connect(m_timer,&QTimer::timeout,[ = ](){
+        m_bmenuexec = false;
+        qDebug() << "m_bmenuexec  ====== ==   " << m_bmenuexec;
+        m_timer->stop();
+    });
 }
 
 QWidget *DFMSideBar::sidebarView()
@@ -399,6 +411,9 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
     QMenu *menu = nullptr;
     if (interface) {
         menu = interface->contextMenu(this, item);
+        //临时解决方案，在处理onContextMenuRequested信号时，处理时间很长，在左边栏一直点击鼠标右键-鼠标左键，就会一直触发onContextMenuRequested信号
+        //这时再次创建menu和执行menu->exec，释放menu就崩溃
+        //要忽略掉在处理onContextMenuRequested信号时，在收到onContextMenuRequested信号
         if (menu) {
             // 如果光驱正在执行刻录/擦除操作，禁用光驱的右键菜单
             QString strVolTag = item->url().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾
@@ -811,6 +826,10 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
     case GroupName::Device:
         if (!m_disableUrlSchemes.contains(COMPUTER_SCHEME)) {
             appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
+        }
+        // 添加保险库
+        if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
+            appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
         }
         break;
     case GroupName::Bookmark: {

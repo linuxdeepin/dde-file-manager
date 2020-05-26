@@ -22,6 +22,7 @@
 #define COMPUTERMODEL_H
 
 #include "ddiskmanager.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <QAbstractItemModel>
 
@@ -69,6 +70,7 @@ public:
         DFMRootUrlRole = Qt::UserRole + 9,  //DUrl
         VolumeTagRole = Qt::UserRole + 10,  //卷标 sr0
         IconNameRole = Qt::UserRole + 11,   //图标名称
+        Scheme = Qt::UserRole + 12, //QString
     };
     Q_ENUM(DataRoles)
 
@@ -94,7 +96,6 @@ public Q_SLOTS:
     void removeItem(const DUrl &url);
     void onGetRootFile(const DAbstractFileInfoPointer &chi);
 
-
 Q_SIGNALS:
     void itemCountChanged(int nitems);
 
@@ -109,6 +110,9 @@ private:
     int findItem(const DUrl &url);
 
     static DUrl makeSplitterUrl(QString text);
+
+    // 记录磁盘个数
+    int m_nDiskNumber;
 };
 
 

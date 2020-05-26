@@ -87,7 +87,7 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
     , m_dbusAppearance(new ComDeepinDaemonAppearanceInterface(AppearanceServ,
                                                               AppearancePath,
                                                               QDBusConnection::sessionBus(),
-                                                              this))
+                                                              this))    
     , m_mouseArea(new DRegionMonitor(this))
     , m_screenName(screenName)
 {

@@ -68,6 +68,11 @@ QAction *DFileMenu::actionAt(const QString &text) const
 
 QAction *DFileMenu::exec()
 {
+    setCanUse(false);
+    QTimer::singleShot(200,this,[this]{
+
+        setCanUse(true);
+    });
     return QMenu::exec(QCursor::pos());
 }
 

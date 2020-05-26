@@ -62,12 +62,21 @@ public Q_SLOTS:
     // 必须调用它，否则高强度exec会有崩溃风险
     void deleteLater(QWidget *w = nullptr);
 
+    bool event(QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void actionEvent(QActionEvent *event) override;
+
+    void setCanUse(const bool canuse);
+
 private:
     DUrl m_currentUrl;
     DUrlList m_selectedUrls;
     quint64 m_eventId = 0;
     const QObject *m_sender = Q_NULLPTR;
     QSet<DFMGlobal::MenuAction> m_ignoreMenuActions; //Don't handle MenuAction list in libdde-file-manager in m_ignoreMenuActions;
+    bool m_canuse = true;
 };
 
 #endif // DFILEMENU_H

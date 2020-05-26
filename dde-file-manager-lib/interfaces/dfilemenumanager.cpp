@@ -437,8 +437,9 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         }
     }
 
-    if (currentUrl == DesktopFileInfo::computerDesktopFileUrl() ||
-            currentUrl == DesktopFileInfo::trashDesktopFileUrl()) {
+    if (currentUrl == DesktopFileInfo::computerDesktopFileUrl()
+            || currentUrl == DesktopFileInfo::trashDesktopFileUrl()
+            || currentUrl == DesktopFileInfo::homeDesktopFileUrl()) {
         return menu;
     }
 
@@ -624,6 +625,17 @@ void DFileMenuData::initData()
     //actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Burn");
     actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Add to disc");
 
+    // Vault
+    actionKeys[MenuAction::LockNow] = QObject::tr("Lock");
+    actionKeys[MenuAction::AutoLock] = QObject::tr("Auto lock");
+    actionKeys[MenuAction::Never] = QObject::tr("Never");
+    actionKeys[MenuAction::FiveMinutes] = QObject::tr("5 minutes");
+    actionKeys[MenuAction::TenMinutes] = QObject::tr("10 minutes");
+    actionKeys[MenuAction::TwentyMinutes] = QObject::tr("20 minutes");
+    actionKeys[MenuAction::DeleteVault] = QObject::tr("Remove File Vault");
+    actionKeys[MenuAction::UnLock] = QObject::tr("Unlock");
+    actionKeys[MenuAction::UnLockByKey] = QObject::tr("Unlock by key");
+
     // Action Icons:
     DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     if (settings.value("context-menu-icons").toBool()) {
@@ -783,6 +795,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                 DFileMenuData::actionToMenuAction[action] = key;
             }
 
+            action->setCheckable(checkable);
             action->setDisabled(disableList.contains(key));
             action->setProperty("_dfm_menu", QVariant::fromValue(menu));
 

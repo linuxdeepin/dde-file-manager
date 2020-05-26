@@ -81,6 +81,10 @@
 
 DFM_USE_NAMESPACE
 
+//fix: 获取当前刻录的全局状态机，便于其它地方调用
+int FileJob::g_opticalBurnStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
+int FileJob::g_opticalBurnEjectCount = 0;
+
 int FileJob::FileJobCount = 0;
 DUrlList FileJob::CopyingFiles = {};
 qint64 FileJob::Msec_For_Display = 1000;
@@ -1279,6 +1283,9 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
 
 void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress)
 {
+    //fix: 获取当前刻录的全局状态机，便于其它地方调用
+    FileJob::g_opticalBurnStatus = status;
+
     m_opticalJobStatus = status;
     if (progress >= 0 && progress <= 100) // DISOMaster 可能抛负值
         m_opticalJobProgress = progress;

@@ -157,6 +157,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<MergedDesktopController>(DFMMD_SCHEME, "");
     DFileService::dRegisterUrlHandler<DFMRootController>(DFMROOT_SCHEME, "");
     DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "files");
+    DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "");
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
@@ -531,6 +532,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         }
         // 断网时mount Samba无效
         if (blk->device().isEmpty()) {
+            dialogManager->showErrorDialog(tr("Mounting device error"), QString());
             qWarning() << "blockDevice is invalid, fileurl is " << fileUrl;
             return;
         }
@@ -689,24 +691,6 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                     QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
                 }
             }
-        });
-    } else {
-        deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
-    }
-}
-
-void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
-{
-    const DUrl &fileUrl = event->url();
-    if (fileUrl.scheme() == DFMROOT_SCHEME) {
-        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
-        bool err = false;
-        if (!blk->mountPoints().empty()) {
-            blk->unmount({});
-            err |= blk->lastError().isValid();
         }
         if (blk->cryptoBackingDevice().length() > 1) {
             cbblk->lock({});

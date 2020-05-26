@@ -19,89 +19,116 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmvaultunlockpages.h"
+#include "vault/interfaceactivevault.h"
+#include "controllers/vaultcontroller.h"
 
-#include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QFrame>
+#include <QToolTip>
+#include <QEvent>
 
-#include <DFloatingButton>
-#include <DCommandLinkButton>
-#include <DSecureString>
+#include <DPushButton>
 #include <DPasswordEdit>
 
-DCORE_USE_NAMESPACE
-
-DFM_BEGIN_NAMESPACE
-
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
-    : DFMVaultContentInterface(parent)
+    : DDialog (parent)
 {
-    QLabel * description = new QLabel(tr("Enter the vault password"), this);
-    description->setAlignment(Qt::AlignHCenter);
+    this->setTitle(tr("Unlock File Vault"));
+    this->setIcon(QIcon::fromTheme("dfm_safebox"));
+    this->setMessage(tr("Verify your fingerprint or password"));
+    this->setFixedSize(438, 260);
 
-    m_unlockButton = new DFloatingButton(DStyle::SP_UnlockElement, this);
+    QStringList btnList({tr("Cancel"), tr("Unlock")});
+    addButton(btnList[0], false);
+    addButton(btnList[1], true, ButtonType::ButtonRecommend);
+    getButton(1)->setEnabled(false);
+
     m_passwordEdit = new DPasswordEdit(this);
+    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
+    m_passwordEdit->lineEdit()->setMaxLength(24);
+    m_passwordEdit->lineEdit()->installEventFilter(this);
+    m_helpButton = new QPushButton(this);
+    m_helpButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
-    DIconButton * icon = new DIconButton(this);
-    icon->setFlat(true);
-    icon->setIcon(QIcon::fromTheme("dfm_lock"));
-    icon->setIconSize(QSize(64, 64));
-    icon->setWindowFlags(Qt::WindowTransparentForInput);
-    icon->setFocusPolicy(Qt::NoFocus);
-    icon->setMinimumHeight(64);
+    QFrame *mainFrame = new QFrame(this);
+    QHBoxLayout *mainLayout = new QHBoxLayout();
+    mainLayout->addWidget(m_passwordEdit);
+    mainLayout->addWidget(m_helpButton);
+    mainLayout->setContentsMargins(0, 10, 0, 25);
+    mainFrame->setLayout(mainLayout);
 
-    m_retrievePasswordButton = new DCommandLinkButton(tr("Retrieve password"), this);
-    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Enter the vault password"));
+    addContent(mainFrame);
+    setSpacing(0);
+    // 防止点击按钮后界面隐藏
+    setOnButtonClickedClose(false);
 
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    layout->addStretch();
-    layout->addWidget(icon);
-    layout->addWidget(description);
-    layout->addWidget(m_passwordEdit);
-    layout->addWidget(m_unlockButton);
-    layout->addStretch();
-    layout->addWidget(m_retrievePasswordButton);
-
-    layout->setAlignment(m_unlockButton, Qt::AlignHCenter);
-    layout->setAlignment(m_retrievePasswordButton, Qt::AlignHCenter);
-
-    connect(m_unlockButton, &QAbstractButton::clicked, this, &DFMVaultUnlockPages::unlock);
-    connect(m_retrievePasswordButton, &QAbstractButton::clicked, this, [=](){
-        emit requestRedirect(VaultController::makeVaultUrl("/retrieve_password", "recovery_key"));
+    connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
+    connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
+    connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
+    connect(m_helpButton, &QPushButton::clicked, [this]{
+        QString strPwdHint("");
+        if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
+            strPwdHint.insert(0, tr("Password hint:"));
+            m_passwordEdit->showAlertMessage(strPwdHint);
+        }
     });
 }
 
-QPair<DUrl, bool> DFMVaultUnlockPages::requireRedirect(VaultController::VaultState state)
+void DFMVaultUnlockPages::showEvent(QShowEvent *event)
 {
-    switch (state) {
-    case VaultController::NotExisted:
-        return {VaultController::makeVaultUrl("/", "setup"), true};
-    case VaultController::Unlocked:
-        return {VaultController::makeVaultUrl(), true};
-    default:
-        break;
+    // 重置所有控件状态
+    m_passwordEdit->lineEdit()->clear();
+    QLineEdit edit;
+    QPalette palette = edit.palette();
+    m_passwordEdit->lineEdit()->setPalette(palette);
+    m_passwordEdit->setEchoMode(QLineEdit::Password);
+}
+
+DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
+{
+    static DFMVaultUnlockPages s_instance;
+    return &s_instance;
+}
+
+void DFMVaultUnlockPages::onButtonClicked(const int &index)
+{
+    if (index == 1){
+        QString strPwd = m_passwordEdit->text();
+
+        QString strClipher("");
+        if (InterfaceActiveVault::checkPassword(strPwd, strClipher)){
+            VaultController::getVaultController()->unlockVault(strClipher);
+        }else {
+            // 设置密码输入框颜色
+            m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
+
+            m_passwordEdit->showAlertMessage(tr("Wrong password"));
+        }
+        return;
     }
-    return DFMVaultContentInterface::requireRedirect(state);
+
+    close();
 }
 
-void DFMVaultUnlockPages::setRootUrl(const DUrl &url)
+void DFMVaultUnlockPages::onPasswordChanged(const QString &pwd)
 {
-    QFile keyFile(VaultController::makeVaultLocalPath("dde-vault.config", "vault_encrypted"));
-    m_retrievePasswordButton->setVisible(keyFile.exists());
-
-    return DFMVaultContentInterface::setRootUrl(url);
-}
-
-void DFMVaultUnlockPages::unlock()
-{
-    m_unlockButton->setDisabled(true);
-    DSecureString passwordString(m_passwordEdit->text());
-    bool succ = VaultController::unlockVault(passwordString);
-    if (succ) {
-        m_passwordEdit->clear();
-        emit requestRedirect(VaultController::makeVaultUrl("/"));
+    if (!pwd.isEmpty()){
+        getButton(1)->setEnabled(true);
+        QLineEdit edit;
+        QPalette palette = edit.palette();
+        m_passwordEdit->lineEdit()->setPalette(palette);
+    }else {
+        getButton(1)->setEnabled(false);
     }
-    m_unlockButton->setDisabled(false);
 }
 
-DFM_END_NAMESPACE
+void DFMVaultUnlockPages::onVaultUlocked(int state)
+{
+    if (state == 0){
+        accept();
+    }else {
+        //others
+    }
+}
+

@@ -165,6 +165,7 @@ public:
     static DUrl fromUserTaggedFile(const QString &tag_name, const QString &localFilePath) noexcept;
     static DUrl fromDeviceId(const QString &deviceId);
     static DUrl fromBurnFile(const QString &filePath);
+    static DUrl fromVaultFile(const QString &filePath);
 
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);

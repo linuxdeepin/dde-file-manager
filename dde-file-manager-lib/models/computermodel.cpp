@@ -25,28 +25,54 @@
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "controllers/dfmrootcontroller.h"
+#include "controllers/vaultcontroller.h"
 #include "dfmrootfileinfo.h"
 #include "app/define.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
-
-#include <QStorageInfo>
+#include "deviceinfoparser.h"
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
 #include "computermodel.h"
 
-ComputerModel::ComputerModel(QObject *parent) :
-    QAbstractItemModel(parent),
-    m_diskm(new DDiskManager(this))
+
+ComputerModel::ComputerModel(QObject *parent)
+    : QAbstractItemModel(parent)
+    , m_diskm(new DDiskManager(this))
+    , m_nDiskNumber(0)
 {
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
     m_nitems = 0;
     addItem(makeSplitterUrl(tr("My Directories")));
-    getRootFile();
-
-    connect(fileService,&DFileService::rootFileChange,this,&ComputerModel::onGetRootFile,Qt::QueuedConnection);
+    QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
+    bool splt = false;
+    m_nitems = 0;
+    for (auto chi : ch) {
+        if (chi->suffix() != SUFFIX_USRDIR && !splt) {
+            addItem(makeSplitterUrl(tr("Disks")));
+            splt = true;
+        }
+        if (splt) {
+            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
+                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+                                          return DFMRootFileInfo::typeCompare(a, b.fi);
+                                      });
+            if (r == m_items.end()) {
+                addItem(chi->fileUrl());
+                m_nDiskNumber++;
+            } else {
+                insertBefore(chi->fileUrl(), r->url);
+                m_nDiskNumber++;
+            }
+        } else {
+            addItem(chi->fileUrl());
+        }
+    }
+    // 保险柜
+    addItem(makeSplitterUrl(QObject::tr("File Vault")));
+    addItem(VaultController::makeVaultUrl());
 
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
     m_watcher->startWatcher();
@@ -56,14 +82,35 @@ ComputerModel::ComputerModel(QObject *parent) :
             if (!fi->exists()) {
                 return;
             }
-            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
-                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
-                                          return DFMRootFileInfo::typeCompare(a, b.fi);
-                                      });
-            if (r == m_items.end()) {
-                addItem(url);
-            } else {
-                insertBefore(url, r->url);
+//            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
+//                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+//                                            return DFMRootFileInfo::typeCompare(a, b.fi);
+//                                      });
+//            if (r == m_items.end()) {
+//                addItem(url);
+//            } else {
+//                insertBefore(url, r->url);
+//            }
+            // 修改判断条件
+            int nIndex = findItem(makeSplitterUrl(tr("Disks")));
+            if(nIndex != -1){   // 找到了
+                nIndex = nIndex + m_nDiskNumber + 1;
+                if(m_items.count() > nIndex){
+                    insertBefore(url, m_items[nIndex].url);
+                }else {
+                    addItem(url);
+                }
+            }
+            else {  // 没找到
+                auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
+                                          [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+                                                return DFMRootFileInfo::typeCompare(a, b.fi);
+                                          });
+                if (r == m_items.end()) {
+                    addItem(url);
+                } else {
+                    insertBefore(url, r->url);
+                }
             }
     });
     connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, [this](const DUrl &url) {
@@ -80,6 +127,8 @@ ComputerModel::ComputerModel(QObject *parent) :
         static_cast<DFMRootFileInfo*>(m_items[p].fi.data())->checkCache();
         emit dataChanged(idx, idx, {Qt::ItemDataRole::DisplayRole});
     });
+
+    connect(deviceListener, SIGNAL(volumeAdded(UDiskDeviceInfoPointer)), this, SLOT(onVolumeAdded(UDiskDeviceInfoPointer)));
 }
 
 ComputerModel::~ComputerModel()
@@ -132,6 +181,19 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DecorationRole) {
         if (pitmdata->fi) {
+
+            DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
+            if (itemType == DFMRootFileInfo::UDisksOptical) {
+                QString udisk = pitmdata->fi->extraProperties()["udisksblk"].toString();
+                QStringList strList = udisk.split("/");
+                QString device = strList.back();
+
+                bool isInternal = DeviceInfoParser::Instance().isInternalDevice(device);
+                if (!isInternal) {
+                    return QIcon::fromTheme("media-external");
+                }
+            }
+
             return QIcon::fromTheme(pitmdata->fi->iconName());
         }
     }
@@ -141,7 +203,13 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     }
 
     if (role == DataRoles::FileSystemRole) {
-        //!!TODO: ?
+        QString fs_type = "";
+        if (pitmdata->fi) {
+            //! 添加文件系统格式数据
+            fs_type = pitmdata->fi->extraProperties()["fsType"].toString().toUpper();
+        }
+
+        return fs_type;
     }
 
     if (role == DataRoles::SizeInUseRole) {
@@ -161,6 +229,9 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                     return DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
                 }
             } else {
+                if (pitmdata->fi->fileUrl().scheme() == DFMVAULT_SCHEME) {
+                    return QString::number(pitmdata->fi->size());
+                }
                 return pitmdata->fi->extraProperties()["fsUsed"];
             }
         }
@@ -194,6 +265,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == DataRoles::OpenUrlRole) {
         if (pitmdata->fi) {
+            // 用保险柜根目录
+            if (pitmdata->fi->scheme() == DFMVAULT_SCHEME) {
+                return QVariant::fromValue(VaultController::getVaultController()->makeVaultUrl());
+            }
             return QVariant::fromValue(pitmdata->fi->redirectedFileUrl());
         }
     }

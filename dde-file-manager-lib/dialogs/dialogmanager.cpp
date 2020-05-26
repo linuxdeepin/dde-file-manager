@@ -535,6 +535,12 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
 
 void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
 {
+    //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
+    if (FileJob::g_opticalBurnEjectCount > 0) {
+        FileJob::g_opticalBurnEjectCount = 0;
+        return;
+    }
+
     DDialog d;
     d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));
     QString failure_type;
@@ -555,7 +561,8 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     QWidget *detailsw = new QWidget(&d);
     detailsw->setLayout(new QVBoxLayout());
     QTextEdit *te = new QTextEdit();
-    te->setPlainText(details.join('\n'));
+    // tmp: 暂时不要详细信息
+    // te->setPlainText(details.join('\n'));
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);
@@ -707,7 +714,10 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                 DFMEvent event(this);
                 event.setData(url);
                 showTrashPropertyDialog(event);
-            } else {
+            } /*else if (url == DUrl::fromVaultFile("/")) {
+                // 显示保险柜属性对话框,后面可以根据需求重新实现
+                showVaultPropertyDialog();
+            }*/ else {
                 if (urlList.count() >= 2) {
                     m_closeIndicatorDialog->show();
                     m_closeIndicatorTimer->start();
@@ -791,7 +801,12 @@ void DialogManager::showComputerPropertyDialog()
 
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
-    }, this)
+                     }, this)
+}
+
+void DialogManager::showVaultPropertyDialog()
+{
+    // Something to do.
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)

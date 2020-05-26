@@ -74,6 +74,10 @@ public:
     };
     Q_ENUM(JobType)
 
+    //fix: 获取当前刻录的全局状态机，便于其它地方调用
+    static int g_opticalBurnStatus;
+    static int g_opticalBurnEjectCount;
+
     static int FileJobCount;
     static DUrlList CopyingFiles;
 

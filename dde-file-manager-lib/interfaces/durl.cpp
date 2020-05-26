@@ -55,7 +55,8 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                            << QString(FTP_SCHEME)
                            << QString(SFTP_SCHEME)
                            << QString(DAV_SCHEME)
-                           << QString{ TAG_SCHEME };
+                           << QString(TAG_SCHEME)
+                           << QString(DFMVAULT_SCHEME); // 文件保险柜
 
 DUrl::DUrl()
     : QUrl()
@@ -604,6 +605,15 @@ DUrl DUrl::fromBurnFile(const QString &filePath)
     ret.setScheme(BURN_SCHEME);
     ret.setPath(filePath);
     return ret;
+}
+
+DUrl DUrl::fromVaultFile(const QString &filePath)
+{
+    DUrl url;
+    url.setScheme(DFMVAULT_SCHEME, false);
+    url.setPath(filePath);
+
+    return url;
 }
 
 DUrlList DUrl::fromStringList(const QStringList &urls, QUrl::ParsingMode mode)

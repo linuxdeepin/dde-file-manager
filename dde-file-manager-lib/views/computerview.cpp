@@ -30,6 +30,7 @@
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "controllers/dfmsidebarvaultitemhandler.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -46,7 +47,9 @@
 #include "models/dfmrootfileinfo.h"
 #include "models/computermodel.h"
 #include "computerviewitemdelegate.h"
-#include "views/dfmopticalmediawidget.h"
+#include "models/deviceinfoparser.h"
+#include "dfmvaultunlockpages.h"
+#include "vault/interfaceactivevault.h"
 
 #include <dslider.h>
 
@@ -173,6 +176,41 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
         }
         if (url.path().endsWith(SUFFIX_USRDIR)) {
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+        } else if (url.scheme() == DFMVAULT_SCHEME) { // 保险柜
+            // 判断保险箱状态
+            InterfaceActiveVault activeVault;
+            EN_VaultState enState = activeVault.vaultState();
+            switch (enState) {
+            case EN_VaultState::NotAvailable:{  // 没有安装cryfs
+                qDebug() << "Don't setup cryfs, can't use vault, please setup cryfs!";
+                break;
+            }
+            case EN_VaultState::NotExisted:{    // 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
+                QDialog *dlg = activeVault.getActiveVaultWidget();
+                if(QDialog::Accepted == dlg->exec()){
+                    // todo 进入保险箱主界面
+                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+                }
+                dlg = nullptr;
+                break;
+            }
+            case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
+                // todo
+                if(QDialog::Accepted == DFMVaultUnlockPages::instance()->exec()){
+                    // 进入保险箱
+                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+                }
+                break;
+            }
+            case EN_VaultState::Unlocked:{  // 保险箱处于开锁状态，直接进入主界面
+                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+                break;
+            }
+            default:{   // 未考虑
+                break;
+            }
+            }
+
         } else {
             appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
         }
@@ -234,6 +272,8 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(re, &ViewReturnEater::entered, std::bind(enterfunc, std::placeholders::_1, -1));
     connect(m_statusbar->scalingSlider(), &QSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);
+
+    connect(&DeviceInfoParser::Instance(), SIGNAL(loadFinished()), this, SLOT(repaint()));
 }
 
 ComputerView::~ComputerView()
@@ -294,7 +334,17 @@ void ComputerView::contextMenu(const QPoint &pos)
             disabled.insert(act);
     }
 
-    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
+
+    DFileMenu *menu = nullptr;
+    if (idx.data(ComputerModel::DataRoles::Scheme) == DFMVAULT_SCHEME) {
+        // 重新创建右键菜单
+        DFMSideBarVaultItemHandler handler;
+        quint64 wndId = WindowManager::getWindowId(this);
+        menu = handler.generateMenu(WindowManager::getWindowById(wndId));
+    } else {
+        menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
+    }
+
     menu->setEventData(DUrl(), {idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>()}, WindowManager::getWindowId(this), this);
     menu->exec(this->mapToGlobal(pos));
     menu->deleteLater(this);

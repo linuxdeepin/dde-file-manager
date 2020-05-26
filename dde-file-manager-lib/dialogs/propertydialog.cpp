@@ -1085,9 +1085,9 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(typeSectionLabel, typeLabel);
     }
 
+    SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
+    QLabel *locationPathLabel = nullptr;
     if (info->isSymLink()) {
-        SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
-
         LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->symlinkTargetPath());
         linkPathLabel->setToolTip(info->symlinkTargetPath());
         linkPathLabel->setLinkTargetUrl(info->redirectedFileUrl());
@@ -1095,9 +1095,18 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         linkPathLabel->setWordWrap(false);
         QString t = linkPathLabel->fontMetrics().elidedText(info->symlinkTargetPath(), Qt::ElideMiddle, 150);
         linkPathLabel->setText(t);
-        layout->addRow(linkPathSectionLabel, linkPathLabel);
+        locationPathLabel = linkPathLabel;
+    } else {
+        locationPathLabel = new SectionValueLabel();
+        QString absoluteFilePath = info->absoluteFilePath();
+        locationPathLabel->setText(absoluteFilePath);
+        locationPathLabel->setToolTip(absoluteFilePath);
+        QString t = locationPathLabel->fontMetrics().elidedText(absoluteFilePath, Qt::ElideMiddle, 150);
+        locationPathLabel->setWordWrap(false);
+        locationPathLabel->setText(t);
     }
 
+    layout->addRow(linkPathSectionLabel, locationPathLabel);
     if (!info->isVirtualEntry()) {
         layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
         layout->addRow(TimeReadSectionLabel, timeReadLabel);

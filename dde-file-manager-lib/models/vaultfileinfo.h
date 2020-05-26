@@ -21,12 +21,18 @@
 #pragma once
 
 #include "dabstractfileinfo.h"
+//#include "dfileinfo.h"
+
+DFM_BEGIN_NAMESPACE
+class DFileStatisticsJob;
+DFM_END_NAMESPACE
 
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DAbstractFileInfo
 {
 public:
     VaultFileInfo(const DUrl &url);
+    ~VaultFileInfo();
 
     bool exists() const override;
 
@@ -38,11 +44,26 @@ public:
 
     bool canRedirectionFileUrl() const override;
     DUrl redirectedFileUrl() const override;
+    bool canIteratorDir() const Q_DECL_OVERRIDE;
 
     QString subtitleForEmptyFloder() const override;
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
+    // 右键菜单
+    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
+    QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const override;
+
+    QString fileDisplayName() const override;
+
+    bool canRename() const override;
+
+    qint64 size() const override;
+
 private:
+    bool isRootDirectory() const;
+
+    DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
+
     Q_DECLARE_PRIVATE(VaultFileInfo)
 };
