@@ -192,6 +192,7 @@ OpenWithDialog::OpenWithDialog(const QList<DUrl> &urllist, QWidget *parent) :
                    & ~ Qt::WindowMaximizeButtonHint
                    & ~ Qt::WindowMinimizeButtonHint
                    & ~ Qt::WindowSystemMenuHint);
+    mimeAppsManager->initMimeTypeApps();
     initUI();
     initConnect();
     initData();
@@ -205,6 +206,7 @@ OpenWithDialog::OpenWithDialog(const DUrl &url, QWidget *parent) :
                    & ~ Qt::WindowMaximizeButtonHint
                    & ~ Qt::WindowMinimizeButtonHint
                    & ~ Qt::WindowSystemMenuHint);
+    mimeAppsManager->initMimeTypeApps();
     initUI();
     initConnect();
     initData();
