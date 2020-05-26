@@ -678,7 +678,7 @@ void FileJob::doOpticalBlank(const DUrl &device)
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
-    DFMOpticalMediaWidget::g_mapCdStatusInfo[dev.mid(5)].bBurningOrErasing = false;
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[m_tarPath.mid(5)].bBurningOrErasing = false;
 
 
     //fix: 空白光盘擦除处理完后需要对当前刻录的全局状态机置恢复位，便于其它地方调用状态机完整性
