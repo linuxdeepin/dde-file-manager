@@ -2899,8 +2899,8 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
             row = 0;
 
             QFuture<void> result;
-
-            if (fileInfo->hasOrderly()) {
+            // tmp: 暂时不排序 排序的宏在大量添加文件操作时会崩（最近访问目录不存在大量文件添加的情况 可放开）
+            if (fileInfo->hasOrderly() && fileUrl.isRecentFile()) {
                 DAbstractFileInfo::CompareFunction compareFun = fileInfo->compareFunByColumn(d->sortRole);
 
                 if (compareFun) {
