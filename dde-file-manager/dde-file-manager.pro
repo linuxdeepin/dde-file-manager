@@ -117,7 +117,8 @@ DISTFILES += \
     mips/dde-computer.sh \
     mips/dde-trash.sh \
     mips/file-manager.sh \
-    generate_translations.sh
+    generate_translations.sh \
+    dde-open.desktop
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}-app.ts \
     $$PWD/translations/$${TARGET}-app_zh_CN.ts

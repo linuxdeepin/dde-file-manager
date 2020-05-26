@@ -71,6 +71,7 @@ void CommandLineManager::initOptions()
     QCommandLineOption workingDirOption(QStringList() << "w" << "working-dir",
                                         "set the file manager working directory (won't work with -r argument)",
                                         "directory");
+    QCommandLineOption openWithDialog(QStringList() << "o" << "open", "open with dialog");
 
     addOption(newWindowOption);
     addOption(backendOption);
@@ -81,6 +82,7 @@ void CommandLineManager::initOptions()
     addOption(event);
     addOption(get_monitor_files);
     addOption(workingDirOption);
+    addOption(openWithDialog);
 }
 
 void CommandLineManager::addOption(const QCommandLineOption &option)
@@ -121,6 +123,13 @@ void CommandLineManager::processCommand()
     if (isSet("p")) {
         QStringList paths = positionalArguments();
         FileManagerApp::instance()->showPropertyDialog(paths);
+
+        return;
+    }
+
+    if (isSet("o")) {
+        QStringList files = positionalArguments();
+        FileManagerApp::instance()->openWithDialog(files);
 
         return;
     }

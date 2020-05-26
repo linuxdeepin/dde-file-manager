@@ -684,12 +684,16 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
 
 void DialogManager::showOpenFilesWithDialog(const DFMEvent &event)
 {
-    QWidget *w = WindowManager::getWindowById(event.windowId());
-    if (w) {
-        OpenWithDialog *d = new OpenWithDialog(event.fileUrlList());
-        d->setDisplayPosition(OpenWithDialog::Center);
-        d->exec();
-    }
+//    QWidget *w = WindowManager::getWindowById(event.windowId());
+//    if (w) {
+//        OpenWithDialog *d = new OpenWithDialog(event.fileUrlList());
+//        d->setDisplayPosition(OpenWithDialog::Center);
+//        d->exec();
+//    }
+//    以前的方法，为了能够从命令行打开对话框，弃用
+    OpenWithDialog *dialog = new OpenWithDialog(event.fileUrlList());
+    dialog->setDisplayPosition(OpenWithDialog::Center);
+    dialog->open(); //不建议使用show、exec
 }
 
 void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
