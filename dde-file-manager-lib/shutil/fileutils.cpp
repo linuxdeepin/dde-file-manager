@@ -546,8 +546,8 @@ bool FileUtils::openFile(const QString &filePath)
         qDebug() << "no default application for" << filePath;
         return false;
     }
-
-    if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory"){
+    //此处会排除执行段(Exec=)包含dde-file-manager的desktop文件，需要对目录(inode/directory)类型及dde-open.desktop例外处理
+    if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory" && !defaultDesktopFile.contains("/dde-open.desktop")){
         QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
         recommendApps.removeOne(defaultDesktopFile);
         if (recommendApps.count() > 0){
@@ -557,7 +557,6 @@ bool FileUtils::openFile(const QString &filePath)
             return false;
         }
     }
-
     result = launchApp(defaultDesktopFile, QStringList() << DUrl::fromLocalFile(filePath).toString());
     if (result){
         // workaround since DTK apps doesn't support the recent file spec.
