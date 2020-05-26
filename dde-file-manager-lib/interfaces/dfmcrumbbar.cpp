@@ -189,7 +189,7 @@ void DFMCrumbBarPrivate::initUI()
     crumbListView.setContentsMargins(0, 0, 0, 0);
     crumbListView.setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
     crumbListView.setIconSize({16, 16});
-
+    crumbListView.setHorizontalScrollMode(QAbstractItemView::ScrollPerItem);
     crumbListView.setOrientation(QListView::LeftToRight, false);
     crumbListView.setEditTriggers(QAbstractItemView::NoEditTriggers);
     crumbListView.setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
