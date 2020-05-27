@@ -1325,7 +1325,7 @@ void DFileView::updateStatusBar()
     event.setData(corectUrls);
     int count = selectedIndexCount();
     //判断网络文件是否可以到达
-    if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
         return;
     }
 
@@ -1509,7 +1509,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 
     if (isEmptyArea) {
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+        if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
             return;
         }
         flags = model()->flags(rootIndex());
@@ -1517,7 +1517,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
             return;
     } else {
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+        if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
             return;
         }
         flags = model()->flags(index);
@@ -2144,7 +2144,7 @@ void DFileView::openIndex(const QModelIndex &index)
 {
     const DUrl &url = model()->getUrlByIndex(index);
     //判断网络文件是否可以到达
-    if (!DFileService::instance()->checkGvfsMountfileBusy(url)) {
+    if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
         return;
     }
     DFMOpenUrlEvent::DirOpenMode mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()

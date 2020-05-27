@@ -195,7 +195,8 @@ QWidget* ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
     QLineEdit *le = new QLineEdit(parent);
     le->setFrame(false);
     le->setTextMargins(0, 0, 0, 0);
-    le->setAutoFillBackground(true);
+    //消除编辑框背后多余的填充色
+//    le->setAutoFillBackground(true);
     le->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     return le;
 }
