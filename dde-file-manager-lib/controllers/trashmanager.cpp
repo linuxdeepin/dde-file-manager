@@ -298,7 +298,11 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
     QScopedPointer<FileJob, ScopedPointerCustomDeleter> job(new FileJob(FileJob::Restore));
     job->setProperty("pathlist", pathlist);
     job->setManualRemoveJob(true);
-    dialogManager->addJob(job.data());
+    if (urlist.size() != 1)
+        dialogManager->addJob(job.data());
+    job->jobPrepared();
+    int i = 0;
+    int total = urlist.size();
     for (const DUrl &url : urlist) {
 
         if (url == DUrl::fromTrashFile("/")) {
@@ -312,6 +316,9 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
                 return true;
 
             return restoreTrashFile(list, restoreOriginUrls);
+        } else {
+            ++i;
+            job->setRestoreProgress(double(i) / total);
         }
 
         //###(zccrs): 必须通过 DAbstractFileInfoPointer 使用
@@ -332,6 +339,8 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
         ok = ok && ret;
     }
+    job->setRestoreProgress(0);
+    emit job->finished();
 
     if (!ok && restoreFailedList.count() > 0){
         emit fileSignalManager->requestShowRestoreFailedDialog(restoreFailedList);

@@ -73,8 +73,9 @@ void TrashFileInfoPrivate::updateInfo()
     const QString &basePath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
     const QString &fileBaseName = QDir::separator() + proxy->fileName();
 
-    if (QFile::exists(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo")) {
-        QSettings setting(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo", QSettings::NativeFormat);
+    QString location(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo");
+    if (QFile::exists(location)) {
+        QSettings setting(location, QSettings::NativeFormat);
 
         setting.beginGroup("Trash Info");
         setting.setIniCodec("utf-8");

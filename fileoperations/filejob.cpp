@@ -298,6 +298,10 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     qDebug() << "Do file operation is started" << m_jobDetail;
     jobPrepared();
 
+    // 用于统计 movetotrash 进度
+    m_allCount = files.size();
+    m_finishedCount = 0;
+
     m_isGvfsFileOperationUsed = checkUseGvfsFileOperation(files, destination);
 
     DUrlList list;
@@ -448,11 +452,16 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             }
         }
 
-        if (!targetPath.isEmpty())
+        if (!targetPath.isEmpty()) {
             list << DUrl::fromLocalFile(targetPath);
-        else
+            m_trashFileName = srcPath;
+        } else {
             list << DUrl();
+        }
+        ++m_finishedCount;
     }
+    m_finishedCount = 0;
+    m_allCount = 1;
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
@@ -565,7 +574,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     DUrlList files;
     files << QUrl::fromLocalFile(srcFilePath);
     m_totalSize = FileUtils::totalSize(files);
-    jobPrepared();
+   // jobPrepared();
 
     QStorageInfo srcStorageInfo = getStorageInfo(srcFilePath);
     QString tarDir = DUrl::fromLocalFile(tarFilePath).parentUrl().toLocalFile();
@@ -611,7 +620,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     // 回收站恢复文件将多个fileJob合并为一个job，所以单个任务完成时不移除（会导致taskdialog被关闭）,在外部手动调用jobRemoved();
     if(m_isJobAdded && !m_isManualRemoveJob)
         jobRemoved();
-    emit finished();
+    //emit finished();
     qDebug() << "Do restore trash file is done!";
 
     return ok;
@@ -669,7 +678,7 @@ void FileJob::doOpticalBlank(const DUrl &device)
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
-    DFMOpticalMediaWidget::g_mapCdStatusInfo[dev.mid(5)].bBurningOrErasing = false;
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[m_tarPath.mid(5)].bBurningOrErasing = false;
 
 
     //fix: 空白光盘擦除处理完后需要对当前刻录的全局状态机置恢复位，便于其它地方调用状态机完整性
@@ -1252,11 +1261,13 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
 
 void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress)
 {
+    qDebug() << "opticalJobUpdated: " << status << progress << jobisom->getInfoMessages();
     m_opticalJobStatus = status;
     if (progress >= 0 && progress <= 100) // DISOMaster 可能抛负值
         m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed && jobisom) {
         QStringList msg = jobisom->getInfoMessages();
+        qDebug() << "failed:" << msg;
         emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
         return;
     }
@@ -1324,7 +1335,6 @@ void FileJob::handleJobFinished()
 
 void FileJob::jobUpdated()
 {
-
     if (m_status == FileJob::Paused){
         return;
     }
@@ -1342,24 +1352,31 @@ void FileJob::jobUpdated()
         jobDataDetail["optical_op_phase"] = QString::number(m_opticalJobPhase);
         jobDataDetail["optical_op_speed"] = m_opticalOpSpeed;
         jobDataDetail["optical_op_dest"] = m_tarPath;
-    }
-    else if (m_jobType == Restore && m_isInSameDisk){
-        jobDataDetail.insert("file", m_srcFileName);
+    } else if (m_jobType == Restore && m_isInSameDisk){
+        jobDataDetail.insert("type", "restore");
+        jobDataDetail.insert("file", m_restoreFileName);
         jobDataDetail.insert("destination", m_tarDirName);
+        jobDataDetail.insert("progress", QString::number(m_restoreProgress));
         if (!m_isFinished){
             if (m_status == Run){
-                jobDataDetail.insert("file", m_srcFileName);
-                jobDataDetail.insert("destination", m_tarDirName);
+                jobDataDetail.insert("file", m_restoreFileName);
                 jobDataDetail.insert("status", "restoring");
-            }else{
-                return;
             }
         }else{
             if (m_status != Cancelled){
                 jobDataDetail.insert("progress", "100");
             }
         }
-    }else{
+    } else if (m_jobType == Trash && m_isInSameDisk) {
+        jobDataDetail.insert("type", "delete");
+        jobDataDetail.insert("file", m_trashFileName);
+        if (m_isFinished) {
+            jobDataDetail.insert("progress", QString::number(1));
+        } else {
+            if (m_finishedCount > 0 && m_finishedCount < m_allCount && m_allCount > 0)
+                jobDataDetail.insert("progress", QString::number((double)m_finishedCount / m_allCount));
+        }
+    } else {
         if (!m_isFinished){
 
             qint64 currentMsec = m_timer.elapsed();
@@ -1493,6 +1510,16 @@ void FileJob::jobConflicted()
 
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
     m_status = Paused;
+}
+
+qreal FileJob::getRestoreProgress() const
+{
+    return m_restoreProgress;
+}
+
+void FileJob::setRestoreProgress(qreal restoreProgress)
+{
+    m_restoreProgress = restoreProgress;
 }
 
 bool FileJob::getIsFinished() const
@@ -2622,6 +2649,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
     QFile to(tarFile);
 
     QFileInfo toInfo(tarFile);
+    m_restoreFileName = toInfo.fileName();
     m_srcFileName = toInfo.fileName();
     m_srcPath = srcFile;
     m_tarPath = toInfo.absoluteFilePath();

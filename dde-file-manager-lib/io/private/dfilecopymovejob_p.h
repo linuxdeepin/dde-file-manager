@@ -105,6 +105,8 @@ public:
     void joinToCompletedFileList(const DUrl &from, const DUrl &target, qint64 dataSize);
     void joinToCompletedDirectoryList(const DUrl &from, const DUrl &target, qint64 dataSize);
     void updateProgress();
+    void updateCopyProgress();
+    void updateMoveProgress();
     void updateSpeed();
     void _q_updateProgress();
 
@@ -123,6 +125,8 @@ public:
     DUrlList sourceUrlList;
     DUrlList targetUrlList;
     DUrl targetUrl;
+
+
     // 是否可以使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
     qint8 canUseWriteBytes : 1;
     // 目标磁盘设备是不是可移除或者热插拔设备
@@ -145,6 +149,7 @@ public:
     QList<QPair<DUrl, DUrl>> completedFileList;
     QList<QPair<DUrl, DUrl>> completedDirectoryList;
     int completedFilesCount = 0;
+    int totalFilesCount = 1;
     qint64 completedDataSize = 0;
     // 已经写入到block设备的总大小
     qint64 completedDataSizeOnBlockDevice = 0;
