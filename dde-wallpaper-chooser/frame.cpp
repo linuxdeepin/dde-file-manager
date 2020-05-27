@@ -755,7 +755,8 @@ void Frame::initUI()
 
     if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
 
-    if (env.contains(DESKTOP_CAN_SCREENSAVER) && env.value(DESKTOP_CAN_SCREENSAVER).startsWith("N")) {
+    if ((env.contains(DESKTOP_CAN_SCREENSAVER) && env.value(DESKTOP_CAN_SCREENSAVER).startsWith("N"))
+            || !existScreensaverService()){
         m_switchModeControl->setButtonList({wallpaperBtn}, true);
         wallpaperBtn->setChecked(true);
     } else {
@@ -968,6 +969,30 @@ QStringList Frame::processListReply(const QString &reply)
             m_deletableInfo[id] = obj["Deletable"].toBool();
         }
     }
+
+    return result;
+}
+
+
+bool Frame::existScreensaverService()
+{
+    bool result = false;
+#ifndef DISABLE_SCREENSAVER
+
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ListActivatableNames");
+    QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(msg);
+    call.waitForFinished();
+    if(call.isFinished()){
+         QDBusReply<QStringList> reply = call.reply();
+         QStringList value = reply.value();
+
+         if (value.contains("com.deepin.ScreenSaver")){
+             qDebug() << "com.deepin.ScreenSaver is ok";
+             result = true;
+         }
+    }
+
+#endif
 
     return result;
 }
