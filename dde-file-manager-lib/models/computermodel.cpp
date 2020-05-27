@@ -40,7 +40,6 @@
 ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
     , m_diskm(new DDiskManager(this))
-    , m_nDiskNumber(0)
 {
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
@@ -60,17 +59,15 @@ ComputerModel::ComputerModel(QObject *parent)
                                       });
             if (r == m_items.end()) {
                 addItem(chi->fileUrl());
-                m_nDiskNumber++;
             } else {
                 insertBefore(chi->fileUrl(), r->url);
-                m_nDiskNumber++;
             }
         } else {
             addItem(chi->fileUrl());
         }
     }
     // 保险柜
-    addItem(makeSplitterUrl(QObject::tr("File Vault")));
+    addItem(makeSplitterUrl(tr("File Vault")));
     addItem(VaultController::makeVaultUrl());
 
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
@@ -90,19 +87,13 @@ ComputerModel::ComputerModel(QObject *parent)
 //            } else {
 //                insertBefore(url, r->url);
 //            }
-            // 修改判断条件
-            int nIndex = findItem(makeSplitterUrl(tr("Disks")));
-            if(nIndex != -1){   // 找到了磁盘盘符
-                nIndex = nIndex + m_nDiskNumber + 1;
+            int nIndex = findItem(makeSplitterUrl(tr("File Vault")));
+            if(nIndex != -1){   // 有保险箱的情况
                 if(m_items.count() > nIndex){
                     insertBefore(url, m_items[nIndex].url);
-                    m_nDiskNumber++;
-                }else {
-                    addItem(url);
-                    m_nDiskNumber++;
                 }
             }
-            else {  // 没找到磁盘盘符
+            else {  // 没有保险箱的情况
                 auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
                                           [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                                                 return DFMRootFileInfo::typeCompare(a, b.fi);
@@ -438,8 +429,6 @@ void ComputerModel::removeItem(const DUrl &url)
     if (p == -1) {
         return;
     }
-
-    m_nDiskNumber--;
 
     beginRemoveRows(QModelIndex(), p, p);
     m_items.removeAt(p);

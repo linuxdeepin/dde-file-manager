@@ -110,9 +110,6 @@ private:
     int findItem(const DUrl &url);
 
     static DUrl makeSplitterUrl(QString text);
-
-    // 记录磁盘个数
-    int m_nDiskNumber;
 };
 
 
