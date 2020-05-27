@@ -64,9 +64,14 @@ QStringList parentPathList(const QString &path)
 
     list << path;
 
-    while (dir.cdUp()) {
+    QString strTmpPath = path;
+    // fix bug#27870 往已刻录的文件夹中的文件夹...中添加文件夹，界面不刷新
+    // 往已刻录的文件夹中放置文件时，由于父路径可能不存在，导致不能创建对应的 watcher ，因此不能监听到文件夹变化，导致界面不刷新
+    if (!dir.exists() && path.contains("/.cache/deepin/discburn/")) // 目前仅针对光驱刻录的暂存区进行处理
+        dir.mkdir(path);
+
+    while (dir.cdUp())
         list << dir.absolutePath();
-    }
 
     return list;
 }
