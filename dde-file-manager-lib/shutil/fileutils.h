@@ -121,6 +121,7 @@ public:
     static bool isDesktopFile(const QString& filePath);
     static bool isDesktopFile(const QFileInfo &fileInfo);
     static bool isDesktopFileOptmise(const QString& filePath);
+    static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
 };
 
 #endif // FILEUTILS_H
