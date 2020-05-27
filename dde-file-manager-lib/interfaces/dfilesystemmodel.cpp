@@ -1847,7 +1847,7 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 //    qDebug() << "Set FOR_DRAGEVENT urls FOR_DRAGEVENT count = " << FOR_DRAGEVENT.length();
 
     m_smForDragEvent->setKey(DRAG_EVENT_URLS);
-    qDebug() << DRAG_EVENT_URLS;
+    //qDebug() << DRAG_EVENT_URLS;
     if (m_smForDragEvent->isAttached()) {
         if (!m_smForDragEvent->detach()) {
             return data;
@@ -1858,7 +1858,7 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
     buffer.open(QBuffer::ReadWrite);
     QDataStream out(&buffer);
     out << urls;
-    int size = static_cast<int>(buffer.size());
+    //int size = static_cast<int>(buffer.size());
     //fix task 21485 分配一个固定的5M内存
     bool bcanwrite = m_smForDragEvent->create(5 * 1024 * 1024);
     if (bcanwrite || (!bcanwrite && QSharedMemory::AlreadyExists)) {
