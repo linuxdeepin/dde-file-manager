@@ -153,11 +153,13 @@ void BackgroundManager::pullImageSettings()
     m_backgroundImagePath.clear();
     if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter){
         for (ScreenPointer sc : ScreenMrg->logicScreens()){
-            QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackground(sc->name());
+            //QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
+            QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())){
                  qCritical() << "get background fail path :" << path << "screen" << sc->name();
                  continue;
             }
+            qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
             m_backgroundImagePath.insert(sc->name(), path);
         }
     }
@@ -180,11 +182,13 @@ QString BackgroundManager::getBackgroundFromWm(const QString &screen)
 {
     QString ret;
     if (!screen.isEmpty() && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter){
-            QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackground(screen);
+            //QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(screen);
+            QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);//wm 新接口获取屏幕壁纸
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())){
                  qCritical() << "get background fail path :" << path << "screen" << screen;
             }
             else {
+                qDebug() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
                 ret = path;
             }
     }
