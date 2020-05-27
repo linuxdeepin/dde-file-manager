@@ -128,9 +128,6 @@ public:
     DUrlList targetUrlList;
     DUrl targetUrl;
 
-    // 统计move进度
-    qint64 totalUrlCount = 1;
-    qint64 fnishedUrlCount = 0;
 
     // 是否可以使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
     qint8 canUseWriteBytes : 1;
@@ -154,6 +151,7 @@ public:
     QList<QPair<DUrl, DUrl>> completedFileList;
     QList<QPair<DUrl, DUrl>> completedDirectoryList;
     int completedFilesCount = 0;
+    int totalFilesCount = 1;
     qint64 completedDataSize = 0;
     // 已经写入到block设备的总大小
     qint64 completedDataSizeOnBlockDevice = 0;
