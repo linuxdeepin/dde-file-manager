@@ -1261,11 +1261,13 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
 
 void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress)
 {
+    qDebug() << "opticalJobUpdated: " << status << progress << jobisom->getInfoMessages();
     m_opticalJobStatus = status;
     if (progress >= 0 && progress <= 100) // DISOMaster 可能抛负值
         m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed && jobisom) {
         QStringList msg = jobisom->getInfoMessages();
+        qDebug() << "failed:" << msg;
         emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
         return;
     }
