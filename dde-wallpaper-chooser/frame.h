@@ -132,6 +132,7 @@ private:
     void onItemPressed(const QString &data);
     void onItemButtonClicked(const QString &buttonID);
     QStringList processListReply(const QString &reply);
+    bool existScreensaverService();
 };
 
 #endif // FRAME_H
