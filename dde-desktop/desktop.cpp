@@ -148,11 +148,6 @@ void Desktop::onBackgroundEnableChanged()
         } else {
             background = d->background->backgroundForScreen(qApp->primaryScreen());
         }
-        if(!background)
-        {
-            qWarning()<<"Warning:cannot find paimary widget and screen name:"<<Display::instance()->primaryName();
-            return;
-        }
 
         if(!background)
         {
