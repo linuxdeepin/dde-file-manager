@@ -26,7 +26,8 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     DButtonBox *m_pButtonBox = new DButtonBox(this);
     // 密钥
     m_pKeyBtn = new DButtonBoxButton(tr("Key"), this);
-    m_pKeyBtn->setFocus();
+    m_pKeyBtn->setCheckable(true);
+    m_pKeyBtn->setChecked(true);
     connect(m_pKeyBtn, &DButtonBoxButton::clicked,
             this, &DFMVaultActiveSaveKeyView::slotKeyBtnClicked);
     m_pKeyText = new QTextEdit(this);
@@ -34,6 +35,7 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
 
     // 二维码
     m_pQRCodeBtn = new DButtonBoxButton(tr("QR code"), this);
+    m_pQRCodeBtn->setCheckable(true);
     connect(m_pQRCodeBtn, &DButtonBoxButton::clicked,
             this, &DFMVaultActiveSaveKeyView::slotQRCodeBtnClicked);
     m_pQRCodeImage = new QLabel(this);

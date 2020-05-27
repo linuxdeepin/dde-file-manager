@@ -51,6 +51,8 @@
 #include "dfileinfo.h"
 #include "models/trashfileinfo.h"
 
+#include "controllers/vaultcontroller.h"
+
 #include "views/windowmanager.h"
 
 #include "xutil.h"
@@ -683,7 +685,12 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
     QWidget *w = WindowManager::getWindowById(event.windowId());
     if (w) {
-        OpenWithDialog *d = new OpenWithDialog(event.fileUrl());
+        DUrl url = event.fileUrl();
+        if(event.fileUrl().scheme() == DFMVAULT_SCHEME)
+        {
+            url = VaultController::vaultToLocalUrl(url);
+        }
+        OpenWithDialog *d = new OpenWithDialog(url);
         d->setDisplayPosition(OpenWithDialog::Center);
         d->exec();
     }
@@ -714,10 +721,7 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                 DFMEvent event(this);
                 event.setData(url);
                 showTrashPropertyDialog(event);
-            } /*else if (url == DUrl::fromVaultFile("/")) {
-                // 显示保险柜属性对话框,后面可以根据需求重新实现
-                showVaultPropertyDialog();
-            }*/ else {
+            } else {
                 if (urlList.count() >= 2) {
                     m_closeIndicatorDialog->show();
                     m_closeIndicatorTimer->start();
@@ -802,11 +806,6 @@ void DialogManager::showComputerPropertyDialog()
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
                      }, this)
-}
-
-void DialogManager::showVaultPropertyDialog()
-{
-    // Something to do.
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)

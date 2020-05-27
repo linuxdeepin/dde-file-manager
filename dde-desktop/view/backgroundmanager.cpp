@@ -7,20 +7,20 @@
 
 BackgroundManager::BackgroundManager(bool preview, QObject *parent)
     : QObject(parent)
-    ,windowManagerHelper(DWindowManagerHelper::instance())
-    ,m_preview(preview)
+    , windowManagerHelper(DWindowManagerHelper::instance())
+    , m_preview(preview)
 {
     init();
 }
 
 BackgroundManager::~BackgroundManager()
 {
-    if (gsettings){
+    if (gsettings) {
         gsettings->deleteLater();
         gsettings = nullptr;
     }
 
-    if (wmInter){
+    if (wmInter) {
         wmInter->deleteLater();
         wmInter = nullptr;
     }
@@ -61,13 +61,13 @@ void BackgroundManager::onRestBackgroundManager()
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
                 this, &BackgroundManager::onBackgroundBuild);
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
-                this, &BackgroundManager::onSkipBackgroundBuild);
+                   this, &BackgroundManager::onSkipBackgroundBuild);
 
         //显示模式改变
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
                 this, &BackgroundManager::onBackgroundBuild);
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
-                this, &BackgroundManager::onSkipBackgroundBuild);
+                   this, &BackgroundManager::onSkipBackgroundBuild);
 
         //屏幕大小改变
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenGeometryChanged,
@@ -83,12 +83,12 @@ void BackgroundManager::onRestBackgroundManager()
     } else {
 
         // 清理数据
-        if (gsettings){
+        if (gsettings) {
             gsettings->deleteLater();
             gsettings = nullptr;
         }
 
-        if (wmInter){
+        if (wmInter) {
             wmInter->deleteLater();
             wmInter = nullptr;
         }
@@ -99,19 +99,19 @@ void BackgroundManager::onRestBackgroundManager()
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
                 this, &BackgroundManager::onSkipBackgroundBuild);
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
-                this, &BackgroundManager::onBackgroundBuild);
+                   this, &BackgroundManager::onBackgroundBuild);
 
         //显示模式改变
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
                 this, &BackgroundManager::onSkipBackgroundBuild);
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
-                this, &BackgroundManager::onBackgroundBuild);
+                   this, &BackgroundManager::onBackgroundBuild);
 
         //没有背景所以不用关心
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenGeometryChanged,
-                this, &BackgroundManager::onScreenGeometryChanged);
+                   this, &BackgroundManager::onScreenGeometryChanged);
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenAvailableGeometryChanged,
-                this, &BackgroundManager::onScreenGeometryChanged);
+                   this, &BackgroundManager::onScreenGeometryChanged);
 
         //销毁窗口
         m_backgroundMap.clear();
@@ -125,7 +125,7 @@ void BackgroundManager::onScreenGeometryChanged(ScreenPointer sp)
 {
     BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
     qInfo() << "screen geometry changed" << sp.get() << bw.get();
-    if (bw.get() != nullptr){
+    if (bw.get() != nullptr) {
         qInfo() << "background geometry change from" << bw->geometry() << "to" << sp->geometry()
                 << "screen name" << sp->name();
         //bw->windowHandle()->handle()->setGeometry(sp->handleGeometry()); //不能设置，设置了widget的geometry会被乱改
@@ -151,15 +151,15 @@ void BackgroundManager::init()
 void BackgroundManager::pullImageSettings()
 {
     m_backgroundImagePath.clear();
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter){
-        for (ScreenPointer sc : ScreenMrg->logicScreens()){
-            //QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
-            QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
-            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())){
-                 qCritical() << "get background fail path :" << path << "screen" << sc->name();
-                 continue;
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter) {
+        for (ScreenPointer sc : ScreenMrg->logicScreens()) {
+            QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
+//            QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
+            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
+                qCritical() << "get background fail path :" << path << "screen" << sc->name();
+                continue;
             }
-            qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
+//            qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
             m_backgroundImagePath.insert(sc->name(), path);
         }
     }
@@ -181,16 +181,15 @@ void BackgroundManager::pullImageSettings()
 QString BackgroundManager::getBackgroundFromWm(const QString &screen)
 {
     QString ret;
-    if (!screen.isEmpty() && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter){
-            //QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(screen);
-            QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);//wm 新接口获取屏幕壁纸
-            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())){
-                 qCritical() << "get background fail path :" << path << "screen" << screen;
-            }
-            else {
-                qDebug() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
-                ret = path;
-            }
+    if (!screen.isEmpty() && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter) {
+        QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(screen);
+//        QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);//wm 新接口获取屏幕壁纸
+        if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
+            qCritical() << "get background fail path :" << path << "screen" << screen;
+        } else {
+//            qDebug() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
+            ret = path;
+        }
     }
     return ret;
 }
@@ -259,16 +258,16 @@ void BackgroundManager::onBackgroundBuild()
 
     //实际是单屏
     if ((AbstractScreenManager::Showonly == mode) || (AbstractScreenManager::Duplicate == mode) //仅显示和复制
-            || (ScreenMrg->screens().count() == 1)){   //单屏模式
+            || (ScreenMrg->screens().count() == 1)) {  //单屏模式
 
         ScreenPointer primary = ScreenMrg->primaryScreen();
-        if (primary == nullptr){
+        if (primary == nullptr) {
             qCritical() << "get primary screen failed return";
             return;
         }
 
         BackgroundWidgetPointer bwp = createBackgroundWidget(primary);
-        m_backgroundMap.insert(primary,bwp);
+        m_backgroundMap.insert(primary, bwp);
 
         //todo 设置壁纸
         onResetBackgroundImage();
@@ -277,11 +276,10 @@ void BackgroundManager::onBackgroundBuild()
             bwp->show();
         else
             qDebug() << "Disable show the background widget, of screen:" << primary->name() << primary->geometry();
-    }
-    else {  //多屏
-        for (ScreenPointer sc : ScreenMrg->logicScreens()){
+    } else { //多屏
+        for (ScreenPointer sc : ScreenMrg->logicScreens()) {
             BackgroundWidgetPointer bwp = createBackgroundWidget(sc);
-            m_backgroundMap.insert(sc,bwp);
+            m_backgroundMap.insert(sc, bwp);
 
             //todo 设置壁纸
 
@@ -307,7 +305,7 @@ void BackgroundManager::onSkipBackgroundBuild()
 //临时使用
 void BackgroundManager::onResetBackgroundImage()
 {
-    auto getPix = [](const QString &path,const QPixmap &defalutPixmap)->QPixmap{
+    auto getPix = [](const QString & path, const QPixmap & defalutPixmap)->QPixmap{
         if (path.isEmpty())
             return defalutPixmap;
 
@@ -315,7 +313,8 @@ void BackgroundManager::onResetBackgroundImage()
         QPixmap backgroundPixmap(currentWallpaper);
         // fix whiteboard shows when a jpeg file with filename xxx.png
         // content formart not epual to extension
-        if (backgroundPixmap.isNull()) {
+        if (backgroundPixmap.isNull())
+        {
             QImageReader reader(currentWallpaper);
             reader.setDecideFormatFromContent(true);
             backgroundPixmap = QPixmap::fromImage(reader.read());
@@ -326,20 +325,19 @@ void BackgroundManager::onResetBackgroundImage()
     QPixmap defaultImage;
 
     QMap<QString, QString> recorder; //记录有效的壁纸
-    for (ScreenPointer sp : m_backgroundMap.keys()){
+    for (ScreenPointer sp : m_backgroundMap.keys()) {
         QString userPath;
-        if (!m_backgroundImagePath.contains(sp->name())){
+        if (!m_backgroundImagePath.contains(sp->name())) {
             userPath = getBackgroundFromWm(sp->name());
-        }
-        else {
+        } else {
             userPath = m_backgroundImagePath.value(sp->name());
         }
 
         if (!userPath.isEmpty())
-            recorder.insert(sp->name(),userPath);
+            recorder.insert(sp->name(), userPath);
 
         QPixmap backgroundPixmap = getPix(userPath, defaultImage);
-        if (backgroundPixmap.isNull()){
+        if (backgroundPixmap.isNull()) {
             qCritical() << "screen " << sp->name() << "backfround path" << userPath
                         << "can not read!";
             continue;
@@ -348,8 +346,8 @@ void BackgroundManager::onResetBackgroundImage()
         BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
         QSize trueSize = sp->handleGeometry().size(); //使用屏幕缩放前的分辨率
         auto pix = backgroundPixmap.scaled(trueSize,
-                         Qt::KeepAspectRatioByExpanding,
-                         Qt::SmoothTransformation);
+                                           Qt::KeepAspectRatioByExpanding,
+                                           Qt::SmoothTransformation);
 
         if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
             pix = pix.copy(QRect((pix.width() - trueSize.width()) / 2.0,
@@ -358,7 +356,7 @@ void BackgroundManager::onResetBackgroundImage()
                                  trueSize.height()));
         }
 
-        qDebug() << sp->name() << "background path" << userPath << "truesize" << trueSize <<"devicePixelRatio"
+        qDebug() << sp->name() << "background path" << userPath << "truesize" << trueSize << "devicePixelRatio"
                  << bw->devicePixelRatioF() << pix << "widget" << bw.get();
         pix.setDevicePixelRatio(bw->devicePixelRatioF());
         bw->setPixmap(pix);

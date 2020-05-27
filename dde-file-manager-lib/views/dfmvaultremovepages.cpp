@@ -1,6 +1,9 @@
 #include "dfmvaultremovepages.h"
 #include "vault/interfaceactivevault.h"
+#include "vault/vaultlockmanager.h"
 #include "controllers/vaultcontroller.h"
+#include "app/define.h"
+#include "dfmvaultremoveprogressview.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -22,6 +25,7 @@
 #include <DPasswordEdit>
 #include <DTextEdit>
 #include <DProgressBar>
+#include <DMessageBox>
 
 DWIDGET_USE_NAMESPACE
 
@@ -41,20 +45,20 @@ VaultPasswordPage::~VaultPasswordPage()
 void VaultPasswordPage::initUI()
 {
     m_pwdEdit = new DPasswordEdit(this);
-    m_pwdEdit->lineEdit()->setPlaceholderText(tr("Verify your fingerprint or password"));
+    m_pwdEdit->lineEdit()->setPlaceholderText(tr("Verify your password"));
     m_pwdEdit->lineEdit()->setMaxLength(24);
 
-    m_helpBtn = new QPushButton(this);
-    m_helpBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
-    m_helpBtn->setFixedSize(40, 36);
+    m_tipsBtn = new QPushButton(this);
+    m_tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
+    m_tipsBtn->setFixedSize(40, 36);
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(m_pwdEdit);
-    layout->addWidget(m_helpBtn);
+    layout->addWidget(m_tipsBtn);
     layout->setContentsMargins(0, 0, 0, 0);
     this->setLayout(layout);
 
-    connect(m_helpBtn, &QPushButton::clicked, [this]{
+    connect(m_tipsBtn, &QPushButton::clicked, [this]{
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
             strPwdHint.insert(0, tr("Password hint:"));
@@ -86,6 +90,11 @@ QLineEdit *VaultPasswordPage::lineEdit()
 void VaultPasswordPage::showAlertMessage(const QString &text, int duration)
 {
     m_pwdEdit->showAlertMessage(text, duration);
+}
+
+void VaultPasswordPage::setTipsButtonVisible(bool visible)
+{
+    m_tipsBtn->setVisible(visible);
 }
 
 void VaultPasswordPage::onPasswordChanged(const QString &password)
@@ -132,7 +141,7 @@ int VaultKeyPage::afterRecoveryKeyChanged(QString &str)
     int location = m_keyEdit->textCursor().position(); // 计算当前光标位置
     int srcLength = str.length();   // 用于计算原有字符串中的“-”数量
     //清除所有的“-”
-    str.replace(tr("-"), tr(""));
+    str.replace("-", "");
     int minusNumber = srcLength - str.length(); // 原有字符串中的“-”数量
 
     int index = 4;
@@ -141,7 +150,7 @@ int VaultKeyPage::afterRecoveryKeyChanged(QString &str)
     int length = str.length();
     while (index < length) {
         if (index % 4 == 0){
-            str.insert(index + minusNum, tr("-"));
+            str.insert(index + minusNum, "-");
             minusNum++;
         }
         index++;
@@ -165,7 +174,7 @@ QString VaultKeyPage::getKey()
 {
     QString strKey = m_keyEdit->toPlainText();
 
-    return strKey.replace(tr("-"), tr(""));
+    return strKey.replace("-", "");
 }
 
 void VaultKeyPage::clear()
@@ -269,7 +278,7 @@ void DFMVaultRemovePages::initUI()
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], true);
     addButton(buttonTexts[2], true);
-    getButton(2)->setStyleSheet(tr("color: rgb(255, 85, 0);"));
+    getButton(2)->setStyleSheet("color: rgb(255, 85, 0);");
     setDefaultButton(2);
 
     QFrame *mianFrame = new QFrame(this);
@@ -294,34 +303,6 @@ void DFMVaultRemovePages::insertPage(const PageType &pageType, QWidget *widget)
     m_stackedLayout->addWidget(widget);
 }
 
-void DFMVaultRemovePages::removeFileInDir(const QString &path)
-{
-    QDir dir(path);
-    QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs);
-
-    if(dir.exists()){
-        dir.setFilter(QDir::Files | QDir::NoSymLinks);
-        QFileInfoList list = dir.entryInfoList();
-    }
-
-    //遍历文件信息列表，进行文件删除
-    foreach(QFileInfo fileInfo, infoList){
-        if (fileInfo.isDir()){
-            //递归
-            removeFileInDir(fileInfo.absoluteFilePath());
-        }else if (fileInfo.isFile()){
-            QFile file(fileInfo.absoluteFilePath());
-
-            //删除文件
-            file.remove();
-        }
-    }
-
-    QDir temp_dir;
-    //删除文件夹
-    temp_dir.rmdir(path);
-}
-
 void DFMVaultRemovePages::showEvent(QShowEvent *event)
 {
     // 重置界面状态
@@ -331,6 +312,16 @@ void DFMVaultRemovePages::showEvent(QShowEvent *event)
     getButton(1)->setText(tr("Use Key"));
     m_bRemoveVault = false;
     m_currentPage = PageType::Password;
+
+    // 如果密码提示信息为空，则隐藏提示按钮
+    QString strPwdHint("");
+    if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
+        if (strPwdHint.isEmpty()){
+            qobject_cast<VaultPasswordPage *>(m_pages[PageType::Password])->setTipsButtonVisible(false);
+        } else {
+            qobject_cast<VaultPasswordPage *>(m_pages[PageType::Password])->setTipsButtonVisible(true);
+        }
+    }
 }
 
 DFMVaultRemovePages *DFMVaultRemovePages::instance()
@@ -374,7 +365,7 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
             // 密钥验证
             VaultKeyPage *keyPage = qobject_cast<VaultKeyPage *>(m_pages[PageType::Key]);
             QString strKey = keyPage->getKey();
-            strKey.replace(tr("-"), tr(""));
+            strKey.replace("-", "");
             QString strClipher("");
 
             if (!InterfaceActiveVault::checkUserKey(strKey, strClipher)){
@@ -391,7 +382,7 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
         }
 
         // 管理员权限认证
-        if (VaultController::checkAuthentication()){
+        if (VaultLockManager::getInstance().checkAuthentication(VAULT_REMOVE)){
             m_bRemoveVault = true;
             // 验证成功，先对保险箱进行上锁
             VaultController::getVaultController()->lockVault();
@@ -405,20 +396,17 @@ void DFMVaultRemovePages::onButtonClicked(int index, const QString &text)
 
 void DFMVaultRemovePages::onLockVault(int state)
 {
-    if (state == 0 && m_bRemoveVault){
-        // 开启线程进行文件删除
-        std::thread thread(
-                [this]()
-                {
-                    QString rmPath = VaultController::getVaultController()->vaultLockPath();
-                    removeFileInDir(rmPath);
-                }
-        );
-        thread.detach();
+    if (state == 0 && m_bRemoveVault){        
+        this->hide();
+        QString vaultPath = VaultController::getVaultController()->vaultLockPath();
+        DFMVaultRemoveProgressView pro;
+        pro.removeVault(vaultPath);
+        pro.exec();
 
-        accept();
+        emit accepted();
     }else if (state != 0 && m_bRemoveVault) {
-        // something to do
+        // error tips
+        DMessageBox::information(this, tr("tips"), tr("Remove failed,the File Vault is busy."));
     }
     m_bRemoveVault = false;
 }

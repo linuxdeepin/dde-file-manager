@@ -123,6 +123,7 @@ public:
     bool isTaggedFile() const;
     //判读ios手机，传输慢，需要特殊处理优化
     bool isOptimise() const;
+    bool isVaultFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions(PrettyDecoded)) const;
 

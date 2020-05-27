@@ -30,6 +30,8 @@
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 #include "dstorageinfo.h"
+#include "controllers/vaultcontroller.h"
+#include "dfmstandardpaths.h"
 
 #include "deviceinfo/udisklistener.h"
 
@@ -361,13 +363,24 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
         return true;
     }
 
+    // 解决在保险箱中执行剪切时，图标不灰显的问题
+    if (fileUrl.scheme() == DFMVAULT_SCHEME){
+        fileUrl = VaultController::vaultToLocalUrl(fileUrl);
+    }
+
+    // 将回收站路径转化成真实路径，解决在回收站中执行剪切时，图标不灰显的问题
+    if (fileUrl.scheme() == TRASH_SCHEME){
+        const QString &path = fileUrl.path();
+        fileUrl = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);
+    }
+
     //为了防止自动整理下剪切与分类名相同的文件夹,如果是分类就不转真实路径了
     auto isVPath = MergedDesktopController::isVirtualEntryPaths(fileUrl);
     if (fileUrl.scheme() == DFMMD_SCHEME && !isVPath)
         fileUrl = MergedDesktopController::convertToRealPath(fileUrl);
 
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-           && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
+            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
 }
 
 /*!

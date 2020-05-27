@@ -37,8 +37,10 @@ HEADERS += \
     $$PWD/vaultglobaldefine.h \
     $$PWD/vaultlockmanager.h
 
-LIBS += /usr/lib/x86_64-linux-gnu/libssl.so \
-        /usr/lib/x86_64-linux-gnu/libcrypto.so
+PKGCONFIG += libcrypto
+
+#LIBS += /usr/lib/x86_64-linux-gnu/libssl.so \
+#        /usr/lib/x86_64-linux-gnu/libcrypto.so
 
 RESOURCES +=
 

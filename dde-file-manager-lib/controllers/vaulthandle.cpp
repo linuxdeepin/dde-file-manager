@@ -112,7 +112,7 @@ int CryFsHandle::lockVaultProcess(QString unlockFileDir)
     QString fusermountBinary = QStandardPaths::findExecutable("fusermount");
     if (fusermountBinary.isEmpty()) return static_cast<int>(ErrorCode::FusermountNotExist);
 
-    m_process->start(fusermountBinary, {"-u", unlockFileDir});
+    m_process->start(fusermountBinary, {"-zu", unlockFileDir});
     m_process->waitForStarted();
     m_process->waitForFinished();
     m_process->terminate();

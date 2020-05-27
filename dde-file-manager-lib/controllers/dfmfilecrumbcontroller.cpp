@@ -114,6 +114,7 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
     DUrlList::const_reverse_iterator iter = urlList.crbegin();
     while (iter != urlList.crend()) {
         const DUrl & oneUrl = *iter;
+        QString localFile = oneUrl.toLocalFile();
         if (!prefixPath.startsWith(oneUrl.toLocalFile())) {
             QString displayText = oneUrl.fileName();
             // Check for possible display text.

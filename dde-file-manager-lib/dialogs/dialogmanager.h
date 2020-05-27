@@ -106,7 +106,6 @@ public slots:
     void showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &event);
     void showTrashPropertyDialog(const DFMEvent &event);
     void showComputerPropertyDialog();
-    void showVaultPropertyDialog(); // 显示保险柜属性框
     void showDevicePropertyDialog(const DFMEvent &event);
     void showDiskErrorDialog(const QString &id, const QString &errorText);
     void showBreakSymlinkDialog(const QString &targetName, const DUrl& linkfile);

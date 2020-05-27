@@ -1,10 +1,9 @@
 #ifndef INTERFACEACTIVEVAULT_H
 #define INTERFACEACTIVEVAULT_H
 
-#include <QObject>
 #include "vaultglobaldefine.h"
 
-class QDialog;
+#include <QObject>
 
 class InterfaceActiveVault : public QObject
 {
@@ -12,12 +11,6 @@ class InterfaceActiveVault : public QObject
 public:
     explicit InterfaceActiveVault(QObject *parent = nullptr);
     ~InterfaceActiveVault();
-
-    /**
-     * @brief getActiveVaultWidget 获取激活保险箱页面
-     * @return 包厢箱激活页面
-     */
-    QDialog *getActiveVaultWidget();
 
     /**
      * @brief getPassword 获取密码
@@ -84,7 +77,7 @@ signals:
 public slots:
 
 private:
-    QDialog         *m_pWidget;
+
 };
 
 #endif // INTERFACEACTIVEVAULT_H

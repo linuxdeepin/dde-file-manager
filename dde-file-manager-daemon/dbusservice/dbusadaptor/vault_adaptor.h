@@ -42,6 +42,9 @@ class VaultAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"getSelfTime\">\n"
 "      <arg direction=\"out\" type=\"t\"/>\n"
 "    </method>\n"
+"    <method name=\"checkAuthentication\">\n"
+"      <arg direction=\"out\" type=\"t\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -56,6 +59,7 @@ public Q_SLOTS: // METHODS
     qulonglong getLastestTime();
     qulonglong getSelfTime();
     void setRefreshTime(qulonglong time);
+    bool checkAuthentication(QString type);
 Q_SIGNALS: // SIGNALS
 };
 

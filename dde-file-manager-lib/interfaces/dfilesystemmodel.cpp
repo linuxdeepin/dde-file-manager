@@ -1854,6 +1854,7 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 //    qDebug() << "Set FOR_DRAGEVENT urls FOR_DRAGEVENT count = " << FOR_DRAGEVENT.length();
 
     m_smForDragEvent->setKey(DRAG_EVENT_URLS);
+    qDebug() << DRAG_EVENT_URLS;
     if (m_smForDragEvent->isAttached()) {
         if (!m_smForDragEvent->detach()) {
             return data;

@@ -53,6 +53,9 @@ signals:
     /* request close current tab*/
     void requestCloseCurrentTab(quint64 winId);
 
+    // 请求关闭窗口的所有保险箱的标签
+    void requestCloseAllTabOfVault(quint64 winId);
+
     /* request fetch network nodes*/
 
     void requestFetchNetworks(const DFMUrlBaseEvent &event);

@@ -29,6 +29,7 @@
 #include "shutil/dsqlitehandle.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
 #include "interfaces/dfileservices.h"
+#include "controllers/vaultcontroller.h"
 
 #include "dcrumbedit.h"
 #include "../app/filesignalmanager.h"
@@ -390,6 +391,12 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         //end
 
         foreach (DUrl url, e->urlList()) {
+
+            // 压缩文件预览时，将保险箱虚拟路径转换成真实路径
+            if (url.scheme() == DFMVAULT_SCHEME){
+                url = VaultController::vaultToLocalUrl(url);
+            }
+
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
             if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()

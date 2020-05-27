@@ -125,4 +125,6 @@ private:
     QMap<int, int> m_activeState;
 };
 
+
+
 #endif // CRYFSHANDLE_H

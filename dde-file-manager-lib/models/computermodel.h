@@ -70,7 +70,9 @@ public:
         DFMRootUrlRole = Qt::UserRole + 9,  //DUrl
         VolumeTagRole = Qt::UserRole + 10,  //卷标 sr0
         IconNameRole = Qt::UserRole + 11,   //图标名称
-        Scheme = Qt::UserRole + 12, //QString
+        SchemeRole = Qt::UserRole + 12, //QString
+        ProgressRole = Qt::UserRole + 13, // Bool(Progress visible)
+        SizeRole = Qt::UserRole + 14, // Bool(Size visible)
     };
     Q_ENUM(DataRoles)
 
@@ -110,9 +112,6 @@ private:
     int findItem(const DUrl &url);
 
     static DUrl makeSplitterUrl(QString text);
-
-    // 记录磁盘个数
-    int m_nDiskNumber;
 };
 
 

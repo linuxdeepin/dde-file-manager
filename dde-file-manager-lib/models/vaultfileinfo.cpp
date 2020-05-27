@@ -23,8 +23,13 @@
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
 #include "dfilestatisticsjob.h"
+#include "dfilesystemmodel.h"
 
 #include <QStandardPaths>
+#include <QStorageInfo>
+#include <QIcon>
+
+qint64 VaultFileInfo::m_vaultSize = 0;
 
 class VaultFileInfoPrivate : public DAbstractFileInfoPrivate
 {
@@ -40,26 +45,11 @@ VaultFileInfo::VaultFileInfo(const DUrl &url)
         DUrl actualUrl = DUrl::fromLocalFile(VaultController::vaultToLocal(url));
         setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, actualUrl)));
     }
-
-//    if (isRootDirectory()) {
-//        m_sizeWorker = new DFileStatisticsJob();
-
-//        VaultController *controller = VaultController::getVaultController();
-
-//        DUrlList urlList;
-//        urlList << controller->vaultToLocalUrl(controller->makeVaultUrl());
-
-//        m_sizeWorker->start(urlList);
-//    }
 }
 
 VaultFileInfo::~VaultFileInfo()
 {
-    if (m_sizeWorker) {
-        m_sizeWorker->stop();
-        delete m_sizeWorker;
-        m_sizeWorker = nullptr;
-    }
+
 }
 
 bool VaultFileInfo::exists() const
@@ -162,6 +152,18 @@ DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     return url;
 }
 
+QFileDevice::Permissions VaultFileInfo::permissions() const
+{
+    if (fileUrl().scheme() == DFMVAULT_SCHEME) {
+        return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
+               | QFile::WriteOwner | QFile::WriteUser;
+    }
+
+    QFileDevice::Permissions p = DAbstractFileInfo::permissions();
+
+    return p;
+}
+
 QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     if(type != SpaceArea) {
@@ -219,7 +221,7 @@ QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList(MenuType
 QString VaultFileInfo::fileDisplayName() const
 {
     if (isRootDirectory()) {
-        return QObject::tr("My File Vault");
+        return QObject::tr("My Vault");
     }
 
     return DAbstractFileInfo::fileDisplayName();
@@ -233,17 +235,51 @@ bool VaultFileInfo::canRename() const
     return DAbstractFileInfo::canRename();
 }
 
+bool VaultFileInfo::canShare() const
+{
+    if (isRootDirectory()) {
+        return false;
+    }
+    return DAbstractFileInfo::canShare();
+}
+
+bool VaultFileInfo::canTag() const
+{
+    if (isRootDirectory()) {
+        return false;
+    }
+    return DAbstractFileInfo::canTag();
+}
+
+QIcon VaultFileInfo::fileIcon() const
+{
+     QIcon icon;
+     if (isRootDirectory()) {
+         icon = QIcon::fromTheme(iconName());
+     } else {
+         icon = DAbstractFileInfo::fileIcon();
+     }
+
+     return icon;
+}
+
 qint64 VaultFileInfo::size() const
 {
-//    if (isRootDirectory() && m_sizeWorker) {
-
-//        qint64 totoalSize = m_sizeWorker->totalSize();
-//        return totoalSize;
-//    }
-
+    if (isRootDirectory() && VaultController::getVaultController()->state() == VaultController::Unlocked)
+    {
+        return m_vaultSize;
+    }
+    else if(isRootDirectory())
+    {
+        return 0;
+    }
     return DAbstractFileInfo::size();
 }
 
+void VaultFileInfo::setVaultSize(qint64 size)
+{
+    m_vaultSize = size;
+}
 
 bool VaultFileInfo::isRootDirectory() const
 {

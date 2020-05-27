@@ -51,6 +51,8 @@
 #include "models/deviceinfoparser.h"
 #include "dfmvaultunlockpages.h"
 #include "vault/interfaceactivevault.h"
+#include "controllers/vaultcontroller.h"
+#include "views/dfmvaultactiveview.h"
 
 #include <dslider.h>
 
@@ -139,6 +141,12 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     event.setWindowId(window()->internalWinId());
     m_statusbar->itemCounted(event, m_model->itemCount());
 
+    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, this, [this](){
+        // todo 进入保险箱主界面
+        DUrl vaultUrl = VaultController::makeVaultUrl();
+        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
+    });
+
     connect(m_model, &ComputerModel::itemCountChanged, this, [this](int count) {
         DFMEvent event(this);
         event.setWindowId(this->window()->internalWinId());
@@ -187,12 +195,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
                 break;
             }
             case EN_VaultState::NotExisted:{    // 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
-                QDialog *dlg = activeVault.getActiveVaultWidget();
-                if(QDialog::Accepted == dlg->exec()){
-                    // todo 进入保险箱主界面
-                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
-                }
-                dlg = nullptr;
+                DFMVaultActiveView::getInstance().showTop();
                 break;
             }
             case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
@@ -275,6 +278,9 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);
 
     connect(&DeviceInfoParser::Instance(), SIGNAL(loadFinished()), this, SLOT(repaint()));
+
+    //! 用于保险箱大小更新
+    connect(VaultController::getVaultController(), &VaultController::signalCalculationVaultFinish, this, &ComputerView::vaultCalculationFinish);
 }
 
 ComputerView::~ComputerView()
@@ -337,7 +343,7 @@ void ComputerView::contextMenu(const QPoint &pos)
 
 
     DFileMenu *menu = nullptr;
-    if (idx.data(ComputerModel::DataRoles::Scheme) == DFMVAULT_SCHEME) {
+    if (idx.data(ComputerModel::DataRoles::SchemeRole) == DFMVAULT_SCHEME) {
         // 重新创建右键菜单
         DFMSideBarVaultItemHandler handler;
         quint64 wndId = WindowManager::getWindowId(this);
@@ -360,6 +366,12 @@ void ComputerView::onRenameRequested(const DFMUrlBaseEvent &event)
     if (idx.isValid()) {
         m_view->edit(idx);
     }
+}
+
+void ComputerView::vaultCalculationFinish() const
+{
+    ComputerView * view = (ComputerView*)this;
+    view->repaint();
 }
 
 void ComputerView::resizeEvent(QResizeEvent *event)

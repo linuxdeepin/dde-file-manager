@@ -37,12 +37,16 @@
 #include "durl.h"
 #include "dabstractfileinfo.h"
 
+#include <unistd.h>
+
 QT_BEGIN_NAMESPACE
 class QEventLoop;
 class QReadWriteLock;
 QT_END_NAMESPACE
 
-#define DRAG_EVENT_URLS "UrlsInDragEvent"
+//#define DRAG_EVENT_URLS "UrlsInDragEvent"
+#define DRAG_EVENT_URLS ((getuid()==0) ? "RootUrlsInDragEvent" :"UrlsInDragEvent")
+//临时解决root用户使用共享内存后其它用户无法使用的问题，但可能会造成内存占用过大的问题 unistd.h在此处被使用，后面若有更换的解决办法，此处应被修改
 
 class FileSystemNode;
 class DAbstractFileInfo;

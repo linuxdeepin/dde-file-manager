@@ -16,30 +16,21 @@
  ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+#ifndef VAULTCLOCK_H
+#define VAULTCLOCK_H
 
-#ifndef VAULTMANAGER_H
-#define VAULTMANAGER_H
-
-#include <QDBusContext>
 #include <QObject>
 #include <QTimer>
 
-class VaultAdaptor;
-class VaultClock;
-
 /**
- * @brief The VaultManager class 保险箱管理类
+ * @brief The VaultClock class
  */
-class VaultManager : public QObject, public QDBusContext
+class VaultClock : public QObject
 {
     Q_OBJECT
 public:
-    explicit VaultManager(QObject *parent = nullptr);
-    ~VaultManager();
-
-    static QString ObjectPath;
-    static QString PolicyKitCreateActionId;
-    static QString PolicyKitRemoveActionId;
+    explicit VaultClock(QObject *parent = nullptr);
+    ~VaultClock();
 
 public slots:
     /**
@@ -60,34 +51,17 @@ public slots:
      */
     quint64 getSelfTime() const;
 
+protected:
     /**
-    * @brief checkAuthentication 权限验证
-    * @param type
-    * @return
-    */
-    bool checkAuthentication(QString type);
-
-private slots:
-    /**
-     * @brief checkUserChanged 检查当前用户是否改变
+     * @brief tick 秒针
      */
-    void checkUserChanged();
+    void tick();
 
 private:
-    /**
-     * @brief getCurrentUser 获取当前用户
-     * @return
-     */
-    QString getCurrentUser() const;
+    quint64 m_lastestTime = 0; // latest time
 
-private:
-    VaultAdaptor* m_vaultAdaptor = nullptr;
-
-    QMap<QString, VaultClock*> m_mapUserClock; // map user and timer.
-    VaultClock *m_curVaultClock; // current user clock.
-    QString m_curUser; // current system user.
-
-    QTimer m_checkUsrChangeTimer; // check user changed.
+    QTimer m_selfTimer;
+    quint64 m_selfTime;
 };
 
-#endif // VAULTMANAGER_H
+#endif // VAULTCLOCK_H

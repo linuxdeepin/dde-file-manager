@@ -184,12 +184,16 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     painter->setPen(pl.color(DPalette::TextTips));
     painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal, strVolTag));
 
-    QString scheme = index.data(ComputerModel::DataRoles::Scheme).toString();
-    if (scheme == DFMVAULT_SCHEME) {
-        // 保险柜只显示大小
-        painter->drawText(textrect, Qt::AlignLeft, FileUtils::formatSize(static_cast<qint64>(sizeinuse)));
-    } else {
-        painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
+    // Paint size.
+    bool bSizeVisible = index.data(ComputerModel::DataRoles::SizeRole).toBool();
+    if (bSizeVisible) {
+        QString scheme = index.data(ComputerModel::DataRoles::SchemeRole).toString();
+        if (scheme == DFMVAULT_SCHEME) {
+            // vault only show size.
+            painter->drawText(textrect, Qt::AlignLeft, FileUtils::formatSize(static_cast<qint64>(sizeinuse)));
+        } else {
+            painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
+        }
     }
 
     QRect usgplrect(option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize), QSize(text_max_width, 6));
@@ -215,8 +219,9 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     plopt.palette.setColor(QPalette::ColorRole::Highlight, plcolor);
     painter->setPen(Qt::PenStyle::NoPen);
 
-    // 保险柜只显示大小
-    if (scheme != DFMVAULT_SCHEME) {
+    // Paint progress
+    bool bProgressVisible = index.data(ComputerModel::DataRoles::ProgressRole).toBool();
+    if (bProgressVisible) {
         sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
         sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
     }

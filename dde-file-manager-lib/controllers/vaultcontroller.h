@@ -1,24 +1,27 @@
 /*
- * Copyright (C) 2019 Deepin Technology Co., Ltd.
+
+ * Copyright (C) 2020 ~ 2020 Deepin Technology Co., Ltd.
+
  *
- * Author:     Gary Wang <wzc782970009@gmail.com>
+
+ * Author:     lixiang
+
  *
- * Maintainer: Gary Wang <wangzichong@deepin.com>
+
+ * Maintainer: lixianga@uniontech.com
+
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+
+ * brief:
+
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ * date:    2020-05-08
+
  */
-#pragma once
+
+#ifndef VAULTCONTROLLER_H
+#define VAULTCONTROLLER_H
 
 #include "dabstractfilecontroller.h"
 
@@ -27,7 +30,6 @@
 DCORE_USE_NAMESPACE
 
 class VaultControllerPrivate;
-class VaultInterface;
 class VaultController : public DAbstractFileController
 {
     Q_OBJECT
@@ -51,11 +53,12 @@ public:
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const Q_DECL_OVERRIDE;
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
+    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
-
     /**
      * @brief shareFolder 设置文件夹共享
      * @param event       共享的信息事件
@@ -119,6 +122,8 @@ public:
      */
     QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
 
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const Q_DECL_OVERRIDE;
+
     static DUrl makeVaultUrl(QString path = "", QString host = "files");
     static DUrl localUrlToVault(const DUrl &vaultUrl);
     static DUrl localToVault(QString localPath);
@@ -127,17 +132,17 @@ public:
     static DUrlList vaultToLocalUrls(DUrlList vaultUrls);
 
     /**
-    * @brief checkAuthentication    权限校验
-    * @return                       是否成功
-    */
-    static bool checkAuthentication();
-
-    /**
      * @brief state         获取当前保险箱状态
      * @param lockBaseDir   保险箱加密文件夹
      * @return              返回VaultState枚举值
      */
     VaultState state(QString lockBaseDir = "");
+
+    /**
+     * @brief VaultFileInfo::isRootDirectory 是否为保险箱根目录
+     * @return
+     */
+    bool isRootDirectory(QString path) const;
 
 public slots:
 
@@ -216,6 +221,11 @@ signals:
      */
     void signalLockVault(int state);
 
+    /**
+     * @brief signalCalculationVaultFinish  计算保险箱大小完成
+     */
+    void signalCalculationVaultFinish() const;
+
 signals:
     /**
     * @brief 下列信号为本类内部使用，请勿外用
@@ -244,12 +254,36 @@ signals:
     void sigLockVault(QString unlockFileDir);
 
 private:
-    static bool runCmd(const QString &cmd, QString &standOutput);
-
-private:
     VaultControllerPrivate * d_ptr;
 
     static VaultController * cryfs;
 
     Q_DECLARE_PRIVATE(VaultController)
 };
+
+
+class VaultCalculation : public QObject
+{
+    Q_OBJECT
+private:
+    VaultCalculation(QObject * parent = nullptr);
+
+public:
+
+    static VaultCalculation * Initialize();
+
+    /**
+     * @brief calculationVault 计算保险箱大小
+     */
+    void calculationVault();
+
+public:
+    bool m_flg;
+
+private:
+    static VaultCalculation * m_vaultCalculation;
+
+
+};
+
+#endif

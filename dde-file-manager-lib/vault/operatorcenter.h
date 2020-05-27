@@ -10,7 +10,10 @@ class OperatorCenter : public QObject
 {
     Q_OBJECT
 public:
-    static OperatorCenter &getInstance();
+    inline static OperatorCenter &getInstance(){
+        static OperatorCenter instance;
+        return instance;
+    }
     ~OperatorCenter();
 
     /**
@@ -105,8 +108,8 @@ private:
     bool executeProcess(const QString &cmd);
 
 private:
-    QString             m_strUserKey;
-    QString             standOutput_;
+    QString                 m_strUserKey;
+    QString                 standOutput_;
 };
 
 #endif // OPERATORCENTER_H

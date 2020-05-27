@@ -35,6 +35,7 @@
 
 #include "controllers/bookmarkmanager.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 #include "dfileservices.h"
 #include "dmimedatabase.h"
 
