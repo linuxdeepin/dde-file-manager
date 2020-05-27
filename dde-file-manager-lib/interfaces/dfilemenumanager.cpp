@@ -177,6 +177,11 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         }
     }
 
+    // 选中保险箱中的文件，则屏蔽掉共享菜单选项
+    if (currentUrl.toLocalFile().contains(VaultController::makeVaultLocalPath())){
+        unusedList << MenuAction::Share << MenuAction::UnShare;
+    }
+
     if (urls.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
         //修改在挂载的文件下面，不能删除，但是显示了删除

@@ -714,7 +714,13 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl)
         d->tabBar->createTab(nullptr);
     }
 
-    if (!d->cdForTab(d->tabBar->currentTab(), fileUrl)) {
+    // 将保险箱虚拟路径转换成真实路径
+    DUrl url = fileUrl;
+    if (url.scheme() == DFMVAULT_SCHEME){
+        url = VaultController::vaultToLocalUrl(fileUrl);
+    }
+
+    if (!d->cdForTab(d->tabBar->currentTab(), url)) {
         return false;
     }
 

@@ -26,6 +26,7 @@
 #include "vaulthandle.h"
 #include "vaulterrorcode.h"
 #include "vaultlockmanager.h"
+#include "dfmeventdispatcher.h"
 
 #include "appcontroller.h"
 #include "singleton.h"

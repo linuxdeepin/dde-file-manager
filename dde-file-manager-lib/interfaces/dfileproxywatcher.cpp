@@ -9,6 +9,7 @@
 
 #include "dfileproxywatcher.h"
 #include "private/dabstractfilewatcher_p.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QPointer>
 

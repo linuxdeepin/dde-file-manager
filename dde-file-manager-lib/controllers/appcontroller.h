@@ -170,6 +170,7 @@ private:
     friend class DFileViewHelper;
     friend class DRenameBar;
     friend class FileBatchProcess;
+    friend class VaultController;
 
 public:
     static QPair<QList<DUrl>, quint64> multiSelectionFilesCache;  //###: for multi selection.
