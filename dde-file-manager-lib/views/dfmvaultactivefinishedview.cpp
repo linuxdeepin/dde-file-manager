@@ -1,6 +1,8 @@
 #include "dfmvaultactivefinishedview.h"
 #include "operatorcenter.h"
 #include "../../controllers/vaultcontroller.h"
+#include "vault/vaultlockmanager.h"
+#include "app/define.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -64,6 +66,18 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
             this, &DFMVaultActiveFinishedView::slotEncryptComplete);
 }
 
+void DFMVaultActiveFinishedView::setFinishedBtnEnabled(bool b)
+{
+    m_pFinishedBtn->setEnabled(b);
+    m_pFinishedBtn->setText(tr("Encrypt"));
+    m_pEncryVaultImage->setIcon(QIcon::fromTheme("dfm_vault"));
+    play->addWidget(m_pEncryVaultImage, 3, 0, 2, 4, Qt::AlignCenter);
+    m_pTips->setVisible(true);
+    m_pTips2->setVisible(true);
+    m_pTips3->setVisible(false);
+    play->removeWidget(m_pTips3);
+}
+
 void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 {
     if(nState == 0){    // 创建保险箱成功
@@ -77,6 +91,9 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
         m_pTips3->setText(tr("The setup is complete"));
         m_pFinishedBtn->setText(tr("ok"));
         m_pFinishedBtn->setEnabled(true);
+
+        // Reset autolock time config.
+        VaultLockManager::getInstance().resetConfig();
     }else{
         qDebug() << QString(tr("create vault failure, the error code is %1!").arg(nState));
     }
@@ -84,34 +101,42 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 
 void DFMVaultActiveFinishedView::slotEncryptVault()
 {
-    // 管理员认证
-    if(!OperatorCenter::getInstance().getRootPassword()){
-        return;
-    }
+    m_pFinishedBtn->setEnabled(false);
 
-    if(m_pFinishedBtn->text() == tr("Encrypt")){
-        // 按钮灰化
-        m_pFinishedBtn->setEnabled(false);
+    // Use thread to avoid repeat enter
+    std::thread thread( [&]() {
 
-        // 进度条
-        m_pTips->setVisible(false);
-        m_pTips2->setVisible(false);
-        m_pEncryVaultImage->setVisible(false);
-        play->removeWidget(m_pEncryVaultImage);
-        play->addWidget(m_pWaterProgress, 3, 0, 2, 4, Qt::AlignCenter);
-        m_pWaterProgress->setVisible(true);
-        m_pWaterProgress->start();
-        play->addWidget(m_pTips3, 5, 0, 1, 4, Qt::AlignHCenter);
-        m_pTips3->setVisible(true);
-        m_pTips3->setText(tr("Encrypted..."));
+        if (!VaultLockManager::getInstance().checkAuthentication(VAULT_CREATE)){
+            m_pFinishedBtn->setEnabled(true);
+            return;
+        }
 
-        // 调用创建保险箱接口
-        // 拿到密码
-        QString strPassword = OperatorCenter::getInstance().getSaltAndPasswordClipher();
-        VaultController::getVaultController()->createVault(strPassword);
+        if(m_pFinishedBtn->text() == tr("Encrypt")){
+            // 按钮灰化
+            m_pFinishedBtn->setEnabled(false);
 
-    }else{
-        // 切换到保险箱主页面
-        emit sigAccepted();
-    }
+            // 进度条
+            m_pTips->setVisible(false);
+            m_pTips2->setVisible(false);
+            m_pEncryVaultImage->setVisible(false);
+            play->removeWidget(m_pEncryVaultImage);
+            play->addWidget(m_pWaterProgress, 3, 0, 2, 4, Qt::AlignCenter);
+            m_pWaterProgress->setVisible(true);
+            m_pWaterProgress->start();
+            play->addWidget(m_pTips3, 5, 0, 1, 4, Qt::AlignHCenter);
+            m_pTips3->setVisible(true);
+            m_pTips3->setText(tr("Encrypted..."));
+
+            // 调用创建保险箱接口
+            // 拿到密码
+            QString strPassword = OperatorCenter::getInstance().getSaltAndPasswordClipher();
+            VaultController::getVaultController()->createVault(strPassword);
+
+        }else{
+            // 切换到保险箱主页面
+            emit sigAccepted();
+        }
+    });
+
+    thread.detach();
 }

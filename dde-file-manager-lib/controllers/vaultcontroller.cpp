@@ -26,6 +26,7 @@
 #include "vaulthandle.h"
 #include "vaulterrorcode.h"
 #include "vaultlockmanager.h"
+#include "dfmeventdispatcher.h"
 
 #include "appcontroller.h"
 #include "singleton.h"
@@ -33,6 +34,7 @@
 
 #include "tag/tagmanager.h"
 #include "shutil/fileutils.h"
+#include "shutil/dfmfilelistfile.h"
 #include "usershare/shareinfo.h"
 #include "app/define.h"
 #include "usershare/usersharemanager.h"
@@ -56,9 +58,9 @@ class VaultControllerPrivate
 {
 public:
     explicit VaultControllerPrivate(VaultController * CryFs);
-
+    
     CryFsHandle *m_cryFsHandle;
-
+    
 private:
     VaultController * q_ptr;
     Q_DECLARE_PUBLIC(VaultController)
@@ -66,7 +68,7 @@ private:
 
 VaultControllerPrivate::VaultControllerPrivate(VaultController *CryFs):q_ptr(CryFs)
 {
-
+    
 }
 
 class VaultDirIterator : public DDirIterator
@@ -76,34 +78,93 @@ public:
                      const QStringList &nameFilters,
                      QDir::Filters filter,
                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+    ~VaultDirIterator() override;
 
     DUrl next() override;
     bool hasNext() const override;
-
+    
     QString fileName() const override;
     DUrl fileUrl() const override;
     const DAbstractFileInfoPointer fileInfo() const override;
     DUrl url() const override;
-
+    
+    DFMFileListFile *hiddenFiles = nullptr;
 private:
     QDirIterator *iterator;
+    bool nextIsCached = false;
+    QDir::Filters filters;
 };
 
 VaultDirIterator::VaultDirIterator(const DUrl &url, const QStringList &nameFilters,
                                    QDir::Filters filter, QDirIterator::IteratorFlags flags)
     : DDirIterator()
+    , filters(filter)
 {
-    iterator = new QDirIterator(VaultController::vaultToLocal(url), nameFilters, filter, flags);
+    QString path = VaultController::vaultToLocal(url);
+    iterator = new QDirIterator(path, nameFilters, filter, flags);
+
+    hiddenFiles = new DFMFileListFile(path);
+}
+
+VaultDirIterator::~VaultDirIterator()
+{
+    if (iterator) {
+        delete iterator;
+    }
+
+    if (hiddenFiles) {
+        delete hiddenFiles;
+    }
 }
 
 DUrl VaultDirIterator::next()
 {
+    if (nextIsCached) {
+        nextIsCached = false;
+
+        QString path = iterator->filePath();
+        return VaultController::localToVault(path);
+    }
     return VaultController::localToVault(iterator->next());
 }
 
+// 添加过滤，将保险箱中.hidden中记录的文件隐藏
 bool VaultDirIterator::hasNext() const
 {
-    return iterator->hasNext();
+    if (nextIsCached) {
+        return true;
+    }
+
+    bool hasNext = iterator->hasNext();
+
+    if (!hasNext) {
+        return false;
+    }
+
+    bool showHidden = filters.testFlag(QDir::Hidden);
+    DAbstractFileInfoPointer info;
+
+    do {
+        const_cast<VaultDirIterator *>(this)->iterator->next();
+        QString absoluteFilePath = iterator->fileInfo().absoluteFilePath();
+        info = DAbstractFileInfoPointer(new VaultFileInfo(DUrl::fromLocalFile(absoluteFilePath)));
+
+        if (!info->isPrivate() && (showHidden || (!info->isHidden() && !hiddenFiles->contains(info->fileName())))) {
+            break;
+        }
+
+        info.reset();
+    } while (iterator->hasNext());
+
+    // file is exists
+    if (info) {
+        const_cast<VaultDirIterator *>(this)->nextIsCached = true;
+
+        return true;
+    }
+
+    return false;
+    //    return iterator->hasNext();
 }
 
 QString VaultDirIterator::fileName() const
@@ -134,7 +195,7 @@ VaultController::VaultController(QObject *parent)
     connect(this, &VaultController::sigCreateVault, d->m_cryFsHandle, &CryFsHandle::createVault);
     connect(this, &VaultController::sigUnlockVault, d->m_cryFsHandle, &CryFsHandle::unlockVault);
     connect(this, &VaultController::sigLockVault, d->m_cryFsHandle, &CryFsHandle::lockVault);
-
+    
     connect(d->m_cryFsHandle, &CryFsHandle::signalCreateVault, this, &VaultController::signalCreateVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalUnlockVault, this, &VaultController::signalUnlockVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalLockVault, this, &VaultController::signalLockVault);
@@ -158,6 +219,13 @@ VaultController *VaultController::getVaultController()
 
 const DAbstractFileInfoPointer VaultController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
+    //! 打开文管对保险箱大小进行计算（每次开打只进行一次）
+    DUrl url("dfmvault://files/");
+    if(url == event->url() && VaultCalculation::Initialize()->m_flg)
+    {
+        VaultCalculation::Initialize()->m_flg = false;
+        VaultCalculation::Initialize()->calculationVault();
+    }
     return DAbstractFileInfoPointer(new VaultFileInfo(event->url()));
 }
 
@@ -166,7 +234,7 @@ const DDirIteratorPointer VaultController::createDirIterator(const QSharedPointe
     if (event->url().host() == "files") {
         return DDirIteratorPointer(new VaultDirIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
     }
-
+    
     return nullptr;
 }
 
@@ -182,23 +250,99 @@ bool VaultController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) co
     return DFileService::instance()->openFile(event->sender(), vaultToLocalUrl(event->url()));
 }
 
+bool VaultController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
+{
+    //    return DFileService::instance()->openFiles(event->sender(), vaultToLocalUrls(event->urlList()));
+    DUrlList fileUrls = event->urlList();
+    DUrlList packUrl;
+    QStringList pathList;
+    bool result = false;
+    
+    for(DUrl fileUrl : fileUrls){
+        const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
+        
+        if (pfile->isSymLink()) {
+            const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
+            
+            if (linkInfo && !linkInfo->exists()) {
+                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+                continue;
+            }
+            fileUrl = linkInfo->redirectedFileUrl();
+        }
+        
+        if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
+            int code = dialogManager->showRunExcutableScriptDialog(fileUrl, event->windowId());
+            result = FileUtils::openExcutableScriptFile(fileUrl.toLocalFile(), code) || result;
+            continue;
+        }
+        
+        if (FileUtils::isFileRunnable(fileUrl.toLocalFile()) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showRunExcutableFileDialog(fileUrl, event->windowId());
+            result = FileUtils::openExcutableFile(fileUrl.toLocalFile(), code) || result;
+            continue;
+        }
+        
+        if (FileUtils::shouldAskUserToAddExecutableFlag(fileUrl.toLocalFile()) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showAskIfAddExcutableFlagAndRunDialog(fileUrl, event->windowId());
+            result = FileUtils::addExecutableFlagAndExecuse(fileUrl.toLocalFile(), code) || result;
+            continue;
+        }
+        
+        packUrl << fileUrl;
+        QString url = vaultToLocal(fileUrl);
+        if (FileUtils::isFileWindowsUrlShortcut(url)) {
+            url = FileUtils::getInternetShortcutUrl(url);
+        }
+        pathList << url;
+    }
+    
+    if (!pathList.empty()) {
+        result = FileUtils::openFiles(pathList);
+        if (!result) {
+            for (const DUrl &fileUrl : packUrl){
+                AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(),fileUrl)); // requestShowOpenWithDialog
+            }
+        }
+    }
+    
+    return result;
+}
+
 bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DUrlList urlList1 = DFileService::instance()->moveToTrash(event->sender(), urlList);
     if(urlList == urlList1)
+    {
+        VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
+        emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
         return true;
+    }
     return false;
 }
 
 DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
-    return DFileService::instance()->moveToTrash(event->sender(), urlList);
+    DUrlList ulist = DFileService::instance()->moveToTrash(event->sender(), urlList);
+    VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
+    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
+    return ulist;
+}
+
+DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
+{
+    DUrlList urlList = vaultToLocalUrls(event->urlList());
+    DUrl url = vaultToLocalUrl(event->targetUrl());
+    DUrlList ulist = DFileService::instance()->pasteFile(event->sender(), event->action(), url, urlList);
+    VaultCalculation::Initialize()->calculationVault();     //! 复制文件后计算保险箱大小
+    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
+    return ulist;
 }
 
 bool VaultController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
-{
+{    
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), urlList);
 }
@@ -214,13 +358,13 @@ bool VaultController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event
 {
     ShareInfo info;
     info.setPath(makeVaultLocalPath(event->name()));
-
+    
     info.setShareName(event->name());
     info.setIsGuestOk(event->allowGuest());
     info.setIsWritable(event->isWritable());
-
+    
     bool ret = userShareManager->addUserShare(info);
-
+    
     return ret;
 }
 
@@ -228,27 +372,27 @@ bool VaultController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent
 {
     QString path = vaultToLocalUrl(event->fileUrl()).path();
     userShareManager->deleteUserShareByPath(path);
-
+    
     return true;
 }
 
 bool VaultController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
     const QString &current_dir = QDir::currentPath();
-
+    
     QDir::setCurrent(vaultToLocalUrl(event->url()).toLocalFile());
-
+    
     bool ok = QProcess::startDetached(FileUtils::defaultTerminalPath());
-
+    
     QDir::setCurrent(current_dir);
-
+    
     return ok;
 }
 
 bool VaultController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
 {
     DUrl destUrl = event->url();
-
+    
     const DAbstractFileInfoPointer &p = fileService->createFileInfo(nullptr, destUrl);
     DUrl bookmarkUrl = DUrl::fromBookMarkFile(destUrl, p->fileDisplayName());
     DStorageInfo info(destUrl.path());
@@ -265,13 +409,13 @@ bool VaultController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> 
         if (devStr.startsWith(QStringLiteral("/dev/"))) {
             devStr = DUrl::fromDeviceId(info.device()).toString();
         }
-
+        
         QUrlQuery query;
         query.addQueryItem("mount_point", devStr);
         query.addQueryItem("locate_url", locateUrl);
         bookmarkUrl.setQuery(query);
     }
-
+    
     return DFileService::instance()->touchFile(event->sender(), bookmarkUrl);
 }
 
@@ -284,15 +428,15 @@ bool VaultController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> 
 {
     QString path = vaultToLocalUrl(event->fileUrl()).path();
     QFile file(path);
-
+    
     QUrl url = event->toUrl().toLocalFile();
-
+    
     bool ok = file.link(event->toUrl().toLocalFile());
-
+    
     if (ok) {
         return true;
     }
-
+    
     if (event->force()) {
         // replace symlink, remove if target was existed
         QFileInfo toLink(event->toUrl().toLocalFile());
@@ -300,7 +444,7 @@ bool VaultController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> 
             QFile::remove(event->toUrl().toLocalFile());
         }
     }
-
+    
     int code = ::symlink(event->fileUrl().toLocalFile().toLocal8Bit().constData(),
                          event->toUrl().toLocalFile().toLocal8Bit().constData());
     if (code == -1) {
@@ -310,7 +454,7 @@ bool VaultController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> 
     } else {
         ok = true;
     }
-
+    
     return ok;
 }
 
@@ -321,10 +465,10 @@ bool VaultController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &eve
     QList<QString> taglist = event->tags();
     if (taglist.isEmpty()) {
         const QStringList &tags = TagManager::instance()->getTagsThroughFiles({durl});
-
+        
         return tags.isEmpty() || TagManager::instance()->removeTagsOfFiles(tags, {durl});
     }
-
+    
     return TagManager::instance()->makeFilesTags(taglist, {durl});
 }
 
@@ -343,6 +487,13 @@ QList<QString> VaultController::getTagsThroughFiles(const QSharedPointer<DFMGetT
     return TagManager::instance()->getTagsThroughFiles(tempList);
 }
 
+bool VaultController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    DUrl url = event->url();
+    DUrl durl = vaultToLocalUrl(url);
+    return DFileService::instance()->setPermissions(event->sender(), durl, event->permissions());
+}
+
 DUrl VaultController::makeVaultUrl(QString path, QString host)
 {
     // blumia: if path is not start with a `/`, QUrl::setPath will destory the whole QUrl
@@ -350,7 +501,7 @@ DUrl VaultController::makeVaultUrl(QString path, QString host)
     if (!path.startsWith('/')) {
         path = '/' + path;
     }
-
+    
     DUrl newUrl;
     newUrl.setScheme(DFMVAULT_SCHEME);
     newUrl.setHost(host);
@@ -371,9 +522,9 @@ DUrl VaultController::localToVault(QString localPath)
         // fallback to vault file root dir.
         return VaultController::makeVaultUrl("/");
     }
-
+    
     index += QString("vault_unlocked").length();
-
+    
     return VaultController::makeVaultUrl(nextPath.mid(index));
 }
 
@@ -385,7 +536,7 @@ QString VaultController::vaultToLocal(const DUrl &vaultUrl)
 
 DUrl VaultController::vaultToLocalUrl(const DUrl &vaultUrl)
 {
-    Q_ASSERT(vaultUrl.scheme() == DFMVAULT_SCHEME);
+    //    Q_ASSERT(vaultUrl.scheme() == DFMVAULT_SCHEME);
     if (vaultUrl.scheme() != DFMVAULT_SCHEME) return vaultUrl;
     return DUrl::fromLocalFile(vaultToLocal(vaultUrl));
 }
@@ -396,19 +547,8 @@ DUrlList VaultController::vaultToLocalUrls(DUrlList vaultUrls)
         DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
         url = vaultToLocalUrl(url);
     }
-
+    
     return vaultUrls;
-}
-
-bool VaultController::checkAuthentication()
-{
-    QString standOutput("");
-    bool res = runCmd("id -un", standOutput);
-    if (res && standOutput.trimmed() == "root"){
-        return true;
-    }
-
-    return runCmd("pkexec deepin-devicemanager-authenticateProxy", standOutput);
 }
 
 VaultController::VaultState VaultController::state(QString lockBaseDir)
@@ -417,7 +557,7 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
     if (cryfsBinary.isEmpty()) {
         return NotAvailable;
     }
-
+    
     if(lockBaseDir.isEmpty())
     {
         lockBaseDir = makeVaultLocalPath("cryfs.config", "vault_encrypted");
@@ -437,11 +577,21 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
         {
             return Unlocked;
         }
-
+        
         return Encrypted;
     } else {
         return NotExisted;
     }
+}
+
+bool VaultController::isRootDirectory(QString path) const
+{
+    bool bRootDir = false;
+    QString localFilePath = makeVaultLocalPath();
+    if (localFilePath == path || makeVaultUrl().toString() == path) {
+        bRootDir = true;
+    }
+    return bRootDir;
 }
 
 void VaultController::createVault(const DSecureString & passWord, QString lockBaseDir, QString unlockFileDir)
@@ -451,7 +601,7 @@ void VaultController::createVault(const DSecureString & passWord, QString lockBa
             QDir().mkpath(path);
         }
     };
-
+    
     if(lockBaseDir.isEmpty() || unlockFileDir.isEmpty())
     {
         if(state() != NotExisted)
@@ -459,10 +609,10 @@ void VaultController::createVault(const DSecureString & passWord, QString lockBa
             emit signalCreateVault(static_cast<int>(ErrorCode::EncryptedExist));
             return;
         }
-
+        
         createIfNotExist(makeVaultLocalPath("", "vault_encrypted"));
         createIfNotExist(makeVaultLocalPath("", "vault_unlocked"));
-
+        
         emit sigCreateVault(makeVaultLocalPath("", "vault_encrypted"),
                             makeVaultLocalPath("", "vault_unlocked"),
                             passWord);
@@ -474,7 +624,7 @@ void VaultController::createVault(const DSecureString & passWord, QString lockBa
             emit signalCreateVault(static_cast<int>(ErrorCode::EncryptedExist));
             return;
         }
-
+        
         createIfNotExist(lockBaseDir);
         createIfNotExist(unlockFileDir);
         emit sigCreateVault(lockBaseDir, unlockFileDir, passWord);
@@ -490,7 +640,7 @@ void VaultController::unlockVault(const DSecureString &passWord, QString lockBas
             emit signalUnlockVault(static_cast<int>(ErrorCode::MountpointNotEmpty));
             return;
         }
-
+        
         emit sigUnlockVault(makeVaultLocalPath("", "vault_encrypted"),
                             makeVaultLocalPath("", "vault_unlocked"),
                             passWord);
@@ -548,39 +698,29 @@ QString VaultController::vaultUnlockPath()
     return makeVaultLocalPath("", "vault_unlocked");
 }
 
-bool VaultController::runCmd(const QString &cmd, QString &standOutput)
+/********************************************************/
+
+VaultCalculation * VaultCalculation::m_vaultCalculation = nullptr;
+
+VaultCalculation::VaultCalculation(QObject * parent):QObject (parent),m_flg(true)
 {
-    QProcess process_;
-    int msecs = 10000;
-    if (cmd.startsWith("pkexec deepin-vaultRemove-authenticateProxy") ) {
-        msecs = -1;
-    }
-
-    process_.start(cmd);
-
-    bool res = process_.waitForFinished(msecs);
-    standOutput = process_.readAllStandardOutput();
-    int exitCode = process_.exitCode();
-    if ( cmd.startsWith("pkexec deepin-devicemanager-authenticateProxy") && (exitCode == 127 || exitCode == 126) ) {
-        //dError( "Run \'" + cmd + "\' failed: Password Error! " + QString::number(exitCode) + "\n");
-
-        if (cmd.contains("whoami")) {
-            //if(exitCode == 126)
-            //{
-            //DMessageBox::critical(nullptr, "", tr("Password Error!" ));
-            //}
-
-            //exit(-1);
-        }
-
-        return false;
-    }
-
-    if (res == false) {
-        //dError( "Run \'" + cmd + "\' failed\n" );
-    }
-
-    return res;
+    
 }
 
+VaultCalculation * VaultCalculation::Initialize()
+{
+    if(m_vaultCalculation == nullptr)
+    {
+        m_vaultCalculation = new VaultCalculation;
+    }
+    return m_vaultCalculation;
+}
 
+void VaultCalculation::calculationVault()
+{
+    VaultController *controller = VaultController::getVaultController();
+    
+    DUrl url = controller->vaultToLocalUrl(controller->makeVaultUrl());
+    QStorageInfo storageInfo(url.toLocalFile());
+    VaultFileInfo::setVaultSize(storageInfo.bytesTotal() - storageInfo.bytesFree());
+}

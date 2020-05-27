@@ -47,6 +47,24 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     this->addContent(m_pStackedWidget);
 }
 
+void DFMVaultActiveView::setBeginingState()
+{
+    m_pStackedWidget->setCurrentIndex(0);
+    m_pSetUnclockMethodWidget->clearText();
+    m_ActiveVaultFinishedWidget->setFinishedBtnEnabled(true);
+}
+
+void DFMVaultActiveView::showTop()
+{
+    this->activateWindow();
+    this->showNormal();
+}
+
+void DFMVaultActiveView::closeEvent(QCloseEvent *)
+{
+    setBeginingState();
+}
+
 void DFMVaultActiveView::slotNextWidget()
 {
     if(m_pStackedWidget){
@@ -58,6 +76,7 @@ void DFMVaultActiveView::slotNextWidget()
             m_pStackedWidget->setCurrentIndex(nNextIndex);
         }else{
             emit accept();
+            setBeginingState();
         }
     }
 }

@@ -40,7 +40,6 @@
 ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
     , m_diskm(new DDiskManager(this))
-    , m_nDiskNumber(0)
 {
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
@@ -60,17 +59,15 @@ ComputerModel::ComputerModel(QObject *parent)
                                       });
             if (r == m_items.end()) {
                 addItem(chi->fileUrl());
-                m_nDiskNumber++;
             } else {
                 insertBefore(chi->fileUrl(), r->url);
-                m_nDiskNumber++;
             }
         } else {
             addItem(chi->fileUrl());
         }
     }
     // 保险柜
-    addItem(makeSplitterUrl(QObject::tr("File Vault")));
+    addItem(makeSplitterUrl(tr("File Vault")));
     addItem(VaultController::makeVaultUrl());
 
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
@@ -90,17 +87,13 @@ ComputerModel::ComputerModel(QObject *parent)
 //            } else {
 //                insertBefore(url, r->url);
 //            }
-            // 修改判断条件
-            int nIndex = findItem(makeSplitterUrl(tr("Disks")));
-            if(nIndex != -1){   // 找到了
-                nIndex = nIndex + m_nDiskNumber + 1;
+            int nIndex = findItem(makeSplitterUrl(tr("File Vault")));
+            if(nIndex != -1){   // 有保险箱的情况
                 if(m_items.count() > nIndex){
                     insertBefore(url, m_items[nIndex].url);
-                }else {
-                    addItem(url);
                 }
             }
-            else {  // 没找到
+            else {  // 没有保险箱的情况
                 auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
                                           [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                                                 return DFMRootFileInfo::typeCompare(a, b.fi);
@@ -201,7 +194,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         QString fs_type = "";
         if (pitmdata->fi) {
             //! 添加文件系统格式数据
-            fs_type = pitmdata->fi->extraProperties()["fsType"].toString().toUpper();
+            bool bMounted = pitmdata->fi->extraProperties()["mounted"].toBool();
+            if (bMounted) {
+                fs_type = pitmdata->fi->extraProperties()["fsType"].toString().toUpper();
+            }
         }
 
         return fs_type;
@@ -280,10 +276,47 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         }
     }
 
-    if (role == DataRoles::Scheme) {
+    if (role == DataRoles::SchemeRole) {
         if (pitmdata->fi) {
             return QVariant::fromValue(pitmdata->fi->fileUrl().scheme());
         }
+    }
+
+    if (role == DataRoles::ProgressRole) {
+
+        bool bProgressVisible = true;
+        if (pitmdata->fi) {
+            QString scheme = pitmdata->fi->fileUrl().scheme();
+            if (scheme == DFMVAULT_SCHEME) {
+                // vault not show progress.
+                bProgressVisible = false;
+            } else {
+                // optical and removable device not show progress when unmounted.
+                DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
+                if (itemType == DFMRootFileInfo::ItemType::UDisksOptical
+                        || itemType == DFMRootFileInfo::ItemType::UDisksRemovable) {
+
+                    bProgressVisible = pitmdata->fi->extraProperties()["mounted"].toBool();
+                }
+            }
+        }
+        return QVariant::fromValue(bProgressVisible);
+    }
+
+    if (role == DataRoles::SizeRole) {
+
+        bool bSizeVisible = true;
+        if (pitmdata->fi) {
+            // optical and removable device not show size when unmounted.
+            DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
+            if (itemType == DFMRootFileInfo::ItemType::UDisksOptical
+                    || itemType == DFMRootFileInfo::ItemType::UDisksRemovable) {
+
+                bSizeVisible = pitmdata->fi->extraProperties()["mounted"].toBool();
+            }
+        }
+
+        return QVariant::fromValue(bSizeVisible);
     }
 
     return QVariant();

@@ -1,16 +1,61 @@
+/**
+ ** This file is part of the filemanager project.
+ ** Copyright 2020 luzhen <luzhen@uniontech.com>.
+ **
+ ** This program is free software: you can redistribute it and/or modify
+ ** it under the terms of the GNU General Public License as published by
+ ** the Free Software Foundation, either version 3 of the License, or
+ ** (at your option) any later version.
+ **
+ ** This program is distributed in the hope that it will be useful,
+ ** but WITHOUT ANY WARRANTY; without even the implied warranty of
+ ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ ** GNU General Public License for more details.
+ **
+ ** You should have received a copy of the GNU General Public License
+ ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #include "vaultlockmanager.h"
 #include "dfileservices.h"
 #include "dfmsettings.h"
 #include "dfmapplication.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/vaulterrorcode.h"
 #include "../app/define.h"
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
 
 #include "../dde-file-manager-daemon/dbusservice/dbusinterface/vault_interface.h"
+#include <QTimer>
 
 #define VAULT_AUTOLOCK_KEY      "AutoLock"
 #define VAULT_GROUP             "Vault/AutoLock"
+
+/**
+ * @brief The VaultLockManagerPrivate class
+ */
+class VaultLockManagerPrivate
+{
+public:
+    VaultLockManagerPrivate(VaultLockManager *qq);
+
+    VaultInterface* m_vaultInterface = nullptr; // dbus interface
+    VaultLockManager::AutoLockState m_autoLockState; // auto lock state
+    QTimer m_alarmClock; // auto lock clock
+    bool m_isCacheTimeReloaded;
+
+    VaultLockManager *q_ptr;
+
+    Q_DECLARE_PUBLIC(VaultLockManager)
+};
+
+VaultLockManagerPrivate::VaultLockManagerPrivate(VaultLockManager *qq)
+    : m_autoLockState(VaultLockManager::Never)
+    , m_isCacheTimeReloaded(false)
+    , q_ptr(qq)
+{
+}
 
 VaultLockManager &VaultLockManager::getInstance()
 {
@@ -18,33 +63,30 @@ VaultLockManager &VaultLockManager::getInstance()
     return instance;
 }
 
-VaultLockManager::VaultLockManager(QObject *parent) : QObject(parent)
-  , m_autoLockState(VaultLockManager::Never)
-  , m_isCacheTimeReloaded(false)
+VaultLockManager::VaultLockManager(QObject *parent)
+    : QObject(parent)
+    , d_ptr(new VaultLockManagerPrivate(this))
 {
-    m_vaultInterface = new VaultInterface("com.deepin.filemanager.daemon",
+    Q_D(VaultLockManager);
+
+    d->m_vaultInterface = new VaultInterface("com.deepin.filemanager.daemon",
                                           "/com/deepin/filemanager/daemon/VaultManager",
                                           QDBusConnection::systemBus(),
                                           this);
 
     if (!isValid()) {
-        qDebug() << m_vaultInterface->lastError().message();
+        qDebug() << d->m_vaultInterface->lastError().message();
         return;
     }
 
     // 自动锁计时处理
-    connect(&m_alarmClock, &QTimer::timeout, this, &VaultLockManager::processAutoLock);
-    m_alarmClock.setInterval(1000);
+    connect(&d->m_alarmClock, &QTimer::timeout, this, &VaultLockManager::processAutoLock);
+    d->m_alarmClock.setInterval(1000);
 
-    connect(VaultController::getVaultController(), &VaultController::sigLockVault, this,  &VaultLockManager::slotLockVault);
+    connect(VaultController::getVaultController(), &VaultController::signalLockVault, this,  &VaultLockManager::slotLockVault);
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this,  &VaultLockManager::slotUnlockVault);
 
     loadConfig();
-}
-
-VaultLockManager::~VaultLockManager()
-{
-
 }
 
 void VaultLockManager::loadConfig()
@@ -57,25 +99,34 @@ void VaultLockManager::loadConfig()
     autoLock(state);
 }
 
+void VaultLockManager::resetConfig()
+{
+    autoLock(VaultLockManager::Never);
+}
+
 VaultLockManager::AutoLockState VaultLockManager::autoLockState() const
 {
-    return m_autoLockState;
+    D_DC(VaultLockManager);
+
+    return d->m_autoLockState;
 }
 
 bool VaultLockManager::autoLock(VaultLockManager::AutoLockState lockState)
 {
-    m_autoLockState = lockState;
+    Q_D(VaultLockManager);
 
-    if (m_autoLockState == Never) {
-        m_alarmClock.stop();
+    d->m_autoLockState = lockState;
+
+    if (d->m_autoLockState == Never) {
+        d->m_alarmClock.stop();
     } else {
-        if (m_isCacheTimeReloaded) {
+        if (d->m_isCacheTimeReloaded) {
             refreshAccessTime();
         }
 
-        m_alarmClock.start();
+        d->m_alarmClock.start();
     }
-    m_isCacheTimeReloaded = true;
+    d->m_isCacheTimeReloaded = true;
 
     DFMApplication::genericSetting()->setValue(VAULT_GROUP, VAULT_AUTOLOCK_KEY, lockState);
 
@@ -90,11 +141,30 @@ void VaultLockManager::refreshAccessTime()
     }
 }
 
+bool VaultLockManager::checkAuthentication(QString type)
+{
+    Q_D(VaultLockManager);
+
+    bool res = false;
+    if (d->m_vaultInterface->isValid()) {
+        QDBusPendingReply<bool> reply = d->m_vaultInterface->checkAuthentication(type);
+        reply.waitForFinished();
+        if (reply.isError()) {
+            qDebug() << reply.error().message();
+        } else {
+            res = reply.value();
+        }
+    }
+    return res;
+}
+
 void VaultLockManager::processAutoLock()
 {
+    Q_D(VaultLockManager);
+
     VaultController *controller = VaultController::getVaultController();
     if (controller->state() != VaultController::Unlocked
-            || m_autoLockState == Never) {
+            || d->m_autoLockState == Never) {
 
         return;
     }
@@ -105,7 +175,7 @@ void VaultLockManager::processAutoLock()
     quint64 curTime = dbusGetSelfTime();
 
     quint64 interval = curTime - lastAccessTime;
-    quint32 threshold = m_autoLockState * 60;
+    quint32 threshold = d->m_autoLockState * 60;
 
 #ifdef AUTOLOCK_TEST
     qDebug() << "vault autolock countdown > " << interval;
@@ -125,24 +195,34 @@ void VaultLockManager::processAutoLock()
     }
 }
 
-void VaultLockManager::slotLockVault(QString msg)
+void VaultLockManager::slotLockVault(int msg)
 {
-    if (msg.contains("vault_unlocked")) {
-        m_alarmClock.stop();
+    Q_D(VaultLockManager);
+
+    if (static_cast<ErrorCode>(msg) == ErrorCode::Success) {
+        d->m_alarmClock.stop();
+    } else {
+        qDebug() << "vault cannot lock";
     }
 }
 
-void VaultLockManager::slotUnlockVault()
+void VaultLockManager::slotUnlockVault(int msg)
 {
-    autoLock(m_autoLockState);
+    Q_D(VaultLockManager);
+
+    if (static_cast<ErrorCode>(msg) == ErrorCode::Success) {
+        autoLock(d->m_autoLockState);
+    }
 }
 
 bool VaultLockManager::isValid() const
 {
+    D_DC(VaultLockManager);
+
     bool bValid = false;
 
-    if (m_vaultInterface->isValid()) {
-        QDBusPendingReply<quint64> reply = m_vaultInterface->getLastestTime();
+    if (d->m_vaultInterface->isValid()) {
+        QDBusPendingReply<quint64> reply = d->m_vaultInterface->getLastestTime();
         reply.waitForFinished();
         bValid = !reply.isError();
     }
@@ -151,8 +231,10 @@ bool VaultLockManager::isValid() const
 
 void VaultLockManager::dbusSetRefreshTime(quint64 time)
 {
-    if (m_vaultInterface->isValid()) {
-        QDBusPendingReply<> reply = m_vaultInterface->setRefreshTime(time);
+    Q_D(VaultLockManager);
+
+    if (d->m_vaultInterface->isValid()) {
+        QDBusPendingReply<> reply = d->m_vaultInterface->setRefreshTime(time);
         reply.waitForFinished();
         if(reply.isError()) {
             qDebug() << reply.error().message();
@@ -162,9 +244,11 @@ void VaultLockManager::dbusSetRefreshTime(quint64 time)
 
 quint64 VaultLockManager::dbusGetLastestTime() const
 {
+    D_DC(VaultLockManager);
+
     quint64 latestTime = 0;
-    if (m_vaultInterface->isValid()) {
-        QDBusPendingReply<quint64> reply = m_vaultInterface->getLastestTime();
+    if (d->m_vaultInterface->isValid()) {
+        QDBusPendingReply<quint64> reply = d->m_vaultInterface->getLastestTime();
         reply.waitForFinished();
         if (reply.isError()) {
             qDebug() << reply.error().message();
@@ -177,9 +261,11 @@ quint64 VaultLockManager::dbusGetLastestTime() const
 
 quint64 VaultLockManager::dbusGetSelfTime() const
 {
+    D_DC(VaultLockManager);
+
     quint64 selfTime = 0;
-    if (m_vaultInterface->isValid()) {
-        QDBusPendingReply<quint64> reply = m_vaultInterface->getSelfTime();
+    if (d->m_vaultInterface->isValid()) {
+        QDBusPendingReply<quint64> reply = d->m_vaultInterface->getSelfTime();
         reply.waitForFinished();
         if (reply.isError()) {
             qDebug() << reply.error().message();

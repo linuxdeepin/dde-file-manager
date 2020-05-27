@@ -21,11 +21,7 @@
 #pragma once
 
 #include "dabstractfileinfo.h"
-//#include "dfileinfo.h"
-
-DFM_BEGIN_NAMESPACE
-class DFileStatisticsJob;
-DFM_END_NAMESPACE
+#include <QIcon>
 
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DAbstractFileInfo
@@ -50,20 +46,25 @@ public:
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
+    QFile::Permissions permissions() const override;
+
     // 右键菜单
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const override;
 
-    QString fileDisplayName() const override;
-
     bool canRename() const override;
-
+    bool canShare() const override;
+    bool canTag() const override;
+    QIcon fileIcon() const override;
+    QString fileDisplayName() const override;
     qint64 size() const override;
+
+    static void setVaultSize(qint64 size);
 
 private:
     bool isRootDirectory() const;
 
-    DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
+    static qint64 m_vaultSize;
 
     Q_DECLARE_PRIVATE(VaultFileInfo)
 };

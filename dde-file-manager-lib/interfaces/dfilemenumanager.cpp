@@ -32,6 +32,7 @@
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 
+#include "controllers/vaultcontroller.h"
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 #include "models/desktopfileinfo.h"
@@ -147,9 +148,6 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
 
     actionKeys << MenuAction::NewWindow
                << MenuAction::Separator
-#ifdef QT_DEBUG
-               << MenuAction::Vault
-#endif // QT_DEBUG
                << MenuAction::ConnectToServer
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
@@ -168,7 +166,23 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         return menu;
     }
 
-    if (urlList.length() == 1) {
+    //! urlList中有保险箱的DUrl需要进行转换否则会出现报错或功能不可用
+    DUrlList urls = urlList;
+    for(int i = 0; i < urlList.size(); ++i)
+    {
+        if(urlList[i].scheme() == "dfmvault")
+        {
+            urls[i] = VaultController::vaultToLocalUrl(urlList[i]);
+
+        }
+    }
+
+    // 选中保险箱中的文件，则屏蔽掉共享菜单选项
+    if (currentUrl.toLocalFile().contains(VaultController::makeVaultLocalPath())){
+        unusedList << MenuAction::Share << MenuAction::UnShare;
+    }
+
+    if (urls.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
         //修改在挂载的文件下面，不能删除，但是显示了删除
         //判定逻辑，如果是挂载盘，并且这个文件是对应的不是一个虚拟的项（表示有实体），那么这个文件就有彻底删除权限MenuAction::CompleteDeletion
@@ -190,14 +204,14 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         }
 
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
-        disableList += DFileMenuManager::getDisableActionList(urlList);
+        disableList += DFileMenuManager::getDisableActionList(urls);
         const bool &tabAddable = WindowManager::tabAddableByWinId(windowId);
         if (!tabAddable) {
             disableList << MenuAction::OpenInNewTab;
         }
 
         ///###: tag protocol.
-        if (!DFileMenuManager::whetherShowTagActions(urlList)) {
+        if (!DFileMenuManager::whetherShowTagActions(urls)) {
             actions.removeAll(MenuAction::TagInfo);
             actions.removeAll(MenuAction::TagFilesUseColor);
         }
@@ -210,7 +224,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         QStringList supportedMimeTypes;
         bool mime_displayOpenWith = true;
 
-        foreach (DUrl url, urlList) {
+        foreach (DUrl url, urls) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
 
             if (!FileUtils::isArchive(url.path())) {
@@ -269,7 +283,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         }
 
         const QMap<MenuAction, QVector<MenuAction> > &subActions  = info->subMenuActionList();
-        disableList += DFileMenuManager::getDisableActionList(urlList);
+        disableList += DFileMenuManager::getDisableActionList(urls);
         const bool &tabAddable = WindowManager::tabAddableByWinId(windowId);
         if (!tabAddable) {
             disableList << MenuAction::OpenInNewTab;
@@ -282,7 +296,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         }
 
         ///###: tag protocol.
-        if (!DFileMenuManager::whetherShowTagActions(urlList)) {
+        if (!DFileMenuManager::whetherShowTagActions(urls)) {
             actions.removeAll(MenuAction::TagInfo);
             actions.removeAll(MenuAction::TagFilesUseColor);
         }
@@ -305,10 +319,10 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             QAction *action = new QAction(desktopFile.getDisplayName(), openWithMenu);
             action->setIcon(FileUtils::searchAppIcon(desktopFile));
             action->setProperty("app", app);
-            if (urlList.length() == 1) {
+            if (urls.length() == 1) {
                 action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
             } else {
-                action->setProperty("urls", QVariant::fromValue(urlList));
+                action->setProperty("urls", QVariant::fromValue(urls));
             }
             openWithMenu->addAction(action);
             connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
@@ -329,7 +343,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
                 QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
                 action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
-                action->setProperty("urlList", DUrl::toStringList(urlList));
+                action->setProperty("urlList", DUrl::toStringList(urls));
                 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
                 action->setProperty("iconName", pDeviceinfo->getDiskInfo().iconName());
                 //id="/dev/sr1" -> tempId="sr1"
@@ -372,7 +386,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             stageAction->setEnabled(false);
         } else if (odrv.size() == 1) {
             stageAction->setProperty("dest_drive", odrv.front());
-            stageAction->setProperty("urlList", DUrl::toStringList(urlList));
+            stageAction->setProperty("urlList", DUrl::toStringList(urls));
             connect(stageAction, &QAction::triggered, appController, &AppController::actionStageFileForBurning, Qt::UniqueConnection);
             DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
             if (stageMenu) {
@@ -386,7 +400,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                     QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
                     QAction *action = new QAction(dev->id(), stageMenu);
                     action->setProperty("dest_drive", devs);
-                    action->setProperty("urlList", DUrl::toStringList(urlList));
+                    action->setProperty("urlList", DUrl::toStringList(urls));
                     stageMenu->addAction(action);
                     connect(action, &QAction::triggered, appController, &AppController::actionStageFileForBurning, Qt::UniqueConnection);
                 }
@@ -400,7 +414,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         return menu;
     }
 
-    loadNormalPluginMenu(menu, urlList, currentUrl, onDesktop);
+    loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
 
@@ -710,7 +724,6 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                 DFileMenuData::actionToMenuAction[action] = key;
             }
 
-            action->setCheckable(checkable);
             action->setDisabled(disableList.contains(key));
             action->setProperty("_dfm_menu", QVariant::fromValue(menu));
 

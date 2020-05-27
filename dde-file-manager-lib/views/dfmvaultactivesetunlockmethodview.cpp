@@ -49,6 +49,9 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     connect(m_pPassword, &DPasswordEdit::editingFinished,
             this, &DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished);
 
+    connect(m_pPassword, &DPasswordEdit::textChanged,
+            this, &DFMVaultActiveSetUnlockMethodView::slotPasswordEditing);
+
 
     // 重复密码
     m_pRepeatPasswordLabel = new QLabel(tr("Repeat password"), this);
@@ -58,6 +61,9 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
             this, &DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength);
     connect(m_pRepeatPassword, &DPasswordEdit::editingFinished,
             this, &DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished);
+
+    connect(m_pRepeatPassword, &DPasswordEdit::textChanged,
+            this, &DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditing);
 
     // 提示信息
     m_pPasswordHintLabel = new QLabel(tr("Hint"), this);
@@ -77,37 +83,37 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
             this, &DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked);
 
     // 长度
-    m_pLengthLabel = new QLabel(tr("Length"), this);
-    m_pLengthSlider = new QSlider(this);
-    m_pLengthSlider->setOrientation(Qt::Horizontal);
-    m_pLengthSlider->setRange(8, 24);
-    connect(m_pLengthSlider, &QSlider::valueChanged,
-            this, &DFMVaultActiveSetUnlockMethodView::slotLengthChanged);
-    m_pLengthEdit = new QLineEdit(this);
-    m_pLengthEdit->setMaximumWidth(60);
-    m_pLengthEdit->setReadOnly(true);
-    m_pLengthEdit->setText(tr("8Bit"));
-    m_pStrengthLabel = new QLabel(tr("Week"), this);
-    m_pStrengthLabel->setStyleSheet("color: #FF4500");
-    m_pStrengthLabel->setMaximumWidth(50);
-    m_pLengthLabel->setVisible(false);
-    m_pLengthSlider->setVisible(false);
-    m_pLengthEdit->setVisible(false);
-    m_pStrengthLabel->setVisible(false);
+//    m_pLengthLabel = new QLabel(tr("Length"), this);
+//    m_pLengthSlider = new QSlider(this);
+//    m_pLengthSlider->setOrientation(Qt::Horizontal);
+//    m_pLengthSlider->setRange(8, 24);
+//    connect(m_pLengthSlider, &QSlider::valueChanged,
+//            this, &DFMVaultActiveSetUnlockMethodView::slotLengthChanged);
+//    m_pLengthEdit = new QLineEdit(this);
+//    m_pLengthEdit->setMaximumWidth(60);
+//    m_pLengthEdit->setReadOnly(true);
+//    m_pLengthEdit->setText(tr("8Bit"));
+//    m_pStrengthLabel = new QLabel(tr("Week"), this);
+//    m_pStrengthLabel->setStyleSheet("color: #FF4500");
+//    m_pStrengthLabel->setMaximumWidth(50);
+//    m_pLengthLabel->setVisible(false);
+//    m_pLengthSlider->setVisible(false);
+//    m_pLengthEdit->setVisible(false);
+//    m_pStrengthLabel->setVisible(false);
 
     // 结果
-    m_pResultLabel = new QLabel(tr("Result"), this);
-    m_pResultEdit = new QLineEdit(tr(""), this);
-    connect(m_pResultEdit, &QLineEdit::textChanged,
-            this, &DFMVaultActiveSetUnlockMethodView::slotGenerateEditChanged);
-    m_pResultLabel->setVisible(false);
-    m_pResultEdit->setVisible(false);
+//    m_pResultLabel = new QLabel(tr("Result"), this);
+//    m_pResultEdit = new QLineEdit(tr(""), this);
+//    connect(m_pResultEdit, &QLineEdit::textChanged,
+//            this, &DFMVaultActiveSetUnlockMethodView::slotGenerateEditChanged);
+//    m_pResultLabel->setVisible(false);
+//    m_pResultEdit->setVisible(false);
 
     // 生成随即密码按钮
-    m_pGenerateBtn = new QPushButton(tr("Generate"), this);
-    connect(m_pGenerateBtn, &QPushButton::clicked,
-            this, &DFMVaultActiveSetUnlockMethodView::slotGeneratePasswordBtnClicked);
-    m_pGenerateBtn->setVisible(false);
+//    m_pGenerateBtn = new QPushButton(tr("Generate"), this);
+//    connect(m_pGenerateBtn, &QPushButton::clicked,
+//            this, &DFMVaultActiveSetUnlockMethodView::slotGeneratePasswordBtnClicked);
+//    m_pGenerateBtn->setVisible(false);
 
     // 布局
     play = new QGridLayout();
@@ -141,6 +147,13 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     if(!OperatorCenter::getInstance().createDirAndFile()) return;
 }
 
+void DFMVaultActiveSetUnlockMethodView::clearText()
+{
+    m_pPassword->clear();
+    m_pRepeatPassword->clear();
+    m_pTips->clear();
+}
+
 void DFMVaultActiveSetUnlockMethodView::slotIsShowPassword()
 {
     if(m_pPassword->echoMode() == QLineEdit::Password){
@@ -159,11 +172,23 @@ void DFMVaultActiveSetUnlockMethodView::slotIshowRepeatPassword()
     }
 }
 
+void DFMVaultActiveSetUnlockMethodView::slotPasswordEditing()
+{
+    bool ok = checkPassword(m_pPassword->text());
+    if (ok) {
+        if(checkInputInfo()){
+            m_pNext->setEnabled(true);
+        }
+    }
+    m_pNext->setEnabled(false);
+}
+
 void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
 {
     bool ok = checkPassword(m_pPassword->text());
     if(!ok){
-        m_pPassword->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
+        m_pNext->setEnabled(false);
+        m_pPassword->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"), 1000);
     } else {
         if(checkInputInfo()){
             m_pNext->setEnabled(true);
@@ -175,12 +200,27 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished()
 {
     bool ok = checkRepeatPassword();
     if(!ok){
-        m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"));
-    } else {
-        if(checkInputInfo()){
-            m_pNext->setEnabled(true);
+        m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"), 1000);
+    }
+}
+
+void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditing()
+{
+    const QString &strRepeatPassword = m_pRepeatPassword->text();
+    const QString &strPassword = m_pPassword->text();
+
+    bool bSizeMatch = strRepeatPassword.size() == strPassword.size();
+    if (bSizeMatch) {
+        if (checkPassword(m_pPassword->text())) {
+            if (checkRepeatPassword()) {
+                m_pNext->setEnabled(true);
+                return;
+            } else {
+                 m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"));
+            }
         }
     }
+    m_pNext->setEnabled(false);
 }
 
 void DFMVaultActiveSetUnlockMethodView::slotGenerateEditChanged(const QString &str)
@@ -217,24 +257,24 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
         m_pRepeatPassword->setVisible(false);
 //        m_pOtherMethod->setVisible(false);
 
-        play->addWidget(m_pLengthLabel, 2, 0, 1, 1, Qt::AlignLeft);
-        play->addWidget(m_pLengthSlider, 2, 1, 1, 3);
-        play->addWidget(m_pLengthEdit, 2, 4, 1, 1);
-        play->addWidget(m_pStrengthLabel, 2, 5, 1, 1);
-        play->addWidget(m_pResultLabel, 3, 0, 1, 1, Qt::AlignLeft);
-        play->addWidget(m_pResultEdit, 3, 1, 1, 5);
+//        play->addWidget(m_pLengthLabel, 2, 0, 1, 1, Qt::AlignLeft);
+//        play->addWidget(m_pLengthSlider, 2, 1, 1, 3);
+//        play->addWidget(m_pLengthEdit, 2, 4, 1, 1);
+//        play->addWidget(m_pStrengthLabel, 2, 5, 1, 1);
+//        play->addWidget(m_pResultLabel, 3, 0, 1, 1, Qt::AlignLeft);
+//        play->addWidget(m_pResultEdit, 3, 1, 1, 5);
         play->addWidget(m_pGenerateBtn, 5, 2, 1, 2, Qt::AlignHCenter);
 
-        m_pLengthLabel->setVisible(true);
-        m_pLengthSlider->setVisible(true);
-        m_pLengthEdit->setVisible(true);
-        m_pStrengthLabel->setVisible(true);
-        m_pResultLabel->setVisible(true);
-        m_pResultEdit->setVisible(true);
+//        m_pLengthLabel->setVisible(true);
+//        m_pLengthSlider->setVisible(true);
+//        m_pLengthEdit->setVisible(true);
+//        m_pStrengthLabel->setVisible(true);
+//        m_pResultLabel->setVisible(true);
+//        m_pResultEdit->setVisible(true);
         m_pGenerateBtn->setVisible(true);
 
         // 检测密码的正确性
-        slotGenerateEditChanged(m_pResultEdit->text());
+//        slotGenerateEditChanged(m_pResultEdit->text());
 
     }else{  // 手动
 
@@ -250,20 +290,20 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
         m_pRepeatPassword->setVisible(true);
 //        m_pOtherMethod->setVisible(true);
 
-        play->removeWidget(m_pLengthLabel);
-        play->removeWidget(m_pLengthSlider);
-        play->removeWidget(m_pLengthEdit);
-        play->removeWidget(m_pStrengthLabel);
-        play->removeWidget(m_pResultLabel);
-        play->removeWidget(m_pResultEdit);
+//        play->removeWidget(m_pLengthLabel);
+//        play->removeWidget(m_pLengthSlider);
+//        play->removeWidget(m_pLengthEdit);
+//        play->removeWidget(m_pStrengthLabel);
+//        play->removeWidget(m_pResultLabel);
+//        play->removeWidget(m_pResultEdit);
         play->removeWidget(m_pGenerateBtn);
 
-        m_pLengthLabel->setVisible(false);
-        m_pLengthSlider->setVisible(false);
-        m_pLengthEdit->setVisible(false);
-        m_pStrengthLabel->setVisible(false);
-        m_pResultLabel->setVisible(false);
-        m_pResultEdit->setVisible(false);
+//        m_pLengthLabel->setVisible(false);
+//        m_pLengthSlider->setVisible(false);
+//        m_pLengthEdit->setVisible(false);
+//        m_pStrengthLabel->setVisible(false);
+//        m_pResultLabel->setVisible(false);
+//        m_pResultEdit->setVisible(false);
         m_pGenerateBtn->setVisible(false);
 
         // 检测密码正确性
@@ -271,20 +311,20 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
     }
 }
 
-void DFMVaultActiveSetUnlockMethodView::slotLengthChanged(int length)
-{
-    m_pLengthEdit->setText(QString("%1%2").arg(length).arg(tr("Bit")));
-    if(length > 7 && length < 12){
-        m_pStrengthLabel->setText(tr("Week"));
-        m_pStrengthLabel->setStyleSheet("color: #FF4500");
-    }else if(length >= 12 && length < 19){
-        m_pStrengthLabel->setText(tr("Medium"));
-        m_pStrengthLabel->setStyleSheet("color: #EEC900");
-    }else if(length >= 19 && length < 25){
-        m_pStrengthLabel->setText(tr("Strong"));
-        m_pStrengthLabel->setStyleSheet("color: #32CD32");
-    }
-}
+//void DFMVaultActiveSetUnlockMethodView::slotLengthChanged(int length)
+//{
+//    m_pLengthEdit->setText(QString("%1%2").arg(length).arg(tr("Bit")));
+//    if(length > 7 && length < 12){
+//        m_pStrengthLabel->setText(tr("Week"));
+//        m_pStrengthLabel->setStyleSheet("color: #FF4500");
+//    }else if(length >= 12 && length < 19){
+//        m_pStrengthLabel->setText(tr("Medium"));
+//        m_pStrengthLabel->setStyleSheet("color: #EEC900");
+//    }else if(length >= 19 && length < 25){
+//        m_pStrengthLabel->setText(tr("Strong"));
+//        m_pStrengthLabel->setStyleSheet("color: #32CD32");
+//    }
+//}
 
 void DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength(const QString &password)
 {
@@ -294,11 +334,11 @@ void DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength(const QString &pa
     }
 }
 
-void DFMVaultActiveSetUnlockMethodView::slotGeneratePasswordBtnClicked()
-{
-    QString strPassword = OperatorCenter::getInstance().autoGeneratePassword(m_pLengthSlider->value());
-    m_pResultEdit->setText(strPassword);
-}
+//void DFMVaultActiveSetUnlockMethodView::slotGeneratePasswordBtnClicked()
+//{
+//    QString strPassword = OperatorCenter::getInstance().autoGeneratePassword(m_pLengthSlider->value());
+//    m_pResultEdit->setText(strPassword);
+//}
 
 bool DFMVaultActiveSetUnlockMethodView::checkPassword(const QString &password)
 {

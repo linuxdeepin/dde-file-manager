@@ -76,7 +76,7 @@ private:
      * @brief 立即上锁
      * @return 上锁是否成功
      */
-    bool lockNow();
+    bool lockNow(DFileManagerWindow *wnd);
 
     /**
      * @brief 自动上锁

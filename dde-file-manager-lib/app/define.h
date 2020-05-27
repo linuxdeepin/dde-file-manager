@@ -74,4 +74,7 @@ QMutex *getOpticalDriveMutex();
 
 #define DISCBURN_STAGING "discburn"
 
+#define VAULT_CREATE "Create"
+#define VAULT_REMOVE "Remove"
+
 #endif // GLOBAL_H

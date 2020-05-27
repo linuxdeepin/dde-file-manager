@@ -788,7 +788,7 @@ QList<QString> DFileService::getTagsThroughFiles(const QObject *sender, const QL
 }
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const
-{
+{    
     const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
 
     if (info) {

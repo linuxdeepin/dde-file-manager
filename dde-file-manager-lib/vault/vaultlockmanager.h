@@ -1,3 +1,21 @@
+/**
+ ** This file is part of the filemanager project.
+ ** Copyright 2020 luzhen <luzhen@uniontech.com>.
+ **
+ ** This program is free software: you can redistribute it and/or modify
+ ** it under the terms of the GNU General Public License as published by
+ ** the Free Software Foundation, either version 3 of the License, or
+ ** (at your option) any later version.
+ **
+ ** This program is distributed in the hope that it will be useful,
+ ** but WITHOUT ANY WARRANTY; without even the implied warranty of
+ ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ ** GNU General Public License for more details.
+ **
+ ** You should have received a copy of the GNU General Public License
+ ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #ifndef VAULTLOCKMANAGER_H
 #define VAULTLOCKMANAGER_H
 
@@ -5,16 +23,14 @@
 
 #include "dfmglobal.h"
 
-#include <QTimer>
-
 //#define AUTOLOCK_TEST
 class VaultInterface;
+class VaultLockManagerPrivate;
 class VaultLockManager : public QObject
 {
     Q_OBJECT
 
 public:
-
     enum AutoLockState {
         Never = 0,
         FiveMinutes = 5,
@@ -48,6 +64,16 @@ public:
      */
     void refreshAccessTime();
 
+    /**
+    * @brief checkAuthentication 保险箱权限认证
+    */
+    bool checkAuthentication(QString type);
+
+    /**
+     * @brief resetConfig 重置保险箱配置
+     */
+    void resetConfig();
+
 protected slots:
     /**
      * @brief processAutoLock 处理自动加锁
@@ -57,17 +83,14 @@ protected slots:
     /**
      * @brief slotLockVault 加锁状态槽函数
      */
-    void slotLockVault(QString msg);
+    void slotLockVault(int msg);
 
     /**
      * @brief slotUnlockVault 解锁状态槽函数
      */
-    void slotUnlockVault();
+    void slotUnlockVault(int msg);
 
-private:
-    explicit VaultLockManager(QObject *parent = nullptr);
-    ~VaultLockManager();
-
+protected:
     /**
      * @brief loadConfig 加载配置文件
      */
@@ -93,17 +116,10 @@ private:
     quint64 dbusGetSelfTime() const;
 
 private:
-    VaultInterface* m_vaultInterface = nullptr; // 交互接口
+    explicit VaultLockManager(QObject *parent = nullptr);
+    QSharedPointer<VaultLockManagerPrivate> d_ptr;
 
-    qulonglong m_lastestTime; // 最新计时
-
-    AutoLockState m_autoLockState; // 自动锁状态
-
-    DAbstractFileInfoPointer m_rootFileInfo; // 根目录文件信息
-
-    QTimer m_alarmClock; // 自动锁计时器
-
-    bool m_isCacheTimeReloaded; // 访问时间是否已经重新加载
+    Q_DECLARE_PRIVATE(VaultLockManager)
 };
 
 #endif // VAULTLOCKMANAGER_H

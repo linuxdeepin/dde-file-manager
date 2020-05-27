@@ -28,6 +28,7 @@ class DFMVaultActiveSetUnlockMethodView : public QWidget
     Q_OBJECT
 public:
     explicit DFMVaultActiveSetUnlockMethodView(QWidget *parent = nullptr);
+    void clearText();
 
 signals:
     void sigAccepted();
@@ -39,19 +40,21 @@ public slots:
 private slots:
     void slotIsShowPassword();
     void slotIshowRepeatPassword();
+    void slotPasswordEditing();
     void slotPasswordEditFinished();
     void slotRepeatPasswordEditFinished();
+    void slotRepeatPasswordEditing();
     void slotGenerateEditChanged(const QString &str);
     // 下一步按钮点击
     void slotNextBtnClicked();
     // 类型切换
     void slotTypeChanged(int index);
     // 随即密码长度改变
-    void slotLengthChanged(int length);
+//    void slotLengthChanged(int length);
     // 限制密码的长度
     void slotLimiPasswordLength(const QString &password);
     // 随即生成密码按钮点击
-    void slotGeneratePasswordBtnClicked();
+//    void slotGeneratePasswordBtnClicked();
 
 private:
     // 校验密码是否符合规则
@@ -67,16 +70,16 @@ private:
     QLabel              *m_pPasswordLabel;
     DPasswordEdit       *m_pPassword;
 
-    QLabel              *m_pLengthLabel;
-    QSlider             *m_pLengthSlider;
-    QLineEdit           *m_pLengthEdit;
-    QLabel              *m_pStrengthLabel;
+//    QLabel              *m_pLengthLabel;
+//    QSlider             *m_pLengthSlider;
+//    QLineEdit           *m_pLengthEdit;
+//    QLabel              *m_pStrengthLabel;
 
     QLabel              *m_pRepeatPasswordLabel;
     DPasswordEdit       *m_pRepeatPassword;
 
-    QLabel              *m_pResultLabel;
-    QLineEdit           *m_pResultEdit;
+//    QLabel              *m_pResultLabel;
+//    QLineEdit           *m_pResultEdit;
 
     QLabel              *m_pPasswordHintLabel;
     QLineEdit           *m_pTips;

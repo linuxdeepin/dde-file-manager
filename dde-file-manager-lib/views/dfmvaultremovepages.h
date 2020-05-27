@@ -44,7 +44,18 @@ public:
 
     QLineEdit *lineEdit();
 
+    /**
+     * @brief showAlertMessage 显示密码输入框提示信息
+     * @param text  信息内容
+     * @param duration  显示时长
+     */
     void showAlertMessage(const QString &text, int duration = 3000);
+
+    /**
+     * @brief setTipsButtonVisible 设置提示按钮是否可见
+     * @param visible
+     */
+    void setTipsButtonVisible(bool visible);
 public slots:
     void onPasswordChanged(const QString &password);
 
@@ -56,7 +67,7 @@ private:
 
 private:
     DPasswordEdit *m_pwdEdit;
-    QPushButton *m_helpBtn;
+    QPushButton *m_tipsBtn;
 };
 //-----------------------------------------------------------
 
@@ -125,12 +136,6 @@ private:
     void initConnect();
 
     void insertPage(const PageType &pageType, QWidget * widget);
-
-    /**
-    * @brief    删除文件及文件夹
-    * @param    文件夹路径
-    */
-    void removeFileInDir(const QString &path);
 
     void showEvent(QShowEvent *event) override;
 private:
