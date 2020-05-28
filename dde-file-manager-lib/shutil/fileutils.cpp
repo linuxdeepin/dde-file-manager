@@ -57,6 +57,7 @@
 #include <QSettings>
 #include <QX11Info>
 #include <dabstractfilewatcher.h>
+#include <DRecentManager>
 
 #include <sys/vfs.h>
 
@@ -68,6 +69,7 @@ extern "C" {
 #define signals public
 
 DFM_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 
 QString FileUtils::XDG_RUNTIME_DIR = "";
 
@@ -564,6 +566,8 @@ bool FileUtils::openFile(const QString &filePath)
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+        DesktopFile df(defaultDesktopFile);
+        addRecentFile(filePath, df, mimetype);
         return result;
     }
 
@@ -624,6 +628,11 @@ bool FileUtils::openFiles(const QStringList &filePaths)
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+        for (const QString &tmp : rePath) {
+            QString filePath = DUrl::fromLocalFile(tmp).toLocalFile();
+            DesktopFile df(defaultDesktopFile);
+            addRecentFile(filePath, df, mimetype);
+        }
         return result;
     }
 
@@ -1281,6 +1290,19 @@ void FileUtils::mountAVFS()
 void FileUtils::umountAVFS()
 {
     QProcess::startDetached("/usr/bin/umountavfs");
+}
+
+void FileUtils::addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype)
+{
+    if (filePath.isEmpty()) {
+        return;
+    }
+    DRecentData recentData;
+    recentData.appName = desktopFile.getName();
+    recentData.appExec = desktopFile.getExec();
+    recentData.mimeType = mimetype;
+    DRecentManager::removeItem(filePath);
+    DRecentManager::addItem(filePath, recentData);
 }
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
