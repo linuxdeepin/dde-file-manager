@@ -110,14 +110,22 @@ void GvfsMountManager::initConnect()
     if (DFMGlobal::isRootUser()){
         g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added_root, nullptr);
         g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed_root, nullptr);
-    }else{
-        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, nullptr);
     }
+    //fix 28660 【文件管理器】【5.1.1.60-1】【服务器】root用户，卸载U盘后，无法重新挂载
+    g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, nullptr);
+//    }else{
+//        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, nullptr);
+//    }
     connect(this, &GvfsMountManager::loadDiskInfoFinished, deviceListener, &UDiskListener::update);
 }
 
