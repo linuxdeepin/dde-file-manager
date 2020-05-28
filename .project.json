@@ -1,0 +1,6 @@
+{
+	"type": "homebrew",
+	"3rdparty": [],
+	"ignore": ["debian", "translations", "*.lai", "*.la", "*.a", "*.theme", "*.json", "*.pri", "*.desktop", "*.out", "*.app", "Makefile", "Makefile.*", "*.Debug", "*.Release", "*.rc", "*.qrc", "*.zip", "*.qm", "*.user", ".vscode", "*.png", "*.svg", "*.ts", "*.xml", "*.service", "dde-file-manager-pkexec", "*.policy", "file-manager-daemon auto", "*.mimetype", "*.sh", "*.conf", "*.js", ".readme", "*.doc", "*.xls", "*.ppt", "*.txt", "*.qss", "*.ui", "*.mov", "*.qdocconf", "*.eot", "*.ttf", "*.woff", "*.css", "*.qdoc", "*.qdocinc", "*.md", "*.toml", "*.gitignore", "*.yml", "LICENCE"],
+	"license": ["GPLv3"]
+}
