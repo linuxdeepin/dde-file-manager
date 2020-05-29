@@ -29,7 +29,8 @@ public:
                     QDirIterator::IteratorFlags flags)
     {
         DUrl url(path);
-        QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
+        const QStringList &nodes = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
+        QString udiskspath = nodes.isEmpty() ? QString() : nodes.first();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
         if (blkdev->mountPoints().size()) {
@@ -199,7 +200,8 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
 
     d->proxyOnDisk.clear();
 
-    QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
+    QString udiskspath = nodes.isEmpty() ? QString() : nodes.first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
 
     if (blkdev->mountPoints().size()) {
