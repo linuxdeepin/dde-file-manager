@@ -28,6 +28,8 @@ public:
                     QDir::Filters filter,
                     QDirIterator::IteratorFlags flags)
     {
+        qDebug() << "create DFMShadowedDirIterator for: " << path;
+
         DUrl url(path);
         QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));

@@ -168,6 +168,7 @@ DAbstractFileWatcher::DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd,
 {
     Q_ASSERT(url.isValid());
 
+    qDebug() << "add file watcher for: " << url;
     d_ptr->url = url;
     DAbstractFileWatcherPrivate::watcherList << this;
 }

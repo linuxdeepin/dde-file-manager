@@ -2331,6 +2331,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         }
     }
 
+    qDebug() << "done to setRootUrl:" << url;
     return true;
 }
 

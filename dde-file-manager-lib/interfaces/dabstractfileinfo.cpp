@@ -111,6 +111,8 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
     : q_ptr(qq)
     , fileUrl(url)
 {
+    qDebug() << "new DAbstractFileInfoPrivate for: " << url;
+
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
     if (hasCache && url.isValid() && (QThread::currentThread()) &&  qApp && qApp->thread() && QThread::currentThread() == qApp->thread()) {
         QWriteLocker locker(urlToFileInfoMapLock);
