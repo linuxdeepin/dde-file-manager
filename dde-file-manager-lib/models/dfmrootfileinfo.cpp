@@ -42,7 +42,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+
 #include <QTimer>
+
 
 class DFMRootFileInfoPrivate
 {
@@ -632,29 +634,30 @@ QString DFMRootFileInfo::udisksDisplayName()
 
     if (d->mps.contains(QByteArray("/\0", 2))) {
         return QCoreApplication::translate("PathManager", "System Disk");
-    } else if (!d->idUUID.isEmpty()){
+
+    } else if (!d->idUUID.isEmpty()) {
         if (d->currentUUID.isEmpty() || d->backupUUID.isEmpty()) {
             QFile recoveryFile(QString("/etc/%1/ab-recovery.json").arg(qApp->organizationName()));
 
-            if (!recoveryFile.open(QIODevice::ReadOnly)) {
-                qDebug() << recoveryFile.fileName();
-            }
-            QByteArray recoveryData = recoveryFile.readAll();
-            recoveryFile.close();
+            if (recoveryFile.open(QIODevice::ReadOnly)) {
 
-            QJsonParseError parseJsonErr;
-            QJsonDocument jsonDoc(QJsonDocument::fromJson(recoveryData, &parseJsonErr));
-            if(!(parseJsonErr.error == QJsonParseError::NoError)) {
-                qDebug() << "decode json file error, create new json data！";
-            } else {
-                QJsonObject rootObj = jsonDoc.object();
-                const QString currentcurrentUUIDKey = "Current";
-                const QString backupUUIDKey = "Backup";
-                if (rootObj.contains(currentcurrentUUIDKey)) {
-                    d->currentUUID = rootObj[currentcurrentUUIDKey].toString();
-                }
-                if (rootObj.contains(backupUUIDKey)) {
-                    d->backupUUID = rootObj[backupUUIDKey].toString();
+                QByteArray recoveryData = recoveryFile.readAll();
+                recoveryFile.close();
+
+                QJsonParseError parseJsonErr;
+                QJsonDocument jsonDoc(QJsonDocument::fromJson(recoveryData, &parseJsonErr));
+                if (!(parseJsonErr.error == QJsonParseError::NoError)) {
+                    qDebug() << "decode json file error, create new json data！";
+                } else {
+                    QJsonObject rootObj = jsonDoc.object();
+                    const QString currentcurrentUUIDKey = "Current";
+                    const QString backupUUIDKey = "Backup";
+                    if (rootObj.contains(currentcurrentUUIDKey)) {
+                        d->currentUUID = rootObj[currentcurrentUUIDKey].toString();
+                    }
+                    if (rootObj.contains(backupUUIDKey)) {
+                        d->backupUUID = rootObj[backupUUIDKey].toString();
+                    }
                 }
             }
         }
@@ -673,7 +676,7 @@ QString DFMRootFileInfo::udisksDisplayName()
         if ((!drv->mediaAvailable()/* || d->idUUID.isEmpty()*/) && drv->mediaCompatibility().join(" ").contains("optical")) { // uuid 为空认为光盘未挂载或已卸载（托盘已弹出），此时强制使用无光盘的名称
             d->blk->unmount({});
             d->size = 0;
-            QTimer::singleShot(100, []{
+            QTimer::singleShot(100, [] {
                 emit fileSignalManager->requestUpdateComputerView();
             });
             QString maxmediacompat;
