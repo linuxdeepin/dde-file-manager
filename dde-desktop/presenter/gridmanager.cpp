@@ -255,7 +255,7 @@ public:
         m_gridItems.insert(pos, itemId);
         m_itemGrids.insert(itemId, pos);
         int index = indexOfGridPos(pos);
-        if (m_cellStatus.length() <= index) {
+        if (m_cellStatus.length() <= index || index < 0) {
             return false;
         }
         m_cellStatus[index] = true;
