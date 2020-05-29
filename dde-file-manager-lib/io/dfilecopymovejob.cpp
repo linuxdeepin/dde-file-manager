@@ -1581,8 +1581,8 @@ void DFileCopyMoveJobPrivate::updateMoveProgress()
         if (realProgress > lastProgress)
             lastProgress = realProgress;
     } else {
-        if (completedFilesCount < totalFilesCount && totalFilesCount > 0) {
-            qreal fuzzyProgress = qreal(completedFilesCount) / totalFilesCount;
+        if (completedFilesCount < totalMoveFilesCount && totalMoveFilesCount > 0) {
+            qreal fuzzyProgress = qreal(completedFilesCount) / totalMoveFilesCount;
             if (fuzzyProgress < 0.5 && fuzzyProgress > lastProgress)
                 lastProgress = fuzzyProgress;
         }
@@ -1608,7 +1608,10 @@ void DFileCopyMoveJobPrivate::updateSpeed()
         speed = 0;
     }
 
-    Q_EMIT q_ptr->speedUpdated(speed);
+    // 复制文件时显示速度
+    if (mode == DFileCopyMoveJob::CopyMode) {
+        Q_EMIT q_ptr->speedUpdated(speed);
+    }
 }
 
 void DFileCopyMoveJobPrivate::_q_updateProgress()
@@ -1813,10 +1816,12 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
     // DFileStatisticsJob 统计数量很慢，自行统计
     QtConcurrent::run([this, sourceUrls, d] () {
-        for (const auto &url : sourceUrls) {
-            QStringList list;
-            FileUtils::recurseFolder(url.toLocalFile(), "", &list);
-            d->totalFilesCount += list.size();
+        if (d->mode == MoveMode) {
+            for (const auto &url : sourceUrls) {
+                QStringList list;
+                FileUtils::recurseFolder(url.toLocalFile(), "", &list);
+                d->totalMoveFilesCount += list.size();
+            }
         }
     });
 
