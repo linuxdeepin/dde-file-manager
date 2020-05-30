@@ -2282,22 +2282,12 @@ void CanvasGridView::initConnection()
 
 void CanvasGridView::updateCanvas()
 {
-    //if X11
-    //auto outRect = qApp->primaryScreen()->geometry();
-    //else
     QRect outRect;
-
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+    if (DesktopInfo().waylandDectected()) {
         outRect = Display::instance()->primaryRect();
     } else {
         outRect = qApp->primaryScreen()->geometry();
     }
-
 
     auto inRect = d->canvasRect;
 
