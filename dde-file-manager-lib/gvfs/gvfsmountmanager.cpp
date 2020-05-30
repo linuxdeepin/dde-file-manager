@@ -442,13 +442,21 @@ void GvfsMountManager::monitor_mount_added_root(GVolumeMonitor *volume_monitor, 
     QMount qMount = gMountToqMount(mount);
     qCDebug(mountManager()) << qMount;
 
-    foreach (QString key, DiskInfos.keys()) {
-        QDiskInfo info = DiskInfos.value(key);
-        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
-            emit gvfsMountManager->volume_added(info);
-            return;
-        }
-    }
+    QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
+    if (qMount.can_unmount())
+        diskInfo.setCan_unmount(true);
+    if (qMount.can_eject())
+        diskInfo.setCan_eject(true);
+    DiskInfos.insert(diskInfo.id(), diskInfo);
+    emit gvfsMountManager->volume_added(diskInfo);
+
+//    foreach (QString key, DiskInfos.keys()) {
+//        QDiskInfo info = DiskInfos.value(key);
+//        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
+//            emit gvfsMountManager->volume_added(info);
+//            return;
+//        }
+//    }
 }
 
 void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor, GMount *mount)
@@ -457,13 +465,18 @@ void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor
     qCDebug(mountManager()) << "==============================monitor_mount_removed_root==============================";
     QMount qMount = gMountToqMount(mount);
     qCDebug(mountManager()) << qMount;
-    foreach (QString key, DiskInfos.keys()) {
-        QDiskInfo info = DiskInfos.value(key);
-        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
-            emit gvfsMountManager->volume_removed(info);
-            return;
-        }
-    }
+
+    QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
+    DiskInfos.remove(diskInfo.id());
+    emit gvfsMountManager->volume_removed(diskInfo);
+
+//    foreach (QString key, DiskInfos.keys()) {
+//        QDiskInfo info = DiskInfos.value(key);
+//        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
+//            emit gvfsMountManager->volume_removed(info);
+//            return;
+//        }
+//    }
 }
 
 
