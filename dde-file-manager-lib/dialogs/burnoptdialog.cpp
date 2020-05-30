@@ -157,6 +157,9 @@ void BurnOptDialogPrivate::setupUi()
     w_content->layout()->addWidget(lb_volname);
 
     le_volname = new QLineEdit();
+    QRegExp regx("[^\\\\/\':\\*\\?\"<>|%&.]+"); //屏蔽特殊字符
+    QValidator *validator = new QRegExpValidator(regx, le_volname);
+    le_volname->setValidator(validator);
     le_volname->setMaxLength(32);
     QObject::connect(le_volname, &QLineEdit::textChanged, [this] {
         while (le_volname->text().toUtf8().length() > 32) {
