@@ -345,8 +345,6 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
-                    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
-                    qDebug() << "add send action: " << pDeviceinfo->getDiskInfo().name();
                     QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
                     action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
                     action->setProperty("urlList", DUrl::toStringList(urlList));
