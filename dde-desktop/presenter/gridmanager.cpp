@@ -489,8 +489,10 @@ public:
         }
 
         if (0 == coordWidth && 0 == coordHeight) {
+            QStringList items = m_overlapItems;
             resetGridSize(w, h);
-            return false;
+            m_overlapItems = items;
+            return !m_overlapItems.isEmpty();
         } else {
             qDebug() << "change grid from" << coordWidth << coordHeight
                      << "to" << w << h;
