@@ -141,6 +141,8 @@ void JobController::setCountCeiling(int countCeiling)
 void JobController::run()
 {
     if (!m_iterator) {
+        qDebug() << "m_iterator not ready";
+
         const auto &&list = DFileService::instance()->getChildren(this, m_fileUrl, m_nameFilters, m_filters, QDirIterator::NoIteratorFlags, m_silent);
 
         emit childrenUpdated(list);
@@ -160,6 +162,8 @@ void JobController::run()
 
     bool update_children = true;
 
+    qDebug() << " get the rootfile: " << m_fileUrl;
+
     const DAbstractFileInfoPointer &rootInfo = DFileService::instance()->createFileInfo(this, m_fileUrl);
 
     if (rootInfo && !rootInfo->hasOrderly() && fileInfoQueue.count() > 0) {
@@ -167,6 +171,9 @@ void JobController::run()
         emit childrenUpdated(fileInfoQueue);
         emit addChildrenList(fileInfoQueue);
     }
+
+    qDebug() << " fetching childrens for: " << m_fileUrl;
+
     while (m_iterator->hasNext()) {
         if (m_state == Paused) {
             mutex.lock();
@@ -181,6 +188,8 @@ void JobController::run()
         m_iterator->next();
         //判读ios手机，传输慢，需要特殊处理优化
         DAbstractFileInfoPointer fileinfo = m_iterator->fileInfo();
+        qDebug() << "continue for fileinfo:" << fileinfo->filePath();
+
         if (update_children) {
             fileInfoQueue.enqueue(fileinfo);
 
@@ -219,6 +228,8 @@ void JobController::run()
     }
 
     setState(Stoped);
+
+    qDebug() << " end the JobController thread running!";
 }
 
 void JobController::setState(JobController::State state)

@@ -1592,6 +1592,8 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 {
     Q_D(DFileSystemModel);
 
+    qDebug() << "enter fetchMore function";
+
     if (d->eventLoop || !d->rootNode) {
         return;
     }
@@ -1610,6 +1612,8 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         if (d->jobController->isFinished()) {
             d->jobController->deleteLater();
         } else {
+            qDebug() << "jobController not finished, terminate it soon!";
+
             QEventLoop eventLoop;
             QPointer<DFileSystemModel> me = this;
             d->eventLoop = &eventLoop;
@@ -1626,11 +1630,12 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
                 d->jobController->terminate();
                 d->jobController->quit();
                 d->jobController.clear();
-
+                qDebug() << "break the fetchMore";
                 return;
             }
 
             if (!me) {
+                qDebug() << "break the fetchMore";
                 return;
             }
         }
@@ -1639,8 +1644,11 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
 
     if (!d->jobController) {
+        qDebug() << "jobController not ready, break the fetchMore";
         return;
     }
+
+    qDebug() << "new jobController is created";
 
     if (!d->rootNode->fileInfo->hasOrderly()) {
         // 对于无需列表, 较少返回结果的等待时间
@@ -1666,6 +1674,8 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     d->childrenUpdated = false;
     d->jobController->start();
     d->rootNodeManager->setEnable(true);
+
+    qDebug() << "end fetchMore function";
 }
 
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
@@ -1949,6 +1959,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
                 this, SLOT(_q_onFileUpdated(DUrl)));
     }
 
+    qDebug() << "done to setRootUrl: " << fileUrl;
     return index(fileUrl);
 }
 
@@ -2565,6 +2576,8 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
+
+    qDebug() << "enter updateChildrenOnNewThread with DAbstractFileInfoPointer list count: " << list.size();
 
     if (d->jobController) {
         d->jobController->pause();

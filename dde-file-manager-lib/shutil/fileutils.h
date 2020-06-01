@@ -119,6 +119,7 @@ public:
     static void umountAVFS();
 
     static bool isDesktopFile(const QString& filePath);
+    static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
 };
 
 #endif // FILEUTILS_H

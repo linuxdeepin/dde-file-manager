@@ -149,7 +149,7 @@ public:
     QList<QPair<DUrl, DUrl>> completedFileList;
     QList<QPair<DUrl, DUrl>> completedDirectoryList;
     int completedFilesCount = 0;
-    int totalFilesCount = 1;
+    int totalMoveFilesCount = 1;
     qint64 completedDataSize = 0;
     // 已经写入到block设备的总大小
     qint64 completedDataSizeOnBlockDevice = 0;
