@@ -2247,6 +2247,7 @@ bool DFileView::setRootUrl(const DUrl &url)
                 QDBusError err = blkdev->lastError();
                 if (err.isValid() && !err.name().toLower().contains("notmounted")) { // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
                     getOpticalDriveMutex()->unlock();
+                    qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
                     return false;
                 }
                 if (!ISOMaster->acquireDevice(devpath))
@@ -2256,6 +2257,7 @@ bool DFileView::setRootUrl(const DUrl &url)
                     QThread::msleep(1000);
                     QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
                     diskdev->eject({});
+                    qDebug() << "setRootUrl failed:" << blkdev->drive();
                     if (diskdev->optical())
                         QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
                     getOpticalDriveMutex()->unlock();
