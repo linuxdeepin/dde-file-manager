@@ -966,6 +966,9 @@ QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
             break;
         }
     }
+    if (!info.isValid()) {
+        qDebug() << "获取磁盘信息失败";
+    }
     info.updateGvfsFileSystemInfo();
     return info;
 }
@@ -1020,8 +1023,9 @@ void GvfsMountManager::startMonitor()
         listDrives();
         listVolumes();
         listMounts();
-        updateDiskInfos();
+//        updateDiskInfos();
     }
+    updateDiskInfos(); //磁盘信息root用户也需要刷新,否则会出现root用户只能挂载不能卸载的情况
 #ifdef DFM_MINIMUM
     qDebug() << "Don't auto mount disk";
 #else
