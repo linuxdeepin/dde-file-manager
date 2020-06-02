@@ -63,11 +63,9 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  libdde-file-manager( =${binary:Version}),
-Conflicts: dde-file-manager-oem
-Replaces: dde-file-manager-oem
 Recommends: dde-qt5integration, avfs, samba
-Description: File manager front end
- File manager front-end of Deepin OS
+Description: File manager dialog front end
+ File manager front-end dialog of Deepin OS
 
 Package: libdde-file-manager
 Architecture: any

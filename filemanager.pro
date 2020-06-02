@@ -7,16 +7,16 @@ CONFIG+=BUILD_MINIMUM DISABLE_ANYTHING
 SUBDIRS  += \
     dde-file-manager \
     dde-file-manager-daemon \
-    dde-file-manager-lib \    
+    dde-desktop \
+    dde-file-manager-lib \
     gschema
 
 
 !CONFIG(BUILD_MINIMUM) {
 message("fully build dde-file-manager")
 SUBDIRS += \
-    dde-file-manager-plugins \   
+    dde-file-manager-plugins \
     dde-dock-plugins \
-    dde-desktop \
     dde-file-thumbnail-tool
    }
 
