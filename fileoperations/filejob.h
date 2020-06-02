@@ -29,7 +29,7 @@
 #include <QMap>
 #include <QElapsedTimer>
 #include <QUrl>
-#include "durl.h"
+#include "interfaces/durl.h"
 #include <QStorageInfo>
 
 #define TRANSFER_RATE 5

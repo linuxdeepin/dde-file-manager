@@ -25,7 +25,7 @@
 #ifndef DTASKDIALOG_H
 #define DTASKDIALOG_H
 
-#include "dfmgenericplugin.h"
+#include "interfaces/plugins/dfmgenericplugin.h"
 #include "dfilecopymovejob.h"
 
 #include <dcircleprogress.h>

@@ -11,7 +11,7 @@
 
 #include <QObject>
 
-#include "dfmglobal.h"
+#include "interfaces/dfmglobal.h"
 
 DFM_BEGIN_NAMESPACE
 

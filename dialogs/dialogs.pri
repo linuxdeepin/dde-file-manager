@@ -1,3 +1,5 @@
+INCLUDEPATH += $$top_srcdir \
+   $$top_srcdir/utils 
 HEADERS += \
     $$PWD/dtaskdialog.h \
     $$PWD/dfmtaskwidget.h
