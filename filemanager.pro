@@ -2,15 +2,23 @@ TEMPLATE  = subdirs
 
 include(./common/common.pri)
 
+CONFIG+=BUILD_MINIMUM DISABLE_ANYTHING
+
 SUBDIRS  += \
     dde-file-manager \
     dde-file-manager-daemon \
-    dde-file-manager-lib \
-    dde-file-manager-plugins \
-    dde-dock-plugins\
-    dde-desktop \
-    dde-file-thumbnail-tool \
+    dde-file-manager-lib \    
     gschema
+
+
+!CONFIG(BUILD_MINIMUM) {
+message("fully build dde-file-manager")
+SUBDIRS += \
+    dde-file-manager-plugins \   
+    dde-dock-plugins \
+    dde-desktop \
+    dde-file-thumbnail-tool
+   }
 
 !CONFIG(DISABLE_ANYTHING) {
     message("Deepin Anything server plugin enabled for" $$ARCH)
@@ -22,4 +30,3 @@ dde-dock-plugins.depends = dde-file-manager-lib
 dde-desktop.depends = dde-file-manager-lib
 dde-file-manager-daemon.depends = dde-file-manager-lib
 deepin-anything-server-plugins.depends = dde-file-manager-lib
-#dde-sharefiles.depends = dde-file-manager-lib

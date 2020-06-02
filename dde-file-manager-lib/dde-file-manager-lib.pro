@@ -8,7 +8,7 @@
 
 include(../common/common.pri)
 
-QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs network
+QT       += core gui svg dbus x11extras concurrent multimedia dbus xml
 #private
 QT       += gui-private
 
@@ -132,8 +132,8 @@ HEADERS += \
     views/dfiledialog.h \
     interfaces/dfiledialoghandle.h \
     dialogs/shareinfoframe.h \
-    interfaces/dfmstandardpaths.h \
     interfaces/dfmglobal.h \
+    interfaces/dfmstandardpaths.h \
     controllers/sharecontroler.h \
     models/sharefileinfo.h \
     interfaces/dfileviewhelper.h \

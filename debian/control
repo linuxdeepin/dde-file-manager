@@ -33,7 +33,6 @@ Build-Depends:
  libxcb-util0-dev,
  qtdeclarative5-dev,
  deepin-gettext-tools,
- libkf5codecs-dev,
  libdtkcore-dev,
  libdtkcore5-bin,
  libdmr-dev,
@@ -64,42 +63,18 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  libdde-file-manager( =${binary:Version}),
- socat,
- deepin-anything-dkms[i386 amd64],
- deepin-anything-server[i386 amd64],
- libblockdev-crypto2,
- dde-device-formatter
 Conflicts: dde-file-manager-oem
 Replaces: dde-file-manager-oem
 Recommends: dde-qt5integration, avfs, samba
 Description: File manager front end
  File manager front-end of Deepin OS
 
-Package: dde-desktop
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
-Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
-Replaces: dde-file-manager-oem
-Recommends: qt5dxcb-plugin, deepin-screensaver
-Description: deepin desktop-environment - desktop module
- Deepin Desktop Environment (DDE) - desktop module.
-
-Package: dde-disk-mount-plugin
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
-Description: plugin of dde-dock
- Disk mount plugin of dde-dock which is created by libdde-file-manager
-
 Package: libdde-file-manager
 Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
- libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends(>=1.27.3),
- cryptsetup,
- libkf5codecs5,
- deepin-anything-libs[i386 amd64]
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library

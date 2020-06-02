@@ -255,7 +255,7 @@ public:
         m_gridItems.insert(pos, itemId);
         m_itemGrids.insert(itemId, pos);
         int index = indexOfGridPos(pos);
-        if (m_cellStatus.length() <= index) {
+        if (m_cellStatus.length() <= index || index < 0) {
             return false;
         }
         m_cellStatus[index] = true;
@@ -489,8 +489,10 @@ public:
         }
 
         if (0 == coordWidth && 0 == coordHeight) {
+            QStringList items = m_overlapItems;
             resetGridSize(w, h);
-            return false;
+            m_overlapItems = items;
+            return !m_overlapItems.isEmpty();
         } else {
             qDebug() << "change grid from" << coordWidth << coordHeight
                      << "to" << w << h;

@@ -59,7 +59,7 @@ unix {
     }
 }
 
-INCLUDEPATH += $$top_srcdir \
+	INCLUDEPATH += $$top_srcdir \
                $$top_srcdir/utils \
                $$top_srcdir/dde-file-manager-lib/interfaces \
                $$top_srcdir/dde-file-manager-lib/interfaces/plugins \

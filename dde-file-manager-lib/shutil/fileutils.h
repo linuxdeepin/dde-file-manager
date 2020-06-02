@@ -32,8 +32,8 @@
 #include <QDir>
 #include "desktopfile.h"
 #include "properties.h"
-#include "durl.h"
-#include "dfmglobal.h"
+#include "interfaces/durl.h"
+#include "interfaces/dfmglobal.h"
 #include "dabstractfileinfo.h"
 
 /**

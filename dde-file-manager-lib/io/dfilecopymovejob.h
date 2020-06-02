@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-#include <dfmglobal.h>
+#include <interfaces/dfmglobal.h>
 
 class DAbstractFileInfo;
 

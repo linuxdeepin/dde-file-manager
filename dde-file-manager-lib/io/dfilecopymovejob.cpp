@@ -1518,32 +1518,43 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, con
 
 void DFileCopyMoveJobPrivate::updateProgress()
 {
-    const qint64 total_size = fileStatistics->totalSize();
-    //通过getCompletedDataSize取出的已传输的数据大小后期会远超实际数据大小，这种情况下直接使用completedDataSize
-    const qint64 data_size = getCompletedDataSize() > completedDataSize ? completedDataSize : getCompletedDataSize();
-    //fix: 删除文件时出现报错(回收箱和光驱处理删除文件)
-    if (data_size == 0) {
-        completedDataSizeOnBlockDevice = total_size;
-    } else {
-        completedDataSizeOnBlockDevice = data_size;
+    switch (mode) {
+    case DFileCopyMoveJob::CopyMode:
+        updateCopyProgress();
+        break;
+    case DFileCopyMoveJob::MoveMode:
+        updateMoveProgress();
+        break;
     }
 
-    if (total_size == 0)
+}
+
+void DFileCopyMoveJobPrivate::updateCopyProgress()
+{
+    const qint64 totalSize = fileStatistics->totalSize();
+    //通过getCompletedDataSize取出的已传输的数据大小后期会远超实际数据大小，这种情况下直接使用completedDataSize
+    qint64 dataSize(getCompletedDataSize());
+    // completedDataSize 可能一直为 0
+    if (dataSize > completedDataSize && completedDataSize > 0) {
+        dataSize = completedDataSize;
+    }
+
+    if (totalSize == 0)
         return;
 
     if (fileStatistics->isFinished()) {
-        qreal real_progress = qreal(data_size) / total_size;
-        if (real_progress > lastProgress)
-            lastProgress = real_progress;
-        qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", data_size, fileStatistics->totalSize());
+        qreal realProgress = qreal(dataSize) / totalSize;
+        if (realProgress > lastProgress)
+            lastProgress = realProgress;
+        qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", dataSize, fileStatistics->totalSize());
     } else {
         //预设一个总大小，让前期进度平滑一些（目前阈值取1mb）
-        qreal virtualSize = total_size < 1000000 ? 1000000 : total_size;
-        if (data_size < virtualSize /*&& total_size > 0*/) {
+        qreal virtualSize = totalSize < 1000000 ? 1000000 : totalSize;
+        if (dataSize < virtualSize /*&& total_size > 0*/) {
          // 取一个时时的总大小来计算一个模糊进度
-         qreal fuzzy_progress = qreal(data_size) / virtualSize;
-         if (fuzzy_progress < 0.3 && fuzzy_progress > lastProgress)
-             lastProgress = fuzzy_progress;
+         qreal fuzzyProgress = qreal(dataSize) / virtualSize;
+         if (fuzzyProgress < 0.3 && fuzzyProgress > lastProgress)
+             lastProgress = fuzzyProgress;
         }
     }
 
@@ -1552,11 +1563,35 @@ void DFileCopyMoveJobPrivate::updateProgress()
         lastProgress = 0.01;
     }
 
-    Q_EMIT q_ptr->progressChanged(qMin(lastProgress, 1.0), data_size);
+    Q_EMIT q_ptr->progressChanged(qMin(lastProgress, 1.0), dataSize);
 
     if (currentJobDataSizeInfo.first > 0) {
         Q_EMIT q_ptr->currentFileProgressChanged(qMin(qreal(currentJobDataSizeInfo.second) / currentJobDataSizeInfo.first, 1.0), currentJobDataSizeInfo.second);
     }
+}
+
+
+// use count calculate progress when mode is move
+void DFileCopyMoveJobPrivate::updateMoveProgress()
+{
+    Q_Q(DFileCopyMoveJob);
+    int totalCount = q->totalFilesCount();
+    if (totalCount > 0) {
+        qreal realProgress = qreal(completedFilesCount) / totalCount;
+        if (realProgress > lastProgress)
+            lastProgress = realProgress;
+    } else {
+        if (completedFilesCount < totalMoveFilesCount && totalMoveFilesCount > 0) {
+            qreal fuzzyProgress = qreal(completedFilesCount) / totalMoveFilesCount;
+            if (fuzzyProgress < 0.5 && fuzzyProgress > lastProgress)
+                lastProgress = fuzzyProgress;
+        }
+    }
+    // 保证至少出现%1
+   if (lastProgress < 0.02) {
+       lastProgress = 0.01;
+   }
+   Q_EMIT q_ptr->progressChanged(qMin(lastProgress, 1.0), 0);
 }
 
 void DFileCopyMoveJobPrivate::updateSpeed()
@@ -1573,7 +1608,10 @@ void DFileCopyMoveJobPrivate::updateSpeed()
         speed = 0;
     }
 
-    Q_EMIT q_ptr->speedUpdated(speed);
+    // 复制文件时显示速度
+    if (mode == DFileCopyMoveJob::CopyMode) {
+        Q_EMIT q_ptr->speedUpdated(speed);
+    }
 }
 
 void DFileCopyMoveJobPrivate::_q_updateProgress()
@@ -1775,6 +1813,17 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
     }
 
     d->fileStatistics->start(sourceUrls);
+
+    // DFileStatisticsJob 统计数量很慢，自行统计
+    QtConcurrent::run([this, sourceUrls, d] () {
+        if (d->mode == MoveMode) {
+            for (const auto &url : sourceUrls) {
+                QStringList list;
+                FileUtils::recurseFolder(url.toLocalFile(), "", &list);
+                d->totalMoveFilesCount += list.size();
+            }
+        }
+    });
 
     QThread::start();
 }
