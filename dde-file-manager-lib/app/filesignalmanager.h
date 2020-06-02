@@ -173,6 +173,9 @@ signals:
     /*request abort copy/move job*/
     void requestAbortJob(const DUrl& url);
 
+    /*request abort copy/move job for DFileCopyMoveJob*/
+    void requestAsynAbortJob(const DUrl& url);
+
     /*request start file job task update timer*/
     void requestStartUpdateJobTimer();
 
