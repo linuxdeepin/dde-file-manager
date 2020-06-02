@@ -656,7 +656,7 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
             (qVolume.activation_root_uri().contains("") || qVolume.unix_device().contains("/dev/sr"))) {
         //fix: 临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
         QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        QString tempMediaPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + getVolTag(volume);
+        QString tempMediaPath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + getVolTag(volume);
         QDir(tempMediaPath).removeRecursively();
 
         //fix: 设置光盘容量属性

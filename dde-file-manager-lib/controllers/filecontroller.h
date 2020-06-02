@@ -83,6 +83,9 @@ public:
     QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
 private:
     QString checkDuplicateName(const QString &name) const;
+    DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false, bool force = false) const;
+    bool isExtDeviceJobCase(void* curJob, const DUrl& url) const;
+    bool isDiscburnJobCase(void* curJob, const DUrl& url) const;
 };
 
 #endif // FILECONTROLLER_H

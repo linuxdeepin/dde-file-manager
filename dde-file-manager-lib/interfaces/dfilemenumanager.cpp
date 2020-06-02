@@ -360,7 +360,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
                     //g_deleteDirPath="/home/union/.cache/deepin/discburn/_dev_sr1"
                     //                DFileMenuManager::g_deleteDirPath = "/home/" + tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
-                    DFileMenuManager::g_deleteDirPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
+                    DFileMenuManager::g_deleteDirPath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + tempId;
                     //获取用户名有问题，fix
 
                     // 禁用发送到列表中的本设备项
