@@ -894,6 +894,7 @@ public:
         , rootNodeManager(new FileNodeManagerThread(qq))
         , needQuitUpdateChildren(false)
     {
+        _q_processFileEvent_runing.store(false);
         if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool()) {
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
         } else {
@@ -953,7 +954,7 @@ public:
     bool readOnly = false;
 
     /// add/rm file event
-    bool _q_processFileEvent_runing = false;
+    std::atomic<bool> _q_processFileEvent_runing;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
     QQueue<QPair<EventType, DUrl>> laterFileEventQueue;
 
@@ -969,7 +970,7 @@ public:
 
 DFileSystemModelPrivate::~DFileSystemModelPrivate()
 {
-    if (_q_processFileEvent_runing) {
+    if (_q_processFileEvent_runing.load()) {
         fileEventQueue.clear();
     }
 }
@@ -1043,7 +1044,7 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     }
 
 //    rootNodeManager->addFile(info);
-    if (!_q_processFileEvent_runing) {
+    if (!_q_processFileEvent_runing.load()) {
         fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
         while (!laterFileEventQueue.isEmpty()) {
             fileEventQueue.enqueue(laterFileEventQueue.dequeue());
@@ -1066,7 +1067,7 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
         flf.remove(fileUrl.fileName());
         flf.save();
     }
-    if (!_q_processFileEvent_runing) {
+    if (!_q_processFileEvent_runing.load()) {
         fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
         while (!laterFileEventQueue.isEmpty()) {
             fileEventQueue.enqueue(laterFileEventQueue.dequeue());
@@ -1150,11 +1151,14 @@ void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 
 void DFileSystemModelPrivate::_q_processFileEvent()
 {
-    if (_q_processFileEvent_runing) {
+    if (_q_processFileEvent_runing.load()) {
         return;
     }
 
-    _q_processFileEvent_runing = true;
+    // CAS
+    bool expect = false;
+    _q_processFileEvent_runing.compare_exchange_strong(expect, true);
+
     qDebug() << "_q_processFileEvent";
     Q_Q(DFileSystemModel);
     while (!fileEventQueue.isEmpty()) {
@@ -1207,7 +1211,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         }
     }
 
-    _q_processFileEvent_runing = false;
+    _q_processFileEvent_runing.store(false);
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
