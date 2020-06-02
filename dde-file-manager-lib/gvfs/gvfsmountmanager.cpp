@@ -73,6 +73,7 @@ QStringList GvfsMountManager::NoVolumes_Mounts_Keys = {}; // key is mount point 
 QStringList GvfsMountManager::Lsblk_Keys = {}; // key is got by lsblk
 
 MountSecretDiskAskPasswordDialog* GvfsMountManager::mountSecretDiskAskPasswordDialog = nullptr;
+MountAskPasswordDialog *GvfsMountManager::askPasswordDialog = nullptr;
 
 bool GvfsMountManager::AskingPassword = false;
 QJsonObject GvfsMountManager::SMBLoginObj = {};
@@ -791,15 +792,17 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
 
 static QJsonObject requestPasswordDialog(WId parentWindowId, bool showDomainLine, const QJsonObject &data)
 {
-    MountAskPasswordDialog askPasswordDialog(WindowManager::getWindowById(parentWindowId));
+    //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
+    if (!GvfsMountManager::instance()->askPasswordDialog) {
+        GvfsMountManager::instance()->askPasswordDialog = new MountAskPasswordDialog(WindowManager::getWindowById(parentWindowId));
+    }
+    GvfsMountManager::instance()->askPasswordDialog->setLoginData(data);
+    GvfsMountManager::instance()->askPasswordDialog->setDomainLineVisible(showDomainLine);
 
-    askPasswordDialog.setLoginData(data);
-    askPasswordDialog.setDomainLineVisible(showDomainLine);
-
-    int ret = askPasswordDialog.exec();
+    int ret = GvfsMountManager::instance()->askPasswordDialog->exec();
 
     if (ret == DDialog::Accepted) {
-        return askPasswordDialog.getLoginData();
+        return GvfsMountManager::instance()->askPasswordDialog->getLoginData();
     }
 
     return QJsonObject();
@@ -807,6 +810,15 @@ static QJsonObject requestPasswordDialog(WId parentWindowId, bool showDomainLine
 
 void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message, const char *default_user, const char *default_domain, GAskPasswordFlags flags)
 {
+    //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
+    if (askPasswordDialog){
+        askPasswordDialog->deleteLater();
+        askPasswordDialog = nullptr;
+        DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                     tr("Mounting device error"),QString("用户名或密码错误，请重新输入"));
+        return;
+    }
+
     bool anonymous = g_mount_operation_get_anonymous(op);
     GPasswordSave passwordSave = g_mount_operation_get_password_save(op);
 
@@ -830,6 +842,8 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     obj.insert("passwordSave", passwordSave);
 
     QJsonObject loginObj = DThreadUtil::runInMainThread(requestPasswordDialog, MountEvent.windowId(), MountEvent.fileUrl().isSMBFile(), obj);
+
+
 
     if (!loginObj.isEmpty()) {
         anonymous = loginObj.value("anonymous").toBool();
@@ -1394,6 +1408,15 @@ MountStatus GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
 
 void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data)
 {
+    //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
+    bool bshow = true;
+    if (askPasswordDialog) {
+        askPasswordDialog->deleteLater();
+        askPasswordDialog = nullptr;
+    }
+    else {
+        bshow = false;
+    }
     gboolean succeeded;
     GError *error = NULL;
     GMountOperation *op = static_cast<GMountOperation*>(user_data);
@@ -1433,7 +1456,8 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
                                                  tr("Mounting device error"), QString(error->message));
         }
         else {
-            if(status ==MOUNT_PASSWORD_WRONG)
+            //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
+            if(status ==MOUNT_PASSWORD_WRONG && bshow)
             {
                     DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                                  tr("Mounting device error"),QString("用户名或密码错误，请重新输入"));
