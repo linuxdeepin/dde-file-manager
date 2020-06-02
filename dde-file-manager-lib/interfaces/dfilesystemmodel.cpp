@@ -1046,7 +1046,7 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     if (!_q_processFileEvent_runing) {
         fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
         while (!laterFileEventQueue.isEmpty()) {
-            laterFileEventQueue.enqueue(laterFileEventQueue.dequeue());
+            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
         }
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
     } else {
@@ -1069,7 +1069,7 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
     if (!_q_processFileEvent_runing) {
         fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
         while (!laterFileEventQueue.isEmpty()) {
-            laterFileEventQueue.enqueue(laterFileEventQueue.dequeue());
+            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
         }
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
     } else {
