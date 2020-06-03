@@ -375,16 +375,10 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             return;
         }
         QMap<QString, QString> data;
-        bool isDelete = false; // 删除模式下不需要显示速度
         if (job->mode() == DFileCopyMoveJob::CopyMode) {
             data["type"] = "copy";
         } else if (job->mode() == DFileCopyMoveJob::MoveMode) {
-            if (job->targetUrl().isValid()) {
-                data["type"] = "move";
-            } else {
-                isDelete = true;
-                data["type"] = "delete";
-            }
+            data["type"] = job->targetUrl().isValid() ? "move" : "delete";
         }
 
         data["sourcePath"] = from.path();
@@ -393,7 +387,7 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
         data["destination"] = to.isValid() ? to.parentUrl().path() : QString();
         bool ok = false;
         qint64 speed =  wid->property("speed").toLongLong(&ok);
-        if (ok && !isDelete) {
+        if (ok) {
             data["speed"] = FileUtils::formatSize(speed) + "/s";
         }
         qint64 totalDataSize = wid->property("totalDataSize").toLongLong(&ok);

@@ -613,16 +613,6 @@ void BackgroundHelper::onScreenRemoved(QScreen *screen)
 
 void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel *l)
 {
-    //性能优化，多次修改时判断区域是否相同，相同则跳过，关联task#23773
-    if (l->geometry() == screen->geometry()){
-        qWarning() << "__screen" << screen->geometry()
-                   << "background" << l->geometry()
-                   << "windowHandle handle" << l->windowHandle()->handle()->geometry()
-                   << "screen handle" << screen->handle()->geometry()
-                   << "skip update geometry";
-        return;
-    }
-
     // 因为接下来会发出backgroundGeometryChanged信号，
     // 所以此处必须保证QWidget::geometry的值和接下来对其windowHandle()对象设置的geometry一致
     l->setGeometry(screen->geometry());

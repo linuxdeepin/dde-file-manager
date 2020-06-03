@@ -131,9 +131,8 @@ void FileUtils::recurseFolder(const QString &path, const QString &parent,
     // If current file is folder perform this method again. Otherwise add file
     // to list of results
     QString current = parent + QDir::separator() + files.at(i);
-    QString next = path + QDir::separator() + files.at(i);
-    if (QFileInfo(next).isDir()) {
-      recurseFolder(next, current, list);
+    if (QFileInfo(files.at(i)).isDir()) {
+      recurseFolder(files.at(i), current, list);
     }
     else list->append(current);
   }
