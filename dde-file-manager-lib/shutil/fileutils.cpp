@@ -754,6 +754,21 @@ bool FileUtils::openFilesByApp(const QString& desktopFile, const QStringList& fi
     }
     g_object_unref(appInfo);
 
+    if (ok){
+        // workaround since DTK apps doesn't support the recent file spec.
+        // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
+        // the correct approach: let the app add it to the recent list.
+        // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+        QString filePath = filePaths.first();
+        filePath = DUrl::fromUserInput(filePath).path();
+        QString mimetype = getFileMimetype(filePath);
+        for (const QString &tmp : filePaths) {
+            QString temFilePath = DUrl::fromUserInput(tmp).path();
+            DesktopFile df(desktopFile);
+            addRecentFile(temFilePath, df, mimetype);
+        }
+    }
+
     return ok;
 }
 
