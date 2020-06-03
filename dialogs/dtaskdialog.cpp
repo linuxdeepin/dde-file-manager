@@ -39,6 +39,7 @@
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
 #include "fileoperations/filejob.h"
+#include "dfmstandardpaths.h"
 
 #include "xutil.h"
 #include "app/define.h"
@@ -680,8 +681,7 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
 
             // fix 回收站还原文件时 若目标目录存在同名文件 需要展示 “合并” “替换” 等按钮
             // fix 如果不做回收站判断，同一目录下会发生闪烁
-            QString trashPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
-                    + "/.local/share/Trash/";
+            QString trashPath(DFMStandardPaths::location(DFMStandardPaths::TrashPath));
             if (srcPath.startsWith(trashPath)) {
                 wid->setConflictMsg(DUrl::fromLocalFile(srcPath), DUrl::fromLocalFile(targetPath));
             }
