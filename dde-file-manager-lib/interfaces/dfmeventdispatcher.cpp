@@ -134,6 +134,7 @@ QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event,
 {
     Q_D(DFMEventDispatcher);
 
+    auto sender = event->sender();
     d->setState(Busy);
 
     QVariant result;

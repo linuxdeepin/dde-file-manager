@@ -124,6 +124,8 @@ public slots:
     void onCurrentTabChanged(int tabIndex);
     void onRequestCloseTab(const int index, const bool &remainState);
     void closeCurrentTab(quint64 winId);
+    // 关闭当前窗口的所有保险箱的标签
+    void closeAllTabOfVault(quint64 winId);
     void showNewTabButton();
     void hideNewTabButton();
     void showEmptyTrashButton();

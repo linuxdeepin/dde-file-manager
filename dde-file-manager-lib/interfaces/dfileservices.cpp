@@ -649,6 +649,24 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
         return list;
     }
 
+    //fix bug#30027 删除文件时将剪切板中的该文件移除
+    {
+        QList<QUrl> org = DFMGlobal::instance()->clipboardFileUrlList();
+        DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
+        if (!org.isEmpty() && action != DFMGlobal::UnknowAction){
+            for (const DUrl &nd : list) {
+                if (org.isEmpty())
+                    break;
+                org.removeOne(nd);
+            }
+            if (org.isEmpty()) //没有文件则清空剪切板
+                DFMGlobal::clearClipboard();
+            else
+                DFMGlobal::setUrlsToClipboard(org,action);
+        }
+    }
+    //end
+
     if (FileUtils::isGvfsMountFile(list.first().toLocalFile())) {
         deleteFiles(sender, list);
         return list;
@@ -835,7 +853,7 @@ QList<QString> DFileService::getTagsThroughFiles(const QObject *sender, const QL
 }
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const
-{
+{    
     const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
 
     if (info) {

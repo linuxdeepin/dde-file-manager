@@ -70,6 +70,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "controllers/vaultcontroller.h"
 #include "dfmsplitter.h"
+#include "views/dfmvaultactiveview.h"
 
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
@@ -316,11 +317,6 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 {
     DFMBaseView *current_view = tab->fileView();
 
-// fix 6942 取消判断先后请求地址差异判断
-//    if (current_view && current_view->rootUrl() == fileUrl) {
-//        return false;
-//    }
-
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
         if (fi->suffix() == SUFFIX_USRDIR) {
@@ -557,6 +553,46 @@ void DFileManagerWindow::closeCurrentTab(quint64 winId)
     }
 
     emit d->tabBar->tabCloseRequested(d->tabBar->currentIndex());
+}
+
+// 关闭当前窗口的所有保险箱的标签
+void DFileManagerWindow::closeAllTabOfVault(quint64 winId)
+{
+    D_D(DFileManagerWindow);
+
+    // 传入的窗口ID不是当前活动窗口ID
+    if(winId != this->winId()){
+        return;
+    }
+
+    // 当前只有一个标签，不用关闭
+    int nCount = d->tabBar->count();
+    if(nCount < 2){
+        return;
+    }
+
+    // 记录是否有除保险箱之外的标签
+    bool bOtherTab = false;
+    for(int i = nCount-1; i > -1; --i)
+    {
+        Tab *tab = d->tabBar->tabAt(i);
+        if (!tab) {
+            return;
+        }
+
+        DUrl url = tab->currentUrl();
+        if(VaultController::isVaultFile(url.toString())){
+            if(i == 0){ // 当判断到最后一个标签时，如何没有其它标签，则保留该标签
+                if(!bOtherTab){
+                    return;
+                }
+            }
+            // 删除编号对应的标签
+            emit d->tabBar->tabCloseRequested(i);
+        }else{
+            bOtherTab = true;
+        }
+    }
 }
 
 void DFileManagerWindow::showNewTabButton()
@@ -977,24 +1013,11 @@ void DFileManagerWindow::initTitleBar()
 
     initTitleFrame();
 
-    QSet<MenuAction> disableList;
-    VaultController::VaultState state = VaultController::state();
-    if (state == VaultController::NotAvailable) {
-        disableList << MenuAction::Vault;
-    }
-
-    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu(disableList);
+    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu();
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
-
-    QAction * vaultAction = menu->actionAt(DFileMenuManager::getActionText(MenuAction::Vault));
-    if (vaultAction) {
-        connect(vaultAction, &QAction::triggered, this, [=](){
-            cd(VaultController::makeVaultUrl("/", "setup"));
-        });
-    }
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
@@ -1196,6 +1219,19 @@ void DFileManagerWindow::initConnect()
     }
 
     QObject::connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
+
+    // 请求关闭窗口所有保险箱的标签
+    QObject::connect(fileSignalManager, &FileSignalManager::requestCloseAllTabOfVault,
+                     this, &DFileManagerWindow::closeAllTabOfVault);
+
+    // 用于创建完保险箱后进入保险箱目录
+    QObject::connect(fileSignalManager, &FileSignalManager::requestCdDir,
+                     this, &DFileManagerWindow::cd);
+    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, [](){
+        // 进入保险箱主界面
+        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
+        emit fileSignalManager->requestCdDir(vaultUrl);
+    });
 
     QObject::connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onCurrentTabChanged);

@@ -68,12 +68,15 @@ QModelIndexList DFileSelectionModel::selectedIndexes() const
             m_selectedList = QItemSelectionModel::selectedIndexes();
         } else {
             for (const QItemSelectionRange &range : m_selection) {
-                m_selectedList << range.indexes();
+                for (const QModelIndex &index : range.indexes()){
+                    if (!m_selectedList.contains(index))
+                        m_selectedList << index;
+                }
             }
         }
 
         // remove repeated item
-        m_selectedList = m_selectedList.toSet().toList();
+        //m_selectedList = m_selectedList.toSet().toList();
     }
 
     return m_selectedList;

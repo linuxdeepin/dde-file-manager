@@ -33,15 +33,19 @@
 #include "app/filesignalmanager.h"
 #include "singleton.h"
 
+#include "controllers/vaultcontroller.h"
 #include "controllers/jobcontroller.h"
 #include "controllers/appcontroller.h"
 #include "shutil/desktopfile.h"
+//处理自动整理的路径问题
+#include "controllers/mergeddesktopcontroller.h"
 #include "shutil/dfmfilelistfile.h"
 
 #include "interfaces/durl.h"
 #include "interfaces/dfileviewhelper.h"
 #include "shutil/fileutils.h"
 #include "deviceinfo/udisklistener.h"
+#include "shutil/dfmfilelistfile.h"
 
 #include <memory>
 #include <QList>
@@ -711,8 +715,9 @@ private:
                 }
 
                 const FileSystemNodePointer &node = rootNode->getNodeByIndex(row);
-
-                if (node->fileInfo->isFile()) {
+                //因在自动整理时，超时会在次判定，导致文件夹以及分类文件夹会出现在扩展分类之前，
+                //所以加一个node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME规避掉
+                if (node->fileInfo->isFile() && node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME) {
                     break;
                 }
 
@@ -916,6 +921,11 @@ public:
             {
                 qq->setState(DFileSystemModel::Idle);
             }
+
+            //当遍历文件的耗时超过JobController::m_timeCeiling时，
+            //onJobFinished函数中拿到的文件不足，因为rootNodeManager还要处理剩余文件
+            //因此在这里rootNodeManager处理完后，再次发送信号 关联bug#24863
+            emit qq->sigJobFinished();
         });
     }
 
@@ -2533,6 +2543,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     }
 
     qDebug() << "finish update children. file count = " << node->childrenCount();
+    emit sigJobFinished();
 }
 
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
@@ -2988,7 +2999,43 @@ void DFileSystemModel::emitAllDataChanged()
 void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
 {
     /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
-    if (AppController::selectionAndRenameFile.first == fileUrl) {
+    if (fileUrl.scheme() == DFMMD_SCHEME){ //自动整理路径特殊实现，fix bug#24715
+        auto realFileUrl = MergedDesktopController::convertToRealPath(fileUrl);
+        if (AppController::selectionAndRenameFile.first == realFileUrl) {
+            quint64 windowId = AppController::selectionAndRenameFile.second;
+            if (windowId != parent()->windowId()) {
+                return;
+            }
+
+            AppController::selectionAndRenameFile = qMakePair(DUrl(), 0);
+            DFMUrlBaseEvent event(this, fileUrl);
+            event.setWindowId(windowId);
+            emit newFileByInternal(fileUrl);
+        }
+    }
+    else if (fileUrl.isVaultFile()) //! 设置保险箱新建文件选中并重命名状态
+    {
+        DUrl url = DUrl::fromLocalFile(VaultController::vaultToLocal(fileUrl));
+        if(AppController::selectionAndRenameFile.first == url)
+        {
+            quint64 windowId = AppController::selectionAndRenameFile.second;
+
+            if (windowId != parent()->windowId()) {
+                return;
+            }
+
+            AppController::selectionAndRenameFile = qMakePair(DUrl(), 0);
+            DFMUrlBaseEvent event(this, fileUrl);
+            event.setWindowId(windowId);
+
+            TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel *>(this), 100, {
+                emit fileSignalManager->requestSelectRenameFile(event);
+            }, event)
+
+            emit newFileByInternal(fileUrl);
+        }
+    }
+     else if (AppController::selectionAndRenameFile.first == fileUrl) {
         quint64 windowId = AppController::selectionAndRenameFile.second;
 
         if (windowId != parent()->windowId()) {

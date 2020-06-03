@@ -21,6 +21,7 @@
 #include <gio/gio.h>
 
 #include "dstorageinfo.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QRegularExpression>
 
@@ -62,7 +63,9 @@ DStorageInfo::DStorageInfo()
 DStorageInfo::DStorageInfo(const QString &path, PathHints hints)
     : DStorageInfo()
 {
-    setPath(preprocessPath(path, hints));
+    //! 如果是保险箱就不进行setpath处理,增加访问速度
+    if(!VaultController::isVaultFile(path))
+        setPath(preprocessPath(path, hints));
 }
 
 DStorageInfo::DStorageInfo(const QDir &dir, PathHints hints)
@@ -92,6 +95,7 @@ DStorageInfo &DStorageInfo::operator=(const DStorageInfo &other)
 
 void DStorageInfo::setPath(const QString &path, PathHints hints)
 {
+
     QStorageInfo::setPath(preprocessPath(path, hints));
 
     Q_D(DStorageInfo);
@@ -311,7 +315,9 @@ bool DStorageInfo::isLocalDevice(const QString &path)
     if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
         return false;
 
-    return DStorageInfo(path).device().startsWith("/dev/");
+    QString device = DStorageInfo(path).device();
+    // 添加保险箱路径判断，使得在保险箱中也能显示缩略图
+    return (device.startsWith("/dev/") || device.startsWith("cryfs"));
 }
 
 bool DStorageInfo::isLowSpeedDevice(const QString &path)

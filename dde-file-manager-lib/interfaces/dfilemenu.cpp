@@ -103,5 +103,10 @@ void DFileMenu::deleteLater(QWidget *w)
     QMenu::deleteLater();
 }
 
+void DFileMenu::mouseMoveEvent(QMouseEvent * event)
+{
+    QMenu::mouseMoveEvent(event);
+    update();
+}
 
 
