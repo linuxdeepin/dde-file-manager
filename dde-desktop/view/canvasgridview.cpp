@@ -1977,24 +1977,41 @@ void CanvasGridView::updateGeometry(const QRect &geometry)
 {
     auto newGeometry =  getValidNewGeometry(geometry, this->geometry());
 
+    //性能优化，多次修改时判断区域是否相同，相同则跳过，关联task#23773
+    {
+        QRect primaryRect = DesktopInfo().waylandDectected() ?
+                    Display::instance()->primaryRect() : qApp->primaryScreen()->geometry();
+
+        if (parentWidget())
+            primaryRect = QRect(0, 0, primaryRect.width(), primaryRect.height());
+
+        if (primaryRect == this->geometry() && d->canvasRect == newGeometry){
+            qWarning() << "__is DBUS" << DesktopInfo().waylandDectected()
+                       << "parent" << parentWidget()
+                       << Display::instance()->primaryRect()
+                       << "qscreen" << qApp->primaryScreen()->geometry()
+                       << "using primaryRect" << primaryRect << "view" << this->geometry()
+                       << "avaliable" << newGeometry << "view avaliable" << d->canvasRect
+                       << "skip update view";
+            return;
+        }
+    }
+
     //if X11
     //setGeometry(qApp->primaryScreen()->geometry());
     //d->canvasRect = newGeometry;
     //qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
     //else
 
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+    if (DesktopInfo().waylandDectected()) {
+        qDebug() << "oldGeometry" << this->geometry() << d->canvasRect;
         setGeometry(Display::instance()->primaryRect());
         d->canvasRect = newGeometry;
         qDebug() << "set newGeometry" << newGeometry << Display::instance()->primaryScreen()->geometry();
     }
 
     else {
+        qDebug() << "oldGeometry" << this->geometry() << d->canvasRect;
         setGeometry(qApp->primaryScreen()->geometry());
         d->canvasRect = newGeometry;
         qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
