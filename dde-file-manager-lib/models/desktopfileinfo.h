@@ -35,7 +35,7 @@ class DesktopFileInfoPrivate;
 class DesktopFileInfo : public DFileInfo
 {
 public:
-    DesktopFileInfo(const DUrl & fileUrl);
+    DesktopFileInfo(const DUrl &fileUrl);
     DesktopFileInfo(const QFileInfo &fileInfo);
 
     ~DesktopFileInfo();
@@ -69,6 +69,7 @@ public:
 
     static DUrl trashDesktopFileUrl();
     static DUrl computerDesktopFileUrl();
+    static DUrl homeDesktopFileUrl();
 
 private:
     Q_DECLARE_PRIVATE(DesktopFileInfo)

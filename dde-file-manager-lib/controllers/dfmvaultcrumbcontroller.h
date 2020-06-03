@@ -31,6 +31,7 @@ public:
     ~DFMVaultCrumbController() override;
 
     bool supportedUrl(DUrl url) override;
+    QList<CrumbData> seprateUrl(const DUrl &url) override;
 };
 
 DFM_END_NAMESPACE

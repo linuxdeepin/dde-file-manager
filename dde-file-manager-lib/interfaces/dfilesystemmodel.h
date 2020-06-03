@@ -224,6 +224,7 @@ signals:
     void enabledSortChanged(bool enabledSort);
     void newFileByInternal(const DUrl &url);
     void requestSelectFiles(const QList<DUrl> &urls);
+    void sigJobFinished();
 
 protected:
     bool remove(const DUrl &url);

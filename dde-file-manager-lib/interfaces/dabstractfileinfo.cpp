@@ -35,6 +35,7 @@
 
 #include "controllers/bookmarkmanager.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 #include "dfileservices.h"
 #include "dmimedatabase.h"
 
@@ -116,7 +117,7 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
 
-        urlToFileInfoMap[url] = qq;
+        urlToFileInfoMap[url] = qq;        
     }
 
     FileSortFunction::sortCollator.setNumericMode(true);
@@ -1566,8 +1567,9 @@ static QVector<MenuAction> getMenuActionTypeListByAction(const QList<QAction *> 
     return type_list;
 }
 
-QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() const
+QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(MenuType type) const
 {
+    Q_UNUSED(type)
     QMap<MenuAction, QVector<MenuAction> > actions;
 
     QVector<MenuAction> openwithMenuActionKeys;

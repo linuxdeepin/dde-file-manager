@@ -713,10 +713,10 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
         {ItemType::GvfsGPhoto2,  6},
         {ItemType::GvfsGeneric,  7}
     };
-    if (!a->exists()) {
+    if (!a || !a->exists()) {
         return false;
     }
-    if (!b->exists()) {
+    if (!b || !b->exists()) {
         return true;
     }
     return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];

@@ -35,6 +35,7 @@
 
 #include "interfaces/dfmstandardpaths.h"
 #include "singleton.h"
+#include "shutil/dfmfilelistfile.h"
 
 #include "dfmeventdispatcher.h"
 
@@ -57,6 +58,7 @@ public:
                      const QStringList &nameFilters,
                      QDir::Filters filter,
                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+    ~TrashDirIterator() override;
 
     DUrl next() Q_DECL_OVERRIDE;
     bool hasNext() const Q_DECL_OVERRIDE;
@@ -66,25 +68,82 @@ public:
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     DUrl url() const Q_DECL_OVERRIDE;
 
+    DFMFileListFile *hiddenFiles = nullptr;
 private:
     QDirIterator *iterator;
+    bool nextIsCached = false;
+    QDir::Filters filters;
 };
 
 TrashDirIterator::TrashDirIterator(const DUrl &url, const QStringList &nameFilters,
                                    QDir::Filters filter, QDirIterator::IteratorFlags flags)
     : DDirIterator()
+    , filters(filter)
 {
-    iterator = new QDirIterator(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + url.path(), nameFilters, filter, flags);
+    QString path = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + url.path();
+    iterator = new QDirIterator(path, nameFilters, filter, flags);
+
+    hiddenFiles = new DFMFileListFile(path);
+}
+
+TrashDirIterator::~TrashDirIterator()
+{
+    if (iterator) {
+        delete iterator;
+    }
+
+    if (hiddenFiles) {
+        delete hiddenFiles;
+    }
 }
 
 DUrl TrashDirIterator::next()
 {
+    if (nextIsCached) {
+        nextIsCached = false;
+
+        QString path = iterator->filePath();
+        return DUrl::fromTrashFile(path.remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+    }
     return DUrl::fromTrashFile(DUrl::fromLocalFile(iterator->next()).path().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
 }
 
 bool TrashDirIterator::hasNext() const
 {
-    return iterator->hasNext();
+    if (nextIsCached) {
+        return true;
+    }
+
+    bool hasNext = iterator->hasNext();
+
+    if (!hasNext) {
+        return false;
+    }
+
+    bool showHidden = filters.testFlag(QDir::Hidden);
+    DAbstractFileInfoPointer info;
+
+    do {
+        const_cast<TrashDirIterator *>(this)->iterator->next();
+        QString absoluteFilePath = iterator->fileInfo().absoluteFilePath();
+        info = DAbstractFileInfoPointer(new TrashFileInfo(DUrl::fromLocalFile(absoluteFilePath)));
+
+        if (!info->isPrivate() && (showHidden || (!info->isHidden() && !hiddenFiles->contains(info->fileName())))) {
+            break;
+        }
+
+        info.reset();
+    } while (iterator->hasNext());
+
+    // file is exists
+    if (info) {
+        const_cast<TrashDirIterator *>(this)->nextIsCached = true;
+
+        return true;
+    }
+
+    return false;
+//    return iterator->hasNext();
 }
 
 QString TrashDirIterator::fileName() const
@@ -164,8 +223,10 @@ bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &e
 }
 
 bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
-{
-    if (event->action() != DFMGlobal::CopyAction) {
+{    
+    if (event->action() != DFMGlobal::CopyAction &&
+            // 取消对剪切操作的屏蔽
+            event->action() != DFMGlobal::CutAction) {
         event->ignore();
         return false;
     }
@@ -184,9 +245,7 @@ bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClip
 //        }
     }
 
-    fileService->writeFilesToClipboard(event->sender(), event->action(), localList);
-
-    return true;
+    return fileService->writeFilesToClipboard(event->sender(), event->action(), localList);
 }
 
 DUrlList TrashManager::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const

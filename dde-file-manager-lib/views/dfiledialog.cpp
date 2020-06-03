@@ -194,7 +194,19 @@ QUrl DFileDialog::directoryUrl() const
     if (!getFileView()) {
         return QUrl();
     }
-    return getFileView()->rootUrl();
+
+    // 保险箱QUrl->转换为文件QUrl
+    QUrl url = getFileView()->rootUrl();
+    QString strPath = url.path();
+    QString strScheme = url.scheme();
+    if(strScheme == DFMVAULT_SCHEME){
+        QUrl urlVault;
+        urlVault.setScheme(FILE_SCHEME);
+        urlVault.setPath(strPath);
+        return urlVault;
+    }
+
+    return url;
 }
 
 void DFileDialog::selectFile(const QString &filename)
@@ -1147,6 +1159,7 @@ void DFileDialog::onAcceptButtonClicked()
             getFileView()->cd(getFileView()->selectedUrls().first());
             return;
         }
+
         if (!directoryUrl().isLocalFile()) {
             return;
         }

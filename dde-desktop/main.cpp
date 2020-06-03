@@ -94,7 +94,7 @@ static bool registerFileManager1DBus()
     return true;
 }
 
-extern QTime gTime;
+static QTime gTime;
 int main(int argc, char *argv[])
 {
     gTime.start();
@@ -224,8 +224,10 @@ int main(int argc, char *argv[])
         QTimer::singleShot(1000, &app, &QCoreApplication::quit);
     } else {
         if (!fileDialogOnly) {
+#if 0 //old
             qDebug() << "begin load view" <<  gTime.elapsed();
             Desktop::instance()->Show();
+#endif
             Desktop::instance()->loadView();
             qDebug() << "end load view" <<  gTime.elapsed();
         }
@@ -304,8 +306,9 @@ int main(int argc, char *argv[])
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.
     // ---------------------------------------------------------------------------
 
-    DEventFilter *event_filter{ new DEventFilter{&app} };
-    app.installEventFilter(event_filter);
-    qDebug() << "evenloop" <<  gTime.elapsed();
+//    DEventFilter *event_filter{ new DEventFilter{&app} };
+//    app.installEventFilter(event_filter);
+
+
     return app.exec();
 }

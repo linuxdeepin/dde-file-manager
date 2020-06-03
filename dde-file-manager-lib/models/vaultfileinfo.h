@@ -21,12 +21,14 @@
 #pragma once
 
 #include "dabstractfileinfo.h"
+#include <QIcon>
 
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DAbstractFileInfo
 {
 public:
     VaultFileInfo(const DUrl &url);
+    ~VaultFileInfo();
 
     bool exists() const override;
 
@@ -38,11 +40,39 @@ public:
 
     bool canRedirectionFileUrl() const override;
     DUrl redirectedFileUrl() const override;
+    bool canIteratorDir() const Q_DECL_OVERRIDE;
 
     QString subtitleForEmptyFloder() const override;
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
+    QFile::Permissions permissions() const override;
+
+    // 右键菜单
+    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
+    QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const override;
+
+    bool canRename() const override;
+    bool canShare() const override;
+    bool canTag() const override;
+    QIcon fileIcon() const override;
+    QString fileDisplayName() const override;
+    qint64 size() const override;
+
+    /**
+     * @brief isAncestorsUrl 拆分路径
+     * @param url            文件路径信息
+     * @param ancestors      拆分后的路径列表
+     * @return               拆分是否成功
+     */
+    bool isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) const override;
+
+    static void setVaultSize(qint64 size);
+
 private:
+    bool isRootDirectory() const;
+
+    static qint64 m_vaultSize;
+
     Q_DECLARE_PRIVATE(VaultFileInfo)
 };

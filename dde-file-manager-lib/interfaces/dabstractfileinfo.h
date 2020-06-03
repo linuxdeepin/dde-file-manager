@@ -237,7 +237,7 @@ public:
     virtual DUrlList parentUrlList() const;
     virtual bool isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors = 0) const;
     virtual QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
-    virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const;
+    virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const;
     virtual QSet<MenuAction> disableMenuActionList() const;
     virtual MenuAction menuActionByColumnRole(int role) const;
     virtual QList<int> sortSubMenuActionUserColumnRoles() const; /*sortby submenu contains column roles*/

@@ -28,6 +28,7 @@
 #include "propertydialog.h"
 #include "dabstractfilewatcher.h"
 #include "dfileinfo.h"
+#include <sys/stat.h>
 
 #include "app/define.h"
 
@@ -43,6 +44,8 @@
 
 #include "models/dfmrootfileinfo.h"
 #include "deviceinfo/udisklistener.h"
+
+#include "controllers/vaultcontroller.h"
 
 #include "utils.h"
 
@@ -408,10 +411,13 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             }
         } else {
             titleList << basicInfo;
-            if (fileInfo->canShare()) {
+            // 保险箱中的文件夹属性不显示共享信息
+            if (!fileInfo->fileUrl().toLocalFile().contains(VaultController::makeVaultLocalPath())
+                    && fileInfo->canShare()) {
                 titleList << shareManager;
             }
-            if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile()) {
+            if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() &&
+                    !VaultController::getVaultController()->isRootDirectory(m_url.toLocalFile())) {
                 titleList << authManager;
             }
         }
@@ -420,9 +426,12 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 
         if (fileInfo->isDir()) {
             if (fileInfo->canShare()) {
-                m_shareinfoFrame = createShareInfoFrame(fileInfo);
-                m_expandGroup.at(1)->setContent(m_shareinfoFrame);
-                m_expandGroup.at(1)->setExpand(false);
+                // 保险箱中的文件夹属性不显示共享信息
+                if (!fileInfo->fileUrl().toLocalFile().contains(VaultController::makeVaultLocalPath())){
+                    m_shareinfoFrame = createShareInfoFrame(fileInfo);
+                    m_expandGroup.at(1)->setContent(m_shareinfoFrame);
+                    m_expandGroup.at(1)->setExpand(false);
+                }
             }
 
             if (fileInfo->toLocalFile().isEmpty()) {
@@ -445,6 +454,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
                 m_expandGroup.at(openWithIndex)->setExpand(false);
             }
         }
+
 
         int authMgrIndex = titleList.indexOf(authManager);
         if (authMgrIndex != -1) {
@@ -532,8 +542,14 @@ QFrame * PropertyDialog::initTagFrame(const DUrl& url)
     }
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
+    DUrl t_url = url;
+    //! 保险箱中属性窗口中要获取标记需要真实路径，需要将虚拟路径转换为真实路径
+    if(url.isVaultFile())
+    {
+        t_url = VaultController::vaultToLocalUrl(url);
+    }
     if (fileInfo && fileInfo->canTag()) {
-        DFMTagWidget *tagInfoFrame = new DFMTagWidget(url, this);
+        DFMTagWidget *tagInfoFrame = new DFMTagWidget(t_url, this);
         new DFMRoundBackground(tagInfoFrame, 8);
         m_tagInfoFrame = tagInfoFrame;
 
@@ -543,7 +559,7 @@ QFrame * PropertyDialog::initTagFrame(const DUrl& url)
         tagInfoFrame->tagTitle()->setFont(font);
         m_tagInfoFrame->setMaximumHeight(150);
 
-        qDebug() << "tag frame is created for: " << url;
+        qDebug() << "tag frame is created for: " << t_url;
 
         return m_tagInfoFrame;
     }
@@ -670,6 +686,16 @@ void PropertyDialog::showTextShowFrame()
             if (!fileInfo->isDesktopFile()) { // this is a dirty fix.
                 m_url = newUrl;
                 updateInfo();//bug 25419
+                onHideFileCheckboxChecked(false);    //bug 29958
+                if(m_basicInfoFrame)    //bug 29961
+                {
+                    QCheckBox *hideThisFile = m_basicInfoFrame->findChild<QCheckBox *>(QString("hideThisFileCheckBox"));
+                    if(hideThisFile)
+                    {
+                        hideThisFile->setChecked(false);
+                    }
+                }
+
                 dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
             }
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
@@ -694,7 +720,7 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
         QTimer::singleShot(100, this, [ = ] {
             this->close();
         });
-//        close();
+        //        close();
     }
 }
 
@@ -787,8 +813,8 @@ void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
 
 void PropertyDialog::onHideFileCheckboxChecked(bool checked)
 {
-    //如果是最近使用文件目录 需要取出其真实的文件url。
-    QFileInfo info(getRealUrl().toLocalFile());
+    DUrl url = getRealUrl();
+    QFileInfo info(url.toLocalFile());
     if (!info.exists()) return;
 
     DFMFileListFile flf(info.absolutePath());
@@ -1085,9 +1111,9 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(typeSectionLabel, typeLabel);
     }
 
+    SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
+    QLabel *locationPathLabel = nullptr;
     if (info->isSymLink()) {
-        SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
-
         LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->symlinkTargetPath());
         linkPathLabel->setToolTip(info->symlinkTargetPath());
         linkPathLabel->setLinkTargetUrl(info->redirectedFileUrl());
@@ -1095,9 +1121,23 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         linkPathLabel->setWordWrap(false);
         QString t = linkPathLabel->fontMetrics().elidedText(info->symlinkTargetPath(), Qt::ElideMiddle, 150);
         linkPathLabel->setText(t);
-        layout->addRow(linkPathSectionLabel, linkPathLabel);
+        locationPathLabel = linkPathLabel;
+    } else {
+        locationPathLabel = new SectionValueLabel();
+        QString absoluteFilePath = info->absoluteFilePath();
+        //! 在属性窗口中不显示保险箱中的文件真实路径
+        if(info->fileUrl().isVaultFile())
+        {
+            absoluteFilePath = VaultController::pathToVirtualPath(absoluteFilePath);
+        }
+        locationPathLabel->setText(absoluteFilePath);
+        locationPathLabel->setToolTip(absoluteFilePath);
+        QString t = locationPathLabel->fontMetrics().elidedText(absoluteFilePath, Qt::ElideMiddle, 150);
+        locationPathLabel->setWordWrap(false);
+        locationPathLabel->setText(t);
     }
 
+    layout->addRow(linkPathSectionLabel, locationPathLabel);
     if (!info->isVirtualEntry()) {
         layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
         layout->addRow(TimeReadSectionLabel, timeReadLabel);
@@ -1126,11 +1166,13 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 
     DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
 
-    if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())) {
+    if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())
+            && !VaultController::getVaultController()->isRootDirectory(info->filePath())) {
         DFMFileListFile flf(QFileInfo(info->filePath()).absolutePath());
         QString fileName = info->fileName();
         QCheckBox *hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
-//        hideThisFile->setToolTip("TODO: hint message?");
+        hideThisFile->setObjectName(QString("hideThisFileCheckBox"));
+        //        hideThisFile->setToolTip("TODO: hint message?");
         hideThisFile->setEnabled(DFMFileListFile::canHideByFile(info->filePath()));
         hideThisFile->setChecked(flf.contains(fileName));
         layout->addWidget(hideThisFile); // FIXME: do the UI thing later.
@@ -1146,7 +1188,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPointer &info)
 {
     DAbstractFileInfoPointer infoPtr = info->canRedirectionFileUrl() ? DFileService::instance()->createFileInfo(nullptr, info->redirectedFileUrl())
-                                       : info;
+                                                                     : info;
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
     connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
@@ -1442,8 +1484,20 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         if (info->ownerId() != getuid()) {
             m_executableCheckBox->setDisabled(true);
         }
-        if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
-            m_executableCheckBox->setChecked(true);
+
+        QString filePath = info->path();
+        if (VaultController::getVaultController()->isVaultFile(info->path())) { // Vault file need to use stat function to read file permission.
+            QString filePath = info->toLocalFile();
+            struct stat buf;
+            std::string stdStr = filePath.toStdString();
+            stat(stdStr.c_str(), &buf);
+            if ((buf.st_mode & S_IXUSR) || (buf.st_mode & S_IXGRP) || (buf.st_mode & S_IXOTH)) {
+                m_executableCheckBox->setChecked(true);
+            }
+        } else {
+            if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
+                m_executableCheckBox->setChecked(true);
+            }
         }
         if (parentScheme == BURN_SCHEME) {
             m_executableCheckBox->setDisabled(true);

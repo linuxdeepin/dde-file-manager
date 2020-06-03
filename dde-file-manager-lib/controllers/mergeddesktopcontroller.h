@@ -23,6 +23,8 @@
 #define MERGEDDESKTOPCONTROLLER_H
 
 #include "dabstractfilecontroller.h"
+#include <QWaitCondition>
+#include <QMutex>
 
 enum DMD_TYPES : unsigned int {
     DMD_PICTURE, DMD_MUSIC, DMD_APPLICATION, DMD_VIDEO, DMD_DOCUMENT, DMD_OTHER, DMD_FOLDER,
@@ -76,6 +78,9 @@ public:
     static DUrl convertToRealPath(const DUrl &oneUrl);
     static DUrlList convertToRealPaths(DUrlList urlList);
     static DMD_TYPES checkUrlArrangedType(const DUrl url);
+    static QMap<DMD_TYPES, QList<DUrl> > initData(QDir::Filters ftrs);
+    //为了防止自动整理下剪切与分类名相同的文件夹，这里创建虚拟的分类路径做对比
+    static bool isVirtualEntryPaths(const DUrl &oneUrl);
 
 public slots:
     void desktopFilesCreated(const DUrl &url);
@@ -83,13 +88,18 @@ public slots:
     void desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl);
 
 private:
-    void initData() const;
-    void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
+    //void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
 
     DFileWatcher* m_desktopFileWatcher;
     mutable DUrl currentUrl;
 //    mutable bool dataInitialized = false;
     mutable QMap<DMD_TYPES, QList<DUrl> > arrangedFileUrls;
+    mutable QMutex m_arrangedFileUrlsMtx; //多线程访问arrangedFileUrls 的锁
+
+    mutable QMutex m_childrenLock;
+    mutable QList<DAbstractFileInfoPointer> m_childrenList;
+    mutable QMutex m_runMtx; //多线程调用时出问题，加锁，禁止多线程
+    mutable QWaitCondition m_cv;
 };
 
 #endif // MERGEDDESKTOPCONTROLLER_H
