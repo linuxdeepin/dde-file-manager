@@ -610,6 +610,10 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+
+        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
+        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+
         if (fi->suffix() == SUFFIX_UDISKS) {
             QString udiskspath = fi->extraProperties()["udisksblk"].toString();
             QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
@@ -617,6 +621,7 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
             if (blkdev->isEncrypted()) {
                 blkdev.reset(DDiskManager::createBlockDevice(blkdev->cleartextDevice()));
             }
+
             blkdev->unmount({});
             QDBusError err = blkdev->lastError();
             // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
@@ -664,8 +669,13 @@ void AppController::actionRestoreAll(const QSharedPointer<DFMUrlBaseEvent> &even
 void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
+
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
+
+        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
+        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+
         QtConcurrent::run([fi](){
             qDebug() << fi->fileUrl().path();
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
@@ -701,11 +711,17 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
+
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
+
+        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
+        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
         QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
+
         bool err = false;
         if (!blk->mountPoints().empty()) {
             blk->unmount({});
