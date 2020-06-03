@@ -24,11 +24,6 @@
 #include "anything_interface.h"
 #else
 #define DISABLE_QUICK_SEARCH
-#ifdef DISABLE_QUICK_SEARCH
-/*临时解决方案 针对解决bug 22667 设置里的索引能进行勾选，勾选后退出设置再次进入，勾选的未保存*/
-    bool b_IndexInternal=false;
-    bool b_IndexExternal=false;
-#endif
 #endif
 
 #include "dfmsettings.h"
@@ -119,10 +114,6 @@ DFMApplication::DFMApplication(QObject *parent)
 {
     qRegisterMetaType<ApplicationAttribute>();
     qRegisterMetaType<GenericAttribute>();
-#ifdef DISABLE_QUICK_SEARCH
-    b_IndexInternal=false;
-    b_IndexExternal=false;
-#endif
 }
 
 DFMApplication::~DFMApplication()
@@ -190,14 +181,10 @@ QVariant DFMApplication::genericAttribute(DFMApplication::GenericAttribute ga)
     if (ga == GA_IndexInternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexInternal();
-#else
-        return b_IndexInternal;
 #endif
     } else if (ga == GA_IndexExternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexExternal();
-#else
-        return b_IndexExternal;
 #endif
     }
 
@@ -213,16 +200,10 @@ void DFMApplication::setGenericAttribute(DFMApplication::GenericAttribute ga, co
     if (ga == GA_IndexInternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexInternal(value.toBool());
-#else
-        b_IndexInternal=value.toBool();
-        return;
 #endif
     } else if (ga == GA_IndexExternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexExternal(value.toBool());
-#else
-        b_IndexExternal=value.toBool();
-        return;
 #endif
     }
 
