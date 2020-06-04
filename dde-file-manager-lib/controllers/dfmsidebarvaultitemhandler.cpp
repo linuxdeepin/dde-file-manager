@@ -212,10 +212,26 @@ bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
             // Flashing alert
             pTaskDlg->hide();
             pTaskDlg->showDialogOnTop();
+            return false;
         }
     }
 
-    // 关闭当前的标签页面
+    // 如果正在有保险箱的移动、粘贴到桌面的任务，通知桌面进程置顶任务对话框
+    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+                                                           "/org/freedesktop/FileManager1",
+                                                           "org.freedesktop.FileManager1",
+                                                           "topTaskDialog");
+    QDBusMessage response = QDBusConnection::sessionBus().call(message);
+    if(response.type() == QDBusMessage::ReplyMessage){
+        bool bValue = response.arguments().takeFirst().toBool();
+        if(bValue){
+            return false;
+        }
+    }else{
+        qDebug() << "vault show top taskdialog failed!";
+    }
+
+    // 关闭当前的保险箱标签页面
     emit fileSignalManager->requestCloseAllTabOfVault(wnd->windowId());
 
     // 保险箱上锁
