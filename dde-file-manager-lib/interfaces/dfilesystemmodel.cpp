@@ -1148,6 +1148,8 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
     Q_Q(DFileSystemModel);
 
     const FileSystemNodePointer &node = rootNode;
+    //fix 27828 文件属性改变刷新一次缓存数据
+    DAbstractFileInfoPointer newFileInfo = fileService->createFileInfo(nullptr, fileUrl);
 
     if (!node) {
         return;

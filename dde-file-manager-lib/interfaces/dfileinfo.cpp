@@ -273,13 +273,18 @@ bool DFileInfoPrivate::isLowSpeedFile() const
 DFileInfo::DFileInfo(const QString &filePath, bool hasCache)
     : DFileInfo(DUrl::fromLocalFile(filePath), hasCache)
 {
-
 }
 
 DFileInfo::DFileInfo(const DUrl &fileUrl, bool hasCache)
     : DAbstractFileInfo(*new DFileInfoPrivate(fileUrl, this, hasCache))
 {
-
+    //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
+    if (FileUtils::isGvfsMountFile(fileUrl.toLocalFile())) {
+        canRename();
+        isWritable();
+        isSymLink();
+        mimeType();
+    }
 }
 
 DFileInfo::DFileInfo(const QFileInfo &fileInfo, bool hasCache)
@@ -413,7 +418,6 @@ QList<QIcon> DFileInfo::additionalIcon() const
 static bool fileIsWritable(const QString &path, uint ownerId)
 {
     QFileInfo dir_info(path);
-
     if (!dir_info.isWritable())
         return false;
 
@@ -518,7 +522,13 @@ bool DFileInfo::isWritable() const
         return false;
 
     Q_D(const DFileInfo);
-
+    //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
+    if (d->gvfsMountFile) {
+        if (d->cacheCanWrite < 0) {
+            d->cacheCanWrite = d->fileInfo.isWritable();
+        }
+        return d->cacheCanWrite;
+    }
     return d->fileInfo.isWritable();
 }
 
@@ -846,6 +856,16 @@ void DFileInfo::refresh()
     d->epInitialized = false;
     d->hasThumbnail = -1;
     d->mimeType = QMimeType();
+    //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
+    if (d->gvfsMountFile) {
+        d->cacheCanWrite = -1;
+        d->cacheCanRename = -1;
+        d->cacheIsSymLink = -1;
+        canRename();
+        isWritable();
+        isSymLink();
+        mimeType();
+    }
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
