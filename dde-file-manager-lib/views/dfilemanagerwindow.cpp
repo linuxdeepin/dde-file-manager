@@ -317,6 +317,12 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 {
     DFMBaseView *current_view = tab->fileView();
 
+    // fix 6942 取消判断先后请求地址差异判断
+    // fix 28857 高频进入光驱会死锁
+    if (current_view && current_view->rootUrl() == fileUrl && fileUrl.scheme() == BURN_ROOT) {
+        return false;
+    }
+
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
         if (fi->suffix() == SUFFIX_USRDIR) {
