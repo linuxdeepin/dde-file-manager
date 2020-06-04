@@ -315,9 +315,13 @@ bool DStorageInfo::isLocalDevice(const QString &path)
     if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
         return false;
 
-    QString device = DStorageInfo(path).device();
-    // 添加保险箱路径判断，使得在保险箱中也能显示缩略图
-    return (device.startsWith("/dev/") || device.startsWith("cryfs"));
+    // 保险箱路径直接返回真
+    if (VaultController::isVaultFile(path)){
+        return true;
+    }
+
+    QString device = DStorageInfo(path).device();    
+    return (device.startsWith("/dev/"));
 }
 
 bool DStorageInfo::isLowSpeedDevice(const QString &path)

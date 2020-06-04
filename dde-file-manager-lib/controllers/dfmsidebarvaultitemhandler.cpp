@@ -223,7 +223,6 @@ bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
     connect(VaultController::getVaultController(), &VaultController::signalLockVault, [wnd](int state){
         if (state == 0){
             // 切换到计算机目录下
-            DUrl url = DUrl(COMPUTER_ROOT);
             wnd->cd(DUrl(COMPUTER_ROOT));
         }
     });

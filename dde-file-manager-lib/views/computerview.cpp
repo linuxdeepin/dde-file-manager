@@ -143,30 +143,6 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     event.setWindowId(window()->internalWinId());
     m_statusbar->itemCounted(event, m_model->itemCount());
 
-    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, this, [this](){
-        // todo 进入保险箱主界面
-        DUrl vaultUrl = VaultController::makeVaultUrl();
-        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
-    });
-
-//    connect(DFMVaultRemovePages::instance(), &DFMVaultRemovePages::accepted, this, [this](){
-//        // 切换到计算机目录下
-//        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << DUrl(COMPUTER_ROOT)));
-//    });
-
-//    connect(DFMVaultUnlockPages::instance(), &DFMVaultUnlockPages::accepted, this, [this](){
-//        // 进入保险箱
-//        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-//        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
-//    });
-
-//    connect(DFMVaultRecoveryKeyPages::instance(), &DFMVaultRecoveryKeyPages::accepted, this, [this](){
-//        // 进入保险箱
-//        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-//        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
-//    });
-
-
     connect(m_model, &ComputerModel::itemCountChanged, this, [this](int count) {
         DFMEvent event(this);
         event.setWindowId(this->window()->internalWinId());

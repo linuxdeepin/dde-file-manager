@@ -31,7 +31,6 @@
 // 密钥最大长度
 #define MAX_KEY_LENGTH (32)
 
-DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::m_instance = nullptr;
 DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     : DDialog (parent)
 {
@@ -58,18 +57,10 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultRecoveryKeyPages::onUnlockVault);
 }
 
-DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
+DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
 {
-    m_instance = nullptr;
-}
-
-DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance(QWidget *parent)
-{
-    if (!m_instance){
-        m_instance = new DFMVaultRecoveryKeyPages(parent);
-    }
-
-    return m_instance;
+    static DFMVaultRecoveryKeyPages s_instance;
+    return &s_instance;
 }
 
 void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
@@ -138,6 +129,8 @@ int DFMVaultRecoveryKeyPages::afterRecoveryKeyChanged(QString &str)
 void DFMVaultRecoveryKeyPages::showEvent(QShowEvent *event)
 {
     m_recoveryKeyEdit->clear();
+    m_bUnlockByKey = false;
+    event->accept();
 }
 
 void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
@@ -163,6 +156,7 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
     }
     key = res;
 
+    m_recoveryKeyEdit->blockSignals(true);
     // 限制输入的最大长度
     if (length > maxLength){
         int position = m_recoveryKeyEdit->textCursor().position();
@@ -172,33 +166,33 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
         textCursor.setPosition(position - (length-maxLength));
         m_recoveryKeyEdit->setTextCursor(textCursor);
 
+        m_recoveryKeyEdit->blockSignals(false);
         return;
     }
 
-    static bool isEdited = false;
-    if (!isEdited){
-        isEdited = true;
-        int position = afterRecoveryKeyChanged(key);
-        m_recoveryKeyEdit->setPlainText(key);
+    int position = afterRecoveryKeyChanged(key);
+    m_recoveryKeyEdit->setPlainText(key);
 
-        QTextCursor textCursor = m_recoveryKeyEdit->textCursor();
-        textCursor.setPosition(position);
-        m_recoveryKeyEdit->setTextCursor(textCursor);
-    } else {
-        isEdited = false;
-    }
+    QTextCursor textCursor = m_recoveryKeyEdit->textCursor();
+    textCursor.setPosition(position);
+    m_recoveryKeyEdit->setTextCursor(textCursor);
+
+    m_recoveryKeyEdit->blockSignals(false);
 }
 
 void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
 {
-    if (state == 0){
-        // success
-        emit accepted();
-        close();
-    }else {
-        // others
-        QString msg = tr("Unlock failed,the error code is ") + QString::number(state);
-        DMessageBox::information(this, tr("tips"), msg);
+    if (m_bUnlockByKey){
+        if (state == 0){
+            // success
+            emit accepted();
+            close();
+        }else {
+            // others
+            QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
+            DMessageBox::information(this, tr("tips"), errMsg);
+        }
+        m_bUnlockByKey = false;
     }
 }
 

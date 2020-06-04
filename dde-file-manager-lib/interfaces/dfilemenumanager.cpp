@@ -179,7 +179,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     }
 
     // 选中保险箱中的文件，则屏蔽掉共享菜单选项
-    if (currentUrl.toLocalFile().contains(VaultController::makeVaultLocalPath())){
+    if (currentUrl.isVaultFile()){
         unusedList << MenuAction::Share << MenuAction::UnShare;
     }
 
@@ -553,7 +553,11 @@ QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrlList &urlList)
     QSet<MenuAction> disableList;
 
     for (const DUrl &fileUrl : urlList) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, fileUrl);
+        DUrl url = fileUrl;
+        if (VaultController::isVaultFile(url.path())){
+            url = VaultController::localUrlToVault(fileUrl);
+        }
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
 
         if (fileInfo) {
             disableList += fileInfo->disableMenuActionList();

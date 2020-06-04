@@ -32,7 +32,6 @@
 #include <DPasswordEdit>
 #include <DMessageBox>
 
-DFMVaultUnlockPages *DFMVaultUnlockPages::m_instance = nullptr;
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DDialog (parent)
 {
@@ -77,11 +76,6 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     });
 }
 
-DFMVaultUnlockPages::~DFMVaultUnlockPages()
-{
-    m_instance = nullptr;
-}
-
 void DFMVaultUnlockPages::showEvent(QShowEvent *event)
 {
     // 重置所有控件状态
@@ -101,17 +95,13 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
             m_tipsButton->show();
         }
     }
+    event->accept();
 }
 
-DFMVaultUnlockPages *DFMVaultUnlockPages::instance(QWidget *parent)
-{
-    if (!m_instance){
-        m_instance = new DFMVaultUnlockPages(parent);
-    }
-
-    return m_instance;
-//    static DFMVaultUnlockPages s_instance;
-//    return &s_instance;
+DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
+{    
+    static DFMVaultUnlockPages s_instance;
+    return &s_instance;
 }
 
 void DFMVaultUnlockPages::onButtonClicked(const int &index)
@@ -155,7 +145,8 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
             close();
         }else {
             // error tips
-            DMessageBox::information(this, tr("tips"), tr("Unlock failed,the directory of the File Vault doesn't exist."));
+            QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
+            DMessageBox::information(this, tr("tips"), errMsg);
         }
 
         m_bUnlockByPwd = false;
