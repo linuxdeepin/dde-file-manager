@@ -284,6 +284,8 @@ DFileInfo::DFileInfo(const DUrl &fileUrl, bool hasCache)
         isWritable();
         isSymLink();
         mimeType();
+        size();
+        filesCount();
     }
 }
 
@@ -724,11 +726,30 @@ qint64 DFileInfo::size() const
 {
     Q_D(const DFileInfo);
 
+    if (d->gvfsMountFile) {
+        if (d->cacheFileSize < 0) {
+            d->cacheFileSize = d->fileInfo.size();
+        }
+        return d->cacheFileSize;
+    }
+
     return d->fileInfo.size();
 }
 
 int DFileInfo::filesCount() const
 {
+    Q_D(const DFileInfo);
+
+    if (d->gvfsMountFile) {
+        if (d->cacheFileCount < 0) {
+            if (isDir())
+                d->cacheFileCount = FileUtils::filesCount(absoluteFilePath());
+            else
+                return -1;
+        }
+        return d->cacheFileCount;
+    }
+
     if (isDir())
         return FileUtils::filesCount(absoluteFilePath());
 
@@ -865,6 +886,8 @@ void DFileInfo::refresh()
         isWritable();
         isSymLink();
         mimeType();
+        size();
+        filesCount();
     }
 }
 
