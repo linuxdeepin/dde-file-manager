@@ -73,5 +73,9 @@ QMutex *getOpticalDriveMutex();
 #define MAX_PROPERTY_DIALOG_NUMBER 16
 
 #define DISCBURN_STAGING "discburn"
+#define DISCBURN_CACHE_MID_PATH "/.cache/deepin/discburn/_dev_"
+
+#define VAULT_CREATE "Create"
+#define VAULT_REMOVE "Remove"
 
 #endif // GLOBAL_H

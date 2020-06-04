@@ -31,6 +31,9 @@
 #include "dfmsidebarmanager.h"
 #include "interfaces/dfmsidebariteminterface.h"
 #include "views/dfmsidebarview.h"
+#include "views/dfmvaultremovepages.h"
+#include "views/dfmvaultunlockpages.h"
+#include "views/dfmvaultrecoverykeypages.h"
 #include "models/dfmsidebarmodel.h"
 #include "dfmsidebaritemdelegate.h"
 #include "dfmsidebaritem.h"
@@ -39,6 +42,8 @@
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
+#include "controllers/dfmsidebarvaultitemhandler.h" // 保险柜
+#include "controllers/vaultcontroller.h"
 #include "app/filesignalmanager.h"
 #include "interfaces/dfilemenu.h"
 #include "dfmopticalmediawidget.h"
@@ -77,6 +82,8 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initConnection();
     initUserShareItem();
     initRecentItem();
+
+    //   DFMSideBarManager::instance();
 }
 
 QWidget *DFMSideBar::sidebarView()
@@ -383,7 +390,12 @@ void DFMSideBar::onItemActivated(const QModelIndex &index)
 
 void DFMSideBar::onContextMenuRequested(const QPoint &pos)
 {
+    // block signals to avoid function reentrant.
+    const QSignalBlocker blocker(this);
+
     if (!m_contextMenuEnabled) return;
+
+
     QModelIndex modelIndex = m_sidebarView->indexAt(pos);
     if (!modelIndex.isValid()) {
         return;
@@ -410,11 +422,12 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
             DFileService::instance()->setCursorBusyState(false);
             if (fmenu) {
                 fmenu->exec(this->mapToGlobal(pos));
+                fmenu->deleteLater(this);
             }
             else {
                 menu->exec(this->mapToGlobal(pos));
+                menu->deleteLater();
             }
-            menu->deleteLater();
         }
         DFileService::instance()->setCursorBusyState(false);
     }
@@ -524,6 +537,7 @@ void DFMSideBar::initConnection()
     initBookmarkConnection();
     initDeviceConnection();
     initTagsConnection();
+    initVaultConnection();
 }
 
 void DFMSideBar::initUserShareItem()
@@ -544,11 +558,11 @@ void DFMSideBar::initUserShareItem()
         int index = findItem(DUrl::fromUserShareFile("/"));
         if (index == -1) {
             if (cnt > 0) {
-//                DFileService::instance()->changeRootFile(url);
+                //                DFileService::instance()->changeRootFile(url);
                 addItem(DFMSideBarDefaultItemHandler::createItem("UserShare"), groupName(Network));
             }
         } else {
-//            DFileService::instance()->changeRootFile(url,false);
+            //            DFileService::instance()->changeRootFile(url,false);
             m_sidebarView->setRowHidden(index, cnt == 0);
         }
     };
@@ -580,26 +594,26 @@ void DFMSideBar::initBookmarkConnection()
     bookmarkWatcher->startWatcher();
 
     connect(bookmarkWatcher, &DAbstractFileWatcher::subfileCreated, this,
-    [this](const DUrl & url) {
-//        DFileService::instance()->changeRootFile(url);
+            [this](const DUrl & url) {
+        //        DFileService::instance()->changeRootFile(url);
         const QString &groupNameStr = groupName(Bookmark);
         this->addItem(DFMSideBarBookmarkItemHandler::createItem(url), groupNameStr);
         this->saveItemOrder(groupNameStr);
     });
 
     connect(bookmarkWatcher, &DAbstractFileWatcher::fileDeleted, this,
-    [this](const DUrl & url) {
+            [this](const DUrl & url) {
         qDebug() << url;
         int index = findItem(url, groupName(Bookmark));
         if (index >= 0) {
-//            DFileService::instance()->changeRootFile(url,false);
+            //            DFileService::instance()->changeRootFile(url,false);
             m_sidebarModel->removeRow(index);
             this->saveItemOrder(groupName(Bookmark));
         }
     });
 
     connect(bookmarkWatcher, &DAbstractFileWatcher::fileMoved, this,
-    [this](const DUrl & source, const DUrl & target) {
+            [this](const DUrl & source, const DUrl & target) {
         int index = findItem(source, groupName(Bookmark));
         if (index > 0) {
             DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
@@ -649,10 +663,10 @@ void DFMSideBar::initDeviceConnection()
         if (this->findItem(url) == -1) {
             auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
                                       [](const DUrl &a, const DUrl &b) {
-                                          DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
-                                          DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
-                                          return DFMRootFileInfo::typeCompare(fia, fib);
-                                      }
+                DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
+                DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
+                return DFMRootFileInfo::typeCompare(fia, fib);
+            }
             );
             if (r == devitems.end()) {
                 DFileService::instance()->changeRootFile(url);
@@ -723,14 +737,14 @@ void DFMSideBar::initTagsConnection()
 
     // New tag added.
     connect(tagsWatcher, &DAbstractFileWatcher::subfileCreated, this, [this, groupNameStr](const DUrl & url) {
-//        DFileService::instance()->changeRootFile(url);
+        //        DFileService::instance()->changeRootFile(url);
         this->addItem(DFMSideBarTagItemHandler::createItem(url), groupNameStr);
         this->saveItemOrder(groupNameStr);
     });
 
     // Tag get removed.
     connect(tagsWatcher, &DAbstractFileWatcher::fileDeleted, this, [this, groupNameStr](const DUrl & url) {
-//        DFileService::instance()->changeRootFile(url,false);
+        //        DFileService::instance()->changeRootFile(url,false);
         this->removeItem(url, groupNameStr);
         this->saveItemOrder(groupNameStr);
     });
@@ -748,11 +762,33 @@ void DFMSideBar::initTagsConnection()
         }
     });
 
-//    // Tag changed color
-//    q->connect(tagsWatcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
-//        DFMSideBarItem *item = group->findItem(url);
-//        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
-//    });
+    //    // Tag changed color
+    //    q->connect(tagsWatcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
+    //        DFMSideBarItem *item = group->findItem(url);
+    //        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
+    //    });
+}
+
+void DFMSideBar::initVaultConnection()
+{
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(this->topLevelWidget());
+
+    connect(DFMVaultRemovePages::instance(this), &DFMVaultRemovePages::accepted, [wnd](){
+        // 切换到计算机目录下
+        wnd->cd(DUrl(COMPUTER_ROOT));
+    });
+
+    connect(DFMVaultUnlockPages::instance(this), &DFMVaultUnlockPages::accepted, [wnd](){
+        // 进入保险箱
+        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
+        wnd->cd(vaultUrl);
+    });
+
+    connect(DFMVaultRecoveryKeyPages::instance(this), &DFMVaultRecoveryKeyPages::accepted, [wnd](){
+        // 进入保险箱
+        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
+        wnd->cd(vaultUrl);
+    });
 }
 
 void DFMSideBar::applySidebarColor()
@@ -812,6 +848,10 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         if (!m_disableUrlSchemes.contains(COMPUTER_SCHEME)) {
             appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
         }
+        // 添加保险库
+        if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
+            appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
+        }
         break;
     case GroupName::Bookmark: {
         if (m_disableUrlSchemes.contains(BOOKMARK_SCHEME))  {
@@ -838,7 +878,7 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         }
 
         auto tag_infos = DFileService::instance()->getChildren(this, DUrl(TAG_ROOT),
-                              QStringList(), QDir::AllEntries);
+                                                               QStringList(), QDir::AllEntries);
         QList<DFMSideBarItem *> unsortedList;
         for (const DAbstractFileInfoPointer &info : tag_infos) {
             unsortedList << DFMSideBarTagItemHandler::createItem(info->fileUrl());

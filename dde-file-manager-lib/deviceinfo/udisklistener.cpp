@@ -509,6 +509,8 @@ QMap<QString, UDiskDeviceInfoPointer> UDiskListener::getMountedRemovableDiskDevi
             infos.insert(info->getDiskInfo().id(), info);
         }
     }
+    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
+    qDebug() << infos;
     return infos;
 }
 
@@ -521,6 +523,8 @@ QMap<QString, UDiskDeviceInfoPointer> UDiskListener::getCanSendDisksByUrl(QStrin
         }
         infos.insert(info->getDiskInfo().id(), info);
     }
+    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
+    qDebug() << infos;
     return infos;
 }
 

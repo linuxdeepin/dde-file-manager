@@ -97,6 +97,7 @@ private:
     void initBookmarkConnection();
     void initDeviceConnection();
     void initTagsConnection();
+    void initVaultConnection();
     void applySidebarColor();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);

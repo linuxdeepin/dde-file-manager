@@ -20,36 +20,38 @@
  */
 #pragma once
 
-#include "interface/dfmvaultcontentinterface.h"
+//#include "interface/dfmvaultcontentinterface.h"
 #include "dtkwidget_global.h"
+#include <DDialog>
 
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
-class DFloatingButton;
-class DCommandLinkButton;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
-DFM_BEGIN_NAMESPACE
-
-class DFMVaultUnlockPages : public DFMVaultContentInterface
+class DFMVaultUnlockPages : public DDialog
 {
     Q_OBJECT
-public:
-    DFMVaultUnlockPages(QWidget * parent = nullptr);
-    ~DFMVaultUnlockPages() override {}
+public:            
+    static DFMVaultUnlockPages *instance(QWidget *parent = nullptr);
 
-    QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
-    void setRootUrl(const DUrl & url) override;
+public slots:
+    void onButtonClicked(const int &index);
 
-private slots:
-    void unlock();
+    void onPasswordChanged(const QString &pwd);
+
+    void onVaultUlocked(int state);
 
 private:
-    DPasswordEdit * m_passwordEdit;
-    DFloatingButton * m_unlockButton;
-    DCommandLinkButton * m_retrievePasswordButton;
-};
+    DFMVaultUnlockPages(QWidget * parent = nullptr);
+    ~DFMVaultUnlockPages() override;
 
-DFM_END_NAMESPACE
+    void showEvent(QShowEvent *event) override;
+
+private:
+    DPasswordEdit * m_passwordEdit {nullptr};
+    QPushButton * m_tipsButton {nullptr};
+    bool m_bUnlockByPwd = false;
+    static DFMVaultUnlockPages *m_instance;
+};

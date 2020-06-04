@@ -56,6 +56,7 @@ public:
 
     DUrlList selectedUrls() const;
     void setCanUse(const bool canuse);
+    void mouseMoveEvent(QMouseEvent * event) override;
 
 public Q_SLOTS:
     // 重定义，防止崩溃

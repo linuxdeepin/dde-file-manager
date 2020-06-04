@@ -51,6 +51,8 @@
 #include "dfileinfo.h"
 #include "models/trashfileinfo.h"
 
+#include "controllers/vaultcontroller.h"
+
 #include "views/windowmanager.h"
 
 #include "xutil.h"
@@ -555,7 +557,8 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     QWidget *detailsw = new QWidget(&d);
     detailsw->setLayout(new QVBoxLayout());
     QTextEdit *te = new QTextEdit();
-    te->setPlainText(details.join('\n'));
+    // tmp: 暂时不要详细信息
+    // te->setPlainText(details.join('\n'));
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);
@@ -676,7 +679,12 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
     QWidget *w = WindowManager::getWindowById(event.windowId());
     if (w) {
-        OpenWithDialog *d = new OpenWithDialog(event.fileUrl());
+        DUrl url = event.fileUrl();
+        if(event.fileUrl().scheme() == DFMVAULT_SCHEME)
+        {
+            url = VaultController::vaultToLocalUrl(url);
+        }
+        OpenWithDialog *d = new OpenWithDialog(url);
         d->setDisplayPosition(OpenWithDialog::Center);
         d->exec();
     }
@@ -795,7 +803,7 @@ void DialogManager::showComputerPropertyDialog()
 
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
-    }, this)
+                     }, this)
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)

@@ -670,12 +670,68 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
     return result;
 }
 
-static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false, bool force = false)
+bool FileController::isExtDeviceJobCase(void* curJob, const DUrl& url) const
+{
+    DFileCopyMoveJob* thisJob = (DFileCopyMoveJob*)curJob;
+    QString filePath = url.path();
+    DUrlList srcUrlList = thisJob->sourceUrlList();
+    DUrl targetUrl = thisJob->targetUrl();
+
+    bool isDiscCase = false; // 查看是否是一般case 路径，比如FAT32 U盘直接写数据
+    if(targetUrl.path().contains(filePath)) {
+        isDiscCase = true;
+    }
+
+    foreach (DUrl oneUrl, srcUrlList) {
+        if(oneUrl.path().contains(filePath)) {
+            isDiscCase = true;
+            break;
+        }
+    }
+
+    if(isDiscCase)
+        return true;
+
+    return  isDiscburnJobCase(curJob, url);
+}
+
+bool FileController::isDiscburnJobCase(void* curJob, const DUrl& url) const
+{
+    DFileCopyMoveJob* thisJob = (DFileCopyMoveJob*)curJob;
+
+    QString burnDestDevice = url.burnDestDevice();
+
+    DUrlList srcUrlList = thisJob->sourceUrlList();
+    DUrl targetUrl = thisJob->targetUrl();
+
+    burnDestDevice.replace('/','_');
+
+    // 查看当前路径是否是光驱缓存路径
+    bool isDiscCase = false;
+    if(targetUrl.path().contains(DISCBURN_CACHE_MID_PATH) &&
+       targetUrl.path().contains(burnDestDevice)     ) {
+        isDiscCase = true;
+    }
+
+    foreach (DUrl oneUrl, srcUrlList) {
+        if(oneUrl.path().contains(DISCBURN_CACHE_MID_PATH) &&
+            oneUrl.path().contains(burnDestDevice)    ) {
+            isDiscCase = true;
+            break;
+        }
+    }
+
+    return  isDiscCase;
+}
+
+DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient , bool force ) const
 {
     // fix bug 27109 在某种情况下，存在 FileCopyMoveJob 还没被析构，但其中的成员 StatisticJob 已经被析构，又在 FileCopyMoveJob 的函数中调用了 StatisticJob 的对象，导致崩溃
     // 所以这里将原来的普通指针以 deleteLater 析构的内存管理方式交给智能指针去判定。测试百次左右没有再发生崩溃的现象。
     // 该现象发生于从搜索列表中往光驱中发送文件夹还不被支持的时候。现已可以从搜索列表、最近列表、标签列表中往光驱中发送文件
     QSharedPointer<DFileCopyMoveJob> job = QSharedPointer<DFileCopyMoveJob>(new DFileCopyMoveJob());
+    //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
+
     //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
 
     if (force) {
@@ -695,13 +751,13 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
     class ErrorHandle : public QObject, public DFileCopyMoveJob::Handle
     {
     public:
-        ErrorHandle(DFileCopyMoveJob *job, bool s)
+        ErrorHandle(QSharedPointer<DFileCopyMoveJob> job, bool s)
             : QObject(nullptr)
             , slient(s)
             , fileJob(job)
         {
             //线程启动传递源地址和目标地址
-            connect(job, &DFileCopyMoveJob::currentJobChanged, job, [this](const DUrl & from, const DUrl & to) {
+            connect(job.data(), &DFileCopyMoveJob::currentJobChanged, this, [this](const DUrl & from, const DUrl & to) {
                     QMutex mutex;
                     mutex.lock();
                     currentJob.first = from;
@@ -719,6 +775,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             if (timer_id > 0) {
                 killTimer(timer_id);
             }
+            qDebug() << " ErrorHandle() ";
         }
 
         // 处理任务对话框显示之前的错误, 无法处理的错误将立即弹出对话框处理
@@ -767,18 +824,34 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             //这里会出现pasteFilesV2函数线程和当前线程是同时在执行，会出现在1处pasteFilesV2所在线程 没结束，但是这时pasteFilesV2所在线程 结束
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
             if(!fileJob->isFinished()){
-                dialogManager->taskDialog()->addTaskJob(fileJob);
+                dialogManager->taskDialog()->addTaskJob(fileJob.data());
                 emit fileJob->currentJobChanged(currentJob.first, currentJob.second);
             }
         }
 
         int timer_id = 0;
         bool slient;
-        DFileCopyMoveJob *fileJob;
+        QSharedPointer<DFileCopyMoveJob> fileJob;
         QPair<DUrl, DUrl> currentJob;
     };
 
-    ErrorHandle *error_handle = new ErrorHandle(job.data(), slient);
+    ErrorHandle *error_handle = new ErrorHandle(job, slient);
+
+    // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
+    DFileCopyMoveJob* thisJob = job.data();
+    connect(fileSignalManager, &FileSignalManager::requestAsynAbortJob, thisJob, [thisJob, this](const DUrl& url) {
+
+        bool isExtDeviceWorkingJob = isExtDeviceJobCase(thisJob, url);
+        if(isExtDeviceWorkingJob) {
+
+            emit thisJob->stop();
+            qDebug() << "break the FileCopyMoveJob for the device:" << url.path();
+
+            thisJob->wait(); // 等job线程结束
+            sleep(1); // 加一个buffer 时间等外设相关设备结束
+        }
+
+    });
 
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
     job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);

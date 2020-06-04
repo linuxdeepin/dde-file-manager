@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>LinuxDeepin</vendor>
+  <vendor_url>https://www.deepin.com/</vendor_url>
+  <action id="com.deepin.pkexec.deepin-vault">
+    <description>Vault</description>
+    <message>Authentication is required to remove the file vault</message>
+    <message xml:lang="zh_CN">删除文件保险箱需要认证</message>
+    <icon_name>infomation</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/deepin-vaultRemove-authenticateProxy</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+</policyconfig>

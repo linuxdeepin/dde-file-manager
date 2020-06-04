@@ -103,8 +103,7 @@ void ComputerPropertyDialog::initUI()
               << tr("Version")
               << tr("Type")
               << tr("Processor")
-              << tr("Memory")
-              << tr("Disk");
+              << tr("Memory");
 
     int row = 0;
     QHash<QString, QString> datas = getMessage(msgsTitle);
@@ -210,14 +209,12 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
                                                       QDBusConnection::systemBus(), this);
     QString memoryInstallStr;
     QString memoryStr;
-    QString diskStr;
     QString processor;
     QString systemType;
     if (!t_systemInfo->isValid()) {
         memoryInstallStr = formatCap(DSysInfo::memoryInstalledSize(), 1024, 0);
         memoryStr = formatCap(DSysInfo::memoryTotalSize());
 
-        diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
         processor = m_systemInfo->processor();
         systemType = QString::number(m_systemInfo->systemType());
         version = m_systemInfo->version();
@@ -228,7 +225,6 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         memoryInstallStr = formatCap(t_systemInfo->property("MemorySize").toULongLong(), 1024, 0);
         memoryStr = formatCap(DSysInfo::memoryTotalSize());
 
-        diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
         processor = m_systemInfo->processor();
         systemType = QString::number(m_systemInfo->systemType());
         version = m_systemInfo->version();
@@ -241,7 +237,6 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     datas.insert(data.at(2), QString::number(m_systemInfo->systemType()) + tr("Bit"));
     datas.insert(data.at(3), processor);
     datas.insert(data.at(4), memoryInstallStr + "(" +  memoryStr + tr("Available") + ")");
-    datas.insert(data.at(5), diskStr + " GB");
 
     return datas;
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 
-<node> 
+<node>
   <interface name="com.deepin.daemon.Appearance">
     <method name="Delete">
       <arg name="type" type="s" direction="in"/>
@@ -19,6 +19,18 @@
       <arg name="type" type="s" direction="in"/>
       <arg name="value" type="s" direction="in"/>
     </method>
+    <method name="SetMonitorBackground">
+      <arg name="monitorName" type="s" direction="in"/>
+      <arg name="imageFile" type="s" direction="in"/>
+    </method>
+    <method name="SetWallpaperSlideShow">
+      <arg name="MonitorName" type="s" direction="in"/>
+      <arg name="WallpaperSlideShow" type="s" direction="in"/>
+    </method>
+    <method name="GetWallpaperSlideShow">
+      <arg name="MonitorName" type="s" direction="in"/>
+      <arg name="SlideShow" type="s" direction="out"/>
+    </method>
     <method name="SetScaleFactor">
       <arg name="scale_factor" type="d" direction="in"/>
     </method>
@@ -35,10 +47,10 @@
     <signal name="Changed">
       <arg name="type0" type="s"/>
       <arg name="value" type="s"/>
-    </signal>  
+    </signal>
     <signal name="Refreshed">
-      <arg name="type0" type="s"/> 
-    </signal>  
+      <arg name="type0" type="s"/>
+    </signal>
     <property name="StandardFont" type="s" access="read"/>
     <property name="MonospaceFont" type="s" access="read"/>
     <property name="Opacity" type="d" access="readwrite"/>

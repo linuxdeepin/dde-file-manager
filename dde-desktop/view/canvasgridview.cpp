@@ -57,6 +57,7 @@
 #include "../dbus/dbusdock.h"
 #include "../config/config.h"
 #include "backgroundhelper.h"
+#include "screen/screenhelper.h"
 
 #include "interfaces/private/mergeddesktop_common_p.h"
 #include "util/xcb/xcb.h"
@@ -69,9 +70,15 @@
 #include "controllers/mergeddesktopcontroller.h"
 
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
-extern QTime gTime;
+
 std::atomic<bool> CanvasGridView::m_flag{ false };
 QMap<DMD_TYPES, bool> CanvasGridView::virtualEntryExpandState;
+
+static const QMap<int, int> kSortActions = {{MenuAction::Name, DFileSystemModel::FileDisplayNameRole}
+                                            ,{MenuAction::Size, DFileSystemModel::FileSizeRole}
+                                            ,{MenuAction::Type, DFileSystemModel::FileMimeTypeRole}
+                                            ,{MenuAction::LastModifiedDate, DFileSystemModel::FileLastModifiedRole}
+                                           };
 
 void startProcessDetached(const QString &program,
                           const QStringList &arguments = QStringList(),
@@ -90,10 +97,13 @@ void startProcessDetached(const QString &program,
 
 DWIDGET_USE_NAMESPACE
 
-CanvasGridView::CanvasGridView(QWidget *parent)
-    : QAbstractItemView(parent), d(new CanvasViewPrivate)
+CanvasGridView::CanvasGridView(const QString &screen, QWidget *parent)
+    : QAbstractItemView(parent)
+    , d(new CanvasViewPrivate)
+    , m_screenName(screen)
 {
-
+    initUI();
+    initConnection();
 }
 
 CanvasGridView::~CanvasGridView()
@@ -104,7 +114,7 @@ CanvasGridView::~CanvasGridView()
 QRect CanvasGridView::visualRect(const QModelIndex &index) const
 {
     auto url = model()->getUrlByIndex(index);
-    auto gridPos = GridManager::instance()->position(url.toString());
+    auto gridPos = GridManager::instance()->position(m_screenNum, url.toString());
 
     auto x = gridPos.x() * d->cellWidth + d->viewMargins.left();
     auto y = gridPos.y() * d->cellHeight + d->viewMargins.top();
@@ -113,9 +123,12 @@ QRect CanvasGridView::visualRect(const QModelIndex &index) const
 
 QModelIndex CanvasGridView::indexAt(const QPoint &point) const
 {
-    auto gridPos = gridAt(point);
-    auto localFile =  GridManager::instance()->itemId(gridPos.x(), gridPos.y());
-    auto rowIndex = model()->index(DUrl(localFile));
+    QPoint gridPos = gridAt(point);
+    //如果本屏有堆叠就，并且point为堆叠点，那么修改点击的项目为堆叠项目的最后一个 for优先在最后一个网格显示堆叠的最后一个项目
+    QString localFile = GridManager::instance()->itemTop(m_screenNum, gridPos.x(), gridPos.y());
+    //GridManager::instance()->itemId(m_screenNum, gridPos.x(), gridPos.y());
+
+    QModelIndex rowIndex = model()->index(DUrl(localFile));
     QPoint pos = QPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
     auto list = itemPaintGeomertys(rowIndex);
 
@@ -186,7 +199,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         return headIndex;
     }
     auto url = model()->getUrlByIndex(current);
-    auto pos = GridManager::instance()->position(url.toString());
+
+    auto pos = GridManager::instance()->position(m_screenNum, url.toString());
     auto newCoord = Coordinate(pos);
 
     switch (cursorAction) {
@@ -194,7 +208,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         while (pos.x() >= 0) {
             newCoord = newCoord.moveLeft();
             pos = newCoord.position();
-            if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
+            if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
                 break;
             }
         }
@@ -203,7 +217,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         while (pos.x() < d->colCount) {
             newCoord = newCoord.moveRight();
             pos = newCoord.position();
-            if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
+            if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
                 break;
             }
         }
@@ -217,7 +231,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 newCoord = Coordinate(pos.x() - 1, d->rowCount - 1);
                 pos = newCoord.position();
             }
-            if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
+            if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
                 break;
             }
         }
@@ -231,7 +245,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 newCoord = Coordinate(pos.x() + 1, 0);
                 pos = newCoord.position();
             }
-            if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
+            if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
                 break;
             }
         }
@@ -247,8 +261,9 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                     newCoord = Coordinate(pos.x() - 1, d->rowCount - 1);
                     pos = newCoord.position();
                 }
-                if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
-                    auto localFile = GridManager::instance()->itemId(pos.x(), pos.y());
+                if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
+                    auto localFile = GridManager::instance()->itemTop(m_screenNum, pos.x(), pos.y());
+                    //GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -270,8 +285,9 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                     newCoord = Coordinate(pos.x() + 1, 0);
                     pos = newCoord.position();
                 }
-                if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
-                    auto localFile = GridManager::instance()->itemId(pos.x(), pos.y());
+                if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
+                    auto localFile = GridManager::instance()->itemTop(m_screenNum, pos.x(), pos.y());
+                    //GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -289,18 +305,31 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         return current;
     }
 
-    auto localFile =  GridManager::instance()->itemId(pos.x(), pos.y());
+    auto localFile = GridManager::instance()->itemTop(m_screenNum, pos.x(), pos.y());
+    //GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
     auto newIndex = model()->index(DUrl(localFile));
     if (newIndex.isValid()) {
         return newIndex;
     }
 
-    qDebug() << selectedUrls();
+    //qDebug() << selectedUrls();
     return current;
 }
 
 void CanvasGridView::updateHiddenItems()
 {
+    itemDelegate()->hideAllIIndexWidget();
+    clearSelection();
+
+    auto filters  = model()->filters();
+    filters = GridManager::instance()->getWhetherShowHiddenFiles() ?
+                filters | QDir::Hidden : filters & ~QDir::Hidden;
+    qDebug() << "current filters" << GridManager::instance()->getWhetherShowHiddenFiles()
+             << filters << m_screenName << m_screenNum;
+    model()->setFilters(filters);
+    delayModelRefresh(0);
+    return;
+#if 0
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, currentUrl());
     if (!info) {
         qDebug() << "CanvasGridView::updateHiddenItems(): currentUrl() scheme is not supported";
@@ -309,33 +338,43 @@ void CanvasGridView::updateHiddenItems()
 
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, currentUrl(),
                                                                                      QStringList(), model()->filters());
-
-    auto existItems = GridManager::instance()->itemIds();
+    auto existItems = GridManager::instance()->itemIds(m_screenNum);
 
     QStringList items;
     for (const DAbstractFileInfoPointer &info : infoList) {
         QString hideItem = info->fileUrl().toString();
         existItems.removeAll(hideItem);
-        if (!GridManager::instance()->contains(hideItem)) {
-            GridManager::instance()->add(hideItem);
+        if (!GridManager::instance()->contains(m_screenNum, hideItem)) {
+            GridManager::instance()->add(m_screenNum, hideItem);
         }
     }
 
     for (auto nonexistItem : existItems) {
-        GridManager::instance()->remove(nonexistItem);
+        GridManager::instance()->remove(m_screenNum, nonexistItem);
     }
 
-    if (GridManager::instance()->shouldArrange()) {
-        GridManager::instance()->reArrange();
-    }
+    GridManager::instance()->reArrange();
+#endif
 }
 
 void CanvasGridView::setGeometry(const QRect &rect)
 {
+#if 0 //old
     if (parentWidget()) {
         QAbstractItemView::setGeometry(QRect(0, 0, rect.width(), rect.height()));
     } else {
         QAbstractItemView::setGeometry(rect);
+    }
+#endif
+    //!防止获取到的屏幕区域是0x0的时候崩溃
+    if (rect.size().width() < 1 || rect.size().height() < 1){
+        return;
+    }
+    else {
+        QAbstractItemView::setGeometry(rect);
+        updateCanvas();
+        if (d->waterMaskFrame)
+            d->waterMaskFrame->updatePosition();
     }
 }
 
@@ -365,6 +404,169 @@ bool CanvasGridView::fetchDragEventUrlsFromSharedMemory()
     return true;
 }
 
+void CanvasGridView::delayModelRefresh(int ms)
+{
+    if (m_refreshTimer != nullptr){
+        m_refreshTimer->stop();
+        delete m_refreshTimer;
+        m_refreshTimer = nullptr;
+        qDebug() << "reset refresh timer" << m_screenNum;
+    }
+
+    if (ms < 1){
+        qDebug() << "now refresh " << m_refreshTimer << m_screenNum;
+        m_rt.start();
+        model()->refresh();
+        return;
+    }
+
+    m_refreshTimer = new QTimer(this);
+    connect(m_refreshTimer,&QTimer::timeout,this,[=](){
+        m_refreshTimer->stop();
+        qDebug() << "beging refresh " << m_refreshTimer << m_screenNum;
+        m_rt.start();
+        model()->refresh();
+    });
+
+    m_refreshTimer->start(ms);
+}
+
+void CanvasGridView::delayArrage(int ms)
+{
+    static QTimer *arrangeTimer = nullptr;
+    if (arrangeTimer != nullptr){
+        arrangeTimer->stop();
+        delete arrangeTimer;
+        arrangeTimer = nullptr;
+        qDebug() << "reset timer" << m_screenNum;
+    }
+    if (ms < 1){
+        d->bReloadItem = true;
+        qDebug() << "beging sort " << arrangeTimer << m_screenNum;
+        model()->setEnabledSort(true);
+        model()->sort();
+        return;
+    }
+
+    arrangeTimer = new QTimer;
+    connect(arrangeTimer,&QTimer::timeout,this,[=](){
+        arrangeTimer->stop();
+        d->bReloadItem = true;
+        qDebug() << "beging sort " << arrangeTimer << m_screenNum;
+        model()->setEnabledSort(true);
+        model()->sort();
+    });
+    arrangeTimer->start(ms);
+}
+
+void CanvasGridView::delayCustom(int ms)
+{
+    if (GridManager::instance()->shouldArrange()){
+        return;
+    }
+
+    static QTimer *arrangeTimer = nullptr;
+    if (arrangeTimer != nullptr){
+        arrangeTimer->stop();
+        delete arrangeTimer;
+        arrangeTimer = nullptr;
+        qDebug() << "reset Custom timer" << m_screenNum;
+    }
+
+    if (ms < 1){
+        QStringList list;
+        for (int i = 0; i < model()->rowCount(); ++i) {
+            auto index = model()->index(i, 0);
+            auto localFile = model()->getUrlByIndex(index).toString();
+            list << localFile;
+        }
+        qDebug() << "initCustom file count" << list.size();
+        GridManager::instance()->initCustom(list);
+
+        emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
+        return;
+    }
+
+    arrangeTimer = new QTimer;
+    connect(arrangeTimer,&QTimer::timeout,this,[=](){
+        arrangeTimer->stop();
+        QStringList list;
+        for (int i = 0; i < model()->rowCount(); ++i) {
+            auto index = model()->index(i, 0);
+            auto localFile = model()->getUrlByIndex(index).toString();
+            list << localFile;
+        }
+        qDebug() << "initCustom file count" << list.size();
+        GridManager::instance()->initCustom(list);
+
+        emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
+    });
+    arrangeTimer->start(ms);
+}
+
+void CanvasGridView::delayAutoMerge(int ms)
+{
+    if (!GridManager::instance()->autoMerge()){
+        return;
+    }
+
+    static QTimer *arrangeTimer = nullptr;
+    if (arrangeTimer != nullptr){
+        arrangeTimer->stop();
+        delete arrangeTimer;
+        arrangeTimer = nullptr;
+        qDebug() << "reset autoMerge timer" << m_screenNum;
+    }
+
+    if (ms < 1){
+        QStringList list;
+        for (int i = 0; i < model()->rowCount(); ++i) {
+            auto index = model()->index(i, 0);
+            auto localFile = model()->getUrlByIndex(index).toString();
+            list << localFile;
+        }
+        qDebug() << "now initArrage file count" << list.size()
+                 << "expend" << currentUrl().fragment();
+        GridManager::instance()->initArrage(list);
+        return;
+    }
+
+    arrangeTimer = new QTimer;
+    connect(arrangeTimer,&QTimer::timeout,this,[=](){
+        arrangeTimer->stop();
+        QStringList list;
+        for (int i = 0; i < model()->rowCount(); ++i) {
+            auto index = model()->index(i, 0);
+            auto localFile = model()->getUrlByIndex(index).toString();
+            list << localFile;
+        }
+        qDebug() << "initArrage file count" << list.size()
+                 << "expend" << currentUrl().fragment() << "screen" << m_screenNum;
+        GridManager::instance()->initArrage(list);
+    });
+    arrangeTimer->start(ms);
+}
+
+DUrl CanvasGridView::currentCursorFile() const
+{
+    DUrl ret;
+    DAbstractFileInfoPointer fp = model()->fileInfo(d->currentCursorIndex);
+    if (fp){
+        ret = fp->fileUrl();
+    }
+    return ret;
+}
+
+void CanvasGridView::syncIconLevel(int level)
+{
+    if (itemDelegate()->iconSizeLevel() == level) {
+        return;
+    }
+
+    itemDelegate()->setIconSizeByIconSizeLevel(level);
+    updateCanvas();
+}
+
 WId CanvasGridView::winId() const
 {
     if (isTopLevel()) {
@@ -374,16 +576,18 @@ WId CanvasGridView::winId() const
     }
 }
 
-bool CanvasGridView::autoMerge() const
-{
-    return GridManager::instance()->autoMerge();
-}
-
 void CanvasGridView::setAutoMerge(bool enabled)
 {
     GridManager::instance()->setAutoMerge(enabled);
     if (enabled) {
-        this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
+        //this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
+        //刷新虚拟路径时是先查看是否已有展开状态
+        DUrl virtualExpandUrl = GridManager::instance()->getCurrentVirtualExpandUrl();
+        if(virtualExpandUrl.fragment().isEmpty()){
+            this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
+        }else {
+            this->setRootUrl(virtualExpandUrl);
+        }
     } else {
         // sa
         QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
@@ -393,15 +597,11 @@ void CanvasGridView::setAutoMerge(bool enabled)
             QDir::home().mkpath(desktopPath);
         }
 
+        //复位成未展开的状态
+        DUrl clearUrl;
+        GridManager::instance()->setCurrentVirtualExpandUrl(DUrl(QUrl()));
         this->setRootUrl(desktopUrl);
     }
-}
-
-void CanvasGridView::toggleAutoMerge(bool enabled)
-{
-    if (enabled == GridManager::instance()->autoMerge()) return;
-
-    setAutoMerge(enabled);
 }
 
 // please make sure the passed \a url argument is a valid virtual entry url.
@@ -422,6 +622,7 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
     // construct fragment which indicated the expanded entries
     QStringList expandedEntries;
     int possibleChildCount = 0;
+
     bool onlyExpandShowClickedEntry = false;
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
@@ -437,6 +638,7 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
                 possibleChildCount += info->filesCount();
             }
         }
+
         if (possibleChildCount > GridManager::instance()->gridCount()) {
             onlyExpandShowClickedEntry = true;
             break;
@@ -452,6 +654,16 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
 
     // set root url (which will update the view)
     this->setRootUrl(targetUrl);
+    //更新其他canvas的model自动整理数据。 todo:考虑优化没有扩展到的不用刷新
+    QMap<QString, DUrl> mergeUpInfo;
+    mergeUpInfo.insert(m_screenName, targetUrl);
+    emit GridManager::instance()->sigSyncOperation(GridManager::soAutoMergeUpdate,QVariant::fromValue(mergeUpInfo));
+
+}
+
+void CanvasGridView::updateEntryExpandedState(const DUrl &url)
+{
+    this->setRootUrl(url);
 }
 
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
@@ -557,7 +769,12 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     d->lastPos = event->pos();
 
     bool isEmptyArea = !index.isValid();
-    itemDelegate()->commitDataAndCloseActiveEditor();
+    if (index.isValid() && itemDelegate()->editingIndex() == index){
+        //如果当前点击的是正在编辑的项目
+        //不关闭编辑框,fix#bug25523 桌面文件进行重命名操作，在重命名输入框中右键，自动退出重命名状态
+    }
+    else
+        itemDelegate()->commitDataAndCloseActiveEditor();
 
     if (isEmptyArea) {
         if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed()) {
@@ -568,14 +785,24 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     }
 
     d->beforeMoveSelection = selectionModel()->selection();
-
+    //auto selectedIndexes = selectionModel()->selectedIndexes();
     bool isselected = isSelected(index);
 //    QAbstractItemView::mousePressEvent(event);
 
     //fix 修改ctrl+左键取消选中状态导致所有选中文件被取消选中的问题。
     if (leftButtonPressed && isselected && event->modifiers() == Qt::ControlModifier) {
+#if 0   //反选功能 暂不清楚是否需要，不开启
+        selectedIndexes.removeOne(index);
+        QItemSelection selection;
+        for (const QModelIndex &mi : selectedIndexes){
+            selection << QItemSelectionRange(mi);
+        }
+        d->beforeMoveSelection = selection;
+        selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+#else
         setProperty("lastPressedIndex", index);
         selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Deselect);
+#endif
     }
     else {
         QAbstractItemView::mousePressEvent(event);
@@ -633,7 +860,7 @@ void CanvasGridView::wheelEvent(QWheelEvent *event)
         } else {
             decreaseIcon();
         }
-        QThread::msleep(200);
+        //QThread::msleep(100);
         event->accept();
     }
 }
@@ -726,12 +953,13 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             }
             break;
         case Qt::Key_Space: {
-            QStringList urls = GridManager::instance()->itemIds();
+            QStringList urls = GridManager::instance()->itemIds(m_screenNum);
             DUrlList entryUrls;
             foreach (QString url, urls) {
                 entryUrls << DUrl(url);
             }
-            DFMGlobal::showFilePreviewDialog(selectUrls, entryUrls);
+            DUrlList selectUrlsActual = MergedDesktopController::convertToRealPaths(selectUrls);
+            DFMGlobal::showFilePreviewDialog(selectUrlsActual, entryUrls);
         }
         break;
         default:
@@ -763,20 +991,12 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             increaseIcon();
             return;
         case Qt::Key_H: {
-
-            ///###: record whether show files which were starting with ".";
+            //更改显示隐藏状态
             bool whetherShowHiddenFiles{ GridManager::instance()->getWhetherShowHiddenFiles() };
             GridManager::instance()->setWhetherShowHiddenFiles(!whetherShowHiddenFiles);
 
-            itemDelegate()->hideAllIIndexWidget();
-            clearSelection();
-            model()->toggleHiddenFiles(rootUrl);
-            updateHiddenItems();
-
-            if (GridManager::instance()->getWhetherShowHiddenFiles()) {
-                update();
-            }
-
+            //同步刷新,交由GridViewManager调用updateHiddenItems
+            emit GridManager::instance()->sigSyncOperation(GridManager::soHidenSwitch);
             return;
         }
         case Qt::Key_I:
@@ -867,7 +1087,7 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
     }
 
     if (event->source()) {
-        if (!autoMerge()) {
+        if (!GridManager::instance()->shouldArrange()) {
             d->startDodge = true;
         }
         itemDelegate()->hideNotEditingIndexWidget();
@@ -900,7 +1120,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         d->dragTargetGrid.setY((pos.y() - d->viewMargins.top()) / d->cellHeight);
 
         // FIXME: out of border???
-        auto localeFile = GridManager::instance()->itemId(d->dragTargetGrid);
+        auto localeFile = GridManager::instance()->itemId(m_screenNum, d->dragTargetGrid);
         if (!localeFile.isEmpty() && !d->dodgeAnimationing) {
             d->dodgeDelayTimer.start();
         }
@@ -918,11 +1138,15 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
 
     if (hoverIndex.isValid()) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(hoverIndex);
-
+        CanvasGridView *view = dynamic_cast<CanvasGridView*>(event->source());
         if (fileInfo) {
-            if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
+            //old
+            //if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
+            //new
+            if (view && !DFMGlobal::keyCtrlIsPressed()) {
                 event->setDropAction(Qt::MoveAction);
             }
+            //end
 
             bool canDrop = fileInfo->canDrop();
             canDrop = fileInfo->isDir() && !fileInfo->isWritable();
@@ -944,16 +1168,48 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         }
     }
 
-    if (!autoMerge()) {
-        startDodgeAnimation();
+    if (!GridManager::instance()->shouldArrange()) {   //自定义
+        CanvasGridView *view = dynamic_cast<CanvasGridView *>(event->source());
+        if (view && event->mimeData()){
+            QPair<int,QPoint> orgpos;
+            //找项目源
+            auto urls = event->mimeData()->urls();
+            if (!urls.isEmpty() && GridManager::instance()->find(urls.first().toString(),orgpos)){
+                if (orgpos.first == m_screenNum) { //同屏
+                    startDodgeAnimation();
+                    update();
+                    return;
+                }        //跨屏拖动，空间不足时先禁止拖动，todo 寻找更好的解决办法
+                else if (GridManager::instance()->emptyPostionCount(m_screenNum) >= urls.size()){
+                    startDodgeAnimation();
+                    update();
+                    return;
+                }
+            }
+            else {
+                qWarning() << "not found items" << urls;
+            }
+        }
+        //end
     }
-    //update(); // bug 23351: this action will paint the whole items so not do it that affects the painting performance
+
+    { //自动排列和自动整理以及不触发让位的drag处理
+        d->fileViewHelper->preproccessDropEvent(event);
+        if (!hoverIndex.isValid()) {
+            if (DFileDragClient::checkMimeData(event->mimeData())) {
+                event->acceptProposedAction();
+                DFileDragClient::setTargetUrl(event->mimeData(), currentUrl());
+            } else {
+                event->accept();
+            }
+        }
+    }
+    update();
 }
 
 void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     CanvasGridView::m_flag.store(false, std::memory_order_release);
-
     d->dodgeDelayTimer.stop();
     d->startDodge = false;
     d->dragTargetGrid = QPoint(-1, -1);
@@ -971,7 +1227,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
     QModelIndex targetIndex = indexAt(event->pos());
 
-    QStringList selectLocalFiles;
+    QSet<QString> selectLocalFiles;
     auto selects = selectionModel()->selectedIndexes();
     bool dropOnSelf = false;
     for (auto index : selects) {
@@ -993,9 +1249,9 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         targetInfo = model()->fileInfo(rootIndex());
     }
 
-    if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
+    CanvasGridView *sourceView = dynamic_cast<CanvasGridView*>(event->source());
+    if (sourceView && !DFMGlobal::keyCtrlIsPressed()) {
         event->setDropAction(Qt::MoveAction);
-
     } else {
         d->fileViewHelper->preproccessDropEvent(event);
     }
@@ -1018,24 +1274,101 @@ void CanvasGridView::dropEvent(QDropEvent *event)
     } else {
         if (event->dropAction() == Qt::MoveAction) {
             QModelIndex dropIndex = indexAt(gridRectAt(event->pos()).center());
-
-            if (event->source() == this && (!dropIndex.isValid() || dropOnSelf)) {
-                if (autoMerge()) {
+            if (sourceView && (!dropIndex.isValid() || dropOnSelf)) {
+                //自动排列和自动整理不允许屏幕间拖动
+                if (GridManager::instance()->shouldArrange()) {
                     return;
                 }
+
                 auto point = event->pos();
                 auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
-                auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
-                GridManager::instance()->move(selectLocalFiles, current, row, col);
+
+                QList<QUrl> urls = event->mimeData()->urls();
+                for (auto url : urls){
+                    selectLocalFiles << url.toString();
+                }
+#if 0
+                //同屏移动
+                if (sourceView == this){
+                    //判断drag是不是去过别的屏并触发了让位动画
+                    QPair<int,QPoint> orgpos;
+                    if (!selectLocalFiles.isEmpty()
+                            && GridManager::instance()->find(*selectLocalFiles.begin(),orgpos)
+                            && orgpos.first != m_screenNum){ //drag从A屏移到B屏，触发动画后又移会A屏的
+
+                        //获取源屏幕的焦点
+                        QString current = currentCursorFile().toString();
+                        qDebug() << "move from" << orgpos.first << "back to" << m_screenNum
+                                 << "focus" << current << selectLocalFiles.size();
+                        GridManager::instance()->move(orgpos.first,m_screenNum, selectLocalFiles.toList(), current, row, col);
+
+                    }
+                    else{
+                        //获取焦点
+                        QString current = currentCursorFile().toString();
+                        qDebug() << "move " << m_screenNum << "focus" << current << "count" << selectLocalFiles.size();
+                        GridManager::instance()->move(m_screenNum, selectLocalFiles.toList(), current, row, col);
+                    }
+                }
+                else {  //夸屏移动
+                    //获取源屏幕的焦点
+                    QString current = sourceView->currentCursorFile().toString();
+                    qDebug() << "move form" << sourceView->screenNum() << "to" << m_screenNum
+                             << "focus" << current << selectLocalFiles.size();
+                    GridManager::instance()->move(sourceView->screenNum(),m_screenNum, selectLocalFiles.toList(), current, row, col);
+                }
+#else
+                QPair<int,QPoint> orgpos;
+                //找项目源
+                if (!selectLocalFiles.isEmpty()
+                        && GridManager::instance()->find(*selectLocalFiles.begin(),orgpos)){
+                    if (orgpos.first == m_screenNum){ //同屏
+                        //获取焦点
+                        QString current = sourceView->currentCursorFile().toString();
+                        qDebug() << "move " << m_screenNum << "focus" << current << "count" << selectLocalFiles.size();
+                        GridManager::instance()->move(m_screenNum, selectLocalFiles.toList(), current, row, col);
+                    }
+                    else {  //跨屏
+                        //获取源屏幕的焦点
+                        QString current = sourceView->currentCursorFile().toString();
+                        qDebug() << "move form" << orgpos.first << "to" << m_screenNum
+                                 << "focus" << current << selectLocalFiles.size();
+                        GridManager::instance()->move(orgpos.first,m_screenNum, selectLocalFiles.toList(), current, row, col);
+                    }
+                }
+#endif
                 setState(NoState);
                 itemDelegate()->hideNotEditingIndexWidget();
-                DUtil::TimerSingleShot(20, [this]() {
-                    repaint();
-                    update();
-                });
+
+                emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
                 return;
             }
+
+#if 0   //!错误的实现方法
+            if (sourceView == nullptr && (!dropIndex.isValid() || dropOnSelf) ){
+                //非桌面间拖入，只处理自定义
+                if (!GridManager::instance()->shouldArrange()) {
+                    auto point = event->pos();
+                    auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
+                    auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
+                    QPoint pos(row,col);
+                    QString item = GridManager::instance()->itemId(m_screenNum, pos);
+
+                    QList<QUrl> urls = event->mimeData()->urls();
+                    qDebug() << "drop" << urls << "pos" << pos
+                             << "item:" << item;
+                    if (item.isEmpty())
+                    {
+                        //todo 设置坐标
+                        qDebug() << "todo user mode add files";
+                    }else { //后面的需要 //!不是在这处理，后续调研 todo
+                        //目标文件item是否可打开urls
+                        //不能打开则交换位子
+                    }
+                }
+            }
+#endif
         }
 
         if (!targetIndex.isValid()) {
@@ -1156,15 +1489,16 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     QStringList repaintLocalFiles;
     for (int x = 0; x < d->colCount; ++x) {
         for (int y = 0; y < d->rowCount; ++y) {
-            auto localFile = GridManager::instance()->itemId(x, y);
+            auto localFile = GridManager::instance()->itemId(m_screenNum, x, y);
             if (!localFile.isEmpty()) {
                 repaintLocalFiles << localFile;
             }
         }
     }
 
-    auto overlayItems = GridManager::instance()->overlapItems();
-    for (int i = 0; i < 10 && i < overlayItems.length(); ++i) {
+    //放入堆叠
+    auto overlayItems = GridManager::instance()->overlapItems(m_screenNum);
+    for (int i = 0;i < overlayItems.length(); ++i) {
         auto localFile = overlayItems.value(i);
         if (!localFile.isEmpty()) {
             repaintLocalFiles << localFile;
@@ -1277,7 +1611,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
                 option.rect = visualRect(index).marginsRemoved(d->cellMargins);
             }
 
-            auto gridPos = d->dodgeTargetGrid->pos(localFile);
+            auto gridPos = d->dodgeTargetGrid->pos(m_screenNum, localFile);
             auto x = gridPos.x() * d->cellWidth + d->viewMargins.left();
             auto y = gridPos.y() * d->cellHeight + d->viewMargins.top();
 
@@ -1296,13 +1630,14 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     }
 }
 
-void CanvasGridView::resizeEvent(QResizeEvent *event)
-{
-    updateCanvas();
-    // todo restore
+//old
+//void CanvasGridView::resizeEvent(QResizeEvent *event)
+//{
+//    updateCanvas();
+//    // todo restore
 
-    return QAbstractItemView::resizeEvent(event);
-}
+//    return QAbstractItemView::resizeEvent(event);
+//}
 
 void CanvasGridView::focusInEvent(QFocusEvent *event)
 {
@@ -1325,6 +1660,9 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())) {
         return;
     }
+
+    //关闭编辑框
+    itemDelegate()->hideAllIIndexWidget();
 
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = selectionModel()->isSelected(index);
@@ -1349,6 +1687,7 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     if (isEmptyArea) {
         itemDelegate()->hideNotEditingIndexWidget();
         clearSelection();
+        //*d->lastMenuPos() = qMakePair(m_screenNum,gridAt(event->pos()));
         d->lastMenuPos = event->pos();
         showEmptyAreaMenu(flags);
     } else {
@@ -1375,7 +1714,6 @@ void CanvasGridView::rowsInserted(const QModelIndex &parent, int first, int last
 
     for (int index = first; index <= last; ++index) {
         const QModelIndex &child = parent.child(index, 0);
-
         DAbstractFileInfoPointer info = model()->fileInfo(child);
         if (info) {
             info->makeToActive();
@@ -1402,12 +1740,9 @@ void CanvasGridView::fakeDropEvent() noexcept
     d->dragTargetGrid = QPoint(-1, -1);
 }
 
-void CanvasGridView::initCanvas()
+QString CanvasGridView::canvansScreenName()
 {
-    qDebug() << "begin init CanvasGridView" <<  gTime.elapsed();
-    initUI();
-    initConnection();
-    qDebug() << "end CanvasGridView init" << gTime.elapsed();
+    return m_screenName;
 }
 
 QRect CanvasGridView::rectForIndex(const QModelIndex &index) const
@@ -1473,16 +1808,16 @@ void CanvasGridView::openUrl(const DUrl &url)
     DFileService::instance()->openFile(this, url);
 }
 
-void CanvasGridView::openUrls(const QList<DUrl> &urlList)
+void CanvasGridView::openUrls(const QList<DUrl> &urls)
 {
-    if(urlList.isEmpty())
+    if(urls.isEmpty())
         return;
-    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, urlList.at(0));
-    if(!info || info->isVirtualEntry()) {
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, urls.at(0));
+    if (!info || info->isVirtualEntry()) {
         return;
     }
 
-    DFileService::instance()->openFiles(this, urlList);
+    DFileService::instance()->openFiles(this, urls);
 }
 
 bool CanvasGridView::setCurrentUrl(const DUrl &url)
@@ -1503,11 +1838,6 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     QModelIndex index = model()->setRootUrl(fileUrl);
     setRootIndex(index);
 
-    if (!model()->canFetchMore(index)) {
-        // TODO: updateContentLabel
-        qDebug() << "TODO: updateContentLabel()";
-    }
-
     if (focusWidget() && focusWidget()->window() == window() && fileUrl.isLocalFile()) {
         QDir::setCurrent(fileUrl.toLocalFile());
     }
@@ -1517,19 +1847,21 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     model()->setFilters(model()->filters());
 
     if (d->filesystemWatcher) {
+        disconnect(d->filesystemWatcher,0,this,0);
         d->filesystemWatcher->deleteLater();
     }
-    qDebug() << "begin getChildren" << gTime.elapsed();
-    QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
-                                                                                     QStringList(), model()->filters());
 
-   qDebug() << "end getChildren" << gTime.elapsed();
-    if (autoMerge()) {
-        GridManager::instance()->initWithoutProfile(infoList);
-    } else {
-        GridManager::instance()->initProfile(infoList);
+    if (!model()->canFetchMore(index)) {
+
+        // TODO: updateContentLabel
+        qDebug() << "TODO: updateContentLabel()";
     }
-    qDebug() << "end GridManager::init" << gTime.elapsed();
+    else { //if (GridManager::instance()->autoMerge()){
+        m_rt.restart();
+        model()->refresh();
+        qDebug() << "refresh" << m_screenNum << fileUrl;
+    }
+
     d->filesystemWatcher = model()->fileWatcher();
 
     connect(d->filesystemWatcher, &DAbstractFileWatcher::subfileCreated,
@@ -1550,8 +1882,8 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         bool findOldPos = false;
         QPoint oldPos = QPoint(-1, -1);
 
-        if (GridManager::instance()->contains(oriUrl.toString()) && !oriUrl.fileName().isEmpty()) {
-            oldPos = GridManager::instance()->position(oriUrl.toString());
+        if (GridManager::instance()->contains(m_screenNum, oriUrl.toString()) && !oriUrl.fileName().isEmpty()) {
+            oldPos = GridManager::instance()->position(m_screenNum, oriUrl.toString());
             findOldPos = true;
 
 #ifdef QT_DEBUG
@@ -1565,16 +1897,21 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             findNewPos = true;
         }
 
-        findNewPos &= !GridManager::instance()->contains(dstUrl.toString());
+        findNewPos &= !GridManager::instance()->contains(m_screenNum, dstUrl.toString());
 
         if (!findNewPos) {
             Q_EMIT itemDeleted(oriUrl);
         } else {
             if (findOldPos) {
-                GridManager::instance()->remove(oriUrl.toString());
-                GridManager::instance()->add(oldPos, dstUrl.toString());
+                GridManager::instance()->remove(m_screenNum, oriUrl.toString());
+                GridManager::instance()->add(m_screenNum, oldPos, dstUrl.toString());
+
+                if (GridManager::instance()->autoMerge())
+                    this->delayModelRefresh();
+                else if (GridManager::instance()->autoArrange())
+                    this->delayArrage();
             } else {
-                Q_EMIT itemCreated(dstUrl);
+                //Q_EMIT itemCreated(dstUrl);
             }
         }
 
@@ -1606,6 +1943,9 @@ bool CanvasGridView::setRootUrl(const DUrl &url)
                 virtualEntryExpandState[MergedDesktopController::entryTypeByName(oneEntry)] = true;
             }
         }
+        //虚拟路径展开后立即保存
+        if(GridManager::instance()->doneInit())
+            GridManager::instance()->setCurrentVirtualExpandUrl(url);
     }
 
     itemDelegate()->hideAllIIndexWidget();
@@ -1613,6 +1953,37 @@ bool CanvasGridView::setRootUrl(const DUrl &url)
     clearSelection();
 
     return setCurrentUrl(url);
+}
+
+const DUrlList CanvasGridView::autoMergeSelectedUrls() const
+{
+    auto selects = selectionModel()->selectedIndexes();
+    DUrlList urls;
+    for (auto index : selects) {
+        auto info = model()->fileInfo(index);
+
+        //为了满足自定义模式下对多个文件的重命名时的replaceText里的判断
+        //这里提前改成对应的Durl
+        if (info && !info->isVirtualEntry()) {
+            if (GridManager::instance()->autoMerge()){
+                if (!info)
+                    continue ;
+                QString fileBaseName{ info->baseName() };
+                const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
+                if (fileBaseName.trimmed().isEmpty()) {
+                    qWarning() << "replace fileBaseName(not include suffix) trimmed is empty string";
+                    continue;
+                }
+                int max_length = MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size();
+                if (fileBaseName.toLocal8Bit().size() > max_length) {
+                    fileBaseName = DFMGlobal::cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
+                }
+                DUrl vUrl{ info->getUrlByNewFileName(fileBaseName + suffix) };
+                urls << vUrl;
+            }
+        }
+    }
+    return urls;
 }
 
 const DUrlList CanvasGridView::selectedUrls() const
@@ -1626,6 +1997,11 @@ const DUrlList CanvasGridView::selectedUrls() const
         }
     }
     return urls;
+}
+
+void CanvasGridView::setScreenNum(int num)
+{
+    m_screenNum = num;
 }
 
 bool CanvasGridView::isSelected(const QModelIndex &index) const
@@ -1646,10 +2022,14 @@ void CanvasGridView::select(const QList<DUrl> &list)
         if (!selection.contains(index)) {
             selection.push_back(selectionRange);
         }
-        auto selectModel = static_cast<DFileSelectionModel *>(selectionModel());
-        selectModel->select(selection, QItemSelectionModel::Select);
         lastIndex = index;
     }
+
+    if (!selection.isEmpty()){
+        auto selectModel = static_cast<DFileSelectionModel *>(selectionModel());
+        selectModel->select(selection, QItemSelectionModel::Select);
+    }
+
     if (lastIndex.isValid()) {
         selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
     }
@@ -1663,8 +2043,10 @@ int CanvasGridView::selectedIndexCount() const
 bool CanvasGridView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     DUrl fileUrl = model()->getUrlByIndex(index);
-
-    if (fileUrl.isEmpty() || selectedIndexCount() > 1 || (trigger == SelectedClicked && DFMGlobal::keyShiftIsPressed())) {
+    //解决自动整理只包含一个有效图标时全选重命名无效问题
+    auto validSelectCount = selectedUrls().size();
+//    if (fileUrl.isEmpty() || selectedIndexCount() > 1 || (trigger == SelectedClicked && DFMGlobal::keyShiftIsPressed())) {
+    if (fileUrl.isEmpty() || validSelectCount > 1 || (trigger == SelectedClicked && DFMGlobal::keyShiftIsPressed())) {
         return false;
     }
 
@@ -1721,10 +2103,29 @@ void CanvasGridView::setDodgeDuration(double dodgeDuration)
     emit dodgeDurationChanged(d->dodgeDuration);
 }
 
-void CanvasGridView::EnableUIDebug()
+void CanvasGridView::selectAll()
 {
-    d->_debug_log = true;
-    d->_debug_show_grid = true;
+    //全选按桌面显示顺序对文件进行选择
+    DUrlList all = DUrl::fromStringList(GridManager::instance()->allItems());
+    select(all);
+}
+
+void CanvasGridView::onRefreshFinished()
+{
+    qDebug() << "fresh ending spend " << m_rt.elapsed() << m_screenNum;
+    if (GridManager::instance()->autoMerge()){
+        delayAutoMerge();
+    } else if (GridManager::instance()->autoArrange()){
+        delayArrage();
+    } else {  //自定义
+        delayCustom();
+    }
+}
+
+void CanvasGridView::EnableUIDebug(bool enable)
+{
+    d->_debug_log = enable;
+    d->_debug_show_grid = enable;
 }
 
 QString CanvasGridView::Size()
@@ -1733,7 +2134,7 @@ QString CanvasGridView::Size()
     buffer.open(QBuffer::ReadWrite);
     QDataStream debug(&buffer);
 
-    debug << GridManager::instance()->gridSize();
+    debug << GridManager::instance()->gridSize(m_screenNum);
 
     return QString::fromUtf8(buffer.buffer());
 }
@@ -1758,7 +2159,7 @@ QString CanvasGridView::DumpPos(qint32 x, qint32 y)
     debug.insert("checkPoint:", QJsonValue::fromVariant(QList<QVariant>({px, py})));
     debug.insert("index", QJsonValue::fromVariant(QList<QVariant>({index.row(), index.column()})));
     debug.insert("url", model()->getUrlByIndex(index).toString());
-    debug.insert("grid content", GridManager::instance()->itemId(x, y));
+    debug.insert("grid content", GridManager::instance()->itemTop(m_screenNum, x, y));
 
     return QJsonDocument(debug).toJson();
 }
@@ -1768,144 +2169,16 @@ void CanvasGridView::Refresh()
     model()->update();
 }
 
-static inline QRect fix_available_geometry()
-{
-    // virtualGeometry is same on all screen, so just get first one
-
-    //if X11
-    //auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
-    //else
-
-    QRect primaryGeometry;
-    if (DesktopInfo().waylandDectected()) {
-        qDebug()<<"Display::instance()->primaryScreen()->virtualGeometry():" << Display::instance()->primaryScreen()->virtualGeometry();
-        qDebug()<<"Display::instance()->primaryRect():" << Display::instance()->primaryRect();
-        primaryGeometry = Display::instance()->primaryRect();}
-    else {
-        primaryGeometry = qApp->primaryScreen()->geometry();
-    }
-
-    int dockHideMode = DockIns::instance()->hideMode();
-    if ( 1 == dockHideMode) {//隐藏
-        qDebug() << "dock hidden" << "primarygeometry:" << primaryGeometry
-                  << "availableRect:" << primaryGeometry;
-        return primaryGeometry;
-    }
-    qDebug() << "begin get dock" << gTime.elapsed();
-    DockRect dockrect = DockIns::instance()->frontendWindowRect();
-    const int positon = DockIns::instance()->position();
-    qDebug() << "end get dock" << gTime.elapsed();
-    qDebug()<<"dock postion" << positon << " dockrect"<< (QRect)dockrect;
-    qreal t_devicePixelRatio = Display::instance()->getScaleFactor();
-    //        if (!QHighDpiScaling::m_active) {
-    //            t_devicePixelRatio = 1;
-    //        }
-
-    dockrect.width = dockrect.width / t_devicePixelRatio;
-    dockrect.height = dockrect.height / t_devicePixelRatio;
-
-    QRect ret = primaryGeometry;
-    switch (positon) {
-    case 0: //上
-        ret.setY(dockrect.height);
-        break;
-    case 1: //右
-        ret.setWidth(ret.width() - dockrect.width);
-        break;
-    case 2: //下
-        ret.setHeight(ret.height() - dockrect.height);
-        break;
-    case 3: //左
-        ret.setX(dockrect.width);
-        break;
-    default:
-        qCritical() << "dock postion error!";
-        break;
-    }
-    qDebug() << "\n"
-             << "dump dock info begin ---------------------------" << "\n"
-             << "dockGeometry:" << dockrect << "\n"
- //            << "virtualGeometry:" << virtualGeometry << "\n"
-             << "primarygeometry:" << primaryGeometry << "\n"
-             << "availableRect:" << ret << "\n"
-             << "dump dock info end ---------------------------" << "\n";
-    return ret;
-    //end
-
-//    xcb_ewmh_wm_strut_partial_t dock_xcb_ewmh_wm_strut_partial_t;
-//    memset(&dock_xcb_ewmh_wm_strut_partial_t, 0, sizeof(xcb_ewmh_wm_strut_partial_t));
-//    auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
-//    for (auto info : structParialInfoList) {
-//        if (info.rc.isValid()) {
-//            dock_xcb_ewmh_wm_strut_partial_t = Xcb::XcbMisc::instance().get_strut_partial(info.winId);
-//            break;
-//        }
-//    }
-
-//    QRegion virtualRegion = QRegion(virtualGeometry);
-
-//    auto primaryGeometry = qApp->primaryScreen()->geometry();
-//    QRect availableRect = primaryGeometry;
-//    qreal actualZoom = qApp->primaryScreen()->devicePixelRatio();
-
-//    // primary screen rect - dock rect;
-//    if (dock_xcb_ewmh_wm_strut_partial_t.top > 0) {
-//        availableRect.setY(dock_xcb_ewmh_wm_strut_partial_t.top/actualZoom);
-//    } else if (dock_xcb_ewmh_wm_strut_partial_t.right > 0) {
-//        availableRect.setWidth(2 * availableRect.width() - dock_xcb_ewmh_wm_strut_partial_t.right/actualZoom);
-//    } else if (dock_xcb_ewmh_wm_strut_partial_t.bottom > 0) {
-//        availableRect.setHeight(availableRect.height() - dock_xcb_ewmh_wm_strut_partial_t.bottom/actualZoom);
-//    } else if (dock_xcb_ewmh_wm_strut_partial_t.left > 0) {
-//        availableRect.setX(dock_xcb_ewmh_wm_strut_partial_t.left/actualZoom);
-//    }
-
-//    qDebug() << "\n"
-//             << "dump dock info begin ---------------------------" << "\n"
-//             << "virtualGeometry:" << virtualGeometry << "\n"
-//             << "primarygeometry:" << primaryGeometry << "\n"
-//             << "availableRect:" << availableRect << "\n"
-//             << "dump dock info end ---------------------------" << "\n";
-//    return availableRect;
-}
-
-static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldGeometry)
-{
-    auto newGeometry = geometry;
-
-//    if (qApp->screens().length() >= 2) {
-    newGeometry = fix_available_geometry();
-//    }
-    bool geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
-    if (geometryValid) {
-        return newGeometry;
-    }
-
-    newGeometry = Display::instance()->primaryRect();;
-    geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
-    if (geometryValid) {
-        return newGeometry;
-    }
-
-    qCritical() << "new valid geometry";
-    return oldGeometry;
-}
-
 void CanvasGridView::initUI()
 {
 #ifdef QT_DEBUG
-    EnableUIDebug();
+    EnableUIDebug(true);
 #endif
-    d->dbusDock = DockIns::instance();//new DBusDock(this);
-    qDebug() << "dock dbus " <<  gTime.elapsed();
 
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAutoFillBackground(false);
     setFrameShape(QFrame::NoFrame); // TODO: using QWidget instead of QFrame?
-
-    setGeometry(Display::instance()->primaryRect());
-    auto newGeometry =  getValidNewGeometry(Display::instance()->primaryRect(), this->geometry());
-    d->canvasRect = newGeometry;
 
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setAcceptDrops(true);
@@ -1918,6 +2191,12 @@ void CanvasGridView::initUI()
 
     setModel(new DFileSystemModel(d->fileViewHelper));
     model()->setEnabledSort(false);
+
+    //设置是否显示隐藏文件
+    auto filters = model()->filters();
+    filters = GridManager::instance()->getWhetherShowHiddenFiles() ?
+                filters | QDir::Hidden : filters & ~QDir::Hidden;
+    model()->setFilters(filters);
 
     setSelectionModel(new DFileSelectionModel(model(), this));
     auto delegate = new DesktopItemDelegate(d->fileViewHelper);
@@ -1936,10 +2215,7 @@ void CanvasGridView::initUI()
     }
     settings->endGroup();
 
-    qDebug() << "model inited " <<  gTime.elapsed();
     DFMSocketInterface::instance();
-    qDebug() << "DFMSocketInterface::instance() " <<  gTime.elapsed();
-
     DGioSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
     if (desktopSettings.keys().contains("water-mask") && desktopSettings.value("water-mask").toBool()) {
         d->waterMaskFrame = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
@@ -1948,46 +2224,6 @@ void CanvasGridView::initUI()
     }
 }
 
-void CanvasGridView::updateGeometry(const QRect &geometry)
-{
-    auto newGeometry =  getValidNewGeometry(geometry, this->geometry());
-
-    //if X11
-    //setGeometry(qApp->primaryScreen()->geometry());
-    //d->canvasRect = newGeometry;
-    //qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
-    //else
-
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        setGeometry(Display::instance()->primaryRect());
-        d->canvasRect = newGeometry;
-        qDebug() << "set newGeometry" << newGeometry << Display::instance()->primaryScreen()->geometry();
-    }
-
-    else {
-        setGeometry(qApp->primaryScreen()->geometry());
-        d->canvasRect = newGeometry;
-        qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
-    }
-
-    if (d->waterMaskFrame)
-        d->waterMaskFrame->updatePosition();
-
-    /*
-     * For some reason, BackgroundHelper fails to resize the wallpaper when switching
-     * a single active monitor among a multi-monitor setup, while CanvasGridView handles
-     * this just fine. So we trigger an extra background resize manually here.
-     */
-    BackgroundHelper::getDesktopInstance()->updateBackground((QLabel *)this->parent());
-
-    updateCanvas();
-    repaint();
-}
 
 void CanvasGridView::initConnection()
 {
@@ -1998,7 +2234,11 @@ void CanvasGridView::initConnection()
         if (index.isValid() && deselected.contains(index)) {
             setProperty("lastPressedIndex", QModelIndex());
         }
+
+        //同步选择状态
+        emit GridManager::instance()->sigSyncSelection(this,selectedUrls());
     });
+
     connect(&d->dodgeDelayTimer, &QTimer::timeout,
     this, [ = ]() {
 //        qDebug() << "start animation";
@@ -2016,55 +2256,83 @@ void CanvasGridView::initConnection()
 
         connect(animation, &QPropertyAnimation::finished,
         this, [ = ]() {
-            auto selecteds = selectedUrls();
+            DUrlList selecteds = selectedUrls();
+            QMap<DUrl,QPair<int, QPoint>> removed; //记录移除的
             for (auto relocateItem : selecteds) {
                 auto localFile = relocateItem.toString();
-                GridManager::instance()->remove(localFile);
+                QPair<int, QPoint> pos;
+                bool ret = GridManager::instance()->find(localFile,pos);
+                //处理跨屏，如果是跨屏的remove失败，后面就无需再add
+                if (ret && GridManager::instance()->remove(pos.first, localFile))
+                    removed.insert(relocateItem,pos);
             }
 
             // commit dodgeTargetGrid
             for (auto relocateItem : d->dodgeItems) {
-                QPoint orgPos = GridManager::instance()->position(relocateItem);
-                bool rmRet = GridManager::instance()->remove(relocateItem);
-                auto pos = d->dodgeTargetGrid->pos(relocateItem);
-                bool addRet = GridManager::instance()->add(pos, relocateItem);
+                QPoint orgPos = GridManager::instance()->position(m_screenNum,relocateItem);
+                bool rmRet = GridManager::instance()->remove(m_screenNum,relocateItem);
+                auto pos = d->dodgeTargetGrid->pos(m_screenNum,relocateItem);
+                bool addRet = GridManager::instance()->add(m_screenNum,pos, relocateItem);
                 //add失败，还原。修复bug#21943
                 if (!addRet && rmRet){
                     qWarning() << "error move!!!" << relocateItem << "from" << orgPos
                                << "to" << pos << "fail." << "put it on" << orgPos;
-                    GridManager::instance()->add(orgPos, relocateItem);
+                    GridManager::instance()->add(m_screenNum,orgPos, relocateItem);
                 }
             }
 
-            for (auto relocateItem : selecteds) {
-                auto localFile = relocateItem.toString();
-                GridManager::instance()->add(d->dodgeTargetGrid->pos(localFile), localFile);
+            //只有被remove的才add。用于处理跨屏拖动
+            for (auto relocateItem : removed.keys()) {
+                QString localFile = relocateItem.toString();
+                QPoint tarPos = d->dodgeTargetGrid->pos(m_screenNum, localFile);
+                bool ret = GridManager::instance()->add(m_screenNum, tarPos, localFile);
+                //用于修复drag在多屏之间拖动触发动画后的bug
+                if (!ret){
+                    auto orgPos = removed.value(relocateItem);
+                    qWarning() << "error move!!!" << localFile << "from" << orgPos
+                               << "to" << tarPos << "fail." << "put it on" << orgPos;
+                    GridManager::instance()->add(orgPos.first, orgPos.second, localFile);
+                }
             }
             d->dodgeAnimationing = false;
             delete d->dodgeTargetGrid;
             d->dodgeTargetGrid = nullptr;
 
-            update();
+            //隐藏选中框
+            emit GridManager::instance()->sigSyncOperation(GridManager::soHideEditing);
         });
         animation->start();
         d->dodgeDelayTimer.stop();
 
-        d->dodgeTargetGrid = GridManager::instance()->core();
-        auto grid = d->dodgeTargetGrid;
-
         auto selURLs = selectedUrls();
         QStringList selLocalFiles;
 
-        auto emptyBefore = 0;
-        auto emptyAfter = 0;
-        auto targetIndex = grid->toIndex(d->dragTargetGrid);
+        d->dodgeTargetGrid = GridManager::instance()->core();
+        auto grid = d->dodgeTargetGrid;
 
+        int emptyBefore = 0;
+        int emptyAfter = 0;
+        GIndex targetIndex = grid->toIndex(m_screenNum, d->dragTargetGrid);
+
+        //获取所有的空位
+        QList<GIndex> empty = grid->emptyPostion(m_screenNum);
+        auto sortIndex = [targetIndex](const GIndex &i1,const GIndex &i2) ->bool{
+            return qAbs(i1 - targetIndex) < qAbs(i2 - targetIndex);
+        };
+        qSort(empty.begin(),empty.end(),sortIndex);
+        GIndex index = 0;
         for (auto sel : selURLs) {
-            auto localFile = sel.toString();
+            QString localFile = sel.toString();
             selLocalFiles << localFile;
-            auto pos = grid->pos(localFile);
-            auto index = grid->toIndex(pos);
-            grid->removeItem(localFile);
+            //抓取的项目在本屏
+            if(GridManager::instance()->contains(m_screenNum, localFile)) {
+                GPos pos = grid->pos(m_screenNum, localFile);
+                index = grid->toIndex(m_screenNum, pos);
+                grid->removeItem(m_screenNum, localFile);
+            }else { //跨屏
+                if (!empty.isEmpty())
+                    index = empty.takeFirst();
+            }
 
             if (index < targetIndex) {
                 ++emptyBefore;
@@ -2072,101 +2340,136 @@ void CanvasGridView::initConnection()
                 ++emptyAfter;
             }
         }
+
         if (0 == emptyAfter) {
             ++targetIndex;
         }
 
-        d->dodgeItems = grid->reloacle(targetIndex, emptyBefore, emptyAfter);
+        d->dodgeItems = grid->reloacle(m_screenNum, targetIndex, emptyBefore, emptyAfter);
         for (auto i = 0; i < selLocalFiles.length(); ++i) {
-            grid->addItem(targetIndex - emptyBefore + i, selLocalFiles.value(i));
+            grid->addItem(m_screenNum, targetIndex - emptyBefore + i, selLocalFiles.value(i));
         }
     });
 
-//    d->syncTimer = new QTimer(this);
-//    connect(d->syncTimer, &QTimer::timeout, this, [ = ]() {
-//        update();
-//        auto interval = d->syncTimer->interval() + 800;
-//        if (interval > 10000) {
-//            interval = 10000;
-//        }
-//        d->syncTimer->setInterval(interval);
-//    });
-//    d->syncTimer->start();
-
-    auto connectScreenGeometryChanged = [this](QScreen * screen) {
-        connect(screen, &QScreen::availableGeometryChanged,
-        this, [ = ](const QRect & /*geometry*/) {
-            QTimer::singleShot(400, this, [ = ]() {
-                auto geometry = Display::instance()->primaryRect();
-                qDebug() << "primaryScreen availableGeometryChanged changed to:" << geometry;
-                qDebug() << "primaryScreen:" << qApp->primaryScreen() << qApp->primaryScreen()->geometry();
-                updateGeometry(geometry);
-            });
-        });
-    };
-
-    connectScreenGeometryChanged(Display::instance()->primaryScreen());
-
-    connect(Display::instance(), &Display::primaryScreenChanged,
-    this, [ = ](QScreen * screen) {
-        qDebug() << "primaryScreenChanged to:" << screen;
-
-        //if X11
-        //qDebug() << "currend primaryScreen" << qApp->primaryScreen()
-        //       << qApp->primaryScreen()->availableGeometry();
-        //else
-
-        qDebug() << "currend primaryScreen" << screen
-                 << screen->availableGeometry();
-
-        screen = Display::instance()->primaryScreen();
-        if (!screen) {
-            return;
-        }
-
-        qDebug() << "screen availableGeometry:" << screen->availableGeometry();
-        for (auto screen : qApp->screens()) {
-            disconnect(screen, &QScreen::availableGeometryChanged, this, Q_NULLPTR);
-        }
-        connectScreenGeometryChanged(screen);
-
-//        updateGeometry(Display::instance()->primaryRect());
-        QTimer::singleShot(400, this, [ = ]() {
-            auto geometry = Display::instance()->primaryRect();
-            updateGeometry(geometry);
-        });
-    });
-
-    connect(Display::instance(),&Display::primaryChanged,this, [ = ](){
-        QTimer::singleShot(400, this, [ = ]() {
-            auto geometry = Display::instance()->primaryRect();
-            updateGeometry(geometry);
-        });
-    });
+    //model刷新完毕
+    connect(model(),&DFileSystemModel::sigJobFinished,this,&CanvasGridView::onRefreshFinished);
 
     connect(this->model(), &DFileSystemModel::newFileByInternal,
     this, [ = ](const DUrl & fileUrl) {
-        auto localFile = fileUrl.toString();
-        auto gridPos = gridAt(d->lastMenuPos);
+        if (GridManager::instance()->shouldArrange()){
+            //排完序后交由GridManager::initArrage触发重命名
+            GridManager::instance()->m_needRenameItem = fileUrl.toString();
+            return ;
+        }
 
+        QString localFile = fileUrl.toString();
+        int itemScreen;
+        QPair<int, QPoint> orgPos;
+        if (GridManager::instance()->find(localFile,orgPos)){
+            itemScreen = orgPos.first;
+        }
+        else{
+            qCritical() << "cannot find item" << localFile << "screen" <<m_screenNum;
+            return ;
+        }
+
+        qDebug() << "newFileByInternal item" << localFile << "screen" << itemScreen
+                 << "pos"<< orgPos.second << "to screen" << m_screenNum;
+
+        QPair<int, QPoint> gridPos;
+        gridPos.first = m_screenNum;
+        gridPos.second = gridAt(d->lastMenuPos);
         if (d->lastMenuNewFilepath == localFile) {
-            if (gridPos == GridManager::instance()->position(localFile)) {
-                return;
+            if (gridPos == orgPos) {
+                //开启编辑框
+                goto openEditor;
             }
         }
 
-        gridPos = GridManager::instance()->forwardFindEmpty(gridPos);
-        GridManager::instance()->move(QStringList() << localFile, localFile, gridPos.x(), gridPos.y());
+        gridPos = GridManager::instance()->forwardFindEmpty(m_screenNum, gridPos.second);
+
+        //无需move
+        if (gridPos == orgPos){
+            goto openEditor;
+        }
+
+        //目标位置在当前屏才move
+        if (gridPos.first == m_screenNum){
+            //同屏
+            if (m_screenNum == itemScreen){
+                GridManager::instance()->move(m_screenNum, QStringList() << localFile,
+                                              localFile, gridPos.second.x(), gridPos.second.y());
+            }
+            else{ //跨屏
+                GridManager::instance()->move(itemScreen,m_screenNum, QStringList() << localFile,
+                                              localFile, gridPos.second.x(), gridPos.second.y());
+            }
+        }
+        //else{} //目标位置无法在m_screenNum放下，就不处理
+
+openEditor:
+        emit GridManager::instance()->sigSyncOperation(GridManager::soRename,fileUrl.toString());
+        return ;
     });
 
-    connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
+    connect(this, &CanvasGridView::itemCreated, this,[ = ](const DUrl & url) {
+        qDebug() << "CanvasGridView::itemCreated" << url << m_screenNum;
+#if 1
         d->lastMenuNewFilepath = url.toString();
-        GridManager::instance()->add(d->lastMenuNewFilepath);
+        //!在这里add会导致自动整理在快速创建文件时crash，与DAbstractFileInfoPrivate中
+        //! 的cache机制 urlToFileInfoMap 在异步时有关 关联bug#24855
+        //GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
+        //!end
+
+        //创建或者粘贴时保持之前的状态
+        if (GridManager::instance()->autoMerge()){
+            this->delayModelRefresh(100);
+            return ;
+        }
+
+        GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
+        if (GridManager::instance()->autoArrange()){ //重新排列
+            this->delayArrage();
+        }
+
+#else
+        QString localFile = url.toString();
+        bool ret = GridManager::instance()->add(m_screenNum, localFile);
+        //创建或者粘贴时保持之前的状态
+        if(GridManager::instance()->autoMerge()){
+            GridManager::instance()->add(m_screenNum, localFile);
+            this->delayModelRefresh(100);
+        } else if (GridManager::instance()->autoArrange()){ //重新排列
+            GridManager::instance()->add(m_screenNum, localFile);
+            this->delayArrage();
+        }else if (ret){
+            QPair<int, QPoint> orgPos;
+            if (!GridManager::instance()->find(localFile,orgPos)){
+                qCritical() << "cannot find item" << localFile << "screen" <<m_screenNum;
+                return ;
+            }
+
+            QPair<int, QPoint> gridPos = *d->lastMenuPos();
+            qDebug() << "try to put" << localFile << "on screen" << gridPos.first << "pos" << gridPos.second;
+            gridPos = GridManager::instance()->forwardFindEmpty(gridPos.first, gridPos.second);
+            qDebug() << "put it on screen" << gridPos.first << "pos" << gridPos.second;
+            if (orgPos == gridPos)
+                return;
+
+            //同屏
+            if (orgPos.first == gridPos.first){
+                GridManager::instance()->move(orgPos.first, QStringList() << localFile,
+                                              localFile, gridPos.second.x(), gridPos.second.y());
+            }
+            else{ //跨屏
+                GridManager::instance()->move(orgPos.first,gridPos.first, QStringList() << localFile,
+                                              localFile, gridPos.second.x(), gridPos.second.y());
+            }
+        }
+#endif
     });
 
-    connect(this, &CanvasGridView::itemDeleted, [ = ](const DUrl & url) {
-        GridManager::instance()->remove(url.toString());
-
+    connect(this, &CanvasGridView::itemDeleted, this, [ = ](const DUrl & url) {
         auto index = model()->index(url);
         if (d->currentCursorIndex == index) {
             d->currentCursorIndex  = QModelIndex();
@@ -2174,8 +2477,18 @@ void CanvasGridView::initConnection()
             setCurrentIndex(QModelIndex());
         }
 
-        if (GridManager::instance()->shouldArrange()) {
-            GridManager::instance()->reArrange();
+        if (!GridManager::instance()->remove(m_screenNum, url.toString()))
+            return;
+
+        //自动整理
+        if (GridManager::instance()->autoMerge()) {
+            delayModelRefresh();
+        }
+        else if (GridManager::instance()->autoArrange()){ //重新排列
+            this->delayArrage();
+        }
+        else {
+            GridManager::instance()->popOverlap(); //弹出堆叠
         }
     });
 
@@ -2184,23 +2497,31 @@ void CanvasGridView::initConnection()
 
     connect(this->model(), &QAbstractItemModel::dataChanged,
     this, [ = ](const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> &roles) {
-        qDebug() << "dataChanged";
-        if (d->resortCount > 0) {
+        qDebug() << "dataChanged" << roles << d->bReloadItem;
+        if (d->bReloadItem) {
+            d->bReloadItem = false;
             qDebug() << "dataChanged" << topLeft << bottomRight << roles;
-            qDebug() << "resort desktop icons";
+            qDebug() << "resort desktop icons ";
             model()->setEnabledSort(false);
-            d->resortCount--;
-            GridManager::instance()->clear();
+
             QStringList list;
             for (int i = 0; i < model()->rowCount(); ++i) {
                 auto index = model()->index(i, 0);
                 auto localFile = model()->getUrlByIndex(index).toString();
                 list << localFile;
             }
-            for (auto lf : list) {
-                GridManager::instance()->add(lf);
+
+            //自动排列和整理
+            if (GridManager::instance()->shouldArrange()){
+                GridManager::instance()->initArrage(list);
+                return ;
             }
-            GridManager::instance()->reArrange();
+
+            GridManager::instance()->clear();
+            //自定义
+            for (auto lf : list) {
+                GridManager::instance()->add(m_screenNum, lf);
+            }
         }
     });
 
@@ -2211,45 +2532,41 @@ void CanvasGridView::initConnection()
     }, Qt::QueuedConnection);
 
 
-    connect(this, &CanvasGridView::autoAlignToggled,
-            Presenter::instance(), &Presenter::onAutoAlignToggled);
-    connect(this, &CanvasGridView::autoMergeToggled,
-            Presenter::instance(), &Presenter::onAutoMergeToggled);
+    connect(this, &CanvasGridView::autoAlignToggled,this,[this](){
+        Presenter::instance()->onAutoAlignToggled();
+        if (GridManager::instance()->autoArrange()){
+            this->delayArrage();
+        }else {
+            GridManager::instance()->delaySyncAllProfile(0);
+        }
+    });
+    connect(this, &CanvasGridView::autoMergeToggled,this,[](){
+        bool enable = !GridManager::instance()->autoMerge();
+        GridManager::instance()->setAutoMerge(enable);
+        Presenter::instance()->onAutoMergeToggled();
+
+        emit GridManager::instance()->sigSyncOperation(GridManager::soAutoMerge,enable);
+    });
+
     connect(this, &CanvasGridView::sortRoleChanged,
             Presenter::instance(), &Presenter::onSortRoleChanged);
     connect(this, &CanvasGridView::changeIconLevel,
             Presenter::instance(), &Presenter::OnIconLevelChanged);
 
-    connect(d->dbusDock, &DBusDock::HideModeChanged,
-    this, [ = ]() {
-          updateGeometry(Display::instance()->primaryRect());
-    });
-//    connect(d->dbusDock, &DBusDock::PositionChanged,
-//    this, [ = ]() {
-//         updateGeometry(Display::instance()->primaryRect());
-//    }); //不关心位子改变，有bug#25148，全部由区域改变触发
-
-    connect(d->dbusDock, &DBusDock::FrontendWindowRectChanged,
-    this, [ = ]() {
-         updateGeometry(Display::instance()->primaryRect());
+    connect(this, &CanvasGridView::changeIconLevel,this,
+            [](int level){
+        emit GridManager::instance()->sigSyncOperation(GridManager::soIconSize,level);
     });
 
-    connect(d->dbusDock, &DBusDock::IconSizeChanged,
-    this, [ = ]() {
-        updateGeometry(Display::instance()->primaryRect());
-        this->updateCanvas();
+    connect(this, &CanvasGridView::sortRoleChanged,this,
+            [](int role, Qt::SortOrder order){
+            QPoint sort(role,order);
+            emit GridManager::instance()->sigSyncOperation(GridManager::soSort,sort);
     });
 
-
-    connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged, [ = ](bool isShowedHiddenFile) {
-        QDir::Filters filters;
-        if (isShowedHiddenFile) {
-            filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
-        } else {
-            filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
-        }
-        model()->setFilters(filters);
-        qDebug() << "current filters" << filters;
+    connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged,this, [ = ](bool isShowedHiddenFile) {
+        GridManager::instance()->setWhetherShowHiddenFiles(isShowedHiddenFile);
+        updateHiddenItems();
     });
 
     connect(DFMApplication::instance(), &DFMApplication::previewAttributeChanged, this->model(), &DFileSystemModel::update);
@@ -2257,22 +2574,16 @@ void CanvasGridView::initConnection()
 
 void CanvasGridView::updateCanvas()
 {
+#if 0 //old
     //if X11
     //auto outRect = qApp->primaryScreen()->geometry();
     //else
     QRect outRect;
-
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+    if (DesktopInfo().waylandDectected()) {
         outRect = Display::instance()->primaryRect();
     } else {
         outRect = qApp->primaryScreen()->geometry();
     }
-
 
     auto inRect = d->canvasRect;
 
@@ -2326,7 +2637,23 @@ void CanvasGridView::updateCanvas()
         QMargins margins(offset, d->cellMargins.top(), 0, 0);
         expandedWidget ->setContentsMargins(margins);
     }
+#else //todo计算margin
+    itemDelegate()->updateItemSizeHint();
+    auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
+    QMargins geometryMargins = QMargins(0, 0, 0, 0);
+    d->updateCanvasSize(this->geometry().size(), this->geometry().size(), geometryMargins, itemSize);
 
+    GridManager::instance()->updateGridSize(m_screenNum, d->colCount, d->rowCount);
+
+    updateEditorGeometries();
+
+    auto expandedWidget = reinterpret_cast<QWidget *>(itemDelegate()->expandedIndexWidget());
+    if (expandedWidget) {
+        int offset = -1 * ((d->cellWidth - itemSize.width()) % 2);
+        QMargins margins(offset, d->cellMargins.top(), 0, 0);
+        expandedWidget ->setContentsMargins(margins);
+    }
+#endif
     update();
 }
 
@@ -2397,13 +2724,14 @@ inline QRect CanvasGridView::itemIconGeomerty(const QModelIndex &index) const
 
 inline QModelIndex CanvasGridView::firstIndex()
 {
-    auto localFile = GridManager::instance()->firstItemId();
+    auto localFile = GridManager::instance()->firstItemId(m_screenNum);
     return model()->index(DUrl(localFile));
 }
 
 inline QModelIndex CanvasGridView::lastIndex()
 {
-    auto localFile = GridManager::instance()->lastItemId();
+    //使用堆叠
+    auto localFile = GridManager::instance()->lastItemTop(m_screenNum);//lastItemId(m_screenNum);
     return model()->index(DUrl(localFile));
 }
 
@@ -2439,7 +2767,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     QPoint currentPoint(-1, -1);
     if (d->mousePressed) {
         auto clickIndex = indexAt(d->lastPos);
-        if (clickIndex.isValid() && !d->showSelectRect) {
+        if (clickIndex.isValid() && !d->showSelectRect) { //如果在框选就不进去
             QPoint tempClickIndex = visualRect(clickIndex).center();
             QPoint tempLastPoint = visualRect(d->currentCursorIndex).center();
             if (!d->currentCursorIndex.isValid())
@@ -2464,11 +2792,13 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             QItemSelection toRemoveSelection;
             for (auto x = topLeftGridPos.x(); x <= bottomRightGridPos.x(); ++x) {
                 for (auto y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
-                    auto localFile = GridManager::instance()->itemId(x, y);
+                    auto localFile = GridManager::instance()->itemTop(m_screenNum, x, y);
+                    //GridManager::instance()->itemId(m_screenNum, x, y);
                     if (localFile.isEmpty()) {
                         continue;
                     }
                     auto index = model()->index(DUrl(localFile));
+
                     auto list = QList<QRect>() << itemPaintGeomertys(index);
                     for (const QRect &r : list) {
                         if (selectRect.intersects(r)) {
@@ -2522,7 +2852,9 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                     continue;
                 if (x > bottomRightGridPos.x() && y == bottomRightGridPos.y())
                     break;
-                auto localFile = GridManager::instance()->itemId(x, y);
+
+                auto localFile = GridManager::instance()->itemTop(m_screenNum, x, y);
+                //GridManager::instance()->itemId(m_screenNum, x, y);
                 if (localFile.isEmpty()) {
                     continue;
                 }
@@ -2538,7 +2870,8 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         QAbstractItemView::selectionModel()->select(rectSelection, command);
     } else if (DFMGlobal::keyCtrlIsPressed()) {
         //just Ctrl
-        auto localFile = GridManager::instance()->itemId(topLeftGridPos.x(), topLeftGridPos.y());
+        auto localFile = GridManager::instance()->itemTop(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
+        //GridManager::instance()->itemId(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
         if (localFile.isEmpty()) {
             return;
         }
@@ -2553,11 +2886,14 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         d->beginPos = topLeftGridPos;
     } else {
         //just click or mouseleft select
-        auto localFile = GridManager::instance()->itemId(topLeftGridPos.x(), topLeftGridPos.y());
+        auto localFile = GridManager::instance()->itemTop(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
+        //GridManager::instance()->itemId(m_screenNum, topLeftGridPos.x(), topLeftGridPos.y());
         if (localFile.isEmpty()) {
             return;
         }
         auto index = model()->index(DUrl(localFile));
+
+        //end
         QItemSelectionRange selectionRange(index);
         QItemSelection rectSelection;
         rectSelection.push_back(selectionRange);
@@ -2583,7 +2919,7 @@ void CanvasGridView::handleContextMenuAction(int action)
         Desktop::instance()->showZoneSettings();
         break;
     case WallpaperSettings:
-        Desktop::instance()->showWallpaperSettings();
+        Desktop::instance()->ShowWallpaperChooser(m_screenName);
         break;
     case MenuAction::SelectAll:
         this->selectAll();
@@ -2596,13 +2932,11 @@ void CanvasGridView::handleContextMenuAction(int action)
 //        break;
 //    }
     case AutoMerge:
-        this->toggleAutoMerge(!autoMerge());
         emit autoMergeToggled();
         break;
     case AutoSort:
         emit autoAlignToggled();
         break;
-
     case IconSize0:
     case IconSize1:
     case IconSize2:
@@ -2624,16 +2958,18 @@ void CanvasGridView::handleContextMenuAction(int action)
 
     if (changeSort) {
         model()->setEnabledSort(true);
-        d->resortCount++;
-        QMap<int, int> sortActions;
-        sortActions.insert(MenuAction::Name, DFileSystemModel::FileDisplayNameRole);
-        sortActions.insert(MenuAction::Size, DFileSystemModel::FileSizeRole);
-        sortActions.insert(MenuAction::Type, DFileSystemModel::FileMimeTypeRole);
-        sortActions.insert(MenuAction::LastModifiedDate, DFileSystemModel::FileLastModifiedRole);
+        d->bReloadItem = true;
+//        QMap<int, int> sortActions;
+//        sortActions.insert(MenuAction::Name, DFileSystemModel::FileDisplayNameRole);
+//        sortActions.insert(MenuAction::Size, DFileSystemModel::FileSizeRole);
+//        sortActions.insert(MenuAction::Type, DFileSystemModel::FileMimeTypeRole);
+//        sortActions.insert(MenuAction::LastModifiedDate, DFileSystemModel::FileLastModifiedRole);
 
-        int             sortRole    = sortActions.value(action);
-        Qt::SortOrder   sortOrder   = model()->sortOrder() == Qt::AscendingOrder ?
-                                      Qt::DescendingOrder : Qt::AscendingOrder;
+        int sortRole = kSortActions.value(action);
+        Qt::SortOrder sortOrder = model()->sortOrder();
+        //若排序模式一样，则改变升降
+        if (sortRole == model()->sortRole())
+                sortOrder = sortOrder == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
 
         model()->setSortRole(sortRole, sortOrder);
         model()->sort();
@@ -2643,6 +2979,7 @@ void CanvasGridView::handleContextMenuAction(int action)
 
 void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 {
+#if 0 //older code
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     QVector<MenuAction> actions;
@@ -2824,10 +3161,186 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         menu->deleteLater();
         return;
     }
+#endif
 
+    const QModelIndex &index = rootIndex();
+    const DAbstractFileInfoPointer &info = model()->fileInfo(index);
+    QVector<MenuAction> actions;
+    actions << MenuAction::NewFolder << MenuAction::NewDocument;
+    if(!GridManager::instance()->autoMerge()){
+        actions << MenuAction::SortBy;
+    }
+    actions << MenuAction::Paste
+            << MenuAction::SelectAll << MenuAction::OpenInTerminal
+            << MenuAction::Property << MenuAction::Separator;
+    if (actions.isEmpty()) {
+        return;
+    }
+
+    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+
+    QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
+
+    if (model()->state() != DFileSystemModel::Idle) {
+        disableList << MenuAction::SortBy;
+    }
+    if (!model()->rowCount()) {
+        disableList << MenuAction::SelectAll;
+    }
+
+    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+    if (!menu) {
+        return;
+    }
+
+    auto *pasteAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Paste));
+
+    DFileMenu iconSizeMenu;
+
+    for (int i = itemDelegate()->minimumIconSizeLevel(); i <= itemDelegate()->maximumIconSizeLevel(); ++i) {
+        auto iconSize = new QAction(&iconSizeMenu);
+        iconSize->setText(itemDelegate()->iconSizeLevelDescription(i));
+        iconSize->setData(IconSize + i);
+        iconSize->setCheckable(true);
+        iconSize->setChecked(i == itemDelegate()->iconSizeLevel());
+        iconSizeMenu.addAction(iconSize);
+    }
+    //图标大小排列
+    QAction iconSizeAction(menu);
+    iconSizeAction.setText(tr("Icon size"));
+    iconSizeAction.setData(IconSize);
+    iconSizeAction.setMenu(&iconSizeMenu);
+    menu->insertAction(pasteAction, &iconSizeAction);
+    //自动整理
+    QAction menuAutoMerge(menu);
+    menuAutoMerge.setText(tr("Auto merge"));
+    menuAutoMerge.setData(AutoMerge);
+    menuAutoMerge.setCheckable(true);
+    menuAutoMerge.setChecked(GridManager::instance()->autoMerge());
+    DGioSettings settings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
+    if (settings.value("auto-merge").toBool()) {
+        menu->insertAction(pasteAction, &menuAutoMerge);
+    }
+    //自动排序
+    QAction autoSort(menu);
+    autoSort.setText(tr("Auto arrange"));
+    autoSort.setData(AutoSort);
+    autoSort.setCheckable(true);
+    autoSort.setChecked(GridManager::instance()->autoArrange());
+    if (!GridManager::instance()->autoMerge()) {
+        menu->insertAction(pasteAction, &autoSort);
+
+        //勾选当前使用的排序
+        QAction *sortAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::SortBy));
+        if (sortAction != nullptr && sortAction->menu() != nullptr){
+            QMenu *roleMenu = sortAction->menu();
+            int datetype = kSortActions.key(model()->sortRole());
+            qDebug() << model()->sortRole() << datetype << model()->sortOrder();
+            for (QAction *action : roleMenu->actions()){
+                if (action->data().toInt() == datetype && autoSort.isChecked()){
+                    action->setCheckable(true);
+                    action->setChecked(true);
+                }
+                else {
+                    action->setCheckable(false);
+                    action->setChecked(false);
+                }
+            }
+        }
+    }
+
+    auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
+    QList<QAction *> pluginActions = DFileMenuManager::loadEmptyAreaPluginMenu(menu, model()->rootUrl(), true);
+
+    if (pluginActions.count() > 0) {
+        QAction *separator = new QAction(menu);
+        separator->setSeparator(true);
+        menu->insertAction(pluginActions.at(0), separator);
+    }
+
+    //显示设置
+    QAction display(menu);
+    display.setText(tr("Display Settings"));
+    display.setData(DisplaySettings);
+    menu->addAction(&display);
+
+    //热区设置，新版无热区设置需求
+    //    QAction corner(menu);
+    //    DGioSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
+    //    if (gsetting.keys().contains("enable-hotzone-settings") && gsetting.value("enable-hotzone-settings").toBool()) {
+    //        corner.setText(tr("Corner Settings"));
+    //        corner.setData(CornerSettings);
+    //        menu->addAction(&corner);
+    //    }
+
+    //壁纸和屏保设置
+    QAction wallpaper(menu);
+#ifdef DISABLE_SCREENSAVER
+    wallpaper.setText(tr("Set Wallpaper"));
+#else
+    if(existScreensaverService()){
+        wallpaper.setText(tr("Wallpaper and Screensaver"));
+    }else {
+        wallpaper.setText(tr("Set Wallpaper"));
+    }
+#endif
+    wallpaper.setData(WallpaperSettings);
+    menu->addAction(&wallpaper);
+
+    menu->removeAction(propertyAction);
+    menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+
+    connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
+        qDebug() << "trigger action" << action->data();
+        if (!action->data().isValid()) {
+            return;
+        }
+        handleContextMenuAction(action->data().toInt());
+    });
+
+    d->fileViewHelper->handleMenu(menu);
+
+    if (DesktopInfo().waylandDectected()) {
+
+        QPoint t_tmpPoint = QCursor::pos();
+        QRect t_tmpRect;
+        if(parentWidget())
+            t_tmpRect = parentWidget()->geometry();
+        else
+        {
+            auto screen = ScreenMrg->primaryScreen();
+            if (screen)
+                t_tmpRect = screen->geometry();
+            else {
+                qCritical() << "get primary geometry fail" << m_screenName << m_screenNum;
+                menu->exec();
+                menu->deleteLater();
+                return;
+            }
+        }
+
+        if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > t_tmpRect.right())
+            t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
+
+        if (t_tmpPoint.y() + int(menu->sizeHint().height()/devicePixelRatioF()) > t_tmpRect.bottom())
+            t_tmpPoint.setY(t_tmpPoint.y() - int(menu->sizeHint().height()/devicePixelRatioF()));
+//        menu->exec(t_tmpPoint);
+        QEventLoop eventLoop;
+        d->menuLoop = &eventLoop;
+        connect(menu, &QMenu::aboutToHide, this, [=]{
+            if(d->menuLoop)
+                d->menuLoop->exit();
+        });
+        menu->popup(t_tmpPoint);
+        menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
+        eventLoop.exec();
+        d->menuLoop = nullptr;
+        menu->deleteLater();
+        return;
+    }
 
     menu->exec();
-    menu->deleteLater();
+    menu->deleteLater(this);
 }
 
 void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
@@ -2837,7 +3350,8 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     }
 
     bool showProperty = true;
-    DUrlList list = selectedUrls();
+    const DUrlList list = selectedUrls();
+    qDebug() << "selectedUrls" << list;
 
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     if (!info || info->isVirtualEntry()) {
@@ -2871,8 +3385,27 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         unusedList << MenuAction::SendToDesktop;
     }
 
-    //totally use dde file manager libs for menu actions
-    auto *menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId(), true);
+    /********************************************/
+        //桌面的菜单action有些是通过filemanager lis管理的
+        //里面的判断都是i基于真实路径，所以在自动整理的虚拟路径就不适用
+        //故重新更改成真实路径传递，可能对action后续的操作是否有影响
+        auto curUrl = info->fileUrl();
+        DUrlList realList;
+        DFileMenu *menu;
+        if(curUrl.scheme() == DFMMD_SCHEME){
+            curUrl = MergedDesktopController::convertToRealPath(curUrl);
+            for(auto url : list){
+                realList.append(MergedDesktopController::convertToRealPath(url));
+            }
+            menu = DFileMenuManager::createNormalMenu(curUrl, realList, disableList, unusedList, winId(), true);
+        }
+        else {
+             menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId(), true);
+        }
+
+        //totally use dde file manager libs for menu actions
+    //    auto *menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId(), true);
+        /********************************************/
 
     QSet<MenuAction> ignoreActions;
     ignoreActions  << MenuAction::Open;
@@ -2887,32 +3420,49 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         menu->removeAction(propertyAction);
     }
 
-    QAction property(menu);
+    QAction *property = new QAction(menu);
     if (showProperty) {
-        property.setText(tr("Properties"));
-        property.setData(FileManagerProperty);
-        menu->addAction(&property);
+        property->setText(tr("Properties"));
+        property->setData(FileManagerProperty);
+        menu->addAction(property);
     }
 
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
 
-    connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
+    //断开连接，桌面优先处理
+    //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突，
+    //故在connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {}相应之后再相应actionTriggered的连接
+    //所以这里先断开
+    disconnect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
+    connect(menu, &DFileMenu::triggered, this, [=](QAction * action) {
         if (!action->data().isValid()) {
             return;
         }
-
         switch (action->data().toInt()) {
         case MenuAction::Open: {
-            // TODO: Workaround
 //            for (auto &url : list) {
 //                openUrl(url);
 //            }
+            qDebug() << "open urls" << list;
             openUrls(list);
         }
         break;
         case FileManagerProperty: {
+            //解决自动整理修改文件属性不生效问题
+            QList<DUrl> selectedUrlLst{};
+            if(GridManager::instance()->autoMerge()){
+                QList<DUrl> t_selectedUrls{};
+                t_selectedUrls = this->autoMergeSelectedUrls();
+                for(auto temp : t_selectedUrls){
+                    if(DFMMD_SCHEME == temp.scheme())
+                        selectedUrlLst.append(MergedDesktopController::convertToRealPath(temp));
+                }
+            }else {
+                selectedUrlLst = this->selectedUrls();
+            }
 
-            DFMGlobal::showPropertyDialog(this, this->selectedUrls());
+            DFMGlobal::showPropertyDialog(this, selectedUrlLst);
+            //DFMGlobal::showPropertyDialog(this, this->selectedUrls());
             break;
         }
         case MenuAction::Rename: {
@@ -2920,17 +3470,38 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
                 QAbstractItemView::edit(index); //###: select one file on desktop.
 
             } else { //###: select more than one files.
-
-                QList<DUrl> selectedUrls{ this->selectedUrls() };
+                QList<DUrl> selectedUrls{};
+                if(GridManager::instance()->autoMerge()){
+                    selectedUrls = this->autoMergeSelectedUrls();
+                }else {
+                    selectedUrls = this->selectedUrls();
+                }
                 DFMGlobal::showMultiFilesRenameDialog(selectedUrls);
             }
             break;
         }
+        //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突
+        //将取消共享文件夹的选中路径提到里面
+        case MenuAction::Share: {
+            if(info->fileUrl().scheme() == DFMMD_SCHEME){
+                menu->setEventData(curUrl, realList, winId(), this);
+            }
+            else {
+                menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+            }
+            break;
+        }
+
         default:
             break;
         }
-    });
+    },Qt::QueuedConnection);
 
+    //使用队列连接，防止menu的exec无法退出
+    //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突，
+    //故在connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {}相应之后再相应actionTriggered的连接
+    //这里再重新连接保证在triggered之后相应
+    connect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered,Qt::QueuedConnection);
     d->fileViewHelper->handleMenu(menu);
 
     if (DesktopInfo().waylandDectected()) {
@@ -2939,8 +3510,17 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         QRect t_tmpRect;
         if(parentWidget())
             t_tmpRect = parentWidget()->geometry();
-        else
-            t_tmpRect = Display::instance()->primaryRect();
+        else {
+            auto screen = ScreenMrg->primaryScreen();
+            if (screen)
+                t_tmpRect = screen->geometry();
+            else {
+                qCritical() << "get primary geometry fail" << m_screenName << m_screenNum;
+                menu->exec();
+                menu->deleteLater();
+                return;
+            }
+        }
 
         if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > t_tmpRect.right())
             t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
@@ -2951,8 +3531,8 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         QEventLoop eventLoop;
         d->menuLoop = &eventLoop;
         connect(menu, &QMenu::aboutToHide, this, [=]{
-           if(d->menuLoop)
-               d->menuLoop->exit();
+            if(d->menuLoop)
+                d->menuLoop->exit();
         });
         menu->popup(t_tmpPoint);
         menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
@@ -2963,7 +3543,27 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     }
 
     menu->exec();
-    menu->deleteLater();
+    menu->deleteLater(this);
+    //断连，防止menu没有释放再次触发信号
+    disconnect(menu, 0, this, 0);
+}
+
+void CanvasGridView::startDrag(Qt::DropActions supportedActions)
+{
+    itemDelegate()->hideAllIIndexWidget();
+    //drag优化，只抓起本屏幕上的图标
+    DUrlList selected = selectedUrls();
+    DUrlList vaildSel;
+    for ( const DUrl &temp : selected){
+        if (GridManager::instance()->contains(m_screenNum, temp.toString())){
+            vaildSel << temp;
+        }
+    }
+    select(vaildSel);
+    //end
+
+    QAbstractItemView::startDrag(supportedActions);
+    return;
 }
 
 bool CanvasGridView::existScreensaverService()

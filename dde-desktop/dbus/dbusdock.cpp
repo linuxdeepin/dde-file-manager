@@ -14,17 +14,19 @@
 /*
  * Implementation of interface class DBusDock
  */
-
 DBusDock::DBusDock(QObject *parent)
-    : QDBusAbstractInterface("com.deepin.dde.daemon.Dock", "/com/deepin/dde/daemon/Dock", staticInterfaceName(), QDBusConnection::sessionBus(), parent)
+    : QDBusAbstractInterface(staticServiceName(), staticObjectPath(), staticInterfaceName(), QDBusConnection::sessionBus(), parent)
 {
     qDBusRegisterMetaType<DockRect>();
-    QDBusConnection::sessionBus().connect(this->service(), this->path(), "org.freedesktop.DBus.Properties",  "PropertiesChanged","sa{sv}as", this, SLOT(__propertyChanged__(QDBusMessage)));
+    QDBusConnection::sessionBus().connect(this->service(), this->path(),
+            "org.freedesktop.DBus.Properties",  "PropertiesChanged",
+            this, SLOT(__propertyChanged__(QDBusMessage)));
 }
 
 DBusDock::~DBusDock()
 {
-    QDBusConnection::sessionBus().disconnect(service(), path(), "org.freedesktop.DBus.Properties",  "PropertiesChanged",  "sa{sv}as", this, SLOT(propertyChanged(QDBusMessage)));
+    QDBusConnection::sessionBus().disconnect(service(), path(), "org.freedesktop.DBus.Properties"
+                     ,  "PropertiesChanged", this, SLOT(__propertyChanged__(QDBusMessage)));
 }
 
 QDBusArgument &operator<<(QDBusArgument &argument, const DockRect &rect)
@@ -48,4 +50,72 @@ QDebug operator<<(QDebug deg, const DockRect &rect)
     qDebug() << "x:" << rect.x << "y:" << rect.y << "width:" << rect.width << "height:" << rect.height;
 
     return deg;
+}
+#if DockGeometry
+DBusDockGeometry::DBusDockGeometry(QObject *parent)
+    : QDBusAbstractInterface(staticServiceName(), staticObjectPath(), staticInterfaceName(), QDBusConnection::sessionBus(), parent)
+{
+    qDBusRegisterMetaType<DockRectI>();
+    //todo 连不上，原因不明
+//    QDBusConnection::sessionBus().connect(this->service(), this->path(),
+//            "org.freedesktop.DBus.Properties",  "PropertiesChanged","sa{sv}as"
+//            ,this, SLOT(__propertyChanged__(QDBusMessage)));
+}
+
+DBusDockGeometry::~DBusDockGeometry()
+{
+//    QDBusConnection::sessionBus().disconnect(service(), path(),
+//     "org.freedesktop.DBus.Properties",  "PropertiesChanged", "sa{sv}as",this, SLOT(__propertyChanged__(QDBusMessage)));
+}
+
+QDBusArgument &operator<<(QDBusArgument &argument, const DockRectI &rect)
+{
+    argument.beginStructure();
+    argument << rect.x << rect.y << rect.width << rect.height;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, DockRectI &rect)
+{
+    argument.beginStructure();
+    argument >> rect.x >> rect.y >> rect.width >> rect.height;
+    argument.endStructure();
+    return argument;
+}
+
+QDebug operator<<(QDebug deg, const DockRectI &rect)
+{
+    qDebug() << "x:" << rect.x << "y:" << rect.y << "width:" << rect.width << "height:" << rect.height;
+
+    return deg;
+}
+#endif
+
+DockInfo *DockInfo::ins()
+{
+    static DockInfo ins;
+    return  &ins;
+}
+
+#if DockGeometry
+DBusDockGeometry *DockInfo::dockGeo() const
+{
+    return m_dockgeo;
+}
+#endif
+
+DBusDock *DockInfo::dock() const
+{
+    return m_dock;
+}
+
+DockInfo::DockInfo(QObject *parent)
+    : QObject (parent)
+{
+
+#if DockGeometry
+    m_dockgeo = new DBusDockGeometry(this);
+#endif
+    m_dock = new DBusDock(this);
 }
