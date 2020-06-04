@@ -236,12 +236,7 @@ bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
 
     // 保险箱上锁
     VaultController::getVaultController()->lockVault();
-    connect(VaultController::getVaultController(), &VaultController::signalLockVault, [wnd](int state){
-        if (state == 0){
-            // 切换到计算机目录下
-            wnd->cd(DUrl(COMPUTER_ROOT));
-        }
-    });
+
     return true;
 }
 
