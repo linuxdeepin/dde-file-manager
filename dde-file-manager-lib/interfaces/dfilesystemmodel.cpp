@@ -1229,6 +1229,14 @@ void DFileSystemModelPrivate::_q_processFileEvent()
     }
 
     _q_processFileEvent_runing.store(false);
+    if( !laterFileEventQueue.isEmpty()) { //解决最后一个队列没有被处理导致文管不能正确显示文件列表的问题 fix 29294 【字体管理器】【5.6.4】【修改引入】安装字体后，文管中没有显示
+        if (laterFileEventQueue.last().first == AddFile) {
+            _q_onFileCreated(laterFileEventQueue.takeLast().second);
+        }
+        else if (laterFileEventQueue.last().first == RmFile) {
+            _q_onFileDeleted(laterFileEventQueue.takeLast().second);
+        }
+    }
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
