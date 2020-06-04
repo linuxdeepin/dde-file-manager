@@ -429,18 +429,17 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 void TrashManager::cleanTrash(const QObject *sender) const
 {
     DUrlList list;
-    const DUrl &file_url = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath));
-    const DUrl &info_url = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
+    const DUrl &file_url = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
+    const DUrl &info_url = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath));
 
     if (QFile::exists(file_url.toLocalFile())) {
         list << file_url;
     }
-
-    if (QFile::exists(info_url.toLocalFile())) {
-        list << info_url;
-    }
-
     fileService->deleteFiles(sender, list, false, false, true);
+
+    // 清空回收站意味着回收站所有文件都被删除，因此直接删除info的目录即可
+    QString infoPaht = info_url.toLocalFile();
+    QProcess::execute("rm -r \"" + infoPaht.toUtf8() + "\"");
 }
 
 bool TrashManager::isEmpty()
