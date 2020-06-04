@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <sys/stat.h>
 #include "vaultfileinfo.h"
 #include "private/dabstractfileinfo_p.h"
 #include "dfileservices.h"
@@ -28,6 +29,7 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QIcon>
+#include <qplatformdefs.h>
 
 qint64 VaultFileInfo::m_vaultSize = 0;
 
@@ -150,16 +152,69 @@ DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     return url;
 }
 
-QFileDevice::Permissions VaultFileInfo::permissions() const
+QList<QIcon> VaultFileInfo::additionalIcon() const
 {
-    if (fileUrl().scheme() == DFMVAULT_SCHEME) {
-        return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
-               | QFile::WriteOwner | QFile::WriteUser;
+    QList<QIcon> icons;
+    if (isSymLink()) {
+        icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
     }
 
-    QFileDevice::Permissions p = DAbstractFileInfo::permissions();
+    if (!isWritable()) {
+        icons << QIcon::fromTheme("emblem-readonly", DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon));
+    }
 
-    return p;
+    return icons;
+}
+
+bool VaultFileInfo::isWritable() const
+{
+    QString filePath = fileUrl().toLocalFile();
+    struct stat buf;
+    std::string stdStr = filePath.toStdString();
+    stat(stdStr.c_str(), &buf);
+    if (buf.st_mode & S_IWUSR) {
+        return true;
+    }else {
+        return false;
+    }
+}
+
+QFileDevice::Permissions VaultFileInfo::permissions() const
+{
+//    if (fileUrl().scheme() == DFMVAULT_SCHEME) {
+//        return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
+//               | QFile::WriteOwner | QFile::WriteUser;
+//    }
+
+//    QFileDevice::Permissions p = DAbstractFileInfo::permissions();
+
+//    return p;
+    QFileInfo fileInfo(fileUrl().toLocalFile());
+    return fileInfo.permissions();
+}
+
+QSet<MenuAction> VaultFileInfo::disableMenuActionList() const
+{
+//    QSet<MenuAction> list;
+
+//    if (!isWritable()){
+//        list << MenuAction::Delete;
+//    }
+
+//    DUrl parentUrl = this->parentUrl();
+//    QString filePath = parentUrl.toLocalFile();
+//    struct stat buf;
+//    std::string stdStr = filePath.toStdString();
+//    stat(stdStr.c_str(), &buf);
+//    if (!(buf.st_mode & S_IWUSR)) {
+//        list << MenuAction::Cut << MenuAction::Rename << MenuAction::Delete;
+//    }
+
+//    if (!list.isEmpty()){
+//        return list;
+//    }
+
+    return DAbstractFileInfo::disableMenuActionList();
 }
 
 QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
@@ -230,15 +285,21 @@ bool VaultFileInfo::canRename() const
     if (isRootDirectory()) {
         return false;
     }
+
+    QT_STATBUF statBuffer;
+    if (QT_LSTAT(QFile::encodeName(this->parentUrl().path()), &statBuffer) == 0) {
+        // 如果父目录为只读权限，则不能重命名
+        if (!(statBuffer.st_mode & S_IWUSR)) {
+            return false;
+        }
+    }
+
     return DAbstractFileInfo::canRename();
 }
 
 bool VaultFileInfo::canShare() const
 {
-    if (isRootDirectory()) {
-        return false;
-    }
-    return DAbstractFileInfo::canShare();
+    return false;
 }
 
 bool VaultFileInfo::canTag() const

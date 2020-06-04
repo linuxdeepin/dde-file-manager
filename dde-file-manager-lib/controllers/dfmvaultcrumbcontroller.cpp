@@ -55,12 +55,12 @@ QList<CrumbData> DFMVaultCrumbController::seprateUrl(const DUrl &url)
         return list;
     }
     QStorageInfo storageInfo(path);
-    prefixPath = storageInfo.rootPath();
+    prefixPath = storageInfo.rootPath() + "/";
 
     // 设置地址栏保险箱图标
     QString text = Singleton<PathManager>::instance()->getSystemPathDisplayName("Vault");
     QString iconName = Singleton<PathManager>::instance()->getSystemPathIconName("Vault");
-    CrumbData data(VaultController::makeVaultUrl("/"), text, iconName);
+    CrumbData data(VaultController::makeVaultUrl(VaultController::makeVaultLocalPath()), text, iconName);
     list.append(data);
 
     DUrlList urlList = info->parentUrlList();

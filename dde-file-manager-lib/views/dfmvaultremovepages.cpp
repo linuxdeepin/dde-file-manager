@@ -16,7 +16,6 @@
 
 DWIDGET_USE_NAMESPACE
 
-DFMVaultRemovePages *DFMVaultRemovePages::m_instance = nullptr;
 DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     : DDialog (parent)
     , m_passwordView(new DFMVaultRemoveByPasswordView(this))
@@ -47,11 +46,6 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     setOnButtonClickedClose(false);
 
     initConnect();
-}
-
-DFMVaultRemovePages::~DFMVaultRemovePages()
-{
-    m_instance = nullptr;
 }
 
 void DFMVaultRemovePages::initConnect()
@@ -91,13 +85,10 @@ void DFMVaultRemovePages::showEvent(QShowEvent *event)
     event->accept();
 }
 
-DFMVaultRemovePages *DFMVaultRemovePages::instance(QWidget *parent)
+DFMVaultRemovePages *DFMVaultRemovePages::instance()
 {
-    if (!m_instance){
-        m_instance = new DFMVaultRemovePages(parent);
-    }
-
-    return m_instance;
+    static DFMVaultRemovePages s_instance;
+    return &s_instance;
 }
 
 void DFMVaultRemovePages::onButtonClicked(int index)
@@ -168,7 +159,8 @@ void DFMVaultRemovePages::onLockVault(int state)
             m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
         }else{
             // error tips
-            DMessageBox::information(this, tr("tips"), tr("Remove failed,the File Vault is busy."));
+            QString errMsg = tr("Remove File Vault failed.%1").arg(VaultController::getErrorInfo(state));
+            DMessageBox::information(this, tr("tips"), errMsg);
         }
         m_bRemoveVault = false;
     }

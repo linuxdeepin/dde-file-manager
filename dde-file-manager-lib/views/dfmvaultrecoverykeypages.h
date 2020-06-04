@@ -34,7 +34,7 @@ class DFMVaultRecoveryKeyPages : public DDialog
 {
     Q_OBJECT
 public:
-    static DFMVaultRecoveryKeyPages *instance(QWidget *parent = nullptr);
+    static DFMVaultRecoveryKeyPages *instance();
 
 private slots:
     void onButtonClicked(const int &index);
@@ -44,7 +44,7 @@ private slots:
     void onUnlockVault(int state);
 private:
     explicit DFMVaultRecoveryKeyPages(QWidget * parent = nullptr);
-    ~DFMVaultRecoveryKeyPages() override;
+    ~DFMVaultRecoveryKeyPages() override {}
 
     bool eventFilter(QObject *watched, QEvent *event) override;
 
@@ -54,5 +54,4 @@ private:
 private:
     QPlainTextEdit *m_recoveryKeyEdit {nullptr};
     bool m_bUnlockByKey = false;
-    static DFMVaultRecoveryKeyPages *m_instance;
 };
