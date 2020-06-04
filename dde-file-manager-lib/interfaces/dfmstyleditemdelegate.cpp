@@ -30,7 +30,7 @@ DFMStyledItemDelegate::~DFMStyledItemDelegate()
 
 DFileViewHelper *DFMStyledItemDelegate::parent() const
 {
-    return static_cast<DFileViewHelper *>(QStyledItemDelegate::parent());
+    return dynamic_cast<DFileViewHelper *>(QStyledItemDelegate::parent());
 }
 
 QModelIndex DFMStyledItemDelegate::editingIndex() const

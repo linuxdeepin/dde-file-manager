@@ -38,6 +38,10 @@
 #include <QStorageInfo>
 #include <QTextCodec>
 
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
 class DFMRootFileInfoPrivate
 {
 public:
@@ -52,6 +56,9 @@ public:
     QString label;
     QString fs;
     QString udispname;
+    QString idUUID;
+    QString currentUUID;
+    QString backupUUID;
     bool isod;
     bool encrypted;
     DFMRootFileInfo *q_ptr;
@@ -519,6 +526,7 @@ void DFMRootFileInfo::checkCache()
     d->mps = blk->mountPoints();
     d->size = blk->size();
     d->label = blk->idLabel();
+
     //FAT32的卷标编码为ascii，idLabel中取不到中文，这里需要从symlink中取出label
     //symlink中的label编码有问题，这里做进一步处理
     QString idVersion = blk->idVersion().toUpper();
@@ -571,6 +579,7 @@ void DFMRootFileInfo::checkCache()
         }
     }
     d->fs = blk->idType();
+    d->idUUID = blk->idUUID();
     d->udispname = udisksDisplayName();
 }
 
@@ -614,7 +623,38 @@ QString DFMRootFileInfo::udisksDisplayName()
 
     if (d->mps.contains(QByteArray("/\0", 2))) {
         return QCoreApplication::translate("PathManager", "System Disk");
+    } else {
+        if (d->currentUUID.isEmpty() || d->backupUUID.isEmpty()) {
+            QFile recoveryFile(QString("/etc/%1/ab-recovery.json").arg(qApp->organizationName()));
+
+            if (!recoveryFile.open(QIODevice::ReadOnly)) {
+                qDebug() << recoveryFile.fileName();
+            }
+            QByteArray recoveryData = recoveryFile.readAll();
+            recoveryFile.close();
+
+            QJsonParseError parseJsonErr;
+            QJsonDocument jsonDoc(QJsonDocument::fromJson(recoveryData, &parseJsonErr));
+            if(!(parseJsonErr.error == QJsonParseError::NoError)) {
+                qDebug() << "decode json file error, create new json data！";
+            } else {
+                QJsonObject rootObj = jsonDoc.object();
+                const QString currentcurrentUUIDKey = "Current";
+                const QString backupUUIDKey = "Backup";
+                if (rootObj.contains(currentcurrentUUIDKey)) {
+                    d->currentUUID = rootObj[currentcurrentUUIDKey].toString();
+                }
+                if (rootObj.contains(backupUUIDKey)) {
+                    d->backupUUID = rootObj[backupUUIDKey].toString();
+                }
+            }
+        }
+        if (d->currentUUID == d->idUUID || d->backupUUID == d->idUUID) {
+            return QCoreApplication::translate("PathManager", "System Disk");
+        }
     }
+
+
     if (d->label.length() == 0) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
         if (!drv->mediaAvailable() && drv->mediaCompatibility().join(" ").contains("optical")) {
@@ -673,10 +713,10 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
         {ItemType::GvfsGPhoto2,  6},
         {ItemType::GvfsGeneric,  7}
     };
-    if (!a->exists()) {
+    if (!a || !a->exists()) {
         return false;
     }
-    if (!b->exists()) {
+    if (!b || !b->exists()) {
         return true;
     }
     return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];

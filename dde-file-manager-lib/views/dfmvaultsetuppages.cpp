@@ -109,6 +109,7 @@ VaultSetupSetPasswordPage::VaultSetupSetPasswordPage(QWidget *parent)
     layout->addWidget(m_nextButton);
 
     connect(m_nextButton, &QPushButton::clicked, this, &VaultSetupSetPasswordPage::onFinishButtonPressed);
+    connect(VaultController::getVaultController(), &VaultController::signalCreateVault, this, &VaultSetupSetPasswordPage::slotSetup);
 }
 
 VaultSetupSetPasswordPage::~VaultSetupSetPasswordPage()
@@ -125,14 +126,25 @@ void VaultSetupSetPasswordPage::onFinishButtonPressed()
     }
 
     m_nextButton->setDisabled(true);
-    bool succ = VaultController::createVault(m_enterPassword->text());
-    if (succ) {
+    VaultController::getVaultController()->createVault(m_enterPassword->text());
+//    if (succ) {
+//        Singleton<SecretManager>::instance()->storeVaultPassword(m_enterPassword->text());
+//        m_enterPassword->clear();
+//        m_confirmPassword->clear();
+//        emit requestRedirect(VaultController::makeVaultUrl("/ask", "recovery_key"));
+//    }
+    m_nextButton->setDisabled(false);
+}
+
+void VaultSetupSetPasswordPage::slotSetup(int state)
+{
+    if(state == 0)
+    {
         Singleton<SecretManager>::instance()->storeVaultPassword(m_enterPassword->text());
         m_enterPassword->clear();
         m_confirmPassword->clear();
         emit requestRedirect(VaultController::makeVaultUrl("/ask", "recovery_key"));
     }
-    m_nextButton->setDisabled(false);
 }
 
 // --------------------------------------
@@ -140,7 +152,7 @@ void VaultSetupSetPasswordPage::onFinishButtonPressed()
 DFMVaultSetupPages::DFMVaultSetupPages(QWidget *parent)
     : DFMVaultPages(parent)
 {
-    VaultController::prepareVaultDirs();
+//    VaultController::prepareVaultDirs();
 
     VaultSetupWelcomePage * welcomePage = new VaultSetupWelcomePage(this);
     VaultSetupSetPasswordPage * passwordPage = new VaultSetupSetPasswordPage(this);

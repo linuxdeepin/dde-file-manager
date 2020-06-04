@@ -157,7 +157,7 @@ QPushButton *WallpaperItem::addButton(const QString &id, const QString &text)
 
 void WallpaperItem::slideUp()
 {
-    if (m_wrapper->y() < 0 && m_downAnim->state() == QAbstractAnimation::State::Stopped)
+    if (m_wrapper->y() < 0 && m_downAnim->state() == QAbstractAnimation::Stopped)
         return;
 
     m_upAnim->setStartValue(QPoint(0, 0));
@@ -174,7 +174,7 @@ void WallpaperItem::slideUp()
 
 void WallpaperItem::slideDown()
 {
-    if (m_wrapper->y() >= 0 && m_upAnim->state() == QAbstractAnimation::State::Stopped)
+    if (m_wrapper->y() >= 0 && m_upAnim->state() == QAbstractAnimation::Stopped)
         return;
 
     m_downAnim->setStartValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));

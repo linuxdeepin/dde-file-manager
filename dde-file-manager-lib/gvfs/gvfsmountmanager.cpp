@@ -442,13 +442,21 @@ void GvfsMountManager::monitor_mount_added_root(GVolumeMonitor *volume_monitor, 
     QMount qMount = gMountToqMount(mount);
     qCDebug(mountManager()) << qMount;
 
-    foreach (QString key, DiskInfos.keys()) {
-        QDiskInfo info = DiskInfos.value(key);
-        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
-            emit gvfsMountManager->volume_added(info);
-            return;
-        }
-    }
+    QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
+    if (qMount.can_unmount())
+        diskInfo.setCan_unmount(true);
+    if (qMount.can_eject())
+        diskInfo.setCan_eject(true);
+    DiskInfos.insert(diskInfo.id(), diskInfo);
+    emit gvfsMountManager->volume_added(diskInfo);
+
+//    foreach (QString key, DiskInfos.keys()) {
+//        QDiskInfo info = DiskInfos.value(key);
+//        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
+//            emit gvfsMountManager->volume_added(info);
+//            return;
+//        }
+//    }
 }
 
 void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor, GMount *mount)
@@ -457,13 +465,18 @@ void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor
     qCDebug(mountManager()) << "==============================monitor_mount_removed_root==============================";
     QMount qMount = gMountToqMount(mount);
     qCDebug(mountManager()) << qMount;
-    foreach (QString key, DiskInfos.keys()) {
-        QDiskInfo info = DiskInfos.value(key);
-        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
-            emit gvfsMountManager->volume_removed(info);
-            return;
-        }
-    }
+
+    QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
+    DiskInfos.remove(diskInfo.id());
+    emit gvfsMountManager->volume_removed(diskInfo);
+
+//    foreach (QString key, DiskInfos.keys()) {
+//        QDiskInfo info = DiskInfos.value(key);
+//        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
+//            emit gvfsMountManager->volume_removed(info);
+//            return;
+//        }
+//    }
 }
 
 
@@ -656,7 +669,7 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
             (qVolume.activation_root_uri().contains("") || qVolume.unix_device().contains("/dev/sr"))) {
         //fix: 临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
         QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        QString tempMediaPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + getVolTag(volume);
+        QString tempMediaPath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + getVolTag(volume);
         QDir(tempMediaPath).removeRecursively();
 
         //fix: 设置光盘容量属性

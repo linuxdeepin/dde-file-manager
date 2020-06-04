@@ -29,9 +29,12 @@
 #include <QApplication>
 #include <QMenu>
 #include <QPainter>
+#include <QToolTip>
 
 #include <danchors.h>
 #include <DTextEdit>
+#include <DArrowRectangle>
+#include <DThemeManager>
 
 #include "fileitem.h"
 #include "dfmglobal.h"
@@ -49,8 +52,22 @@ public:
     void setDragEnabled(const bool &bdrag);
 };
 
+class FileIconItemPrivate{
+public:
+    FileIconItemPrivate(){}
+    ~FileIconItemPrivate()
+    {
+        if (tooltip){
+            tooltip->deleteLater();
+        }
+    }
+
+    DArrowRectangle *tooltip {nullptr};
+};
+
 FileIconItem::FileIconItem(QWidget *parent) :
     QFrame(parent)
+  , d_ptr(new FileIconItemPrivate())
 {
     icon = new QLabel(this);
     edit = new CanSetDragTextEdit(this);
@@ -92,7 +109,11 @@ FileIconItem::FileIconItem(QWidget *parent) :
         int text_length = text.length();
         int text_line_height = fontMetrics().height();
 
+        QString tmpText = text;
         text = DFMGlobal::preprocessingFileName(text);
+        if (tmpText != text){
+            showAlertMessage(tr("The following characters cannot be used: \\ /: *? \"< >|"));
+        }
 
         QVector<uint> list = text.toUcs4();
         int cursor_pos = edit->textCursor().position() - text_length + text.length();
@@ -136,6 +157,11 @@ FileIconItem::FileIconItem(QWidget *parent) :
         }
     });
     connect(edit, &QTextEdit::customContextMenuRequested, this, &FileIconItem::popupEditContentMenu);
+}
+
+FileIconItem::~FileIconItem()
+{
+
 }
 
 qreal FileIconItem::opacity() const
@@ -213,6 +239,43 @@ void FileIconItem::editRedo()
     QTextCursor cursor = edit->textCursor();
     edit->setPlainText(editTextStackAdvance());
     edit->setTextCursor(cursor);
+}
+
+void FileIconItem::showAlertMessage(const QString &text, int duration)
+{
+    Q_D(FileIconItem);
+
+    if (!d->tooltip){
+        d->tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop, this);
+        d->tooltip->setObjectName("AlertTooltip");
+
+        QLabel *label = new QLabel(d->tooltip);
+
+        label->setWordWrap(true);
+        label->setMaximumWidth(500);
+        d->tooltip->setContent(label);
+        d->tooltip->setBackgroundColor(palette().color(backgroundRole()));
+        d->tooltip->setArrowX(15);
+        d->tooltip->setArrowHeight(5);
+
+        QTimer::singleShot(duration, d->tooltip, [d] {
+            d->tooltip->deleteLater();
+            d->tooltip = Q_NULLPTR;
+        });
+    }
+
+    QLabel *label = qobject_cast<QLabel *>(d->tooltip->getContent());
+
+    if (!label) {
+        return;
+    }
+
+    label->setText(text);
+    label->adjustSize();
+
+    const QPoint &pos = edit->mapToGlobal(QPoint(edit->width()/2, edit->height()));
+
+    d->tooltip->show(pos.x(), pos.y());
 }
 
 bool FileIconItem::event(QEvent *ee)
@@ -314,8 +377,8 @@ void FileIconItem::updateStyleSheet()
 
     base.append("FileIconItem QTextEdit {color: %3}");
     base = base.arg(palette().color(QPalette::Background).name(QColor::HexArgb))
-           .arg(palette().color(QPalette::BrightText).name(QColor::HexArgb))
-           .arg(palette().color(QPalette::Text).name(QColor::HexArgb));
+            .arg(palette().color(QPalette::BrightText).name(QColor::HexArgb))
+            .arg(palette().color(QPalette::Text).name(QColor::HexArgb));
 
     // WARNING: setStyleSheet will clean margins!!!!!!
     auto saveContent = contentsMargins();

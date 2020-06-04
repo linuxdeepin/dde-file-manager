@@ -55,6 +55,7 @@
 #include "controllers/appcontroller.h"
 #include "dfileservices.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 
 #include "models/dfileselectionmodel.h"
 #include "dfilesystemmodel.h"
@@ -2183,10 +2184,13 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     DUrl fileUrl = url;
+    //! 快捷方式打开路径需要转换，把真是路径转换成虚拟路径
+//    if(url.toLocalFile().contains(VaultController::makeVaultLocalPath()))
+//    {
+//        fileUrl = VaultController::localUrlToVault(url);
+//    }
 
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, fileUrl);
-
-
 
     while (info && info->canRedirectionFileUrl()) {
         const DUrl old_url = fileUrl;
@@ -2200,6 +2204,12 @@ bool DFileView::setRootUrl(const DUrl &url)
 
         qDebug() << "url redirected, from:" << old_url << "to:" << fileUrl;
     }
+
+    //! 书签方式打开路径需要转换，把真是路径转换成虚拟路径
+//    if(fileUrl.toLocalFile().contains(VaultController::makeVaultLocalPath()))
+//    {
+//        fileUrl = VaultController::localUrlToVault(fileUrl);
+//    }
 
     if (!info) {
         qDebug() << "This scheme isn't support, url" << fileUrl;
@@ -2256,6 +2266,7 @@ bool DFileView::setRootUrl(const DUrl &url)
                     QThread::msleep(1000);
                     QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
                     diskdev->eject({});
+                    qDebug() << "setRootUrl failed:" << blkdev->drive();
                     if (diskdev->optical())
                         QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
                     getOpticalDriveMutex()->unlock();
@@ -2589,7 +2600,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     if (actions.isEmpty())
         return;
 
-    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList(DAbstractFileInfo::SpaceArea);
 
     QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
 

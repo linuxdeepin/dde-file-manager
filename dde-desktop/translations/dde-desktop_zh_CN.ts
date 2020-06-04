@@ -4,43 +4,50 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2692"/>
+        <location filename="../view/canvasgridview.cpp" line="3040"/>
+        <location filename="../view/canvasgridview.cpp" line="3216"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2698"/>
+        <location filename="../view/canvasgridview.cpp" line="3046"/>
+        <location filename="../view/canvasgridview.cpp" line="3222"/>
         <source>Auto merge</source>
         <translation>自动整理</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2713"/>
+        <location filename="../view/canvasgridview.cpp" line="3061"/>
+        <location filename="../view/canvasgridview.cpp" line="3232"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2770"/>
-        <location filename="../view/canvasgridview.cpp" line="2773"/>
+        <location filename="../view/canvasgridview.cpp" line="3118"/>
+        <location filename="../view/canvasgridview.cpp" line="3121"/>
+        <location filename="../view/canvasgridview.cpp" line="3285"/>
+        <location filename="../view/canvasgridview.cpp" line="3290"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2775"/>
+        <location filename="../view/canvasgridview.cpp" line="3123"/>
+        <location filename="../view/canvasgridview.cpp" line="3288"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁纸与屏保</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2887"/>
+        <location filename="../view/canvasgridview.cpp" line="3431"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2753"/>
+        <location filename="../view/canvasgridview.cpp" line="3101"/>
+        <location filename="../view/canvasgridview.cpp" line="3269"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2762"/>
+        <location filename="../view/canvasgridview.cpp" line="3110"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>
@@ -84,87 +91,77 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="594"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="642"/>
         <source>Wallpaper Slideshow</source>
         <translation>自动更换壁纸</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="636"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="687"/>
         <source>When login</source>
         <translation>登录时</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="638"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="689"/>
         <source>When wakeup</source>
         <translation>唤醒时</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="686"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="742"/>
         <source>Require a password on wakeup</source>
         <translation>恢复时需要密码</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="716"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="772"/>
         <source>Never</source>
         <translation>从不</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="717"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="773"/>
         <source>Wait:</source>
         <translation>闲置时间：</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="751"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="807"/>
         <source>Wallpaper</source>
         <translation>壁纸</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="762"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="819"/>
         <source>Screensaver</source>
         <translation>屏保</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="837"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="894"/>
         <source>Only desktop</source>
         <translation>仅设置桌面</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="838"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="895"/>
         <source>Only lock screen</source>
         <translation>仅设置锁屏</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="874"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="931"/>
         <source>Apply</source>
         <translation>设置屏保</translation>
     </message>
 </context>
 <context>
-    <name>QObject</name>
+    <name>WaterMaskFrame</name>
     <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="15"/>
-        <source>screen_background</source>
-        <translation>桌面</translation>
+        <location filename="../view/watermaskframe.cpp" line="253"/>
+        <source>Not authorized</source>
+        <translation type="unfinished">未授权</translation>
     </message>
     <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="16"/>
-        <source>screen_frame</source>
-        <translation>桌面画布</translation>
+        <location filename="../view/watermaskframe.cpp" line="256"/>
+        <source>authorized</source>
+        <translation type="unfinished">已授权</translation>
     </message>
     <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="17"/>
-        <source>water_mask_frame</source>
-        <translation>桌面水印</translation>
-    </message>
-    <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="19"/>
-        <source>water_mask_logo</source>
-        <translation>桌面水印 logo</translation>
-    </message>
-    <message>
-        <location filename="../accessible/frameaccessibledefine.h" line="20"/>
-        <source>water_mask_text</source>
-        <translation>桌面水印 文字描述</translation>
+        <location filename="../view/watermaskframe.cpp" line="259"/>
+        <source>In trial period</source>
+        <translation type="unfinished">试用期</translation>
     </message>
 </context>
 <context>

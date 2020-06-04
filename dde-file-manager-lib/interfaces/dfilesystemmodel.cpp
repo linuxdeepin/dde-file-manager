@@ -33,15 +33,19 @@
 #include "app/filesignalmanager.h"
 #include "singleton.h"
 
+#include "controllers/vaultcontroller.h"
 #include "controllers/jobcontroller.h"
 #include "controllers/appcontroller.h"
 #include "shutil/desktopfile.h"
+//处理自动整理的路径问题
+#include "controllers/mergeddesktopcontroller.h"
 #include "shutil/dfmfilelistfile.h"
 
 #include "interfaces/durl.h"
 #include "interfaces/dfileviewhelper.h"
 #include "shutil/fileutils.h"
 #include "deviceinfo/udisklistener.h"
+#include "shutil/dfmfilelistfile.h"
 
 #include <memory>
 #include <QList>
@@ -711,8 +715,9 @@ private:
                 }
 
                 const FileSystemNodePointer &node = rootNode->getNodeByIndex(row);
-
-                if (node->fileInfo->isFile()) {
+                //因在自动整理时，超时会在次判定，导致文件夹以及分类文件夹会出现在扩展分类之前，
+                //所以加一个node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME规避掉
+                if (node->fileInfo->isFile() && node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME) {
                     break;
                 }
 
@@ -901,6 +906,7 @@ public:
         , rootNodeManager(new FileNodeManagerThread(qq))
         , needQuitUpdateChildren(false)
     {
+        _q_processFileEvent_runing.store(false);
         if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool()) {
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
         } else {
@@ -915,6 +921,11 @@ public:
             {
                 qq->setState(DFileSystemModel::Idle);
             }
+
+            //当遍历文件的耗时超过JobController::m_timeCeiling时，
+            //onJobFinished函数中拿到的文件不足，因为rootNodeManager还要处理剩余文件
+            //因此在这里rootNodeManager处理完后，再次发送信号 关联bug#24863
+            emit qq->sigJobFinished();
         });
     }
 
@@ -961,7 +972,7 @@ public:
     bool readOnly = false;
 
     /// add/rm file event
-    bool _q_processFileEvent_runing = false;
+    std::atomic<bool> _q_processFileEvent_runing;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
     QQueue<QPair<EventType, DUrl>> laterFileEventQueue;
 
@@ -977,7 +988,7 @@ public:
 
 DFileSystemModelPrivate::~DFileSystemModelPrivate()
 {
-    if (_q_processFileEvent_runing) {
+    if (_q_processFileEvent_runing.load()) {
         fileEventQueue.clear();
     }
 }
@@ -1051,10 +1062,10 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     }
 
 //    rootNodeManager->addFile(info);
-    if (!_q_processFileEvent_runing) {
+    if (!_q_processFileEvent_runing.load()) {
         fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
         while (!laterFileEventQueue.isEmpty()) {
-            laterFileEventQueue.enqueue(laterFileEventQueue.dequeue());
+            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
         }
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
     } else {
@@ -1074,10 +1085,10 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
         flf.remove(fileUrl.fileName());
         flf.save();
     }
-    if (!_q_processFileEvent_runing) {
+    if (!_q_processFileEvent_runing.load()) {
         fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
         while (!laterFileEventQueue.isEmpty()) {
-            laterFileEventQueue.enqueue(laterFileEventQueue.dequeue());
+            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
         }
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
     } else {
@@ -1157,11 +1168,14 @@ void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 
 void DFileSystemModelPrivate::_q_processFileEvent()
 {
-    if (_q_processFileEvent_runing) {
+    if (_q_processFileEvent_runing.load()) {
         return;
     }
 
-    _q_processFileEvent_runing = true;
+    // CAS
+    bool expect = false;
+    _q_processFileEvent_runing.compare_exchange_strong(expect, true);
+
     qDebug() << "_q_processFileEvent";
     Q_Q(DFileSystemModel);
     while (!fileEventQueue.isEmpty()) {
@@ -1214,7 +1228,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         }
     }
 
-    _q_processFileEvent_runing = false;
+    _q_processFileEvent_runing.store(false);
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
@@ -2497,6 +2511,12 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        if (fileHash.contains(fileInfo->fileUrl())) {
 //            continue;
 //        }
+        //挂载设备下目录添加tag后 移除该挂载设备 目录已不存在但其URL依然还保存在tag集合中
+        //该问题导致这些不存在的目录依然会添加到tag的fileview下 引起其他被标记文件可能标记数据获取失败
+        //为了避免引起其他问题 暂时只对tag的目录做处理
+        if (fileInfo->fileUrl().scheme() == TAG_SCHEME && !fileInfo->exists()) {
+            continue;
+        }
 
         qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
@@ -2529,6 +2549,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     }
 
     qDebug() << "finish update children. file count = " << node->childrenCount();
+    emit sigJobFinished();
 }
 
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
@@ -2984,7 +3005,43 @@ void DFileSystemModel::emitAllDataChanged()
 void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
 {
     /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
-    if (AppController::selectionAndRenameFile.first == fileUrl) {
+    if (fileUrl.scheme() == DFMMD_SCHEME){ //自动整理路径特殊实现，fix bug#24715
+        auto realFileUrl = MergedDesktopController::convertToRealPath(fileUrl);
+        if (AppController::selectionAndRenameFile.first == realFileUrl) {
+            quint64 windowId = AppController::selectionAndRenameFile.second;
+            if (windowId != parent()->windowId()) {
+                return;
+            }
+
+            AppController::selectionAndRenameFile = qMakePair(DUrl(), 0);
+            DFMUrlBaseEvent event(this, fileUrl);
+            event.setWindowId(windowId);
+            emit newFileByInternal(fileUrl);
+        }
+    }
+    else if (fileUrl.isVaultFile()) //! 设置保险箱新建文件选中并重命名状态
+    {
+        DUrl url = DUrl::fromLocalFile(VaultController::vaultToLocal(fileUrl));
+        if(AppController::selectionAndRenameFile.first == url)
+        {
+            quint64 windowId = AppController::selectionAndRenameFile.second;
+
+            if (windowId != parent()->windowId()) {
+                return;
+            }
+
+            AppController::selectionAndRenameFile = qMakePair(DUrl(), 0);
+            DFMUrlBaseEvent event(this, fileUrl);
+            event.setWindowId(windowId);
+
+            TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel *>(this), 100, {
+                emit fileSignalManager->requestSelectRenameFile(event);
+            }, event)
+
+            emit newFileByInternal(fileUrl);
+        }
+    }
+     else if (AppController::selectionAndRenameFile.first == fileUrl) {
         quint64 windowId = AppController::selectionAndRenameFile.second;
 
         if (windowId != parent()->windowId()) {

@@ -20,6 +20,8 @@
  */
 #include "dfmvaultfileview.h"
 #include "controllers/vaultcontroller.h"
+#include "vault/vaultlockmanager.h"
+
 
 
 #include <QHBoxLayout>
@@ -38,20 +40,20 @@ VaultHeaderView::VaultHeaderView(QWidget *parent)
     font.setPixelSize(24);
     lb->setFont(font);
 
-    DIconButton * menuBtn = new DIconButton(DStyle::SP_TitleBarMenuButton, this);
-    menuBtn->setFixedSize(QSize(32, 32));
+    //DIconButton * menuBtn = new DIconButton(DStyle::SP_TitleBarMenuButton, this);
+    //menuBtn->setFixedSize(QSize(32, 32));
 
     QHBoxLayout * layout = new QHBoxLayout(this);
-    layout->addWidget(lb);
+    layout->addWidget(lb);    
     layout->addStretch();
 
-    layout->addWidget(menuBtn);
+    //layout->addWidget(menuBtn);
 
-    connect(menuBtn, &QAbstractButton::clicked, this, [=](){
-        DFileMenu * menu = createMenu();
-        menu->exec(menuBtn->mapToGlobal(menuBtn->rect().center()));
-        menu->deleteLater(this);
-    });
+//    connect(menuBtn, &QAbstractButton::clicked, this, [=](){
+//        DFileMenu * menu = createMenu();
+//        menu->exec(menuBtn->mapToGlobal(menuBtn->rect().center()));
+//        menu->deleteLater();
+//    });
 }
 
 DFileMenu *VaultHeaderView::createMenu()
@@ -69,32 +71,36 @@ DFileMenu *VaultHeaderView::createMenu()
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
-    VaultHeaderView * headerView = new VaultHeaderView(this);
-    int index = this->addHeaderWidget(headerView);
-    Q_UNUSED(index);
+//    VaultHeaderView * headerView = new VaultHeaderView(this);
+//    int index = this->addHeaderWidget(headerView);
+//    Q_UNUSED(index);
 
-    connect(headerView, &VaultHeaderView::requestLockVault, this, [this](){
-        if (VaultController::lockVault()) {
-            cd(VaultController::makeVaultUrl("/", "unlock"));
-        }
-    });
+//    connect(headerView, &VaultHeaderView::requestLockVault, this, [this](){
+//        if (VaultController::lockVault()) {
+//            cd(VaultController::makeVaultUrl("/", "unlock"));
+//        }
+//    });
 
-    connect(headerView, &VaultHeaderView::requestGenerateRecoveryKey, this, [this](){
-        cd(VaultController::makeVaultUrl("/verify", "recovery_key"));
-    });
+//    connect(headerView, &VaultHeaderView::sRequestLockVault, VaultController::getVaultController(), &VaultController::lockVault);
+
+    connect(VaultController::getVaultController(), &VaultController::signalLockVault, this, &DFMVaultFileView::lockVault);
+
+//    connect(headerView, &VaultHeaderView::requestGenerateRecoveryKey, this, [this](){
+//        cd(VaultController::makeVaultUrl("/verify", "recovery_key"));
+//    });
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
 {
-    VaultController::VaultState state = VaultController::state();
+    VaultController::VaultState state = VaultController::getVaultController()->state();
 
     if (state != VaultController::Unlocked) {
         switch (state) {
         case VaultController::NotExisted:
-            cd(VaultController::makeVaultUrl("/", "setup"));
+//            cd(VaultController::makeVaultUrl("/", "setup"));
             return false;
         case VaultController::Encrypted:
-            cd(VaultController::makeVaultUrl("/", "unlock"));
+//            cd(VaultController::makeVaultUrl("/", "unlock"));
             return false;
         default:
             return false;
@@ -102,4 +108,28 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     }
 
     return DFileView::setRootUrl(url);
+}
+
+bool DFMVaultFileView::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::HoverMove
+            || event->type() == QEvent::MouseButtonPress
+            || event->type() == QEvent::KeyRelease) {
+
+        VaultLockManager::getInstance().refreshAccessTime();
+#ifdef AUTOLOCK_TEST
+        qDebug() << "type == " << event->type();
+#endif
+    }
+
+    return DFileView::eventFilter(obj, event);
+}
+
+void DFMVaultFileView::lockVault(int state)
+{
+    if(state == 0)
+    {
+        DUrl url(COMPUTER_ROOT);
+        cd(url);
+    }
 }

@@ -132,7 +132,7 @@ public slots:
     QList<QString> actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event);
     bool actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event);
     void actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent>& event);
-    void showTagEdit(const QPoint &globalPos, const DUrlList &fileList);
+    void showTagEdit(const QRect& parentRect, const QPoint &globalPos, const DUrlList &fileList);
 
 #ifdef SW_LABEL
     void actionSetLabel(const DFMEvent& event);
@@ -171,6 +171,7 @@ private:
     friend class DFileViewHelper;
     friend class DRenameBar;
     friend class FileBatchProcess;
+    friend class VaultController;
 
 public:
     static QPair<QList<DUrl>, quint64> multiSelectionFilesCache;  //###: for multi selection.

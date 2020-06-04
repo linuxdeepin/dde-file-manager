@@ -20,157 +20,39 @@
  */
 #pragma once
 
-#include "interface/dfmvaultcontentinterface.h"
+//#include "interface/dfmvaultcontentinterface.h"
 #include "dtkwidget_global.h"
-
-#include <QPushButton>
+#include <DDialog>
 
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
-class QLineEdit;
 QT_END_NAMESPACE
-
-DWIDGET_BEGIN_NAMESPACE
-class DPasswordEdit;
-class DFloatingButton;
-DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
-DFM_BEGIN_NAMESPACE
-
-class VaultAskCreateKeyPage : public QWidget
+class DFMVaultRecoveryKeyPages : public DDialog
 {
     Q_OBJECT
 public:
-    explicit VaultAskCreateKeyPage(QWidget * parent = nullptr);
-    ~VaultAskCreateKeyPage() override;
-
-signals:
-    void requestRedirect(DUrl url);
+    static DFMVaultRecoveryKeyPages *instance(QWidget *parent = nullptr);
 
 private slots:
-    void next();
-    void skip();
+    void onButtonClicked(const int &index);
 
+    void recoveryKeyChanged();
+
+    void onUnlockVault(int state);
 private:
-    QPushButton * m_nextButton;
-    QPushButton * m_skipButton;
-};
-
-// ------------------------------------------------
-
-class VaultVerifyUserPage : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit VaultVerifyUserPage(QWidget * parent = nullptr);
-    ~VaultVerifyUserPage() override;
-
-signals:
-    void requestRedirect(DUrl url);
-
-private slots:
-    void unlock();
-
-private:
-    DPasswordEdit * m_passwordEdit;
-    DFloatingButton * m_unlockButton;
-};
-
-// ------------------------------------------------
-
-class VaultGeneratedKeyPage : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit VaultGeneratedKeyPage(QWidget * parent = nullptr);
-    ~VaultGeneratedKeyPage() override;
-
-signals:
-    void requestRedirect(DUrl url);
-
-public slots:
-    void startKeyGeneration();
-    void saveKeyFile();
-    void finishButtonPressed();
-
-private:
-    void clearData();
-    DSecureString createRecoveryKeyString(const DSecureString &ivHexString, const DSecureString &keyHexString);
-
-    QPushButton * m_saveFileButton;
-    QPushButton * m_finishButton;
-    QPlainTextEdit * m_generatedKeyEdit;
-};
-
-// ------------------------------------------------
-
-class VaultVerifyRecoveryKeyPage : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit VaultVerifyRecoveryKeyPage(QWidget * parent = nullptr);
-    ~VaultVerifyRecoveryKeyPage() override;
-
-signals:
-    void requestRedirect(DUrl url);
-
-public slots:
-    void preparePage();
-    void startVerifyKey();
-
-private:
-    bool verifyKey();
-
-    QByteArray m_ivData;
-    QByteArray m_encryptedPasswordData;
-
-    QLineEdit * m_verifyKeyEdit;
-    QLineEdit * m_recoveryKeyEdit;
-    QPushButton * m_retrievePasswordButton;
-};
-
-// ------------------------------------------------
-
-class VaultPasswordPage : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit VaultPasswordPage(QWidget * parent = nullptr);
-    ~VaultPasswordPage() override;
-
-signals:
-    void requestRedirect(DUrl url);
-
-public slots:
-    void showPassword();
-    void quitPasswordPage();
-
-private:
-    QLineEdit * m_passwordEdit;
-    QPushButton * m_finishButton;
-};
-
-// ------------------------------------------------
-
-class DFMVaultRecoveryKeyPages : public DFMVaultPages
-{
-    Q_OBJECT
-public:
     explicit DFMVaultRecoveryKeyPages(QWidget * parent = nullptr);
     ~DFMVaultRecoveryKeyPages() override;
 
-    QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
-    QString pageString(const DUrl & url) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
-signals:
-    void requestCreateRecoveryKey();
-    void requestPrepareRetrievePasswordPage();
-    void requestShowPassword();
+    int afterRecoveryKeyChanged(QString &str);
 
-public slots:
-    void onRootPageChanged(QString pageStr);
+    void showEvent(QShowEvent *event) override;
+private:
+    QPlainTextEdit *m_recoveryKeyEdit {nullptr};
+    bool m_bUnlockByKey = false;
+    static DFMVaultRecoveryKeyPages *m_instance;
 };
-
-DFM_END_NAMESPACE

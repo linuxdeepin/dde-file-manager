@@ -18,6 +18,7 @@ class Config: public QObject, public Singleton<Config>
     Q_OBJECT
 public:
     QSettings *settings()  {return m_settings;}
+    QVariant getConfig(const QString &group, const QString &key, const QVariant &defaultValue = QVariant());
 
     static const QString groupGeneral;
     static const QString keyProfile;
@@ -27,6 +28,7 @@ public:
     static const QString keyIconLevel;
     static const QString keyQuickHide;
     static const QString keyAutoMerge;
+    static const QString keyWaterMask;
 
 public slots:
     void setConfig(const QString &group, const QString &key, const QVariant &value);

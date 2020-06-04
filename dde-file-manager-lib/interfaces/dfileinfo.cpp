@@ -30,6 +30,7 @@
 
 #include "controllers/pathmanager.h"
 #include "controllers/filecontroller.h"
+#include "controllers/vaultcontroller.h"
 
 #include "app/define.h"
 #include "singleton.h"
@@ -238,6 +239,7 @@ DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache
     : DAbstractFileInfoPrivate(url, qq, hasCache)
 {
     fileInfo.setFile(url.toLocalFile());
+
     gvfsMountFile = FileUtils::isGvfsMountFile(url.toLocalFile());
 }
 
@@ -812,7 +814,7 @@ QString DFileInfo::subtitleForEmptyFloder() const
         next = readdir(dirp);
         closedir(dirp);
         if (!next && errno != 0) {
-//            qDebug() << errno;
+            //            qDebug() << errno;
             return QObject::tr("You do not have permission to access this folder");
         }
     }
@@ -905,8 +907,14 @@ QIcon DFileInfo::fileIcon() const
 #ifdef DFM_MINIMUM
     d->hasThumbnail = 0;
 #else
-    if (d->hasThumbnail < 0)
-        d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
+    if (d->hasThumbnail < 0){
+         // 如果是保险箱，直接获取图片(解决保险箱没有图标问题)
+        if(fileUrl.toString().contains(VaultController::makeVaultLocalPath())){
+            d->hasThumbnail = DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
+        }else{
+            d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
+        }
+    }
 #endif
     if (d->needThumbnail || d->hasThumbnail > 0) {
         d->needThumbnail = true;
