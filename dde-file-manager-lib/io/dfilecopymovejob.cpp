@@ -1184,7 +1184,8 @@ open_file: {
 //        writtenDataSize += size_write;
 
         if (Q_LIKELY(!fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking))) {
-            source_checksum = adler32(source_checksum, reinterpret_cast<Bytef *>(data), size_read);
+//            source_checksum = adler32(source_checksum, reinterpret_cast<Bytef *>(data), size_read);
+            source_checksum = adler32(source_checksum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(size_read));
         }
 
 //        if (Q_UNLIKELY(writtenDataSize > 20000000)) {
@@ -1259,7 +1260,7 @@ open_file: {
             }
         }
 
-        target_checksum = adler32(target_checksum, reinterpret_cast<Bytef *>(data), size);
+        target_checksum = adler32(target_checksum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(size));
 
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
@@ -1820,7 +1821,7 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
     d->fileStatistics->start(sourceUrls);
 
     // DFileStatisticsJob 统计数量很慢，自行统计
-    QtConcurrent::run([this, sourceUrls, d] () {
+    QtConcurrent::run([sourceUrls, d] () {
         if (d->mode == MoveMode) {
             for (const auto &url : sourceUrls) {
                 QStringList list;
@@ -1980,7 +1981,7 @@ void DFileCopyMoveJob::run()
                                 d->targetIsRemovable = list.at(1) == "1";
 
                                 bool ok = false;
-                                d->targetLogSecionSize = list.at(2).toInt(&ok);
+                                d->targetLogSecionSize = static_cast<qint16>(list.at(2).toInt(&ok));
 
                                 if (!ok) {
                                     d->targetLogSecionSize = 512;
@@ -2003,7 +2004,7 @@ void DFileCopyMoveJob::run()
                     }
                 }
 
-                qCDebug(fileJob(), "canUseWriteBytes = %d, targetIsRemovable = %d", bool(d->canUseWriteBytes));
+                qCDebug(fileJob(), "canUseWriteBytes = %d, targetIsRemovable = %d", bool(d->canUseWriteBytes), bool(d->targetIsRemovable));
             }
         }
     } else if (d->mode == CopyMode) {
