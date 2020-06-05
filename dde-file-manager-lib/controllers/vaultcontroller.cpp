@@ -501,6 +501,7 @@ bool VaultController::setPermissions(const QSharedPointer<DFMSetPermissionEvent>
 
 DUrl VaultController::makeVaultUrl(QString path, QString host)
 {
+    Q_UNUSED(host)
     // blumia: if path is not start with a `/`, QUrl::setPath will destory the whole QUrl
     //         and only leave the path to the QUrl.
     if (!path.startsWith('/')) {

@@ -200,7 +200,7 @@ Frame::~Frame()
         }
     });
 
-    disconnect(ScreenMrg, 0,this,0);
+    disconnect(ScreenMrg, nullptr,this,nullptr);
 }
 
 void Frame::show()
@@ -703,8 +703,6 @@ void Frame::initUI()
         }
 
         for (const QByteArray &time : array_policy) {
-            int index = 0;
-
             DButtonBoxButton *btn;
             if (time == "login") {
                 btn = new DButtonBoxButton(tr("When login"), this);
