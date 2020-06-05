@@ -211,6 +211,7 @@ QPoint DialogManager::getPropertyPos(int dialogWidth, int dialogHeight)
 
 QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int count, int index)
 {
+    Q_UNUSED(dialogHeight)
     const QScreen *cursor_screen = Q_NULLPTR;
     const QPoint &cursor_pos = QCursor::pos();
 
@@ -241,7 +242,7 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
         row = count / numberPerRow + 1;
 
     }
-
+    Q_UNUSED(row)
     int dialogsWidth;
     if (count / numberPerRow > 0) {
         dialogsWidth = dialogWidth * numberPerRow + SpaceWidth * (numberPerRow - 1);
@@ -537,6 +538,7 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
 
 void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
 {
+    Q_UNUSED(details)
     DDialog d;
     d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));
     QString failure_type;

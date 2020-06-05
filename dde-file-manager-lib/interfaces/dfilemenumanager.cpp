@@ -230,21 +230,19 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         QStringList supportedMimeTypes;
         bool mime_displayOpenWith = true;
 
-        //先获取supportedMimeTypes 防止遍历urls的第一的文件的mimeType可能为空，而引发的菜单选项错误 BugID：24964
-        foreach (DUrl url, urls) {
-            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
-            if (supportedMimeTypes.isEmpty()) {
-                QMimeType fileMimeType = fileInfo->mimeType();
-                QString defaultAppDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(fileMimeType.name());
-                QSettings desktopFile(defaultAppDesktopFile, QSettings::IniFormat);
-                desktopFile.setIniCodec("UTF-8");
-                Properties mimeTypeList(defaultAppDesktopFile, "Desktop Entry");
-                supportedMimeTypes = mimeTypeList.value("MimeType").toString().split(';');
-                supportedMimeTypes.removeAll({});
-            }
-            if(!supportedMimeTypes.isEmpty()){
-                break;
-            }
+#if 1   //!fix bug#29264.部分格式的文件在上面的MimesAppsManager::getDefaultAppDesktopFileByMimeType
+        //!调用中可以找到app打开，但是在后面的判断是由于该app的supportedMimeTypes中并没有本文件的mimeTypeList支持
+        //!导致了无法匹配，matched为false。因此这里加做一次判断，如果本次文件的后缀名与与上面查询app的文件后缀名一样，则直接匹配
+
+        //获取当前文件的app
+        if (supportedMimeTypes.isEmpty()) {
+            QMimeType fileMimeType = info->mimeType();
+            QString defaultAppDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(fileMimeType.name());
+            QSettings desktopFile(defaultAppDesktopFile, QSettings::IniFormat);
+            desktopFile.setIniCodec("UTF-8");
+            Properties mimeTypeList(defaultAppDesktopFile, "Desktop Entry");
+            supportedMimeTypes = mimeTypeList.value("MimeType").toString().split(';');
+            supportedMimeTypes.removeAll("");
         }
 
         foreach (DUrl url, urls) {
@@ -262,16 +260,54 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                 continue;
             }
 
-//            if (supportedMimeTypes.isEmpty()) {
-//                QMimeType fileMimeType = fileInfo->mimeType();
-//                QString defaultAppDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(fileMimeType.name());
-//                QSettings desktopFile(defaultAppDesktopFile, QSettings::IniFormat);
-//                desktopFile.setIniCodec("UTF-8");
-//                Properties mimeTypeList(defaultAppDesktopFile, "Desktop Entry");
-//                supportedMimeTypes = mimeTypeList.value("MimeType").toString().split(';');
-//                supportedMimeTypes.removeAll({});
-//            } else {
-            if (!supportedMimeTypes.isEmpty()) {
+            QStringList mimeTypeList = { fileInfo->mimeType().name() };
+            mimeTypeList.append(fileInfo->mimeType().parentMimeTypes());
+            bool matched = false;
+
+            //后缀名相同直接匹配
+            if (fileInfo->suffix() == info->suffix()){
+                matched = true;
+            }
+            else{
+                for (const QString &oneMimeType : mimeTypeList) {
+                    if (supportedMimeTypes.contains(oneMimeType)) {
+                        matched = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!matched) {
+                mime_displayOpenWith = false;
+                disableList << MenuAction::Open << MenuAction::OpenWith;
+                break;
+            }
+        }
+#else  //原来的实现
+        foreach (DUrl url, urlList) {
+            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
+
+            if (!FileUtils::isArchive(url.path())) {
+                isAllCompressedFiles = false;
+            }
+
+            if (systemPathManager->isSystemPath(fileInfo->fileUrl().toLocalFile())) {
+                isSystemPathIncluded = true;
+            }
+
+            if (!mime_displayOpenWith) {
+                continue;
+            }
+
+            if (supportedMimeTypes.isEmpty()) {
+                QMimeType fileMimeType = fileInfo->mimeType();
+                QString defaultAppDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(fileMimeType.name());
+                QSettings desktopFile(defaultAppDesktopFile, QSettings::IniFormat);
+                desktopFile.setIniCodec("UTF-8");
+                Properties mimeTypeList(defaultAppDesktopFile, "Desktop Entry");
+                supportedMimeTypes = mimeTypeList.value("MimeType").toString().split(';');
+                supportedMimeTypes.removeAll({});
+            } else {
                 QStringList mimeTypeList = { fileInfo->mimeType().name() };
                 mimeTypeList.append(fileInfo->mimeType().parentMimeTypes());
                 bool matched = false;
@@ -287,7 +323,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                 }
             }
         }
-
+#endif
         QVector<MenuAction> actions;
 
         if (isSystemPathIncluded) {
