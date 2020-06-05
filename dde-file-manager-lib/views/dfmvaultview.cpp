@@ -41,6 +41,7 @@ FallbackDispatcher::FallbackDispatcher(QWidget *parent)
 
 QPair<DUrl, bool> FallbackDispatcher::requireRedirect(VaultController::VaultState state)
 {
+    Q_UNUSED(state)
     return {VaultController::makeVaultUrl(), true};
 
 //    switch (state) {

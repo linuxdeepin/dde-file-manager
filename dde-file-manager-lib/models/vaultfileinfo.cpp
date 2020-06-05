@@ -337,6 +337,7 @@ qint64 VaultFileInfo::size() const
 
 bool VaultFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) const
 {
+    Q_UNUSED(url)
     DUrl parentUrl = this->parentUrl();
 
     forever {

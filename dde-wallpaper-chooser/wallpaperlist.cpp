@@ -352,6 +352,11 @@ void WallpaperList::setCurrentIndex(int index)
     m_index = m_items.indexOf(item, 0);
 }
 
+WallpaperItem *WallpaperList::getCurrentItem()
+{
+    return m_items.at(m_index);
+}
+
 void WallpaperList::wallpaperItemPressed()
 {
     WallpaperItem *item = qobject_cast<WallpaperItem *>(sender());

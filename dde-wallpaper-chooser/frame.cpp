@@ -200,7 +200,7 @@ Frame::~Frame()
         }
     });
 
-    disconnect(ScreenMrg, 0,this,0);
+    disconnect(ScreenMrg, nullptr,this,nullptr);
 }
 
 void Frame::show()
@@ -423,17 +423,12 @@ void Frame::keyPressEvent(QKeyEvent *event)
         widgetList << qobject_cast<QWidget *>(button);
     }
 
-    for (int i=0; i<(widgetList.count()-1); i++) {
-        setTabOrder(widgetList[i], widgetList[i+1]);
-    }
-
     switch(event->key())
     {
     case Qt::Key_Escape:
         hide();
         qDebug() << "escape key pressed, quit.";
         break;
-    case Qt::Key_Tab:
     case Qt::Key_Right:
         qDebug() << "Right";
         //选中列表下一控件
@@ -480,28 +475,51 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *key = static_cast<QKeyEvent *>(event);
         qDebug() << "keyPress";
+
         if (key->key() == Qt::Key_Tab) {
             qDebug() << "Tab";
 
-            if (QString(object->metaObject()->className()) == "QPushButton") { //专为设置屏保界面设计，也只有这个地方使用QPushButton
-                m_waitControl->buttonList().first()->setFocus();
-                return true;
-            }
 
             if (object == m_switchModeControl->buttonList().last()) {
-                return false;
+                if (m_mode == WallpaperMode) {
+                    return  false;
+                }
+                else {
+                    return false;
+                }
             }
+
             QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier, QString(""));
             keyPressEvent(&keyEvent); //Tab键转右方向键
             return true; //屏蔽Tab按键事件
         }
-        else if (key->key() == Qt::Key_Return || key->key() == Qt::Key_Enter || key->key() == Qt::Key_Space) { //这些键被当作确认键，鼠标点击
-            return false;
+        else if (key->key() == Qt::Key_Backtab) { //BackTab
+            qDebug() << "BackTab(Shift Tab)";
+
+            if (m_mode == WallpaperMode) {
+                if (object == m_wallpaperCarouselCheckBox) {
+                    return false;
+                }
+            }
+            else if (m_mode == ScreenSaverMode) {
+                if (object == m_waitControl->buttonList().first()) {
+                    m_wallpaperList->getCurrentItem()->focusLastButton();
+                    return  true;
+                }
+            }
+
+            QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier, QString(""));
+            keyPressEvent(&keyEvent); //Shitf + Tab(BackTab)键转左方向键
+            return true; //屏蔽Shift + Tab(BackTab)按键事件
         }
-        else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left) { //[Q]CheckBox会将左右方向键当作Tab键处理
-            if (QString(object->metaObject()->className()) == "CheckBox") { //其它类型别发送，不然会接收到两次按键事件
+        else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left || key->key() == Qt::Key_Up || key->key() == Qt::Key_Down) { //[Q]CheckBox会将方向键当作Tab键处理
+            //if (QString(object->metaObject()->className()) == "CheckBox") { //其它类型别发送，不然会接收到两次按键事件
+            if (object == m_wallpaperCarouselCheckBox || object == m_lockScreenBox){
                 keyPressEvent(key);
                 return true;
+            }
+            else {
+                return false;
             }
         }
         else {
@@ -703,8 +721,6 @@ void Frame::initUI()
         }
 
         for (const QByteArray &time : array_policy) {
-            int index = 0;
-
             DButtonBoxButton *btn;
             if (time == "login") {
                 btn = new DButtonBoxButton(tr("When login"), this);
@@ -837,7 +853,6 @@ void Frame::initUI()
     wallpaperBtn->setMinimumWidth(40);
     //wallpaperBtn->setFocusPolicy(Qt::NoFocus);
     m_switchModeControl = new DButtonBox(this);
-    m_switchModeControl->installEventFilter(this);
     m_switchModeControl->setFocusPolicy(Qt::NoFocus);
 
     if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
@@ -846,6 +861,7 @@ void Frame::initUI()
             || !existScreensaverService()) {
         m_switchModeControl->setButtonList({wallpaperBtn}, true);
         wallpaperBtn->setChecked(true);
+        wallpaperBtn->installEventFilter(this);
     } else {
         DButtonBoxButton *screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
         screensaverBtn->installEventFilter(this);
@@ -927,6 +943,17 @@ void Frame::refreshList()
                     item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Only lock screen"));
                     item->show();
                     connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
+                    connect(item, &WallpaperItem::tab, this, [=](){
+                        if (m_mode == WallpaperMode) {
+                            m_wallpaperCarouselCheckBox->setFocus();
+                        }
+                        else {
+                            m_waitControl->buttonList().first()->setFocus();
+                        }
+                    });
+                    connect(item, &WallpaperItem::backtab, this, [=](){
+                        m_switchModeControl->buttonList().last()->setFocus();
+                    });
 
                     //首次进入时，选中当前设置壁纸
                     if (m_backgroundManager == nullptr){
@@ -965,8 +992,19 @@ void Frame::refreshList()
             item->setData(name);
             item->setUseThumbnailManager(false);
             item->setDeletable(false);
-            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply"))->installEventFilter(this);
+            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply"));
             item->show();
+            connect(item, &WallpaperItem::tab, this, [=](){
+                if (m_mode == WallpaperMode) {
+                    m_wallpaperCarouselCheckBox->setFocus();
+                }
+                else {
+                    m_waitControl->buttonList().first()->setFocus();
+                }
+            });
+            connect(item, &WallpaperItem::backtab, this, [=](){
+                m_switchModeControl->buttonList().last()->setFocus();
+            });
             connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
             //首次进入时，选中当前设置屏保
             if(cover_path == m_dbusScreenSaver->GetScreenSaverCover(m_dbusScreenSaver->currentScreenSaver()))

@@ -144,6 +144,7 @@ QPushButton *WallpaperItem::addButton(const QString &id, const QString &text)
     Button *button = new Button(this);
     button->setText(text);
     button->setAttract(false);
+    button->installEventFilter(this);
     button->setFocusPolicy(Qt::NoFocus);
 
     connect(button, &Button::clicked, this, [this, id] {
@@ -221,22 +222,13 @@ void WallpaperItem::mousePressEvent(QMouseEvent *event)
 
 void WallpaperItem::keyPressEvent(QKeyEvent *event)
 {
-    QWidgetList widgetList; //记录按钮
-    for(int i=0; i<m_buttonLayout->count(); i++)
-    {
-        widgetList << m_buttonLayout->itemAt(i)->widget();
-    }
     switch(event->key())
     {
     case Qt::Key_Up:
-    //选中上一按钮
-        if(widgetList.indexOf(focusWidget()) > 0)
-            widgetList.at(widgetList.indexOf(focusWidget())-1)->setFocus();
+        m_buttonLayout->itemAt(0)->widget()->setFocus();
         break;
     case Qt::Key_Down:
-    //选中下一按钮
-        if(widgetList.indexOf(focusWidget()) < widgetList.count()-1)
-            widgetList.at(widgetList.indexOf(focusWidget())+1)->setFocus();
+        m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()->setFocus();
         break;
     default:
     //保持按键事件传递
@@ -270,6 +262,34 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
     m_wrapper->m_pixmapBoxGeometry = QRect(offset * ratio, QSize(ItemWidth * ratio, ItemHeight * ratio));
 
     QFrame::resizeEvent(event);
+}
+
+bool WallpaperItem::eventFilter(QObject *object, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        qDebug() << "我要测试";
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Tab) {
+            if (object == m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()) {
+                qDebug() << "TAB";
+                emit tab();
+                return true;
+            }
+        }
+        else if (keyEvent->key() == Qt::Key_Backtab) {
+            if (object == m_buttonLayout->itemAt(0)->widget()) {
+                qDebug() << "BACKTAB";
+                emit backtab();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void WallpaperItem::focusLastButton()
+{
+    m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()->setFocus();
 }
 
 void WallpaperItem::refindPixmap()
