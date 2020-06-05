@@ -934,7 +934,7 @@ public:
     bool passNameFilters(const FileSystemNodePointer &node) const;
     bool passFileFilters(const DAbstractFileInfoPointer &info) const;
 
-    void _q_onFileCreated(const DUrl &fileUrl);
+    void _q_onFileCreated(const DUrl &fileUrl, bool isPickUpQeueu = false);
     void _q_onFileDeleted(const DUrl &fileUrl);
     void _q_onFileUpdated(const DUrl &fileUrl);
     void _q_onFileUpdated(const DUrl &fileUrl, const int &isExternalSource);
@@ -947,6 +947,7 @@ public:
 
     FileSystemNodePointer rootNode;
     QReadWriteLock rootNodeRWLock;
+    QReadWriteLock queueWLock;
     FileNodeManagerThread *rootNodeManager;
     // 是否支持一列中包含多个元素
     bool columnCompact = false;
@@ -1050,26 +1051,30 @@ bool DFileSystemModelPrivate::passFileFilters(const DAbstractFileInfoPointer &in
     return !info->isPrivate();
 }
 
-void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
+void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl, bool isPickUpQueue)
 {
     Q_Q(DFileSystemModel);
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
     qDebug() << fileUrl;
 
-    if (!info || !passFileFilters(info)) {
+    if ((!info || !passFileFilters(info)) && !isPickUpQueue) {
         return;
     }
 
 //    rootNodeManager->addFile(info);
     if (!_q_processFileEvent_runing.load()) {
-        fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+        queueWLock.lockForWrite();
         while (!laterFileEventQueue.isEmpty()) {
             fileEventQueue.enqueue(laterFileEventQueue.dequeue());
         }
+        fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+        queueWLock.unlock();
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
     } else {
+        queueWLock.lockForWrite();
         laterFileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+        queueWLock.unlock();
     }
 }
 
@@ -1086,10 +1091,10 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
         flf.save();
     }
     if (!_q_processFileEvent_runing.load()) {
-        fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
         while (!laterFileEventQueue.isEmpty()) {
             fileEventQueue.enqueue(laterFileEventQueue.dequeue());
         }
+        fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
     } else {
         laterFileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
@@ -1230,11 +1235,12 @@ void DFileSystemModelPrivate::_q_processFileEvent()
 
     _q_processFileEvent_runing.store(false);
     if( !laterFileEventQueue.isEmpty()) { //解决最后一个队列没有被处理导致文管不能正确显示文件列表的问题 fix 29294 【字体管理器】【5.6.4】【修改引入】安装字体后，文管中没有显示
+        DUrl url;
         if (laterFileEventQueue.last().first == AddFile) {
-            _q_onFileCreated(laterFileEventQueue.takeLast().second);
+            _q_onFileCreated(url, true);
         }
         else if (laterFileEventQueue.last().first == RmFile) {
-            _q_onFileDeleted(laterFileEventQueue.takeLast().second);
+            _q_onFileDeleted(url);
         }
     }
 }
