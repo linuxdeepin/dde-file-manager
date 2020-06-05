@@ -257,6 +257,7 @@ QPainterPath Tab::shape() const
 void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
+    Q_UNUSED(option)
 
     if(m_dragOutSide)
         return;

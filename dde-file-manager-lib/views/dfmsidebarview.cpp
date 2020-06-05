@@ -266,6 +266,7 @@ DFMSideBarItem *DFMSideBarView::itemAt(const QPoint &pt)
 
 Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
 {
+    Q_UNUSED(data)
     // Got a copy of urls so whatever data was changed, it won't affact the following code.
     QList<QUrl> urls = m_urlsForDragEvent;
 

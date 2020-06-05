@@ -387,7 +387,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     action->setProperty("isOpticalDevice", tempId.startsWith("sr")); // fix bug#27909 原本使用 pDeviceinfo->getDiskInfo().iconName() 字段作为判定是否是光驱设备的依据，但root权限下该字段值为空，因此采用卷标 tempId 来判定是否是光驱设备
                     //mounted_root_uri="file:///media/union/***" -> tempMediaAddr="union"
                     QString tempMountedRootUrl = pDeviceinfo->getDiskInfo().mounted_root_uri();
-                    int tempAddrIndex = tempMountedRootUrl.lastIndexOf("/");
+//                    int tempAddrIndex = tempMountedRootUrl.lastIndexOf("/");后面为使用，为了避免警告注释之
 
                     //获取用户名有问题，fix
                     //                QString tempMediaAddr= tempMountedRootUrl.mid(14, tempAddrIndex - 14);

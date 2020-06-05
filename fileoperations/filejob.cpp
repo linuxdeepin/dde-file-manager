@@ -1231,6 +1231,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         }
 
         bool rst = ! ((flag & 4) && (globalBad > (2 + 1e-6)));
+        Q_UNUSED(rst)
 
         if (m_isJobAdded)
             jobRemoved();

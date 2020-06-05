@@ -567,6 +567,7 @@ void DFMSideBar::initUserShareItem()
     userShareFileWatcher->startWatcher();
 
     auto userShareLambda = [ = ](const DUrl &url) {
+        Q_UNUSED(url)
         int cnt = DFileService::instance()->getChildren(nullptr, DUrl::fromUserShareFile("/"),
                                                         QStringList(), QDir::AllEntries).count();
         int index = findItem(DUrl::fromUserShareFile("/"));
