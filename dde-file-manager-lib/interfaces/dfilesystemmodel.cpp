@@ -917,6 +917,11 @@ public:
                 qq->setState(DFileSystemModel::Idle);
             }
         });
+
+        m_checkTimer = new QTimer();
+        qq->connect(m_checkTimer, &QTimer::timeout, qq, [this] {
+            this->_q_checkLaterFileEventQueue();
+        });
     }
 
     ~DFileSystemModelPrivate();
@@ -932,6 +937,8 @@ public:
 
     /// add/rm file event
     void _q_processFileEvent();
+
+    void _q_checkLaterFileEventQueue();
 
     DFileSystemModel *q_ptr;
 
@@ -973,6 +980,8 @@ public:
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
 
+    QPointer<QTimer> m_checkTimer;
+
     Q_DECLARE_PUBLIC(DFileSystemModel)
 };
 
@@ -980,6 +989,11 @@ DFileSystemModelPrivate::~DFileSystemModelPrivate()
 {
     if (_q_processFileEvent_runing.load()) {
         fileEventQueue.clear();
+    }
+
+    if (m_checkTimer) {
+        m_checkTimer->stop();
+        m_checkTimer->deleteLater();
     }
 }
 
@@ -1052,7 +1066,6 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     }
 //    rootNodeManager->addFile(info);
     if (!_q_processFileEvent_runing.load()) {
-
         while (!laterFileEventQueue.isEmpty()) {
             fileEventQueue.enqueue(laterFileEventQueue.dequeue());
         }
@@ -1164,12 +1177,17 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         return;
     }
 
+    if (m_checkTimer->isActive()) {
+        m_checkTimer->stop();
+    }
+
     // CAS
     bool expect = false;
     _q_processFileEvent_runing.compare_exchange_strong(expect, true);
 
     qDebug() << "_q_processFileEvent";
     Q_Q(DFileSystemModel);
+    bool hasAddOrRm = false;
     while (!fileEventQueue.isEmpty()) {
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         const DUrl &fileUrl = event.second;
@@ -1193,6 +1211,10 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             if (!nparentUrl.path().endsWith('/') && rootUrl.path().endsWith("/")) {
                 nparentUrl.setPath(nparentUrl.path() + "/");
             }
+        }
+
+        if (event.first == RmFile || event.first == AddFile) {
+            hasAddOrRm = true;
         }
 
         if (nfileUrl == rootUrl) {
@@ -1220,6 +1242,28 @@ void DFileSystemModelPrivate::_q_processFileEvent()
     }
 
     _q_processFileEvent_runing.store(false);
+    //添加或删除文件事件队列可能残存未推出的事件。
+    //在processFileEvent结束后需要延迟检查一下laterFileEventQueue是否还有未执行事件
+    if (hasAddOrRm) {
+        m_checkTimer->setSingleShot(true);
+        m_checkTimer->start(200);
+    }
+}
+
+//检查laterFileEventQueue中是否还有没推出的事件。
+void DFileSystemModelPrivate::_q_checkLaterFileEventQueue()
+{
+    qDebug() << "_q_checkLaterFileEventQueue";
+    Q_Q(DFileSystemModel);
+    if (!_q_processFileEvent_runing.load()) {
+        while (!laterFileEventQueue.isEmpty()) {
+            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
+        }
+
+        if (fileEventQueue.count() > 0) {
+            q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+        }
+    }
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
