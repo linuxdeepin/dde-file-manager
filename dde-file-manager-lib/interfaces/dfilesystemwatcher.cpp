@@ -354,7 +354,6 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
 void DFileSystemWatcherPrivate::onFileChanged(const QString &path, bool removed)
 {
-    Q_Q(DFileSystemWatcher);
     if (!files.contains(path)) {
         // the path was removed after a change was detected, but before we delivered the signal
         return;
@@ -367,7 +366,6 @@ void DFileSystemWatcherPrivate::onFileChanged(const QString &path, bool removed)
 
 void DFileSystemWatcherPrivate::onDirectoryChanged(const QString &path, bool removed)
 {
-    Q_Q(DFileSystemWatcher);
     if (!directories.contains(path)) {
         // perhaps the path was removed after a change was detected, but before we delivered the signal
         return;

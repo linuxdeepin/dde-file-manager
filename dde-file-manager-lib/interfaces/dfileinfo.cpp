@@ -727,8 +727,6 @@ int DFileInfo::filesCount() const
 
 QString DFileInfo::sizeDisplayName() const
 {
-    Q_D(const DFileInfo);
-
     if (isDir()) {
         return QStringLiteral("-");
     }
