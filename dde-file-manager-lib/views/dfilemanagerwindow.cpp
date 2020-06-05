@@ -261,8 +261,12 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     return false;
 }
 
+// 2020/6/8 系统更新后，怀疑dtk更新，导致原有鼠标事件不可用，屏蔽文管实现
 bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event)
+    return false;
+#if 0
     if (!event)
         return false;
 
@@ -311,6 +315,7 @@ bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
 
     move = false;
     return false;
+#endif
 }
 
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
