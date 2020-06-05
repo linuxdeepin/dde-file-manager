@@ -57,6 +57,9 @@ void Button::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:
         emit clicked();
         break;
+    case Qt::Key_Up:    //bug#30790屏蔽上下键
+    case Qt::Key_Down:
+        return;
     default:
     //保持按键事件传递
         event->ignore();

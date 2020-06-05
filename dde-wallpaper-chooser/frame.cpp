@@ -522,6 +522,9 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
                 return false;
             }
         }
+        else if (key->key() == Qt::Key_Up || key->key() == Qt::Key_Down) {  //bug#30790屏蔽上下键
+            return true;
+        }
         else {
             return false;
         }
