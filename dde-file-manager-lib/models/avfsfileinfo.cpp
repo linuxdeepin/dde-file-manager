@@ -45,7 +45,6 @@ public:
 AVFSFileInfo::AVFSFileInfo(const DUrl &avfsUrl):
     DAbstractFileInfo(*new AVFSFileInfoPrivate(avfsUrl, this))
 {
-    Q_D(AVFSFileInfo);
 
     setProxy(DAbstractFileInfoPointer(new DFileInfo(realFileUrl(avfsUrl))));
 }

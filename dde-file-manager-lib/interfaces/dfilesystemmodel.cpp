@@ -2035,7 +2035,6 @@ DUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
 
 void DFileSystemModel::setSortColumn(int column, Qt::SortOrder order)
 {
-    Q_D(DFileSystemModel);
     int role = columnActiveRole(column);
     setSortRole(role, order);
 }
@@ -2282,8 +2281,6 @@ bool DFileSystemModel::sort()
 
 bool DFileSystemModel::sort(bool emitDataChange)
 {
-    Q_D(const DFileSystemModel);
-
     if (!enabledSort()) {
         return false;
     }

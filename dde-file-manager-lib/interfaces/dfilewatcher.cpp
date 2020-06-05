@@ -32,6 +32,7 @@ public:
     DFileWatcherPrivate(DFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
+
     bool start() Q_DECL_OVERRIDE;
     bool stop() Q_DECL_OVERRIDE;
     bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1) override;
@@ -129,7 +130,8 @@ bool DFileWatcherPrivate::stop()
     if (watcher_file_private.isDestroyed())
         return true;
 
-    q->disconnect(watcher_file_private, 0, q, 0);
+//    q->disconnect(watcher_file_private, 0, q, 0);//避免0值警告
+    q->disconnect(watcher_file_private, nullptr, q, nullptr);
 
     bool ok = true;
 
@@ -162,8 +164,6 @@ bool DFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFile
 {
     if (!targetUrl.isLocalFile())
         return false;
-
-    Q_Q(DFileWatcher);
 
     if (signal == &DAbstractFileWatcher::fileDeleted) {
         for (const QString &path : watchFileList) {
