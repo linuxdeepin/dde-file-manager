@@ -180,7 +180,7 @@ qint64 DStorageInfo::bytesTotal() const
     Q_D(const DStorageInfo);
 
     if (d->gioInfo)
-        return g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+        return static_cast<qint64>(g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE));
 
     return QStorageInfo::bytesTotal();
 }
@@ -192,7 +192,7 @@ qint64 DStorageInfo::bytesFree() const
     if (d->gioInfo) {
         quint64 used = g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
 
-        return bytesTotal() - used;
+        return bytesTotal() - static_cast<qint64>(used);
     }
 
     return QStorageInfo::bytesFree();
@@ -203,7 +203,7 @@ qint64 DStorageInfo::bytesAvailable() const
     Q_D(const DStorageInfo);
 
     if (d->gioInfo) {
-        return g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+        return static_cast<qint64>(g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE));
     }
 
     return QStorageInfo::bytesAvailable();
@@ -238,8 +238,6 @@ bool DStorageInfo::isLowSpeedDevice() const
 
 bool DStorageInfo::isValid() const
 {
-    Q_D(const DStorageInfo);
-
     return QStorageInfo::isValid();
 }
 
