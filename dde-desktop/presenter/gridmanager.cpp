@@ -1188,6 +1188,7 @@ public:
         }
 
         auto settings = Config::instance()->settings();
+        Q_UNUSED(settings)
         Config::instance()->removeConfig(Config::keyProfile, "");
         Config::instance()->setConfigList(Config::keyProfile, keys, values);
 
