@@ -2666,7 +2666,8 @@ void DFileSystemModel::update()
 
     d->rootNode->setIsUpdate(true);
     for (const FileSystemNode *node : d->rootNode->getChildrenList()) {
-        node->fileInfo->refresh();
+        if (node->fileInfo)
+            node->fileInfo->refresh();
     }
     d->rootNode->setIsUpdate(false);
 
@@ -2998,7 +2999,7 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
 
                         const FileSystemNodePointer &node = parentNode->getNodeByIndex(row);
                         if (node) {
-                            if (node->fileInfo->isFile()) {
+                            if (node->fileInfo && node->fileInfo->isFile()) {
                                 break;
                             }
 
