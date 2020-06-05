@@ -58,12 +58,19 @@ public:
 QMap<QString, int> DFileWatcherPrivate::filePathToWatcherCount;
 Q_GLOBAL_STATIC(DFileSystemWatcher, watcher_file_private)
 
+bool isPathWatched(const QString &path);
+
 QStringList parentPathList(const QString &path)
 {
     QStringList list;
     QDir dir(path);
 
-    list << path;
+    //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
+    if(!(dir.absolutePath().contains("vault_unlocked") && isPathWatched(dir.absolutePath())))
+    {
+        list << path;
+    }
+
 
     QString strTmpPath = path;
     // fix bug#27870 往已刻录的文件夹中的文件夹...中添加文件夹，界面不刷新
@@ -72,7 +79,14 @@ QStringList parentPathList(const QString &path)
         dir.mkdir(path);
 
     while (dir.cdUp())
+    {
+        //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
+        if(dir.absolutePath().contains("vault_unlocked") && isPathWatched(dir.absolutePath()))
+        {
+            continue;
+        }
         list << dir.absolutePath();
+    }
 
     return list;
 }
