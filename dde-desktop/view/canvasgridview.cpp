@@ -395,7 +395,10 @@ bool CanvasGridView::fetchDragEventUrlsFromSharedMemory()
 
     sm.lock();
     //用缓冲区得到共享内存关联后得到的数据和数据大小
-    buffer.setData((char*)sm.constData(), sm.size());
+
+//    buffer.setData((char*)sm.constData(), sm.size());//解决警告采用下方方式
+    buffer.setData(static_cast<char*>(const_cast<void*>(sm.constData())), sm.size());
+
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
     in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
     sm.unlock();    //解锁
@@ -959,7 +962,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             DUrlList selectUrlsActual = MergedDesktopController::convertToRealPaths(selectUrls);
             DFMGlobal::showFilePreviewDialog(selectUrlsActual, entryUrls);
         }
-        break;
+            break;
         default:
             break;
         }
@@ -1149,6 +1152,8 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
             bool canDrop = fileInfo->canDrop();
             canDrop = fileInfo->isDir() && !fileInfo->isWritable();
             canDrop = fileInfo->supportedDropActions().testFlag(event->dropAction());
+            //解决未使用警告，不清楚是否能直接删除上方canDrop相关，故采用宏
+            Q_UNUSED(canDrop)
             if (!fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) ||
                     !fileInfo->supportedDropActions().testFlag(event->dropAction())) {
                 // not support drag

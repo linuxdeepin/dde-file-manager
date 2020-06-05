@@ -179,16 +179,19 @@ void DFMDeviceController::unmount(const QString &path)
 
 void DFMDeviceController::eject(const QString &path)
 {
+    Q_UNUSED(path)
     throw "Not implemented";
 }
 
 void DFMDeviceController::stopDrive(const QString &path)
 {
+    Q_UNUSED(path)
     throw "Not implemented";
 }
 
 void DFMDeviceController::forceUnmount(const QString &id)
 {
+    Q_UNUSED(id)
     throw "Not implemented";
 }
 

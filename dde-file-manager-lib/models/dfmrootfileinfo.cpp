@@ -354,6 +354,7 @@ QString DFMRootFileInfo::iconName() const
 QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     Q_D(const DFMRootFileInfo);
+    Q_UNUSED(type)
     bool protectUnmountOrEject = false;
     DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     QVector<MenuAction> ret;

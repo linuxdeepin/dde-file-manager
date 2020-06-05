@@ -546,10 +546,16 @@ QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfo *sourceF
     QString suffix = sourceFileInfo->suffix();
     QString filename = sourceFileInfo->fileName();
     //在7z分卷压缩后的名称特殊处理7z.003
-    if(filename.contains(QRegularExpression("\.7z\.[0-9]{3,10}$")))
+//    if(filename.contains(QRegularExpression("\.7z\.[0-9]{3,10}$")))
+//    {
+//        file_base_name = filename.left(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$")));
+//        suffix = filename.mid(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$"))+1);
+//    }
+    //'\'没有转义为了避免警告加了转义
+    if(filename.contains(QRegularExpression("\\.7z\\.[0-9]{3,10}$")))
     {
-        file_base_name = filename.left(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$")));
-        suffix = filename.mid(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$"))+1);
+        file_base_name = filename.left(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$")));
+        suffix = filename.mid(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$"))+1);
     }
     int number = 0;
 
