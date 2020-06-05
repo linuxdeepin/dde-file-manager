@@ -683,6 +683,18 @@ QString VaultController::getErrorInfo(int state)
     return strErr;
 }
 
+qint64 VaultController::getVaultCurSize()
+{
+    QStorageInfo info(makeVaultLocalPath(""));
+    QString temp = info.fileSystemType();
+    if (info.isValid() && temp == "fuse.cryfs")
+    {
+        return info.bytesTotal() - info.bytesFree();
+    }else{
+        return 0;
+    }
+}
+
 bool VaultController::isVaultFile(QString path)
 {
     bool bVaultFile = false;

@@ -21,7 +21,7 @@
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DPalette>
-
+#include <sys/stat.h>
 #include <QLineEdit>
 
 #include "models/computermodel.h"
