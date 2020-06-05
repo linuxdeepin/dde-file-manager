@@ -94,7 +94,7 @@ private:
     /**
      * @brief 显示解锁页面
      */
-    void showUnLockView();
+    void showUnLockView(QWidget *wndPtr);
 
     /**
      * @brief 显示凭证页面

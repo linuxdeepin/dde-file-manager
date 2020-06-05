@@ -98,8 +98,7 @@ void DFMSideBarVaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSi
     }
     case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
         // todo
-        DFMVaultUnlockPages::instance()->show();
-        DFMVaultUnlockPages::instance()->raise();
+        showUnLockView(sidebar->topLevelWidget());
         break;
     }
     case EN_VaultState::Unlocked:{  // 保险箱处于开锁状态，直接进入主界面
@@ -189,8 +188,8 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
         // 解锁
         QAction *action = DFileMenuManager::getAction(MenuAction::UnLock);
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            showUnLockView();
+        QObject::connect(action, &QAction::triggered, action, [this, topWidget](){
+            showUnLockView(topWidget);
         });
 
         // 使用恢复凭证
@@ -251,9 +250,10 @@ void DFMSideBarVaultItemHandler::showDeleteVaultView()
     DFMVaultRemovePages::instance()->showTop();
 }
 
-void DFMSideBarVaultItemHandler::showUnLockView()
+void DFMSideBarVaultItemHandler::showUnLockView(QWidget *wndPtr)
 {
-    // Something to do.
+    DFMVaultUnlockPages::instance()->setWndPtr(wndPtr);
+
     DFMVaultUnlockPages::instance()->show();
     DFMVaultUnlockPages::instance()->raise();
 }

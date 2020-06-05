@@ -36,6 +36,9 @@ class DFMVaultUnlockPages : public DDialog
 public:            
     static DFMVaultUnlockPages *instance();
 
+    void setWndPtr(QWidget *wnd);
+    QWidget *getWndPtr() const;
+
 public slots:
     void onButtonClicked(const int &index);
 
@@ -53,4 +56,6 @@ private:
     DPasswordEdit * m_passwordEdit {nullptr};
     QPushButton * m_tipsButton {nullptr};
     bool m_bUnlockByPwd = false;
+
+    QWidget *m_wndptr = nullptr;
 };

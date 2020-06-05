@@ -450,8 +450,12 @@ void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
 void DFMSideBar::onOpenVault()
 {
     // 进入保险箱
-    DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
+    QWidget *wndPtr = DFMVaultUnlockPages::instance()->getWndPtr();
+
+    if (wndPtr == this->topLevelWidget()) {
+        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
+        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
+    }
 }
 
 void DFMSideBar::onRemoveVault()

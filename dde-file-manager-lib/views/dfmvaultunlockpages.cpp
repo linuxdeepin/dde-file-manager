@@ -104,6 +104,16 @@ DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
     return &s_instance;
 }
 
+void DFMVaultUnlockPages::setWndPtr(QWidget *wnd)
+{
+    m_wndptr = wnd;
+}
+
+QWidget *DFMVaultUnlockPages::getWndPtr() const
+{
+    return m_wndptr;
+}
+
 void DFMVaultUnlockPages::onButtonClicked(const int &index)
 {
     if (index == 1){
