@@ -287,7 +287,7 @@ bool VaultFileInfo::canRename() const
     }
 
     QT_STATBUF statBuffer;
-    if (QT_LSTAT(QFile::encodeName(this->parentUrl().path()), &statBuffer) == 0) {
+    if (QT_STAT(QFile::encodeName(this->parentUrl().path()), &statBuffer) == 0) {
         // 如果父目录为只读权限，则不能重命名
         if (!(statBuffer.st_mode & S_IWUSR)) {
             return false;
