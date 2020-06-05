@@ -638,11 +638,9 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
                 possibleChildCount += info->filesCount();
             }
         }
-
-        if (possibleChildCount > GridManager::instance()->gridCount()) {
-            onlyExpandShowClickedEntry = true;
-            break;
-        }
+    }
+    if (possibleChildCount > GridManager::instance()->gridCount()) {
+        onlyExpandShowClickedEntry = true;
     }
 
     // prepare root url
