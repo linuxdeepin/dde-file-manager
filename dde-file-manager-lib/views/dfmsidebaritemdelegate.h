@@ -41,6 +41,9 @@ public:
     QWidget *createEditor(QWidget *parent,
                           const QStyleOptionViewItem &option,
                           const QModelIndex &index) const override;
+    void updateEditorGeometry(QWidget *editor,
+                              const QStyleOptionViewItem &option,
+                              const QModelIndex &index) const override;
 signals:
     void rename(const QModelIndex &index, QString newName) const;
 private:
