@@ -453,7 +453,14 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
             }
         }
         if (d->mps.size()) {
-            return DUrl::fromLocalFile(d->mps.first());
+            DUrl rootUrl = DUrl::fromLocalFile(d->mps.first());
+
+            //点击数据盘直接跳转到主目录
+            if (rootUrl == DUrl::fromLocalFile("/data")) {
+                QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+                rootUrl = DUrl::fromLocalFile("/data" + userPath);
+            }
+            return rootUrl;
         }
     }
     return DUrl();
