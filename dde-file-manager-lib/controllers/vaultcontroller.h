@@ -161,6 +161,8 @@ public:
      */
     static QString getErrorInfo(int state);
 
+    static qint64 getVaultCurSize();
+
 public slots:
 
     /**
