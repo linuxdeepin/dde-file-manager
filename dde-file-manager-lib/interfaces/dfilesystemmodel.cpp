@@ -1062,7 +1062,6 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl, bool isPickU
     if ((!info || !passFileFilters(info)) && !isPickUpQueue) {
         return;
     }
-
 //    rootNodeManager->addFile(info);
     mutex.lock();
     fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
@@ -1204,7 +1203,6 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         mutex.unlock();
         const DUrl &fileUrl = event.second;
-
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
 
         if (!info) {
@@ -1781,12 +1779,11 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         if (d->readOnly) {
             return flags;
         }
-
-        if (indexNode->fileInfo->canRename()) {
+        //fix bug 29914 fileInof为nullptr
+        if (indexNode && indexNode->fileInfo && indexNode->fileInfo->canRename()) {
             flags |= Qt::ItemIsEditable;
         }
-
-        if (indexNode->fileInfo->isWritable()) {
+        if (indexNode && indexNode->fileInfo && indexNode->fileInfo->isWritable()) {
             if (indexNode->fileInfo->canDrop()) {
                 flags |= Qt::ItemIsDropEnabled;
             } else {
@@ -2565,6 +2562,10 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        if (fileHash.contains(fileInfo->fileUrl())) {
 //            continue;
 //        }
+        //fix bug 29914 fileInof为nullptr
+        if (!fileInfo) {
+            continue;
+        }
         //挂载设备下目录添加tag后 移除该挂载设备 目录已不存在但其URL依然还保存在tag集合中
         //该问题导致这些不存在的目录依然会添加到tag的fileview下 引起其他被标记文件可能标记数据获取失败
         //为了避免引起其他问题 暂时只对tag的目录做处理
