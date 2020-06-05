@@ -512,7 +512,7 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
             keyPressEvent(&keyEvent); //Shitf + Tab(BackTab)键转左方向键
             return true; //屏蔽Shift + Tab(BackTab)按键事件
         }
-        else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left || key->key() == Qt::Key_Up || key->key() == Qt::Key_Down) { //[Q]CheckBox会将方向键当作Tab键处理
+        else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left) { //[Q]CheckBox会将方向键当作Tab键处理
             //if (QString(object->metaObject()->className()) == "CheckBox") { //其它类型别发送，不然会接收到两次按键事件
             if (object == m_wallpaperCarouselCheckBox || object == m_lockScreenBox){
                 keyPressEvent(key);
