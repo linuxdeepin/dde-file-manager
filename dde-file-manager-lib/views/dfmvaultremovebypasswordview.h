@@ -38,7 +38,7 @@ class DFMVaultRemoveByPasswordView : public QWidget
     Q_OBJECT
 public:
     explicit DFMVaultRemoveByPasswordView(QWidget *patent = nullptr);
-    ~DFMVaultRemoveByPasswordView() override {}
+    ~DFMVaultRemoveByPasswordView() override;
 
     /**
     * @brief    获取密码

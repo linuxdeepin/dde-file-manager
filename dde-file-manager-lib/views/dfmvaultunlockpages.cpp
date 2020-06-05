@@ -111,8 +111,8 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
 
         QString strClipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strClipher)){
-            VaultController::getVaultController()->unlockVault(strClipher);
             m_bUnlockByPwd = true;
+            VaultController::getVaultController()->unlockVault(strClipher);            
         }else {
             // 设置密码输入框颜色
             m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
