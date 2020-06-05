@@ -27,12 +27,26 @@
 #include <QToolTip>
 
 #include <DMessageBox>
+#include <DArrowRectangle>
 
 // 密钥最大长度
 #define MAX_KEY_LENGTH (32)
 
+class DFMVaultRecoveryKeyPagesPrivate
+{
+public:
+    ~DFMVaultRecoveryKeyPagesPrivate(){
+        if (tooltip){
+            tooltip->deleteLater();
+        }
+    }
+
+    DArrowRectangle *tooltip {nullptr};
+};
+
 DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     : DDialog (parent)
+    , d_ptr (new DFMVaultRecoveryKeyPagesPrivate())
 {
     this->setTitle(tr("Unlock by Key"));
     this->setIcon(QIcon::fromTheme("dfm_safebox"));
@@ -57,10 +71,53 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultRecoveryKeyPages::onUnlockVault);
 }
 
+DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
+{
+
+}
+
 DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
 {
     static DFMVaultRecoveryKeyPages s_instance;
     return &s_instance;
+}
+
+void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duration)
+{
+    Q_D(DFMVaultRecoveryKeyPages);
+
+    if (!d->tooltip){
+        d->tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop, this);
+        d->tooltip->setObjectName("AlertTooltip");
+
+        QLabel *label = new QLabel(d->tooltip);
+
+        label->setWordWrap(true);
+        label->setMaximumWidth(width());
+        d->tooltip->setContent(label);
+        d->tooltip->setBackgroundColor(palette().color(backgroundRole()));
+        d->tooltip->setArrowX(15);
+        d->tooltip->setArrowHeight(5);
+
+        QTimer::singleShot(duration, d->tooltip, [d] {
+            d->tooltip->deleteLater();
+            d->tooltip = Q_NULLPTR;
+        });
+    }
+
+    QLabel *label = qobject_cast<QLabel *>(d->tooltip->getContent());
+
+    if (!label) {
+        return;
+    }
+
+    label->setText(text);
+    label->adjustSize();
+    label->setStyleSheet("color:rgb(255, 85, 0)");
+
+    const QPoint &pos = m_recoveryKeyEdit->mapToGlobal(QPoint(15, 25));
+
+    d->tooltip->show(pos.x(), pos.y());
 }
 
 void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
@@ -71,15 +128,17 @@ void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
 
         QString strClipher("");
         if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
+            m_bUnlockByKey = true;
             VaultController::getVaultController()->unlockVault(strClipher);
         } else {
             //设置QToolTip颜色
-            QPalette palette = QToolTip::palette();
-            palette.setColor(QPalette::Inactive,QPalette::ToolTipBase,Qt::white);   //设置ToolTip背景色
-            palette.setColor(QPalette::Inactive,QPalette::ToolTipText,QColor(255, 85, 0, 255)); 	//设置ToolTip字体色
-            QToolTip::setPalette(palette);
-            QRect rect(pos(), geometry().size());
-            QToolTip::showText(m_recoveryKeyEdit->mapToGlobal(m_recoveryKeyEdit->pos()), tr("Wrong recovery key"));
+//            QPalette palette = QToolTip::palette();
+//            palette.setColor(QPalette::Inactive,QPalette::ToolTipBase,Qt::white);   //设置ToolTip背景色
+//            palette.setColor(QPalette::Inactive,QPalette::ToolTipText,QColor(255, 85, 0, 255)); 	//设置ToolTip字体色
+//            QToolTip::setPalette(palette);
+//            QRect rect(pos(), geometry().size());
+//            QToolTip::showText(m_recoveryKeyEdit->mapToGlobal(m_recoveryKeyEdit->pos()), tr("Wrong recovery key"));
+            showAlertMessage(tr("Wrong recovery key"));
         }
 
         return;

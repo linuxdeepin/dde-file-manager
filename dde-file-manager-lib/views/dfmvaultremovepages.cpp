@@ -24,23 +24,13 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     , m_stackedWidget (new QStackedWidget(this))
 {
     this->setTitle(tr("Remove File Vault"));
-    this->setMessage(tr("Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue."));
     this->setIcon(QIcon::fromTheme("dfm_safebox"));
     this->setFixedSize(440, 290);
 
     m_stackedWidget->addWidget(m_passwordView);
     m_stackedWidget->addWidget(m_recoverykeyView);
     m_stackedWidget->addWidget(m_progressView);
-    m_stackedWidget->setCurrentIndex(0);
-
     addContent(m_stackedWidget);
-
-    QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Remove")});
-    addButton(buttonTexts[0], false);
-    addButton(buttonTexts[1], false);
-    addButton(buttonTexts[2], true);
-    getButton(2)->setStyleSheet("color: rgb(255, 85, 0);");
-    setDefaultButton(2);
 
     // 防止点击按钮隐藏界面
     setOnButtonClickedClose(false);
@@ -55,23 +45,18 @@ void DFMVaultRemovePages::initConnect()
     connect(m_progressView, &DFMVaultRemoveProgressView::removeFinished, this, &DFMVaultRemovePages::onVualtRemoveFinish);
 }
 
-void DFMVaultRemovePages::showEvent(QShowEvent *event)
+void DFMVaultRemovePages::showVerifyWidget()
 {
-    // 重置界面状态
-    this->setMessage(tr("Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue."));
-    m_stackedWidget->setCurrentIndex(0);
-    m_passwordView->clear();
-    m_recoverykeyView->clear();
-    m_progressView->clear();
-    this->clearButtons();
-    this->setCloseButtonVisible(true);
+    setCloseButtonVisible(true);
+    clearButtons();
+    setMessage(tr("Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue."));
     QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Remove")});
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
     addButton(buttonTexts[2], true);
     getButton(2)->setStyleSheet("color: rgb(255, 85, 0);");
     setDefaultButton(2);
-    m_bRemoveVault = false;
+    m_stackedWidget->setCurrentIndex(0);
 
     // 如果密码提示信息为空，则隐藏提示按钮
     QString strPwdHint("");
@@ -82,6 +67,25 @@ void DFMVaultRemovePages::showEvent(QShowEvent *event)
             m_passwordView->setTipsButtonVisible(true);
         }
     }
+}
+
+void DFMVaultRemovePages::showRemoveWidget()
+{
+    setCloseButtonVisible(false);
+    clearButtons();
+    setMessage(tr("Removing..."));
+    addButton(tr("Ok"), true, ButtonType::ButtonRecommend);
+    getButton(0)->setEnabled(false);
+    m_stackedWidget->setCurrentIndex(2);
+}
+
+void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
+{
+    // 重置界面状态
+    m_passwordView->clear();
+    m_recoverykeyView->clear();
+    m_progressView->clear();
+    m_bRemoveVault = false;
 
     event->accept();
 }
@@ -90,6 +94,14 @@ DFMVaultRemovePages *DFMVaultRemovePages::instance()
 {
     static DFMVaultRemovePages s_instance;
     return &s_instance;
+}
+
+void DFMVaultRemovePages::showTop()
+{
+    this->activateWindow();
+    this->showNormal();
+
+    showVerifyWidget();
 }
 
 void DFMVaultRemovePages::onButtonClicked(int index)
@@ -132,13 +144,6 @@ void DFMVaultRemovePages::onButtonClicked(int index)
 
         // 管理员权限认证
         if (VaultLockManager::getInstance().checkAuthentication(VAULT_REMOVE)){
-            // 切换至删除界面
-            this->setMessage(tr("Removing..."));
-            this->clearButtons();
-            this->addButton(tr("Ok"), true, ButtonType::ButtonRecommend);
-//            this->setCloseButtonVisible(false);
-            this->getButton(0)->setEnabled(false);
-            m_stackedWidget->setCurrentIndex(2);
             m_bRemoveVault = true;
             // 验证成功，先对保险箱进行上锁
             VaultController::getVaultController()->lockVault();
@@ -154,11 +159,13 @@ void DFMVaultRemovePages::onLockVault(int state)
 {
     if (m_bRemoveVault){
         if (state == 0){
+            // 切换至删除界面
+            showRemoveWidget();
             emit accepted();
 
             QString vaultLockPath = VaultController::getVaultController()->vaultLockPath();
             QString vaultUnlockPath = VaultController::getVaultController()->vaultUnlockPath();
-//            m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
+            m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
         }else{
             // error tips
             QString errMsg = tr("Remove File Vault failed.%1").arg(VaultController::getErrorInfo(state));

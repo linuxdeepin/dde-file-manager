@@ -248,8 +248,7 @@ bool DFMSideBarVaultItemHandler::autoLock(int lockState)
 void DFMSideBarVaultItemHandler::showDeleteVaultView()
 {
     // Something to do.
-    DFMVaultRemovePages::instance()->show();
-    DFMVaultRemovePages::instance()->raise();
+    DFMVaultRemovePages::instance()->showTop();
 }
 
 void DFMSideBarVaultItemHandler::showUnLockView()

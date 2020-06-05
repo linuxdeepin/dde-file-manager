@@ -11,13 +11,13 @@ class DFMVaultRemoveByRecoverykeyView;
 class DFMVaultRemoveByPasswordView;
 DWIDGET_USE_NAMESPACE
 
-// 页面类型，Password：密码输入页面， Key：密钥输入界面，Progress删除进度页面
-enum class PageType { Password, Key, Progress};
 class DFMVaultRemovePages : public DDialog
 {
     Q_OBJECT
 public:   
     static DFMVaultRemovePages* instance();
+
+    void showTop();
 
 public slots:
     void onButtonClicked(int index);
@@ -32,7 +32,11 @@ private:
 
     void initConnect();
 
-    void showEvent(QShowEvent *event) override;
+    void showVerifyWidget();
+
+    void showRemoveWidget();
+
+    void closeEvent(QCloseEvent *event) override;
 private:
     DFMVaultRemoveByPasswordView *m_passwordView {nullptr};
     DFMVaultRemoveByRecoverykeyView *m_recoverykeyView {nullptr};

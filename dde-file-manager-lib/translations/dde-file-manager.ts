@@ -565,37 +565,37 @@
 <context>
     <name>DFMVaultRecoveryKeyPages</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="37"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="51"/>
         <source>Unlock by Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="55"/>
         <source>Cancel</source>
         <translation type="unfinished">Cancel</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="55"/>
         <source>Unlock</source>
         <translation type="unfinished">Unlock</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="47"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="61"/>
         <source>Input the 32-digit recovery key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="82"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="141"/>
         <source>Wrong recovery key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="192"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="251"/>
         <source>Unlock File Vault failed.%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="193"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="252"/>
         <source>tips</source>
         <translation type="unfinished"></translation>
     </message>
@@ -629,72 +629,68 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="27"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="61"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="52"/>
         <source>Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="38"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="67"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="53"/>
         <source>Cancel</source>
         <translation type="unfinished">Cancel</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="38"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="67"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="105"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="53"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="118"/>
         <source>Use Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="38"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="67"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="53"/>
         <source>Remove</source>
         <translation type="unfinished">Remove</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="102"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <source>Use Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="117"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="130"/>
         <source>Wrong password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="127"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="140"/>
         <source>Wrong recovery key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="135"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="76"/>
         <source>Removing...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="137"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="77"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="162"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="171"/>
         <source>Remove File Vault failed.%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="172"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="181"/>
         <source>Removed successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="174"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="183"/>
         <source>Failed to remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="163"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="172"/>
         <source>tips</source>
         <translation type="unfinished"></translation>
     </message>
@@ -927,36 +923,36 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1565"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1573"/>
         <location filename="../models/trashfileinfo.cpp" line="335"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1049"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1567"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1575"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
         <translation>Time modified</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1569"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1577"/>
         <source>Size</source>
         <translation>Size</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1571"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1579"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1573"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1581"/>
         <source>Time created</source>
         <translation>Time created</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="634"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1575"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1583"/>
         <source>Last access</source>
         <translation>Last access</translation>
     </message>
@@ -4082,122 +4078,122 @@
 <context>
     <name>VaultController</name>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="611"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="608"/>
         <source>The command line arguments are invalid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="614"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="611"/>
         <source>Couldn&apos;t load config file. Probably the password is wrong</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="617"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="614"/>
         <source>Password cannot be empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="620"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="617"/>
         <source>The file system format is too new for this CryFS version. Please update your CryFS version.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="623"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="620"/>
         <source>The file system format is too old for this CryFS version. Run with --allow-filesystem-upgrade to upgrade it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="626"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="623"/>
         <source>The file system uses a different cipher than the one specified on the command line using the --cipher argument.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="629"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="626"/>
         <source>Base directory doesn&apos;t exist or is inaccessible (i.e. not read or writable or not a directory)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="632"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="629"/>
         <source>Mount directory doesn&apos;t exist or is inaccessible (i.e. not read or writable or not a directory)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="635"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="632"/>
         <source>Base directory can&apos;t be a subdirectory of the mount directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="638"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="635"/>
         <source>Something&apos;s wrong with the file system.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="641"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="638"/>
         <source>The filesystem id in the config file is different to the last time we loaded a filesystem from this basedir. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="644"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="641"/>
         <source>The filesystem encryption key differs from the last time we loaded this filesystem. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="647"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="644"/>
         <source>The command line options and the file system disagree on whether missing blocks should be treated as integrity violations.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="650"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="647"/>
         <source>File system is in single-client mode and can only be used from the client that created it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="653"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="650"/>
         <source>A previous run of the file system detected an integrity violation. Preventing access to make sure the user notices. The file system will be accessible again after the user deletes the integrity state file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="656"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="653"/>
         <source>An integrity violation was detected and the file system unmounted to make sure the user notices.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="659"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="656"/>
         <source>Mount directory is not empty.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="662"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="659"/>
         <source>Mount directory in use.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="665"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="662"/>
         <source>Cryfs not installed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="668"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="665"/>
         <source>Mount directory doesn&apos;t exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="671"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="668"/>
         <source>Mounted directory encrypted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="674"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="671"/>
         <source>No permissions.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="677"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="674"/>
         <source>Fusermount does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="680"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="677"/>
         <source>An encrypted folder created by Cryfs already exists.</source>
         <translation type="unfinished"></translation>
     </message>
