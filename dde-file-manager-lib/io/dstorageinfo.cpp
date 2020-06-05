@@ -245,8 +245,6 @@ bool DStorageInfo::isValid() const
 
 void DStorageInfo::refresh()
 {
-    Q_D(DStorageInfo);
-
     QStorageInfo::refresh();
     setPath(rootPath());
 }
