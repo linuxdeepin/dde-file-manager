@@ -980,6 +980,7 @@ public:
     bool enabledSort = true;
 
     bool beginRemoveRowsFlag = false;
+    QMutex mutex;
 
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
@@ -1061,21 +1062,25 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl, bool isPickU
     if ((!info || !passFileFilters(info)) && !isPickUpQueue) {
         return;
     }
-
 //    rootNodeManager->addFile(info);
-    if (!_q_processFileEvent_runing.load()) {
-        queueWLock.lockForWrite();
-        while (!laterFileEventQueue.isEmpty()) {
-            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
-        }
-        fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
-        queueWLock.unlock();
-        q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
-    } else {
-        queueWLock.lockForWrite();
-        laterFileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
-        queueWLock.unlock();
-    }
+    mutex.lock();
+    fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+    mutex.unlock();
+    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+
+//    if (!_q_processFileEvent_runing.load()) {
+//        queueWLock.lockForWrite();
+//        while (!laterFileEventQueue.isEmpty()) {
+//            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
+//        }
+//        fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+//        queueWLock.unlock();
+//        q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+//    } else {
+//        queueWLock.lockForWrite();
+//        laterFileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+//        queueWLock.unlock();
+//    }
 }
 
 void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
@@ -1090,15 +1095,19 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
         flf.remove(fileUrl.fileName());
         flf.save();
     }
-    if (!_q_processFileEvent_runing.load()) {
-        while (!laterFileEventQueue.isEmpty()) {
-            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
-        }
-        fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
-        q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
-    } else {
-        laterFileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
-    }
+    mutex.lock();
+    fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
+    mutex.unlock();
+    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+//    if (!_q_processFileEvent_runing.load()) {
+//        while (!laterFileEventQueue.isEmpty()) {
+//            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
+//        }
+//        fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
+//        q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+//    } else {
+//        laterFileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
+//    }
 }
 
 void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
@@ -1183,13 +1192,26 @@ void DFileSystemModelPrivate::_q_processFileEvent()
 
     qDebug() << "_q_processFileEvent";
     Q_Q(DFileSystemModel);
-    while (!fileEventQueue.isEmpty()) {
+    mutex.lock();
+    bool isemptyqueue = fileEventQueue.isEmpty();
+    if (isemptyqueue) {
+        _q_processFileEvent_runing.store(false);
+    }
+    mutex.unlock();
+    while (!isemptyqueue) {
+        mutex.lock();
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
+        mutex.unlock();
         const DUrl &fileUrl = event.second;
-
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
 
         if (!info) {
+            mutex.lock();
+            isemptyqueue = fileEventQueue.isEmpty();
+            if (isemptyqueue) {
+                _q_processFileEvent_runing.store(false);
+            }
+            mutex.unlock();
             continue;
         }
 
@@ -1215,10 +1237,22 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             }
             // It must be refreshed when the root url itself is deleted or newly created
             q->refresh();
+            mutex.lock();
+            isemptyqueue = fileEventQueue.isEmpty();
+            if (isemptyqueue) {
+                _q_processFileEvent_runing.store(false);
+            }
+            mutex.unlock();
             continue;
         }
 
         if (nparentUrl != rootUrl) {
+            mutex.lock();
+            isemptyqueue = fileEventQueue.isEmpty();
+            if (isemptyqueue) {
+                _q_processFileEvent_runing.store(false);
+            }
+            mutex.unlock();
             continue;
         }
 
@@ -1231,18 +1265,25 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         } else {// rm file event
             q->remove(fileUrl);
         }
+
+        mutex.lock();
+        isemptyqueue = fileEventQueue.isEmpty();
+        if (isemptyqueue) {
+            _q_processFileEvent_runing.store(false);
+        }
+        mutex.unlock();
     }
 
     _q_processFileEvent_runing.store(false);
-    if( !laterFileEventQueue.isEmpty()) { //解决最后一个队列没有被处理导致文管不能正确显示文件列表的问题 fix 29294 【字体管理器】【5.6.4】【修改引入】安装字体后，文管中没有显示
-        DUrl url;
-        if (laterFileEventQueue.last().first == AddFile) {
-            _q_onFileCreated(url, true);
-        }
-        else if (laterFileEventQueue.last().first == RmFile) {
-            _q_onFileDeleted(url);
-        }
-    }
+//    if( !laterFileEventQueue.isEmpty()) { //解决最后一个队列没有被处理导致文管不能正确显示文件列表的问题 fix 29294 【字体管理器】【5.6.4】【修改引入】安装字体后，文管中没有显示
+//        DUrl url;
+//        if (laterFileEventQueue.last().first == AddFile) {
+//            _q_onFileCreated(url, true);
+//        }
+//        else if (laterFileEventQueue.last().first == RmFile) {
+//            _q_onFileDeleted(url);
+//        }
+//    }
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
@@ -1738,12 +1779,11 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         if (d->readOnly) {
             return flags;
         }
-
-        if (indexNode->fileInfo->canRename()) {
+        //fix bug 29914 fileInof为nullptr
+        if (indexNode && indexNode->fileInfo && indexNode->fileInfo->canRename()) {
             flags |= Qt::ItemIsEditable;
         }
-
-        if (indexNode->fileInfo->isWritable()) {
+        if (indexNode && indexNode->fileInfo && indexNode->fileInfo->isWritable()) {
             if (indexNode->fileInfo->canDrop()) {
                 flags |= Qt::ItemIsDropEnabled;
             } else {
@@ -2522,6 +2562,10 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        if (fileHash.contains(fileInfo->fileUrl())) {
 //            continue;
 //        }
+        //fix bug 29914 fileInof为nullptr
+        if (!fileInfo) {
+            continue;
+        }
         //挂载设备下目录添加tag后 移除该挂载设备 目录已不存在但其URL依然还保存在tag集合中
         //该问题导致这些不存在的目录依然会添加到tag的fileview下 引起其他被标记文件可能标记数据获取失败
         //为了避免引起其他问题 暂时只对tag的目录做处理
@@ -2653,13 +2697,15 @@ bool DFileSystemModel::removeRows(int row, int count, const QModelIndex &parent)
     Q_D(DFileSystemModel);
 
     const FileSystemNodePointer &parentNode = parent.isValid() ? getNodeByIndex(parent) : d->rootNode;
-
     if (parentNode && parentNode->populatedChildren) {
+        const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index(row, 0));
+        fileInfo->refresh();
+        if (fileInfo->exists())
+            return true;
         if (beginRemoveRows(createIndex(parentNode, 0), row, row + count - 1)) {
             for (int i = 0; i < count; ++i) {
                 Q_UNUSED(parentNode->takeNodeByIndex(row));
             }
-
             endRemoveRows();
         }
 
@@ -2966,7 +3012,6 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
             }
 //            qDebug() << "~~~~~ processevent finished";
         }
-
         if (!me) {
             return;
         }
