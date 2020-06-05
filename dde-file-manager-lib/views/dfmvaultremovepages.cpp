@@ -64,6 +64,7 @@ void DFMVaultRemovePages::showEvent(QShowEvent *event)
     m_recoverykeyView->clear();
     m_progressView->clear();
     this->clearButtons();
+    this->setCloseButtonVisible(true);
     QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Remove")});
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
@@ -135,6 +136,7 @@ void DFMVaultRemovePages::onButtonClicked(int index)
             this->setMessage(tr("Removing..."));
             this->clearButtons();
             this->addButton(tr("Ok"), true, ButtonType::ButtonRecommend);
+//            this->setCloseButtonVisible(false);
             this->getButton(0)->setEnabled(false);
             m_stackedWidget->setCurrentIndex(2);
             m_bRemoveVault = true;
@@ -156,7 +158,7 @@ void DFMVaultRemovePages::onLockVault(int state)
 
             QString vaultLockPath = VaultController::getVaultController()->vaultLockPath();
             QString vaultUnlockPath = VaultController::getVaultController()->vaultUnlockPath();
-            m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
+//            m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
         }else{
             // error tips
             QString errMsg = tr("Remove File Vault failed.%1").arg(VaultController::getErrorInfo(state));
