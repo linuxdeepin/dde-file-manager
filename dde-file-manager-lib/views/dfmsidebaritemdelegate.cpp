@@ -102,6 +102,16 @@ QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptio
     return editor;
 }
 
+void DFMSideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    Q_UNUSED(index);
+    DStyledItemDelegate::updateEditorGeometry(editor, option, index);
+
+    //DTK在计算editor宽度的时候没有考虑icon的宽度，导致editor超出view的范围，超出部分看不到了，这里需要调整editor的宽度。
+    DFMSideBarView *sidebarView = dynamic_cast<DFMSideBarView*>(this->parent());
+    editor->setFixedWidth(sidebarView->width() - 59);
+}
+
 void DFMSideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const
 {
     painter->save();
