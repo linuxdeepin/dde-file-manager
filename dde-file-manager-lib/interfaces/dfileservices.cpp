@@ -43,6 +43,7 @@
 #include "models/trashfileinfo.h"
 #include "models/desktopfileinfo.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 #include "dfmstandardpaths.h"
 #include "views/windowmanager.h"
 #include "models/avfsfileinfo.h"
@@ -334,7 +335,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         const DUrlList new_list = qvariant_cast<DUrlList>(result);
 
         for (int i = 0; i < new_list.count(); ++i) {
-            if (!new_list.at(i).isValid())
+            if (!new_list.at(i).isValid() || VaultController::isVaultFile(new_list.at(i).path()))
                 continue;
 
             emit fileMovedToTrash(list.at(i), new_list.at(i));
