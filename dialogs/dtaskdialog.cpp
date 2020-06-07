@@ -140,7 +140,7 @@ static QString formatTime(int second)
 int DTaskDialog::MaxHeight = 0;
 
 DTaskDialog::DTaskDialog(QWidget *parent) :
-    DAbstractDialog(parent)
+    DAbstractDialog(parent),m_flag(false)
 {
     initUI();
     initConnect();
@@ -324,12 +324,15 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             emit job->stop();
         });
     }
+    //! 保存任务widget与状态
+    m_flagMap.insert(wid, false);
 
     ErrorHandle *handle = new ErrorHandle(wid);
     job->setErrorHandle(handle, thread());
     connect(handle, &ErrorHandle::onConflict, wid, &DFMTaskWidget::setConflictMsg);
     connect(handle, &ErrorHandle::onError, wid, &DFMTaskWidget::setErrorMsg);
     connect(wid, &DFMTaskWidget::heightChanged, this, &DTaskDialog::adjustSize);
+    connect(this, &DTaskDialog::closed, job,&DFileCopyMoveJob::stop);
     connect(this, &DTaskDialog::closed,job,&DFileCopyMoveJob::taskDailogClose);
 
     connect(wid, &DFMTaskWidget::butonClicked, job, [job, wid, handle, this](DFMTaskWidget::BUTTON bt) {
@@ -412,7 +415,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             if(mapNotCompleteVaultTask.contains(job)){
                 mapNotCompleteVaultTask.remove(job);
             }
-
+            //! 设置任务widget对应的状态
+            m_flagMap[wid] = true;
             return;
         }
         QMap<QString, QString> data;
@@ -466,6 +470,14 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             if(mapNotCompleteVaultTask.contains(job)){
                 mapNotCompleteVaultTask.remove(job);
             }
+        }
+
+        //! 设置任务widget对应的状态
+        m_flagMap[wid] = true;
+        if(m_flag && getFlagMapValueIsTrue())
+        {
+            //! 有点击关闭任务窗口，进行窗口关闭
+            this->close();
         }
     });
     connect(job, &DFileCopyMoveJob::errorChanged, wid, [wid](DFileCopyMoveJob::Error error) {
@@ -730,6 +742,16 @@ void DTaskDialog::stopVaultTask()
     emit sigStopJob();
 }
 
+bool DTaskDialog::getFlagMapValueIsTrue()
+{
+    bool flg = false;
+    for(bool i : m_flagMap.values())
+    {
+        flg = i;
+    }
+    return flg;
+}
+
 void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail,
         const QMap<QString, QString> &data)
 {
@@ -750,20 +772,29 @@ void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail
 
 void DTaskDialog::closeEvent(QCloseEvent *event)
 {
-    for (QListWidgetItem *item : m_jobIdItems.values()) {
-        DFMTaskWidget *w = static_cast<DFMTaskWidget *>(m_taskListWidget->itemWidget(item));
-        if (w) {
-            w->getButton(DFMTaskWidget::STOP)->click();
-            m_taskListWidget->removeItemWidget(item);
-            m_taskListWidget->takeItem(m_taskListWidget->row(item));
-            m_jobIdItems.remove(m_jobIdItems.key(item));
+    //! 记录是否点击关闭按钮
+    m_flag = true;
+    if(getFlagMapValueIsTrue())
+    {
+        for (QListWidgetItem *item : m_jobIdItems.values()) {
+            DFMTaskWidget *w = static_cast<DFMTaskWidget *>(m_taskListWidget->itemWidget(item));
+            if (w) {
+                w->getButton(DFMTaskWidget::STOP)->click();
+                m_taskListWidget->removeItemWidget(item);
+                m_taskListWidget->takeItem(m_taskListWidget->row(item));
+                m_jobIdItems.remove(m_jobIdItems.key(item));
+            }
         }
+        //! 清空数据
+        m_flag = false;
+        m_flagMap.clear();
+
+        // 任务对话框关闭时，清空未完成保险箱任务记录
+        mapNotCompleteVaultTask.clear();
+
+        QDialog::closeEvent(event);
     }
 
-    // 任务对话框关闭时，清空未完成保险箱任务记录
-    mapNotCompleteVaultTask.clear();
-
-    QDialog::closeEvent(event);
     emit closed();
 }
 
