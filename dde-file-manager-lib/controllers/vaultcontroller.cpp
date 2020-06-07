@@ -321,8 +321,8 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DFileService::instance()->deleteFiles(event->sender(), urlList);
-    VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
-    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
+//    VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
+//    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
     return true;
 }
 
@@ -685,10 +685,15 @@ QString VaultController::getErrorInfo(int state)
 
 qint64 VaultController::getVaultCurSize()
 {
-    QStorageInfo info(makeVaultLocalPath(""));
+    QString strVaultPath = makeVaultLocalPath("");
+    QStorageInfo info(strVaultPath);
     QString temp = info.fileSystemType();
     if (info.isValid() && temp == "fuse.cryfs")
     {
+        QDir dir(strVaultPath);
+        QList<QFileInfo> lstFile = dir.entryInfoList(QDir::NoDotAndDotDot);
+        if(lstFile.count() == 0)
+            return 0;
         return info.bytesTotal() - info.bytesFree();
     }else{
         return 0;
