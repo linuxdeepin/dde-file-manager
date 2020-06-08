@@ -46,7 +46,10 @@ public:
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
+    QList<QIcon> additionalIcon() const override;
+    bool isWritable() const Q_DECL_OVERRIDE;
     QFile::Permissions permissions() const override;
+    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
 
     // 右键菜单
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;

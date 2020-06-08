@@ -595,7 +595,6 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
 
 QSize DFileView::itemSizeHint() const
 {
-    D_DC(DFileView);
 
     return itemDelegate()->sizeHint(viewOptions(), rootIndex());
 }
@@ -724,8 +723,6 @@ void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
 
 void DFileView::setViewMode(DFileView::ViewMode mode)
 {
-    D_D(DFileView);
-
     switchViewMode(mode);
     emit viewStateChanged();
 }
@@ -1884,8 +1881,6 @@ void DFileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int e
 
 void DFileView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
-    D_D(DFileView);
-
     DListView::rowsInserted(parent, start, end);
 }
 
@@ -1918,10 +1913,14 @@ bool DFileView::event(QEvent *e)
                 return DListView::event(e);
             e->accept();
 
-            if (keyEvent->modifiers() == Qt::ShiftModifier)
-                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier));
-            else
-                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier));
+            if (keyEvent->modifiers() == Qt::ShiftModifier){
+                QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier);
+                keyPressEvent(&nkeyEvent);
+            }
+            else {
+                QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier);
+                keyPressEvent(&nkeyEvent);
+            }
 
             return true;
         }
@@ -2102,7 +2101,6 @@ void DFileView::initConnects()
     connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged, this, &DFileView::onShowHiddenFileChanged);
     connect(fileSignalManager, &FileSignalManager::requestFreshAllFileView, this, &DFileView::freshView);
     connect(DFMApplication::instance(), &DFMApplication::viewModeChanged, this, [this](const int &viewMode) {
-        Q_D(const DFileView);
         setDefaultViewMode(static_cast<ViewMode>(viewMode));
     });
     connect(DFMApplication::instance(), &DFMApplication::previewAttributeChanged, this, [this] {
@@ -2684,8 +2682,6 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
 void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
-    D_D(DFileView);
-
     if (!index.isValid())
         return;
 

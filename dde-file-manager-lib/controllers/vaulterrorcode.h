@@ -107,7 +107,7 @@ enum class ErrorCode : int
   //! fusermount不存在
   FusermountNotExist = 32,
 
-  //! Cryfs创建的加密文件夹一存在
+  //! Cryfs创建的加密文件夹已存在
   EncryptedExist = 33
 };
 

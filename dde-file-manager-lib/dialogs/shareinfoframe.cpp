@@ -135,6 +135,7 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
         }
     } else {
         m_shareCheckBox->setChecked(false);
+        m_shareCheckBox->setEnabled(true);
         disactivateWidgets();
     }
 }

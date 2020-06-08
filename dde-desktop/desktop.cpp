@@ -374,6 +374,7 @@ void Desktop::showZoneSettings()
 
 void Desktop::initDebugDBus(QDBusConnection &conn)
 {
+    Q_UNUSED(conn)
 #if USINGOLD
     if (!conn.registerObject(DesktopCanvasPath, d->screenFrame,
                              QDBusConnection::ExportScriptableSlots)) {

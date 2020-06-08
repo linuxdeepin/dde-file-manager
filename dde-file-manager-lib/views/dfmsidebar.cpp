@@ -34,6 +34,7 @@
 #include "views/dfmvaultremovepages.h"
 #include "views/dfmvaultunlockpages.h"
 #include "views/dfmvaultrecoverykeypages.h"
+#include "views/dfmvaultactiveview.h"
 #include "models/dfmsidebarmodel.h"
 #include "dfmsidebaritemdelegate.h"
 #include "dfmsidebaritem.h"
@@ -446,6 +447,23 @@ void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
     }
 }
 
+void DFMSideBar::onOpenVault()
+{
+    // 进入保险箱
+    QWidget *wndPtr = DFMVaultUnlockPages::instance()->getWndPtr();
+
+    if (wndPtr == this->topLevelWidget()) {
+        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
+        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
+    }
+}
+
+void DFMSideBar::onRemoveVault()
+{
+    // 切换到home目录下
+    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())));
+}
+
 void DFMSideBar::initUI()
 {
     // init layout.
@@ -553,6 +571,7 @@ void DFMSideBar::initUserShareItem()
     userShareFileWatcher->startWatcher();
 
     auto userShareLambda = [ = ](const DUrl &url) {
+        Q_UNUSED(url)
         int cnt = DFileService::instance()->getChildren(nullptr, DUrl::fromUserShareFile("/"),
                                                         QStringList(), QDir::AllEntries).count();
         int index = findItem(DUrl::fromUserShareFile("/"));
@@ -771,24 +790,13 @@ void DFMSideBar::initTagsConnection()
 
 void DFMSideBar::initVaultConnection()
 {
-    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(this->topLevelWidget());
+    connect(DFMVaultRemovePages::instance(), &DFMVaultRemovePages::accepted, this, &DFMSideBar::onRemoveVault);
 
-    connect(DFMVaultRemovePages::instance(this), &DFMVaultRemovePages::accepted, [wnd](){
-        // 切换到计算机目录下
-        wnd->cd(DUrl(COMPUTER_ROOT));
-    });
+    connect(DFMVaultUnlockPages::instance(), &DFMVaultUnlockPages::accepted, this, &DFMSideBar::onOpenVault);
 
-    connect(DFMVaultUnlockPages::instance(this), &DFMVaultUnlockPages::accepted, [wnd](){
-        // 进入保险箱
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        wnd->cd(vaultUrl);
-    });
+    connect(DFMVaultRecoveryKeyPages::instance(), &DFMVaultRecoveryKeyPages::accepted, this, &DFMSideBar::onOpenVault);
 
-    connect(DFMVaultRecoveryKeyPages::instance(this), &DFMVaultRecoveryKeyPages::accepted, [wnd](){
-        // 进入保险箱
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        wnd->cd(vaultUrl);
-    });
+    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, this, &DFMSideBar::onOpenVault);
 }
 
 void DFMSideBar::applySidebarColor()

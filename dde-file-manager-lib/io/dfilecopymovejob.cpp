@@ -546,10 +546,16 @@ QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfo *sourceF
     QString suffix = sourceFileInfo->suffix();
     QString filename = sourceFileInfo->fileName();
     //在7z分卷压缩后的名称特殊处理7z.003
-    if(filename.contains(QRegularExpression("\.7z\.[0-9]{3,10}$")))
+//    if(filename.contains(QRegularExpression("\.7z\.[0-9]{3,10}$")))
+//    {
+//        file_base_name = filename.left(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$")));
+//        suffix = filename.mid(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$"))+1);
+//    }
+    //'\'没有转义为了避免警告加了转义
+    if(filename.contains(QRegularExpression("\\.7z\\.[0-9]{3,10}$")))
     {
-        file_base_name = filename.left(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$")));
-        suffix = filename.mid(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$"))+1);
+        file_base_name = filename.left(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$")));
+        suffix = filename.mid(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$"))+1);
     }
     int number = 0;
 
@@ -571,8 +577,6 @@ QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfo *sourceF
 
 bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPointer source_info, const DAbstractFileInfo *target_info)
 {
-    Q_Q(DFileCopyMoveJob);
-
     if (!source_info) {
         setError(DFileCopyMoveJob::UnknowUrlError, "Failed create file info");
 
@@ -1180,7 +1184,8 @@ open_file: {
 //        writtenDataSize += size_write;
 
         if (Q_LIKELY(!fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking))) {
-            source_checksum = adler32(source_checksum, reinterpret_cast<Bytef *>(data), size_read);
+//            source_checksum = adler32(source_checksum, reinterpret_cast<Bytef *>(data), size_read);
+            source_checksum = adler32(source_checksum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(size_read));
         }
 
 //        if (Q_UNLIKELY(writtenDataSize > 20000000)) {
@@ -1255,7 +1260,7 @@ open_file: {
             }
         }
 
-        target_checksum = adler32(target_checksum, reinterpret_cast<Bytef *>(data), size);
+        target_checksum = adler32(target_checksum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(size));
 
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
@@ -1816,7 +1821,7 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
     d->fileStatistics->start(sourceUrls);
 
     // DFileStatisticsJob 统计数量很慢，自行统计
-    QtConcurrent::run([this, sourceUrls, d] () {
+    QtConcurrent::run([sourceUrls, d] () {
         if (d->mode == MoveMode) {
             for (const auto &url : sourceUrls) {
                 QStringList list;
@@ -1976,7 +1981,7 @@ void DFileCopyMoveJob::run()
                                 d->targetIsRemovable = list.at(1) == "1";
 
                                 bool ok = false;
-                                d->targetLogSecionSize = list.at(2).toInt(&ok);
+                                d->targetLogSecionSize = static_cast<qint16>(list.at(2).toInt(&ok));
 
                                 if (!ok) {
                                     d->targetLogSecionSize = 512;
@@ -1999,7 +2004,7 @@ void DFileCopyMoveJob::run()
                     }
                 }
 
-                qCDebug(fileJob(), "canUseWriteBytes = %d, targetIsRemovable = %d", bool(d->canUseWriteBytes));
+                qCDebug(fileJob(), "canUseWriteBytes = %d, targetIsRemovable = %d", bool(d->canUseWriteBytes), bool(d->targetIsRemovable));
             }
         }
     } else if (d->mode == CopyMode) {

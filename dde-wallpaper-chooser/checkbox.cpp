@@ -36,7 +36,8 @@ CheckBox::CheckBox(const QString &text, QWidget *parent)
 
 void CheckBox::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return || event->key() == Qt::Key_Space){
+    // 不要加event->key() == Qt::Key_Space，QCheckBox默认就是空格勾选
+    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return /*|| event->key() == Qt::Key_Space*/){
         if (this->isChecked()){
             this->setChecked(false);
             emit clicked(false);

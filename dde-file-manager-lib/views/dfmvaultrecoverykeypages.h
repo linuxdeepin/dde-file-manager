@@ -23,6 +23,7 @@
 //#include "interface/dfmvaultcontentinterface.h"
 #include "dtkwidget_global.h"
 #include <DDialog>
+#include <QScopedPointer>
 
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
@@ -30,12 +31,14 @@ QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
+class DFMVaultRecoveryKeyPagesPrivate;
 class DFMVaultRecoveryKeyPages : public DDialog
 {
     Q_OBJECT
 public:
-    static DFMVaultRecoveryKeyPages *instance(QWidget *parent = nullptr);
+    static DFMVaultRecoveryKeyPages *instance();
 
+    void showAlertMessage(const QString &text, int duration = 3000);
 private slots:
     void onButtonClicked(const int &index);
 
@@ -54,5 +57,7 @@ private:
 private:
     QPlainTextEdit *m_recoveryKeyEdit {nullptr};
     bool m_bUnlockByKey = false;
-    static DFMVaultRecoveryKeyPages *m_instance;
+
+    QScopedPointer<DFMVaultRecoveryKeyPagesPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(DFMVaultRecoveryKeyPages)
 };

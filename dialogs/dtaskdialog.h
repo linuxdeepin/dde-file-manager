@@ -82,6 +82,12 @@ public:
     // 结束当前未完成的保险箱任务
     void stopVaultTask();
 
+    /**
+     * @brief getFlagMapValueIsTrue 获取m_flagMap中所有的值是否为true
+     * @return 是否为真
+     */
+    bool getFlagMapValueIsTrue();
+
 signals:
     void abortTask(const QMap<QString, QString>& jobDetail);
     void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
@@ -130,6 +136,11 @@ private:
 
     // 记录当前未完成的保险箱任务
     QSet<DFileCopyMoveJob*> mapNotCompleteVaultTask;
+
+    //! 记录当前是否完成一个文件的删除或拷贝工作
+    QMap<QWidget*, bool> m_flagMap;
+    //! 是否点击关闭按钮
+    bool m_flag;
 };
 
 #endif // DTASKDIALOG_H

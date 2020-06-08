@@ -31,7 +31,8 @@ struct DockRect{
 
     operator QRect() const
     {
-        return QRect(x, y, width, height);
+        //return QRect(x, y, width, height);//解决警告采用下方形式
+        return QRect(x, y, static_cast<int>(width), static_cast<int>(height));
     }
 };
 Q_DECLARE_METATYPE(DockRect)
@@ -73,7 +74,7 @@ public:
     { return "/com/deepin/dde/daemon/Dock";}
 
 public:
-    explicit DBusDock(QObject *parent = 0);
+    explicit DBusDock(QObject *parent = nullptr);
 
     ~DBusDock();
 

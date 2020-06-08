@@ -411,9 +411,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             }
         } else {
             titleList << basicInfo;
-            // 保险箱中的文件夹属性不显示共享信息
-            if (!fileInfo->fileUrl().toLocalFile().contains(VaultController::makeVaultLocalPath())
-                    && fileInfo->canShare()) {
+            if (fileInfo->canShare()) {
                 titleList << shareManager;
             }
             if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() &&
@@ -426,12 +424,9 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 
         if (fileInfo->isDir()) {
             if (fileInfo->canShare()) {
-                // 保险箱中的文件夹属性不显示共享信息
-                if (!fileInfo->fileUrl().toLocalFile().contains(VaultController::makeVaultLocalPath())){
-                    m_shareinfoFrame = createShareInfoFrame(fileInfo);
-                    m_expandGroup.at(1)->setContent(m_shareinfoFrame);
-                    m_expandGroup.at(1)->setExpand(false);
-                }
+                m_shareinfoFrame = createShareInfoFrame(fileInfo);
+                m_expandGroup.at(1)->setContent(m_shareinfoFrame);
+                m_expandGroup.at(1)->setExpand(false);
             }
 
             if (fileInfo->toLocalFile().isEmpty()) {
@@ -1192,9 +1187,9 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
     connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
-//    connect(frame, &ShareInfoFrame::unfolderShared, this, [this](){
-//        m_expandGroup.at(1)->setExpand(false);
-//    });
+    //    connect(frame, &ShareInfoFrame::unfolderShared, this, [this](){
+    //        m_expandGroup.at(1)->setExpand(false);
+    //    });
 
     return frame;
 }

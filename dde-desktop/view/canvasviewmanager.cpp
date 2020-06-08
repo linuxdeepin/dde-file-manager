@@ -278,7 +278,8 @@ void CanvasViewManager::arrageEditDeal(const QString &file)
                 DUrl fileUrl(file);
                 auto index = view->model()->index(fileUrl);
                 view->select(QList<DUrl>() << fileUrl);
-                bool bEdit = view->edit(index,QAbstractItemView::EditKeyPressed,0);
+                bool bEdit = view->edit(index,QAbstractItemView::EditKeyPressed,nullptr);
+                Q_UNUSED(bEdit)
                 QWidget *editor = view->itemDelegate()->editingIndexWidget();
                 if (editor)
                     editor->activateWindow();

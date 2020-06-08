@@ -816,7 +816,7 @@ QString DUrl::toLocalFile() const
     } else if (isUserShareFile()) {
         return QString(path()).remove(USERSHARE_ROOT);
     } else if (isVaultFile()){
-        return path().remove(DFMVAULT_ROOT);
+        return path();
     }else {
         return QUrl::toLocalFile();
     }

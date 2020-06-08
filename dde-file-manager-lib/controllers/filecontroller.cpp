@@ -895,9 +895,7 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
 //        return DFileService::instance()->deleteFiles(nullptr, event->urlList(), false);
 //    }
 
-
     bool ok = !pasteFilesV2(DFMGlobal::CutAction, event->fileUrlList(), DUrl(), event->silent(), event->force()).isEmpty();
-
     return ok;
 }
 

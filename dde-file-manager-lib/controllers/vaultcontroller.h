@@ -154,6 +154,15 @@ public:
      */
     bool isRootDirectory(QString path) const;
 
+    /**
+     * @brief getErrorInfo 根据错误码获取错误信息
+     * @param state 错误码
+     * @return
+     */
+    static QString getErrorInfo(int state);
+
+    static qint64 getVaultCurSize();
+
 public slots:
 
     /**

@@ -1188,6 +1188,7 @@ public:
         }
 
         auto settings = Config::instance()->settings();
+        Q_UNUSED(settings)
         Config::instance()->removeConfig(Config::keyProfile, "");
         Config::instance()->setConfigList(Config::keyProfile, keys, values);
 
@@ -1489,6 +1490,7 @@ public:
 
         //auto screenPositionProfile = positionProfiles.value(screenNum);
         auto settings = Config::instance()->settings();
+        Q_UNUSED(settings)
         Config::instance()->removeConfig(screenPositionProfile, "");
         Config::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
         //emit Presenter::instance()->removeConfig(screenPositionProfile, "");
@@ -1913,6 +1915,7 @@ void GridManager::initCustom(const QStringList &items)
 
 bool GridManager::add(int screenNum, const QString &id)
 {
+    Q_UNUSED(screenNum)
     for (int screenNum : d->screenCode()) {
         if (d->m_itemGrids.value(screenNum).contains(id)){
             qDebug() << "item exist item" << screenNum << id;
@@ -2007,6 +2010,7 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
     for (int i = 0; i < selecteds.length(); ++i) {
         QPoint point{ destPosList.value(i) };
         bool ret = add(screenNum, point, selecteds.value(i));
+        Q_UNUSED(ret)
 //        if (!ret){
 //            auto fPos = forwardFindEmpty(screenNum,point);
 //            add(fPos.first, fPos.second, selecteds.value(i));
