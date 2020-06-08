@@ -23,7 +23,7 @@
         <location filename="../controllers/appcontroller.cpp" line="709"/>
         <location filename="../controllers/appcontroller.cpp" line="764"/>
         <source>Action timeout, action is canceled</source>
-        <translation type="Action is timeout, and canceled!"></translation>
+	<translation>Action is timeout, and canceled！</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="636"/>

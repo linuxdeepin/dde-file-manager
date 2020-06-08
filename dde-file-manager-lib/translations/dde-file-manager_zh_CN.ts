@@ -23,7 +23,7 @@
         <location filename="../controllers/appcontroller.cpp" line="709"/>
         <location filename="../controllers/appcontroller.cpp" line="764"/>
         <source>Action timeout, action is canceled</source>
-        <translation type="当前操作超时，操作已被取消！"></translation>
+        <translation>当前操作超时，操作已被取消！</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="636"/>
