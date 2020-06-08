@@ -61,6 +61,8 @@ DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
     connect(VaultController::getVaultController(), &VaultController::signalLockVault, this, &DFMVaultFileView::lockVault);
+
+    connect(VaultController::getVaultController(), &VaultController::vaultRepaint, this, &DFMVaultFileView::onVaultRepaint);
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
@@ -103,4 +105,10 @@ void DFMVaultFileView::lockVault(int state)
         DUrl url(COMPUTER_ROOT);
         cd(url);
     }
+}
+
+void DFMVaultFileView::onVaultRepaint()
+{
+    DFMVaultFileView *w = (DFMVaultFileView*)this;
+    w->repaint();
 }
