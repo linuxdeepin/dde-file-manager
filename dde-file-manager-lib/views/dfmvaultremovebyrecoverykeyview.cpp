@@ -110,8 +110,9 @@ void DFMVaultRemoveByRecoverykeyView::showAlertMessage(const QString &text, int 
 
     label->setText(text);
     label->adjustSize();
+    label->setStyleSheet("color:rgb(255, 85, 0)");
 
-    const QPoint &pos = m_keyEdit->mapToGlobal(QPoint(15, m_keyEdit->height()));
+    const QPoint &pos = m_keyEdit->mapToGlobal(QPoint(15, 25));
 
     d->tooltip->show(pos.x(), pos.y());
 }

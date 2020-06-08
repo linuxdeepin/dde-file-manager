@@ -267,9 +267,7 @@ HEADERS += \
     controllers/vaultcontroller.h \
     models/vaultfileinfo.h \
     controllers/dfmvaultcrumbcontroller.h \
-    views/dfmvaultview.h \
     views/interface/dfmvaultcontentinterface.h \
-    views/dfmvaultsetuppages.h \
     views/dfmvaultunlockpages.h \
     views/dfmvaultfileview.h \
     views/dfmvaultrecoverykeypages.h \
@@ -470,9 +468,7 @@ SOURCES += \
     controllers/vaultcontroller.cpp \
     models/vaultfileinfo.cpp \
     controllers/dfmvaultcrumbcontroller.cpp \
-    views/dfmvaultview.cpp \
     views/interface/dfmvaultcontentinterface.cpp \
-    views/dfmvaultsetuppages.cpp \
     views/dfmvaultunlockpages.cpp \
     views/dfmvaultfileview.cpp \
     views/dfmvaultrecoverykeypages.cpp \

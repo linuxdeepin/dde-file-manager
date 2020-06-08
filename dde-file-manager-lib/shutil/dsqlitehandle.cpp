@@ -823,8 +823,9 @@ void DSqliteHandle::connectToSqlite(const QString &mountPoint, const QString &db
             if (blk->idType() == "ntfs") {
                 QString db_path(mountPoint + QString("/") + db_name);
                 const char* db_path_cs(db_path.toUtf8().data());
+                Q_UNUSED(db_path_cs)
                 quint32 attr;
-                getxattr(db_path.toUtf8().data(), "system.ntfs_attrib_be", (void*)&attr, 4);
+                getxattr(db_path.toUtf8().data(), "system.ntfs_attrib_be", static_cast<void*>(&attr), 4);
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
                 attr = __builtin_bswap32(attr);
 #endif
@@ -832,7 +833,7 @@ void DSqliteHandle::connectToSqlite(const QString &mountPoint, const QString &db
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
                 attr = __builtin_bswap32(attr);
 #endif
-                setxattr(db_path.toUtf8().data(), "system.ntfs_attrib_be", (void*)&attr, 4, 0);
+                setxattr(db_path.toUtf8().data(), "system.ntfs_attrib_be", static_cast<void*>(&attr), 4, 0);
             }
 
         } else {

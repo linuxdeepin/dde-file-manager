@@ -320,23 +320,19 @@ bool VaultController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) 
 bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
-    DUrlList urlList1 = DFileService::instance()->moveToTrash(event->sender(), urlList);
-    if(urlList == urlList1)
-    {
-        VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
-        emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
-        return true;
-    }
-    return false;
+    DFileService::instance()->deleteFiles(event->sender(), urlList);
+//    VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
+//    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
+    return true;
 }
 
 DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
-    DUrlList ulist = DFileService::instance()->moveToTrash(event->sender(), urlList);
+    DFileService::instance()->deleteFiles(event->sender(), urlList);
     VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
     emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
-    return ulist;
+    return urlList;
 }
 
 DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
@@ -504,6 +500,7 @@ bool VaultController::setPermissions(const QSharedPointer<DFMSetPermissionEvent>
 
 DUrl VaultController::makeVaultUrl(QString path, QString host)
 {
+    Q_UNUSED(host)
     // blumia: if path is not start with a `/`, QUrl::setPath will destory the whole QUrl
     //         and only leave the path to the QUrl.
     if (!path.startsWith('/')) {
@@ -601,6 +598,106 @@ bool VaultController::isRootDirectory(QString path) const
         bRootDir = true;
     }
     return bRootDir;
+}
+
+QString VaultController::getErrorInfo(int state)
+{
+    QString strErr("");
+    switch (state) {
+    case 10:
+        strErr = tr("The command line arguments are invalid.");
+        break;
+    case 11:
+        strErr = tr("Couldn't load config file. Probably the password is wrong");
+        break;
+    case 12:
+        strErr = tr("Password cannot be empty");
+        break;
+    case 13:
+        strErr = tr("The file system format is too new for this CryFS version. Please update your CryFS version.");
+        break;
+    case 14:
+        strErr = tr("The file system format is too old for this CryFS version. Run with --allow-filesystem-upgrade to upgrade it.");
+        break;
+    case 15:
+        strErr = tr("The file system uses a different cipher than the one specified on the command line using the --cipher argument.");
+        break;
+    case 16:
+        strErr = tr("Base directory doesn't exist or is inaccessible (i.e. not read or writable or not a directory)");
+        break;
+    case 17:
+        strErr = tr("Mount directory doesn't exist or is inaccessible (i.e. not read or writable or not a directory)");
+        break;
+    case 18:
+        strErr = tr("Base directory can't be a subdirectory of the mount directory");
+        break;
+    case 19:
+        strErr = tr("Something's wrong with the file system.");
+        break;
+    case 20:
+        strErr = tr("The filesystem id in the config file is different to the last time we loaded a filesystem from this basedir. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.");
+        break;
+    case 21:
+        strErr = tr("The filesystem encryption key differs from the last time we loaded this filesystem. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.");
+        break;
+    case 22:
+        strErr = tr("The command line options and the file system disagree on whether missing blocks should be treated as integrity violations.");
+        break;
+    case 23:
+        strErr = tr("File system is in single-client mode and can only be used from the client that created it.");
+        break;
+    case 24:
+        strErr = tr("A previous run of the file system detected an integrity violation. Preventing access to make sure the user notices. The file system will be accessible again after the user deletes the integrity state file.");
+        break;
+    case 25:
+        strErr = tr("An integrity violation was detected and the file system unmounted to make sure the user notices.");
+        break;
+    case 26:
+        strErr = tr("Mount directory is not empty.");
+        break;
+    case 27:
+        strErr = tr("Mount directory in use.");
+        break;
+    case 28:
+        strErr = tr("Cryfs not installed.");
+        break;
+    case 29:
+        strErr = tr("Mount directory doesn't exist.");
+        break;
+    case 30:
+        strErr = tr("Mounted directory encrypted.");
+        break;
+    case 31:
+        strErr = tr("No permissions.");
+        break;
+    case 32:
+        strErr = tr("Fusermount does not exist");
+        break;
+    case 33:
+        strErr = tr("An encrypted folder created by Cryfs already exists.");
+        break;
+    default:
+        break;
+    }
+
+    return strErr;
+}
+
+qint64 VaultController::getVaultCurSize()
+{
+    QString strVaultPath = makeVaultLocalPath("");
+    QStorageInfo info(strVaultPath);
+    QString temp = info.fileSystemType();
+    if (info.isValid() && temp == "fuse.cryfs")
+    {
+        QDir dir(strVaultPath);
+        QList<QFileInfo> lstFile = dir.entryInfoList(QDir::NoDotAndDotDot);
+        if(lstFile.count() == 0)
+            return 0;
+        return info.bytesTotal() - info.bytesFree();
+    }else{
+        return 0;
+    }
 }
 
 bool VaultController::isVaultFile(QString path)

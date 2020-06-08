@@ -182,10 +182,16 @@ QString FileJob::checkDuplicateName(const QString &name)
                                                           startInfo.baseName(),
                                                           cpy);
                 }else{
+                    /*针对文件名里面带点的文件进行删除再还原，使用QFileInfo 进行获取的时候，取出来的扩展名是用第一个.出现的位置去判断，
+                     * ，正确的是应该从后向前进行查找
+                    */
+                    QString baseName_tmp=name.right(name.length()-destUrl.lastIndexOf("/")-1);
+                    QString baseName=baseName_tmp.left(baseName_tmp.lastIndexOf("."));
+                    QString completeSuffixName=baseName_tmp.right(baseName_tmp.length()-baseName_tmp.lastIndexOf(".")-1);
                     destUrl = QString("%1/%2(%3).%4").arg(startInfo.absolutePath(),
-                                                          startInfo.baseName(),
+                                                          baseName,
                                                           cpy,
-                                                          startInfo.completeSuffix());
+                                                          completeSuffixName);
                 }
             }
         }
@@ -204,11 +210,14 @@ QString FileJob::checkDuplicateName(const QString &name)
                                                              cpy,
                                                              QString::number(num));
                 }else{
+                    QString baseName_tmp=name.right(name.length()-destUrl.lastIndexOf("/")-1);
+                    QString baseName=baseName_tmp.left(baseName_tmp.lastIndexOf("."));
+                    QString completeSuffixName=baseName_tmp.right(baseName_tmp.length()-baseName_tmp.lastIndexOf(".")-1);
                     destUrl = QString("%1/%2(%3 %4).%5").arg(startInfo.absolutePath(),
-                                                             startInfo.baseName(),
+                                                             baseName,
                                                              cpy,
                                                              QString::number(num),
-                                                             startInfo.completeSuffix());
+                                                             completeSuffixName);
                 }
             }
         }
@@ -1231,6 +1240,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         }
 
         bool rst = ! ((flag & 4) && (globalBad > (2 + 1e-6)));
+        Q_UNUSED(rst)
 
         if (m_isJobAdded)
             jobRemoved();

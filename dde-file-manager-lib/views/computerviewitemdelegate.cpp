@@ -21,7 +21,7 @@
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DPalette>
-
+#include <sys/stat.h>
 #include <QLineEdit>
 
 #include "models/computermodel.h"
@@ -231,6 +231,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
 
 QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option)
     ComputerModelItemData::Category cat = ComputerModelItemData::Category(index.data(ComputerModel::DataRoles::ICategoryRole).toInt());
     if (cat == ComputerModelItemData::Category::cat_widget) {
         return static_cast<ComputerModelItemData*>(index.internalPointer())->widget->size();
@@ -251,6 +252,8 @@ QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, con
 
 QWidget* ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option)
+    Q_UNUSED(index)
     QLineEdit *le = new QLineEdit(parent);
     le->setFrame(false);
     le->setTextMargins(0, 0, 0, 0);

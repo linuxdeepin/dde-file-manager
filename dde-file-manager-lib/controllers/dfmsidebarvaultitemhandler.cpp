@@ -98,8 +98,7 @@ void DFMSideBarVaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSi
     }
     case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
         // todo
-        DFMVaultUnlockPages::instance()->show();
-        DFMVaultUnlockPages::instance()->raise();
+        showUnLockView(sidebar->topLevelWidget());
         break;
     }
     case EN_VaultState::Unlocked:{  // 保险箱处于开锁状态，直接进入主界面
@@ -189,14 +188,14 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
         // 解锁
         QAction *action = DFileMenuManager::getAction(MenuAction::UnLock);
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            showUnLockView();
+        QObject::connect(action, &QAction::triggered, action, [this, topWidget](){
+            showUnLockView(topWidget);
         });
 
         // 使用恢复凭证
         action = DFileMenuManager::getAction(MenuAction::UnLockByKey);
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            showCertificateView();
+        QObject::connect(action, &QAction::triggered, action, [this, topWidget](){
+            showCertificateView(topWidget);
         });
     }    
 
@@ -212,21 +211,31 @@ bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
             // Flashing alert
             pTaskDlg->hide();
             pTaskDlg->showDialogOnTop();
+            return false;
         }
     }
 
-    // 关闭当前的标签页面
+    // 如果正在有保险箱的移动、粘贴到桌面的任务，通知桌面进程置顶任务对话框
+    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+                                                           "/org/freedesktop/FileManager1",
+                                                           "org.freedesktop.FileManager1",
+                                                           "topTaskDialog");
+    QDBusMessage response = QDBusConnection::sessionBus().call(message);
+    if(response.type() == QDBusMessage::ReplyMessage){
+        bool bValue = response.arguments().takeFirst().toBool();
+        if(bValue){
+            return false;
+        }
+    }else{
+        qDebug() << "vault show top taskdialog failed!";
+    }
+
+    // 关闭当前的保险箱标签页面
     emit fileSignalManager->requestCloseAllTabOfVault(wnd->windowId());
 
     // 保险箱上锁
     VaultController::getVaultController()->lockVault();
-    connect(VaultController::getVaultController(), &VaultController::signalLockVault, [wnd](int state){
-        if (state == 0){
-            // 切换到计算机目录下
-            DUrl url = DUrl(COMPUTER_ROOT);
-            wnd->cd(DUrl(COMPUTER_ROOT));
-        }
-    });
+
     return true;
 }
 
@@ -238,20 +247,22 @@ bool DFMSideBarVaultItemHandler::autoLock(int lockState)
 void DFMSideBarVaultItemHandler::showDeleteVaultView()
 {
     // Something to do.
-    DFMVaultRemovePages::instance()->show();
-    DFMVaultRemovePages::instance()->raise();
+    DFMVaultRemovePages::instance()->showTop();
 }
 
-void DFMSideBarVaultItemHandler::showUnLockView()
+void DFMSideBarVaultItemHandler::showUnLockView(QWidget *wndPtr)
 {
-    // Something to do.
+    DFMVaultUnlockPages::instance()->setWndPtr(wndPtr);
+
     DFMVaultUnlockPages::instance()->show();
     DFMVaultUnlockPages::instance()->raise();
 }
 
-void DFMSideBarVaultItemHandler::showCertificateView()
+void DFMSideBarVaultItemHandler::showCertificateView(QWidget *wndPtr)
 {
     // Something to do.
+    DFMVaultUnlockPages::instance()->setWndPtr(wndPtr);
+
     DFMVaultRecoveryKeyPages::instance()->show();
     DFMVaultRecoveryKeyPages::instance()->raise();
 }

@@ -55,6 +55,11 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     });
 }
 
+DFMVaultRemoveByPasswordView::~DFMVaultRemoveByPasswordView()
+{
+
+}
+
 QString DFMVaultRemoveByPasswordView::getPassword()
 {
     return m_pwdEdit->text();

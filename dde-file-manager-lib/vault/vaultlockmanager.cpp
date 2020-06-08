@@ -189,6 +189,16 @@ void VaultLockManager::processAutoLock()
             }
         }
 
+        // 如果正在有保险箱的移动、粘贴到桌面的任务，通知桌面进程置结束当前保险箱的任务
+        QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+                                                             "/org/freedesktop/FileManager1",
+                                                             "org.freedesktop.FileManager1",
+                                                             "closeTask");
+        QDBusMessage response = QDBusConnection::sessionBus().call(message);
+        if(response.type() != QDBusMessage::ReplyMessage){
+            qDebug() << "close vault task failed!";
+        }
+
         controller->lockVault();
     }
 }

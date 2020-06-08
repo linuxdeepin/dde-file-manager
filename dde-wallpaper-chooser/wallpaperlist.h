@@ -74,6 +74,7 @@ public:
 
     void updateItemThumb();
     void setCurrentIndex(int index);
+    WallpaperItem *getCurrentItem();
 
 signals:
     void itemPressed(QString data) const;

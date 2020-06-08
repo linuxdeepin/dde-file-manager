@@ -34,7 +34,10 @@ class DFMVaultUnlockPages : public DDialog
 {
     Q_OBJECT
 public:            
-    static DFMVaultUnlockPages *instance(QWidget *parent = nullptr);
+    static DFMVaultUnlockPages *instance();
+
+    void setWndPtr(QWidget *wnd);
+    QWidget *getWndPtr() const;
 
 public slots:
     void onButtonClicked(const int &index);
@@ -45,7 +48,7 @@ public slots:
 
 private:
     DFMVaultUnlockPages(QWidget * parent = nullptr);
-    ~DFMVaultUnlockPages() override;
+    ~DFMVaultUnlockPages() override {}
 
     void showEvent(QShowEvent *event) override;
 
@@ -53,5 +56,6 @@ private:
     DPasswordEdit * m_passwordEdit {nullptr};
     QPushButton * m_tipsButton {nullptr};
     bool m_bUnlockByPwd = false;
-    static DFMVaultUnlockPages *m_instance;
+
+    QWidget *m_wndptr = nullptr;
 };
