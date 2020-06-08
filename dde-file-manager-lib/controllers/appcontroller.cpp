@@ -685,7 +685,6 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
         emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
-
         QtConcurrent::run([fi](){
             qDebug() << fi->fileUrl().path();
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
@@ -711,7 +710,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                     if(lastError.type() == QDBusError::NoReply ) // bug 29268, 用户超时操作
                     {
                         qDebug() << "action timeout with noreply response";
-                        dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Action timeout, action is canceled")),  Q_ARG(QString, ""));
+                        //dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
                         return;
                     }
 
