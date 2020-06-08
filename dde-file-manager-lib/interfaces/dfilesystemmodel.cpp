@@ -2952,7 +2952,7 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
 
                         const FileSystemNodePointer &node = parentNode->getNodeByIndex(row);
 
-                        if (node->fileInfo->isFile()) {
+                        if (node->fileInfo||node->fileInfo->isFile()) {
                             break;
                         }
 

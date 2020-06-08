@@ -932,14 +932,15 @@ QIcon DFileInfo::fileIcon() const
             QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, me] {
                 DThumbnailProvider::instance()->appendToProduceQueue(me->d_func()->fileInfo, DThumbnailProvider::Large,
                                                                      [me] (const QString &path) {
-                    if (path.isEmpty()) {
-                        me->d_func()->iconFromTheme = true;
-                    } else {
-                        // clean old icon
-                        me->d_func()->icon = QIcon();
-                    }
-
-                    me->d_func()->needThumbnail = false;
+                    DThreadUtil::runInMainThread([me, path]() {
+                           if (path.isEmpty()) {
+                               me->d_func()->iconFromTheme = true;
+                           } else {
+                               // clean old icon
+                               me->d_func()->icon = QIcon();
+                           }
+                           me->d_func()->needThumbnail = false;
+                       });
                 });
                 me->d_func()->requestingThumbnail = true;
                 timer->deleteLater();
