@@ -226,6 +226,17 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
             return file->getVolTag();
     }
 
+    if (role == DataRoles::DiscUUIDRole) {
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
+        return blkdev->idUUID();
+    }
+
+    if (role == DataRoles::DiscOpticalRole) {
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
+        return drv->opticalBlank();
+    }
+
     return QVariant();
 }
 

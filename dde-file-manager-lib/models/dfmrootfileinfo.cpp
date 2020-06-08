@@ -23,6 +23,7 @@
 #include "app/define.h"
 #include "utils/singleton.h"
 #include "controllers/pathmanager.h"
+#include "app/filesignalmanager.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -41,6 +42,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QTimer>
 
 class DFMRootFileInfoPrivate
 {
@@ -664,7 +666,15 @@ QString DFMRootFileInfo::udisksDisplayName()
 
     if (d->label.length() == 0) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
-        if (!drv->mediaAvailable() && drv->mediaCompatibility().join(" ").contains("optical")) {
+        if (drv->opticalBlank()) {
+            return QCoreApplication::translate("DeepinStorage", "Blank %1 Disc").arg(opticalmediamap[drv->media()]);
+        }
+        if ((!drv->mediaAvailable() || d->idUUID.isEmpty()) && drv->mediaCompatibility().join(" ").contains("optical")) { // uuid 为空认为光盘未挂载或已卸载（托盘已弹出），此时强制使用无光盘的名称
+            d->blk->unmount({});
+            d->size = 0;
+            QTimer::singleShot(100, []{
+                emit fileSignalManager->requestUpdateComputerView();
+            });
             QString maxmediacompat;
             for (auto i = opticalmediakv.rbegin(); i != opticalmediakv.rend(); ++i) {
                 if (drv->mediaCompatibility().contains(i->first)) {
@@ -673,9 +683,6 @@ QString DFMRootFileInfo::udisksDisplayName()
                 }
             }
             return QCoreApplication::translate("DeepinStorage", "%1 Drive").arg(maxmediacompat);
-        }
-        if (drv->opticalBlank()) {
-            return QCoreApplication::translate("DeepinStorage", "Blank %1 Disc").arg(opticalmediamap[drv->media()]);
         }
         if (d->blk->isEncrypted() && !d->ctblk) {
             return QCoreApplication::translate("DeepinStorage", "%1 Encrypted").arg(FileUtils::formatSize(d->size));
