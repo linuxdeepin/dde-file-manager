@@ -2242,6 +2242,8 @@ void CanvasGridView::initConnection()
             for (auto lf : list) {
                 GridManager::instance()->add(lf);
             }
+            int t_sortRole = this->model()->sortRole();
+            GridManager::instance()->setSortRole(t_sortRole);
             GridManager::instance()->reArrange();
         }
     });

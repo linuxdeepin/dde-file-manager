@@ -54,6 +54,7 @@ public:
     void toggleArrange();
     void setAutoMerge(bool enable = true);
     void toggleAutoMerge();
+    void setSortRole(int role);
     void reArrange();
 
     int gridCount() const;

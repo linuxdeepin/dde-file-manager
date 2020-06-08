@@ -948,7 +948,7 @@ public:
 
 //    QHash<DUrl, FileSystemNodePointer> d->urlToNode;
 
-    int sortRole = DFileSystemModel::FileDisplayNameRole;
+    int sortRole = DFileSystemModel::FileMimeTypeRole;
     QStringList nameFilters;
     QDir::Filters filters;
     Qt::SortOrder srotOrder = Qt::AscendingOrder;

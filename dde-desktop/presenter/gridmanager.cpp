@@ -18,6 +18,7 @@
 #include "../config/config.h"
 #include "dabstractfileinfo.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "interfaces/dfilesystemmodel.h"
 
 class GridManagerPrivate
 {
@@ -27,6 +28,7 @@ public:
         auto settings = Config::instance()->settings();
         settings->beginGroup(Config::groupGeneral);
         positionProfile = settings->value(Config::keyProfile).toString();
+        sortRole = settings->value(Config::keySortBy, DFileSystemModel::UnknowRole).toInt();
         autoArrange = settings->value(Config::keyAutoAlign).toBool();
         autoMerge = settings->value(Config::keyAutoMerge, false).toBool();
         settings->endGroup();
@@ -91,6 +93,32 @@ public:
         }
 
         clear();
+
+        //需求：按类型自动排序时，计算机和回收站始终排在最前面
+        if ((modifyRortRole && sortRole == DFileSystemModel::FileMimeTypeRole)  //运行时修改排序规则后
+           || (!modifyRortRole && sortRole == DFileSystemModel::UnknowRole) )   //初始化时未读取到排序规则时
+        {
+            QString dde_computer;
+            QString dde_transh;
+            for (auto item : sortItems) {
+                if (item.endsWith(QString("/Desktop/dde-computer.desktop"))) {
+                    dde_computer = item;
+                }
+                if (item.endsWith(QString("/Desktop/dde-trash.desktop"))) {
+                    dde_transh = item;
+                }
+                if (!dde_computer.isEmpty() && !dde_transh.isEmpty())
+                    break;
+            }
+            if (!dde_transh.isEmpty()) {
+                sortItems.removeOne(dde_transh);
+                sortItems.prepend(dde_transh);
+            }
+            if (!dde_computer.isEmpty()) {
+                sortItems.removeOne(dde_computer);
+                sortItems.prepend(dde_computer);
+            }
+        }
 
         for (auto item : sortItems) {
             QPoint empty_pos{ takeEmptyPos() };
@@ -536,6 +564,8 @@ public:
     int                     coordWidth;
     int                     coordHeight;
 
+    int                     sortRole=0;
+    bool                    modifyRortRole = false;
     bool                    autoArrange;
     bool                    autoMerge = false;
 
@@ -816,6 +846,12 @@ void GridManager::setAutoMerge(bool enable)
 void GridManager::toggleAutoMerge()
 {
     setAutoMerge(!d->autoMerge);
+}
+
+void GridManager::setSortRole(int role)
+{
+    d->sortRole = role;
+    d->modifyRortRole = true;
 }
 
 void GridManager::reArrange()
