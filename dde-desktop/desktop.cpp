@@ -521,7 +521,6 @@ void Desktop::ShowScreensaverChooser(const QString &screen)
 }
 
 #if USINGOLD
-#ifdef QT_DEBUG
 void Desktop::logAllScreenLabel()
 {
     if (d->background)
@@ -540,4 +539,12 @@ void Desktop::mapLabelScreen(int labelIndex, int screenIndex)
         d->background->mapLabelScreen(labelIndex, screenIndex);
 }
 #endif
-#endif // QT_DEBUG
+
+QList<int> Desktop::GetIconSize()
+{
+    QSize iconSize{0,0};
+    if (d->m_canvas && !d->m_canvas->canvas().isEmpty())
+        iconSize = d->m_canvas->canvas().first()->iconSize();
+    QList<int> size{iconSize.width(),iconSize.height()};
+    return  size;
+}
