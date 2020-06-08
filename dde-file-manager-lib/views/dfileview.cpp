@@ -1917,10 +1917,14 @@ bool DFileView::event(QEvent *e)
                 return DListView::event(e);
             e->accept();
 
-            if (keyEvent->modifiers() == Qt::ShiftModifier)
-                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier));
-            else
-                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier));
+            if (keyEvent->modifiers() == Qt::ShiftModifier){
+                QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier);
+                keyPressEvent(&nkeyEvent);
+            }
+            else {
+                QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier);
+                keyPressEvent(&nkeyEvent);
+            }
 
             return true;
         }

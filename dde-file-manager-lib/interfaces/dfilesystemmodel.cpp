@@ -917,6 +917,11 @@ public:
                 qq->setState(DFileSystemModel::Idle);
             }
         });
+
+        m_checkTimer = new QTimer();
+        qq->connect(m_checkTimer, &QTimer::timeout, qq, [this] {
+            this->_q_checkLaterFileEventQueue();
+        });
     }
 
     ~DFileSystemModelPrivate();
@@ -932,6 +937,8 @@ public:
 
     /// add/rm file event
     void _q_processFileEvent();
+
+    void _q_checkLaterFileEventQueue();
 
     DFileSystemModel *q_ptr;
 
@@ -973,6 +980,8 @@ public:
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
 
+    QPointer<QTimer> m_checkTimer;
+
     Q_DECLARE_PUBLIC(DFileSystemModel)
 };
 
@@ -980,6 +989,11 @@ DFileSystemModelPrivate::~DFileSystemModelPrivate()
 {
     if (_q_processFileEvent_runing.load()) {
         fileEventQueue.clear();
+    }
+
+    if (m_checkTimer) {
+        m_checkTimer->stop();
+        m_checkTimer->deleteLater();
     }
 }
 
@@ -1050,13 +1064,12 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     if (!info || !passFileFilters(info)) {
         return;
     }
-
 //    rootNodeManager->addFile(info);
     if (!_q_processFileEvent_runing.load()) {
-        fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
         while (!laterFileEventQueue.isEmpty()) {
             fileEventQueue.enqueue(laterFileEventQueue.dequeue());
         }
+        fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
     } else {
         laterFileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
@@ -1076,10 +1089,10 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
         flf.save();
     }
     if (!_q_processFileEvent_runing.load()) {
-        fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
         while (!laterFileEventQueue.isEmpty()) {
             fileEventQueue.enqueue(laterFileEventQueue.dequeue());
         }
+        fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
     } else {
         laterFileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
@@ -1124,6 +1137,8 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
     Q_Q(DFileSystemModel);
 
     const FileSystemNodePointer &node = rootNode;
+    //fix 27828 文件属性改变刷新一次缓存数据
+    DAbstractFileInfoPointer newFileInfo = fileService->createFileInfo(nullptr, fileUrl);
 
     if (!node) {
         return;
@@ -1162,16 +1177,20 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         return;
     }
 
+    if (m_checkTimer->isActive()) {
+        m_checkTimer->stop();
+    }
+
     // CAS
     bool expect = false;
     _q_processFileEvent_runing.compare_exchange_strong(expect, true);
 
     qDebug() << "_q_processFileEvent";
     Q_Q(DFileSystemModel);
+    bool hasAddOrRm = false;
     while (!fileEventQueue.isEmpty()) {
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         const DUrl &fileUrl = event.second;
-
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
 
         if (!info) {
@@ -1192,6 +1211,10 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             if (!nparentUrl.path().endsWith('/') && rootUrl.path().endsWith("/")) {
                 nparentUrl.setPath(nparentUrl.path() + "/");
             }
+        }
+
+        if (event.first == RmFile || event.first == AddFile) {
+            hasAddOrRm = true;
         }
 
         if (nfileUrl == rootUrl) {
@@ -1219,6 +1242,28 @@ void DFileSystemModelPrivate::_q_processFileEvent()
     }
 
     _q_processFileEvent_runing.store(false);
+    //添加或删除文件事件队列可能残存未推出的事件。
+    //在processFileEvent结束后需要延迟检查一下laterFileEventQueue是否还有未执行事件
+    if (hasAddOrRm) {
+        m_checkTimer->setSingleShot(true);
+        m_checkTimer->start(200);
+    }
+}
+
+//检查laterFileEventQueue中是否还有没推出的事件。
+void DFileSystemModelPrivate::_q_checkLaterFileEventQueue()
+{
+    qDebug() << "_q_checkLaterFileEventQueue";
+    Q_Q(DFileSystemModel);
+    if (!_q_processFileEvent_runing.load()) {
+        while (!laterFileEventQueue.isEmpty()) {
+            fileEventQueue.enqueue(laterFileEventQueue.dequeue());
+        }
+
+        if (fileEventQueue.count() > 0) {
+            q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+        }
+    }
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
@@ -1714,12 +1759,12 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         if (d->readOnly) {
             return flags;
         }
-
-        if (indexNode->fileInfo->canRename()) {
+        //fix bug 29914 fileInof为nullptr
+        if (indexNode && indexNode->fileInfo && indexNode->fileInfo->canRename()) {
             flags |= Qt::ItemIsEditable;
         }
 
-        if (indexNode->fileInfo->isWritable()) {
+        if (indexNode && indexNode->fileInfo && indexNode->fileInfo->isWritable()) {
             //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时ignoreDropFlag为true，不调用candrop，节省时间,bug#10926
             if (!ignoreDropFlag && indexNode->fileInfo->canDrop()) {
                 flags |= Qt::ItemIsDropEnabled;
@@ -2502,6 +2547,10 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        if (fileHash.contains(fileInfo->fileUrl())) {
 //            continue;
 //        }
+        //fix bug 29914 fileInof为nullptr
+        if (!fileInfo) {
+            continue;
+        }
         //挂载设备下目录添加tag后 移除该挂载设备 目录已不存在但其URL依然还保存在tag集合中
         //该问题导致这些不存在的目录依然会添加到tag的fileview下 引起其他被标记文件可能标记数据获取失败
         //为了避免引起其他问题 暂时只对tag的目录做处理

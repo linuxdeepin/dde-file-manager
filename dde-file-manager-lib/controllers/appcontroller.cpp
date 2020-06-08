@@ -624,9 +624,14 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 
             blkdev->unmount({});
             QDBusError err = blkdev->lastError();
+            if(err.type() == QDBusError::NoReply ) // bug 29268, 用户超时操作
+            {
+                qDebug() << "action timeout with noreply response";
+                dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
+            }
             // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
             // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
-            if (err.isValid() && err.type() != QDBusError::Other) {
+            else if (err.isValid() && err.type() != QDBusError::Other) {
                 qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
                 dialogManager->showErrorDialog(tr("Disk is busy, cannot unmount now"), QString());
             }
@@ -689,6 +694,22 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                 QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
                 if (!blk->mountPoints().empty()) {
                     blk->unmount({});
+
+                    QDBusError lastError = blk->lastError();
+
+                    if(lastError.type() == QDBusError::Other ) // bug 27164, 取消 应该直接退出操作
+                    {
+                        qDebug() << "blk action has been canceled";
+                        return;
+                    }
+
+                    if(lastError.type() == QDBusError::NoReply ) // bug 29268, 用户超时操作
+                    {
+                        qDebug() << "action timeout with noreply response";
+                        dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
+                        return;
+                    }
+
                     err |= blk->lastError().isValid();
                 }
                 if (blk->cryptoBackingDevice().length() > 1) {
@@ -697,9 +718,14 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                 }
                 drv->eject({});
                 err |= drv->lastError().isValid();
+                QDBusError dbusError = drv->lastError();
                 if (err) {
-                    qDebug() << "disc eject error: " << drv->lastError().message() << drv->lastError().name() << drv->lastError().type();
-                    QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                    // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
+                    // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
+                    if (dbusError.isValid() && dbusError.type() != QDBusError::Other) {
+                        qDebug() << "disc eject error: " << dbusError.message() << dbusError.name() << dbusError.type();
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                    }
                 }
             }
         });
@@ -729,6 +755,13 @@ void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent
             if(lastError.type() == QDBusError::Other ) // bug 27164, 取消 应该直接退出操作
             {
                 qDebug() << "blk action has been canceled";
+                return;
+            }
+
+            if(lastError.type() == QDBusError::NoReply ) // bug 29268, 用户超时操作
+            {
+                qDebug() << "action timeout with noreply response";
+                dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
                 return;
             }
 

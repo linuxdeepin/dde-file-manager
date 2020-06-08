@@ -25,6 +25,7 @@
 #include "dfmglobal.h"
 #include "filebatchprocess.h"
 #include "dfmeventdispatcher.h"
+#include "tag/tagmanager.h"
 
 #include <QDebug>
 #include <QByteArray>
@@ -69,6 +70,13 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUr
         if(!isDeskTopApp){
             fileBaseName += suffix;
         }
+
+        //tag目录重命名走的逻辑和一般文件目录重命名不一样，这里单独处理tag目录重命名逻辑
+        if (url.isTaggedFile() && url.taggedLocalFilePath().isEmpty()) {
+            TagManager::instance()->changeTagName(qMakePair(url.tagName(), fileBaseName));
+            continue;
+        }
+
         DUrl changedUrl{ info->getUrlByNewFileName(fileBaseName) };
 
         if (changedUrl != url)
@@ -115,6 +123,13 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::addText(const QList<DUrl> &originUrls, 
         if(!isDeskTopApp){
             fileBaseName += suffix;
         }
+
+        //tag目录重命名走的逻辑和一般文件目录重命名不一样，这里单独处理tag目录重命名逻辑
+        if (url.isTaggedFile() && url.taggedLocalFilePath().isEmpty()) {
+            TagManager::instance()->changeTagName(qMakePair(url.tagName(), fileBaseName));
+            continue;
+        }
+
         DUrl changedUrl = { info->getUrlByNewFileName(fileBaseName) };
 
         if(isDeskTopApp) {
@@ -164,6 +179,14 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
         }
 
         fileBaseName = isDeskTopApp ? (fileBaseName + index_string) : (fileBaseName + index_string + suffix);
+
+        //tag目录重命名走的逻辑和一般文件目录重命名不一样，这里单独处理tag目录重命名逻辑
+        if (url.isTaggedFile() && url.taggedLocalFilePath().isEmpty()) {
+            TagManager::instance()->changeTagName(qMakePair(url.tagName(), fileBaseName));
+            ++index;
+            continue;
+        }
+
         DUrl beModifieddUrl = { info->getUrlByNewFileName(fileBaseName) };
         result->insert(url, beModifieddUrl);
 
