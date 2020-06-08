@@ -1253,15 +1253,20 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
 
     QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d] {
-        d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
-        emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
+        DUrl url = currentUrl();
+        if(VaultController::isVaultFile(url.path()) && !url.isVaultFile())
+        {
+            url = VaultController::localUrlToVault(url);
+        }
+        d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, url));
+        emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, url));
 
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, currentUrl());
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
         if (info)
         {
             setWindowTitle(info->fileDisplayName());
-        } else if (currentUrl().isComputerFile())
+        } else if (url.isComputerFile())
         {
             setWindowTitle(systemPathManager->getSystemPathDisplayName("Computer"));
         }

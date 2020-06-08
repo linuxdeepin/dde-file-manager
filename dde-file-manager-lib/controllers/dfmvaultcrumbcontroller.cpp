@@ -55,8 +55,11 @@ QList<CrumbData> DFMVaultCrumbController::seprateUrl(const DUrl &url)
         return list;
     }
     QStorageInfo storageInfo(path);
-    prefixPath = storageInfo.rootPath() + "/";
-
+    QFile file(path);
+    if(file.exists())
+        prefixPath = storageInfo.rootPath() + "/";
+    else
+        prefixPath = VaultController::makeVaultLocalPath();
     // 设置地址栏保险箱图标
     QString text = Singleton<PathManager>::instance()->getSystemPathDisplayName("Vault");
     QString iconName = Singleton<PathManager>::instance()->getSystemPathIconName("Vault");
