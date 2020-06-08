@@ -51,4 +51,6 @@ protected:
 
 public slots:
     void lockVault(int state);
+
+    void onVaultRepaint();
 };
