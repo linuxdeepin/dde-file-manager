@@ -690,11 +690,7 @@ qint64 VaultController::getVaultCurSize()
     QString temp = info.fileSystemType();
     if (info.isValid() && temp == "fuse.cryfs")
     {
-        QDir dir(strVaultPath);
-        QList<QFileInfo> lstFile = dir.entryInfoList(QDir::NoDotAndDotDot);
-        if(lstFile.count() == 0)
-            return 0;
-        return info.bytesTotal() - info.bytesFree();
+        return info.bytesTotal() - info.bytesFree() - 32704;
     }else{
         return 0;
     }
