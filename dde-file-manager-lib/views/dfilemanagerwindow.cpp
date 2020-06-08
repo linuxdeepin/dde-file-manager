@@ -1238,11 +1238,6 @@ void DFileManagerWindow::initConnect()
     // 用于创建完保险箱后进入保险箱目录
     QObject::connect(fileSignalManager, &FileSignalManager::requestCdDir,
                      this, &DFileManagerWindow::cd);
-    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, [](){
-        // 进入保险箱主界面
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        emit fileSignalManager->requestCdDir(vaultUrl);
-    });
 
     QObject::connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onCurrentTabChanged);

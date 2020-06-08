@@ -447,10 +447,29 @@ void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
     }
 }
 
-void DFMSideBar::onOpenVault()
+void DFMSideBar::onUnlockVault()
 {
-    // 进入保险箱
     QWidget *wndPtr = DFMVaultUnlockPages::instance()->getWndPtr();
+
+    if (wndPtr == this->topLevelWidget()) {
+        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
+        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
+    }
+}
+
+void DFMSideBar::onCreateVault()
+{
+    QWidget *wndPtr = DFMVaultActiveView::getInstance().getWndPtr();
+
+    if (wndPtr == this->topLevelWidget()) {
+        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
+        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
+    }
+}
+
+void DFMSideBar::onRecoverVault()
+{
+    QWidget *wndPtr = DFMVaultRecoveryKeyPages::instance()->getWndPtr();
 
     if (wndPtr == this->topLevelWidget()) {
         DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
@@ -460,8 +479,10 @@ void DFMSideBar::onOpenVault()
 
 void DFMSideBar::onRemoveVault()
 {
-    // 切换到home目录下
-    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())));
+    QWidget *wndPtr = DFMVaultRemovePages::instance()->getWndPtr();
+    if (wndPtr == this->topLevelWidget()) {
+        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())));
+    }
 }
 
 void DFMSideBar::initUI()
@@ -792,11 +813,11 @@ void DFMSideBar::initVaultConnection()
 {
     connect(DFMVaultRemovePages::instance(), &DFMVaultRemovePages::accepted, this, &DFMSideBar::onRemoveVault);
 
-    connect(DFMVaultUnlockPages::instance(), &DFMVaultUnlockPages::accepted, this, &DFMSideBar::onOpenVault);
+    connect(DFMVaultUnlockPages::instance(), &DFMVaultUnlockPages::accepted, this, &DFMSideBar::onUnlockVault);
 
-    connect(DFMVaultRecoveryKeyPages::instance(), &DFMVaultRecoveryKeyPages::accepted, this, &DFMSideBar::onOpenVault);
+    connect(DFMVaultRecoveryKeyPages::instance(), &DFMVaultRecoveryKeyPages::accepted, this, &DFMSideBar::onRecoverVault);
 
-    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, this, &DFMSideBar::onOpenVault);
+    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, this, &DFMSideBar::onCreateVault);
 }
 
 void DFMSideBar::applySidebarColor()

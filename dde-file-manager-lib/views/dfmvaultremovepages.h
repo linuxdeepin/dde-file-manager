@@ -17,6 +17,9 @@ class DFMVaultRemovePages : public DDialog
 public:   
     static DFMVaultRemovePages* instance();
 
+    void setWndPtr(QWidget *wnd);
+    QWidget *getWndPtr() const;
+
     void showTop();
 
 public slots:
@@ -44,6 +47,8 @@ private:
 
     QStackedWidget * m_stackedWidget {nullptr};   //用于页面切换
     bool m_bRemoveVault = false;
+
+    QWidget *m_wndptr = nullptr;
 };
 
 #endif // DFMVAULTREMOVEPAGES_H
