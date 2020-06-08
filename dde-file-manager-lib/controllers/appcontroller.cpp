@@ -547,7 +547,8 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
         QtConcurrent::run([=] {
-            getOpticalDriveMutex()->lock();
+            QMutexLocker locker(getOpticalDriveMutex()); //bug 31318 refine
+
             DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(fileUrl.query());
             if (dp.devid.length() == 0) {
                 if (blkdev->mountPoints().size()) {
@@ -562,13 +563,13 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
                     diskdev->eject({});
                     if (diskdev->optical())
                         QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
-                    getOpticalDriveMutex()->unlock();
+
                     return;
                 }
                 dp = ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
             }
-            getOpticalDriveMutex()->unlock();
+
             if (!dp.formatted) {
                 //blkdev->mount({});
                 //We have to stick with 'UDisk'Listener until actionOpenDiskInNew*

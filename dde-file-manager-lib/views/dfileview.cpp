@@ -2233,28 +2233,31 @@ bool DFileView::setRootUrl(const DUrl &url)
             return false;
         }
         QString udiskspath = rootDeviceNode.first();
-        getOpticalDriveMutex()->lock();
+        //getOpticalDriveMutex()->lock();// 主线程不能加锁，否则导致界面僵死：bug 31318:切换用户，打开文件管理器，多次点击左侧光驱栏目，右键，关闭一个授权弹窗，文件管理器卡死
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
-        getOpticalDriveMutex()->unlock();
+        //getOpticalDriveMutex()->unlock();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         if (!dp.devid.length()) {
             QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
             QSharedPointer<QFutureWatcher<bool>> fw(new QFutureWatcher<bool>);
             connect(fw.data(), &QFutureWatcher<bool>::finished, this, [ = ] {
-                QGuiApplication::restoreOverrideCursor();
+                //QGuiApplication::restoreOverrideCursor();
+                QGuiApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // bug 31318， 应该直接使用ArrowCursor，否则多个弹窗的情况下，鼠标要出问题
                 if (fw->result())
                 {
                     cd(fileUrl);
                 }
             });
             fw->setFuture(QtConcurrent::run([ = ] {
-                getOpticalDriveMutex()->lock();
+                QMutexLocker locker(getOpticalDriveMutex());
+
                 blkdev->unmount({});
                 // fix bug 27211 用户操作其他用户挂载的设备的时候，需要先卸载，卸载得提权，如果用户直接关闭了对话框，会返回错误代码 QDbusError::Other
                 // 需要对错误进行处理，出错的时候就不再执行后续操作了。
                 QDBusError err = blkdev->lastError();
                 if (err.isValid() && !err.name().toLower().contains("notmounted")) { // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
-                    getOpticalDriveMutex()->unlock();
+
+                    qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
                     return false;
                 }
                 if (!ISOMaster->acquireDevice(devpath))
@@ -2267,13 +2270,13 @@ bool DFileView::setRootUrl(const DUrl &url)
                     qDebug() << "setRootUrl failed:" << blkdev->drive();
                     if (diskdev->optical())
                         QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
-                    getOpticalDriveMutex()->unlock();
+
                     return false;
                 }
                 ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
                 blkdev->mount({});
-                getOpticalDriveMutex()->unlock();
+
                 return true;
             }));
             return false;
