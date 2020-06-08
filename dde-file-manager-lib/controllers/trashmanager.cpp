@@ -376,12 +376,13 @@ void TrashManager::cleanTrash(const QObject *sender) const
     if (QFile::exists(file_url.toLocalFile())) {
         list << file_url;
     }
+    bool ret = fileService->deleteFiles(sender, list, false, false, true);
 
-    if (QFile::exists(info_url.toLocalFile())) {
-        list << info_url;
+    // 清空回收站意味着回收站所有文件都被删除，因此直接删除info的目录即可
+    if (ret) {
+        QString infoPaht = info_url.toLocalFile();
+        QProcess::execute("rm -r \"" + infoPaht.toUtf8() + "\"");
     }
-
-    fileService->deleteFiles(sender, list, false, false, true);
 }
 
 bool TrashManager::isEmpty()
