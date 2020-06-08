@@ -712,7 +712,7 @@ private:
 
                 const FileSystemNodePointer &node = rootNode->getNodeByIndex(row);
 
-                if (node->fileInfo->isFile()) {
+                if (node->fileInfo && node->fileInfo->isFile()) {
                     break;
                 }
 
@@ -1004,7 +1004,7 @@ bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node)
     }
 
     // Check the name regularexpression filters
-    if (!(node->fileInfo->isDir() && (filters & QDir::Dirs))) {
+    if (!(node->fileInfo && node->fileInfo->isDir() && (filters & QDir::Dirs))) {
         const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
         for (int i = 0; i < nameFilters.size(); ++i) {
