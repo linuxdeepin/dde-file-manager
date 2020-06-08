@@ -99,7 +99,7 @@ private:
     /**
      * @brief 显示凭证页面
      */
-    void showCertificateView();
+    void showCertificateView(QWidget *wndPtr);
 
 private:
     DFMVaultUnlockPages *m_vaultUnlockPage { nullptr };

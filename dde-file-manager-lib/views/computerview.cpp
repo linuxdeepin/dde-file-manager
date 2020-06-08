@@ -196,6 +196,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
             }
             case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
                 // todo                
+                DFMVaultUnlockPages::instance()->setWndPtr(this->topLevelWidget());
                 DFMVaultUnlockPages::instance()->show();
                 DFMVaultUnlockPages::instance()->raise();
                 break;
