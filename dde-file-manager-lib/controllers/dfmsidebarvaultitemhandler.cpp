@@ -194,8 +194,8 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
         // 使用恢复凭证
         action = DFileMenuManager::getAction(MenuAction::UnLockByKey);
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            showCertificateView();
+        QObject::connect(action, &QAction::triggered, action, [this, topWidget](){
+            showCertificateView(topWidget);
         });
     }    
 
@@ -258,9 +258,11 @@ void DFMSideBarVaultItemHandler::showUnLockView(QWidget *wndPtr)
     DFMVaultUnlockPages::instance()->raise();
 }
 
-void DFMSideBarVaultItemHandler::showCertificateView()
+void DFMSideBarVaultItemHandler::showCertificateView(QWidget *wndPtr)
 {
     // Something to do.
+    DFMVaultUnlockPages::instance()->setWndPtr(wndPtr);
+
     DFMVaultRecoveryKeyPages::instance()->show();
     DFMVaultRecoveryKeyPages::instance()->raise();
 }
