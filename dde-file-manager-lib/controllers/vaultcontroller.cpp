@@ -218,13 +218,7 @@ VaultController *VaultController::getVaultController()
 
 const DAbstractFileInfoPointer VaultController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
-    //! 打开文管对保险箱大小进行计算（每次开打只进行一次）
     DUrl url(makeVaultUrl());
-    if(VaultCalculation::Initialize()->m_flg)
-    {
-        VaultCalculation::Initialize()->m_flg = false;
-        VaultCalculation::Initialize()->calculationVault();
-    }
 
     if(url == event->url())
     {

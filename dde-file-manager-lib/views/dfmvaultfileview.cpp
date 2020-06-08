@@ -40,20 +40,9 @@ VaultHeaderView::VaultHeaderView(QWidget *parent)
     font.setPixelSize(24);
     lb->setFont(font);
 
-    //DIconButton * menuBtn = new DIconButton(DStyle::SP_TitleBarMenuButton, this);
-    //menuBtn->setFixedSize(QSize(32, 32));
-
     QHBoxLayout * layout = new QHBoxLayout(this);
     layout->addWidget(lb);    
     layout->addStretch();
-
-    //layout->addWidget(menuBtn);
-
-//    connect(menuBtn, &QAbstractButton::clicked, this, [=](){
-//        DFileMenu * menu = createMenu();
-//        menu->exec(menuBtn->mapToGlobal(menuBtn->rect().center()));
-//        menu->deleteLater();
-//    });
 }
 
 DFileMenu *VaultHeaderView::createMenu()
@@ -71,23 +60,7 @@ DFileMenu *VaultHeaderView::createMenu()
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
-//    VaultHeaderView * headerView = new VaultHeaderView(this);
-//    int index = this->addHeaderWidget(headerView);
-//    Q_UNUSED(index);
-
-//    connect(headerView, &VaultHeaderView::requestLockVault, this, [this](){
-//        if (VaultController::lockVault()) {
-//            cd(VaultController::makeVaultUrl("/", "unlock"));
-//        }
-//    });
-
-//    connect(headerView, &VaultHeaderView::sRequestLockVault, VaultController::getVaultController(), &VaultController::lockVault);
-
     connect(VaultController::getVaultController(), &VaultController::signalLockVault, this, &DFMVaultFileView::lockVault);
-
-//    connect(headerView, &VaultHeaderView::requestGenerateRecoveryKey, this, [this](){
-//        cd(VaultController::makeVaultUrl("/verify", "recovery_key"));
-//    });
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
@@ -97,10 +70,8 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     if (state != VaultController::Unlocked) {
         switch (state) {
         case VaultController::NotExisted:
-//            cd(VaultController::makeVaultUrl("/", "setup"));
             return false;
         case VaultController::Encrypted:
-//            cd(VaultController::makeVaultUrl("/", "unlock"));
             return false;
         default:
             return false;
