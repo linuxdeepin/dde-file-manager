@@ -24,6 +24,9 @@ public:
         return dlg;
     }
 
+    void setWndPtr(QWidget *wnd);
+    QWidget *getWndPtr() const;
+
     // 置顶显示
     void showTop();
 
@@ -47,6 +50,8 @@ private:
     DFMVaultActiveSetUnlockMethodView       *m_pSetUnclockMethodWidget;
     DFMVaultActiveSaveKeyView               *m_SaveKeyWidget;
     DFMVaultActiveFinishedView              *m_ActiveVaultFinishedWidget;
+
+    QWidget *m_wndptr = nullptr;
 };
 
 #endif // DFMVAULTACTIVEVIEW_H
