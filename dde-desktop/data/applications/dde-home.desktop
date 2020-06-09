@@ -9,8 +9,8 @@ OnlyShowIn=Deepin;
 Terminal=false
 Type=Application
 X-AppStream-Ignore=true
-X-Deepin-AppID=dde-home
-X-Deepin-Vendor=user-custom
+X-Deepin-AppID=dde-file-manager
+X-Deepin-Vendor=deepin
 
 # Translations:
 # Do not manually modify!
