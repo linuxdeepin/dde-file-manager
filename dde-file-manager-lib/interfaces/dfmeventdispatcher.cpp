@@ -95,7 +95,7 @@ int DFMEventFuture::waitForFinishedWithEventLoop(QEventLoop::ProcessEventsFlags 
 
         return loop.exec(flags);
     };
-    // Run in main thread
+    //Run in main thread
     return DThreadUtil::runInMainThread(fun);
 }
 

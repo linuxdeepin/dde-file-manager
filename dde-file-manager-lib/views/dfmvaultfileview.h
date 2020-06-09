@@ -23,21 +23,6 @@
 #include "dfileview.h"
 #include "interfaces/dfilemenu.h"
 
-class VaultHeaderView : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit VaultHeaderView(QWidget *parent = nullptr);
-
-signals:
-    void requestLockVault();
-    void requestGenerateRecoveryKey();
-    void sRequestLockVault(QString lockdir = "", QString unlockdir = "");
-
-private:
-    DFileMenu * createMenu();
-};
-
 class DFMVaultFileView : public DFileView
 {
     Q_OBJECT
