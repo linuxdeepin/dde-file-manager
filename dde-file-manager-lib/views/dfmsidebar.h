@@ -114,9 +114,6 @@ private:
     bool m_contextMenuEnabled = true;
     QList<DUrl> devitems;
     QSet<QString> m_disableUrlSchemes;
-    //临时处理方案,处理第一个menu事件还没处理完就出现第二个menu事件创建
-    bool m_bmenuexec;
-    QTimer *m_timer;
 
 };
 

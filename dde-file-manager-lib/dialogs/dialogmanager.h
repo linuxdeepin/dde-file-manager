@@ -132,6 +132,7 @@ public slots:
     void raiseAllPropertyDialog();
     void handleFocusChanged(QWidget* old, QWidget* now);
     void showTaskProgressDlgOnActive();
+    int showUnableToLocateDir(const QString &dir);
 
     void refreshPropertyDialogs(const DUrl& oldUrl, const DUrl& newUrl);
 
