@@ -1206,7 +1206,9 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 void DialogManager::showErrorDialog(const QString &title, const QString &message)
 {
     DDialog d(title, message);
-
+    Qt::WindowFlags flags = d.windowFlags();
+    // dialog show top
+    d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
     d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
     d.setMaximumWidth(640);

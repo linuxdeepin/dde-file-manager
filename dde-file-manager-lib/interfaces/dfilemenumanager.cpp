@@ -284,7 +284,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             }
         }
 #else  //原来的实现
-        foreach (DUrl url, urlList) {
+        foreach (DUrl url, urls) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
 
             if (!FileUtils::isArchive(url.path())) {
@@ -384,7 +384,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                 action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
             } else {
                 DUrlList redirectedUrlList;
-                for (auto url : urlList) {
+                for (auto url : urls) {
                     DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, url);
                     auto redirectedUrl = info->redirectedFileUrl();
                     if (redirectedUrl.isValid()) {
@@ -417,7 +417,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     qDebug() << "add send action: " << pDeviceinfo->getDiskInfo().name();
                     QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
                     action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
-                    action->setProperty("urlList", DUrl::toStringList(urlList));
+                    action->setProperty("urlList", DUrl::toStringList(urls));
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
                     QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
                     action->setProperty("isOpticalDevice", tempId.startsWith("sr")); // fix bug#27909 原本使用 pDeviceinfo->getDiskInfo().iconName() 字段作为判定是否是光驱设备的依据，但root权限下该字段值为空，因此采用卷标 tempId 来判定是否是光驱设备
@@ -434,8 +434,8 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     //获取用户名有问题，fix
 
                     // 禁用发送到列表中的本设备项
-                    if (urlList.count() > 0) {
-                        DUrl url = urlList[0];
+                    if (urls.count() > 0) {
+                        DUrl url = urls[0];
                         if (url.path().contains(pDeviceinfo->getDiskInfo().id()))
                             action->setEnabled(false);
                     }

@@ -261,8 +261,12 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     return false;
 }
 
+// 2020/6/8 系统更新后，怀疑dtk更新，导致原有鼠标事件不可用，屏蔽文管实现
 bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event)
+    return false;
+#if 0
     if (!event)
         return false;
 
@@ -311,6 +315,7 @@ bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
 
     move = false;
     return false;
+#endif
 }
 
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
@@ -1233,11 +1238,6 @@ void DFileManagerWindow::initConnect()
     // 用于创建完保险箱后进入保险箱目录
     QObject::connect(fileSignalManager, &FileSignalManager::requestCdDir,
                      this, &DFileManagerWindow::cd);
-    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, [](){
-        // 进入保险箱主界面
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        emit fileSignalManager->requestCdDir(vaultUrl);
-    });
 
     QObject::connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onCurrentTabChanged);
@@ -1253,15 +1253,20 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
 
     QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d] {
-        d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
-        emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
+        DUrl url = currentUrl();
+        if(VaultController::isVaultFile(url.path()) && !url.isVaultFile())
+        {
+            url = VaultController::localUrlToVault(url);
+        }
+        d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, url));
+        emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, url));
 
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, currentUrl());
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
         if (info)
         {
             setWindowTitle(info->fileDisplayName());
-        } else if (currentUrl().isComputerFile())
+        } else if (url.isComputerFile())
         {
             setWindowTitle(systemPathManager->getSystemPathDisplayName("Computer"));
         }

@@ -57,6 +57,7 @@
 
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 0
+
 class FileSystemNode : public QSharedData
 {
 public:
@@ -77,6 +78,8 @@ public:
 
     ~FileSystemNode()
     {
+        visibleChildren.clear();
+        children.clear();
 ////        rwLock->lockForWrite();
 //        qDebug()<< m_dFileSystemModel->m_allFileSystemNodes[this];
 //        m_dFileSystemModel->m_allFileSystemNodes.remove(this);
@@ -143,12 +146,12 @@ public:
         if (isUpdate) return;
 
         if (visible) {
-            if (!visibleChildren.contains(node.data())) {
-                visibleChildren.append(node.data());
+            if (!visibleChildren.contains(node)) {
+                visibleChildren.append(node);
             }
         } else {
-            if (visibleChildren.contains(node.data())) {
-                visibleChildren.removeOne(node.data());
+            if (visibleChildren.contains(node)) {
+                visibleChildren.removeOne(node);
             }
         }
     }
@@ -162,7 +165,7 @@ public:
 
         for (auto node : children) {
             if (!node->shouldHideByFilterRule(filter)) {
-                visibleChildren.append(node.data());
+                visibleChildren.append(node);
             }
         }
     }
@@ -205,7 +208,7 @@ public:
     {
         if (isUpdate) return;
         children[url] = node;
-        visibleChildren.insert(index, node.data());
+        visibleChildren.insert(index, node);
     }
 
     void insertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
@@ -219,7 +222,7 @@ public:
     {
         if (isUpdate) return;
         children[url] = node;
-        visibleChildren.append(node.data());
+        visibleChildren.append(node);
     }
 
     void appendChildren(const DUrl &url, const FileSystemNodePointer &node)
@@ -241,14 +244,8 @@ public:
     FileSystemNodePointer getNodeByIndex(int index)
     {
         rwLock->lockForRead();
-        FileSystemNode *n = visibleChildren.value(index);
-
-        if (n && n->ref < 1) {
-            n = nullptr;
-        }
-        FileSystemNodePointer node(n);
+        FileSystemNodePointer node = visibleChildren.value(index);
         rwLock->unlock();
-
         return node;
     }
 
@@ -257,7 +254,7 @@ public:
          if (isUpdate) return FileSystemNodePointer();
         rwLock->lockForWrite();
         FileSystemNodePointer node = children.take(url);
-        visibleChildren.removeOne(node.data());
+        visibleChildren.removeOne(node);
         rwLock->unlock();
 
         return node;
@@ -279,7 +276,7 @@ public:
         return node;
     }
 
-    int indexOfChild(FileSystemNode *node)
+    int indexOfChild(const FileSystemNodePointer &node)
     {
         rwLock->lockForRead();
         int index = visibleChildren.indexOf(node);
@@ -292,7 +289,7 @@ public:
     {
         rwLock->lockForRead();
         const FileSystemNodePointer &node = children.value(url);
-        int index = visibleChildren.indexOf(node.data());
+        int index = visibleChildren.indexOf(node);
         rwLock->unlock();
 
         return index;
@@ -305,7 +302,7 @@ public:
         return visibleChildren.count();
     }
 
-    QList<FileSystemNode *> getChildrenList() const
+    QList<FileSystemNodePointer> getChildrenList() const
     {
         return visibleChildren;
     }
@@ -318,7 +315,7 @@ public:
 
         list.reserve(visibleChildren.size());
 
-        for (const FileSystemNode *node : visibleChildren)
+        for (const FileSystemNodePointer &node : visibleChildren)
             list << node->fileInfo->fileUrl();
 
         rwLock->unlock();
@@ -326,7 +323,7 @@ public:
         return list;
     }
 
-    void setChildrenList(const QList<FileSystemNode *> &list)
+    void setChildrenList(const QList<FileSystemNodePointer> &list)
     {
         if (isUpdate) return;
         rwLock->lockForWrite();
@@ -438,7 +435,8 @@ private:
     // todo: 后期全面优化，暂不改动此处基本逻辑
     bool isUpdate = false;
     QHash<DUrl, FileSystemNodePointer> children;
-    QList<FileSystemNode *> visibleChildren;
+    //fix bug 31225,if children clear,another thread useing visibleChildren will crush,so use FileSystemNodePointer
+    QList<FileSystemNodePointer> visibleChildren;
     QReadWriteLock *rwLock = nullptr;
     DFileSystemModel *m_dFileSystemModel;
 };
@@ -715,6 +713,7 @@ private:
                 }
 
                 const FileSystemNodePointer &node = rootNode->getNodeByIndex(row);
+
                 //因在自动整理时，超时会在次判定，导致文件夹以及分类文件夹会出现在扩展分类之前，
                 //所以加一个node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME规避掉
                 if (node->fileInfo->isFile() && node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME) {
@@ -2368,7 +2367,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
 
     qDebug()<<"start the sort business";
 
-    QList<FileSystemNode *> list = node->getChildrenList();
+    QList<FileSystemNodePointer> list = node->getChildrenList();
 
     d->rootNode->setIsUpdate(true);
     bool ok = sort(node->fileInfo, list);
@@ -2484,7 +2483,7 @@ bool DFileSystemModel::setColumnCompact(bool compact)
         }
 
         d->rootNode->setIsUpdate(true);
-        for (const FileSystemNode *child : d->rootNode->getChildrenList()) {
+        for (const FileSystemNodePointer &child : d->rootNode->getChildrenList()) {
             child->fileInfo->setColumnCompact(compact);
         }
         d->rootNode->setIsUpdate(false);
@@ -2552,7 +2551,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     node->clearChildren();
 
     QHash<DUrl, FileSystemNodePointer> fileHash;
-    QList<FileSystemNode *> fileList;
+    QList<FileSystemNodePointer> fileList;
 
     fileHash.reserve(list.size());
     fileList.reserve(list.size());
@@ -2581,7 +2580,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
         if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
             fileHash[fileInfo->fileUrl()] = chileNode;
-            fileList << chileNode.data();
+            fileList << chileNode;
         }
     }
 
@@ -2666,7 +2665,7 @@ void DFileSystemModel::update()
     const QModelIndex &rootIndex = createIndex(d->rootNode, 0);
 
     d->rootNode->setIsUpdate(true);
-    for (const FileSystemNode *node : d->rootNode->getChildrenList()) {
+    for (const FileSystemNodePointer &node : d->rootNode->getChildrenList()) {
         if (node->fileInfo)
             node->fileInfo->refresh();
     }
@@ -2771,7 +2770,7 @@ const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &
 QModelIndex DFileSystemModel::createIndex(const FileSystemNodePointer &node, int column) const
 {
     int row = (node->parent && node->parent->childrenCount() > 0)
-              ? node->parent->indexOfChild(node.data())
+              ? node->parent->indexOfChild(node)
               : 0;
 
     return createIndex(row, column, const_cast<FileSystemNode *>(node.data()));
@@ -2782,7 +2781,7 @@ bool DFileSystemModel::isDir(const FileSystemNodePointer &node) const
     return node->fileInfo->isDir();
 }
 
-bool DFileSystemModel::sort(const DAbstractFileInfoPointer &parentInfo, QList<FileSystemNode *> &list) const
+bool DFileSystemModel::sort(const DAbstractFileInfoPointer &parentInfo, QList<FileSystemNodePointer> &list) const
 {
     Q_D(const DFileSystemModel);
 
@@ -2796,7 +2795,7 @@ bool DFileSystemModel::sort(const DAbstractFileInfoPointer &parentInfo, QList<Fi
         return false;
     }
 
-    qSort(list.begin(), list.end(), [sortFun, d, this](const FileSystemNode * node1, const FileSystemNode * node2) {
+    qSort(list.begin(), list.end(), [sortFun, d, this](const FileSystemNodePointer node1, const FileSystemNodePointer node2) {
 
         if(this->isNeedToBreakBusyCase) //bug 27384: 当是网络文件的时候，这里奇慢，需要快速跳出 qSort操作，目前我只想到这种方案：不做比较，或者 直接跳出sort 更好
             return false;

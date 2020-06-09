@@ -96,6 +96,16 @@ DFMVaultRemovePages *DFMVaultRemovePages::instance()
     return &s_instance;
 }
 
+void DFMVaultRemovePages::setWndPtr(QWidget *wnd)
+{
+    m_wndptr = wnd;
+}
+
+QWidget *DFMVaultRemovePages::getWndPtr() const
+{
+    return m_wndptr;
+}
+
 void DFMVaultRemovePages::showTop()
 {
     this->activateWindow();

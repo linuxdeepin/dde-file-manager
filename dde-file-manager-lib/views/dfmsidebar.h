@@ -88,10 +88,21 @@ private slots:
     void onContextMenuRequested(const QPoint &pos);
     void onRename(const QModelIndex &index, QString newName) const ;
 
+
     /**
-     * @brief onUnlockVault 进入保险箱
+     * @brief onUnlockVault
      */
-    void onOpenVault();
+    void onUnlockVault();
+
+    /**
+     * @brief onCreateVault
+     */
+    void onCreateVault();
+
+    /**
+     * @brief onRecoverVault
+     */
+    void onRecoverVault();
 
     /**
      * @brief onRemoveVault 删除保险箱

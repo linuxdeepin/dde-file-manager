@@ -191,6 +191,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
                 break;
             }
             case EN_VaultState::NotExisted:{    // 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
+                DFMVaultActiveView::getInstance().setWndPtr(this->topLevelWidget());
                 DFMVaultActiveView::getInstance().showTop();
                 break;
             }
