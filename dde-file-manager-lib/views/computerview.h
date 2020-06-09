@@ -66,11 +66,6 @@ public Q_SLOTS:
     void contextMenu(const QPoint &pos);
     void onRenameRequested(const DFMUrlBaseEvent &event);
 
-    /**
-     * @brief vaultCalculationFinish 保险箱大小计算完成后需要刷新页面
-     */
-    void vaultCalculationFinish() const;
-
 protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
