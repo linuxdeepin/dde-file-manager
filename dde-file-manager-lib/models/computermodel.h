@@ -69,6 +69,8 @@ public:
         DFMRootUrlRole = Qt::UserRole + 9,  //DUrl
         VolumeTagRole = Qt::UserRole + 10,  //卷标 sr0
         IconNameRole = Qt::UserRole + 11,   //图标名称
+        DiscUUIDRole = Qt::UserRole + 12,   //设备UUID
+        DiscOpticalRole = Qt::UserRole + 13,//光盘是否是空盘
     };
     Q_ENUM(DataRoles)
 

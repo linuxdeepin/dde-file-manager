@@ -751,7 +751,7 @@ void BackgroundHelper::resetBackgroundVisibleState()
         }
     }
 }
-#ifdef QT_DEBUG
+
 void BackgroundHelper::printLog()
 {
     qDebug() << "\n************************\n";
@@ -811,4 +811,3 @@ void BackgroundHelper::mapLabelScreen(int labelIndex, int screenIndex)
 
     updateBackgroundGeometry(screen, static_cast<BackgroundLabel *>(l));
 }
-#endif //QT_DEBUG

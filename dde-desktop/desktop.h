@@ -39,15 +39,15 @@ public:
     CanvasGridView *getView();
 
 public slots:
-    void Show();
     void ShowWallpaperChooser();
     void ShowScreensaverChooser();
-    void Refresh();
-#ifdef QT_DEBUG
-    void logAllScreenLabel();
-    void logScreenLabel(int index);
-    void mapLabelScreen(int labelIndex, int screenIndex);
-#endif // QT_DEBUG
+
+    Q_SCRIPTABLE void Show();
+    Q_SCRIPTABLE void Refresh();
+    Q_SCRIPTABLE void logAllScreenLabel();
+    Q_SCRIPTABLE void logScreenLabel(int index);
+    Q_SCRIPTABLE void mapLabelScreen(int labelIndex, int screenIndex);
+    Q_SCRIPTABLE QList<int> GetIconSize();
 
 private:
     explicit Desktop();

@@ -373,7 +373,6 @@ void Desktop::Refresh()
         d->screenFrame->Refresh();
 }
 
-#ifdef QT_DEBUG
 void Desktop::logAllScreenLabel()
 {
     if (d->background)
@@ -391,4 +390,10 @@ void Desktop::mapLabelScreen(int labelIndex, int screenIndex)
     if (d->background)
         d->background->mapLabelScreen(labelIndex, screenIndex);
 }
-#endif
+
+QList<int> Desktop::GetIconSize()
+{
+    QSize iconSize = d->screenFrame->iconSize();;
+    QList<int> size{iconSize.width(),iconSize.height()};
+    return  size;
+}
