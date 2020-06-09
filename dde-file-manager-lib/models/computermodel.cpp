@@ -239,9 +239,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 }
             } else {
                 if (pitmdata->fi->fileUrl().scheme() == DFMVAULT_SCHEME) {
-                    // 计算保险箱大小
-                    return QString::number(VaultController::getVaultCurSize());
-//                    return QString::number(pitmdata->fi->size());
+                    return QString::number(pitmdata->fi->size());
                 }
                 return pitmdata->fi->extraProperties()["fsUsed"];
             }

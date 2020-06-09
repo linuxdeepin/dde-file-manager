@@ -23,15 +23,12 @@
 #include "private/dabstractfileinfo_p.h"
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
-#include "dfilestatisticsjob.h"
 #include "dfilesystemmodel.h"
 
 #include <QStandardPaths>
-#include <QStorageInfo>
 #include <QIcon>
 #include <qplatformdefs.h>
 
-qint64 VaultFileInfo::m_vaultSize = 0;
 
 class VaultFileInfoPrivate : public DAbstractFileInfoPrivate
 {
@@ -49,7 +46,6 @@ VaultFileInfo::VaultFileInfo(const DUrl &url)
 
 VaultFileInfo::~VaultFileInfo()
 {
-
 }
 
 bool VaultFileInfo::exists() const
@@ -324,14 +320,12 @@ QIcon VaultFileInfo::fileIcon() const
 
 qint64 VaultFileInfo::size() const
 {
-    if (isRootDirectory() && VaultController::getVaultController()->state() == VaultController::Unlocked)
-    {
-        return m_vaultSize;
+    if (isRootDirectory()) {
+
+        qint64 totoalSize = VaultController::getVaultController()->totalsize();
+        return totoalSize;
     }
-    else if(isRootDirectory())
-    {
-        return 0;
-    }
+
     return DAbstractFileInfo::size();
 }
 
@@ -367,11 +361,6 @@ bool VaultFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) cons
     return false;
 }
 
-void VaultFileInfo::setVaultSize(qint64 size)
-{
-    m_vaultSize = size;
-}
-
 bool VaultFileInfo::isRootDirectory() const
 {
     bool bRootDir = false;
@@ -383,3 +372,4 @@ bool VaultFileInfo::isRootDirectory() const
     }
     return bRootDir;
 }
+
