@@ -153,6 +153,7 @@ public:
     int completedFilesCount = 0;
     int totalMoveFilesCount = 1;
     qint64 completedDataSize = 0;
+    qint64 completedProgressDataSize = 0;
     // 已经写入到block设备的总大小
     qint64 completedDataSizeOnBlockDevice = 0;
     QPair<qint64 /*total*/, qint64 /*writed*/> currentJobDataSizeInfo;
