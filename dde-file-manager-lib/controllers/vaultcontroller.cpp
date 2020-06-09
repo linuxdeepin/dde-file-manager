@@ -328,12 +328,7 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());        
     DFileService::instance()->deleteFiles(event->sender(), urlList);
-<<<<<<< HEAD
-    VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
-    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
-    emit vaultRepaint();
-=======
->>>>>>> Title:fix 29669
+
     return true;
 }
 
@@ -341,12 +336,7 @@ DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> 
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DFileService::instance()->deleteFiles(event->sender(), urlList);
-<<<<<<< HEAD
-    VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
-    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
-    emit vaultRepaint();
-=======
->>>>>>> Title:fix 29669
+
     return urlList;
 }
 
