@@ -232,18 +232,20 @@ bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
         for(; itr != lstShellOutput.end(); ++itr){
             setResult.insert(*itr);
         }
-        // 遍历桌面窗口
-        bool bFlag = false;
-        for(auto window: DWindowManagerHelper::instance()->currentWorkspaceWindows()) {
-            QString strWid = QString("%1").arg(window->pid());
-            // 如果当前窗口的进程PID属于压缩进程，则将窗口置顶
-            if(setResult.contains(strWid)){
-                window->raise();
-                bFlag = true;
+        if(setResult.count() > 0){  // 有压缩任务
+            // 遍历桌面窗口
+            bool bFlag = false;
+            for(auto window: DWindowManagerHelper::instance()->currentWorkspaceWindows()) {
+                QString strWid = QString("%1").arg(window->pid());
+                // 如果当前窗口的进程PID属于压缩进程，则将窗口置顶
+                if(setResult.contains(strWid)){
+                    window->raise();
+                    bFlag = true;
+                }
             }
-        }
-        if(bFlag){
-            return false;
+            if(bFlag){
+                return false;
+            }
         }
     }else{
         qDebug() << "执行查找进程PID命令失败!";
