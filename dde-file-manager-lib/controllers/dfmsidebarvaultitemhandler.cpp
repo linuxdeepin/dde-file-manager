@@ -19,6 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <DWindowManagerHelper>
+#include <DForeignWindow>
+
 #include "dfmsidebarvaultitemhandler.h"
 
 #include "dfmsidebaritem.h"
@@ -214,6 +217,36 @@ bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
             pTaskDlg->showDialogOnTop();
             return false;
         }
+    }
+    // 如果当前有保险箱的压缩或解压缩任务，激活任务对话框进程
+    QString strPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
+    QString strCmd = QString("ps -xo pid,cmd | grep /usr/bin/deepin-compressor | grep ")
+            + strPath
+            + QString(" | grep -v grep | awk '{print $1}'");
+    QStringList lstShellOutput;
+    // 执行shell命令，获得压缩进程PID
+    int res = InterfaceActiveVault::executionShellCommand(strCmd, lstShellOutput);
+    if(res == 0){   // shell命令执行成功
+        QStringList::const_iterator itr = lstShellOutput.begin();
+        QSet<QString> setResult;
+        for(; itr != lstShellOutput.end(); ++itr){
+            setResult.insert(*itr);
+        }
+        // 遍历桌面窗口
+        bool bFlag = false;
+        for(auto window: DWindowManagerHelper::instance()->currentWorkspaceWindows()) {
+            QString strWid = QString("%1").arg(window->pid());
+            // 如果当前窗口的进程PID属于压缩进程，则将窗口置顶
+            if(setResult.contains(strWid)){
+                window->raise();
+                bFlag = true;
+            }
+        }
+        if(bFlag){
+            return false;
+        }
+    }else{
+        qDebug() << "执行查找进程PID命令失败!";
     }
 
     // 如果正在有保险箱的移动、粘贴到桌面的任务，通知桌面进程置顶任务对话框

@@ -21,6 +21,8 @@
 
 #define ROOT_PROXY                      "pkexec deepin-vault-authenticateProxy"
 
+#define MAXLINE                         1024            // shell命令输出每行最大的字符个数
+
 enum EN_VaultState {
     NotExisted = 0,
     Encrypted,
