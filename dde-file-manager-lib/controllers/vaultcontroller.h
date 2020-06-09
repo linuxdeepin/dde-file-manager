@@ -255,16 +255,6 @@ signals:
      */
     void signalLockVault(int state);
 
-<<<<<<< HEAD
-    /**
-     * @brief signalCalculationVaultFinish  计算保险箱大小完成
-     */
-    void signalCalculationVaultFinish() const;
-
-    void vaultRepaint() const;
-
-=======
->>>>>>> Title:fix 29669
 signals:
     /**
     * @brief 下列信号为本类内部使用，请勿外用
