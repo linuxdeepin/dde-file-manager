@@ -52,6 +52,7 @@ void DFMVaultActiveView::setBeginingState()
     m_pStackedWidget->setCurrentIndex(0);
     m_pSetUnclockMethodWidget->clearText();
     m_ActiveVaultFinishedWidget->setFinishedBtnEnabled(true);
+
 }
 
 void DFMVaultActiveView::setWndPtr(QWidget *wnd)
