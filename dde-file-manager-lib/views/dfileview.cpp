@@ -105,6 +105,7 @@ public:
     void toggleHeaderViewSnap(bool on);
     void _q_onSectionHandleDoubleClicked(int logicalIndex);
 
+public:
     DFileView *q_ptr;
 
     DFileMenuManager *fileMenuManager;
@@ -117,43 +118,6 @@ public:
     QActionGroup *sortByActionGroup;
     QActionGroup *openWithActionGroup;
 
-    QList<int> columnRoles;
-
-    DFileView::ViewMode defaultViewMode = DFileView::IconMode;
-    DFileView::ViewMode currentViewMode = DFileView::IconMode;
-
-    int horizontalOffset = 0;
-
-    /// move cursor later selecte index when pressed key shift
-    QModelIndex lastCursorIndex;
-
-    /// list mode column visible
-    QMap<QString, bool> columnForRoleHiddenMap;
-
-    int firstVisibleColumn = -1;
-    int lastVisibleColumn = -1;
-
-    DUrlList preSelectionUrls;
-
-    DAnchors<QLabel> contentLabel = nullptr;
-
-    QModelIndex mouseLastPressedIndex;
-
-    /// drag drop
-    QModelIndex dragMoveHoverIndex;
-
-    /// Saved before sorting
-    DUrlList oldSelectedUrls;
-    DUrl oldCurrentUrl;
-
-    DFileView::RandeIndex visibleIndexRande;
-
-    /// menu actions filter
-    QSet<MenuAction> menuWhitelist;
-    QSet<MenuAction> menuBlacklist;
-
-    QSet<DFileView::SelectionMode> enabledSelectionModes;
-
     FileViewHelper *fileViewHelper;
 
     QTimer *updateStatusBarTimer;
@@ -164,21 +128,60 @@ public:
 
     QActionGroup *toolbarActionGroup;
 
-    bool allowedAdjustColumnSize = true;
-    bool adjustFileNameCol = false; // mac finder style half-auto col size adjustment flag.
-    int cachedViewWidth = -1;
+    // u盘访问控制
+    AcessControlInterface *m_acessControlInterface = nullptr;
 
     // 用于实现触屏滚动视图和框选文件不冲突，手指在屏幕上按下短时间内就开始移动
     // 会被认为触发滚动视图，否则为触发文件选择（时间默认为300毫秒）
     QPointer<QTimer> updateEnableSelectionByMouseTimer;
+
     // 记录触摸按下事件，在mouse move事件中使用，用于判断手指移动的距离，当大于
     // QPlatformTheme::TouchDoubleTapDistance 的值时认为触发触屏滚动
     QPoint lastTouchBeginPos;
+
+    QList<int> columnRoles;
+
+    DFileView::ViewMode defaultViewMode = DFileView::IconMode;
+    DFileView::ViewMode currentViewMode = DFileView::IconMode;
+    /// move cursor later selecte index when pressed key shift
+    QModelIndex lastCursorIndex;
+
+    QModelIndex mouseLastPressedIndex;
+
+    /// drag drop
+    QModelIndex dragMoveHoverIndex;
+
+    /// list mode column visible
+    QMap<QString, bool> columnForRoleHiddenMap;
+
+    DUrlList preSelectionUrls;
+
+    /// Saved before sorting
+    DUrlList oldSelectedUrls;
+
+    DAnchors<QLabel> contentLabel = nullptr;
+
+    DUrl oldCurrentUrl;
+
+    /// menu actions filter
+    QSet<MenuAction> menuWhitelist;
+
+    QSet<MenuAction> menuBlacklist;
+
+    QSet<DFileView::SelectionMode> enabledSelectionModes;
+
+    int horizontalOffset = 0;
+    int firstVisibleColumn = -1;
+    int lastVisibleColumn = -1;
+    int cachedViewWidth = -1;
     int touchTapDistance = -1;
 
-    // u盘访问控制
-    AcessControlInterface *m_acessControlInterface = nullptr;
+    DFileView::RandeIndex visibleIndexRande;
 
+    bool allowedAdjustColumnSize = true;
+    bool adjustFileNameCol = false; // mac finder style half-auto col size adjustment flag.
+
+    char justAvoidWaringOfAlignmentBoundary[2];//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -1199,8 +1202,8 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
                 QScroller::grabGesture(this);
                 QScroller *scroller = QScroller::scroller(this);
 
-                scroller->handleInput(QScroller::InputPress, event->localPos(), event->timestamp());
-                scroller->handleInput(QScroller::InputMove, event->localPos(), event->timestamp());
+                scroller->handleInput(QScroller::InputPress, event->localPos(), static_cast<qint64>(event->timestamp()));
+                scroller->handleInput(QScroller::InputMove, event->localPos(), static_cast<qint64>(event->timestamp()));
             }
 
             return;
@@ -1556,7 +1559,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     if (!fetchDragEventUrlsFromSharedMemory())
         return;
 
-    for (const DUrl &url : m_urlsForDragEvent) {
+    for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
 
         // a symlink that points to a non-existing file QFileInfo::isReadAble() returns false
