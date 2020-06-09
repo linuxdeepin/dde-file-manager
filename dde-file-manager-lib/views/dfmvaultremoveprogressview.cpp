@@ -138,7 +138,7 @@ void DFMVaultRemoveProgressView::removeFileInDir(const QString &vaultPath)
             file.remove();
             m_iRmFiles++;
             int value = 100 * (m_iRmFiles + m_iRmDir - 1) / m_iFiles;
-            emit fileRemoved(value);
+                emit fileRemoved(value);
         }
     }
 
@@ -152,5 +152,6 @@ void DFMVaultRemoveProgressView::removeFileInDir(const QString &vaultPath)
 
 void DFMVaultRemoveProgressView::onFileRemove(int value)
 {
-    m_vaultRmProgressBar->setValue(value);
+    if(m_vaultRmProgressBar->value() != 100)
+        m_vaultRmProgressBar->setValue(value);
 }

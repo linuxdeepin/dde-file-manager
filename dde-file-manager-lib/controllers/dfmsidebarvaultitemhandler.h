@@ -89,7 +89,7 @@ private:
     /**
      * @brief 显示删除保险箱页面
      */
-    void showDeleteVaultView();
+    void showDeleteVaultView(QWidget *wndPtr);
 
     /**
      * @brief 显示解锁页面

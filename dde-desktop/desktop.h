@@ -37,23 +37,25 @@ public:
 
     void initDebugDBus(QDBusConnection &conn);
 public slots:
-    void EnableUIDebug(bool enable);
-    void SetVisible(int screenNum,bool);
-    void FixGeometry(int screenNum);
-    void Reset();
-    void PrintInfo();
-    void Refresh();
     void ShowWallpaperChooser(const QString &screen = QString());
     void ShowScreensaverChooser(const QString &screen = QString());
+
+    Q_SCRIPTABLE void EnableUIDebug(bool enable);
+    Q_SCRIPTABLE void SetVisible(int screenNum,bool);
+    Q_SCRIPTABLE void FixGeometry(int screenNum);
+    Q_SCRIPTABLE void Reset();
+    Q_SCRIPTABLE void PrintInfo();
+    Q_SCRIPTABLE void Refresh();
+    Q_SCRIPTABLE QList<int> GetIconSize();
+
+#if USINGOLD
+    Q_SCRIPTABLE void logAllScreenLabel();
+    Q_SCRIPTABLE void logScreenLabel(int index);
+    Q_SCRIPTABLE void mapLabelScreen(int labelIndex, int screenIndex);
+#endif
+
 protected:
     void showWallpaperSettings(QString name, int mode = 0);
-#if USINGOLD
-#ifdef QT_DEBUG
-    void logAllScreenLabel();
-    void logScreenLabel(int index);
-    void mapLabelScreen(int labelIndex, int screenIndex);
-#endif // QT_DEBUG
-#endif
 private:
     explicit Desktop();
     ~Desktop();

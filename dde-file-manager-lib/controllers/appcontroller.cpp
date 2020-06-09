@@ -547,7 +547,8 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
         QtConcurrent::run([=] {
-            getOpticalDriveMutex()->lock();
+            QMutexLocker locker(getOpticalDriveMutex()); //bug 31318 refine
+
             DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(fileUrl.query());
             if (dp.devid.length() == 0) {
                 if (blkdev->mountPoints().size()) {
@@ -562,13 +563,13 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
                     diskdev->eject({});
                     if (diskdev->optical())
                         QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
-                    getOpticalDriveMutex()->unlock();
+
                     return;
                 }
                 dp = ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
             }
-            getOpticalDriveMutex()->unlock();
+
             if (!dp.formatted) {
                 //blkdev->mount({});
                 //We have to stick with 'UDisk'Listener until actionOpenDiskInNew*
@@ -680,7 +681,6 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
         emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
-
         QtConcurrent::run([fi](){
             qDebug() << fi->fileUrl().path();
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
@@ -705,7 +705,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                     if(lastError.type() == QDBusError::NoReply ) // bug 29268, 用户超时操作
                     {
                         qDebug() << "action timeout with noreply response";
-                        dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Action timeout, action is canceled")),  Q_ARG(QString, ""));
+                        //dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
                         return;
                     }
                     err |= blk->lastError().isValid();

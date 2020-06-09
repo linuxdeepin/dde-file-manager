@@ -54,6 +54,16 @@ void DFMVaultActiveView::setBeginingState()
     m_ActiveVaultFinishedWidget->setFinishedBtnEnabled(true);
 }
 
+void DFMVaultActiveView::setWndPtr(QWidget *wnd)
+{
+    m_wndptr = wnd;
+}
+
+QWidget *DFMVaultActiveView::getWndPtr() const
+{
+    return m_wndptr;
+}
+
 void DFMVaultActiveView::showTop()
 {
     this->activateWindow();

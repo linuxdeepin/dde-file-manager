@@ -38,6 +38,9 @@ class DFMVaultRecoveryKeyPages : public DDialog
 public:
     static DFMVaultRecoveryKeyPages *instance();
 
+    void setWndPtr(QWidget *wnd);
+    QWidget *getWndPtr() const;
+
     void showAlertMessage(const QString &text, int duration = 3000);
 private slots:
     void onButtonClicked(const int &index);
@@ -60,4 +63,6 @@ private:
 
     QScopedPointer<DFMVaultRecoveryKeyPagesPrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFMVaultRecoveryKeyPages)
+
+    QWidget *m_wndptr = nullptr;
 };

@@ -245,6 +245,8 @@ signals:
      */
     void signalCalculationVaultFinish() const;
 
+    void vaultRepaint() const;
+
 signals:
     /**
     * @brief 下列信号为本类内部使用，请勿外用

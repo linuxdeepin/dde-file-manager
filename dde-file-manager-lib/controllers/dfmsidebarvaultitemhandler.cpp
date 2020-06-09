@@ -93,6 +93,7 @@ void DFMSideBarVaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSi
         break;
     }
     case EN_VaultState::NotExisted:{    // 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
+        DFMVaultActiveView::getInstance().setWndPtr(sidebar->topLevelWidget());
         DFMVaultActiveView::getInstance().showTop();
         break;
     }
@@ -181,8 +182,8 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
         // 删除保险柜
         action = DFileMenuManager::getAction(MenuAction::DeleteVault);
-        QObject::connect(action, &QAction::triggered, action, [this](){
-            showDeleteVaultView();
+        QObject::connect(action, &QAction::triggered, action, [this, topWidget](){
+            showDeleteVaultView(topWidget);
         });        
     } else if (vaultState == VaultController::Encrypted) {
 
@@ -244,9 +245,9 @@ bool DFMSideBarVaultItemHandler::autoLock(int lockState)
     return VaultLockManager::getInstance().autoLock(static_cast<VaultLockManager::AutoLockState>(lockState));
 }
 
-void DFMSideBarVaultItemHandler::showDeleteVaultView()
+void DFMSideBarVaultItemHandler::showDeleteVaultView(QWidget *wndPtr)
 {
-    // Something to do.
+    DFMVaultRemovePages::instance()->setWndPtr(wndPtr);
     DFMVaultRemovePages::instance()->showTop();
 }
 
@@ -260,8 +261,7 @@ void DFMSideBarVaultItemHandler::showUnLockView(QWidget *wndPtr)
 
 void DFMSideBarVaultItemHandler::showCertificateView(QWidget *wndPtr)
 {
-    // Something to do.
-    DFMVaultUnlockPages::instance()->setWndPtr(wndPtr);
+    DFMVaultRecoveryKeyPages::instance()->setWndPtr(wndPtr);
 
     DFMVaultRecoveryKeyPages::instance()->show();
     DFMVaultRecoveryKeyPages::instance()->raise();

@@ -82,6 +82,16 @@ DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
     return &s_instance;
 }
 
+void DFMVaultRecoveryKeyPages::setWndPtr(QWidget *wnd)
+{
+    m_wndptr = wnd;
+}
+
+QWidget *DFMVaultRecoveryKeyPages::getWndPtr() const
+{
+    return m_wndptr;
+}
+
 void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duration)
 {
     Q_D(DFMVaultRecoveryKeyPages);
