@@ -182,10 +182,13 @@ QString FileJob::checkDuplicateName(const QString &name)
                                                           startInfo.baseName(),
                                                           cpy);
                 }else{
-                    destUrl = QString("%1/%2(%3).%4").arg(startInfo.absolutePath(),
-                                                          startInfo.baseName(),
-                                                          cpy,
-                                                          startInfo.completeSuffix());
+                   QString baseName_tmp=name.right(name.length()-destUrl.lastIndexOf("/")-1);
+                   QString baseName=baseName_tmp.left(baseName_tmp.lastIndexOf("."));
+                   QString completeSuffixName=baseName_tmp.right(baseName_tmp.length()-baseName_tmp.lastIndexOf(".")-1);
+                   destUrl = QString("%1/%2(%3).%4").arg(startInfo.absolutePath(),
+                                                         baseName,
+                                                         cpy,
+                                                         completeSuffixName);
                 }
             }
         }
@@ -204,11 +207,15 @@ QString FileJob::checkDuplicateName(const QString &name)
                                                              cpy,
                                                              QString::number(num));
                 }else{
-                    destUrl = QString("%1/%2(%3 %4).%5").arg(startInfo.absolutePath(),
-                                                             startInfo.baseName(),
-                                                             cpy,
-                                                             QString::number(num),
-                                                             startInfo.completeSuffix());
+                   QString baseName_tmp=name.right(name.length()-destUrl.lastIndexOf("/")-1);
+                   QString baseName=baseName_tmp.left(baseName_tmp.lastIndexOf("."));
+                   QString completeSuffixName=baseName_tmp.right(baseName_tmp.length()-baseName_tmp.lastIndexOf(".")-1);
+                   destUrl = QString("%1/%2(%3 %4).%5").arg(startInfo.absolutePath(),
+                                                            baseName,
+                                                            cpy,
+                                                            QString::number(num),
+                                                            completeSuffixName);
+
                 }
             }
         }

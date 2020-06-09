@@ -1235,6 +1235,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->addFile(info);
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event
+            q->update();//解决文管多窗口的状态下，删除文件的时候系统崩溃的问题
             q->remove(fileUrl);
         }
     }
