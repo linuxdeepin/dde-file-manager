@@ -1177,6 +1177,7 @@ open_file: {
 
         currentJobDataSizeInfo.second += size_write;
         completedDataSize += size_write;
+        completedDataSizeOnBlockDevice += size_write;
 //        writtenDataSize += size_write;
 
         if (Q_LIKELY(!fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking))) {
@@ -1436,7 +1437,7 @@ bool DFileCopyMoveJobPrivate::linkFile(DFileHandler *handler, const DAbstractFil
 
 void DFileCopyMoveJobPrivate::beginJob(JobInfo::Type type, const DUrl &from, const DUrl &target)
 {
-    qCDebug(fileJob(), "job begin, Type: %d, from: %s, to: %s", type, qPrintable(from.toString()), qPrintable(target.toString()));
+//    qCDebug(fileJob(), "job begin, Type: %d, from: %s, to: %s", type, qPrintable(from.toString()), qPrintable(target.toString()));
 
     jobStack.push({type, QPair<DUrl, DUrl>(from, target)});
     currentJobDataSizeInfo = qMakePair(-1, 0);
@@ -1450,7 +1451,7 @@ void DFileCopyMoveJobPrivate::endJob()
     jobStack.pop();
     currentJobFileHandle = -1;
 
-    qCDebug(fileJob()) << "job end, error:" << error << "last error handle action:" << lastErrorHandleAction;
+//    qCDebug(fileJob()) << "job end, error:" << error << "last error handle action:" << lastErrorHandleAction;
 }
 
 void DFileCopyMoveJobPrivate::enterDirectory(const DUrl &from, const DUrl &to)
@@ -1491,6 +1492,8 @@ void DFileCopyMoveJobPrivate::joinToCompletedFileList(const DUrl &from, const DU
         completedDataSize += dataSize;
     }
 
+    completedProgressDataSize += dataSize <= 0 ? 4096 : 0;
+
     ++completedFilesCount;
 
     Q_EMIT q_ptr->completedFilesCountChanged(completedFilesCount);
@@ -1507,6 +1510,7 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, con
     qCDebug(fileJob(), "directory. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(target.toString()), dataSize);
 
 //    completedDataSize += dataSize;
+    completedProgressDataSize += targetIsRemovable <= 0 ? 4096 : 0;
     ++completedFilesCount;
 
     Q_EMIT q_ptr->completedFilesCountChanged(completedFilesCount);
@@ -1533,13 +1537,18 @@ void DFileCopyMoveJobPrivate::updateProgress()
 
 void DFileCopyMoveJobPrivate::updateCopyProgress()
 {
-    const qint64 totalSize = fileStatistics->totalSize();
+    // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+    const qint64 totalSize = fileStatistics->totalProgressSize();
     //通过getCompletedDataSize取出的已传输的数据大小后期会远超实际数据大小，这种情况下直接使用completedDataSize
     qint64 dataSize(getCompletedDataSize());
     // completedDataSize 可能一直为 0
     if (dataSize > completedDataSize && completedDataSize > 0) {
         dataSize = completedDataSize;
     }
+
+    dataSize = targetIsRemovable <= 0 ? completedDataSizeOnBlockDevice : dataSize;
+
+    dataSize += completedProgressDataSize;
 
     if (totalSize == 0)
         return;
@@ -1913,7 +1922,7 @@ void DFileCopyMoveJob::run()
 //        }
 //    }
 
-    qCDebug(fileJob()) << "start job, mode:" << d->mode << "file url list:" << d->sourceUrlList << ", target url:" << d->targetUrl;
+//    qCDebug(fileJob()) << "start job, mode:" << d->mode << "file url list:" << d->sourceUrlList << ", target url:" << d->targetUrl;
 
     d->unsetError();
     d->setState(RunningState);
@@ -1983,7 +1992,7 @@ void DFileCopyMoveJob::run()
                                 d->targetIsRemovable = list.at(1) == "1";
 
                                 bool ok = false;
-                                d->targetLogSecionSize = list.at(2).toInt(&ok);
+                                d->targetLogSecionSize = static_cast<qint16>(list.at(2).toInt(&ok));
 
                                 if (!ok) {
                                     d->targetLogSecionSize = 512;
@@ -2108,6 +2117,8 @@ end:
             d->setState(RunningState);
         }
     }
+
+    qDebug() << mayExecSync ;
 
     d->fileStatistics->stop();
     d->setState(StoppedState);

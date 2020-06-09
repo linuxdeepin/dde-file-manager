@@ -54,6 +54,8 @@ public:
     QWaitCondition waitCondition;
 
     QAtomicInteger<qint64> totalSize = 0;
+    // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+    QAtomicInteger<qint64> totalProgressSize = 0;
     QAtomicInt filesCount = 0;
     QAtomicInt directoryCount = 0;
 };
@@ -165,14 +167,19 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
             size = info->size();
             if (size > 0) {
                 totalSize += size;
+
                 Q_EMIT q_ptr->sizeChanged(totalSize);
             }
+            // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+            totalProgressSize += size <= 0 ? 4096 : size;
         } while (false);
 
         ++filesCount;
 
         Q_EMIT q_ptr->fileFound(url);
     } else {
+        // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+        totalProgressSize += 4096;
         if (info->isSymLink()) {
             if (!fileHints.testFlag(DFileStatisticsJob::FollowSymlink)) {
                 ++filesCount;
@@ -256,6 +263,13 @@ qint64 DFileStatisticsJob::totalSize() const
     Q_D(const DFileStatisticsJob);
 
     return d->totalSize.load();
+}
+// fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+qint64 DFileStatisticsJob::totalProgressSize() const
+{
+    Q_D(const DFileStatisticsJob);
+
+    return d->totalProgressSize;
 }
 
 int DFileStatisticsJob::filesCount() const

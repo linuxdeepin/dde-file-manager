@@ -1057,7 +1057,7 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     Q_Q(DFileSystemModel);
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
-    qDebug() << fileUrl;
+//    qDebug() << fileUrl;
 
     if (!info || !passFileFilters(info)) {
         return;
@@ -1183,7 +1183,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
     bool expect = false;
     _q_processFileEvent_runing.compare_exchange_strong(expect, true);
 
-    qDebug() << "_q_processFileEvent";
+//    qDebug() << "_q_processFileEvent";
     Q_Q(DFileSystemModel);
     bool hasAddOrRm = false;
     while (!fileEventQueue.isEmpty()) {
