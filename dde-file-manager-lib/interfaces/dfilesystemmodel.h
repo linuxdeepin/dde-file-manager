@@ -232,7 +232,8 @@ private:
 
     bool isDir(const FileSystemNodePointer &node) const;
 
-    bool sort(const DAbstractFileInfoPointer &parentInfo, QList<FileSystemNode *> &list) const;
+    bool sort(const DAbstractFileInfoPointer &parentInfo, QList<FileSystemNodePointer> &list) const;
+    bool doSortBusiness(bool emitDataChange);
 
     const FileSystemNodePointer createNode(FileSystemNode *parent, const DAbstractFileInfoPointer &info, QReadWriteLock *lock = nullptr);
 
