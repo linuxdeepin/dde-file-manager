@@ -168,7 +168,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
         }
         DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(url)) {
+        if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
             return;
         }
         if (url.path().endsWith(SUFFIX_USRDIR)) {

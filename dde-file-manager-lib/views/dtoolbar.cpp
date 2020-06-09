@@ -192,7 +192,7 @@ void DToolBar::initConnect()
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DFMCrumbBar::crumbListItemSelected, this, [this](const DUrl &url){
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(url)) {
+        if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
             return;
         }
         DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_crumbWidget, url, window());
@@ -302,7 +302,7 @@ void DToolBar::back()
 {
     DUrl url = m_navStack->back();
     //判断网络文件是否可以到达
-    if (!DFileService::instance()->checkGvfsMountfileBusy(url)) {
+    if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
         return;
     }
     if(!url.isEmpty())
@@ -316,7 +316,7 @@ void DToolBar::forward()
 {
     DUrl url = m_navStack->forward();
     //判断网络文件是否可以到达
-    if (!DFileService::instance()->checkGvfsMountfileBusy(url)) {
+    if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
         return;
     }
     if(!url.isEmpty())
