@@ -202,7 +202,7 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
     QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
-    if (blk->idUUID().isEmpty() && !drv->opticalBlank()) return; // 如果光驱的uuid为空（光盘未挂载）且不是空光盘的情况下
+    if (fileUrl.path().contains("dfmroot:///sr") && blk->idUUID().isEmpty() && !drv->opticalBlank()) return; // 如果光驱的uuid为空（光盘未挂载）且不是空光盘的情况下
 
     if (!mounted) {
         m_fmEvent = event;
