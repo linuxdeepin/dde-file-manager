@@ -72,6 +72,14 @@ public:
      */
     static bool getRootPassword();
 
+    /**
+    * @brief executionShellCommand 执行shell命令并获得shell命令的返回值
+    * @param strCmd 要执行的shell命令
+    * @param lstShellOutput shell命令返回的结果
+    * @return 返回值为0表示成功，其它都不成功
+    */
+    static int executionShellCommand(const QString &strCmd, QStringList &lstShellOutput);
+
 signals:
 
 public slots:

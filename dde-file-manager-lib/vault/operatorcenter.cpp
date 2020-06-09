@@ -458,3 +458,42 @@ bool OperatorCenter::getRootPassword()
     return true;
 }
 
+int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &lstShellOutput)
+{
+    FILE *fp;
+    int res;
+    char buf[MAXLINE] = {'\0'};
+
+    std::string sCmd = strCmd.toStdString();
+    const char* cmd = sCmd.c_str();
+
+    // 命令为空
+    if(cmd == nullptr){
+        qDebug() << "cmd is NULL!";
+        return -1;
+    }
+
+    if((fp = popen(cmd, "r")) == nullptr){
+        perror("popen");
+        qDebug() << QString("popen error: %s").arg(strerror(errno));
+        return -1;
+    }else{
+        while(fgets(buf, sizeof(buf), fp)){ // 获得每行输出
+            QString strLineOutput(buf);
+            if(strLineOutput.endsWith('\n'))
+                strLineOutput.chop(1);
+            lstShellOutput.push_back(strLineOutput);
+        }
+
+        if((res = pclose(fp)) == -1){
+            qDebug() << "close popen file pointer fp error!";
+            return res;
+        }else if(res == 0){
+            return res;
+        }else{
+            qDebug() << QString("popen res is : %1").arg(res);
+            return res;
+        }
+    }
+}
+
