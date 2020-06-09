@@ -1482,6 +1482,7 @@ void DFileView::resizeEvent(QResizeEvent *event)
 {
     Q_D(DFileView);
 
+    qDebug() << "resizeEvent";
     DListView::resizeEvent(event);
 
     if (d->statusBar && d->statusBar->width() != width()) {
@@ -1491,7 +1492,10 @@ void DFileView::resizeEvent(QResizeEvent *event)
     updateHorizontalOffset();
 
     if (d->currentViewMode == ListMode) { //fix 任务25717 文件管理器窗口默认以列表视图显示时，开启文件管理器窗口，列表视图未适配窗口大小。（一般+必现+常用功能
-        d->adjustFileNameCol = d->headerView->width() <= this->width();
+        if (d->headerView->width() <= this->width()) {
+            d->adjustFileNameCol = true;
+            d->doFileNameColResize();
+        }
     }
 
     if (itemDelegate()->editingIndex().isValid())
