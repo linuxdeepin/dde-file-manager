@@ -1526,6 +1526,7 @@ void DFileCopyMoveJobPrivate::updateProgress()
 {
     switch (mode) {
     case DFileCopyMoveJob::CopyMode:
+    case DFileCopyMoveJob::CutMode:
         updateCopyProgress();
         break;
     case DFileCopyMoveJob::MoveMode:
@@ -1623,8 +1624,8 @@ void DFileCopyMoveJobPrivate::updateSpeed()
         speed = 0;
     }
 
-    // 复制文件时显示速度
-    if (mode == DFileCopyMoveJob::CopyMode) {
+    // 复制和剪切文件时显示速度
+    if (mode != DFileCopyMoveJob::MoveMode) {
         Q_EMIT q_ptr->speedUpdated(speed);
     }
 }

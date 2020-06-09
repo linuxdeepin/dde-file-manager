@@ -379,6 +379,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
         bool isDelete = false; // 删除模式下不需要显示速度
         if (job->mode() == DFileCopyMoveJob::CopyMode) {
             data["type"] = "copy";
+        } else if (job->mode() == DFileCopyMoveJob::CutMode) {
+            data["type"] = "move";
         } else if (job->mode() == DFileCopyMoveJob::MoveMode) {
             if (job->targetUrl().isValid()) {
                 data["type"] = "move";
