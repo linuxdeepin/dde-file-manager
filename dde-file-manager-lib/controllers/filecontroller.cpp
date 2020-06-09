@@ -226,8 +226,8 @@ public:
     DFMAnythingDirIterator(ComDeepinAnythingInterface *u,
                            const QString &path, const QString &k)
         : interface(u)
-            , keyword(k)
-            , dir(path)
+        , keyword(k)
+        , dir(path)
     {
         keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(keyword);
     }
@@ -709,13 +709,13 @@ bool FileController::isDiscburnJobCase(void* curJob, const DUrl& url) const
     // 查看当前路径是否是光驱缓存路径
     bool isDiscCase = false;
     if(targetUrl.path().contains(DISCBURN_CACHE_MID_PATH) &&
-       targetUrl.path().contains(burnDestDevice)     ) {
+            targetUrl.path().contains(burnDestDevice)     ) {
         isDiscCase = true;
     }
 
     foreach (DUrl oneUrl, srcUrlList) {
         if(oneUrl.path().contains(DISCBURN_CACHE_MID_PATH) &&
-            oneUrl.path().contains(burnDestDevice)    ) {
+                oneUrl.path().contains(burnDestDevice)    ) {
             isDiscCase = true;
             break;
         }
@@ -758,12 +758,12 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
         {
             //线程启动传递源地址和目标地址
             connect(job.data(), &DFileCopyMoveJob::currentJobChanged, this, [this](const DUrl & from, const DUrl & to) {
-                    QMutex mutex;
-                    mutex.lock();
-                    currentJob.first = from;
-                    currentJob.second = to;
-                    mutex.unlock();
-                }, Qt::DirectConnection);
+                QMutex mutex;
+                mutex.lock();
+                currentJob.first = from;
+                currentJob.second = to;
+                mutex.unlock();
+            }, Qt::DirectConnection);
             if (!slient) {
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
@@ -862,8 +862,8 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
         dialogManager->taskDialog()->removeTaskJob(job.data());
     });
     //当前线程不要去处理error_handle所在的线程资源
-//    error_handle->currentJob = nullptr;
-//    error_handle->fileJob = nullptr;
+    //    error_handle->currentJob = nullptr;
+    //    error_handle->fileJob = nullptr;
 
     if (slient) {
         error_handle->deleteLater();
@@ -871,7 +871,7 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
         QMetaObject::invokeMethod(error_handle, "deleteLater");
     }
 
-//    QMetaObject::invokeMethod(job, "deleteLater");
+    //    QMetaObject::invokeMethod(job, "deleteLater");
 
     return job->targetUrlList();
 }
@@ -884,19 +884,20 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
  */
 bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-//    FileJob job(FileJob::Delete);
-//    job.setWindowId(event->windowId());
-//    dialogManager->addJob(&job);
+    //    FileJob job(FileJob::Delete);
+    //    job.setWindowId(event->windowId());
+    //    dialogManager->addJob(&job);
 
-//    job.doDelete(event->urlList());
-//    dialogManager->removeJob(job.getJobId());
+    //    job.doDelete(event->urlList());
+    //    dialogManager->removeJob(job.getJobId());
     // 解决撤销操作后文件删除不提示问题
-//    if (event->type() == DFMEvent::DeleteFiles) {
-//        return DFileService::instance()->deleteFiles(nullptr, event->urlList(), false);
-//    }
+    //    if (event->type() == DFMEvent::DeleteFiles) {
+    //        return DFileService::instance()->deleteFiles(nullptr, event->urlList(), false);
+    //    }
 
     // 保险箱删除大文件会导致文管界面卡死，暂时先将文件隐藏
     DUrlList urlList = event->fileUrlList();
+    DUrlList urls;
     for (const auto &url: urlList){
         if (url.path().contains("vault_unlocked")){
             QFileInfo info(url.path());
@@ -905,12 +906,16 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
                 flf.insert(info.fileName());
                 flf.save();
 
-                return true;
+                continue;
+            }else {
+                urls << url;
             }
+        }else {
+            urls << url;
         }
     }
 
-    bool ok = !pasteFilesV2(DFMGlobal::CutAction, event->fileUrlList(), DUrl(), event->silent(), event->force()).isEmpty();
+    bool ok = !pasteFilesV2(DFMGlobal::CutAction, urls, DUrl(), event->silent(), event->force()).isEmpty();
     return ok;
 }
 
@@ -1332,7 +1337,7 @@ QString FileController::checkDuplicateName(const QString &name) const
     while (file.exists()) {
         num++;
         destUrl = QString("%1/%2 %3").arg(startInfo.absolutePath()).
-                  arg(startInfo.fileName()).arg(num);
+                arg(startInfo.fileName()).arg(num);
         file.setFileName(destUrl);
     }
 
