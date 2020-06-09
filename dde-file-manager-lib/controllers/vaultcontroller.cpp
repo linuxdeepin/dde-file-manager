@@ -207,6 +207,10 @@ VaultController::VaultController(QObject *parent)
     DUrl rootUrl = vaultToLocalUrl(makeVaultUrl());
     m_sizeWorker->start({rootUrl});
     connect(m_sizeWorker, &DFileStatisticsJob::dataNotify, this, &VaultController::updateFolderSizeLabel);
+
+    // Refresh size when lock state changed.
+    connect(this, &VaultController::signalUnlockVault, this, &VaultController::refreshTotalSize);
+    connect(this, &VaultController::signalLockVault, this, &VaultController::refreshTotalSize);
 }
 
 VaultController *VaultController::getVaultController()
