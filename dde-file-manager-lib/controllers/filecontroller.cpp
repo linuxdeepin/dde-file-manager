@@ -852,7 +852,9 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
     });
 
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
-    job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);
+    job->setMode(action == DFMGlobal::CopyAction
+                 ? DFileCopyMoveJob::CopyMode
+                 : (action == DFMGlobal::CutAction ? DFileCopyMoveJob::CutMode : DFileCopyMoveJob::MoveMode));
     job->start(list, target);
     job->wait();
 

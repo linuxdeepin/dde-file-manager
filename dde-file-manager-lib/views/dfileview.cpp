@@ -175,6 +175,7 @@ public:
     QPoint lastTouchBeginPos;
     int touchTapDistance = -1;
 
+    int showCount = 0;  //记录showEvent次数，为了在第一次时去调整列表模式的表头宽度
     // u盘访问控制
     AcessControlInterface *m_acessControlInterface = nullptr;
 
@@ -1086,6 +1087,7 @@ void DFileView::showEvent(QShowEvent *event)
     DFileMenuManager::setActionWhitelist(d->menuWhitelist);
     DFileMenuManager::setActionBlacklist(d->menuBlacklist);
 
+    d->showCount++;
     setFocus();
 }
 
@@ -2567,7 +2569,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             // 初始化列宽调整
             d->cachedViewWidth = this->width();
             //fix task klu 21328 当切换到列表显示时自动适应列宽度
-            d->adjustFileNameCol = d->headerView->width() <= this->width();
+            d->adjustFileNameCol = true; //fix 31609 无论如何在切换显示模式时都去调整列表宽度
             updateListHeaderViewProperty();
         }
 
@@ -3118,6 +3120,13 @@ void DFileViewPrivate::updateHorizontalScrollBarPosition()
 void DFileViewPrivate::pureResizeEvent(QResizeEvent *event)
 {
     Q_Q(DFileView);
+
+    if (currentViewMode == DFileView::ListMode) { //修复分非列表模式启动崩溃
+        if (showCount == 1) { //fix 任务25717 文件管理器窗口默认以列表视图显示时，开启文件管理器窗口，列表视图未适配窗口大小。
+            adjustFileNameCol = q->width() >= headerView->width();
+            showCount ++; //次数比实际次数多一次，跳过1
+        }
+    }
 
     if (!allowedAdjustColumnSize) {
         // auto switch list mode

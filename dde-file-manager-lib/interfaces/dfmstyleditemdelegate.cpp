@@ -242,15 +242,19 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
 
     //确保特殊比例icon的高或宽不为0
     bool isSpecialSize = false;
-    QSize tempSize(size.width(), size.height());
-    while (icon_size.width() < 1) {
-        tempSize.setHeight(tempSize.height() * 2);
-        icon_size = icon.actualSize(tempSize, mode, state);
-        isSpecialSize = true;
-    }
-    while (icon_size.height() < 1) {
-        tempSize.setWidth(tempSize.width() * 2);
-        icon_size = icon.actualSize(tempSize, mode, state);
+//    QSize tempSize(size.width(), size.height());
+//    while (icon_size.width() < 1) {
+//        tempSize.setHeight(tempSize.height() * 2);
+//        icon_size = icon.actualSize(tempSize, mode, state);
+//        isSpecialSize = true;
+//    }
+//    while (icon_size.height() < 1) {
+//        tempSize.setWidth(tempSize.width() * 2);
+//        icon_size = icon.actualSize(tempSize, mode, state);
+//
+//    }
+    if (icon_size.width() < 1 || icon_size.height() < 1) {
+        icon_size = icon.actualSize(iconRealSize, mode, state);
         isSpecialSize = true;
     }
 

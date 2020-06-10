@@ -44,7 +44,8 @@ class DFileCopyMoveJob : public QThread
 public:
     enum Mode {
         CopyMode,
-        MoveMode
+        MoveMode,
+        CutMode
     };
 
     Q_ENUM(Mode)

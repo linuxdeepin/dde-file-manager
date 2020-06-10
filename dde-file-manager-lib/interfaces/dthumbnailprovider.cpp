@@ -249,15 +249,19 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
 
     QImageReader ir(thumbnail, QByteArray(FORMAT).mid(1));
     if (!ir.canRead()) {
-      QFile::remove(thumbnail);
-      emit thumbnailChanged(absoluteFilePath, QString());
-      return QString();
+        qDebug() << "thumbnail will be remove ===== " << thumbnail;
+        qDebug() << "thumbnail QImageReader can not read!";
+        QFile::remove(thumbnail);
+        emit thumbnailChanged(absoluteFilePath, QString());
+        return QString();
     }
     ir.setAutoDetectImageFormat(false);
 
     const QImage image = ir.read();
 
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)info.lastModified().toTime_t()) {
+        qDebug() << "thumbnail will be remove ===== " << thumbnail;
+        qDebug() << "thumbnail image.text(QT_STRINGIFY(Thumb::MTime)) ===== " <<  image.text(QT_STRINGIFY(Thumb::MTime)).toInt() << ", info.lastModified().toTime_t() ===== " << static_cast<int>(info.lastModified().toTime_t());
         QFile::remove(thumbnail);
 
         emit thumbnailChanged(absoluteFilePath, QString());
@@ -564,12 +568,13 @@ _return:
     }
 
     if (d->errorString.isEmpty()) {
+        qDebug() << "create thumbnail return success, path ===== " << thumbnail;
         emit createThumbnailFinished(absoluteFilePath, thumbnail);
         emit thumbnailChanged(absoluteFilePath, thumbnail);
 
         return thumbnail;
     }
-
+    qDebug() << "create thumbnail return fail, error ===== " << d->errorString << ", path ===== " << thumbnail;
     // fail
     emit createThumbnailFailed(absoluteFilePath);
 
