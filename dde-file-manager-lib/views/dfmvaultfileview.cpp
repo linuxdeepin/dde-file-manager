@@ -21,7 +21,7 @@
 #include "dfmvaultfileview.h"
 #include "controllers/vaultcontroller.h"
 #include "vault/vaultlockmanager.h"
-
+#include "dfilesystemmodel.h"
 
 
 #include <QHBoxLayout>
@@ -31,38 +31,10 @@
 
 DWIDGET_USE_NAMESPACE
 
-VaultHeaderView::VaultHeaderView(QWidget *parent)
-    : QWidget (parent)
-{
-    QLabel * lb = new QLabel(tr("File Vault"), this);
-    QFont font = lb->font();
-    font.setBold(true);
-    font.setPixelSize(24);
-    lb->setFont(font);
-
-    QHBoxLayout * layout = new QHBoxLayout(this);
-    layout->addWidget(lb);    
-    layout->addStretch();
-}
-
-DFileMenu *VaultHeaderView::createMenu()
-{
-    DFileMenu * menu = new DFileMenu;
-
-    menu->addAction(tr("Lock vault"), this, &VaultHeaderView::requestLockVault);
-    menu->addAction(tr("Generate key"), this, &VaultHeaderView::requestGenerateRecoveryKey);
-
-    return menu;
-}
-
-// --------------------------------------------
-
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
     connect(VaultController::getVaultController(), &VaultController::signalLockVault, this, &DFMVaultFileView::lockVault);
-
-    connect(VaultController::getVaultController(), &VaultController::vaultRepaint, this, &DFMVaultFileView::onVaultRepaint);
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
@@ -107,8 +79,3 @@ void DFMVaultFileView::lockVault(int state)
     }
 }
 
-void DFMVaultFileView::onVaultRepaint()
-{
-    DFMVaultFileView *w = (DFMVaultFileView*)this;
-    w->repaint();
-}

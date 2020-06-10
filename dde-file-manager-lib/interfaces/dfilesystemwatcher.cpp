@@ -179,9 +179,11 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             }
 #ifdef QT_DEBUG
             else {
+#if 0 // not use these code because too much logs
                 qDebug() << "exist event:" << "event->wd" << event->wd <<
                             "event->mask" << event->mask <<
                             "event->cookie" << event->cookie << "exist counts " << ++exist_count;
+#endif
             }
 #endif
             const QList<QString> bps = batch_pathmap.values(id);

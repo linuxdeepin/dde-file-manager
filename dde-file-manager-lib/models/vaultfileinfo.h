@@ -23,6 +23,8 @@
 #include "dabstractfileinfo.h"
 #include <QIcon>
 
+
+
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DAbstractFileInfo
 {
@@ -70,12 +72,8 @@ public:
      */
     bool isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) const override;
 
-    static void setVaultSize(qint64 size);
-
 private:
     bool isRootDirectory() const;
-
-    static qint64 m_vaultSize;
 
     Q_DECLARE_PRIVATE(VaultFileInfo)
 };

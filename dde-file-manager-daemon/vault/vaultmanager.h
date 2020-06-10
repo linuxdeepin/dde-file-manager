@@ -43,6 +43,12 @@ public:
 
 public slots:
     /**
+     * @brief slotUserChanged 用户切换槽函数
+     * @param curUser
+     */
+    void sysUserChanged(const QString& curUser);
+
+    /**
      * @brief setRefreshTime 设置保险箱刷新时间
      * @param time
      */
@@ -67,12 +73,6 @@ public slots:
     */
     bool checkAuthentication(QString type);
 
-private slots:
-    /**
-     * @brief checkUserChanged 检查当前用户是否改变
-     */
-    void checkUserChanged();
-
 private:
     /**
      * @brief getCurrentUser 获取当前用户
@@ -86,8 +86,6 @@ private:
     QMap<QString, VaultClock*> m_mapUserClock; // map user and timer.
     VaultClock *m_curVaultClock; // current user clock.
     QString m_curUser; // current system user.
-
-    QTimer m_checkUsrChangeTimer; // check user changed.
 };
 
 #endif // VAULTMANAGER_H

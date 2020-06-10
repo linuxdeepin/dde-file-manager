@@ -76,25 +76,28 @@ public:
      */
     bool createQRCode(const QString &srcStr, int width, int height, QPixmap &pix);
 
-    // 获取保险箱状态
+    //! 获取保险箱状态
     EN_VaultState vaultState();
 
-    // 获取盐值及密码密文
+    //! 获取盐值及密码密文
     QString getSaltAndPasswordClipher();
 
-    // 获得加密文件夹路径
+    //! 获得加密文件夹路径
     QString getEncryptDirPath();
-    // 获得解密文件夹路径
+    //! 获得解密文件夹路径
     QString getdecryptDirPath();
 
-    // 获得配置文件路径
+    //! 获得配置文件路径
     QStringList getConfigFilePath();
 
-    // 随即生成密码
+    //! 随即生成密码
     QString autoGeneratePassword(int minLength);
 
-    // 管理员权限认证
+    //! 管理员权限认证
     bool getRootPassword();
+
+    //! 执行shell命令并获得shell命令的返回值
+    int executionShellCommand(const QString &strCmd, QStringList &lstShellOutput);
 
 signals:
 

@@ -25,8 +25,8 @@
 #include "dfileproxywatcher.h"
 #include "vaulthandle.h"
 #include "vaulterrorcode.h"
-#include "vaultlockmanager.h"
 #include "dfmeventdispatcher.h"
+#include "dfilestatisticsjob.h"
 
 #include "appcontroller.h"
 #include "singleton.h"
@@ -50,7 +50,6 @@
 #include <QDBusPendingCall>
 #include <unistd.h>
 
-#include "vault/vaultlockmanager.h"
 
 VaultController * VaultController::cryfs = nullptr;
 
@@ -201,6 +200,17 @@ VaultController::VaultController(QObject *parent)
     connect(d->m_cryFsHandle, &CryFsHandle::signalLockVault, this, &VaultController::signalLockVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadError, this, &VaultController::signalReadError);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadOutput, this, &VaultController::signalReadOutput);
+
+    // Get root dir size.
+    m_sizeWorker = new DFileStatisticsJob(this);
+
+    DUrl rootUrl = vaultToLocalUrl(makeVaultUrl());
+    m_sizeWorker->start({rootUrl});
+    connect(m_sizeWorker, &DFileStatisticsJob::dataNotify, this, &VaultController::updateFolderSizeLabel);
+
+    // Refresh size when lock state changed.
+    connect(this, &VaultController::signalUnlockVault, this, &VaultController::refreshTotalSize);
+    connect(this, &VaultController::signalLockVault, this, &VaultController::refreshTotalSize);
 }
 
 VaultController *VaultController::getVaultController()
@@ -242,9 +252,16 @@ DAbstractFileWatcher *VaultController::createFileWatcher(const QSharedPointer<DF
 {
     QString urlPath = event->url().toLocalFile();
     DUrl url = makeVaultUrl(urlPath);
-    return new DFileProxyWatcher(url,
+    auto watcher = new DFileProxyWatcher(url,
                                  new DFileWatcher(urlPath),
                                  VaultController::localUrlToVault);
+
+    connect(watcher, &DFileProxyWatcher::fileDeleted, this, &VaultController::refreshTotalSize);
+    connect(watcher, &DFileProxyWatcher::subfileCreated, this, &VaultController::refreshTotalSize);
+    connect(watcher, &DFileProxyWatcher::fileMoved, this, &VaultController::refreshTotalSize);
+    connect(watcher, &DFileProxyWatcher::fileAttributeChanged, this, &VaultController::refreshTotalSize);
+
+    return watcher;
 }
 
 bool VaultController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
@@ -315,9 +332,7 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());        
     DFileService::instance()->deleteFiles(event->sender(), urlList);
-    VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
-    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
-    emit vaultRepaint();
+
     return true;
 }
 
@@ -325,9 +340,7 @@ DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> 
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DFileService::instance()->deleteFiles(event->sender(), urlList);
-    VaultCalculation::Initialize()->calculationVault();     //! 删除文件后计算保险箱大小
-    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
-    emit vaultRepaint();
+
     return urlList;
 }
 
@@ -336,8 +349,6 @@ DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) 
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DUrl url = vaultToLocalUrl(event->targetUrl());
     DUrlList ulist = DFileService::instance()->pasteFile(event->sender(), event->action(), url, urlList);
-    VaultCalculation::Initialize()->calculationVault();     //! 复制文件后计算保险箱大小
-    emit signalCalculationVaultFinish();                    //! 发送计算大小完成后文管首页刷新信号
     return ulist;
 }
 
@@ -679,17 +690,14 @@ QString VaultController::getErrorInfo(int state)
     return strErr;
 }
 
-qint64 VaultController::getVaultCurSize()
+qint64 VaultController::totalsize() const
 {
-    QString strVaultPath = makeVaultLocalPath("");
-    QStorageInfo info(strVaultPath);
-    QString temp = info.fileSystemType();
-    if (info.isValid() && temp == "fuse.cryfs")
-    {
-        return info.bytesTotal() - info.bytesFree() - 32704;
-    }else{
-        return 0;
-    }
+    return m_totalSize;
+}
+
+void VaultController::updateFolderSizeLabel(const qint64 size) noexcept
+{
+    m_totalSize = size;
 }
 
 bool VaultController::isVaultFile(QString path)
@@ -837,29 +845,12 @@ QString VaultController::vaultUnlockPath()
     return makeVaultLocalPath("", "vault_unlocked");
 }
 
-/********************************************************/
-
-VaultCalculation * VaultCalculation::m_vaultCalculation = nullptr;
-
-VaultCalculation::VaultCalculation(QObject * parent):QObject (parent),m_flg(true)
+void VaultController::refreshTotalSize()
 {
-    
-}
-
-VaultCalculation * VaultCalculation::Initialize()
-{
-    if(m_vaultCalculation == nullptr)
-    {
-        m_vaultCalculation = new VaultCalculation;
+    if (m_sizeWorker->isRunning()) {
+        m_sizeWorker->stop();
+        m_sizeWorker->wait();
     }
-    return m_vaultCalculation;
-}
-
-void VaultCalculation::calculationVault()
-{
-    VaultController *controller = VaultController::getVaultController();
-    
-    DUrl url = controller->vaultToLocalUrl(controller->makeVaultUrl());
-    QStorageInfo storageInfo(url.toLocalFile());
-    VaultFileInfo::setVaultSize(storageInfo.bytesTotal() - storageInfo.bytesFree());
+    DUrl url = vaultToLocalUrl(makeVaultUrl());
+    m_sizeWorker->start({url});
 }

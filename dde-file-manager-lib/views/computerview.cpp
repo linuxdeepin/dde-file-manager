@@ -274,9 +274,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);
 
     connect(&DeviceInfoParser::Instance(), SIGNAL(loadFinished()), this, SLOT(repaint()));
-
-    //! 用于保险箱大小更新
-    connect(VaultController::getVaultController(), &VaultController::signalCalculationVaultFinish, this, &ComputerView::vaultCalculationFinish);
+    connect(fileSignalManager, &FileSignalManager::requestUpdateComputerView, this, static_cast<void (ComputerView::*)()>(&ComputerView::update));
 }
 
 ComputerView::~ComputerView()
@@ -321,7 +319,10 @@ void ComputerView::contextMenu(const QPoint &pos)
 
     const QString &strVolTag = idx.data(ComputerModel::DataRoles::VolumeTagRole).value<QString>();
     if (strVolTag.startsWith("sr") // fix bug#25921 仅针对光驱设备实行禁用操作
-            && !idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()) {
+            && idx.data(ComputerModel::DataRoles::DiscUUIDRole).value<QString>().isEmpty()
+            && !idx.data(ComputerModel::DataRoles::DiscOpticalRole).value<bool>()
+            && (!idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()
+            || idx.data(ComputerModel::DataRoles::SizeTotalRole).value<int>() == 0)) {
         //fix:光驱还没有加载成功前，右键点击光驱“挂载”，光驱自动弹出。
         disabled.insert(MenuAction::OpenDiskInNewWindow);
         disabled.insert(MenuAction::OpenDiskInNewTab);
@@ -362,12 +363,6 @@ void ComputerView::onRenameRequested(const DFMUrlBaseEvent &event)
     if (idx.isValid()) {
         m_view->edit(idx);
     }
-}
-
-void ComputerView::vaultCalculationFinish() const
-{
-    ComputerView * view = (ComputerView*)this;
-    view->repaint();
 }
 
 void ComputerView::resizeEvent(QResizeEvent *event)
