@@ -182,6 +182,8 @@ void VaultLockManager::processAutoLock()
 
     if (interval > threshold) {
 
+        qDebug() << "---------------enter interval > threshold---------------";
+
         // 如果正在有保险箱的移动、粘贴、删除操作，强行结束任务
         DTaskDialog *pTaskDlg = dialogManager->taskDialog();
         if(pTaskDlg){
@@ -220,7 +222,9 @@ void VaultLockManager::processAutoLock()
             qDebug() << "close vault task failed!";
         }
 
+        qDebug() << "---------------begin lockVault---------------";
         controller->lockVault();
+        qDebug() << "---------------leave lockVault---------------";
     }
 }
 
