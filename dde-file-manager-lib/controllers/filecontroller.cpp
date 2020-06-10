@@ -959,7 +959,13 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
 
 
     bool ok = !pasteFilesV2(DFMGlobal::CutAction, event->fileUrlList(), DUrl(), event->silent(), event->force()).isEmpty();
-
+    for (const auto &url : event->fileUrlList()) {
+        if (url.toLocalFile().contains("/mtp:")) {
+            DUrl mtpUrl(url);
+            mtpUrl.setScheme(MTP_SCHEME);
+            DAbstractFileWatcher::ghostSignal(mtpUrl.parentUrl(), &DAbstractFileWatcher::fileDeleted, mtpUrl);
+        }
+    }
     return ok;
 }
 
@@ -1108,6 +1114,7 @@ bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
     bool ok = QDir::current().mkdir(event->url().toLocalFile());
 
     if (ok) {
+        fileAdded(event->url());
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
     }
 
@@ -1123,6 +1130,7 @@ bool FileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
 
     if (file.open(QIODevice::WriteOnly)) {
         file.close();
+        fileAdded(event->url());
     } else {
         return false;
     }
@@ -1390,6 +1398,15 @@ QString FileController::checkDuplicateName(const QString &name) const
     }
 
     return destUrl;
+}
+
+bool FileController::fileAdded(const DUrl &url) const
+{
+    // 华为平台特有的问题，inotify无法向mtp发送信号，因此采用以下模式在文件创建完成后来刷新模型
+    if (url.toLocalFile().contains("/mtp:")) {
+        return DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::subfileCreated, url);
+    }
+    return true;
 }
 
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,
