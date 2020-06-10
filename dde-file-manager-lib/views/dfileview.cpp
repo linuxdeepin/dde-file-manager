@@ -3115,9 +3115,11 @@ void DFileViewPrivate::pureResizeEvent(QResizeEvent *event)
 {
     Q_Q(DFileView);
 
-    if (showCount == 1) { //fix 任务25717 文件管理器窗口默认以列表视图显示时，开启文件管理器窗口，列表视图未适配窗口大小。
-        adjustFileNameCol = q->width() >= headerView->width();
-        showCount ++; //次数比实际次数多一次，跳过1
+    if (currentViewMode == DFileView::ListMode) { //修复分非列表模式启动崩溃
+        if (showCount == 1) { //fix 任务25717 文件管理器窗口默认以列表视图显示时，开启文件管理器窗口，列表视图未适配窗口大小。
+            adjustFileNameCol = q->width() >= headerView->width();
+            showCount ++; //次数比实际次数多一次，跳过1
+        }
     }
 
     if (!allowedAdjustColumnSize) {
