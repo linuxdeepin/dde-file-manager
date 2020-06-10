@@ -184,6 +184,11 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
         }
         DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
     } else {
+        //fix bug 30506 ,异步处理网路文件很卡的情况下，快速点击会崩溃，或者卡死
+        if (urls.size() > 0 && FileUtils::isGvfsMountFile(urls.first().path())) {
+            DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+            return;
+        }
         DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
     }
 }
