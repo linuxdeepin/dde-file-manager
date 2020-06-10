@@ -2582,7 +2582,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             // 初始化列宽调整
             d->cachedViewWidth = this->width();
             //fix task klu 21328 当切换到列表显示时自动适应列宽度
-            d->adjustFileNameCol = d->headerView->width() <= this->width();
+            d->adjustFileNameCol = true; //fix 31609 无论如何在切换显示模式时都去调整列表宽度
             updateListHeaderViewProperty();
         }
 
