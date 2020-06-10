@@ -175,6 +175,7 @@ public:
     QPoint lastTouchBeginPos;
     int touchTapDistance = -1;
 
+    int showCount = 0;  //记录showEvent次数，为了在第一次时去调整列表模式的表头宽度
     // u盘访问控制
     AcessControlInterface *m_acessControlInterface = nullptr;
 
@@ -1098,6 +1099,7 @@ void DFileView::showEvent(QShowEvent *event)
     DFileMenuManager::setActionWhitelist(d->menuWhitelist);
     DFileMenuManager::setActionBlacklist(d->menuBlacklist);
 
+    d->showCount++;
     setFocus();
 }
 
@@ -1325,6 +1327,10 @@ void DFileView::updateStatusBar()
     event.setWindowId(windowId());
     event.setData(selectedUrls());
     int count = selectedIndexCount();
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+        return;
+    }
 
     emit notifySelectUrlChanged(selectedUrls());
 
@@ -1482,6 +1488,7 @@ void DFileView::resizeEvent(QResizeEvent *event)
 {
     Q_D(DFileView);
 
+    qDebug() << "resizeEvent";
     DListView::resizeEvent(event);
 
     if (d->statusBar && d->statusBar->width() != width()) {
@@ -1489,10 +1496,6 @@ void DFileView::resizeEvent(QResizeEvent *event)
     }
 
     updateHorizontalOffset();
-
-    if (d->currentViewMode == ListMode) { //fix 任务25717 文件管理器窗口默认以列表视图显示时，开启文件管理器窗口，列表视图未适配窗口大小。（一般+必现+常用功能
-        d->adjustFileNameCol = d->headerView->width() <= this->width();
-    }
 
     if (itemDelegate()->editingIndex().isValid())
         doItemsLayout();
@@ -1503,20 +1506,25 @@ void DFileView::resizeEvent(QResizeEvent *event)
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     D_DC(DFileView);
-
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = isIconViewMode() ? index.isValid() : this->isSelected(index);
     bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
     Qt::ItemFlags flags;
 
     if (isEmptyArea) {
+        //判断网络文件是否可以到达
+        if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+            return;
+        }
         flags = model()->flags(rootIndex());
-
         if (!flags.testFlag(Qt::ItemIsEnabled))
             return;
     } else {
+        //判断网络文件是否可以到达
+        if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+            return;
+        }
         flags = model()->flags(index);
-
         if (!flags.testFlag(Qt::ItemIsEnabled)) {
             isEmptyArea = true;
             flags = rootIndex().flags();
@@ -1716,6 +1724,7 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return;
     }
 
+
     if (flags == (QItemSelectionModel::Current | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect)) {
         QRect tmp_rect = rect;
         //修改远程时，文件选择框内容选中后被取消问题
@@ -1746,7 +1755,6 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return selectionModel()->select(selection, flags);
 #endif
     }
-
     DListView::setSelection(rect, flags);
 }
 
@@ -2143,7 +2151,10 @@ void DFileView::decreaseIcon()
 void DFileView::openIndex(const QModelIndex &index)
 {
     const DUrl &url = model()->getUrlByIndex(index);
-
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
+        return;
+    }
     DFMOpenUrlEvent::DirOpenMode mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()
                                         ? DFMOpenUrlEvent::ForceOpenNewWindow
                                         : DFMOpenUrlEvent::OpenInCurrentWindow;
@@ -2217,24 +2228,38 @@ bool DFileView::setRootUrl(const DUrl &url)
         }
 
         QString devpath = fileUrl.burnDestDevice();
-        QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
-        getOpticalDriveMutex()->lock();
+        QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(devpath, {});
+        if (rootDeviceNode.isEmpty()) {
+            return false;
+        }
+        QString udiskspath = rootDeviceNode.first();
+        //getOpticalDriveMutex()->lock();// 主线程不能加锁，否则导致界面僵死：bug 31318:切换用户，打开文件管理器，多次点击左侧光驱栏目，右键，关闭一个授权弹窗，文件管理器卡死
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
-        getOpticalDriveMutex()->unlock();
+        //getOpticalDriveMutex()->unlock();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         if (!dp.devid.length()) {
             QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
             QSharedPointer<QFutureWatcher<bool>> fw(new QFutureWatcher<bool>);
             connect(fw.data(), &QFutureWatcher<bool>::finished, this, [ = ] {
-                QGuiApplication::restoreOverrideCursor();
+                //QGuiApplication::restoreOverrideCursor();
+                QGuiApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // bug 31318， 应该直接使用ArrowCursor，否则多个弹窗的情况下，鼠标要出问题
                 if (fw->result())
                 {
                     cd(fileUrl);
                 }
             });
             fw->setFuture(QtConcurrent::run([ = ] {
-                getOpticalDriveMutex()->lock();
+                QMutexLocker locker(getOpticalDriveMutex());
+
                 blkdev->unmount({});
+                // fix bug 27211 用户操作其他用户挂载的设备的时候，需要先卸载，卸载得提权，如果用户直接关闭了对话框，会返回错误代码 QDbusError::Other
+                // 需要对错误进行处理，出错的时候就不再执行后续操作了。
+                QDBusError err = blkdev->lastError();
+                if (err.isValid() && !err.name().toLower().contains("notmounted")) { // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
+
+                    qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
+                    return false;
+                }
                 if (!ISOMaster->acquireDevice(devpath))
                 {
                     ISOMaster->releaseDevice();
@@ -2245,13 +2270,13 @@ bool DFileView::setRootUrl(const DUrl &url)
                     qDebug() << "setRootUrl failed:" << blkdev->drive();
                     if (diskdev->optical())
                         QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
-                    getOpticalDriveMutex()->unlock();
+
                     return false;
                 }
                 ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
                 blkdev->mount({});
-                getOpticalDriveMutex()->unlock();
+
                 return true;
             }));
             return false;
@@ -3089,6 +3114,11 @@ void DFileViewPrivate::updateHorizontalScrollBarPosition()
 void DFileViewPrivate::pureResizeEvent(QResizeEvent *event)
 {
     Q_Q(DFileView);
+
+    if (showCount == 1) { //fix 任务25717 文件管理器窗口默认以列表视图显示时，开启文件管理器窗口，列表视图未适配窗口大小。
+        adjustFileNameCol = q->width() >= headerView->width();
+        showCount ++; //次数比实际次数多一次，跳过1
+    }
 
     if (!allowedAdjustColumnSize) {
         // auto switch list mode

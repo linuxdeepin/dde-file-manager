@@ -159,6 +159,7 @@ public:
     QTimer *updateSpeedTimer = nullptr;
     int timeOutCount = 0;
     bool needUpdateProgress = false;
+    bool countStatisticsFinished = false;
     // 线程id
     long tid = -1;
 

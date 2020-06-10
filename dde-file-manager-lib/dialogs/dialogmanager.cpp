@@ -1281,6 +1281,19 @@ void DialogManager::showTaskProgressDlgOnActive()
         m_taskDialog->addTask(mapJobDetail);
     }
 }
+int DialogManager::showUnableToLocateDir(const QString &dir)
+{
+    DDialog d;
+    d.setTitle(tr("Locate to %1 failed!").arg(dir));
+    d.setMessage(" ");
+    QStringList buttonTexts;
+    buttonTexts << tr("Confirm");
+    d.addButton(buttonTexts[0], true);
+    d.setDefaultButton(0);
+    d.setIconPixmap(QIcon::fromTheme("folder").pixmap(64, 64));
+    int code = d.exec();
+    return code;
+}
 
 void DialogManager::refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl)
 {

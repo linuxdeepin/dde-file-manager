@@ -191,6 +191,10 @@ void DToolBar::initConnect()
     connect(m_forwardButton, &DButtonBoxButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DFMCrumbBar::crumbListItemSelected, this, [this](const DUrl &url){
+        //判断网络文件是否可以到达
+        if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
+            return;
+        }
         DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_crumbWidget, url, window());
     });
     connect(m_crumbWidget, &DFMCrumbBar::addressBarShown, this, &DToolBar::searchBarActivated);
@@ -297,7 +301,10 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
 void DToolBar::back()
 {
     DUrl url = m_navStack->back();
-
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
+        return;
+    }
     if(!url.isEmpty())
     {
         updateBackForwardButtonsState();
@@ -308,7 +315,10 @@ void DToolBar::back()
 void DToolBar::forward()
 {
     DUrl url = m_navStack->forward();
-
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
+        return;
+    }
     if(!url.isEmpty())
     {
         updateBackForwardButtonsState();

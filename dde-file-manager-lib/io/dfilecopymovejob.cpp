@@ -1575,6 +1575,10 @@ void DFileCopyMoveJobPrivate::updateMoveProgress()
         qreal realProgress = qreal(completedFilesCount) / totalCount;
         if (realProgress > lastProgress)
             lastProgress = realProgress;
+    } else if (countStatisticsFinished && totalMoveFilesCount > 0) {
+        qreal realProgress = qreal(completedFilesCount) / totalMoveFilesCount;
+        if (realProgress > lastProgress)
+            lastProgress = realProgress;
     } else {
         if (completedFilesCount < totalMoveFilesCount && totalMoveFilesCount > 0) {
             qreal fuzzyProgress = qreal(completedFilesCount) / totalMoveFilesCount;
@@ -1812,11 +1816,13 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
     // DFileStatisticsJob 统计数量很慢，自行统计
     QtConcurrent::run([this, sourceUrls, d] () {
         if (d->mode == MoveMode) {
+            d->countStatisticsFinished = false;
             for (const auto &url : sourceUrls) {
                 QStringList list;
                 FileUtils::recurseFolder(url.toLocalFile(), "", &list);
                 d->totalMoveFilesCount += list.size();
             }
+            d->countStatisticsFinished = true;
         }
     });
 

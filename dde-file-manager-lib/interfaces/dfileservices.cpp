@@ -68,24 +68,33 @@
 #include <QMimeData>
 #include <QTimer>
 #include <QStandardPaths>
+#include <QNetworkConfigurationManager>
+#include <QHostInfo>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
 
 DWIDGET_USE_NAMESPACE
 
 class DFileServicePrivate
 {
 public:
+
     static QMultiHash<const HandlerType, DAbstractFileController *> controllerHash;
     static QHash<const DAbstractFileController *, HandlerType> handlerHash;
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
-    static QHash<QUrl,DAbstractFileInfoPointer> rootfileHash;
-    JobController *m_jobcontroller = nullptr;
+    static QList<DUrl> rootfilelist;
     bool bstartonce = false;
+    bool m_bcursorbusy = false;
+    bool m_bonline = false;
+    JobController *m_jobcontroller = nullptr;
+    QNetworkConfigurationManager *m_networkmgr = nullptr;
+    QEventLoop *m_loop = nullptr;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
 QHash<const DAbstractFileController *, HandlerType> DFileServicePrivate::handlerHash;
 QMultiHash<const HandlerType, HandlerCreatorType> DFileServicePrivate::controllerCreatorHash;
-QHash<QUrl,DAbstractFileInfoPointer> DFileServicePrivate::rootfileHash;//本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
+QList<DUrl> DFileServicePrivate::rootfilelist;//本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
 
 DFileService::DFileService(QObject *parent)
     : QObject(parent)
@@ -101,6 +110,17 @@ DFileService::DFileService(QObject *parent)
             return DFMFileControllerFactory::create(key);
         }));
     }
+    //判断当前自己的网络状态
+    d_ptr->m_networkmgr = new QNetworkConfigurationManager();
+    d_ptr->m_bonline = d_ptr->m_networkmgr->isOnline();
+    d_ptr->m_loop = new QEventLoop();
+    connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged,[this](bool state){
+        d_ptr->m_bonline = state;
+        if (!d_ptr->m_bonline && d_ptr->m_loop)
+        {
+            d_ptr->m_loop->exit();
+        }
+    });
 
 }
 
@@ -891,16 +911,31 @@ DStorageInfo *DFileService::createStorageInfo(const QObject *sender, const DUrl 
     return qvariant_cast<DStorageInfo *>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
-QList<DAbstractFileInfoPointer> DFileService::getRootFile() const
+QList<DAbstractFileInfoPointer> DFileService::getRootFile()
 {
     QList<DAbstractFileInfoPointer> ret;
     QMutex mex;
     mex.lock();
-    foreach (auto key,d_ptr->rootfileHash.keys()){
-        if (d_ptr->rootfileHash.value(key)->exists()) {
-            ret.push_back(d_ptr->rootfileHash.value(key));
+    setCursorBusyState(true);
+    for (auto url : d_ptr->rootfilelist)
+    {
+        DAbstractFileInfoPointer rootinfo = createFileInfo(nullptr,url);
+        if (rootinfo->exists()) {
+            ret.push_back(rootinfo);
         }
     }
+    // fix 25778 每次打开文管，"我的目录" 顺序随机排列
+    static const QList<QString> udir = {"desktop", "videos", "music", "pictures", "documents", "downloads"};
+    for (int i = 0; i < udir.count(); i++) {
+        for (int j = 0; j < ret.count(); j++) {
+            if (ret[j]->fileUrl().path().contains(udir[i]) && ret[j]->suffix() == SUFFIX_USRDIR && i != j) {
+                ret.move(j, i);
+                break;
+            }
+        }
+    }
+
+    setCursorBusyState(false);
     mex.unlock();
     return ret;
 }
@@ -910,10 +945,10 @@ void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
     QMutex mex;
     if (bcreate) {
         mex.lock();
-        if(!d_ptr->rootfileHash.contains(fileurl)){
+        if(!d_ptr->rootfilelist.contains(fileurl)){
             DAbstractFileInfoPointer info = createFileInfo(nullptr, fileurl);
             if(info->exists()) {
-                d_ptr->rootfileHash.insert(fileurl,info);
+                d_ptr->rootfilelist.push_back(fileurl);
                 qDebug() << "  insert   " << fileurl;
             }
         }
@@ -921,10 +956,10 @@ void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
     }
     else {
         mex.lock();
-        qDebug() << "  remove   " << d_ptr->rootfileHash.keys();
-        if(d_ptr->rootfileHash.contains(fileurl)){
+        qDebug() << "  remove   " << d_ptr->rootfilelist;
+        if(d_ptr->rootfilelist.contains(fileurl)){
             qDebug() << "  remove   " << fileurl;
-            d_ptr->rootfileHash.remove(fileurl);
+            d_ptr->rootfilelist.removeOne(fileurl);
         }
         mex.unlock();
     }
@@ -938,24 +973,14 @@ void DFileService::startQuryRootFile()
     else {
         return;
     }
-    qDebug() << "start thread    startQuryRootFile   ===== ";
-    //先读本地的
-    QList<DAbstractFileInfoPointer> ch1 = fileService->getChildren(this, DUrl(DFMROOT_ROOT),  QStringList(), QDir::AllEntries,QDirIterator::NoIteratorFlags,false, true);
-    QMutex mex;
-    mex.lock();
-    for (auto _ch : ch1) {
-        if (!d_ptr->rootfileHash.contains(_ch->fileUrl())) {
-            d_ptr->rootfileHash.insert(_ch->fileUrl(),_ch);
-        }
-    }
-    mex.unlock();
+    qDebug() << "start thread    startQuryRootFile   ===== " << d_ptr->rootfilelist.size();
     //启用异步线程去读取
     d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
     connect(d_ptr->m_jobcontroller,&JobController::addChildren,this ,[this](const DAbstractFileInfoPointer &chi){
         QMutex mex;
         mex.lock();
-        if (!d_ptr->rootfileHash.contains(chi->fileUrl()) && chi->exists()) {
-            d_ptr->rootfileHash.insert(chi->fileUrl(),chi);
+        if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
+            d_ptr->rootfilelist.push_back(chi->fileUrl());
             qDebug() << "  addChildren " << chi->fileUrl();
             emit rootFileChange(chi);
         }
@@ -966,8 +991,9 @@ void DFileService::startQuryRootFile()
         QMutex mex;
         mex.lock();
         for (auto chi : ch) {
-            if (!d_ptr->rootfileHash.contains(chi->fileUrl()) && chi->exists()) {
-                d_ptr->rootfileHash.insert(chi->fileUrl(),chi);
+            if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
+                d_ptr->rootfilelist.push_back(chi->fileUrl());
+                qDebug() << "  addChildrenlist " << chi->fileUrl();
                 emit rootFileChange(chi);
             }
         }
@@ -996,6 +1022,215 @@ void DFileService::clearThread()
         d_ptr->m_jobcontroller = nullptr;
     }
 
+}
+
+void DFileService::setCursorBusyState(const bool bbusy)
+{
+    if (d_ptr->m_bcursorbusy == bbusy) {
+        return;
+    }
+    d_ptr->m_bcursorbusy = bbusy;
+    if (d_ptr->m_bcursorbusy) {
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    }
+    else {
+        QApplication::restoreOverrideCursor();
+    }
+
+}
+
+bool DFileService::checkGvfsMountfileBusy(const DUrl &url)
+{
+    //找出url的rootfile路径，判断rootfile是否存在
+    qDebug() << url << QThread::currentThreadId();
+    if (!url.isValid()) {
+        return false;
+    }
+    if (d_ptr->m_loop) {
+        d_ptr->m_loop->exit();
+    }
+    //还原设置鼠标状态
+    setCursorBusyState(false);
+
+    DUrl rooturl;
+    QString urlpath = url.path();
+    QString rootfilename;
+    if (url.scheme() == DFMROOT_SCHEME && urlpath.endsWith(SUFFIX_GVFSMP))
+    {
+        rootfilename = QUrl::fromPercentEncoding( url.path().toUtf8());
+        QStringList rootstrlist = rootfilename.split(QRegularExpression("^//run/user/\\d+/gvfs/"));
+        if (rootstrlist.size() >= 2) {
+            rootfilename = rootstrlist.at(1);
+            rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP),"");
+        }
+        if (!(rootfilename.startsWith("smb") || rootfilename.startsWith("ftp"))) {
+            return false;
+        }
+        rooturl = url;
+    }
+    else {
+        static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
+                                         QRegularExpression::DotMatchesEverythingOption
+                                         | QRegularExpression::DontCaptureOption
+                                         | QRegularExpression::OptimizeOnFirstUsageOption);
+
+        if (!regExp.match(urlpath, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch()) {
+            return false;
+        }
+        int qi = 0;
+        QStringList urlpathlist = urlpath.split(QRegularExpression("^/run/user/\\d+/gvfs/"));
+        QString urlstr;
+        QString urllast;
+        if (urlpathlist.size() >= 2) {
+            urllast = urlpathlist[1];
+            urlstr = urlpath.left(urlpath.indexOf(urllast));
+        }
+
+        qi = urllast.indexOf("/");
+        QString path;
+        if (0 >= qi) {
+            path = urlpath;
+            QStringList rootstrlist = path.split(QRegularExpression("^/run/user/\\d+/gvfs/"));
+            if (rootstrlist.size() >= 2) {
+                rootfilename = rootstrlist.at(1);
+                rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP),"");
+            }
+        }
+        else {
+            rootfilename = urllast.left(qi);
+            path = urlstr + urllast.left(qi);
+        }
+        if (path.isNull() || path.isEmpty() ||
+                !(rootfilename.startsWith("smb") || rootfilename.startsWith("ftp"))) {
+            return false;
+        }
+        rooturl.setScheme(DFMROOT_SCHEME);
+        rooturl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
+    }
+
+    return checkGvfsMountfileBusy(rooturl, rootfilename);
+
+}
+
+bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename)
+{
+    if(!rootUrl.isValid()) {
+        return false;
+    }
+    //设置鼠标状态，查看文件状态是否存在
+    setCursorBusyState(true);
+    //check network online
+    bool bonline = isNetWorkOnline();
+    bool fileexit = false;
+    if (!bonline) {
+        setCursorBusyState(false);
+        //文件不存在弹提示框
+        dialogManager->showUnableToLocateDir(rootfilename);
+        return true;
+    }
+
+    if (rootfilename.startsWith("smb")) {
+        DAbstractFileInfoPointer rootptr = createFileInfo(nullptr, rootUrl);
+        fileexit = rootptr->exists();
+        setCursorBusyState(false);
+        //文件不存在弹提示框
+        if (!fileexit) {
+            dialogManager->showUnableToLocateDir(rootfilename);
+        }
+        return !fileexit;
+    }
+
+    //是网络文件，就去确定host和port端口号
+    bool bvist = false;
+    QString host = rootfilename.mid(rootfilename.indexOf("host=")+5,rootfilename.indexOf(","));
+    QString port;
+    if (-1 != rootfilename.indexOf("port=")) {
+        port = rootfilename.right(rootfilename.indexOf("port=")+5);
+        port = port.mid(0,port.indexOf(","));
+    }
+
+    QString roottemp = rootfilename;
+    QUrl url; //该QUrl类提供了一个方便的接口,用于处理URL
+    url.setScheme(roottemp.left(roottemp.indexOf(":")));//设置该计划描述了URL的类型（或协议）
+    if (rootfilename.startsWith("ftp")) {
+        //设置URL的端口。该端口是URL的权限的一部分，如setAuthority（描述）。
+        //端口必须是介于0和65535（含）。端口设置为-1表示该端口是不确定的。
+         url.setPort(21);
+    }
+    else {
+        url.setPort(port.isNull() ? -1 : port.toInt());
+    }
+    url.setHost(host);//设置主机地址
+    url.setPath("/.hidden");//设置URL路径。该路径是自带权限后的URL的一部分，但在查询字符串之前
+
+    QNetworkRequest request;//该QNetworkReply类包含的数据和标题,对QNetworkAccessManager发送请求
+    request.setUrl(url); //这只request的请求
+
+    QNetworkAccessManager manager;//QNetworkAccessManager 允许发送网络请求和接收回复
+    //发送请求，以获得目标要求的内容，并返回一个新的QNetworkReply对象打开阅读，
+    //每当新的数据到达发射的readyRead（）信号。要求的内容以及相关的头文件会被下载。
+    manager.get(request);
+    qDebug() << "loop sart ===========";
+    connect(&manager, &QNetworkAccessManager::finished, this, [&](QNetworkReply *reply){
+        qDebug() << reply->error() << reply->errorString();
+        bvist = QNetworkReply::UnknownNetworkError < reply->error();
+        if (d_ptr->m_loop) {
+            d_ptr->m_loop->exit();
+        }
+    });
+    if (d_ptr->m_loop) {
+        d_ptr->m_loop->exec();
+    }
+
+    bonline = isNetWorkOnline();
+    if (!bonline) {
+        setCursorBusyState(false);
+        //文件不存在弹提示框
+        dialogManager->showUnableToLocateDir(rootfilename);
+        return true;
+    }
+
+    setCursorBusyState(false);
+    //文件不存在弹提示框
+    if (!bvist) {
+        dialogManager->showUnableToLocateDir(rootfilename);
+    }
+    return !bvist;
+}
+
+void DFileService::changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo)
+{
+    QMutex mex;
+    mex.lock();
+    for (const DAbstractFileInfoPointer &fi : rootinfo) {
+        DUrl url = fi->fileUrl();
+        if(!d_ptr->rootfilelist.contains(url) && fi->exists()) {
+            d_ptr->rootfilelist.push_back(url);
+        }
+    }
+    mex.unlock();
+}
+
+bool DFileService::isNetWorkOnline()
+{
+    return d_ptr->m_bonline;
+}
+
+bool DFileService::checkNetWorkToVistHost(const QString &host)
+{
+    if (host.isNull()) {
+        return false;
+    }
+    bool bvisit = false;
+    QEventLoop eventLoop;
+    QHostInfo::lookupHost(host,this,[&](QHostInfo &info){
+        qDebug() << " -----       " << info.errorString() << info.hostName();
+        bvisit = info.error() == QHostInfo::NoError;
+        eventLoop.exit();
+    });
+    eventLoop.exec();
+
+    return bvisit;
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
@@ -1081,7 +1316,12 @@ void DFileService::laterRequestSelectFiles(const DFMUrlListBaseEvent &event) con
 
     TIMER_SINGLESHOT_OBJECT(manager, qMax(event.fileUrlList().count() * (10 + event.fileUrlList().count() / 150), 200), {
         manager->requestSelectFile(event);
-    }, event, manager)
+                            }, event, manager)
+}
+
+void DFileService::slotError(QNetworkReply::NetworkError err)
+{
+    qDebug() << static_cast<QNetworkReply *>(sender())->errorString() << err;
 }
 
 ///###: replace
