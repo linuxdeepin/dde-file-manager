@@ -44,14 +44,31 @@ VaultManager::VaultManager(QObject *parent)
     m_curUser = getCurrentUser();
     m_mapUserClock.insert(m_curUser, m_curVaultClock);
 
-    // launch timer to check if user changed.
-    connect(&m_checkUsrChangeTimer, &QTimer::timeout, this, &VaultManager::checkUserChanged);
-    m_checkUsrChangeTimer.setInterval(2000);
-    m_checkUsrChangeTimer.start();
+    QDBusConnection::systemBus().connect(
+                "com.deepin.dde.LockService",
+                "/com/deepin/dde/LockService",
+                "com.deepin.dde.LockService",
+                "UserChanged",
+                this,
+                SLOT(sysUserChanged(QString)));
 }
 
 VaultManager::~VaultManager()
 {
+}
+
+void VaultManager::sysUserChanged(const QString &curUser)
+{
+    if (m_curUser != curUser) {
+        m_curUser = curUser;
+        bool bContain = m_mapUserClock.contains(m_curUser);
+        if (bContain) {
+            m_curVaultClock = m_mapUserClock[m_curUser];
+        } else {
+            m_curVaultClock = new VaultClock(this);
+            m_mapUserClock.insert(m_curUser, m_curVaultClock);
+        }
+    }
 }
 
 void VaultManager::setRefreshTime(quint64 time)
@@ -90,21 +107,6 @@ bool VaultManager::checkAuthentication(QString type)
         qDebug() << "Authentication failed !!";
     }
     return ret;
-}
-
-void VaultManager::checkUserChanged()
-{
-    QString curUser = getCurrentUser();
-    if (m_curUser != curUser) {
-        m_curUser = curUser;
-        bool bContain = m_mapUserClock.contains(m_curUser);
-        if (bContain) {
-            m_curVaultClock = m_mapUserClock[m_curUser];
-        } else {
-            m_curVaultClock = new VaultClock(this);
-            m_mapUserClock.insert(m_curUser, m_curVaultClock);
-        }
-    }
 }
 
 QString VaultManager::getCurrentUser() const

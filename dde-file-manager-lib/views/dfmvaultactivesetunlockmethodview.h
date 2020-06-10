@@ -5,6 +5,7 @@
 #include <dtkwidget_global.h>
 
 #define PASSWORD_LENGHT_MAX     24
+#define TIPS_TIME               3600000
 
 QT_BEGIN_NAMESPACE
 class QLineEdit;
@@ -38,12 +39,12 @@ signals:
 public slots:
 
 private slots:
-    void slotIsShowPassword();
-    void slotIshowRepeatPassword();
     void slotPasswordEditing();
     void slotPasswordEditFinished();
+    void slotPasswordEditFocusChanged(bool bFocus);
     void slotRepeatPasswordEditFinished();
     void slotRepeatPasswordEditing();
+    void slotRepeatPasswordEditFocusChanged(bool bFocus);
     void slotGenerateEditChanged(const QString &str);
     // 下一步按钮点击
     void slotNextBtnClicked();

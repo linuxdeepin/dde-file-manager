@@ -73,6 +73,8 @@ public:
         SchemeRole = Qt::UserRole + 12, //QString
         ProgressRole = Qt::UserRole + 13, // Bool(Progress visible)
         SizeRole = Qt::UserRole + 14, // Bool(Size visible)
+        DiscUUIDRole = Qt::UserRole + 15,   //设备UUID
+        DiscOpticalRole = Qt::UserRole + 16,//光盘是否是空盘
     };
     Q_ENUM(DataRoles)
 

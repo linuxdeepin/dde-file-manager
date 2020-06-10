@@ -184,6 +184,11 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
         }
         DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
     } else {
+        //fix bug 30506 ,异步处理网路文件很卡的情况下，快速点击会崩溃，或者卡死
+        if (urls.size() > 0 && FileUtils::isGvfsMountFile(urls.first().path())) {
+            DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+            return;
+        }
         DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
     }
 }
@@ -198,6 +203,11 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (fi && fi->scheme() == DFMROOT_SCHEME) {
         mounted |= (!fi->redirectedFileUrl().isEmpty());
     }
+
+    QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+
+    if (fileUrl.path().contains("dfmroot:///sr") && blk->idUUID().isEmpty() && !drv->opticalBlank()) return; // 如果光驱的uuid为空（光盘未挂载）且不是空光盘的情况下
 
     if (!mounted) {
         m_fmEvent = event;

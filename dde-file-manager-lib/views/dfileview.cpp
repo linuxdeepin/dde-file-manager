@@ -105,6 +105,7 @@ public:
     void toggleHeaderViewSnap(bool on);
     void _q_onSectionHandleDoubleClicked(int logicalIndex);
 
+public:
     DFileView *q_ptr;
 
     DFileMenuManager *fileMenuManager;
@@ -117,43 +118,6 @@ public:
     QActionGroup *sortByActionGroup;
     QActionGroup *openWithActionGroup;
 
-    QList<int> columnRoles;
-
-    DFileView::ViewMode defaultViewMode = DFileView::IconMode;
-    DFileView::ViewMode currentViewMode = DFileView::IconMode;
-
-    int horizontalOffset = 0;
-
-    /// move cursor later selecte index when pressed key shift
-    QModelIndex lastCursorIndex;
-
-    /// list mode column visible
-    QMap<QString, bool> columnForRoleHiddenMap;
-
-    int firstVisibleColumn = -1;
-    int lastVisibleColumn = -1;
-
-    DUrlList preSelectionUrls;
-
-    DAnchors<QLabel> contentLabel = nullptr;
-
-    QModelIndex mouseLastPressedIndex;
-
-    /// drag drop
-    QModelIndex dragMoveHoverIndex;
-
-    /// Saved before sorting
-    DUrlList oldSelectedUrls;
-    DUrl oldCurrentUrl;
-
-    DFileView::RandeIndex visibleIndexRande;
-
-    /// menu actions filter
-    QSet<MenuAction> menuWhitelist;
-    QSet<MenuAction> menuBlacklist;
-
-    QSet<DFileView::SelectionMode> enabledSelectionModes;
-
     FileViewHelper *fileViewHelper;
 
     QTimer *updateStatusBarTimer;
@@ -164,21 +128,60 @@ public:
 
     QActionGroup *toolbarActionGroup;
 
-    bool allowedAdjustColumnSize = true;
-    bool adjustFileNameCol = false; // mac finder style half-auto col size adjustment flag.
-    int cachedViewWidth = -1;
+    // u盘访问控制
+    AcessControlInterface *m_acessControlInterface = nullptr;
 
     // 用于实现触屏滚动视图和框选文件不冲突，手指在屏幕上按下短时间内就开始移动
     // 会被认为触发滚动视图，否则为触发文件选择（时间默认为300毫秒）
     QPointer<QTimer> updateEnableSelectionByMouseTimer;
+
     // 记录触摸按下事件，在mouse move事件中使用，用于判断手指移动的距离，当大于
     // QPlatformTheme::TouchDoubleTapDistance 的值时认为触发触屏滚动
     QPoint lastTouchBeginPos;
+
+    QList<int> columnRoles;
+
+    DFileView::ViewMode defaultViewMode = DFileView::IconMode;
+    DFileView::ViewMode currentViewMode = DFileView::IconMode;
+    /// move cursor later selecte index when pressed key shift
+    QModelIndex lastCursorIndex;
+
+    QModelIndex mouseLastPressedIndex;
+
+    /// drag drop
+    QModelIndex dragMoveHoverIndex;
+
+    /// list mode column visible
+    QMap<QString, bool> columnForRoleHiddenMap;
+
+    DUrlList preSelectionUrls;
+
+    /// Saved before sorting
+    DUrlList oldSelectedUrls;
+
+    DAnchors<QLabel> contentLabel = nullptr;
+
+    DUrl oldCurrentUrl;
+
+    /// menu actions filter
+    QSet<MenuAction> menuWhitelist;
+
+    QSet<MenuAction> menuBlacklist;
+
+    QSet<DFileView::SelectionMode> enabledSelectionModes;
+
+    int horizontalOffset = 0;
+    int firstVisibleColumn = -1;
+    int lastVisibleColumn = -1;
+    int cachedViewWidth = -1;
     int touchTapDistance = -1;
 
-    // u盘访问控制
-    AcessControlInterface *m_acessControlInterface = nullptr;
+    DFileView::RandeIndex visibleIndexRande;
 
+    bool allowedAdjustColumnSize = true;
+    bool adjustFileNameCol = false; // mac finder style half-auto col size adjustment flag.
+
+    char justAvoidWaringOfAlignmentBoundary[2];//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -713,7 +716,7 @@ void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
     if (!info)
         return;
 
-    ViewModes modes = (ViewModes)info->supportViewMode();
+    ViewModes modes = static_cast<ViewModes>(info->supportViewMode());
 
     //view mode support handler
     if (modes & mode) {
@@ -778,8 +781,8 @@ void DFileView::setEnabledSelectionModes(const QSet<QAbstractItemView::Selection
         const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
 
         for (DAbstractFileInfo::SelectionMode mode : supportSelectionModes) {
-            if (list.contains((SelectionMode)mode)) {
-                setSelectionMode((SelectionMode)mode);
+            if (list.contains(static_cast<SelectionMode>(mode))) {
+                setSelectionMode(static_cast<SelectionMode>(mode));
                 break;
             }
         }
@@ -820,7 +823,7 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
 {
     QAction *dAction = static_cast<QAction *>(action);
     dAction->setChecked(true);
-    MenuAction type = (MenuAction)dAction->data().toInt();
+    MenuAction type = static_cast<MenuAction>(dAction->data().toInt());
 
     switch (type) {
     case MenuAction::IconView:
@@ -860,7 +863,7 @@ void DFileView::sortByActionTriggered(QAction *action)
     const DUrl &root_url = rootUrl();
 
     d->setFileViewStateValue(root_url, "sortRole", model()->sortRole());
-    d->setFileViewStateValue(root_url, "sortOrder", (int)order);
+    d->setFileViewStateValue(root_url, "sortOrder", static_cast<int>(order));
 }
 
 void DFileView::openWithActionTriggered(QAction *action)
@@ -1199,8 +1202,8 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
                 QScroller::grabGesture(this);
                 QScroller *scroller = QScroller::scroller(this);
 
-                scroller->handleInput(QScroller::InputPress, event->localPos(), event->timestamp());
-                scroller->handleInput(QScroller::InputMove, event->localPos(), event->timestamp());
+                scroller->handleInput(QScroller::InputPress, event->localPos(), static_cast<qint64>(event->timestamp()));
+                scroller->handleInput(QScroller::InputMove, event->localPos(), static_cast<qint64>(event->timestamp()));
             }
 
             return;
@@ -1237,6 +1240,13 @@ void DFileView::updateModelActiveIndex()
 
     const RandeIndex &rande = randeList.first();
     DAbstractFileWatcher *fileWatcher = model()->fileWatcher();
+
+    //fix 31327， 监控./.hidden文件更改
+    connect(fileWatcher, &DAbstractFileWatcher::fileModified, this, [this](const DUrl &url){
+        if (url.fileName() == ".hidden" && !(model()->filters() & QDir::Hidden)){
+            model()->refresh();
+        }
+    });
 
     for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
@@ -1420,7 +1430,7 @@ void DFileView::saveViewState()
     Q_D(DFileView);
 
     d->setFileViewStateValue(url, "iconSizeLevel", statusBar()->scalingSlider()->value());
-    d->setFileViewStateValue(url, "viewMode", (int)viewMode());
+    d->setFileViewStateValue(url, "viewMode", static_cast<int>(viewMode()));
 }
 
 void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
@@ -1440,7 +1450,7 @@ void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
     const DUrl &root_url = rootUrl();
 
     d->setFileViewStateValue(root_url, "sortRole", model()->sortRole());
-    d->setFileViewStateValue(root_url, "sortOrder", (int)order);
+    d->setFileViewStateValue(root_url, "sortOrder", static_cast<int>(order));
 }
 
 void DFileView::onDriveOpticalChanged(const QString &path)
@@ -1549,7 +1559,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     if (!fetchDragEventUrlsFromSharedMemory())
         return;
 
-    for (const DUrl &url : m_urlsForDragEvent) {
+    for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
 
         // a symlink that points to a non-existing file QFileInfo::isReadAble() returns false
@@ -1829,7 +1839,8 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
 
             if (last_row) {
                 // call later
-                QTimer::singleShot(0, this, [this, index, d] {
+                //QTimer::singleShot(0, this, [this, index, d] {//this index unused,改成如下
+                QTimer::singleShot(0, this, [d] {
                     // scroll to end
                     d->verticalScrollBar->setValue(d->verticalScrollBar->maximum());
                 });
@@ -2325,7 +2336,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     model()->setSortRole(d->fileViewStateValue(fileUrl, "sortRole", DFileSystemModel::FileDisplayNameRole).toInt(),
-                         (Qt::SortOrder)d->fileViewStateValue(fileUrl, "sortOrder", Qt::AscendingOrder).toInt());
+                         static_cast<Qt::SortOrder>(d->fileViewStateValue(fileUrl, "sortOrder", Qt::AscendingOrder).toInt()));
 
     if (d->headerView) {
         updateListHeaderViewProperty();
@@ -2336,7 +2347,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     if (info) {
-        ViewModes modes = (ViewModes)info->supportViewMode();
+        ViewModes modes = static_cast<ViewModes>(info->supportViewMode());
 
         //view mode support handler
         toolBarActionList().first()->setVisible(testViewMode(modes, IconMode));
@@ -2359,8 +2370,8 @@ bool DFileView::setRootUrl(const DUrl &url)
     const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
 
     for (DAbstractFileInfo::SelectionMode mode : supportSelectionModes) {
-        if (d->enabledSelectionModes.contains((SelectionMode)mode)) {
-            setSelectionMode((SelectionMode)mode);
+        if (d->enabledSelectionModes.contains(static_cast<SelectionMode>(mode))) {
+            setSelectionMode(static_cast<SelectionMode>(mode));
             break;
         }
     }
@@ -2503,7 +2514,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                 d->headerViewHolder = new QWidget(this);
                 d->headerView = new DFMHeaderView(Qt::Horizontal, d->headerViewHolder);
 
-                connect(d->headerView, &DFMHeaderView::viewResized, this, [this, d] {
+                connect(d->headerView, &DFMHeaderView::viewResized, this, [d] {
                     d->headerViewHolder->setFixedHeight(d->headerView->height());
                 });
                 connect(d->headerView, &DFMHeaderView::sectionResized, d->headerView, &DFMHeaderView::adjustSize);
@@ -2571,7 +2582,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             // 初始化列宽调整
             d->cachedViewWidth = this->width();
             //fix task klu 21328 当切换到列表显示时自动适应列宽度
-            d->adjustFileNameCol = d->headerView->width() <= this->width();
+            d->adjustFileNameCol = true; //fix 31609 无论如何在切换显示模式时都去调整列表宽度
             updateListHeaderViewProperty();
         }
 
@@ -2722,7 +2733,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         qDebug() << "reject show menu";
         return;
     }
-    menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, windowId(), false);
+    menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(windowId()), false);
     lock = true;
 
     if (!menu) {
@@ -2900,7 +2911,7 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
                 }
             }
 
-            connect(action, &QAction::triggered, this, [this, action, column, i, d, childRoles] {
+            connect(action, &QAction::triggered, this, [this, i,childRoles] {
                 if (i % 2 == 0)
                 {
                     sortByRole(childRoles.at(i / 2), Qt::AscendingOrder);
@@ -3063,7 +3074,7 @@ bool DFileView::fetchDragEventUrlsFromSharedMemory()
 
     sm.lock();
     //用缓冲区得到共享内存关联后得到的数据和数据大小
-    buffer.setData((char *)sm.constData(), sm.size());
+    buffer.setData(static_cast<char*>(const_cast<void*>(sm.constData())), sm.size());
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
     in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
     qDebug() << m_urlsForDragEvent;

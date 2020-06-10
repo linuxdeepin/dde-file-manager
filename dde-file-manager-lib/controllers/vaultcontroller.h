@@ -27,6 +27,10 @@
 
 #include <DSecureString>
 
+DFM_BEGIN_NAMESPACE
+class DFileStatisticsJob;
+DFM_END_NAMESPACE
+
 DCORE_USE_NAMESPACE
 
 class VaultControllerPrivate;
@@ -161,9 +165,15 @@ public:
      */
     static QString getErrorInfo(int state);
 
-    static qint64 getVaultCurSize();
+    /**
+     * @brief totalsize 保险箱大小
+     * @return
+     */
+    qint64 totalsize() const;
 
 public slots:
+
+   void updateFolderSizeLabel(const qint64 size) noexcept;
 
     /**
      * @brief createVault       创建保险箱
@@ -209,6 +219,11 @@ public slots:
      */
     static QString vaultUnlockPath();
 
+    /**
+     * @brief refreshTotalSize 刷新保险箱大小
+     */
+    void refreshTotalSize();
+
 signals:
     /**
      * @brief readError 错误输出
@@ -239,13 +254,6 @@ signals:
      * @param state             返回ErrorCode枚举值
      */
     void signalLockVault(int state);
-
-    /**
-     * @brief signalCalculationVaultFinish  计算保险箱大小完成
-     */
-    void signalCalculationVaultFinish() const;
-
-    void vaultRepaint() const;
 
 signals:
     /**
@@ -279,32 +287,11 @@ private:
 
     static VaultController * cryfs;
 
+    qint64 m_totalSize = 0;
+
+    DFM_NAMESPACE::DFileStatisticsJob *m_sizeWorker{ nullptr };
+
     Q_DECLARE_PRIVATE(VaultController)
-};
-
-
-class VaultCalculation : public QObject
-{
-    Q_OBJECT
-private:
-    VaultCalculation(QObject * parent = nullptr);
-
-public:
-
-    static VaultCalculation * Initialize();
-
-    /**
-     * @brief calculationVault 计算保险箱大小
-     */
-    void calculationVault();
-
-public:
-    bool m_flg;
-
-private:
-    static VaultCalculation * m_vaultCalculation;
-
-
 };
 
 #endif

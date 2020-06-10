@@ -239,9 +239,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 }
             } else {
                 if (pitmdata->fi->fileUrl().scheme() == DFMVAULT_SCHEME) {
-                    // 计算保险箱大小
-                    return QString::number(VaultController::getVaultCurSize());
-//                    return QString::number(pitmdata->fi->size());
+                    return QString::number(pitmdata->fi->size());
                 }
                 return pitmdata->fi->extraProperties()["fsUsed"];
             }
@@ -353,6 +351,16 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         if (pitmdata->fi) {
             return QVariant::fromValue(pitmdata->fi->fileUrl().scheme());
         }
+    }
+    if (role == DataRoles::DiscUUIDRole) {
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
+        return blkdev->idUUID();
+    }
+
+    if (role == DataRoles::DiscOpticalRole) {
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
+        return drv->opticalBlank();
     }
 
     return QVariant();
