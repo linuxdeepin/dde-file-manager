@@ -17,6 +17,7 @@ struct CdStatusInfo {
     quint64 nUsage = 0;
     quint64 nTotal = 0;
     bool bBurningOrErasing = false;
+    bool bProcessLocked = false;
 };
 
 class DFMOpticalMediaWidgetPrivate;
@@ -43,6 +44,12 @@ public:
     void updateDiscInfo(QString dev);
     //fix: 设置光盘容量属性
     static void setBurnCapacity(int status, QString strVolTag = "");
+
+    //根据url 获取光驱标签
+    static QString getVolTag(const DUrl& fileUrl);
+
+    //判断当前磁盘是否正忙碌
+    static bool hasVolProcessBusy();
 
     //fix: 动态更新光驱磁盘状态
 private slots:

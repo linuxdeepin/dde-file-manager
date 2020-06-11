@@ -11,132 +11,192 @@
 #include <QDebug>
 #include <DWaterProgress>
 #include <QThread>
+#include <QMessageBox>
+#include <QTimer>
 
 DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     : QWidget(parent)
     , m_pTips(nullptr)
+    , m_pEncryptFinishedImage(nullptr)
+    , m_pTips4(nullptr)
     , m_pFinishedBtn(nullptr)
-    , m_pTips2(nullptr)
 {
     // 标题
     QLabel *pLabelTitle = new QLabel(tr("Encrypt File Vault"), this);
-    pLabelTitle->setStyleSheet("font: 16pt 'CESI黑体-GB13000'");
+    pLabelTitle->setStyleSheet("font-family: SourceHanSansSC;"
+                           "font-size: 14px;"
+                           "font-weight: 500;"
+                           "font-streth: normal;"
+                           "font-style: normal;"
+                           "line-height: normal;"
+                           "text-align: center;"
+                           "color: rgba(0, 0, 0, 0.9);");
+    pLabelTitle->setAlignment(Qt::AlignHCenter);
 
-    // 提示
-    m_pTips = new QLabel(tr("Click 'Encrypt' and input the user password to finish the setup wizard."), this);
-    m_pTips2 = new QLabel(tr("It will take several minutes, please wait..."), this);
-    m_pTips3 = new QLabel(this);
-    m_pTips3->setVisible(false);
-
+    // 加密提示
+    m_pTips = new QLabel(tr("Click 'Encrypt' and input the user password to finish the setup wizard.") + '\n' +
+                         tr("It will take several minutes, please wait..."), this);
+    m_pTips->setStyleSheet("font-family: SourceHanSansSC;"
+                           "font-size: 14px;"
+                           "font-weight: normal;"
+                           "font-stretch: normal;"
+                           "font-style: normal;"
+                           "line-height: 1.43;"
+                           "letter-spaceing: normal;"
+                           "text-align: center;"
+                           "color: rgba(0, 0, 0, 0.7);");
+    m_pTips->setAlignment(Qt::AlignHCenter);
     // 加密保险箱图片
-    m_pEncryVaultImage = new DIconButton(this);
-    m_pEncryVaultImage->setFlat(true);
-    m_pEncryVaultImage->setIcon(QIcon::fromTheme("dfm_vault"));
-    m_pEncryVaultImage->setIconSize(QSize(210, 210));
-    m_pEncryVaultImage->setWindowFlags(Qt::WindowTransparentForInput);
-    m_pEncryVaultImage->setFocusPolicy(Qt::NoFocus);
-    m_pEncryVaultImage->setMinimumHeight(210);
+    m_pEncryVaultImage = new QLabel(this);
+    m_pEncryVaultImage->setPixmap(QIcon::fromTheme("dfm_vault_active_encrypt").pixmap(98, 88));
+    m_pEncryVaultImage->setAlignment(Qt::AlignHCenter);
 
     // 进度条
     m_pWaterProgress = new DWaterProgress(this);
-    m_pWaterProgress->setValue(100);
-    m_pWaterProgress->setVisible(false);
+    m_pWaterProgress->setValue(1);
+    m_pWaterProgress->setFixedSize(98, 98);
+    // 进度条提示
+    m_pTips3 = new QLabel(tr("Encrypted..."), this);
+    m_pTips3->setStyleSheet("font-family: SourceHanSansSC;"
+                           "font-size: 12px;"
+                           "font-weight: normal;"
+                           "font-streth: normal;"
+                           "font-style: normal;"
+                           "line-height: normal;"
+                           "text-align: center;"
+                           "color: rgba(0, 0, 0, 0.7);");
+    m_pTips3->setAlignment(Qt::AlignHCenter);
+
+    // 加密完成完成图片
+    m_pEncryptFinishedImage = new QLabel(this);
+    m_pEncryptFinishedImage->setPixmap(QIcon::fromTheme("dfm_vault_active_finish").pixmap(128, 128));
+    m_pEncryptFinishedImage->setAlignment(Qt::AlignHCenter);
+    // 加密完成提示
+    m_pTips4 = new QLabel(tr("The setup is complete"), this);
+    m_pTips4->setStyleSheet("font-family: SourceHanSansSC;"
+                           "font-size: 12px;"
+                           "font-weight: normal;"
+                           "font-streth: normal;"
+                           "font-style: normal;"
+                           "line-height: normal;"
+                           "text-align: center;"
+                           "color: rgba(0, 0, 0, 0.7);");
+    m_pTips4->setAlignment(Qt::AlignHCenter);
 
     // 加密保险箱按钮
     m_pFinishedBtn = new QPushButton(tr("Encrypt") , this);
-    m_pFinishedBtn->setMinimumWidth(450);
+    m_pFinishedBtn->setStyleSheet("width: 452px;"
+                            "height: 30px;");
     connect(m_pFinishedBtn, &QPushButton::clicked,
             this, &DFMVaultActiveFinishedView::slotEncryptVault);
 
-    play = new QGridLayout();
-    play->addWidget(pLabelTitle, 0, 0, 1, 4, Qt::AlignCenter);
-    play->addWidget(m_pTips, 1, 0, 1, 4, Qt::AlignCenter);
-    play->addWidget(m_pTips2, 2, 0, 1, 4, Qt::AlignCenter);
-    play->addWidget(m_pEncryVaultImage, 3, 0, 2, 4, Qt::AlignCenter);
+    // 布局
+    m_pWidget1 = new QWidget(this);
+    QVBoxLayout *play1 = new QVBoxLayout(m_pWidget1);
+    play1->setMargin(0);
+    play1->addWidget(m_pTips);
+    play1->addSpacing(22);
+    play1->addWidget(m_pEncryVaultImage);
 
-    QVBoxLayout *play2 = new QVBoxLayout(this);
-    play2->setMargin(1);
-    play2->addLayout(play);
-    play2->addStretch();
-    play2->addWidget(m_pFinishedBtn, 0, Qt::AlignCenter);
+    m_pWidget2 = new QWidget(this);
+    QVBoxLayout *play2 = new QVBoxLayout(m_pWidget2);
+    play2->setContentsMargins(0, 22, 0, 0);
+    play2->addWidget(m_pWaterProgress);
+    play2->addSpacing(22);
+    play2->addWidget(m_pTips3);
+
+    m_pWidget3 = new QWidget(this);
+    QVBoxLayout *play3 = new QVBoxLayout(m_pWidget3);
+    play3->setContentsMargins(0, 15, 0, 0);
+    play3->addWidget(m_pEncryptFinishedImage);
+    play3->addSpacing(10);
+    play3->addWidget(m_pTips4);
+
+    QVBoxLayout *m_pLay = new QVBoxLayout(this);
+    m_pLay->setMargin(0);
+    m_pLay->addWidget(pLabelTitle);
+    m_pLay->addSpacing(10);
+    m_pLay->addWidget(m_pWidget1);
+    m_pLay->addWidget(m_pWidget2, 0, Qt::AlignHCenter);
+    m_pLay->addWidget(m_pWidget3);
+    m_pLay->addStretch();
+    m_pLay->addWidget(m_pFinishedBtn, 0, Qt::AlignCenter);
+
+    m_pWidget2->setVisible(false);
+    m_pWidget3->setVisible(false);
 
     // cryfs对象
     VaultController * pcryfs = VaultController::getVaultController();
     connect(pcryfs, &VaultController::signalCreateVault,
             this, &DFMVaultActiveFinishedView::slotEncryptComplete);
+
+    // 初始化定时器
+    m_pTimer = new QTimer(this);
+    connect(m_pTimer, &QTimer::timeout,
+             this, &DFMVaultActiveFinishedView::slotTimeout);
 }
 
 void DFMVaultActiveFinishedView::setFinishedBtnEnabled(bool b)
 {
     m_pFinishedBtn->setEnabled(b);
     m_pFinishedBtn->setText(tr("Encrypt"));
-    m_pEncryVaultImage->setIcon(QIcon::fromTheme("dfm_vault"));
-    play->addWidget(m_pEncryVaultImage, 3, 0, 2, 4, Qt::AlignCenter);
-    m_pTips->setVisible(true);
-    m_pTips2->setVisible(true);
-    m_pTips3->setVisible(false);
-    play->removeWidget(m_pTips3);
+    m_pWidget1->setVisible(true);
+    m_pWidget2->setVisible(false);
+    m_pWidget3->setVisible(false);
 }
 
 void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 {
     if(nState == 0){    // 创建保险箱成功
-        m_pTips->setVisible(false);
-        m_pTips2->setVisible(false);
+        m_pWaterProgress->setValue(100);
         m_pWaterProgress->stop();
-        m_pWaterProgress->setVisible(false);
-        play->removeWidget(m_pWaterProgress);
-        m_pEncryVaultImage->setIcon(QIcon::fromTheme("dfm_vault_active_finish"));
-        m_pEncryVaultImage->setVisible(true);
-        m_pTips3->setText(tr("The setup is complete"));
-        m_pFinishedBtn->setText(tr("ok"));
-        m_pFinishedBtn->setEnabled(true);
+        repaint();
+        m_pTimer->setSingleShot(true);
+        m_pTimer->start(500);
 
         // Reset autolock time config.
         VaultLockManager::getInstance().resetConfig();
     }else{
-        qDebug() << QString(tr("create vault failure, the error code is %1!").arg(nState));
+        QMessageBox::warning(this, QString(tr("warning")), QString(tr("create vault failure, the error code is %1!").arg(nState)));
     }
 }
 
 void DFMVaultActiveFinishedView::slotEncryptVault()
 {
-    m_pFinishedBtn->setEnabled(false);
+    if (!VaultLockManager::getInstance().checkAuthentication(VAULT_CREATE)){
+        m_pFinishedBtn->setEnabled(true);
+        return;
+    }
 
-    // Use thread to avoid repeat enter
-    std::thread thread( [&]() {
+    if(m_pFinishedBtn->text() == tr("Encrypt")){
+        // 按钮灰化
+        m_pFinishedBtn->setEnabled(false);
 
-        if (!VaultLockManager::getInstance().checkAuthentication(VAULT_CREATE)){
-            m_pFinishedBtn->setEnabled(true);
-            return;
-        }
+        // 进度条
+        m_pWaterProgress->start();
+        m_pWidget1->setVisible(false);
+        m_pWidget2->setVisible(true);
+        m_pWidget3->setVisible(false);
 
-        if(m_pFinishedBtn->text() == tr("Encrypt")){
-            // 按钮灰化
-            m_pFinishedBtn->setEnabled(false);
-
-            // 进度条
-            m_pTips->setVisible(false);
-            m_pTips2->setVisible(false);
-            m_pEncryVaultImage->setVisible(false);
-            play->removeWidget(m_pEncryVaultImage);
-            play->addWidget(m_pWaterProgress, 3, 0, 2, 4, Qt::AlignCenter);
-            m_pWaterProgress->setVisible(true);
-            m_pWaterProgress->start();
-            play->addWidget(m_pTips3, 5, 0, 1, 4, Qt::AlignHCenter);
-            m_pTips3->setVisible(true);
-            m_pTips3->setText(tr("Encrypted..."));
-
+        std::thread t([](){
             // 调用创建保险箱接口
             // 拿到密码
             QString strPassword = OperatorCenter::getInstance().getSaltAndPasswordClipher();
             VaultController::getVaultController()->createVault(strPassword);
+        });
+        t.detach();
 
-        }else{
-            // 切换到保险箱主页面
-            emit sigAccepted();
-        }
-    });
+    }else{
+        // 切换到保险箱主页面
+        emit sigAccepted();
+    }
+}
 
-    thread.detach();
+void DFMVaultActiveFinishedView::slotTimeout()
+{
+    m_pFinishedBtn->setText(tr("ok"));
+    m_pFinishedBtn->setEnabled(true);
+    m_pWidget1->setVisible(false);
+    m_pWidget2->setVisible(false);
+    m_pWidget3->setVisible(true);
 }

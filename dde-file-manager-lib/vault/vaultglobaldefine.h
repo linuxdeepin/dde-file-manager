@@ -1,6 +1,8 @@
 #ifndef VAULTGLOBALDEFINE_H
 #define VAULTGLOBALDEFINE_H
 
+#include <QString>
+
 #define CONFIG_DIR_NAME                 "vault"
 #define VAULT_DECRYPT_DIR_NAME          "vault_unlocked"
 #define VAULT_ENCRYPY_DIR_NAME          "vault_encrypted"

@@ -8,6 +8,7 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QPushButton;
 class QGridLayout;
+class QVBoxLayout;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
@@ -34,17 +35,27 @@ public slots:
 
 private slots:
     void slotEncryptVault();
+    void slotTimeout();
 
-private:
+private: 
+    QWidget             *m_pWidget1;
     QLabel              *m_pTips;
-    QPushButton         *m_pFinishedBtn;
-    QLabel              *m_pTips2;
+    QLabel              *m_pEncryVaultImage;
+
+    QWidget             *m_pWidget2;
+    DWaterProgress      *m_pWaterProgress;
     QLabel              *m_pTips3;
 
-    DIconButton         *m_pEncryVaultImage;
-    DWaterProgress      *m_pWaterProgress;
+    QWidget             *m_pWidget3;
+    QLabel              *m_pEncryptFinishedImage;
+    QLabel              *m_pTips4;
 
-    QGridLayout         *play;
+    QPushButton         *m_pFinishedBtn;
+
+    QVBoxLayout         *m_pLay;
+
+    // 辅助进度条，实现加密过程效果
+    QTimer              *m_pTimer;
 };
 
 #endif // DFMVAULTACTIVEFINISHEDVIEW_H

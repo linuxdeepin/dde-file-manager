@@ -112,7 +112,8 @@ void WindowManager::loadWindowState(DFileManagerWindow *window)
     int width = state.value("width").toInt();
     int height = state.value("height").toInt();
     NetWmStates windowState = static_cast<NetWmStates>(state.value("state").toInt());
-    if ((m_windows.size() == 0) && ((windowState & (NetWmStateMaximizedHorz | NetWmStateMaximizedVert)) != 0))
+    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
+    if ((m_windows.size() == 0) && ((windowState & NetWmStateMaximizedHorz) != 0 && (windowState & NetWmStateMaximizedVert) != 0))
     {
             window->showMaximized();
     }
@@ -127,7 +128,8 @@ void WindowManager::saveWindowState(DFileManagerWindow *window)
     /// The power by dxcb platform plugin
     NetWmStates states = static_cast<NetWmStates>(window->window()->windowHandle()->property("_d_netWmStates").toInt());
     QVariantMap state;
-    if ((states & (NetWmStateMaximizedHorz | NetWmStateMaximizedVert)) == 0) {
+    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
+    if ((states & NetWmStateMaximizedHorz) == 0 || (states & NetWmStateMaximizedVert) == 0) {
         state["width"] = window->size().width();
         state["height"] = window->size().height();
     }
