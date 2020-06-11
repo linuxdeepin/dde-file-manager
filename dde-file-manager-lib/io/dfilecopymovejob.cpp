@@ -676,11 +676,10 @@ create_new_file_info:
     }
 
     if (new_file_info->exists()) {
-        if (mode == DFileCopyMoveJob::MoveMode) {
+        if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode)
+                && new_file_info->fileUrl() == from) {
             // 不用再进行后面的操作
-            if (new_file_info->fileUrl() == from) {
-                return true;
-            }
+            return true;
         }
 
         // 禁止目录复制/移动到自己里面
@@ -1858,7 +1857,7 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
     // DFileStatisticsJob 统计数量很慢，自行统计
     QtConcurrent::run([sourceUrls, d] () {
-        if (d->mode == MoveMode) {
+        if (d->mode == MoveMode || d->mode == CutMode) {
             d->countStatisticsFinished = false;
             for (const auto &url : sourceUrls) {
                 QStringList list;
