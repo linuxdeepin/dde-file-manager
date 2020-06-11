@@ -24,14 +24,14 @@
 
 #include <QPlainTextEdit>
 #include <QAbstractButton>
-#include <QToolTip>
-
+#include <DToolTip>
 #include <DMessageBox>
-#include <DArrowRectangle>
+#include <DFloatingWidget>
+#include <QTimer>
 
 // 密钥最大长度
 #define MAX_KEY_LENGTH (32)
-
+DWIDGET_USE_NAMESPACE
 class DFMVaultRecoveryKeyPagesPrivate
 {
 public:
@@ -41,7 +41,8 @@ public:
         }
     }
 
-    DArrowRectangle *tooltip {nullptr};
+    DToolTip *tooltip {nullptr};
+    DFloatingWidget *frame {nullptr};
 };
 
 DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
@@ -50,7 +51,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
 {
     this->setTitle(tr("Unlock by Key"));
     this->setIcon(QIcon::fromTheme("dfm_safebox"));
-    this->setFixedSize(438, 260);
+    this->setFixedSize(396, 218);
 
     QStringList btnList({tr("Cancel"), tr("Unlock")});
     addButton(btnList[0], false);
@@ -61,6 +62,8 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     m_recoveryKeyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
     m_recoveryKeyEdit->setMaximumBlockCount(MAX_KEY_LENGTH + 3);
     m_recoveryKeyEdit->installEventFilter(this);
+    m_recoveryKeyEdit->setStyleSheet("border-radius: 8px;"
+                                     "background-color: rgba(0, 0, 0, 0.08);");
 
     addContent(m_recoveryKeyEdit);
     // 防止点击按钮后界面隐藏
@@ -97,37 +100,34 @@ void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duratio
     Q_D(DFMVaultRecoveryKeyPages);
 
     if (!d->tooltip){
-        d->tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop, this);
+        d->tooltip = new DToolTip(text);
         d->tooltip->setObjectName("AlertTooltip");
+        d->tooltip->setForegroundRole(DPalette::TextWarning);
+        d->tooltip->setWordWrap(true);
 
-        QLabel *label = new QLabel(d->tooltip);
-
-        label->setWordWrap(true);
-        label->setMaximumWidth(width());
-        d->tooltip->setContent(label);
-        d->tooltip->setBackgroundColor(palette().color(backgroundRole()));
-        d->tooltip->setArrowX(15);
-        d->tooltip->setArrowHeight(5);
-
-        QTimer::singleShot(duration, d->tooltip, [d] {
-            d->tooltip->deleteLater();
-            d->tooltip = Q_NULLPTR;
-        });
+        d->frame = new DFloatingWidget;
+        d->frame->setFramRadius(DStyle::pixelMetric(style(), DStyle::PM_FrameRadius));
+        d->frame->setStyleSheet("background-color: rgba(247, 247, 247, 0.6);");
+        d->frame->setWidget(d->tooltip);
     }
 
-    QLabel *label = qobject_cast<QLabel *>(d->tooltip->getContent());
+    d->frame->setParent(m_recoveryKeyEdit);
 
-    if (!label) {
+    d->tooltip->setText(text);
+    if(d->frame->parent()){
+        d->frame->setGeometry(0, 25, 68, 26);
+        d->frame->show();
+        d->frame->adjustSize();
+        d->frame->raise();
+    }
+
+    if (duration < 0) {
         return;
     }
 
-    label->setText(text);
-    label->adjustSize();
-    label->setStyleSheet("color:rgb(255, 85, 0)");
-
-    const QPoint &pos = m_recoveryKeyEdit->mapToGlobal(QPoint(15, 25));
-
-    d->tooltip->show(pos.x(), pos.y());
+    QTimer::singleShot(duration, d->frame, [d] {
+        d->frame->close();
+    });
 }
 
 void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)

@@ -31,6 +31,9 @@
 #include <DPushButton>
 #include <DPasswordEdit>
 #include <DMessageBox>
+#include <DFloatingWidget>
+#include <DToolTip>
+#include <QTimer>
 
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DDialog (parent)
@@ -38,7 +41,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     this->setTitle(tr("Unlock File Vault"));
     this->setIcon(QIcon::fromTheme("dfm_safebox"));
     this->setMessage(tr("Verify your password"));
-    this->setFixedSize(438, 260);
+    this->setFixedSize(396, 218);
 
     QStringList btnList({tr("Cancel"), tr("Unlock")});
     addButton(btnList[0], false);
@@ -47,7 +50,6 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
 
     m_passwordEdit = new DPasswordEdit(this);
     m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
-    m_passwordEdit->lineEdit()->setMaxLength(24);
     m_passwordEdit->lineEdit()->installEventFilter(this);
     m_tipsButton = new QPushButton(this);
     m_tipsButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
@@ -56,7 +58,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     QHBoxLayout *mainLayout = new QHBoxLayout();
     mainLayout->addWidget(m_passwordEdit);
     mainLayout->addWidget(m_tipsButton);
-    mainLayout->setContentsMargins(0, 10, 0, 25);
+    mainLayout->setContentsMargins(0, 15, 0, 0);
     mainFrame->setLayout(mainLayout);
 
     addContent(mainFrame);
@@ -71,7 +73,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
             strPwdHint.insert(0, tr("Password hint:"));
-            m_passwordEdit->showAlertMessage(strPwdHint);
+            showToolTip(strPwdHint, 3000, EN_ToolTip::Information);
         }
     });
 }
@@ -96,6 +98,42 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
         }
     }
     event->accept();
+}
+
+void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaultUnlockPages::EN_ToolTip enType)
+{
+    if (!m_tooltip){
+        m_tooltip = new DToolTip(text);
+        m_tooltip->setObjectName("AlertTooltip");
+        m_tooltip->setWordWrap(true);
+
+        m_frame = new DFloatingWidget;
+        m_frame->setFramRadius(DStyle::pixelMetric(style(), DStyle::PM_FrameRadius));
+        m_frame->setStyleSheet("background-color: rgba(247, 247, 247, 0.6);");
+        m_frame->setWidget(m_tooltip);
+    }
+    if(EN_ToolTip::Warning == enType)
+        m_tooltip->setForegroundRole(DPalette::TextWarning);
+    else
+        m_tooltip->setForegroundRole(DPalette::TextTitle);
+
+    m_frame->setParent(this);
+
+    m_tooltip->setText(text);
+    if(m_frame->parent()){
+        m_frame->setGeometry(12, 148, 68, 26);
+        m_frame->show();
+        m_frame->adjustSize();
+        m_frame->raise();
+    }
+
+    if (duration < 0) {
+        return;
+    }
+
+    QTimer::singleShot(duration, this, [=] {
+        m_frame->close();
+    });
 }
 
 DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
@@ -125,9 +163,8 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
             VaultController::getVaultController()->unlockVault(strClipher);            
         }else {
             // 设置密码输入框颜色
-            m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
-
-            m_passwordEdit->showAlertMessage(tr("Wrong password"));
+            m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+            showToolTip(tr("Wrong password"), 3000, EN_ToolTip::Warning);
         }
         return;
     }

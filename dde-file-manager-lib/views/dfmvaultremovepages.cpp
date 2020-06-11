@@ -25,7 +25,7 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
 {
     this->setTitle(tr("Remove File Vault"));
     this->setIcon(QIcon::fromTheme("dfm_safebox"));
-    this->setFixedSize(440, 290);
+    this->setFixedSize(396, 248);
 
     m_stackedWidget->addWidget(m_passwordView);
     m_stackedWidget->addWidget(m_recoverykeyView);
@@ -74,7 +74,7 @@ void DFMVaultRemovePages::showRemoveWidget()
     setCloseButtonVisible(false);
     clearButtons();
     setMessage(tr("Removing..."));
-    addButton(tr("Ok"), true, ButtonType::ButtonRecommend);
+    addButton(tr("Ok"), true, ButtonType::ButtonNormal);
     getButton(0)->setEnabled(false);
     m_stackedWidget->setCurrentIndex(2);
 }
@@ -137,7 +137,7 @@ void DFMVaultRemovePages::onButtonClicked(int index)
             QString strClipher("");
 
             if (!InterfaceActiveVault::checkPassword(strPwd, strClipher)){
-                m_passwordView->showAlertMessage(tr("Wrong password"));
+                m_passwordView->showToolTip(tr("Wrong password"), 3000, DFMVaultRemoveByPasswordView::EN_ToolTip::Warning);
                 return;
             }
         }else {
