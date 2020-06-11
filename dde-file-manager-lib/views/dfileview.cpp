@@ -2333,9 +2333,11 @@ bool DFileView::setRootUrl(const DUrl &url)
         fileUrl.setQuery(qq);
     } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(this, rootUrl)) {
         QList<DUrl> ancestors;
-
-        if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
-            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl);
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl,false)) {
+            if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
+                d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl);
+            }
         }
     }
 
