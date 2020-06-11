@@ -170,8 +170,8 @@ public:
     //set cursor busy status
     void setCursorBusyState(const bool bbusy);
     //check networkfile is busy(or network is unline)
-    bool checkGvfsMountfileBusy(const DUrl &url);
-    bool checkGvfsMountfileBusy(const DUrl &rootUrl,const QString &rootfilename);
+    bool checkGvfsMountfileBusy(const DUrl &url,const bool showdailog = true);
+    bool checkGvfsMountfileBusy(const DUrl &rootUrl,const QString &rootfilename,const bool showdailog = true);
     //chang rootfile
     void changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo);
     //judge me net work is online
