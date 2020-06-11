@@ -30,7 +30,7 @@ CanvasViewManager::~CanvasViewManager()
 void CanvasViewManager::onCanvasViewBuild(int imode)
 {
     //屏幕模式判断
-    AbstractScreenManager::DisplayMode mode = (AbstractScreenManager::DisplayMode)imode;
+    AbstractScreenManager::DisplayMode mode = static_cast<AbstractScreenManager::DisplayMode>(imode);
 
     GridManager::instance()->restCoord();
     //实际是单屏
@@ -173,7 +173,7 @@ void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)
 
 void CanvasViewManager::onSyncOperation(int so,QVariant var)
 {
-    GridManager::SyncOperation type = (GridManager::SyncOperation)so;
+    GridManager::SyncOperation type = static_cast<GridManager::SyncOperation>(so);
     qDebug() << "sync type" << type << "data" << var;
 
     switch (type) {
@@ -202,7 +202,7 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
     case GridManager::soSort:{
         QPoint sort = var.toPoint();
         for (CanvasViewPointer view : m_canvasMap.values()){
-            view->model()->setSortRole(sort.x(),(Qt::SortOrder)sort.y());
+            view->model()->setSortRole(sort.x(),static_cast<Qt::SortOrder>(sort.y()));
             view->update();
         }
         break;
