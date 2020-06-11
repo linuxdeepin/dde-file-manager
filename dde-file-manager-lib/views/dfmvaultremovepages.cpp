@@ -108,10 +108,10 @@ QWidget *DFMVaultRemovePages::getWndPtr() const
 
 void DFMVaultRemovePages::showTop()
 {
-    this->activateWindow();
-    this->showNormal();
-
     showVerifyWidget();
+
+    show();
+    raise();
 }
 
 void DFMVaultRemovePages::onButtonClicked(int index)
