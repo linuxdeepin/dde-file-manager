@@ -69,7 +69,7 @@ public:
 
     DFileView *view = Q_NULLPTR;
     int currentNameFilterIndex = -1;
-    QDir::Filters filters = 0;
+    QDir::Filters filters = nullptr;
     QString currentInputName;
     mutable QModelIndexList orderedSelectedList;
     FileDialogStatusBar *statusBar;
@@ -787,7 +787,7 @@ int DFileDialog::exec()
     if (guard.isNull()) {
         return QDialog::Rejected;
     }
-    d->eventLoop = 0;
+    d->eventLoop = nullptr;
 
     setAttribute(Qt::WA_ShowModal, wasShowModal);
 

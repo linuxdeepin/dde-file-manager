@@ -226,10 +226,10 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 
 quint64 WindowManager::getWindowId(const QWidget *window)
 {
-    int winId = m_windows.value(window->topLevelWidget(), 0);
+    int winId = static_cast<int>(m_windows.value(window->topLevelWidget(), 0));
 
     if (winId != 0)
-        return winId;
+        return static_cast<quint64>(winId);
 
     const QWidget *newW = window;
 
