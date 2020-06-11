@@ -2217,9 +2217,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
 
         // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
-        QString strVolTag = fileUrl.path().split("/", QString::SkipEmptyParts).count() >= 2
-                            ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
-                            : "";
+        QString strVolTag = DFMOpticalMediaWidget::getVolTag(fileUrl);
         if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
             emit fileSignalManager->activeTaskDlg();
             return false;
@@ -2235,21 +2233,35 @@ bool DFileView::setRootUrl(const DUrl &url)
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
         //getOpticalDriveMutex()->unlock();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+        CdStatusInfo* pCdStatusInfo = &DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag]; // bug fix 31427:挂载光驱，切换多个用户，文件管理器卡死:多用户情况下 授权框是 串行资源，必须做执行才能继续后续操作，不能神操作，否则就卡，这是 linux 的安全策略
+
         if (!dp.devid.length()) {
-            QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            //QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            DFileService::instance()->setCursorBusyState(true);
+
             QSharedPointer<QFutureWatcher<bool>> fw(new QFutureWatcher<bool>);
             connect(fw.data(), &QFutureWatcher<bool>::finished, this, [ = ] {
                 //QGuiApplication::restoreOverrideCursor();
-                QGuiApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // bug 31318， 应该直接使用ArrowCursor，否则多个弹窗的情况下，鼠标要出问题
+                if(!pCdStatusInfo->bProcessLocked){
+                    DFileService::instance()->setCursorBusyState(false);
+                    //QGuiApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // bug 31318， 应该直接使用ArrowCursor，否则多个弹窗的情况下，鼠标要出问题
+                }
+
                 if (fw->result())
                 {
                     cd(fileUrl);
                 }
             });
             fw->setFuture(QtConcurrent::run([ = ] {
-                QMutexLocker locker(getOpticalDriveMutex());
+                if(pCdStatusInfo->bProcessLocked)
+                    return false;
+                pCdStatusInfo->bProcessLocked = true;
 
+                QMutexLocker locker(getOpticalDriveMutex());
                 blkdev->unmount({});
+
+                pCdStatusInfo->bProcessLocked = false; // 过了unmount 流程，系统就不会有卡点了，下面流程会平滑过度
+
                 // fix bug 27211 用户操作其他用户挂载的设备的时候，需要先卸载，卸载得提权，如果用户直接关闭了对话框，会返回错误代码 QDbusError::Other
                 // 需要对错误进行处理，出错的时候就不再执行后续操作了。
                 QDBusError err = blkdev->lastError();

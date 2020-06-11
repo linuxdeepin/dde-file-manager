@@ -377,7 +377,8 @@ void DFMSideBar::onItemActivated(const QModelIndex &index)
         }
         DFileService::instance()->setCursorBusyState(true);
         interface->cdAction(this, item);
-        DFileService::instance()->setCursorBusyState(false);
+
+        DFileService::instance()->setCursorBusyState(DFMOpticalMediaWidget::hasVolProcessBusy());
     }
 }
 
