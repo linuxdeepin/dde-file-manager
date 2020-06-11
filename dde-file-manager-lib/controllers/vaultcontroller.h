@@ -47,6 +47,15 @@ public:
         NotAvailable
     };
 
+    struct FileBaseInfo
+    {
+        bool isExist = false;
+        bool isFile;
+        bool isDir;
+        bool isWritable = true;
+        bool isSymLink = false;
+    };
+
     explicit VaultController(QObject *parent = nullptr);
 public:
 
@@ -128,6 +137,8 @@ public:
 
     bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const Q_DECL_OVERRIDE;
 
+    void updateFileInfo(const DUrlList &fileUrls);
+    FileBaseInfo getFileInfo(const DUrl &fileUrl);
     static DUrl makeVaultUrl(QString path = "", QString host = "");
     static DUrl localUrlToVault(const DUrl &vaultUrl);
     static DUrl localToVault(QString localPath);
@@ -283,6 +294,8 @@ signals:
     void sigLockVault(QString unlockFileDir);
 
 private:
+    QMap<DUrl, FileBaseInfo> m_mapVaultFileInfo;
+
     VaultControllerPrivate * d_ptr;
 
     static VaultController * cryfs;

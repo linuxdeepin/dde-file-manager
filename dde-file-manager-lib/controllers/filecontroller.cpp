@@ -897,27 +897,8 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
     //        return DFileService::instance()->deleteFiles(nullptr, event->urlList(), false);
     //    }
 
-    // 保险箱删除大文件会导致文管界面卡死，暂时先将文件隐藏
-    DUrlList urlList = event->fileUrlList();
-    DUrlList urls;
-    for (const auto &url: urlList){
-        if (url.path().contains("vault_unlocked")){
-            QFileInfo info(url.path());
-            if (info.size() > 10 * 1024 * 1024){
-                DFMFileListFile flf(info.absolutePath());
-                flf.insert(info.fileName());
-                flf.save();
 
-                continue;
-            }else {
-                urls << url;
-            }
-        }else {
-            urls << url;
-        }
-    }
-
-    bool ok = !pasteFilesV2(DFMGlobal::CutAction, urls, DUrl(), event->silent(), event->force()).isEmpty();
+    bool ok = !pasteFilesV2(DFMGlobal::CutAction, event->fileUrlList(), DUrl(), event->silent(), event->force()).isEmpty();
     return ok;
 }
 

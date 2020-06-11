@@ -291,6 +291,7 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
 
     setTitle(m_taskListWidget->count());
     adjustSize();
+    setModal(false);
     show();
     QTimer::singleShot(100, this, &DTaskDialog::raise);
 }
@@ -307,6 +308,25 @@ bool DTaskDialog::isHaveVaultTask(const DUrlList &sourceUrls, const DUrl &target
         }
     }
     return false;
+}
+
+void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
+{
+    if (!wid) {
+        return;
+    }
+    blockShutdown();
+    QListWidgetItem *item = new QListWidgetItem();
+    item->setFlags(Qt::NoItemFlags);
+    m_taskListWidget->addItem(item);
+    m_taskListWidget->setItemWidget(item, wid);
+    m_jobIdItems.insert(wid->taskId(), item);
+
+    wid->setObjectName(QString("%1_%2").arg(DIALOGS_TASK_DIALOG_TASK_LIST_ITEM).arg(m_taskListWidget->count()));
+    m_titlebar->setTitle(tr("The File Vault is progressing delete task, please do nothing!"));
+    adjustSize();
+    setModal(true);
+    show();
 }
 
 DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
@@ -495,7 +515,17 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
 
     wid->getButton(DFMTaskWidget::PAUSE)->setEnabled(job->error() == DFileCopyMoveJob::NoError);
 
-    addTaskWidget(wid);
+    if (isHaveVaultTask(job->sourceUrlList(), job->targetUrl())
+            && job->mode() != DFileCopyMoveJob::CopyMode){
+        if (!job->targetUrl().isValid()) {
+            showVaultDeleteDialog(wid);
+        } else {
+            addTaskWidget(wid);
+        }
+    }else {
+        addTaskWidget(wid);
+    }
+
     return handle;
 }
 void DTaskDialog::adjustSize()

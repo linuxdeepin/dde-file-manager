@@ -78,4 +78,3 @@ void DFMVaultFileView::lockVault(int state)
         cd(url);
     }
 }
-
