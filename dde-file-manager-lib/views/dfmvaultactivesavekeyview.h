@@ -46,7 +46,7 @@ private:
     QLabel              *m_pQRCodeImage;
     QLabel              *m_pScanTipsLabel;
     QPushButton         *m_pNext;
-    QGridLayout         *play;
+    QGridLayout         *play1;
 };
 
 #endif // DFMVAULTACTIVESAVEKEYVIEW_H
