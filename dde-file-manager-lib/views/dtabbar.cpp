@@ -376,6 +376,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QGraphicsObject::mouseMoveEvent(event);
         return;
     }
+
     if(pos().x() == 0 && pos().x() == scene()->width() - m_width){
         QGraphicsObject::mouseMoveEvent(event);
         return;

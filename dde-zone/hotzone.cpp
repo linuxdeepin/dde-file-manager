@@ -170,7 +170,7 @@ void HotZone::reSetAnimation()
     m_endPoint = m_ButtonColumnItem->pos();
 
     m_startPoint.setX(m_endPoint.x());
-    m_startPoint.setY(m_endPoint.y() + ((int)m_isBottom * 2 - 1)*ANIMATION_MOVE_DISTANCE);
+    m_startPoint.setY(m_endPoint.y() + (static_cast<int>(m_isBottom) * 2 - 1)*ANIMATION_MOVE_DISTANCE);
     m_animation->setStartValue(m_startPoint);
     m_animation->setEndValue(m_endPoint);
 }
@@ -256,7 +256,7 @@ void HotZone::initAnimationCorrectly()
     m_endPoint = m_ButtonColumnItem->pos();
 
     m_startPoint.setX(m_endPoint.x());
-    m_startPoint.setY(m_endPoint.y() + ((int)m_isBottom * 2 - 1)*ANIMATION_MOVE_DISTANCE);
+    m_startPoint.setY(m_endPoint.y() + (static_cast<int>(m_isBottom) * 2 - 1)*ANIMATION_MOVE_DISTANCE);
 
     m_animation = new QPropertyAnimation(m_ButtonColumnItem, "pos", m_mainItem);
     m_animation->setDuration(100);
