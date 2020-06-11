@@ -350,8 +350,8 @@ void BackgroundManager::onResetBackgroundImage()
                                            Qt::SmoothTransformation);
 
         if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
-            pix = pix.copy(QRect((pix.width() - trueSize.width()) / 2.0,
-                                 (pix.height() - trueSize.height()) / 2.0,
+            pix = pix.copy(QRect(static_cast<int>((pix.width() - trueSize.width()) / 2.0),
+                                 static_cast<int>((pix.height() - trueSize.height()) / 2.0),
                                  trueSize.width(),
                                  trueSize.height()));
         }

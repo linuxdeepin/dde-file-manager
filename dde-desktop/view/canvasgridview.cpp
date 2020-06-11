@@ -1850,7 +1850,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     model()->setFilters(model()->filters());
 
     if (d->filesystemWatcher) {
-        disconnect(d->filesystemWatcher,0,this,0);
+        disconnect(d->filesystemWatcher,nullptr,this,nullptr);
         d->filesystemWatcher->deleteLater();
     }
 
@@ -3407,10 +3407,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
             for(auto url : list){
                 realList.append(MergedDesktopController::convertToRealPath(url));
             }
-            menu = DFileMenuManager::createNormalMenu(curUrl, realList, disableList, unusedList, winId(), true);
+            menu = DFileMenuManager::createNormalMenu(curUrl, realList, disableList, unusedList, static_cast<int>(winId()), true);
         }
         else {
-             menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId(), true);
+             menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(winId()), true);
         }
 
         //totally use dde file manager libs for menu actions
@@ -3555,7 +3555,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     menu->exec();
     menu->deleteLater(this);
     //断连，防止menu没有释放再次触发信号
-    disconnect(menu, 0, this, 0);
+    disconnect(menu, nullptr, this, nullptr);
 }
 
 void CanvasGridView::startDrag(Qt::DropActions supportedActions)
