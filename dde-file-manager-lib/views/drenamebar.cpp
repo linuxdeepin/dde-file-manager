@@ -414,9 +414,9 @@ void DRenameBar::onRenamePatternChanged(const int &index)noexcept
 {
     DRenameBarPrivate* const d{ d_func() };
 
-    d->m_currentPattern = index;
+    d->m_currentPattern = static_cast<std::size_t>(index);
 
-    bool state{ d->m_renameButtonStates[index] }; //###: we get the value of state of button in current mode.
+    bool state{ d->m_renameButtonStates[static_cast<std::size_t>(index)] }; //###: we get the value of state of button in current mode.
     d->m_stackWidget->setCurrentIndex(index);
     std::get<1>(d->m_buttonsArea)->setEnabled(state);
 
@@ -701,7 +701,7 @@ void DRenameBar::loadState(std::unique_ptr<RecordRenameBarState>& state)
         QPair<QString, DFileService::AddTextFlags> patternTwoContent{ state->getPatternSecondItemContent() };
         std::get<1>(d->m_addOperatorItems)->setText(patternTwoContent.first);
         d->m_flag = patternTwoContent.second;
-        std::get<3>(d->m_addOperatorItems)->setCurrentIndex(static_cast<std::size_t>(patternTwoContent.second));
+        std::get<3>(d->m_addOperatorItems)->setCurrentIndex(static_cast<int>(patternTwoContent.second));
 
         QPair<QString, QString> patternThreeContent{ state->getPatternThirdItemContent() };
         std::get<1>(d->m_customOPeratorItems)->setText(patternThreeContent.first);
@@ -709,7 +709,7 @@ void DRenameBar::loadState(std::unique_ptr<RecordRenameBarState>& state)
 
         d->m_renameButtonStates = state->getbuttonStateInThreePattern();
         d->m_currentPattern = state->getCurrentPattern();
-        d->m_stackWidget->setCurrentIndex(state->getCurrentPattern());
+        d->m_stackWidget->setCurrentIndex(static_cast<int>(state->getCurrentPattern()));
         std::get<1>(d->m_buttonsArea)->setEnabled(d->m_renameButtonStates[d->m_currentPattern]);
 
         d->m_urlList = state->getSelectedUrl();

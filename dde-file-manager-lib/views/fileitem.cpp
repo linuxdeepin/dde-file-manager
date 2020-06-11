@@ -360,7 +360,7 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
 void FileIconItem::updateEditorGeometry()
 {
     edit->setFixedWidth(width());
-    int text_height = edit->document()->size().height();
+    int text_height = static_cast<int>(edit->document()->size().height());
 
     if (edit->isReadOnly()) {
         if (edit->isVisible()) {
