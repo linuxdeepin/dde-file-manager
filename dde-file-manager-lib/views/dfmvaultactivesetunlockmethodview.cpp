@@ -210,7 +210,7 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
     bool ok = checkPassword(m_pPassword->text());
     if(!ok){
         m_pNext->setEnabled(false);
-        m_pPassword->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
+        m_pPassword->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
         m_pPassword->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"),TIPS_TIME);
     } else {
         if(checkInputInfo()){
@@ -231,7 +231,7 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished()
 {
     bool ok = checkRepeatPassword();
     if(!ok){
-        m_pRepeatPassword->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
+        m_pRepeatPassword->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
         m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"), TIPS_TIME);
     }
 }
