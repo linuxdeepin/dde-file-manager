@@ -197,6 +197,7 @@ private:
     void updateInfo(); // when any property has been changed should update the linked properties ASAP, bug 25419
     //属性框的URL需要重定向
     const DUrl getRealUrl();
+    bool canChmod(const DAbstractFileInfoPointer &info);
 
 private:
     DFMEvent m_fmevent{};
