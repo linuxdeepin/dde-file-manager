@@ -29,6 +29,7 @@
 #include "dfilestatisticsjob.h"
 #include "dlocalfiledevice.h"
 #include "models/trashfileinfo.h"
+#include "controllers/vaultcontroller.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "shutil/fileutils.h"
 
@@ -617,7 +618,18 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
         qint64 size = source_info->isSymLink() ? 0 : source_info->size();
 
         if (source_info->isFile() || source_info->isSymLink()) {
-            ok = removeFile(handler, source_info.constData());
+            // 保险箱下的文件删除，先判断所在文件夹是否可写
+            QString absolutePath = source_info->absolutePath();
+            if (VaultController::isVaultFile(absolutePath)){
+                VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(VaultController::localToVault(absolutePath));
+                if (!fbi.isWritable){
+                    ok = false;
+                }else{
+                    ok = removeFile(handler, source_info.constData());
+                }
+            }else{
+                ok = removeFile(handler, source_info.constData());
+            }
 
             if (ok) {
                 joinToCompletedFileList(from, DUrl(), size);
@@ -627,8 +639,18 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
             if (fileHints.testFlag(DFileCopyMoveJob::ForceDeleteFile)) {
                 handler->setPermissions(source_info->fileUrl(), QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
             }
-
-            ok = mergeDirectory(handler, source_info.constData(), nullptr);
+            // 保险箱下的文件删除，先判断所在文件夹是否可写
+            QString absolutePath = source_info->absolutePath();
+            if (VaultController::isVaultFile(absolutePath)){
+                VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(VaultController::localToVault(absolutePath));
+                if (!fbi.isWritable){
+                    ok = false;
+                }else{
+                    ok = mergeDirectory(handler, source_info.constData(), nullptr);
+                }
+            }else{
+                ok = mergeDirectory(handler, source_info.constData(), nullptr);
+            }
 
             if (ok) {
                 joinToCompletedDirectoryList(from, DUrl(), size);
