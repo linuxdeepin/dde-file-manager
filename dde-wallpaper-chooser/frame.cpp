@@ -622,8 +622,8 @@ void Frame::adjustModeSwitcherPoint()
 
 static QString timeFormat(int second)
 {
-    quint8 s = second % 60;
-    quint8 m = second / 60;
+    quint8 s = static_cast<quint8>(second % 60);
+    quint8 m = static_cast<quint8>(second / 60);
     quint8 h = m / 60;
     quint8 d = h / 24;
 

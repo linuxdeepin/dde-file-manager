@@ -42,7 +42,7 @@
 class WrapperWidget : public QWidget
 {
 public:
-    explicit WrapperWidget(QWidget *parent = 0) : QWidget(parent) {}
+    explicit WrapperWidget(QWidget *parent = nullptr) : QWidget(parent) {}
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE
@@ -259,7 +259,7 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
                                   (event->size().height() - ItemHeight) / 2);
 
     m_wrapper->setFixedWidth(width());
-    m_wrapper->m_pixmapBoxGeometry = QRect(offset * ratio, QSize(ItemWidth * ratio, ItemHeight * ratio));
+    m_wrapper->m_pixmapBoxGeometry = QRect(offset * ratio, QSize(static_cast<int>(ItemWidth * ratio), static_cast<int>(ItemHeight * ratio)));
 
     QFrame::resizeEvent(event);
 }
