@@ -341,6 +341,14 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                     || itemType == DFMRootFileInfo::ItemType::UDisksRemovable) {
 
                 bSizeVisible = pitmdata->fi->extraProperties()["mounted"].toBool();
+
+            } else if (pitmdata->url.isVaultFile()) {
+                // not show vault size when locked or not created.
+                VaultController::VaultState state = VaultController::getVaultController()->state();
+                if (state == VaultController::Encrypted
+                        || state == VaultController::NotExisted) {
+                    bSizeVisible = false;
+                }
             }
         }
 
