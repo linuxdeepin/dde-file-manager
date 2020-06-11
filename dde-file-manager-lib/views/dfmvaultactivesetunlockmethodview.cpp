@@ -24,15 +24,30 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     , m_pRepeatPassword(nullptr)
     , m_pPasswordHintLabel(nullptr)
     , m_pTips(nullptr)
-    , m_pOtherMethod(nullptr)
+//    , m_pOtherMethod(nullptr)
     , m_pNext(nullptr)
 {
     // 设置开锁方式标签
     QLabel *pLabel = new QLabel(tr("Set Vault Password"), this);
-    pLabel->setStyleSheet("font: 16pt 'CESI黑体-GB13000'");
+    pLabel->setStyleSheet("font-family: SourceHanSansSC;"
+                           "font-size: 14px;"
+                           "font-weight: 500;"
+                           "font-streth: normal;"
+                           "font-style: normal;"
+                           "line-height: normal;"
+                           "text-align: center;"
+                           "color: rgba(0, 0, 0, 0.9);");
+    pLabel->setAlignment(Qt::AlignHCenter);
 
     // 类型
     QLabel *pTypeLabel = new QLabel(tr("Method"), this);
+    pTypeLabel->setStyleSheet("font-family: SourceHanSansSC;"
+                           "font-size: 14px;"
+                           "font-streth: normal;"
+                           "font-style: normal;"
+                           "line-height: normal;"
+                           "letter-spacing: center;"
+                           "color: rgba(0, 0, 0, 0.7);");
     m_pTypeCombo = new QComboBox(this);
     QStringList lstItems;
     lstItems << tr("Manual")/* << tr("Random")*/;
@@ -42,6 +57,13 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     // 设置密码
     m_pPasswordLabel = new QLabel(tr("Password"),this);
+    m_pPasswordLabel->setStyleSheet("font-family: SourceHanSansSC;"
+                           "font-size: 14px;"
+                           "font-streth: normal;"
+                           "font-style: normal;"
+                           "line-height: normal;"
+                           "letter-spacing: center;"
+                           "color: rgba(0, 0, 0, 0.7);");
     m_pPassword = new DPasswordEdit(this);
     m_pPassword->lineEdit()->setPlaceholderText(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
     connect(m_pPassword, &DPasswordEdit::textEdited,
@@ -56,6 +78,13 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     // 重复密码
     m_pRepeatPasswordLabel = new QLabel(tr("Repeat password"), this);
+    m_pRepeatPasswordLabel->setStyleSheet("font-family: SourceHanSansSC;"
+                           "font-size: 14px;"
+                           "font-streth: normal;"
+                           "font-style: normal;"
+                           "line-height: normal;"
+                           "letter-spacing: center;"
+                           "color: rgba(0, 0, 0, 0.7);");
     m_pRepeatPassword = new DPasswordEdit(this);
     m_pRepeatPassword->lineEdit()->setPlaceholderText(tr("Input the password again"));
     connect(m_pRepeatPassword, &DPasswordEdit::textEdited,
@@ -69,21 +98,30 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     // 提示信息
     m_pPasswordHintLabel = new QLabel(tr("Hint"), this);
+    m_pPasswordHintLabel->setStyleSheet("font-family: SourceHanSansSC;"
+                           "font-size: 14px;"
+                           "font-streth: normal;"
+                           "font-style: normal;"
+                           "line-height: normal;"
+                           "letter-spacing: center;"
+                           "color: rgba(0, 0, 0, 0.7);");
     m_pTips = new QLineEdit(this);
     m_pTips->setMaxLength(14);
     m_pTips->setPlaceholderText(tr("Password Hint"));
 
-    // 其他解锁方式
-    m_pOtherMethod = new QCheckBox(tr("Fingerprint"), this);
-    m_pOtherMethod->setVisible(false);
+
 
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
-    m_pNext->setMinimumWidth(450);
+    m_pNext->setStyleSheet("width: 452px;"
+                               "height: 30px;");
     m_pNext->setEnabled(false);
     connect(m_pNext, &QPushButton::clicked,
             this, &DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked);
 
+    // 其他解锁方式
+//    m_pOtherMethod = new QCheckBox(tr("Fingerprint"), this);
+//    m_pOtherMethod->setVisible(false);
     // 长度
 //    m_pLengthLabel = new QLabel(tr("Length"), this);
 //    m_pLengthSlider = new QSlider(this);
@@ -118,32 +156,28 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 //    m_pGenerateBtn->setVisible(false);
 
     // 布局
-    play = new QGridLayout();
-    play->setMargin(1);
-    play->addWidget(pLabel, 0, 0, 1, 6, Qt::AlignHCenter);
+    play1 = new QGridLayout();
+    play1->setMargin(0);
 
-    play->addWidget(pTypeLabel, 1, 0, 1, 1, Qt::AlignLeft);
-    play->addWidget(m_pTypeCombo, 1, 1, 1, 5);
+    play1->addWidget(pTypeLabel, 0, 0, 1, 1, Qt::AlignLeft);
+    play1->addWidget(m_pTypeCombo, 0, 1, 1, 5);
 
-    play->addWidget(m_pPasswordLabel, 2, 0, 1, 1, Qt::AlignLeft);
-    play->addWidget(m_pPassword, 2, 1, 1,5);
+    play1->addWidget(m_pPasswordLabel, 1, 0, 1, 1, Qt::AlignLeft);
+    play1->addWidget(m_pPassword, 1, 1, 1,5);
 
-    play->addWidget(m_pRepeatPasswordLabel, 3, 0, 1, 1, Qt::AlignLeft);
-    play->addWidget(m_pRepeatPassword, 3, 1, 1, 5);
+    play1->addWidget(m_pRepeatPasswordLabel, 2, 0, 1, 1, Qt::AlignLeft);
+    play1->addWidget(m_pRepeatPassword, 2, 1, 1, 5);
 
-    play->addWidget(m_pPasswordHintLabel, 4, 0, 1, 1, Qt::AlignLeft);
-    play->addWidget(m_pTips, 4, 1, 1, 5);
+    play1->addWidget(m_pPasswordHintLabel, 3, 0, 1, 1, Qt::AlignLeft);
+    play1->addWidget(m_pTips, 3, 1, 1, 5);
 
-//    play->addWidget(m_pOtherMethod, 5, 2, 1, 2, Qt::AlignHCenter);
-
-    QSpacerItem *pSpacer = new QSpacerItem(1, 1, QSizePolicy::Minimum,
-                                           QSizePolicy::Expanding);
-
-    QVBoxLayout *play2 = new QVBoxLayout(this);
-    play2->setMargin(1);
-    play2->addLayout(play);
-    play2->addSpacerItem(pSpacer);
-    play2->addWidget(m_pNext, 0, Qt::AlignCenter);
+    QVBoxLayout *play = new QVBoxLayout(this);
+    play->setMargin(0);
+    play->addWidget(pLabel);
+    play->addSpacing(15);
+    play->addLayout(play1);
+    play->addStretch();
+    play->addWidget(m_pNext, 0, Qt::AlignCenter);
 
     // 创建文件夹与目录
     if(!OperatorCenter::getInstance().createDirAndFile()) return;
@@ -153,8 +187,10 @@ void DFMVaultActiveSetUnlockMethodView::clearText()
 {
     m_pPassword->clear();
     m_pPassword->hideAlertMessage();
+    m_pPassword->lineEdit()->setStyleSheet("");
     m_pRepeatPassword->clear();
     m_pRepeatPassword->hideAlertMessage();
+    m_pRepeatPassword->lineEdit()->setStyleSheet("");
     m_pTips->clear();
 }
 
@@ -174,6 +210,7 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
     bool ok = checkPassword(m_pPassword->text());
     if(!ok){
         m_pNext->setEnabled(false);
+        m_pPassword->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
         m_pPassword->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"),TIPS_TIME);
     } else {
         if(checkInputInfo()){
@@ -185,6 +222,7 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
 void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFocusChanged(bool bFocus)
 {
     if(bFocus){
+        m_pPassword->lineEdit()->setStyleSheet("");
         m_pPassword->hideAlertMessage();
     }
 }
@@ -193,6 +231,7 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished()
 {
     bool ok = checkRepeatPassword();
     if(!ok){
+        m_pRepeatPassword->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
         m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"), TIPS_TIME);
     }
 }
@@ -219,6 +258,7 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditing()
 void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged(bool bFocus)
 {
     if(bFocus){
+        m_pRepeatPassword->lineEdit()->setStyleSheet("");
         m_pRepeatPassword->hideAlertMessage();
     }
 }
@@ -245,11 +285,11 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 {
     if(index){  // 随机
 
-        play->removeWidget(m_pPasswordLabel);
-        play->removeWidget(m_pPassword);
-        play->removeWidget(m_pRepeatPasswordLabel);
-        play->removeWidget(m_pRepeatPassword);
-//        play->removeWidget(m_pOtherMethod);
+        play1->removeWidget(m_pPasswordLabel);
+        play1->removeWidget(m_pPassword);
+        play1->removeWidget(m_pRepeatPasswordLabel);
+        play1->removeWidget(m_pRepeatPassword);
+//        play1->removeWidget(m_pOtherMethod);
 
         m_pPasswordLabel->setVisible(false);
         m_pPassword->setVisible(false);
@@ -257,13 +297,13 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
         m_pRepeatPassword->setVisible(false);
 //        m_pOtherMethod->setVisible(false);
 
-//        play->addWidget(m_pLengthLabel, 2, 0, 1, 1, Qt::AlignLeft);
-//        play->addWidget(m_pLengthSlider, 2, 1, 1, 3);
-//        play->addWidget(m_pLengthEdit, 2, 4, 1, 1);
-//        play->addWidget(m_pStrengthLabel, 2, 5, 1, 1);
-//        play->addWidget(m_pResultLabel, 3, 0, 1, 1, Qt::AlignLeft);
-//        play->addWidget(m_pResultEdit, 3, 1, 1, 5);
-        play->addWidget(m_pGenerateBtn, 5, 2, 1, 2, Qt::AlignHCenter);
+//        play1->addWidget(m_pLengthLabel, 2, 0, 1, 1, Qt::AlignLeft);
+//        play1->addWidget(m_pLengthSlider, 2, 1, 1, 3);
+//        play1->addWidget(m_pLengthEdit, 2, 4, 1, 1);
+//        play1->addWidget(m_pStrengthLabel, 2, 5, 1, 1);
+//        play1->addWidget(m_pResultLabel, 3, 0, 1, 1, Qt::AlignLeft);
+//        play1->addWidget(m_pResultEdit, 3, 1, 1, 5);
+//        play1->addWidget(m_pGenerateBtn, 5, 2, 1, 2, Qt::AlignHCenter);
 
 //        m_pLengthLabel->setVisible(true);
 //        m_pLengthSlider->setVisible(true);
@@ -271,18 +311,18 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 //        m_pStrengthLabel->setVisible(true);
 //        m_pResultLabel->setVisible(true);
 //        m_pResultEdit->setVisible(true);
-        m_pGenerateBtn->setVisible(true);
+//        m_pGenerateBtn->setVisible(true);
 
         // 检测密码的正确性
 //        slotGenerateEditChanged(m_pResultEdit->text());
 
     }else{  // 手动
 
-        play->addWidget(m_pPasswordLabel, 2, 0, 1, 1, Qt::AlignLeft);
-        play->addWidget(m_pPassword, 2, 1, 1, 5);
-        play->addWidget(m_pRepeatPasswordLabel, 3, 0, 1, 1, Qt::AlignLeft);
-        play->addWidget(m_pRepeatPassword, 3, 1, 1, 5);
-//        play->addWidget(m_pOtherMethod, 5, 2, 1, 2, Qt::AlignHCenter);
+        play1->addWidget(m_pPasswordLabel, 2, 0, 1, 1, Qt::AlignLeft);
+        play1->addWidget(m_pPassword, 2, 1, 1, 5);
+        play1->addWidget(m_pRepeatPasswordLabel, 3, 0, 1, 1, Qt::AlignLeft);
+        play1->addWidget(m_pRepeatPassword, 3, 1, 1, 5);
+//        play1->addWidget(m_pOtherMethod, 5, 2, 1, 2, Qt::AlignHCenter);
 
         m_pPasswordLabel->setVisible(true);
         m_pPassword->setVisible(true);
@@ -290,13 +330,13 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
         m_pRepeatPassword->setVisible(true);
 //        m_pOtherMethod->setVisible(true);
 
-//        play->removeWidget(m_pLengthLabel);
-//        play->removeWidget(m_pLengthSlider);
-//        play->removeWidget(m_pLengthEdit);
-//        play->removeWidget(m_pStrengthLabel);
-//        play->removeWidget(m_pResultLabel);
-//        play->removeWidget(m_pResultEdit);
-        play->removeWidget(m_pGenerateBtn);
+//        play1->removeWidget(m_pLengthLabel);
+//        play1->removeWidget(m_pLengthSlider);
+//        play1->removeWidget(m_pLengthEdit);
+//        play1->removeWidget(m_pStrengthLabel);
+//        play1->removeWidget(m_pResultLabel);
+//        play1->removeWidget(m_pResultEdit);
+//        play1->removeWidget(m_pGenerateBtn);
 
 //        m_pLengthLabel->setVisible(false);
 //        m_pLengthSlider->setVisible(false);
@@ -304,7 +344,7 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 //        m_pStrengthLabel->setVisible(false);
 //        m_pResultLabel->setVisible(false);
 //        m_pResultEdit->setVisible(false);
-        m_pGenerateBtn->setVisible(false);
+//        m_pGenerateBtn->setVisible(false);
 
         // 检测密码正确性
         slotRepeatPasswordEditFinished();

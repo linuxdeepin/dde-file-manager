@@ -71,27 +71,24 @@ private:
     QLabel              *m_pPasswordLabel;
     DPasswordEdit       *m_pPassword;
 
-//    QLabel              *m_pLengthLabel;
-//    QSlider             *m_pLengthSlider;
-//    QLineEdit           *m_pLengthEdit;
-//    QLabel              *m_pStrengthLabel;
-
     QLabel              *m_pRepeatPasswordLabel;
     DPasswordEdit       *m_pRepeatPassword;
-
-//    QLabel              *m_pResultLabel;
-//    QLineEdit           *m_pResultEdit;
 
     QLabel              *m_pPasswordHintLabel;
     QLineEdit           *m_pTips;
 
-    QCheckBox           *m_pOtherMethod;
-
-    QPushButton         *m_pGenerateBtn;
-
     QPushButton         *m_pNext;
 
-    QGridLayout         *play;
+    QGridLayout         *play1;
+
+//    QLabel              *m_pLengthLabel;
+//    QSlider             *m_pLengthSlider;
+//    QLineEdit           *m_pLengthEdit;
+//    QLabel              *m_pStrengthLabel;
+//    QLabel              *m_pResultLabel;
+//    QLineEdit           *m_pResultEdit;
+//    QCheckBox           *m_pOtherMethod;
+//    QPushButton         *m_pGenerateBtn;
 };
 
 #endif // DFMVAULTSETUNLOCKMETHODVIEW_H
