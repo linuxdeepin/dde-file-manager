@@ -1034,79 +1034,84 @@
         <translation>不支持此操作</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="609"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="326"/>
+        <source>The File Vault is progressing delete task, please do nothing!</source>
+        <translation>保险箱正在执行删除任务，请不要执行任何操作！</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="639"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>正在擦除%1，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="610"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="640"/>
         <source>Burning disc %1, please wait...</source>
         <translation>正在刻录到%1，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="615"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
         <source>Writing data...</source>
         <translation>正在写入数据...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="616"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="646"/>
         <source>Verifying data...</source>
         <translation>正在校验数据...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="667"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="697"/>
         <source>Copying %1</source>
         <translation>正在复制%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="668"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="672"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="675"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="698"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="702"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="705"/>
         <source>to %2</source>
         <translation>到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="691"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="721"/>
         <source>%1 already exists in target folder</source>
         <translation>目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="692"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="722"/>
         <source>Original path %1 Target path %2</source>
         <translation>原路径%1 目标路径%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="671"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="701"/>
         <source>Moving %1</source>
         <translation>正在移动%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="674"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="704"/>
         <source>Restoring %1</source>
         <translation>正在恢复%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="677"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="707"/>
         <source>Deleting %1</source>
         <translation>正在删除%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="680"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="710"/>
         <source>Trashing %1</source>
         <translation>正在移动 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="688"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="718"/>
         <source>Calculating space, please wait</source>
         <translation>正在计算大小，请稍候</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="703"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="733"/>
         <source>Merge</source>
         <translation>合并</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="706"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="736"/>
         <source>Replace</source>
         <translation>替换</translation>
     </message>
@@ -3160,7 +3165,7 @@
         <location filename="../interfaces/dfileinfo.cpp" line="851"/>
         <location filename="../models/recentfileinfo.cpp" line="247"/>
         <location filename="../models/trashfileinfo.cpp" line="380"/>
-        <location filename="../models/vaultfileinfo.cpp" line="145"/>
+        <location filename="../models/vaultfileinfo.cpp" line="144"/>
         <source>Folder is empty</source>
         <translation>文件夹为空</translation>
     </message>
@@ -3472,7 +3477,7 @@
         <translation type="unfinished">未知</translation>
     </message>
     <message>
-        <location filename="../models/vaultfileinfo.cpp" line="277"/>
+        <location filename="../models/vaultfileinfo.cpp" line="257"/>
         <source>My Vault</source>
         <translation>我的保险箱</translation>
     </message>
@@ -4004,122 +4009,122 @@
 <context>
     <name>VaultController</name>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="604"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="675"/>
         <source>The command line arguments are invalid.</source>
         <translation>命令行参数无效。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="607"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="678"/>
         <source>Couldn&apos;t load config file. Probably the password is wrong</source>
         <translation>无法加载配置文件，密码可能不正确。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="610"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="681"/>
         <source>Password cannot be empty</source>
         <translation>密码不能为空。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="613"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="684"/>
         <source>The file system format is too new for this CryFS version. Please update your CryFS version.</source>
         <translation>对于此CryFS版本，文件系统格式太新了。请更新您的CryFS版本。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="616"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="687"/>
         <source>The file system format is too old for this CryFS version. Run with --allow-filesystem-upgrade to upgrade it.</source>
         <translation>对于此CryFS版本，文件系统格式过旧。与--allow-filesystem-upgrade一起运行以对其进行升级。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="619"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="690"/>
         <source>The file system uses a different cipher than the one specified on the command line using the --cipher argument.</source>
         <translation>文件系统使用的密码与使用--cipher参数在命令行上指定的密码不同。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="622"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="693"/>
         <source>Base directory doesn&apos;t exist or is inaccessible (i.e. not read or writable or not a directory)</source>
         <translation>基本目录不存在或不可访问（即，不可读取或可写或非目录）</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="625"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="696"/>
         <source>Mount directory doesn&apos;t exist or is inaccessible (i.e. not read or writable or not a directory)</source>
         <translation>挂载目录不存在或不可访问（即无法读取或写入或不是目录）</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="628"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="699"/>
         <source>Base directory can&apos;t be a subdirectory of the mount directory</source>
         <translation>基本目录不能是安装目录的子目录。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="631"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="702"/>
         <source>Something&apos;s wrong with the file system.</source>
         <translation>文件系统出了点问题。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="634"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="705"/>
         <source>The filesystem id in the config file is different to the last time we loaded a filesystem from this basedir. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.</source>
         <translation>配置文件中的文件系统ID与我们上次从此basedir加载文件系统的时间不同。这可能意味着攻击者用另一种文件系统替换了文件系统。您可以传递--allow-replaced-filesystem选项以允许此操作。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="637"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="708"/>
         <source>The filesystem encryption key differs from the last time we loaded this filesystem. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.</source>
         <translation>文件系统加密密钥与我们上次加载此文件系统的时间不同。这可能意味着攻击者用另一种文件系统替换了文件系统。您可以传递--allow-replaced-filesystem选项以允许此操作。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="640"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="711"/>
         <source>The command line options and the file system disagree on whether missing blocks should be treated as integrity violations.</source>
         <translation>命令行选项和文件系统在是否应该将丢失的块视为完整性违规方面存在分歧。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="643"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="714"/>
         <source>File system is in single-client mode and can only be used from the client that created it.</source>
         <translation>文件系统处于单客户端模式，只能在创建它的客户端中使用。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="646"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="717"/>
         <source>A previous run of the file system detected an integrity violation. Preventing access to make sure the user notices. The file system will be accessible again after the user deletes the integrity state file.</source>
         <translation>先前运行的文件系统检测到完整性违规。阻止访问以确保用户注意。用户删除完整性状态文件后，将可以再次访问文件系统。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="649"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="720"/>
         <source>An integrity violation was detected and the file system unmounted to make sure the user notices.</source>
         <translation>检测到完整性违规，并卸载文件系统以确保用户注意。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="652"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="723"/>
         <source>Mount directory is not empty.</source>
         <translation>挂载点不为空。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="655"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="726"/>
         <source>Mount directory in use.</source>
         <translation>挂载目录使用中。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="658"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="729"/>
         <source>Cryfs not installed.</source>
         <translation>cryfs不存在。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="661"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="732"/>
         <source>Mount directory doesn&apos;t exist.</source>
         <translation>挂载目录不存在。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="664"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="735"/>
         <source>Mounted directory encrypted.</source>
         <translation>挂载目录已加密。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="667"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="738"/>
         <source>No permissions.</source>
         <translation>没有权限。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="670"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="741"/>
         <source>Fusermount does not exist</source>
         <translation>fusermount不存在。</translation>
     </message>
     <message>
-        <location filename="../controllers/vaultcontroller.cpp" line="673"/>
+        <location filename="../controllers/vaultcontroller.cpp" line="744"/>
         <source>An encrypted folder created by Cryfs already exists.</source>
         <translation>Cryfs创建的加密文件夹已存在。</translation>
     </message>
@@ -4127,19 +4132,16 @@
 <context>
     <name>VaultHeaderView</name>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="37"/>
         <source>File Vault</source>
-        <translation>保险箱</translation>
+        <translation type="vanished">保险箱</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="52"/>
         <source>Lock vault</source>
-        <translation>锁定保险柜</translation>
+        <translation type="vanished">锁定保险柜</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="53"/>
         <source>Generate key</source>
-        <translation>生成密钥</translation>
+        <translation type="vanished">生成密钥</translation>
     </message>
 </context>
 </TS>
