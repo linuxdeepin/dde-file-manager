@@ -70,6 +70,7 @@ void DFMVaultActiveView::showTop()
 {
     this->activateWindow();
     this->showNormal();
+    this->raise();
 }
 
 void DFMVaultActiveView::closeEvent(QCloseEvent *)

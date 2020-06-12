@@ -153,6 +153,13 @@ QWidget *DFMVaultRemovePages::getWndPtr() const
 
 void DFMVaultRemovePages::showTop()
 {
+<<<<<<< HEAD
+=======
+    this->activateWindow();
+    this->showNormal();
+    this->raise();
+
+>>>>>>> Title:chore Refactor
     showVerifyWidget();
 
     show();
