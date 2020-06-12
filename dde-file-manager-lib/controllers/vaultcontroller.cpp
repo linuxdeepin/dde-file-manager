@@ -336,6 +336,55 @@ bool VaultController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) 
     return result;
 }
 
+bool VaultController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
+{
+    //处理快捷方式，还原成原路径
+    DUrl fileUrl = event->url();
+
+    const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
+
+    if (pfile->isSymLink()) {
+        const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
+
+        if (linkInfo && !linkInfo->exists()) {
+            dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+            return false;
+        }
+        const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
+    }
+    return FileUtils::openFilesByApp(event->appName(), {fileUrl.toString()});
+}
+
+bool VaultController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
+{
+    //处理快捷方式，还原成原路径
+    QList<DUrl> fileUrls = event->urlList();
+
+    QStringList pathList;
+
+    for(DUrl fileUrl : fileUrls){
+        const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
+
+        if (pfile->isSymLink()) {
+            const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
+
+            if (linkInfo && !linkInfo->exists()) {
+                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+                continue;
+            }
+            fileUrl = linkInfo->redirectedFileUrl();
+        }
+        QString url = fileUrl.toLocalFile();
+        if (FileUtils::isFileWindowsUrlShortcut(url)) {
+            url = FileUtils::getInternetShortcutUrl(url);
+        }
+        pathList << url;
+    }
+
+    return FileUtils::openFilesByApp(event->appName(), pathList);
+
+}
+
 bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     DUrlList urlList = vaultToLocalUrls(event->urlList());
