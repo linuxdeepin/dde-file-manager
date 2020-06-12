@@ -129,6 +129,11 @@ void BackgroundManager::onScreenGeometryChanged(ScreenPointer sp)
         qInfo() << "background geometry change from" << bw->geometry() << "to" << sp->geometry()
                 << "screen name" << sp->name();
         //bw->windowHandle()->handle()->setGeometry(sp->handleGeometry()); //不能设置，设置了widget的geometry会被乱改
+        //fix bug32166 bug32205
+        if (bw->geometry() == sp->geometry()) {
+            qDebug() << "background geometry is equal to screen geometry,and discard changes";
+            return;
+        }
         bw->setGeometry(sp->geometry());
 
         //todo 背景处理
