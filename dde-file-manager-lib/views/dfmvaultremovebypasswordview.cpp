@@ -104,13 +104,14 @@ void DFMVaultRemoveByPasswordView::showToolTip(const QString &text, int duration
 
     if(parentWidget()){
         if(parentWidget()->parentWidget()){
-            m_frame->setParent(parentWidget()->parentWidget());
+            if(parentWidget()->parentWidget()->parentWidget())
+            m_frame->setParent(parentWidget()->parentWidget()->parentWidget());
         }
     }
 
     m_tooltip->setText(text);
     if(m_frame->parent()){
-        m_frame->setGeometry(6, 170, 68, 26);
+        m_frame->setGeometry(6, 180, 68, 26);
         m_frame->show();
         m_frame->adjustSize();
         m_frame->raise();
