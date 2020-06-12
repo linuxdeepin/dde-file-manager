@@ -310,11 +310,12 @@ qint64 VaultFileInfo::size() const
 bool VaultFileInfo::isDir() const
 {
     // resolved the issue when directory not exist
-    QString path = this->path();
+    QString path = this->filePath();
     QString local = VaultController::vaultToLocal(VaultController::makeVaultUrl());
     if (local.endsWith("/")) {
         local.chop(1);
     }
+
     if (path.endsWith("/") || path == local) {
         return true;
     }
