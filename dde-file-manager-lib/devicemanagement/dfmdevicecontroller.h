@@ -35,7 +35,7 @@ class DFMDeviceController : public DAbstractFileController
     Q_OBJECT
 
 public:
-    explicit DFMDeviceController(QObject *parent = 0);
+    explicit DFMDeviceController(QObject *parent = nullptr);
 
     void initDiskManager();
     void initVfsManager();

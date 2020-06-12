@@ -741,7 +741,7 @@ QString DFMGlobal::elideText(const QString &text, const QSizeF &size,
 
     QStringList lines;
 
-    elideText(&textLayout, size, wordWrap, mode, lineHeight, flags, &lines);
+    elideText(&textLayout, size, wordWrap, mode, lineHeight, static_cast<int>(flags), &lines);
 
     return lines.join('\n');
 }
@@ -1103,7 +1103,7 @@ QString DFMGlobal::cutString(const QString &text, int dataByteSize, const QTextC
 namespace DThreadUtil {
 FunctionCallProxy::FunctionCallProxy(QThread *thread)
 {
-    connect(this, &FunctionCallProxy::callInLiveThread, this, [this] (FunctionType * func) {
+    connect(this, &FunctionCallProxy::callInLiveThread, this, [] (FunctionType * func) {
         (*func)();
     }, Qt::QueuedConnection);
     connect(thread, &QThread::finished, this, [this] {
@@ -1197,10 +1197,10 @@ float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, co
         return 1.0f;
     }
 
-    float c = qreal(hep_count) / non_base_latin_count / 1.2;
+    float c = static_cast<float>(qreal(hep_count) / non_base_latin_count / 1.2);
 
-    c -= qreal(replacement_count) / non_base_latin_count;
-    c -= qreal(unidentification_count) / non_base_latin_count;
+    c -= static_cast<float>(qreal(replacement_count) / non_base_latin_count);
+    c -= static_cast<float>(qreal(unidentification_count) / non_base_latin_count);
 
     return qMax(0.0f, c);
 }
