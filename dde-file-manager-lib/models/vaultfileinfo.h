@@ -65,6 +65,7 @@ public:
     QIcon fileIcon() const override;
     QString fileDisplayName() const override;
     qint64 size() const override;
+    bool isDir() const override;
 
     /**
      * @brief isAncestorsUrl 拆分路径

@@ -587,6 +587,7 @@ DUrl VaultController::makeVaultUrl(QString path, QString host)
     
     DUrl newUrl;
     newUrl.setScheme(DFMVAULT_SCHEME);
+    newUrl.setHost(host);
     newUrl.setPath(path);
     return newUrl;
 }
