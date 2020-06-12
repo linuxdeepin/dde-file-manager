@@ -167,6 +167,11 @@ void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)
         qDebug() << "primary Screen" << ScreenMrg->primaryScreen()->name()
                  << "view geometry change from" << mView->geometry() << "to" << avRect
                  << "view screen" << sp->name() << sp->geometry() << sp->availableGeometry();
+        //fix bug32166 bug32205
+        if (mView->geometry() == avRect) {
+            qDebug() << "view geometry is equal to rect,and discard changes";
+            return;
+        }
         mView->setGeometry(avRect);
     }
 }
