@@ -14,6 +14,7 @@
 #include "dfilesystemwatcher.h"
 
 #include "private/dfilesystemwatcher_p.h"
+#include "../vault/vaultglobaldefine.h"
 
 #include <QDir>
 #include <QDebug>
@@ -66,7 +67,7 @@ QStringList parentPathList(const QString &path)
     QDir dir(path);
 
     //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
-    if(!(dir.absolutePath().contains("vault_unlocked") && isPathWatched(dir.absolutePath())))
+    if(!(dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath())))
     {
         list << path;
     }
@@ -81,7 +82,7 @@ QStringList parentPathList(const QString &path)
     while (dir.cdUp())
     {
         //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
-        if(dir.absolutePath().contains("vault_unlocked") && isPathWatched(dir.absolutePath()))
+        if(dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath()))
         {
             continue;
         }

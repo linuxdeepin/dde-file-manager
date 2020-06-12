@@ -189,10 +189,7 @@ bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
         }
     }
     // 如果当前有保险箱的压缩或解压缩任务，激活任务对话框进程
-    QString strPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
-    QString strCmd = QString("ps -xo pid,cmd | grep /usr/bin/deepin-compressor | grep ")
-            + strPath
-            + QString(" | grep -v grep | awk '{print $1}'");
+    QString strCmd = GET_COMPRESSOR_PID_SHELL(VAULT_BASE_PATH);
     QStringList lstShellOutput;
     // 执行shell命令，获得压缩进程PID
     int res = InterfaceActiveVault::executionShellCommand(strCmd, lstShellOutput);
