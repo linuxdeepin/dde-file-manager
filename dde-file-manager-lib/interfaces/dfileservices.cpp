@@ -89,6 +89,9 @@ public:
     JobController *m_jobcontroller = nullptr;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
+    //fix bug,当快速点击左边侧边栏会出现鼠标一直在转圈圈
+    QMutex m_mutexCursorState;
+    QMutex m_mutexrootfilechange;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
@@ -942,9 +945,8 @@ QList<DAbstractFileInfoPointer> DFileService::getRootFile()
 
 void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
 {
-    QMutex mex;
+    QMutexLocker lock(&d_ptr->m_mutexrootfilechange);
     if (bcreate) {
-        mex.lock();
         if(!d_ptr->rootfilelist.contains(fileurl)){
             DAbstractFileInfoPointer info = createFileInfo(nullptr, fileurl);
             if(info->exists()) {
@@ -952,16 +954,13 @@ void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
                 qDebug() << "  insert   " << fileurl;
             }
         }
-        mex.unlock();
     }
     else {
-        mex.lock();
         qDebug() << "  remove   " << d_ptr->rootfilelist;
         if(d_ptr->rootfilelist.contains(fileurl)){
             qDebug() << "  remove   " << fileurl;
             d_ptr->rootfilelist.removeOne(fileurl);
         }
-        mex.unlock();
     }
 }
 
@@ -977,19 +976,16 @@ void DFileService::startQuryRootFile()
     //启用异步线程去读取
     d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
     connect(d_ptr->m_jobcontroller,&JobController::addChildren,this ,[this](const DAbstractFileInfoPointer &chi){
-        QMutex mex;
-        mex.lock();
+        QMutexLocker lock(&d_ptr->m_mutexrootfilechange);
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
             d_ptr->rootfilelist.push_back(chi->fileUrl());
             qDebug() << "  addChildren " << chi->fileUrl();
             emit rootFileChange(chi);
         }
-        mex.unlock();
     });
 
     connect(d_ptr->m_jobcontroller,&JobController::addChildrenList,this ,[this](QList<DAbstractFileInfoPointer> ch){
-        QMutex mex;
-        mex.lock();
+        QMutexLocker lock(&d_ptr->m_mutexrootfilechange);
         for (auto chi : ch) {
             if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
                 d_ptr->rootfilelist.push_back(chi->fileUrl());
@@ -997,7 +993,6 @@ void DFileService::startQuryRootFile()
                 emit rootFileChange(chi);
             }
         }
-        mex.unlock();
     });
     connect(d_ptr->m_jobcontroller,&JobController::finished,this,[this](){
         d_ptr->m_jobcontroller->deleteLater();
@@ -1026,6 +1021,8 @@ void DFileService::clearThread()
 
 void DFileService::setCursorBusyState(const bool bbusy)
 {
+    //fix bug,当快速点击左边侧边栏会出现鼠标一直在转圈圈
+    QMutexLocker lock(&d_ptr->m_mutexCursorState);
     if (d_ptr->m_bcursorbusy == bbusy) {
         return;
     }
@@ -1034,15 +1031,15 @@ void DFileService::setCursorBusyState(const bool bbusy)
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     }
     else {
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     }
 
 }
 
-bool DFileService::checkGvfsMountfileBusy(const DUrl &url)
+bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog)
 {
     //找出url的rootfile路径，判断rootfile是否存在
-    qDebug() << url << QThread::currentThreadId();
+//    qDebug() << url << QThread::currentThreadId();
     if (!url.isValid()) {
         return false;
     }
@@ -1108,11 +1105,11 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url)
         rooturl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
     }
 
-    return checkGvfsMountfileBusy(rooturl, rootfilename);
+    return checkGvfsMountfileBusy(rooturl, rootfilename,showdailog);
 
 }
 
-bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename)
+bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog)
 {
     if(!rootUrl.isValid()) {
         return false;
@@ -1125,7 +1122,9 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     if (!bonline) {
         setCursorBusyState(false);
         //文件不存在弹提示框
-        dialogManager->showUnableToLocateDir(rootfilename);
+        if (showdailog) {
+            dialogManager->showUnableToLocateDir(rootfilename);
+        }
         return true;
     }
 
@@ -1134,7 +1133,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
         fileexit = rootptr->exists();
         setCursorBusyState(false);
         //文件不存在弹提示框
-        if (!fileexit) {
+        if (!fileexit && showdailog) {
             dialogManager->showUnableToLocateDir(rootfilename);
         }
         return !fileexit;
@@ -1186,13 +1185,15 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     if (!bonline) {
         setCursorBusyState(false);
         //文件不存在弹提示框
-        dialogManager->showUnableToLocateDir(rootfilename);
+        if (showdailog) {
+            dialogManager->showUnableToLocateDir(rootfilename);
+        }
         return true;
     }
 
     setCursorBusyState(false);
     //文件不存在弹提示框
-    if (!bvist) {
+    if (!bvist && showdailog) {
         dialogManager->showUnableToLocateDir(rootfilename);
     }
     return !bvist;

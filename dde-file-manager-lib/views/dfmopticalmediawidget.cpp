@@ -236,6 +236,26 @@ void DFMOpticalMediaWidget::selectBurnFilesOptionUpdate()
     }
 }
 
+QString DFMOpticalMediaWidget::getVolTag(const DUrl& fileUrl)
+{
+    QString strVolTag = fileUrl.path().split("/", QString::SkipEmptyParts).count() >= 2
+                        ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
+                        : "";
+    return strVolTag;
+}
+
+bool DFMOpticalMediaWidget::hasVolProcessBusy()
+{
+    QMap<QString, CdStatusInfo>::iterator ite = g_mapCdStatusInfo.begin();
+
+    for(; ite != g_mapCdStatusInfo.end(); ++ite)
+    {
+        if(ite.value().bProcessLocked)
+            return true;
+    }
+    return false;
+}
+
 DFMOpticalMediaWidgetPrivate::DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q) :
     q_ptr(q)
 {

@@ -1156,9 +1156,10 @@ void DFileDialog::onAcceptButtonClicked()
         }
 
         QString file_name = statusBar()->lineEdit()->text();
-        if (!d->nameFilters.isEmpty() &&
-                (file_name.right(d->nameFilters.at(0).length() - 1) != d->nameFilters.at(0).mid(1))) { //判断文件名是否含有后缀，若无，加上
-            file_name.append(d->nameFilters.at(0).mid(1));
+        QString currentFilter = modelCurrentNameFilter(); //fix 31878 【日志收集工具】【5.6.10】日志导出时相同的文件名未提示直接覆盖
+        if (!currentFilter.isEmpty() && !file_name.isEmpty() &&
+                (file_name.right(currentFilter.length() - 1) != currentFilter.mid(1))) { //判断文件名是否含有后缀，若无，加上
+            file_name.append(currentFilter.mid(1));
         }
 
         if (!file_name.isEmpty()) {

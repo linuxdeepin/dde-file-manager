@@ -632,7 +632,7 @@ QString DFMRootFileInfo::udisksDisplayName()
 
     if (d->mps.contains(QByteArray("/\0", 2))) {
         return QCoreApplication::translate("PathManager", "System Disk");
-    } else {
+    } else if (!d->idUUID.isEmpty()){
         if (d->currentUUID.isEmpty() || d->backupUUID.isEmpty()) {
             QFile recoveryFile(QString("/etc/%1/ab-recovery.json").arg(qApp->organizationName()));
 
@@ -669,7 +669,8 @@ QString DFMRootFileInfo::udisksDisplayName()
         if (drv->opticalBlank()) {
             return QCoreApplication::translate("DeepinStorage", "Blank %1 Disc").arg(opticalmediamap[drv->media()]);
         }
-        if ((!drv->mediaAvailable() || d->idUUID.isEmpty()) && drv->mediaCompatibility().join(" ").contains("optical")) { // uuid 为空认为光盘未挂载或已卸载（托盘已弹出），此时强制使用无光盘的名称
+        // TODO xust，暂时先屏蔽判定uuid的语句，该语句会导致无法正常挂载的盘连盘符都不显示，引入该改动是为解决自动光驱弹出托盘后界面不刷新的问题，此处之后再找其他的方式调整。
+        if ((!drv->mediaAvailable()/* || d->idUUID.isEmpty()*/) && drv->mediaCompatibility().join(" ").contains("optical")) { // uuid 为空认为光盘未挂载或已卸载（托盘已弹出），此时强制使用无光盘的名称
             d->blk->unmount({});
             d->size = 0;
             QTimer::singleShot(100, []{
