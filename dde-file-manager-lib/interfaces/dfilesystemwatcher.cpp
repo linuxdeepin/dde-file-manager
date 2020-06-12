@@ -137,7 +137,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
     int buffSize = 0;
     ioctl(inotifyFd, FIONREAD, (char *) &buffSize);
     QVarLengthArray<char, 4096> buffer(buffSize);
-    buffSize = read(inotifyFd, buffer.data(), buffSize);
+    buffSize = static_cast<int>(read(inotifyFd, buffer.data(), static_cast<size_t>(buffSize)));
     char *at = buffer.data();
     char * const end = at + buffSize;
 
@@ -148,7 +148,9 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
     QMultiMap<int, QString> cookieToFileName;
     QSet<int> hasMoveFromByCookie;
 #ifdef QT_DEBUG
+#if 0
     int exist_count = 0;
+#endif
 #endif
     while (at < end) {
         inotify_event *event = reinterpret_cast<inotify_event *>(at);
