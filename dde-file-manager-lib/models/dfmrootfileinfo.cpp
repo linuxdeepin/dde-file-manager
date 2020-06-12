@@ -632,7 +632,7 @@ QString DFMRootFileInfo::udisksDisplayName()
 
     if (d->mps.contains(QByteArray("/\0", 2))) {
         return QCoreApplication::translate("PathManager", "System Disk");
-    } else {
+    } else if (!d->idUUID.isEmpty()){
         if (d->currentUUID.isEmpty() || d->backupUUID.isEmpty()) {
             QFile recoveryFile(QString("/etc/%1/ab-recovery.json").arg(qApp->organizationName()));
 
