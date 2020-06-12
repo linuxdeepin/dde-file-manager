@@ -39,6 +39,19 @@ class FileMonitor;
 class DRenameBar;
 class FileBatchProcess;
 
+/**
+ * @brief The UnmountWorker class 卸载操作类 用于在子线程执行卸载操作
+ */
+class UnmountWorker : public QObject
+{
+    Q_OBJECT
+public slots:
+    void doUnmount(const QString &blkStr);
+    void doSaveRemove(const QString &blkStr);
+signals:
+    void unmountResult(const QString &result);
+};
+
 class AppController : public QObject, public Subscriber
 {
     Q_OBJECT
@@ -148,14 +161,20 @@ public:
 
     static QString createFile(const QString &sourceFile, const QString &targetDir, const QString &baseFileName, WId windowId);
 
+signals:
+    void doUnmount(const QString &blk);
+    void doSaveRemove(const QString &blk);
+
 protected:
     explicit AppController(QObject *parent = 0);
+    ~AppController();
 
 private:
     void initConnect();
     void createGVfSManager();
     void createUserShareManager();
     void createDBusInterface();
+    void showErrorDialog(const QString content);
 
     QSharedPointer<DFMEvent> m_fmEvent;
     static QPair<DUrl, quint64> selectionAndRenameFile;        //###: for creating new file.
@@ -164,6 +183,8 @@ private:
     StartManagerInterface* m_startManagerInterface;
     IntrospectableInterface* m_introspectableInterface;
     bool m_hasLaunchAppInterface = false;
+    QThread m_unmountThread;
+    UnmountWorker *m_unmountWorker;
 
     friend class FileController;
     friend class MergedDesktopController;
