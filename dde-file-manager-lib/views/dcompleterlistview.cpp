@@ -68,7 +68,7 @@ DCompleterListView::DCompleterListView(QWidget *parent)
         if (m_bshow) {
             QWidget *parentnew = parent;
             QWidget *window = nullptr;
-            while (parent){
+            while (parentnew){
                 window = parentnew;
                 parentnew = parentnew->parentWidget();
             }
