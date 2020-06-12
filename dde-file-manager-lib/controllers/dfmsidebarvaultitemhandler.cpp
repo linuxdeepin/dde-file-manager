@@ -53,9 +53,7 @@
 
 #include <QDialog>
 
-
 DFM_BEGIN_NAMESPACE
-
 
 DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey)
 {

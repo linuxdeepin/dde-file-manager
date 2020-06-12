@@ -28,6 +28,7 @@
 #include <DMessageBox>
 #include <DFloatingWidget>
 #include <QTimer>
+#include <QVBoxLayout>
 
 // 密钥最大长度
 #define MAX_KEY_LENGTH (32)
@@ -49,15 +50,23 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     : DDialog (parent)
     , d_ptr (new DFMVaultRecoveryKeyPagesPrivate())
 {
-    this->setTitle(tr("Unlock by Key"));
-    this->setIcon(QIcon::fromTheme("dfm_safebox"));
+//    this->setTitle(tr("Unlock by Key"));
+    this->setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
     this->setFixedSize(396, 218);
 
-    QStringList btnList({tr("Cancel"), tr("Unlock")});
-    addButton(btnList[0], false);
-    addButton(btnList[1], true, ButtonType::ButtonRecommend);
-    getButton(1)->setEnabled(false);
+    // 标题
+    QLabel *pTitle = new QLabel(tr("Unlock by Key"), this);
+    pTitle->setStyleSheet("font-family: SourceHanSansSC;"
+                          "font-size: 14px;"
+                          "font-weight: 500;"
+                          "font-streth: normal;"
+                          "font-style: normal;"
+                          "line-height: normal;"
+                          "text-align: center;"
+                          "color: rgba(0, 0, 0, 0.9);");
+    pTitle->setAlignment(Qt::AlignHCenter);
 
+    // 密钥编辑框
     m_recoveryKeyEdit = new QPlainTextEdit(this);
     m_recoveryKeyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
     m_recoveryKeyEdit->setMaximumBlockCount(MAX_KEY_LENGTH + 3);
@@ -65,7 +74,23 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     m_recoveryKeyEdit->setStyleSheet("border-radius: 8px;"
                                      "background-color: rgba(0, 0, 0, 0.08);");
 
-    addContent(m_recoveryKeyEdit);
+    // 主视图
+    QFrame *mainFrame = new QFrame(this);
+    // 布局
+    QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
+    mainLayout->setMargin(0);
+    mainLayout->addWidget(pTitle);
+    mainLayout->addWidget(m_recoveryKeyEdit);
+
+    mainFrame->setLayout(mainLayout);
+    addContent(mainFrame);
+
+    QStringList btnList({tr("Cancel"), tr("Unlock")});
+    addButton(btnList[0], false);
+    addButton(btnList[1], true, ButtonType::ButtonRecommend);
+    getButton(1)->setEnabled(false);
+
+
     // 防止点击按钮后界面隐藏
     setOnButtonClickedClose(false);
 

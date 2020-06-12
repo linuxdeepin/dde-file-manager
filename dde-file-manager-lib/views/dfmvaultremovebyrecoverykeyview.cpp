@@ -62,7 +62,6 @@ DFMVaultRemoveByRecoverykeyView::DFMVaultRemoveByRecoverykeyView(QWidget *parent
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_keyEdit);
-//    layout->setContentsMargins(10, 10, 10, 0);
     layout->setMargin(0);
     this->setLayout(layout);
 

@@ -38,33 +38,68 @@
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DDialog (parent)
 {
-    this->setTitle(tr("Unlock File Vault"));
-    this->setIcon(QIcon::fromTheme("dfm_safebox"));
-    this->setMessage(tr("Verify your password"));
-    this->setFixedSize(396, 218);
+    setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
+    setFixedSize(396, 218);
+
+    // 标题
+    QLabel *pTitle = new QLabel(tr("Unlock File Vault"), this);
+    pTitle->setStyleSheet("font-family: SourceHanSansSC;"
+                          "font-size: 14px;"
+                          "font-weight: 500;"
+                          "font-streth: normal;"
+                          "font-style: normal;"
+                          "line-height: normal;"
+                          "text-align: center;"
+                          "color: rgba(0, 0, 0, 0.9);");
+    pTitle->setAlignment(Qt::AlignHCenter);
+
+    // 信息
+    QLabel *pMessage = new QLabel(tr("Verify your password"), this);
+    pMessage->setStyleSheet("font-family: SourceHanSansSC;"
+                            "font-size: 14px;"
+                            "font-weight: normal;"
+                            "font-stretch: normal;"
+                            "font-style: normal;"
+                            "line-height: 1.43;"
+                            "letter-spaceing: normal;"
+                            "text-align: center;"
+                            "color: rgba(0, 0, 0, 0.7);");
+    pMessage->setAlignment(Qt::AlignHCenter);
+
+    // 密码编辑框
+    m_passwordEdit = new DPasswordEdit(this);
+    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
+    m_passwordEdit->lineEdit()->installEventFilter(this);
+
+    // 提示按钮
+    m_tipsButton = new QPushButton(this);
+    m_tipsButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
+
+    // 主视图
+    QFrame *mainFrame = new QFrame(this);
+
+    // 布局
+    QHBoxLayout *play1 = new QHBoxLayout();
+    play1->setMargin(0);
+    play1->addWidget(m_passwordEdit);
+    play1->addWidget(m_tipsButton);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
+    mainLayout->setMargin(0);
+    mainLayout->addWidget(pTitle);
+    mainLayout->addWidget(pMessage);
+    mainLayout->addLayout(play1);
+
+    mainFrame->setLayout(mainLayout);
+    addContent(mainFrame);
+    setSpacing(0);
+    // 防止点击按钮后界面隐藏
+    setOnButtonClickedClose(false);
 
     QStringList btnList({tr("Cancel"), tr("Unlock")});
     addButton(btnList[0], false);
     addButton(btnList[1], true, ButtonType::ButtonRecommend);
     getButton(1)->setEnabled(false);
-
-    m_passwordEdit = new DPasswordEdit(this);
-    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
-    m_passwordEdit->lineEdit()->installEventFilter(this);
-    m_tipsButton = new QPushButton(this);
-    m_tipsButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
-
-    QFrame *mainFrame = new QFrame(this);
-    QHBoxLayout *mainLayout = new QHBoxLayout();
-    mainLayout->addWidget(m_passwordEdit);
-    mainLayout->addWidget(m_tipsButton);
-    mainLayout->setContentsMargins(0, 15, 0, 0);
-    mainFrame->setLayout(mainLayout);
-
-    addContent(mainFrame);
-    setSpacing(0);
-    // 防止点击按钮后界面隐藏
-    setOnButtonClickedClose(false);
 
     connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
@@ -121,7 +156,7 @@ void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaul
 
     m_tooltip->setText(text);
     if(m_frame->parent()){
-        m_frame->setGeometry(12, 148, 68, 26);
+        m_frame->setGeometry(8, 154, 68, 26);
         m_frame->show();
         m_frame->adjustSize();
         m_frame->raise();

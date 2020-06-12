@@ -11,8 +11,9 @@
 #include <QRegExpValidator>
 #include <QStackedWidget>
 #include <QAbstractButton>
-
+#include <QLabel>
 #include <DMessageBox>
+#include <QVBoxLayout>
 
 DWIDGET_USE_NAMESPACE
 
@@ -23,14 +24,50 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     , m_progressView(new DFMVaultRemoveProgressView(this))
     , m_stackedWidget (new QStackedWidget(this))
 {
-    this->setTitle(tr("Remove File Vault"));
-    this->setIcon(QIcon::fromTheme("dfm_safebox"));
+    setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
     this->setFixedSize(396, 248);
+
+    // 标题
+    QLabel *pTitle = new QLabel(tr("Remove File Vault"), this);
+    pTitle->setStyleSheet("font-family: SourceHanSansSC;"
+                          "font-size: 14px;"
+                          "font-weight: 500;"
+                          "font-streth: normal;"
+                          "font-style: normal;"
+                          "line-height: normal;"
+                          "text-align: center;"
+                          "color: rgba(0, 0, 0, 0.9);");
+    pTitle->setAlignment(Qt::AlignHCenter);
+
+    // 信息
+    m_pInfo = new QLabel(this);
+    m_pInfo->setStyleSheet("font-family: SourceHanSansSC;"
+                         "font-size: 14px;"
+                         "font-weight: normal;"
+                         "font-stretch: normal;"
+                         "font-style: normal;"
+                         "line-height: 1.43;"
+                         "letter-spaceing: normal;"
+                         "text-align: center;"
+                         "color: rgba(0, 0, 0, 0.7);");
+    m_pInfo->setAlignment(Qt::AlignHCenter);
+
+    // 主界面
+    QFrame *mainFrame = new QFrame(this);
 
     m_stackedWidget->addWidget(m_passwordView);
     m_stackedWidget->addWidget(m_recoverykeyView);
     m_stackedWidget->addWidget(m_progressView);
-    addContent(m_stackedWidget);
+
+    // 布局
+    QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
+    mainLayout->setMargin(0);
+    mainLayout->addWidget(pTitle);
+    mainLayout->addWidget(m_pInfo);
+    mainLayout->addWidget(m_stackedWidget);
+
+    mainFrame->setLayout(mainLayout);
+    addContent(mainFrame);
 
     // 防止点击按钮隐藏界面
     setOnButtonClickedClose(false);
@@ -47,9 +84,11 @@ void DFMVaultRemovePages::initConnect()
 
 void DFMVaultRemovePages::showVerifyWidget()
 {
+    setInfo(tr("Once the file vault is removed, the files in it will be permanently deleted.") + '\n' +
+            tr("This action cannot be undone, please confirm and continue."));
+
     setCloseButtonVisible(true);
     clearButtons();
-    setMessage(tr("Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue."));
     QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Remove")});
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
@@ -71,12 +110,18 @@ void DFMVaultRemovePages::showVerifyWidget()
 
 void DFMVaultRemovePages::showRemoveWidget()
 {
+    setInfo(tr("Removing..."));
+
     setCloseButtonVisible(false);
     clearButtons();
-    setMessage(tr("Removing..."));
     addButton(tr("Ok"), true, ButtonType::ButtonNormal);
     getButton(0)->setEnabled(false);
     m_stackedWidget->setCurrentIndex(2);
+}
+
+void DFMVaultRemovePages::setInfo(const QString &info)
+{
+    m_pInfo->setText(info);
 }
 
 void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
@@ -188,9 +233,9 @@ void DFMVaultRemovePages::onLockVault(int state)
 void DFMVaultRemovePages::onVualtRemoveFinish(bool result)
 {
     if (result){
-        this->setMessage(tr("Removed successfully"));
+        setInfo(tr("Removed successfully"));
     }else {
-        this->setMessage(tr("Failed to remove"));
+        setInfo(tr("Failed to remove"));
     }
 
     this->getButton(0)->setEnabled(true);
