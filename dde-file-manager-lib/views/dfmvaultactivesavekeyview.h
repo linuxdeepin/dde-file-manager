@@ -10,10 +10,12 @@ class QPushButton;
 class QLineEdit;
 class QTextEdit;
 class QGridLayout;
+class QPlainTextEdit;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
 class DButtonBoxButton;
+class DLabel;
 DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -39,12 +41,12 @@ signals:
 private:
 
 private:
-    QLabel              *m_pTipsLabel;
+    DLabel              *m_pTipsLabel;
     DButtonBoxButton    *m_pKeyBtn;
-    QTextEdit           *m_pKeyText;
+    QPlainTextEdit      *m_pKeyText;
     DButtonBoxButton    *m_pQRCodeBtn;
-    QLabel              *m_pQRCodeImage;
-    QLabel              *m_pScanTipsLabel;
+    DLabel              *m_pQRCodeImage;
+    DLabel              *m_pScanTipsLabel;
     QPushButton         *m_pNext;
     QGridLayout         *play1;
 };

@@ -38,32 +38,19 @@
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DDialog (parent)
 {
-    setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
+    setIcon(QIcon::fromTheme("dfm_vault"));
     setFixedSize(396, 218);
 
     // 标题
     QLabel *pTitle = new QLabel(tr("Unlock File Vault"), this);
-    pTitle->setStyleSheet("font-family: SourceHanSansSC;"
-                          "font-size: 14px;"
-                          "font-weight: 500;"
-                          "font-streth: normal;"
-                          "font-style: normal;"
-                          "line-height: normal;"
-                          "text-align: center;"
-                          "color: rgba(0, 0, 0, 0.9);");
+    QFont font = pTitle->font();
+    font.setBold(true);
+    font.setPixelSize(18);
+    pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
 
     // 信息
     QLabel *pMessage = new QLabel(tr("Verify your password"), this);
-    pMessage->setStyleSheet("font-family: SourceHanSansSC;"
-                            "font-size: 14px;"
-                            "font-weight: normal;"
-                            "font-stretch: normal;"
-                            "font-style: normal;"
-                            "line-height: 1.43;"
-                            "letter-spaceing: normal;"
-                            "text-align: center;"
-                            "color: rgba(0, 0, 0, 0.7);");
     pMessage->setAlignment(Qt::AlignHCenter);
 
     // 密码编辑框

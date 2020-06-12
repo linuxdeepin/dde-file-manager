@@ -9,6 +9,8 @@
 #include <QTextEdit>
 #include <QHBoxLayout>
 #include <DButtonBox>
+#include <DLabel>
+#include <QPlainTextEdit>
 
 DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     : QWidget(parent)
@@ -18,27 +20,14 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
 {
     // 标题名
     QLabel *pLabelTitle = new QLabel(tr("Recovery Key"), this);
-    pLabelTitle->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-weight: 500;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.9);");
+    QFont font = pLabelTitle->font();
+    font.setBold(true);
+    font.setPixelSize(18);
+    pLabelTitle->setFont(font);
     pLabelTitle->setAlignment(Qt::AlignHCenter);
 
     // 提示标签
-    m_pTipsLabel = new QLabel(tr("Generate a recovery key in case that you forget the password"), this);
-    m_pTipsLabel->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-weight: normal;"
-                           "font-stretch: normal;"
-                           "font-style: normal;"
-                           "line-height: 1.43;"
-                           "letter-spaceing: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
+    m_pTipsLabel = new DLabel(tr("Generate a recovery key in case that you forget the password"), this);
 
     DButtonBox *m_pButtonBox = new DButtonBox(this);
     m_pButtonBox->setFixedSize(200, 36);
@@ -49,19 +38,16 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     m_pKeyBtn->setChecked(true);
     connect(m_pKeyBtn, &DButtonBoxButton::clicked,
             this, &DFMVaultActiveSaveKeyView::slotKeyBtnClicked);
-    m_pKeyText = new QTextEdit(this);
+    m_pKeyText = new QPlainTextEdit(this);
     m_pKeyText->setReadOnly(true);
-    m_pKeyText->setStyleSheet("width: 452px;"
-                              "height: 134px;"
-                              "border-radius: 8px;"
-                              "background-color: rgba(0, 0, 0, 0.08);");
+    m_pKeyText->setFixedSize(452, 134);
 
     // 二维码
     m_pQRCodeBtn = new DButtonBoxButton(tr("QR code"), this);
     m_pQRCodeBtn->setCheckable(true);
     connect(m_pQRCodeBtn, &DButtonBoxButton::clicked,
             this, &DFMVaultActiveSaveKeyView::slotQRCodeBtnClicked);
-    m_pQRCodeImage = new QLabel(this);
+    m_pQRCodeImage = new DLabel(this);
     m_pQRCodeImage->setFixedSize(120, 120);
     m_pQRCodeImage->setVisible(false);
 
@@ -71,22 +57,15 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     m_pButtonBox->setButtonList(lstBtn, true);
 
     // 扫描提示
-    m_pScanTipsLabel = new QLabel(tr("Scan QR code and save the key to another device"), this);
+    m_pScanTipsLabel = new DLabel(tr("Scan QR code and save the key to another device"), this);
+    QFont font2 = m_pScanTipsLabel->font();
+    font2.setPixelSize(12);
+    m_pScanTipsLabel->setFont(font2);
     m_pScanTipsLabel->setVisible(false);
-    m_pScanTipsLabel->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 12px;"
-                           "font-weight: normal;"
-                           "font-stretch: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "letter-spaceing: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
 
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
-    m_pNext->setStyleSheet("width: 452px;"
-                            "height: 30px;");
+    m_pNext->setFixedSize(452, 30);
     connect(m_pNext, &QPushButton::clicked,
             this, &DFMVaultActiveSaveKeyView::slotNextBtnClicked);
 
@@ -123,7 +102,7 @@ void DFMVaultActiveSaveKeyView::showEvent(QShowEvent *event)
     QPixmap QRCodePix;
     if(OperatorCenter::getInstance().createQRCode(strContent, m_pQRCodeImage->width(), m_pQRCodeImage->height(), QRCodePix))
         m_pQRCodeImage->setPixmap(QRCodePix);
-    m_pKeyText->setText(strKeyShow);
+    m_pKeyText->appendPlainText(strKeyShow);
 
     QWidget::showEvent(event);
 }

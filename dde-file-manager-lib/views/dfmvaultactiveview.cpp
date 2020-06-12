@@ -20,7 +20,7 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     , m_SaveKeyWidget(nullptr)
     , m_ActiveVaultFinishedWidget(nullptr)
 {
-    this->setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
+    this->setIcon(QIcon::fromTheme("dfm_vault"));
 
     // 初始化试图容器
     m_pStackedWidget = new QStackedWidget(this);

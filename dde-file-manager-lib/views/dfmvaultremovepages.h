@@ -9,6 +9,10 @@ class QStackedWidget;
 class DFMVaultRemoveProgressView;
 class DFMVaultRemoveByRecoverykeyView;
 class DFMVaultRemoveByPasswordView;
+DWIDGET_BEGIN_NAMESPACE
+
+class DLabel;
+DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 class DFMVaultRemovePages : public DDialog

@@ -38,7 +38,6 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     // 提示按钮
     m_tipsBtn = new QPushButton(this);
     m_tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
-    m_tipsBtn->setFixedSize(40, 36);
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(m_pwdEdit);
