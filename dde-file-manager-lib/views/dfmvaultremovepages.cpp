@@ -14,6 +14,7 @@
 #include <QLabel>
 #include <DMessageBox>
 #include <QVBoxLayout>
+#include <DLabel>
 
 DWIDGET_USE_NAMESPACE
 
@@ -28,28 +29,15 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     this->setFixedSize(396, 248);
 
     // 标题
-    QLabel *pTitle = new QLabel(tr("Remove File Vault"), this);
-    pTitle->setStyleSheet("font-family: SourceHanSansSC;"
-                          "font-size: 14px;"
-                          "font-weight: 500;"
-                          "font-streth: normal;"
-                          "font-style: normal;"
-                          "line-height: normal;"
-                          "text-align: center;"
-                          "color: rgba(0, 0, 0, 0.9);");
+    DLabel *pTitle = new DLabel(tr("Remove File Vault"), this);
+    QFont font = pTitle->font();
+    font.setBold(true);
+    font.setPixelSize(18);
+    pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
 
     // 信息
     m_pInfo = new QLabel(this);
-    m_pInfo->setStyleSheet("font-family: SourceHanSansSC;"
-                         "font-size: 14px;"
-                         "font-weight: normal;"
-                         "font-stretch: normal;"
-                         "font-style: normal;"
-                         "line-height: 1.43;"
-                         "letter-spaceing: normal;"
-                         "text-align: center;"
-                         "color: rgba(0, 0, 0, 0.7);");
     m_pInfo->setAlignment(Qt::AlignHCenter);
 
     // 主界面
@@ -93,7 +81,6 @@ void DFMVaultRemovePages::showVerifyWidget()
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
     addButton(buttonTexts[2], true);
-    getButton(2)->setStyleSheet("color: rgb(255, 85, 0);");
     setDefaultButton(2);
     m_stackedWidget->setCurrentIndex(0);
 

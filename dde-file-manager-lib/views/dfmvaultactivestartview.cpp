@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QSpacerItem>
 #include <DIconButton>
+#include <DLabel>
 
 DWIDGET_USE_NAMESPACE
 
@@ -12,37 +13,25 @@ DFMVaultActiveStartView::DFMVaultActiveStartView(QWidget *parent)
     : QWidget(parent)
     , m_pStartBtn(nullptr)
 {
-    QLabel *pLabel1 = new QLabel(tr("File Vault"), this);
-    pLabel1->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-weight: 500;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.9);");
+    // 标题
+    DLabel *pLabel1 = new DLabel(tr("File Vault"), this);
+    QFont font = pLabel1->font();
+    font.setBold(true);
+    font.setPixelSize(18);
+    pLabel1->setFont(font);
     pLabel1->setAlignment(Qt::AlignHCenter);
-    QLabel *pLabel2 = new QLabel(tr("Create your secure private space") + '\n' +
+
+    DLabel *pLabel2 = new DLabel(tr("Create your secure private space") + '\n' +
                                  tr("Advanced encryption technology") + '\n' +
                                  tr("Convenient and easy to use"), this);
-    pLabel2->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-weight: normal;"
-                           "font-stretch: normal;"
-                           "font-style: normal;"
-                           "line-height: 1.43;"
-                           "letter-spaceing: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
     pLabel2->setAlignment(Qt::AlignHCenter);
 
-    QLabel *pLabel3 = new QLabel();
+    DLabel *pLabel3 = new DLabel();
     pLabel3->setPixmap(QIcon::fromTheme("dfm_vault_active_start").pixmap(88, 100));
     pLabel3->setAlignment(Qt::AlignHCenter);
 
     m_pStartBtn = new QPushButton(tr("Create"), this);
-    m_pStartBtn->setStyleSheet("width: 452px;"
-                               "height: 30px;");
+    m_pStartBtn->setFixedSize(452, 30);
     connect(m_pStartBtn, &QPushButton::clicked,
             this, &DFMVaultActiveStartView::slotStartBtnClicked);
 

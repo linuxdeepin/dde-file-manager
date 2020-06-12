@@ -20,6 +20,7 @@ QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
+class DLabel;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -68,13 +69,13 @@ private:
 private:
     QComboBox           *m_pTypeCombo;
 
-    QLabel              *m_pPasswordLabel;
+    DLabel              *m_pPasswordLabel;
     DPasswordEdit       *m_pPassword;
 
-    QLabel              *m_pRepeatPasswordLabel;
+    DLabel              *m_pRepeatPasswordLabel;
     DPasswordEdit       *m_pRepeatPassword;
 
-    QLabel              *m_pPasswordHintLabel;
+    DLabel              *m_pPasswordHintLabel;
     QLineEdit           *m_pTips;
 
     QPushButton         *m_pNext;

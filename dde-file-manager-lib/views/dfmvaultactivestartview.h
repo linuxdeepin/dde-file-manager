@@ -2,6 +2,7 @@
 #define DFMVAULTACTIVESTARTVIEW_H
 
 #include <QWidget>
+#include <dtkwidget_global.h>
 
 QT_BEGIN_NAMESPACE
 class QPushButton;

@@ -56,9 +56,6 @@ DFMVaultRemoveByRecoverykeyView::DFMVaultRemoveByRecoverykeyView(QWidget *parent
     m_keyEdit = new QPlainTextEdit(this);
     m_keyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
     m_keyEdit->installEventFilter(this);
-    m_keyEdit->setStyleSheet("border-radius: 8px;"
-                             "background-color: rgba(0, 0, 0, 0.08);");
-    m_keyEdit->setMaximumHeight(60);
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_keyEdit);

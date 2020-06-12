@@ -50,20 +50,15 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     : DDialog (parent)
     , d_ptr (new DFMVaultRecoveryKeyPagesPrivate())
 {
-//    this->setTitle(tr("Unlock by Key"));
-    this->setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
+    this->setIcon(QIcon::fromTheme("dfm_vault"));
     this->setFixedSize(396, 218);
 
     // 标题
     QLabel *pTitle = new QLabel(tr("Unlock by Key"), this);
-    pTitle->setStyleSheet("font-family: SourceHanSansSC;"
-                          "font-size: 14px;"
-                          "font-weight: 500;"
-                          "font-streth: normal;"
-                          "font-style: normal;"
-                          "line-height: normal;"
-                          "text-align: center;"
-                          "color: rgba(0, 0, 0, 0.9);");
+    QFont font = pTitle->font();
+    font.setBold(true);
+    font.setPixelSize(16);
+    pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
 
     // 密钥编辑框
@@ -71,8 +66,6 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     m_recoveryKeyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
     m_recoveryKeyEdit->setMaximumBlockCount(MAX_KEY_LENGTH + 3);
     m_recoveryKeyEdit->installEventFilter(this);
-    m_recoveryKeyEdit->setStyleSheet("border-radius: 8px;"
-                                     "background-color: rgba(0, 0, 0, 0.08);");
 
     // 主视图
     QFrame *mainFrame = new QFrame(this);
@@ -166,13 +159,6 @@ void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
             m_bUnlockByKey = true;
             VaultController::getVaultController()->unlockVault(strClipher);
         } else {
-            //设置QToolTip颜色
-//            QPalette palette = QToolTip::palette();
-//            palette.setColor(QPalette::Inactive,QPalette::ToolTipBase,Qt::white);   //设置ToolTip背景色
-//            palette.setColor(QPalette::Inactive,QPalette::ToolTipText,QColor(255, 85, 0, 255)); 	//设置ToolTip字体色
-//            QToolTip::setPalette(palette);
-//            QRect rect(pos(), geometry().size());
-//            QToolTip::showText(m_recoveryKeyEdit->mapToGlobal(m_recoveryKeyEdit->pos()), tr("Wrong recovery key"));
             showAlertMessage(tr("Wrong recovery key"));
         }
 
