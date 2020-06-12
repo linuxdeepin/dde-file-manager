@@ -137,6 +137,9 @@ public:
 
     bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const Q_DECL_OVERRIDE;
 
+    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const Q_DECL_OVERRIDE;
+    bool openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const Q_DECL_OVERRIDE;
+
     void updateFileInfo(const DUrlList &fileUrls);
     FileBaseInfo getFileInfo(const DUrl &fileUrl);
     static DUrl makeVaultUrl(QString path = "", QString host = "");
