@@ -84,8 +84,8 @@ void DFMVaultRemovePages::initConnect()
 
 void DFMVaultRemovePages::showVerifyWidget()
 {
-    setInfo(tr("Once the file vault is removed, the files in it will be permanently deleted.") + '\n' +
-            tr("This action cannot be undone, please confirm and continue."));
+    setInfo(tr("Once removed, the files in it will be permanently deleted,") + '\n' +
+            tr("please confirm and continue"));
 
     setCloseButtonVisible(true);
     clearButtons();

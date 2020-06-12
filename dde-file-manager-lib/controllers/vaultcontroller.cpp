@@ -41,6 +41,7 @@
 #include "dialogs/dialogmanager.h"
 
 #include "dfmevent.h"
+#include "../vault/vaultglobaldefine.h"
 
 #include <QProcess>
 #include <QStandardPaths>
@@ -645,7 +646,7 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
     
     if(lockBaseDir.isEmpty())
     {
-        lockBaseDir = makeVaultLocalPath("cryfs.config", "vault_encrypted");
+        lockBaseDir = makeVaultLocalPath("cryfs.config", VAULT_ENCRYPY_DIR_NAME);
     }
     else
     {
@@ -788,13 +789,13 @@ bool VaultController::isVaultFile(QString path)
 QString VaultController::pathToVirtualPath(QString path)
 {
     QString nextPath = path;
-    int index = nextPath.indexOf("vault_unlocked");
+    int index = nextPath.indexOf(VAULT_DECRYPT_DIR_NAME);
     if (index == -1) {
         // fallback to vault file root dir.
         return VaultController::makeVaultUrl("/").toString();
     }
 
-    index += QString("vault_unlocked").length();
+    index += QString(VAULT_DECRYPT_DIR_NAME).length();
 
     return VaultController::makeVaultUrl(nextPath.mid(index)).toString();
 }
@@ -802,13 +803,13 @@ QString VaultController::pathToVirtualPath(QString path)
 DUrl VaultController::urlToVirtualUrl(QString path)
 {
     QString nextPath = path;
-    int index = nextPath.indexOf("vault_unlocked");
+    int index = nextPath.indexOf(VAULT_DECRYPT_DIR_NAME);
     if (index == -1) {
         // fallback to vault file root dir.
         return VaultController::makeVaultUrl("/");
     }
 
-    index += QString("vault_unlocked").length();
+    index += QString(VAULT_DECRYPT_DIR_NAME).length();
 
     return VaultController::makeVaultUrl(nextPath.mid(index));
 }
@@ -829,11 +830,11 @@ void VaultController::createVault(const DSecureString & passWord, QString lockBa
             return;
         }
         
-        createIfNotExist(makeVaultLocalPath("", "vault_encrypted"));
-        createIfNotExist(makeVaultLocalPath("", "vault_unlocked"));
+        createIfNotExist(makeVaultLocalPath("", VAULT_ENCRYPY_DIR_NAME));
+        createIfNotExist(makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME));
         
-        emit sigCreateVault(makeVaultLocalPath("", "vault_encrypted"),
-                            makeVaultLocalPath("", "vault_unlocked"),
+        emit sigCreateVault(makeVaultLocalPath("", VAULT_ENCRYPY_DIR_NAME),
+                            makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME),
                             passWord);
     }
     else
@@ -860,8 +861,8 @@ void VaultController::unlockVault(const DSecureString &passWord, QString lockBas
             return;
         }
         
-        emit sigUnlockVault(makeVaultLocalPath("", "vault_encrypted"),
-                            makeVaultLocalPath("", "vault_unlocked"),
+        emit sigUnlockVault(makeVaultLocalPath("", VAULT_ENCRYPY_DIR_NAME),
+                            makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME),
                             passWord);
     }
     else
@@ -884,7 +885,7 @@ void VaultController::lockVault(QString lockBaseDir, QString unlockFileDir)
             emit signalLockVault(static_cast<int>(ErrorCode::MountdirEncrypted));
             return;
         }
-        emit sigLockVault(makeVaultLocalPath("", "vault_unlocked"));
+        emit sigLockVault(makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME));
     }
     else
     {
@@ -901,20 +902,19 @@ QString VaultController::makeVaultLocalPath(QString path, QString base)
 {
     if(base.isEmpty())
     {
-        base = "vault_unlocked";
+        base = VAULT_DECRYPT_DIR_NAME;
     }
-    return QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)
-            + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
+    return VAULT_BASE_PATH + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
 }
 
 QString VaultController::vaultLockPath()
 {
-    return makeVaultLocalPath("", "vault_encrypted");
+    return makeVaultLocalPath("", VAULT_ENCRYPY_DIR_NAME);
 }
 
 QString VaultController::vaultUnlockPath()
 {
-    return makeVaultLocalPath("", "vault_unlocked");
+    return makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME);
 }
 
 void VaultController::refreshTotalSize()
