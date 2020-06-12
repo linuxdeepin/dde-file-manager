@@ -499,8 +499,14 @@ void CanvasGridView::delayCustom(int ms)
             auto localFile = model()->getUrlByIndex(index).toString();
             list << localFile;
         }
-        qDebug() << "initCustom file count" << list.size();
+        auto oriItems = GridManager::instance()->allItems();
+        qDebug() << "initCustom file count" << list.size()<<" and oriItems count "<<oriItems.count();
         GridManager::instance()->initCustom(list);
+        //fix bug #32527
+        if(list.isEmpty() && !oriItems.isEmpty())
+        {
+            delayModelRefresh(500);
+        }
 
         emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
     });
