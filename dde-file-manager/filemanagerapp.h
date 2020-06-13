@@ -63,10 +63,10 @@ public slots:
     void openWithDialog(const QStringList files);
 
 protected:
-    explicit FileManagerApp(QObject *parent = 0);
+    explicit FileManagerApp(QObject *parent = nullptr);
 
 private:
-    WindowManager* m_windowManager = NULL;
+    WindowManager* m_windowManager = nullptr;
     QFileSystemWatcher* m_sysPathWatcher;
 };
 

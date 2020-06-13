@@ -123,6 +123,12 @@ private:
     // 检测是否存在保险箱任务
     bool isHaveVaultTask(const DUrlList &sourceUrls, const DUrl &targetUrl);
 
+    /**
+     * @brief showVaultDeleteDialog 显示保险箱文件删除进度
+     * @param wid
+     */
+    void showVaultDeleteDialog(DFMTaskWidget *wid);
+
 private:
     int m_defaultWidth = 700;
     int m_defaultHeight = 120;

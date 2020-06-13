@@ -35,7 +35,7 @@ class VideoWidget : public dmr::PlayerWidget
 {
 public:
     VideoWidget(VideoPreview *preview)
-        : dmr::PlayerWidget(0)
+        : dmr::PlayerWidget(nullptr)
         , p(preview)
         , title(new QLabel(this))
     {
@@ -80,7 +80,7 @@ class VideoStatusBar : public QWidget
 {
 public:
     VideoStatusBar(VideoPreview *preview)
-        : QWidget(0)
+        : QWidget(nullptr)
         , p(preview)
         , slider(new QSlider(this))
         , timeLabel(new QLabel(this))
@@ -149,7 +149,7 @@ public:
             if (!sliderIsPressed) {
                 QSignalBlocker blocker(slider);
                 Q_UNUSED(blocker)
-                slider->setValue(p->playerWidget->engine().elapsed());
+                slider->setValue(static_cast<int>(p->playerWidget->engine().elapsed()));
             }
             timeLabel->setText(dmr::utils::Time2str(p->playerWidget->engine().elapsed()));
         });
@@ -200,7 +200,7 @@ bool VideoPreview::setFileUrl(const DUrl &url)
 
     playerWidget->title->setText(info.title);
     playerWidget->title->adjustSize();
-    statusBar->slider->setMaximum(info.duration);
+    statusBar->slider->setMaximum(static_cast<int>(info.duration));
     videoUrl = QUrl(url.toLocalFile());
 
     return true;

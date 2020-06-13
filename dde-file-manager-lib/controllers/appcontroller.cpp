@@ -484,6 +484,11 @@ void AppController::actionClearTrash(const QObject *sender)
 {
     DUrlList list;
     list << DUrl::fromTrashFile("/");
+    //fix bug 31324,判断当前是否是正在清空回收站，是返回，不是保存状态
+    if (DFileService::instance()->getDoClearTrashState()) {
+        return;
+    }
+    DFileService::instance()->setDoClearTrashState(true);
 
     bool ret = fileService->deleteFiles(sender, list);
 
@@ -626,26 +631,10 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
         emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
 
         if (fi->suffix() == SUFFIX_UDISKS) {
-            QString udiskspath = fi->extraProperties()["udisksblk"].toString();
-            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-            QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
-            if (blkdev->isEncrypted()) {
-                blkdev.reset(DDiskManager::createBlockDevice(blkdev->cleartextDevice()));
-            }
-
-            blkdev->unmount({});
-            QDBusError err = blkdev->lastError();
-            if(err.type() == QDBusError::NoReply ) // bug 29268, 用户超时操作
-            {
-                qDebug() << "action timeout with noreply response";
-                dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
-            }
-            // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
-            // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
-            else if (err.isValid() && err.type() != QDBusError::Other) {
-                qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-                dialogManager->showErrorDialog(tr("Disk is busy, cannot unmount now"), QString());
-            }
+            //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
+            //在关闭窗口特效情况下，还会出现文管界面绘制不刷新出现重影的情况
+            //把unmount相关操作移至子线程
+            emit doUnmount(fi->extraProperties()["udisksblk"].toString());
         } else if (fi->suffix() == SUFFIX_GVFSMP) {
             QString path = fi->extraProperties()["rooturi"].toString();
             if(path.isEmpty())
@@ -753,40 +742,10 @@ void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
         emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
 
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
-
-        bool err = false;
-        if (!blk->mountPoints().empty()) {
-            blk->unmount({});
-            QDBusError lastError = blk->lastError();
-            if(lastError.type() == QDBusError::Other ) // bug 27164, 取消 应该直接退出操作
-            {
-                qDebug() << "blk action has been canceled";
-                return;
-            }
-
-            if(lastError.type() == QDBusError::NoReply ) // bug 29268, 用户超时操作
-            {
-                qDebug() << "action timeout with noreply response";
-                dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
-                return;
-            }
-
-            err |= blk->lastError().isValid();
-        }
-        if (blk->cryptoBackingDevice().length() > 1) {
-            cbblk->lock({});
-            err |= cbblk->lastError().isValid();
-            drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
-        }
-        drv->powerOff({});
-        err |= drv->lastError().isValid();
-        if (err) {
-            dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
-        }
-
+        //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
+        //在关闭窗口特效情况下，还会出现文管界面绘制不刷新出现重影的情况
+        //把unmount相关操作移至子线程
+        emit doSaveRemove(fi->extraProperties()["udisksblk"].toString());
     } else {
         QString unix_device = fileUrl.query(DUrl::FullyEncoded);
         QString drive_unix_device = gvfsMountManager->getDriveUnixDevice(unix_device);
@@ -1348,10 +1307,25 @@ AppController::AppController(QObject *parent) : QObject(parent)
     registerUrlHandle();
 }
 
+AppController::~AppController()
+{
+    m_unmountThread.quit();
+    m_unmountThread.wait();
+}
+
 void AppController::initConnect()
 {
     connect(userShareManager, &UserShareManager::userShareCountChanged,
             fileSignalManager, &FileSignalManager::userShareCountChanged);
+
+    m_unmountWorker = new UnmountWorker;
+    m_unmountWorker->moveToThread(&m_unmountThread);
+    connect(&m_unmountThread, &QThread::finished, m_unmountWorker, &QObject::deleteLater);
+    connect(m_unmountWorker, &UnmountWorker::unmountResult, this, &AppController::showErrorDialog);
+    connect(this, &AppController::doUnmount, m_unmountWorker, &UnmountWorker::doUnmount);
+    connect(this, &AppController::doSaveRemove, m_unmountWorker, &UnmountWorker::doSaveRemove);
+
+    m_unmountThread.start();
 }
 
 void AppController::createGVfSManager()
@@ -1392,6 +1366,11 @@ void AppController::createDBusInterface()
     });
 }
 
+void AppController::showErrorDialog(const QString content)
+{
+    dialogManager->showErrorDialog(content, QString());
+}
+
 void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
 {
     m_hasLaunchAppInterface = hasLaunchAppInterface;
@@ -1408,4 +1387,60 @@ bool AppController::hasLaunchAppInterface() const
 StartManagerInterface *AppController::startManagerInterface() const
 {
     return m_startManagerInterface;
+}
+
+void UnmountWorker::doUnmount(const QString &blkStr)
+{
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blkStr));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (blkdev->isEncrypted()) {
+        blkdev.reset(DDiskManager::createBlockDevice(blkdev->cleartextDevice()));
+    }
+    blkdev->unmount({});
+    QDBusError err = blkdev->lastError();
+    if (err.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
+        qDebug() << "action timeout with noreply response";
+        emit unmountResult(tr("Action timeout, action is canceled"));
+    }
+    // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
+    // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
+    else if (err.isValid() && err.type() != QDBusError::Other) {
+        qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
+        emit unmountResult(tr("Disk is busy, cannot unmount now"));
+    }
+}
+
+void UnmountWorker::doSaveRemove(const QString &blkStr)
+{
+    QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blkStr));
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+    QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
+
+    bool err = false;
+    if (!blk->mountPoints().empty()) {
+        blk->unmount({});
+        QDBusError lastError = blk->lastError();
+        if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
+            qDebug() << "blk action has been canceled";
+            return;
+        }
+
+        if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
+            qDebug() << "action timeout with noreply response";
+            emit unmountResult(tr("Action timeout, action is canceled"));
+            return;
+        }
+
+        err |= blk->lastError().isValid();
+    }
+    if (blk->cryptoBackingDevice().length() > 1) {
+        cbblk->lock({});
+        err |= cbblk->lastError().isValid();
+        drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
+    }
+    drv->powerOff({});
+    err |= drv->lastError().isValid();
+    if (err) {
+        emit unmountResult(tr("Disk is busy, cannot eject now"));
+    }
 }

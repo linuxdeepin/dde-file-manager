@@ -11,8 +11,8 @@ static QRect dealRectRatio(QRect orgRect)
     qreal ratio = qApp->primaryScreen()->devicePixelRatio();
     if (ratio != 1.0)
         orgRect = QRect(orgRect.x(), orgRect.y()
-                        , orgRect.width() / ratio
-                        , orgRect.height() / ratio);
+                        , static_cast<int>(orgRect.width() / ratio)
+                        , static_cast<int>(orgRect.height() / ratio));
     return orgRect;
 }
 

@@ -13,6 +13,7 @@
 #include <QThread>
 #include <QMessageBox>
 #include <QTimer>
+#include <DLabel>
 
 DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     : QWidget(parent)
@@ -23,31 +24,19 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
 {
     // 标题
     QLabel *pLabelTitle = new QLabel(tr("Encrypt File Vault"), this);
-    pLabelTitle->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-weight: 500;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.9);");
+    QFont font = pLabelTitle->font();
+    font.setBold(true);
+    font.setPixelSize(18);
+    pLabelTitle->setFont(font);
     pLabelTitle->setAlignment(Qt::AlignHCenter);
 
     // 加密提示
-    m_pTips = new QLabel(tr("Click 'Encrypt' and input the user password to finish the setup wizard.") + '\n' +
+    m_pTips = new DLabel(tr("Click 'Encrypt' and input the user password to finish the setup wizard.") + '\n' +
                          tr("It will take several minutes, please wait..."), this);
-    m_pTips->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-weight: normal;"
-                           "font-stretch: normal;"
-                           "font-style: normal;"
-                           "line-height: 1.43;"
-                           "letter-spaceing: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
     m_pTips->setAlignment(Qt::AlignHCenter);
+
     // 加密保险箱图片
-    m_pEncryVaultImage = new QLabel(this);
+    m_pEncryVaultImage = new DLabel(this);
     m_pEncryVaultImage->setPixmap(QIcon::fromTheme("dfm_vault_active_encrypt").pixmap(98, 88));
     m_pEncryVaultImage->setAlignment(Qt::AlignHCenter);
 
@@ -56,37 +45,20 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     m_pWaterProgress->setValue(1);
     m_pWaterProgress->setFixedSize(98, 98);
     // 进度条提示
-    m_pTips3 = new QLabel(tr("Encrypted..."), this);
-    m_pTips3->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 12px;"
-                           "font-weight: normal;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
+    m_pTips3 = new DLabel(tr("Encrypted..."), this);
     m_pTips3->setAlignment(Qt::AlignHCenter);
 
     // 加密完成完成图片
-    m_pEncryptFinishedImage = new QLabel(this);
+    m_pEncryptFinishedImage = new DLabel(this);
     m_pEncryptFinishedImage->setPixmap(QIcon::fromTheme("dfm_vault_active_finish").pixmap(128, 128));
     m_pEncryptFinishedImage->setAlignment(Qt::AlignHCenter);
     // 加密完成提示
-    m_pTips4 = new QLabel(tr("The setup is complete"), this);
-    m_pTips4->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 12px;"
-                           "font-weight: normal;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
+    m_pTips4 = new DLabel(tr("The setup is complete"), this);
     m_pTips4->setAlignment(Qt::AlignHCenter);
 
     // 加密保险箱按钮
     m_pFinishedBtn = new QPushButton(tr("Encrypt") , this);
-    m_pFinishedBtn->setStyleSheet("width: 452px;"
-                            "height: 30px;");
+    m_pFinishedBtn->setFixedSize(452, 30);
     connect(m_pFinishedBtn, &QPushButton::clicked,
             this, &DFMVaultActiveFinishedView::slotEncryptVault);
 
@@ -185,7 +157,6 @@ void DFMVaultActiveFinishedView::slotEncryptVault()
             VaultController::getVaultController()->createVault(strPassword);
         });
         t.detach();
-
     }else{
         // 切换到保险箱主页面
         emit sigAccepted();

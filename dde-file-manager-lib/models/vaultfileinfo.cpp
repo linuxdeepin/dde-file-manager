@@ -29,7 +29,6 @@
 #include <QIcon>
 #include <qplatformdefs.h>
 
-
 class VaultFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
@@ -164,52 +163,33 @@ QList<QIcon> VaultFileInfo::additionalIcon() const
 
 bool VaultFileInfo::isWritable() const
 {
-    QString filePath = fileUrl().toLocalFile();
-    struct stat buf;
-    std::string stdStr = filePath.toStdString();
-    stat(stdStr.c_str(), &buf);
-    if (buf.st_mode & S_IWUSR) {
-        return true;
-    }else {
-        return false;
+    VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(fileUrl());
+    if (fbi.isExist){
+        return fbi.isWritable;
     }
+
+    return DAbstractFileInfo::isWritable();
+}
+
+bool VaultFileInfo::isSymLink() const
+{
+    VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(fileUrl());
+    if (fbi.isExist){
+        return fbi.isSymLink;
+    }
+
+    bool flg = DAbstractFileInfo::isSymLink();
+    return flg;
 }
 
 QFileDevice::Permissions VaultFileInfo::permissions() const
 {
-//    if (fileUrl().scheme() == DFMVAULT_SCHEME) {
-//        return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
-//               | QFile::WriteOwner | QFile::WriteUser;
-//    }
-
-//    QFileDevice::Permissions p = DAbstractFileInfo::permissions();
-
-//    return p;
     QFileInfo fileInfo(fileUrl().toLocalFile());
     return fileInfo.permissions();
 }
 
 QSet<MenuAction> VaultFileInfo::disableMenuActionList() const
 {
-//    QSet<MenuAction> list;
-
-//    if (!isWritable()){
-//        list << MenuAction::Delete;
-//    }
-
-//    DUrl parentUrl = this->parentUrl();
-//    QString filePath = parentUrl.toLocalFile();
-//    struct stat buf;
-//    std::string stdStr = filePath.toStdString();
-//    stat(stdStr.c_str(), &buf);
-//    if (!(buf.st_mode & S_IWUSR)) {
-//        list << MenuAction::Cut << MenuAction::Rename << MenuAction::Delete;
-//    }
-
-//    if (!list.isEmpty()){
-//        return list;
-//    }
-
     return DAbstractFileInfo::disableMenuActionList();
 }
 
@@ -249,22 +229,22 @@ QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList(MenuType
     if(type != SpaceArea) {
         if (isRootDirectory()) {
 
-         QMap<MenuAction, QVector<MenuAction> > actions;
-         QVector<MenuAction> vecActions;
+            QMap<MenuAction, QVector<MenuAction> > actions;
+            QVector<MenuAction> vecActions;
 
-         vecActions << MenuAction::Never
-                    << MenuAction::Separator
-                    << MenuAction::FiveMinutes
-                    << MenuAction::TenMinutes
-                    << MenuAction::TwentyMinutes;
+            vecActions << MenuAction::Never
+                       << MenuAction::Separator
+                       << MenuAction::FiveMinutes
+                       << MenuAction::TenMinutes
+                       << MenuAction::TwentyMinutes;
 
-         actions.insert(MenuAction::AutoLock, vecActions);
+            actions.insert(MenuAction::AutoLock, vecActions);
 
-         return actions;
+            return actions;
         }
-     }
+    }
 
-     return DAbstractFileInfo::subMenuActionList();
+    return DAbstractFileInfo::subMenuActionList();
 }
 
 QString VaultFileInfo::fileDisplayName() const
@@ -282,12 +262,10 @@ bool VaultFileInfo::canRename() const
         return false;
     }
 
-    QT_STATBUF statBuffer;
-    if (QT_STAT(QFile::encodeName(this->parentUrl().path()), &statBuffer) == 0) {
-        // 如果父目录为只读权限，则不能重命名
-        if (!(statBuffer.st_mode & S_IWUSR)) {
-            return false;
-        }
+    // 如果父目录为只读权限，则不能重命名
+    VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(parentUrl());
+    if (fbi.isExist && !fbi.isWritable){
+        return false;
     }
 
     return DAbstractFileInfo::canRename();
@@ -308,14 +286,14 @@ bool VaultFileInfo::canTag() const
 
 QIcon VaultFileInfo::fileIcon() const
 {
-     QIcon icon;
-     if (isRootDirectory()) {
-         icon = QIcon::fromTheme(iconName());
-     } else {
-         icon = DAbstractFileInfo::fileIcon();
-     }
+    QIcon icon;
+    if (isRootDirectory()) {
+        icon = QIcon::fromTheme(iconName());
+    } else {
+        icon = DAbstractFileInfo::fileIcon();
+    }
 
-     return icon;
+    return icon;
 }
 
 qint64 VaultFileInfo::size() const
@@ -327,6 +305,21 @@ qint64 VaultFileInfo::size() const
     }
 
     return DAbstractFileInfo::size();
+}
+
+bool VaultFileInfo::isDir() const
+{
+    // resolved the issue when directory not exist
+    QString path = this->filePath();
+    QString local = VaultController::vaultToLocal(VaultController::makeVaultUrl());
+    if (local.endsWith("/")) {
+        local.chop(1);
+    }
+
+    if (path.endsWith("/") || path == local) {
+        return true;
+    }
+    return DAbstractFileInfo::isDir();
 }
 
 bool VaultFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) const

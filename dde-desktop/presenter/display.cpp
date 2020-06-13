@@ -38,7 +38,7 @@ Display::Display(QObject *parent) : QObject(parent)
     });
     connect(m_display, &DBusDisplay::MonitorsChanged,this, [ = ]() {
         qDebug()<< "sigMonitorsChanged emit....  ";
-        emit  sigMonitorsChanged(NULL);
+        emit  sigMonitorsChanged(nullptr);
     });
 
     connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [ = ]() {

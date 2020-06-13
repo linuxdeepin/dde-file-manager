@@ -23,8 +23,11 @@
 #include <dtkwidget_global.h>
 #include <QPlainTextEdit>
 
-#include <DArrowRectangle>
+#include <DToolTip>
 #include <DThemeManager>
+#include <QVBoxLayout>
+#include <QTimer>
+#include <DFloatingWidget>
 
 #define MAX_KEY_LENGTH (32) //凭证最大值，4的倍数
 DWIDGET_USE_NAMESPACE
@@ -39,7 +42,8 @@ public:
         }
     }
 
-    DArrowRectangle *tooltip {nullptr};
+    DToolTip *tooltip {nullptr};
+    DFloatingWidget *frame {nullptr};
 
     DFMVaultRemoveByRecoverykeyView *q_ptr;
     Q_DECLARE_PUBLIC(DFMVaultRemoveByRecoverykeyView)
@@ -55,7 +59,6 @@ DFMVaultRemoveByRecoverykeyView::DFMVaultRemoveByRecoverykeyView(QWidget *parent
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_keyEdit);
-    layout->setContentsMargins(10, 10, 10, 0);
     layout->setMargin(0);
     this->setLayout(layout);
 
@@ -84,37 +87,34 @@ void DFMVaultRemoveByRecoverykeyView::showAlertMessage(const QString &text, int 
     Q_D(DFMVaultRemoveByRecoverykeyView);
 
     if (!d->tooltip){
-        d->tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop, this);
+        d->tooltip = new DToolTip(text);
         d->tooltip->setObjectName("AlertTooltip");
+        d->tooltip->setForegroundRole(DPalette::TextWarning);
+        d->tooltip->setWordWrap(true);
 
-        QLabel *label = new QLabel(d->tooltip);
-
-        label->setWordWrap(true);
-        label->setMaximumWidth(width());
-        d->tooltip->setContent(label);
-        d->tooltip->setBackgroundColor(palette().color(backgroundRole()));
-        d->tooltip->setArrowX(15);
-        d->tooltip->setArrowHeight(5);
-
-        QTimer::singleShot(duration, d->tooltip, [d] {
-            d->tooltip->deleteLater();
-            d->tooltip = Q_NULLPTR;
-        });
+        d->frame = new DFloatingWidget;
+        d->frame->setFramRadius(DStyle::pixelMetric(style(), DStyle::PM_FrameRadius));
+        d->frame->setBackgroundRole(QPalette::ToolTipBase);
+        d->frame->setWidget(d->tooltip);
     }
 
-    QLabel *label = qobject_cast<QLabel *>(d->tooltip->getContent());
+    d->frame->setParent(parentWidget());
 
-    if (!label) {
+    d->tooltip->setText(text);
+    if(d->frame->parent()){
+        d->frame->setGeometry(0, 25, 68, 26);
+        d->frame->show();
+        d->frame->adjustSize();
+        d->frame->raise();
+    }
+
+    if (duration < 0) {
         return;
     }
 
-    label->setText(text);
-    label->adjustSize();
-    label->setStyleSheet("color:rgb(255, 85, 0)");
-
-    const QPoint &pos = m_keyEdit->mapToGlobal(QPoint(15, 25));
-
-    d->tooltip->show(pos.x(), pos.y());
+    QTimer::singleShot(duration, d->frame, [d] {
+        d->frame->close();
+    });
 }
 
 void DFMVaultRemoveByRecoverykeyView::onRecoveryKeyChanged()

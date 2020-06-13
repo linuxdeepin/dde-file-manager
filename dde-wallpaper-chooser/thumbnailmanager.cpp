@@ -47,11 +47,11 @@ static QPixmap ThumbnailImage(const QString &path, qreal scale)
     imageReader.setDecideFormatFromContent(true);
     QImage image = imageReader.read();
 
-    QPixmap pix = QPixmap::fromImage(image.scaled(QSize(ItemWidth * ratio, ItemHeight * ratio),
+    QPixmap pix = QPixmap::fromImage(image.scaled(QSize(static_cast<int>(ItemWidth * ratio), static_cast<int>(ItemHeight * ratio)),
                                                              Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
 
-    const QRect r(0, 0, ItemWidth * ratio, ItemHeight * ratio);
-    const QSize size(ItemWidth * ratio, ItemHeight * ratio);
+    const QRect r(0, 0, static_cast<int>(ItemWidth * ratio), static_cast<int>(ItemHeight * ratio));
+    const QSize size(static_cast<int>(ItemWidth * ratio), static_cast<int>(ItemHeight * ratio));
 
     if (pix.width() > ItemWidth * ratio || pix.height() > ItemHeight * ratio)
         pix = pix.copy(QRect(pix.rect().center() - r.center(), size));
@@ -64,7 +64,7 @@ static QPixmap ThumbnailImage(const QString &path, qreal scale)
 }
 
 ThumbnailManager::ThumbnailManager(qreal scale)
-    : QObject(NULL)
+    : QObject(nullptr)
     , m_scale(scale)
 {
     const QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);

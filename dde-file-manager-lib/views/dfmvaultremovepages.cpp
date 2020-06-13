@@ -11,8 +11,10 @@
 #include <QRegExpValidator>
 #include <QStackedWidget>
 #include <QAbstractButton>
-
+#include <QLabel>
 #include <DMessageBox>
+#include <QVBoxLayout>
+#include <DLabel>
 
 DWIDGET_USE_NAMESPACE
 
@@ -23,14 +25,37 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     , m_progressView(new DFMVaultRemoveProgressView(this))
     , m_stackedWidget (new QStackedWidget(this))
 {
-    this->setTitle(tr("Remove File Vault"));
-    this->setIcon(QIcon::fromTheme("dfm_safebox"));
-    this->setFixedSize(440, 290);
+    setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
+    this->setFixedSize(396, 248);
+
+    // 标题
+    DLabel *pTitle = new DLabel(tr("Remove File Vault"), this);
+    QFont font = pTitle->font();
+    font.setBold(true);
+    font.setPixelSize(18);
+    pTitle->setFont(font);
+    pTitle->setAlignment(Qt::AlignHCenter);
+
+    // 信息
+    m_pInfo = new QLabel(this);
+    m_pInfo->setAlignment(Qt::AlignHCenter);
+
+    // 主界面
+    QFrame *mainFrame = new QFrame(this);
 
     m_stackedWidget->addWidget(m_passwordView);
     m_stackedWidget->addWidget(m_recoverykeyView);
     m_stackedWidget->addWidget(m_progressView);
-    addContent(m_stackedWidget);
+
+    // 布局
+    QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
+    mainLayout->setMargin(0);
+    mainLayout->addWidget(pTitle);
+    mainLayout->addWidget(m_pInfo);
+    mainLayout->addWidget(m_stackedWidget);
+
+    mainFrame->setLayout(mainLayout);
+    addContent(mainFrame);
 
     // 防止点击按钮隐藏界面
     setOnButtonClickedClose(false);
@@ -47,14 +72,15 @@ void DFMVaultRemovePages::initConnect()
 
 void DFMVaultRemovePages::showVerifyWidget()
 {
+    setInfo(tr("Once removed, the files in it will be permanently deleted,") + '\n' +
+            tr("please confirm and continue"));
+
     setCloseButtonVisible(true);
     clearButtons();
-    setMessage(tr("Once the file vault is removed, the files in it will be permanently deleted. This action cannot be undone, please confirm and continue."));
     QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Remove")});
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
     addButton(buttonTexts[2], true);
-    getButton(2)->setStyleSheet("color: rgb(255, 85, 0);");
     setDefaultButton(2);
     m_stackedWidget->setCurrentIndex(0);
 
@@ -71,12 +97,18 @@ void DFMVaultRemovePages::showVerifyWidget()
 
 void DFMVaultRemovePages::showRemoveWidget()
 {
+    setInfo(tr("Removing..."));
+
     setCloseButtonVisible(false);
     clearButtons();
-    setMessage(tr("Removing..."));
-    addButton(tr("Ok"), true, ButtonType::ButtonRecommend);
+    addButton(tr("Ok"), true, ButtonType::ButtonNormal);
     getButton(0)->setEnabled(false);
     m_stackedWidget->setCurrentIndex(2);
+}
+
+void DFMVaultRemovePages::setInfo(const QString &info)
+{
+    m_pInfo->setText(info);
 }
 
 void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
@@ -108,10 +140,10 @@ QWidget *DFMVaultRemovePages::getWndPtr() const
 
 void DFMVaultRemovePages::showTop()
 {
-    this->activateWindow();
-    this->showNormal();
-
     showVerifyWidget();
+
+    show();
+    raise();
 }
 
 void DFMVaultRemovePages::onButtonClicked(int index)
@@ -137,7 +169,7 @@ void DFMVaultRemovePages::onButtonClicked(int index)
             QString strClipher("");
 
             if (!InterfaceActiveVault::checkPassword(strPwd, strClipher)){
-                m_passwordView->showAlertMessage(tr("Wrong password"));
+                m_passwordView->showToolTip(tr("Wrong password"), 3000, DFMVaultRemoveByPasswordView::EN_ToolTip::Warning);
                 return;
             }
         }else {
@@ -188,9 +220,9 @@ void DFMVaultRemovePages::onLockVault(int state)
 void DFMVaultRemovePages::onVualtRemoveFinish(bool result)
 {
     if (result){
-        this->setMessage(tr("Removed successfully"));
+        setInfo(tr("Removed successfully"));
     }else {
-        this->setMessage(tr("Failed to remove"));
+        setInfo(tr("Failed to remove"));
     }
 
     this->getButton(0)->setEnabled(true);

@@ -29,6 +29,8 @@ class QPushButton;
 
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
+class DToolTip;
+class DFloatingWidget;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -39,6 +41,10 @@ class DFMVaultRemoveByPasswordView : public QWidget
 public:
     explicit DFMVaultRemoveByPasswordView(QWidget *patent = nullptr);
     ~DFMVaultRemoveByPasswordView() override;
+    enum EN_ToolTip{
+        Warning = 0,
+        Information
+    };
 
     /**
     * @brief    获取密码
@@ -56,6 +62,7 @@ public:
      * @param duration  显示时长
      */
     void showAlertMessage(const QString &text, int duration = 3000);
+    void showToolTip(const QString &text, int duration, EN_ToolTip enType);
 
     /**
      * @brief setTipsButtonVisible 设置提示按钮是否可见
@@ -68,6 +75,9 @@ public slots:
 private:
     DPasswordEdit *m_pwdEdit {nullptr};
     QPushButton *m_tipsBtn {nullptr};
+
+    DToolTip *m_tooltip {nullptr};
+    DFloatingWidget *m_frame {nullptr};
 };
 
 #endif // DFMVAULTREMOVEBYPASSWORDVIEW_H

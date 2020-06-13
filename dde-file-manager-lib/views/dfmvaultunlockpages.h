@@ -26,6 +26,8 @@
 
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
+class DToolTip;
+class DFloatingWidget;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -35,6 +37,11 @@ class DFMVaultUnlockPages : public DDialog
     Q_OBJECT
 public:            
     static DFMVaultUnlockPages *instance();
+
+    enum EN_ToolTip{
+        Warning = 0,
+        Information
+    };
 
     void setWndPtr(QWidget *wnd);
     QWidget *getWndPtr() const;
@@ -52,10 +59,15 @@ private:
 
     void showEvent(QShowEvent *event) override;
 
+    void showToolTip(const QString &text, int duration, EN_ToolTip enType);
+
 private:
     DPasswordEdit * m_passwordEdit {nullptr};
     QPushButton * m_tipsButton {nullptr};
     bool m_bUnlockByPwd = false;
 
     QWidget *m_wndptr = nullptr;
+
+    DToolTip *m_tooltip {nullptr};
+    DFloatingWidget *m_frame {nullptr};
 };

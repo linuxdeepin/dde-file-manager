@@ -34,7 +34,9 @@ DFMVaultRemoveProgressView::DFMVaultRemoveProgressView(QWidget *parent)
     : QWidget (parent)
     , m_vaultRmProgressBar(new DWaterProgress(this))
 {
+    m_vaultRmProgressBar->setFixedSize(75, 75);
     QHBoxLayout *layout = new QHBoxLayout();
+    layout->setMargin(0);
     layout->addWidget(m_vaultRmProgressBar, 1, Qt::AlignCenter);
 
     this->setLayout(layout);

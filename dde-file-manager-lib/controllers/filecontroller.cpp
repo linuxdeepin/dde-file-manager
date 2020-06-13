@@ -731,7 +731,14 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
     // 该现象发生于从搜索列表中往光驱中发送文件夹还不被支持的时候。现已可以从搜索列表、最近列表、标签列表中往光驱中发送文件
     QSharedPointer<DFileCopyMoveJob> job = QSharedPointer<DFileCopyMoveJob>(new DFileCopyMoveJob());
     //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
-
+    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+    bool bdoingcleartrash = DFileService::instance()->getDoClearTrashState();
+    if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
+            list.first().toString().endsWith(".local/share/Trash/files")) {
+        connect(job.data(),&DFileCopyMoveJob::finished,this,[=](){
+            DFileService::instance()->setDoClearTrashState(false);
+        });
+    }
     //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
 
     if (force) {
@@ -897,27 +904,8 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
     //        return DFileService::instance()->deleteFiles(nullptr, event->urlList(), false);
     //    }
 
-    // 保险箱删除大文件会导致文管界面卡死，暂时先将文件隐藏
-    DUrlList urlList = event->fileUrlList();
-    DUrlList urls;
-    for (const auto &url: urlList){
-        if (url.path().contains("vault_unlocked")){
-            QFileInfo info(url.path());
-            if (info.size() > 10 * 1024 * 1024){
-                DFMFileListFile flf(info.absolutePath());
-                flf.insert(info.fileName());
-                flf.save();
 
-                continue;
-            }else {
-                urls << url;
-            }
-        }else {
-            urls << url;
-        }
-    }
-
-    bool ok = !pasteFilesV2(DFMGlobal::CutAction, urls, DUrl(), event->silent(), event->force()).isEmpty();
+    bool ok = !pasteFilesV2(DFMGlobal::CutAction, event->fileUrlList(), DUrl(), event->silent(), event->force()).isEmpty();
     return ok;
 }
 

@@ -21,7 +21,7 @@ OperatorCenter::OperatorCenter(QObject *parent)
 
 QString OperatorCenter::makeVaultLocalPath(const QString &before, const QString &behind)
 {
-    return QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)
+    return VAULT_BASE_PATH
 //            + QDir::separator() + CONFIG_DIR_NAME
             + (before.isEmpty() ? QString("") : QDir::separator()) + before
             + (behind.isEmpty() ? QString("") : QDir::separator()) + behind;
@@ -77,8 +77,6 @@ OperatorCenter::~OperatorCenter()
 
 bool OperatorCenter::createDirAndFile()
 {
-    QString strWorkDirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-
     // 创建配置文件目录
     QString strConfigDir = makeVaultLocalPath();
     QDir configDir(strConfigDir);

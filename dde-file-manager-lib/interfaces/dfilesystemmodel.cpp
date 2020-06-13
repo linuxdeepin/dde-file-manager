@@ -2007,7 +2007,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     }
 
     if (d->watcher) {
-        disconnect(d->watcher, 0, this, 0);
+        disconnect(d->watcher, nullptr, this, nullptr);
         d->watcher->deleteLater();
     }
 
@@ -3143,7 +3143,7 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
                 if (AppController::multiSelectionFilesCache.first.contains(fileUrl) == true) {
 
                     ++AppController::multiSelectionFilesCacheCounter;
-                    if (AppController::multiSelectionFilesCacheCounter.load(std::memory_order_seq_cst) ==
+                    if (static_cast<int>(AppController::multiSelectionFilesCacheCounter.load(std::memory_order_seq_cst)) ==
                             AppController::multiSelectionFilesCache.first.size()) {
 
                         DFMUrlListBaseEvent event{ parent()->parent(),  AppController::multiSelectionFilesCache.first};

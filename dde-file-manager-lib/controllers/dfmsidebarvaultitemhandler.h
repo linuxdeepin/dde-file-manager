@@ -86,22 +86,9 @@ private:
      */
     bool autoLock(int lockState);
 
-    /**
-     * @brief 显示删除保险箱页面
-     */
-    void showDeleteVaultView(QWidget *wndPtr);
-
-    /**
-     * @brief 显示解锁页面
-     */
-    void showUnLockView(QWidget *wndPtr);
-
-    /**
-     * @brief 显示凭证页面
-     */
-    void showCertificateView(QWidget *wndPtr);
-
 private:
+    void showView(QWidget *wndPtr, QString host);
+
     DFMVaultUnlockPages *m_vaultUnlockPage { nullptr };
 };
 

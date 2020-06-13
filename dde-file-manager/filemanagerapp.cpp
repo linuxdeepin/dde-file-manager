@@ -182,7 +182,7 @@ void FileManagerApp::initSysPathWatcher()
 void FileManagerApp::initConnect()
 {
     connect(m_sysPathWatcher, &QFileSystemWatcher::directoryChanged, systemPathManager, &PathManager::loadSystemPaths);
-    connect(DFMApplication::instance(), &DFMApplication::previewCompressFileChanged, this, [this] (bool enable) {
+    connect(DFMApplication::instance(), &DFMApplication::previewCompressFileChanged, this, [] (bool enable) {
         if (enable)
             FileUtils::mountAVFS();
         else
