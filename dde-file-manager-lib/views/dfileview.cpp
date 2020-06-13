@@ -2309,9 +2309,11 @@ bool DFileView::setRootUrl(const DUrl &url)
         fileUrl.setQuery(qq);
     } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(this, rootUrl)) {
         QList<DUrl> ancestors;
-
-        if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
-            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl);
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl,false)) {
+            if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
+                d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl);
+            }
         }
     }
 
@@ -2571,7 +2573,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             // 初始化列宽调整
             d->cachedViewWidth = this->width();
             //fix task klu 21328 当切换到列表显示时自动适应列宽度
-            d->adjustFileNameCol = d->headerView->width() <= this->width();
+            d->adjustFileNameCol = true; //fix 31609 无论如何在切换显示模式时都去调整列表宽度
             updateListHeaderViewProperty();
         }
 

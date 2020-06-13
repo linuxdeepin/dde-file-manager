@@ -83,6 +83,7 @@ public:
     QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
 private:
     QString checkDuplicateName(const QString &name) const;
+    bool fileAdded(const DUrl &url) const;
 };
 
 #endif // FILECONTROLLER_H
