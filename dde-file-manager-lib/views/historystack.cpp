@@ -78,14 +78,25 @@ DUrl HistoryStack::back()
 
         if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
             break;
+        //判断网络文件是否可以到达
+        if (DFileService::instance()->checkGvfsMountfileBusy(url,false)) {
+            if (currentUrl == url) {
+                removeAt(m_index);
+                url = m_list.at(m_index);
+            }
+            else {
+                break;
+            }
+        }
+        else {
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
-
-        if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
-            removeAt(m_index);
-            url = m_list.at(m_index);
-        } else {
-            break;
+            if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
+                removeAt(m_index);
+                url = m_list.at(m_index);
+            } else {
+                break;
+            }
         }
     }
 
@@ -111,15 +122,27 @@ DUrl HistoryStack::forward()
 
         if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
             break;
+        //判断网络文件是否可以到达
+        if (DFileService::instance()->checkGvfsMountfileBusy(url,false)) {
+            if (currentUrl == url) {
+                removeAt(m_index);
+                --m_index;
+                url = m_list.at(m_index);
+            }
+            else {
+                break;
+            }
+        }
+        else {
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
-
-        if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
-            removeAt(m_index);
-            --m_index;
-            url = m_list.at(m_index);
-        } else {
-            break;
+            if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
+                removeAt(m_index);
+                --m_index;
+                url = m_list.at(m_index);
+            } else {
+                break;
+            }
         }
     }
 
