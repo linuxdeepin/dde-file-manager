@@ -158,8 +158,8 @@ void BackgroundManager::pullImageSettings()
     m_backgroundImagePath.clear();
     if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter) {
         for (ScreenPointer sc : ScreenMrg->logicScreens()) {
-//           QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
-            QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
+           QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
+            //QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 qCritical() << "get background fail path :" << path << "screen" << sc->name();
                 continue;
