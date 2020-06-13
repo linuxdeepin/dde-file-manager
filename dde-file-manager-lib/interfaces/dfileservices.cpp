@@ -87,6 +87,7 @@ public:
     bool bstartonce = false;
     bool m_bcursorbusy = false;
     bool m_bonline = false;
+    bool m_bdoingcleartrash = false;
     JobController *m_jobcontroller = nullptr;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
@@ -1255,6 +1256,20 @@ bool DFileService::checkNetWorkToVistHost(const QString &host)
     eventLoop.exec();
 
     return bvisit;
+}
+
+bool DFileService::getDoClearTrashState() const
+{
+    Q_D(const DFileService);
+
+    return  d->m_bdoingcleartrash;
+}
+
+void DFileService::setDoClearTrashState(const bool bdoing)
+{
+    Q_D(DFileService);
+
+    d->m_bdoingcleartrash = bdoing;
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
