@@ -14,6 +14,7 @@ QT_END_NAMESPACE
 DWIDGET_BEGIN_NAMESPACE
 class DIconButton;
 class DWaterProgress;
+class DLabel;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -39,16 +40,16 @@ private slots:
 
 private: 
     QWidget             *m_pWidget1;
-    QLabel              *m_pTips;
-    QLabel              *m_pEncryVaultImage;
+    DLabel              *m_pTips;
+    DLabel              *m_pEncryVaultImage;
 
     QWidget             *m_pWidget2;
     DWaterProgress      *m_pWaterProgress;
-    QLabel              *m_pTips3;
+    DLabel              *m_pTips3;
 
     QWidget             *m_pWidget3;
-    QLabel              *m_pEncryptFinishedImage;
-    QLabel              *m_pTips4;
+    DLabel              *m_pEncryptFinishedImage;
+    DLabel              *m_pTips4;
 
     QPushButton         *m_pFinishedBtn;
 

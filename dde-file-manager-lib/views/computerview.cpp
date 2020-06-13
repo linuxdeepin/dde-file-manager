@@ -49,12 +49,7 @@
 #include "computerviewitemdelegate.h"
 #include "views/dfmopticalmediawidget.h"
 #include "models/deviceinfoparser.h"
-#include "dfmvaultunlockpages.h"
-#include "vault/interfaceactivevault.h"
 #include "controllers/vaultcontroller.h"
-#include "views/dfmvaultactiveview.h"
-#include "views/dfmvaultremovepages.h"
-#include "views/dfmvaultrecoverykeypages.h"
 
 #include <dslider.h>
 
@@ -77,6 +72,7 @@
 #include <DApplication>
 #include <DLineEdit>
 #include <DStyle>
+#include <views/dfilemanagerwindow.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -181,36 +177,8 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
         }
         if (url.path().endsWith(SUFFIX_USRDIR)) {
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
-        } else if (url.scheme() == DFMVAULT_SCHEME) { // 保险柜
-            // 判断保险箱状态
-            InterfaceActiveVault activeVault;
-            EN_VaultState enState = activeVault.vaultState();
-            switch (enState) {
-            case EN_VaultState::NotAvailable:{  // 没有安装cryfs
-                qDebug() << "Don't setup cryfs, can't use vault, please setup cryfs!";
-                break;
-            }
-            case EN_VaultState::NotExisted:{    // 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
-                DFMVaultActiveView::getInstance().setWndPtr(this->topLevelWidget());
-                DFMVaultActiveView::getInstance().showTop();
-                break;
-            }
-            case EN_VaultState::Encrypted:{ // 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
-                // todo                
-                DFMVaultUnlockPages::instance()->setWndPtr(this->topLevelWidget());
-                DFMVaultUnlockPages::instance()->show();
-                DFMVaultUnlockPages::instance()->raise();
-                break;
-            }
-            case EN_VaultState::Unlocked:{  // 保险箱处于开锁状态，直接进入主界面
-                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
-                break;
-            }
-            default:{   // 未考虑
-                break;
-            }
-            }
-
+        } else if (url.scheme() == DFMVAULT_SCHEME) {
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
         } else {
             appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
         }

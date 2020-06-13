@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
     qDebug() << "Desktop inited" << gTime.elapsed();
 
     // init pixmap cache size limit, 20MB * devicePixelRatio
-    QPixmapCache::setCacheLimit(20 * 1024 * app.devicePixelRatio());
+    QPixmapCache::setCacheLimit(static_cast<int>(20 * 1024 * app.devicePixelRatio()));
 
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 

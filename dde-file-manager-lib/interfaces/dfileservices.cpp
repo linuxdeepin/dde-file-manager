@@ -87,6 +87,7 @@ public:
     bool bstartonce = false;
     bool m_bcursorbusy = false;
     bool m_bonline = false;
+    bool m_bdoingcleartrash = false;
     JobController *m_jobcontroller = nullptr;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
@@ -1059,10 +1060,10 @@ void DFileService::setCursorBusyState(const bool bbusy)
 
 }
 
-bool DFileService::checkGvfsMountfileBusy(const DUrl &url)
+bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog)
 {
     //找出url的rootfile路径，判断rootfile是否存在
-    qDebug() << url << QThread::currentThreadId();
+//    qDebug() << url << QThread::currentThreadId();
     if (!url.isValid()) {
         return false;
     }
@@ -1128,11 +1129,11 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url)
         rooturl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
     }
 
-    return checkGvfsMountfileBusy(rooturl, rootfilename);
+    return checkGvfsMountfileBusy(rooturl, rootfilename,showdailog);
 
 }
 
-bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename)
+bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog)
 {
     if(!rootUrl.isValid()) {
         return false;
@@ -1145,7 +1146,9 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     if (!bonline) {
         setCursorBusyState(false);
         //文件不存在弹提示框
-        dialogManager->showUnableToLocateDir(rootfilename);
+        if (showdailog) {
+            dialogManager->showUnableToLocateDir(rootfilename);
+        }
         return true;
     }
 
@@ -1154,7 +1157,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
         fileexit = rootptr->exists();
         setCursorBusyState(false);
         //文件不存在弹提示框
-        if (!fileexit) {
+        if (!fileexit && showdailog) {
             dialogManager->showUnableToLocateDir(rootfilename);
         }
         return !fileexit;
@@ -1206,13 +1209,15 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     if (!bonline) {
         setCursorBusyState(false);
         //文件不存在弹提示框
-        dialogManager->showUnableToLocateDir(rootfilename);
+        if (showdailog) {
+            dialogManager->showUnableToLocateDir(rootfilename);
+        }
         return true;
     }
 
     setCursorBusyState(false);
     //文件不存在弹提示框
-    if (!bvist) {
+    if (!bvist && showdailog) {
         dialogManager->showUnableToLocateDir(rootfilename);
     }
     return !bvist;
@@ -1251,6 +1256,20 @@ bool DFileService::checkNetWorkToVistHost(const QString &host)
     eventLoop.exec();
 
     return bvisit;
+}
+
+bool DFileService::getDoClearTrashState() const
+{
+    Q_D(const DFileService);
+
+    return  d->m_bdoingcleartrash;
+}
+
+void DFileService::setDoClearTrashState(const bool bdoing)
+{
+    Q_D(DFileService);
+
+    d->m_bdoingcleartrash = bdoing;
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)

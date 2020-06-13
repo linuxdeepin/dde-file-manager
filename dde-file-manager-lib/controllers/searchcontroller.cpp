@@ -190,7 +190,7 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
         }
     }
 
-    removeWatcher(fromUrl);
+//    removeWatcher(fromUrl); // fix task 21431 临时解决方案。
 
     emit fileMoved(newFromUrl, newToUrl);
 }
@@ -529,9 +529,9 @@ bool SearchController::renameFile(const QSharedPointer<DFMRenameEvent> &event) c
 bool SearchController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
 {
     DUrl url = event->url();
-
+    /*解决搜索状态下修改文件属性会修改到当前用户的属性*/
     if (!url.searchTargetUrl().isEmpty()) {
-        return DFileService::instance()->setPermissions(event->sender(), url.searchTargetUrl(), event->permissions());
+        return DFileService::instance()->setPermissions(event->sender(), DUrl(url.fragment()), event->permissions());
     }
 
     return false;

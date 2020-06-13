@@ -50,6 +50,8 @@ public:
 
     QList<QIcon> additionalIcon() const override;
     bool isWritable() const Q_DECL_OVERRIDE;
+    bool isSymLink() const Q_DECL_OVERRIDE;
+
     QFile::Permissions permissions() const override;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
 
@@ -63,6 +65,7 @@ public:
     QIcon fileIcon() const override;
     QString fileDisplayName() const override;
     qint64 size() const override;
+    bool isDir() const override;
 
     /**
      * @brief isAncestorsUrl 拆分路径

@@ -9,6 +9,10 @@ class QStackedWidget;
 class DFMVaultRemoveProgressView;
 class DFMVaultRemoveByRecoverykeyView;
 class DFMVaultRemoveByPasswordView;
+DWIDGET_BEGIN_NAMESPACE
+
+class DLabel;
+DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 class DFMVaultRemovePages : public DDialog
@@ -38,6 +42,7 @@ private:
     void showVerifyWidget();
 
     void showRemoveWidget();
+    void setInfo(const QString &info);
 
     void closeEvent(QCloseEvent *event) override;
 private:
@@ -49,6 +54,8 @@ private:
     bool m_bRemoveVault = false;
 
     QWidget *m_wndptr = nullptr;
+
+    QLabel              *m_pInfo;
 };
 
 #endif // DFMVAULTREMOVEPAGES_H

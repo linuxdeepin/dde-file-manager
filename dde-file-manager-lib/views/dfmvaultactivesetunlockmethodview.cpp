@@ -14,8 +14,7 @@
 #include <QSlider>
 #include <QVBoxLayout>
 #include <DPasswordEdit>
-
-DWIDGET_USE_NAMESPACE
+#include <DLabel>
 
 DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *parent)
     : QWidget(parent)
@@ -29,25 +28,14 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 {
     // 设置开锁方式标签
     QLabel *pLabel = new QLabel(tr("Set Vault Password"), this);
-    pLabel->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-weight: 500;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "text-align: center;"
-                           "color: rgba(0, 0, 0, 0.9);");
+    QFont font = pLabel->font();
+    font.setBold(true);
+    font.setPixelSize(18);
+    pLabel->setFont(font);
     pLabel->setAlignment(Qt::AlignHCenter);
 
     // 类型
-    QLabel *pTypeLabel = new QLabel(tr("Method"), this);
-    pTypeLabel->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "letter-spacing: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
+    DLabel *pTypeLabel = new DLabel(tr("Method"), this);
     m_pTypeCombo = new QComboBox(this);
     QStringList lstItems;
     lstItems << tr("Manual")/* << tr("Random")*/;
@@ -56,14 +44,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
                       this, SLOT(slotTypeChanged(int)));
 
     // 设置密码
-    m_pPasswordLabel = new QLabel(tr("Password"),this);
-    m_pPasswordLabel->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "letter-spacing: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
+    m_pPasswordLabel = new DLabel(tr("Password"),this);
     m_pPassword = new DPasswordEdit(this);
     m_pPassword->lineEdit()->setPlaceholderText(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
     connect(m_pPassword, &DPasswordEdit::textEdited,
@@ -77,14 +58,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
 
     // 重复密码
-    m_pRepeatPasswordLabel = new QLabel(tr("Repeat password"), this);
-    m_pRepeatPasswordLabel->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "letter-spacing: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
+    m_pRepeatPasswordLabel = new DLabel(tr("Repeat password"), this);
     m_pRepeatPassword = new DPasswordEdit(this);
     m_pRepeatPassword->lineEdit()->setPlaceholderText(tr("Input the password again"));
     connect(m_pRepeatPassword, &DPasswordEdit::textEdited,
@@ -97,14 +71,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
             this, &DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged);
 
     // 提示信息
-    m_pPasswordHintLabel = new QLabel(tr("Hint"), this);
-    m_pPasswordHintLabel->setStyleSheet("font-family: SourceHanSansSC;"
-                           "font-size: 14px;"
-                           "font-streth: normal;"
-                           "font-style: normal;"
-                           "line-height: normal;"
-                           "letter-spacing: center;"
-                           "color: rgba(0, 0, 0, 0.7);");
+    m_pPasswordHintLabel = new DLabel(tr("Hint"), this);
     m_pTips = new QLineEdit(this);
     m_pTips->setMaxLength(14);
     m_pTips->setPlaceholderText(tr("Password Hint"));
@@ -113,8 +80,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
-    m_pNext->setStyleSheet("width: 452px;"
-                               "height: 30px;");
+    m_pNext->setFixedSize(452, 30);
     m_pNext->setEnabled(false);
     connect(m_pNext, &QPushButton::clicked,
             this, &DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked);
@@ -210,7 +176,7 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
     bool ok = checkPassword(m_pPassword->text());
     if(!ok){
         m_pNext->setEnabled(false);
-        m_pPassword->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
+        m_pPassword->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
         m_pPassword->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"),TIPS_TIME);
     } else {
         if(checkInputInfo()){
@@ -231,7 +197,7 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished()
 {
     bool ok = checkRepeatPassword();
     if(!ok){
-        m_pRepeatPassword->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
+        m_pRepeatPassword->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
         m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"), TIPS_TIME);
     }
 }

@@ -62,6 +62,7 @@
 #include "dfmeventdispatcher.h"
 #include "views/dfmsidebar.h"
 #include "dfmapplication.h"
+#include "dstorageinfo.h"
 
 #include <DDrawer>
 #include <DDrawerGroup>
@@ -89,9 +90,12 @@
 #include <QScrollArea>
 #include <ddiskmanager.h>
 #include <QGuiApplication>
-#include "unistd.h"
+#include <unistd.h>
 #include <models/trashfileinfo.h>
 #include <views/dfmtagwidget.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 
 #include <dgiosettings.h>
 
@@ -574,6 +578,19 @@ const DUrl PropertyDialog::getRealUrl()
     }
 
     return m_url;
+}
+
+bool PropertyDialog::canChmod(const DAbstractFileInfoPointer &info)
+{
+    bool ret = true;
+    DUrl parentUrl = info->parentUrl();
+    QString parentScheme = parentUrl.scheme();
+
+    if (parentScheme == BURN_SCHEME) {
+        ret = false;
+    }
+
+    return ret;
 }
 
 void PropertyDialog::initConnect()
@@ -1381,7 +1398,8 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     DUrl parentUrl = info->parentUrl();
     QString parentScheme = parentUrl.scheme();
-
+    DStorageInfo storageInfo(parentUrl.toLocalFile());
+    const QString &fsType = storageInfo.fileSystemType();
     // these are for file or folder, folder will with executable index.
     int readWriteIndex = 0, readOnlyIndex = 0;
 
@@ -1395,6 +1413,8 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
                   << QObject::tr("Read only")  // 5 with x
                   << QObject::tr("Read-write") // 6
                   << QObject::tr("Read-write"); // 7 with x
+
+    static QStringList canChmodFileType = {"vfat", "fuseblk"};
 
     if (info->isFile()) {
         // append `Executable` string
@@ -1439,11 +1459,21 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     // when change the index...
     auto onComboBoxChanged = [ = ]() {
+        struct stat fileStat;
+        stat(info->toLocalFile().toUtf8().data(), &fileStat);
+        auto preMode = fileStat.st_mode;
         DFileService::instance()->setPermissions(this, getRealUrl(),
                                                  QFileDevice::Permissions(ownerBox->currentData().toInt()) |
                                                  /*(info->permissions() & 0x0700) |*/
                                                  QFileDevice::Permissions(groupBox->currentData().toInt()) |
                                                  QFileDevice::Permissions((otherBox->currentData().toInt())));
+        stat(info->toLocalFile().toUtf8().data(), &fileStat);
+        auto afterMode = fileStat.st_mode;
+        // 修改权限失败
+        // todo 回滚权限
+        if (preMode == afterMode) {
+            qDebug() << "chmod failed";
+        }
     };
 
     if (info->isDir()) {
@@ -1494,11 +1524,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
                 m_executableCheckBox->setChecked(true);
             }
         }
-        if (parentScheme == BURN_SCHEME) {
+        // 一些文件系统不支持修改可执行权限
+        if (!canChmod(info) || canChmodFileType.contains(fsType)) {
             m_executableCheckBox->setDisabled(true);
-            ownerBox->setDisabled(true);
-            groupBox->setDisabled(true);
-            otherBox->setDisabled(true);
         }
         layout->addRow(m_executableCheckBox);
     }
@@ -1511,11 +1539,24 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     connect(groupBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
     connect(otherBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
 
-    if (info->ownerId() != getuid()) {
+    // 置灰：
+    // 1. 本身用户无权限
+    // 2. 所属文件系统无权限机制
+    if (info->ownerId() != getuid() ||
+            !canChmod(info) ||
+            fsType == "fuseblk") {
         ownerBox->setDisabled(true);
         groupBox->setDisabled(true);
         otherBox->setDisabled(true);
     }
 
+    // tmp: 暂时的处理
+    if (fsType == "vfat") {
+        groupBox->setDisabled(true);
+        otherBox->setDisabled(true);
+        if (info->isDir()) {
+            ownerBox->setDisabled(true);
+        }
+    }
     return widget;
 }

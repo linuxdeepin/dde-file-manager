@@ -23,8 +23,10 @@
 
 #include <QPushButton>
 #include <QHBoxLayout>
-
+#include <DToolTip>
 #include <DPasswordEdit>
+#include <DFloatingWidget>
+#include <QTimer>
 
 DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     : QWidget (parent)
@@ -32,17 +34,15 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     //密码输入框
     m_pwdEdit = new DPasswordEdit(this);
     m_pwdEdit->lineEdit()->setPlaceholderText(tr("Verify your password"));
-    m_pwdEdit->lineEdit()->setMaxLength(24);
 
     // 提示按钮
     m_tipsBtn = new QPushButton(this);
     m_tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
-    m_tipsBtn->setFixedSize(40, 36);
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(m_pwdEdit);
     layout->addWidget(m_tipsBtn);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 15, 0, 0);
     this->setLayout(layout);
 
     connect(m_pwdEdit->lineEdit(), &QLineEdit::textChanged, this, &DFMVaultRemoveByPasswordView::onPasswordChanged);
@@ -50,7 +50,7 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
             strPwdHint.insert(0, tr("Password hint:"));
-            m_pwdEdit->showAlertMessage(strPwdHint);
+            showToolTip(strPwdHint, 3000, EN_ToolTip::Information);
         }
     });
 }
@@ -77,8 +77,52 @@ void DFMVaultRemoveByPasswordView::clear()
 
 void DFMVaultRemoveByPasswordView::showAlertMessage(const QString &text, int duration)
 {
-    m_pwdEdit->lineEdit()->setStyleSheet("background-color:rgb(245, 218, 217)");
+    m_pwdEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
     m_pwdEdit->showAlertMessage(text, duration);
+}
+
+void DFMVaultRemoveByPasswordView::showToolTip(const QString &text, int duration, DFMVaultRemoveByPasswordView::EN_ToolTip enType)
+{
+    if (!m_tooltip){
+        m_tooltip = new DToolTip(text);
+        m_tooltip->setObjectName("AlertTooltip");
+        m_tooltip->setWordWrap(true);
+
+        m_frame = new DFloatingWidget;
+        m_frame->setFramRadius(DStyle::pixelMetric(style(), DStyle::PM_FrameRadius));
+        m_frame->setStyleSheet("background-color: rgba(247, 247, 247, 0.6);");
+        m_frame->setWidget(m_tooltip);
+    }
+    if(EN_ToolTip::Warning == enType){
+        m_pwdEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+        m_tooltip->setForegroundRole(DPalette::TextWarning);
+    }
+    else{
+        m_tooltip->setForegroundRole(DPalette::TextTitle);
+    }
+
+    if(parentWidget()){
+        if(parentWidget()->parentWidget()){
+            if(parentWidget()->parentWidget()->parentWidget())
+            m_frame->setParent(parentWidget()->parentWidget()->parentWidget());
+        }
+    }
+
+    m_tooltip->setText(text);
+    if(m_frame->parent()){
+        m_frame->setGeometry(6, 180, 68, 26);
+        m_frame->show();
+        m_frame->adjustSize();
+        m_frame->raise();
+    }
+
+    if (duration < 0) {
+        return;
+    }
+
+    QTimer::singleShot(duration, this, [=] {
+        m_frame->close();
+    });
 }
 
 void DFMVaultRemoveByPasswordView::setTipsButtonVisible(bool visible)

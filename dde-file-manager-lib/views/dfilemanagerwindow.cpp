@@ -320,6 +320,8 @@ bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
 
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 {
+    Q_Q(DFileManagerWindow);
+
     DFMBaseView *current_view = tab->fileView();
 
     // fix 6942 取消判断先后请求地址差异判断
@@ -337,6 +339,18 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
             if (blk->mountPoints().empty()) {
                 blk->mount({});
             }
+        }
+    }
+
+    if (fileUrl.scheme() == DFMVAULT_SCHEME) {
+        if (VaultController::Unlocked != VaultController::getVaultController()->state()
+                || fileUrl.host() == "delete") {
+            DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
+            view->widget()->setParent(q);
+            bool ret = view->setRootUrl(fileUrl);
+            delete view;
+            view = nullptr;
+            return ret;
         }
     }
 

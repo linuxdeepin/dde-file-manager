@@ -1034,79 +1034,84 @@
         <translation>This action is not supported</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="609"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="326"/>
+        <source>The File Vault is progressing delete task, please do nothing!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="639"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>Erasing disc %1, please wait...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="610"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="640"/>
         <source>Burning disc %1, please wait...</source>
         <translation>Burning disc %1, please wait...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="615"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
         <source>Writing data...</source>
         <translation>Writing data...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="616"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="646"/>
         <source>Verifying data...</source>
         <translation>Verifying data...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="667"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="697"/>
         <source>Copying %1</source>
         <translation>Copying %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="668"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="672"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="675"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="698"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="702"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="705"/>
         <source>to %2</source>
         <translation>to %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="691"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="721"/>
         <source>%1 already exists in target folder</source>
         <translation>%1 already exists in target folder</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="692"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="722"/>
         <source>Original path %1 Target path %2</source>
         <translation>Original path %1 Target path %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="671"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="701"/>
         <source>Moving %1</source>
         <translation>Moving %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="674"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="704"/>
         <source>Restoring %1</source>
         <translation>Restoring %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="677"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="707"/>
         <source>Deleting %1</source>
         <translation>Deleting %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="680"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="710"/>
         <source>Trashing %1</source>
         <translation>Trashing %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="688"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="718"/>
         <source>Calculating space, please wait</source>
         <translation>Calculating space, please wait</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="703"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="733"/>
         <source>Merge</source>
         <translation>Merge</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="706"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="736"/>
         <source>Replace</source>
         <translation>Replace</translation>
     </message>
@@ -3160,7 +3165,7 @@
         <location filename="../interfaces/dfileinfo.cpp" line="851"/>
         <location filename="../models/recentfileinfo.cpp" line="247"/>
         <location filename="../models/trashfileinfo.cpp" line="380"/>
-        <location filename="../models/vaultfileinfo.cpp" line="145"/>
+        <location filename="../models/vaultfileinfo.cpp" line="144"/>
         <source>Folder is empty</source>
         <translation>Folder is empty</translation>
     </message>
@@ -3472,7 +3477,7 @@
         <translation type="unfinished">Unknown</translation>
     </message>
     <message>
-        <location filename="../models/vaultfileinfo.cpp" line="277"/>
+        <location filename="../models/vaultfileinfo.cpp" line="257"/>
         <source>My Vault</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3999,122 +4004,218 @@
 <context>
     <name>VaultController</name>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="604"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="675"/>
+>>>>>>> Stashed changes
         <source>The command line arguments are invalid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="607"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="678"/>
+>>>>>>> Stashed changes
         <source>Couldn&apos;t load config file. Probably the password is wrong</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="610"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="681"/>
+>>>>>>> Stashed changes
         <source>Password cannot be empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="613"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="684"/>
+>>>>>>> Stashed changes
         <source>The file system format is too new for this CryFS version. Please update your CryFS version.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="616"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="687"/>
+>>>>>>> Stashed changes
         <source>The file system format is too old for this CryFS version. Run with --allow-filesystem-upgrade to upgrade it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="619"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="690"/>
+>>>>>>> Stashed changes
         <source>The file system uses a different cipher than the one specified on the command line using the --cipher argument.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="622"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="693"/>
+>>>>>>> Stashed changes
         <source>Base directory doesn&apos;t exist or is inaccessible (i.e. not read or writable or not a directory)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="625"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="696"/>
+>>>>>>> Stashed changes
         <source>Mount directory doesn&apos;t exist or is inaccessible (i.e. not read or writable or not a directory)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="628"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="699"/>
+>>>>>>> Stashed changes
         <source>Base directory can&apos;t be a subdirectory of the mount directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="631"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="702"/>
+>>>>>>> Stashed changes
         <source>Something&apos;s wrong with the file system.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="634"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="705"/>
+>>>>>>> Stashed changes
         <source>The filesystem id in the config file is different to the last time we loaded a filesystem from this basedir. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="637"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="708"/>
+>>>>>>> Stashed changes
         <source>The filesystem encryption key differs from the last time we loaded this filesystem. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="640"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="711"/>
+>>>>>>> Stashed changes
         <source>The command line options and the file system disagree on whether missing blocks should be treated as integrity violations.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="643"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="714"/>
+>>>>>>> Stashed changes
         <source>File system is in single-client mode and can only be used from the client that created it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="646"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="717"/>
+>>>>>>> Stashed changes
         <source>A previous run of the file system detected an integrity violation. Preventing access to make sure the user notices. The file system will be accessible again after the user deletes the integrity state file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="649"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="720"/>
+>>>>>>> Stashed changes
         <source>An integrity violation was detected and the file system unmounted to make sure the user notices.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="652"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="723"/>
+>>>>>>> Stashed changes
         <source>Mount directory is not empty.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="655"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="726"/>
+>>>>>>> Stashed changes
         <source>Mount directory in use.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="658"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="729"/>
+>>>>>>> Stashed changes
         <source>Cryfs not installed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="661"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="732"/>
+>>>>>>> Stashed changes
         <source>Mount directory doesn&apos;t exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="664"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="735"/>
+>>>>>>> Stashed changes
         <source>Mounted directory encrypted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="667"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="738"/>
+>>>>>>> Stashed changes
         <source>No permissions.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="670"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="741"/>
+>>>>>>> Stashed changes
         <source>Fusermount does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../controllers/vaultcontroller.cpp" line="673"/>
+=======
+        <location filename="../controllers/vaultcontroller.cpp" line="744"/>
+>>>>>>> Stashed changes
         <source>An encrypted folder created by Cryfs already exists.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4122,19 +4223,24 @@
 <context>
     <name>VaultHeaderView</name>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="37"/>
         <source>File Vault</source>
-        <translation>File Vault</translation>
+        <translation type="vanished">File Vault</translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../views/dfmvaultfileview.cpp" line="52"/>
+=======
+>>>>>>> Stashed changes
         <source>Lock vault</source>
-        <translation>Lock vault</translation>
+        <translation type="vanished">Lock vault</translation>
     </message>
     <message>
+<<<<<<< Updated upstream
         <location filename="../views/dfmvaultfileview.cpp" line="53"/>
+=======
+>>>>>>> Stashed changes
         <source>Generate key</source>
-        <translation>Generate key</translation>
+        <translation type="vanished">Generate key</translation>
     </message>
 </context>
 </TS>

@@ -20,7 +20,7 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     , m_SaveKeyWidget(nullptr)
     , m_ActiveVaultFinishedWidget(nullptr)
 {
-    this->setIcon(QIcon::fromTheme("dfm_safebox"));
+    this->setIcon(QIcon::fromTheme("dfm_vault"));
 
     // 初始化试图容器
     m_pStackedWidget = new QStackedWidget(this);
@@ -70,6 +70,7 @@ void DFMVaultActiveView::showTop()
 {
     this->activateWindow();
     this->showNormal();
+    this->raise();
 }
 
 void DFMVaultActiveView::closeEvent(QCloseEvent *)

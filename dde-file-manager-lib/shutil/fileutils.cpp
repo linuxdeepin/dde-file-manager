@@ -687,7 +687,7 @@ bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePat
 {
     if (isFileManagerSelf(desktopFile) && filePaths.count() > 1){
         foreach(const QString& filePath, filePaths){
-            openFile(DUrl(filePath).toLocalFile());
+            openFile(filePath);
         }
         return true;
     }

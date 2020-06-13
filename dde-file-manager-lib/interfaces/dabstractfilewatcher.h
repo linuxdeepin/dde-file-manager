@@ -45,7 +45,7 @@ signals:
     void fileClosed(const DUrl &url);
 
 protected:
-    explicit DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd, const DUrl &url, QObject *parent = 0);
+    explicit DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd, const DUrl &url, QObject *parent = nullptr);
 
     QScopedPointer<DAbstractFileWatcherPrivate> d_ptr;
 

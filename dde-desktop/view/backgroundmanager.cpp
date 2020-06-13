@@ -129,6 +129,11 @@ void BackgroundManager::onScreenGeometryChanged(ScreenPointer sp)
         qInfo() << "background geometry change from" << bw->geometry() << "to" << sp->geometry()
                 << "screen name" << sp->name();
         //bw->windowHandle()->handle()->setGeometry(sp->handleGeometry()); //不能设置，设置了widget的geometry会被乱改
+        //fix bug32166 bug32205
+        if (bw->geometry() == sp->geometry()) {
+            qDebug() << "background geometry is equal to screen geometry,and discard changes";
+            return;
+        }
         bw->setGeometry(sp->geometry());
 
         //todo 背景处理
@@ -153,13 +158,13 @@ void BackgroundManager::pullImageSettings()
     m_backgroundImagePath.clear();
     if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter) {
         for (ScreenPointer sc : ScreenMrg->logicScreens()) {
-            QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
-//            QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
+           QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
+            //QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 qCritical() << "get background fail path :" << path << "screen" << sc->name();
                 continue;
             }
-//            qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
+            qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
             m_backgroundImagePath.insert(sc->name(), path);
         }
     }
