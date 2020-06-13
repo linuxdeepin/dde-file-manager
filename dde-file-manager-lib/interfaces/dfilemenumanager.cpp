@@ -356,7 +356,9 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     if (openWithMenu && openWithMenu->isEnabled()) {
         QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->redirectedFileUrl());
         recommendApps.removeOne("/usr/share/applications/dde-open.desktop"); //在右键菜单打开方式中屏蔽/usr/share/applications/dde-open.desktop，在此处更改不影响打开效果
-
+//        bug 20275 【桌面社区版版V20】【beta】【DDE】【 桌面】选中图片右键打开方式多了“ImageMagick”需隐藏
+        recommendApps.removeOne("/usr/share/applications/display-im6.q16.desktop"); //按产品经理要求屏蔽咯
+        recommendApps.removeOne("/usr/share/applications/display-im6.q16hdri.desktop"); //按产品经理要求屏蔽咯
         foreach (QString app, recommendApps) {
 //            const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
             //ignore no show apps
