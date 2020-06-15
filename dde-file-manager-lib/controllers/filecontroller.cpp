@@ -131,7 +131,7 @@ public:
         DUrl url = DUrl::fromLocalFile(info.absoluteFilePath());
         url.setOptimise(true);
         QString abfilepath = info.absoluteFilePath();
-        if(info.isDir())
+        if (info.isDir())
             abfilepath += QString("/");
         if (!info.isSymLink() && FileUtils::isDesktopFileOptmise(abfilepath)) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(url));
@@ -358,13 +358,12 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
     bool boptimise = url.isOptimise();
     if (boptimise) {
         QString abfilepath = info.absoluteFilePath();
-        if(info.isDir())
+        if (info.isDir())
             abfilepath += QString("/");
         if (!info.isSymLink() && FileUtils::isDesktopFileOptmise(abfilepath)) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
         }
-    }
-    else {
+    } else {
         if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
         }
@@ -431,7 +430,7 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
     QStringList pathList;
     bool result = false;
 
-    for(DUrl fileUrl : fileUrls){
+    for (DUrl fileUrl : fileUrls) {
         const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
 
         if (pfile->isSymLink()) {
@@ -473,8 +472,8 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
     if (!pathList.empty()) {
         result = FileUtils::openFiles(pathList);
         if (!result) {
-            for (const DUrl &fileUrl : packUrl){
-                AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(),fileUrl)); // requestShowOpenWithDialog
+            for (const DUrl &fileUrl : packUrl) {
+                AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(), fileUrl)); // requestShowOpenWithDialog
             }
         }
     }
@@ -508,7 +507,7 @@ bool FileController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent>
 
     QStringList pathList;
 
-    for(DUrl fileUrl : fileUrls){
+    for (DUrl fileUrl : fileUrls) {
         const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
 
         if (pfile->isSymLink()) {
@@ -670,52 +669,53 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
     return result;
 }
 
-bool FileController::isExtDeviceJobCase(void* curJob, const DUrl& url) const
+bool FileController::isExtDeviceJobCase(void *curJob, const DUrl &url) const
 {
-    DFileCopyMoveJob* thisJob = (DFileCopyMoveJob*)curJob;
+    DFileCopyMoveJob *thisJob = (DFileCopyMoveJob *)curJob;
     QString filePath = url.path();
     DUrlList srcUrlList = thisJob->sourceUrlList();
     DUrl targetUrl = thisJob->targetUrl();
 
     bool isDiscCase = false; // 查看是否是一般case 路径，比如FAT32 U盘直接写数据
-    if(targetUrl.path().contains(filePath)) {
+    if (targetUrl.path().contains(filePath)) {
         isDiscCase = true;
     }
 
     foreach (DUrl oneUrl, srcUrlList) {
-        if(oneUrl.path().contains(filePath)) {
+        if (oneUrl.path().contains(filePath)) {
             isDiscCase = true;
             break;
         }
     }
 
-    if(isDiscCase)
+    if (isDiscCase)
         return true;
 
     return  isDiscburnJobCase(curJob, url);
 }
 
-bool FileController::isDiscburnJobCase(void* curJob, const DUrl& url) const
+bool FileController::isDiscburnJobCase(void *curJob, const DUrl &url) const
 {
-    DFileCopyMoveJob* thisJob = (DFileCopyMoveJob*)curJob;
+    DFileCopyMoveJob *thisJob = (DFileCopyMoveJob *)curJob;
 
     QString burnDestDevice = url.burnDestDevice();
 
     DUrlList srcUrlList = thisJob->sourceUrlList();
     DUrl targetUrl = thisJob->targetUrl();
 
-    burnDestDevice.replace('/','_');
+    burnDestDevice.replace('/', '_');
 
     // 查看当前路径是否是光驱缓存路径
     bool isDiscCase = false;
-    if(targetUrl.path().contains(DISCBURN_CACHE_MID_PATH) &&
-       targetUrl.path().contains(burnDestDevice)     ) {
+
+    if (targetUrl.path().contains(DISCBURN_CACHE_MID_PATH) &&
+            targetUrl.path().contains(burnDestDevice)) {
         isDiscCase = true;
     }
 
     foreach (DUrl oneUrl, srcUrlList) {
-        if(oneUrl.path().contains(DISCBURN_CACHE_MID_PATH) &&
-            oneUrl.path().contains(burnDestDevice)    ) {
+        if (oneUrl.path().contains(DISCBURN_CACHE_MID_PATH) &&
+                oneUrl.path().contains(burnDestDevice)) {
             isDiscCase = true;
             break;
         }
@@ -724,7 +724,7 @@ bool FileController::isDiscburnJobCase(void* curJob, const DUrl& url) const
     return  isDiscCase;
 }
 
-DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient , bool force ) const
+DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient, bool force) const
 {
     // fix bug 27109 在某种情况下，存在 FileCopyMoveJob 还没被析构，但其中的成员 StatisticJob 已经被析构，又在 FileCopyMoveJob 的函数中调用了 StatisticJob 的对象，导致崩溃
     // 所以这里将原来的普通指针以 deleteLater 析构的内存管理方式交给智能指针去判定。测试百次左右没有再发生崩溃的现象。
@@ -735,7 +735,7 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
     bool bdoingcleartrash = DFileService::instance()->getDoClearTrashState();
     if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
             list.first().toString().endsWith(".local/share/Trash/files")) {
-        connect(job.data(),&DFileCopyMoveJob::finished,this,[=](){
+        connect(job.data(), &DFileCopyMoveJob::finished, this, [ = ]() {
             DFileService::instance()->setDoClearTrashState(false);
         });
     }
@@ -830,7 +830,7 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
                 return;
             //这里会出现pasteFilesV2函数线程和当前线程是同时在执行，会出现在1处pasteFilesV2所在线程 没结束，但是这时pasteFilesV2所在线程 结束
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
-            if(!fileJob->isFinished()){
+            if (!fileJob->isFinished()) {
                 dialogManager->taskDialog()->addTaskJob(fileJob.data());
                 emit fileJob->currentJobChanged(currentJob.first, currentJob.second);
             }
@@ -845,11 +845,11 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
     ErrorHandle *error_handle = new ErrorHandle(job, slient);
 
     // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-    DFileCopyMoveJob* thisJob = job.data();
-    connect(fileSignalManager, &FileSignalManager::requestAsynAbortJob, thisJob, [thisJob, this](const DUrl& url) {
+    DFileCopyMoveJob *thisJob = job.data();
+    connect(fileSignalManager, &FileSignalManager::requestAsynAbortJob, thisJob, [thisJob, this](const DUrl & url) {
 
         bool isExtDeviceWorkingJob = isExtDeviceJobCase(thisJob, url);
-        if(isExtDeviceWorkingJob) {
+        if (isExtDeviceWorkingJob) {
 
             emit thisJob->stop();
             qDebug() << "break the FileCopyMoveJob for the device:" << url.path();
@@ -861,6 +861,11 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
     });
 
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
+    // fix：原来本来没有 movemode，当前彻底删除文件时要转换 mode 为 movemode，
+    //     原来剪切和删除都是用的 cutmode 来表示，这会导致进度条无法区分剪切和删除
+    //     为了区分剪切和删除，这里使用 traget 是否为空来判断当前的操作是剪切还是删除
+    if (target.isEmpty())
+        action = DFMGlobal::UnknowAction;
     job->setMode(action == DFMGlobal::CopyAction
                  ? DFileCopyMoveJob::CopyMode
                  : (action == DFMGlobal::CutAction ? DFileCopyMoveJob::CutMode : DFileCopyMoveJob::MoveMode));
@@ -1391,7 +1396,7 @@ bool FileDirIterator::hasNext() const
 
     do {
         const_cast<FileDirIterator *>(this)->iterator->next();
-        if(m_boptimise){
+        if (m_boptimise) {
             info = iterator->optimiseFileInfo();
         }
         if (!info) {
