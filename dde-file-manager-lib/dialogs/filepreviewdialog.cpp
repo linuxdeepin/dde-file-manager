@@ -305,6 +305,14 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
     return DAbstractDialog::closeEvent(event);
 }
 
+void FilePreviewDialog::resizeEvent(QResizeEvent *event)
+{
+    DAbstractDialog::resizeEvent(event);
+    QTimer::singleShot(50, this, [=]() { //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
+        repaint(); //通过重绘来解决调整大小前的窗口残留的问题
+    });
+}
+
 bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
