@@ -485,6 +485,11 @@ void AppController::actionClearTrash(const QObject *sender)
 {
     DUrlList list;
     list << DUrl::fromTrashFile("/");
+    //fix bug 31324,判断当前是否是正在清空回收站，是返回，不是保存状态
+    if (DFileService::instance()->getDoClearTrashState()) {
+        return;
+    }
+    DFileService::instance()->setDoClearTrashState(true);
 
     bool ret = fileService->deleteFiles(sender, list);
 

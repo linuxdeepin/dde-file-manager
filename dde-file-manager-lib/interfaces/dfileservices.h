@@ -178,7 +178,10 @@ public:
     bool isNetWorkOnline();
     //judge network can visit host
     bool checkNetWorkToVistHost(const QString &host);
-
+    //获取是否是正在清空回收站 fix bug 31324,
+    bool getDoClearTrashState() const;
+    //设置当前是否是在清空回收站 fix bug 31324,
+    void setDoClearTrashState(const bool bdoing);
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;
