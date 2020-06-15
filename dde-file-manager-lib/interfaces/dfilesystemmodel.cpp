@@ -1709,7 +1709,9 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
             if (code != 0) {
                 if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
-                    d->jobController->terminate();
+                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+                    //此时d->jobController有可能已经在析构了，不能调用terminate
+//                    d->jobController->terminate();
                     d->jobController->quit();
                     d->jobController.clear();
                 }
@@ -1750,6 +1752,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     setState(Busy);
 
     d->childrenUpdated = false;
+    //
     d->jobController->start();
     d->rootNodeManager->setEnable(true);
 }
