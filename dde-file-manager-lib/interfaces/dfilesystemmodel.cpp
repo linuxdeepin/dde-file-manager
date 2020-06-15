@@ -1690,10 +1690,13 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
             d->eventLoop = Q_NULLPTR;
 
             if (code != 0) {
-                d->jobController->terminate();
-                d->jobController->quit();
-                d->jobController.clear();
-                qDebug() << "break the fetchMore";
+                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+                    //此时d->jobController有可能已经在析构了，不能调用terminate
+//                    d->jobController->terminate();
+                    d->jobController->quit();
+                    d->jobController.clear();
+                }
                 return;
             }
 
@@ -1735,6 +1738,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     setState(Busy);
 
     d->childrenUpdated = false;
+    //
     d->jobController->start();
     d->rootNodeManager->setEnable(true);
 
