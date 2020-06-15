@@ -29,7 +29,6 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     // 设置开锁方式标签
     QLabel *pLabel = new QLabel(tr("Set Vault Password"), this);
     QFont font = pLabel->font();
-    font.setBold(true);
     font.setPixelSize(18);
     pLabel->setFont(font);
     pLabel->setAlignment(Qt::AlignHCenter);
