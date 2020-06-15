@@ -114,7 +114,7 @@ template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
 const char *empty_recent_file =
-R"|(<?xml version="1.0" encoding="UTF-8"?>
+    R"|(<?xml version="1.0" encoding="UTF-8"?>
 <xbel version="1.0"
       xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
       xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
@@ -168,17 +168,20 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
     }
 
     if (urls.size() > 1 || DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()) {
-        // TODO: xust 20200513 为解决在最近列表中框选多个文件后右键打开不能成功打开文件的问题，暂时在入口处处理 url (recent:// -> file://）,
-        // 单个文件可以正常打开，路径是通过 recent scheme 获取 RecentController 再转 FileController ，不过到多个文件打开就不走
-        // 这个路径，获取不到 RecentController 的原因还没查清楚。目前暂时从入口处理 url ，有时间再排查问题。
+        // 选择多文件打开的时候调用函数 openFiles，单文件打开调用 openFile，部分 controller 没有实现 openFiles 函数，因此在这里转换成 file:// 的 url，
+        // 通过 fileController 来进行打开调用
         DUrlList lstUrls;
-        for (DUrl u: urls) {
+        for (DUrl u : urls) {
             if (u.scheme() == RECENT_SCHEME) {
                 u = DUrl::fromLocalFile(u.path());
-            }
-            //搜索结果也存在右键批量打卡不成功的问题，这里做类似处理
-            else if (u.scheme() == SEARCH_SCHEME) {
+            } else if (u.scheme() == SEARCH_SCHEME) { //搜索结果也存在右键批量打卡不成功的问题，这里做类似处理
                 u = u.searchedFileUrl();
+            } else if (u.scheme() == BURN_SCHEME) {
+                DAbstractFileInfoPointer info = fileService->createFileInfo(event->sender(), u);
+                if (!info)
+                    continue;
+                if (info->canRedirectionFileUrl())
+                    u = info->redirectedFileUrl();
             }
             lstUrls << u;
         }
@@ -236,7 +239,7 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
                 if (mountPoint.length() > 0) {
                     QFile file(mountPoint);
                     if (!(QFile::ExeUser & file.permissions())) {
-                            return;
+                        return;
                     }
                 }
             }
@@ -427,7 +430,7 @@ void AppController::actionBookmarkRename(const QSharedPointer<DFMUrlBaseEvent> &
 
 void AppController::actionBookmarkRemove(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-     fileService->removeBookmark(event->sender(), event->url());
+    fileService->removeBookmark(event->sender(), event->url());
 }
 
 void AppController::actionDelete(const QSharedPointer<DFMUrlListBaseEvent> &event)
@@ -605,7 +608,7 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
     args << archiveuri;
     QProcess *gioproc = new QProcess;
     gioproc->start("gio", args);
-    connect(gioproc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
+    connect(gioproc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
         if (ret) {
             dialogManager->showErrorDialog(tr("Mount error: unsupported image format"), QString());
         } else {
@@ -637,17 +640,16 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
             emit doUnmount(fi->extraProperties()["udisksblk"].toString());
         } else if (fi->suffix() == SUFFIX_GVFSMP) {
             QString path = fi->extraProperties()["rooturi"].toString();
-            if(path.isEmpty())
-            {
+            if (path.isEmpty()) {
                 //FIXME(zccrs): 为解决，无法访问smb共享地址时，点击卸载共享目录，创建的fileinfo拿到的path为""，所有就没办法umount，临时解决方案，重Durl中获取
                 path = QString("smb://");
                 QString mpp = QUrl::fromPercentEncoding(fileUrl.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
                 QStringList strlist = mpp.split(",");
                 if (strlist.size() >= 2) {
-                    if(strlist.at(0).contains(QString("="))){
+                    if (strlist.at(0).contains(QString("="))) {
                         path = path + strlist.at(0).split("=").at(1) + QString("/");
                     }
-                    if(strlist.at(1).contains(QString("="))){
+                    if (strlist.at(1).contains(QString("="))) {
                         path = path + strlist.at(1).split("=").at(1) + QString("/");
                     }
                 }
@@ -680,7 +682,7 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
         emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
-        QtConcurrent::run([fi](){
+        QtConcurrent::run([fi]() {
             qDebug() << fi->fileUrl().path();
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
@@ -695,14 +697,12 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                     blk->unmount({});
                     QDBusError lastError = blk->lastError();
 
-                    if(lastError.type() == QDBusError::Other ) // bug 27164, 取消 应该直接退出操作
-                    {
+                    if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
                         qDebug() << "blk action has been canceled";
                         return;
                     }
 
-                    if(lastError.type() == QDBusError::NoReply ) // bug 29268, 用户超时操作
-                    {
+                    if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
                         qDebug() << "action timeout with noreply response";
                         QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Action timeout, action is canceled")),  Q_ARG(QString, ""));
                         //dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
@@ -920,9 +920,9 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
         tmpWidget->show();
 
         connect(process, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-        tmpWidget, &QWidget::deleteLater);
+                tmpWidget, &QWidget::deleteLater);
         connect(process, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
-        tmpWidget, &QWidget::deleteLater);
+                tmpWidget, &QWidget::deleteLater);
     });
 
     connect(process, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -1067,7 +1067,7 @@ void AppController::actionOpenFileByApp()
     if (action->property("urls").isValid()) {
         DUrlList fileUrls = qvariant_cast<DUrlList>(action->property("urls"));
         QStringList fileUrlStrs;
-        for (const DUrl& url : fileUrls) {
+        for (const DUrl &url : fileUrls) {
             fileUrlStrs << url.toString();
         }
         FileUtils::openFilesByApp(app, fileUrlStrs);
@@ -1132,7 +1132,7 @@ void AppController::actionStageFileForBurning()
     }
 
     DDiskManager diskm;
-    for(auto &blks : diskm.blockDevices()) {
+    for (auto &blks : diskm.blockDevices()) {
         QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blks));
         if (blkd->drive() == destdev) {
             DUrl dest = DUrl::fromBurnFile(QString(blkd->device()) + "/" BURN_SEG_STAGING "/");
@@ -1146,18 +1146,18 @@ QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFM
 {
     QList<QString> tags{};
 
-    if(static_cast<bool>(event) && (!event->urlList().isEmpty())){
+    if (static_cast<bool>(event) && (!event->urlList().isEmpty())) {
         tags = DFileService::instance()->getTagsThroughFiles(nullptr, event->urlList());
     }
 
     return tags;
 }
 
-bool AppController::actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event)
+bool AppController::actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event)
 {
     bool value{ false };
 
-    if(event && (event->url().isValid()) && !(event->tags().isEmpty())){
+    if (event && (event->url().isValid()) && !(event->tags().isEmpty())) {
         QList<QString> tags = event->tags();
         value = DFileService::instance()->removeTagsOfFile(this, event->url(), tags);
     }
@@ -1177,7 +1177,7 @@ void AppController::showTagEdit(const QRect &parentRect, const QPoint &globalPos
     DTagEdit *tagEdit = new DTagEdit();
 
     auto subValue = parentRect.height() - globalPos.y();
-    if(subValue < 98){
+    if (subValue < 98) {
         tagEdit->setArrowDirection(DArrowRectangle::ArrowDirection::ArrowBottom);
     }
 
@@ -1342,13 +1342,13 @@ void AppController::createUserShareManager()
 void AppController::createDBusInterface()
 {
     m_startManagerInterface = new StartManagerInterface("com.deepin.SessionManager",
-            "/com/deepin/StartManager",
-            QDBusConnection::sessionBus(),
-            this);
+                                                        "/com/deepin/StartManager",
+                                                        QDBusConnection::sessionBus(),
+                                                        this);
     m_introspectableInterface = new IntrospectableInterface("com.deepin.SessionManager",
-            "/com/deepin/StartManager",
-            QDBusConnection::sessionBus(),
-            this);
+                                                            "/com/deepin/StartManager",
+                                                            QDBusConnection::sessionBus(),
+                                                            this);
 
     QtConcurrent::run(QThreadPool::globalInstance(), [&] {
         QDBusPendingReply<QString> reply = m_introspectableInterface->Introspect();
