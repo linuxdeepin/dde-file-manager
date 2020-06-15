@@ -1293,6 +1293,9 @@ DFileSystemModel::~DFileSystemModel()
         m_smForDragEvent = nullptr;
     }
 
+    //fix bug 33014
+    releaseJobController();
+
     if (d->jobController) {
         d->jobController->stopAndDeleteLater();
     }
@@ -1667,45 +1670,55 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    if (d->jobController) {
-        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
-        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
-        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
+    //
+    if (!releaseJobController()) {
+        return;
+    }
+//    if (d->jobController) {
+//        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+//        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+//        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
 
-        if (d->jobController->isFinished()) {
-            d->jobController->deleteLater();
-        } else {
-            qDebug() << "jobController not finished, terminate it soon!";
+//        if (d->jobController->isFinished()) {
+//            d->jobController->deleteLater();
+//        } else {
+//            QEventLoop eventLoop;
+//            QPointer<DFileSystemModel> me = this;
+//            d->eventLoop = &eventLoop;
 
-            QEventLoop eventLoop;
-            QPointer<DFileSystemModel> me = this;
-            d->eventLoop = &eventLoop;
+//            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
 
-            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+//            d->jobController->stopAndDeleteLater();
 
-            d->jobController->stopAndDeleteLater();
+//            int code = eventLoop.exec();
 
-            int code = eventLoop.exec();
+//            d->eventLoop = Q_NULLPTR;
 
-            d->eventLoop = Q_NULLPTR;
+//            if (code != 0) {
+//                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+//                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+//                    //此时d->jobController有可能已经在析构了，不能调用terminate
+////                    d->jobController->terminate();
+//                    d->jobController->quit();
+//                    d->jobController.clear();
+//                }
+//                return;
+//            }
 
-            if (code != 0) {
-                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
-                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
-                    //此时d->jobController有可能已经在析构了，不能调用terminate
-//                    d->jobController->terminate();
-                    d->jobController->quit();
-                    d->jobController.clear();
-                }
-                return;
-            }
-
+<<<<<<< HEAD
             if (!me) {
                 qDebug() << "break the fetchMore";
                 return;
             }
         }
     }
+=======
+//            if (!me) {
+//                return;
+//            }
+//        }
+//    }
+>>>>>>> d9abeb2... Title:fix bug 33014 【文件管理器】【5.1.1.86-1】【sp2】在任意目录浏览大量文件途中，点击其他栏目（如：计算机/光驱等），文件管理器崩溃
 
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
 
@@ -3171,6 +3184,50 @@ void DFileSystemModel::endRemoveRows()
 
     d->beginRemoveRowsFlag = false;
     QAbstractItemModel::endRemoveRows();
+}
+//fix bug 33014,在文件或者文件很多时，切换到computer时DFileSystemModel已释放但是d->jobController未释放，发送更新消息就崩溃，在DFileSystemModel析构时释放d->jobController
+bool DFileSystemModel::releaseJobController()
+{
+    Q_D(DFileSystemModel);
+
+    if (d->jobController) {
+        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
+
+        if (d->jobController->isFinished()) {
+            d->jobController->deleteLater();
+        } else {
+            QEventLoop eventLoop;
+            QPointer<DFileSystemModel> me = this;
+            d->eventLoop = &eventLoop;
+
+            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+
+            d->jobController->stopAndDeleteLater();
+
+            int code = eventLoop.exec();
+
+            d->eventLoop = Q_NULLPTR;
+
+            if (code != 0) {
+                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+                    //此时d->jobController有可能已经在析构了，不能调用terminate
+//                    d->jobController->terminate();
+                    d->jobController->quit();
+                    d->jobController.clear();
+                    d->jobController->stopAndDeleteLater();
+                }
+                return false;
+            }
+
+            if (!me) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 #include "moc_dfilesystemmodel.cpp"
