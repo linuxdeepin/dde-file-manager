@@ -859,6 +859,13 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
         }
 
     });
+    connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow,thisJob,[thisJob](){
+        emit thisJob->stop();
+        qDebug() << "break the FileCopyMoveJob for the app exit";
+
+        thisJob->wait(); // 等job线程结束
+        sleep(1); // 加一个buffer 时间等外设相关设备结束
+    });
 
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
     job->setMode(action == DFMGlobal::CopyAction
