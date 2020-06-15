@@ -129,8 +129,6 @@ public:
 
     QActionGroup *toolbarActionGroup;
 
-    // u盘访问控制
-    AcessControlInterface *m_acessControlInterface = nullptr;
 
     // 用于实现触屏滚动视图和框选文件不冲突，手指在屏幕上按下短时间内就开始移动
     // 会被认为触发滚动视图，否则为触发文件选择（时间默认为300毫秒）
@@ -203,11 +201,6 @@ DFileView::DFileView(QWidget *parent)
 #else
     d_ptr->touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 #endif
-
-    d->m_acessControlInterface = new AcessControlInterface("com.deepin.filemanager.daemon",
-                                                           "/com/deepin/filemanager/daemon/AcessControlManager",
-                                                           QDBusConnection::systemBus(),
-                                                           this);
 
     initUI();
     initModel();

@@ -30,7 +30,6 @@ AcessControlManager::AcessControlManager(QObject *parent)
     if (!QDBusConnection::systemBus().registerObject(ObjectPath, this)) {
         qFatal("=======AcessControlManager Register Object Failed.");
     }
-    m_acessControlAdaptor = new AcessControlAdaptor(this);
     m_diskMnanager = new DDiskManager(this);
     m_diskMnanager->setWatchChanges(true);
     qDebug() << "=======AcessControlManager() ";
@@ -74,21 +73,6 @@ bool AcessControlManager::checkAuthentication()
     return ret;
 }
 
-// 废弃
-bool AcessControlManager::acquireFullAuthentication(const QString &userName, const QString &path)
-{
-    Q_UNUSED(userName)
-
-    bool ret = false;
-    QByteArray pathBytes(path.toLocal8Bit());
-    struct stat fileStat;
-    stat(pathBytes.data(), &fileStat);
-    if (chmod(pathBytes.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH)) == 0) {
-        qDebug() << "chmod() success!";
-        ret = true;
-    }
-    return ret;
-}
 
 void AcessControlManager::chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint)
 {
