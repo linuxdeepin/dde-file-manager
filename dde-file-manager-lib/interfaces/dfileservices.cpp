@@ -274,8 +274,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                             emit fileDeleted(url);
                         }
                     }
-
                 }
+
                 if (lock) {
                     result = CALL_CONTROLLER(deleteFiles);
                     if (result.toBool()) {
@@ -284,6 +284,13 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                         }
                     }
                 }
+                else {
+                    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+                    if (event->fileUrlList().count() == 1 && event->fileUrlList().first().toString().endsWith("trash:///")){
+                        setDoClearTrashState(false);
+                    }
+                }
+
                 break;
             } else {
                 continue;

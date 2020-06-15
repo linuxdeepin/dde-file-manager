@@ -255,6 +255,8 @@ private:
 
     bool beginRemoveRows(const QModelIndex &parent, int first, int last);
     void endRemoveRows();
+    //fix bug释放jobcontroller
+    bool releaseJobController();
     QDir::Filters m_filters; //仅记录非回收站文件过滤规则
     bool isFirstRun = true; //判断是否首次运行
     bool isNeedToBreakBusyCase = false; // 停止那些忙的流程 // bug 26972, 27384
