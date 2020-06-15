@@ -104,6 +104,7 @@ private slots:
 
 private:
     bool m_pluginAdded;
+    bool m_pluginLoaded;
 
     TipsWidget *m_tipsLabel;
     DiskPluginItem *m_diskPluginItem;
