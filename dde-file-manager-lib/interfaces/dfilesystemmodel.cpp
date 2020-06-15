@@ -1705,20 +1705,11 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 //                return;
 //            }
 
-<<<<<<< HEAD
-            if (!me) {
-                qDebug() << "break the fetchMore";
-                return;
-            }
-        }
-    }
-=======
 //            if (!me) {
 //                return;
 //            }
 //        }
 //    }
->>>>>>> d9abeb2... Title:fix bug 33014 【文件管理器】【5.1.1.86-1】【sp2】在任意目录浏览大量文件途中，点击其他栏目（如：计算机/光驱等），文件管理器崩溃
 
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
 
