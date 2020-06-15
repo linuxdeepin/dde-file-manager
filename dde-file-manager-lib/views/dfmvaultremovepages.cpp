@@ -31,7 +31,6 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     // 标题
     DLabel *pTitle = new DLabel(tr("Remove File Vault"), this);
     QFont font = pTitle->font();
-    font.setBold(true);
     font.setPixelSize(18);
     pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);

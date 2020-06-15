@@ -56,7 +56,6 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     // 标题
     QLabel *pTitle = new QLabel(tr("Unlock by Key"), this);
     QFont font = pTitle->font();
-    font.setBold(true);
     font.setPixelSize(16);
     pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
