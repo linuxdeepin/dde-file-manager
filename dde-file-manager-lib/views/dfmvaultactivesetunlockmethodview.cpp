@@ -47,6 +47,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     m_pPasswordLabel = new DLabel(tr("Password"),this);
     m_pPassword = new DPasswordEdit(this);
     m_pPassword->lineEdit()->setPlaceholderText(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
+    m_pPassword->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
     connect(m_pPassword, &DPasswordEdit::textEdited,
             this, &DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength);
     connect(m_pPassword, &DPasswordEdit::editingFinished,
@@ -61,6 +62,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     m_pRepeatPasswordLabel = new DLabel(tr("Repeat password"), this);
     m_pRepeatPassword = new DPasswordEdit(this);
     m_pRepeatPassword->lineEdit()->setPlaceholderText(tr("Input the password again"));
+    m_pRepeatPassword->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
     connect(m_pRepeatPassword, &DPasswordEdit::textEdited,
             this, &DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength);
     connect(m_pRepeatPassword, &DPasswordEdit::editingFinished,
@@ -350,7 +352,6 @@ bool DFMVaultActiveSetUnlockMethodView::checkPassword(const QString &password)
 {
     QString strPassword = password;
 
-//    QRegExp rx("^(?![^a-zA-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
     QRegExp rx("^(?![^a-z]+$)(?![^A-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
     QRegExpValidator v(rx);
     int pos = 0;
