@@ -696,6 +696,8 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
         }
 
         switchToView(tab->fileView());
+        // bug 32988 进入标签先刷新一次，解决保险箱重命名文件夹，在标签目录下出现重复文件夹
+        tab->fileView()->refresh();
 
 //        if (currentUrl().isSearchFile()) {
 //            if (!d->toolbar->getSearchBar()->isVisible()) {
