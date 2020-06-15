@@ -531,7 +531,7 @@ bool SearchController::setPermissions(const QSharedPointer<DFMSetPermissionEvent
     DUrl url = event->url();
 
     if (!url.searchTargetUrl().isEmpty()) {
-        return DFileService::instance()->setPermissions(event->sender(), url.searchTargetUrl(), event->permissions());
+        return DFileService::instance()->setPermissions(event->sender(),DUrl(url.fragment()) , event->permissions());
     }
 
     return false;
