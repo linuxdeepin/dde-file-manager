@@ -23,7 +23,9 @@
 #if QT_HAS_INCLUDE("anything_interface.h")
 #include "anything_interface.h"
 #else
+#ifndef DISABLE_QUICK_SEARCH
 #define DISABLE_QUICK_SEARCH
+#endif
 #endif
 
 #include "dfmsettings.h"
