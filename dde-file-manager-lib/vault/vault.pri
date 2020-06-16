@@ -18,7 +18,6 @@ SOURCES += \
     $$PWD/vaultlockmanager.cpp
 
 HEADERS += \
-    $$PWD/activevault/dialogautocreatepassword.h \
     $$PWD/qrencode/bitstream.h \
     $$PWD/qrencode/config.h \
     $$PWD/qrencode/mask.h \
