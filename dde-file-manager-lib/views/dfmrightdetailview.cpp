@@ -167,6 +167,8 @@ void DFMRightDetailView::setUrl(const DUrl &url)
             iconName = systemPathManager->getSystemPathIconName("Network");
         } else if (url.isUserShareFile()) {
             iconName = systemPathManager->getSystemPathIconName("UserShare");
+        } else if (url.isVaultFile()) {
+            iconName = systemPathManager->getSystemPathIconName("Vault");
         }
 
         QIcon fileIcon = iconName.isEmpty() ? fileInfo->fileIcon() : QIcon::fromTheme(iconName);

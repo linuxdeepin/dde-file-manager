@@ -459,7 +459,9 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
         data["targetPath"] = to.path();
         data["destination"] = to.isValid() ? to.parentUrl().path() : QString();
         bool ok = false;
-        qint64 speed =  wid->property("speed").toLongLong(&ok);
+
+        qint64 speed = wid->property("speed").toLongLong(&ok);
+
         if (ok && !isDelete) {
             data["speed"] = FileUtils::formatSize(speed) + "/s";
         }

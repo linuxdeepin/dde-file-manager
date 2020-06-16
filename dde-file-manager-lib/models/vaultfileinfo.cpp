@@ -193,6 +193,15 @@ QSet<MenuAction> VaultFileInfo::disableMenuActionList() const
     return DAbstractFileInfo::disableMenuActionList();
 }
 
+DUrl VaultFileInfo::goToUrlWhenDeleted() const
+{
+    if (fileUrl() == VaultController::makeVaultUrl(VaultController::vaultUnlockPath())) {
+        return fileUrl();
+    }
+
+    return DAbstractFileInfo::goToUrlWhenDeleted();
+}
+
 QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     if(type != SpaceArea) {
@@ -360,7 +369,7 @@ bool VaultFileInfo::isRootDirectory() const
     QString localFilePath = VaultController::getVaultController()->makeVaultLocalPath();
     QString vrfilePath = DUrl::fromVaultFile("/").toString();
     QString path = DAbstractFileInfo::filePath();
-    if (localFilePath == path || vrfilePath == path || localFilePath + "/" == path) {
+    if (localFilePath == path || vrfilePath == path || localFilePath + "/" == path || localFilePath == path + "/") {
         bRootDir = true;
     }
     return bRootDir;

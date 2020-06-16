@@ -20,39 +20,4 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
-/*
- * Proxy class for interface com.deepin.filemanager.daemon.AcessControlManager
- */
-class AcessControlInterface: public QDBusAbstractInterface
-{
-    Q_OBJECT
-public:
-    static inline const char *staticInterfaceName()
-    { return "com.deepin.filemanager.daemon.AcessControlManager"; }
-
-public:
-    AcessControlInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
-
-    ~AcessControlInterface();
-
-public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<bool> acquireFullAuthentication(const QString &userName, const QString &path)
-    {
-        QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(userName) << QVariant::fromValue(path);
-        return asyncCallWithArgumentList(QStringLiteral("acquireFullAuthentication"), argumentList);
-    }
-
-Q_SIGNALS: // SIGNALS
-};
-
-namespace com {
-  namespace deepin {
-    namespace filemanager {
-      namespace daemon {
-        typedef ::AcessControlInterface AcessControlManager;
-      }
-    }
-  }
-}
 #endif

@@ -91,6 +91,9 @@ public:
     JobController *m_jobcontroller = nullptr;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
+    //fix bug,当快速点击左边侧边栏会出现鼠标一直在转圈圈
+    QMutex m_mutexCursorState;
+    QMutex m_mutexrootfilechange;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
@@ -272,8 +275,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                             emit fileDeleted(url);
                         }
                     }
-
                 }
+
                 if (lock) {
                     result = CALL_CONTROLLER(deleteFiles);
                     if (result.toBool()) {
@@ -282,6 +285,13 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                         }
                     }
                 }
+                else {
+                    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+                    if (event->fileUrlList().count() == 1 && event->fileUrlList().first().toString().endsWith("trash:///")){
+                        setDoClearTrashState(false);
+                    }
+                }
+
                 break;
             } else {
                 continue;
@@ -963,9 +973,8 @@ QList<DAbstractFileInfoPointer> DFileService::getRootFile()
 
 void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
 {
-    QMutex mex;
+    QMutexLocker lock(&d_ptr->m_mutexrootfilechange);
     if (bcreate) {
-        mex.lock();
         if(!d_ptr->rootfilelist.contains(fileurl)){
             DAbstractFileInfoPointer info = createFileInfo(nullptr, fileurl);
             if(info->exists()) {
@@ -973,16 +982,13 @@ void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
                 qDebug() << "  insert   " << fileurl;
             }
         }
-        mex.unlock();
     }
     else {
-        mex.lock();
         qDebug() << "  remove   " << d_ptr->rootfilelist;
         if(d_ptr->rootfilelist.contains(fileurl)){
             qDebug() << "  remove   " << fileurl;
             d_ptr->rootfilelist.removeOne(fileurl);
         }
-        mex.unlock();
     }
 }
 
@@ -998,19 +1004,16 @@ void DFileService::startQuryRootFile()
     //启用异步线程去读取
     d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
     connect(d_ptr->m_jobcontroller,&JobController::addChildren,this ,[this](const DAbstractFileInfoPointer &chi){
-        QMutex mex;
-        mex.lock();
+        QMutexLocker lock(&d_ptr->m_mutexrootfilechange);
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
             d_ptr->rootfilelist.push_back(chi->fileUrl());
             qDebug() << "  addChildren " << chi->fileUrl();
             emit rootFileChange(chi);
         }
-        mex.unlock();
     });
 
     connect(d_ptr->m_jobcontroller,&JobController::addChildrenList,this ,[this](QList<DAbstractFileInfoPointer> ch){
-        QMutex mex;
-        mex.lock();
+        QMutexLocker lock(&d_ptr->m_mutexrootfilechange);
         for (auto chi : ch) {
             if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
                 d_ptr->rootfilelist.push_back(chi->fileUrl());
@@ -1018,7 +1021,6 @@ void DFileService::startQuryRootFile()
                 emit rootFileChange(chi);
             }
         }
-        mex.unlock();
     });
     connect(d_ptr->m_jobcontroller,&JobController::finished,this,[this](){
         d_ptr->m_jobcontroller->deleteLater();
@@ -1047,6 +1049,8 @@ void DFileService::clearThread()
 
 void DFileService::setCursorBusyState(const bool bbusy)
 {
+    //fix bug,当快速点击左边侧边栏会出现鼠标一直在转圈圈
+    QMutexLocker lock(&d_ptr->m_mutexCursorState);
     if (d_ptr->m_bcursorbusy == bbusy) {
         return;
     }
@@ -1055,7 +1059,7 @@ void DFileService::setCursorBusyState(const bool bbusy)
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     }
     else {
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     }
 
 }
