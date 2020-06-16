@@ -411,14 +411,15 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             titleList << basicInfo;
             if (!m_url.isTrashFile()) {
                 titleList << openWith;
-                titleList << authManager;
+                if (fileInfo->canManageAuth())
+                    titleList << authManager;
             }
         } else {
             titleList << basicInfo;
             if (fileInfo->canShare()) {
                 titleList << shareManager;
             }
-            if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() &&
+            if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() && fileInfo->canManageAuth() &&
                     !VaultController::getVaultController()->isRootDirectory(m_url.toLocalFile())) {
                 titleList << authManager;
             }
@@ -453,7 +454,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
                 m_expandGroup.at(openWithIndex)->setExpand(false);
             }
         }
-
 
         int authMgrIndex = titleList.indexOf(authManager);
         if (authMgrIndex != -1) {
@@ -524,18 +524,17 @@ void PropertyDialog::initUI()
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
     layout->addLayout(scrolllayout, 1);
 
-    QFrame* tagFrame = initTagFrame(m_url);
-    if(tagFrame != nullptr)
-    {
+    QFrame *tagFrame = initTagFrame(m_url);
+    if (tagFrame != nullptr) {
         scrollWidgetLayout->addWidget(tagFrame);
     }
 
     setFixedWidth(350);
 }
 
-QFrame * PropertyDialog::initTagFrame(const DUrl& url)
+QFrame *PropertyDialog::initTagFrame(const DUrl &url)
 {
-    if(m_tagInfoFrame != nullptr){
+    if (m_tagInfoFrame != nullptr) {
         ((DFMTagWidget *)m_tagInfoFrame)->loadTags(url);
         return m_tagInfoFrame;
     }
@@ -543,8 +542,7 @@ QFrame * PropertyDialog::initTagFrame(const DUrl& url)
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
     DUrl t_url = url;
     //! 保险箱中属性窗口中要获取标记需要真实路径，需要将虚拟路径转换为真实路径
-    if(url.isVaultFile())
-    {
+    if (url.isVaultFile()) {
         t_url = VaultController::vaultToLocalUrl(url);
     }
     if (fileInfo && fileInfo->canTag()) {
@@ -699,11 +697,9 @@ void PropertyDialog::showTextShowFrame()
                 m_url = newUrl;
                 updateInfo();//bug 25419
                 onHideFileCheckboxChecked(false);    //bug 29958
-                if(m_basicInfoFrame)    //bug 29961
-                {
+                if (m_basicInfoFrame) { //bug 29961
                     QCheckBox *hideThisFile = m_basicInfoFrame->findChild<QCheckBox *>(QString("hideThisFileCheckBox"));
-                    if(hideThisFile)
-                    {
+                    if (hideThisFile) {
                         hideThisFile->setChecked(false);
                     }
                 }
@@ -758,7 +754,7 @@ void PropertyDialog::flickFolderToSidebar()
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
     //QLabel *aniLabel = new QLabel(window);
-    m_aniLabel = new QLabel (window);
+    m_aniLabel = new QLabel(window);
     m_aniLabel->raise();
     m_aniLabel->setFixedSize(m_icon->size());
     m_aniLabel->setAttribute(Qt::WA_TranslucentBackground);
@@ -773,13 +769,13 @@ void PropertyDialog::flickFolderToSidebar()
     }
 
     // QVariantAnimation *xani = new QVariantAnimation(this);
-    m_xani = new QVariantAnimation (this);
+    m_xani = new QVariantAnimation(this);
     m_xani->setStartValue(m_aniLabel->pos());
     m_xani->setEndValue(QPoint(targetPos.x(), angle));
     m_xani->setDuration(440);
 
     //QVariantAnimation *gani = new QVariantAnimation(this);
-    m_gani = new QVariantAnimation (this);
+    m_gani = new QVariantAnimation(this);
     m_gani->setStartValue(m_aniLabel->geometry());
     m_gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
     m_gani->setEasingCurve(QEasingCurve::InBack);
@@ -1138,8 +1134,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         locationPathLabel = new SectionValueLabel();
         QString absoluteFilePath = info->absoluteFilePath();
         //! 在属性窗口中不显示保险箱中的文件真实路径
-        if(info->fileUrl().isVaultFile())
-        {
+        if (info->fileUrl().isVaultFile()) {
             absoluteFilePath = VaultController::pathToVirtualPath(absoluteFilePath);
         }
         locationPathLabel->setText(absoluteFilePath);
@@ -1200,7 +1195,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPointer &info)
 {
     DAbstractFileInfoPointer infoPtr = info->canRedirectionFileUrl() ? DFileService::instance()->createFileInfo(nullptr, info->redirectedFileUrl())
-                                                                     : info;
+                                       : info;
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
     connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);

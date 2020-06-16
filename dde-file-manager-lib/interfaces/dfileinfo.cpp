@@ -505,6 +505,11 @@ bool DFileInfo::canTag() const
     if (!isFiltered)
         return false;
 
+    //压缩包内的文件和目录不支持添加tag的功能
+    QString compressPath = QDir::homePath() + "/.avfs/";
+    if (filePath().startsWith(compressPath))
+        return false;
+
     return !systemPathManager->isSystemPath(filePath());
 }
 
@@ -807,10 +812,10 @@ QMimeType DFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
     if (!d->mimeType.isValid() || d->mimeTypeMode != mode) {
         //优化是苹果的就用新的minetype
         DUrl url = fileUrl();
-        if(url.isOptimise() && isDir()) {
-            d->mimeType = mimeType(absoluteFilePath() + QString("/"), mode,url.isOptimise());
-        }else {
-            d->mimeType = mimeType(absoluteFilePath(), mode,url.isOptimise());
+        if (url.isOptimise() && isDir()) {
+            d->mimeType = mimeType(absoluteFilePath() + QString("/"), mode, url.isOptimise());
+        } else {
+            d->mimeType = mimeType(absoluteFilePath(), mode, url.isOptimise());
         }
         d->mimeTypeMode = mode;
     }
@@ -948,11 +953,11 @@ QIcon DFileInfo::fileIcon() const
 #ifdef DFM_MINIMUM
     d->hasThumbnail = 0;
 #else
-    if (d->hasThumbnail < 0){
-         // 如果是保险箱，直接获取图片(解决保险箱没有图标问题)
-        if(fileUrl.toString().contains(VaultController::makeVaultLocalPath())){
+    if (d->hasThumbnail < 0) {
+        // 如果是保险箱，直接获取图片(解决保险箱没有图标问题)
+        if (fileUrl.toString().contains(VaultController::makeVaultLocalPath())) {
             d->hasThumbnail = DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
-        }else{
+        } else {
             d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
         }
     }
