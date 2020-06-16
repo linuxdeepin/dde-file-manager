@@ -297,6 +297,7 @@ void ComputerView::contextMenu(const QPoint &pos)
 
     DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
     menu->setEventData(DUrl(), {idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>()}, WindowManager::getWindowId(this), this);
+
     menu->exec(this->mapToGlobal(pos));
     menu->deleteLater();
 }

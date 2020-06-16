@@ -2920,7 +2920,6 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
             menu->addAction(action);
         }
     }
-
     menu->exec(QCursor::pos());
     menu->deleteLater();
 }
