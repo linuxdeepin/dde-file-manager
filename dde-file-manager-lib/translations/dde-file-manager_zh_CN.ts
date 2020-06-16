@@ -2061,7 +2061,7 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1580"/>
         <source>No key available to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>没有密钥解锁设备</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1659"/>
