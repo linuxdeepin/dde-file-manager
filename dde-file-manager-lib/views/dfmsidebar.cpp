@@ -58,6 +58,7 @@
 #include <ddiskdevice.h>
 #include <dblockdevice.h>
 #include <QMenu>
+#include <QtConcurrent>
 
 #include <algorithm>
 
@@ -345,6 +346,7 @@ DFMSideBar::GroupName DFMSideBar::groupFromName(const QString &name)
 void DFMSideBar::rootFileChange()
 {
     QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
+    qDebug() << "DFileService::instance()->getRootFile() filist:" << filist.size();
     std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
 
     for (const DAbstractFileInfoPointer &fi : filist) {
@@ -361,7 +363,8 @@ void DFMSideBar::rootFileChange()
 
 void DFMSideBar::onRootFileChange(const DAbstractFileInfoPointer &fi)
 {
-    QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
+    //QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
+    qDebug() << "insert root file" << fi->fileUrl() << fi->fileType();
     if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
         if (devitems.contains(fi->fileUrl())) {
             devitems.removeOne(fi->fileUrl());
@@ -578,7 +581,10 @@ void DFMSideBar::initConnection()
     });
 
     initBookmarkConnection();
-    initDeviceConnection();
+
+    //initDeviceConnection(); //高耗时
+    QtConcurrent::run([this](){initDeviceConnection(true);});
+
     initTagsConnection();
     initVaultConnection();
 }
@@ -670,8 +676,9 @@ void DFMSideBar::initBookmarkConnection()
     });
 }
 
-void DFMSideBar::initDeviceConnection()
+void DFMSideBar::initDeviceConnection(bool async)
 {
+#if 0
     DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
     Q_CHECK_PTR(devicesWatcher);
     devicesWatcher->startWatcher();
@@ -699,7 +706,46 @@ void DFMSideBar::initDeviceConnection()
     DFileService::instance()->startQuryRootFile();
     rootFileChange();
     connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+#else
 
+    DFileService::instance()->startQuryRootFile();
+    rootFileChange();
+    //connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+    connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
+        rootFileChange();
+        connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+        qDebug() << "DFileService::queryRootFileFinsh ->rootFileChange";
+    },Qt::QueuedConnection);
+
+    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
+    Q_CHECK_PTR(devicesWatcher);
+    if (async){
+        devicesWatcher->moveToThread(qApp->thread());
+        devicesWatcher->setParent(this);
+        //QMetaObject::invokeMethod(devicesWatcher,[devicesWatcher](){
+        QTimer::singleShot(1000,devicesWatcher,[devicesWatcher](){
+            devicesWatcher->startWatcher();
+            qDebug() << "devicesWatcher->startWatcher" << QThread::currentThread() << qApp->thread();
+        });
+    }
+    else
+        devicesWatcher->startWatcher();
+#if 0 //未发现被使用，待观察，2020-06-16 性能优化
+    qDebug() << "createFileWatcher" << kTime.elapsed();
+    m_udisks2DiskManager.reset(new DDiskManager);
+    if (async){
+        m_udisks2DiskManager->moveToThread(qApp->thread());
+        //QMetaObject::invokeMethod(m_udisks2DiskManager.data(),"setWatchChanges",Q_ARG(bool,true));
+        QTimer::singleShot(1000,this,[this](){
+            m_udisks2DiskManager->setWatchChanges(true);
+        });
+    }
+    else {
+        m_udisks2DiskManager->setWatchChanges(true);
+    }
+    qDebug() << "m_udisks2DiskManager" << kTime.elapsed();
+#endif
+#endif
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
         if (!fileService->createFileInfo(nullptr, url)->exists()) {
             return;

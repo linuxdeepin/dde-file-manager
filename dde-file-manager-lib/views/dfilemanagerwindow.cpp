@@ -536,7 +536,6 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     initData();
     initUI();
     initConnect();
-
     openNewTab(fileUrl);
 }
 
@@ -1044,7 +1043,7 @@ void DFileManagerWindow::initTitleBar()
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
-    menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
+    menu->setEventData(DUrl(), DUrlList() << DUrl(),winId(), this);
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
