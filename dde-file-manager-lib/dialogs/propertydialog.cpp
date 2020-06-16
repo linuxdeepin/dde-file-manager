@@ -632,6 +632,7 @@ void PropertyDialog::renameFile()
     m_edit->setPlainText(fileName);
     m_editStackWidget->setCurrentIndex(0);
     m_edit->setFixedHeight(m_textShowFrame->height());
+    m_edit->setFocus();
 
     const DAbstractFileInfoPointer pfile = fileService->createFileInfo(this, m_url);
     int endPos = -1;
