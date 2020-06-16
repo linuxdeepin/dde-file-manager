@@ -67,8 +67,8 @@
 
 #undef signals
 extern "C" {
-    #include <gio/gio.h>
-    #include <gio/gdesktopappinfo.h>
+#include <gio/gio.h>
+#include <gio/gdesktopappinfo.h>
 }
 #define signals public
 
@@ -83,35 +83,34 @@ QString FileUtils::XDG_RUNTIME_DIR = "";
  * @param name name of file
  * @return true if file/directory was successfully removed
  */
-bool FileUtils::removeRecurse(const QString &path, const QString &name) {
+bool FileUtils::removeRecurse(const QString &path, const QString &name)
+{
+    // File location
+    QString url = path + QDir::separator() + name;
 
-  // File location
-  QString url = path + QDir::separator() + name;
-
-  // Check whether file or directory exists
-  QFileInfo file(url);
-  if (!file.exists()) {
-    return false;
-  }
-
-  // List of files that will be deleted
-  QStringList files;
-
-  // If given file is a directory, collect all children of given directory
-  if (file.isDir()) {
-    QDirIterator it(url, QDir::AllEntries | QDir::System | QDir::NoDotAndDotDot
-                    | QDir::Hidden, QDirIterator::Subdirectories);
-    while (it.hasNext()) {
-      files.prepend(it.next());
+    // Check whether file or directory exists
+    QFileInfo file(url);
+    if (!file.exists()) {
+        return false;
     }
-  }
 
-  // Append given file to the list of files and delete all
-  files.append(url);
-  foreach (QString file, files) {
-    QFile(file).remove();
-  }
-  return true;
+    // List of files that will be deleted
+    QStringList files;
+
+    // If given file is a directory, collect all children of given directory
+    if (file.isDir()) {
+        QDirIterator it(url, QDir::AllEntries | QDir::System | QDir::NoDotAndDotDot | QDir::Hidden, QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            files.prepend(it.next());
+        }
+    }
+
+    // Append given file to the list of files and delete all
+    files.append(url);
+    foreach (QString file, files) {
+        QFile(file).remove();
+    }
+    return true;
 }
 //---------------------------------------------------------------------------
 
@@ -122,32 +121,31 @@ bool FileUtils::removeRecurse(const QString &path, const QString &name) {
  * @param list resulting list of files
  */
 void FileUtils::recurseFolder(const QString &path, const QString &parent,
-                              QStringList *list) {
+                              QStringList *list)
+{
+    // Get all files in this path
+    QDir dir(path);
+    QStringList files = dir.entryList(QDir::AllEntries | QDir::Files
+                                      | QDir::NoDotAndDotDot | QDir::Hidden);
 
-  // Get all files in this path
-  QDir dir(path);
-  QStringList files = dir.entryList(QDir::AllEntries | QDir::Files
-                                    | QDir::NoDotAndDotDot | QDir::Hidden);
-
-  // Go through all files in current directory
-  for (int i = 0; i < files.count(); i++) {
-
-    // If current file is folder perform this method again. Otherwise add file
-    // to list of results
-    QString current = parent + QDir::separator() + files.at(i);
-    QString next = path + QDir::separator() + files.at(i);
-    if (QFileInfo(next).isDir()) {
-      recurseFolder(next, current, list);
+    // Go through all files in current directory
+    for (int i = 0; i < files.count(); i++) {
+        // If current file is folder perform this method again. Otherwise add file
+        // to list of results
+        QString current = parent + QDir::separator() + files.at(i);
+        QString next = path + QDir::separator() + files.at(i);
+        if (QFileInfo(next).isDir()) {
+            recurseFolder(next, current, list);
+        } else
+            list->append(current);
     }
-    else list->append(current);
-  }
 }
 
 int FileUtils::filesCount(const QString &dir)
 {
     QDir d(dir);
     QStringList entryList = d.entryList(QDir::AllEntries | QDir::System
-                | QDir::NoDotAndDotDot | QDir::Hidden);
+                                        | QDir::NoDotAndDotDot | QDir::Hidden);
     return entryList.size();
 }
 
@@ -155,27 +153,24 @@ qint64 FileUtils::totalSize(const QString &targetFile)
 {
     qint64 total = 0;
     QFileInfo targetInfo(targetFile);
-    if (targetInfo.exists()){
-        if (targetInfo.isDir()){
+    if (targetInfo.exists()) {
+        if (targetInfo.isDir()) {
             QDir d(targetFile);
             QFileInfoList entryInfoList = d.entryInfoList(QDir::AllEntries | QDir::System
-                        | QDir::NoDotAndDotDot | QDir::NoSymLinks
-                        | QDir::Hidden);
+                                                          | QDir::NoDotAndDotDot | QDir::NoSymLinks
+                                                          | QDir::Hidden);
             foreach (QFileInfo file, entryInfoList) {
-                if (file.isFile()){
+                if (file.isFile()) {
                     total += file.size();
-                }
-                else {
-                    QDirIterator it(file.absoluteFilePath(), QDir::AllEntries | QDir::System
-                                  | QDir::NoDotAndDotDot | QDir::NoSymLinks
-                                  | QDir::Hidden, QDirIterator::Subdirectories);
+                } else {
+                    QDirIterator it(file.absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Hidden, QDirIterator::Subdirectories);
                     while (it.hasNext()) {
                         it.next();
                         total += it.fileInfo().size();
                     }
                 }
             }
-        }else{
+        } else {
             total += targetInfo.size();
         }
     }
@@ -188,47 +183,45 @@ qint64 FileUtils::totalSize(const QString &targetFile)
  * @param files
  * @return total size
  */
-qint64 FileUtils::totalSize(const DUrlList &files) {
-  qint64 total = 1;
-  foreach (QUrl url, files) {
-    QFileInfo file = url.path();
-    if (file.isFile()) total += file.size();
-    else if (!file.isSymLink()) {
-      QDirIterator it(url.path(), QDir::AllEntries | QDir::System
-                      | QDir::NoDotAndDotDot | QDir::NoSymLinks
-                      | QDir::Hidden, QDirIterator::Subdirectories);
-      while (it.hasNext()) {
-        it.next();
-        total += it.fileInfo().size();
-      }
+qint64 FileUtils::totalSize(const DUrlList &files)
+{
+    qint64 total = 1;
+    foreach (QUrl url, files) {
+        QFileInfo file = url.path();
+        if (file.isFile())
+            total += file.size();
+        else if (!file.isSymLink()) {
+            QDirIterator it(url.path(), QDir::AllEntries | QDir::System | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Hidden, QDirIterator::Subdirectories);
+            while (it.hasNext()) {
+                it.next();
+                total += it.fileInfo().size();
+            }
+        }
     }
-  }
-  return total;
+    return total;
 }
 
 qint64 FileUtils::totalSize(const DUrlList &files, const qint64 &maxLimit, bool &isInLimit)
 {
     qint64 total = 1;
     foreach (QUrl url, files) {
-      QFileInfo file = url.path();
-      if (file.isFile()) total += file.size();
-      if(total > maxLimit){
-          isInLimit = false;
-          return total;
-      }
-      else {
-        QDirIterator it(url.path(), QDir::AllEntries | QDir::System
-                        | QDir::NoDotAndDotDot | QDir::NoSymLinks
-                        | QDir::Hidden, QDirIterator::Subdirectories);
-        while (it.hasNext()) {
-          it.next();
-          total += it.fileInfo().size();
-          if(total > maxLimit){
-              isInLimit = false;
-              return total;
-          }
+        QFileInfo file = url.path();
+        if (file.isFile())
+            total += file.size();
+        if (total > maxLimit) {
+            isInLimit = false;
+            return total;
+        } else {
+            QDirIterator it(url.path(), QDir::AllEntries | QDir::System | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Hidden, QDirIterator::Subdirectories);
+            while (it.hasNext()) {
+                it.next();
+                total += it.fileInfo().size();
+                if (total > maxLimit) {
+                    isInLimit = false;
+                    return total;
+                }
+            }
         }
-      }
     }
     return total;
 }
@@ -236,9 +229,9 @@ qint64 FileUtils::totalSize(const DUrlList &files, const qint64 &maxLimit, bool 
 bool FileUtils::isArchive(const QString &path)
 {
     QFileInfo f(path);
-    if (f.exists()){
+    if (f.exists()) {
         return mimeTypeDisplayManager->supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(f).name());
-    }else{
+    } else {
         return false;
     }
 }
@@ -249,16 +242,17 @@ bool FileUtils::isArchive(const QString &path)
  * @brief Returns names of available applications
  * @return application name list
  */
-QStringList FileUtils::getApplicationNames() {
-  QStringList appNames;
-  QDirIterator it("/usr/share/applications", QStringList("*.desktop"),
-                  QDir::Files | QDir::NoDotAndDotDot,
-                  QDirIterator::Subdirectories);
-  while (it.hasNext()) {
-    it.next();
-    appNames.append(it.fileName());
-  }
-  return appNames;
+QStringList FileUtils::getApplicationNames()
+{
+    QStringList appNames;
+    QDirIterator it("/usr/share/applications", QStringList("*.desktop"),
+                    QDir::Files | QDir::NoDotAndDotDot,
+                    QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        it.next();
+        appNames.append(it.fileName());
+    }
+    return appNames;
 }
 
 //---------------------------------------------------------------------------
@@ -268,19 +262,19 @@ QStringList FileUtils::getApplicationNames() {
  * @param name
  * @return suffix
  */
-QString FileUtils::getRealSuffix(const QString &name) {
-
-  // Strip version suffix
-  QStringList tmp = name.split(".");
-  bool ok;
-  while (tmp.size() > 1) {
-    tmp.last().toInt(&ok);
-    if (!ok) {
-      return tmp.last();
+QString FileUtils::getRealSuffix(const QString &name)
+{
+    // Strip version suffix
+    QStringList tmp = name.split(".");
+    bool ok;
+    while (tmp.size() > 1) {
+        tmp.last().toInt(&ok);
+        if (!ok) {
+            return tmp.last();
+        }
+        tmp.removeLast();
     }
-    tmp.removeLast();
-  }
-  return "";
+    return "";
 }
 //---------------------------------------------------------------------------
 
@@ -289,9 +283,10 @@ QString FileUtils::getRealSuffix(const QString &name) {
  * @param mime
  * @return icon
  */
-QIcon FileUtils::searchMimeIcon(QString mime, const QIcon &defaultIcon) {
-  QIcon icon = QIcon::fromTheme(mime.replace("/", "-"), defaultIcon);
-  return icon;
+QIcon FileUtils::searchMimeIcon(QString mime, const QIcon &defaultIcon)
+{
+    QIcon icon = QIcon::fromTheme(mime.replace("/", "-"), defaultIcon);
+    return icon;
 }
 //---------------------------------------------------------------------------
 
@@ -301,13 +296,14 @@ QIcon FileUtils::searchMimeIcon(QString mime, const QIcon &defaultIcon) {
  * @return icon
  */
 QIcon FileUtils::searchGenericIcon(const QString &category,
-                                   const QIcon &defaultIcon) {
-  QIcon icon = QIcon::fromTheme(category + "-generic");
-  if (!icon.isNull()) {
-    return icon;
-  }
-  icon = QIcon::fromTheme(category + "-x-generic");
-  return icon.isNull() ? defaultIcon : icon;
+                                   const QIcon &defaultIcon)
+{
+    QIcon icon = QIcon::fromTheme(category + "-generic");
+    if (!icon.isNull()) {
+        return icon;
+    }
+    icon = QIcon::fromTheme(category + "-x-generic");
+    return icon.isNull() ? defaultIcon : icon;
 }
 //---------------------------------------------------------------------------
 
@@ -318,42 +314,42 @@ QIcon FileUtils::searchGenericIcon(const QString &category,
  * @return icon
  */
 QIcon FileUtils::searchAppIcon(const DesktopFile &app,
-                               const QIcon &defaultIcon) {
+                               const QIcon &defaultIcon)
+{
+    // Resulting icon
+    QIcon icon;
 
-  // Resulting icon
-  QIcon icon;
-
-  // First attempt, check whether icon is a valid file
-  if (QFile(app.getIcon()).exists()) {
-    icon = QIcon(app.getIcon());
-    if (!icon.isNull()) {
-      return icon;
+    // First attempt, check whether icon is a valid file
+    if (QFile(app.getIcon()).exists()) {
+        icon = QIcon(app.getIcon());
+        if (!icon.isNull()) {
+            return icon;
+        }
     }
-  }
 
-  // Second attempt, try load icon from theme
-  icon = QIcon::fromTheme(app.getIcon());
-  if (!icon.isNull()) {
-    return icon;
-  }
+    // Second attempt, try load icon from theme
+    icon = QIcon::fromTheme(app.getIcon());
+    if (!icon.isNull()) {
+        return icon;
+    }
 
-  // Next, try luck with application name
-  QString name = app.getFileName().remove(".desktop").split("/").last();
-  icon = QIcon::fromTheme(name);
-  if (!icon.isNull()) {
-    return icon;
-  }
+    // Next, try luck with application name
+    QString name = app.getFileName().remove(".desktop").split("/").last();
+    icon = QIcon::fromTheme(name);
+    if (!icon.isNull()) {
+        return icon;
+    }
 
-  // Last chance
-  QDir appIcons("/usr/share/pixmaps","", 0, QDir::Files | QDir::NoDotAndDotDot);
-  QStringList iconFiles = appIcons.entryList();
-  QStringList searchIcons = iconFiles.filter(name);
-  if (searchIcons.count() > 0) {
-    return QIcon("/usr/share/pixmaps/" + searchIcons.at(0));
-  }
+    // Last chance
+    QDir appIcons("/usr/share/pixmaps", "", 0, QDir::Files | QDir::NoDotAndDotDot);
+    QStringList iconFiles = appIcons.entryList();
+    QStringList searchIcons = iconFiles.filter(name);
+    if (searchIcons.count() > 0) {
+        return QIcon("/usr/share/pixmaps/" + searchIcons.at(0));
+    }
 
-  // Default icon
-  return defaultIcon;
+    // Default icon
+    return defaultIcon;
 }
 //---------------------------------------------------------------------------
 
@@ -420,7 +416,7 @@ QString FileUtils::formatSize(qint64 num, bool withUnitVisible, int precision, i
     QString unit = i.hasNext() ? i.next() : QStringLiteral(" B");
 
     int index = 0;
-    while(i.hasNext()) {
+    while (i.hasNext()) {
         if (fileSize < 1024 && !isForceUnit) {
             break;
         }
@@ -449,11 +445,11 @@ QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize, QString 
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     bool bVolFlag = strVolTag.startsWith("sr") // 避免因传入非光驱挂载点而插入 CdStatusInfo 对象
-            ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag
-            : false;
+                        ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag
+                        : false;
     bool bMntFlag = strVolTag.startsWith("sr")
-            ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bMntFlag
-            : false;
+                        ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bMntFlag
+                        : false;
     if (bVolFlag && (totalSize == 0)) { //CD/DVD
         return QObject::tr("Unknown");
     } else if (!bVolFlag && !bMntFlag  && (totalSize == 0)) { //CD/DVD
@@ -461,8 +457,8 @@ QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize, QString 
     } else if (!bVolFlag && !bMntFlag  && (totalSize > 0) && (usedSize == 0)) { //blank CD/DVD
         return QString("0M");
     } else {
-        return QString("%1/%2").arg(FileUtils::formatSize(usedSize, true, 0, usedSize < mb ? 2 : -1, unitDisplayText),
-                                        FileUtils::formatSize(totalSize, true, 0, totalSize < mb ? 2 : -1, unitDisplayText));
+        return QString("%1/%2").arg(FileUtils::formatSize(usedSize, true, 1, usedSize < mb ? 2 : -1, unitDisplayText),
+                                    FileUtils::formatSize(totalSize, true, 1, totalSize < mb ? 2 : -1, unitDisplayText));
     }
 }
 
@@ -480,8 +476,8 @@ DUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, con
         if (newInfo && newInfo->exists()) {
             ++i;
             fileName = suffix.isEmpty()
-                    ? QString("%1%2").arg(baseName, QString::number(i))
-                    : QString("%1%2.%3").arg(baseName, QString::number(i), suffix);
+                           ? QString("%1%2").arg(baseName, QString::number(i))
+                           : QString("%1%2.%3").arg(baseName, QString::number(i), suffix);
             fileUrl = targetDirInfo->getUrlByChildFileName(fileName);
         } else {
             return fileUrl;
@@ -515,16 +511,16 @@ QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, co
     return QString();
 }
 
-bool FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix, WId windowId)
+bool FileUtils::cpTemplateFileToTargetDir(const QString &targetdir, const QString &baseName, const QString &suffix, WId windowId)
 {
     QString templateFile;
     QDirIterator it(DFMStandardPaths::location(DFMStandardPaths::TemplatesPath), QDir::Files);
     while (it.hasNext()) {
-      it.next();
-      if (it.fileInfo().suffix() == suffix){
-          templateFile = it.filePath();
-          break;
-      }
+        it.next();
+        if (it.fileInfo().suffix() == suffix) {
+            templateFile = it.filePath();
+            break;
+        }
     }
 
     if (templateFile.isEmpty())
@@ -542,7 +538,7 @@ bool FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QStrin
 bool FileUtils::openFile(const QString &filePath)
 {
     bool result = false;
-    if (QFileInfo(filePath).suffix() == "desktop"){
+    if (QFileInfo(filePath).suffix() == "desktop") {
         result = FileUtils::launchApp(filePath);
         return result;
     }
@@ -565,18 +561,18 @@ bool FileUtils::openFile(const QString &filePath)
         return false;
     }
     //此处会排除执行段(Exec=)包含dde-file-manager的desktop文件，需要对目录(inode/directory)类型及dde-open.desktop例外处理
-    if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory" && !defaultDesktopFile.contains("/dde-open.desktop")){
+    if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory" && !defaultDesktopFile.contains("/dde-open.desktop")) {
         QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
         recommendApps.removeOne(defaultDesktopFile);
-        if (recommendApps.count() > 0){
+        if (recommendApps.count() > 0) {
             defaultDesktopFile = recommendApps.first();
-        }else{
+        } else {
             qDebug() << "no default application for" << filePath;
             return false;
         }
     }
     result = launchApp(defaultDesktopFile, QStringList() << DUrl::fromLocalFile(filePath).toString());
-    if (result){
+    if (result) {
         // workaround since DTK apps doesn't support the recent file spec.
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
         // the correct approach: let the app add it to the recent list.
@@ -586,9 +582,9 @@ bool FileUtils::openFile(const QString &filePath)
         return result;
     }
 
-    if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop"){
+    if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop") {
         QProcess::startDetached("gio", QStringList() << "open" << filePath);
-        QTimer::singleShot(200, [=]{
+        QTimer::singleShot(200, [=] {
             QProcess::startDetached("gio", QStringList() << "open" << filePath);
         });
         return true;
@@ -605,8 +601,8 @@ bool FileUtils::openFiles(const QStringList &filePaths)
 {
     QStringList rePath = filePaths;
     bool ret = false;
-    for (const QString &filePath : filePaths){
-        if (QFileInfo(filePath).suffix() == "desktop"){
+    for (const QString &filePath : filePaths) {
+        if (QFileInfo(filePath).suffix() == "desktop") {
             ret = FileUtils::launchApp(filePath) || ret; //有一个成功就成功
             rePath.removeOne(filePath);
             continue;
@@ -617,9 +613,9 @@ bool FileUtils::openFiles(const QStringList &filePaths)
     //fix bug 33136 在选中3过文件，mimetype有3种不同，但是用enter键打开，这里只处理了
     //第一个文件的mimetype，根据mimetype，选定desktop，传入了3个文件地址，所以后面两个
     //打开失败，处理所有的文件的mimetype，相同的就用同一个desktop启动
-    QHash<QString,QStringList> openinfo;
+    QHash<QString, QStringList> openinfo;
     QHash<QString, QString> mimetypeinfo;
-    foreach (const QString & filePath, rePath) {
+    foreach (const QString &filePath, rePath) {
         /*********************************************************/
         //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
         //QString mimetype = getFileMimetype(filePath);
@@ -627,11 +623,10 @@ bool FileUtils::openFiles(const QStringList &filePaths)
         QString mimetype = QString();
         if (info && info->size() == 0) {
             mimetype = info->mimeType().name();
-        }
-        else {
+        } else {
             mimetype = getFileMimetype(filePath);
         }
-        mimetypeinfo.insert(DUrl::fromLocalFile(filePath).toString(),mimetype);
+        mimetypeinfo.insert(DUrl::fromLocalFile(filePath).toString(), mimetype);
         /*********************************************************/
 
         QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
@@ -640,21 +635,20 @@ bool FileUtils::openFiles(const QStringList &filePaths)
             continue;
         }
 
-        if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory"){
+        if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory") {
             QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
             recommendApps.removeOne(defaultDesktopFile);
-            if (recommendApps.count() > 0){
+            if (recommendApps.count() > 0) {
                 defaultDesktopFile = recommendApps.first();
-            }else{
+            } else {
                 qDebug() << "no default application for" << rePath;
                 continue;
             }
         }
         if (!defaultDesktopFile.isEmpty()) {
-            QStringList value = openinfo.contains(defaultDesktopFile) ?
-                        openinfo.value(defaultDesktopFile) : QStringList();
+            QStringList value = openinfo.contains(defaultDesktopFile) ? openinfo.value(defaultDesktopFile) : QStringList();
             value << DUrl::fromLocalFile(filePath).toString();
-            openinfo.insert(defaultDesktopFile,value);
+            openinfo.insert(defaultDesktopFile, value);
         }
     }
 
@@ -662,7 +656,7 @@ bool FileUtils::openFiles(const QStringList &filePaths)
     for (const QString &tmp : rePath)
         appAgrs << DUrl::fromLocalFile(tmp).toString();
     bool result = false;
-    foreach(const QString &defaultDesktopFile,openinfo.keys()) {
+    foreach (const QString &defaultDesktopFile, openinfo.keys()) {
         bool temresult = launchApp(defaultDesktopFile, openinfo.value(defaultDesktopFile));
         if (temresult) {
             // workaround since DTK apps doesn't support the recent file spec.
@@ -678,14 +672,14 @@ bool FileUtils::openFiles(const QStringList &filePaths)
         }
     }
     //只要一次成功就返回
-    if (result){
+    if (result) {
         return result;
     }
 
     const QString filePath = rePath.first();
-    if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop"){
+    if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop") {
         QProcess::startDetached("gio", QStringList() << "open" << rePath);
-        QTimer::singleShot(200, [=]{
+        QTimer::singleShot(200, [=] {
             QProcess::startDetached("gio", QStringList() << "open" << rePath);
         });
         return true;
@@ -693,7 +687,7 @@ bool FileUtils::openFiles(const QStringList &filePaths)
 
     result = QProcess::startDetached("gio", QStringList() << "open" << rePath);
 
-    if (!result){
+    if (!result) {
         result = false;
         for (const QString &tmp : rePath)
             result = QDesktopServices::openUrl(QUrl::fromLocalFile(tmp)) || result; //有一个成功就成功
@@ -703,15 +697,15 @@ bool FileUtils::openFiles(const QStringList &filePaths)
 
 bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePaths)
 {
-    if (isFileManagerSelf(desktopFile) && filePaths.count() > 1){
-        foreach(const QString& filePath, filePaths){
+    if (isFileManagerSelf(desktopFile) && filePaths.count() > 1) {
+        foreach (const QString &filePath, filePaths) {
             openFile(filePath);
         }
         return true;
     }
 
     bool ok = launchAppByDBus(desktopFile, filePaths);
-    if (!ok){
+    if (!ok) {
         ok = launchAppByGio(desktopFile, filePaths);
     }
     return ok;
@@ -719,7 +713,7 @@ bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePat
 
 bool FileUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-    if (appController->hasLaunchAppInterface()){
+    if (appController->hasLaunchAppInterface()) {
         qDebug() << "launchApp by dbus:" << desktopFile << filePaths;
         appController->startManagerInterface()->LaunchApp(desktopFile, QX11Info::getTimestamp(), filePaths);
         return true;
@@ -732,24 +726,24 @@ bool FileUtils::launchAppByGio(const QString &desktopFile, const QStringList &fi
     qDebug() << "launchApp by gio:" << desktopFile << filePaths;
 
     std::string stdDesktopFilePath = desktopFile.toStdString();
-    const char* cDesktopPath = stdDesktopFilePath.data();
+    const char *cDesktopPath = stdDesktopFilePath.data();
 
-    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(cDesktopPath);
+    GDesktopAppInfo *appInfo = g_desktop_app_info_new_from_filename(cDesktopPath);
     if (!appInfo) {
         qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
         return false;
     }
 
-    GList* g_files = nullptr;
-    foreach (const QString& filePath, filePaths) {
+    GList *g_files = nullptr;
+    foreach (const QString &filePath, filePaths) {
         std::string stdFilePath = filePath.toStdString();
-        const char* cFilePath = stdFilePath.data();
-        GFile* f = g_file_new_for_uri(cFilePath);
+        const char *cFilePath = stdFilePath.data();
+        GFile *f = g_file_new_for_uri(cFilePath);
         g_files = g_list_append(g_files, f);
     }
 
-    GError* gError = nullptr;
-    gboolean ok = g_app_info_launch(reinterpret_cast<GAppInfo*>(appInfo), g_files, nullptr, &gError);
+    GError *gError = nullptr;
+    gboolean ok = g_app_info_launch(reinterpret_cast<GAppInfo *>(appInfo), g_files, nullptr, &gError);
 
     if (gError) {
         qWarning() << "Error when trying to open desktop file with gio:" << gError->message;
@@ -765,7 +759,7 @@ bool FileUtils::launchAppByGio(const QString &desktopFile, const QStringList &fi
     return ok;
 }
 
-bool FileUtils::openFilesByApp(const QString& desktopFile, const QStringList& filePaths)
+bool FileUtils::openFilesByApp(const QString &desktopFile, const QStringList &filePaths)
 {
     bool ok = false;
 
@@ -781,26 +775,26 @@ bool FileUtils::openFilesByApp(const QString& desktopFile, const QStringList& fi
 
     qDebug() << desktopFile << filePaths;
 
-    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(desktopFile.toLocal8Bit().constData());
+    GDesktopAppInfo *appInfo = g_desktop_app_info_new_from_filename(desktopFile.toLocal8Bit().constData());
     if (!appInfo) {
         qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
         return false;
     }
 
     QString terminalFlag = QString(g_desktop_app_info_get_string(appInfo, "Terminal"));
-    if (terminalFlag == "true"){
+    if (terminalFlag == "true") {
         QString exec = QString(g_desktop_app_info_get_string(appInfo, "Exec"));
         QStringList args;
         args << "-e" << exec.split(" ").at(0) << filePaths;
         QString termPath = defaultTerminalPath();
         qDebug() << termPath << args;
         ok = QProcess::startDetached(termPath, args);
-    }else{
+    } else {
         ok = launchApp(desktopFile, filePaths);
     }
     g_object_unref(appInfo);
 
-    if (ok){
+    if (ok) {
         // workaround since DTK apps doesn't support the recent file spec.
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
         // the correct approach: let the app add it to the recent list.
@@ -846,18 +840,18 @@ bool FileUtils::setBackground(const QString &pictureFilePath)
     QDBusMessage msgIntrospect = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", "org.freedesktop.DBus.Introspectable", "Introspect");
     QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(msgIntrospect);
     call.waitForFinished();
-    if(call.isFinished()){
-         QDBusReply<QString> reply = call.reply();
-         QString value = reply.value();
+    if (call.isFinished()) {
+        QDBusReply<QString> reply = call.reply();
+        QString value = reply.value();
 
-         if (value.contains("SetMonitorBackground")){
-             QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", "com.deepin.daemon.Appearance", "SetMonitorBackground");
-             msg.setArguments({qApp->primaryScreen()->name(), pictureFilePath});
-             QDBusConnection::sessionBus().asyncCall(msg);
+        if (value.contains("SetMonitorBackground")) {
+            QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", "com.deepin.daemon.Appearance", "SetMonitorBackground");
+            msg.setArguments({qApp->primaryScreen()->name(), pictureFilePath});
+            QDBusConnection::sessionBus().asyncCall(msg);
 
-             qDebug() << "FileUtils::setBackground call Appearance SetMonitorBackground";
-             return true;
-         }
+            qDebug() << "FileUtils::setBackground call Appearance SetMonitorBackground";
+            return true;
+        }
     }
 
     QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", "com.deepin.daemon.Appearance", "Set");
@@ -913,7 +907,7 @@ bool FileUtils::isFileExecutable(const QString &path)
     bool isExeUser = false;
 
     // Vault file need to use stat function to read file permission.
-    if(VaultController::isVaultFile(path)) {
+    if (VaultController::isVaultFile(path)) {
         struct stat buf;
         std::string stdStr = path.toStdString();
         stat(stdStr.c_str(), &buf);
@@ -933,7 +927,7 @@ bool FileUtils::shouldAskUserToAddExecutableFlag(const QString &path)
     QString _path = path;
     QFileInfo info(path);
     QString mimetype = getFileMimetype(path);
-    if (info.isSymLink()){
+    if (info.isSymLink()) {
         _path = QFile(path).symLinkTarget();
         mimetype = getFileMimetype(path);
     }
@@ -954,7 +948,7 @@ bool FileUtils::isFileRunnable(const QString &path)
     QFileInfo info(path);
     QString mimetype = getFileMimetype(path);
     qDebug() << info.isSymLink() << mimetype;
-    if (info.isSymLink()){
+    if (info.isSymLink()) {
         _path = QFile(path).symLinkTarget();
         mimetype = getFileMimetype(path);
     }
@@ -1019,7 +1013,7 @@ bool FileUtils::isExecutableScript(const QString &path)
 //        return false;
 //    }
 
-    if (info.isSymLink()){
+    if (info.isSymLink()) {
         _path = QFile(path).symLinkTarget();
         mimetype = getFileMimetype(path);
     }
@@ -1044,7 +1038,7 @@ bool FileUtils::openExcutableScriptFile(const QString &path, int flag)
     case 1:
         result = runCommand(path, QStringList(), QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
-    case 2:{
+    case 2: {
         QStringList args;
         args << "-e" << path;
         result = runCommand(FileUtils::defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
@@ -1084,7 +1078,7 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
     switch (flag) {
     case 0:
         break;
-    case 1:{
+    case 1: {
         QStringList args;
         args << "-e" << path;
         result = runCommand(FileUtils::defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
@@ -1100,18 +1094,18 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
     return result;
 }
 
-bool FileUtils::runCommand(const QString &cmd, const QStringList &args, const QString& wd)
+bool FileUtils::runCommand(const QString &cmd, const QStringList &args, const QString &wd)
 {
     bool result = false;
-    if (appController->hasLaunchAppInterface()){
+    if (appController->hasLaunchAppInterface()) {
         qDebug() << "launch cmd by dbus:" << cmd << args;
-        if(wd.length()) {
+        if (wd.length()) {
             QVariantMap opt = {{"dir", wd}};
             appController->startManagerInterface()->RunCommandWithOptions(cmd, args, opt);
-        }
-        else appController->startManagerInterface()->RunCommand(cmd, args);
+        } else
+            appController->startManagerInterface()->RunCommand(cmd, args);
         result = true;
-    }else{
+    } else {
         qDebug() << "launch cmd by qt:" << cmd << args;
         result = QProcess::startDetached(cmd, args, wd);
     }
@@ -1171,12 +1165,11 @@ QString FileUtils::getFileContent(const QString &file)
 {
     QFile f(file);
     QString fileContent = "";
-    if (f.open(QFile::ReadOnly))
-    {
+    if (f.open(QFile::ReadOnly)) {
         fileContent = QString(f.readAll());
         f.close();
     } else {
-        qDebug () << "Could not read file " << file << ":" << f.errorString();
+        qDebug() << "Could not read file " << file << ":" << f.errorString();
     }
     return fileContent;
 }
@@ -1184,53 +1177,53 @@ QString FileUtils::getFileContent(const QString &file)
 bool FileUtils::writeTextFile(const QString &filePath, const QString &content)
 {
     QFile file(filePath);
-    if (file.open(QIODevice::WriteOnly|QIODevice::Text)) {
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream in(&file);
         in << content << endl;
         file.close();
         return true;
     } else {
-        qDebug () << "Failed to write content to file " << filePath << ":" << file.errorString();
+        qDebug() << "Failed to write content to file " << filePath << ":" << file.errorString();
     }
     return false;
 }
 
-void FileUtils::migrateConfigFileFromCache(const QString& key)
+void FileUtils::migrateConfigFileFromCache(const QString &key)
 {
     bool ret = false;
-    QString oldPath = QString("%1/%2/%3.%4").arg(QDir().homePath(), ".cache/dde-file-manager",key,"json");
-    QString newPath = QString("%1/%2.%3").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath),key.toLower(), "json");
+    QString oldPath = QString("%1/%2/%3.%4").arg(QDir().homePath(), ".cache/dde-file-manager", key, "json");
+    QString newPath = QString("%1/%2.%3").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath), key.toLower(), "json");
     QFile srcFile(oldPath);
     ret = srcFile.open(QIODevice::ReadOnly);
-    if(ret){
+    if (ret) {
         QByteArray data = srcFile.readAll();
         srcFile.close();
 
         QFile desFile(newPath);
         ret = desFile.open(QIODevice::WriteOnly);
-        if(ret){
+        if (ret) {
             int code = desFile.write(data);
-            if(code < 0){
-                qDebug () << "Error occurred when writing data";
+            if (code < 0) {
+                qDebug() << "Error occurred when writing data";
                 ret = false;
             } else {
                 ret = srcFile.remove();
-                if(!ret){
-                    qDebug () << "Failed to remove source file " << oldPath;
+                if (!ret) {
+                    qDebug() << "Failed to remove source file " << oldPath;
                 }
             }
             desFile.close();
 
         } else {
-            qDebug () << "Failed to write data :" << desFile.errorString();
+            qDebug() << "Failed to write data :" << desFile.errorString();
         }
 
     } else {
-        qDebug () << "Could not read source file " << oldPath << ":" << srcFile.errorString();
+        qDebug() << "Could not read source file " << oldPath << ":" << srcFile.errorString();
     }
 
-    if(!ret){
-        qDebug () << "Failed to migrate config file from cache";
+    if (!ret) {
+        qDebug() << "Failed to migrate config file from cache";
     }
 }
 
@@ -1245,7 +1238,7 @@ QMap<QString, QString> FileUtils::getKernelParameters()
     QMap<QString, QString> result;
     result.insert("_ori_proc_cmdline", content);
 
-    for (const QByteArray& onePara : paraList) {
+    for (const QByteArray &onePara : paraList) {
         int equalsIdx = onePara.indexOf('=');
         QString key = equalsIdx == -1 ? onePara.trimmed() : onePara.left(equalsIdx).trimmed();
         QString value = equalsIdx == -1 ? QString() : onePara.right(equalsIdx).trimmed();
@@ -1261,25 +1254,25 @@ DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
     int dirCount = 0;
     foreach (DUrl url, urlList) {
         QFileInfo info(url.toLocalFile());
-        if (info.isDir()){
+        if (info.isDir()) {
             dirCount += 1;
-        }else if (info.isFile()){
+        } else if (info.isFile()) {
             fileCount += 1;
         }
     }
-    if (urlList.count() == 0){
-            return DFMGlobal::MenuExtension::EmptyArea;
-    }else if (fileCount == 1 && dirCount == 0 && fileCount == urlList.count()){
+    if (urlList.count() == 0) {
+        return DFMGlobal::MenuExtension::EmptyArea;
+    } else if (fileCount == 1 && dirCount == 0 && fileCount == urlList.count()) {
         return DFMGlobal::MenuExtension::SingleFile;
-    }else if (fileCount > 1 && dirCount == 0 && fileCount == urlList.count()){
+    } else if (fileCount > 1 && dirCount == 0 && fileCount == urlList.count()) {
         return DFMGlobal::MenuExtension::MultiFiles;
-    }else if (fileCount == 0 && dirCount == 1 && dirCount == urlList.count()){
+    } else if (fileCount == 0 && dirCount == 1 && dirCount == urlList.count()) {
         return DFMGlobal::MenuExtension::SingleDir;
-    }else if (fileCount ==0 && dirCount > 1 && dirCount == urlList.count()){
+    } else if (fileCount == 0 && dirCount > 1 && dirCount == urlList.count()) {
         return DFMGlobal::MenuExtension::MultiDirs;
-    }else if (urlList.count() > 1){
+    } else if (urlList.count() > 1) {
         return DFMGlobal::MenuExtension::MultiFileDirs;
-    }else{
+    } else {
         return DFMGlobal::MenuExtension::UnknowMenuExtension;
     }
 }
@@ -1306,13 +1299,13 @@ QJsonObject FileUtils::getJsonObjectFromFile(const QString &filePath)
 {
     QJsonObject obj;
     QJsonDocument doc;
-    if(!QFile::exists(filePath))
+    if (!QFile::exists(filePath))
         return obj;
 
     QFile file(filePath);
 
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug () << "cannot read file " << filePath << ":" << file.errorString();
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "cannot read file " << filePath << ":" << file.errorString();
         file.close();
         return obj;
     }
@@ -1322,8 +1315,8 @@ QJsonObject FileUtils::getJsonObjectFromFile(const QString &filePath)
     QJsonParseError *jsError = NULL;
     doc = QJsonDocument::fromJson(data, jsError);
 
-    if(jsError){
-        qDebug () << "cache data pase error:" << jsError->errorString();
+    if (jsError) {
+        qDebug() << "cache data pase error:" << jsError->errorString();
         return obj;
     }
 
@@ -1335,13 +1328,13 @@ QJsonArray FileUtils::getJsonArrayFromFile(const QString &filePath)
 {
     QJsonArray array;
     QJsonDocument doc;
-    if(!QFile::exists(filePath))
+    if (!QFile::exists(filePath))
         return array;
 
     QFile file(filePath);
 
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug () << "cannot read file " << filePath << ":" << file.errorString();
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "cannot read file " << filePath << ":" << file.errorString();
         file.close();
         return array;
     }
@@ -1351,8 +1344,8 @@ QJsonArray FileUtils::getJsonArrayFromFile(const QString &filePath)
     QJsonParseError *jsError = NULL;
     doc = QJsonDocument::fromJson(data, jsError);
 
-    if(jsError){
-        qDebug () << "cache data pase error:" << jsError->errorString();
+    if (jsError) {
+        qDebug() << "cache data pase error:" << jsError->errorString();
         return array;
     }
 
@@ -1409,15 +1402,13 @@ void FileUtils::addRecentFile(const QString &filePath, const DesktopFile &deskto
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
-{  
+{
     QMimeType mt = DMimeDatabase().mimeTypeForFile(filePath);
-    return mt.name() == "application/x-desktop" &&
-            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+    return mt.name() == "application/x-desktop" && mt.suffixes().contains("desktop", Qt::CaseInsensitive);
 }
 
 bool FileUtils::isDesktopFile(const QFileInfo &fileInfo)
 {
     QMimeType mt = DMimeDatabase().mimeTypeForFile(fileInfo);
-    return mt.name() == "application/x-desktop" &&
-            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+    return mt.name() == "application/x-desktop" && mt.suffixes().contains("desktop", Qt::CaseInsensitive);
 }
