@@ -112,7 +112,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         QString tmpText = text;
         text = DFMGlobal::preprocessingFileName(text);
         if (tmpText != text){
-            showAlertMessage(tr("The following characters cannot be used: \\ /: *? \"< >|"));
+            showAlertMessage(tr("Contains invalid characters (any of \\ /: *? \"< >|)"));
         }
 
         QVector<uint> list = text.toUcs4();

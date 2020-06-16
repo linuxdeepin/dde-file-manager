@@ -30,7 +30,6 @@
 
 #include <DPushButton>
 #include <DPasswordEdit>
-#include <DMessageBox>
 #include <DFloatingWidget>
 #include <DToolTip>
 #include <QTimer>
@@ -214,7 +213,11 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
         }else {
             // error tips
             QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
-            DMessageBox::information(this, tr("tips"), errMsg);
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(errMsg);
+            dialog.addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+            dialog.exec();
         }
 
         m_bUnlockByPwd = false;
