@@ -117,7 +117,7 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
 
-        urlToFileInfoMap[url] = qq;        
+        urlToFileInfoMap[url] = qq;
     }
 
     FileSortFunction::sortCollator.setNumericMode(true);
@@ -421,6 +421,13 @@ bool DAbstractFileInfo::makeAbsolute()
     CALL_PROXY(makeAbsolute());
 
     return false;
+}
+
+bool DAbstractFileInfo::canManageAuth() const
+{
+    CALL_PROXY(canManageAuth());
+
+    return true;
 }
 
 DAbstractFileInfo::FileType DAbstractFileInfo::fileType() const

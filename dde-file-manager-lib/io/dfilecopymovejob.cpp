@@ -38,6 +38,7 @@
 #include <QLoggingCategory>
 #include <QProcess>
 #include <QtConcurrent/QtConcurrent>
+#include <qplatformdefs.h>
 
 #include <unistd.h>
 #include <zlib.h>
@@ -818,7 +819,15 @@ process_file:
 
             if (ok) {
                 handler->setFileTime(new_file_info->fileUrl(), source_info->lastRead(), source_info->lastModified());
-                handler->setPermissions(new_file_info->fileUrl(), source_info->permissions());
+
+                QFileDevice::Permissions permissions = source_info->permissions();
+                //! use stat function to read vault file permission.
+                QString path = source_info->fileUrl().path();
+                if (VaultController::isVaultFile(path)) {
+                    permissions = VaultController::getPermissions(path);
+                }
+
+                handler->setPermissions(new_file_info->fileUrl(), /*source_info->permissions()*/permissions);
             }
         } else {
             ok = renameFile(handler, source_info.constData(), new_file_info.constData());
@@ -1364,7 +1373,15 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
     }
 
     handler->setFileTime(newInfo->fileUrl(), oldInfo->lastRead(), oldInfo->lastModified());
-    handler->setPermissions(newInfo->fileUrl(), oldInfo->permissions());
+
+    //! use stat function to read vault file permission.
+    QFileDevice::Permissions permissions = oldInfo->permissions();
+    QString path = oldInfo->fileUrl().path();
+    if (VaultController::isVaultFile(path)) {
+        permissions = VaultController::getPermissions(path);
+    }
+
+    handler->setPermissions(newInfo->fileUrl(), /*oldInfo->permissions()*/permissions);
 
     if (!doRemoveFile(handler, oldInfo)) {
         return false;
@@ -1533,7 +1550,7 @@ void DFileCopyMoveJobPrivate::joinToCompletedFileList(const DUrl &from, const DU
 
 void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, const DUrl &target, qint64 dataSize)
 {
-    qCDebug(fileJob(), "directory. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(target.toString()), dataSize);
+//    qCDebug(fileJob(), "directory. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(target.toString()), dataSize);
 
 //    completedDataSize += dataSize;
     completedProgressDataSize += targetIsRemovable <= 0 ? 4096 : 0;
@@ -1595,7 +1612,6 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
              lastProgress = fuzzyProgress;
         }
     }
-
      // 保证至少出现%1
     if (lastProgress < 0.02) {
         lastProgress = 0.01;

@@ -21,7 +21,6 @@ TARGET = $$ProjectName
 TEMPLATE = lib
 CONFIG += create_pc create_prl no_install_prl
 
-
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 
 isEmpty(QMAKE_ORGANIZATION_NAME) {

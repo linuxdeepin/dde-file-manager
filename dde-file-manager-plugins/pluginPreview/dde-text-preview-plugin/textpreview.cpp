@@ -48,7 +48,7 @@ TextPreview::~TextPreview()
     if (m_textBrowser)
         m_textBrowser->deleteLater();
     if (m_device)
-       m_device->deleteLater();
+        m_device->deleteLater();
 }
 
 bool TextPreview::setFileUrl(const DUrl &url)
@@ -61,8 +61,7 @@ bool TextPreview::setFileUrl(const DUrl &url)
     m_flg = true;   //! 预览新文件时对其设置初始值
 
     //! 关闭并回收上个文件使用的m_device文件操作对象
-    if(m_device)
-    {
+    if (m_device) {
         m_device->close();
         delete m_device;
         m_device = nullptr;
@@ -80,7 +79,7 @@ bool TextPreview::setFileUrl(const DUrl &url)
 
         if (!m_device) {
             if (url.isLocalFile()) {
-               m_device = new QFile(url.toLocalFile());
+                m_device = new QFile(url.toLocalFile());
             }
         }
 
@@ -91,6 +90,11 @@ bool TextPreview::setFileUrl(const DUrl &url)
             return false;
         }
 
+        //fix 如果文件不可读行，之后读行会导致文管假死或中断
+        //文本如果不可读行就不显示预览
+        if (!m_device->canReadLine()) {
+            return false;
+        }
     }
 
     if (!m_textBrowser) {
@@ -108,8 +112,7 @@ bool TextPreview::setFileUrl(const DUrl &url)
     }
 
     //! 每次预览文本时，预先加载49行数据提供显示
-    for(int i = 0; i < 49; ++i)
-    {
+    for (int i = 0; i < 49; ++i) {
         text.append(m_device->readLine());
     }
     QString convertedStr{ DFMGlobal::toUnicode(text, url.toLocalFile()) };
@@ -144,8 +147,7 @@ bool TextPreview::showStatusBarSeparator() const
 
 void TextPreview::valueChanged(int index)
 {
-    if(index >= m_textBrowser->verticalScrollBar()->maximum() && m_flg)
-    {
+    if (index >= m_textBrowser->verticalScrollBar()->maximum() && m_flg) {
         if (!m_device)
             return ;
 
@@ -153,8 +155,7 @@ void TextPreview::valueChanged(int index)
 
         //! 每次分段加载数据36行
         QByteArray text;
-        for(int i = 0; i < 36; ++i)
-        {
+        for (int i = 0; i < 36; ++i) {
             text.append(m_device->readLine()); //! 读取文本一行数据，并追加到text中
         }
         QString convertedStr{ DFMGlobal::toUnicode(text, m_url.toLocalFile()) }; //! 字符编码转换

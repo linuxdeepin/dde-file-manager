@@ -44,7 +44,6 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     // 标题
     QLabel *pTitle = new QLabel(tr("Unlock File Vault"), this);
     QFont font = pTitle->font();
-    font.setBold(true);
     font.setPixelSize(18);
     pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
