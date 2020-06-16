@@ -1550,7 +1550,7 @@ void DFileCopyMoveJobPrivate::joinToCompletedFileList(const DUrl &from, const DU
 
 void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, const DUrl &target, qint64 dataSize)
 {
-    qCDebug(fileJob(), "directory. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(target.toString()), dataSize);
+//    qCDebug(fileJob(), "directory. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(target.toString()), dataSize);
 
 //    completedDataSize += dataSize;
     completedProgressDataSize += targetIsRemovable <= 0 ? 4096 : 0;
@@ -1612,7 +1612,6 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
              lastProgress = fuzzyProgress;
         }
     }
-
      // 保证至少出现%1
     if (lastProgress < 0.02) {
         lastProgress = 0.01;
