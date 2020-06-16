@@ -77,6 +77,10 @@ public:
         if (menu_event.selectedUrls().isEmpty())
             return false;
 
+        //! avoid error process when multi-tag.
+        if (menu_event.currentUrl() != viewHelper->currentUrl())
+            return false;
+
         const QModelIndex &index = viewHelper->model()->index(menu_event.selectedUrls().first());
         const QRect &rect = viewHelper->parent()->visualRect(index);
         QStyleOptionViewItem option = viewHelper->parent()->viewOptions();
