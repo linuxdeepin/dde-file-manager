@@ -31,6 +31,7 @@
 #include <QProcess>
 #include <QDBusReply>
 #include <QVBoxLayout>
+#include <QPushButton>
 
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) : DDialog(parent)
 {
@@ -50,6 +51,10 @@ void UserSharePasswordSettingDialog::initUI()
     m_passwordEdit->setFocus();
     addContent(m_passwordEdit);
     setContentsMargins(0,0,0,0);
+    getButton(1)->setEnabled(false);
+    connect(m_passwordEdit,&DPasswordEdit::textChanged,this,[this]{
+        getButton(1)->setEnabled(!m_passwordEdit->text().isEmpty());
+    });
 }
 
 void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
