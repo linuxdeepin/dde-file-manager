@@ -2700,9 +2700,10 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
 
     fileViewHelper()->handleMenu(menu);
-
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<DFileView> me = this;
     menu->exec();
-    menu->deleteLater(this);
+    menu->deleteLater(me);
 }
 
 
@@ -2757,11 +2758,12 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
 
     fileViewHelper()->handleMenu(menu);
-
-    menu->exec();
     // 若此处使用this，那么当切换到其台view时，当前view释放，会造成野指针引起崩溃
     // 因此使用当前的 activewindow，确保当前窗口下工作时切换到其他view不受影响
-    auto window = qApp->activeWindow();
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+    //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<QWidget> window = qApp->activeWindow();
+    menu->exec();
     menu->deleteLater(window);
     lock = false;
 }
@@ -2900,7 +2902,10 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
         const QList<int> &childRoles = fileInfo->userColumnChildRoles(column);
 
         if (childRoles.isEmpty()) {
-            menu->deleteLater(this);
+            //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+            //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+            QPointer<DFileView> me = this;
+            menu->deleteLater(me);
 
             return;
         }
@@ -2958,9 +2963,11 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
             menu->addAction(action);
         }
     }
-
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+    //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<DFileView> me = this;
     menu->exec(QCursor::pos());
-    menu->deleteLater(this);
+    menu->deleteLater(me);
 }
 
 void DFileView::onModelStateChanged(int state)
