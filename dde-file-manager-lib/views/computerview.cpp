@@ -318,8 +318,10 @@ void ComputerView::contextMenu(const QPoint &pos)
     }
 
     menu->setEventData(DUrl(), {idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>()}, WindowManager::getWindowId(this), this);
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<ComputerView> me = this;
     menu->exec(this->mapToGlobal(pos));
-    menu->deleteLater(this);
+    menu->deleteLater(me);
 }
 
 void ComputerView::onRenameRequested(const DFMUrlBaseEvent &event)

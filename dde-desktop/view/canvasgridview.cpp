@@ -3354,9 +3354,10 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         menu->deleteLater();
         return;
     }
-
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<CanvasGridView> me = this;
     menu->exec();
-    menu->deleteLater(this);
+    menu->deleteLater(me);
 }
 
 void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
@@ -3557,9 +3558,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         menu->deleteLater();
         return;
     }
-
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<CanvasGridView> me = this;
     menu->exec();
-    menu->deleteLater(this);
+    menu->deleteLater(me);
     //断连，防止menu没有释放再次触发信号
     disconnect(menu, nullptr, this, nullptr);
 }

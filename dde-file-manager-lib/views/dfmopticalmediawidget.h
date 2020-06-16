@@ -27,10 +27,10 @@ class DFMOpticalMediaWidget : public QWidget
 public:
     //fix: 光盘容量属性: 光盘容量状态
     enum BurnCapacityStatusAttribute {
-        BCSA_BurnCapacityStatusEjct =  0, //光盘容量状态：0,光驱弹出状态
+        BCSA_BurnCapacityStatusEjct = 0, //光盘容量状态：0,光驱弹出状态
         BCSA_BurnCapacityStatusAdd, //光盘容量状态：1,光驱弹入处于添加未挂载状态
         BCSA_BurnCapacityStatusAddMount //光盘容量状态：2,光驱弹入处于添加后并挂载的状态
-    }; 
+    };
 
     //fixed:CD display size error
     static QMap<QString, CdStatusInfo> g_mapCdStatusInfo;
@@ -38,15 +38,18 @@ public:
     static qint64 g_selectBurnFilesSize;
     static qint64 g_selectBurnDirFileCount;
 
-    explicit DFMOpticalMediaWidget(QWidget* parent);
+    explicit DFMOpticalMediaWidget(QWidget *parent);
     ~DFMOpticalMediaWidget();
 
     void updateDiscInfo(QString dev);
+    void setDiscMountPoint(const QString &strMntPath);
+    bool hasFileInDir(QDir dir);
+    QString getDiscMountPoint();
     //fix: 设置光盘容量属性
     static void setBurnCapacity(int status, QString strVolTag = "");
 
     //根据url 获取光驱标签
-    static QString getVolTag(const DUrl& fileUrl);
+    static QString getVolTag(const DUrl &fileUrl);
 
     //判断当前磁盘是否正忙碌
     static bool hasVolProcessBusy();

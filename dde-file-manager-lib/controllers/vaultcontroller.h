@@ -160,6 +160,13 @@ public:
     static bool isVaultFile(QString path);
 
     /**
+     * @brief getPermissions 获取文件的权限信息
+     * @param filePath       文件路径
+     * @return
+     */
+    static QFileDevice::Permissions getPermissions(QString filePath);
+
+    /**
      * @brief state         获取当前保险箱状态
      * @param lockBaseDir   保险箱加密文件夹
      * @return              返回VaultState枚举值

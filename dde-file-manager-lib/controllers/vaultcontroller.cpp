@@ -835,6 +835,37 @@ bool VaultController::isVaultFile(QString path)
     return bVaultFile;
 }
 
+QFileDevice::Permissions VaultController::getPermissions(QString filePath)
+{
+    QFileDevice::Permissions permissions;
+    QT_STATBUF statBuffer;
+    if (QT_STAT(QFile::encodeName(filePath), &statBuffer) == 0) {
+        auto st_mode = statBuffer.st_mode;
+
+        auto setPermission = [&](bool isOwner, QFileDevice::Permissions permission) {
+            if (isOwner) {
+                permissions |= permission;
+            } else {
+                permissions &= ~permission;
+            }
+        };
+
+        setPermission(st_mode & S_IRUSR, QFileDevice::ReadUser);
+        setPermission(st_mode & S_IWUSR, QFileDevice::WriteUser);
+        setPermission(st_mode & S_IXUSR, QFileDevice::ExeUser);
+
+        setPermission(st_mode & S_IRGRP, QFileDevice::ReadGroup);
+        setPermission(st_mode & S_IWGRP, QFileDevice::WriteGroup);
+        setPermission(st_mode & S_IXGRP, QFileDevice::ExeGroup);
+
+        setPermission(st_mode & S_IROTH, QFileDevice::ReadOther);
+        setPermission(st_mode & S_IWOTH, QFileDevice::WriteOther);
+        setPermission(st_mode & S_IXOTH, QFileDevice::ExeOther);
+    }
+
+    return permissions;
+}
+
 QString VaultController::pathToVirtualPath(QString path)
 {
     QString nextPath = path;

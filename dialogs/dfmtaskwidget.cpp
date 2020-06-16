@@ -29,6 +29,7 @@
 #include <DIconButton>
 #include <DGuiApplicationHelper>
 #include <QTimer>
+#include <QException>
 
 #include "app/define.h"
 #include "dfileservices.h"
@@ -330,7 +331,7 @@ void DFMTaskWidgetPrivate::initConnection()
     },Qt::DirectConnection);
 
     QObject::connect(m_timer, &QTimer::timeout, [this](){
-       m_isSettingValue = false;
+        m_isSettingValue = false;
     });
 }
 
@@ -522,23 +523,23 @@ QAbstractButton *DFMTaskWidget::getButton(DFMTaskWidget::BUTTON bt)
     Q_D(DFMTaskWidget);
     QAbstractButton *btn = nullptr;
     switch (bt) {
-        case PAUSE:
-            btn = d->m_btnPause;
-            break;
-        case STOP:
-            btn = d->m_btnStop;
-            break;
-        case SKIP:
-            btn = d->m_btnSkip;
+    case PAUSE:
+        btn = d->m_btnPause;
         break;
-        case REPLACE:
-            btn = d->m_btnReplace;
+    case STOP:
+        btn = d->m_btnStop;
         break;
-        case COEXIST:
-            btn = d->m_btnCoexist;
+    case SKIP:
+        btn = d->m_btnSkip;
         break;
-        case CHECKBOX_NOASK:
-            btn = d->m_chkboxNotAskAgain;
+    case REPLACE:
+        btn = d->m_btnReplace;
+        break;
+    case COEXIST:
+        btn = d->m_btnCoexist;
+        break;
+    case CHECKBOX_NOASK:
+        btn = d->m_chkboxNotAskAgain;
         break;
     }
 

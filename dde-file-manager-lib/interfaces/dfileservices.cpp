@@ -83,7 +83,8 @@ public:
     static QMultiHash<const HandlerType, DAbstractFileController *> controllerHash;
     static QHash<const DAbstractFileController *, HandlerType> handlerHash;
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
-    static QList<DUrl> rootfilelist;
+    static QMap<DUrl,DAbstractFileInfoPointer> rootfilelist;
+    static QMutex rootfileMtx;
     bool bstartonce = false;
     bool m_bcursorbusy = false;
     bool m_bonline = false;
@@ -91,12 +92,15 @@ public:
     JobController *m_jobcontroller = nullptr;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
+    //fix bug,当快速点击左边侧边栏会出现鼠标一直在转圈圈
+    QMutex m_mutexCursorState;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
 QHash<const DAbstractFileController *, HandlerType> DFileServicePrivate::handlerHash;
 QMultiHash<const HandlerType, HandlerCreatorType> DFileServicePrivate::controllerCreatorHash;
-QList<DUrl> DFileServicePrivate::rootfilelist;//本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
+QMap<DUrl,DAbstractFileInfoPointer> DFileServicePrivate::rootfilelist;//本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
+QMutex DFileServicePrivate::rootfileMtx;
 
 DFileService::DFileService(QObject *parent)
     : QObject(parent)
@@ -272,8 +276,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                             emit fileDeleted(url);
                         }
                     }
-
                 }
+
                 if (lock) {
                     result = CALL_CONTROLLER(deleteFiles);
                     if (result.toBool()) {
@@ -282,6 +286,13 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                         }
                     }
                 }
+                else {
+                    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+                    if (event->fileUrlList().count() == 1 && event->fileUrlList().first().toString().endsWith("trash:///")){
+                        setDoClearTrashState(false);
+                    }
+                }
+
                 break;
             } else {
                 continue;
@@ -934,55 +945,54 @@ DStorageInfo *DFileService::createStorageInfo(const QObject *sender, const DUrl 
 
 QList<DAbstractFileInfoPointer> DFileService::getRootFile()
 {
-    QList<DAbstractFileInfoPointer> ret;
-    QMutex mex;
-    mex.lock();
-    setCursorBusyState(true);
-    for (auto url : d_ptr->rootfilelist)
-    {
-        DAbstractFileInfoPointer rootinfo = createFileInfo(nullptr,url);
-        if (rootinfo->exists()) {
-            ret.push_back(rootinfo);
-        }
-    }
-    // fix 25778 每次打开文管，"我的目录" 顺序随机排列
-    static const QList<QString> udir = {"desktop", "videos", "music", "pictures", "documents", "downloads"};
-    for (int i = 0; i < udir.count(); i++) {
-        for (int j = 0; j < ret.count(); j++) {
-            if (ret[j]->fileUrl().path().contains(udir[i]) && ret[j]->suffix() == SUFFIX_USRDIR && i != j) {
-                ret.move(j, i);
-                break;
+    QMutexLocker lk(&d_ptr->rootfileMtx);
+    QList<DAbstractFileInfoPointer> ret = d_ptr->rootfilelist.values();
+    lk.unlock();
+
+    //setCursorBusyState(true);
+//    for (auto url : d_ptr->rootfilelist)
+//    {
+//        DAbstractFileInfoPointer rootinfo = createFileInfo(nullptr,url);
+//        if (rootinfo->exists()) {
+//            ret.push_back(rootinfo);
+//        }
+//    }
+
+    if (!ret.isEmpty()){
+        // fix 25778 每次打开文管，"我的目录" 顺序随机排列
+        static const QList<QString> udir = {"desktop", "videos", "music", "pictures", "documents", "downloads"};
+        for (int i = 0; i < udir.count(); i++) {
+            for (int j = 0; j < ret.count(); j++) {
+                if (ret[j]->fileUrl().path().contains(udir[i]) && ret[j]->suffix() == SUFFIX_USRDIR && i != j) {
+                    ret.move(j, i);
+                    break;
+                }
             }
         }
     }
 
-    setCursorBusyState(false);
-    mex.unlock();
+    //setCursorBusyState(false);
     return ret;
 }
 
 void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
 {
-    QMutex mex;
+    QMutexLocker lk(&d_ptr->rootfileMtx);
     if (bcreate) {
-        mex.lock();
         if(!d_ptr->rootfilelist.contains(fileurl)){
             DAbstractFileInfoPointer info = createFileInfo(nullptr, fileurl);
             if(info->exists()) {
-                d_ptr->rootfilelist.push_back(fileurl);
+                d_ptr->rootfilelist.insert(fileurl,info);
                 qDebug() << "  insert   " << fileurl;
             }
         }
-        mex.unlock();
     }
     else {
-        mex.lock();
         qDebug() << "  remove   " << d_ptr->rootfilelist;
         if(d_ptr->rootfilelist.contains(fileurl)){
             qDebug() << "  remove   " << fileurl;
-            d_ptr->rootfilelist.removeOne(fileurl);
+            d_ptr->rootfilelist.remove(fileurl);
         }
-        mex.unlock();
     }
 }
 
@@ -994,32 +1004,30 @@ void DFileService::startQuryRootFile()
     else {
         return;
     }
-    qDebug() << "start thread    startQuryRootFile   ===== " << d_ptr->rootfilelist.size();
+    qDebug() << "start thread    startQuryRootFile   ===== " << d_ptr->rootfilelist.size() << QThread::currentThread();
     //启用异步线程去读取
     d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
     connect(d_ptr->m_jobcontroller,&JobController::addChildren,this ,[this](const DAbstractFileInfoPointer &chi){
-        QMutex mex;
-        mex.lock();
+        QMutexLocker lk(&d_ptr->rootfileMtx);
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
-            d_ptr->rootfilelist.push_back(chi->fileUrl());
+            d_ptr->rootfilelist.insert(chi->fileUrl(),chi);
+            lk.unlock();
             qDebug() << "  addChildren " << chi->fileUrl();
             emit rootFileChange(chi);
         }
-        mex.unlock();
-    });
+    },Qt::DirectConnection);
 
     connect(d_ptr->m_jobcontroller,&JobController::addChildrenList,this ,[this](QList<DAbstractFileInfoPointer> ch){
-        QMutex mex;
-        mex.lock();
         for (auto chi : ch) {
+            QMutexLocker lk(&d_ptr->rootfileMtx);
             if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
-                d_ptr->rootfilelist.push_back(chi->fileUrl());
+                d_ptr->rootfilelist.insert(chi->fileUrl(),chi);
+                lk.unlock();
                 qDebug() << "  addChildrenlist " << chi->fileUrl();
                 emit rootFileChange(chi);
             }
         }
-        mex.unlock();
-    });
+    },Qt::DirectConnection);
     connect(d_ptr->m_jobcontroller,&JobController::finished,this,[this](){
         d_ptr->m_jobcontroller->deleteLater();
         qDebug() << "获取 m_jobcontroller  finished  " << QThread::currentThreadId();
@@ -1047,6 +1055,8 @@ void DFileService::clearThread()
 
 void DFileService::setCursorBusyState(const bool bbusy)
 {
+    //fix bug,当快速点击左边侧边栏会出现鼠标一直在转圈圈
+    QMutexLocker lock(&d_ptr->m_mutexCursorState);
     if (d_ptr->m_bcursorbusy == bbusy) {
         return;
     }
@@ -1055,7 +1065,7 @@ void DFileService::setCursorBusyState(const bool bbusy)
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     }
     else {
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     }
 
 }
@@ -1225,15 +1235,13 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
 
 void DFileService::changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo)
 {
-    QMutex mex;
-    mex.lock();
+    QMutexLocker lk(&d_ptr->rootfileMtx);
     for (const DAbstractFileInfoPointer &fi : rootinfo) {
         DUrl url = fi->fileUrl();
         if(!d_ptr->rootfilelist.contains(url) && fi->exists()) {
-            d_ptr->rootfilelist.push_back(url);
+            d_ptr->rootfilelist.insert(url,fi);
         }
     }
-    mex.unlock();
 }
 
 bool DFileService::isNetWorkOnline()
