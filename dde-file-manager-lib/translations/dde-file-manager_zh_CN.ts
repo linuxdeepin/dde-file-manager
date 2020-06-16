@@ -119,7 +119,8 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="239"/>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>可用</translatorcomment>
+        <translation>可用</translation>
     </message>
 </context>
 <context>
