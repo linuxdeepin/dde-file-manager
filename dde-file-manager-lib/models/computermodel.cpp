@@ -529,7 +529,10 @@ void ComputerModel::onOpticalChanged()
 void ComputerModel::getRootFile()
 {
     QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
-    qDebug() << "获取 ComputerModel  getRootFile start" << ch.size() << QThread::currentThreadId();
+    qDebug() << "获取 ComputerModel  getRootFile start" << ch.size() << QThread::currentThread() << qApp->thread();
+    if (ch.isEmpty())
+        return;
+
     std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompare);
     bool splt = false;
     m_nitems = 0;

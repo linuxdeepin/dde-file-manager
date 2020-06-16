@@ -115,7 +115,7 @@ private:
     void initUserShareItem();
     void initRecentItem();
     void initBookmarkConnection();
-    void initDeviceConnection();
+    void initDeviceConnection(bool async = false);
     void initTagsConnection();
     void initVaultConnection();
     void applySidebarColor();

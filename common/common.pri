@@ -25,13 +25,12 @@ unix {
 
         #use classical file section mode
         DEFINES += CLASSICAL_SECTION
-        DEFINES += AUTO_RESTART_DEAMON
 
         DEFINES += LOAD_FILE_INTERVAL=150
 
         DEFINES += DISABLE_COMPRESS_PREIVEW
 
-        DEFINES += DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
+        DEFINES += ENABLE_DAEMON
     } else {
         isEmpty(DISABLE_JEMALLOC) {
             LIBS += -ljemalloc
