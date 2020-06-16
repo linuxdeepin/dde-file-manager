@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
         ffmpegthumbnailer::VideoThumbnailer vt(size, false, true, 20, false);
         vt.generateThumbnail(path, ThumbnailerImageTypeEnum::Png, imageData);
 
-        char *base64_data = toBase64(imageData.data(), imageData.size(), Base64Encoding);
+        char *base64_data = toBase64(imageData.data(), static_cast<int>(imageData.size()), Base64Encoding);
 
         printf("%s", base64_data);
         fflush(stdout);

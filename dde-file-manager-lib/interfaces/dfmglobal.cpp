@@ -477,7 +477,7 @@ QString DFMGlobal::getUser()
 
 int DFMGlobal::getUserId()
 {
-    return getuid();
+    return static_cast<int>(getuid());
 }
 
 bool DFMGlobal::isRootUser()
@@ -554,7 +554,7 @@ void DFMGlobal::refreshPlugins()
 void DFMGlobal::wordWrapText(QTextLayout *layout, qreal width, QTextOption::WrapMode wrapMode,
                              qreal lineHeight, QStringList *lines)
 {
-    elideText(layout, QSize(width, INT_MAX), wrapMode, Qt::ElideNone, lineHeight, 0, lines);
+    elideText(layout, QSize(static_cast<int>(width), INT_MAX), wrapMode, Qt::ElideNone, lineHeight, 0, lines);
 }
 
 void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::WrapMode wordWrap,
@@ -758,7 +758,8 @@ bool DFMGlobal::startWithHanzi(const QString &text)
 
     return text.at(0).script() == QChar::Script_Han;
 }
-
+#if 0
+//解决定义未使用警告
 static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
 {
     QTextDecoder decoder(QTextCodec::codecForName(codecName));
@@ -767,6 +768,7 @@ static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
 
     return decoder.hasFailure() ? QString() : text;
 }
+#endif
 
 ///###: forward-declare.
 static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);

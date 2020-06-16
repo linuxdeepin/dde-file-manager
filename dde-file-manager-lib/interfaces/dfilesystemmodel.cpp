@@ -437,8 +437,8 @@ private:
     QHash<DUrl, FileSystemNodePointer> children;
     //fix bug 31225,if children clear,another thread useing visibleChildren will crush,so use FileSystemNodePointer
     QList<FileSystemNodePointer> visibleChildren;
-    QReadWriteLock *rwLock = nullptr;
     DFileSystemModel *m_dFileSystemModel;
+    QReadWriteLock *rwLock = nullptr;
 };
 
 template<typename T>
