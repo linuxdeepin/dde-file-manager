@@ -63,10 +63,15 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
         return;
 
     if (event->button() == Qt::RightButton) {
+#if 1   //fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上
+        event->accept();
+        return;
+#else
         if (m_current != indexAt(event->pos())) {
             DListView::mousePressEvent(event);
-            return  setCurrentIndex(m_previous);
+            return setCurrentIndex(m_previous);
         }
+#endif
     }
     DListView::mousePressEvent(event);
 }
