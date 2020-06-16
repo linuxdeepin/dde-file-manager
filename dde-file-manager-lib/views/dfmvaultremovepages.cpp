@@ -12,7 +12,6 @@
 #include <QStackedWidget>
 #include <QAbstractButton>
 #include <QLabel>
-#include <DMessageBox>
 #include <QVBoxLayout>
 #include <DLabel>
 
@@ -31,7 +30,6 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     // 标题
     DLabel *pTitle = new DLabel(tr("Remove File Vault"), this);
     QFont font = pTitle->font();
-    font.setBold(true);
     font.setPixelSize(18);
     pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
@@ -211,7 +209,11 @@ void DFMVaultRemovePages::onLockVault(int state)
         }else{
             // error tips
             QString errMsg = tr("Remove File Vault failed.%1").arg(VaultController::getErrorInfo(state));
-            DMessageBox::information(this, tr("tips"), errMsg);
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(errMsg);
+            dialog.addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+            dialog.exec();
         }
         m_bRemoveVault = false;
     }

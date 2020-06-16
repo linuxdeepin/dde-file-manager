@@ -78,6 +78,8 @@ Desktop::~Desktop()
 
 }
 
+#if 0
+//避免定义未使用警告
 static void setWindowFlag(QWidget *w, Qt::WindowType flag, bool on)
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 9, 0)
@@ -90,6 +92,7 @@ static void setWindowFlag(QWidget *w, Qt::WindowType flag, bool on)
     w->setWindowFlag(flag, on);
 #endif
 }
+#endif
 
 #if USINGOLD
 void Desktop::onBackgroundEnableChanged()

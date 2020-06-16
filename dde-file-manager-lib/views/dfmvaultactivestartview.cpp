@@ -16,7 +16,6 @@ DFMVaultActiveStartView::DFMVaultActiveStartView(QWidget *parent)
     // 标题
     DLabel *pLabel1 = new DLabel(tr("File Vault"), this);
     QFont font = pLabel1->font();
-    font.setBold(true);
     font.setPixelSize(18);
     pLabel1->setFont(font);
     pLabel1->setAlignment(Qt::AlignHCenter);

@@ -23,6 +23,9 @@
 #include "dfmevent.h"
 #include "dfmglobal.h"
 #include "private/dabstractfilewatcher_p.h"
+#include "dialogs/dialogmanager.h"
+#include "shutil/fileutils.h"
+#include "app/define.h"
 
 #include <QFileSystemWatcher>
 #include <QXmlStreamReader>
@@ -270,7 +273,65 @@ bool RecentController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) c
 {
     return DFileService::instance()->openFile(event->sender(), DUrl::fromLocalFile(event->url().path()));
 }
+bool RecentController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
+{
+    DUrlList fileUrls = event->urlList();
+    DUrlList packUrl;
+    QStringList pathList;
+    bool result = false;
 
+    for(DUrl fileUrl : fileUrls){
+        const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
+        if(!pfile)
+        {
+            continue;
+        }
+        if (pfile->isSymLink()) {
+            const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
+
+            if (linkInfo && !linkInfo->exists()) {
+                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), DUrl(fileUrl.path().remove(RECENT_ROOT)));
+                continue;
+            }
+            fileUrl = linkInfo->redirectedFileUrl();
+        }
+
+        if (FileUtils::isExecutableScript(fileUrl.path().remove(RECENT_ROOT))) {
+            int code = dialogManager->showRunExcutableScriptDialog(DUrl(fileUrl.path().remove(RECENT_ROOT)), event->windowId());
+            result = FileUtils::openExcutableScriptFile(fileUrl.path().remove(RECENT_ROOT), code) || result;
+            continue;
+        }
+
+        if (FileUtils::isFileRunnable(fileUrl.path().remove(RECENT_ROOT)) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showRunExcutableFileDialog(DUrl(fileUrl.path().remove(RECENT_ROOT)), event->windowId());
+            result = FileUtils::openExcutableFile(fileUrl.path().remove(RECENT_ROOT), code) || result;
+            continue;
+        }
+
+        if (FileUtils::shouldAskUserToAddExecutableFlag(fileUrl.path().remove(RECENT_ROOT)) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showAskIfAddExcutableFlagAndRunDialog(DUrl(fileUrl.path().remove(RECENT_ROOT)), event->windowId());
+            result = FileUtils::addExecutableFlagAndExecuse(fileUrl.path().remove(RECENT_ROOT), code) || result;
+            continue;
+        }
+
+        packUrl << fileUrl;
+        QString url = fileUrl.path().remove(RECENT_ROOT);
+        if (FileUtils::isFileWindowsUrlShortcut(url)) {
+            url = FileUtils::getInternetShortcutUrl(url);
+        }
+        pathList << url;
+    }
+    if (!pathList.empty()) {
+        result = FileUtils::openFiles(pathList);
+        if (!result) {
+            for (const DUrl &fileUrl : packUrl){
+                DFileService::instance()->openFile(event->sender(), fileUrl);
+            }
+        }
+    }
+
+    return result;
+}
 bool RecentController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
     return DFileService::instance()->openFileByApp(event->sender(), event->appName(), DUrl::fromLocalFile(event->url().path()));

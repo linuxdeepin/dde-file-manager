@@ -25,7 +25,6 @@
 #include <QPlainTextEdit>
 #include <QAbstractButton>
 #include <DToolTip>
-#include <DMessageBox>
 #include <DFloatingWidget>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -56,7 +55,6 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     // 标题
     QLabel *pTitle = new QLabel(tr("Unlock by Key"), this);
     QFont font = pTitle->font();
-    font.setBold(true);
     font.setPixelSize(16);
     pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
@@ -270,7 +268,11 @@ void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
         }else {
             // others
             QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
-            DMessageBox::information(this, tr("tips"), errMsg);
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(errMsg);
+            dialog.addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+            dialog.exec();
         }
         m_bUnlockByKey = false;
     }

@@ -96,6 +96,7 @@ DUrlList DFileMenu::selectedUrls() const
     return m_selectedUrls;
 }
 
+// 重定义，防止多次右键点击造成崩溃
 void DFileMenu::deleteLater(QWidget *w)
 {
     if (w)

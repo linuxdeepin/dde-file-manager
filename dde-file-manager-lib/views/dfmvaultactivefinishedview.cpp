@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <DLabel>
+#include <DDialog>
 
 DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     : QWidget(parent)
@@ -25,7 +26,6 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     // 标题
     QLabel *pLabelTitle = new QLabel(tr("Encrypt File Vault"), this);
     QFont font = pLabelTitle->font();
-    font.setBold(true);
     font.setPixelSize(18);
     pLabelTitle->setFont(font);
     pLabelTitle->setAlignment(Qt::AlignHCenter);
@@ -141,8 +141,15 @@ void DFMVaultActiveFinishedView::slotEncryptVault()
     }
 
     if(m_pFinishedBtn->text() == tr("Encrypt")){
-        // 按钮灰化
+        // 完成按钮灰化
         m_pFinishedBtn->setEnabled(false);
+        // 隐藏右上角关闭按钮
+        if(parentWidget()){
+            DDialog *pParent = static_cast<DDialog*>(parentWidget()->parentWidget());
+            if(pParent){
+                pParent->setCloseButtonVisible(false);
+            }
+        }
 
         // 进度条
         m_pWaterProgress->start();
@@ -165,9 +172,16 @@ void DFMVaultActiveFinishedView::slotEncryptVault()
 
 void DFMVaultActiveFinishedView::slotTimeout()
 {
-    m_pFinishedBtn->setText(tr("ok"));
-    m_pFinishedBtn->setEnabled(true);
     m_pWidget1->setVisible(false);
     m_pWidget2->setVisible(false);
     m_pWidget3->setVisible(true);
+    m_pFinishedBtn->setText(tr("ok"));
+    m_pFinishedBtn->setEnabled(true);
+    // 显示右上角关闭按钮
+    if(parentWidget()){
+        DDialog *pParent = static_cast<DDialog*>(parentWidget()->parentWidget());
+        if(pParent){
+            pParent->setCloseButtonVisible(true);
+        }
+    }
 }
