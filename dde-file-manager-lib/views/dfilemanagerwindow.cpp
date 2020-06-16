@@ -112,7 +112,7 @@ public:
     bool isRenameBarVisible() const;
     void setRenameBarVisible(bool visible);
     void resetRenameBar();
-    void storeUrlListToRenameBar(const QList<DUrl>& list) noexcept;
+    void storeUrlListToRenameBar(const QList<DUrl> &list) noexcept;
 
     QFrame *centralWidget{ nullptr };//中央区域（所有的除顶部区域）
     DFMSideBar *sideBar{ nullptr };
@@ -123,8 +123,8 @@ public:
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
     DIconButton *newTabButton { nullptr };
-    QFrame * tabTopLine { nullptr };
-    QFrame * tabBottomLine { nullptr };
+    QFrame *tabTopLine { nullptr };
+    QFrame *tabBottomLine { nullptr };
     DFMBaseView *currentView { nullptr };
     DStatusBar *statusBar { nullptr };
     QVBoxLayout *mainLayout { nullptr };
@@ -455,7 +455,7 @@ void DFileManagerWindowPrivate::initAdvanceSearchBar()
 
     QObject::connect(advanceSearchBar, &DFMAdvanceSearchBar::optionChanged, q, [ = ](const QMap<int, QVariant> &formData, bool updateView) {
         if (currentView) {
-            DFileView *fv = dynamic_cast<DFileView*>(currentView);
+            DFileView *fv = dynamic_cast<DFileView *>(currentView);
             if (fv) {
                 fv->setAdvanceSearchFilter(formData, true, updateView);
             }
@@ -586,35 +586,34 @@ void DFileManagerWindow::closeAllTabOfVault(quint64 winId)
     D_D(DFileManagerWindow);
 
     // 传入的窗口ID不是当前活动窗口ID
-    if(winId != this->winId()){
+    if (winId != this->winId()) {
         return;
     }
 
     // 当前只有一个标签，不用关闭
     int nCount = d->tabBar->count();
-    if(nCount < 2){
+    if (nCount < 2) {
         return;
     }
 
     // 记录是否有除保险箱之外的标签
     bool bOtherTab = false;
-    for(int i = nCount-1; i > -1; --i)
-    {
+    for (int i = nCount - 1; i > -1; --i) {
         Tab *tab = d->tabBar->tabAt(i);
         if (!tab) {
             return;
         }
 
         DUrl url = tab->currentUrl();
-        if(VaultController::isVaultFile(url.toString())){
-            if(i == 0){ // 当判断到最后一个标签时，如何没有其它标签，则保留该标签
-                if(!bOtherTab){
+        if (VaultController::isVaultFile(url.toString())) {
+            if (i == 0) { // 当判断到最后一个标签时，如何没有其它标签，则保留该标签
+                if (!bOtherTab) {
                     return;
                 }
             }
             // 删除编号对应的标签
             emit d->tabBar->tabCloseRequested(i);
-        }else{
+        } else {
             bOtherTab = true;
         }
     }
@@ -814,7 +813,7 @@ bool DFileManagerWindow::cdForTabByView(DFMBaseView *view, const DUrl &fileUrl)
     Q_D(DFileManagerWindow);
 
     for (int i = 0; i < d->tabBar->count(); ++i) {
-        Tab *tab =d->tabBar->tabAt(i);
+        Tab *tab = d->tabBar->tabAt(i);
 
         if (tab->fileView() == view) {
             return d->cdForTab(tab, fileUrl);
@@ -973,8 +972,7 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
     case DFMEvent::Forward:
         d->toolbar->forward();
         return true;
-    case DFMEvent::OpenNewTab:
-    {
+    case DFMEvent::OpenNewTab: {
         if (event->windowId() != this->internalWinId()) {
             return false;
         }
@@ -1206,7 +1204,7 @@ void DFileManagerWindow::initCentralWidget()
     QWidget *midWidget = new QWidget;
     QHBoxLayout *midLayout = new QHBoxLayout;
     midWidget->setLayout(midLayout);
-    //! lixiang start 设置后显示空间会大些 
+    //! lixiang start 设置后显示空间会大些
     midLayout->setContentsMargins(0, 0, 0, 0);
     //! lixiang end
     midLayout->addWidget(d->splitter);
@@ -1270,7 +1268,7 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d] {
         DUrl url = currentUrl();
-        if(VaultController::isVaultFile(url.path()) && !url.isVaultFile())
+        if (VaultController::isVaultFile(url.path()) && !url.isVaultFile())
         {
             url = VaultController::localUrlToVault(url);
         }
@@ -1290,19 +1288,19 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
-    QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [d](){
-        if(d->rightDetailViewHolder){
+    QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [d]() {
+        if (d->rightDetailViewHolder) {
             d->rightDetailViewHolder->setVisible(!d->rightDetailViewHolder->isVisible());
             qDebug() << "File information window on the right";
         }
     });
 
-    QObject::connect(this, &DFileManagerWindow::selectUrlChanged, this, [d](/*const QList<DUrl> &urlList*/){
-        DFileView *fv = dynamic_cast<DFileView*>(d->currentView);
+    QObject::connect(this, &DFileManagerWindow::selectUrlChanged, this, [d](/*const QList<DUrl> &urlList*/) {
+        DFileView *fv = dynamic_cast<DFileView *>(d->currentView);
         if (d->detailView && fv) {
-           d->detailView->setUrl(fv->selectedUrls().value(0, fv->rootUrl()));
-           if (fv->selectedIndexCount()==0)
-               d->detailView->setTagWidgetVisible(false);
+            d->detailView->setUrl(fv->selectedUrls().value(0, fv->rootUrl()));
+            if (fv->selectedIndexCount() == 0)
+                d->detailView->setTagWidgetVisible(false);
         }
     });
 }
@@ -1374,6 +1372,10 @@ void DFileManagerWindow::initRenameBarState()
     if (DFileManagerWindow::flagForNewWindowFromTab.compare_exchange_strong(expected, false, std::memory_order_seq_cst)) {
 
         if (static_cast<bool>(DFileManagerWindow::renameBarState) == true) { //###: when we drag a tab to create a new window, but the RenameBar is showing in last window.
+            //多标签情况下，renamebar可能存在隐藏的情况，在新窗口中打开目录会出现renamebar指针失效的问题
+            //这种情况下需要跳过loadState
+            if (!d->renameBar || !d->renameBar->isVisible())
+                return;
             d->renameBar->loadState(DFileManagerWindow::renameBarState);
 
         } else { //###: when we drag a tab to create a new window, but the RenameBar is hiding.
@@ -1389,6 +1391,12 @@ void DFileManagerWindow::initRenameBarState()
 void DFileManagerWindow::requestToSelectUrls()
 {
     DFileManagerWindowPrivate *const d{ d_func() };
+
+    //多标签情况下，renamebar可能存在隐藏的情况，在新窗口中打开目录会出现renamebar指针失效的问题
+    //这种情况下需要跳过loadState
+    if (!d->renameBar || !d->renameBar->isVisible())
+        return;
+
     if (static_cast<bool>(DFileManagerWindow::renameBarState) == true) {
         d->renameBar->loadState(DFileManagerWindow::renameBarState);
 
