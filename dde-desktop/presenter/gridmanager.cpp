@@ -28,10 +28,15 @@ public:
         auto settings = Config::instance()->settings();
         settings->beginGroup(Config::groupGeneral);
         positionProfile = settings->value(Config::keyProfile).toString();
-        sortRole = settings->value(Config::keySortBy, DFileSystemModel::UnknowRole).toInt();
         autoArrange = settings->value(Config::keyAutoAlign).toBool();
         autoMerge = settings->value(Config::keyAutoMerge, false).toBool();
         settings->endGroup();
+
+        //只有刚安装电脑后第一次启动时
+        if(settings->allKeys().isEmpty())
+        {
+            sortRole = DFileSystemModel::UnknowRole;
+        }
 
         coordWidth = 0;
         coordHeight = 0;
@@ -96,7 +101,7 @@ public:
 
         //需求：按类型自动排序时，计算机和回收站始终排在最前面
         if ((modifyRortRole && sortRole == DFileSystemModel::FileMimeTypeRole)  //运行时修改排序规则后
-           || (!modifyRortRole && sortRole == DFileSystemModel::UnknowRole) )   //初始化时未读取到排序规则时
+           || (!modifyRortRole && sortRole == DFileSystemModel::UnknowRole) )   //初始化未读取到配置文件
         {
             QString dde_computer;
             QString dde_transh;
@@ -193,7 +198,7 @@ public:
             add(empty_pos, item);
         }
 
-        if (autoArrange || autoMerge) {
+        if (autoArrange || autoMerge || settings->allKeys().isEmpty()) {
             arrange();
         }
     }
