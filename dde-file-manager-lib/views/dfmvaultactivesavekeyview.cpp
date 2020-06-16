@@ -21,7 +21,6 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     // 标题名
     QLabel *pLabelTitle = new QLabel(tr("Recovery Key"), this);
     QFont font = pLabelTitle->font();
-    font.setBold(true);
     font.setPixelSize(18);
     pLabelTitle->setFont(font);
     pLabelTitle->setAlignment(Qt::AlignHCenter);

@@ -17,25 +17,3 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
-/*
- * Implementation of adaptor class AcessControlAdaptor
- */
-
-AcessControlAdaptor::AcessControlAdaptor(AcessControlManager *parent)
-    : QDBusAbstractAdaptor(parent)
-{
-    // constructor
-    setAutoRelaySignals(true);
-}
-
-AcessControlAdaptor::~AcessControlAdaptor()
-{
-    // destructor
-}
-
-bool AcessControlAdaptor::acquireFullAuthentication(const QString &userName, const QString &path)
-{
-    // handle method call com.deepin.filemanager.daemon.AcessControlManager.acquireFullAuthentication
-    return parent()->acquireFullAuthentication(userName, path);
-}
-

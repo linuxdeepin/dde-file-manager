@@ -411,22 +411,46 @@ void DFileDialog::selectNameFilterByIndex(int index)
         QString fileName = statusBar()->lineEdit()->text();
         const QString fileNameExtension = db.suffixForFileName(fileName);
 
-        for (const QString &filter : newNameFilters) {
-            newNameFilterExtension = db.suffixForFileName(filter);
+        for (const QString &filter : newNameFilters) { //从扩展名列表中轮询，目前发现的应用程序传入扩展名列表均只有一个
+            newNameFilterExtension = db.suffixForFileName(filter); //在QMimeDataBase里面查询扩展名是否存在（不能查询正则表达式）
+            if (newNameFilterExtension.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
+                QRegExp  regExp(filter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
+                qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << filter;
+                for (QMimeType m: db.allMimeTypes()) {
+                    for(QString suffixe: m.suffixes()) {
+                        if (regExp.exactMatch(suffixe)) {
+                            newNameFilterExtension = suffixe;
+                            qDebug() << "正则表达式查询到扩展名" << suffixe;
+                            break; //查询到后跳出循环
+                        }
+                    }
+                    if (!newNameFilterExtension.isEmpty()) {
+                        break; //查询到后跳出循环
+                    }
+                }
+            }
+
+            if (newNameFilterExtension.isEmpty()) {
+                qDebug() << "未查询到扩展名";
+            }
 
             QRegExp  re(newNameFilterExtension, Qt::CaseInsensitive, QRegExp::Wildcard);
 
-            if (re.exactMatch(fileNameExtension)) {
-                return getFileView()->setNameFilters(newNameFilters);
+            if (re.exactMatch(fileNameExtension)) { //原扩展名与新扩展名不匹配？
+                qDebug() << "设置新的过滤规则" << newNameFilters;
+                return getFileView()->setNameFilters(newNameFilters); //这里传递回去的有可能是一个正则表达式，它决定哪些文件不被置灰
             }
         }
-
-        newNameFilterExtension = db.suffixForFileName(newNameFilters.at(0));
+//        下面这部分内容似乎没有必要，因为上面已经查询到了第一个符合QMimeDataBase记录的扩展名
+//        newNameFilterExtension = db.suffixForFileName(newNameFilters.at(0));
 
         if (!fileNameExtension.isEmpty() && !newNameFilterExtension.isEmpty()) {
             const int fileNameExtensionLength = fileNameExtension.count();
             fileName.replace(fileName.count() - fileNameExtensionLength,
                              fileNameExtensionLength, newNameFilterExtension);
+            setCurrentInputName(fileName);
+        } else if (fileNameExtension.isEmpty() && !fileName.isEmpty() && !newNameFilterExtension.isEmpty()) {
+            fileName.append('.' + newNameFilterExtension);
             setCurrentInputName(fileName);
         }
     }
@@ -434,7 +458,7 @@ void DFileDialog::selectNameFilterByIndex(int index)
     // when d->fileMode == QFileDialog::DirectoryOnly or d->fileMode == QFileDialog::Directory
     // we use setNameFilters("/") to filter files (can't select file, select dir is ok)
     if ((d->fileMode == QFileDialog::DirectoryOnly ||
-            d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters) {
+            d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters) { //是目录？
         newNameFilters = QStringList("/");
     }
 
@@ -1168,10 +1192,50 @@ void DFileDialog::onAcceptButtonClicked()
             return;
         }
 
-        QString file_name = statusBar()->lineEdit()->text();
-        if (!d->nameFilters.isEmpty() &&
-                (file_name.right(d->nameFilters.at(0).length() - 1) != d->nameFilters.at(0).mid(1))) { //判断文件名是否含有后缀，若无，加上
-            file_name.append(d->nameFilters.at(0).mid(1));
+        QString file_name = statusBar()->lineEdit()->text(); //文件名
+        bool suffixCheck = false; //后缀名检测
+        QStringList nameFilters = d->nameFilters;//当前所有后缀列表
+        qDebug() << "后缀名列表" << nameFilters;
+        for (QString nameFilterList: nameFilters) {
+            for (QString nameFilter: QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) { //清理掉多余的信息
+                QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
+                qDebug() << "检测后缀名" << nameFilter;
+                if (re.exactMatch(file_name)) {
+                    suffixCheck = true;
+                    break;
+                };
+            }
+            if (suffixCheck) {
+                break;
+            }
+        }
+        //无符合扩展名，补扩展名
+        if (!suffixCheck) { //文件名、扩展名匹配？
+            QMimeDatabase mdb;
+            QString nameFilter = modelCurrentNameFilter(); //当前设置扩展名
+            QString suffix = mdb.suffixForFileName(nameFilter);
+            if (suffix.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
+                QRegExp  regExp(nameFilter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
+                qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << nameFilter;
+                for (QMimeType m: mdb.allMimeTypes()) {
+                    for(QString suffixe: m.suffixes()) {
+                        if (regExp.exactMatch(suffixe)) {
+                            suffix = suffixe;
+                            qDebug() << "正则表达式查询到扩展名" << suffixe;
+                            break; //查询到后跳出循环
+                        }
+                    }
+                    if (!suffix.isEmpty()) {
+                        break; //查询到后跳出循环
+                    }
+                }
+            }
+            if (!suffix.isEmpty()) {
+                qDebug() << "扩展名补全" << suffix;
+                file_name.append('.' + suffix);
+                setCurrentInputName(file_name);
+            }
+            qDebug() << file_name;
         }
 
         if (!file_name.isEmpty()) {
