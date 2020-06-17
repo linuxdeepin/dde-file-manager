@@ -22,6 +22,7 @@
 #include "controllers/vaultcontroller.h"
 #include "vault/vaultlockmanager.h"
 #include "dfilesystemmodel.h"
+#include "app/define.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -39,7 +40,6 @@ DWIDGET_USE_NAMESPACE
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
-    connect(VaultController::getVaultController(), &VaultController::signalLockVault, this, &DFMVaultFileView::lockVault);
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
@@ -56,21 +56,19 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
             }
             case VaultController::NotExisted:{
                 //! 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
-                DFMVaultActiveView::getInstance().setWndPtr(wndPtr);
-                DFMVaultActiveView::getInstance().showTop();
+                DFMVaultActiveView::getInstance()->setWndPtr(wndPtr);
+                DFMVaultActiveView::getInstance()->showTop();
                 break;
             }
             case VaultController::Encrypted:{
 
             if (url.host() == "certificate") {
                 DFMVaultRecoveryKeyPages::instance()->setWndPtr(wndPtr);
-                DFMVaultRecoveryKeyPages::instance()->show();
-                DFMVaultRecoveryKeyPages::instance()->raise();
+                DFMVaultRecoveryKeyPages::instance()->showTop();
             } else {
                 //! 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
                 DFMVaultUnlockPages::instance()->setWndPtr(wndPtr);
-                DFMVaultUnlockPages::instance()->show();
-                DFMVaultUnlockPages::instance()->raise();
+                DFMVaultUnlockPages::instance()->showTop();
             }
             break;
             }
@@ -107,13 +105,4 @@ bool DFMVaultFileView::eventFilter(QObject *obj, QEvent *event)
     }
 
     return DFileView::eventFilter(obj, event);
-}
-
-void DFMVaultFileView::lockVault(int state)
-{
-    if(state == 0)
-    {
-        DUrl url(COMPUTER_ROOT);
-        cd(url);
-    }
 }

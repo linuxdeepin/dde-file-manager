@@ -1,8 +1,7 @@
 #ifndef DFMVAULTREMOVEPAGES_H
 #define DFMVAULTREMOVEPAGES_H
 
-#include <dtkwidget_global.h>
-#include <DDialog>
+#include "dfmvaultpagebase.h"
 
 class QStackedWidget;
 
@@ -15,16 +14,12 @@ class DLabel;
 DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
-class DFMVaultRemovePages : public DDialog
+class DFMVaultRemovePages : public DFMVaultPageBase
 {
-    Q_OBJECT
 public:   
     static DFMVaultRemovePages* instance();
 
-    void setWndPtr(QWidget *wnd);
-    QWidget *getWndPtr() const;
-
-    void showTop();
+    void showTop() override;
 
 public slots:
     void onButtonClicked(int index);
@@ -45,6 +40,7 @@ private:
     void setInfo(const QString &info);
 
     void closeEvent(QCloseEvent *event) override;
+
 private:
     DFMVaultRemoveByPasswordView *m_passwordView {nullptr};
     DFMVaultRemoveByRecoverykeyView *m_recoverykeyView {nullptr};
@@ -52,8 +48,6 @@ private:
 
     QStackedWidget * m_stackedWidget {nullptr};   //用于页面切换
     bool m_bRemoveVault = false;
-
-    QWidget *m_wndptr = nullptr;
 
     QLabel              *m_pInfo;
 };

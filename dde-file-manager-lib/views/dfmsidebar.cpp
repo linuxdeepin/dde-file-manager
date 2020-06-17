@@ -31,10 +31,6 @@
 #include "dfmsidebarmanager.h"
 #include "interfaces/dfmsidebariteminterface.h"
 #include "views/dfmsidebarview.h"
-#include "views/dfmvaultremovepages.h"
-#include "views/dfmvaultunlockpages.h"
-#include "views/dfmvaultrecoverykeypages.h"
-#include "views/dfmvaultactiveview.h"
 #include "models/dfmsidebarmodel.h"
 #include "dfmsidebaritemdelegate.h"
 #include "dfmsidebaritem.h"
@@ -451,44 +447,6 @@ void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
     }
 }
 
-void DFMSideBar::onUnlockVault()
-{
-    QWidget *wndPtr = DFMVaultUnlockPages::instance()->getWndPtr();
-
-    if (wndPtr == this->topLevelWidget()) {
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
-    }
-}
-
-void DFMSideBar::onCreateVault()
-{
-    QWidget *wndPtr = DFMVaultActiveView::getInstance().getWndPtr();
-
-    if (wndPtr == this->topLevelWidget()) {
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
-    }
-}
-
-void DFMSideBar::onRecoverVault()
-{
-    QWidget *wndPtr = DFMVaultRecoveryKeyPages::instance()->getWndPtr();
-
-    if (wndPtr == this->topLevelWidget()) {
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
-    }
-}
-
-void DFMSideBar::onRemoveVault()
-{
-    QWidget *wndPtr = DFMVaultRemovePages::instance()->getWndPtr();
-    if (wndPtr == this->topLevelWidget()) {
-        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())));
-    }
-}
-
 void DFMSideBar::initUI()
 {
     // init layout.
@@ -580,7 +538,6 @@ void DFMSideBar::initConnection()
     initBookmarkConnection();
     initDeviceConnection();
     initTagsConnection();
-    initVaultConnection();
 }
 
 void DFMSideBar::initUserShareItem()
@@ -811,17 +768,6 @@ void DFMSideBar::initTagsConnection()
     //        DFMSideBarItem *item = group->findItem(url);
     //        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
     //    });
-}
-
-void DFMSideBar::initVaultConnection()
-{
-    connect(DFMVaultRemovePages::instance(), &DFMVaultRemovePages::accepted, this, &DFMSideBar::onRemoveVault);
-
-    connect(DFMVaultUnlockPages::instance(), &DFMVaultUnlockPages::accepted, this, &DFMSideBar::onUnlockVault);
-
-    connect(DFMVaultRecoveryKeyPages::instance(), &DFMVaultRecoveryKeyPages::accepted, this, &DFMSideBar::onRecoverVault);
-
-    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, this, &DFMSideBar::onCreateVault);
 }
 
 void DFMSideBar::applySidebarColor()
