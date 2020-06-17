@@ -719,7 +719,7 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
     }
 }
 
-bool VaultController::isRootDirectory(QString path) const
+bool VaultController::isRootDirectory(QString path)
 {
     bool bRootDir = false;
     QString localFilePath = makeVaultLocalPath();

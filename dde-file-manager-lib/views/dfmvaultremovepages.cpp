@@ -55,6 +55,8 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     mainFrame->setLayout(mainLayout);
     addContent(mainFrame);
 
+    showVerifyWidget();
+
     // 防止点击按钮隐藏界面
     setOnButtonClickedClose(false);
 
@@ -78,7 +80,7 @@ void DFMVaultRemovePages::showVerifyWidget()
     QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Remove")});
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
-    addButton(buttonTexts[2], true);
+    addButton(buttonTexts[2], true, DDialog::ButtonWarning);
     setDefaultButton(2);
     m_stackedWidget->setCurrentIndex(0);
 
@@ -99,7 +101,7 @@ void DFMVaultRemovePages::showRemoveWidget()
 
     setCloseButtonVisible(false);
     clearButtons();
-    addButton(tr("Ok"), true, ButtonType::ButtonNormal);
+    addButton(tr("Ok"), true, ButtonType::ButtonRecommend);
     getButton(0)->setEnabled(false);
     m_stackedWidget->setCurrentIndex(2);
 }
@@ -116,8 +118,9 @@ void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
     m_recoverykeyView->clear();
     m_progressView->clear();
     m_bRemoveVault = false;
+    showVerifyWidget();
 
-    event->accept();
+    DDialog::closeEvent(event);
 }
 
 DFMVaultRemovePages *DFMVaultRemovePages::instance()
@@ -127,9 +130,8 @@ DFMVaultRemovePages *DFMVaultRemovePages::instance()
 }
 
 void DFMVaultRemovePages::showTop()
-{
-    showVerifyWidget();
-
+{    
+    activateWindow();
     show();
     raise();
 }
