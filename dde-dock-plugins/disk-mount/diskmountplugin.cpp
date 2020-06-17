@@ -36,6 +36,7 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
     : QObject(parent),
 
       m_pluginAdded(false),
+      m_pluginLoaded(false),
 
       m_tipsLabel(new TipsWidget),
       m_diskPluginItem(new DiskPluginItem),
@@ -56,13 +57,20 @@ const QString DiskMountPlugin::pluginName() const
 
 void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
 {
-    // blumia: we are using i10n translation from DFM so...	    qApp->loadTranslator();
+    // blumia: we are using i10n translation from DFM so...     qApp->loadTranslator();
     QString applicationName = qApp->applicationName();
     qApp->setApplicationName("dde-disk-mount-plugin");
     qDebug() << qApp->loadTranslator();
     qApp->setApplicationName(applicationName);
     qDebug() << "===============init==proxyInter===========";
     m_proxyInter = proxyInter;
+
+    if (m_pluginLoaded) {
+        qDebug() << "disk mount plugin has been loaded! return";
+        return;
+    }
+
+    m_pluginLoaded = true;
 
     initCompoments();
     m_diskPluginItem->setDockDisplayMode(displayMode());

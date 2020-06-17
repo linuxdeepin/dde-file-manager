@@ -67,6 +67,7 @@
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
 
+#include <QApplication>
 #include <DFileDragClient>
 #include <DAnchors>
 #include <QUrlQuery>
@@ -176,8 +177,6 @@ public:
     int touchTapDistance = -1;
 
     int showCount = 0;  //记录showEvent次数，为了在第一次时去调整列表模式的表头宽度
-    // u盘访问控制
-    AcessControlInterface *m_acessControlInterface = nullptr;
 
     Q_DECLARE_PUBLIC(DFileView)
 };
@@ -199,11 +198,6 @@ DFileView::DFileView(QWidget *parent)
 #else
     d_ptr->touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 #endif
-
-    d->m_acessControlInterface = new AcessControlInterface("com.deepin.filemanager.daemon",
-                                                           "/com/deepin/filemanager/daemon/AcessControlManager",
-                                                           QDBusConnection::systemBus(),
-                                                           this);
 
     initUI();
     initModel();
@@ -1243,8 +1237,8 @@ void DFileView::updateModelActiveIndex()
     DAbstractFileWatcher *fileWatcher = model()->fileWatcher();
 
     //fix 31327， 监控./.hidden文件更改
-    connect(fileWatcher, &DAbstractFileWatcher::fileModified, this, [this](const DUrl &url){
-        if (url.fileName() == ".hidden" && !(model()->filters() & QDir::Hidden)){
+    connect(fileWatcher, &DAbstractFileWatcher::fileModified, this, [this](const DUrl & url) {
+        if (url.fileName() == ".hidden" && !(model()->filters() & QDir::Hidden)) {
             model()->refresh();
         }
     });
@@ -1926,11 +1920,10 @@ bool DFileView::event(QEvent *e)
                 return DListView::event(e);
             e->accept();
 
-            if (keyEvent->modifiers() == Qt::ShiftModifier){
+            if (keyEvent->modifiers() == Qt::ShiftModifier) {
                 QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier);
                 keyPressEvent(&nkeyEvent);
-            }
-            else {
+            } else {
                 QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier);
                 keyPressEvent(&nkeyEvent);
             }
@@ -2240,7 +2233,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
         //getOpticalDriveMutex()->unlock();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-        CdStatusInfo* pCdStatusInfo = &DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag]; // bug fix 31427:挂载光驱，切换多个用户，文件管理器卡死:多用户情况下 授权框是 串行资源，必须做执行才能继续后续操作，不能神操作，否则就卡，这是 linux 的安全策略
+        CdStatusInfo *pCdStatusInfo = &DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag]; // bug fix 31427:挂载光驱，切换多个用户，文件管理器卡死:多用户情况下 授权框是 串行资源，必须做执行才能继续后续操作，不能神操作，否则就卡，这是 linux 的安全策略
 
         if (!dp.devid.length()) {
             //QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
@@ -2249,7 +2242,8 @@ bool DFileView::setRootUrl(const DUrl &url)
             QSharedPointer<QFutureWatcher<bool>> fw(new QFutureWatcher<bool>);
             connect(fw.data(), &QFutureWatcher<bool>::finished, this, [ = ] {
                 //QGuiApplication::restoreOverrideCursor();
-                if(!pCdStatusInfo->bProcessLocked){
+                if (!pCdStatusInfo->bProcessLocked)
+                {
                     DFileService::instance()->setCursorBusyState(false);
                     //QGuiApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // bug 31318， 应该直接使用ArrowCursor，否则多个弹窗的情况下，鼠标要出问题
                 }
@@ -2260,7 +2254,7 @@ bool DFileView::setRootUrl(const DUrl &url)
                 }
             });
             fw->setFuture(QtConcurrent::run([ = ] {
-                if(pCdStatusInfo->bProcessLocked)
+                if (pCdStatusInfo->bProcessLocked)
                     return false;
                 pCdStatusInfo->bProcessLocked = true;
 
@@ -2272,7 +2266,8 @@ bool DFileView::setRootUrl(const DUrl &url)
                 // fix bug 27211 用户操作其他用户挂载的设备的时候，需要先卸载，卸载得提权，如果用户直接关闭了对话框，会返回错误代码 QDbusError::Other
                 // 需要对错误进行处理，出错的时候就不再执行后续操作了。
                 QDBusError err = blkdev->lastError();
-                if (err.isValid() && !err.name().toLower().contains("notmounted")) { // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
+                if (err.isValid() && !err.name().toLower().contains("notmounted"))   // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
+                {
 
                     qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
                     return false;
@@ -2328,7 +2323,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(this, rootUrl)) {
         QList<DUrl> ancestors;
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl,false)) {
+        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl, false)) {
             if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
                 d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl);
             }
@@ -2696,9 +2691,10 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
 
     fileViewHelper()->handleMenu(menu);
-
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<DFileView> me = this;
     menu->exec();
-    menu->deleteLater(this);
+    menu->deleteLater(me);
 }
 
 
@@ -2738,6 +2734,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         }
     }
 
+    // 在上一个菜单没有结束前，拒绝下一个菜单
     static bool lock = false;
     if (lock) {
         qDebug() << "reject show menu";
@@ -2754,9 +2751,13 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
 
     fileViewHelper()->handleMenu(menu);
-
+    // 若此处使用this，那么当切换到其台view时，当前view释放，会造成野指针引起崩溃
+    // 因此使用当前的 activewindow，确保当前窗口下工作时切换到其他view不受影响
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+    //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<QWidget> window = qApp->activeWindow();
     menu->exec();
-    menu->deleteLater(this);
+    menu->deleteLater(window);
     lock = false;
 }
 
@@ -2894,7 +2895,10 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
         const QList<int> &childRoles = fileInfo->userColumnChildRoles(column);
 
         if (childRoles.isEmpty()) {
-            menu->deleteLater(this);
+            //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+            //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+            QPointer<DFileView> me = this;
+            menu->deleteLater(me);
 
             return;
         }
@@ -2921,7 +2925,7 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
                 }
             }
 
-            connect(action, &QAction::triggered, this, [this, action, column, i, d, childRoles] {
+            connect(action, &QAction::triggered, this, [this, i, childRoles] {
                 if (i % 2 == 0)
                 {
                     sortByRole(childRoles.at(i / 2), Qt::AscendingOrder);
@@ -2952,9 +2956,11 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
             menu->addAction(action);
         }
     }
-
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+    //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<DFileView> me = this;
     menu->exec(QCursor::pos());
-    menu->deleteLater(this);
+    menu->deleteLater(me);
 }
 
 void DFileView::onModelStateChanged(int state)
@@ -3084,7 +3090,7 @@ bool DFileView::fetchDragEventUrlsFromSharedMemory()
 
     sm.lock();
     //用缓冲区得到共享内存关联后得到的数据和数据大小
-    buffer.setData((char *)sm.constData(), sm.size());
+    buffer.setData(static_cast<char *>(const_cast<void *>(sm.constData())), sm.size());
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
     in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
     qDebug() << m_urlsForDragEvent;

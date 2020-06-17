@@ -67,8 +67,8 @@ public:
                    QReadWriteLock *lock = nullptr)
         : fileInfo(info)
         , parent(parent)
-        , m_dFileSystemModel(dFileSystemModel)
         , rwLock(lock)
+        , m_dFileSystemModel(dFileSystemModel)
     {
     }
 
@@ -930,6 +930,7 @@ public:
 
     /// add/rm file event
     void _q_processFileEvent();
+    bool checkFileEventQueue();
 
     DFileSystemModel *q_ptr;
 
@@ -1083,7 +1084,7 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
         flf.remove(fileUrl.fileName());
         flf.save();
     }
-    qDebug() << fileUrl;
+
     mutex.lock();
     fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
     mutex.unlock();
@@ -1173,6 +1174,9 @@ void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 
 void DFileSystemModelPrivate::_q_processFileEvent()
 {
+    Q_Q(DFileSystemModel);
+    //处理异步正在执行此函数，但是当前类释放了
+    QPointer<DFileSystemModel> me = q;
     if (_q_processFileEvent_runing.load()) {
         return;
     }
@@ -1180,16 +1184,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
     bool expect = false;
     _q_processFileEvent_runing.compare_exchange_strong(expect, true);
 
-    qDebug() << "_q_processFileEvent";
-    Q_Q(DFileSystemModel);
-
-    mutex.lock();
-    bool isemptyqueue = fileEventQueue.isEmpty();
-    if (isemptyqueue) {
-        _q_processFileEvent_runing.store(false);
-    }
-    mutex.unlock();
-    while (!isemptyqueue) {
+    while (checkFileEventQueue()) {
         mutex.lock();
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         mutex.unlock();
@@ -1197,18 +1192,11 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
 
         if (!info) {
-            mutex.lock();
-            isemptyqueue = fileEventQueue.isEmpty();
-            if (isemptyqueue) {
-                _q_processFileEvent_runing.store(false);
-            }
-            mutex.unlock();
             continue;
         }
 
         const DUrl &rootUrl = q->rootUrl();
         const DAbstractFileInfoPointer rootinfo = fileService->createFileInfo(q, rootUrl);
-
         DUrl nparentUrl(info->parentUrl());
         DUrl nfileUrl(fileUrl);
 
@@ -1221,35 +1209,19 @@ void DFileSystemModelPrivate::_q_processFileEvent()
                 nparentUrl.setPath(nparentUrl.path() + "/");
             }
         }
-
         if (nfileUrl == rootUrl) {
             if (event.first == RmFile) {
                 emit q->rootUrlDeleted(rootUrl);
             }
             // It must be refreshed when the root url itself is deleted or newly created
             q->refresh();
-            mutex.lock();
-            isemptyqueue = fileEventQueue.isEmpty();
-            if (isemptyqueue) {
-                _q_processFileEvent_runing.store(false);
-            }
-            mutex.unlock();
             continue;
         }
-
         if (nparentUrl != rootUrl) {
-            mutex.lock();
-            isemptyqueue = fileEventQueue.isEmpty();
-            if (isemptyqueue) {
-                _q_processFileEvent_runing.store(false);
-            }
-            mutex.unlock();
             continue;
         }
-
         // Will refreshing the file info meta data
         info->refresh();
-
         if (event.first == AddFile) {
             q->addFile(info);
             q->selectAndRenameFile(fileUrl);
@@ -1257,15 +1229,10 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->update();//解决文管多窗口的状态下，删除文件的时候系统崩溃的问题
             q->remove(fileUrl);
         }
-
-        mutex.lock();
-        isemptyqueue = fileEventQueue.isEmpty();
-        if (isemptyqueue) {
-            _q_processFileEvent_runing.store(false);
+        if (!me) {
+            break;
         }
-        mutex.unlock();
     }
-    qDebug() << "_q_processFileEvent    end";
     _q_processFileEvent_runing.store(false);
 //    if( !laterFileEventQueue.isEmpty()) { //解决最后一个队列没有被处理导致文管不能正确显示文件列表的问题 fix 29294 【字体管理器】【5.6.4】【修改引入】安装字体后，文管中没有显示
 //        DUrl url;
@@ -1275,7 +1242,15 @@ void DFileSystemModelPrivate::_q_processFileEvent()
 //        else if (laterFileEventQueue.last().first == RmFile) {
 //            _q_onFileDeleted(url);
 //        }
-//    }
+    //    }
+}
+
+bool DFileSystemModelPrivate::checkFileEventQueue()
+{
+    mutex.lock();
+    bool isemptyqueue = fileEventQueue.isEmpty();
+    mutex.unlock();
+    return !isemptyqueue;
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
@@ -1290,6 +1265,7 @@ DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
 
 DFileSystemModel::~DFileSystemModel()
 {
+
     Q_D(DFileSystemModel);
 
     isNeedToBreakBusyCase = true; // 清场的时候，必须让其他资源线程跳出相关流程
@@ -1298,6 +1274,9 @@ DFileSystemModel::~DFileSystemModel()
         delete m_smForDragEvent;
         m_smForDragEvent = nullptr;
     }
+
+    //fix bug 33014
+    releaseJobController();
 
     if (d->jobController) {
         d->jobController->stopAndDeleteLater();
@@ -1677,40 +1656,46 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    if (d->jobController) {
-        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
-        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
-        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
-
-        if (d->jobController->isFinished()) {
-            d->jobController->deleteLater();
-        } else {
-            QEventLoop eventLoop;
-            QPointer<DFileSystemModel> me = this;
-            d->eventLoop = &eventLoop;
-
-            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
-
-            d->jobController->stopAndDeleteLater();
-
-            int code = eventLoop.exec();
-
-            d->eventLoop = Q_NULLPTR;
-
-            if (code != 0) {
-                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
-                    d->jobController->terminate();
-                    d->jobController->quit();
-                    d->jobController.clear();
-                }
-                return;
-            }
-
-            if (!me) {
-                return;
-            }
-        }
+    //
+    if (!releaseJobController()) {
+        return;
     }
+//    if (d->jobController) {
+//        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+//        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+//        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
+
+//        if (d->jobController->isFinished()) {
+//            d->jobController->deleteLater();
+//        } else {
+//            QEventLoop eventLoop;
+//            QPointer<DFileSystemModel> me = this;
+//            d->eventLoop = &eventLoop;
+
+//            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+
+//            d->jobController->stopAndDeleteLater();
+
+//            int code = eventLoop.exec();
+
+//            d->eventLoop = Q_NULLPTR;
+
+//            if (code != 0) {
+//                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+//                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+//                    //此时d->jobController有可能已经在析构了，不能调用terminate
+////                    d->jobController->terminate();
+//                    d->jobController->quit();
+//                    d->jobController.clear();
+//                }
+//                return;
+//            }
+
+//            if (!me) {
+//                return;
+//            }
+//        }
+//    }
 
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
 
@@ -1740,6 +1725,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     setState(Busy);
 
     d->childrenUpdated = false;
+    //
     d->jobController->start();
     d->rootNodeManager->setEnable(true);
 }
@@ -3146,6 +3132,50 @@ void DFileSystemModel::endRemoveRows()
 
     d->beginRemoveRowsFlag = false;
     QAbstractItemModel::endRemoveRows();
+}
+//fix bug 33014,在文件或者文件很多时，切换到computer时DFileSystemModel已释放但是d->jobController未释放，发送更新消息就崩溃，在DFileSystemModel析构时释放d->jobController
+bool DFileSystemModel::releaseJobController()
+{
+    Q_D(DFileSystemModel);
+
+    if (d->jobController) {
+        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
+
+        if (d->jobController->isFinished()) {
+            d->jobController->deleteLater();
+        } else {
+            QEventLoop eventLoop;
+            QPointer<DFileSystemModel> me = this;
+            d->eventLoop = &eventLoop;
+
+            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+
+            d->jobController->stopAndDeleteLater();
+
+            int code = eventLoop.exec();
+
+            d->eventLoop = Q_NULLPTR;
+
+            if (code != 0) {
+                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+                    //此时d->jobController有可能已经在析构了，不能调用terminate
+//                    d->jobController->terminate();
+                    d->jobController->quit();
+                    d->jobController.clear();
+                    d->jobController->stopAndDeleteLater();
+                }
+                return false;
+            }
+
+            if (!me) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 #include "moc_dfilesystemmodel.cpp"

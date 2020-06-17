@@ -407,10 +407,14 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
                 for (QAction *act: menu->actions())
                     act->setEnabled(false);
             }
-            DFileMenu *fmenu = static_cast<DFileMenu *>(menu);
+            DFileMenu *fmenu = qobject_cast<DFileMenu *>(menu);
             DFileService::instance()->setCursorBusyState(false);
             if (fmenu) {
+                //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+                //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+                QPointer<DFMSideBar> me = this;
                 fmenu->exec(this->mapToGlobal(pos));
+                fmenu->deleteLater(me);
             }
             else {
                 menu->exec(this->mapToGlobal(pos));

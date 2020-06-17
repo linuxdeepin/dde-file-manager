@@ -86,6 +86,7 @@ public:
     bool bstartonce = false;
     bool m_bcursorbusy = false;
     bool m_bonline = false;
+    bool m_bdoingcleartrash = false;
     JobController *m_jobcontroller = nullptr;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
@@ -273,8 +274,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                             emit fileDeleted(url);
                         }
                     }
-
                 }
+
                 if (lock) {
                     result = CALL_CONTROLLER(deleteFiles);
                     if (result.toBool()) {
@@ -283,6 +284,13 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                         }
                     }
                 }
+                else {
+                    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+                    if (event->fileUrlList().count() == 1 && event->fileUrlList().first().toString().endsWith("trash:///")){
+                        setDoClearTrashState(false);
+                    }
+                }
+
                 break;
             } else {
                 continue;
@@ -1232,6 +1240,20 @@ bool DFileService::checkNetWorkToVistHost(const QString &host)
     eventLoop.exec();
 
     return bvisit;
+}
+
+bool DFileService::getDoClearTrashState() const
+{
+    Q_D(const DFileService);
+
+    return  d->m_bdoingcleartrash;
+}
+
+void DFileService::setDoClearTrashState(const bool bdoing)
+{
+    Q_D(DFileService);
+
+    d->m_bdoingcleartrash = bdoing;
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)

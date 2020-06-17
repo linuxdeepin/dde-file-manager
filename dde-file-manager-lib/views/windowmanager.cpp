@@ -313,6 +313,7 @@ void WindowManager::onLastActivedWindowClosed(quint64 winId)
 
     if (QWidget *window = getWindowById(winId))
         window->close();
-
-    qApp->quit();
+    //fix bug 32774 在复制大量文件时，用菜单的退出按钮，会造成这里qApp退出（等待拷贝线程），dfilesystemmodel中的addfile中qApp->processEvents
+    //上的while循环等待，卡死主进程，所以复制进度条也卡死
+//    qApp->quit();
 }
