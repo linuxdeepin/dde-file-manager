@@ -113,7 +113,17 @@ QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMSideBar *sidebar, con
 
     menu->addAction(QObject::tr("Properties"), [ = ]() {
         DUrlList list;
-        list.append(info->redirectedFileUrl());
+        //fix bug 33005 在是smb文件和ftp文件加标签后redirectedFileUrl取出的url对应不上，自己补齐
+        DUrl openurl = info->redirectedFileUrl();
+        QString strscheme = openurl.scheme();
+        if (strscheme == SMB_SCHEME || strscheme == FTP_SCHEME || strscheme == SFTP_SCHEME)
+        {
+            QString sharename = info->absolutePath().mid(info->absolutePath().lastIndexOf("=")+1)+"/";
+            QString localname = openurl.path().replace(sharename,"");
+            openurl = DUrl(info->absolutePath() + localname);
+            openurl.setScheme(FILE_SCHEME);
+        }
+        list.append(openurl);
         fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(nullptr, list));
     })->setEnabled(fileExist);
 

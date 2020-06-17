@@ -29,6 +29,12 @@
 
 class DFMRootFileInfoPrivate;
 
+typedef struct {
+    QString driver; //盘符
+    QString label;  //标签
+    QString uuid;   //id
+} DiskInfoStr;
+
 class DFMRootFileInfo : public DAbstractFileInfo
 {
 public:
@@ -94,6 +100,11 @@ public:
 private:
     QScopedPointer<DFMRootFileInfoPrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFMRootFileInfo)
+
+    /**
+     * @brief loadDiskInfo 加载盘符信息
+     */
+    void loadDiskInfo();
 };
 
 #endif // DFMROOTFILEINFO_H

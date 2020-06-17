@@ -12,18 +12,17 @@
 #include <QStackedWidget>
 #include <QAbstractButton>
 #include <QLabel>
-#include <DMessageBox>
 #include <QVBoxLayout>
 #include <DLabel>
 
 DWIDGET_USE_NAMESPACE
 
 DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
-    : DDialog (parent)
+    : DFMVaultPageBase(parent)
     , m_passwordView(new DFMVaultRemoveByPasswordView(this))
     , m_recoverykeyView(new DFMVaultRemoveByRecoverykeyView(this))
     , m_progressView(new DFMVaultRemoveProgressView(this))
-    , m_stackedWidget (new QStackedWidget(this))
+    , m_stackedWidget(new QStackedWidget(this))
 {
     setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
     this->setFixedSize(396, 248);
@@ -56,6 +55,8 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     mainFrame->setLayout(mainLayout);
     addContent(mainFrame);
 
+    showVerifyWidget();
+
     // 防止点击按钮隐藏界面
     setOnButtonClickedClose(false);
 
@@ -79,7 +80,7 @@ void DFMVaultRemovePages::showVerifyWidget()
     QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Remove")});
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
-    addButton(buttonTexts[2], true);
+    addButton(buttonTexts[2], true, DDialog::ButtonWarning);
     setDefaultButton(2);
     m_stackedWidget->setCurrentIndex(0);
 
@@ -100,7 +101,7 @@ void DFMVaultRemovePages::showRemoveWidget()
 
     setCloseButtonVisible(false);
     clearButtons();
-    addButton(tr("Ok"), true, ButtonType::ButtonNormal);
+    addButton(tr("Ok"), true, ButtonType::ButtonRecommend);
     getButton(0)->setEnabled(false);
     m_stackedWidget->setCurrentIndex(2);
 }
@@ -117,8 +118,9 @@ void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
     m_recoverykeyView->clear();
     m_progressView->clear();
     m_bRemoveVault = false;
+    showVerifyWidget();
 
-    event->accept();
+    DDialog::closeEvent(event);
 }
 
 DFMVaultRemovePages *DFMVaultRemovePages::instance()
@@ -127,20 +129,9 @@ DFMVaultRemovePages *DFMVaultRemovePages::instance()
     return &s_instance;
 }
 
-void DFMVaultRemovePages::setWndPtr(QWidget *wnd)
-{
-    m_wndptr = wnd;
-}
-
-QWidget *DFMVaultRemovePages::getWndPtr() const
-{
-    return m_wndptr;
-}
-
 void DFMVaultRemovePages::showTop()
-{
-    showVerifyWidget();
-
+{    
+    activateWindow();
     show();
     raise();
 }
@@ -210,7 +201,11 @@ void DFMVaultRemovePages::onLockVault(int state)
         }else{
             // error tips
             QString errMsg = tr("Remove File Vault failed.%1").arg(VaultController::getErrorInfo(state));
-            DMessageBox::information(this, tr("tips"), errMsg);
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(errMsg);
+            dialog.addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+            dialog.exec();
         }
         m_bRemoveVault = false;
     }

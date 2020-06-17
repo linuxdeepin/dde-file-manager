@@ -60,9 +60,9 @@ UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
     m_shareInfosChangedTimer = new QTimer(this);
     m_shareInfosChangedTimer->setSingleShot(true);
     m_shareInfosChangedTimer->setInterval(300);
-//    m_lazyStartSambaServiceTimer = new QTimer(this);
-//    m_lazyStartSambaServiceTimer->setSingleShot(true);
-//    m_lazyStartSambaServiceTimer->setInterval(3000);
+    //    m_lazyStartSambaServiceTimer = new QTimer(this);
+    //    m_lazyStartSambaServiceTimer->setSingleShot(true);
+    //    m_lazyStartSambaServiceTimer->setInterval(3000);
 
 
     m_userShareInterface = new UserShareInterface("com.deepin.filemanager.daemon",
@@ -72,7 +72,7 @@ UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
     initConnect();
     updateUserShareInfo();
     initMonitorPath();
-//    m_lazyStartSambaServiceTimer->start();
+    //    m_lazyStartSambaServiceTimer->start();
 
     connect(this, &UserShareManager::userShareAdded, this, &UserShareManager::updateFileAttributeInfo);
     connect(this, &UserShareManager::userShareDeleted, this, &UserShareManager::updateFileAttributeInfo);
@@ -100,7 +100,7 @@ void UserShareManager::initConnect()
         handleShareChanged(to);
     });
     connect(m_shareInfosChangedTimer, &QTimer::timeout, this, [this]() {emit updateUserShareInfo(true);});
-//    connect(m_lazyStartSambaServiceTimer, &QTimer::timeout, this, &UserShareManager::initSamaServiceSettings);
+    //    connect(m_lazyStartSambaServiceTimer, &QTimer::timeout, this, &UserShareManager::initSamaServiceSettings);
 }
 
 QString UserShareManager::getCacehPath()
@@ -209,23 +209,23 @@ QString UserShareManager::readCacheFromFile(const QString &path)
 
 QString UserShareManager::getCurrentUserName()
 {
-//    if(CurrentUser.isEmpty()){
-//        QProcess up;
-//        up.start("id",QStringList() << "-u" << "-n");
-//        up.waitForFinished();
-//        QByteArray data = up.readAll();
-//        QString userName = data.data();
-//        // throw out '\n' string
-//        CurrentUser = userName.trimmed();
-//    }
+    //    if(CurrentUser.isEmpty()){
+    //        QProcess up;
+    //        up.start("id",QStringList() << "-u" << "-n");
+    //        up.waitForFinished();
+    //        QByteArray data = up.readAll();
+    //        QString userName = data.data();
+    //        // throw out '\n' string
+    //        CurrentUser = userName.trimmed();
+    //    }
     CurrentUser = getpwuid(getuid())->pw_name; //getpwuid get password uid，pw_name password name，这个用来获取uid对应的用户名
     return CurrentUser;
 }
 
 void UserShareManager::initSamaServiceSettings()
 {
-//    addCurrentUserToSambashareGroup();
-//    restartSambaService();
+    //    addCurrentUserToSambashareGroup();
+    //    restartSambaService();
 }
 
 ShareInfoList UserShareManager::shareInfoList() const
@@ -437,29 +437,63 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
         // Wait for process to finish without timeout.
         process.waitForFinished(-1);
 
-        QString err = process.readAllStandardError();
+        if (process.exitCode() != 0) {
+            QString err = process.readAllStandardError();
 
-        if (err.contains("is already a valid system user name")) {
-            emit fileSignalManager->requestShowAddUserShareFailedDialog(_info.path());
-            return false;
-        }
-
-        //root权限文件分享会报这个错误信息
-        if (err.contains("as we are restricted to only sharing directories we own.")) {
-            DDialog dialog;
-
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-            dialog.setTitle(tr("To protect the files, you cannot share this folder."));
-            dialog.addButton(tr("OK"), true);
-
-            if (dialog.exec() == DDialog::Accepted) {
+            if (err.contains("is already a valid system user name")) {
+                emit fileSignalManager->requestShowAddUserShareFailedDialog(_info.path());
                 return false;
             }
 
-            return false;
-        }
+            //root权限文件分享会报这个错误信息
+            if (err.contains("as we are restricted to only sharing directories we own.")) {
+                DDialog dialog;
 
-        if (process.exitCode() != 0) {
+                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+                dialog.setTitle(tr("To protect the files, you cannot share this folder."));
+                dialog.addButton(tr("OK"), true);
+
+                if (dialog.exec() == DDialog::Accepted) {
+                    return false;
+                }
+
+                return false;
+            }
+
+            // 共享文件的共享名输入特殊字符会报这个错误信息
+            if (err.contains("contains invalid characters")){
+                DDialog dialog;
+                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+                QFontMetrics fontMetrics(dialog.font());
+                QString shareName= fontMetrics.elidedText(_info.shareName(), Qt::ElideMiddle, 150);
+                dialog.setTitle(tr("Share name %1 contains invalid characters (any of %<>*?|/\\+=;:\",)").arg(shareName));
+                dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+
+                if (dialog.exec() == DDialog::Accepted) {
+                    return false;
+                }
+
+                return false;
+            }
+
+            // net usershare add: failed to add share sharename. Error was 文件名过长
+            // 共享文件的共享名太长，会报上面这个错误信息，最后居然还是中文
+            QString strErr = "net usershare add: failed to add share %1. Error was";
+            if (err.contains(strErr.arg(_info.shareName()))){
+                DDialog dialog;
+                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+                QFontMetrics fontMetrics(dialog.font());
+                QString shareName= fontMetrics.elidedText(_info.shareName(), Qt::ElideMiddle, 150);
+                dialog.setTitle(tr("Failed to add share %1. The share name is too long.").arg(shareName));
+                dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+
+                if (dialog.exec() == DDialog::Accepted) {
+                    return false;
+                }
+
+                return false;
+            }
+
             qWarning() << err << "err code = " << QString::number(process.exitCode());
             dialogManager->showErrorDialog(QString(), err);
             return false;

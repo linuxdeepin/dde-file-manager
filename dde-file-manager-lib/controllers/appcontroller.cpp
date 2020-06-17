@@ -114,12 +114,12 @@ template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
 const char *empty_recent_file =
-    R"|(<?xml version="1.0" encoding="UTF-8"?>
-<xbel version="1.0"
-      xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
-      xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
->
-</xbel>)|";
+        R"|(<?xml version="1.0" encoding="UTF-8"?>
+        <xbel version="1.0"
+        xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
+        xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
+        >
+        </xbel>)|";
 
 QPair<DUrl, quint64> AppController::selectionAndRenameFile;
 QPair<DUrl, quint64> AppController::selectionFile;
@@ -139,7 +139,7 @@ AppController *AppController::instance()
 void AppController::registerUrlHandle()
 {
     DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
-//    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
+    //    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
     DFileService::setFileUrlHandler(TRASH_SCHEME, "", new TrashManager());
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
@@ -1199,7 +1199,7 @@ void AppController::actionSetLabel(const DFMEvent &event)
 {
     if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
-//        auto_operation(const_cast<char*>(path.c_str()), "020100");
+        //        auto_operation(const_cast<char*>(path.c_str()), "020100");
         FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "020100");
         qDebug() << "020100" << "set label";
     }
@@ -1209,7 +1209,7 @@ void AppController::actionViewLabel(const DFMEvent &event)
 {
     if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
-//        auto_operation(const_cast<char*>(path.c_str()), "010101");
+        //        auto_operation(const_cast<char*>(path.c_str()), "010101");
         FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "010101");
         qDebug() << "010101" << "view label";
     }
@@ -1219,7 +1219,7 @@ void AppController::actionEditLabel(const DFMEvent &event)
 {
     if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
-//        auto_operation(const_cast<char*>(path.c_str()), "010201");
+        //        auto_operation(const_cast<char*>(path.c_str()), "010201");
         FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "010201");
         qDebug() << "010201" << "edit label";
     }
@@ -1229,7 +1229,7 @@ void AppController::actionPrivateFileToPublic(const DFMEvent &event)
 {
     if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
-//        auto_operation(const_cast<char*>(path.c_str()), "010501");
+        //        auto_operation(const_cast<char*>(path.c_str()), "010501");
         FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "010501");
         qDebug() << "010501" << "private file to public";
     }
@@ -1275,7 +1275,7 @@ QString AppController::createFile(const QString &sourceFile, const QString &targ
     }
 
     const QString &targetFile = FileUtils::newDocmentName(targetDir, baseFileName, info.suffix());
-//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
+    //    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
 
     if (DFileService::instance()->touchFile(WindowManager::getWindowById(windowId), DUrl::fromLocalFile(targetFile))) {
         QFile target(targetFile);

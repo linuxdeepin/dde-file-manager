@@ -2020,7 +2020,7 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1563"/>
         <source>No key available to unlock device</source>
-        <translation type="unfinished"></translation>
+        <translation>No key available to unlock device</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1642"/>

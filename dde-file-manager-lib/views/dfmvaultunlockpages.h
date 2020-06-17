@@ -21,8 +21,7 @@
 #pragma once
 
 //#include "interface/dfmvaultcontentinterface.h"
-#include "dtkwidget_global.h"
-#include <DDialog>
+#include "dfmvaultpagebase.h"
 
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
@@ -32,9 +31,8 @@ DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
-class DFMVaultUnlockPages : public DDialog
+class DFMVaultUnlockPages : public DFMVaultPageBase
 {
-    Q_OBJECT
 public:            
     static DFMVaultUnlockPages *instance();
 
@@ -42,9 +40,6 @@ public:
         Warning = 0,
         Information
     };
-
-    void setWndPtr(QWidget *wnd);
-    QWidget *getWndPtr() const;
 
 public slots:
     void onButtonClicked(const int &index);
@@ -65,8 +60,6 @@ private:
     DPasswordEdit * m_passwordEdit {nullptr};
     QPushButton * m_tipsButton {nullptr};
     bool m_bUnlockByPwd = false;
-
-    QWidget *m_wndptr = nullptr;
 
     DToolTip *m_tooltip {nullptr};
     DFloatingWidget *m_frame {nullptr};

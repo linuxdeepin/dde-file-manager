@@ -14,7 +14,6 @@
 
 #include "views/dfileview.h"
 #include "views/computerview.h"
-#include "views/dfmvaultview.h"
 #include "views/dfmvaultfileview.h"
 
 #include <QHash>

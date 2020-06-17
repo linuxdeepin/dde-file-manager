@@ -55,15 +55,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     QMimeType result;
     QString path = fileInfo.path();
     if (DStorageInfo::isLowSpeedDevice(path)) {
-        //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
-        if (FileUtils::isGvfsMountFile(path)) {
-            QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo.fileName());
-            if (!results.isEmpty()) {
-                result = results.first();
-            }
-        }else {
-            result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
-        }
+        result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
     }

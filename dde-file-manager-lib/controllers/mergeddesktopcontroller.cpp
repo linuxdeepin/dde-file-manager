@@ -588,7 +588,6 @@ QMap<DMD_TYPES, QList<DUrl> > MergedDesktopController::initData(QDir::Filters ft
         if (!showHidden && hiddenFiles->contains(oneFile)){
             continue;
         }
-        auto temp = desktopDir.filePath(oneFile);
         DUrl oneUrl = DUrl::fromLocalFile(desktopDir.filePath(oneFile));
         DMD_TYPES typeInfo = checkUrlArrangedType(oneUrl);
         tArrangedFileUrls[typeInfo].append(oneUrl);
