@@ -25,7 +25,6 @@
 #include <QPlainTextEdit>
 #include <QAbstractButton>
 #include <DToolTip>
-#include <DMessageBox>
 #include <DFloatingWidget>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -47,8 +46,8 @@ public:
 };
 
 DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
-    : DDialog (parent)
-    , d_ptr (new DFMVaultRecoveryKeyPagesPrivate())
+    : DFMVaultPageBase(parent)
+    , d_ptr(new DFMVaultRecoveryKeyPagesPrivate())
 {
     this->setIcon(QIcon::fromTheme("dfm_vault"));
     this->setFixedSize(396, 218);
@@ -89,6 +88,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     connect(this, &DFMVaultRecoveryKeyPages::buttonClicked, this, &DFMVaultRecoveryKeyPages::onButtonClicked);
     connect(m_recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &DFMVaultRecoveryKeyPages::recoveryKeyChanged);
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultRecoveryKeyPages::onUnlockVault);
+    connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 }
 
 DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
@@ -100,16 +100,6 @@ DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
 {
     static DFMVaultRecoveryKeyPages s_instance;
     return &s_instance;
-}
-
-void DFMVaultRecoveryKeyPages::setWndPtr(QWidget *wnd)
-{
-    m_wndptr = wnd;
-}
-
-QWidget *DFMVaultRecoveryKeyPages::getWndPtr() const
-{
-    return m_wndptr;
 }
 
 void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duration)
@@ -269,7 +259,11 @@ void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
         }else {
             // others
             QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
-            DMessageBox::information(this, tr("tips"), errMsg);
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(errMsg);
+            dialog.addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+            dialog.exec();
         }
         m_bUnlockByKey = false;
     }

@@ -4,7 +4,9 @@
 #include "dfileservices.h"
 #include "tagcontroller.h"
 #include "tag/tagmanager.h"
+#include "shutil/fileutils.h"
 #include "../tag/tagmanager.h"
+#include "dialogs/dialogmanager.h"
 #include "../models/tagfileinfo.h"
 #include "../interfaces/dfileinfo.h"
 #include "interfaces/dfileservices.h"
@@ -273,6 +275,64 @@ bool TagController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) cons
         return false;
 
     return DFileService::instance()->openFile(event->sender(), local_file);
+}
+
+bool TagController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
+{
+    DUrlList fileUrls = event->urlList();
+    DUrlList packUrl;
+    QStringList pathList;
+    bool result = false;
+
+    for (DUrl fileUrl : fileUrls) {
+        const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
+
+        if (pfile->isSymLink()) {
+            const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
+
+            if (linkInfo && !linkInfo->exists()) {
+                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+                continue;
+            }
+            fileUrl = linkInfo->redirectedFileUrl();
+        }
+
+        if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
+            int code = dialogManager->showRunExcutableScriptDialog(fileUrl, event->windowId());
+            result = FileUtils::openExcutableScriptFile(fileUrl.toLocalFile(), code) || result;
+            continue;
+        }
+
+        if (FileUtils::isFileRunnable(fileUrl.toLocalFile()) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showRunExcutableFileDialog(fileUrl, event->windowId());
+            result = FileUtils::openExcutableFile(fileUrl.toLocalFile(), code) || result;
+            continue;
+        }
+
+        if (FileUtils::shouldAskUserToAddExecutableFlag(fileUrl.toLocalFile()) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showAskIfAddExcutableFlagAndRunDialog(fileUrl, event->windowId());
+            result = FileUtils::addExecutableFlagAndExecuse(fileUrl.toLocalFile(), code) || result;
+            continue;
+        }
+
+        packUrl << fileUrl;
+        QString url = fileUrl.toLocalFile();
+        if (FileUtils::isFileWindowsUrlShortcut(url)) {
+            url = FileUtils::getInternetShortcutUrl(url);
+        }
+        pathList << url;
+    }
+
+    if (!pathList.empty()) {
+        result = FileUtils::openFiles(pathList);
+        if (!result) {
+            for (const DUrl &fileUrl : packUrl) {
+                AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(), fileUrl)); // requestShowOpenWithDialog
+            }
+        }
+    }
+
+    return result;
 }
 
 bool TagController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const

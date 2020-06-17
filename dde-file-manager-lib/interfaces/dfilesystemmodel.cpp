@@ -2563,7 +2563,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
             continue;
         }
 
-        qDebug() << "update node url = " << fileInfo->filePath();
+//        qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
         //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
         if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
@@ -2981,7 +2981,6 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
                 result = QtConcurrent::run(QThreadPool::globalInstance(), [&] {
                     forever
                     {
-                        qDebug() << row << parentNode->childrenCount();
                         if (!me || row >= parentNode->childrenCount()) {
                             break;
                         }

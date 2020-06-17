@@ -347,7 +347,8 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         AppController::instance()->actionOpticalBlank(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
     case DFMGlobal::RemoveFromRecent:
-        if (event->urlList().first().isRecentFile()) {
+        /*解决在最近使用的文档里面搜索以后删除不了的问题*/
+        if (event->urlList().first().isRecentFile()||event->urlList().first().isSearchFile()) {
             DFileService::instance()->deleteFiles(event->sender(), event->urlList(), false, true);
         }
     }
