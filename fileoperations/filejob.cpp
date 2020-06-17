@@ -89,16 +89,14 @@ qint64 FileJob::Data_Flush_Size = 16777216;
 
 #define IS_IO_ERROR(__error, KIND) (((__error)->domain == G_IO_ERROR && (__error)->code == G_IO_ERROR_ ## KIND))
 
-
-static inline char * ptr_align (char const *ptr, size_t alignment)
+static inline char *ptr_align(char const *ptr, size_t alignment)
 {
-  char const *p0 = ptr;
-  char const *p1 = p0 + alignment - 1;
-  return (char *) (p1 - (size_t) p1 % alignment);
+    char const *p0 = ptr;
+    char const *p1 = p0 + alignment - 1;
+    return (char *)(p1 - (size_t)p1 % alignment);
 }
 
-
-bool FileJob::setDirPermissions(const QString &scrPath, const QString& tarDirPath)
+bool FileJob::setDirPermissions(const QString &scrPath, const QString &tarDirPath)
 {
     struct stat buf;
     std::string stdSrcPath = scrPath.toStdString();
@@ -128,8 +126,8 @@ FileJob::FileJob(JobType jobType, QObject *parent) : QObject(parent)
     connect(this, &FileJob::finished, this, &FileJob::handleJobFinished);
 
 #ifdef SPLICE_CP
-    if(pipe(m_filedes) < 0) {
-       qDebug() << "Create  pipe fail";
+    if (pipe(m_filedes) < 0) {
+        qDebug() << "Create  pipe fail";
     }
     qDebug() << "Create  pipe successfully";
 #endif
@@ -167,55 +165,36 @@ QString FileJob::checkDuplicateName(const QString &name)
     QFileInfo startInfo(destUrl);
     int num = 1;
     QString cpy = tr("copy");
-    while (file.exists())
-    {
-        if(num == 1)
-        {
-            if(startInfo.isDir()){
+    while (file.exists()) {
+        if (num == 1) {
+            if (startInfo.isDir()) {
                 destUrl = QString("%1/%2(%3)").arg(startInfo.absolutePath(),
                                                    startInfo.fileName(),
                                                    cpy);
-            }
-            else{
-                if (startInfo.completeSuffix().isEmpty()){
-                    destUrl = QString("%1/%2(%3)").arg(startInfo.absolutePath(),
-                                                          startInfo.baseName(),
-                                                          cpy);
-                }else{
-                   QString baseName_tmp=name.right(name.length()-destUrl.lastIndexOf("/")-1);
-                   QString baseName=baseName_tmp.left(baseName_tmp.lastIndexOf("."));
-                   QString completeSuffixName=baseName_tmp.right(baseName_tmp.length()-baseName_tmp.lastIndexOf(".")-1);
-                   destUrl = QString("%1/%2(%3).%4").arg(startInfo.absolutePath(),
-                                                         baseName,
-                                                         cpy,
-                                                         completeSuffixName);
+            } else {
+                if (startInfo.completeSuffix().isEmpty()) {
+                    destUrl = QString("%1/%2(%3)").arg(startInfo.absolutePath(), startInfo.baseName(), cpy);
+                } else {
+                    QString baseName_tmp = name.right(name.length() - destUrl.lastIndexOf("/") - 1);
+                    QString baseName = baseName_tmp.left(baseName_tmp.lastIndexOf("."));
+                    QString completeSuffixName = baseName_tmp.right(baseName_tmp.length() - baseName_tmp.lastIndexOf(".") - 1);
+                    destUrl = QString("%1/%2(%3).%4").arg(startInfo.absolutePath(), baseName, cpy, completeSuffixName);
                 }
             }
-        }
-        else
-        {
-            if(startInfo.isDir()){
+        } else {
+            if (startInfo.isDir()) {
                 destUrl = QString("%1/%2(%3 %4)").arg(startInfo.absolutePath(),
                                                       startInfo.fileName(),
                                                       cpy,
                                                       QString::number(num));
-            }
-            else{
-                if (startInfo.completeSuffix().isEmpty()){
-                    destUrl = QString("%1/%2(%3 %4)").arg(startInfo.absolutePath(),
-                                                             startInfo.baseName(),
-                                                             cpy,
-                                                             QString::number(num));
-                }else{
-                   QString baseName_tmp=name.right(name.length()-destUrl.lastIndexOf("/")-1);
-                   QString baseName=baseName_tmp.left(baseName_tmp.lastIndexOf("."));
-                   QString completeSuffixName=baseName_tmp.right(baseName_tmp.length()-baseName_tmp.lastIndexOf(".")-1);
-                   destUrl = QString("%1/%2(%3 %4).%5").arg(startInfo.absolutePath(),
-                                                            baseName,
-                                                            cpy,
-                                                            QString::number(num),
-                                                            completeSuffixName);
-
+            } else {
+                if (startInfo.completeSuffix().isEmpty()) {
+                    destUrl = QString("%1/%2(%3 %4)").arg(startInfo.absolutePath(), startInfo.baseName(), cpy, QString::number(num));
+                } else {
+                    QString baseName_tmp = name.right(name.length() - destUrl.lastIndexOf("/") - 1);
+                    QString baseName = baseName_tmp.left(baseName_tmp.lastIndexOf("."));
+                    QString completeSuffixName = baseName_tmp.right(baseName_tmp.length() - baseName_tmp.lastIndexOf(".") - 1);
+                    destUrl = QString("%1/%2(%3 %4).%5").arg(startInfo.absolutePath(), baseName, cpy, QString::number(num), completeSuffixName);
                 }
             }
         }
@@ -251,10 +230,10 @@ void FileJob::adjustSymlinkPath(QString &scrPath, QString &tarDirPath)
 {
     QFileInfo srcFileInfo(scrPath);
     QFileInfo tarDirFileInfo(tarDirPath);
-    if (!srcFileInfo.canonicalFilePath().isEmpty()){
+    if (!srcFileInfo.canonicalFilePath().isEmpty()) {
         scrPath = srcFileInfo.canonicalFilePath();
     }
-    if (!tarDirFileInfo.canonicalFilePath().isEmpty()){
+    if (!tarDirFileInfo.canonicalFilePath().isEmpty()) {
         tarDirPath = tarDirFileInfo.canonicalFilePath();
     }
 }
@@ -263,7 +242,7 @@ DUrlList FileJob::doCopy(const DUrlList &files, const DUrl &destination)
 {
     m_noPermissonUrls.clear();
     DUrlList result = doMoveCopyJob(files, destination);
-    if (!m_noPermissonUrls.isEmpty()){
+    if (!m_noPermissonUrls.isEmpty()) {
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
         noPermissionEvent.setWindowId(getWindowId());
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
@@ -289,7 +268,7 @@ DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
     if (!new_list.isEmpty())
         result = doMoveCopyJob(new_list, destination);
 
-    if (!m_noPermissonUrls.isEmpty()){
+    if (!m_noPermissonUrls.isEmpty()) {
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
         noPermissionEvent.setWindowId(getWindowId());
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
@@ -315,16 +294,16 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     QString tarDirPath = destination.toLocalFile();
     QDir tarDir(tarDirPath);
     QStorageInfo tarStorageInfo = getStorageInfo(tarDirPath);
-    if (files.count() > 0){
+    if (files.count() > 0) {
         QStorageInfo srcStorageInfo = getStorageInfo(files.at(0).toLocalFile());
-        if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
+        if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()) {
             m_isInSameDisk = false;
-        }else if (FileUtils::isGvfsMountFile(destination.toLocalFile())){
+        } else if (FileUtils::isGvfsMountFile(destination.toLocalFile())) {
             UDiskDeviceInfoPointer pSrc = deviceListener->getDeviceByFilePath(files.at(0).toLocalFile());
             UDiskDeviceInfoPointer pDes = deviceListener->getDeviceByFilePath(destination.toLocalFile());
-            if (pSrc && pDes){
+            if (pSrc && pDes) {
                 qDebug() << pSrc->getMountPointUrl() << pDes->getMountPointUrl();
-                if (pSrc->getMountPointUrl() != pDes->getMountPointUrl()){
+                if (pSrc->getMountPointUrl() != pDes->getMountPointUrl()) {
                     m_isInSameDisk = false;
                 }
             }
@@ -335,31 +314,29 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     qDebug() << "mountpoint" << tarStorageInfo.rootPath();
 
     //No need to check dist usage for moving job in same disk
-    if(!((m_jobType == Move || m_jobType == Trash || m_jobType == Restore) && m_isInSameDisk)){
+    if (!((m_jobType == Move || m_jobType == Trash || m_jobType == Restore) && m_isInSameDisk)) {
         const bool diskSpaceAvailable = checkDiskSpaceAvailable(files, destination);
         m_isCheckingDisk = false;
-        if(!diskSpaceAvailable){
+        if (!diskSpaceAvailable) {
             emit requestNoEnoughSpaceDialogShowed();
             emit requestJobRemovedImmediately(m_jobDetail);
             return DUrlList();
         }
-    } else{
+    } else {
         m_totalSize = FileUtils::totalSize(files);
     }
 
     qDebug() << "m_totalSize" << FileUtils::formatSize(m_totalSize);
 
-    if(!tarDir.exists())
-    {
+    if (!tarDir.exists()) {
         qDebug() << "Destination must be directory";
         return list;
     }
 
-    for(int i = 0; i < files.size(); i++)
-    {
+    for (int i = 0; i < files.size(); i++) {
         QUrl url = files.at(i);
         QString srcPath = url.toLocalFile();
-        if (srcPath.isEmpty()){
+        if (srcPath.isEmpty()) {
             continue;
         }
         QFileInfo srcInfo(srcPath);
@@ -372,31 +349,27 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
         if (m_isAborted)
             break;
 
-        if (srcInfo.isSymLink()){
+        if (srcInfo.isSymLink()) {
             handleSymlinkFile(srcPath, tarDirPath, &targetPath);
-        }else if (srcInfo.isDir()){
+        } else if (srcInfo.isDir()) {
             adjustSymlinkPath(srcPath, tarDirPath);
-            if (m_jobType == Copy){
+            if (m_jobType == Copy) {
                 copyDir(srcPath, tarDirPath, false,  &targetPath);
-            }else if (m_jobType == Move || m_jobType == Restore){
-                if(m_isInSameDisk)
-                {
+            } else if (m_jobType == Move || m_jobType == Restore) {
+                if (m_isInSameDisk) {
                     if (!moveDir(srcPath, tarDirPath, &targetPath)) {
-                        if(copyDir(srcPath, tarDirPath, true, &targetPath))
+                        if (copyDir(srcPath, tarDirPath, true, &targetPath))
                             deleteDir(srcPath);
                     }
-                }
-                else
-                {
-                    if(copyDir(srcPath, tarDirPath, true, &targetPath))
+                } else {
+                    if (copyDir(srcPath, tarDirPath, true, &targetPath))
                         if (!m_isSkip)
                             deleteDir(srcPath);
                 }
-            }else if (m_jobType == Trash){
+            } else if (m_jobType == Trash) {
                 bool canTrash = moveDirToTrash(srcPath, &targetPath);
-                if(m_isInSameDisk)
-                {
-                    if (canTrash){
+                if (m_isInSameDisk) {
+                    if (canTrash) {
                         QDir sourceDir(srcPath);
                         if (!sourceDir.rename(srcPath, targetPath)) {
                             if (QProcess::execute("mv -T \"" + srcPath.toUtf8() + "\" \"" + targetPath.toUtf8() + "\"") != 0) {
@@ -404,43 +377,36 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                             }
                         }
                     }
-                }
-                else
-                {
-                    if(copyDir(srcPath, tarDirPath, true, &targetPath))
+                } else {
+                    if (copyDir(srcPath, tarDirPath, true, &targetPath))
                         if (!m_isSkip)
                             deleteDir(srcPath);
                 }
             }
-        }else{
+        } else {
             adjustSymlinkPath(srcPath, tarDirPath);
-            if (m_jobType == Copy){
+            if (m_jobType == Copy) {
                 copyFile(srcPath, tarDirPath, false,  &targetPath);
-            }else if (m_jobType == Move || m_jobType == Restore){
-                if(m_isInSameDisk)
-                {
+            } else if (m_jobType == Move || m_jobType == Restore) {
+                if (m_isInSameDisk) {
                     if (!moveFile(srcPath, tarDirPath, &targetPath)) {
 #ifndef SW_LABEL
-                        if(copyFile(srcPath, tarDirPath, true, &targetPath))
+                        if (copyFile(srcPath, tarDirPath, true, &targetPath))
                             deleteFile(srcPath);
 #endif
                     }
-                }
-                else
-                {
-                    if(copyFile(srcPath, tarDirPath, true, &targetPath)){
+                } else {
+                    if (copyFile(srcPath, tarDirPath, true, &targetPath)) {
                         if (!m_isSkip)
                             deleteFile(srcPath);
                     }
                 }
-            }else if (m_jobType == Trash){
+            } else if (m_jobType == Trash) {
                 bool canTrash = moveFileToTrash(srcPath, &targetPath);
-                if(m_isInSameDisk)
-                {
-                    if (canTrash){
+                if (m_isInSameDisk) {
+                    if (canTrash) {
                         QFile localFile(srcPath);
-                        if (!localFile.rename(targetPath))
-                        {
+                        if (!localFile.rename(targetPath)) {
                             if (QProcess::execute("mv -T \"" + srcPath.toUtf8() + "\" \"" + targetPath.toUtf8() + "\"") != 0) {
                                 //Todo: find reason
                                 qDebug() << "Unable to trash file:" << localFile.fileName();
@@ -449,10 +415,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                             }
                         }
                     }
-                }
-                else
-                {
-                    if(copyFile(srcPath, tarDirPath, true, &targetPath))
+                } else {
+                    if (copyFile(srcPath, tarDirPath, true, &targetPath))
                         if (!m_isSkip)
                             deleteFile(srcPath);
                 }
@@ -469,7 +433,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     }
     m_finishedCount = 0;
     m_allCount = 1;
-    if(m_isJobAdded)
+    if (m_isJobAdded)
         jobRemoved();
     emit finished();
     qDebug() << "Do file operation is done" << m_jobDetail;
@@ -485,27 +449,26 @@ void FileJob::doDelete(const DUrlList &files)
 {
     qDebug() << "Do delete is started";
     m_noPermissonUrls.clear();
-    for(int i = 0; i < files.size(); i++)
-    {
+    for (int i = 0; i < files.size(); i++) {
         QUrl url = files.at(i);
         QFileInfo info(url.path());
 
         if (!info.exists() && !info.isSymLink())
             continue;
 
-        if (info.isFile() || info.isSymLink()){
+        if (info.isFile() || info.isSymLink()) {
             deleteFile(url.path());
-        }else{
+        } else {
             if (!deleteDir(url.path())) {
                 QProcess::execute("rm -r \"" + url.path().toUtf8() + "\"");
             }
         }
     }
-    if(m_isJobAdded)
+    if (m_isJobAdded)
         jobRemoved();
     emit finished();
     qDebug() << "Do delete is done!";
-    if (!m_noPermissonUrls.isEmpty()){
+    if (!m_noPermissonUrls.isEmpty()) {
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
         noPermissionEvent.setWindowId(getWindowId());
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
@@ -518,24 +481,24 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
     QDir trashDir;
     DUrlList list;
 
-    if(!trashDir.mkpath(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+    if (!trashDir.mkpath(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
         qDebug() << "mk" << DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) << "failed!";
         /// TODO
 
         return list;
     }
 
-    if(!trashDir.mkpath(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath))) {
+    if (!trashDir.mkpath(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath))) {
         qDebug() << "mk" << DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) << "failed!";
         /// TODO
 
         return list;
     }
 
-    if (files.count() > 0){
+    if (files.count() > 0) {
         QStorageInfo storageInfo = getStorageInfo(files.at(0).toLocalFile());
         QStorageInfo trashStorageInfo = getStorageInfo(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
-        if(storageInfo.rootPath() != trashStorageInfo.rootPath()){
+        if (storageInfo.rootPath() != trashStorageInfo.rootPath()) {
             m_isInSameDisk = false;
         }
     }
@@ -544,13 +507,12 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
     DUrlList canMoveToTrashList;
     DUrlList canNotMoveToTrashList;
 
-    for(int i = 0; i < files.size(); i++)
-    {
+    for (int i = 0; i < files.size(); i++) {
         DUrl url = files.at(i);
-        if (!m_isInSameDisk){
+        if (!m_isInSameDisk) {
             //check if is target file in the / disk
             bool canMoveToTrash = checkTrashFileOutOf1GB(url);
-            if(!canMoveToTrash){
+            if (!canMoveToTrash) {
                 canNotMoveToTrashList << url;
                 continue;
             }
@@ -558,13 +520,13 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
         canMoveToTrashList << url;
     }
 
-    if(canNotMoveToTrashList.size() > 0){
+    if (canNotMoveToTrashList.size() > 0) {
         emit requestCanNotMoveToTrashDialogShowed(canNotMoveToTrashList);
-    }else{
+    } else {
         list = doMove(files, DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
     }
 
-    if(m_isJobAdded)
+    if (m_isJobAdded)
         jobRemoved();
 
     emit finished();
@@ -581,38 +543,37 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     DUrlList files;
     files << QUrl::fromLocalFile(srcFilePath);
     m_totalSize = FileUtils::totalSize(files);
-   // jobPrepared();
+    // jobPrepared();
 
     QStorageInfo srcStorageInfo = getStorageInfo(srcFilePath);
     QString tarDir = DUrl::fromLocalFile(tarFilePath).parentUrl().toLocalFile();
     QStorageInfo tarStorageInfo = getStorageInfo(tarDir);
-    if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
+    if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()) {
         m_isInSameDisk = false;
     }
 
     bool ok = false;
 
-    if (m_isInSameDisk){
+    if (m_isInSameDisk) {
         ok = restoreTrashFile(srcFilePath, tarFilePath);
-    }else{
-
+    } else {
         QString _tarFilePath = tarFilePath;
         QFileInfo srcInfo(srcFilePath);
 
-        if (srcInfo.isSymLink()){
+        if (srcInfo.isSymLink()) {
             DUrlList urls;
-            DUrl url =DUrl::fromLocalFile(srcFilePath);
+            DUrl url = DUrl::fromLocalFile(srcFilePath);
             urls << url;
 //            qDebug() << srcInfo.symLinkTarget() << DUrl::fromLocalFile(srcInfo.symLinkTarget()).parentUrl() << tarFilePath;
             const DUrlList &result = doMove(urls, DUrl::fromLocalFile(_tarFilePath).parentUrl());
 
             ok = !result.isEmpty();
-        }else if (srcInfo.isDir()){
+        } else if (srcInfo.isDir()) {
             if (copyDir(srcFilePath, tarDir, true, &_tarFilePath)) {
                 deleteDir(srcFilePath);
                 ok = QFile::rename(_tarFilePath, tarFilePath);
             }
-        }else if (srcInfo.isFile() || srcInfo.isSymLink()){
+        } else if (srcInfo.isFile() || srcInfo.isSymLink()) {
             if (copyFile(srcFilePath, tarDir, true, &_tarFilePath) && !getIsSkip()) {
                 deleteFile(srcFilePath);
                 ok = QFile::rename(_tarFilePath, tarFilePath);
@@ -625,7 +586,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     }
 
     // 回收站恢复文件将多个fileJob合并为一个job，所以单个任务完成时不移除（会导致taskdialog被关闭）,在外部手动调用jobRemoved();
-    if(m_isJobAdded && !m_isManualRemoveJob)
+    if (m_isJobAdded && !m_isManualRemoveJob)
         jobRemoved();
     //emit finished();
     qDebug() << "Do restore trash file is done!";
@@ -728,7 +689,7 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     job_isomaster->acquireDevice(device.path());
     job_isomaster->getDeviceProperty();
     QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
-                    + "/" DISCBURN_STAGING "/" + device.path().replace('/','_') + "/");
+                    + "/" DISCBURN_STAGING "/" + device.path().replace('/', '_') + "/");
     job_isomaster->stageFiles({{stagingurl, QUrl("/")}});
     bool wret = job_isomaster->commit(speed, flag & 1, volname);
 
@@ -739,7 +700,7 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     }
     //fix:不同品牌的光盘或者光驱，刻录校验识别能力不同，对应获取到的bad数据也不一样，但是数据在校验前已经写入成功，根据厂商要求所以此处需要放开
     //bool rst = ! ((flag & 4) && bad > 1e-6);
-    bool rst = ! ((flag & 4) && (bad > (2 + 1e-6)));
+    bool rst = !((flag & 4) && (bad > (2 + 1e-6)));
     job_isomaster->releaseDevice();
 
     if (flag & 2) {
@@ -785,9 +746,9 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
     jobPrepared();
 
     QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
-                    + "/" DISCBURN_STAGING "/" + device.path().replace('/','_') + "/");
+                    + "/" DISCBURN_STAGING "/" + device.path().replace('/', '_') + "/");
 
-/////////////////////////////
+    /////////////////////////////
     constexpr int BUFFERSIZE = 4096;
     int progressPipefd[2];
     if (pipe(progressPipefd) < 0)
@@ -906,7 +867,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         if ((flag & 4) && (m_opticalJobPhase == 2) && (m_opticalJobProgress > 0 && m_opticalJobProgress < 100)) {
             fakeEndTime = QDateTime::currentDateTime();
             qint64 totalSeconds = fakeStartTime.secsTo(fakeEndTime);
-            qint64 averageMSeconds = totalSeconds *1000 / m_opticalJobProgress;
+            qint64 averageMSeconds = totalSeconds * 1000 / m_opticalJobProgress;
             qint64 maxMSeconds = 60 * 1000;
             averageMSeconds = averageMSeconds < 0 ? maxMSeconds : averageMSeconds;
             averageMSeconds = averageMSeconds < maxMSeconds ? averageMSeconds : maxMSeconds;
@@ -948,7 +909,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             ISOMaster->nullifyDevicePropertyCache(device.path());
         }
 
-        bool rst = ! ((flag & 4) && (globalBad > (2 + 1e-6)));
+        bool rst = !((flag & 4) && (globalBad > (2 + 1e-6)));
 
         if (m_isJobAdded)
             jobRemoved();
@@ -1034,7 +995,7 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     }
     //fix:不同品牌的光盘或者光驱，刻录校验识别能力不同，对应获取到的bad数据也不一样，但是数据在校验前已经写入成功，根据厂商要求所以此处需要放开
     //bool rst = ! ((flag & 4) && bad > 1e-6);
-    bool rst = ! ((flag & 4) && (bad > (2 + 1e-6)));
+    bool rst = !((flag & 4) && (bad > (2 + 1e-6)));
     job_isomaster->releaseDevice();
 
     if (flag & 2) {
@@ -1195,7 +1156,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         if ((flag & 4) && (m_opticalJobPhase == 2) && (m_opticalJobProgress > 0 && m_opticalJobProgress < 100)) {
             fakeEndTime = QDateTime::currentDateTime();
             qint64 totalSeconds = fakeStartTime.secsTo(fakeEndTime);
-            qint64 averageMSeconds = totalSeconds *1000 / m_opticalJobProgress;
+            qint64 averageMSeconds = totalSeconds * 1000 / m_opticalJobProgress;
             qint64 maxMSeconds = 60 * 1000;
             averageMSeconds = averageMSeconds < 0 ? maxMSeconds : averageMSeconds;
             averageMSeconds = averageMSeconds < maxMSeconds ? averageMSeconds : maxMSeconds;
@@ -1237,7 +1198,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             ISOMaster->nullifyDevicePropertyCache(device.path());
         }
 
-        bool rst = ! ((flag & 4) && (globalBad > (2 + 1e-6)));
+        bool rst = !((flag & 4) && (globalBad > (2 + 1e-6)));
 
         if (m_isJobAdded)
             jobRemoved();
@@ -1360,11 +1321,11 @@ void FileJob::handleJobFinished()
 
 void FileJob::jobUpdated()
 {
-    if (m_status == FileJob::Paused){
+    if (m_status == FileJob::Paused) {
         return;
     }
 
-    if (m_isCheckingDisk){
+    if (m_isCheckingDisk) {
         emit requestJobDataUpdated(m_jobDetail, m_checkDiskJobDataDetail);
     }
 
@@ -1377,18 +1338,18 @@ void FileJob::jobUpdated()
         jobDataDetail["optical_op_phase"] = QString::number(m_opticalJobPhase);
         jobDataDetail["optical_op_speed"] = m_opticalOpSpeed;
         jobDataDetail["optical_op_dest"] = m_tarPath;
-    } else if (m_jobType == Restore && m_isInSameDisk){
+    } else if (m_jobType == Restore && m_isInSameDisk) {
         jobDataDetail.insert("type", "restore");
         jobDataDetail.insert("file", m_restoreFileName);
         jobDataDetail.insert("destination", m_tarDirName);
         jobDataDetail.insert("progress", QString::number(m_restoreProgress));
-        if (!m_isFinished){
-            if (m_status == Run){
+        if (!m_isFinished) {
+            if (m_status == Run) {
                 jobDataDetail.insert("file", m_restoreFileName);
                 jobDataDetail.insert("status", "restoring");
             }
-        }else{
-            if (m_status != Cancelled){
+        } else {
+            if (m_status != Cancelled) {
                 jobDataDetail.insert("progress", "100");
             }
         }
@@ -1402,8 +1363,7 @@ void FileJob::jobUpdated()
                 jobDataDetail.insert("progress", QString::number((double)m_finishedCount / m_allCount));
         }
     } else {
-        if (!m_isFinished){
-
+        if (!m_isFinished) {
             qint64 currentMsec = m_timer.elapsed();
 
             m_factor = (currentMsec - m_lastMsec) / 1000;
@@ -1413,59 +1373,49 @@ void FileJob::jobUpdated()
 
             m_bytesPerSec /= m_factor;
 
-            if (m_bytesPerSec == 0){
+            if (m_bytesPerSec == 0) {
                 return;
             }
 
-            if(m_bytesPerSec > 0)
-            {
-                if (m_totalSize < m_bytesCopied){
+            if (m_bytesPerSec > 0) {
+                if (m_totalSize < m_bytesCopied) {
                     qDebug() << "error copying file by growing" << m_totalSize << m_bytesCopied;
                     m_totalSize = m_bytesCopied;
                     cancelled();
-                }else{
+                } else {
                     int remainTime = (m_totalSize - m_bytesCopied) / m_bytesPerSec;
 
-                    if (remainTime < 60){
+                    if (remainTime < 60) {
                         jobDataDetail.insert("remainTime", tr("%1 s").arg(QString::number(remainTime)));
-                    }else if (remainTime >=60  && remainTime < 3600){
+                    } else if (remainTime >= 60 && remainTime < 3600) {
                         int min = remainTime / 60;
                         int second = remainTime % 60;
-                        jobDataDetail.insert("remainTime", tr("%1 m %2 s").arg(QString::number(min),
-                                                                                    QString::number(second)));
-                    }else if (remainTime >=3600  && remainTime < 86400){
+                        jobDataDetail.insert("remainTime", tr("%1 m %2 s").arg(QString::number(min), QString::number(second)));
+                    } else if (remainTime >= 3600 && remainTime < 86400) {
                         int hour = remainTime / 3600;
                         int min = (remainTime % 3600) / 60;
                         int second = (remainTime % 3600) % 60;
-                        jobDataDetail.insert("remainTime", tr("%1 h %2 m %3 s").arg(QString::number(hour),
-                                                                                         QString::number(min),
-                                                                                         QString::number(second)));
-                    }else{
+                        jobDataDetail.insert("remainTime", tr("%1 h %2 m %3 s").arg(QString::number(hour), QString::number(min), QString::number(second)));
+                    } else {
                         int day = remainTime / 86400;
                         int left = remainTime % 86400;
                         int hour = left / 3600;
                         int min = (left % 3600) / 60;
                         int second = (left % 3600) % 60;
-                        jobDataDetail.insert("remainTime", tr("%1 d %2 h %3 m %4 s").arg(QString::number(day),
-                                                                                              QString::number(hour),
-                                                                                              QString::number(min),
-                                                                                              QString::number(second)));
+                        jobDataDetail.insert("remainTime", tr("%1 d %2 h %3 m %4 s").arg(QString::number(day), QString::number(hour), QString::number(min), QString::number(second)));
                     }
                 }
             }
         }
         QString speed;
 
-        if (m_bytesCopied == m_totalSize){
+        if (m_bytesCopied == m_totalSize) {
             speed = QString("0 MB/s");
-        }else{
-            if(m_bytesPerSec > ONE_MB_SIZE)
-            {
+        } else {
+            if (m_bytesPerSec > ONE_MB_SIZE) {
                 m_bytesPerSec = m_bytesPerSec / ONE_MB_SIZE;
                 speed = QString("%1 MB/s").arg(QString::number(m_bytesPerSec));
-            }
-            else
-            {
+            } else {
                 m_bytesPerSec = m_bytesPerSec / ONE_KB_SIZE;
                 speed = QString("%1 KB/s").arg(QString::number(m_bytesPerSec));
             }
@@ -1473,7 +1423,7 @@ void FileJob::jobUpdated()
 
         jobDataDetail.insert("speed", speed);
         jobDataDetail.insert("file", m_srcFileName);
-        jobDataDetail.insert("progress", QString::number(m_bytesCopied * 100/ m_totalSize));
+        jobDataDetail.insert("progress", QString::number(m_bytesCopied * 100 / m_totalSize));
         jobDataDetail.insert("destination", m_tarDirName);
         m_progress = jobDataDetail.value("progress");
     }
@@ -1486,7 +1436,7 @@ void FileJob::jobUpdated()
 
 void FileJob::jobAdded()
 {
-    if(m_isJobAdded)
+    if (m_isJobAdded)
         return;
     emit requestJobAdded(m_jobDetail);
     m_isJobAdded = true;
@@ -1526,7 +1476,7 @@ void FileJob::jobConflicted()
     jobDataDetail.insert("file", m_srcFileName);
     jobDataDetail.insert("progress", m_progress);
     jobDataDetail.insert("destination", m_tarDirName);
-    jobDataDetail.insert("sourcePath",m_srcPath);
+    jobDataDetail.insert("sourcePath", m_srcPath);
     jobDataDetail.insert("targetPath", m_tarPath);
     jobDataDetail.insert("status", "conflict");
     QString type = QMetaEnum::fromType<FileJob::JobType>().valueToKey(m_jobType);
@@ -1614,25 +1564,25 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
         return ok;
     }
 #ifdef SW_LABEL
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         QString tarFile = tarDir + "/" + QFileInfo(srcFile).fileName();
         bool isSrcLabelFileFlag = isLabelFile(srcFile);
         bool isDstLabelFileFlag = isLabelFile(srcFile);
         qDebug() << "srcFile: " << srcFile;
-        qDebug() << "tarFile: "<< tarFile;
+        qDebug() << "tarFile: " << tarFile;
         qDebug() << "isSrcLabelFileFlag: " << isSrcLabelFileFlag;
         qDebug() << "isDstLabelFileFlag: " << isDstLabelFileFlag;
         qDebug() << tarDir << deviceListener->isInRemovableDeviceFolder(tarDir);
         int nRet = 0;
-        if (deviceListener->isInRemovableDeviceFolder(tarDir)){
+        if (deviceListener->isInRemovableDeviceFolder(tarDir)) {
             nRet = checkStoreInRemovableDiskPrivilege(srcFile, tarFile);
-            if (nRet != 0){
+            if (nRet != 0) {
                 emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
                 return false;
             }
-        }else{
+        } else {
             nRet = checkCopyJobPrivilege(srcFile, tarFile);
-            if (nRet != 0){
+            if (nRet != 0) {
                 emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
                 return false;
             }
@@ -1646,9 +1596,9 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
     if (m_isAborted)
         return false;
-    if(m_applyToAll && m_status == FileJob::Cancelled){
+    if (m_applyToAll && m_status == FileJob::Cancelled) {
         m_skipandApplyToAll = true;
-    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+    } else if (!m_applyToAll && m_status == FileJob::Cancelled) {
         m_status = Started;
     }
     QFileInfo srcFileInfo(srcFile);
@@ -1657,12 +1607,12 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     m_tarDirName = tarDirInfo.fileName();
     m_srcPath = srcFile;
 
-    if (m_jobType != Trash && m_jobType != Restore){
+    if (m_jobType != Trash && m_jobType != Restore) {
         m_tarPath = tarDir + "/" + m_srcFileName;
-    }else{
-        if (targetPath){
+    } else {
+        if (targetPath) {
             m_tarPath = *targetPath;
-        }else{
+        } else {
             m_tarPath = tarDir + "/" + m_srcFileName;
         }
     }
@@ -1676,13 +1626,12 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
     bool isTargetExists = targetInfo.exists();
 
-    if(srcFileInfo.absolutePath() != targetInfo.absolutePath()){
-        if(isTargetExists && !m_applyToAll)
-        {
+    if (srcFileInfo.absolutePath() != targetInfo.absolutePath()) {
+        if (isTargetExists && !m_applyToAll) {
             jobConflicted();
-        }else if (isTargetExists && m_skipandApplyToAll){
+        } else if (isTargetExists && m_skipandApplyToAll) {
             return false;
-        }else{
+        } else {
             m_isSkip = false;
         }
     }
@@ -1696,201 +1645,187 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     int in_fd = 0;
     int out_fd = 0;
 #else
-    if (!m_bufferAlign){
+    if (!m_bufferAlign) {
         m_buffer = (char *) malloc(Data_Block_Size + getpagesize());
         m_bufferAlign = ptr_align(m_buffer, getpagesize());
     }
 #endif
 
-    while(true)
-    {
-        switch(m_status)
-        {
-            case FileJob::Started:
-            {
-                if (isTargetExists){
+    while (true) {
+        switch (m_status) {
+        case FileJob::Started: {
+            if (isTargetExists) {
+                if (m_isSkip) {
+                    if (!m_applyToAll)
+                        m_isSkip = false;
 
-                    if (m_isSkip){
-
-                        if(!m_applyToAll)
-                            m_isSkip = false;
-
-                        return false;
-                    }
-
-                    if(m_isCoExisted && !m_isReplaced)
-                    {
-                        m_tarPath = checkDuplicateName(m_tarPath);
-                        to.setFileName(m_tarPath);
-                        if(!m_applyToAll)
-                            m_isCoExisted = true;
-                    }
-
-                    if (m_isReplaced){
-
-                        if (targetInfo.isSymLink()){
-                            QFile(m_tarPath).remove();
-                        }else if (!targetInfo.isSymLink() && targetInfo.isDir()){
-                            QDir(m_tarPath).removeRecursively();
-                        }else if (!targetInfo.isSymLink() && targetInfo.isFile()){
-                            QFile(m_tarPath).remove();
-                        }
-
-                        if(!m_applyToAll)
-                            m_isReplaced = false;
-
-                        // Clean saved events
-                        DFMEventDispatcher::instance()->processEvent<DFMCleanSaveOperatorEvent>(nullptr);
-                    }
-                }
-
-                if(!from.open(QIODevice::ReadOnly))
-                {
-                    //Operation failed
-                    qDebug() << srcFile << "isn't read only";
                     return false;
                 }
 
-                if(!to.open(QIODevice::WriteOnly))
-                {
-                    //Operation failed
-                    qDebug() << to.fileName() << to.error() << to.errorString() << "isn't write only";
-                    QString toFileName =  tarDir + "/" + DUrl::toPercentEncoding(m_srcFileName);
-                    qDebug() << "toPercentEncoding" <<  toFileName;
-                    to.setFileName(toFileName);
-                    if (!to.open(QIODevice::WriteOnly)){
-                        qDebug() << to.fileName() << to.error() <<to.errorString() << "isn't write only";
-                        return false;
-                    }
+                if (m_isCoExisted && !m_isReplaced) {
+                    m_tarPath = checkDuplicateName(m_tarPath);
+                    to.setFileName(m_tarPath);
+                    if (!m_applyToAll)
+                        m_isCoExisted = true;
                 }
-                posix_fadvise (from.handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
 
-                CopyingFiles.append(DUrl::fromLocalFile(m_tarPath));
+                if (m_isReplaced) {
+                    if (targetInfo.isSymLink()) {
+                        QFile(m_tarPath).remove();
+                    } else if (!targetInfo.isSymLink() && targetInfo.isDir()) {
+                        QDir(m_tarPath).removeRecursively();
+                    } else if (!targetInfo.isSymLink() && targetInfo.isFile()) {
+                        QFile(m_tarPath).remove();
+                    }
 
-                m_status = Run;
- #ifdef SPLICE_CP
-                in_fd = from.handle();
-                out_fd = to.handle();
-                len = srcFileInfo.size();
-                posix_fadvise(from.handle(), 0, len, POSIX_FADV_SEQUENTIAL);
-                posix_fadvise(from.handle(), 0, len, POSIX_FADV_WILLNEED);
- #endif
-                break;
+                    if (!m_applyToAll)
+                        m_isReplaced = false;
+
+                    // Clean saved events
+                    DFMEventDispatcher::instance()->processEvent<DFMCleanSaveOperatorEvent>(nullptr);
+                }
             }
-            case FileJob::Run:
-            {
 
-#ifdef SPLICE_CP
-                if(len <= 0)
-                {
-                    if ((m_totalSize - m_bytesCopied) <= 1){
-                        m_bytesCopied = m_totalSize;
-                    }
-
-                    to.flush();
-//                    fsync(out_fd);
-                    from.close();
-                    to.close();
-
-                    if (targetPath)
-                        *targetPath = m_tarPath;
-
-                    return true;
-                }
-
-                if(buf_size > len)
-                    buf_size = len;
-                /*
-                 * move to pipe buffer.
-                 */
-                err = splice(in_fd, &in_off, m_filedes[1], NULL, buf_size, SPLICE_F_MOVE);
-                if(err < 0) {
-                    qDebug() << "splice pipe0 fail";
-                    return false;
-                }
-
-                if (err < buf_size) {
-                    qDebug() << QString("copy ret %1 (need %2)").arg(err, buf_size);
-                    buf_size = err;
-                }
-                /*
-                 * move from pipe buffer to out_fd
-                 */
-                err = splice(m_filedes[0], NULL, out_fd, &out_off, buf_size, SPLICE_F_MOVE );
-                if(err < 0) {
-                    qDebug() << "splice pipe1 fail";
-                    return false;
-                }
-                len -= buf_size;
-
-                m_bytesCopied += buf_size;
-                m_bytesPerSec += buf_size;
-
-                if (!m_isInSameDisk){
-                    if (m_bytesCopied % (Data_Flush_Size) == 0){
-                        fsync(out_fd);
-                    }
-                }
-#else
-                qint64 inBytes = from.read(m_bufferAlign, Data_Block_Size);
-
-                if(inBytes == 0)
-                {
-                    if ((m_totalSize - m_bytesCopied) <= 1){
-                        m_bytesCopied = m_totalSize;
-                    }
-                    to.close();
-                    from.close();
-
-                    if (!to.setPermissions(from.permissions())){
-                        qDebug() << "Set permissions from " << srcFile << "to" << m_tarPath << "failed";
-                    }
-
-                    if (targetPath){
-                        *targetPath = m_tarPath;
-                    }
-                    return true;
-                }else if (inBytes == -1 && from.error() == QFileDevice::ReadError){
-                    to.close();
-                    from.close();
-                    if (targetPath){
-                        *targetPath = m_tarPath;
-                    }
-                    return false;
-                }
-
-                qint64 availableBytes = inBytes;
-
-                while (true) {
-                    qint64 writtenBytes = to.write(m_bufferAlign, availableBytes);
-                    availableBytes = availableBytes - writtenBytes;
-                    if (writtenBytes == 0 && availableBytes == 0){
-                        break;
-                    }
-                }
-
-                m_bytesCopied += inBytes;
-                m_bytesPerSec += inBytes;
-#endif
-                break;
-            }
-            case FileJob::Paused:
-                QThread::msleep(100);
-                m_lastMsec = m_timer.elapsed();
-                break;
-            case FileJob::Cancelled:
-                from.close();
-                to.close();
-                if (m_isSkip)
-                    return true;
-                else
-                    return false;
-            default:
-                from.close();
-                to.close();
+            if (!from.open(QIODevice::ReadOnly)) {
+                //Operation failed
+                qDebug() << srcFile << "isn't read only";
                 return false;
-         }
+            }
 
+            if (!to.open(QIODevice::WriteOnly)) {
+                //Operation failed
+                qDebug() << to.fileName() << to.error() << to.errorString() << "isn't write only";
+                QString toFileName = tarDir + "/" + DUrl::toPercentEncoding(m_srcFileName);
+                qDebug() << "toPercentEncoding" << toFileName;
+                to.setFileName(toFileName);
+                if (!to.open(QIODevice::WriteOnly)) {
+                    qDebug() << to.fileName() << to.error() << to.errorString() << "isn't write only";
+                    return false;
+                }
+            }
+            posix_fadvise(from.handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+
+            CopyingFiles.append(DUrl::fromLocalFile(m_tarPath));
+
+            m_status = Run;
+#ifdef SPLICE_CP
+            in_fd = from.handle();
+            out_fd = to.handle();
+            len = srcFileInfo.size();
+            posix_fadvise(from.handle(), 0, len, POSIX_FADV_SEQUENTIAL);
+            posix_fadvise(from.handle(), 0, len, POSIX_FADV_WILLNEED);
+#endif
+            break;
+        }
+        case FileJob::Run: {
+#ifdef SPLICE_CP
+            if (len <= 0) {
+                if ((m_totalSize - m_bytesCopied) <= 1) {
+                    m_bytesCopied = m_totalSize;
+                }
+
+                to.flush();
+                //                    fsync(out_fd);
+                from.close();
+                to.close();
+
+                if (targetPath)
+                    *targetPath = m_tarPath;
+
+                return true;
+            }
+
+            if (buf_size > len)
+                buf_size = len;
+            /*
+             * move to pipe buffer.
+             */
+            err = splice(in_fd, &in_off, m_filedes[1], NULL, buf_size, SPLICE_F_MOVE);
+            if (err < 0) {
+                qDebug() << "splice pipe0 fail";
+                return false;
+            }
+
+            if (err < buf_size) {
+                qDebug() << QString("copy ret %1 (need %2)").arg(err, buf_size);
+                buf_size = err;
+            }
+            /*
+             * move from pipe buffer to out_fd
+             */
+            err = splice(m_filedes[0], NULL, out_fd, &out_off, buf_size, SPLICE_F_MOVE);
+            if (err < 0) {
+                qDebug() << "splice pipe1 fail";
+                return false;
+            }
+            len -= buf_size;
+
+            m_bytesCopied += buf_size;
+            m_bytesPerSec += buf_size;
+
+            if (!m_isInSameDisk) {
+                if (m_bytesCopied % (Data_Flush_Size) == 0) {
+                    fsync(out_fd);
+                }
+            }
+#else
+            qint64 inBytes = from.read(m_bufferAlign, Data_Block_Size);
+
+            if (inBytes == 0) {
+                if ((m_totalSize - m_bytesCopied) <= 1) {
+                    m_bytesCopied = m_totalSize;
+                }
+                to.close();
+                from.close();
+
+                if (!to.setPermissions(from.permissions())) {
+                    qDebug() << "Set permissions from " << srcFile << "to" << m_tarPath << "failed";
+                }
+
+                if (targetPath) {
+                    *targetPath = m_tarPath;
+                }
+                return true;
+            } else if (inBytes == -1 && from.error() == QFileDevice::ReadError) {
+                to.close();
+                from.close();
+                if (targetPath) {
+                    *targetPath = m_tarPath;
+                }
+                return false;
+            }
+
+            qint64 availableBytes = inBytes;
+
+            while (true) {
+                qint64 writtenBytes = to.write(m_bufferAlign, availableBytes);
+                availableBytes = availableBytes - writtenBytes;
+                if (writtenBytes == 0 && availableBytes == 0) {
+                    break;
+                }
+            }
+
+            m_bytesCopied += inBytes;
+            m_bytesPerSec += inBytes;
+#endif
+            break;
+        }
+        case FileJob::Paused:
+            QThread::msleep(100);
+            m_lastMsec = m_timer.elapsed();
+            break;
+        case FileJob::Cancelled:
+            from.close();
+            to.close();
+            if (m_isSkip)
+                return true;
+            else
+                return false;
+        default:
+            from.close();
+            to.close();
+            return false;
+        }
     }
     return false;
 }
@@ -1899,8 +1834,8 @@ void FileJob::showProgress(goffset current_num_bytes, goffset total_num_bytes, g
 {
     Q_UNUSED(total_num_bytes)
 
-    FileJob* job = static_cast<FileJob*>(user_data);
-//    qDebug() << current_num_bytes << total_num_bytes;
+    FileJob *job = static_cast<FileJob *>(user_data);
+    //    qDebug() << current_num_bytes << total_num_bytes;
     qint64 writtenBytes = current_num_bytes - job->m_last_current_num_bytes;
     job->m_bytesPerSec += writtenBytes;
     job->m_bytesCopied += writtenBytes;
@@ -1930,9 +1865,9 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
 
     if (m_isAborted)
         return false;
-    if(m_applyToAll && m_status == FileJob::Cancelled){
+    if (m_applyToAll && m_status == FileJob::Cancelled) {
         m_skipandApplyToAll = true;
-    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+    } else if (!m_applyToAll && m_status == FileJob::Cancelled) {
         m_status = Started;
     }
 
@@ -1950,119 +1885,110 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
     //they are not in the same folder
     bool isTargetExists = targetInfo.exists();
 
-    if(srcFileInfo.absolutePath() != targetInfo.absolutePath()){
-        if(isTargetExists && !m_applyToAll)
-        {
+    if (srcFileInfo.absolutePath() != targetInfo.absolutePath()) {
+        if (isTargetExists && !m_applyToAll) {
             jobConflicted();
-        }else if (isTargetExists && m_skipandApplyToAll){
+        } else if (isTargetExists && m_skipandApplyToAll) {
             return false;
-        }else{
+        } else {
             m_isSkip = false;
         }
     }
 
     GError *error;
-    GFile *source = NULL, *target=NULL;
+    GFile *source = NULL, *target = NULL;
     GFileCopyFlags flags;
 
     flags = static_cast<GFileCopyFlags>(G_FILE_COPY_NONE | G_FILE_COPY_ALL_METADATA);
     error = NULL;
     bool result = false;
-    while(true)
-    {
-        switch(m_status)
-        {
-            case FileJob::Started:
-            {
-                if (isTargetExists){
-
-                    if (m_isSkip){
-                        if(!m_applyToAll)
-                            m_isSkip = false;
-                        return true;
-                    }
-
-                    if(m_isCoExisted && !m_isReplaced)
-                    {
-                        m_tarPath = checkDuplicateName(m_tarPath);
-                        if(!m_applyToAll)
-                            m_isCoExisted = true;
-                    }
-
-                    if (m_isReplaced){
-
-                        if (targetInfo.isSymLink()){
-                            QFile(m_tarPath).remove();
-                        }else if (!targetInfo.isSymLink() && targetInfo.isDir()){
-                            QDir(m_tarPath).removeRecursively();
-                        }else{
-                            flags = static_cast<GFileCopyFlags>(flags | G_FILE_COPY_OVERWRITE);
-                        }
-
-                        if(!m_applyToAll)
-                            m_isReplaced = false;
-                    }
+    while (true) {
+        switch (m_status) {
+        case FileJob::Started: {
+            if (isTargetExists) {
+                if (m_isSkip) {
+                    if (!m_applyToAll)
+                        m_isSkip = false;
+                    return true;
                 }
 
-                std::string std_srcPath = m_srcPath.toStdString();
-                source = g_file_new_for_path(std_srcPath.data());
+                if (m_isCoExisted && !m_isReplaced) {
+                    m_tarPath = checkDuplicateName(m_tarPath);
+                    if (!m_applyToAll)
+                        m_isCoExisted = true;
+                }
 
-                std::string std_tarPath = m_tarPath.toStdString();
-                target = g_file_new_for_path(std_tarPath.data());
+                if (m_isReplaced) {
+                    if (targetInfo.isSymLink()) {
+                        QFile(m_tarPath).remove();
+                    } else if (!targetInfo.isSymLink() && targetInfo.isDir()) {
+                        QDir(m_tarPath).removeRecursively();
+                    } else {
+                        flags = static_cast<GFileCopyFlags>(flags | G_FILE_COPY_OVERWRITE);
+                    }
 
+                    if (!m_applyToAll)
+                        m_isReplaced = false;
+                }
+            }
+
+            std::string std_srcPath = m_srcPath.toStdString();
+            source = g_file_new_for_path(std_srcPath.data());
+
+            std::string std_tarPath = m_tarPath.toStdString();
+            target = g_file_new_for_path(std_tarPath.data());
+
+            m_last_current_num_bytes = 0;
+
+            m_status = Run;
+            break;
+        }
+        case FileJob::Run: {
+            GFileProgressCallback progress_callback = FileJob::showProgress;
+
+            // 需要模拟通知文件创建的信号
+            m_needGhostFileCreateSignal = true;
+            g_cancellable_reset(m_abortGCancellable);
+
+            if (!g_file_copy(source, target, flags, m_abortGCancellable, progress_callback, this, &error)) {
+                if (error) {
+                    qDebug() << error->message << g_file_error_from_errno(error->domain);
+                    if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)) {
+                        m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
+                    } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+                        emit fileSignalManager->requestShowErrorDialog(QString::fromUtf8(error->message), QString(" "));
+                    }
+                    g_error_free(error);
+                }
+                result = false;
+                continue;
+            } else {
                 m_last_current_num_bytes = 0;
-
-                m_status = Run;
-                break;
-            }
-            case FileJob::Run:
-            {
-                GFileProgressCallback progress_callback = FileJob::showProgress;
-
-                // 需要模拟通知文件创建的信号
-                m_needGhostFileCreateSignal = true;
-                g_cancellable_reset(m_abortGCancellable);
-
-                if (!g_file_copy (source, target, flags, m_abortGCancellable, progress_callback, this, &error)){
-                    if (error){
-                        qDebug() << error->message << g_file_error_from_errno(error->domain);
-                        if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)){
-                            m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
-                        } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-                            emit fileSignalManager->requestShowErrorDialog(QString::fromUtf8(error->message), QString(" "));
-                        }
-                        g_error_free (error);
-                    }
-                    result = false;
-                    continue;
-                }else{
-                    m_last_current_num_bytes = 0;
-                    if (error && IS_IO_ERROR (error, CANCELLED)) {
-                        qDebug() << error->message;
-                        g_error_free (error);
-                    }
-                    if (targetPath)
-                        *targetPath = m_tarPath;
-                    result = true;
+                if (error && IS_IO_ERROR(error, CANCELLED)) {
+                    qDebug() << error->message;
+                    g_error_free(error);
                 }
-                goto unref;
+                if (targetPath)
+                    *targetPath = m_tarPath;
+                result = true;
             }
-            case FileJob::Paused:
-                QThread::msleep(100);
-                m_lastMsec = m_timer.elapsed();
-                break;
-            case FileJob::Cancelled:
-                goto unref;
-            default:
-                goto unref;
-         }
-
+            goto unref;
+        }
+        case FileJob::Paused:
+            QThread::msleep(100);
+            m_lastMsec = m_timer.elapsed();
+            break;
+        case FileJob::Cancelled:
+            goto unref;
+        default:
+            goto unref;
+        }
     }
 unref:
     if (source)
-        g_object_unref (source);
+        g_object_unref(source);
     if (target)
-        g_object_unref (target);
+        g_object_unref(target);
     return result;
 }
 
@@ -2070,8 +1996,8 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
 {
     DUrl srcUrl(srcDir);
     DUrl tarUrl(tarDir);
-    qDebug() << srcUrl<< tarUrl << isMoved;
-    if(DUrl::childrenList(tarUrl).contains(srcUrl) && !isMoved){
+    qDebug() << srcUrl << tarUrl << isMoved;
+    if (DUrl::childrenList(tarUrl).contains(srcUrl) && !isMoved) {
         emit requestCopyMoveToSelfDialogShowed(m_jobDetail);
         return false;
     }
@@ -2079,9 +2005,9 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     if (m_isAborted)
         return false;
 
-    if(m_applyToAll && m_status == FileJob::Cancelled){
+    if (m_applyToAll && m_status == FileJob::Cancelled) {
         m_skipandApplyToAll = true;
-    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+    } else if (!m_applyToAll && m_status == FileJob::Cancelled) {
         m_status = Started;
     }
     QDir sourceDir(srcDir);
@@ -2091,12 +2017,12 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     m_srcFileName = srcDirInfo.fileName();
     m_tarDirName = targetDir.dirName();
 
-    if (m_jobType != Trash){
+    if (m_jobType != Trash) {
         m_tarPath = tarDir + "/" + m_srcFileName;
-    }else{
-        if (targetPath){
+    } else {
+        if (targetPath) {
             m_tarPath = *targetPath;
-        }else{
+        } else {
             m_tarPath = tarDir + "/" + m_srcFileName;
         }
     }
@@ -2106,63 +2032,55 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
 
     bool isTargetExists = targetInfo.exists();
 
-    if(srcDirInfo.absolutePath() != targetInfo.absolutePath()){
-        if(isTargetExists && !m_applyToAll)
-        {
+    if (srcDirInfo.absolutePath() != targetInfo.absolutePath()) {
+        if (isTargetExists && !m_applyToAll) {
             jobConflicted();
-        }else if (isTargetExists && m_skipandApplyToAll){
+        } else if (isTargetExists && m_skipandApplyToAll) {
             return false;
-        }else{
+        } else {
             m_isSkip = false;
         }
     }
 
-    while(true)
-    {
-        switch(m_status)
-        {
-        case Started:
-        {
-            if (isTargetExists){
-
-                if (m_isSkip){
-
-                    if(!m_applyToAll)
+    while (true) {
+        switch (m_status) {
+        case Started: {
+            if (isTargetExists) {
+                if (m_isSkip) {
+                    if (!m_applyToAll)
                         m_isSkip = false;
 
                     return true;
                 }
 
-                if(m_isCoExisted && !m_isReplaced)
-                {
+                if (m_isCoExisted && !m_isReplaced) {
                     m_tarPath = checkDuplicateName(m_tarPath);
                     isTargetExists = false;
 
-                    if(!m_applyToAll)
+                    if (!m_applyToAll)
                         m_isCoExisted = true;
                 }
 
-                if (m_isReplaced){
-                    if (targetInfo.isSymLink()){
+                if (m_isReplaced) {
+                    if (targetInfo.isSymLink()) {
                         QFile(m_tarPath).remove();
-                    }else if (!targetInfo.isSymLink() && targetInfo.isFile()){
+                    } else if (!targetInfo.isSymLink() && targetInfo.isFile()) {
                         QFile(m_tarPath).remove();
-                    }else if (!targetInfo.isSymLink() && targetInfo.isDir()){
-//                        if (!deleteDir(m_tarPath)) {
-//                            QProcess::execute("rm -r \"" + m_tarPath.toUtf8() + "\"");
-//                        }
+                    } else if (!targetInfo.isSymLink() && targetInfo.isDir()) {
+                        //                        if (!deleteDir(m_tarPath)) {
+                        //                            QProcess::execute("rm -r \"" + m_tarPath.toUtf8() + "\"");
+                        //                        }
                     }
 
                     targetDir.mkdir(m_tarPath);
 
-                    if(!m_applyToAll)
+                    if (!m_applyToAll)
                         m_isReplaced = false;
                 }
             }
 
-            if(!isTargetExists)
-            {
-                if(!targetDir.mkdir(m_tarPath))
+            if (!isTargetExists) {
+                if (!targetDir.mkdir(m_tarPath))
                     return false;
             }
             targetDir.setPath(m_tarPath);
@@ -2170,9 +2088,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             m_status = Run;
             break;
         }
-        case Run:
-        {
-
+        case Run: {
             char *name_space;
             char *namep;
             name_space = savedir(srcDir.toStdString().data());
@@ -2182,34 +2098,31 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             if (!namep)
                 return false;
 
-            while (*namep != '\0')
-            {
+            while (*namep != '\0') {
                 QString srcFile = QString("%1/%2").arg(srcDir, QString(namep));
                 QFileInfo srcFileInfo(srcFile);
-                if (srcFileInfo.isSymLink()){
+                if (srcFileInfo.isSymLink()) {
                     handleSymlinkFile(srcFile, targetDir.absolutePath());
-                }else if(!srcFileInfo.isSymLink() && srcFileInfo.isDir()){
-                    if(!copyDir(srcFile, targetDir.absolutePath(), isMoved)){
+                } else if (!srcFileInfo.isSymLink() && srcFileInfo.isDir()) {
+                    if (!copyDir(srcFile, targetDir.absolutePath(), isMoved)) {
                         qDebug() << "coye dir" << srcFile << "failed";
                     }
-                }else
-                {
-                    if(!copyFile(srcFile, targetDir.absolutePath(), isMoved))
-                    {
+                } else {
+                    if (!copyFile(srcFile, targetDir.absolutePath(), isMoved)) {
                         qDebug() << "coye file" << srcFile << "failed";
                     }
                 }
-                namep += strlen (namep) + 1;
+                namep += strlen(namep) + 1;
             }
-           free (name_space);
+            free(name_space);
 
             if (targetPath)
                 *targetPath = targetDir.absolutePath();
 
-            if (!FileUtils::isGvfsMountFile(targetDir.path())){
+            if (!FileUtils::isGvfsMountFile(targetDir.path())) {
                 bool isSetPermissionsSuccess = setDirPermissions(srcDir, targetDir.path());
-                if (!isSetPermissionsSuccess){
-                    qWarning() << "Set Permissions of "<< m_tarPath << "same as" <<  srcDir << "failed";
+                if (!isSetPermissionsSuccess) {
+                    qWarning() << "Set Permissions of " << m_tarPath << "same as" << srcDir << "failed";
                 }
             }
 
@@ -2240,25 +2153,25 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
 //    }
 
 #ifdef SW_LABEL
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         QString tarFile = tarDir + "/" + QFileInfo(srcFile).fileName();
         bool isSrcLabelFileFlag = isLabelFile(srcFile);
         bool isDstLabelFileFlag = isLabelFile(tarFile);
         qDebug() << "srcFile: " << srcFile;
-        qDebug() << "tarFile: "<< tarFile;
+        qDebug() << "tarFile: " << tarFile;
         qDebug() << "isSrcLabelFileFlag: " << isSrcLabelFileFlag;
         qDebug() << "isDstLabelFileFlag: " << isDstLabelFileFlag;
         qDebug() << tarDir << deviceListener->isInRemovableDeviceFolder(tarDir);
         int nRet = 0;
-        if (deviceListener->isInRemovableDeviceFolder(tarDir)){
+        if (deviceListener->isInRemovableDeviceFolder(tarDir)) {
             nRet = checkStoreInRemovableDiskPrivilege(srcFile, tarFile);
-            if (nRet != 0){
-                emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile  );
+            if (nRet != 0) {
+                emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
                 return false;
             }
-        }else{
+        } else {
             nRet = checkMoveJobPrivilege(srcFile, tarFile);
-            if (nRet != 0){
+            if (nRet != 0) {
                 emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
                 return false;
             }
@@ -2279,10 +2192,10 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
 
     QFileInfo scrFileInfo(srcPath);
 
-    if (scrFileInfo.isDir() && scrFileInfo.exists()){
+    if (scrFileInfo.isDir() && scrFileInfo.exists()) {
         DUrl srcUrl(srcPath);
         DUrl tarUrl(tarDir);
-        if(DUrl::childrenList(tarUrl).contains(srcUrl)){
+        if (DUrl::childrenList(tarUrl).contains(srcUrl)) {
             emit requestCopyMoveToSelfDialogShowed(m_jobDetail);
             /*copyDir/deleteDir will excute if return false;*/
             return true;
@@ -2292,9 +2205,9 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
     if (m_isAborted)
         return false;
 
-    if(m_applyToAll && m_status == FileJob::Cancelled){
+    if (m_applyToAll && m_status == FileJob::Cancelled) {
         m_skipandApplyToAll = true;
-    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+    } else if (!m_applyToAll && m_status == FileJob::Cancelled) {
         m_status = Started;
     }
 
@@ -2309,21 +2222,20 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
 
     //We only check the conflict of the files when
     //they are not in the same folder
-    if(scrFileInfo.absolutePath()== tarDir && isTargetExists)
+    if (scrFileInfo.absolutePath() == tarDir && isTargetExists)
         return true;
-    else{
-        if(isTargetExists && !m_applyToAll)
-        {
+    else {
+        if (isTargetExists && !m_applyToAll) {
             jobConflicted();
-        }else if (isTargetExists && m_skipandApplyToAll){
+        } else if (isTargetExists && m_skipandApplyToAll) {
             return false;
-        }else{
+        } else {
             m_isSkip = false;
         }
     }
 
     GError *error;
-    GFile *source = NULL, *target=NULL;
+    GFile *source = NULL, *target = NULL;
     GFileCopyFlags flags;
 
     flags = static_cast<GFileCopyFlags>(G_FILE_COPY_NONE | G_FILE_COPY_ALL_METADATA);
@@ -2331,95 +2243,86 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
 
     bool result = false;
 
-    while(true)
-    {
-        switch(m_status)
-        {
-            case FileJob::Started:
-            {
-                if (isTargetExists){
+    while (true) {
+        switch (m_status) {
+        case FileJob::Started: {
+            if (isTargetExists) {
+                if (m_isSkip) {
+                    if (!m_applyToAll)
+                        m_isSkip = false;
 
-                    if (m_isSkip){
-
-                        if(!m_applyToAll)
-                            m_isSkip = false;
-
-                        return true;
-                    }
-
-                    if(m_isCoExisted && !m_isReplaced)
-                    {
-                        m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
-
-                        if(!m_applyToAll)
-                            m_isCoExisted = true;
-                    }
-
-                    if (m_isReplaced){
-
-                        m_tarPath = m_tarPath + "/" + m_srcFileName;
-
-                        flags = static_cast<GFileCopyFlags>(flags | G_FILE_COPY_OVERWRITE);
-
-                        if(!m_applyToAll)
-                            m_isReplaced = false;
-                    }
+                    return true;
                 }
 
-                std::string std_srcPath = m_srcPath.toStdString();
-                source = g_file_new_for_path(std_srcPath.data());
+                if (m_isCoExisted && !m_isReplaced) {
+                    m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
 
-                std::string std_tarPath = m_tarPath.toStdString();
-                target = g_file_new_for_path(std_tarPath.data());
+                    if (!m_applyToAll)
+                        m_isCoExisted = true;
+                }
 
+                if (m_isReplaced) {
+                    m_tarPath = m_tarPath + "/" + m_srcFileName;
+
+                    flags = static_cast<GFileCopyFlags>(flags | G_FILE_COPY_OVERWRITE);
+
+                    if (!m_applyToAll)
+                        m_isReplaced = false;
+                }
+            }
+
+            std::string std_srcPath = m_srcPath.toStdString();
+            source = g_file_new_for_path(std_srcPath.data());
+
+            std::string std_tarPath = m_tarPath.toStdString();
+            target = g_file_new_for_path(std_tarPath.data());
+
+            m_last_current_num_bytes = 0;
+
+            m_status = Run;
+            break;
+        }
+        case FileJob::Run: {
+            GFileProgressCallback progress_callback = FileJob::showProgress;
+            g_cancellable_reset(m_abortGCancellable);
+
+            if (!g_file_move(source, target, flags, m_abortGCancellable, progress_callback, this, &error)) {
+                if (error) {
+                    qDebug() << error->message << g_file_error_from_errno(error->domain);
+                    if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)) {
+                        m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
+                    } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+                        emit fileSignalManager->requestShowErrorDialog(QString::fromUtf8(error->message), QString(" "));
+                    }
+                    g_error_free(error);
+                }
+                result = true;
+            } else {
                 m_last_current_num_bytes = 0;
-
-
-                m_status = Run;
-                break;
-            }
-            case FileJob::Run:
-            {
-                GFileProgressCallback progress_callback = FileJob::showProgress;
-                g_cancellable_reset(m_abortGCancellable);
-
-                if (!g_file_move (source, target, flags, m_abortGCancellable, progress_callback, this, &error)){
-                    if (error){
-                        qDebug() << error->message << g_file_error_from_errno(error->domain);
-                        if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)){
-                            m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
-                        } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-                            emit fileSignalManager->requestShowErrorDialog(QString::fromUtf8(error->message), QString(" "));
-                        }
-                        g_error_free (error);
-                    }
-                    result = true;
-                }else{
-                    m_last_current_num_bytes = 0;
-                    if (error && IS_IO_ERROR (error, CANCELLED)) {
-                        qDebug() << error->message;
-                        g_error_free (error);
-                    }
-                    if (targetPath)
-                        *targetPath = m_tarPath;
-                    result = true;
+                if (error && IS_IO_ERROR(error, CANCELLED)) {
+                    qDebug() << error->message;
+                    g_error_free(error);
                 }
-                goto unref;
+                if (targetPath)
+                    *targetPath = m_tarPath;
+                result = true;
             }
-            case FileJob::Paused:
-                QThread::msleep(100);
-                break;
-            case FileJob::Cancelled:
-                goto unref;
-            default:
-                goto unref;
+            goto unref;
+        }
+        case FileJob::Paused:
+            QThread::msleep(100);
+            break;
+        case FileJob::Cancelled:
+            goto unref;
+        default:
+            goto unref;
         }
     }
 unref:
     if (source)
-        g_object_unref (source);
+        g_object_unref(source);
     if (target)
-        g_object_unref (target);
+        g_object_unref(target);
     return result;
 }
 
@@ -2436,10 +2339,10 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
 
     QFileInfo scrFileInfo(srcPath);
 
-    if (scrFileInfo.isDir() && scrFileInfo.exists()){
+    if (scrFileInfo.isDir() && scrFileInfo.exists()) {
         DUrl srcUrl(srcPath);
         DUrl tarUrl(tarDir);
-        if(DUrl::childrenList(tarUrl).contains(srcUrl)){
+        if (DUrl::childrenList(tarUrl).contains(srcUrl)) {
             emit requestCopyMoveToSelfDialogShowed(m_jobDetail);
             /*copyDir/deleteDir will excute if return false;*/
             return true;
@@ -2449,9 +2352,9 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
     if (m_isAborted)
         return false;
 
-    if(m_applyToAll && m_status == FileJob::Cancelled){
+    if (m_applyToAll && m_status == FileJob::Cancelled) {
         m_skipandApplyToAll = true;
-    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+    } else if (!m_applyToAll && m_status == FileJob::Cancelled) {
         m_status = Started;
     }
 
@@ -2466,134 +2369,119 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
 
     //We only check the conflict of the files when
     //they are not in the same folder
-    if(scrFileInfo.absolutePath()== tarDir && isTargetExists)
+    if (scrFileInfo.absolutePath() == tarDir && isTargetExists)
         return true;
-    else{
-        if(isTargetExists && !m_applyToAll)
-        {
+    else {
+        if (isTargetExists && !m_applyToAll) {
             jobConflicted();
-        }else if (isTargetExists && m_skipandApplyToAll){
+        } else if (isTargetExists && m_skipandApplyToAll) {
             return false;
-        }else{
+        } else {
             m_isSkip = false;
         }
-
     }
 
-    while(true)
-    {
-        switch(m_status)
-        {
-            case FileJob::Started:
-            {
-                qDebug() << m_isSkip << m_isCoExisted << m_isReplaced << m_applyToAll;
-                if (m_isSkip){
+    while (true) {
+        switch (m_status) {
+        case FileJob::Started: {
+            qDebug() << m_isSkip << m_isCoExisted << m_isReplaced << m_applyToAll;
+            if (m_isSkip) {
+                if (!m_applyToAll)
+                    m_isSkip = false;
 
-                    if(!m_applyToAll)
-                        m_isSkip = false;
-
-                    return true;
-                }
-
-                if(m_isCoExisted && !m_isReplaced){
-                    m_tarPath = checkDuplicateName(m_tarPath);
-
-                    if(!m_applyToAll)
-                        m_isCoExisted = true;
-
-                }
-
-                if (m_isReplaced){
-
-                    QFileInfo tarInfo(m_tarPath);
-                    if (tarInfo.isDir()){
-                        QDir tarDir(m_tarPath);
-                        if(tarDir.exists()){
-
-                        }else{
-                            return false;
-                        }
-                    }else{
-                        QFile tarFile(m_tarPath);
-                        if(tarFile.exists() || QFileInfo(tarFile).isSymLink()){
-                            QFile(m_tarPath).remove();
-                        }
-                    }
-
-                    if(!m_applyToAll)
-                        m_isReplaced = false;
-                }
-
-                m_status = Run;
-                break;
+                return true;
             }
-            case FileJob::Run:
-            {
-                bool ok(false);
-                if (scrFileInfo.isDir()){
-                    if (!QDir(m_tarPath).exists()){
-                        qDebug() << srcPath << m_tarPath;
-                        ok = QDir(srcPath).rename(srcPath, m_tarPath);
-                    }else{
-                        QDirIterator tmp_iterator(scrFileInfo.absoluteFilePath(),
-                                                  QDir::AllEntries | QDir::System
+
+            if (m_isCoExisted && !m_isReplaced) {
+                m_tarPath = checkDuplicateName(m_tarPath);
+
+                if (!m_applyToAll)
+                    m_isCoExisted = true;
+            }
+
+            if (m_isReplaced) {
+                QFileInfo tarInfo(m_tarPath);
+                if (tarInfo.isDir()) {
+                    QDir tarDir(m_tarPath);
+                    if (tarDir.exists()) {
+                    } else {
+                        return false;
+                    }
+                } else {
+                    QFile tarFile(m_tarPath);
+                    if (tarFile.exists() || QFileInfo(tarFile).isSymLink()) {
+                        QFile(m_tarPath).remove();
+                    }
+                }
+
+                if (!m_applyToAll)
+                    m_isReplaced = false;
+            }
+
+            m_status = Run;
+            break;
+        }
+        case FileJob::Run: {
+            bool ok(false);
+            if (scrFileInfo.isDir()) {
+                if (!QDir(m_tarPath).exists()) {
+                    qDebug() << srcPath << m_tarPath;
+                    ok = QDir(srcPath).rename(srcPath, m_tarPath);
+                } else {
+                    QDirIterator tmp_iterator(scrFileInfo.absoluteFilePath(),
+                                              QDir::AllEntries | QDir::System
                                                   | QDir::NoDotAndDotDot
                                                   | QDir::Hidden);
 
-                        while (tmp_iterator.hasNext()) {
+                    while (tmp_iterator.hasNext()) {
+                        if (m_isAborted)
+                            break;
 
-                            if (m_isAborted)
-                                break;
-
-                            tmp_iterator.next();
-                            const QFileInfo fileInfo = tmp_iterator.fileInfo();
-                            QString srcFilePath = fileInfo.filePath();
-                            QString _targetDir = QFileInfo(m_tarPath).absoluteFilePath();
-                            if (fileInfo.isSymLink()){
-                                handleSymlinkFile(srcFilePath, _targetDir);
-                            }else if(!fileInfo.isSymLink() && fileInfo.isDir()){
-                                qDebug() << srcFilePath << _targetDir;
-                                if(!moveDir(srcFilePath, _targetDir)){
-                                    qDebug() << "move dir" << srcFilePath << _targetDir << "failed";
-                                }else{
-                                    m_tarPath = _targetDir;
-                                }
-                            }else
-                            {
-                                if(!moveFile(srcFilePath, _targetDir))
-                                {
-                                    qDebug() << "move file" << srcFilePath << _targetDir << "failed";
-                                }else{
-                                    m_tarPath = _targetDir;
-                                }
+                        tmp_iterator.next();
+                        const QFileInfo fileInfo = tmp_iterator.fileInfo();
+                        QString srcFilePath = fileInfo.filePath();
+                        QString _targetDir = QFileInfo(m_tarPath).absoluteFilePath();
+                        if (fileInfo.isSymLink()) {
+                            handleSymlinkFile(srcFilePath, _targetDir);
+                        } else if (!fileInfo.isSymLink() && fileInfo.isDir()) {
+                            qDebug() << srcFilePath << _targetDir;
+                            if (!moveDir(srcFilePath, _targetDir)) {
+                                qDebug() << "move dir" << srcFilePath << _targetDir << "failed";
+                            } else {
+                                m_tarPath = _targetDir;
+                            }
+                        } else {
+                            if (!moveFile(srcFilePath, _targetDir)) {
+                                qDebug() << "move file" << srcFilePath << _targetDir << "failed";
+                            } else {
+                                m_tarPath = _targetDir;
                             }
                         }
-                        ok = true;
                     }
-
-
-                }else{
-                    QFile srcFile(srcPath);
-                    ok = srcFile.rename(m_tarPath);
+                    ok = true;
                 }
 
-                if (ok && targetPath)
-                    *targetPath = m_tarPath;
-
-                return ok;
+            } else {
+                QFile srcFile(srcPath);
+                ok = srcFile.rename(m_tarPath);
             }
-            case FileJob::Paused:
-                QThread::msleep(100);
-                break;
-            case FileJob::Cancelled:
+
+            if (ok && targetPath)
+                *targetPath = m_tarPath;
+
+            return ok;
+        }
+        case FileJob::Paused:
+            QThread::msleep(100);
+            break;
+        case FileJob::Cancelled:
             if (m_isSkip)
                 return true;
             else
                 return false;
-            default:
-                return false;
-         }
-
+        default:
+            return false;
+        }
     }
     return false;
 
@@ -2612,58 +2500,52 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
     m_tarPath = tarDir;
     m_status = Started;
 
-    while(true)
-    {
-        switch(m_status)
-        {
-            case FileJob::Started:
-            {
-                if (m_jobType != Trash){
-                    m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
-                }else{
-                    bool canTrash = moveFileToTrash(srcFile, targetPath);
-                    if (canTrash && targetPath){
-                        m_tarPath = *targetPath;
-                    }
+    while (true) {
+        switch (m_status) {
+        case FileJob::Started: {
+            if (m_jobType != Trash) {
+                m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
+            } else {
+                bool canTrash = moveFileToTrash(srcFile, targetPath);
+                if (canTrash && targetPath) {
+                    m_tarPath = *targetPath;
                 }
-                m_status = Run;
-                break;
             }
-            case FileJob::Run:
-            {
-
-                QFile targetFile(fromInfo.symLinkTarget());
-                bool ok = targetFile.link(m_tarPath);
-                if (ok){
-                    if (m_jobType == Move || m_jobType == Trash || m_jobType == Restore){
-                        QFile from(srcFile);
-                        from.remove();
-                    }
-                    if (targetPath){
-                        *targetPath = m_tarPath;
-                    }
-                }else{
-                    qDebug() << targetFile.errorString();
+            m_status = Run;
+            break;
+        }
+        case FileJob::Run: {
+            QFile targetFile(fromInfo.symLinkTarget());
+            bool ok = targetFile.link(m_tarPath);
+            if (ok) {
+                if (m_jobType == Move || m_jobType == Trash || m_jobType == Restore) {
+                    QFile from(srcFile);
+                    from.remove();
                 }
-
-                if(!m_applyToAll){
-                    m_isReplaced = false;
+                if (targetPath) {
+                    *targetPath = m_tarPath;
                 }
-
-                return ok;
+            } else {
+                qDebug() << targetFile.errorString();
             }
-            case FileJob::Paused:
-                QThread::msleep(100);
-                break;
-            case FileJob::Cancelled:
-                if (m_isSkip)
-                    return true;
-                else
-                    return false;
-            default:
+
+            if (!m_applyToAll) {
+                m_isReplaced = false;
+            }
+
+            return ok;
+        }
+        case FileJob::Paused:
+            QThread::msleep(100);
+            break;
+        case FileJob::Cancelled:
+            if (m_isSkip)
+                return true;
+            else
                 return false;
-         }
-
+        default:
+            return false;
+        }
     }
     return false;
 }
@@ -2681,105 +2563,99 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
     m_tarDirName = toInfo.absoluteDir().dirName();
     m_status = Started;
 
-    if(toInfo.exists() || toInfo.isSymLink())
-    {
+    if (toInfo.exists() || toInfo.isSymLink()) {
         jobConflicted();
     }
 
-    while(true)
-    {
-        switch(m_status)
-        {
-            case FileJob::Started:
-            {
-                if (m_isSkip){
-                    return false; // return true will delete .trashinfo and we cannot restore it anymore
-                }
-
-                if(m_isCoExisted && !m_isReplaced)
-                {
-                    m_tarPath = checkDuplicateName(m_tarPath);
-                }
-
-                if (m_isReplaced){
-                    if(to.exists() || toInfo.isSymLink()){
-                        if (toInfo.isDir()){
-//                            bool result = QDir(tarFile).removeRecursively();
-
-//                            if (!result) {
-//                                result = QProcess::execute("rm -r \"" + tarFile.toUtf8() + "\"") == 0;
-//                            }
-
-//                            if (!result)
-//                                return false;
-                        }else if (toInfo.isFile() || toInfo.isSymLink()){
-                            to.remove();
-//                            qDebug() << to.error() << to.errorString();
-                        }
-                    }
-                }
-
-                m_status = Run;
-                break;
-            }
-            case FileJob::Run:
-            {
-                bool result(false);
-                QFileInfo srcFileinfo(srcFile);
-                if (srcFileinfo.isSymLink()){
-                    result =  QFile(srcFileinfo.symLinkTarget()).link(m_tarPath);
-                    if (result){
-                        from.remove();
-                    }
-                }else if (srcFileinfo.isDir() && m_isReplaced){
-                    QDir srcDir(srcFile);
-                    QFileInfoList infos = srcDir.entryInfoList(QDir::AllEntries | QDir::System
-                                     | QDir::NoDotAndDotDot
-                                     | QDir::Hidden);
-                    DUrlList urls, resultUrls;
-                    foreach (const QFileInfo& info, infos) {
-                        urls << DUrl::fromLocalFile(info.absoluteFilePath());
-                    }
-                    qDebug() << urls;
-                    m_isReplaced = false;
-                    resultUrls = doMove(urls, DUrl::fromLocalFile(tarFile));
-                    m_isReplaced = true;
-                    qDebug() << resultUrls;
-                    if (resultUrls.count() == urls.count()){
-                       result = QDir(srcFile).removeRecursively();
-                        if (!result) {
-                            result = QProcess::execute("rm -r \"" + srcFile.toUtf8() + "\"") == 0;
-                        }
-                        if (!result)
-                            return false;
-                    }
-
-                }else{
-                    result = from.rename(m_tarPath);
-                }
-
-                if (!result) {
-                    if (srcFileinfo.isDir() && m_isReplaced){
-                        return result;
-                    }else{
-                        qDebug() << m_tarPath << from.error() << from.errorString();
-                        result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);
-//                        if (!result){
-//                            emit fileSignalManager->requestShowRestoreFailedPerssionDialog(srcFile, m_tarPath);
-//                        }
-                    }
-                }
-
-                return result;
-            }
-            case FileJob::Paused:
-                QThread::msleep(100);
-                break;
-            case FileJob::Cancelled:
+    while (true) {
+        switch (m_status) {
+        case FileJob::Started: {
+            if (m_isSkip) {
                 return false; // return true will delete .trashinfo and we cannot restore it anymore
-            default:
-                return false;
-         }
+            }
+
+            if (m_isCoExisted && !m_isReplaced) {
+                m_tarPath = checkDuplicateName(m_tarPath);
+            }
+
+            if (m_isReplaced) {
+                if (to.exists() || toInfo.isSymLink()) {
+                    if (toInfo.isDir()) {
+                        //                            bool result = QDir(tarFile).removeRecursively();
+
+                        //                            if (!result) {
+                        //                                result = QProcess::execute("rm -r \"" + tarFile.toUtf8() + "\"") == 0;
+                        //                            }
+
+                        //                            if (!result)
+                        //                                return false;
+                    } else if (toInfo.isFile() || toInfo.isSymLink()) {
+                        to.remove();
+                        //                            qDebug() << to.error() << to.errorString();
+                    }
+                }
+            }
+
+            m_status = Run;
+            break;
+        }
+        case FileJob::Run: {
+            bool result(false);
+            QFileInfo srcFileinfo(srcFile);
+            if (srcFileinfo.isSymLink()) {
+                result = QFile(srcFileinfo.symLinkTarget()).link(m_tarPath);
+                if (result) {
+                    from.remove();
+                }
+            } else if (srcFileinfo.isDir() && m_isReplaced) {
+                QDir srcDir(srcFile);
+                QFileInfoList infos = srcDir.entryInfoList(QDir::AllEntries | QDir::System
+                                                           | QDir::NoDotAndDotDot
+                                                           | QDir::Hidden);
+                DUrlList urls, resultUrls;
+                foreach (const QFileInfo &info, infos) {
+                    urls << DUrl::fromLocalFile(info.absoluteFilePath());
+                }
+                qDebug() << urls;
+                m_isReplaced = false;
+                resultUrls = doMove(urls, DUrl::fromLocalFile(tarFile));
+                m_isReplaced = true;
+                qDebug() << resultUrls;
+                if (resultUrls.count() == urls.count()) {
+                    result = QDir(srcFile).removeRecursively();
+                    if (!result) {
+                        result = QProcess::execute("rm -r \"" + srcFile.toUtf8() + "\"") == 0;
+                    }
+                    if (!result)
+                        return false;
+                }
+
+            } else {
+                result = from.rename(m_tarPath);
+            }
+
+            if (!result) {
+                if (srcFileinfo.isDir() && m_isReplaced) {
+                    return result;
+                } else {
+                    qDebug() << m_tarPath << from.error() << from.errorString();
+                    result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);
+                    //                        if (!result){
+                    //                            emit fileSignalManager->requestShowRestoreFailedPerssionDialog(srcFile, m_tarPath);
+                    //                        }
+                }
+            }
+
+            return result;
+        }
+        case FileJob::Paused:
+            QThread::msleep(100);
+            break;
+        case FileJob::Cancelled:
+            return false; // return true will delete .trashinfo and we cannot restore it anymore
+        default:
+            return false;
+        }
     }
     return false;
 }
@@ -2792,10 +2668,10 @@ bool FileJob::deleteFile(const QString &file)
 //    }
 
 #ifdef SW_LABEL
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
-        if (isLabelFile(file)){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
+        if (isLabelFile(file)) {
             int nRet = checkDeleteJobPrivilege(file);
-            if (nRet != 0){
+            if (nRet != 0) {
                 emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), file);
                 return false;
             }
@@ -2805,11 +2681,9 @@ bool FileJob::deleteFile(const QString &file)
 
 //    qDebug() << "delete file by qtio" << file;
 
-    if(QFile::remove(file)){
+    if (QFile::remove(file)) {
         return true;
-    }
-    else
-    {
+    } else {
         qDebug() << "unable to delete file:" << file;
 //        emit fileSignalManager->requestShowNoPermissionDialog(DUrl::fromLocalFile(file));
         m_noPermissonUrls << DUrl::fromLocalFile(file);
@@ -2821,22 +2695,22 @@ bool FileJob::deleteFileByGio(const QString &srcFile)
 {
 //    qDebug() << "delete file by gvfs" << srcFile;
     GFile *source;
-    GError* error = NULL;
+    GError *error = NULL;
 
     std::string std_srcPath = srcFile.toStdString();
     source = g_file_new_for_path(std_srcPath.data());
 
     bool result = false;
-    if (!g_file_delete (source, NULL, &error)){
-        if (error){
+    if (!g_file_delete(source, NULL, &error)) {
+        if (error) {
             qDebug() << error->message;
-            g_error_free (error);
+            g_error_free(error);
         }
-    }else{
+    } else {
         result = true;
     }
     if (source)
-        g_object_unref (source);
+        g_object_unref(source);
     return result;
 }
 
@@ -2855,7 +2729,7 @@ bool FileJob::deleteDir(const QString &dir)
 
     while (iterator.hasNext()) {
         const QFileInfo &fileInfo = iterator.next();
-        if (fileInfo.exists() || fileInfo.isSymLink()){
+        if (fileInfo.exists() || fileInfo.isSymLink()) {
             if (fileInfo.isFile() || fileInfo.isSymLink()) {
                 if (!deleteFile(fileInfo.filePath())) {
                     qDebug() << "Unable to remove file:" << fileInfo.filePath();
@@ -2864,7 +2738,7 @@ bool FileJob::deleteDir(const QString &dir)
                 }
             } else {
                 qDebug() << fileInfo.filePath() << fileInfo.isDir() << fileInfo.isFile() << fileInfo.isSymLink();
-                if (fileInfo.isDir()){
+                if (fileInfo.isDir()) {
                     if (!deleteDir(fileInfo.filePath()))
                         return false;
                 }
@@ -2886,35 +2760,34 @@ bool FileJob::deleteDir(const QString &dir)
 void FileJob::deleteEmptyDir(const QString &srcPath)
 {
     QFlags<QDir::Filter> f = QDir::AllEntries | QDir::System
-            | QDir::NoDotAndDotDot
-            | QDir::Hidden;
+                             | QDir::NoDotAndDotDot
+                             | QDir::Hidden;
     QDirIterator tmp_iterator(srcPath, f);
 
     while (tmp_iterator.hasNext()) {
         tmp_iterator.next();
         const QFileInfo fileInfo = tmp_iterator.fileInfo();
-        if (fileInfo.isDir()){
+        if (fileInfo.isDir()) {
             QString _srcPath = fileInfo.absoluteFilePath();
             QDir _srcDir(_srcPath);
             _srcDir.setFilter(f);
-            if (_srcDir.count() == 0){
+            if (_srcDir.count() == 0) {
                 deleteDir(_srcPath);
-            }else{
+            } else {
                 deleteEmptyDir(_srcPath);
             }
         }
     }
     QDir srcDir(srcPath);
     srcDir.setFilter(f);
-    if (srcDir.count() == 0){
+    if (srcDir.count() == 0) {
         deleteDir(srcPath);
     }
 }
 
 bool FileJob::moveDirToTrash(const QString &dir, QString *targetPath)
 {
-    if(m_status == FileJob::Cancelled)
-    {
+    if (m_status == FileJob::Cancelled) {
         emit result("cancelled");
         return false;
     }
@@ -2963,7 +2836,7 @@ QString FileJob::getNotExistsTrashFileName(const QString &fileName)
     while (true) {
         QFileInfo info(trashpath + name + suffix);
         // QFile::exists ==> If the file is a symlink that points to a non-existing file, false is returned.
-        if(!info.isSymLink() && !info.exists()){
+        if (!info.isSymLink() && !info.exists()) {
             break;
         }
 
@@ -2976,10 +2849,10 @@ QString FileJob::getNotExistsTrashFileName(const QString &fileName)
 bool FileJob::moveFileToTrash(const QString &file, QString *targetPath)
 {
 #ifdef SW_LABEL
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
-        if (isLabelFile(file)){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
+        if (isLabelFile(file)) {
             int nRet = checkMoveJobPrivilege(file, "");
-            if (nRet != 0){
+            if (nRet != 0) {
                 emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), file);
                 return false;
             }
@@ -2987,8 +2860,7 @@ bool FileJob::moveFileToTrash(const QString &file, QString *targetPath)
     }
 #endif
 
-    if(m_status == FileJob::Cancelled)
-    {
+    if (m_status == FileJob::Cancelled) {
         emit result("cancelled");
         return false;
     }
@@ -3012,9 +2884,9 @@ bool FileJob::moveFileToTrash(const QString &file, QString *targetPath)
 
 bool FileJob::writeTrashInfo(const QString &fileBaseName, const QString &path, const QString &time)
 {
-    QFile metadata( m_trashLoc + "/info/" + fileBaseName + ".trashinfo" );
+    QFile metadata(m_trashLoc + "/info/" + fileBaseName + ".trashinfo");
 
-    if (!metadata.open( QIODevice::WriteOnly )) {
+    if (!metadata.open(QIODevice::WriteOnly)) {
         qDebug() << metadata.fileName() << "file open error:" << metadata.errorString();
 
         return false;
@@ -3048,10 +2920,10 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
 //    UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(destination.path()); // get disk info from mount point
 //    if(!info)
 //        info = deviceListener->getDeviceByFilePath(destination.path()); // get disk infor from mount mount point sub path
-    if (FileUtils::isGvfsMountFile(destination.toLocalFile())){
-        m_totalSize = FileUtils::totalSize(files);
-        return true;
-    }
+if (FileUtils::isGvfsMountFile(destination.toLocalFile())) {
+    m_totalSize = FileUtils::totalSize(files);
+    return true;
+}
 
     qint64 freeBytes;
     freeBytes = getStorageInfo(destination.toLocalFile()).bytesFree();
@@ -3075,8 +2947,8 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
 
     m_checkDiskJobDataDetail = jobDataDetail;
 
-    if(!isInLimit)
-        qDebug() << QString ("Can't copy or move files to target disk, disk free: %1").arg(FileUtils::formatSize(freeBytes));
+    if (!isInLimit)
+        qDebug() << QString("Can't copy or move files to target disk, disk free: %1").arg(FileUtils::formatSize(freeBytes));
 
     return isInLimit;
 }
@@ -3103,7 +2975,7 @@ bool FileJob::checkTrashFileOutOf1GB(const DUrl &url)
     m_checkDiskJobDataDetail = jobDataDetail;
 
     //calculate files's sizes
-    m_totalSize = FileUtils::totalSize(list, 1024*1024*1024, isInLimit);
+    m_totalSize = FileUtils::totalSize(list, 1024 * 1024 * 1024, isInLimit);
 
     jobDataDetail["status"] = "working";
 
@@ -3120,23 +2992,23 @@ bool FileJob::checkFat32FileOutof4G(const QString &srcFile, const QString &tarDi
     threshold = threshold / 1024;
     threshold = threshold / 1024;
 
-    if (threshold >= 4 ){
+    if (threshold >= 4) {
         UDiskDeviceInfoPointer pDesDevice;
         UDiskDeviceInfoPointer pDesDevice1 = deviceListener->getDeviceByPath(tarDir);
         UDiskDeviceInfoPointer pDesDevice2 = deviceListener->getDeviceByFilePath(tarDir);
-        if (pDesDevice1 || pDesDevice2){
-            if (pDesDevice1){
+        if (pDesDevice1 || pDesDevice2) {
+            if (pDesDevice1) {
                 pDesDevice = pDesDevice1;
             }
-            if (pDesDevice2){
+            if (pDesDevice2) {
                 pDesDevice = pDesDevice2;
             }
-            if (pDesDevice){
+            if (pDesDevice) {
                 QString devicePath = pDesDevice->getDiskInfo().unix_device();
-                QStringList && udiskspaths = DDiskManager::resolveDeviceNode(devicePath, {});
+                QStringList &&udiskspaths = DDiskManager::resolveDeviceNode(devicePath, {});
                 if (udiskspaths.isEmpty()) return false;
                 QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspaths.first()));
-                if (blk->idType() == "vfat" ){
+                if (blk->idType() == "vfat") {
                     emit fileSignalManager->requestShow4GFat32Dialog();
                     return true;
                 }
@@ -3148,11 +3020,11 @@ bool FileJob::checkFat32FileOutof4G(const QString &srcFile, const QString &tarDi
 
 bool FileJob::checkUseGvfsFileOperation(const DUrlList &files, const DUrl &destination)
 {
-    if (checkUseGvfsFileOperation(destination.path())){
+    if (checkUseGvfsFileOperation(destination.path())) {
         return true;
     }
     foreach (DUrl url, files) {
-        if (checkUseGvfsFileOperation(url.path())){
+        if (checkUseGvfsFileOperation(url.path())) {
             return true;
         }
     }
@@ -3169,8 +3041,8 @@ QStorageInfo FileJob::getStorageInfo(const QString &file)
     QFileInfo info(file);
 
     return info.isSymLink()
-            ? QStorageInfo(info.absolutePath())
-            : QStorageInfo(info.absoluteFilePath());
+               ? QStorageInfo(info.absolutePath())
+               : QStorageInfo(info.absoluteFilePath());
 }
 
 bool FileJob::canMove(const QString &filePath)
@@ -3202,7 +3074,7 @@ bool FileJob::canMove(const QString &filePath)
 QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
 {
     QRegularExpression ovrex("While grafting '(.*)'");
-    for (auto& msgs : msg) {
+    for (auto &msgs : msg) {
         auto ovrxm = ovrex.match(msgs);
         if (msgs.contains("file object exists and may not be overwritten") && ovrxm.hasMatch()) {
             return tr("%1 is a duplicate file.").arg(ovrxm.captured(1));
@@ -3230,14 +3102,14 @@ QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
 #ifdef SW_LABEL
 bool FileJob::isLabelFile(const QString &srcFileName)
 {
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         std::string path = srcFileName.toStdString();
 //        int ret = lls_simplechecklabel(const_cast<char*>(path.c_str()));
-        int ret = LlsDeepinLabelLibrary::instance()->lls_simplechecklabel()(const_cast<char*>(path.c_str()));
+        int ret = LlsDeepinLabelLibrary::instance()->lls_simplechecklabel()(const_cast<char *>(path.c_str()));
         qDebug() << ret << srcFileName;
-        if (ret == 0){
+        if (ret == 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -3246,11 +3118,11 @@ bool FileJob::isLabelFile(const QString &srcFileName)
 
 int FileJob::checkCopyJobPrivilege(const QString &srcFileName, const QString &dstFileName)
 {
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         std::string path = srcFileName.toStdString();
         std::string dstpath = dstFileName.toStdString();
 //        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_COPY);
-        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), const_cast<char*>(dstpath.c_str()), E_FILE_PRI_COPY);
+        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char *>(path.c_str()), const_cast<char *>(dstpath.c_str()), E_FILE_PRI_COPY);
         qDebug() << nRet << srcFileName;
         return nRet;
     }
@@ -3259,11 +3131,11 @@ int FileJob::checkCopyJobPrivilege(const QString &srcFileName, const QString &ds
 
 int FileJob::checkMoveJobPrivilege(const QString &srcFileName, const QString &dstFileName)
 {
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         std::string path = srcFileName.toStdString();
         std::string dstpath = dstFileName.toStdString();
 //        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_MOVE);
-        int nRet =   LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), const_cast<char*>(dstpath.c_str()), E_FILE_PRI_MOVE);
+        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char *>(path.c_str()), const_cast<char *>(dstpath.c_str()), E_FILE_PRI_MOVE);
         qDebug() << nRet << srcFileName;
         return nRet;
     }
@@ -3272,11 +3144,11 @@ int FileJob::checkMoveJobPrivilege(const QString &srcFileName, const QString &ds
 
 int FileJob::checkStoreInRemovableDiskPrivilege(const QString &srcFileName, const QString &dstFileName)
 {
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         std::string path = srcFileName.toStdString();
         std::string dstpath = dstFileName.toStdString();
 //        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_STORE);
-        int nRet =  LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), const_cast<char*>(dstpath.c_str()), E_FILE_PRI_STORE);
+        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char *>(path.c_str()), const_cast<char *>(dstpath.c_str()), E_FILE_PRI_STORE);
         qDebug() << nRet << srcFileName;
         return nRet;
     }
@@ -3285,10 +3157,10 @@ int FileJob::checkStoreInRemovableDiskPrivilege(const QString &srcFileName, cons
 
 int FileJob::checkDeleteJobPrivilege(const QString &srcFileName)
 {
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         std::string path = srcFileName.toStdString();
 //        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_DELETE);
-        int nRet =   LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_DELETE);
+        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char *>(path.c_str()), NULL, E_FILE_PRI_DELETE);
         qDebug() << nRet << srcFileName;
         return nRet;
     }
@@ -3297,10 +3169,10 @@ int FileJob::checkDeleteJobPrivilege(const QString &srcFileName)
 
 int FileJob::checkRenamePrivilege(const QString &srcFileName)
 {
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         std::string path = srcFileName.toStdString();
 //        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_RENAME);
-        int nRet =  LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_RENAME);
+        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char *>(path.c_str()), NULL, E_FILE_PRI_RENAME);
         qDebug() << nRet << srcFileName;
         return nRet;
     }
@@ -3309,10 +3181,10 @@ int FileJob::checkRenamePrivilege(const QString &srcFileName)
 
 int FileJob::checkReadPrivilege(const QString &srcFileName)
 {
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         std::string path = srcFileName.toStdString();
 //        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_READ);
-        int nRet =  LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_READ);
+        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char *>(path.c_str()), NULL, E_FILE_PRI_READ);
         qDebug() << nRet << srcFileName;
         return nRet;
     }

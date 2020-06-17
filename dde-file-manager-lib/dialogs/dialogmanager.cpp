@@ -312,7 +312,7 @@ QString DialogManager::getJobIdByUrl(const DUrl &url)
         FileJob *job = m_jobs.value(jobId);
         bool ret = false;
         QStringList pathlist = job->property("pathlist").toStringList();
-        for (const QString& path : pathlist) {
+        for (const QString &path : pathlist) {
             if (path == url.toLocalFile()) {
                 ret = true;
                 break;
@@ -536,7 +536,7 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
 void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
 {
     DDialog d;
-    d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));
+    d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
     QString failure_type;
     switch (type) {
     case FileJob::OpticalBlank:
@@ -559,7 +559,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);
-    connect(&d, &DDialog::buttonClicked, this, [failure_str, te, &d](int idx, const QString&) {
+    connect(&d, &DDialog::buttonClicked, this, [failure_str, te, &d](int idx, const QString &) {
         if (idx == 1) {
             d.done(idx);
             return;
@@ -590,10 +590,10 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     }
 }
 
-void DialogManager::showOpticalJobCompletionDialog(const QString& msg, const QString& icon)
+void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)
 {
     DDialog d;
-    d.setIcon(QIcon::fromTheme(icon), QSize(64,64));
+    d.setIcon(QIcon::fromTheme(icon), QSize(64, 64));
     d.setTitle(msg);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
@@ -1114,11 +1114,12 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 {
-    QTimer::singleShot(1000, [ = ]{
+    QTimer::singleShot(1000, [=] {
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
-            QStringList && udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
-            if (udiskspaths.isEmpty()) return;
+            QStringList &&udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
+            if (udiskspaths.isEmpty())
+                return;
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspaths.first()));
             QString fstype = blk->idType();
             if (fstype == "ntfs") {
@@ -1129,7 +1130,8 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                 checkFsDrv.start("df", {"--output=fstype", diskInfo.unix_device()});
                 checkFsDrv.waitForFinished(-1);
                 QString dfStdOut = checkFsDrv.readAllStandardOutput().split('\n').value(1);
-                if (dfStdOut == QStringLiteral("ntfs")) return;
+                if (dfStdOut == QStringLiteral("ntfs"))
+                    return;
 
                 bool isReadOnly = false;
                 DUrl mountUrl = DUrl(diskInfo.mounted_root_uri());
@@ -1182,9 +1184,9 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                     if (ret == 1) {
                         qDebug() << "===================Reboot system=====================";
                         QDBusInterface sessionManagerIface("com.deepin.SessionManager",
-                        "/com/deepin/SessionManager",
-                        "com.deepin.SessionManager",
-                        QDBusConnection::sessionBus());
+                                                           "/com/deepin/SessionManager",
+                                                           "com.deepin.SessionManager",
+                                                           QDBusConnection::sessionBus());
                         sessionManagerIface.asyncCall("Reboot");
                     }
                 }
