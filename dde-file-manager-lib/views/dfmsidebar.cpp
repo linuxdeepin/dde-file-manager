@@ -545,9 +545,11 @@ void DFMSideBar::initConnection()
     });
 
     initBookmarkConnection();
-
-    //initDeviceConnection(); //高耗时
+#if ENABLE_DAEMON
     QtConcurrent::run([this](){initDeviceConnection(true);});
+#else
+    initDeviceConnection();
+#endif
 
     initTagsConnection();
 }
