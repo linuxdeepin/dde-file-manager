@@ -125,8 +125,6 @@ public:
 
     bool getIsOpticalJob() const;
 
-    QMap<QString, QString> getJobDetail() const;
-
 signals:
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
