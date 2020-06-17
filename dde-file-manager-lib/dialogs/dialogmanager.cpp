@@ -139,8 +139,8 @@ void DialogManager::initConnect()
 
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
 
-//    connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
-//    connect(m_taskDialog, &DTaskDialog::closed, this, &DialogManager::removeAllJobs);
+    connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
+    connect(m_taskDialog, &DTaskDialog::closed, this, &DialogManager::removeAllJobs);
     connect(m_closeIndicatorDialog, &CloseAllDialogIndicator::allClosed, this, &DialogManager::closeAllPropertyDialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
@@ -273,6 +273,9 @@ void DialogManager::addJob(FileJob *job)
 {
     m_jobs.insert(job->getJobId(), job);
     emit fileSignalManager->requestStartUpdateJobTimer();
+
+    job->disconnect(m_taskDialog); // 对于光盘刻录、擦除的 job，可能会因为进度框的关闭打开而多次被添加导致多次连接槽，所以这里在连接前先断开这部分的信号槽
+    job->disconnect(this);
     connect(job, &FileJob::requestJobAdded, m_taskDialog, &DTaskDialog::addTask);
     connect(job, &FileJob::requestJobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
     connect(job, &FileJob::requestJobRemovedImmediately, m_taskDialog, &DTaskDialog::removeTaskImmediately);
@@ -290,16 +293,19 @@ void DialogManager::removeJob(const QString &jobId)
 {
     if (m_jobs.contains(jobId)) {
         FileJob *job = m_jobs.value(jobId);
+        if (job->getIsOpticalJob() && !job->getIsFinished()) {
+            m_Opticaljobs.insert(jobId, job); // 备份刻录、擦除任务以便再次点击光驱的时候可以激活当前进度
+        }
         job->setIsAborted(true);
         job->setApplyToAll(true);
         job->cancelled();
         m_jobs.remove(jobId);
 
-//        if (job->getIsGvfsFileOperationUsed()){
-//            if (job->getIsFinished()){
-//                emit fileSignalManager->requestFreshFileView(job->getWindowId());
-//            }
-//        }
+        //        if (job->getIsGvfsFileOperationUsed()){
+        //            if (job->getIsFinished()){
+        //                emit fileSignalManager->requestFreshFileView(job->getWindowId());
+        //            }
+        //        }
     }
     if (m_jobs.count() == 0) {
         emit fileSignalManager->requestStopUpdateJobTimer();
@@ -1282,14 +1288,13 @@ void DialogManager::showTaskProgressDlgOnActive()
     m_taskDialog->raise();
     m_taskDialog->activateWindow();
 
-    QMapIterator<QString, FileJob *> iter(m_jobs);
+    QMapIterator<QString, FileJob *> iter(m_Opticaljobs);
     while (iter.hasNext()) {
         iter.next();
         if (iter.value()->getIsFinished())
             continue;
-        QMap<QString, QString> mapJobDetail;
-        mapJobDetail.insert("jobId", iter.value()->getJobId());
-        m_taskDialog->addTask(mapJobDetail);
+        addJob(iter.value());
+        emit iter.value()->requestJobAdded(iter.value()->getJobDetail());
     }
 }
 int DialogManager::showUnableToLocateDir(const QString &dir)
