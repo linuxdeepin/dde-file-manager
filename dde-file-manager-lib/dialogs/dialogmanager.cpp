@@ -1285,7 +1285,7 @@ void DialogManager::showTaskProgressDlgOnActive()
         if (iter.value()->getIsFinished())
             continue;
         addJob(iter.value());
-        emit iter.value()->requestJobAdded(iter.value()->getJobDetail());
+        emit iter.value()->requestJobAdded(iter.value()->jobDetail());
     }
 }
 int DialogManager::showUnableToLocateDir(const QString &dir)
@@ -1310,7 +1310,6 @@ void DialogManager::refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUr
         m_propertyDialogs.insert(newUrl, d);
     }
 }
-
 
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
 {

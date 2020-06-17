@@ -1473,11 +1473,6 @@ void FileJob::jobConflicted()
     m_status = Paused;
 }
 
-QMap<QString, QString> FileJob::getJobDetail() const
-{
-    return m_jobDetail;
-}
-
 bool FileJob::getIsOpticalJob() const
 {
     return m_isOpticalJob;
