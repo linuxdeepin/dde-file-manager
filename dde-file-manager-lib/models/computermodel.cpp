@@ -45,7 +45,7 @@ ComputerModel::ComputerModel(QObject *parent)
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
     m_nitems = 0;
-#if 1
+#if ENABLE_DAEMON
     QtConcurrent::run([=](){
         addItem(makeSplitterUrl(tr("My Directories")));
         //QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
