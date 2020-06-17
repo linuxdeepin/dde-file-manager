@@ -392,6 +392,9 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
             dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
             return false;
         }
+        if (!linkInfo) {
+            return false;
+        }
         const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
     }
 
