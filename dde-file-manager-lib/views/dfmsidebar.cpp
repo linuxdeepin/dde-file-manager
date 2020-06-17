@@ -343,13 +343,19 @@ void DFMSideBar::rootFileChange()
 {
     QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
     qDebug() << "DFileService::instance()->getRootFile() filist:" << filist.size();
+    if (filist.isEmpty())
+        return;
     std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
 
     for (const DAbstractFileInfoPointer &fi : filist) {
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
             if (devitems.contains(fi->fileUrl())) {
+#if 1 //性能优化 2020-06-17
+                continue;
+#else //移除后再添加？？？
                 devitems.removeOne(fi->fileUrl());
                 removeItem(fi->fileUrl(), groupName(Device));
+#endif
             }
             addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
             devitems.push_back(fi->fileUrl());
