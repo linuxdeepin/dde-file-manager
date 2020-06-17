@@ -101,7 +101,7 @@ void DFMVaultActiveSaveKeyView::showEvent(QShowEvent *event)
     QPixmap QRCodePix;
     if(OperatorCenter::getInstance().createQRCode(strContent, m_pQRCodeImage->width(), m_pQRCodeImage->height(), QRCodePix))
         m_pQRCodeImage->setPixmap(QRCodePix);
-    m_pKeyText->appendPlainText(strKeyShow);
+    m_pKeyText->setPlainText(strKeyShow);
 
     QWidget::showEvent(event);
 }
