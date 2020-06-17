@@ -597,6 +597,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
 
 void FileJob::doOpticalBlank(const DUrl &device)
 {
+    m_isOpticalJob = true;
     QString dev = device.path();
     DUrl rdevice(device);
     m_tarPath = dev;
@@ -764,6 +765,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
     double globalBad;
 /////////////////////////////
 
+    m_isOpticalJob = true;
     pid_t pid = fork();
     if (pid == 0) { // child process: burn files
         qDebug() << "start child process";
@@ -1049,6 +1051,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
     double globalBad;
 /////////////////////////////
 
+    m_isOpticalJob = true;
     pid_t pid = fork();
     if (pid == 0) { // child process: burn image;
         qDebug() << "start child process";
@@ -1468,6 +1471,16 @@ void FileJob::jobConflicted()
 
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
     m_status = Paused;
+}
+
+QMap<QString, QString> FileJob::getJobDetail() const
+{
+    return m_jobDetail;
+}
+
+bool FileJob::getIsOpticalJob() const
+{
+    return m_isOpticalJob;
 }
 
 qreal FileJob::getRestoreProgress() const
@@ -2261,7 +2274,6 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
             target = g_file_new_for_path(std_tarPath.data());
 
             m_last_current_num_bytes = 0;
-
             m_status = Run;
             break;
         }

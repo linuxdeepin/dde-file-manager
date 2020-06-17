@@ -122,6 +122,10 @@ public:
     void setRestoreProgress(qreal restoreProgress);
     qreal getRestoreProgress() const;
 
+    bool getIsOpticalJob() const;
+
+    QMap<QString, QString> getJobDetail() const;
+
 signals:
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
@@ -198,6 +202,7 @@ private:
     QMap<QString, QString> m_jobDetail;
     QMap<QString, QString> m_checkDiskJobDataDetail;
     bool m_isCheckingDisk = false;
+    bool m_isOpticalJob = false;
 
     bool m_isGvfsFileOperationUsed = false;
     bool m_needGhostFileCreateSignal = false;
