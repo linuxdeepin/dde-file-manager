@@ -85,6 +85,7 @@ public:
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
     static QMap<DUrl,DAbstractFileInfoPointer> rootfilelist;
     static QMutex rootfileMtx;
+    bool m_bRootFileInited = false;
     bool bstartonce = false;
     bool m_bcursorbusy = false;
     bool m_bonline = false;
@@ -288,7 +289,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 }
                 else {
                     //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
-                    if (event->fileUrlList().count() == 1 && event->fileUrlList().first().toString().endsWith("trash:///")){
+                    if (event->fileUrlList().count() == 1 && event->fileUrlList().first().toString() == TRASH_ROOT){
                         setDoClearTrashState(false);
                     }
                 }
@@ -975,6 +976,11 @@ QList<DAbstractFileInfoPointer> DFileService::getRootFile()
     return ret;
 }
 
+bool DFileService::isRootFileInited() const
+{
+    return d_ptr->m_bRootFileInited;
+}
+
 void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
 {
     QMutexLocker lk(&d_ptr->rootfileMtx);
@@ -1005,6 +1011,7 @@ void DFileService::startQuryRootFile()
         return;
     }
     qDebug() << "start thread    startQuryRootFile   ===== " << d_ptr->rootfilelist.size() << QThread::currentThread();
+    d_ptr->m_bRootFileInited = false;
     //启用异步线程去读取
     d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
     connect(d_ptr->m_jobcontroller,&JobController::addChildren,this ,[this](const DAbstractFileInfoPointer &chi){
@@ -1032,6 +1039,7 @@ void DFileService::startQuryRootFile()
         d_ptr->m_jobcontroller->deleteLater();
         qDebug() << "获取 m_jobcontroller  finished  " << QThread::currentThreadId();
         d_ptr->m_jobcontroller = nullptr;
+        d_ptr->m_bRootFileInited = true;
         emit queryRootFileFinsh();
     });
     d_ptr->m_jobcontroller->start();

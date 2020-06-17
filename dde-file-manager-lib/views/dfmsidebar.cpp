@@ -31,10 +31,6 @@
 #include "dfmsidebarmanager.h"
 #include "interfaces/dfmsidebariteminterface.h"
 #include "views/dfmsidebarview.h"
-#include "views/dfmvaultremovepages.h"
-#include "views/dfmvaultunlockpages.h"
-#include "views/dfmvaultrecoverykeypages.h"
-#include "views/dfmvaultactiveview.h"
 #include "models/dfmsidebarmodel.h"
 #include "dfmsidebaritemdelegate.h"
 #include "dfmsidebaritem.h"
@@ -347,13 +343,19 @@ void DFMSideBar::rootFileChange()
 {
     QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
     qDebug() << "DFileService::instance()->getRootFile() filist:" << filist.size();
+    if (filist.isEmpty())
+        return;
     std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
 
     for (const DAbstractFileInfoPointer &fi : filist) {
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
             if (devitems.contains(fi->fileUrl())) {
+#if 1 //性能优化 2020-06-17
+                continue;
+#else //移除后再添加？？？
                 devitems.removeOne(fi->fileUrl());
                 removeItem(fi->fileUrl(), groupName(Device));
+#endif
             }
             addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
             devitems.push_back(fi->fileUrl());
@@ -454,44 +456,6 @@ void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
     }
 }
 
-void DFMSideBar::onUnlockVault()
-{
-    QWidget *wndPtr = DFMVaultUnlockPages::instance()->getWndPtr();
-
-    if (wndPtr == this->topLevelWidget()) {
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
-    }
-}
-
-void DFMSideBar::onCreateVault()
-{
-    QWidget *wndPtr = DFMVaultActiveView::getInstance().getWndPtr();
-
-    if (wndPtr == this->topLevelWidget()) {
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
-    }
-}
-
-void DFMSideBar::onRecoverVault()
-{
-    QWidget *wndPtr = DFMVaultRecoveryKeyPages::instance()->getWndPtr();
-
-    if (wndPtr == this->topLevelWidget()) {
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << vaultUrl));
-    }
-}
-
-void DFMSideBar::onRemoveVault()
-{
-    QWidget *wndPtr = DFMVaultRemovePages::instance()->getWndPtr();
-    if (wndPtr == this->topLevelWidget()) {
-        appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first())));
-    }
-}
-
 void DFMSideBar::initUI()
 {
     // init layout.
@@ -581,12 +545,13 @@ void DFMSideBar::initConnection()
     });
 
     initBookmarkConnection();
-
-    //initDeviceConnection(); //高耗时
+#if ENABLE_DAEMON
     QtConcurrent::run([this](){initDeviceConnection(true);});
+#else
+    initDeviceConnection();
+#endif
 
     initTagsConnection();
-    initVaultConnection();
 }
 
 void DFMSideBar::initUserShareItem()
@@ -709,14 +674,19 @@ void DFMSideBar::initDeviceConnection(bool async)
 #else
 
     DFileService::instance()->startQuryRootFile();
-    rootFileChange();
-    //connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
-    connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
+
+    if (fileService->isRootFileInited()) {
         rootFileChange();
         connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
-        qDebug() << "DFileService::queryRootFileFinsh ->rootFileChange";
-    },Qt::QueuedConnection);
+    }
+    else {
+        connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
+            rootFileChange();
+            connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+        },Qt::QueuedConnection);
+    }
 
+    //connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
     DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
     Q_CHECK_PTR(devicesWatcher);
     if (async){
@@ -857,17 +827,6 @@ void DFMSideBar::initTagsConnection()
     //        DFMSideBarItem *item = group->findItem(url);
     //        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
     //    });
-}
-
-void DFMSideBar::initVaultConnection()
-{
-    connect(DFMVaultRemovePages::instance(), &DFMVaultRemovePages::accepted, this, &DFMSideBar::onRemoveVault);
-
-    connect(DFMVaultUnlockPages::instance(), &DFMVaultUnlockPages::accepted, this, &DFMSideBar::onUnlockVault);
-
-    connect(DFMVaultRecoveryKeyPages::instance(), &DFMVaultRecoveryKeyPages::accepted, this, &DFMSideBar::onRecoverVault);
-
-    connect(&DFMVaultActiveView::getInstance(), &DFMVaultActiveView::accepted, this, &DFMSideBar::onCreateVault);
 }
 
 void DFMSideBar::applySidebarColor()

@@ -163,6 +163,7 @@ public:
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
     DStorageInfo *createStorageInfo(const QObject *sender, const DUrl &url);
     QList<DAbstractFileInfoPointer> getRootFile();
+    bool isRootFileInited() const;
     void changeRootFile(const DUrl &fileurl,const bool bcreate = true);
     void startQuryRootFile();
     void clearThread();

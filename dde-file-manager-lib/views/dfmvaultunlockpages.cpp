@@ -21,6 +21,7 @@
 #include "dfmvaultunlockpages.h"
 #include "vault/interfaceactivevault.h"
 #include "controllers/vaultcontroller.h"
+#include "dfilemanagerwindow.h"
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -30,13 +31,12 @@
 
 #include <DPushButton>
 #include <DPasswordEdit>
-#include <DMessageBox>
 #include <DFloatingWidget>
 #include <DToolTip>
 #include <QTimer>
 
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
-    : DDialog (parent)
+    : DFMVaultPageBase(parent)
 {
     setIcon(QIcon::fromTheme("dfm_vault"));
     setFixedSize(396, 218);
@@ -97,6 +97,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
             showToolTip(strPwdHint, 3000, EN_ToolTip::Information);
         }
     });
+    connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 }
 
 void DFMVaultUnlockPages::showEvent(QShowEvent *event)
@@ -163,16 +164,6 @@ DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
     return &s_instance;
 }
 
-void DFMVaultUnlockPages::setWndPtr(QWidget *wnd)
-{
-    m_wndptr = wnd;
-}
-
-QWidget *DFMVaultUnlockPages::getWndPtr() const
-{
-    return m_wndptr;
-}
-
 void DFMVaultUnlockPages::onButtonClicked(const int &index)
 {
     if (index == 1){
@@ -181,7 +172,7 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
         QString strClipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strClipher)){
             m_bUnlockByPwd = true;
-            VaultController::getVaultController()->unlockVault(strClipher);            
+            VaultController::getVaultController()->unlockVault(strClipher);
         }else {
             // 设置密码输入框颜色
             m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
@@ -214,7 +205,11 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
         }else {
             // error tips
             QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
-            DMessageBox::information(this, tr("tips"), errMsg);
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(errMsg);
+            dialog.addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+            dialog.exec();
         }
 
         m_bUnlockByPwd = false;

@@ -88,26 +88,6 @@ private slots:
     void onContextMenuRequested(const QPoint &pos);
     void onRename(const QModelIndex &index, QString newName) const ;
 
-
-    /**
-     * @brief onUnlockVault
-     */
-    void onUnlockVault();
-
-    /**
-     * @brief onCreateVault
-     */
-    void onCreateVault();
-
-    /**
-     * @brief onRecoverVault
-     */
-    void onRecoverVault();
-
-    /**
-     * @brief onRemoveVault 删除保险箱
-     */
-    void onRemoveVault();
 private:
     void initUI();
     void initModelData();
@@ -117,7 +97,6 @@ private:
     void initBookmarkConnection();
     void initDeviceConnection(bool async = false);
     void initTagsConnection();
-    void initVaultConnection();
     void applySidebarColor();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);
