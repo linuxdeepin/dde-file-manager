@@ -1304,6 +1304,7 @@ void DialogManager::showTaskProgressDlgOnActive()
         if (iter.value()->getIsFinished())
             continue;
         addJob(iter.value());
+        emit iter.value()->requestJobAdded(iter.value()->jobDetail());
     }
 }
 int DialogManager::showUnableToLocateDir(const QString &dir)
