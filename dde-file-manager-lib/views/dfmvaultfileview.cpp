@@ -21,13 +21,6 @@
 #include "dfmvaultfileview.h"
 #include "controllers/vaultcontroller.h"
 #include "vault/vaultlockmanager.h"
-#include "dfilesystemmodel.h"
-#include "app/define.h"
-
-#include <QHBoxLayout>
-#include <QLabel>
-#include <DIconButton>
-#include <QMenu>
 
 #include "views/dfmvaultunlockpages.h"
 #include "views/dfmvaultrecoverykeypages.h"
@@ -47,42 +40,37 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     VaultController::VaultState enState = VaultController::getVaultController()->state();
 
     QWidget *wndPtr = widget()->topLevelWidget();
+    DFMVaultPageBase *page = nullptr;
     if (enState != VaultController::Unlocked) {
         switch (enState) {
-            case VaultController::NotAvailable:{
-                //! 没有安装cryfs
-                qDebug() << "Don't setup cryfs, can't use vault, please setup cryfs!";
-                break;
-            }
-            case VaultController::NotExisted:{
-                //! 没有创建过保险箱，此时创建保险箱,创建成功后，进入主界面
-                DFMVaultActiveView::getInstance()->setWndPtr(wndPtr);
-                DFMVaultActiveView::getInstance()->showTop();
-                break;
-            }
-            case VaultController::Encrypted:{
-
+        case VaultController::NotAvailable: {
+            qDebug() << "cryfs not installed!";
+            break;
+        }
+        case VaultController::NotExisted: {
+            page = DFMVaultActiveView::getInstance();
+            break;
+        }
+        case VaultController::Encrypted: {
             if (url.host() == "certificate") {
-                DFMVaultRecoveryKeyPages::instance()->setWndPtr(wndPtr);
-                DFMVaultRecoveryKeyPages::instance()->showTop();
+                page = DFMVaultRecoveryKeyPages::instance();
             } else {
-                //! 保险箱处于加密状态，弹出开锁对话框,开锁成功后，进入主界面
-                DFMVaultUnlockPages::instance()->setWndPtr(wndPtr);
-                DFMVaultUnlockPages::instance()->showTop();
+                page = DFMVaultUnlockPages::instance();
             }
             break;
-            }
-            default:{
-                ;
-            }
         }
-        return false;
+        default:;
+        }
     } else {
         if (url.host() == "delete") {
-            DFMVaultRemovePages::instance()->setWndPtr(wndPtr);
-            DFMVaultRemovePages::instance()->showTop();
-            return false;
+            page = DFMVaultRemovePages::instance();
         }
+    }
+
+    if (page) {
+        page->setWndPtr(wndPtr);
+        page->showTop();
+        return false;
     }
 
     if (DFMVaultRemovePages::instance()->isVisible()) {
