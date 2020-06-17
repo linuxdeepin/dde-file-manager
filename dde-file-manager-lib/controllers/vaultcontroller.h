@@ -177,7 +177,7 @@ public:
      * @brief VaultFileInfo::isRootDirectory 是否为保险箱根目录
      * @return
      */
-    bool isRootDirectory(QString path) const;
+    static bool isRootDirectory(QString path);
 
     /**
      * @brief getErrorInfo 根据错误码获取错误信息
