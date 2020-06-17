@@ -48,42 +48,71 @@ ComputerModel::ComputerModel(QObject *parent)
 #if 1
     QtConcurrent::run([=](){
         addItem(makeSplitterUrl(tr("My Directories")));
-        QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
-        bool splt = false;
-        m_nitems = 0;
-        bool opticalchanged = false;
-        for (auto chi : ch) {
-            if (chi->suffix() != SUFFIX_USRDIR && !splt) {
-                addItem(makeSplitterUrl(tr("Disks")));
-                splt = true;
-            }
-            if (splt) {
-                auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
-                                          [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
-                                              return DFMRootFileInfo::typeCompare(a, b.fi);
-                                          });
-                if (r == m_items.end()) {
-                    addItem(chi->fileUrl());
-                } else {
-                    insertBefore(chi->fileUrl(), r->url);
+        //QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
+        auto rootInit = [=](const QList<DAbstractFileInfoPointer> &ch){
+            qDebug() << "init root file" << ch.size();
+            bool splt = false;
+            bool opticalchanged = false;
+            for (auto chi : ch) {
+                if (chi->suffix() != SUFFIX_USRDIR && !splt) {
+                    addItem(makeSplitterUrl(tr("Disks")));
+                    splt = true;
                 }
-            } else {
-                addItem(chi->fileUrl());
+                if (splt) {
+                    auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
+                                              [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+                                                  return DFMRootFileInfo::typeCompare(a, b.fi);
+                                              });
+                    if (r == m_items.end()) {
+                        addItem(chi->fileUrl());
+                    } else {
+                        insertBefore(chi->fileUrl(), r->url);
+                    }
+                } else {
+                    addItem(chi->fileUrl());
+                }
+
+                if (chi->fileUrl().path().contains("sr")) {
+                    opticalchanged = true;
+                }
             }
 
-            if (chi->fileUrl().path().contains("sr")) {
-                opticalchanged = true;
+            connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
+            if (opticalchanged) {
+                emit opticalChanged();
             }
-        }
 
-        connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
-        if (opticalchanged) {
-            emit opticalChanged();
-        }
+        };
 
-        // 保险柜
-        addItem(makeSplitterUrl(QObject::tr("File Vault")));
-        addItem(VaultController::makeVaultUrl());
+        if (fileService->isRootFileInited()) {
+            QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+            rootInit(ch);
+
+            // 保险柜
+            addItem(makeSplitterUrl(QObject::tr("File Vault")));
+            addItem(VaultController::makeVaultUrl());
+        }
+        else {
+            static const QList<QString> udir = {"desktop", "videos", "music", "pictures", "documents", "downloads"};
+            QList<DAbstractFileInfoPointer> ret;
+            for (auto d : udir) {
+                DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + d + "." SUFFIX_USRDIR)));
+                if (fp->exists()) {
+                    ret.push_back(fp);
+                }
+            }
+
+            rootInit(ret);
+
+            connect(fileService,&DFileService::queryRootFileFinsh,this,[this,rootInit](){
+                QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+                rootInit(ch);
+
+                // 保险柜
+                addItem(makeSplitterUrl(QObject::tr("File Vault")));
+                addItem(VaultController::makeVaultUrl());
+            });
+        }
 
         m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
         m_watcher->setParent(this);

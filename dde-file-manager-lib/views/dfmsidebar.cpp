@@ -672,14 +672,19 @@ void DFMSideBar::initDeviceConnection(bool async)
 #else
 
     DFileService::instance()->startQuryRootFile();
-    rootFileChange();
-    //connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
-    connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
+
+    if (fileService->isRootFileInited()) {
         rootFileChange();
         connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
-        qDebug() << "DFileService::queryRootFileFinsh ->rootFileChange";
-    },Qt::QueuedConnection);
+    }
+    else {
+        connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
+            rootFileChange();
+            connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+        },Qt::QueuedConnection);
+    }
 
+    //connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
     DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
     Q_CHECK_PTR(devicesWatcher);
     if (async){
