@@ -2196,8 +2196,13 @@ bool DFileView::setRootUrl(const DUrl &url)
 
         if (old_url == fileUrl)
             break;
-
-        info = DFileService::instance()->createFileInfo(this, fileUrl);
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(fileUrl)) {
+            info = DFileService::instance()->createFileInfo(this, fileUrl);
+        }
+        else {
+            info = nullptr;
+        }
 
         qDebug() << "url redirected, from:" << old_url << "to:" << fileUrl;
     }

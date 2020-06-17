@@ -276,8 +276,9 @@ DFileInfo::DFileInfo(const QString &filePath, bool hasCache)
 DFileInfo::DFileInfo(const DUrl &fileUrl, bool hasCache)
     : DAbstractFileInfo(*new DFileInfoPrivate(fileUrl, this, hasCache))
 {
+    Q_D(const DFileInfo);
     //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
-    if (FileUtils::isGvfsMountFile(fileUrl.toLocalFile())) {
+    if (d->gvfsMountFile) {
         canRename();
         isWritable();
         isSymLink();
@@ -311,7 +312,7 @@ bool DFileInfo::exists() const
 {
     Q_D(const DFileInfo);
 
-    if (d->isLowSpeedFile() && d->cacheFileExists < 0)
+    if ((d->isLowSpeedFile() || d->gvfsMountFile) && d->cacheFileExists < 0)
         d->cacheFileExists = d->fileInfo.exists() || d->fileInfo.isSymLink();
 
     if (d->cacheFileExists >= 0)
@@ -439,8 +440,8 @@ bool DFileInfo::canRename() const
         return false;
 
     Q_D(const DFileInfo);
-
-    if (d->cacheCanRename < 0 && d->isLowSpeedFile()) {
+    //fix bug 27828 修改gvfsMountFile属性时，也要缓存属性，才不会造成ftp和smb卡死
+    if (d->cacheCanRename < 0 && (d->isLowSpeedFile() || d->gvfsMountFile)) {
         d->cacheCanRename = fileIsWritable(d->fileInfo.absolutePath(), d->fileInfo.ownerId());
     }
 
@@ -631,8 +632,8 @@ bool DFileInfo::isDir() const
 bool DFileInfo::isSymLink() const
 {
     Q_D(const DFileInfo);
-
-    if (d->isLowSpeedFile() && d->cacheIsSymLink < 0) {
+    //fix bug 27828 修改gvfsMountFile属性时，也要缓存属性，才不会造成ftp和smb卡死
+    if ((d->isLowSpeedFile() || d->gvfsMountFile) && d->cacheIsSymLink < 0) {
         d->cacheIsSymLink = d->fileInfo.isSymLink();
     }
 
