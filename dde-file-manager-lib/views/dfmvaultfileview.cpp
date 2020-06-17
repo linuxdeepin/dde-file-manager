@@ -25,7 +25,6 @@
 #include "views/dfmvaultactiveview.h"
 #include "views/dfilemanagerwindow.h"
 
-DWIDGET_USE_NAMESPACE
 
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
