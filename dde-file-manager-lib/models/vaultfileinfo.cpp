@@ -195,8 +195,8 @@ QSet<MenuAction> VaultFileInfo::disableMenuActionList() const
 
 DUrl VaultFileInfo::goToUrlWhenDeleted() const
 {
-    if (fileUrl() == VaultController::makeVaultUrl(VaultController::vaultUnlockPath())) {
-        return fileUrl();
+    if (isRootDirectory()) {
+        return DUrl(COMPUTER_ROOT);
     }
 
     return DAbstractFileInfo::goToUrlWhenDeleted();

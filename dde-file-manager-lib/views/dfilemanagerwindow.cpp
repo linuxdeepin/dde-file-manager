@@ -1249,10 +1249,6 @@ void DFileManagerWindow::initConnect()
     QObject::connect(fileSignalManager, &FileSignalManager::requestCloseAllTabOfVault,
                      this, &DFileManagerWindow::closeAllTabOfVault);
 
-    // 用于创建完保险箱后进入保险箱目录
-    QObject::connect(fileSignalManager, &FileSignalManager::requestCdDir,
-                     this, &DFileManagerWindow::cd);
-
     QObject::connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onCurrentTabChanged);
     QObject::connect(d->tabBar, &TabBar::tabCloseRequested, this, &DFileManagerWindow::onRequestCloseTab);

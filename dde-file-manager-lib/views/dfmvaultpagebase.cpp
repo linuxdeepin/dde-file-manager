@@ -18,19 +18,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
+#include "dfmvaultpagebase.h"
 
-#include "dfileview.h"
-#include "interfaces/dfilemenu.h"
+#include "controllers/vaultcontroller.h"
+#include "dfilemanagerwindow.h"
 
-class DFMVaultFileView : public DFileView
+DFMVaultPageBase::DFMVaultPageBase(QWidget *parent)
+    : DDialog(parent)
 {
-    Q_OBJECT
-public:
-    explicit DFMVaultFileView(QWidget *parent = nullptr);
+}
 
-    bool setRootUrl(const DUrl &url) override;
+void DFMVaultPageBase::enterVaultDir()
+{
+    DFileManagerWindow *wnd = dynamic_cast<DFileManagerWindow *>(m_wndptr);
+    if (wnd) {
+        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
+        wnd->cd(vaultUrl);
+    }
+}
 
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
-};
+void DFMVaultPageBase::setWndPtr(QWidget *wnd)
+{
+    m_wndptr = wnd;
+}
+
+QWidget *DFMVaultPageBase::getWndPtr() const
+{
+    return m_wndptr;
+}
+
+void DFMVaultPageBase::showTop()
+{
+    this->activateWindow();
+    this->showNormal();
+    this->raise();
+}

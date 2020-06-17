@@ -46,8 +46,8 @@ public:
 };
 
 DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
-    : DDialog (parent)
-    , d_ptr (new DFMVaultRecoveryKeyPagesPrivate())
+    : DFMVaultPageBase(parent)
+    , d_ptr(new DFMVaultRecoveryKeyPagesPrivate())
 {
     this->setIcon(QIcon::fromTheme("dfm_vault"));
     this->setFixedSize(396, 218);
@@ -88,6 +88,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     connect(this, &DFMVaultRecoveryKeyPages::buttonClicked, this, &DFMVaultRecoveryKeyPages::onButtonClicked);
     connect(m_recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &DFMVaultRecoveryKeyPages::recoveryKeyChanged);
     connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultRecoveryKeyPages::onUnlockVault);
+    connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 }
 
 DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
@@ -99,16 +100,6 @@ DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
 {
     static DFMVaultRecoveryKeyPages s_instance;
     return &s_instance;
-}
-
-void DFMVaultRecoveryKeyPages::setWndPtr(QWidget *wnd)
-{
-    m_wndptr = wnd;
-}
-
-QWidget *DFMVaultRecoveryKeyPages::getWndPtr() const
-{
-    return m_wndptr;
 }
 
 void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duration)

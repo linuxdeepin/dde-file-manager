@@ -18,11 +18,11 @@
 DWIDGET_USE_NAMESPACE
 
 DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
-    : DDialog (parent)
+    : DFMVaultPageBase(parent)
     , m_passwordView(new DFMVaultRemoveByPasswordView(this))
     , m_recoverykeyView(new DFMVaultRemoveByRecoverykeyView(this))
     , m_progressView(new DFMVaultRemoveProgressView(this))
-    , m_stackedWidget (new QStackedWidget(this))
+    , m_stackedWidget(new QStackedWidget(this))
 {
     setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
     this->setFixedSize(396, 248);
@@ -124,16 +124,6 @@ DFMVaultRemovePages *DFMVaultRemovePages::instance()
 {
     static DFMVaultRemovePages s_instance;
     return &s_instance;
-}
-
-void DFMVaultRemovePages::setWndPtr(QWidget *wnd)
-{
-    m_wndptr = wnd;
-}
-
-QWidget *DFMVaultRemovePages::getWndPtr() const
-{
-    return m_wndptr;
 }
 
 void DFMVaultRemovePages::showTop()

@@ -20,9 +20,7 @@
  */
 #pragma once
 
-//#include "interface/dfmvaultcontentinterface.h"
-#include "dtkwidget_global.h"
-#include <DDialog>
+#include "dfmvaultpagebase.h"
 #include <QScopedPointer>
 
 QT_BEGIN_NAMESPACE
@@ -32,14 +30,11 @@ QT_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 class DFMVaultRecoveryKeyPagesPrivate;
-class DFMVaultRecoveryKeyPages : public DDialog
+class DFMVaultRecoveryKeyPages : public DFMVaultPageBase
 {
     Q_OBJECT
 public:
     static DFMVaultRecoveryKeyPages *instance();
-
-    void setWndPtr(QWidget *wnd);
-    QWidget *getWndPtr() const;
 
     void showAlertMessage(const QString &text, int duration = 3000);
 private slots:
@@ -63,6 +58,4 @@ private:
 
     QScopedPointer<DFMVaultRecoveryKeyPagesPrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFMVaultRecoveryKeyPages)
-
-    QWidget *m_wndptr = nullptr;
 };
