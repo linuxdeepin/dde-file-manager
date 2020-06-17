@@ -50,6 +50,9 @@ signals:
     /* emit usershare status changed*/
     void userShareCountChanged(const int count);
 
+    // 在共享信息刷新后，请求刷新页面
+    void requestRefreshFileModel(const DUrl &url);
+
     /* request close current tab*/
     void requestCloseCurrentTab(quint64 winId);
 

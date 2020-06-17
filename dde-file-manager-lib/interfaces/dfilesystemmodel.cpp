@@ -1965,6 +1965,11 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     // Restore state
     setState(Idle);
 
+    disconnect(fileSignalManager, &FileSignalManager::requestRefreshFileModel, this, &DFileSystemModel::refresh);
+    if (fileUrl == DUrl::fromUserShareFile("/")) {
+        connect(fileSignalManager, &FileSignalManager::requestRefreshFileModel, this, &DFileSystemModel::refresh);
+    }
+
     if (d->eventLoop) {
         d->eventLoop->exit(1);
     }
