@@ -1181,7 +1181,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         QCheckBox *hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
         hideThisFile->setObjectName(QString("hideThisFileCheckBox"));
         //        hideThisFile->setToolTip("TODO: hint message?");
-        hideThisFile->setEnabled(DFMFileListFile::canHideByFile(info->filePath()));
+        hideThisFile->setEnabled(DFMFileListFile::canHideByFile(info->filePath()) && !info->fileUrl().isTrashFile()); // fix bug#33763 回收站中不允许对文件属性进行编辑
         hideThisFile->setChecked(flf.contains(fileName));
         layout->addWidget(hideThisFile); // FIXME: do the UI thing later.
         connect(hideThisFile, &QCheckBox::clicked, this, &PropertyDialog::onHideFileCheckboxChecked);
