@@ -699,7 +699,13 @@ bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePat
 {
     if (isFileManagerSelf(desktopFile) && filePaths.count() > 1) {
         foreach (const QString &filePath, filePaths) {
-            openFile(filePath);
+            // fix bug#33577在桌面上，多选文件夹不能打开
+            DUrl t_file(filePath);
+            QString t_filePath = t_file.toString();
+            if (t_file.isLocalFile()) {
+                t_filePath = t_file.toLocalFile();
+            }
+            openFile(t_filePath);
         }
         return true;
     }
