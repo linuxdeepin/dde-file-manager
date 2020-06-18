@@ -176,8 +176,6 @@ public:
     int touchTapDistance = -1;
 
     int showCount = 0;  //记录showEvent次数，为了在第一次时去调整列表模式的表头宽度
-    // u盘访问控制
-    AcessControlInterface *m_acessControlInterface = nullptr;
 
     Q_DECLARE_PUBLIC(DFileView)
 };
@@ -199,11 +197,6 @@ DFileView::DFileView(QWidget *parent)
 #else
     d_ptr->touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 #endif
-
-    d->m_acessControlInterface = new AcessControlInterface("com.deepin.filemanager.daemon",
-                                                           "/com/deepin/filemanager/daemon/AcessControlManager",
-                                                           QDBusConnection::systemBus(),
-                                                           this);
 
     initUI();
     initModel();
@@ -2203,8 +2196,13 @@ bool DFileView::setRootUrl(const DUrl &url)
 
         if (old_url == fileUrl)
             break;
-
-        info = DFileService::instance()->createFileInfo(this, fileUrl);
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(fileUrl)) {
+            info = DFileService::instance()->createFileInfo(this, fileUrl);
+        }
+        else {
+            info = nullptr;
+        }
 
         qDebug() << "url redirected, from:" << old_url << "to:" << fileUrl;
     }
@@ -2927,7 +2925,6 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
             menu->addAction(action);
         }
     }
-
     menu->exec(QCursor::pos());
     menu->deleteLater();
 }

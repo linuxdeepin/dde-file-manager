@@ -54,7 +54,7 @@
 
 #ifdef __arm__
 // arm
-    #include "./search/myfsearch.h"
+#include "./search/myfsearch.h"
 #endif
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 0
@@ -68,12 +68,12 @@ public:
 
     FileSystemNode(FileSystemNode *parent,
                    const DAbstractFileInfoPointer &info,
-                   DFileSystemModel * dFileSystemModel,
+                   DFileSystemModel *dFileSystemModel,
                    QReadWriteLock *lock = nullptr)
         : fileInfo(info)
         , parent(parent)
-        , m_dFileSystemModel(dFileSystemModel)
         , rwLock(lock)
+        , m_dFileSystemModel(dFileSystemModel)
     {
     }
 
@@ -158,7 +158,8 @@ public:
         }
     }
 
-    void applyFileFilter(std::shared_ptr<FileFilter> filter) {
+    void applyFileFilter(std::shared_ptr<FileFilter> filter)
+    {
         if (!filter) return;
         if (isUpdate) return;
 
@@ -171,7 +172,8 @@ public:
         }
     }
 
-    bool shouldHideByFilterRule(std::shared_ptr<FileFilter> filter) {
+    bool shouldHideByFilterRule(std::shared_ptr<FileFilter> filter)
+    {
         if (!filter) return false;
 
         if (filter->f_comboValid[SEARCH_RANGE] && !filter->f_includeSubDir) {
@@ -218,14 +220,14 @@ public:
         rwLock->unlock();
     }
 
-    void noLockAppendChildren(const DUrl& url, const FileSystemNodePointer &node)
+    void noLockAppendChildren(const DUrl &url, const FileSystemNodePointer &node)
     {
         if (isUpdate) return;
         children[url] = node;
         visibleChildren.append(node);
     }
 
-    void appendChildren(const DUrl& url, const FileSystemNodePointer &node)
+    void appendChildren(const DUrl &url, const FileSystemNodePointer &node)
     {
         rwLock->lockForWrite();
         noLockAppendChildren(url, node);
@@ -251,7 +253,8 @@ public:
 
     FileSystemNodePointer takeNodeByUrl(const DUrl &url)
     {
-         if (isUpdate) return FileSystemNodePointer();
+        if (isUpdate)
+            return FileSystemNodePointer();
         rwLock->lockForWrite();
         FileSystemNodePointer node = children.take(url);
         visibleChildren.removeOne(node);
@@ -354,8 +357,8 @@ public:
         return children.contains(url);
     }
 
-
-    void addFileSystemNode(const FileSystemNodePointer &node) {
+    void addFileSystemNode(const FileSystemNodePointer &node)
+    {
         if (nullptr != node->parent) {
             QString url = node->fileInfo->filePath();
             rwLock->lockForWrite();
@@ -366,17 +369,19 @@ public:
         }
     }
 
-    void removeFileSystemNode(const FileSystemNodePointer &node) {
+    void removeFileSystemNode(const FileSystemNodePointer &node)
+    {
         if (nullptr != node->parent) {
             QString url = node->fileInfo->filePath();
             rwLock->lockForWrite();
-            qDebug()<< m_dFileSystemModel->m_allFileSystemNodes[url];
+            qDebug() << m_dFileSystemModel->m_allFileSystemNodes[url];
             m_dFileSystemModel->m_allFileSystemNodes.remove(url);
             rwLock->unlock();
         }
     }
 
-    const FileSystemNodePointer getFileSystemNode(FileSystemNode *parent) {
+    const FileSystemNodePointer getFileSystemNode(FileSystemNode *parent)
+    {
         if (nullptr == parent) {
             return FileSystemNodePointer();
         }
@@ -416,7 +421,6 @@ public:
         return tmpNode1;
     }
 
-
     bool getIsUpdate() const
     {
         return isUpdate;
@@ -435,7 +439,7 @@ private:
     //fix bug 31225,if children clear,another thread useing visibleChildren will crush,so use FileSystemNodePointer
     QList<FileSystemNodePointer> visibleChildren;
     QReadWriteLock *rwLock = nullptr;
-    DFileSystemModel * m_dFileSystemModel;
+    DFileSystemModel *m_dFileSystemModel;
 };
 
 template<typename T>
@@ -447,13 +451,15 @@ public:
         QAtomicPointer<Node> next;
     };
 
-    LockFreeQueue() {
+    LockFreeQueue()
+    {
         m_head.store(new Node());
         m_head.load()->next.store(nullptr);
         m_tail.store(m_head.load());
     }
 
-    ~LockFreeQueue() {
+    ~LockFreeQueue()
+    {
         clear();
 
         delete m_head.load();
@@ -498,7 +504,7 @@ public:
         node->data = t;
         node->next = nullptr;
 
-        Node* _tail = nullptr;
+        Node *_tail = nullptr;
 
         do {
             _tail = m_tail.load();
@@ -562,11 +568,13 @@ public:
         connect(waitTimer, &QTimer::timeout, this, &FileNodeManagerThread::start);
     }
 
-    ~FileNodeManagerThread() {
+    ~FileNodeManagerThread()
+    {
         stop();
     }
 
-    void start() {
+    void start()
+    {
         if (fileQueue.isEmpty())
             return;
 
@@ -575,7 +583,7 @@ public:
 
     inline DFileSystemModel *model() const
     {
-        return static_cast<DFileSystemModel*>(parent());
+        return static_cast<DFileSystemModel *>(parent());
     }
 
     void addFile(const DAbstractFileInfoPointer &info, bool append = false)
@@ -647,7 +655,7 @@ private:
         // 使用计时器避免文件在批量插入列表中等待太久
         QTime timerOfFileList, timerOfDirList;
 
-        auto insertInfoList = [&] (int index, const QList<DAbstractFileInfoPointer> &list) {
+        auto insertInfoList = [&](int index, const QList<DAbstractFileInfoPointer> &list) {
             DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::beginInsertRows,
                                      model()->createIndex(rootNode, 0), index, index + list.count() - 1);
 
@@ -693,7 +701,8 @@ private:
 
             int row = 0;
 
-            forever {
+            forever
+            {
                 if (!enable) {
                     return false;
                 }
@@ -719,7 +728,7 @@ private:
             return true;
         };
 
-        auto removeInList = [&] (QList<DAbstractFileInfoPointer> &list, const DUrl &url) {
+        auto removeInList = [&](QList<DAbstractFileInfoPointer> &list, const DUrl &url) {
             for (int i = 0; i < list.count(); ++i) {
                 if (list.at(i)->fileUrl() == url) {
                     list.removeAt(i);
@@ -731,7 +740,7 @@ private:
             return false;
         };
 
-begin:
+    begin:
 
         while (!fileQueue.isEmpty()) {
             if (!enable) {
@@ -922,6 +931,7 @@ public:
 
     /// add/rm file event
     void _q_processFileEvent();
+    bool checkFileEventQueue();
 
     DFileSystemModel *q_ptr;
 
@@ -1118,8 +1128,7 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
     q->parent()->parent()->update(index);
 //    emit q->dataChanged(index, index);
     //这里调用refresh重刷界面
-    if (fileUrl.scheme() == RECENT_SCHEME)
-    {
+    if (fileUrl.scheme() == RECENT_SCHEME) {
         q->refresh(node->fileInfo->fileUrl());
     }
 }
@@ -1154,8 +1163,7 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
 
 void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 {
-    if (from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString())
-    {
+    if (from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
         return;
     }
 
@@ -1165,6 +1173,9 @@ void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 
 void DFileSystemModelPrivate::_q_processFileEvent()
 {
+    Q_Q(DFileSystemModel);
+    //处理异步正在执行此函数，但是当前类释放了
+    QPointer<DFileSystemModel> me = q;
     if (_q_processFileEvent_runing.load()) {
         return;
     }
@@ -1173,15 +1184,8 @@ void DFileSystemModelPrivate::_q_processFileEvent()
     bool expect = false;
     _q_processFileEvent_runing.compare_exchange_strong(expect, true);
 
-    qDebug() << "_q_processFileEvent";
-    Q_Q(DFileSystemModel);
-    mutex.lock();
-    bool isemptyqueue = fileEventQueue.isEmpty();
-    if (isemptyqueue) {
-        _q_processFileEvent_runing.store(false);
-    }
-    mutex.unlock();
-    while (!isemptyqueue) {
+
+    while (checkFileEventQueue()) {
         mutex.lock();
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         mutex.unlock();
@@ -1194,18 +1198,11 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             if (fileUrl.isMTPFile() && event.first == RmFile) {
                 q->refresh();
             }
-            mutex.lock();
-            isemptyqueue = fileEventQueue.isEmpty();
-            if (isemptyqueue) {
-                _q_processFileEvent_runing.store(false);
-            }
-            mutex.unlock();
             continue;
         }
 
         const DUrl &rootUrl = q->rootUrl();
         const DAbstractFileInfoPointer rootinfo = fileService->createFileInfo(q, rootUrl);
-
         DUrl nparentUrl(info->parentUrl());
         DUrl nfileUrl(fileUrl);
 
@@ -1218,49 +1215,30 @@ void DFileSystemModelPrivate::_q_processFileEvent()
                 nparentUrl.setPath(nparentUrl.path() + "/");
             }
         }
-
         if (nfileUrl == rootUrl) {
             if (event.first == RmFile) {
                 emit q->rootUrlDeleted(rootUrl);
             }
             // It must be refreshed when the root url itself is deleted or newly created
             q->refresh();
-            mutex.lock();
-            isemptyqueue = fileEventQueue.isEmpty();
-            if (isemptyqueue) {
-                _q_processFileEvent_runing.store(false);
-            }
-            mutex.unlock();
             continue;
         }
-
         if (nparentUrl != rootUrl) {
-            mutex.lock();
-            isemptyqueue = fileEventQueue.isEmpty();
-            if (isemptyqueue) {
-                _q_processFileEvent_runing.store(false);
-            }
-            mutex.unlock();
             continue;
         }
-
         // Will refreshing the file info meta data
         info->refresh();
-
         if (event.first == AddFile) {
             q->addFile(info);
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event
             q->remove(fileUrl);
         }
-        mutex.lock();
-        isemptyqueue = fileEventQueue.isEmpty();
-        if (isemptyqueue) {
-            _q_processFileEvent_runing.store(false);
-        }
-        mutex.unlock();
-    }
+        if (!me) {
+            break;
 
+        }
+    }
     _q_processFileEvent_runing.store(false);
 //    if( !laterFileEventQueue.isEmpty()) { //解决最后一个队列没有被处理导致文管不能正确显示文件列表的问题 fix 29294 【字体管理器】【5.6.4】【修改引入】安装字体后，文管中没有显示
 //        DUrl url;
@@ -1270,7 +1248,15 @@ void DFileSystemModelPrivate::_q_processFileEvent()
 //        else if (laterFileEventQueue.last().first == RmFile) {
 //            _q_onFileDeleted(url);
 //        }
-//    }
+    //    }
+}
+
+bool DFileSystemModelPrivate::checkFileEventQueue()
+{
+    mutex.lock();
+    bool isemptyqueue = fileEventQueue.isEmpty();
+    mutex.unlock();
+    return !isemptyqueue;
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
@@ -1285,13 +1271,16 @@ DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
 
 DFileSystemModel::~DFileSystemModel()
 {
+
     Q_D(DFileSystemModel);
 
-    if (m_smForDragEvent)
-    {
+    if (m_smForDragEvent) {
         delete m_smForDragEvent;
         m_smForDragEvent = nullptr;
     }
+
+    //fix bug 33014
+    releaseJobController();
 
     if (d->jobController) {
         d->jobController->stopAndDeleteLater();
@@ -1349,14 +1338,14 @@ QModelIndex DFileSystemModel::index(int row, int column, const QModelIndex &pare
     }
 
     const FileSystemNodePointer &parentNode = parent.isValid()
-            ? FileSystemNodePointer(getNodeByIndex(parent))
-            : d->rootNode;
+                                                  ? FileSystemNodePointer(getNodeByIndex(parent))
+                                                  : d->rootNode;
 
     if (!parentNode) {
         return QModelIndex();
     }
 
-    FileSystemNode* childNode = parentNode->getNodeByIndex(row).data();
+    FileSystemNode *childNode = parentNode->getNodeByIndex(row).data();
 
     if (!childNode) {
         return QModelIndex();
@@ -1383,8 +1372,8 @@ int DFileSystemModel::rowCount(const QModelIndex &parent) const
     Q_D(const DFileSystemModel);
 
     const FileSystemNodePointer &parentNode = parent.isValid()
-            ? FileSystemNodePointer(getNodeByIndex(parent))
-            : d->rootNode;
+                                                  ? FileSystemNodePointer(getNodeByIndex(parent))
+                                                  : d->rootNode;
 
     if (!parentNode) {
         return 0;
@@ -1667,42 +1656,46 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    if (d->jobController) {
-        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
-        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
-        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
-
-        if (d->jobController->isFinished()) {
-            d->jobController->deleteLater();
-        } else {
-            qDebug() << "jobController not finished, terminate it soon!";
-
-            QEventLoop eventLoop;
-            QPointer<DFileSystemModel> me = this;
-            d->eventLoop = &eventLoop;
-
-            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
-
-            d->jobController->stopAndDeleteLater();
-
-            int code = eventLoop.exec();
-
-            d->eventLoop = Q_NULLPTR;
-
-            if (code != 0) {
-                d->jobController->terminate();
-                d->jobController->quit();
-                d->jobController.clear();
-                qDebug() << "break the fetchMore";
-                return;
-            }
-
-            if (!me) {
-                qDebug() << "break the fetchMore";
-                return;
-            }
-        }
+    //
+    if (!releaseJobController()) {
+        return;
     }
+//    if (d->jobController) {
+//        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+//        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+//        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
+
+//        if (d->jobController->isFinished()) {
+//            d->jobController->deleteLater();
+//        } else {
+//            QEventLoop eventLoop;
+//            QPointer<DFileSystemModel> me = this;
+//            d->eventLoop = &eventLoop;
+
+//            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+
+//            d->jobController->stopAndDeleteLater();
+
+//            int code = eventLoop.exec();
+
+//            d->eventLoop = Q_NULLPTR;
+
+//            if (code != 0) {
+//                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+//                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+//                    //此时d->jobController有可能已经在析构了，不能调用terminate
+////                    d->jobController->terminate();
+//                    d->jobController->quit();
+//                    d->jobController.clear();
+//                }
+//                return;
+//            }
+
+//            if (!me) {
+//                return;
+//            }
+//        }
+//    }
 
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
 
@@ -1735,6 +1728,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     setState(Busy);
 
     d->childrenUpdated = false;
+    //
     d->jobController->start();
     d->rootNodeManager->setEnable(true);
 
@@ -1857,7 +1851,7 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     case Qt::CopyAction:
         if (urlList.count() > 0) {
             // blumia: 如果不在新线程跑的话，用户就只能在复制完毕之后才能进行新的拖拽操作。
-            QtConcurrent::run([=](){
+            QtConcurrent::run([=]() {
                 fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
             });
         }
@@ -1920,11 +1914,11 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
     bool bcanwrite = m_smForDragEvent->create(5 * 1024 * 1024);
     if (bcanwrite || (!bcanwrite && QSharedMemory::AlreadyExists)) {
         //因为创建失败，就没有连接内存，所以写失败
-        if(!bcanwrite) {
+        if (!bcanwrite) {
             m_smForDragEvent->attach();
         }
         m_smForDragEvent->lock();
-        char *to = static_cast<char*>(m_smForDragEvent->data());
+        char *to = static_cast<char *>(m_smForDragEvent->data());
         const char *from = buffer.data().data();
         memcpy(to, from, qMin(static_cast<size_t>(buffer.size()), static_cast<size_t>(m_smForDragEvent->size())));
         m_smForDragEvent->unlock();
@@ -1949,19 +1943,16 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 {
     Q_D(DFileSystemModel);
     //首次进入目录记录过滤规则
-    if(isFirstRun)
-    {
+    if (isFirstRun) {
         m_filters = d->filters;
         isFirstRun = false;
     }
     //非回收站还原规则
-    if (!fileUrl.isTrashFile())
-    {
+    if (!fileUrl.isTrashFile()) {
         d->filters = m_filters;
     }
     //回收站设置规则
-    else
-    {
+    else {
         d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
     }
     // Restore state
@@ -2044,7 +2035,7 @@ DUrlList DFileSystemModel::getNoTransparentUrls()
 {
     DUrlList lst = sortedUrls();
     DUrlList lstValid;
-    for (DUrl url: lst) {
+    for (DUrl url : lst) {
         QModelIndex idx = index(url);
         if (!idx.isValid())
             continue;
@@ -2343,7 +2334,7 @@ bool DFileSystemModel::sort(bool emitDataChange)
         return false;
     }
 
-    qDebug()<<"start the sort business";
+    qDebug() << "start the sort business";
 
     QList<FileSystemNodePointer> list = node->getChildrenList();
 
@@ -2509,16 +2500,15 @@ int DFileSystemModel::columnActiveRole(int column) const
 }
 #ifdef __arm__
 // arm
-static QString printList(BTreeNode *pNode){
-
+static QString printList(BTreeNode *pNode)
+{
     QString fullPath("");
-    int i=0;
+    int i = 0;
     if (pNode == nullptr) {
-
-    }else{
+    } else {
         while (pNode != nullptr) {
             fullPath.insert(0, pNode->name);
-            if(strcmp(pNode->name,"")!=0){
+            if (strcmp(pNode->name, "") != 0) {
                 fullPath.insert(0, "/");
             }
             pNode = pNode->parent;
@@ -2557,15 +2547,14 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     /*该修改方案是临时修改方案，只为验证fsearch在arm平台上的可行性。
      *
     */
-    if(get_search_state())//fsearch状态
-    {
-        unsigned int length=get_ResultLen();
-        GPtrArray *results=get_Result();
-        for (unsigned int i=0;i<length;i++) {
-            DatabaseSearchEntry *entry=static_cast<DatabaseSearchEntry*>(g_ptr_array_index(results,i));
-            DUrl url =QUrl(printList(entry->node));
-            url.setFragment("file://"+printList(entry->node));
-            DAbstractFileInfoPointer fileInfo=DAbstractFileInfoPointer(new DFileInfo(url));
+    if (get_search_state()) { //fsearch状态
+        unsigned int length = get_ResultLen();
+        GPtrArray *results = get_Result();
+        for (unsigned int i = 0; i < length; i++) {
+            DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, i));
+            DUrl url = QUrl(printList(entry->node));
+            url.setFragment("file://" + printList(entry->node));
+            DAbstractFileInfoPointer fileInfo = DAbstractFileInfoPointer(new DFileInfo(url));
             const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
             //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
             if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
@@ -2573,17 +2562,16 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
                 fileList << chileNode.data();
             }
         }
-        qDebug()<<"fsearch added node to list";
-    }
-    else {//默认状态
+        qDebug() << "fsearch added node to list";
+    } else { //默认状态
         for (const DAbstractFileInfoPointer &fileInfo : list) {
             if (d->needQuitUpdateChildren) {
                 break;
             }
 
-    //        if (fileHash.contains(fileInfo->fileUrl())) {
-    //            continue;
-    //        }
+            //        if (fileHash.contains(fileInfo->fileUrl())) {
+            //            continue;
+            //        }
 
             qDebug() << "update node url = " << fileInfo->filePath();
 
@@ -2617,7 +2605,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (enabledSort())
         sort(node->fileInfo, fileList);
 
-    qDebug() << "begin insert rows count = " << QString::number( list.count());
+    qDebug() << "begin insert rows count = " << QString::number(list.count());
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     node->setChildrenMap(fileHash);
@@ -3016,7 +3004,7 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
 
                         const FileSystemNodePointer &node = parentNode->getNodeByIndex(row);
 
-                        if (node->fileInfo||node->fileInfo->isFile()) {
+                        if (node->fileInfo || node->fileInfo->isFile()) {
                             break;
                         }
 
@@ -3111,9 +3099,7 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
             emit this->requestSelectFiles(event.urlList());
         }, event, this)
 
-
     } else if (AppController::multiSelectionFilesCache.second != 0) {
-
         quint64 winId{ AppController::multiSelectionFilesCache.second };
         if (winId == parent()->windowId() || AppController::flagForDDesktopRenameBar) { //###: flagForDDesktopRenameBar is false usually.
 
@@ -3145,7 +3131,6 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
             }
         }
     }
-
 }
 
 bool DFileSystemModel::beginRemoveRows(const QModelIndex &parent, int first, int last)
@@ -3167,6 +3152,50 @@ void DFileSystemModel::endRemoveRows()
 
     d->beginRemoveRowsFlag = false;
     QAbstractItemModel::endRemoveRows();
+}
+//fix bug 33014,在文件或者文件很多时，切换到computer时DFileSystemModel已释放但是d->jobController未释放，发送更新消息就崩溃，在DFileSystemModel析构时释放d->jobController
+bool DFileSystemModel::releaseJobController()
+{
+    Q_D(DFileSystemModel);
+
+    if (d->jobController) {
+        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
+
+        if (d->jobController->isFinished()) {
+            d->jobController->deleteLater();
+        } else {
+            QEventLoop eventLoop;
+            QPointer<DFileSystemModel> me = this;
+            d->eventLoop = &eventLoop;
+
+            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+
+            d->jobController->stopAndDeleteLater();
+
+            int code = eventLoop.exec();
+
+            d->eventLoop = Q_NULLPTR;
+
+            if (code != 0) {
+                //                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+                //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+                //此时d->jobController有可能已经在析构了，不能调用terminate
+                //                    d->jobController->terminate();
+                //                    d->jobController->quit();
+                //                    d->jobController.clear();
+                //                    d->jobController->stopAndDeleteLater();
+                //                }
+                return false;
+            }
+
+            if (!me) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 #include "moc_dfilesystemmodel.cpp"

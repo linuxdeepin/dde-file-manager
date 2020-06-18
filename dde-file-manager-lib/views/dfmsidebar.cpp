@@ -400,10 +400,11 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
     if (interface) {
         menu = interface->contextMenu(this, item);
         if (menu) {
-            DFileMenu *fmenu = static_cast<DFileMenu *>(menu);
+            DFileMenu *fmenu = qobject_cast<DFileMenu *>(menu);
             DFileService::instance()->setCursorBusyState(false);
             if (fmenu) {
                 fmenu->exec(this->mapToGlobal(pos));
+                fmenu->deleteLater();
             }
             else {
                 menu->exec(this->mapToGlobal(pos));

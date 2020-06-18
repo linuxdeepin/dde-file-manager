@@ -539,6 +539,9 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
             dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
             return false;
         }
+        if (!linkInfo) {
+            return false;
+        }
         const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
     }
 
@@ -812,6 +815,10 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
     // 该现象发生于从搜索列表中往光驱中发送文件夹还不被支持的时候。现已可以从搜索列表、最近列表、标签列表中往光驱中发送文件
     QSharedPointer<DFileCopyMoveJob> job = QSharedPointer<DFileCopyMoveJob>(new DFileCopyMoveJob());
     //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
+    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+    bool bdoingcleartrash = DFileService::instance()->getDoClearTrashState();
+
+    //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
 
     if (force) {
         job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
@@ -923,6 +930,11 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
     QTimer::singleShot(200, dialogManager->taskDialog(), [job] {
         dialogManager->taskDialog()->removeTaskJob(job.data());
     });
+    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+    if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
+            list.first().toString().endsWith(".local/share/Trash/files")) {
+            DFileService::instance()->setDoClearTrashState(false);
+    }
     //当前线程不要去处理error_handle所在的线程资源
 //    error_handle->currentJob = nullptr;
 //    error_handle->fileJob = nullptr;
