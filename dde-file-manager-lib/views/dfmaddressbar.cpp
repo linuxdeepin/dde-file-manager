@@ -263,8 +263,8 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Enter:
         case Qt::Key_Return:
             e->accept();
-            emit returnPressed();
             completerView->hideMe();
+            emit returnPressed();
             return;
         case Qt::Key_Tab:
             if (completer()->completionCount() > 0) {
@@ -508,7 +508,6 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 {
     int slashIndex = text.lastIndexOf('/');
     bool hasSlash = (slashIndex != -1);
-
     DUrl url = DUrl::fromUserInput(hasSlash ? text.left(slashIndex + 1) : text, false);
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
