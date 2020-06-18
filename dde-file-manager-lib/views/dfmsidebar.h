@@ -58,7 +58,7 @@ public:
 
     int addItem(DFMSideBarItem *item, const QString &group);
     bool removeItem(const DUrl &url, const QString &group);
-    int findItem(const DFMSideBarItem * item) const;
+    int findItem(const DFMSideBarItem *item) const;
     int findItem(const DUrl &url, const QString &group) const;
     int findItem(const DUrl &url, bool fuzzy = false) const;
     int findItem(std::function<bool(const DFMSideBarItem *item)> cb) const; // cb return true to get the index
@@ -100,8 +100,8 @@ private:
     void applySidebarColor();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);
-    void insertItem(int index, DFMSideBarItem * item, const QString &groupName);
-    void appendItem(DFMSideBarItem * item, const QString &groupName);
+    void insertItem(int index, DFMSideBarItem *item, const QString &groupName);
+    void appendItem(DFMSideBarItem *item, const QString &groupName);
     void appendItemWithOrder(QList<DFMSideBarItem *> &list, const DUrlList &order, const QString &groupName);
 
     QModelIndex groupModelIndex(const QString &groupName);
@@ -115,6 +115,8 @@ private:
     QList<DUrl> devitems;
     QSet<QString> m_disableUrlSchemes;
 
+    QDateTime m_lastToggleTime;
+    DFMSideBarItem *m_pLastToggleItem = nullptr;
 };
 
 DFM_END_NAMESPACE
