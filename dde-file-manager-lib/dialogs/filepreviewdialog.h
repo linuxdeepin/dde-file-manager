@@ -100,6 +100,7 @@ private:
     DHorizontalLine *m_separator;
     FilePreviewDialogStatusBar *m_statusBar;
 
+    bool m_playingVideo = false;
     int m_currentPageIndex = -1;
     DFMFilePreview *m_preview = nullptr;
 
