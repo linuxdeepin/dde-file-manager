@@ -95,8 +95,13 @@ void ScreenManager::connectScreen(ScreenPointer psc)
 {
     connect(psc.get(),&AbstractScreen::sigGeometryChanged,this,
             &ScreenManager::onScreenGeometryChanged);
-    connect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
-            &ScreenManager::onScreenAvailableGeometryChanged);
+//为了解决bug33117，
+//在dock时尚模式下，去切换dock位置后，会先触发QScreen的sigAvailableGeometryChanged，此时去获取
+//dock的区域不正确，继而导致桌面栅格计算不正确从而导致自定义下记录的桌面图标无法恢复而异常位置。先暂时屏蔽之。
+//至于此处信号会影响什么地方暂时不可追溯（目前在x86单双屏切换dock均未发现有何影响）。
+
+//    connect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
+//            &ScreenManager::onScreenAvailableGeometryChanged);
 }
 
 
