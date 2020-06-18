@@ -13,7 +13,7 @@
 #include <QMouseEvent>
 
 DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
-    : DDialog(parent)
+    : DFMVaultPageBase(parent)
     , m_pStackedWidget(nullptr)
     , m_pStartVaultWidget(nullptr)
     , m_pSetUnclockMethodWidget(nullptr)
@@ -46,6 +46,8 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
 
     this->addContent(m_pStackedWidget);
     setFixedSize(472, 346);
+
+    connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 }
 
 void DFMVaultActiveView::setBeginingState()
@@ -54,23 +56,6 @@ void DFMVaultActiveView::setBeginingState()
     m_pSetUnclockMethodWidget->clearText();
     m_ActiveVaultFinishedWidget->setFinishedBtnEnabled(true);
     this->setCloseButtonVisible(true);
-}
-
-void DFMVaultActiveView::setWndPtr(QWidget *wnd)
-{
-    m_wndptr = wnd;
-}
-
-QWidget *DFMVaultActiveView::getWndPtr() const
-{
-    return m_wndptr;
-}
-
-void DFMVaultActiveView::showTop()
-{
-    this->activateWindow();
-    this->showNormal();
-    this->raise();
 }
 
 void DFMVaultActiveView::closeEvent(QCloseEvent *)

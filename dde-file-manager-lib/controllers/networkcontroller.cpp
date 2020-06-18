@@ -59,10 +59,9 @@ public:
         initialized = true;
 
         fetchNetworksMutex->lock();
-        //fix bug 32652 当连接了同一台机器的smb共享时，就缓存了它，第二次再去连接smb访问时，使用了缓存
-//        if (!m_silence && NetworkManager::NetworkNodes.value(m_url).isEmpty()) {
+        if (!m_silence && NetworkManager::NetworkNodes.value(m_url).isEmpty()) {
             Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(m_sender.data(), m_url));
-//        }
+        }
         fetchNetworksMutex->unlock();
 
         foreach (const NetworkNode &node, NetworkManager::NetworkNodes.value(m_url)) {

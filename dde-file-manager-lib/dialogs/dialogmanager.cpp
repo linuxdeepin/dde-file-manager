@@ -141,8 +141,8 @@ void DialogManager::initConnect()
 
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
 
-//    connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
-//    connect(m_taskDialog, &DTaskDialog::closed, this, &DialogManager::removeAllJobs);
+    connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
+    connect(m_taskDialog, &DTaskDialog::closed, this, &DialogManager::removeAllJobs);
     connect(m_closeIndicatorDialog, &CloseAllDialogIndicator::allClosed, this, &DialogManager::closeAllPropertyDialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
@@ -276,6 +276,9 @@ void DialogManager::addJob(FileJob *job)
 {
     m_jobs.insert(job->getJobId(), job);
     emit fileSignalManager->requestStartUpdateJobTimer();
+
+    job->disconnect(m_taskDialog); // 对于光盘刻录、擦除的 job，可能会因为进度框的关闭打开而多次被添加导致多次连接槽，所以这里在连接前先断开这部分的信号槽
+    job->disconnect(this);
     connect(job, &FileJob::requestJobAdded, m_taskDialog, &DTaskDialog::addTask);
     connect(job, &FileJob::requestJobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
     connect(job, &FileJob::requestJobRemovedImmediately, m_taskDialog, &DTaskDialog::removeTaskImmediately);
@@ -293,6 +296,9 @@ void DialogManager::removeJob(const QString &jobId)
 {
     if (m_jobs.contains(jobId)) {
         FileJob *job = m_jobs.value(jobId);
+        if (job->getIsOpticalJob() && !job->getIsFinished()) {
+            m_Opticaljobs.insert(jobId, job); // 备份刻录、擦除任务以便再次点击光驱的时候可以激活当前进度
+        }
         job->setIsAborted(true);
         job->setApplyToAll(true);
         job->cancelled();
@@ -315,7 +321,7 @@ QString DialogManager::getJobIdByUrl(const DUrl &url)
         FileJob *job = m_jobs.value(jobId);
         bool ret = false;
         QStringList pathlist = job->property("pathlist").toStringList();
-        for (const QString& path : pathlist) {
+        for (const QString &path : pathlist) {
             if (path == url.toLocalFile()) {
                 ret = true;
                 break;
@@ -540,7 +546,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
 {
     Q_UNUSED(details)
     DDialog d;
-    d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));
+    d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
     QString failure_type;
     switch (type) {
     case FileJob::OpticalBlank:
@@ -564,7 +570,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);
-    connect(&d, &DDialog::buttonClicked, this, [failure_str, te, &d](int idx, const QString&) {
+    connect(&d, &DDialog::buttonClicked, this, [failure_str, te, &d](int idx, const QString &) {
         if (idx == 1) {
             d.done(idx);
             return;
@@ -595,10 +601,10 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     }
 }
 
-void DialogManager::showOpticalJobCompletionDialog(const QString& msg, const QString& icon)
+void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)
 {
     DDialog d;
-    d.setIcon(QIcon::fromTheme(icon), QSize(64,64));
+    d.setIcon(QIcon::fromTheme(icon), QSize(64, 64));
     d.setTitle(msg);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
@@ -682,8 +688,7 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
     QWidget *w = WindowManager::getWindowById(event.windowId());
     if (w) {
         DUrl url = event.fileUrl();
-        if(event.fileUrl().scheme() == DFMVAULT_SCHEME)
-        {
+        if (event.fileUrl().scheme() == DFMVAULT_SCHEME) {
             url = VaultController::vaultToLocalUrl(url);
         }
         OpenWithDialog *d = new OpenWithDialog(url);
@@ -805,7 +810,8 @@ void DialogManager::showComputerPropertyDialog()
 
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
-                     }, this)
+    },
+                     this)
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
@@ -1124,11 +1130,12 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 {
-    QTimer::singleShot(1000, [ = ]{
+    QTimer::singleShot(1000, [=] {
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
-            QStringList && udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
-            if (udiskspaths.isEmpty()) return;
+            QStringList &&udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
+            if (udiskspaths.isEmpty())
+                return;
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspaths.first()));
             QString fstype = blk->idType();
             if (fstype == "ntfs") {
@@ -1139,7 +1146,8 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                 checkFsDrv.start("df", {"--output=fstype", diskInfo.unix_device()});
                 checkFsDrv.waitForFinished(-1);
                 QString dfStdOut = checkFsDrv.readAllStandardOutput().split('\n').value(1);
-                if (dfStdOut == QStringLiteral("ntfs")) return;
+                if (dfStdOut == QStringLiteral("ntfs"))
+                    return;
 
                 bool isReadOnly = false;
                 DUrl mountUrl = DUrl(diskInfo.mounted_root_uri());
@@ -1192,9 +1200,9 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                     if (ret == 1) {
                         qDebug() << "===================Reboot system=====================";
                         QDBusInterface sessionManagerIface("com.deepin.SessionManager",
-                        "/com/deepin/SessionManager",
-                        "com.deepin.SessionManager",
-                        QDBusConnection::sessionBus());
+                                                           "/com/deepin/SessionManager",
+                                                           "com.deepin.SessionManager",
+                                                           QDBusConnection::sessionBus());
                         sessionManagerIface.asyncCall("Reboot");
                     }
                 }
@@ -1290,14 +1298,13 @@ void DialogManager::showTaskProgressDlgOnActive()
     m_taskDialog->raise();
     m_taskDialog->activateWindow();
 
-    QMapIterator<QString, FileJob *> iter(m_jobs);
+    QMapIterator<QString, FileJob *> iter(m_Opticaljobs);
     while (iter.hasNext()) {
         iter.next();
         if (iter.value()->getIsFinished())
             continue;
-        QMap<QString, QString> mapJobDetail;
-        mapJobDetail.insert("jobId", iter.value()->getJobId());
-        m_taskDialog->addTask(mapJobDetail);
+        addJob(iter.value());
+        emit iter.value()->requestJobAdded(iter.value()->jobDetail());
     }
 }
 int DialogManager::showUnableToLocateDir(const QString &dir)

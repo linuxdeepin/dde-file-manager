@@ -79,7 +79,7 @@ VaultLockManager::VaultLockManager(QObject *parent)
         return;
     }
 
-    // 自动锁计时处理
+    //! 自动锁计时处理
     connect(&d->m_alarmClock, &QTimer::timeout, this, &VaultLockManager::processAutoLock);
     d->m_alarmClock.setInterval(1000);
 
@@ -181,43 +181,8 @@ void VaultLockManager::processAutoLock()
 #endif
 
     if (interval > threshold) {
-
-        qDebug() << "---------------enter interval > threshold---------------";
-
-        // 如果正在有保险箱的移动、粘贴、删除操作，强行结束任务
-        DTaskDialog *pTaskDlg = dialogManager->taskDialog();
-        if(pTaskDlg){
-            if(pTaskDlg->bHaveNotCompletedVaultTask()){
-                pTaskDlg->stopVaultTask();
-            }
-        }
-
-        // 如果当前有保险箱的压缩或解压缩任务，杀死任务对话框进程
-        QString strCmd = GET_COMPRESSOR_PID_SHELL(VAULT_BASE_PATH);
-        QStringList lstShellOutput;
-        int res = InterfaceActiveVault::executionShellCommand(strCmd, lstShellOutput);
-        if(res == 0){   // shell命令执行成功
-            QStringList::const_iterator itr = lstShellOutput.begin();
-            for(; itr != lstShellOutput.end(); ++itr){
-                QString strCmd2 = QString("kill -9 %1").arg(*itr);
-                QStringList lstShellOutput2;
-                int res2 = InterfaceActiveVault::executionShellCommand(strCmd2, lstShellOutput2);
-                if(res2 == 0)
-                    qDebug() << QString("杀死进程PID: %1 成功").arg(*itr);
-            }
-        }else{
-            qDebug() << "执行查找进程PID命令失败!";
-        }
-
-        // 如果正在有保险箱的移动、粘贴到桌面的任务，通知桌面进程置结束当前保险箱的任务
-        QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
-                                                             "/org/freedesktop/FileManager1",
-                                                             "org.freedesktop.FileManager1",
-                                                             "closeTask");
-        QDBusMessage response = QDBusConnection::sessionBus().call(message);
-        if(response.type() != QDBusMessage::ReplyMessage){
-            qDebug() << "close vault task failed!";
-        }
+        qDebug() << "-----------enter interval > threshold-------------";
+        terminateTask();
 
         qDebug() << "---------------begin lockVault---------------";
         controller->lockVault();
@@ -304,4 +269,42 @@ quint64 VaultLockManager::dbusGetSelfTime() const
         }
     }
     return selfTime;
+}
+
+void VaultLockManager::terminateTask()
+{
+    //! 如果正在有保险箱的移动、粘贴、删除操作，强行结束任务
+    DTaskDialog *pTaskDlg = dialogManager->taskDialog();
+    if (pTaskDlg) {
+        if (pTaskDlg->bHaveNotCompletedVaultTask()) {
+            pTaskDlg->stopVaultTask();
+        }
+    }
+
+    //! 如果当前有保险箱的压缩或解压缩任务，杀死任务对话框进程
+    QString strCmd = GET_COMPRESSOR_PID_SHELL(VAULT_BASE_PATH);
+    QStringList lstShellOutput;
+    int res = InterfaceActiveVault::executionShellCommand(strCmd, lstShellOutput);
+    if (res == 0) { //! shell命令执行成功
+        QStringList::const_iterator itr = lstShellOutput.begin();
+        for (; itr != lstShellOutput.end(); ++itr) {
+            QString strCmd2 = QString("kill -9 %1").arg(*itr);
+            QStringList lstShellOutput2;
+            int res2 = InterfaceActiveVault::executionShellCommand(strCmd2, lstShellOutput2);
+            if (res2 == 0)
+                qDebug() << QString("杀死进程PID: %1 成功").arg(*itr);
+        }
+    } else {
+        qDebug() << "执行查找进程PID命令失败!";
+    }
+
+    //! 如果正在有保险箱的移动、粘贴到桌面的任务，通知桌面进程置结束当前保险箱的任务
+    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+                                                          "/org/freedesktop/FileManager1",
+                                                          "org.freedesktop.FileManager1",
+                                                          "closeTask");
+    QDBusMessage response = QDBusConnection::sessionBus().call(message);
+    if (response.type() != QDBusMessage::ReplyMessage) {
+        qDebug() << "close vault task failed!";
+    }
 }

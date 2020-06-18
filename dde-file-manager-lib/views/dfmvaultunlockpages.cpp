@@ -21,6 +21,7 @@
 #include "dfmvaultunlockpages.h"
 #include "vault/interfaceactivevault.h"
 #include "controllers/vaultcontroller.h"
+#include "dfilemanagerwindow.h"
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -35,7 +36,7 @@
 #include <QTimer>
 
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
-    : DDialog (parent)
+    : DFMVaultPageBase(parent)
 {
     setIcon(QIcon::fromTheme("dfm_vault"));
     setFixedSize(396, 218);
@@ -96,6 +97,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
             showToolTip(strPwdHint, 3000, EN_ToolTip::Information);
         }
     });
+    connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 }
 
 void DFMVaultUnlockPages::showEvent(QShowEvent *event)
@@ -162,16 +164,6 @@ DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
     return &s_instance;
 }
 
-void DFMVaultUnlockPages::setWndPtr(QWidget *wnd)
-{
-    m_wndptr = wnd;
-}
-
-QWidget *DFMVaultUnlockPages::getWndPtr() const
-{
-    return m_wndptr;
-}
-
 void DFMVaultUnlockPages::onButtonClicked(const int &index)
 {
     if (index == 1){
@@ -180,7 +172,7 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
         QString strClipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strClipher)){
             m_bUnlockByPwd = true;
-            VaultController::getVaultController()->unlockVault(strClipher);            
+            VaultController::getVaultController()->unlockVault(strClipher);
         }else {
             // 设置密码输入框颜色
             m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");

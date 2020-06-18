@@ -195,8 +195,8 @@ QSet<MenuAction> VaultFileInfo::disableMenuActionList() const
 
 DUrl VaultFileInfo::goToUrlWhenDeleted() const
 {
-    if (fileUrl() == VaultController::makeVaultUrl(VaultController::vaultUnlockPath())) {
-        return fileUrl();
+    if (isRootDirectory()) {
+        return DUrl(COMPUTER_ROOT);
     }
 
     return DAbstractFileInfo::goToUrlWhenDeleted();
@@ -329,6 +329,16 @@ bool VaultFileInfo::isDir() const
         return true;
     }
     return DAbstractFileInfo::isDir();
+}
+
+bool VaultFileInfo::canDrop() const
+{
+    // 保险箱处于开锁状态下，可以拖拽文件到保险箱，否则，不支持拖拽
+    if(VaultController::VaultState::Unlocked == VaultController::getVaultController()->state()){
+        return true;
+    }else {
+        return false;
+    }
 }
 
 bool VaultFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) const
