@@ -445,11 +445,11 @@ QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize, QString 
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     bool bVolFlag = strVolTag.startsWith("sr") // 避免因传入非光驱挂载点而插入 CdStatusInfo 对象
-                        ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag
-                        : false;
+                    ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag
+                    : false;
     bool bMntFlag = strVolTag.startsWith("sr")
-                        ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bMntFlag
-                        : false;
+                    ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bMntFlag
+                    : false;
     if (bVolFlag && (totalSize == 0)) { //CD/DVD
         return QObject::tr("Unknown");
     } else if (!bVolFlag && !bMntFlag  && (totalSize == 0)) { //CD/DVD
@@ -476,8 +476,8 @@ DUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, con
         if (newInfo && newInfo->exists()) {
             ++i;
             fileName = suffix.isEmpty()
-                           ? QString("%1%2").arg(baseName, QString::number(i))
-                           : QString("%1%2.%3").arg(baseName, QString::number(i), suffix);
+                       ? QString("%1%2").arg(baseName, QString::number(i))
+                       : QString("%1%2.%3").arg(baseName, QString::number(i), suffix);
             fileUrl = targetDirInfo->getUrlByChildFileName(fileName);
         } else {
             return fileUrl;
@@ -584,7 +584,7 @@ bool FileUtils::openFile(const QString &filePath)
 
     if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop") {
         QProcess::startDetached("gio", QStringList() << "open" << filePath);
-        QTimer::singleShot(200, [=] {
+        QTimer::singleShot(200, [ = ] {
             QProcess::startDetached("gio", QStringList() << "open" << filePath);
         });
         return true;
@@ -664,9 +664,9 @@ bool FileUtils::openFiles(const QStringList &filePaths)
             // the correct approach: let the app add it to the recent list.
             // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
             for (const QString &tmp : openinfo.value(defaultDesktopFile)) {
-                QString filePath = DUrl::fromLocalFile(tmp).toLocalFile();
+                QString filePath = DUrl::fromUserInput(tmp).toLocalFile();
                 DesktopFile df(defaultDesktopFile);
-                addRecentFile(filePath, df, mimetypeinfo.value(filePath));
+                addRecentFile(filePath, df, mimetypeinfo.value(tmp));
             }
             result = true;
         }
@@ -679,7 +679,7 @@ bool FileUtils::openFiles(const QStringList &filePaths)
     const QString filePath = rePath.first();
     if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop") {
         QProcess::startDetached("gio", QStringList() << "open" << rePath);
-        QTimer::singleShot(200, [=] {
+        QTimer::singleShot(200, [ = ] {
             QProcess::startDetached("gio", QStringList() << "open" << rePath);
         });
         return true;
@@ -939,9 +939,9 @@ bool FileUtils::shouldAskUserToAddExecutableFlag(const QString &path)
     }
 
     if (mimetype == "application/x-executable"
-        || mimetype == "application/x-sharedlib"
-        || mimetype == "application/x-iso9660-appimage"
-        || mimetype == "application/vnd.appimage") {
+            || mimetype == "application/x-sharedlib"
+            || mimetype == "application/x-iso9660-appimage"
+            || mimetype == "application/vnd.appimage") {
         return !isFileExecutable(_path);
     }
 
@@ -963,9 +963,9 @@ bool FileUtils::isFileRunnable(const QString &path)
     //         https://cgit.freedesktop.org/xdg/shared-mime-info/tree/freedesktop.org.xml.in
     //         btw, consider using MimeTypeDisplayManager::ExecutableMimeTypes(private) ?
     if (mimetype == "application/x-executable"
-        || mimetype == "application/x-sharedlib"
-        || mimetype == "application/x-iso9660-appimage"
-        || mimetype == "application/vnd.appimage") {
+            || mimetype == "application/x-sharedlib"
+            || mimetype == "application/x-iso9660-appimage"
+            || mimetype == "application/vnd.appimage") {
         return isFileExecutable(_path);
     }
 
