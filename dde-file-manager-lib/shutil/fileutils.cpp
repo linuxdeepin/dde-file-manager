@@ -621,7 +621,7 @@ bool FileUtils::openFiles(const QStringList &filePaths)
         //QString mimetype = getFileMimetype(filePath);
         DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
         QString mimetype = QString();
-        if (info && info->size() == 0) {
+        if (info && info->size() == 0 && info->exists()) {
             mimetype = info->mimeType().name();
         } else {
             mimetype = getFileMimetype(filePath);
