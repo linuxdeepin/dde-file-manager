@@ -334,7 +334,7 @@ bool VaultFileInfo::isDir() const
 bool VaultFileInfo::canDrop() const
 {
     // 保险箱处于开锁状态下，可以拖拽文件到保险箱，否则，不支持拖拽
-    if(VaultController::VaultState::Unlocked == VaultController::getVaultController()->state()){
+    if(VaultController::VaultState::Unlocked == VaultController::getVaultController()->getVaultState()){
         return true;
     }else {
         return false;

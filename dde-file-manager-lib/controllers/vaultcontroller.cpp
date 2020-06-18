@@ -203,8 +203,8 @@ VaultController::VaultController(QObject *parent)
     connect(this, &VaultController::sigLockVault, d->m_cryFsHandle, &CryFsHandle::lockVault);
     
     connect(d->m_cryFsHandle, &CryFsHandle::signalCreateVault, this, &VaultController::signalCreateVault);
-    connect(d->m_cryFsHandle, &CryFsHandle::signalUnlockVault, this, &VaultController::signalUnlockVault);
-    connect(d->m_cryFsHandle, &CryFsHandle::signalLockVault, this, &VaultController::signalLockVault);
+    connect(d->m_cryFsHandle, &CryFsHandle::signalUnlockVault, this, &VaultController::slotUnlockVault);
+    connect(d->m_cryFsHandle, &CryFsHandle::signalLockVault, this, &VaultController::slotLockVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadError, this, &VaultController::signalReadError);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadOutput, this, &VaultController::signalReadOutput);
 
@@ -218,6 +218,9 @@ VaultController::VaultController(QObject *parent)
     // Refresh size when lock state changed.
     connect(this, &VaultController::signalUnlockVault, this, &VaultController::refreshTotalSize);
     connect(this, &VaultController::signalLockVault, this, &VaultController::refreshTotalSize);
+
+    // 初始化时，记录保险箱状态
+    m_enVaultState = state();
 }
 
 VaultController *VaultController::getVaultController()
@@ -1005,4 +1008,20 @@ void VaultController::refreshTotalSize()
     }
     DUrl url = vaultToLocalUrl(makeVaultUrl());
     m_sizeWorker->start({url});
+}
+
+void VaultController::slotUnlockVault(int state)
+{
+    if(state == static_cast<int>(ErrorCode::Success)){
+        m_enVaultState = Unlocked;
+    }
+    emit signalUnlockVault(state);
+}
+
+void VaultController::slotLockVault(int state)
+{
+    if(state == static_cast<int>(ErrorCode::Success)){
+        m_enVaultState = Encrypted;
+    }
+    emit signalLockVault(state);
 }
