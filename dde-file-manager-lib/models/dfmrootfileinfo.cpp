@@ -147,7 +147,10 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             d_ptr->blk->setWatchChanges(true);
             checkCache();
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idLabelChanged, [this] {this->checkCache();});
-            QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] {this->checkCache();});
+            QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] {
+                this->loadDiskInfo();
+                this->checkCache();
+            });
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::sizeChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idTypeChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::cleartextDeviceChanged, [this] {this->checkCache();});
