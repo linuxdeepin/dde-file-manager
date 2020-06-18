@@ -340,6 +340,10 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
 //添加此函数为解决拖拽后不选中拖拽项目问题
 void DFMSideBarView::onRowCountChanged()
 {
+    if (isHidden()) {
+        return; //在显示前不处理
+    }
+
     if (previousRowCount == model()->rowCount()) {
         setCurrentIndex(indexAt(dropPos));
         if (dragItemName != model()->data(currentIndex()).toString()) {

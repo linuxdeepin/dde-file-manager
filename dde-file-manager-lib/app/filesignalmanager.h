@@ -50,17 +50,16 @@ signals:
     /* emit usershare status changed*/
     void userShareCountChanged(const int count);
 
+    // 在共享信息刷新后，请求刷新页面
+    void requestRefreshFileModel(const DUrl &url);
+
     /* request close current tab*/
     void requestCloseCurrentTab(quint64 winId);
 
     // 请求关闭窗口的所有保险箱的标签
     void requestCloseAllTabOfVault(quint64 winId);
 
-    // 请求进入某目录（用于保险箱）
-    void requestCdDir(const DUrl &fileUrl);
-
     /* request fetch network nodes*/
-
     void requestFetchNetworks(const DFMUrlBaseEvent &event);
 
     /*request choose smb mounted file*/

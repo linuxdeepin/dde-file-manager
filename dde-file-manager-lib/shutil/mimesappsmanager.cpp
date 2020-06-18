@@ -390,6 +390,9 @@ bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const 
 
 QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
 {
+    if (!url.isValid()) {
+        return QStringList();
+    }
     QStringList recommendedApps;
     QString mimeType;
 

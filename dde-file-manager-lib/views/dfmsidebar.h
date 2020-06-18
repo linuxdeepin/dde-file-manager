@@ -58,7 +58,7 @@ public:
 
     int addItem(DFMSideBarItem *item, const QString &group);
     bool removeItem(const DUrl &url, const QString &group);
-    int findItem(const DFMSideBarItem * item) const;
+    int findItem(const DFMSideBarItem *item) const;
     int findItem(const DUrl &url, const QString &group) const;
     int findItem(const DUrl &url, bool fuzzy = false) const;
     int findItem(std::function<bool(const DFMSideBarItem *item)> cb) const; // cb return true to get the index
@@ -88,26 +88,6 @@ private slots:
     void onContextMenuRequested(const QPoint &pos);
     void onRename(const QModelIndex &index, QString newName) const ;
 
-
-    /**
-     * @brief onUnlockVault
-     */
-    void onUnlockVault();
-
-    /**
-     * @brief onCreateVault
-     */
-    void onCreateVault();
-
-    /**
-     * @brief onRecoverVault
-     */
-    void onRecoverVault();
-
-    /**
-     * @brief onRemoveVault 删除保险箱
-     */
-    void onRemoveVault();
 private:
     void initUI();
     void initModelData();
@@ -117,12 +97,11 @@ private:
     void initBookmarkConnection();
     void initDeviceConnection();
     void initTagsConnection();
-    void initVaultConnection();
     void applySidebarColor();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);
-    void insertItem(int index, DFMSideBarItem * item, const QString &groupName);
-    void appendItem(DFMSideBarItem * item, const QString &groupName);
+    void insertItem(int index, DFMSideBarItem *item, const QString &groupName);
+    void appendItem(DFMSideBarItem *item, const QString &groupName);
     void appendItemWithOrder(QList<DFMSideBarItem *> &list, const DUrlList &order, const QString &groupName);
 
     QModelIndex groupModelIndex(const QString &groupName);
@@ -136,6 +115,8 @@ private:
     QList<DUrl> devitems;
     QSet<QString> m_disableUrlSchemes;
 
+    QDateTime m_lastToggleTime;
+    DFMSideBarItem *m_pLastToggleItem = nullptr;
 };
 
 DFM_END_NAMESPACE

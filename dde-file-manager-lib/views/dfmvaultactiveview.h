@@ -1,7 +1,7 @@
 #ifndef DFMVAULTACTIVEVIEW_H
 #define DFMVAULTACTIVEVIEW_H
 
-#include <DDialog>
+#include "dfmvaultpagebase.h"
 
 QT_BEGIN_NAMESPACE
 class QStackedWidget;
@@ -15,20 +15,14 @@ class DFMVaultActiveFinishedView;
 
 DWIDGET_USE_NAMESPACE
 
-class DFMVaultActiveView  : public DDialog
+class DFMVaultActiveView : public DFMVaultPageBase
 {
-    Q_OBJECT
 public:
-    static DFMVaultActiveView &getInstance(){
+    static DFMVaultActiveView *getInstance()
+    {
         static DFMVaultActiveView dlg;
-        return dlg;
+        return &dlg;
     }
-
-    void setWndPtr(QWidget *wnd);
-    QWidget *getWndPtr() const;
-
-    // 置顶显示
-    void showTop();
 
 protected:
     void closeEvent(QCloseEvent *) override;
@@ -50,8 +44,6 @@ private:
     DFMVaultActiveSetUnlockMethodView       *m_pSetUnclockMethodWidget;
     DFMVaultActiveSaveKeyView               *m_SaveKeyWidget;
     DFMVaultActiveFinishedView              *m_ActiveVaultFinishedWidget;
-
-    QWidget *m_wndptr = nullptr;
 };
 
 #endif // DFMVAULTACTIVEVIEW_H

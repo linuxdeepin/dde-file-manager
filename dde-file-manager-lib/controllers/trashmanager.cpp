@@ -167,13 +167,13 @@ DUrl TrashDirIterator::url() const
 }
 
 TrashManager::TrashManager(QObject *parent)
-    : DAbstractFileController(parent),
-      m_trashFileWatcher(new DFileWatcher(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath),this))
+    : DAbstractFileController(parent)
+    , m_trashFileWatcher(new DFileWatcher(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath), this))
 {
     m_isTrashEmpty = isEmpty();
     QString trashFilePath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
     //make sure trash file exists
-    if(!QFile::exists(trashFilePath))
+    if (!QFile::exists(trashFilePath))
         QDir().mkdir(trashFilePath);
 
     connect(m_trashFileWatcher, &DFileWatcher::fileDeleted, this, &TrashManager::trashFilesChanged);
@@ -210,7 +210,8 @@ bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &e
     //如果是全部还原操作 需要先遍历trash根目录下的所有目录
     if (urlList.size() == 1 && DUrl::fromTrashFile("/") == urlList.first()) {
         urlList.clear();
-        for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System))
+        // fix bug#33763 回收站内的隐藏文件应该被找出来进行还原
+        for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden))
             urlList << info->fileUrl();
     }
     bool ok = restoreTrashFile(urlList, &originUrls);
@@ -223,7 +224,7 @@ bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &e
 }
 
 bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
-{    
+{
     if (event->action() != DFMGlobal::CopyAction &&
             // 取消对剪切操作的屏蔽
             event->action() != DFMGlobal::CutAction) {
@@ -233,7 +234,7 @@ bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClip
 
     DUrlList localList;
 
-    for(const DUrl &url : event->urlList()) {
+    for (const DUrl &url : event->urlList()) {
         const QString &path = url.path();
 
         localList << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);
@@ -265,7 +266,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
 {
     DUrlList localList;
 
-    for(const DUrl &url : event->urlList()) {
+    for (const DUrl &url : event->urlList()) {
         if (DUrl::fromTrashFile("/") == url) {
             cleanTrash(event->sender());
             return true;
@@ -349,13 +350,13 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
     if (!isRestoreAll && urlist.size() == 0) {
         DTaskDialog *dlg = dialogManager->taskDialog();
-        if (dlg && dlg->getTaskListWidget() && dlg->getTaskListWidget()->count()>0) {
+        if (dlg && dlg->getTaskListWidget() && dlg->getTaskListWidget()->count() > 0) {
             dlg->raise();
         }
         return true; // job already existed
     }
 
-    struct ScopedPointerCustomDeleter{
+    struct ScopedPointerCustomDeleter {
         static inline void cleanup(FileJob *job)
         {
             job->jobRemoved();
@@ -371,8 +372,8 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 //            dialogManager->addJob(job.data());
 //    }
 //    else {
-        dialogManager->addJob(job.data());
-//    }
+    dialogManager->addJob(job.data());
+    //    }
 
     job->jobPrepared();
     int i = 0;
@@ -391,8 +392,8 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
 //            return restoreTrashFile(list, restoreOriginUrls);
 //        } else {
-            ++i;
-            job->setRestoreProgress(double(i) / total);
+++i;
+job->setRestoreProgress(double(i) / total);
 //        }
 
         //###(zccrs): 必须通过 DAbstractFileInfoPointer 使用
@@ -416,7 +417,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
     job->setRestoreProgress(0);
     emit job->finished();
 
-    if (!ok && restoreFailedList.count() > 0){
+    if (!ok && restoreFailedList.count() > 0) {
         emit fileSignalManager->requestShowRestoreFailedDialog(restoreFailedList);
     }
 
@@ -458,10 +459,10 @@ bool TrashManager::isEmpty()
     return !iterator.hasNext();
 }
 
-void TrashManager::trashFilesChanged(const DUrl& url)
+void TrashManager::trashFilesChanged(const DUrl &url)
 {
     Q_UNUSED(url);
-    if(m_isTrashEmpty == isEmpty())
+    if (m_isTrashEmpty == isEmpty())
         return;
 
     m_isTrashEmpty = isEmpty();

@@ -268,6 +268,9 @@ void UserShareManager::handleShareChanged(const QString &filePath)
     if (filePath.contains(":tmp"))
         return;
     m_shareInfosChangedTimer->start();
+    QTimer::singleShot(1000, this, [=](){
+        emit fileSignalManager->requestRefreshFileModel(DUrl::fromUserShareFile("/"));
+    });
 }
 
 void UserShareManager::updateUserShareInfo(bool sendSignal)
