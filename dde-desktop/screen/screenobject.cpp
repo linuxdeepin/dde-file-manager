@@ -84,6 +84,9 @@ QRect ScreenObject::availableGeometry() const
 
     DockRect dockrectI = DockInfoIns->frontendWindowRect(); //原始dock大小
     QRect dockrect = dealRectRatio(dockrectI.operator QRect());  //缩放处理
+     qDebug() << "frontendWindowRect: dockrectI " << QRect(dockrectI);
+     qDebug() << "dealRectRatio dockrect " << dockrect;
+     qDebug() << "ScreenObject ret " << ret;
     switch (DockInfoIns->position()) {
     case 0: //上
         ret.setY(ret.y() + dockrect.height());
