@@ -800,8 +800,16 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
             return;
 
         const DUrl from = urls.first();
-        const DUrl to = info->fileUrl();
+        DUrl to = info->fileUrl();
         Qt::DropAction default_action = Qt::CopyAction;
+
+        //fix bug#23703勾选自动整理，拖拽其他目录文件到桌面做得是复制操作
+        //因为自动整理的路径被DStorageInfo::inSameDevice判断为false，这里做转化
+        if (to.scheme() == DFMMD_SCHEME) {
+            to = DUrl(info->absoluteFilePath());
+            to.setScheme(FILE_SCHEME);
+        }
+        //end
 
         if (qApp->keyboardModifiers() == Qt::AltModifier) {
             default_action = Qt::MoveAction;
