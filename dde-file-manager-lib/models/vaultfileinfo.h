@@ -67,6 +67,7 @@ public:
     QString fileDisplayName() const override;
     qint64 size() const override;
     bool isDir() const override;
+    bool canDrop() const override;
 
     /**
      * @brief isAncestorsUrl 拆分路径

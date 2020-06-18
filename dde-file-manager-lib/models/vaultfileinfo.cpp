@@ -331,6 +331,16 @@ bool VaultFileInfo::isDir() const
     return DAbstractFileInfo::isDir();
 }
 
+bool VaultFileInfo::canDrop() const
+{
+    // 保险箱处于开锁状态下，可以拖拽文件到保险箱，否则，不支持拖拽
+    if(VaultController::VaultState::Unlocked == VaultController::getVaultController()->state()){
+        return true;
+    }else {
+        return false;
+    }
+}
+
 bool VaultFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) const
 {
     Q_UNUSED(url)
