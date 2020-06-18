@@ -3142,6 +3142,7 @@ bool DFileSystemModel::releaseJobController()
 
         if (d->jobController->isFinished()) {
             d->jobController->deleteLater();
+            d->jobController = nullptr;
         } else {
             QEventLoop eventLoop;
             QPointer<DFileSystemModel> me = this;
@@ -3150,6 +3151,8 @@ bool DFileSystemModel::releaseJobController()
             connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
 
             d->jobController->stopAndDeleteLater();
+
+            d->jobController = nullptr;
 
             int code = eventLoop.exec();
 
