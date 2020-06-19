@@ -545,7 +545,7 @@ void DFMSideBar::initConnection()
     });
 
     initBookmarkConnection();
-#if ENABLE_DAEMON
+#if ENABLE_ASYNCINIT
     QtConcurrent::run([this](){initDeviceConnection(true);});
 #else
     initDeviceConnection();
@@ -643,7 +643,7 @@ void DFMSideBar::initBookmarkConnection()
 
 void DFMSideBar::initDeviceConnection(bool async)
 {
-#if 0
+#if 0 //to delete.
     DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
     Q_CHECK_PTR(devicesWatcher);
     devicesWatcher->startWatcher();
@@ -674,19 +674,18 @@ void DFMSideBar::initDeviceConnection(bool async)
 #else
 
     DFileService::instance()->startQuryRootFile();
+    connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
+        rootFileChange();
+        connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+    },Qt::QueuedConnection);
 
     if (fileService->isRootFileInited()) {
+        disconnect(DFileService::instance(),&DFileService::queryRootFileFinsh, this, nullptr);
+
         rootFileChange();
         connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
     }
-    else {
-        connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
-            rootFileChange();
-            connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
-        },Qt::QueuedConnection);
-    }
-
-    //connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+#if 0 //性能优化
     DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
     Q_CHECK_PTR(devicesWatcher);
     if (async){
@@ -700,6 +699,9 @@ void DFMSideBar::initDeviceConnection(bool async)
     }
     else
         devicesWatcher->startWatcher();
+#else
+    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->rootFileWather();
+#endif
 #if 0 //未发现被使用，待观察，2020-06-16 性能优化
     qDebug() << "createFileWatcher" << kTime.elapsed();
     m_udisks2DiskManager.reset(new DDiskManager);
@@ -729,11 +731,11 @@ void DFMSideBar::initDeviceConnection(bool async)
             }
             );
             if (r == devitems.end()) {
-                DFileService::instance()->changeRootFile(url);
+                //DFileService::instance()->changeRootFile(url); //性能优化，注释
                 this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                 devitems.append(url);
             } else {
-                DFileService::instance()->changeRootFile(url);
+                //DFileService::instance()->changeRootFile(url); //性能优化，注释
                 this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                 devitems.insert(r, url);
             }
@@ -752,7 +754,7 @@ void DFMSideBar::initDeviceConnection(bool async)
                 }
             }
         }
-        DFileService::instance()->changeRootFile(url,false);
+        //DFileService::instance()->changeRootFile(url,false); //性能优化，注释
         this->removeItem(url, this->groupName(Device));
         devitems.removeAll(url);
     });

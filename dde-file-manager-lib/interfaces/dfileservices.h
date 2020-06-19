@@ -166,6 +166,7 @@ public:
     bool isRootFileInited() const;
     void changeRootFile(const DUrl &fileurl,const bool bcreate = true);
     void startQuryRootFile();
+    DAbstractFileWatcher *rootFileWather() const;
     void clearThread();
 
     //set cursor busy status
