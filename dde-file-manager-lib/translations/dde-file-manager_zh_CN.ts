@@ -1587,7 +1587,7 @@
     <message>
         <location filename="../views/fileitem.cpp" line="115"/>
         <source>Contains invalid characters (any of \ /: *? &quot;&lt; &gt;|)</source>
-        <translation type="unfinished"></translation>
+        <translation>名称包含无效字符（\ /: *? &quot;&lt; &gt;|）</translation>
     </message>
 </context>
 <context>

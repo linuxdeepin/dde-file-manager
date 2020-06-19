@@ -687,11 +687,7 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
     QWidget *w = WindowManager::getWindowById(event.windowId());
     if (w) {
-        DUrl url = event.fileUrl();
-        if (event.fileUrl().scheme() == DFMVAULT_SCHEME) {
-            url = VaultController::vaultToLocalUrl(url);
-        }
-        OpenWithDialog *d = new OpenWithDialog(url);
+        OpenWithDialog *d = new OpenWithDialog(event.fileUrl());
         d->setDisplayPosition(OpenWithDialog::Center);
         d->exec();
     }
