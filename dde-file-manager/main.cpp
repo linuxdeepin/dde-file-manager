@@ -177,6 +177,9 @@ int main(int argc, char *argv[])
             fileManagerApp;
             app.setQuitOnLastWindowClosed(false);
 
+            //widget 加速
+            QWidget wid;
+            wid.winId();
         } else {
             CommandLineManager::instance()->processCommand();
         }
