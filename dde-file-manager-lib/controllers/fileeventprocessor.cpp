@@ -165,38 +165,50 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     }
     case DFMGlobal::Open:
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
-            AppController::instance()->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+            }
         }
         break;
     case DFMGlobal::OpenDisk:
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
-            AppController::instance()->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+            }
         }
         break;
     case DFMGlobal::OpenInNewWindow:
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
-            AppController::instance()->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+            }
         }
         break;
     case DFMGlobal::OpenInNewTab:
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
-            AppController::instance()->actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+            }
         }
         break;
     case DFMGlobal::OpenDiskInNewWindow:
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
-            AppController::instance()->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+            }
         }
         break;
     case DFMGlobal::OpenDiskInNewTab:
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
-            AppController::instance()->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+            }
         }
         break;
     case DFMGlobal::OpenAsAdmin:
