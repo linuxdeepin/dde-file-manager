@@ -545,8 +545,8 @@ void DFMSideBar::initConnection()
     });
 
     initBookmarkConnection();
-#if ENABLE_ASYNCINIT
-    QtConcurrent::run([this](){initDeviceConnection(true);});
+#ifdef ENABLE_ASYNCINIT
+    QtConcurrent::run([this](){initDeviceConnection();});
 #else
     initDeviceConnection();
 #endif
@@ -641,7 +641,7 @@ void DFMSideBar::initBookmarkConnection()
     });
 }
 
-void DFMSideBar::initDeviceConnection(bool async)
+void DFMSideBar::initDeviceConnection()
 {
 #if 0 //to delete.
     DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
@@ -685,7 +685,7 @@ void DFMSideBar::initDeviceConnection(bool async)
         rootFileChange();
         connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
     }
-#if 0 //性能优化
+#if 0 //性能优化,使用已有的watcher
     DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
     Q_CHECK_PTR(devicesWatcher);
     if (async){
