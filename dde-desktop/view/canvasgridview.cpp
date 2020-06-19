@@ -1203,7 +1203,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
     }
 
     { //自动排列和自动整理以及不触发让位的drag处理
-        d->fileViewHelper->preproccessDropEvent(event);
+        d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
         if (!hoverIndex.isValid()) {
             if (DFileDragClient::checkMimeData(event->mimeData())) {
                 event->acceptProposedAction();
