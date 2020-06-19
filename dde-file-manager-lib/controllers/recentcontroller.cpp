@@ -280,10 +280,9 @@ bool RecentController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event)
     QStringList pathList;
     bool result = false;
 
-    for(DUrl fileUrl : fileUrls){
+    for (DUrl fileUrl : fileUrls) {
         const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
-        if(!pfile)
-        {
+        if (!pfile) {
             continue;
         }
         if (pfile->isSymLink()) {
@@ -324,7 +323,7 @@ bool RecentController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event)
     if (!pathList.empty()) {
         result = FileUtils::openFiles(pathList);
         if (!result) {
-            for (const DUrl &fileUrl : packUrl){
+            for (const DUrl &fileUrl : packUrl) {
                 DFileService::instance()->openFile(event->sender(), fileUrl);
             }
         }
@@ -370,7 +369,10 @@ bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) 
 {
     QStringList list;
     for (const DUrl &url : event->urlList()) {
-        list << DUrl::fromLocalFile(url.path()).toString();
+        //list << DUrl::fromLocalFile(url.path()).toString();
+        //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
+        QString urlPath = url.path();
+        list << "file://" + urlPath;
     }
 
     DRecentManager::removeItems(list);
@@ -460,7 +462,7 @@ void RecentController::handleFileChanged()
         return;
     }
 
-    if(m_condition.wait(&m_xbelFileLock, 1000)) {
+    if (m_condition.wait(&m_xbelFileLock, 1000)) {
         // if the parser is interrupted.
         // we need a timeout long enough so that
         // virtually all execution time is spent here.
@@ -474,7 +476,7 @@ void RecentController::handleFileChanged()
         while (!reader.atEnd()) {
 
             if (!reader.readNextStartElement() ||
-                 reader.name() != "bookmark") {
+                    reader.name() != "bookmark") {
                 continue;
             }
 
@@ -490,7 +492,7 @@ void RecentController::handleFileChanged()
                 if (info.exists() && info.isFile()) {
                     urlList << recentUrl;
 
-                    DThreadUtil::runInMainThread([=]() {
+                    DThreadUtil::runInMainThread([ = ]() {
 //                        RecentPointer fileInfo();
                         if (!recentNodes.contains(recentUrl)) {
                             recentNodes[recentUrl] = new RecentFileInfo(recentUrl);
@@ -511,7 +513,7 @@ void RecentController::handleFileChanged()
     }
 
     // delete does not exist url.
-    for (auto iter = recentNodes.begin(); iter != recentNodes.end(); ) {
+    for (auto iter = recentNodes.begin(); iter != recentNodes.end();) {
         DUrl url = iter.key();
 
         if (!urlList.contains(url)) {
