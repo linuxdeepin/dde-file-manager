@@ -45,8 +45,10 @@ ComputerModel::ComputerModel(QObject *parent)
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
     m_nitems = 0;
-#if ENABLE_ASYNCINIT
+
+#ifdef ENABLE_ASYNCINIT
     QtConcurrent::run([=](){
+#endif
         addItem(makeSplitterUrl(tr("My Directories")));
         //QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
         auto rootInit = [=](const QList<DAbstractFileInfoPointer> &ch){
@@ -121,14 +123,14 @@ ComputerModel::ComputerModel(QObject *parent)
 //            rootInit(ret);
         }
 
-        m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
-        m_watcher->setParent(this);
-        QTimer::singleShot(1000,this,[=](){
-            qDebug() << "ComputerModel::startWatcher" << m_watcher;
-            if (m_watcher)
-                m_watcher->startWatcher();
-        });
-
+//        m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
+//        m_watcher->setParent(this);
+//        QTimer::singleShot(1000,this,[=](){
+//            qDebug() << "ComputerModel::startWatcher" << m_watcher;
+//            if (m_watcher)
+//                m_watcher->startWatcher();
+//        });
+        m_watcher = fileService->rootFileWather();
         connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
         connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
@@ -172,8 +174,11 @@ ComputerModel::ComputerModel(QObject *parent)
             static_cast<DFMRootFileInfo*>(m_items[p].fi.data())->checkCache();
             emit dataChanged(idx, idx, {Qt::ItemDataRole::DisplayRole});
         });
+#ifdef ENABLE_ASYNCINIT
     });
-#else
+#endif
+
+#if 0
     addItem(makeSplitterUrl(tr("My Directories")));
     QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
     bool splt = false;
@@ -251,7 +256,7 @@ ComputerModel::ComputerModel(QObject *parent)
             emit opticalChanged();
         }
     });
-    connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, [this](const DUrl &url) {
+    connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, this,[this](const DUrl &url) {
         int p;
         for (p = 0; p < m_items.size(); ++p) {
             if (m_items[p].url == url) {
