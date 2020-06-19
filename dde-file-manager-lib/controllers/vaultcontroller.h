@@ -192,6 +192,11 @@ public:
      */
     qint64 totalsize() const;
 
+    // 获得保险箱状态
+    inline VaultState getVaultState() const {return m_enVaultState;}
+    // 设置保险箱状态
+    inline void setVaultState(const VaultState &state) {m_enVaultState = state;}
+
 public slots:
 
    void updateFolderSizeLabel(const qint64 size) noexcept;
@@ -244,6 +249,10 @@ public slots:
      * @brief refreshTotalSize 刷新保险箱大小
      */
     void refreshTotalSize();
+
+private slots:
+    void slotUnlockVault(int state);
+    void slotLockVault(int state);
 
 signals:
     /**
@@ -311,6 +320,9 @@ private:
     static VaultController * cryfs;
 
     qint64 m_totalSize = 0;
+
+    // 记录保险箱状态
+    VaultState m_enVaultState{NotExisted};
 
     DFM_NAMESPACE::DFileStatisticsJob *m_sizeWorker{ nullptr };
 
