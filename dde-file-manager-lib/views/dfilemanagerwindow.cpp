@@ -67,6 +67,7 @@
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
 #include "controllers/trashmanager.h"
+#include "controllers/filecontroller.h"
 #include "models/dfmrootfileinfo.h"
 #include "controllers/vaultcontroller.h"
 #include "dfmsplitter.h"
@@ -261,61 +262,61 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     return false;
 }
 
-// 2020/6/8 系统更新后，怀疑dtk更新，导致原有鼠标事件不可用，屏蔽文管实现
 bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event)
-    return false;
-#if 0
-    if (!event)
-        return false;
+    // tmp: 删除和恢复文件走的主线程，不能拖动窗口，后面修改回复和删除文件的方式后去除以下代码
+    if (TrashManager::isWorking()) {
+        if (!event)
+            return false;
 
-    Q_Q(DFileManagerWindow);
+        Q_Q(DFileManagerWindow);
 
-    if (event->type() == QEvent::MouseButtonPress) {
-        auto mouseEvent = static_cast<QMouseEvent *>(event);
-        if (mouseEvent->button() == Qt::LeftButton) {
-            move = true;
-            /*记录鼠标的全局坐标.*/
-            startPoint = mouseEvent->globalPos();
-            /*记录窗体的全局坐标.*/
-            windowPoint = q->frameGeometry().topLeft();
-            return true;
+        if (event->type() == QEvent::MouseButtonPress) {
+            auto mouseEvent = static_cast<QMouseEvent *>(event);
+            if (mouseEvent->button() == Qt::LeftButton) {
+                move = true;
+                /*记录鼠标的全局坐标.*/
+                startPoint = mouseEvent->globalPos();
+                /*记录窗体的全局坐标.*/
+                windowPoint = q->frameGeometry().topLeft();
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
 
-    if (event->type() == QEvent::MouseButtonRelease) {
-        auto mouseEvent = static_cast<QMouseEvent *>(event);
-        /*改变移动状态.*/
-        if (mouseEvent->buttons() & Qt::LeftButton) {
+        if (event->type() == QEvent::MouseButtonRelease) {
+            auto mouseEvent = static_cast<QMouseEvent *>(event);
+            /*改变移动状态.*/
+            if (mouseEvent->buttons() & Qt::LeftButton) {
+                move = false;
+                return true;
+            }
+            return false;
+        }
+
+        if (event->type() == QEvent::MouseButtonDblClick) {
             move = false;
-            return true;
+            return false;
         }
-        return false;
-    }
 
-    if (event->type() == QEvent::MouseButtonDblClick) {
+        if (event->type() == QEvent::MouseMove) {
+            if (move) {
+                auto mouseEvent = static_cast<QMouseEvent *>(event);
+                /*移动中的鼠标位置相对于初始位置的相对位置.*/
+                QPoint relativePos = mouseEvent->globalPos() - startPoint;
+                /*然后移动窗体即可.*/
+                if (event->buttons() == Qt::LeftButton) {
+                    q->move(windowPoint + relativePos);
+                }
+            }
+            return false;
+        }
+
         move = false;
         return false;
     }
 
-    if (event->type() == QEvent::MouseMove) {
-        if (move) {
-            auto mouseEvent = static_cast<QMouseEvent *>(event);
-            /*移动中的鼠标位置相对于初始位置的相对位置.*/
-            QPoint relativePos = mouseEvent->globalPos() - startPoint;
-            /*然后移动窗体即可.*/
-            if (event->buttons() == Qt::LeftButton) {
-                q->move(windowPoint + relativePos);
-            }
-        }
-        return false;
-    }
-
-    move = false;
     return false;
-#endif
 }
 
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)

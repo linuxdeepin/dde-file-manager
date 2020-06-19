@@ -51,6 +51,7 @@
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
 
+static bool kWorking = false; // tmp
 class TrashDirIterator : public DDirIterator
 {
 public:
@@ -204,8 +205,8 @@ DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &ev
 
 bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const
 {
+    ::kWorking = true;
     DUrlList originUrls;
-
     DUrlList urlList = event->urlList();
     //如果是全部还原操作 需要先遍历trash根目录下的所有目录
     if (urlList.size() == 1 && DUrl::fromTrashFile("/") == urlList.first()) {
@@ -219,7 +220,7 @@ bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &e
     if (ok && !originUrls.isEmpty()) {
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, originUrls));
     }
-
+    ::kWorking = false;
     return ok;
 }
 
@@ -457,6 +458,11 @@ bool TrashManager::isEmpty()
     QDirIterator iterator(dir);
 
     return !iterator.hasNext();
+}
+
+bool TrashManager::isWorking()
+{
+    return ::kWorking;
 }
 
 void TrashManager::trashFilesChanged(const DUrl &url)
