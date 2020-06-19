@@ -355,7 +355,7 @@ bool VaultController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> 
         }
         const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
     }
-    return FileUtils::openFilesByApp(event->appName(), {fileUrl.toString()});
+    return DFileService::instance()->openFileByApp(event->sender(), event->appName(), vaultToLocalUrl(fileUrl));
 }
 
 bool VaultController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const

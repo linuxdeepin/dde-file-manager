@@ -171,7 +171,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     DUrlList urls = urlList;
     for(int i = 0; i < urlList.size(); ++i)
     {
-        if(urlList[i].scheme() == "dfmvault")
+        if(urlList[i].isVaultFile())
         {
             urls[i] = VaultController::vaultToLocalUrl(urlList[i]);
 

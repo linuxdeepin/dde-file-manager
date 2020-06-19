@@ -275,9 +275,9 @@ bool VaultFileInfo::canRename() const
     VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(parentUrl());
     if (fbi.isExist && !fbi.isWritable){
         return false;
-    }
+    }    
 
-    return DAbstractFileInfo::canRename();
+    return true;
 }
 
 bool VaultFileInfo::canShare() const
