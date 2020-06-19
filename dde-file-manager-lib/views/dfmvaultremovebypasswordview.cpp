@@ -34,6 +34,7 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     //密码输入框
     m_pwdEdit = new DPasswordEdit(this);
     m_pwdEdit->lineEdit()->setPlaceholderText(tr("Verify your password"));
+    m_pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     // 提示按钮
     m_tipsBtn = new QPushButton(this);

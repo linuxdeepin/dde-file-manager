@@ -56,6 +56,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     m_passwordEdit = new DPasswordEdit(this);
     m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_passwordEdit->lineEdit()->installEventFilter(this);
+    m_passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     // 提示按钮
     m_tipsButton = new QPushButton(this);
