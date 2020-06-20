@@ -1172,6 +1172,10 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         DListView::mousePressEvent(event);
         break;
     }
+    case Qt::RightButton: {
+        DListView::mousePressEvent(event);
+        break;
+    }
     default:
         break;
     }
@@ -2716,7 +2720,6 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
 {
     if (!index.isValid())
         return;
-
     DUrlList list = selectedUrls();
 
     DFileMenu *menu;

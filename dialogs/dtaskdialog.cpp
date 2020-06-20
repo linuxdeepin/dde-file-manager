@@ -502,7 +502,9 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
         if(m_flag && getFlagMapValueIsTrue())
         {
             //! 有点击关闭任务窗口，进行窗口关闭
-            this->close();
+            if(isHaveVaultTask(job->sourceUrlList(), job->targetUrl())){
+                this->close();
+            }
         }
     });
     connect(job, &DFileCopyMoveJob::errorChanged, wid, [wid](DFileCopyMoveJob::Error error) {
