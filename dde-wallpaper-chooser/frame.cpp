@@ -1043,6 +1043,9 @@ void Frame::onItemPressed(const QString &data)
             m_closeButton->hide();
         }
 
+        QStringList used;
+        if (m_backgroundManager)
+            used = m_backgroundManager->backgroundImages().values();
         {
             for (int i = 0; i < m_wallpaperList->count(); ++i) {
                 WallpaperItem *item = dynamic_cast<WallpaperItem *>(m_wallpaperList->item(i));
@@ -1051,8 +1054,8 @@ void Frame::onItemPressed(const QString &data)
                     if (!isCustom) {
                         continue;
                     }
-                    //bool isCurrent = m_backgroundHelper ? (item->data() == m_backgroundHelper->background()) : false; /*** old code ***/
-                    bool isCurrent = true;
+
+                    bool isCurrent = used.contains(item->data());
                     bool isDeletable = item->getDeletable();
                     item->setDeletable(!isCurrent && (isDeletable || isCustom));
                 }
