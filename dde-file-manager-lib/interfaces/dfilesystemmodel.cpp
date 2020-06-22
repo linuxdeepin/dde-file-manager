@@ -1239,7 +1239,8 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->addFile(info);
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event
-            q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
+            // todo: 此处引起效率变低，暂时注释
+           // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
             q->remove(fileUrl);
         }
         if (!me) {
