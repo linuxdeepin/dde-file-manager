@@ -933,7 +933,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         return;
         case Qt::Key_Delete: {
             QString rootPath = rootUrl().toLocalFile();
-            if (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath)) {
+            if (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath) || VaultController::isVaultFile(rootPath)) {
                 appController->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             } else {
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
@@ -2208,8 +2208,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         //判断网络文件是否可以到达
         if (!DFileService::instance()->checkGvfsMountfileBusy(fileUrl)) {
             info = DFileService::instance()->createFileInfo(this, fileUrl);
-        }
-        else {
+        } else {
             info = nullptr;
         }
 
