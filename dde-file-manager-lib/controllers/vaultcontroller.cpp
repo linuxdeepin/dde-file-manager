@@ -399,6 +399,7 @@ DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> 
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DFileService::instance()->deleteFiles(event->sender(), urlList);                 //! 发送计算大小完成后文管首页刷新信号
     const_cast<VaultController *>(this)->updateFileInfo(urlList);
+    emit const_cast<VaultController *>(this)->signalFileDeleted();
     return urlList;
 }
 
