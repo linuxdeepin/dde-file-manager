@@ -385,7 +385,7 @@ void DFMTaskWidget::setProgressValue(int value)
     //大量快速的设置进度条会导致进度数值不刷新
     //这里通过对相等值判断和定时器降低刷新频率
     //并且手动调用update强制刷新界面
-    if (d->m_isSettingValue) {
+    if (d->m_isSettingValue && value != 100) { // fix : 删除文件最后要显示100%
         return;
     }
 
