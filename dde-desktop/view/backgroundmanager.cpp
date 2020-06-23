@@ -73,9 +73,9 @@ void BackgroundManager::onRestBackgroundManager()
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenGeometryChanged,
                 this, &BackgroundManager::onScreenGeometryChanged);
 
-        //可用区改变
-        connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenAvailableGeometryChanged,
-                this, &BackgroundManager::onScreenGeometryChanged);
+        //可用区改变,背景不用处理可用区改变
+//        connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenAvailableGeometryChanged,
+//                this, &BackgroundManager::onScreenGeometryChanged);
 
         //创建背景
         pullImageSettings();

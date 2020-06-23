@@ -56,27 +56,51 @@ QRect ScreenObjectWayland::availableGeometry() const
     //DockGeoIns->getGeometry(); //经过缩放处理后的docks,有问题
     DockRect dockrectI = DockInfoIns->frontendWindowRect(); //原始dock大小
     QRect dockrect = dealRectRatio(dockrectI.operator QRect());  //缩放处理
-    switch (DockInfoIns->position()) {
-    case 0: //上
-        ret.setY(ret.y() + dockrect.height());
-        qDebug() << "dock on top" << dockrect;
-        break;
-    case 1: //右
-        ret.setWidth(ret.width() - dockrect.width());
-        qDebug() << "dock on right" << dockrect;
-        break;
-    case 2: //下
-        ret.setHeight(ret.height() - dockrect.height());
-        qDebug() << "dock on bottom" << dockrect;
-        break;
-    case 3: //左
-        ret.setX(ret.x() + dockrect.width());
-        qDebug() << "dock on left" << dockrect;
-        break;
-    default:
-        qCritical() << "dock postion error!";
-        break;
-    }
+
+#ifndef UNUSED_SMARTDOCK
+    if (!ret.contains(dockrect))
+        return ret;
+    qDebug() << "wl dock in screen" << name();
+#endif
+
+    qDebug() << "frontendWindowRect: dockrectI " << QRect(dockrectI);
+    qDebug() << "dealRectRatio dockrect " << dockrect;
+    qDebug() << "ScreenObject ret " << ret << name();
+   switch (DockInfoIns->position()) {
+   case 0: //上
+       ret.setY(dockrect.bottom());
+       qDebug() << "dock on top, availableGeometry" << ret;
+       break;
+   case 1: //右
+   {
+       int w = dockrect.left() - ret.left();
+       if (w >= 0)
+           ret.setWidth(w);
+       else {
+           qCritical() << "dockrect.left() - ret.left() is invaild" << w;
+       }
+       qDebug() << "dock on right,availableGeometry" << ret;
+   }
+       break;
+   case 2: //下
+   {
+       int h = dockrect.top() - ret.top();
+       if (h >= 0)
+           ret.setHeight(h);
+       else {
+           qCritical() << "dockrect.top() - ret.top() is invaild" << h;
+       }
+       qDebug() << "dock on bottom,availableGeometry" << ret;
+       break;
+   }
+   case 3: //左
+       ret.setX(dockrect.right());
+       qDebug() << "dock on left,availableGeometry" << ret;
+       break;
+   default:
+       qCritical() << "dock postion error!";
+       break;
+   }
     return ret;
 }
 
