@@ -97,6 +97,8 @@ public:
     bool checkMpsStr(const QString &path) const override;
 
     static bool typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b);
+
+    static QMap<QString, DiskInfoStr> DiskInfoMap;
 private:
     QScopedPointer<DFMRootFileInfoPrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFMRootFileInfo)
