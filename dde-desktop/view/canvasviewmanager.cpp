@@ -118,12 +118,16 @@ void CanvasViewManager::onBackgroundEnableChanged()
             mView->setAttribute(Qt::WA_NativeWindow, false);
             bw->setView(mView);
             QRect avRect;
+#ifndef UNUSED_SMARTDOCK
+            avRect = relativeRect(sp->availableGeometry(),sp->geometry());
+#else
             if (sp == ScreenMrg->primaryScreen()){
                 avRect = relativeRect(sp->availableGeometry(),sp->geometry());
             }
             else {
                 avRect = relativeRect(sp->geometry(),sp->geometry());
             }
+#endif
             qDebug() << "canvas" <<mView << "availableGeometry" << avRect
                      << "screen" << sp->geometry() << sp->availableGeometry();
             mView->show();
@@ -138,7 +142,11 @@ void CanvasViewManager::onBackgroundEnableChanged()
             mView->setWindowFlag(Qt::FramelessWindowHint, true);
             Xcb::XcbMisc::instance().set_window_type(mView->winId(), Xcb::XcbMisc::Desktop);
             mView->show();
+#ifndef UNUSED_SMARTDOCK
+            mView->setGeometry(sp->availableGeometry());
+#else
             mView->setGeometry(sp == ScreenMrg->primaryScreen() ? sp->availableGeometry() : sp->geometry());
+#endif
             qDebug() << "no background. primaryScreen" << ScreenMrg->primaryScreen()->name()
                      << "canvas geo" << mView->geometry()  << "canvas's screen"<< sp->name()
                      << sp->geometry() << "availableGeometry" << sp->availableGeometry();
@@ -147,8 +155,9 @@ void CanvasViewManager::onBackgroundEnableChanged()
     GridManager::instance()->initGridItemsInfos();
 }
 
-void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)
+void CanvasViewManager::onScreenGeometryChanged(ScreenPointer)
 {
+#ifdef UNUSED_SMARTDOCK
     CanvasViewPointer mView = m_canvasMap.value(sp);
     if (mView.get() != nullptr){
         QRect avRect;
@@ -174,6 +183,30 @@ void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)
         }
         mView->setGeometry(avRect);
     }
+#else
+    for (const ScreenPointer &sp : m_canvasMap.keys()) {
+        CanvasViewPointer mView = m_canvasMap.value(sp);
+        if (mView == nullptr)
+            continue;
+
+        QRect avRect;
+        if (m_background->isEnabled()) {
+            avRect = relativeRect(sp->availableGeometry(), sp->geometry());
+        }
+        else {
+            avRect = sp->availableGeometry();
+        }
+
+        qDebug() << "view geometry change from" << mView->geometry() << "to" << avRect
+                 << "view screen" << sp->name() << sp->geometry() << sp->availableGeometry();
+        //fix bug32166 bug32205
+        if (mView->geometry() == avRect) {
+            qDebug() << "view geometry is equal to rect,and discard changes";
+            continue;
+        }
+        mView->setGeometry(avRect);
+    }
+#endif
 }
 
 void CanvasViewManager::onSyncOperation(int so,QVariant var)
