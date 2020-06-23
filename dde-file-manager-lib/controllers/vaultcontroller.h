@@ -47,8 +47,7 @@ public:
         NotAvailable
     };
 
-    struct FileBaseInfo
-    {
+    struct FileBaseInfo {
         bool isExist = false;
         bool isFile;
         bool isDir;
@@ -59,7 +58,7 @@ public:
     explicit VaultController(QObject *parent = nullptr);
 public:
 
-    static VaultController * getVaultController();
+    static VaultController *getVaultController();
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
@@ -193,13 +192,19 @@ public:
     qint64 totalsize() const;
 
     // 获得保险箱状态
-    inline VaultState getVaultState() const {return m_enVaultState;}
+    inline VaultState getVaultState() const
+    {
+        return m_enVaultState;
+    }
     // 设置保险箱状态
-    inline void setVaultState(const VaultState &state) {m_enVaultState = state;}
+    inline void setVaultState(const VaultState &state)
+    {
+        m_enVaultState = state;
+    }
 
 public slots:
 
-   void updateFolderSizeLabel(const qint64 size) noexcept;
+    void updateFolderSizeLabel(const qint64 size) noexcept;
 
     /**
      * @brief createVault       创建保险箱
@@ -285,6 +290,11 @@ signals:
      */
     void signalLockVault(int state);
 
+    /**
+     * @brief signalFileDeleted 文件删除完成信号
+     */
+    void signalFileDeleted();
+
 signals:
     /**
     * @brief 下列信号为本类内部使用，请勿外用
@@ -315,9 +325,9 @@ signals:
 private:
     QMap<DUrl, FileBaseInfo> m_mapVaultFileInfo;
 
-    VaultControllerPrivate * d_ptr;
+    VaultControllerPrivate *d_ptr;
 
-    static VaultController * cryfs;
+    static VaultController *cryfs;
 
     qint64 m_totalSize = 0;
 

@@ -25,10 +25,11 @@
 #include <QWidget>
 #include <durl.h>
 
-class DFMElidedLable : public QLabel {
+class DFMElidedLable : public QLabel
+{
     Q_OBJECT
 public:
-    DFMElidedLable(QWidget *parent=nullptr);
+    DFMElidedLable(QWidget *parent = nullptr);
     virtual ~DFMElidedLable();
     void setText(const QString &text);
 };
@@ -38,7 +39,7 @@ class DFMTaskWidget : public QWidget
 {
     Q_OBJECT
 public:
-    enum BUTTON{
+    enum BUTTON {
         PAUSE,
         STOP,
         SKIP,
@@ -56,12 +57,14 @@ public:
     void setErrorMsg(const QString &err);
     void setConflictMsg(const DUrl &src, const DUrl &dst);
     void setButtonText(BUTTON bt, const QString &text);
-    void hideButton(BUTTON bt, bool hidden=true);
+    void hideButton(BUTTON bt, bool hidden = true);
     QAbstractButton *getButton(BUTTON bt);
+
+    void progressStart();
 
 protected:
     void onMouseHover(bool hover);
-    void showConflictButtons(bool showBtns=true, bool showConflict=true);
+    void showConflictButtons(bool showBtns = true, bool showConflict = true);
 
     virtual void enterEvent(QEvent *event);
     virtual void leaveEvent(QEvent *event);

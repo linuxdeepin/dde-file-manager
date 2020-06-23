@@ -42,7 +42,7 @@ DWIDGET_USE_NAMESPACE
 #define SPEED_LABEL_WITH 100
 
 DFMElidedLable::DFMElidedLable(QWidget *parent)
-    :QLabel(parent)
+    : QLabel(parent)
 {
 
 }
@@ -65,13 +65,15 @@ void DFMElidedLable::setText(const QString &text)
     QLabel::setText(metrics.elidedText(text, em, width()));
 }
 
-class DFMTaskWidgetPrivate {
+class DFMTaskWidgetPrivate
+{
 public:
-    DFMTaskWidgetPrivate(DFMTaskWidget *qq):q_ptr(qq){
+    DFMTaskWidgetPrivate(DFMTaskWidget *qq): q_ptr(qq)
+    {
         initUI();
         initConnection();
     }
-    ~DFMTaskWidgetPrivate(){}
+    ~DFMTaskWidgetPrivate() {}
 
 protected:
     void initUI();
@@ -100,20 +102,20 @@ private:
     QWidget *m_widButton;
 
     QCheckBox *m_chkboxNotAskAgain;
-    DIconButton* m_btnStop;
-    DIconButton* m_btnPause;
-    QPushButton* m_btnCoexist;
-    QPushButton* m_btnSkip;
-    QPushButton* m_btnReplace;
+    DIconButton *m_btnStop;
+    DIconButton *m_btnPause;
+    QPushButton *m_btnCoexist;
+    QPushButton *m_btnSkip;
+    QPushButton *m_btnReplace;
 
-    QTimer* m_timer;
+    QTimer *m_timer;
     bool m_isSettingValue;
 
     DFMTaskWidget *q_ptr;
     Q_DECLARE_PUBLIC(DFMTaskWidget)
 };
 
-QWidget * DFMTaskWidgetPrivate::createConflictWidget()
+QWidget *DFMTaskWidgetPrivate::createConflictWidget()
 {
     Q_Q(DFMTaskWidget);
     QWidget *conflictWidget = new QWidget;
@@ -167,7 +169,7 @@ QWidget * DFMTaskWidgetPrivate::createConflictWidget()
     conflictMainLayout->setVerticalSpacing(4);
     conflictMainLayout->setContentsMargins(0, 0, 0, 0);
 
-    conflictMainLayout->setColumnMinimumWidth(1, MSG_LABEL_WITH-100);
+    conflictMainLayout->setColumnMinimumWidth(1, MSG_LABEL_WITH - 100);
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addLayout(conflictMainLayout);
     hLayout->addStretch();
@@ -175,7 +177,7 @@ QWidget * DFMTaskWidgetPrivate::createConflictWidget()
     return conflictWidget;
 }
 
-QWidget * DFMTaskWidgetPrivate::createBtnWidget()
+QWidget *DFMTaskWidgetPrivate::createBtnWidget()
 {
     QWidget *buttonWidget = new QWidget;
     QHBoxLayout *buttonLayout = new QHBoxLayout;
@@ -300,37 +302,37 @@ void DFMTaskWidgetPrivate::initUI()
 void DFMTaskWidgetPrivate::initConnection()
 {
     Q_Q(DFMTaskWidget);
-    QObject::connect(m_btnSkip, &QPushButton::clicked, q, [q, this](){
+    QObject::connect(m_btnSkip, &QPushButton::clicked, q, [q, this]() {
         m_widConfict->hide();
         m_widButton->hide();
         q->showConflictButtons(false);
 
         emit q->butonClicked(DFMTaskWidget::SKIP);
     });
-    QObject::connect(m_btnReplace, &QPushButton::clicked, q, [q, this](){
+    QObject::connect(m_btnReplace, &QPushButton::clicked, q, [q, this]() {
         m_widConfict->hide();
         m_widButton->hide();
         q->showConflictButtons(false);
         emit q->butonClicked(DFMTaskWidget::REPLACE);
     });
-    QObject::connect(m_btnCoexist, &QPushButton::clicked, q, [q, this](){
+    QObject::connect(m_btnCoexist, &QPushButton::clicked, q, [q, this]() {
         m_widConfict->hide();
         m_widButton->hide();
         q->showConflictButtons(false);
         emit q->butonClicked(DFMTaskWidget::COEXIST);
     });
 
-    QObject::connect(m_btnPause, &QPushButton::clicked, q, [q](){
+    QObject::connect(m_btnPause, &QPushButton::clicked, q, [q]() {
         emit q->butonClicked(DFMTaskWidget::PAUSE);
     });
-    QObject::connect(m_btnStop, &QPushButton::clicked, q, [q, this](){
+    QObject::connect(m_btnStop, &QPushButton::clicked, q, [q, this]() {
         m_widConfict->hide();
         m_widButton->hide();
         q->showConflictButtons(false);
         emit q->butonClicked(DFMTaskWidget::STOP);
-    },Qt::DirectConnection);
+    }, Qt::DirectConnection);
 
-    QObject::connect(m_timer, &QTimer::timeout, [this](){
+    QObject::connect(m_timer, &QTimer::timeout, [this]() {
         m_isSettingValue = false;
     });
 }
@@ -341,7 +343,7 @@ void DFMTaskWidgetPrivate::initConnection()
 ////////////////////////////////////////////
 DFMTaskWidget::DFMTaskWidget(QWidget *parent)
     : QWidget(parent)
-    ,d_private(new DFMTaskWidgetPrivate(this))
+    , d_private(new DFMTaskWidgetPrivate(this))
 {
     setMouseTracking(true);
 }
@@ -386,7 +388,7 @@ void DFMTaskWidget::setProgressValue(int value)
     //大量快速的设置进度条会导致进度数值不刷新
     //这里通过对相等值判断和定时器降低刷新频率
     //并且手动调用update强制刷新界面
-    if (d->m_isSettingValue) {
+    if (d->m_isSettingValue && value != 100) { // fix : 删除文件最后要显示100%
         return;
     }
 
@@ -396,7 +398,7 @@ void DFMTaskWidget::setProgressValue(int value)
 
     d->m_timer->start(100);
     d->m_isSettingValue = true;
-    if (value>=0 && d->m_progress->value()==0) {
+    if (value >= 0 && d->m_progress->value() == 0) {
         d->m_progress->start();
         d->m_progress->setValue(value);
         return;
@@ -510,7 +512,7 @@ void DFMTaskWidget::showConflictButtons(bool showBtns/*=true*/, bool showConflic
     if (showBtns) {
         h += d->m_widButton->sizeHint().height();
         if (showConflict) {
-            h +=d->m_widConfict->sizeHint().height();
+            h += d->m_widConfict->sizeHint().height();
         }
     }
 
@@ -544,6 +546,13 @@ QAbstractButton *DFMTaskWidget::getButton(DFMTaskWidget::BUTTON bt)
     }
 
     return btn;
+}
+
+void DFMTaskWidget::progressStart()
+{
+    Q_D(DFMTaskWidget);
+
+    d->m_progress->start();
 }
 
 void DFMTaskWidget::enterEvent(QEvent *event)
@@ -601,7 +610,7 @@ void DFMTaskWidget::onProgressChanged(qreal progress, qint64 writeData)
 {
     Q_UNUSED(writeData);
 
-    setProgressValue(progress*100);
+    setProgressValue(progress * 100);
     setProperty("progress", progress);
 }
 
