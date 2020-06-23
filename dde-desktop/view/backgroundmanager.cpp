@@ -155,16 +155,20 @@ void BackgroundManager::init()
 
 void BackgroundManager::pullImageSettings()
 {
+    QString defaultPath = getDefaultBackground();
     m_backgroundImagePath.clear();
     if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter) {
         for (ScreenPointer sc : ScreenMrg->logicScreens()) {
 //            QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
             QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
+            qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 qCritical() << "get background fail path :" << path << "screen" << sc->name();
-                continue;
+                if (defaultPath.isEmpty())
+                    continue;
+                path = defaultPath;
             }
-            qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
+            qDebug() << "screen" << sc->name() << "set background " << path;
             m_backgroundImagePath.insert(sc->name(), path);
         }
     }
@@ -190,13 +194,35 @@ QString BackgroundManager::getBackgroundFromWm(const QString &screen)
 //        QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(screen);
         QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);//wm 新接口获取屏幕壁纸
         if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
-            qCritical() << "get background fail path :" << path << "screen" << screen;
+            ret = getDefaultBackground();
+            qCritical() << "get background fail path :" << path << "screen" << screen
+                        << "use default:" << ret;
         } else {
             qDebug() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
             ret = path;
         }
     }
     return ret;
+}
+
+QString BackgroundManager::getDefaultBackground() const
+{
+    //获取默认壁纸
+    QString defaultPath;
+    if (gsettings)
+    {
+        for (const QString &path : gsettings->value("background-uris").toStringList()){
+            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
+                continue;
+            }
+            else {
+                defaultPath = path;
+                qDebug() << "default background path:" << path;
+                break;
+            }
+        }
+    }
+    return defaultPath;
 }
 
 BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer screen)
