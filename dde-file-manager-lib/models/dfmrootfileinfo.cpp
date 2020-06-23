@@ -68,16 +68,15 @@ public:
     bool encrypted;
     DFMRootFileInfo *q_ptr;
     Q_DECLARE_PUBLIC(DFMRootFileInfo)
-    static QMap<QString, DiskInfoStr> DiskInfoMap;
 };
 
-QMap<QString, DiskInfoStr> DFMRootFileInfoPrivate::DiskInfoMap = QMap<QString, DiskInfoStr>();
+QMap<QString, DiskInfoStr> DFMRootFileInfo::DiskInfoMap = QMap<QString, DiskInfoStr>();
 
 DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
     DAbstractFileInfo(url),
     d_ptr(new DFMRootFileInfoPrivate)
 {
-    loadDiskInfo();
+//    loadDiskInfo();
     if (suffix() == SUFFIX_USRDIR) {
         QStandardPaths::StandardLocation loc = QStandardPaths::StandardLocation::HomeLocation;
         if (baseName() == "desktop") {
@@ -148,7 +147,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             checkCache();
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idLabelChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] {
-                this->loadDiskInfo();
+//                this->loadDiskInfo();
                 this->checkCache();
             });
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::sizeChanged, [this] {this->checkCache();});
@@ -598,6 +597,7 @@ void DFMRootFileInfo::checkCache()
             }
         }
     }
+    loadDiskInfo();
     d->fs = blk->idType();
     d->idUUID = blk->idUUID();
     d->udispname = udisksDisplayName();
@@ -608,8 +608,8 @@ QString DFMRootFileInfo::udisksDisplayName()
     Q_D(DFMRootFileInfo);
 
     //windows分区需要显示该分区在windows下的盘符或卷标
-    if (DFMRootFileInfoPrivate::DiskInfoMap.contains(d->idUUID)) {
-        const DiskInfoStr info = DFMRootFileInfoPrivate::DiskInfoMap.value(d->idUUID);
+    if (DFMRootFileInfo::DiskInfoMap.contains(d->idUUID)) {
+        const DiskInfoStr info = DFMRootFileInfo::DiskInfoMap.value(d->idUUID);
         if (!info.label.isEmpty()) {
             return info.label;
         } else {
@@ -760,23 +760,17 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
 
 void DFMRootFileInfo::loadDiskInfo()
 {
-    QDir dir("/media/" + QString(getlogin()));
-    //要判断路径是否存在
-    if (!dir.exists()) {
-        return ;
-    }
-    //实现对文件的过滤
-    dir.setFilter(QDir::Dirs | QDir::Hidden | QDir::NoSymLinks | QDir::NoDotAndDotDot);
-    QFileInfoList list = dir.entryInfoList();
+    Q_D(const DFMRootFileInfo);
 
-    QString jsonPath("");
-    for (QFileInfo fileInfo : list) {
-        QDir kidDir(fileInfo.absoluteFilePath() + "/UOSICON");
-        if (kidDir.exists()) {
-            jsonPath = kidDir.absolutePath();
-            break;
-        }
+    if (d->mps.empty())
+        return;
+
+    QDir dir(QString(d->mps.front()) + "/UOSICON");
+    if (!dir.exists()) {
+        return;
     }
+
+    QString jsonPath = dir.absolutePath();
     //不存在该目录
     if (jsonPath.isEmpty()) {
         return;
@@ -810,7 +804,7 @@ void DFMRootFileInfo::loadDiskInfo()
                     if (jsonObjectInfo.contains("label"))
                         str.label = jsonObjectInfo.value("label").toString();
 
-                    DFMRootFileInfoPrivate::DiskInfoMap[str.uuid] = str;
+                    DFMRootFileInfo::DiskInfoMap[str.uuid] = str;
                 }
             }
         }
