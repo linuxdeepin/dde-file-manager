@@ -39,6 +39,12 @@ public:
      */
     bool setRootUrl(const DUrl &url) override;
 
+public slots:
+    /**
+     * @brief onFileDeleted 文件删除后，执行界面刷新操作
+     */
+    void onFileDeleted();
+
 protected:
     /**
      * @brief eventFilter 事件过滤器，用于获取保险箱操作事件

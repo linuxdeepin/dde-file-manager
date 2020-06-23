@@ -8,7 +8,7 @@ SUBDIRS  += \
     dde-file-manager-lib \
     dde-file-manager-plugins \
     dde-dock-plugins\
-   $ dde-desktop \
+    dde-desktop \
     dde-file-thumbnail-tool \
     gschema
 

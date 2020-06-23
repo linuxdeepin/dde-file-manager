@@ -87,7 +87,8 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         QDir dirMnt(d->strMntPath);
         if (!dirMnt.exists())
             return;
-        QFileInfoList lstFilesOnDisc = dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        // 如果放入空盘是没有挂载点的，此时给QDir传入空的path将导致QDir获取到的是程序运行目录的Dir，之后的去重会产生不正常的结果
+        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
 
         QDir dirStage(urlOfStage.path());
         if (!dirStage.exists())
@@ -104,8 +105,8 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
         bool bDeletedValidFile = false; // 在点击进入光驱中文件夹时，因解决bug#27870时，在暂存区中手动创建了本不存在的目录
         // 如果光盘挂载根目录与暂存区根目录中有同名文件或文件夹，则移除暂存区中的相关文件或文件夹；
-        for (QFileInfo fStage : lstFilesInStage) {
-            for (QFileInfo fOn : lstFilesOnDisc) {
+        for (QFileInfo fOn : lstFilesOnDisc) {
+            for (QFileInfo fStage : lstFilesInStage) {
                 if (fStage.fileName() != fOn.fileName())
                     continue;
 

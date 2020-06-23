@@ -15,6 +15,7 @@
 
 #include "private/dfilesystemwatcher_p.h"
 #include "../vault/vaultglobaldefine.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QDir>
 #include <QDebug>
@@ -67,8 +68,7 @@ QStringList parentPathList(const QString &path)
     QDir dir(path);
 
     //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
-    if(!(dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath())))
-    {
+    if (!(dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath()))) {
         list << path;
     }
 
@@ -79,11 +79,9 @@ QStringList parentPathList(const QString &path)
     if (!dir.exists() && path.contains("/.cache/deepin/discburn/")) // 目前仅针对光驱刻录的暂存区进行处理
         dir.mkdir(path);
 
-    while (dir.cdUp())
-    {
+    while (dir.cdUp()) {
         //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
-        if(dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath()))
-        {
+        if (dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath())) {
             continue;
         }
         list << dir.absolutePath();
@@ -305,6 +303,11 @@ DFileWatcher::DFileWatcher(const QString &filePath, QObject *parent)
 
 void DFileWatcher::onFileDeleted(const QString &path, const QString &name)
 {
+    // 为防止文管卡死，保险箱里文件删除不执行后续流程
+    if (VaultController::isVaultFile(path)) {
+        return;
+    }
+
     if (name.isEmpty())
         d_func()->_q_handleFileDeleted(path, QString());
     else

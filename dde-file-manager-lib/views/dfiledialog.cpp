@@ -199,7 +199,7 @@ QUrl DFileDialog::directoryUrl() const
     QUrl url = getFileView()->rootUrl();
     QString strPath = url.path();
     QString strScheme = url.scheme();
-    if(strScheme == DFMVAULT_SCHEME){
+    if (strScheme == DFMVAULT_SCHEME) {
         QUrl urlVault;
         urlVault.setScheme(FILE_SCHEME);
         urlVault.setPath(strPath);
@@ -416,8 +416,8 @@ void DFileDialog::selectNameFilterByIndex(int index)
             if (newNameFilterExtension.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
                 QRegExp  regExp(filter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
                 qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << filter;
-                for (QMimeType m: db.allMimeTypes()) {
-                    for(QString suffixe: m.suffixes()) {
+                for (QMimeType m : db.allMimeTypes()) {
+                    for (QString suffixe : m.suffixes()) {
                         if (regExp.exactMatch(suffixe)) {
                             newNameFilterExtension = suffixe;
                             qDebug() << "正则表达式查询到扩展名" << suffixe;
@@ -557,6 +557,7 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         statusBar()->setMode(FileDialogStatusBar::Save);
         getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
         getLeftSideBar()->setDisableUrlSchemes({"recent"}); // save mode disable recent
+        setFileMode(QFileDialog::DirectoryOnly);
 
         connect(statusBar()->lineEdit(), &QLineEdit::textChanged,
                 this, &DFileDialog::onCurrentInputNameChanged);
@@ -1196,8 +1197,8 @@ void DFileDialog::onAcceptButtonClicked()
         bool suffixCheck = false; //后缀名检测
         QStringList nameFilters = d->nameFilters;//当前所有后缀列表
         qDebug() << "后缀名列表" << nameFilters;
-        for (QString nameFilterList: nameFilters) {
-            for (QString nameFilter: QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) { //清理掉多余的信息
+        for (QString nameFilterList : nameFilters) {
+            for (QString nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) { //清理掉多余的信息
                 QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
                 qDebug() << "检测后缀名" << nameFilter;
                 if (re.exactMatch(file_name)) {
@@ -1217,8 +1218,8 @@ void DFileDialog::onAcceptButtonClicked()
             if (suffix.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
                 QRegExp  regExp(nameFilter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
                 qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << nameFilter;
-                for (QMimeType m: mdb.allMimeTypes()) {
-                    for(QString suffixe: m.suffixes()) {
+                for (QMimeType m : mdb.allMimeTypes()) {
+                    for (QString suffixe : m.suffixes()) {
                         if (regExp.exactMatch(suffixe)) {
                             suffix = suffixe;
                             qDebug() << "正则表达式查询到扩展名" << suffixe;

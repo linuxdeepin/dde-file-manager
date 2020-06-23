@@ -24,11 +24,13 @@
 #include "views/dfmvaultremovepages.h"
 #include "views/dfmvaultactiveview.h"
 #include "views/dfilemanagerwindow.h"
+#include "dfilesystemmodel.h"
 
 
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
+    connect(VaultController::getVaultController(), &VaultController::signalFileDeleted, this, &DFMVaultFileView::onFileDeleted);
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
@@ -55,7 +57,8 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
             }
             break;
         }
-        default:;
+        default:
+            ;
         }
     } else {
         if (url.host() == "delete") {
@@ -74,6 +77,11 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     }
 
     return DFileView::setRootUrl(url);
+}
+
+void DFMVaultFileView::onFileDeleted()
+{
+    this->model()->refresh();
 }
 
 bool DFMVaultFileView::eventFilter(QObject *obj, QEvent *event)
