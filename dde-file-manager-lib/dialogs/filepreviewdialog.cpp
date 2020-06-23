@@ -537,6 +537,12 @@ void FilePreviewDialog::done(int r)
 void FilePreviewDialog::playCurrentPreviewFile()
 {
     if (m_preview) {
+        if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
+            m_playingVideo = true;
+            QTimer::singleShot(1000, [this] () {
+               m_playingVideo = false;
+            });
+        }
         m_preview->play();
     }
 
@@ -546,6 +552,8 @@ void FilePreviewDialog::previousPage()
 {
     if (m_currentPageIndex < 1)
         return;
+    if (m_playingVideo)
+        return;
 
     switchToPage(m_currentPageIndex - 1);
 }
@@ -553,6 +561,8 @@ void FilePreviewDialog::previousPage()
 void FilePreviewDialog::nextPage()
 {
     if (m_currentPageIndex > m_fileList.count() - 2)
+        return;
+    if (m_playingVideo)
         return;
 
     switchToPage(m_currentPageIndex + 1);

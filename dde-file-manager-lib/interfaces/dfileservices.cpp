@@ -84,14 +84,11 @@ public:
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
     static QList<DUrl> rootfilelist;
     bool bstartonce = false;
-    bool m_bcursorbusy = false;
     bool m_bonline = false;
     bool m_bdoingcleartrash = false;
     JobController *m_jobcontroller = nullptr;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
-    //fix bug,当快速点击左边侧边栏会出现鼠标一直在转圈圈
-    QMutex m_mutexCursorState;
     QMutex m_mutexrootfilechange;
 };
 
@@ -1029,13 +1026,8 @@ void DFileService::clearThread()
 
 void DFileService::setCursorBusyState(const bool bbusy)
 {
-    //fix bug,当快速点击左边侧边栏会出现鼠标一直在转圈圈
-    QMutexLocker lock(&d_ptr->m_mutexCursorState);
-    if (d_ptr->m_bcursorbusy == bbusy) {
-        return;
-    }
-    d_ptr->m_bcursorbusy = bbusy;
-    if (d_ptr->m_bcursorbusy) {
+    //fix bug 34594,当快速点击左边侧边栏会出现鼠标一直在转圈圈, 去掉全局判断，直接调用鼠标状态
+    if (bbusy) {
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     }
     else {

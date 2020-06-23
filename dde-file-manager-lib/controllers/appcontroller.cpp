@@ -433,7 +433,10 @@ void AppController::actionBookmarkRemove(const QSharedPointer<DFMUrlBaseEvent> &
 
 void AppController::actionDelete(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->moveToTrash(event->sender(), event->urlList());
+    // 使用 Qtimer 避免回收站有大量文件时，异步事件处理时间过长，导致窗口不能拖动
+    QTimer::singleShot(1, [event]() {
+        fileService->moveToTrash(event->sender(), event->urlList());
+    });
 }
 
 void AppController::actionCompleteDeletion(const QSharedPointer<DFMUrlListBaseEvent> &event)

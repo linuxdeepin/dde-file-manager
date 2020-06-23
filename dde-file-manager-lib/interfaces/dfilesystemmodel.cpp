@@ -247,7 +247,8 @@ public:
 
     FileSystemNodePointer takeNodeByUrl(const DUrl &url)
     {
-         if (isUpdate) return FileSystemNodePointer();
+        if (isUpdate)
+            return FileSystemNodePointer();
         rwLock->lockForWrite();
         FileSystemNodePointer node = children.take(url);
         visibleChildren.removeOne(node);
@@ -1226,7 +1227,8 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->addFile(info);
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event
-            q->update();//解决文管多窗口的状态下，删除文件的时候系统崩溃的问题
+            // todo: 此处引起效率变低，暂时注释
+           // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
             q->remove(fileUrl);
         }
         if (!me) {
@@ -2330,14 +2332,14 @@ bool DFileSystemModel::sort(bool emitDataChange)
 
 bool DFileSystemModel::doSortBusiness(bool emitDataChange)
 {
-    if(isNeedToBreakBusyCase) // 有清场流程来了,其他线程无需进行处理了
+    if (isNeedToBreakBusyCase) // 有清场流程来了,其他线程无需进行处理了
         return false;
 
     Q_D(const DFileSystemModel);
 
     QMutexLocker locker(&m_mutex);
 
-    if(isNeedToBreakBusyCase) // bug 27384: 有清场流程来了,其他线程无需进行处理了， 这里做处理是 其他线程可能获取 锁，那么这里做及时处理
+    if (isNeedToBreakBusyCase) // bug 27384: 有清场流程来了,其他线程无需进行处理了， 这里做处理是 其他线程可能获取 锁，那么这里做及时处理
         return false;
 
     const FileSystemNodePointer &node = d->rootNode;
@@ -2346,7 +2348,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
         return false;
     }
 
-    qDebug()<<"start the sort business";
+    qDebug() << "start the sort business";
 
     QList<FileSystemNodePointer> list = node->getChildrenList();
 
@@ -2361,7 +2363,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
         }
     }
 
-    qDebug()<<"end the sort business";
+    qDebug() << "end the sort business";
     return ok;
 }
 
@@ -2776,8 +2778,7 @@ bool DFileSystemModel::sort(const DAbstractFileInfoPointer &parentInfo, QList<Fi
     }
 
     qSort(list.begin(), list.end(), [sortFun, d, this](const FileSystemNodePointer node1, const FileSystemNodePointer node2) {
-
-        if(this->isNeedToBreakBusyCase) //bug 27384: 当是网络文件的时候，这里奇慢，需要快速跳出 qSort操作，目前我只想到这种方案：不做比较，或者 直接跳出sort 更好
+        if (this->isNeedToBreakBusyCase) //bug 27384: 当是网络文件的时候，这里奇慢，需要快速跳出 qSort操作，目前我只想到这种方案：不做比较，或者 直接跳出sort 更好
             return false;
 
         return sortFun(node1->fileInfo, node2->fileInfo, d->srotOrder);
@@ -3076,9 +3077,7 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
             emit this->requestSelectFiles(event.urlList());
         }, event, this)
 
-
     } else if (AppController::multiSelectionFilesCache.second != 0) {
-
         quint64 winId{ AppController::multiSelectionFilesCache.second };
         if (winId == parent()->windowId() || AppController::flagForDDesktopRenameBar) { //###: flagForDDesktopRenameBar is false usually.
 
@@ -3110,7 +3109,6 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
             }
         }
     }
-
 }
 
 bool DFileSystemModel::beginRemoveRows(const QModelIndex &parent, int first, int last)
@@ -3145,6 +3143,7 @@ bool DFileSystemModel::releaseJobController()
 
         if (d->jobController->isFinished()) {
             d->jobController->deleteLater();
+            d->jobController = nullptr;
         } else {
             QEventLoop eventLoop;
             QPointer<DFileSystemModel> me = this;
@@ -3154,19 +3153,21 @@ bool DFileSystemModel::releaseJobController()
 
             d->jobController->stopAndDeleteLater();
 
+            d->jobController = nullptr;
+
             int code = eventLoop.exec();
 
             d->eventLoop = Q_NULLPTR;
 
             if (code != 0) {
-                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
-                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
-                    //此时d->jobController有可能已经在析构了，不能调用terminate
-//                    d->jobController->terminate();
-                    d->jobController->quit();
-                    d->jobController.clear();
-                    d->jobController->stopAndDeleteLater();
-                }
+                //                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+                //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+                //此时d->jobController有可能已经在析构了，不能调用terminate
+                //                    d->jobController->terminate();
+                //                    d->jobController->quit();
+                //                    d->jobController.clear();
+                //                    d->jobController->stopAndDeleteLater();
+                //                }
                 return false;
             }
 

@@ -491,6 +491,9 @@ DUrl DAbstractFileInfo::rootSymLinkTarget() const
         }
 
         info = fileService->createFileInfo(Q_NULLPTR, targetUrl);
+        if (!info) {
+            return QUrl();
+        }
     }
 
     return info->fileUrl();
