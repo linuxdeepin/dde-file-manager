@@ -41,6 +41,7 @@ private:
     void init();
     void pullImageSettings();
     QString getBackgroundFromWm(const QString &screen);
+    QString getDefaultBackground() const;
     BackgroundWidgetPointer createBackgroundWidget(ScreenPointer);
 protected:
     DGioSettings *gsettings = nullptr;
