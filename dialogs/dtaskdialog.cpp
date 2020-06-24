@@ -326,7 +326,8 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     adjustSize();
     setModal(true);
     show();
-    QTimer::singleShot(100, this, &DTaskDialog::raise);
+    // 直接raise
+    raise();
 }
 
 DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
