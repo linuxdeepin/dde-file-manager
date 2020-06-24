@@ -743,8 +743,10 @@ DUrlList FileController::pasteFilesV2(DFMGlobal::ClipboardAction action, const D
     if (force) {
         job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
     }
+
     //去掉完整性校验
     job->setFileHints( job->fileHints() | DFileCopyMoveJob::DontIntegrityChecking);
+
     if (action == DFMGlobal::CutAction && !target.isValid()) {
         // for remove mode
         job->setActionOfErrorType(DFileCopyMoveJob::NonexistenceError, DFileCopyMoveJob::SkipAction);
