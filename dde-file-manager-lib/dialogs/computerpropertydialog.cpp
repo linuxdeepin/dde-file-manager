@@ -179,7 +179,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
                   .arg(DSysInfo::productVersion());
     }
 
-    QString memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 2) + " GB";
+    QString memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 2) + " GB ";
     QString diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 2) + " GB";
 
     datas.insert(data.at(0), DSysInfo::computerName());
