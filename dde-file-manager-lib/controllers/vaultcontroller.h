@@ -151,6 +151,13 @@ public:
     static QString pathToVirtualPath(QString path);
 
     static DUrl urlToVirtualUrl(QString path);
+
+    /**
+     * @brief isDeleteFiles 判断保险箱当前是否正在删除文件
+     * @return true/false
+     */
+    static bool isDeleteFiles();
+
     /**
      * @brief isVaultFile  是否为保险箱中的文件
      * @param path         文件路径
@@ -330,6 +337,8 @@ private:
     static VaultController *cryfs;
 
     qint64 m_totalSize = 0;
+
+    static bool m_isDeleteFiles;
 
     // 记录保险箱状态
     VaultState m_enVaultState{NotExisted};
