@@ -22,6 +22,7 @@
 #include <dfmapplication.h>
 
 #include "util/dde/ddesession.h"
+#include "util/dde/desktopinfo.h"
 
 #include "config/config.h"
 #include "desktop.h"
@@ -96,10 +97,12 @@ static bool registerFileManager1DBus()
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    DApplication::loadDXcbPlugin();
+    if (!DesktopInfo().waylandDectected()) //wayland下不加载xcb
+        DApplication::loadDXcbPlugin();
 
     DApplication app(argc, argv);
 
