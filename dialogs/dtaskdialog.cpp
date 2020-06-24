@@ -754,7 +754,12 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
     }
 
     if (!progress.isEmpty()) {
-        wid->onProgressChanged(progress.toDouble(), 0);
+        wid->onProgressChanged(progress.toDouble(), 0);if (data.contains("sw_paste")) {
+            return wid->onBurnProgressChanged(progress.toDouble(), 0);
+        }
+        else {
+            wid->onProgressChanged(progress.toDouble(), 0);
+        }
     }
 }
 
