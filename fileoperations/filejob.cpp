@@ -1431,6 +1431,13 @@ void FileJob::jobUpdated()
         m_progress = jobDataDetail.value("progress");
     }
 //    qDebug() << m_jobDetail << jobDataDetail;
+
+#ifdef SW_LABEL
+    if (m_jobType == Copy || m_jobType == Move) {
+        jobDataDetail.insert("sw_paste", "");
+    }
+#endif
+
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
 
     m_lastMsec = m_timer.elapsed();
