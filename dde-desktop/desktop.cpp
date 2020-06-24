@@ -30,7 +30,8 @@
 #include "../dde-zone/mainwindow.h"
 #endif
 
-#include "util/xcb/xcb.h"
+//#include "util/xcb/xcb.h"
+#include "util/util.h"
 
 using WallpaperSettings = Frame;
 
@@ -120,18 +121,20 @@ void Desktop::onBackgroundEnableChanged()
             // 隐藏完全重叠的窗口
             for (QWidget *l : d->background->waylandAllBackgrounds()) {
                 if (l != background) {
-                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
+                    //Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
+                    l->setWindowFlag(Qt::WindowTransparentForInput);
                     l->setVisible(!background->geometry().contains(l->geometry()));
                 } else {
-                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
-                    l->show();
+                   //Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                   l->setWindowFlag(Qt::WindowTransparentForInput,false);
+                   l->show();
                 }
             }
         } else {
             d->screenFrame.setParent(nullptr);
             setWindowFlag(&d->screenFrame, Qt::FramelessWindowHint, true);
             d->screenFrame.QWidget::setGeometry(Display::instance()->primaryRect());
-            Xcb::XcbMisc::instance().set_window_type(d->screenFrame.winId(), Xcb::XcbMisc::Desktop);
+            DesktopUtil::set_desktop_window(&d->screenFrame);
             d->screenFrame.show();
         }
 
@@ -173,12 +176,14 @@ void Desktop::onBackgroundEnableChanged()
         qDebug() << "primary background" << background << background->isVisible() << background->geometry();
         for (QWidget *l : d->background->allBackgrounds()) {
             if (l != background) {
-                Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
+                //Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
+                l->setWindowFlag(Qt::WindowTransparentForInput);
                 //由于之前的BackgroundLabel::setVisible中有做特殊情况下强制显示的操作，所以这里暂时这样处理
                 //不是是否会会有i其他影响
                 l->QWidget::setVisible(!background->geometry().contains(l->geometry()));
             } else {
-                Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                //Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                l->setWindowFlag(Qt::WindowTransparentForInput, false);
                 l->show();
             }
             qDebug() << "hide overlap widget" << l << l->isVisible() << l->geometry();
@@ -203,9 +208,7 @@ void Desktop::onBackgroundEnableChanged()
             d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
         }
 
-
-        Xcb::XcbMisc::instance().set_window_type(d->screenFrame.winId(), Xcb::XcbMisc::Desktop);
-
+        DesktopUtil::set_desktop_window(&d->screenFrame);
         d->screenFrame.show();
     }
 }

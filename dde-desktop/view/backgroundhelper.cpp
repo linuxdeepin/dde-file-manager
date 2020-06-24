@@ -20,7 +20,7 @@
  */
 #include "backgroundhelper.h"
 #include "presenter/display.h"
-#include "util/xcb/xcb.h"
+#include "util/util.h"
 #include "dbus/dbusmonitor.h"
 #include "accessible/frameaccessibledefine.h"
 #include "../util/dde/desktopinfo.h"
@@ -132,7 +132,8 @@ BackgroundHelper *BackgroundHelper::getDesktopInstance()
 bool BackgroundHelper::isEnabled() const
 {
     // 只支持kwin，或未开启混成的桌面环境
-    return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
+    //!在klu本上启用wayland后显示壁纸，这里强制返回true
+    return true;//windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
 }
 
 QWidget *BackgroundHelper::waylandBackground(const QString &name) const
@@ -329,12 +330,14 @@ void BackgroundHelper::updateBackground(QWidget *l)
             if(!t_l || !t_background || t_l->property("isPreview").toBool())
                 continue;
             if (t_l != t_background) {
-                Xcb::XcbMisc::instance().set_window_transparent_input(t_l->winId(), true);
+                //Xcb::XcbMisc::instance().set_window_transparent_input(t_l->winId(), true);
+                l->setWindowFlag(Qt::WindowTransparentForInput);
                 t_l->QWidget::setVisible(t_l->geometry().topLeft() != t_background->geometry().topLeft());
                 qInfo() << "updateBackground hide" << t_l <<t_l->isVisible()<< t_l->geometry() << " show" << t_background
                         << t_background->isVisible() << t_background->geometry();
             }else  {
-                Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                //Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                l->setWindowFlag(Qt::WindowTransparentForInput,false);
                 t_l->show();
                 qInfo() << "updateBackground show" << t_l <<t_l->isVisible() << t_l->geometry() << "    show" << t_background
                         << t_background->isVisible() << t_background->geometry();
@@ -510,7 +513,8 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
                 if (m_previuew) {
                     l->setWindowFlags(l->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
                 } else {
-                    Xcb::XcbMisc::instance().set_window_type(l->winId(), Xcb::XcbMisc::Desktop);
+                    //Xcb::XcbMisc::instance().set_window_type(l->winId(), Xcb::XcbMisc::Desktop);
+                    DesktopUtil::set_desktop_window(l);
                 }
 
                 if (m_visible)
@@ -575,7 +579,8 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     if (m_previuew) {
         l->setWindowFlags(l->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
     } else {
-        Xcb::XcbMisc::instance().set_window_type(l->winId(), Xcb::XcbMisc::Desktop);
+        //Xcb::XcbMisc::instance().set_window_type(l->winId(), Xcb::XcbMisc::Desktop);
+        DesktopUtil::set_desktop_window(l);
     }
 
     if (m_visible)

@@ -30,7 +30,7 @@
 #include "thumbnailmanager.h"
 #include "appearance_interface.h"
 #include "backgroundhelper.h"
-#include "util/xcb/xcb.h"
+//#include "util/xcb/xcb.h"
 #include "presenter/display.h"
 #include "util/dde/desktopinfo.h"
 
@@ -207,12 +207,14 @@ void Frame::show()
             // 隐藏完全重叠的窗口
             for (QWidget *l : allBackgrounds) {
                 if (l != background) {
-                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
+                    //Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
+                    l->setWindowFlag(Qt::WindowTransparentForInput);
                     l->setVisible(l->geometry().topLeft() != background->geometry().topLeft());
                     qInfo() << "backgorund hide" << l << l->geometry() << "show" << background
                             << background->isVisible() << background->geometry();
                 } else {
-                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                    //Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                    l->setWindowFlag(Qt::WindowTransparentForInput,false);
                     l->show();
                     qInfo() << "backgorund show" << l << l->geometry() << "show" << background
                             << background->isVisible() << background->geometry();
