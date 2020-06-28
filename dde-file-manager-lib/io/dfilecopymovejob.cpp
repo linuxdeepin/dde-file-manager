@@ -1357,6 +1357,22 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
         // 先尝试直接rename
         if (handler->rename(oldInfo->fileUrl(), newInfo->fileUrl())) {
             return true;
+        }else{  // bug-35066 添加对保险箱的判断
+            if(oldInfo->isSymLink()){   // 如果为链接文件
+                if(VaultController::isVaultFile(oldInfo->path()) || VaultController::isVaultFile(newInfo->path())){ // 如果是保险箱任务
+                    // 新建链接文件
+                    if(!handler->link(oldInfo->symlinkTargetPath(), newInfo->fileUrl())){
+                        return false;
+                    }
+
+                    // 删除旧的链接文件
+                    if (!doRemoveFile(handler, oldInfo)) {
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
         }
     }
 
