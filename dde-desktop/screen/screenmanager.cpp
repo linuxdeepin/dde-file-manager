@@ -60,7 +60,7 @@ void ScreenManager::onDockChanged()
 //    int dockHideMode = DockInfoIns->hideMode();
 //    if (3 != dockHideMode) //只处理智能隐藏
 //        return ;
-
+#ifdef UNUSED_SMARTDOCK
     auto primary = primaryScreen();
     if (primary == nullptr){
         qCritical() << "get primary screen failed";
@@ -69,6 +69,10 @@ void ScreenManager::onDockChanged()
     else {
         emit sigScreenAvailableGeometryChanged(primary, primary->availableGeometry());
     }
+#else
+    //新增动态dock区功能，dock区不再只是在主屏幕,随鼠标移动
+    emit sigScreenAvailableGeometryChanged(nullptr, QRect());
+#endif
 }
 
 void ScreenManager::init()

@@ -7,12 +7,13 @@
 #include "durl.h"
 #include "private/dfileinfo_p.h"
 #include "tag/tagmanager.h"
+#include "shutil/fileutils.h"
 
 TagFileInfo::TagFileInfo(const DUrl &url)
-            :DAbstractFileInfo{ url, false } //###: Do not cache.
+    : DAbstractFileInfo{ url, false } //###: Do not cache.
 {
     ///###: if the true url of file is put into fragment field of Uri. Then setup proxy.
-    if(!url.taggedLocalFilePath().isEmpty()){
+    if (!url.taggedLocalFilePath().isEmpty()) {
         DAbstractFileInfoPointer infoPointer{ DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.fragment())) };
         this->DAbstractFileInfo::setProxy(infoPointer);
     }
@@ -20,7 +21,7 @@ TagFileInfo::TagFileInfo(const DUrl &url)
 
 bool TagFileInfo::isDir() const
 {
-    const DAbstractFileInfoPrivate* const d{ d_func() };
+    const DAbstractFileInfoPrivate *const d{ d_func() };
 
     return  ((!static_cast<bool>(d->proxy)) || d->proxy->isDir());
 }
@@ -32,7 +33,7 @@ bool TagFileInfo::makeAbsolute()
 
 bool TagFileInfo::exists() const
 {
-    const DAbstractFileInfoPrivate* const d{ d_func() };
+    const DAbstractFileInfoPrivate *const d{ d_func() };
 
     if (d->proxy) {
         return d->proxy->exists();
@@ -75,7 +76,7 @@ bool TagFileInfo::isWritable() const
 
 bool TagFileInfo::canRedirectionFileUrl() const
 {
-    const DAbstractFileInfoPrivate* const d{ d_func() };
+    const DAbstractFileInfoPrivate *const d{ d_func() };
 
     return static_cast<bool>(d->proxy);
 }
@@ -88,13 +89,13 @@ QFileDevice::Permissions TagFileInfo::permissions() const
         return d->proxy->permissions();
 
     return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
-            | QFile::WriteGroup | QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther;
+           | QFile::WriteGroup | QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther;
 }
 
 
 DUrl TagFileInfo::redirectedFileUrl() const
 {
-    const DAbstractFileInfoPrivate* const d{ d_func() };
+    const DAbstractFileInfoPrivate *const d{ d_func() };
 
     return d->proxy->fileUrl();
 }
@@ -177,7 +178,7 @@ QVariantHash TagFileInfo::extraProperties() const
     const QColor &tag_color = TagManager::instance()->getTagColor({tag_name}).value(tag_name);
 
     hash["tag_name_list"] = QStringList{tag_name};
-    hash["colored"] = QVariant::fromValue(QList<QColor>{tag_color});
+    hash["colored"] = QVariant::fromValue(QList<QColor> {tag_color});
 
     return hash;
 }
@@ -191,8 +192,8 @@ QList<int> TagFileInfo::userColumnRoles() const
 
     if (fileUrl() == DUrl(TAG_ROOT)) {
         return QList<int> {
-              DFileSystemModel::FileDisplayNameRole,
-              DFileSystemModel::FileSizeRole
+            DFileSystemModel::FileDisplayNameRole,
+            DFileSystemModel::FileSizeRole
         };
     }
 
@@ -248,6 +249,17 @@ bool TagFileInfo::isVirtualEntry() const
     return !d->proxy;
 }
 
+QString TagFileInfo::sizeDisplayName() const
+{
+    // 如果是文件夹，不去遍历下面的文件数量，否则大文件数量时界面会很卡
+    // 原因是因为model会一直刷新，获取size
+    if (isDir()) {
+        return QStringLiteral("-");
+    }
+
+    return FileUtils::formatSize(size());
+}
+
 DUrl TagFileInfo::parentUrl() const
 {
     DUrl url = fileUrl();
@@ -263,7 +275,7 @@ QString TagFileInfo::iconName() const
 {
     DUrl current_url{ this->fileUrl() };
 
-    if(current_url.isTaggedFile()){
+    if (current_url.isTaggedFile()) {
         return QString{"folder"};
     }
 
@@ -272,14 +284,14 @@ QString TagFileInfo::iconName() const
 
 DUrl TagFileInfo::goToUrlWhenDeleted() const
 {
-    const DAbstractFileInfoPrivate* d{ d_func() };
+    const DAbstractFileInfoPrivate *d{ d_func() };
 
     DUrl current_url{ this->fileUrl() };
     QString parent_url{ current_url.parentUrl().path()};
 
     ///###: if there current file-info do not have a proxy!
     ///###: it shows that current item is a tag-dir(tag:///tag-name).
-    if(current_url.isTaggedFile() && parent_url == QString{"/"} && !d->proxy){
+    if (current_url.isTaggedFile() && parent_url == QString{"/"} && !d->proxy) {
         return DUrl::fromLocalFile(QDir::homePath());
     }
 
