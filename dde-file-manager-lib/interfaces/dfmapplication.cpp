@@ -183,14 +183,10 @@ QVariant DFMApplication::genericAttribute(DFMApplication::GenericAttribute ga)
     if (ga == GA_IndexInternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexInternal();
-#else
-        return false;
 #endif
     } else if (ga == GA_IndexExternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexExternal();
-#else
-        return false;
 #endif
     }
 
@@ -206,14 +202,10 @@ void DFMApplication::setGenericAttribute(DFMApplication::GenericAttribute ga, co
     if (ga == GA_IndexInternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexInternal(value.toBool());
-#else
-        return;
 #endif
     } else if (ga == GA_IndexExternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexExternal(value.toBool());
-#else
-        return;
 #endif
     }
 
