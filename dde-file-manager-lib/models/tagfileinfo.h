@@ -8,8 +8,8 @@
 class TagFileInfo : public DAbstractFileInfo
 {
 public:
-    TagFileInfo(const DUrl& url);
-    virtual ~TagFileInfo()=default;
+    TagFileInfo(const DUrl &url);
+    virtual ~TagFileInfo() = default;
 
     virtual bool isDir() const override;
     virtual bool makeAbsolute() override;
@@ -44,6 +44,12 @@ public:
     Qt::DropActions supportedDropActions() const override;
     bool canDrop() const override;
     bool isVirtualEntry() const override;
+
+    /**
+     * @brief sizeDisplayName 列表模式下，获取大小
+     * @return
+     */
+    QString sizeDisplayName() const override;
 };
 
 

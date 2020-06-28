@@ -54,6 +54,7 @@
 
 
 VaultController *VaultController::cryfs = nullptr;
+bool VaultController::m_isDeleteFiles = false;
 
 class VaultControllerPrivate
 {
@@ -387,19 +388,23 @@ bool VaultController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent
 
 bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
+    m_isDeleteFiles = true;
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DFileService::instance()->deleteFiles(event->sender(), urlList);                 //! 发送计算大小完成后文管首页刷新信号
     const_cast<VaultController *>(this)->updateFileInfo(urlList);
     emit const_cast<VaultController *>(this)->signalFileDeleted();
+    m_isDeleteFiles = false;
     return true;
 }
 
 DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
+    m_isDeleteFiles = true;
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DFileService::instance()->deleteFiles(event->sender(), urlList);                 //! 发送计算大小完成后文管首页刷新信号
     const_cast<VaultController *>(this)->updateFileInfo(urlList);
     emit const_cast<VaultController *>(this)->signalFileDeleted();
+    m_isDeleteFiles = false;
     return urlList;
 }
 
@@ -894,6 +899,11 @@ DUrl VaultController::urlToVirtualUrl(QString path)
     index += QString(VAULT_DECRYPT_DIR_NAME).length();
 
     return VaultController::makeVaultUrl(nextPath.mid(index));
+}
+
+bool VaultController::isDeleteFiles()
+{
+    return m_isDeleteFiles;
 }
 
 void VaultController::createVault(const DSecureString &passWord, QString lockBaseDir, QString unlockFileDir)

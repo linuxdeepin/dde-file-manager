@@ -145,12 +145,17 @@ void ScreenManagerWayland::onMonitorChanged()
 
 void ScreenManagerWayland::onDockChanged()
 {
+#ifdef UNUSED_SMARTDOCK
     auto screen = primaryScreen();
     if (screen == nullptr){
         qCritical() << "primaryScreen() return nullptr!!!";
         return;
     }
     emit sigScreenAvailableGeometryChanged(screen, screen->availableGeometry());
+#else
+    //新增动态dock区功能，dock区不再只是在主屏幕,随鼠标移动
+    emit sigScreenAvailableGeometryChanged(nullptr, QRect());
+#endif
 }
 
 void ScreenManagerWayland::onScreenGeometryChanged(const QRect &rect)
