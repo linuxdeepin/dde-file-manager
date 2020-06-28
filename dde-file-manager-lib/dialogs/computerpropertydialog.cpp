@@ -103,8 +103,8 @@ void ComputerPropertyDialog::initUI()
               << tr("Version")
               << tr("Type")
               << tr("Processor")
-              << tr("Memory")
-              << tr("Disk");
+              << tr("Memory");
+//              << tr("Disk");
 
     int row = 0;
     QHash<QString, QString> datas = getMessage(msgsTitle);
@@ -187,7 +187,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     datas.insert(data.at(2), QString::number(m_systemInfo->systemType()) + tr("Bit"));
     datas.insert(data.at(3), m_systemInfo->processor());
     datas.insert(data.at(4), memoryStr);
-    datas.insert(data.at(5), diskStr);
+//    datas.insert(data.at(5), diskStr);
 
     return datas;
 }
