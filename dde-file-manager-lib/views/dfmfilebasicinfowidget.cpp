@@ -34,6 +34,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QStackedLayout>
+#include <QTimer>
 
 #include <mediainfo/dfmmediainfo.h>
 
@@ -254,11 +255,26 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
             mediaType = DFMMediaInfo::Image;
             break;
         default:
+
             break;
         }
 
         if (mediaType!= DFMMediaInfo::Other){
-            DFMMediaInfo *mediaInfo = new DFMMediaInfo(info->filePath(), layoutWidget);
+            const QString &filePath = info->filePath();
+            DFMMediaInfo *mediaInfo = nullptr;
+            // iphone 中读media文件很慢，因此特殊处理
+            if (filePath.contains("Apple_Inc") && filePath.startsWith("/run/user")) {
+                mediaInfo = new DFMMediaInfo(filePath, nullptr);
+                QTimer::singleShot(1000, [mediaInfo] () {
+                    mediaInfo->startReadInfo();
+                    QTimer::singleShot(5000, [mediaInfo] () {
+                        mediaInfo->deleteLater();
+                    });
+                });
+            } else {
+                mediaInfo = new DFMMediaInfo(filePath, layoutWidget);
+                mediaInfo->startReadInfo();
+            }
             QObject::connect(mediaInfo, &DFMMediaInfo::Finished, layout, [=](){
                 int frameHeight = q->height();
                 QString duration = mediaInfo->Value("Duration", mediaType);

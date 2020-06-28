@@ -30,28 +30,10 @@ DFM_BEGIN_NAMESPACE
 class DFMMediaInfoPrivate : public QSharedData {
 public:
     DFMMediaInfoPrivate(DFMMediaInfo *qq, const QString &file) : q_ptr(qq){
+        m_isWorking.store(false);
+        m_file = file;
         m_mediaInfo = new MediaInfo;
-        m_mediaInfo->Option(__T("Thread"), __T("1")); // open file in thread..
-        m_mediaInfo->Option(__T("Inform"), __T("Text"));
-        m_mediaInfo->Open(file.toStdWString());
         m_timer = new QTimer(qq);
-        m_timer->setInterval(200);
-        m_timer->start();
-        QObject::connect(m_timer, &QTimer::timeout, qq, [this](){
-            if (m_mediaInfo) {
-                if (m_mediaInfo->State_Get() == MediaInfo_State_Finished) {
-                    emit q_ptr->Finished();
-                    m_timer->stop();
-                    return ;
-                }
-//                if (m_mediaInfo->Count_Get(Stream_Image)>0)
-//                    emit q_ptr->typeFinished("image");
-//                if (m_mediaInfo->Count_Get(Stream_Video)>0)
-//                    emit q_ptr->typeFinished("video");
-//                if (m_mediaInfo->Count_Get(Stream_Audio)>0)
-//                    emit q_ptr->typeFinished("audio");
-            }
-        });
     }
 
     ~DFMMediaInfoPrivate(){
@@ -59,6 +41,38 @@ public:
             m_timer->stop();
         if (m_mediaInfo)
             delete m_mediaInfo;
+    }
+
+    void start() {
+
+        Q_Q(DFMMediaInfo);
+        if (!q)
+            return;
+        if (m_isWorking.load())
+            return;
+//        m_isWorking.store(true);
+        m_mediaInfo->Option(__T("Thread"), __T("1")); // open file in thread..
+        m_mediaInfo->Option(__T("Inform"), __T("Text"));
+        if (m_mediaInfo->Open(m_file.toStdWString()) == 0) { // 可能耗时
+            m_timer->setInterval(200);
+            m_timer->start();
+            QObject::connect(m_timer, &QTimer::timeout, q, [this](){
+                if (m_mediaInfo) {
+                    if (m_mediaInfo->State_Get() == MediaInfo_State_Finished) {
+                        emit q_ptr->Finished();
+                        m_timer->stop();
+                        return ;
+                    }
+    //                if (m_mediaInfo->Count_Get(Stream_Image)>0)
+    //                    emit q_ptr->typeFinished("image");
+    //                if (m_mediaInfo->Count_Get(Stream_Video)>0)
+    //                    emit q_ptr->typeFinished("video");
+    //                if (m_mediaInfo->Count_Get(Stream_Audio)>0)
+    //                    emit q_ptr->typeFinished("audio");
+                }
+            });
+        }
+        m_isWorking.store(false);
     }
 
     QString Inform(){
@@ -74,6 +88,8 @@ public:
     }
 
 private:
+    std::atomic<bool>    m_isWorking;
+    QString m_file;
     MediaInfo     *m_mediaInfo {nullptr};
     QTimer        *m_timer {nullptr};
     DFMMediaInfo *q_ptr{ nullptr };
@@ -102,6 +118,12 @@ QString DFMMediaInfo::Value(const QString &key, MeidiaType meidiaType/* = Genera
 {
     Q_D(DFMMediaInfo);
     return d->Value(key, static_cast<stream_t>(meidiaType));
+}
+
+void DFMMediaInfo::startReadInfo()
+{
+    Q_D(DFMMediaInfo);
+    d->start();
 }
 
 DFM_END_NAMESPACE
