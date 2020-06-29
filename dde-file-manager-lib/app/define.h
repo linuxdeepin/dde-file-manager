@@ -78,4 +78,7 @@ QMutex *getOpticalDriveMutex();
 #define VAULT_CREATE "Create"
 #define VAULT_REMOVE "Remove"
 
+#define IPHONE_STAGING   "Apple_Inc"
+#define MOBILE_ROOT_PATH "/run/user"
+
 #endif // GLOBAL_H
