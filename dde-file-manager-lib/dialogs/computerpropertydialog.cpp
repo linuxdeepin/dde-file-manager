@@ -240,7 +240,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     datas.insert(data.at(1), version);
     datas.insert(data.at(2), QString::number(m_systemInfo->systemType()) + tr("Bit"));
     datas.insert(data.at(3), processor);
-    datas.insert(data.at(4), memoryInstallStr + "(" +  memoryStr + tr("Available") + ")");
+    datas.insert(data.at(4), memoryInstallStr + "(" +  memoryStr + ' ' + tr("Available") + ")");
     datas.insert(data.at(5), diskStr + " GB");
 
     return datas;

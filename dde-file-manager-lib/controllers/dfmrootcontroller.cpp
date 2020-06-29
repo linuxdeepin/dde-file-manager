@@ -39,6 +39,9 @@
 #include <gvfs/networkmanager.h>
 
 #include <QProcessEnvironment>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 class DFMRootFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
@@ -124,6 +127,18 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
         }
+        //检查挂载目录下是否存在diskinfo文件
+        QByteArrayList mps = blk->mountPoints();
+        if (!mps.empty()) {
+            QString mpPath(mps.front());
+            if (mpPath.lastIndexOf("/") != (mpPath.length() - 1))
+                mpPath += "/";
+            QDir kidDir(mpPath + "UOSICON");
+            if (kidDir.exists()) {
+                QString jsonPath = kidDir.absolutePath();
+                loadDiskInfo(jsonPath);
+            }
+        }
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             continue;
         }
@@ -203,6 +218,48 @@ const DAbstractFileInfoPointer DFMRootController::createFileInfo(const QSharedPo
 DAbstractFileWatcher *DFMRootController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     return new DFMRootFileWatcher(event->url());
+}
+
+void DFMRootController::loadDiskInfo(const QString &jsonPath) const
+{
+    //不存在该目录
+    if (jsonPath.isEmpty()) {
+        return;
+    }
+
+    //读取本地json文件
+    QFile file(jsonPath + "/diskinfo.json");
+    if (!file.open(QIODevice::ReadWrite)) {
+        return;
+    }
+
+    //解析json文件
+    QJsonParseError jsonParserError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(file.readAll(), &jsonParserError);
+    if (jsonDocument.isNull() || jsonParserError.error != QJsonParseError::NoError) {
+        return;
+    }
+
+    if (jsonDocument.isObject()) {
+        QJsonObject jsonObject = jsonDocument.object();
+        if (jsonObject.contains("DISKINFO") && jsonObject.value("DISKINFO").isArray()) {
+            QJsonArray jsonArray = jsonObject.value("DISKINFO").toArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                if (jsonArray[i].isObject()) {
+                    QJsonObject jsonObjectInfo = jsonArray[i].toObject();
+                    DiskInfoStr str;
+                    if (jsonObjectInfo.contains("uuid"))
+                        str.uuid = jsonObjectInfo.value("uuid").toString();
+                    if (jsonObjectInfo.contains("drive"))
+                        str.driver = jsonObjectInfo.value("drive").toString();
+                    if (jsonObjectInfo.contains("label"))
+                        str.label = jsonObjectInfo.value("label").toString();
+
+                    DFMRootFileInfo::DiskInfoMap[str.uuid] = str;
+                }
+            }
+        }
+    }
 }
 
 DFMRootFileWatcher::DFMRootFileWatcher(const DUrl &url, QObject *parent):
