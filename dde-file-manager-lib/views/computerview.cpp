@@ -90,6 +90,7 @@ protected:
                 if (v) {
                     auto model = v->model();
                     const QModelIndex &curIdx = v->selectionModel()->currentIndex();
+                    // 目的是可移动设备的item重命名时，按enter键时，不应该进入对应的目录，因此直接返回false
                     if (model->flags(curIdx) & Qt::ItemFlag::ItemIsEditable) {
                         return false;
                     }
