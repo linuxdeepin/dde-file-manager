@@ -87,9 +87,15 @@ protected:
             QKeyEvent *ke = static_cast<QKeyEvent*>(e);
             if (ke->key() == Qt::Key::Key_Return || ke->key() == Qt::Key::Key_Enter) {
                 QListView *v = qobject_cast<QListView*>(parent());
-                Q_ASSERT(v);
-                Q_EMIT entered(v->selectionModel()->currentIndex());
-                return true;
+                if (v) {
+                    auto model = v->model();
+                    const QModelIndex &curIdx = v->selectionModel()->currentIndex();
+                    if (model->flags(curIdx) & Qt::ItemFlag::ItemIsEditable) {
+                        return false;
+                    }
+                    Q_EMIT entered(curIdx);
+                    return true;
+                }
             }
         }
         return false;
