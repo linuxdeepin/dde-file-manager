@@ -350,8 +350,6 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             emit job->stop();
         });
     }
-    //! 保存任务widget与状态
-    m_flagMap.insert(wid, false);
 
     ErrorHandle *handle = new ErrorHandle(wid);
     job->setErrorHandle(handle, thread());
@@ -431,7 +429,10 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
     });
     wid->setProperty("totalDataSize", job->totalDataSize());
 
-    connect(job, &DFileCopyMoveJob::currentJobChanged, this, [this, job, wid](const DUrl from, const DUrl to) {
+    // bug-35335 将wid设置为信号接收方，避免wid窗口回收后，继续接收currentJobChanged信号，执行曹函数，导致崩溃
+    connect(job, &DFileCopyMoveJob::currentJobChanged, wid, [this, job, wid](const DUrl from, const DUrl to) {
+        //! 保存任务文件路径与状态
+        m_flagMap.insert(from, false);
         //正在执行当前槽函数时，job线程一结束，判断job线程是否结束
         if (job->isFinished()) {
             this->removeTaskJob(job);
@@ -440,8 +441,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             if (mapNotCompleteVaultTask.contains(job)) {
                 mapNotCompleteVaultTask.remove(job);
             }
-            //! 设置任务widget对应的状态
-            m_flagMap[wid] = true;
+            //! 设置任务时文件路径对应的状态
+            m_flagMap[from] = true;
             return;
         }
         QMap<QString, QString> data;
@@ -500,8 +501,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             }
         }
 
-        //! 设置任务widget对应的状态
-        m_flagMap[wid] = true;
+        //! 设置任务文件路径对应的状态
+        m_flagMap[from] = true;
         if (m_flag && getFlagMapValueIsTrue()) {
             //! 有点击关闭任务窗口，进行窗口关闭
             if (isHaveVaultTask(job->sourceUrlList(), job->targetUrl())) {
@@ -834,9 +835,9 @@ void DTaskDialog::closeEvent(QCloseEvent *event)
         mapNotCompleteVaultTask.clear();
 
         QDialog::closeEvent(event);
-    }
 
-    emit closed();
+        emit closed();
+    }
 }
 
 void DTaskDialog::keyPressEvent(QKeyEvent *event)
