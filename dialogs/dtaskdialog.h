@@ -144,7 +144,7 @@ private:
     QSet<DFileCopyMoveJob*> mapNotCompleteVaultTask;
 
     //! 记录当前是否完成一个文件的删除或拷贝工作
-    QMap<QWidget*, bool> m_flagMap;
+    QMap<DUrl, bool> m_flagMap;
     //! 是否点击关闭按钮
     bool m_flag;
 };
