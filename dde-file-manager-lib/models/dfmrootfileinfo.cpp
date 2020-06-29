@@ -69,6 +69,8 @@ public:
     Q_DECLARE_PUBLIC(DFMRootFileInfo)
 };
 
+QMap<QString, DiskInfoStr> DFMRootFileInfo::DiskInfoMap = QMap<QString, DiskInfoStr>();
+
 DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
     DAbstractFileInfo(url),
     d_ptr(new DFMRootFileInfoPrivate)
@@ -589,6 +591,7 @@ void DFMRootFileInfo::checkCache()
             }
         }
     }
+    loadDiskInfo();
     d->fs = blk->idType();
     d->idUUID = blk->idUUID();
     d->udispname = udisksDisplayName();
@@ -597,6 +600,16 @@ void DFMRootFileInfo::checkCache()
 QString DFMRootFileInfo::udisksDisplayName()
 {
     Q_D(DFMRootFileInfo);
+
+    //windows分区需要显示该分区在windows下的盘符或卷标
+    if (DFMRootFileInfo::DiskInfoMap.contains(d->idUUID)) {
+        const DiskInfoStr info = DFMRootFileInfo::DiskInfoMap.value(d->idUUID);
+        if (!info.label.isEmpty()) {
+            return info.label;
+        } else {
+            return info.driver;
+        }
+    }
 
     static QMap<QString, const char *> i18nMap {
         {"data", "Data Disk"}
@@ -738,4 +751,57 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
         return true;
     }
     return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
+}
+
+void DFMRootFileInfo::loadDiskInfo()
+{
+    Q_D(const DFMRootFileInfo);
+
+    if (d->mps.empty())
+        return;
+
+    //要判断路径是否存在
+    QString mpPath(d->mps.front());
+    if (mpPath.lastIndexOf("/") != (mpPath.length() - 1))
+        mpPath += "/";
+    QDir dir(mpPath + "UOSICON");
+    if (!dir.exists())
+        return;
+
+    QString jsonPath = dir.absolutePath();
+    //不存在该目录
+    if (jsonPath.isEmpty())
+        return;
+
+    //读取本地json文件
+    QFile file(jsonPath + "/diskinfo.json");
+    if (!file.open(QIODevice::ReadWrite))
+        return;
+
+    //解析json文件
+    QJsonParseError jsonParserError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(file.readAll(), &jsonParserError);
+    if (jsonDocument.isNull() || jsonParserError.error != QJsonParseError::NoError)
+        return;
+
+    if (jsonDocument.isObject()) {
+        QJsonObject jsonObject = jsonDocument.object();
+        if (jsonObject.contains("DISKINFO") && jsonObject.value("DISKINFO").isArray()) {
+            QJsonArray jsonArray = jsonObject.value("DISKINFO").toArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                if (jsonArray[i].isObject()) {
+                    QJsonObject jsonObjectInfo = jsonArray[i].toObject();
+                    DiskInfoStr str;
+                    if (jsonObjectInfo.contains("uuid"))
+                        str.uuid = jsonObjectInfo.value("uuid").toString();
+                    if (jsonObjectInfo.contains("drive"))
+                        str.driver = jsonObjectInfo.value("drive").toString();
+                    if (jsonObjectInfo.contains("label"))
+                        str.label = jsonObjectInfo.value("label").toString();
+
+                    DFMRootFileInfo::DiskInfoMap[str.uuid] = str;
+                }
+            }
+        }
+    }
 }
