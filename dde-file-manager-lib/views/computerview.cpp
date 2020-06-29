@@ -78,15 +78,15 @@ class ViewReturnEater : public QObject
 {
     Q_OBJECT
 public:
-    explicit ViewReturnEater(QListView *parent) : QObject(parent){}
+    explicit ViewReturnEater(QListView *parent) : QObject(parent) {}
 
 protected:
     bool eventFilter(QObject *, QEvent *e)
     {
         if (e->type() == QEvent::Type::KeyPress) {
-            QKeyEvent *ke = static_cast<QKeyEvent*>(e);
+            QKeyEvent *ke = static_cast<QKeyEvent *>(e);
             if (ke->key() == Qt::Key::Key_Return || ke->key() == Qt::Key::Key_Enter) {
-                QListView *v = qobject_cast<QListView*>(parent());
+                QListView *v = qobject_cast<QListView *>(parent());
                 Q_ASSERT(v);
                 Q_EMIT entered(v->selectionModel()->currentIndex());
                 return true;
@@ -146,7 +146,8 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this] {
         DFMEvent event(this);
         event.setWindowId(this->window()->internalWinId());
-        if (this->m_view->selectionModel()->hasSelection()) {
+        if (this->m_view->selectionModel()->hasSelection())
+        {
             QModelIndex curidx(this->m_view->selectionModel()->currentIndex());
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, curidx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>());
             if (fi && fi->suffix() == SUFFIX_USRDIR) {
@@ -160,7 +161,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     });
 
     connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView::contextMenu);
-    auto enterfunc = [this](const QModelIndex &idx, int triggermatch) {
+    auto enterfunc = [this](const QModelIndex & idx, int triggermatch) {
         if (~triggermatch) {
             if (DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt() != triggermatch) {
                 return;
@@ -182,7 +183,8 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     m_view->addAction(newTabAction);
     newTabAction->setShortcut(QKeySequence(Qt::Key::Key_T | Qt::Modifier::CTRL));
     connect(newTabAction, &QAction::triggered, [this] {
-        if (m_view->selectionModel()->hasSelection()) {
+        if (m_view->selectionModel()->hasSelection())
+        {
             const QModelIndex &idx = m_view->selectionModel()->currentIndex();
             DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
             if (url.path().endsWith(SUFFIX_USRDIR)) {
@@ -190,7 +192,8 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
             } else {
                 appController->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
             }
-        } else {
+        } else
+        {
             appController->actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, rootUrl()));
         }
     });
@@ -199,7 +202,8 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     m_view->addAction(newWindowAction);
     newWindowAction->setShortcut(QKeySequence(Qt::Key::Key_N | Qt::Modifier::CTRL));
     connect(newWindowAction, &QAction::triggered, [this] {
-        if (m_view->selectionModel()->hasSelection()) {
+        if (m_view->selectionModel()->hasSelection())
+        {
             const QModelIndex &idx = m_view->selectionModel()->currentIndex();
             DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
             if (url.path().endsWith(SUFFIX_USRDIR)) {
@@ -207,7 +211,8 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
             } else {
                 appController->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
             }
-        } else {
+        } else
+        {
             appController->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << rootUrl()));
         }
     });
@@ -216,7 +221,8 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     m_view->addAction(propAction);
     propAction->setShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL));
     connect(propAction, &QAction::triggered, [this] {
-        if (m_view->selectionModel()->hasSelection()) {
+        if (m_view->selectionModel()->hasSelection())
+        {
             const QModelIndex &idx = m_view->selectionModel()->currentIndex();
             DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
             if (url.path().endsWith(SUFFIX_USRDIR)) {
@@ -239,14 +245,14 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
 
 ComputerView::~ComputerView()
 {
-    ComputerModel *m = static_cast<ComputerModel*>(m_view->model());
+    ComputerModel *m = static_cast<ComputerModel *>(m_view->model());
     m_view->setModel(nullptr);
     delete m;
 }
 
-QWidget* ComputerView::widget() const
+QWidget *ComputerView::widget() const
 {
-    return const_cast<ComputerView*>(this);
+    return const_cast<ComputerView *>(this);
 }
 
 DUrl ComputerView::rootUrl() const
@@ -259,7 +265,7 @@ bool ComputerView::setRootUrl(const DUrl &url)
     return url == DUrl(COMPUTER_ROOT);
 }
 
-QListView* ComputerView::view()
+QListView *ComputerView::view()
 {
     return m_view;
 }
@@ -291,7 +297,7 @@ void ComputerView::contextMenu(const QPoint &pos)
         disabled.insert(MenuAction::Property);
     }
     if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) { // 如果当前光驱设备正在执行擦除/刻录，则禁用所有右键菜单选项
-        for (MenuAction act: av)
+        for (MenuAction act : av)
             disabled.insert(act);
     }
 
@@ -325,16 +331,15 @@ void ComputerView::resizeEvent(QResizeEvent *event)
 bool ComputerView::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonRelease && obj == m_view->viewport()) {
-        QMouseEvent *e = static_cast<QMouseEvent*>(event);
+        QMouseEvent *e = static_cast<QMouseEvent *>(event);
         const QModelIndex &idx = m_view->indexAt(e->pos());
         if (e->button() == Qt::MouseButton::LeftButton && (!idx.isValid() || !(idx.flags() & Qt::ItemFlag::ItemIsEnabled))) {
             m_view->selectionModel()->clearSelection();
         }
         return false;
     } else if (event->type() == QEvent::KeyPress && obj == m_view) {
-        QKeyEvent *ke = static_cast<QKeyEvent*>(event);
-        if (ke->modifiers() == Qt::Modifier::ALT)
-        {
+        QKeyEvent *ke = static_cast<QKeyEvent *>(event);
+        if (ke->modifiers() == Qt::Modifier::ALT) {
             this->event(event);
             return true;
         }
