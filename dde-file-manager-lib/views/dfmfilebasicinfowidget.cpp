@@ -263,10 +263,12 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
             const QString &filePath = info->filePath();
             DFMMediaInfo *mediaInfo = nullptr;
             // iphone 中读media文件很慢，因此特殊处理
-            if (filePath.contains("Apple_Inc") && filePath.startsWith("/run/user")) {
+            if (filePath.contains(IPHONE_STAGING) && filePath.startsWith(MOBILE_ROOT_PATH)) {
                 mediaInfo = new DFMMediaInfo(filePath, nullptr);
+                // startReadInfo 可能会很慢，因此延时1秒后，待后面的代码执行完后再执行
                 QTimer::singleShot(1000, [mediaInfo] () {
                     mediaInfo->startReadInfo();
+                    // 立即析构会导致读取media的任务无法完成，因此延时析构，5s是实验后比较稳定的值
                     QTimer::singleShot(5000, [mediaInfo] () {
                         mediaInfo->deleteLater();
                     });

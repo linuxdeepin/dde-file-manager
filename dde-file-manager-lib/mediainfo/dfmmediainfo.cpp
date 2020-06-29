@@ -43,11 +43,13 @@ public:
             delete m_mediaInfo;
     }
 
+    /**
+     * @brief bug-35165, 将构造时读取media信息的方式改为独立的方法
+     * 以免造成构造对象时直接卡住
+     */
     void start() {
 
         Q_Q(DFMMediaInfo);
-        if (!q)
-            return;
         if (m_isWorking.load())
             return;
 //        m_isWorking.store(true);
