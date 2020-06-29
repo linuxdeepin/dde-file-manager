@@ -288,8 +288,8 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
 
     wid->setObjectName(QString("%1_%2").arg(DIALOGS_TASK_DIALOG_TASK_LIST_ITEM).arg(m_taskListWidget->count()));
 
-    // 显示最小化按钮
-    setWindowFlags(windowFlags() & Qt::WindowMinMaxButtonsHint);
+    // 显示最小化按钮、关闭按钮
+    setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
     setTitle(m_taskListWidget->count());
     adjustSize();
     setModal(false);
@@ -327,7 +327,7 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     m_titlebar->setTitle(tr("The File Vault is progressing delete task, please do nothing!"));
 
     // 因为对话框为模态对话框，点击最小化按钮窗口并不能最小化，故隐藏最小化按钮
-    setWindowFlags(windowFlags() &~ Qt::WindowMinMaxButtonsHint);
+    setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint);
     adjustSize();
     setModal(true);
     show();
