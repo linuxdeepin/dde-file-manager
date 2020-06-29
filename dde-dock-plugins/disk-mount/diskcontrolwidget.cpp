@@ -241,7 +241,7 @@ void DiskControlWidget::unmountAll()
                             qWarning() << diskDev->lastError().name() << blockDevices;
                             NotifyMsg(tr("Disk is busy, cannot eject now"));
                         }
-                        return;
+                        continue; // fix bug#16936 在 dock 上选择了卸载全部后，还会有U盘未被卸载
                     }
                 }
 
