@@ -49,6 +49,12 @@ public:
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
+private:
+    /**
+     * @brief loadDiskInfo 加载磁盘信息
+     * @param jsonPath 磁盘信息文件路径
+     */
+    void loadDiskInfo(const QString &jsonPath) const;
 };
 
 #endif // DFMROOTCONTROLLER_H
