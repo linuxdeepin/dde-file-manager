@@ -186,7 +186,13 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
             newToUrl = fileUrl();
             newToUrl.setSearchedFileUrl(toUrl);
 
-            addWatcher(toUrl);
+            /*fix bug34957,搜索模式下，删除文件到回收站的文件不再加入到watcher中，不然会一直删除不掉*/
+            if(toUrl.path().contains("/.local/share/Trash/files",Qt::CaseSensitive)){
+               return;
+           }
+           else {
+               addWatcher(toUrl);
+           }
         }
     }
 
