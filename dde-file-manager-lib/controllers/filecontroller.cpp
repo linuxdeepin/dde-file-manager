@@ -837,13 +837,13 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
     class ErrorHandle : public QObject, public DFileCopyMoveJob::Handle
     {
     public:
-        ErrorHandle(DFileCopyMoveJob *job, bool s)
+        ErrorHandle(QSharedPointer<DFileCopyMoveJob> job, bool s)
             : QObject(nullptr)
             , slient(s)
             , fileJob(job)
         {
             //线程启动传递源地址和目标地址
-            connect(job, &DFileCopyMoveJob::currentJobChanged, job, [this](const DUrl & from, const DUrl & to) {
+            connect(job.data(), &DFileCopyMoveJob::currentJobChanged, this, [this](const DUrl & from, const DUrl & to) {
                     QMutex mutex;
                     mutex.lock();
                     currentJob.first = from;
@@ -909,18 +909,18 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             //这里会出现pasteFilesV2函数线程和当前线程是同时在执行，会出现在1处pasteFilesV2所在线程 没结束，但是这时pasteFilesV2所在线程 结束
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
             if(!fileJob->isFinished()){
-                dialogManager->taskDialog()->addTaskJob(fileJob);
+                dialogManager->taskDialog()->addTaskJob(fileJob.data());
                 emit fileJob->currentJobChanged(currentJob.first, currentJob.second);
             }
         }
 
         int timer_id = 0;
         bool slient;
-        DFileCopyMoveJob *fileJob;
+        QSharedPointer<DFileCopyMoveJob> fileJob;
         QPair<DUrl, DUrl> currentJob;
     };
 
-    ErrorHandle *error_handle = new ErrorHandle(job.data(), slient);
+    ErrorHandle *error_handle = new ErrorHandle(job, slient);
 
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
     job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);
