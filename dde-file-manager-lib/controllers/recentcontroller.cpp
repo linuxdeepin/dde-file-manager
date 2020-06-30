@@ -338,6 +338,9 @@ bool RecentController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent>
 
 bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
+    //最近使用文件不支持剪切，这里主要是屏蔽从ctrl+x快捷键操作过来的剪切事件。
+    if (event->action() == DFMGlobal::CutAction)
+        return false;
     return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(),
                                                            realUrlList(event->urlList()));
 }

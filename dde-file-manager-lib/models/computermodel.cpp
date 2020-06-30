@@ -344,7 +344,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
             } else if (pitmdata->url.isVaultFile()) {
                 // not show vault size when locked or not created.
-                VaultController::VaultState state = VaultController::getVaultController()->state();
+                VaultController::VaultState state = VaultController::ins()->state();
                 if (state == VaultController::Encrypted
                         || state == VaultController::NotExisted) {
                     bSizeVisible = false;

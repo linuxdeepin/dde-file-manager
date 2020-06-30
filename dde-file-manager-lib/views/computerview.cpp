@@ -91,9 +91,16 @@ protected:
             QKeyEvent *ke = static_cast<QKeyEvent*>(e);
             if (ke->key() == Qt::Key::Key_Return || ke->key() == Qt::Key::Key_Enter) {
                 QListView *v = qobject_cast<QListView*>(parent());
-                Q_ASSERT(v);
-                Q_EMIT entered(v->selectionModel()->currentIndex());
-                return true;
+                if (v) {
+                    auto model = v->model();
+                    const QModelIndex &curIdx = v->selectionModel()->currentIndex();
+                    // 目的是可移动设备的item重命名时，按enter键时，不应该进入对应的目录，因此直接返回false
+                    if (model->flags(curIdx) & Qt::ItemFlag::ItemIsEditable) {
+                        return false;
+                    }
+                    Q_EMIT entered(curIdx);
+                    return true;
+                }
             }
         }
         return false;

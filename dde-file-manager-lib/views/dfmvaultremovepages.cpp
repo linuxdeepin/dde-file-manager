@@ -66,7 +66,7 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
 void DFMVaultRemovePages::initConnect()
 {
     connect(this, &DFMVaultRemovePages::buttonClicked, this, &DFMVaultRemovePages::onButtonClicked);
-    connect(VaultController::getVaultController(), &VaultController::signalLockVault, this, &DFMVaultRemovePages::onLockVault);
+    connect(VaultController::ins(), &VaultController::signalLockVault, this, &DFMVaultRemovePages::onLockVault);
     connect(m_progressView, &DFMVaultRemoveProgressView::removeFinished, this, &DFMVaultRemovePages::onVualtRemoveFinish);
 }
 
@@ -178,7 +178,7 @@ void DFMVaultRemovePages::onButtonClicked(int index)
         if (VaultLockManager::getInstance().checkAuthentication(VAULT_REMOVE)){
             m_bRemoveVault = true;
             // 验证成功，先对保险箱进行上锁
-            VaultController::getVaultController()->lockVault();
+            VaultController::ins()->lockVault();
         }
     }
         break;
@@ -195,8 +195,8 @@ void DFMVaultRemovePages::onLockVault(int state)
             showRemoveWidget();
             emit accepted();
 
-            QString vaultLockPath = VaultController::getVaultController()->vaultLockPath();
-            QString vaultUnlockPath = VaultController::getVaultController()->vaultUnlockPath();
+            QString vaultLockPath = VaultController::ins()->vaultLockPath();
+            QString vaultUnlockPath = VaultController::ins()->vaultUnlockPath();
             m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
         }else{
             // error tips

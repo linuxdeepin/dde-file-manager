@@ -96,7 +96,7 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
     DFileMenu *menu = nullptr;
 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topWidget);
-    VaultController *controller = VaultController::getVaultController();
+    VaultController *controller = VaultController::ins();
 
     VaultController::VaultState vaultState = controller->state();
 
@@ -235,7 +235,7 @@ bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
 
     emit fileSignalManager->requestCloseAllTabOfVault(wnd->windowId());
 
-    VaultController::getVaultController()->lockVault();
+    VaultController::ins()->lockVault();
 
     return true;
 }
