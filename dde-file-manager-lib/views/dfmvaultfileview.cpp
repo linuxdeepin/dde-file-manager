@@ -30,12 +30,12 @@
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
-    connect(VaultController::getVaultController(), &VaultController::signalFileDeleted, this, &DFMVaultFileView::onFileDeleted);
+    connect(VaultController::ins(), &VaultController::signalFileDeleted, this, &DFMVaultFileView::onFileDeleted);
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
 {
-    VaultController::VaultState enState = VaultController::getVaultController()->state();
+    VaultController::VaultState enState = VaultController::ins()->state();
 
     QWidget *wndPtr = widget()->topLevelWidget();
     DFMVaultPageBase *page = nullptr;
