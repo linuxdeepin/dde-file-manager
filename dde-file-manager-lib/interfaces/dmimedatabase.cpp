@@ -54,7 +54,21 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
     QMimeType result;
     QString path = fileInfo.path();
-    if (DStorageInfo::isLowSpeedDevice(path)) {
+    bool bMatchExtension = false;
+    //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+    if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
+            || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
+        QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
+                                             QRegularExpression::DotMatchesEverythingOption
+                                             | QRegularExpression::DontCaptureOption
+                                             | QRegularExpression::OptimizeOnFirstUsageOption);
+
+        const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
+                                                            QRegularExpression::DontCheckSubjectStringMatchOption);
+
+        bMatchExtension = match.hasMatch();
+    }
+    if (DStorageInfo::isLowSpeedDevice(path) || bMatchExtension) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
