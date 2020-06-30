@@ -58,7 +58,11 @@ QRect ScreenObjectWayland::availableGeometry() const
     QRect dockrect = dealRectRatio(dockrectI.operator QRect());  //缩放处理
 
 #ifndef UNUSED_SMARTDOCK
-    if (!ret.contains(dockrect))
+    qreal ratio = qApp->primaryScreen()->devicePixelRatio();
+    QRect t_rect = ret;
+    t_rect.setSize(t_rect.size() * ratio);  //原始geometry大小
+
+    if (!t_rect.contains(dockrectI))
         return ret;
     qDebug() << "wl dock in screen" << name();
 #endif
@@ -75,7 +79,7 @@ QRect ScreenObjectWayland::availableGeometry() const
    {
        int w = dockrect.left() - ret.left();
        if (w >= 0)
-           ret.setWidth(w);
+           ret.setWidth(static_cast<int>(w / ratio));
        else {
            qCritical() << "dockrect.left() - ret.left() is invaild" << w;
        }
@@ -86,7 +90,7 @@ QRect ScreenObjectWayland::availableGeometry() const
    {
        int h = dockrect.top() - ret.top();
        if (h >= 0)
-           ret.setHeight(h);
+           ret.setHeight(static_cast<int>(h / ratio));
        else {
            qCritical() << "dockrect.top() - ret.top() is invaild" << h;
        }
