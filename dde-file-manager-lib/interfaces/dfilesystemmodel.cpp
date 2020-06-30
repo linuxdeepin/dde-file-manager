@@ -1116,6 +1116,11 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
 {
     Q_Q(DFileSystemModel);
 
+    //fix 31327， 监控./.hidden文件更改
+    if ((fileUrl.fileName() == ".hidden") && !(q->filters() & QDir::Hidden)) {
+        q->refresh();
+    }
+
     const FileSystemNodePointer &node = rootNode;
 
     if (!node) {
