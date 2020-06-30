@@ -942,7 +942,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 if (urls.size() > 0) {
                     QString filepath = urls.front().toLocalFile();
                     if (VaultController::isVaultFile(filepath) && !d->isVaultDelSigConnected) {
-                        connect(VaultController::getVaultController(), &VaultController::signalFileDeleted, this, [&](){
+                        connect(VaultController::ins(), &VaultController::signalFileDeleted, this, [&](){
                             model()->refresh();
                         });
                         d->isVaultDelSigConnected = true;
