@@ -62,7 +62,7 @@ QRect ScreenObject::availableGeometry() const
     QRect t_rect = ret;
     t_rect.setSize(t_rect.size() * ratio);  //原始geometry大小
 
-    if (!t_rect.contains(dockrectI))
+    if (!t_rect.contains(dockrectI)) //使用原始大小判断的dock区所在的屏幕
         return ret;
 #endif
 
@@ -78,7 +78,7 @@ QRect ScreenObject::availableGeometry() const
     {
         int w = dockrect.left() - ret.left();
         if (w >= 0)
-            ret.setWidth(static_cast<int>(w / ratio));
+            ret.setWidth(static_cast<int>(w / ratio)); //原始大小计算的宽，需缩放处理
         else {
             qCritical() << "dockrect.left() - ret.left() is invaild" << w;
         }
@@ -89,7 +89,7 @@ QRect ScreenObject::availableGeometry() const
     {
         int h = dockrect.top() - ret.top();
         if (h >= 0)
-            ret.setHeight(static_cast<int>(h / ratio));
+            ret.setHeight(static_cast<int>(h / ratio)); //原始大小计算的高，需缩放处理
         else {
             qCritical() << "dockrect.top() - ret.top() is invaild" << h;
         }
