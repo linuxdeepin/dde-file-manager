@@ -229,6 +229,11 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 //        QMimeType fileMimeType;
         QStringList supportedMimeTypes;
         bool mime_displayOpenWith = true;
+        //fix bug 35546 【文件管理器】【5.1.2.2-1】【sp2】【sp1】选择多个只读文件夹，删除按钮没有置灰
+        //只判断当前选中的文件夹是否是只读文件夹
+        if (!info->isWritable() && !info->isFile() && !info->isSymLink()) {
+            disableList << MenuAction::Delete;
+        }
 
 #if 1   //!fix bug#29264.部分格式的文件在上面的MimesAppsManager::getDefaultAppDesktopFileByMimeType
         //!调用中可以找到app打开，但是在后面的判断是由于该app的supportedMimeTypes中并没有本文件的mimeTypeList支持
