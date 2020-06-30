@@ -23,7 +23,7 @@ public:
     bool stop() Q_DECL_OVERRIDE;
 
     QPointer<DAbstractFileWatcher> proxy;
-    std::function<DUrl (const DUrl&)> urlConvertFun;
+    std::function<DUrl (const DUrl &)> urlConvertFun;
 
     Q_DECLARE_PUBLIC(DFileProxyWatcher)
 };
@@ -57,6 +57,7 @@ DFileProxyWatcher::DFileProxyWatcher(const DUrl &url, DAbstractFileWatcher *prox
     connect(proxy, &DAbstractFileWatcher::fileDeleted, this, &DFileProxyWatcher::onFileDeleted);
     connect(proxy, &DAbstractFileWatcher::fileMoved, this, &DFileProxyWatcher::onFileMoved);
     connect(proxy, &DAbstractFileWatcher::subfileCreated, this, &DFileProxyWatcher::onSubfileCreated);
+    connect(proxy, &DAbstractFileWatcher::fileModified, this, &DFileProxyWatcher::onFileModified);
 }
 
 void DFileProxyWatcher::onFileDeleted(const DUrl &url)
@@ -85,4 +86,11 @@ void DFileProxyWatcher::onSubfileCreated(const DUrl &url)
     Q_D(const DFileProxyWatcher);
 
     emit subfileCreated(d->urlConvertFun(url));
+}
+
+void DFileProxyWatcher::onFileModified(const DUrl &url)
+{
+    Q_D(const DFileProxyWatcher);
+
+    emit fileModified(d->urlConvertFun(url));
 }
