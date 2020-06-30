@@ -20,7 +20,9 @@
  */
 #include "dlocalfilehandler.h"
 #include "private/dfilehandler_p.h"
+#include "../controllers/vaultcontroller.h"
 
+#include <QObject>
 #include <QDir>
 #include <QDateTime>
 #include <QTemporaryFile>
@@ -69,11 +71,11 @@ bool DLocalFileHandler::mkdir(const DUrl &url)
 {
     Q_ASSERT(url.isLocalFile());
 
+    Q_D(DFileHandler);
+
     if (QDir::current().mkdir(url.toLocalFile())) {
         return true;
     }
-
-    Q_D(DFileHandler);
 
     d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
 
