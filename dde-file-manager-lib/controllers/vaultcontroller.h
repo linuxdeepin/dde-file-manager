@@ -263,6 +263,8 @@ public slots:
     void refreshTotalSize();
 
 private slots:
+    // 创建保险箱，执行该槽函数,通知保险箱创建成功与否，并更新保险箱的状态
+    void slotCreateVault(int state);
     void slotUnlockVault(int state);
     void slotLockVault(int state);
 
