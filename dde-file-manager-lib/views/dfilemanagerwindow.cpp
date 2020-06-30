@@ -344,7 +344,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     }
 
     if (fileUrl.scheme() == DFMVAULT_SCHEME) {
-        if (VaultController::Unlocked != VaultController::getVaultController()->state()
+        if (VaultController::Unlocked != VaultController::ins()->state()
                 || fileUrl.host() == "delete") {
             DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
             view->widget()->setParent(q);

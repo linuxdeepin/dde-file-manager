@@ -87,7 +87,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
 
     connect(this, &DFMVaultRecoveryKeyPages::buttonClicked, this, &DFMVaultRecoveryKeyPages::onButtonClicked);
     connect(m_recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &DFMVaultRecoveryKeyPages::recoveryKeyChanged);
-    connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultRecoveryKeyPages::onUnlockVault);
+    connect(VaultController::ins(), &VaultController::signalUnlockVault, this, &DFMVaultRecoveryKeyPages::onUnlockVault);
     connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 }
 
@@ -146,7 +146,7 @@ void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
         QString strClipher("");
         if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
             m_bUnlockByKey = true;
-            VaultController::getVaultController()->unlockVault(strClipher);
+            VaultController::ins()->unlockVault(strClipher);
         } else {
             showAlertMessage(tr("Wrong recovery key"));
         }

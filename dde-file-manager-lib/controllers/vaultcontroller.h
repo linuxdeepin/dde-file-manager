@@ -58,7 +58,7 @@ public:
     explicit VaultController(QObject *parent = nullptr);
 public:
 
-    static VaultController *getVaultController();
+    static VaultController *ins();
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
