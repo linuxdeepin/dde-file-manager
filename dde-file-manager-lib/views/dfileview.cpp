@@ -181,6 +181,8 @@ public:
     bool adjustFileNameCol = false; // mac finder style half-auto col size adjustment flag.
 
     char justAvoidWaringOfAlignmentBoundary[2];//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
+
+    bool isVaultDelSigConnected = false; //is vault delete signal connected.
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -936,6 +938,16 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             if (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath) || VaultController::isVaultFile(rootPath)) {
                 appController->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             } else {
+                //! refresh after vault file deleted.
+                if (urls.size() > 0) {
+                    QString filepath = urls.front().toLocalFile();
+                    if (VaultController::isVaultFile(filepath) && !d->isVaultDelSigConnected) {
+                        connect(VaultController::getVaultController(), &VaultController::signalFileDeleted, this, [&](){
+                            model()->refresh();
+                        });
+                        d->isVaultDelSigConnected = true;
+                    }
+                }
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             }
             break;
