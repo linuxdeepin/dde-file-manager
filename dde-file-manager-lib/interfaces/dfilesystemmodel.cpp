@@ -1290,9 +1290,12 @@ DFileSystemModel::~DFileSystemModel()
     }
 
     //fix bug 33014
-    releaseJobController();
+//    releaseJobController();
 
     if (d->jobController) {
+        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
         d->jobController->stopAndDeleteLater();
     }
 

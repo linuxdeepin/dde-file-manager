@@ -203,7 +203,8 @@ VaultController::VaultController(QObject *parent)
     connect(this, &VaultController::sigUnlockVault, d->m_cryFsHandle, &CryFsHandle::unlockVault);
     connect(this, &VaultController::sigLockVault, d->m_cryFsHandle, &CryFsHandle::lockVault);
 
-    connect(d->m_cryFsHandle, &CryFsHandle::signalCreateVault, this, &VaultController::signalCreateVault);
+    // 创建保险箱，关联信号
+    connect(d->m_cryFsHandle, &CryFsHandle::signalCreateVault, this, &VaultController::slotCreateVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalUnlockVault, this, &VaultController::slotUnlockVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalLockVault, this, &VaultController::slotLockVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadError, this, &VaultController::signalReadError);
@@ -1001,6 +1002,15 @@ void VaultController::refreshTotalSize()
     }
     DUrl url = vaultToLocalUrl(makeVaultUrl());
     m_sizeWorker->start({url});
+}
+
+// 创建保险箱，执行该槽函数,通知保险箱创建成功与否，并更新保险箱的状态
+void VaultController::slotCreateVault(int state)
+{
+    if(state == static_cast<int>(ErrorCode::Success)){
+        m_enVaultState = Unlocked;
+    }
+    emit signalCreateVault(state);
 }
 
 void VaultController::slotUnlockVault(int state)
