@@ -98,7 +98,7 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     m_pWidget3->setVisible(false);
 
     // cryfs对象
-    VaultController * pcryfs = VaultController::getVaultController();
+    VaultController * pcryfs = VaultController::ins();
     connect(pcryfs, &VaultController::signalCreateVault,
             this, &DFMVaultActiveFinishedView::slotEncryptComplete);
 
@@ -161,7 +161,7 @@ void DFMVaultActiveFinishedView::slotEncryptVault()
             // 调用创建保险箱接口
             // 拿到密码
             QString strPassword = OperatorCenter::getInstance().getSaltAndPasswordClipher();
-            VaultController::getVaultController()->createVault(strPassword);
+            VaultController::ins()->createVault(strPassword);
         });
         t.detach();
     }else{

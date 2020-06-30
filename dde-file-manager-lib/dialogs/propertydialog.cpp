@@ -420,7 +420,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
                 titleList << shareManager;
             }
             if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() && fileInfo->canManageAuth() &&
-                    !VaultController::getVaultController()->isRootDirectory(m_url.toLocalFile())) {
+                    !VaultController::ins()->isRootDirectory(m_url.toLocalFile())) {
                 titleList << authManager;
             }
         }
@@ -1175,7 +1175,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
 
     if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())
-            && !VaultController::getVaultController()->isRootDirectory(info->filePath())) {
+            && !VaultController::ins()->isRootDirectory(info->filePath())) {
         DFMFileListFile flf(QFileInfo(info->filePath()).absolutePath());
         QString fileName = info->fileName();
         QCheckBox *hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
@@ -1507,7 +1507,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         }
 
         QString filePath = info->path();
-        if (VaultController::getVaultController()->isVaultFile(info->path())) { // Vault file need to use stat function to read file permission.
+        if (VaultController::ins()->isVaultFile(info->path())) { // Vault file need to use stat function to read file permission.
             QString filePath = info->toLocalFile();
             struct stat buf;
             std::string stdStr = filePath.toStdString();
