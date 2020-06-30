@@ -90,7 +90,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
 
     connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
-    connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
+    connect(VaultController::ins(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
     connect(m_tipsButton, &QPushButton::clicked, [this]{
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
@@ -173,7 +173,7 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
         QString strClipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strClipher)){
             m_bUnlockByPwd = true;
-            VaultController::getVaultController()->unlockVault(strClipher);
+            VaultController::ins()->unlockVault(strClipher);
         }else {
             // 设置密码输入框颜色
             m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");

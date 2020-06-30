@@ -163,7 +163,7 @@ QList<QIcon> VaultFileInfo::additionalIcon() const
 
 bool VaultFileInfo::isWritable() const
 {
-    VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(fileUrl());
+    VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(fileUrl());
     if (fbi.isExist){
         return fbi.isWritable;
     }
@@ -173,7 +173,7 @@ bool VaultFileInfo::isWritable() const
 
 bool VaultFileInfo::isSymLink() const
 {
-    VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(fileUrl());
+    VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(fileUrl());
     if (fbi.isExist){
         return fbi.isSymLink;
     }
@@ -184,8 +184,7 @@ bool VaultFileInfo::isSymLink() const
 
 QFileDevice::Permissions VaultFileInfo::permissions() const
 {
-    QFileInfo fileInfo(fileUrl().toLocalFile());
-    return fileInfo.permissions();
+    return VaultController::ins()->getPermissions(fileUrl().toLocalFile());
 }
 
 QSet<MenuAction> VaultFileInfo::disableMenuActionList() const
@@ -207,7 +206,7 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
     if(type != SpaceArea) {
         if (isRootDirectory()) {
 
-            VaultController::VaultState vaultState = VaultController::getVaultController()->state();
+            VaultController::VaultState vaultState = VaultController::ins()->state();
 
             QVector<MenuAction> actions;
             if (vaultState == VaultController::Unlocked) {
@@ -272,7 +271,7 @@ bool VaultFileInfo::canRename() const
     }
 
     // 如果父目录为只读权限，则不能重命名
-    VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(parentUrl());
+    VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(parentUrl());
     if (fbi.isExist && !fbi.isWritable){
         return false;
     }    
@@ -309,7 +308,7 @@ qint64 VaultFileInfo::size() const
 {
     if (isRootDirectory()) {
 
-        qint64 totoalSize = VaultController::getVaultController()->totalsize();
+        qint64 totoalSize = VaultController::ins()->totalsize();
         return totoalSize;
     }
 
@@ -334,7 +333,7 @@ bool VaultFileInfo::isDir() const
 bool VaultFileInfo::canDrop() const
 {
     // 保险箱处于开锁状态下，可以拖拽文件到保险箱，否则，不支持拖拽
-    if(VaultController::VaultState::Unlocked == VaultController::getVaultController()->getVaultState()){
+    if(VaultController::VaultState::Unlocked == VaultController::ins()->getVaultState()){
         return true;
     }else {
         return false;
@@ -376,7 +375,7 @@ bool VaultFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) cons
 bool VaultFileInfo::isRootDirectory() const
 {
     bool bRootDir = false;
-    QString localFilePath = VaultController::getVaultController()->makeVaultLocalPath();
+    QString localFilePath = VaultController::ins()->makeVaultLocalPath();
     QString vrfilePath = DUrl::fromVaultFile("/").toString();
     QString path = DAbstractFileInfo::filePath();
     if (localFilePath == path || vrfilePath == path || localFilePath + "/" == path || localFilePath == path + "/") {

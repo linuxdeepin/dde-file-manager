@@ -83,8 +83,8 @@ VaultLockManager::VaultLockManager(QObject *parent)
     connect(&d->m_alarmClock, &QTimer::timeout, this, &VaultLockManager::processAutoLock);
     d->m_alarmClock.setInterval(1000);
 
-    connect(VaultController::getVaultController(), &VaultController::signalLockVault, this,  &VaultLockManager::slotLockVault);
-    connect(VaultController::getVaultController(), &VaultController::signalUnlockVault, this,  &VaultLockManager::slotUnlockVault);
+    connect(VaultController::ins(), &VaultController::signalLockVault, this,  &VaultLockManager::slotLockVault);
+    connect(VaultController::ins(), &VaultController::signalUnlockVault, this,  &VaultLockManager::slotUnlockVault);
 
     loadConfig();
 }
@@ -162,7 +162,7 @@ void VaultLockManager::processAutoLock()
 {
     Q_D(VaultLockManager);
 
-    VaultController *controller = VaultController::getVaultController();
+    VaultController *controller = VaultController::ins();
     if (controller->state() != VaultController::Unlocked
             || d->m_autoLockState == Never) {
 

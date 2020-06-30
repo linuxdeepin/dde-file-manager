@@ -126,12 +126,12 @@ DUrl VaultDirIterator::next()
 
         QString path = iterator->filePath();
         DUrl url = VaultController::localToVault(path);
-        VaultController::getVaultController()->updateFileInfo(DUrlList() << url);
+        VaultController::ins()->updateFileInfo(DUrlList() << url);
         return url;
     }
 
     DUrl url = VaultController::localToVault(iterator->next());
-    VaultController::getVaultController()->updateFileInfo(DUrlList() << url);
+    VaultController::ins()->updateFileInfo(DUrlList() << url);
     return url;
 }
 
@@ -225,7 +225,7 @@ VaultController::VaultController(QObject *parent)
     m_enVaultState = state();
 }
 
-VaultController *VaultController::getVaultController()
+VaultController *VaultController::ins()
 {
     if (!cryfs) {
         DUrl url(DFMVAULT_ROOT);
@@ -857,6 +857,10 @@ QFileDevice::Permissions VaultController::getPermissions(QString filePath)
                 permissions &= ~permission;
             }
         };
+
+        setPermission(st_mode & S_IRUSR, QFileDevice::ReadOwner);
+        setPermission(st_mode & S_IWUSR, QFileDevice::WriteOwner);
+        setPermission(st_mode & S_IXUSR, QFileDevice::ExeOwner);
 
         setPermission(st_mode & S_IRUSR, QFileDevice::ReadUser);
         setPermission(st_mode & S_IWUSR, QFileDevice::WriteUser);

@@ -622,7 +622,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
             // 保险箱下的文件删除，先判断所在文件夹是否可写
             QString absolutePath = source_info->absolutePath();
             if (VaultController::isVaultFile(absolutePath)){
-                VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(VaultController::localToVault(absolutePath));
+                VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(VaultController::localToVault(absolutePath));
                 if (!fbi.isWritable){
                     ok = false;
                 }else{
@@ -643,7 +643,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
             // 保险箱下的文件删除，先判断所在文件夹是否可写
             QString absolutePath = source_info->absolutePath();
             if (VaultController::isVaultFile(absolutePath)){
-                VaultController::FileBaseInfo fbi = VaultController::getVaultController()->getFileInfo(VaultController::localToVault(absolutePath));
+                VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(VaultController::localToVault(absolutePath));
                 if (!fbi.isWritable){
                     ok = false;
                 }else{
@@ -942,7 +942,17 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
     }
 
     if (toInfo) {
-        handler->setPermissions(toInfo->fileUrl(), fromInfo->permissions());
+
+        // vault file fetch permissons separately.
+        QFileDevice::Permissions permissions;
+        QString filePath = fromInfo->fileUrl().toLocalFile();
+        if (VaultController::ins()->isVaultFile(filePath)) {
+            permissions = VaultController::ins()->getPermissions(filePath);
+        } else {
+            permissions = fromInfo->permissions();
+        }
+
+        handler->setPermissions(toInfo->fileUrl(), permissions);
     }
 
     if (mode == DFileCopyMoveJob::CopyMode) {
