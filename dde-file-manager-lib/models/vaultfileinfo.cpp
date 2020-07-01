@@ -80,9 +80,7 @@ QString VaultFileInfo::iconName() const
         if (d->proxy) {
             iconName = d->proxy->iconName();
         }
-    }
-    else if(!iconName.isEmpty())
-    {
+    } else if (!iconName.isEmpty()) {
         return iconName;
     }
 
@@ -164,7 +162,7 @@ QList<QIcon> VaultFileInfo::additionalIcon() const
 bool VaultFileInfo::isWritable() const
 {
     VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(fileUrl());
-    if (fbi.isExist){
+    if (fbi.isExist) {
         return fbi.isWritable;
     }
 
@@ -174,7 +172,7 @@ bool VaultFileInfo::isWritable() const
 bool VaultFileInfo::isSymLink() const
 {
     VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(fileUrl());
-    if (fbi.isExist){
+    if (fbi.isExist) {
         return fbi.isSymLink;
     }
 
@@ -192,18 +190,9 @@ QSet<MenuAction> VaultFileInfo::disableMenuActionList() const
     return DAbstractFileInfo::disableMenuActionList();
 }
 
-DUrl VaultFileInfo::goToUrlWhenDeleted() const
-{
-    if (isRootDirectory()) {
-        return DUrl(COMPUTER_ROOT);
-    }
-
-    return DAbstractFileInfo::goToUrlWhenDeleted();
-}
-
 QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    if(type != SpaceArea) {
+    if (type != SpaceArea) {
         if (isRootDirectory()) {
 
             VaultController::VaultState vaultState = VaultController::ins()->state();
@@ -234,7 +223,7 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
 
 QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList(MenuType type) const
 {
-    if(type != SpaceArea) {
+    if (type != SpaceArea) {
         if (isRootDirectory()) {
 
             QMap<MenuAction, QVector<MenuAction> > actions;
@@ -272,9 +261,9 @@ bool VaultFileInfo::canRename() const
 
     // 如果父目录为只读权限，则不能重命名
     VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(parentUrl());
-    if (fbi.isExist && !fbi.isWritable){
+    if (fbi.isExist && !fbi.isWritable) {
         return false;
-    }    
+    }
 
     return true;
 }
@@ -333,9 +322,9 @@ bool VaultFileInfo::isDir() const
 bool VaultFileInfo::canDrop() const
 {
     // 保险箱处于开锁状态下，可以拖拽文件到保险箱，否则，不支持拖拽
-    if(VaultController::VaultState::Unlocked == VaultController::ins()->getVaultState()){
+    if (VaultController::VaultState::Unlocked == VaultController::ins()->getVaultState()) {
         return true;
-    }else {
+    } else {
         return false;
     }
 }

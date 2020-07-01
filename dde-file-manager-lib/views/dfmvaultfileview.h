@@ -45,6 +45,11 @@ public slots:
      */
     void onFileDeleted();
 
+    /**
+     * @brief onLeaveVault 离开保险箱，当上锁/删除保险箱时调用
+     */
+    void onLeaveVault(int state);
+
 protected:
     /**
      * @brief eventFilter 事件过滤器，用于获取保险箱操作事件
