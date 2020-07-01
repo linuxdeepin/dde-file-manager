@@ -16,6 +16,9 @@
 #include "dfileproxywatcher.h"
 #include "dstorageinfo.h"
 
+#include "controllers/vaultcontroller.h"
+#include "models/vaultfileinfo.h"
+
 template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
@@ -30,6 +33,12 @@ TagController::TagController(QObject* const parent)
 
 const DAbstractFileInfoPointer TagController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent>& event) const
 {
+    //! 如过在标记中有保险箱的文件需要创建保险箱的fileinfo
+    if(VaultController::isVaultFile(event->url().fragment()))
+    {
+        return DAbstractFileInfoPointer(new VaultFileInfo(event->url()));
+    }
+
     DAbstractFileInfoPointer TaggedFilesInfo{ new TagFileInfo{ event->url() } };
 
     return TaggedFilesInfo;
