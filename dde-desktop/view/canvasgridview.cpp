@@ -1559,7 +1559,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     //sp2 fix bug#30019 当.hidden文件改变时刷新model,用于实时更新隐藏文件
     //次部分也关联sp1的bug35439因此从bugfix-merge-feature提取过来
     connect(d->filesystemWatcher, &DAbstractFileWatcher::fileModified, this, [this](const DUrl &url){
-        if (url.fileName() == ".hidden" && !(model()->filters() & QDir::Hidden))
+        if ((url.fileName() == ".hidden") && !(model()->filters() & QDir::Hidden))
             model()->refresh();
     });
     //end
@@ -1605,7 +1605,6 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             if (findOldPos) {
                 GridManager::instance()->remove(oriUrl.toString());
                 GridManager::instance()->add(oldPos, dstUrl.toString());
-                model()->refresh();
             } else {
                 Q_EMIT itemCreated(dstUrl);
             }
@@ -2241,11 +2240,6 @@ void CanvasGridView::initConnection()
     });
 
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
-        //创建或者粘贴时保持之前的状态
-        if (GridManager::instance()->autoMerge()){
-            model()->refresh();
-            return ;
-        }
         d->lastMenuNewFilepath = url.toString();
         GridManager::instance()->add(d->lastMenuNewFilepath);
     });
