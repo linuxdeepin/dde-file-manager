@@ -31,6 +31,7 @@ DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
     connect(VaultController::ins(), &VaultController::signalFileDeleted, this, &DFMVaultFileView::onFileDeleted);
+    connect(VaultController::ins(), &VaultController::signalLockVault, this, &DFMVaultFileView::onLeaveVault);
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
@@ -82,6 +83,13 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
 void DFMVaultFileView::onFileDeleted()
 {
     this->model()->refresh();
+}
+
+void DFMVaultFileView::onLeaveVault(int state)
+{
+    if (state == 0) {
+        this->cd(DUrl(COMPUTER_ROOT));
+    }
 }
 
 bool DFMVaultFileView::eventFilter(QObject *obj, QEvent *event)
