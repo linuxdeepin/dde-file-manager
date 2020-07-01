@@ -402,9 +402,11 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 {
     m_isDeleteFiles = true;
     DUrlList urlList = vaultToLocalUrls(event->urlList());
-    DFileService::instance()->deleteFiles(event->sender(), urlList);                 //! 发送计算大小完成后文管首页刷新信号
-    const_cast<VaultController *>(this)->updateFileInfo(urlList);
-    emit const_cast<VaultController *>(this)->signalFileDeleted();
+    bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
+    if (bDeletedSuccess) {
+        const_cast<VaultController *>(this)->updateFileInfo(urlList);
+        emit const_cast<VaultController *>(this)->signalFileDeleted();
+    }
     m_isDeleteFiles = false;
     return true;
 }
@@ -413,9 +415,11 @@ DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> 
 {
     m_isDeleteFiles = true;
     DUrlList urlList = vaultToLocalUrls(event->urlList());
-    DFileService::instance()->deleteFiles(event->sender(), urlList);                 //! 发送计算大小完成后文管首页刷新信号
-    const_cast<VaultController *>(this)->updateFileInfo(urlList);
-    emit const_cast<VaultController *>(this)->signalFileDeleted();
+    bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
+    if (bDeletedSuccess) {
+        const_cast<VaultController *>(this)->updateFileInfo(urlList);
+        emit const_cast<VaultController *>(this)->signalFileDeleted();
+    }
     m_isDeleteFiles = false;
     return urlList;
 }
