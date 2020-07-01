@@ -30,6 +30,7 @@
 #include "models/mergeddesktopfileinfo.h"
 #include "interfaces/private/mergeddesktop_common_p.h"
 #include "private/dabstractfilewatcher_p.h"
+#include "shutil/dfmfilelistfile.h"
 
 #include <QList>
 #include <QStandardPaths>
@@ -166,21 +167,44 @@ const DAbstractFileInfoPointer MergedDesktopController::createFileInfo(const QSh
 
 const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-//    if (!dataInitialized) {
-//        initData();
-//        dataInitialized = true;
-//    }
-    // blumia: 文件监听占用完了的时候有可能桌面会监听不到文件变动,此时即便 F5 也不会刷新该 Controller 存储的整理桌面数据,故改为每次都重新初始化整理数据
-    initData();
+    //以下部分为解决bug35439从bugfix-merge-feature提取过来
 
+    // blumia: 文件监听占用完了的时候有可能桌面会监听不到文件变动,此时即便 F5 也不会刷新该 Controller 存储的整理桌面数据,故改为每次都重新初始化整理数据
+
+    //加锁失败，说明有线程在跑后面的算法
+    if (!m_runMtx.tryLock(0)){
+        m_childrenLock.lock();
+        m_cv.wait(&m_childrenLock);
+        QList<DAbstractFileInfoPointer> infoList = m_childrenList;
+        m_childrenLock.unlock();
+        return infoList;
+    }
+
+    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
+
+    arrangedFileUrls = initData(event->filters());
     currentUrl = event->url();
     QString path { currentUrl.path() };
     QList<DAbstractFileInfoPointer> infoList;
 
-    auto appendVirtualEntries = [this, &infoList](bool displayEmptyEntry = false, const QStringList & expandedEntries = {}) {
+    auto appendEntryFiles = [this](QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType){
+        for (const DUrl & url : arrangedFileUrls[entryType]) {
+            DAbstractFileInfoPointer info {
+                new MergedDesktopFileInfo(convertToDFMMDPath(url), currentUrl)
+            };
+            infoList.append(info);
+        }
+    };
+
+    auto appendVirtualEntries = [this, &infoList,appendEntryFiles](bool displayEmptyEntry = false, const QStringList & expandedEntries = {}) {
         for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_ENTRY; i++) {
             DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
             if (!displayEmptyEntry && arrangedFileUrls[oneType].isEmpty()) {
+                continue;
+            }
+            //屏蔽掉2个以下文件的分类图标
+            if(arrangedFileUrls[oneType].size() < 2){
+                appendEntryFiles(infoList, oneType);
                 continue;
             }
             QString entryName = entryNameByEnum(oneType);
@@ -238,6 +262,11 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
         }
     }
 
+    m_runMtx.unlock();
+    m_childrenLock.lock();
+    m_childrenList = infoList;
+    m_childrenLock.unlock();
+    m_cv.wakeAll();
     return infoList;
 }
 
@@ -463,6 +492,7 @@ DMD_TYPES MergedDesktopController::checkUrlArrangedType(const DUrl url)
 
 void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 {
+    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
     DMD_TYPES typeInfo = checkUrlArrangedType(url);
     if (arrangedFileUrls[typeInfo].contains(url)) {
         qWarning() << url << "existed, it must be a bug!!!!!!!!";
@@ -479,6 +509,7 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 
 void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 {
+    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(url)) {
@@ -495,6 +526,7 @@ void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 
 void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl)
 {
+    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(oriUrl)) {
@@ -514,30 +546,49 @@ void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl
     DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileMoved, vOriUrl, vDstUrl);
 }
 
-void MergedDesktopController::initData() const
+QMap<DMD_TYPES, QList<DUrl> > MergedDesktopController::initData(QDir::Filters ftrs)
 {
-    arrangedFileUrls.clear();
+    QMap<DMD_TYPES, QList<DUrl> > tArrangedFileUrls;
 
     QDir desktopDir(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
+#if 0
     const QStringList &fileList = desktopDir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
+#else
+    //自动整理下需要显示隐藏文件,故新加QDir::Filters ftrs
+    QStringList fileList = desktopDir.entryList(ftrs, QDir::Name);
+#endif
+    //文件名排序
+    auto compateFunc = [](const QString &str1, const QString &str2) -> bool{
+        return FileSortFunction::compareByString(str1,str2);
+    };
+    qSort(fileList.begin(),fileList.end(),compateFunc);
+    //end
+
+    //解决自动整理时的文件隐藏显示问题
+    bool showHidden = ftrs.testFlag(QDir::Hidden);
+    DFMFileListFile *hiddenFiles = new DFMFileListFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
+
     for (const QString &oneFile : fileList) {
+        if (!showHidden && hiddenFiles->contains(oneFile)){
+            continue;
+        }
         DUrl oneUrl = DUrl::fromLocalFile(desktopDir.filePath(oneFile));
         DMD_TYPES typeInfo = checkUrlArrangedType(oneUrl);
-        arrangedFileUrls[typeInfo].append(oneUrl);
+        tArrangedFileUrls[typeInfo].append(oneUrl);
     }
 
-    return;
+    return tArrangedFileUrls;
 }
 
-void MergedDesktopController::appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const
-{
-    for (const DUrl & url : arrangedFileUrls[entryType]) {
-        DAbstractFileInfoPointer info {
-            new MergedDesktopFileInfo(convertToDFMMDPath(url), currentUrl)
-        };
-        infoList.append(info);
-    }
-}
+//void MergedDesktopController::appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const
+//{
+//    for (const DUrl & url : arrangedFileUrls[entryType]) {
+//        DAbstractFileInfoPointer info {
+//            new MergedDesktopFileInfo(convertToDFMMDPath(url), currentUrl)
+//        };
+//        infoList.append(info);
+//    }
+//}
 
 DUrl MergedDesktopController::convertToDFMMDPath(const DUrl &oriUrl)
 {
@@ -551,11 +602,25 @@ DUrl MergedDesktopController::convertToDFMMDPath(const DUrl &oriUrl, DMD_TYPES o
 {
     DUrl vUrl;
 
+
+#if 0
+    //    if (oneType == DMD_FOLDER) {
+    //        vUrl = DUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER + oriUrl.fileName());
+    //    } else {
+    //        vUrl = DUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType) + QDir::separator() + oriUrl.fileName());
+    //    }
+#else
+    //oriUrl.fileName()自动整理时在获取带有特殊不规范字符的名字时不准确，改为‘/’获取
+    auto str = oriUrl.toString();
+    auto idxPos = str.indexOf("/");
+    auto fileNameStartPos = str.length() - idxPos - 1;
+    auto fileName = str.right(fileNameStartPos);
     if (oneType == DMD_FOLDER) {
-        vUrl = DUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER + oriUrl.fileName());
+        vUrl = DUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER + fileName);
     } else {
-        vUrl = DUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType) + QDir::separator() + oriUrl.fileName());
+        vUrl = DUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType) + QDir::separator() + fileName);
     }
+#endif
 
     return vUrl;
 }

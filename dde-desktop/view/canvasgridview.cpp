@@ -1556,6 +1556,13 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     }
     qDebug() << "end GridManager::init" << gTime.elapsed();
     d->filesystemWatcher = model()->fileWatcher();
+    //sp2 fix bug#30019 当.hidden文件改变时刷新model,用于实时更新隐藏文件
+    //次部分也关联sp1的bug35439因此从bugfix-merge-feature提取过来
+    connect(d->filesystemWatcher, &DAbstractFileWatcher::fileModified, this, [this](const DUrl &url){
+        if (url.fileName() == ".hidden" && !(model()->filters() & QDir::Hidden))
+            model()->refresh();
+    });
+    //end
 
     connect(d->filesystemWatcher, &DAbstractFileWatcher::subfileCreated,
     this, [ = ](const DUrl & url) {
@@ -1638,6 +1645,37 @@ bool CanvasGridView::setRootUrl(const DUrl &url)
     clearSelection();
 
     return setCurrentUrl(url);
+}
+
+const DUrlList CanvasGridView::autoMergeSelectedUrls() const
+{
+    auto selects = selectionModel()->selectedIndexes();
+    DUrlList urls;
+    for (auto index : selects) {
+        auto info = model()->fileInfo(index);
+
+        //为了满足自定义模式下对多个文件的重命名时的replaceText里的判断
+        //这里提前改成对应的Durl
+        if (info && !info->isVirtualEntry()) {
+            if (GridManager::instance()->autoMerge()){
+                if (!info)
+                    continue ;
+                QString fileBaseName{ info->baseName() };
+                const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
+                if (fileBaseName.trimmed().isEmpty()) {
+                    qWarning() << "replace fileBaseName(not include suffix) trimmed is empty string";
+                    continue;
+                }
+                int max_length = MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size();
+                if (fileBaseName.toLocal8Bit().size() > max_length) {
+                    fileBaseName = DFMGlobal::cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
+                }
+                DUrl vUrl{ info->getUrlByNewFileName(fileBaseName + suffix) };
+                urls << vUrl;
+            }
+        }
+    }
+    return urls;
 }
 
 const DUrlList CanvasGridView::selectedUrls() const
@@ -2944,8 +2982,20 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         }
         break;
         case FileManagerProperty: {
-
-            DFMGlobal::showPropertyDialog(this, this->selectedUrls());
+            //DFMGlobal::showPropertyDialog(this, this->selectedUrls());
+            //解决自动整理修改文件属性不生效问题
+            QList<DUrl> selectedUrlLst{};
+            if(GridManager::instance()->autoMerge()){
+                QList<DUrl> t_selectedUrls{};
+                t_selectedUrls = this->autoMergeSelectedUrls();
+                for(auto temp : t_selectedUrls){
+                    if(DFMMD_SCHEME == temp.scheme())
+                        selectedUrlLst.append(MergedDesktopController::convertToRealPath(temp));
+                }
+            }else {
+                selectedUrlLst = this->selectedUrls();
+            }
+            DFMGlobal::showPropertyDialog(this, selectedUrlLst);
             break;
         }
         case MenuAction::Rename: {
