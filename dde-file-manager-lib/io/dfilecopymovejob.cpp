@@ -883,6 +883,18 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
         DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
 
         do {
+            // 当为保险箱路径时，判断目录名的长度，如果长度大于85，则不让其创建成功，并报错“文件名过长”
+            QString strPath = toInfo->fileUrl().toString();
+            if(VaultController::isVaultFile(strPath)){
+                // 获得目录名
+                QString strDirName = strPath.section("/", -1, -1);
+                if(strDirName.toUtf8().length() > 255){
+                    setError(DFileCopyMoveJob::MkdirError, qApp->translate("DFileCopyMoveJob", "Failed to open the dir, cause: File name too long"));
+                    action = handleError(fromInfo, toInfo);
+                    break;
+                }
+            }
+
             if (!handler->mkdir(toInfo->fileUrl())) {
                 const DAbstractFileInfoPointer &parent_info = DFileService::instance()->createFileInfo(nullptr, toInfo->parentUrl());
 
@@ -894,6 +906,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
 
                 action = handleError(fromInfo, toInfo);
             }
+
         } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
 
         if (action != DFileCopyMoveJob::NoAction) {
@@ -988,6 +1001,18 @@ open_file: {
         DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
 
         do {
+            // 如果打开文件在保险箱内
+            QString strPath = toInfo->fileUrl().toString();
+            if(VaultController::isVaultFile(strPath)){
+                QString strFileName = strPath.section("/", -1, -1);
+                if(strFileName.toUtf8().length() > 255){
+                    qCDebug(fileJob()) << "open error:" << fromInfo->fileUrl();
+                    setError(DFileCopyMoveJob::OpenError, qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
+                    action = handleError(fromInfo, nullptr);
+                    break;
+                }
+            }
+
             if (fromDevice->open(QIODevice::ReadOnly)) {
                 action = DFileCopyMoveJob::NoAction;
             } else {
