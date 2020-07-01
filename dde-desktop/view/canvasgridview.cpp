@@ -1605,6 +1605,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             if (findOldPos) {
                 GridManager::instance()->remove(oriUrl.toString());
                 GridManager::instance()->add(oldPos, dstUrl.toString());
+                model()->refresh();
             } else {
                 Q_EMIT itemCreated(dstUrl);
             }
@@ -2240,6 +2241,11 @@ void CanvasGridView::initConnection()
     });
 
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
+        //创建或者粘贴时保持之前的状态
+        if (GridManager::instance()->autoMerge()){
+            model()->refresh();
+            return ;
+        }
         d->lastMenuNewFilepath = url.toString();
         GridManager::instance()->add(d->lastMenuNewFilepath);
     });

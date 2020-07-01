@@ -78,7 +78,6 @@ public:
     static DUrl convertToRealPath(const DUrl &oneUrl);
     static DUrlList convertToRealPaths(DUrlList urlList);
     static DMD_TYPES checkUrlArrangedType(const DUrl url);
-    static QMap<DMD_TYPES, QList<DUrl> > initData(QDir::Filters ftrs);
 
 public slots:
     void desktopFilesCreated(const DUrl &url);
@@ -86,7 +85,8 @@ public slots:
     void desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl);
 
 private:
-//    void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
+    void initData(QDir::Filters ftrs) const;
+    void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
 
     DFileWatcher* m_desktopFileWatcher;
     mutable DUrl currentUrl;

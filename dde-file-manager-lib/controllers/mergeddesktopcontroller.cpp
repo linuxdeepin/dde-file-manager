@@ -167,33 +167,21 @@ const DAbstractFileInfoPointer MergedDesktopController::createFileInfo(const QSh
 
 const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-//以下部分为解决bug35439从bugfix-merge-feature提取过来
-// blumia: 文件监听占用完了的时候有可能桌面会监听不到文件变动,此时即便 F5 也不会刷新该 Controller 存储的整理桌面数据,故改为每次都重新初始化整理数据
-//    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
+    //    if (!dataInitialized) {
+    //        initData();
+    //        dataInitialized = true;
+    //    }
+    // blumia: 文件监听占用完了的时候有可能桌面会监听不到文件变动,此时即便 F5 也不会刷新该 Controller 存储的整理桌面数据,故改为每次都重新初始化整理数据
+    initData(event->filters());
 
-    arrangedFileUrls = initData(event->filters());
     currentUrl = event->url();
     QString path { currentUrl.path() };
     QList<DAbstractFileInfoPointer> infoList;
 
-    auto appendEntryFiles = [this](QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType){
-        for (const DUrl & url : arrangedFileUrls[entryType]) {
-            DAbstractFileInfoPointer info {
-                new MergedDesktopFileInfo(convertToDFMMDPath(url), currentUrl)
-            };
-            infoList.append(info);
-        }
-    };
-
-    auto appendVirtualEntries = [this, &infoList,appendEntryFiles](bool displayEmptyEntry = false, const QStringList & expandedEntries = {}) {
+    auto appendVirtualEntries = [this, &infoList](bool displayEmptyEntry = false, const QStringList & expandedEntries = {}) {
         for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_ENTRY; i++) {
             DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
             if (!displayEmptyEntry && arrangedFileUrls[oneType].isEmpty()) {
-                continue;
-            }
-            //屏蔽掉2个以下文件的分类图标
-            if(arrangedFileUrls[oneType].size() < 2){
-                appendEntryFiles(infoList, oneType);
                 continue;
             }
             QString entryName = entryNameByEnum(oneType);
@@ -250,6 +238,7 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
             appendFolders();
         }
     }
+
     return infoList;
 }
 
@@ -526,9 +515,9 @@ void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl
     DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileMoved, vOriUrl, vDstUrl);
 }
 
-QMap<DMD_TYPES, QList<DUrl> > MergedDesktopController::initData(QDir::Filters ftrs)
+void MergedDesktopController::initData(QDir::Filters ftrs) const
 {
-    QMap<DMD_TYPES, QList<DUrl> > tArrangedFileUrls;
+    arrangedFileUrls.clear();
 
     QDir desktopDir(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
 #if 0
@@ -537,38 +526,32 @@ QMap<DMD_TYPES, QList<DUrl> > MergedDesktopController::initData(QDir::Filters ft
     //自动整理下需要显示隐藏文件,故新加QDir::Filters ftrs
     QStringList fileList = desktopDir.entryList(ftrs, QDir::Name);
 #endif
-    //文件名排序
-    auto compateFunc = [](const QString &str1, const QString &str2) -> bool{
-        return FileSortFunction::compareByString(str1,str2);
-    };
-    qSort(fileList.begin(),fileList.end(),compateFunc);
-    //end
 
     //解决自动整理时的文件隐藏显示问题
     bool showHidden = ftrs.testFlag(QDir::Hidden);
     DFMFileListFile *hiddenFiles = new DFMFileListFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
-
     for (const QString &oneFile : fileList) {
         if (!showHidden && hiddenFiles->contains(oneFile)){
             continue;
         }
+
         DUrl oneUrl = DUrl::fromLocalFile(desktopDir.filePath(oneFile));
         DMD_TYPES typeInfo = checkUrlArrangedType(oneUrl);
-        tArrangedFileUrls[typeInfo].append(oneUrl);
+        arrangedFileUrls[typeInfo].append(oneUrl);
     }
 
-    return tArrangedFileUrls;
+    return;
 }
 
-//void MergedDesktopController::appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const
-//{
-//    for (const DUrl & url : arrangedFileUrls[entryType]) {
-//        DAbstractFileInfoPointer info {
-//            new MergedDesktopFileInfo(convertToDFMMDPath(url), currentUrl)
-//        };
-//        infoList.append(info);
-//    }
-//}
+void MergedDesktopController::appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const
+{
+    for (const DUrl & url : arrangedFileUrls[entryType]) {
+        DAbstractFileInfoPointer info {
+            new MergedDesktopFileInfo(convertToDFMMDPath(url), currentUrl)
+        };
+        infoList.append(info);
+    }
+}
 
 DUrl MergedDesktopController::convertToDFMMDPath(const DUrl &oriUrl)
 {
