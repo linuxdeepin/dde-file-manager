@@ -333,11 +333,10 @@ void DFileCopyMoveJobPrivate::unsetError()
 }
 
 DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFileInfo *sourceInfo,
-        const DAbstractFileInfo *targetInfo)
+                                                              const DAbstractFileInfo *targetInfo)
 {
     //当任务对话框结束返回cancel
-    if(btaskdailogclose)
-    {
+    if (btaskdailogclose) {
         return DFileCopyMoveJob::CancelAction;
     }
     if (actionOfError[error] != DFileCopyMoveJob::NoAction) {
@@ -387,7 +386,7 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
     do {
         if (threadOfErrorHandle && threadOfErrorHandle->loopLevel() > 0) {
             lastErrorHandleAction = DThreadUtil::runInThread(threadOfErrorHandle, handle, &DFileCopyMoveJob::Handle::handleError,
-                                    q_ptr, error, sourceInfo, targetInfo);
+                                                             q_ptr, error, sourceInfo, targetInfo);
         } else {
             lastErrorHandleAction = handle->handleError(q_ptr, error, sourceInfo, targetInfo);
         }
@@ -541,7 +540,7 @@ QString DFileCopyMoveJobPrivate::formatFileName(const QString &name) const
 QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfo *sourceFileInfo, const DAbstractFileInfo *targetDirectory)
 {
     const QString &copy_text = QCoreApplication::translate("DFileCopyMoveJob", "copy",
-                               "Extra name added to new file name when used for file name.");
+                                                           "Extra name added to new file name when used for file name.");
 
     DAbstractFileInfoPointer target_file_info;
     QString file_base_name = sourceFileInfo->baseName();
@@ -554,10 +553,9 @@ QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfo *sourceF
 //        suffix = filename.mid(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$"))+1);
 //    }
     //'\'没有转义为了避免警告加了转义
-    if(filename.contains(QRegularExpression("\\.7z\\.[0-9]{3,10}$")))
-    {
+    if (filename.contains(QRegularExpression("\\.7z\\.[0-9]{3,10}$"))) {
         file_base_name = filename.left(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$")));
-        suffix = filename.mid(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$"))+1);
+        suffix = filename.mid(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$")) + 1);
     }
     int number = 0;
 
@@ -621,14 +619,14 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
         if (source_info->isFile() || source_info->isSymLink()) {
             // 保险箱下的文件删除，先判断所在文件夹是否可写
             QString absolutePath = source_info->absolutePath();
-            if (VaultController::isVaultFile(absolutePath)){
+            if (VaultController::isVaultFile(absolutePath)) {
                 VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(VaultController::localToVault(absolutePath));
-                if (!fbi.isWritable){
+                if (!fbi.isWritable) {
                     ok = false;
-                }else{
+                } else {
                     ok = removeFile(handler, source_info.constData());
                 }
-            }else{
+            } else {
                 ok = removeFile(handler, source_info.constData());
             }
 
@@ -642,14 +640,14 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
             }
             // 保险箱下的文件删除，先判断所在文件夹是否可写
             QString absolutePath = source_info->absolutePath();
-            if (VaultController::isVaultFile(absolutePath)){
+            if (VaultController::isVaultFile(absolutePath)) {
                 VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(VaultController::localToVault(absolutePath));
-                if (!fbi.isWritable){
+                if (!fbi.isWritable) {
                     ok = false;
-                }else{
+                } else {
                     ok = mergeDirectory(handler, source_info.constData(), nullptr);
                 }
-            }else{
+            } else {
                 ok = mergeDirectory(handler, source_info.constData(), nullptr);
             }
 
@@ -885,10 +883,10 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
         do {
             // 当为保险箱路径时，判断目录名的长度，如果长度大于85，则不让其创建成功，并报错“文件名过长”
             QString strPath = toInfo->fileUrl().toString();
-            if(VaultController::isVaultFile(strPath)){
+            if (VaultController::isVaultFile(strPath)) {
                 // 获得目录名
                 QString strDirName = strPath.section("/", -1, -1);
-                if(strDirName.toUtf8().length() > 255){
+                if (strDirName.toUtf8().length() > 255) {
                     setError(DFileCopyMoveJob::MkdirError, qApp->translate("DFileCopyMoveJob", "Failed to open the dir, cause: File name too long"));
                     action = handleError(fromInfo, toInfo);
                     break;
@@ -916,9 +914,9 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
 
     bool sortInode = toInfo && !fileHints.testFlag(DFileCopyMoveJob::DontSortInode);
     const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(nullptr, fromInfo->fileUrl(), QStringList(),
-                                          QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
-                                          sortInode ? static_cast<QDirIterator::IteratorFlag>(DDirIterator::SortINode)
-                                          : QDirIterator::NoIteratorFlags, true);
+                                                                                      QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
+                                                                                      sortInode ? static_cast<QDirIterator::IteratorFlag>(DDirIterator::SortINode)
+                                                                                      : QDirIterator::NoIteratorFlags, true);
 
     if (!iterator) {
         setError(DFileCopyMoveJob::UnknowUrlError, "Failed on create dir iterator");
@@ -1003,9 +1001,9 @@ open_file: {
         do {
             // 如果打开文件在保险箱内
             QString strPath = toInfo->fileUrl().toString();
-            if(VaultController::isVaultFile(strPath)){
+            if (VaultController::isVaultFile(strPath)) {
                 QString strFileName = strPath.section("/", -1, -1);
-                if(strFileName.toUtf8().length() > 255){
+                if (strFileName.toUtf8().length() > 255) {
                     qCDebug(fileJob()) << "open error:" << fromInfo->fileUrl();
                     setError(DFileCopyMoveJob::OpenError, qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
                     action = handleError(fromInfo, nullptr);
@@ -1094,7 +1092,7 @@ open_file: {
 
     Q_FOREVER {
         qint64 current_pos = fromDevice->pos();
-    read_data:
+read_data:
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
@@ -1133,15 +1131,14 @@ open_file: {
         }
 
         current_pos = toDevice->pos();
-    write_data:
+write_data:
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
         qint64 size_write = toDevice->write(data, size_read);
         //如果写失败了，直接推出
         if (size_write < 0) {
-            if(!stateCheck())
-            {
+            if (!stateCheck()) {
                 //临时处理 fix
                 //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
                 //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
@@ -1150,39 +1147,39 @@ open_file: {
                 }
                 return false;
             }
-           setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
-           switch (handleError(fromInfo, toInfo)) {
-           case DFileCopyMoveJob::RetryAction: {
-               if (!toDevice->seek(current_pos)) {
-                   setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
-                   //临时处理 fix
-                   //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
-                   //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
-                   if (FileUtils::isGvfsMountFile(toInfo->path())) {
-                       toDevice->closeWriteReadFailed(true);
-                   }
-                   return false;
-               }
+            setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
+            switch (handleError(fromInfo, toInfo)) {
+            case DFileCopyMoveJob::RetryAction: {
+                if (!toDevice->seek(current_pos)) {
+                    setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
+                    //临时处理 fix
+                    //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+                    //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+                    if (FileUtils::isGvfsMountFile(toInfo->path())) {
+                        toDevice->closeWriteReadFailed(true);
+                    }
+                    return false;
+                }
 
-               goto write_data;
-           }
-           case DFileCopyMoveJob::SkipAction:
-               //临时处理 fix
-               //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
-               //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
-               if (FileUtils::isGvfsMountFile(toInfo->path())) {
-                   toDevice->closeWriteReadFailed(true);
-               }
-               return true;
-           default:
-               //临时处理 fix
-               //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
-               //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
-               if (FileUtils::isGvfsMountFile(toInfo->path())) {
-                   toDevice->closeWriteReadFailed(true);
-               }
-               return false;
-           }
+                goto write_data;
+            }
+            case DFileCopyMoveJob::SkipAction:
+                //临时处理 fix
+                //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+                //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+                if (FileUtils::isGvfsMountFile(toInfo->path())) {
+                    toDevice->closeWriteReadFailed(true);
+                }
+                return true;
+            default:
+                //临时处理 fix
+                //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+                //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+                if (FileUtils::isGvfsMountFile(toInfo->path())) {
+                    toDevice->closeWriteReadFailed(true);
+                }
+                return false;
+            }
         }
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
         const DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
@@ -1290,8 +1287,7 @@ open_file: {
         return true;
     }
     //当打开目标文件失败了，就不去校验数据完整性
-    else if(action == DFileCopyMoveJob::CancelAction)
-    {
+    else if (action == DFileCopyMoveJob::CancelAction) {
         return false;
     }
     //校验数据完整性
@@ -1391,6 +1387,11 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
     if (storage_target.device() != "gvfsd-fuse" || storage_source == storage_target) {
         // 先尝试直接rename
         if (handler->rename(oldInfo->fileUrl(), newInfo->fileUrl())) {
+            // 剪切合并需要更新进度条
+            needUpdateProgress = true;
+            if (Q_UNLIKELY(!stateCheck())) {
+                return false;
+            }
             return true;
         }else{  // bug-35066 添加对保险箱的判断
             if(oldInfo->isSymLink()){   // 如果为链接文件
@@ -1404,7 +1405,7 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
                     }
 
                     // 新建链接文件
-                    if(!handler->link(oldInfo->symlinkTargetPath(), newInfo->fileUrl())){
+                    if (!handler->link(oldInfo->symlinkTargetPath(), newInfo->fileUrl())) {
                         return false;
                     }
 
@@ -1665,13 +1666,13 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
         //预设一个总大小，让前期进度平滑一些（目前阈值取1mb）
         qreal virtualSize = totalSize < 1000000 ? 1000000 : totalSize;
         if (dataSize < virtualSize /*&& total_size > 0*/) {
-         // 取一个时时的总大小来计算一个模糊进度
-         qreal fuzzyProgress = qreal(dataSize) / virtualSize;
-         if (fuzzyProgress < 0.3 && fuzzyProgress > lastProgress)
-             lastProgress = fuzzyProgress;
+            // 取一个时时的总大小来计算一个模糊进度
+            qreal fuzzyProgress = qreal(dataSize) / virtualSize;
+            if (fuzzyProgress < 0.3 && fuzzyProgress > lastProgress)
+                lastProgress = fuzzyProgress;
         }
     }
-     // 保证至少出现%1
+    // 保证至少出现%1
     if (lastProgress < 0.02) {
         lastProgress = 0.01;
     }
@@ -1705,10 +1706,10 @@ void DFileCopyMoveJobPrivate::updateMoveProgress()
         }
     }
     // 保证至少出现%1
-   if (lastProgress < 0.02) {
-       lastProgress = 0.01;
-   }
-   Q_EMIT q_ptr->progressChanged(qMin(lastProgress, 1.0), 0);
+    if (lastProgress < 0.02) {
+        lastProgress = 0.01;
+    }
+    Q_EMIT q_ptr->progressChanged(qMin(lastProgress, 1.0), 0);
 }
 
 void DFileCopyMoveJobPrivate::updateSpeed()
@@ -2154,8 +2155,8 @@ void DFileCopyMoveJob::run()
         }
 
         // 只要有一个不是skip或者cancel就执行一下sync
-        if (!mayExecSync && d->lastErrorHandleAction!=SkipAction &&
-                            d->lastErrorHandleAction!=CancelAction) {
+        if (!mayExecSync && d->lastErrorHandleAction != SkipAction &&
+                d->lastErrorHandleAction != CancelAction) {
             mayExecSync = true;
         }
 
