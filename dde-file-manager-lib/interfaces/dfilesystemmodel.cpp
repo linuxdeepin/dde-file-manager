@@ -1203,6 +1203,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
     _q_processFileEvent_runing.compare_exchange_strong(expect, true);
 
     while (checkFileEventQueue()) {
+        qApp->processEvents();
         mutex.lock();
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         mutex.unlock();

@@ -179,7 +179,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     }
 
     // 选中保险箱中的文件，则屏蔽掉共享菜单选项
-    if (currentUrl.isVaultFile()){
+    if (VaultController::isVaultFile(currentUrl.path()) || VaultController::isVaultFile(currentUrl.fragment()) || VaultController::isVaultFile(info->toQFileInfo().canonicalFilePath())){
         unusedList << MenuAction::Share << MenuAction::UnShare;
     }
 
