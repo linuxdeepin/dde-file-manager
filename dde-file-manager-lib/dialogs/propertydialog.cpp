@@ -417,7 +417,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         } else {
             titleList << basicInfo;
             //! 选中的文件是保险箱的，则屏蔽掉共享选项
-            if (fileInfo->canShare() && VaultController::isVaultFile(fileInfo->toQFileInfo().canonicalFilePath())) {
+            if (fileInfo->canShare() && !VaultController::isVaultFile(fileInfo->toQFileInfo().canonicalFilePath())) {
                 titleList << shareManager;
             }
             if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() && fileInfo->canManageAuth() &&
