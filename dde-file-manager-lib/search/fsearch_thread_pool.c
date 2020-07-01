@@ -206,11 +206,9 @@ fsearch_thread_pool_wait_for_thread (FsearchThreadPool *pool, GList *thread)
 {
     thread_context_t *ctx = thread->data;
     g_mutex_lock (&ctx->mutex);
-//    while (fsearch_thread_pool_task_is_busy (pool, thread)) {
-//printf("+++++++++++++++++++++++++++++++++++++++++++wait finish0\n");
-//        g_cond_wait (&ctx->finished_cond, &ctx->mutex);
-//        printf("+++++++++++++++++++++++++++++++++++++++++++wait finish1\n");
-//    }
+    while (fsearch_thread_pool_task_is_busy (pool, thread)) {
+        g_cond_wait (&ctx->finished_cond, &ctx->mutex);
+    }
     g_mutex_unlock (&ctx->mutex);
     return true;
 }
