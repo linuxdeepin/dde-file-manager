@@ -314,8 +314,7 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
     DUrl bookMarkTo = DUrl::fromBookMarkFile(to, to.fileName());
 
     BookMarkPointer item = findBookmark(bookMarkFrom);
-    if (!item)
-    {
+    if (!item) {
         return;
     }
 
@@ -333,8 +332,7 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             //挂载的设备目录特殊处理
             if (locateUrl.startsWith("/media")) {
                 indexOfFirstDir = locateUrl.lastIndexOf("/", locateUrl.length() - 1);
-            }
-            else {
+            } else {
                 indexOfFirstDir = locateUrl.indexOf("/", 1);
             }
             locateUrl = locateUrl.mid(indexOfFirstDir);
@@ -348,7 +346,7 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             list[i] = map;
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
 
-            BookMark *new_item = new BookMark(bookMarkTo);
+            BookMarkPointer new_item(new BookMark(bookMarkTo));
             new_item->m_created = item->m_created;
             new_item->m_lastModified = QDateTime::currentDateTime();
             new_item->mountPoint = map.value("mountPoint").toString();
