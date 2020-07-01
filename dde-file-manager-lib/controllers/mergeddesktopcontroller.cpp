@@ -167,20 +167,9 @@ const DAbstractFileInfoPointer MergedDesktopController::createFileInfo(const QSh
 
 const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    //以下部分为解决bug35439从bugfix-merge-feature提取过来
-
-    // blumia: 文件监听占用完了的时候有可能桌面会监听不到文件变动,此时即便 F5 也不会刷新该 Controller 存储的整理桌面数据,故改为每次都重新初始化整理数据
-
-    //加锁失败，说明有线程在跑后面的算法
-    if (!m_runMtx.tryLock(0)){
-        m_childrenLock.lock();
-        m_cv.wait(&m_childrenLock);
-        QList<DAbstractFileInfoPointer> infoList = m_childrenList;
-        m_childrenLock.unlock();
-        return infoList;
-    }
-
-    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
+//以下部分为解决bug35439从bugfix-merge-feature提取过来
+// blumia: 文件监听占用完了的时候有可能桌面会监听不到文件变动,此时即便 F5 也不会刷新该 Controller 存储的整理桌面数据,故改为每次都重新初始化整理数据
+//    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
 
     arrangedFileUrls = initData(event->filters());
     currentUrl = event->url();
@@ -261,12 +250,6 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
             appendFolders();
         }
     }
-
-    m_runMtx.unlock();
-    m_childrenLock.lock();
-    m_childrenList = infoList;
-    m_childrenLock.unlock();
-    m_cv.wakeAll();
     return infoList;
 }
 
@@ -492,7 +475,6 @@ DMD_TYPES MergedDesktopController::checkUrlArrangedType(const DUrl url)
 
 void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 {
-    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
     DMD_TYPES typeInfo = checkUrlArrangedType(url);
     if (arrangedFileUrls[typeInfo].contains(url)) {
         qWarning() << url << "existed, it must be a bug!!!!!!!!";
@@ -509,7 +491,6 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 
 void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 {
-    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(url)) {
@@ -526,7 +507,6 @@ void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 
 void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl)
 {
-    QMutexLocker aful(&m_arrangedFileUrlsMtx); //禁止其他线程修改arrangedFileUrls
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(oriUrl)) {
