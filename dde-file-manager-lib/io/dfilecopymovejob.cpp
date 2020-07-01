@@ -1370,6 +1370,14 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
         }else{  // bug-35066 添加对保险箱的判断
             if(oldInfo->isSymLink()){   // 如果为链接文件
                 if(VaultController::isVaultFile(oldInfo->path()) || VaultController::isVaultFile(newInfo->path())){ // 如果是保险箱任务
+
+                    // 判断当前目录是否存在该名称的链接文件，如果存在，则删除
+                    if (newInfo->exists()) {
+                        if (!removeFile(handler, newInfo)) {
+                            return false;
+                        }
+                    }
+
                     // 新建链接文件
                     if(!handler->link(oldInfo->symlinkTargetPath(), newInfo->fileUrl())){
                         return false;
