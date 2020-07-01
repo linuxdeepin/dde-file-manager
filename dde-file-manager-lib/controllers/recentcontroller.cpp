@@ -365,7 +365,7 @@ bool RecentController::decompressFile(const QSharedPointer<DFMDecompressEvent> &
 
 bool RecentController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
-    return DFileService::instance()->createSymlink(event->sender(), DUrl::fromLocalFile(event->fileUrl().path()), event->toUrl());
+    return DFileService::instance()->createSymlink(event->sender(), DUrl::fromLocalFile(event->fileUrl().path()), event->toUrl(), event->force());
 }
 
 bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
