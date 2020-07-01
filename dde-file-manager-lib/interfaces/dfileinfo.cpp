@@ -891,6 +891,8 @@ void DFileInfo::refresh()
         d->cacheCanWrite = -1;
         d->cacheCanRename = -1;
         d->cacheIsSymLink = -1;
+        //fix bug 35831 cacheFileExists也需要清空 否则文件存在会被误判
+        d->cacheFileExists = -1;
         canRename();
         isWritable();
         isSymLink();
