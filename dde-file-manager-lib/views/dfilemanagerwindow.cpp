@@ -1265,14 +1265,18 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d] {
         DUrl url = currentUrl();
-        if (VaultController::isVaultFile(url.path()) && !url.isVaultFile())
+
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+
+        if (VaultController::isVaultFile(url.toString()))
         {
-            url = VaultController::localUrlToVault(url);
+            if(info->isSymLink()){
+                url = info->symLinkTarget();
+                url = VaultController::localUrlToVault(url);
+            }
         }
         d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, url));
         emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, url));
-
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
         if (info)
         {
