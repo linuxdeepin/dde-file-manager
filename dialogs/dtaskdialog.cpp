@@ -299,13 +299,13 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
 
 bool DTaskDialog::isHaveVaultTask(const DUrlList &sourceUrls, const DUrl &targetUrl)
 {
-    DUrlList::const_iterator itr = sourceUrls.begin();
-    for (; itr != sourceUrls.end(); ++itr) {
-        QString str = (*itr).toString() + targetUrl.toString();
-        if (VaultController::isVaultFile(str)
-                || str.contains("dfmvault://")) {
-            return true;
-        }
+    if (sourceUrls.isEmpty())
+        return false;
+    // 为了优化性能，判断是否为保险箱任务不必遍历所有
+    QString str = sourceUrls.at(0).toString() + targetUrl.toString();
+    if (VaultController::isVaultFile(str)
+            || str.contains("dfmvault://")) {
+        return true;
     }
     return false;
 }
@@ -787,10 +787,14 @@ void DTaskDialog::stopVaultTask()
 
 bool DTaskDialog::getFlagMapValueIsTrue()
 {
+    if(m_flagMap.isEmpty())
+        return true;
+
     bool flg = false;
     for (bool i : m_flagMap.values()) {
         flg = i;
     }
+
     return flg;
 }
 
