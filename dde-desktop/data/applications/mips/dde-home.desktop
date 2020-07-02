@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=System;
 Comment=Open home directory
-Exec=/usr/bin/dde-file-manager -O -n
+Exec=file-manager.sh -O -n
 GenericName=Home
 Icon=user-home
 Name=Home
