@@ -527,6 +527,10 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             && job->mode() != DFileCopyMoveJob::CopyMode) {
         if (!job->targetUrl().isValid()) {
             showVaultDeleteDialog(wid);
+            // Record deleting state.
+            if (job->sourceUrlList().size() > 1) {
+                VaultController::ins()->setBigFileIsDeleting(true);
+            }
         } else {
             addTaskWidget(wid);
         }
