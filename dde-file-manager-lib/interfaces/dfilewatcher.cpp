@@ -305,7 +305,7 @@ void DFileWatcher::onFileDeleted(const QString &path, const QString &name)
 {
     // 为防止文管卡死，保险箱里文件删除不执行后续流程
     // 只有删除保险箱文件时，才不执行后续流程
-    if (VaultController::isDeleteFiles() && VaultController::isVaultFile(path)) {
+    if (VaultController::isBigFileDeleting()) {
         return;
     }
 
