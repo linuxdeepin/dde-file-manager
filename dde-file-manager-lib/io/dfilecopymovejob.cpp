@@ -1388,14 +1388,18 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
         // 先尝试直接rename
         if (handler->rename(oldInfo->fileUrl(), newInfo->fileUrl())) {
             // 剪切合并需要更新进度条
+            currentJobDataSizeInfo.first = oldInfo->size();
+            currentJobDataSizeInfo.second += newInfo->size();
+            completedDataSize += newInfo->size();
+            completedDataSizeOnBlockDevice += newInfo->size();
             needUpdateProgress = true;
             if (Q_UNLIKELY(!stateCheck())) {
                 return false;
             }
             return true;
-        }else{  // bug-35066 添加对保险箱的判断
-            if(oldInfo->isSymLink()){   // 如果为链接文件
-                if(VaultController::isVaultFile(oldInfo->path()) || VaultController::isVaultFile(newInfo->path())){ // 如果是保险箱任务
+        } else { // bug-35066 添加对保险箱的判断
+            if (oldInfo->isSymLink()) { // 如果为链接文件
+                if (VaultController::isVaultFile(oldInfo->path()) || VaultController::isVaultFile(newInfo->path())) { // 如果是保险箱任务
 
                     // 判断当前目录是否存在该名称的链接文件，如果存在，则删除
                     if (newInfo->exists()) {

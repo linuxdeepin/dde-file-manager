@@ -943,11 +943,13 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                     QString filepath = urls.front().toLocalFile();
                     if (VaultController::isVaultFile(filepath) && !d->isVaultDelSigConnected) {
                         connect(VaultController::ins(), &VaultController::signalFileDeleted, this, [&]() {
-                            model()->refresh();
-                        });
+                            if (VaultController::isBigFileDeleting())
+                                refresh();
+                        }, Qt::DirectConnection);
                         d->isVaultDelSigConnected = true;
                     }
                 }
+                qDebug() << "action delete --------------------------------";
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             }
             break;
