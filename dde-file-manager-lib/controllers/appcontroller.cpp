@@ -408,8 +408,10 @@ void AppController::actionCopy(const QSharedPointer<DFMUrlListBaseEvent> &event)
 
 void AppController::actionPaste(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    fileService->pasteFileByClipboard(event->sender(), event->url());
-}
+    // QTimer::singleshot目的: 多窗口下粘贴，右键拖动标题栏
+    QTimer::singleShot(0, [event] () {
+        fileService->pasteFileByClipboard(event->sender(), event->url());
+    });}
 
 void AppController::actionRename(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
