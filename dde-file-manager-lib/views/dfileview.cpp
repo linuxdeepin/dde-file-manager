@@ -1226,12 +1226,17 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
 
 void DFileView::updateModelActiveIndex()
 {
+    if(m_isRemovingCase) // bug202007010004：正在删除的时候，fileInfo->makeToActive() 第二次调用会 crash
+        return;
+
     Q_D(DFileView);
 
     const RandeIndexList randeList = visibleIndexes(QRect(QPoint(0, verticalScrollBar()->value()), QSize(size())));
 
-    if (randeList.isEmpty())
+    if (randeList.isEmpty()){
+        m_isRemovingCase = false;
         return;
+    }
 
     const RandeIndex &rande = randeList.first();
     DAbstractFileWatcher *fileWatcher = model()->fileWatcher();
@@ -1273,12 +1278,14 @@ void DFileView::updateModelActiveIndex()
             fileInfo->makeToActive();
 
             if (!fileInfo->exists()) {
+                m_isRemovingCase = true;
                 model()->removeRow(i, rootIndex());
             } else if (fileWatcher) {
                 fileWatcher->setEnabledSubfileWatcher(fileInfo->fileUrl());
             }
         }
     }
+    m_isRemovingCase = false;
 }
 
 void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
