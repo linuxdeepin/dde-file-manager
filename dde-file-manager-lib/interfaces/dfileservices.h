@@ -182,6 +182,8 @@ public:
     bool getDoClearTrashState() const;
     //设置当前是否是在清空回收站 fix bug 31324,
     void setDoClearTrashState(const bool bdoing);
+    //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
+    void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;

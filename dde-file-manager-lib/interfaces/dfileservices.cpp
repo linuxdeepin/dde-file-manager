@@ -358,7 +358,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     }
     case DFMEvent::PasteFile: {
         result = CALL_CONTROLLER(pasteFile);
-
+        //fix bug 35855修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程
+#if 0
         if (event->isAccepted()) {
             DFMUrlListBaseEvent e(event->sender(), qvariant_cast<DUrlList>(result));
 
@@ -383,7 +384,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 emit fileRenamed(list.at(i), url);
             }
         }
-
+#endif
         break;
     }
     case DFMEvent::Mkdir:
@@ -1266,6 +1267,34 @@ void DFileService::setDoClearTrashState(const bool bdoing)
     Q_D(DFileService);
 
     d->m_bdoingcleartrash = bdoing;
+}
+
+void DFileService::dealPasteEnd(const QSharedPointer<DFMEvent> &event,const DUrlList &result)
+{
+    if (event->isAccepted()) {
+        DFMUrlListBaseEvent e(event->sender(), result);
+
+        e.setWindowId(event->windowId());
+        laterRequestSelectFiles(e);
+    }
+
+    const DUrlList &list = event->fileUrlList();
+    const DUrlList new_list = result;
+
+    for (int i = 0; i < new_list.count(); ++i) {
+        const DUrl &url = new_list.at(i);
+
+        if (url.isEmpty())
+            continue;
+
+        DFMGlobal::ClipboardAction action = event.staticCast<DFMPasteEvent>()->action();
+
+        if (action == DFMGlobal::ClipboardAction::CopyAction) {
+            emit fileCopied(list.at(i), url);
+        } else if (action == DFMGlobal::ClipboardAction::CutAction) {
+            emit fileRenamed(list.at(i), url);
+        }
+    }
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
