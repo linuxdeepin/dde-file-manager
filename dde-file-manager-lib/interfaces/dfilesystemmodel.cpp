@@ -1168,6 +1168,9 @@ void DFileSystemModelPrivate::_q_processFileEvent()
 
     while (checkFileEventQueue()) {
         qApp->processEvents();
+        if (!me) { // 当前窗口被关闭以后，me 指针指向的窗口会马上被析构，后面的流程不需要再走了
+            return;
+        }
         mutex.lock();
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         mutex.unlock();
@@ -1214,7 +1217,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->remove(fileUrl);
         }
         if (!me) {
-            break;
+            return;
         }
     }
     _q_processFileEvent_runing.store(false);
