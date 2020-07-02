@@ -753,6 +753,16 @@ bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl) con
     QString linkName = getSymlinkFileName(fileUrl);
     QString linkPath = QFileDialog::getSaveFileName(qobject_cast<const QWidget *>(sender) ? qobject_cast<const QWidget *>(sender)->window() : Q_NULLPTR,
                                                     QObject::tr("Create symlink"), linkName);
+
+    //! QFileDialog::getSaveFileName not support vault file, so we need get path self.
+    if (VaultController::ins()->isVaultFile(linkPath)) {
+        QStringList strList = linkPath.split("/");
+        if (strList.back() != linkName) {
+            strList.removeLast();
+            linkPath = strList.join("/") + "/" + linkName;
+        }
+    }
+
     //handle for cancel select file
     if (linkPath.isEmpty()) {
         return false;
