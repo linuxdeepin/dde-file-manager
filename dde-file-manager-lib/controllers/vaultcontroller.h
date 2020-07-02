@@ -156,7 +156,7 @@ public:
      * @brief isDeleteFiles 判断保险箱当前是否正在删除文件
      * @return true/false
      */
-    static bool isDeleteFiles();
+    static bool isBigFileDeleting();
 
     /**
      * @brief isVaultFile  是否为保险箱中的文件
@@ -208,6 +208,13 @@ public:
     {
         m_enVaultState = state;
     }
+
+    /**
+     * @brief setBigFileIsDeleting Record big file deleting state.
+     * Avoid block while mutl-file deleted.
+     * @param isDeleting
+     */
+    void setBigFileIsDeleting(bool const isDeleting);
 
 public slots:
 
@@ -340,7 +347,7 @@ private:
 
     qint64 m_totalSize = 0;
 
-    static bool m_isDeleteFiles;
+    static bool m_isBigFileDeleting;
 
     // 记录保险箱状态
     VaultState m_enVaultState{NotExisted};
