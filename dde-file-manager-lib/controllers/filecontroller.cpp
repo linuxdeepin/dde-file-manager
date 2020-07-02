@@ -737,7 +737,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
     bool bdoingcleartrash = DFileService::instance()->getDoClearTrashState();
     if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
             list.first().toString().endsWith(".local/share/Trash/files")) {
-        connect(job.data(), &DFileCopyMoveJob::finished, this, [ = ]() {
+        connect(job.data(), &QThread::finished, this, [ = ]() {
             DFileService::instance()->setDoClearTrashState(false);
         });
     }
@@ -894,7 +894,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
         return job->targetUrlList();
     }
     //fix bug 35855走新流程不去阻塞主线程，拷贝线程自己去运行，主线程返回，当拷贝线程结束了再去处理以前的相应处理
-    connect(job.data(), &DFileCopyMoveJob::finished, dialogManager->taskDialog(), [this, job, error_handle, slient, event] {
+    connect(job.data(), &QThread::finished, dialogManager->taskDialog(), [this, job, error_handle, slient, event] {
         dialogManager->taskDialog()->removeTaskJob(job.data());
         if (slient)
         {
