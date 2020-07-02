@@ -942,12 +942,14 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 if (urls.size() > 0) {
                     QString filepath = urls.front().toLocalFile();
                     if (VaultController::isVaultFile(filepath) && !d->isVaultDelSigConnected) {
-                        connect(VaultController::ins(), &VaultController::signalFileDeleted, this, [&](){
-                            model()->refresh();
-                        });
+                        connect(VaultController::ins(), &VaultController::signalFileDeleted, this, [&]() {
+                            if (VaultController::isBigFileDeleting())
+                                refresh();
+                        }, Qt::DirectConnection);
                         d->isVaultDelSigConnected = true;
                     }
                 }
+                qDebug() << "action delete --------------------------------";
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             }
             break;
@@ -1241,12 +1243,17 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
 
 void DFileView::updateModelActiveIndex()
 {
+    if (m_isRemovingCase) // bug202007010004：正在删除的时候，fileInfo->makeToActive() 第二次调用会 crash
+        return;
+
     Q_D(DFileView);
 
     const RandeIndexList randeList = visibleIndexes(QRect(QPoint(0, verticalScrollBar()->value()), QSize(size())));
 
-    if (randeList.isEmpty())
+    if (randeList.isEmpty()) {
+        m_isRemovingCase = false;
         return;
+    }
 
     const RandeIndex &rande = randeList.first();
     DAbstractFileWatcher *fileWatcher = model()->fileWatcher();
@@ -1281,12 +1288,14 @@ void DFileView::updateModelActiveIndex()
             fileInfo->makeToActive();
 
             if (!fileInfo->exists()) {
+                m_isRemovingCase = true;
                 model()->removeRow(i, rootIndex());
             } else if (fileWatcher) {
                 fileWatcher->setEnabledSubfileWatcher(fileInfo->fileUrl());
             }
         }
     }
+    m_isRemovingCase = false;
 }
 
 void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -1684,7 +1693,8 @@ void DFileView::dropEvent(QDropEvent *event)
                 }
             }
         }
-
+        //还原鼠标状态
+        DFileService::instance()->setCursorBusyState(false);
         stopAutoScroll();
         setState(NoState);
         viewport()->update();

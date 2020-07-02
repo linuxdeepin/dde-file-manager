@@ -1265,14 +1265,19 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d] {
         DUrl url = currentUrl();
-        if (VaultController::isVaultFile(url.path()) && !url.isVaultFile())
+
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+
+        if (VaultController::isVaultFile(url.toString()))
         {
-            url = VaultController::localUrlToVault(url);
+            // 如果是快捷方式，则赋值为快捷方式的源文件路径，便于正常显示快捷方式的路径
+            if(info->isSymLink()){
+                url = info->symLinkTarget();
+                url = VaultController::localUrlToVault(url);
+            }
         }
         d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, url));
         emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, url));
-
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
         if (info)
         {
