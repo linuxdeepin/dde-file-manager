@@ -1691,7 +1691,8 @@ void DFileView::dropEvent(QDropEvent *event)
                 }
             }
         }
-
+        //还原鼠标状态
+        DFileService::instance()->setCursorBusyState(false);
         stopAutoScroll();
         setState(NoState);
         viewport()->update();
