@@ -28,6 +28,7 @@
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
 #include "dfmapplication.h"
+#include "dfmstandardpaths.h"
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
@@ -72,6 +73,7 @@ void CommandLineManager::initOptions()
                                         "set the file manager working directory (won't work with -r argument)",
                                         "directory");
     QCommandLineOption openWithDialog(QStringList() << "o" << "open", "open with dialog");
+    QCommandLineOption openHomeOption(QStringList() << "O" << "open-home", "open home");
 
     addOption(newWindowOption);
     addOption(backendOption);
@@ -83,6 +85,7 @@ void CommandLineManager::initOptions()
     addOption(get_monitor_files);
     addOption(workingDirOption);
     addOption(openWithDialog);
+    addOption(openHomeOption);
 }
 
 void CommandLineManager::addOption(const QCommandLineOption &option)
@@ -131,6 +134,15 @@ void CommandLineManager::processCommand()
         QStringList files = positionalArguments();
         FileManagerApp::instance()->openWithDialog(files);
 
+        return;
+    }
+
+    if (isSet("O")) {
+         DUrlList argumentUrls;
+         QString homePath = DFMStandardPaths::location(DFMStandardPaths::StandardLocation::HomePath);
+         DUrl url = DUrl::fromUserInput(homePath);
+         argumentUrls.append(url);
+         DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(Q_NULLPTR, argumentUrls, isSet("n"));
         return;
     }
 

@@ -55,7 +55,7 @@
 
 
 VaultController *VaultController::cryfs = nullptr;
-bool VaultController::m_isDeleteFiles = false;
+bool VaultController::m_isBigFileDeleting = false;
 
 class VaultControllerPrivate
 {
@@ -400,27 +400,25 @@ bool VaultController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent
 
 bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    m_isDeleteFiles = true;
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
     if (bDeletedSuccess) {
         const_cast<VaultController *>(this)->updateFileInfo(urlList);
         emit const_cast<VaultController *>(this)->signalFileDeleted();
     }
-    m_isDeleteFiles = false;
+    m_isBigFileDeleting = false;
     return true;
 }
 
 DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    m_isDeleteFiles = true;
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
     if (bDeletedSuccess) {
         const_cast<VaultController *>(this)->updateFileInfo(urlList);
         emit const_cast<VaultController *>(this)->signalFileDeleted();
     }
-    m_isDeleteFiles = false;
+    m_isBigFileDeleting = false;
     return urlList;
 }
 
@@ -840,6 +838,11 @@ qint64 VaultController::totalsize() const
     return m_totalSize;
 }
 
+void VaultController::setBigFileIsDeleting(const bool isDeleting)
+{
+    m_isBigFileDeleting = isDeleting;
+}
+
 void VaultController::updateFolderSizeLabel(const qint64 size) noexcept
 {
     m_totalSize = size;
@@ -921,9 +924,9 @@ DUrl VaultController::urlToVirtualUrl(QString path)
     return VaultController::makeVaultUrl(nextPath.mid(index));
 }
 
-bool VaultController::isDeleteFiles()
+bool VaultController::isBigFileDeleting()
 {
-    return m_isDeleteFiles;
+    return m_isBigFileDeleting;
 }
 
 void VaultController::createVault(const DSecureString &passWord, QString lockBaseDir, QString unlockFileDir)

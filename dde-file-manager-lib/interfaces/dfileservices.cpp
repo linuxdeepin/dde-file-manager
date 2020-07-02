@@ -116,10 +116,9 @@ DFileService::DFileService(QObject *parent)
     d_ptr->m_networkmgr = new QNetworkConfigurationManager();
     d_ptr->m_bonline = d_ptr->m_networkmgr->isOnline();
     d_ptr->m_loop = new QEventLoop();
-    connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged,[this](bool state){
+    connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [this](bool state) {
         d_ptr->m_bonline = state;
-        if (!d_ptr->m_bonline && d_ptr->m_loop)
-        {
+        if (!d_ptr->m_bonline && d_ptr->m_loop) {
             d_ptr->m_loop->exit();
         }
     });
@@ -281,10 +280,9 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                             emit fileDeleted(url);
                         }
                     }
-                }
-                else {
+                } else {
                     //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
-                    if (event->fileUrlList().count() == 1 && event->fileUrlList().first().toString() == TRASH_ROOT){
+                    if (event->fileUrlList().count() == 1 && event->fileUrlList().first().toString() == TRASH_ROOT) {
                         setDoClearTrashState(false);
                     }
                 }
@@ -358,7 +356,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     }
     case DFMEvent::PasteFile: {
         result = CALL_CONTROLLER(pasteFile);
-
+        //fix bug 35855修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程
+#if 0
         if (event->isAccepted()) {
             DFMUrlListBaseEvent e(event->sender(), qvariant_cast<DUrlList>(result));
 
@@ -383,7 +382,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 emit fileRenamed(list.at(i), url);
             }
         }
-
+#endif
         break;
     }
     case DFMEvent::Mkdir:
@@ -466,7 +465,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::OpenFiles:
         result = CALL_CONTROLLER(openFiles);
         if (result.toBool()) {
-            for( auto url : event->fileUrlList()) {
+            for (auto url : event->fileUrlList()) {
                 emit fileOpened(url);
             }
         }
@@ -477,7 +476,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::OpenFilesByApp:
         result = CALL_CONTROLLER(openFilesByApp);
         if (result.toBool()) {
-            for( auto url : event->fileUrlList()) {
+            for (auto url : event->fileUrlList()) {
                 emit fileOpened(url);
             }
         }
@@ -663,7 +662,7 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
     {
         QList<QUrl> org = DFMGlobal::instance()->clipboardFileUrlList();
         DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
-        if (!org.isEmpty() && action != DFMGlobal::UnknowAction){
+        if (!org.isEmpty() && action != DFMGlobal::UnknowAction) {
             for (const DUrl &nd : list) {
                 if (org.isEmpty())
                     break;
@@ -672,7 +671,7 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
             if (org.isEmpty()) //没有文件则清空剪切板
                 DFMGlobal::clearClipboard();
             else
-                DFMGlobal::setUrlsToClipboard(org,action);
+                DFMGlobal::setUrlsToClipboard(org, action);
         }
     }
     //end
@@ -863,7 +862,7 @@ QList<QString> DFileService::getTagsThroughFiles(const QObject *sender, const QL
 }
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const
-{    
+{
     const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
 
     if (info) {
@@ -885,9 +884,9 @@ const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender,
 }
 
 const QList<DAbstractFileInfoPointer> DFileService::getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                                                QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent,bool canconst) const
+                                                                QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, bool canconst) const
 {
-    const auto &&event = dMakeEventPointer<DFMGetChildrensEvent>(sender, fileUrl, nameFilters, filters, flags, silent,canconst);
+    const auto &&event = dMakeEventPointer<DFMGetChildrensEvent>(sender, fileUrl, nameFilters, filters, flags, silent, canconst);
 
     return qvariant_cast<QList<DAbstractFileInfoPointer>>(DFMEventDispatcher::instance()->processEvent(event));
 }
@@ -945,9 +944,8 @@ QList<DAbstractFileInfoPointer> DFileService::getRootFile()
     QMutex mex;
     mex.lock();
     setCursorBusyState(true);
-    for (auto url : d_ptr->rootfilelist)
-    {
-        DAbstractFileInfoPointer rootinfo = createFileInfo(nullptr,url);
+    for (auto url : d_ptr->rootfilelist) {
+        DAbstractFileInfoPointer rootinfo = createFileInfo(nullptr, url);
         if (rootinfo->exists()) {
             ret.push_back(rootinfo);
         }
@@ -972,17 +970,16 @@ void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
 {
     QMutexLocker lock(&d_ptr->m_mutexrootfilechange);
     if (bcreate) {
-        if(!d_ptr->rootfilelist.contains(fileurl)){
+        if (!d_ptr->rootfilelist.contains(fileurl)) {
             DAbstractFileInfoPointer info = createFileInfo(nullptr, fileurl);
-            if(info->exists()) {
+            if (info->exists()) {
                 d_ptr->rootfilelist.push_back(fileurl);
                 qDebug() << "  insert   " << fileurl;
             }
         }
-    }
-    else {
+    } else {
         qDebug() << "  remove   " << d_ptr->rootfilelist;
-        if(d_ptr->rootfilelist.contains(fileurl)){
+        if (d_ptr->rootfilelist.contains(fileurl)) {
             qDebug() << "  remove   " << fileurl;
             d_ptr->rootfilelist.removeOne(fileurl);
         }
@@ -991,16 +988,15 @@ void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
 
 void DFileService::startQuryRootFile()
 {
-    if(!d_ptr->bstartonce) {
+    if (!d_ptr->bstartonce) {
         d_ptr->bstartonce = true;
-    }
-    else {
+    } else {
         return;
     }
     qDebug() << "start thread    startQuryRootFile   ===== " << d_ptr->rootfilelist.size();
     //启用异步线程去读取
     d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
-    connect(d_ptr->m_jobcontroller,&JobController::addChildren,this ,[this](const DAbstractFileInfoPointer &chi){
+    connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this](const DAbstractFileInfoPointer & chi) {
         QMutexLocker lock(&d_ptr->m_mutexrootfilechange);
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
             d_ptr->rootfilelist.push_back(chi->fileUrl());
@@ -1009,7 +1005,7 @@ void DFileService::startQuryRootFile()
         }
     });
 
-    connect(d_ptr->m_jobcontroller,&JobController::addChildrenList,this ,[this](QList<DAbstractFileInfoPointer> ch){
+    connect(d_ptr->m_jobcontroller, &JobController::addChildrenList, this, [this](QList<DAbstractFileInfoPointer> ch) {
         QMutexLocker lock(&d_ptr->m_mutexrootfilechange);
         for (auto chi : ch) {
             if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
@@ -1019,7 +1015,7 @@ void DFileService::startQuryRootFile()
             }
         }
     });
-    connect(d_ptr->m_jobcontroller,&JobController::finished,this,[this](){
+    connect(d_ptr->m_jobcontroller, &JobController::finished, this, [this]() {
         d_ptr->m_jobcontroller->deleteLater();
         qDebug() << "获取 m_jobcontroller  finished  " << QThread::currentThreadId();
         d_ptr->m_jobcontroller = nullptr;
@@ -1049,8 +1045,7 @@ void DFileService::setCursorBusyState(const bool bbusy)
     //fix bug 34594,当快速点击左边侧边栏会出现鼠标一直在转圈圈, 去掉全局判断，直接调用鼠标状态
     if (bbusy) {
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-    }
-    else {
+    } else {
         QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     }
 
@@ -1072,20 +1067,18 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
     DUrl rooturl;
     QString urlpath = url.path();
     QString rootfilename;
-    if (url.scheme() == DFMROOT_SCHEME && urlpath.endsWith(SUFFIX_GVFSMP))
-    {
-        rootfilename = QUrl::fromPercentEncoding( url.path().toUtf8());
+    if (url.scheme() == DFMROOT_SCHEME && urlpath.endsWith(SUFFIX_GVFSMP)) {
+        rootfilename = QUrl::fromPercentEncoding(url.path().toUtf8());
         QStringList rootstrlist = rootfilename.split(QRegularExpression("^//run/user/\\d+/gvfs/"));
         if (rootstrlist.size() >= 2) {
             rootfilename = rootstrlist.at(1);
-            rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP),"");
+            rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP), "");
         }
         if (!(rootfilename.startsWith("smb") || rootfilename.startsWith("ftp"))) {
             return false;
         }
         rooturl = url;
-    }
-    else {
+    } else {
         static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
                                          QRegularExpression::DotMatchesEverythingOption
                                          | QRegularExpression::DontCaptureOption
@@ -1110,10 +1103,9 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             QStringList rootstrlist = path.split(QRegularExpression("^/run/user/\\d+/gvfs/"));
             if (rootstrlist.size() >= 2) {
                 rootfilename = rootstrlist.at(1);
-                rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP),"");
+                rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP), "");
             }
-        }
-        else {
+        } else {
             rootfilename = urllast.left(qi);
             path = urlstr + urllast.left(qi);
         }
@@ -1125,13 +1117,13 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
         rooturl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
     }
 
-    return checkGvfsMountfileBusy(rooturl, rootfilename,showdailog);
+    return checkGvfsMountfileBusy(rooturl, rootfilename, showdailog);
 
 }
 
 bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog)
 {
-    if(!rootUrl.isValid()) {
+    if (!rootUrl.isValid()) {
         return false;
     }
     //设置鼠标状态，查看文件状态是否存在
@@ -1161,11 +1153,11 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
 
     //是网络文件，就去确定host和port端口号
     bool bvist = false;
-    QString host = rootfilename.mid(rootfilename.indexOf("host=")+5,rootfilename.indexOf(","));
+    QString host = rootfilename.mid(rootfilename.indexOf("host=") + 5, rootfilename.indexOf(","));
     QString port;
     if (-1 != rootfilename.indexOf("port=")) {
-        port = rootfilename.right(rootfilename.indexOf("port=")+5);
-        port = port.mid(0,port.indexOf(","));
+        port = rootfilename.right(rootfilename.indexOf("port=") + 5);
+        port = port.mid(0, port.indexOf(","));
     }
 
     QString roottemp = rootfilename;
@@ -1174,9 +1166,8 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     if (rootfilename.startsWith("ftp")) {
         //设置URL的端口。该端口是URL的权限的一部分，如setAuthority（描述）。
         //端口必须是介于0和65535（含）。端口设置为-1表示该端口是不确定的。
-         url.setPort(21);
-    }
-    else {
+        url.setPort(21);
+    } else {
         url.setPort(port.isNull() ? -1 : port.toInt());
     }
     url.setHost(host);//设置主机地址
@@ -1190,7 +1181,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     //每当新的数据到达发射的readyRead（）信号。要求的内容以及相关的头文件会被下载。
     manager.get(request);
     qDebug() << "loop sart ===========";
-    connect(&manager, &QNetworkAccessManager::finished, this, [&](QNetworkReply *reply){
+    connect(&manager, &QNetworkAccessManager::finished, this, [&](QNetworkReply * reply) {
         qDebug() << reply->error() << reply->errorString();
         bvist = QNetworkReply::UnknownNetworkError < reply->error();
         if (d_ptr->m_loop) {
@@ -1225,7 +1216,7 @@ void DFileService::changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo
     mex.lock();
     for (const DAbstractFileInfoPointer &fi : rootinfo) {
         DUrl url = fi->fileUrl();
-        if(!d_ptr->rootfilelist.contains(url) && fi->exists()) {
+        if (!d_ptr->rootfilelist.contains(url) && fi->exists()) {
             d_ptr->rootfilelist.push_back(url);
         }
     }
@@ -1244,7 +1235,7 @@ bool DFileService::checkNetWorkToVistHost(const QString &host)
     }
     bool bvisit = false;
     QEventLoop eventLoop;
-    QHostInfo::lookupHost(host,this,[&](QHostInfo &info){
+    QHostInfo::lookupHost(host, this, [&](QHostInfo & info) {
         qDebug() << " -----       " << info.errorString() << info.hostName();
         bvisit = info.error() == QHostInfo::NoError;
         eventLoop.exit();
@@ -1266,6 +1257,34 @@ void DFileService::setDoClearTrashState(const bool bdoing)
     Q_D(DFileService);
 
     d->m_bdoingcleartrash = bdoing;
+}
+
+void DFileService::dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result)
+{
+    if (event->isAccepted()) {
+        DFMUrlListBaseEvent e(event->sender(), result);
+
+        e.setWindowId(event->windowId());
+        laterRequestSelectFiles(e);
+    }
+
+    const DUrlList &list = event->fileUrlList();
+    const DUrlList new_list = result;
+
+    for (int i = 0; i < new_list.count(); ++i) {
+        const DUrl &url = new_list.at(i);
+
+        if (url.isEmpty())
+            continue;
+
+        DFMGlobal::ClipboardAction action = event.staticCast<DFMPasteEvent>()->action();
+
+        if (action == DFMGlobal::ClipboardAction::CopyAction) {
+            emit fileCopied(list.at(i), url);
+        } else if (action == DFMGlobal::ClipboardAction::CutAction) {
+            emit fileRenamed(list.at(i), url);
+        }
+    }
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
@@ -1351,7 +1370,7 @@ void DFileService::laterRequestSelectFiles(const DFMUrlListBaseEvent &event) con
 
     TIMER_SINGLESHOT_OBJECT(manager, qMax(event.fileUrlList().count() * (10 + event.fileUrlList().count() / 150), 200), {
         manager->requestSelectFile(event);
-                            }, event, manager)
+    }, event, manager)
 }
 
 void DFileService::slotError(QNetworkReply::NetworkError err)

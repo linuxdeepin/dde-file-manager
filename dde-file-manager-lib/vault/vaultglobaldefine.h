@@ -25,7 +25,7 @@
 
 #define MAXLINE                         1024            // shell命令输出每行最大的字符个数
 
-#define VAULT_BASE_PATH QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)
+#define VAULT_BASE_PATH (QDir::homePath() + QString("/.local/share/applications"))  //! 获取保险箱创建的目录地址
 
 #define GET_COMPRESSOR_PID_SHELL(x)     QString("ps -xo pid,cmd | grep /usr/bin/deepin-compressor | grep ")+x+QString(" | grep -v grep | awk '{print $1}'")
 
