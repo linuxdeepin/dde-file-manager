@@ -1241,13 +1241,6 @@ void DFileView::updateModelActiveIndex()
     const RandeIndex &rande = randeList.first();
     DAbstractFileWatcher *fileWatcher = model()->fileWatcher();
 
-    //fix 31327， 监控./.hidden文件更改
-    connect(fileWatcher, &DAbstractFileWatcher::fileModified, this, [this](const DUrl & url) {
-        if (url.fileName() == ".hidden" && !(model()->filters() & QDir::Hidden)) {
-            model()->refresh();
-        }
-    });
-
     for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
 
