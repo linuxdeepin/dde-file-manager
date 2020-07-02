@@ -264,7 +264,9 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
 QVector<MenuAction> DesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     Q_D(const DesktopFileInfo);
-    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer" || d->deepinID == "dde-home") {
+
+
+    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer" || (d->deepinID == "dde-file-manager" && d->exec.contains("-O"))) {
         QVector<MenuAction> actions;
         actions << MenuAction::Open
                 << MenuAction::Separator;
