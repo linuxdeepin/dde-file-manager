@@ -1270,6 +1270,7 @@ void DFileManagerWindow::initConnect()
 
         if (VaultController::isVaultFile(url.toString()))
         {
+            // 如果是快捷方式，则赋值为快捷方式的源文件路径，便于正常显示快捷方式的路径
             if(info->isSymLink()){
                 url = info->symLinkTarget();
                 url = VaultController::localUrlToVault(url);
