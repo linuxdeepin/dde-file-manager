@@ -88,28 +88,6 @@ bool OperatorCenter::createDirAndFile()
         }
     }
 
-    // 创建保险箱解密目录
-    QString strDecryptDir = makeVaultLocalPath(VAULT_DECRYPT_DIR_NAME);
-    QDir decrypyDir(strDecryptDir);
-    if(!decrypyDir.exists()){
-        bool ok = decrypyDir.mkpath(strDecryptDir);
-        if(!ok){
-            qDebug() << tr("create decrypt dir failure!");
-            return false;
-        }
-    }
-
-    // 创建保险箱加密目录
-    QString strEncryptDir = makeVaultLocalPath(VAULT_ENCRYPY_DIR_NAME);
-    QDir encryptDir(strEncryptDir);
-    if(!encryptDir.exists()){
-        bool ok = encryptDir.mkpath(strEncryptDir);
-        if(!ok){
-            qDebug() << tr("create encrypt dir failure!");
-            return false;
-        }
-    }
-
     // 创建密码文件
     QString strPasswordFile = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile passwordFile(strPasswordFile);
