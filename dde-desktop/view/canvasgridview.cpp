@@ -1351,6 +1351,9 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
         return;
     }
 
+    //fix buf#202007010011,忽略drop判断，提升响应速度
+    IgnoreDropFlag idf(model());
+
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = selectionModel()->isSelected(index);
     bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
