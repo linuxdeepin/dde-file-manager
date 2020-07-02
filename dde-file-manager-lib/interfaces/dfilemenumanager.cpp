@@ -183,6 +183,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         unusedList << MenuAction::Share << MenuAction::UnShare;
     }
 
+    DUrlList redirectedUrlList;
     if (urls.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
         //修改在挂载的文件下面，不能删除，但是显示了删除
@@ -250,8 +251,14 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             supportedMimeTypes.removeAll("");
         }
 
+        redirectedUrlList.clear();
         foreach (DUrl url, urls) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
+            // fix bug202007010011 优化文件判断效率，提升右键菜单响应速度
+            auto redirectedUrl = fileInfo->redirectedFileUrl();
+            if (redirectedUrl.isValid()) {
+                redirectedUrlList << redirectedUrl;
+            }
 
             if (!FileUtils::isArchive(url.path())) {
                 isAllCompressedFiles = false;
@@ -390,6 +397,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             if (urls.length() == 1) {
                 action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
             } else {
+#if 0       // fix bug202007010011 优化文件判断效率，提升右键菜单响应速度
                 DUrlList redirectedUrlList;
                 for (auto url : urls) {
                     DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, url);
@@ -398,6 +406,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                         redirectedUrlList << redirectedUrl;
                     }
                 }
+#endif
                 action->setProperty("urls", QVariant::fromValue(redirectedUrlList));
             }
             openWithMenu->addAction(action);
