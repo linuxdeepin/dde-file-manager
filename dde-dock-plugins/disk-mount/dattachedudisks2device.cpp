@@ -109,9 +109,7 @@ QString DAttachedUdisks2Device::displayName()
         }
 
         result = devName;
-    }
-
-    if (storage_info.isValid()) {
+    } else if (storage_info.isValid()) {
         if (!hasLabelName) {
             qint64 bytesTotal = storage_info.bytesTotal();
             result = qApp->translate("DeepinStorage", "%1 Volume").arg(DiskControlItem::formatDiskSize(bytesTotal));
