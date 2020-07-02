@@ -1226,14 +1226,14 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
 
 void DFileView::updateModelActiveIndex()
 {
-    if(m_isRemovingCase) // bug202007010004：正在删除的时候，fileInfo->makeToActive() 第二次调用会 crash
+    if (m_isRemovingCase) // bug202007010004：正在删除的时候，fileInfo->makeToActive() 第二次调用会 crash
         return;
 
     Q_D(DFileView);
 
     const RandeIndexList randeList = visibleIndexes(QRect(QPoint(0, verticalScrollBar()->value()), QSize(size())));
 
-    if (randeList.isEmpty()){
+    if (randeList.isEmpty()) {
         m_isRemovingCase = false;
         return;
     }
@@ -1677,6 +1677,8 @@ void DFileView::dropEvent(QDropEvent *event)
             }
         }
 
+        //还原鼠标状态
+        DFileService::instance()->setCursorBusyState(false);
         stopAutoScroll();
         setState(NoState);
         viewport()->update();
@@ -2204,8 +2206,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         //判断网络文件是否可以到达
         if (!DFileService::instance()->checkGvfsMountfileBusy(fileUrl)) {
             info = DFileService::instance()->createFileInfo(this, fileUrl);
-        }
-        else {
+        } else {
             info = nullptr;
         }
 

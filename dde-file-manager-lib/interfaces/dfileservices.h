@@ -77,7 +77,8 @@ public:
             DAbstractFileController *handler = new T();
             DFileService *that = instance();
 
-            if (handler->thread() != that->thread()) {
+            if (handler->thread() != that->thread())
+            {
                 handler->moveToThread(that->thread());
             }
 
@@ -104,8 +105,8 @@ public:
     static void clearFileUrlHandler(const QString &scheme, const QString &host);
 
     static QList<DAbstractFileController *> getHandlerTypeByUrl(const DUrl &fileUrl,
-            bool ignoreHost = false,
-            bool ignoreScheme = false);
+                                                                bool ignoreHost = false,
+                                                                bool ignoreScheme = false);
 
     bool openFile(const QObject *sender, const DUrl &url) const;
     bool openFiles(const QObject *sender, const DUrlList &list) const;
@@ -148,10 +149,10 @@ public:
 
     const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-            QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
+                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
 
     const QList<DAbstractFileInfoPointer> getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false,bool canconst = false) const;
+                                                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false, bool canconst = false) const;
 
     JobController *getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
@@ -163,15 +164,15 @@ public:
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
     DStorageInfo *createStorageInfo(const QObject *sender, const DUrl &url);
     QList<DAbstractFileInfoPointer> getRootFile();
-    void changeRootFile(const DUrl &fileurl,const bool bcreate = true);
+    void changeRootFile(const DUrl &fileurl, const bool bcreate = true);
     void startQuryRootFile();
     void clearThread();
 
     //set cursor busy status
     void setCursorBusyState(const bool bbusy);
     //check networkfile is busy(or network is unline)
-    bool checkGvfsMountfileBusy(const DUrl &url,const bool showdailog = true);
-    bool checkGvfsMountfileBusy(const DUrl &rootUrl,const QString &rootfilename,const bool showdailog = true);
+    bool checkGvfsMountfileBusy(const DUrl &url, const bool showdailog = true);
+    bool checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog = true);
     //chang rootfile
     void changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo);
     //judge me net work is online
@@ -182,6 +183,9 @@ public:
     bool getDoClearTrashState() const;
     //设置当前是否是在清空回收站 fix bug 31324,
     void setDoClearTrashState(const bool bdoing);
+    //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
+    void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
+
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;
