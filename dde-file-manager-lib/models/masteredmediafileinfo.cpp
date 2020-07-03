@@ -174,6 +174,8 @@ QVector<MenuAction> MasteredMediaFileInfo::menuActionList(MenuType type) const
 
 bool MasteredMediaFileInfo::canRedirectionFileUrl() const
 {
+    if (isDir())
+        return isSymLink(); // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
     return !isDir();
 }
 
