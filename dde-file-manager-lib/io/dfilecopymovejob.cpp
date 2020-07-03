@@ -462,6 +462,17 @@ bool DFileCopyMoveJobPrivate::stateCheck()
         setError(DFileCopyMoveJob::CancelError);
         qCDebug(fileJob()) << "Will be abort";
 
+        //! re-calculate vault size.
+        bool isVaultFile = VaultController::isVaultFile(targetUrl.toLocalFile());
+        DUrlList::iterator it = sourceUrlList.begin();
+        while (!isVaultFile && it != sourceUrlList.end()) {
+            isVaultFile = VaultController::isVaultFile(it->toLocalFile());
+            it++;
+        }
+        if (isVaultFile) {
+            QMetaObject::invokeMethod(VaultController::ins(), "refreshTotalSize", Qt::QueuedConnection);
+        }
+
         return false;
     }
 
