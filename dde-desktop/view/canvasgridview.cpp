@@ -97,6 +97,26 @@ void startProcessDetached(const QString &program,
 
 DWIDGET_USE_NAMESPACE
 
+//candrop十分耗时,在不关心Qt::ItemDropEnable的调用时ignoreDropFlag为true，不调用candrop，节省时间,bug#10926
+namespace  {
+    class IgnoreDropFlag
+    {
+    public:
+        IgnoreDropFlag (DFileSystemModel *m) : model(m)
+        {
+            if (model)
+                model->ignoreDropFlag = true;
+        }
+        ~IgnoreDropFlag(){
+            if (model)
+                model->ignoreDropFlag = false;
+        }
+    private:
+        DFileSystemModel *model = nullptr;
+    };
+    //end
+}
+
 CanvasGridView::CanvasGridView(const QString &screen, QWidget *parent)
     : QAbstractItemView(parent)
     , d(new CanvasViewPrivate)
@@ -737,6 +757,9 @@ QRegion CanvasGridView::visualRegionForSelection(const QItemSelection &selection
 
 void CanvasGridView::mouseMoveEvent(QMouseEvent *event)
 {
+    //不关心Dropflag，节省时间,bug#10926
+    IgnoreDropFlag idf(model());
+
     if (event->buttons() != Qt::LeftButton) {
         event->ignore();
         return;
@@ -1426,6 +1449,8 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 //        }
 //        d->lastRepaintTime = currentTime;
 //    }
+    //不关心Dropflag，节省时间,bug#10926
+    IgnoreDropFlag idf(model());
 
     QPainter painter(viewport());
     auto repaintRect = event->rect();
@@ -1672,6 +1697,9 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 
     //关闭编辑框
     itemDelegate()->hideAllIIndexWidget();
+
+    //fix buf#202007010011,忽略drop判断，提升响应速度
+    IgnoreDropFlag idf(model());
 
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = selectionModel()->isSelected(index);
@@ -2027,6 +2055,9 @@ bool CanvasGridView::isSelected(const QModelIndex &index) const
 
 void CanvasGridView::select(const QList<DUrl> &list)
 {
+    //不关心Dropflag，节省时间 bug#202007010011
+    IgnoreDropFlag idf(model());
+
     QModelIndex lastIndex;
     QItemSelection selection;
 
