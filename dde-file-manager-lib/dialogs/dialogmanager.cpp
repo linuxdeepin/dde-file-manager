@@ -596,7 +596,8 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     //fix:一旦刻录失败，必须清楚磁盘临时缓存的数据文件，否则下次刻录操作等就会报一些错误，不能正常进行操作流程
     if ((type == FileJob::OpticalBurn) || (type == FileJob::OpticalImageBurn)) {
         QString deleteFile = err.mid(1, (err.length() - 22));
-        QString deletePathStr = QString(tr("%1/%2")).arg(DFileMenuManager::g_deleteDirPath).arg(deleteFile);
+        // marked by max-lv: 这里是有问题的，如果多个光驱使用的时候，DFileMenuManager::fmblkDevice 明显会发生问题，这个后续再做优化，改动接口很大！
+        QString deletePathStr = QString(tr("%1/%2")).arg(DFileMenuManager::getDeviceCatchPath(DFileMenuManager::fmblkDevice)).arg(deleteFile);
         QFile::remove(deletePathStr);
     }
 }
