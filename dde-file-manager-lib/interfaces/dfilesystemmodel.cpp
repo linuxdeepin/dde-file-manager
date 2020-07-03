@@ -1788,7 +1788,8 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
             flags |= Qt::ItemIsEditable;
         }
         if (indexNode && indexNode->fileInfo && indexNode->fileInfo->isWritable()) {
-            if (indexNode->fileInfo->canDrop()) {
+            //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时ignoreDropFlag为true，不调用candrop，节省时间,bug#10926
+            if (!ignoreDropFlag && indexNode->fileInfo->canDrop()) {
                 flags |= Qt::ItemIsDropEnabled;
             } else {
                 flags |= Qt::ItemNeverHasChildren;
