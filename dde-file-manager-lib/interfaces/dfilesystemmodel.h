@@ -284,6 +284,9 @@ private:
 
     Q_DECLARE_PRIVATE(DFileSystemModel)
     Q_DISABLE_COPY(DFileSystemModel)
+public:
+     bool ignoreDropFlag = false; //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时设置其为true，
+                                  //不调用candrop，节省时间,bug#10926
 };
 
 #endif // DFILESYSTEMMODEL_H
