@@ -437,9 +437,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     action->setProperty("urlList", DUrl::toStringList(urls));
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
                     QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
-                    action->setProperty("isOpticalDevice", tempId.startsWith("sr")); // fix bug#27909 原本使用 pDeviceinfo->getDiskInfo().iconName() 字段作为判定是否是光驱设备的依据，但root权限下该字段值为空，因此采用卷标 tempId 来判定是否是光驱设备
                     action->setProperty("blkDevice", tempId);
-                    //mounted_root_uri="file:///media/union/***" -> tempMediaAddr="union"
 
                     setDeviceCatchPath(tempId);
 
