@@ -264,6 +264,11 @@ FilePreviewDialog::~FilePreviewDialog()
 
 void FilePreviewDialog::updatePreviewList(const DUrlList &previewUrllist)
 {
+    // 视频预览的前一秒禁止再次播放
+    if (m_playingVideo) {
+        return;
+    }
+
     m_fileList = previewUrllist;
     m_currentPageIndex = -1;
 
@@ -329,6 +334,10 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
                 nextPage();
             break;
         case Qt::Key_Space: {
+            // 视频预览的前一秒禁止再次播放
+            if (m_playingVideo) {
+                break;
+            }
             if (m_preview) {
                 m_preview->stop();
             }

@@ -1358,6 +1358,7 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
             VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(VaultController::localToVault(absolutePath));
             if (!fbi.isWritable) {
                 canRemove = false;
+                setError(DFileCopyMoveJob::PermissionError);
             }
         }
 
@@ -1365,12 +1366,11 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
             if (is_file ? handler->remove(fileInfo->fileUrl()) : handler->rmdir(fileInfo->fileUrl())) {
                 return true;
             }
-        }
-
-        if (fileInfo->canRename()) {
-            setError(DFileCopyMoveJob::RemoveError, qApp->translate("DFileCopyMoveJob", "Failed to delete the file, cause: %1").arg(handler->errorString()));
-        } else {
-            setError(DFileCopyMoveJob::PermissionError);
+            if (fileInfo->canRename()) {
+                setError(DFileCopyMoveJob::RemoveError, qApp->translate("DFileCopyMoveJob", "Failed to delete the file, cause: %1").arg(handler->errorString()));
+            } else {
+                setError(DFileCopyMoveJob::PermissionError);
+            }
         }
 
         action = handleError(fileInfo, nullptr);

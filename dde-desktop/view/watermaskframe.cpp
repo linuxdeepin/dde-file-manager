@@ -253,7 +253,9 @@ void WaterMaskFrame::initUI()
             m_textLabel->setText(tr("Not authorized"));
             break;
         case Authorized:
-            m_textLabel->setText(tr("authorized"));
+            //2020-07-06 需求变更，已授权不显示
+            //m_textLabel->setText(tr("authorized"));
+            m_textLabel->setText("");
             break;
         case TrialAuthorized:
             m_textLabel->setText(tr("In trial period"));
