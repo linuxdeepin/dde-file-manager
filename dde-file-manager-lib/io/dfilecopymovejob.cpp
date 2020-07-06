@@ -628,19 +628,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
         qint64 size = source_info->isSymLink() ? 0 : source_info->size();
 
         if (source_info->isFile() || source_info->isSymLink()) {
-            // 保险箱下的文件删除，先判断所在文件夹是否可写
-            QString absolutePath = source_info->absolutePath();
-            if (VaultController::isVaultFile(absolutePath)) {
-                VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(VaultController::localToVault(absolutePath));
-                if (!fbi.isWritable) {
-                    ok = false;
-                } else {
-                    ok = removeFile(handler, source_info.constData());
-                }
-            } else {
-                ok = removeFile(handler, source_info.constData());
-            }
-
+            ok = removeFile(handler, source_info.constData());
             if (ok) {
                 joinToCompletedFileList(from, DUrl(), size);
             }
@@ -649,19 +637,8 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
             if (fileHints.testFlag(DFileCopyMoveJob::ForceDeleteFile)) {
                 handler->setPermissions(source_info->fileUrl(), QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
             }
-            // 保险箱下的文件删除，先判断所在文件夹是否可写
-            QString absolutePath = source_info->absolutePath();
-            if (VaultController::isVaultFile(absolutePath)) {
-                VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(VaultController::localToVault(absolutePath));
-                if (!fbi.isWritable) {
-                    ok = false;
-                } else {
-                    ok = mergeDirectory(handler, source_info.constData(), nullptr);
-                }
-            } else {
-                ok = mergeDirectory(handler, source_info.constData(), nullptr);
-            }
 
+            ok = mergeDirectory(handler, source_info.constData(), nullptr);
             if (ok) {
                 joinToCompletedDirectoryList(from, DUrl(), size);
             }
@@ -1374,8 +1351,20 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
     bool is_file = fileInfo->isFile() || fileInfo->isSymLink();
 
     do {
-        if (is_file ? handler->remove(fileInfo->fileUrl()) : handler->rmdir(fileInfo->fileUrl())) {
-            return true;
+        //! vault file without writable permission cannot processed by system function.
+        bool canRemove = true;
+        QString absolutePath = fileInfo->absolutePath();
+        if (VaultController::isVaultFile(absolutePath)) {
+            VaultController::FileBaseInfo fbi = VaultController::ins()->getFileInfo(VaultController::localToVault(absolutePath));
+            if (!fbi.isWritable) {
+                canRemove = false;
+            }
+        }
+
+        if(canRemove) {
+            if (is_file ? handler->remove(fileInfo->fileUrl()) : handler->rmdir(fileInfo->fileUrl())) {
+                return true;
+            }
         }
 
         if (fileInfo->canRename()) {
