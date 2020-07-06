@@ -1295,6 +1295,18 @@ void DFileService::dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUr
             emit fileRenamed(list.at(i), url);
         }
     }
+
+    // fix bug#202007010020 发送到光驱暂存区的文件保留了文件的原始权限信息，在刻录或删除的时候可能会报错，因此在文件复制完成时添加用户写权限，让去重/删除可以顺利往下走
+    if (result.count() > 0 && result[0].path().contains(DISCBURN_CACHE_MID_PATH)) {
+        QString strFilePath = result[0].path();
+        static QRegularExpression reg("/_dev_sr[0-9]*/"); // 正则匹配 _dev_srN  N为任意数字，考虑可能接入多光驱的情况
+        QRegularExpressionMatch match = reg.match(strFilePath);
+        if (match.hasMatch()) {
+            QString strTag = match.captured();
+            QString strStagingPath = strFilePath.mid(0, strFilePath.indexOf(strTag) + strTag.length());
+            QProcess::execute("chmod -R u+w " + strStagingPath); // 之前尝试使用 DLocalFileHandler 去处理权限问题但是会失败，因此这里采用命令去更改权限
+        }
+    }
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
