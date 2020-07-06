@@ -628,7 +628,7 @@ void FileJob::doOpticalBlank(const DUrl &device)
 
     if (!drive->mediaChangeDetected()) {
         m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
-        emit requestOpticalJobFailureDialog(JobType::OpticalBlank, TR_CONN_ERROR, QStringList());
+        handleOpticalJobFailure(JobType::OpticalBlank, TR_CONN_ERROR, QStringList());
     }
 
     // must show %100
@@ -637,7 +637,7 @@ void FileJob::doOpticalBlank(const DUrl &device)
         for (int i = 0; i < 20; i++) {
             if (!drive->mediaChangeDetected()) {
                 m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
-                emit requestOpticalJobFailureDialog(JobType::OpticalBlank, TR_CONN_ERROR, QStringList());
+                handleOpticalJobFailure(JobType::OpticalBlank, TR_CONN_ERROR, QStringList());
                 break;
             }
             opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
@@ -926,14 +926,14 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             if ((flag & 4) && (m_opticalJobPhase == 2)) {
                 if (!drive->mediaChangeDetected()) {
                     m_lastError = TR_CONN_ERROR;
-                    emit requestOpticalJobFailureDialog(FileJob::OpticalCheck, m_lastError, m_lastSrcError);
+                    handleOpticalJobFailure(FileJob::OpticalCheck, m_lastError, m_lastSrcError);
                 } else {
                     // 校验必须成功
                     emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
                 }
             } else {
                 // 刻录失败提示
-                emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
+                handleOpticalJobFailure(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
             }
         } else {
             if ((flag & 4)) {
@@ -1219,14 +1219,14 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             if ((flag & 4) && (m_opticalJobPhase == 2)) {
                 if (!drive->mediaChangeDetected()) {
                     m_lastError = TR_CONN_ERROR;
-                    emit requestOpticalJobFailureDialog(FileJob::OpticalCheck, m_lastError, m_lastSrcError);
+                    handleOpticalJobFailure(FileJob::OpticalCheck, m_lastError, m_lastSrcError);
                 } else {
                     // 校验必须成功
                     emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
                 }
             } else {
                 // 刻录失败提示
-                emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
+                handleOpticalJobFailure(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
             }
         } else {
             if ((flag & 4)) {
@@ -1256,8 +1256,8 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
         m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed && jobisom) {
         QStringList msg = jobisom->getInfoMessages();
-        qDebug() << "failed:" << msg;
-        emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
+        qDebug() << "ISOMaster failed:" << msg;
+        handleOpticalJobFailure(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
         return;
     }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
@@ -1280,8 +1280,7 @@ void FileJob::opticalJobUpdatedByParentProcess(int status, int progress, const Q
         m_lastSrcError = msgs;
         m_lastError = FileJob::getXorrisoErrorMsg(msgs);
         // tmp : 暂不处理失败
-        //dialogManager->showOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msgs), msgs);
-        //emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
+        //handleOpticalJobFailure(m_jobType, FileJob::getXorrisoErrorMsg(msg), msgs);
         qDebug() << "encounter failed";
         qDebug() << msgs;
         return;
@@ -1295,6 +1294,22 @@ void FileJob::opticalJobUpdatedByParentProcess(int status, int progress, const Q
     } else {
         m_opticalOpSpeed.clear();
     }
+}
+
+void FileJob::handleOpticalJobFailure(int type, const QString &err, const QStringList &details)
+{
+    //fix:一旦刻录失败，必须清楚磁盘临时缓存的数据文件，否则下次刻录操作等就会报一些错误，不能正常进行操作流程
+    if ((type == FileJob::OpticalBurn) || (type == FileJob::OpticalImageBurn)) {
+        QString tagKey = DFMOpticalMediaWidget::getVolTag(DUrl::fromLocalFile(m_tarPath));
+        qWarning() << "handle failure for: " << tagKey;
+
+        QMap<QString, CdStatusInfo>::iterator ite = DFMOpticalMediaWidget::g_mapCdStatusInfo.find(tagKey);
+        if(ite != DFMOpticalMediaWidget::g_mapCdStatusInfo.end()){
+            QFile::remove(DFMOpticalMediaWidget::g_mapCdStatusInfo[tagKey].cachePath);
+        }
+    }
+
+    emit requestOpticalJobFailureDialog(type, err, details);
 }
 
 void FileJob::paused()
