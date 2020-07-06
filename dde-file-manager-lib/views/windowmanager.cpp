@@ -171,11 +171,18 @@ bool WindowManager::enableAutoQuit() const
 
 void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 {
+    //202007010032【文件管理器】【5.1.2.10-1】【sp2】（.doc,ppt,xls）文件拖拽到桌面上的文件管理器图标上，被识别为文件夹打开，
+    // 判断出入的url是否是一个目录，不是就取parentUrl
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
+    DUrl newurl = url;
+    if (fileInfo && !fileInfo->isDir()) {
+        newurl = url.parentUrl();
+    }
     if (!isNewWindow){
         for(int i=0; i< m_windows.count(); i++){
             QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
             DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
-            if (currentUrl == url){
+            if (currentUrl == newurl){
                 DFileManagerWindow * wd = static_cast<DFileManagerWindow *>(window);
                 qDebug() << currentUrl << wd;
                 if (wd->isMinimized()) {
@@ -188,12 +195,12 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
-    DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow) : url);
+    DFileManagerWindow *window = new DFileManagerWindow(newurl.isEmpty() ? DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow) : newurl);
     loadWindowState(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();
 
-    qDebug() << "new window" << window->winId() << url;
+    qDebug() << "new window" << window->winId() << newurl;
 
     connect(window, &DFileManagerWindow::aboutToClose,
             this, &WindowManager::onWindowClosed);
