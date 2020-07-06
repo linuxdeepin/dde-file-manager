@@ -1103,8 +1103,10 @@ void AppController::actionSendToRemovableDisk()
     }
 
     //fix:修正临时拷贝文件到光盘的路径问题，不是挂载目录，而是临时缓存目录
-    if (action->property("isOpticalDevice").toBool()) { // fix bug#27909
-        DUrl tempTargetUrl = DUrl::fromLocalFile(DFileMenuManager::g_deleteDirPath);
+    QString blkDevice = action->property("blkDevice").toString();
+
+    if (blkDevice.startsWith("sr")) { // fix bug#27909
+        DUrl tempTargetUrl = DUrl::fromLocalFile(DFMOpticalMediaWidget::g_mapCdStatusInfo[blkDevice].cachePath);
         fileService->pasteFile(action, DFMGlobal::CopyAction, tempTargetUrl, urlList);
     } else { // other: usb storage and so on
         fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
