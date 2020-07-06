@@ -214,7 +214,23 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     QString processor;
     QString systemType;
     if (!t_systemInfo->isValid()) {
-        memoryInstallStr = formatCap(DSysInfo::memoryInstalledSize(), 1024, 0);
+
+        auto e = QProcessEnvironment::systemEnvironment();
+        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+        //在wayland平台下设置固定大小，解决内存展示问题
+        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+
+            memoryInstallStr = formatCap(DSysInfo::memoryInstalledSize(), 1000, 0);
+        }
+
+        else {
+            memoryInstallStr = formatCap(DSysInfo::memoryInstalledSize(), 1024, 0);
+        }
+
+
         memoryStr = formatCap(DSysInfo::memoryTotalSize());
 
         diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
@@ -226,6 +242,22 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
 //        memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 1);
 
         memoryInstallStr = formatCap(t_systemInfo->property("MemorySize").toULongLong(), 1024, 0);
+
+        auto e = QProcessEnvironment::systemEnvironment();
+        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+        //在wayland平台下设置固定大小，解决内存展示问题
+        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+
+            memoryInstallStr = formatCap(t_systemInfo->property("MemorySize").toULongLong(), 1000, 0);
+        }
+
+        else {
+            memoryInstallStr = formatCap(t_systemInfo->property("MemorySize").toULongLong(), 1024, 0);
+        }
+
         memoryStr = formatCap(DSysInfo::memoryTotalSize());
 
         diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
