@@ -72,8 +72,6 @@
 #include <plugins/dfmadditionalmenu.h>
 
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
-//记录当前正在使用的设备
-QString DFileMenuManager::fmblkDevice = nullptr;
 
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
@@ -439,8 +437,6 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
                     action->setProperty("blkDevice", tempId);
 
-                    setDeviceCatchPath(tempId);
-
                     // 禁用发送到列表中的本设备项
                     if (urls.count() > 0) {
                         DUrl url = urls[0];
@@ -525,29 +521,6 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
 
     return menu;
-}
-
-// PPMS20200213 在多块文件（光驱）处理的时候，添加对设备的映射处理，以支持多个类型设备
-static QMap<QString, QString> fmblkDeviceToCatchPath;
-
-void DFileMenuManager::setDeviceCatchPath(const QString& blkDeviceId)
-{
-    QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    //g_deleteDirPath="/home/union/.cache/deepin/discburn/_dev_sr1"
-    //                DFileMenuManager::g_deleteDirPath = "/home/" + tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
-    QString cachPath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + blkDeviceId;
-
-    fmblkDeviceToCatchPath[blkDeviceId] = cachPath;
-
-    fmblkDevice = blkDeviceId;
-}
-
-QString DFileMenuManager::getDeviceCatchPath(const QString& blkDeviceId)
-{
-    QMap<QString, QString>::iterator ite = fmblkDeviceToCatchPath.find(blkDeviceId);
-    if(ite == fmblkDeviceToCatchPath.end())
-        return "";
-    return ite.value();
 }
 
 QList<QAction *> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl, bool onDesktop)

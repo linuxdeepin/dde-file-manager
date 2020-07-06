@@ -339,7 +339,13 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
     //fixed:CD display size error
     DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nTotal = dp.data + dp.avail;
     DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nUsage = dp.data;
-    //qDebug() << dp.datablocks << "Sectors" << DFMOpticalMediaWidget::g_usedSize / 1024 / 1024 << "MB" << (DFMOpticalMediaWidget::g_totalSize - DFMOpticalMediaWidget::g_usedSize) / 1024 / 1024 << "MB";
+
+    QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    QString cachePath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + strKey;
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].cachePath = cachePath;
+
+    qDebug() << "get " << strKey <<" catch path:" << cachePath;
 }
 
 QString DFMOpticalMediaWidgetPrivate::getCurrentDevice() const

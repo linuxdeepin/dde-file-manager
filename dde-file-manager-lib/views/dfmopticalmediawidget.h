@@ -18,6 +18,7 @@ struct CdStatusInfo {
     quint64 nTotal = 0;
     bool bBurningOrErasing = false;
     bool bProcessLocked = false;
+    QString cachePath=""; // bug202007010027:添加文件缓存区，进行统一管理
 };
 
 class DFMOpticalMediaWidgetPrivate;

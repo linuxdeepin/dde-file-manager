@@ -91,10 +91,6 @@ public:
 
     static bool whetherShowTagActions(const QList<DUrl> &urls);
 
-    static void setDeviceCatchPath(const QString& blkDeviceId);
-
-    static QString getDeviceCatchPath(const QString& blkDeviceId);
-
 public slots:
     void actionTriggered(QAction *action);
 };
