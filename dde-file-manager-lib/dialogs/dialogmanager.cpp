@@ -62,6 +62,7 @@
 #include "dialogs/dmultifilepropertydialog.h"
 #include "plugins/pluginmanager.h"
 #include "preview/previewinterface.h"
+#include "views/dfmopticalmediawidget.h"
 
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
@@ -587,13 +588,6 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
     d.exec();
-
-    //fix:一旦刻录失败，必须清楚磁盘临时缓存的数据文件，否则下次刻录操作等就会报一些错误，不能正常进行操作流程
-    if ((type == FileJob::OpticalBurn) || (type == FileJob::OpticalImageBurn)) {
-        QString deleteFile = err.mid(1, (err.length() - 22));
-        QString deletePathStr = QString(tr("%1/%2")).arg(DFileMenuManager::g_deleteDirPath).arg(deleteFile);
-        QFile::remove(deletePathStr);
-    }
 }
 
 void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)
