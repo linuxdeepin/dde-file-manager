@@ -23,13 +23,17 @@
 #include "dfileservices.h"
 #include "app/define.h"
 
+#include <unistd.h>
+#include <sys/types.h>
+
 #include <QDebug>
 #include <dstorageinfo.h>
 #include <qmimedata.h>
 #include <QtConcurrent>
 #include <models/dfmsidebarmodel.h>
 
-#define DRAG_EVENT_URLS "UrlsInDragEvent"
+//临时解决一普通用户使用共享内存的时候，其他用户不能访问问题，增加用户名可解决多个用户同时访问共享内存的问题
+#define DRAG_EVENT_URLS ((getuid()==0) ? (QString(getlogin())+"_RootUrlsInDragEvent") :(QString(getlogin())+"_UrlsInDragEvent"))
 
 DFM_BEGIN_NAMESPACE
 

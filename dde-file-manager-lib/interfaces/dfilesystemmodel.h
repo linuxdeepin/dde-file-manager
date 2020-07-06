@@ -33,6 +33,8 @@
 // for std::shared_ptr
 #include <iostream>
 #include <memory>
+#include <unistd.h>
+#include <sys/types.h>
 
 #include "durl.h"
 #include "dabstractfileinfo.h"
@@ -42,7 +44,9 @@ class QEventLoop;
 class QReadWriteLock;
 QT_END_NAMESPACE
 
-#define DRAG_EVENT_URLS "UrlsInDragEvent"
+//临时解决一普通用户使用共享内存的时候，其他用户不能访问问题，增加用户名可解决多个用户同时访问共享内存的问题
+//临时解决root用户使用共享内存后其它用户无法使用的问题，但可能会造成内存占用过大的问题 unistd.h在此处被使用，后面若有更换的解决办法，此处应被修改
+#define DRAG_EVENT_URLS ((getuid()==0) ? (QString(getlogin())+"_RootUrlsInDragEvent") :(QString(getlogin())+"_UrlsInDragEvent"))
 
 class FileSystemNode;
 class DAbstractFileInfo;
