@@ -416,10 +416,6 @@ void DFileDialog::selectNameFilterByIndex(int index)
                 }
             }
 
-            if (newNameFilterExtension.isEmpty()) {
-                qDebug() << "未查询到扩展名";
-            }
-
             QRegExp  re(newNameFilterExtension, Qt::CaseInsensitive, QRegExp::Wildcard);
 
             if (re.exactMatch(fileNameExtension)) { //原扩展名与新扩展名不匹配？
@@ -1198,7 +1194,6 @@ void DFileDialog::onAcceptButtonClicked()
             QString suffix = mdb.suffixForFileName(nameFilter);
             if (suffix.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
                 QRegExp  regExp(nameFilter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
-                qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << nameFilter;
                 for (QMimeType m: mdb.allMimeTypes()) {
                     for(QString suffixe: m.suffixes()) {
                         if (regExp.exactMatch(suffixe)) {
@@ -1215,7 +1210,6 @@ void DFileDialog::onAcceptButtonClicked()
                 file_name.append('.' + suffix);
                 setCurrentInputName(file_name);
             }
-            qDebug() << file_name;
         }
 
         if (!file_name.isEmpty()) {
