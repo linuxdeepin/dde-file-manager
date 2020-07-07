@@ -66,6 +66,7 @@ public:
 
     bool canDrop() const Q_DECL_OVERRIDE;
     bool canTag() const Q_DECL_OVERRIDE;
+    bool canMoveOrCopy() const Q_DECL_OVERRIDE;
 
     static DUrl trashDesktopFileUrl();
     static DUrl computerDesktopFileUrl();
