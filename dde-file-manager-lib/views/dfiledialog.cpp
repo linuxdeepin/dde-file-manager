@@ -403,12 +403,10 @@ void DFileDialog::selectNameFilterByIndex(int index)
             newNameFilterExtension = db.suffixForFileName(filter); //在QMimeDataBase里面查询扩展名是否存在（不能查询正则表达式）
             if (newNameFilterExtension.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
                 QRegExp  regExp(filter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
-                qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << filter;
                 for (QMimeType m: db.allMimeTypes()) {
                     for(QString suffixe: m.suffixes()) {
                         if (regExp.exactMatch(suffixe)) {
                             newNameFilterExtension = suffixe;
-                            qDebug() << "正则表达式查询到扩展名" << suffixe;
                             break; //查询到后跳出循环
                         }
                     }
@@ -425,7 +423,6 @@ void DFileDialog::selectNameFilterByIndex(int index)
             QRegExp  re(newNameFilterExtension, Qt::CaseInsensitive, QRegExp::Wildcard);
 
             if (re.exactMatch(fileNameExtension)) { //原扩展名与新扩展名不匹配？
-                qDebug() << "设置新的过滤规则" << newNameFilters;
                 return getFileView()->setNameFilters(newNameFilters); //这里传递回去的有可能是一个正则表达式，它决定哪些文件不被置灰
             }
         }
@@ -1182,11 +1179,9 @@ void DFileDialog::onAcceptButtonClicked()
         QString file_name = statusBar()->lineEdit()->text(); //文件名
         bool suffixCheck = false; //后缀名检测
         QStringList nameFilters = d->nameFilters;//当前所有后缀列表
-        qDebug() << "后缀名列表" << nameFilters;
         for (QString nameFilterList: nameFilters) {
             for (QString nameFilter: QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) { //清理掉多余的信息
                 QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
-                qDebug() << "检测后缀名" << nameFilter;
                 if (re.exactMatch(file_name)) {
                     suffixCheck = true;
                     break;
@@ -1208,7 +1203,6 @@ void DFileDialog::onAcceptButtonClicked()
                     for(QString suffixe: m.suffixes()) {
                         if (regExp.exactMatch(suffixe)) {
                             suffix = suffixe;
-                            qDebug() << "正则表达式查询到扩展名" << suffixe;
                             break; //查询到后跳出循环
                         }
                     }
@@ -1218,7 +1212,6 @@ void DFileDialog::onAcceptButtonClicked()
                 }
             }
             if (!suffix.isEmpty()) {
-                qDebug() << "扩展名补全" << suffix;
                 file_name.append('.' + suffix);
                 setCurrentInputName(file_name);
             }
