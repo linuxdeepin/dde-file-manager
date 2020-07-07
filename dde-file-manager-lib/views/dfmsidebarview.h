@@ -64,6 +64,7 @@ private:
     int dragRow;
     QModelIndex m_previous;
     QModelIndex m_current;
+    QString m_strItemUniqueKey;
 
     QList<QUrl> m_urlsForDragEvent;
 
