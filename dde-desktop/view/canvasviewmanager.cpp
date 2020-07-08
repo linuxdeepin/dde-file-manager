@@ -71,9 +71,9 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
         GridManager::instance()->setDisplayMode(true);
         m_canvasMap.insert(primary, mView);
 
-        qDebug() << "mode" << mode << mView->geometry() << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
-                 << primary->name() << "num" << 1 << primary->availableGeometry()<< primary->geometry()
-                 << "devicePixelRatio" << ScreenMrg->devicePixelRatio();;
+        qDebug() << "mode" << mode << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
+                 << primary->name() << "num" << 1
+                 << "devicePixelRatio" << ScreenMrg->devicePixelRatio();
     }
     else {
         auto currentScreens = ScreenMrg->logicScreens();
@@ -97,9 +97,9 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
                 mView->setScreenNum(screenNum);
             }
 
-            qDebug() << "mode" << mode << mView->geometry() << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
-                     << sp->name() << "num" << screenNum << sp->availableGeometry()<< sp->geometry()
-                     << "devicePixelRatio" << ScreenMrg->devicePixelRatio();;
+            qDebug() << "mode" << mode << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
+                     << sp->name() << "num" << screenNum
+                     << "devicePixelRatio" << ScreenMrg->devicePixelRatio();
         }
 
         //检查移除的屏幕
@@ -125,8 +125,9 @@ void CanvasViewManager::onBackgroundEnableChanged()
             mView->setAttribute(Qt::WA_NativeWindow, false);
             bw->setView(mView);
             QRect avRect;
+            QRect screenAvaRect = sp->availableGeometry();
 #ifndef UNUSED_SMARTDOCK
-            avRect = relativeRect(sp->availableGeometry(),sp->geometry());
+            avRect = relativeRect(screenAvaRect,sp->geometry());
 #else
             if (sp == ScreenMrg->primaryScreen()){
                 avRect = relativeRect(sp->availableGeometry(),sp->geometry());
@@ -141,7 +142,7 @@ void CanvasViewManager::onBackgroundEnableChanged()
             initView(mView);
             qDebug() << "canvas" << mView << "availableGeometry" << avRect
                      << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
-                     << "screen" << sp->name() << sp->geometry() << sp->availableGeometry();
+                     << "screen" << sp->name() << sp->geometry() << screenAvaRect;
         }
     }
     else {
@@ -151,8 +152,9 @@ void CanvasViewManager::onBackgroundEnableChanged()
             mView->setParent(nullptr);
             mView->setWindowFlag(Qt::FramelessWindowHint, true);
             Xcb::XcbMisc::instance().set_window_type(mView->winId(), Xcb::XcbMisc::Desktop);
+            QRect screenAvaRect = sp->availableGeometry();
 #ifndef UNUSED_SMARTDOCK
-            mView->setGeometry(sp->availableGeometry());
+            mView->setGeometry(screenAvaRect);
 #else
             mView->setGeometry(sp == ScreenMrg->primaryScreen() ? sp->availableGeometry() : sp->geometry());
 #endif
@@ -160,7 +162,7 @@ void CanvasViewManager::onBackgroundEnableChanged()
             initView(mView);
             qDebug() << "no background. primaryScreen" << ScreenMrg->primaryScreen()->name()
                      << "canvas geo" << mView->geometry()  << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
-                     << "canvas's screen"<< sp->name() << sp->geometry() << "availableGeometry" << sp->availableGeometry();
+                     << "canvas's screen"<< sp->name() << sp->geometry() << "availableGeometry" << screenAvaRect;
         }
     }
     GridManager::instance()->initGridItemsInfos();

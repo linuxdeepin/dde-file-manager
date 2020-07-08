@@ -555,6 +555,7 @@ void FilePreviewDialog::playCurrentPreviewFile()
     if (m_preview) {
         if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
             m_playingVideo = true;
+            // 1s 后才能重新预览视频，原因是快速切换预览视频会因为视频插件内部的崩溃引起文管崩溃
             QTimer::singleShot(1000, [this] () {
                m_playingVideo = false;
             });
@@ -586,6 +587,10 @@ void FilePreviewDialog::nextPage()
 
 void FilePreviewDialog::updateTitle()
 {
+    // 在频繁启动关闭的场景下，m_preview可能会意外释放，引起空指针造成的崩溃
+    if (!m_preview)
+        return;
+
     QFont font = m_statusBar->title()->font();
     QFontMetrics fm(font);
     QString elidedText;
