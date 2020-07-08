@@ -44,6 +44,7 @@
 #include "app/filesignalmanager.h"
 #include "interfaces/dfilemenu.h"
 #include "dfmopticalmediawidget.h"
+#include "vault/vaulthelper.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -54,6 +55,7 @@
 #include <ddiskdevice.h>
 #include <dblockdevice.h>
 #include <QMenu>
+#include <DSysInfo>
 
 #include <algorithm>
 
@@ -828,15 +830,18 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
             appendItem(DFMSideBarDefaultItemHandler::createItem("Trash"), groupNameStr);
         }
         break;
-    case GroupName::Device:
+    case GroupName::Device:{
         if (!m_disableUrlSchemes.contains(COMPUTER_SCHEME)) {
             appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
         }
-        // 添加保险库
-        if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
-            appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
+        // 判断系统类型，决定是否启用保险箱
+        if (VaultHelper::isVaultEnabled()) {
+            if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
+                appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
+            }
         }
         break;
+    }
     case GroupName::Bookmark: {
         if (m_disableUrlSchemes.contains(BOOKMARK_SCHEME))  {
             break;
