@@ -15,7 +15,8 @@ SOURCES += \
     $$PWD/openssl/rsam.cpp \
     $$PWD/interfaceactivevault.cpp \
     $$PWD/operatorcenter.cpp \
-    $$PWD/vaultlockmanager.cpp
+    $$PWD/vaultlockmanager.cpp \
+    $$PWD/vaulthelper.cpp
 
 HEADERS += \
     $$PWD/qrencode/bitstream.h \
@@ -34,7 +35,8 @@ HEADERS += \
     $$PWD/interfaceactivevault.h \
     $$PWD/operatorcenter.h \
     $$PWD/vaultglobaldefine.h \
-    $$PWD/vaultlockmanager.h
+    $$PWD/vaultlockmanager.h \
+    $$PWD/vaulthelper.h
 
 PKGCONFIG += libcrypto
 

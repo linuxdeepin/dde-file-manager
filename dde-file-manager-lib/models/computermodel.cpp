@@ -34,9 +34,9 @@
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
+#include "vault/vaulthelper.h"
 #include "computermodel.h"
 
-#include <DSysInfo>
 
 ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -80,13 +80,9 @@ ComputerModel::ComputerModel(QObject *parent)
     }
 
     // 判断系统类型，决定是否启用保险箱
-    if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
-        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        if(DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType){ // 如果系不是个人版和未知版
-            // 保险柜
-            addItem(makeSplitterUrl(QObject::tr("File Vault")));
-            addItem(VaultController::makeVaultUrl());
-        }
+    if (VaultHelper::isVaultEnabled()) {
+        addItem(makeSplitterUrl(QObject::tr("File Vault")));
+        addItem(VaultController::makeVaultUrl());
     }
 
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
