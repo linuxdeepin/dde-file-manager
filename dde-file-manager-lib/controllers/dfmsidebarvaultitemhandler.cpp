@@ -19,9 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DWindowManagerHelper>
-#include <DForeignWindow>
-
 #include "dfmsidebarvaultitemhandler.h"
 
 #include "dfmsidebaritem.h"
@@ -36,17 +33,11 @@
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmsidebar.h"
 #include "views/windowmanager.h"
-#include "trashmanager.h"
 #include "durl.h"
 #include "interfaces/dfilemenu.h"
 
-#include "vault/interfaceactivevault.h"
 #include "vault/vaultlockmanager.h"
-
-#include "dialogs/dialogmanager.h"
-#include "dialogs/dtaskdialog.h"
-
-#include <QDialog>
+#include "vault/vaulthelper.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -77,7 +68,6 @@ DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey)
 DFMSideBarVaultItemHandler::DFMSideBarVaultItemHandler(QObject *parent)
     : DFMSideBarItemInterface(parent)
 {
-
 }
 
 void DFMSideBarVaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSideBarItem *item)
@@ -178,64 +168,11 @@ DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DF
 
 bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)
 {
-    // 如果正在有保险箱的移动、粘贴、删除操作，置顶弹出任务框
-    DTaskDialog *pTaskDlg = dialogManager->taskDialog();
-    if(pTaskDlg){
-        if(pTaskDlg->bHaveNotCompletedVaultTask()){
-            // Flashing alert
-            pTaskDlg->hide();
-            pTaskDlg->showDialogOnTop();
-            return false;
-        }
+    //! Is there a vault task, top it if exist.
+    if(!VaultHelper::topVaultTasks()) {
+        emit fileSignalManager->requestCloseAllTabOfVault(wnd->windowId());
+        VaultController::ins()->lockVault();
     }
-    // 如果当前有保险箱的压缩或解压缩任务，激活任务对话框进程
-    QString strCmd = GET_COMPRESSOR_PID_SHELL(VAULT_BASE_PATH);
-    QStringList lstShellOutput;
-    // 执行shell命令，获得压缩进程PID
-    int res = InterfaceActiveVault::executionShellCommand(strCmd, lstShellOutput);
-    if(res == 0){   // shell命令执行成功
-        QStringList::const_iterator itr = lstShellOutput.begin();
-        QSet<QString> setResult;
-        for(; itr != lstShellOutput.end(); ++itr){
-            setResult.insert(*itr);
-        }
-        if(setResult.count() > 0){  // 有压缩任务
-            // 遍历桌面窗口
-            bool bFlag = false;
-            for(auto window: DWindowManagerHelper::instance()->currentWorkspaceWindows()) {
-                QString strWid = QString("%1").arg(window->pid());
-                // 如果当前窗口的进程PID属于压缩进程，则将窗口置顶
-                if(setResult.contains(strWid)){
-                    window->raise();
-                    bFlag = true;
-                }
-            }
-            if(bFlag){
-                return false;
-            }
-        }
-    }else{
-        qDebug() << "执行查找进程PID命令失败!";
-    }
-
-    //! 如果正在有保险箱的移动、粘贴到桌面的任务，通知桌面进程置顶任务对话框
-    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
-                                                           "/org/freedesktop/FileManager1",
-                                                           "org.freedesktop.FileManager1",
-                                                           "topTaskDialog");
-    QDBusMessage response = QDBusConnection::sessionBus().call(message);
-    if(response.type() == QDBusMessage::ReplyMessage){
-        bool bValue = response.arguments().takeFirst().toBool();
-        if(bValue){
-            return false;
-        }
-    }else{
-        qDebug() << "vault show top taskdialog failed!";
-    }
-
-    emit fileSignalManager->requestCloseAllTabOfVault(wnd->windowId());
-
-    VaultController::ins()->lockVault();
 
     return true;
 }
