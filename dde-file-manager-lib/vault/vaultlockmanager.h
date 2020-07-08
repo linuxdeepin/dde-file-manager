@@ -115,11 +115,6 @@ protected:
      */
     quint64 dbusGetSelfTime() const;
 
-    /**
-     * @brief terminateTask 终止拷贝、删除等操作
-     */
-    void terminateTask();
-
 private:
     explicit VaultLockManager(QObject *parent = nullptr);
     QSharedPointer<VaultLockManagerPrivate> d_ptr;
