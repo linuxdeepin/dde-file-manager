@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QUuid>
 
 DFM_BEGIN_NAMESPACE
 
@@ -34,6 +35,7 @@ DFMSideBarItem::DFMSideBarItem(const QIcon &icon, const QString &text, const DUr
     this->setData(SidebarItem, ItemTypeRole);
     this->setData("none", ItemUseRegisteredHandlerRole);
     // setToolTip(text);
+    this->setData(QUuid::createUuid().toString(), ItemUniqueKeyRole);
 }
 
 /*!
