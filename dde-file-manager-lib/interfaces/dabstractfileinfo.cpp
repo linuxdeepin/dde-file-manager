@@ -430,6 +430,13 @@ bool DAbstractFileInfo::canManageAuth() const
     return true;
 }
 
+bool DAbstractFileInfo::canMoveOrCopy() const
+{
+    CALL_PROXY(canMoveOrCopy());
+
+    return true;
+}
+
 DAbstractFileInfo::FileType DAbstractFileInfo::fileType() const
 {
     CALL_PROXY(fileType());
