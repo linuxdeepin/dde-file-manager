@@ -186,6 +186,11 @@ public:
      * @return
      */
     virtual bool canManageAuth() const;
+    /**
+     * @brief canMoveOrCopy 是否可以复制或剪切
+     * @return
+     */
+    virtual bool canMoveOrCopy() const;
 
     // only for base file type
     virtual FileType fileType() const;

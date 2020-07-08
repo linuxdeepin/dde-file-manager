@@ -34,6 +34,7 @@
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
+#include "vault/vaulthelper.h"
 #include "computermodel.h"
 
 
@@ -78,9 +79,11 @@ ComputerModel::ComputerModel(QObject *parent)
         emit opticalChanged();
     }
 
-    // 保险柜
-    addItem(makeSplitterUrl(QObject::tr("File Vault")));
-    addItem(VaultController::makeVaultUrl());
+    // 判断系统类型，决定是否启用保险箱
+    if (VaultHelper::isVaultEnabled()) {
+        addItem(makeSplitterUrl(QObject::tr("File Vault")));
+        addItem(VaultController::makeVaultUrl());
+    }
 
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
     m_watcher->startWatcher();

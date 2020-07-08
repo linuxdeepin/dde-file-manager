@@ -1580,6 +1580,18 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 
             return;
         }
+
+        //部分文件不能复制或剪切，需要在拖拽时忽略
+        if (!fileInfo->canMoveOrCopy()) {
+            event->ignore();
+            return;
+        }
+
+        //防止不可添加tag的文件被拖进tag目录从而获取tag属性
+        if (model()->rootUrl().isTaggedFile() && !fileInfo->canTag()) {
+            event->ignore();
+            return;
+        }
     }
 
     Q_D(const DFileView);
