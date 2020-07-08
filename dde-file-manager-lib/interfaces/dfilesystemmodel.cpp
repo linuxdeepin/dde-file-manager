@@ -1567,6 +1567,21 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     }
     case ExtraProperties:
         return indexNode->dataByRole(role);
+    case FileIconModelToolTipRole: { // fix bug 202007010029 由于 list 视图处理 tooltip 的代码通用性太弱，所以这里新增一个 role 用来返回 tooltip
+        QString strToolTip = data(index, FileNameRole).toString();
+        QStyleOptionViewItem option;
+
+        option.init(parent()->parent());
+        parent()->initStyleOption(&option, index);
+        option.rect = parent()->parent()->visualRect(index);
+        const QList<QRect> &geometries = parent()->itemDelegate()->paintGeomertys(option, index);
+        if (geometries.count() < 3)
+            return QString();
+        if (option.fontMetrics.width(strToolTip) > geometries[1].width() * 2)
+            return strToolTip;
+        return QString();
+    }
+
     default: {
         const DAbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
 
