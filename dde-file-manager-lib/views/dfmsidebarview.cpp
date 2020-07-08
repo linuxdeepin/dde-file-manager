@@ -287,6 +287,14 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         if (!fileInfo || !fileInfo->isReadable()) {
             return Qt::IgnoreAction;
         }
+        //部分文件不能复制或剪切，需要在拖拽时忽略
+        if (!fileInfo->canMoveOrCopy()) {
+            return Qt::IgnoreAction;
+        }
+        //防止不可添加tag的文件被拖进tag目录从而获取tag属性
+        if (item->url().isTaggedFile() && !fileInfo->canTag()) {
+            return Qt::IgnoreAction;
+        }
     }
 
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, item->url());
