@@ -94,6 +94,8 @@ protected:
 
     using DFMStyledItemDelegate::drawText;
 
+    bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+
 private:
     void onEditWidgetFocusOut();
     void onTriggerEdit(const QModelIndex &index);

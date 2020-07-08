@@ -104,6 +104,7 @@ public:
         FileSuffixOfRenameRole = Qt::UserRole + 16,
         FileSizeInKiloByteRole = Qt::UserRole + 17,
         FileLastModifiedDateTimeRole = Qt::UserRole + 18,
+        FileIconModelToolTipRole = Qt::UserRole + 19, // 用于返回图标视图下的tooltip
         FileUserRole = Qt::UserRole + 99,
         UnknowRole = Qt::UserRole + 999
     };
