@@ -62,6 +62,9 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
     if (!checkOpTime())
         return;
 
+    // 鼠标按下时记录当前点击item的唯一key
+    m_strItemUniqueKey = model()->data(indexAt(event->pos()), DFMSideBarItem::ItemUniqueKeyRole).toString();
+
     if (event->button() == Qt::RightButton) {
 #if 1   //fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上
         event->accept();
@@ -348,18 +351,19 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
 //添加此函数为解决拖拽后不选中拖拽项目问题
 void DFMSideBarView::onRowCountChanged()
 {
-    if (isHidden()) {
-        return; //在显示前不处理
-    }
-
-    if (previousRowCount == model()->rowCount()) {
-        setCurrentIndex(indexAt(dropPos));
-        if (dragItemName != model()->data(currentIndex()).toString()) {
-            setCurrentIndex(model()->index(currentIndex().row() + (dragRow > currentIndex().row() ? 1 : -1), currentIndex().column()));
+    // 重写该函数，之前的实现方式会导致在频繁添加、移除书签或是进行其他影响侧边栏item数量的操作时，左侧item的高亮选项错误跳动
+    if (m_strItemUniqueKey.isEmpty())
+        return;
+    DFMSideBarModel *pModel = dynamic_cast<DFMSideBarModel *>(model());
+    if (!pModel)
+        return;
+    for (int i = 0; i < pModel->rowCount(); i++) {
+        QModelIndex currIdx = pModel->index(i, 0);
+        if (pModel->data(currIdx, DFMSideBarItem::ItemUniqueKeyRole).toString() == m_strItemUniqueKey) {
+            setCurrentIndex(currIdx);
+            QTimer::singleShot(50, nullptr, [this] { m_strItemUniqueKey.clear(); }); // 发生拖拽排序的时候该函数会在短时间内触发两次，第二次才是准确数据，触发间隔时间 << 50ms，因此这里设置50ms后清空记录的key
+            return;
         }
-    } else {
-        dragItemName = model()->data(currentIndex()).toString();
-        dragRow = currentIndex().row();
     }
 }
 
