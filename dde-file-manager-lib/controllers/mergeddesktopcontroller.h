@@ -23,6 +23,8 @@
 #define MERGEDDESKTOPCONTROLLER_H
 
 #include "dabstractfilecontroller.h"
+#include <QWaitCondition>
+#include <QMutex>
 
 enum DMD_TYPES : unsigned int {
     DMD_PICTURE, DMD_MUSIC, DMD_APPLICATION, DMD_VIDEO, DMD_DOCUMENT, DMD_OTHER, DMD_FOLDER,
@@ -83,7 +85,7 @@ public slots:
     void desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl);
 
 private:
-    void initData() const;
+    void initData(QDir::Filters ftrs) const;
     void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
 
     DFileWatcher* m_desktopFileWatcher;

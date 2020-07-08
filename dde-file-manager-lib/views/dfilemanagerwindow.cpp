@@ -521,7 +521,19 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     initUI();
     initConnect();
 
-    openNewTab(fileUrl);
+    //202007010032【文件管理器】【5.1.2.10-1】【sp2】（.doc,ppt,xls）文件拖拽到桌面上的文件管理器图标上，被识别为文件夹打开，
+    // 判断出入的url是否是一个目录，不是就取parentUrl
+    DUrl newurl = fileUrl;
+    //排除u盘自动挂载，并且自动打开，拖拽的文件都是FILE_SCHEME
+    if (newurl.scheme() == FILE_SCHEME) {
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
+
+        if (fileInfo && !fileInfo->isDir()) {
+            newurl = fileUrl.parentUrl();
+        }
+    }
+
+    openNewTab(newurl);
 }
 
 DFileManagerWindow::~DFileManagerWindow()

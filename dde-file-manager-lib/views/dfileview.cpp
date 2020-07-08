@@ -1226,22 +1226,20 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
 
 void DFileView::updateModelActiveIndex()
 {
+    if (m_isRemovingCase) // bug202007010004：正在删除的时候，fileInfo->makeToActive() 第二次调用会 crash
+        return;
+
     Q_D(DFileView);
 
     const RandeIndexList randeList = visibleIndexes(QRect(QPoint(0, verticalScrollBar()->value()), QSize(size())));
 
-    if (randeList.isEmpty())
+    if (randeList.isEmpty()) {
+        m_isRemovingCase = false;
         return;
+    }
 
     const RandeIndex &rande = randeList.first();
     DAbstractFileWatcher *fileWatcher = model()->fileWatcher();
-
-    //fix 31327， 监控./.hidden文件更改
-    connect(fileWatcher, &DAbstractFileWatcher::fileModified, this, [this](const DUrl & url) {
-        if (url.fileName() == ".hidden" && !(model()->filters() & QDir::Hidden)) {
-            model()->refresh();
-        }
-    });
 
     for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
@@ -1273,12 +1271,14 @@ void DFileView::updateModelActiveIndex()
             fileInfo->makeToActive();
 
             if (!fileInfo->exists()) {
+                m_isRemovingCase = true;
                 model()->removeRow(i, rootIndex());
             } else if (fileWatcher) {
                 fileWatcher->setEnabledSubfileWatcher(fileInfo->fileUrl());
             }
         }
     }
+    m_isRemovingCase = false;
 }
 
 void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -1677,6 +1677,8 @@ void DFileView::dropEvent(QDropEvent *event)
             }
         }
 
+        //还原鼠标状态
+        DFileService::instance()->setCursorBusyState(false);
         stopAutoScroll();
         setState(NoState);
         viewport()->update();
@@ -2204,8 +2206,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         //判断网络文件是否可以到达
         if (!DFileService::instance()->checkGvfsMountfileBusy(fileUrl)) {
             info = DFileService::instance()->createFileInfo(this, fileUrl);
-        }
-        else {
+        } else {
             info = nullptr;
         }
 

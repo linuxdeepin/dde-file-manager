@@ -1149,8 +1149,14 @@ void AppController::actionSendToRemovableDisk()
     }
 
     //fix:修正临时拷贝文件到光盘的路径问题，不是挂载目录，而是临时缓存目录
-    if (action->property("isOpticalDevice").toBool()) { // fix bug#27909
-        DUrl tempTargetUrl = DUrl::fromLocalFile(DFileMenuManager::g_deleteDirPath);
+    QString blkDevice = action->property("blkDevice").toString();
+
+    if (blkDevice.startsWith("sr")) { // fix bug#27909
+        QString &strCachePath = DFMOpticalMediaWidget::g_mapCdStatusInfo[blkDevice].cachePath;
+        if (strCachePath.isEmpty()) { // fix 未打开文管加载光驱时，结构中cachePath为空，此时往暂存区中发送文件会触发错误流程
+            strCachePath = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/_dev_" + blkDevice;
+        }
+        DUrl tempTargetUrl = DUrl::fromLocalFile(strCachePath);
         fileService->pasteFile(action, DFMGlobal::CopyAction, tempTargetUrl, urlList);
     } else { // other: usb storage and so on
         fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);

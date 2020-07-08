@@ -139,8 +139,6 @@ public:
 
     void setNodeVisible(const FileSystemNodePointer &node, bool visible)
     {
-        if (isUpdate) return;
-
         if (visible) {
             if (!visibleChildren.contains(node)) {
                 visibleChildren.append(node);
@@ -155,7 +153,6 @@ public:
     void applyFileFilter(std::shared_ptr<FileFilter> filter)
     {
         if (!filter) return;
-        if (isUpdate) return;
 
         visibleChildren.clear();
 
@@ -202,7 +199,6 @@ public:
 
     void noLockInsertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
     {
-        if (isUpdate) return;
         children[url] = node;
         visibleChildren.insert(index, node);
     }
@@ -216,7 +212,6 @@ public:
 
     void noLockAppendChildren(const DUrl &url, const FileSystemNodePointer &node)
     {
-        if (isUpdate) return;
         children[url] = node;
         visibleChildren.append(node);
     }
@@ -247,8 +242,6 @@ public:
 
     FileSystemNodePointer takeNodeByUrl(const DUrl &url)
     {
-        if (isUpdate)
-            return FileSystemNodePointer();
         rwLock->lockForWrite();
         FileSystemNodePointer node = children.take(url);
         visibleChildren.removeOne(node);
@@ -261,7 +254,6 @@ public:
     {
         rwLock->lockForWrite();
         FileSystemNodePointer node;
-        if (isUpdate) return node;
         if (index >= 0 && visibleChildren.size() > index) {
             node = visibleChildren.takeAt(index);
             children.remove(node->fileInfo->fileUrl());
@@ -322,7 +314,6 @@ public:
 
     void setChildrenList(const QList<FileSystemNodePointer> &list)
     {
-        if (isUpdate) return;
         rwLock->lockForWrite();
         visibleChildren = list;
         rwLock->unlock();
@@ -337,7 +328,6 @@ public:
 
     void clearChildren()
     {
-        if (isUpdate) return;
         rwLock->lockForWrite();
         visibleChildren.clear();
         children.clear();
@@ -416,21 +406,7 @@ public:
         return tmpNode1;
     }
 
-
-    bool getIsUpdate() const
-    {
-        return isUpdate;
-    }
-
-    void setIsUpdate(bool value)
-    {
-        isUpdate = value;
-    }
-
 private:
-    // tmp: 获取visibleChildren更新时，visibleChildren可能会改变，导致崩溃，因此临时锁住
-    // todo: 后期全面优化，暂不改动此处基本逻辑
-    bool isUpdate = false;
     QHash<DUrl, FileSystemNodePointer> children;
     //fix bug 31225,if children clear,another thread useing visibleChildren will crush,so use FileSystemNodePointer
     QList<FileSystemNodePointer> visibleChildren;
@@ -1105,6 +1081,11 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
 {
     Q_Q(DFileSystemModel);
 
+    //fix 31327， 监控./.hidden文件更改
+    if ((fileUrl.fileName() == ".hidden") && !(q->filters() & QDir::Hidden)) {
+        q->refresh();
+    }
+
     const FileSystemNodePointer &node = rootNode;
 
     if (!node) {
@@ -1186,6 +1167,10 @@ void DFileSystemModelPrivate::_q_processFileEvent()
     _q_processFileEvent_runing.compare_exchange_strong(expect, true);
 
     while (checkFileEventQueue()) {
+        qApp->processEvents();
+        if (!me) { // 当前窗口被关闭以后，me 指针指向的窗口会马上被析构，后面的流程不需要再走了
+            return;
+        }
         mutex.lock();
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         mutex.unlock();
@@ -1232,7 +1217,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->remove(fileUrl);
         }
         if (!me) {
-            break;
+            return;
         }
     }
     _q_processFileEvent_runing.store(false);
@@ -1278,9 +1263,12 @@ DFileSystemModel::~DFileSystemModel()
     }
 
     //fix bug 33014
-    releaseJobController();
+//    releaseJobController();
 
     if (d->jobController) {
+        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
         d->jobController->stopAndDeleteLater();
     }
 
@@ -2352,9 +2340,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
 
     QList<FileSystemNodePointer> list = node->getChildrenList();
 
-    d->rootNode->setIsUpdate(true);
     bool ok = sort(node->fileInfo, list);
-    d->rootNode->setIsUpdate(false);
 
     if (ok) {
         node->setChildrenList(list);
@@ -2465,11 +2451,9 @@ bool DFileSystemModel::setColumnCompact(bool compact)
             d->rootNode->fileInfo->setColumnCompact(compact);
         }
 
-        d->rootNode->setIsUpdate(true);
         for (const FileSystemNodePointer &child : d->rootNode->getChildrenList()) {
             child->fileInfo->setColumnCompact(compact);
         }
-        d->rootNode->setIsUpdate(false);
     }
 
     return true;
@@ -2646,12 +2630,10 @@ void DFileSystemModel::update()
 
     const QModelIndex &rootIndex = createIndex(d->rootNode, 0);
 
-    d->rootNode->setIsUpdate(true);
     for (const FileSystemNodePointer &node : d->rootNode->getChildrenList()) {
         if (node->fileInfo)
             node->fileInfo->refresh();
     }
-    d->rootNode->setIsUpdate(false);
 
     emit dataChanged(rootIndex.child(0, 0), rootIndex.child(rootIndex.row() - 1, 0));
 }

@@ -71,7 +71,6 @@
 #include <plugins/dfmadditionalmenu.h>
 
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
-QString DFileMenuManager::g_deleteDirPath = nullptr;
 
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
@@ -215,6 +214,11 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 //        QMimeType fileMimeType;
         QStringList supportedMimeTypes;
         bool mime_displayOpenWith = true;
+        //fix bug 35546 【文件管理器】【5.1.2.2-1】【sp2】【sp1】选择多个只读文件夹，删除按钮没有置灰
+        //只判断当前选中的文件夹是否是只读文件夹
+        if (!info->isWritable() && !info->isFile() && !info->isSymLink()) {
+            disableList << MenuAction::Delete;
+        }
 
 #if 1   //!fix bug#29264.部分格式的文件在上面的MimesAppsManager::getDefaultAppDesktopFileByMimeType
         //!调用中可以找到app打开，但是在后面的判断是由于该app的supportedMimeTypes中并没有本文件的mimeTypeList支持
@@ -406,18 +410,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     action->setProperty("urlList", DUrl::toStringList(urlList));
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
                     QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
-                    action->setProperty("isOpticalDevice", tempId.startsWith("sr")); // fix bug#27909 原本使用 pDeviceinfo->getDiskInfo().iconName() 字段作为判定是否是光驱设备的依据，但root权限下该字段值为空，因此采用卷标 tempId 来判定是否是光驱设备
-                    //mounted_root_uri="file:///media/union/***" -> tempMediaAddr="union"
-                    QString tempMountedRootUrl = pDeviceinfo->getDiskInfo().mounted_root_uri();
-                    int tempAddrIndex = tempMountedRootUrl.lastIndexOf("/");
-
-                    //获取用户名有问题，fix
-                    //                QString tempMediaAddr= tempMountedRootUrl.mid(14, tempAddrIndex - 14);
-                    QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-                    //g_deleteDirPath="/home/union/.cache/deepin/discburn/_dev_sr1"
-                    //                DFileMenuManager::g_deleteDirPath = "/home/" + tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
-                    DFileMenuManager::g_deleteDirPath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + tempId;
-                    //获取用户名有问题，fix
+                    action->setProperty("blkDevice", tempId);
 
                     // 禁用发送到列表中的本设备项
                     if (urlList.count() > 0) {
