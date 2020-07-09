@@ -2341,6 +2341,8 @@ bool DFileView::setRootUrl(const DUrl &url)
             }
             if (!blkdev->mountPoints().empty()) {
                 d->headerOpticalDisc->setDiscMountPoint(blkdev->mountPoints()[0]);
+            } else {
+                d->headerOpticalDisc->setDiscMountPoint("");
             }
         }
     } else {
