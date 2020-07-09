@@ -285,14 +285,23 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
         }
         break;
     }
-    case GridManager::soHidenSwitch:{
+        //default处会报警告："warning: default label in switch which covers all enumeration values"
+        //因此这样处理
+        //    case GridManager::soHidenSwitch:{
+        //        for (CanvasViewPointer view : m_canvasMap.values()){
+        //            view->updateHiddenItems();
+        //        }
+        //        break;
+        //    }
+        //    default:
+        //        break;
+        //    }
+    default:{
         for (CanvasViewPointer view : m_canvasMap.values()){
             view->updateHiddenItems();
         }
         break;
     }
-    default:
-        break;
     }
 }
 
