@@ -41,6 +41,9 @@ public:
     static QString PolicyKitCreateActionId;
     static QString PolicyKitRemoveActionId;
 
+signals:
+    void lockEventTriggered(QString user);
+
 public slots:
     /**
      * @brief slotUserChanged 用户切换槽函数
@@ -73,6 +76,32 @@ public slots:
     */
     bool checkAuthentication(QString type);
 
+    /**
+     * @brief isLockEventTriggered 是否存在已触发的锁定事件
+     * @return
+     */
+    bool isLockEventTriggered() const;
+
+    /**
+     * @brief triggerLockEvent 触发锁定事件
+     */
+    void triggerLockEvent();
+
+    /**
+     * @brief clearLockEvent 清除锁定事件
+     */
+    void clearLockEvent();
+
+private slots:
+    /**
+     * @brief lockServiceEvent 锁屏事件
+     * @param type             事件类型
+     * @param processID        dde-lock进程ID
+     * @param user             当前用户
+     * @param state            状态
+     */
+    void lockServiceEvent(quint32 type, quint32 processID, const QString &user, const QString &state);
+
 private:
     /**
      * @brief getCurrentUser 获取当前用户
@@ -80,7 +109,6 @@ private:
      */
     QString getCurrentUser() const;
 
-private:
     VaultAdaptor* m_vaultAdaptor = nullptr;
 
     QMap<QString, VaultClock*> m_mapUserClock; // map user and timer.
