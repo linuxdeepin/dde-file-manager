@@ -1458,117 +1458,11 @@ bool DFileCopyMoveJobPrivate::process(const DUrl &from, const DAbstractFileInfoP
 
 bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, int blockSize)
 {
-    Q_Q(DFileCopyMoveJob);
+//    Q_Q(DFileCopyMoveJob);
     qint64 elapsed = 0;
-    qint64 start = QDateTime::currentMSecsSinceEpoch();
     if (fileJob().isDebugEnabled()) {
         elapsed = updateSpeedElapsedTimer->elapsed();
     }
-
-<<<<<<< Updated upstream
-    bool ok =true;
-
-    if (fileJob().isDebugEnabled()) {
-        elapsed = updateSpeedElapsedTimer->elapsed();
-    }
-    QScopedPointer<DFileDevice> fromDevice(DFileService::instance()->createFileDevice(nullptr, fromInfo->fileUrl()));
-
-    if (!fromDevice) {
-        setError(DFileCopyMoveJob::UnknowUrlError, "Failed on create file device");
-
-        return false;
-    }
-
-    QScopedPointer<DFileDevice> toDevice(DFileService::instance()->createFileDevice(nullptr, toInfo->fileUrl()));
-
-    if (!toDevice) {
-        setError(DFileCopyMoveJob::UnknowUrlError, "Failed on create file device");
-
-        return false;
-    }
-    DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
-
-    if (fromDevice->open(QIODevice::ReadOnly)) {
-        action = DFileCopyMoveJob::NoAction;
-    }
-    if (toDevice->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        action = DFileCopyMoveJob::NoAction;
-    }
-
-//    if (toDevice->resize(fromDevice->size())) {
-//                       action = DFileCopyMoveJob::NoAction;
-//                   }
-    // 开启读取优化，告诉内核，我们将顺序读取此文件
-    if (fromDevice->handle() > 0) {
-      posix_fadvise (fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
-    }
-
-    if (toDevice->handle() > 0) {
-      posix_fadvise (toDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
-    }
-
-    int fileSize = 0;
-    int totalCopySize = 0;
-#define FILELENGTH      10*1024*1024
-    char* byteTemp = new char[FILELENGTH];//字节数组
-    QFile tofile;
-    tofile.setFileName(toDevice->fileUrl().path());
-    QDataStream out(&tofile);
-    out.setVersion(QDataStream::Qt_5_11);
-    if(!tofile.open(QIODevice::WriteOnly)){
-        qDebug() << "open fromfile failed！！！";
-        return false;
-    }
-    int cnt=0;
-    QFile fromfile;
-    completedDataSize=0;
-    fromfile.setFileName(fromDevice->fileUrl().path());
-    if(!fromfile.open(QIODevice::ReadOnly)){
-        qDebug() << "open fromfile failed！！！";
-        return false;
-    }
-    fileSize = fromfile.size();
-    currentJobDataSizeInfo.first = fromDevice->size();
-    QDataStream in(&fromfile);
-    in.setVersion(QDataStream::Qt_5_11);
-    setState(DFileCopyMoveJob::IOWaitState);
-    while(!in.atEnd())
-    {
-        int readSize = 0;
-        //读入字节数组,返回读取的字节数量，如果小于4096*1024*1024，则到了文件尾
-        readSize = in.readRawData(byteTemp, FILELENGTH);
-        out.writeRawData(byteTemp, readSize);
-        totalCopySize += readSize;
-        currentJobDataSizeInfo.second += readSize;
-        completedDataSize += readSize;
-        completedDataSizeOnBlockDevice += readSize;
-        if(readSize==0)
-        {
-            if(cnt++>10)
-            {
-                break;
-            }
-        }
-    }
-    if(!fromfile.flush())
-    {
-        qDebug("fromfile.flush()->write failed");
-    }
-
-    if(totalCopySize == fileSize){
-        tofile.setPermissions(QFile::ExeUser);
-    }
-//    setState(DFileCopyMoveJob::IOWaitState);
-    fromDevice->close();
-    toDevice->close();
-    if (state == DFileCopyMoveJob::IOWaitState) {
-        setState(DFileCopyMoveJob::RunningState);
-    } else if (Q_UNLIKELY(!stateCheck())) {
-        return false;
-    }
-    qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
-
-=======
     beginJob(JobInfo::Copy, fromInfo->fileUrl(), toInfo->fileUrl());
 //    qDebug() << m_pool.activeThreadCount();
     bool ok = true;
@@ -1589,8 +1483,7 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer &fromInfo,
     }
     endJob();
 
-//    qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
->>>>>>> Stashed changes
+    qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
     return ok;
 }
 
