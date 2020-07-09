@@ -45,7 +45,7 @@ class WallpaperItem : public QFrame
     Q_PROPERTY(bool useThumbnailManager READ useThumbnailManager WRITE setUseThumbnailManager)
 
 public:
-    WallpaperItem(QFrame *parent = 0, const QString &path = "");
+    WallpaperItem(QFrame *parent = nullptr, const QString &path = "");
     ~WallpaperItem();
 
     void slideUp();
@@ -105,11 +105,11 @@ private:
 
     QVBoxLayout *m_buttonLayout = nullptr;
 
-    WrapperWidget * m_wrapper = NULL;
-    QPropertyAnimation * m_upAnim = NULL;
-    QPropertyAnimation * m_downAnim = NULL;
+    WrapperWidget * m_wrapper = nullptr;
+    QPropertyAnimation * m_upAnim = nullptr;
+    QPropertyAnimation * m_downAnim = nullptr;
 
-    QFutureWatcher<QPixmap> * m_thumbnailerWatcher = NULL;
+    QFutureWatcher<QPixmap> * m_thumbnailerWatcher = nullptr;
 
     void initUI();
     void initAnimation();

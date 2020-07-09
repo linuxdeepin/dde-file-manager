@@ -29,11 +29,11 @@ public:
     bool buttonClickStatus() const
     {
         return buttonHasClicked;
-    };
+    }
     void setButtonClickStatus(bool btnClicked)
     {
         buttonHasClicked = btnClicked;
-    };
+    }
 
     void addButton(QString buttonName, QString actionStr, bool lastAddedButton);
 
