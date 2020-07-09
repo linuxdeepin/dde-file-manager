@@ -15,6 +15,10 @@ unix {
 
     isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
         message("Build arch:" $$ARCH)
+
+        DEFINES += ENABLE_DAEMON
+
+        DEFINES += ENABLE_ASYNCINIT
     } else {
         message("Build arch:" $$ARCH "Deepin Anything support disabled")
         CONFIG += DISABLE_ANYTHING
