@@ -34,7 +34,7 @@ class CopyJob : public BaseJob
 {
     Q_OBJECT
 public:
-    explicit CopyJob(const QStringList &filelist, const QString &targetDir, QObject *parent = 0);
+    explicit CopyJob(const QStringList &filelist, const QString &targetDir, QObject *parent = nullptr);
     ~CopyJob();
 
     static QString BaseObjectPath;

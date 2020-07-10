@@ -34,7 +34,7 @@ class CreateFolderJob : public BaseJob
 {
     Q_OBJECT
 public:
-    explicit CreateFolderJob(const QString& fabspath, QObject *parent = 0);
+    explicit CreateFolderJob(const QString& fabspath, QObject *parent = nullptr);
     ~CreateFolderJob();
 
     static QString BaseObjectPath;

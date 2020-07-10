@@ -33,7 +33,7 @@ class FileManagerDaemon : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileManagerDaemon(QObject *parent = 0);
+    explicit FileManagerDaemon(QObject *parent = nullptr);
     ~FileManagerDaemon();
 
     void initControllers();
@@ -44,7 +44,7 @@ signals:
 public slots:
 
 private:
-    AppController* m_appController = NULL;
+    AppController* m_appController = nullptr;
 };
 
 #endif // FILEMANAGERDAEMON_H

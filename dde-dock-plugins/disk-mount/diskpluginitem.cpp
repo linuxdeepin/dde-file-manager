@@ -85,7 +85,7 @@ void DiskPluginItem::updateIcon()
     if (height() <= PLUGIN_BACKGROUND_MIN_SIZE && DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
         iconName.append(PLUGIN_MIN_ICON_NAME);
 
-    m_icon = QIcon::fromTheme(iconName, QIcon(QString(":/icons/resources/%1.svg").arg(iconName))).pixmap(16 * qApp->devicePixelRatio(), 16 * qApp->devicePixelRatio());
+    m_icon = QIcon::fromTheme(iconName, QIcon(QString(":/icons/resources/%1.svg").arg(iconName))).pixmap(static_cast<int>(16 * qApp->devicePixelRatio()), static_cast<int>(16 * qApp->devicePixelRatio()));
     m_icon.setDevicePixelRatio(qApp->devicePixelRatio());
     update();
 }
