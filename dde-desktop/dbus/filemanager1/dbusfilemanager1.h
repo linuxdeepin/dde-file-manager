@@ -32,7 +32,7 @@ class DBusFileManager1 : public QObject
     Q_OBJECT
 
 public:
-    explicit DBusFileManager1(QObject *parent = 0);
+    explicit DBusFileManager1(QObject *parent = nullptr);
 
     void ShowFolders(const QStringList &URIs, const QString &StartupId);
     void ShowItemProperties(const QStringList &URIs, const QString &StartupId);

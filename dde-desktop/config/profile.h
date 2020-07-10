@@ -32,7 +32,7 @@ class Profile : public QObject
 {
     Q_OBJECT
 public:
-    explicit Profile(QObject *parent = 0);
+    explicit Profile(QObject *parent = nullptr);
     ~Profile();
 
 Q_SIGNALS:
