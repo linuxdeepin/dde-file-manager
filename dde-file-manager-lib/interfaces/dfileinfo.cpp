@@ -488,8 +488,8 @@ bool DFileInfo::canShare() const
         if (absoluteFilePath().startsWith(userPath)) {
             return true;
         }
-
-        UDiskDeviceInfoPointer info = deviceListener->getDeviceByFilePath(filePath());
+        //fix fix task 29259,说明是共享使用true
+        UDiskDeviceInfoPointer info = deviceListener->getDeviceByFilePath(filePath(),true);
 
         if (info) {
             if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() != UDiskDeviceInfo::network)

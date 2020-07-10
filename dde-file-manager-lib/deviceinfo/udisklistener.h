@@ -86,7 +86,7 @@ public:
     UDiskDeviceInfoPointer getDeviceByMountPoint(const QString &mountPoint);
     UDiskDeviceInfoPointer getDeviceByMountPointFilePath(const QString &filePath);
     UDiskDeviceInfoPointer getDeviceByPath(const QString &path);
-    UDiskDeviceInfoPointer getDeviceByFilePath(const QString &path);
+    UDiskDeviceInfoPointer getDeviceByFilePath(const QString &path,const bool bshareuse = false);
     UDiskDeviceInfoPointer getDeviceByDeviceID(const QString &deviceID);
 
     void loadCustomVolumeLetters();
