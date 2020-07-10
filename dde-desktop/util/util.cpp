@@ -8,8 +8,32 @@
  **/
 
 #include "util.h"
+#include "dde/desktopinfo.h"
 
-namespace DesktopUtil
+#include <QWidget>
+#include <QWindow>
+#include <QDebug>
+//for xcb
+#include <QtPlatformHeaders/QXcbWindowFunctions>
+#define WINDOWS_DESKTOP 0x01000000
+
+namespace DesktopUtil {
+
+void set_desktop_window(QWidget *win)
 {
+    if (!win)
+        return;
 
+    win->winId(); //must be called
+    QWindow *window = win->windowHandle();
+    if (!window)
+        return;
+
+    if (DesktopInfo().waylandDectected()) {
+        qDebug() << "wayland set desktop";
+        win->setWindowFlags((Qt::WindowFlags)WINDOWS_DESKTOP | Qt::FramelessWindowHint); //to do set Desktop flag
+    } else {
+        QXcbWindowFunctions::setWmWindowType(window, QXcbWindowFunctions::Desktop);
+    }
+}
 }

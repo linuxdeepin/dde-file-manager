@@ -9,7 +9,8 @@
 
 #pragma once
 
+class QWidget;
 namespace DesktopUtil
 {
-
+    void set_desktop_window(QWidget *);
 }
