@@ -323,8 +323,6 @@ void WallpaperItem::setOpacity(qreal opacity)
 {
     //qreal类型是double类型，这里是设置透明度，根据Qt文档描述取值范围是0.0-1.0
     //这里精度应当足够了。
-    //    if (m_wrapper->m_opacity == opacity)
-    //        return;
     const double tempEps = 1e-6;
     if(fabs(m_wrapper->m_opacity - opacity) < tempEps)
         return;
