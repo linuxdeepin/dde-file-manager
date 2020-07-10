@@ -1089,6 +1089,7 @@ void AppController::actionStageFileForBurning()
             QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(destdev));
             dev->eject({});
         });
+        dialogManager->showMessageDialog(1, tr("Please insert a disc and retry"));
         return;
     }
 
