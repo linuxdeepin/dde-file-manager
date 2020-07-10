@@ -34,7 +34,7 @@ class CreateTemplateFileJob : public BaseJob
 {
     Q_OBJECT
 public:
-    explicit CreateTemplateFileJob(const QString &templateFile, const QString &targetDir, QObject *parent = 0);
+    explicit CreateTemplateFileJob(const QString &templateFile, const QString &targetDir, QObject *parent = nullptr);
     ~CreateTemplateFileJob();
 
     static QString BaseObjectPath;
