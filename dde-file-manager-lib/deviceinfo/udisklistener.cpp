@@ -454,8 +454,9 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByPath(const QString &path)
     }
     return UDiskDeviceInfoPointer();
 }
-
-UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
+// fix task 29259 ,在判断空白光驱时就返回，是没有找到要用的UDiskDeviceInfoPointer，需要找的info在m_list中的位置在空白光驱之后，所以就不能直接返回
+// 使用bshareuse，是在判断可以共享时，根据路径取得UDiskDeviceInfoPointer,找到空白光驱就跳过，查询完m_list所有的元素
+UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path, const bool bshareuse)
 {
     for (int i = 0; i < m_list.size(); i++) {
         UDiskDeviceInfoPointer info = m_list.at(i);
@@ -463,13 +464,13 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
 
             bool t_ok = info->getId().contains("/dev/sr");
             //获取空白光盘路径有问题，fix
-            if (info->getMountPointUrl().toString() == "burn:///" || info->getId().contains("/dev/sr")) {
+            if (!bshareuse && (info->getMountPointUrl().toString() == "burn:///" || info->getId().contains("/dev/sr"))) {
                 return UDiskDeviceInfoPointer();
             }
             //获取空白光盘路径有问题，fix
-
+            // fix task 29259增加一个判断info->getMountPointUrl()，因为有可能空光盘的挂载点是空
             bool flag = (DUrl::fromLocalFile(path) == info->getMountPointUrl());
-            if (!flag && path.startsWith(QString("%1").arg(info->getMountPointUrl().toLocalFile()))) {
+            if (!flag && !info->getMountPointUrl().toLocalFile().isEmpty() && path.startsWith(QString("%1").arg(info->getMountPointUrl().toLocalFile()))) {
                 return info;
             }
         }

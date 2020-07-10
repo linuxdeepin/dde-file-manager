@@ -51,15 +51,10 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
                             fileInfo.absoluteFilePath() == QString("/sys/power/wakeup_count"))?
                 true : false;
     if (DStorageInfo::isLowSpeedDevice(path) || bMatchExtension) {
-        //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
-        if (FileUtils::isGvfsMountFile(path)) {
-            QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo.fileName());
-            if (!results.isEmpty()) {
-                result = results.first();
-            }
-        }else {
-            result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
-        }
+        //fix bug 29259 【PanguV-TR点】【PanguV_daily-20200704】【HUAWEI】
+        //【文件管理器】挂载的安卓手机文件夹右键菜单无共享文件夹选项，且存在解压缩、解压缩到当前文件夹选项（一般+必现+非常用）
+        // 去掉另外的获取mimetype的方式，这个当时缓存时，考虑到是网络文件，就使用了更加简单的获取方式，优化性能，但是这个获取方式不是很准确，获取错误了
+        result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
     }
