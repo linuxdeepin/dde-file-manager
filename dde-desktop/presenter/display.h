@@ -21,7 +21,7 @@ class Display: public QObject, public Singleton<Display>
 
     friend class Singleton<Display>;
 public:
-    explicit Display(QObject *parent = 0);
+    explicit Display(QObject *parent = nullptr);
 
     QRect primaryRect();
     QString primaryName();
@@ -49,7 +49,7 @@ class DockIns: public QObject, public Singleton<DBusDock>
 
     friend class Singleton<DBusDock>;
 public:
-    explicit DockIns(QObject *parent = 0);
+    explicit DockIns(QObject *parent = nullptr);
 
 private:
     DBusDock *m_dock = nullptr;
