@@ -31,7 +31,7 @@ public:
     { return "com.deepin.filemanager.daemon.CreateFolderJob"; }
 
 public:
-    CreateFolderJobInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    CreateFolderJobInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~CreateFolderJobInterface();
 
