@@ -2238,6 +2238,7 @@ void CanvasGridView::initUI()
 
     setModel(new DFileSystemModel(d->fileViewHelper));
     model()->setEnabledSort(false);
+    model()->isDesktop = true;//紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
 
     //设置是否显示隐藏文件
     auto filters = model()->filters();
