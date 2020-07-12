@@ -918,7 +918,17 @@ public:
     GridManagerPrivate()
     {
         autoArrange = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoAlign).toBool();
+#ifdef ENABLE_AUTOMERGE  //sp2需求调整，屏蔽自动整理
         autoMerge = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoMerge, false).toBool();
+#else
+        //取消自动整理
+        autoMerge = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoMerge, false).toBool();
+        //若用户开启了自动整理，则强制退出
+        if (autoMerge){
+            autoMerge = false;
+            Config::instance()->setConfig(Config::groupGeneral, Config::keyAutoMerge, false);
+        }
+#endif
 //        auto settings = Config::instance()->settings();
 //        settings->beginGroup(Config::groupGeneral);
 //        autoArrange = settings->value(Config::keyAutoAlign).toBool();
