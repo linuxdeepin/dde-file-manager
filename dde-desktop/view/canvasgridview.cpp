@@ -2587,6 +2587,8 @@ openEditor:
             GridManager::instance()->delaySyncAllProfile(0);
         }
     });
+
+#ifdef ENABLE_AUTOMERGE  //sp2需求调整，屏蔽自动整理
     connect(this, &CanvasGridView::autoMergeToggled,this,[](){
         bool enable = !GridManager::instance()->autoMerge();
         GridManager::instance()->setAutoMerge(enable);
@@ -2594,6 +2596,7 @@ openEditor:
 
         emit GridManager::instance()->sigSyncOperation(GridManager::soAutoMerge,enable);
     });
+#endif
 
     connect(this, &CanvasGridView::sortRoleChanged,
             Presenter::instance(), &Presenter::onSortRoleChanged);
@@ -3258,6 +3261,8 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     iconSizeAction.setData(IconSize);
     iconSizeAction.setMenu(&iconSizeMenu);
     menu->insertAction(pasteAction, &iconSizeAction);
+
+#ifdef ENABLE_AUTOMERGE  //sp2需求调整，屏蔽自动整理
     //自动整理
     QAction menuAutoMerge(menu);
     menuAutoMerge.setText(tr("Auto merge"));
@@ -3268,6 +3273,8 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     if (settings.value("auto-merge").toBool()) {
         menu->insertAction(pasteAction, &menuAutoMerge);
     }
+#endif
+
     //自动排序
     QAction autoSort(menu);
     autoSort.setText(tr("Auto arrange"));
