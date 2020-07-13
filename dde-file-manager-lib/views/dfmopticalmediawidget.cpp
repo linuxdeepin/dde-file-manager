@@ -111,7 +111,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
                     if (f.isFile())
                         dir.remove(f.fileName());
                     else
-                        QDir(f.path()).removeRecursively();
+                        QDir(f.absoluteFilePath()).removeRecursively();
                     continue;
                 }
             }
