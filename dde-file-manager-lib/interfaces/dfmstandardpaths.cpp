@@ -128,8 +128,6 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
     default:
         return QStringLiteral("bug://dde-file-manager-lib/interface/dfmstandardpaths.cpp#") + QT_STRINGIFY(type);
     }
-
-    return QString();
 }
 
 QString DFMStandardPaths::fromStandardUrl(const DUrl &standardUrl)

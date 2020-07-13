@@ -104,6 +104,7 @@ public:
         FileSuffixOfRenameRole = Qt::UserRole + 16,
         FileSizeInKiloByteRole = Qt::UserRole + 17,
         FileLastModifiedDateTimeRole = Qt::UserRole + 18,
+        FileIconModelToolTipRole = Qt::UserRole + 19, // 用于返回图标视图下的tooltip
         FileUserRole = Qt::UserRole + 99,
         UnknowRole = Qt::UserRole + 999
     };
@@ -287,6 +288,7 @@ private:
 public:
      bool ignoreDropFlag = false; //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时设置其为true，
                                   //不调用candrop，节省时间,bug#10926
+     bool isDesktop = false; //紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
 };
 
 #endif // DFILESYSTEMMODEL_H

@@ -37,7 +37,7 @@ class RenameJob : public BaseJob
 public:
     explicit RenameJob(const QString&oldFile,
                        const QString &newFile,
-                       QObject *parent = 0);
+                       QObject *parent = nullptr);
     ~RenameJob();
 
     static QString BaseObjectPath;

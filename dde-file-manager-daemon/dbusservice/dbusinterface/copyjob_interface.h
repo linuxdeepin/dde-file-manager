@@ -31,7 +31,7 @@ public:
     { return "com.deepin.filemanager.daemon.CopyJob"; }
 
 public:
-    CopyJobInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    CopyJobInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~CopyJobInterface();
 

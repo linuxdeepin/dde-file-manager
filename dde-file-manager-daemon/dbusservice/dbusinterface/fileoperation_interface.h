@@ -32,7 +32,7 @@ public:
     { return "com.deepin.filemanager.daemon.Operations"; }
 
 public:
-    FileOperationInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    FileOperationInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~FileOperationInterface();
 

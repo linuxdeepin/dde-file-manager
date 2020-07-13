@@ -31,7 +31,7 @@ public:
     { return "com.deepin.filemanager.daemon.UsbFormatter"; }
 
 public:
-    UsbFormatterInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    UsbFormatterInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~UsbFormatterInterface();
 

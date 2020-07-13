@@ -85,7 +85,7 @@ public:
     QLocalSocket *socket = nullptr;
 
     DFMSocketInterface *q_ptr;
-    Q_DECLARE_PUBLIC(DFMSocketInterface);
+    Q_DECLARE_PUBLIC(DFMSocketInterface)
 };
 
 DFMSocketInterface::DFMSocketInterface(QObject *parent) : QObject(parent), d_ptr(new DFMSocketInterfacePrivate(this))
