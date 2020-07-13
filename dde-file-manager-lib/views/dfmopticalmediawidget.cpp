@@ -85,8 +85,10 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
                                               + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/', '_') + "/");
         // 1、获取暂存区内文件列表信息，去除与当前光盘中有交集的部分（当前 isomaster 库不提供覆盖写入的选项，后或可优化）
         QDir dirMnt(d->strMntPath);
-        if (!dirMnt.exists())
+        if (!dirMnt.exists()) {
+            qWarning() << "Mount points doesn't exist: " << d->strMntPath;
             return;
+        }
         // 如果放入空盘是没有挂载点的，此时给QDir传入空的path将导致QDir获取到的是程序运行目录的Dir，之后的去重会产生不正常的结果
         QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
 

@@ -112,7 +112,7 @@ QString DAttachedUdisks2Device::displayName()
     } else if (storage_info.isValid()) {
         if (!hasLabelName) {
             qint64 bytesTotal = storage_info.bytesTotal();
-            result = qApp->translate("DeepinStorage", "%1 Volume").arg(DiskControlItem::formatDiskSize(bytesTotal));
+            result = qApp->translate("DeepinStorage", "%1 Volume").arg(DiskControlItem::formatDiskSize(static_cast<quint64>(bytesTotal)));
         }
     }
 
@@ -132,7 +132,7 @@ QPair<quint64, quint64> DAttachedUdisks2Device::deviceUsage()
     if (storage_info.isValid()) {
         qint64 bytesTotal = storage_info.bytesTotal();
         qint64 bytesFree = storage_info.bytesFree();
-        return QPair<quint64, quint64>(bytesFree, bytesTotal);
+        return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
     }
 
     return QPair<quint64, quint64>(-1, 0);

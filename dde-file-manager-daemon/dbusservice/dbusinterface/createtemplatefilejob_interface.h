@@ -31,7 +31,7 @@ public:
     { return "com.deepin.filemanager.daemon.CreateTemplateFileJob"; }
 
 public:
-    CreateTemplateFileInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    CreateTemplateFileInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~CreateTemplateFileInterface();
 

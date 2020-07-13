@@ -46,6 +46,7 @@
 #include <DApplicationHelper>
 #include "dstyleoption.h"
 #include <DStyle>
+#include <QToolTip>
 
 DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
@@ -799,6 +800,37 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     painter->setOpacity(1);
+}
+
+bool DIconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (event->type() == QEvent::ToolTip) {
+        const QString tooltip = index.data(DFileSystemModel::Roles::FileIconModelToolTipRole).toString();
+
+        if (tooltip.isEmpty()) { // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
+            QWidgetList qwl = QApplication::topLevelWidgets();
+            for (QWidget *qw : qwl) {
+                if (QStringLiteral("QTipLabel") == qw->metaObject()->className()) {
+                    qw->close();
+                }
+            }
+        } else {
+            int tooltipsize = tooltip.size();
+            const int nlong = 32;
+            int lines = tooltipsize / nlong + 1;
+            QString strtooltip;
+            for (int i = 0; i < lines; ++i) {
+                strtooltip.append(tooltip.mid(i * nlong, nlong));
+                strtooltip.append("\n");
+            }
+            strtooltip.chop(1);
+            QToolTip::showText(event->globalPos(), strtooltip, view);
+        }
+
+        return true;
+    }
+
+    return DFMStyledItemDelegate::helpEvent(event, view, option, index);
 }
 
 QSize DIconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const

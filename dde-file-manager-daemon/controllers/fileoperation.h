@@ -37,7 +37,7 @@ class FileOperation : public QObject ,protected QDBusContext
     Q_OBJECT
 
 public:
-    explicit FileOperation(const QString& servicePath, QObject *parent = 0);
+    explicit FileOperation(const QString& servicePath, QObject *parent = nullptr);
     ~FileOperation();
 
     static QString ObjectPath;
