@@ -25,7 +25,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QStandardPaths>
-
+#include <QProcess>
 #include <QFile>
 
 DWIDGET_USE_NAMESPACE
@@ -90,12 +90,12 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             return;
         }
         // 如果放入空盘是没有挂载点的，此时给QDir传入空的path将导致QDir获取到的是程序运行目录的Dir，之后的去重会产生不正常的结果
-        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : entryInfoList(d->strMntPath) /*dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot)*/;
 
         QDir dirStage(urlOfStage.path());
         if (!dirStage.exists())
             return;
-        QFileInfoList lstFilesInStage = dirStage.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        QFileInfoList lstFilesInStage = entryInfoList(urlOfStage.path());
         if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
@@ -112,7 +112,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
                 if (fStage.fileName() != fOn.fileName())
                     continue;
 
-                if (fStage.isFile())
+                if (fStage.isFile() || fStage.isSymLink())
                     dirStage.remove(fStage.fileName());
                 else {
                     if (!bDeletedValidFile)
@@ -122,7 +122,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             }
         }
 
-        lstFilesInStage = dirStage.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        lstFilesInStage = entryInfoList(urlOfStage.path());
         if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
@@ -280,6 +280,26 @@ bool DFMOpticalMediaWidget::hasVolProcessBusy()
             return true;
     }
     return false;
+}
+
+QFileInfoList DFMOpticalMediaWidget::entryInfoList(const QString &dirPath)
+{
+    QFileInfoList lst;
+    foreach (auto fileName, entryList(dirPath))
+        lst << QFileInfo(fileName);
+    return lst;
+}
+
+QStringList DFMOpticalMediaWidget::entryList(const QString &dirPath)
+{
+    QProcess p;
+    p.start("ls", {dirPath});
+    p.waitForFinished();
+    QStringList lstFileNames = QString(p.readAllStandardOutput()).split("\n", QString::SkipEmptyParts);
+    QStringList lst;
+    foreach (auto s, lstFileNames)
+        lst << dirPath + QDir::separator() + s;
+    return lst;
 }
 
 DFMOpticalMediaWidgetPrivate::DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q) :
