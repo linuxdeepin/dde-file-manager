@@ -19,7 +19,7 @@ class DFMSocketInterface : public QObject, public Singleton<DFMSocketInterface>
     Q_OBJECT
     friend class Singleton<DFMSocketInterface>;
 public:
-    explicit DFMSocketInterface(QObject *parent = 0);
+    explicit DFMSocketInterface(QObject *parent = nullptr);
     ~DFMSocketInterface();
 
 signals:

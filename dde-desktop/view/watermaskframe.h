@@ -28,7 +28,7 @@ class WaterMaskFrame : public QFrame
 {
     Q_OBJECT
 public:
-    explicit WaterMaskFrame(const QString& fileName, QWidget *parent = 0);
+    explicit WaterMaskFrame(const QString& fileName, QWidget *parent = nullptr);
     ~WaterMaskFrame();
     bool checkConfigFile(const QString& fileName);
     void loadConfig(const QString& fileName);
@@ -45,8 +45,8 @@ public slots:
 private:
     QString m_configFile;
     QJsonObject m_configs;
-    QLabel* m_logoLabel = NULL;
-    QLabel* m_textLabel = NULL;
+    QLabel* m_logoLabel = nullptr;
+    QLabel* m_textLabel = nullptr;
     bool m_isMaskAlwaysOn = false;
     int m_xRightBottom;
     int m_yRightBottom;

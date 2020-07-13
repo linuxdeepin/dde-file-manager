@@ -31,7 +31,7 @@ public:
     { return "com.deepin.filemanager.daemon.DeleteJob"; }
 
 public:
-    DeleteJobInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    DeleteJobInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~DeleteJobInterface();
 
