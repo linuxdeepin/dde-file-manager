@@ -27,6 +27,7 @@
 #include <QStandardPaths>
 #include <QProcess>
 #include <QFile>
+#include <glob.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -292,13 +293,20 @@ QFileInfoList DFMOpticalMediaWidget::entryInfoList(const QString &dirPath)
 
 QStringList DFMOpticalMediaWidget::entryList(const QString &dirPath)
 {
-    QProcess p;
-    p.start("ls", {dirPath});
-    p.waitForFinished();
-    QStringList lstFileNames = QString(p.readAllStandardOutput()).split("\n", QString::SkipEmptyParts);
     QStringList lst;
-    foreach (auto s, lstFileNames)
-        lst << dirPath + QDir::separator() + s;
+    QString strPattern;
+    dirPath.endsWith("/")
+        ? (strPattern = dirPath + "*")
+        : (strPattern = dirPath + "/*");
+
+    glob_t buf;
+    glob(strPattern.toLocal8Bit(), GLOB_PERIOD, nullptr, &buf);
+    for (int i = 0; i < static_cast<int>(buf.gl_pathc); i++) {
+        QString strPath = buf.gl_pathv[i];
+        if (strPath.endsWith("/.") || strPath.endsWith("/..")) // 过滤 . 和 .. 路径
+            continue;
+        lst << strPath;
+    }
     return lst;
 }
 
