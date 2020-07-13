@@ -54,6 +54,7 @@
 #include <ddiskdevice.h>
 #include <dblockdevice.h>
 #include <QMenu>
+#include <DSysInfo>
 
 #include <algorithm>
 
@@ -828,15 +829,22 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
             appendItem(DFMSideBarDefaultItemHandler::createItem("Trash"), groupNameStr);
         }
         break;
-    case GroupName::Device:
+    case GroupName::Device:{
         if (!m_disableUrlSchemes.contains(COMPUTER_SCHEME)) {
             appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
         }
-        // 添加保险库
-        if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
-            appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
+        // 判断系统类型，决定是否启用保险箱
+        if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
+            DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+            if(DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType){ // 如果不是个人版和未知版
+                // 添加保险库
+                if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
+                    appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
+                }
+            }
         }
         break;
+    }
     case GroupName::Bookmark: {
         if (m_disableUrlSchemes.contains(BOOKMARK_SCHEME))  {
             break;
