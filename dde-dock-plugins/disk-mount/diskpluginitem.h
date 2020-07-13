@@ -37,7 +37,7 @@ class DiskPluginItem : public QWidget
     Q_OBJECT
 
 public:
-    explicit DiskPluginItem(QWidget *parent = 0);
+    explicit DiskPluginItem(QWidget *parent = nullptr);
 
 public slots:
     void setDockDisplayMode(const Dock::DisplayMode mode);

@@ -34,7 +34,7 @@ class DeleteJob : public BaseJob
 {
     Q_OBJECT
 public:
-    explicit DeleteJob(const QStringList& filelist, QObject *parent = 0);
+    explicit DeleteJob(const QStringList& filelist, QObject *parent = nullptr);
     ~DeleteJob();
 
     static QString BaseObjectPath;
