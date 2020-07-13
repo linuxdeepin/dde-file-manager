@@ -25,8 +25,9 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QStandardPaths>
-
+#include <QProcess>
 #include <QFile>
+#include <glob.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -90,12 +91,12 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             return;
         }
         // 如果放入空盘是没有挂载点的，此时给QDir传入空的path将导致QDir获取到的是程序运行目录的Dir，之后的去重会产生不正常的结果
-        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : entryInfoList(d->strMntPath) /*dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot)*/;
 
         QDir dirStage(urlOfStage.path());
         if (!dirStage.exists())
             return;
-        QFileInfoList lstFilesInStage = dirStage.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        QFileInfoList lstFilesInStage = entryInfoList(urlOfStage.path());
         if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
@@ -112,7 +113,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
                 if (fStage.fileName() != fOn.fileName())
                     continue;
 
-                if (fStage.isFile())
+                if (fStage.isFile() || fStage.isSymLink())
                     dirStage.remove(fStage.fileName());
                 else {
                     if (!bDeletedValidFile)
@@ -122,7 +123,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             }
         }
 
-        lstFilesInStage = dirStage.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        lstFilesInStage = entryInfoList(urlOfStage.path());
         if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
@@ -280,6 +281,33 @@ bool DFMOpticalMediaWidget::hasVolProcessBusy()
             return true;
     }
     return false;
+}
+
+QFileInfoList DFMOpticalMediaWidget::entryInfoList(const QString &dirPath)
+{
+    QFileInfoList lst;
+    foreach (auto fileName, entryList(dirPath))
+        lst << QFileInfo(fileName);
+    return lst;
+}
+
+QStringList DFMOpticalMediaWidget::entryList(const QString &dirPath)
+{
+    QStringList lst;
+    QString strPattern;
+    dirPath.endsWith("/")
+        ? (strPattern = dirPath + "*")
+        : (strPattern = dirPath + "/*");
+
+    glob_t buf;
+    glob(strPattern.toLocal8Bit(), GLOB_PERIOD, nullptr, &buf);
+    for (int i = 0; i < static_cast<int>(buf.gl_pathc); i++) {
+        QString strPath = buf.gl_pathv[i];
+        if (strPath.endsWith("/.") || strPath.endsWith("/..")) // 过滤 . 和 .. 路径
+            continue;
+        lst << strPath;
+    }
+    return lst;
 }
 
 DFMOpticalMediaWidgetPrivate::DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q) :
