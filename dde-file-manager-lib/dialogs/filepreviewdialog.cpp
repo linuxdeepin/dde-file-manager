@@ -430,38 +430,41 @@ void FilePreviewDialog::switchToPage(int index)
 
     key_list.append(mime_type.aliases());
     key_list.append(mime_type.allAncestors());
+    //判断文件是否是.desktop文件就直接跳过
+    if (!(mime_type.name() == "application/x-desktop" &&
+          mime_type.suffixes().contains("desktop", Qt::CaseInsensitive))) {
+        for (const QString &key : key_list) {
+            const QString &general_key = generalKey(key);
 
-    for (const QString &key : key_list) {
-        const QString &general_key = generalKey(key);
-
-        if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key)
-                          || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
-            if (m_preview->setFileUrl(m_fileList.at(index))) {
-                m_preview->contentWidget()->updateGeometry();
-                adjustSize();
-                updateTitle();
-                m_statusBar->openButton()->setFocus();
-                playCurrentPreviewFile();
-                moveToCenter();
-                return;
+            if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key)
+                              || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
+                if (m_preview->setFileUrl(m_fileList.at(index))) {
+                    m_preview->contentWidget()->updateGeometry();
+                    adjustSize();
+                    updateTitle();
+                    m_statusBar->openButton()->setFocus();
+                    playCurrentPreviewFile();
+                    moveToCenter();
+                    return;
+                }
             }
-        }
 
-        preview = DFMFilePreviewFactory::create(key);
+            preview = DFMFilePreviewFactory::create(key);
 
-        if (!preview && general_key != key) {
-            preview = DFMFilePreviewFactory::create(general_key);
-        }
+            if (!preview && general_key != key) {
+                preview = DFMFilePreviewFactory::create(general_key);
+            }
 
-        if (preview) {
-            preview->initialize(this, m_statusBar);
+            if (preview) {
+                preview->initialize(this, m_statusBar);
 
-            if (preview->setFileUrl(m_fileList.at(index)))
-                break;
-            else if (info->canRedirectionFileUrl() && preview->setFileUrl(info->redirectedFileUrl()))
-                break;
-            else
-                preview->deleteLater();
+                if (preview->setFileUrl(m_fileList.at(index)))
+                    break;
+                else if (info->canRedirectionFileUrl() && preview->setFileUrl(info->redirectedFileUrl()))
+                    break;
+                else
+                    preview->deleteLater();
+            }
         }
     }
     if (!preview) {
