@@ -1337,6 +1337,10 @@ void DFileManagerWindow::initConnect()
                 d->detailView->setTagWidgetVisible(false);
         }
     });
+
+    //! redirect when tab root url changed.
+    QObject::connect(fileSignalManager, &FileSignalManager::requestRedirectTabUrl, this, &DFileManagerWindow::onRequestRedirectUrl);
+    QObject::connect(fileSignalManager, &FileSignalManager::requestCloseTab, this, &DFileManagerWindow::onRequestCloseTabByUrl);
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
@@ -1386,6 +1390,48 @@ void DFileManagerWindow::onReuqestCacheRenameBarState()const
 {
     const DFileManagerWindowPrivate *const d{ d_func() };
     DFileManagerWindow::renameBarState = d->renameBar->getCurrentState();//###: record current state, when a new window is created from a already has tab.
+}
+
+void DFileManagerWindow::onRequestRedirectUrl(const DUrl &tabRootUrl, const DUrl &newUrl)
+{
+    D_D(DFileManagerWindow);
+
+    int curIndex = d->tabBar->currentIndex();
+    int tabCount = d->tabBar->count();
+    if (tabCount > 1) {
+        for (int i = 0; i < tabCount; i++) {
+            Tab *tab = d->tabBar->tabAt(i);
+            if (tabRootUrl == tab->fileView()->rootUrl()) {
+                onRequestCloseTab(i, false);
+                openNewTab(newUrl);
+                d->tabBar->setCurrentIndex(curIndex);
+            }
+        }
+    }
+}
+
+void DFileManagerWindow::onRequestCloseTabByUrl(const DUrl &rootUrl)
+{
+    D_D(DFileManagerWindow);
+
+    int originIndex = d->tabBar->currentIndex();
+    if (d->tabBar->count() > 1) {
+        for (int i = 0; i < d->tabBar->count(); i++) {
+            Tab *tab = d->tabBar->tabAt(i);
+            if (tab->fileView()) {
+                if (rootUrl == tab->fileView()->rootUrl()) {
+                    onRequestCloseTab(i, false);
+                    i--;
+                }
+            }
+        }
+        int curIndex = d->tabBar->currentIndex();
+        if (curIndex != originIndex) {
+            if (originIndex < d->tabBar->count()) {
+                d->tabBar->setCurrentIndex(originIndex);
+            }
+        }
+    }
 }
 
 void DFileManagerWindow::showEvent(QShowEvent *event)

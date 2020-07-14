@@ -137,6 +137,10 @@ public slots:
     void onShowRenameBar(const DFMUrlListBaseEvent &event)noexcept;
     void onTabBarCurrentIndexChange(const int &index)noexcept;
     void onReuqestCacheRenameBarState() const;
+    //! re-direct url when root directory renamed.
+    void onRequestRedirectUrl(const DUrl &tabRootUrl, const DUrl &newUrl);
+    //! close tab when root directory deleted.
+    void onRequestCloseTabByUrl(const DUrl &rootUrl);
 
 protected:
     void showEvent(QShowEvent *event) override;
