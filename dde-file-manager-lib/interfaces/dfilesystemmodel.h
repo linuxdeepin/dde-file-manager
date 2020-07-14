@@ -227,6 +227,7 @@ signals:
     void newFileByInternal(const DUrl &url);
     void requestSelectFiles(const QList<DUrl> &urls);
     void sigJobFinished();
+    void requestRedirect(const DUrl &rootUrl, const DUrl &newUrl);
 
 protected:
     bool remove(const DUrl &url);
