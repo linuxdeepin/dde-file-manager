@@ -292,8 +292,8 @@ void DialogManager::addJob(FileJob *job)
 void DialogManager::removeJob(const QString &jobId, bool clearAllbuffer)
 {
     if(clearAllbuffer && m_Opticaljobs.contains(jobId)) { // 最后的时候需要删除所有buffer的数据，否则形成脏数据
-            qDebug() << "remove job " << jobId << "from m_Opticaljobs";
             m_Opticaljobs.remove(jobId);
+            qDebug() << "remove job " << jobId << "from m_Opticaljobs";
         }
 
     if (m_jobs.contains(jobId)) {
