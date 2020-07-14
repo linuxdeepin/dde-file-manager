@@ -400,6 +400,12 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
     if (interface) {
         menu = interface->contextMenu(this, item);
         if (menu) {
+            // 如果光驱正在执行刻录/擦除操作，禁用光驱的右键菜单
+            QString strVolTag = item->url().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾
+            if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
+                for (QAction *act : menu->actions())
+                    act->setEnabled(false);
+            }
             DFileMenu *fmenu = qobject_cast<DFileMenu *>(menu);
             DFileService::instance()->setCursorBusyState(false);
             if (fmenu) {
