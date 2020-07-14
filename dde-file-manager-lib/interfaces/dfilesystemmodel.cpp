@@ -28,6 +28,8 @@
 #include "dabstractfilewatcher.h"
 #include "dfmstyleditemdelegate.h"
 #include "dfmapplication.h"
+#include "views/dfileview.h"
+#include "dfmstandardpaths.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -1156,8 +1158,19 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
 
 void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 {
+     Q_Q(DFileSystemModel);
+
     //如果被重命名的目录是root目录，则不刷新该目录,而是直接退回到上层目录
-    if (from.isLocalFile() && from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
+    bool isLocalFile = from.isLocalFile() || (from.isVaultFile() || to.isVaultFile());
+    if (isLocalFile && from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
+        QString trashPath = DFMStandardPaths::location(DFMStandardPaths::TrashPath);
+        bool isMoveToTrash = to.toLocalFile().contains(trashPath);
+        if (!isMoveToTrash && !to.toLocalFile().isEmpty()) {
+            // re-enter directory if tab root directory renamed.
+            DFileView *fileview = static_cast<DFileView *>(q->parent()->parent());
+            fileSignalManager->requestRedirectTabUrl(fileview->rootUrl(), to);
+        }
+
         return;
     }
 
@@ -1209,10 +1222,15 @@ void DFileSystemModelPrivate::_q_processFileEvent()
                 nparentUrl.setPath(nparentUrl.path() + "/");
             }
         }
+
         if (nfileUrl == rootUrl) {
             if (event.first == RmFile) {
+                //! close tab if root url deleted.
+                emit fileSignalManager->requestCloseTab(nfileUrl);
+                //! return to parent.
                 emit q->rootUrlDeleted(rootUrl);
             }
+
             // It must be refreshed when the root url itself is deleted or newly created
             q->refresh();
             continue;
@@ -1228,6 +1246,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         } else {// rm file event
             // todo: 此处引起效率变低，暂时注释
            // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
+
             q->remove(fileUrl);
         }
         if (!me) {
