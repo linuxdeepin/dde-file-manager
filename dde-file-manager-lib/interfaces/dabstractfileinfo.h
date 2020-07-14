@@ -39,37 +39,37 @@
 #include "dfmglobal.h"
 
 #define COMPARE_FUN_DEFINE(Value, Name, Type) \
-bool compareFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2, Qt::SortOrder order)\
-{\
-    bool isDir1 = info1->isDir();\
-    bool isDir2 = info2->isDir();\
-    \
-    bool isFile1 = info1->isFile();\
-    bool isFile2 = info2->isFile();\
-    \
-    if (!static_cast<const Type*>(info1.data())) \
-        return false; \
-    if (!static_cast<const Type*>(info2.data())) \
-        return false; \
-    auto value1 = static_cast<const Type*>(info1.data())->Value();\
-    auto value2 = static_cast<const Type*>(info2.data())->Value();\
-    \
-    if (isDir1) {\
-        if (!isDir2) return true;\
-    } else {\
-        if (isDir2) return false;\
-    }\
-    \
-    if ((isDir1 && isDir2 && (value1 == value2)) || (isFile1 && isFile2 && (value1 == value2))) {\
-        return compareByString(info1->fileDisplayName(), info2->fileDisplayName());\
-    }\
-    \
-    bool isStrType = typeid(value1) == typeid(QString);\
-    if (isStrType)\
-        return compareByString(value1, value2, order);\
-    \
-    return ((order == Qt::DescendingOrder) ^ (value1 < value2)) == 0x01;\
-}
+    bool compareFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2, Qt::SortOrder order)\
+    {\
+        bool isDir1 = info1->isDir();\
+        bool isDir2 = info2->isDir();\
+        \
+        bool isFile1 = info1->isFile();\
+        bool isFile2 = info2->isFile();\
+        \
+        if (!static_cast<const Type*>(info1.data())) \
+            return false; \
+        if (!static_cast<const Type*>(info2.data())) \
+            return false; \
+        auto value1 = static_cast<const Type*>(info1.data())->Value();\
+        auto value2 = static_cast<const Type*>(info2.data())->Value();\
+        \
+        if (isDir1) {\
+            if (!isDir2) return true;\
+        } else {\
+            if (isDir2) return false;\
+        }\
+        \
+        if ((isDir1 && isDir2 && (value1 == value2)) || (isFile1 && isFile2 && (value1 == value2))) {\
+            return compareByString(info1->fileDisplayName(), info2->fileDisplayName());\
+        }\
+        \
+        bool isStrType = typeid(value1) == typeid(QString);\
+        if (isStrType)\
+            return compareByString(value1, value2, order);\
+        \
+        return ((order == Qt::DescendingOrder) ^ (value1 < value2)) == 0x01;\
+    }
 
 namespace FileSortFunction {
 bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order = Qt::AscendingOrder);
@@ -92,8 +92,7 @@ class DAbstractFileInfoPrivate;
 
 #ifdef SW_LABEL
 
-struct LabelMenuItemData
-{
+struct LabelMenuItemData {
     QString id;
     QString label;
     QString tip;
@@ -130,19 +129,20 @@ public:
         SocketFile,
         RegularFile,
         //
-        Executable,
         Documents,
         Images,
         Videos,
         Audios,
         Archives,
         DesktopApplication,
+        Executable,
         Backups,
         Unknown,
         CustomType = 0x100
     };
 
-    inline static QString dateTimeFormat() {
+    inline static QString dateTimeFormat()
+    {
         return "yyyy/MM/dd HH:mm:ss";
     }
 
@@ -265,7 +265,7 @@ public:
     /// user column default visible for role
     virtual bool columnDefaultVisibleForRole(int role) const;
 
-    typedef std::function<bool(const DAbstractFileInfoPointer&, const DAbstractFileInfoPointer&, Qt::SortOrder)> CompareFunction;
+    typedef std::function<bool(const DAbstractFileInfoPointer &, const DAbstractFileInfoPointer &, Qt::SortOrder)> CompareFunction;
     virtual CompareFunction compareFunByColumn(int columnRole) const;
     /// Whether the file should be inserted into a position according to the current sort type and order
     virtual bool hasOrderly() const;

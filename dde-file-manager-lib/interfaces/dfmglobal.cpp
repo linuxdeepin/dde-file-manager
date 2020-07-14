@@ -383,7 +383,7 @@ void DFMGlobal::initOperatorRevocation()
 void DFMGlobal::initTagManagerConnect()
 {
     connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagColor),
-    [] (const QMap<QString, QString> &tag_and_new_color) {
+    [](const QMap<QString, QString> &tag_and_new_color) {
         for (auto i = tag_and_new_color.constBegin(); i != tag_and_new_color.constEnd(); ++i) {
             const QString &tag_name = i.key();
             const QStringList &files = TagManager::instance()->getFilesThroughTag(tag_name);
@@ -399,7 +399,7 @@ void DFMGlobal::initTagManagerConnect()
             DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::fileAttributeChanged, file_url);
         }
     });
-    connect(TagManager::instance(), &TagManager::filesWereTagged, [] (const QMap<QString, QList<QString>> &files_were_tagged) {
+    connect(TagManager::instance(), &TagManager::filesWereTagged, [](const QMap<QString, QList<QString>> &files_were_tagged) {
         for (auto i = files_were_tagged.constBegin(); i != files_were_tagged.constEnd(); ++i) {
             // is trash files
             if (i.key().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
@@ -417,7 +417,7 @@ void DFMGlobal::initTagManagerConnect()
             }
         }
     });
-    connect(TagManager::instance(), &TagManager::untagFiles, [] (const QMap<QString, QList<QString>> &tag_be_removed_files) {
+    connect(TagManager::instance(), &TagManager::untagFiles, [](const QMap<QString, QList<QString>> &tag_be_removed_files) {
         for (auto i = tag_be_removed_files.constBegin(); i != tag_be_removed_files.constEnd(); ++i) {
             DUrl url = DUrl::fromLocalFile(i.key());
             DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
@@ -433,18 +433,18 @@ void DFMGlobal::initTagManagerConnect()
     });
 
     // for tag watcher
-    connect(TagManager::instance(), &TagManager::addNewTag, [] (const QList<QString> &new_tags) {
+    connect(TagManager::instance(), &TagManager::addNewTag, [](const QList<QString> &new_tags) {
         for (const QString &tag : new_tags) {
             DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::subfileCreated, DUrl::fromUserTaggedFile(tag, QString()));
         }
     });
-    connect(TagManager::instance(), &TagManager::deleteTag, [] (const QList<QString> &new_tags) {
+    connect(TagManager::instance(), &TagManager::deleteTag, [](const QList<QString> &new_tags) {
         for (const QString &tag : new_tags) {
             DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::fileDeleted, DUrl::fromUserTaggedFile(tag, QString()));
         }
     });
     connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagName),
-    [] (const QMap<QString, QString> &old_and_new_name) {
+    [](const QMap<QString, QString> &old_and_new_name) {
         for (auto i = old_and_new_name.constBegin(); i != old_and_new_name.constEnd(); ++i) {
             const DUrl &old_url = DUrl::fromUserTaggedFile(i.key(), QString());
             const DUrl &new_url = DUrl::fromUserTaggedFile(i.value(), QString());
@@ -456,7 +456,7 @@ void DFMGlobal::initTagManagerConnect()
 
 void DFMGlobal::initThumbnailConnection()
 {
-    connect(DThumbnailProvider::instance(), &DThumbnailProvider::createThumbnailFinished, [ = ] (const QString & filePath) {
+    connect(DThumbnailProvider::instance(), &DThumbnailProvider::createThumbnailFinished, [ = ](const QString & filePath) {
         const DUrl &fileUrl = DUrl::fromLocalFile(filePath);
 
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
@@ -584,7 +584,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
         layout->engine()->ignoreBidi = true;
     }
 
-    auto naturalTextRect = [&] (const QRectF rect) {
+    auto naturalTextRect = [&](const QRectF rect) {
         QRectF new_rect = rect;
 
         new_rect.setHeight(lineHeight);
@@ -592,7 +592,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
         return new_rect;
     };
 
-    auto drawShadowFun = [&] (const QTextLine & line) {
+    auto drawShadowFun = [&](const QTextLine & line) {
         const QPen pen = painter->pen();
 
         painter->setPen(shadowColor);
@@ -759,6 +759,16 @@ bool DFMGlobal::startWithHanzi(const QString &text)
     return text.at(0).script() == QChar::Script_Han;
 }
 
+bool DFMGlobal::startWithSymbol(const QString &text)
+{
+    if (text.isEmpty())
+        return false;
+
+    //匹配字母、数字和中文开头的字符串
+    QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5].*$");
+    return !regExp.exactMatch(text);
+}
+
 static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
 {
     QTextDecoder decoder(QTextCodec::codecForName(codecName));
@@ -890,7 +900,7 @@ QByteArray DFMGlobal::detectCharset(const QByteArray &data, const QString &fileN
             prober_encoding = pre_encoding;
         }
 
-confidence:
+    confidence:
         if (QTextCodec *codec = QTextCodec::codecForName(prober_encoding)) {
             if (def_codec == codec)
                 def_codec = nullptr;
@@ -1017,7 +1027,7 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
 
 void DFMGlobal::showMultiFilesRenameDialog(const QList<DUrl> &selectedFiles)
 {
-    dialogManager->showMultiFilesRenameDialog( selectedFiles );
+    dialogManager->showMultiFilesRenameDialog(selectedFiles);
 }
 
 void DFMGlobal::showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList &entryUrls)
@@ -1103,7 +1113,7 @@ QString DFMGlobal::cutString(const QString &text, int dataByteSize, const QTextC
 namespace DThreadUtil {
 FunctionCallProxy::FunctionCallProxy(QThread *thread)
 {
-    connect(this, &FunctionCallProxy::callInLiveThread, this, [this] (FunctionType * func) {
+    connect(this, &FunctionCallProxy::callInLiveThread, this, [this](FunctionType * func) {
         (*func)();
     }, Qt::QueuedConnection);
     connect(thread, &QThread::finished, this, [this] {

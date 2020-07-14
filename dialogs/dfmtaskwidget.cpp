@@ -107,6 +107,7 @@ private:
 
     QTimer* m_timer;
     bool m_isSettingValue;
+    bool m_isEnableHover;
 
     DFMTaskWidget *q_ptr;
     Q_DECLARE_PUBLIC(DFMTaskWidget)
@@ -294,6 +295,7 @@ void DFMTaskWidgetPrivate::initUI()
 
     m_timer = new QTimer(q);
     m_isSettingValue = false;
+    m_isEnableHover = true;
 }
 
 void DFMTaskWidgetPrivate::initConnection()
@@ -469,6 +471,12 @@ void DFMTaskWidget::setButtonText(DFMTaskWidget::BUTTON bt, const QString &text)
     }
 }
 
+void DFMTaskWidget::setHoverEnable(bool enable)
+{
+    Q_D(DFMTaskWidget);
+    d->m_isEnableHover = enable;
+}
+
 void DFMTaskWidget::hideButton(DFMTaskWidget::BUTTON bt, bool hidden/*=true*/)
 {
     Q_D(DFMTaskWidget);
@@ -486,15 +494,17 @@ void DFMTaskWidget::hideButton(DFMTaskWidget::BUTTON bt, bool hidden/*=true*/)
 void DFMTaskWidget::onMouseHover(bool hover)
 {
     Q_D(DFMTaskWidget);
-    d->m_btnPause->setVisible(hover);
-    d->m_btnStop->setVisible(hover);
+    if (d->m_isEnableHover) {
+        d->m_btnPause->setVisible(hover);
+        d->m_btnStop->setVisible(hover);
 
-    d->m_lbSpeed->setHidden(hover);
-    d->m_lbRmTime->setHidden(hover);
+        d->m_lbSpeed->setHidden(hover);
+        d->m_lbRmTime->setHidden(hover);
 
-    update(rect());
-    setProperty("isHover", hover);
-    emit hoverChanged(hover);
+        update(rect());
+        setProperty("isHover", hover);
+        emit hoverChanged(hover);
+    }
 }
 
 void DFMTaskWidget::showConflictButtons(bool showBtns/*=true*/, bool showConflict/*=true*/)
