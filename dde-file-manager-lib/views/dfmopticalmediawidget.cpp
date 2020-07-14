@@ -82,6 +82,8 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 
     connect(d->pb_burn, &DPushButton::clicked, this, [=] {
+        QDir::Filters filter = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+
         DUrl urlOfStage = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
                                               + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/', '_') + "/");
         // 1、获取暂存区内文件列表信息，去除与当前光盘中有交集的部分（当前 isomaster 库不提供覆盖写入的选项，后或可优化）
@@ -91,12 +93,12 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             return;
         }
         // 如果放入空盘是没有挂载点的，此时给QDir传入空的path将导致QDir获取到的是程序运行目录的Dir，之后的去重会产生不正常的结果
-        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : entryInfoList(d->strMntPath) /*dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot)*/;
+        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(filter);
 
         QDir dirStage(urlOfStage.path());
         if (!dirStage.exists())
             return;
-        QFileInfoList lstFilesInStage = entryInfoList(urlOfStage.path());
+        QFileInfoList lstFilesInStage = dirStage.entryInfoList(filter);
         if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
@@ -123,7 +125,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             }
         }
 
-        lstFilesInStage = entryInfoList(urlOfStage.path());
+        lstFilesInStage = dirStage.entryInfoList(filter);
         if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
@@ -236,7 +238,7 @@ void DFMOpticalMediaWidget::setDiscMountPoint(const QString &strMntPath)
 
 bool DFMOpticalMediaWidget::hasFileInDir(QDir dir)
 {
-    QFileInfoList lstFiles = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries);
+    QFileInfoList lstFiles = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::System);
     foreach (QFileInfo f, lstFiles) {
         if (f.isFile())
             return true;
@@ -281,33 +283,6 @@ bool DFMOpticalMediaWidget::hasVolProcessBusy()
             return true;
     }
     return false;
-}
-
-QFileInfoList DFMOpticalMediaWidget::entryInfoList(const QString &dirPath)
-{
-    QFileInfoList lst;
-    foreach (auto fileName, entryList(dirPath))
-        lst << QFileInfo(fileName);
-    return lst;
-}
-
-QStringList DFMOpticalMediaWidget::entryList(const QString &dirPath)
-{
-    QStringList lst;
-    QString strPattern;
-    dirPath.endsWith("/")
-        ? (strPattern = dirPath + "*")
-        : (strPattern = dirPath + "/*");
-
-    glob_t buf;
-    glob(strPattern.toLocal8Bit(), GLOB_PERIOD, nullptr, &buf);
-    for (int i = 0; i < static_cast<int>(buf.gl_pathc); i++) {
-        QString strPath = buf.gl_pathv[i];
-        if (strPath.endsWith("/.") || strPath.endsWith("/..")) // 过滤 . 和 .. 路径
-            continue;
-        lst << strPath;
-    }
-    return lst;
 }
 
 DFMOpticalMediaWidgetPrivate::DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q) :
