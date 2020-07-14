@@ -37,8 +37,8 @@
         <translation>Open</translation>
     </message>
     <message>
-        <source>Unmount all</source>
-        <translation>Unmount all</translation>
+        <source>Eject all</source>
+        <translation>Eject all</translation>
     </message>
 </context>
 <context>
