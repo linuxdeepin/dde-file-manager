@@ -797,6 +797,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Separator
                    << MenuAction::DisplayAs
                    << MenuAction::SortBy
+                   << MenuAction::OpenAsAdmin
                    << MenuAction::OpenInTerminal
                    << MenuAction::Separator
                    << MenuAction::Paste
@@ -809,6 +810,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
+                       << MenuAction::OpenAsAdmin
                        << MenuAction::Separator
                        << MenuAction::Copy
                        << MenuAction::Separator
@@ -839,7 +841,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
             if (isDir()) {
                 actionKeys << MenuAction::OpenInNewWindow
-                           << MenuAction::OpenInNewTab;
+                           << MenuAction::OpenInNewTab
+                           << MenuAction::OpenAsAdmin;
             } else {
                 QSet<QString> mountable = {"application/x-cd-image", "application/x-iso9660-image"};
                 if (mountable.contains(mimeTypeName())) {
