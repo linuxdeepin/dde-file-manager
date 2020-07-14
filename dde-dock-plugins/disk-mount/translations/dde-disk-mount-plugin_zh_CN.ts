@@ -37,8 +37,8 @@
         <translation>打开</translation>
     </message>
     <message>
-        <source>Unmount all</source>
-        <translation>卸载全部</translation>
+        <source>Eject all</source>
+        <translation>推出全部</translation>
     </message>
 </context>
 <context>

@@ -116,7 +116,7 @@ const QString DiskMountPlugin::itemContextMenu(const QString &itemKey)
 
     QMap<QString, QVariant> unmountAll;
     unmountAll["itemId"] = UNMOUNT_ALL;
-    unmountAll["itemText"] = tr("Unmount all");
+    unmountAll["itemText"] = tr("Eject all");
     unmountAll["isActive"] = true;
     items.push_back(unmountAll);
 
