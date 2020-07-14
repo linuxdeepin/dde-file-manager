@@ -949,7 +949,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                         d->isVaultDelSigConnected = true;
                     }
                 }
-                qDebug() << "action delete --------------------------------";
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             }
             break;
