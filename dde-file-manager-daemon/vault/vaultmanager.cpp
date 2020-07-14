@@ -44,6 +44,7 @@ VaultManager::VaultManager(QObject *parent)
     m_curUser = getCurrentUser();
     m_mapUserClock.insert(m_curUser, m_curVaultClock);
 
+    // monitor system user changed.
     QDBusConnection::systemBus().connect(
                 "com.deepin.dde.LockService",
                 "/com/deepin/dde/LockService",
@@ -51,6 +52,18 @@ VaultManager::VaultManager(QObject *parent)
                 "UserChanged",
                 this,
                 SLOT(sysUserChanged(QString)));
+
+    // monitor dde-lock event.
+    bool bConnected = QDBusConnection::systemBus().connect(
+                "com.deepin.dde.LockService",
+                "/com/deepin/dde/LockService",
+                "com.deepin.dde.LockService",
+                "Event",
+                this,
+                SLOT(lockServiceEvent(quint32, quint32, QString, QString)));
+
+    if (!bConnected)
+        qDebug() << "VaultManager connect LockService failed!";
 }
 
 VaultManager::~VaultManager()
@@ -109,9 +122,33 @@ bool VaultManager::checkAuthentication(QString type)
     return ret;
 }
 
+bool VaultManager::isLockEventTriggered() const
+{
+    return m_curVaultClock->isLockEventTriggered();
+}
+
+void VaultManager::triggerLockEvent()
+{
+    m_curVaultClock->triggerLockEvent();
+}
+
+void VaultManager::clearLockEvent()
+{
+    m_curVaultClock->clearLockEvent();
+}
+
+void VaultManager::lockServiceEvent(quint32 type, quint32 processID, const QString &user, const QString &state)
+{
+    qDebug() << type << processID << user << state;
+
+    if (state == "Authenticated") {
+        m_curVaultClock->triggerLockEvent();
+        emit lockEventTriggered(user);
+    }
+}
+
 QString VaultManager::getCurrentUser() const
 {
-    // Aquire current acount.
     QString user = m_curUser;
 
     QDBusInterface sessionManagerIface("com.deepin.dde.LockService",
