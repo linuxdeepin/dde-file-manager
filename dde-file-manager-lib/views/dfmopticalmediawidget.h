@@ -55,12 +55,6 @@ public:
     //判断当前磁盘是否正忙碌
     static bool hasVolProcessBusy();
 
-    /** fix bug202007010038/39 暂存区中存在无效链接时，刻录异常（只有无效链接，提示无文件；无效同名链接+有效文件+光盘内同名文件=刻录失败（重复文件））
-     * 之前通过 DUrl::entryInfoList / entryList 函数无法获取到目录下的无效链接信息，因此这里使用命令行去获取目录下的所有文件信息。
-      */
-    static QFileInfoList entryInfoList(const QString &dirPath);
-    static QStringList entryList(const QString &dirPath);
-
     //fix: 动态更新光驱磁盘状态
 private slots:
     void selectBurnFilesOptionUpdate();
