@@ -374,6 +374,7 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
 
     QString cachePath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + strKey;
     DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].cachePath = cachePath;
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].bLoading = false;
 
     qDebug() << "get " << strKey <<" catch path:" << cachePath;
 }

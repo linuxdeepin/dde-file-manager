@@ -19,6 +19,7 @@ struct CdStatusInfo {
     bool bBurningOrErasing = false;
     bool bProcessLocked = false;
     QString cachePath=""; // bug202007010027:添加文件缓存区，进行统一管理
+    bool bLoading = false; // sp3 feature 35，光盘加载时显示光标为繁忙状态
 };
 
 class DFMOpticalMediaWidgetPrivate;

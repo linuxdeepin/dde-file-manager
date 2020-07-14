@@ -2278,6 +2278,8 @@ bool DFileView::setRootUrl(const DUrl &url)
         if (!dp.devid.length()) {
             //QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
             DFileService::instance()->setCursorBusyState(true);
+            if (DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(strVolTag))
+                DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bLoading = true;
 
             QSharedPointer<QFutureWatcher<bool>> fw(new QFutureWatcher<bool>);
             connect(fw.data(), &QFutureWatcher<bool>::finished, this, [ = ] {
