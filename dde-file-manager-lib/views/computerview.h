@@ -48,6 +48,7 @@
 
 DFM_USE_NAMESPACE
 
+class ComputerListView;
 class ComputerModel;
 class DFMUrlBaseEvent;
 class ComputerView : public QWidget, public DFMBaseView
@@ -71,10 +72,22 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
-    QListView *m_view;
+    ComputerListView *m_view;
     ComputerModel *m_model;
     DStatusBar *m_statusbar;
     static const QList<int> iconsizes;
+};
+
+// sp3 feature 35 光盘加载时光标移动到光驱图标上，光标变成繁忙状态，其余时候为正常指针
+// 原来的 view 直接使用的 QListView，因此这里继承重写其中的 mouseMoveEvent 函数
+class ComputerListView : public QListView
+{
+    Q_OBJECT
+public:
+    ComputerListView(QWidget *parent = nullptr);
+
+protected:
+    void mouseMoveEvent(QMouseEvent *event) override;
 };
 
 #endif // COMPUTERVIEW_H
