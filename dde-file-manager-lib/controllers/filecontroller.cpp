@@ -741,15 +741,15 @@ bool FileController::isDiscburnJobCase(void *curJob, const DUrl &url) const
 
     return  isDiscCase;
 }
-//fix bug 35855修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程
+// fix bug 35855修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程
 DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event, DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient, bool force, bool bold) const
 {
     // fix bug 27109 在某种情况下，存在 FileCopyMoveJob 还没被析构，但其中的成员 StatisticJob 已经被析构，又在 FileCopyMoveJob 的函数中调用了 StatisticJob 的对象，导致崩溃
     // 所以这里将原来的普通指针以 deleteLater 析构的内存管理方式交给智能指针去判定。测试百次左右没有再发生崩溃的现象。
     // 该现象发生于从搜索列表中往光驱中发送文件夹还不被支持的时候。现已可以从搜索列表、最近列表、标签列表中往光驱中发送文件
     QSharedPointer<DFileCopyMoveJob> job = QSharedPointer<DFileCopyMoveJob>(new DFileCopyMoveJob());
-    //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
-    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+    // 当前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
+    // fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
     bool bdoingcleartrash = DFileService::instance()->getDoClearTrashState();
     if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
             list.first().toString().endsWith(".local/share/Trash/files")) {
@@ -757,12 +757,13 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             DFileService::instance()->setDoClearTrashState(false);
         });
     }
-    //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
 
     if (force) {
         job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
     }
 
+    // sp3 feature： 复制时不进行校验，后面调整为独立的功能
+    job->setFileHints(job->fileHints() | DFileCopyMoveJob::DontIntegrityChecking);
     if (action == DFMGlobal::CutAction && !target.isValid()) {
         // for remove mode
         job->setActionOfErrorType(DFileCopyMoveJob::NonexistenceError, DFileCopyMoveJob::SkipAction);
