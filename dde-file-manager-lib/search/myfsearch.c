@@ -82,6 +82,8 @@ gboolean
 update_model_cb (gpointer user_data)
 {
     DatabaseSearchResult *result = user_data;
+    // 防止在db_search_results_clear中触发断言，导致文管退出，先自行判断一下
+    if (app->search == NULL) return FALSE;
     db_search_results_clear (app->search);
     results=NULL;
     num_results = 0;
@@ -158,6 +160,9 @@ void fsearch_Find(const char*text)
 #else
 void fsearch_Find(const char*text,void (*callback)(void *))
 {
+    // 防止在db_search_results_clear中触发断言，导致文管退出，先自行判断一下
+    if (app->search == NULL) return;
+
     db_search_results_clear (app->search);
     Database *db = app->db;
     if (!db_try_lock (db)) {
