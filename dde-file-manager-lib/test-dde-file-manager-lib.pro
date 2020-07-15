@@ -8,7 +8,7 @@
 
 include(../common/common.pri)
 
-QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs network
+QT       += core gui svg dbus x11extras concurrent multimedia xml KCodecs network
 #private
 QT       += gui-private
 
@@ -16,9 +16,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 QT += widgets-private
 
-TARGET = $$ProjectName
+TARGET = test-dde-file-manager-lib
 
-TEMPLATE = lib
 CONFIG += create_pc create_prl no_install_prl
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
@@ -32,7 +31,7 @@ isEmpty(PREFIX){
 }
 
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget dtkgui udisks2-qt5 disomaster gio-qt libcrypto Qt5Xdg
+PKGCONFIG += x11 libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget dtkgui udisks2-qt5 disomaster gio-qt libcrypto Qt5Xdg xcb xcb-ewmh xcb-shape
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
@@ -78,17 +77,6 @@ APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
 
-win32* {
-    DEFINES += STATIC_LIB
-    CONFIG += staticlib
-    LIB_DIR =
-}
-
-isEmpty(LIB_INSTALL_DIR) {
-    target.path = $$[QT_INSTALL_LIBS]
-} else {
-    target.path = $$LIB_INSTALL_DIR
-}
 
 isEmpty(INCLUDE_INSTALL_DIR) {
     includes.path = $$PREFIX/include/dde-file-manager
@@ -119,23 +107,8 @@ plugin_includes.files += $$PWD/../dde-file-manager-plugins/plugininterfaces/menu
 plugin_includes.files += $$PWD/../dde-file-manager-plugins/plugininterfaces/preview/*.h
 plugin_includes.files += $$PWD/../dde-file-manager-plugins/plugininterfaces/view/*.h
 
-QMAKE_PKGCONFIG_LIBDIR = $$target.path
-QMAKE_PKGCONFIG_VERSION = $$VERSION
-QMAKE_PKGCONFIG_DESTDIR = pkgconfig
-QMAKE_PKGCONFIG_NAME = dde-file-manager
-QMAKE_PKGCONFIG_DESCRIPTION = DDE File Manager Header Files
-QMAKE_PKGCONFIG_INCDIR = $$includes.path
 
 templateFiles.path = $$APPSHAREDIR/templates
-
-isEqual(BUILD_MINIMUM, YES){
-    templateFiles.files = skin/templates/newTxt.txt
-}else{
-    templateFiles.files = skin/templates/newDoc.doc \
-        skin/templates/newExcel.xls \
-        skin/templates/newPowerPoint.ppt \
-        skin/templates/newTxt.txt
-}
 
 mimetypeFiles.path = $$APPSHAREDIR/mimetypes
 mimetypeFiles.files += \
@@ -151,35 +124,14 @@ mimetypeAssociations.path = $$APPSHAREDIR/mimetypeassociations
 mimetypeAssociations.files += \
     mimetypeassociations/mimetypeassociations.json
 
-TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
-    $$PWD/translations/$${TARGET}_zh_CN.ts
-
-# Automating generation .qm files from .ts files
-CONFIG(release, debug|release) {
-    !system($$PWD/generate_translations.sh): error("Failed to generate translation")
-    !system($$PWD/update_translations.sh): error("Failed to generate translation")
-#    DEFINES += QT_NO_DEBUG_OUTPUT
-}
-
-translations.path = $$APPSHAREDIR/translations
-translations.files = translations/*.qm
-
-icon.path = $$ICONDIR
-icon.files = skin/images/$${TARGET}.svg
-
-defaultConfig.path = $$APPSHAREDIR/config
-defaultConfig.files = configure/default-view-states.json
-
-# readme file for create oem-menuextension directory
-readmefile.path = $$PREFIX/share/deepin/$$TARGET/oem-menuextensions
-readmefile.files = plugins/.readme
-
-INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations \
- icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile policy
-
-DISTFILES += \
-    mimetypeassociations/mimetypeassociations.json \
-    confirm/deepin-vault-authenticateProxy \
-    policy/com.deepin.pkexec.deepin-vault-authenticateProxy.policy
 
 include($$PWD/settings_dialog_json.pri)
+
+TEMPLATE = app
+CONFIG += console
+
+QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
+QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
+
+include(../third-party/googletest/gtest_dependency.pri)
+include(tests/test.pri)
