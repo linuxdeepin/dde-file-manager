@@ -81,7 +81,7 @@ public:
     static qint64 Data_Flush_Size;
     static bool setDirPermissions(const QString &scrPath, const QString &tarDirPath);
 
-    explicit FileJob(JobType jobType, QObject *parent = 0);
+    explicit FileJob(JobType jobType, QObject *parent = nullptr);
     ~FileJob();
     void setStatus(Status status);
     void setJobId(const QString &id);
@@ -245,30 +245,30 @@ private:
     QString m_lastError; // 最后一个刻录失败的错误原因
     QStringList m_lastSrcError; // 底层抛出的原始错误原因
 
-    GCancellable *m_abortGCancellable = NULL;
+    GCancellable *m_abortGCancellable = nullptr;
 
     DUrlList m_noPermissonUrls;
 
     char *m_bufferAlign = nullptr;
     char *m_buffer = nullptr;
 
-    bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved = false, QString *targetPath = 0);
+    bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved = false, QString *targetPath = nullptr);
     static void showProgress(goffset current_num_bytes, goffset total_num_bytes, gpointer user_data);
-    bool copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved = false, QString *targetPath = 0);
-    bool copyDir(const QString &srcDir, const QString &tarDir, bool isMoved = false, QString *targetPath = 0);
-    bool moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
-    bool moveFileByGio(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
-    bool moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath = 0);
-    bool handleMoveJob(const QString &srcPath, const QString &tarDir, QString *targetPath = 0);
-    bool handleSymlinkFile(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
+    bool copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved = false, QString *targetPath = nullptr);
+    bool copyDir(const QString &srcDir, const QString &tarDir, bool isMoved = false, QString *targetPath = nullptr);
+    bool moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath = nullptr);
+    bool moveFileByGio(const QString &srcFile, const QString &tarDir, QString *targetPath = nullptr);
+    bool moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath = nullptr);
+    bool handleMoveJob(const QString &srcPath, const QString &tarDir, QString *targetPath = nullptr);
+    bool handleSymlinkFile(const QString &srcFile, const QString &tarDir, QString *targetPath = nullptr);
 
     bool restoreTrashFile(const QString &srcFile, const QString &tarFile);
     bool deleteFile(const QString &file);
     bool deleteFileByGio(const QString &srcFile);
     bool deleteDir(const QString &dir);
     void deleteEmptyDir(const QString &srcPath);
-    bool moveDirToTrash(const QString &dir, QString *targetPath = 0);
-    bool moveFileToTrash(const QString &file, QString *targetPath = 0);
+    bool moveDirToTrash(const QString &dir, QString *targetPath = nullptr);
+    bool moveFileToTrash(const QString &file, QString *targetPath = nullptr);
     bool writeTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
 
     //check disk space available before do copy/move job

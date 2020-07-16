@@ -156,7 +156,7 @@ bool DFMDeviceInfo::isWritable() const
 
 qint64 DFMDeviceInfo::size() const
 {
-    return attachedDeviceConst()->totalBytes();
+    return static_cast<qint64>(attachedDeviceConst()->totalBytes());
 }
 
 int DFMDeviceInfo::filesCount() const

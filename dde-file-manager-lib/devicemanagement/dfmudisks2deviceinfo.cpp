@@ -111,7 +111,7 @@ QString DFMUdisks2DeviceInfo::displayName() const
         QString devName = blockDeviceConst()->idLabel();
         if (devName.isEmpty()) {
             hasLabelName = false;
-            devName = qApp->translate("DeepinStorage", "%1 Volume").arg(FileUtils::formatSize(blockDeviceConst()->size()));
+            devName = qApp->translate("DeepinStorage", "%1 Volume").arg(FileUtils::formatSize(static_cast<qint64>(blockDeviceConst()->size())));
         }
 
         // Deepin i10n Label text (_dde_text):
@@ -163,7 +163,7 @@ quint64 DFMUdisks2DeviceInfo::availableBytes() const
     QStorageInfo storage_info(mountPoint);
 
     if (storage_info.isValid()) {
-        return storage_info.bytesAvailable();
+        return static_cast<quint64>(storage_info.bytesAvailable());
     }
 
     return -1;
@@ -174,7 +174,7 @@ quint64 DFMUdisks2DeviceInfo::freeBytes() const
     QStorageInfo storage_info(mountPoint);
 
     if (storage_info.isValid()) {
-        return storage_info.bytesFree();
+        return static_cast<quint64>(storage_info.bytesFree());
     }
 
     return -1;
@@ -185,7 +185,7 @@ quint64 DFMUdisks2DeviceInfo::totalBytes() const
     QStorageInfo storage_info(mountPoint);
 
     if (storage_info.isValid()) {
-        return storage_info.bytesTotal();
+        return static_cast<quint64>(storage_info.bytesTotal());
     }
 
     return 0;
