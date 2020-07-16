@@ -53,17 +53,14 @@ VaultManager::VaultManager(QObject *parent)
                 this,
                 SLOT(sysUserChanged(QString)));
 
-    // monitor dde-lock event.
-    bool bConnected = QDBusConnection::systemBus().connect(
-                "com.deepin.dde.LockService",
-                "/com/deepin/dde/LockService",
-                "com.deepin.dde.LockService",
-                "Event",
+    // monitor screen lock event.
+    QDBusConnection::sessionBus().connect(
+                "com.deepin.SessionManager",
+                "/com/deepin/SessionManager",
+                "org.freedesktop.DBus.Properties",
+                "PropertiesChanged","sa{sv}as",
                 this,
-                SLOT(lockServiceEvent(quint32, quint32, QString, QString)));
-
-    if (!bConnected)
-        qDebug() << "VaultManager connect LockService failed!";
+                SLOT(propertyChanged(QDBusMessage)));
 }
 
 VaultManager::~VaultManager()
@@ -137,13 +134,27 @@ void VaultManager::clearLockEvent()
     m_curVaultClock->clearLockEvent();
 }
 
-void VaultManager::lockServiceEvent(quint32 type, quint32 processID, const QString &user, const QString &state)
+void VaultManager::propertyChanged(const QDBusMessage &msg)
 {
-    qDebug() << type << processID << user << state;
+    QList<QVariant> arguments = msg.arguments();
+    if (3 != arguments.count())
+        return;
 
-    if (state == "Authenticated") {
-        m_curVaultClock->triggerLockEvent();
-        emit lockEventTriggered(user);
+    QString interfaceName = msg.arguments().at(0).toString();
+    if (interfaceName != "com.deepin.SessionManager")
+        return;
+
+    QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
+    QStringList keys = changedProps.keys();
+    foreach (const QString &prop, keys) {
+        if (prop == "Locked") {
+            bool bLocked = changedProps[prop].toBool();
+            if (bLocked) {
+                char *loginUser = getlogin();
+                QString user = loginUser ? loginUser : "";
+                emit lockEventTriggered(user);
+            }
+        }
     }
 }
 

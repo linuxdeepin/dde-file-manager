@@ -94,13 +94,10 @@ public slots:
 
 private slots:
     /**
-     * @brief lockServiceEvent 锁屏事件
-     * @param type             事件类型
-     * @param processID        dde-lock进程ID
-     * @param user             当前用户
-     * @param state            状态
+     * @brief propertyChanged 属性改变事件
+     * @param msg
      */
-    void lockServiceEvent(quint32 type, quint32 processID, const QString &user, const QString &state);
+    void propertyChanged(const QDBusMessage &msg);
 
 private:
     /**
