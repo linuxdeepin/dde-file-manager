@@ -610,7 +610,7 @@ void DFMTaskWidget::onProgressChanged(qreal progress, qint64 writeData)
 {
     Q_UNUSED(writeData);
 
-    setProgressValue(progress * 100);
+    setProgressValue(static_cast<int>(progress * 100));
     setProperty("progress", progress);
 }
 
@@ -619,7 +619,7 @@ void DFMTaskWidget::onBurnProgressChanged(qreal progress, qint64 writeData)
     Q_UNUSED(writeData);
 
     //fixed:progress*100  -> progress;共性问题，在光驱刻录显示百分比时，由于底层disomaster库返回给上层就是乘以100了，所以上层不想要再乘以100来处理。
-    setProgressValue(progress);
+    setProgressValue(static_cast<int>(progress));
     setProperty("progress", progress);
 }
 

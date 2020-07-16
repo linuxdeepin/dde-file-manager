@@ -54,7 +54,7 @@ x2nrealloc (void *p, size_t *pn, size_t s)
          Check for overflow, so that N * S stays in size_t range.
          The check may be slightly conservative, but an exact check isn't
          worth the trouble.  */
-      if ((size_t) -1 / 3 * 2 / s <= n)
+      if (static_cast<size_t>(-1) / 3 * 2 / s <= n)
         exit(-1);
       n += n / 2 + 1;
     }
@@ -69,8 +69,8 @@ x2nrealloc (void *p, size_t *pn, size_t s)
 static int
 direntry_cmp_name (void const *a, void const *b)
 {
-  direntry_t const *dea = (direntry_t const *)a;
-  direntry_t const *deb = (direntry_t const *)b;
+  direntry_t const *dea = static_cast<direntry_t const *>(a);
+  direntry_t const *deb = static_cast<direntry_t const *>(b);
 
   return strcmp (dea->name, deb->name);
 }
@@ -88,7 +88,7 @@ typedef int (*comparison_function) (void const *, void const *);
 
 static comparison_function const comparison_function_table[] =
   {
-    0,
+    nullptr,
     direntry_cmp_name
    , direntry_cmp_inode
   };
@@ -103,17 +103,17 @@ static comparison_function const comparison_function_table[] =
 char *
 streamsavedir (DIR *dirp)
 {
-  char *name_space = NULL;
+  char *name_space = nullptr;
   size_t allocated = 0;
-  direntry_t *entries = NULL;
+  direntry_t *entries = nullptr;
   size_t entries_allocated = 0;
   size_t entries_used = 0;
   size_t used = 0;
   int readdir_errno;
   comparison_function cmp = direntry_cmp_inode;
 
-  if (dirp == NULL)
-    return NULL;
+  if (dirp == nullptr)
+    return nullptr;
 
   for (;;)
     {
@@ -152,7 +152,7 @@ streamsavedir (DIR *dirp)
                   size_t n = used + entry_size;
                   if (n < used)
                     exit(-1);
-                  name_space = (char *)x2nrealloc (name_space, &n, 1);
+                  name_space = static_cast<char *>(x2nrealloc (name_space, &n, 1));
                   allocated = n;
                 }
               memcpy (name_space + used, entry, entry_size);
@@ -167,7 +167,7 @@ streamsavedir (DIR *dirp)
       free (entries);
       free (name_space);
       errno = readdir_errno;
-      return NULL;
+      return nullptr;
     }
 
   if (cmp)
@@ -176,7 +176,7 @@ streamsavedir (DIR *dirp)
 
       if (entries_used)
         qsort (entries, entries_used, sizeof *entries, cmp);
-      name_space = (char *)malloc (used + 1);
+      name_space = static_cast<char *>(malloc (used + 1));
       used = 0;
       for (i = 0; i < entries_used; i++)
         {
@@ -187,7 +187,7 @@ streamsavedir (DIR *dirp)
       free (entries);
     }
   else if (used == allocated)
-    name_space = (char *)realloc (name_space, used + 1);
+    name_space = static_cast<char *>(realloc (name_space, used + 1));
 
   name_space[used] = '\0';
   return name_space;
@@ -202,7 +202,7 @@ char *savedir (char const *dir)
 {
   DIR *dirp = opendir (dir);
   if (! dirp)
-    return NULL;
+    return nullptr;
   else
     {
       char *name_space = streamsavedir (dirp);
@@ -211,7 +211,7 @@ char *savedir (char const *dir)
           int closedir_errno = errno;
           free (name_space);
           errno = closedir_errno;
-          return NULL;
+          return nullptr;
         }
       return name_space;
     }
