@@ -49,7 +49,7 @@ public slots:
     void doUnmount(const QString &blkStr);
     void doSaveRemove(const QString &blkStr);
 signals:
-    void unmountResult(const QString &result);
+    void unmountResult(const QString &title, const QString &msg);
 };
 
 class AppController : public QObject, public Subscriber
@@ -174,7 +174,7 @@ private:
     void createGVfSManager();
     void createUserShareManager();
     void createDBusInterface();
-    void showErrorDialog(const QString content);
+    void showErrorDialog(const QString& title, const QString& content);
 
     QSharedPointer<DFMEvent> m_fmEvent;
     static QPair<DUrl, quint64> selectionAndRenameFile;        //###: for creating new file.
