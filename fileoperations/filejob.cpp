@@ -143,6 +143,11 @@ FileJob::~FileJob()
     free(m_buffer);
 }
 
+FileJob::JobType FileJob::jobType()
+{
+    return m_jobType;
+}
+
 void FileJob::setStatus(FileJob::Status status)
 {
     m_status = status;
