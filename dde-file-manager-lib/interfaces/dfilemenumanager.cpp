@@ -31,13 +31,11 @@
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
-
 #include "controllers/vaultcontroller.h"
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 #include "models/desktopfileinfo.h"
 #include "shutil/mimetypedisplaymanager.h"
-
 #include "singleton.h"
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
@@ -52,8 +50,9 @@
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "views/dtagactionwidget.h"
+#include "plugins/dfmadditionalmenu.h"
 
-#include <dgiosettings.h>
+#include <DSysInfo>
 
 #include <QMetaObject>
 #include <QMetaEnum>
@@ -67,9 +66,10 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QWidgetAction>
+
+#include <dgiosettings.h>
 #include <unistd.h>
 
-#include <plugins/dfmadditionalmenu.h>
 
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
 
@@ -195,7 +195,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             disableList << MenuAction::CompleteDeletion;
         }
         if (info->isDir()) { //判断是否目录
-            if (info->ownerId() != getuid() && getuid() != 0) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
+            if (info->ownerId() != getuid() && !DFMGlobal::isRootUser()) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
                 disableList << MenuAction::UnShare << MenuAction::Share; //设置取消共享、取消共享不可选
             }
         }
@@ -220,6 +220,11 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         if (!DFileMenuManager::whetherShowTagActions(urls)) {
             actions.removeAll(MenuAction::TagInfo);
             actions.removeAll(MenuAction::TagFilesUseColor);
+        }
+
+        // sp3 feature: root用户和服务器版本用户不需要以管理员身份打开的功能
+        if (DFMGlobal::isRootUser() || DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+            actions.removeAll(MenuAction::OpenAsAdmin);
         }
 
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
