@@ -135,7 +135,7 @@ private:
     //QLabel* m_titleLabel=NULL;
     //QPushButton* m_titlebarMinimizeButton;
     //QPushButton* m_titlebarCloseButton;
-    QListWidget* m_taskListWidget=NULL;
+    QListWidget* m_taskListWidget=nullptr;
     QMap<QString, QListWidgetItem*> m_jobIdItems;
     DTitlebar* m_titlebar;
     QDBusReply<QDBusUnixFileDescriptor> m_reply; // ~QDBusUnixFileDescriptor() will disposes of the Unix file descriptor that it contained.

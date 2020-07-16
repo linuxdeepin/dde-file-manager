@@ -61,7 +61,7 @@ void InitDict() {
         const QStringList items = line.split(QChar(':'));
 
         if (items.size() == 2) {
-            dict.insert(items[0].toInt(nullptr, 16), items[1]);
+            dict.insert(static_cast<uint>(items[0].toInt(nullptr, 16)), items[1]);
         }
     }
 }
