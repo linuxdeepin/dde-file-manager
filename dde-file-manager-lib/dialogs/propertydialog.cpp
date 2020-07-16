@@ -1200,11 +1200,17 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
                                        : info;
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
-    connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
+//    connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
     //    connect(frame, &ShareInfoFrame::unfolderShared, this, [this](){
     //        m_expandGroup.at(1)->setExpand(false);
     //    });
 
+    // 侧边栏创建完成共享标签后再执行动画
+    DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
+    if (window) {
+        DFMSideBar *sideBar = window->getLeftSideBar();
+        connect(sideBar, &DFMSideBar::addUserShareItemFinished, this, &PropertyDialog::flickFolderToSidebar);
+    }
     return frame;
 }
 

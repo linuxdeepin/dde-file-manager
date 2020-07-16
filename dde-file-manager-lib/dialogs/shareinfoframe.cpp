@@ -130,7 +130,7 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
 
     if (ret) {
         if (checked) {
-            emit folderShared(m_fileinfo->absoluteFilePath());
+//            emit folderShared(m_fileinfo->absoluteFilePath());
             activateWidgets();
         }
     } else {
