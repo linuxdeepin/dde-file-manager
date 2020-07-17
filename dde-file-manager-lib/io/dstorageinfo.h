@@ -34,6 +34,7 @@ class DStorageInfo : public QStorageInfo
 
 public:
     enum PathHint {
+        NoHint = 0x00,
         FollowSymlink = 0x01,
     };
 
@@ -53,7 +54,7 @@ public:
     inline void swap(DStorageInfo &other) Q_DECL_NOTHROW
     { qSwap(d_ptr, other.d_ptr); }
 
-    void setPath(const QString &path, PathHints hints = nullptr);
+    void setPath(const QString &path, PathHints hints = PathHint::NoHint);
 
     QString rootPath() const;
     QByteArray device() const;
