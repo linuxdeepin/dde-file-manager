@@ -382,7 +382,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
     }
     case DFMEvent::ChangeCurrentUrl: {
         const QSharedPointer<DFMChangeCurrentUrlEvent> &e = event.staticCast<DFMChangeCurrentUrlEvent>();
-        const DAbstractFileInfoPointer &fileInfo  = fileService->createFileInfo(NULL, e->fileUrl());
+        const DAbstractFileInfoPointer &fileInfo  = fileService->createFileInfo(nullptr, e->fileUrl());
         if (fileInfo && fileInfo->exists() && fileInfo->isFile()) {
             DUrlList urls;
             fmEvent(dMakeEventPointer<DFMOpenUrlEvent>(event->sender(), urls << event->fileUrl(), DFMOpenUrlEvent::OpenNewWindow), resultData);

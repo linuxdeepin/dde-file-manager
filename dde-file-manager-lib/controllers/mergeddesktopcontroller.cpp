@@ -502,7 +502,7 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
     if (arrangedFileUrls[typeInfo].contains(url)) {
         qWarning() << url << "existed, it must be a bug!!!!!!!!";
         return; //不return会崩溃，不知道为什么 todo
-        arrangedFileUrls[typeInfo].removeAll(url);
+//        arrangedFileUrls[typeInfo].removeAll(url);//return后不执行，导致警告屏蔽之
     }
     arrangedFileUrls[typeInfo].append(url);
     aful.unlock();

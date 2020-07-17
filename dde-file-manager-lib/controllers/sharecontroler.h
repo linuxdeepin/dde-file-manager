@@ -16,7 +16,7 @@ class ShareControler : public DAbstractFileController
 {
     Q_OBJECT
 public:
-    explicit ShareControler(QObject *parent = 0);
+    explicit ShareControler(QObject *parent = nullptr);
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;

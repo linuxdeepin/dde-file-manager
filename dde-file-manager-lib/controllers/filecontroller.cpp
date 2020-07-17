@@ -690,7 +690,7 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 
 bool FileController::isExtDeviceJobCase(void *curJob, const DUrl &url) const
 {
-    DFileCopyMoveJob *thisJob = (DFileCopyMoveJob *)curJob;
+    DFileCopyMoveJob *thisJob = static_cast<DFileCopyMoveJob *>(curJob);
     QString filePath = url.path();
     DUrlList srcUrlList = thisJob->sourceUrlList();
     DUrl targetUrl = thisJob->targetUrl();
@@ -715,7 +715,7 @@ bool FileController::isExtDeviceJobCase(void *curJob, const DUrl &url) const
 
 bool FileController::isDiscburnJobCase(void *curJob, const DUrl &url) const
 {
-    DFileCopyMoveJob *thisJob = (DFileCopyMoveJob *)curJob;
+    DFileCopyMoveJob *thisJob = static_cast<DFileCopyMoveJob *>(curJob);
 
     QString burnDestDevice = url.burnDestDevice();
 
@@ -990,7 +990,7 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
 DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
     FileJob job(FileJob::Trash);
-    job.setWindowId(event->windowId());
+    job.setWindowId(static_cast<int>(event->windowId()));
     dialogManager->addJob(&job);
     DUrlList list = job.doMoveToTrash(event->urlList());
     dialogManager->removeJob(job.getJobId());
@@ -1057,7 +1057,7 @@ static DUrlList pasteFilesV1(const QSharedPointer<DFMPasteEvent> &event)
 
         if (parentUrl != event->targetUrl()) {
             FileJob job(FileJob::Move);
-            job.setWindowId(event->windowId());
+            job.setWindowId(static_cast<int>(event->windowId()));
             dialogManager->addJob(&job);
 
             list = job.doMove(urlList, event->targetUrl());
@@ -1068,7 +1068,7 @@ static DUrlList pasteFilesV1(const QSharedPointer<DFMPasteEvent> &event)
     } else {
 
         FileJob job(FileJob::Copy);
-        job.setWindowId(event->windowId());
+        job.setWindowId(static_cast<int>(event->windowId()));
         dialogManager->addJob(&job);
 
         list = job.doCopy(urlList, event->targetUrl());
