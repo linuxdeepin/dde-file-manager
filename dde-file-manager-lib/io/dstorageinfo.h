@@ -41,8 +41,8 @@ public:
     Q_DECLARE_FLAGS(PathHints, PathHint)
 
     DStorageInfo();
-    explicit DStorageInfo(const QString &path, PathHints hints = nullptr);
-    explicit DStorageInfo(const QDir &dir, PathHints hints = nullptr);
+    explicit DStorageInfo(const QString &path, PathHints hints = PathHint::NoHint);
+    explicit DStorageInfo(const QDir &dir, PathHints hints = PathHint::NoHint);
     DStorageInfo(const DStorageInfo &other);
     ~DStorageInfo();
 
@@ -71,8 +71,8 @@ public:
     bool isValid() const;
     void refresh();
 
-    static bool inSameDevice(QString path1, QString path2, PathHints hints = nullptr);
-    static bool inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hints = nullptr);
+    static bool inSameDevice(QString path1, QString path2, PathHints hints = PathHint::NoHint);
+    static bool inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hints = PathHint::NoHint);
     static bool isLocalDevice(const QString &path);
     static bool isLowSpeedDevice(const QString &path);
     static bool isCdRomDevice(const QString &path);
