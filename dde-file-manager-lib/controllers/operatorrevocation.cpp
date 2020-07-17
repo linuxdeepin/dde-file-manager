@@ -38,7 +38,7 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
     Q_UNUSED(event)
     Q_UNUSED(resultData)
 
-    switch ((int)event->type()) {
+    switch (static_cast<int>(event->type())) {
     case DFMEvent::SaveOperator: {
         DFMSaveOperatorEvent *e = static_cast<DFMSaveOperatorEvent*>(event.data());
 

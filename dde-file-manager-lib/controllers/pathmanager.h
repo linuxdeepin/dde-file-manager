@@ -36,7 +36,7 @@ class PathManager : public QObject
     Q_OBJECT
 
 public:
-    explicit PathManager(QObject *parent = 0);
+    explicit PathManager(QObject *parent = nullptr);
     ~PathManager();
 
     void initPaths();
