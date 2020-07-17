@@ -309,6 +309,5 @@ int main(int argc, char *argv[])
 //    DEventFilter *event_filter{ new DEventFilter{&app} };
 //    app.installEventFilter(event_filter);
 
-
     return app.exec();
 }

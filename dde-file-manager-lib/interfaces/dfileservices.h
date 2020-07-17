@@ -164,8 +164,10 @@ public:
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
     DStorageInfo *createStorageInfo(const QObject *sender, const DUrl &url);
     QList<DAbstractFileInfoPointer> getRootFile();
-    void changeRootFile(const DUrl &fileurl, const bool bcreate = true);
+    bool isRootFileInited() const;
+    void changeRootFile(const DUrl &fileurl,const bool bcreate = true);
     void startQuryRootFile();
+    DAbstractFileWatcher *rootFileWather() const;
     void clearThread();
 
     //set cursor busy status

@@ -547,13 +547,20 @@ DFileManagerWindow::DFileManagerWindow(QWidget *parent)
 {
 }
 
+QPair<bool,QMutex> winId_mtx;   //异步初始化win插件
 DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
     /// init global AppController
     setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-
+    if (!winId_mtx.first){
+        //等待异步加载完成
+        winId_mtx.second.lock();
+        winId_mtx.second.unlock();
+        winId_mtx.first = true;
+    }
+    winId();
     initData();
     initUI();
     initConnect();
@@ -1075,7 +1082,7 @@ void DFileManagerWindow::initTitleBar()
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
-    menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
+    menu->setEventData(DUrl(), DUrlList() << DUrl(),winId(), this);
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
