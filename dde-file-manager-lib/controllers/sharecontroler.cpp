@@ -23,7 +23,7 @@ class ShareFileWatcherPrivate;
 class ShareFileWatcher : public DAbstractFileWatcher
 {
 public:
-    explicit ShareFileWatcher(QObject *parent = 0);
+    explicit ShareFileWatcher(QObject *parent = nullptr);
 
 private slots:
     void onUserShareAdded(const QString &filePath);
@@ -63,7 +63,7 @@ bool ShareFileWatcherPrivate::stop()
 {
     Q_Q(ShareFileWatcher);
 
-    return q->disconnect(userShareManager, 0, q, 0);
+    return q->disconnect(userShareManager, nullptr, q, nullptr);
 }
 
 void ShareFileWatcher::onUserShareAdded(const QString &filePath)
@@ -109,7 +109,7 @@ const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const QSharedP
 DAbstractFileWatcher *ShareControler::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     if (event->url().path() != "/")
-        return 0;
+        return nullptr;
 
     return new ShareFileWatcher();
 }

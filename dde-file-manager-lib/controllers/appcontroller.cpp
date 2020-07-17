@@ -472,7 +472,7 @@ void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event
 
 void AppController::actionSelectAll(quint64 winId)
 {
-    emit fileSignalManager->requestViewSelectAll(winId);
+    emit fileSignalManager->requestViewSelectAll(static_cast<int>(winId));
 }
 
 void AppController::actionClearRecent(const QSharedPointer<DFMMenuActionEvent> &event)
@@ -507,28 +507,28 @@ void AppController::actionClearTrash(const QObject *sender)
 
 void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    int windowId = event->windowId();
+    quint64 windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
     FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Document"), "doc", windowId);
 }
 
 void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    int windowId = event->windowId();
+    quint64 windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
     FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Spreadsheet"), "xls", windowId);
 }
 
 void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    int windowId = event->windowId();
+    quint64 windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
     FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Presentation"), "ppt", windowId);
 }
 
 void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    int windowId = event->windowId();
+    quint64 windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
     FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Text"), "txt", windowId);
 }
@@ -848,7 +848,7 @@ void AppController::actionNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &e
 
 void AppController::actionExit(quint64 winId)
 {
-    emit fileSignalManager->aboutToCloseLastActivedWindow(winId);
+    emit fileSignalManager->aboutToCloseLastActivedWindow(static_cast<int>(winId));
 }
 
 void AppController::actionSetAsWallpaper(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -943,7 +943,7 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
         QtConcurrent::run([=] {
             FileJob *job = new FileJob(FileJob::OpticalBlank);
             job->moveToThread(qApp->thread());
-            job->setWindowId(event->windowId());
+            job->setWindowId(static_cast<int>(event->windowId()));
             dialogManager->addJob(job);
 
             DUrl dev(event->url());

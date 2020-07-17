@@ -124,7 +124,7 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
     }
     //fix:光驱还没有加载成功前，右键点击光驱“挂载”，光驱自动弹出。
     if ((!info["mounted"].toBool()) && \
-            (info["fsType"].toString() ==  NULL) && \
+            (info["fsType"].toString() ==  nullptr) && \
             (info["fsSize"].toLongLong() ==  0)) {
         disabled.insert(MenuAction::OpenDiskInNewWindow);
         disabled.insert(MenuAction::OpenDiskInNewTab);

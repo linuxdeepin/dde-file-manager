@@ -100,7 +100,7 @@ public slots:
     void actionSelectAll(quint64 winId);
     void actionClearRecent(const QSharedPointer<DFMMenuActionEvent>& event);
     void actionClearRecent();
-    void actionClearTrash(const QObject *sender = 0);
+    void actionClearTrash(const QObject *sender = nullptr);
     void actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event);
@@ -166,7 +166,7 @@ signals:
     void doSaveRemove(const QString &blk);
 
 protected:
-    explicit AppController(QObject *parent = 0);
+    explicit AppController(QObject *parent = nullptr);
     ~AppController();
 
 private:

@@ -30,7 +30,7 @@ DFM_BEGIN_NAMESPACE
 class DFMTrashCrumbController : public DFMCrumbInterface
 {
 public:
-    explicit DFMTrashCrumbController(QObject *parent = 0);
+    explicit DFMTrashCrumbController(QObject *parent = nullptr);
     ~DFMTrashCrumbController();
 
     bool supportedUrl(DUrl url) override;

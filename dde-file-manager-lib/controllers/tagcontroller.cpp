@@ -222,7 +222,7 @@ bool TaggedFileWatcherPrivate::start()
 bool TaggedFileWatcherPrivate::stop()
 {
     TaggedFileWatcher* q{q_func()};
-    bool value{ QObject::disconnect(TagManager::instance(), 0, q, 0) };
+    bool value{ QObject::disconnect(TagManager::instance(), nullptr, q, nullptr) };
 
     for (DAbstractFileWatcher *watcher : m_watchers) {
         value = value && watcher->stopWatcher();

@@ -30,7 +30,7 @@ DFM_BEGIN_NAMESPACE
 class DFMSearchCrumbController : public DFMCrumbInterface
 {
 public:
-    explicit DFMSearchCrumbController(QObject *parent = 0);
+    explicit DFMSearchCrumbController(QObject *parent = nullptr);
     ~DFMSearchCrumbController();
 
     void processAction(ActionType type) override;
