@@ -27,7 +27,8 @@ void ScreenManager::onScreenAdded(QScreen *screen)
     m_screens.insert(screen,psc);
     connectScreen(psc);
 
-    emit sigScreenChanged();
+    //emit sigScreenChanged();
+    appendEvent(Screen);
 }
 
 void ScreenManager::onScreenRemoved(QScreen *screen)
@@ -35,24 +36,27 @@ void ScreenManager::onScreenRemoved(QScreen *screen)
     auto psc = m_screens.take(screen);
     if (psc.get() != nullptr){
         disconnectScreen(psc);
-        emit sigScreenChanged();
+        //emit sigScreenChanged();
+        appendEvent(Screen);
     }
 }
 
 void ScreenManager::onScreenGeometryChanged(const QRect &rect)
 {
-    ScreenObject *sc = SCREENOBJECT(sender());
-    if (sc != nullptr && m_screens.contains(sc->screen())) {
-        emit sigScreenGeometryChanged(m_screens.value(sc->screen()), rect);
-    }
+//    ScreenObject *sc = SCREENOBJECT(sender());
+//    if (sc != nullptr && m_screens.contains(sc->screen())) {
+//        emit sigScreenGeometryChanged(m_screens.value(sc->screen()), rect);
+//    }
+    appendEvent(AbstractScreenManager::Geometry);
 }
 
 void ScreenManager::onScreenAvailableGeometryChanged(const QRect &rect)
 {
-    ScreenObject *sc = SCREENOBJECT(sender());
-    if (sc != nullptr && m_screens.contains(sc->screen())) {
-        emit sigScreenAvailableGeometryChanged(m_screens.value(sc->screen()), rect);
-    }
+//    ScreenObject *sc = SCREENOBJECT(sender());
+//    if (sc != nullptr && m_screens.contains(sc->screen())) {
+//        emit sigScreenAvailableGeometryChanged(m_screens.value(sc->screen()), rect);
+//    }
+    appendEvent(AbstractScreenManager::AvailableGeometry);
 }
 
 void ScreenManager::onDockChanged()
@@ -71,7 +75,8 @@ void ScreenManager::onDockChanged()
     }
 #else
     //新增动态dock区功能，dock区不再只是在主屏幕,随鼠标移动
-    emit sigScreenAvailableGeometryChanged(nullptr, QRect());
+    //emit sigScreenAvailableGeometryChanged(nullptr, QRect());
+    appendEvent(AbstractScreenManager::AvailableGeometry);
 #endif
 }
 
@@ -79,8 +84,33 @@ void ScreenManager::init()
 {
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManager::onScreenAdded);
     connect(qApp, &QGuiApplication::screenRemoved, this, &ScreenManager::onScreenRemoved);
-    connect(qApp, &QGuiApplication::primaryScreenChanged, this, &AbstractScreenManager::sigScreenChanged);
+    //connect(qApp, &QGuiApplication::primaryScreenChanged, this, &AbstractScreenManager::sigScreenChanged);
+    connect(qApp, &QGuiApplication::primaryScreenChanged, this, [this](){
+        this->appendEvent(Screen);
+    });
+#ifdef UNUSE_TEMP
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
+#else
+    //临时方案，
+    connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this](){
+        //emit sigDisplayModeChanged();
+        m_lastMode = m_display->GetRealDisplayMode();
+        this->appendEvent(Mode);
+    });
+
+    //临时方案，使用PrimaryRectChanged信号作为拆分/合并信号
+    connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [this](){
+        int mode = m_display->GetRealDisplayMode();
+        qDebug() << "deal merge and split" << mode << m_lastMode;
+        if (m_lastMode == mode)
+            return;
+        m_lastMode = mode;
+        //emit sigDisplayModeChanged();
+        this->appendEvent(Mode);
+    });
+
+    m_lastMode = m_display->GetRealDisplayMode();
+#endif
 
     //dock区处理
     connect(DockInfoIns,&DBusDock::FrontendWindowRectChanged,this, &ScreenManager::onDockChanged);
@@ -129,8 +159,11 @@ QVector<ScreenPointer> ScreenManager::screens() const
 {
     QVector<ScreenPointer> order;
     for (QScreen *sc : qApp->screens()){
-        if (m_screens.contains(sc))
+        if (m_screens.contains(sc)){
+            if (sc->geometry().size() == QSize(0,0))
+                qCritical() << "screen error. does it is closed?";
             order.append(m_screens.value(sc));
+        }
     }
     return order;
 }
@@ -171,8 +204,26 @@ qreal ScreenManager::devicePixelRatio() const
 
 AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
 {
-    AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
-    return ret;
+    auto pending = m_display->GetRealDisplayMode();
+    pending.waitForFinished();
+    if (pending.isError()){
+        qWarning() << "Display GetRealDisplayMode Error:" << pending.error().name() << pending.error().message();
+        AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
+        return ret;
+    }else {
+        /*
+        DisplayModeMirror: 1
+        DisplayModeExtend: 2
+        DisplayModeOnlyOne: 3
+        DisplayModeUnknow: 4
+        */
+        int mode = pending.argumentAt(0).toInt();
+        qDebug() << "GetRealDisplayMode resulet" << mode;
+        if (mode > 0 && mode < 4)
+            return (AbstractScreenManager::DisplayMode)mode;
+        else
+            return AbstractScreenManager::Custom;
+    }
 }
 
 void ScreenManager::reset()
