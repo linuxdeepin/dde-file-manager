@@ -993,7 +993,7 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
 
     if (!m_filePreviewDialog) {
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
-        DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
+//        DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
     } else {
         m_filePreviewDialog->updatePreviewList(canPreivewlist);
     }
@@ -1113,7 +1113,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 {
-    QTimer::singleShot(1000, [=] {
+    QTimer::singleShot(1000, [ = ] {
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
             QStringList &&udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
