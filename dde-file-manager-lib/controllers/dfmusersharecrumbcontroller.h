@@ -30,7 +30,7 @@ DFM_BEGIN_NAMESPACE
 class DFMUserShareCrumbController : public DFMCrumbInterface
 {
 public:
-    explicit DFMUserShareCrumbController(QObject *parent = 0);
+    explicit DFMUserShareCrumbController(QObject *parent = nullptr);
     ~DFMUserShareCrumbController();
 
     bool supportedUrl(DUrl url) override;

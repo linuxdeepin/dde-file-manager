@@ -60,8 +60,7 @@ void DFMSearchCrumbController::processAction(DFMCrumbInterface::ActionType type)
     case AddressBarLostFocus:
         // Do nothing here.
         break;
-    default:
-        break;
+    //全量枚举case，因此为解决警告删除default
     }
 }
 

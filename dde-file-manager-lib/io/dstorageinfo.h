@@ -34,14 +34,15 @@ class DStorageInfo : public QStorageInfo
 
 public:
     enum PathHint {
+        NoHint = 0x00,
         FollowSymlink = 0x01,
     };
 
     Q_DECLARE_FLAGS(PathHints, PathHint)
 
     DStorageInfo();
-    explicit DStorageInfo(const QString &path, PathHints hints = 0);
-    explicit DStorageInfo(const QDir &dir, PathHints hints = 0);
+    explicit DStorageInfo(const QString &path, PathHints hints = PathHint::NoHint);
+    explicit DStorageInfo(const QDir &dir, PathHints hints = PathHint::NoHint);
     DStorageInfo(const DStorageInfo &other);
     ~DStorageInfo();
 
@@ -53,7 +54,7 @@ public:
     inline void swap(DStorageInfo &other) Q_DECL_NOTHROW
     { qSwap(d_ptr, other.d_ptr); }
 
-    void setPath(const QString &path, PathHints hints = 0);
+    void setPath(const QString &path, PathHints hints = PathHint::NoHint);
 
     QString rootPath() const;
     QByteArray device() const;
@@ -70,8 +71,8 @@ public:
     bool isValid() const;
     void refresh();
 
-    static bool inSameDevice(QString path1, QString path2, PathHints hints = 0);
-    static bool inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hints = 0);
+    static bool inSameDevice(QString path1, QString path2, PathHints hints = PathHint::NoHint);
+    static bool inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hints = PathHint::NoHint);
     static bool isLocalDevice(const QString &path);
     static bool isLowSpeedDevice(const QString &path);
     static bool isCdRomDevice(const QString &path);
