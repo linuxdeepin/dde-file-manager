@@ -67,15 +67,16 @@ void BackgroundLabel::paintEvent(QPaintEvent *event)
 
 void BackgroundLabel::setVisible(bool visible)
 {
-    if (!visible && !property("isPreview").toBool()) {
-        // 暂时（紧急）解决arm64双屏切换复制模式容易出现无法显示桌面的问题，禁止隐藏任何桌面。
-        // 后续有较好的解决方案可以删除此代码
-        qDebug() << "not allow to hide desktop(screen is " << property("myScreen").toString() <<
-                 ") primaryScreen is " << qApp->primaryScreen()->name();
-        return ;
-    }
-    qInfo() << this->geometry() << visible << "(screen is " << property("myScreen").toString() <<
-             ") primaryScreen is " << qApp->primaryScreen()->name();
+    //!取消以下代码
+//    if (!visible && !property("isPreview").toBool()) {
+//        // 暂时（紧急）解决arm64双屏切换复制模式容易出现无法显示桌面的问题，禁止隐藏任何桌面。
+//        // 后续有较好的解决方案可以删除此代码
+//        qDebug() << "not allow to hide desktop(screen is " << property("myScreen").toString() <<
+//                 ") primaryScreen is " << qApp->primaryScreen()->name();
+//        return ;
+//    }
+    qInfo() << this->geometry() << visible << "(screen is " << property("myScreen").toString() << this->windowHandle()->screen()->name()
+            << ") primaryScreen is " << qApp->primaryScreen()->name();
     QWidget::setVisible(visible);
 }
 
@@ -331,13 +332,13 @@ void BackgroundHelper::updateBackground(QWidget *l)
                 continue;
             if (t_l != t_background) {
                 //Xcb::XcbMisc::instance().set_window_transparent_input(t_l->winId(), true);
-                l->setWindowFlag(Qt::WindowTransparentForInput);
-                t_l->QWidget::setVisible(t_l->geometry().topLeft() != t_background->geometry().topLeft());
+                t_l->setWindowFlag(Qt::WindowTransparentForInput);
+                t_l->setVisible(t_l->geometry().topLeft() != t_background->geometry().topLeft());
                 qInfo() << "updateBackground hide" << t_l <<t_l->isVisible()<< t_l->geometry() << " show" << t_background
                         << t_background->isVisible() << t_background->geometry();
             }else  {
                 //Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
-                l->setWindowFlag(Qt::WindowTransparentForInput,false);
+                t_l->setWindowFlag(Qt::WindowTransparentForInput,false);
                 t_l->show();
                 qInfo() << "updateBackground show" << t_l <<t_l->isVisible() << t_l->geometry() << "    show" << t_background
                         << t_background->isVisible() << t_background->geometry();
@@ -759,7 +760,8 @@ void BackgroundHelper::resetBackgroundVisibleState()
 #ifdef QT_DEBUG
 void BackgroundHelper::printLog()
 {
-    qDebug() << "\n************************\n";
+    if (!DesktopInfo().waylandDectected()){
+    qDebug() << "primary" << qApp->primaryScreen();
     for (QScreen *screen : qGuiApp->screens()) {
         BackgroundLabel *l = backgroundMap.value(screen);
         qDebug() << screen->name() << "\n" <<
@@ -776,10 +778,27 @@ void BackgroundHelper::printLog()
                  "property.myScreen" << l->property("myScreen") <<
                  "\r\nlabel.screen" << l->windowHandle()->handle()->screen()->name() <<
                  "label geo" << l->windowHandle()->handle()->geometry()
-                 << "widget geo" << l->geometry();
+                 << "widget geo" << l->geometry()
+                 << "screen" << l->windowHandle()->screen()->geometry();
 
     }
     qDebug() << "\n************************\n";
+    }
+    else {
+       qDebug() << "Qt Screen"<< qApp->screens() << "primary" << qApp->primaryScreen()->name();
+       for(QScreen *sc : qApp->screens()){
+           qDebug() << "name" << sc->name() << sc->geometry() << "handle" << sc->handle()->geometry();
+       }
+
+       for (BackgroundLabel *l : waylandbackgroundMap) {
+           qDebug() << "\r\n" << l << "l->isvisible" << l->isVisible() <<
+                    "property.myScreen" << l->property("myScreen") <<
+                    "\r\nlabel.screen" << l->windowHandle()->handle()->screen()->name() <<
+                    "label geo" << l->windowHandle()->handle()->geometry()
+                    << "widget geo" << l->geometry()
+                    << "screen" << l->windowHandle()->screen()->geometry();
+       }
+    }
 }
 
 void BackgroundHelper::printLog(int index)

@@ -246,7 +246,7 @@ private:
     void refresh() Q_DECL_OVERRIDE;
     bool fetchDragEventUrlsFromSharedMemory();
 
-
+    bool m_isRemovingCase = false;
     QScopedPointer<DFileViewPrivate> d_ptr;
     QList<QUrl> m_urlsForDragEvent;
 
