@@ -55,7 +55,7 @@
 #include <ddiskdevice.h>
 #include <dblockdevice.h>
 #include <QMenu>
-#include <DSysInfo>
+#include <QtConcurrent>
 
 #include <algorithm>
 
@@ -343,13 +343,20 @@ DFMSideBar::GroupName DFMSideBar::groupFromName(const QString &name)
 void DFMSideBar::rootFileChange()
 {
     QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
+    qDebug() << "DFileService::instance()->getRootFile() filist:" << filist.size();
+    if (filist.isEmpty())
+        return;
     std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
 
     for (const DAbstractFileInfoPointer &fi : filist) {
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
             if (devitems.contains(fi->fileUrl())) {
+#if 1 //性能优化 2020-06-17
+                continue;
+#else //移除后再添加？？？
                 devitems.removeOne(fi->fileUrl());
                 removeItem(fi->fileUrl(), groupName(Device));
+#endif
             }
             addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
             devitems.push_back(fi->fileUrl());
@@ -359,7 +366,8 @@ void DFMSideBar::rootFileChange()
 
 void DFMSideBar::onRootFileChange(const DAbstractFileInfoPointer &fi)
 {
-    QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
+    //QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
+    qDebug() << "insert root file" << fi->fileUrl() << fi->fileType();
     if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
         if (devitems.contains(fi->fileUrl())) {
             devitems.removeOne(fi->fileUrl());
@@ -545,7 +553,12 @@ void DFMSideBar::initConnection()
     });
 
     initBookmarkConnection();
+#ifdef ENABLE_ASYNCINIT
+    QtConcurrent::run([this](){initDeviceConnection();});
+#else
     initDeviceConnection();
+#endif
+
     initTagsConnection();
 }
 
@@ -647,6 +660,7 @@ void DFMSideBar::initBookmarkConnection()
 
 void DFMSideBar::initDeviceConnection()
 {
+#if 0 //to delete.
     DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
     Q_CHECK_PTR(devicesWatcher);
     devicesWatcher->startWatcher();
@@ -673,9 +687,55 @@ void DFMSideBar::initDeviceConnection()
 
     DFileService::instance()->startQuryRootFile();
     rootFileChange();
-    connect(DFileService::instance(), &DFileService::rootFileChange, this, &DFMSideBar::onRootFileChange, Qt::QueuedConnection);
+    connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+#else
 
-    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl & url) {
+    DFileService::instance()->startQuryRootFile();
+    connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
+        rootFileChange();
+        connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+    },Qt::QueuedConnection);
+
+    if (fileService->isRootFileInited()) {
+        disconnect(DFileService::instance(),&DFileService::queryRootFileFinsh, this, nullptr);
+
+        rootFileChange();
+        connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+    }
+#if 0 //性能优化,使用已有的watcher
+    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
+    Q_CHECK_PTR(devicesWatcher);
+    if (async){
+        devicesWatcher->moveToThread(qApp->thread());
+        devicesWatcher->setParent(this);
+        //QMetaObject::invokeMethod(devicesWatcher,[devicesWatcher](){
+        QTimer::singleShot(1000,devicesWatcher,[devicesWatcher](){
+            devicesWatcher->startWatcher();
+            qDebug() << "devicesWatcher->startWatcher" << QThread::currentThread() << qApp->thread();
+        });
+    }
+    else
+        devicesWatcher->startWatcher();
+#else
+    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->rootFileWather();
+#endif
+#if 0 //未发现被使用，待观察，2020-06-16 性能优化
+    qDebug() << "createFileWatcher" << kTime.elapsed();
+    m_udisks2DiskManager.reset(new DDiskManager);
+    if (async){
+        m_udisks2DiskManager->moveToThread(qApp->thread());
+        //QMetaObject::invokeMethod(m_udisks2DiskManager.data(),"setWatchChanges",Q_ARG(bool,true));
+        QTimer::singleShot(1000,this,[this](){
+            m_udisks2DiskManager->setWatchChanges(true);
+        });
+    }
+    else {
+        m_udisks2DiskManager->setWatchChanges(true);
+    }
+    qDebug() << "m_udisks2DiskManager" << kTime.elapsed();
+#endif
+#endif
+    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
         if (!fileService->createFileInfo(nullptr, url)->exists()) {
             return;
         }
@@ -687,11 +747,11 @@ void DFMSideBar::initDeviceConnection()
                 return DFMRootFileInfo::typeCompare(fia, fib);
             });
             if (r == devitems.end()) {
-                DFileService::instance()->changeRootFile(url);
+                //DFileService::instance()->changeRootFile(url); //性能优化，注释
                 this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                 devitems.append(url);
             } else {
-                DFileService::instance()->changeRootFile(url);
+                //DFileService::instance()->changeRootFile(url); //性能优化，注释
                 this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                 devitems.insert(r, url);
             }
@@ -710,7 +770,7 @@ void DFMSideBar::initDeviceConnection()
                 }
             }
         }
-        DFileService::instance()->changeRootFile(url, false);
+        //DFileService::instance()->changeRootFile(url,false); //性能优化，注释
         this->removeItem(url, this->groupName(Device));
         devitems.removeAll(url);
     });

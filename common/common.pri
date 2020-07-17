@@ -15,9 +15,15 @@ unix {
 
     isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
         message("Build arch:" $$ARCH)
+
+        DEFINES += ENABLE_DAEMON
+
+        DEFINES += ENABLE_ASYNCINIT
     } else {
         message("Build arch:" $$ARCH "Deepin Anything support disabled")
         CONFIG += DISABLE_ANYTHING
+
+        DEFINES += ENABLE_ASYNCINIT
     }
 
     isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
@@ -25,13 +31,14 @@ unix {
 
         #use classical file section mode
         DEFINES += CLASSICAL_SECTION
-        DEFINES += AUTO_RESTART_DEAMON
 
         DEFINES += LOAD_FILE_INTERVAL=150
 
         DEFINES += DISABLE_COMPRESS_PREIVEW
 
-        DEFINES += DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
+        DEFINES += ENABLE_DAEMON
+
+        DEFINES += ENABLE_ASYNCINIT
     } else {
         isEmpty(DISABLE_JEMALLOC) {
             LIBS += -ljemalloc
