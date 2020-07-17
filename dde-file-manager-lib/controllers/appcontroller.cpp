@@ -692,7 +692,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
             if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
-                QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection,
+                                          Q_ARG(QString, tr("The device was not safely removed")),  Q_ARG(QString, tr("Click \"Safely Remove\" and then disconnect it next time")));
             } else {
                 bool err = false;
                 QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
@@ -727,7 +728,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                     // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
                     if (dbusError.isValid() && dbusError.type() != QDBusError::Other) {
                         qDebug() << "disc eject error: " << dbusError.message() << dbusError.name() << dbusError.type();
-                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection,
+                                                  Q_ARG(QString, tr("The device was not safely removed")), Q_ARG(QString, tr("Click \"Safely Remove\" and then disconnect it next time")));
                     }
                 }
             }
@@ -1377,9 +1379,9 @@ void AppController::createDBusInterface()
     });
 }
 
-void AppController::showErrorDialog(const QString content)
+void AppController::showErrorDialog(const QString& title,const QString& content)
 {
-    dialogManager->showErrorDialog(content, QString());
+    dialogManager->showErrorDialog(title, content);
 }
 
 void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
@@ -1411,13 +1413,13 @@ void UnmountWorker::doUnmount(const QString &blkStr)
     QDBusError err = blkdev->lastError();
     if (err.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
         qDebug() << "action timeout with noreply response";
-        emit unmountResult(tr("Action timeout, action is canceled"));
+        emit unmountResult(tr("Action timeout, action is canceled"),"");
     }
     // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
     // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
     else if (err.isValid() && err.type() != QDBusError::Other) {
         qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-        emit unmountResult(tr("Disk is busy, cannot unmount now"));
+        emit unmountResult(tr("Disk is busy, cannot unmount now"),"");
     }
 }
 
@@ -1438,7 +1440,7 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
 
         if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
             qDebug() << "action timeout with noreply response";
-            emit unmountResult(tr("Action timeout, action is canceled"));
+            emit unmountResult(tr("Action timeout, action is canceled"), "");
             return;
         }
 
@@ -1452,6 +1454,6 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
     drv->powerOff({});
     err |= drv->lastError().isValid();
     if (err) {
-        emit unmountResult(tr("Disk is busy, cannot eject now"));
+        emit unmountResult(tr("The device was not safely removed"),tr("Click \"Safely Remove\" and then disconnect it next time"));
     }
 }

@@ -18,12 +18,16 @@
 <context>
     <name>DiskControlWidget</name>
     <message>
-        <source>Disk is busy, cannot eject now</source>
-        <translation>Disk is busy, cannot eject now</translation>
-    </message>
-    <message>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
+    </message>
+    <message>
+        <source>The device was not safely removed</source>
+        <translation>The device was not safely removed</translation>
+    </message>
+    <message>
+        <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
+        <translation>Click "Safely Remove" and then disconnect it next time</translation>
     </message>
 </context>
 <context>
@@ -44,8 +48,8 @@
 <context>
     <name>QObject</name>
     <message>
-        <source>Device has been removed</source>
-        <translation>Device has been removed</translation>
+        <source>The device has been safely removed</source>
+        <translation>The device has been safely removed</translation>
     </message>
 </context>
 </TS>
