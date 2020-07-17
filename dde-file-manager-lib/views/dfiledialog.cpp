@@ -403,8 +403,8 @@ void DFileDialog::selectNameFilterByIndex(int index)
             newNameFilterExtension = db.suffixForFileName(filter); //在QMimeDataBase里面查询扩展名是否存在（不能查询正则表达式）
             if (newNameFilterExtension.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
                 QRegExp  regExp(filter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
-                for (QMimeType m: db.allMimeTypes()) {
-                    for(QString suffixe: m.suffixes()) {
+                for (QMimeType m : db.allMimeTypes()) {
+                    for (QString suffixe : m.suffixes()) {
                         if (regExp.exactMatch(suffixe)) {
                             newNameFilterExtension = suffixe;
                             break; //查询到后跳出循环
@@ -1175,8 +1175,8 @@ void DFileDialog::onAcceptButtonClicked()
         QString file_name = statusBar()->lineEdit()->text(); //文件名
         bool suffixCheck = false; //后缀名检测
         QStringList nameFilters = d->nameFilters;//当前所有后缀列表
-        for (QString nameFilterList: nameFilters) {
-            for (QString nameFilter: QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) { //清理掉多余的信息
+        for (QString nameFilterList : nameFilters) {
+            for (QString nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) { //清理掉多余的信息
                 QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
                 if (re.exactMatch(file_name)) {
                     suffixCheck = true;
@@ -1194,8 +1194,8 @@ void DFileDialog::onAcceptButtonClicked()
             QString suffix = mdb.suffixForFileName(nameFilter);
             if (suffix.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
                 QRegExp  regExp(nameFilter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
-                for (QMimeType m: mdb.allMimeTypes()) {
-                    for(QString suffixe: m.suffixes()) {
+                for (QMimeType m : mdb.allMimeTypes()) {
+                    for (QString suffixe : m.suffixes()) {
                         if (regExp.exactMatch(suffixe)) {
                             suffix = suffixe;
                             break; //查询到后跳出循环
@@ -1250,13 +1250,19 @@ void DFileDialog::onAcceptButtonClicked()
                     DDialog dialog(this);
 
                     // NOTE(zccrs): dxcb bug
-                    if (!DPlatformWindowHandle::isEnabledDXcb(this)
+//                    if (!DPlatformWindowHandle::isEnabledDXcb(this)
+//#if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
+//                            || pwPluginVersionGreaterThen("1.1.8.3")
+//#endif
+//                       ) {
+//                        dialog.setWindowModality(Qt::WindowModal);
+//                    }
+
 #if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
-                            || pwPluginVersionGreaterThen("1.1.8.3")
-#endif
-                       ) {
+                    if (pwPluginVersionGreaterThen("1.1.8.3")) {
                         dialog.setWindowModality(Qt::WindowModal);
                     }
+#endif
 
                     dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
                     dialog.setTitle(tr("%1 already exists, do you want to replace it?").arg(file_name));
