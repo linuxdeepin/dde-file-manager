@@ -1,12 +1,12 @@
 ### dde-file-manager
 
-Deepin File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.
+Deepin File Manager is a file management tool independently developed by Deepin Technology with file management features such as search, copy, move to trash, compression/decompression, and displaying file properties.
 
 ### Dependencies
 
 ### Build dependencies
 
-_The **master** branch is current development branch, build dependencies may changes without update README.md, refer to `./debian/control` for a working build depends list_
+_The **master** branch is the current development branch. This README.md does not always reflect all changes in build dependencies. Refer to `./debian/control` for a working build depends list_
  
 * pkg-config
 * dh-systemd
@@ -52,9 +52,9 @@ _The **master** branch is current development branch, build dependencies may cha
 
 1. Make sure you have installed all dependencies.
 
-_Package name may be different between distros, if dde-file-manager is available from your distro, check the packaging script delivered from your distro is a better idea._
+_Package name may differ across distros. If dde-file-manager is available from your distro, refer to the packaging script shipped with your distro._
 
-Assume you are using [Deepin](https://distrowatch.com/table.php?distribution=deepin) or other debian-based distro which got dde-file-manager delivered:
+Assuming you are using [Deepin](https://distrowatch.com/table.php?distribution=deepin) or other debian-based distros that ship with dde-file-manager:
 
 ``` shell
 $ apt build-dep dde-file-manager
