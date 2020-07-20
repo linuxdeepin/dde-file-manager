@@ -68,6 +68,7 @@
 
 #include "app/define.h"
 #include "controllers/mergeddesktopcontroller.h"
+#include "../dde-wallpaper-chooser/screensavercontrol.h"
 
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
 
@@ -3342,7 +3343,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 #ifdef DISABLE_SCREENSAVER
     wallpaper.setText(tr("Set Wallpaper"));
 #else
-    if(existScreensaverService()){
+    if(ScreenSaverCtrlFunction::needShowScreensaver()){
         wallpaper.setText(tr("Wallpaper and Screensaver"));
     }else {
         wallpaper.setText(tr("Set Wallpaper"));
@@ -3632,25 +3633,3 @@ void CanvasGridView::startDrag(Qt::DropActions supportedActions)
     return;
 }
 
-bool CanvasGridView::existScreensaverService()
-{
-    bool result = false;
-#ifndef DISABLE_SCREENSAVER
-
-    QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ListActivatableNames");
-    QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(msg);
-    call.waitForFinished();
-    if(call.isFinished()){
-         QDBusReply<QStringList> reply = call.reply();
-         QStringList value = reply.value();
-
-         if (value.contains("com.deepin.ScreenSaver")){
-             qDebug() << "com.deepin.ScreenSaver is ok";
-             result = true;
-         }
-    }
-
-#endif
-
-    return result;
-}
