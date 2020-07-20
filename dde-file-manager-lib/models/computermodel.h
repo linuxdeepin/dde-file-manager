@@ -116,6 +116,7 @@ private:
     int findItem(const DUrl &url);
 
     static DUrl makeSplitterUrl(QString text);
+    int findNextSplitter(const int &index);
 };
 
 
