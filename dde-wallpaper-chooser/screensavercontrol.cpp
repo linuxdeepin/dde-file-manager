@@ -19,7 +19,7 @@ bool needShowScreensaver()
         return false;
     }
 
- #ifndef DISABLE_SCREENSAVER
+#ifndef DISABLE_SCREENSAVER
     //2 判断是否安装屏保程序
     QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ListActivatableNames");
     QDBusMessage response = QDBusConnection::sessionBus().call(msg);
@@ -30,7 +30,9 @@ bool needShowScreensaver()
         qDebug() << "The screen saver is uninstalled";
         return false;
     }
- #endif
+#elif defined DISABLE_SCREENSAVER
+    return false;
+#endif
 
     //3 Gsetting 判断屏保是否可用...
     DGioSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
