@@ -68,6 +68,7 @@
 
 #include "app/define.h"
 #include "controllers/mergeddesktopcontroller.h"
+#include "../dde-wallpaper-chooser/screensavercontrol.h"
 
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
 
@@ -504,6 +505,7 @@ void CanvasGridView::delayCustom(int ms)
             list << localFile;
         }
         qDebug() << "initCustom file count" << list.size();
+        GridManager::sortMainDesktopFile(list,model()->sortRole() ,model()->sortOrder());
         GridManager::instance()->initCustom(list);
 
         emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
@@ -519,6 +521,7 @@ void CanvasGridView::delayCustom(int ms)
             auto localFile = model()->getUrlByIndex(index).toString();
             list << localFile;
         }
+        GridManager::sortMainDesktopFile(list,model()->sortRole() ,model()->sortOrder());
         auto oriItems = GridManager::instance()->allItems();
         qDebug() << "initCustom file count" << list.size()<<" and oriItems count "<<oriItems.count();
         GridManager::instance()->initCustom(list);
@@ -2160,6 +2163,7 @@ void CanvasGridView::selectAll()
 void CanvasGridView::onRefreshFinished()
 {
     qDebug() << "fresh ending spend " << m_rt.elapsed() << m_screenNum;
+    model()->setEnabledSort(false);
     if (GridManager::instance()->autoMerge()){
         delayAutoMerge();
     } else if (GridManager::instance()->autoArrange()){
@@ -2237,7 +2241,11 @@ void CanvasGridView::initUI()
     d->fileViewHelper->setProperty("isCanvasViewHelper", true);
 
     setModel(new DFileSystemModel(d->fileViewHelper));
-    model()->setEnabledSort(false);
+
+    //默认按类型排序
+    this->model()->setSortRole(DFileSystemModel::FileMimeTypeRole);
+    this->model()->setEnabledSort(true);
+
     model()->isDesktop = true;//紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
 
     //设置是否显示隐藏文件
@@ -2558,6 +2566,8 @@ openEditor:
                 auto localFile = model()->getUrlByIndex(index).toString();
                 list << localFile;
             }
+
+            GridManager::sortMainDesktopFile(list, model()->sortRole(), model()->sortOrder());
 
             //自动排列和整理
             if (GridManager::instance()->shouldArrange()){
@@ -3333,7 +3343,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 #ifdef DISABLE_SCREENSAVER
     wallpaper.setText(tr("Set Wallpaper"));
 #else
-    if(existScreensaverService()){
+    if(ScreenSaverCtrlFunction::needShowScreensaver()){
         wallpaper.setText(tr("Wallpaper and Screensaver"));
     }else {
         wallpaper.setText(tr("Set Wallpaper"));
@@ -3623,25 +3633,3 @@ void CanvasGridView::startDrag(Qt::DropActions supportedActions)
     return;
 }
 
-bool CanvasGridView::existScreensaverService()
-{
-    bool result = false;
-#ifndef DISABLE_SCREENSAVER
-
-    QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ListActivatableNames");
-    QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(msg);
-    call.waitForFinished();
-    if(call.isFinished()){
-         QDBusReply<QStringList> reply = call.reply();
-         QStringList value = reply.value();
-
-         if (value.contains("com.deepin.ScreenSaver")){
-             qDebug() << "com.deepin.ScreenSaver is ok";
-             result = true;
-         }
-    }
-
-#endif
-
-    return result;
-}

@@ -76,6 +76,7 @@
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
 
+#include <QScreen>
 #include <QStatusBar>
 #include <QFrame>
 #include <QVBoxLayout>
@@ -421,6 +422,25 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     bool ok = false;
 
     if (current_view) {
+        // 为了解决 bug 34363: [4K屏]下且[缩放]，[ICON视图]下[浏览大量文件]，同时[疯狂滚动 scrollbar] 导致的崩溃问题
+        auto fileView = dynamic_cast<DFileView*>(current_view);
+        if (fileView && fileView->isIconViewMode()) {
+            auto model = fileView->model();
+            if (model) {
+                auto state = model->state();
+                // busy 状态说明文件太多，还没加载完
+                if (state == DFileSystemModel::Busy) {
+                    // 目前系统缩放区间为 [1.0, 2.75], ratio > 1.0 则为缩放, 目前 1.0 没有出现崩溃
+                    qreal ratio = qApp->primaryScreen()->devicePixelRatio();
+                    if (ratio > 1.0) {
+                        // 如果疯狂滚动，那么Qt可能会由于绘制的原因崩溃，因此在切换前选中第一个item
+                        // 这样界面就不会处于一个疯狂刷新绘制的状态，即不会调用绘制的函数，因此避免了绘制崩溃的问题
+                        fileView->setCurrentIndex(model->index(0, 0));
+                    }
+                }
+            }
+        }
+
         ok = current_view->setRootUrl(fileUrl);
 
         if (ok) {
