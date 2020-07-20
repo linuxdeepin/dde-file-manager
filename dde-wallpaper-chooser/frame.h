@@ -147,7 +147,6 @@ private:
     QString getWallpaperSlideShow();
     void setWallpaperSlideShow(QString slideShow);
     void setBackground();
-    bool existScreensaverService();
 
     QString m_screenName;
 };
