@@ -103,12 +103,24 @@ ComputerModel::ComputerModel(QObject *parent)
         //                insertBefore(url, r->url);
         //            }
         int nIndex = findItem(makeSplitterUrl(QObject::tr("File Vault")));
+
         if(nIndex != -1){   // 有保险箱的情况
+            //fix bug PPMS20200213,在没有磁盘项时，创建磁盘项
+            int ndisksIndex = findItem(makeSplitterUrl(QObject::tr("Disks")));
+            if (ndisksIndex == -1 ) {
+                insertBefore(makeSplitterUrl(tr("Disks")), m_items[nIndex].url);
+                nIndex++;
+            }
             if(m_items.count() > nIndex){
                 insertBefore(url, m_items[nIndex].url);
             }
         }
         else {  // 没有保险箱的情况
+            //fix bug PPMS20200213,在没有磁盘项时，创建磁盘项
+            int ndisksIndex = findItem(makeSplitterUrl(QObject::tr("Disks")));
+            if (ndisksIndex == -1 ) {
+                addItem(makeSplitterUrl(tr("Disks")));
+            }
             auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
                                       [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                 return DFMRootFileInfo::typeCompare(a, b.fi);
@@ -487,6 +499,18 @@ void ComputerModel::removeItem(const DUrl &url)
     beginRemoveRows(QModelIndex(), p, p);
     m_items.removeAt(p);
     endRemoveRows();
+    //fix bug PPMS20200213,在移除最后一个磁盘时，移除磁盘这个项
+    int ndiskindex = findItem(makeSplitterUrl(QObject::tr("Disks")));
+    int nextspliter = findNextSplitter(ndiskindex);
+    //磁盘的分割线的ndiskindex和从磁盘到下一个分割线nextspliter，如果没有下一个分割线并且磁盘分割线ndiskindex是最后一项
+    //或者磁盘分割线ndiskindex到从磁盘到下一个分割线nextspliter之间的item为0就移除磁盘的分割线
+    if ((nextspliter == -1 && ndiskindex != -1 && m_items.size() - 1 == ndiskindex) ||
+            (ndiskindex != -1 && nextspliter != -1 && (nextspliter - ndiskindex) == 1)) {
+        beginRemoveRows(QModelIndex(), ndiskindex, ndiskindex);
+        m_items.removeAt(ndiskindex);
+        endRemoveRows();
+    }
+
     if (url.scheme() != SPLITTER_SCHEME && url.scheme() != WIDGET_SCHEME) {
         Q_EMIT itemCountChanged(--m_nitems);
     }
@@ -597,3 +621,21 @@ DUrl ComputerModel::makeSplitterUrl(QString text)
     ret.setFragment(text);
     return ret;
 }
+
+int ComputerModel::findNextSplitter(const int &index)
+{
+    int p = index + 1;
+    if (m_items.size() <= index || -1 == index) {
+        return -1;
+    }
+    for (; p < m_items.size(); ++p) {
+        if (m_items[p].url.scheme() == SPLITTER_SCHEME) {
+            break;
+        }
+    }
+    if (p >= m_items.size()) {
+        return -1;
+    }
+    return p;
+}
+
