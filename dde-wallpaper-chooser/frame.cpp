@@ -859,7 +859,7 @@ void Frame::initUI()
     if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
 
 
-    if (!needShowScreensaver()) {
+    if (!ScreenSaverCtrlFunction::needShowScreensaver()) {
         m_switchModeControl->setButtonList({wallpaperBtn}, true);
         wallpaperBtn->setChecked(true);
         wallpaperBtn->installEventFilter(this);

@@ -3334,7 +3334,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 #ifdef DISABLE_SCREENSAVER
     wallpaper.setText(tr("Set Wallpaper"));
 #else
-    if(needShowScreensaver()){
+    if(ScreenSaverCtrlFunction::needShowScreensaver()){
         wallpaper.setText(tr("Wallpaper and Screensaver"));
     }else {
         wallpaper.setText(tr("Set Wallpaper"));
