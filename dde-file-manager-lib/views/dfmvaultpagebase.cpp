@@ -27,11 +27,10 @@ DFMVaultPageBase::DFMVaultPageBase(QWidget *parent)
 
 void DFMVaultPageBase::enterVaultDir()
 {
+    //! bug 38585 这样修改可以减少一次文管是否设置双击文件始终在新窗口中打开
+    DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
     DFileManagerWindow *wnd = dynamic_cast<DFileManagerWindow *>(m_wndptr);
-    if (wnd) {
-        DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
-        wnd->cd(vaultUrl);
-    }
+    AppController::instance()->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(wnd, DUrlList() << vaultUrl));
 }
 
 void DFMVaultPageBase::setWndPtr(QWidget *wnd)
