@@ -8,6 +8,7 @@
 
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
 
+namespace ScreenSaverCtrlFunction {
 bool needShowScreensaver()
 {
     //1 判断环境变量
@@ -39,4 +40,5 @@ bool needShowScreensaver()
     }
 
     return true;
+}
 }
