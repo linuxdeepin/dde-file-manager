@@ -51,6 +51,7 @@
 #include "ddiskdevice.h"
 #include "views/dtagactionwidget.h"
 #include "plugins/dfmadditionalmenu.h"
+#include "models/dfmrootfileinfo.h"
 
 #include <DSysInfo>
 
@@ -433,13 +434,19 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
-                    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
-                    qDebug() << "add send action: " << pDeviceinfo->getDiskInfo().name();
-                    QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
-                    action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
-                    action->setProperty("urlList", DUrl::toStringList(urls));
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
                     QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
+                    DUrl gvfsmpurl;
+                    gvfsmpurl.setScheme(DFMROOT_SCHEME);
+                    gvfsmpurl.setPath("/" + QUrl::toPercentEncoding(tempId) + "." SUFFIX_UDISKS);
+
+                    DAbstractFileInfoPointer fp(new DFMRootFileInfo(gvfsmpurl)); // 通过DFMRootFileInfo 拿到与桌面显示一致的 名字
+
+                    qDebug() << "add send action: [ diskinfoname:" << pDeviceinfo->getDiskInfo().name() << " to RootFileInfo: " << fp->fileDisplayName();
+
+                    QAction *action = new QAction(fp->fileDisplayName(), sendToMountedRemovableDiskMenu);
+                    action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
+                    action->setProperty("urlList", DUrl::toStringList(urls));
                     action->setProperty("blkDevice", tempId);
 
                     // 禁用发送到列表中的本设备项
