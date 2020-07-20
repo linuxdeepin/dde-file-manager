@@ -557,8 +557,8 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     if (!winId_mtx.first){
         //等待异步加载完成
         winId_mtx.second.lock();
-        winId_mtx.second.unlock();
         winId_mtx.first = true;
+        winId_mtx.second.unlock();
     }
     winId();
     initData();
