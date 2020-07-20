@@ -4,7 +4,8 @@ SOURCES += $$PWD/frame.cpp \
     $$PWD/thumbnailmanager.cpp \
     $$PWD/button.cpp \
     $$PWD/dbus/deepin_wm.cpp \
-    $$PWD/checkbox.cpp
+    $$PWD/checkbox.cpp \
+    $$PWD/screensavercontrol.cpp
 
 HEADERS  += $$PWD/frame.h \
     $$PWD/wallpaperlist.h \
@@ -13,7 +14,8 @@ HEADERS  += $$PWD/frame.h \
     $$PWD/thumbnailmanager.h \
     $$PWD/button.h \
     $$PWD/dbus/deepin_wm.h \
-    $$PWD/checkbox.h
+    $$PWD/checkbox.h \
+    $$PWD/screensavercontrol.h
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/view
 
