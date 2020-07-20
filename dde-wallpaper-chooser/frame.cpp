@@ -33,6 +33,7 @@
 #include "backgroundhelper.h"
 #include "screen/screenhelper.h"
 #include "dbusinterface/introspectable_interface.h"
+#include "screensavercontrol.h"
 
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
@@ -59,7 +60,6 @@
 #define DESKTOP_BUTTON_ID "desktop"
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
-#define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
 #define SessionManagerService "com.deepin.SessionManager"
 #define SessionManagerPath "/com/deepin/SessionManager"
 
@@ -67,7 +67,6 @@ DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 using namespace com::deepin;
-
 static bool previewBackground()
 {
     if (DWindowManagerHelper::instance()->windowManagerName() == DWindowManagerHelper::DeepinWM)
@@ -850,7 +849,6 @@ void Frame::initUI()
 
     //###(zccrs): 直接把switModeControl放到布局中始终无法在两种mos模式下都居中
     // 使用anchors使此控件居中
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     DButtonBoxButton *wallpaperBtn = new DButtonBoxButton(tr("Wallpaper"), this);
     wallpaperBtn->installEventFilter(this);
     wallpaperBtn->setMinimumWidth(40);
@@ -860,8 +858,8 @@ void Frame::initUI()
 
     if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
 
-    if ((env.contains(DESKTOP_CAN_SCREENSAVER) && env.value(DESKTOP_CAN_SCREENSAVER).startsWith("N"))
-            || !existScreensaverService()) {
+
+    if (!needShowScreensaver()) {
         m_switchModeControl->setButtonList({wallpaperBtn}, true);
         wallpaperBtn->setChecked(true);
         wallpaperBtn->installEventFilter(this);
@@ -1191,27 +1189,4 @@ void Frame::setBackground()
         qDebug() << " dbus Appearance Set background ";
         m_dbusAppearance->Set("background", m_desktopWallpaper);
     }
-}
-
-bool Frame::existScreensaverService()
-{
-    bool result = false;
-#ifndef DISABLE_SCREENSAVER
-
-    QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ListActivatableNames");
-    QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(msg);
-    call.waitForFinished();
-    if(call.isFinished()){
-         QDBusReply<QStringList> reply = call.reply();
-         QStringList value = reply.value();
-
-         if (value.contains("com.deepin.ScreenSaver")){
-             qDebug() << "com.deepin.ScreenSaver is ok";
-             result = true;
-         }
-    }
-
-#endif
-
-    return result;
 }
