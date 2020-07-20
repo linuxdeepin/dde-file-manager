@@ -61,6 +61,15 @@
       </description>
     </key>
 
+    <key name='show-screen-saver' type='b'>
+      <default>true</default>
+      <summary>Wether use screen saver on the desktop</summary>
+      <description>
+        If enabled, screen saver will display on the desktop.
+        If disabled, screen saver will not display on the desktop.s
+      </description>
+    </key>
+
   </schema>
 
 </schemalist>

@@ -197,7 +197,6 @@ private:
 
     void setGeometry(int, int, int, int) = delete;
     bool fetchDragEventUrlsFromSharedMemory();
-    bool existScreensaverService();
 
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
