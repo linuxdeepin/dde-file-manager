@@ -95,9 +95,6 @@ public:
     JobController *m_jobcontroller = nullptr;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
-    //fix bug,当快速点击左边侧边栏会出现鼠标一直在转圈圈
-    QMutex m_mutexCursorState;
-    QMutex m_mutexrootfilechange;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;

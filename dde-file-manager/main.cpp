@@ -128,6 +128,10 @@ int main(int argc, char *argv[])
     //使用异步加载win相关的插件
     QtConcurrent::run([](){
         winId_mtx.second.lock();
+        if (winId_mtx.first){
+            winId_mtx.second.unlock();
+            return;
+        }
         QWidget *w = new QWidget;
         w->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
         w->winId();
