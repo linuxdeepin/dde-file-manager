@@ -1178,6 +1178,10 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
                 return;
             }
+        } else if(DFMGlobal::keyShiftIsPressed()){  // 如果按住shit键，鼠标左键点击某项
+            if(!selectionModel()->isSelected(index)){   // 如果该项没有被选择
+                DListView::mousePressEvent(event);  // 选择该项
+            }
         }
 
         d->mouseLastPressedIndex = QModelIndex();
