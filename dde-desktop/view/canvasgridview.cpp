@@ -1423,7 +1423,18 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         setState(NoState);
         viewport()->update();
     }
-
+    //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
+    QObject *parentptr = parent();
+    QObject *preparentptr = nullptr;
+    while(parentptr)
+    {
+        preparentptr = parentptr;
+        parentptr = parentptr->parent();
+    }
+    QWidget *curwindow = static_cast<QWidget *>(preparentptr);
+    if (curwindow){
+        qApp->setActiveWindow(curwindow);
+    }
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         event->acceptProposedAction();
         DFileDragClient::setTargetUrl(event->mimeData(), model()->getUrlByIndex(targetIndex));
