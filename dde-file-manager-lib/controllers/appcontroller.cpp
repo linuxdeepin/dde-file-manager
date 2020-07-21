@@ -114,7 +114,7 @@ template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
 const char *empty_recent_file =
-        R"|(<?xml version="1.0" encoding="UTF-8"?>
+    R"|(<?xml version="1.0" encoding="UTF-8"?>
         <xbel version="1.0"
         xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
         xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
@@ -409,9 +409,10 @@ void AppController::actionCopy(const QSharedPointer<DFMUrlListBaseEvent> &event)
 void AppController::actionPaste(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     // QTimer::singleshot目的: 多窗口下粘贴，右键拖动标题栏
-    QTimer::singleShot(0, [event] () {
+    QTimer::singleShot(0, [event]() {
         fileService->pasteFileByClipboard(event->sender(), event->url());
-    });}
+    });
+}
 
 void AppController::actionRename(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
@@ -1364,6 +1365,7 @@ void AppController::createDBusInterface()
                                                             this);
 
     QtConcurrent::run(QThreadPool::globalInstance(), [&] {
+        m_creatingDBusInterface = true;
         QDBusPendingReply<QString> reply = m_introspectableInterface->Introspect();
         reply.waitForFinished();
         if (reply.isFinished())
@@ -1375,11 +1377,12 @@ void AppController::createDBusInterface()
             } else {
                 qDebug() << "com.deepin.SessionManager : StartManager doesn't have LaunchApp interface";
             }
+            m_creatingDBusInterface = false;
         }
     });
 }
 
-void AppController::showErrorDialog(const QString& title,const QString& content)
+void AppController::showErrorDialog(const QString &title, const QString &content)
 {
     dialogManager->showErrorDialog(title, content);
 }
@@ -1391,9 +1394,14 @@ void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
 
 bool AppController::hasLaunchAppInterface() const
 {
-    while (!m_hasLaunchAppInterface) {
+    //如果正在加载dbus接口，则稍等
+    int times = 10;
+    while (m_creatingDBusInterface && times > 0) {
         qDebug() << "LaunchAppInterface is loading...";
+        QThread::msleep(100);
+        times--;
     }
+
     return m_hasLaunchAppInterface;
 }
 
@@ -1413,13 +1421,13 @@ void UnmountWorker::doUnmount(const QString &blkStr)
     QDBusError err = blkdev->lastError();
     if (err.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
         qDebug() << "action timeout with noreply response";
-        emit unmountResult(tr("Action timeout, action is canceled"),"");
+        emit unmountResult(tr("Action timeout, action is canceled"), "");
     }
     // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
     // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
     else if (err.isValid() && err.type() != QDBusError::Other) {
         qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-        emit unmountResult(tr("Disk is busy, cannot unmount now"),"");
+        emit unmountResult(tr("Disk is busy, cannot unmount now"), "");
     }
 }
 
@@ -1454,6 +1462,6 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
     drv->powerOff({});
     err |= drv->lastError().isValid();
     if (err) {
-        emit unmountResult(tr("The device was not safely removed"),tr("Click \"Safely Remove\" and then disconnect it next time"));
+        emit unmountResult(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));
     }
 }
