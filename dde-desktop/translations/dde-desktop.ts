@@ -4,50 +4,50 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3049"/>
-        <location filename="../view/canvasgridview.cpp" line="3226"/>
+        <location filename="../view/canvasgridview.cpp" line="3085"/>
+        <location filename="../view/canvasgridview.cpp" line="3262"/>
         <source>Icon size</source>
         <translation>Icon size</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3055"/>
-        <location filename="../view/canvasgridview.cpp" line="3232"/>
+        <location filename="../view/canvasgridview.cpp" line="3091"/>
+        <location filename="../view/canvasgridview.cpp" line="3270"/>
         <source>Auto merge</source>
         <translation>Auto merge</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3070"/>
-        <location filename="../view/canvasgridview.cpp" line="3242"/>
+        <location filename="../view/canvasgridview.cpp" line="3106"/>
+        <location filename="../view/canvasgridview.cpp" line="3282"/>
         <source>Auto arrange</source>
         <translation>Auto arrange</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3127"/>
-        <location filename="../view/canvasgridview.cpp" line="3131"/>
-        <location filename="../view/canvasgridview.cpp" line="3295"/>
-        <location filename="../view/canvasgridview.cpp" line="3300"/>
+        <location filename="../view/canvasgridview.cpp" line="3163"/>
+        <location filename="../view/canvasgridview.cpp" line="3167"/>
+        <location filename="../view/canvasgridview.cpp" line="3335"/>
+        <location filename="../view/canvasgridview.cpp" line="3340"/>
         <source>Set Wallpaper</source>
         <translation>Set Wallpaper</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3133"/>
-        <location filename="../view/canvasgridview.cpp" line="3298"/>
+        <location filename="../view/canvasgridview.cpp" line="3169"/>
+        <location filename="../view/canvasgridview.cpp" line="3338"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Wallpaper and Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3442"/>
+        <location filename="../view/canvasgridview.cpp" line="3482"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3110"/>
-        <location filename="../view/canvasgridview.cpp" line="3279"/>
+        <location filename="../view/canvasgridview.cpp" line="3146"/>
+        <location filename="../view/canvasgridview.cpp" line="3319"/>
         <source>Display Settings</source>
         <translation>Display Settings</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3119"/>
+        <location filename="../view/canvasgridview.cpp" line="3155"/>
         <source>Corner Settings</source>
         <translation>Corner Settings</translation>
     </message>
@@ -121,27 +121,27 @@
         <translation>Wait:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="854"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="853"/>
         <source>Wallpaper</source>
         <translation>Wallpaper</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="869"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="867"/>
         <source>Screensaver</source>
         <translation>Screensaver</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="945"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="943"/>
         <source>Only desktop</source>
         <translation>Only desktop</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="946"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="944"/>
         <source>Only lock screen</source>
         <translation>Only lock screen</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="998"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="996"/>
         <source>Apply</source>
         <translation>Apply</translation>
     </message>
@@ -154,12 +154,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="256"/>
-        <source>authorized</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../view/watermaskframe.cpp" line="259"/>
+        <location filename="../view/watermaskframe.cpp" line="261"/>
         <source>In trial period</source>
         <translation type="unfinished"></translation>
     </message>
