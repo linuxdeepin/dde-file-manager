@@ -533,6 +533,7 @@ void CanvasGridView::delayCustom(int ms)
             list << localFile;
         }
         qDebug() << "initCustom file count" << list.size();
+        GridManager::sortMainDesktopFile(list,model()->sortRole() ,model()->sortOrder());
         GridManager::instance()->initCustom(list);
 #ifndef USE_SP2_AUTOARRAGE   //sp3需求改动
         if (GridManager::instance()->autoArrange()) {
@@ -554,6 +555,7 @@ void CanvasGridView::delayCustom(int ms)
             auto localFile = model()->getUrlByIndex(index).toString();
             list << localFile;
         }
+        GridManager::sortMainDesktopFile(list,model()->sortRole() ,model()->sortOrder());
         auto oriItems = GridManager::instance()->allItems();
         qDebug() << "initCustom file count" << list.size()<<" and oriItems count "<<oriItems.count();
         GridManager::instance()->initCustom(list);
@@ -2019,7 +2021,19 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         } else {
             if (findOldPos) {
                 GridManager::instance()->remove(m_screenNum, oriUrl.toString());
-                GridManager::instance()->add(m_screenNum, oldPos, dstUrl.toString());
+
+                //文件被重名后变成隐藏文件
+                DAbstractFileInfoPointer file = fileService->createFileInfo(nullptr, dstUrl);
+                //判断文件是否为隐藏文件，当前若不显示隐藏文件，则跳过
+                if (file && file->isHidden() && !(model()->filters() & QDir::Hidden)){
+                    qDebug() << dstUrl << "is hidden file，do not show";
+
+                    //变成隐藏文件，出现了空位，需要执行一次排列
+                    if (GridManager::instance()->autoArrange())
+                        this->delayArrage();
+                }
+                else
+                    GridManager::instance()->add(m_screenNum, oldPos, dstUrl.toString());
 
                 if (GridManager::instance()->autoMerge())
                     this->delayModelRefresh();
@@ -2233,6 +2247,7 @@ void CanvasGridView::selectAll()
 void CanvasGridView::onRefreshFinished()
 {
     qDebug() << "fresh ending spend " << m_rt.elapsed() << m_screenNum;
+    model()->setEnabledSort(false);
     if (GridManager::instance()->autoMerge()){
         delayAutoMerge();
     }
@@ -2314,8 +2329,11 @@ void CanvasGridView::initUI()
     d->fileViewHelper->setProperty("isCanvasViewHelper", true);
 
     setModel(new DFileSystemModel(d->fileViewHelper));
-    model()->setEnabledSort(false);
     model()->isDesktop = true;//紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
+
+    //默认按类型排序
+    model()->setSortRole(DFileSystemModel::FileMimeTypeRole);
+    model()->setEnabledSort(true);
 
     //设置是否显示隐藏文件
     auto filters = model()->filters();
@@ -2563,6 +2581,13 @@ openEditor:
             return ;
         }
 
+        //判断文件是否为隐藏文件，当前若不显示隐藏文件，则跳过
+        DAbstractFileInfoPointer file = fileService->createFileInfo(nullptr,url);
+        if (file && file->isHidden() && !(model()->filters() & QDir::Hidden)){
+            qDebug() << url << "is hidden file，do not show";
+            return;
+        }
+
         GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
 #ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
         if (GridManager::instance()->autoArrange()){ //重新排列
@@ -2648,7 +2673,9 @@ openEditor:
                 auto localFile = model()->getUrlByIndex(index).toString();
                 list << localFile;
             }
-#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
+
+            GridManager::sortMainDesktopFile(list, model()->sortRole(), model()->sortOrder());
+#ifdef USE_SP2_AUTOARRAGE
             //自动排列和整理
             if (GridManager::instance()->shouldArrange()){
                 GridManager::instance()->initArrage(list);
