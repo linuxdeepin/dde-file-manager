@@ -464,6 +464,7 @@ void CanvasGridView::delayArrage(int ms)
         arrangeTimer = nullptr;
         qDebug() << "reset timer" << m_screenNum;
     }
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
     if (ms < 1){
         d->bReloadItem = true;
         qDebug() << "beging sort " << arrangeTimer << m_screenNum;
@@ -480,12 +481,39 @@ void CanvasGridView::delayArrage(int ms)
         model()->setEnabledSort(true);
         model()->sort();
     });
+#else
+    if (ms < 1){
+        qDebug() << "beging arrage " << arrangeTimer << m_screenNum;
+        auto list = GridManager::instance()->allItems();
+        qDebug() << "initArrage file count" << list.size();
+        GridManager::instance()->initArrage(list);
+        GridManager::instance()->delaySyncAllProfile();
+
+        emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
+        return;
+    }
+
+    arrangeTimer = new QTimer;
+    connect(arrangeTimer,&QTimer::timeout,this,[=](){
+        arrangeTimer->stop();
+        auto list = GridManager::instance()->allItems();
+        qDebug() << "initArrage file count" << list.size();
+        GridManager::instance()->initArrage(list);
+        GridManager::instance()->delaySyncAllProfile();
+
+        emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
+    });
+#endif
     arrangeTimer->start(ms);
 }
 
 void CanvasGridView::delayCustom(int ms)
 {
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
     if (GridManager::instance()->shouldArrange()){
+#else
+    if (GridManager::instance()->autoMerge()){
+#endif
         return;
     }
 
@@ -506,6 +534,12 @@ void CanvasGridView::delayCustom(int ms)
         }
         qDebug() << "initCustom file count" << list.size();
         GridManager::instance()->initCustom(list);
+#ifndef USE_SP2_AUTOARRAGE   //sp3需求改动
+        if (GridManager::instance()->autoArrange()) {
+            delayArrage(0);
+        }
+#endif
+
 
         emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
         return;
@@ -523,6 +557,12 @@ void CanvasGridView::delayCustom(int ms)
         auto oriItems = GridManager::instance()->allItems();
         qDebug() << "initCustom file count" << list.size()<<" and oriItems count "<<oriItems.count();
         GridManager::instance()->initCustom(list);
+#ifndef USE_SP2_AUTOARRAGE   //sp3需求改动
+        if (GridManager::instance()->autoArrange()) {
+            delayArrage(0);
+        }
+#endif
+
         //fix bug #32527
         if(list.isEmpty() && !oriItems.isEmpty())
         {
@@ -1120,8 +1160,11 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         DFileDragClient::setTargetUrl(event->mimeData(), currentUrl());
         return;
     }
-
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
     if (event->source()) {
+#else
+    if (!GridManager::instance()->autoMerge()) {
+#endif
         if (!GridManager::instance()->shouldArrange()) {
             d->startDodge = true;
         }
@@ -1205,7 +1248,11 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         }
     }
 
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
     if (!GridManager::instance()->shouldArrange()) {   //自定义
+#else
+    if (!GridManager::instance()->autoMerge()) {   //自定义
+#endif
         CanvasGridView *view = dynamic_cast<CanvasGridView *>(event->source());
         if (view && event->mimeData()){
             QPair<int,QPoint> orgpos;
@@ -1230,7 +1277,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         //end
     }
 
-    { //自动排列和自动整理以及不触发让位的drag处理
+    { //自动整理(sp2自动排列)以及不触发让位的drag处理
         d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
         if (!hoverIndex.isValid()) {
             if (DFileDragClient::checkMimeData(event->mimeData())) {
@@ -1312,8 +1359,13 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         if (event->dropAction() == Qt::MoveAction) {
             QModelIndex dropIndex = indexAt(gridRectAt(event->pos()).center());
             if (sourceView && (!dropIndex.isValid() || dropOnSelf)) {
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
                 //自动排列和自动整理不允许屏幕间拖动
                 if (GridManager::instance()->shouldArrange()) {
+#else
+                //自动整理不允许屏幕间拖动
+                if (GridManager::instance()->autoMerge()) {
+#endif
                     return;
                 }
 
@@ -1377,7 +1429,11 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 #endif
                 setState(NoState);
                 itemDelegate()->hideNotEditingIndexWidget();
-
+#ifndef USE_SP2_AUTOARRAGE   //sp3需求改动
+                if (GridManager::instance()->autoArrange()) {
+                    delayArrage(0);
+                }
+#endif
                 emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
                 return;
             }
@@ -1967,8 +2023,10 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
 
                 if (GridManager::instance()->autoMerge())
                     this->delayModelRefresh();
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
                 else if (GridManager::instance()->autoArrange())
                     this->delayArrage();
+#endif
             } else {
                 //Q_EMIT itemCreated(dstUrl);
             }
@@ -2177,9 +2235,13 @@ void CanvasGridView::onRefreshFinished()
     qDebug() << "fresh ending spend " << m_rt.elapsed() << m_screenNum;
     if (GridManager::instance()->autoMerge()){
         delayAutoMerge();
-    } else if (GridManager::instance()->autoArrange()){
+    }
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
+    else if (GridManager::instance()->autoArrange()){
         delayArrage();
-    } else {  //自定义
+    }
+#endif
+    else {  //自定义
         delayCustom();
     }
 }
@@ -2419,11 +2481,22 @@ void CanvasGridView::initConnection()
 
     connect(this->model(), &DFileSystemModel::newFileByInternal,
     this, [ = ](const DUrl & fileUrl) {
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
         if (GridManager::instance()->shouldArrange()){
+#else
+        if (GridManager::instance()->autoMerge()){
+#endif
             //排完序后交由GridManager::initArrage触发重命名
             GridManager::instance()->m_needRenameItem = fileUrl.toString();
             return ;
         }
+#ifndef USE_SP2_AUTOARRAGE   //sp3需求改动
+        else if (GridManager::instance()->autoArrange()){
+            //开启编辑框
+            emit GridManager::instance()->sigSyncOperation(GridManager::soRename,fileUrl.toString());
+            return;
+        }
+#endif
 
         QString localFile = fileUrl.toString();
         int itemScreen;
@@ -2491,9 +2564,11 @@ openEditor:
         }
 
         GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
         if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();
         }
+#endif
 
 #else
         QString localFile = url.toString();
@@ -2573,7 +2648,7 @@ openEditor:
                 auto localFile = model()->getUrlByIndex(index).toString();
                 list << localFile;
             }
-
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
             //自动排列和整理
             if (GridManager::instance()->shouldArrange()){
                 GridManager::instance()->initArrage(list);
@@ -2585,6 +2660,16 @@ openEditor:
             for (auto lf : list) {
                 GridManager::instance()->add(m_screenNum, lf);
             }
+#else
+            GridManager::instance()->initArrage(list);
+
+            //自动整理
+            if (GridManager::instance()->autoMerge()){
+                return ;
+            }
+
+            GridManager::instance()->delaySyncAllProfile();
+#endif
         }
     });
 
@@ -3300,6 +3385,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     if (!GridManager::instance()->autoMerge()) {
         menu->insertAction(pasteAction, &autoSort);
 
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
         //勾选当前使用的排序
         QAction *sortAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::SortBy));
         if (sortAction != nullptr && sortAction->menu() != nullptr){
@@ -3317,6 +3403,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
                 }
             }
         }
+#endif
     }
 
     auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
