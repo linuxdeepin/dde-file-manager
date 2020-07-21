@@ -27,7 +27,7 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Click "Safely Remove" and then disconnect it next time</translation>
+        <translation>Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
 </context>
 <context>

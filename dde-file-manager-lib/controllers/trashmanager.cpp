@@ -191,8 +191,10 @@ bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
     Q_UNUSED(event)
 
-    qWarning() << "trash open action is disable : " << event->url();
+//    qWarning() << "trash open action is disable : " << event->url();
 //    return FileServices::instance()->openFile(DUrl::fromLocalFile(TRASHFILEPATH + fileUrl.path()));
+    QString strMsg = tr("Unable to open items in the trash,please restore it first");
+    dialogManager->showMessageDialog(2, strMsg);
     return false;
 }
 
@@ -393,8 +395,8 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
 //            return restoreTrashFile(list, restoreOriginUrls);
 //        } else {
-++i;
-job->setRestoreProgress(double(i) / total);
+        ++i;
+        job->setRestoreProgress(double(i) / total);
 //        }
 
         //###(zccrs): 必须通过 DAbstractFileInfoPointer 使用
