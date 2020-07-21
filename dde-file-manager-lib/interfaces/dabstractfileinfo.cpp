@@ -81,6 +81,13 @@ QCollator sortCollator;
 
 bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
+    //其他符号要排在最后，需要在中文前先做判断
+    if (DFMGlobal::startWithSymbol(str1)) {
+        if (!DFMGlobal::startWithSymbol(str2))
+            return order == Qt::DescendingOrder;
+    } else if (DFMGlobal::startWithSymbol(str2))
+        return order != Qt::DescendingOrder;
+
     if (DFMGlobal::startWithHanzi(str1)) {
         if (!DFMGlobal::startWithHanzi(str2)) {
             return order == Qt::DescendingOrder;
