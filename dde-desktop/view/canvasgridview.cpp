@@ -1033,7 +1033,35 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_I:
             DFMGlobal::showPropertyDialog(nullptr, selectUrls);
             return;
-        case Qt::Key_M:{
+
+        default:
+            break;
+        }
+        break;
+
+    case Qt::ControlModifier | Qt::ShiftModifier:
+
+        if (event->key() == Qt::Key_N) {
+            if (itemDelegate()->editingIndex().isValid()) {
+                return;
+            }
+//            clearSelection();
+//            appController->actionNewFolder(fmevent);
+            return;
+        }
+
+        if (event->key() == Qt::Key_Question) {
+//            appController->actionShowHotkeyHelp(fmevent);
+            return;
+        }
+        if (event->key() == Qt::Key_Plus) {
+            increaseIcon();
+            return;
+        }
+        break;
+
+    case Qt::AltModifier:
+        if (event->key() == Qt::Key_M){
             if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())) {
                 return;
             }
@@ -1066,30 +1094,6 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                 const QModelIndex &index = indexList.first();
                 showNormalMenu(index, flags);
             }
-            return;
-        }
-        default:
-            break;
-        }
-        break;
-
-    case Qt::ControlModifier | Qt::ShiftModifier:
-
-        if (event->key() == Qt::Key_N) {
-            if (itemDelegate()->editingIndex().isValid()) {
-                return;
-            }
-//            clearSelection();
-//            appController->actionNewFolder(fmevent);
-            return;
-        }
-
-        if (event->key() == Qt::Key_Question) {
-//            appController->actionShowHotkeyHelp(fmevent);
-            return;
-        }
-        if (event->key() == Qt::Key_Plus) {
-            increaseIcon();
             return;
         }
         break;
