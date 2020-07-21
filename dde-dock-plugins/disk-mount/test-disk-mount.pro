@@ -16,21 +16,9 @@ DISTFILES       += disk-mount.json
 
 DEFINES += QT_MESSAGELOGCONTEXT DFM_NO_FILE_WATCHER
 
-#unix: LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
-
 include(src.pri)
 
 TR_EXCLUDE += $$PWD/../../dde-file-manager-lib/configure/*
-
-# Automating generation .qm files from .ts files
-CONFIG(release, debug|release) {
-    !system($$PWD/../../dde-file-manager-lib/generate_translations.sh): error("Failed to generate translation")
-#    DEFINES += QT_NO_DEBUG_OUTPUT
-}
-
-gschema.path = $${PREFIX}/share/glib-2.0/schemas
-gschema.files = *.gschema.xml
-
 
 INSTALLS += target gschema translations
 
