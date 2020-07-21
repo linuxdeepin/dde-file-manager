@@ -151,7 +151,6 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-
     bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) override;
     QObject *object() const Q_DECL_OVERRIDE;
 

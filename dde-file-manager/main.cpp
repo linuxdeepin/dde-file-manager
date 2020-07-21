@@ -60,6 +60,7 @@
 
 #include <pwd.h>
 #include <DApplicationSettings>
+#include <QtConcurrent>
 
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
@@ -85,8 +86,10 @@ void handleSIGTERM(int sig)
 
 DWIDGET_USE_NAMESPACE
 
+extern QPair<bool,QMutex> winId_mtx;
 int main(int argc, char *argv[])
 {
+    winId_mtx.first = false;
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
 #endif
@@ -116,16 +119,25 @@ int main(int argc, char *argv[])
                                                                "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-#ifdef DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
-    app.setQuitOnLastWindowClosed(false);
-#endif
-
     DApplicationSettings setting;
 
     DFMGlobal::installTranslator();
 
     LogUtil::registerLogger();
 
+    //使用异步加载win相关的插件
+    QtConcurrent::run([](){
+        winId_mtx.second.lock();
+        if (winId_mtx.first){
+            winId_mtx.second.unlock();
+            return;
+        }
+        QWidget *w = new QWidget;
+        w->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
+        w->winId();
+        winId_mtx.second.unlock();
+        w->deleteLater();
+    });
     // init application object
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
@@ -173,20 +185,13 @@ int main(int argc, char *argv[])
     QString uniqueKey = app.applicationName();
 
     bool isSingleInstance  = app.setSingleInstance(uniqueKey);
-
     if (isSingleInstance) {
         // init app
         Q_UNUSED(FileManagerApp::instance())
-
+        DFileService::instance()->startQuryRootFile();
         if (CommandLineManager::instance()->isSet("d")) {
             fileManagerApp;
-#ifdef AUTO_RESTART_DEAMON
-            QWidget w;
-            w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
-            w.setAttribute(Qt::WA_TranslucentBackground);
-            w.resize(0, 0);
-            w.show();
-#endif
+            app.setQuitOnLastWindowClosed(false);
         } else {
             CommandLineManager::instance()->processCommand();
         }
@@ -204,7 +209,7 @@ int main(int argc, char *argv[])
         return request;
 #else
         int ret = app.exec();
-#ifdef AUTO_RESTART_DEAMON
+#ifdef ENABLE_DAEMON
         app.closeServer();
         QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
 #endif
@@ -230,12 +235,6 @@ int main(int argc, char *argv[])
             data.chop(1);
 
         QLocalSocket *socket = SingleApplication::newClientProcess(uniqueKey, data);
-        QWidget w;
-        w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
-        w.setAttribute(Qt::WA_TranslucentBackground);
-        w.resize(1, 1);
-        w.show();
-
         if (is_set_get_monitor_files && socket->error() == QLocalSocket::UnknownSocketError) {
             socket->waitForReadyRead();
 
