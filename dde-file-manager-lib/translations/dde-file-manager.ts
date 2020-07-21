@@ -4,39 +4,39 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="470"/>
+        <location filename="../controllers/appcontroller.cpp" line="477"/>
         <source>New Folder</source>
         <translation>New Folder</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="556"/>
+        <location filename="../controllers/appcontroller.cpp" line="563"/>
         <source>Mounting device error</source>
         <translation>Mounting device error</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="588"/>
+        <location filename="../controllers/appcontroller.cpp" line="596"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>The disc image was corrupted, cannot mount now, please erase the disc first</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="618"/>
+        <location filename="../controllers/appcontroller.cpp" line="627"/>
         <source>Mount error: unsupported image format</source>
         <translation>Mount error: unsupported image format</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="696"/>
-        <location filename="../controllers/appcontroller.cpp" line="732"/>
+        <location filename="../controllers/appcontroller.cpp" line="705"/>
+        <location filename="../controllers/appcontroller.cpp" line="741"/>
         <source>The device was not safely removed</source>
         <translation type="unfinished">The device was not safely removed</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="696"/>
-        <location filename="../controllers/appcontroller.cpp" line="732"/>
+        <location filename="../controllers/appcontroller.cpp" line="705"/>
+        <location filename="../controllers/appcontroller.cpp" line="741"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation type="unfinished">Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="713"/>
+        <location filename="../controllers/appcontroller.cpp" line="722"/>
         <source>Action timeout, action is canceled</source>
         <translation>Action is timeout, and canceled!</translation>
     </message>
@@ -64,12 +64,12 @@
     <message>
         <location filename="../models/computermodel.cpp" line="55"/>
         <location filename="../models/computermodel.cpp" line="59"/>
-        <location filename="../models/computermodel.cpp" line="110"/>
-        <location filename="../models/computermodel.cpp" line="120"/>
-        <location filename="../models/computermodel.cpp" line="522"/>
-        <location filename="../models/computermodel.cpp" line="526"/>
-        <location filename="../models/computermodel.cpp" line="560"/>
-        <location filename="../models/computermodel.cpp" line="564"/>
+        <location filename="../models/computermodel.cpp" line="111"/>
+        <location filename="../models/computermodel.cpp" line="122"/>
+        <location filename="../models/computermodel.cpp" line="527"/>
+        <location filename="../models/computermodel.cpp" line="531"/>
+        <location filename="../models/computermodel.cpp" line="565"/>
+        <location filename="../models/computermodel.cpp" line="569"/>
         <source>Disks</source>
         <translation>Disks</translation>
     </message>
@@ -3190,23 +3190,23 @@
         <translation>Source Path</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="512"/>
+        <location filename="../controllers/appcontroller.cpp" line="519"/>
         <source>Document</source>
         <translation>Document</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="519"/>
+        <location filename="../controllers/appcontroller.cpp" line="526"/>
         <source>Spreadsheet</source>
         <translation>Spreadsheet</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="526"/>
+        <location filename="../controllers/appcontroller.cpp" line="533"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="671"/>
         <source>Presentation</source>
         <translation>Presentation</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="533"/>
+        <location filename="../controllers/appcontroller.cpp" line="540"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
@@ -3480,9 +3480,9 @@
         <translation>My Vault</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="108"/>
-        <location filename="../models/computermodel.cpp" line="118"/>
-        <location filename="../models/computermodel.cpp" line="500"/>
+        <location filename="../models/computermodel.cpp" line="109"/>
+        <location filename="../models/computermodel.cpp" line="120"/>
+        <location filename="../models/computermodel.cpp" line="503"/>
         <source>Disks</source>
         <translation type="unfinished">Disks</translation>
     </message>
@@ -3935,6 +3935,19 @@
     </message>
 </context>
 <context>
+    <name>TrashManager</name>
+    <message>
+        <location filename="../controllers/trashmanager.cpp" line="196"/>
+        <source>Unable to open items in the trash,please restore it first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/trashmanager.cpp" line="200"/>
+        <source>Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TrashPropertyDialog</name>
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="53"/>
@@ -3968,23 +3981,23 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1416"/>
-        <location filename="../controllers/appcontroller.cpp" line="1443"/>
+        <location filename="../controllers/appcontroller.cpp" line="1425"/>
+        <location filename="../controllers/appcontroller.cpp" line="1452"/>
         <source>Action timeout, action is canceled</source>
         <translation>Action is timeout, and canceled!</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1422"/>
+        <location filename="../controllers/appcontroller.cpp" line="1431"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disk is busy, cannot unmount now</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1457"/>
+        <location filename="../controllers/appcontroller.cpp" line="1466"/>
         <source>The device was not safely removed</source>
         <translation>The device was not safely removed</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1457"/>
+        <location filename="../controllers/appcontroller.cpp" line="1466"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
