@@ -311,6 +311,9 @@ void DFileStatisticsJob::start(const DUrlList &sourceUrls)
             it->setUrl(it->taggedLocalFilePath());
             it->setScheme(FILE_SCHEME);
         }
+        if (it->scheme() == SEARCH_SCHEME && !it->fragment().isEmpty()) {
+            it->setUrl(it->fragment());
+        }
         it++;
     }
 
