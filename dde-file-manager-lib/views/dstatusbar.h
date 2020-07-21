@@ -144,6 +144,8 @@ private:
     QHBoxLayout * m_layout;
     DFMElidLabel * m_label = Q_NULLPTR;
     DPictureSequenceView* m_loadingIndicator;
+    bool m_loadingIndicatorInited = false;
+
     QSlider* m_scaleSlider;
 
     QPushButton *m_acceptButton = Q_NULLPTR;

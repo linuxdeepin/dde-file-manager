@@ -22,7 +22,6 @@
 #define DFILECOPYMOVEJOB_H
 
 #include <QObject>
-
 #include <dfmglobal.h>
 
 class DAbstractFileInfo;
@@ -150,6 +149,15 @@ public:
     int totalFilesCount() const;
     QList<QPair<DUrl, DUrl> > completedFiles() const;
     QList<QPair<DUrl, DUrl> > completedDirectorys() const;
+    //优化拷贝时，异步线程去同步的一些状态使用
+    bool getSysncState();
+    bool getSysncQuitState();
+    void setSysncState(const bool &state);
+    void setSysncQuitState(const bool &quitstate);
+    //判断当前盘是否是可以卸载的u盘，手机，光驱或者gvfs
+    bool destIsLocal(const QString &rootpath);
+    void setRefine(const bool &brefine);
+    void waitSysncEnd();
 
     static Actions supportActions(Error error);
 

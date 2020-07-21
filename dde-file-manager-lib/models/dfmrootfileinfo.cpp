@@ -525,6 +525,16 @@ QVariantHash DFMRootFileInfo::extraProperties() const
     return ret;
 }
 
+void DFMRootFileInfo::refresh()
+{   
+    //udisk的refresh函数中的proxy为空指针，没有实际意义
+    //由于优化性能后，u盘挂载文件信息会被缓存，因此需要在此增加刷新U盘的挂载数据
+    if (suffix() == SUFFIX_UDISKS)
+        checkCache();
+
+    DAbstractFileInfo::refresh();
+}
+
 void DFMRootFileInfo::checkCache()
 {
     Q_D(DFMRootFileInfo);
