@@ -10,7 +10,8 @@ extract_info=${3} #针对当前目录进行覆盖率操作
 remove_info=${4} #排除当前目录进行覆盖率操作
 
 if [ ! $# -eq 4 ]; then
-  echo "no project dir, usage: <编译路径> <可执行程序> <期望覆盖的路径> <不期望覆盖的路径>"
+  echo "param number set err: "$# ": "$*
+  echo "wrong param set,usage: <编译路径> <可执行程序> <期望覆盖的路径> <不期望覆盖的路径>"
   exit 0
 fi
 
@@ -23,8 +24,8 @@ $build_dir/$executable --gtest_output=xml:$result_report_dir
 
 lcov -d $build_dir -c -o $build_dir/coverage.info
 
-lcov --remove $build_dir/coverage.info $remove_info --output-file $build_dir/coverage.info
 lcov --extract $build_dir/coverage.info $extract_info --output-file  $build_dir/coverage.info
+lcov --remove $build_dir/coverage.info $remove_info --output-file $build_dir/coverage.info
 
 lcov --list-full-path -e $build_dir/coverage.info –o $build_dir/coverage-stripped.info
 
