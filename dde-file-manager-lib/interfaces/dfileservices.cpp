@@ -118,7 +118,7 @@ DFileService::DFileService(QObject *parent)
     d_ptr->m_loop = new QEventLoop();
     connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [this](bool state) {
         d_ptr->m_bonline = state;
-        if (!d_ptr->m_bonline && d_ptr->m_loop) {
+        if (d_ptr->m_loop) {
             d_ptr->m_loop->exit();
         }
     });
