@@ -1844,6 +1844,7 @@ void GridManager::initGridItemsInfos()
     if(GridManager::instance()->autoMerge()){
         GridManager::instance()->initAutoMerge(infoList);
     }
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
     else if (GridManager::instance()->autoArrange())
     {
         QModelIndex index = tempModel->setRootUrl(fileUrl);
@@ -1867,8 +1868,12 @@ void GridManager::initGridItemsInfos()
         qDebug() << "sorted desktop items num" << list.size() << " time "<< t.elapsed();
         initArrage(list);
     }
+#endif
     else {
         initProfile(infoList);
+        if (GridManager::instance()->autoArrange()){
+            initArrage(allItems());
+        }
     }
 }
 
@@ -1941,7 +1946,11 @@ bool GridManager::add(int screenNum, QPoint pos, const QString &id)
 {
     qDebug() << "add" << pos << id;
     auto ret = d->add(screenNum, pos, id);
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
     if (ret && !autoMerge() && !autoArrange()) {
+#else
+    if (ret && !autoMerge()) {
+#endif
         d->syncProfile(screenNum);
     }
 
@@ -2129,7 +2138,11 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
 
 
     //保存源屏配置
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
     if(!autoMerge() && !autoArrange()){
+#else
+    if(!autoMerge()) {
+#endif
         d->syncProfile(fromScreen);
     }
 
@@ -2171,7 +2184,11 @@ int GridManager::emptyPostionCount(int screenNum) const
 bool GridManager::remove(int screenNum, QPoint pos, const QString &id)
 {
     auto ret = d->remove(screenNum, pos, id);
+#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
     if (ret && !(autoMerge() || autoArrange())) {
+#else
+    if (ret && !autoMerge()) {
+#endif
         d->syncProfile(screenNum);
     }
     return ret;
@@ -2473,6 +2490,11 @@ void GridManager::updateGridSize(int screenNum, int w, int h)
     if (shouldArrange()) {
         d->clear();
         d->arrange(items);
+#ifndef USE_SP2_AUTOARRAGE   //sp3需求改动
+        if ( autoArrange()) {
+            d->syncAllProfile();
+        }
+#endif
     }else {
 //        DUrl fileUrl = getInitRootUrl();
 //        d->clear();
