@@ -1382,6 +1382,7 @@ void AppController::createDBusInterface()
                                                             this);
 
     QtConcurrent::run(QThreadPool::globalInstance(), [&] {
+        m_creatingDBusInterface = true;
         QDBusPendingReply<QString> reply = m_introspectableInterface->Introspect();
         reply.waitForFinished();
         if (reply.isFinished())
@@ -1393,6 +1394,7 @@ void AppController::createDBusInterface()
             } else {
                 qDebug() << "com.deepin.SessionManager : StartManager doesn't have LaunchApp interface";
             }
+            m_creatingDBusInterface = false;
         }
     });
 }
@@ -1409,9 +1411,14 @@ void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
 
 bool AppController::hasLaunchAppInterface() const
 {
-    while (!m_hasLaunchAppInterface) {
+    //如果正在加载dbus接口，则稍等
+    int times = 10;
+    while (m_creatingDBusInterface && times > 0) {
         qDebug() << "LaunchAppInterface is loading...";
+        QThread::msleep(100);
+        times--;
     }
+
     return m_hasLaunchAppInterface;
 }
 

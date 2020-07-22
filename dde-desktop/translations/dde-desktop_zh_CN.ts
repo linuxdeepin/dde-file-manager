@@ -4,50 +4,50 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3085"/>
-        <location filename="../view/canvasgridview.cpp" line="3262"/>
+        <location filename="../view/canvasgridview.cpp" line="3215"/>
+        <location filename="../view/canvasgridview.cpp" line="3392"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3091"/>
-        <location filename="../view/canvasgridview.cpp" line="3270"/>
+        <location filename="../view/canvasgridview.cpp" line="3221"/>
+        <location filename="../view/canvasgridview.cpp" line="3400"/>
         <source>Auto merge</source>
         <translation>自动整理</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3106"/>
-        <location filename="../view/canvasgridview.cpp" line="3282"/>
+        <location filename="../view/canvasgridview.cpp" line="3236"/>
+        <location filename="../view/canvasgridview.cpp" line="3412"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3163"/>
-        <location filename="../view/canvasgridview.cpp" line="3167"/>
-        <location filename="../view/canvasgridview.cpp" line="3335"/>
-        <location filename="../view/canvasgridview.cpp" line="3340"/>
+        <location filename="../view/canvasgridview.cpp" line="3293"/>
+        <location filename="../view/canvasgridview.cpp" line="3297"/>
+        <location filename="../view/canvasgridview.cpp" line="3467"/>
+        <location filename="../view/canvasgridview.cpp" line="3472"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3169"/>
-        <location filename="../view/canvasgridview.cpp" line="3338"/>
+        <location filename="../view/canvasgridview.cpp" line="3299"/>
+        <location filename="../view/canvasgridview.cpp" line="3470"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁纸与屏保</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3482"/>
+        <location filename="../view/canvasgridview.cpp" line="3614"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3146"/>
-        <location filename="../view/canvasgridview.cpp" line="3319"/>
+        <location filename="../view/canvasgridview.cpp" line="3276"/>
+        <location filename="../view/canvasgridview.cpp" line="3451"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3155"/>
+        <location filename="../view/canvasgridview.cpp" line="3285"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>

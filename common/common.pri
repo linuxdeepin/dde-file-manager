@@ -15,9 +15,20 @@ unix {
 
     isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
         message("Build arch:" $$ARCH)
+
+    #只在release开启，方便debug时开发
+    CONFIG(release, debug|release) {
+        message("x86 ENABLE_DAEMON")
+        #启用守护，当前进程退出后会接着起动一个文管后台驻留进程，提升响应速度
+        DEFINES += ENABLE_DAEMON
+    }
+        #起动时，使用异步初始化，加载资源，提升起动速度
+        DEFINES += ENABLE_ASYNCINIT
     } else {
         message("Build arch:" $$ARCH "Deepin Anything support disabled")
         CONFIG += DISABLE_ANYTHING
+
+        DEFINES += ENABLE_ASYNCINIT
     }
 
     isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
@@ -25,13 +36,16 @@ unix {
 
         #use classical file section mode
         DEFINES += CLASSICAL_SECTION
-        DEFINES += AUTO_RESTART_DEAMON
 
         DEFINES += LOAD_FILE_INTERVAL=150
 
         DEFINES += DISABLE_COMPRESS_PREIVEW
 
-        DEFINES += DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
+        #启用守护，当前进程退出后会接着起动一个文管后台驻留进程，提升响应速度
+        DEFINES += ENABLE_DAEMON
+
+        #起动时，使用异步初始化，加载资源，提升起动速度
+        DEFINES += ENABLE_ASYNCINIT
     } else {
         isEmpty(DISABLE_JEMALLOC) {
             LIBS += -ljemalloc

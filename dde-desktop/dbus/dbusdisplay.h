@@ -251,6 +251,12 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("SwitchMode"), argumentList);
     }
 
+    inline QDBusPendingReply<uchar> GetRealDisplayMode()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("GetRealDisplayMode"), argumentList);
+    }
+
 Q_SIGNALS: // SIGNALS
     //void PrimaryChanged(const QRect &in0);
 // begin property changed signals

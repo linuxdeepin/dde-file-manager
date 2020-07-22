@@ -5,11 +5,14 @@
 #include <QObject>
 #include <QRect>
 
+class ScreenManagerPrivate;
 class AbstractScreenManager : public QObject
 {
     Q_OBJECT
+    friend class ScreenManagerPrivate;
 public:
-    enum DisplayMode{Custom = 0,Duplicate,Extend,Showonly};
+    enum DisplayMode{Custom = 0,Duplicate,Extend,Showonly}; //显示模式
+    enum Event{Screen,Mode,Geometry,AvailableGeometry}; //事件类型
 public:
     explicit AbstractScreenManager(QObject *parent = nullptr);
     virtual ~AbstractScreenManager();
@@ -20,11 +23,19 @@ public:
     virtual qreal devicePixelRatio() const = 0;
     virtual DisplayMode displayMode() const = 0;
     virtual void reset() = 0;
+protected:
+    void appendEvent(Event);    //添加屏幕事件
 signals:
     void sigScreenChanged();    //屏幕接入，移除
     void sigDisplayModeChanged();   //显示模式改变
-    void sigScreenGeometryChanged(ScreenPointer,QRect); //屏幕分辨率改变
-    void sigScreenAvailableGeometryChanged(ScreenPointer,QRect); //屏幕可用区改变
+    void sigScreenGeometryChanged(); //屏幕分辨率改变
+    void sigScreenAvailableGeometryChanged(); //屏幕可用区改变
+protected:
+#ifndef UNUSE_TEMP //临时方案，判断主屏大小改变时，是否是合并/拆分
+    int m_lastMode = -1;
+#endif
+private:
+    ScreenManagerPrivate *d;
 };
 
 #endif // ABSTRACTSCREENMANAGER_H

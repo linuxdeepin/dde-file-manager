@@ -94,10 +94,10 @@ public:
                        ,soHidenSwitch};
     DUrl getInitRootUrl();
     void initGridItemsInfos();
-    void initProfile(const QList<DAbstractFileInfoPointer> &items);
     void initAutoMerge(const QList<DAbstractFileInfoPointer> &items);
     void initArrage(const QStringList &items);
     void initCustom(const QStringList &items);
+    void initCustom(const QStringList &orderedItems, const QHash<QString, bool> &indexHash);
 
     bool add(int screenNum, QPoint pos, const QString &itemId);
     bool add(int screenNum, const QString &itemId);
@@ -155,9 +155,11 @@ public:
     void setCurrentVirtualExpandUrl(const DUrl url);
     DUrl getCurrentVirtualExpandUrl();
     void setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList);
+    bool isGsettingShow(const QString &targetkey, const bool defaultValue);
 
 public:
     void dump();
+    static void sortMainDesktopFile(QStringList &list, int role, Qt::SortOrder order);
     QString m_needRenameItem; //用于排完顺序后打开编辑框
 signals:
     void sigSyncOperation(int so,QVariant var = QVariant());

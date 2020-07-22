@@ -70,6 +70,42 @@
       </description>
     </key>
 
+    <key name='context-menu' type='b'>
+      <default>true</default>
+      <summary>Wether use context menu on the desktop</summary>
+      <description>
+        If enabled, context menu will display on the desktop.
+        If disabled, context menu will not display on the desktop.s
+      </description>
+    </key>
+
+    <key name='desktop-computer' type='b'>
+      <default>true</default>
+      <summary>Wether use desktop computer on the desktop</summary>
+      <description>
+        If enabled, desktop computer will display on the desktop.
+        If disabled, desktop computer will not display on the desktop.s
+      </description>
+    </key>
+
+    <key name='desktop-trash' type='b'>
+      <default>true</default>
+      <summary>Wether use desktop trash on the desktop</summary>
+      <description>
+        If enabled, desktop trash will display on the desktop.
+        If disabled, desktop trash will not display on the desktop.s
+      </description>
+    </key>
+
+    <key name='desktop-home-directory' type='b'>
+      <default>true</default>
+      <summary>Wether use desktop home directory on the desktop</summary>
+      <description>
+        If enabled, desktop home directory will display on the desktop.
+        If disabled, desktop home directory will not display on the desktop.s
+      </description>
+    </key>
+
   </schema>
 
 </schemalist>
