@@ -45,7 +45,7 @@
 
     \li suffix "gvfsmp"
 
-    Entires with this suffix has percent-encoded path of mount point as its basename.
+    Entries with this suffix has percent-encoded path of mount point as its basename.
     This could be confusing: path of gvfs-managed mount point may already contain percent-encoded or
     sometimes even double percent-encoded components.
     In any case, a single decode pass should always result in the correct mount point path.
