@@ -57,19 +57,22 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="48"/>
+        <location filename="../models/computermodel.cpp" line="53"/>
+        <location filename="../models/computermodel.cpp" line="183"/>
         <source>My Directories</source>
         <translation>My Directories</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="55"/>
-        <location filename="../models/computermodel.cpp" line="59"/>
-        <location filename="../models/computermodel.cpp" line="111"/>
-        <location filename="../models/computermodel.cpp" line="122"/>
-        <location filename="../models/computermodel.cpp" line="527"/>
-        <location filename="../models/computermodel.cpp" line="531"/>
-        <location filename="../models/computermodel.cpp" line="565"/>
-        <location filename="../models/computermodel.cpp" line="569"/>
+        <location filename="../models/computermodel.cpp" line="61"/>
+        <location filename="../models/computermodel.cpp" line="65"/>
+        <location filename="../models/computermodel.cpp" line="190"/>
+        <location filename="../models/computermodel.cpp" line="194"/>
+        <location filename="../models/computermodel.cpp" line="246"/>
+        <location filename="../models/computermodel.cpp" line="257"/>
+        <location filename="../models/computermodel.cpp" line="663"/>
+        <location filename="../models/computermodel.cpp" line="667"/>
+        <location filename="../models/computermodel.cpp" line="704"/>
+        <location filename="../models/computermodel.cpp" line="708"/>
         <source>Disks</source>
         <translation>Disks</translation>
     </message>
@@ -735,125 +738,125 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="168"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="174"/>
         <source>Permission error</source>
         <translation>Permission error</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="170"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="176"/>
         <source>The action is denied</source>
         <translation>The action is denied</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="176"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="182"/>
         <source>Failed to open the file</source>
         <translation>Failed to open the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="178"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="184"/>
         <source>Failed to read the file</source>
         <translation>Failed to read the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="180"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="186"/>
         <source>Failed to write the file</source>
         <translation>Failed to write the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="182"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="188"/>
         <source>Failed to create the directory</source>
         <translation>Failed to create the directory</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="184"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="190"/>
         <source>Failed to delete the file</source>
         <translation>Failed to delete the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="186"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="192"/>
         <source>Failed to move the file</source>
         <translation>Failed to move the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="188"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="194"/>
         <source>Original file does not exist</source>
         <translation>Original file does not exist</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="190"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="196"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>Failed, file size must be less than 4GB</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="192"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="198"/>
         <source>Not enough free space on the target disk</source>
         <translation>Not enough free space on the target disk</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="194"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="200"/>
         <source>File integrity was damaged</source>
         <translation>File integrity was damaged</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="196"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="202"/>
         <source>The target device is read only</source>
         <translation>The target device is read only</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="198"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="204"/>
         <source>Target folder is inside the source folder</source>
         <translation>Target folder is inside the source folder</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="553"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="560"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>copy</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="878"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="895"/>
         <source>Failed to open the dir, cause: File name too long</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="888"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="905"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Failed to create the directory, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="996"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1013"/>
         <source>Failed to open the file, cause: File name too long</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1008"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1030"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1025"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1047"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Failed to open the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1099"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1116"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Failed to read the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1138"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1209"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1155"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1227"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Failed to write the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1300"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1321"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>File integrity was damaged, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1370"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1392"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Failed to delete the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1473"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1495"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Fail to create symlink, cause: %1</translation>
     </message>
@@ -901,12 +904,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1141"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1148"/>
         <source>Trash</source>
         <translation>Trash</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1149"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1156"/>
         <source>Empty</source>
         <translation>Empty</translation>
     </message>
@@ -920,7 +923,7 @@
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1069"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1076"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1631"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
@@ -957,12 +960,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2326"/>
+        <location filename="../views/dfileview.cpp" line="2341"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>The disc image was corrupted, cannot mount now, please erase the disc first</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2957"/>
+        <location filename="../views/dfileview.cpp" line="2972"/>
         <source>(Reverse)</source>
         <translation>(Reverse)</translation>
     </message>
@@ -1023,17 +1026,17 @@
         <translation>%1 folder selected</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="166"/>
+        <location filename="../views/dstatusbar.cpp" line="168"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="176"/>
+        <location filename="../views/dstatusbar.cpp" line="178"/>
         <source>Save as:</source>
         <translation>Save as:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="508"/>
+        <location filename="../views/dstatusbar.cpp" line="519"/>
         <source>Loading...</source>
         <translation>Loading...</translation>
     </message>
@@ -1133,7 +1136,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="711"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="721"/>
         <source>%1 Volume</source>
         <translation>%1 Volume</translation>
     </message>
@@ -1144,17 +1147,17 @@
         <translation>Data Disk</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="706"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="716"/>
         <source>%1 Drive</source>
         <translation>%1 Drive</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="690"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="700"/>
         <source>Blank %1 Disc</source>
         <translation>Blank %1 Disc</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="709"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="719"/>
         <source>%1 Encrypted</source>
         <translation>%1 Encrypted</translation>
     </message>
@@ -1543,7 +1546,7 @@
     <name>FileIconItem</name>
     <message>
         <location filename="../views/fileitem.cpp" line="115"/>
-        <source>Contains invalid characters (any of \ /: *? &quot;&lt; &gt;|)</source>
+        <source>Contains invalid characters (any of &quot;&apos;/\[]:|&lt;&gt;+=;,?*)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2162,7 +2165,7 @@
         <translation>Backup file</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="649"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="656"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation>Unknown</translation>
@@ -2439,8 +2442,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="65"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="655"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="683"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="665"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="693"/>
         <source>System Disk</source>
         <translation>System Disk</translation>
     </message>
@@ -2818,7 +2821,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="106"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="665"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1150"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1157"/>
         <source>Empty Trash</source>
         <translation>Empty Trash</translation>
     </message>
@@ -2944,8 +2947,11 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="699"/>
-        <location filename="../models/computermodel.cpp" line="84"/>
-        <location filename="../models/computermodel.cpp" line="105"/>
+        <location filename="../models/computermodel.cpp" line="96"/>
+        <location filename="../models/computermodel.cpp" line="108"/>
+        <location filename="../models/computermodel.cpp" line="142"/>
+        <location filename="../models/computermodel.cpp" line="219"/>
+        <location filename="../models/computermodel.cpp" line="240"/>
         <source>File Vault</source>
         <translation>File Vault</translation>
     </message>
@@ -3109,24 +3115,24 @@
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
         <location filename="../dialogs/propertydialog.cpp" line="1302"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="669"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="676"/>
         <source>%1 item</source>
         <translation>%1 item</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
         <location filename="../dialogs/propertydialog.cpp" line="1302"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="671"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="678"/>
         <source>%1 items</source>
         <translation>%1 items</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1339"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1381"/>
         <source>Shortcut</source>
         <translation>Shortcut</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="754"/>
+        <location filename="../interfaces/dfileservices.cpp" line="759"/>
         <source>Create symlink</source>
         <translation>Create symlink</translation>
     </message>
@@ -3143,7 +3149,7 @@
         <translation>Time deleted</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1278"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1285"/>
         <source>Loading...</source>
         <translation>Loading...</translation>
     </message>
@@ -3480,9 +3486,9 @@
         <translation>My Vault</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="109"/>
-        <location filename="../models/computermodel.cpp" line="120"/>
-        <location filename="../models/computermodel.cpp" line="503"/>
+        <location filename="../models/computermodel.cpp" line="244"/>
+        <location filename="../models/computermodel.cpp" line="255"/>
+        <location filename="../models/computermodel.cpp" line="639"/>
         <source>Disks</source>
         <translation type="unfinished">Disks</translation>
     </message>
@@ -3941,11 +3947,6 @@
         <source>Unable to open items in the trash,please restore it first</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../controllers/trashmanager.cpp" line="200"/>
-        <source>Ok</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>TrashPropertyDialog</name>
@@ -3981,23 +3982,23 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1425"/>
-        <location filename="../controllers/appcontroller.cpp" line="1452"/>
+        <location filename="../controllers/appcontroller.cpp" line="1432"/>
+        <location filename="../controllers/appcontroller.cpp" line="1459"/>
         <source>Action timeout, action is canceled</source>
         <translation>Action is timeout, and canceled!</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1431"/>
+        <location filename="../controllers/appcontroller.cpp" line="1438"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disk is busy, cannot unmount now</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1466"/>
+        <location filename="../controllers/appcontroller.cpp" line="1473"/>
         <source>The device was not safely removed</source>
         <translation>The device was not safely removed</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1466"/>
+        <location filename="../controllers/appcontroller.cpp" line="1473"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
