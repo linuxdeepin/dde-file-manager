@@ -810,7 +810,7 @@ bool DFileService::sendToDesktop(const QObject *sender, const DUrlList &urlList)
 
 bool DFileService::sendToBluetooth(const DUrlList &urlList) const
 {
-    dialogManager->showBluTthTransferDlg(urlList);
+    dialogManager->showBluetoothTransferDlg(urlList);
 }
 
 bool DFileService::shareFolder(const QObject *sender, const DUrl &fileUrl, const QString &name, bool isWritable, bool allowGuest)

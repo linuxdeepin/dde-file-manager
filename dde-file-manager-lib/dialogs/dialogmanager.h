@@ -139,7 +139,7 @@ public slots:
     void refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl);
 
     int showMessageDialog(int messageLevel, const QString &message);
-    void showBluTthTransferDlg(const DUrlList &files);
+    void showBluetoothTransferDlg(const DUrlList &files);
 
 #ifdef SW_LABEL
     void onJobFailed_SW(int nRet, const QString &jobType, const QString &srcfilename);
