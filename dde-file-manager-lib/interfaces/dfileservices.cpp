@@ -795,6 +795,11 @@ bool DFileService::sendToDesktop(const QObject *sender, const DUrlList &urlList)
     return ok;
 }
 
+bool DFileService::sendToBluetooth(const DUrlList &urlList) const
+{
+    dialogManager->showBluTthTransferDlg(urlList);
+}
+
 bool DFileService::shareFolder(const QObject *sender, const DUrl &fileUrl, const QString &name, bool isWritable, bool allowGuest)
 {
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMFileShareEvent>(sender, fileUrl, name, isWritable, allowGuest)).toBool();

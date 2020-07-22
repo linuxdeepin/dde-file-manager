@@ -218,7 +218,8 @@ HEADERS += \
     $$PWD/views/dfmvaultremoveprogressview.h \
     $$PWD/views/dfmvaultremovebypasswordview.h \
     $$PWD/views/dfmvaultremovebyrecoverykeyview.h \
-    $$PWD/views/dfmvaultpagebase.h
+    $$PWD/views/dfmvaultpagebase.h \
+    $$PWD/dialogs/bluetoothtransdialog.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -419,7 +420,8 @@ SOURCES += \
     $$PWD/views/dfmvaultremoveprogressview.cpp \
     $$PWD/views/dfmvaultremovebypasswordview.cpp \
     $$PWD/views/dfmvaultremovebyrecoverykeyview.cpp \
-    $$PWD/views/dfmvaultpagebase.cpp
+    $$PWD/views/dfmvaultpagebase.cpp \
+    $$PWD/dialogs/bluetoothtransdialog.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h

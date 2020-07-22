@@ -465,6 +465,15 @@ void AppController::actionSendToDesktop(const QSharedPointer<DFMUrlListBaseEvent
     fileService->sendToDesktop(event->sender(), event->urlList());
 }
 
+void AppController::actionSendToBluetooth()
+{
+    QAction *act = dynamic_cast<QAction *>(sender());
+    if (!act)
+        return;
+    DUrlList urlList = DUrl::fromStringList(act->property("urlList").toStringList());
+    fileService->sendToBluetooth(urlList);
+}
+
 void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     fileService->addToBookmark(event->sender(), event->url());
