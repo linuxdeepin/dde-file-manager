@@ -57,19 +57,22 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="48"/>
+        <location filename="../models/computermodel.cpp" line="53"/>
+        <location filename="../models/computermodel.cpp" line="183"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="55"/>
-        <location filename="../models/computermodel.cpp" line="59"/>
-        <location filename="../models/computermodel.cpp" line="111"/>
-        <location filename="../models/computermodel.cpp" line="122"/>
-        <location filename="../models/computermodel.cpp" line="527"/>
-        <location filename="../models/computermodel.cpp" line="531"/>
-        <location filename="../models/computermodel.cpp" line="565"/>
-        <location filename="../models/computermodel.cpp" line="569"/>
+        <location filename="../models/computermodel.cpp" line="61"/>
+        <location filename="../models/computermodel.cpp" line="65"/>
+        <location filename="../models/computermodel.cpp" line="190"/>
+        <location filename="../models/computermodel.cpp" line="194"/>
+        <location filename="../models/computermodel.cpp" line="246"/>
+        <location filename="../models/computermodel.cpp" line="257"/>
+        <location filename="../models/computermodel.cpp" line="663"/>
+        <location filename="../models/computermodel.cpp" line="667"/>
+        <location filename="../models/computermodel.cpp" line="704"/>
+        <location filename="../models/computermodel.cpp" line="708"/>
         <source>Disks</source>
         <translation>磁盘</translation>
     </message>
@@ -736,125 +739,125 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="168"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="174"/>
         <source>Permission error</source>
         <translation>文件权限错误</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="170"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="176"/>
         <source>The action is denied</source>
         <translation>文件不支持此操作</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="176"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="182"/>
         <source>Failed to open the file</source>
         <translation>文件打开失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="178"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="184"/>
         <source>Failed to read the file</source>
         <translation>文件内容读取失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="180"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="186"/>
         <source>Failed to write the file</source>
         <translation>文件内容写入失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="182"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="188"/>
         <source>Failed to create the directory</source>
         <translation>目录创建失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="184"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="190"/>
         <source>Failed to delete the file</source>
         <translation>文件删除失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="186"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="192"/>
         <source>Failed to move the file</source>
         <translation>文件移动失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="188"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="194"/>
         <source>Original file does not exist</source>
         <translation>源文件不存在</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="190"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="196"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>操作失败，文件大小已超出上限值4GB！</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="192"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="198"/>
         <source>Not enough free space on the target disk</source>
         <translation>目标磁盘剩余空间不足</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="194"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="200"/>
         <source>File integrity was damaged</source>
         <translation>文件完整性检查失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="196"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="202"/>
         <source>The target device is read only</source>
         <translation>目标设备为只读</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="198"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="204"/>
         <source>Target folder is inside the source folder</source>
         <translation>目标文件夹位于源文件夹内</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="553"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="560"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="878"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="895"/>
         <source>Failed to open the dir, cause: File name too long</source>
         <translation>目录打开失败，原因：目录名太长</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="888"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="905"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>目录创建失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="996"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1013"/>
         <source>Failed to open the file, cause: File name too long</source>
         <translation>文件打开失败，原因：文件名太长</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1008"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1030"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1025"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1047"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>文件打开失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1099"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1116"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>文件内容读取失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1138"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1209"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1155"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1227"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>文件内容写入失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1300"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1321"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>文件完整性检查失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1370"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1392"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>文件删除失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1473"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1495"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>创建链接失败，原因：%1</translation>
     </message>
@@ -902,12 +905,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1141"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1148"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1149"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1156"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -921,7 +924,7 @@
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1069"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1076"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1631"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
@@ -958,12 +961,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2326"/>
+        <location filename="../views/dfileview.cpp" line="2341"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>此光盘中的镜像已损坏，无法挂载，请擦除后使用</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2957"/>
+        <location filename="../views/dfileview.cpp" line="2972"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1024,17 +1027,17 @@
         <translation>选中%1个文件夹</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="166"/>
+        <location filename="../views/dstatusbar.cpp" line="168"/>
         <source>Filter</source>
         <translation>过滤</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="176"/>
+        <location filename="../views/dstatusbar.cpp" line="178"/>
         <source>Save as:</source>
         <translation>保存为：</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="508"/>
+        <location filename="../views/dstatusbar.cpp" line="519"/>
         <source>Loading...</source>
         <translation>正在加载......</translation>
     </message>
@@ -1134,7 +1137,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="711"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="721"/>
         <source>%1 Volume</source>
         <translation>%1 卷</translation>
     </message>
@@ -1145,17 +1148,17 @@
         <translation>数据盘</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="706"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="716"/>
         <source>%1 Drive</source>
         <translation>%1 驱动器</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="690"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="700"/>
         <source>Blank %1 Disc</source>
         <translation>空白%1光盘</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="709"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="719"/>
         <source>%1 Encrypted</source>
         <translation>%1 已加密</translation>
     </message>
@@ -1543,9 +1546,13 @@
 <context>
     <name>FileIconItem</name>
     <message>
-        <location filename="../views/fileitem.cpp" line="115"/>
         <source>Contains invalid characters (any of \ /: *? &quot;&lt; &gt;|)</source>
-        <translation>名称包含无效字符（\ /: *? &quot;&lt; &gt;|）</translation>
+        <translation type="vanished">名称包含无效字符（\ /: *? &quot;&lt; &gt;|）</translation>
+    </message>
+    <message>
+        <location filename="../views/fileitem.cpp" line="115"/>
+        <source>Contains invalid characters (any of &quot;&apos;/\[]:|&lt;&gt;+=;,?*)</source>
+        <translation>名称包含无效字符（&quot;&apos;/\[]:|&lt;&gt;+=;,?*）</translation>
     </message>
 </context>
 <context>
@@ -2163,7 +2170,7 @@
         <translation>备份文件</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="649"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="656"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation>未知</translation>
@@ -2440,8 +2447,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="65"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="655"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="683"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="665"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="693"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
@@ -2819,7 +2826,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="106"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="665"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1150"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1157"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
@@ -2945,8 +2952,11 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="699"/>
-        <location filename="../models/computermodel.cpp" line="84"/>
-        <location filename="../models/computermodel.cpp" line="105"/>
+        <location filename="../models/computermodel.cpp" line="96"/>
+        <location filename="../models/computermodel.cpp" line="108"/>
+        <location filename="../models/computermodel.cpp" line="142"/>
+        <location filename="../models/computermodel.cpp" line="219"/>
+        <location filename="../models/computermodel.cpp" line="240"/>
         <source>File Vault</source>
         <translation>保险箱</translation>
     </message>
@@ -3110,24 +3120,24 @@
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
         <location filename="../dialogs/propertydialog.cpp" line="1302"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="669"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="676"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
         <location filename="../dialogs/propertydialog.cpp" line="1302"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="671"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="678"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1339"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1381"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="754"/>
+        <location filename="../interfaces/dfileservices.cpp" line="759"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
@@ -3144,7 +3154,7 @@
         <translation>删除时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1278"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1285"/>
         <source>Loading...</source>
         <translation>正在加载...</translation>
     </message>
@@ -3481,9 +3491,9 @@
         <translation>我的保险箱</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="109"/>
-        <location filename="../models/computermodel.cpp" line="120"/>
-        <location filename="../models/computermodel.cpp" line="503"/>
+        <location filename="../models/computermodel.cpp" line="244"/>
+        <location filename="../models/computermodel.cpp" line="255"/>
+        <location filename="../models/computermodel.cpp" line="639"/>
         <source>Disks</source>
         <translation type="unfinished">磁盘</translation>
     </message>
@@ -3948,9 +3958,8 @@
         <translation>无法打开回收站中的文件，请先将其还原。</translation>
     </message>
     <message>
-        <location filename="../controllers/trashmanager.cpp" line="200"/>
         <source>Ok</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
 </context>
 <context>
@@ -3987,23 +3996,23 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1425"/>
-        <location filename="../controllers/appcontroller.cpp" line="1452"/>
+        <location filename="../controllers/appcontroller.cpp" line="1432"/>
+        <location filename="../controllers/appcontroller.cpp" line="1459"/>
         <source>Action timeout, action is canceled</source>
         <translation>当前操作超时，操作已被取消！</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1431"/>
+        <location filename="../controllers/appcontroller.cpp" line="1438"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1466"/>
+        <location filename="../controllers/appcontroller.cpp" line="1473"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1466"/>
+        <location filename="../controllers/appcontroller.cpp" line="1473"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
