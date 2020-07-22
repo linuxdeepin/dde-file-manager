@@ -497,6 +497,22 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     return code;
 }
 
+int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
+{
+    // 获取父对话框字体特性
+    DDialog d(WindowManager::getWindowById(event.windowId()));
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("The file name must not contain .."));
+    QStringList buttonTexts;
+    buttonTexts << tr("Confirm");
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    // 设置对话框icon
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
+    int code = d.exec();
+    return code;
+}
+
 int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event)
 {
     QString EraseDisk = tr("Are you sure you want to erase all data on the disc?");

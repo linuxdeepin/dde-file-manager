@@ -29,6 +29,7 @@
 #include <qmimedata.h>
 #include <QtConcurrent>
 #include <models/dfmsidebarmodel.h>
+#include <QApplication>
 
 #include <unistd.h>
 
@@ -197,6 +198,18 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     }
 
     if (isActionDone) {
+        //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
+        QWidget *parentptr = parentWidget();
+        QWidget *curwindow = nullptr;
+        while(parentptr)
+        {
+            curwindow = parentptr;
+            parentptr = parentptr->parentWidget();
+        }
+        if (curwindow){
+            qApp->setActiveWindow(curwindow);
+        }
+
         event->accept();
     } else {
         DListView::dropEvent(event);

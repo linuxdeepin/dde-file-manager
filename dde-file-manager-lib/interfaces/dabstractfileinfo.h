@@ -129,13 +129,13 @@ public:
         SocketFile,
         RegularFile,
         //
-        Executable,
         Documents,
         Images,
         Videos,
         Audios,
         Archives,
         DesktopApplication,
+        Executable,
         Backups,
         Unknown,
         CustomType = 0x100

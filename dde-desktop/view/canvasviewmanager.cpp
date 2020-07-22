@@ -168,7 +168,7 @@ void CanvasViewManager::onBackgroundEnableChanged()
     GridManager::instance()->initGridItemsInfos();
 }
 
-void CanvasViewManager::onScreenGeometryChanged(ScreenPointer)
+void CanvasViewManager::onScreenGeometryChanged()
 {
 #ifdef UNUSED_SMARTDOCK
     CanvasViewPointer mView = m_canvasMap.value(sp);
@@ -210,13 +210,14 @@ void CanvasViewManager::onScreenGeometryChanged(ScreenPointer)
             avRect = sp->availableGeometry();
         }
 
-        qDebug() << "view geometry change from" << mView->geometry() << "to" << avRect
-                 << "view screen" << sp->name() << sp->geometry() << sp->availableGeometry();
         //fix bug32166 bug32205
         if (mView->geometry() == avRect) {
-            qDebug() << "view geometry is equal to rect,and discard changes";
+            qDebug() << "view geometry is equal to rect,and discard changes" << avRect;
             continue;
         }
+
+        qDebug() << "view geometry change from" << mView->geometry() << "to" << avRect
+                 << "view screen" << sp->name() << sp->geometry() << sp->availableGeometry();
         mView->setGeometry(avRect);
     }
 #endif
