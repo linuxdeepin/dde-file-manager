@@ -941,6 +941,7 @@ public:
     ~GridManagerPrivate(){
         if(m_desktopSettings){
             delete m_desktopSettings;
+            m_desktopSettings = nullptr;
         }
     }
     inline int cellCount(int screenNum) const
