@@ -164,6 +164,7 @@ public:
         CreateSymlink,
         SendToDesktop,
         SendToRemovableDisk,
+        SendToBluetooth,
         AddToBookMark,
         Delete,
         Property,
