@@ -219,7 +219,6 @@ HEADERS += \
     $$PWD/views/dfmvaultremovebypasswordview.h \
     $$PWD/views/dfmvaultremovebyrecoverykeyview.h \
     $$PWD/views/dfmvaultpagebase.h \
-    $$PWD/dialogs/bluetoothtransdialog.h \
     $$PWD/bluetooth/bluetoothmanager.h \
     $$PWD/bluetooth/bluetoothadapter.h \
     $$PWD/bluetooth/bluetoothdevice.h \
@@ -425,7 +424,6 @@ SOURCES += \
     $$PWD/views/dfmvaultremovebypasswordview.cpp \
     $$PWD/views/dfmvaultremovebyrecoverykeyview.cpp \
     $$PWD/views/dfmvaultpagebase.cpp \
-    $$PWD/dialogs/bluetoothtransdialog.cpp \
     $$PWD/bluetooth/bluetoothmanager.cpp \
     $$PWD/bluetooth/bluetoothadapter.cpp \
     $$PWD/bluetooth/bluetoothdevice.cpp \
