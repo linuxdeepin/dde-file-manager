@@ -55,9 +55,6 @@ public:
     inline bool trusted() const { return m_trusted; }
     void setTrusted(bool trusted);
 
-    inline bool connecting() const { return m_connecting; }
-    void setConnecting(bool connecting);
-
     inline State state() const { return m_state; }
     void setState(const State &state);
 
@@ -69,7 +66,6 @@ private:
     QString m_icon;
     bool m_paired;
     bool m_trusted;
-    bool m_connecting;
     State m_state;
 };
 

@@ -43,6 +43,13 @@ class BluetoothManager : public QObject
 public:
     static BluetoothManager *instance();
 
+    /**
+     * @brief 返回数据模型
+     * @return
+     */
+    BluetoothModel *model();
+
+
 public Q_SLOTS:
     /**
      * @brief 异步接口：调用刷新蓝牙模块，初始化数据
@@ -69,9 +76,6 @@ public Q_SLOTS:
      * @return 文件可以发送返回 true，，但并不意味着发送成功
      */
     bool sendFile(const QString &id, const QString &filePath);
-
-Q_SIGNALS:
-
 
 private:
     explicit BluetoothManager(QObject *parent = nullptr);

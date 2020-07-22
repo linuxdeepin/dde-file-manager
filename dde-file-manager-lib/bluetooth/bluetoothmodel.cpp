@@ -18,14 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "bluetoothmodel.h"
 
 BluetoothModel::BluetoothModel(QObject *parent) : QObject(parent)
-{
-    clear();
-}
-
-void BluetoothModel::clear()
 {
     m_adapters.clear();
 }
@@ -48,4 +44,17 @@ void BluetoothModel::addAdapter(BluetoothAdapter *adapter)
         return;
     }
     adapter->deleteLater();
+}
+
+const BluetoothAdapter *BluetoothModel::removeAdapater(const QString &adapterId)
+{
+    const BluetoothAdapter *adapter = nullptr;
+
+    adapter = adapterById(adapterId);
+    if (adapter) {
+        m_adapters.remove(adapterId);
+        Q_EMIT adapterRemoved(adapter);
+    }
+
+    return adapter;
 }
