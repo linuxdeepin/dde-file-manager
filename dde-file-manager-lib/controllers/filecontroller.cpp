@@ -1111,7 +1111,10 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
     bool use_old_filejob = false;
 
 #ifdef SW_LABEL
-    use_old_filejob = true;
+    /*fix bug 38276 【服务器UOS】【sw64】【SP1 update1(B11)】【DDE-UOS】【文件管理器】 复制文件到有相同的文件名存在的目录时，弹窗提示异常
+     *针对申威平台做针对性处理，如果io文件存在即内核做了优化则走pasteFilesV2函数，否则走pasteFilesV1
+    */
+    use_old_filejob = !QFile("/proc/thread-self/io").exists();
 #endif
 
     DUrlList list;
