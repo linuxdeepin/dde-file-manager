@@ -30,7 +30,6 @@ DFM_BEGIN_NAMESPACE
 DFMSideBarItem::DFMSideBarItem(const QIcon &icon, const QString &text, const DUrl &url, const QString &groupName)
     : DStandardItem (icon, text)
 {
-    qDebug() << icon.name();
     setUrl(url);
     setGroupName(groupName);
     this->setData(SidebarItem, ItemTypeRole);
