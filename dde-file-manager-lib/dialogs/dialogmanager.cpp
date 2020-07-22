@@ -62,6 +62,7 @@
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
 #include "dialogs/dmultifilepropertydialog.h"
+#include "dialogs/bluetoothtransdialog.h"
 #include "plugins/pluginmanager.h"
 #include "preview/previewinterface.h"
 #include "views/dfmopticalmediawidget.h"
@@ -1400,6 +1401,12 @@ int DialogManager::showMessageDialog(int messageLevel, const QString &message)
     return code;
 }
 
+void DialogManager::showBluTthTransferDlg(const DUrlList &files)
+{
+    BluetoothTransDialog *dlg = new BluetoothTransDialog;
+    dlg->setFiles(files);
+    dlg->show();
+}
 
 void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 {
