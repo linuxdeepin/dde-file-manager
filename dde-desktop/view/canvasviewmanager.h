@@ -19,7 +19,7 @@ public slots:
     void onCanvasViewBuild(int mode);
 private slots:
     void onBackgroundEnableChanged();
-    void onScreenGeometryChanged(ScreenPointer);
+    void onScreenGeometryChanged();
     void onSyncOperation(int so, QVariant var);
     void onSyncSelection(CanvasGridView *v, DUrlList selected);
 private:

@@ -14,6 +14,7 @@ public:
     QRect availableGeometry() const Q_DECL_OVERRIDE;
     QRect handleGeometry() const Q_DECL_OVERRIDE;
     QString path() const;
+    bool enabled() const;
 private:
     void init();
 private:
