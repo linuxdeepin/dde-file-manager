@@ -31,17 +31,26 @@ class BluetoothModel : public QObject
 public:
     explicit BluetoothModel(QObject *parent = nullptr);
 
-    void clear();
-
+    /**
+     * @brief 返回所有蓝牙 adapter_id - adapter
+     * @return
+     */
     QMap<QString, const BluetoothAdapter *> adapters() const;
 
+    /**
+     * @brief 通过 adapter_id_id 返回 adapter
+     * @param id
+     * @return
+     */
     const BluetoothAdapter *adapterById(const QString &id);
 
 public Q_SLOTS:
     void addAdapter(BluetoothAdapter *adapter);
+    const BluetoothAdapter *removeAdapater(const QString &adapterId);
 
 Q_SIGNALS:
     void adapterAdded(const BluetoothAdapter *adapter) const;
+    void adapterRemoved(const BluetoothAdapter *adapter) const;
 
 private:
     QMap<QString, const BluetoothAdapter *> m_adapters;

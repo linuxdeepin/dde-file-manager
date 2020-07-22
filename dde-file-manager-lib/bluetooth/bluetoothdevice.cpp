@@ -55,11 +55,6 @@ void BluetoothDevice::setTrusted(bool trusted)
     m_trusted = trusted;
 }
 
-void BluetoothDevice::setConnecting(bool connecting)
-{
-    m_connecting = connecting;
-}
-
 void BluetoothDevice::setState(const BluetoothDevice::State &state)
 {
     m_state = state;
