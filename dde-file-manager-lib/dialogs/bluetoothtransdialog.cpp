@@ -113,7 +113,7 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
     pLayout->addWidget(m_devicesList);
 
     DCommandLinkButton *linkBtn = new DCommandLinkButton(TXT_GOTO_BT_SETS, this);
-    connect(linkBtn, &DCommandLinkButton::clicked, this, &BluetoothTransDialog::showBluTthSetting);
+    connect(linkBtn, &DCommandLinkButton::clicked, this, &BluetoothTransDialog::showBluetoothSetting);
     QHBoxLayout *pLay = new QHBoxLayout(this);
     pLay->setMargin(0);
     pLay->setSpacing(0);
@@ -139,7 +139,7 @@ QWidget *BluetoothTransDialog::initNonDevicePage()
     pLay->addWidget(statusTxt);
 
     DCommandLinkButton *linkBtn = new DCommandLinkButton(TXT_GOTO_BT_SETS, this);
-    connect(linkBtn, &DCommandLinkButton::clicked, this, &BluetoothTransDialog::showBluTthSetting);
+    connect(linkBtn, &DCommandLinkButton::clicked, this, &BluetoothTransDialog::showBluetoothSetting);
     QHBoxLayout *pHLay = new QHBoxLayout(w);
     pHLay->addStretch(1);
     pHLay->addWidget(linkBtn);
@@ -307,7 +307,7 @@ void BluetoothTransDialog::closeEvent(QCloseEvent *event)
     Q_UNUSED(event)
 }
 
-void BluetoothTransDialog::showBluTthSetting()
+void BluetoothTransDialog::showBluetoothSetting()
 {
 }
 

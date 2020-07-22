@@ -96,7 +96,7 @@ Q_SIGNALS:
     void resetProgress();
 
 public Q_SLOTS:
-    void showBluTthSetting();
+    void showBluetoothSetting();
     void updateProgress();
     void retry();
 
