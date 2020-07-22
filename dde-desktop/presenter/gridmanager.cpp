@@ -2607,7 +2607,7 @@ void GridManager::setCurrentAllItems(const QList<DAbstractFileInfoPointer> &info
     d->m_allItems = infoList;
 }
 
-bool GridManager::isGsettingShow(const QString &targetkey, const bool &defaultValue)
+bool GridManager::isGsettingShow(const QString &targetkey, const bool defaultValue)
 {
     if(!d->m_desktopSettings->keys().contains(targetkey))
         return defaultValue;
