@@ -1401,7 +1401,7 @@ int DialogManager::showMessageDialog(int messageLevel, const QString &message)
     return code;
 }
 
-void DialogManager::showBluTthTransferDlg(const DUrlList &files)
+void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
 {
     BluetoothTransDialog *dlg = new BluetoothTransDialog;
     dlg->setFiles(files);
