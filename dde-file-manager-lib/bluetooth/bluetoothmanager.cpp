@@ -52,6 +52,11 @@ public:
 
 private:
     /**
+     * @brief 蓝牙 dbus 信号的处理
+     */
+    void initConnects();
+
+    /**
      * @brief 获取适配器信息
      * @param adapter
      * @param adapterObj
@@ -93,12 +98,98 @@ void BluetoothManagerPrivate::resolve(const QDBusReply<QString> &req)
     const QString replyStr = req.value();
     QJsonDocument doc = QJsonDocument::fromJson(replyStr.toUtf8());
     QJsonArray arr = doc.array();
-    m_model->clear(); // 重置蓝牙数据
     for (QJsonValue val : arr) {
         BluetoothAdapter *adapter = new BluetoothAdapter(m_model);
         inflateAdapter(adapter, val.toObject());
         m_model->addAdapter(adapter);
     }
+}
+
+void BluetoothManagerPrivate::initConnects()
+{
+    Q_Q(BluetoothManager);
+
+    // adapter added
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::AdapterAdded, q, [this](const QString & json) {
+        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+        QJsonObject obj = doc.object();
+
+        BluetoothAdapter *adapter = new BluetoothAdapter(m_model);
+        inflateAdapter(adapter, obj);
+        m_model->addAdapter(adapter);
+    });
+
+    // adapter removed
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::AdapterRemoved, q, [this](const QString & json) {
+        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+        QJsonObject obj = doc.object();
+        const QString id = obj["Path"].toString();
+
+        const BluetoothAdapter *result = m_model->removeAdapater(id);
+        BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(result);
+        if (adapter) {
+            adapter->deleteLater();
+        }
+    });
+
+    // adapter changed
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::AdapterPropertiesChanged, q, [this](const QString & json) {
+        const QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+        const QJsonObject obj = doc.object();
+        const QString id = obj["Path"].toString();
+
+        BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(m_model->adapterById(id));
+        if (adapter) {
+            inflateAdapter(adapter, obj);
+        }
+    });
+
+    // device added
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::DeviceAdded, q, [this](const QString & json) {
+        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+        QJsonObject obj = doc.object();
+        const QString adapterId = obj["AdapterPath"].toString();
+        const QString id = obj["Path"].toString();
+
+        const BluetoothAdapter *result = m_model->adapterById(adapterId);
+        BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(result);
+        if (adapter) {
+            const BluetoothDevice *result1 = adapter->deviceById(id);
+            BluetoothDevice *device = const_cast<BluetoothDevice *>(result1);
+            if (!device) {
+                device = new BluetoothDevice(adapter);
+            }
+            inflateDevice(device, obj);
+            adapter->addDevice(device);
+        }
+    });
+
+    // deivce removeed
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::DeviceRemoved, q, [this](const QString & json) {
+        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+        QJsonObject obj = doc.object();
+        const QString adapterId = obj["AdapterPath"].toString();
+        const QString id = obj["Path"].toString();
+
+        const BluetoothAdapter *result = m_model->adapterById(adapterId);
+        BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(result);
+        if (adapter) {
+            adapter->removeDevice(id);
+        }
+    });
+
+    // device changed
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::DevicePropertiesChanged, q, [this](const QString & json) {
+        const QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+        const QJsonObject obj = doc.object();
+        const QString id = obj["Path"].toString();
+        for (const BluetoothAdapter *adapter : m_model->adapters()) {
+            BluetoothDevice *device = const_cast<BluetoothDevice *>(adapter->deviceById(id));
+            if (device) {
+                inflateDevice(device, obj);
+            }
+        }
+    });
 }
 
 void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJsonObject &adapterObj)
@@ -116,7 +207,7 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
 
     QPointer<BluetoothAdapter> adapterPointer(adapter);
 
-     // 异步获取适配器的所有设备
+    // 异步获取适配器的所有设备
     QDBusObjectPath dPath(path);
     QDBusPendingCall call = m_bluetoothInter->GetDevices(dPath);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, q);
@@ -136,9 +227,10 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
             for (QJsonValue val : arr) {
                 const QString id = val.toObject()["Path"].toString();
                 const BluetoothDevice *result = adapter->deviceById(id);
-                BluetoothDevice *device = const_cast<BluetoothDevice*>(result);
-                if (device == nullptr)
+                BluetoothDevice *device = const_cast<BluetoothDevice *>(result);
+                if (device == nullptr) {
                     device = new BluetoothDevice(adapter);
+                }
                 // 存储设备数据
                 inflateDevice(device, val.toObject());
                 adapter->addDevice(device);
@@ -151,8 +243,10 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
                 if (!tmpList.contains(device->id())) {
                     adapter->removeDevice(device->id());
 
-                    BluetoothDevice *target = const_cast<BluetoothDevice*>(device);
-                    if (target) target->deleteLater();
+                    BluetoothDevice *target = const_cast<BluetoothDevice *>(device);
+                    if (target) {
+                        target->deleteLater();
+                    }
                 }
             }
         } else {
@@ -163,10 +257,10 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
 
 void BluetoothManagerPrivate::inflateDevice(BluetoothDevice *device, const QJsonObject &deviceObj)
 {
-    const QString id = deviceObj["Path"].toString();
-    const QString name = deviceObj["Name"].toString();
-    const QString alias = deviceObj["Alias"].toString();
-    const QString icon = deviceObj["Icon"].toString();
+    const QString &id = deviceObj["Path"].toString();
+    const QString &name = deviceObj["Name"].toString();
+    const QString &alias = deviceObj["Alias"].toString();
+    const QString &icon = deviceObj["Icon"].toString();
     const bool paired = deviceObj["Paired"].toBool();
     const bool trusted = deviceObj["Trusted"].toBool();
     const BluetoothDevice::State state = BluetoothDevice::State(deviceObj["State"].toInt());
@@ -209,13 +303,22 @@ void BluetoothManager::refresh()
     QDBusPendingCall call = d->m_bluetoothInter->GetAdapters();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
-        if (!call.isError()) {
+        if (!call.isError())
+        {
             QDBusReply<QString> reply = call.reply();
             d->resolve(reply);
-        } else {
+        } else
+        {
             qWarning() << call.error().message();
         }
     });
+}
+
+BluetoothModel *BluetoothManager::model()
+{
+    Q_D(BluetoothManager);
+
+    return d->m_model;
 }
 
 void BluetoothManager::showBluetoothSettings()
