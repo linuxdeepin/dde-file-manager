@@ -1104,7 +1104,9 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 
     case Qt::AltModifier:
         if (event->key() == Qt::Key_M){
-            if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())) {
+            //新需求gesetting控制右键菜单隐藏功能
+            if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())
+                    && !Q_LIKELY(GridManager::instance()->isGsettingShow("context-menu",true))) {
                 return;
             }
 
@@ -1764,7 +1766,9 @@ void CanvasGridView::focusOutEvent(QFocusEvent *event)
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 {
-    if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())) {
+    //新需求gesetting控制右键菜单隐藏功能
+    if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())
+            && !Q_LIKELY(GridManager::instance()->isGsettingShow("context-menu",true))) {
         return;
     }
 

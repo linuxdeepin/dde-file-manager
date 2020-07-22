@@ -15,6 +15,7 @@
 #include <QStandardPaths>
 #include <QTimer>
 
+#include <dgiosettings.h>
 #include <dfilesystemmodel.h>
 #include <dfmapplication.h>
 #include "apppresenter.h"
@@ -917,6 +918,7 @@ class GridManagerPrivate
 public:
     GridManagerPrivate()
     {
+        m_desktopSettings = new DGioSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
         autoArrange = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoAlign).toBool();
 #ifdef ENABLE_AUTOMERGE  //sp2需求调整，屏蔽自动整理
         autoMerge = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoMerge, false).toBool();
@@ -936,6 +938,12 @@ public:
 //        settings->endGroup();
     }
 
+    ~GridManagerPrivate(){
+        if(m_desktopSettings){
+            delete m_desktopSettings;
+            m_desktopSettings = nullptr;
+        }
+    }
     inline int cellCount(int screenNum) const
     {
         auto coordInfo = screensCoordInfo.value(screenNum);
@@ -1774,6 +1782,7 @@ public:
     bool                                                m_bSingleMode = true;
     bool                                                m_doneInit{false};
     DUrl                                                m_currentVirtualUrl{""};//保留当前屏幕上的扩展情况，用于插拔屏和分辨率变化等重新刷新图标位置
+    DGioSettings                                        *m_desktopSettings{nullptr};
 };
 
 GridManager::GridManager(): d(new GridManagerPrivate)
@@ -2648,5 +2657,15 @@ DUrl GridManager::getCurrentVirtualExpandUrl()
 void GridManager::setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList)
 {
     d->m_allItems = infoList;
+}
+
+bool GridManager::isGsettingShow(const QString &targetkey, const bool defaultValue)
+{
+    if(!d->m_desktopSettings->keys().contains(targetkey))
+        return defaultValue;
+    QVariant tempValue = d->m_desktopSettings->value(targetkey);
+    if(!tempValue.isValid())
+        return defaultValue;
+    return tempValue.toBool();
 }
 #endif
