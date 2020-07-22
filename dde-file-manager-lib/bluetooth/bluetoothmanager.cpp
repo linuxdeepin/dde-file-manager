@@ -303,12 +303,10 @@ void BluetoothManager::refresh()
     QDBusPendingCall call = d->m_bluetoothInter->GetAdapters();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
-        if (!call.isError())
-        {
+        if (!call.isError()) {
             QDBusReply<QString> reply = call.reply();
             d->resolve(reply);
-        } else
-        {
+        } else {
             qWarning() << call.error().message();
         }
     });
