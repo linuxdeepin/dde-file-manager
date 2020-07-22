@@ -1097,7 +1097,7 @@ public:
         createProfileTime++;
     }
 
-    void loadProfile(QMap<QString, int> existItems)
+    void loadProfile(const QStringList &orderedItems, QHash<QString, bool> existItems)
     {
         QMap<int, QString> screenNumProfiles;
 
@@ -1149,7 +1149,11 @@ public:
             }
         }
 
-        for (auto &item : existItems.keys()) {
+        for (const QString &item : orderedItems) {
+            //已经有位子的，跳过
+            if (!existItems.contains(item))
+                continue;
+
             QPair<int, QPoint> empty_pos{ takeEmptyPos() };
             add(empty_pos.first,empty_pos.second, item);
         }
@@ -1826,7 +1830,7 @@ void GridManager::initGridItemsInfos()
     d->clear();
 
     //设置排序
-    DFileSystemModel::Roles sortRole = static_cast<DFileSystemModel::Roles>(Config::instance()->getConfig(Config::groupGeneral,Config::keySortBy, DFileSystemModel::FileDisplayNameRole).toInt());
+    DFileSystemModel::Roles sortRole = static_cast<DFileSystemModel::Roles>(Config::instance()->getConfig(Config::groupGeneral,Config::keySortBy, DFileSystemModel::FileMimeTypeRole).toInt());
     Qt::SortOrder sortOrder = Config::instance()->getConfig(Config::groupGeneral,Config::keySortOrder).toInt() == Qt::AscendingOrder ?
                 Qt::AscendingOrder : Qt::DescendingOrder;
 
@@ -1870,26 +1874,44 @@ void GridManager::initGridItemsInfos()
     }
 #endif
     else {
-        initProfile(infoList);
-        if (GridManager::instance()->autoArrange()){
-            initArrage(allItems());
+        QModelIndex index = tempModel->setRootUrl(fileUrl);
+        DAbstractFileInfoPointer root = tempModel->fileInfo(index);
+        QTime t;
+        if (root != nullptr){
+            DAbstractFileInfo::CompareFunction sortFun = root->compareFunByColumn(sortRole);
+            qDebug() << "DAbstractFileInfo::CompareFunction " << (sortFun != nullptr);
+            t.start();
+            if (sortFun){
+                qSort(infoList.begin(), infoList.end(), [sortFun, sortOrder](const DAbstractFileInfoPointer &node1, const DAbstractFileInfoPointer &node2) {
+                    return sortFun(node1, node2, sortOrder);
+                });
+            }
+            qDebug() << "sort complete time " <<t.elapsed();
         }
+
+        //顺序
+        QStringList list;
+        //加载配置文件位置信息，此加载应当加载所有，通过add来将不同屏幕图标信息加载到m_gridItems和m_itemGrids
+        QHash<QString,bool> indexHash;
+
+        for (const DAbstractFileInfoPointer &df : infoList) {
+            QString path = df->fileUrl().toString();
+            list << path;
+            indexHash.insert(path,false);
+        }
+        sortMainDesktopFile(list,sortRole,sortOrder); //按类型排序的特殊处理
+        qDebug() << "sorted desktop items num" << list.size() << " time "<< t.elapsed();
+
+        //初始化Profile,用实际地址的文件去匹配图标位置（自动整理则图标顺延展开，自定义则按照配置文件对应顺序）
+        d->createProfile();
+        d->loadProfile(list,indexHash);
+#ifndef USE_SP2_AUTOARRAGE
+        if (GridManager::instance()->autoArrange()){
+           d->arrange(d->allItems());
+        }
+#endif
+        delaySyncAllProfile();
     }
-}
-
-void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
-{
-    //初始化Profile,用实际地址的文件去匹配图标位置（自动整理则图标顺延展开，自定义则按照配置文件对应顺序）
-    d->createProfile();
-
-    //加载配置文件位置信息，此加载应当加载所有，通过add来将不同屏幕图标信息加载到m_gridItems和m_itemGrids
-    QMap<QString, int> existItems;//实际存在的文件
-    for (const DAbstractFileInfoPointer &info : items) {
-        existItems.insert(info->fileUrl().toString(), 0);
-    }
-
-    d->loadProfile(existItems);
-    delaySyncAllProfile();
 }
 
 void GridManager::initAutoMerge(const QList<DAbstractFileInfoPointer> &items)
@@ -1917,15 +1939,21 @@ void GridManager::initArrage(const QStringList &items)
     }
 }
 
-void GridManager::initCustom(const QStringList &items)
+void GridManager::initCustom(const QStringList &orderedItems, const QHash<QString, bool> &indexHash)
 {
     clear();
-    QMap<QString, int> existItem;
-    for(const QString &item : items){
-        existItem.insert(item, 0);
-    }
-    d->loadProfile(existItem);
+    d->loadProfile(orderedItems,indexHash);
     delaySyncAllProfile();
+}
+
+void GridManager::initCustom(const QStringList &items)
+{
+    QHash<QString, bool> indexHash;
+    for (const QString &item : items){
+        indexHash.insert(item, false);
+    }
+
+    initCustom(items,indexHash);
 }
 
 bool GridManager::add(int screenNum, const QString &id)
@@ -2496,13 +2524,6 @@ void GridManager::updateGridSize(int screenNum, int w, int h)
         }
 #endif
     }else {
-//        DUrl fileUrl = getInitRootUrl();
-//        d->clear();
-//        //todo 优化，是否可以直接使用 items
-//        QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
-//        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
-//                                                                                         QStringList(), tempModel->filters());
-//        initProfile(infoList);
         initCustom(items);
     }
     emit sigSyncOperation(soUpdate);
@@ -2556,6 +2577,37 @@ void GridManager::dump()
         qDebug() << key << d->m_itemGrids.value(key);
     }
 }
+
+void GridManager::sortMainDesktopFile(QStringList &list, int role, Qt::SortOrder order)
+{
+    if (role != DFileSystemModel::FileMimeTypeRole)
+        return;
+    QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+    DUrl desktopUrl = DUrl::fromLocalFile(desktopPath);
+    QDir dir(desktopUrl.toString());
+
+    QList<QPair<QString,bool>> mainDesktop = {{dir.filePath("dde-home.desktop"),false},
+                                              {dir.filePath("dde-trash.desktop"),false},
+                                              {dir.filePath("dde-computer.desktop"),false}};
+    for (auto it = mainDesktop.begin();it != mainDesktop.end();++it){
+        if (list.removeOne(it->first)){
+            it->second = true;
+        }
+    }
+
+    for (auto it = mainDesktop.begin();it != mainDesktop.end();++it){
+        if (it->second){
+            //升序
+            if (order == Qt::AscendingOrder){
+                list.push_front(it->first);
+            }//降序
+            else {
+                list.push_back(it->first);
+            }
+        }
+    }
+}
+
 void GridManager::setDisplayMode(bool single)
 {
     d->m_bSingleMode = single;
