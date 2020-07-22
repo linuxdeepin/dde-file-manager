@@ -155,6 +155,7 @@ public:
     void setCurrentVirtualExpandUrl(const DUrl url);
     DUrl getCurrentVirtualExpandUrl();
     void setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList);
+    bool isGsettingShow(const QString targetkey, const bool defaultValue);
 
 public:
     void dump();
