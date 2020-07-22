@@ -29,6 +29,7 @@
 #include <DIconButton>
 #include <DGuiApplicationHelper>
 #include <QTimer>
+#include <QPainterPath>
 
 #include "app/define.h"
 #include "dfileservices.h"

@@ -70,6 +70,7 @@
 #include <QMediaPlayer>
 #include <QDBusObjectPath>
 #include <QRegularExpression>
+#include <QPainterPath>
 
 #include <private/qtextengine_p.h>
 

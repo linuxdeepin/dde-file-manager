@@ -34,6 +34,7 @@
 
 #include <QLabel>
 #include <QPainter>
+#include <QPainterPath>
 #include <QTextEdit>
 #include <QLineEdit>
 #include <QTextBlock>

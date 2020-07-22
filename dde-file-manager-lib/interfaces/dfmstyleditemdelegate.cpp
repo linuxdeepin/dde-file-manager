@@ -14,6 +14,7 @@
 #include <QDebug>
 #include <QAbstractItemView>
 #include <QPainter>
+#include <QPainterPath>
 #include <QGuiApplication>
 #include <QThreadStorage>
 
