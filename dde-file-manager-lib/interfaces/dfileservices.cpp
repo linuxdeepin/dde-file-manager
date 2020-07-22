@@ -237,7 +237,15 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         const QSharedPointer<DFMRenameEvent> &e = event.staticCast<DFMRenameEvent>();
         const DAbstractFileInfoPointer &f = createFileInfo(this, e->toUrl());
         if (f && f->exists() && !e->silent()) {
-            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showRenameNameSameErrorDialog, f->fileDisplayName(), *event.data());
+            // sp3_fix: 添加文件命名规则  当文件名为..时，弹出提示，文件名不能为..
+            QString strFrom = e->fromUrl().toString();
+            QString strTo = e->toUrl().toString();
+            QString strGrandParent = strFrom.section(QDir::separator(), 0, -3);
+            if(strTo == strGrandParent){ // 如果目的目录是源目录的父目录的父目录（及目录名为..）
+                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showRenameNameDotDotErrorDialog, *event.data());
+            }else{
+                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showRenameNameSameErrorDialog, f->fileDisplayName(), *event.data());
+            }
             result = false;
         } else {
             result = CALL_CONTROLLER(renameFile);
