@@ -8,8 +8,10 @@
  **/
 
 #pragma once
+#include <QtCore>
 
 namespace DesktopUtil
 {
-
+    //根据主题加载系统中的x11光标为QCursor
+    QCursor *loadQCursorFromX11Cursor(const char* theme, const char* cursorName, int cursorSize);
 }
