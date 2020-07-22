@@ -95,6 +95,7 @@ public slots:
     void actionCompleteDeletion(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionCreateSymlink(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionSendToDesktop(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionSendToBluetooth();
     void actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionSelectAll(quint64 winId);
