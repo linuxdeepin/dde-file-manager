@@ -216,7 +216,9 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
     // blumia: 2019/12/01: seems now based on current 5.11.3.2+c1-1+deepin version of Qt,
     //         completion will no longer trigger Qt::ActiveWindowFocusReason reason focus
     //         out event, so we comment out this case for now and see if it still happens.
-    if (/*e->reason() == Qt::ActiveWindowFocusReason || */ e->reason() == Qt::PopupFocusReason) {
+    // fix bug#38455 文管启动后第一次点击搜索，再点击筛选按钮，会导致搜索框隐藏
+    // 第一次点击筛选按钮，会发出Qt::OtherFocusReason信号导致搜索框隐藏，所以将其屏蔽
+    if (/*e->reason() == Qt::ActiveWindowFocusReason || */ e->reason() == Qt::PopupFocusReason || e->reason() == Qt::OtherFocusReason) {
         e->accept();
         setFocus();
         return;
@@ -569,7 +571,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
         // start request
         clearCompleterModel();
         //fix 33750 在匹配到smb:/，就创建url地址smb：///,去拉取url的目录，目前不知道什么原因造成gio mount smb：///失败就会出现提示框
-        if (text.endsWith("smb:/")){
+        if (text.endsWith("smb:/")) {
             return;
         }
         crumbController->requestCompletionList(url);
