@@ -42,42 +42,28 @@ class QStandardItemModel;
 class QStackedWidget;
 QT_END_NAMESPACE
 
-#define TITLE_BT_TRANS_FILE BluetoothTransDialog::tr("Bluetooth File Transfer")
-#define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
-#define TITLE_BT_TRANS_FAIL BluetoothTransDialog::tr("File Transfer Failed")
-
-#define TXT_SENDING_FILE BluetoothTransDialog::tr("Sending files to \"%1\"")
-#define TXT_SENDING_FAIL BluetoothTransDialog::tr("Failed to send files to \"%1\"")
-#define TXT_SENDING_SUCC BluetoothTransDialog::tr("Sent to \"%1\" successfully")
-#define TXT_SELECT_DEVIC BluetoothTransDialog::tr("Select a Bluetooth device to receive files")
-#define TXT_NO_DEV_FOUND BluetoothTransDialog::tr("Cannot find the connected Bluetooth device")
-#define TXT_WAIT_FOR_RCV BluetoothTransDialog::tr("Waiting for receiving, please wait...")
-#define TXT_GOTO_BT_SETS BluetoothTransDialog::tr("Go to Bluetooth Settings")
-#define TXT_SEND_PROGRES BluetoothTransDialog::tr("%1/%2 Sent")
-#define TXT_ERROR_REASON BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected")
-
-#define TXT_NEXT BluetoothTransDialog::tr("Next")
-#define TXT_CANC BluetoothTransDialog::tr("Cancel")
-#define TXT_DONE BluetoothTransDialog::tr("Done")
-#define TXT_RTRY BluetoothTransDialog::tr("Retry")
-
-#define ICON_CONNECT "notification-bluetooth-connected"
-#define ICON_DISCONN "notification-bluetooth-disconnected"
-#define ICON_PHONE "phone"
-
-#define PXMP_NO_DEV_LIGHT "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg"
-#define PXMP_NO_DEV_DARKY "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg"
-
 class BluetoothTransDialog : public DDialog
 {
     Q_OBJECT
 public:
     BluetoothTransDialog(QWidget *parent = nullptr);
+
+    /**
+     * @brief 设置要发送的文件列表
+     * @param urls 待发送的文件列表 url
+     */
     void setFiles(const DUrlList &urls) { m_urls = urls; }
 
-protected:
-    void initUI();
+Q_SIGNALS:
+    void startSpinner();
+    void stopSpinner();
+    void resetProgress();
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+private:
+    void initUI();
     QWidget *initDeviceSelectorPage();
     QWidget *initNonDevicePage();
     QWidget *initWaitForRecvPage();
@@ -88,21 +74,11 @@ protected:
     QList<QString> listDevices();
     void UpdateDeviceList();
 
-    void closeEvent(QCloseEvent *event) override;
-
-Q_SIGNALS:
-    void startSpinner();
-    void stopSpinner();
-    void resetProgress();
-
-public Q_SLOTS:
+private Q_SLOTS:
     void showBluetoothSetting();
-    void updateProgress();
-    void retry();
 
     // 这个函数只处理每个页面的按键事件
     void onBtnClicked(const int &nIdx);
-
     // 该函数负责刷新每个页面的按钮和标题文字
     void onPageChagned(const int &nIdx);
 
@@ -131,7 +107,6 @@ private:
 private:
     DUrlList m_urls;
     QString m_selectedDevice;
-    QMap<QString, int> m_indexes;
 };
 
 #endif // BluetoothTransDialog_H

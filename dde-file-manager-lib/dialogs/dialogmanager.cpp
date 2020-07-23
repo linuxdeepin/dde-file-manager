@@ -62,7 +62,7 @@
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
 #include "dialogs/dmultifilepropertydialog.h"
-#include "dialogs/bluetoothtransdialog.h"
+#include "bluetooth/bluetoothtransdialog.h"
 #include "plugins/pluginmanager.h"
 #include "preview/previewinterface.h"
 #include "views/dfmopticalmediawidget.h"

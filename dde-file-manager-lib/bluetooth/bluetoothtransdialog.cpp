@@ -1,5 +1,6 @@
 #include "bluetoothtransdialog.h"
 #include "dguiapplicationhelper.h"
+#include "bluetooth/bluetoothmanager.h"
 
 #include <QStackedWidget>
 #include <QVBoxLayout>
@@ -15,16 +16,45 @@
 #include <QDebug>
 #include <QTimer>
 
+#define TITLE_BT_TRANS_FILE BluetoothTransDialog::tr("Bluetooth File Transfer")
+#define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
+#define TITLE_BT_TRANS_FAIL BluetoothTransDialog::tr("File Transfer Failed")
+
+#define TXT_SENDING_FILE BluetoothTransDialog::tr("Sending files to \"%1\"")
+#define TXT_SENDING_FAIL BluetoothTransDialog::tr("Failed to send files to \"%1\"")
+#define TXT_SENDING_SUCC BluetoothTransDialog::tr("Sent to \"%1\" successfully")
+#define TXT_SELECT_DEVIC BluetoothTransDialog::tr("Select a Bluetooth device to receive files")
+#define TXT_NO_DEV_FOUND BluetoothTransDialog::tr("Cannot find the connected Bluetooth device")
+#define TXT_WAIT_FOR_RCV BluetoothTransDialog::tr("Waiting for receiving, please wait...")
+#define TXT_GOTO_BT_SETS BluetoothTransDialog::tr("Go to Bluetooth Settings")
+#define TXT_SEND_PROGRES BluetoothTransDialog::tr("%1/%2 Sent")
+#define TXT_ERROR_REASON BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected")
+
+#define TXT_NEXT BluetoothTransDialog::tr("Next")
+#define TXT_CANC BluetoothTransDialog::tr("Cancel")
+#define TXT_DONE BluetoothTransDialog::tr("Done")
+#define TXT_RTRY BluetoothTransDialog::tr("Retry")
+
+#define ICON_CONNECT "notification-bluetooth-connected"
+#define ICON_DISCONN "notification-bluetooth-disconnected"
+#define ICON_PHONE "phone"
+
+#define PXMP_NO_DEV_LIGHT "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg"
+#define PXMP_NO_DEV_DARKY "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg"
+
 BluetoothTransDialog::BluetoothTransDialog(QWidget *parent)
     : DDialog(parent)
 {
+    // 测试进度条
     timer = new QTimer(this);
+
     setAttribute(Qt::WA_DeleteOnClose);
 
     initUI();
 
     UpdateDeviceList();
 
+    // 调试布局
     //    setStyleSheet("border: 1px solid blue;");
 }
 
@@ -309,41 +339,41 @@ void BluetoothTransDialog::closeEvent(QCloseEvent *event)
 
 void BluetoothTransDialog::showBluetoothSetting()
 {
-}
-
-void BluetoothTransDialog::updateProgress()
-{
-}
-
-void BluetoothTransDialog::retry()
-{
+    BluetoothManager::instance()->showBluetoothSettings();
 }
 
 void BluetoothTransDialog::onBtnClicked(const int &nIdx)
 {
-    auto jumpPage = [nIdx, this] {
-        if (nIdx == 0) {
-            close();
-            return;
-        } else if (nIdx == 1) { // 下一步
-            m_stack->setCurrentIndex(WaitForRecvPage);
-            Q_EMIT startSpinner();
-        }
+    auto sendFile = [this] {
+        m_selectedDevice;
+        m_urls;
+
+        m_stack->setCurrentIndex(WaitForRecvPage);
+        Q_EMIT startSpinner();
     };
+
     Page currpage = static_cast<Page>(m_stack->currentIndex());
     switch (currpage) {
     case SelectDevicePage:
         if (m_selectedDevice.isEmpty() && nIdx == 1)
             return;
+        if (nIdx == 1)
+            sendFile();
+        else {
+            close();
+            return;
+        }
+
         m_subTitle1->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
         m_subTitle2->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
         m_subTitle3->setText(TXT_SENDING_FAIL.arg(m_selectedDevice));
         m_subTitle4->setText(TXT_SENDING_SUCC.arg(m_selectedDevice));
-        jumpPage();
-        qDebug() << "SendFiles: " << m_urls << "to" << m_selectedDevice;
         break;
     case FailedPage:
-        jumpPage();
+        if (nIdx == 1)
+            sendFile();
+        else
+            close();
         break;
     case WaitForRecvPage:
     case NoneDevicePage:
@@ -384,14 +414,16 @@ void BluetoothTransDialog::onPageChagned(const int &nIdx)
         break;
     }
 
-    // 测试代码
+    // 测试，模拟接收方已同意接收文件
     if (currpage == WaitForRecvPage) {
-        QTimer::singleShot(3000, nullptr, [this] {
+        QTimer::singleShot(1000, nullptr, [this] {
             if (!m_stack)
                 return;
             m_stack->setCurrentIndex(TransferPage);
         });
     }
+
+    // 进度条测试
     if (currpage == TransferPage) {
         Q_EMIT resetProgress();
         timer->start(100);
