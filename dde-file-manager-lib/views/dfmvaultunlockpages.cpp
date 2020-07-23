@@ -203,7 +203,29 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
         if (state == 0){
             emit accepted();
             close();
-        }else {
+        } else if(state == 1) { // cryfs没有成功卸载挂载目录
+            // 解决sp3bug-38885:注销系统时，cryfs卸载挂载目录会概率性失败
+            // 卸载挂载目录
+            QProcess process;
+            QString fusermountBinary = QStandardPaths::findExecutable("fusermount");
+            process.start(fusermountBinary, {"-zu", QString(VAULT_BASE_PATH)+QDir::separator()+QString(VAULT_DECRYPT_DIR_NAME)});
+            process.waitForStarted();
+            process.waitForFinished();
+            process.terminate();
+            if(process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0){
+                QString strPwd = m_passwordEdit->text();
+                QString strClipher("");
+                // 判断密码是否正确
+                if(InterfaceActiveVault::checkPassword(strPwd, strClipher)){
+                    VaultController::ins()->unlockVault(strClipher);
+                    return;
+                } else {    // 密码不正确
+                    // 设置密码输入框颜色,并弹出tooltip
+                    m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+                    showToolTip(tr("Wrong password"), 3000, EN_ToolTip::Warning);
+                }
+            }
+        } else {
             // error tips
             QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
             DDialog dialog(this);
