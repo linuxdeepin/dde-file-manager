@@ -22,6 +22,8 @@ TEMPLATE = lib
 CONFIG += create_pc create_prl no_install_prl
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
+QMAKE_CXX += -DUNICODE
+QMAKE_CXXFLAGS +=  -D_UNICODE -DMEDIAINFO_LIBMMS_NO -DMEDIAINFO_LIBCURL_NO
 
 isEmpty(QMAKE_ORGANIZATION_NAME) {
     DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
@@ -31,8 +33,8 @@ isEmpty(PREFIX){
     PREFIX = /usr
 }
 
-CONFIG += c++11 link_pkgconfig
-PKGCONFIG += libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget dtkgui udisks2-qt5 disomaster gio-qt libcrypto Qt5Xdg
+CONFIG += staticlib c++11 link_pkgconfig
+PKGCONFIG += libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget dtkgui udisks2-qt5 disomaster gio-qt  Qt5Xdg #libcrypto
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
@@ -605,3 +607,7 @@ DISTFILES += \
     policy/com.deepin.pkexec.deepin-vault-authenticateProxy.policy
 
 include($$PWD/settings_dialog_json.pri)
+
+unix:!macx: LIBS += -lcrypto
+
+unix:!macx: PRE_TARGETDEPS += $$[QT_INSTALL_LIBS]/libcrypto.a

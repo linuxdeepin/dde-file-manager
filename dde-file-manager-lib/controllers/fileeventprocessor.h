@@ -19,8 +19,12 @@ class FileEventProcessor : public DFMAbstractEventHandler
 public:
     FileEventProcessor();
 
+    static FileEventProcessor * Init();
+
 private:
     virtual bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData) Q_DECL_OVERRIDE;
+
+    static FileEventProcessor *eventProcessor;
 };
 
 DFM_END_NAMESPACE
