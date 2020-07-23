@@ -32,12 +32,18 @@ void BluetoothDevice::setId(const QString &id)
 
 void BluetoothDevice::setName(const QString &name)
 {
-    m_name = name;
+    if (name != m_name) {
+        m_name = name;
+        Q_EMIT nameChanged(name);
+    }
 }
 
 void BluetoothDevice::setAlias(const QString &alias)
 {
-    m_alias = alias;
+    if (alias != m_alias) {
+        m_alias = alias;
+        Q_EMIT aliasChanged(alias);
+    }
 }
 
 void BluetoothDevice::setIcon(const QString &icon)
@@ -47,15 +53,24 @@ void BluetoothDevice::setIcon(const QString &icon)
 
 void BluetoothDevice::setPaired(bool paired)
 {
-    m_paired = paired;
+    if (paired != m_paired) {
+        m_paired = paired;
+        Q_EMIT pairedChanged(paired);
+    }
 }
 
 void BluetoothDevice::setTrusted(bool trusted)
 {
-    m_trusted = trusted;
+    if (trusted != m_trusted) {
+        m_trusted = trusted;
+        Q_EMIT trustedChanged(trusted);
+    }
 }
 
 void BluetoothDevice::setState(const BluetoothDevice::State &state)
 {
-    m_state = state;
+    if (state != m_state) {
+        m_state = state;
+        Q_EMIT stateChanged(state);
+    }
 }
