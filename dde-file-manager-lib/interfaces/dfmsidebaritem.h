@@ -38,6 +38,7 @@ public:
         ItemGroupNameRole,
         ItemUseRegisteredHandlerRole,
         ItemUniqueKeyRole,
+        ItemVolTagRole,
         ItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 

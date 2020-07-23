@@ -35,6 +35,7 @@
 #include "controllers/subscriber.h"
 #include "singleton.h"
 
+#include "views/dfmopticalmediawidget.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "udiskdeviceinfo.h"
 #include "dblockdevice.h"
@@ -676,6 +677,15 @@ void UDiskListener::changeVolumeDiskInfo(const QDiskInfo &diskInfo)
     if (device) {
         device->setDiskInfo(diskInfo);
         emit volumeChanged(device);
+    }
+
+    // sp3 feature 35 光盘正在加载时，光标移动到光盘图标（左侧tab和计算机页面item），光标显示繁忙状态，加载完成后显示为正常指针
+    if (diskInfo.id().contains("sr") && !diskInfo.mounted_root_uri().isEmpty()) { // 光盘已挂载上后挂载路径有值
+        const QString &volTag = diskInfo.id().mid(5);
+        if (DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(volTag)) {
+            DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].bLoading = false;
+            DFileService::instance()->setCursorBusyState(false); // 上面一行代码用于设置光标在移动时的判定条件，如果没有移动不会触发更新，因此这里要手动刷新一次状态
+        }
     }
 }
 

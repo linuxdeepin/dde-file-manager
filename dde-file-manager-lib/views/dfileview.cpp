@@ -949,7 +949,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                         d->isVaultDelSigConnected = true;
                     }
                 }
-                qDebug() << "action delete --------------------------------";
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             }
             break;
@@ -1178,6 +1177,10 @@ void DFileView::mousePressEvent(QMouseEvent *event)
                 selectionModel()->select(index, QItemSelectionModel::Select);
 
                 return;
+            }
+        } else if(DFMGlobal::keyShiftIsPressed()){  // 如果按住shit键，鼠标左键点击某项
+            if(!selectionModel()->isSelected(index)){   // 如果该项没有被选择
+                DListView::mousePressEvent(event);  // 选择该项
             }
         }
 
@@ -1710,6 +1713,17 @@ void DFileView::dropEvent(QDropEvent *event)
         stopAutoScroll();
         setState(NoState);
         viewport()->update();
+    }
+    //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
+    QWidget *parentptr = parentWidget();
+    QWidget *curwindow = nullptr;
+    while(parentptr)
+    {
+        curwindow = parentptr;
+        parentptr = parentptr->parentWidget();
+    }
+    if (curwindow){
+        qApp->setActiveWindow(curwindow);
     }
 
     if (DFileDragClient::checkMimeData(event->mimeData())) {
@@ -2279,6 +2293,8 @@ bool DFileView::setRootUrl(const DUrl &url)
         if (!dp.devid.length()) {
             //QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
             DFileService::instance()->setCursorBusyState(true);
+            if (DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(strVolTag))
+                DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bLoading = true;
 
             QSharedPointer<QFutureWatcher<bool>> fw(new QFutureWatcher<bool>);
             connect(fw.data(), &QFutureWatcher<bool>::finished, this, [ = ] {

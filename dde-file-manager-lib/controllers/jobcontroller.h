@@ -51,9 +51,9 @@ public:
         Stoped
     };
 
-    explicit JobController(const DUrl &fileUrl, const DDirIteratorPointer &iterator, bool silent = false, QObject *parent = 0);
+    explicit JobController(const DUrl &fileUrl, const DDirIteratorPointer &iterator, bool silent = false, QObject *parent = nullptr);
     explicit JobController(const DUrl &fileUrl, const QStringList &nameFilters,
-                           QDir::Filters filters, bool silent = false, QObject *parent = 0);
+                           QDir::Filters filters, bool silent = false, QObject *parent = nullptr);
 
     ~JobController();
 

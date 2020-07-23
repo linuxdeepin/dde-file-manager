@@ -231,7 +231,7 @@ void DiskControlWidget::unmountAll()
                     qDebug() << "unmountAll";
                     if (diskDev->lastError().isValid()) {
                         qWarning() << diskDev->lastError().name() << blockDevices;
-                        NotifyMsg(tr("Disk is busy, cannot eject now"));
+                        NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
                     }
                 }
                 if (diskDev->optical()) { // is optical
@@ -239,7 +239,7 @@ void DiskControlWidget::unmountAll()
                         diskDev->eject({});
                         if (diskDev->lastError().isValid()) {
                             qWarning() << diskDev->lastError().name() << blockDevices;
-                            NotifyMsg(tr("Disk is busy, cannot eject now"));
+                            NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
                         }
                         continue; // fix bug#16936 在 dock 上选择了卸载全部后，还会有U盘未被卸载
                     }
@@ -323,7 +323,7 @@ void DiskControlWidget::onDiskListChanged()
                     DAttachedUdisks2Device *drv = dynamic_cast<DAttachedUdisks2Device *>(device);
                     if (drv) {
                         qWarning() << drv->blockDevice()->lastError().name() << device->displayName();
-                        NotifyMsg(DiskControlWidget::tr("Disk is busy, cannot eject now"));
+                        NotifyMsg(DiskControlWidget::tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));
                     }
                 }
             };
@@ -431,7 +431,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
 void DiskControlWidget::onDriveDisconnected()
 {
     DDesktopServices::playSystemSoundEffect("device-removed");
-    NotifyMsg(QObject::tr("Device has been removed"));
+    NotifyMsg(QObject::tr("The device has been safely removed"));
     onDiskListChanged();
 }
 
@@ -496,7 +496,7 @@ void DiskControlWidget::unmountDisk(const QString &diskId) const
                 qDebug() << "unmountDisk " << diskId;
                 if (diskDev->lastError().isValid()) {
                     qWarning() << diskDev->lastError().name() << diskId;
-                    NotifyMsg(tr("Disk is busy, cannot eject now"));
+                    NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
                 }
             }
         }
@@ -515,6 +515,23 @@ void DiskControlWidget::NotifyMsg(QString msg)
     .arg(QString("media-eject"))
     .arg(msg)
     .arg(QString())
+    .arg(QStringList())
+    .arg(QVariantMap())
+    .arg(5000).call();
+}
+
+void DiskControlWidget::NotifyMsg(QString title, QString msg)
+{
+    DDBusSender()
+    .service("org.freedesktop.Notifications")
+    .path("/org/freedesktop/Notifications")
+    .interface("org.freedesktop.Notifications")
+    .method(QString("Notify"))
+    .arg(tr("dde-file-manager"))
+    .arg(static_cast<uint>(0))
+    .arg(QString("media-eject"))
+    .arg(title)
+    .arg(msg)
     .arg(QStringList())
     .arg(QVariantMap())
     .arg(5000).call();

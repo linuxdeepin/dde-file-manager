@@ -311,6 +311,9 @@ void DFileStatisticsJob::start(const DUrlList &sourceUrls)
             it->setUrl(it->taggedLocalFilePath());
             it->setScheme(FILE_SCHEME);
         }
+        if (it->scheme() == SEARCH_SCHEME && !it->fragment().isEmpty()) {
+            it->setUrl(it->fragment());
+        }
         it++;
     }
 
@@ -416,7 +419,7 @@ void DFileStatisticsJob::run()
     while (!directory_queue.isEmpty()) {
         const DUrl &directory_url = directory_queue.dequeue();
         const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(nullptr, directory_url, QStringList(),
-                                              QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot, 0, true);
+                                              QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot, nullptr, true);
 
         if (!iterator) {
             qWarning() << "Failed on create dir iterator, for url:" << directory_url;

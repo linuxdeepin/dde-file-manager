@@ -36,7 +36,7 @@ class SearchController : public DAbstractFileController
     Q_OBJECT
 
 public:
-    explicit SearchController(QObject *parent = 0);
+    explicit SearchController(QObject *parent = nullptr);
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
     bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const Q_DECL_OVERRIDE;

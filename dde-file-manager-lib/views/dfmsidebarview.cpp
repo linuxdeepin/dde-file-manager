@@ -22,12 +22,14 @@
 #include "dfmsidebaritem.h"
 #include "dfileservices.h"
 #include "app/define.h"
+#include "dfmopticalmediawidget.h"
 
 #include <QDebug>
 #include <dstorageinfo.h>
 #include <qmimedata.h>
 #include <QtConcurrent>
 #include <models/dfmsidebarmodel.h>
+#include <QApplication>
 
 #include <unistd.h>
 
@@ -44,7 +46,7 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
 //    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-//    setMouseTracking(true);
+    setMouseTracking(true); // sp3 feature 35，解除注释以便鼠标在移动时就能触发 mousemoveevent
 
     setDragDropMode(QAbstractItemView::InternalMove);
     setDragDropOverwriteMode(false);
@@ -82,18 +84,32 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
 void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 {
     DListView::mouseMoveEvent(event);
-#if QT_CONFIG(draganddrop)
-    if (state() == DraggingState) {
-        startDrag(Qt::MoveAction);
-        setState(NoState); // the startDrag will return when the dnd operation is done
-        stopAutoScroll();
-        QPoint pt = mapFromGlobal(QCursor::pos());
-        QRect rc = geometry();
-        if (!rc.contains(pt)) {
-            emit requestRemoveItem(); //model()->removeRow(currentIndex().row());
+    // sp3 feature 35，光标悬浮到光驱item上如果正在加载，需要显示为繁忙光标。添加判定避免额外操作
+    if (event->button() == Qt::NoButton) {
+        const QModelIndex &idx = indexAt(event->pos());
+        QString voltag = idx.data(DFMSideBarItem::ItemVolTagRole).toString();
+        if (!voltag.isEmpty() && voltag.startsWith("sr")
+            && DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(voltag)
+            && DFMOpticalMediaWidget::g_mapCdStatusInfo[voltag].bLoading) {
+            // 设置光标为繁忙状态
+            DFileService::instance()->setCursorBusyState(true);
+        } else {
+            DFileService::instance()->setCursorBusyState(false);
         }
-    }
+    } else {
+#if QT_CONFIG(draganddrop)
+        if (state() == DraggingState) {
+            startDrag(Qt::MoveAction);
+            setState(NoState); // the startDrag will return when the dnd operation is done
+            stopAutoScroll();
+            QPoint pt = mapFromGlobal(QCursor::pos());
+            QRect rc = geometry();
+            if (!rc.contains(pt)) {
+                emit requestRemoveItem(); //model()->removeRow(currentIndex().row());
+            }
+        }
 #endif // QT_CONFIG(draganddrop)
+    }
 }
 
 void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
@@ -182,6 +198,18 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     }
 
     if (isActionDone) {
+        //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
+        QWidget *parentptr = parentWidget();
+        QWidget *curwindow = nullptr;
+        while(parentptr)
+        {
+            curwindow = parentptr;
+            parentptr = parentptr->parentWidget();
+        }
+        if (curwindow){
+            qApp->setActiveWindow(curwindow);
+        }
+
         event->accept();
     } else {
         DListView::dropEvent(event);

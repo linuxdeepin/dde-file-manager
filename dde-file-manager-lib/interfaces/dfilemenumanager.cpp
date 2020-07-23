@@ -31,13 +31,11 @@
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
-
 #include "controllers/vaultcontroller.h"
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 #include "models/desktopfileinfo.h"
 #include "shutil/mimetypedisplaymanager.h"
-
 #include "singleton.h"
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
@@ -52,8 +50,10 @@
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "views/dtagactionwidget.h"
+#include "plugins/dfmadditionalmenu.h"
+#include "models/dfmrootfileinfo.h"
 
-#include <dgiosettings.h>
+#include <DSysInfo>
 
 #include <QMetaObject>
 #include <QMetaEnum>
@@ -67,9 +67,10 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QWidgetAction>
+
+#include <dgiosettings.h>
 #include <unistd.h>
 
-#include <plugins/dfmadditionalmenu.h>
 
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
 
@@ -195,7 +196,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             disableList << MenuAction::CompleteDeletion;
         }
         if (info->isDir()) { //判断是否目录
-            if (info->ownerId() != getuid() && getuid() != 0) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
+            if (info->ownerId() != getuid() && !DFMGlobal::isRootUser()) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
                 disableList << MenuAction::UnShare << MenuAction::Share; //设置取消共享、取消共享不可选
             }
         }
@@ -220,6 +221,11 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         if (!DFileMenuManager::whetherShowTagActions(urls)) {
             actions.removeAll(MenuAction::TagInfo);
             actions.removeAll(MenuAction::TagFilesUseColor);
+        }
+
+        // sp3 feature: root用户和服务器版本用户不需要以管理员身份打开的功能
+        if (DFMGlobal::isRootUser() || DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+            actions.removeAll(MenuAction::OpenAsAdmin);
         }
 
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
@@ -427,14 +433,27 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         else {
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
+                if (0) { // 如果有蓝牙设备
+                    QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
+                    sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
+                    sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
+                    connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
+                }
+
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
-                    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
-                    qDebug() << "add send action: " << pDeviceinfo->getDiskInfo().name();
-                    QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
-                    action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
-                    action->setProperty("urlList", DUrl::toStringList(urls));
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
                     QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
+                    DUrl gvfsmpurl;
+                    gvfsmpurl.setScheme(DFMROOT_SCHEME);
+                    gvfsmpurl.setPath("/" + QUrl::toPercentEncoding(tempId) + "." SUFFIX_UDISKS);
+
+                    DAbstractFileInfoPointer fp(new DFMRootFileInfo(gvfsmpurl)); // 通过DFMRootFileInfo 拿到与桌面显示一致的 名字
+
+                    qDebug() << "add send action: [ diskinfoname:" << pDeviceinfo->getDiskInfo().name() << " to RootFileInfo: " << fp->fileDisplayName();
+
+                    QAction *action = new QAction(fp->fileDisplayName(), sendToMountedRemovableDiskMenu);
+                    action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
+                    action->setProperty("urlList", DUrl::toStringList(urls));
                     action->setProperty("blkDevice", tempId);
 
                     // 禁用发送到列表中的本设备项
@@ -641,6 +660,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     actionKeys[MenuAction::SendToRemovableDisk] = QObject::tr("Send to");
+    actionKeys[MenuAction::SendToBluetooth] = QObject::tr("Send to bluetooth");
     actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
     actionKeys[MenuAction::Delete] = QObject::tr("Delete");
     actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Delete");

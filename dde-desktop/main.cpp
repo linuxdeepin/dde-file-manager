@@ -202,16 +202,15 @@ int main(int argc, char *argv[])
 #endif
     qDebug() << "register desktop" <<  gTime.elapsed();
 
-    Desktop::instance()->preInit();
-    qDebug() << "Desktop inited" << gTime.elapsed();
-
     // init pixmap cache size limit, 20MB * devicePixelRatio
     QPixmapCache::setCacheLimit(static_cast<int>(20 * 1024 * app.devicePixelRatio()));
 
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 
     if (!fileDialogOnly) {
+        Desktop::instance()->preInit();
         Config::instance();
+        qDebug() << "Desktop inited" << gTime.elapsed();
     }
 
     DFMGlobal::installTranslator();
@@ -308,7 +307,6 @@ int main(int argc, char *argv[])
 
 //    DEventFilter *event_filter{ new DEventFilter{&app} };
 //    app.installEventFilter(event_filter);
-
 
     return app.exec();
 }

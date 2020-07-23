@@ -36,6 +36,7 @@ DFMSideBarItem::DFMSideBarItem(const QIcon &icon, const QString &text, const DUr
     this->setData("none", ItemUseRegisteredHandlerRole);
     // setToolTip(text);
     this->setData(QUuid::createUuid().toString(), ItemUniqueKeyRole);
+    this->setData(url.path().remove("/").remove(".localdisk"), ItemVolTagRole);
 }
 
 /*!

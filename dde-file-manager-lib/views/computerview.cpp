@@ -112,7 +112,7 @@ Q_SIGNALS:
 
 ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
 {
-    m_view = new QListView(this);
+    m_view = new ComputerListView(this);
     m_statusbar = new DStatusBar(this);
     m_statusbar->scalingSlider()->setMaximum(iconsizes.count() - 1);
     m_statusbar->scalingSlider()->setMinimum(0);
@@ -372,6 +372,25 @@ bool ComputerView::eventFilter(QObject *obj, QEvent *event)
         return false;
     } else {
         return QObject::eventFilter(obj, event);
+    }
+}
+
+ComputerListView::ComputerListView(QWidget *parent)
+    : QListView(parent)
+{
+    setMouseTracking(true);
+}
+
+void ComputerListView::mouseMoveEvent(QMouseEvent *event)
+{
+    QListView::mouseMoveEvent(event);
+    const QModelIndex &idx = indexAt(event->pos());
+    const QString &volTag = idx.data(ComputerModel::VolumeTagRole).toString();
+    if (volTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(volTag)
+        && DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].bLoading) {
+        DFileService::instance()->setCursorBusyState(true);
+    } else {
+        DFileService::instance()->setCursorBusyState(false);
     }
 }
 

@@ -17,6 +17,7 @@
  **/
 
 #include "vaultlockmanager.h"
+#include <unistd.h>
 #include "dfileservices.h"
 #include "dfmsettings.h"
 #include "dfmapplication.h"
@@ -28,7 +29,8 @@
 #include "interfaceactivevault.h"
 #include "vault/vaulthelper.h"
 
-#include "../dde-file-manager-daemon/dbusservice/dbusinterface/vault_interface.h"
+#include "dbusinterface/vault_interface.h"
+#include "vault/vaulthelper.h"
 
 #define VAULT_AUTOLOCK_KEY      "AutoLock"
 #define VAULT_GROUP             "Vault/AutoLock"
@@ -88,6 +90,13 @@ VaultLockManager::VaultLockManager(QObject *parent)
     connect(VaultController::ins(), &VaultController::signalUnlockVault, this,  &VaultLockManager::slotUnlockVault);
 
     loadConfig();
+
+    //! process lock event if recoreded.
+    if (isLockEventTriggered()) {
+        processLockEvent();
+    }
+
+    connect(d->m_vaultInterface, &VaultInterface::lockEventTriggered, this, &VaultLockManager::slotLockEvent);
 }
 
 void VaultLockManager::loadConfig()
@@ -103,6 +112,16 @@ void VaultLockManager::loadConfig()
 void VaultLockManager::resetConfig()
 {
     autoLock(VaultLockManager::Never);
+}
+
+bool VaultLockManager::isLockEventTriggered() const
+{
+    return dbusIsLockEventTriggered();
+}
+
+void VaultLockManager::clearLockEvent()
+{
+    dbusClearLockEvent();
 }
 
 VaultLockManager::AutoLockState VaultLockManager::autoLockState() const
@@ -210,6 +229,24 @@ void VaultLockManager::slotUnlockVault(int msg)
     }
 }
 
+void VaultLockManager::processLockEvent()
+{
+    // lock vault.
+    VaultHelper::killVaultTasks();
+    VaultController::ins()->lockVault();
+
+    // clear event.
+    clearLockEvent();
+}
+
+void VaultLockManager::slotLockEvent(const QString &user)
+{
+    char *loginUser = getlogin();
+    if (user == loginUser) {
+        processLockEvent();
+    }
+}
+
 bool VaultLockManager::isValid() const
 {
     D_DC(VaultLockManager);
@@ -269,4 +306,34 @@ quint64 VaultLockManager::dbusGetSelfTime() const
         }
     }
     return selfTime;
+}
+
+bool VaultLockManager::dbusIsLockEventTriggered() const
+{
+    D_DC(VaultLockManager);
+
+    bool isTriggered = false;
+    if (d->m_vaultInterface->isValid()) {
+        QDBusPendingReply<bool> reply = d->m_vaultInterface->isLockEventTriggered();
+        reply.waitForFinished();
+        if (reply.isError()) {
+            qDebug() << reply.error().message();
+        } else {
+            isTriggered = reply.value();
+        }
+    }
+    return isTriggered;
+}
+
+void VaultLockManager::dbusClearLockEvent()
+{
+    D_DC(VaultLockManager);
+
+    if (d->m_vaultInterface->isValid()) {
+        QDBusPendingReply<> reply = d->m_vaultInterface->clearLockEvent();
+        reply.waitForFinished();
+        if (reply.isError()) {
+            qDebug() << reply.error().message();
+        }
+    }
 }

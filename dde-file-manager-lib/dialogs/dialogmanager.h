@@ -77,7 +77,7 @@ public:
 public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob *job);
-    void removeJob(const QString &jobId);
+    void removeJob(const QString &jobId,bool clearAllbuffer = false);
     QString getJobIdByUrl(const DUrl &url);
     void removeAllJobs();
     void updateJob();
@@ -94,6 +94,8 @@ public slots:
     int showRunExcutableFileDialog(const DUrl &url, quint64 winId);
     int showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint64 winId);
     int showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event);
+    // 重命名文件时，如果文件名为..，则弹出警告对话框
+    int showRenameNameDotDotErrorDialog(const DFMEvent &event);
     int showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event);
     int showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event);
     void showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details);
@@ -137,6 +139,7 @@ public slots:
     void refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl);
 
     int showMessageDialog(int messageLevel, const QString &message);
+    void showBluetoothTransferDlg(const DUrlList &files);
 
 #ifdef SW_LABEL
     void onJobFailed_SW(int nRet, const QString &jobType, const QString &srcfilename);

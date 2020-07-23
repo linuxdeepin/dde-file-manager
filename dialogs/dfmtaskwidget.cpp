@@ -110,6 +110,7 @@ private:
 
     QTimer *m_timer;
     bool m_isSettingValue;
+    bool m_isEnableHover;
 
     DFMTaskWidget *q_ptr;
     Q_DECLARE_PUBLIC(DFMTaskWidget)
@@ -297,6 +298,7 @@ void DFMTaskWidgetPrivate::initUI()
 
     m_timer = new QTimer(q);
     m_isSettingValue = false;
+    m_isEnableHover = true;
 }
 
 void DFMTaskWidgetPrivate::initConnection()
@@ -472,6 +474,12 @@ void DFMTaskWidget::setButtonText(DFMTaskWidget::BUTTON bt, const QString &text)
     }
 }
 
+void DFMTaskWidget::setHoverEnable(bool enable)
+{
+    Q_D(DFMTaskWidget);
+    d->m_isEnableHover = enable;
+}
+
 void DFMTaskWidget::hideButton(DFMTaskWidget::BUTTON bt, bool hidden/*=true*/)
 {
     Q_D(DFMTaskWidget);
@@ -489,15 +497,17 @@ void DFMTaskWidget::hideButton(DFMTaskWidget::BUTTON bt, bool hidden/*=true*/)
 void DFMTaskWidget::onMouseHover(bool hover)
 {
     Q_D(DFMTaskWidget);
-    d->m_btnPause->setVisible(hover);
-    d->m_btnStop->setVisible(hover);
+    if (d->m_isEnableHover) {
+        d->m_btnPause->setVisible(hover);
+        d->m_btnStop->setVisible(hover);
 
-    d->m_lbSpeed->setHidden(hover);
-    d->m_lbRmTime->setHidden(hover);
+        d->m_lbSpeed->setHidden(hover);
+        d->m_lbRmTime->setHidden(hover);
 
-    update(rect());
-    setProperty("isHover", hover);
-    emit hoverChanged(hover);
+        update(rect());
+        setProperty("isHover", hover);
+        emit hoverChanged(hover);
+    }
 }
 
 void DFMTaskWidget::showConflictButtons(bool showBtns/*=true*/, bool showConflict/*=true*/)
@@ -610,7 +620,7 @@ void DFMTaskWidget::onProgressChanged(qreal progress, qint64 writeData)
 {
     Q_UNUSED(writeData);
 
-    setProgressValue(progress * 100);
+    setProgressValue(static_cast<int>(progress * 100));
     setProperty("progress", progress);
 }
 
@@ -619,7 +629,7 @@ void DFMTaskWidget::onBurnProgressChanged(qreal progress, qint64 writeData)
     Q_UNUSED(writeData);
 
     //fixed:progress*100  -> progress;共性问题，在光驱刻录显示百分比时，由于底层disomaster库返回给上层就是乘以100了，所以上层不想要再乘以100来处理。
-    setProgressValue(progress);
+    setProgressValue(static_cast<int>(progress));
     setProperty("progress", progress);
 }
 
