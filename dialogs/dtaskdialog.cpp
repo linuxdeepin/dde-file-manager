@@ -380,6 +380,13 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
     wid->setProperty("totalDataSize" ,job->totalDataSize());
 
     connect(job, &DFileCopyMoveJob::currentJobChanged, this, [this, job, wid](const DUrl from, const DUrl to){
+        //fix 复制文件的错误窗口很多时，关闭对话框，会导致wid已经被释放，但该函数依然使用wid指针导致崩溃
+        //解决方案当m_jobIdItems中不存在该任务，说明与任务关联wid已经被释放或者即将释放，这里直接返回
+        auto item = m_jobIdItems.value(QString::number(quintptr(job), 16));
+        if (item == nullptr){
+            return;
+        }
+
         QMap<QString, QString> data;
         bool isDelete = false; // 删除模式下不需要显示速度
         if (job->mode() == DFileCopyMoveJob::CopyMode) {
