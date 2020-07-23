@@ -5,9 +5,9 @@
 
 int main(int argc, char *argv[])
 {
-    qDebug() << "start disk-mount test cases ..............";
+    qDebug() << "start dde-file-manager-daemon test cases ..............";
     ::testing::InitGoogleTest(&argc, argv);
     int ret = RUN_ALL_TESTS();
-    qDebug() << "end disk-mount test cases ..............";
+    qDebug() << "end dde-file-manager-daemon test cases ..............";
     return ret;
 }
