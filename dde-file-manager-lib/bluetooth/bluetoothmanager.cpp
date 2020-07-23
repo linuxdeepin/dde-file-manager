@@ -90,7 +90,7 @@ BluetoothManagerPrivate::BluetoothManagerPrivate(BluetoothManager *qq)
     m_controlcenterInter = new DBusControlcenter(ControlcenterService, ControlcenterPath,
                                                  QDBusConnection::sessionBus(), q);
 
-    // todo: signal-slot
+    initConnects();
 }
 
 void BluetoothManagerPrivate::resolve(const QDBusReply<QString> &req)
