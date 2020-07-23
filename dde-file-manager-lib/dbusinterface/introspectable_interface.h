@@ -31,7 +31,7 @@ public:
     { return "org.freedesktop.DBus.Introspectable"; }
 
 public:
-    IntrospectableInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    IntrospectableInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~IntrospectableInterface();
 

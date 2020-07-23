@@ -41,7 +41,7 @@ class TrashManager : public DAbstractFileController
     Q_OBJECT
 
 public:
-    explicit TrashManager(QObject *parent = 0);
+    explicit TrashManager(QObject *parent = nullptr);
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
 
@@ -55,8 +55,8 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
-    static bool restoreTrashFile(const DUrlList &list, DUrlList *restoreOriginUrls = 0);
-    void cleanTrash(const QObject *sender = 0) const;
+    static bool restoreTrashFile(const DUrlList &list, DUrlList *restoreOriginUrls = nullptr);
+    void cleanTrash(const QObject *sender = nullptr) const;
 
     static bool isEmpty();
     static bool isWorking();

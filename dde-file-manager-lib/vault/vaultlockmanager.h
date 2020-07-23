@@ -74,6 +74,18 @@ public:
      */
     void resetConfig();
 
+    /**
+     * @brief isLockEventTriggered 是否存在已触发的锁定事件
+     * @return
+     */
+    bool isLockEventTriggered() const;
+
+    /**
+     * @brief clearLockEvent 清除锁定事件
+     */
+    void clearLockEvent();
+
+
 protected slots:
     /**
      * @brief processAutoLock 处理自动加锁
@@ -89,6 +101,17 @@ protected slots:
      * @brief slotUnlockVault 解锁状态槽函数
      */
     void slotUnlockVault(int msg);
+
+    /**
+     * @brief processLockEvent 处理加锁事件
+     */
+    void processLockEvent();
+
+    /**
+     * @brief slotLockEvent 上锁事件
+     * @param user
+     */
+    void slotLockEvent(const QString &user);
 
 protected:
     /**
@@ -114,6 +137,17 @@ protected:
      * @return
      */
     quint64 dbusGetSelfTime() const;
+
+    /**
+     * @brief dbusIsLockEventTriggered 是否存在已触发的锁定事件
+     * @return
+     */
+    bool dbusIsLockEventTriggered() const;
+
+    /**
+     * @brief dbusClearLockEvent 清除锁定事件
+     */
+    void dbusClearLockEvent();
 
 private:
     explicit VaultLockManager(QObject *parent = nullptr);

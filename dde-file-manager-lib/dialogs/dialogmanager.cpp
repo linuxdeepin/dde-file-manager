@@ -62,6 +62,7 @@
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
 #include "dialogs/dmultifilepropertydialog.h"
+#include "bluetooth/bluetoothtransdialog.h"
 #include "plugins/pluginmanager.h"
 #include "preview/previewinterface.h"
 #include "views/dfmopticalmediawidget.h"
@@ -293,12 +294,18 @@ void DialogManager::addJob(FileJob *job)
 }
 
 
-void DialogManager::removeJob(const QString &jobId)
+void DialogManager::removeJob(const QString &jobId, bool clearAllbuffer)
 {
+    if(clearAllbuffer && m_Opticaljobs.contains(jobId)) { // 最后的时候需要删除所有buffer的数据，否则形成脏数据
+            m_Opticaljobs.remove(jobId);
+            qDebug() << "remove job " << jobId << "from m_Opticaljobs";
+        }
+
     if (m_jobs.contains(jobId)) {
         FileJob *job = m_jobs.value(jobId);
-        if (job->getIsOpticalJob() && !job->getIsFinished()) {
+        if (!clearAllbuffer && job->getIsOpticalJob() && !job->getIsFinished()) {// 最后的时候需要删除所有buffer的数据，就不能再插入了
             m_Opticaljobs.insert(jobId, job); // 备份刻录、擦除任务以便再次点击光驱的时候可以激活当前进度
+            qDebug() << "insert job " << jobId << "to m_Opticaljobs";
         }
         job->setIsAborted(true);
         job->setApplyToAll(true);
@@ -485,6 +492,22 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     buttonTexts << tr("Confirm");
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
+{
+    // 获取父对话框字体特性
+    DDialog d(WindowManager::getWindowById(event.windowId()));
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("The file name must not contain .."));
+    QStringList buttonTexts;
+    buttonTexts << tr("Confirm");
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    // 设置对话框icon
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     int code = d.exec();
     return code;
@@ -1378,6 +1401,12 @@ int DialogManager::showMessageDialog(int messageLevel, const QString &message)
     return code;
 }
 
+void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
+{
+    BluetoothTransDialog *dlg = new BluetoothTransDialog;
+    dlg->setFiles(files);
+    dlg->show();
+}
 
 void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 {

@@ -143,6 +143,11 @@ FileJob::~FileJob()
     free(m_buffer);
 }
 
+FileJob::JobType FileJob::jobType()
+{
+    return m_jobType;
+}
+
 void FileJob::setStatus(FileJob::Status status)
 {
     m_status = status;
@@ -254,7 +259,7 @@ DUrlList FileJob::doCopy(const DUrlList &files, const DUrl &destination)
     DUrlList result = doMoveCopyJob(files, destination);
     if (!m_noPermissonUrls.isEmpty()) {
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
-        noPermissionEvent.setWindowId(getWindowId());
+        noPermissionEvent.setWindowId(static_cast<quint64>(getWindowId()));
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
     }
     m_noPermissonUrls.clear();
@@ -280,7 +285,7 @@ DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
 
     if (!m_noPermissonUrls.isEmpty()) {
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
-        noPermissionEvent.setWindowId(getWindowId());
+        noPermissionEvent.setWindowId(static_cast<quint64>(getWindowId()));
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
     }
 
@@ -480,7 +485,7 @@ void FileJob::doDelete(const DUrlList &files)
     qDebug() << "Do delete is done!";
     if (!m_noPermissonUrls.isEmpty()) {
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
-        noPermissionEvent.setWindowId(getWindowId());
+        noPermissionEvent.setWindowId(static_cast<quint64>(getWindowId()));
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
     }
     m_noPermissonUrls.clear();
@@ -1384,7 +1389,7 @@ void FileJob::jobUpdated()
             jobDataDetail.insert("progress", QString::number(1));
         } else {
             if (m_finishedCount > 0 && m_finishedCount < m_allCount && m_allCount > 0)
-                jobDataDetail.insert("progress", QString::number((double)m_finishedCount / m_allCount));
+                jobDataDetail.insert("progress", QString::number(static_cast<double>(m_finishedCount) / m_allCount));
         }
     } else {
         if (!m_isFinished) {
@@ -1407,7 +1412,7 @@ void FileJob::jobUpdated()
                     m_totalSize = m_bytesCopied;
                     cancelled();
                 } else {
-                    int remainTime = (m_totalSize - m_bytesCopied) / m_bytesPerSec;
+                    int remainTime = static_cast<int>((m_totalSize - m_bytesCopied) / m_bytesPerSec);
 
                     if (remainTime < 60) {
                         jobDataDetail.insert("remainTime", tr("%1 s").arg(QString::number(remainTime)));
@@ -1682,8 +1687,8 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     int out_fd = 0;
 #else
     if (!m_bufferAlign) {
-        m_buffer = (char *) malloc(Data_Block_Size + getpagesize());
-        m_bufferAlign = ptr_align(m_buffer, getpagesize());
+        m_buffer = static_cast<char*>(malloc(static_cast<size_t>(Data_Block_Size + getpagesize())));
+        m_bufferAlign = ptr_align(m_buffer, static_cast<size_t>(getpagesize()));
     }
 #endif
 
@@ -1932,11 +1937,11 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
     }
 
     GError *error;
-    GFile *source = NULL, *target = NULL;
+    GFile *source = nullptr, *target = nullptr;
     GFileCopyFlags flags;
 
     flags = static_cast<GFileCopyFlags>(G_FILE_COPY_NONE | G_FILE_COPY_ALL_METADATA);
-    error = NULL;
+    error = nullptr;
     bool result = false;
     while (true) {
         switch (m_status) {
@@ -1988,7 +1993,7 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
 
             if (!g_file_copy(source, target, flags, m_abortGCancellable, progress_callback, this, &error)) {
                 if (error) {
-                    qDebug() << error->message << g_file_error_from_errno(error->domain);
+                    qDebug() << error->message << g_file_error_from_errno(static_cast<gint>(error->domain));
                     if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)) {
                         m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
                     } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
@@ -2271,11 +2276,11 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
     }
 
     GError *error;
-    GFile *source = NULL, *target = NULL;
+    GFile *source = nullptr, *target = nullptr;
     GFileCopyFlags flags;
 
     flags = static_cast<GFileCopyFlags>(G_FILE_COPY_NONE | G_FILE_COPY_ALL_METADATA);
-    error = NULL;
+    error = nullptr;
 
     bool result = false;
 
@@ -2324,7 +2329,7 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
 
             if (!g_file_move(source, target, flags, m_abortGCancellable, progress_callback, this, &error)) {
                 if (error) {
-                    qDebug() << error->message << g_file_error_from_errno(error->domain);
+                    qDebug() << error->message << g_file_error_from_errno(static_cast<gint>(error->domain));
                     if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)) {
                         m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
                     } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
@@ -2731,13 +2736,13 @@ bool FileJob::deleteFileByGio(const QString &srcFile)
 {
 //    qDebug() << "delete file by gvfs" << srcFile;
     GFile *source;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     std::string std_srcPath = srcFile.toStdString();
     source = g_file_new_for_path(std_srcPath.data());
 
     bool result = false;
-    if (!g_file_delete(source, NULL, &error)) {
+    if (!g_file_delete(source, nullptr, &error)) {
         if (error) {
             qDebug() << error->message;
             g_error_free(error);

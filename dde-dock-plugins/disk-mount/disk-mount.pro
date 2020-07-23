@@ -16,28 +16,7 @@ DEFINES += QT_MESSAGELOGCONTEXT DFM_NO_FILE_WATCHER
 
 #unix: LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
 
-HEADERS += \
-    diskmountplugin.h \
-    diskcontrolwidget.h \
-    diskpluginitem.h \
-    diskcontrolitem.h \
-    $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.h \
-    $$PWD/../../dde-file-manager-lib/interfaces/dfmstandardpaths.h \
-    $$PWD/../../dde-file-manager-lib/interfaces/durl.h \
-    dattacheddeviceinterface.h \
-    dattachedudisks2device.h \
-    dattachedvfsdevice.h
-
-SOURCES += \
-    diskmountplugin.cpp \
-    diskcontrolwidget.cpp \
-    diskpluginitem.cpp \
-    diskcontrolitem.cpp \
-    $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.cpp \
-    $$PWD/../../dde-file-manager-lib/interfaces/dfmstandardpaths.cpp \
-    $$PWD/../../dde-file-manager-lib/interfaces/durl.cpp \
-    dattachedudisks2device.cpp \
-    dattachedvfsdevice.cpp
+include(src.pri)
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts

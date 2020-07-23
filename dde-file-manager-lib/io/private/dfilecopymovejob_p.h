@@ -28,6 +28,11 @@
 #include <QPointer>
 #include <QStack>
 #include <QElapsedTimer>
+#include <QThreadPool>
+#include <QMutex>
+#include <QFuture>
+
+#include "dfiledevice.h"
 
 typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
 
@@ -88,16 +93,16 @@ public:
 
     bool doProcess(const DUrl &from, DAbstractFileInfoPointer source_info, const DAbstractFileInfo *target_info);
     bool mergeDirectory(DFileHandler *handler, const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo);
-    bool doCopyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 1048576);
+    bool doCopyFile(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, int blockSize = 1048576);
     bool doRemoveFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo);
-    bool doRenameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo);
+    bool doRenameFile(DFileHandler *handler, const DAbstractFileInfoPointer &oldInfo, const DAbstractFileInfoPointer &newInfo);
     bool doLinkFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo, const QString &linkPath);
 
     bool process(const DUrl &from, const DAbstractFileInfo *target_info);
     bool process(const DUrl &from, const DAbstractFileInfoPointer &source_info, const DAbstractFileInfo *target_info);
-    bool copyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 1048576);
+    bool copyFile(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, int blockSize = 1048576);
     bool removeFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo);
-    bool renameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo);
+    bool renameFile(DFileHandler *handler, const DAbstractFileInfoPointer &oldInfo, const DAbstractFileInfoPointer &newInfo);
     bool linkFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo, const QString &linkPath);
 
     void beginJob(JobInfo::Type type, const DUrl &from, const DUrl &target);
@@ -111,6 +116,7 @@ public:
     void updateMoveProgress();
     void updateSpeed();
     void _q_updateProgress();
+    void countrefinesize(const qint64 &size);
 
     DFileCopyMoveJob *q_ptr;
 
@@ -165,10 +171,26 @@ public:
     bool countStatisticsFinished = false;
     // 线程id
     long tid = -1;
+//    QScopedPointer<DFileDevice> m_toDevice;
 
     qreal lastProgress = 0.01; // 上次刷新的进度
 
+    int currentthread = 0;
+
     bool btaskdailogclose = false;
+
+    bool brefine = true;
+    //优化盘内拷贝，启用的线程池
+    QThreadPool m_pool;
+    //优化拷贝时异步线程状态
+    bool bsysncstate = false;
+    //异步线程是否可以退出状体
+    bool bsysncquitstate = false;
+    QMutex m_sysncmutex;
+    bool bdestLocal = false;
+    qint64 refinecpsize = 0;
+    QMutex m_refinemutex;
+
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };

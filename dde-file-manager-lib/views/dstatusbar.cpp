@@ -74,16 +74,18 @@ void DStatusBar::initUI()
     m_selectedNetworkOnlyOneFolder = tr("%1 folder selected");
     m_layout = new QHBoxLayout(this);
 
-    QStringList seq;
-
-    for (int i(1); i != 91; ++i)
-        seq.append(QString(":/images/images/Spinner/Spinner%1.png").arg(i, 2, 10, QChar('0')));
-
     m_loadingIndicator = new DPictureSequenceView(this);
     m_loadingIndicator->setFixedSize(18, 18);
-    m_loadingIndicator->setPictureSequence(seq, true);
-    m_loadingIndicator->setSpeed(20);
-    m_loadingIndicator->hide();
+ #if 0 //性能优化，放到 setLoadingIncatorVisible函数处理
+     {
+         QStringList seq;
+         for (int i(1); i != 91; ++i)
+             seq.append(QString(":/images/images/Spinner/Spinner%1.png").arg(i, 2, 10, QChar('0')));
+         m_loadingIndicator->setPictureSequence(seq, true);
+     }
+ #endif
+     m_loadingIndicator->setSpeed(20);
+     m_loadingIndicator->hide();
 
     m_scaleSlider = new QSlider(this);
     m_scaleSlider->setOrientation(Qt::Horizontal);
@@ -498,8 +500,17 @@ void DStatusBar::setLoadingIncatorVisible(bool visible, const QString &tipText)
 {
     m_loadingIndicator->setVisible(visible);
 
-    if (visible)
+    if (visible){
+        if (!m_loadingIndicatorInited){
+            QStringList seq;
+            for (int i(1); i != 91; ++i)
+                seq.append(QString(":/images/images/Spinner/Spinner%1.png").arg(i, 2, 10, QChar('0')));
+            m_loadingIndicator->setPictureSequence(seq, true);
+            m_loadingIndicatorInited = true;
+        }
+
         m_loadingIndicator->play();
+    }
 
     if (!m_label)
         return;

@@ -137,6 +137,10 @@ public slots:
     void onShowRenameBar(const DFMUrlListBaseEvent &event)noexcept;
     void onTabBarCurrentIndexChange(const int &index)noexcept;
     void onReuqestCacheRenameBarState() const;
+    //! re-direct url when root directory renamed.
+    void onRequestRedirectUrl(const DUrl &tabRootUrl, const DUrl &newUrl);
+    //! close tab when root directory deleted.
+    void onRequestCloseTabByUrl(const DUrl &rootUrl);
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -147,7 +151,6 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-
     bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) override;
     QObject *object() const Q_DECL_OVERRIDE;
 

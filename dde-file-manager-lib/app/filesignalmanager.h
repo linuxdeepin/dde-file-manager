@@ -227,6 +227,12 @@ signals:
     // 强制刷新计算机页面
     void requestUpdateComputerView();
 
+    // 请求重定向tab页
+    void requestRedirectTabUrl(const DUrl &tabRootUrl, const DUrl &newUrl);
+
+    // 请求关闭tab页
+    void requestCloseTab(const DUrl &tabRootUrl);
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);

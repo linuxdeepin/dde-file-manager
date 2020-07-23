@@ -54,6 +54,21 @@ quint64 VaultClock::getSelfTime() const
     return m_selfTime;
 }
 
+bool VaultClock::isLockEventTriggered() const
+{
+    return m_isLockEventTriggerd;
+}
+
+void VaultClock::triggerLockEvent()
+{
+    m_isLockEventTriggerd = true;
+}
+
+void VaultClock::clearLockEvent()
+{
+    m_isLockEventTriggerd = false;
+}
+
 void VaultClock::tick()
 {
     m_selfTime++;

@@ -34,7 +34,7 @@ public:
     static OperatorRevocation *instance();
 
 protected:
-    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0) override;
+    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) override;
 
     OperatorRevocation();
 

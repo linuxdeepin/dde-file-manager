@@ -81,6 +81,13 @@ QCollator sortCollator;
 
 bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
+    //其他符号要排在最后，需要在中文前先做判断
+    if (DFMGlobal::startWithSymbol(str1)) {
+        if (!DFMGlobal::startWithSymbol(str2))
+            return order == Qt::DescendingOrder;
+    } else if (DFMGlobal::startWithSymbol(str2))
+        return order != Qt::DescendingOrder;
+
     if (DFMGlobal::startWithHanzi(str1)) {
         if (!DFMGlobal::startWithHanzi(str2)) {
             return order == Qt::DescendingOrder;
@@ -797,6 +804,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Separator
                    << MenuAction::DisplayAs
                    << MenuAction::SortBy
+                   << MenuAction::OpenAsAdmin
                    << MenuAction::OpenInTerminal
                    << MenuAction::Separator
                    << MenuAction::Paste
@@ -809,6 +817,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
+                       << MenuAction::OpenAsAdmin
                        << MenuAction::Separator
                        << MenuAction::Copy
                        << MenuAction::Separator
@@ -839,7 +848,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
             if (isDir()) {
                 actionKeys << MenuAction::OpenInNewWindow
-                           << MenuAction::OpenInNewTab;
+                           << MenuAction::OpenInNewTab
+                           << MenuAction::OpenAsAdmin;
             } else {
                 QSet<QString> mountable = {"application/x-cd-image", "application/x-iso9660-image"};
                 if (mountable.contains(mimeTypeName())) {

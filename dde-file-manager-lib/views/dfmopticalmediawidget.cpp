@@ -25,8 +25,9 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QStandardPaths>
-
+#include <QProcess>
 #include <QFile>
+#include <glob.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -81,6 +82,8 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 
     connect(d->pb_burn, &DPushButton::clicked, this, [=] {
+        QDir::Filters filter = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+
         DUrl urlOfStage = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
                                               + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/', '_') + "/");
         // 1、获取暂存区内文件列表信息，去除与当前光盘中有交集的部分（当前 isomaster 库不提供覆盖写入的选项，后或可优化）
@@ -90,12 +93,12 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             return;
         }
         // 如果放入空盘是没有挂载点的，此时给QDir传入空的path将导致QDir获取到的是程序运行目录的Dir，之后的去重会产生不正常的结果
-        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(filter);
 
         QDir dirStage(urlOfStage.path());
         if (!dirStage.exists())
             return;
-        QFileInfoList lstFilesInStage = dirStage.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        QFileInfoList lstFilesInStage = dirStage.entryInfoList(filter);
         if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
@@ -112,7 +115,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
                 if (fStage.fileName() != fOn.fileName())
                     continue;
 
-                if (fStage.isFile())
+                if (fStage.isFile() || fStage.isSymLink())
                     dirStage.remove(fStage.fileName());
                 else {
                     if (!bDeletedValidFile)
@@ -122,7 +125,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             }
         }
 
-        lstFilesInStage = dirStage.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        lstFilesInStage = dirStage.entryInfoList(filter);
         if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
@@ -235,7 +238,7 @@ void DFMOpticalMediaWidget::setDiscMountPoint(const QString &strMntPath)
 
 bool DFMOpticalMediaWidget::hasFileInDir(QDir dir)
 {
-    QFileInfoList lstFiles = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries);
+    QFileInfoList lstFiles = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::System);
     foreach (QFileInfo f, lstFiles) {
         if (f.isFile())
             return true;
@@ -346,6 +349,7 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
 
     QString cachePath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + strKey;
     DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].cachePath = cachePath;
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].bLoading = false;
 
     qDebug() << "get " << strKey <<" catch path:" << cachePath;
 }

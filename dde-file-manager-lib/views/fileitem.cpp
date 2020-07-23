@@ -112,7 +112,8 @@ FileIconItem::FileIconItem(QWidget *parent) :
         QString tmpText = text;
         text = DFMGlobal::preprocessingFileName(text);
         if (tmpText != text){
-            showAlertMessage(tr("Contains invalid characters (any of \\ /: *? \"< >|)"));
+            // 修改文件的命名规则
+            showAlertMessage(tr("Contains invalid characters (any of \"\'/\\[]:|<>+=;,?*)"));
         }
 
         QVector<uint> list = text.toUcs4();

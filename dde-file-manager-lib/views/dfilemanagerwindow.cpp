@@ -76,6 +76,7 @@
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
 
+#include <QScreen>
 #include <QStatusBar>
 #include <QFrame>
 #include <QVBoxLayout>
@@ -421,6 +422,25 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     bool ok = false;
 
     if (current_view) {
+        // 为了解决 bug 34363: [4K屏]下且[缩放]，[ICON视图]下[浏览大量文件]，同时[疯狂滚动 scrollbar] 导致的崩溃问题
+        auto fileView = dynamic_cast<DFileView*>(current_view);
+        if (fileView && fileView->isIconViewMode()) {
+            auto model = fileView->model();
+            if (model) {
+                auto state = model->state();
+                // busy 状态说明文件太多，还没加载完
+                if (state == DFileSystemModel::Busy) {
+                    // 目前系统缩放区间为 [1.0, 2.75], ratio > 1.0 则为缩放, 目前 1.0 没有出现崩溃
+                    qreal ratio = qApp->primaryScreen()->devicePixelRatio();
+                    if (ratio > 1.0) {
+                        // 如果疯狂滚动，那么Qt可能会由于绘制的原因崩溃，因此在切换前选中第一个item
+                        // 这样界面就不会处于一个疯狂刷新绘制的状态，即不会调用绘制的函数，因此避免了绘制崩溃的问题
+                        fileView->setCurrentIndex(model->index(0, 0));
+                    }
+                }
+            }
+        }
+
         ok = current_view->setRootUrl(fileUrl);
 
         if (ok) {
@@ -527,13 +547,20 @@ DFileManagerWindow::DFileManagerWindow(QWidget *parent)
 {
 }
 
+QPair<bool,QMutex> winId_mtx;   //异步初始化win插件
 DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
     /// init global AppController
     setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-
+    if (!winId_mtx.first){
+        //等待异步加载完成
+        winId_mtx.second.lock();
+        winId_mtx.first = true;
+        winId_mtx.second.unlock();
+    }
+    winId();
     initData();
     initUI();
     initConnect();
@@ -1055,7 +1082,7 @@ void DFileManagerWindow::initTitleBar()
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
-    menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
+    menu->setEventData(DUrl(), DUrlList() << DUrl(),winId(), this);
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
@@ -1317,6 +1344,10 @@ void DFileManagerWindow::initConnect()
                 d->detailView->setTagWidgetVisible(false);
         }
     });
+
+    //! redirect when tab root url changed.
+    QObject::connect(fileSignalManager, &FileSignalManager::requestRedirectTabUrl, this, &DFileManagerWindow::onRequestRedirectUrl);
+    QObject::connect(fileSignalManager, &FileSignalManager::requestCloseTab, this, &DFileManagerWindow::onRequestCloseTabByUrl);
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
@@ -1366,6 +1397,48 @@ void DFileManagerWindow::onReuqestCacheRenameBarState()const
 {
     const DFileManagerWindowPrivate *const d{ d_func() };
     DFileManagerWindow::renameBarState = d->renameBar->getCurrentState();//###: record current state, when a new window is created from a already has tab.
+}
+
+void DFileManagerWindow::onRequestRedirectUrl(const DUrl &tabRootUrl, const DUrl &newUrl)
+{
+    D_D(DFileManagerWindow);
+
+    int curIndex = d->tabBar->currentIndex();
+    int tabCount = d->tabBar->count();
+    if (tabCount > 1) {
+        for (int i = 0; i < tabCount; i++) {
+            Tab *tab = d->tabBar->tabAt(i);
+            if (tabRootUrl == tab->fileView()->rootUrl()) {
+                onRequestCloseTab(i, false);
+                openNewTab(newUrl);
+                d->tabBar->setCurrentIndex(curIndex);
+            }
+        }
+    }
+}
+
+void DFileManagerWindow::onRequestCloseTabByUrl(const DUrl &rootUrl)
+{
+    D_D(DFileManagerWindow);
+
+    int originIndex = d->tabBar->currentIndex();
+    if (d->tabBar->count() > 1) {
+        for (int i = 0; i < d->tabBar->count(); i++) {
+            Tab *tab = d->tabBar->tabAt(i);
+            if (tab->fileView()) {
+                if (rootUrl == tab->fileView()->rootUrl()) {
+                    onRequestCloseTab(i, false);
+                    i--;
+                }
+            }
+        }
+        int curIndex = d->tabBar->currentIndex();
+        if (curIndex != originIndex) {
+            if (originIndex < d->tabBar->count()) {
+                d->tabBar->setCurrentIndex(originIndex);
+            }
+        }
+    }
 }
 
 void DFileManagerWindow::showEvent(QShowEvent *event)

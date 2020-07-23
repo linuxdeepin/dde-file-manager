@@ -417,7 +417,7 @@ void Desktop::FixGeometry(int screenNum)
     QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
     if (screens.size() > screenNum && screenNum >= 0){
         ScreenPointer sp = screens[screenNum];
-        emit ScreenMrg->sigScreenGeometryChanged(sp,sp->geometry());
+        emit ScreenMrg->sigScreenGeometryChanged();
     }
 }
 

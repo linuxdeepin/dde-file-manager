@@ -67,6 +67,9 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
                                                             QRegularExpression::DontCheckSubjectStringMatchOption);
 
         bMatchExtension = match.hasMatch();
+    } else {
+        bMatchExtension = (fileInfo.absoluteFilePath() == QString("/sys/kernel/security/apparmor/revision") ||
+                           fileInfo.absoluteFilePath() == QString("/sys/power/wakeup_count"))? true : false;
     }
     if (DStorageInfo::isLowSpeedDevice(path) || bMatchExtension) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);

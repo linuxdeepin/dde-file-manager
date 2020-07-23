@@ -164,6 +164,7 @@ public:
         CreateSymlink,
         SendToDesktop,
         SendToRemovableDisk,
+        SendToBluetooth,
         AddToBookMark,
         Delete,
         Property,
@@ -343,6 +344,12 @@ public:
     template<typename T>
     static bool startWithHanzi(T)
     { return false;}
+    /**
+     * @brief startWithSymbol 判断字符串是由符号开头
+     * @param text
+     * @return
+     */
+    static bool startWithSymbol(const QString &text);
 
     static bool keyShiftIsPressed();
     static bool keyCtrlIsPressed();

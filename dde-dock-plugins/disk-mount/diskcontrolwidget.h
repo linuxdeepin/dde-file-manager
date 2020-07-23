@@ -52,6 +52,7 @@ public:
 
     const QList<QExplicitlySharedDataPointer<DGioMount> > getVfsMountList();
     static void NotifyMsg(QString msg);
+    static void NotifyMsg(QString title, QString msg);
 
 signals:
     void diskCountChanged(const int count) const;

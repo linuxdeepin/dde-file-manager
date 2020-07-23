@@ -67,8 +67,8 @@ QStringList parentPathList(const QString &path)
     QStringList list;
     QDir dir(path);
 
-    //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
-    if (!(dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath()))) {
+    //! fixed the bug that directory not refresh when same pathes in the list.
+    if (!(isPathWatched(dir.absolutePath()))) {
         list << path;
     }
 
@@ -80,8 +80,8 @@ QStringList parentPathList(const QString &path)
         dir.mkdir(path);
 
     while (dir.cdUp()) {
-        //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
-        if (dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath())) {
+        //! fixed the bug that directory not refresh when same pathes in the list.
+        if (isPathWatched(dir.absolutePath())) {
             continue;
         }
         list << dir.absolutePath();

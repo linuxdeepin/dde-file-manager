@@ -114,7 +114,7 @@ template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
 const char *empty_recent_file =
-        R"|(<?xml version="1.0" encoding="UTF-8"?>
+    R"|(<?xml version="1.0" encoding="UTF-8"?>
         <xbel version="1.0"
         xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
         xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
@@ -185,7 +185,13 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
             }
             lstUrls << u;
         }
-        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
+
+        //! bug 38585 判断是不是保险箱以及是否是解锁状态，如果是就发送processEventAsync事件OpenInCurrentWindow走解锁流程
+        if (VaultController::ins()->state() != VaultController::Unlocked && lstUrls.size() == 1 && lstUrls.first().isVaultFile()) {
+            DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+        } else {
+            DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
+        }
     } else {
         //fix bug 30506 ,异步处理网路文件很卡的情况下，快速点击会崩溃，或者卡死
         if (urls.size() > 0 && FileUtils::isGvfsMountFile(urls.first().path())) {
@@ -409,9 +415,10 @@ void AppController::actionCopy(const QSharedPointer<DFMUrlListBaseEvent> &event)
 void AppController::actionPaste(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     // QTimer::singleshot目的: 多窗口下粘贴，右键拖动标题栏
-    QTimer::singleShot(0, [event] () {
+    QTimer::singleShot(0, [event]() {
         fileService->pasteFileByClipboard(event->sender(), event->url());
-    });}
+    });
+}
 
 void AppController::actionRename(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
@@ -458,6 +465,15 @@ void AppController::actionSendToDesktop(const QSharedPointer<DFMUrlListBaseEvent
     fileService->sendToDesktop(event->sender(), event->urlList());
 }
 
+void AppController::actionSendToBluetooth()
+{
+    QAction *act = dynamic_cast<QAction *>(sender());
+    if (!act)
+        return;
+    DUrlList urlList = DUrl::fromStringList(act->property("urlList").toStringList());
+    fileService->sendToBluetooth(urlList);
+}
+
 void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     fileService->addToBookmark(event->sender(), event->url());
@@ -472,7 +488,7 @@ void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event
 
 void AppController::actionSelectAll(quint64 winId)
 {
-    emit fileSignalManager->requestViewSelectAll(winId);
+    emit fileSignalManager->requestViewSelectAll(static_cast<int>(winId));
 }
 
 void AppController::actionClearRecent(const QSharedPointer<DFMMenuActionEvent> &event)
@@ -507,28 +523,28 @@ void AppController::actionClearTrash(const QObject *sender)
 
 void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    int windowId = event->windowId();
+    quint64 windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
     FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Document"), "doc", windowId);
 }
 
 void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    int windowId = event->windowId();
+    quint64 windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
     FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Spreadsheet"), "xls", windowId);
 }
 
 void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    int windowId = event->windowId();
+    quint64 windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
     FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Presentation"), "ppt", windowId);
 }
 
 void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    int windowId = event->windowId();
+    quint64 windowId = event->windowId();
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
     FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Text"), "txt", windowId);
 }
@@ -569,11 +585,12 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
-        QtConcurrent::run([=] {
+        QtConcurrent::run([ = ] {
             QMutexLocker locker(getOpticalDriveMutex()); //bug 31318 refine
 
             DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(fileUrl.query());
-            if (dp.devid.length() == 0) {
+            if (dp.devid.length() == 0)
+            {
                 if (blkdev->mountPoints().size()) {
                     blkdev->unmount({});
                 }
@@ -593,7 +610,8 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
                 ISOMaster->releaseDevice();
             }
 
-            if (!dp.formatted) {
+            if (!dp.formatted)
+            {
                 //blkdev->mount({});
                 //We have to stick with 'UDisk'Listener until actionOpenDiskInNew*
                 //stops relying on doSubscriberAction...
@@ -613,7 +631,7 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
     args << archiveuri;
     QProcess *gioproc = new QProcess;
     gioproc->start("gio", args);
-    connect(gioproc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
+    connect(gioproc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [ = ](int ret) {
         if (ret) {
             dialogManager->showErrorDialog(tr("Mount error: unsupported image format"), QString());
         } else {
@@ -692,7 +710,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
             if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
-                QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection,
+                                          Q_ARG(QString, tr("The device was not safely removed")),  Q_ARG(QString, tr("Click \"Safely Remove\" and then disconnect it next time")));
             } else {
                 bool err = false;
                 QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
@@ -727,7 +746,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                     // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
                     if (dbusError.isValid() && dbusError.type() != QDBusError::Other) {
                         qDebug() << "disc eject error: " << dbusError.message() << dbusError.name() << dbusError.type();
-                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection,
+                                                  Q_ARG(QString, tr("The device was not safely removed")), Q_ARG(QString, tr("Click \"Safely Remove\" and then disconnect it next time")));
                     }
                 }
             }
@@ -848,7 +868,7 @@ void AppController::actionNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &e
 
 void AppController::actionExit(quint64 winId)
 {
-    emit fileSignalManager->aboutToCloseLastActivedWindow(winId);
+    emit fileSignalManager->aboutToCloseLastActivedWindow(static_cast<int>(winId));
 }
 
 void AppController::actionSetAsWallpaper(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -940,10 +960,10 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
 void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showOpticalBlankConfirmationDialog, DFMUrlBaseEvent(event->sender(), event->url())) == DDialog::Accepted) {
-        QtConcurrent::run([=] {
+        QtConcurrent::run([ = ] {
             FileJob *job = new FileJob(FileJob::OpticalBlank);
             job->moveToThread(qApp->thread());
-            job->setWindowId(event->windowId());
+            job->setWindowId(static_cast<int>(event->windowId()));
             dialogManager->addJob(job);
 
             DUrl dev(event->url());
@@ -1362,6 +1382,7 @@ void AppController::createDBusInterface()
                                                             this);
 
     QtConcurrent::run(QThreadPool::globalInstance(), [&] {
+        m_creatingDBusInterface = true;
         QDBusPendingReply<QString> reply = m_introspectableInterface->Introspect();
         reply.waitForFinished();
         if (reply.isFinished())
@@ -1373,13 +1394,14 @@ void AppController::createDBusInterface()
             } else {
                 qDebug() << "com.deepin.SessionManager : StartManager doesn't have LaunchApp interface";
             }
+            m_creatingDBusInterface = false;
         }
     });
 }
 
-void AppController::showErrorDialog(const QString content)
+void AppController::showErrorDialog(const QString &title, const QString &content)
 {
-    dialogManager->showErrorDialog(content, QString());
+    dialogManager->showErrorDialog(title, content);
 }
 
 void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
@@ -1389,9 +1411,14 @@ void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
 
 bool AppController::hasLaunchAppInterface() const
 {
-    while (!m_hasLaunchAppInterface) {
+    //如果正在加载dbus接口，则稍等
+    int times = 10;
+    while (m_creatingDBusInterface && times > 0) {
         qDebug() << "LaunchAppInterface is loading...";
+        QThread::msleep(100);
+        times--;
     }
+
     return m_hasLaunchAppInterface;
 }
 
@@ -1411,13 +1438,13 @@ void UnmountWorker::doUnmount(const QString &blkStr)
     QDBusError err = blkdev->lastError();
     if (err.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
         qDebug() << "action timeout with noreply response";
-        emit unmountResult(tr("Action timeout, action is canceled"));
+        emit unmountResult(tr("Action timeout, action is canceled"), "");
     }
     // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
     // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
     else if (err.isValid() && err.type() != QDBusError::Other) {
         qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-        emit unmountResult(tr("Disk is busy, cannot unmount now"));
+        emit unmountResult(tr("Disk is busy, cannot unmount now"), "");
     }
 }
 
@@ -1438,7 +1465,7 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
 
         if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
             qDebug() << "action timeout with noreply response";
-            emit unmountResult(tr("Action timeout, action is canceled"));
+            emit unmountResult(tr("Action timeout, action is canceled"), "");
             return;
         }
 
@@ -1452,6 +1479,6 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
     drv->powerOff({});
     err |= drv->lastError().isValid();
     if (err) {
-        emit unmountResult(tr("Disk is busy, cannot eject now"));
+        emit unmountResult(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));
     }
 }

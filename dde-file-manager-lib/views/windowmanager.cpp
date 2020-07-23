@@ -223,7 +223,6 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 }
 
 
-
 quint64 WindowManager::getWindowId(const QWidget *window)
 {
     int winId = static_cast<int>(m_windows.value(window->topLevelWidget(), 0));
