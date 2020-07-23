@@ -25,6 +25,9 @@
 
 #include <QObject>
 
+/**
+ * @brief 蓝牙模块数据模型，管理所有的适配器，是一对多关系
+ */
 class BluetoothModel : public QObject
 {
     Q_OBJECT

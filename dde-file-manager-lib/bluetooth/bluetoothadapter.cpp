@@ -36,12 +36,18 @@ void BluetoothAdapter::setId(const QString &id)
 
 void BluetoothAdapter::setName(const QString &name)
 {
-    m_name = name;
+    if (name != m_name) {
+        m_name = name;
+        Q_EMIT nameChanged(name);
+    }
 }
 
 void BluetoothAdapter::setPowered(bool powered)
 {
-    m_powered = powered;
+    if (powered != m_powered) {
+        m_powered = powered;
+        Q_EMIT poweredChanged(powered);
+    }
 }
 
 QMap<QString, const BluetoothDevice *> BluetoothAdapter::devices() const
