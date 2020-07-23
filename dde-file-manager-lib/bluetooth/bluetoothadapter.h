@@ -26,6 +26,9 @@
 #include <QObject>
 #include <QMap>
 
+/**
+ * @brief 蓝牙模块适配器，管理终端的蓝牙设备，是一对多的关系
+ */
 class BluetoothAdapter : public QObject
 {
     Q_OBJECT
