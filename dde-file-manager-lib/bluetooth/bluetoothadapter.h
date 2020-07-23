@@ -51,6 +51,8 @@ public Q_SLOTS:
 Q_SIGNALS:
     void deviceAdded(const BluetoothDevice *device) const;
     void deviceRemoved(const QString &deviceId) const;
+    void nameChanged(const QString &name) const;
+    void poweredChanged(const bool &powered) const;
 
 private:
     QString m_id;

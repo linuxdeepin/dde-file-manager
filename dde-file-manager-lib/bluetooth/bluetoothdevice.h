@@ -58,6 +58,12 @@ public:
     inline State state() const { return m_state; }
     void setState(const State &state);
 
+Q_SIGNALS:
+    void nameChanged(const QString &name) const;
+    void aliasChanged(const QString &alias) const;
+    void pairedChanged(const bool &paired) const;
+    void stateChanged(const State &state) const;
+    void trustedChanged(const bool trusted) const;
 
 private:
     QString m_id;
