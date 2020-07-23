@@ -1178,8 +1178,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
                 return;
             }
-        } else if(DFMGlobal::keyShiftIsPressed()){  // 如果按住shit键，鼠标左键点击某项
-            if(!selectionModel()->isSelected(index)){   // 如果该项没有被选择
+        } else if (DFMGlobal::keyShiftIsPressed()) { // 如果按住shit键，鼠标左键点击某项
+            if (!selectionModel()->isSelected(index)) { // 如果该项没有被选择
                 DListView::mousePressEvent(event);  // 选择该项
             }
         }
@@ -1717,12 +1717,11 @@ void DFileView::dropEvent(QDropEvent *event)
     //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
     QWidget *parentptr = parentWidget();
     QWidget *curwindow = nullptr;
-    while(parentptr)
-    {
+    while (parentptr) {
         curwindow = parentptr;
         parentptr = parentptr->parentWidget();
     }
-    if (curwindow){
+    if (curwindow) {
         qApp->setActiveWindow(curwindow);
     }
 
@@ -3238,6 +3237,11 @@ void DFileViewPrivate::doFileNameColResize()
         int targetWidth = q->width() - columnWidthSumOmitFileName;
         if (targetWidth >= headerView->minimumSectionSize()) {
             headerView->resizeSection(fileNameColRole, q->width() - columnWidthSumOmitFileName);
+        } else {
+            // fix bug#39026 文件管理器列表视图的窗口拖至最窄，点击最大化，点击还原，文管窗口未自适应大小
+            // 当文管窗口拖至最窄时，targetWidth的值小于headerView->minimumSectionSize()（80），
+            // 所以不会走上面的if，导致还原时显示的还是最大化时候的值
+            headerView->resizeSection(fileNameColRole, headerView->minimumSectionSize());
         }
     }
 }
