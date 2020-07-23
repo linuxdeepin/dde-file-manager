@@ -491,9 +491,12 @@ void DTaskDialog::removeTaskByPath(QString jobId)
     if (m_jobIdItems.contains(jobId)) {
         QListWidgetItem *item = m_jobIdItems.value(jobId);
         if (item) {
+            auto wid = m_taskListWidget->itemWidget(item);
             m_taskListWidget->removeItemWidget(item);
             m_taskListWidget->takeItem(m_taskListWidget->row(item));
             m_jobIdItems.remove(jobId);
+            if (wid)
+                wid->hide();
         }
 
         setTitle(m_taskListWidget->count());
