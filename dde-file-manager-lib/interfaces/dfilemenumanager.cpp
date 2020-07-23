@@ -433,6 +433,13 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         else {
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
+                if (0) { // 如果有蓝牙设备
+                    QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
+                    sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
+                    sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
+                    connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
+                }
+
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
                     QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
@@ -653,6 +660,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     actionKeys[MenuAction::SendToRemovableDisk] = QObject::tr("Send to");
+    actionKeys[MenuAction::SendToBluetooth] = QObject::tr("Send to bluetooth");
     actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
     actionKeys[MenuAction::Delete] = QObject::tr("Delete");
     actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Delete");
