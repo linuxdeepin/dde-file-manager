@@ -8,7 +8,7 @@ QT       += core dbus concurrent
 
 QT       -= gui
 
-TARGET = dde-file-manager-daemon
+TARGET = test-dde-file-manager-daemon
 CONFIG   += console
 CONFIG   -= app_bundle
 
@@ -41,8 +41,6 @@ INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
 DEFINES += QT_MESSAGELOGCONTEXT
 
 include(src.pri)
-SOURCES += \
-    main.cpp
 
 target.path = /usr/bin
 
@@ -63,3 +61,9 @@ INSTALLS += target poliktpolicy systembusconf services systemd_service
 DISTFILES += \
     dbusservice/fileoperation.xml \
     dbusservice/renamejob.xml
+
+QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
+QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
+
+include(../third-party/googletest/gtest_dependency.pri)
+include(tests/test.pri)

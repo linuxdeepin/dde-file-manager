@@ -15,5 +15,7 @@ remove_path="*/third-party/* *tests*"
 cp dde-dock-plugins/test-dde-disk-mount-plugin $build_dir/dde-dock-plugins/disk-mount
 ./third-party/test-prj-running.sh $build_dir/dde-dock-plugins/disk-mount test-dde-disk-mount-plugin "$extract_path" "$remove_path"
 
+#dde-file-manager-daemon 测试报告
+./third-party/test-prj-running.sh $build_dir/dde-file-manager-daemon test-dde-file-manager-daemon "$extract_path" "$remove_path"
 
 exit 0
