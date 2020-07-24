@@ -286,15 +286,21 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
         }
         break;
     }
-        case GridManager::soHidenSwitch:{
-            for (CanvasViewPointer view : m_canvasMap.values()){
-                view->updateHiddenItems();
-            }
-            break;
+    case GridManager::soHidenSwitch:{
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->updateHiddenItems();
         }
+        break;
+    }
+    case GridManager::soGsettingUpdate:{
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->delayModelRefresh();
+        }
+        break;
+    }
         //default处会报警告："warning: default label in switch which covers all enumeration values"
         //这里是全量case，因此为解决警告删除default
-        }
+    }
 }
 
 void CanvasViewManager::onSyncSelection(CanvasGridView *v, DUrlList selected)

@@ -918,6 +918,15 @@ class GridManagerPrivate
 public:
     GridManagerPrivate()
     {
+        //新需求gsetting控制桌面部分文件
+        m_desktopSettings = new DGioSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
+        QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+        DUrl desktopUrl = DUrl::fromLocalFile(desktopPath);
+        QDir dir(desktopUrl.toString());
+        m_gsettings <<dir.filePath("dde-home.desktop")
+                    <<dir.filePath("dde-trash.desktop")
+                    <<dir.filePath("dde-computer.desktop");
+
         m_desktopSettings = new DGioSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
         autoArrange = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoAlign).toBool();
 #ifdef ENABLE_AUTOMERGE  //sp2需求调整，屏蔽自动整理
@@ -1035,6 +1044,14 @@ public:
 
     void arrange(QStringList sortedItems)
     {
+        //过滤gsetting中配置的文件
+        for (auto &one : m_gsettings){
+            //todo:如果开放自动整理需要转化成真是路径做处理
+            DUrl tempUrl(one);
+            if(!GridManager::instance()->desktopFileShow(tempUrl, true))
+                sortedItems.removeOne(one);
+        }
+
         auto screenOrder = screenCode();
         QTime t;
         t.start();
@@ -1783,12 +1800,20 @@ public:
     bool                                                m_doneInit{false};
     DUrl                                                m_currentVirtualUrl{""};//保留当前屏幕上的扩展情况，用于插拔屏和分辨率变化等重新刷新图标位置
     DGioSettings                                        *m_desktopSettings{nullptr};
+    QStringList                                         m_gsettings;
 };
 
 GridManager::GridManager(): d(new GridManagerPrivate)
 {
     bool showHidden = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool();
     setWhetherShowHiddenFiles(showHidden);
+    //gsetting配置发生变化
+    connect(d->m_desktopSettings, &DGioSettings::valueChanged,this,[this](const QString & key, const QVariant & value){
+        Q_UNUSED(value)
+        QStringList desktopIconKey{"desktop-computer", "desktop-trash", "desktop-home-directory"};
+        if(desktopIconKey.contains(key))
+            emit this->sigSyncOperation(soGsettingUpdate);
+    });
 }
 
 GridManager::~GridManager()
@@ -1904,9 +1929,11 @@ void GridManager::initGridItemsInfos()
         QHash<QString,bool> indexHash;
 
         for (const DAbstractFileInfoPointer &df : infoList) {
-            QString path = df->fileUrl().toString();
-            list << path;
-            indexHash.insert(path,false);
+            auto path = df->fileUrl();
+            if(!GridManager::instance()->desktopFileShow(path, true))
+                continue;
+            list << path.toString();
+            indexHash.insert(path.toString(),false);
         }
         sortMainDesktopFile(list,sortRole,sortOrder); //按类型排序的特殊处理
         qDebug() << "sorted desktop items num" << list.size() << " time "<< t.elapsed();
@@ -1955,8 +1982,14 @@ void GridManager::initCustom(const QStringList &orderedItems, const QHash<QStrin
     delaySyncAllProfile();
 }
 
-void GridManager::initCustom(const QStringList &items)
+void GridManager::initCustom(QStringList &items)
 {
+    for (auto &one : d->m_gsettings){
+        DUrl tempUrl(one);
+        if(!GridManager::instance()->desktopFileShow(tempUrl, true))
+            items.removeOne(one);
+    }
+
     QHash<QString, bool> indexHash;
     for (const QString &item : items){
         indexHash.insert(item, false);
@@ -1968,6 +2001,9 @@ void GridManager::initCustom(const QStringList &items)
 bool GridManager::add(int screenNum, const QString &id)
 {
     Q_UNUSED(screenNum)
+    DUrl tempUrl(id);
+    if(!GridManager::instance()->desktopFileShow(tempUrl,true))
+        return true;
     for (int screenNum : d->screenCode()) {
         if (d->m_itemGrids.value(screenNum).contains(id)){
             qDebug() << "item exist item" << screenNum << id;
@@ -2667,5 +2703,18 @@ bool GridManager::isGsettingShow(const QString &targetkey, const bool defaultVal
     if(!tempValue.isValid())
         return defaultValue;
     return tempValue.toBool();
+}
+
+bool GridManager::desktopFileShow(const DUrl &url, const bool defaultValue)
+{
+    if(!url.isValid())
+        return defaultValue;
+    if(0 == url.fileName().localeAwareCompare("dde-computer.desktop"))
+        return isGsettingShow("desktop-computer",true);
+    if(0 == url.fileName().localeAwareCompare("dde-trash.desktop"))
+        return isGsettingShow("desktop-trash",true);
+    if(0 == url.fileName().localeAwareCompare("dde-home.desktop"))
+        return isGsettingShow("desktop-home-directory",true);
+    return defaultValue;
 }
 #endif
