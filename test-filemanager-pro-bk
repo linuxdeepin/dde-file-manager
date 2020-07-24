@@ -11,4 +11,6 @@ SUBDIRS += \
     dde-file-manager-daemon/test-dde-file-manager-daemon.pro \
     dde-file-manager/test-dde-file-manager.pro \
     dde-file-manager-plugins/test-dde-file-manager-plugins.pro \
-    dde-file-manager-lib/test-dde-file-manager-lib.pro
+    dde-file-manager-lib/test-dde-file-manager-lib.pro \
+    dde-file-thumbnail-tool/test-dde-file-thumbnail-tool.pro \
+    deepin-anything-server-plugins/test-deepin-anything-server-plugins.pro \
