@@ -11,13 +11,8 @@ TEMPLATE = lib
 CONFIG += c++11 plugin
 
 include(../../../common/common.pri)
+include(dde-text-preview-plugin.pri)
 
-SOURCES += \
-    main.cpp \
-    textpreview.cpp
-
-HEADERS += \
-    textpreview.h
 DISTFILES += \
     dde-text-preview-plugin.json
 
