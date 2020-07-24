@@ -26,6 +26,9 @@
 #include <QObject>
 #include <QMap>
 
+/**
+ * @brief 蓝牙模块适配器，管理终端的蓝牙设备，是一对多的关系
+ */
 class BluetoothAdapter : public QObject
 {
     Q_OBJECT
@@ -51,6 +54,8 @@ public Q_SLOTS:
 Q_SIGNALS:
     void deviceAdded(const BluetoothDevice *device) const;
     void deviceRemoved(const QString &deviceId) const;
+    void nameChanged(const QString &name) const;
+    void poweredChanged(const bool &powered) const;
 
 private:
     QString m_id;

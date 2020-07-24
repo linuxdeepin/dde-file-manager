@@ -23,15 +23,18 @@
 
 #include <QObject>
 
+/**
+ * @brief 蓝牙连接的终端设备，例如含有蓝牙模块的手机/电脑
+ */
 class BluetoothDevice : public QObject
 {
     Q_OBJECT
 
 public:
     enum State {
-        StateUnavailable = 0,
-        StateAvailable   = 1,
-        StateConnected   = 2
+        StateUnavailable = 0, // 未连接
+        StateAvailable   = 1, // 可链接
+        StateConnected   = 2  // 完成连接
     };
     Q_ENUM(State)
 
@@ -58,14 +61,20 @@ public:
     inline State state() const { return m_state; }
     void setState(const State &state);
 
+Q_SIGNALS:
+    void nameChanged(const QString &name) const;
+    void aliasChanged(const QString &alias) const;
+    void pairedChanged(const bool &paired) const;
+    void stateChanged(const State &state) const;
+    void trustedChanged(const bool trusted) const;
 
 private:
     QString m_id;
     QString m_name;
     QString m_alias;
-    QString m_icon;
-    bool m_paired;
-    bool m_trusted;
+    QString m_icon; // phone/computer
+    bool m_paired;  // 是否配对
+    bool m_trusted; // 是否信任该设备
     State m_state;
 };
 
