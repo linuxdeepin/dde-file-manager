@@ -52,8 +52,6 @@ signals:
 
 public slots:
     void mediaStatusChanged(QMediaPlayer::MediaStatus status);
-    void metaDataAvailableChanged(bool available);
-    void durationChanged(qint64 duration);
 
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
