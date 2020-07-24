@@ -1237,14 +1237,14 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
 
 void DFileView::updateModelActiveIndex()
 {
-    if(m_isRemovingCase) // bug202007010004：正在删除的时候，fileInfo->makeToActive() 第二次调用会 crash
+    if (m_isRemovingCase) // bug202007010004：正在删除的时候，fileInfo->makeToActive() 第二次调用会 crash
         return;
 
     Q_D(DFileView);
 
     const RandeIndexList randeList = visibleIndexes(QRect(QPoint(0, verticalScrollBar()->value()), QSize(size())));
 
-    if (randeList.isEmpty()){
+    if (randeList.isEmpty()) {
         m_isRemovingCase = false;
         return;
     }
@@ -1921,11 +1921,10 @@ bool DFileView::event(QEvent *e)
                 return DListView::event(e);
             e->accept();
 
-            if (keyEvent->modifiers() == Qt::ShiftModifier){
+            if (keyEvent->modifiers() == Qt::ShiftModifier) {
                 QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier);
                 keyPressEvent(&nkeyEvent);
-            }
-            else {
+            } else {
                 QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier);
                 keyPressEvent(&nkeyEvent);
             }
@@ -2206,8 +2205,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         //判断网络文件是否可以到达
         if (!DFileService::instance()->checkGvfsMountfileBusy(fileUrl)) {
             info = DFileService::instance()->createFileInfo(this, fileUrl);
-        }
-        else {
+        } else {
             info = nullptr;
         }
 
@@ -2225,8 +2223,8 @@ bool DFileView::setRootUrl(const DUrl &url)
 
         // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
         QString strVolTag = fileUrl.path().split("/", QString::SkipEmptyParts).count() >= 2
-                ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
-                : "";
+                            ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
+                            : "";
         if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
             emit fileSignalManager->activeTaskDlg();
             return false;
@@ -2260,7 +2258,8 @@ bool DFileView::setRootUrl(const DUrl &url)
                 // fix bug 27211 用户操作其他用户挂载的设备的时候，需要先卸载，卸载得提权，如果用户直接关闭了对话框，会返回错误代码 QDbusError::Other
                 // 需要对错误进行处理，出错的时候就不再执行后续操作了。
                 QDBusError err = blkdev->lastError();
-                if (err.isValid() && !err.name().toLower().contains("notmounted")) { // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
+                if (err.isValid() && !err.name().toLower().contains("notmounted"))   // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
+                {
 
                     qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
                     return false;
@@ -2315,7 +2314,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(this, rootUrl)) {
         QList<DUrl> ancestors;
         //判断网络文件是否可以到达
-        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl,false)) {
+        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl, false)) {
             if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
                 d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl);
             }
@@ -3159,6 +3158,11 @@ void DFileViewPrivate::doFileNameColResize()
         int targetWidth = q->width() - columnWidthSumOmitFileName;
         if (targetWidth >= headerView->minimumSectionSize()) {
             headerView->resizeSection(fileNameColRole, q->width() - columnWidthSumOmitFileName);
+        } else {
+            // fix bug#39026 文件管理器列表视图的窗口拖至最窄，点击最大化，点击还原，文管窗口未自适应大小
+            // 当文管窗口拖至最窄时，targetWidth的值为60，小于headerView->minimumSectionSize()（80），
+            // 所以不会走上面的if，导致还原时显示的还是最大化时候的值
+            headerView->resizeSection(fileNameColRole, headerView->minimumSectionSize());
         }
     }
 }
