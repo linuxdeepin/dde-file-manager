@@ -16,7 +16,7 @@ unix {
     isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
         message("Build arch:" $$ARCH)
 
-        DEFINES += ENABLE_DAEMON
+        #DEFINES += ENABLE_DAEMON
 
         DEFINES += ENABLE_ASYNCINIT
     } else {
@@ -36,7 +36,7 @@ unix {
 
         DEFINES += DISABLE_COMPRESS_PREIVEW
 
-        DEFINES += ENABLE_DAEMON
+        #DEFINES += ENABLE_DAEMON
 
         DEFINES += ENABLE_ASYNCINIT
     } else {

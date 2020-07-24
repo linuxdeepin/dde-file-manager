@@ -1297,9 +1297,10 @@ QString AppController::createFile(const QString &sourceFile, const QString &targ
 
     return QString();
 }
-
+#include "fileeventprocessor.h"
 AppController::AppController(QObject *parent) : QObject(parent)
 {
+    FileEventProcessor::Init();
     createGVfSManager();
     createUserShareManager();
     createDBusInterface();

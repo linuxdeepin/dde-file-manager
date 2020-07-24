@@ -16,6 +16,7 @@ DWIDGET_USE_NAMESPACE
 
 class DFMVaultRemovePages : public DFMVaultPageBase
 {
+     Q_OBJECT
 public:   
     static DFMVaultRemovePages* instance();
 

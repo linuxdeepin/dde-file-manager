@@ -44,11 +44,18 @@
 
 DFM_BEGIN_NAMESPACE
 
-static FileEventProcessor *eventProcessor = new FileEventProcessor();
+FileEventProcessor *FileEventProcessor::eventProcessor = nullptr;
 
 FileEventProcessor::FileEventProcessor()
 {
 
+}
+
+FileEventProcessor *FileEventProcessor::Init()
+{
+    if(eventProcessor == nullptr)
+        eventProcessor = new FileEventProcessor();
+    return eventProcessor;
 }
 
 static bool isAvfsMounted()

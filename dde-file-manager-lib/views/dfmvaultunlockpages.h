@@ -33,6 +33,8 @@ DWIDGET_USE_NAMESPACE
 
 class DFMVaultUnlockPages : public DFMVaultPageBase
 {
+
+    Q_OBJECT
 public:            
     static DFMVaultUnlockPages *instance();
 
