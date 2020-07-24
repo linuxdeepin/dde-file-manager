@@ -1048,11 +1048,13 @@ void DFileService::startQuryRootFile()
             changeRootFile(url,false);
         });
     }
-    else {
-        return;
-    }
+//    else {
+//        return;
+//    }
     qDebug() << "start thread    startQuryRootFile   ===== " << d_ptr->rootfilelist.size() << QThread::currentThread();
-    d_ptr->m_bRootFileInited.store(false);
+    if (!d_ptr->m_bRootFileInited.load()) {
+        d_ptr->m_bRootFileInited.store(false);
+    }
     //启用异步线程去读取
     d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
     connect(d_ptr->m_jobcontroller,&JobController::addChildren,this ,[this](const DAbstractFileInfoPointer &chi){
