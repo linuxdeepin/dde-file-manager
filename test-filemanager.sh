@@ -18,4 +18,12 @@ cp dde-dock-plugins/test-dde-disk-mount-plugin $build_dir/dde-dock-plugins/disk-
 #dde-file-manager-daemon 测试报告
 ./third-party/test-prj-running.sh $build_dir/dde-file-manager-daemon test-dde-file-manager-daemon "$extract_path" "$remove_path"
 
+#dde-file-manager-plugins 测试报告
+./third-party/test-prj-running.sh $build_dir/dde-file-manager-plugins/pluginPreview/dde-image-preview-plugin test-dde-image-preview-plugin "$extract_path" "$remove_path"
+./third-party/test-prj-running.sh $build_dir/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin test-dde-music-preview-plugin "$extract_path" "$remove_path"
+./third-party/test-prj-running.sh $build_dir/dde-file-manager-plugins/pluginPreview/dde-pdf-preview-plugin test-dde-pdf-preview-plugin "$extract_path" "$remove_path"
+./third-party/test-prj-running.sh $build_dir/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin test-dde-text-preview-plugin "$extract_path" "$remove_path"
+./third-party/test-prj-running.sh $build_dir/dde-file-manager-plugins/pluginPreview/dde-video-preview-plugin test-dde-video-preview-plugin "$extract_path" "$remove_path"
+
+
 exit 0
