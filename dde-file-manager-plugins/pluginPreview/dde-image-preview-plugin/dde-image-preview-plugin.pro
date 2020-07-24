@@ -13,15 +13,8 @@ CONFIG += plugin c++11 link_pkgconfig
 PKGCONFIG += dtkwidget dtkgui
 
 include(../../../common/common.pri)
+include(dde-image-preview-plugin.pri)
 
-SOURCES += \
-    imageview.cpp \
-    main.cpp \
-    imagepreview.cpp
-
-HEADERS += \
-    imageview.h \
-    imagepreview.h
 DISTFILES += dde-image-preview-plugin.json
 
 PLUGIN_INSTALL_DIR = $$PLUGINDIR/previews

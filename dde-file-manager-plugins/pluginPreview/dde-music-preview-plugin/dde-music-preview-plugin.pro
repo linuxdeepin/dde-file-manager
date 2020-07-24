@@ -14,17 +14,7 @@ PKGCONFIG += taglib
 CONFIG += c++11 plugin link_pkgconfig
 
 include(../../../common/common.pri)
-
-SOURCES += \
-    toolbarframe.cpp \
-    musicmessageview.cpp \
-    musicpreview.cpp \
-    main.cpp
-
-HEADERS += \
-    toolbarframe.h \
-    musicmessageview.h \
-    musicpreview.h
+include(dde-music-preview-plugin.pri)
 
 DISTFILES += dde-music-preview-plugin.json
 
@@ -37,5 +27,3 @@ unix {
     INSTALLS += target
 }
 
-RESOURCES += \
-    dde-music-preview-plugin.qrc
