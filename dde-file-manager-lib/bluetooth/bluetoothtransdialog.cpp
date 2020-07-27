@@ -28,7 +28,7 @@
 #define TXT_SENDING_SUCC BluetoothTransDialog::tr("Sent to \"%1\" successfully")
 #define TXT_SELECT_DEVIC BluetoothTransDialog::tr("Select a Bluetooth device to receive files")
 #define TXT_NO_DEV_FOUND BluetoothTransDialog::tr("Cannot find the connected Bluetooth device")
-#define TXT_WAIT_FOR_RCV BluetoothTransDialog::tr("Waiting for receiving, please wait...")
+#define TXT_WAIT_FOR_RCV BluetoothTransDialog::tr("Waiting to be received...")
 #define TXT_GOTO_BT_SETS BluetoothTransDialog::tr("Go to Bluetooth Settings")
 #define TXT_SEND_PROGRES BluetoothTransDialog::tr("%1/%2 Sent")
 #define TXT_ERROR_REASON BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected")
@@ -44,8 +44,9 @@
 #define PXMP_NO_DEV_LIGHT "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg"
 #define PXMP_NO_DEV_DARKY "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg"
 
-BluetoothTransDialog::BluetoothTransDialog(QWidget *parent)
+BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTransDialog::TransferMode mode, QString targetDevId, QWidget *parent)
     : DDialog(parent)
+    , m_urls(urls)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -57,8 +58,31 @@ BluetoothTransDialog::BluetoothTransDialog(QWidget *parent)
     updateDeviceList(); // 打开多个窗口的时候蓝牙设备不一定任何更新操作，因此这时依靠蓝牙状态的变更去更新列表不可取，手动获取一次列表
     bluetoothManager->refresh();
 
+    if (mode == DirectlySend)
+        sendFilesToDevice(targetDevId);
+
     // 调试布局
     //    setStyleSheet("border: 1px solid blue;");
+}
+
+void BluetoothTransDialog::sendFilesToDevice(const QString &devId)
+{
+    const BluetoothDevice *dev = nullptr;
+    QMapIterator<QString, const BluetoothAdapter *> iter(bluetoothManager->model()->adapters());
+    while (iter.hasNext()) {
+        iter.next();
+        dev = (iter.value()->deviceById(devId));
+        if (dev)
+            break;
+    }
+
+    if (!dev) {
+        qDebug() << "can not find device: " << devId;
+    } else {
+        m_selectedDevice = dev->alias();
+        m_selectedDeviceId = devId;
+        sendFiles();
+    }
 }
 
 void BluetoothTransDialog::initUI()
@@ -169,6 +193,7 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
             if (i == curr.row()) {
                 item->setCheckState(Qt::Checked);
                 m_selectedDevice = item->text();
+                m_selectedDeviceId = item->data(DevIdRole).toString();
             } else
                 item->setCheckState(Qt::Unchecked);
         }
@@ -359,7 +384,12 @@ DStandardItem *BluetoothTransDialog::getStyledItem(const BluetoothDevice *dev)
 
 DStandardItem *BluetoothTransDialog::findItemByIdRole(const BluetoothDevice *dev)
 {
-    const QString &id = dev->id();
+    return findItemByIdRole(dev->id());
+}
+
+DStandardItem *BluetoothTransDialog::findItemByIdRole(const QString &devId)
+{
+    const QString &id = devId;
     for (int i = 0; i < m_devModel->rowCount(); i++) {
         if (id == m_devModel->data(m_devModel->index(i, 0), DevIdRole).toString())
             return dynamic_cast<DStandardItem *>(m_devModel->item(i));
@@ -416,6 +446,22 @@ void BluetoothTransDialog::removeDevice(const QString &id)
     }
 }
 
+void BluetoothTransDialog::sendFiles()
+{
+    m_selectedDevice;
+    m_urls;
+
+    m_subTitleForWaitPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
+    m_subTitleOfTransPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
+    m_subTitleOfFailedPage->setText(TXT_SENDING_FAIL.arg(m_selectedDevice));
+    m_subTitleOfSuccessPage->setText(TXT_SENDING_SUCC.arg(m_selectedDevice));
+
+    m_stack->setCurrentIndex(WaitForRecvPage);
+    Q_EMIT startSpinner();
+
+    bluetoothManager->sendFile(m_selectedDeviceId, m_urls.first());
+}
+
 void BluetoothTransDialog::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event)
@@ -428,34 +474,19 @@ void BluetoothTransDialog::showBluetoothSetting()
 
 void BluetoothTransDialog::onBtnClicked(const int &nIdx)
 {
-    auto sendFile = [this] {
-        m_selectedDevice;
-        m_urls;
-
-        m_stack->setCurrentIndex(WaitForRecvPage);
-        Q_EMIT startSpinner();
-    };
-
     Page currpage = static_cast<Page>(m_stack->currentIndex());
     switch (currpage) {
     case SelectDevicePage:
         if (m_selectedDevice.isEmpty() && nIdx == 1)
             return;
         if (nIdx == 1)
-            sendFile();
-        else {
+            sendFiles();
+        else
             close();
-            return;
-        }
-
-        m_subTitleForWaitPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
-        m_subTitleOfTransPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
-        m_subTitleOfFailedPage->setText(TXT_SENDING_FAIL.arg(m_selectedDevice));
-        m_subTitleOfSuccessPage->setText(TXT_SENDING_SUCC.arg(m_selectedDevice));
         break;
     case FailedPage:
         if (nIdx == 1)
-            sendFile();
+            sendFiles();
         else
             close();
         break;
