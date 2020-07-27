@@ -33,9 +33,6 @@ class VaultAdaptor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.daemon.VaultManager")
     Q_CLASSINFO("D-Bus Introspection", ""
 "  <interface name=\"com.deepin.filemanager.daemon.VaultManager\">\n"
-"    <signal name=\"lockEventTriggered\">\n"
-"      <arg direction=\"out\" type=\"s\" name=\"user\"/>\n"
-"    </signal>\n"
 "    <method name=\"sysUserChanged\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"curUser\"/>\n"
 "    </method>\n"
@@ -77,7 +74,6 @@ public Q_SLOTS: // METHODS
     void sysUserChanged(const QString &curUser);
     void triggerLockEvent();
 Q_SIGNALS: // SIGNALS
-    void lockEventTriggered(const QString &user);
 };
 
 #endif
