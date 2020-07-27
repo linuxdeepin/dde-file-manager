@@ -49,13 +49,12 @@ class BluetoothTransDialog : public DDialog
 {
     Q_OBJECT
 public:
-    BluetoothTransDialog(QWidget *parent = nullptr);
+    enum TransferMode {
+        Default = 0, // 先选择设备再发送
+        DirectlySend // 直接发送到指定设备
+    };
 
-    /**
-     * @brief 设置要发送的文件列表
-     * @param urls 待发送的文件列表 url
-     */
-    void setFiles(const DUrlList &urls) { m_urls = urls; }
+    BluetoothTransDialog(const QStringList &urls, TransferMode mode = Default, QString targetDevId = QString(), QWidget *parent = nullptr);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -83,6 +82,7 @@ private:
      * @return
      */
     DStandardItem *findItemByIdRole(const BluetoothDevice *dev);
+    DStandardItem *findItemByIdRole(const QString &devId);
 
     /**
      * @brief updateDeviceList 初始化加载设备列表
@@ -101,6 +101,14 @@ private:
      */
     void removeDevice(const BluetoothDevice *dev);
     void removeDevice(const QString &id);
+
+    void sendFiles();
+
+    /**
+     * @brief sendFilesToDevice 直接发送文件到指定设备
+     * @param devId 接收方id
+     */
+    void sendFilesToDevice(const QString &devId);
 
 private Q_SLOTS:
     void showBluetoothSetting();
@@ -160,8 +168,9 @@ private:
     QTimer *timer = nullptr; // 流程测试用，后删
 
 private:
-    DUrlList m_urls; // 待发送文件
+    QStringList m_urls; // 待发送文件
     QString m_selectedDevice;
+    QString m_selectedDeviceId;
 
     QStringList m_connectedAdapter;
 };
