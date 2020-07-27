@@ -1002,6 +1002,16 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             QCoreApplication::sendEvent(this, &downKey);
             break;
         }
+        case Qt::Key_Escape: {
+            auto tmpUrl = DFMGlobal::instance()->fetchUrlsFromClipboard();
+            auto homePath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+            if(tmpUrl.size() > 0){
+                DAbstractFileInfoPointer tempInfo = DFileService::instance()->createFileInfo(nullptr, MergedDesktopController::convertToRealPath(tmpUrl.first()));
+                if(tempInfo->path() == homePath)
+                    DFMGlobal::instance()->clearClipboard();
+            }
+            break;
+        }
         default:
             break;
         }
