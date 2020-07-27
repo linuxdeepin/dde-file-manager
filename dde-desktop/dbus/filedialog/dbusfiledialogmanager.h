@@ -44,6 +44,8 @@ public:
     QStringList globPatternsForMime(const QString &mimeType) const;
     QStringList monitorFiles() const;
 
+    void showBluetoothTransDialog(const QString &id, const QStringList &URIs);
+
 private:
     void onDialogDestroy();
 

@@ -167,6 +167,11 @@ QStringList DBusFileDialogManager::monitorFiles() const
     return DFileWatcher::getMonitorFiles();
 }
 
+void DBusFileDialogManager::showBluetoothTransDialog(const QString &id, const QStringList &URIs)
+{
+    // todo: wait interface
+}
+
 void DBusFileDialogManager::onDialogDestroy()
 {
     const QDBusObjectPath &path = m_dialogObjectMap.key(QObject::sender());
