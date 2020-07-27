@@ -48,8 +48,6 @@ BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTra
     : DDialog(parent)
     , m_urls(urls)
 {
-    setAttribute(Qt::WA_DeleteOnClose);
-
     // 测试进度条
     timer = new QTimer(this);
 
