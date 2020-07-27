@@ -292,6 +292,7 @@ public:
     static void initOperatorRevocation();
     static void initTagManagerConnect();
     static void initThumbnailConnection();
+    static void initBluetoothManager();
 
     static QString getUser();
     static int getUserId();

@@ -281,7 +281,7 @@ BluetoothManager::BluetoothManager(QObject *parent)
     : QObject(parent),
       d_ptr(new BluetoothManagerPrivate(this))
 {
-
+    refresh();
 }
 
 

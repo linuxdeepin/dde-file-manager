@@ -256,6 +256,8 @@ int main(int argc, char *argv[])
         qDebug() << "end initDeviceListener" <<  gTime.elapsed(); //高耗时
         DFMGlobal::initGvfsMountManager();
         qDebug() << "end initGvfsMountManager and load plugin" <<  gTime.elapsed();
+        DFMGlobal::initBluetoothManager();
+        qDebug() << "end initBluetoothManager" << gTime.elapsed();
     });
 #if 0
     qDebug() << "begin load plugin " <<  gTime.elapsed();
