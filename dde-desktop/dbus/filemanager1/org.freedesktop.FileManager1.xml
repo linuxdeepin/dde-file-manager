@@ -17,6 +17,9 @@
     <method name='Trash'>
         <arg type='as' name='URIs' direction='in'/>
     </method>
+    <signal name="lockEventTriggered">
+      <arg name="user" type="s" direction="out"/>
+    </signal>
     <method name="topTaskDialog">
       <arg type="b" direction="out"/>
     </method>
