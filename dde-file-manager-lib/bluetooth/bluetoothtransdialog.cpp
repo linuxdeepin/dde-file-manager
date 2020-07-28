@@ -561,3 +561,8 @@ void BluetoothTransDialog::connectDevice(const BluetoothDevice *dev)
         }
     });
 }
+
+void BluetoothTransDialog::onAcceptFiles()
+{
+    m_stack->setCurrentIndex(TransferPage);
+}

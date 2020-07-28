@@ -190,6 +190,12 @@ void BluetoothManagerPrivate::initConnects()
             }
         }
     });
+
+    //#ifdef BLUETOOTH_ENABLE
+    //    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferCreated, q, [this](int idx, const QString &file, const QDBusObjectPath &transfer){
+    //        qDebug() << idx << file << transfer.path();
+    //    });
+    //#endif
 }
 
 void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJsonObject &adapterObj)
@@ -343,27 +349,23 @@ bool BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
     }
 
     // /org/bluez/hci0/dev_90_63_3B_DA_5A_4C  --》  90:63:3B:DA:5A:4C
-    QString strNewId = id;
-    strNewId.remove(QRegularExpression("/org/bluez/hci[0-9]/dev_")).replace("_", ":");
+    QString newId = id;
+    newId.remove(QRegularExpression("/org/bluez/hci[0-9]*/dev_")).replace("_", ":");
 
-    if (!d->m_bluetoothInter->isValid())
+    QDBusInterface interface(BluetoothService, BluetoothPath, BluetoothService, QDBusConnection::sessionBus());
+    if (!interface.isValid()) {
+        qDebug() << qPrintable(QDBusConnection::sessionBus().lastError().message());
         return false;
-    QDBusPendingCall call = d->m_bluetoothInter->SendFiles(strNewId, filePath);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [=] {
-        if (!call.isError()) {
-            QDBusReply<QString> reply = call.reply();
-            d->resolve(reply);
-        } else {
-            qWarning() << call.error().message();
-        }
-    });
+    }
+
+    QDBusMessage msg = interface.call("SendFiles", newId, filePath);
+    qDebug() << msg.errorName() << msg.errorMessage();
     return true;
 }
 
 bool BluetoothManager::interfaceExists(const QString &path, const QString &method)
 {
-    QDBusInterface ud2("com.deepin.daemon.Bluetooth", path, "org.freedesktop.DBus.Introspectable", QDBusConnection::sessionBus());
+    QDBusInterface ud2(BluetoothService, path, "org.freedesktop.DBus.Introspectable", QDBusConnection::sessionBus());
     QDBusReply<QString> reply = ud2.call("Introspect");
     QXmlStreamReader xml_parser(reply.value());
 
