@@ -216,11 +216,13 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
     // 异步获取适配器的所有设备
     QDBusObjectPath dPath(path);
     QDBusPendingCall call = m_bluetoothInter->GetDevices(dPath);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, q);
-    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, q, [this, adapterPointer, call] {
-        if (!adapterPointer)
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, q, [this, watcher, adapterPointer, call] {
+        if (!adapterPointer) {
+            qDebug() << "adapterPointer released!";
+            watcher->deleteLater();
             return;
-
+        }
         BluetoothAdapter *adapter = adapterPointer.data();
         if (!call.isError()) {
             QStringList tmpList;
@@ -258,6 +260,8 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
         } else {
             qWarning() << call.error().message();
         }
+
+        watcher->deleteLater();
     });
 }
 
@@ -307,7 +311,7 @@ void BluetoothManager::refresh()
 
     // 获取蓝牙设备
     QDBusPendingCall call = d->m_bluetoothInter->GetAdapters();
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
         if (!call.isError()) {
             QDBusReply<QString> reply = call.reply();
@@ -315,6 +319,7 @@ void BluetoothManager::refresh()
         } else {
             qWarning() << call.error().message();
         }
+        watcher->deleteLater();
     });
 }
 
