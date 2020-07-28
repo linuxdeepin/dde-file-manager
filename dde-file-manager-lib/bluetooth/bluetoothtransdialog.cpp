@@ -566,3 +566,7 @@ void BluetoothTransDialog::onAcceptFiles()
 {
     m_stack->setCurrentIndex(TransferPage);
 }
+
+void BluetoothTransDialog::onProgressUpdated(const int &curr, const int &total)
+{
+}
