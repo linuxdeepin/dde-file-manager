@@ -54,6 +54,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "bluetooth/bluetoothmanager.h"
 #include "bluetooth/bluetoothmodel.h"
+#include "io/dstorageinfo.h"
 
 #include <DSysInfo>
 
@@ -1067,6 +1068,19 @@ void DFileMenuManager::actionTriggered(QAction *action)
             qDebug() << typeAction->text() << action->text();
             if (typeAction->text() == action->text()) {
                 const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
+
+                // fix bug 39754 【sp3专业版】【文件管理器】【5.2.0.8-1】挂载磁盘右键菜单，拔出挂载磁盘，选择任意右键菜单列表-属性，界面展示大小异常
+                // 按照测试期望处理，当 url 构造出来的文件信息不存在的时候，不执行后续的事件处理
+                const DUrlList &selUrls = event->selectedUrls();
+                if (selUrls.count() > 0) {
+                    const DUrl &u = selUrls.first();
+                    if (!DStorageInfo::isLowSpeedDevice(u.path())) { // 这里只针对非低速设备做判定，否则可能导致正常情况下的右键菜单响应过慢
+                        DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
+                        if (!info->exists())
+                            return;
+                    }
+                }
+
                 DFMEventDispatcher::instance()->processEvent(event);
             }
         }
