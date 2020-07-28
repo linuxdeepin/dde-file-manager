@@ -342,9 +342,13 @@ bool BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
         return false;
     }
 
+    // /org/bluez/hci0/dev_90_63_3B_DA_5A_4C  --》  90:63:3B:DA:5A:4C
+    QString strNewId = id;
+    strNewId.remove(QRegularExpression("/org/bluez/hci[0-9]/dev_")).replace("_", ":");
+
     if (!d->m_bluetoothInter->isValid())
         return false;
-    QDBusPendingCall call = d->m_bluetoothInter->SendFiles(id, filePath);
+    QDBusPendingCall call = d->m_bluetoothInter->SendFiles(strNewId, filePath);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [=] {
         if (!call.isError()) {

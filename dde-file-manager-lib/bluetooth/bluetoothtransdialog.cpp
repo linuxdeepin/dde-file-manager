@@ -48,9 +48,6 @@ BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTra
     : DDialog(parent)
     , m_urls(urls)
 {
-    // 测试进度条
-    timer = new QTimer(this);
-
     initUI();
     initConn();
     updateDeviceList(); // 打开多个窗口的时候蓝牙设备不一定任何更新操作，因此这时依靠蓝牙状态的变更去更新列表不可取，手动获取一次列表
@@ -298,13 +295,13 @@ QWidget *BluetoothTransDialog::initTranferingPage()
     progress->setMaximum(100);
     progress->setMaximumHeight(8);
     pLay->addWidget(progress);
-    connect(timer, &QTimer::timeout, this, [progress, this] {
-        progress->setValue(progress->value() + 4);
-        qDebug() << progress->value();
-        if (progress->value() == progress->maximum()) {
-            m_stack->setCurrentIndex(SuccessPage);
-        }
-    });
+    //    connect(timer, &QTimer::timeout, this, [progress, this] {
+    //        progress->setValue(progress->value() + 4);
+    //        qDebug() << progress->value();
+    //        if (progress->value() == progress->maximum()) {
+    //            m_stack->setCurrentIndex(SuccessPage);
+    //        }
+    //    });
     connect(this, &BluetoothTransDialog::resetProgress, this, [progress] {
         progress->setValue(0);
     });
@@ -528,23 +525,6 @@ void BluetoothTransDialog::onPageChagned(const int &nIdx)
         m_titleOfDialog->setText(TITLE_BT_TRANS_SUCC);
         addButton(TXT_DONE);
         break;
-    }
-
-    // 测试，模拟接收方已同意接收文件
-    if (currpage == WaitForRecvPage) {
-        QTimer::singleShot(1000, nullptr, [this] {
-            if (!m_stack)
-                return;
-            m_stack->setCurrentIndex(TransferPage);
-        });
-    }
-
-    // 进度条测试
-    if (currpage == TransferPage) {
-        Q_EMIT resetProgress();
-        timer->start(100);
-    } else {
-        timer->stop();
     }
 }
 
