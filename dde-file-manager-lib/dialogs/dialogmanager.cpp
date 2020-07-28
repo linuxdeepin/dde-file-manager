@@ -1406,8 +1406,9 @@ void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
     QStringList paths;
     foreach (auto u, files)
         paths << u.path();
-    // 为了不模态显示所以这里使用指针，构造函数中设置了关闭时自动析构，所以这里不用显式 delete
+
     BluetoothTransDialog *dlg = new BluetoothTransDialog(paths);
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->show();
 }
 

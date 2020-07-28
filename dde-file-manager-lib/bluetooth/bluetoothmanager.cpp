@@ -190,6 +190,12 @@ void BluetoothManagerPrivate::initConnects()
             }
         }
     });
+
+    //#ifdef BLUETOOTH_ENABLE
+    //    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferCreated, q, [this](int idx, const QString &file, const QDBusObjectPath &transfer){
+    //        qDebug() << idx << file << transfer.path();
+    //    });
+    //#endif
 }
 
 void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJsonObject &adapterObj)
@@ -326,17 +332,55 @@ void BluetoothManager::showBluetoothSettings()
     d->m_controlcenterInter->ShowModule(BluetoothPage);
 }
 
-
-bool BluetoothManager::sendFile(const BluetoothDevice &device, const QString &filePath)
+bool BluetoothManager::sendFiles(const BluetoothDevice &device, const QStringList &filePath)
 {
-    return sendFile(device.id(), filePath);
+    return sendFiles(device.id(), filePath);
 }
 
-bool BluetoothManager::sendFile(const QString &id, const QString &filePath)
+bool BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
 {
-    // todo, wait interface
+    Q_D(BluetoothManager);
+
+    if (filePath.count() == 0)
+        return false;
+
+    if (!interfaceExists(BluetoothPath, "SendFiles")) {
+        return false;
+    }
+
+    // /org/bluez/hci0/dev_90_63_3B_DA_5A_4C  --》  90:63:3B:DA:5A:4C
+    QString newId = id;
+    newId.remove(QRegularExpression("/org/bluez/hci[0-9]*/dev_")).replace("_", ":");
+
+    QDBusInterface interface(BluetoothService, BluetoothPath, BluetoothService, QDBusConnection::sessionBus());
+    if (!interface.isValid()) {
+        qDebug() << qPrintable(QDBusConnection::sessionBus().lastError().message());
+        return false;
+    }
+
+    QDBusMessage msg = interface.call("SendFiles", newId, filePath);
+    qDebug() << msg.errorName() << msg.errorMessage();
     return true;
 }
 
+bool BluetoothManager::interfaceExists(const QString &path, const QString &method)
+{
+    QDBusInterface ud2(BluetoothService, path, "org.freedesktop.DBus.Introspectable", QDBusConnection::sessionBus());
+    QDBusReply<QString> reply = ud2.call("Introspect");
+    QXmlStreamReader xml_parser(reply.value());
 
+    while (!xml_parser.atEnd()) {
+        xml_parser.readNext();
 
+        if (xml_parser.tokenType() == QXmlStreamReader::StartElement
+            && xml_parser.name().toString() == "method") {
+            const QString &name = xml_parser.attributes().value("name").toString();
+
+            if (name == method) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}

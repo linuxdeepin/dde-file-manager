@@ -67,7 +67,7 @@ public Q_SLOTS:
      * @param filePath 文件路径
      * @return 文件可以发送返回 true，但并不意味着发送成功
      */
-    bool sendFile(const BluetoothDevice &device, const QString &filePath);
+    bool sendFiles(const BluetoothDevice &device, const QStringList &filePath);
 
     /**
      * @brief 向设备发送文件
@@ -75,7 +75,15 @@ public Q_SLOTS:
      * @param filePath 文件路径
      * @return 文件可以发送返回 true，，但并不意味着发送成功
      */
-    bool sendFile(const QString &id, const QString &filePath);
+    bool sendFiles(const QString &id, const QStringList &filePath);
+
+    /**
+     * @brief interfaceExists d-bus 是否包含当前方法
+     * @param path  d-bus path
+     * @param interface 方法名称
+     * @return
+     */
+    bool interfaceExists(const QString &path, const QString &method);
 
 private:
     explicit BluetoothManager(QObject *parent = nullptr);
