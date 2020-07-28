@@ -48,11 +48,6 @@ BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTra
     : DDialog(parent)
     , m_urls(urls)
 {
-    setAttribute(Qt::WA_DeleteOnClose);
-
-    // 测试进度条
-    timer = new QTimer(this);
-
     initUI();
     initConn();
     updateDeviceList(); // 打开多个窗口的时候蓝牙设备不一定任何更新操作，因此这时依靠蓝牙状态的变更去更新列表不可取，手动获取一次列表
@@ -300,13 +295,13 @@ QWidget *BluetoothTransDialog::initTranferingPage()
     progress->setMaximum(100);
     progress->setMaximumHeight(8);
     pLay->addWidget(progress);
-    connect(timer, &QTimer::timeout, this, [progress, this] {
-        progress->setValue(progress->value() + 4);
-        qDebug() << progress->value();
-        if (progress->value() == progress->maximum()) {
-            m_stack->setCurrentIndex(SuccessPage);
-        }
-    });
+    //    connect(timer, &QTimer::timeout, this, [progress, this] {
+    //        progress->setValue(progress->value() + 4);
+    //        qDebug() << progress->value();
+    //        if (progress->value() == progress->maximum()) {
+    //            m_stack->setCurrentIndex(SuccessPage);
+    //        }
+    //    });
     connect(this, &BluetoothTransDialog::resetProgress, this, [progress] {
         progress->setValue(0);
     });
@@ -451,6 +446,9 @@ void BluetoothTransDialog::sendFiles()
     m_selectedDevice;
     m_urls;
 
+    if (m_urls.count() == 0)
+        return;
+
     m_subTitleForWaitPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
     m_subTitleOfTransPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
     m_subTitleOfFailedPage->setText(TXT_SENDING_FAIL.arg(m_selectedDevice));
@@ -459,7 +457,7 @@ void BluetoothTransDialog::sendFiles()
     m_stack->setCurrentIndex(WaitForRecvPage);
     Q_EMIT startSpinner();
 
-    bluetoothManager->sendFile(m_selectedDeviceId, m_urls.first());
+    bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
 }
 
 void BluetoothTransDialog::closeEvent(QCloseEvent *event)
@@ -528,23 +526,6 @@ void BluetoothTransDialog::onPageChagned(const int &nIdx)
         addButton(TXT_DONE);
         break;
     }
-
-    // 测试，模拟接收方已同意接收文件
-    if (currpage == WaitForRecvPage) {
-        QTimer::singleShot(1000, nullptr, [this] {
-            if (!m_stack)
-                return;
-            m_stack->setCurrentIndex(TransferPage);
-        });
-    }
-
-    // 进度条测试
-    if (currpage == TransferPage) {
-        Q_EMIT resetProgress();
-        timer->start(100);
-    } else {
-        timer->stop();
-    }
 }
 
 void BluetoothTransDialog::connectAdapter(const BluetoothAdapter *adapter)
@@ -579,4 +560,9 @@ void BluetoothTransDialog::connectDevice(const BluetoothDevice *dev)
             break;
         }
     });
+}
+
+void BluetoothTransDialog::onAcceptFiles()
+{
+    m_stack->setCurrentIndex(TransferPage);
 }
