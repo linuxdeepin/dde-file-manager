@@ -135,6 +135,18 @@ private Q_SLOTS:
      */
     void connectDevice(const BluetoothDevice *);
 
+    /**
+     * @brief onAcceptFiles 对方设备同意接收文件时触发
+     */
+    void onAcceptFiles();
+
+    /**
+     * @brief onProgressUpdated 文件传输进度
+     * @param curr
+     * @param total
+     */
+    void onProgressUpdated(const int &curr, const int &total);
+
 Q_SIGNALS:
     void startSpinner();
     void stopSpinner();
@@ -164,8 +176,6 @@ private:
     DLabel *m_subTitleOfFailedPage = nullptr;
     DLabel *m_subTitleOfSuccessPage = nullptr;
     DLabel *m_sendingStatus = nullptr;
-
-    QTimer *timer = nullptr; // 流程测试用，后删
 
 private:
     QStringList m_urls; // 待发送文件
