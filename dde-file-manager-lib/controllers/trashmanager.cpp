@@ -198,6 +198,15 @@ bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
     return false;
 }
 
+bool TrashManager::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
+{
+    Q_UNUSED(event)
+
+    QString strMsg = tr("Unable to open items in the trash,please restore it first");
+    dialogManager->showMessageDialog(2, strMsg);
+    return false;
+}
+
 DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
     fileService->deleteFiles(event->sender(), event->urlList(), true, false, true);

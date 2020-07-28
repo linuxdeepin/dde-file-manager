@@ -710,7 +710,8 @@ void DIconItemDelegate::paint(QPainter *painter,
     label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2*backgroundMargin - ICON_MODE_BACK_RADIUS);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS/2);
 
-    if (isSelected && isCanvas) {
+    //文管窗口拖拽时的字体保持白色
+    if ((isSelected && isCanvas) || isDragMode) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
     } else {
         painter->setPen(opt.palette.color(QPalette::Text));
@@ -760,8 +761,10 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     if (isSelected || !d->enabledTextShadow || isDragMode) {// do not draw text background color
-        const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,
-                                              isSelected && isCanvas ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush),
+
+        //图标拖拽时保持蓝底
+        auto tempBackground = isDragMode ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight)) : (isCanvas ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush));
+        const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,tempBackground,
                                               QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
 
         const QColor &border_color = focusTextBackgroundBorderColor();
