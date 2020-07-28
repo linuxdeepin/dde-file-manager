@@ -80,7 +80,26 @@ void ScreenManager::init()
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManager::onScreenAdded);
     connect(qApp, &QGuiApplication::screenRemoved, this, &ScreenManager::onScreenRemoved);
     connect(qApp, &QGuiApplication::primaryScreenChanged, this, &AbstractScreenManager::sigScreenChanged);
+#ifdef UNUSE_TEMP
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
+#else
+    //临时方案，
+    connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this](){
+        m_lastMode = m_display->GetRealDisplayMode();
+        qDebug() << "mode changed" << m_lastMode;
+        emit sigDisplayModeChanged();
+    });
+
+    //临时方案，使用PrimaryRectChanged信号作为拆分/合并信号
+    connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [this](){
+        int mode = m_display->GetRealDisplayMode();
+        qDebug() << "deal merge and split" << mode << m_lastMode;
+        if (m_lastMode == mode)
+            return;
+        m_lastMode = mode;
+        emit sigDisplayModeChanged();
+    });
+#endif
 
     //dock区处理
     connect(DockInfoIns,&DBusDock::FrontendWindowRectChanged,this, &ScreenManager::onDockChanged);
@@ -129,8 +148,11 @@ QVector<ScreenPointer> ScreenManager::screens() const
 {
     QVector<ScreenPointer> order;
     for (QScreen *sc : qApp->screens()){
-        if (m_screens.contains(sc))
+        if (m_screens.contains(sc)){
+            if (sc->geometry().size() == QSize(0,0))
+                qCritical() << "screen error. does it is closed?";
             order.append(m_screens.value(sc));
+        }
     }
     return order;
 }
@@ -171,8 +193,26 @@ qreal ScreenManager::devicePixelRatio() const
 
 AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
 {
-    AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
-    return ret;
+    auto pending = m_display->GetRealDisplayMode();
+    pending.waitForFinished();
+    if (pending.isError()){
+        qWarning() << "Display GetRealDisplayMode Error:" << pending.error().name() << pending.error().message();
+        AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
+        return ret;
+    }else {
+        /*
+        DisplayModeMirror: 1
+        DisplayModeExtend: 2
+        DisplayModeOnlyOne: 3
+        DisplayModeUnknow: 4
+        */
+        int mode = pending.argumentAt(0).toInt();
+        qDebug() << "GetRealDisplayMode resulet" << mode;
+        if (mode > 0 && mode < 4)
+            return (AbstractScreenManager::DisplayMode)mode;
+        else
+            return AbstractScreenManager::Custom;
+    }
 }
 
 void ScreenManager::reset()
