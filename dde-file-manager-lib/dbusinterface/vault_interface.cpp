@@ -9,7 +9,7 @@
  * before re-generating it.
  */
 
-#include "vault_interface.h"
+#include "dbusinterface/vault_interface.h"
 
 /*
  * Implementation of interface class VaultInterface

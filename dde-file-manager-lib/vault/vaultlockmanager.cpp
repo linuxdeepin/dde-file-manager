@@ -91,12 +91,14 @@ VaultLockManager::VaultLockManager(QObject *parent)
 
     loadConfig();
 
-    //! process lock event if recoreded.
-    if (isLockEventTriggered()) {
-        processLockEvent();
-    }
-
-    connect(d->m_vaultInterface, &VaultInterface::lockEventTriggered, this, &VaultLockManager::slotLockEvent);
+    // monitor screen lock event.
+    QDBusConnection::sessionBus().connect(
+                "org.freedesktop.FileManager1",
+                "/org/freedesktop/FileManager1",
+                "org.freedesktop.FileManager1",
+                "lockEventTriggered",
+                this,
+                SLOT(slotLockEvent(QString)));
 }
 
 void VaultLockManager::loadConfig()
@@ -112,16 +114,6 @@ void VaultLockManager::loadConfig()
 void VaultLockManager::resetConfig()
 {
     autoLock(VaultLockManager::Never);
-}
-
-bool VaultLockManager::isLockEventTriggered() const
-{
-    return dbusIsLockEventTriggered();
-}
-
-void VaultLockManager::clearLockEvent()
-{
-    dbusClearLockEvent();
 }
 
 VaultLockManager::AutoLockState VaultLockManager::autoLockState() const
@@ -234,9 +226,6 @@ void VaultLockManager::processLockEvent()
     // lock vault.
     VaultHelper::killVaultTasks();
     VaultController::ins()->lockVault();
-
-    // clear event.
-    clearLockEvent();
 }
 
 void VaultLockManager::slotLockEvent(const QString &user)
@@ -306,23 +295,6 @@ quint64 VaultLockManager::dbusGetSelfTime() const
         }
     }
     return selfTime;
-}
-
-bool VaultLockManager::dbusIsLockEventTriggered() const
-{
-    D_DC(VaultLockManager);
-
-    bool isTriggered = false;
-    if (d->m_vaultInterface->isValid()) {
-        QDBusPendingReply<bool> reply = d->m_vaultInterface->isLockEventTriggered();
-        reply.waitForFinished();
-        if (reply.isError()) {
-            qDebug() << reply.error().message();
-        } else {
-            isTriggered = reply.value();
-        }
-    }
-    return isTriggered;
 }
 
 void VaultLockManager::dbusClearLockEvent()

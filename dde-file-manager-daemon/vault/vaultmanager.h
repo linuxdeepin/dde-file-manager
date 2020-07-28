@@ -41,9 +41,6 @@ public:
     static QString PolicyKitCreateActionId;
     static QString PolicyKitRemoveActionId;
 
-signals:
-    void lockEventTriggered(QString user);
-
 public slots:
     /**
      * @brief slotUserChanged 用户切换槽函数
@@ -91,13 +88,6 @@ public slots:
      * @brief clearLockEvent 清除锁定事件
      */
     void clearLockEvent();
-
-private slots:
-    /**
-     * @brief propertyChanged 属性改变事件
-     * @param msg
-     */
-    void propertyChanged(const QDBusMessage &msg);
 
 private:
     /**
