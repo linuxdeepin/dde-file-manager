@@ -2149,6 +2149,11 @@ void CanvasGridView::setScreenNum(int num)
     m_screenNum = num;
 }
 
+void CanvasGridView::setScreenName(const QString &name)
+{
+    m_screenName = name;
+}
+
 bool CanvasGridView::isSelected(const QModelIndex &index) const
 {
     return static_cast<DFileSelectionModel *>(selectionModel())->isSelected(index);
