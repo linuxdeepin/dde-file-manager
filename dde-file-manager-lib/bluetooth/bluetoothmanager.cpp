@@ -326,17 +326,55 @@ void BluetoothManager::showBluetoothSettings()
     d->m_controlcenterInter->ShowModule(BluetoothPage);
 }
 
-
-bool BluetoothManager::sendFile(const BluetoothDevice &device, const QString &filePath)
+bool BluetoothManager::sendFiles(const BluetoothDevice &device, const QStringList &filePath)
 {
-    return sendFile(device.id(), filePath);
+    return sendFiles(device.id(), filePath);
 }
 
-bool BluetoothManager::sendFile(const QString &id, const QString &filePath)
+bool BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
 {
-    // todo, wait interface
+    Q_D(BluetoothManager);
+
+    if (filePath.count() == 0)
+        return false;
+
+    if (!interfaceExists(BluetoothPath, "SendFiles")) {
+        return false;
+    }
+
+    if (!d->m_bluetoothInter->isValid())
+        return false;
+    QDBusPendingCall call = d->m_bluetoothInter->SendFiles(id, filePath);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, [=] {
+        if (!call.isError()) {
+            QDBusReply<QString> reply = call.reply();
+            d->resolve(reply);
+        } else {
+            qWarning() << call.error().message();
+        }
+    });
     return true;
 }
 
+bool BluetoothManager::interfaceExists(const QString &path, const QString &method)
+{
+    QDBusInterface ud2("com.deepin.daemon.Bluetooth", path, "org.freedesktop.DBus.Introspectable", QDBusConnection::sessionBus());
+    QDBusReply<QString> reply = ud2.call("Introspect");
+    QXmlStreamReader xml_parser(reply.value());
 
+    while (!xml_parser.atEnd()) {
+        xml_parser.readNext();
 
+        if (xml_parser.tokenType() == QXmlStreamReader::StartElement
+            && xml_parser.name().toString() == "method") {
+            const QString &name = xml_parser.attributes().value("name").toString();
+
+            if (name == method) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}

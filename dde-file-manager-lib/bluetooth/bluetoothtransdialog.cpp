@@ -449,6 +449,9 @@ void BluetoothTransDialog::sendFiles()
     m_selectedDevice;
     m_urls;
 
+    if (m_urls.count() == 0)
+        return;
+
     m_subTitleForWaitPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
     m_subTitleOfTransPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
     m_subTitleOfFailedPage->setText(TXT_SENDING_FAIL.arg(m_selectedDevice));
@@ -457,7 +460,7 @@ void BluetoothTransDialog::sendFiles()
     m_stack->setCurrentIndex(WaitForRecvPage);
     Q_EMIT startSpinner();
 
-    bluetoothManager->sendFile(m_selectedDeviceId, m_urls.first());
+    bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
 }
 
 void BluetoothTransDialog::closeEvent(QCloseEvent *event)
