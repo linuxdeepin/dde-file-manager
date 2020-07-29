@@ -197,6 +197,10 @@ void BluetoothManagerPrivate::initConnects()
     });
 
     QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferRemoved, q, [this](const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath, bool done) {
+        Q_Q(BluetoothManager);
+        if (!done) {
+            Q_EMIT q->transferCancledByRemote(sessionPath.path());
+        }
         qDebug() << file << transferPath.path() << sessionPath.path() << done;
     });
 
@@ -210,7 +214,6 @@ void BluetoothManagerPrivate::initConnects()
 
     QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionProcess, q, [this](const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIdx) {
         Q_Q(BluetoothManager);
-        qDebug() << sessionPath.path() << totalSize << transferred << currentIdx;
         Q_EMIT q->transferProcessUpdated(sessionPath.path(), totalSize, transferred, currentIdx);
     });
 #endif
@@ -366,10 +369,10 @@ QString BluetoothManager::sendFiles(const QString &id, const QStringList &filePa
     Q_D(BluetoothManager);
 
     // /org/bluez/hci0/dev_90_63_3B_DA_5A_4C  --》  90:63:3B:DA:5A:4C
-    QString newId = id;
-    newId.remove(QRegularExpression("/org/bluez/hci[0-9]*/dev_")).replace("_", ":");
+    QString deviceAddress = id;
+    deviceAddress.remove(QRegularExpression("/org/bluez/hci[0-9]*/dev_")).replace("_", ":");
 
-    QDBusPendingReply<QDBusObjectPath> reply = d->m_bluetoothInter->SendFiles(newId, filePath);
+    QDBusPendingReply<QDBusObjectPath> reply = d->m_bluetoothInter->SendFiles(deviceAddress, filePath);
     reply.waitForFinished();
     if (reply.isError()) {
         qDebug() << "Error" << reply.error();
