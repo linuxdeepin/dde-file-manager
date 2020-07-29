@@ -150,6 +150,8 @@ void BluetoothTransDialog::initConn()
             iter.value()->disconnect();
         }
     });
+
+    connect(bluetoothManager, &BluetoothManager::transferProcessUpdated, this, &BluetoothTransDialog::onProgressUpdated);
 }
 
 QWidget *BluetoothTransDialog::initDeviceSelectorPage()
@@ -290,20 +292,13 @@ QWidget *BluetoothTransDialog::initTranferingPage()
     m_subTitleOfTransPage->setFont(f);
     pLay->addWidget(m_subTitleOfTransPage);
 
-    DProgressBar *progress = new DProgressBar(this);
-    progress->setValue(0);
-    progress->setMaximum(100);
-    progress->setMaximumHeight(8);
-    pLay->addWidget(progress);
-    //    connect(timer, &QTimer::timeout, this, [progress, this] {
-    //        progress->setValue(progress->value() + 4);
-    //        qDebug() << progress->value();
-    //        if (progress->value() == progress->maximum()) {
-    //            m_stack->setCurrentIndex(SuccessPage);
-    //        }
-    //    });
-    connect(this, &BluetoothTransDialog::resetProgress, this, [progress] {
-        progress->setValue(0);
+    m_progressBar = new DProgressBar(this);
+    m_progressBar->setValue(0);
+    m_progressBar->setMaximum(100);
+    m_progressBar->setMaximumHeight(8);
+    pLay->addWidget(m_progressBar);
+    connect(this, &BluetoothTransDialog::resetProgress, this, [this] {
+        m_progressBar->setValue(0);
     });
 
     m_sendingStatus = new DLabel(TXT_SEND_PROGRES, this);
@@ -443,10 +438,7 @@ void BluetoothTransDialog::removeDevice(const QString &id)
 
 void BluetoothTransDialog::sendFiles()
 {
-    m_selectedDevice;
-    m_urls;
-
-    if (m_urls.count() == 0)
+    if (m_urls.count() == 0 || m_selectedDeviceId.isEmpty())
         return;
 
     m_subTitleForWaitPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
@@ -454,15 +446,27 @@ void BluetoothTransDialog::sendFiles()
     m_subTitleOfFailedPage->setText(TXT_SENDING_FAIL.arg(m_selectedDevice));
     m_subTitleOfSuccessPage->setText(TXT_SENDING_SUCC.arg(m_selectedDevice));
 
+    m_progressSignalEmitCount = 0;
+
+    m_currSessionPath = bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
+    if (m_currSessionPath.isEmpty()) {
+        qDebug() << "transfer error";
+        return;
+    }
+
     m_stack->setCurrentIndex(WaitForRecvPage);
     Q_EMIT startSpinner();
-
-    bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
 }
 
 void BluetoothTransDialog::closeEvent(QCloseEvent *event)
 {
-    Q_UNUSED(event)
+    DDialog::closeEvent(event);
+
+    if (m_stack->currentIndex() == WaitForRecvPage
+        || m_stack->currentIndex() == TransferPage
+        || m_stack->currentIndex() == FailedPage) {
+        bluetoothManager->cancleTransfer(m_currSessionPath);
+    }
 }
 
 void BluetoothTransDialog::showBluetoothSetting()
@@ -567,6 +571,23 @@ void BluetoothTransDialog::onAcceptFiles()
     m_stack->setCurrentIndex(TransferPage);
 }
 
-void BluetoothTransDialog::onProgressUpdated(const int &curr, const int &total)
+void BluetoothTransDialog::onProgressUpdated(const QString &sessionPath, const qulonglong &total, const qulonglong &transferred, const int &currFileIndex)
 {
+    if (sessionPath != m_currSessionPath)
+        return;
+
+    m_progressSignalEmitCount++; // 发送蓝牙到设备时可能由于需要发送请求信息会导致该信号被触发，因此在第一次接收到该信号时，接收方并没有同意接收文件，所以这里过滤掉第一次的发送
+    if (m_progressSignalEmitCount < 2)
+        return;
+
+    if (m_stack->currentIndex() != TransferPage)
+        m_stack->setCurrentIndex(TransferPage);
+
+    m_sendingStatus->setText(TXT_SEND_PROGRES.arg(currFileIndex - 1).arg(m_urls.count()));
+    m_progressBar->setMaximum(static_cast<int>(total));
+    m_progressBar->setValue(static_cast<int>(transferred));
+
+    if (total == transferred) {
+        QTimer::singleShot(500, nullptr, [this] { m_stack->setCurrentIndex(SuccessPage); });
+    }
 }
