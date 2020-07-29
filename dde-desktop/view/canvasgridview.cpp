@@ -841,6 +841,22 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     d->showSelectRect = showSelectFrame;
     d->lastPos = event->pos();
 
+    //如果是触摸屏，就开启200ms计时，再响应drag
+    //当事件source为MouseEventSynthesizedByQt，认为此事件为TouchBegin转换而来
+    if ((event->source() == Qt::MouseEventSynthesizedByQt) && leftButtonPressed){
+        //读取dde配置的按压时长
+        static QObject *theme_settings = reinterpret_cast<QObject *>(qvariant_cast<quintptr>(qApp->property("_d_theme_settings_object")));
+        QVariant touchFlickBeginMoveDelay;
+        if (theme_settings) {
+            touchFlickBeginMoveDelay = theme_settings->property("touchFlickBeginMoveDelay");
+        }
+        //若dde配置了则使用dde的配置，若没有则使用默认的200ms
+        d->touchTimer.setInterval(touchFlickBeginMoveDelay.isValid() ? touchFlickBeginMoveDelay.toInt() : 200);
+        d->touchTimer.start();
+    }else{
+        d->touchTimer.stop();
+    }
+
     bool isEmptyArea = !index.isValid();
     if (index.isValid() && itemDelegate()->editingIndex() == index){
         //如果当前点击的是正在编辑的项目
@@ -3755,6 +3771,11 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
 void CanvasGridView::startDrag(Qt::DropActions supportedActions)
 {
+    // 在定时器期间收到鼠标move事件低于配置时间，不触发drag
+    if (d->touchTimer.isActive()) {
+        return;
+    }
+
     itemDelegate()->hideAllIIndexWidget();
     //drag优化，只抓起本屏幕上的图标
     DUrlList selected = selectedUrls();

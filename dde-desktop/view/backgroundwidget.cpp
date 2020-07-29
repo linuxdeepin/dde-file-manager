@@ -48,7 +48,7 @@ void BackgroundWidget::paintEvent(QPaintEvent *event)
     }
 
     QPainter pa(this);
-    pa.drawPixmap(event->rect().topLeft(), m_pixmap, QRect(event->rect().topLeft() * scale, event->rect().size() * scale));
+    pa.drawPixmap(event->rect().topLeft(), m_pixmap, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
 }
 
 void BackgroundWidget::setView(const QSharedPointer<CanvasGridView> &v)
