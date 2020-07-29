@@ -141,11 +141,13 @@ private Q_SLOTS:
     void onAcceptFiles();
 
     /**
-     * @brief onProgressUpdated 文件传输进度
-     * @param curr
-     * @param total
+     * @brief onProgressUpdated
+     * @param sessionPath        用来标识当前传输进程的会话id
+     * @param total              当前传输列表的总bytes
+     * @param transferred        当前已传输的 bytes
+     * @param currFileIndex      当前传输文件的序号
      */
-    void onProgressUpdated(const int &curr, const int &total);
+    void onProgressUpdated(const QString &sessionPath, const qulonglong &total, const qulonglong &transferred, const int &currFileIndex);
 
 Q_SIGNALS:
     void startSpinner();
@@ -176,11 +178,14 @@ private:
     DLabel *m_subTitleOfFailedPage = nullptr;
     DLabel *m_subTitleOfSuccessPage = nullptr;
     DLabel *m_sendingStatus = nullptr;
+    DProgressBar *m_progressBar = nullptr;
 
 private:
     QStringList m_urls; // 待发送文件
     QString m_selectedDevice;
     QString m_selectedDeviceId;
+    QString m_currSessionPath; // 当前发送进程的 obex 会话路径，用于取消当前传输会话
+    int m_progressSignalEmitCount = 0; // 信号发送次数
 
     QStringList m_connectedAdapter;
 };
