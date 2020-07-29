@@ -52,6 +52,9 @@
 #include "views/dtagactionwidget.h"
 #include "plugins/dfmadditionalmenu.h"
 #include "models/dfmrootfileinfo.h"
+#include "bluetooth/bluetoothmanager.h"
+#include "bluetooth/bluetoothmodel.h"
+#include "io/dstorageinfo.h"
 
 #include <DSysInfo>
 
@@ -425,7 +428,11 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         DFileMenuData::actionToMenuAction[action] = MenuAction::OpenWithCustom;
     }
 
-    if (deviceListener->isMountedRemovableDiskExits()) {
+    if (deviceListener->isMountedRemovableDiskExits()
+#ifdef BLUETOOTH_ENABLE
+        || bluetoothManager->model()->adapters().count() > 0
+#endif
+    ) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
         if (currentUrl.path().contains("/dev/sr")
                 || (currentUrl.scheme() == SEARCH_SCHEME && currentUrl.query().contains("/dev/sr"))) // 禁用光盘搜索列表中的发送到选项
@@ -433,12 +440,14 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         else {
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
-                if (0) { // 如果有蓝牙设备
+#ifdef BLUETOOTH_ENABLE // (暂时屏蔽蓝牙入口，还未开发完成)
+                if (bluetoothManager->model()->adapters().count() > 0) { // 如果有蓝牙设备
                     QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
                     sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
                     sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
                     connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
                 }
+#endif
 
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
@@ -660,7 +669,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     actionKeys[MenuAction::SendToRemovableDisk] = QObject::tr("Send to");
-    actionKeys[MenuAction::SendToBluetooth] = QObject::tr("Send to bluetooth");
+    actionKeys[MenuAction::SendToBluetooth] = QObject::tr("Send to Bluetooth");
     actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
     actionKeys[MenuAction::Delete] = QObject::tr("Delete");
     actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Delete");
@@ -1059,6 +1068,19 @@ void DFileMenuManager::actionTriggered(QAction *action)
             qDebug() << typeAction->text() << action->text();
             if (typeAction->text() == action->text()) {
                 const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
+
+                // fix bug 39754 【sp3专业版】【文件管理器】【5.2.0.8-1】挂载磁盘右键菜单，拔出挂载磁盘，选择任意右键菜单列表-属性，界面展示大小异常
+                // 按照测试期望处理，当 url 构造出来的文件信息不存在的时候，不执行后续的事件处理
+                const DUrlList &selUrls = event->selectedUrls();
+                if (selUrls.count() > 0) {
+                    const DUrl &u = selUrls.first();
+                    if (!DStorageInfo::isLowSpeedDevice(u.path())) { // 这里只针对非低速设备做判定，否则可能导致正常情况下的右键菜单响应过慢
+                        DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
+                        if (!info->exists())
+                            return;
+                    }
+                }
+
                 DFMEventDispatcher::instance()->processEvent(event);
             }
         }

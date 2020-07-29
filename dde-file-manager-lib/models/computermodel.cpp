@@ -141,11 +141,22 @@ ComputerModel::ComputerModel(QObject *parent)
 
             int nIndex = findItem(makeSplitterUrl(QObject::tr("File Vault")));
             if(nIndex != -1){   // 有保险箱的情况
+                //fix bug PPMS20200213,在没有磁盘项时，创建磁盘项
+                int ndisksIndex = findItem(makeSplitterUrl(QObject::tr("Disks")));
+                if (ndisksIndex == -1 ) {
+                    insertBefore(makeSplitterUrl(tr("Disks")), m_items[nIndex].url);
+                    nIndex++;
+                }
                 if(m_items.count() > nIndex){
                     insertBefore(url, m_items[nIndex].url);
                 }
             }
             else {  // 没有保险箱的情况
+                //fix bug PPMS20200213,在没有磁盘项时，创建磁盘项
+                int ndisksIndex = findItem(makeSplitterUrl(QObject::tr("Disks")));
+                if (ndisksIndex == -1 ) {
+                    addItem(makeSplitterUrl(tr("Disks")));
+                }
                 auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
                                           [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                     return DFMRootFileInfo::typeCompare(a, b.fi);

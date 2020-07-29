@@ -46,7 +46,7 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
             || (ScreenMrg->screens().count() == 1)){
 
         ScreenPointer primary = ScreenMrg->primaryScreen();
-        if (primary == nullptr){
+        if (primary == nullptr) {
             qCritical() << "get primary screen failed return";
             return;
         }
@@ -65,6 +65,7 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
         }
         else {
             mView->setScreenNum(1);
+            mView->setScreenName(primary->name());
             GridManager::instance()->addCoord(1, {0,0});
         }
 
@@ -72,7 +73,7 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
         m_canvasMap.insert(primary, mView);
 
         qDebug() << "mode" << mode << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
-                 << primary->name() << "num" << 1
+                 << primary << primary->name() << "num" << 1
                  << "devicePixelRatio" << ScreenMrg->devicePixelRatio();
     }
     else {
@@ -95,10 +96,11 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
             else {
                 GridManager::instance()->addCoord(screenNum, {0,0});
                 mView->setScreenNum(screenNum);
+                mView->setScreenName(sp->name());
             }
 
             qDebug() << "mode" << mode << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
-                     << sp->name() << "num" << screenNum
+                     << sp << sp->name() << "num" << screenNum << mView->screenName()
                      << "devicePixelRatio" << ScreenMrg->devicePixelRatio();
         }
 
@@ -286,15 +288,21 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
         }
         break;
     }
-        case GridManager::soHidenSwitch:{
-            for (CanvasViewPointer view : m_canvasMap.values()){
-                view->updateHiddenItems();
-            }
-            break;
+    case GridManager::soHidenSwitch:{
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->updateHiddenItems();
         }
+        break;
+    }
+    case GridManager::soGsettingUpdate:{
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->delayModelRefresh();
+        }
+        break;
+    }
         //default处会报警告："warning: default label in switch which covers all enumeration values"
         //这里是全量case，因此为解决警告删除default
-        }
+    }
 }
 
 void CanvasViewManager::onSyncSelection(CanvasGridView *v, DUrlList selected)

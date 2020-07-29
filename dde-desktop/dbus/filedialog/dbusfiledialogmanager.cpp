@@ -34,6 +34,7 @@
 #include "dfmsettings.h"
 #include "views/windowmanager.h"
 #include "dfileservices.h"
+#include "bluetooth/bluetoothtransdialog.h"
 
 #include <QDBusConnection>
 
@@ -165,6 +166,13 @@ QStringList DBusFileDialogManager::globPatternsForMime(const QString &mimeType) 
 QStringList DBusFileDialogManager::monitorFiles() const
 {
     return DFileWatcher::getMonitorFiles();
+}
+
+void DBusFileDialogManager::showBluetoothTransDialog(const QString &id, const QStringList &URIs)
+{
+    BluetoothTransDialog *dlg = new BluetoothTransDialog(URIs, BluetoothTransDialog::DirectlySend, id);
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    dlg->show();
 }
 
 void DBusFileDialogManager::onDialogDestroy()

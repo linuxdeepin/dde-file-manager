@@ -23,6 +23,7 @@
 #include "dfileservices.h"
 #include "app/define.h"
 #include "dfmopticalmediawidget.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QDebug>
 #include <dstorageinfo.h>
@@ -167,9 +168,26 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         if (DUrl(url).parentUrl() == item->url()) {
             qDebug() << "skip the same dir file..." << url;
         } else {
-            QFileInfo folderinfo(DUrl(url).parentUrl().path()); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
-            QFileInfo fileinfo(url.path());
-            if (!fileinfo.isWritable() || !folderinfo.isWritable()) {
+            QString folderPath = DUrl(url).parentUrl().path();
+            QString filePath = url.path();
+
+            bool isFolderWritable = false;
+            bool isFileWritable = false;
+
+            if (VaultController::isVaultFile(folderPath)
+                    || VaultController::isVaultFile(filePath)) {
+                //! vault file get permissions separatly
+                isFolderWritable = VaultController::getPermissions(folderPath) & QFileDevice::WriteUser;
+                isFileWritable = VaultController::getPermissions(filePath) & QFileDevice::WriteUser;
+            } else {
+                QFileInfo folderinfo(folderPath); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
+                QFileInfo fileinfo(filePath);
+
+                isFolderWritable = fileinfo.isWritable();
+                isFileWritable = folderinfo.isWritable();
+            }
+
+            if (!isFolderWritable || !isFileWritable) {
                 copyUrls << url;
                 qDebug() << "this is a unwriteable case:" << url;
             } else {

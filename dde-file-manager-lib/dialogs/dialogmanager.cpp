@@ -1403,8 +1403,12 @@ int DialogManager::showMessageDialog(int messageLevel, const QString &message)
 
 void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
 {
-    BluetoothTransDialog *dlg = new BluetoothTransDialog;
-    dlg->setFiles(files);
+    QStringList paths;
+    foreach (auto u, files)
+        paths << u.path();
+
+    BluetoothTransDialog *dlg = new BluetoothTransDialog(paths);
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->show();
 }
 

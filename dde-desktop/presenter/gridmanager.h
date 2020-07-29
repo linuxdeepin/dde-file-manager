@@ -91,12 +91,12 @@ class GridManager: public QObject, public Singleton<GridManager>
 public:
     enum SyncOperation{soAutoMerge,soRename,soIconSize,soSort
                        ,soHideEditing,soUpdate,soAutoMergeUpdate
-                       ,soHidenSwitch};
+                       ,soHidenSwitch,soGsettingUpdate};
     DUrl getInitRootUrl();
     void initGridItemsInfos();
     void initAutoMerge(const QList<DAbstractFileInfoPointer> &items);
     void initArrage(const QStringList &items);
-    void initCustom(const QStringList &items);
+    void initCustom(QStringList &items);
     void initCustom(const QStringList &orderedItems, const QHash<QString, bool> &indexHash);
 
     bool add(int screenNum, QPoint pos, const QString &itemId);
@@ -156,6 +156,7 @@ public:
     DUrl getCurrentVirtualExpandUrl();
     void setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList);
     bool isGsettingShow(const QString &targetkey, const bool defaultValue);
+    bool desktopFileShow(const DUrl &url, const bool defaultValue);
 
 public:
     void dump();

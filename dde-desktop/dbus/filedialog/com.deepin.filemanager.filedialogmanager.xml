@@ -30,5 +30,9 @@
     <method name="monitorFiles">
         <arg name="files" type="as" direction="out"/>
     </method>
+    <method name="showBluetoothTransDialog">
+        <arg name="id" type="s" direction="in"/>
+        <arg name="URIs" type="as" direction="in"/>
+    </method>
   </interface>
 </node>

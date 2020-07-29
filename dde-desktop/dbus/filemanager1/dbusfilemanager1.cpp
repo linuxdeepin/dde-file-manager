@@ -22,14 +22,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <unistd.h>
 #include <QProcess>
-
 #include "dbusfilemanager1.h"
 #include "dfilewatcher.h"
 #include "dfileservices.h"
 #include "app/define.h"
 #include "dialogs/dialogmanager.h"
 #include "../dialogs/dtaskdialog.h"
+#include "../dde-file-manager-lib/vault/vaultglobaldefine.h"
 
 
 #include <QDebug>
@@ -37,7 +38,14 @@
 DBusFileManager1::DBusFileManager1(QObject *parent)
     : QObject(parent)
 {
-
+    // monitor screen lock event.
+    QDBusConnection::sessionBus().connect(
+                "com.deepin.SessionManager",
+                "/com/deepin/SessionManager",
+                "org.freedesktop.DBus.Properties",
+                "PropertiesChanged","sa{sv}as",
+                this,
+                SLOT(lockPropertyChanged(QDBusMessage)));
 }
 
 void DBusFileManager1::ShowFolders(const QStringList &URIs, const QString &StartupId)
@@ -106,6 +114,43 @@ void DBusFileManager1::closeTask()
     if(pTaskDlg){
         if(pTaskDlg->bHaveNotCompletedVaultTask()){
             pTaskDlg->stopVaultTask();
+        }
+    }
+}
+
+void DBusFileManager1::lockPropertyChanged(const QDBusMessage &msg)
+{
+    QList<QVariant> arguments = msg.arguments();
+    if (3 != arguments.count())
+        return;
+
+    QString interfaceName = msg.arguments().at(0).toString();
+    if (interfaceName != "com.deepin.SessionManager")
+        return;
+
+    QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
+    QStringList keys = changedProps.keys();
+    foreach (const QString &prop, keys) {
+        if (prop == "Locked") {
+            bool bLocked = changedProps[prop].toBool();
+            if (bLocked) {
+                char *loginUser = getlogin();
+                QString user = loginUser ? loginUser : "";
+                emit lockEventTriggered(user);
+
+                char buf[512] = {0};
+                FILE *cmd_pipe = popen("pidof -s /usr/bin/dde-file-manager", "r");
+
+                fgets(buf, 512, cmd_pipe);
+                pid_t pid = static_cast<pid_t>(strtoul(buf, nullptr, 10));
+
+                if (pid == 0) {
+                    QString umountCmd = "fusermount -zu " + VAULT_BASE_PATH + "/" + VAULT_DECRYPT_DIR_NAME;
+                    system(umountCmd.toUtf8().data());
+                }
+
+                pclose(cmd_pipe);
+            }
         }
     }
 }

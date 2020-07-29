@@ -42,6 +42,7 @@
 #include "ddiskdevice.h"
 #include "disomaster.h"
 #include "views/dfmopticalmediawidget.h"
+#include "controllers/vaultcontroller.h"
 
 #include "tag/tagmanager.h"
 
@@ -3089,9 +3090,26 @@ QStorageInfo FileJob::getStorageInfo(const QString &file)
 bool FileJob::canMove(const QString &filePath)
 {
     QFileInfo file_info(filePath);
-    QFileInfo dir_info(file_info.dir().absolutePath());
+    QString folderPath = file_info.dir().absolutePath();
+    QFileInfo dir_info(folderPath);
 
-    if (!dir_info.permission(QFile::WriteUser))
+    bool isFolderWritable = false;
+    bool isFileWritable = false;
+
+    if (VaultController::isVaultFile(folderPath)
+            || VaultController::isVaultFile(filePath)) {
+        //! vault file get permissions separatly
+        isFolderWritable = VaultController::getPermissions(folderPath) & QFileDevice::WriteUser;
+        isFileWritable = VaultController::getPermissions(filePath) & QFileDevice::WriteUser;
+    } else {
+        QFileInfo folderinfo(folderPath); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
+        QFileInfo fileinfo(filePath);
+
+        isFolderWritable = fileinfo.isWritable();
+        isFileWritable = folderinfo.isWritable();
+    }
+
+    if (!isFolderWritable || !isFileWritable)
         return false;
 
 #ifdef Q_OS_LINUX
