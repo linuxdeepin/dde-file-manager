@@ -185,13 +185,18 @@ void WallpaperList::keyPressEvent(QKeyEvent *event)
 {
     switch(event->key())
     {
-    case Qt::Key_Right:
-    //选中下一壁纸
-        setCurrentIndex(m_index+1);
-        break;
     case Qt::Key_Left:
-    //选中上一壁纸
-        setCurrentIndex(m_index-1);
+    case Qt::Key_Right:
+        //fix bug#39948,按住不放时需等待切换结束再继续切换
+        if (event->isAutoRepeat() && scrollAnimation.state() == QAbstractAnimation::Running){
+            event->accept();
+            return;
+        }
+        //选中下一壁纸
+        if (event->key() == Qt::Key_Right)
+            setCurrentIndex(m_index+1);
+        else    //选中上一壁纸
+            setCurrentIndex(m_index-1);
         break;
     default:
     //保持按键事件传递
