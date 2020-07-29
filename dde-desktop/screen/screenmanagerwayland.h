@@ -30,6 +30,9 @@ private:
 protected:
     QMap<QString,ScreenPointer> m_screens; //dbus-path - screen
     DBusDisplay *m_display = nullptr;
+#ifndef UNUSE_TEMP //临时方案，过滤多次信号
+    int m_lastMode = -1;
+#endif
 };
 
 #endif // SCREENMANAGERWAYLAND_H

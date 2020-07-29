@@ -93,6 +93,8 @@ bool MasteredMediaFileInfo::isReadable() const
 
 bool MasteredMediaFileInfo::isWritable() const
 {
+    if (!m_backerUrl.burnIsOnDisc())
+        return true;
     return ISOMaster->getDevicePropertyCached(fileUrl().burnDestDevice()).avail > 0;
 }
 

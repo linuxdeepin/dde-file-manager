@@ -266,6 +266,18 @@ bool MasteredMediaController::openFileByApp(const QSharedPointer<DFMOpenFileByAp
     return fileService->openFileByApp(event->sender(), event->appName(), url);
 }
 
+bool MasteredMediaController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
+{
+    DUrlList lst;
+    for (auto &i : event->urlList()) {
+        if (i.burnIsOnDisc()) {
+            DUrl transUrl = DUrl::fromLocalFile(MasteredMediaFileInfo(i).extraProperties()["mm_backer"].toString());
+            lst.append(transUrl);
+        }
+    }
+    return fileService->openFilesByApp(event->sender(), event->appName(), lst);
+}
+
 bool MasteredMediaController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     DUrlList lst;
