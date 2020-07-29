@@ -877,7 +877,6 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     //auto selectedIndexes = selectionModel()->selectedIndexes();
     bool isselected = isSelected(index);
 //    QAbstractItemView::mousePressEvent(event);
-
     //fix 修改ctrl+左键取消选中状态导致所有选中文件被取消选中的问题。
     if (leftButtonPressed && isselected && event->modifiers() == Qt::ControlModifier) {
 #if 0   //反选功能 暂不清楚是否需要，不开启
@@ -890,7 +889,16 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
         selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 #else
         setProperty("lastPressedIndex", index);
-        selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Deselect);
+
+        //fixbug39610:必须先取出已选择列表，再调用mousePressEvent(不调用会导致不能连续拖拽复制)，再设置选中列表为获取的项
+        QItemSelection selection;
+        for (const QModelIndex &mi : selectedIndexes()){
+            selection << QItemSelectionRange(mi);
+        }
+
+        QAbstractItemView::mousePressEvent(event);
+
+        selectionModel()->select(selection, QItemSelectionModel::Select);
 #endif
     }
     else {
@@ -923,8 +931,8 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
     QModelIndex index = property("lastPressedIndex").toModelIndex();
     if (index.isValid() && DFMGlobal::keyCtrlIsPressed() && index == indexAt(event->pos()) && isSelected(index)) {
         //fix 修改ctrl+左键取消选中状态导致所有选中文件被取消选中的问题。
-//        selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Deselect);
-        setProperty("lastPressedIndex", index);
+        selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Deselect);
+        setProperty("lastPressedIndex", QModelIndex());
     }
 
     update();
@@ -1195,7 +1203,8 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 #else
     if (!GridManager::instance()->autoMerge()) {
 #endif
-        if (!GridManager::instance()->shouldArrange()) {
+        //拖拽复制时，不做让位处理
+        if (!GridManager::instance()->shouldArrange() && !DFMGlobal::keyCtrlIsPressed()) {
             d->startDodge = true;
         }
         itemDelegate()->hideNotEditingIndexWidget();
@@ -1281,7 +1290,8 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
 #ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
     if (!GridManager::instance()->shouldArrange()) {   //自定义
 #else
-    if (!GridManager::instance()->autoMerge()) {   //自定义
+    //fixbug39610 区分图标拖拽移动和拖拽复制操作
+    if (!GridManager::instance()->autoMerge() && !DFMGlobal::keyCtrlIsPressed()) {   //自定义
 #endif
         CanvasGridView *view = dynamic_cast<CanvasGridView *>(event->source());
         if (view && event->mimeData()){
@@ -1644,7 +1654,8 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     for (auto &localFile : repaintLocalFiles) {
         auto url = DUrl(localFile);
         // hide selected if draw animation
-        if ((d->dodgeAnimationing || d->startDodge) && selecteds.contains(url)) {
+        //拖拽复制时，原图标保持
+        if ((d->dodgeAnimationing || d->startDodge) && selecteds.contains(url) && !DFMGlobal::keyCtrlIsPressed()) {
 //            qDebug() << "skip drag select" << url;
             continue;
         }
