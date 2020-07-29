@@ -46,6 +46,8 @@ public:
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
 
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
+    //! 多文件打开入口
+    bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const Q_DECL_OVERRIDE;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const Q_DECL_OVERRIDE;
     bool restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const Q_DECL_OVERRIDE;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const Q_DECL_OVERRIDE;
@@ -64,7 +66,7 @@ public slots:
     void trashFilesChanged(const DUrl &url);
 private:
     bool m_isTrashEmpty;
-    DFileWatcher* m_trashFileWatcher;
+    DFileWatcher *m_trashFileWatcher;
 };
 
 #endif // TRASHMANAGER_H

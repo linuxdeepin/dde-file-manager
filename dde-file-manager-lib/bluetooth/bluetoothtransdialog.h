@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2020 Deepin Technology Co., Ltd.
  *
  *
  * Author:     xushitong<xushitong@uniontech.com>
@@ -34,6 +34,7 @@ class DLabel;
 class DCommandLinkButton;
 class DListView;
 class DProgressBar;
+class DStandardItem;
 DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -42,28 +43,25 @@ class QStandardItemModel;
 class QStackedWidget;
 QT_END_NAMESPACE
 
+class BluetoothDevice;
+class BluetoothAdapter;
 class BluetoothTransDialog : public DDialog
 {
     Q_OBJECT
 public:
-    BluetoothTransDialog(QWidget *parent = nullptr);
+    enum TransferMode {
+        Default = 0, // 先选择设备再发送
+        DirectlySend // 直接发送到指定设备
+    };
 
-    /**
-     * @brief 设置要发送的文件列表
-     * @param urls 待发送的文件列表 url
-     */
-    void setFiles(const DUrlList &urls) { m_urls = urls; }
-
-Q_SIGNALS:
-    void startSpinner();
-    void stopSpinner();
-    void resetProgress();
+    BluetoothTransDialog(const QStringList &urls, TransferMode mode = Default, QString targetDevId = QString(), QWidget *parent = nullptr);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
     void initUI();
+    void initConn();
     QWidget *initDeviceSelectorPage();
     QWidget *initNonDevicePage();
     QWidget *initWaitForRecvPage();
@@ -71,16 +69,88 @@ private:
     QWidget *initFailedPage();
     QWidget *initSuccessPage();
 
-    QList<QString> listDevices();
-    void UpdateDeviceList();
+    /**
+     * @brief getStyledItem 根据蓝牙设备对象获取一个处理后的列表 item
+     * @param dev 蓝牙设备对象
+     * @return 返回一个列表 item 用于添加到列表中
+     */
+    DStandardItem *getStyledItem(const BluetoothDevice *dev);
+
+    /**
+     * @brief findItemByIdRole 从列表中获取对应蓝牙设备的 item
+     * @param dev
+     * @return
+     */
+    DStandardItem *findItemByIdRole(const BluetoothDevice *dev);
+    DStandardItem *findItemByIdRole(const QString &devId);
+
+    /**
+     * @brief updateDeviceList 初始化加载设备列表
+     */
+    void updateDeviceList();
+
+    /**
+     * @brief addDevice 添加设备到设备列表
+     * @param dev 蓝牙设备对象
+     */
+    void addDevice(const BluetoothDevice *dev);
+
+    /**
+     * @brief removeDevice 从列表中移除相应设备
+     * @param dev 蓝牙设备对象
+     */
+    void removeDevice(const BluetoothDevice *dev);
+    void removeDevice(const QString &id);
+
+    void sendFiles();
+
+    /**
+     * @brief sendFilesToDevice 直接发送文件到指定设备
+     * @param devId 接收方id
+     */
+    void sendFilesToDevice(const QString &devId);
 
 private Q_SLOTS:
     void showBluetoothSetting();
 
-    // 这个函数只处理每个页面的按键事件
+    /**
+     * @brief onBtnClicked 对话框按钮槽函数，根据页面及触发按钮的索引执行页面间的跳转
+     * @param nIdx 按钮的索引
+     */
     void onBtnClicked(const int &nIdx);
-    // 该函数负责刷新每个页面的按钮和标题文字
+
+    /**
+     * @brief onPageChagned 处理页面跳转后界面按钮的更新等操作
+     * @param nIdx 页面的索引，索引值与枚举 Page 一致
+     */
     void onPageChagned(const int &nIdx);
+
+    /**
+     * @brief connectAdapter 连接每个 adapter 的信号
+     */
+    void connectAdapter(const BluetoothAdapter *);
+
+    /**
+     * @brief connectDevice 连接每个设备的信号
+     */
+    void connectDevice(const BluetoothDevice *);
+
+    /**
+     * @brief onAcceptFiles 对方设备同意接收文件时触发
+     */
+    void onAcceptFiles();
+
+    /**
+     * @brief onProgressUpdated 文件传输进度
+     * @param curr
+     * @param total
+     */
+    void onProgressUpdated(const int &curr, const int &total);
+
+Q_SIGNALS:
+    void startSpinner();
+    void stopSpinner();
+    void resetProgress();
 
 private:
     enum Page {
@@ -92,21 +162,27 @@ private:
         SuccessPage,
     };
 
-    DLabel *m_title = nullptr;
-    QStackedWidget *m_stack = nullptr;
-    DListView *m_devicesList = nullptr;
-    QStandardItemModel *m_devModel = nullptr;
-    DLabel *m_subTitle1 = nullptr;
-    DLabel *m_subTitle2 = nullptr;
-    DLabel *m_subTitle3 = nullptr;
-    DLabel *m_subTitle4 = nullptr;
+    enum DeviceRoles {
+        DevNameRole = Qt::UserRole + 100,
+        DevIdRole,
+    };
+
+    DLabel *m_titleOfDialog = nullptr;
+    QStackedWidget *m_stack = nullptr; // 多页面容器
+    DListView *m_devicesList = nullptr; // 设备列表
+    QStandardItemModel *m_devModel = nullptr; // 列表的 model
+    DLabel *m_subTitleForWaitPage = nullptr;
+    DLabel *m_subTitleOfTransPage = nullptr;
+    DLabel *m_subTitleOfFailedPage = nullptr;
+    DLabel *m_subTitleOfSuccessPage = nullptr;
     DLabel *m_sendingStatus = nullptr;
 
-    QTimer *timer = nullptr;
-
 private:
-    DUrlList m_urls;
+    QStringList m_urls; // 待发送文件
     QString m_selectedDevice;
+    QString m_selectedDeviceId;
+
+    QStringList m_connectedAdapter;
 };
 
 #endif // BluetoothTransDialog_H

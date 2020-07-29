@@ -266,7 +266,10 @@ QVector<MenuAction> DesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     Q_D(const DesktopFileInfo);
 
 
-    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer" || (d->deepinID == "dde-file-manager" && d->exec.contains("-O"))) {
+    if (d->deepinID == "dde-trash"
+            || d->deepinID == "dde-home"
+            || d->deepinID == "dde-computer"
+            || (d->deepinID == "dde-file-manager" && d->exec.contains("-O"))) {
         QVector<MenuAction> actions;
         actions << MenuAction::Open
                 << MenuAction::Separator;
