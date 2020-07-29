@@ -922,8 +922,9 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
-
+                //与桌面的enter行为同步
+                for (auto url : urls)
+                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList{url}));
                 return;
             }
 
