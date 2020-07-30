@@ -47,6 +47,7 @@
 #include <QJsonArray>
 #include <QProcess>
 #include <QDebug>
+#include <QtConcurrent>
 
 // use original poppler api
 #include <poppler-document.h>
@@ -59,6 +60,7 @@
 DFM_BEGIN_NAMESPACE
 
 #define FORMAT ".png"
+#define CREATE_VEDIO_THUMB "CreateVedioThumbnail"
 
 inline QByteArray dataToMd5Hex(const QByteArray &data)
 {
@@ -212,9 +214,9 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
 
     if (Q_LIKELY(mime == "text/plain" || mimeTypeList.contains("application/pdf")
 //            || mime == "application/vnd.adobe.flash.movie"
-            || mime == "application/vnd.rn-realmedia"
-            || mime == "application/vnd.ms-asf"
-            || mime == "application/mxf")) {
+                 || mime == "application/vnd.rn-realmedia"
+                 || mime == "application/vnd.ms-asf"
+                 || mime == "application/mxf")) {
         DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
 
         return true;
@@ -249,9 +251,9 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
 
     QImageReader ir(thumbnail, QByteArray(FORMAT).mid(1));
     if (!ir.canRead()) {
-      QFile::remove(thumbnail);
-      emit thumbnailChanged(absoluteFilePath, QString());
-      return QString();
+        QFile::remove(thumbnail);
+        emit thumbnailChanged(absoluteFilePath, QString());
+        return QString();
     }
     ir.setAutoDetectImageFormat(false);
 
@@ -278,7 +280,7 @@ static QString generalKey(const QString &key)
     return key;
 }
 
-QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailProvider::Size size)
+QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailProvider::Size size, const CallBack &callback)
 {
     Q_D(DThumbnailProvider);
 
@@ -337,7 +339,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
         //fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
         //这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
-        if(!imageSize.isValid()){
+        if (!imageSize.isValid()) {
             d->errorString = "Fail to read image file attribute data:" + info.absoluteFilePath();
             goto _return;
         }
@@ -425,13 +427,13 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             d->errorString = QStringLiteral("Image format is invalid");
             goto _return;
         case poppler::image::format_mono:
-            img = QImage((uchar*)imageData.data(), imageData.width(), imageData.height(), QImage::Format_Mono);
+            img = QImage((uchar *)imageData.data(), imageData.width(), imageData.height(), QImage::Format_Mono);
             break;
         case poppler::image::format_rgb24:
-            img = QImage((uchar*)imageData.data(),imageData.width(),imageData.height(),QImage::Format_ARGB6666_Premultiplied);
+            img = QImage((uchar *)imageData.data(), imageData.width(), imageData.height(), QImage::Format_ARGB6666_Premultiplied);
             break;
         case poppler::image::format_argb32:
-            img = QImage((uchar*)imageData.data(), imageData.width(), imageData.height(), QImage::Format_ARGB32);
+            img = QImage((uchar *)imageData.data(), imageData.width(), imageData.height(), QImage::Format_ARGB32);
             break;
         default:
             break;
@@ -502,45 +504,87 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
                 return thumbnail;
             }
 
-            QProcess process;
-            process.start(tool, {QString::number(size), absoluteFilePath}, QIODevice::ReadOnly);
+            //截取视频缩略图的process耗时较多，需要多线程并行处理提高效率
+            QtConcurrent::run([ = ] {
+                QString tThumbnail;
+                QProcess process;
+                process.start(tool, {QString::number(size), absoluteFilePath}, QIODevice::ReadOnly);
 
-            if (!process.waitForFinished()) {
-                d->errorString = process.errorString();
+                QString errorString("");
+                if (!process.waitForFinished())
+                {
+                    errorString = process.errorString();
+                } else if (process.exitCode() != 0)
+                {
+                    const QString &error = process.readAllStandardError();
 
-                goto _return;
-            }
-
-            if (process.exitCode() != 0) {
-                const QString &error = process.readAllStandardError();
-
-                if (error.isEmpty()) {
-                    d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(tool);
-                } else {
-                    d->errorString = error;
+                    if (error.isEmpty()) {
+                        errorString = QString("get thumbnail failed from the \"%1\" application").arg(tool);
+                    } else {
+                        errorString = error;
+                    }
                 }
 
-                goto _return;
-            }
+                if (!errorString.isEmpty())
+                {
+                    d->errorString = errorString;
+                    emit createThumbnailFailed(absoluteFilePath);
+                    callback(QString());
+                    return ;
+                }
 
-            const QByteArray output = process.readAllStandardOutput();
-            const QByteArray png_data = QByteArray::fromBase64(output);
-            Q_ASSERT(!png_data.isEmpty());
-
-            if (image->loadFromData(png_data, "png")) {
-                d->errorString.clear();
-            } else {
-                //过滤video tool的其他输出信息
-                QString processResult(output);
-                processResult = processResult.split(QRegExp("[\n]"),QString::SkipEmptyParts).last();
-                const QByteArray png_data = QByteArray::fromBase64(processResult.toUtf8());
+                const QByteArray output = process.readAllStandardOutput();
+                const QByteArray png_data = QByteArray::fromBase64(output);
                 Q_ASSERT(!png_data.isEmpty());
-                if (image->loadFromData(png_data, "png")) {
-                    d->errorString.clear();
-                } else {
-                    d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
+
+                QScopedPointer<QImage> tImage(new QImage());
+                if (tImage->loadFromData(png_data, "png"))
+                {
+                    errorString.clear();
+                } else
+                {
+                    //过滤video tool的其他输出信息
+                    QString processResult(output);
+                    processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
+                    const QByteArray png_data = QByteArray::fromBase64(processResult.toUtf8());
+                    Q_ASSERT(!png_data.isEmpty());
+                    if (tImage->loadFromData(png_data, "png")) {
+                        errorString.clear();
+                    } else {
+                        errorString = QString("load png image failed from the \"%1\" application").arg(tool);
+                    }
                 }
-            }
+
+                if (!errorString.isEmpty())
+                {
+                    d->errorString = errorString;
+                    emit createThumbnailFailed(absoluteFilePath);
+                    callback(QString());
+                } else
+                {
+                    tThumbnail = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
+                    tImage->setText(QT_STRINGIFY(Thumb::URL), fileUrl);
+                    tImage->setText(QT_STRINGIFY(Thumb::MTime), QString::number(info.lastModified().toTime_t()));
+
+                    // create path
+                    QFileInfo(tThumbnail).absoluteDir().mkpath(".");
+
+                    if (!tImage->save(tThumbnail, Q_NULLPTR, 80)) {
+                        errorString = QStringLiteral("Can not save image to ") + tThumbnail;
+                        d->errorString = errorString;
+                        emit createThumbnailFailed(absoluteFilePath);
+                        callback(QString());
+                    }
+
+                    if (errorString.isEmpty()) {
+                        emit createThumbnailFinished(absoluteFilePath, tThumbnail);
+                        emit thumbnailChanged(absoluteFilePath, tThumbnail);
+                        callback(tThumbnail);
+                    }
+                }
+            });
+
+            return QString(CREATE_VEDIO_THUMB);
         }
     }
 
@@ -566,7 +610,6 @@ _return:
     if (d->errorString.isEmpty()) {
         emit createThumbnailFinished(absoluteFilePath, thumbnail);
         emit thumbnailChanged(absoluteFilePath, thumbnail);
-
         return thumbnail;
     }
 
@@ -685,10 +728,12 @@ void DThumbnailProvider::run()
 
         locker.unlock();
 
-        const QString &thumbnail = createThumbnail(task.fileInfo, task.size);
+        const QString &thumbnail = createThumbnail(task.fileInfo, task.size, task.callback);
 
-        if (task.callback)
-            task.callback(thumbnail);
+        if (thumbnail != CREATE_VEDIO_THUMB) {
+            if (task.callback)
+                task.callback(thumbnail);
+        }
     }
 }
 
