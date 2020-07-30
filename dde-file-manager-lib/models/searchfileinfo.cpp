@@ -113,12 +113,12 @@ void SearchFileInfo::setColumnCompact(bool)
 QList<int> SearchFileInfo::userColumnRoles() const
 {
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileDisplayNameRole
-                                                     << DFileSystemModel::FileUserRole + 1
+//                                                     << DFileSystemModel::FileUserRole + 1
 //                                                     << DFileSystemModel::FileUserRole + 2
-//                                                     << DFileSystemModel::FilePathRole
-                                                     << DFileSystemModel::FileLastModifiedRole
-                                                     << DFileSystemModel::FileSizeRole
-                                                     << DFileSystemModel::FileMimeTypeRole;
+                                        << DFileSystemModel::FilePathRole
+                                        << DFileSystemModel::FileLastModifiedRole
+                                        << DFileSystemModel::FileSizeRole
+                                        << DFileSystemModel::FileMimeTypeRole;
 
     return userColumnRoles;
 }
@@ -130,8 +130,8 @@ QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return qApp->translate("DFileSystemModel",  "Time modified");
 
-    if (userColumnRole == DFileSystemModel::FilePathRole){
-        return QObject::tr("Path", "SearchFileInfo");;
+    if (userColumnRole == DFileSystemModel::FilePathRole) {
+        return qApp->translate("DFileSystemModel",  "Path");
     }
 
     return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
@@ -143,7 +143,7 @@ QVariant SearchFileInfo::userColumnData(int userColumnRole) const
 
     if (userColumnRole == DFileSystemModel::FileUserRole + 2) {
         return QVariant::fromValue(qMakePair(lastModifiedDisplayName(), qMakePair(sizeDisplayName(), mimeTypeDisplayName())));
-    } else if (userColumnRole == DFileSystemModel::FileUserRole + 1) {
+    } else if (userColumnRole == DFileSystemModel::FilePathRole) {
         QString file_path;
 
         const DUrl &fileUrl = d->proxy->fileUrl();
