@@ -346,8 +346,12 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     raise();
 }
 
-DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
+DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const bool ischecksamejob)
 {
+    if (ischecksamejob && m_jobIdItems.contains(QString::number(quintptr(job), 16))) {
+        return nullptr;
+    }
+    QMutexLocker lock(&addtaskmutex);
     DFMTaskWidget *wid = new DFMTaskWidget;
     wid->setTaskId(QString::number(quintptr(job), 16));
 
@@ -553,6 +557,7 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
 }
 void DTaskDialog::adjustSize()
 {
+    QMutexLocker lock(&adjustmutex);
     int listHeight = 2;
     for (int i = 0; i < m_taskListWidget->count(); i++) {
         QListWidgetItem *item = m_taskListWidget->item(i);
@@ -588,13 +593,14 @@ void DTaskDialog::moveYCenter()
 
 void DTaskDialog::removeTaskByPath(QString jobId)
 {
+    QMutexLocker lock(&removetaskmutex);
     if (m_jobIdItems.contains(jobId)) {
-        QListWidgetItem *item = m_jobIdItems.value(jobId);
-        if (item) {
+        QList<QListWidgetItem *> items = m_jobIdItems.values(jobId);
+        for(auto item : items) {
             m_taskListWidget->removeItemWidget(item);
             m_taskListWidget->takeItem(m_taskListWidget->row(item));
-            m_jobIdItems.remove(jobId);
         }
+        m_jobIdItems.remove(jobId);
 
         setTitle(m_taskListWidget->count());
         if (m_taskListWidget->count() == 0) {
@@ -819,13 +825,15 @@ void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail
     if (jobDetail.contains("jobId")) {
         QString jobId = jobDetail.value("jobId");
         if (m_jobIdItems.contains(jobId)) {
-            QListWidgetItem *item = m_jobIdItems.value(jobId);
-            DFMTaskWidget *w = item ? static_cast<DFMTaskWidget *>(item->listWidget()->itemWidget(item)) : nullptr;
-            if (w) {
-                updateData(w, data);
-                // 预防界面不刷，pangu出现过界面不会刷新的问题
-                w->repaint();
-                qApp->processEvents();
+            QList<QListWidgetItem *> items = m_jobIdItems.values(jobId);
+            for (auto item : items) {
+                DFMTaskWidget *w = item ? static_cast<DFMTaskWidget *>(item->listWidget()->itemWidget(item)) : nullptr;
+                if (w) {
+                    updateData(w, data);
+                    // 预防界面不刷，pangu出现过界面不会刷新的问题
+                    w->repaint();
+                    qApp->processEvents();
+                }
             }
         }
     }
