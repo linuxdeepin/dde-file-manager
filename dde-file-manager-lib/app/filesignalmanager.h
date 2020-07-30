@@ -234,7 +234,7 @@ signals:
     void requestCloseTab(const DUrl &tabRootUrl);
 
     //隐藏系统盘状态发生改变消息
-    void requestHideSystemPartition(const bool ishide);
+    void requestHideSystemPartition(bool ishide);
 
 
 #ifdef SW_LABEL

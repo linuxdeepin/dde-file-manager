@@ -1474,7 +1474,7 @@ void DFileService::hideSystemPartition()
     d_ptr->rootfileMtx.unlock();
     changRootFile(fileist);
 
-    emit servicehideSystemPartition();
+    emit serviceHideSystemPartition();
 }
 
 ///###: replace
