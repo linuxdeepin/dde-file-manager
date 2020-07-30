@@ -296,10 +296,10 @@ void DialogManager::addJob(FileJob *job)
 
 void DialogManager::removeJob(const QString &jobId, bool clearAllbuffer)
 {
-    if(clearAllbuffer && m_Opticaljobs.contains(jobId)) { // 最后的时候需要删除所有buffer的数据，否则形成脏数据
-            m_Opticaljobs.remove(jobId);
-            qDebug() << "remove job " << jobId << "from m_Opticaljobs";
-        }
+    if (clearAllbuffer && m_Opticaljobs.contains(jobId)) { // 最后的时候需要删除所有buffer的数据，否则形成脏数据
+        m_Opticaljobs.remove(jobId);
+        qDebug() << "remove job " << jobId << "from m_Opticaljobs";
+    }
 
     if (m_jobs.contains(jobId)) {
         FileJob *job = m_jobs.value(jobId);
@@ -824,7 +824,7 @@ void DialogManager::showComputerPropertyDialog()
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
     },
-                     this)
+    this)
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
@@ -1088,6 +1088,8 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         d.setMessage(message);
         d.setIcon(m_dialogWarningIcon, QSize(64, 64));
         d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+
+        //点确定ret = 0， 直接点叉关闭 ret = -1
         ret = d.exec();
     } else {
 
@@ -1127,11 +1129,13 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         d.addContent(contentFrame, Qt::AlignCenter);
         d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
         d.addButton(tr("View"), true, DDialog::ButtonRecommend);
+        //点取消 ret = 0， 点查看 ret = 1, 直接点叉关闭 ret = -1
         ret = d.exec();
     }
-    if (ret) {
+    //只有 ret = 1 时需要跳转目录
+    if (ret > 0) {
         QWidget *w = WindowManager::getWindowById(event.windowId());
-        DFileManagerWindow *window = dynamic_cast<DFileManagerWindow*>(w);
+        DFileManagerWindow *window = dynamic_cast<DFileManagerWindow *>(w);
         if (window) {
             DUrl parentUrl = event.urlList().at(0).parentUrl();
             window->cd(parentUrl);
@@ -1143,7 +1147,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 {
-    QTimer::singleShot(1000, [=] {
+    QTimer::singleShot(1000, [ = ] {
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
             QStringList &&udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
