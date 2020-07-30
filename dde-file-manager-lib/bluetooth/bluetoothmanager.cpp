@@ -200,8 +200,9 @@ void BluetoothManagerPrivate::initConnects()
         Q_Q(BluetoothManager);
         if (!done) {
             Q_EMIT q->transferCancledByRemote(sessionPath.path());
+        } else {
+            Q_EMIT q->fileTransferFinished(sessionPath.path(), file);
         }
-        qDebug() << file << transferPath.path() << sessionPath.path() << done;
     });
 
     QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionCreated, q, [this](const QDBusObjectPath &sessionPath) {

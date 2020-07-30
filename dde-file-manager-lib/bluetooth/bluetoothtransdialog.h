@@ -35,6 +35,7 @@ class DCommandLinkButton;
 class DListView;
 class DProgressBar;
 class DStandardItem;
+class DSpinner;
 DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -135,10 +136,6 @@ private Q_SLOTS:
      */
     void connectDevice(const BluetoothDevice *);
 
-Q_SIGNALS:
-    void startSpinner();
-    void stopSpinner();
-
 private:
     enum Page {
         SelectDevicePage,
@@ -164,9 +161,11 @@ private:
     DLabel *m_subTitleOfSuccessPage = nullptr;
     DLabel *m_sendingStatus = nullptr;
     DProgressBar *m_progressBar = nullptr;
+    DSpinner *m_spinner = nullptr;
 
 private:
     QStringList m_urls; // 待发送文件
+    QStringList m_finishedUrls;
     QString m_selectedDevice;
     QString m_selectedDeviceId;
     QString m_currSessionPath; // 当前发送进程的 obex 会话路径，用于取消当前传输会话
