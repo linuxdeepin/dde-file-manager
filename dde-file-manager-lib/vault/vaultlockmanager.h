@@ -74,18 +74,6 @@ public:
      */
     void resetConfig();
 
-    /**
-     * @brief isLockEventTriggered 是否存在已触发的锁定事件
-     * @return
-     */
-    bool isLockEventTriggered() const;
-
-    /**
-     * @brief clearLockEvent 清除锁定事件
-     */
-    void clearLockEvent();
-
-
 protected slots:
     /**
      * @brief processAutoLock 处理自动加锁
@@ -137,12 +125,6 @@ protected:
      * @return
      */
     quint64 dbusGetSelfTime() const;
-
-    /**
-     * @brief dbusIsLockEventTriggered 是否存在已触发的锁定事件
-     * @return
-     */
-    bool dbusIsLockEventTriggered() const;
 
     /**
      * @brief dbusClearLockEvent 清除锁定事件

@@ -722,7 +722,7 @@ private:
             return false;
         };
 
-    begin:
+begin:
 
         while (!fileQueue.isEmpty()) {
             if (!enable) {
@@ -1158,7 +1158,7 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
 
 void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 {
-     Q_Q(DFileSystemModel);
+    Q_Q(DFileSystemModel);
 
     //如果被重命名的目录是root目录，则不刷新该目录,而是直接退回到上层目录
     bool isLocalFile = from.isLocalFile() || (from.isVaultFile() || to.isVaultFile());
@@ -1245,7 +1245,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event
             // todo: 此处引起效率变低，暂时注释
-           // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
+            // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
 
             q->remove(fileUrl);
         }
@@ -1637,7 +1637,10 @@ QString DFileSystemModel::roleName(int role)
         return tr("Time created");
     case FileLastReadRole:
         return tr("Last access");
-    default: return QString();
+    case FilePathRole:
+        return tr("Path");
+    default:
+        return QString();
     }
 }
 

@@ -56,6 +56,9 @@ public:
         bReloadItem = false;
         dodgeDelayTimer.setInterval(200);
 
+        touchTimer.setTimerType(Qt::PreciseTimer);
+        QObject::connect(&touchTimer,&QTimer::timeout,&touchTimer,&QTimer::stop);
+
         if (qgetenv("_DDE_DESKTOP_DEBUG_SHOW_GRID") == "TRUE") {
             _debug_log = true;
             _debug_show_grid = true;
@@ -183,4 +186,7 @@ public:
     bool                _debug_log          = false;
     bool                _debug_show_grid    = false;
     bool                _debug_profiler     = false;
+
+    // 用于实现触屏拖拽手指在屏幕上按下短时间200ms后响应
+    QTimer touchTimer;
 };

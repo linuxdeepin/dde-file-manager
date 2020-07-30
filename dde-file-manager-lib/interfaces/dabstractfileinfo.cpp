@@ -51,6 +51,9 @@
 #include "ddiskmanager.h"
 #include "ddiskdevice.h"
 
+#include "bluetooth/bluetoothmanager.h"
+#include "bluetooth/bluetoothmodel.h"
+
 #include <DDesktopEntry>
 
 #include <QDateTime>
@@ -901,7 +904,11 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::CreateSymlink
                        << MenuAction::SendToDesktop;
 
-            if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0) {
+            if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
+#ifdef BLUETOOTH_ENABLE
+                || bluetoothManager->model()->adapters().count() > 0
+#endif
+            ) {
                 actionKeys << MenuAction::SendToRemovableDisk;
             }
 
@@ -974,7 +981,11 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Compress
                    << MenuAction::SendToDesktop;
 
-        if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0) {
+        if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
+#ifdef BLUETOOTH_ENABLE
+            || bluetoothManager->model()->adapters().count() > 0
+#endif
+        ) {
             actionKeys << MenuAction::SendToRemovableDisk;
         }
 
@@ -1655,7 +1666,11 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(Menu
 
     actions.insert(MenuAction::SortBy, sortByMenuActionKeys);
 
-    if (deviceListener->isMountedRemovableDiskExits()) {
+    if (deviceListener->isMountedRemovableDiskExits()
+#ifdef BLUETOOTH_ENABLE
+        || bluetoothManager->model()->adapters().count() > 0
+#endif
+    ) {
         QVector<MenuAction> diskMenuActionKeys;
         actions.insert(MenuAction::SendToRemovableDisk, diskMenuActionKeys);
     }
