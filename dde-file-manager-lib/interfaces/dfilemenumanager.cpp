@@ -1074,9 +1074,9 @@ void DFileMenuManager::actionTriggered(QAction *action)
                 const DUrlList &selUrls = event->selectedUrls();
                 if (selUrls.count() > 0) {
                     const DUrl &u = selUrls.first();
-                    if (!DStorageInfo::isLowSpeedDevice(u.path())) { // 这里只针对非低速设备做判定，否则可能导致正常情况下的右键菜单响应过慢
+                    if (u.isValid() && !DStorageInfo::isLowSpeedDevice(u.path())) { // 这里只针对非低速设备做判定，否则可能导致正常情况下的右键菜单响应过慢
                         DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
-                        if (!info->exists())
+                        if (info && !info->exists())
                             return;
                     }
                 }
