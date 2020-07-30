@@ -1803,6 +1803,9 @@ void CanvasGridView::focusOutEvent(QFocusEvent *event)
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 {
+    //fix bug39609 选中桌面文件夹，进行右键操作，例如打开、重命名，然后再按快捷键home、left、right无效
+    d->mousePressed = false;
+
     //新需求gesetting控制右键菜单隐藏功能
     if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())
             && !Q_LIKELY(GridManager::instance()->isGsettingShow("context-menu",true))) {
@@ -2418,7 +2421,12 @@ void CanvasGridView::initConnection()
 {
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
     [this](const QItemSelection & selected, const QItemSelection & deselected) {
-        Q_UNUSED(selected);
+
+        //fix bug39609 选中桌面文件夹，通过按键F2重命名，然后再按快捷键home、left、right均变为桌面第一个图标为选中
+        if (!selected.indexes().isEmpty()) {
+            d->currentCursorIndex = selected.indexes().first();
+        }
+
         QModelIndex index = property("lastPressedIndex").toModelIndex();
         if (index.isValid() && deselected.contains(index)) {
             setProperty("lastPressedIndex", QModelIndex());
