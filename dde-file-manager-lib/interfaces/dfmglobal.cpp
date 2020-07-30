@@ -52,6 +52,7 @@
 #include <dfmstandardpaths.h>
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "bluetooth/bluetoothmanager.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -466,6 +467,11 @@ void DFMGlobal::initThumbnailConnection()
 
         DAbstractFileWatcher::ghostSignal(fileInfo->parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, fileUrl);
     });
+}
+
+void DFMGlobal::initBluetoothManager()
+{
+    bluetoothManager;
 }
 
 QString DFMGlobal::getUser()

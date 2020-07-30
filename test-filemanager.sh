@@ -25,5 +25,11 @@ cp dde-dock-plugins/test-dde-disk-mount-plugin $build_dir/dde-dock-plugins/disk-
 ./third-party/test-prj-running.sh $build_dir/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin test-dde-text-preview-plugin "$extract_path" "$remove_path"
 ./third-party/test-prj-running.sh $build_dir/dde-file-manager-plugins/pluginPreview/dde-video-preview-plugin test-dde-video-preview-plugin "$extract_path" "$remove_path"
 
+#dde-file-thumbnail-tool 测试报告
+./third-party/test-prj-running.sh $build_dir/dde-file-thumbnail-tool/video test-video "$extract_path" "$remove_path"
+
+#deepin-anything-server-plugins 测试报告
+./third-party/test-prj-running.sh $build_dir/deepin-anything-server-plugins/dde-anythingmonitor/ test-dde-anythingmonitor "$extract_path" "$remove_path"
+
 
 exit 0

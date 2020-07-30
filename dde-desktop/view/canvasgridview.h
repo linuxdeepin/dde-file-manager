@@ -108,6 +108,8 @@ public:
     const DUrlList autoMergeSelectedUrls() const;
     const DUrlList selectedUrls() const;
     void setScreenNum(int num);
+    void setScreenName(const QString &name);
+    inline QString screenName() const {return m_screenName;}
     bool isSelected(const QModelIndex &index) const;
     void select(const QList<DUrl> &list);
     int selectedIndexCount() const;

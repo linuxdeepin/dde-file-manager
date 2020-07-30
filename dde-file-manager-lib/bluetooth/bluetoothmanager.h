@@ -65,17 +65,43 @@ public Q_SLOTS:
      * @brief 向设备发送文件
      * @param device 设备对象
      * @param filePath 文件路径
-     * @return 文件可以发送返回 true，但并不意味着发送成功
+     * @return 返回一个 sessionPath，用于对传输进行取消，返回空说明调用dbus接口时发生了错误
      */
-    bool sendFile(const BluetoothDevice &device, const QString &filePath);
+    QString sendFiles(const BluetoothDevice &device, const QStringList &filePath);
 
     /**
      * @brief 向设备发送文件
      * @param id 设备对象中的id
      * @param filePath 文件路径
-     * @return 文件可以发送返回 true，，但并不意味着发送成功
+     * @return 返回一个 sessionPath，用于对传输进行取消，返回空说明调用dbus接口时发生了错误
      */
-    bool sendFile(const QString &id, const QString &filePath);
+    QString sendFiles(const QString &id, const QStringList &filePath);
+
+    /**
+     * @brief cancleTransfer 取消某个传输会话
+     * @param sessionPath
+     * @return
+     */
+    bool cancleTransfer(const QString &sessionPath);
+
+Q_SIGNALS:
+
+    /**
+     * @brief transferProcessUpdated    当前传输会话进度更新
+     * @param sessionPath   用来标识当前传输进程的会话id
+     * @param total         当前传输列表的总bytes
+     * @param transferred   当前已传输的 bytes
+     * @param currFileIndex 当前传输文件的序号
+     */
+    void transferProcessUpdated(const QString &sessionPath, qulonglong total, qulonglong transferred, int currFileIndex);
+
+    /**
+     * @brief transferCancledByRemote
+     * @param sessionPath
+     */
+    void transferCancledByRemote(const QString &sessionPath);
+
+    void fileTransferFinished(const QString &sessionPath, const QString &filePath);
 
 private:
     explicit BluetoothManager(QObject *parent = nullptr);

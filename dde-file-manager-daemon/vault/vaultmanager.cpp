@@ -52,15 +52,6 @@ VaultManager::VaultManager(QObject *parent)
                 "UserChanged",
                 this,
                 SLOT(sysUserChanged(QString)));
-
-    // monitor screen lock event.
-    QDBusConnection::sessionBus().connect(
-                "com.deepin.SessionManager",
-                "/com/deepin/SessionManager",
-                "org.freedesktop.DBus.Properties",
-                "PropertiesChanged","sa{sv}as",
-                this,
-                SLOT(propertyChanged(QDBusMessage)));
 }
 
 VaultManager::~VaultManager()
@@ -132,30 +123,6 @@ void VaultManager::triggerLockEvent()
 void VaultManager::clearLockEvent()
 {
     m_curVaultClock->clearLockEvent();
-}
-
-void VaultManager::propertyChanged(const QDBusMessage &msg)
-{
-    QList<QVariant> arguments = msg.arguments();
-    if (3 != arguments.count())
-        return;
-
-    QString interfaceName = msg.arguments().at(0).toString();
-    if (interfaceName != "com.deepin.SessionManager")
-        return;
-
-    QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
-    QStringList keys = changedProps.keys();
-    foreach (const QString &prop, keys) {
-        if (prop == "Locked") {
-            bool bLocked = changedProps[prop].toBool();
-            if (bLocked) {
-                char *loginUser = getlogin();
-                QString user = loginUser ? loginUser : "";
-                emit lockEventTriggered(user);
-            }
-        }
-    }
 }
 
 QString VaultManager::getCurrentUser() const

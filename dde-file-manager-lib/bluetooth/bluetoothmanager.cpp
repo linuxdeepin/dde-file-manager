@@ -190,6 +190,34 @@ void BluetoothManagerPrivate::initConnects()
             }
         }
     });
+
+#ifdef BLUETOOTH_ENABLE
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferCreated, q, [this](const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath) {
+        qDebug() << file << transferPath.path() << sessionPath.path();
+    });
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferRemoved, q, [this](const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath, bool done) {
+        Q_Q(BluetoothManager);
+        if (!done) {
+            Q_EMIT q->transferCancledByRemote(sessionPath.path());
+        } else {
+            Q_EMIT q->fileTransferFinished(sessionPath.path(), file);
+        }
+    });
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionCreated, q, [this](const QDBusObjectPath &sessionPath) {
+        qDebug() << sessionPath.path();
+    });
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionRemoved, q, [this](const QDBusObjectPath &sessionPath) {
+        qDebug() << sessionPath.path();
+    });
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionProcess, q, [this](const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIdx) {
+        Q_Q(BluetoothManager);
+        Q_EMIT q->transferProcessUpdated(sessionPath.path(), totalSize, transferred, currentIdx);
+    });
+#endif
 }
 
 void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJsonObject &adapterObj)
@@ -210,11 +238,13 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
     // 异步获取适配器的所有设备
     QDBusObjectPath dPath(path);
     QDBusPendingCall call = m_bluetoothInter->GetDevices(dPath);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, q);
-    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, q, [this, adapterPointer, call] {
-        if (!adapterPointer)
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, q, [this, watcher, adapterPointer, call] {
+        if (!adapterPointer) {
+            qDebug() << "adapterPointer released!";
+            watcher->deleteLater();
             return;
-
+        }
         BluetoothAdapter *adapter = adapterPointer.data();
         if (!call.isError()) {
             QStringList tmpList;
@@ -252,6 +282,8 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
         } else {
             qWarning() << call.error().message();
         }
+
+        watcher->deleteLater();
     });
 }
 
@@ -281,7 +313,7 @@ BluetoothManager::BluetoothManager(QObject *parent)
     : QObject(parent),
       d_ptr(new BluetoothManagerPrivate(this))
 {
-
+    refresh();
 }
 
 
@@ -301,7 +333,7 @@ void BluetoothManager::refresh()
 
     // 获取蓝牙设备
     QDBusPendingCall call = d->m_bluetoothInter->GetAdapters();
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
         if (!call.isError()) {
             QDBusReply<QString> reply = call.reply();
@@ -309,6 +341,7 @@ void BluetoothManager::refresh()
         } else {
             qWarning() << call.error().message();
         }
+        watcher->deleteLater();
     });
 }
 
@@ -326,17 +359,39 @@ void BluetoothManager::showBluetoothSettings()
     d->m_controlcenterInter->ShowModule(BluetoothPage);
 }
 
-
-bool BluetoothManager::sendFile(const BluetoothDevice &device, const QString &filePath)
+QString BluetoothManager::sendFiles(const BluetoothDevice &device, const QStringList &filePath)
 {
-    return sendFile(device.id(), filePath);
+    return sendFiles(device.id(), filePath);
 }
 
-bool BluetoothManager::sendFile(const QString &id, const QString &filePath)
+QString BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
 {
-    // todo, wait interface
+#ifdef BLUETOOTH_ENABLE
+    Q_D(BluetoothManager);
+
+    // /org/bluez/hci0/dev_90_63_3B_DA_5A_4C  --》  90:63:3B:DA:5A:4C
+    QString deviceAddress = id;
+    deviceAddress.remove(QRegularExpression("/org/bluez/hci[0-9]*/dev_")).replace("_", ":");
+
+    QDBusPendingReply<QDBusObjectPath> reply = d->m_bluetoothInter->SendFiles(deviceAddress, filePath);
+    reply.waitForFinished();
+    if (reply.isError()) {
+        qDebug() << "Error" << reply.error();
+        return QString();
+    }
+
+    return reply.value().path();
+#else
+    return QString();
+#endif
+}
+
+bool BluetoothManager::cancleTransfer(const QString &sessionPath)
+{
+#ifdef BLUETOOTH_ENABLE
+    Q_D(BluetoothManager);
+    d->m_bluetoothInter->CancelTransferSession(QDBusObjectPath(sessionPath));
+    qDebug() << sessionPath;
+#endif
     return true;
 }
-
-
-
