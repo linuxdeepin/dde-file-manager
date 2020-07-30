@@ -198,7 +198,7 @@ signals:
     void fileRenamed(const DUrl &from, const DUrl &to) const;
     void rootFileChange(const DAbstractFileInfoPointer &chi) const;
     void queryRootFileFinsh() const;
-    void servicehideSystemPartition() const;
+    void serviceHideSystemPartition() const;
 public Q_SLOTS:
     void slotError(QNetworkReply::NetworkError err);
     void hideSystemPartition();

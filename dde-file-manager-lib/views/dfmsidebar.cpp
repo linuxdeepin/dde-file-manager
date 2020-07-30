@@ -697,18 +697,16 @@ void DFMSideBar::initDeviceConnection()
 
     connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
 
-    connect(DFileService::instance(),&DFileService::servicehideSystemPartition,this,[this](){
-        QList<DUrl>::Iterator it = devitems.begin();
-        while (it != devitems.end()) {
-            DUrl nowurl = *it;
-            if (!DFileService::instance()->isRootFileContain(nowurl)) {
-                devitems.erase(it);
-                removeItem(nowurl, groupName(Device));
+    connect(DFileService::instance(),&DFileService::serviceHideSystemPartition,this,[this](){
+        QList<DUrl> removelist;
+        for (auto itemurl : devitems) {
+            if (!DFileService::instance()->isRootFileContain(itemurl)) {
+                removelist.push_back(itemurl);
             }
-            if (it == devitems.end()) {
-                break;
-            }
-            ++it;
+        }
+        for (auto removeurl : removelist) {
+            devitems.removeOne(removeurl);
+            removeItem(removeurl, groupName(Device));
         }
         rootFileChange();
     },Qt::QueuedConnection);

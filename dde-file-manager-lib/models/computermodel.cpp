@@ -97,7 +97,7 @@ ComputerModel::ComputerModel(QObject *parent)
             addItem(VaultController::makeVaultUrl());
         });
 
-        connect(fileService,&DFileService::servicehideSystemPartition,this,[this,rootInit](){
+        connect(fileService,&DFileService::serviceHideSystemPartition,this,[this,rootInit](){
             m_items.clear();
             m_nitems = 0;
             addItem(makeSplitterUrl(tr("My Directories")));
