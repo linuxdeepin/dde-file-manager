@@ -105,7 +105,6 @@ void BluetoothTransDialog::initUI()
 
     // stacked area
     m_stack = new QStackedWidget(this);
-    connect(m_stack, &QStackedWidget::currentChanged, this, &BluetoothTransDialog::onPageChagned);
 
     pLayout->addWidget(m_stack);
 
@@ -120,8 +119,6 @@ void BluetoothTransDialog::initUI()
     m_stack->setCurrentIndex(NoneDevicePage); // 初始界面为空界面
 
     setOnButtonClickedClose(false);
-
-    connect(this, &BluetoothTransDialog::buttonClicked, this, &BluetoothTransDialog::onBtnClicked);
 }
 
 void BluetoothTransDialog::initConn()
@@ -133,6 +130,23 @@ void BluetoothTransDialog::initConn()
         const BluetoothAdapter *adapter = iter.value();
         connectAdapter(adapter);
     }
+
+    connect(m_stack, &QStackedWidget::currentChanged, this, &BluetoothTransDialog::onPageChagned);
+    connect(this, &BluetoothTransDialog::buttonClicked, this, &BluetoothTransDialog::onBtnClicked);
+
+    connect(m_devicesList, &DListView::clicked, this, [this](const QModelIndex &curr) {
+        for (int i = 0; i < m_devModel->rowCount(); i++) {
+            DStandardItem *item = dynamic_cast<DStandardItem *>(m_devModel->item(i));
+            if (!item)
+                continue;
+            if (i == curr.row()) {
+                item->setCheckState(Qt::Checked);
+                m_selectedDevice = item->text();
+                m_selectedDeviceId = item->data(DevIdRole).toString();
+            } else
+                item->setCheckState(Qt::Unchecked);
+        }
+    });
 
     connect(bluetoothManager->model(), &BluetoothModel::adapterAdded, this, [=](const BluetoothAdapter *adapter) {
         connectAdapter(adapter);
@@ -149,6 +163,40 @@ void BluetoothTransDialog::initConn()
             iter.next();
             iter.value()->disconnect();
         }
+    });
+
+    connect(bluetoothManager, &BluetoothManager::transferProcessUpdated, this, [this](const QString &sessionPath, qulonglong total, qulonglong transferred, int currFileIndex) {
+        if (sessionPath != m_currSessionPath)
+            return;
+
+        if (m_progressUpdateShouldBeIgnore) {
+            m_progressUpdateShouldBeIgnore = false;
+            return;
+        }
+
+        if (m_stack->currentIndex() != TransferPage)
+            m_stack->setCurrentIndex(TransferPage);
+
+        m_sendingStatus->setText(TXT_SEND_PROGRES.arg(currFileIndex - 1).arg(m_urls.count()));
+        m_progressBar->setMaximum(static_cast<int>(total));
+        m_progressBar->setValue(static_cast<int>(transferred));
+
+        if (total == transferred) {
+            m_sendingStatus->setText(TXT_SEND_PROGRES.arg(currFileIndex).arg(m_urls.count()));
+            QTimer::singleShot(1000, nullptr, [this] { m_stack->setCurrentIndex(SuccessPage); }); // 这里留一秒的时间用于显示完整的进度，避免进度满就直接跳转页面了
+        }
+    });
+
+    connect(bluetoothManager, &BluetoothManager::transferCancledByRemote, this, [this](const QString &sessionPath) {
+        if (sessionPath != m_currSessionPath)
+            return;
+        m_stack->setCurrentIndex(FailedPage);
+    });
+
+    connect(bluetoothManager, &BluetoothManager::fileTransferFinished, this, [this](const QString &sessionPath, const QString &filePath) {
+        if (sessionPath != m_currSessionPath)
+            return;
+        m_finishedUrls << filePath;
     });
 }
 
@@ -180,19 +228,7 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
     m_devicesList->setViewportMargins(0, 0, 0, 0);
     m_devicesList->setItemSpacing(1);
     m_devicesList->setModel(m_devModel);
-    connect(m_devicesList, &DListView::clicked, this, [this](const QModelIndex &curr) {
-        for (int i = 0; i < m_devModel->rowCount(); i++) {
-            DStandardItem *item = dynamic_cast<DStandardItem *>(m_devModel->item(i));
-            if (!item)
-                continue;
-            if (i == curr.row()) {
-                item->setCheckState(Qt::Checked);
-                m_selectedDevice = item->text();
-                m_selectedDeviceId = item->data(DevIdRole).toString();
-            } else
-                item->setCheckState(Qt::Unchecked);
-        }
-    });
+
     pLayout->addWidget(m_devicesList);
 
     DCommandLinkButton *linkBtn = new DCommandLinkButton(TXT_GOTO_BT_SETS, this);
@@ -263,10 +299,8 @@ QWidget *BluetoothTransDialog::initWaitForRecvPage()
     m_subTitleForWaitPage->setFont(f);
     pLay->addWidget(m_subTitleForWaitPage);
 
-    DSpinner *spinner = new DSpinner(this);
-    pLay->addWidget(spinner);
-    connect(this, &BluetoothTransDialog::startSpinner, spinner, &DSpinner::start);
-    connect(this, &BluetoothTransDialog::stopSpinner, spinner, &DSpinner::stop);
+    m_spinner = new DSpinner(this);
+    pLay->addWidget(m_spinner);
 
     DLabel *txt2 = new DLabel(TXT_WAIT_FOR_RCV, this);
     txt2->setAlignment(Qt::AlignCenter);
@@ -290,21 +324,11 @@ QWidget *BluetoothTransDialog::initTranferingPage()
     m_subTitleOfTransPage->setFont(f);
     pLay->addWidget(m_subTitleOfTransPage);
 
-    DProgressBar *progress = new DProgressBar(this);
-    progress->setValue(0);
-    progress->setMaximum(100);
-    progress->setMaximumHeight(8);
-    pLay->addWidget(progress);
-    //    connect(timer, &QTimer::timeout, this, [progress, this] {
-    //        progress->setValue(progress->value() + 4);
-    //        qDebug() << progress->value();
-    //        if (progress->value() == progress->maximum()) {
-    //            m_stack->setCurrentIndex(SuccessPage);
-    //        }
-    //    });
-    connect(this, &BluetoothTransDialog::resetProgress, this, [progress] {
-        progress->setValue(0);
-    });
+    m_progressBar = new DProgressBar(this);
+    m_progressBar->setValue(0);
+    m_progressBar->setMaximum(100);
+    m_progressBar->setMaximumHeight(8);
+    pLay->addWidget(m_progressBar);
 
     m_sendingStatus = new DLabel(TXT_SEND_PROGRES, this);
     m_sendingStatus->setAlignment(Qt::AlignCenter);
@@ -415,6 +439,11 @@ void BluetoothTransDialog::updateDeviceList()
 
 void BluetoothTransDialog::addDevice(const BluetoothDevice *dev)
 {
+    // 根据设备的 uuid 或 icon 要对可接收文件的设备进行过滤
+    static const QStringList deviceCanRecvFile {"computer", "phone"};
+    if (!deviceCanRecvFile.contains(dev->icon())) // 暂时根据 icon 进行判定，以后或可根据 uuid 是否包含 obex 传输服务来判定设备能否接收文件
+        return;
+
     DStandardItem *item = getStyledItem(dev);
     if (!item)
         return;
@@ -443,10 +472,12 @@ void BluetoothTransDialog::removeDevice(const QString &id)
 
 void BluetoothTransDialog::sendFiles()
 {
-    m_selectedDevice;
-    m_urls;
+    foreach (auto path, m_finishedUrls) { // 针对失败重试：之前已经发送成功的文件不再次发送
+        m_urls.removeAll(path);
+    }
+    m_finishedUrls.clear();
 
-    if (m_urls.count() == 0)
+    if (m_urls.count() == 0 || m_selectedDeviceId.isEmpty())
         return;
 
     m_subTitleForWaitPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
@@ -454,15 +485,31 @@ void BluetoothTransDialog::sendFiles()
     m_subTitleOfFailedPage->setText(TXT_SENDING_FAIL.arg(m_selectedDevice));
     m_subTitleOfSuccessPage->setText(TXT_SENDING_SUCC.arg(m_selectedDevice));
 
-    m_stack->setCurrentIndex(WaitForRecvPage);
-    Q_EMIT startSpinner();
+    m_progressUpdateShouldBeIgnore = true;
+    m_progressBar->setValue(0); // retry 时需要重置进度
 
-    bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
+    m_currSessionPath = bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
+    if (m_currSessionPath.isEmpty()) { // 执行重传也发生错误的时候，根据当前列表是否为空，决定返回到选择列表页面还是空列表页面
+        if (m_devModel->rowCount() != 0)
+            m_stack->setCurrentIndex(SelectDevicePage);
+        else
+            m_stack->setCurrentIndex(NoneDevicePage);
+        return;
+    }
+
+    m_stack->setCurrentIndex(WaitForRecvPage);
+    m_spinner->start();
 }
 
 void BluetoothTransDialog::closeEvent(QCloseEvent *event)
 {
-    Q_UNUSED(event)
+    DDialog::closeEvent(event);
+
+    if (m_stack->currentIndex() == WaitForRecvPage
+        || m_stack->currentIndex() == TransferPage
+        || m_stack->currentIndex() == FailedPage) {
+        bluetoothManager->cancleTransfer(m_currSessionPath);
+    }
 }
 
 void BluetoothTransDialog::showBluetoothSetting()
@@ -499,7 +546,9 @@ void BluetoothTransDialog::onBtnClicked(const int &nIdx)
 
 void BluetoothTransDialog::onPageChagned(const int &nIdx)
 {
-    Q_EMIT stopSpinner();
+    if (!m_titleOfDialog || !m_spinner)
+        return;
+    m_spinner->stop();
     setIcon(QIcon::fromTheme(ICON_CONNECT));
     m_titleOfDialog->setText(TITLE_BT_TRANS_FILE);
     clearButtons();
@@ -560,13 +609,4 @@ void BluetoothTransDialog::connectDevice(const BluetoothDevice *dev)
             break;
         }
     });
-}
-
-void BluetoothTransDialog::onAcceptFiles()
-{
-    m_stack->setCurrentIndex(TransferPage);
-}
-
-void BluetoothTransDialog::onProgressUpdated(const int &curr, const int &total)
-{
 }
