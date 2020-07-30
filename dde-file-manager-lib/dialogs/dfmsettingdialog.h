@@ -45,8 +45,8 @@ public:
     static QPair<QWidget*, QWidget*> createAutoMountCheckBox(QObject* opt);
     static QPair<QWidget *, QWidget *> createAutoMountOpenCheckBox(QObject* opt);
 
-    static QCheckBox* AutoMountCheckBox;
-    static QCheckBox* AutoMountOpenCheckBox;
+    static QPointer<QCheckBox> AutoMountCheckBox;
+    static QPointer<QCheckBox> AutoMountOpenCheckBox;
 
 private:
     QPointer<DSettings> m_settings;

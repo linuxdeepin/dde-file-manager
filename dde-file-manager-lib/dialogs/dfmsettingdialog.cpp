@@ -343,8 +343,8 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     return DSettings::fromJson(data);
 }
 
-QCheckBox *DFMSettingDialog::AutoMountCheckBox = nullptr;
-QCheckBox *DFMSettingDialog::AutoMountOpenCheckBox = nullptr;
+QPointer<QCheckBox> DFMSettingDialog::AutoMountCheckBox = nullptr;
+QPointer<QCheckBox> DFMSettingDialog::AutoMountOpenCheckBox = nullptr;
 
 DFMSettingDialog::DFMSettingDialog(QWidget *parent):
     DSettingsDialog(parent)
