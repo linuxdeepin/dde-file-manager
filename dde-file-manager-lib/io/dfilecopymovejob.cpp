@@ -1268,7 +1268,7 @@ write_data:
 //    setState(DFileCopyMoveJob::IOWaitState);
     fromDevice->close();
     toDevice->close();
-    countrefinesize(blockSize <= 0 ? 4096 : 0);
+    countrefinesize(fromInfo->size() <= 0 ? 4096 : 0);
     /*if (state == DFileCopyMoveJob::IOWaitState) {
         setState(DFileCopyMoveJob::RunningState);
     } else */
@@ -1709,7 +1709,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
         qreal realProgress = qreal(dataSize) / totalSize;
         if (realProgress > lastProgress)
             lastProgress = realProgress;
-        qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", dataSize, fileStatistics->totalSize());
+        qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", dataSize, fileStatistics->totalProgressSize());
     } else {
         //预设一个总大小，让前期进度平滑一些（目前阈值取1mb）
         qreal virtualSize = totalSize < 1000000 ? 1000000 : totalSize;
@@ -1798,7 +1798,7 @@ void DFileCopyMoveJobPrivate::_q_updateProgress()
 void DFileCopyMoveJobPrivate::countrefinesize(const qint64 &size)
 {
     QMutexLocker lock(&m_refinemutex);
-    refinecpsize += size;
+    refinecpsize += size <= 0 ? 4096 : size;
 }
 
 DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
@@ -2191,8 +2191,9 @@ void DFileCopyMoveJob::run()
         if (targetStorageInfo) {
             d->targetRootPath = targetStorageInfo->rootPath();
             QString rootpath = d->targetRootPath;
-            if (d->brefine) {
-                d->bdestLocal = destIsLocal(rootpath);
+            d->bdestLocal = destIsLocal(rootpath);
+            if (d->brefine && !d->bdestLocal) {
+
                 //优化等待1秒后启动异步“同文件”
                 QTimer::singleShot(100,this,[me,&rootpath](){
                     if (!me) {
@@ -2329,13 +2330,13 @@ void DFileCopyMoveJob::run()
 end:
     me->setSysncQuitState(true);
     //等待线程池结束,等待异步tongbu线程结束
-    qDebug() << "wait threadpool over";
+//    qDebug() << "wait threadpool over";
     waitSysncEnd();
 
     if (d->targetIsRemovable && mayExecSync &&
             d->state != DFileCopyMoveJob::StoppedState) { //主动取消时state已经被设置为stop了
-        qCDebug(fileJob()) << "sync file, lastErrorHandleAction" << d->lastErrorHandleAction
-                           << ", state:" << d->state;
+//        qCDebug(fileJob()) << "sync file, lastErrorHandleAction" << d->lastErrorHandleAction
+//                           << ", state:" << d->state;
         // 任务完成后执行 sync 同步数据到硬盘, 同时将状态改为 SleepState，用于定时器更新进度和速度信息
         d->setState(IOWaitState);
         int syncRet = 0;
