@@ -97,6 +97,19 @@ ComputerModel::ComputerModel(QObject *parent)
             addItem(VaultController::makeVaultUrl());
         });
 
+        connect(fileService,&DFileService::servicehideSystemPartition,this,[this,rootInit](){
+            m_items.clear();
+            m_nitems = 0;
+            addItem(makeSplitterUrl(tr("My Directories")));
+            QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+            qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
+            rootInit(ch);
+
+            // 保险柜
+            addItem(makeSplitterUrl(QObject::tr("File Vault")));
+            addItem(VaultController::makeVaultUrl());
+        });
+
         if (fileService->isRootFileInited()) {
             disconnect(fileService,&DFileService::queryRootFileFinsh,this, nullptr);
 

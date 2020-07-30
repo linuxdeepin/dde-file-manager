@@ -693,7 +693,24 @@ void DFMSideBar::initDeviceConnection()
     DFileService::instance()->startQuryRootFile();
     connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
         rootFileChange();
-        connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+    },Qt::QueuedConnection);
+
+    connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+
+    connect(DFileService::instance(),&DFileService::servicehideSystemPartition,this,[this](){
+        QList<DUrl>::Iterator it = devitems.begin();
+        while (it != devitems.end()) {
+            DUrl nowurl = *it;
+            if (!DFileService::instance()->isRootFileContain(nowurl)) {
+                devitems.erase(it);
+                removeItem(nowurl, groupName(Device));
+            }
+            if (it == devitems.end()) {
+                break;
+            }
+            ++it;
+        }
+        rootFileChange();
     },Qt::QueuedConnection);
 
     if (fileService->isRootFileInited()) {
