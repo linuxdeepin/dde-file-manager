@@ -29,6 +29,7 @@
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
+#include "desktopinfo.h"
 
 #include "filemanagerapp.h"
 #include "logutil.h"
@@ -98,7 +99,9 @@ int main(int argc, char *argv[])
         DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
     }
 
-    SingleApplication::loadDXcbPlugin();
+    if (!DesktopInfo().waylandDectected()) //wayland下不加载xcb
+        SingleApplication::loadDXcbPlugin();
+
     SingleApplication::initSources();
     SingleApplication app(argc, argv);
 
@@ -110,10 +113,10 @@ int main(int argc, char *argv[])
     app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     app.setApplicationDescription(app.translate("Application", "File Manager is a powerful and "
-                                                               "easy-to-use file management tool, "
-                                                               "featured with searching, copying, "
-                                                               "trash, compression/decompression, file property "
-                                                               "and other useful functions."));
+                                                "easy-to-use file management tool, "
+                                                "featured with searching, copying, "
+                                                "trash, compression/decompression, file property "
+                                                "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
 #ifdef DISABLE_QUIT_ON_LAST_WINDOW_CLOSED

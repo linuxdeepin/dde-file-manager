@@ -88,7 +88,8 @@ QString Display::primaryName()
 
 QScreen *Display::primaryScreen()
 {
-#ifdef DDE_DBUS_DISPLAY
+
+#if 0 //#ifdef DDE_DBUS_DISPLAY  //!在真正使用wayland下，继续使用下面代码会崩溃
 //    auto primaryName = m_display->primary();
 
     //if X11

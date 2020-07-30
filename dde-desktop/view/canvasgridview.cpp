@@ -2990,6 +2990,9 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
 void CanvasGridView::updateFrameCursor()
 {
+    if (DesktopInfo().waylandDectected())
+        return;
+
     static QCursor *lastArrowCursor = nullptr;
     static QString  lastCursorTheme;
     int lastCursorSize = 0;
