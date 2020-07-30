@@ -191,11 +191,33 @@ void BluetoothManagerPrivate::initConnects()
         }
     });
 
-    //#ifdef BLUETOOTH_ENABLE
-    //    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferCreated, q, [this](int idx, const QString &file, const QDBusObjectPath &transfer){
-    //        qDebug() << idx << file << transfer.path();
-    //    });
-    //#endif
+#ifdef BLUETOOTH_ENABLE
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferCreated, q, [this](const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath) {
+        qDebug() << file << transferPath.path() << sessionPath.path();
+    });
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferRemoved, q, [this](const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath, bool done) {
+        Q_Q(BluetoothManager);
+        if (!done) {
+            Q_EMIT q->transferCancledByRemote(sessionPath.path());
+        } else {
+            Q_EMIT q->fileTransferFinished(sessionPath.path(), file);
+        }
+    });
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionCreated, q, [this](const QDBusObjectPath &sessionPath) {
+        qDebug() << sessionPath.path();
+    });
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionRemoved, q, [this](const QDBusObjectPath &sessionPath) {
+        qDebug() << sessionPath.path();
+    });
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionProcess, q, [this](const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIdx) {
+        Q_Q(BluetoothManager);
+        Q_EMIT q->transferProcessUpdated(sessionPath.path(), totalSize, transferred, currentIdx);
+    });
+#endif
 }
 
 void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJsonObject &adapterObj)
@@ -337,55 +359,39 @@ void BluetoothManager::showBluetoothSettings()
     d->m_controlcenterInter->ShowModule(BluetoothPage);
 }
 
-bool BluetoothManager::sendFiles(const BluetoothDevice &device, const QStringList &filePath)
+QString BluetoothManager::sendFiles(const BluetoothDevice &device, const QStringList &filePath)
 {
     return sendFiles(device.id(), filePath);
 }
 
-bool BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
+QString BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
 {
+#ifdef BLUETOOTH_ENABLE
     Q_D(BluetoothManager);
 
-    if (filePath.count() == 0)
-        return false;
-
-    if (!interfaceExists(BluetoothPath, "SendFiles")) {
-        return false;
-    }
-
     // /org/bluez/hci0/dev_90_63_3B_DA_5A_4C  --》  90:63:3B:DA:5A:4C
-    QString newId = id;
-    newId.remove(QRegularExpression("/org/bluez/hci[0-9]*/dev_")).replace("_", ":");
+    QString deviceAddress = id;
+    deviceAddress.remove(QRegularExpression("/org/bluez/hci[0-9]*/dev_")).replace("_", ":");
 
-    QDBusInterface interface(BluetoothService, BluetoothPath, BluetoothService, QDBusConnection::sessionBus());
-    if (!interface.isValid()) {
-        qDebug() << qPrintable(QDBusConnection::sessionBus().lastError().message());
-        return false;
+    QDBusPendingReply<QDBusObjectPath> reply = d->m_bluetoothInter->SendFiles(deviceAddress, filePath);
+    reply.waitForFinished();
+    if (reply.isError()) {
+        qDebug() << "Error" << reply.error();
+        return QString();
     }
 
-    QDBusMessage msg = interface.call("SendFiles", newId, filePath);
-    qDebug() << msg.errorName() << msg.errorMessage();
-    return true;
+    return reply.value().path();
+#else
+    return QString();
+#endif
 }
 
-bool BluetoothManager::interfaceExists(const QString &path, const QString &method)
+bool BluetoothManager::cancleTransfer(const QString &sessionPath)
 {
-    QDBusInterface ud2(BluetoothService, path, "org.freedesktop.DBus.Introspectable", QDBusConnection::sessionBus());
-    QDBusReply<QString> reply = ud2.call("Introspect");
-    QXmlStreamReader xml_parser(reply.value());
-
-    while (!xml_parser.atEnd()) {
-        xml_parser.readNext();
-
-        if (xml_parser.tokenType() == QXmlStreamReader::StartElement
-            && xml_parser.name().toString() == "method") {
-            const QString &name = xml_parser.attributes().value("name").toString();
-
-            if (name == method) {
-                return true;
-            }
-        }
-    }
-
-    return false;
+#ifdef BLUETOOTH_ENABLE
+    Q_D(BluetoothManager);
+    d->m_bluetoothInter->CancelTransferSession(QDBusObjectPath(sessionPath));
+    qDebug() << sessionPath;
+#endif
+    return true;
 }
