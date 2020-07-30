@@ -267,18 +267,15 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
 bool WallpaperItem::eventFilter(QObject *object, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
-        qDebug() << "我要测试";
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Tab) {
             if (object == m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()) {
-                qDebug() << "TAB";
                 emit tab();
                 return true;
             }
         }
         else if (keyEvent->key() == Qt::Key_Backtab) {
             if (object == m_buttonLayout->itemAt(0)->widget()) {
-                qDebug() << "BACKTAB";
                 emit backtab();
                 return true;
             }
