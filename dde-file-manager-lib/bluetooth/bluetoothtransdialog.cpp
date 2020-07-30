@@ -439,7 +439,10 @@ void BluetoothTransDialog::updateDeviceList()
 
 void BluetoothTransDialog::addDevice(const BluetoothDevice *dev)
 {
-    // TODO 根据设备的 uuid 或 icon 要对可接收文件的设备进行过滤
+    // 根据设备的 uuid 或 icon 要对可接收文件的设备进行过滤
+    static const QStringList deviceCanRecvFile {"computer", "phone"};
+    if (!deviceCanRecvFile.contains(dev->icon())) // 暂时根据 icon 进行判定，以后或可根据 uuid 是否包含 obex 传输服务来判定设备能否接收文件
+        return;
 
     DStandardItem *item = getStyledItem(dev);
     if (!item)
