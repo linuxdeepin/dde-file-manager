@@ -128,6 +128,8 @@ DFileService::DFileService(QObject *parent)
         }
     });
 
+    connect(fileSignalManager,&FileSignalManager::requestHideSystemPartition,this,&DFileService::hideSystemPartition);
+
 }
 
 DFileService::~DFileService()
@@ -1367,6 +1369,11 @@ void DFileService::dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUr
     }
 }
 
+bool DFileService::isRootFileContain(const DUrl &url)
+{
+    return d_ptr->rootfilelist.contains(url);
+}
+
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
 {
     HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.host());
@@ -1456,6 +1463,18 @@ void DFileService::laterRequestSelectFiles(const DFMUrlListBaseEvent &event) con
 void DFileService::slotError(QNetworkReply::NetworkError err)
 {
     qDebug() << static_cast<QNetworkReply *>(sender())->errorString() << err;
+}
+
+void DFileService::hideSystemPartition()
+{
+    QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
+            getChildren(this, DUrl(DFMROOT_ROOT),QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
+    d_ptr->rootfileMtx.lock();
+    d_ptr->rootfilelist.clear();
+    d_ptr->rootfileMtx.unlock();
+    changRootFile(fileist);
+
+    emit servicehideSystemPartition();
 }
 
 ///###: replace

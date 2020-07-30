@@ -44,6 +44,7 @@
 #include "app/define.h"
 #include "singleton.h"
 #include "dfmapplication.h"
+#include "app/filesignalmanager.h"
 
 DFM_USE_NAMESPACE
 
@@ -192,6 +193,13 @@ void SettingBackend::doSetOption(const QString &key, const QVariant &value)
     Q_ASSERT(attribute >= 0);
 
     DFMApplication::instance()->setGenericAttribute(static_cast<DFMApplication::GenericAttribute>(attribute), value);
+
+    //fix bug 39785 【专业版 sp3】【文件管理器】【5.2.0.8-1】文管菜单设置隐藏系统盘，关闭所有文管窗口，再打开新文管窗口，系统盘没有隐藏
+    if (key == QString("advance.other.hide_system_partition")) {
+        fileSignalManager->requestHideSystemPartition(value.toBool());
+    }
+
+
 }
 
 void SettingBackend::onValueChanged(int attribute, const QVariant &value)

@@ -233,6 +233,10 @@ signals:
     // 请求关闭tab页
     void requestCloseTab(const DUrl &tabRootUrl);
 
+    //隐藏系统盘状态发生改变消息
+    void requestHideSystemPartition(const bool ishide);
+
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);

@@ -188,7 +188,8 @@ public:
     void setDoClearTrashState(const bool bdoing);
     //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
     void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
-
+    //处理rootfilelist中是否包含某个durl
+    bool isRootFileContain(const DUrl &url);
 signals:
     void fileOpened(const DUrl &fileUrl) const;
     void fileCopied(const DUrl &source, const DUrl &target) const;
@@ -197,8 +198,10 @@ signals:
     void fileRenamed(const DUrl &from, const DUrl &to) const;
     void rootFileChange(const DAbstractFileInfoPointer &chi) const;
     void queryRootFileFinsh() const;
+    void servicehideSystemPartition() const;
 public Q_SLOTS:
     void slotError(QNetworkReply::NetworkError err);
+    void hideSystemPartition();
 
 private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;
