@@ -35,6 +35,7 @@ class DCommandLinkButton;
 class DListView;
 class DProgressBar;
 class DStandardItem;
+class DSpinner;
 DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -135,23 +136,6 @@ private Q_SLOTS:
      */
     void connectDevice(const BluetoothDevice *);
 
-    /**
-     * @brief onAcceptFiles 对方设备同意接收文件时触发
-     */
-    void onAcceptFiles();
-
-    /**
-     * @brief onProgressUpdated 文件传输进度
-     * @param curr
-     * @param total
-     */
-    void onProgressUpdated(const int &curr, const int &total);
-
-Q_SIGNALS:
-    void startSpinner();
-    void stopSpinner();
-    void resetProgress();
-
 private:
     enum Page {
         SelectDevicePage,
@@ -176,11 +160,16 @@ private:
     DLabel *m_subTitleOfFailedPage = nullptr;
     DLabel *m_subTitleOfSuccessPage = nullptr;
     DLabel *m_sendingStatus = nullptr;
+    DProgressBar *m_progressBar = nullptr;
+    DSpinner *m_spinner = nullptr;
 
 private:
     QStringList m_urls; // 待发送文件
+    QStringList m_finishedUrls;
     QString m_selectedDevice;
     QString m_selectedDeviceId;
+    QString m_currSessionPath; // 当前发送进程的 obex 会话路径，用于取消当前传输会话
+    bool m_progressUpdateShouldBeIgnore = true; // 忽略每次调用 sendFile 发送过来的第一次更新进度的信号，此时接收方还未同意接收文件，信号被触发可能是因为创建链路的时候携带有部分请求信息导致 transferred 数据的更新
 
     QStringList m_connectedAdapter;
 };
