@@ -20,30 +20,29 @@
 #include <X11/Xcursor/Xcursor.h>
 //for xcb
 #include <QtPlatformHeaders/QXcbWindowFunctions>
-#define WINDOWS_DESKTOP 0x01000000
-
-
-
 
 namespace DesktopUtil
 {
-void set_desktop_window(QWidget *win)
+void set_desktop_window(QWidget *w)
 {
-    if (!win)
+    if (!w)
         return;
 
-    win->winId(); //must be called
-    QWindow *window = win->windowHandle();
-    if (!window)
+    w->winId(); //must be called
+    QWindow *window = w->windowHandle();
+    if (!window){
+        qWarning() << w << "windowHandle is null";
         return;
+    }
 
     if (DesktopInfo().waylandDectected()) {
         qDebug() << "wayland set desktop";
-        win->setWindowFlags((Qt::WindowFlags)WINDOWS_DESKTOP | Qt::FramelessWindowHint); //to do set Desktop flag
+        w->setWindowFlags(Qt::FramelessWindowHint); //to do set Desktop flag
+        w->setAttribute(Qt::WA_NativeWindow);
+        window->setProperty("_d_dwayland_window-type","desktop");
     } else {
         QXcbWindowFunctions::setWmWindowType(window, QXcbWindowFunctions::Desktop);
     }
-
 }
 
 QCursor *loadQCursorFromX11Cursor(const char* theme, const char* cursorName, int cursorSize)

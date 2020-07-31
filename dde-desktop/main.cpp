@@ -100,8 +100,11 @@ int main(int argc, char *argv[])
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    if (!DesktopInfo().waylandDectected()) //wayland下不加载xcb
-        DApplication::loadDXcbPlugin();
+    if (DesktopInfo().waylandDectected())
+        qputenv("QT_WAYLAND_SHELL_INTEGRATION","kwayland-shell"); //wayland shell
+    else
+        DApplication::loadDXcbPlugin();//wayland下不加载xcb
+
 
     DApplication app(argc, argv);
 
