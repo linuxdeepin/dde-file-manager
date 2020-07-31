@@ -810,7 +810,7 @@ bool DFileService::sendToDesktop(const QObject *sender, const DUrlList &urlList)
     return ok;
 }
 
-bool DFileService::sendToBluetooth(const DUrlList &urlList) const
+void DFileService::sendToBluetooth(const DUrlList &urlList) const
 {
     dialogManager->showBluetoothTransferDlg(urlList);
 }
