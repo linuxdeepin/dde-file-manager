@@ -355,8 +355,13 @@ void DFMAddressBar::showEvent(QShowEvent *event)
 //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
 void DFMAddressBar::inputMethodEvent(QInputMethodEvent *e)
 {
-    if (hasSelectedText())
-        setText(lastEditedString);
+    if (hasSelectedText()) {
+        // fix bug#31692 搜索框输入中文后,全选已输入的,再次输入未覆盖之前的内容
+        int pos = selectPosStart;
+        setText(lastEditedString.remove(selectPosStart, selectLength));
+        // 设置光标到修改处
+        setCursorPosition(pos);
+    }
     QLineEdit::inputMethodEvent(e);
 }
 
@@ -423,6 +428,15 @@ void DFMAddressBar::initConnections()
     // animation delay timer
     connect(&timer, &QTimer::timeout, animation, [this]() {
         animation->start();
+    });
+
+    // fix bug#31692 搜索框输入中文后,全选已输入的,再次输入未覆盖之前的内容
+    // 选中内容时，记录光标开始位置以及选中的长度
+    connect(this, &DFMAddressBar::selectionChanged, this, [this] {
+        int posStart = selectionStart();
+        int posEnd = selectionEnd();
+        selectPosStart = posStart < posEnd ? posStart : posEnd;
+        selectLength = selectionLength();
     });
 }
 
