@@ -174,16 +174,19 @@ void BluetoothTransDialog::initConn()
             return;
         }
 
-        if (m_stack->currentIndex() != TransferPage)
+        if (m_stack->currentIndex() != TransferPage && m_stack->currentIndex() != FailedPage)
             m_stack->setCurrentIndex(TransferPage);
 
         m_sendingStatus->setText(TXT_SEND_PROGRES.arg(currFileIndex - 1).arg(m_urls.count()));
         m_progressBar->setMaximum(static_cast<int>(total));
         m_progressBar->setValue(static_cast<int>(transferred));
 
-        if (total == transferred) {
+        if (total == transferred && m_stack->currentIndex() == TransferPage) {
             m_sendingStatus->setText(TXT_SEND_PROGRES.arg(currFileIndex).arg(m_urls.count()));
-            QTimer::singleShot(1000, nullptr, [this] { m_stack->setCurrentIndex(SuccessPage); }); // 这里留一秒的时间用于显示完整的进度，避免进度满就直接跳转页面了
+            QTimer::singleShot(1000, nullptr, [this] { // 这里留一秒的时间用于显示完整的进度，避免进度满就直接跳转页面了
+                qDebug() << "delay switch page on trans success";
+                m_stack->setCurrentIndex(SuccessPage);
+            });
         }
     });
 
@@ -191,6 +194,7 @@ void BluetoothTransDialog::initConn()
         if (sessionPath != m_currSessionPath)
             return;
         m_stack->setCurrentIndex(FailedPage);
+        bluetoothManager->cancleTransfer(sessionPath);
     });
 
     connect(bluetoothManager, &BluetoothManager::fileTransferFinished, this, [this](const QString &sessionPath, const QString &filePath) {
