@@ -170,6 +170,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         return menu;
     }
 
+    bool enableSendToBluetooth = true; // feat 蓝牙：当选中的列表中包含文件夹时不予启用蓝牙发送选项
     //! urlList中有保险箱的DUrl需要进行转换否则会出现报错或功能不可用
     DUrlList urls = urlList;
     for(int i = 0; i < urlList.size(); ++i)
@@ -178,6 +179,13 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         {
             urls[i] = VaultController::vaultToLocalUrl(urlList[i]);
 
+        }
+
+        // feat 蓝牙：当选中的列表中包含文件夹时不予启用蓝牙发送选项
+        if (bluetoothManager->model()->adapters().count() > 0 && enableSendToBluetooth) {
+            DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, urls[i]);
+            if (fileInfo && fileInfo->isDir())
+                enableSendToBluetooth = false;
         }
     }
 
@@ -446,6 +454,9 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
                     sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
                     connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
+
+                    if (!enableSendToBluetooth)
+                        sendToBluetooth->setEnabled(false);
                 }
 #endif
 

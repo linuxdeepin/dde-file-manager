@@ -136,7 +136,7 @@ public:
     bool createSymlink(const QObject *sender, const DUrl &fileUrl) const;
     bool createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl, bool force = false) const;
     bool sendToDesktop(const QObject *sender, const DUrlList &urlList) const;
-    bool sendToBluetooth(const DUrlList &urlList) const;
+    void sendToBluetooth(const DUrlList &urlList) const;
 
     bool shareFolder(const QObject *sender, const DUrl &fileUrl, const QString &name, bool isWritable = false, bool allowGuest = false);
     bool unShareFolder(const QObject *sender, const DUrl &fileUrl) const;
