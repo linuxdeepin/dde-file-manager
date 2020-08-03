@@ -104,11 +104,19 @@ bool DFileWatcherPrivate::start()
             continue;
 
         if (filePathToWatcherCount.value(path, -1) <= 0 || !isPathWatched(path)) {
-            if (QFile::exists(path) && !watcher_file_private->addPath(path)) {
-                qWarning() << Q_FUNC_INFO << "start watch failed, file path =" << path;
-                q->stopWatcher();
-                started = false;
-                return false;
+            if (QFile::exists(path)) {
+                bool shouldAddToPath = true;
+                // vault directory should not be watched before filesystem mounted.
+                if (VaultController::isVaultFile(path) &&
+                        (VaultController::ins()->state() != VaultController::Unlocked)) {
+                    shouldAddToPath = false;
+                }
+                if (shouldAddToPath && !watcher_file_private->addPath(path)) {
+                    qWarning() << Q_FUNC_INFO << "start watch failed, file path =" << path;
+                    q->stopWatcher();
+                    started = false;
+                    return false;
+                }
             }
         }
 
