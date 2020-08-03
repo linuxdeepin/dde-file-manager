@@ -259,6 +259,8 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
                         if (isMove)
                             break;
+                    }else if(event.mask & IN_UNMOUNT){
+                        emit q->fileSystemUMount(path, QString(), DFileSystemWatcher::QPrivateSignal());
                     }
 
                     /// Keep watcher
