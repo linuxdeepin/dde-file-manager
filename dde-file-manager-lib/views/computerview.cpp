@@ -30,7 +30,6 @@
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
-#include "controllers/dfmsidebarvaultitemhandler.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -315,13 +314,11 @@ void ComputerView::contextMenu(const QPoint &pos)
             disabled.insert(act);
     }
 
-
     DFileMenu *menu = nullptr;
+    //! create vault menu.
     if (idx.data(ComputerModel::DataRoles::SchemeRole) == DFMVAULT_SCHEME) {
-        // 重新创建右键菜单
-        DFMSideBarVaultItemHandler handler;
         quint64 wndId = WindowManager::getWindowId(this);
-        menu = handler.generateMenu(WindowManager::getWindowById(wndId));
+        menu = DFileMenuManager::createVaultMenu(WindowManager::getWindowById(wndId));
     } else {
         menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
     }
