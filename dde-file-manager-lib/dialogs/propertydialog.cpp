@@ -391,6 +391,13 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     } else {
         // tagged file basicinfo not complete??
         DUrl realUrl = m_url.isTaggedFile() ? DUrl::fromLocalFile(m_url.fragment()) : m_url;
+
+        bool isVaultFile = VaultController::isVaultFile(realUrl.toLocalFile());
+        if (isVaultFile) {
+            //! set scheme to get vault file info.
+            realUrl.setScheme(DFMVAULT_SCHEME);
+        }
+
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, realUrl);
         if (!fileInfo) {
             close();

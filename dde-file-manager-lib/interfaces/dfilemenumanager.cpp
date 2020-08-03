@@ -55,6 +55,10 @@
 #include "bluetooth/bluetoothmanager.h"
 #include "bluetooth/bluetoothmodel.h"
 #include "io/dstorageinfo.h"
+#include "vault/vaultlockmanager.h"
+#include "vault/vaulthelper.h"
+#include "app/filesignalmanager.h"
+#include "views/dfilemanagerwindow.h"
 
 #include <DSysInfo>
 
@@ -558,6 +562,113 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
+
+    return menu;
+}
+
+DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *sender)
+{
+    DFileMenu *menu = nullptr;
+
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topWidget);
+    VaultController *controller = VaultController::ins();
+
+    VaultController::VaultState vaultState = controller->state();
+
+    DUrl url = controller->vaultToLocalUrl(controller->makeVaultUrl());
+    url.setScheme(DFMVAULT_SCHEME);
+    const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
+
+    QSet<MenuAction> disableList;
+    if (!VaultLockManager::getInstance().isValid()) {
+        disableList << MenuAction::FiveMinutes
+                    << MenuAction::TenMinutes
+                    << MenuAction::TwentyMinutes;
+    }
+
+    menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList(), false);
+    menu->setEventData(DUrl(), {url}, WindowManager::getWindowId(wnd), sender);
+
+    auto lockNow = [](DFileManagerWindow *wnd)->bool
+    {
+        //! Is there a vault task, top it if exist.
+        if(!VaultHelper::topVaultTasks()) {
+            emit fileSignalManager->requestCloseAllTabOfVault(wnd->windowId());
+            VaultController::ins()->lockVault();
+        }
+
+        return true;
+    };
+
+    auto autoLock = [](int lockState)->bool
+    {
+        return VaultLockManager::getInstance().autoLock(static_cast<VaultLockManager::AutoLockState>(lockState));
+    };
+
+    auto showView = [&](QWidget *wndPtr, QString host)
+    {
+        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(wndPtr);
+        wnd->cd(VaultController::makeVaultUrl("/", host));
+    };
+
+    if (vaultState == VaultController::Unlocked) {
+
+        //! 立即上锁
+        QAction *action = DFileMenuManager::getAction(MenuAction::LockNow);
+        QObject::connect(action, &QAction::triggered, action, [&, wnd](){
+            lockNow(wnd);
+        });
+
+        //! 自动上锁
+        VaultLockManager::AutoLockState lockState = VaultLockManager::getInstance().autoLockState();
+
+        QAction *actionNever = DFileMenuManager::getAction(MenuAction::Never);
+        QObject::connect(actionNever, &QAction::triggered, actionNever, [&](){
+            autoLock(VaultLockManager::Never);
+        });
+        actionNever->setCheckable(true);
+        actionNever->setChecked(lockState == VaultLockManager::Never ? true : false);
+
+        QAction *actionFiveMins = DFileMenuManager::getAction(MenuAction::FiveMinutes);
+        QObject::connect(actionFiveMins, &QAction::triggered, actionFiveMins, [&](){
+            autoLock(VaultLockManager::FiveMinutes);
+        });
+        actionFiveMins->setCheckable(true);
+        actionFiveMins->setChecked(lockState == VaultLockManager::FiveMinutes ? true : false);
+
+        QAction *actionTenMins = DFileMenuManager::getAction(MenuAction::TenMinutes);
+        QObject::connect(actionTenMins, &QAction::triggered, actionTenMins, [&](){
+            autoLock(VaultLockManager::TenMinutes);
+        });
+        actionTenMins->setCheckable(true);
+        actionTenMins->setChecked(lockState == VaultLockManager::TenMinutes ? true : false);
+
+        QAction *actionTwentyMins = DFileMenuManager::getAction(MenuAction::TwentyMinutes);
+        QObject::connect(actionTwentyMins, &QAction::triggered, actionTwentyMins, [&](){
+            autoLock(VaultLockManager::TwentyMinutes);
+        });
+        actionTwentyMins->setCheckable(true);
+        actionTwentyMins->setChecked(lockState == VaultLockManager::TwentyMinutes ? true : false);
+
+        //! 删除保险柜
+        action = DFileMenuManager::getAction(MenuAction::DeleteVault);
+        QObject::connect(action, &QAction::triggered, action, [&, topWidget](){
+            showView(topWidget, "delete");
+        });
+    } else if (vaultState == VaultController::Encrypted) {
+
+        //! 解锁
+        QAction *action = DFileMenuManager::getAction(MenuAction::UnLock);
+        QObject::connect(action, &QAction::triggered, action, [&, topWidget](){
+            showView(topWidget, "unlock");
+        });
+
+        //! 使用恢复凭证
+        action = DFileMenuManager::getAction(MenuAction::UnLockByKey);
+        QObject::connect(action, &QAction::triggered, action, [&, topWidget](){
+            showView(topWidget, "certificate");
+        });
+    }
 
     return menu;
 }

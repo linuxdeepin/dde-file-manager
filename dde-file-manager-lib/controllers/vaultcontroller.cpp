@@ -744,7 +744,10 @@ bool VaultController::isRootDirectory(QString path)
 {
     bool bRootDir = false;
     QString localFilePath = makeVaultLocalPath();
-    if (localFilePath == path || makeVaultUrl().toString() == path) {
+    QString pathNoSplash = localFilePath;
+    pathNoSplash.chop(1);
+    if (localFilePath == path || makeVaultUrl().toString() == path
+            || pathNoSplash == path) {
         bRootDir = true;
     }
     return bRootDir;
