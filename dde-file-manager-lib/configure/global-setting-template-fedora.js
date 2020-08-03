@@ -170,6 +170,12 @@
                             "text": qsTranslate("GenerateSettingTranslate", "Index external storage device after connected to computer"),
                             "type": "checkbox",
                             "default": false
+                    },
+                    {
+                            "key": "index_search",
+                            "text": qsTranslate("GenerateSettingTranslate", "Full-Text search"),
+                            "type": "checkbox",
+                            "default": false
                     }
                     ]
                 },
