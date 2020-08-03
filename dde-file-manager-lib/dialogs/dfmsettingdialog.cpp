@@ -129,6 +129,7 @@ private:
         {"base.hidden_files.show_recent", DFMApplication::GA_ShowRecentFileEntry},
         {"advance.index.index_internal", DFMApplication::GA_IndexInternal},
         {"advance.index.index_external", DFMApplication::GA_IndexExternal},
+        {"advance.index.index_search", DFMApplication::GA_IndexSearch},
         {"advance.search.show_hidden", DFMApplication::GA_ShowedHiddenOnSearch},
         {"advance.preview.compress_file_preview", DFMApplication::GA_PreviewCompressFile},
         {"advance.preview.text_file_preview", DFMApplication::GA_PreviewTextFile},
@@ -323,7 +324,7 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     /*fix task 22667,针对ARM下不能使用anything,所以去掉整个索引配置项
     */
     //解析
-    auto const& jdoc = QJsonDocument::fromJson(data);
+    auto const &jdoc = QJsonDocument::fromJson(data);
     QJsonObject RootObject = jdoc.object();
     QJsonValueRef ArrayRef = RootObject.find("groups").value();
     QJsonArray Array = ArrayRef.toArray();
@@ -342,11 +343,11 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     ArrayRef2 = Array2;
     ElementOneValueRef = ElementOneObject;
     ArrayRef = Array;
-    qDebug()<<RootObject;
-    QByteArray arr=QJsonDocument(RootObject).toJson();
+    qDebug() << RootObject;
+    QByteArray arr = QJsonDocument(RootObject).toJson();
 
     return DSettings::fromJson(arr);
- #endif
+#endif
 
     return DSettings::fromJson(data);
 }
