@@ -4,6 +4,8 @@
 #include "bluetooth/bluetoothadapter.h"
 #include "bluetooth/bluetoothmodel.h"
 #include "app/define.h"
+#include "dfileservices.h"
+#include "dialogs/dialogmanager.h"
 
 #include <QStackedWidget>
 #include <QVBoxLayout>
@@ -15,7 +17,7 @@
 #include <DProgressBar>
 #include <QFont>
 #include <QSpacerItem>
-
+#include <QPointer>
 #include <QDebug>
 #include <QTimer>
 
@@ -32,17 +34,21 @@
 #define TXT_GOTO_BT_SETS BluetoothTransDialog::tr("Go to Bluetooth Settings")
 #define TXT_SEND_PROGRES BluetoothTransDialog::tr("%1/%2 Sent")
 #define TXT_ERROR_REASON BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected")
+#define TXT_FILE_OVERSIZ BluetoothTransDialog::tr("Unable to send the file more than 2 GB")
 
 #define TXT_NEXT BluetoothTransDialog::tr("Next")
 #define TXT_CANC BluetoothTransDialog::tr("Cancel")
 #define TXT_DONE BluetoothTransDialog::tr("Done")
 #define TXT_RTRY BluetoothTransDialog::tr("Retry")
+#define TXT_OKAY BluetoothTransDialog::tr("Ok")
 
 #define ICON_CONNECT "notification-bluetooth-connected"
 #define ICON_DISCONN "notification-bluetooth-disconnected"
 
 #define PXMP_NO_DEV_LIGHT "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg"
 #define PXMP_NO_DEV_DARKY "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg"
+
+#define FILE_TRANSFER_LIMITS 2147483648 // 2GB = 2 * 1024 * 1024 * 1024 Bytes
 
 BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTransDialog::TransferMode mode, QString targetDevId, QWidget *parent)
     : DDialog(parent)
@@ -183,9 +189,12 @@ void BluetoothTransDialog::initConn()
 
         if (total == transferred && m_stack->currentIndex() == TransferPage) {
             m_sendingStatus->setText(TXT_SEND_PROGRES.arg(currFileIndex).arg(m_urls.count()));
-            QTimer::singleShot(1000, nullptr, [this] { // 这里留一秒的时间用于显示完整的进度，避免进度满就直接跳转页面了
+            QPointer<QStackedWidget> stack(m_stack);
+            QTimer::singleShot(1000, nullptr, [stack] { // 这里留一秒的时间用于显示完整的进度，避免进度满就直接跳转页面了
+                if (!stack)
+                    return;
                 qDebug() << "delay switch page on trans success";
-                m_stack->setCurrentIndex(SuccessPage);
+                stack->setCurrentIndex(SuccessPage);
             });
         }
     });
@@ -483,6 +492,18 @@ void BluetoothTransDialog::sendFiles()
 
     if (m_urls.count() == 0 || m_selectedDeviceId.isEmpty())
         return;
+
+    // 无法发送文件尺寸大于 2GB 的文件，若包含则中止发送行为
+    foreach (auto u, m_urls) {
+        DUrl url = DUrl::fromLocalFile(u);
+        if (!url.isValid())
+            continue;
+        DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
+        if (info && info->size() > FILE_TRANSFER_LIMITS) {
+            dialogManager->showMessageDialog(1, TXT_FILE_OVERSIZ, TXT_OKAY);
+            return;
+        }
+    }
 
     m_subTitleForWaitPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));
     m_subTitleOfTransPage->setText(TXT_SENDING_FILE.arg(m_selectedDevice));

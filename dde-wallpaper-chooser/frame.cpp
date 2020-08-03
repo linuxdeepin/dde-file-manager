@@ -34,6 +34,7 @@
 #include "screen/screenhelper.h"
 #include "dbusinterface/introspectable_interface.h"
 #include "screensavercontrol.h"
+#include "button.h"
 
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
@@ -418,9 +419,14 @@ void Frame::keyPressEvent(QKeyEvent *event)
         //是否需要密码按钮
         widgetList << m_lockScreenBox;
     }
-    //模式切换按钮组
-    for (QAbstractButton *button: m_switchModeControl->buttonList()) {
-        widgetList << qobject_cast<QWidget *>(button);
+
+    if (!widgetList.contains(focusWidget())) {
+        widgetList.clear();
+
+        //模式切换按钮组
+        for (QAbstractButton *button: m_switchModeControl->buttonList()) {
+            widgetList << qobject_cast<QWidget *>(button);
+        }
     }
 
     switch(event->key())
@@ -437,15 +443,16 @@ void Frame::keyPressEvent(QKeyEvent *event)
         }
         break;
     case Qt::Key_Left:
+        qDebug() << "Left";
         //选中列表上一控件
         if (widgetList.indexOf(focusWidget(),0) > 0) {
             widgetList.at(widgetList.indexOf(focusWidget(),0)-1)->setFocus();
         }
         break;
     default:
+        DBlurEffectWidget::keyPressEvent(event);
         break;
     }
-    DBlurEffectWidget::keyPressEvent(event);
 }
 
 void Frame::paintEvent(QPaintEvent *event)
@@ -475,42 +482,64 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *key = static_cast<QKeyEvent *>(event);
         qDebug() << "keyPress";
+        if(!key) {
+            qDebug()<<"key is null.";
+            return false;
+        }
 
         if (key->key() == Qt::Key_Tab) {
             qDebug() << "Tab";
 
+            //第一个区域发出tab信号，则跳转到第二个区域的第一个控件上
+            if (object == m_wallpaperCarouselCheckBox
+                    || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
+                    || object == m_lockScreenBox
+                    || m_waitControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                m_switchModeControl->buttonList().first()->setFocus();
+                return  true;
+            }
 
-            if (object == m_switchModeControl->buttonList().last()) {
-                if (m_mode == WallpaperMode) {
-                    return  false;
-                }
-                else {
-                    return false;
+            //第二个区域tab跳转到第三个区域的当前选项（WallpaperItem）的第一个控件（Button）上
+            if (m_switchModeControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                QList<Button *> childButtons = m_wallpaperList->getCurrentItem()->findChildren<Button *>();
+                if (!childButtons.isEmpty()) {
+                    childButtons.first()->setFocus();
+                    return true;
                 }
             }
 
-            QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier, QString(""));
-            keyPressEvent(&keyEvent); //Tab键转右方向键
-            return true; //屏蔽Tab按键事件
+            //第三个区域tab跳转到第一个区域：已连接WallpaperItem的tab信号进行处理
         }
         else if (key->key() == Qt::Key_Backtab) { //BackTab
             qDebug() << "BackTab(Shift Tab)";
 
-            if (m_mode == WallpaperMode) {
-                if (object == m_wallpaperCarouselCheckBox) {
-                    return false;
-                }
-            }
-            else if (m_mode == ScreenSaverMode) {
-                if (object == m_waitControl->buttonList().first()) {
-                    m_wallpaperList->getCurrentItem()->focusLastButton();
-                    return  true;
+            //第一个区域发出backtab信号，则跳转到第三个区域的当前选项（WallpaperItem）的最后一个控件（Button）上
+            if (object == m_wallpaperCarouselCheckBox
+                    || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
+                    || object == m_lockScreenBox
+                    || m_waitControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                QList<Button *> childButtons = m_wallpaperList->getCurrentItem()->findChildren<Button *>();
+                if (!childButtons.isEmpty()) {
+                    childButtons.last()->setFocus();
+                    return true;
                 }
             }
 
-            QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier, QString(""));
-            keyPressEvent(&keyEvent); //Shitf + Tab(BackTab)键转左方向键
-            return true; //屏蔽Shift + Tab(BackTab)按键事件
+            //第三个区域backtab跳转到第二个区域：已连接WallpaperItem的backtab信号进行处理
+
+            //第二个区域发出backtab信号，则跳转到第一个区域的最后一个控件上
+            if (m_switchModeControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                if (m_mode == WallpaperMode ) {
+                    if (m_wallpaperCarouselControl->isVisible()) {
+                        m_wallpaperCarouselControl->buttonList().last()->setFocus();
+                    } else {
+                        m_wallpaperCarouselCheckBox->setFocus();
+                    }
+                } else {
+                    m_lockScreenBox->setFocus();
+                }
+                return true;
+            }
         }
         else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left) { //[Q]CheckBox会将方向键当作Tab键处理
             //if (QString(object->metaObject()->className()) == "CheckBox") { //其它类型别发送，不然会接收到两次按键事件
@@ -945,6 +974,7 @@ void Frame::refreshList()
                     item->show();
                     connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
                     connect(item, &WallpaperItem::tab, this, [=](){
+                        //第三个区域发出tab信号，则跳转到第一个区域的第一个控件上
                         if (m_mode == WallpaperMode) {
                             m_wallpaperCarouselCheckBox->setFocus();
                         }
@@ -953,6 +983,7 @@ void Frame::refreshList()
                         }
                     });
                     connect(item, &WallpaperItem::backtab, this, [=](){
+                        //第三个区域发出backtab信号，则跳转到第二个区域的最后一个控件上
                         m_switchModeControl->buttonList().last()->setFocus();
                     });
 

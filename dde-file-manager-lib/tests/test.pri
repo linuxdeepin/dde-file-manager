@@ -10,7 +10,12 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/interfaces/ut_durl_test.h \
-    $$PWD/interfaces/tst_all_interfaces.h
+    $$PWD/interfaces/tst_all_interfaces.h \
 
 SOURCES += \
     $$PWD/main.cpp \
+    # vault
+    $$PWD/vault/ut_interfaceactivevault.cpp \
+    $$PWD/vault/ut_operatorcenter.cpp \
+    $$PWD/vault/ut_vaulthelper.cpp \
+    $$PWD/vault/ut_vaultlockmanager.cpp \
