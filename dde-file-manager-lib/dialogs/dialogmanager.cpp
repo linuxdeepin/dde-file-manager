@@ -1382,13 +1382,13 @@ void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString>
     }
 }
 
-int DialogManager::showMessageDialog(int messageLevel, const QString &message)
+int DialogManager::showMessageDialog(int messageLevel, const QString &message, QString btnTxt)
 {
     DDialog d;
     d.moveToCenter();
     d.setTitle(message);
     QStringList buttonTexts;
-    buttonTexts << tr("Confirm");
+    buttonTexts << btnTxt;
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
     if (messageLevel == 1) {

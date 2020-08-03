@@ -23,7 +23,7 @@ bool TagFileInfo::isDir() const
 {
     const DAbstractFileInfoPrivate *const d{ d_func() };
 
-    return  ((!static_cast<bool>(d->proxy)) || d->proxy->isDir());
+    return ((!static_cast<bool>(d->proxy)) || d->proxy->isDir());
 }
 
 bool TagFileInfo::makeAbsolute()
@@ -97,7 +97,11 @@ DUrl TagFileInfo::redirectedFileUrl() const
 {
     const DAbstractFileInfoPrivate *const d{ d_func() };
 
-    return d->proxy->fileUrl();
+    //d-proxy可能为空，需要先判断
+    if (d->proxy)
+        return d->proxy->fileUrl();
+
+    return fileUrl();
 }
 
 Qt::ItemFlags TagFileInfo::fileItemDisableFlags() const
