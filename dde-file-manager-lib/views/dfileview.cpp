@@ -2799,7 +2799,12 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         qDebug() << "reject show menu";
         return;
     }
-    menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(windowId()), false);
+    if (VaultController::isRootDirectory(info->fileUrl().fragment())) {
+        //! create vault menu.
+        menu = DFileMenuManager::createVaultMenu(this->topLevelWidget());
+    } else {
+        menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(windowId()), false);
+    }
     lock = true;
 
     if (!menu) {

@@ -344,12 +344,19 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         }
     }
 
-    if (fileUrl.scheme() == DFMVAULT_SCHEME) {
+    if (fileUrl.scheme() == DFMVAULT_SCHEME ||
+            VaultController::isVaultFile(fileUrl.fragment())) {
         if (VaultController::Unlocked != VaultController::ins()->state()
                 || fileUrl.host() == "delete") {
-            DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
+
+            DUrl realUrl = fileUrl.isTaggedFile() ? DUrl::fromLocalFile(fileUrl.fragment()) : fileUrl;
+
+            //! set scheme to get vault file info.
+            realUrl.setScheme(DFMVAULT_SCHEME);
+
+            DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(realUrl);
             view->widget()->setParent(q);
-            bool ret = view->setRootUrl(fileUrl);
+            bool ret = view->setRootUrl(realUrl);
             delete view;
             view = nullptr;
             return ret;
