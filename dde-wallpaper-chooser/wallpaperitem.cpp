@@ -269,16 +269,12 @@ bool WallpaperItem::eventFilter(QObject *object, QEvent *event)
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Tab) {
-            if (object == m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()) {
-                emit tab();
-                return true;
-            }
+            emit tab();
+            return true;
         }
         else if (keyEvent->key() == Qt::Key_Backtab) {
-            if (object == m_buttonLayout->itemAt(0)->widget()) {
-                emit backtab();
-                return true;
-            }
+            emit backtab();
+            return true;
         }
     }
     return false;
