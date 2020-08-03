@@ -80,10 +80,20 @@ DCORE_USE_NAMESPACE
 
 
 namespace FileSortFunction {
-QCollator sortCollator;
+//fix 多线程排序时，该处的全局变量在compareByString函数中可能导致软件崩溃
+//QCollator sortCollator;
+class DCollator : public QCollator
+{
+public:
+    DCollator() : QCollator() {
+        setNumericMode(true);
+        setCaseSensitivity(Qt::CaseInsensitive);
+    }
+};
 
 bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
+    thread_local static DCollator sortCollator;
     //其他符号要排在最后，需要在中文前先做判断
     if (DFMGlobal::startWithSymbol(str1)) {
         if (!DFMGlobal::startWithSymbol(str2))
@@ -129,9 +139,6 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
 
         urlToFileInfoMap[url] = qq;
     }
-
-    FileSortFunction::sortCollator.setNumericMode(true);
-    FileSortFunction::sortCollator.setCaseSensitivity(Qt::CaseInsensitive);
 }
 
 DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
