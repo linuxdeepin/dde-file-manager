@@ -40,6 +40,9 @@ Q_SIGNALS:
     void fileCreated(const QString &path, const QString &name, QPrivateSignal);
     void fileModified(const QString &path, const QString &name, QPrivateSignal);
 
+
+    //! 当挂载的文件系统被卸载时发送卸载卸载信号
+    void fileSystemUMount(const QString &path, const QString &name, QPrivateSignal);
 private:
     QScopedPointer<DFileSystemWatcherPrivate> d_ptr;
 
