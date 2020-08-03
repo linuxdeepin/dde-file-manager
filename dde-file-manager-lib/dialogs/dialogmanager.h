@@ -138,7 +138,7 @@ public slots:
 
     void refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl);
 
-    int showMessageDialog(int messageLevel, const QString &message);
+    int showMessageDialog(int messageLevel, const QString &message, QString btnTxt = tr("Confirm"));
     void showBluetoothTransferDlg(const DUrlList &files);
 
 #ifdef SW_LABEL
