@@ -1021,7 +1021,7 @@
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1087"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1094"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1631"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
@@ -1355,7 +1355,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="885"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1238"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1333"/>
-        <location filename="../dialogs/dialogmanager.h" line="141"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -2015,30 +2014,37 @@
         <translation>连接电脑后索引外部存储设备</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="251"/>
-        <location filename="../configure/global-setting-template-pro.js" line="251"/>
-        <location filename="../configure/global-setting-template.js" line="250"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="176"/>
+        <location filename="../configure/global-setting-template-pro.js" line="177"/>
+        <location filename="../configure/global-setting-template.js" line="177"/>
+        <source>Full-Text search</source>
+        <translation>全文搜索</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="257"/>
+        <location filename="../configure/global-setting-template-pro.js" line="257"/>
+        <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>使用文件管理器的文件选择对话框</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="259"/>
-        <location filename="../configure/global-setting-template-pro.js" line="259"/>
-        <location filename="../configure/global-setting-template.js" line="258"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="265"/>
+        <location filename="../configure/global-setting-template-pro.js" line="265"/>
+        <location filename="../configure/global-setting-template.js" line="264"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="263"/>
-        <location filename="../configure/global-setting-template-pro.js" line="263"/>
-        <location filename="../configure/global-setting-template.js" line="262"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="269"/>
+        <location filename="../configure/global-setting-template-pro.js" line="269"/>
+        <location filename="../configure/global-setting-template.js" line="268"/>
         <source>Hide system disk</source>
         <translation>隐藏系统盘</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="182"/>
-        <location filename="../configure/global-setting-template-pro.js" line="183"/>
-        <location filename="../configure/global-setting-template.js" line="183"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="188"/>
+        <location filename="../configure/global-setting-template-pro.js" line="189"/>
+        <location filename="../configure/global-setting-template.js" line="189"/>
         <source>Show hidden files in search results</source>
         <translation>搜索结果显示隐藏文件</translation>
     </message>
@@ -2050,76 +2056,76 @@
         <translation>显示最近使用文件</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="191"/>
-        <location filename="../configure/global-setting-template-pro.js" line="192"/>
-        <location filename="../configure/global-setting-template.js" line="192"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="197"/>
+        <location filename="../configure/global-setting-template-pro.js" line="198"/>
+        <location filename="../configure/global-setting-template.js" line="198"/>
         <source>Preview</source>
         <translation>预览</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="195"/>
-        <location filename="../configure/global-setting-template-pro.js" line="196"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="201"/>
+        <location filename="../configure/global-setting-template-pro.js" line="202"/>
         <source>Compress file preview</source>
         <translation>压缩包预览</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="202"/>
-        <location filename="../configure/global-setting-template-pro.js" line="203"/>
-        <location filename="../configure/global-setting-template.js" line="202"/>
-        <source>Text preview</source>
-        <translation>文本预览</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="208"/>
         <location filename="../configure/global-setting-template-pro.js" line="209"/>
         <location filename="../configure/global-setting-template.js" line="208"/>
-        <source>Document preview</source>
-        <translation>文档预览</translation>
+        <source>Text preview</source>
+        <translation>文本预览</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="214"/>
         <location filename="../configure/global-setting-template-pro.js" line="215"/>
         <location filename="../configure/global-setting-template.js" line="214"/>
-        <source>Image preview</source>
-        <translation>图片预览</translation>
+        <source>Document preview</source>
+        <translation>文档预览</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="220"/>
         <location filename="../configure/global-setting-template-pro.js" line="221"/>
         <location filename="../configure/global-setting-template.js" line="220"/>
+        <source>Image preview</source>
+        <translation>图片预览</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="226"/>
+        <location filename="../configure/global-setting-template-pro.js" line="227"/>
+        <location filename="../configure/global-setting-template.js" line="226"/>
         <source>Video preview</source>
         <translation>视频预览</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="229"/>
-        <location filename="../configure/global-setting-template-pro.js" line="229"/>
-        <location filename="../configure/global-setting-template.js" line="228"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="235"/>
+        <location filename="../configure/global-setting-template-pro.js" line="235"/>
+        <location filename="../configure/global-setting-template.js" line="234"/>
         <source>Mount</source>
         <translation>挂载</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="233"/>
-        <location filename="../configure/global-setting-template-pro.js" line="233"/>
-        <location filename="../configure/global-setting-template.js" line="232"/>
-        <source>Auto mount</source>
-        <translation>自动挂载</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="239"/>
         <location filename="../configure/global-setting-template-pro.js" line="239"/>
         <location filename="../configure/global-setting-template.js" line="238"/>
+        <source>Auto mount</source>
+        <translation>自动挂载</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="245"/>
+        <location filename="../configure/global-setting-template-pro.js" line="245"/>
+        <location filename="../configure/global-setting-template.js" line="244"/>
         <source>Open after auto mount</source>
         <translation>自动挂载后打开</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="247"/>
-        <location filename="../configure/global-setting-template-pro.js" line="247"/>
-        <location filename="../configure/global-setting-template.js" line="246"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="253"/>
+        <location filename="../configure/global-setting-template-pro.js" line="253"/>
+        <location filename="../configure/global-setting-template.js" line="252"/>
         <source>Dialog</source>
         <translation>对话框</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template.js" line="196"/>
+        <location filename="../configure/global-setting-template.js" line="202"/>
         <source>Compressed file preview</source>
         <translation>压缩文件预览</translation>
     </message>
@@ -2271,7 +2277,7 @@
         <translation>备份文件</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="659"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="666"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation>未知</translation>
@@ -3073,12 +3079,12 @@
         <translation type="unfinished">添加至光盘刻录</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="395"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="396"/>
         <source>Auto mount</source>
         <translation>自动挂载</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="433"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="434"/>
         <source>Open after auto mount</source>
         <translation>自动挂载后打开</translation>
     </message>
@@ -3227,14 +3233,14 @@
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
         <location filename="../dialogs/propertydialog.cpp" line="1302"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="679"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="686"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
         <location filename="../dialogs/propertydialog.cpp" line="1302"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="681"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="688"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
@@ -3261,7 +3267,7 @@
         <translation>删除时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1296"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1303"/>
         <source>Loading...</source>
         <translation>正在加载...</translation>
     </message>
