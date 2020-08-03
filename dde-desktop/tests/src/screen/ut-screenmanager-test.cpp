@@ -14,7 +14,11 @@ namespace  {
     class ScreenManagerTest : public Test
     {
     public:
-        ScreenManagerTest():Test(){}
+        ScreenManagerTest():Test()
+        {
+            qunsetenv("XDG_SESSION_TYPE");
+            qunsetenv("WAYLAND_DISPLAY");
+        }
         QVector<ScreenPointer> screens;
         QList<QScreen *> reference;
         virtual void SetUp() override{
@@ -42,7 +46,7 @@ namespace  {
     };
 }
 
-TEST_F(ScreenManagerTest, Screen)
+TEST_F(ScreenManagerTest, screen_object)
 {
     EXPECT_EQ(reference.size(),screens.size());
 
@@ -57,7 +61,7 @@ TEST_F(ScreenManagerTest, Screen)
     }
 }
 
-TEST_F(ScreenManagerTestWayland, Screen)
+TEST_F(ScreenManagerTestWayland, screen_object)
 {   
     EXPECT_EQ(reference.size(),screens.size());
 
@@ -72,7 +76,7 @@ TEST_F(ScreenManagerTestWayland, Screen)
     }
 }
 
-TEST(Geometry, Screen)
+TEST(ScreenObject,geometry)
 {
     ScreenManager sm;
     auto screenList = sm.logicScreens();
@@ -89,21 +93,30 @@ TEST(Geometry, Screen)
     }
 }
 
-TEST(primaryScreen, Screen)
+TEST(ScreenObject,primary_screen)
 {
     ScreenManager sm;
     EXPECT_EQ(qApp->primaryScreen()->name(),sm.primaryScreen()->name());
 
     ScreenManagerWayland smw;
     EXPECT_EQ(qApp->primaryScreen()->name(),smw.primaryScreen()->name());
+}
 
-    EXPECT_EQ(sm.primaryScreen()->name(),smw.primaryScreen()->name());
-
+TEST(ScreenObject,display_mode)
+{
+    ScreenManager sm;
+    ScreenManagerWayland smw;
     EXPECT_EQ(sm.displayMode(),smw.displayMode());
+}
 
+TEST(ScreenObject,device_pixel_ratio)
+{
+    ScreenManager sm;
+    ScreenManagerWayland smw;
     EXPECT_EQ(sm.devicePixelRatio(),smw.devicePixelRatio());
 }
 
+namespace  {
 class ScreenOperation : public Test , public ScreenManager
 {
 public:
@@ -112,8 +125,9 @@ public:
           ,ScreenManager()
     {}
 };
+}
 
-TEST_F(ScreenOperation, ScreenRemove)
+TEST_F(ScreenOperation, screen_remove)
 {
     int count = screens().size();
     onScreenRemoved(nullptr);
@@ -134,7 +148,7 @@ TEST_F(ScreenOperation, ScreenRemove)
     EXPECT_EQ(true,screens().isEmpty());
 }
 
-TEST_F(ScreenOperation, ScreenAdded)
+TEST_F(ScreenOperation, screen_added)
 {
     for (QScreen *sc : qApp->screens()){
         onScreenRemoved(sc);
@@ -165,7 +179,7 @@ TEST_F(ScreenOperation, ScreenAdded)
     EXPECT_EQ(count,screens().size());
 }
 
-TEST_F(ScreenOperation, ScreenReset)
+TEST_F(ScreenOperation, screen_reset)
 {
     for (QScreen *sc : qApp->screens()){
         onScreenRemoved(sc);
@@ -177,6 +191,7 @@ TEST_F(ScreenOperation, ScreenReset)
     EXPECT_EQ(qApp->screens().size(),screens().size());
 }
 
+namespace  {
 class ScreenSignal : public Test , public ScreenManager
 {
 public:
@@ -211,8 +226,9 @@ public:
         });
     }
 };
+}
 
-TEST_F(ScreenSignal, sreenDisplayChanged)
+TEST_F(ScreenSignal, screen_display_changed)
 {
     QEventLoop loop;
     init(&loop);
@@ -227,7 +243,7 @@ TEST_F(ScreenSignal, sreenDisplayChanged)
     EXPECT_EQ(false,sreenAvailableGeometryChanged);
 }
 
-TEST_F(ScreenSignal, ScreenChanged)
+TEST_F(ScreenSignal, screen_changed)
 {
     QEventLoop loop;
     init(&loop);
@@ -241,7 +257,7 @@ TEST_F(ScreenSignal, ScreenChanged)
     EXPECT_EQ(false,sreenAvailableGeometryChanged);
 }
 
-TEST_F(ScreenSignal, ScreenGeometryChanged)
+TEST_F(ScreenSignal, screen_geometry_changed)
 {
     QEventLoop loop;
     init(&loop);
@@ -255,7 +271,7 @@ TEST_F(ScreenSignal, ScreenGeometryChanged)
     EXPECT_EQ(false,sreenAvailableGeometryChanged);
 }
 
-TEST_F(ScreenSignal, sreenAvailableGeometryChanged)
+TEST_F(ScreenSignal, sreen_available_geometry_changed)
 {
     QEventLoop loop;
     init(&loop);
