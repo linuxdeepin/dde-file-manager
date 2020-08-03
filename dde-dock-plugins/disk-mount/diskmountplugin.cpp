@@ -142,13 +142,16 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
 int DiskMountPlugin::itemSortKey(const QString &itemKey)
 {
     const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
-    return m_proxyInter->getValue(this, key, 0).toInt();
+    int ret = m_proxyInter->getValue(this, key, 5).toInt(); // 按照文案挂载设备，放置在第5个位置
+    qDebug() << "itemSortKey [key:" << key << "," << ret << "] for :" << itemKey;
+    return ret;
 }
 
 void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
 {
     const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
     m_proxyInter->saveValue(this, key, order);
+    qDebug() << "setSortKey [key:" << key << "," << order << "] for :" << itemKey;
 }
 
 void DiskMountPlugin::refreshIcon(const QString &itemKey)
