@@ -67,11 +67,7 @@ QStringList parentPathList(const QString &path)
     QStringList list;
     QDir dir(path);
 
-    //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
-    if (!(dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath()))) {
-        list << path;
-    }
-
+    list << path;
 
     QString strTmpPath = path;
     // fix bug#27870 往已刻录的文件夹中的文件夹...中添加文件夹，界面不刷新
@@ -80,8 +76,8 @@ QStringList parentPathList(const QString &path)
         dir.mkdir(path);
 
     while (dir.cdUp()) {
-        //! 解决保险箱解锁后上锁，再次解锁进入新建文件不刷新的问题
-        if (dir.absolutePath().contains(VAULT_DECRYPT_DIR_NAME) && isPathWatched(dir.absolutePath())) {
+        //! fixed the bug that directory not refresh when same pathes in the list.
+        if (isPathWatched(dir.absolutePath())) {
             continue;
         }
         list << dir.absolutePath();
@@ -132,6 +128,8 @@ bool DFileWatcherPrivate::start()
                q, &DFileWatcher::onFileModified);
     q->connect(watcher_file_private, &DFileSystemWatcher::fileClosed,
                q, &DFileWatcher::onFileClosed);
+    q->connect(watcher_file_private, &DFileSystemWatcher::fileSystemUMount,
+               q, &DFileWatcher::onFileSystemUMount);
 
     return true;
 }
@@ -364,6 +362,14 @@ void DFileWatcher::onFileClosed(const QString &path, const QString &name)
         d_func()->_q_handleFileClose(path, QString());
     else
         d_func()->_q_handleFileClose(joinFilePath(path, name), path);
+}
+
+void DFileWatcher::onFileSystemUMount(const QString &path, const QString &name)
+{
+    d_func()->filePathToWatcherCount.remove(path);
+    bool ok = true;
+    ok = ok && watcher_file_private->removePath(path);
+    d_func()->watchFileList.removeOne(path);
 }
 
 QStringList DFileWatcher::getMonitorFiles()

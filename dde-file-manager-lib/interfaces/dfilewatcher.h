@@ -32,6 +32,9 @@ private slots:
     void onFileModified(const QString &path, const QString &name);
     void onFileClosed(const QString &path, const QString &name);
 
+    //! 处理文件系统卸载事件如U盘、Cryfs加密保险箱
+    void onFileSystemUMount(const QString &path, const QString &name);
+
 private:
     Q_DECLARE_PRIVATE(DFileWatcher)
 };
