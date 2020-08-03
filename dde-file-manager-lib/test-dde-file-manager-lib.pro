@@ -133,5 +133,8 @@ CONFIG += console
 QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
+# resolve .gcda merge issue.
+system(find $$OUT_PWD -name "*.gcda" -print0 | xargs -0 rm -f)
+
 include(../third-party/googletest/gtest_dependency.pri)
 include(tests/test.pri)
