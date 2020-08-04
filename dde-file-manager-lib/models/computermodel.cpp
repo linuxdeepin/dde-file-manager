@@ -47,6 +47,15 @@ ComputerModel::ComputerModel(QObject *parent) :
     getRootFile();
 
     connect(fileService,&DFileService::rootFileChange,this,&ComputerModel::onGetRootFile,Qt::QueuedConnection);
+    connect(fileService,&DFileService::serviceHideSystemPartition,this,[this](){
+                m_items.clear();
+                m_nitems = 0;
+                addItem(makeSplitterUrl(tr("My Directories")));
+                QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+                qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
+                getRootFile();
+            });
+
 
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
     m_watcher->startWatcher();
