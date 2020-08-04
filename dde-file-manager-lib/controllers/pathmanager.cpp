@@ -261,6 +261,7 @@ bool PathManager::isSystemPath(QString path) const
  */
 bool PathManager::isVisiblePartitionPath(const DAbstractFileInfoPointer &fi)
 {
+#ifdef SP3_UNSTABLE_FEATURE_ENABLE
     QString suffix = fi->suffix();
     if (DFMGlobal::isRootUser()) { // root 用户不受限
         return true;
@@ -295,6 +296,10 @@ bool PathManager::isVisiblePartitionPath(const DAbstractFileInfoPointer &fi)
     qDebug() << "partition ignore path:" << fi->redirectedFileUrl().toLocalFile();
 
     return false;
+#else
+    Q_UNUSED(fi)
+    return true;
+#endif
 }
 
 bool PathManager::isOptical(const DAbstractFileInfoPointer &fi)
