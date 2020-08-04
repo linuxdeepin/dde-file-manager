@@ -219,6 +219,9 @@ signals:
     // 强制刷新计算机页面
     void requestUpdateComputerView();
 
+    //隐藏系统盘状态发生改变消息
+    void requestHideSystemPartition(bool ishide);
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);

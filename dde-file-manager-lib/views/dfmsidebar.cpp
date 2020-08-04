@@ -643,6 +643,21 @@ void DFMSideBar::initDeviceConnection()
     rootFileChange();
     connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
 
+    connect(DFileService::instance(),&DFileService::serviceHideSystemPartition,this,[this](){
+            QList<DUrl> removelist;
+            for (auto itemurl : devitems) {
+                if (!DFileService::instance()->isRootFileContain(itemurl)) {
+                    removelist.push_back(itemurl);
+                }
+            }
+            for (auto removeurl : removelist) {
+                devitems.removeOne(removeurl);
+                removeItem(removeurl, groupName(Device));
+            }
+            rootFileChange();
+        },Qt::QueuedConnection);
+
+
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
         if (!fileService->createFileInfo(nullptr, url)->exists()) {
             return;
