@@ -24,6 +24,9 @@ CONFIG += create_pc create_prl no_install_prl
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 DEFINES += BLUETOOTH_ENABLE
 
+# sp3 不稳定的feature，使用宏 UNSTABLE_FEATURE_ENABLE 屏蔽，待稳定后放开
+#DEFINES += SP3_UNSTABLE_FEATURE_ENABLE
+
 isEmpty(QMAKE_ORGANIZATION_NAME) {
     DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
 }
