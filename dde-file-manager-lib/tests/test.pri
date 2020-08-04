@@ -19,3 +19,5 @@ SOURCES += \
     $$PWD/vault/ut_operatorcenter.cpp \
     $$PWD/vault/ut_vaulthelper.cpp \
     $$PWD/vault/ut_vaultlockmanager.cpp \
+    $$PWD/interfaces/ut_dfmglobal.cpp \
+    $$PWD/dialogs/ut_dialogmanager.cpp
