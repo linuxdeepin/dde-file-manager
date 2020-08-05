@@ -1050,15 +1050,18 @@ void DFileService::startQuryRootFile()
             changeRootFile(url, false);
         });
     }
-//    else {
-//        return;
-//    }
+
     qDebug() << "start thread    startQuryRootFile   ===== " << d_ptr->rootfilelist.size() << QThread::currentThread();
-    if (!d_ptr->m_bRootFileInited.load()) {
-        d_ptr->m_bRootFileInited.store(false);
+    QMutexLocker lk(&d_ptr->rootfileMtx);
+    if (d_ptr->m_jobcontroller){
+        qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
+        return;
     }
-    //启用异步线程去读取
-    d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
+    else
+        //启用异步线程去读取
+        d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
+    lk.unlock();
+
     connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this](const DAbstractFileInfoPointer & chi) {
         QMutexLocker lk(&d_ptr->rootfileMtx);
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
@@ -1081,10 +1084,12 @@ void DFileService::startQuryRootFile()
         }
     }, Qt::DirectConnection);
     connect(d_ptr->m_jobcontroller, &JobController::finished, this, [this]() {
+        QMutexLocker lk(&d_ptr->rootfileMtx);
         d_ptr->m_jobcontroller->deleteLater();
         qDebug() << "获取 m_jobcontroller  finished  " << QThread::currentThreadId() << d_ptr->rootfilelist.size();
         d_ptr->m_jobcontroller = nullptr;
         d_ptr->m_bRootFileInited.store(true);
+        lk.unlock();
         emit queryRootFileFinsh();
     });
     d_ptr->m_jobcontroller->start();
