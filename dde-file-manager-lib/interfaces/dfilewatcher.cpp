@@ -67,11 +67,7 @@ QStringList parentPathList(const QString &path)
     QStringList list;
     QDir dir(path);
 
-    //! fixed the bug that directory not refresh when same pathes in the list.
-    if (!(isPathWatched(dir.absolutePath()))) {
-        list << path;
-    }
-
+    list << path;
 
     QString strTmpPath = path;
     // fix bug#27870 往已刻录的文件夹中的文件夹...中添加文件夹，界面不刷新
@@ -108,11 +104,19 @@ bool DFileWatcherPrivate::start()
             continue;
 
         if (filePathToWatcherCount.value(path, -1) <= 0 || !isPathWatched(path)) {
-            if (QFile::exists(path) && !watcher_file_private->addPath(path)) {
-                qWarning() << Q_FUNC_INFO << "start watch failed, file path =" << path;
-                q->stopWatcher();
-                started = false;
-                return false;
+            if (QFile::exists(path)) {
+                bool shouldAddToPath = true;
+                // vault directory should not be watched before filesystem mounted.
+                if (VaultController::isVaultFile(path) &&
+                        (VaultController::ins()->state() != VaultController::Unlocked)) {
+                    shouldAddToPath = false;
+                }
+                if (shouldAddToPath && !watcher_file_private->addPath(path)) {
+                    qWarning() << Q_FUNC_INFO << "start watch failed, file path =" << path;
+                    q->stopWatcher();
+                    started = false;
+                    return false;
+                }
             }
         }
 
@@ -132,6 +136,8 @@ bool DFileWatcherPrivate::start()
                q, &DFileWatcher::onFileModified);
     q->connect(watcher_file_private, &DFileSystemWatcher::fileClosed,
                q, &DFileWatcher::onFileClosed);
+    q->connect(watcher_file_private, &DFileSystemWatcher::fileSystemUMount,
+               q, &DFileWatcher::onFileSystemUMount);
 
     return true;
 }
@@ -364,6 +370,14 @@ void DFileWatcher::onFileClosed(const QString &path, const QString &name)
         d_func()->_q_handleFileClose(path, QString());
     else
         d_func()->_q_handleFileClose(joinFilePath(path, name), path);
+}
+
+void DFileWatcher::onFileSystemUMount(const QString &path, const QString &name)
+{
+    d_func()->filePathToWatcherCount.remove(path);
+    bool ok = true;
+    ok = ok && watcher_file_private->removePath(path);
+    d_func()->watchFileList.removeOne(path);
 }
 
 QStringList DFileWatcher::getMonitorFiles()
