@@ -134,10 +134,10 @@ void FileUtils::recurseFolder(const QString &path, const QString &parent,
         // to list of results
         QString current = parent + QDir::separator() + files.at(i);
         QString next = path + QDir::separator() + files.at(i);
+        list->append(current);
         if (QFileInfo(next).isDir()) {
             recurseFolder(next, current, list);
-        } else
-            list->append(current);
+        }
     }
 }
 
