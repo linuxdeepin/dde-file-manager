@@ -67,6 +67,7 @@ QStringList DFileSystemWatcherPrivate::addPaths(const QStringList &paths, QStrin
                                        | IN_DELETE
                                        | IN_DELETE_SELF
                                        | IN_MODIFY
+                                       | IN_UNMOUNT
                                        )
                                     : (0
                                        | IN_ATTRIB
@@ -257,6 +258,8 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
                         if (isMove)
                             break;
+                    } else if(event.mask & IN_UNMOUNT){//! 文件系统没卸载进行信号发送处理
+                        emit q->fileSystemUMount(path, QString(), DFileSystemWatcher::QPrivateSignal());
                     }
 
                     /// Keep watcher

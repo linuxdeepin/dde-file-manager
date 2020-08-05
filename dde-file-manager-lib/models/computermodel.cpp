@@ -22,10 +22,12 @@
 #include "views/dfmopticalmediawidget.h"
 #include "gvfs/gvfsmountmanager.h"
 
+#include "singleton.h"
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "controllers/dfmrootcontroller.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/pathmanager.h"
 #include "dfmrootfileinfo.h"
 #include "app/define.h"
 #include "dfileservices.h"
@@ -57,6 +59,10 @@ ComputerModel::ComputerModel(QObject *parent)
             bool splt = false;
             bool opticalchanged = false;
             for (auto chi : ch) {
+                if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(chi)) {
+                    continue;
+                }
+
                 if (chi->suffix() != SUFFIX_USRDIR && !splt) {
                     addItem(makeSplitterUrl(tr("Disks")));
                     splt = true;
@@ -149,6 +155,10 @@ ComputerModel::ComputerModel(QObject *parent)
         connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
             if (!fi->exists()) {
+                return;
+            }
+
+            if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
                 return;
             }
 

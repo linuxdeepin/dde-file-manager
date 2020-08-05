@@ -41,6 +41,7 @@
 #include "controllers/dfmsidebartagitemhandler.h"
 #include "controllers/dfmsidebarvaultitemhandler.h" // 保险柜
 #include "controllers/vaultcontroller.h"
+#include "controllers/pathmanager.h"
 #include "app/filesignalmanager.h"
 #include "interfaces/dfilemenu.h"
 #include "dfmopticalmediawidget.h"
@@ -358,8 +359,10 @@ void DFMSideBar::rootFileChange()
                 removeItem(fi->fileUrl(), groupName(Device));
 #endif
             }
-            addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
-            devitems.push_back(fi->fileUrl());
+            if (Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
+                addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
+                devitems.push_back(fi->fileUrl());
+            }
         }
     }
 }
@@ -373,8 +376,10 @@ void DFMSideBar::onRootFileChange(const DAbstractFileInfoPointer &fi)
             devitems.removeOne(fi->fileUrl());
             removeItem(fi->fileUrl(), groupName(Device));
         }
-        addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
-        devitems.push_back(fi->fileUrl());
+        if (Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
+            addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
+            devitems.push_back(fi->fileUrl());
+        }
     }
 }
 
@@ -751,9 +756,15 @@ void DFMSideBar::initDeviceConnection()
 #endif
 #endif
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
-        if (!fileService->createFileInfo(nullptr, url)->exists()) {
+        auto fi = fileService->createFileInfo(nullptr, url);
+        if (!fi->exists()) {
             return;
         }
+
+        if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
+            return;
+        }
+
         if (this->findItem(url) == -1) {
             auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
             [](const DUrl & a, const DUrl & b) {
