@@ -11,3 +11,9 @@ INCLUDEPATH += $$PWD
 
 SOURCES += \
     $$PWD/main.cpp \
+    $$PWD/cases/ut_dattachedudisks2device.cpp \
+    $$PWD/cases/ut_dattachedvfsdevice.cpp \
+    $$PWD/cases/ut_diskcontrolitem.cpp
+
+HEADERS += \
+    $$PWD/cases/ut_mock_dattacheddeviceinterface.h
