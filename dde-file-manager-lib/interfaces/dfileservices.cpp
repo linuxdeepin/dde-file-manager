@@ -1057,9 +1057,10 @@ void DFileService::startQuryRootFile()
         qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
         return;
     }
-    else
+    else {
         //启用异步线程去读取
         d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
+    }
     lk.unlock();
 
     connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this](const DAbstractFileInfoPointer & chi) {
