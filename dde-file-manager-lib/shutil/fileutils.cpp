@@ -433,7 +433,14 @@ QString FileUtils::formatSize(qint64 num, bool withUnitVisible, int precision, i
     return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', precision)), unitString);
 }
 
-QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize, QString strVolTag)
+/*!
+ * \brief 计算机页面磁盘大小数据
+ * \param usedSize 使用引用的原因是光驱的数据可能重置，若不重置则会影响进度条异常
+ * \param totalSize 使用引用的原因是光驱的数据可能重置，若不重置则会影响进度条异常
+ * \param strVolTag 这个标识符加入的用于判定是否为光驱
+ * \return
+ */
+QString FileUtils::diskUsageString(quint64 &usedSize, quint64 &totalSize, QString strVolTag)
 {
     const qint64 kb = 1024;
     const qint64 mb = 1024 * kb;
@@ -443,7 +450,8 @@ QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize, QString 
         return FileUtils::formatSize(totalSize, true, 0, totalSize < mb ? 2 : -1, unitDisplayText);
     }
 
-    //fix: 探测光盘推进,弹出和挂载状态机标识
+    // todo: too ugly! should be beaufify
+    // fix: 探测光盘推进,弹出和挂载状态机标识
     bool bVolFlag = strVolTag.startsWith("sr") // 避免因传入非光驱挂载点而插入 CdStatusInfo 对象
                     ? DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag
                     : false;
@@ -452,14 +460,76 @@ QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize, QString 
                     : false;
     if (bVolFlag && (totalSize == 0)) { //CD/DVD
         return QObject::tr("Unknown");
-    } else if (!bVolFlag && !bMntFlag  && (totalSize == 0)) { //CD/DVD
-        return QString("0M");
+    } else if (!bVolFlag && !bMntFlag  && (totalSize == 0)) {
+        if (strVolTag.startsWith("sr")) { //CD/DVD
+            return FileUtils::defaultOpticalSize(strVolTag, usedSize, totalSize);
+        } else { // special: totalsize == 0
+            return QString("0M");
+        }
     } else if (!bVolFlag && !bMntFlag  && (totalSize > 0) && (usedSize == 0)) { //blank CD/DVD
         return QString("0M");
     } else {
-        return QString("%1/%2").arg(FileUtils::formatSize(usedSize, true, 1, usedSize < mb ? 2 : -1, unitDisplayText),
-                                    FileUtils::formatSize(totalSize, true, 1, totalSize < mb ? 2 : -1, unitDisplayText));
+        return QString("%1/%2").arg(FileUtils::formatSize(static_cast<qint64>(usedSize), true, 1, usedSize < mb ? 2 : -1, unitDisplayText),
+                                    FileUtils::formatSize(static_cast<qint64>(totalSize), true, 1, totalSize < mb ? 2 : -1, unitDisplayText));
     }
+}
+
+
+/*!
+ * \brief 解析配置文件，获取光盘大小数据
+ * 光盘打开后可以显示大小，并挂载然而关闭文管后再重新启动会导致之前的状态机失效（未持久化存储）
+ * 因此会显示为0M，且状态为已挂载的状态，而右下角插件则因为读取了配置而显示正确的大小
+ *
+ * \return 挂载状态时返回配置文件中存储的光盘大小
+ */
+QString FileUtils::defaultOpticalSize(const QString &tagName, quint64 &usedSize, quint64 &totalSize)
+{
+    QString size{"0M"};
+
+    // todo: should be beautify, copy from `diskcontrolitem.cpp`
+    // 解析配置文件，获取光驱数据暂存的内容（包含挂载状态，大小）
+    QFile burnCapacityFile(QString("%1/dde-file-manager.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath)));
+    if (burnCapacityFile.open(QIODevice::ReadOnly)) {
+        QByteArray burnCapacityData = burnCapacityFile.readAll();
+        burnCapacityFile.close();
+
+        QJsonParseError parseJsonErr;
+        QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData, &parseJsonErr));
+        if(!(parseJsonErr.error == QJsonParseError::NoError)) {
+            qDebug() << "decode json file error！";
+            return size;
+        }
+
+        int burnStatus{DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct};
+        quint64 curTotalSize{0}; // 光盘总大小
+        quint64 curUsedSize{0};  // 光盘已使用的大小
+        QJsonObject tempBurnObjs = jsonDoc.object();
+        if (tempBurnObjs.contains(QStringLiteral("BurnCapacityAttribute"))) {
+            QJsonValue jsonBurnValueList = tempBurnObjs.value(QStringLiteral("BurnCapacityAttribute"));
+            QJsonObject tagItem = jsonBurnValueList.toObject();
+            // 从配置文件读取光盘信息
+            if (tagItem.contains(tagName)) {
+                QJsonObject burnItem = tagItem[tagName].toObject();
+                curTotalSize = static_cast<quint64>(burnItem["BurnCapacityTotalSize"].toDouble());
+                curUsedSize = static_cast<quint64>(burnItem["BurnCapacityUsedSize"].toDouble());
+                burnStatus = burnItem["BurnCapacityStatus"].toInt();
+            }
+        }
+
+        // 光盘已挂载状态
+        if (burnStatus == DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAddMount && curUsedSize > 0 && curTotalSize > 8) {
+            const qint64 kb = 1024;
+            const qint64 mb = 1024 * kb;
+            const QStringList unitDisplayText = {"B", "K", "M", "G", "T"};
+            // 重置原始的size数据
+            usedSize = curUsedSize;
+            totalSize = curTotalSize;
+            size = QString("%1/%2").arg(FileUtils::formatSize(static_cast<qint64>(usedSize), true, 1, usedSize < mb ? 2 : -1, unitDisplayText),
+                                        FileUtils::formatSize(static_cast<qint64>(totalSize), true, 1, totalSize < mb ? 2 : -1, unitDisplayText));
+        }
+    }
+
+    return size;
 }
 
 DUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix)
