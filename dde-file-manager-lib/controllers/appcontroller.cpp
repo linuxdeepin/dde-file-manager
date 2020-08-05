@@ -167,10 +167,31 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
         return;
     }
 
+    /**
+     * SearchController 搜索 / MasterdMediaController 光盘 / RecentController 最近列表
+     * 三个类中都没有实现 openFiles 函数，因此打开多文件的时候没有响应，重写三个函数的同名函数开发成本较高
+     * 因此直接利用 url 转换，将 scheme 转换为 file:// ，就可以调用 FileController::openFiles 去打开多文件
+     * */
+    DUrlList lstRedirectedUrls;
+    foreach (auto u, urls) {
+        if (u.scheme() == BURN_SCHEME) {
+            DAbstractFileInfoPointer info = fileService->createFileInfo(event->sender(), u);
+            if (!info)
+                continue;
+            if (info->canRedirectionFileUrl())
+                u = info->redirectedFileUrl();
+        } else if (u.scheme() == RECENT_SCHEME) {
+            u = DUrl::fromLocalFile(u.path());
+        } else if (u.scheme() == SEARCH_SCHEME) {
+            u = u.searchedFileUrl();
+        }
+        lstRedirectedUrls << u;
+    }
+
     if (urls.size() > 1 || DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()) {
-        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::ForceOpenNewWindow);
+        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstRedirectedUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
     } else {
-        DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+        DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), lstRedirectedUrls, DFMOpenUrlEvent::OpenInCurrentWindow);
     }
 }
 
@@ -1089,6 +1110,7 @@ void AppController::actionStageFileForBurning()
             QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(destdev));
             dev->eject({});
         });
+        dialogManager->showMessageDialog(1, tr("Please insert a disc and retry"));
         return;
     }
 

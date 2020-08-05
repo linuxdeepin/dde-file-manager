@@ -38,7 +38,7 @@
 DFM_BEGIN_NAMESPACE
 
 DFMSideBarView::DFMSideBarView(QWidget *parent)
-    : DListView (parent)
+    : DListView(parent)
 {
     setVerticalScrollMode(ScrollPerPixel);
     setIconSize(QSize(16, 16));
@@ -56,10 +56,8 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
 
 void DFMSideBarView::mousePressEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::RightButton)
-    {
-        if(m_current != indexAt(event->pos()))
-        {
+    if (event->button() == Qt::RightButton) {
+        if (m_current != indexAt(event->pos())) {
             DListView::mousePressEvent(event);
             return  setCurrentIndex(m_previous);
         }
@@ -125,7 +123,10 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     qDebug() << "source: " << event->mimeData()->urls();
     qDebug() << "target item: " << item->groupName() << "|" << item->text() <<  "|" << item->url();
 
-    QPoint pt = mapFromGlobal(QCursor::pos());
+    //wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
+    //QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
+    //但rc本来就是由event->pos()计算item得出的Rect，这样判断似乎就没有意义了（虽然原来的逻辑感觉也没什么意义）
+    QPoint pt = event->pos();   //mapFromGlobal(QCursor::pos());
     QRect rc = visualRect(indexAt(event->pos()));
     if (!rc.contains(pt)) {
         qDebug() << "mouse not in my area";
@@ -141,7 +142,7 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         } else {
             QFileInfo folderinfo(DUrl(url).parentUrl().path()); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
             QFileInfo fileinfo(url.path());
-            if(!fileinfo.isWritable() || !folderinfo.isWritable()){
+            if (!fileinfo.isWritable() || !folderinfo.isWritable()) {
                 copyUrls << url;
                 qDebug() << "this is a unwriteable case:" << url;
             } else {
@@ -151,7 +152,7 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     }
 
     bool isActionDone = false;
-    if (!urls.isEmpty()){
+    if (!urls.isEmpty()) {
         Qt::DropAction action = canDropMimeData(item, event->mimeData(), Qt::MoveAction);
         if (action == Qt::IgnoreAction) {
             action = canDropMimeData(item, event->mimeData(), event->possibleActions());
@@ -163,16 +164,15 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         }
     }
     if (!copyUrls.isEmpty()) {
-        if (onDropData(copyUrls, item->url(), Qt::CopyAction) ) { // 对于只读权限的，只能进行 copy动作
+        if (onDropData(copyUrls, item->url(), Qt::CopyAction)) {  // 对于只读权限的，只能进行 copy动作
             event->setDropAction(Qt::CopyAction);
             isActionDone = true;
         }
     }
 
-    if(isActionDone) {
+    if (isActionDone) {
         event->accept();
-    }
-    else {
+    } else {
         DListView::dropEvent(event);
     }
 }
@@ -229,7 +229,7 @@ bool DFMSideBarView::onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction ac
     switch (action) {
     case Qt::CopyAction:
         // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
-        QtConcurrent::run([=](){
+        QtConcurrent::run([ = ]() {
             fileService->pasteFile(this, DFMGlobal::CopyAction, dstUrl, srcUrls);
         });
         break;
@@ -320,9 +320,9 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
     }
 
     if (action != Qt::IgnoreAction) {
-       event->setDropAction(action);
-       event->accept();
-       accept = true;
+        event->setDropAction(action);
+        event->accept();
+        accept = true;
     }
 
     return accept;
@@ -331,16 +331,12 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
 //添加此函数为解决拖拽后不选中拖拽项目问题
 void DFMSideBarView::onRowCountChanged()
 {
-    if(previousRowCount == model()->rowCount())
-    {
+    if (previousRowCount == model()->rowCount()) {
         setCurrentIndex(indexAt(dropPos));
-        if(dragItemName != model()->data(currentIndex()).toString())
-        {
-            setCurrentIndex(model()->index(currentIndex().row()+ (dragRow > currentIndex().row() ? 1:-1), currentIndex().column()));
+        if (dragItemName != model()->data(currentIndex()).toString()) {
+            setCurrentIndex(model()->index(currentIndex().row() + (dragRow > currentIndex().row() ? 1 : -1), currentIndex().column()));
         }
-    }
-    else
-    {
+    } else {
         dragItemName = model()->data(currentIndex()).toString();
         dragRow = currentIndex().row();
     }
@@ -364,7 +360,7 @@ bool DFMSideBarView::fetchDragEventUrlsFromSharedMemory()
 
     sm.lock();
     //用缓冲区得到共享内存关联后得到的数据和数据大小
-    buffer.setData((char*)sm.constData(), sm.size());
+    buffer.setData((char *)sm.constData(), sm.size());
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
     in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
     sm.unlock();    //解锁

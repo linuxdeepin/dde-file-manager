@@ -43,6 +43,7 @@
 #include "app/define.h"
 #include "singleton.h"
 #include "dfmapplication.h"
+#include "app/filesignalmanager.h"
 
 DFM_USE_NAMESPACE
 
@@ -191,6 +192,12 @@ void SettingBackend::doSetOption(const QString &key, const QVariant &value)
     Q_ASSERT(attribute >= 0);
 
     DFMApplication::instance()->setGenericAttribute(static_cast<DFMApplication::GenericAttribute>(attribute), value);
+
+    if (key == QString("advance.other.hide_system_partition")) {
+        fileSignalManager->requestHideSystemPartition(value.toBool());
+    }
+
+
 }
 
 void SettingBackend::onValueChanged(int attribute, const QVariant &value)

@@ -26,6 +26,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QPropertyAnimation>
+#include <dgiosettings.h>
 #include <danchors.h>
 #include <DUtil>
 #include <DApplication>
@@ -60,6 +61,7 @@
 
 #include "interfaces/private/mergeddesktop_common_p.h"
 #include "util/xcb/xcb.h"
+#include "util/util.h"
 #include "private/canvasviewprivate.h"
 #include "canvasviewhelper.h"
 #include "watermaskframe.h"
@@ -515,6 +517,12 @@ QRegion CanvasGridView::visualRegionForSelection(const QItemSelection &selection
         region = region.united(QRegion(visualRect(index)));
     }
     return region;
+}
+
+void CanvasGridView::enterEvent(QEvent *e)
+{
+    updateFrameCursor();
+    QAbstractItemView::enterEvent(e);
 }
 
 void CanvasGridView::mouseMoveEvent(QMouseEvent *event)
@@ -2819,11 +2827,11 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         else
             t_tmpRect = Display::instance()->primaryRect();
 
-        if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > t_tmpRect.right())
-            t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
+        if (t_tmpPoint.x() + menu->sizeHint().width() > t_tmpRect.right())
+            t_tmpPoint.setX(t_tmpPoint.x() - menu->sizeHint().width());
 
-        if (t_tmpPoint.y() + int(menu->sizeHint().height()/devicePixelRatioF()) > t_tmpRect.bottom())
-            t_tmpPoint.setY(t_tmpPoint.y() - int(menu->sizeHint().height()/devicePixelRatioF()));
+        if (t_tmpPoint.y() + menu->sizeHint().height() > t_tmpRect.bottom())
+            t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
 //        menu->exec(t_tmpPoint);
         QEventLoop eventLoop;
         d->menuLoop = &eventLoop;
@@ -2955,11 +2963,11 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         else
             t_tmpRect = Display::instance()->primaryRect();
 
-        if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > t_tmpRect.right())
-            t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
+        if (t_tmpPoint.x() + menu->sizeHint().width() > t_tmpRect.right())
+            t_tmpPoint.setX(t_tmpPoint.x() - menu->sizeHint().width());
 
-        if (t_tmpPoint.y() + int(menu->sizeHint().height()/devicePixelRatioF()) > t_tmpRect.bottom())
-            t_tmpPoint.setY(t_tmpPoint.y() - int(menu->sizeHint().height()/devicePixelRatioF()));
+        if (t_tmpPoint.y() + menu->sizeHint().height() > t_tmpRect.bottom())
+            t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
 //        menu->exec(t_tmpPoint);
         QEventLoop eventLoop;
         d->menuLoop = &eventLoop;
@@ -2978,4 +2986,28 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     QPointer<CanvasGridView> me = this;
     menu->exec();
     menu->deleteLater();
+}
+
+void CanvasGridView::updateFrameCursor()
+{
+    if (DesktopInfo().waylandDectected())
+        return;
+
+    static QCursor *lastArrowCursor = nullptr;
+    static QString  lastCursorTheme;
+    int lastCursorSize = 0;
+    DGioSettings gsetting("com.deepin.xsettings", "/com/deepin/xsettings/");
+    QString theme = gsetting.value("gtk-cursor-theme-name").toString();
+    int cursorSize = gsetting.value("gtk-cursor-theme-size").toInt();
+    if (theme != lastCursorTheme || cursorSize != lastCursorSize)
+    {
+        QCursor *cursor = DesktopUtil::loadQCursorFromX11Cursor(theme.toStdString().c_str(), "left_ptr", cursorSize);
+        lastCursorTheme = theme;
+        lastCursorSize = cursorSize;
+        setCursor(*cursor);
+        if (lastArrowCursor != nullptr)
+            delete lastArrowCursor;
+
+        lastArrowCursor = cursor;
+    }
 }

@@ -215,6 +215,17 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
             return;
         DFMTaskWidget *wid = new DFMTaskWidget;
         wid->setTaskId(jobDetail.value("jobId"));
+        // task 29264， 光驱相关的操作，“对于永久无用的按钮，系统设计中通用的处理方式为不展示”
+        FileJob *job = qobject_cast<FileJob*>(sender());
+        if (job) {
+            QList<FileJob::JobType> opticalTypes{FileJob::JobType::OpticalBurn, FileJob::JobType::OpticalBlank, FileJob::JobType::OpticalImageBurn};
+            auto curType = job->jobType();
+            if (opticalTypes.contains(curType)) {
+                wid->setHoverEnable(false);
+            } else {
+                wid->setHoverEnable(true);
+            }
+        }
         connect(wid, &DFMTaskWidget::heightChanged, this, &DTaskDialog::adjustSize);
         connect(wid, &DFMTaskWidget::butonClicked, this, [this, wid, jobDetail](DFMTaskWidget::BUTTON bt) {
             int code = -1;
@@ -369,6 +380,13 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
     wid->setProperty("totalDataSize" ,job->totalDataSize());
 
     connect(job, &DFileCopyMoveJob::currentJobChanged, this, [this, job, wid](const DUrl from, const DUrl to){
+        //fix 复制文件的错误窗口很多时，关闭对话框，会导致wid已经被释放，但该函数依然使用wid指针导致崩溃
+        //解决方案当m_jobIdItems中不存在该任务，说明与任务关联wid已经被释放或者即将释放，这里直接返回
+        auto item = m_jobIdItems.value(QString::number(quintptr(job), 16));
+        if (item == nullptr){
+            return;
+        }
+
         QMap<QString, QString> data;
         bool isDelete = false; // 删除模式下不需要显示速度
         if (job->mode() == DFileCopyMoveJob::CopyMode) {
@@ -473,9 +491,12 @@ void DTaskDialog::removeTaskByPath(QString jobId)
     if (m_jobIdItems.contains(jobId)) {
         QListWidgetItem *item = m_jobIdItems.value(jobId);
         if (item) {
+            auto wid = m_taskListWidget->itemWidget(item);
             m_taskListWidget->removeItemWidget(item);
             m_taskListWidget->takeItem(m_taskListWidget->row(item));
             m_jobIdItems.remove(jobId);
+            if (wid)
+                wid->hide();
         }
 
         setTitle(m_taskListWidget->count());

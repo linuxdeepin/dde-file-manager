@@ -71,6 +71,7 @@ public:
     virtual QRegion visualRegionForSelection(const QItemSelection &selection) const Q_DECL_OVERRIDE;
 
     // event override
+    void enterEvent(QEvent *) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -165,6 +166,8 @@ private:
     void increaseIcon();
     void decreaseIcon();
 
+    //根据当前cursor theme更新frame的光标
+    void updateFrameCursor();
     inline QPoint gridAt(const QPoint &pos) const;
     inline QRect gridRectAt(const QPoint &pos) const;
     inline QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;

@@ -83,7 +83,7 @@
 #include "anything_interface.h"
 #endif
 #ifdef DISABLE_QUICK_SEARCH
-    #include "./search/myfsearch.h"
+#include "./search/myfsearch.h"
 #endif
 
 class DFMQDirIterator : public DDirIterator
@@ -304,23 +304,23 @@ void Delay_MSec(unsigned int msec)
 {
     QTime dieTime = QTime::currentTime().addMSecs(msec);
 
-    while( QTime::currentTime() < dieTime )
+    while ( QTime::currentTime() < dieTime )
 
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 
 }
-QString printList(BTreeNode *pNode){
+QString printList(BTreeNode *pNode)
+{
 
     QString fullPath("");
-    int i=0;
+    int i = 0;
     if (pNode == nullptr) {
-
-    }else{
+        return "";
+    } else {
         while (pNode != nullptr) {
-            if(pNode->name!=nullptr)
-            {
+            if (pNode->name != nullptr) {
                 fullPath.insert(0, pNode->name);
-                if(strcmp(pNode->name,"")!=0){
+                if (strcmp(pNode->name, "") != 0) {
                     fullPath.insert(0, "/");
                 }
             }
@@ -329,25 +329,32 @@ QString printList(BTreeNode *pNode){
         }
     }
 
-    QString t_prefix = fullPath.split('/').at(1);
+    // 防止后续pathList越界，先判断
+    QStringList pathList = fullPath.split('/');
+    if (pathList.isEmpty() || pathList.size() < 2) {
+        return "";
+    }
+    QString t_prefix = pathList.at(1);
 
-    if(t_prefix == "boot" || t_prefix == "dev" || t_prefix == "proc" || t_prefix == "sys"
-            || t_prefix == "root" || t_prefix == "run"|| t_prefix == "home")
-    {
+    if (t_prefix == "boot" || t_prefix == "dev" || t_prefix == "proc" || t_prefix == "sys"
+            || t_prefix == "root" || t_prefix == "run" || t_prefix == "home") {
         return "";
     }
 
     return fullPath;
 }
 QStringList searchResult;
-bool mDone=false;
+bool mDone = false;
+QString filepath="";
 class DFMAnythingDirIterator : public DDirIterator
 {
 public:
     DFMAnythingDirIterator(const QString &path, const QString &k)
         : keyword(k)
-            , dir(path)
+        , dir(path)
     {
+        /*fix task 30348 当前目录初始化*/
+        filepath=path;
         fsearch_Close();
         fsearch_Init(path.toLocal8Bit().data());
 //        QTimer::singleShot(1000, [this] {
@@ -367,23 +374,25 @@ public:
         uint32_t num_files;
         uint32_t num_results = 0;
         searchResult.clear();
-        DatabaseSearch *result =static_cast<DatabaseSearch*>(back);
+        DatabaseSearch *result = static_cast<DatabaseSearch *>(back);
         GPtrArray *results = result->results;
         if (results) {
             num_folders = result->num_folders;;
             num_files = result->num_files;
             num_results = results->len;
-            for(uint32_t j=0;j<num_results;j++)
-            {
-                DatabaseSearchEntry *entry=static_cast<DatabaseSearchEntry*>(g_ptr_array_index(results,j));
+            for (uint32_t j = 0; j < num_results; j++) {
+                DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
 //                searchResult.append(printList(entry->node));
-                if(printList(entry->node) != "")
-                {
-                    searchResult.append(printList(entry->node));
+                QString strResult = printList(entry->node);
+                strResult.replace("////", "/");
+                if (!strResult.isEmpty()) {
+                    /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
+                    if(strResult.startsWith(filepath))
+                        searchResult.append(strResult);
                 }
             }
-            mDone=true;
-            qDebug()<<"-------callback:"<<num_results;
+            mDone = true;
+            qDebug() << "-------callback:" << num_results;
         }
     }
     DUrl next() override
@@ -400,32 +409,28 @@ public:
 
             if (searchDirList.isEmpty() || searchDirList.first() != dir_path) {
                 searchDirList.prepend(dir_path);
-                fsearch_Find(keyword.toStdString().c_str(),callbackFunc);
-                qDebug()<<"*******************************find";
-                mDone=false;
+                fsearch_Find(keyword.toStdString().c_str(), callbackFunc);
+                qDebug() << "*******************************find";
+                mDone = false;
             }
             searchResult.clear();
             searchResults.clear();
             initialized = true;
         }
-        if(!resultinit)
-        {
+        if (!resultinit) {
 
 //            while(1)
             {
                 std::this_thread::sleep_for(std::chrono::seconds(2));
-                if (mDone)
-                {
+                if (mDone) {
 //                    break;
                 }
             }
         }
 
-        if(searchResult.size())
-        {
-            if(searchResults.isEmpty() && !resultinit)
-            {
-                searchResults=searchResult;
+        if (searchResult.size()) {
+            if (searchResults.isEmpty() && !resultinit) {
+                searchResults = searchResult;
 
                 resultinit = true;
                 searchDirList.removeAt(0);
@@ -580,7 +585,7 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
     QStringList pathList;
     bool result = false;
 
-    for(DUrl fileUrl : fileUrls){
+    for (DUrl fileUrl : fileUrls) {
         const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
 
         if (pfile->isSymLink()) {
@@ -622,8 +627,8 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
     if (!pathList.empty()) {
         result = FileUtils::openFiles(pathList);
         if (!result) {
-            for (const DUrl &fileUrl : packUrl){
-                AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(),fileUrl)); // requestShowOpenWithDialog
+            for (const DUrl &fileUrl : packUrl) {
+                AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(), fileUrl)); // requestShowOpenWithDialog
             }
         }
     }
@@ -657,7 +662,7 @@ bool FileController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent>
 
     QStringList pathList;
 
-    for(DUrl fileUrl : fileUrls){
+    for (DUrl fileUrl : fileUrls) {
         const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
 
         if (pfile->isSymLink()) {
@@ -844,12 +849,12 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
         {
             //线程启动传递源地址和目标地址
             connect(job.data(), &DFileCopyMoveJob::currentJobChanged, this, [this](const DUrl & from, const DUrl & to) {
-                    QMutex mutex;
-                    mutex.lock();
-                    currentJob.first = from;
-                    currentJob.second = to;
-                    mutex.unlock();
-                }, Qt::DirectConnection);
+                QMutex mutex;
+                mutex.lock();
+                currentJob.first = from;
+                currentJob.second = to;
+                mutex.unlock();
+            }, Qt::DirectConnection);
             if (!slient) {
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
@@ -908,7 +913,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
                 return;
             //这里会出现pasteFilesV2函数线程和当前线程是同时在执行，会出现在1处pasteFilesV2所在线程 没结束，但是这时pasteFilesV2所在线程 结束
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
-            if(!fileJob->isFinished()){
+            if (!fileJob->isFinished()) {
                 dialogManager->taskDialog()->addTaskJob(fileJob.data());
                 emit fileJob->currentJobChanged(currentJob.first, currentJob.second);
             }
@@ -933,7 +938,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
     //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
     if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
             list.first().toString().endsWith(".local/share/Trash/files")) {
-            DFileService::instance()->setDoClearTrashState(false);
+        DFileService::instance()->setDoClearTrashState(false);
     }
     //当前线程不要去处理error_handle所在的线程资源
 //    error_handle->currentJob = nullptr;
