@@ -1389,6 +1389,23 @@ void FileUtils::addRecentFile(const QString &filePath, const DesktopFile &deskto
     DRecentManager::addItem(filePath, recentData);
 }
 
+bool FileUtils::deviceShouldBeIgnore(const QString &devId)
+{
+    bool canConvert = false;
+    devId.chopped(1).toInt(&canConvert); // 设备以数字结束，代表有分区 （/dev/sdb1）
+    if (canConvert)
+        return false;
+
+    QString volTag = devId.mid(devId.lastIndexOf("/") + 1); // 当传入设备 id 是 /dev/sdb 时，如果包含 /dev/sdbN，则忽略 /dev/sdb
+    QProcess p;
+    p.start("bash", QStringList() << "-c"
+                                  << "ls /dev/ | grep " + volTag);
+    p.waitForFinished();
+    QString output(p.readAllStandardOutput());
+    QStringList devices = output.split("\n", QString::SkipEmptyParts);
+    return devices.count() > 1;
+}
+
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {
