@@ -1416,6 +1416,25 @@ void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
     dlg->show();
 }
 
+void DialogManager::showFormatDialog(const QString &devId)
+{
+    if (devId.isEmpty())
+        return;
+
+    DDialog dlg;
+    dlg.setIcon(m_dialogWarningIcon);
+    dlg.addButton(tr("Cancle"));
+    dlg.addButton(tr("Format"), true, DDialog::ButtonRecommend);
+    dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
+    if (dlg.exec() == 1) {
+        // 显示格式化窗口
+        QProcess *p = new QProcess;
+        connect(p, static_cast<void (QProcess::*)(int)>(&QProcess::finished), p, &QProcess::deleteLater);
+        connect(p, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), p, &QProcess::deleteLater);
+        p->startDetached("dde-device-formatter", QStringList {devId});
+    }
+}
+
 void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 {
     DDesktopRenameDialog renameDialog;
