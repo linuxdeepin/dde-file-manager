@@ -129,7 +129,7 @@ private:
         {"base.hidden_files.show_recent", DFMApplication::GA_ShowRecentFileEntry},
         {"advance.index.index_internal", DFMApplication::GA_IndexInternal},
         {"advance.index.index_external", DFMApplication::GA_IndexExternal},
-        {"advance.index.index_search", DFMApplication::GA_IndexSearch},
+        {"advance.index.index_search", DFMApplication::GA_IndexFullTextSearch},
         {"advance.search.show_hidden", DFMApplication::GA_ShowedHiddenOnSearch},
         {"advance.preview.compress_file_preview", DFMApplication::GA_PreviewCompressFile},
         {"advance.preview.text_file_preview", DFMApplication::GA_PreviewTextFile},
