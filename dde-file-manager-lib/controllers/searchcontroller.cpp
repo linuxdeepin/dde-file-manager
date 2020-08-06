@@ -514,6 +514,17 @@ const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPoi
 
 bool SearchController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
+    const DUrl &url = realUrl(event->url());
+    // why? because 'DDesktopServices::showFileItem(realUrl(event->url()))' will call session bus 'org.freedesktop.FileManager1'
+    // but cannot find session bus when user is root!
+    if (DFMGlobal::isRootUser()) {
+        QStringList urls{QStringList() << url.toLocalFile()};
+        // call by platform 'mips'
+        if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" <<  urls << "--raw"))
+            return true;
+
+        return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  urls << "--raw");
+    }
     return DTK_WIDGET_NAMESPACE::DDesktopServices::showFileItem(realUrl(event->url()));
 }
 
