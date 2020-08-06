@@ -345,7 +345,7 @@ QString printList(BTreeNode *pNode)
 }
 QStringList searchResult;
 bool mDone = false;
-QString filepath="";
+QString filepath = "";
 class DFMAnythingDirIterator : public DDirIterator
 {
 public:
@@ -354,7 +354,7 @@ public:
         , dir(path)
     {
         /*fix task 30348 当前目录初始化*/
-        filepath=path;
+        filepath = path;
         fsearch_Close();
         fsearch_Init(path.toLocal8Bit().data());
 //        QTimer::singleShot(1000, [this] {
@@ -384,10 +384,12 @@ public:
                 DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
 //                searchResult.append(printList(entry->node));
                 QString strResult = printList(entry->node);
-                strResult.replace("////", "/");
                 if (!strResult.isEmpty()) {
                     /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
-                    if(strResult.startsWith(filepath))
+                    QFileInfo fileInfo(strResult);
+                    QString fullPath = fileInfo.absoluteFilePath();
+                    QString filePath = fileInfo.absolutePath();
+                    if (filePath.startsWith(filepath) && !searchResult.contains(fullPath))
                         searchResult.append(strResult);
                 }
             }
@@ -418,12 +420,11 @@ public:
             initialized = true;
         }
         if (!resultinit) {
-
-//            while(1)
-            {
+            int i = 0;
+            while (1) {
                 std::this_thread::sleep_for(std::chrono::seconds(2));
-                if (mDone) {
-//                    break;
+                if (mDone || i++ > 10) {
+                    break;
                 }
             }
         }

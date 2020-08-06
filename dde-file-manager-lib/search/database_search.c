@@ -452,8 +452,8 @@ db_search (DatabaseSearch *search, FsearchQuery *q)
 
     search_query_t **queries = build_queries (search, q);
 
-    const uint32_t num_threads = fsearch_thread_pool_get_num_threads (search->pool);
-    const uint32_t num_items_per_thread = search->num_entries / num_threads;
+    const uint32_t num_threads = MIN(fsearch_thread_pool_get_num_threads (search->pool), search->num_entries);
+    const uint32_t num_items_per_thread = MAX(search->num_entries / num_threads, 1);
 
     search_thread_context_t *thread_data[num_threads];
     memset (thread_data, 0, num_threads * sizeof (search_thread_context_t *));
