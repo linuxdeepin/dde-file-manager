@@ -135,10 +135,17 @@ void DFMCrumbBarPrivate::updateController(const DUrl &url)
         if (crumbController) {
             crumbController->deleteLater();
         }
-        crumbController = DFMCrumbManager::instance()->createControllerByUrl(url, q);
+        // 修复bug41522-保险箱内，右键文件管理器打开文件夹，面包屑显示不对问题
+        DUrl newurl;
+        if(VaultController::isVaultFile(url.toString())){
+            newurl = VaultController::localUrlToVault(url);
+        }else{
+            newurl = url;
+        }
+        crumbController = DFMCrumbManager::instance()->createControllerByUrl(newurl, q);
         // Not found? Then nothing here...
         if (!crumbController) {
-            qDebug() << "Unsupported url / scheme: " << url;
+            qDebug() << "Unsupported url / scheme: " << newurl;
         }
     }
 }
