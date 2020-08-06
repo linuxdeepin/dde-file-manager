@@ -13,17 +13,18 @@ namespace  {
         void SetUp() override
         {
             mockInterface = new MockDAttachedDeviceInterface();
-            mDiskContrlItem = new DiskControlItem(mockInterface);
+            mDiskContrlItem.reset( new DiskControlItem(mockInterface));
+
+            testing::Mock::AllowLeak(mockInterface);
         }
         void TearDown() override
         {
-            mDiskContrlItem->deleteLater();
         }
 
     public:
 
         MockDAttachedDeviceInterface* mockInterface;
-        DiskControlItem* mDiskContrlItem = nullptr;
+        std::shared_ptr<DiskControlItem>mDiskContrlItem;
     };
 }
 
@@ -43,7 +44,7 @@ TEST_F(TestDiskControlItem, can_be_showed)
 {
     EXPECT_CALL(*mockInterface,displayName).WillOnce(testing::Return("displayName"));
     EXPECT_CALL(*mockInterface,deviceUsageValid).WillOnce(testing::Return(false));
-    EXPECT_CALL(*mockInterface,iconName).WillOnce(testing::Return("iconName"));
+    ON_CALL(*mockInterface,iconName).WillByDefault(testing::Return("iconName"));
 
     ON_CALL(*mockInterface,deviceUsage).WillByDefault(testing::Return(qMakePair(1024, 1024 * 1024)));
 
