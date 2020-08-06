@@ -384,10 +384,12 @@ public:
                 DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
 //                searchResult.append(printList(entry->node));
                 QString strResult = printList(entry->node);
-                strResult.replace("////", "/");
                 if (!strResult.isEmpty()) {
                     /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
-                    if (strResult.startsWith(filepath))
+                    QFileInfo fileInfo(strResult);
+                    QString fullPath = fileInfo.absoluteFilePath();
+                    QString filePath = fileInfo.absolutePath();
+                    if (filePath.startsWith(filepath) && !searchResult.contains(fullPath))
                         searchResult.append(strResult);
                 }
             }

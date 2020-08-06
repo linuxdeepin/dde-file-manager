@@ -47,7 +47,7 @@ void fsearch_Init(const char*path)
     app->config->locations=NULL;
     g_mutex_init (&app->mutex);
     /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
-    app->config->locations = g_list_append (app->config->locations, "//");//默认初始化根目录
+    app->config->locations = g_list_append (app->config->locations, path);//默认初始化根目录
     load_database(app);//更新数据库
     app->pool = fsearch_thread_pool_init ();//初始化线程池
     app->search = db_search_new (fsearch_application_get_thread_pool (app));
@@ -173,7 +173,7 @@ void fsearch_Find(const char*text,void (*callback)(void *))
             db_search_update (app->search,
                   db_get_entries (db),
                   db_get_num_entries (db),
-                  5000,
+                  500000,
                   0,
                   text,
                   app->config->hide_results_on_empty_search,
