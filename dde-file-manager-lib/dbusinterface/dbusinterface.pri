@@ -4,7 +4,6 @@ HEADERS += \
     $$PWD/usershare_interface.h \
     $$PWD/startmanager_interface.h \
     $$PWD/introspectable_interface.h \
-    $$PWD/acesscontrol_interface.h \
     $$PWD/vault_interface.h
 
 SOURCES += \
@@ -13,7 +12,6 @@ SOURCES += \
     $$PWD/usershare_interface.cpp \
     $$PWD/startmanager_interface.cpp \
     $$PWD/introspectable_interface.cpp \
-    $$PWD/acesscontrol_interface.cpp \
     $$PWD/vault_interface.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
