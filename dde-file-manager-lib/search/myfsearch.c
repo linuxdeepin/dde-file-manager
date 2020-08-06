@@ -212,7 +212,7 @@ void fsearch_Close(void)
 //    config_save (fsearch->config);
     config_free (fsearch->config);
     db_search_free(fsearch->search);
-    g_mutex_clear (&fsearch->mutex);\
+    g_mutex_clear (&fsearch->mutex);
     free(app);
     app = NULL;
 }
