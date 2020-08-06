@@ -20,4 +20,20 @@ SOURCES += \
     $$PWD/vault/ut_vaulthelper.cpp \
     $$PWD/vault/ut_vaultlockmanager.cpp \
     $$PWD/interfaces/ut_dfmglobal.cpp \
-    $$PWD/dialogs/ut_dialogmanager.cpp
+    $$PWD/dialogs/ut_dialogmanager.cpp \
+    $$PWD/models/ut_avfsfileinfo.cpp \
+    $$PWD/models/ut_computermodel.cpp \
+    $$PWD/models/ut_dfmrootfileinfo.cpp \
+    $$PWD/models/ut_bookmark.cpp \
+    $$PWD/models/ut_desktopfileinfo.cpp \
+    $$PWD/models/ut_deviceinfoparser.cpp \
+    $$PWD/models/ut_dfileselectionmodel.cpp \
+    $$PWD/models/ut_dfmsidebarmodel.cpp \
+    $$PWD/models/ut_masteredmediafileinfo.cpp \
+    $$PWD/models/ut_mergeddesktopfileinfo.cpp \
+    $$PWD/models/ut_mountfileinfo.cpp \
+    $$PWD/models/ut_networkfileinfo.cpp \
+    $$PWD/models/ut_recentfileinfo.cpp \
+    $$PWD/models/ut_searchfileinfo.cpp \
+    $$PWD/models/ut_searchhistory.cpp \
+    $$PWD/models/ut_sharefileinfo.cpp
