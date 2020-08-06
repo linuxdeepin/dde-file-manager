@@ -202,13 +202,17 @@ void fsearch_Close(void)
     }
 
     if (fsearch->db) {
-        db_save_locations (fsearch->db);
+//        db_save_locations (fsearch->db);
         db_clear (fsearch->db);
+        db_free(fsearch->db);//内存数据库释放
     }
     if (fsearch->pool) {
         fsearch_thread_pool_free (fsearch->pool);
     }
-    config_save (fsearch->config);
+//    config_save (fsearch->config);
     config_free (fsearch->config);
-    g_mutex_clear (&fsearch->mutex);
+    db_search_free(fsearch->search);
+    g_mutex_clear (&fsearch->mutex);\
+    free(app);
+    app = NULL;
 }
