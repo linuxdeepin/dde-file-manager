@@ -82,6 +82,7 @@
 #include <QMutex>
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
+#include <DSysInfo>
 
 DWIDGET_USE_NAMESPACE
 
@@ -2672,10 +2673,14 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
-    const QVector<MenuAction> &actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
+    QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
 
     if (actions.isEmpty())
         return;
+    // sp3 feature: root用户和服务器版本用户不需要以管理员身份打开的功能
+    if (DFMGlobal::isRootUser() || DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+        actions.removeAll(MenuAction::OpenAsAdmin);
+    }
 
     const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList(DAbstractFileInfo::SpaceArea);
 
