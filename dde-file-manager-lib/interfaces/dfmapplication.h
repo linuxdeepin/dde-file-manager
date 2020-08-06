@@ -55,7 +55,7 @@ public:
     enum GenericAttribute {
         GA_IndexInternal,
         GA_IndexExternal,
-        GA_IndexSearch, //全文搜索
+        GA_IndexFullTextSearch, //全文搜索
         GA_PreviewCompressFile, // 把压缩包当做目录打开
         GA_PreviewTextFile, // 纯文本生成缩略图
         GA_PreviewDocumentFile, // 文档生成缩略图（pdf）
@@ -107,6 +107,7 @@ Q_SIGNALS:
     void showedHiddenFilesChanged(bool enable);
     void recentDisplayChanged(bool enable);
     void csdClickableAreaAttributeChanged(bool enabled);
+//    void fullTextSearchChanged(bool enable);
 
     void genericSettingCreated(DFMSettings *settings);
     void appSettingCreated(DFMSettings *settings);
