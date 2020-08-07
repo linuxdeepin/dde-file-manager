@@ -1365,9 +1365,17 @@ void DFileView::updateStatusBar()
 
 void DFileView::openIndexByOpenAction(const int &action, const QModelIndex &index)
 {
-    if (action == DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt())
+    if (action == DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt()) {
+        //在dfiledialog中单击打开文件时 需要判断文件是否处于enable的状态 否则会引起dialog崩溃
+        if (action == 0) {
+            Qt::ItemFlags flags = model()->flags(index);
+            if (!flags.testFlag(Qt::ItemIsEnabled))
+                return;
+        }
+
         if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
             openIndex(index);
+    }
 }
 
 void DFileView::setIconSizeBySizeIndex(const int &sizeIndex)
