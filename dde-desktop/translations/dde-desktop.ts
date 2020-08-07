@@ -4,50 +4,50 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3265"/>
-        <location filename="../view/canvasgridview.cpp" line="3442"/>
+        <location filename="../view/canvasgridview.cpp" line="3269"/>
+        <location filename="../view/canvasgridview.cpp" line="3446"/>
         <source>Icon size</source>
         <translation>Icon size</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3271"/>
-        <location filename="../view/canvasgridview.cpp" line="3450"/>
+        <location filename="../view/canvasgridview.cpp" line="3275"/>
+        <location filename="../view/canvasgridview.cpp" line="3454"/>
         <source>Auto merge</source>
         <translation>Auto merge</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3286"/>
-        <location filename="../view/canvasgridview.cpp" line="3462"/>
+        <location filename="../view/canvasgridview.cpp" line="3290"/>
+        <location filename="../view/canvasgridview.cpp" line="3466"/>
         <source>Auto arrange</source>
         <translation>Auto arrange</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3343"/>
         <location filename="../view/canvasgridview.cpp" line="3347"/>
-        <location filename="../view/canvasgridview.cpp" line="3517"/>
-        <location filename="../view/canvasgridview.cpp" line="3522"/>
+        <location filename="../view/canvasgridview.cpp" line="3351"/>
+        <location filename="../view/canvasgridview.cpp" line="3521"/>
+        <location filename="../view/canvasgridview.cpp" line="3526"/>
         <source>Set Wallpaper</source>
         <translation>Set Wallpaper</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3349"/>
-        <location filename="../view/canvasgridview.cpp" line="3520"/>
+        <location filename="../view/canvasgridview.cpp" line="3353"/>
+        <location filename="../view/canvasgridview.cpp" line="3524"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Wallpaper and Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3664"/>
+        <location filename="../view/canvasgridview.cpp" line="3668"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3326"/>
-        <location filename="../view/canvasgridview.cpp" line="3501"/>
+        <location filename="../view/canvasgridview.cpp" line="3330"/>
+        <location filename="../view/canvasgridview.cpp" line="3505"/>
         <source>Display Settings</source>
         <translation>Display Settings</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3335"/>
+        <location filename="../view/canvasgridview.cpp" line="3339"/>
         <source>Corner Settings</source>
         <translation>Corner Settings</translation>
     </message>
