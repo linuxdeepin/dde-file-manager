@@ -101,10 +101,11 @@ void DiskControlWidget::initConnect()
     connect(m_vfsManager.data(), &DGioVolumeManager::mountRemoved, this, &DiskControlWidget::onVfsMountChanged);
 }
 
-void DiskControlWidget::startMonitor()
+DDiskManager*  DiskControlWidget::startMonitor()
 {
     m_diskManager->setWatchChanges(true);
     onDiskListChanged();
+    return m_diskManager;
 }
 
 /*
@@ -482,25 +483,6 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
     if (url.scheme() == "file") return;
 
     onDiskListChanged();
-}
-
-void DiskControlWidget::unmountDisk(const QString &diskId) const
-{
-    QtConcurrent::run([diskId]() {
-        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(diskId));
-        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
-        blDev->unmount({});
-        if (diskDev->optical()) { // is optical
-            if (diskDev->ejectable()) {
-                diskDev->eject({});
-                qDebug() << "unmountDisk " << diskId;
-                if (diskDev->lastError().isValid()) {
-                    qWarning() << diskDev->lastError().name() << diskId;
-                    NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
-                }
-            }
-        }
-    });
 }
 
 void DiskControlWidget::NotifyMsg(QString msg)
