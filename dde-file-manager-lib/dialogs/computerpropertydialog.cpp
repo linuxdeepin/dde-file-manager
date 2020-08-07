@@ -201,10 +201,16 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     QString processor;
     QString systemType;
 
+    //! 从com.deepin.system.SystemInfo中获取实际安装的内存的大小
+    QDBusInterface *deepin_systemInfo = new QDBusInterface("com.deepin.system.SystemInfo",
+                                                      "/com/deepin/system/SystemInfo",
+                                                      "com.deepin.system.SystemInfo",
+                                                      QDBusConnection::systemBus(), this);
+
     //部分数据优先从dbus读取，如果dbus没有，则从dtk读数据
     if (m_systemInfo->isValid()) {
         //! 获取安装的内存总量
-        memoryInstallStr = formatCap(m_systemInfo->memoryCap(), 1024, 0);
+        memoryInstallStr = formatCap(deepin_systemInfo->property("MemorySize").toULongLong(), 1024, 0);
         //! 获取实际可以内存总量
         memoryStr = formatCap(static_cast<qulonglong>(DSysInfo::memoryTotalSize()));
         //! 获取cpu信息
@@ -229,7 +235,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         Edition = DSysInfo::uosEditionName();
         //! 获取系统版本号
         version = DSysInfo::majorVersion();
-        if(!m_systemInfo->isValid()){
+        if(!deepin_systemInfo->isValid()){
             //! 获取安装的内存总量
             memoryInstallStr = formatCap(static_cast<qulonglong>(DSysInfo::memoryInstalledSize()), 1024, 0);
             //! 获取实际可以内存总量
