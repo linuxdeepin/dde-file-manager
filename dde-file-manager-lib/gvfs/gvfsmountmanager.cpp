@@ -76,6 +76,7 @@ MountSecretDiskAskPasswordDialog* GvfsMountManager::mountSecretDiskAskPasswordDi
 MountAskPasswordDialog *GvfsMountManager::askPasswordDialog = nullptr;
 
 bool GvfsMountManager::AskingPassword = false;
+bool GvfsMountManager::AskedPasswordWhileMountDisk = false;
 QJsonObject GvfsMountManager::SMBLoginObj = {};
 DFMUrlBaseEvent GvfsMountManager::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl());
 QPointer<QEventLoop> GvfsMountManager::eventLoop;
@@ -917,6 +918,8 @@ void GvfsMountManager::ask_disk_password_cb(GMountOperation *op, const char *mes
         return;
     }
 
+    AskedPasswordWhileMountDisk = true;
+
     g_print ("%s\n", message);
 
     bool anonymous = g_mount_operation_get_anonymous(op);
@@ -999,6 +1002,7 @@ QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
     }
     if (!info.isValid()) {
         qDebug() << "获取磁盘信息失败";
+        dialogManager->showFormatDialog(path);
     }
     info.updateGvfsFileSystemInfo();
     return info;
@@ -1591,6 +1595,7 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
     volume = G_VOLUME (object);
 
     succeeded = g_volume_mount_finish (volume, res, &error);
+    QVolume qVolume = gVolumeToqVolume(volume);
 
     if (!succeeded) {
         qCDebug(mountManager()) << "Error mounting: " << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)
@@ -1598,18 +1603,20 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
 
         //! 下面这样做只是为了字符串翻译，因为错误信息是底层返回的
         QString err = QString::fromLocal8Bit(error->message);
-         switch(error->code)
-        {
-         case 0:
+        switch (error->code) {
+        case 0:
             err = QString(tr("No key available to unlock device"));
             break;
-         default:
-             break;
+        default:
+            break;
         }
-        if (!silent && !errorCodeNeedSilent(error->code)) {
-            fileSignalManager->requestShowErrorDialog(err, QString(" "));
+        if (AskedPasswordWhileMountDisk) { // 显示过密码框的设备，说明该设备可解锁，但密码不一定正确或取消了，不需要提示用户格式化
+            if (!silent && !errorCodeNeedSilent(error->code)) {
+                fileSignalManager->requestShowErrorDialog(err, QString(" "));
+            }
+        } else {
+            dialogManager->showFormatDialog(qVolume.drive_unix_device());
         }
-
     } else {
         GMount *mount;
         GFile *root;
@@ -1622,6 +1629,7 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
         g_object_unref (root);
         g_free (mount_path);
     }
+    AskedPasswordWhileMountDisk = false;
 }
 
 void GvfsMountManager::unmount(const QDiskInfo &diskInfo)
