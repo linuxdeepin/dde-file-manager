@@ -118,6 +118,11 @@ QString ScreenObjectWayland::path() const
     return  m_monitor->path();
 }
 
+bool ScreenObjectWayland::enabled() const
+{
+    return m_monitor->enabled();
+}
+
 void ScreenObjectWayland::init()
 {
     connect(m_monitor,&DBusMonitor::monitorRectChanged,[this](){
