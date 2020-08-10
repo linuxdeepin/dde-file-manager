@@ -55,8 +55,13 @@ public:
     Q_PROPERTY(quint16 Height READ height NOTIFY monitorRectChanged)
     inline quint16 height() const
     { return qvariant_cast< quint16 >(property("Height")); }
+
+    Q_PROPERTY(bool Enabled READ enabled NOTIFY monitorEnabledChanged)
+    inline bool enabled() const
+    { return qvariant_cast< bool >(property("Enabled")); }
 signals:
     void monitorRectChanged();
+    void monitorEnabledChanged();
 public:
     QRect rect() const;
 };

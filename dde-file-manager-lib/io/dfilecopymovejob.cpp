@@ -1942,7 +1942,7 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
             for (const auto &url : sourceUrls) {
                 QStringList list;
                 FileUtils::recurseFolder(url.toLocalFile(), "", &list);
-                d->totalMoveFilesCount += list.size();
+                d->totalMoveFilesCount += (list.size() + 1); // +1 的目的是当前选中的目录要统计到
             }
             d->countStatisticsFinished = true;
         }

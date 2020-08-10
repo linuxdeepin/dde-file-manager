@@ -720,7 +720,7 @@ private:
             return false;
         };
 
-    begin:
+begin:
 
         while (!fileQueue.isEmpty()) {
             if (!enable) {
@@ -1227,7 +1227,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event
             // todo: 此处引起效率变低，暂时注释
-           // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
+            // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
             q->remove(fileUrl);
         }
         if (!me) {
@@ -1603,7 +1603,10 @@ QString DFileSystemModel::roleName(int role)
         return tr("Time created");
     case FileLastReadRole:
         return tr("Last access");
-    default: return QString();
+    case FilePathRole:
+        return tr("Path");
+    default:
+        return QString();
     }
 }
 

@@ -43,8 +43,15 @@ QVector<ScreenPointer> ScreenManagerWayland::screens() const
 {
     QVector<ScreenPointer> order;
     for (const QDBusObjectPath &path : m_display->monitors()){
-        if (m_screens.contains(path.path()))
-            order.append(m_screens.value(path.path()));
+        if (m_screens.contains(path.path())){
+            ScreenPointer sp = m_screens.value(path.path());
+            ScreenObjectWayland *screen = SCREENOBJECT(sp.data());
+            if (screen){
+                if (screen->enabled())
+                    order.append(sp);
+            }else
+                order.append(sp);
+        }
     }
     return order;
 }
@@ -73,7 +80,12 @@ QVector<ScreenPointer> ScreenManagerWayland::logicScreens() const
                 order.push_front(sp);
             }
             else{
-                order.push_back(sp);
+                ScreenObjectWayland *screen = SCREENOBJECT(sp.data());
+                if (screen){
+                    if (screen->enabled())
+                        order.push_back(sp);
+                }else
+                    order.push_back(sp);
             }
         }
     }
@@ -100,8 +112,26 @@ qreal ScreenManagerWayland::devicePixelRatio() const
 
 AbstractScreenManager::DisplayMode ScreenManagerWayland::displayMode() const
 {
-    AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
-    return ret;
+    auto pending = m_display->GetRealDisplayMode();
+    pending.waitForFinished();
+    if (pending.isError()){
+        qWarning() << "Display GetRealDisplayMode Error:" << pending.error().name() << pending.error().message();
+        AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
+        return ret;
+    }else {
+        /*
+        DisplayModeMirror: 1
+        DisplayModeExtend: 2
+        DisplayModeOnlyOne: 3
+        DisplayModeUnknow: 4
+        */
+        int mode = pending.argumentAt(0).toInt();
+        qDebug() << "GetRealDisplayMode resulet" << mode;
+        if (mode > 0 && mode < 4)
+            return (AbstractScreenManager::DisplayMode)mode;
+        else
+            return AbstractScreenManager::Custom;
+    }
 }
 
 void ScreenManagerWayland::reset()
@@ -175,7 +205,26 @@ void ScreenManagerWayland::init()
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManagerWayland::onMonitorChanged);
     connect(m_display, &DBusDisplay::MonitorsChanged, this, &ScreenManagerWayland::onMonitorChanged);
     connect(m_display, &DBusDisplay::PrimaryChanged, this, &AbstractScreenManager::sigScreenChanged);
+#ifdef UNUSE_TEMP
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
+#else
+    //临时方案，
+    connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this](){
+        m_lastMode = m_display->GetRealDisplayMode();
+        qDebug() << "mode changed" << m_lastMode;
+        emit sigDisplayModeChanged();
+    });
+
+    //临时方案，使用PrimaryRectChanged信号作为拆分/合并信号
+    connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [this](){
+        int mode = m_display->GetRealDisplayMode();
+        qDebug() << "deal merge and split" << mode << m_lastMode;
+        if (m_lastMode == mode)
+            return;
+        m_lastMode = mode;
+        emit sigDisplayModeChanged();
+    });
+#endif
 
     //dock区处理
     connect(DockInfoIns,&DBusDock::FrontendWindowRectChanged,this, &ScreenManagerWayland::onDockChanged);
