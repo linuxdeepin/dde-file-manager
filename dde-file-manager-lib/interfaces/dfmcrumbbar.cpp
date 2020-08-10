@@ -71,7 +71,7 @@ public:
     DFMAddressBar *addressBar = nullptr;
 
     // Scheme support
-    DFMCrumbInterface* crumbController = nullptr;
+    DFMCrumbInterface *crumbController = nullptr;
 
     // Misc
     bool clickableAreaEnabled = false;
@@ -111,7 +111,7 @@ void DFMCrumbBarPrivate::clearCrumbs()
 
 void DFMCrumbBarPrivate::checkArrowVisiable()
 {
-    QScrollBar* sb = crumbListView.horizontalScrollBar();
+    QScrollBar *sb = crumbListView.horizontalScrollBar();
     if (!sb)
         return;
 
@@ -135,10 +135,17 @@ void DFMCrumbBarPrivate::updateController(const DUrl &url)
         if (crumbController) {
             crumbController->deleteLater();
         }
-        crumbController = DFMCrumbManager::instance()->createControllerByUrl(url, q);
+        // 修复bug41522-保险箱内，右键文件管理器打开文件夹，面包屑显示不对问题
+        DUrl newurl;
+        if(VaultController::isVaultFile(url.toString())){
+            newurl = VaultController::localUrlToVault(url);
+        }else{
+            newurl = url;
+        }
+        crumbController = DFMCrumbManager::instance()->createControllerByUrl(newurl, q);
         // Not found? Then nothing here...
         if (!crumbController) {
-            qDebug() << "Unsupported url / scheme: " << url;
+            qDebug() << "Unsupported url / scheme: " << newurl;
         }
     }
 }
@@ -203,13 +210,16 @@ void DFMCrumbBarPrivate::initUI()
     crumbListView.viewport()->installEventFilter(q);
 
     // for first icon item icon AlignCenter...
-    class IconItemDelegate : public DStyledItemDelegate {
+    class IconItemDelegate : public DStyledItemDelegate
+    {
     public:
-        explicit IconItemDelegate(QAbstractItemView *parent = nullptr):DStyledItemDelegate(parent){
+        explicit IconItemDelegate(QAbstractItemView *parent = nullptr): DStyledItemDelegate(parent)
+        {
             setItemSpacing(10);
         }
 
-        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override{
+        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+        {
             QStyleOptionViewItem opt = option;
             opt.decorationAlignment = Qt::AlignCenter;
             DStyledItemDelegate::paint(painter, opt, index);
@@ -222,7 +232,7 @@ void DFMCrumbBarPrivate::initUI()
     crumbBarLayout->addWidget(&leftArrow);
     crumbBarLayout->addWidget(&crumbListView);
     crumbBarLayout->addWidget(&rightArrow);
-    crumbBarLayout->setContentsMargins(0,0,0,0);
+    crumbBarLayout->setContentsMargins(0, 0, 0, 0);
     crumbBarLayout->setSpacing(0);
     q->setLayout(crumbBarLayout);
 
@@ -241,8 +251,8 @@ void DFMCrumbBarPrivate::initConnections()
     Q_Q(DFMCrumbBar);
     QObject::connect(&crumbListView, &QListView::customContextMenuRequested, q, &DFMCrumbBar::onListViewContextMenu);
 
-    QObject::connect(&crumbListView, &QListView::clicked, q, [q](const QModelIndex &index){
-        if (index.isValid()){
+    QObject::connect(&crumbListView, &QListView::clicked, q, [q](const QModelIndex & index) {
+        if (index.isValid()) {
             emit q->crumbListItemSelected(index.data(DFMCrumbListviewModel::FileUrlRole).toUrl());
         }
     });
@@ -270,13 +280,14 @@ void DFMCrumbBarPrivate::initConnections()
     });
 
     q->connect(addressBar, &DFMAddressBar::lostFocus, q, [q, this]() {
-        if (crumbController && !qobject_cast<DFileManagerWindow*>(q->window())->isAdvanceSearchBarVisible()) {
+        if (crumbController && !qobject_cast<DFileManagerWindow *>(q->window())->isAdvanceSearchBarVisible()) {
             crumbController->processAction(DFMCrumbInterface::AddressBarLostFocus);
         }
     });
 
     q->connect(addressBar, &DFMAddressBar::clearButtonPressed, q, [this] {
-        if (crumbController && !addressBar->text().isEmpty()) {
+        if (crumbController && !addressBar->text().isEmpty())
+        {
             crumbController->processAction(DFMCrumbInterface::ClearButtonPressed);
         }
     });
@@ -372,7 +383,7 @@ void DFMCrumbBar::hideAddressBar()
     return;
 }
 
-static QString getIconName(const CrumbData& c)
+static QString getIconName(const CrumbData &c)
 {
     QString iconName = c.iconName;
     if (c.url == DUrl(TRASH_ROOT)) {
@@ -409,8 +420,14 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
         return;
     }
 
-    QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
-    for (const CrumbData& c : crumbDataList) {
+    // 回收站预览打开文件夹时传过来的是真实路径，所以将其转换为虚拟路径
+    DUrl fileUrl = url;
+    if (url.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+        fileUrl = DUrl::fromTrashFile(url.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+    }
+
+    QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(fileUrl);
+    for (const CrumbData &c : crumbDataList) {
         if (d->crumbListviewModel) {
             QString iconName = getIconName(c);
             QStandardItem *listitem = nullptr;
@@ -492,7 +509,7 @@ void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
     const QPoint pos_difference = d->clickedPos - event->globalPos();
 
     if (qAbs(pos_difference.x()) < 2 && qAbs(pos_difference.y()) < 2) {
-        showAddressBar(qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl());
+        showAddressBar(qobject_cast<DFileManagerWindow *>(topLevelWidget())->currentUrl());
     }
 
     QFrame::mouseReleaseEvent(event);
@@ -538,10 +555,10 @@ bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
             return true;
         }
 
-        bool isDragging = (pos-QCursor::pos()).manhattanLength()>QApplication::startDragDistance();
+        bool isDragging = (pos - QCursor::pos()).manhattanLength() > QApplication::startDragDistance();
         if (type == QEvent::MouseButtonRelease && me->button() == Qt::LeftButton && !isDragging) {
             QModelIndex index = d->crumbListView.indexAt(me->pos());
-            if (index.isValid() && index != d->crumbListView.currentIndex()){
+            if (index.isValid() && index != d->crumbListView.currentIndex()) {
                 d->crumbListView.clicked(index);
                 return true;
             }
@@ -573,7 +590,7 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(window());
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
 
-    menu->addAction(copyIcon, QObject::tr("Copy path"), [=]() {
+    menu->addAction(copyIcon, QObject::tr("Copy path"), [ = ]() {
         QGuiApplication::clipboard()->setText(url.toString());
     });
 
@@ -581,13 +598,13 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
         WindowManager::instance()->showNewWindow(url, true);
     });
 
-    menu->addAction(newTabIcon, QObject::tr("Open in new tab"), [wnd,url]() {
+    menu->addAction(newTabIcon, QObject::tr("Open in new tab"), [wnd, url]() {
         wnd->openNewTab(url);
     })->setDisabled(shouldDisable);
 
     menu->addSeparator();
 
-    menu->addAction(editIcon, QObject::tr("Edit address"), this, [=]() {
+    menu->addAction(editIcon, QObject::tr("Edit address"), this, [ = ]() {
         showAddressBar(wnd->currentUrl());
     });
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃

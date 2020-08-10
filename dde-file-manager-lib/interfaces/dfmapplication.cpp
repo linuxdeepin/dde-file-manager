@@ -29,9 +29,11 @@
 #endif
 
 #include "dfmsettings.h"
+#include "fulltextsearch/fulltextsearch.h"
 
 #include <QCoreApplication>
 #include <QMetaEnum>
+#include <QtConcurrent>
 
 DFM_BEGIN_NAMESPACE
 
@@ -99,6 +101,11 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             break;
         case DFMApplication::GA_ShowCsdCrumbBarClickableArea:
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
+            break;
+        case DFMApplication::GA_IndexFullTextSearch:
+            if (value.toBool()) {
+                DFMFullTextSearchManager::getInstance()->fulltextIndex("/");/*全文搜索建立索引*/
+            }
             break;
         default:
             break;

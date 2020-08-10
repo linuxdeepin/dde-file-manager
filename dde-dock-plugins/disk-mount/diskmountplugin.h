@@ -78,6 +78,7 @@ class DiskMountPlugin : public QObject, PluginsItemInterface
 
 public:
     explicit DiskMountPlugin(QObject *parent = nullptr);
+    explicit DiskMountPlugin(bool usingAppLoader, QObject *parent = nullptr);
 
     const QString pluginName() const Q_DECL_OVERRIDE;
     void init(PluginProxyInterface *proxyInter) Q_DECL_OVERRIDE;
@@ -105,6 +106,7 @@ private slots:
 private:
     bool m_pluginAdded;
     bool m_pluginLoaded;
+    bool m_usingAppLoader;
 
     TipsWidget *m_tipsLabel;
     DiskPluginItem *m_diskPluginItem;
