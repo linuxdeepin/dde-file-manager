@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "fulltextsearch.h"
 #include <QString>
-#include "targetver.h"
+#include <targetver.h>
 #include <iostream>
 #include "LuceneHeaders.h"
 #include "FileUtils.h"
@@ -38,9 +38,11 @@
 #include <QStringList>
 #include "dfmapplication.h"
 
+#include <QStandardPaths>
+#include <QApplication>
 DFM_BEGIN_NAMESPACE
 
-#define INDEX_PATH  "/var/deepin/136"
+
 #define SEARCH_RESULT_NUM   100000
 using namespace Lucene;
 
@@ -425,7 +427,14 @@ static void doStreamingSearch(const SearcherPtr &searcher, const QueryPtr &query
 int search_keyworld(std::string keyword)
 {
     try {
-        String index = StringUtils::toUnicode(INDEX_PATH);
+        auto indexPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+        indexPath = indexPath
+                    + "/" + QApplication::organizationName()
+                    + "/" + QApplication::applicationName()
+                    + "/" + "index";
+
+        Lucene::String indexDir(indexPath.toStdWString());
+        String index = indexDir;
         String field = L"contents";
         String queries;
         int32_t repeat = 0;
@@ -479,7 +488,13 @@ int fulltextIndex(QString sourcefile)
     std::setlocale(LC_CTYPE, "");    // MinGW gcc.
     std::wcout.imbue(std::locale(""));
 
-    Lucene::String indexDir(StringUtils::toUnicode("/var/deepin/135"));
+    auto indexPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+    indexPath = indexPath
+                + "/" + QApplication::organizationName()
+                + "/" + QApplication::applicationName()
+                + "/" + "index";
+
+    Lucene::String indexDir(indexPath.toStdWString());
 
     Lucene::String sourceDir(StringUtils::toUnicode(sourcefile.toStdString()));
     if (!FileUtils::isDirectory(sourceDir)) {
@@ -558,7 +573,13 @@ int DFMFullTextSearchManager::fulltextIndexSetUp(QString sourcefile)
     std::setlocale(LC_CTYPE, "");    // MinGW gcc.
     std::wcout.imbue(std::locale(""));
 
-    Lucene::String indexDir(StringUtils::toUnicode(INDEX_PATH));
+    auto indexPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+    indexPath = indexPath
+                + "/" + QApplication::organizationName()
+                + "/" + QApplication::applicationName()
+                + "/" + "index";
+
+    Lucene::String indexDir(indexPath.toStdWString());
 
     Lucene::String sourceDir(StringUtils::toUnicode(sourcefile.toStdString()));
     if (!FileUtils::isDirectory(sourceDir)) {
