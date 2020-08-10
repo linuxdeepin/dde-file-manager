@@ -91,7 +91,7 @@ void FileManagerApp::initApp()
     DFMGlobal::autoLoadDefaultPlugins();
 
     /*init plugin manager */
-    DFMGlobal::initPluginManager();
+    //    DFMGlobal::initPluginManager();
 
     /*init searchHistoryManager */
     DFMGlobal::initSearchHistoryManager();
