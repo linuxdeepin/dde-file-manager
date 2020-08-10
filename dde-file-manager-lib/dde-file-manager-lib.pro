@@ -158,6 +158,9 @@ mimetypeAssociations.files += \
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts
 
+TR_EXCLUDE += /usr/include/boost/ \
+              $$PWD/fulltextsearch/*
+
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
     !system($$PWD/generate_translations.sh): error("Failed to generate translation")
