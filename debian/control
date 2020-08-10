@@ -54,7 +54,13 @@ Build-Depends:
  libqt5xdg-dev,
  libtag1-dev,
  libicu-dev,
- libcue-dev
+ libcue-dev,
+ liblucene++-dev,
+ libgsf-1-dev,
+ libglib2.0-dev,
+ libhtmlcxx-dev,
+ libxml2-dev,
+ libmimetic-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
