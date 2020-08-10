@@ -60,7 +60,14 @@ Build-Depends:
  libglib2.0-dev,
  libhtmlcxx-dev,
  libxml2-dev,
- libmimetic-dev
+ libmimetic-dev,
+ libboost-date-time-dev,
+ libboost-filesystem-dev,
+ libboost-iostreams-dev,
+ libboost-regex-dev,
+ libboost-system-dev,
+ libboost-test-dev,
+ libboost-thread-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
