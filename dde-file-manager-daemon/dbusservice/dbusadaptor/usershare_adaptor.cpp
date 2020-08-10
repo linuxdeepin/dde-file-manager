@@ -21,7 +21,7 @@
  * Implementation of adaptor class UserShareAdaptor
  */
 
-UserShareAdaptor::UserShareAdaptor(UserShareManager *parent)
+UserShareAdaptor::UserShareAdaptor(UserShareManagerDaemon *parent)
     : QDBusAbstractAdaptor(parent)
 {
     // constructor

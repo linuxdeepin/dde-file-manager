@@ -561,13 +561,13 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
 {
     /// init global AppController
     setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-    if (!winId_mtx.first){
-        //等待异步加载完成
-        winId_mtx.second.lock();
-        winId_mtx.first = true;
-        winId_mtx.second.unlock();
-    }
-    winId();
+//    if (!winId_mtx.first){
+//        //等待异步加载完成
+//        winId_mtx.second.lock();
+//        winId_mtx.first = true;
+//        winId_mtx.second.unlock();
+//    }
+//    winId();
     initData();
     initUI();
     initConnect();
@@ -583,7 +583,13 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
             newurl = fileUrl.parentUrl();
         }
     }
-
+    if (!winId_mtx.first){
+        //等待异步加载完成
+        winId_mtx.second.lock();
+        winId_mtx.first = true;
+        winId_mtx.second.unlock();
+    }
+    dynamic_cast<DFileMenu *>(titlebar()->menu())->setEventData(DUrl(), DUrlList() << DUrl(),winId(), this);
     openNewTab(newurl);
 }
 
@@ -1089,7 +1095,7 @@ void DFileManagerWindow::initTitleBar()
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
-    menu->setEventData(DUrl(), DUrlList() << DUrl(),winId(), this);
+    //menu->setEventData(DUrl(), DUrlList() << DUrl(),winId(), this); //!移到构造函数中
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);

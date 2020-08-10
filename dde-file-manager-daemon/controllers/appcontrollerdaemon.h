@@ -22,34 +22,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "app/global.h"
-#include "appcontroller.h"
-#include "fileoperation.h"
-#include "tag/tagmanagerdaemon.h"
-#include "usershare/usersharemanager.h"
-#include "acesscontrol/acesscontrolmanager.h"
-#include "vault/vaultmanager.h"
+#ifndef APPCONTROLLER_H
+#define APPCONTROLLER_H
 
-AppController::AppController(QObject *parent) : QObject(parent)
+#include <QObject>
+
+class FileOperation;
+class UserShareManager;
+class UsbFormatter;
+class CommandManager;
+class DeviceInfoManager;
+class TagManagerDaemon;
+class AcessControlManager;
+class VaultManager;
+
+class AppControllerDaemon : public QObject
 {
-    initControllers();
-    initConnect();
-}
+    Q_OBJECT
+public:
+    explicit AppControllerDaemon(QObject *parent = nullptr);
+    ~AppControllerDaemon();
 
-AppController::~AppController()
-{
+    void initControllers();
+    void initConnect();
 
-}
+signals:
 
-void AppController::initControllers()
-{
-    m_acessController = new AcessControlManager(this);
-    m_userShareManager = new UserShareManager(this);
-    m_tagManagerDaemon = new TagManagerDaemon{ this };
-    m_vaultManager = new VaultManager(this);
-}
+public slots:
 
-void AppController::initConnect()
-{
-}
+private:
+    UserShareManager *m_userShareManager = nullptr;
+    TagManagerDaemon *m_tagManagerDaemon = nullptr;
+    AcessControlManager *m_acessController = nullptr;
+    VaultManager *m_vaultManager = nullptr;
+};
 
+#endif // APPCONTROLLER_H

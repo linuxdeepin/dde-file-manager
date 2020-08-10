@@ -15,7 +15,7 @@ isEmpty(TARGET) {
 
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += gio-unix-2.0
+PKGCONFIG += gio-unix-2.0 x11
 CONFIG(release, release|debug) {
     PKGCONFIG += dtkwidget
 } else {
@@ -101,6 +101,8 @@ isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
 else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+#调用file-manager-lib的静态库
+unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../dde-file-manager-lib/libdde-file-manager.a
 
 CONFIG(debug, debug|release) {
     DEPENDPATH += $$PWD/../dde-file-manager-lib
@@ -129,6 +131,8 @@ translations.path = $$APPSHAREDIR/translations
 translations.files = translations/*.qm
 
 INSTALLS += translations
+
+LIBS += -lzen
 
 CONFIG(release, debug|release) {
     !system($$PWD/generate_translations.sh): error("Failed to generate translation")

@@ -61,7 +61,7 @@
 #include <pwd.h>
 #include <DApplicationSettings>
 #include <QtConcurrent>
-
+#include <DMainWindow>
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
 #endif
@@ -105,12 +105,32 @@ int main(int argc, char *argv[])
     SingleApplication::initSources();
     SingleApplication app(argc, argv);
 
+    //使用异步加载win相关的插件
+    QtConcurrent::run([](){
+        winId_mtx.second.lock();
+        if (winId_mtx.first){
+            winId_mtx.second.unlock();
+            return;
+        }
+        QWidget *w = new QWidget;
+        w->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
+        w->winId();
+        winId_mtx.second.unlock();
+        delete w;
+    });
+
+    QtConcurrent::run([&app](){
+        DMainWindow *w = new DMainWindow;
+        delete w;
+        app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
+    });
+
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app.setApplicationName(QMAKE_TARGET);
     app.loadTranslator();
     app.setApplicationDisplayName(app.translate("Application", "File Manager"));
     app.setApplicationVersion(DApplication::buildVersion((QMAKE_VERSION)));
-    app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
+    //app.setProductIcon(QIcon::fromTheme("dde-file-manager")); //移到线程中
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     app.setApplicationDescription(app.translate("Application", "File Manager is a powerful and "
                                                                "easy-to-use file management tool, "
@@ -125,19 +145,6 @@ int main(int argc, char *argv[])
 
     LogUtil::registerLogger();
 
-    //使用异步加载win相关的插件
-    QtConcurrent::run([](){
-        winId_mtx.second.lock();
-        if (winId_mtx.first){
-            winId_mtx.second.unlock();
-            return;
-        }
-        QWidget *w = new QWidget;
-        w->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-        w->winId();
-        winId_mtx.second.unlock();
-        w->deleteLater();
-    });
     // init application object
     DFMApplication fmApp;
     Q_UNUSED(fmApp)

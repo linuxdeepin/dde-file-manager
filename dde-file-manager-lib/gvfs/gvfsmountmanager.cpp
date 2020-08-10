@@ -95,7 +95,6 @@ GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
         connect(this, &GvfsMountManager::mount_added, dialogManager, &DialogManager::showNtfsWarningDialog);
     }
 
-    m_gVolumeMonitor = g_volume_monitor_get();
     qRegisterMetaType<QDrive>("QDrive");
 
 //    mount_mounted("smb://10.0.10.30/people");
@@ -1048,6 +1047,8 @@ bool GvfsMountManager::isDeviceCrypto_LUKS(const QDiskInfo &diskInfo)
 
 void GvfsMountManager::startMonitor()
 {
+    m_gVolumeMonitor = g_volume_monitor_get();
+
     if (DFMGlobal::isRootUser()){
         listMountsBylsblk();
     }else{

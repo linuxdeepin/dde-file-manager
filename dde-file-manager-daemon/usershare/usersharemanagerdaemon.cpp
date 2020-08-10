@@ -22,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "usersharemanager.h"
+#include "usersharemanagerdaemon.h"
 #include "dbusservice/dbusadaptor/usershare_adaptor.h"
 #include <QDBusConnection>
 #include <QDBusVariant>
@@ -30,10 +30,10 @@
 #include <QDebug>
 #include "app/policykithelper.h"
 
-QString UserShareManager::ObjectPath = "/com/deepin/filemanager/daemon/UserShareManager";
-QString UserShareManager::PolicyKitActionId = "com.deepin.filemanager.daemon.UserShareManager";
+QString UserShareManagerDaemon::ObjectPath = "/com/deepin/filemanager/daemon/UserShareManager";
+QString UserShareManagerDaemon::PolicyKitActionId = "com.deepin.filemanager.daemon.UserShareManager";
 
-UserShareManager::UserShareManager(QObject *parent)
+UserShareManagerDaemon::UserShareManagerDaemon(QObject *parent)
     : QObject(parent)
     , QDBusContext()
 {
@@ -41,12 +41,12 @@ UserShareManager::UserShareManager(QObject *parent)
     m_userShareAdaptor = new UserShareAdaptor(this);
 }
 
-UserShareManager::~UserShareManager()
+UserShareManagerDaemon::~UserShareManagerDaemon()
 {
 
 }
 
-bool UserShareManager::checkAuthentication()
+bool UserShareManagerDaemon::checkAuthentication()
 {
     bool ret = false;
     qint64 pid = 0;
@@ -65,7 +65,7 @@ bool UserShareManager::checkAuthentication()
     return ret;
 }
 
-bool UserShareManager::addGroup(const QString &groupName)
+bool UserShareManagerDaemon::addGroup(const QString &groupName)
 {
     if (!checkAuthentication()) {
         qDebug() << "addGroup failed" <<  groupName;
@@ -79,7 +79,7 @@ bool UserShareManager::addGroup(const QString &groupName)
     return ret;
 }
 
-bool UserShareManager::setUserSharePassword(const QString &username, const QString &passward)
+bool UserShareManagerDaemon::setUserSharePassword(const QString &username, const QString &passward)
 {
     if (!checkAuthentication()) {
         qDebug() << "setUserSharePassword failed" <<  username;
@@ -100,7 +100,7 @@ bool UserShareManager::setUserSharePassword(const QString &username, const QStri
     return ret;
 }
 
-bool UserShareManager::closeSmbShareByShareName(const QString &sharename, const bool bshow)
+bool UserShareManagerDaemon::closeSmbShareByShareName(const QString &sharename, const bool bshow)
 {
     if (!bshow) {
         return true;

@@ -22,33 +22,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef USERSHAREDAEMONMANAGER_H
-#define USERSHAREDAEMONMANAGER_H
+#include "app/global.h"
+#include "appcontrollerdaemon.h"
+#include "fileoperation.h"
+#include "tag/tagmanagerdaemon.h"
+#include "usershare/usersharemanager.h"
+#include "acesscontrol/acesscontrolmanager.h"
+#include "vault/vaultmanager.h"
 
-#include <QDBusContext>
-#include <QObject>
-
-class UserShareAdaptor;
-
-class UserShareManager : public QObject, public QDBusContext
+AppControllerDaemon::AppControllerDaemon(QObject *parent) : QObject(parent)
 {
-    Q_OBJECT
-public:
-    explicit UserShareManager(QObject *parent = nullptr);
-    ~UserShareManager();
+    initControllers();
+    initConnect();
+}
 
-    static QString ObjectPath;
-    static QString PolicyKitActionId;
-protected:
-    bool checkAuthentication();
-signals:
+AppControllerDaemon::~AppControllerDaemon()
+{
 
-public slots:
-    bool addGroup(const QString &groupName);
-    bool setUserSharePassword(const QString &username, const QString &passward);
-    bool closeSmbShareByShareName(const QString &sharename,const bool bshow);
-private:
-    UserShareAdaptor* m_userShareAdaptor = nullptr;
-};
+}
 
-#endif // USERSHAREDAEMONMANAGER_H
+void AppControllerDaemon::initControllers()
+{
+    m_acessController = new AcessControlManager(this);
+    m_userShareManager = new UserShareManager(this);
+    m_tagManagerDaemon = new TagManagerDaemon{ this };
+    m_vaultManager = new VaultManager(this);
+}
+
+void AppControllerDaemon::initConnect()
+{
+}
+

@@ -1,4 +1,4 @@
-usr/lib/*/libdde-file-manager.so.*
+usr/lib/*/libdde-file-manager.a
 usr/share/dde-file-manager/translations/*.qm
 usr/share/dde-file-manager/templates/*
 usr/share/dde-file-manager/mimetypes/*

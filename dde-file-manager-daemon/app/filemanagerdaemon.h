@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-class AppController;
+class AppControllerDaemon;
 
 class FileManagerDaemon : public QObject
 {
@@ -44,7 +44,7 @@ signals:
 public slots:
 
 private:
-    AppController* m_appController = nullptr;
+    AppControllerDaemon* m_appController = nullptr;
 };
 
 #endif // FILEMANAGERDAEMON_H
