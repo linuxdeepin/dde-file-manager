@@ -73,6 +73,7 @@
 #include <QHostInfo>
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
+#include <QtConcurrent/QtConcurrentRun>
 
 DWIDGET_USE_NAMESPACE
 
@@ -118,14 +119,18 @@ DFileService::DFileService(QObject *parent)
         }));
     }
     //判断当前自己的网络状态
-    d_ptr->m_networkmgr = new QNetworkConfigurationManager();
-    d_ptr->m_bonline = d_ptr->m_networkmgr->isOnline();
-    d_ptr->m_loop = new QEventLoop();
-    connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [this](bool state) {
-        d_ptr->m_bonline = state;
-        if (d_ptr->m_loop) {
-            d_ptr->m_loop->exit();
-        }
+    QtConcurrent::run([this] {
+        d_ptr->m_networkmgr = new QNetworkConfigurationManager();
+        d_ptr->m_networkmgr->moveToThread(qApp->thread());
+        d_ptr->m_bonline = d_ptr->m_networkmgr->isOnline();
+        d_ptr->m_loop = new QEventLoop();
+        d_ptr->m_loop->moveToThread(qApp->thread());
+        connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [this](bool state) {
+            d_ptr->m_bonline = state;
+            if (d_ptr->m_loop) {
+                d_ptr->m_loop->exit();
+            }
+        });
     });
 
     connect(fileSignalManager,&FileSignalManager::requestHideSystemPartition,this,&DFileService::hideSystemPartition);
