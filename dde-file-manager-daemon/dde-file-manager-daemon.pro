@@ -21,6 +21,7 @@ CONFIG(release, release|debug) {
 CONFIG += c++11 link_pkgconfig
 
 LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../dde-file-manager-lib/libdde-file-manager.a
 
 CONFIG(debug, debug|release) {
     DEPENDPATH += $$PWD/../dde-file-manager-lib

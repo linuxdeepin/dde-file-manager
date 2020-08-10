@@ -16,6 +16,11 @@ unix {
     isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
         message("Build arch:" $$ARCH)
 
+        QMAKE_CFLAGS += -pg
+
+        QMAKE_CXXFLAGS += -pg
+
+        QMAKE_LFLAGS += -pg
     #只在release开启，方便debug时开发
     CONFIG(release, debug|release) {
         message("x86 ENABLE_DAEMON")
@@ -46,6 +51,11 @@ unix {
 
         #起动时，使用异步初始化，加载资源，提升起动速度
         DEFINES += ENABLE_ASYNCINIT
+
+        #mips编译优化-pg是用于测试性能提升
+        QMAKE_CXX += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mmsa -mloongson-ext2 -mloongson-mmi
+        QMAKE_CXXFLAGS += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mmsa -mloongson-ext2 -mloongson-mmi
+        QMAKE_LFLAGS += -Wl,--as-needed
     } else {
         isEmpty(DISABLE_JEMALLOC) {
             LIBS += -ljemalloc

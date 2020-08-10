@@ -25,13 +25,14 @@ PKGCONFIG   += xcb xcb-ewmh xcb-shape dframeworkdbus gio-qt
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib\
                $$PWD/../utils \
-              $$PWD/../dde-file-manager-lib/interfaces \
-                $$PWD/../dde-file-manager-lib/interfaces/plugins \
-                $$PWD/../dde-file-manager-lib/io
+               $$PWD/../dde-file-manager-lib/interfaces \
+               $$PWD/../dde-file-manager-lib/interfaces/plugins \
+               $$PWD/../dde-file-manager-lib/io
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
 else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../dde-file-manager-lib/libdde-file-manager.a
 
 CONFIG(debug, debug|release) {
     DEPENDPATH += $$PWD/../dde-file-manager-lib

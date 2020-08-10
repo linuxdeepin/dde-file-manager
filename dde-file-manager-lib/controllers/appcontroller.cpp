@@ -48,6 +48,7 @@
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "disomaster.h"
+#include "fileeventprocessor.h"
 
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
@@ -1331,6 +1332,7 @@ QString AppController::createFile(const QString &sourceFile, const QString &targ
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
+    FileEventProcessor::Init();
     createGVfSManager();
     createUserShareManager();
     createDBusInterface();

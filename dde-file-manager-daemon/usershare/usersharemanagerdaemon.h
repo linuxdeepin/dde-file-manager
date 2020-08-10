@@ -22,39 +22,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef APPCONTROLLER_H
-#define APPCONTROLLER_H
+#ifndef USERSHAREDAEMONMANAGER_H
+#define USERSHAREDAEMONMANAGER_H
 
+#include <QDBusContext>
 #include <QObject>
 
-class FileOperation;
-class UserShareManager;
-class UsbFormatter;
-class CommandManager;
-class DeviceInfoManager;
-class TagManagerDaemon;
-class AcessControlManager;
-class VaultManager;
+class UserShareAdaptor;
 
-class AppController : public QObject
+class UserShareManagerDaemon : public QObject, public QDBusContext
 {
     Q_OBJECT
 public:
-    explicit AppController(QObject *parent = nullptr);
-    ~AppController();
+    explicit UserShareManagerDaemon(QObject *parent = nullptr);
+    ~UserShareManagerDaemon();
 
-    void initControllers();
-    void initConnect();
-
+    static QString ObjectPath;
+    static QString PolicyKitActionId;
+protected:
+    bool checkAuthentication();
 signals:
 
 public slots:
-
+    bool addGroup(const QString &groupName);
+    bool setUserSharePassword(const QString &username, const QString &passward);
+    bool closeSmbShareByShareName(const QString &sharename,const bool bshow);
 private:
-    UserShareManager *m_userShareManager = nullptr;
-    TagManagerDaemon *m_tagManagerDaemon = nullptr;
-    AcessControlManager *m_acessController = nullptr;
-    VaultManager *m_vaultManager = nullptr;
+    UserShareAdaptor* m_userShareAdaptor = nullptr;
 };
 
-#endif // APPCONTROLLER_H
+#endif // USERSHAREDAEMONMANAGER_H

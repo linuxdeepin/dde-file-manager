@@ -14,7 +14,7 @@
 
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
-#include "usershare/usersharemanager.h"
+#include "usershare/usersharemanagerdaemon.h"
 QT_BEGIN_NAMESPACE
 class QByteArray;
 template<class T> class QList;
@@ -50,11 +50,11 @@ class UserShareAdaptor: public QDBusAbstractAdaptor
 "  </interface>\n"
         "")
 public:
-    UserShareAdaptor(UserShareManager *parent);
+    UserShareAdaptor(UserShareManagerDaemon *parent);
     virtual ~UserShareAdaptor();
 
-    inline UserShareManager *parent() const
-    { return static_cast<UserShareManager *>(QObject::parent()); }
+    inline UserShareManagerDaemon *parent() const
+    { return static_cast<UserShareManagerDaemon *>(QObject::parent()); }
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS

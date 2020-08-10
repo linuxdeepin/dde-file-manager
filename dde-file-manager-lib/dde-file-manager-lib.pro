@@ -22,7 +22,7 @@ TEMPLATE = lib
 CONFIG += create_pc create_prl no_install_prl
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
-DEFINES += BLUETOOTH_ENABLE
+#DEFINES += BLUETOOTH_ENABLE
 
 isEmpty(QMAKE_ORGANIZATION_NAME) {
     DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
@@ -32,8 +32,9 @@ isEmpty(PREFIX){
     PREFIX = /usr
 }
 
-CONFIG += c++11 link_pkgconfig
-PKGCONFIG += libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget dtkgui udisks2-qt5 disomaster gio-qt libcrypto Qt5Xdg dframeworkdbus
+#静态库
+CONFIG += staticlib c++11 link_pkgconfig
+PKGCONFIG += libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget dtkgui udisks2-qt5 disomaster gio-qt Qt5Xdg dframeworkdbus #libcrypto
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
@@ -184,3 +185,7 @@ DISTFILES += \
     policy/com.deepin.pkexec.deepin-vault-authenticateProxy.policy
 
 include($$PWD/settings_dialog_json.pri)
+
+unix:!macx: LIBS += -lcrypto -lX11
+
+unix:!macx: PRE_TARGETDEPS += $$[QT_INSTALL_LIBS]/libcrypto.a

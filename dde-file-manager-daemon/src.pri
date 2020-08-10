@@ -8,7 +8,6 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/app/filemanagerdaemon.h \
-    $$PWD/controllers/appcontroller.h \
     $$PWD/app/global.h \
     $$PWD/controllers/fileoperation.h \
     $$PWD/fileoperationjob/renamejob.h \
@@ -35,7 +34,6 @@ HEADERS += \
     $$PWD/dbusservice/dbusinterface/createtemplatefilejob_interface.h \
     $$PWD/dbusservice/dbusinterface/deletejob_interface.h \
     $$PWD/dbusservice/dbusinterface/movejob_interface.h \
-    $$PWD/usershare/usersharemanager.h \
     $$PWD/dbusservice/dbusadaptor/usershare_adaptor.h \
     $$PWD/dbusservice/dbusinterface/usershare_interface.h \
     $$PWD/dbusservice/dbusinterface/usbformatter_interface.h \
@@ -47,11 +45,12 @@ HEADERS += \
     $$PWD/vault/vaultmanager.h \
     $$PWD/dbusservice/dbusadaptor/vault_adaptor.h \
     $$PWD/dbusservice/dbusinterface/vault_interface.h \
-    $$PWD/vault/vaultclock.h
+    $$PWD/vault/vaultclock.h \
+    $$PWD/controllers/appcontrollerdaemon.h \
+    $$PWD/usershare/usersharemanagerdaemon.h
 
 SOURCES += \
     $$PWD/app/filemanagerdaemon.cpp \
-    $$PWD/controllers/appcontroller.cpp \
     $$PWD/controllers/fileoperation.cpp \
     $$PWD/fileoperationjob/renamejob.cpp \
     $$PWD/dbusservice/dbusadaptor/fileoperation_adaptor.cpp \
@@ -77,7 +76,6 @@ SOURCES += \
     $$PWD/dbusservice/dbusinterface/createtemplatefilejob_interface.cpp \
     $$PWD/dbusservice/dbusinterface/deletejob_interface.cpp \
     $$PWD/dbusservice/dbusinterface/movejob_interface.cpp \
-    $$PWD/usershare/usersharemanager.cpp \
     $$PWD/dbusservice/dbusadaptor/usershare_adaptor.cpp \
     $$PWD/dbusservice/dbusinterface/usershare_interface.cpp \
     $$PWD/dbusservice/dbusinterface/usbformatter_interface.cpp \
@@ -89,4 +87,6 @@ SOURCES += \
     $$PWD/vault/vaultmanager.cpp \
     $$PWD/dbusservice/dbusadaptor/vault_adaptor.cpp \
     $$PWD/dbusservice/dbusinterface/vault_interface.cpp \
-    $$PWD/vault/vaultclock.cpp
+    $$PWD/vault/vaultclock.cpp \
+    $$PWD/controllers/appcontrollerdaemon.cpp \
+    $$PWD/usershare/usersharemanagerdaemon.cpp

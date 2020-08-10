@@ -23,7 +23,7 @@
  */
 
 #include "filemanagerdaemon.h"
-#include "controllers/appcontroller.h"
+#include "controllers/appcontrollerdaemon.h"
 
 FileManagerDaemon::FileManagerDaemon(QObject *parent) : QObject(parent)
 {
@@ -38,7 +38,7 @@ FileManagerDaemon::~FileManagerDaemon()
 
 void FileManagerDaemon::initControllers()
 {
-    m_appController = new AppController(this);
+    m_appController = new AppControllerDaemon(this);
 }
 
 void FileManagerDaemon::initConnect()
