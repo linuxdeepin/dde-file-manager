@@ -8,7 +8,7 @@
 
 include(../common/common.pri)
 
-QT       += core gui svg dbus x11extras concurrent multimedia xml KCodecs network
+QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs network
 #private
 QT       += gui-private
 
@@ -62,7 +62,7 @@ include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
 include(vault/vault.pri)
-
+include(fulltextsearch/fulltextsearch.pri)
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL

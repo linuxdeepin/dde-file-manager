@@ -82,6 +82,7 @@
 #include <QMutex>
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
+#include <DSysInfo>
 
 DWIDGET_USE_NAMESPACE
 
@@ -923,8 +924,27 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
                 //与桌面的enter行为同步
-                for (auto url : urls)
-                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList{url}));
+                // fix bug#41296 回收站中选择多个文件打开,弹出多个提示框
+                bool openTrashFileHint = false; // 回收站打开文件是否已经提示了
+                if (urls.size() == 1) {
+                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+                } else {
+                    for (auto url : urls) {
+                        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+                        if (!info || info->isVirtualEntry() || (url.isTrashFile() && info->isFile())) {
+                            // 只提示一次
+                            if (!openTrashFileHint) {
+                                QString strMsg = tr("Unable to open items in the trash,please restore it first");
+                                dialogManager->showMessageDialog(2, strMsg);
+                                openTrashFileHint = true;
+                            }
+                            continue;
+                        }
+
+                        DFileService::instance()->openFile(this, url);
+                    }
+                }
+
                 return;
             }
 
@@ -1364,9 +1384,17 @@ void DFileView::updateStatusBar()
 
 void DFileView::openIndexByOpenAction(const int &action, const QModelIndex &index)
 {
-    if (action == DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt())
+    if (action == DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt()) {
+        //在dfiledialog中单击打开文件时 需要判断文件是否处于enable的状态 否则会引起dialog崩溃
+        if (action == 0) {
+            Qt::ItemFlags flags = model()->flags(index);
+            if (!flags.testFlag(Qt::ItemIsEnabled))
+                return;
+        }
+
         if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
             openIndex(index);
+    }
 }
 
 void DFileView::setIconSizeBySizeIndex(const int &sizeIndex)
@@ -2672,10 +2700,14 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
-    const QVector<MenuAction> &actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
+    QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
 
     if (actions.isEmpty())
         return;
+    // sp3 feature: root用户和服务器版本用户不需要以管理员身份打开的功能
+    if (DFMGlobal::isRootUser() || DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+        actions.removeAll(MenuAction::OpenAsAdmin);
+    }
 
     const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList(DAbstractFileInfo::SpaceArea);
 

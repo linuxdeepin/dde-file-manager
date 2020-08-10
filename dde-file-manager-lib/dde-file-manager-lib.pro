@@ -67,7 +67,7 @@ include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
 include(vault/vault.pri)
-
+include(fulltextsearch/fulltextsearch.pri)
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL
@@ -157,6 +157,9 @@ mimetypeAssociations.files += \
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts
+
+TR_EXCLUDE += /usr/include/boost/ \
+              $$PWD/fulltextsearch/*
 
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {

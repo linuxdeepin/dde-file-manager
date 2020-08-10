@@ -123,6 +123,8 @@ public:
     static bool isDesktopFile(const QFileInfo &fileInfo);
     static bool isDesktopFileOptmise(const QString& filePath);
     static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
+
+    static bool deviceShouldBeIgnore(const QString &devId); // devId = /dev/sdb(N)
 };
 
 #endif // FILEUTILS_H
