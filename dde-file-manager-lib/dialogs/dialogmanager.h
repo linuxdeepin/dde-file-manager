@@ -141,6 +141,8 @@ public slots:
     int showMessageDialog(int messageLevel, const QString &message, QString btnTxt = tr("Confirm"));
     void showBluetoothTransferDlg(const DUrlList &files);
 
+    void showFormatDialog(const QString &devId); // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化
+
 #ifdef SW_LABEL
     void onJobFailed_SW(int nRet, const QString &jobType, const QString &srcfilename);
     int showPrivilegeDialog_SW(int nRet, const QString &srcfilename);

@@ -26,7 +26,7 @@
 #include "utils/singleton.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-
+#include "shutil/fileutils.h"
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
 #include <dgiomount.h>
@@ -35,6 +35,8 @@
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
+
+#include "dialogs/dialogmanager.h"
 
 #include <gvfs/networkmanager.h>
 
@@ -125,9 +127,14 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             continue;
         }
 
-        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
+        if (blk->device().toLower().contains("sda") // 对于 sda 系列设备，一般是用户的系统硬盘，使用以前的过滤方式
+            && !blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
         }
+        // sp3 feat 异常U盘也需要显示盘符在界面上
+        if (drv->removable() && FileUtils::deviceShouldBeIgnore(blk->device())) // 过滤包含分区的disk: 例如，sdb, sdb1, sdb2 ，过滤掉 sdb
+            continue;
+
         //检查挂载目录下是否存在diskinfo文件
         QByteArrayList mps = blk->mountPoints();
         if (!mps.empty()) {
@@ -407,8 +414,13 @@ bool DFMRootFileWatcherPrivate::start()
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
-        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
+        if (drv->removable() && FileUtils::deviceShouldBeIgnore(blk->device())) {
             return;
+        }
+
+        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()
+            && drv->removable()) {
+            dialogManager->showFormatDialog(blk->device());
         }
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             return;
