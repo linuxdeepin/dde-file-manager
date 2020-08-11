@@ -6,7 +6,11 @@
 
 #include <QPixmap>
 #include <QStandardPaths>
+#include "QtTest/QTest"
 
+#include "controllers/vaultcontroller.h"
+
+DFM_USE_NAMESPACE
 namespace  {
     class TestOperatorCenter : public testing::Test
     {
@@ -38,11 +42,11 @@ TEST_F(TestOperatorCenter, createDirAndFile)
  */
 TEST_F(TestOperatorCenter, saveSaltAndClipher)
 {
-#if 0 // this will modify the vault password.
+    QSKIP("this test will change vault password on local machine.");
+    // this will modify the vault password.
     QString pswd("123456");
     QString hint("unit test.");
     EXPECT_TRUE(m_opCenter->saveSaltAndClipher(pswd, hint));
-#endif
 }
 
 /**
@@ -50,7 +54,7 @@ TEST_F(TestOperatorCenter, saveSaltAndClipher)
  */
 TEST_F(TestOperatorCenter, createKey)
 {
-    // do somthing.
+    QSKIP("this test will change vault password on local machine.");
 }
 
 /**
@@ -91,13 +95,18 @@ TEST_F(TestOperatorCenter, getUserKey)
  */
 TEST_F(TestOperatorCenter, getPasswordHint)
 {
-    QString pswdHint;
-    bool bSuccess = m_opCenter->getPasswordHint(pswdHint);
-    if (bSuccess) {
-        EXPECT_FALSE(pswdHint.isEmpty());
-    } else {
-        EXPECT_TRUE(pswdHint.isEmpty());
+    QString strPasswordHintFilePath = VaultController::makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
+    QFile passwordHintFile(strPasswordHintFilePath);
+    QString passwordHint = "";
+    if(passwordHintFile.open(QIODevice::Text | QIODevice::ReadOnly)){
+        passwordHint = QString(passwordHintFile.readAll());
     }
+    passwordHintFile.close();
+
+    QString opPswdHint;
+    m_opCenter->getPasswordHint(opPswdHint);
+
+    EXPECT_EQ(passwordHint, opPswdHint);
 }
 
 /**
