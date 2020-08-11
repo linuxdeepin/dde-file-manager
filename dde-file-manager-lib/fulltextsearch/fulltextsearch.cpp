@@ -252,14 +252,12 @@ void indexDocs(const IndexWriterPtr &writer, const String &sourceDir)
             }
             QString t_prefix = pathList.at(1);
 
+            /*建立全文搜索索引排除以下目录 /boot /dev /proc /sys /root /run /lib  /usr*/
             if (t_prefix == "boot" || t_prefix == "dev" || t_prefix == "proc" || t_prefix == "sys"
-                    || t_prefix == "root" || t_prefix == "run" || t_prefix == "lib" || t_prefix == "home") {
+                    || t_prefix == "root" || t_prefix == "run" || t_prefix == "lib" || t_prefix == "usr") {
                 continue;
             } else {
-                if (pathList.size() > 2 && pathList.at(2) == "lib")
-                    continue;
-                else
-                    indexDocs(writer, docFile);
+                indexDocs(writer, docFile);
             }
         } else {
             if (StringUtils::toUTF8(*dirFile).at(0) != '.') {
