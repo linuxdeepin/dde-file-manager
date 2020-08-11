@@ -135,6 +135,10 @@ public:
             return fileInfo->fileDisplayPinyinName();
         case Role::ExtraProperties:
             return fileInfo->extraProperties();
+        case Role::FileLastReadDateTimeRole:
+            return fileInfo->lastRead();
+        case Role::FileCreatedDateTimeRole:
+            return fileInfo->created();
         default: {
             return QVariant();
         }
@@ -198,6 +202,16 @@ public:
         if (filter->f_comboValid[DATE_RANGE]) {
             QDateTime filemtime = dataByRole(DFileSystemModel::FileLastModifiedDateTimeRole).toDateTime();
             if (filemtime < filter->f_dateRangeStart || filemtime > filter->f_dateRangeEnd) return true;
+        }
+
+        if (filter->f_comboValid[ACCESS_DATE_RANGE]) {
+            QDateTime filemtime = dataByRole(DFileSystemModel::FileLastReadDateTimeRole).toDateTime();
+            if (filemtime < filter->f_accessDateRangeStart || filemtime > filter->f_accessDateRangeEnd) return true;
+        }
+
+        if (filter->f_comboValid[CREATE_DATE_RANGE]) {
+            QDateTime filemtime = dataByRole(DFileSystemModel::FileCreatedDateTimeRole).toDateTime();
+            if (filemtime < filter->f_createDateRangeStart || filemtime > filter->f_createDateRangeEnd) return true;
         }
 
         return false;
@@ -2166,53 +2180,60 @@ void DFileSystemModel::setAdvanceSearchFilter(const QMap<int, QVariant> &formDat
         advanceSearchFilter()->f_sizeRange = advanceSearchFilter()->filterRule[SIZE_RANGE].value<QPair<quint64, quint64> >();
     }
 
-    int dateRange = advanceSearchFilter()->filterRule[DATE_RANGE].toInt();
-    advanceSearchFilter()->f_comboValid[DATE_RANGE] = (dateRange != 0);
-    if (advanceSearchFilter()->f_comboValid[DATE_RANGE]) {
+    // 计算时间过滤条件
+    auto calDateFilter = [ = ](_asb_LabelIndex labelIndex, QDateTime & startTime, QDateTime & endTime) {
+        int dateRange = advanceSearchFilter()->filterRule[labelIndex].toInt();
+        advanceSearchFilter()->f_comboValid[labelIndex] = (dateRange != 0);
 
-        int firstDayOfWeek = QLocale::system().firstDayOfWeek();
-        QDate today = QDate::currentDate();
-        QDate tomorrow = QDate::currentDate().addDays(+1);
-        int dayDist = today.dayOfWeek() - firstDayOfWeek;
-        if (dayDist < 0) dayDist += 7;
+        if (advanceSearchFilter()->f_comboValid[labelIndex]) {
+            int firstDayOfWeek = QLocale::system().firstDayOfWeek();
+            QDate today = QDate::currentDate();
+            QDate tomorrow = QDate::currentDate().addDays(+1);
+            int dayDist = today.dayOfWeek() - firstDayOfWeek;
+            if (dayDist < 0) dayDist += 7;
 
-        switch (dateRange) { // see DFMAdvanceSearchBar::initUI() for all cases
-        case 1:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(today);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
-            break;
-        case 2:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(-1);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(today);
-            break;
-        case 7:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(0 - dayDist);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
-            break;
-        case 14:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(-7 - dayDist);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(today).addDays(0 - dayDist);
-            break;
-        case 30:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), today.month(), 1));
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
-            break;
-        case 60:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), today.month(), 1)).addMonths(-1);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(QDate(today.year(), today.month(), 1));
-            break;
-        case 365:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), 1, 1));
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
-            break;
-        case 730:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), 1, 1)).addYears(-1);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(QDate(today.year(), 1, 1));
-            break;
-        default:
-            break;
+            switch (dateRange) { // see DFMAdvanceSearchBar::initUI() for all cases
+            case 1:
+                startTime = QDateTime(today);
+                endTime = QDateTime(tomorrow);
+                break;
+            case 2:
+                startTime = QDateTime(today).addDays(-1);
+                endTime = QDateTime(today);
+                break;
+            case 7:
+                startTime = QDateTime(today).addDays(0 - dayDist);
+                endTime = QDateTime(tomorrow);
+                break;
+            case 14:
+                startTime = QDateTime(today).addDays(-7 - dayDist);
+                endTime = QDateTime(today).addDays(0 - dayDist);
+                break;
+            case 30:
+                startTime = QDateTime(QDate(today.year(), today.month(), 1));
+                endTime = QDateTime(tomorrow);
+                break;
+            case 60:
+                startTime = QDateTime(QDate(today.year(), today.month(), 1)).addMonths(-1);
+                endTime = QDateTime(QDate(today.year(), today.month(), 1));
+                break;
+            case 365:
+                startTime = QDateTime(QDate(today.year(), 1, 1));
+                endTime = QDateTime(tomorrow);
+                break;
+            case 730:
+                startTime = QDateTime(QDate(today.year(), 1, 1)).addYears(-1);
+                endTime = QDateTime(QDate(today.year(), 1, 1));
+                break;
+            default:
+                break;
+            }
         }
-    }
+    };
+
+    calDateFilter(DATE_RANGE, advanceSearchFilter()->f_dateRangeStart, advanceSearchFilter()->f_dateRangeEnd);
+    calDateFilter(ACCESS_DATE_RANGE, advanceSearchFilter()->f_accessDateRangeStart, advanceSearchFilter()->f_accessDateRangeEnd);
+    calDateFilter(CREATE_DATE_RANGE, advanceSearchFilter()->f_createDateRangeStart, advanceSearchFilter()->f_createDateRangeEnd);
 
     if (updateView) {
         applyAdvanceSearchFilter();
