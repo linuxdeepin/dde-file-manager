@@ -9,8 +9,6 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
-    $$PWD/interfaces/ut_durl_test.h \
-    $$PWD/interfaces/tst_all_interfaces.h \
 
 SOURCES += \
     $$PWD/main.cpp \
@@ -21,5 +19,10 @@ SOURCES += \
     $$PWD/vault/ut_vaultlockmanager.cpp \
     $$PWD/interfaces/ut_dfmglobal.cpp \
     $$PWD/dialogs/ut_dialogmanager.cpp \
+    $$PWD/shutil/ut_danythingmonitor.cpp \
+    $$PWD/shutil/ut_danythingmonitorfilter.cpp \
+    $$PWD/shutil/ut_desktopfile.cpp \
+    $$PWD/shutil/ut_dfmfilelistfile.cpp \
+    $$PWD/shutil/ut_dfmregularexpression.cpp \
     $$PWD/controllers/ut_appcontroller.cpp \
     $$PWD/views/ut_computerview.cpp
