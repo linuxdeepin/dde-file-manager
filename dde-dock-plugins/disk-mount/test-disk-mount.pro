@@ -1,5 +1,5 @@
 PREFIX = /usr
-QT              += core widgets concurrent dbus
+QT              += core widgets concurrent dbus testlib
 CONFIG          += plugin c++11 link_pkgconfig
 PKGCONFIG       += dtkwidget gio-qt udisks2-qt5
 

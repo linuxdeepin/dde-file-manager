@@ -1,0 +1,6 @@
+*_generated.*
+*_test.cpp
+convert.h
+convert.cpp
+Makefile
+Makefile.in

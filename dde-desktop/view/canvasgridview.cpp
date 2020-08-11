@@ -1203,9 +1203,13 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 #else
     if (!GridManager::instance()->autoMerge()) {
 #endif
-        //拖拽复制时，不做让位处理
-        if (!GridManager::instance()->shouldArrange() && !DFMGlobal::keyCtrlIsPressed()) {
-            d->startDodge = true;
+        //从非桌面拖入时，不启动让位动画（同步dragMoveEvent的处理方式），否则将导致桌面已选择的图标在绘制时被隐藏
+        CanvasGridView *view = dynamic_cast<CanvasGridView *>(event->source());
+        if (view && event->mimeData()){
+            //拖拽复制时，不做让位处理
+            if (!GridManager::instance()->shouldArrange() && !DFMGlobal::keyCtrlIsPressed()) {
+                d->startDodge = true;
+            }
         }
         itemDelegate()->hideNotEditingIndexWidget();
     }

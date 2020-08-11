@@ -36,4 +36,6 @@ SOURCES += \
     $$PWD/models/ut_recentfileinfo.cpp \
     $$PWD/models/ut_searchfileinfo.cpp \
     $$PWD/models/ut_searchhistory.cpp \
-    $$PWD/models/ut_sharefileinfo.cpp
+    $$PWD/models/ut_sharefileinfo.cpp \
+    $$PWD/controllers/ut_appcontroller.cpp \
+    $$PWD/views/ut_computerview.cpp
