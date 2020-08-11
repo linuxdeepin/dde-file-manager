@@ -1,5 +1,3 @@
-#include "interfaces/tst_all_interfaces.h"
-
 #include <gtest/gtest.h>
 #include <QDebug>
 #include <QApplication>
