@@ -12,6 +12,9 @@ QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs n
 #private
 QT       += gui-private
 
+#for qtest
+QT       += testlib
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 QT += widgets-private
@@ -62,6 +65,7 @@ include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
 include(vault/vault.pri)
 include(fulltextsearch/fulltextsearch.pri)
+
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL

@@ -1,0 +1,30 @@
+This file lists a few known defects in the Word specs:
+- Word6 spec:
+
+
+
+- Word8 spec:
+  + The LSTF structures are stored as strange PLF (with a short count instead of
+    the integer count known from plain PLFs) and it's labeled plcflst. Normally
+    a PLCF also contains an array of CPs or FCs, so this is a clear error in the
+    spec.
+  + The name of a style (STD::xstzName) is stored as pascal string. According to
+    the spec it's preceded by a length byte, to me it looks like a length short.
+    In Shaheed's code it looks like older versions (baseSize < 10) don't store it
+    as Unicode string. The whole style docu looks like Word6 documentation to me.
+  + The PAP spec suggests that fMultLineSpace and dyaLine should be set to some
+    default values. I think they mean fMinHeight and dyaHeight, but we don't need
+    that stuff, do we?
+  + It looks like sprmCHpsKern has a two byte data field, but I found a document
+    where it's only one byte long. Any special case we're missing?
+  + I added a few sprms as sprmUnknown1,2,... to the jump tables, to avoid warnings
+    we can't do anything about. I also added sprmPJcFE (0x2461) with the same
+    behavior as plain old sprmPJc (as seen in OOo).
+  + sprmPIncLvl talks about an stc, but it's istd now in Word97 (check wv/sprm.c)
+  + The header/footer documentation is crap, look at the code
+  + The footnote/endnote documentation is crap too
+
+- Word 2000:
+  + OOo reverse-engineered a field of the FIB they called fcMagicTable. A PLCF
+    with information about table cell start CPs in the file. For now I decided
+    not to use this information, as Word 8 doesn't have it anyway.

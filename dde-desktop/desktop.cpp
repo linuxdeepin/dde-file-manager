@@ -49,7 +49,27 @@ using ZoneSettings = ZoneMainWindow;
 class DesktopPrivate
 {
 public:
+    ~DesktopPrivate(){
+        if (m_background){
+            delete m_background;
+            m_background = nullptr;
+        }
 
+        if (m_canvas){
+            delete m_canvas;
+            m_canvas = nullptr;
+        }
+
+        if (wallpaperSettings){
+            delete wallpaperSettings;
+            wallpaperSettings = nullptr;
+        }
+
+        if (zoneSettings){
+            delete zoneSettings;
+            zoneSettings = nullptr;
+        }
+    }
 #if USINGOLD
     CanvasGridView      *screenFrame = nullptr;
     BackgroundHelper *background = nullptr;

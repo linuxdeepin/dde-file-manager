@@ -23,4 +23,6 @@ SOURCES += \
     $$PWD/shutil/ut_danythingmonitorfilter.cpp \
     $$PWD/shutil/ut_desktopfile.cpp \
     $$PWD/shutil/ut_dfmfilelistfile.cpp \
-    $$PWD/shutil/ut_dfmregularexpression.cpp
+    $$PWD/shutil/ut_dfmregularexpression.cpp \
+    $$PWD/controllers/ut_appcontroller.cpp \
+    $$PWD/views/ut_computerview.cpp
