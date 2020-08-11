@@ -20,4 +20,6 @@ SOURCES += \
     $$PWD/vault/ut_vaulthelper.cpp \
     $$PWD/vault/ut_vaultlockmanager.cpp \
     $$PWD/interfaces/ut_dfmglobal.cpp \
-    $$PWD/dialogs/ut_dialogmanager.cpp
+    $$PWD/dialogs/ut_dialogmanager.cpp \
+    $$PWD/controllers/ut_appcontroller.cpp \
+    $$PWD/views/ut_computerview.cpp
