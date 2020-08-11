@@ -26,6 +26,8 @@
 
 class DAbstractFileInfo;
 
+typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
+
 DFM_BEGIN_NAMESPACE
 
 class DFileCopyMoveJobPrivate;
@@ -59,6 +61,28 @@ public:
 
     Q_ENUM(State)
 
+    enum RefineState{
+        NoRefine,
+        MoreThreadRefine,
+        MoreThreadAndMainRefine,
+        MoreThreadAndMainAndReadRefine,
+        MoreThreadAndMainAndOpenRefine,
+    };
+
+    Q_ENUM(RefineState)
+
+    enum RefineCopyProccessSate{
+        NoProccess,
+        MainProccessOver,
+        OpenFromFileProccessOver,
+        ReadFileProccessOver,
+        ReadAndWriteFileProccessOver,
+        AddPermissionProccessOver,
+    };
+
+    Q_ENUM(RefineCopyProccessSate)
+
+
     enum Error {
         NoError,
         CancelError,
@@ -81,12 +105,13 @@ public:
         NotEnoughSpaceError,
         TargetReadOnlyError,
         TargetIsSelfError,
-        UnknowError
+        UnknowError,
     };
 
     Q_ENUM(Error)
 
     enum FileHint {
+        NoHint = 0x00,
         FollowSymlink = 0x01,
         Attributes = 0x02, // 复制文件时携带它的扩展属性
         AttributesOnly = 0x04, // 只复制文件的扩展属性
@@ -122,12 +147,12 @@ public:
         virtual Action handleError(DFileCopyMoveJob *job, Error error,
                                    const DAbstractFileInfo *sourceInfo,
                                    const DAbstractFileInfo *targetInfo) = 0;
-        virtual QString getNewFileName(DFileCopyMoveJob *job, const DAbstractFileInfo *sourceInfo);
-        virtual QString getNonExistsFileName(DFileCopyMoveJob *job, const DAbstractFileInfo *sourceInfo, const DAbstractFileInfo *targetDirectory);
+        virtual QString getNewFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer sourceInfo);
+        virtual QString getNonExistsFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer &sourceInfo, const DAbstractFileInfoPointer &targetDirectory);
     };
 
     explicit DFileCopyMoveJob(QObject *parent = nullptr);
-    ~DFileCopyMoveJob();
+    ~DFileCopyMoveJob() override;
 
     Handle *errorHandle() const;
     void setErrorHandle(Handle *handle, QThread *threadOfHandle = nullptr);
@@ -156,8 +181,9 @@ public:
     void setSysncQuitState(const bool &quitstate);
     //判断当前盘是否是可以卸载的u盘，手机，光驱或者gvfs
     bool destIsLocal(const QString &rootpath);
-    void setRefine(const bool &brefine);
+    void setRefine(const RefineState &refinestat);
     void waitSysncEnd();
+    void waitRefineThreadOver();
 
     static Actions supportActions(Error error);
 
