@@ -36,3 +36,5 @@ SOURCES += \
 INCLUDEPATH += $$PWD
 INCLUDEPATH += $$PWD/../3rdParty/doctotext
 DEPENDPATH += $$PWD/../3rdParty/doctotext
+
+LIBS += -lboost_system
