@@ -31,7 +31,6 @@ struct DockRect{
 
     operator QRect() const
     {
-        //return QRect(x, y, width, height);//解决警告采用下方形式
         return QRect(x, y, static_cast<int>(width), static_cast<int>(height));
     }
 };
@@ -205,92 +204,18 @@ Q_SIGNALS: // SIGNALS
     void ShowTimeoutChanged();
     void FrontendWindowRectChanged();
 };
+
 #define DockInfoIns DockInfo::ins()->dock()
-
-//这个DBUS有问题，弃用
-#define DockGeometry 0
-#if DockGeometry
-struct DockRectI{
-    qint32 x;
-    qint32 y;
-    qint32 width;
-    qint32 height;
-
-    operator QRect() const
-    {
-        return QRect(x, y, width, height);
-    }
-};
-Q_DECLARE_METATYPE(DockRectI)
-
-QDBusArgument &operator<<(QDBusArgument &argument, const DockRect &rect);
-const QDBusArgument &operator>>(const QDBusArgument &argument, DockRect &rect);
-QDebug operator<<(QDebug deg, const DockRect &rect);
-
-class DBusDockGeometry: public QDBusAbstractInterface
-{
-    Q_OBJECT
-
-private slots:
-    void __propertyChanged__(const QDBusMessage& msg)
-    {
-        QList<QVariant> arguments = msg.arguments();
-        if (3 != arguments.count())
-            return;
-        QString interfaceName = msg.arguments().at(0).toString();
-        if (interfaceName !="com.deepin.dde.Dock")
-            return;
-        QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
-        foreach(const QString &prop, changedProps.keys()) {
-        const QMetaObject* self = metaObject();
-            for (int i=self->propertyOffset(); i < self->propertyCount(); ++i) {
-                QMetaProperty p = self->property(i);
-                if (p.name() == prop) {
-                Q_EMIT p.notifySignal().invoke(this);
-                }
-            }
-        }
-   }
-
-public:
-    static inline const char *staticInterfaceName()
-    { return "com.deepin.dde.Dock"; }
-    static inline const char *staticServiceName()
-    { return "com.deepin.dde.Dock";}
-    static inline const char *staticObjectPath()
-    { return "/com/deepin/dde/Dock";}
-
-public:
-    explicit DBusDockGeometry(QObject *parent = 0);
-
-    ~DBusDockGeometry();
-    Q_PROPERTY(DockRectI geometry READ getGeometry NOTIFY GeometryChanged)
-    inline DockRectI getGeometry() const
-    { return qvariant_cast< DockRectI >(property("geometry")); }
-Q_SIGNALS:
-    void GeometryChanged();
-};
-#define DockGeoIns DockInfo::ins()->dockGeo()
-#endif
 class DockInfo : public QObject
 {
     Q_OBJECT
 public:
     static DockInfo *ins();
-#if DockGeometry
-    DBusDockGeometry *dockGeo() const;
-#endif
     DBusDock *dock() const;
 private:
     DockInfo(QObject *parent = nullptr);
-#if DockGeometry
-    DBusDockGeometry *m_dockgeo = nullptr;
-#endif
     DBusDock *m_dock = nullptr;
 };
-
-
-
 
 namespace com {
   namespace deepin {

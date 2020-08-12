@@ -16,31 +16,20 @@
 #include <QDBusConnection>
 #include <QScreen>
 
-#include <durl.h>
-
-#include "view/canvasgridview.h"
-#include "view/backgroundhelper.h"
 #include "presenter/apppresenter.h"
-#include "presenter/display.h"
-
 #include "../dde-wallpaper-chooser/frame.h"
 #include "../util/dde/desktopinfo.h"
-
-#ifndef DISABLE_ZONE
-#include "../dde-zone/mainwindow.h"
-#endif
-
-#include "util/xcb/xcb.h"
-#include <malloc.h>
 #include "backgroundmanager.h"
 #include "canvasviewmanager.h"
 #include "screen/screenhelper.h"
 #include "presenter/gridmanager.h"
+
+#ifndef DISABLE_ZONE
+#include "../dde-zone/mainwindow.h"
+#endif
 #include <malloc.h>
 
 using WallpaperSettings = Frame;
-
-extern QScreen *GetPrimaryScreen();
 
 #ifndef DISABLE_ZONE
 using ZoneSettings = ZoneMainWindow;
@@ -70,13 +59,8 @@ public:
             zoneSettings = nullptr;
         }
     }
-#if USINGOLD
-    CanvasGridView      *screenFrame = nullptr;
-    BackgroundHelper *background = nullptr;
-#else
     BackgroundManager *m_background = nullptr;
     CanvasViewManager *m_canvas = nullptr;
-#endif
     WallpaperSettings *wallpaperSettings{ nullptr };
 
 #ifndef DISABLE_ZONE
@@ -88,9 +72,6 @@ Desktop::Desktop()
     : d(new DesktopPrivate)
 {
 
-#if 0
-    d->screenFrame = new CanvasGridView;
-#endif
 }
 
 Desktop::~Desktop()
@@ -98,195 +79,13 @@ Desktop::~Desktop()
 
 }
 
-#if 0
-//避免定义未使用警告
-static void setWindowFlag(QWidget *w, Qt::WindowType flag, bool on)
-{
-#if QT_VERSION < QT_VERSION_CHECK(5, 9, 0)
-    if (on) {
-        w->setWindowFlags(w->windowFlags() | flag);
-    } else {
-        w->setWindowFlags(w->windowFlags() & ~flag);
-    }
-#else
-    w->setWindowFlag(flag, on);
-#endif
-}
-#endif
-
-#if USINGOLD
-void Desktop::onBackgroundEnableChanged()
-{
-    if (DesktopInfo().waylandDectected()) {
-        qInfo() << "Primary Screen:" << Display::instance()->primaryName();
-        if (d->background->isEnabled()) {
-            d->background->monitorRectChanged();
-            QWidget *background = d->background->waylandBackground(Display::instance()->primaryName());
-            if(!background)
-            {
-                qWarning()<<"Warning:cannot find paimary widget and screen name:"<<Display::instance()->primaryName();
-                return;
-            }
-
-            d->screenFrame->setAttribute(Qt::WA_NativeWindow, false);
-            d->screenFrame->setParent(background);
-            d->screenFrame->move(0, 0);
-            d->screenFrame->show();
-
-            // 防止复制模式下主屏窗口被遮挡
-            background->activateWindow();
-            QMetaObject::invokeMethod(background, "raise", Qt::QueuedConnection);
-
-            // 隐藏完全重叠的窗口
-            for (QWidget *l : d->background->waylandAllBackgrounds()) {
-                if (l != background) {
-                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
-                    l->setVisible(!background->geometry().contains(l->geometry()));
-                } else {
-                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
-                    l->show();
-                }
-            }
-        } else {
-            d->screenFrame->setParent(nullptr);
-            setWindowFlag(d->screenFrame, Qt::FramelessWindowHint, true);
-            d->screenFrame->QWidget::setGeometry(Display::instance()->primaryRect());
-            Xcb::XcbMisc::instance().set_window_type(d->screenFrame->winId(), Xcb::XcbMisc::Desktop);
-            d->screenFrame->show();
-        }
-
-        return;
-    }
-    qInfo() << "Primary Screen:" << qApp->primaryScreen();
-    qInfo() << "Background enabled:" << d->background->isEnabled();
-
-    if (d->background->isEnabled()) {
-
-        //if X11
-        //QWidget *background = d->background->backgroundForScreen(qApp->primaryScreen());
-        //else
-        QWidget *background;
-
-        if (DesktopInfo().waylandDectected()) {
-            background = d->background->waylandBackground(Display::instance()->primaryName());
-        } else {
-            background = d->background->backgroundForScreen(qApp->primaryScreen());
-        }
-
-        if(!background)
-        {
-            qWarning()<<"Warning:cannot find paimary widget and screen name:"<<Display::instance()->primaryName();
-            return;
-        }
-
-        d->screenFrame->setAttribute(Qt::WA_NativeWindow, false);
-        d->screenFrame->setParent(background);
-        d->screenFrame->move(0, 0);
-        d->screenFrame->show();
-
-        // 防止复制模式下主屏窗口被遮挡
-        background->activateWindow();
-        QMetaObject::invokeMethod(background, "raise", Qt::QueuedConnection);
-
-        // 隐藏完全重叠的窗口
-        qDebug() << "primary background" << background << background->isVisible() << background->geometry();
-        for (QWidget *l : d->background->allBackgrounds()) {
-            if (l != background) {
-                Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
-                //由于之前的BackgroundLabel::setVisible中有做特殊情况下强制显示的操作，所以这里暂时这样处理
-                //不是是否会会有i其他影响
-                l->QWidget::setVisible(!background->geometry().contains(l->geometry()));
-            } else {
-                Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
-                l->show();
-            }
-            qDebug() << "hide overlap widget" << l << l->isVisible() << l->geometry();
-        }
-
-        //if X11
-        //nothing
-        //else
-
-    } else {
-        d->screenFrame->setParent(nullptr);
-        setWindowFlag(d->screenFrame, Qt::FramelessWindowHint, true);
-
-        //if X11
-        //d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
-        //else
-
-        if (DesktopInfo().waylandDectected()) {
-            d->screenFrame->QWidget::setGeometry(Display::instance()->primaryRect());
-        }
-        else {
-            d->screenFrame->QWidget::setGeometry(qApp->primaryScreen()->geometry());
-        }
-
-
-        Xcb::XcbMisc::instance().set_window_type(d->screenFrame->winId(), Xcb::XcbMisc::Desktop);
-
-        d->screenFrame->show();
-    }
-}
-
-void Desktop::onBackgroundGeometryChanged(QWidget *l)
-{
-    d->background->resetBackgroundVisibleState();
-
-    QWidget *primaryBackground = d->screenFrame->parentWidget();
-
-    if (!primaryBackground) {
-        return;
-    }
-
-    qInfo() << "primaryBackground widget geometry: " << primaryBackground->geometry()
-            << "changedBackground widget geometry:" << l->geometry();
-
-    primaryBackground->activateWindow();
-    QMetaObject::invokeMethod(primaryBackground, "raise", Qt::QueuedConnection);
-
-    if (l != primaryBackground && primaryBackground->geometry().contains(l->geometry())) {
-        l->hide();
-    } else {
-        l->show();
-    }
-}
-
-#endif
 void Desktop::preInit()
 {
-#if USINGOLD
-    d->screenFrame->initCanvas();
-    d->background = new BackgroundHelper();
-    DesktopInfo desktoInfo;
-    connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);
-    if (desktoInfo.waylandDectected()) {
-        connect(Display::instance(), &Display::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
-    } else {
-        connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
-    }
-
-    connect(d->background, &BackgroundHelper::aboutDestoryBackground, this, [this] (QWidget * l) {
-        if (l == d->screenFrame->parent()) {
-            d->screenFrame->setParent(nullptr);
-        }
-    }, Qt::DirectConnection);
-    // 任意控件改变位置都可能会引起主窗口被其它屏幕上的窗口所遮挡
-    connect(d->background, &BackgroundHelper::backgroundGeometryChanged, this, &Desktop::onBackgroundGeometryChanged);
-    onBackgroundEnableChanged();
-
-    //周期归还内存
-//    QTimer *realseTimer = new QTimer;
-//    connect(realseTimer,&QTimer::timeout,this,[](){malloc_trim(0);});
-//    realseTimer->start(5000);
-#else
     d->m_background = new BackgroundManager;
     //    //5s归还一次内存
     //    QTimer *releaseMem = new QTimer;
     //    connect(releaseMem,&QTimer::timeout,this,[](){malloc_trim(0);});
     //    releaseMem->start(5000);
-#endif
-
 }
 
 void Desktop::loadData()
@@ -296,11 +95,7 @@ void Desktop::loadData()
 
 void Desktop::loadView()
 {
-#if USINGOLD //old;
-    d->screenFrame->initRootUrl();
-#else
     d->m_canvas = new CanvasViewManager(d->m_background);
-#endif
 }
 
 void Desktop::showWallpaperSettings(QString name, int mode)
@@ -344,7 +139,6 @@ void Desktop::showWallpaperSettings(QString name, int mode)
             return;
         //激活窗口
         d->wallpaperSettings->activateWindow();
-        qDebug() << "wallpaperSettings windowHandle activateWindow";
         //10毫秒后再次检测
         QTimer::singleShot(10,d->wallpaperSettings,[=]()
         {
@@ -352,27 +146,6 @@ void Desktop::showWallpaperSettings(QString name, int mode)
                 d->wallpaperSettings->windowHandle()->activeChanged();
         });
     });
-
-#if 0
-    //屏幕有改变直接退出壁纸设置
-    auto close = [this](){
-        qDebug() << "screen changed , wallpaperSettings is exiting";
-        if (d->wallpaperSettings) {
-            d->wallpaperSettings->close();
-            d->wallpaperSettings->deleteLater();
-            d->wallpaperSettings = nullptr;
-        }
-    };
-    connect(ScreenMrg, &AbstractScreenManager::sigScreenChanged,[close](){
-            close();
-    });
-    connect(ScreenMrg, &AbstractScreenManager::sigScreenGeometryChanged,[close](){
-            close();
-    });
-    //end
-#endif
-
-    //d->wallpaperSettings->grabKeyboard(); //设计按键交互功能QWindow *window = d->wallpaperSettings->windowHandle();
 }
 
 #ifndef DISABLE_ZONE
@@ -392,20 +165,7 @@ void Desktop::showZoneSettings()
     d->zoneSettings->show();
     d->zoneSettings->grabKeyboard();
 }
-
 #endif
-
-void Desktop::initDebugDBus(QDBusConnection &conn)
-{
-    Q_UNUSED(conn)
-#if USINGOLD
-    if (!conn.registerObject(DesktopCanvasPath, d->screenFrame,
-                             QDBusConnection::ExportScriptableSlots)) {
-        qDebug() << "registerObject Failed" << conn.lastError();
-        exit(0x0004);
-    }
-#endif
-}
 
 void Desktop::EnableUIDebug(bool enable)
 {
@@ -542,26 +302,6 @@ void Desktop::ShowScreensaverChooser(const QString &screen)
 {
     showWallpaperSettings(screen,Frame::ScreenSaverMode);
 }
-
-#if USINGOLD
-void Desktop::logAllScreenLabel()
-{
-    if (d->background)
-        d->background->printLog();
-}
-
-void Desktop::logScreenLabel(int index)
-{
-    if (d->background)
-        d->background->printLog(index);
-}
-
-void Desktop::mapLabelScreen(int labelIndex, int screenIndex)
-{
-    if (d->background)
-        d->background->mapLabelScreen(labelIndex, screenIndex);
-}
-#endif
 
 QList<int> Desktop::GetIconSize()
 {
