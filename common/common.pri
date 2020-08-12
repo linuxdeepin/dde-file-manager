@@ -52,10 +52,12 @@ unix {
         #起动时，使用异步初始化，加载资源，提升起动速度
         DEFINES += ENABLE_ASYNCINIT
 
+        isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
         #mips编译优化-pg是用于测试性能提升
-        QMAKE_CXX += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mmsa -mloongson-ext2 -mloongson-mmi
-        QMAKE_CXXFLAGS += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mmsa -mloongson-ext2 -mloongson-mmi
+        QMAKE_CXX += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi #-mmsa 龙芯4000使用的编译优化参数
+        QMAKE_CXXFLAGS += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi #-mmsa 龙芯4000使用的编译优化参数
         QMAKE_LFLAGS += -Wl,--as-needed
+        }
     } else {
         isEmpty(DISABLE_JEMALLOC) {
             LIBS += -ljemalloc
