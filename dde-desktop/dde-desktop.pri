@@ -35,13 +35,11 @@ SOURCES += \
     $$PWD/config/config.cpp \
     $$PWD/desktop.cpp \
     $$PWD/view/canvasviewhelper.cpp \
-#    view/canvasview.cpp \
     $$PWD/model/dfileselectionmodel.cpp \
     $$PWD/view/canvasgridview.cpp \
     $$PWD/presenter/apppresenter.cpp \
     $$PWD/presenter/gridmanager.cpp \
     $$PWD/dbus/dbusdisplay.cpp \
-    $$PWD/presenter/display.cpp \
     $$PWD/presenter/dfmsocketinterface.cpp \
     $$PWD/view/watermaskframe.cpp \
     $$PWD/dbus/dbusdock.cpp \
@@ -49,7 +47,6 @@ SOURCES += \
     $$PWD/view/desktopitemdelegate.cpp \
     $$PWD/presenter/gridcore.cpp \
     $$PWD/config/dfmdesktopsettings.cpp \
-    $$PWD/view/backgroundhelper.cpp \
     $$PWD/dbus/dbusmonitor.cpp \
     $$PWD/screen/abstractscreen.cpp \
     $$PWD/screen/abstractscreenmanager.cpp \
@@ -77,7 +74,6 @@ HEADERS += \
     $$PWD/presenter/apppresenter.h \
     $$PWD/presenter/gridmanager.h \
     $$PWD/dbus/dbusdisplay.h \
-    $$PWD/presenter/display.h \
     $$PWD/presenter/dfmsocketinterface.h \
     $$PWD/view/watermaskframe.h \
     $$PWD/dbus/dbusdock.h \
@@ -86,7 +82,6 @@ HEADERS += \
     $$PWD/presenter/gridcore.h \
     $$PWD/deventfilter.h \
     $$PWD/config/dfmdesktopsettings.h \
-    $$PWD/view/backgroundhelper.h \
     $$PWD/dbus/dbusmonitor.h \
     $$PWD/dbus/licenceInterface.h \
     $$PWD/screen/abstractscreen.h \
