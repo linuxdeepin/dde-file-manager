@@ -171,7 +171,7 @@ void BluetoothTransDialog::initConn()
         }
     });
 
-    connect(bluetoothManager, &BluetoothManager::transferProcessUpdated, this, [this](const QString &sessionPath, qulonglong total, qulonglong transferred, int currFileIndex) {
+    connect(bluetoothManager, &BluetoothManager::transferProgressUpdated, this, [this](const QString &sessionPath, qulonglong total, qulonglong transferred, int currFileIndex) {
         if (sessionPath != m_currSessionPath)
             return;
 
