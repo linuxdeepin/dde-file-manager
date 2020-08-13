@@ -93,7 +93,7 @@ Q_SIGNALS:
      * @param transferred   当前已传输的 bytes
      * @param currFileIndex 当前传输文件的序号
      */
-    void transferProcessUpdated(const QString &sessionPath, qulonglong total, qulonglong transferred, int currFileIndex);
+    void transferProgressUpdated(const QString &sessionPath, qulonglong total, qulonglong transferred, int currFileIndex);
 
     /**
      * @brief transferCancledByRemote
