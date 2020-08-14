@@ -90,7 +90,7 @@ std::string get_document(std::string input)
             parser_type = PlainTextExtractor::PARSER_XLSB;
         else if (ext == "doc" || ext == "dot" || ext == "wps")
             parser_type = PlainTextExtractor::PARSER_DOC;
-        else if (ext == "ppt" || ext == "pps")
+        else if (ext == "ppt" || ext == "pps" || ext == "dps")
             parser_type = PlainTextExtractor::PARSER_PPT;
 //        else if (ext == "htm" || ext == "html")
 //            parser_type = PlainTextExtractor::PARSER_HTML;
@@ -271,7 +271,7 @@ void indexDocs(const IndexWriterPtr &writer, const String &sourceDir)
                         || ext == "docx" || ext == "xlsx" || ext == "pptx" || ext == "ppsx"
                         || ext == "xls" || ext == "xlsb" || ext == "doc" || ext == "dot"
                         || ext == "wps" || ext == "ppt" || ext == "pps" || ext == "txt"
-                        || ext == "htm" || ext == "html" || ext == "pdf") {
+                        || ext == "htm" || ext == "html" || ext == "pdf" || ext == "dps") {
                     std::wcout << L"Adding [" << ++docNumber << L"]: " << docFile << L"\n";
                     try {
                         size_t last = input.find_last_of("/");
