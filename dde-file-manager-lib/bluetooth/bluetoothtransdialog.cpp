@@ -56,6 +56,8 @@ BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTra
 {
     initUI();
     initConn();
+    m_stack->setCurrentIndex(NoneDevicePage); // 初始界面为空界面
+
     updateDeviceList(); // 打开多个窗口的时候蓝牙设备不一定任何更新操作，因此这时依靠蓝牙状态的变更去更新列表不可取，手动获取一次列表
     bluetoothManager->refresh();
 
@@ -121,8 +123,6 @@ void BluetoothTransDialog::initUI()
     m_stack->addWidget(initTranferingPage());
     m_stack->addWidget(initFailedPage());
     m_stack->addWidget(initSuccessPage());
-
-    m_stack->setCurrentIndex(NoneDevicePage); // 初始界面为空界面
 
     setOnButtonClickedClose(false);
 }
