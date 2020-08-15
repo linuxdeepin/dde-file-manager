@@ -1427,7 +1427,9 @@ void DFileManagerWindow::onRequestRedirectUrl(const DUrl &tabRootUrl, const DUrl
 void DFileManagerWindow::onRequestCloseTabByUrl(const DUrl &rootUrl)
 {
     D_D(DFileManagerWindow);
-
+    if (rootUrl.toString() == TRASH_ROOT) {
+        return;
+    }
     int originIndex = d->tabBar->currentIndex();
     if (d->tabBar->count() > 1) {
         for (int i = 0; i < d->tabBar->count(); i++) {
@@ -1437,6 +1439,9 @@ void DFileManagerWindow::onRequestCloseTabByUrl(const DUrl &rootUrl)
                     onRequestCloseTab(i, false);
                     i--;
                 }
+            }
+            if (d->tabBar->count() <= 1) {
+                break;
             }
         }
         int curIndex = d->tabBar->currentIndex();
