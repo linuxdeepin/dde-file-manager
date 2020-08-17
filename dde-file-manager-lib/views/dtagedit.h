@@ -14,7 +14,7 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QFocusEvent>
-#include <QThread>
+#include <QTimer>
 
 using namespace Dtk::Widget;
 
