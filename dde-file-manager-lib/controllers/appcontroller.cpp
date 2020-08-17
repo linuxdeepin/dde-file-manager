@@ -1446,7 +1446,7 @@ void UnmountWorker::doUnmount(const QString &blkStr)
     else if (err.isValid() ) {
         QDBusError::ErrorType thistyep = err.type();
         qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-        emit unmountResult(tr("The device was not safely unmounted"), tr("Disk is busy, cannot unmount now"));
+        emit unmountResult(tr("The device was unmounted insecurely"), tr("Disk is busy, cannot unmount now"));
     }
 }
 
@@ -1468,7 +1468,7 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
         }
         else if ( lastError.isValid() ) {
             qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
-            emit unmountResult(tr("The device was not safely removed"), tr("Disk is busy, cannot unmount now") );
+            emit unmountResult(tr("The device was removed insecurely"), tr("Disk is busy, cannot unmount now") );
             return;
         }
 
