@@ -935,7 +935,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                             // 只提示一次
                             if (!openTrashFileHint) {
                                 QString strMsg = tr("Unable to open items in the trash,please restore it first");
-                                dialogManager->showMessageDialog(2, strMsg);
+                                dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
                                 openTrashFileHint = true;
                             }
                             continue;
