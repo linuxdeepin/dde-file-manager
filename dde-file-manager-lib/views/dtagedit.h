@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QFocusEvent>
+#include <QThread>
 
 using namespace Dtk::Widget;
 
@@ -57,6 +58,8 @@ private:
     QList<DUrl> m_files{};
 
     std::atomic<bool> m_flagForShown{ false };
+
+    QTimer m_waitForMoreCrumbChanged;   //用于等待短时间内的多次CrumbChanged
 };
 
 
