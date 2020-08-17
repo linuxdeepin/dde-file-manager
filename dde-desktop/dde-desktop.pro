@@ -49,7 +49,6 @@ SOURCES += \
     presenter/apppresenter.cpp \
     presenter/gridmanager.cpp \
     dbus/dbusdisplay.cpp \
-    presenter/display.cpp \
     presenter/dfmsocketinterface.cpp \
     view/watermaskframe.cpp \
     dbus/dbusdock.cpp \
@@ -57,7 +56,6 @@ SOURCES += \
     view/desktopitemdelegate.cpp \
     presenter/gridcore.cpp \
     config/dfmdesktopsettings.cpp \
-    view/backgroundhelper.cpp \
     dbus/dbusmonitor.cpp \
     screen/abstractscreen.cpp \
     screen/abstractscreenmanager.cpp \
@@ -85,7 +83,6 @@ HEADERS += \
     presenter/apppresenter.h \
     presenter/gridmanager.h \
     dbus/dbusdisplay.h \
-    presenter/display.h \
     presenter/dfmsocketinterface.h \
     view/watermaskframe.h \
     dbus/dbusdock.h \
@@ -94,7 +91,6 @@ HEADERS += \
     presenter/gridcore.h \
     deventfilter.h \
     config/dfmdesktopsettings.h \
-    view/backgroundhelper.h \
     dbus/dbusmonitor.h \
     dbus/licenceInterface.h \
     screen/abstractscreen.h \
