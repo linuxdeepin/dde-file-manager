@@ -361,7 +361,8 @@ void AppController::asyncOpenDiskInNewWindow(const QString &path)
 void AppController::actionOpenAsAdmin(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     QStringList args;
-    args << event->url().toString();
+    // fix bug#42601 【专业版 sp3】【文件管理器】【5.2.0.21-1】搜索结果页，右键文件夹点击以管理员身份打开，新窗口未聚焦到对应文件夹
+    args << event->url().toLocalFile();
     qDebug() << args;
     QProcess::startDetached("dde-file-manager-pkexec", args);
 }
