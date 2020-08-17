@@ -1181,89 +1181,89 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="80"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="93"/>
         <source>This action is not supported</source>
         <translation>不支持此操作</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="338"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="351"/>
         <source>The File Vault is progressing delete task, please do nothing!</source>
         <translation>保险箱正在执行删除任务，请不要执行任何操作！</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="670"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="683"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>正在擦除%1，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="671"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="684"/>
         <source>Burning disc %1, please wait...</source>
         <translation>正在刻录到%1，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="676"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="689"/>
         <source>Writing data...</source>
         <translation>正在写入数据...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="677"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="690"/>
         <source>Verifying data...</source>
         <translation>正在校验数据...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="727"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="740"/>
         <source>Copying %1</source>
         <translation>正在复制%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="728"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="732"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="735"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="741"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="745"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="748"/>
         <source>to %2</source>
         <translation>到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="751"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="764"/>
         <source>%1 already exists in target folder</source>
         <translation>目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="752"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="765"/>
         <source>Original path %1 Target path %2</source>
         <translation>原路径%1 目标路径%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="731"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="744"/>
         <source>Moving %1</source>
         <translation>正在移动%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="734"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="747"/>
         <source>Restoring %1</source>
         <translation>正在恢复%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="737"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="750"/>
         <source>Deleting %1</source>
         <translation>正在删除%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="740"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="753"/>
         <source>Trashing %1</source>
         <translation>正在移动 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="748"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="761"/>
         <source>Calculating space, please wait</source>
         <translation>正在计算大小，请稍候</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="763"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="776"/>
         <source>Merge</source>
         <translation>合并</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="766"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="779"/>
         <source>Replace</source>
         <translation>替换</translation>
     </message>
@@ -3382,12 +3382,12 @@
         <translation>新建文本</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="204"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="217"/>
         <source>1 task in progress</source>
         <translation>有1个任务正在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="206"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="219"/>
         <source>%1 tasks in progress</source>
         <translation>有%1个任务正在进行</translation>
     </message>
@@ -3636,7 +3636,7 @@
         <translation>可用空间 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="271"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="284"/>
         <source>Files are being processed</source>
         <translation>正在处理文件</translation>
     </message>
@@ -4168,11 +4168,15 @@
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1449"/>
-        <source>The device was not safely unmounted</source>
+        <source>The device was unmounted insecurely</source>
         <translation>设备没有正常卸载</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1471"/>
+        <source>The device was removed insecurely</source>
+        <translation>设备没有正常移除</translation>
+    </message>
+    <message>
         <location filename="../controllers/appcontroller.cpp" line="1485"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
