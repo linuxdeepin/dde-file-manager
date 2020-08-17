@@ -109,27 +109,32 @@
         <translation>无法发送超过2GB的文件</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
+        <source>Unable to send 0 KB files</source>
+        <translation>无法发送0KB的文件</translation>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
         <source>Next</source>
         <translation>下一步</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
         <source>Retry</source>
         <translation>重试</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
         <source>Ok</source>
         <translation>确定</translation>
     </message>

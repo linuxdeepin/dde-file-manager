@@ -109,27 +109,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
+        <source>Unable to send 0 KB files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
         <source>Next</source>
         <translation type="unfinished">Next</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
         <source>Cancel</source>
         <translation type="unfinished">Cancel</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
         <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
         <source>Retry</source>
         <translation type="unfinished">Retry</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
