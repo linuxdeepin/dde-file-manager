@@ -210,6 +210,9 @@ void BluetoothTransDialog::initConn()
         if (sessionPath != m_currSessionPath)
             return;
         m_finishedUrls << filePath;
+        if (m_finishedUrls.count() == m_urls.count()) {
+            m_stack->setCurrentIndex(SuccessPage);
+        }
     });
 }
 
