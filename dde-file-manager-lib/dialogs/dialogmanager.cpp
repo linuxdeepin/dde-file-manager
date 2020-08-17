@@ -1382,20 +1382,19 @@ void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString>
     }
 }
 
-int DialogManager::showMessageDialog(int messageLevel, const QString &message, QString btnTxt)
+int DialogManager::showMessageDialog(messageType messageLevel, const QString &title, const QString &message, QString btnTxt)
 {
-    DDialog d;
+    DDialog d(title, message);
     d.moveToCenter();
-    d.setTitle(message);
     QStringList buttonTexts;
     buttonTexts << btnTxt;
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
-    if (messageLevel == 1) {
+    if (messageLevel == msgInfo) {
         d.setIcon(m_dialogInfoIcon, QSize(64, 64));
-    } else if (messageLevel == 2) {
+    } else if (messageLevel == msgWarn) {
         d.setIcon(m_dialogWarningIcon, QSize(64, 64));
-    } else if (messageLevel == 3) {
+    } else if (messageLevel == msgErr) {
         d.setIcon(m_dialogErrorIcon, QSize(64, 64));
     } else {
         d.setIcon(m_dialogInfoIcon, QSize(64, 64));

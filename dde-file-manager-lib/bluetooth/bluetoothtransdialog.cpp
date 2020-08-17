@@ -500,7 +500,7 @@ void BluetoothTransDialog::sendFiles()
             continue;
         DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
         if (info && info->size() > FILE_TRANSFER_LIMITS) {
-            dialogManager->showMessageDialog(1, TXT_FILE_OVERSIZ, TXT_OKAY);
+            dialogManager->showMessageDialog(DialogManager::msgInfo, TXT_FILE_OVERSIZ, "", TXT_OKAY);
             return;
         }
     }

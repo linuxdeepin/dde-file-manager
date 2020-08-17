@@ -5,6 +5,7 @@
 #include "disomaster.h"
 #include "shutil/fileutils.h"
 #include "dialogs/burnoptdialog.h"
+#include "dialogs/dialogmanager.h"
 #include "dfilestatisticsjob.h"
 #include "dfileview.h"
 #include "dfilesystemmodel.h"
@@ -82,7 +83,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 
     connect(d->pb_burn, &DPushButton::clicked, this, [=] {
-        QDir::Filters filter = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+        QDir::Filters filter = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
 
         DUrl urlOfStage = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
                                               + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/', '_') + "/");
@@ -100,11 +101,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             return;
         QFileInfoList lstFilesInStage = dirStage.entryInfoList(filter);
         if (lstFilesInStage.count() == 0) {
-            DDialog dialog(this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-            dialog.setTitle(tr("No file to burn."));
-            dialog.addButton(tr("OK"), true);
-            dialog.exec();
+            dialogManager->showMessageDialog(DialogManager::msgWarn, tr("No file to burn."));
             return;
         }
 
@@ -127,14 +124,8 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
         lstFilesInStage = dirStage.entryInfoList(filter);
         if (lstFilesInStage.count() == 0) {
-            DDialog dialog(this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-            if (bDeletedValidFile)
-                dialog.setTitle(tr("No file to burn. Duplicated files will be ignore."));
-            else
-                dialog.setTitle(tr("No file to burn."));
-            dialog.addButton(tr("OK"), true);
-            dialog.exec();
+            QString errTitle = bDeletedValidFile ? tr("No file to burn. Duplicated files will be ignore.") : tr("No file to burn.");
+            dialogManager->showMessageDialog(DialogManager::msgWarn, errTitle);
             return;
         }
 
@@ -151,11 +142,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         {
             //fix: 光盘容量小于刻录项目，对话框提示：目标磁盘剩余空间不足，无法进行刻录！
             //qDebug() << d->m_selectBurnFilesSize / 1024 / 1024 << "MB" << dp.avail / 1024 / 1024 << "MB";
-            DDialog dialog(this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-            dialog.setTitle(tr("Unable to burn. Not enough free space on the target disk."));
-            dialog.addButton(tr("OK"), true);
-            dialog.exec();
+            dialogManager->showMessageDialog(DialogManager::msgWarn, tr("Unable to burn. Not enough free space on the target disk."));
             return;
         }
 
