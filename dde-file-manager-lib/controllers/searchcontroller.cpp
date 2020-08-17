@@ -31,6 +31,7 @@
 #include "models/searchfileinfo.h"
 #include "ddiriterator.h"
 #include "shutil/dfmregularexpression.h"
+#include "shutil/dfmfilelistfile.h"
 #include "dfmapplication.h"
 
 #include "app/define.h"
@@ -350,14 +351,21 @@ bool SearchDiriterator::hasNext() const
     // 全文搜索
     if (!bFullTextSearchEnd && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
         QStringList searchResult;
-        searchResult = DFMFullTextSearchManager::getInstance()->fulltextSearch(m_fileUrl.searchKeyword());
+        searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
         DFMFullTextSearchManager::getInstance()->clearSearchResult();
         for (QString res : searchResult) {
             DUrl url = m_fileUrl;
             const DUrl &realUrl = DUrl::fromUserInput(res);
             url.setSearchedFileUrl(realUrl);
-            if (res.startsWith(targetUrl.toLocalFile()))/*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
+            if (res.startsWith(targetUrl.toLocalFile())) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
+                DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, realUrl);
+                DFMFileListFile hiddenFiles(fileInfo->absolutePath());
+                // 隐藏文件不显示
+                if (fileInfo->isHidden() || hiddenFiles.contains(fileInfo->fileName())) {
+                    continue;
+                }
                 childrens << url;
+            }
         }
         bFullTextSearchEnd = true;
         return true;
