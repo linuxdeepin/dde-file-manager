@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     LogUtil::registerLogger();
 
     //使用异步加载win相关的插件
-    QtConcurrent::run([](){
+    auto windPluginLoader = QtConcurrent::run([](){
         winId_mtx.second.lock();
         if (winId_mtx.first){
             winId_mtx.second.unlock();
@@ -175,6 +175,7 @@ int main(int argc, char *argv[])
         args.removeAll(QStringLiteral("--working-dir"));
         QProcess::startDetached("dde-file-manager-pkexec", args, QDir::currentPath());
 
+        windPluginLoader.waitForFinished();
         return 0;
     }
 
@@ -241,7 +242,7 @@ int main(int argc, char *argv[])
             for (const QByteArray &i : socket->readAll().split(' '))
                 qDebug() << QString::fromLocal8Bit(QByteArray::fromBase64(i));
         }
-
+        windPluginLoader.waitForFinished();
         return 0;
     }
 }

@@ -392,7 +392,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         // tagged file basicinfo not complete??
         DUrl realUrl = m_url.isTaggedFile() ? DUrl::fromLocalFile(m_url.fragment()) : m_url;
 
-        bool isVaultFile = VaultController::isVaultFile(realUrl.toLocalFile());
+        //! bug#40608 解决通过标记访问保险箱，属性菜单显示不正确的问题.
+        bool isVaultFile = VaultController::isRootDirectory(realUrl.toLocalFile());
         if (isVaultFile) {
             //! set scheme to get vault file info.
             realUrl.setScheme(DFMVAULT_SCHEME);

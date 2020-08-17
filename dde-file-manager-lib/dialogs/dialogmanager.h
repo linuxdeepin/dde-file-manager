@@ -61,6 +61,13 @@ DWIDGET_END_NAMESPACE
 class DialogManager : public QObject
 {
     Q_OBJECT
+public:
+    enum messageType
+    {
+        msgInfo = 1,
+        msgWarn = 2,
+        msgErr = 3
+    };
 
 public:
     explicit DialogManager(QObject *parent = 0);
@@ -138,7 +145,7 @@ public slots:
 
     void refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl);
 
-    int showMessageDialog(int messageLevel, const QString &message, QString btnTxt = tr("Confirm"));
+    int showMessageDialog(messageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm"));
     void showBluetoothTransferDlg(const DUrlList &files);
 
     void showFormatDialog(const QString &devId); // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化
