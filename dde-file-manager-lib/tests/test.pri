@@ -25,4 +25,5 @@ SOURCES += \
     $$PWD/shutil/ut_dfmfilelistfile.cpp \
     $$PWD/shutil/ut_dfmregularexpression.cpp \
     $$PWD/controllers/ut_appcontroller.cpp \
-    $$PWD/views/ut_computerview.cpp
+    $$PWD/views/ut_computerview.cpp \
+    $$PWD/io/ut_dlocalfilehandler.cpp
