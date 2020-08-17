@@ -1408,8 +1408,20 @@ int DialogManager::showMessageDialog(int messageLevel, const QString &message, Q
 void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
 {
     QStringList paths;
-    foreach (auto u, files)
+    foreach (auto u, files) {
+        if (u.scheme() == RECENT_SCHEME) {
+            u = DUrl::fromLocalFile(u.path());
+        } else if (u.scheme() == SEARCH_SCHEME) { //搜索结果也存在右键批量打卡不成功的问题，这里做类似处理
+            u = u.searchedFileUrl();
+        } else if (u.scheme() == BURN_SCHEME) {
+            DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
+            if (!info)
+                continue;
+            if (info->canRedirectionFileUrl())
+                u = info->redirectedFileUrl();
+        }
         paths << u.path();
+    }
 
     BluetoothTransDialog *dlg = new BluetoothTransDialog(paths);
     dlg->setAttribute(Qt::WA_DeleteOnClose);
