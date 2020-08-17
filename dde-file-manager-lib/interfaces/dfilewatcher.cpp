@@ -215,10 +215,19 @@ bool DFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFile
 
 void DFileWatcherPrivate::_q_handleFileDeleted(const QString &path, const QString &parentPath)
 {
+    Q_Q(DFileWatcher);
+
+    //如果被删除目录是当前目录的父级及以上目录
+    //则需要发出当前目录也被删除的事件
+    if (this->path.startsWith(path) && path != this->path) {
+        emit q->fileDeleted(DUrl::fromLocalFile(this->path));
+        return;
+    }
+
+    //如果被删除的目录是当前目录或当前目录的子目录
+    //则需要发出被删除目录已被删除的事件
     if (path != this->path && parentPath != this->path)
         return;
-
-    Q_Q(DFileWatcher);
 
     emit q->fileDeleted(DUrl::fromLocalFile(path));
 }
