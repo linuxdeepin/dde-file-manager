@@ -1556,17 +1556,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1437"/>
         <source>Cancle</source>
-        <translation type="unfinished"></translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1438"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>格式化</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1439"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
-        <translation type="unfinished"></translation>
+        <translation>需要格式化磁盘才能访问此设备，是否继续？</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1488"/>
