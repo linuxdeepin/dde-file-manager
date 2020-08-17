@@ -195,7 +195,7 @@ bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
     QFileInfo fileInfo(fileUrl.toLocalFile());
     if (fileInfo.isFile()) {
         QString strMsg = tr("Unable to open items in the trash,please restore it first");
-        dialogManager->showMessageDialog(2, strMsg);
+        dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
         return false;
     }
 
@@ -208,7 +208,7 @@ bool TrashManager::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) con
     Q_UNUSED(event)
 
     QString strMsg = tr("Unable to open items in the trash,please restore it first");
-    dialogManager->showMessageDialog(2, strMsg);
+    dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
     return false;
 }
 
