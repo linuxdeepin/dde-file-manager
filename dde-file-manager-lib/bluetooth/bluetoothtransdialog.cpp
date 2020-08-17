@@ -35,6 +35,7 @@ const QString TXT_GOTO_BT_SETS = BluetoothTransDialog::tr("Go to Bluetooth Setti
 const QString TXT_SEND_PROGRES = BluetoothTransDialog::tr("%1/%2 Sent");
 const QString TXT_ERROR_REASON = BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected");
 const QString TXT_FILE_OVERSIZ = BluetoothTransDialog::tr("Unable to send the file more than 2 GB");
+const QString TXT_FILE_ZEROSIZ = BluetoothTransDialog::tr("Unable to send 0 KB files");
 
 const QString TXT_NEXT = BluetoothTransDialog::tr("Next");
 const QString TXT_CANC = BluetoothTransDialog::tr("Cancel");
@@ -504,6 +505,9 @@ void BluetoothTransDialog::sendFiles()
         DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
         if (info && info->size() > FILE_TRANSFER_LIMITS) {
             dialogManager->showMessageDialog(DialogManager::msgInfo, TXT_FILE_OVERSIZ, "", TXT_OKAY);
+            return;
+        } else if (info && info->size() == 0) {
+            dialogManager->showMessageDialog(DialogManager::msgInfo, TXT_FILE_ZEROSIZ, "", TXT_OKAY);
             return;
         }
     }
