@@ -34,12 +34,11 @@
 
 #include "thread_safe_ole_stream_reader.h"
 
-#include "data_stream.h"
 #include <new>
 
 struct ThreadSafeOLEStreamReader::Implementation
 {
-	DataStream* m_data_stream;
+    doctotext::DataStream* m_data_stream;
 	uint64_t m_size;
 	uint64_t m_position;
 	uint64_t m_chunk_position;

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string>
 
+namespace doctotext {
 class DataStream
 {
 	public:
@@ -60,5 +61,5 @@ class BufferStream : public DataStream
 		std::string name();
 		DataStream* clone();
 };
-
+}
 #endif	//DOCTOTEXT_DATA_STREAM_H
