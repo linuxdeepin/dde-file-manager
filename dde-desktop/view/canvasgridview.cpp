@@ -504,6 +504,7 @@ void CanvasGridView::delayCustom(int ms)
         }
 #endif
         emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
+        d->bModelRefreshing = false;
         return;
     }
 
@@ -533,6 +534,7 @@ void CanvasGridView::delayCustom(int ms)
         }
 
         emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
+        d->bModelRefreshing = false;
     });
     arrangeTimer->start(ms);
 }
@@ -561,6 +563,7 @@ void CanvasGridView::delayAutoMerge(int ms)
         qDebug() << "now initArrage file count" << list.size()
                  << "expend" << currentUrl().fragment();
         GridManager::instance()->initArrage(list);
+        d->bModelRefreshing = false;
         return;
     }
 
@@ -576,6 +579,7 @@ void CanvasGridView::delayAutoMerge(int ms)
         qDebug() << "initArrage file count" << list.size()
                  << "expend" << currentUrl().fragment() << "screen" << m_screenNum;
         GridManager::instance()->initArrage(list);
+        d->bModelRefreshing = false;
     });
     arrangeTimer->start(ms);
 }
@@ -1013,7 +1017,10 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             }
             break;
         case Qt::Key_F5:
-            model()->refresh();
+            if (!d->bModelRefreshing) {
+                d->bModelRefreshing = true;
+                model()->refresh();
+            }
             return;
         case Qt::Key_Delete:
             if (canDeleted && !selectUrlsMap.contains(rootUrl.toString()) && !selectUrls.isEmpty()) {
