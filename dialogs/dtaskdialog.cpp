@@ -49,6 +49,7 @@
 #include "singleton.h"
 #include "accessible/libframenamedefine.h"
 #include "controllers/vaultcontroller.h"
+#include "io/dstorageinfo.h"
 
 ErrorHandle::~ErrorHandle()
 {
@@ -68,11 +69,12 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
     switch (error) {
     case DFileCopyMoveJob::FileExistsError:
     case DFileCopyMoveJob::DirectoryExistsError: {
-        if (sourceInfo->fileUrl() == targetInfo->fileUrl()) {
+        if (sourceInfo->fileUrl() == targetInfo->fileUrl() || DStorageInfo::isSameFile(sourceInfo->fileUrl().path(), targetInfo->fileUrl().path())) {
             return DFileCopyMoveJob::CoexistAction;
         }
 
         emit onConflict(sourceInfo->fileUrl(), targetInfo->fileUrl());
+        emit job->currentJobChanged(sourceInfo->fileUrl(), targetInfo->fileUrl());
         job->togglePause();
     }
     break;

@@ -40,16 +40,16 @@ void DTagEdit::setFilesForTagging(const QList<DUrl> &files)
 
 void DTagEdit::setDefaultCrumbs(const QStringList &list)
 {
+    //由于crumbEdit变更响应被优化合并这里的改动不再被需要，先注释掉
+    //TODO 等过几个版本这块功能没有问题了再删除该处冗余注释
     //设置初始值会按顺序添加，多标签情况下会多次触发processTag，这样可能会导致文件被移除再添加等不可控的问题出现
     //所以这里先断开信号槽链接 等list被append完毕之后主动调用processTag，再连接信号槽
-    QObject::disconnect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, &DTagEdit::processTags);
+//    QObject::disconnect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, &DTagEdit::processTags);
     for (const QString &crumb : list)
         m_crumbEdit->appendCrumb(crumb);
-
-    if (list.length() > 0)
-        processTags();
-
-    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, &DTagEdit::processTags);
+//    if (list.length() > 0)
+//        processTags();
+//    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, &DTagEdit::processTags);
 }
 
 void DTagEdit::onFocusOut()
@@ -134,7 +134,13 @@ void DTagEdit::initializeLayout()
 void DTagEdit::initializeConnect()
 {
     QObject::connect(this, &DTagEdit::windowDeactivate, this, &DTagEdit::onFocusOut);
-    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, &DTagEdit::processTags);
+
+    //为避免crumbEdit频繁变更 导致processTags被高频大量调用 这里做一个变更合并机制
+    m_waitForMoreCrumbChanged.setSingleShot(true);
+    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, [=]{
+        m_waitForMoreCrumbChanged.start(500);   //500毫秒内的crumb连续变更会合并为一次crumb变更操作
+    });
+    QObject::connect(&m_waitForMoreCrumbChanged, &QTimer::timeout, this, &DTagEdit::processTags);
 }
 
 void DTagEdit::processTags()
