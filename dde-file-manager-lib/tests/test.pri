@@ -38,4 +38,7 @@ SOURCES += \
     $$PWD/models/ut_searchhistory.cpp \
     $$PWD/models/ut_sharefileinfo.cpp \
     $$PWD/controllers/ut_appcontroller.cpp \
-    $$PWD/views/ut_computerview.cpp
+    $$PWD/views/ut_computerview.cpp \
+    $$PWD/models/ut_tagfileinfo.cpp \
+    $$PWD/models/ut_trashfileinfo.cpp \
+    $$PWD/models/ut_vaultfileinfo.cpp
