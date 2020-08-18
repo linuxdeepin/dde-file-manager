@@ -453,30 +453,26 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
         else if (key->key() == Qt::Key_Backtab) { //BackTab
             qDebug() << "BackTab(Shift Tab)";
 
-            //第一个区域发出backtab信号，则跳转到第三个区域的当前选项（WallpaperItem）的最后一个控件（Button）上
+            //第一个区域发出backtab信号，则跳转到第三个区域的当前选项（WallpaperItem）的第一个控件（Button）上
             if (object == m_wallpaperCarouselCheckBox
                     || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
                     || object == m_lockScreenBox
                     || m_waitControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
                 QList<Button *> childButtons = m_wallpaperList->getCurrentItem()->findChildren<Button *>();
                 if (!childButtons.isEmpty()) {
-                    childButtons.last()->setFocus();
+                    childButtons.first()->setFocus();
                     return true;
                 }
             }
 
             //第三个区域backtab跳转到第二个区域：已连接WallpaperItem的backtab信号进行处理
 
-            //第二个区域发出backtab信号，则跳转到第一个区域的最后一个控件上
+            //第二个区域发出backtab信号，则跳转到第一个区域的第一个控件上
             if (m_switchModeControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
-                if (m_mode == WallpaperMode ) {
-                    if (m_wallpaperCarouselControl->isVisible()) {
-                        m_wallpaperCarouselControl->buttonList().last()->setFocus();
-                    } else {
-                        m_wallpaperCarouselCheckBox->setFocus();
-                    }
+                if (m_mode == WallpaperMode) {
+                    m_wallpaperCarouselCheckBox->setFocus();
                 } else {
-                    m_lockScreenBox->setFocus();
+                    m_waitControl->buttonList().first()->setFocus();
                 }
                 return true;
             }
@@ -923,8 +919,8 @@ void Frame::refreshList()
                         }
                     });
                     connect(item, &WallpaperItem::backtab, this, [=](){
-                        //第三个区域发出backtab信号，则跳转到第二个区域的最后一个控件上
-                        m_switchModeControl->buttonList().last()->setFocus();
+                        //第三个区域发出backtab信号，则跳转到第二个区域的第一个控件上
+                        m_switchModeControl->buttonList().first()->setFocus();
                     });
 
                     //首次进入时，选中当前设置壁纸
@@ -975,7 +971,7 @@ void Frame::refreshList()
                 }
             });
             connect(item, &WallpaperItem::backtab, this, [=](){
-                m_switchModeControl->buttonList().last()->setFocus();
+                m_switchModeControl->buttonList().first()->setFocus();
             });
             connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
             //首次进入时，选中当前设置屏保
