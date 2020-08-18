@@ -51,6 +51,7 @@ Config::Config()
     m_syncTimer.setSingleShot(true);
     m_syncTimer.setInterval(1000);
     connect(&m_syncTimer, &QTimer::timeout, this, [ = ]() {
+        QMutexLocker lk(&m_mtxLock);
         m_settings->sync();
     }, Qt::QueuedConnection);
 }
