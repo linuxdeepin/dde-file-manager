@@ -348,28 +348,30 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     if (!info || !info->canDrop()) {
         return Qt::IgnoreAction;
     }
-
+    Qt::DropAction action = Qt::IgnoreAction;
     const Qt::DropActions support_actions = info->supportedDropActions() & actions;
 
     if (DStorageInfo::inSameDevice(urls.first(), item->url())) {
         if (support_actions.testFlag(Qt::MoveAction)) {
-            return Qt::MoveAction;
+            action = Qt::MoveAction;
         }
     }
 
     if (support_actions.testFlag(Qt::CopyAction)) {
-        return Qt::CopyAction;
+        action = Qt::CopyAction;
     }
 
     if (support_actions.testFlag(Qt::MoveAction)) {
-        return Qt::MoveAction;
+        action = Qt::MoveAction;
     }
 
     if (support_actions.testFlag(Qt::LinkAction)) {
-        return Qt::LinkAction;
+        action = Qt::LinkAction;
     }
-
-    return Qt::IgnoreAction;
+    if ((action == Qt::MoveAction) && DFMGlobal::keyCtrlIsPressed()) {
+        action = Qt::CopyAction;
+    }
+    return action;
 }
 
 bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
