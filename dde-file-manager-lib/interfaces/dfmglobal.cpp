@@ -81,6 +81,7 @@
 
 #include <KCodecs>
 #include <KEncodingProber>
+#include <DSysInfo>
 
 #include <QMimeType>
 #include <QMimeDatabase>
@@ -489,6 +490,21 @@ int DFMGlobal::getUserId()
 bool DFMGlobal::isRootUser()
 {
     return getUserId() == 0;
+}
+
+bool DFMGlobal::isServerSys()
+{
+    return DSysInfo::deepinType() == DSysInfo::DeepinServer;
+}
+
+bool DFMGlobal::isDesktopSys()
+{
+    return !(DFMGlobal::isServerSys());
+}
+
+bool DFMGlobal::isOpenAsAdmin()
+{
+    return DFMGlobal::isRootUser() && DFMGlobal::isDesktopSys();
 }
 
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const

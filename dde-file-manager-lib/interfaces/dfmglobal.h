@@ -297,6 +297,9 @@ public:
     static QString getUser();
     static int getUserId();
     static bool isRootUser();
+    static bool isServerSys();
+    static bool isDesktopSys();
+    static bool isOpenAsAdmin();
 
     //check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
     static bool isDesktopFile(const DUrl& url);
