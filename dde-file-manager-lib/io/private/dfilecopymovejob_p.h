@@ -67,8 +67,8 @@ public:
     struct FileCopyInfo {
         bool closeflag;
         bool isdir;
-        DFileDevice *fromdevice;
-        DFileDevice *todevice;
+        QSharedPointer<DFileDevice> fromdevice;
+        QSharedPointer<DFileDevice> todevice;
         DFileHandler *handler;
         DAbstractFileInfoPointer frominfo;
         DAbstractFileInfoPointer toinfo;
@@ -215,13 +215,13 @@ public:
     qint64 m_write = 0;
     qint64 m_sart = 0;
 
-    DFileCopyQueue<DFileDevice *> closetodevicesqueue,closefromdevicequeue;
+    DFileCopyQueue<QSharedPointer<DFileDevice>> closetodevicesqueue,closefromdevicequeue;
     DFileCopyQueue<FileCopyInfoPointer> readfileinfoqueue;
     DFileCopyQueue<FileCopyInfoPointer> writefilequeue,openfromfilequeue;
     QAtomicInt copyrefineflag = DFileCopyMoveJob::NoProccess;
     QAtomicInt filerefinefd = 0;
     DFileCopyQueue<FileCopyInfoPointer> addfilepermissionsqueue;
-    QFuture<void> closefromresult,addper,closedevice,openfrom,copyresult,writeresult;
+    QFuture<void> closefromresult,addper,closedevice,openfrom,copyresult,writeresult,syncresult;
 
 
     // 是否可以使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
