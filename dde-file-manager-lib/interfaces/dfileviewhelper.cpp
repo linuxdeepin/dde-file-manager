@@ -32,8 +32,9 @@
 #include "dstorageinfo.h"
 #include "controllers/vaultcontroller.h"
 #include "dfmstandardpaths.h"
-
 #include "deviceinfo/udisklistener.h"
+
+#include <sys/stat.h>
 
 #include <QTimer>
 #include <QAction>
@@ -383,8 +384,13 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
     if (fileUrl.scheme() == DFMMD_SCHEME && !isVPath)
         fileUrl = MergedDesktopController::convertToRealPath(fileUrl);
 
+    //获取文件的inode
+    struct stat statinfo;
+    int filestat = stat(fileUrl.path().toStdString().c_str(),&statinfo);
+    quint64 inode = 0 == filestat ? statinfo.st_ino : 0;
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
+            && (DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl) ||
+                DFMGlobal::instance()->clipboardFileInodeList().contains(inode));
 }
 
 /*!

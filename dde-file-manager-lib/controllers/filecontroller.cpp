@@ -815,19 +815,8 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             }
 
             if (error == DFileCopyMoveJob::DirectoryExistsError || error == DFileCopyMoveJob::FileExistsError) {
-                if (sourceInfo->fileUrl() == targetInfo->fileUrl()) {
+                if (sourceInfo->fileUrl() == targetInfo->fileUrl() || DStorageInfo::isSameFile(sourceInfo->fileUrl().path(),targetInfo->fileUrl().path())) {
                     return DFileCopyMoveJob::CoexistAction;
-                }
-                QString sourcepath = sourceInfo->fileUrl().path();
-                QString tagpath = targetInfo->fileUrl().path();
-                if ((sourcepath.startsWith("/data/home") && tagpath.startsWith("/home")) ||
-                        (sourcepath.startsWith("/home") && tagpath.startsWith("/data/home"))) {
-                    sourcepath = sourcepath.startsWith("/data/home") ? sourcepath.mid(5) : sourcepath;
-                    tagpath = tagpath.startsWith("/data/home") ? tagpath.mid(5) : tagpath;
-
-                    if (sourcepath == tagpath) {
-                        return DFileCopyMoveJob::CoexistAction;
-                    }
                 }
             }
 
