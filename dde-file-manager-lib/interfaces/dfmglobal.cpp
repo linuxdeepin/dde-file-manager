@@ -78,6 +78,7 @@
 #include <locale>
 #include <sstream>
 #include <fstream>
+#include <sys/stat.h>
 
 #include <KCodecs>
 #include <KEncodingProber>
@@ -99,11 +100,13 @@ extern "C"
 
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
+static QList<quint64> clipbordFileinode;
 static DFMGlobal::ClipboardAction clipboardAction = DFMGlobal::UnknowAction;
 
 void onClipboardDataChanged()
 {
     clipboardFileUrls.clear();
+    clipbordFileinode.clear();
     const QByteArray &data = qApp->clipboard()->mimeData()->data("x-special/gnome-copied-files");
 
     if (data.startsWith("cut")) {
@@ -119,6 +122,11 @@ void onClipboardDataChanged()
             url.setScheme("file");
         }
         clipboardFileUrls << url;
+        struct stat statInfo;
+        int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
+        if (0 == fileStat) {
+            clipbordFileinode << statInfo.st_ino;
+        }
     }
 }
 
@@ -494,6 +502,11 @@ bool DFMGlobal::isRootUser()
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const
 {
     return GlobalData::clipboardFileUrls;
+}
+
+QList<quint64> DFMGlobal::clipboardFileInodeList() const
+{
+    return  GlobalData::clipbordFileinode;
 }
 
 DFMGlobal::ClipboardAction DFMGlobal::clipboardAction() const

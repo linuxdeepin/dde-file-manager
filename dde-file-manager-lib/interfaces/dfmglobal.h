@@ -308,6 +308,7 @@ public:
     static bool isComputerDesktopFileUrl(const DUrl& url);
 
     QList<QUrl> clipboardFileUrlList() const;
+    QList<quint64> clipboardFileInodeList() const;
     ClipboardAction clipboardAction() const;
     QIcon standardIcon(Icon iconType) const;
 

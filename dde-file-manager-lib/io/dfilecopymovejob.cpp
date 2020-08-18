@@ -409,7 +409,6 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
         } else {
             lastErrorHandleAction = handle->handleError(q_ptr, error, sourceInfo, targetInfo);
         }
-
         if (!stateCheck()) {
             lastErrorHandleAction = DFileCopyMoveJob::CancelAction;
             break;
@@ -685,10 +684,10 @@ create_new_file_info:
     }
 
     if (new_file_info->exists()) {
-        if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode)
-                && new_file_info->fileUrl() == from) {
-            // 不用再进行后面的操作
-            return true;
+        if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode) &&
+                (new_file_info->fileUrl() == from || DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()))) {
+                // 不用再进行后面的操作
+                return true;
         }
 
         // 禁止目录复制/移动到自己里面
@@ -2101,10 +2100,10 @@ create_new_file_info:
     }
 
     if (new_file_info->exists()) {
-        if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode)
-                && new_file_info->fileUrl() == from) {
-            // 不用再进行后面的操作
-            return true;
+        if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode) &&
+                (new_file_info->fileUrl() == from || DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()))) {
+                // 不用再进行后面的操作
+                return true;
         }
 
         // 禁止目录复制/移动到自己里面
