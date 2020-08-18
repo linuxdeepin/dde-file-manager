@@ -42,7 +42,8 @@ Config::Config()
     if (!configFile.exists()) {
         configFile.absoluteDir().mkpath(".");
     }
-    m_settings = new DFMDesktopSettings(configPath);
+    //不使用DFMDesktopSettings，有几率启动崩溃
+    m_settings = new QSettings(configPath);
     auto work = new QThread(this);
     this->moveToThread(work);
     work->start();
