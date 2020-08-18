@@ -37,6 +37,7 @@
 #include <new>
 #include <string.h>
 
+using namespace doctotext;
 struct FileStream::Implementation
 {
 	FILE* m_file;
