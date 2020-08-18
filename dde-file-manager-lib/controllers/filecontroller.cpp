@@ -825,7 +825,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
                 timer_id = 0;
             }
 
-            DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job);
+            DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job,true);
             emit job->currentJobChanged(currentJob.first, currentJob.second);
 
             if (!handle) {
