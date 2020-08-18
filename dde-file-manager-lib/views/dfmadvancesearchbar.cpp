@@ -60,6 +60,8 @@ void DFMAdvanceSearchBar::onOptionChanged()
     formData[FILE_TYPE] = asbCombos[FILE_TYPE]->currentData();
     formData[SIZE_RANGE] = asbCombos[SIZE_RANGE]->currentData();
     formData[DATE_RANGE] = asbCombos[DATE_RANGE]->currentData();
+    formData[ACCESS_DATE_RANGE] = asbCombos[ACCESS_DATE_RANGE]->currentData();
+    formData[CREATE_DATE_RANGE] = asbCombos[CREATE_DATE_RANGE]->currentData();
 
     bool triggerSearch = false;
 
@@ -96,7 +98,7 @@ void DFMAdvanceSearchBar::initUI()
 
     QGridLayout *formLayout = new QGridLayout;
 
-    auto createLabelCombo = [ = ](int index, const QString& labelText) {
+    auto createLabelCombo = [ = ](int index, const QString & labelText) {
         asbLabels[index] = new QLabel(labelText);
         asbCombos[index] = new QComboBox(this);
         asbCombos[index]->setFocusPolicy(Qt::NoFocus);
@@ -107,6 +109,8 @@ void DFMAdvanceSearchBar::initUI()
     createLabelCombo(FILE_TYPE, qApp->translate("DFMAdvanceSearchBar", "File Type:"));
     createLabelCombo(SIZE_RANGE, qApp->translate("DFMAdvanceSearchBar", "File Size:"));
     createLabelCombo(DATE_RANGE, qApp->translate("DFMAdvanceSearchBar", "Time Modified:"));
+    createLabelCombo(ACCESS_DATE_RANGE, qApp->translate("DFMAdvanceSearchBar", "Time Accessed:"));
+    createLabelCombo(CREATE_DATE_RANGE, qApp->translate("DFMAdvanceSearchBar", "Time Created:"));
 
     resetBtn = new DCommandLinkButton(qApp->translate("DFMAdvanceSearchBar", "Reset"), this);
     resetBtn->setFocusPolicy(Qt::NoFocus);
@@ -121,11 +125,13 @@ void DFMAdvanceSearchBar::initUI()
     asbCombos[FILE_TYPE]->setMinimumWidth(RIGHT_COMBO_MIN_WIDTH);
     asbLabels[DATE_RANGE]->setMinimumWidth(rightLebelWidth);
     asbCombos[DATE_RANGE]->setMinimumWidth(RIGHT_COMBO_MIN_WIDTH);
+    asbCombos[ACCESS_DATE_RANGE]->setMinimumWidth(RIGHT_COMBO_MIN_WIDTH);
+    asbCombos[CREATE_DATE_RANGE]->setMinimumWidth(RIGHT_COMBO_MIN_WIDTH);
 
     asbCombos[SEARCH_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "All subdirectories"), QVariant::fromValue(true));
     asbCombos[SEARCH_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "Current directory"), QVariant::fromValue(false));
 
-    auto addItemToFileTypeCombo = [this](const QString& typeStr) {
+    auto addItemToFileTypeCombo = [this](const QString & typeStr) {
         asbCombos[FILE_TYPE]->addItem(typeStr, QVariant::fromValue(typeStr));
     };
 
@@ -147,15 +153,21 @@ void DFMAdvanceSearchBar::initUI()
     asbCombos[SIZE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "100 MB ~ 1 GB"), QVariant::fromValue(QPair<quint64, quint64>(100 * 1024, 1 << 20)));
     asbCombos[SIZE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "> 1 GB"), QVariant::fromValue(QPair<quint64, quint64>(1 << 20, 1 << 30))); // here to 1T
 
-    asbCombos[DATE_RANGE]->addItem("--", QVariant());
-    asbCombos[DATE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "Today"), QVariant::fromValue(1));
-    asbCombos[DATE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "Yesterday"), QVariant::fromValue(2));
-    asbCombos[DATE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "This week"), QVariant::fromValue(7));
-    asbCombos[DATE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "Last week"), QVariant::fromValue(14));
-    asbCombos[DATE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "This month"), QVariant::fromValue(30));
-    asbCombos[DATE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "Last month"), QVariant::fromValue(60));
-    asbCombos[DATE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "This year"), QVariant::fromValue(365));
-    asbCombos[DATE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "Last year"), QVariant::fromValue(730));
+    auto createDateCombos = [ = ](const LabelIndex index) {
+        asbCombos[index]->addItem("--", QVariant());
+        asbCombos[index]->addItem(qApp->translate("DFMAdvanceSearchBar", "Today"), QVariant::fromValue(1));
+        asbCombos[index]->addItem(qApp->translate("DFMAdvanceSearchBar", "Yesterday"), QVariant::fromValue(2));
+        asbCombos[index]->addItem(qApp->translate("DFMAdvanceSearchBar", "This week"), QVariant::fromValue(7));
+        asbCombos[index]->addItem(qApp->translate("DFMAdvanceSearchBar", "Last week"), QVariant::fromValue(14));
+        asbCombos[index]->addItem(qApp->translate("DFMAdvanceSearchBar", "This month"), QVariant::fromValue(30));
+        asbCombos[index]->addItem(qApp->translate("DFMAdvanceSearchBar", "Last month"), QVariant::fromValue(60));
+        asbCombos[index]->addItem(qApp->translate("DFMAdvanceSearchBar", "This year"), QVariant::fromValue(365));
+        asbCombos[index]->addItem(qApp->translate("DFMAdvanceSearchBar", "Last year"), QVariant::fromValue(730));
+    };
+    createDateCombos(DATE_RANGE);
+    createDateCombos(ACCESS_DATE_RANGE);
+    createDateCombos(CREATE_DATE_RANGE);
+
 
 //    QTimer::singleShot(1000, this, [this] {
 //       qDebug() << asbCombos[0]->sizeHint() << asbCombos[0]->size() << asbCombos[0]->minimumSizeHint();
@@ -166,13 +178,18 @@ void DFMAdvanceSearchBar::initUI()
     formLayout->addItem(new QSpacerItem(14, 1), 0, 2);
     formLayout->addWidget(asbLabels[FILE_TYPE], 0, 3);
     formLayout->addWidget(asbCombos[FILE_TYPE], 0, 4);
-    formLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::MinimumExpanding), 0, 5);
-    formLayout->addWidget(resetBtn, 0, 6);
+    formLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::MinimumExpanding), 0, 7);
+    formLayout->addWidget(resetBtn, 0, 8);
 
     formLayout->addWidget(asbLabels[SIZE_RANGE], 1, 0);
     formLayout->addWidget(asbCombos[SIZE_RANGE], 1, 1);
     formLayout->addWidget(asbLabels[DATE_RANGE], 1, 3);
     formLayout->addWidget(asbCombos[DATE_RANGE], 1, 4);
+    formLayout->addWidget(asbLabels[ACCESS_DATE_RANGE], 0, 5);
+    formLayout->addWidget(asbCombos[ACCESS_DATE_RANGE], 0, 6);
+    formLayout->addWidget(asbLabels[CREATE_DATE_RANGE], 1, 5);
+    formLayout->addWidget(asbCombos[CREATE_DATE_RANGE], 1, 6);
+
 
     formLayout->setSpacing(6);
     formLayout->setMargin(6);

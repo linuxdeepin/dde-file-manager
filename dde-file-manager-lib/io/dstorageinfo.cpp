@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <gio/gio.h>
+#include <sys/stat.h>
 
 #include "dstorageinfo.h"
 #include "controllers/vaultcontroller.h"
@@ -342,6 +343,21 @@ bool DStorageInfo::isLowSpeedDevice(const QString &path)
 bool DStorageInfo::isCdRomDevice(const QString &path)
 {
     return DStorageInfo(path).device().startsWith("/dev/sr");
+}
+
+bool DStorageInfo::isSameFile(const QString &filePath1, const QString &filePath2)
+{
+    struct stat statFromInfo;
+    struct stat statToInfo;
+    int fromStat = stat(filePath1.toStdString().c_str(), &statFromInfo);
+    int toStat = stat(filePath2.toStdString().c_str(), &statToInfo);
+    if (0 == fromStat && 0 == toStat) {
+        // 通过inode判断是否是同一个文件
+        if (statFromInfo.st_ino == statToInfo.st_ino) {
+            return true;
+        }
+    }
+    return false;
 }
 
 DFM_END_NAMESPACE

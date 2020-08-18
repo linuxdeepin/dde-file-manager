@@ -31,6 +31,7 @@
 #include "models/searchfileinfo.h"
 #include "ddiriterator.h"
 #include "shutil/dfmregularexpression.h"
+#include "shutil/dfmfilelistfile.h"
 #include "dfmapplication.h"
 
 #include "app/define.h"
@@ -349,15 +350,41 @@ bool SearchDiriterator::hasNext() const
     }
     // 全文搜索
     if (!bFullTextSearchEnd && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
+        // 判断文件是否为隐藏文件
+        std::function<bool(const DUrl &)> isHidden;
+        isHidden = [ =, &isHidden](const DUrl & fileUrl) ->bool {
+            DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
+            DUrl parentUrl = fileUrl.parentUrl();
+
+            DFMFileListFile hiddenFiles(parentUrl.toLocalFile());
+            if (fileInfo->isHidden() || hiddenFiles.contains(fileInfo->fileName()))
+            {
+                return true;
+            } else if (targetUrl.toLocalFile() == parentUrl.toLocalFile())
+            {
+                return false;
+            } else if (isHidden(parentUrl))
+            {
+                return true;
+            }
+
+            return false;
+        };
+
         QStringList searchResult;
-        searchResult = DFMFullTextSearchManager::getInstance()->fulltextSearch(m_fileUrl.searchKeyword());
+        searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
         DFMFullTextSearchManager::getInstance()->clearSearchResult();
         for (QString res : searchResult) {
             DUrl url = m_fileUrl;
             const DUrl &realUrl = DUrl::fromUserInput(res);
             url.setSearchedFileUrl(realUrl);
-            if (res.startsWith(targetUrl.toLocalFile()))/*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
+            if (res.startsWith(targetUrl.toLocalFile())) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
+                // 隐藏文件不显示
+                if (isHidden(DUrl::fromLocalFile(res))) {
+                    continue;
+                }
                 childrens << url;
+            }
         }
         bFullTextSearchEnd = true;
         return true;
@@ -514,18 +541,7 @@ const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPoi
 
 bool SearchController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    const DUrl &url = realUrl(event->url());
-    // why? because 'DDesktopServices::showFileItem(realUrl(event->url()))' will call session bus 'org.freedesktop.FileManager1'
-    // but cannot find session bus when user is root!
-    if (DFMGlobal::isRootUser()) {
-        QStringList urls{QStringList() << url.toLocalFile()};
-        // call by platform 'mips'
-        if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" <<  urls << "--raw"))
-            return true;
-
-        return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  urls << "--raw");
-    }
-    return DTK_WIDGET_NAMESPACE::DDesktopServices::showFileItem(realUrl(event->url()));
+    return DFileService::instance()->openFileLocation(event->sender(), realUrl(event->url()));
 }
 
 bool SearchController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
