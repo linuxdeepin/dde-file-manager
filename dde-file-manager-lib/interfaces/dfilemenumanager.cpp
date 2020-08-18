@@ -239,7 +239,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         }
 
         // sp3 feature: root用户和服务器版本用户不需要以管理员身份打开的功能
-        if (DFMGlobal::isRootUser() || DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+        if (DFMGlobal::isRootUser() || DFMGlobal::isServerSys()) {
             actions.removeAll(MenuAction::OpenAsAdmin);
         }
 
