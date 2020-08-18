@@ -2457,6 +2457,12 @@ bool DFileCopyMoveJobPrivate::doCopyFileRefine(const FileCopyInfoPointer &copyin
 
 bool DFileCopyMoveJobPrivate::doCopyFileRefineReadAndWrite(const DFileCopyMoveJobPrivate::FileCopyInfoPointer &copyinfo)
 {
+    // fix:bug42483 从文管中(数据盘)的桌面目录拖动回收站、桌面等图标至桌面，选择替换后图标变为文件状态无法使用
+    if (DStorageInfo::isSameFile(copyinfo->frominfo->fileUrl().path(), copyinfo->toinfo->fileUrl().path())) {
+        qDebug()<<"Info:"<<copyinfo->frominfo->fileUrl().path()<<" and "<<copyinfo->toinfo->fileUrl().path()<<" are the same file.";
+        return true;
+    }
+
     qint64 curt = QDateTime::currentMSecsSinceEpoch();
     QScopedPointer<DFileDevice> fromDevice(DFileService::instance()->createFileDevice(nullptr, copyinfo->frominfo->fileUrl()));
     if (!fromDevice) {
