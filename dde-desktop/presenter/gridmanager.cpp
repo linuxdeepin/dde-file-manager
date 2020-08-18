@@ -213,6 +213,7 @@ public:
 
         //获取个屏幕分组信息对应的图标信息
         QMap<int, QStringList> moreIcon;
+        QMutexLocker lk(Config::instance()->mutex());
         auto settings = Config::instance()->settings();
         for (int &screenKey : screenNumProfiles.keys()) {
             settings->beginGroup(screenNumProfiles.value(screenKey));
@@ -240,6 +241,7 @@ public:
             }
             settings->endGroup();
         }
+        lk.unlock();
 
         for(int key : moreIcon.keys()){
             foreach(QString item, moreIcon.value(key)){
@@ -274,6 +276,7 @@ public:
     void readProfiles()
     {
         positionProfiles.clear();
+        QMutexLocker lk(Config::instance()->mutex());
         auto settings = Config::instance()->settings();
         settings->beginGroup(Config::keyProfile);
         for (QString &key : settings->allKeys()) {
@@ -295,13 +298,8 @@ public:
             values.append(QString("Screen_%1").arg(index));
         }
 
-        auto settings = Config::instance()->settings();
-        Q_UNUSED(settings)
         Config::instance()->removeConfig(Config::keyProfile, "");
         Config::instance()->setConfigList(Config::keyProfile, keys, values);
-
-//        emit Presenter::instance()->removeConfig(Config::keyProfile, "");
-//        emit Presenter::instance()->setConfigList(Config::keyProfile,keys, values);
     }
 
     inline bool isValid(int screenNum, QPoint pos) const
@@ -519,13 +517,8 @@ public:
             screenPositionProfile = QString("Screen_%1").arg(screenNum);
         }
 
-        //auto screenPositionProfile = positionProfiles.value(screenNum);
-        auto settings = Config::instance()->settings();
-        Q_UNUSED(settings)
         Config::instance()->removeConfig(screenPositionProfile, "");
         Config::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
-        //emit Presenter::instance()->removeConfig(screenPositionProfile, "");
-        //emit Presenter::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
     }
 
     bool remove(int screenNum, QPoint pos, const QString &id)
@@ -1454,11 +1447,12 @@ void GridManager::setDisplayMode(bool single)
 void GridManager::delaySyncAllProfile(int ms)
 {
     static QTimer *syncTimer = nullptr;
+    qDebug() << "delaySyncAllProfile" << QThread::currentThread() << qApp->thread();
     if (syncTimer != nullptr){
+        qDebug() << "reset timer" << syncTimer;
         syncTimer->stop();
         delete syncTimer;
         syncTimer = nullptr;
-        qDebug() << "reset timer" << syncTimer;
     }
     if (ms < 1){
         d->syncAllProfile();
