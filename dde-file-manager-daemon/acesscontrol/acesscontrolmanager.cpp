@@ -116,7 +116,9 @@ void AcessControlManager::onFileCreated(const QString &path, const QString &name
     Q_UNUSED(name)
 
     QDir homeDir("/home");
-    for (const QString &dirName : homeDir.entryList(QDir::NoDotAndDotDot | QDir::Dirs)) {
+    QStringList dirNames = homeDir.entryList(QDir::NoDotAndDotDot | QDir::Dirs);
+    dirNames.append("root"); // root 用户不在/home下，但设备会挂载到/media/root
+    for (const QString &dirName : dirNames) {
         // /media/[UserName] 为默认挂载的基路径，预先从创建此目录，目的是为了确保该路径其他用户能够访问
         QString mountBaseName = QString("/media/%1").arg(dirName);
         QDir mountDir(mountBaseName);

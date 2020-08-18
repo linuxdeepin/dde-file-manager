@@ -47,7 +47,7 @@ struct ThreadSafeOLEStorage::Implementation
 	bool m_is_valid_ole;
 	std::string m_error;
 	std::string m_file_name;
-	DataStream* m_data_stream;
+    doctotext::DataStream* m_data_stream;
 	uint16_t m_sector_size, m_mini_sector_size;
 	uint32_t m_number_of_directories;
 	uint16_t m_header_version;

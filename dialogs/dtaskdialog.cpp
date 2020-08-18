@@ -49,6 +49,7 @@
 #include "singleton.h"
 #include "accessible/libframenamedefine.h"
 #include "controllers/vaultcontroller.h"
+#include "io/dstorageinfo.h"
 
 ErrorHandle::~ErrorHandle()
 {
@@ -68,11 +69,12 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
     switch (error) {
     case DFileCopyMoveJob::FileExistsError:
     case DFileCopyMoveJob::DirectoryExistsError: {
-        if (sourceInfo->fileUrl() == targetInfo->fileUrl()) {
+        if (sourceInfo->fileUrl() == targetInfo->fileUrl() || DStorageInfo::isSameFile(sourceInfo->fileUrl().path(), targetInfo->fileUrl().path())) {
             return DFileCopyMoveJob::CoexistAction;
         }
 
         emit onConflict(sourceInfo->fileUrl(), targetInfo->fileUrl());
+        emit job->currentJobChanged(sourceInfo->fileUrl(), targetInfo->fileUrl());
         job->togglePause();
     }
     break;
@@ -348,11 +350,22 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
 
 DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const bool ischecksamejob)
 {
-    if (ischecksamejob && m_jobIdItems.contains(QString::number(quintptr(job), 16))) {
-        return nullptr;
-    }
     QMutexLocker lock(&addtaskmutex);
-    DFMTaskWidget *wid = new DFMTaskWidget;
+    DFMTaskWidget *wid = nullptr;
+    bool haswid = false;
+    if (ischecksamejob && m_jobIdItems.contains(QString::number(quintptr(job), 16))) {
+        auto item = m_jobIdItems.value(QString::number(quintptr(job), 16));
+        wid = item ? static_cast<DFMTaskWidget *>(item->listWidget()->itemWidget(item)) : nullptr;
+
+    }
+    if (nullptr == wid) {
+        wid = new DFMTaskWidget;
+    }
+    else {
+        wid->disconnect();
+        haswid = true;
+    }
+
     wid->setTaskId(QString::number(quintptr(job), 16));
 
     // 判断任务是否属于保险箱任务,如果是，记录到容器
@@ -547,10 +560,14 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
                 VaultController::ins()->setBigFileIsDeleting(true);
             }
         } else {
-            addTaskWidget(wid);
+            if (!haswid) {
+                addTaskWidget(wid);
+            }
         }
     } else {
-        addTaskWidget(wid);
+        if (!haswid) {
+            addTaskWidget(wid);
+        }
     }
 
     return handle;

@@ -6,9 +6,10 @@
 #include <string>
 #include <vector>
 #include "olestream.h"
-
+#include "data_stream.h"
 class ThreadSafeOLEStorage;
 using namespace wvWare;
+using namespace doctotext;
 class DataStream;
 
 class ThreadSafeOLEStreamReader : public AbstractOLEStreamReader
@@ -21,7 +22,7 @@ private:
         uint64_t m_size;
         std::vector<uint32_t> m_file_positions;
         uint32_t m_sector_size;
-        DataStream *m_data_stream;
+        doctotext::DataStream *m_data_stream;
     };
     ThreadSafeOLEStreamReader(ThreadSafeOLEStorage *storage, Stream &stream);
 public:
