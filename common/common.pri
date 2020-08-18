@@ -56,6 +56,13 @@ unix {
         DEFINES += SW_CPUINFO
         QMAKE_CXXFLAGS += -mieee
     }
+    isEqual(ARCH, aarch64){
+        DEFINES += arm
+        DEFINES += __arm__
+    }
+    isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
+        DEFINES += __mips__
+    }
 
     isEmpty(LIB_INSTALL_DIR) {
         LIB_BASE_DIR = $$[QT_INSTALL_LIBS]/$$ProjectName
