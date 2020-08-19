@@ -62,7 +62,7 @@ DEFINES += QT_DEPRECATED_WARNINGS DDE_ANYTHINGMONITOR DFM_NO_FILE_WATCHER
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 include(src.pri)
-
+include($$PWD/../../dde-file-manager-lib/fulltextsearch/fulltextsearch.pri)
 DISTFILES += dde-anythingmonitor.json
 
 

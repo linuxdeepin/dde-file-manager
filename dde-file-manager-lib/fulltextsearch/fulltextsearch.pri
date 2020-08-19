@@ -23,6 +23,7 @@
 #这个搜索引擎是利用C++语言，文件搜索速度相当快，是移植的开源代码doctotext的核心部分
 #-------------------------------------------------
 
+QT += widgets
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += liblucene++ liblucene++-contrib
 
