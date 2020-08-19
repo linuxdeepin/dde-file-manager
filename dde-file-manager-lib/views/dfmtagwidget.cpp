@@ -255,6 +255,15 @@ void DFMTagWidget::loadTags(const DUrl& durl)
                     loadTags(d->m_url);
                 }
             });
+
+            //当文件被删除时需要在这里把watcher移除，否则可能导致再创建同名文件无法正确添加watcher
+            connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [=]{
+                if (d->m_devicesWatcher) {
+                    d->m_devicesWatcher->stopWatcher();
+                    d->m_devicesWatcher->deleteLater();
+                    d->m_devicesWatcher = nullptr;
+                }
+            });
         }
     }
 }
