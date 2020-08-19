@@ -113,6 +113,7 @@ public slots:
     void removeVolumeDiskInfo(const QDiskInfo &diskInfo);
     void changeVolumeDiskInfo(const QDiskInfo &diskInfo);
     void mount(const QString &path);
+    bool mountByUDisks(const QString &path);
     void unmount(const QString &path);
     void eject(const QString &path);
     void stopDrive(const QString &path);
