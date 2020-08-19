@@ -2451,6 +2451,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileRefine(const FileCopyInfoPointer &copyin
             if (size_read >= MAX_BUFFER_LEN && size_read < fromDevice->size()) {
                 FileCopyInfoPointer tmpinfo(new FileCopyInfo);
                 tmpinfo->closeflag = false;
+                tmpinfo->frominfo = copyinfo->frominfo;
+                tmpinfo->toinfo = copyinfo->toinfo;
                 tmpinfo->todevice = toDevice;
                 tmpinfo->currentpos = current_pos;
                 tmpinfo->buffer = buffer;
@@ -3574,7 +3576,7 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
                 }
                 unsigned short flag = ent->fts_info;
                 if (flag != FTS_DP) {
-                    totalsize += ent->fts_statp->st_size;
+                    totalsize += ent->fts_statp->st_size <= 0 ? 4096 : ent->fts_statp->st_size;
                 }
                 if (flag == FTS_F) {
                     totalfilecount++;
