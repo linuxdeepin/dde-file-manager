@@ -533,6 +533,10 @@ bool DFileCopyMoveJobPrivate::checkFileSize(qint64 size) const
 
 bool DFileCopyMoveJobPrivate::checkFreeSpace(qint64 needSize)
 {
+    if (directoryStack.isEmpty()){
+        qWarning() << "directoryStack.isEmpty() return true";
+        return true;
+    }
     DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
 
     if (!targetStorageInfo.isValid()) {
