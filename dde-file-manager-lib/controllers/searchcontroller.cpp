@@ -356,11 +356,13 @@ bool SearchDiriterator::hasNext() const
             DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
             DUrl parentUrl = fileUrl.parentUrl();
 
+            QString targetPath = targetUrl.toLocalFile();
+            QString filePath = parentUrl.toLocalFile();
             DFMFileListFile hiddenFiles(parentUrl.toLocalFile());
             if (fileInfo->isHidden() || hiddenFiles.contains(fileInfo->fileName()))
             {
                 return true;
-            } else if (targetUrl.toLocalFile() == parentUrl.toLocalFile())
+            } else if (targetPath.startsWith(filePath))
             {
                 return false;
             } else if (isHidden(parentUrl))
@@ -371,14 +373,14 @@ bool SearchDiriterator::hasNext() const
             return false;
         };
 
-        QStringList searchResult;
-        searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
+        QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
         DFMFullTextSearchManager::getInstance()->clearSearchResult();
         for (QString res : searchResult) {
             DUrl url = m_fileUrl;
             const DUrl &realUrl = DUrl::fromUserInput(res);
             url.setSearchedFileUrl(realUrl);
-            if (res.startsWith(targetUrl.toLocalFile())) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
+            QString searchPath = targetUrl.toLocalFile();
+            if (res.startsWith(searchPath.endsWith("/") ? searchPath : (searchPath + "/"))) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
                 // 隐藏文件不显示
                 if (isHidden(DUrl::fromLocalFile(res))) {
                     continue;

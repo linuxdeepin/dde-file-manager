@@ -139,7 +139,7 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
 DocumentPtr DFMFullTextSearchManager::getFileDocument(const QString &filename)
 {
     DocumentPtr doc = newLucene<Document>();
-    doc->add(newLucene<Field>(L"path", filename.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));
+    doc->add(newLucene<Field>(L"path", filename.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     QString contents = getFileContents(filename);
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));
     return doc;
@@ -295,6 +295,101 @@ int DFMFullTextSearchManager::fulltextIndex(const QString &sourceDir)
 void DFMFullTextSearchManager::clearSearchResult()
 {
     searchResults.clear();
+}
+
+void DFMFullTextSearchManager::updateIndex(const QString &filePath, DFMFullTextSearchManager::Type type)
+{
+    if (filePath.contains(".avfs"))
+        return;
+
+    QRegExp reg("^(/boot)|(/dev)|(/proc)|(/sys)|(/root)|(/run)|(/lib)|(/usr)");
+    if (reg.exactMatch(filePath)) {
+        return;
+    }
+
+    switch (type) {
+    case Add: {
+        try {
+            QFileInfo fileInfo(filePath);
+            if (fileInfo.isFile()) {
+                QString suffix = fileInfo.suffix();
+                reg.setPattern("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
+                               "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)");
+                if (reg.exactMatch(suffix)) {
+                    IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
+                                                                   newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
+                                                                   IndexWriter::MaxFieldLengthLIMITED);
+                    if (fileInfo.exists()) {
+                        writer->addDocument(getFileDocument(filePath));
+                        // 为防止出现重复索引，需要更新一次
+                        TermPtr query = newLucene<Term>(L"path", filePath.toStdWString());
+                        //更新
+                        writer->updateDocument(query, getFileDocument(filePath));
+                        qDebug() << "Add [" << filePath << "]";
+                        writer->close();
+                    }
+                }
+            } else {
+                QDir dir(filePath);
+                QFileInfoList pathList = dir.entryInfoList(QDir::AllEntries | QDir::Hidden);
+                for (QFileInfo path : pathList) {
+                    QString fileName = path.fileName();
+                    if (fileName == "." || fileName == "..") {
+                        continue;
+                    }
+                    updateIndex(path.filePath(), Add);
+                }
+            }
+        } catch (FileNotFoundException &ex) {
+            qDebug() << "addDocument error: " << ex.getError().c_str();
+        }
+    }
+    break;
+    case Modify: {
+        try {
+            QFileInfo fileInfo(filePath);
+            if (fileInfo.isFile()) {
+                QString suffix = fileInfo.suffix();
+                reg.setPattern("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
+                               "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)");
+                if (reg.exactMatch(suffix)) {
+                    IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
+                                                                   newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
+                                                                   IndexWriter::MaxFieldLengthLIMITED);
+                    if (fileInfo.exists()) {
+                        //定义一个更新条件
+                        TermPtr query = newLucene<Term>(L"path", filePath.toStdWString());
+                        //更新
+                        writer->updateDocument(query, getFileDocument(filePath));
+                        qDebug() << "Update [" << filePath << "]";
+                        //关闭
+                        writer->close();
+                    }
+                }
+            }
+        } catch (FileNotFoundException &ex) {
+            qDebug() << "addDocument error: " << ex.getError().c_str();
+        }
+    }
+    break;
+    case Delete: {
+        try {
+            IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
+                                                           newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
+                                                           IndexWriter::MaxFieldLengthLIMITED);
+            //定义一个删除条件，定义一个查询对象
+            QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"path", filePath.toStdWString()));
+            //删除
+            writer->deleteDocuments(query);
+            qDebug() << "Delete [" << filePath << "]";
+            //关闭
+            writer->close();
+        } catch (FileNotFoundException &ex) {
+            qDebug() << "deleteDocuments error: " << ex.getError().c_str();
+        }
+    }
+    break;
+    }
 }
 
 bool DFMFullTextSearchManager::createFileIndex(const QString &sourcePath)
