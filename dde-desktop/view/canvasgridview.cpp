@@ -1106,10 +1106,16 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 
     case Qt::AltModifier:
         if (event->key() == Qt::Key_M){
-            //新需求gesetting控制右键菜单隐藏功能
-            if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())
-                    && !Q_LIKELY(GridManager::instance()->isGsettingShow("context-menu",true))) {
-                return;
+            //新需求gesetting控制右键菜单隐藏功能,和产品确认调整为gsetting高于本身配置文件，即gsetting有相关配置后本身的json相关配置失效
+            auto tempGsetting = GridManager::instance()->isGsettingShow("context-menu",QVariant());
+            if(tempGsetting.isValid()){
+                if(!tempGsetting.toBool())
+                    return;
+            }else {
+                auto tempConfig = DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", QVariant());
+                if(tempConfig.isValid())
+                    if(!tempConfig.toBool())
+                        return;
             }
 
             QModelIndexList indexList = selectionModel()->selectedIndexes();
@@ -1701,10 +1707,16 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     //fix bug39609 选中桌面文件夹，进行右键操作，例如打开、重命名，然后再按快捷键home、left、right无效
     d->mousePressed = false;
 
-    //新需求gesetting控制右键菜单隐藏功能
-    if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())
-            && !Q_LIKELY(GridManager::instance()->isGsettingShow("context-menu",true))) {
-        return;
+    //新需求gesetting控制右键菜单隐藏功能,和产品确认调整为gsetting高于本身配置文件，即gsetting有相关配置后本身的json相关配置失效
+    auto tempGsetting = GridManager::instance()->isGsettingShow("context-menu",QVariant());
+    if(tempGsetting.isValid()){
+        if(!tempGsetting.toBool())
+            return;
+    }else {
+        auto tempConfig = DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", QVariant());
+        if(tempConfig.isValid())
+            if(!tempConfig.toBool())
+                return;
     }
 
     //关闭编辑框
