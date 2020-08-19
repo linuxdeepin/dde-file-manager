@@ -1469,7 +1469,8 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 //        }
         if (showWarnDlg) {
                     DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                                 tr("Mounting device error"), QString(error->message));
+                                                 tr("Mounting device error"), QString());
+                    qDebug() << "Mounting device error: " << QString(error->message);
         }
         else {
             //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
