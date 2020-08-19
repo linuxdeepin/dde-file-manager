@@ -196,7 +196,11 @@ bool TrashFileInfo::isDir() const
 QString TrashFileInfo::fileDisplayName() const
 {
     Q_D(const TrashFileInfo);
-
+    if(isDesktopFile()) {
+        QFileInfo f(absoluteFilePath());
+        DesktopFileInfo dfi(f);
+        return dfi.fileDisplayName();
+    }
     return d->displayName;
 }
 
