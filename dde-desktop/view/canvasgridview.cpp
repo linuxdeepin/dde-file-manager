@@ -2260,16 +2260,10 @@ void CanvasGridView::initUI()
     delegate->setFocusTextBackgroundBorderColor(Qt::white);
     setItemDelegate(delegate);
 
-    auto settings = Config::instance()->settings();
-    settings->beginGroup(Config::groupGeneral);
-    if (settings->contains(Config::keyIconLevel)) {
-        auto iconSizeLevel = settings->value(Config::keyIconLevel).toInt();
-        itemDelegate()->setIconSizeByIconSizeLevel(iconSizeLevel);
-        qDebug() << "current icon size level" << itemDelegate()->iconSizeLevel();
-    } else {
-        itemDelegate()->setIconSizeByIconSizeLevel(1);
-    }
-    settings->endGroup();
+    QVariant iconSizeLevel = 1;
+    iconSizeLevel = Config::instance()->getConfig(Config::groupGeneral,Config::keyIconLevel,iconSizeLevel);
+    itemDelegate()->setIconSizeByIconSizeLevel(iconSizeLevel.toInt());
+    qDebug() << "current icon size level" << itemDelegate()->iconSizeLevel();
 
     DFMSocketInterface::instance();
     DGioSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
