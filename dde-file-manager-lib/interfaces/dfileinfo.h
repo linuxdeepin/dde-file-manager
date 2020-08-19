@@ -114,6 +114,8 @@ public:
 
     QVariantHash extraProperties() const Q_DECL_OVERRIDE;
 
+    quint64 inode() const Q_DECL_OVERRIDE;
+
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);
 

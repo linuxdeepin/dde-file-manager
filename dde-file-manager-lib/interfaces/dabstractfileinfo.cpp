@@ -1472,6 +1472,11 @@ void DAbstractFileInfo::updateReadTime(const QDateTime &)
 
 }
 
+quint64 DAbstractFileInfo::inode() const
+{
+    return 0;
+}
+
 void DAbstractFileInfo::makeToActive()
 {
     Q_D(DAbstractFileInfo);
