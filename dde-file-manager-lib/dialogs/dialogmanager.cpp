@@ -1431,7 +1431,7 @@ void DialogManager::showFormatDialog(const QString &devId)
 {
     if (devId.isEmpty())
         return;
-    if (devId.startsWith("/dev/sr")) // optical disk canot format(bug )
+    if (devId.startsWith("/dev/sr")) // optical disk canot format(bug-42414)
         return;
 
     DDialog dlg;
