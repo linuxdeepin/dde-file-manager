@@ -32,6 +32,8 @@ class DFMFullTextSearchManager : public QObject
     Q_OBJECT
 
 public:
+    enum Type {Add, Modify, Delete};
+
     static DFMFullTextSearchManager *getInstance();
 
     /**
@@ -52,6 +54,9 @@ public:
      * @brief clearSearchResult 清除搜索结果
      */
     void clearSearchResult();
+
+public slots:
+    void updateIndex(const QString &filePath, Type type);
 
 private:
     explicit DFMFullTextSearchManager(QObject *parent = 0);
