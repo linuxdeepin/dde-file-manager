@@ -1482,7 +1482,7 @@ void GridManager::setCurrentAllItems(const QList<DAbstractFileInfoPointer> &info
     d->m_allItems = infoList;
 }
 
-bool GridManager::isGsettingShow(const QString &targetkey, const bool defaultValue)
+QVariant GridManager::isGsettingShow(const QString &targetkey, const QVariant defaultValue)
 {
     if(!d->m_desktopSettings->keys().contains(targetkey))
         return defaultValue;
@@ -1496,12 +1496,24 @@ bool GridManager::desktopFileShow(const DUrl &url, const bool defaultValue)
 {
     if(!url.isValid())
         return defaultValue;
-    if(0 == url.fileName().localeAwareCompare("dde-computer.desktop"))
-        return isGsettingShow("desktop-computer",true);
-    if(0 == url.fileName().localeAwareCompare("dde-trash.desktop"))
-        return isGsettingShow("desktop-trash",true);
-    if(0 == url.fileName().localeAwareCompare("dde-home.desktop"))
-        return isGsettingShow("desktop-home-directory",true);
+   if(0 == url.fileName().localeAwareCompare("dde-computer.desktop")){
+        auto tempComputer = isGsettingShow("desktop-computer",QVariant());
+        if(!tempComputer.isValid())
+            return defaultValue;
+        return tempComputer.toBool();
+    }
+    if(0 == url.fileName().localeAwareCompare("dde-trash.desktop")){
+        auto tempTrash = isGsettingShow("desktop-trash",QVariant());
+        if(!tempTrash.isValid())
+            return defaultValue;
+        return tempTrash.toBool();
+    }
+    if(0 == url.fileName().localeAwareCompare("dde-home.desktop")){
+        auto tempHome = isGsettingShow("desktop-home-directory",QVariant());
+        if(!tempHome.isValid())
+            return defaultValue;
+        return tempHome.toBool();
+    }
     return defaultValue;
 }
 
