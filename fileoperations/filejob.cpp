@@ -383,6 +383,9 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                             deleteDir(srcPath);
                 }
             } else if (m_jobType == Trash) {
+                if (url.path().startsWith( destination.path())) {
+                    continue;
+                }
                 bool canTrash = moveDirToTrash(srcPath, &targetPath);
                 if (m_isInSameDisk) {
                     if (canTrash) {
@@ -418,6 +421,9 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                     }
                 }
             } else if (m_jobType == Trash) {
+                if (url.path().startsWith( destination.path())) {
+                    continue;
+                }
                 bool canTrash = moveFileToTrash(srcPath, &targetPath);
                 if (m_isInSameDisk) {
                     if (canTrash) {
@@ -2548,9 +2554,11 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
             if (m_jobType != Trash) {
                 m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
             } else {
-                bool canTrash = moveFileToTrash(srcFile, targetPath);
-                if (canTrash && targetPath) {
-                    m_tarPath = *targetPath;
+                if (!srcFile.startsWith(tarDir)) {
+                    bool canTrash = moveFileToTrash(srcFile, targetPath);
+                    if (canTrash && targetPath) {
+                        m_tarPath = *targetPath;
+                    }
                 }
             }
             m_status = Run;
