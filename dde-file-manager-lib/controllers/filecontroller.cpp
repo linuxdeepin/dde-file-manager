@@ -802,6 +802,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
                 killTimer(timer_id);
             }
             dialogManager->taskDialog()->removeTaskJob(fileJob.data());
+            fileJob->disconnect();
             qDebug() << " ErrorHandle() ";
         }
 
@@ -912,8 +913,9 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
         return job->targetUrlList();
     }
     //fix bug 35855走新流程不去阻塞主线程，拷贝线程自己去运行，主线程返回，当拷贝线程结束了再去处理以前的相应处理
-    connect(job.data(), &QThread::finished, dialogManager->taskDialog(), [this, job, error_handle, slient, event] {
-        dialogManager->taskDialog()->removeTaskJob(job.data());
+    connect(job.data(), &QThread::finished, dialogManager->taskDialog(), [this, thisJob, error_handle, slient, event] {
+        dialogManager->taskDialog()->removeTaskJob(thisJob);
+        DUrlList targetUrlList = thisJob->targetUrlList();
         if (slient)
         {
             error_handle->deleteLater();
@@ -922,7 +924,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             QMetaObject::invokeMethod(error_handle, "deleteLater");
         }
         //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
-        this->dealpasteEnd(job->targetUrlList(), event);
+        this->dealpasteEnd(targetUrlList, event);
     });
 
     return job->targetUrlList();

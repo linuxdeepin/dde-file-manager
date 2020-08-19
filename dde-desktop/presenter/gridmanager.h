@@ -93,7 +93,7 @@ public:
     void setCurrentVirtualExpandUrl(const DUrl url);
     DUrl getCurrentVirtualExpandUrl();
     void setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList);
-    bool isGsettingShow(const QString &targetkey, const bool defaultValue);
+    QVariant isGsettingShow(const QString &targetkey, const QVariant defaultValue);
     bool desktopFileShow(const DUrl &url, const bool defaultValue);
 
 public:

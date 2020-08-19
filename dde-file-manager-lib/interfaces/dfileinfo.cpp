@@ -907,8 +907,10 @@ void DFileInfo::refresh()
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
 {
-    if (deviceListener->isInDeviceFolder(absoluteFilePath())
-            || absoluteFilePath().startsWith("/run/user" /*for gvfs mount point*/)) {
+    QString absFilePath = absoluteFilePath();
+    if (deviceListener->isInDeviceFolder(absFilePath) ||
+        absFilePath.startsWith("/run/user" /*for gvfs mount point*/) ||
+        absFilePath.startsWith("/media/")) {
         return DUrl::fromLocalFile(QDir::homePath());
     }
 
