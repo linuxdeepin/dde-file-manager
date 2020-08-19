@@ -359,6 +359,14 @@ void WallpaperList::setCurrentIndex(int index)
 
 WallpaperItem *WallpaperList::getCurrentItem()
 {
+    // fix bug42257进入到“壁纸与屏保”界面，按TAB键，桌面崩溃
+    if(m_index<0 || m_index>=count()) {
+        if (m_items.isEmpty()) {
+            return nullptr;
+        } else {
+            return m_items.first();
+        }
+    }
     return m_items.at(m_index);
 }
 

@@ -441,6 +441,9 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
 
             //第二个区域tab跳转到第三个区域的当前选项（WallpaperItem）的第一个控件（Button）上
             if (m_switchModeControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                if (nullptr == m_wallpaperList->getCurrentItem()) {
+                    return false;
+                }
                 QList<Button *> childButtons = m_wallpaperList->getCurrentItem()->findChildren<Button *>();
                 if (!childButtons.isEmpty()) {
                     childButtons.first()->setFocus();
@@ -458,6 +461,9 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
                     || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
                     || object == m_lockScreenBox
                     || m_waitControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                if (nullptr == m_wallpaperList->getCurrentItem()) {
+                    return false;
+                }
                 QList<Button *> childButtons = m_wallpaperList->getCurrentItem()->findChildren<Button *>();
                 if (!childButtons.isEmpty()) {
                     childButtons.first()->setFocus();
