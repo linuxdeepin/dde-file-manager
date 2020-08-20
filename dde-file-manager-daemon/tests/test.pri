@@ -11,3 +11,5 @@ INCLUDEPATH += $$PWD
 
 SOURCES += \
     $$PWD/main.cpp \
+    $$PWD/vault/ut_vaultmanager.cpp \
+    $$PWD/vault/ut_vaultclock.cpp

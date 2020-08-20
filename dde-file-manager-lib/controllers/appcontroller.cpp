@@ -230,8 +230,6 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
         if (fi && fi->scheme() == DFMROOT_SCHEME) {
             newUrl = fi->redirectedFileUrl();
         }
-        //处理是否优化
-        newUrl.setOptimise(fileUrl.isOptimise());
 
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), newUrl);
         if (newUrl.scheme() == BURN_SCHEME) {

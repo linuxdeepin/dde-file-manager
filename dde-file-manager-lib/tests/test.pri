@@ -27,6 +27,30 @@ SOURCES += \
     $$PWD/controllers/ut_appcontroller.cpp \
     $$PWD/views/ut_computerview.cpp \
     $$PWD/io/ut_dlocalfilehandler.cpp \
+    $$PWD/views/ut_dfilemanagerwindow.cpp \
+    $$PWD/controllers/ut_masteredmediacontroller.cpp \
+    $$PWD/controllers/ut_mergeddesktopcontroller.cpp \
+    $$PWD/controllers/ut_mountcontroller.cpp \
+    $$PWD/models/ut_avfsfileinfo.cpp \
+    $$PWD/models/ut_bookmark.cpp \
+    $$PWD/models/ut_computermodel.cpp \
+    $$PWD/models/ut_desktopfileinfo.cpp \
+    $$PWD/models/ut_deviceinfoparser.cpp \
+    $$PWD/models/ut_dfileselectionmodel.cpp \
+    $$PWD/models/ut_dfmrootfileinfo.cpp \
+    $$PWD/models/ut_dfmsidebarmodel.cpp \
+    $$PWD/models/ut_masteredmediafileinfo.cpp \
+    $$PWD/models/ut_mergeddesktopfileinfo.cpp \
+    $$PWD/models/ut_mountfileinfo.cpp \
+    $$PWD/models/ut_networkfileinfo.cpp \
+    $$PWD/models/ut_recentfileinfo.cpp \
+    $$PWD/models/ut_searchfileinfo.cpp \
+    $$PWD/models/ut_searchhistory.cpp \
+    $$PWD/models/ut_sharefileinfo.cpp \
+    $$PWD/models/ut_tagfileinfo.cpp \
+    $$PWD/models/ut_trashfileinfo.cpp \
+    $$PWD/models/ut_vaultfileinfo.cpp \
+    $$PWD/mediainfo/ut_dfmmediainfo.cpp
     $$PWD/bluetooth/ut_bluetoothdevice.cpp \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \
     $$PWD/bluetooth/ut_bluetoothmanager.cpp \

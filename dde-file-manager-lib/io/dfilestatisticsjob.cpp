@@ -425,11 +425,8 @@ void DFileStatisticsJob::run()
             qWarning() << "Failed on create dir iterator, for url:" << directory_url;
             continue;
         }
-        iterator->setOptimise(directory_url.isOptimise());
         while (iterator->hasNext()) {
-            //判读ios手机，传输慢，需要特殊处理优化
             DUrl url = iterator->next();
-            url.setOptimise(directory_url.isOptimise());
             d->processFile(url, directory_queue);
 
             if (!d->stateCheck()) {
