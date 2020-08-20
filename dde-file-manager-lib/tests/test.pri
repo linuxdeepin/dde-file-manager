@@ -54,4 +54,5 @@ SOURCES += \
     $$PWD/bluetooth/ut_bluetoothdevice.cpp \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \
     $$PWD/bluetooth/ut_bluetoothmanager.cpp \
-    $$PWD/bluetooth/ut_bluetoothmodel.cpp
+    $$PWD/bluetooth/ut_bluetoothmodel.cpp \
+    $$PWD/bluetooth/ut_bluetoothtransdialog.cpp
