@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     LogUtil::registerLogger();
 
     //使用异步加载win相关的插件
-    QtConcurrent::run([](){
+    auto windPluginLoader = QtConcurrent::run([](){
         winId_mtx.second.lock();
         if (winId_mtx.first){
             winId_mtx.second.unlock();
@@ -175,6 +175,7 @@ int main(int argc, char *argv[])
         args.removeAll(QStringLiteral("--working-dir"));
         QProcess::startDetached("dde-file-manager-pkexec", args, QDir::currentPath());
 
+        windPluginLoader.waitForFinished();
         return 0;
     }
 
@@ -184,7 +185,16 @@ int main(int argc, char *argv[])
 
     QString uniqueKey = app.applicationName();
 
-    bool isSingleInstance  = app.setSingleInstance(uniqueKey);
+    bool isSingleInstance  = true;
+    // cannot open the filemanager when multiple users as an administrator
+    // to open the filemanager(bug-42832). therefore, we have to give up single application mode.
+    if (DFMGlobal::isOpenAsAdmin()) {
+        qDebug() << "oepn as admin";
+        isSingleInstance = true;
+    } else {
+        isSingleInstance = app.setSingleInstance(uniqueKey);
+    }
+
     if (isSingleInstance) {
         // init app
         Q_UNUSED(FileManagerApp::instance())
@@ -197,9 +207,6 @@ int main(int argc, char *argv[])
         }
 
         signal(SIGTERM, handleSIGTERM);
-//        修复root用户无法接收程序退出信号导致程序异常卡死
-//        signal(SIGBUS, SIG_IGN); // 硬件问题引起coredump
-//        signal(SIGCHLD, SIG_IGN);
 
 #ifdef ENABLE_PPROF
         int request = app.exec();
@@ -210,8 +217,10 @@ int main(int argc, char *argv[])
 #else
         int ret = app.exec();
 #ifdef ENABLE_DAEMON
-        app.closeServer();
-        QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
+        if (!DFMGlobal::isOpenAsAdmin()) {
+            app.closeServer();
+            QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
+        }
 #endif
         return ret;
 #endif
@@ -241,7 +250,7 @@ int main(int argc, char *argv[])
             for (const QByteArray &i : socket->readAll().split(' '))
                 qDebug() << QString::fromLocal8Bit(QByteArray::fromBase64(i));
         }
-
+        windPluginLoader.waitForFinished();
         return 0;
     }
 }

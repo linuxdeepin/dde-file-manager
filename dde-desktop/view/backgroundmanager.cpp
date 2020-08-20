@@ -177,19 +177,6 @@ void BackgroundManager::pullImageSettings()
             m_backgroundImagePath.insert(sc->name(), path);
         }
     }
-
-
-//    if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())
-//            // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
-//            // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
-//            || (!path.startsWith("/") && !path.startsWith("file:"))) {
-//        path = gsettings->value("background-uris").toStringList().value(currentWorkspaceIndex);
-
-//        if (path.isEmpty()) {
-//            qWarning() << "invalid path, will not setbackground";
-//            //return;
-//        }
-    //    }
 }
 
 QString BackgroundManager::getBackgroundFromWm(const QString &screen)

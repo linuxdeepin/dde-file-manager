@@ -361,7 +361,8 @@ void AppController::asyncOpenDiskInNewWindow(const QString &path)
 void AppController::actionOpenAsAdmin(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     QStringList args;
-    args << event->url().toString();
+    // fix bug#42601 【专业版 sp3】【文件管理器】【5.2.0.21-1】搜索结果页，右键文件夹点击以管理员身份打开，新窗口未聚焦到对应文件夹
+    args << event->url().toLocalFile();
     qDebug() << args;
     QProcess::startDetached("dde-file-manager-pkexec", args);
 }
@@ -1442,9 +1443,10 @@ void UnmountWorker::doUnmount(const QString &blkStr)
     }
     // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
     // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
-    else if (err.isValid() && err.type() != QDBusError::Other) {
+    else if (err.isValid() ) {
+        QDBusError::ErrorType thistyep = err.type();
         qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-        emit unmountResult(tr("Disk is busy, cannot unmount now"), "");
+        emit unmountResult(tr("The device was unmounted insecurely"), tr("Disk is busy, cannot unmount now"));
     }
 }
 
@@ -1458,14 +1460,15 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
     if (!blk->mountPoints().empty()) {
         blk->unmount({});
         QDBusError lastError = blk->lastError();
-        if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
-            qDebug() << "blk action has been canceled";
-            return;
-        }
 
         if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
             qDebug() << "action timeout with noreply response";
             emit unmountResult(tr("Action timeout, action is canceled"), "");
+            return;
+        }
+        else if ( lastError.isValid() ) {
+            qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
+            emit unmountResult(tr("The device was removed insecurely"), tr("Disk is busy, cannot unmount now") );
             return;
         }
 

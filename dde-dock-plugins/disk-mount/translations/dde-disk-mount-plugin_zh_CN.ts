@@ -42,7 +42,7 @@
     </message>
     <message>
         <source>Eject all</source>
-        <translation>推出全部</translation>
+        <translation>全部弹出</translation>
     </message>
 </context>
 <context>

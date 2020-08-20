@@ -9,7 +9,6 @@
 
 #include "frameaccessibledefine.h"
 #include "accessible/accessibledefine.h"
-#include "../view/backgroundhelper.h"
 #include "../view/canvasgridview.h"
 #include "../view/watermaskframe.h"
 
@@ -27,7 +26,6 @@ DWIDGET_USE_NAMESPACE
 // 添加accessible
 SET_FORM_ACCESSIBLE(CanvasGridView,OBJ_NAME_CANVAS_GRID_VIEW)
 SET_FORM_ACCESSIBLE(WaterMaskFrame,OBJ_NAME_WATER_MASK_FRAME)
-SET_FORM_ACCESSIBLE(BackgroundLabel,m_w->objectName())
 SET_FORM_ACCESSIBLE(QFrame,m_w->objectName())
 SET_FORM_ACCESSIBLE(QWidget,m_w->objectName())
 SET_LABEL_ACCESSIBLE(QLabel,m_w->objectName())
@@ -44,7 +42,6 @@ QAccessibleInterface *accessibleFactory(const QString &classname, QObject *objec
 
     USE_ACCESSIBLE(classname, CanvasGridView);
     USE_ACCESSIBLE(classname, WaterMaskFrame);
-    USE_ACCESSIBLE(classname, BackgroundLabel);
     USE_ACCESSIBLE(classname, QFrame);
     USE_ACCESSIBLE(classname, QWidget);
     USE_ACCESSIBLE(classname, QLabel);

@@ -26,6 +26,7 @@
 #include "dfmevent.h"
 
 #include <DDesktopServices>
+#include <QProcess>
 
 DWIDGET_USE_NAMESPACE
 
@@ -208,7 +209,18 @@ bool DAbstractFileController::setPermissions(const QSharedPointer<DFMSetPermissi
 
 bool DAbstractFileController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    return DDesktopServices::showFileItem(event->url());
+    const DUrl &url = event->url();
+    // why? because 'DDesktopServices::showFileItem(realUrl(event->url()))' will call session bus 'org.freedesktop.FileManager1'
+    // but cannot find session bus when user is root!
+    if (DFMGlobal::isRootUser()) {
+        QStringList urls{QStringList() << url.toLocalFile()};
+        // call by platform 'mips'
+        if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" <<  urls << "--raw"))
+            return true;
+
+        return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  urls << "--raw");
+    }
+    return DDesktopServices::showFileItem(url);
 }
 
 const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const

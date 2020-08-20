@@ -628,6 +628,8 @@ void DFMSideBar::initRecentItem()
 void DFMSideBar::initBookmarkConnection()
 {
     DAbstractFileWatcher *bookmarkWatcher = DFileService::instance()->createFileWatcher(this, DUrl(BOOKMARK_ROOT), this);
+    if (!bookmarkWatcher) return;
+
     bookmarkWatcher->startWatcher();
 
     connect(bookmarkWatcher, &DAbstractFileWatcher::subfileCreated, this,
