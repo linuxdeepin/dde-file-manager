@@ -5,15 +5,7 @@ isEmpty(PREFIX){
 target.path = $${PREFIX}/bin/
 
 desktop_files.path = /usr/share/applications/
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
-    desktop_files.files = $$PWD/data/applications/mips/dde-home.desktop \
-                    $$PWD/data/applications/dde-computer.desktop \
-                    $$PWD/data/applications/dde-trash.desktop
-} else {
-    desktop_files.files = $$PWD/data/applications/dde-home.desktop \
-                    $$PWD/data/applications/dde-computer.desktop \
-                    $$PWD/data/applications/dde-trash.desktop
-}
+desktop_files.files = $$PWD/data/applications/*
 
 services.path = /usr/share/dbus-1/services
 services.files = $$PWD/data/com.deepin.dde.desktop.service
