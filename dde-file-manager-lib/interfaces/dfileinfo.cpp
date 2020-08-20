@@ -423,6 +423,7 @@ QList<QIcon> DFileInfo::additionalIcon() const
 
 static bool fileIsWritable(const QString &path, uint ownerId)
 {
+    // 以前使用 QFileInfo 获取文件是否可读的属性，速度太慢，因此这里使用系统函数来获取相关属性
     struct stat statinfo;
     int filestat = stat(path.toStdString().c_str(), &statinfo);
     if (filestat == 0 && !(statinfo.st_mode & S_IWRITE)) {
