@@ -49,4 +49,5 @@ SOURCES += \
     $$PWD/models/ut_sharefileinfo.cpp \
     $$PWD/models/ut_tagfileinfo.cpp \
     $$PWD/models/ut_trashfileinfo.cpp \
-    $$PWD/models/ut_vaultfileinfo.cpp
+    $$PWD/models/ut_vaultfileinfo.cpp \
+    $$PWD/mediainfo/ut_dfmmediainfo.cpp
