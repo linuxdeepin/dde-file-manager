@@ -309,13 +309,9 @@ bool DFileInfo::exists(const DUrl &fileUrl)
     return QFileInfo::exists(fileUrl.toLocalFile());
 }
 
-QMimeType DFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const bool boptimise)
+QMimeType DFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode)
 {
     static DMimeDatabase db;
-    //判读ios手机，传输慢，需要特殊处理优化
-    if (boptimise) {
-        return db.mimeTypeForFileOptimise(filePath, mode);
-    }
     return db.mimeTypeForFile(filePath, mode);
 }
 
@@ -816,11 +812,8 @@ QMimeType DFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
     if (!d->mimeType.isValid() || d->mimeTypeMode != mode) {
         //优化是苹果的就用新的minetype
         DUrl url = fileUrl();
-        if (url.isOptimise() && isDir()) {
-            d->mimeType = mimeType(absoluteFilePath() + QString("/"), mode, url.isOptimise());
-        } else {
-            d->mimeType = mimeType(absoluteFilePath(), mode, url.isOptimise());
-        }
+
+        d->mimeType = mimeType(absoluteFilePath(), mode);
         d->mimeTypeMode = mode;
     }
 
