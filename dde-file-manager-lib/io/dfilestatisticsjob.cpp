@@ -368,7 +368,7 @@ void DFileStatisticsJob::run()
     Q_EMIT dataNotify(0, 0, 0);
 
     QQueue<DUrl> directory_queue;
-
+    int fileCount = 0;
     if (d->fileHints.testFlag(ExcludeSourceFile)) {
         for (const DUrl &url : d->sourceUrlList) {
             if (!d->stateCheck()) {
@@ -382,6 +382,12 @@ void DFileStatisticsJob::run()
             if (!info) {
                 qDebug() << "Url not yet supported: " << url;
                 continue;
+            }
+
+            if (info->isDir() && d->fileHints.testFlag(SingleDepth)) {
+                fileCount += info->filesCount();
+            } else {
+                fileCount++;
             }
 
             if (info->isSymLink()) {
@@ -414,6 +420,12 @@ void DFileStatisticsJob::run()
                 return;
             }
         }
+    }
+
+    if (d->fileHints.testFlag(SingleDepth)) {
+        d->filesCount = fileCount;
+        directory_queue.clear();
+        return;
     }
 
     while (!directory_queue.isEmpty()) {
