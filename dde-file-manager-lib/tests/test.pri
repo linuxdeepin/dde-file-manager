@@ -41,4 +41,8 @@ SOURCES += \
     $$PWD/views/ut_computerview.cpp \
     $$PWD/models/ut_tagfileinfo.cpp \
     $$PWD/models/ut_trashfileinfo.cpp \
-    $$PWD/models/ut_vaultfileinfo.cpp
+    $$PWD/models/ut_vaultfileinfo.cpp \
+    $$PWD/mediainfo/ut_dfmmediainfo.cpp \
+    $$PWD/controllers/ut_masteredmediacontroller.cpp \
+    $$PWD/controllers/ut_mergeddesktopcontroller.cpp \
+    $$PWD/controllers/ut_mountcontroller.cpp
