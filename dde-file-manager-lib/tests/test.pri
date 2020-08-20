@@ -26,4 +26,8 @@ SOURCES += \
     $$PWD/shutil/ut_dfmregularexpression.cpp \
     $$PWD/controllers/ut_appcontroller.cpp \
     $$PWD/views/ut_computerview.cpp \
-    $$PWD/io/ut_dlocalfilehandler.cpp
+    $$PWD/io/ut_dlocalfilehandler.cpp \
+    $$PWD/bluetooth/ut_bluetoothdevice.cpp \
+    $$PWD/bluetooth/ut_bluetoothadapter.cpp \
+    $$PWD/bluetooth/ut_bluetoothmanager.cpp \
+    $$PWD/bluetooth/ut_bluetoothmodel.cpp
