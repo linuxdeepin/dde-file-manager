@@ -124,16 +124,14 @@ public:
 
         return DAbstractFileInfoPointer(new DFileInfo(info));
     }
-    //判读ios手机，传输慢，需要特殊处理优化
     const DAbstractFileInfoPointer optimiseFileInfo() const override
     {
         const QFileInfo &info = iterator.fileInfo();
         DUrl url = DUrl::fromLocalFile(info.absoluteFilePath());
-        url.setOptimise(true);
         QString abfilepath = info.absoluteFilePath();
         if (info.isDir())
             abfilepath += QString("/");
-        if (!info.isSymLink() && FileUtils::isDesktopFileOptmise(abfilepath)) {
+        if (!info.isSymLink() && FileUtils::isDesktopFile(abfilepath)) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(url));
         }
 
@@ -354,21 +352,9 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
     DUrl url = event->url();
     QString localFile = url.toLocalFile();
     QFileInfo info(localFile);
-    //处理苹果文件是否优化
-    bool boptimise = url.isOptimise();
-    if (boptimise) {
-        QString abfilepath = info.absoluteFilePath();
-        if (info.isDir())
-            abfilepath += QString("/");
-        if (!info.isSymLink() && FileUtils::isDesktopFileOptmise(abfilepath)) {
-            return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
-        }
-    } else {
-        if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
-            return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
-        }
+    if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
+        return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
-
 
     return DAbstractFileInfoPointer(new DFileInfo(event->url()));
 }

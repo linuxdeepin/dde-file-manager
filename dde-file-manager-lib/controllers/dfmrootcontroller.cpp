@@ -182,25 +182,8 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP);
-        bool bsame = false;
-        //判断是否是苹果手机
-        //判读ios手机，传输他慢，需要特殊处理优化
-        if (gvfsmp->name().startsWith("iPhone")) {
-            url.setOptimise(true);
-        }
-        for (QString str : gvfsmp->themedIconNames()) {
-            if (str.startsWith("phone-apple")) {
-                url.setOptimise(true);
-                break;
-            }
-        }
-        foreach (const QString &str, urllist) {
-            if (str == QString("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP)) {
-                bsame = true;
-                break;
-            }
-        }
-        if (bsame) {
+
+        if (urllist.contains(QString("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP))) {
             continue;
         }
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(url));
@@ -360,16 +343,6 @@ bool DFMRootFileWatcherPrivate::start()
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
-        //判读ios手机，传输他慢，需要特殊处理优化
-        if (mnt->name().startsWith("iPhone")) {
-            url.setOptimise(true);
-        }
-        for (QString str : mnt->themedIconNames()) {
-            if (str.startsWith("phone-apple")) {
-                url.setOptimise(true);
-                break;
-            }
-        }
         Q_EMIT wpar->subfileCreated(url);
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
@@ -383,7 +356,8 @@ bool DFMRootFileWatcherPrivate::start()
         if (path.isNull() || path.isEmpty()) {
             QStringList qq = mnt->getRootFile()->uri().replace("/", "").split(":");
             if (qq.size() >= 3) {
-                path = QString("/run/user/1000/gvfs/" + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2)));
+                path = QString("/run/user/")+ QString::number(getuid()) +
+                                      QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
             }
         }
         qDebug() << path;
