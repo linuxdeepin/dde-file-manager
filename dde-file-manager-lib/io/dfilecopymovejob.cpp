@@ -2285,7 +2285,7 @@ process_file:
         return ok;
     } else if (source_info->isDir()) {
         // 禁止目录复制/移动到自己里面
-        if (ischeck && new_file_info->isAncestorsUrl(source_info->fileUrl())) {
+        if (new_file_info->isAncestorsUrl(source_info->fileUrl())) {
             setError(DFileCopyMoveJob::TargetIsSelfError);
 
             DFileCopyMoveJob::Action action = handleError(source_info.constData(), new_file_info.constData());
