@@ -56,8 +56,8 @@ TEST_F(TestComputerModel, modelCanNotFindItemByUrl)
     EXPECT_FALSE(model->findIndex(DUrl("/")).isValid());
 }
 
-TEST_F(TestComputerModel, modelItemCountIsZero)
+TEST_F(TestComputerModel, modelItemCountIsNotZero)
 {
     model->getRootFile();
-    EXPECT_EQ(int(0), model->itemCount());
+    EXPECT_NE(int(0), model->itemCount());
 }
