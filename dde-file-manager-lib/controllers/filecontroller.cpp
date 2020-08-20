@@ -796,12 +796,13 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             }
         }
 
-        ~ErrorHandle()
+        ~ErrorHandle() override
         {
             if (timer_id > 0) {
                 killTimer(timer_id);
             }
             dialogManager->taskDialog()->removeTaskJob(fileJob.data());
+            fileJob->disconnect();
             qDebug() << " ErrorHandle() ";
         }
 
@@ -815,7 +816,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             }
 
             if (error == DFileCopyMoveJob::DirectoryExistsError || error == DFileCopyMoveJob::FileExistsError) {
-                if (sourceInfo->fileUrl() == targetInfo->fileUrl()) {
+                if (sourceInfo->fileUrl() == targetInfo->fileUrl() || DStorageInfo::isSameFile(sourceInfo->fileUrl().path(),targetInfo->fileUrl().path())) {
                     return DFileCopyMoveJob::CoexistAction;
                 }
             }
@@ -825,7 +826,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
                 timer_id = 0;
             }
 
-            DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job);
+            DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job,true);
             emit job->currentJobChanged(currentJob.first, currentJob.second);
 
             if (!handle) {
@@ -851,7 +852,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             //这里会出现pasteFilesV2函数线程和当前线程是同时在执行，会出现在1处pasteFilesV2所在线程 没结束，但是这时pasteFilesV2所在线程 结束
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
             if (!fileJob->isFinished()) {
-                dialogManager->taskDialog()->addTaskJob(fileJob.data(),true);
+                dialogManager->taskDialog()->addTaskJob(fileJob.data(), true);
                 emit fileJob->currentJobChanged(currentJob.first, currentJob.second);
             }
         }
@@ -912,8 +913,9 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
         return job->targetUrlList();
     }
     //fix bug 35855走新流程不去阻塞主线程，拷贝线程自己去运行，主线程返回，当拷贝线程结束了再去处理以前的相应处理
-    connect(job.data(), &QThread::finished, dialogManager->taskDialog(), [this, job, error_handle, slient, event] {
-        dialogManager->taskDialog()->removeTaskJob(job.data());
+    connect(job.data(), &QThread::finished, dialogManager->taskDialog(), [this, thisJob, error_handle, slient, event] {
+        dialogManager->taskDialog()->removeTaskJob(thisJob);
+        DUrlList targetUrlList = thisJob->targetUrlList();
         if (slient)
         {
             error_handle->deleteLater();
@@ -922,7 +924,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             QMetaObject::invokeMethod(error_handle, "deleteLater");
         }
         //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
-        this->dealpasteEnd(job->targetUrlList(), event);
+        this->dealpasteEnd(targetUrlList, event);
     });
 
     return job->targetUrlList();
@@ -1126,7 +1128,10 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
     bool use_old_filejob = false;
 
 #ifdef SW_LABEL
-    use_old_filejob = true;
+    /*fix bug 38276 【服务器UOS】【sw64】【SP1 update1(B11)】【DDE-UOS】【文件管理器】 复制文件到有相同的文件名存在的目录时，弹窗提示异常
+         *针对申威平台做针对性处理，如果io文件存在即内核做了优化则走pasteFilesV2函数，否则走pasteFilesV1
+        */
+    use_old_filejob = !QFile("/proc/thread-self/io").exists();
 #endif
 
     DUrlList list;

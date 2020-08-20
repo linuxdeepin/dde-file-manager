@@ -111,7 +111,7 @@ private:
     void showDeleteButtonForItem(const WallpaperItem *item) const;
 
     friend class Frame;
-    int m_index;
+    int m_index = 0;
 
 private slots:
     void wallpaperItemPressed();

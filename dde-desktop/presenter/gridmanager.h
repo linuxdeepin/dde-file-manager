@@ -21,68 +21,6 @@
 #include "../global/coorinate.h"
 #include "../global/singleton.h"
 
-#if 0 //多屏图标自定义配置做修改： older
-class GridCore;
-class GridManagerPrivate;
-class GridManager: public QObject, public Singleton<GridManager>
-{
-    Q_OBJECT
-public:
-    void initProfile(const QList<DAbstractFileInfoPointer> &items);
-    void initWithoutProfile(const QList<DAbstractFileInfoPointer> &items);
-
-    bool add(QPoint pos, const QString &itemId);
-    bool add(const QString &itemId);
-    bool move(const QStringList &selectedIds, const QString &itemId, int x, int y);
-    bool remove(const QString &itemId);
-
-    bool clear();
-
-    QString firstItemId();
-    QString lastItemId();
-    QStringList itemIds();
-
-    bool contains(const QString &itemId);
-    QPoint position(const QString &itemId);
-    QString itemId(int x, int y);
-    QString itemId(QPoint pos);
-    bool isEmpty(int x, int y);
-
-    const QStringList &overlapItems() const;
-    bool shouldArrange() const;
-    bool autoArrange() const;
-    bool autoMerge() const;
-    void toggleArrange();
-    void setAutoMerge(bool enable = true);
-    void toggleAutoMerge();
-    void reArrange();
-
-    int gridCount() const;
-    QPoint forwardFindEmpty(QPoint start) const;
-    QSize gridSize() const;
-    void updateGridSize(int w, int h);
-
-    GridCore *core();
-
-    void setWhetherShowHiddenFiles(bool value)noexcept;
-    bool getWhetherShowHiddenFiles()noexcept;
-
-public:
-    void dump();
-
-protected:
-    bool remove(int x, int y, const QString &itemId);
-    bool remove(QPoint pos, const QString &itemId);
-
-    friend class Singleton<GridManager>;
-
-    GridManager();
-    ~GridManager();
-
-    QScopedPointer<GridManagerPrivate> d;
-};
-#endif
-#if 1 //多屏图标自定义配置做修改： newer
 class GridCore;
 class GridManagerPrivate;
 class GridManager: public QObject, public Singleton<GridManager>
@@ -155,7 +93,7 @@ public:
     void setCurrentVirtualExpandUrl(const DUrl url);
     DUrl getCurrentVirtualExpandUrl();
     void setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList);
-    bool isGsettingShow(const QString &targetkey, const bool defaultValue);
+    QVariant isGsettingShow(const QString &targetkey, const QVariant defaultValue);
     bool desktopFileShow(const DUrl &url, const bool defaultValue);
 
 public:
@@ -176,4 +114,3 @@ protected:
 
     QScopedPointer<GridManagerPrivate> d;
 };
-#endif

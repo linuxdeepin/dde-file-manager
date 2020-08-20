@@ -39,7 +39,7 @@ class DFMAdvanceSearchBar : public DBoxWidget
 {
     Q_OBJECT
 public:
-    DFMAdvanceSearchBar(QWidget* parent = nullptr);
+    DFMAdvanceSearchBar(QWidget *parent = nullptr);
 
     void resetForm(bool updateView = true);
 
@@ -58,7 +58,7 @@ private:
     void initConnection();
 
     enum LabelIndex {
-        SEARCH_RANGE, FILE_TYPE, SIZE_RANGE, DATE_RANGE, LABEL_COUNT,
+        SEARCH_RANGE, FILE_TYPE, SIZE_RANGE, DATE_RANGE, ACCESS_DATE_RANGE, CREATE_DATE_RANGE, LABEL_COUNT,
         TRIGGER_SEARCH = 114514
     };
 

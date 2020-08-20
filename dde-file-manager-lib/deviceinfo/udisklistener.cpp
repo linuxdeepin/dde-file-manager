@@ -692,7 +692,30 @@ void UDiskListener::changeVolumeDiskInfo(const QDiskInfo &diskInfo)
 void UDiskListener::mount(const QString &path)
 {
     qDebug() << path;
-    GvfsMountManager::mount(path);
+    // The gio's method cannot mount block device, use the UDisks's method replace it.(bug 42690)
+    if (DFMGlobal::isOpenAsAdmin() && mountByUDisks(path)) {
+        return;
+    } else {
+        GvfsMountManager::mount(path);
+    }
+}
+
+bool UDiskListener::mountByUDisks(const QString &path)
+{
+    const QStringList &rootDeviceNode = DDiskManager::resolveDeviceNode(path, {});
+    if (rootDeviceNode.isEmpty()) {
+        return false;
+    }
+
+    const QString &udiskspath = rootDeviceNode.first();
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    if (blkdev) {
+        const QString &mountedPath = blkdev->mount({});
+        qDebug() << "mounted path by udisks:" << mountedPath;
+        return mountedPath.isEmpty() ? false : true;
+    }
+
+    return false;
 }
 
 void UDiskListener::unmount(const QString &path)

@@ -336,9 +336,13 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     QJsonArray::iterator ArrayIterator2 = Array2.begin();
     QJsonValueRef ElementOneValueRef2 = ArrayIterator2[0];
     QJsonObject ElementOneObject2 = ElementOneValueRef2.toObject();
-    ElementOneObject2.remove("key");
-    ElementOneObject2.remove("name");
-    ElementOneObject2.remove("options");
+    /*使能全文搜索在ARM下能正常工作*/
+    QJsonValueRef indexArrayRef = ElementOneObject2.find("options").value();
+    QJsonArray indexArray = indexArrayRef.toArray();
+    indexArray.removeFirst();
+    indexArray.removeFirst();
+    indexArrayRef = indexArray;
+
     ElementOneValueRef2 = ElementOneObject2;
     ArrayRef2 = Array2;
     ElementOneValueRef = ElementOneObject;
