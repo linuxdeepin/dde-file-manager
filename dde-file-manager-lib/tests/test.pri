@@ -50,4 +50,8 @@ SOURCES += \
     $$PWD/models/ut_tagfileinfo.cpp \
     $$PWD/models/ut_trashfileinfo.cpp \
     $$PWD/models/ut_vaultfileinfo.cpp \
-    $$PWD/mediainfo/ut_dfmmediainfo.cpp
+    $$PWD/mediainfo/ut_dfmmediainfo.cpp \
+    $$PWD/bluetooth/ut_bluetoothdevice.cpp \
+    $$PWD/bluetooth/ut_bluetoothadapter.cpp \
+    $$PWD/bluetooth/ut_bluetoothmanager.cpp \
+    $$PWD/bluetooth/ut_bluetoothmodel.cpp
