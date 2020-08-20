@@ -222,6 +222,9 @@ VaultController::VaultController(QObject *parent)
     connect(this, &VaultController::signalUnlockVault, this, &VaultController::refreshTotalSize);
     connect(this, &VaultController::signalLockVault, this, &VaultController::refreshTotalSize);
 
+    // 保险箱大小计算线程结束后，再次计算一次大小
+    connect(m_sizeWorker, &QThread::finished, this, &VaultController::onFinishCalcSize);
+
     // 初始化时，记录保险箱状态
     m_enVaultState = state();
 }
@@ -1021,12 +1024,25 @@ QString VaultController::vaultUnlockPath()
 
 void VaultController::refreshTotalSize()
 {
-    if (m_sizeWorker->isRunning()) {
-        m_sizeWorker->stop();
-        m_sizeWorker->wait();
+    // 修复BUG-42897 打开正在拷贝或剪贴的文件夹时，主界面卡死问题
+    // 当保险箱大小计算线程没有结束时，直接返回
+    if(m_sizeWorker->isRunning()){
+        m_bNeedRefreshSize = true;
+        return;
     }
+
     DUrl url = vaultToLocalUrl(makeVaultUrl());
     m_sizeWorker->start({url});
+}
+
+void VaultController::onFinishCalcSize()
+{
+    // 但保险箱大小计算完成后，再次计算一次保险箱的大小
+    if (m_bNeedRefreshSize) {
+        DUrl url = vaultToLocalUrl(makeVaultUrl());
+        m_sizeWorker->start({url});
+    }
+    m_bNeedRefreshSize = false;
 }
 
 // 创建保险箱，执行该槽函数,通知保险箱创建成功与否，并更新保险箱的状态

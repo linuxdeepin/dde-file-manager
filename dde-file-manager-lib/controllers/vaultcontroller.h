@@ -269,6 +269,11 @@ public slots:
      */
     void refreshTotalSize();
 
+    /**
+     * @brief refreshTotalSize 刷新保险箱大小完成
+     */
+    void onFinishCalcSize();
+
 private slots:
     // 创建保险箱，执行该槽函数,通知保险箱创建成功与否，并更新保险箱的状态
     void slotCreateVault(int state);
@@ -353,6 +358,9 @@ private:
     VaultState m_enVaultState{NotExisted};
 
     DFM_NAMESPACE::DFileStatisticsJob *m_sizeWorker{ nullptr };
+
+    // 计算当前保险箱大小是否需要刷新
+    bool m_bNeedRefreshSize = false;
 
     Q_DECLARE_PRIVATE(VaultController)
 };
