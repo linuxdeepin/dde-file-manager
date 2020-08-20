@@ -534,7 +534,7 @@ bool DFileInfo::isWritable() const
         if (d->cacheCanWrite < 0) {
             struct stat statinfo;
             int filestat = stat(d->fileInfo.absoluteFilePath().toStdString().c_str(), &statinfo);
-            d->cacheCanWrite = filestat == 0 && (statinfo.st_mode & S_IWRITE);
+            d->cacheCanWrite = (filestat == 0) && (statinfo.st_mode & S_IWRITE);
             if (d->inode == 0)
                 d->inode = statinfo.st_ino;
         }
