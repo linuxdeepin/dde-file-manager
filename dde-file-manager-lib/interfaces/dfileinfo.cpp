@@ -419,24 +419,21 @@ QList<QIcon> DFileInfo::additionalIcon() const
 
 static bool fileIsWritable(const QString &path, uint ownerId)
 {
-    QFileInfo dir_info(path);
-    if (!dir_info.isWritable())
+    // 以前使用 QFileInfo 获取文件是否可读的属性，速度太慢，因此这里使用系统函数来获取相关属性
+    struct stat statinfo;
+    int filestat = stat(path.toStdString().c_str(), &statinfo);
+    if (filestat == 0 && !(statinfo.st_mode & S_IWRITE)) {
         return false;
+    }
 
-#ifdef Q_OS_LINUX
     // 如果是root，则拥有权限
     if (getuid() == 0) {
         return true;
     }
 
-    QT_STATBUF statBuffer;
-    if (QT_LSTAT(QFile::encodeName(dir_info.absoluteFilePath()), &statBuffer) == 0) {
-        // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
-        if ((statBuffer.st_mode & S_ISVTX) && ownerId != getuid()) {
-            return false;
-        }
-    }
-#endif
+    // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
+    if (filestat == 0 && (statinfo.st_mode & S_ISVTX) && ownerId != getuid())
+        return false;
 
     return true;
 }
@@ -532,7 +529,11 @@ bool DFileInfo::isWritable() const
     //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
     if (d->gvfsMountFile) {
         if (d->cacheCanWrite < 0) {
-            d->cacheCanWrite = d->fileInfo.isWritable();
+            struct stat statinfo;
+            int filestat = stat(d->fileInfo.absoluteFilePath().toStdString().c_str(), &statinfo);
+            d->cacheCanWrite = (filestat == 0) && (statinfo.st_mode & S_IWRITE);
+            if (d->inode == 0)
+                d->inode = statinfo.st_ino;
         }
         return d->cacheCanWrite;
     }
@@ -1094,6 +1095,12 @@ QVariantHash DFileInfo::extraProperties() const
     }
 
     return d->extraProperties;
+}
+
+quint64 DFileInfo::inode() const
+{
+    Q_D(const DFileInfo);
+    return d->inode;
 }
 
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)
