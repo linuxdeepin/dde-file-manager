@@ -563,17 +563,21 @@ void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
     }
 
     qDebug() << m_subscribers;
-    foreach (Subscriber *sub, m_subscribers) {
+    for (Subscriber *sub : m_subscribers) {
         QString url = device->getMountPointUrl().toString();
         QStringList devList = DDiskManager::resolveDeviceNode(device->getId(), {});
-        if (devList.isEmpty()) continue;
-        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devList.first()));
-        QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
-        if (drive->optical()) {
-            url = DUrl::fromBurnFile(device->getId() + "/" + BURN_SEG_ONDISC + "/").toString();
+        if (!devList.isEmpty()) {
+            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devList.first()));
+            QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+            if (drive->optical()) {
+                url = DUrl::fromBurnFile(device->getId() + "/" + BURN_SEG_ONDISC + "/").toString();
+            }
+            qDebug() << url;
+            sub->doSubscriberAction(url);
+        } else {
+            if (DFMGlobal::isOpenAsAdmin())
+                sub->doSubscriberAction(url);
         }
-        qDebug() << url;
-        sub->doSubscriberAction(url);
     }
 
 
