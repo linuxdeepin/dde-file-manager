@@ -1153,6 +1153,14 @@ bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
         if (!temp) {
             return false;
         }
+
+        //多选文件中包含一下文件时 则不展示标记信息菜单项
+        if (info->fileUrl() == DesktopFileInfo::computerDesktopFileUrl()
+                || info->fileUrl() == DesktopFileInfo::trashDesktopFileUrl()
+                || info->fileUrl() == DesktopFileInfo::homeDesktopFileUrl())
+        {
+            return false;
+        }
     }
 
     return true;

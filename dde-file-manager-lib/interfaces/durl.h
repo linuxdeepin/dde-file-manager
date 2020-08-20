@@ -121,8 +121,6 @@ public:
     bool isFTPFile() const;
     bool isSFTPFile() const;
     bool isTaggedFile() const;
-    //判读ios手机，传输慢，需要特殊处理优化
-    bool isOptimise() const;
     bool isVaultFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions(PrettyDecoded)) const;
@@ -147,8 +145,6 @@ public:
     void setSearchedFileUrl(const DUrl &url);
     void setTaggedFileUrl(const QString &localFilePath) noexcept;
     void setBookmarkName(const QString &name);
-    //判读ios手机，传输慢，需要特殊处理优化
-    void setOptimise(const bool bOptimise);
 
     static DUrl fromLocalFile(const QString &filePath);
     static DUrl fromTrashFile(const QString &filePath);
@@ -201,8 +197,6 @@ private:
     void updateVirtualPath();
 
     QString m_virtualPath;
-
-    bool m_boptimise; //是否需要优化
 
     static QRegularExpression burn_rxp;
 };
