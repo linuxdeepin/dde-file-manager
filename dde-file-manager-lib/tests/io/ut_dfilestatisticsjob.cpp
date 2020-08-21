@@ -45,7 +45,7 @@ TEST_F(DFileStatisticsJobTest,can_running) {
 
     job->stop();
     job->togglePause();
-    url.setPath("/bin/xsys");
+    url.setPath("/etc/sane.d");
     job->start(DUrlList() << url);
     while (job->filesCount() < 10) {
 
