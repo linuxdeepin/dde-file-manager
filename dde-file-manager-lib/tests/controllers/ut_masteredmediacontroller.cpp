@@ -55,7 +55,7 @@ TEST_F(TestMasteredMediaController, boolTest)
     EXPECT_FALSE(ctrl->unShareFolder(e10));
 
     auto e11 = dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, testUrl);
-    EXPECT_TRUE(ctrl->openInTerminal(e11));
+    EXPECT_FALSE(ctrl->openInTerminal(e11));
     //    auto e12 = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, testUrl, DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DownloadsPath)));
     //    EXPECT_FALSE(ctrl->createSymlink(e12));
 
