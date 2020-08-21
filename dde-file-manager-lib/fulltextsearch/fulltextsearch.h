@@ -50,11 +50,6 @@ public:
      */
     int fulltextIndex(const QString &sourceDir);
 
-    /**
-     * @brief clearSearchResult 清除搜索结果
-     */
-    void clearSearchResult();
-
 public slots:
     void updateIndex(const QString &filePath, Type type);
 
