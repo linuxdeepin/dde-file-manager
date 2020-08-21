@@ -70,6 +70,7 @@ SOURCES += \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \
     $$PWD/bluetooth/ut_bluetoothmanager.cpp \
     $$PWD/bluetooth/ut_bluetoothmodel.cpp \
+    $$PWD/bluetooth/ut_bluetoothtransdialog.cpp \
     $$PWD/dialogs/ut_basedialog.cpp \
     $$PWD/dialogs/ut_burnoptdialog.cpp \
     $$PWD/dialogs/ut_closealldialogindicator.cpp \

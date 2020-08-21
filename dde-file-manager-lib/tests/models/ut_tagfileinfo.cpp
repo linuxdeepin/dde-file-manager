@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "models/tagfileinfo.h"
+#include "interfaces/dfmstandardpaths.h"
 
 namespace {
 class TestTagFileInfo : public testing::Test
@@ -40,7 +41,8 @@ TEST_F(TestTagFileInfo, PropertyTest)
 TEST_F(TestTagFileInfo, UrlTest)
 {
     EXPECT_STREQ("", info->parentUrl().path().toStdString().c_str());
-    EXPECT_STREQ("", info->goToUrlWhenDeleted().path().toStdString().c_str());
+    EXPECT_STREQ(DFMStandardPaths::location(DFMStandardPaths::HomePath).toStdString().c_str(),
+                 info->goToUrlWhenDeleted().path().toStdString().c_str());
     EXPECT_STREQ("/", info->redirectedFileUrl().path().toStdString().c_str());
     EXPECT_STREQ("", info->mimeDataUrl().path().toStdString().c_str());
 }
