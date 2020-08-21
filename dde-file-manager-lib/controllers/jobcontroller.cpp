@@ -167,9 +167,6 @@ void JobController::run()
         emit childrenUpdated(fileInfoQueue);
         emit addChildrenList(fileInfoQueue);
     }
-    //获取目录是否优化
-    bool boptimise = m_fileUrl.isOptimise();
-    m_iterator->setOptimise(boptimise);
     while (m_iterator->hasNext()) {
         if (m_state == Paused) {
             mutex.lock();
@@ -182,12 +179,9 @@ void JobController::run()
         }
 
         m_iterator->next();
-        //判读ios手机，传输慢，需要特殊处理优化
         DAbstractFileInfoPointer fileinfo;
-        if (boptimise) {
-            fileinfo = m_iterator->optimiseFileInfo();
-        }
-        if(!boptimise || !fileinfo) {
+        fileinfo = m_iterator->optimiseFileInfo();
+        if(!fileinfo) {
             fileinfo = m_iterator->fileInfo();
         }
         if (update_children) {
