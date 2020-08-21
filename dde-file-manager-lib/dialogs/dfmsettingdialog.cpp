@@ -45,6 +45,10 @@
 #include "singleton.h"
 #include "dfmapplication.h"
 #include "app/filesignalmanager.h"
+#include "dfmsettings.h"
+
+#define FULLTEXT_KEY      "IndexFullTextSearch"
+#define FULLTEXT_GROUP             "GenericAttribute"
 
 DFM_USE_NAMESPACE
 
@@ -388,6 +392,12 @@ DFMSettingDialog::DFMSettingDialog(QWidget *parent):
 
     //load conf value
     auto backen = new SettingBackend(this);
+    //fulltext fix 42500 配置文件无FULLTEXT_KEY 导致第一次索引失败
+    QVariant var = DFMApplication::genericSetting()->value(FULLTEXT_GROUP, FULLTEXT_KEY);
+    if (!var.isValid()) {
+        DFMApplication::genericSetting()->setValue(FULLTEXT_GROUP, FULLTEXT_KEY, QVariant(false));
+
+    }
 
     m_settings->setParent(this);
     m_settings->setBackend(backen);
