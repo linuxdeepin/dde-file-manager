@@ -59,8 +59,10 @@ TEST_F(DLocalFileHandlerTest,can_not_get_mkpath){
 
 TEST_F(DLocalFileHandlerTest,can_get_touch){
     EXPECT_EQ(true, handler->touch(fileurl));
-    QString error = handler->errorString();
+    QString error = static_cast<DFileHandler *>(handler)->errorString();
     std::cout << error.toUtf8().toStdString() << std::endl;
+    EXPECT_EQ(true, error.isEmpty());
+    error = static_cast<DFileHandler*>(handler)->errorString();
     EXPECT_EQ(true, error.isEmpty());
 }
 

@@ -32,7 +32,7 @@ class DFileIODeviceProxy : public DFileDevice
 
 public:
     explicit DFileIODeviceProxy(QIODevice *device = nullptr, QObject *parent = nullptr);
-    ~DFileIODeviceProxy();
+    ~DFileIODeviceProxy() override;
 
     void setDevice(QIODevice *device);
     QIODevice *device() const;
