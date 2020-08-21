@@ -380,7 +380,6 @@ bool SearchDiriterator::hasNext() const
 
         QString searchPath = fileInfo->filePath();
         QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
-        DFMFullTextSearchManager::getInstance()->clearSearchResult();
         for (QString res : searchResult) {
             DUrl url = m_fileUrl;
             const DUrl &realUrl = DUrl::fromUserInput(res);

@@ -292,11 +292,6 @@ int DFMFullTextSearchManager::fulltextIndex(const QString &sourceDir)
     }
 }
 
-void DFMFullTextSearchManager::clearSearchResult()
-{
-    searchResults.clear();
-}
-
 void DFMFullTextSearchManager::updateIndex(const QString &filePath, DFMFullTextSearchManager::Type type)
 {
     if (filePath.contains(".avfs"))
@@ -436,6 +431,7 @@ bool DFMFullTextSearchManager::createFileIndex(const QString &sourcePath)
 
 QStringList DFMFullTextSearchManager::fullTextSearch(const QString &keyword)
 {
+    searchResults.clear();
     if (searchByKeyworld(keyword))
         return searchResults;
 
