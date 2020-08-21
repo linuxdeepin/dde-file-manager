@@ -164,7 +164,7 @@ void DFMFullTextSearchManager::indexDocs(const IndexWriterPtr &writer, const QSt
         QString fileName = fileInfo.fileName();
         if (fileInfo.isDir()) {
             /*建立全文搜索索引排除以下目录 /boot /dev /proc /sys /root /run /lib  /usr*/
-            QRegExp reg("^(/boot)|(/dev)|(/proc)|(/sys)|(/root)|(/run)|(/lib)|(/usr)");
+            QRegExp reg("^/(boot|dev|proc|sys|root|lib|usr).*$");
             if (reg.exactMatch(filePath) || fileName == "." || fileName == ".." || fileName == ".avfs") {
                 continue;
             } else {
@@ -292,18 +292,13 @@ int DFMFullTextSearchManager::fulltextIndex(const QString &sourceDir)
     }
 }
 
-void DFMFullTextSearchManager::clearSearchResult()
-{
-    searchResults.clear();
-}
-
 void DFMFullTextSearchManager::updateIndex(const QString &filePath, DFMFullTextSearchManager::Type type)
 {
     if (filePath.contains(".avfs"))
         return;
 
-    QRegExp reg("^(/boot)|(/dev)|(/proc)|(/sys)|(/root)|(/run)|(/lib)|(/usr)");
-    if (reg.exactMatch(filePath)) {
+    QRegExp reg("^/(boot|dev|proc|sys|root|run|lib|usr).*$");
+    if (reg.exactMatch(filePath) && !filePath.startsWith("/run/user")) {
         return;
     }
 
@@ -436,6 +431,7 @@ bool DFMFullTextSearchManager::createFileIndex(const QString &sourcePath)
 
 QStringList DFMFullTextSearchManager::fullTextSearch(const QString &keyword)
 {
+    searchResults.clear();
     if (searchByKeyworld(keyword))
         return searchResults;
 

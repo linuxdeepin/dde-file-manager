@@ -14,4 +14,5 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/test-main.cpp \
-    $$PWD/funcwrapper.cpp
+    $$PWD/funcwrapper.cpp \
+    $$PWD/ut_funcwrapper.cpp
