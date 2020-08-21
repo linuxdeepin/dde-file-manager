@@ -26,6 +26,9 @@ SOURCES += \
     $$PWD/shutil/ut_dfmregularexpression.cpp \
     $$PWD/controllers/ut_appcontroller.cpp \
     $$PWD/io/ut_dlocalfilehandler.cpp \
+    $$PWD/views/ut_computerviewitemdelegate.cpp \
+    $$PWD/views/ut_dcomputerlistview.cpp \
+    $$PWD/views/ut_dfiledialog.cpp \
     $$PWD/views/ut_computerview.cpp \
     $$PWD/views/ut_dfilemanagerwindow.cpp \
     $$PWD/views/ut_dtagactionwidget.cpp \
@@ -59,6 +62,9 @@ SOURCES += \
     $$PWD/io/ut_dfilecopyqueue.cpp \
     $$PWD/io/ut_dgiofiledevice.cpp \
     $$PWD/io/ut_dlocalfiledevice.cpp \
+    $$PWD/io/ut_dfilestatisticsjob.cpp \
+    $$PWD/io/ut_dstorageinfo.cpp \
+    $$PWD/io/ut_dfilecopymovejob.cpp \
     $$PWD/io/ut_dfileiodeviceproxy.cpp \
     $$PWD/bluetooth/ut_bluetoothdevice.cpp \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \
@@ -66,6 +72,7 @@ SOURCES += \
     $$PWD/bluetooth/ut_bluetoothmodel.cpp \
     $$PWD/deviceinfo/ut_udisklistener.cpp \
     $$PWD/deviceinfo/ut_udiskdeviceinfo.cpp \
+    $$PWD/bluetooth/ut_bluetoothtransdialog.cpp \
     $$PWD/dialogs/ut_basedialog.cpp \
     $$PWD/dialogs/ut_burnoptdialog.cpp \
     $$PWD/dialogs/ut_closealldialogindicator.cpp \
