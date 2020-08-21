@@ -91,4 +91,5 @@ SOURCES += \
     $$PWD/dialogs/ut_usersharepasswordsettingdialog.cpp \
     $$PWD/plugins/ut_dfmadditionalmenu.cpp \
     $$PWD/plugins/ut_pluginmanager.cpp \
-    $$PWD/fulltextsearch/ut_fulltextsearch.cpp
+    $$PWD/fulltextsearch/ut_fulltextsearch.cpp \
+    $$PWD/controllers/ut_searchcontroller.cpp
