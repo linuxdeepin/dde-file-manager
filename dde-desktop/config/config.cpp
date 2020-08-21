@@ -43,7 +43,7 @@ Config::Config()
         configFile.absoluteDir().mkpath(".");
     }
     //不使用DFMDesktopSettings，有几率启动崩溃
-    m_settings = new QSettings(configPath);
+    m_settings = new QSettings(configPath,QSettings::IniFormat);
     auto work = new QThread(this);
     this->moveToThread(work);
     work->start();
