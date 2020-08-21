@@ -25,9 +25,17 @@ SOURCES += \
     $$PWD/shutil/ut_dfmfilelistfile.cpp \
     $$PWD/shutil/ut_dfmregularexpression.cpp \
     $$PWD/controllers/ut_appcontroller.cpp \
-    $$PWD/views/ut_computerview.cpp \
     $$PWD/io/ut_dlocalfilehandler.cpp \
+    $$PWD/views/ut_computerviewitemdelegate.cpp \
+    $$PWD/views/ut_dcomputerlistview.cpp \
+    $$PWD/views/ut_dfiledialog.cpp \
+    $$PWD/views/ut_computerview.cpp \
     $$PWD/views/ut_dfilemanagerwindow.cpp \
+    $$PWD/views/ut_dtagactionwidget.cpp \
+    $$PWD/views/ut_dtagedit.cpp \
+    $$PWD/views/ut_dtoolbar.cpp \
+    $$PWD/views/ut_extendview.cpp \
+    $$PWD/views/ut_filedialogstatusbar.cpp\
     $$PWD/controllers/ut_masteredmediacontroller.cpp \
     $$PWD/controllers/ut_mergeddesktopcontroller.cpp \
     $$PWD/controllers/ut_mountcontroller.cpp \
@@ -51,8 +59,34 @@ SOURCES += \
     $$PWD/models/ut_trashfileinfo.cpp \
     $$PWD/models/ut_vaultfileinfo.cpp \
     $$PWD/mediainfo/ut_dfmmediainfo.cpp \
+    $$PWD/io/ut_dfilecopyqueue.cpp \
+    $$PWD/io/ut_dgiofiledevice.cpp \
+    $$PWD/io/ut_dlocalfiledevice.cpp \
+    $$PWD/io/ut_dfilestatisticsjob.cpp \
+    $$PWD/io/ut_dstorageinfo.cpp \
+    $$PWD/io/ut_dfilecopymovejob.cpp \
+    $$PWD/io/ut_dfileiodeviceproxy.cpp \
     $$PWD/bluetooth/ut_bluetoothdevice.cpp \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \
     $$PWD/bluetooth/ut_bluetoothmanager.cpp \
     $$PWD/bluetooth/ut_bluetoothmodel.cpp \
-    $$PWD/bluetooth/ut_bluetoothtransdialog.cpp
+    $$PWD/bluetooth/ut_bluetoothtransdialog.cpp \
+    $$PWD/dialogs/ut_basedialog.cpp \
+    $$PWD/dialogs/ut_burnoptdialog.cpp \
+    $$PWD/dialogs/ut_closealldialogindicator.cpp \
+    $$PWD/dialogs/ut_computerpropertydialog.cpp \
+    $$PWD/dialogs/ut_connecttoserverdialog.cpp \
+    $$PWD/dialogs/ut_ddeskprenamedialog.cpp \
+    $$PWD/dialogs/ut_dfmsettingdialog.cpp \
+    $$PWD/dialogs/ut_dialogmanager.cpp \
+    $$PWD/dialogs/ut_dmultifilepropertydialog.cpp \
+    $$PWD/dialogs/ut_filepreviewdialog.cpp \
+    $$PWD/dialogs/ut_movetotrashconflictdialog.cpp \
+    $$PWD/dialogs/ut_openwithdialog.cpp \
+    $$PWD/dialogs/ut_propertydialog.cpp \
+    $$PWD/dialogs/ut_shareinfoframe.cpp \
+    $$PWD/dialogs/ut_trashpropertydialog.cpp \
+    $$PWD/dialogs/ut_usersharepasswordsettingdialog.cpp \
+    $$PWD/plugins/ut_dfmadditionalmenu.cpp \
+    $$PWD/plugins/ut_pluginmanager.cpp \
+    $$PWD/fulltextsearch/ut_fulltextsearch.cpp
