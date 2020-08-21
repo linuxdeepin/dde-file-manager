@@ -146,6 +146,8 @@ void DTagEdit::initializeConnect()
 void DTagEdit::processTags()
 {
     QList<QString> tagList{ m_crumbEdit->crumbList() };
+    //防止DTagEdit对象被析构后m_files无法访问
+    QList<DUrl> files = m_files;
 
-    DFileService::instance()->makeTagsOfFiles(this, m_files, tagList);
+    DFileService::instance()->makeTagsOfFiles(this, files, tagList);
 }
