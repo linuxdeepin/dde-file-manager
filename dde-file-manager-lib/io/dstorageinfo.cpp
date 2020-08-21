@@ -109,7 +109,7 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
         d->gioInfo = g_file_query_filesystem_info(file, "filesystem::*", nullptr, &error);
 
         if (error) {
-//            qWarning() << QString::fromLocal8Bit(error->message);
+            qWarning() << QString::fromLocal8Bit(error->message);
 
             g_error_free(error);
             error = nullptr;
@@ -118,7 +118,7 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
         GMount *mount = g_file_find_enclosing_mount(file, nullptr, &error);
 
         if (error) {
-//            qWarning() << QString::fromLocal8Bit(error->message);
+            qWarning() << QString::fromLocal8Bit(error->message);
 
             g_error_free(error);
         } else {

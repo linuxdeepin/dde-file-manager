@@ -1070,14 +1070,14 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         return;
     }
 
-    int ret = 0;
     QFont f;
     f.setPixelSize(16);
     QFontMetrics fm(f);
     int maxWith = qApp->primaryScreen()->size().width() * 3 / 4;
+    DDialog d;
 
     if (urls.count() == 1) {
-        DDialog d;
+
         d.setTitle(tr("You do not have permission to operate file/folder!"));
         QString message = urls.at(0).toLocalFile();
 
@@ -1087,13 +1087,8 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
         d.setMessage(message);
         d.setIcon(m_dialogWarningIcon, QSize(64, 64));
-        d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-
-        //点确定ret = 0， 直接点叉关闭 ret = -1
-        ret = d.exec();
     } else {
 
-        DDialog d;
         QFrame *contentFrame = new QFrame;
 
         QLabel *iconLabel = new QLabel;
@@ -1127,22 +1122,10 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         contentFrame->setLayout(contentLayout);
 
         d.addContent(contentFrame, Qt::AlignCenter);
-        d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
-        d.addButton(tr("View"), true, DDialog::ButtonRecommend);
-        //点取消 ret = 0， 点查看 ret = 1, 直接点叉关闭 ret = -1
-        ret = d.exec();
     }
-    //只有 ret = 1 时需要跳转目录
-    if (ret > 0) {
-        QWidget *w = WindowManager::getWindowById(event.windowId());
-        DFileManagerWindow *window = dynamic_cast<DFileManagerWindow *>(w);
-        if (window) {
-            DUrl parentUrl = event.urlList().at(0).parentUrl();
-            window->cd(parentUrl);
-            window->raise();
-            QTimer::singleShot(1000, [ = ] { emit fileSignalManager->requestSelectFile(event); });
-        }
-    }
+
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.exec();
 }
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)

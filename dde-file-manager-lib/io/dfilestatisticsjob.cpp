@@ -368,7 +368,7 @@ void DFileStatisticsJob::run()
     Q_EMIT dataNotify(0, 0, 0);
 
     QQueue<DUrl> directory_queue;
-
+    int fileCount = 0;
     if (d->fileHints.testFlag(ExcludeSourceFile)) {
         for (const DUrl &url : d->sourceUrlList) {
             if (!d->stateCheck()) {
@@ -382,6 +382,12 @@ void DFileStatisticsJob::run()
             if (!info) {
                 qDebug() << "Url not yet supported: " << url;
                 continue;
+            }
+
+            if (info->isDir() && d->fileHints.testFlag(SingleDepth)) {
+                fileCount += info->filesCount();
+            } else {
+                fileCount++;
             }
 
             if (info->isSymLink()) {
@@ -416,6 +422,12 @@ void DFileStatisticsJob::run()
         }
     }
 
+    if (d->fileHints.testFlag(SingleDepth)) {
+        d->filesCount = fileCount;
+        directory_queue.clear();
+        return;
+    }
+
     while (!directory_queue.isEmpty()) {
         const DUrl &directory_url = directory_queue.dequeue();
         const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(nullptr, directory_url, QStringList(),
@@ -425,11 +437,8 @@ void DFileStatisticsJob::run()
             qWarning() << "Failed on create dir iterator, for url:" << directory_url;
             continue;
         }
-        iterator->setOptimise(directory_url.isOptimise());
         while (iterator->hasNext()) {
-            //判读ios手机，传输慢，需要特殊处理优化
             DUrl url = iterator->next();
-            url.setOptimise(directory_url.isOptimise());
             d->processFile(url, directory_queue);
 
             if (!d->stateCheck()) {

@@ -1,9 +1,12 @@
-#include "views/computerview.h"
-
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+
+#include "views/computerview.h"
 #include "dfmevent.h"
 #include <QMouseEvent>
+#include "views/dfilemanagerwindow.h"
+
+
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -11,22 +14,25 @@ namespace  {
     {
     public:
         ComputerView *m_computerView;
+        QSharedPointer<DFileManagerWindow> m_window;
+
         virtual void SetUp() override
         {
-            m_computerView = new ComputerView();
+            m_window = QSharedPointer<DFileManagerWindow>(new DFileManagerWindow());
+            m_window->cd(DUrl(COMPUTER_ROOT));
+            m_computerView = dynamic_cast<ComputerView*>(m_window->getFileView());
+
             std::cout << "start TestComputerView" << std::endl;
         }
 
         virtual void TearDown() override
         {
-            delete m_computerView;
-            m_computerView = nullptr;
             std::cout << "end TestComputerView" << std::endl;
         }
     };
 }
 
-#ifdef QEVENT_LOOP
+
 TEST_F(TestComputerView, getWidget)
 {
     ASSERT_NE(nullptr, m_computerView->widget());
@@ -68,11 +74,4 @@ TEST_F(TestComputerView, tstResizeEvent)
     EXPECT_EQ(10, size.width());
     EXPECT_EQ(10, size.height());
 }
-
-TEST_F(TestComputerView, tstEventFilter)
-{
-    // something to do.
-}
-#endif
-
 

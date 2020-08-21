@@ -28,6 +28,7 @@ public:
 TEST_F(TestDFMMediaInfo, StringPropertyTest)
 {
     info->startReadInfo();
+    QThread::msleep(200);
     EXPECT_STREQ("", DFMMediaInfo::generalInformation("test.mp3").toStdString().c_str());
     EXPECT_STREQ("", info->Value("").toStdString().c_str());
 }
