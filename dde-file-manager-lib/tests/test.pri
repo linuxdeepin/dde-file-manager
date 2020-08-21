@@ -26,7 +26,6 @@ SOURCES += \
     $$PWD/shutil/ut_dfmregularexpression.cpp \
     $$PWD/controllers/ut_appcontroller.cpp \
     $$PWD/io/ut_dlocalfilehandler.cpp \
-    $$PWD/views/ut_dfilemanagerwindow.cpp \
     $$PWD/views/ut_computerviewitemdelegate.cpp \
     $$PWD/views/ut_dcomputerlistview.cpp \
     $$PWD/views/ut_dfiledialog.cpp \
