@@ -51,6 +51,10 @@ SOURCES += \
     $$PWD/models/ut_trashfileinfo.cpp \
     $$PWD/models/ut_vaultfileinfo.cpp \
     $$PWD/mediainfo/ut_dfmmediainfo.cpp \
+    $$PWD/io/ut_dfilecopyqueue.cpp \
+    $$PWD/io/ut_dgiofiledevice.cpp \
+    $$PWD/io/ut_dlocalfiledevice.cpp \
+    $$PWD/io/ut_dfileiodeviceproxy.cpp \
     $$PWD/bluetooth/ut_bluetoothdevice.cpp \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \
     $$PWD/bluetooth/ut_bluetoothmanager.cpp \
