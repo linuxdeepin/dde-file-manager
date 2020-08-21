@@ -55,6 +55,7 @@
 #include "../desktop.h"
 #include "../config/config.h"
 #include "screen/screenhelper.h"
+#include "../models/desktopfileinfo.h"
 
 #include "interfaces/private/mergeddesktop_common_p.h"
 #include "private/canvasviewprivate.h"
@@ -1345,6 +1346,21 @@ void CanvasGridView::dropEvent(QDropEvent *event)
     DAbstractFileInfoPointer targetInfo = model()->fileInfo(indexAt(event->pos()));
     if (!targetInfo || dropOnSelf) {
         targetInfo = model()->fileInfo(rootIndex());
+    }
+
+    //防止桌面的计算机/回收站/主目录被拖拽复制到其他目录中
+    if (indexAt(event->pos()).isValid() &&
+            (targetInfo->isDir() ||
+            targetInfo->fileUrl() == DesktopFileInfo::homeDesktopFileUrl())) {
+        for (QUrl url : m_urlsForDragEvent) {
+            DUrl durl(url);
+            if ((DesktopFileInfo::computerDesktopFileUrl() == durl) ||
+                    (DesktopFileInfo::trashDesktopFileUrl() == durl) ||
+                    (DesktopFileInfo::homeDesktopFileUrl() == durl)) {
+                event->setDropAction(Qt::IgnoreAction);
+                return;
+            }
+        }
     }
 
     CanvasGridView *sourceView = dynamic_cast<CanvasGridView*>(event->source());
