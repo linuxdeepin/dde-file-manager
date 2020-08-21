@@ -38,7 +38,7 @@ class DFileStatisticsJob : public QThread
 
 public:
     explicit DFileStatisticsJob(QObject *parent = nullptr);
-    ~DFileStatisticsJob();
+    ~DFileStatisticsJob() override;
 
     enum State {
         StoppedState,

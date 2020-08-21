@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "models/vaultfileinfo.h"
+#include "interfaces/dfmstandardpaths.h"
 
 namespace {
 class TestVaultFileInfo : public testing::Test
@@ -42,7 +43,8 @@ TEST_F(TestVaultFileInfo, BoolPropertyTest)
 TEST_F(TestVaultFileInfo, UrlTest)
 {
     EXPECT_STREQ("", info->parentUrl().path().toStdString().c_str());
-    EXPECT_STREQ("/", info->goToUrlWhenDeleted().path().toStdString().c_str());
+    EXPECT_STREQ(DFMStandardPaths::location(DFMStandardPaths::HomePath).toStdString().c_str(),
+                 info->goToUrlWhenDeleted().path().toStdString().c_str());
     EXPECT_TRUE(info->redirectedFileUrl().path().contains(".local/share/applications/vault_unlocked/"));
     EXPECT_TRUE(info->mimeDataUrl().path().contains(".local/share/applications/vault_unlocked"));
 }
