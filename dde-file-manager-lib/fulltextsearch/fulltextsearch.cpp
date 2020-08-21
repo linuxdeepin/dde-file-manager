@@ -93,7 +93,7 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
         parser_type = PlainTextExtractor::PARSER_XLSB;
     else if (ext == "doc" || ext == "dot" || ext == "wps")
         parser_type = PlainTextExtractor::PARSER_DOC;
-    else if (ext == "ppt" || ext == "pps")
+    else if (ext == "ppt" || ext == "pps" || ext == "dps")
         parser_type = PlainTextExtractor::PARSER_PPT;
     else if (ext == "pdf")
         parser_type = PlainTextExtractor::PARSER_PDF;
@@ -173,7 +173,7 @@ void DFMFullTextSearchManager::indexDocs(const IndexWriterPtr &writer, const QSt
         } else {
             QString suffix = fileInfo.suffix();
             QRegExp reg("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
-                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)");
+                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
             if (reg.exactMatch(suffix)) {
                 qDebug() << "Adding [" << filePath << "]";
                 try {
@@ -309,7 +309,7 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath, DFMFullTextS
             if (fileInfo.isFile()) {
                 QString suffix = fileInfo.suffix();
                 reg.setPattern("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
-                               "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)");
+                               "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
                 if (reg.exactMatch(suffix)) {
                     IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
                                                                    newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
@@ -346,7 +346,7 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath, DFMFullTextS
             if (fileInfo.isFile()) {
                 QString suffix = fileInfo.suffix();
                 reg.setPattern("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
-                               "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)");
+                               "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
                 if (reg.exactMatch(suffix)) {
                     IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
                                                                    newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
