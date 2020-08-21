@@ -33,7 +33,7 @@ class DGIOFileDevice : public DFileDevice
 
 public:
     explicit DGIOFileDevice(const DUrl &url, QObject *parent = nullptr);
-    ~DGIOFileDevice();
+    ~DGIOFileDevice() override;
 
     bool setFileUrl(const DUrl &url) override;
 
