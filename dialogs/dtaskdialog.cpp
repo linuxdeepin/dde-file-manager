@@ -622,6 +622,7 @@ void DTaskDialog::removeTaskByPath(QString jobId)
         setTitle(m_taskListWidget->count());
         if (m_taskListWidget->count() == 0) {
             close();
+            emit closed();
         }
     }
 }

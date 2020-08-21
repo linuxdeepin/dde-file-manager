@@ -372,14 +372,18 @@ bool SearchDiriterator::hasNext() const
 
             return false;
         };
+        DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
+        if (fileInfo->isVirtualEntry()) {
+            bFullTextSearchEnd = true;
+            return true;
+        }
 
+        QString searchPath = fileInfo->filePath();
         QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
-        DFMFullTextSearchManager::getInstance()->clearSearchResult();
         for (QString res : searchResult) {
             DUrl url = m_fileUrl;
             const DUrl &realUrl = DUrl::fromUserInput(res);
             url.setSearchedFileUrl(realUrl);
-            QString searchPath = targetUrl.toLocalFile();
             if (res.startsWith(searchPath.endsWith("/") ? searchPath : (searchPath + "/"))) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
                 // 隐藏文件不显示
                 if (isHidden(DUrl::fromLocalFile(res))) {
