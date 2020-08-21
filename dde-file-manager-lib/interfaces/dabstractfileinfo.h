@@ -326,6 +326,8 @@ public:
     virtual const QDateTime getReadTime() const;
     virtual void updateReadTime(const QDateTime &);
 
+    virtual quint64 inode() const;
+
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);
     void setProxy(const DAbstractFileInfoPointer &proxy);

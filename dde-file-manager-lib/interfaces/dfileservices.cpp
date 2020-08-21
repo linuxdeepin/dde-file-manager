@@ -260,7 +260,6 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     }
     case DFMEvent::DeleteFiles: {
-
         // 解决撤销操作后文件删除不提示问题
         for (const DUrl &url : event->fileUrlList()) {
             //书签保存已删除目录，在这里剔除对书签文件是否存在的判断
@@ -277,7 +276,10 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
             const DAbstractFileInfoPointer &f = createFileInfo(this, url);
             if (f && f->exists()) {
                 static bool lock = false;
-                if (!lock && DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) == DDialog::Accepted) {
+                // 如果传入的 event 中 silent 为 true，就不再弹框询问是否删除
+                auto delEvent = dynamic_cast<DFMDeleteEvent *>(event.data());
+                bool deleteFileSilently = delEvent && delEvent->silent();
+                if (!lock && (deleteFileSilently || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) == DDialog::Accepted)) {
                     lock = true;
                     result = CALL_CONTROLLER(deleteFiles);
                     lock = false;

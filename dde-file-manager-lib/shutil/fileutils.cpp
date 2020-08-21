@@ -1439,13 +1439,6 @@ void FileUtils::umountAVFS()
     QProcess::startDetached("/usr/bin/umountavfs");
 }
 
-bool FileUtils::isDesktopFileOptmise(const QString &filePath)
-{
-    QMimeType mt = DMimeDatabase().mimeTypeForFileOptimise(filePath);
-    return mt.name() == "application/x-desktop" &&
-           mt.suffixes().contains("desktop", Qt::CaseInsensitive);
-}
-
 void FileUtils::addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype)
 {
     if (filePath.isEmpty()) {

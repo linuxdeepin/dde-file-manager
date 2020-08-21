@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e 
+
+HOME="/home"
+for dir in $HOME/*
+do
+    if [ -d "$dir" ]
+    then 
+        home_desktop="$dir/Desktop/dde-home.desktop"
+        if [ -f "$home_desktop" ]
+        then
+            rm -f $home_desktop
+        fi
+        
+    fi
+done
+
+home_desktop="/usr/share/applications/dde-home.desktop"
+if [ -f $home_desktop ]
+then
+   rm -f $home_desktop
+fi
+
+#DEBHELPER#
+exit 0
