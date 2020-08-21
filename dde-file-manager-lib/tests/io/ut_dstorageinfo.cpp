@@ -139,7 +139,12 @@ TEST_F(DStorageInfoTest,can_operator) {
 }
 
 TEST_F(DStorageInfoTest,can_isSameFile) {
-    EXPECT_TRUE(DStorageInfo::isSameFile("~/sys", "~/sys"));
+    DUrl url1,url2;
+    url1.setScheme(FILE_SCHEME);
+    url2.setScheme(FILE_SCHEME);
+    url1.setPath("~/test.log");
+    url2.setPath("~/test.log");
+    EXPECT_TRUE(DStorageInfo::isSameFile(url1.path(), url2.path()));
     EXPECT_FALSE(DStorageInfo::isSameFile("/sys/bin/aconnect", "/sys/bin/aconnect"));
     EXPECT_FALSE(DStorageInfo::isSameFile("/sys/bin/aconnect", "/sys/bin/aconnec"));
     EXPECT_FALSE(DStorageInfo::isSameFile("/sys/bin/aconnect", "/sys/bin/aclocal"));
