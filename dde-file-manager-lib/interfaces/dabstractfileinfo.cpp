@@ -54,6 +54,8 @@
 #include "bluetooth/bluetoothmanager.h"
 #include "bluetooth/bluetoothmodel.h"
 
+#include "io/dstorageinfo.h"
+
 #include <DDesktopEntry>
 
 #include <QDateTime>
@@ -780,7 +782,7 @@ bool DAbstractFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) 
             ancestors->append(parentUrl);
         }
 
-        if (parentUrl == url) {
+        if (parentUrl == url || DStorageInfo::isSameFile(parentUrl.path(), url.path())) {
             return true;
         }
 
@@ -1470,6 +1472,11 @@ const QDateTime DAbstractFileInfo::getReadTime() const
 void DAbstractFileInfo::updateReadTime(const QDateTime &)
 {
 
+}
+
+quint64 DAbstractFileInfo::inode() const
+{
+    return 0;
 }
 
 void DAbstractFileInfo::makeToActive()

@@ -39,15 +39,6 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase:
 {
     return mimeTypeForFile(QFileInfo(fileName), mode);
 }
-//判读ios手机，传输慢，需要特殊处理优化
-QMimeType DMimeDatabase::mimeTypeForFileOptimise(const QString &fileName, QMimeDatabase::MatchMode mode) const
-{
-    QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileName);
-    if (!results.isEmpty()) {
-        return results.first();
-    }
-    return mimeTypeForFile(fileName,mode);
-}
 
 QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode) const
 {

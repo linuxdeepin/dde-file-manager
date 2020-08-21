@@ -2039,7 +2039,12 @@ bool DFileCopyMoveJobPrivate::doProcessRefine(const DUrl &from, const DAbstractF
     }
 
     if (!source_info->exists()) {
-        setError(DFileCopyMoveJob::NonexistenceError);
+        //如果是从root目录拷贝到普通用户的目录，需要提示权限错误
+        if (source_info->path().startsWith("/root/") && !target_info->path().startsWith("/root/")) {
+            setError(DFileCopyMoveJob::PermissionError);
+        } else {
+            setError(DFileCopyMoveJob::NonexistenceError);
+        }
 
         return handleError(source_info.constData(), nullptr) == DFileCopyMoveJob::SkipAction;
     }
@@ -2285,7 +2290,7 @@ process_file:
         return ok;
     } else if (source_info->isDir()) {
         // 禁止目录复制/移动到自己里面
-        if (ischeck && new_file_info->isAncestorsUrl(source_info->fileUrl())) {
+        if (new_file_info->isAncestorsUrl(source_info->fileUrl())) {
             setError(DFileCopyMoveJob::TargetIsSelfError);
 
             DFileCopyMoveJob::Action action = handleError(source_info.constData(), new_file_info.constData());
