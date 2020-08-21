@@ -2386,7 +2386,10 @@ void CanvasGridView::initConnection()
                 if (!addRet && rmRet){
                     qWarning() << "error move!!!" << relocateItem << "from" << orgPos
                                << "to" << pos << "fail." << "put it on" << orgPos;
-                    GridManager::instance()->add(m_screenNum,orgPos, relocateItem);
+                    bool ret = GridManager::instance()->add(m_screenNum,orgPos, relocateItem);
+                    if (!ret){
+                        qWarning() << "error resotre " << relocateItem << " to" << orgPos << "fail.";
+                    }
                 }
             }
 
@@ -2400,7 +2403,12 @@ void CanvasGridView::initConnection()
                     auto orgPos = removed.value(relocateItem);
                     qWarning() << "error move!!!" << localFile << "from" << orgPos
                                << "to" << tarPos << "fail." << "put it on" << orgPos;
-                    GridManager::instance()->add(orgPos.first, orgPos.second, localFile);
+                    ret = GridManager::instance()->add(orgPos.first, orgPos.second, localFile);
+                    //还原失败，放入堆叠
+                    if (!ret){
+                        int iret = GridManager::instance()->addToOverlap(localFile);
+                        qWarning() << "error put " << localFile << " on" << orgPos << "fail. move to overlaps" << iret;
+                    }
                 }
             }
             d->dodgeAnimationing = false;
