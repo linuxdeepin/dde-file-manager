@@ -64,4 +64,22 @@ SOURCES += \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \
     $$PWD/bluetooth/ut_bluetoothmanager.cpp \
     $$PWD/bluetooth/ut_bluetoothmodel.cpp \
+    $$PWD/dialogs/ut_basedialog.cpp \
+    $$PWD/dialogs/ut_burnoptdialog.cpp \
+    $$PWD/dialogs/ut_closealldialogindicator.cpp \
+    $$PWD/dialogs/ut_computerpropertydialog.cpp \
+    $$PWD/dialogs/ut_connecttoserverdialog.cpp \
+    $$PWD/dialogs/ut_ddeskprenamedialog.cpp \
+    $$PWD/dialogs/ut_dfmsettingdialog.cpp \
+    $$PWD/dialogs/ut_dialogmanager.cpp \
+    $$PWD/dialogs/ut_dmultifilepropertydialog.cpp \
+    $$PWD/dialogs/ut_filepreviewdialog.cpp \
+    $$PWD/dialogs/ut_movetotrashconflictdialog.cpp \
+    $$PWD/dialogs/ut_openwithdialog.cpp \
+    $$PWD/dialogs/ut_propertydialog.cpp \
+    $$PWD/dialogs/ut_shareinfoframe.cpp \
+    $$PWD/dialogs/ut_trashpropertydialog.cpp \
+    $$PWD/dialogs/ut_usersharepasswordsettingdialog.cpp \
+    $$PWD/plugins/ut_dfmadditionalmenu.cpp \
+    $$PWD/plugins/ut_pluginmanager.cpp \
     $$PWD/fulltextsearch/ut_fulltextsearch.cpp
