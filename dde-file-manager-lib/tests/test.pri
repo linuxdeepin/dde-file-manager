@@ -25,9 +25,14 @@ SOURCES += \
     $$PWD/shutil/ut_dfmfilelistfile.cpp \
     $$PWD/shutil/ut_dfmregularexpression.cpp \
     $$PWD/controllers/ut_appcontroller.cpp \
-    $$PWD/views/ut_computerview.cpp \
     $$PWD/io/ut_dlocalfilehandler.cpp \
+    $$PWD/views/ut_computerview.cpp \
     $$PWD/views/ut_dfilemanagerwindow.cpp \
+    $$PWD/views/ut_dtagactionwidget.cpp \
+    $$PWD/views/ut_dtagedit.cpp \
+    $$PWD/views/ut_dtoolbar.cpp \
+    $$PWD/views/ut_extendview.cpp \
+    $$PWD/views/ut_filedialogstatusbar.cpp\
     $$PWD/controllers/ut_masteredmediacontroller.cpp \
     $$PWD/controllers/ut_mergeddesktopcontroller.cpp \
     $$PWD/controllers/ut_mountcontroller.cpp \
