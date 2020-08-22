@@ -231,7 +231,7 @@ void DFileWatcherPrivate::_q_handleFileDeleted(const QString &path, const QStrin
         return;
 
     emit q->fileDeleted(DUrl::fromLocalFile(path));
-    DFMFullTextSearchManager::getInstance()->updateIndex(path, DFMFullTextSearchManager::Delete);
+    DFMFullTextSearchManager::getInstance()->addIndexQueue(path, DFMFullTextSearchManager::Delete);
 }
 
 void DFileWatcherPrivate::_q_handleFileAttributeChanged(const QString &path, const QString &parentPath)
@@ -250,15 +250,15 @@ bool DFileWatcherPrivate::_q_handleFileMoved(const QString &from, const QString 
 
     if ((fromParent == this->path && toParent == this->path) || from == this->path) {
         emit q->fileMoved(DUrl::fromLocalFile(from), DUrl::fromLocalFile(to));
-        DFMFullTextSearchManager::getInstance()->updateIndex(to, DFMFullTextSearchManager::Add);
+        DFMFullTextSearchManager::getInstance()->addIndexQueue(to, DFMFullTextSearchManager::Add);
     } else if (fromParent == this->path) {
         emit q->fileDeleted(DUrl::fromLocalFile(from));
-        DFMFullTextSearchManager::getInstance()->updateIndex(from, DFMFullTextSearchManager::Delete);
+        DFMFullTextSearchManager::getInstance()->addIndexQueue(from, DFMFullTextSearchManager::Delete);
     } else if (watchFileList.contains(from)) {
         emit q->fileDeleted(url);
     } else if (toParent == this->path) {
         emit q->subfileCreated(DUrl::fromLocalFile(to));
-        DFMFullTextSearchManager::getInstance()->updateIndex(to, DFMFullTextSearchManager::Add);
+        DFMFullTextSearchManager::getInstance()->addIndexQueue(to, DFMFullTextSearchManager::Add);
     } else {
         return false;
     }
@@ -281,7 +281,7 @@ void DFileWatcherPrivate::_q_handleFileCreated(const QString &path, const QStrin
     Q_Q(DFileWatcher);
 
     emit q->subfileCreated(DUrl::fromLocalFile(path));
-    DFMFullTextSearchManager::getInstance()->updateIndex(path, DFMFullTextSearchManager::Add);
+    DFMFullTextSearchManager::getInstance()->addIndexQueue(path, DFMFullTextSearchManager::Add);
 }
 
 void DFileWatcherPrivate::_q_handleFileModified(const QString &path, const QString &parentPath)
@@ -294,7 +294,7 @@ void DFileWatcherPrivate::_q_handleFileModified(const QString &path, const QStri
     Q_Q(DFileWatcher);
 
     emit q->fileModified(DUrl::fromLocalFile(path));
-    DFMFullTextSearchManager::getInstance()->updateIndex(path, DFMFullTextSearchManager::Modify);
+    DFMFullTextSearchManager::getInstance()->addIndexQueue(path, DFMFullTextSearchManager::Modify);
 }
 
 void DFileWatcherPrivate::_q_handleFileClose(const QString &path, const QString &parentPath)

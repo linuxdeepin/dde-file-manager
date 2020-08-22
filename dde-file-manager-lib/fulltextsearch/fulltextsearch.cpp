@@ -54,7 +54,7 @@ public:
 };
 
 DFMFullTextSearchManager::DFMFullTextSearchManager(QObject *parent)
-    : QObject (parent)
+    : QThread (parent)
 {
     status = false;
     indexStorePath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()
@@ -246,6 +246,18 @@ void DFMFullTextSearchManager::doPagingSearch(const SearcherPtr &searcher, const
     }
 }
 
+void DFMFullTextSearchManager::run()
+{
+    while (!indexQueue.isEmpty()) {
+        mutex.lock();
+        auto info = indexQueue.dequeue();
+        mutex.unlock();
+
+        updateIndex(info.first, info.second);
+    }
+    m_state = Stoped;
+}
+
 bool DFMFullTextSearchManager::searchByKeyworld(const QString &keyword)
 {
     try {
@@ -290,6 +302,24 @@ int DFMFullTextSearchManager::fulltextIndex(const QString &sourceDir)
         });
         return 1;
     }
+}
+
+void DFMFullTextSearchManager::start()
+{
+    if (m_state == Started)
+        return;
+
+    m_state = Started;
+    QThread::start();
+}
+
+void DFMFullTextSearchManager::addIndexQueue(const QString &filePath, DFMFullTextSearchManager::Type type)
+{
+    mutex.lock();
+    indexQueue.enqueue(qMakePair(filePath, type));
+    mutex.unlock();
+
+    start();
 }
 
 void DFMFullTextSearchManager::updateIndex(const QString &filePath, DFMFullTextSearchManager::Type type)
