@@ -413,9 +413,6 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
     // handle old info
     ShareInfo oldInfo = getOldShareInfoByNewInfo(info);
     qDebug() << oldInfo << info;
-    if (oldInfo.isValid()) {
-        deleteUserShareByPath(oldInfo.path());
-    }
     if (!info.shareName().isEmpty() && QFile(info.path()).exists()) {
 
 
@@ -501,10 +498,12 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             dialogManager->showErrorDialog(QString(), err);
             return false;
         }
+        if (oldInfo.isValid()) {
+            deleteUserShareByPath(oldInfo.path());
+        }
 
         return true;
     }
-
     return false;
 }
 
