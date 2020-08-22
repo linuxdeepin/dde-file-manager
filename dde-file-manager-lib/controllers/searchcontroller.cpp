@@ -275,6 +275,7 @@ public:
 #endif
 
     bool closed = false;
+    mutable bool hasExecuteFullTextSearch = false;/*全文搜索状态判断，false表示搜索未开始，true表示搜索已经完成。全文搜索只运行一次就出结果，其他搜索需要多次运行*/
 };
 
 SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFilters,
@@ -344,12 +345,11 @@ DUrl SearchDiriterator::next()
 
 bool SearchDiriterator::hasNext() const
 {
-    static bool bFullTextSearchEnd = false;/*全文搜索状态判断，false表示搜索未开始，true表示搜索已经完成。全文搜索只运行一次就出结果，其他搜索需要多次运行*/
     if (!childrens.isEmpty()) {
         return true;
     }
     // 全文搜索
-    if (!bFullTextSearchEnd && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
+    if (!hasExecuteFullTextSearch && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
         // 判断文件是否为隐藏文件
         std::function<bool(const DUrl &)> isHidden;
         isHidden = [ =, &isHidden](const DUrl & fileUrl) ->bool {
@@ -374,7 +374,7 @@ bool SearchDiriterator::hasNext() const
         };
         DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
         if (fileInfo->isVirtualEntry()) {
-            bFullTextSearchEnd = true;
+            hasExecuteFullTextSearch = true;
             return true;
         }
 
@@ -392,13 +392,12 @@ bool SearchDiriterator::hasNext() const
                 childrens << url;
             }
         }
-        bFullTextSearchEnd = true;
+        hasExecuteFullTextSearch = true;
         return true;
     }
 
     forever {
         if (closed) {
-            bFullTextSearchEnd = false;
             return false;
         }
 
@@ -444,7 +443,6 @@ bool SearchDiriterator::hasNext() const
 
         while (it->hasNext()) {
             if (closed) {
-                bFullTextSearchEnd = false;
                 return false;
             }
 
@@ -497,7 +495,6 @@ bool SearchDiriterator::hasNext() const
         it.clear();
     }
 
-    bFullTextSearchEnd = false;
     return false;
 }
 
