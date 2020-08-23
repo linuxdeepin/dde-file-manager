@@ -82,6 +82,10 @@ DCompleterListView::DCompleterListView(QWidget *parent)
                         return;
                     }
                 }
+                if (window != qApp->activeWindow()) {
+                    hideMe();
+                    return;
+                }
             }
         }
         if (rect().contains(point))
