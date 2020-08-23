@@ -986,7 +986,7 @@ DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &
 
     // save event
     const QVariant &result = DFMEventDispatcher::instance()->processEvent<DFMGetChildrensEvent>(event->sender(), DUrl::fromTrashFile("/"),
-                                                                                                QStringList(), QDir::AllEntries);
+                                                                                                QStringList(), QDir::AllEntries | QDir::Hidden);
     const QList<DAbstractFileInfoPointer> &infos = qvariant_cast<QList<DAbstractFileInfoPointer>>(result);
 
     if (infos.isEmpty()) {
