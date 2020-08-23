@@ -26,6 +26,7 @@
 #include "views/dcompleterlistview.h"
 #include "interfaces/dfmcrumbinterface.h"
 #include "controllers/searchhistroymanager.h"
+#include "controllers/vaultcontroller.h"
 
 #include "singleton.h"
 #include "dfileservices.h"
@@ -409,7 +410,10 @@ void DFMAddressBar::initConnections()
         if (text().isEmpty()) {
             return;
         }
-        QString str = text();
+
+        //! 如果为保险箱路径则进行路径转换
+        QString str = VaultController::toInternalPath(text());
+
         if (!DUrl::fromUserInput(str).isLocalFile()) {
             if (!historyList.contains(str)) {
                 historyList.append(str);
@@ -669,7 +673,11 @@ void DFMAddressBar::onTextEdited(const QString &text)
 
     // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
     //         completerBaseString should be "/aa/bbbb/"
-    updateCompletionState(text);
+
+    //! 如果为保险箱路径则进行路径转换
+    QString realUrl = VaultController::toInternalPath(text);
+
+    updateCompletionState(realUrl);
 }
 
 bool DFMAddressBar::event(QEvent *e)
