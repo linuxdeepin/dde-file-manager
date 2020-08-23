@@ -883,9 +883,11 @@ bool VaultController::isVaultFile(QString path)
     if (rootPath.back() == "/") {
         rootPath.chop(1);
     }
-    if (path.contains(rootPath)) {
+
+    if (path.contains(rootPath) && path.left(6) != "search") {
         bVaultFile = true;
     }
+
     return bVaultFile;
 }
 
