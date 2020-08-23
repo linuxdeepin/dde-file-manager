@@ -262,6 +262,9 @@ public:
 
     void syncAllProfile()
     {
+        if (allItems().isEmpty())
+            return;
+
         if(m_bSingleMode){
             syncProfile(1);
         }else {
