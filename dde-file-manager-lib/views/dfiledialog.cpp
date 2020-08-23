@@ -31,6 +31,7 @@
 #include "dfmaddressbar.h"
 #include "views/dstatusbar.h"
 #include "views/filedialogstatusbar.h"
+#include "controllers/vaultcontroller.h"
 
 #include <DTitlebar>
 #include <DDialog>
@@ -186,7 +187,14 @@ void DFileDialog::setDirectoryUrl(const DUrl &directory)
     if (!getFileView()) {
         return;
     }
-    getFileView()->cd(directory);
+    // 修复BUG-44160
+    DUrl url(directory);
+    if(VaultController::isVaultFile(directory.path())){ // 判断是否是保险箱路径
+        if(VaultController::Encrypted == VaultController::ins()->state()){  // 判断保险箱当前状态,如果处于加密状态
+            url.setPath(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first());
+        }
+    }
+    getFileView()->cd(url);
 }
 
 QUrl DFileDialog::directoryUrl() const
