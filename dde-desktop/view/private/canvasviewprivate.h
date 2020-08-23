@@ -172,7 +172,6 @@ public:
     CanvasViewHelper    *fileViewHelper = nullptr;
 
     bool                 bReloadItem;
-    bool                 bModelRefreshing = false;
 
     // secice system up
 //    QTimer              *syncTimer          = nullptr;
