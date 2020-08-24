@@ -462,7 +462,6 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
     // bug-35335 将wid设置为信号接收方，避免wid窗口回收后，继续接收currentJobChanged信号，执行曹函数，导致崩溃
     connect(job, &DFileCopyMoveJob::currentJobChanged, wid, [this, job, wid](const DUrl from, const DUrl to,const bool iseeroroc) {
        QMutexLocker lk(&currentjobchangemutex);
-       qDebug() << "currentJobChanged " <<  from << to;
        if (!iseeroroc && iserroroc.contains(QString::number(quintptr(job), 16)) &&
              iserroroc.value(QString::number(quintptr(job), 16))){
             return ;
