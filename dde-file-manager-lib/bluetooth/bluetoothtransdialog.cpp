@@ -205,14 +205,14 @@ void BluetoothTransDialog::initConn()
         if (sessionPath != m_currSessionPath)
             return;
         m_stack->setCurrentIndex(FailedPage);
-        bluetoothManager->cancleTransfer(sessionPath);
+        bluetoothManager->cancelTransfer(sessionPath);
     });
 
     connect(bluetoothManager, &BluetoothManager::transferFailed, this, [this](const QString &sessionPath, const QString &filePath, const QString &errMsg) {
         if (sessionPath != m_currSessionPath)
             return;
         m_stack->setCurrentIndex(FailedPage);
-        bluetoothManager->cancleTransfer(sessionPath);
+        bluetoothManager->cancelTransfer(sessionPath);
         qDebug() << "filePath: " << filePath
                  << "\nerrorMsg: " << errMsg;
     });
@@ -554,7 +554,7 @@ void BluetoothTransDialog::closeEvent(QCloseEvent *event)
     if (m_stack->currentIndex() == WaitForRecvPage
         || m_stack->currentIndex() == TransferPage
         || m_stack->currentIndex() == FailedPage) {
-        bluetoothManager->cancleTransfer(m_currSessionPath);
+        bluetoothManager->cancelTransfer(m_currSessionPath);
     }
 }
 
