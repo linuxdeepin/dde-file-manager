@@ -158,6 +158,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
         QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
         bd->setJobWindowId(static_cast<int>(this->window()->winId()));
+        bd->setDefaultVolName(dp.volid);
         bd->exec();
     });
 }
