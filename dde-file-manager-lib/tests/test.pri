@@ -92,4 +92,7 @@ SOURCES += \
     $$PWD/plugins/ut_dfmadditionalmenu.cpp \
     $$PWD/plugins/ut_pluginmanager.cpp \
     $$PWD/fulltextsearch/ut_fulltextsearch.cpp \
-    $$PWD/controllers/ut_searchcontroller.cpp
+    $$PWD/controllers/ut_searchcontroller.cpp \
+    $$PWD/dbusinterface/ut_dbustype.cpp \
+    $$PWD/vfs/ut_dfmvfsmanager.cpp \
+    $$PWD/vfs/ut_dfmvfsdevice.cpp
