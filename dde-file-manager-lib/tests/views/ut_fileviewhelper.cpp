@@ -97,15 +97,38 @@ TEST_F(FileViewHelperTest,column_width)
     EXPECT_EQ(m_view->columnWidth(0),m_fileViewHelper->columnWidth(0));
 }
 
-//TEST_F(FileViewHelperTest,select)
-//{
-//    auto configPath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
-//    auto desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
-//    DUrl path(configPath);
-//    m_view->cd(path);
+TEST_F(FileViewHelperTest,select)
+{
+    auto configPath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+    auto desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+    DUrl path("file://" + configPath);
+    m_view->setRootUrl(path);
+    QEventLoop loop;
+    QObject::connect(m_view->model(),&DFileSystemModel::sigJobFinished,&loop,[&loop](){
+        loop.exit();
+    });
+    m_fileViewHelper->refreshFileView(m_view->windowId());
+    loop.exec();
+    ASSERT_NE(0,m_fileViewHelper->rowCount());
 
-//    DUrl desktop(desktopPath);
-//    m_fileViewHelper->select({desktop});
-//    ASSERT_EQ(1,m_fileViewHelper->selectedUrls().size());
-//    EXPECT_EQ(desktop,m_fileViewHelper->selectedUrls().first());
-//}
+    DUrl desktop("file://" + desktopPath);
+    m_fileViewHelper->select({desktop});
+    ASSERT_EQ(1,m_fileViewHelper->selectedUrls().size());
+    EXPECT_EQ(desktop,m_fileViewHelper->selectedUrls().first());
+
+    m_fileViewHelper->select({});
+    m_fileViewHelper->selectAll(-1);
+    EXPECT_EQ(0,m_fileViewHelper->selectedUrls().size());
+
+    m_fileViewHelper->selectAll(m_fileViewHelper->windowId());
+    EXPECT_EQ(m_view->model()->rowCount(),m_fileViewHelper->selectedUrls().size());
+}
+
+TEST_F(FileViewHelperTest,set_foucs)
+{
+    ASSERT_EQ(false,m_view->hasFocus());
+    m_fileViewHelper->setFoucsOnFileView(-1);
+    ASSERT_EQ(false,m_view->hasFocus());
+    m_fileViewHelper->setFoucsOnFileView(m_view->windowId());
+    ASSERT_EQ(false,m_view->hasFocus());
+}
