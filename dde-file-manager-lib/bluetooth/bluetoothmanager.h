@@ -102,6 +102,7 @@ Q_SIGNALS:
     void transferCancledByRemote(const QString &sessionPath);
 
     void fileTransferFinished(const QString &sessionPath, const QString &filePath);
+    void transferFailed(const QString &sessionPath, const QString &filePath, const QString &errMsg);
 
 private:
     explicit BluetoothManager(QObject *parent = nullptr);
