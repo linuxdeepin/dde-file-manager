@@ -273,10 +273,9 @@ public:
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
     //优化拷贝时异步线程状态
-    bool bsysncstate = false;
+    QAtomicInteger<bool> bsysncstate = false;
     //异步线程是否可以退出状体
-    bool bsysncquitstate = false;
-    QMutex m_sysncmutex;
+    QAtomicInteger<bool> bsysncquitstate = false;
     bool bdestLocal = false;
     qint64 refinecpsize = 0;
     QMutex m_refinemutex;

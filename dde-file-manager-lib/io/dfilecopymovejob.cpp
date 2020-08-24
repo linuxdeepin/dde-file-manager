@@ -177,17 +177,11 @@ DFileCopyMoveJobPrivate::DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq)
 DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
 {
     qDebug() << "DFileCopyMoveJobPrivate " << QDateTime::currentMSecsSinceEpoch() - m_sart;
-    closefromresult.waitForFinished();
-    closedevice.waitForFinished();
-    addper.waitForFinished();
-    openfrom.waitForFinished();
-    copyresult.waitForFinished();
-    writeresult.waitForFinished();
 
-    qDebug() << "DFileCopyMoveJobPrivate all thread over == " << QDateTime::currentMSecsSinceEpoch() - m_sart;
     while (!closefromresult.isFinished() || !addper.isFinished() || !closedevice.isFinished()
            || !openfrom.isFinished() || !copyresult.isFinished() || !writeresult.isFinished()) {
         qDebug() << "DFileCopyMoveJobPrivate all thread over ooo" << QDateTime::currentMSecsSinceEpoch() - m_sart;
+        qApp->processEvents();
     }
     delete updateSpeedElapsedTimer;
 }
@@ -3150,10 +3144,6 @@ bool DFileCopyMoveJobPrivate::copyReadAndWriteRefineThread()
             }
             else
             {
-                if (!bdestLocal || isreadwriteseparate) {
-                    copyReadAndWriteRefineRefine(copyinfo);
-                    continue;
-                }
                 //判断目标目录是u盘就只走但线程
                 if (Q_UNLIKELY(!stateCheck())) {
                     //打开文件失败，退出当前线程，清理所有的open队列，继续处理read、write和close队列，
@@ -3167,6 +3157,11 @@ bool DFileCopyMoveJobPrivate::copyReadAndWriteRefineThread()
                                                                     DFileCopyMoveJob::ReadAndWriteFileProccessOver);
                     return false;
                 }
+                if (!bdestLocal || isreadwriteseparate) {
+                    copyReadAndWriteRefineRefine(copyinfo);
+                    continue;
+                }
+
                 while(m_pool.activeThreadCount() >= 24)
                 {
 
@@ -3185,10 +3180,6 @@ bool DFileCopyMoveJobPrivate::copyReadAndWriteRefineThread()
         }
         else
         {
-            if (!bdestLocal || isreadwriteseparate) {
-                copyReadAndWriteRefineRefine(copyinfo);
-                continue;
-            }
             //判断目标目录是u盘就只走但线程
             if (Q_UNLIKELY(!stateCheck())) {
                 //打开文件失败，退出当前线程，清理所有的open队列，继续处理read、write和close队列，
@@ -3202,6 +3193,11 @@ bool DFileCopyMoveJobPrivate::copyReadAndWriteRefineThread()
                                                                 DFileCopyMoveJob::ReadAndWriteFileProccessOver);
                 return false;
             }
+            if (!bdestLocal || isreadwriteseparate) {
+                copyReadAndWriteRefineRefine(copyinfo);
+                continue;
+            }
+
             while(m_pool.activeThreadCount() >= 24)
             {
 
@@ -3815,7 +3811,6 @@ bool DFileCopyMoveJob::getSysncState()
 {
     Q_D(DFileCopyMoveJob);
 
-    QMutexLocker(&d->m_sysncmutex);
     return d->bsysncstate;
 }
 
@@ -3823,7 +3818,6 @@ bool DFileCopyMoveJob::getSysncQuitState()
 {
     Q_D(DFileCopyMoveJob);
 
-    QMutexLocker(&d->m_sysncmutex);
     return d->bsysncquitstate;
 }
 
@@ -3831,7 +3825,6 @@ void DFileCopyMoveJob::setSysncState(const bool &state)
 {
     Q_D(DFileCopyMoveJob);
 
-    QMutexLocker(&d->m_sysncmutex);
     d->bsysncstate = state;
 }
 
@@ -3839,7 +3832,6 @@ void DFileCopyMoveJob::setSysncQuitState(const bool &quitstate)
 {
     Q_D(DFileCopyMoveJob);
 
-    QMutexLocker(&d->m_sysncmutex);
     d->bsysncquitstate = quitstate;
 }
 
@@ -3884,9 +3876,6 @@ void DFileCopyMoveJob::waitSysncEnd()
 void DFileCopyMoveJob::waitRefineThreadOver()
 {
     Q_D(DFileCopyMoveJob);
-    d->openfrom.waitForFinished();
-    d->writeresult.waitForFinished();
-    d->copyresult.waitForFinished();
     while (d->m_pool.activeThreadCount() > 0 || !d->openfrom.isFinished()
            || !d->copyresult.isFinished() || !d->writeresult.isFinished()) {
 
@@ -4059,6 +4048,7 @@ void DFileCopyMoveJob::run()
     DAbstractFileInfoPointer target_info;
     bool mayExecSync = false;
     QPointer<DFileCopyMoveJob> me = this;
+//    QPointer<DFileCopyMoveJobPrivate> dp = d;
 
     if (d->targetUrl.isValid()) {
         target_info = DFileService::instance()->createFileInfo(nullptr, d->targetUrl);
@@ -4100,16 +4090,19 @@ void DFileCopyMoveJob::run()
 
                 //优化等待1秒后启动异步“同文件”
                 QTimer::singleShot(100,this,[me,d,&rootpath](){
-                    if (!me) {
+                    if (!me || !d) {
                         return;
                     }
-                    d->syncresult = QtConcurrent::run([me,&rootpath]() {
+                    d->syncresult = QtConcurrent::run([me,d,&rootpath]() {
                         if (!me) {
                             return;
                         }
                         me->setSysncState(true);
-                        while (me && !me->getSysncQuitState()) {
+                        while (me && d && !me->getSysncQuitState()) {
                             QProcess::execute("sync", {"-f", rootpath});
+                        }
+                        if (!me) {
+                            return;
                         }
                         me->setSysncState(false);
                     });
