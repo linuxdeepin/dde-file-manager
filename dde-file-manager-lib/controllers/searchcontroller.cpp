@@ -252,6 +252,7 @@ public:
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     DUrl url() const Q_DECL_OVERRIDE;
     void close() Q_DECL_OVERRIDE;
+    void fullTextSearch(const QString &searchPath) const;
 
     SearchController *parent;
     DAbstractFileInfoPointer currentFileInfo;
@@ -276,6 +277,7 @@ public:
 
     bool closed = false;
     mutable bool hasExecuteFullTextSearch = false;/*全文搜索状态判断，false表示搜索未开始，true表示搜索已经完成。全文搜索只运行一次就出结果，其他搜索需要多次运行*/
+    mutable bool hasUpdateIndex = false;
 };
 
 SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFilters,
@@ -343,55 +345,61 @@ DUrl SearchDiriterator::next()
     return DUrl();
 }
 
+// 全文搜索
+void SearchDiriterator::fullTextSearch(const QString &searchPath) const
+{
+    // 判断文件是否为隐藏文件
+    std::function<bool(const DUrl &)> isHidden;
+    isHidden = [ =, &isHidden](const DUrl & fileUrl) ->bool {
+        DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
+        DUrl parentUrl = fileUrl.parentUrl();
+
+        QString targetPath = targetUrl.toLocalFile();
+        QString filePath = parentUrl.toLocalFile();
+        DFMFileListFile hiddenFiles(parentUrl.toLocalFile());
+        if (fileInfo->isHidden() || hiddenFiles.contains(fileInfo->fileName()))
+        {
+            return true;
+        } else if (targetPath.startsWith(filePath))
+        {
+            return false;
+        } else if (isHidden(parentUrl))
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
+    for (QString res : searchResult) {
+        DUrl url = m_fileUrl;
+        const DUrl &realUrl = DUrl::fromUserInput(res);
+        url.setSearchedFileUrl(realUrl);
+        if (res.startsWith(searchPath.endsWith("/") ? searchPath : (searchPath + "/"))) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
+            // 隐藏文件不显示
+            if (isHidden(DUrl::fromLocalFile(res)) || childrens.contains(url)) {
+                continue;
+            }
+            childrens << url;
+        }
+    }
+}
+
 bool SearchDiriterator::hasNext() const
 {
     if (!childrens.isEmpty()) {
         return true;
     }
-    // 全文搜索
     if (!hasExecuteFullTextSearch && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
-        // 判断文件是否为隐藏文件
-        std::function<bool(const DUrl &)> isHidden;
-        isHidden = [ =, &isHidden](const DUrl & fileUrl) ->bool {
-            DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
-            DUrl parentUrl = fileUrl.parentUrl();
-
-            QString targetPath = targetUrl.toLocalFile();
-            QString filePath = parentUrl.toLocalFile();
-            DFMFileListFile hiddenFiles(parentUrl.toLocalFile());
-            if (fileInfo->isHidden() || hiddenFiles.contains(fileInfo->fileName()))
-            {
-                return true;
-            } else if (targetPath.startsWith(filePath))
-            {
-                return false;
-            } else if (isHidden(parentUrl))
-            {
-                return true;
-            }
-
-            return false;
-        };
         DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
         if (fileInfo->isVirtualEntry()) {
             hasExecuteFullTextSearch = true;
-            return true;
+            return false;
         }
 
         QString searchPath = fileInfo->filePath();
-        QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
-        for (QString res : searchResult) {
-            DUrl url = m_fileUrl;
-            const DUrl &realUrl = DUrl::fromUserInput(res);
-            url.setSearchedFileUrl(realUrl);
-            if (res.startsWith(searchPath.endsWith("/") ? searchPath : (searchPath + "/"))) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
-                // 隐藏文件不显示
-                if (isHidden(DUrl::fromLocalFile(res))) {
-                    continue;
-                }
-                childrens << url;
-            }
-        }
+        fullTextSearch(searchPath);
         hasExecuteFullTextSearch = true;
         return true;
     }
@@ -493,6 +501,20 @@ bool SearchDiriterator::hasNext() const
         }
 
         it.clear();
+    }
+
+    if (!hasUpdateIndex && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
+        DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
+        if (fileInfo->isVirtualEntry()) {
+            hasUpdateIndex = true;
+            return true;
+        }
+
+        QString searchPath = fileInfo->filePath();
+        DFMFullTextSearchManager::getInstance()->updateIndex(searchPath);
+        fullTextSearch(searchPath);
+        hasUpdateIndex = true;
+        return true;
     }
 
     return false;

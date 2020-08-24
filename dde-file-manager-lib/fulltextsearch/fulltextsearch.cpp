@@ -7,6 +7,8 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <codecvt>
+#include <dirent.h>
+#include <fnmatch.h>
 
 //lucene++ header
 #include <FileUtils.h>
@@ -77,8 +79,6 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
     options.list_style.setPrefix(" * ");
     options.url_style = URL_STYLE_UNDERSCORED;
     XmlParseMode mode = PARSE_XML;
-    clock_t start, end;
-    start = clock();           /*记录起始时间*/
 
     PlainTextExtractor::ParserType parser_type = PlainTextExtractor::PARSER_AUTO;
     QFileInfo fileInfo(filePath);
@@ -103,7 +103,6 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
         qDebug() << "Unsupported file extension: " << ext;
         return "";
     }
-    qDebug() << "Conversion complete: " << filePath;
 
     //创建文件解析器
     PlainTextExtractor extractor(parser_type);
@@ -127,11 +126,6 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
         qDebug() << "Error processing file " << filePath;
         return "";
     }
-
-    end = clock();           /*记录结束时间*/
-    double seconds  = (double)(end - start) / CLOCKS_PER_SEC;
-    qDebug() << "Use time is: " << seconds;
-
     return text.c_str();
 }
 
@@ -139,50 +133,23 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
 DocumentPtr DFMFullTextSearchManager::getFileDocument(const QString &filename)
 {
     DocumentPtr doc = newLucene<Document>();
-    doc->add(newLucene<Field>(L"path", filename.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    doc->add(newLucene<Field>(L"path", filename.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));
+    String modifyTime = DateTools::timeToString(FileUtils::fileModified(filename.toStdWString()), DateTools::RESOLUTION_SECOND);
+    doc->add(newLucene<Field>(L"modified", modifyTime, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     QString contents = getFileContents(filename);
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));
     return doc;
 }
 void DFMFullTextSearchManager::indexDocs(const IndexWriterPtr &writer, const QString &sourceDir)
 {
-    QDir searchDir(sourceDir);
-    if (!searchDir.exists()) {
-        return;
-    }
-
-    // 限制一下目录级数
-    QStringList dirLevel = sourceDir.split('/');
-    if (dirLevel.count() > 10) {
-        return;
-    }
-
-    //遍历目录文件
-    QFileInfoList fileInfoList = searchDir.entryInfoList(QDir::AllEntries | QDir::Hidden);
-    for (auto fileInfo : fileInfoList) {
-        QString filePath = fileInfo.filePath();
-        QString fileName = fileInfo.fileName();
-        if (fileInfo.isDir()) {
-            /*建立全文搜索索引排除以下目录 /boot /dev /proc /sys /root /run /lib  /usr*/
-            QRegExp reg("^/(boot|dev|proc|sys|root|lib|usr).*$");
-            if (reg.exactMatch(filePath) || fileName == "." || fileName == ".." || fileName == ".avfs") {
-                continue;
-            } else {
-                indexDocs(writer, filePath);
-            }
-        } else {
-            QString suffix = fileInfo.suffix();
-            QRegExp reg("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
-                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
-            if (reg.exactMatch(suffix)) {
-                qDebug() << "Adding [" << filePath << "]";
-                try {
-                    if (fileInfo.exists())
-                        writer->addDocument(getFileDocument(filePath));
-                } catch (FileNotFoundException &ex) {
-                    qDebug() << "addDocument error: " << ex.getError().c_str();
-                }
-            }
+    QStringList files;
+    readFileName(sourceDir.toStdString().c_str(), files);
+    for (auto file : files) {
+        qDebug() << "Adding [" << file << "]";
+        try {
+            writer->addDocument(getFileDocument(file));
+        } catch (FileNotFoundException &ex) {
+            qDebug() << "addDocument error: " << ex.getError().c_str();
         }
     }
 }
@@ -246,18 +213,6 @@ void DFMFullTextSearchManager::doPagingSearch(const SearcherPtr &searcher, const
     }
 }
 
-void DFMFullTextSearchManager::run()
-{
-    while (!indexQueue.isEmpty()) {
-        mutex.lock();
-        auto info = indexQueue.dequeue();
-        mutex.unlock();
-
-        updateIndex(info.first, info.second);
-    }
-    m_state = Stoped;
-}
-
 bool DFMFullTextSearchManager::searchByKeyworld(const QString &keyword)
 {
     try {
@@ -304,116 +259,135 @@ int DFMFullTextSearchManager::fulltextIndex(const QString &sourceDir)
     }
 }
 
-void DFMFullTextSearchManager::start()
+void DFMFullTextSearchManager::readFileName(const char *filePath, QStringList &result)
 {
-    if (m_state == Started)
-        return;
-
-    m_state = Started;
-    QThread::start();
-}
-
-void DFMFullTextSearchManager::addIndexQueue(const QString &filePath, DFMFullTextSearchManager::Type type)
-{
-    mutex.lock();
-    indexQueue.enqueue(qMakePair(filePath, type));
-    mutex.unlock();
-
-    start();
-}
-
-void DFMFullTextSearchManager::updateIndex(const QString &filePath, DFMFullTextSearchManager::Type type)
-{
-    if (filePath.contains(".avfs"))
-        return;
-
     QRegExp reg("^/(boot|dev|proc|sys|root|run|lib|usr).*$");
-    if (reg.exactMatch(filePath) && !filePath.startsWith("/run/user")) {
+    if (reg.exactMatch(QString(filePath)) && !QString(filePath).startsWith("/run/user")) {
         return;
     }
 
-    switch (type) {
-    case Add: {
-        try {
-            QFileInfo fileInfo(filePath);
-            if (fileInfo.isFile()) {
-                QString suffix = fileInfo.suffix();
-                reg.setPattern("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
-                               "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
-                if (reg.exactMatch(suffix)) {
-                    IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
-                                                                   newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
-                                                                   IndexWriter::MaxFieldLengthLIMITED);
-                    if (fileInfo.exists()) {
-                        writer->addDocument(getFileDocument(filePath));
-                        // 为防止出现重复索引，需要更新一次
-                        TermPtr query = newLucene<Term>(L"path", filePath.toStdWString());
-                        //更新
-                        writer->updateDocument(query, getFileDocument(filePath));
-                        qDebug() << "Add [" << filePath << "]";
-                        writer->close();
-                    }
-                }
-            } else {
-                QDir dir(filePath);
-                QFileInfoList pathList = dir.entryInfoList(QDir::AllEntries | QDir::Hidden);
-                for (QFileInfo path : pathList) {
-                    QString fileName = path.fileName();
-                    if (fileName == "." || fileName == "..") {
-                        continue;
-                    }
-                    updateIndex(path.filePath(), Add);
-                }
+    std::string path(filePath);
+    int pathLevel = 0;
+    std::for_each(std::begin(path), std::end(path), [&](char ch) {
+        if (ch == '/') {
+            pathLevel++;
+        }
+    });
+
+    if (pathLevel > 10) {
+        return;
+    }
+
+    DIR *dir = NULL;
+    if (!(dir = opendir (filePath))) {
+        //trace ("can't open: %s\n", dname);
+        return;
+    }
+    struct dirent *dent = NULL;
+    int len = strlen (filePath);
+    if (len >= FILENAME_MAX - 1) {
+        //trace ("filename too long: %s\n", dname);
+        return;
+    }
+
+    char fn[FILENAME_MAX] = "";
+    strcpy (fn, filePath);
+    if (strcmp (filePath, "/")) {
+        // TODO: use a more performant fix to handle root directory
+        fn[len++] = '/';
+    }
+    while ((dent = readdir (dir))) {
+        if (!dent->d_name[0] == '.') {
+            // file is dotfile, skip
+            continue;
+        }
+        if (!strcmp (dent->d_name, ".") || !strcmp (dent->d_name, "..") || !strcmp (dent->d_name, ".avfs")) {
+            continue;
+        }
+
+        struct stat st;
+        strncpy (fn + len, dent->d_name, FILENAME_MAX - len);
+        if (lstat (fn, &st) == -1) {
+            //warn("Can't stat %s", fn);
+            continue;
+        }
+        const bool is_dir = S_ISDIR (st.st_mode);
+        if (is_dir) {
+            readFileName(fn, result);
+        } else {
+            QFileInfo fileInfo(fn);
+            QString suffix = fileInfo.suffix();
+            QRegExp reg("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
+                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
+            if (reg.exactMatch(suffix)) {
+                result.append(fn);
             }
-        } catch (FileNotFoundException &ex) {
-            qDebug() << "addDocument error: " << ex.getError().c_str();
         }
     }
-    break;
-    case Modify: {
+    if (dir) {
+        closedir (dir);
+    }
+}
+
+void DFMFullTextSearchManager::updateIndex(const QString &filePath)
+{
+    qDebug() << "Update index";
+    QStringList files;
+    readFileName(filePath.toStdString().c_str(), files);
+    int i = 0;
+    for (QString file : files) {
         try {
-            QFileInfo fileInfo(filePath);
-            if (fileInfo.isFile()) {
-                QString suffix = fileInfo.suffix();
-                reg.setPattern("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
-                               "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
-                if (reg.exactMatch(suffix)) {
+            IndexReaderPtr reader = IndexReader::open(FSDirectory::open(indexStorePath.toStdWString()), true);
+            SearcherPtr searcher = newLucene<IndexSearcher>(reader);
+            AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
+            QueryParserPtr parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"path", analyzer);
+            QueryPtr query = parser->parse(file.toStdWString());
+
+            // 文件路径为唯一值，所以搜索一个结果就行了
+            TopScoreDocCollectorPtr collector = TopScoreDocCollector::create(1, false);
+            searcher->search(query, collector);
+            Collection<ScoreDocPtr> hits = collector->topDocs()->scoreDocs;
+            int32_t numTotalHits = collector->getTotalHits();
+            if (numTotalHits == 0) {
+                try {
                     IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
                                                                    newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
                                                                    IndexWriter::MaxFieldLengthLIMITED);
-                    if (fileInfo.exists()) {
+                    writer->addDocument(getFileDocument(file));
+                    qDebug() << "Add file: [" << file << "]";
+                    writer->close();
+                } catch (LuceneException &ex) {
+                    qDebug() << ex.getError().c_str();
+                }
+
+            } else {
+                DocumentPtr doc = searcher->doc(hits[0]->doc);
+                String modifyTime = DateTools::timeToString(FileUtils::fileModified(file.toStdWString()), DateTools::RESOLUTION_SECOND);
+                String storeTime = doc->get(L"modified");
+                if (modifyTime == storeTime) {
+                    continue;
+                } else {
+                    try {
+                        IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
+                                                                       newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
+                                                                       IndexWriter::MaxFieldLengthLIMITED);
                         //定义一个更新条件
-                        TermPtr query = newLucene<Term>(L"path", filePath.toStdWString());
+                        TermPtr query = newLucene<Term>(L"path", file.toStdWString());
                         //更新
-                        writer->updateDocument(query, getFileDocument(filePath));
-                        qDebug() << "Update [" << filePath << "]";
+                        writer->updateDocument(query, getFileDocument(file));
+                        qDebug() << "Update file: [" << file << "]";
                         //关闭
                         writer->close();
+                    } catch (LuceneException &ex) {
+                        qDebug() << ex.getError().c_str();
                     }
                 }
             }
-        } catch (FileNotFoundException &ex) {
-            qDebug() << "addDocument error: " << ex.getError().c_str();
+            reader->close();
+        } catch (LuceneException &ex) {
+            String err = ex.getError();
+            qDebug() << ex.getError().c_str() << " Type: " << ex.getType();
         }
-    }
-    break;
-    case Delete: {
-        try {
-            IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
-                                                           newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
-                                                           IndexWriter::MaxFieldLengthLIMITED);
-            //定义一个删除条件，定义一个查询对象
-            QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"path", filePath.toStdWString()));
-            //删除
-            writer->deleteDocuments(query);
-            qDebug() << "Delete [" << filePath << "]";
-            //关闭
-            writer->close();
-        } catch (FileNotFoundException &ex) {
-            qDebug() << "deleteDocuments error: " << ex.getError().c_str();
-        }
-    }
-    break;
     }
 }
 

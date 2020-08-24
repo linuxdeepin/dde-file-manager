@@ -54,10 +54,7 @@ public:
      */
     int fulltextIndex(const QString &sourceDir);
 
-    void addIndexQueue(const QString &filePath, Type type);
-
-public slots:
-    void updateIndex(const QString &filePath, Type type);
+    void updateIndex(const QString &filePath);
 
 private:
     explicit DFMFullTextSearchManager(QObject *parent = nullptr);
@@ -89,9 +86,7 @@ private:
 
     void doPagingSearch(const SearcherPtr &searcher, const QueryPtr &query, int32_t hitsPerPage, bool raw, bool interactive);
 
-    void start();
-
-    void run() override;
+    void readFileName(const char *filePath, QStringList &result);
 private:
     bool status;
 
