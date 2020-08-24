@@ -353,7 +353,8 @@ bool DStorageInfo::isSameFile(const QString &filePath1, const QString &filePath2
     int toStat = stat(filePath2.toStdString().c_str(), &statToInfo);
     if (0 == fromStat && 0 == toStat) {
         // 通过inode判断是否是同一个文件
-        if (statFromInfo.st_ino == statToInfo.st_ino) {
+        if (statFromInfo.st_ino == statToInfo.st_ino
+                && statFromInfo.st_dev == statToInfo.st_dev) { //! 需要判断设备号
             return true;
         }
     }

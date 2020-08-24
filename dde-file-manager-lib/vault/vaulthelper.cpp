@@ -87,7 +87,8 @@ bool VaultHelper::topVaultTasks()
                                                            "/org/freedesktop/FileManager1",
                                                            "org.freedesktop.FileManager1",
                                                            "topTaskDialog");
-    QDBusMessage response = QDBusConnection::sessionBus().call(message);
+    // 修复BUG-44055 设置超时等待为1000毫米，提高用户操作流畅度
+    QDBusMessage response = QDBusConnection::sessionBus().call(message, QDBus::Block, 1000);
     if(response.type() == QDBusMessage::ReplyMessage){
         bool bValue = response.arguments().takeFirst().toBool();
         if(bValue){
@@ -130,7 +131,8 @@ bool VaultHelper::killVaultTasks()
                                                           "/org/freedesktop/FileManager1",
                                                           "org.freedesktop.FileManager1",
                                                           "closeTask");
-    QDBusMessage response = QDBusConnection::sessionBus().call(message);
+    // 设置超时等待为1000毫秒
+    QDBusMessage response = QDBusConnection::sessionBus().call(message, QDBus::Block, 1000);
     if (response.type() != QDBusMessage::ReplyMessage) {
         qDebug() << "close vault task failed!";
         return false;

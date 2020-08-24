@@ -193,6 +193,20 @@ public:
     static QString getErrorInfo(int state);
 
     /**
+     * @brief toInternalPath 外部路径转内部路径
+     * @param external
+     * @return
+     */
+    static QString toInternalPath(const QString &externalPath);
+
+    /**
+     * @brief toExternalPath 转换成外部路径
+     * @param internalPath
+     * @return
+     */
+    static QString toExternalPath(const QString &internalPath);
+
+    /**
      * @brief totalsize 保险箱大小
      * @return
      */

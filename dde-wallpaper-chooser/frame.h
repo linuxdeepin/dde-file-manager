@@ -27,7 +27,7 @@
 
 #include "view/backgroundmanager.h"
 #include <DBlurEffectWidget>
-#include <dregionmonitor.h>
+#include <DRegionMonitor>
 #include <com_deepin_sessionmanager.h>
 
 DWIDGET_BEGIN_NAMESPACE
