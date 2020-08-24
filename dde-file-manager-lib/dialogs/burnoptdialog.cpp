@@ -42,6 +42,7 @@ private:
     QHash<QString, int> speedmap;
     DUrl image_file;
     int window_id;
+    QString lastVolName;
 
     Q_DECLARE_PUBLIC(BurnOptDialog)
 };
@@ -74,7 +75,10 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
 
                         // fix: use fork() burn files
                         qDebug() << "start burn files";
-                        job->doOpticalBurnByChildProcess(dev, d->le_volname->text(), d->speedmap[d->cb_writespeed->currentText()], flag);
+                        const QString &volName = d->le_volname->text().trimmed().isEmpty()
+                                                     ? d->lastVolName
+                                                     : d->le_volname->text().trimmed();
+                        job->doOpticalBurnByChildProcess(dev, volName, d->speedmap[d->cb_writespeed->currentText()], flag);
                         dialogManager->removeJob(job->getJobId());
                         job->deleteLater();
                     });
@@ -124,6 +128,16 @@ void BurnOptDialog::setJobWindowId(int wid)
 {
     Q_D(BurnOptDialog);
     d->window_id = wid;
+}
+
+void BurnOptDialog::setDefaultVolName(const QString &volName)
+{
+    Q_D(BurnOptDialog);
+    d->le_volname->clear();
+    d->le_volname->setText(volName);
+    d->le_volname->setSelection(0, volName.length());
+    d->le_volname->setFocus();
+    d->lastVolName = volName;
 }
 
 BurnOptDialog::~BurnOptDialog()
