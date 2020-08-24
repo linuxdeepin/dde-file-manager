@@ -33,6 +33,7 @@
 #include "shutil/dfmregularexpression.h"
 #include "shutil/dfmfilelistfile.h"
 #include "dfmapplication.h"
+#include "dfmstandardpaths.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -373,15 +374,22 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
 
     QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
     for (QString res : searchResult) {
-        DUrl url = m_fileUrl;
-        const DUrl &realUrl = DUrl::fromUserInput(res);
-        url.setSearchedFileUrl(realUrl);
         if (res.startsWith(searchPath.endsWith("/") ? searchPath : (searchPath + "/"))) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
             // 隐藏文件不显示
-            if (isHidden(DUrl::fromLocalFile(res)) || childrens.contains(url)) {
+            if (isHidden(DUrl::fromLocalFile(res))) {
                 continue;
             }
-            childrens << url;
+
+            DUrl url = m_fileUrl;
+            DUrl realUrl = DUrl::fromUserInput(res);
+            // 回收站的文件右键菜单比较特殊，需要将文件url转换为回收站类型的URL
+            if (targetUrl.isTrashFile()) {
+                realUrl = DUrl::fromTrashFile(realUrl.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+            }
+            url.setSearchedFileUrl(realUrl);
+
+            if (!childrens.contains(url))
+                childrens << url;
         }
     }
 }
