@@ -813,7 +813,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             }
 
             DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job,true);
-            emit job->currentJobChanged(currentJob.first, currentJob.second);
+            emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), targetInfo ? targetInfo->fileUrl() :DUrl(), true);
 
             if (!handle) {
                 qWarning() << "addTaskJob create handle failed!!";
@@ -839,7 +839,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
             if (!fileJob->isFinished()) {
                 dialogManager->taskDialog()->addTaskJob(fileJob.data(), true);
-                emit fileJob->currentJobChanged(currentJob.first, currentJob.second);
+                emit fileJob->currentJobChanged(currentJob.first, currentJob.second,false);
             }
         }
 

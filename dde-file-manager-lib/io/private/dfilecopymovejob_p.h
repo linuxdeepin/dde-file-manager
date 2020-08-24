@@ -209,6 +209,7 @@ public:
     QAtomicInteger<bool> iscountsizeover = false;
     QAtomicInteger<bool> isreadwriteseparate = false;
     QAtomicInteger<bool> isbigfile = false;
+    QAtomicInteger<bool> cansetnoerror = true;
 
     qint64 m_tatol = 0;
     qint64 m_readtime = 0;
