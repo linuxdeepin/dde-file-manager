@@ -527,10 +527,11 @@ QSharedPointer<DFMRestoreFromTrashEvent> DFMRestoreFromTrashEvent::fromJson(cons
 }
 
 DFMPasteEvent::DFMPasteEvent(const QObject *sender, DFMGlobal::ClipboardAction action,
-                             const DUrl &targetUrl, const DUrlList &list)
+                             const DUrl &targetUrl, const DUrlList &list, const DUrlList & cutList)
     : DFMUrlListBaseEvent(PasteFile, sender, list)
 {
     setData(list);
+    setCutData(cutList);
     setProperty(QT_STRINGIFY(DFMPasteEvent::action), action);
     setProperty(QT_STRINGIFY(DFMPasteEvent::targetUrl), targetUrl);
 }
