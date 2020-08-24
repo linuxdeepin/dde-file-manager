@@ -3559,7 +3559,7 @@ void DFileCopyMoveJobPrivate::closeRefineToDeviceThread()
 
 void DFileCopyMoveJobPrivate::countAllCopyFile()
 {
-    if (mode ==  DFileCopyMoveJob::CopyMode) {
+//    if (mode ==  DFileCopyMoveJob::CopyMode) {
         qint64 times = QDateTime::currentMSecsSinceEpoch();
         for (auto url : sourceUrlList) {
             char *paths[2] = {nullptr,nullptr};
@@ -3587,8 +3587,8 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
                 }
             }
             fts_close(fts);
-        }
-        iscountsizeover++;
+//        }
+        iscountsizeover = true;
 
         qDebug() << " dir time " << QDateTime::currentMSecsSinceEpoch() - times << totalsize;
     }
@@ -3767,6 +3767,11 @@ bool DFileCopyMoveJob::fileStatisticsIsFinished() const
 qint64 DFileCopyMoveJob::totalDataSize() const
 {
     Q_D(const DFileCopyMoveJob);
+    if (!d->iscountsizeover) {
+        return -1;
+    }
+    return d->totalsize;
+
     if (d->mode == CopyMode) {
         if (!d->iscountsizeover) {
             return -1;
@@ -3924,13 +3929,13 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
     d->sourceUrlList = sourceUrls;
     d->targetUrl = targetUrl;
-    if (d->mode != CopyMode) {
-        if (d->fileStatistics->isRunning()) {
-            d->fileStatistics->stop();
-            d->fileStatistics->wait();
-        }
-        d->fileStatistics->start(sourceUrls);
-    }
+//    if (d->mode != CopyMode) {
+//        if (d->fileStatistics->isRunning()) {
+//            d->fileStatistics->stop();
+//            d->fileStatistics->wait();
+//        }
+//        d->fileStatistics->start(sourceUrls);
+//    }
 
     // DFileStatisticsJob 统计数量很慢，自行统计
     QtConcurrent::run([sourceUrls, d] () {
