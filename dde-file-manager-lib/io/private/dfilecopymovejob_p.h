@@ -206,9 +206,9 @@ public:
 
     qint64 totalsize = 0;
     QAtomicInt totalfilecount = 0;
-    QAtomicInt iscountsizeover = 0;
-    bool isreadwriteseparate = false;
-    bool isbigfile = false;
+    QAtomicInteger<bool> iscountsizeover = false;
+    QAtomicInteger<bool> isreadwriteseparate = false;
+    QAtomicInteger<bool> isbigfile = false;
 
     qint64 m_tatol = 0;
     qint64 m_readtime = 0;
@@ -256,8 +256,8 @@ public:
     ElapsedTimer *updateSpeedElapsedTimer = nullptr;
     QTimer *updateSpeedTimer = nullptr;
     int timeOutCount = 0;
-    bool needUpdateProgress = false;
-    bool countStatisticsFinished = false;
+    QAtomicInteger<bool> needUpdateProgress = false;
+    QAtomicInteger<bool> countStatisticsFinished = false;
     // 线程id
     long tid = -1;
 //    QScopedPointer<DFileDevice> m_toDevice;
@@ -266,7 +266,7 @@ public:
 
     int currentthread = 0;
 
-    bool btaskdailogclose = false;
+    QAtomicInteger<bool>btaskdailogclose = false;
 
 
     QAtomicInt refinestat = DFileCopyMoveJob::MoreThreadAndMainRefine;
@@ -276,7 +276,7 @@ public:
     QAtomicInteger<bool> bsysncstate = false;
     //异步线程是否可以退出状体
     QAtomicInteger<bool> bsysncquitstate = false;
-    bool bdestLocal = false;
+    QAtomicInteger<bool> bdestLocal = false;
     qint64 refinecpsize = 0;
     QMutex m_refinemutex;
 
