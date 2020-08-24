@@ -36,6 +36,7 @@ const QString TXT_SEND_PROGRES = BluetoothTransDialog::tr("%1/%2 Sent");
 const QString TXT_ERROR_REASON = BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected");
 const QString TXT_FILE_OVERSIZ = BluetoothTransDialog::tr("Unable to send the file more than 2 GB");
 const QString TXT_FILE_ZEROSIZ = BluetoothTransDialog::tr("Unable to send 0 KB files");
+const QString TXT_FILE_NOEXIST = BluetoothTransDialog::tr("File doesn't exist");
 
 const QString TXT_NEXT = BluetoothTransDialog::tr("Next");
 const QString TXT_CANC = BluetoothTransDialog::tr("Cancel");
@@ -506,12 +507,16 @@ void BluetoothTransDialog::sendFiles()
     if (m_urls.count() == 0 || m_selectedDeviceId.isEmpty())
         return;
 
-    // 无法发送文件尺寸大于 2GB 的文件，若包含则中止发送行为
+    // 无法发送文件尺寸大于 2GB 以及尺寸为 0 的文件，若包含则中止发送行为，文件不存在也一样
     foreach (auto u, m_urls) {
         DUrl url = DUrl::fromLocalFile(u);
         if (!url.isValid())
             continue;
         DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
+        if (info && !info->exists()) {
+            dialogManager->showMessageDialog(DialogManager::msgErr, TXT_FILE_NOEXIST, "", TXT_OKAY);
+            return;
+        }
         if (info && info->size() > FILE_TRANSFER_LIMITS) {
             dialogManager->showMessageDialog(DialogManager::msgInfo, TXT_FILE_OVERSIZ, "", TXT_OKAY);
             return;
