@@ -1587,7 +1587,6 @@ bool DFileCopyMoveJobPrivate::process(const DUrl &from, const DAbstractFileInfoP
 {
     // reset error and action
     if (DFileCopyMoveJob::MoreThreadAndMainRefine <= refinestat) {
-        qDebug() << "xinb  youhua ";
         return processRefine(from,source_info,target_info,isNew);
     }
     unsetError();
