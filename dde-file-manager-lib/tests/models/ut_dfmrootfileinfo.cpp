@@ -1,4 +1,5 @@
 #include "models/dfmrootfileinfo.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include <gtest/gtest.h>
 
@@ -134,7 +135,7 @@ TEST_F(TestDFMRootFileInfo, canRedirectionFileUrl)
 
 TEST_F(TestDFMRootFileInfo, redirectedFileUrl)
 {
-    EXPECT_STREQ("/home/xust/Desktop", info->redirectedFileUrl().path().toStdString().c_str());
+    EXPECT_STREQ(DFMStandardPaths::location(DFMStandardPaths::DesktopPath).toStdString().c_str(), info->redirectedFileUrl().path().toStdString().c_str());
 }
 
 TEST_F(TestDFMRootFileInfo, canDrop)
