@@ -326,6 +326,8 @@ void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
         }
         _q_updateProgress();
         QMetaObject::invokeMethod(updateSpeedTimer, "start", Q_ARG(int, 500));
+    } else if (s == DFileCopyMoveJob::StoppedState) {
+        cansetnoerror = true;
     } else if (s != DFileCopyMoveJob::IOWaitState) {
         updateSpeedElapsedTimer->togglePause();
 
@@ -342,7 +344,7 @@ void DFileCopyMoveJobPrivate::setError(DFileCopyMoveJob::Error e, const QString 
     }
     if (DFileCopyMoveJob::CancelError < error) {
         while(!cansetnoerror) {
-
+            usleep(100);
         }
     }
     if (DFileCopyMoveJob::CancelError < e) {
@@ -499,6 +501,7 @@ bool DFileCopyMoveJobPrivate::stateCheck()
             return false;
         }
     } else if (state == DFileCopyMoveJob::StoppedState) {
+        cansetnoerror = true;
         setError(DFileCopyMoveJob::CancelError);
         qCDebug(fileJob()) << "Will be abort";
 
@@ -3892,7 +3895,7 @@ void DFileCopyMoveJob::waitSysncEnd()
             d->syncresult.cancel();
             break;
         }
-//        usleep(10);
+        usleep(100);
     }
 }
 
@@ -3901,7 +3904,7 @@ void DFileCopyMoveJob::waitRefineThreadOver()
     Q_D(DFileCopyMoveJob);
     while (d->m_pool.activeThreadCount() > 0 || !d->openfrom.isFinished()
            || !d->copyresult.isFinished() || !d->writeresult.isFinished()) {
-
+        usleep(100);
     }
 }
 
