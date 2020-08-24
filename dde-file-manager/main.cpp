@@ -90,10 +90,11 @@ int main(int argc, char *argv[])
     auto e = QProcessEnvironment::systemEnvironment();
     QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
     QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
+    bool isWayland = false;
     if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
+        isWayland = true;
+        qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
     }
 
 #ifdef ENABLE_PPROF
@@ -107,7 +108,8 @@ int main(int argc, char *argv[])
         DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
     }
 
-    SingleApplication::loadDXcbPlugin();
+    if (!isWayland) //wayland下不加载xcb
+        SingleApplication::loadDXcbPlugin();
     SingleApplication::initSources();
     SingleApplication app(argc, argv);
 
@@ -151,12 +153,7 @@ int main(int argc, char *argv[])
 
     // open as root
     if (CommandLineManager::instance()->isSet("r")) {
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        if (isWayland) {
             QString cmd = "xhost";
             QStringList args;
             args << "+";

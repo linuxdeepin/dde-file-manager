@@ -1277,7 +1277,15 @@ void DFileDialog::onAcceptButtonClicked()
                     DDialog dialog(this);
 
                     // NOTE(zccrs): dxcb bug
-                    if (!DPlatformWindowHandle::isEnabledDXcb(this)
+                    auto e = QProcessEnvironment::systemEnvironment();
+                    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+                    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+                    bool isWayland = false;
+                    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+                            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+                        isWayland = true;
+                    }
+                    if ( (!isWayland && !DPlatformWindowHandle::isEnabledDXcb(this))
 #if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
                             || pwPluginVersionGreaterThen("1.1.8.3")
 #endif
