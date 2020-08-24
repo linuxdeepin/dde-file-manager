@@ -745,6 +745,9 @@ begin:
 
             const QPair<EventType, DAbstractFileInfoPointer> &v = fileQueue.dequeue();
             const DAbstractFileInfoPointer &fileInfo = v.second;
+            if (!fileInfo) {
+                continue;
+            }
             const DUrl &fileUrl = fileInfo->fileUrl();
 
             if (v.first == AddFile || v.first == AppendFile) {

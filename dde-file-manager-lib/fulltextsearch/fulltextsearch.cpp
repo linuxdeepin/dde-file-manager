@@ -261,7 +261,7 @@ int DFMFullTextSearchManager::fulltextIndex(const QString &sourceDir)
 
 void DFMFullTextSearchManager::readFileName(const char *filePath, QStringList &result)
 {
-    QRegExp reg("^/(boot|dev|proc|sys|root|run|lib|usr).*$");
+    QRegExp reg("^/(boot|dev|proc|sys|run|lib|usr).*$");
     if (reg.exactMatch(QString(filePath)) && !QString(filePath).startsWith("/run/user")) {
         return;
     }
