@@ -213,10 +213,10 @@ void BluetoothManagerPrivate::initConnects()
         qDebug() << sessionPath.path();
     });
 
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionProgress, q, [this](const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIdx) {
-        Q_Q(BluetoothManager);
-        Q_EMIT q->transferProgressUpdated(sessionPath.path(), totalSize, transferred, currentIdx);
-    });
+//    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionProgress, q, [this](const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIdx) {
+//        Q_Q(BluetoothManager);
+//        Q_EMIT q->transferProgressUpdated(sessionPath.path(), totalSize, transferred, currentIdx);
+//    });
 #endif
 }
 
