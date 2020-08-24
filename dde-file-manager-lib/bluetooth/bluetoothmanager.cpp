@@ -391,7 +391,7 @@ QString BluetoothManager::sendFiles(const QString &id, const QStringList &filePa
 #endif
 }
 
-bool BluetoothManager::cancleTransfer(const QString &sessionPath)
+bool BluetoothManager::cancelTransfer(const QString &sessionPath)
 {
 #ifdef BLUETOOTH_ENABLE
     Q_D(BluetoothManager);

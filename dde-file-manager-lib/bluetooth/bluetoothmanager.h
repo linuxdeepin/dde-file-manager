@@ -82,7 +82,7 @@ public Q_SLOTS:
      * @param sessionPath
      * @return
      */
-    bool cancleTransfer(const QString &sessionPath);
+    bool cancelTransfer(const QString &sessionPath);
 
 Q_SIGNALS:
 
