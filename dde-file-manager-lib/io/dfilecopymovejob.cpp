@@ -2588,7 +2588,7 @@ open_file: {
     currentJobDataSizeInfo.first = fromDevice->size();
     currentJobFileHandle = toDevice->handle();
     uLong source_checksum = adler32(0L, nullptr, 0);
-    qint64 size_block = fromDevice->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN: fromDevice->size();
+    qint64 size_block = copyinfo->frominfo->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN: copyinfo->frominfo->size();
     char *buffer = new char[size_block + 1];
 
     Q_FOREVER {
