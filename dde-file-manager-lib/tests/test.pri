@@ -36,6 +36,8 @@ SOURCES += \
     $$PWD/views/ut_dtoolbar.cpp \
     $$PWD/views/ut_extendview.cpp \
     $$PWD/views/ut_filedialogstatusbar.cpp\
+    $$PWD/views/ut_fileitem.cpp\
+    $$PWD/views/ut_fileviewhelper.cpp\
     $$PWD/controllers/ut_masteredmediacontroller.cpp \
     $$PWD/controllers/ut_mergeddesktopcontroller.cpp \
     $$PWD/controllers/ut_mountcontroller.cpp \
@@ -92,4 +94,7 @@ SOURCES += \
     $$PWD/plugins/ut_dfmadditionalmenu.cpp \
     $$PWD/plugins/ut_pluginmanager.cpp \
     $$PWD/fulltextsearch/ut_fulltextsearch.cpp \
-    $$PWD/controllers/ut_searchcontroller.cpp
+    $$PWD/controllers/ut_searchcontroller.cpp \
+    $$PWD/dbusinterface/ut_dbustype.cpp \
+    $$PWD/vfs/ut_dfmvfsmanager.cpp \
+    $$PWD/vfs/ut_dfmvfsdevice.cpp

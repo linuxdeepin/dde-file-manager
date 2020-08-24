@@ -185,6 +185,8 @@ public:
     void waitSysncEnd();
     void waitRefineThreadOver();
 
+    void setCurTrashData(QVariant fileNameList);
+
     static Actions supportActions(Error error);
 
 public Q_SLOTS:
