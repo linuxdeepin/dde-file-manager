@@ -79,7 +79,7 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                                                      ? d->lastVolName
                                                      : d->le_volname->text().trimmed();
                         job->doOpticalBurnByChildProcess(dev, volName, d->speedmap[d->cb_writespeed->currentText()], flag);
-                        dialogManager->removeJob(job->getJobId());
+                        dialogManager->removeJob(job->getJobId(),true );
                         job->deleteLater();
                     });
                 } else {
@@ -100,7 +100,7 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                         // fix: use fork() burn image
                         qDebug() << "start burn image";
                         job->doOpticalImageBurnByChildProcess(dev, img, d->speedmap[d->cb_writespeed->currentText()], flag);
-                        dialogManager->removeJob(job->getJobId());
+                        dialogManager->removeJob(job->getJobId(), true );
                         job->deleteLater();
                     });
                 }
