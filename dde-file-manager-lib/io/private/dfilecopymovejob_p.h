@@ -31,6 +31,7 @@
 #include <QThreadPool>
 #include <QMutex>
 #include <QFuture>
+#include <QQueue>
 
 #include "dfiledevice.h"
 #include "dfilecopyqueue.h"
@@ -186,6 +187,15 @@ public:
     void runRefineWriteAndCloseThread();
     void setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     bool checkRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
+
+    /**
+     * @brief setCutTrashData    保存剪切回收站文件路径
+     * @param fileNameList       文件路径
+     */
+    void setCutTrashData(QVariant fileNameList);
+
+    //! 剪切回收站文件路径
+    QQueue<QString> m_fileNameList;
 
     DFileCopyMoveJob *q_ptr;
 
