@@ -36,6 +36,8 @@ SOURCES += \
     $$PWD/views/ut_dtoolbar.cpp \
     $$PWD/views/ut_extendview.cpp \
     $$PWD/views/ut_filedialogstatusbar.cpp\
+    $$PWD/views/ut_fileitem.cpp\
+    $$PWD/views/ut_fileviewhelper.cpp\
     $$PWD/controllers/ut_masteredmediacontroller.cpp \
     $$PWD/controllers/ut_mergeddesktopcontroller.cpp \
     $$PWD/controllers/ut_mountcontroller.cpp \
