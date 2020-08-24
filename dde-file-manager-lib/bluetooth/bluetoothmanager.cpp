@@ -217,6 +217,11 @@ void BluetoothManagerPrivate::initConnects()
         Q_Q(BluetoothManager);
         Q_EMIT q->transferProgressUpdated(sessionPath.path(), totalSize, transferred, currentIdx);
     });
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferFailed, q, [this](const QString &file, const QDBusObjectPath &sessionPath, const QString &errInfo) {
+        Q_Q(BluetoothManager);
+        Q_EMIT q->transferFailed(sessionPath.path(), file, errInfo);
+    });
 #endif
 }
 

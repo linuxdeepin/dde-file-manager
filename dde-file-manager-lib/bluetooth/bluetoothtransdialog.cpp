@@ -207,6 +207,15 @@ void BluetoothTransDialog::initConn()
         bluetoothManager->cancleTransfer(sessionPath);
     });
 
+    connect(bluetoothManager, &BluetoothManager::transferFailed, this, [this](const QString &sessionPath, const QString &filePath, const QString &errMsg) {
+        if (sessionPath != m_currSessionPath)
+            return;
+        m_stack->setCurrentIndex(FailedPage);
+        bluetoothManager->cancleTransfer(sessionPath);
+        qDebug() << "filePath: " << filePath
+                 << "\nerrorMsg: " << errMsg;
+    });
+
     connect(bluetoothManager, &BluetoothManager::fileTransferFinished, this, [this](const QString &sessionPath, const QString &filePath) {
         if (sessionPath != m_currSessionPath)
             return;
