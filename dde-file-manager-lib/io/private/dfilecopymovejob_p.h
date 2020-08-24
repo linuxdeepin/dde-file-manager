@@ -279,7 +279,7 @@ public:
     QAtomicInteger<bool> bsysncquitstate = false;
     QAtomicInteger<bool> bdestLocal = false;
     qint64 refinecpsize = 0;
-    QMutex m_refinemutex;
+    QMutex m_refinemutex,m_errormutex;
 
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)

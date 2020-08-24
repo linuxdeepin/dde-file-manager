@@ -75,7 +75,9 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
 
         emit onConflict(sourceInfo->fileUrl(), targetInfo->fileUrl());
         emit job->currentJobChanged(sourceInfo->fileUrl(), targetInfo->fileUrl(),true);
-        job->togglePause();
+        if (job->state() != DFileCopyMoveJob::PausedState) {
+            job->togglePause();
+        }
     }
     break;
     case DFileCopyMoveJob::UnknowUrlError: {
@@ -87,7 +89,9 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
     case DFileCopyMoveJob::UnknowError:
         return DFileCopyMoveJob::CancelAction;
     default:
-        job->togglePause();
+        if (job->state() != DFileCopyMoveJob::PausedState) {
+            job->togglePause();
+        }
         emit onError(job->errorString());
         break;
     }

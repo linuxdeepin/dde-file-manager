@@ -339,13 +339,17 @@ void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
 
 void DFileCopyMoveJobPrivate::setError(DFileCopyMoveJob::Error e, const QString &es)
 {
+    QMutexLocker lk(&m_errormutex);
     if (DFileCopyMoveJob::CancelError <= error && error == e) {
         return;
     }
-    if (DFileCopyMoveJob::CancelError < error) {
-        while(!cansetnoerror) {
-            usleep(100);
-        }
+
+    if (DFileCopyMoveJob::CancelError < error && !cansetnoerror && DFileCopyMoveJob::StoppedState != state) {
+       setState(DFileCopyMoveJob::PausedState);
+       if (!Q_LIKELY(stateCheck())) {
+           qDebug() << "cuowuchuangtai ";
+           return;
+       }
     }
     if (DFileCopyMoveJob::CancelError < e) {
         cansetnoerror = false;
