@@ -37,7 +37,7 @@ void set_desktop_window(QWidget *w)
 
     if (DesktopInfo().waylandDectected()) {
         qDebug() << "wayland set desktop";
-        w->setWindowFlags(Qt::FramelessWindowHint); //to do set Desktop flag
+        w->setWindowFlags(Qt::FramelessWindowHint);
         w->setAttribute(Qt::WA_NativeWindow);
         window->setProperty("_d_dwayland_window-type","desktop");
     } else {
