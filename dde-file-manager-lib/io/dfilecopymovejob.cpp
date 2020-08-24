@@ -1771,7 +1771,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
 {
     // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
 //    const qint64 totalSize = fileStatistics->totalProgressSize();
-    const qint64 totalSize = DFileCopyMoveJob::CopyMode == mode ? totalsize : fileStatistics->totalProgressSize();
+    const qint64 totalSize = totalsize;
     //通过getCompletedDataSize取出的已传输的数据大小后期会远超实际数据大小，这种情况下直接使用completedDataSize
     qint64 dataSize(getCompletedDataSize());
     // completedDataSize 可能一直为 0
@@ -1790,8 +1790,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
         return;
 
 //    if (fileStatistics->isFinished()) {
-    if ((DFileCopyMoveJob::CopyMode == mode &&  iscountsizeover) ||
-            (DFileCopyMoveJob::CopyMode != mode && fileStatistics->isFinished())) {
+    if (iscountsizeover) {
         qreal realProgress = qreal(dataSize) / totalSize;
         if (realProgress > lastProgress)
             lastProgress = realProgress;
