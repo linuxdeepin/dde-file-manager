@@ -36,6 +36,7 @@
 #include "filemanager1_adaptor.h"
 #include "dbusfilemanager1.h"
 #include "accessible/accessiblelist.h"
+#include "util/dde/desktopinfo.h"
 
 using namespace Dtk::Core;
 using namespace Dtk::Widget;
@@ -102,8 +103,14 @@ int main(int argc, char *argv[])
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    DApplication::loadDXcbPlugin();
-    tmp += QString(" end loadDXcbPlugin %0").arg(gTime.elapsed());
+    if (DesktopInfo().waylandDectected()) {
+        qputenv("QT_WAYLAND_SHELL_INTEGRATION","kwayland-shell"); //wayland shell
+        tmp += QString(" end load kwayland-shell %0").arg(gTime.elapsed());
+    } else {
+        DApplication::loadDXcbPlugin();//wayland下不加载xcb
+        tmp += QString(" end loadDXcbPlugin %0").arg(gTime.elapsed());
+    }
+
     DApplication app(argc, argv);
     tmp += QString(" end DApplication %0").arg(gTime.elapsed());
 
