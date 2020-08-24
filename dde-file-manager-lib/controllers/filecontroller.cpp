@@ -54,6 +54,7 @@
 
 #include "singleton.h"
 #include "interfaces/dfmglobal.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include "appcontroller.h"
 #include "singleton.h"
@@ -734,6 +735,11 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
     // 所以这里将原来的普通指针以 deleteLater 析构的内存管理方式交给智能指针去判定。测试百次左右没有再发生崩溃的现象。
     // 该现象发生于从搜索列表中往光驱中发送文件夹还不被支持的时候。现已可以从搜索列表、最近列表、标签列表中往光驱中发送文件
     QSharedPointer<DFileCopyMoveJob> job = QSharedPointer<DFileCopyMoveJob>(new DFileCopyMoveJob());
+    //! 当前拷贝如果是退回到回收站，如要在job中保存回收站中文件原路径
+    if(!event.isNull() && !qvariant_cast<DUrlList>(event->cutData()).isEmpty())
+    {
+        job->setCurTrashData(event->cutData());
+    }
     // 当前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
     // fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
     bool bdoingcleartrash = DFileService::instance()->getDoClearTrashState();
@@ -938,8 +944,14 @@ void FileController::dealpasteEnd(const DUrlList &list, const QSharedPointer<DFM
             DFileService::instance()->dealPasteEnd(event, list);
             return;
         }
-
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
+        //! 新增剪切回收站路径event->urlList()
+        if(targetDir.startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
+        {
+            DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files, event->urlList()), true);
+        }
+        else {
+            DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
+        }
     }
 
     //到dfileservice里面作处理
