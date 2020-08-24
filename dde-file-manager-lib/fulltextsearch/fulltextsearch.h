@@ -24,15 +24,19 @@
 #include <QObject>
 #include <dfmglobal.h>
 #include <lucene++/LuceneHeaders.h>
+#include <QQueue>
+#include <QPair>
+#include <QMutex>
 
 using namespace Lucene;
 DFM_BEGIN_NAMESPACE
-class DFMFullTextSearchManager : public QObject
+class DFMFullTextSearchManager : public QThread
 {
     Q_OBJECT
 
 public:
     enum Type {Add, Modify, Delete};
+    enum State {Started, Stoped};
 
     static DFMFullTextSearchManager *getInstance();
 
@@ -50,16 +54,10 @@ public:
      */
     int fulltextIndex(const QString &sourceDir);
 
-    /**
-     * @brief clearSearchResult 清除搜索结果
-     */
-    void clearSearchResult();
-
-public slots:
-    void updateIndex(const QString &filePath, Type type);
+    void updateIndex(const QString &filePath);
 
 private:
-    explicit DFMFullTextSearchManager(QObject *parent = 0);
+    explicit DFMFullTextSearchManager(QObject *parent = nullptr);
 
     void indexDocs(const IndexWriterPtr &writer, const QString &sourceDir);
 
@@ -87,6 +85,8 @@ private:
     bool searchByKeyworld(const QString &keyword);
 
     void doPagingSearch(const SearcherPtr &searcher, const QueryPtr &query, int32_t hitsPerPage, bool raw, bool interactive);
+
+    void readFileName(const char *filePath, QStringList &result);
 private:
     bool status;
 
@@ -99,6 +99,12 @@ private:
      * @brief indexStorePath 索引存储目录
      */
     QString indexStorePath;
+
+    QQueue<QPair<QString, Type>> indexQueue;
+
+    State m_state = Stoped;
+
+    QMutex mutex;
 };
 
 DFM_END_NAMESPACE

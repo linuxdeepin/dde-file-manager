@@ -31,6 +31,7 @@
 #include <QThreadPool>
 #include <QMutex>
 #include <QFuture>
+#include <QQueue>
 
 #include "dfiledevice.h"
 #include "dfilecopyqueue.h"
@@ -187,6 +188,15 @@ public:
     void setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     bool checkRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
 
+    /**
+     * @brief setCutTrashData    保存剪切回收站文件路径
+     * @param fileNameList       文件路径
+     */
+    void setCutTrashData(QVariant fileNameList);
+
+    //! 剪切回收站文件路径
+    QQueue<QString> m_fileNameList;
+
     DFileCopyMoveJob *q_ptr;
 
     QWaitCondition waitCondition;
@@ -206,9 +216,9 @@ public:
 
     qint64 totalsize = 0;
     QAtomicInt totalfilecount = 0;
-    QAtomicInt iscountsizeover = 0;
-    bool isreadwriteseparate = false;
-    bool isbigfile = false;
+    QAtomicInteger<bool> iscountsizeover = false;
+    QAtomicInteger<bool> isreadwriteseparate = false;
+    QAtomicInteger<bool> isbigfile = false;
 
     qint64 m_tatol = 0;
     qint64 m_readtime = 0;
@@ -256,8 +266,8 @@ public:
     ElapsedTimer *updateSpeedElapsedTimer = nullptr;
     QTimer *updateSpeedTimer = nullptr;
     int timeOutCount = 0;
-    bool needUpdateProgress = false;
-    bool countStatisticsFinished = false;
+    QAtomicInteger<bool> needUpdateProgress = false;
+    QAtomicInteger<bool> countStatisticsFinished = false;
     // 线程id
     long tid = -1;
 //    QScopedPointer<DFileDevice> m_toDevice;
@@ -266,18 +276,17 @@ public:
 
     int currentthread = 0;
 
-    bool btaskdailogclose = false;
+    QAtomicInteger<bool>btaskdailogclose = false;
 
 
     QAtomicInt refinestat = DFileCopyMoveJob::MoreThreadAndMainRefine;
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
     //优化拷贝时异步线程状态
-    bool bsysncstate = false;
+    QAtomicInteger<bool> bsysncstate = false;
     //异步线程是否可以退出状体
-    bool bsysncquitstate = false;
-    QMutex m_sysncmutex;
-    bool bdestLocal = false;
+    QAtomicInteger<bool> bsysncquitstate = false;
+    QAtomicInteger<bool> bdestLocal = false;
     qint64 refinecpsize = 0;
     QMutex m_refinemutex;
 

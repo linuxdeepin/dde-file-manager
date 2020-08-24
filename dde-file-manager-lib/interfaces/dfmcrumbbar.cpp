@@ -270,7 +270,11 @@ void DFMCrumbBarPrivate::initConnections()
     });
 
     q->connect(addressBar, &DFMAddressBar::returnPressed, q, [q, this]() {
-        emit q->addressBarContentEntered(addressBar->text());
+
+        //! 如果为保险箱路径则进行路径转换
+        QString str = VaultController::toInternalPath(addressBar->text());
+
+        emit q->addressBarContentEntered(str);
     });
 
     q->connect(addressBar, &DFMAddressBar::escKeyPressed, q, [this]() {
@@ -605,7 +609,11 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
     menu->addSeparator();
 
     menu->addAction(editIcon, QObject::tr("Edit address"), this, [ = ]() {
-        showAddressBar(wnd->currentUrl());
+
+        //! 如果为保险箱路径则进行路径转换
+        QString realUrl = VaultController::toExternalPath(wnd->currentUrl().toString());
+
+        showAddressBar(realUrl);
     });
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
     QPointer<DFMCrumbBar> me = this;

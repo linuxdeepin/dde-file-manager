@@ -505,7 +505,6 @@ void CanvasGridView::delayCustom(int ms)
         }
 #endif
         emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
-        d->bModelRefreshing = false;
         return;
     }
 
@@ -535,7 +534,6 @@ void CanvasGridView::delayCustom(int ms)
         }
 
         emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
-        d->bModelRefreshing = false;
     });
     arrangeTimer->start(ms);
 }
@@ -564,7 +562,6 @@ void CanvasGridView::delayAutoMerge(int ms)
         qDebug() << "now initArrage file count" << list.size()
                  << "expend" << currentUrl().fragment();
         GridManager::instance()->initArrage(list);
-        d->bModelRefreshing = false;
         return;
     }
 
@@ -580,7 +577,6 @@ void CanvasGridView::delayAutoMerge(int ms)
         qDebug() << "initArrage file count" << list.size()
                  << "expend" << currentUrl().fragment() << "screen" << m_screenNum;
         GridManager::instance()->initArrage(list);
-        d->bModelRefreshing = false;
     });
     arrangeTimer->start(ms);
 }
@@ -1018,10 +1014,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             }
             break;
         case Qt::Key_F5:
-            if (!d->bModelRefreshing) {
-                d->bModelRefreshing = true;
-                model()->refresh();
-            }
+            model()->refresh();
             return;
         case Qt::Key_Delete:
             if (canDeleted && !selectUrlsMap.contains(rootUrl.toString()) && !selectUrls.isEmpty()) {
@@ -2386,7 +2379,10 @@ void CanvasGridView::initConnection()
                 if (!addRet && rmRet){
                     qWarning() << "error move!!!" << relocateItem << "from" << orgPos
                                << "to" << pos << "fail." << "put it on" << orgPos;
-                    GridManager::instance()->add(m_screenNum,orgPos, relocateItem);
+                    bool ret = GridManager::instance()->add(m_screenNum,orgPos, relocateItem);
+                    if (!ret){
+                        qWarning() << "error resotre " << relocateItem << " to" << orgPos << "fail.";
+                    }
                 }
             }
 
@@ -2400,7 +2396,12 @@ void CanvasGridView::initConnection()
                     auto orgPos = removed.value(relocateItem);
                     qWarning() << "error move!!!" << localFile << "from" << orgPos
                                << "to" << tarPos << "fail." << "put it on" << orgPos;
-                    GridManager::instance()->add(orgPos.first, orgPos.second, localFile);
+                    ret = GridManager::instance()->add(orgPos.first, orgPos.second, localFile);
+                    //还原失败，放入堆叠
+                    if (!ret){
+                        int iret = GridManager::instance()->addToOverlap(localFile);
+                        qWarning() << "error put " << localFile << " on" << orgPos << "fail. move to overlaps" << iret;
+                    }
                 }
             }
             d->dodgeAnimationing = false;

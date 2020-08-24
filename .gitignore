@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.obj
+.qmake.stash
 
 # Compiled Dynamic libraries
 *.so

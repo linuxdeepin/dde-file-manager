@@ -262,6 +262,9 @@ public:
 
     void syncAllProfile()
     {
+        if (allItems().isEmpty())
+            return;
+
         if(m_bSingleMode){
             syncProfile(1);
         }else {
@@ -918,11 +921,11 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
     for (int i = 0; i < selecteds.length(); ++i) {
         QPoint point{ destPosList.value(i) };
         bool ret = add(screenNum, point, selecteds.value(i));
-        Q_UNUSED(ret)
-//        if (!ret){
+        if (!ret){
+            d->m_overlapItems << selecteds.value(i);
 //            auto fPos = forwardFindEmpty(screenNum,point);
 //            add(fPos.first, fPos.second, selecteds.value(i));
-//        }
+        }
     }
 
     return true;
@@ -1063,6 +1066,20 @@ void GridManager::popOverlap()
         auto pos = d->takeEmptyPos();
         add(pos.first, pos.second, itemId);
     }
+}
+
+int GridManager::addToOverlap(const QString &itemId)
+{
+    if (d->m_overlapItems.contains(itemId))
+        return 1;
+
+    for (auto coor : d->m_itemGrids.values()){
+        if (coor.contains(itemId))
+            return -1;
+    }
+
+    d->m_overlapItems << itemId;
+    return 0;
 }
 
 int GridManager::emptyPostionCount(int screenNum) const

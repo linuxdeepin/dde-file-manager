@@ -53,7 +53,7 @@
 
 #undef signals
 extern "C" {
-    #include <gio/gio.h>
+#include <gio/gio.h>
 }
 #define signals public
 
@@ -177,17 +177,11 @@ DFileCopyMoveJobPrivate::DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq)
 DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
 {
     qDebug() << "DFileCopyMoveJobPrivate " << QDateTime::currentMSecsSinceEpoch() - m_sart;
-    closefromresult.waitForFinished();
-    closedevice.waitForFinished();
-    addper.waitForFinished();
-    openfrom.waitForFinished();
-    copyresult.waitForFinished();
-    writeresult.waitForFinished();
 
-    qDebug() << "DFileCopyMoveJobPrivate all thread over == " << QDateTime::currentMSecsSinceEpoch() - m_sart;
     while (!closefromresult.isFinished() || !addper.isFinished() || !closedevice.isFinished()
-           || !openfrom.isFinished() || !copyresult.isFinished() || !writeresult.isFinished()) {
+            || !openfrom.isFinished() || !copyresult.isFinished() || !writeresult.isFinished()) {
         qDebug() << "DFileCopyMoveJobPrivate all thread over ooo" << QDateTime::currentMSecsSinceEpoch() - m_sart;
+        qApp->processEvents();
     }
     delete updateSpeedElapsedTimer;
 }
@@ -533,7 +527,7 @@ bool DFileCopyMoveJobPrivate::checkFileSize(qint64 size) const
 
 bool DFileCopyMoveJobPrivate::checkFreeSpace(qint64 needSize)
 {
-    if (directoryStack.isEmpty()){
+    if (directoryStack.isEmpty()) {
         qWarning() << "directoryStack.isEmpty() return true";
         return true;
     }
@@ -686,7 +680,13 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     }
 
     QString file_name;
-    file_name = isNew ? source_info->fileName() : (handle ? handle->getNewFileName(q_ptr, source_info) : source_info->fileName());
+    //! 是否退回到回收站
+    if (m_fileNameList.isEmpty()) {
+        file_name = isNew ? source_info->fileName() : (handle ? handle->getNewFileName(q_ptr, source_info) : source_info->fileName());
+    } else {
+        file_name = m_fileNameList.dequeue().split('/').last();
+    }
+
 
     // 回收站可能重名文件，因此回收站中的文件实际filename是经过处理的,这里需要取真正需要展示的filename
     if (source_info->filePath().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
@@ -704,8 +704,8 @@ create_new_file_info:
     if (new_file_info->exists()) {
         if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode) &&
                 (new_file_info->fileUrl() == from || DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()))) {
-                // 不用再进行后面的操作
-                return true;
+            // 不用再进行后面的操作
+            return true;
         }
 
         // 禁止目录复制/移动到自己里面
@@ -926,7 +926,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
                 action = handleError(fromInfo.data(), toInfo.data());
             }
             isNew = true;
-        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
         if (action != DFileCopyMoveJob::NoAction) {
             return action == DFileCopyMoveJob::SkipAction;
@@ -1016,9 +1016,9 @@ bool DFileCopyMoveJobPrivate::doCopyFile(const DAbstractFileInfoPointer &fromInf
 {
     //预先读取
     {
-        int fromfd = open(fromInfo->fileUrl().path().toUtf8().toStdString().data(),O_RDONLY);
+        int fromfd = open(fromInfo->fileUrl().path().toUtf8().toStdString().data(), O_RDONLY);
         if (-1 != fromfd) {
-            readahead(fromfd,0,static_cast<size_t>(fromInfo->size()));
+            readahead(fromfd, 0, static_cast<size_t>(fromInfo->size()));
             close(fromfd);
         }
     }
@@ -1064,7 +1064,7 @@ open_file: {
 
                 action = handleError(fromInfo.constData(), nullptr);
             }
-        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() ); // bug: 26333, while set the stop status shoule break the process!
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());  // bug: 26333, while set the stop status shoule break the process!
 
         if (action == DFileCopyMoveJob::SkipAction) {
             return true;
@@ -1086,7 +1086,7 @@ open_file: {
 
                 action = handleError(toInfo.data(), nullptr);
             }
-        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
         if (action == DFileCopyMoveJob::SkipAction) {
             return true;
@@ -1102,7 +1102,7 @@ open_file: {
                     setError(DFileCopyMoveJob::ResizeError, toDevice->errorString());
                     action = handleError(toInfo.data(), nullptr);
                 }
-            } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+            } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
             if (action == DFileCopyMoveJob::SkipAction) {
                 return true;
@@ -1116,11 +1116,11 @@ open_file: {
     // 开启读取优化，告诉内核，我们将顺序读取此文件
 
     if (fromDevice->handle() > 0) {
-        posix_fadvise (fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
     }
 
     if (toDevice->handle() > 0) {
-        posix_fadvise (toDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(toDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
     }
 #endif
 
@@ -1131,11 +1131,11 @@ open_file: {
 
     qint64 block_Size = fromInfo->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN : fromInfo->size();
 
-    char *data = new char[block_Size +1];
+    char *data = new char[block_Size + 1];
 
     Q_FOREVER {
         qint64 current_pos = fromDevice->pos();
-read_data:
+    read_data:
         if (Q_UNLIKELY(!stateCheck())) {
             delete[] data;
             return false;
@@ -1178,7 +1178,7 @@ read_data:
         }
 
         current_pos = toDevice->pos();
-write_data:
+    write_data:
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
@@ -1195,20 +1195,20 @@ write_data:
                 delete[] data;
                 return false;
             }
-           setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
-           switch (handleError(fromInfo.data(), toInfo.data())) {
-           case DFileCopyMoveJob::RetryAction: {
-               if (!toDevice->seek(current_pos)) {
-                   setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
-                   //临时处理 fix
-                   //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
-                   //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
-                   if (FileUtils::isGvfsMountFile(toInfo->path())) {
-                       toDevice->closeWriteReadFailed(true);
-                   }
-                   delete[] data;
-                   return false;
-               }
+            setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
+            switch (handleError(fromInfo.data(), toInfo.data())) {
+            case DFileCopyMoveJob::RetryAction: {
+                if (!toDevice->seek(current_pos)) {
+                    setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
+                    //临时处理 fix
+                    //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+                    //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+                    if (FileUtils::isGvfsMountFile(toInfo->path())) {
+                        toDevice->closeWriteReadFailed(true);
+                    }
+                    delete[] data;
+                    return false;
+                }
 
                 goto write_data;
             }
@@ -1451,7 +1451,7 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
             }
         }
 
-        if(canRemove) {
+        if (canRemove) {
             if (is_file ? handler->remove(fileInfo->fileUrl()) : handler->rmdir(fileInfo->fileUrl())) {
                 return true;
             }
@@ -1463,7 +1463,7 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
         }
 
         action = handleError(fileInfo.constData(), nullptr);
-    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
     return action == DFileCopyMoveJob::SkipAction;
 }
@@ -1579,13 +1579,13 @@ bool DFileCopyMoveJobPrivate::process(const DUrl &from, const DAbstractFileInfoP
     // reset error and action
     if (DFileCopyMoveJob::MoreThreadAndMainRefine <= refinestat) {
         qDebug() << "xinb  youhua ";
-        return processRefine(from,source_info,target_info,isNew);
+        return processRefine(from, source_info, target_info, isNew);
     }
     unsetError();
     lastErrorHandleAction = DFileCopyMoveJob::NoAction;
 
     beginJob(JobInfo::Preprocess, from, (source_info && target_info) ? target_info->getUrlByChildFileName(source_info->fileName()) : DUrl());
-    bool ok = doProcess(from, source_info, target_info,isNew);
+    bool ok = doProcess(from, source_info, target_info, isNew);
     endJob();
 
     return ok;
@@ -1603,17 +1603,15 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer &fromInfo,
     //判断目标目录是u盘就只走但线程
     if (!bdestLocal || DFileCopyMoveJob::MoreThreadRefine > refinestat) {
         ok = doCopyFile(fromInfo, toInfo, handler, blockSize);
-    }
-    else {
-        while(m_pool.activeThreadCount() >= 24)
-        {
+    } else {
+        while (m_pool.activeThreadCount() >= 24) {
             if (Q_UNLIKELY(!stateCheck())) {
                 return false;
             }
         }
         QtConcurrent::run(&m_pool, this, static_cast<bool(DFileCopyMoveJobPrivate::*)
-                         (const DAbstractFileInfoPointer &, const DAbstractFileInfoPointer &, DFileHandler *, int)>
-                         (&DFileCopyMoveJobPrivate::doCopyFile), fromInfo, toInfo, handler, blockSize);
+                          (const DAbstractFileInfoPointer &, const DAbstractFileInfoPointer &, DFileHandler *, int)>
+                          (&DFileCopyMoveJobPrivate::doCopyFile), fromInfo, toInfo, handler, blockSize);
     }
     endJob();
 
@@ -1878,7 +1876,7 @@ void DFileCopyMoveJobPrivate::countrefinesize(const qint64 &size)
 }
 
 bool DFileCopyMoveJobPrivate::mergeDirectoryRefine(DFileHandler *handler, const DAbstractFileInfoPointer &fromInfo,
-                                                  const DAbstractFileInfoPointer &toInfo)
+                                                   const DAbstractFileInfoPointer &toInfo)
 {
     //copyrefineflag为0,遍历线程才会继续去遍历
     if (copyrefineflag >= 1) {
@@ -1912,7 +1910,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectoryRefine(DFileHandler *handler, const 
             }
             nextischeck = true;
 
-        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
         if (action != DFileCopyMoveJob::NoAction) {
             return action == DFileCopyMoveJob::SkipAction;
@@ -1984,8 +1982,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectoryRefine(DFileHandler *handler, const 
         copyinfo->handler = handler;
         if (refinestat == DFileCopyMoveJob::MoreThreadAndMainAndOpenRefine) {
             openfromfilequeue.enqueue(copyinfo);
-        }
-        else {
+        } else {
             readfileinfoqueue.enqueue(copyinfo);
         }
         return true;
@@ -2020,15 +2017,15 @@ bool DFileCopyMoveJobPrivate::processRefine(const DUrl &from, const DAbstractFil
     unsetError();
     lastErrorHandleAction = DFileCopyMoveJob::NoAction;
 
-    beginJob(JobInfo::Preprocess, from, (source_info && target_info) ? target_info->getUrlByChildFileName(source_info->fileName()) : DUrl(),true);
-    bool ok = doProcessRefine(from, source_info, target_info,ischeck);
+    beginJob(JobInfo::Preprocess, from, (source_info && target_info) ? target_info->getUrlByChildFileName(source_info->fileName()) : DUrl(), true);
+    bool ok = doProcessRefine(from, source_info, target_info, ischeck);
     endJob(true);
 
     return ok;
 }
 
 bool DFileCopyMoveJobPrivate::doProcessRefine(const DUrl &from, const DAbstractFileInfoPointer &source_info,
-                                               const DAbstractFileInfoPointer &target_info, const bool ischeck)
+                                              const DAbstractFileInfoPointer &target_info, const bool ischeck)
 {
 //    Q_Q(DFileCopyMoveJob);
     qint64 curt = QDateTime::currentMSecsSinceEpoch();
@@ -2097,12 +2094,17 @@ bool DFileCopyMoveJobPrivate::doProcessRefine(const DUrl &from, const DAbstractF
     }
 
     QString file_name;
-    if (!ischeck) {
-        file_name = handle ? handle->getNewFileName(q_ptr, source_info) : source_info->fileName();
+    //! 是否退回到回收站
+    if (m_fileNameList.isEmpty()) {
+        if (!ischeck) {
+            file_name = handle ? handle->getNewFileName(q_ptr, source_info) : source_info->fileName();
+        } else {
+            file_name = source_info->fileName();
+        }
+    } else {
+        file_name = m_fileNameList.dequeue().split('/').last();
     }
-    else {
-        file_name = source_info->fileName();
-    }
+
 
     // 回收站可能重名文件，因此回收站中的文件实际filename是经过处理的,这里需要取真正需要展示的filename
     if (source_info->filePath().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
@@ -2122,8 +2124,8 @@ create_new_file_info:
     if (new_file_info->exists()) {
         if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode) &&
                 (new_file_info->fileUrl() == from || DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()))) {
-                // 不用再进行后面的操作
-                return true;
+            // 不用再进行后面的操作
+            return true;
         }
 
         // 禁止目录复制/移动到自己里面
@@ -2202,8 +2204,7 @@ create_new_file_info:
             }
             if (new_source_info) {
                 ok = linkFile(handler, new_file_info, new_source_info->symlinkTargetPath());
-            }
-            else {
+            } else {
                 ok = linkFile(handler, new_file_info, source_info->symlinkTargetPath());
             }
         } else {
@@ -2274,8 +2275,7 @@ process_file:
             info->handler = handler;
             if (refinestat >= DFileCopyMoveJob::MoreThreadAndMainAndOpenRefine) {
                 openfromfilequeue.enqueue(info);
-            }
-            else {
+            } else {
                 readfileinfoqueue.enqueue(info);
             }
             ok = true;
@@ -2330,12 +2330,12 @@ bool DFileCopyMoveJobPrivate::copyFileRefine(const DFileCopyMoveJobPrivate::File
 {
     qint64 elapsed = QDateTime::currentMSecsSinceEpoch();
 //    qDebug() << "read and open copyFileRefine  " << copyinfo->frominfo->fileUrl();
-    beginJob(JobInfo::Copy, copyinfo->frominfo->fileUrl(), copyinfo->toinfo->fileUrl(),true);
+    beginJob(JobInfo::Copy, copyinfo->frominfo->fileUrl(), copyinfo->toinfo->fileUrl(), true);
     //预先读取
     {
-        int fromfd = open(copyinfo->frominfo->fileUrl().path().toUtf8().toStdString().data(),O_RDONLY);
+        int fromfd = open(copyinfo->frominfo->fileUrl().path().toUtf8().toStdString().data(), O_RDONLY);
         if (-1 != fromfd) {
-            readahead(fromfd,0,static_cast<size_t>(copyinfo->frominfo->size()));
+            readahead(fromfd, 0, static_cast<size_t>(copyinfo->frominfo->size()));
             close(fromfd);
         }
     }
@@ -2391,7 +2391,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileRefine(const FileCopyInfoPointer &copyin
 
             action = handleError(copyinfo->frominfo.constData(), nullptr);
         }
-    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() ); // bug: 26333, while set the stop status shoule break the process!
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());  // bug: 26333, while set the stop status shoule break the process!
 
     if (action == DFileCopyMoveJob::SkipAction) {
         return true;
@@ -2402,7 +2402,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileRefine(const FileCopyInfoPointer &copyin
     // 开启读取优化，告诉内核，我们将顺序读取此文件
 
     if (fromDevice->handle() > 0) {
-        posix_fadvise (fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
     }
 #endif
     qint64 size_block = fromDevice->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN : fromDevice->size();
@@ -2451,8 +2451,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileRefine(const FileCopyInfoPointer &copyin
                 closefromdevicequeue.enqueue(fromDevice);
                 return false;
             }
-        }
-        else {
+        } else {
             if (size_read >= MAX_BUFFER_LEN && size_read < fromDevice->size()) {
                 FileCopyInfoPointer tmpinfo(new FileCopyInfo);
                 tmpinfo->closeflag = false;
@@ -2464,8 +2463,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileRefine(const FileCopyInfoPointer &copyin
                 tmpinfo->size = size_read;
                 writefilequeue.enqueue(tmpinfo);
 //                qDebug() << "insert write queue";
-            }
-            else {
+            } else {
                 copyinfo->buffer = buffer;
                 copyinfo->size = size_read;
                 if (size_read >= fromDevice->size()) {
@@ -2531,7 +2529,7 @@ open_file: {
 
                 action = handleError(copyinfo->frominfo.constData(), nullptr);
             }
-        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() ); // bug: 26333, while set the stop status shoule break the process!
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());  // bug: 26333, while set the stop status shoule break the process!
 
         if (action == DFileCopyMoveJob::SkipAction) {
             return true;
@@ -2553,7 +2551,7 @@ open_file: {
 
                 action = handleError(copyinfo->toinfo.data(), nullptr);
             }
-        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
         if (action == DFileCopyMoveJob::SkipAction) {
             return true;
@@ -2569,7 +2567,7 @@ open_file: {
                     setError(DFileCopyMoveJob::ResizeError, toDevice->errorString());
                     action = handleError(copyinfo->toinfo.data(), nullptr);
                 }
-            } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+            } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
             if (action == DFileCopyMoveJob::SkipAction) {
                 return true;
@@ -2583,23 +2581,23 @@ open_file: {
     // 开启读取优化，告诉内核，我们将顺序读取此文件
 
     if (fromDevice->handle() > 0) {
-        posix_fadvise (fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
     }
 
     if (toDevice->handle() > 0) {
-        posix_fadvise (toDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(toDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
     }
 #endif
 
     currentJobDataSizeInfo.first = fromDevice->size();
     currentJobFileHandle = toDevice->handle();
     uLong source_checksum = adler32(0L, nullptr, 0);
-    qint64 size_block = fromDevice->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN: fromDevice->size();
+    qint64 size_block = copyinfo->frominfo->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN: copyinfo->frominfo->size();
     char *buffer = new char[size_block + 1];
 
     Q_FOREVER {
         qint64 current_pos = fromDevice->pos();
-read_data:
+    read_data:
         if (Q_UNLIKELY(!stateCheck())) {
             delete[] buffer;
             return false;
@@ -2641,7 +2639,7 @@ read_data:
         }
 
         current_pos = toDevice->pos();
-write_data:
+    write_data:
         if (Q_UNLIKELY(!stateCheck())) {
             delete[] buffer;
             return false;
@@ -2662,20 +2660,20 @@ write_data:
                 delete[] buffer;
                 return false;
             }
-           setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
-           switch (handleError(copyinfo->frominfo.data(), copyinfo->toinfo.data())) {
-           case DFileCopyMoveJob::RetryAction: {
-               if (!toDevice->seek(current_pos)) {
-                   setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
-                   //临时处理 fix
-                   //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
-                   //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
-                   if (FileUtils::isGvfsMountFile(copyinfo->toinfo->path())) {
-                       toDevice->closeWriteReadFailed(true);
-                   }
-                   delete[] buffer;
-                   return false;
-               }
+            setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
+            switch (handleError(copyinfo->frominfo.data(), copyinfo->toinfo.data())) {
+            case DFileCopyMoveJob::RetryAction: {
+                if (!toDevice->seek(current_pos)) {
+                    setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
+                    //临时处理 fix
+                    //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+                    //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+                    if (FileUtils::isGvfsMountFile(copyinfo->toinfo->path())) {
+                        toDevice->closeWriteReadFailed(true);
+                    }
+                    delete[] buffer;
+                    return false;
+                }
 
                 goto write_data;
             }
@@ -2763,7 +2761,7 @@ write_data:
     }
     delete[] buffer;
     DFileHandler *handler = copyinfo->handler ? copyinfo->handler :
-                                            DFileService::instance()->createFileHandler(nullptr, copyinfo->frominfo->fileUrl());
+                            DFileService::instance()->createFileHandler(nullptr, copyinfo->frominfo->fileUrl());
     handler->setFileTime(copyinfo->frominfo->fileUrl(), copyinfo->frominfo->lastRead(), copyinfo->frominfo->lastModified());
 
     QFileDevice::Permissions permissions = copyinfo->frominfo->permissions();
@@ -2875,19 +2873,18 @@ bool DFileCopyMoveJobPrivate::openRefineThread()
     qint64 copyresulttime = QDateTime::currentMSecsSinceEpoch();
     bool ok = false;
     while (checkRefineCopyProccessSate(DFileCopyMoveJob::MainProccessOver)) {
-        if(!openfromfilequeue.isEmpty()) {
+        if (!openfromfilequeue.isEmpty()) {
             auto copyinfo = openfromfilequeue.dequeue();
             if (copyinfo->isdir) {
                 readfileinfoqueue.enqueue(copyinfo);
-            }
-            else {
+            } else {
                 while (filerefinefd > 600) {
                     usleep(10);
                 }
                 ok = openRefine(copyinfo);
                 //打开文件失败，退出当前线程，清理所有的open队列（是文件夹的继续，到后面去加权），继续处理read、write和close队列，
                 if (!ok) {
-                    while(!openfromfilequeue.isEmpty()) {
+                    while (!openfromfilequeue.isEmpty()) {
                         auto copyinfo = openfromfilequeue.dequeue();
                         if (copyinfo->isdir) {
                             readfileinfoqueue.enqueue(copyinfo);
@@ -2899,19 +2896,18 @@ bool DFileCopyMoveJobPrivate::openRefineThread()
             }
         }
     }
-    while(!openfromfilequeue.isEmpty()) {
+    while (!openfromfilequeue.isEmpty()) {
         auto copyinfo = openfromfilequeue.dequeue();
         if (copyinfo->isdir) {
             readfileinfoqueue.enqueue(copyinfo);
-        }
-        else {
+        } else {
             while (filerefinefd > 600) {
                 usleep(10);
             }
             ok = openRefine(copyinfo);
             //打开文件失败，退出当前线程，清理所有的open队列，继续处理read、write和close队列，
             if (!ok) {
-                while(!openfromfilequeue.isEmpty()) {
+                while (!openfromfilequeue.isEmpty()) {
                     auto copyinfo = openfromfilequeue.dequeue();
                     if (copyinfo->isdir) {
                         readfileinfoqueue.enqueue(copyinfo);
@@ -2930,7 +2926,7 @@ bool DFileCopyMoveJobPrivate::openRefineThread()
 
 bool DFileCopyMoveJobPrivate::openRefine(const DFileCopyMoveJobPrivate::FileCopyInfoPointer &copyinfo)
 {
-    beginJob(JobInfo::Copy, copyinfo->frominfo->fileUrl(), copyinfo->toinfo->fileUrl(),true);
+    beginJob(JobInfo::Copy, copyinfo->frominfo->fileUrl(), copyinfo->toinfo->fileUrl(), true);
 
     QSharedPointer<DFileDevice> fromDevice(DFileService::instance()->createFileDevice(nullptr, copyinfo->frominfo->fileUrl()));
     if (!fromDevice) {
@@ -2975,7 +2971,7 @@ bool DFileCopyMoveJobPrivate::openRefine(const DFileCopyMoveJobPrivate::FileCopy
 
             action = handleError(copyinfo->frominfo.constData(), nullptr);
         }
-    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() ); // bug: 26333, while set the stop status shoule break the process!
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());  // bug: 26333, while set the stop status shoule break the process!
 
     if (action == DFileCopyMoveJob::SkipAction) {
         return true;
@@ -3002,18 +2998,16 @@ bool DFileCopyMoveJobPrivate::readRefineThread()
                     continue;
                 }
                 writefilequeue.enqueue(copyinfo);
-            }
-            else{
+            } else {
                 bool ok = false;
                 if (refinestat == DFileCopyMoveJob::MoreThreadAndMainAndOpenRefine) {
                     ok = readRefine(copyinfo);
-                }
-                else {
+                } else {
                     ok = copyFileRefine(copyinfo);
                 }
                 if (!ok) {
                     //打开文件失败，退出当前线程，清理所有的open队列，继续处理read、write和close队列，
-                    while(!readfileinfoqueue.isEmpty()) {
+                    while (!readfileinfoqueue.isEmpty()) {
                         auto copyinfo = readfileinfoqueue.dequeue();
                         if (copyinfo->isdir) {
                             writefilequeue.enqueue(copyinfo);
@@ -3034,18 +3028,16 @@ bool DFileCopyMoveJobPrivate::readRefineThread()
             }
             //对文件夹加权
             writefilequeue.enqueue(copyinfo);
-        }
-        else{
+        } else {
             bool ok = false;
             if (refinestat == DFileCopyMoveJob::MoreThreadAndMainAndOpenRefine) {
                 ok = readRefine(copyinfo);
-            }
-            else {
+            } else {
                 ok = copyFileRefine(copyinfo);
             }
             if (!ok) {
                 //打开文件失败，退出当前线程，清理所有的open队列，继续处理read、write和close队列，
-                while(!readfileinfoqueue.isEmpty()) {
+                while (!readfileinfoqueue.isEmpty()) {
                     auto copyinfo = readfileinfoqueue.dequeue();
                     if (copyinfo->isdir) {
                         writefilequeue.enqueue(copyinfo);
@@ -3068,7 +3060,7 @@ bool DFileCopyMoveJobPrivate::readRefine(const DFileCopyMoveJobPrivate::FileCopy
     // 开启读取优化，告诉内核，我们将顺序读取此文件
 
     if (copyinfo->fromdevice->handle() > 0) {
-        posix_fadvise (copyinfo->fromdevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(copyinfo->fromdevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
     }
 #endif
     qint64 size_block = copyinfo->fromdevice->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN : copyinfo->fromdevice->size();
@@ -3083,7 +3075,7 @@ bool DFileCopyMoveJobPrivate::readRefine(const DFileCopyMoveJobPrivate::FileCopy
         }
         qint64 curt = QDateTime::currentMSecsSinceEpoch();
         qint64 size_read = copyinfo->fromdevice->read(buffer, size_block);
-         m_readtime += QDateTime::currentMSecsSinceEpoch() - curt;
+        m_readtime += QDateTime::currentMSecsSinceEpoch() - curt;
 
         if (Q_UNLIKELY(size_read <= 0)) {
             if (size_read == 0 && copyinfo->fromdevice->atEnd()) {
@@ -3112,8 +3104,7 @@ bool DFileCopyMoveJobPrivate::readRefine(const DFileCopyMoveJobPrivate::FileCopy
             default:
                 return false;
             }
-        }
-        else {
+        } else {
             if (size_read >= MAX_BUFFER_LEN && size_read < copyinfo->fromdevice->size()) {
                 FileCopyInfoPointer tmpinfo(new FileCopyInfo(*copyinfo));
                 tmpinfo->closeflag = false;
@@ -3121,8 +3112,7 @@ bool DFileCopyMoveJobPrivate::readRefine(const DFileCopyMoveJobPrivate::FileCopy
                 tmpinfo->size = size_read;
                 tmpinfo->currentpos = current_pos;
                 writefilequeue.enqueue(tmpinfo);
-            }
-            else {
+            } else {
                 copyinfo->buffer = buffer;
                 copyinfo->size = size_read;
                 if (size_read >= copyinfo->fromdevice->size()) {
@@ -3150,30 +3140,31 @@ bool DFileCopyMoveJobPrivate::copyReadAndWriteRefineThread()
             }
             else
             {
-                if (!bdestLocal || isreadwriteseparate) {
-                    copyReadAndWriteRefineRefine(copyinfo);
-                    continue;
-                }
                 //判断目标目录是u盘就只走但线程
                 if (Q_UNLIKELY(!stateCheck())) {
                     //打开文件失败，退出当前线程，清理所有的open队列，继续处理read、write和close队列，
-                    while(!readfileinfoqueue.isEmpty()) {
+                    while (!readfileinfoqueue.isEmpty()) {
                         auto copyinfo = readfileinfoqueue.dequeue();
                         if (copyinfo->isdir) {
                             addfilepermissionsqueue.enqueue(copyinfo);
                         }
                     }
                     setRefineCopyProccessSate(isreadwriteseparate ? DFileCopyMoveJob::ReadFileProccessOver :
-                                                                    DFileCopyMoveJob::ReadAndWriteFileProccessOver);
+                                              DFileCopyMoveJob::ReadAndWriteFileProccessOver);
                     return false;
                 }
+                if (!bdestLocal || isreadwriteseparate) {
+                    copyReadAndWriteRefineRefine(copyinfo);
+                    continue;
+                }
+
                 while(m_pool.activeThreadCount() >= 24)
                 {
 
                 }
                 QtConcurrent::run(&m_pool, this, static_cast<bool(DFileCopyMoveJobPrivate::*)
-                                 (const DFileCopyMoveJobPrivate::FileCopyInfoPointer &)>
-                                 (&DFileCopyMoveJobPrivate::copyReadAndWriteRefineRefine), copyinfo);
+                                  (const DFileCopyMoveJobPrivate::FileCopyInfoPointer &)>
+                                  (&DFileCopyMoveJobPrivate::copyReadAndWriteRefineRefine), copyinfo);
             }
         }
     }
@@ -3185,34 +3176,35 @@ bool DFileCopyMoveJobPrivate::copyReadAndWriteRefineThread()
         }
         else
         {
-            if (!bdestLocal || isreadwriteseparate) {
-                copyReadAndWriteRefineRefine(copyinfo);
-                continue;
-            }
             //判断目标目录是u盘就只走但线程
             if (Q_UNLIKELY(!stateCheck())) {
                 //打开文件失败，退出当前线程，清理所有的open队列，继续处理read、write和close队列，
-                while(!readfileinfoqueue.isEmpty()) {
+                while (!readfileinfoqueue.isEmpty()) {
                     auto copyinfo = readfileinfoqueue.dequeue();
                     if (copyinfo->isdir) {
                         addfilepermissionsqueue.enqueue(copyinfo);
                     }
                 }
                 setRefineCopyProccessSate(isreadwriteseparate ? DFileCopyMoveJob::ReadFileProccessOver :
-                                                                DFileCopyMoveJob::ReadAndWriteFileProccessOver);
+                                          DFileCopyMoveJob::ReadAndWriteFileProccessOver);
                 return false;
             }
+            if (!bdestLocal || isreadwriteseparate) {
+                copyReadAndWriteRefineRefine(copyinfo);
+                continue;
+            }
+
             while(m_pool.activeThreadCount() >= 24)
             {
 
             }
             QtConcurrent::run(&m_pool, this, static_cast<bool(DFileCopyMoveJobPrivate::*)
-                             (const DFileCopyMoveJobPrivate::FileCopyInfoPointer &)>
-                             (&DFileCopyMoveJobPrivate::copyReadAndWriteRefineRefine), copyinfo);
+                              (const DFileCopyMoveJobPrivate::FileCopyInfoPointer &)>
+                              (&DFileCopyMoveJobPrivate::copyReadAndWriteRefineRefine), copyinfo);
         }
     }
     setRefineCopyProccessSate(isreadwriteseparate ? DFileCopyMoveJob::ReadFileProccessOver :
-                                                    DFileCopyMoveJob::ReadAndWriteFileProccessOver);
+                              DFileCopyMoveJob::ReadAndWriteFileProccessOver);
     qDebug() << "copyReadAndWriteRefineThread over ==== " << QDateTime::currentMSecsSinceEpoch() - m_sart;
     return true;
 }
@@ -3221,21 +3213,20 @@ bool DFileCopyMoveJobPrivate::copyReadAndWriteRefineRefine(const DFileCopyMoveJo
 {
     FileCopyInfoPointer copytemp = copyinfo;
     qint64 elapsed = QDateTime::currentMSecsSinceEpoch();
-    beginJob(JobInfo::Copy, copyinfo->frominfo->fileUrl(), copyinfo->toinfo->fileUrl(),true);
+    beginJob(JobInfo::Copy, copyinfo->frominfo->fileUrl(), copyinfo->toinfo->fileUrl(), true);
     //大于1G并且在盘内只有一个拷贝的和大于1G拷贝到u盘，执行
     bool ok = false;
     //预先读取
     {
-        int fromfd = open(copyinfo->frominfo->fileUrl().path().toUtf8().toStdString().data(),O_RDONLY);
+        int fromfd = open(copyinfo->frominfo->fileUrl().path().toUtf8().toStdString().data(), O_RDONLY);
         if (-1 != fromfd) {
-            readahead(fromfd,0,static_cast<size_t>(copyinfo->frominfo->size()));
+            readahead(fromfd, 0, static_cast<size_t>(copyinfo->frominfo->size()));
             close(fromfd);
         }
     }
     if ((copyinfo->frominfo->size() >= BIG_FILE_SIZE) && (1 == totalfilecount || !bdestLocal)) {
         ok = doCopyFileRefine(copytemp);
-    }
-    else {
+    } else {
         ok = doCopyFileRefineReadAndWrite(copytemp);
     }
     endJob(true);
@@ -3278,14 +3269,14 @@ bool DFileCopyMoveJobPrivate::writeRefine()
             addfilepermissionsqueue.enqueue(info);
             continue;
         }
-        if (!info->todevice){
+        if (!info->todevice) {
 //            qDebug() << "write stat change ";
             continue;
         }
 #ifdef Q_OS_LINUX
         // 开启读取优化，告诉内核，我们将顺序读取此文件
         if (info->todevice && info->todevice->handle() > 0) {
-            posix_fadvise (info->todevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+            posix_fadvise(info->todevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
         }
 #endif
         if (!info->todevice->isOpen()) {
@@ -3306,7 +3297,7 @@ bool DFileCopyMoveJobPrivate::writeRefine()
 
                     action = handleError(info->toinfo.data(), nullptr);
                 }
-            } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+            } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
             if (action == DFileCopyMoveJob::SkipAction) {
                 return true;
@@ -3322,7 +3313,7 @@ bool DFileCopyMoveJobPrivate::writeRefine()
                         setError(DFileCopyMoveJob::ResizeError, info->todevice->errorString());
                         action = handleError(info->toinfo.data(), nullptr);
                     }
-                } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+                } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
                 if (action == DFileCopyMoveJob::SkipAction) {
                     return true;
@@ -3333,8 +3324,7 @@ bool DFileCopyMoveJobPrivate::writeRefine()
         }
 
         qint64 curt = QDateTime::currentMSecsSinceEpoch();
-write_data:
-        {
+    write_data: {
 //            qDebug() << " write start   ===== " << curt - m_sart;
             qint64 size_write = info->todevice->write(info->buffer, info->size);
             m_write += QDateTime::currentMSecsSinceEpoch() - curt;
@@ -3351,21 +3341,21 @@ write_data:
                     delete[] info->buffer;
                     return false;
                 }
-               setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").
-                        arg(info->todevice->errorString()));
-               switch (handleError(info->frominfo.data(), info->toinfo.data())) {
-               case DFileCopyMoveJob::RetryAction: {
-                   if (!info->todevice->seek(info->currentpos)) {
-                       setError(DFileCopyMoveJob::UnknowError, info->todevice->errorString());
-                       //临时处理 fix
-                       //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
-                       //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
-                       if (FileUtils::isGvfsMountFile(info->toinfo->path())) {
-                           info->todevice->closeWriteReadFailed(true);
-                       }
-                       delete[] info->buffer;
-                       return false;
-                   }
+                setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").
+                         arg(info->todevice->errorString()));
+                switch (handleError(info->frominfo.data(), info->toinfo.data())) {
+                case DFileCopyMoveJob::RetryAction: {
+                    if (!info->todevice->seek(info->currentpos)) {
+                        setError(DFileCopyMoveJob::UnknowError, info->todevice->errorString());
+                        //临时处理 fix
+                        //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
+                        //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+                        if (FileUtils::isGvfsMountFile(info->toinfo->path())) {
+                            info->todevice->closeWriteReadFailed(true);
+                        }
+                        delete[] info->buffer;
+                        return false;
+                    }
 
                     goto write_data;
                 }
@@ -3465,7 +3455,7 @@ write_data:
                 //对文件加权
 //                qDebug() << "isreadwriteseparate write addpermissions  ";
                 DFileHandler *handler = info->handler ? info->handler :
-                                                        DFileService::instance()->createFileHandler(nullptr, info->frominfo->fileUrl());
+                                        DFileService::instance()->createFileHandler(nullptr, info->frominfo->fileUrl());
                 handler->setFileTime(info->frominfo->fileUrl(), info->frominfo->lastRead(), info->frominfo->lastModified());
                 QFileDevice::Permissions permissions = info->frominfo->permissions();
                 //! use stat function to read vault file permission.
@@ -3474,8 +3464,7 @@ write_data:
                     permissions = VaultController::getPermissions(path);
                 }
                 handler->setPermissions(info->toinfo->fileUrl(), /*source_info->permissions()*/permissions);
-            }
-            else {
+            } else {
 //                qDebug() << "write insert addfilepermissionsqueue  ";
                 addfilepermissionsqueue.enqueue(info);
             }
@@ -3491,7 +3480,7 @@ void DFileCopyMoveJobPrivate::addRefinePermissions()
     while (!addfilepermissionsqueue.isEmpty()) {
         auto info = addfilepermissionsqueue.dequeue();
         DFileHandler *handler = info->handler ? info->handler :
-                                                DFileService::instance()->createFileHandler(nullptr, info->frominfo->fileUrl());
+                                DFileService::instance()->createFileHandler(nullptr, info->frominfo->fileUrl());
         if (info->isdir) {
             //对文件夹加权
             //处理文件权限问题
@@ -3503,8 +3492,7 @@ void DFileCopyMoveJobPrivate::addRefinePermissions()
                 permissions = info->frominfo->permissions();
             }
             handler->setPermissions(info->toinfo->fileUrl(), permissions);
-        }
-        else {
+        } else {
             //对文件加权
             handler->setFileTime(info->frominfo->fileUrl(), info->frominfo->lastRead(), info->frominfo->lastModified());
             QFileDevice::Permissions permissions = info->frominfo->permissions();
@@ -3563,18 +3551,18 @@ void DFileCopyMoveJobPrivate::closeRefineToDeviceThread()
 
 void DFileCopyMoveJobPrivate::countAllCopyFile()
 {
-    if (mode ==  DFileCopyMoveJob::CopyMode) {
+//    if (mode ==  DFileCopyMoveJob::CopyMode) {
         qint64 times = QDateTime::currentMSecsSinceEpoch();
         for (auto url : sourceUrlList) {
-            char *paths[2] = {nullptr,nullptr};
+            char *paths[2] = {nullptr, nullptr};
             paths[0] = strdup(url.path().toUtf8().toStdString().data());
-            FTS* fts = fts_open(paths, 0, nullptr);
+            FTS *fts = fts_open(paths, 0, nullptr);
             if (nullptr == fts) {
                 perror("fts_open");
                 continue;
             }
-            while(1) {
-                FTSENT* ent = fts_read(fts);
+            while (1) {
+                FTSENT *ent = fts_read(fts);
                 if (ent == nullptr) {
                     printf("walk end\n");
                     break;
@@ -3591,8 +3579,8 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
                 }
             }
             fts_close(fts);
-        }
-        iscountsizeover++;
+//        }
+        iscountsizeover = true;
 
         qDebug() << " dir time " << QDateTime::currentMSecsSinceEpoch() - times << totalsize;
     }
@@ -3602,59 +3590,56 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
 void DFileCopyMoveJobPrivate::runRefineThread()
 {
     switch (refinestat) {
-        case DFileCopyMoveJob::MoreThreadAndMainRefine:
-        {
-            //启动拷贝线程
-            copyresult = QtConcurrent::run([this](){
-                this->copyReadAndWriteRefineThread();
-            });
+    case DFileCopyMoveJob::MoreThreadAndMainRefine: {
+        //启动拷贝线程
+        copyresult = QtConcurrent::run([this]() {
+            this->copyReadAndWriteRefineThread();
+        });
 
-            break;
-        }
-        case DFileCopyMoveJob::MoreThreadAndMainAndReadRefine:
-        {
-            //启用线程去读取文件
-            copyresult = QtConcurrent::run([this](){
-                this->readRefineThread();
-            });
-            //启动写线程
-            runRefineWriteAndCloseThread();
-            //加权线程
-            this->addper = QtConcurrent::run([this](){
-                this->addRefinePermissionsThread();
-            });
-            break;
-        }
-        case DFileCopyMoveJob::MoreThreadAndMainAndOpenRefine:
-        {
-            openfrom = QtConcurrent::run([this](){
-                openRefineThread();
-            });
+        break;
+    }
+    case DFileCopyMoveJob::MoreThreadAndMainAndReadRefine: {
+        //启用线程去读取文件
+        copyresult = QtConcurrent::run([this]() {
+            this->readRefineThread();
+        });
+        //启动写线程
+        runRefineWriteAndCloseThread();
+        //加权线程
+        this->addper = QtConcurrent::run([this]() {
+            this->addRefinePermissionsThread();
+        });
+        break;
+    }
+    case DFileCopyMoveJob::MoreThreadAndMainAndOpenRefine: {
+        openfrom = QtConcurrent::run([this]() {
+            openRefineThread();
+        });
 
-            //启用线程去读取文件
-            copyresult = QtConcurrent::run([this](){
-                this->readRefineThread();
-            });
-            runRefineWriteAndCloseThread();
-            //加权线程
-            this->addper = QtConcurrent::run([this](){
-                this->addRefinePermissionsThread();
-            });
-            break;
-        }
+        //启用线程去读取文件
+        copyresult = QtConcurrent::run([this]() {
+            this->readRefineThread();
+        });
+        runRefineWriteAndCloseThread();
+        //加权线程
+        this->addper = QtConcurrent::run([this]() {
+            this->addRefinePermissionsThread();
+        });
+        break;
+    }
     }
 }
 
 void DFileCopyMoveJobPrivate::runRefineWriteAndCloseThread()
 {
     //启动写线程
-    writeresult = QtConcurrent::run([this](){
+    writeresult = QtConcurrent::run([this]() {
         this->writeRefineThread();
     });
-    this->closedevice = QtConcurrent::run([this](){
+    this->closedevice = QtConcurrent::run([this]() {
         this->closeRefineFromDeviceThread();
     });
-    this->closefromresult = QtConcurrent::run([this](){
+    this->closefromresult = QtConcurrent::run([this]() {
         this->closeRefineToDeviceThread();
     });
 }
@@ -3669,9 +3654,17 @@ bool DFileCopyMoveJobPrivate::checkRefineCopyProccessSate(const DFileCopyMoveJob
     return copyrefineflag < stat;
 }
 
+void DFileCopyMoveJobPrivate::setCutTrashData(QVariant fileNameList)
+{
+    for(DUrl temp : qvariant_cast<DUrlList>(fileNameList))
+    {
+        m_fileNameList.enqueue(temp.path());
+    }
+}
 
 
-DFileCopyMoveJob::DFileCopyMoveJob( QObject *parent)
+
+DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
     : DFileCopyMoveJob(*new DFileCopyMoveJobPrivate(this), parent)
 {
 }
@@ -3771,6 +3764,11 @@ bool DFileCopyMoveJob::fileStatisticsIsFinished() const
 qint64 DFileCopyMoveJob::totalDataSize() const
 {
     Q_D(const DFileCopyMoveJob);
+    if (!d->iscountsizeover) {
+        return -1;
+    }
+    return d->totalsize;
+
     if (d->mode == CopyMode) {
         if (!d->iscountsizeover) {
             return -1;
@@ -3815,7 +3813,6 @@ bool DFileCopyMoveJob::getSysncState()
 {
     Q_D(DFileCopyMoveJob);
 
-    QMutexLocker(&d->m_sysncmutex);
     return d->bsysncstate;
 }
 
@@ -3823,7 +3820,6 @@ bool DFileCopyMoveJob::getSysncQuitState()
 {
     Q_D(DFileCopyMoveJob);
 
-    QMutexLocker(&d->m_sysncmutex);
     return d->bsysncquitstate;
 }
 
@@ -3831,7 +3827,6 @@ void DFileCopyMoveJob::setSysncState(const bool &state)
 {
     Q_D(DFileCopyMoveJob);
 
-    QMutexLocker(&d->m_sysncmutex);
     d->bsysncstate = state;
 }
 
@@ -3839,7 +3834,6 @@ void DFileCopyMoveJob::setSysncQuitState(const bool &quitstate)
 {
     Q_D(DFileCopyMoveJob);
 
-    QMutexLocker(&d->m_sysncmutex);
     d->bsysncquitstate = quitstate;
 }
 
@@ -3870,8 +3864,7 @@ void DFileCopyMoveJob::waitSysncEnd()
     if (d->refinestat == NoRefine) {
         return;
     }
-    while (d->m_pool.activeThreadCount() || getSysncState())
-    {
+    while (d->m_pool.activeThreadCount() || getSysncState()) {
         if (StoppedState == d->state) {
             d->m_pool.clear();
             d->syncresult.cancel();
@@ -3884,13 +3877,17 @@ void DFileCopyMoveJob::waitSysncEnd()
 void DFileCopyMoveJob::waitRefineThreadOver()
 {
     Q_D(DFileCopyMoveJob);
-    d->openfrom.waitForFinished();
-    d->writeresult.waitForFinished();
-    d->copyresult.waitForFinished();
     while (d->m_pool.activeThreadCount() > 0 || !d->openfrom.isFinished()
-           || !d->copyresult.isFinished() || !d->writeresult.isFinished()) {
+            || !d->copyresult.isFinished() || !d->writeresult.isFinished()) {
 
     }
+}
+
+//! 用于保存回收站剪切出去的文件在回收站的原始路径
+void DFileCopyMoveJob::setCurTrashData(QVariant fileNameList)
+{
+    Q_D(DFileCopyMoveJob);
+    d->setCutTrashData(fileNameList);
 }
 
 DFileCopyMoveJob::Actions DFileCopyMoveJob::supportActions(DFileCopyMoveJob::Error error)
@@ -3935,16 +3932,16 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
     d->sourceUrlList = sourceUrls;
     d->targetUrl = targetUrl;
-    if (d->mode != CopyMode) {
-        if (d->fileStatistics->isRunning()) {
-            d->fileStatistics->stop();
-            d->fileStatistics->wait();
-        }
-        d->fileStatistics->start(sourceUrls);
-    }
+//    if (d->mode != CopyMode) {
+//        if (d->fileStatistics->isRunning()) {
+//            d->fileStatistics->stop();
+//            d->fileStatistics->wait();
+//        }
+//        d->fileStatistics->start(sourceUrls);
+//    }
 
     // DFileStatisticsJob 统计数量很慢，自行统计
-    QtConcurrent::run([sourceUrls, d] () {
+    QtConcurrent::run([sourceUrls, d]() {
         if (d->mode == MoveMode || d->mode == CutMode) {
             d->countStatisticsFinished = false;
             for (const auto &url : sourceUrls) {
@@ -4059,6 +4056,7 @@ void DFileCopyMoveJob::run()
     DAbstractFileInfoPointer target_info;
     bool mayExecSync = false;
     QPointer<DFileCopyMoveJob> me = this;
+//    QPointer<DFileCopyMoveJobPrivate> dp = d;
 
     if (d->targetUrl.isValid()) {
         target_info = DFileService::instance()->createFileInfo(nullptr, d->targetUrl);
@@ -4100,16 +4098,19 @@ void DFileCopyMoveJob::run()
 
                 //优化等待1秒后启动异步“同文件”
                 QTimer::singleShot(100,this,[me,d,&rootpath](){
-                    if (!me) {
+                    if (!me || !d) {
                         return;
                     }
-                    d->syncresult = QtConcurrent::run([me,&rootpath]() {
+                    d->syncresult = QtConcurrent::run([me,d,&rootpath]() {
                         if (!me) {
                             return;
                         }
                         me->setSysncState(true);
-                        while (me && !me->getSysncQuitState()) {
+                        while (me && d && !me->getSysncQuitState()) {
                             QProcess::execute("sync", {"-f", rootpath});
+                        }
+                        if (!me) {
+                            return;
                         }
                         me->setSysncState(false);
                     });
@@ -4146,7 +4147,7 @@ void DFileCopyMoveJob::run()
                                 if (!ok) {
                                     d->targetLogSecionSize = 512;
 
-                                    qCWarning(fileJob(), );
+                                    qCWarning(fileJob(),);
                                 }
 
                                 if (d->targetIsRemovable) {
@@ -4250,7 +4251,7 @@ end:
     waitRefineThreadOver();
     if (MoreThreadAndMainRefine == d->refinestat && DFileCopyMoveJob::StoppedState != d->state) {
         //加权线程
-        d->addper = QtConcurrent::run([d](){
+        d->addper = QtConcurrent::run([d]() {
             d->addRefinePermissionsThread();
         });
     }
@@ -4264,7 +4265,7 @@ end:
         // 任务完成后执行 sync 同步数据到硬盘, 同时将状态改为 SleepState，用于定时器更新进度和速度信息
         d->setState(IOWaitState);
         int syncRet = 0;
-        d->syncresult = QtConcurrent::run([me,&d, &syncRet]() {
+        d->syncresult = QtConcurrent::run([me, &d, &syncRet]() {
             qDebug() << "sync >>>>>>>>>>>>>>";
             syncRet = QProcess::execute("sync", {"-f", d->targetRootPath});
         });

@@ -317,7 +317,8 @@ DUrlList MergedDesktopController::pasteFile(const QSharedPointer<DFMPasteEvent> 
 bool MergedDesktopController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     DUrlList urlList = convertToRealPaths(event->urlList());
-    return DFileService::instance()->deleteFiles(event->sender(), urlList);
+    // 注意这里第三个参数 confirmationDialog, 在函数体内并未使用，但需要后面的两个参数所以给第三个参数赋值true
+    return DFileService::instance()->deleteFiles(event->sender(), urlList, true, event->silent(), event->force());
 }
 
 bool MergedDesktopController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const

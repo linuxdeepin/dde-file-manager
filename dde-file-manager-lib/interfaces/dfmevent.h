@@ -172,6 +172,25 @@ public:
     {
         return qvariant_cast<T>(m_data);
     }
+    //! 设置剪切文件在回收站的路径
+    inline void setCutData(const QVariant & data)
+    {
+        m_cutData = data;
+    }
+    template<typename T>
+    void setCutData(T &&data)
+    {
+        m_cutData = QVariant::fromValue(std::forward<T>(data));
+    }
+    inline QVariant cutData() const
+    {
+        return m_cutData;
+    }
+    template<typename T>
+    inline T cutData() const
+    {
+        return qvariant_cast<T>(m_cutData);
+    }
 
 //    template<typename T>
 //    inline T data()const
@@ -222,6 +241,7 @@ public:
 protected:
     ushort m_type;
     QVariant m_data;
+    QVariant m_cutData; //! 剪切原路径
     QVariantMap m_properties;
     QPointer<const QObject> m_sender;
 
@@ -423,8 +443,9 @@ public:
 class DFMPasteEvent : public DFMUrlListBaseEvent
 {
 public:
+    //! 新增剪切回收站路径cutList
     explicit DFMPasteEvent(const QObject *sender, DFMGlobal::ClipboardAction action,
-                           const DUrl &targetUrl, const DUrlList &list);
+                           const DUrl &targetUrl, const DUrlList &list, const DUrlList &cutList = DUrlList());
 
     DFMGlobal::ClipboardAction action() const;
     DUrl targetUrl() const;
