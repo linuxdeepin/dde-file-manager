@@ -78,9 +78,12 @@ public:
         if (menu_event.selectedUrls().isEmpty())
             return false;
 
-        //! avoid error process when multi-tag.
-        if (menu_event.currentUrl() != viewHelper->currentUrl())
-            return false;
+        //在多标签的情况下只判断currentUrl无法区分同一个目录打开的多个标签
+        //修改为判断事件发送者和viewhelper的持有者是否为同一个view对象
+        if (menu_event.sender() && viewHelper->parent()) {
+            if (menu_event.sender().data() != viewHelper->parent())
+                return false;
+        }
 
         const QModelIndex &index = viewHelper->model()->index(menu_event.selectedUrls().first());
         const QRect &rect = viewHelper->parent()->visualRect(index);
