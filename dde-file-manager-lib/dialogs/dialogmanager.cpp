@@ -293,12 +293,18 @@ void DialogManager::addJob(FileJob *job)
 }
 
 
-void DialogManager::removeJob(const QString &jobId)
+void DialogManager::removeJob(const QString &jobId, bool clearAllbuffer)
 {
+    if (clearAllbuffer && m_Opticaljobs.contains(jobId)) { // 最后的时候需要删除所有buffer的数据，否则形成脏数据
+        m_Opticaljobs.remove(jobId);
+        qDebug() << "remove job " << jobId << "from m_Opticaljobs";
+    }
+
     if (m_jobs.contains(jobId)) {
         FileJob *job = m_jobs.value(jobId);
-        if (job->getIsOpticalJob() && !job->getIsFinished()) {
+        if (!clearAllbuffer && job->getIsOpticalJob() && !job->getIsFinished()) {// 最后的时候需要删除所有buffer的数据，就不能再插入了
             m_Opticaljobs.insert(jobId, job); // 备份刻录、擦除任务以便再次点击光驱的时候可以激活当前进度
+            qDebug() << "insert job " << jobId << "to m_Opticaljobs";
         }
         job->setIsAborted(true);
         job->setApplyToAll(true);
@@ -1000,7 +1006,16 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
 
     if (!m_filePreviewDialog) {
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
-        DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
+        auto e = QProcessEnvironment::systemEnvironment();
+        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+        bool isWayland = false;
+        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+            isWayland = true;
+        }
+        if (!isWayland)
+            DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
     } else {
         m_filePreviewDialog->updatePreviewList(canPreivewlist);
     }

@@ -580,14 +580,19 @@ void DTaskDialog::removeTaskByPath(QString jobId)
     if (m_jobIdItems.contains(jobId)) {
         QListWidgetItem *item = m_jobIdItems.value(jobId);
         if (item) {
+            QWidget *wid = m_taskListWidget->itemWidget(item);
             m_taskListWidget->removeItemWidget(item);
             m_taskListWidget->takeItem(m_taskListWidget->row(item));
             m_jobIdItems.remove(jobId);
+            //有几率出现wid被移除，但未释放，依然显示在任务窗口出现重叠问题，这里将其隐藏
+            if (wid)
+                wid->hide();
         }
 
         setTitle(m_taskListWidget->count());
         if (m_taskListWidget->count() == 0) {
             close();
+            emit closed();
         }
     }
 }

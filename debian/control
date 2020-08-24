@@ -54,7 +54,8 @@ Build-Depends:
  libqt5xdg-dev,
  libtag1-dev,
  libicu-dev,
- libcue-dev
+ libcue-dev,
+ libxcursor-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
