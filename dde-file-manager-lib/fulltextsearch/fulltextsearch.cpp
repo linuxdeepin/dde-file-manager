@@ -134,8 +134,9 @@ DocumentPtr DFMFullTextSearchManager::getFileDocument(const QString &filename)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"path", filename.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));
-    String modifyTime = DateTools::timeToString(FileUtils::fileModified(filename.toStdWString()), DateTools::RESOLUTION_SECOND);
-    doc->add(newLucene<Field>(L"modified", modifyTime, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    QFileInfo fileInfo(filename);
+    QString modifyTime = fileInfo.lastModified().toString("yyyyMMddHHmmss");
+    doc->add(newLucene<Field>(L"modified", modifyTime.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     QString contents = getFileContents(filename);
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));
     return doc;
@@ -334,8 +335,12 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath)
     qDebug() << "Update index";
     QStringList files;
     readFileName(filePath.toStdString().c_str(), files);
-    int i = 0;
     for (QString file : files) {
+        if (m_state == JobController::Stoped) {
+            qDebug() << "full text search stop!";
+            return;
+        }
+
         try {
             IndexReaderPtr reader = IndexReader::open(FSDirectory::open(indexStorePath.toStdWString()), true);
             SearcherPtr searcher = newLucene<IndexSearcher>(reader);
@@ -362,9 +367,10 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath)
 
             } else {
                 DocumentPtr doc = searcher->doc(hits[0]->doc);
-                String modifyTime = DateTools::timeToString(FileUtils::fileModified(file.toStdWString()), DateTools::RESOLUTION_SECOND);
+                QFileInfo info(file);
+                QString modifyTime = info.lastModified().toString("yyyyMMddHHmmss");
                 String storeTime = doc->get(L"modified");
-                if (modifyTime == storeTime) {
+                if (modifyTime.toStdWString() == storeTime) {
                     continue;
                 } else {
                     try {

@@ -27,6 +27,7 @@
 #include <QQueue>
 #include <QPair>
 #include <QMutex>
+#include "controllers/jobcontroller.h"
 
 using namespace Lucene;
 DFM_BEGIN_NAMESPACE
@@ -35,9 +36,6 @@ class DFMFullTextSearchManager : public QThread
     Q_OBJECT
 
 public:
-    enum Type {Add, Modify, Delete};
-    enum State {Started, Stoped};
-
     static DFMFullTextSearchManager *getInstance();
 
     /**
@@ -55,6 +53,11 @@ public:
     int fulltextIndex(const QString &sourceDir);
 
     void updateIndex(const QString &filePath);
+
+    inline void setSearchState(JobController::State state)
+    {
+        m_state = state;
+    }
 
 private:
     explicit DFMFullTextSearchManager(QObject *parent = nullptr);
@@ -100,9 +103,7 @@ private:
      */
     QString indexStorePath;
 
-    QQueue<QPair<QString, Type>> indexQueue;
-
-    State m_state = Stoped;
+    JobController::State m_state = JobController::Stoped;
 
     QMutex mutex;
 };
