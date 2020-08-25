@@ -180,7 +180,8 @@ public:
         if (filter->f_comboValid[SEARCH_RANGE] && !filter->f_includeSubDir) {
             DUrl parentUrl = fileInfo->parentUrl().isSearchFile() ? fileInfo->parentUrl().searchTargetUrl() : fileInfo->parentUrl();
             QString filePath = dataByRole(DFileSystemModel::FilePathRole).toString();
-            filePath.remove(parentUrl.path() + '/');
+            // fix bug 44185 【专业版 sp3】【文件管理器】【5.2.0.28-1】多标签操作筛选搜索结果，回退路径时出现空白页面
+            filePath.remove(parentUrl.toLocalFile().endsWith("/") ?  parentUrl.toLocalFile() : parentUrl.toLocalFile() + '/');
             if (filePath.contains('/')) return true;
         }
 

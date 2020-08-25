@@ -334,8 +334,12 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath)
     qDebug() << "Update index";
     QStringList files;
     readFileName(filePath.toStdString().c_str(), files);
-    int i = 0;
     for (QString file : files) {
+        if (m_state == JobController::Stoped) {
+            qDebug() << "full text search stop!";
+            return;
+        }
+
         try {
             IndexReaderPtr reader = IndexReader::open(FSDirectory::open(indexStorePath.toStdWString()), true);
             SearcherPtr searcher = newLucene<IndexSearcher>(reader);
