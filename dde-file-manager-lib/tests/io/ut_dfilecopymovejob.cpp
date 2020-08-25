@@ -38,3 +38,19 @@ TEST_F(DFileCopyMoveJobTest,can_job_running) {
 
     }
 }
+
+TEST_F(DFileCopyMoveJobTest,can_job_running_remove) {
+    job->setMode(DFileCopyMoveJob::CopyMode);
+    DUrl urlsour,target;
+    urlsour.setScheme(FILE_SCHEME);
+    target.setScheme(FILE_SCHEME);
+    urlsour.setPath("~/Pictures/Wallpapers(copy)");
+    if (QThread::currentThread()->loopLevel() <= 0) {
+        // 确保对象所在线程有事件循环
+        job->moveToThread(qApp->thread());
+    }
+    job->start(DUrlList() << urlsour, DUrl());
+    while(!job->isFinished()) {
+
+    }
+}
