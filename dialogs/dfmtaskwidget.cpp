@@ -40,6 +40,7 @@ DWIDGET_USE_NAMESPACE
 
 #define MSG_LABEL_WITH 350
 #define SPEED_LABEL_WITH 100
+#define PausedState 2
 
 DFMElidedLable::DFMElidedLable(QWidget *parent)
     : QLabel(parent)
@@ -110,6 +111,7 @@ private:
 
     QTimer *m_timer;
     bool m_isSettingValue;
+    bool ispausestate = false;
 
     DFMTaskWidget *q_ptr;
     Q_DECLARE_PUBLIC(DFMTaskWidget)
@@ -636,12 +638,16 @@ void DFMTaskWidget::onSpeedUpdated(qint64 speed)
 
 void DFMTaskWidget::onStateChanged(int state)
 {
-#define PausedState 2
     Q_D(DFMTaskWidget);
     if (state == PausedState) {
+        d->ispausestate = true;
         d->m_btnPause->setIcon(QIcon::fromTheme("dfm_task_start"));
         d->m_progress->stop();
     } else {
+        if (!d->ispausestate) {
+            return;
+        }
+        d->ispausestate = false;
         d->m_btnPause->setIcon(QIcon::fromTheme("dfm_task_pause"));
         d->m_progress->start();
     }
