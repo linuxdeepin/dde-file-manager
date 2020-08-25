@@ -97,4 +97,8 @@ SOURCES += \
     $$PWD/controllers/ut_searchcontroller.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
-    $$PWD/vfs/ut_dfmvfsdevice.cpp
+    $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    $$PWD/gvfs/ut_mountaskpassworddialog.cpp \
+    $$PWD/gvfs/ut_mountsecretdiskaskpassworddialog.cpp \
+    $$PWD/gvfs/ut_qdrive.cpp \
+    $$PWD/gvfs/ut_gvfsmountmanager.cpp
