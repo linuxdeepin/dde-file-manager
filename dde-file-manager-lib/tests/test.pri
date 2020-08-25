@@ -100,5 +100,8 @@ SOURCES += \
     $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
-    $$PWD/vfs/ut_dfmvfsdevice.cpp
+    $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
+    $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
+    $$PWD/controllers/ut_dfmsidebartagitemhandler_test.cpp
 
