@@ -127,7 +127,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             continue;
         }
 
-        if (blk->device().toLower().contains("sda") // 对于 sda 系列设备，一般是用户的系统硬盘，使用以前的过滤方式
+        if (!drv->removable() // 对于本地磁盘，使用以前的过滤方式
             && !blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
         }
@@ -388,14 +388,14 @@ bool DFMRootFileWatcherPrivate::start()
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
-        if (drv->removable() && FileUtils::deviceShouldBeIgnore(blk->device())) {
+        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()
+            && drv->removable() && !FileUtils::deviceShouldBeIgnore(blk->device())) { // 对于无法加载文件系统的非光学设备非加密设备的可移动设备，并且分区不该被过滤的，提示格式化
+            dialogManager->showFormatDialog(blk->device());
+        } else if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()
+                   && !drv->removable()) { // 对于本地磁盘（不可移动）的设备，按照以前的方式进行过滤
             return;
         }
 
-        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()
-            && drv->removable()) {
-            dialogManager->showFormatDialog(blk->device());
-        }
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             return;
         }
