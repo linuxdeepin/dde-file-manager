@@ -36,7 +36,7 @@ class DFileCopyMoveJob : public QThread
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_d_ptr), DFileCopyMoveJob)
 
     Q_PROPERTY(Mode mode READ mode WRITE setMode)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+//    Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(FileHints fileHints READ fileHints WRITE setFileHints)
     Q_PROPERTY(QString errorString READ errorString CONSTANT)
@@ -128,7 +128,7 @@ public:
     };
 
     explicit DFileCopyMoveJob(QObject *parent = nullptr);
-    ~DFileCopyMoveJob();
+    ~DFileCopyMoveJob() override;
 
     Handle *errorHandle() const;
     void setErrorHandle(Handle *handle, QThread *threadOfHandle = nullptr);
