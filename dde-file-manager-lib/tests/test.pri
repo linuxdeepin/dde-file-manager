@@ -95,10 +95,10 @@ SOURCES += \
     $$PWD/plugins/ut_pluginmanager.cpp \
     $$PWD/fulltextsearch/ut_fulltextsearch.cpp \
     $$PWD/controllers/ut_searchcontroller.cpp \
+    $$PWD/dbus/ut_dbussystemInfo_test.cpp \
+    $$PWD/sw_label/ut_llsdeepinlabellibrary_test.cpp \
+    $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
-    $$PWD/vfs/ut_dfmvfsdevice.cpp \
-    $$PWD/gvfs/ut_mountaskpassworddialog.cpp \
-    $$PWD/gvfs/ut_mountsecretdiskaskpassworddialog.cpp \
-    $$PWD/gvfs/ut_qdrive.cpp \
-    $$PWD/gvfs/ut_gvfsmountmanager.cpp
+    $$PWD/vfs/ut_dfmvfsdevice.cpp
+
