@@ -59,7 +59,7 @@ TEST_F(TestBluetoothManager, sendFiles)
 
 TEST_F(TestBluetoothManager, cancleTransfer)
 {
-    EXPECT_TRUE(bluetoothManager->cancleTransfer(""));
+    EXPECT_TRUE(bluetoothManager->cancelTransfer(""));
 }
 
 TEST_F(TestBluetoothManager, showBluetoothSettings)
