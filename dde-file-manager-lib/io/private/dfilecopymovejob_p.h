@@ -290,7 +290,7 @@ public:
     QAtomicInteger<bool> bdestLocal = false;
     qint64 refinecpsize = 0;
     QMutex m_refinemutex,m_errormutex;
-
+    QList<DUrl> errorurllist;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
