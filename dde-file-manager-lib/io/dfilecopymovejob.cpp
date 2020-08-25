@@ -287,8 +287,6 @@ void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
 
     Q_Q(DFileCopyMoveJob);
 
-    Q_EMIT q->stateChanged(s);
-
     if (updateSpeedTimer->thread()->loopLevel() <= 0) {
         qWarning() << "The thread of update speed timer no event loop" << updateSpeedTimer->thread();
     }
@@ -307,6 +305,8 @@ void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
 
         QMetaObject::invokeMethod(updateSpeedTimer, "stop");
     }
+
+    Q_EMIT q->stateChanged(s);
 
     qCDebug(fileJob()) << "state changed, new state:" << s;
 }
@@ -438,6 +438,7 @@ bool DFileCopyMoveJobPrivate::jobWait()
 
 bool DFileCopyMoveJobPrivate::stateCheck()
 {
+    Q_Q(DFileCopyMoveJob);
     if (state == DFileCopyMoveJob::RunningState) {
         if (needUpdateProgress) {
             needUpdateProgress = false;
@@ -451,7 +452,7 @@ bool DFileCopyMoveJobPrivate::stateCheck()
 
     if (state == DFileCopyMoveJob::PausedState) {
         qCDebug(fileJob()) << "Will be suspended";
-
+        emit q->stateChanged(DFileCopyMoveJob::PausedState);
         if (!jobWait()) {
             setError(DFileCopyMoveJob::CancelError);
             qCDebug(fileJob()) << "Will be abort";
