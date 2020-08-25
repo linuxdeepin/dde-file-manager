@@ -484,6 +484,7 @@ bool DFileCopyMoveJobPrivate::jobWait()
 
 bool DFileCopyMoveJobPrivate::stateCheck()
 {
+    Q_Q(DFileCopyMoveJob);
     if (state == DFileCopyMoveJob::RunningState) {
         if (needUpdateProgress) {
             needUpdateProgress = false;
@@ -497,7 +498,7 @@ bool DFileCopyMoveJobPrivate::stateCheck()
 
     if (state == DFileCopyMoveJob::PausedState) {
         qCDebug(fileJob()) << "Will be suspended";
-
+        Q_EMIT q->stateChanged(DFileCopyMoveJob::PausedState);
         if (!jobWait()) {
             setError(DFileCopyMoveJob::CancelError);
             qCDebug(fileJob()) << "Will be abort";
