@@ -194,7 +194,8 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
             if (toUrl.path().contains("/.local/share/Trash/files", Qt::CaseSensitive)) {
                 return;
             } else {
-                addWatcher(toUrl);
+                /*fix bug 44187 修改搜索结果名称，文件夹会从搜索结果消失，因为watcher里面增加的是真实路径不是搜索路径*/
+                addWatcher(newToUrl);
             }
         }
     }
