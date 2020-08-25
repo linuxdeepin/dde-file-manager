@@ -1514,6 +1514,8 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
         }
 
         action = handleError(fileInfo.constData(), nullptr);
+
+        QThread::msleep(500); // fix bug 44436 高频执行循环高频发送信号导致主界面卡死
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
     return action == DFileCopyMoveJob::SkipAction;
