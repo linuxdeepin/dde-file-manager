@@ -2625,6 +2625,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
             fileHash[fileInfo->fileUrl()] = chileNode;
             fileList << chileNode;
+            emit showFilterButton();
         }
     }
 
