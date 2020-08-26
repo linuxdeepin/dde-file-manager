@@ -9,5 +9,7 @@ SOURCES += \
     $$PWD/ut-desktop-test.cpp \
     $$PWD/dbus/filedialog/ut_dbusfiledialogmanager_test.cpp \
     $$PWD/dbus/filedialog/ut_dbusfiledialoghandle_test.cpp \
-    $$PWD/dbus/filemanager1/ut_dbusfilemanager_test.cpp
+    $$PWD/dbus/filemanager1/ut_dbusfilemanager_test.cpp \
+    $$PWD/view/ut_canvasgridview_test.cpp \
+    $$PWD/view/ut_canvasviewmanager_test.cpp
 
