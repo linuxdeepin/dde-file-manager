@@ -2196,6 +2196,12 @@ void DFileView::initConnects()
         else
             setViewModeToList();
     });
+
+    // fix bug#44171 【专业版 sp3】【文件管理器】【5.2.0.28-1】有搜索结果时才展示高级筛选面板
+    connect(model(), &DFileSystemModel::showFilterButton, this, [this]() {
+        DFileManagerWindow *w = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(windowId()));
+        w->showFilterButton();
+    });
 }
 
 void DFileView::increaseIcon()
