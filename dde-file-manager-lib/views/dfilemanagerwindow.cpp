@@ -42,6 +42,7 @@
 #include "dfmsettings.h"
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
+#include "dfmopticalmediawidget.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
@@ -330,6 +331,16 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     // fix 28857 高频进入光驱会死锁
     if (current_view && current_view->rootUrl() == fileUrl && fileUrl.scheme() == BURN_ROOT) {
         return false;
+    }
+
+    if (fileUrl.scheme() == BURN_SCHEME) {
+
+        // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
+        QString strVolTag = DFMOpticalMediaWidget::getVolTag(fileUrl);
+        if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
+            emit fileSignalManager->activeTaskDlg();
+            return false;
+        }
     }
 
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
