@@ -2305,12 +2305,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     if (fileUrl.scheme() == BURN_SCHEME) {
         Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
 
-        // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
         QString strVolTag = DFMOpticalMediaWidget::getVolTag(fileUrl);
-        if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
-            emit fileSignalManager->activeTaskDlg();
-            return false;
-        }
 
         QString devpath = fileUrl.burnDestDevice();
         QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(devpath, {});
