@@ -127,13 +127,13 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             continue;
         }
 
-        if (blk->device().toLower().contains("sda") // 对于 sda 系列设备，一般是用户的系统硬盘，使用以前的过滤方式
-            && !blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
-            continue;
+        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
+            if (!drv->removable()) // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
+                continue;
+
+            if (FileUtils::deviceShouldBeIgnore(blk->device())) // 对于可移动设备，根据设备描述符选择过滤（sp3 需求，异常设备需要显示，以提供格式化入口）
+                continue;
         }
-        // sp3 feat 异常U盘也需要显示盘符在界面上
-        if (drv->removable() && FileUtils::deviceShouldBeIgnore(blk->device())) // 过滤包含分区的disk: 例如，sdb, sdb1, sdb2 ，过滤掉 sdb
-            continue;
 
         //检查挂载目录下是否存在diskinfo文件
         QByteArrayList mps = blk->mountPoints();
@@ -388,14 +388,15 @@ bool DFMRootFileWatcherPrivate::start()
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
-        if (drv->removable() && FileUtils::deviceShouldBeIgnore(blk->device())) {
-            return;
+        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
+            if (!drv->removable()) // 对于本地磁盘，直接按照以前的方式，满足外围条件直接 return
+                return;
+
+            // 对于满足外层条件的可移动设备，并且分区不该被过滤的，提示格式化
+            if (!FileUtils::deviceShouldBeIgnore(blk->device()))
+                dialogManager->showFormatDialog(blk->device());
         }
 
-        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()
-            && drv->removable()) {
-            dialogManager->showFormatDialog(blk->device());
-        }
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             return;
         }
