@@ -91,6 +91,12 @@ public:
 bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
     thread_local static DCollator sortCollator;
+    if (DFMGlobal::startWithSymbol(str1)) {
+        if (!DFMGlobal::startWithSymbol(str2))
+            return order == Qt::DescendingOrder;
+    } else if (DFMGlobal::startWithSymbol(str2))
+        return order != Qt::DescendingOrder;
+
     if (DFMGlobal::startWithHanzi(str1)) {
         if (!DFMGlobal::startWithHanzi(str2)) {
             return order == Qt::DescendingOrder;

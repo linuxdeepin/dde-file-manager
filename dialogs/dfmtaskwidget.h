@@ -57,7 +57,8 @@ public:
     void setErrorMsg(const QString &err);
     void setConflictMsg(const DUrl &src, const DUrl &dst);
     void setButtonText(BUTTON bt, const QString &text);
-    void hideButton(BUTTON bt, bool hidden = true);
+    void setHoverEnable(bool enable);
+    void hideButton(BUTTON bt, bool hidden=true);
     QAbstractButton *getButton(BUTTON bt);
 
     void progressStart();

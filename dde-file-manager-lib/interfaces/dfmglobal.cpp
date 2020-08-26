@@ -758,8 +758,18 @@ bool DFMGlobal::startWithHanzi(const QString &text)
 
     return text.at(0).script() == QChar::Script_Han;
 }
+
+bool DFMGlobal::startWithSymbol(const QString &text)
+{
+    if (text.isEmpty())
+        return false;
+
+    //匹配字母、数字和中文开头的字符串
+    QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5].*$");
+    return !regExp.exactMatch(text);
+}
+
 #if 0
-//解决定义未使用警告
 static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
 {
     QTextDecoder decoder(QTextCodec::codecForName(codecName));

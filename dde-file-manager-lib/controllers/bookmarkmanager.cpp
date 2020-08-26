@@ -137,10 +137,8 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
 
             new_item->m_created = item->m_created;
             new_item->m_lastModified = QDateTime::currentDateTime();
-//            new_item->mountPoint = query.queryItemValue("mount_point");
-//            new_item->locateUrl = query.queryItemValue("locate_url");
-            new_item->mountPoint = map.value("mountPoint").toString();
-            new_item->locateUrl = map.value("locateUrl").toString();
+            new_item->mountPoint = item->getMountPoint();//query.queryItemValue("mount_point");
+            new_item->locateUrl = map.value("locateUrl").toString();//query.queryItemValue("locate_url");
 
             m_bookmarks[event->toUrl().bookmarkTargetUrl()] = new_item;
             break;
@@ -327,7 +325,8 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
 //            bookMarkFrom.setQuery(fromQueryStr);
             bookMarkFrom.setFragment(map.value("name").toString());
 
-            QString locateUrl = bookMarkTo.bookmarkTargetUrl().toLocalFile();
+//            QString locateUrl = bookMarkTo.bookmarkTargetUrl().toLocalFile();
+            QString locateUrl = to.path();
             int indexOfFirstDir = 0;
             //挂载的设备目录特殊处理
             if (locateUrl.startsWith("/media")) {
@@ -341,7 +340,9 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
 //            bookMarkTo.setQuery(toQueryStr);
             bookMarkTo.setFragment(map.value("name").toString());
 
-            map["locateUrl"] = locateUrl;
+            //为防止locateUrl传入QUrl被转码，locateUrl统一保存为base64
+            QByteArray ba = locateUrl.toLocal8Bit().toBase64();
+            map["locateUrl"] = QString(ba);
             map["url"] = bookMarkTo.path();
             list[i] = map;
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
@@ -350,7 +351,7 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             new_item->m_created = item->m_created;
             new_item->m_lastModified = QDateTime::currentDateTime();
             new_item->mountPoint = map.value("mountPoint").toString();
-            new_item->locateUrl = locateUrl;
+            new_item->locateUrl = QString(ba);
 
             m_bookmarks.remove(bookMarkFrom.bookmarkTargetUrl());
             m_bookmarks[bookMarkTo.bookmarkTargetUrl()] = new_item;

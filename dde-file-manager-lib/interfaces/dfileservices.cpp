@@ -123,6 +123,8 @@ DFileService::DFileService(QObject *parent)
         }
     });
 
+    connect(fileSignalManager,&FileSignalManager::requestHideSystemPartition,this,&DFileService::hideSystemPartition);
+
 }
 
 DFileService::~DFileService()
@@ -1427,6 +1429,25 @@ bool DFileService::multiFilesCustomName(const QList<DUrl> &urls, const QPair<QSt
 
     return DFileService::checkMultiSelectionFilesCache();
 }
+
+bool DFileService::isRootFileContain(const DUrl &url)
+{
+    return d_ptr->rootfilelist.contains(url);
+}
+
+void DFileService::hideSystemPartition()
+{
+    QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->
+            getChildren(this, DUrl(DFMROOT_ROOT),QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
+    d_ptr->m_mutexrootfilechange.lock();
+    d_ptr->rootfilelist.clear();
+    d_ptr->m_mutexrootfilechange.unlock();
+    changRootFile(fileist);
+
+    emit serviceHideSystemPartition();
+}
+
+
 
 ///###: helper function.
 bool DFileService::checkMultiSelectionFilesCache()

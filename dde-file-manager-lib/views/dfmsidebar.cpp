@@ -567,11 +567,9 @@ void DFMSideBar::initUserShareItem()
         int index = findItem(DUrl::fromUserShareFile("/"));
         if (index == -1) {
             if (cnt > 0) {
-                //                DFileService::instance()->changeRootFile(url);
                 addItem(DFMSideBarDefaultItemHandler::createItem("UserShare"), groupName(Network));
             }
         } else {
-            //            DFileService::instance()->changeRootFile(url,false);
             m_sidebarView->setRowHidden(index, cnt == 0);
         }
     };
@@ -663,7 +661,21 @@ void DFMSideBar::initDeviceConnection()
 
     DFileService::instance()->startQuryRootFile();
     rootFileChange();
-    connect(DFileService::instance(), &DFileService::rootFileChange, this, &DFMSideBar::onRootFileChange, Qt::QueuedConnection);
+    connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+    connect(DFileService::instance(),&DFileService::serviceHideSystemPartition,this,[this](){
+            QList<DUrl> removelist;
+            for (auto itemurl : devitems) {
+                if (!DFileService::instance()->isRootFileContain(itemurl)) {
+                    removelist.push_back(itemurl);
+                }
+            }
+            for (auto removeurl : removelist) {
+                devitems.removeOne(removeurl);
+                removeItem(removeurl, groupName(Device));
+            }
+            rootFileChange();
+        },Qt::QueuedConnection);
+
 
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
         if (!fileService->createFileInfo(nullptr, url)->exists()) {
