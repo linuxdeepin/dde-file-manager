@@ -1514,8 +1514,8 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
         }
 
         action = handleError(fileInfo.constData(), nullptr);
-
-        QThread::msleep(500); // fix bug 44436 高频执行循环高频发送信号导致主界面卡死
+        if (action == DFileCopyMoveJob::RetryAction) // 仅在选择重试时触发休眠
+            QThread::msleep(200); // fix bug 44436 高频执行循环高频发送信号导致主界面卡死
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
     return action == DFileCopyMoveJob::SkipAction;
@@ -1614,7 +1614,8 @@ bool DFileCopyMoveJobPrivate::doLinkFile(DFileHandler *handler, const DAbstractF
 
         setError(DFileCopyMoveJob::SymlinkError, qApp->translate("DFileCopyMoveJob", "Fail to create symlink, cause: %1").arg(handler->errorString()));
         action = handleError(fileInfo.constData(), nullptr);
-        q->msleep(500); // fix bug#30091 文件操作失败的时候，点击对话框的“不再提示+重试”，会导致不停失败不停发送信号通知主线程更新ui，这里加个延时控制响应频率
+        if (action == DFileCopyMoveJob::RetryAction) // 仅在用户重试时休眠
+            q->msleep(200); // fix bug#30091 文件操作失败的时候，点击对话框的“不再提示+重试”，会导致不停失败不停发送信号通知主线程更新ui，这里加个延时控制响应频率
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
     return action == DFileCopyMoveJob::SkipAction;
