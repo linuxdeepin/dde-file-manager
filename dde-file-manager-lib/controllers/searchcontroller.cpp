@@ -375,6 +375,9 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
 
     QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
     for (QString res : searchResult) {
+        if (DFMFullTextSearchManager::getInstance()->getSearchState() == JobController::Stoped) {
+            return;
+        }
         if (res.startsWith(searchPath.endsWith("/") ? searchPath : (searchPath + "/"))) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
             // 隐藏文件不显示
             if (isHidden(DUrl::fromLocalFile(res))) {

@@ -59,6 +59,11 @@ public:
         m_state = state;
     }
 
+    inline JobController::State getSearchState() const
+    {
+        return m_state;
+    }
+
 private:
     explicit DFMFullTextSearchManager(QObject *parent = nullptr);
 
@@ -106,6 +111,8 @@ private:
     JobController::State m_state = JobController::Stoped;
 
     QMutex mutex;
+
+    bool isCreateIndex = false;
 };
 
 DFM_END_NAMESPACE
