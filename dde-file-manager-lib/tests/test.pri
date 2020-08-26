@@ -102,5 +102,6 @@ SOURCES += \
     $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
-    $$PWD/vfs/ut_dfmvfsdevice.cpp
+    $$PWD/vfs/ut_dfmvfsdevice.cpp   \
+    $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp
 
