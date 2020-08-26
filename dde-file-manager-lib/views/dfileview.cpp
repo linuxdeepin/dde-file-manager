@@ -174,7 +174,7 @@ public:
     int lastVisibleColumn = -1;
     int cachedViewWidth = -1;
     int touchTapDistance = -1;
-
+    int showCount = 0;  //记录showEvent次数，为了在第一次时去调整列表模式的表头宽度
     DFileView::RandeIndex visibleIndexRande;
 
     bool allowedAdjustColumnSize = true;
@@ -183,7 +183,8 @@ public:
     char justAvoidWaringOfAlignmentBoundary[2];//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
 
     bool isVaultDelSigConnected = false; //is vault delete signal connected.
-    Q_DECLARE_PUBLIC(DFileView)
+
+	Q_DECLARE_PUBLIC(DFileView)
 };
 
 DFileView::DFileView(QWidget *parent)
@@ -1095,6 +1096,7 @@ void DFileView::showEvent(QShowEvent *event)
     DFileMenuManager::setActionWhitelist(d->menuWhitelist);
     DFileMenuManager::setActionBlacklist(d->menuBlacklist);
 
+    d->showCount++;
     setFocus();
 }
 
@@ -3179,6 +3181,13 @@ void DFileViewPrivate::pureResizeEvent(QResizeEvent *event)
 {
     Q_Q(DFileView);
 
+    if (currentViewMode == DFileView::ListMode) { //修复分非列表模式启动崩溃
+        if (showCount == 1) { //fix 任务25717 文件管理器窗口默认以列表视图显示时，开启文件管理器窗口，列表视图未适配窗口大小。
+            adjustFileNameCol = q->width() >= headerView->width();
+            showCount ++; //次数比实际次数多一次，跳过1
+        }
+    }
+
     if (!allowedAdjustColumnSize) {
         // auto switch list mode
         if (currentViewMode == DFileView::ListMode
@@ -3210,6 +3219,11 @@ void DFileViewPrivate::doFileNameColResize()
         int targetWidth = q->width() - columnWidthSumOmitFileName;
         if (targetWidth >= headerView->minimumSectionSize()) {
             headerView->resizeSection(fileNameColRole, q->width() - columnWidthSumOmitFileName);
+        } else {
+            // fix bug#39026 文件管理器列表视图的窗口拖至最窄，点击最大化，点击还原，文管窗口未自适应大小
+            // 当文管窗口拖至最窄时，targetWidth的值为60，小于headerView->minimumSectionSize()（80），
+            // 所以不会走上面的if，导致还原时显示的还是最大化时候的值
+            headerView->resizeSection(fileNameColRole, headerView->minimumSectionSize());
         }
     }
 }

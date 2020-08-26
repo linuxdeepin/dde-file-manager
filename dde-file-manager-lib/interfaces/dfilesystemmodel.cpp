@@ -54,7 +54,12 @@
 #include <QSharedPointer>
 #include <QAbstractItemView>
 #include <QtConcurrent/QtConcurrent>
+#include <QtGlobal>
 
+#ifdef __arm__
+// arm
+#include "./search/myfsearch.h"
+#endif
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 0
 
@@ -1192,6 +1197,10 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
 
         if (!info) {
+            // 华为mtp下删除，直接刷新
+            if (fileUrl.isMTPFile() && event.first == RmFile) {
+                q->refresh();
+            }
             continue;
         }
 
@@ -2515,7 +2524,26 @@ int DFileSystemModel::columnActiveRole(int column) const
 
     return d->columnActiveRole.value(column, roles.first());
 }
-
+#ifdef __arm__
+// arm
+static QString printList(BTreeNode *pNode)
+{
+    QString fullPath("");
+    int i = 0;
+    if (pNode == nullptr) {
+    } else {
+        while (pNode != nullptr) {
+            fullPath.insert(0, pNode->name);
+            if (strcmp(pNode->name, "") != 0) {
+                fullPath.insert(0, "/");
+            }
+            pNode = pNode->parent;
+            i++;
+        }
+    }
+    return fullPath;
+}
+#endif
 void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
@@ -2541,6 +2569,58 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     fileHash.reserve(list.size());
     fileList.reserve(list.size());
 
+#ifdef __arm__
+// arm
+    /*该修改方案是临时修改方案，只为验证fsearch在arm平台上的可行性。
+     *
+    */
+    if (get_search_state()) { //fsearch状态
+        unsigned int length = get_ResultLen();
+        GPtrArray *results = get_Result();
+        for (unsigned int i = 0; i < length; i++) {
+            DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, i));
+            DUrl url = QUrl(printList(entry->node));
+            url.setFragment("file://" + printList(entry->node));
+            DAbstractFileInfoPointer fileInfo = DAbstractFileInfoPointer(new DFileInfo(url));
+            const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
+            //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
+            if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
+                fileHash[fileInfo->fileUrl()] = chileNode;
+                fileList << chileNode.data();
+            }
+        }
+        qDebug() << "fsearch added node to list";
+    } else { //默认状态
+        for (const DAbstractFileInfoPointer &fileInfo : list) {
+            if (d->needQuitUpdateChildren) {
+                break;
+            }
+
+            //        if (fileHash.contains(fileInfo->fileUrl())) {
+            //            continue;
+            //        }
+                    if (!fileInfo) {
+            continue;
+        }
+        //挂载设备下目录添加tag后 移除该挂载设备 目录已不存在但其URL依然还保存在tag集合中
+        //该问题导致这些不存在的目录依然会添加到tag的fileview下 引起其他被标记文件可能标记数据获取失败
+        //为了避免引起其他问题 暂时只对tag的目录做处理
+        if (fileInfo->fileUrl().scheme() == TAG_SCHEME && !fileInfo->exists()) {
+            continue;
+        }
+
+
+            //qDebug() << "update node url = " << fileInfo->filePath();
+
+            const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
+            //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
+            if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
+                fileHash[fileInfo->fileUrl()] = chileNode;
+                fileList << chileNode.data();
+            }
+        }
+    }
+#else
     for (const DAbstractFileInfoPointer &fileInfo : list) {
         if (d->needQuitUpdateChildren) {
             break;
@@ -2549,7 +2629,6 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        if (fileHash.contains(fileInfo->fileUrl())) {
 //            continue;
 //        }
-        //fix bug 29914 fileInof为nullptr
         if (!fileInfo) {
             continue;
         }
@@ -2560,7 +2639,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
             continue;
         }
 
-//        qDebug() << "update node url = " << fileInfo->filePath();
+       // qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
         //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
         if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
@@ -2568,6 +2647,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
             fileList << chileNode;
         }
     }
+#endif
 
     if (enabledSort())
         sort(node->fileInfo, fileList);

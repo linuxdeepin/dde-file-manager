@@ -29,6 +29,7 @@
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
+#include "desktopinfo.h"
 
 #include "filemanagerapp.h"
 #include "logutil.h"
@@ -87,12 +88,8 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
     bool isWayland = false;
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+    if (!DesktopInfo().waylandDectected()) {
         isWayland = true;
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
     }

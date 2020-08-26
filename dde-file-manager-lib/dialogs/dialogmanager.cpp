@@ -599,6 +599,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
     d.exec();
+
 }
 
 void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)

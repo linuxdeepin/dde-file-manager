@@ -272,6 +272,12 @@ public:
     QDBusPendingCallWatcher *dbusWatcher = nullptr;
 #endif
 
+#ifdef DISABLE_QUICK_SEARCH
+    // 所有支持快速搜索的子目录(可包含待搜索目录本身)
+    QStringList hasLFTSubdirectories;
+//    QDBusPendingCallWatcher *dbusWatcher = nullptr;
+#endif
+
     bool closed = false;
 };
 
@@ -317,6 +323,33 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
         }
     }
 #endif
+
+#ifdef DISABLE_QUICK_SEARCH
+//    if (targetUrl.isLocalFile()) {
+//        QStorageInfo info(targetUrl.toLocalFile());
+
+//        if (info.isValid()) {
+//            ComDeepinAnythingInterface *interface = new ComDeepinAnythingInterface("com.deepin.anything",
+//                                                                                   "/com/deepin/anything",
+//                                                                                   QDBusConnection::systemBus());
+
+//            dbusWatcher = new QDBusPendingCallWatcher(interface->hasLFTSubdirectories(info.rootPath()));
+//            interface->setTimeout(3);
+//            interface->setParent(dbusWatcher);
+
+            // 先将列表设置为适用于任意目录, 等取到异步结果后再更新此值
+            hasLFTSubdirectories.append("/");
+//            QObject::connect(dbusWatcher, &QDBusPendingCallWatcher::finished,
+//                             dbusWatcher, [this] (QDBusPendingCallWatcher *call) {
+//                QDBusPendingReply<QStringList> result = *call;
+
+//                hasLFTSubdirectories = result.value();
+//                dbusWatcher->deleteLater();
+//                dbusWatcher = nullptr;
+//            });
+//        }
+//    }
+#endif
 }
 
 SearchDiriterator::~SearchDiriterator()
@@ -325,6 +358,10 @@ SearchDiriterator::~SearchDiriterator()
     if (dbusWatcher) {
         dbusWatcher->deleteLater();
     }
+#endif
+
+#ifdef DISABLE_QUICK_SEARCH
+    //FSEARCH CLOSE
 #endif
 }
 
@@ -368,6 +405,26 @@ bool SearchDiriterator::hasNext() const
             m_hasIteratorByKeywordOfCurrentIt = false;
 
 #ifndef DISABLE_QUICK_SEARCH
+            if (url.isLocalFile()) { // 针对本地文件, 先判断此目录是否是索引数据的子目录, 可以依此过滤掉很多目录, 减少对anything dbus接口的调用
+                const QString &file = url.toLocalFile().append("/");
+
+                for (const QString &path : hasLFTSubdirectories) {
+                    if (path == "/") {
+                        m_hasIteratorByKeywordOfCurrentIt = true;
+                        break;
+                    }
+
+                    if (file.startsWith(path + "/")) {
+                        m_hasIteratorByKeywordOfCurrentIt = true;
+                        break;
+                    }
+                }
+
+                if (m_hasIteratorByKeywordOfCurrentIt)
+                    m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
+            } else
+#endif
+#ifdef DISABLE_QUICK_SEARCH
             if (url.isLocalFile()) { // 针对本地文件, 先判断此目录是否是索引数据的子目录, 可以依此过滤掉很多目录, 减少对anything dbus接口的调用
                 const QString &file = url.toLocalFile().append("/");
 

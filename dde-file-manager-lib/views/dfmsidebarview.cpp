@@ -134,7 +134,10 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     qDebug() << "source: " << event->mimeData()->urls();
     qDebug() << "target item: " << item->groupName() << "|" << item->text() <<  "|" << item->url();
 
-    QPoint pt = mapFromGlobal(QCursor::pos());
+    //wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
+    //QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
+    //但rc本来就是由event->pos()计算item得出的Rect，这样判断似乎就没有意义了（虽然原来的逻辑感觉也没什么意义）
+    QPoint pt = event->pos();   //mapFromGlobal(QCursor::pos());
     QRect rc = visualRect(indexAt(event->pos()));
     if (!rc.contains(pt)) {
         qDebug() << "mouse not in my area";
