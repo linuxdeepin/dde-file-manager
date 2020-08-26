@@ -73,6 +73,7 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
+#include "utils/desktopinfo.h"
 
 #ifdef SW_LABEL
 #include "sw_label/llsdeepinlabellibrary.h"
@@ -808,7 +809,7 @@ void DialogManager::showComputerPropertyDialog()
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
     },
-                     this)
+    this)
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
@@ -1136,7 +1137,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 {
-    QTimer::singleShot(1000, [=] {
+    QTimer::singleShot(1000, [ = ] {
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
             QStringList &&udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
@@ -1274,7 +1275,9 @@ void DialogManager::raiseAllPropertyDialog()
         qDebug() << d->getUrl() << d->isVisible() << d->windowState();
 //        d->showMinimized();
         d->showNormal();
-        QtX11::utils::ShowNormalWindow(d);
+        if (!DesktopInfo().waylandDectected()) {
+            QtX11::utils::ShowNormalWindow(d);
+        }
         qobject_cast<QWidget *>(d)->showNormal();
         d->show();
         d->raise();
