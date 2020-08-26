@@ -143,8 +143,10 @@ DocumentPtr DFMFullTextSearchManager::getFileDocument(const QString &filename)
 }
 void DFMFullTextSearchManager::indexDocs(const IndexWriterPtr &writer, const QString &sourceDir)
 {
+    isCreateIndex = true;
     QStringList files;
     readFileName(sourceDir.toStdString().c_str(), files);
+    isCreateIndex = false;
     for (auto file : files) {
         qDebug() << "Adding [" << file << "]";
         try {
@@ -188,6 +190,10 @@ void DFMFullTextSearchManager::doPagingSearch(const SearcherPtr &searcher, const
         end = std::min(hits.size(), start + hitsPerPage);
 
         for (int32_t i = start; i < end; ++i) {
+            if (m_state == JobController::Stoped) {
+                return;
+            }
+
             if (raw) { // output raw format
                 std::wcout << L"doc=" << hits[i]->doc << L" score=" << hits[i]->score << L"\n";
                 continue;
@@ -262,6 +268,10 @@ int DFMFullTextSearchManager::fulltextIndex(const QString &sourceDir)
 
 void DFMFullTextSearchManager::readFileName(const char *filePath, QStringList &result)
 {
+    if (!isCreateIndex && m_state == JobController::Stoped) {
+        return;
+    }
+
     QRegExp reg("^/(boot|dev|proc|sys|run|lib|usr).*$");
     if (reg.exactMatch(QString(filePath)) && !QString(filePath).startsWith("/run/user")) {
         return;
