@@ -234,6 +234,7 @@ signals:
     void requestSelectFiles(const QList<DUrl> &urls);
     void sigJobFinished();
     void requestRedirect(const DUrl &rootUrl, const DUrl &newUrl);
+    void showFilterButton();
 
 protected:
     bool remove(const DUrl &url);

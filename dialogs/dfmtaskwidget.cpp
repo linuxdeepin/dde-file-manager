@@ -111,6 +111,7 @@ private:
     QTimer *m_timer;
     bool m_isSettingValue;
     bool m_isEnableHover;
+    QAtomicInteger<bool> m_isPauseState = false;
 
     DFMTaskWidget *q_ptr;
     Q_DECLARE_PUBLIC(DFMTaskWidget)
@@ -648,10 +649,15 @@ void DFMTaskWidget::onStateChanged(int state)
 {
 #define PausedState 2
     Q_D(DFMTaskWidget);
+    if ((PausedState == state) == d->m_isPauseState) {
+        return;
+    }
     if (state == PausedState) {
+        d->m_isPauseState = true;
         d->m_btnPause->setIcon(QIcon::fromTheme("dfm_task_start"));
         d->m_progress->stop();
     } else {
+        d->m_isPauseState = false;
         d->m_btnPause->setIcon(QIcon::fromTheme("dfm_task_pause"));
         d->m_progress->start();
     }
