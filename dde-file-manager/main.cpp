@@ -89,7 +89,7 @@ DWIDGET_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     bool isWayland = false;
-    if (!DesktopInfo().waylandDectected()) {
+    if (DesktopInfo().waylandDectected()) {
         isWayland = true;
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
     }
@@ -118,10 +118,10 @@ int main(int argc, char *argv[])
     app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     app.setApplicationDescription(app.translate("Application", "File Manager is a powerful and "
-                                                               "easy-to-use file management tool, "
-                                                               "featured with searching, copying, "
-                                                               "trash, compression/decompression, file property "
-                                                               "and other useful functions."));
+                                                "easy-to-use file management tool, "
+                                                "featured with searching, copying, "
+                                                "trash, compression/decompression, file property "
+                                                "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
 #ifdef DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
@@ -234,7 +234,12 @@ int main(int argc, char *argv[])
 
         QLocalSocket *socket = SingleApplication::newClientProcess(uniqueKey, data);
         QWidget w;
-        w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
+        if (!DesktopInfo().waylandDectected()) {
+            w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
+        } else {
+            w.setWindowFlags(Qt::FramelessWindowHint);
+        }
+
         w.setAttribute(Qt::WA_TranslucentBackground);
         w.resize(1, 1);
         w.show();
