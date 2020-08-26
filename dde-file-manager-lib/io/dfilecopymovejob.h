@@ -204,7 +204,7 @@ Q_SIGNALS:
     // 引用类型有关
     void stateChanged(State state);
     void errorChanged(Error error);
-    void currentJobChanged(const DUrl from, const DUrl to);
+    void currentJobChanged(const DUrl from, const DUrl to, const bool iserroeroc);
     void finished(const DUrl from, const DUrl to);
     void completedFilesCountChanged(int count);
     void fileStatisticsFinished();

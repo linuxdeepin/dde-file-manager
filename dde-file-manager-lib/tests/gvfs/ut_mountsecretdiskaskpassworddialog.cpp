@@ -18,52 +18,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "app/define.h"
-#include "bluetooth/bluetoothmodel.h"
-#include "bluetooth/bluetoothmanager.h"
+#include "gvfs/mountsecretdiskaskpassworddialog.h"
 
 #include <gtest/gtest.h>
-#include <gmock/gmock-matchers.h>
 
-
-
-namespace  {
-/**
- * @brief 此类难以编写单元测试，需要蓝牙适配器支持
- */
-class TestBluetoothManager:  public testing::Test {
+namespace {
+class TestMountSecretDiskAskPasswordDialog: public testing::Test
+{
 public:
+    MountSecretDiskAskPasswordDialog *m_dlg {nullptr};
+
     void SetUp() override
     {
-        bluetoothManager;
-        bluetoothManager->refresh();
+        m_dlg = new MountSecretDiskAskPasswordDialog("test");
     }
 
     void TearDown() override
     {
-
+        delete m_dlg;
     }
+
 };
 }
 
-TEST_F(TestBluetoothManager, model)
+TEST_F(TestMountSecretDiskAskPasswordDialog, show)
 {
-    EXPECT_NO_FATAL_FAILURE(bluetoothManager->model());
+    m_dlg->show();
+    m_dlg->hide();
 }
-
-TEST_F(TestBluetoothManager, sendFiles)
-{
-    BluetoothDevice device;
-    EXPECT_TRUE(bluetoothManager->sendFiles(device, QStringList()).isEmpty());
-}
-
-TEST_F(TestBluetoothManager, cancleTransfer)
-{
-    EXPECT_TRUE(bluetoothManager->cancelTransfer(""));
-}
-
-TEST_F(TestBluetoothManager, showBluetoothSettings)
-{
-    bluetoothManager->showBluetoothSettings();
-}
-

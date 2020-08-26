@@ -42,6 +42,7 @@
 #include "dfmsettings.h"
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
+#include "dfmopticalmediawidget.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
@@ -332,6 +333,16 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         return false;
     }
 
+    if (fileUrl.scheme() == BURN_SCHEME) {
+
+        // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
+        QString strVolTag = DFMOpticalMediaWidget::getVolTag(fileUrl);
+        if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
+            emit fileSignalManager->activeTaskDlg();
+            return false;
+        }
+    }
+
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
         if (fi->suffix() == SUFFIX_USRDIR) {
@@ -430,7 +441,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
     if (current_view) {
         // 为了解决 bug 34363: [4K屏]下且[缩放]，[ICON视图]下[浏览大量文件]，同时[疯狂滚动 scrollbar] 导致的崩溃问题
-        auto fileView = dynamic_cast<DFileView*>(current_view);
+        auto fileView = dynamic_cast<DFileView *>(current_view);
         if (fileView && fileView->isIconViewMode()) {
             auto model = fileView->model();
             if (model) {
@@ -554,14 +565,14 @@ DFileManagerWindow::DFileManagerWindow(QWidget *parent)
 {
 }
 
-QPair<bool,QMutex> winId_mtx;   //异步初始化win插件
+QPair<bool, QMutex> winId_mtx;  //异步初始化win插件
 DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
     /// init global AppController
     setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-    if (!winId_mtx.first){
+    if (!winId_mtx.first) {
         //等待异步加载完成
         winId_mtx.second.lock();
         winId_mtx.first = true;
@@ -1028,7 +1039,8 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
         return true;
     }
-    default: break;
+    default:
+        break;
     }
 
     return false;
@@ -1089,7 +1101,7 @@ void DFileManagerWindow::initTitleBar()
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
-    menu->setEventData(DUrl(), DUrlList() << DUrl(),winId(), this);
+    menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
@@ -1317,7 +1329,7 @@ void DFileManagerWindow::initConnect()
         if (VaultController::isVaultFile(url.toString()))
         {
             // 如果是快捷方式，则赋值为快捷方式的源文件路径，便于正常显示快捷方式的路径
-            if(info->isSymLink()){
+            if (info->isSymLink()) {
                 url = info->symLinkTarget();
                 url = VaultController::localUrlToVault(url);
             }
@@ -1530,4 +1542,11 @@ void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
     if (d->advanceSearchBar && resetForm) {
         d->advanceSearchBar->resetForm(false);
     }
+}
+
+void DFileManagerWindow::showFilterButton()
+{
+    Q_D(DFileManagerWindow);
+
+    d->toolbar->showFilterButton();
 }
