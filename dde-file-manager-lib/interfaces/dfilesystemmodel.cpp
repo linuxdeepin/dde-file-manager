@@ -2970,6 +2970,7 @@ void DFileSystemModel::onJobAddChildren(const DAbstractFileInfoPointer &fileInfo
 //    mutex.unlock();
     Q_D(DFileSystemModel);
     d->rootNodeManager->addFile(fileInfo, FileNodeManagerThread::AppendFile);
+    emit showFilterButton();
 }
 
 void DFileSystemModel::onJobFinished()
