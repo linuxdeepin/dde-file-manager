@@ -38,6 +38,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QCursor>
+#include <QPainter>
 #include <QPainterPath>
 #include "dfileview.h"
 #include "dfmevent.h"
