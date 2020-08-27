@@ -18,7 +18,6 @@ SOURCES += \
     $$PWD/vault/ut_vaulthelper.cpp \
     $$PWD/vault/ut_vaultlockmanager.cpp \
     $$PWD/interfaces/ut_dfmglobal.cpp \
-    $$PWD/dialogs/ut_dialogmanager.cpp \
     $$PWD/shutil/ut_danythingmonitor.cpp \
     $$PWD/shutil/ut_danythingmonitorfilter.cpp \
     $$PWD/shutil/ut_desktopfile.cpp \

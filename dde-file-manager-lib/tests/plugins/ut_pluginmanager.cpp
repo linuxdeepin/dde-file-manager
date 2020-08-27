@@ -5,7 +5,15 @@
 namespace  {
     class TestPluginManager : public testing::Test
     {
+    public:
+        static void SetUpTestCase()
+        {
 
+        }
+        static void TearDownTestCase()
+        {
+
+        }
     };
 }
 
@@ -23,6 +31,21 @@ TEST_F(TestPluginManager, testPluginDir)
 TEST_F(TestPluginManager, testLoadPlugin)
 {
     PluginManager::instance()->loadPlugin();
+}
+
+TEST_F(TestPluginManager, testGetExpandInfoInterfaces)
+{
+    PluginManager::instance()->getViewInterfaces();
+}
+
+TEST_F(TestPluginManager, testGetViewInterfaces)
+{
+    PluginManager::instance()->getViewInterfacesMap();
+}
+
+TEST_F(TestPluginManager, testGetPreviewInterfaces)
+{
+    PluginManager::instance()->getPreviewInterfaces();
 }
 
 TEST_F(TestPluginManager, testGetViewInterfaceByScheme)
