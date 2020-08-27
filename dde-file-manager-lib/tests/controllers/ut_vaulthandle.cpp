@@ -48,3 +48,9 @@ TEST_F(TestCryFsHandle, tst_slotReadOut)
     EXPECT_NO_FATAL_FAILURE(m_controller->slotReadOutput());
 }
 
+TEST_F(TestCryFsHandle, tst_lockVault)
+{
+    EXPECT_NO_FATAL_FAILURE(m_controller->lockVault("/test/path"));
+}
+
+
