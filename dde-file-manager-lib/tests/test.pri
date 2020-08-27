@@ -123,5 +123,12 @@ SOURCES += \
     $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
     $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
-    $$PWD/controllers/ut_dfmsidebartagitemhandler_test.cpp 
+    $$PWD/controllers/ut_dfmsidebartagitemhandler_test.cpp \
+    $$PWD/shutil/ut_filebatchprocess.cpp \
+    $$PWD/shutil/ut_fileutils.cpp \
+    $$PWD/shutil/ut_dsqlitehandle.cpp \
+    $$PWD/shutil/ut_mimesappsmanager.cpp \
+    $$PWD/shutil/ut_mimetypedisplaymanager.cpp \
+    $$PWD/shutil/ut_properties.cpp \
+    $$PWD/shutil/ut_shortcut.cpp
 

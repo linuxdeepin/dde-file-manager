@@ -49,6 +49,7 @@ public:
     static void recurseFolder(const QString &path, const QString &parent,
                             QStringList *list);
     static int filesCount(const QString& dir);
+    static QStringList filesList(const QString& dir);
     static qint64 totalSize(const QString& dir);
     static qint64 totalSize(const DUrlList &files);
     static qint64 totalSize(const DUrlList &files, const qint64& maxLimit, bool &isInLimit);
