@@ -102,12 +102,27 @@ SOURCES += \
     $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
-    $$PWD/vfs/ut_dfmvfsdevice.cpp   \
-    $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
     $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    $$PWD/views/ut_dfmvaultactivefinishedview.cpp \
+    $$PWD/views/ut_dfmvaultactivesavekeyview.cpp \
+    $$PWD/views/ut_dfmvaultactivesetunlockmethodview.cpp \
+    $$PWD/views/ut_dfmvaultactivestartview.cpp \
+    $$PWD/views/ut_dfmvaultactiveview.cpp \
+    $$PWD/views/ut_dfmvaultfileview.cpp \
+    $$PWD/views/ut_dfmvaultpagebase.cpp \
+    $$PWD/views/ut_dfmvaultrecoverykeypages.cpp \
+    $$PWD/views/ut_dfmvaultremovebypasswordview.cpp \
+    $$PWD/views/ut_dfmvaultremovebyrecoverykeyview.cpp \
+    $$PWD/views/ut_dfmvaultremovepages.cpp \
+    $$PWD/views/ut_dfmvaultremoveprogressview.cpp \
+    $$PWD/views/ut_dfmvaultunlockpages.cpp \
+    $$PWD/controllers/ut_vaulthandle.cpp \
+    $$PWD/controllers/ut_vaultcontroller.cpp \
+    $$PWD/controllers/ut_dfmsidebarvaultitemhandler.cpp \
+    $$PWD/controllers/ut_dfmvaultcrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmsmbcrumbcontroller.cpp \
+    $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
     $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebartagitemhandler_test.cpp 
-    
-
 

@@ -74,7 +74,7 @@ void DFileStatisticsJobPrivate::setState(DFileStatisticsJob::State s)
 
     state = s;
 
-    if (notifyDataTimer->thread()->loopLevel() <= 0) {
+    if (notifyDataTimer->thread() && notifyDataTimer->thread()->loopLevel() <= 0) {
         qWarning() << "The thread of notify data timer no event loop" << notifyDataTimer->thread();
     }
 
