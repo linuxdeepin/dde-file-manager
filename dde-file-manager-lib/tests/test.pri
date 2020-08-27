@@ -103,5 +103,11 @@ SOURCES += \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
     $$PWD/vfs/ut_dfmvfsdevice.cpp   \
-    $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp
+    $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
+    $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
+    $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
+    $$PWD/controllers/ut_dfmsidebartagitemhandler_test.cpp 
+    
+
 
