@@ -44,13 +44,13 @@
 #define TXT_RTRY BluetoothTransDialog::tr("Retry")
 #define TXT_OKAY BluetoothTransDialog::tr("Ok")
 
-const QString ICON_CONNECT = "notification-bluetooth-connected";
-const QString ICON_DISCONN = "notification-bluetooth-disconnected";
+static const QString ICON_CONNECT = "notification-bluetooth-connected";
+static const QString ICON_DISCONN = "notification-bluetooth-disconnected";
 
-const QString PXMP_NO_DEV_LIGHT = "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg";
-const QString PXMP_NO_DEV_DARKY = "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg";
+static const QString PXMP_NO_DEV_LIGHT = "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg";
+static const QString PXMP_NO_DEV_DARKY = "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg";
 
-const qint64 FILE_TRANSFER_LIMITS = 2147483648; // 2GB = 2 * 1024 * 1024 * 1024 Bytes
+static const qint64 FILE_TRANSFER_LIMITS = 2147483648; // 2GB = 2 * 1024 * 1024 * 1024 Bytes
 
 BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTransDialog::TransferMode mode, QString targetDevId, QWidget *parent)
     : DDialog(parent)
