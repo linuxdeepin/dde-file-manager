@@ -152,7 +152,7 @@ void DFMFullTextSearchManager::indexDocs(const IndexWriterPtr &writer, const QSt
         try {
             writer->addDocument(getFileDocument(file));
         } catch (FileNotFoundException &ex) {
-            qDebug() << "addDocument error: " << ex.getError().c_str();
+            qDebug() << "addDocument error: " << QString::fromStdWString(ex.getError());
         }
     }
 }
@@ -245,7 +245,7 @@ bool DFMFullTextSearchManager::searchByKeyworld(const QString &keyword)
         doPagingSearch(searcher, query, hitsPerPage, false, true);
         reader->close();
     } catch (LuceneException &e) {
-        qDebug() << "Exception: " << e.getError().c_str();
+        qDebug() << "Exception: " << QString::fromStdWString(e.getError());
         return false;
     }
 
@@ -372,7 +372,7 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath)
                     qDebug() << "Add file: [" << file << "]";
                     writer->close();
                 } catch (LuceneException &ex) {
-                    qDebug() << ex.getError().c_str();
+                    qDebug() << "Add file error:" << QString::fromStdWString(ex.getError());
                 }
 
             } else {
@@ -395,14 +395,13 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath)
                         //关闭
                         writer->close();
                     } catch (LuceneException &ex) {
-                        qDebug() << ex.getError().c_str();
+                        qDebug() << "Update file error:" << QString::fromStdWString(ex.getError());
                     }
                 }
             }
             reader->close();
         } catch (LuceneException &ex) {
-            String err = ex.getError();
-            qDebug() << ex.getError().c_str() << " Type: " << ex.getType();
+            qDebug() << QString::fromStdWString(ex.getError());;
         }
     }
 }
@@ -443,7 +442,7 @@ bool DFMFullTextSearchManager::createFileIndex(const QString &sourcePath)
 
         qDebug() << "\n\nIndex time: " << indexDuration + optimizeDuration << " milliseconds\n\n";
     } catch (LuceneException &e) {
-        qDebug() << "Exception: " << e.getError().c_str();
+        qDebug() << "Exception: " << QString::fromStdWString(e.getError());
         return false;
     }
     return true;
