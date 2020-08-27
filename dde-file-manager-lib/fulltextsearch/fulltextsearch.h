@@ -52,7 +52,7 @@ public:
      */
     int fulltextIndex(const QString &sourceDir);
 
-    void updateIndex(const QString &filePath);
+    bool updateIndex(const QString &filePath);
 
     inline void setSearchState(JobController::State state)
     {
