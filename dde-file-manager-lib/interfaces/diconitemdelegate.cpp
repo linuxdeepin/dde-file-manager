@@ -47,6 +47,7 @@
 #include "dstyleoption.h"
 #include <DStyle>
 #include <QToolTip>
+#include <DApplication>
 
 DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
@@ -692,9 +693,14 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     if (!isCanvas && isSelected) {
         QRect rc = option.rect;
-        rc.setSize({30,30});
-        rc.moveTopRight(QPoint(option.rect.right(),option.rect.top()));
-        m_checkedIcon.paint(painter, rc);
+        rc.setSize({20, 20});
+        rc.moveTopRight(QPoint(option.rect.right() - 5, option.rect.top() + 5));
+
+        DStyleOptionButton check;
+        check.state = DStyle::State_On;
+        check.rect = rc;
+
+        DApplication::style()->drawPrimitive(DStyle::PE_IndicatorItemViewItemCheck, &check, painter);
     }
 
     if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {

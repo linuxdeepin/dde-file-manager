@@ -21,36 +21,36 @@
 #include <QDebug>
 #include <QTimer>
 
-const QString TITLE_BT_TRANS_FILE = BluetoothTransDialog::tr("Bluetooth File Transfer");
-const QString TITLE_BT_TRANS_SUCC = BluetoothTransDialog::tr("File Transfer Successful");
-const QString TITLE_BT_TRANS_FAIL = BluetoothTransDialog::tr("File Transfer Failed");
+#define TITLE_BT_TRANS_FILE BluetoothTransDialog::tr("Bluetooth File Transfer")
+#define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
+#define TITLE_BT_TRANS_FAIL BluetoothTransDialog::tr("File Transfer Failed")
 
-const QString TXT_SENDING_FILE = BluetoothTransDialog::tr("Sending files to \"%1\"");
-const QString TXT_SENDING_FAIL = BluetoothTransDialog::tr("Failed to send files to \"%1\"");
-const QString TXT_SENDING_SUCC = BluetoothTransDialog::tr("Sent to \"%1\" successfully");
-const QString TXT_SELECT_DEVIC = BluetoothTransDialog::tr("Select a Bluetooth device to receive files");
-const QString TXT_NO_DEV_FOUND = BluetoothTransDialog::tr("Cannot find the connected Bluetooth device");
-const QString TXT_WAIT_FOR_RCV = BluetoothTransDialog::tr("Waiting to be received...");
-const QString TXT_GOTO_BT_SETS = BluetoothTransDialog::tr("Go to Bluetooth Settings");
-const QString TXT_SEND_PROGRES = BluetoothTransDialog::tr("%1/%2 Sent");
-const QString TXT_ERROR_REASON = BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected");
-const QString TXT_FILE_OVERSIZ = BluetoothTransDialog::tr("Unable to send the file more than 2 GB");
-const QString TXT_FILE_ZEROSIZ = BluetoothTransDialog::tr("Unable to send 0 KB files");
-const QString TXT_FILE_NOEXIST = BluetoothTransDialog::tr("File doesn't exist");
+#define TXT_SENDING_FILE BluetoothTransDialog::tr("Sending files to \"%1\"")
+#define TXT_SENDING_FAIL BluetoothTransDialog::tr("Failed to send files to \"%1\"")
+#define TXT_SENDING_SUCC BluetoothTransDialog::tr("Sent to \"%1\" successfully")
+#define TXT_SELECT_DEVIC BluetoothTransDialog::tr("Select a Bluetooth device to receive files")
+#define TXT_NO_DEV_FOUND BluetoothTransDialog::tr("Cannot find the connected Bluetooth device")
+#define TXT_WAIT_FOR_RCV BluetoothTransDialog::tr("Waiting to be received...")
+#define TXT_GOTO_BT_SETS BluetoothTransDialog::tr("Go to Bluetooth Settings")
+#define TXT_SEND_PROGRES BluetoothTransDialog::tr("%1/%2 Sent")
+#define TXT_ERROR_REASON BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected")
+#define TXT_FILE_OVERSIZ BluetoothTransDialog::tr("Unable to send the file more than 2 GB")
+#define TXT_FILE_ZEROSIZ BluetoothTransDialog::tr("Unable to send 0 KB files")
+#define TXT_FILE_NOEXIST BluetoothTransDialog::tr("File doesn't exist")
 
-const QString TXT_NEXT = BluetoothTransDialog::tr("Next");
-const QString TXT_CANC = BluetoothTransDialog::tr("Cancel");
-const QString TXT_DONE = BluetoothTransDialog::tr("Done");
-const QString TXT_RTRY = BluetoothTransDialog::tr("Retry");
-const QString TXT_OKAY = BluetoothTransDialog::tr("Ok");
+#define TXT_NEXT BluetoothTransDialog::tr("Next")
+#define TXT_CANC BluetoothTransDialog::tr("Cancel")
+#define TXT_DONE BluetoothTransDialog::tr("Done")
+#define TXT_RTRY BluetoothTransDialog::tr("Retry")
+#define TXT_OKAY BluetoothTransDialog::tr("Ok")
 
-const QString ICON_CONNECT = "notification-bluetooth-connected";
-const QString ICON_DISCONN = "notification-bluetooth-disconnected";
+static const QString ICON_CONNECT = "notification-bluetooth-connected";
+static const QString ICON_DISCONN = "notification-bluetooth-disconnected";
 
-const QString PXMP_NO_DEV_LIGHT = "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg";
-const QString PXMP_NO_DEV_DARKY = "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg";
+static const QString PXMP_NO_DEV_LIGHT = "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg";
+static const QString PXMP_NO_DEV_DARKY = "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg";
 
-#define FILE_TRANSFER_LIMITS 2147483648 // 2GB = 2 * 1024 * 1024 * 1024 Bytes
+static const qint64 FILE_TRANSFER_LIMITS = 2147483648; // 2GB = 2 * 1024 * 1024 * 1024 Bytes
 
 BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTransDialog::TransferMode mode, QString targetDevId, QWidget *parent)
     : DDialog(parent)
