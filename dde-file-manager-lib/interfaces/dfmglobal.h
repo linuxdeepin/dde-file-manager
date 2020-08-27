@@ -45,6 +45,7 @@
 #define MAX_FILE_NAME_CHAR_COUNT 255
 #define DDE_TRASH_ID "dde-trash"
 #define DDE_COMPUTER_ID "dde-computer"
+#define REVOCATION_TIMES 2
 
 #define ASYN_CALL(Fun, Code, captured...) {\
     QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\
