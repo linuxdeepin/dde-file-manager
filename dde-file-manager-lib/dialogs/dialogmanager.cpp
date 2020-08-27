@@ -1401,6 +1401,8 @@ void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
                 continue;
             if (info->canRedirectionFileUrl())
                 u = info->redirectedFileUrl();
+        } else if (u.scheme() == TAG_SCHEME) {
+            u = DUrl::fromLocalFile(u.toLocalFile());
         }
         paths << u.path();
     }

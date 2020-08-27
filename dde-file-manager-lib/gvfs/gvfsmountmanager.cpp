@@ -1054,12 +1054,10 @@ void GvfsMountManager::startMonitor()
 {
     if (DFMGlobal::isRootUser()){
         listMountsBylsblk();
-    }else{
-        listDrives();
-        listVolumes();
-        listMounts();
-//        updateDiskInfos();
     }
+    listVolumes();
+    listMounts();
+    listDrives();
     updateDiskInfos(); //磁盘信息root用户也需要刷新,否则会出现root用户只能挂载不能卸载的情况
 #ifdef DFM_MINIMUM
     qDebug() << "Don't auto mount disk";
