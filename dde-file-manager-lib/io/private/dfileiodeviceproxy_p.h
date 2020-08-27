@@ -32,7 +32,7 @@ class DFileIODeviceProxyPrivate : public DFileDevicePrivate
 public:
     DFileIODeviceProxyPrivate(DFileIODeviceProxy *qq);
 
-    QPointer<QIODevice> device;
+    QPointer<QIODevice> device = nullptr;
 };
 DFM_END_NAMESPACE
 

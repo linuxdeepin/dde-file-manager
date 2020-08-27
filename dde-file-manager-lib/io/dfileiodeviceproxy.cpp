@@ -87,8 +87,10 @@ void DFileIODeviceProxy::close()
     Q_D(DFileIODeviceProxy);
 
     DFileDevice::close();
-    d->device->close();
-    setErrorString(d->device->errorString());
+    if (d->device) {
+        d->device->close();
+        setErrorString(d->device->errorString());
+    }
 }
 
 qint64 DFileIODeviceProxy::pos() const

@@ -1554,7 +1554,8 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1313"/>
         <source>Locate to %1 failed!</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>访问 %1 失败！</translatorcomment>
+        <translation>访问 %1 失败！</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1422"/>
