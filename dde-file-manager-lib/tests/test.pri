@@ -102,6 +102,7 @@ SOURCES += \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
     $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    $$PWD/views/ut_dfmsidebarview.cpp \
     $$PWD/views/ut_dfmvaultactivefinishedview.cpp \
     $$PWD/views/ut_dfmvaultactivesavekeyview.cpp \
     $$PWD/views/ut_dfmvaultactivesetunlockmethodview.cpp \
