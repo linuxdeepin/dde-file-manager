@@ -317,8 +317,12 @@ void WallpaperList::updateItemThumb()
 
     showDeleteButtonForItem(static_cast<WallpaperItem *>(itemAt(mapFromGlobal(QCursor::pos()))));
 
+    //fix bug44918 首次打开壁纸库，点击图片切换到下一页图片，过程中会出现短暂空库
+    QRect r = rect();
+    //判断区域增加前一页，当前页，下一页的壁纸缩略图
+    QRect cacheRect(r.x() - r.width(), r.y(),r.width() * 3, r.height());
     for (WallpaperItem *item : m_items) {
-        if (rect().intersects(QRect(item->mapTo(this, QPoint()), item->size()))) {
+        if (cacheRect.intersects(QRect(item->mapTo(this, QPoint()), item->size()))) {
             item->initPixmap();
         }
     }
