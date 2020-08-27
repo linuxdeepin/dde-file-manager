@@ -83,6 +83,7 @@
 #include <QButtonGroup>
 #include <QProgressBar>
 #include <QPainter>
+#include <QPainterPath>
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QStorageInfo>
