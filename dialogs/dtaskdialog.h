@@ -88,6 +88,8 @@ public:
      */
     bool getFlagMapValueIsTrue();
 
+    bool getIsErrorOc(const DFileCopyMoveJob * job);
+
 signals:
     void abortTask(const QMap<QString, QString>& jobDetail);
     void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
@@ -142,7 +144,8 @@ private:
 
     // 记录当前未完成的保险箱任务
     QSet<DFileCopyMoveJob*> mapNotCompleteVaultTask;
-    QMutex adjustmutex,addtaskmutex,removetaskmutex;
+    QMutex adjustmutex,addtaskmutex,removetaskmutex,currentjobchangemutex,errorocmutex;
+    QHash<QString,bool> iserroroc;
 
     //! 记录当前是否完成一个文件的删除或拷贝工作
     QMap<DUrl, bool> m_flagMap;

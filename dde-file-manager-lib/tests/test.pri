@@ -38,6 +38,8 @@ SOURCES += \
     $$PWD/views/ut_filedialogstatusbar.cpp\
     $$PWD/views/ut_fileitem.cpp\
     $$PWD/views/ut_fileviewhelper.cpp\
+    $$PWD/views/ut_historystack.cpp\
+    $$PWD/views/ut_windowmanager.cpp\
     $$PWD/controllers/ut_masteredmediacontroller.cpp \
     $$PWD/controllers/ut_mergeddesktopcontroller.cpp \
     $$PWD/controllers/ut_mountcontroller.cpp \
@@ -95,6 +97,17 @@ SOURCES += \
     $$PWD/plugins/ut_pluginmanager.cpp \
     $$PWD/fulltextsearch/ut_fulltextsearch.cpp \
     $$PWD/controllers/ut_searchcontroller.cpp \
+    $$PWD/dbus/ut_dbussystemInfo_test.cpp \
+    $$PWD/sw_label/ut_llsdeepinlabellibrary_test.cpp \
+    $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
-    $$PWD/vfs/ut_dfmvfsdevice.cpp
+    $$PWD/vfs/ut_dfmvfsdevice.cpp   \
+    $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
+    $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
+    $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
+    $$PWD/controllers/ut_dfmsidebartagitemhandler_test.cpp 
+    
+
+

@@ -219,6 +219,7 @@ public:
     QAtomicInteger<bool> iscountsizeover = false;
     QAtomicInteger<bool> isreadwriteseparate = false;
     QAtomicInteger<bool> isbigfile = false;
+    QAtomicInteger<bool> cansetnoerror = true;
 
     qint64 m_tatol = 0;
     qint64 m_readtime = 0;
@@ -288,8 +289,8 @@ public:
     QAtomicInteger<bool> bsysncquitstate = false;
     QAtomicInteger<bool> bdestLocal = false;
     qint64 refinecpsize = 0;
-    QMutex m_refinemutex;
-
+    QMutex m_refinemutex,m_errormutex;
+    QList<DUrl> errorurllist;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };

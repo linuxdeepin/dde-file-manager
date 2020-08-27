@@ -24,6 +24,7 @@
 
 #include "jobcontroller.h"
 #include "dfileservices.h"
+#include "fulltextsearch.h"
 
 #include <QtConcurrent/QtConcurrent>
 
@@ -181,7 +182,7 @@ void JobController::run()
         m_iterator->next();
         DAbstractFileInfoPointer fileinfo;
         fileinfo = m_iterator->optimiseFileInfo();
-        if(!fileinfo) {
+        if (!fileinfo) {
             fileinfo = m_iterator->fileInfo();
         }
         if (update_children) {
@@ -231,5 +232,6 @@ void JobController::setState(JobController::State state)
 
     m_state = state;
 
+    DFMFullTextSearchManager::getInstance()->setSearchState(state);
     emit stateChanged(state);
 }
