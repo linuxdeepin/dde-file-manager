@@ -76,6 +76,11 @@
 
 DWIDGET_USE_NAMESPACE
 
+#define GVFS_ROOT_MATCH "^//run/user/\\d+/gvfs/"
+#define GVFS_MATCH "^/run/user/\\d+/gvfs/"
+#define FTP_HOST "ftp:host="
+#define GVFS_MATCH_EX "^/run/user/\\d+/gvfs/.+$"
+
 class DFileServicePrivate
 {
 public:
@@ -92,6 +97,8 @@ public:
     bool m_bcursorbusy = false;
     bool m_bonline = false;
     bool m_bdoingcleartrash = false;
+    QHash<DUrl,bool> m_rootsmbftpurllist;
+    QMutex checkgvfsmtx,smbftpmutex;
     JobController *m_jobcontroller = nullptr;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
@@ -134,7 +141,7 @@ DFileService::DFileService(QObject *parent)
 
 DFileService::~DFileService()
 {
-
+    d_ptr->m_rootsmbftpurllist.clear();
 }
 
 template<typename T>
@@ -1135,6 +1142,8 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
 {
     //找出url的rootfile路径，判断rootfile是否存在
 //    qDebug() << url << QThread::currentThreadId();
+    Q_D(DFileService);
+    QMutexLocker lk(&d->checkgvfsmtx);
     if (!url.isValid()) {
         return false;
     }
@@ -1149,17 +1158,17 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
     QString rootfilename;
     if (url.scheme() == DFMROOT_SCHEME && urlpath.endsWith(SUFFIX_GVFSMP)) {
         rootfilename = QUrl::fromPercentEncoding(url.path().toUtf8());
-        QStringList rootstrlist = rootfilename.split(QRegularExpression("^//run/user/\\d+/gvfs/"));
+        QStringList rootstrlist = rootfilename.split(QRegularExpression(GVFS_ROOT_MATCH));
         if (rootstrlist.size() >= 2) {
             rootfilename = rootstrlist.at(1);
             rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP), "");
         }
-        if (!(rootfilename.startsWith("smb") || rootfilename.startsWith("ftp"))) {
+        if (!(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME))) {
             return false;
         }
         rooturl = url;
     } else {
-        static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
+        static QRegularExpression regExp(GVFS_MATCH_EX,
                                          QRegularExpression::DotMatchesEverythingOption
                                          | QRegularExpression::DontCaptureOption
                                          | QRegularExpression::OptimizeOnFirstUsageOption);
@@ -1168,7 +1177,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             return false;
         }
         int qi = 0;
-        QStringList urlpathlist = urlpath.split(QRegularExpression("^/run/user/\\d+/gvfs/"));
+        QStringList urlpathlist = urlpath.split(QRegularExpression(GVFS_MATCH));
         QString urlstr;
         QString urllast;
         if (urlpathlist.size() >= 2) {
@@ -1180,7 +1189,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
         QString path;
         if (0 >= qi) {
             path = urlpath;
-            QStringList rootstrlist = path.split(QRegularExpression("^/run/user/\\d+/gvfs/"));
+            QStringList rootstrlist = path.split(QRegularExpression(GVFS_MATCH));
             if (rootstrlist.size() >= 2) {
                 rootfilename = rootstrlist.at(1);
                 rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP), "");
@@ -1190,14 +1199,25 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             path = urlstr + urllast.left(qi);
         }
         if (path.isNull() || path.isEmpty() ||
-                !(rootfilename.startsWith("smb") || rootfilename.startsWith("ftp"))) {
+                !(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME))) {
             return false;
         }
         rooturl.setScheme(DFMROOT_SCHEME);
         rooturl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
     }
 
-    return checkGvfsMountfileBusy(rooturl, rootfilename, showdailog);
+    if (isSmbFtpContain(rooturl)) {
+        return d->m_rootsmbftpurllist.value(rooturl);
+    }
+
+    bool isbusy = checkGvfsMountfileBusy(rooturl, rootfilename, showdailog);
+    d->m_rootsmbftpurllist.insert(rooturl,isbusy);
+    QTimer::singleShot(500,this,[rooturl,d](){
+        QMutexLocker lk(&d->smbftpmutex);
+        d->m_rootsmbftpurllist.remove(rooturl);
+    });
+
+    return isbusy;
 
 }
 
@@ -1220,7 +1240,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
         return true;
     }
 
-    if (rootfilename.startsWith("smb")) {
+    if (rootfilename.startsWith(SMB_SCHEME)) {
         DAbstractFileInfoPointer rootptr = createFileInfo(nullptr, rootUrl);
         fileexit = rootptr->exists();
         setCursorBusyState(false);
@@ -1233,42 +1253,41 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
 
     //是网络文件，就去确定host和port端口号
     bool bvist = false;
-    QString host = rootfilename.mid(rootfilename.indexOf("host=") + 5, rootfilename.indexOf(","));
-    QString port;
-    if (-1 != rootfilename.indexOf("port=")) {
-        port = rootfilename.right(rootfilename.indexOf("port=") + 5);
-        port = port.mid(0, port.indexOf(","));
+    QString host,port;
+    QStringList ipinfolist = rootfilename.split(",");
+    if (ipinfolist.count() >= 1) {
+        host = ipinfolist[0].replace(FTP_HOST,"");
+    }
+    else {
+        return true;
     }
 
-    QString roottemp = rootfilename;
-    QUrl url; //该QUrl类提供了一个方便的接口,用于处理URL
-    url.setScheme(roottemp.left(roottemp.indexOf(":")));//设置该计划描述了URL的类型（或协议）
-    if (rootfilename.startsWith("ftp")) {
-        //设置URL的端口。该端口是URL的权限的一部分，如setAuthority（描述）。
-        //端口必须是介于0和65535（含）。端口设置为-1表示该端口是不确定的。
-        url.setPort(21);
-    } else {
-        url.setPort(port.isNull() ? -1 : port.toInt());
+    if (ipinfolist.count() >=2 && -1 != ipinfolist[1].indexOf("port=")) {
+        port = ipinfolist[1].replace("port=","");
     }
-    url.setHost(host);//设置主机地址
-    url.setPath("/.hidden");//设置URL路径。该路径是自带权限后的URL的一部分，但在查询字符串之前
 
-    QNetworkRequest request;//该QNetworkReply类包含的数据和标题,对QNetworkAccessManager发送请求
-    request.setUrl(url); //这只request的请求
 
     QNetworkAccessManager manager;//QNetworkAccessManager 允许发送网络请求和接收回复
-    //发送请求，以获得目标要求的内容，并返回一个新的QNetworkReply对象打开阅读，
-    //每当新的数据到达发射的readyRead（）信号。要求的内容以及相关的头文件会被下载。
-    manager.get(request);
     qDebug() << "loop sart ===========";
+
     connect(&manager, &QNetworkAccessManager::finished, this, [&](QNetworkReply * reply) {
         qDebug() << reply->error() << reply->errorString();
-        bvist = QNetworkReply::UnknownNetworkError < reply->error();
+        bvist = QNetworkReply::UnknownNetworkError < reply->error() ||  QNetworkReply::NoError >= reply->error();
         if (d_ptr->m_loop) {
             d_ptr->m_loop->exit();
         }
     });
-    if (d_ptr->m_loop) {
+
+    connect(&manager, &QNetworkAccessManager::sslErrors, this, [&](QNetworkReply * reply,const QList<QSslError> &errors) {
+        qDebug() << reply->error() << reply->errorString();
+        qDebug() << errors;
+        bvist = QNetworkReply::UnknownNetworkError < reply->error() ||  QNetworkReply::NoError >= reply->error();
+        if (d_ptr->m_loop) {
+            d_ptr->m_loop->exit();
+        }
+    });
+    manager.connectToHost(host,port.toUShort() == 0 ? 21 : port.toUShort());
+    if (d_ptr->m_loop && !d_ptr->m_loop->isRunning()) {
         d_ptr->m_loop->exec();
     }
 
@@ -1281,8 +1300,9 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
         }
         return true;
     }
-
+    qDebug() << bvist;
     setCursorBusyState(false);
+
     //文件不存在弹提示框
     if (!bvist && showdailog) {
         dialogManager->showUnableToLocateDir(rootfilename);
@@ -1380,6 +1400,12 @@ void DFileService::dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUr
 bool DFileService::isRootFileContain(const DUrl &url)
 {
     return d_ptr->rootfilelist.contains(url);
+}
+
+bool DFileService::isSmbFtpContain(const DUrl &url)
+{
+    QMutexLocker lk(&d_ptr->smbftpmutex);
+    return d_ptr->m_rootsmbftpurllist.contains(url);
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
