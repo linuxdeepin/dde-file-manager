@@ -523,8 +523,9 @@ bool SearchDiriterator::hasNext() const
         }
 
         QString searchPath = fileInfo->filePath();
-        DFMFullTextSearchManager::getInstance()->updateIndex(searchPath);
-        fullTextSearch(searchPath);
+        if (DFMFullTextSearchManager::getInstance()->updateIndex(searchPath)) {
+            fullTextSearch(searchPath);
+        }
         hasUpdateIndex = true;
         return true;
     }
