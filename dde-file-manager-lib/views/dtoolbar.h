@@ -70,12 +70,13 @@ public:
     int navStackCount() const;
     void updateBackForwardButtonsState();
 
-    void setCustomActionList(const QList<QAction*> &list);
+    void setCustomActionList(const QList<QAction *> &list);
     void triggerActionByIndex(int index);
+    void showFilterButton();
 
 signals:
     void refreshButtonClicked();
-    void toolbarUrlChanged(const DUrl& url);
+    void toolbarUrlChanged(const DUrl &url);
     void detailButtonClicked();
 
 public slots:
@@ -102,20 +103,20 @@ private:
     void onForwardButtonClicked();
 
     bool m_searchState = false;
-    QFrame* m_addressToolBar;
-    DButtonBoxButton* m_backButton = nullptr;
-    DButtonBoxButton* m_forwardButton = nullptr;
-    QPushButton* m_searchButton = nullptr;
-    QToolButton* m_detailButton = nullptr;
-    QFrame* m_contollerToolBar;
+    QFrame *m_addressToolBar;
+    DButtonBoxButton *m_backButton = nullptr;
+    DButtonBoxButton *m_forwardButton = nullptr;
+    QPushButton *m_searchButton = nullptr;
+    QToolButton *m_detailButton = nullptr;
+    QFrame *m_contollerToolBar;
     QHBoxLayout *m_contollerToolBarContentLayout;
-    QList<QAction*> m_actionList;
+    QList<QAction *> m_actionList;
 
     bool m_switchState = false;
     bool m_searchButtonAsbState = false;
-    DFMCrumbBar * m_crumbWidget = nullptr;
-    HistoryStack * m_navStack = nullptr;
-    QList<HistoryStack*> m_navStacks;
+    DFMCrumbBar *m_crumbWidget = nullptr;
+    HistoryStack *m_navStack = nullptr;
+    QList<HistoryStack *> m_navStacks;
 };
 
 #endif // DTOOLBAR_H
