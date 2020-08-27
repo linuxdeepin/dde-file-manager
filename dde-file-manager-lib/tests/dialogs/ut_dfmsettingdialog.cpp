@@ -1,7 +1,8 @@
 #include "dialogs/dfmsettingdialog.h"
+#include "interfaces/dfmapplication.h"
 
 #include <gtest/gtest.h>
-#include <interfaces/dfmapplication.h>
+
 
 namespace  {
     class TestDFMSettingDialog : public testing::Test
@@ -9,13 +10,21 @@ namespace  {
     public:
         void SetUp() override
         {
-            std::cout << "start DFMSettingDialog";
+            m_pTesting = new DFMSettingDialog();
+            std::cout << "start TestDFMSettingDialog";
         }
         void TearDown() override
         {
-            std::cout << "end DFMSettingDialog";
+            delete  m_pTesting;
+            m_pTesting = nullptr;
+            std::cout << "end TestDFMSettingDialog";
         }
     public:
         DFMSettingDialog *m_pTesting;
     };
 }
+
+//TEST_F(TestDFMSettingDialog, testInit)
+//{
+//    m_pTesting->show();
+//}

@@ -1,6 +1,9 @@
-#include "dialogs/ddesktoprenamedialog.h"
+
 
 #include <gtest/gtest.h>
+
+#define private public
+#include "dialogs/ddesktoprenamedialog.h"
 
 namespace  {
     class TestDDesktopRenameDialog : public testing::Test
@@ -66,4 +69,41 @@ TEST_F(TestDDesktopRenameDialog, testSetVisible)
 TEST_F(TestDDesktopRenameDialog, testSetDialogTitle)
 {
     m_pTester->setDialogTitle("UnitTestTitle");
+}
+
+TEST_F(TestDDesktopRenameDialog, testOnReplaceTextChanged)
+{
+    m_pTester->onReplaceTextChanged();
+}
+
+TEST_F(TestDDesktopRenameDialog, testOnCurrentModeChanged)
+{
+    std::size_t index = 0;
+    m_pTester->onCurrentModeChanged(index);
+}
+
+TEST_F(TestDDesktopRenameDialog, testOnCurrentAddModeChanged)
+{
+    std::size_t index = 0;
+    m_pTester->onCurrentAddModeChanged(index);
+}
+
+TEST_F(TestDDesktopRenameDialog, testSetRenameButtonStatus)
+{
+    m_pTester->setRenameButtonStatus(false);
+}
+
+TEST_F(TestDDesktopRenameDialog, testOnContentChangedForFinding)
+{
+    m_pTester->onContentChangedForFinding("123");
+}
+
+TEST_F(TestDDesktopRenameDialog, testOnContentChangedForAdding)
+{
+    m_pTester->onContentChangedForAdding("123");
+}
+
+TEST_F(TestDDesktopRenameDialog, testOnContentChangedForCustomzedSN)
+{
+    m_pTester->onContentChangedForCustomzedSN("123");
 }
