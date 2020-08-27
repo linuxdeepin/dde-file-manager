@@ -133,23 +133,26 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
 DocumentPtr DFMFullTextSearchManager::getFileDocument(const QString &filename)
 {
     DocumentPtr doc = newLucene<Document>();
-    doc->add(newLucene<Field>(L"path", filename.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));
-    String modifyTime = DateTools::timeToString(FileUtils::fileModified(filename.toStdWString()), DateTools::RESOLUTION_SECOND);
-    doc->add(newLucene<Field>(L"modified", modifyTime, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    doc->add(newLucene<Field>(L"path", filename.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    QFileInfo fileInfo(filename);
+    QString modifyTime = fileInfo.lastModified().toString("yyyyMMddHHmmss");
+    doc->add(newLucene<Field>(L"modified", modifyTime.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     QString contents = getFileContents(filename);
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));
     return doc;
 }
 void DFMFullTextSearchManager::indexDocs(const IndexWriterPtr &writer, const QString &sourceDir)
 {
+    isCreateIndex = true;
     QStringList files;
     readFileName(sourceDir.toStdString().c_str(), files);
+    isCreateIndex = false;
     for (auto file : files) {
         qDebug() << "Adding [" << file << "]";
         try {
             writer->addDocument(getFileDocument(file));
         } catch (FileNotFoundException &ex) {
-            qDebug() << "addDocument error: " << ex.getError().c_str();
+            qDebug() << "addDocument error: " << QString::fromStdWString(ex.getError());
         }
     }
 }
@@ -187,6 +190,10 @@ void DFMFullTextSearchManager::doPagingSearch(const SearcherPtr &searcher, const
         end = std::min(hits.size(), start + hitsPerPage);
 
         for (int32_t i = start; i < end; ++i) {
+            if (m_state == JobController::Stoped) {
+                return;
+            }
+
             if (raw) { // output raw format
                 std::wcout << L"doc=" << hits[i]->doc << L" score=" << hits[i]->score << L"\n";
                 continue;
@@ -238,7 +245,7 @@ bool DFMFullTextSearchManager::searchByKeyworld(const QString &keyword)
         doPagingSearch(searcher, query, hitsPerPage, false, true);
         reader->close();
     } catch (LuceneException &e) {
-        qDebug() << "Exception: " << e.getError().c_str();
+        qDebug() << "Exception: " << QString::fromStdWString(e.getError());
         return false;
     }
 
@@ -261,6 +268,10 @@ int DFMFullTextSearchManager::fulltextIndex(const QString &sourceDir)
 
 void DFMFullTextSearchManager::readFileName(const char *filePath, QStringList &result)
 {
+    if (!isCreateIndex && m_state == JobController::Stoped) {
+        return;
+    }
+
     QRegExp reg("^/(boot|dev|proc|sys|run|lib|usr).*$");
     if (reg.exactMatch(QString(filePath)) && !QString(filePath).startsWith("/run/user")) {
         return;
@@ -329,25 +340,26 @@ void DFMFullTextSearchManager::readFileName(const char *filePath, QStringList &r
     }
 }
 
-void DFMFullTextSearchManager::updateIndex(const QString &filePath)
+bool DFMFullTextSearchManager::updateIndex(const QString &filePath)
 {
+    bool res = false;
     qDebug() << "Update index";
     QStringList files;
     readFileName(filePath.toStdString().c_str(), files);
-    int i = 0;
     for (QString file : files) {
+        if (m_state == JobController::Stoped) {
+            qDebug() << "full text search stop!";
+            return false;
+        }
+
         try {
             IndexReaderPtr reader = IndexReader::open(FSDirectory::open(indexStorePath.toStdWString()), true);
             SearcherPtr searcher = newLucene<IndexSearcher>(reader);
-            AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-            QueryParserPtr parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"path", analyzer);
-            QueryPtr query = parser->parse(file.toStdWString());
+            TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"path", file.toStdWString()));
 
             // 文件路径为唯一值，所以搜索一个结果就行了
-            TopScoreDocCollectorPtr collector = TopScoreDocCollector::create(1, false);
-            searcher->search(query, collector);
-            Collection<ScoreDocPtr> hits = collector->topDocs()->scoreDocs;
-            int32_t numTotalHits = collector->getTotalHits();
+            TopDocsPtr topDocs = searcher->search(query, 1);
+            int32_t numTotalHits = topDocs->totalHits;
             if (numTotalHits == 0) {
                 try {
                     IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
@@ -356,15 +368,17 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath)
                     writer->addDocument(getFileDocument(file));
                     qDebug() << "Add file: [" << file << "]";
                     writer->close();
+                    res = true;
                 } catch (LuceneException &ex) {
-                    qDebug() << ex.getError().c_str();
+                    qDebug() << "Add file error:" << QString::fromStdWString(ex.getError());
                 }
 
             } else {
-                DocumentPtr doc = searcher->doc(hits[0]->doc);
-                String modifyTime = DateTools::timeToString(FileUtils::fileModified(file.toStdWString()), DateTools::RESOLUTION_SECOND);
+                DocumentPtr doc = searcher->doc(topDocs->scoreDocs[0]->doc);
+                QFileInfo info(file);
+                QString modifyTime = info.lastModified().toString("yyyyMMddHHmmss");
                 String storeTime = doc->get(L"modified");
-                if (modifyTime == storeTime) {
+                if (modifyTime.toStdWString() == storeTime) {
                     continue;
                 } else {
                     try {
@@ -372,23 +386,25 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath)
                                                                        newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT),
                                                                        IndexWriter::MaxFieldLengthLIMITED);
                         //定义一个更新条件
-                        TermPtr query = newLucene<Term>(L"path", file.toStdWString());
+                        TermPtr term = newLucene<Term>(L"path", file.toStdWString());
                         //更新
-                        writer->updateDocument(query, getFileDocument(file));
+                        writer->updateDocument(term, getFileDocument(file));
                         qDebug() << "Update file: [" << file << "]";
                         //关闭
                         writer->close();
+                        res = true;
                     } catch (LuceneException &ex) {
-                        qDebug() << ex.getError().c_str();
+                        qDebug() << "Update file error:" << QString::fromStdWString(ex.getError());
                     }
                 }
             }
             reader->close();
         } catch (LuceneException &ex) {
-            String err = ex.getError();
-            qDebug() << ex.getError().c_str() << " Type: " << ex.getType();
+            qDebug() << QString::fromStdWString(ex.getError());
         }
     }
+
+    return res;
 }
 
 bool DFMFullTextSearchManager::createFileIndex(const QString &sourcePath)
@@ -427,7 +443,7 @@ bool DFMFullTextSearchManager::createFileIndex(const QString &sourcePath)
 
         qDebug() << "\n\nIndex time: " << indexDuration + optimizeDuration << " milliseconds\n\n";
     } catch (LuceneException &e) {
-        qDebug() << "Exception: " << e.getError().c_str();
+        qDebug() << "Exception: " << QString::fromStdWString(e.getError());
         return false;
     }
     return true;
