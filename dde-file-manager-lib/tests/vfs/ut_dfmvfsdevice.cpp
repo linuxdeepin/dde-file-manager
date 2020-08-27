@@ -32,7 +32,6 @@ public:
         DUrl url = DUrl::fromLocalFile("smb://10.0.12.161:445/");
         url.setScheme(SMB_SCHEME);
         m_service = dde_file_manager::DFMVfsDevice::createUnsafe(url);
-        qDebug() << "--->" << m_service;
     }
 
     void TearDown() override
