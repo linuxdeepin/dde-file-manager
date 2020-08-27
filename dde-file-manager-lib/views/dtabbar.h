@@ -27,8 +27,8 @@
 
 #include "singleton.h"
 #include "durl.h"
+
 #include <QDebug>
-#include "singleton.h"
 #include <QFont>
 #include <QFontMetrics>
 #include <QJsonObject>
@@ -38,6 +38,9 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QCursor>
+#include <QPainter>
+#include <QPainterPath>
+
 #include "dfileview.h"
 #include "dfmevent.h"
 

@@ -16,6 +16,7 @@
 
 #include <QLabel>
 #include <QPainter>
+#include <QPainterPath>
 #include <QAbstractItemView>
 #include <QLineEdit>
 #include <QApplication>
