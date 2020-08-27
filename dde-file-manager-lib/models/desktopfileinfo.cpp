@@ -99,7 +99,7 @@ QString DesktopFileInfo::getIconName() const
 {
     Q_D(const DesktopFileInfo);
 
-     //special handling for trash desktop file which has tash datas
+    //special handling for trash desktop file which has tash datas
     if (d->iconName == "user-trash") {
         if (!TrashManager::isEmpty())
             return "user-trash-full";
@@ -264,23 +264,25 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
 QVector<MenuAction> DesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     Q_D(const DesktopFileInfo);
-    if(d->deepinID == "dde-trash" || d->deepinID == "dde-computer"){
+
+
+    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer" || (d->deepinID == "dde-file-manager" && d->exec.contains("-O"))) {
         QVector<MenuAction> actions;
         actions << MenuAction::Open
-        << MenuAction::Separator;
+                << MenuAction::Separator;
 
-        if(d->deepinID == "dde-trash"){
+        if (d->deepinID == "dde-trash") {
             actions << MenuAction::ClearTrash
                     << MenuAction::Separator;
         }
 
-        if(type == SingleFile)
+        if (type == SingleFile)
             actions << MenuAction::CreateSymlink;
 
         actions << MenuAction::Property;
 
         return actions;
-    } else{
+    } else {
         return DFileInfo::menuActionList(type);
     }
 }
@@ -288,9 +290,9 @@ QVector<MenuAction> DesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType 
 QSet<MenuAction> DesktopFileInfo::disableMenuActionList() const
 {
     Q_D(const DesktopFileInfo);
-    if(d->deepinID == "dde-trash"){
+    if (d->deepinID == "dde-trash") {
         QSet<MenuAction> actions;
-        if(FileUtils::filesCount(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)) <= 0)
+        if (FileUtils::filesCount(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)) <= 0)
             actions << MenuAction::ClearTrash;
         return actions;
     }
@@ -305,7 +307,7 @@ QList<QIcon> DesktopFileInfo::additionalIcon() const
 Qt::DropActions DesktopFileInfo::supportedDragActions() const
 {
     Q_D(const DesktopFileInfo);
-    if(d->deepinID == "dde-trash" || d->deepinID == "dde-computer"){
+    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer") {
         return Qt::IgnoreAction;
     }
 
@@ -316,7 +318,7 @@ bool DesktopFileInfo::canDrop() const
 {
     //ignore drop event for computer desktop file
     Q_D(const DesktopFileInfo);
-    if(d->deepinID == "dde-computer")
+    if (d->deepinID == "dde-computer")
         return false;
 
     return DFileInfo::canDrop();
@@ -325,7 +327,7 @@ bool DesktopFileInfo::canDrop() const
 bool DesktopFileInfo::canTag() const
 {
     Q_D(const DesktopFileInfo);
-    if(d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
+    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
         return false;
 
     return DFileInfo::canTag();
@@ -339,6 +341,11 @@ DUrl DesktopFileInfo::trashDesktopFileUrl()
 DUrl DesktopFileInfo::computerDesktopFileUrl()
 {
     return DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath) + "/dde-computer.desktop");
+}
+
+DUrl DesktopFileInfo::homeDesktopFileUrl()
+{
+    return DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath) + "/dde-home.desktop");
 }
 
 void DesktopFileInfoPrivate::updateInfo(const DUrl &fileUrl)
@@ -356,6 +363,6 @@ void DesktopFileInfoPrivate::updateInfo(const DUrl &fileUrl)
     deepinVendor = map.value("DeepinVendor").toString();
     // Fix categories
     if (categories.first().compare("") == 0) {
-      categories.removeFirst();
+        categories.removeFirst();
     }
 }

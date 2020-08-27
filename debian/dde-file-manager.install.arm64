@@ -4,6 +4,7 @@ usr/bin/dde-file-manager-pkexec
 usr/bin/dde-property-dialog
 
 usr/share/applications/dde-file-manager.desktop
+usr/share/applications/dde-open.desktop
 
 usr/share/polkit-1/actions/*.policy
 

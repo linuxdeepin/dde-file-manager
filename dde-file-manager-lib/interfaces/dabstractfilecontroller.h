@@ -36,6 +36,7 @@ class DFMEvent;
 class DFMOpenFileEvent;
 class DFMOpenFilesEvent;
 class DFMOpenFileByAppEvent;
+class DFMOpenFilesByAppEvent;
 class DFMCompressEvent;
 class DFMDecompressEvent;
 class DFMWriteUrlsToClipboardEvent;
@@ -83,6 +84,7 @@ public:
     virtual bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const;
     virtual bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const;
     virtual bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const;
+    virtual bool openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const;
     virtual bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const;
     virtual bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const;
     virtual bool decompressFileHere(const QSharedPointer<DFMDecompressEvent> &event) const;

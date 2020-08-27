@@ -184,14 +184,29 @@ OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title,
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
+OpenWithDialog::OpenWithDialog(const QList<DUrl> &urllist, QWidget *parent) :
+    BaseDialog(parent)
+{
+    m_urllist = urllist;
+    setWindowFlags(windowFlags()
+                   & ~ Qt::WindowMaximizeButtonHint
+                   & ~ Qt::WindowMinimizeButtonHint
+                   & ~ Qt::WindowSystemMenuHint);
+    mimeAppsManager->initMimeTypeApps();
+    initUI();
+    initConnect();
+    initData();
+}
+
 OpenWithDialog::OpenWithDialog(const DUrl &url, QWidget *parent) :
     BaseDialog(parent)
 {
     m_url = url;
     setWindowFlags(windowFlags()
-                           &~ Qt::WindowMaximizeButtonHint
-                           &~ Qt::WindowMinimizeButtonHint
-                           &~ Qt::WindowSystemMenuHint);
+                   & ~ Qt::WindowMaximizeButtonHint
+                   & ~ Qt::WindowMinimizeButtonHint
+                   & ~ Qt::WindowSystemMenuHint);
+    mimeAppsManager->initMimeTypeApps();
     initUI();
     initConnect();
     initData();
@@ -215,6 +230,7 @@ void OpenWithDialog::initUI()
     m_scrollArea->setWidgetResizable(true);
     QScroller::grabGesture(m_scrollArea);
     m_scrollArea->installEventFilter(this);
+    m_scrollArea->viewport()->setStyleSheet("background-color:transparent;"); //设置滚动区域与主窗体颜色一致
 
     QWidget *content_widget = new QWidget;
 
@@ -232,7 +248,7 @@ void OpenWithDialog::initUI()
     m_cancelButton = new QPushButton(tr("Cancel"));
     m_chooseButton = new QPushButton(tr("Confirm"));
 
-    QVBoxLayout* content_layout = new QVBoxLayout;
+    QVBoxLayout *content_layout = new QVBoxLayout;
     content_layout->setContentsMargins(10, 0, 10, 0);
     content_layout->addWidget(new OpenWithDialogListSparerItem(tr("Recommended Applications"), this));
     content_layout->addLayout(m_recommandLayout);
@@ -242,7 +258,7 @@ void OpenWithDialog::initUI()
 
     content_widget->setLayout(content_layout);
 
-    QHBoxLayout* buttonLayout = new QHBoxLayout;
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->addWidget(m_openFileChooseButton);
     buttonLayout->addStretch();
     buttonLayout->addWidget(m_setToDefaultCheckBox);
@@ -251,7 +267,7 @@ void OpenWithDialog::initUI()
     buttonLayout->addWidget(m_chooseButton);
     buttonLayout->setContentsMargins(10, 0, 10, 0);
 
-    QVBoxLayout *main_layout= new QVBoxLayout(this);
+    QVBoxLayout *main_layout = new QVBoxLayout(this);
     QVBoxLayout *bottom_layout = new QVBoxLayout;
 
     bottom_layout->addWidget(new DHorizontalLine(this));
@@ -273,15 +289,40 @@ void OpenWithDialog::initConnect()
 
 void OpenWithDialog::initData()
 {
-    const DAbstractFileInfoPointer &file_info = DFileService::instance()->createFileInfo(this, m_url);
+    //在选择默认程序时，有多个url，要传多个url
+    if (m_url.isValid() && m_urllist.size() == 0) {
+        const DAbstractFileInfoPointer &file_info = DFileService::instance()->createFileInfo(this, m_url);
 
-    if (!file_info)
-        return;
+        if (!file_info)
+            return;
 
-    m_mimeType = file_info->mimeType();
+        m_mimeType = file_info->mimeType();
 
-    if (file_info->isDesktopFile())
-        m_setToDefaultCheckBox->hide();
+        if (file_info->isDesktopFile())
+            m_setToDefaultCheckBox->hide();
+    } else if (!m_url.isValid() && m_urllist.size() > 0) {
+        QList<DUrl> openlist;
+        bool bhide = true;
+        for (auto url : m_urllist) {
+            const DAbstractFileInfoPointer &file_info = DFileService::instance()->createFileInfo(this, url);
+
+            if (!file_info) {
+                continue;
+            }
+            m_mimeType = file_info->mimeType();
+            if (!file_info->isDesktopFile()) {
+                bhide = false;
+            }
+            openlist.push_back(url);
+        }
+
+        if (0 == openlist.size())
+            return;
+
+        if (bhide)
+            m_setToDefaultCheckBox->hide();
+    }
+
 
     const QString &default_app = mimeAppsManager->getDefaultAppByMimeType(m_mimeType);
     const QStringList &recommendApps = mimeAppsManager->getRecommendedAppsByQio(m_mimeType);
@@ -298,21 +339,21 @@ void OpenWithDialog::initData()
 
     QList<DesktopFile> other_app_list;
 
-    foreach (const QString& f, mimeAppsManager->DesktopObjs.keys()) {
+    foreach (const QString &f, mimeAppsManager->DesktopObjs.keys()) {
         //filter recommend apps , no show apps and no mime support apps
-        const DesktopFile& app = mimeAppsManager->DesktopObjs.value(f);
-        if(recommendApps.contains(f))
+        const DesktopFile &app = mimeAppsManager->DesktopObjs.value(f);
+        if (recommendApps.contains(f))
             continue;
 
-        if(mimeAppsManager->DesktopObjs.value(f).getNoShow())
+        if (mimeAppsManager->DesktopObjs.value(f).getNoShow())
             continue;
 
-        if(mimeAppsManager->DesktopObjs.value(f).getMimeType().isEmpty())
+        if (mimeAppsManager->DesktopObjs.value(f).getMimeType().isEmpty())
             continue;
 
         bool isSameDesktop = false;
-        foreach (const DesktopFile& otherApp, other_app_list) {
-            if(otherApp.getExec() == app.getExec() && otherApp.getLocalName() == app.getLocalName())
+        foreach (const DesktopFile &otherApp, other_app_list) {
+            if (otherApp.getExec() == app.getExec() && otherApp.getLocalName() == app.getLocalName())
                 isSameDesktop = true;
         }
 
@@ -359,7 +400,7 @@ void OpenWithDialog::useOtherApplication()
     target_desktop_file_name = target_desktop_file_name.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(m_mimeType.name().replace("/", "-"));
 
     if (file_path.endsWith(".desktop")) {
-        for (const OpenWithDialog *w : m_recommandLayout->parentWidget()->findChildren<OpenWithDialog*>()) {
+        for (const OpenWithDialog *w : m_recommandLayout->parentWidget()->findChildren<OpenWithDialog *>()) {
             if (w->property("app").toString() == file_path)
                 return;
         }
@@ -431,8 +472,22 @@ void OpenWithDialog::openFileByApp()
     if (m_setToDefaultCheckBox->isChecked())
         mimeAppsManager->setDefautlAppForTypeByGio(m_mimeType.name(), app);
 
-    if (DFileService::instance()->openFileByApp(this, app, m_url))
+    if (m_url.isValid() && DFileService::instance()->openFileByApp(this, app, m_url)) {
         close();
+        return;
+    }
+    if (m_urllist.size() == 0) {
+        close();
+        return;
+    }
+    if (m_urllist.size() == 1 && DFileService::instance()->openFileByApp(this, app, m_urllist.first())) {
+        close();
+        return;
+    }
+    if (m_urllist.size() > 1 && DFileService::instance()->openFilesByApp(this, app, m_urllist)) {
+        close();
+        return;
+    }
 }
 
 void OpenWithDialog::showEvent(QShowEvent *event)
@@ -455,8 +510,8 @@ bool OpenWithDialog::eventFilter(QObject *obj, QEvent *event)
 
     if (event->type() == QEvent::MouseButtonPress) {
 
-        if (static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton) {
-            if (OpenWithDialogListItem *item = qobject_cast<OpenWithDialogListItem*>(obj))
+        if (static_cast<QMouseEvent *>(event)->button() == Qt::LeftButton) {
+            if (OpenWithDialogListItem *item = qobject_cast<OpenWithDialogListItem *>(obj))
                 checkItem(item);
 
             return true;

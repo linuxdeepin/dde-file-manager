@@ -61,7 +61,20 @@
 
 #define SEPARATOR "_"
 
-inline QString getAccessibleName(QWidget *w, QAccessible::Role r, QString fallback)
+inline QString getObjPrefix(QAccessible::Role r)
+{
+    // 按照类型添加固定前缀
+    QMetaEnum metaEnum = QMetaEnum::fromType<QAccessible::Role>();
+    QByteArray prefix = metaEnum.valueToKeys(r);
+    switch (r) {
+    case QAccessible::Button:       prefix = "Btn";         break;
+    case QAccessible::StaticText:   prefix = "Label";       break;
+    default:                        break;
+    }
+    return QString::fromLatin1(prefix);
+}
+
+inline QString getIntelAccessibleName(QWidget *w, QAccessible::Role r, QString fallback)
 {
     // 避免重复生成
     static QMap< QObject *, QString > objnameMap;
@@ -72,17 +85,8 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, QString fallba
     QString oldAccessName = w->accessibleName();
     oldAccessName.replace(SEPARATOR, "");
 
-    // 按照类型添加固定前缀
-    QMetaEnum metaEnum = QMetaEnum::fromType<QAccessible::Role>();
-    QByteArray prefix = metaEnum.valueToKeys(r);
-    switch (r) {
-    case QAccessible::Button:       prefix = "Btn";         break;
-    case QAccessible::StaticText:   prefix = "Label";       break;
-    default:                        break;
-    }
-
     // 再加上标识
-    QString accessibleName = QString::fromLatin1(prefix) + SEPARATOR;
+    QString accessibleName = "";//getObjPrefix(r) + SEPARATOR;
     accessibleName += oldAccessName.isEmpty() ? fallback : oldAccessName;
     // 检查名称是否唯一
     if (accessibleMap[r].contains(accessibleName)) {
@@ -111,6 +115,17 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, QString fallba
 
         return accessibleName;
     }
+}
+
+inline QString getAccessibleName(QWidget *w, QAccessible::Role r, QString fallback)
+{
+    QString accessibleName = getIntelAccessibleName(w, r, fallback);
+    if(accessibleName.isEmpty())
+    {
+        return getObjPrefix(r) + SEPARATOR;
+    }
+
+    return accessibleName;
 }
 
 #define FUNC_CREATE(classname,accessibletype,accessdescription)    Accessible##classname(classname *w) \

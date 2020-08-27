@@ -83,6 +83,7 @@ private:
     void childEvent(QChildEvent *event) override;
     void showEvent(QShowEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 
     void initUI();
@@ -99,6 +100,7 @@ private:
     DHorizontalLine *m_separator;
     FilePreviewDialogStatusBar *m_statusBar;
 
+    bool m_playingVideo = false;
     int m_currentPageIndex = -1;
     DFMFilePreview *m_preview = nullptr;
 

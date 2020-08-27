@@ -42,7 +42,7 @@
 class WrapperWidget : public QWidget
 {
 public:
-    explicit WrapperWidget(QWidget *parent = 0) : QWidget(parent) {}
+    explicit WrapperWidget(QWidget *parent = nullptr) : QWidget(parent) {}
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE
@@ -144,6 +144,8 @@ QPushButton *WallpaperItem::addButton(const QString &id, const QString &text)
     Button *button = new Button(this);
     button->setText(text);
     button->setAttract(false);
+    button->installEventFilter(this);
+    button->setFocusPolicy(Qt::NoFocus);
 
     connect(button, &Button::clicked, this, [this, id] {
         emit buttonClicked(id);
@@ -156,22 +158,34 @@ QPushButton *WallpaperItem::addButton(const QString &id, const QString &text)
 
 void WallpaperItem::slideUp()
 {
-    if (m_wrapper->y() < 0 && m_downAnim->state() == QAbstractAnimation::State::Stopped)
+    if (m_wrapper->y() < 0 && m_downAnim->state() == QAbstractAnimation::Stopped)
         return;
 
     m_upAnim->setStartValue(QPoint(0, 0));
     m_upAnim->setEndValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));
     m_upAnim->start();
+    //当按钮浮起，设置按钮可获得焦点
+    for(int i=0; i<m_buttonLayout->count(); i++)
+    {
+        m_buttonLayout->itemAt(i)->widget()->setFocusPolicy(Qt::StrongFocus);
+    }
+    //设置第一个按钮为焦点
+    m_buttonLayout->itemAt(0)->widget()->setFocus();
 }
 
 void WallpaperItem::slideDown()
 {
-    if (m_wrapper->y() >= 0 && m_upAnim->state() == QAbstractAnimation::State::Stopped)
+    if (m_wrapper->y() >= 0 && m_upAnim->state() == QAbstractAnimation::Stopped)
         return;
 
     m_downAnim->setStartValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));
     m_downAnim->setEndValue(QPoint(0, 0));
     m_downAnim->start();
+    //当按钮下沉，设置按钮不可获得焦点
+    for(int i=0; i<m_buttonLayout->count(); i++)
+    {
+        m_buttonLayout->itemAt(i)->widget()->setFocusPolicy(Qt::NoFocus);
+    }
 }
 
 QString WallpaperItem::getPath() const
@@ -206,6 +220,23 @@ void WallpaperItem::mousePressEvent(QMouseEvent *event)
         emit pressed();
 }
 
+void WallpaperItem::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Up:
+        m_buttonLayout->itemAt(0)->widget()->setFocus();
+        break;
+    case Qt::Key_Down:
+        m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()->setFocus();
+        break;
+    default:
+    //保持按键事件传递
+        event->ignore();
+        break;
+    }
+}
+
 void WallpaperItem::enterEvent(QEvent *event)
 {
     Q_UNUSED(event);
@@ -228,9 +259,37 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
                                   (event->size().height() - ItemHeight) / 2);
 
     m_wrapper->setFixedWidth(width());
-    m_wrapper->m_pixmapBoxGeometry = QRect(offset * ratio, QSize(ItemWidth * ratio, ItemHeight * ratio));
+    m_wrapper->m_pixmapBoxGeometry = QRect(offset * ratio, QSize(static_cast<int>(ItemWidth * ratio), static_cast<int>(ItemHeight * ratio)));
 
     QFrame::resizeEvent(event);
+}
+
+bool WallpaperItem::eventFilter(QObject *object, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        qDebug() << "我要测试";
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Tab) {
+            if (object == m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()) {
+                qDebug() << "TAB";
+                emit tab();
+                return true;
+            }
+        }
+        else if (keyEvent->key() == Qt::Key_Backtab) {
+            if (object == m_buttonLayout->itemAt(0)->widget()) {
+                qDebug() << "BACKTAB";
+                emit backtab();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void WallpaperItem::focusLastButton()
+{
+    m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()->setFocus();
 }
 
 void WallpaperItem::refindPixmap()

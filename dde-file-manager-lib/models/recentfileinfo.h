@@ -61,6 +61,10 @@ public:
     virtual QString fileDisplayName() const override;
     virtual QString mimeTypeDisplayName() const override;
     virtual bool isVirtualEntry() const override;
+    //获取最近访问时间
+    virtual const QDateTime getReadTime() const override;
+    //更新最近访问时间
+    virtual void updateReadTime(const QDateTime &) override;
 
     void updateInfo();
     void setReadDateTime(const QString &time);

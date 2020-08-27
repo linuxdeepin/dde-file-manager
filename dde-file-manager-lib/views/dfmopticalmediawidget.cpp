@@ -33,9 +33,7 @@ DWIDGET_USE_NAMESPACE
 using namespace DISOMasterNS;
 
 //fixed:CD display size error
-quint64 DFMOpticalMediaWidget::g_totalSize = 0;
-quint64 DFMOpticalMediaWidget::g_usedSize = 0;
-QMap<QString, QPair<quint64, quint64>> DFMOpticalMediaWidget::g_mapCDUsage;
+QMap<QString, CdStatusInfo> DFMOpticalMediaWidget::g_mapCdStatusInfo;
 //fix: 动态获取刻录选中文件的字节大小
 qint64 DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
 qint64 DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
@@ -66,6 +64,7 @@ private:
     QHBoxLayout *layout;
     DFMOpticalMediaWidget *q_ptr;
     QString curdev;
+    QString strMntPath;
     Q_DECLARE_PUBLIC(DFMOpticalMediaWidget)
 };
 
@@ -81,23 +80,23 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 
-//    d->updateBurnStatusTimer = new QTimer(this);
-//    d->updateBurnStatusTimer->start(100);
-//    connect(d->updateBurnStatusTimer, &QTimer::timeout, this, &DFMOpticalMediaWidget::selectBurnFilesOptionUpdate);
-    connect(d->pb_burn, &DPushButton::clicked, this, [ = ] {
-        DUrl url = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
-                                       + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/','_') + "/");
+    connect(d->pb_burn, &DPushButton::clicked, this, [=] {
+        DUrl urlOfStage = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
+                                              + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/', '_') + "/");
         // 1、获取暂存区内文件列表信息，去除与当前光盘中有交集的部分（当前 isomaster 库不提供覆盖写入的选项，后或可优化）
-        DFileView *pParent = dynamic_cast<DFileView *>(parent);
-        if (!pParent)
+        QDir dirMnt(d->strMntPath);
+        if (!dirMnt.exists()) {
+            qWarning() << "Mount points doesn't exist: " << d->strMntPath;
             return;
-        DUrlList lstCurr = pParent->model()->getNoTransparentUrls();
+        }
+        // 如果放入空盘是没有挂载点的，此时给QDir传入空的path将导致QDir获取到的是程序运行目录的Dir，之后的去重会产生不正常的结果
+        QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
 
-        QDir dir(url.path());
-        if (!dir.exists())
+        QDir dirStage(urlOfStage.path());
+        if (!dirStage.exists())
             return;
-        QFileInfoList lstFiles = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
-        if (lstFiles.count() == 0) {
+        QFileInfoList lstFilesInStage = dirStage.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
             dialog.setTitle(tr("No file to burn."));
@@ -106,23 +105,31 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             return;
         }
 
-        // 如果光盘根目录与暂存区中文件有同名文件或文件夹，则移除暂存区中的相关文件或文件夹；
-        for (QFileInfo f: lstFiles) {
-            for (DUrl u: lstCurr) {
-                if (f.fileName() == QFileInfo(u.path()).fileName()) {
-                    if (f.isFile())
-                        dir.remove(f.fileName());
-                    else
-                        QDir(f.path()).removeRecursively();
+        bool bDeletedValidFile = false; // 在点击进入光驱中文件夹时，因解决bug#27870时，在暂存区中手动创建了本不存在的目录
+        // 如果光盘挂载根目录与暂存区根目录中有同名文件或文件夹，则移除暂存区中的相关文件或文件夹；
+        for (QFileInfo fOn : lstFilesOnDisc) {
+            for (QFileInfo fStage : lstFilesInStage) {
+                if (fStage.fileName() != fOn.fileName())
                     continue;
+
+                if (fStage.isFile())
+                    dirStage.remove(fStage.fileName());
+                else {
+                    if (!bDeletedValidFile)
+                        bDeletedValidFile = hasFileInDir(fStage.absoluteFilePath()); // 这里判断是否有移除掉非文件夹类文件
+                    QDir(fStage.absoluteFilePath()).removeRecursively();
                 }
             }
         }
-        lstFiles = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
-        if (lstFiles.count() == 0) {
+
+        lstFilesInStage = dirStage.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        if (lstFilesInStage.count() == 0) {
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-            dialog.setTitle(tr("No file to burn. Duplicated files will be ignore."));
+            if (bDeletedValidFile)
+                dialog.setTitle(tr("No file to burn. Duplicated files will be ignore."));
+            else
+                dialog.setTitle(tr("No file to burn."));
             dialog.addButton(tr("OK"), true);
             dialog.exec();
             return;
@@ -131,15 +138,14 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         // 2、启动worker线程计算缓存区文件大小
         if (!m_pStatisticWorker)
             return;
-        QList<DUrl> urls;
-        urls << url;
-        m_pStatisticWorker->start(urls);
+        m_pStatisticWorker->start({urlOfStage});
     });
 
     connect(m_pStatisticWorker, &DFileStatisticsJob::finished, this, [=] {
         DeviceProperty dp = ISOMaster->getDevicePropertyCached(d->getCurrentDevice());
 
-        if (m_pStatisticWorker->totalSize() > dp.avail) {
+        if (dp.avail == 0 || static_cast<quint64>(m_pStatisticWorker->totalSize()) > dp.avail) // 可用空间为0时也禁止刻录
+        {
             //fix: 光盘容量小于刻录项目，对话框提示：目标磁盘剩余空间不足，无法进行刻录！
             //qDebug() << d->m_selectBurnFilesSize / 1024 / 1024 << "MB" << dp.avail / 1024 / 1024 << "MB";
             DDialog dialog(this);
@@ -151,12 +157,8 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         }
 
         QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
-        bd->setJobWindowId(this->window()->winId());
+        bd->setJobWindowId(static_cast<int>(this->window()->winId()));
         bd->exec();
-//        if (bd->exec() == DDialog::Accepted) {
-//            // 发送信号停止扫描光驱的计时器
-//            emit fileSignalManager->stopCdScanTimer(d->getCurrentDevice());
-//        }
     });
 }
 
@@ -181,8 +183,8 @@ void DFMOpticalMediaWidget::setBurnCapacity(int status, QString strVolTag)
     QByteArray burnCapacityData = burnCapacityFile.readAll();
     burnCapacityFile.close();
 
-    double burnTotalSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
-    double burnUsedSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
+    double burnTotalSize = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
+    double burnUsedSize = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
 
     QJsonObject rootObj;
     QJsonObject tagItem;
@@ -194,7 +196,7 @@ void DFMOpticalMediaWidget::setBurnCapacity(int status, QString strVolTag)
 
     QJsonParseError parseJsonErr;
     QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData, &parseJsonErr));
-    if(!(parseJsonErr.error == QJsonParseError::NoError)) {
+    if (!(parseJsonErr.error == QJsonParseError::NoError)) {
         qDebug() << "decode json file error, create new json data！";
         //第一次如果没有这个属性需要创建
         tagItem[strVolTag] = burnItem;
@@ -225,6 +227,29 @@ void DFMOpticalMediaWidget::updateDiscInfo(QString dev)
     DFMOpticalMediaWidget::setBurnCapacity(BCSA_BurnCapacityStatusAddMount, d->getVolTag());
 }
 
+void DFMOpticalMediaWidget::setDiscMountPoint(const QString &strMntPath)
+{
+    Q_D(DFMOpticalMediaWidget);
+    d->strMntPath = strMntPath;
+}
+
+bool DFMOpticalMediaWidget::hasFileInDir(QDir dir)
+{
+    QFileInfoList lstFiles = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries);
+    foreach (QFileInfo f, lstFiles) {
+        if (f.isFile())
+            return true;
+        return hasFileInDir(QDir(f.absoluteFilePath()));
+    }
+    return false;
+}
+
+QString DFMOpticalMediaWidget::getDiscMountPoint()
+{
+    Q_D(DFMOpticalMediaWidget);
+    return d->strMntPath;
+}
+
 //fix: 根据光盘选择文件状态实时更新状态
 void DFMOpticalMediaWidget::selectBurnFilesOptionUpdate()
 {
@@ -236,6 +261,25 @@ void DFMOpticalMediaWidget::selectBurnFilesOptionUpdate()
     } else {
         d->pb_burn->setEnabled(false);
     }
+}
+
+QString DFMOpticalMediaWidget::getVolTag(const DUrl &fileUrl)
+{
+    QString strVolTag = fileUrl.path().split("/", QString::SkipEmptyParts).count() >= 2
+                        ? fileUrl.path().split("/", QString::SkipEmptyParts).at(1)
+                        : "";
+    return strVolTag;
+}
+
+bool DFMOpticalMediaWidget::hasVolProcessBusy()
+{
+    QMap<QString, CdStatusInfo>::iterator ite = g_mapCdStatusInfo.begin();
+
+    for (; ite != g_mapCdStatusInfo.end(); ++ite) {
+        if (ite.value().bProcessLocked)
+            return true;
+    }
+    return false;
 }
 
 DFMOpticalMediaWidgetPrivate::DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q) :
@@ -267,20 +311,19 @@ void DFMOpticalMediaWidgetPrivate::setupUi()
 void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
 {
     const static QHash<MediaType, QString> rtypemap = {
-        {MediaType::CD_ROM       , "CD-ROM"  },
-        {MediaType::CD_R         , "CD-R"    },
-        {MediaType::CD_RW        , "CD-RW"   },
-        {MediaType::DVD_ROM      , "DVD-ROM" },
-        {MediaType::DVD_R        , "DVD-R"   },
-        {MediaType::DVD_RW       , "DVD-RW"  },
-        {MediaType::DVD_PLUS_R   , "DVD+R"   },
+        {MediaType::CD_ROM, "CD-ROM"},
+        {MediaType::CD_R, "CD-R"},
+        {MediaType::CD_RW, "CD-RW"},
+        {MediaType::DVD_ROM, "DVD-ROM"},
+        {MediaType::DVD_R, "DVD-R"},
+        {MediaType::DVD_RW, "DVD-RW"},
+        {MediaType::DVD_PLUS_R, "DVD+R"},
         {MediaType::DVD_PLUS_R_DL, "DVD+R/DL"},
-        {MediaType::DVD_RAM      , "DVD-RAM" },
-        {MediaType::DVD_PLUS_RW  , "DVD+RW"  },
-        {MediaType::BD_ROM       , "BD-ROM"  },
-        {MediaType::BD_R         , "BD-R"    },
-        {MediaType::BD_RE        , "BD-RE"   }
-    };
+        {MediaType::DVD_RAM, "DVD-RAM"},
+        {MediaType::DVD_PLUS_RW, "DVD+RW"},
+        {MediaType::BD_ROM, "BD-ROM"},
+        {MediaType::BD_R, "BD-R"},
+        {MediaType::BD_RE, "BD-RE"}};
     //fix: 没有选择文件时防止误操作,故默认禁止操作
     //pb_burn->setEnabled(dp.avail > 0);
 //    pb_burn->setEnabled(false);
@@ -296,10 +339,15 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
 
     QString strKey = getVolTag();
     //fixed:CD display size error
-    DFMOpticalMediaWidget::g_usedSize = dp.data;
-    DFMOpticalMediaWidget::g_totalSize = dp.data + dp.avail;
-    DFMOpticalMediaWidget::g_mapCDUsage[strKey] = QPair<quint64, quint64>(dp.data, dp.data + dp.avail);
-    //qDebug() << dp.datablocks << "Sectors" << DFMOpticalMediaWidget::g_usedSize / 1024 / 1024 << "MB" << (DFMOpticalMediaWidget::g_totalSize - DFMOpticalMediaWidget::g_usedSize) / 1024 / 1024 << "MB";
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nTotal = dp.data + dp.avail;
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nUsage = dp.data;
+
+    QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    QString cachePath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + strKey;
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].cachePath = cachePath;
+
+    qDebug() << "get " << strKey <<" catch path:" << cachePath;
 }
 
 QString DFMOpticalMediaWidgetPrivate::getCurrentDevice() const

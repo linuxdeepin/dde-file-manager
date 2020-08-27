@@ -14,7 +14,6 @@
 
 #include "views/dfileview.h"
 #include "views/computerview.h"
-#include "views/dfmvaultview.h"
 #include "views/dfmvaultfileview.h"
 
 #include <QHash>
@@ -133,8 +132,13 @@ DFMViewManager::DFMViewManager(QObject *parent)
     , d_ptr(new DFMViewManagerPrivate(this))
 {
     dRegisterUrlView<ComputerView>(COMPUTER_SCHEME, QString());
-    dRegisterUrlView<DFMVaultView>(DFMVAULT_SCHEME, QString());
-    dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "files");
+
+    // vault view.
+    dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "");
+    dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "setup");
+    dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "delete");
+    dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "unlock");
+    dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "certificate");
 
     // register plugins
     for (const QString &key : DFMViewFactory::keys()) {

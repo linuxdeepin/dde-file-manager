@@ -11,6 +11,7 @@
 
 #include <QScreen>
 #include <QApplication>
+#include "util/dde/desktopinfo.h"
 #define private public
 #include <private/qhighdpiscaling_p.h>
 
@@ -37,26 +38,12 @@ Display::Display(QObject *parent) : QObject(parent)
     });
     connect(m_display, &DBusDisplay::MonitorsChanged,this, [ = ]() {
         qDebug()<< "sigMonitorsChanged emit....  ";
-        emit  sigMonitorsChanged(NULL);
+        emit  sigMonitorsChanged(nullptr);
     });
 
     connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [ = ]() {
         auto primaryName = m_display->primary();
-        //if X11
-        /*for (auto screen : qApp->screens()) {
-            if (screen && screen->name() == primaryName) {
-                emit primaryScreenChanged(screen);
-                return;
-            }
-        }*/
-        //else
-
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        if (DesktopInfo().waylandDectected()) {
             emit primaryScreenChanged(primaryScreen());
             emit  primaryChanged();
         }
@@ -69,8 +56,6 @@ Display::Display(QObject *parent) : QObject(parent)
                 }
             }
         }
-
-
 
         qCritical() << "find primaryScreen:" << primaryName << primaryScreen();
     });
@@ -110,13 +95,7 @@ QScreen *Display::primaryScreen()
     //auto primaryName = m_display->primary();
     //else
 
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-
+    if (DesktopInfo().waylandDectected()) {
         static QPair<QString, QScreen *> s_primaryScreen;
         if (s_primaryScreen.first.isEmpty()) {
 //        s_primaryScreen.first = primaryName;

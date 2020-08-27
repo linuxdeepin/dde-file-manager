@@ -242,7 +242,7 @@ void DiskControlItem::showEvent(QShowEvent *e)
                     burnExt = burnItem["BurnCapacityExt"].toInt();
                 }
             }
-
+            Q_UNUSED(burnExt)//解决未用警告
             bytesFree = burnCapacityTotalSize - burnCapacityUsedSize;
             bytesTotal = burnCapacityTotalSize;
             if (burnStatus == 2) {

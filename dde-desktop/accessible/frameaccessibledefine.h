@@ -8,11 +8,15 @@
 #define DESKTOP_FRAME_ACCESSIBLE_DEFINE_H
 
 #include <QString>
+#include <QObject>
 
-static const QString SCREEN_BACKGROUND = "screen_background";
-static const QString OBJ_NAME_CANVAS_GRID_VIEW = "screen_frame";
-static const QString OBJ_NAME_WATER_MASK_FRAME = "water_mask_frame";
+// 使用宏定义，方便国际化操作
 
-static const QString WATER_MASK_LOGO_LABEL = "water_mask_logo";
-static const QString WATER_MASK_TEXT_LABEL = "water_mask_text";
+#define SCREEN_BACKGROUND QObject::tr("screen_background") // 设置桌面
+#define OBJ_NAME_CANVAS_GRID_VIEW QObject::tr("screen_frame") // 桌面视图画布
+#define OBJ_NAME_WATER_MASK_FRAME QObject::tr("water_mask_frame") // 桌面水印
+
+#define WATER_MASK_LOGO_LABEL QObject::tr("water_mask_logo") // 水印logo
+#define WATER_MASK_TEXT_LABEL QObject::tr("water_mask_text") // 水印文字描述
+
 #endif // DESKTOP_FRAME_ACCESSIBLE_DEFINE_H

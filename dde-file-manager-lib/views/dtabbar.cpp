@@ -134,7 +134,7 @@ void Tab::setGeometry(QRect rect)
 
 QRect Tab::geometry()
 {
-    return QRect(x(),y(),m_width,m_height);
+    return QRect(static_cast<int>(x()),static_cast<int>(y()),m_width,m_height);
 }
 
 int Tab::width()
@@ -191,7 +191,7 @@ QPixmap Tab::toPixmap(bool drawBorder)
     if (drawBorder) {
         QPainterPath path;
         path.addRect(0,0 ,300-1,m_height-1);
-        color.setRgb(0,0,0,0.1*255);
+        color.setRgb(0,0,0,static_cast<int>(0.1*255));
         pen.setColor(color);
         painter.setPen(pen);
         painter.drawPath(path);
@@ -257,6 +257,7 @@ QPainterPath Tab::shape() const
 void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
+    Q_UNUSED(option)
 
     if(m_dragOutSide)
         return;
@@ -354,7 +355,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             int radius = 20;
 
             const QPixmap &pixmap = toPixmap(true);
-            QImage image = Dtk::Widget::dropShadow(pixmap, radius,QColor(0,0,0,0.2*255));
+            QImage image = Dtk::Widget::dropShadow(pixmap, radius,QColor(0,0,0,static_cast<int>(0.2*255)));
             QPainter pa(&image);
 
             pa.drawPixmap(radius, radius, pixmap);

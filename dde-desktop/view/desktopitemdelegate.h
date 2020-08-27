@@ -45,7 +45,7 @@ public:
     QSize iconSizeByIconSizeLevel() const;
 
     void updateItemSizeHint() Q_DECL_OVERRIDE;
-
+    void hideAllIIndexWidget() Q_DECL_OVERRIDE;
 private:
     QStringList iconSizeDescriptions;
     QList<int> iconSizes;

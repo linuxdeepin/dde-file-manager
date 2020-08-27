@@ -55,6 +55,7 @@ public:
     bool canTag() const Q_DECL_OVERRIDE;
     bool canRename() const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
+    void refresh() Q_DECL_OVERRIDE;
 
 private:
     DUrl m_backerUrl;

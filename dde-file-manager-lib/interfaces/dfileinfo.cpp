@@ -30,6 +30,7 @@
 
 #include "controllers/pathmanager.h"
 #include "controllers/filecontroller.h"
+#include "controllers/vaultcontroller.h"
 
 #include "app/define.h"
 #include "singleton.h"
@@ -75,9 +76,9 @@ public:
     ~RequestEP();
 
     // Request get the file extra properties
-    QQueue<QPair<DUrl, DFileInfoPrivate*>> requestEPFiles;
+    QQueue<QPair<DUrl, DFileInfoPrivate *>> requestEPFiles;
     QReadWriteLock requestEPFilesLock;
-    QSet<DFileInfoPrivate*> dirtyFileInfos;
+    QSet<DFileInfoPrivate *> dirtyFileInfos;
 
     void run() override;
     void requestEP(const DUrl &url, DFileInfoPrivate *info);
@@ -86,7 +87,7 @@ public:
 Q_SIGNALS:
     void requestEPFinished(const DUrl &url, const QVariantHash &ep);
 
- private Q_SLOTS:
+private Q_SLOTS:
     void processEPChanged(const DUrl &url, DFileInfoPrivate *info, const QVariantHash &ep);
 
 private:
@@ -97,7 +98,7 @@ RequestEP::RequestEP(QObject *parent)
     : QThread(parent)
 {
     QMetaType::registerEqualsComparator<QList<QColor>>();
-    qRegisterMetaType<DFileInfoPrivate*>();
+    qRegisterMetaType<DFileInfoPrivate *>();
 
     connect(this, &RequestEP::finished, this, [this] {
         dirtyFileInfos.clear();
@@ -159,7 +160,7 @@ void RequestEP::run()
         }
 
         QMetaObject::invokeMethod(this, "processEPChanged", Qt::QueuedConnection,
-                                  Q_ARG(DUrl, url), Q_ARG(DFileInfoPrivate*, file_info.second), Q_ARG(QVariantHash, ep));
+                                  Q_ARG(DUrl, url), Q_ARG(DFileInfoPrivate *, file_info.second), Q_ARG(QVariantHash, ep));
     }
 }
 
@@ -235,9 +236,10 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
 }
 
 DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache)
-    : DAbstractFileInfoPrivate (url, qq, hasCache)
+    : DAbstractFileInfoPrivate(url, qq, hasCache)
 {
     fileInfo.setFile(url.toLocalFile());
+
     gvfsMountFile = FileUtils::isGvfsMountFile(url.toLocalFile());
 }
 
@@ -271,13 +273,24 @@ bool DFileInfoPrivate::isLowSpeedFile() const
 DFileInfo::DFileInfo(const QString &filePath, bool hasCache)
     : DFileInfo(DUrl::fromLocalFile(filePath), hasCache)
 {
-
 }
 
 DFileInfo::DFileInfo(const DUrl &fileUrl, bool hasCache)
     : DAbstractFileInfo(*new DFileInfoPrivate(fileUrl, this, hasCache))
 {
-
+    Q_D(const DFileInfo);
+    //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
+    if (d->gvfsMountFile) {
+        canRename();
+        isWritable();
+        isSymLink();
+        mimeType();
+        size();
+        //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+        //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
+        //所以ftp和smb挂载点没有了，显示文件已被删除
+//        filesCount();
+    }
 }
 
 DFileInfo::DFileInfo(const QFileInfo &fileInfo, bool hasCache)
@@ -310,7 +323,7 @@ bool DFileInfo::exists() const
 {
     Q_D(const DFileInfo);
 
-    if (d->isLowSpeedFile() && d->cacheFileExists < 0)
+    if ((d->isLowSpeedFile() || d->gvfsMountFile) && d->cacheFileExists < 0)
         d->cacheFileExists = d->fileInfo.exists() || d->fileInfo.isSymLink();
 
     if (d->cacheFileExists >= 0)
@@ -411,7 +424,6 @@ QList<QIcon> DFileInfo::additionalIcon() const
 static bool fileIsWritable(const QString &path, uint ownerId)
 {
     QFileInfo dir_info(path);
-
     if (!dir_info.isWritable())
         return false;
 
@@ -439,8 +451,8 @@ bool DFileInfo::canRename() const
         return false;
 
     Q_D(const DFileInfo);
-
-    if (d->cacheCanRename < 0 && d->isLowSpeedFile()) {
+    //fix bug 27828 修改gvfsMountFile属性时，也要缓存属性，才不会造成ftp和smb卡死
+    if (d->cacheCanRename < 0 && (d->isLowSpeedFile() || d->gvfsMountFile)) {
         d->cacheCanRename = fileIsWritable(d->fileInfo.absolutePath(), d->fileInfo.ownerId());
     }
 
@@ -467,11 +479,11 @@ bool DFileInfo::canShare() const
         UDiskDeviceInfoPointer info = deviceListener->getDeviceByFilePath(filePath());
 
         if (info) {
-            if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() !=UDiskDeviceInfo::network)
+            if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() != UDiskDeviceInfo::network)
                 return true;
         } else {
             QStringList udiskspathes = DDiskManager::resolveDeviceNode(stInfo.device(), {});
-            return udiskspathes.size()>0;
+            return udiskspathes.size() > 0;
         }
     }
 
@@ -483,8 +495,8 @@ bool DFileInfo::canFetch() const
     if (isPrivate())
         return false;
 
-    return ( isDir() ||
-            (FileUtils::isArchive(absoluteFilePath()) && DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()) );
+    return (isDir() ||
+            (FileUtils::isArchive(absoluteFilePath()) && DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()));
 }
 
 bool DFileInfo::canTag() const
@@ -495,6 +507,11 @@ bool DFileInfo::canTag() const
 
     bool isFiltered = DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(toLocalFile().toLocal8Bit());
     if (!isFiltered)
+        return false;
+
+    //压缩包内的文件和目录不支持添加tag的功能
+    QString compressPath = QDir::homePath() + "/.avfs/";
+    if (filePath().startsWith(compressPath))
         return false;
 
     return !systemPathManager->isSystemPath(filePath());
@@ -516,7 +533,13 @@ bool DFileInfo::isWritable() const
         return false;
 
     Q_D(const DFileInfo);
-
+    //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
+    if (d->gvfsMountFile) {
+        if (d->cacheCanWrite < 0) {
+            d->cacheCanWrite = d->fileInfo.isWritable();
+        }
+        return d->cacheCanWrite;
+    }
     return d->fileInfo.isWritable();
 }
 
@@ -625,13 +648,13 @@ bool DFileInfo::isDir() const
 bool DFileInfo::isSymLink() const
 {
     Q_D(const DFileInfo);
-
-    if (d->isLowSpeedFile() && d->cacheIsSymLink < 0) {
+    //fix bug 27828 修改gvfsMountFile属性时，也要缓存属性，才不会造成ftp和smb卡死
+    if ((d->isLowSpeedFile() || d->gvfsMountFile) && d->cacheIsSymLink < 0) {
         d->cacheIsSymLink = d->fileInfo.isSymLink();
     }
 
     if (d->cacheIsSymLink >= 0)
-        return d->cacheIsSymLink!=0;
+        return d->cacheIsSymLink != 0;
 
     return d->fileInfo.isSymLink();
 }
@@ -641,7 +664,7 @@ QString DFileInfo::symlinkTargetPath() const
     Q_D(const DFileInfo);
 
     if (d->fileInfo.isSymLink()) {
-        char s[PATH_MAX+1];
+        char s[PATH_MAX + 1];
         int len = readlink(d->fileInfo.absoluteFilePath().toLocal8Bit().constData(), s, PATH_MAX);
 
         return QString::fromLocal8Bit(s, len);
@@ -712,11 +735,30 @@ qint64 DFileInfo::size() const
 {
     Q_D(const DFileInfo);
 
+    if (d->gvfsMountFile) {
+        if (d->cacheFileSize < 0) {
+            d->cacheFileSize = d->fileInfo.size();
+        }
+        return d->cacheFileSize;
+    }
+
     return d->fileInfo.size();
 }
 
 int DFileInfo::filesCount() const
 {
+    Q_D(const DFileInfo);
+
+    if (d->gvfsMountFile) {
+        if (d->cacheFileCount < 0) {
+            if (isDir())
+                d->cacheFileCount = FileUtils::filesCount(absoluteFilePath());
+            else
+                return -1;
+        }
+        return d->cacheFileCount;
+    }
+
     if (isDir())
         return FileUtils::filesCount(absoluteFilePath());
 
@@ -725,8 +767,6 @@ int DFileInfo::filesCount() const
 
 QString DFileInfo::sizeDisplayName() const
 {
-    Q_D(const DFileInfo);
-
     if (isDir()) {
         return QStringLiteral("-");
     }
@@ -776,10 +816,10 @@ QMimeType DFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
     if (!d->mimeType.isValid() || d->mimeTypeMode != mode) {
         //优化是苹果的就用新的minetype
         DUrl url = fileUrl();
-        if(url.isOptimise() && isDir()) {
-            d->mimeType = mimeType(absoluteFilePath() + QString("/"), mode,url.isOptimise());
-        }else {
-            d->mimeType = mimeType(absoluteFilePath(), mode,url.isOptimise());
+        if (url.isOptimise() && isDir()) {
+            d->mimeType = mimeType(absoluteFilePath() + QString("/"), mode, url.isOptimise());
+        } else {
+            d->mimeType = mimeType(absoluteFilePath(), mode, url.isOptimise());
         }
         d->mimeTypeMode = mode;
     }
@@ -806,13 +846,13 @@ QString DFileInfo::subtitleForEmptyFloder() const
         //         a 700 permission with your username on it, but you can't do readdir
         //         at all.
         struct dirent *next;
-        DIR* dirp = opendir(absoluteFilePath().toUtf8().constData());
+        DIR *dirp = opendir(absoluteFilePath().toUtf8().constData());
         if (!dirp) return QObject::tr("You do not have permission to access this folder");
         errno = 0;
         next = readdir(dirp);
         closedir(dirp);
         if (!next && errno != 0) {
-//            qDebug() << errno;
+            //            qDebug() << errno;
             return QObject::tr("You do not have permission to access this folder");
         }
     }
@@ -846,6 +886,23 @@ void DFileInfo::refresh()
     d->epInitialized = false;
     d->hasThumbnail = -1;
     d->mimeType = QMimeType();
+    //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
+    if (d->gvfsMountFile) {
+        d->cacheCanWrite = -1;
+        d->cacheCanRename = -1;
+        d->cacheIsSymLink = -1;
+        //fix bug 35831 cacheFileExists也需要清空 否则文件存在会被误判
+        d->cacheFileExists = -1;
+        canRename();
+        isWritable();
+        isSymLink();
+        mimeType();
+        size();
+        //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+        //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
+        //所以ftp和smb挂载点没有了，显示文件已被删除
+//        filesCount();
+    }
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
@@ -905,8 +962,14 @@ QIcon DFileInfo::fileIcon() const
 #ifdef DFM_MINIMUM
     d->hasThumbnail = 0;
 #else
-    if (d->hasThumbnail < 0)
-        d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
+    if (d->hasThumbnail < 0) {
+        // 如果是保险箱，直接获取图片(解决保险箱没有图标问题)
+        if (fileUrl.toString().contains(VaultController::makeVaultLocalPath())) {
+            d->hasThumbnail = DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
+        } else {
+            d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
+        }
+    }
 #endif
     if (d->needThumbnail || d->hasThumbnail > 0) {
         d->needThumbnail = true;
@@ -930,7 +993,7 @@ QIcon DFileInfo::fileIcon() const
             QMetaObject::invokeMethod(d->getIconTimer, "start", Qt::QueuedConnection);
         } else if (isActive()) {
             QTimer *timer = new QTimer();
-            const QExplicitlySharedDataPointer<DFileInfo> me(const_cast<DFileInfo*>(this));
+            const QExplicitlySharedDataPointer<DFileInfo> me(const_cast<DFileInfo *>(this));
 
             d->getIconTimer = timer;
             timer->setSingleShot(true);
@@ -939,15 +1002,19 @@ QIcon DFileInfo::fileIcon() const
 
             QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, me] {
                 DThumbnailProvider::instance()->appendToProduceQueue(me->d_func()->fileInfo, DThumbnailProvider::Large,
-                                                                     [me] (const QString &path) {
-                    if (path.isEmpty()) {
-                        me->d_func()->iconFromTheme = true;
-                    } else {
-                        // clean old icon
-                        me->d_func()->icon = QIcon();
-                    }
+                                                                     [me](const QString & path)
+                {
+                    DThreadUtil::runInMainThread([me, path]() {
+                        if (path.isEmpty()) {
+                            me->d_func()->iconFromTheme = true;
+                        } else {
+                            // clean old icon
+                            me->d_func()->icon = QIcon();
+                        }
 
-                    me->d_func()->needThumbnail = false;
+                        me->d_func()->needThumbnail = false;
+                    });
+
                 });
                 me->d_func()->requestingThumbnail = true;
                 timer->deleteLater();
@@ -970,7 +1037,7 @@ QIcon DFileInfo::fileIcon() const
         if (symLinkTarget != fileUrl) {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, symLinkTarget);
 
-            if (fileInfo){
+            if (fileInfo) {
                 d->icon = fileInfo->fileIcon();
                 d->iconFromTheme = false;
 
@@ -1024,7 +1091,7 @@ QVariantHash DFileInfo::extraProperties() const
 
         QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url, this] {
             d->requestEP = RequestEP::instance();
-            d->requestEP->requestEP(url, const_cast<DFileInfoPrivate*>(d));
+            d->requestEP->requestEP(url, const_cast<DFileInfoPrivate *>(d));
             d->getEPTimer->deleteLater();
         });
 

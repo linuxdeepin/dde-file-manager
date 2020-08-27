@@ -19,6 +19,8 @@
 #define DesktopServicePath          "/com/deepin/dde/desktop"
 #define DesktopServiceInterface     "com.deepin.dde.desktop"
 
+#define USINGOLD 0
+
 class QDBusConnection;
 class CanvasGridView;
 class DesktopPrivate;
@@ -27,33 +29,40 @@ class Desktop : public QObject, public Singleton<Desktop>
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", DesktopServiceInterface)
 public:
+    void preInit();
     void loadData();
     void loadView();
 
-    void showWallpaperSettings(int mode = 0);
     void showZoneSettings();
 
     void initDebugDBus(QDBusConnection &conn);
-
-    CanvasGridView *getView();
-
 public slots:
-    void Show();
-    void ShowWallpaperChooser();
-    void ShowScreensaverChooser();
-#ifdef QT_DEBUG
-    void logAllScreenLabel();
-    void logScreenLabel(int index);
-    void mapLabelScreen(int labelIndex, int screenIndex);
-#endif // QT_DEBUG
+    void ShowWallpaperChooser(const QString &screen = QString());
+    void ShowScreensaverChooser(const QString &screen = QString());
 
+    Q_SCRIPTABLE void EnableUIDebug(bool enable);
+    Q_SCRIPTABLE void SetVisible(int screenNum,bool);
+    Q_SCRIPTABLE void FixGeometry(int screenNum);
+    Q_SCRIPTABLE void Reset();
+    Q_SCRIPTABLE void PrintInfo();
+    Q_SCRIPTABLE void Refresh();
+    Q_SCRIPTABLE QList<int> GetIconSize();
+
+#if USINGOLD
+    Q_SCRIPTABLE void logAllScreenLabel();
+    Q_SCRIPTABLE void logScreenLabel(int index);
+    Q_SCRIPTABLE void mapLabelScreen(int labelIndex, int screenIndex);
+#endif
+
+protected:
+    void showWallpaperSettings(QString name, int mode = 0);
 private:
     explicit Desktop();
     ~Desktop();
-
+#if USINGOLD
     void onBackgroundEnableChanged();
     void onBackgroundGeometryChanged(QWidget *l);
-
+#endif
     friend class Singleton<Desktop>;
     Q_DISABLE_COPY(Desktop)
 

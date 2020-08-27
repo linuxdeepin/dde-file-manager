@@ -214,7 +214,7 @@ void DiskControlWidget::unmountAll()
 {
     QStringList blockDevices = m_diskManager->blockDevices();
 
-    QtConcurrent::run([blockDevices, this]() {
+    QtConcurrent::run([blockDevices]() {
         for (const QString &blDevStr : blockDevices) {
             QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
             if (isProtectedDevice(blDev.data())) continue;
@@ -241,7 +241,7 @@ void DiskControlWidget::unmountAll()
                             qWarning() << diskDev->lastError().name() << blockDevices;
                             NotifyMsg(tr("Disk is busy, cannot eject now"));
                         }
-                        return;
+                        continue; // fix bug#16936 在 dock 上选择了卸载全部后，还会有U盘未被卸载
                     }
                 }
 
@@ -486,7 +486,7 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
 
 void DiskControlWidget::unmountDisk(const QString &diskId) const
 {
-    QtConcurrent::run([diskId, this]() {
+    QtConcurrent::run([diskId]() {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(diskId));
         QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
         blDev->unmount({});

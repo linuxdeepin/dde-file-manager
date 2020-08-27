@@ -73,16 +73,13 @@ QStringList GvfsMountManager::NoVolumes_Mounts_Keys = {}; // key is mount point 
 QStringList GvfsMountManager::Lsblk_Keys = {}; // key is got by lsblk
 
 MountSecretDiskAskPasswordDialog* GvfsMountManager::mountSecretDiskAskPasswordDialog = nullptr;
+MountAskPasswordDialog *GvfsMountManager::askPasswordDialog = nullptr;
 
 bool GvfsMountManager::AskingPassword = false;
 QJsonObject GvfsMountManager::SMBLoginObj = {};
 DFMUrlBaseEvent GvfsMountManager::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl());
 QPointer<QEventLoop> GvfsMountManager::eventLoop;
 
-//fix: 探测光盘推进,弹出和挂载状态机标识
-bool GvfsMountManager::g_burnVolumeFlag = false;
-bool GvfsMountManager::g_burnMountFlag = false;
-QMap<QString, QPair<bool, bool>> GvfsMountManager::g_mapCdStatus;
 //fix: 每次弹出光驱时需要删除临时缓存数据文件
 QString GvfsMountManager::g_qVolumeId = "sr0";
 
@@ -114,14 +111,22 @@ void GvfsMountManager::initConnect()
     if (DFMGlobal::isRootUser()){
         g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added_root, nullptr);
         g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed_root, nullptr);
-    }else{
-        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, nullptr);
     }
+    //fix 28660 【文件管理器】【5.1.1.60-1】【服务器】root用户，卸载U盘后，无法重新挂载
+    g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, nullptr);
+    g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, nullptr);
+//    }else{
+//        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, nullptr);
+//        g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, nullptr);
+//    }
     connect(this, &GvfsMountManager::loadDiskInfoFinished, deviceListener, &UDiskListener::update);
 }
 
@@ -446,13 +451,21 @@ void GvfsMountManager::monitor_mount_added_root(GVolumeMonitor *volume_monitor, 
     QMount qMount = gMountToqMount(mount);
     qCDebug(mountManager()) << qMount;
 
-    foreach (QString key, DiskInfos.keys()) {
-        QDiskInfo info = DiskInfos.value(key);
-        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
-            emit gvfsMountManager->volume_added(info);
-            return;
-        }
-    }
+    QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
+    if (qMount.can_unmount())
+        diskInfo.setCan_unmount(true);
+    if (qMount.can_eject())
+        diskInfo.setCan_eject(true);
+    DiskInfos.insert(diskInfo.id(), diskInfo);
+    emit gvfsMountManager->volume_added(diskInfo);
+
+//    foreach (QString key, DiskInfos.keys()) {
+//        QDiskInfo info = DiskInfos.value(key);
+//        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
+//            emit gvfsMountManager->volume_added(info);
+//            return;
+//        }
+//    }
 }
 
 void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor, GMount *mount)
@@ -461,13 +474,18 @@ void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor
     qCDebug(mountManager()) << "==============================monitor_mount_removed_root==============================";
     QMount qMount = gMountToqMount(mount);
     qCDebug(mountManager()) << qMount;
-    foreach (QString key, DiskInfos.keys()) {
-        QDiskInfo info = DiskInfos.value(key);
-        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
-            emit gvfsMountManager->volume_removed(info);
-            return;
-        }
-    }
+
+    QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
+    DiskInfos.remove(diskInfo.id());
+    emit gvfsMountManager->volume_removed(diskInfo);
+
+//    foreach (QString key, DiskInfos.keys()) {
+//        QDiskInfo info = DiskInfos.value(key);
+//        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
+//            emit gvfsMountManager->volume_removed(info);
+//            return;
+//        }
+//    }
 }
 
 
@@ -480,9 +498,8 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qMount.icons().contains("media-optical")) { //CD/DVD
-        GvfsMountManager::g_burnVolumeFlag = true;
-        GvfsMountManager::g_burnMountFlag = true;
-        GvfsMountManager::g_mapCdStatus[getVolTag(volume)] = QPair<bool, bool>(true, true);
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bMntFlag = true;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bVolFlag = true;
         //fix: 设置光盘容量属性
         //DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAddMount);
     }
@@ -530,8 +547,7 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qMount.name().contains("CD/DVD") || qMount.name().contains("CD") || qMount.icons().contains("media-optical")) { //CD/DVD
-        GvfsMountManager::g_burnMountFlag = false;
-        GvfsMountManager::g_mapCdStatus[getVolTag(mount)].second = false;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(mount)].bMntFlag = false;
     }
 
     qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << "=======================";
@@ -605,9 +621,8 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qVolume.icons().contains("media-optical")) { //CD/DVD
-        GvfsMountManager::g_burnVolumeFlag = true;
-        GvfsMountManager::g_burnMountFlag = false;
-        GvfsMountManager::g_mapCdStatus[getVolTag(volume)] = QPair<bool, bool>(true, false);
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bMntFlag = false;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bVolFlag = true;
         //fix: 设置光盘容量属性
         DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAdd, getVolTag(volume));
     }
@@ -654,8 +669,8 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qVolume.name().contains("CD/DVD") || qVolume.name().contains("CD") || qVolume.icons().contains("media-optical")) { //CD/DVD
-        GvfsMountManager::g_burnVolumeFlag = false;
-        GvfsMountManager::g_mapCdStatus[getVolTag(volume)].first = false;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bVolFlag = false;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bBurningOrErasing = false;
     }
 
     //fix: 每次弹出光驱时需要删除临时缓存数据文件
@@ -663,17 +678,14 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
             (qVolume.activation_root_uri().contains("") || qVolume.unix_device().contains("/dev/sr"))) {
         //fix: 临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
         QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        QString tempMediaPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + getVolTag(volume);
+        QString tempMediaPath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + getVolTag(volume);
         QDir(tempMediaPath).removeRecursively();
 
         //fix: 设置光盘容量属性
-        DFMOpticalMediaWidget::g_totalSize = 0;
-        DFMOpticalMediaWidget::g_usedSize = 0;
-        DFMOpticalMediaWidget::g_mapCDUsage[getVolTag(volume)] = QPair<quint64, quint64>(0, 0);
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nTotal = 0;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nUsage = 0;;
         DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct, getVolTag(volume));
-        QWidget *pWid = qApp->focusWidget();
-        if (pWid)
-            pWid->update();
+        emit fileSignalManager->requestUpdateComputerView();
     }
 
     GDrive *drive = g_volume_get_drive(volume);
@@ -716,6 +728,13 @@ void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GV
         DiskInfos.insert(diskInfo.id(), diskInfo);
         qCDebug(mountManager()) << diskInfo;
         emit gvfsMountManager->volume_changed(diskInfo);
+
+        // 部分光驱（自动式）托盘弹出的时候还未触发 mount_changed / volume_remove 等信号，所以在这里判定到 uuid 为空了并且是光驱设备，表示光驱弹出，此时移除路径以让文管跳转到主目录
+        if (diskInfo.uuid().isEmpty() && diskInfo.drive_unix_device().contains("/dev/sr")) {
+            static const QString strUrl = QString("burn://%1/disc_files/");
+            DUrl discUrl = DUrl(strUrl.arg(diskInfo.drive_unix_device()));
+            DAbstractFileWatcher::ghostSignal(discUrl, &DAbstractFileWatcher::fileDeleted, discUrl);
+        }
     }else{
         qCDebug(mountManager()) << "==============================changed volume empty==============================" ;
     }
@@ -785,15 +804,17 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
 
 static QJsonObject requestPasswordDialog(WId parentWindowId, bool showDomainLine, const QJsonObject &data)
 {
-    MountAskPasswordDialog askPasswordDialog(WindowManager::getWindowById(parentWindowId));
+    //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
+    if (!GvfsMountManager::instance()->askPasswordDialog) {
+        GvfsMountManager::instance()->askPasswordDialog = new MountAskPasswordDialog(WindowManager::getWindowById(parentWindowId));
+    }
+    GvfsMountManager::instance()->askPasswordDialog->setLoginData(data);
+    GvfsMountManager::instance()->askPasswordDialog->setDomainLineVisible(showDomainLine);
 
-    askPasswordDialog.setLoginData(data);
-    askPasswordDialog.setDomainLineVisible(showDomainLine);
-
-    int ret = askPasswordDialog.exec();
+    int ret = GvfsMountManager::instance()->askPasswordDialog->exec();
 
     if (ret == DDialog::Accepted) {
-        return askPasswordDialog.getLoginData();
+        return GvfsMountManager::instance()->askPasswordDialog->getLoginData();
     }
 
     return QJsonObject();
@@ -801,6 +822,15 @@ static QJsonObject requestPasswordDialog(WId parentWindowId, bool showDomainLine
 
 void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message, const char *default_user, const char *default_domain, GAskPasswordFlags flags)
 {
+    //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
+    if (askPasswordDialog){
+        askPasswordDialog->deleteLater();
+        askPasswordDialog = nullptr;
+        DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                     tr("Mounting device error"),QString("用户名或密码错误，请重新输入"));
+        return;
+    }
+
     bool anonymous = g_mount_operation_get_anonymous(op);
     GPasswordSave passwordSave = g_mount_operation_get_password_save(op);
 
@@ -824,6 +854,8 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     obj.insert("passwordSave", passwordSave);
 
     QJsonObject loginObj = DThreadUtil::runInMainThread(requestPasswordDialog, MountEvent.windowId(), MountEvent.fileUrl().isSMBFile(), obj);
+
+
 
     if (!loginObj.isEmpty()) {
         anonymous = loginObj.value("anonymous").toBool();
@@ -873,6 +905,7 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
 
     } else {
         qCDebug(mountManager()) << "cancel connect";
+        AskingPassword = false;
         g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ABORTED));
         g_mount_operation_reply (op, G_MOUNT_OPERATION_ABORTED);
     }
@@ -964,6 +997,9 @@ QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
             break;
         }
     }
+    if (!info.isValid()) {
+        qDebug() << "获取磁盘信息失败";
+    }
     info.updateGvfsFileSystemInfo();
     return info;
 }
@@ -1018,8 +1054,9 @@ void GvfsMountManager::startMonitor()
         listDrives();
         listVolumes();
         listMounts();
-        updateDiskInfos();
+//        updateDiskInfos();
     }
+    updateDiskInfos(); //磁盘信息root用户也需要刷新,否则会出现root用户只能挂载不能卸载的情况
 #ifdef DFM_MINIMUM
     qDebug() << "Don't auto mount disk";
 #else
@@ -1383,6 +1420,15 @@ MountStatus GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
 
 void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data)
 {
+    //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
+    bool bshow = true;
+    if (askPasswordDialog) {
+        askPasswordDialog->deleteLater();
+        askPasswordDialog = nullptr;
+    }
+    else {
+        bshow = false;
+    }
     gboolean succeeded;
     GError *error = NULL;
     GMountOperation *op = static_cast<GMountOperation*>(user_data);
@@ -1397,7 +1443,11 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 
         switch (error->code) {
         case G_IO_ERROR_FAILED:
-            status = MOUNT_PASSWORD_WRONG;
+            if (AskingPassword) {
+                status = MOUNT_PASSWORD_WRONG;
+            } else {
+                 showWarnDlg = true;
+            }
             break;
 
         case G_IO_ERROR_FAILED_HANDLED: // Operation failed and a helper program has already interacted with the user. Do not display any error dialog.
@@ -1418,7 +1468,8 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
                                                  tr("Mounting device error"), QString(error->message));
         }
         else {
-            if(status ==MOUNT_PASSWORD_WRONG)
+            //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
+            if(status ==MOUNT_PASSWORD_WRONG && bshow)
             {
                     DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                                  tr("Mounting device error"),QString("用户名或密码错误，请重新输入"));

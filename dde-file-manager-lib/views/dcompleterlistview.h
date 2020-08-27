@@ -22,6 +22,7 @@
 #define DCOMPLETERLISTVIEW_H
 
 #include <QListView>
+#include <QTimer>
 
 #include "dfmglobal.h"
 
@@ -33,9 +34,11 @@ class DCompleterListView : public QListView
 
 public:
     DCompleterListView(QWidget *parent = nullptr);
-
     void keyPressEvent(QKeyEvent *e) override;
 
+    void showMe();
+public slots:
+    void hideMe();
 protected:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
@@ -43,6 +46,12 @@ protected:
 signals:
     void listCurrentChanged(const QModelIndex &current);
     void listSelectionChanged(const QItemSelection &selected);
+private:
+    bool m_bgrabmouse = false;
+    bool m_bshow = false;
+    QTimer *m_timer;
+    QPoint m_windowpos = QPoint();
+
 };
 
 DFM_END_NAMESPACE

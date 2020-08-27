@@ -14,6 +14,8 @@
 #include "dfilesystemwatcher.h"
 
 #include "private/dfilesystemwatcher_p.h"
+#include "../vault/vaultglobaldefine.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QDir>
 #include <QDebug>
@@ -31,6 +33,7 @@ class DFileWatcherPrivate : DAbstractFileWatcherPrivate
 public:
     DFileWatcherPrivate(DFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
+
 
     bool start() Q_DECL_OVERRIDE;
     bool stop() Q_DECL_OVERRIDE;
@@ -57,6 +60,8 @@ public:
 QMap<QString, int> DFileWatcherPrivate::filePathToWatcherCount;
 Q_GLOBAL_STATIC(DFileSystemWatcher, watcher_file_private)
 
+bool isPathWatched(const QString &path);
+
 QStringList parentPathList(const QString &path)
 {
     QStringList list;
@@ -64,7 +69,17 @@ QStringList parentPathList(const QString &path)
 
     list << path;
 
+    QString strTmpPath = path;
+    // fix bug#27870 往已刻录的文件夹中的文件夹...中添加文件夹，界面不刷新
+    // 往已刻录的文件夹中放置文件时，由于父路径可能不存在，导致不能创建对应的 watcher ，因此不能监听到文件夹变化，导致界面不刷新
+    if (!dir.exists() && path.contains("/.cache/deepin/discburn/")) // 目前仅针对光驱刻录的暂存区进行处理
+        dir.mkdir(path);
+
     while (dir.cdUp()) {
+        //! fixed the bug that directory not refresh when same pathes in the list.
+        if (isPathWatched(dir.absolutePath())) {
+            continue;
+        }
         list << dir.absolutePath();
     }
 
@@ -113,6 +128,8 @@ bool DFileWatcherPrivate::start()
                q, &DFileWatcher::onFileModified);
     q->connect(watcher_file_private, &DFileSystemWatcher::fileClosed,
                q, &DFileWatcher::onFileClosed);
+    q->connect(watcher_file_private, &DFileSystemWatcher::fileSystemUMount,
+               q, &DFileWatcher::onFileSystemUMount);
 
     return true;
 }
@@ -124,7 +141,8 @@ bool DFileWatcherPrivate::stop()
     if (watcher_file_private.isDestroyed())
         return true;
 
-    q->disconnect(watcher_file_private, 0, q, 0);
+//    q->disconnect(watcher_file_private, 0, q, 0);//避免0值警告
+    q->disconnect(watcher_file_private, nullptr, q, nullptr);
 
     bool ok = true;
 
@@ -157,8 +175,6 @@ bool DFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFile
 {
     if (!targetUrl.isLocalFile())
         return false;
-
-    Q_Q(DFileWatcher);
 
     if (signal == &DAbstractFileWatcher::fileDeleted) {
         for (const QString &path : watchFileList) {
@@ -247,7 +263,9 @@ void DFileWatcherPrivate::_q_handleFileCreated(const QString &path, const QStrin
 
 void DFileWatcherPrivate::_q_handleFileModified(const QString &path, const QString &parentPath)
 {
-    if (path != this->path && parentPath != this->path)
+    //if (path != this->path && parentPath != this->path)
+    // bug 25533: some path add some external path when modified, so use the contain function
+    if (!path.contains(this->path) && parentPath != this->path)
         return;
 
     Q_Q(DFileWatcher);
@@ -283,6 +301,12 @@ DFileWatcher::DFileWatcher(const QString &filePath, QObject *parent)
 
 void DFileWatcher::onFileDeleted(const QString &path, const QString &name)
 {
+    // 为防止文管卡死，保险箱里文件删除不执行后续流程
+    // 只有删除保险箱文件时，才不执行后续流程
+    if (VaultController::isBigFileDeleting()) {
+        return;
+    }
+
     if (name.isEmpty())
         d_func()->_q_handleFileDeleted(path, QString());
     else
@@ -338,6 +362,14 @@ void DFileWatcher::onFileClosed(const QString &path, const QString &name)
         d_func()->_q_handleFileClose(path, QString());
     else
         d_func()->_q_handleFileClose(joinFilePath(path, name), path);
+}
+
+void DFileWatcher::onFileSystemUMount(const QString &path, const QString &name)
+{
+    d_func()->filePathToWatcherCount.remove(path);
+    bool ok = true;
+    ok = ok && watcher_file_private->removePath(path);
+    d_func()->watchFileList.removeOne(path);
 }
 
 QStringList DFileWatcher::getMonitorFiles()

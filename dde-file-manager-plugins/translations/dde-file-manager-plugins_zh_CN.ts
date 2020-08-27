@@ -4,22 +4,22 @@
 <context>
     <name>MusicMessageView</name>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="63"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="62"/>
         <source>Artist:</source>
         <translation>歌手:</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="69"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="68"/>
         <source>Album:</source>
         <translation>专辑:</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="159"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="158"/>
         <source>unknown artist</source>
         <translation>未知歌手</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="163"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="162"/>
         <source>unknown album</source>
         <translation>未知专辑</translation>
     </message>

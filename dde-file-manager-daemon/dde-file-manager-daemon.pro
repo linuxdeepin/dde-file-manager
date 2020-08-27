@@ -77,7 +77,11 @@ SOURCES += main.cpp \
     dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp \
     acesscontrol/acesscontrolmanager.cpp \
     dbusservice/dbusadaptor/acesscontrol_adaptor.cpp \
-    dbusservice/dbusinterface/acesscontrol_interface.cpp
+    dbusservice/dbusinterface/acesscontrol_interface.cpp \
+    vault/vaultmanager.cpp \
+    dbusservice/dbusadaptor/vault_adaptor.cpp \
+    dbusservice/dbusinterface/vault_interface.cpp \
+    vault/vaultclock.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -116,7 +120,11 @@ HEADERS += \
     dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h \
     acesscontrol/acesscontrolmanager.h \
     dbusservice/dbusadaptor/acesscontrol_adaptor.h \
-    dbusservice/dbusinterface/acesscontrol_interface.h
+    dbusservice/dbusinterface/acesscontrol_interface.h \
+    vault/vaultmanager.h \
+    dbusservice/dbusadaptor/vault_adaptor.h \
+    dbusservice/dbusinterface/vault_interface.h \
+    vault/vaultclock.h
 
 target.path = /usr/bin
 

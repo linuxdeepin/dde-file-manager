@@ -22,7 +22,6 @@ DAbstractFileWatcherPrivate::DAbstractFileWatcherPrivate(DAbstractFileWatcher *q
 
 bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1)
 {
-    Q_Q(DAbstractFileWatcher);
 
     if (url == targetUrl || url == arg1) {
         (q_ptr->*signal)(arg1);
@@ -35,7 +34,6 @@ bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbst
 
 bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType3 signal, const DUrl &arg1, int isExternalSource)
 {
-    Q_Q(DAbstractFileWatcher);
 
     if (url == targetUrl || url == arg1) {
         (q_ptr->*signal)(arg1, isExternalSource);
@@ -48,7 +46,6 @@ bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbst
 
 bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType2 signal, const DUrl &arg1, const DUrl &arg2)
 {
-    Q_Q(DAbstractFileWatcher);
 
     if (url == targetUrl || url == arg1 || url == arg2) {
         (q_ptr->*signal)(arg1, arg2);
@@ -167,6 +164,8 @@ DAbstractFileWatcher::DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd,
     , d_ptr(&dd)
 {
     Q_ASSERT(url.isValid());
+
+    qDebug() << "add file watcher for: " << url;
 
     d_ptr->url = url;
     DAbstractFileWatcherPrivate::watcherList << this;

@@ -54,6 +54,8 @@ public:
     QWaitCondition waitCondition;
 
     QAtomicInteger<qint64> totalSize = 0;
+    // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+    QAtomicInteger<qint64> totalProgressSize = 0;
     QAtomicInt filesCount = 0;
     QAtomicInt directoryCount = 0;
 };
@@ -165,14 +167,19 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
             size = info->size();
             if (size > 0) {
                 totalSize += size;
+
                 Q_EMIT q_ptr->sizeChanged(totalSize);
             }
+            // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+            totalProgressSize += size <= 0 ? 4096 : size;
         } while (false);
 
         ++filesCount;
 
         Q_EMIT q_ptr->fileFound(url);
     } else {
+        // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+        totalProgressSize += 4096;
         if (info->isSymLink()) {
             if (!fileHints.testFlag(DFileStatisticsJob::FollowSymlink)) {
                 ++filesCount;
@@ -257,6 +264,13 @@ qint64 DFileStatisticsJob::totalSize() const
 
     return d->totalSize.load();
 }
+// fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
+qint64 DFileStatisticsJob::totalProgressSize() const
+{
+    Q_D(const DFileStatisticsJob);
+
+    return d->totalProgressSize;
+}
 
 int DFileStatisticsJob::filesCount() const
 {
@@ -282,6 +296,22 @@ void DFileStatisticsJob::start(const DUrlList &sourceUrls)
     Q_D(DFileStatisticsJob);
 
     d->sourceUrlList = sourceUrls;
+    //fix bug 35044 【文件管理器】【5.1.2-1】【sp2】我的共享和标记栏目下，预览文件夹，文件大小和文件个数显示错误
+    // 传入的scheme为USERSHARE_SCHEME设置为FILE_SCHEME,传入的scheme是TAG_SCHEME判断taggedLocalFilePath是否为空，
+    //判断path()是否为“/”,(因为这两个在tagcontroller中处理了)设置为FILE_SCHEME，设置setScheme为FILE_SCHEME，url为taggedLocalFilePath
+    QList<DUrl>::iterator it = d->sourceUrlList.begin();
+    while(it != d->sourceUrlList.end())
+    {
+        if (it->scheme() == USERSHARE_SCHEME) {
+            it->setScheme(FILE_SCHEME);
+        }
+        if (it->scheme() == TAG_SCHEME && it->path() != QString("/") && !it->taggedLocalFilePath().isEmpty()) {
+            it->setUrl(it->taggedLocalFilePath());
+            it->setScheme(FILE_SCHEME);
+        }
+        it++;
+    }
+
     QThread::start();
 }
 

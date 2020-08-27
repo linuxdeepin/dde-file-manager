@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
     Q_UNUSED(fmApp)
 
     // init pixmap cache size limit, 20MB * devicePixelRatio
-    QPixmapCache::setCacheLimit(20 * 1024 * app.devicePixelRatio());
+    QPixmapCache::setCacheLimit(static_cast<int>(20 * 1024 * app.devicePixelRatio()));
 
     CommandLineManager::instance()->process();
 
@@ -192,8 +192,9 @@ int main(int argc, char *argv[])
         }
 
         signal(SIGTERM, handleSIGTERM);
-        signal(SIGBUS, SIG_IGN); // 硬件问题引起coredump
-        signal(SIGCHLD, SIG_IGN);
+//        修复root用户无法接收程序退出信号导致程序异常卡死
+//        signal(SIGBUS, SIG_IGN); // 硬件问题引起coredump
+//        signal(SIGCHLD, SIG_IGN);
 
 #ifdef ENABLE_PPROF
         int request = app.exec();

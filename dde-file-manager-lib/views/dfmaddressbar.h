@@ -40,7 +40,8 @@ DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
-class DCompleterStyledItemDelegate : public QStyledItemDelegate {
+class DCompleterStyledItemDelegate : public QStyledItemDelegate
+{
     Q_OBJECT
 public:
     explicit DCompleterStyledItemDelegate(QObject *parent = nullptr);
@@ -100,23 +101,28 @@ private:
     void appendToCompleterModel(const QStringList &stringList);
 
     int lastPressedKey = Qt::Key_D; // just an init value
+    int lastPreviousKey = Qt::Key_Control; //记录上前一个按钮
     bool isHistoryInCompleterModel = false;
     QTimer timer;
     DUrl currentUrl = DUrl();
     QString m_placeholderText = QString();
     QString completerBaseString = QString();
     QString lastEditedString = QString();
+    // inputMethodEvent中获取不到选中的内容，故缓存光标开始位置以及选中长度
+    int selectPosStart = 0;
+    int selectLength = 0;
     QStringListModel completerModel;
-    DCompleterListView * completerView;
+    DCompleterListView *completerView;
     QStringList historyList;
-    QAction * indicator = nullptr;
+    QAction *indicator = nullptr;
     QCompleter *urlCompleter = nullptr;
     QVariantAnimation *animation = nullptr;
-    DFMCrumbInterface* crumbController = nullptr; // Scheme completion support
+    DFMCrumbInterface *crumbController = nullptr; // Scheme completion support
     DCompleterStyledItemDelegate styledItemDelegate;
     enum IndicatorType indicatorType = IndicatorType::Search;
 
     DSpinner *animationSpinner = nullptr;
+    bool isKeyPressed = false;
 
 private slots:
     void insertCompletion(const QString &completion);

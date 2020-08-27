@@ -35,6 +35,7 @@ class QVolume;
 class QMount;
 class QDiskInfo;
 class MountSecretDiskAskPasswordDialog;
+class MountAskPasswordDialog;
 
 #undef signals
 extern "C" {
@@ -62,15 +63,12 @@ public:
       MOUNT_OP_ABORTED
     };
 
-    //fix: 探测光盘推进,弹出和挂载状态机标识
-    static bool g_burnVolumeFlag;
-    static bool g_burnMountFlag;
-    static QMap<QString, QPair<bool, bool>> g_mapCdStatus; // sr0, (volFlag, MntFlag)
     //fix: 每次弹出光驱时需要删除临时缓存数据文件
     static QString g_qVolumeId;
 
     static GvfsMountManager* instance();
     static MountSecretDiskAskPasswordDialog* mountSecretDiskAskPasswordDialog;
+    static MountAskPasswordDialog *askPasswordDialog;
 
     static QMap<QString, QDrive> Drives;
     static QMap<QString, QVolume> Volumes;

@@ -39,8 +39,11 @@
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
+#include "controllers/dfmsidebarvaultitemhandler.h" // 保险柜
+#include "controllers/vaultcontroller.h"
 #include "app/filesignalmanager.h"
 #include "interfaces/dfilemenu.h"
+#include "dfmopticalmediawidget.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -51,6 +54,7 @@
 #include <ddiskdevice.h>
 #include <dblockdevice.h>
 #include <QMenu>
+#include <DSysInfo>
 
 #include <algorithm>
 
@@ -61,8 +65,7 @@ DFM_BEGIN_NAMESPACE
 DFMSideBar::DFMSideBar(QWidget *parent)
     : QWidget(parent),
       m_sidebarView(new DFMSideBarView(this)),
-      m_sidebarModel(new DFMSideBarModel(this)),
-      m_bmenuexec(false)
+      m_sidebarModel(new DFMSideBarModel(this))
 {
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
@@ -78,13 +81,7 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initUserShareItem();
     initRecentItem();
 
-
-    m_timer = new QTimer(this);
-    connect(m_timer,&QTimer::timeout,[ = ](){
-        m_bmenuexec = false;
-        qDebug() << "m_bmenuexec  ====== ==   " << m_bmenuexec;
-        m_timer->stop();
-    });
+    //   DFMSideBarManager::instance();
 }
 
 QWidget *DFMSideBar::sidebarView()
@@ -114,7 +111,7 @@ void DFMSideBar::setCurrentUrl(const DUrl &url)
 
 int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
 {
-    if(!item) {
+    if (!item) {
         return 0;
     }
     int lastAtGroup = findLastItem(group, false);
@@ -143,7 +140,7 @@ int DFMSideBar::findItem(const DFMSideBarItem *item) const
 int DFMSideBar::findItem(const DUrl &url, const QString &group) const
 {
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
+        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
         if (item->itemType() == DFMSideBarItem::SidebarItem && item->groupName() == group) {
             if (item->url() == url) {
                 return i;
@@ -162,7 +159,7 @@ int DFMSideBar::findItem(const DUrl &url, const QString &group) const
 int DFMSideBar::findItem(const DUrl &url, bool fuzzy/* = false*/) const
 {
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
+        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
         if (item->itemType() == DFMSideBarItem::SidebarItem) {
             if (item->url() == url)
                 return i;
@@ -189,7 +186,7 @@ int DFMSideBar::findItem(const DUrl &url, bool fuzzy/* = false*/) const
 int DFMSideBar::findItem(std::function<bool (const DFMSideBarItem *)> cb) const
 {
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
+        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
         if (cb(item)) {
             return i;
         }
@@ -202,7 +199,7 @@ int DFMSideBar::findLastItem(const QString &group, bool sidebarItemOnly) const
 {
     int index = -1;
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
+        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
         if (item->groupName() == group && (item->itemType() == DFMSideBarItem::SidebarItem || !sidebarItemOnly)) {
             index = i;
         } else if (item->groupName() != group && index != -1) {
@@ -234,11 +231,11 @@ void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
     m_disableUrlSchemes += schemes;
     for (QString scheme : m_disableUrlSchemes) {
         forever {
-            int index = findItem([&](const DFMSideBarItem *item)->bool{
+            int index = findItem([&](const DFMSideBarItem *item) -> bool {
                 return item->url().scheme() == scheme;
             });
 
-            if (index>=0) {
+            if (index >= 0) {
                 m_sidebarModel->removeRow(index);
             } else {
                 break;
@@ -254,7 +251,7 @@ DUrlList DFMSideBar::savedItemOrder(const QString &groupName) const
     DUrlList list;
 
     QStringList savedList = DFMApplication::genericSetting()->value(SIDEBAR_ITEMORDER_KEY, groupName).toStringList();
-    for (const QString & item : savedList) {
+    for (const QString &item : savedList) {
         list << DUrl(item);
     }
 
@@ -266,7 +263,7 @@ void DFMSideBar::saveItemOrder(const QString &groupName) const
     QVariantList list;
 
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(m_sidebarModel->index(i, 0));
+        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(m_sidebarModel->index(i, 0));
         if (item->itemType() == DFMSideBarItem::SidebarItem && item->groupName() == groupName) {
             list << QVariant(item->url());
         }
@@ -374,23 +371,38 @@ void DFMSideBar::onRootFileChange(const DAbstractFileInfoPointer &fi)
 
 void DFMSideBar::onItemActivated(const QModelIndex &index)
 {
-    DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
+    DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
     QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
+
+    if (m_lastToggleTime.isValid() && m_lastToggleTime.addMSecs(500) > QDateTime::currentDateTime()
+        && m_pLastToggleItem == item) {
+        m_lastToggleTime = QDateTime::currentDateTime();
+        return;
+    }
+    m_lastToggleTime = QDateTime::currentDateTime();
+    m_pLastToggleItem = item;
 
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     if (interface) {
+        //判断网络文件是否可以到达
+        if (DFileService::instance()->checkGvfsMountfileBusy(item->url())) {
+            return;
+        }
+        DFileService::instance()->setCursorBusyState(true);
         interface->cdAction(this, item);
+
+        DFileService::instance()->setCursorBusyState(DFMOpticalMediaWidget::hasVolProcessBusy());
     }
 }
 
 void DFMSideBar::onContextMenuRequested(const QPoint &pos)
 {
+    // block signals to avoid function reentrant.
+    const QSignalBlocker blocker(this);
+
     if (!m_contextMenuEnabled) return;
-    //判断是否有之前的menu还在exec
-    if(m_bmenuexec) {
-        qDebug()<< "m_bmenuexec = " << m_bmenuexec << pos;
-        return;
-    }
+
+
     QModelIndex modelIndex = m_sidebarView->indexAt(pos);
     if (!modelIndex.isValid()) {
         return;
@@ -401,45 +413,44 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
         return ; // separator should not show menu
     }
     QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
-
+    DFileService::instance()->setCursorBusyState(true);
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     QMenu *menu = nullptr;
-
     if (interface) {
         menu = interface->contextMenu(this, item);
-        //临时解决方案，在处理onContextMenuRequested信号时，处理时间很长，在左边栏一直点击鼠标右键-鼠标左键，就会一直触发onContextMenuRequested信号
-        //这时再次创建menu和执行menu->exec，释放menu就崩溃
-        //要忽略掉在处理onContextMenuRequested信号时，在收到onContextMenuRequested信号
         if (menu) {
-            qDebug() << "menu->exec  =  " << identifierStr << menu;
-            m_bmenuexec = true;
-            DFileMenu *fmenu = static_cast<DFileMenu *>(menu);
+            // 如果光驱正在执行刻录/擦除操作，禁用光驱的右键菜单
+            QString strVolTag = item->url().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾
+            if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
+                for (QAction *act : menu->actions())
+                    act->setEnabled(false);
+            }
+            DFileMenu *fmenu = qobject_cast<DFileMenu *>(menu);
+            DFileService::instance()->setCursorBusyState(false);
             if (fmenu) {
+                //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+                //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+                QPointer<DFMSideBar> me = this;
                 fmenu->exec(this->mapToGlobal(pos));
-            }
-            else {
+                fmenu->deleteLater(me);
+            } else {
                 menu->exec(this->mapToGlobal(pos));
+                menu->deleteLater();
             }
-
-            qDebug() << "menu->exec  =  " << identifierStr << menu;
-            connect(menu,&QMenu::destroyed,this,[ = ](){
-                m_timer->setInterval(250);
-                m_timer->start();
-                qDebug() << " destroyed ====================================="<<menu;
-            });
-            menu->deleteLater();
         }
+        DFileService::instance()->setCursorBusyState(false);
     }
+    DFileService::instance()->setCursorBusyState(false);
     return;
 }
 
 void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
 {
-    DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
+    DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
     QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
 
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
-    if (interface && !newName.isEmpty() && item->text()!= newName) {
+    if (interface && !newName.isEmpty() && item->text() != newName) {
         interface->rename(item, newName);
     }
 }
@@ -486,7 +497,7 @@ void DFMSideBar::initModelData()
 void DFMSideBar::initConnection()
 {
     // drag to delete bookmark or tag
-    connect(m_sidebarView, &DFMSideBarView::requestRemoveItem, this, [this](){
+    connect(m_sidebarView, &DFMSideBarView::requestRemoveItem, this, [this]() {
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(m_sidebarView->currentIndex());
         if (item && item->flags().testFlag(Qt::ItemIsEnabled) && item->flags().testFlag(Qt::ItemIsDragEnabled)) {
             DFileService::instance()->deleteFiles(nullptr, DUrlList{item->url()}, false);
@@ -508,25 +519,25 @@ void DFMSideBar::initConnection()
     connect(m_sidebarModel, &QStandardItemModel::rowsMoved, this, &DFMSideBar::updateSeparatorVisibleState);
     // drag to move item will emit rowsInserted and rowsMoved..
     connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this,
-            [this](const QModelIndex &parent, int first, int last){
-        Q_UNUSED(parent);
-        Q_UNUSED(last);
-        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(first);
-        if (!item) {
-            item = m_sidebarModel->itemFromIndex(first-1);
-        }
+            [this](const QModelIndex &parent, int first, int last) {
+                Q_UNUSED(parent);
+                Q_UNUSED(last);
+                DFMSideBarItem *item = m_sidebarModel->itemFromIndex(first);
+                if (!item) {
+                    item = m_sidebarModel->itemFromIndex(first - 1);
+                }
 
-        // only bookmark and tag item are DragEnabled
-        if (item && item->flags().testFlag(Qt::ItemIsEnabled) && item->flags().testFlag(Qt::ItemIsDragEnabled)) {
-            saveItemOrder(item->groupName());
-        }
-    });
+                // only bookmark and tag item are DragEnabled
+                if (item && item->flags().testFlag(Qt::ItemIsEnabled) && item->flags().testFlag(Qt::ItemIsDragEnabled)) {
+                    saveItemOrder(item->groupName());
+                }
+            });
     DFMSideBarItemDelegate *idelegate = dynamic_cast<DFMSideBarItemDelegate *>(m_sidebarView->itemDelegate());
     if (idelegate) {
         connect(idelegate, &DFMSideBarItemDelegate::rename, this, &DFMSideBar::onRename);
     }
 
-    connect(fileSignalManager, &FileSignalManager::requestRename, this, [this](const DFMUrlBaseEvent &event){
+    connect(fileSignalManager, &FileSignalManager::requestRename, this, [this](const DFMUrlBaseEvent &event) {
         if (event.sender() == this) {
             this->openItemEditor(this->findItem(event.url()));
         }
@@ -549,17 +560,18 @@ void DFMSideBar::initUserShareItem()
     Q_CHECK_PTR(userShareFileWatcher);
     userShareFileWatcher->startWatcher();
 
-    auto userShareLambda = [ = ](const DUrl &url) {
+    auto userShareLambda = [=](const DUrl &url) {
+        Q_UNUSED(url)
         int cnt = DFileService::instance()->getChildren(nullptr, DUrl::fromUserShareFile("/"),
                                                         QStringList(), QDir::AllEntries).count();
         int index = findItem(DUrl::fromUserShareFile("/"));
         if (index == -1) {
             if (cnt > 0) {
-                DFileService::instance()->changeRootFile(url);
+                //                DFileService::instance()->changeRootFile(url);
                 addItem(DFMSideBarDefaultItemHandler::createItem("UserShare"), groupName(Network));
             }
         } else {
-            DFileService::instance()->changeRootFile(url,false);
+            //            DFileService::instance()->changeRootFile(url,false);
             m_sidebarView->setRowHidden(index, cnt == 0);
         }
     };
@@ -570,7 +582,7 @@ void DFMSideBar::initUserShareItem()
 
 void DFMSideBar::initRecentItem()
 {
-    auto recentLambda = [=] (bool enable) {
+    auto recentLambda = [=](bool enable) {
         int index = findItem(DUrl(RECENT_ROOT), groupName(Common));
         if (index) {
             m_sidebarView->setRowHidden(index, !enable);
@@ -591,36 +603,36 @@ void DFMSideBar::initBookmarkConnection()
     bookmarkWatcher->startWatcher();
 
     connect(bookmarkWatcher, &DAbstractFileWatcher::subfileCreated, this,
-    [this](const DUrl & url) {
-//        DFileService::instance()->changeRootFile(url);
-        const QString &groupNameStr = groupName(Bookmark);
-        this->addItem(DFMSideBarBookmarkItemHandler::createItem(url), groupNameStr);
-        this->saveItemOrder(groupNameStr);
-    });
+            [this](const DUrl &url) {
+                //        DFileService::instance()->changeRootFile(url);
+                const QString &groupNameStr = groupName(Bookmark);
+                this->addItem(DFMSideBarBookmarkItemHandler::createItem(url), groupNameStr);
+                this->saveItemOrder(groupNameStr);
+            });
 
     connect(bookmarkWatcher, &DAbstractFileWatcher::fileDeleted, this,
-    [this](const DUrl & url) {
-        qDebug() << url;
-        int index = findItem(url, groupName(Bookmark));
-        if (index >= 0) {
-//            DFileService::instance()->changeRootFile(url,false);
-            m_sidebarModel->removeRow(index);
-            this->saveItemOrder(groupName(Bookmark));
-        }
-    });
+            [this](const DUrl &url) {
+                qDebug() << url;
+                int index = findItem(url, groupName(Bookmark));
+                if (index >= 0) {
+                    //            DFileService::instance()->changeRootFile(url,false);
+                    m_sidebarModel->removeRow(index);
+                    this->saveItemOrder(groupName(Bookmark));
+                }
+            });
 
     connect(bookmarkWatcher, &DAbstractFileWatcher::fileMoved, this,
-    [this](const DUrl & source, const DUrl & target) {
-        int index = findItem(source, groupName(Bookmark));
-        if (index > 0) {
-            DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
-            if (item) {
-                item->setText(target.bookmarkName());
-                item->setUrl(target);
-                this->saveItemOrder(groupName(Bookmark));
-            }
-        }
-    });
+            [this](const DUrl &source, const DUrl &target) {
+                int index = findItem(source, groupName(Bookmark));
+                if (index > 0) {
+                    DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
+                    if (item) {
+                        item->setText(target.bookmarkName());
+                        item->setUrl(target);
+                        this->saveItemOrder(groupName(Bookmark));
+                    }
+                }
+            });
 }
 
 void DFMSideBar::initDeviceConnection()
@@ -633,8 +645,10 @@ void DFMSideBar::initDeviceConnection()
     m_udisks2DiskManager->setWatchChanges(true);
 
     QList<DAbstractFileInfoPointer> filist = DFileService::instance()->getChildren(this, DUrl(DFMROOT_ROOT),
-                                                                                   QStringList(), QDir::AllEntries,QDirIterator::NoIteratorFlags,false, true);
+                                                                                   QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false, true);
+
     std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
+    DFileService::instance()->changRootFile(filist);
 
     for (const DAbstractFileInfoPointer &fi : filist) {
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
@@ -649,7 +663,7 @@ void DFMSideBar::initDeviceConnection()
 
     DFileService::instance()->startQuryRootFile();
     rootFileChange();
-    connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+    connect(DFileService::instance(), &DFileService::rootFileChange, this, &DFMSideBar::onRootFileChange, Qt::QueuedConnection);
 
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
         if (!fileService->createFileInfo(nullptr, url)->exists()) {
@@ -661,8 +675,7 @@ void DFMSideBar::initDeviceConnection()
                                           DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
                                           DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
                                           return DFMRootFileInfo::typeCompare(fia, fib);
-                                      }
-            );
+                                      });
             if (r == devitems.end()) {
                 DFileService::instance()->changeRootFile(url);
                 this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
@@ -678,7 +691,7 @@ void DFMSideBar::initDeviceConnection()
         int index = findItem(url, groupName(Device));
         if (m_sidebarView->currentIndex().row() == index && index != -1) {
             index = findItem(DUrl::fromLocalFile(QDir::homePath()), groupName(Common));
-            DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
+            DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
             if (item) {
                 QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
                 QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
@@ -687,7 +700,7 @@ void DFMSideBar::initDeviceConnection()
                 }
             }
         }
-        DFileService::instance()->changeRootFile(url,false);
+        DFileService::instance()->changeRootFile(url, false);
         this->removeItem(url, this->groupName(Device));
         devitems.removeAll(url);
     });
@@ -701,11 +714,11 @@ void DFMSideBar::initDeviceConnection()
 
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
         DViewItemActionList actionList = item->actionList(Qt::RightEdge);
-        auto actionlist = fi->menuActionList();
-        if (!actionlist.isEmpty()) {
-            actionList.front()->setVisible(actionlist.contains(MenuAction::Eject) ||
-                                           actionlist.contains(MenuAction::Unmount) ||
-                                           actionlist.contains(MenuAction::SafelyRemoveDrive));
+        auto list = fi->menuActionList();
+        if (!actionList.isEmpty()) {
+            actionList.front()->setVisible(list.contains(MenuAction::Eject) ||
+                                           list.contains(MenuAction::Unmount) ||
+                                           list.contains(MenuAction::SafelyRemoveDrive));
         }
 
         item->setText(fi->fileDisplayName());
@@ -732,36 +745,35 @@ void DFMSideBar::initTagsConnection()
 
     // New tag added.
     connect(tagsWatcher, &DAbstractFileWatcher::subfileCreated, this, [this, groupNameStr](const DUrl & url) {
-//        DFileService::instance()->changeRootFile(url);
+        //        DFileService::instance()->changeRootFile(url);
         this->addItem(DFMSideBarTagItemHandler::createItem(url), groupNameStr);
         this->saveItemOrder(groupNameStr);
     });
 
     // Tag get removed.
     connect(tagsWatcher, &DAbstractFileWatcher::fileDeleted, this, [this, groupNameStr](const DUrl & url) {
-//        DFileService::instance()->changeRootFile(url,false);
+        //        DFileService::instance()->changeRootFile(url,false);
         this->removeItem(url, groupNameStr);
         this->saveItemOrder(groupNameStr);
     });
 
     // Tag got rename
     connect(tagsWatcher, &DAbstractFileWatcher::fileMoved, this,
-            [this, groupNameStr](const DUrl & source, const DUrl & target) {
+            [this, groupNameStr](const DUrl &source, const DUrl &target) {
+                int index = findItem(source, groupNameStr);
+                if (index >= 0) {
+                    DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
+                    item->setText(target.tagName());
+                    item->setUrl(target);
+                    this->saveItemOrder(groupNameStr);
+                }
+            });
 
-        int index = findItem(source, groupNameStr);
-        if (index>=0) {
-            DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
-            item->setText(target.tagName());
-            item->setUrl(target);
-            this->saveItemOrder(groupNameStr);
-        }
-    });
-
-//    // Tag changed color
-//    q->connect(tagsWatcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
-//        DFMSideBarItem *item = group->findItem(url);
-//        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
-//    });
+    //    // Tag changed color
+    //    q->connect(tagsWatcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
+    //        DFMSideBarItem *item = group->findItem(url);
+    //        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
+    //    });
 }
 
 void DFMSideBar::applySidebarColor()
@@ -777,7 +789,7 @@ void DFMSideBar::updateSeparatorVisibleState()
     int lastSeparatorIndex = -1;
 
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
+        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
         if (item->groupName() != lastGroupName) {
             if (item->itemType() == DFMSideBarItem::Separator) {
                 m_sidebarView->setRowHidden(i, lastGroupItemCount == 0);
@@ -817,11 +829,22 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
             appendItem(DFMSideBarDefaultItemHandler::createItem("Trash"), groupNameStr);
         }
         break;
-    case GroupName::Device:
+    case GroupName::Device:{
         if (!m_disableUrlSchemes.contains(COMPUTER_SCHEME)) {
             appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
         }
+        // 判断系统类型，决定是否启用保险箱
+        if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
+            DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+            if(DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType){ // 如果不是个人版和未知版
+                // 添加保险库
+                if (!m_disableUrlSchemes.contains(DFMVAULT_SCHEME)) {
+                    appendItem(DFMSideBarVaultItemHandler::createItem("Vault"), groupNameStr);
+                }
+            }
+        }
         break;
+    }
     case GroupName::Bookmark: {
         if (m_disableUrlSchemes.contains(BOOKMARK_SCHEME))  {
             break;
@@ -847,7 +870,7 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         }
 
         auto tag_infos = DFileService::instance()->getChildren(this, DUrl(TAG_ROOT),
-                              QStringList(), QDir::AllEntries);
+                                                               QStringList(), QDir::AllEntries);
         QList<DFMSideBarItem *> unsortedList;
         for (const DAbstractFileInfoPointer &info : tag_infos) {
             unsortedList << DFMSideBarTagItemHandler::createItem(info->fileUrl());
@@ -862,7 +885,7 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
 
 void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &groupName)
 {
-    if(!item) {
+    if (!item) {
         return;
     }
     item->setGroupName(groupName);
@@ -886,11 +909,11 @@ void DFMSideBar::appendItemWithOrder(QList<DFMSideBarItem *> &list, const DUrlLi
 {
     DUrlList urlList;
 
-    for (const DFMSideBarItem* item : list) {
+    for (const DFMSideBarItem *item : list) {
         urlList << item->url();
     }
 
-    for (const DUrl & url: order) {
+    for (const DUrl &url : order) {
         int idx = urlList.indexOf(url);
         if (idx >= 0) {
             urlList.removeAt(idx);
@@ -898,7 +921,7 @@ void DFMSideBar::appendItemWithOrder(QList<DFMSideBarItem *> &list, const DUrlLi
         }
     }
 
-    for (DFMSideBarItem * item: list) {
+    for (DFMSideBarItem *item : list) {
         this->appendItem(item, groupName);
     }
 }

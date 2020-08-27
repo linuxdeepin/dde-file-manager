@@ -65,6 +65,7 @@ Depends:
  ${misc:Depends},
  libdde-file-manager( =${binary:Version}),
  socat,
+ cryfs,
  deepin-anything-dkms[i386 amd64],
  deepin-anything-server[i386 amd64],
  libblockdev-crypto2,

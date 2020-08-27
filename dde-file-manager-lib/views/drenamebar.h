@@ -174,6 +174,7 @@ private slots:
     void onRenamePatternChanged(const int& index)noexcept;
 
     void onReplaceOperatorFileNameChanged(const QString& text)noexcept;
+    void onReplaceOperatorDestNameChanged(const QString& text)noexcept;
     void onAddOperatorAddedContentChanged(const QString& text)noexcept;
     void onAddTextPatternChanged(const int& index)noexcept;
     void onCustomOperatorFileNameChanged()noexcept;
@@ -184,7 +185,6 @@ private slots:
 private:
     ///###: just connect signals and slots(through d pointer).
     void initConnect();
-
 
     QSharedPointer<DRenameBarPrivate> d_ptr{ nullptr };
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DRenameBar)

@@ -223,6 +223,8 @@ const QSharedPointer<DFMEvent> DFMEvent::fromJson(DFMEvent::Type type, const QJs
         return DFMOpenFileEvent::fromJson(json);
     case OpenFileByApp:
         return DFMOpenFileByAppEvent::fromJson(json);
+    case OpenFilesByApp:
+        return DFMOpenFilesByAppEvent::fromJson(json);
     case CompressFiles:
         return DFMCompressEvent::fromJson(json);
     case DecompressFile:
@@ -371,6 +373,29 @@ QString DFMOpenFileByAppEvent::appName() const
 QSharedPointer<DFMOpenFileByAppEvent> DFMOpenFileByAppEvent::fromJson(const QJsonObject &json)
 {
     return dMakeEventPointer<DFMOpenFileByAppEvent>(Q_NULLPTR, json["appName"].toString(), DUrl::fromUserInput(json["url"].toString()));
+}
+
+DFMOpenFilesByAppEvent::DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url)
+    : DFMOpenFilesEvent(sender, url)
+{
+    m_type = OpenFilesByApp;
+    setProperty(QT_STRINGIFY(DFMOpenFilesByAppEvent::appName), appName);
+}
+
+QString DFMOpenFilesByAppEvent::appName() const
+{
+    return property(QT_STRINGIFY(DFMOpenFilesByAppEvent::appName), QString());
+}
+
+QSharedPointer<DFMOpenFilesByAppEvent> DFMOpenFilesByAppEvent::fromJson(const QJsonObject &json)
+{
+    DUrlList list;
+
+    for (const QJsonValue &value : json["urlList"].toArray()) {
+        list << DUrl::fromUserInput(value.toString());
+    }
+
+    return dMakeEventPointer<DFMOpenFilesByAppEvent>(Q_NULLPTR, json["appName"].toString(), list);
 }
 
 DFMCompressEvent::DFMCompressEvent(const QObject *sender, const DUrlList &list)

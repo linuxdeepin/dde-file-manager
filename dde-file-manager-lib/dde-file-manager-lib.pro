@@ -8,17 +8,18 @@
 
 include(../common/common.pri)
 
-QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs
+QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs network
 #private
 QT       += gui-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+QT += widgets-private
+
 TARGET = $$ProjectName
 
 TEMPLATE = lib
 CONFIG += create_pc create_prl no_install_prl
-
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 
@@ -61,6 +62,7 @@ include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
+include(vault/vault.pri)
 
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
@@ -264,9 +266,7 @@ HEADERS += \
     controllers/vaultcontroller.h \
     models/vaultfileinfo.h \
     controllers/dfmvaultcrumbcontroller.h \
-    views/dfmvaultview.h \
     views/interface/dfmvaultcontentinterface.h \
-    views/dfmvaultsetuppages.h \
     views/dfmvaultunlockpages.h \
     views/dfmvaultfileview.h \
     views/dfmvaultrecoverykeypages.h \
@@ -275,8 +275,20 @@ HEADERS += \
     shutil/dfmfilelistfile.h \
     views/dfmsplitter.h \
     dbus/dbussysteminfo.h \
-    accessible/accessibledefine.h \
-    accessible/libframenamedefine.h
+    models/deviceinfoparser.h \
+    controllers/dfmsidebarvaultitemhandler.h \
+    controllers/vaulthandle.h \
+    controllers/vaulterrorcode.h \
+    views/dfmvaultremovepages.h \
+    views/dfmvaultactiveview.h \
+    views/dfmvaultactivestartview.h \
+    views/dfmvaultactivesavekeyview.h \
+    views/dfmvaultactivefinishedview.h \
+    views/dfmvaultactivesetunlockmethodview.h \
+    views/dfmvaultremoveprogressview.h \
+    views/dfmvaultremovebypasswordview.h \
+    views/dfmvaultremovebyrecoverykeyview.h \
+    views/dfmvaultpagebase.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -456,9 +468,7 @@ SOURCES += \
     controllers/vaultcontroller.cpp \
     models/vaultfileinfo.cpp \
     controllers/dfmvaultcrumbcontroller.cpp \
-    views/dfmvaultview.cpp \
     views/interface/dfmvaultcontentinterface.cpp \
-    views/dfmvaultsetuppages.cpp \
     views/dfmvaultunlockpages.cpp \
     views/dfmvaultfileview.cpp \
     views/dfmvaultrecoverykeypages.cpp \
@@ -466,7 +476,20 @@ SOURCES += \
     dialogs/connecttoserverdialog.cpp \
     shutil/dfmfilelistfile.cpp \
     views/dfmsplitter.cpp \
-    dbus/dbussysteminfo.cpp
+    dbus/dbussysteminfo.cpp \
+    models/deviceinfoparser.cpp \
+    controllers/dfmsidebarvaultitemhandler.cpp \
+    controllers/vaulthandle.cpp \
+    views/dfmvaultremovepages.cpp \
+    views/dfmvaultactiveview.cpp \
+    views/dfmvaultactivestartview.cpp \
+    views/dfmvaultactivesavekeyview.cpp \
+    views/dfmvaultactivefinishedview.cpp \
+    views/dfmvaultactivesetunlockmethodview.cpp \
+    views/dfmvaultremoveprogressview.cpp \
+    views/dfmvaultremovebypasswordview.cpp \
+    views/dfmvaultremovebyrecoverykeyview.cpp \
+    views/dfmvaultpagebase.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
@@ -574,9 +597,11 @@ readmefile.path = $$PREFIX/share/deepin/$$TARGET/oem-menuextensions
 readmefile.files = plugins/.readme
 
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations \
- icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile
+ icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile policy
 
 DISTFILES += \
-    mimetypeassociations/mimetypeassociations.json
+    mimetypeassociations/mimetypeassociations.json \
+    confirm/deepin-vault-authenticateProxy \
+    policy/com.deepin.pkexec.deepin-vault-authenticateProxy.policy
 
 include($$PWD/settings_dialog_json.pri)

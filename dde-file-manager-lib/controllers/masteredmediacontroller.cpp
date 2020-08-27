@@ -29,7 +29,8 @@ public:
                     QDirIterator::IteratorFlags flags)
     {
         DUrl url(path);
-        QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
+        const QStringList &nodes = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
+        QString udiskspath = nodes.isEmpty() ? QString() : nodes.first();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
         if (blkdev->mountPoints().size()) {
@@ -199,7 +200,8 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
 
     d->proxyOnDisk.clear();
 
-    QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
+    QString udiskspath = nodes.isEmpty() ? QString() : nodes.first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
 
     if (blkdev->mountPoints().size()) {
@@ -262,6 +264,18 @@ bool MasteredMediaController::openFileByApp(const QSharedPointer<DFMOpenFileByAp
     DUrl url = DUrl::fromLocalFile(MasteredMediaFileInfo(event->url()).extraProperties()["mm_backer"].toString());
 
     return fileService->openFileByApp(event->sender(), event->appName(), url);
+}
+
+bool MasteredMediaController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
+{
+    DUrlList lst;
+    for (auto &i : event->urlList()) {
+        if (i.burnIsOnDisc()) {
+            DUrl transUrl = DUrl::fromLocalFile(MasteredMediaFileInfo(i).extraProperties()["mm_backer"].toString());
+            lst.append(transUrl);
+        }
+    }
+    return fileService->openFilesByApp(event->sender(), event->appName(), lst);
 }
 
 bool MasteredMediaController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
@@ -433,7 +447,7 @@ bool MasteredMediaController::createSymlink(const QSharedPointer<DFMCreateSymlin
     }
 
     DUrl local_url = DUrl::fromLocalFile(MasteredMediaFileInfo(event->fileUrl()).extraProperties()["mm_backer"].toString());
-    return fileService->createSymlink(event->sender(), local_url, event->toUrl());
+    return fileService->createSymlink(event->sender(), local_url, event->toUrl(), true);
 }
 
 bool MasteredMediaController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const

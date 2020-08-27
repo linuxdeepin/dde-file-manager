@@ -100,11 +100,11 @@ void ComputerPropertyDialog::initUI()
 
     QStringList msgsTitle;
     msgsTitle << tr("Computer Name")
+              << tr("Edition")
               << tr("Version")
               << tr("Type")
               << tr("Processor")
-              << tr("Memory")
-              << tr("Disk");
+              << tr("Memory");
 
     int row = 0;
     QHash<QString, QString> datas = getMessage(msgsTitle);
@@ -136,6 +136,9 @@ void ComputerPropertyDialog::initUI()
 
         gridLayout->addWidget(keyLabel, row, 0, Qt::AlignLeft | Qt::AlignTop);
         gridLayout->addWidget(valLabel, row, 1, Qt::AlignLeft | Qt::AlignTop);
+        //! 使内存显示不换行
+        if (key == tr("Memory"))
+            valLabel->setWordWrap(false);
         gridLayout->setRowMinimumHeight(row, valLabel->heightForWidth(gridLayout->columnMinimumWidth(1)));
         row++;
     }
@@ -167,47 +170,87 @@ void ComputerPropertyDialog::initUI()
     addContent(contentFrame);
 }
 
+static QString formatCap(qulonglong cap, const int size = 1024, quint8 precision = 1)
+{
+    static QString type[] = {" B", " KB", " MB", " GB", " TB"};
+
+    qulonglong lc = cap;
+    double dc = cap;
+    double ds = size;
+
+    for (size_t p = 0; p < sizeof(type); ++p) {
+        if (cap < pow(size, p + 1) || p == sizeof(type) - 1) {
+            if (!precision) {
+                return QString::number(round(lc / pow(size, p))) + type[p];
+            }
+
+            return QString::number(dc / pow(ds, p), 'f', precision) + type[p];
+        }
+    }
+
+    return "";
+}
+
 QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &data)
 {
     QHash<QString, QString> datas;
+    QString Edition;
     QString version;
-
-    if (DSysInfo::isDeepin()) {
-        version = DSysInfo::deepinVersion().split(" ").first() + " " + DSysInfo::deepinTypeDisplayName();
-    } else {
-        version = QString("%1 %2").arg(DSysInfo::productTypeString())
-                  .arg(DSysInfo::productVersion());
-    }
-
-//    qDebug() << "1111" << DSysInfo::deepinEdition() << "222" << DSysInfo::deepinCopyright() << "333" << DSysInfo::deepinTypeDisplayName()
-//             << "444" << DSysInfo::productTypeString() << "555" << DSysInfo::productVersion() << "666" << DSysInfo::operatingSystemName();
-    //部分数据优先从dbus读取，如果dbus没有，则从dtk读数据
     QString memoryInstallStr;
     QString memoryStr;
-    QString diskStr;
     QString processor;
     QString systemType;
-    if (m_systemInfo->memoryCap() <= 0 || m_systemInfo->diskCap() <= 0) {
-        memoryInstallStr = QString::number(DSysInfo::memoryInstalledSize());
-        memoryStr = QString::number(DSysInfo::memoryInstalledSize());
-        diskStr = QString::number(DSysInfo::systemDiskSize());
-        processor = DSysInfo::cpuModelName();
-        systemType = "64";
-    }
-    else {
-        memoryInstallStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1000 * 1000 * 1000), 'f', 0);
-        memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 1);
-        diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
+
+    //! 从com.deepin.system.SystemInfo中获取实际安装的内存的大小
+    QDBusInterface *deepin_systemInfo = new QDBusInterface("com.deepin.system.SystemInfo",
+                                                      "/com/deepin/system/SystemInfo",
+                                                      "com.deepin.system.SystemInfo",
+                                                      QDBusConnection::systemBus(), this);
+
+    //部分数据优先从dbus读取，如果dbus没有，则从dtk读数据
+    if (m_systemInfo->isValid()) {
+        //! 获取安装的内存总量
+        memoryInstallStr = formatCap(deepin_systemInfo->property("MemorySize").toULongLong(), 1024, 0);
+        //! 获取实际可以内存总量
+        memoryStr = formatCap(static_cast<qulonglong>(DSysInfo::memoryTotalSize()));
+        //! 获取cpu信息
         processor = m_systemInfo->processor();
-        systemType = QString::number(m_systemInfo->systemType());
+        //! 获取系统是64位还是32位
+        systemType = QString::number(m_systemInfo->systemType()) + tr("Bit");
+
+        if (Edition.isEmpty()) {
+            Edition = m_systemInfo->version();
+            QStringList temp = Edition.split(' ');
+            if(temp.size() > 1){
+                version = temp[0];
+                Edition = temp[1];
+            }else if(!temp.isEmpty()){
+                Edition = temp[0];
+            }
+        }
+    }
+
+    if (DSysInfo::isDeepin()) {
+        //! 获取系统版本名
+        Edition = DSysInfo::uosEditionName();
+        //! 获取系统版本号
+        version = DSysInfo::majorVersion();
+        if(!deepin_systemInfo->isValid()){
+            //! 获取安装的内存总量
+            memoryInstallStr = formatCap(static_cast<qulonglong>(DSysInfo::memoryInstalledSize()), 1024, 0);
+            //! 获取实际可以内存总量
+            memoryStr = formatCap(static_cast<qulonglong>(DSysInfo::memoryTotalSize()));
+            //! 获取cpu信息
+            processor = DSysInfo::cpuModelName();
+        }
     }
 
     datas.insert(data.at(0), DSysInfo::computerName());
-    datas.insert(data.at(1), version);
-    datas.insert(data.at(2), QString::number(m_systemInfo->systemType()) + tr("Bit"));
-    datas.insert(data.at(3), processor);
-    datas.insert(data.at(4), memoryInstallStr + " GB (" +  memoryStr + " GB " + tr("Available") + ")");
-    datas.insert(data.at(5), diskStr + " GB");
+    datas.insert(data.at(1), Edition);
+    datas.insert(data.at(2), version);
+    datas.insert(data.at(3), systemType);
+    datas.insert(data.at(4), processor);
+    datas.insert(data.at(5), memoryInstallStr + "(" +  memoryStr + ' ' + tr("Available") + ")");
 
     return datas;
 }

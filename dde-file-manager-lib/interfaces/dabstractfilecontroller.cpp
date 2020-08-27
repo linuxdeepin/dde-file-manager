@@ -115,6 +115,13 @@ bool DAbstractFileController::openFileByApp(const QSharedPointer<DFMOpenFileByAp
     return false;
 }
 
+bool DAbstractFileController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
+{
+    event->ignore();
+
+    return false;
+}
+
 bool DAbstractFileController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     event->ignore();

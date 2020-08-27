@@ -47,6 +47,7 @@
 #include "singleton.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 #include "interfaces/dfilemenu.h"
 
 DWIDGET_USE_NAMESPACE
@@ -189,7 +190,7 @@ void DFMCrumbBarPrivate::initUI()
     crumbListView.setContentsMargins(0, 0, 0, 0);
     crumbListView.setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
     crumbListView.setIconSize({16, 16});
-
+    crumbListView.setHorizontalScrollMode(QAbstractItemView::ScrollPerItem);
     crumbListView.setOrientation(QListView::LeftToRight, false);
     crumbListView.setEditTriggers(QAbstractItemView::NoEditTriggers);
     crumbListView.setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
@@ -589,9 +590,10 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
     menu->addAction(editIcon, QObject::tr("Edit address"), this, [=]() {
         showAddressBar(wnd->currentUrl());
     });
-
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<DFMCrumbBar> me = this;
     menu->exec(QCursor::pos());
-    menu->deleteLater();
+    menu->deleteLater(me);
 }
 
 /*!

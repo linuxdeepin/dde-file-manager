@@ -40,7 +40,7 @@ class FileController : public DAbstractFileController
 public:
     explicit FileController(QObject *parent = 0);
 
-    static bool findExecutable(const QString & executableName, const QStringList & paths = QStringList());
+    static bool findExecutable(const QString &executableName, const QStringList &paths = QStringList());
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const Q_DECL_OVERRIDE;
@@ -48,6 +48,7 @@ public:
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
     bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const Q_DECL_OVERRIDE;
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const Q_DECL_OVERRIDE;
+    bool openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const Q_DECL_OVERRIDE;
     bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const Q_DECL_OVERRIDE;
     bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const Q_DECL_OVERRIDE;
     bool decompressFileHere(const QSharedPointer<DFMDecompressEvent> &event) const Q_DECL_OVERRIDE;
@@ -80,8 +81,15 @@ public:
     bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const Q_DECL_OVERRIDE;
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const Q_DECL_OVERRIDE;
     QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
+
 private:
     QString checkDuplicateName(const QString &name) const;
+    //修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程
+    DUrlList pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event, DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false, bool force = false, bool bold = false) const;
+    //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
+    void dealpasteEnd(const DUrlList &lsit, const QSharedPointer<DFMPasteEvent> &event) const;
+    bool isExtDeviceJobCase(void *curJob, const DUrl &url) const;
+    bool isDiscburnJobCase(void *curJob, const DUrl &url) const;
 };
 
 #endif // FILECONTROLLER_H

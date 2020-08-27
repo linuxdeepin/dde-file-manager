@@ -125,3 +125,13 @@ void DesktopItemDelegate::updateItemSizeHint()
 
     d_ptr->itemSizeHint = QSize(width, height);
 }
+
+void DesktopItemDelegate::hideAllIIndexWidget()
+{
+    //父类的hideAllIIndexWidget不会立即隐藏editor，这里做特殊处理
+    auto editor = editingIndexWidget();
+    DIconItemDelegate::hideAllIIndexWidget();
+
+    if (editor)
+        editor->hide();
+}

@@ -55,6 +55,7 @@
 #include "controllers/appcontroller.h"
 #include "dfileservices.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 
 #include "models/dfileselectionmodel.h"
 #include "dfilesystemmodel.h"
@@ -67,6 +68,7 @@
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
 
+#include <QApplication>
 #include <DFileDragClient>
 #include <DAnchors>
 #include <QUrlQuery>
@@ -104,6 +106,7 @@ public:
     void toggleHeaderViewSnap(bool on);
     void _q_onSectionHandleDoubleClicked(int logicalIndex);
 
+public:
     DFileView *q_ptr;
 
     DFileMenuManager *fileMenuManager;
@@ -116,43 +119,6 @@ public:
     QActionGroup *sortByActionGroup;
     QActionGroup *openWithActionGroup;
 
-    QList<int> columnRoles;
-
-    DFileView::ViewMode defaultViewMode = DFileView::IconMode;
-    DFileView::ViewMode currentViewMode = DFileView::IconMode;
-
-    int horizontalOffset = 0;
-
-    /// move cursor later selecte index when pressed key shift
-    QModelIndex lastCursorIndex;
-
-    /// list mode column visible
-    QMap<QString, bool> columnForRoleHiddenMap;
-
-    int firstVisibleColumn = -1;
-    int lastVisibleColumn = -1;
-
-    DUrlList preSelectionUrls;
-
-    DAnchors<QLabel> contentLabel = nullptr;
-
-    QModelIndex mouseLastPressedIndex;
-
-    /// drag drop
-    QModelIndex dragMoveHoverIndex;
-
-    /// Saved before sorting
-    DUrlList oldSelectedUrls;
-    DUrl oldCurrentUrl;
-
-    DFileView::RandeIndex visibleIndexRande;
-
-    /// menu actions filter
-    QSet<MenuAction> menuWhitelist;
-    QSet<MenuAction> menuBlacklist;
-
-    QSet<DFileView::SelectionMode> enabledSelectionModes;
-
     FileViewHelper *fileViewHelper;
 
     QTimer *updateStatusBarTimer;
@@ -163,21 +129,60 @@ public:
 
     QActionGroup *toolbarActionGroup;
 
-    bool allowedAdjustColumnSize = true;
-    bool adjustFileNameCol = false; // mac finder style half-auto col size adjustment flag.
-    int cachedViewWidth = -1;
 
     // 用于实现触屏滚动视图和框选文件不冲突，手指在屏幕上按下短时间内就开始移动
     // 会被认为触发滚动视图，否则为触发文件选择（时间默认为300毫秒）
     QPointer<QTimer> updateEnableSelectionByMouseTimer;
+
     // 记录触摸按下事件，在mouse move事件中使用，用于判断手指移动的距离，当大于
     // QPlatformTheme::TouchDoubleTapDistance 的值时认为触发触屏滚动
     QPoint lastTouchBeginPos;
+
+    QList<int> columnRoles;
+
+    DFileView::ViewMode defaultViewMode = DFileView::IconMode;
+    DFileView::ViewMode currentViewMode = DFileView::IconMode;
+    /// move cursor later selecte index when pressed key shift
+    QModelIndex lastCursorIndex;
+
+    QModelIndex mouseLastPressedIndex;
+
+    /// drag drop
+    QModelIndex dragMoveHoverIndex;
+
+    /// list mode column visible
+    QMap<QString, bool> columnForRoleHiddenMap;
+
+    DUrlList preSelectionUrls;
+
+    /// Saved before sorting
+    DUrlList oldSelectedUrls;
+
+    DAnchors<QLabel> contentLabel = nullptr;
+
+    DUrl oldCurrentUrl;
+
+    /// menu actions filter
+    QSet<MenuAction> menuWhitelist;
+
+    QSet<MenuAction> menuBlacklist;
+
+    QSet<DFileView::SelectionMode> enabledSelectionModes;
+
+    int horizontalOffset = 0;
+    int firstVisibleColumn = -1;
+    int lastVisibleColumn = -1;
+    int cachedViewWidth = -1;
     int touchTapDistance = -1;
 
-    // u盘访问控制
-    AcessControlInterface *m_acessControlInterface = nullptr;
+    DFileView::RandeIndex visibleIndexRande;
 
+    bool allowedAdjustColumnSize = true;
+    bool adjustFileNameCol = false; // mac finder style half-auto col size adjustment flag.
+
+    char justAvoidWaringOfAlignmentBoundary[2];//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
+
+    bool isVaultDelSigConnected = false; //is vault delete signal connected.
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -199,11 +204,6 @@ DFileView::DFileView(QWidget *parent)
     d_ptr->touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 #endif
 
-    d->m_acessControlInterface = new AcessControlInterface("com.deepin.filemanager.daemon",
-                                                           "/com/deepin/filemanager/daemon/AcessControlManager",
-                                                           QDBusConnection::systemBus(),
-                                                           this);
-
     initUI();
     initModel();
     initDelegate();
@@ -218,6 +218,7 @@ DFileView::DFileView(QWidget *parent)
     d->diskmgr = new DDiskManager(this);
     connect(d->diskmgr, &DDiskManager::opticalChanged, this, &DFileView::onDriveOpticalChanged);
     d->diskmgr->setWatchChanges(true);
+
 }
 
 DFileView::~DFileView()
@@ -288,19 +289,7 @@ QList<DUrl> DFileView::selectedUrls() const
         if (index.parent() != rootIndex)
             continue;
 
-        DUrl url = model()->getUrlByIndex(index);
-        if (url.scheme() == SEARCH_SCHEME) {
-            //搜索目录需要特殊处理
-            list << url.searchedFileUrl();
-        } else if (url.scheme() == RECENT_SCHEME) {
-            // TODO
-            // xust 20200426 为解决在最近列表中框选多个文件后右键打开不能成功打开文件的问题，暂时在入口处处理 url (recent:// -> file://）,
-            // 单个文件可以正常打开，路径是通过 recent scheme 获取 RecentController 再转 FileController ，不过到多个文件打开就不走
-            // 这个路径，获取不到 RecentController 的原因还没查清楚。目前暂时从入口处理 url ，有时间再排查问题。
-            list << DUrl::fromLocalFile(url.path());
-        } else {
-            list << model()->getUrlByIndex(index);
-        }
+        list << model()->getUrlByIndex(index);
     }
 
     return list;
@@ -605,7 +594,6 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
 
 QSize DFileView::itemSizeHint() const
 {
-    D_DC(DFileView);
 
     return itemDelegate()->sizeHint(viewOptions(), rootIndex());
 }
@@ -708,6 +696,11 @@ void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
 
     const DUrl &root_url = rootUrl();
 
+    //fix task klu 21328 当切换到列表显示时自动适应列宽度
+    if (d->allowedAdjustColumnSize) {
+        setResizeMode(QListView::Adjust);
+    }
+
     if (!root_url.isValid())
         return;
 
@@ -719,7 +712,7 @@ void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
     if (!info)
         return;
 
-    ViewModes modes = (ViewModes)info->supportViewMode();
+    ViewModes modes = static_cast<ViewModes>(info->supportViewMode());
 
     //view mode support handler
     if (modes & mode) {
@@ -729,8 +722,6 @@ void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
 
 void DFileView::setViewMode(DFileView::ViewMode mode)
 {
-    D_D(DFileView);
-
     switchViewMode(mode);
     emit viewStateChanged();
 }
@@ -786,8 +777,8 @@ void DFileView::setEnabledSelectionModes(const QSet<QAbstractItemView::Selection
         const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
 
         for (DAbstractFileInfo::SelectionMode mode : supportSelectionModes) {
-            if (list.contains((SelectionMode)mode)) {
-                setSelectionMode((SelectionMode)mode);
+            if (list.contains(static_cast<SelectionMode>(mode))) {
+                setSelectionMode(static_cast<SelectionMode>(mode));
                 break;
             }
         }
@@ -828,7 +819,7 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
 {
     QAction *dAction = static_cast<QAction *>(action);
     dAction->setChecked(true);
-    MenuAction type = (MenuAction)dAction->data().toInt();
+    MenuAction type = static_cast<MenuAction>(dAction->data().toInt());
 
     switch (type) {
     case MenuAction::IconView:
@@ -868,7 +859,7 @@ void DFileView::sortByActionTriggered(QAction *action)
     const DUrl &root_url = rootUrl();
 
     d->setFileViewStateValue(root_url, "sortRole", model()->sortRole());
-    d->setFileViewStateValue(root_url, "sortOrder", (int)order);
+    d->setFileViewStateValue(root_url, "sortOrder", static_cast<int>(order));
 }
 
 void DFileView::openWithActionTriggered(QAction *action)
@@ -944,9 +935,21 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         return;
         case Qt::Key_Delete: {
             QString rootPath = rootUrl().toLocalFile();
-            if (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath)) {
+            if (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath) || VaultController::isVaultFile(rootPath)) {
                 appController->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             } else {
+                //! refresh after vault file deleted.
+                if (urls.size() > 0) {
+                    QString filepath = urls.front().toLocalFile();
+                    if (VaultController::isVaultFile(filepath) && !d->isVaultDelSigConnected) {
+                        connect(VaultController::ins(), &VaultController::signalFileDeleted, this, [&]() {
+                            if (VaultController::isBigFileDeleting())
+                                refresh();
+                        }, Qt::DirectConnection);
+                        d->isVaultDelSigConnected = true;
+                    }
+                }
+                qDebug() << "action delete --------------------------------";
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             }
             break;
@@ -1183,6 +1186,10 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         DListView::mousePressEvent(event);
         break;
     }
+    case Qt::RightButton: {
+        DListView::mousePressEvent(event);
+        break;
+    }
     default:
         break;
     }
@@ -1207,8 +1214,8 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
                 QScroller::grabGesture(this);
                 QScroller *scroller = QScroller::scroller(this);
 
-                scroller->handleInput(QScroller::InputPress, event->localPos(), event->timestamp());
-                scroller->handleInput(QScroller::InputMove, event->localPos(), event->timestamp());
+                scroller->handleInput(QScroller::InputPress, event->localPos(), static_cast<qint64>(event->timestamp()));
+                scroller->handleInput(QScroller::InputMove, event->localPos(), static_cast<qint64>(event->timestamp()));
             }
 
             return;
@@ -1236,12 +1243,17 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
 
 void DFileView::updateModelActiveIndex()
 {
+    if (m_isRemovingCase) // bug202007010004：正在删除的时候，fileInfo->makeToActive() 第二次调用会 crash
+        return;
+
     Q_D(DFileView);
 
     const RandeIndexList randeList = visibleIndexes(QRect(QPoint(0, verticalScrollBar()->value()), QSize(size())));
 
-    if (randeList.isEmpty())
+    if (randeList.isEmpty()) {
+        m_isRemovingCase = false;
         return;
+    }
 
     const RandeIndex &rande = randeList.first();
     DAbstractFileWatcher *fileWatcher = model()->fileWatcher();
@@ -1276,12 +1288,14 @@ void DFileView::updateModelActiveIndex()
             fileInfo->makeToActive();
 
             if (!fileInfo->exists()) {
+                m_isRemovingCase = true;
                 model()->removeRow(i, rootIndex());
             } else if (fileWatcher) {
                 fileWatcher->setEnabledSubfileWatcher(fileInfo->fileUrl());
             }
         }
     }
+    m_isRemovingCase = false;
 }
 
 void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -1317,10 +1331,25 @@ void DFileView::updateStatusBar()
 
     DFMEvent event(this);
     event.setWindowId(windowId());
-    event.setData(selectedUrls());
-    int count = selectedIndexCount();
+    //来自搜索目录的url需要处理转换为localfile，否则statusBar上的展示会不正确
+    QList<DUrl> sourceUrls = selectedUrls();
+    QList<DUrl> corectUrls;
+    for (DUrl srcUrl : sourceUrls) {
+        if (srcUrl.scheme() == SEARCH_SCHEME) {
+            corectUrls << srcUrl.searchedFileUrl();
+        } else {
+            corectUrls << srcUrl;
+        }
+    }
 
-    emit notifySelectUrlChanged(selectedUrls());
+    event.setData(corectUrls);
+    int count = selectedIndexCount();
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+        return;
+    }
+
+    notifySelectUrlChanged(corectUrls);
 
     if (count == 0) {
         d->statusBar->itemCounted(event, this->count());
@@ -1413,7 +1442,7 @@ void DFileView::saveViewState()
     Q_D(DFileView);
 
     d->setFileViewStateValue(url, "iconSizeLevel", statusBar()->scalingSlider()->value());
-    d->setFileViewStateValue(url, "viewMode", (int)viewMode());
+    d->setFileViewStateValue(url, "viewMode", static_cast<int>(viewMode()));
 }
 
 void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
@@ -1433,7 +1462,7 @@ void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
     const DUrl &root_url = rootUrl();
 
     d->setFileViewStateValue(root_url, "sortRole", model()->sortRole());
-    d->setFileViewStateValue(root_url, "sortOrder", (int)order);
+    d->setFileViewStateValue(root_url, "sortOrder", static_cast<int>(order));
 }
 
 void DFileView::onDriveOpticalChanged(const QString &path)
@@ -1493,20 +1522,25 @@ void DFileView::resizeEvent(QResizeEvent *event)
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     D_DC(DFileView);
-
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = isIconViewMode() ? index.isValid() : this->isSelected(index);
     bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
     Qt::ItemFlags flags;
 
     if (isEmptyArea) {
+        //判断网络文件是否可以到达
+        if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+            return;
+        }
         flags = model()->flags(rootIndex());
-
         if (!flags.testFlag(Qt::ItemIsEnabled))
             return;
     } else {
+        //判断网络文件是否可以到达
+        if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+            return;
+        }
         flags = model()->flags(index);
-
         if (!flags.testFlag(Qt::ItemIsEnabled)) {
             isEmptyArea = true;
             flags = rootIndex().flags();
@@ -1537,7 +1571,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     if (!fetchDragEventUrlsFromSharedMemory())
         return;
 
-    for (const DUrl &url : m_urlsForDragEvent) {
+    for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
 
         // a symlink that points to a non-existing file QFileInfo::isReadAble() returns false
@@ -1659,7 +1693,8 @@ void DFileView::dropEvent(QDropEvent *event)
                 }
             }
         }
-
+        //还原鼠标状态
+        DFileService::instance()->setCursorBusyState(false);
         stopAutoScroll();
         setState(NoState);
         viewport()->update();
@@ -1706,6 +1741,7 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return;
     }
 
+
     if (flags == (QItemSelectionModel::Current | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect)) {
         QRect tmp_rect = rect;
         //修改远程时，文件选择框内容选中后被取消问题
@@ -1736,7 +1772,6 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return selectionModel()->select(selection, flags);
 #endif
     }
-
     DListView::setSelection(rect, flags);
 }
 
@@ -1817,7 +1852,8 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
 
             if (last_row) {
                 // call later
-                QTimer::singleShot(0, this, [this, index, d] {
+                //QTimer::singleShot(0, this, [this, index, d] {//this index unused,改成如下
+                QTimer::singleShot(0, this, [d] {
                     // scroll to end
                     d->verticalScrollBar->setValue(d->verticalScrollBar->maximum());
                 });
@@ -1869,8 +1905,6 @@ void DFileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int e
 
 void DFileView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
-    D_D(DFileView);
-
     DListView::rowsInserted(parent, start, end);
 }
 
@@ -1903,10 +1937,13 @@ bool DFileView::event(QEvent *e)
                 return DListView::event(e);
             e->accept();
 
-            if (keyEvent->modifiers() == Qt::ShiftModifier)
-                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier));
-            else
-                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier));
+            if (keyEvent->modifiers() == Qt::ShiftModifier) {
+                QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier);
+                keyPressEvent(&nkeyEvent);
+            } else {
+                QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier);
+                keyPressEvent(&nkeyEvent);
+            }
 
             return true;
         }
@@ -2061,11 +2098,11 @@ void DFileView::initConnects()
 {
     D_D(DFileView);
 
-    connect(this, &DFileView::clicked, [ = ] (const QModelIndex & index) {
+    connect(this, &DFileView::clicked, [ = ](const QModelIndex & index) {
         openIndexByOpenAction(0, index);
     });
 
-    connect(this, &DFileView::doubleClicked, [ = ] (const QModelIndex & index) {
+    connect(this, &DFileView::doubleClicked, [ = ](const QModelIndex & index) {
         openIndexByOpenAction(1, index);
     });
 
@@ -2087,7 +2124,6 @@ void DFileView::initConnects()
     connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged, this, &DFileView::onShowHiddenFileChanged);
     connect(fileSignalManager, &FileSignalManager::requestFreshAllFileView, this, &DFileView::freshView);
     connect(DFMApplication::instance(), &DFMApplication::viewModeChanged, this, [this](const int &viewMode) {
-        Q_D(const DFileView);
         setDefaultViewMode(static_cast<ViewMode>(viewMode));
     });
     connect(DFMApplication::instance(), &DFMApplication::previewAttributeChanged, this, [this] {
@@ -2129,7 +2165,10 @@ void DFileView::decreaseIcon()
 void DFileView::openIndex(const QModelIndex &index)
 {
     const DUrl &url = model()->getUrlByIndex(index);
-
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
+        return;
+    }
     DFMOpenUrlEvent::DirOpenMode mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()
                                         ? DFMOpenUrlEvent::ForceOpenNewWindow
                                         : DFMOpenUrlEvent::OpenInCurrentWindow;
@@ -2166,10 +2205,13 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     DUrl fileUrl = url;
+    //! 快捷方式打开路径需要转换，把真是路径转换成虚拟路径
+//    if(url.toLocalFile().contains(VaultController::makeVaultLocalPath()))
+//    {
+//        fileUrl = VaultController::localUrlToVault(url);
+//    }
 
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, fileUrl);
-
-
 
     while (info && info->canRedirectionFileUrl()) {
         const DUrl old_url = fileUrl;
@@ -2178,11 +2220,21 @@ bool DFileView::setRootUrl(const DUrl &url)
 
         if (old_url == fileUrl)
             break;
-
-        info = DFileService::instance()->createFileInfo(this, fileUrl);
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(fileUrl)) {
+            info = DFileService::instance()->createFileInfo(this, fileUrl);
+        } else {
+            info = nullptr;
+        }
 
         qDebug() << "url redirected, from:" << old_url << "to:" << fileUrl;
     }
+
+    //! 书签方式打开路径需要转换，把真是路径转换成虚拟路径
+//    if(fileUrl.toLocalFile().contains(VaultController::makeVaultLocalPath()))
+//    {
+//        fileUrl = VaultController::localUrlToVault(fileUrl);
+//    }
 
     if (!info) {
         qDebug() << "This scheme isn't support, url" << fileUrl;
@@ -2192,40 +2244,80 @@ bool DFileView::setRootUrl(const DUrl &url)
     // TODO: drop this special case when we switch away from UDiskListener::addSubscriber in AppController.
     if (fileUrl.scheme() == BURN_SCHEME) {
         Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
+
+        // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
+        QString strVolTag = DFMOpticalMediaWidget::getVolTag(fileUrl);
+        if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
+            emit fileSignalManager->activeTaskDlg();
+            return false;
+        }
+
         QString devpath = fileUrl.burnDestDevice();
-        QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
-        getOpticalDriveMutex()->lock();
+        QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(devpath, {});
+        if (rootDeviceNode.isEmpty()) {
+            return false;
+        }
+        QString udiskspath = rootDeviceNode.first();
+        //getOpticalDriveMutex()->lock();// 主线程不能加锁，否则导致界面僵死：bug 31318:切换用户，打开文件管理器，多次点击左侧光驱栏目，右键，关闭一个授权弹窗，文件管理器卡死
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
-        getOpticalDriveMutex()->unlock();
+        //getOpticalDriveMutex()->unlock();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+        CdStatusInfo *pCdStatusInfo = &DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag]; // bug fix 31427:挂载光驱，切换多个用户，文件管理器卡死:多用户情况下 授权框是 串行资源，必须做执行才能继续后续操作，不能神操作，否则就卡，这是 linux 的安全策略
+
         if (!dp.devid.length()) {
-            QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            //QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            DFileService::instance()->setCursorBusyState(true);
+
             QSharedPointer<QFutureWatcher<bool>> fw(new QFutureWatcher<bool>);
             connect(fw.data(), &QFutureWatcher<bool>::finished, this, [ = ] {
-                QGuiApplication::restoreOverrideCursor();
+                //QGuiApplication::restoreOverrideCursor();
+                if (!pCdStatusInfo->bProcessLocked)
+                {
+                    DFileService::instance()->setCursorBusyState(false);
+                    //QGuiApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // bug 31318， 应该直接使用ArrowCursor，否则多个弹窗的情况下，鼠标要出问题
+                }
+
                 if (fw->result())
                 {
                     cd(fileUrl);
                 }
             });
             fw->setFuture(QtConcurrent::run([ = ] {
-                getOpticalDriveMutex()->lock();
+                if (pCdStatusInfo->bProcessLocked)
+                    return false;
+                pCdStatusInfo->bProcessLocked = true;
+
+                QMutexLocker locker(getOpticalDriveMutex());
                 blkdev->unmount({});
+
+                pCdStatusInfo->bProcessLocked = false; // 过了unmount 流程，系统就不会有卡点了，下面流程会平滑过度
+
+                // fix bug 27211 用户操作其他用户挂载的设备的时候，需要先卸载，卸载得提权，如果用户直接关闭了对话框，会返回错误代码 QDbusError::Other
+                // 需要对错误进行处理，出错的时候就不再执行后续操作了。
+                QDBusError err = blkdev->lastError();
+                if (err.isValid() && !err.name().toLower().contains("notmounted"))   // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
+                {
+
+                    qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
+                    return false;
+                }
                 if (!ISOMaster->acquireDevice(devpath))
                 {
                     ISOMaster->releaseDevice();
-                    QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
                     blkdev->unmount({});
                     QThread::msleep(1000);
                     QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
                     diskdev->eject({});
-                    getOpticalDriveMutex()->unlock();
+                    qDebug() << "setRootUrl failed:" << blkdev->drive();
+                    if (diskdev->optical())
+                        QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
+
                     return false;
                 }
                 ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
                 blkdev->mount({});
-                getOpticalDriveMutex()->unlock();
+
                 return true;
             }));
             return false;
@@ -2234,6 +2326,11 @@ bool DFileView::setRootUrl(const DUrl &url)
             d->headerOpticalDisc->show();
             if (blkdev->mountPoints().empty()) {
                 blkdev->mount({});
+            }
+            if (!blkdev->mountPoints().empty()) {
+                d->headerOpticalDisc->setDiscMountPoint(blkdev->mountPoints()[0]);
+            } else {
+                d->headerOpticalDisc->setDiscMountPoint("");
             }
         }
     } else {
@@ -2244,8 +2341,9 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     qDebug() << "cd: current url:" << rootUrl << "to url:" << fileUrl;
 
-    if (rootUrl == fileUrl)
-        return true;
+//    if (rootUrl == fileUrl)
+//        return true;
+//    对于相同路径也要走同样的流程
 
     const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl", QUrl::FullyEncoded));
 
@@ -2258,9 +2356,11 @@ bool DFileView::setRootUrl(const DUrl &url)
         fileUrl.setQuery(qq);
     } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(this, rootUrl)) {
         QList<DUrl> ancestors;
-
-        if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
-            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl);
+        //判断网络文件是否可以到达
+        if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl, false)) {
+            if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
+                d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl);
+            }
         }
     }
 
@@ -2273,7 +2373,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     model()->setSortRole(d->fileViewStateValue(fileUrl, "sortRole", DFileSystemModel::FileDisplayNameRole).toInt(),
-                         (Qt::SortOrder)d->fileViewStateValue(fileUrl, "sortOrder", Qt::AscendingOrder).toInt());
+                         static_cast<Qt::SortOrder>(d->fileViewStateValue(fileUrl, "sortOrder", Qt::AscendingOrder).toInt()));
 
     if (d->headerView) {
         updateListHeaderViewProperty();
@@ -2284,7 +2384,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     if (info) {
-        ViewModes modes = (ViewModes)info->supportViewMode();
+        ViewModes modes = static_cast<ViewModes>(info->supportViewMode());
 
         //view mode support handler
         toolBarActionList().first()->setVisible(testViewMode(modes, IconMode));
@@ -2307,8 +2407,8 @@ bool DFileView::setRootUrl(const DUrl &url)
     const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
 
     for (DAbstractFileInfo::SelectionMode mode : supportSelectionModes) {
-        if (d->enabledSelectionModes.contains((SelectionMode)mode)) {
-            setSelectionMode((SelectionMode)mode);
+        if (d->enabledSelectionModes.contains(static_cast<SelectionMode>(mode))) {
+            setSelectionMode(static_cast<SelectionMode>(mode));
             break;
         }
     }
@@ -2451,7 +2551,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                 d->headerViewHolder = new QWidget(this);
                 d->headerView = new DFMHeaderView(Qt::Horizontal, d->headerViewHolder);
 
-                connect(d->headerView, &DFMHeaderView::viewResized, this, [this, d] {
+                connect(d->headerView, &DFMHeaderView::viewResized, this, [d] {
                     d->headerViewHolder->setFixedHeight(d->headerView->height());
                 });
                 connect(d->headerView, &DFMHeaderView::sectionResized, d->headerView, &DFMHeaderView::adjustSize);
@@ -2493,7 +2593,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                 DFMApplication::appObtuselySetting()->setValue("WindowManager", "ViewColumnState", state);
             });
             connect(horizontalScrollBar(), &QScrollBar::valueChanged, d->headerView,
-            [d] (int value) {
+            [d](int value) {
                 if (d->headerView) {
                     d->headerView->move(-value, d->headerView->y());
                 }
@@ -2518,8 +2618,11 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             horizontalScrollBar()->parentWidget()->installEventFilter(this);
             // 初始化列宽调整
             d->cachedViewWidth = this->width();
-            d->adjustFileNameCol = d->headerView->width() == this->width();
+            //fix task klu 21328 当切换到列表显示时自动适应列宽度
+            d->adjustFileNameCol = true; //fix 31609 无论如何在切换显示模式时都去调整列表宽度
+            updateListHeaderViewProperty();
         }
+
         break;
     }
     case ExtendMode: {
@@ -2546,7 +2649,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     if (actions.isEmpty())
         return;
 
-    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList(DAbstractFileInfo::SpaceArea);
 
     QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
 
@@ -2622,19 +2725,17 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
 
     fileViewHelper()->handleMenu(menu);
-
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<DFileView> me = this;
     menu->exec();
-    menu->deleteLater();
+    menu->deleteLater(me);
 }
 
 
 void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
-    D_D(DFileView);
-
     if (!index.isValid())
         return;
-
     DUrlList list = selectedUrls();
 
     DFileMenu *menu;
@@ -2664,18 +2765,31 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         }
     }
 
-    menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, windowId(), false);
+    // 在上一个菜单没有结束前，拒绝下一个菜单
+    static bool lock = false;
+    if (lock) {
+        qDebug() << "reject show menu";
+        return;
+    }
+    menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(windowId()), false);
+    lock = true;
 
     if (!menu) {
+        lock = false;
         return;
     }
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
 
     fileViewHelper()->handleMenu(menu);
-
+    // 若此处使用this，那么当切换到其台view时，当前view释放，会造成野指针引起崩溃
+    // 因此使用当前的 activewindow，确保当前窗口下工作时切换到其他view不受影响
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+    //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<QWidget> window = qApp->activeWindow();
     menu->exec();
-    menu->deleteLater();
+    menu->deleteLater(window);
+    lock = false;
 }
 
 void DFileView::updateListHeaderViewProperty()
@@ -2812,7 +2926,10 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
         const QList<int> &childRoles = fileInfo->userColumnChildRoles(column);
 
         if (childRoles.isEmpty()) {
-            menu->deleteLater();
+            //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+            //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+            QPointer<DFileView> me = this;
+            menu->deleteLater(me);
 
             return;
         }
@@ -2839,7 +2956,7 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
                 }
             }
 
-            connect(action, &QAction::triggered, this, [this, action, column, i, d, childRoles] {
+            connect(action, &QAction::triggered, this, [this, i, childRoles] {
                 if (i % 2 == 0)
                 {
                     sortByRole(childRoles.at(i / 2), Qt::AscendingOrder);
@@ -2870,9 +2987,11 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
             menu->addAction(action);
         }
     }
-
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
+    //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<DFileView> me = this;
     menu->exec(QCursor::pos());
-    menu->deleteLater();
+    menu->deleteLater(me);
 }
 
 void DFileView::onModelStateChanged(int state)
@@ -3002,9 +3121,10 @@ bool DFileView::fetchDragEventUrlsFromSharedMemory()
 
     sm.lock();
     //用缓冲区得到共享内存关联后得到的数据和数据大小
-    buffer.setData((char *)sm.constData(), sm.size());
+    buffer.setData(static_cast<char *>(const_cast<void *>(sm.constData())), sm.size());
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
     in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
+    qDebug() << m_urlsForDragEvent;
     sm.unlock();    //解锁
     sm.detach();//与共享内存空间分离
 

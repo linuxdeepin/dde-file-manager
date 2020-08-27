@@ -64,13 +64,14 @@ enum : int {
 
 };
 
-static const char *const PROTOCOL_HEAD{ "file://" };
+//PROTOCOL_HEAD与act_names暂时未使用，为了避免未用警告，暂时屏蔽之
+//static const char *const PROTOCOL_HEAD{ "file://" };
 static const char *const PROCFS_PATH{ "/proc/vfs_changes" };
-constexpr static const char *const act_names[] {"file_created", "link_created",
-    "symlink_created", "dir_created",
-    "file_deleted", "dir_deleted",
-    "file_renamed", "dir_renamed"
-};
+//constexpr static const char *const act_names[] {"file_created", "link_created",
+//    "symlink_created", "dir_created",
+//    "file_deleted", "dir_deleted",
+//    "file_renamed", "dir_renamed"
+//};
 
 
 
@@ -175,9 +176,9 @@ void DAnythingMonitor::workSignal()
 
         int off = 0;
         for (int i = 0; i < ira.size; i++) {
-            unsigned char action = *(ira.data + off);
+            unsigned char action = static_cast<unsigned char>(*(ira.data + off));
             off++;
-            char *src = ira.data + off, *dst = 0;
+            char *src = ira.data + off, *dst = nullptr;
             off += strlen(src) + 1;
 
             switch (action) {

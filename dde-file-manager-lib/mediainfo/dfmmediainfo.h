@@ -43,6 +43,7 @@ public:
     ~DFMMediaInfo();
     static QString generalInformation(const QString &filename);
     QString Value(const QString &key, MeidiaType meidiaType = General);
+    void startReadInfo();
 signals:
     void Finished();
 

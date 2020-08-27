@@ -20,6 +20,7 @@
  */
 #include "dfmadditionalmenu.h"
 #include "dfileservices.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QDir>
 #include <QMenu>
@@ -33,16 +34,17 @@ DFM_BEGIN_NAMESPACE
 #define MENUEXTENSIONS_PATH  "/usr/share/deepin/dde-file-manager/oem-menuextensions/"
 
 #define SET_PROPERTY_IFEXIST(action, file, key)\
-do{\
-    QStringList values = d->getValues(file, key);\
-    if (file.contains(key)) {\
-        action->setProperty(key.data(), values);\
-    }\
-}while(false)
+    do{\
+        QStringList values = d->getValues(file, key);\
+        if (file.contains(key)) {\
+            action->setProperty(key.data(), values);\
+        }\
+    }while(false)
 
 #define MIME_TYPE_KEY "MimeType"
 
-class DFMAdditionalMenuPrivate : public QSharedData{
+class DFMAdditionalMenuPrivate : public QSharedData
+{
     Q_DECLARE_PUBLIC(DFMAdditionalMenu)
 public:
     const QStringList AllMenuTypes {
@@ -60,12 +62,12 @@ public:
 
     DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq);
 
-    QStringList getValues(XdgDesktopFile &file, const QLatin1String &key, const QStringList &whiteList={});
+    QStringList getValues(XdgDesktopFile &file, const QLatin1String &key, const QStringList &whiteList = {});
     bool isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes);
     bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
     bool isActionShouldShow(QAction *action, bool onDesktop);
     bool isSchemeSupport(QAction *action, const DUrl &url);
-    bool isSuffixSupport(QAction *action, const DUrl &url,const bool ballEx7z = false);
+    bool isSuffixSupport(QAction *action, const DUrl &url, const bool ballEx7z = false);
     //都是7z分卷压缩文件
     bool isAllEx7zFile(const QStringList &url);
     QList<QAction *> emptyAreaActoins(const QString &currentDir, bool onDesktop);
@@ -80,7 +82,7 @@ private:
 };
 
 DFMAdditionalMenuPrivate::DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq)
-    :q_ptr(qq)
+    : q_ptr(qq)
 {
     m_delayedLoadFileTimer = new QTimer(qq);
     m_delayedLoadFileTimer->setSingleShot(true);
@@ -92,11 +94,11 @@ DFMAdditionalMenuPrivate::DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq)
         dirWatch->startWatcher();
     }
 
-    QObject::connect(dirWatch, &DAbstractFileWatcher::fileDeleted, m_delayedLoadFileTimer, [=](){
+    QObject::connect(dirWatch, &DAbstractFileWatcher::fileDeleted, m_delayedLoadFileTimer, [ = ]() {
         m_delayedLoadFileTimer->start();
     });
 
-    QObject::connect(dirWatch, &DAbstractFileWatcher::subfileCreated, m_delayedLoadFileTimer, [=](){
+    QObject::connect(dirWatch, &DAbstractFileWatcher::subfileCreated, m_delayedLoadFileTimer, [ = ]() {
         m_delayedLoadFileTimer->start();
     });
 }
@@ -119,7 +121,7 @@ QStringList DFMAdditionalMenuPrivate::getValues(XdgDesktopFile &file, const QLat
 
 bool DFMAdditionalMenuPrivate::isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes)
 {
-    foreach(const QString &fmt, fileMimeTypes){
+    foreach (const QString &fmt, fileMimeTypes) {
         if (fmt.contains(mt, Qt::CaseInsensitive)) {
             return true;
         }
@@ -137,7 +139,7 @@ bool DFMAdditionalMenuPrivate::isMimeTypeMatch(const QStringList &fileMimeTypes,
         }
 
         int starPos = mt.indexOf("*");
-        if (starPos >=0 && isMimeTypeSupport(mt.left(starPos), fileMimeTypes)) {
+        if (starPos >= 0 && isMimeTypeSupport(mt.left(starPos), fileMimeTypes)) {
             match = true;
             break;
         }
@@ -159,7 +161,7 @@ bool DFMAdditionalMenuPrivate::isActionShouldShow(QAction *action, bool onDeskto
     // is menu triggered on desktop
     QStringList notShowInList =  action->property(MENU_HIDDEN_KEY.data()).toStringList();
     return (onDesktop  && !notShowInList.contains("Desktop", Qt::CaseInsensitive)) ||
-            (!onDesktop && !notShowInList.contains("Filemanager", Qt::CaseInsensitive));
+           (!onDesktop && !notShowInList.contains("Filemanager", Qt::CaseInsensitive));
 }
 
 bool DFMAdditionalMenuPrivate::isSchemeSupport(QAction *action, const DUrl &url)
@@ -168,7 +170,6 @@ bool DFMAdditionalMenuPrivate::isSchemeSupport(QAction *action, const DUrl &url)
     if (!action || !action->property(SUPPORT_SCHEMES_KEY.data()).isValid()) {
         return true;
     }
-
     QStringList supportList =  action->property(SUPPORT_SCHEMES_KEY.data()).toStringList();
     return supportList.contains(url.scheme(), Qt::CaseInsensitive);
 }
@@ -196,7 +197,7 @@ bool DFMAdditionalMenuPrivate::isSuffixSupport(QAction *action, const DUrl &url,
     bool match = false;
     for (QString suffix : supportList) {
         int endPos = suffix.lastIndexOf("*"); // 7z.*
-        if (endPos >=0 && cs.length()>endPos && suffix.left(endPos) == cs.left(endPos)) {
+        if (endPos >= 0 && cs.length() > endPos && suffix.left(endPos) == cs.left(endPos)) {
             match = true;
             break;
         }
@@ -207,15 +208,14 @@ bool DFMAdditionalMenuPrivate::isSuffixSupport(QAction *action, const DUrl &url,
 //都是7z分卷压缩文件
 bool DFMAdditionalMenuPrivate::isAllEx7zFile(const QStringList &files)
 {
-    if(files.size() <= 1)
-    {
+    if (files.size() <= 1) {
         return false;
     }
     for (const QString &f : files) {
         QFileInfo info(f);
         // 7z.001,7z.002, 7z.003 ... 7z.xxx
         QString cs = info.completeSuffix();
-        if(!cs.startsWith(QString("7z."))) {
+        if (!cs.startsWith(QString("7z."))) {
             return false;
         }
     }
@@ -226,9 +226,9 @@ QList<QAction *>DFMAdditionalMenuPrivate::emptyAreaActoins(const QString &curren
 {
     QString menuType = "EmptyArea";
     QList<QAction *> actions = actionListByType[menuType];
-    for (auto it = actions.begin(); it != actions.end(); ) {
-        QAction * action = *it;
-        if(!action || !isActionShouldShow(action, onDesktop) ||
+    for (auto it = actions.begin(); it != actions.end();) {
+        QAction *action = *it;
+        if (!action || !isActionShouldShow(action, onDesktop) ||
                 !isSchemeSupport(action, DUrl(currentDir)) ||
                 !isSuffixSupport(action, DUrl(currentDir))) {
             it = actions.erase(it);
@@ -238,7 +238,7 @@ QList<QAction *>DFMAdditionalMenuPrivate::emptyAreaActoins(const QString &curren
         // Add file list data.
         action->setData(currentDir);
         if (action->menu()) {
-            for (QAction * subAction : action->menu()->actions()) {
+            for (QAction *subAction : action->menu()->actions()) {
                 subAction->setData(currentDir);
             }
         }
@@ -291,7 +291,7 @@ void DFMAdditionalMenu::loadDesktopFile()
                 d->menuList.append(menu);
                 for (const QString &actionName : entryActionList) {
                     QAction *subAction = new QAction(file.actionIcon(actionName), file.actionName(actionName), d->menuActionHolder);
-                    connect(subAction, &QAction::triggered, this, [subAction, actionName, file](){
+                    connect(subAction, &QAction::triggered, this, [subAction, actionName, file]() {
                         QStringList files = subAction->data().toStringList();
                         file.actionActivate(actionName, files);
                     });
@@ -300,7 +300,7 @@ void DFMAdditionalMenu::loadDesktopFile()
                 action->setMenu(menu);
             }
 
-            connect(action, &QAction::triggered, this, [action, file](){
+            connect(action, &QAction::triggered, this, [action, file]() {
                 QStringList files = action->data().toStringList();
                 file.startDetached(files);
             });
@@ -332,9 +332,9 @@ DFMAdditionalMenu::~DFMAdditionalMenu()
 
 }
 
-void DFMAdditionalMenu::appendParentMineType(const QStringList &parentmimeTypes,  QStringList& mimeTypes)
+void DFMAdditionalMenu::appendParentMineType(const QStringList &parentmimeTypes,  QStringList &mimeTypes)
 {
-    if (parentmimeTypes.size()==0)
+    if (parentmimeTypes.size() == 0)
         return;
 
     for (const QString &mtName : parentmimeTypes) {
@@ -363,13 +363,16 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
     QList<QAction *> actions = d->actionListByType[menuType];
     bool bex7z = d->isAllEx7zFile(files);
     for (const QString &f : files) {
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(f));
+        DAbstractFileInfoPointer fileInfo;
+        DUrl url = DUrl(f);
+        fileInfo = DFileService::instance()->createFileInfo(this, url);
+
         if (!fileInfo) {
             qWarning() << "createFileInfo failed: " << f;
             continue;
         }
 
-        if (actions.size()==0) {
+        if (actions.size() == 0) {
             break;
         }
 
@@ -382,11 +385,11 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
         fileMimeTypes.removeAll({});
         fmts.removeAll({});
 
-        for (auto it = actions.begin(); it != actions.end(); ) {
-            QAction * action = *it;
-            if(!action || !d->isActionShouldShow(action, onDesktop) ||
-                    !d->isSchemeSupport(action, DUrl(f)) ||
-                    !d->isSuffixSupport(action, DUrl(f),bex7z)) {
+        for (auto it = actions.begin(); it != actions.end();) {
+            QAction *action = *it;
+            if (!action || !d->isActionShouldShow(action, onDesktop) ||
+                    !d->isSchemeSupport(action, url) ||
+                    !d->isSuffixSupport(action, url, bex7z)) {
                 it = actions.erase(it);
                 continue;
             }
@@ -411,6 +414,12 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
             QStringList supportMimeTypes =  action->property(MIME_TYPE_KEY).toStringList();
             supportMimeTypes.removeAll({});
             match = d->isMimeTypeMatch(fileMimeTypes, supportMimeTypes);
+
+            //部分mtp挂载设备目录下文件属性不符合规范，暂时做特殊处理
+            if (url.path().contains("/mtp:host") && supportMimeTypes.contains("application/octet-stream") && fileMimeTypes.contains("application/octet-stream")) {
+                match = false;
+            }
+
             if (!match) {
                 it = actions.erase(it);
                 continue;
@@ -421,10 +430,10 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
     }
 
     // Add file list data.
-    for (QAction * action : actions) {
+    for (QAction *action : actions) {
         action->setData(files);
         if (action->menu()) {
-            for (QAction * subAction : action->menu()->actions()) {
+            for (QAction *subAction : action->menu()->actions()) {
                 subAction->setData(files);
             }
         }

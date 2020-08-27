@@ -68,11 +68,11 @@ public:
     QString background() const {return currentWallpaper;}
     void setVisible(bool visible);
     void resetBackgroundVisibleState();
-#ifdef QT_DEBUG
+
+public: //for debug
     void printLog();
     void printLog(int index);
     void mapLabelScreen(int labelIndex, int screenIndex);
-#endif //QT_DEBUG
 
 Q_SIGNALS:
     void aboutDestoryBackground(QWidget *l);
@@ -111,8 +111,7 @@ private:
 public:
     static BackgroundHelper* getDesktopInstance();
 
-private slots:
-
+public slots:
     void monitorRectChanged();
 };
 

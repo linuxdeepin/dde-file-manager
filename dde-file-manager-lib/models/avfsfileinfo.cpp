@@ -38,14 +38,14 @@ class AVFSFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     AVFSFileInfoPrivate(const DUrl &url, AVFSFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq, true) {
+        : DAbstractFileInfoPrivate(url, qq, true)
+    {
     }
 };
 
 AVFSFileInfo::AVFSFileInfo(const DUrl &avfsUrl):
     DAbstractFileInfo(*new AVFSFileInfoPrivate(avfsUrl, this))
 {
-    Q_D(AVFSFileInfo);
 
     setProxy(DAbstractFileInfoPointer(new DFileInfo(realFileUrl(avfsUrl))));
 }
@@ -69,19 +69,19 @@ QVector<MenuAction> AVFSFileInfo::menuActionList(DAbstractFileInfo::MenuType typ
 {
 
     QVector<MenuAction> actions;
-    if(type == DAbstractFileInfo::SingleFile){
+    if (type == DAbstractFileInfo::SingleFile) {
         actions << MenuAction::Open;
-        if(!isDir())
+        if (!isDir())
             actions << MenuAction::OpenWith;
         actions << MenuAction::Separator;
         actions << MenuAction::Copy
                 << MenuAction::Property;
 
-    } else if(type == DAbstractFileInfo::SpaceArea){
+    } else if (type == DAbstractFileInfo::SpaceArea) {
         actions << MenuAction::SortBy
                 << MenuAction::DisplayAs
                 << MenuAction::Property;
-    } else{
+    } else {
         actions << MenuAction::Open
                 << MenuAction::Separator
                 << MenuAction::Copy
@@ -100,11 +100,17 @@ bool AVFSFileInfo::isDir() const
     Q_D(const AVFSFileInfo);
     //Temporarily just support one lay arch file parser
     QString realFilePath = realFileUrl(fileUrl()).toLocalFile();
-    if(FileUtils::isArchive(realFilePath)){
+    if (FileUtils::isArchive(realFilePath)) {
         realFilePath += "#/";
         return QFileInfo(realFilePath).isDir();
     }
     return d->proxy->isDir();
+}
+
+bool AVFSFileInfo::canManageAuth() const
+{
+    //压缩包内的文件不提供权限管理
+    return false;
 }
 
 QString AVFSFileInfo::toLocalFile() const
@@ -115,7 +121,7 @@ QString AVFSFileInfo::toLocalFile() const
 DUrl AVFSFileInfo::parentUrl() const
 {
     DUrl durl = DAbstractFileInfo::parentUrl();
-    if(fileType() == FileType::Directory){
+    if (fileType() == FileType::Directory) {
         durl.setScheme(FILE_SCHEME);
     }
     return durl;
@@ -141,19 +147,18 @@ DUrl AVFSFileInfo::realFileUrl(const DUrl &avfsUrl)
     QString iterPath = "/";
     int archLength = 0;
     foreach (QString item, pathItems) {
-        if(item == "")
+        if (item == "")
             continue;
         iterPath += item;
-        if(FileUtils::isArchive(iterPath)){
+        if (FileUtils::isArchive(iterPath)) {
             archLength++;
             iterPath += "#/";
-        }
-        else
+        } else
             iterPath += "/";
     }
 
-    if(archLength > 1){
-        if(iterPath.endsWith("#/"))
+    if (archLength > 1) {
+        if (iterPath.endsWith("#/"))
             iterPath.chop(2);
         else
             iterPath.chop(1);
@@ -177,10 +182,10 @@ DUrl AVFSFileInfo::realDirUrl(const DUrl &avfsUrl)
     QStringList pathItems = virtualPath.split("/");
     QString iterPath = "/";
     foreach (QString item, pathItems) {
-        if(item == "")
+        if (item == "")
             continue;
         iterPath += item;
-        if(FileUtils::isArchive(iterPath))
+        if (FileUtils::isArchive(iterPath))
             iterPath += "#/";
         else
             iterPath += "/";

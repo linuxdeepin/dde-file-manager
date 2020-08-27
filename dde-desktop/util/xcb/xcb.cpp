@@ -73,10 +73,10 @@ void XcbMisc::set_window_transparent_input(WId winId, bool transparent)
 {
     if (transparent) {
         xcb_shape_rectangles(QX11Info::connection(), XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT,
-                             XCB_CLIP_ORDERING_YX_BANDED, winId, 0, 0, 0, 0);
+                             XCB_CLIP_ORDERING_YX_BANDED, static_cast<xcb_window_t>(winId), 0, 0, 0, nullptr);
     } else {
         xcb_shape_mask(QX11Info::connection(), XCB_SHAPE_SO_SET,
-                       XCB_SHAPE_SK_INPUT, winId, 0, 0, XCB_NONE);
+                       XCB_SHAPE_SK_INPUT, static_cast<xcb_window_t>(winId), 0, 0, XCB_NONE);
     }
 }
 
@@ -103,12 +103,12 @@ bool XcbMisc::is_dock_window(xcb_window_t winId)
 
 QRect get_window_rect(xcb_window_t winId)
 {
-    xcb_connection_t *c = xcb_connect (NULL, NULL);
+    xcb_connection_t *c = xcb_connect (nullptr, nullptr);
     xcb_get_geometry_cookie_t geo_cookie;
     xcb_get_geometry_reply_t *reply;
     QRect rc;
     geo_cookie = xcb_get_geometry(c, winId);
-    if ((reply = xcb_get_geometry_reply(c, geo_cookie, NULL))) {
+    if ((reply = xcb_get_geometry_reply(c, geo_cookie, nullptr))) {
         rc = {reply->x, reply->y, reply->width, reply->height};
         qDebug() << reply->x << reply->y << reply->width << reply->height;
     } else {

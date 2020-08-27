@@ -50,11 +50,16 @@ signals:
     /* emit usershare status changed*/
     void userShareCountChanged(const int count);
 
+    // 在共享信息刷新后，请求刷新页面
+    void requestRefreshFileModel(const DUrl &url);
+
     /* request close current tab*/
     void requestCloseCurrentTab(quint64 winId);
 
-    /* request fetch network nodes*/
+    // 请求关闭窗口的所有保险箱的标签
+    void requestCloseAllTabOfVault(quint64 winId);
 
+    /* request fetch network nodes*/
     void requestFetchNetworks(const DFMUrlBaseEvent &event);
 
     /*request choose smb mounted file*/
@@ -104,6 +109,9 @@ signals:
 
     /*request show PropertyDialog*/
     void requestShowOpenWithDialog(const DFMEvent &event);
+
+    /*request show OpenFiles PropertyDialog*/
+    void requestShowOpenFilesWithDialog(const DFMUrlListBaseEvent &event);
 
     /*request show PropertyDialog*/
     void requestShowPropertyDialog(const DFMUrlListBaseEvent &event);
@@ -170,6 +178,9 @@ signals:
     /*request abort copy/move job*/
     void requestAbortJob(const DUrl& url);
 
+    /*request abort copy/move job for DFileCopyMoveJob*/
+    void requestAsynAbortJob(const DUrl& url);
+
     /*request start file job task update timer*/
     void requestStartUpdateJobTimer();
 
@@ -209,6 +220,12 @@ signals:
 
     // 在擦除光盘完成后重启定时器
     void restartCdScanTimer(const QString &strDevice);
+
+    // 激活任务进度对话框
+    void activeTaskDlg();
+
+    // 强制刷新计算机页面
+    void requestUpdateComputerView();
 
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */

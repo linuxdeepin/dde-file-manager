@@ -50,7 +50,7 @@ public:
         return m_currentInfo->fileUrl();
     }
 
-    bool hasNext() const
+    bool hasNext() const override
     {
         if (initialized) {
             return !m_infoList.isEmpty();

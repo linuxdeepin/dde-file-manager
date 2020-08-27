@@ -67,13 +67,16 @@
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
 #include "controllers/trashmanager.h"
+#include "controllers/filecontroller.h"
 #include "models/dfmrootfileinfo.h"
 #include "controllers/vaultcontroller.h"
 #include "dfmsplitter.h"
+#include "views/dfmvaultactiveview.h"
 
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
 
+#include <QScreen>
 #include <QStatusBar>
 #include <QFrame>
 #include <QVBoxLayout>
@@ -102,6 +105,7 @@ public:
 
     void setCurrentView(DFMBaseView *view);
     bool processKeyPressEvent(QKeyEvent *event);
+    bool processTitleBarEvent(QMouseEvent *event);
     bool cdForTab(Tab *tab, const DUrl &fileUrl);
     void initAdvanceSearchBar();
     bool isAdvanceSearchBarVisible() const;
@@ -110,7 +114,7 @@ public:
     bool isRenameBarVisible() const;
     void setRenameBarVisible(bool visible);
     void resetRenameBar();
-    void storeUrlListToRenameBar(const QList<DUrl>& list) noexcept;
+    void storeUrlListToRenameBar(const QList<DUrl> &list) noexcept;
 
     QFrame *centralWidget{ nullptr };//中央区域（所有的除顶部区域）
     DFMSideBar *sideBar{ nullptr };
@@ -121,8 +125,8 @@ public:
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
     DIconButton *newTabButton { nullptr };
-    QFrame * tabTopLine { nullptr };
-    QFrame * tabBottomLine { nullptr };
+    QFrame *tabTopLine { nullptr };
+    QFrame *tabBottomLine { nullptr };
     DFMBaseView *currentView { nullptr };
     DStatusBar *statusBar { nullptr };
     QVBoxLayout *mainLayout { nullptr };
@@ -135,6 +139,10 @@ public:
     DFMAdvanceSearchBar *advanceSearchBar = nullptr;
 
     QMap<DUrl, QWidget *> views;
+
+    bool move;
+    QPoint startPoint;
+    QPoint windowPoint;
 
     DFileManagerWindow *q_ptr{ nullptr };
 
@@ -255,14 +263,74 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     return false;
 }
 
+bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
+{
+    // tmp: 删除和恢复文件走的主线程，不能拖动窗口，后面修改回复和删除文件的方式后去除以下代码
+    if (TrashManager::isWorking()) {
+        if (!event)
+            return false;
+
+        Q_Q(DFileManagerWindow);
+
+        if (event->type() == QEvent::MouseButtonPress) {
+            auto mouseEvent = static_cast<QMouseEvent *>(event);
+            if (mouseEvent->button() == Qt::LeftButton) {
+                move = true;
+                /*记录鼠标的全局坐标.*/
+                startPoint = mouseEvent->globalPos();
+                /*记录窗体的全局坐标.*/
+                windowPoint = q->frameGeometry().topLeft();
+                return true;
+            }
+            return false;
+        }
+
+        if (event->type() == QEvent::MouseButtonRelease) {
+            auto mouseEvent = static_cast<QMouseEvent *>(event);
+            /*改变移动状态.*/
+            if (mouseEvent->buttons() & Qt::LeftButton) {
+                move = false;
+                return true;
+            }
+            return false;
+        }
+
+        if (event->type() == QEvent::MouseButtonDblClick) {
+            move = false;
+            return false;
+        }
+
+        if (event->type() == QEvent::MouseMove) {
+            if (move) {
+                auto mouseEvent = static_cast<QMouseEvent *>(event);
+                /*移动中的鼠标位置相对于初始位置的相对位置.*/
+                QPoint relativePos = mouseEvent->globalPos() - startPoint;
+                /*然后移动窗体即可.*/
+                if (event->buttons() == Qt::LeftButton) {
+                    q->move(windowPoint + relativePos);
+                }
+            }
+            return false;
+        }
+
+        move = false;
+        return false;
+    }
+
+    return false;
+}
+
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 {
+    Q_Q(DFileManagerWindow);
+
     DFMBaseView *current_view = tab->fileView();
 
-// fix 6942 取消判断先后请求地址差异判断
-//    if (current_view && current_view->rootUrl() == fileUrl) {
-//        return false;
-//    }
+    // fix 6942 取消判断先后请求地址差异判断
+    // fix 28857 高频进入光驱会死锁
+    if (current_view && current_view->rootUrl() == fileUrl && fileUrl.scheme() == BURN_ROOT) {
+        return false;
+    }
 
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
@@ -273,6 +341,18 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
             if (blk->mountPoints().empty()) {
                 blk->mount({});
             }
+        }
+    }
+
+    if (fileUrl.scheme() == DFMVAULT_SCHEME) {
+        if (VaultController::Unlocked != VaultController::ins()->state()
+                || fileUrl.host() == "delete") {
+            DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
+            view->widget()->setParent(q);
+            bool ret = view->setRootUrl(fileUrl);
+            delete view;
+            view = nullptr;
+            return ret;
         }
     }
 
@@ -342,6 +422,25 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     bool ok = false;
 
     if (current_view) {
+        // 为了解决 bug 34363: [4K屏]下且[缩放]，[ICON视图]下[浏览大量文件]，同时[疯狂滚动 scrollbar] 导致的崩溃问题
+        auto fileView = dynamic_cast<DFileView*>(current_view);
+        if (fileView && fileView->isIconViewMode()) {
+            auto model = fileView->model();
+            if (model) {
+                auto state = model->state();
+                // busy 状态说明文件太多，还没加载完
+                if (state == DFileSystemModel::Busy) {
+                    // 目前系统缩放区间为 [1.0, 2.75], ratio > 1.0 则为缩放, 目前 1.0 没有出现崩溃
+                    qreal ratio = qApp->primaryScreen()->devicePixelRatio();
+                    if (ratio > 1.0) {
+                        // 如果疯狂滚动，那么Qt可能会由于绘制的原因崩溃，因此在切换前选中第一个item
+                        // 这样界面就不会处于一个疯狂刷新绘制的状态，即不会调用绘制的函数，因此避免了绘制崩溃的问题
+                        fileView->setCurrentIndex(model->index(0, 0));
+                    }
+                }
+            }
+        }
+
         ok = current_view->setRootUrl(fileUrl);
 
         if (ok) {
@@ -377,7 +476,7 @@ void DFileManagerWindowPrivate::initAdvanceSearchBar()
 
     QObject::connect(advanceSearchBar, &DFMAdvanceSearchBar::optionChanged, q, [ = ](const QMap<int, QVariant> &formData, bool updateView) {
         if (currentView) {
-            DFileView *fv = dynamic_cast<DFileView*>(currentView);
+            DFileView *fv = dynamic_cast<DFileView *>(currentView);
             if (fv) {
                 fv->setAdvanceSearchFilter(formData, true, updateView);
             }
@@ -459,7 +558,19 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     initUI();
     initConnect();
 
-    openNewTab(fileUrl);
+    //202007010032【文件管理器】【5.1.2.10-1】【sp2】（.doc,ppt,xls）文件拖拽到桌面上的文件管理器图标上，被识别为文件夹打开，
+    // 判断出入的url是否是一个目录，不是就取parentUrl
+    DUrl newurl = fileUrl;
+    //排除u盘自动挂载，并且自动打开，拖拽的文件都是FILE_SCHEME
+    if (newurl.scheme() == FILE_SCHEME) {
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
+
+        if (fileInfo && !fileInfo->isDir()) {
+            newurl = fileUrl.parentUrl();
+        }
+    }
+
+    openNewTab(newurl);
 }
 
 DFileManagerWindow::~DFileManagerWindow()
@@ -500,6 +611,45 @@ void DFileManagerWindow::closeCurrentTab(quint64 winId)
     }
 
     emit d->tabBar->tabCloseRequested(d->tabBar->currentIndex());
+}
+
+// 关闭当前窗口的所有保险箱的标签
+void DFileManagerWindow::closeAllTabOfVault(quint64 winId)
+{
+    D_D(DFileManagerWindow);
+
+    // 传入的窗口ID不是当前活动窗口ID
+    if (winId != this->winId()) {
+        return;
+    }
+
+    // 当前只有一个标签，不用关闭
+    int nCount = d->tabBar->count();
+    if (nCount < 2) {
+        return;
+    }
+
+    // 记录是否有除保险箱之外的标签
+    bool bOtherTab = false;
+    for (int i = nCount - 1; i > -1; --i) {
+        Tab *tab = d->tabBar->tabAt(i);
+        if (!tab) {
+            return;
+        }
+
+        DUrl url = tab->currentUrl();
+        if (VaultController::isVaultFile(url.toString())) {
+            if (i == 0) { // 当判断到最后一个标签时，如何没有其它标签，则保留该标签
+                if (!bOtherTab) {
+                    return;
+                }
+            }
+            // 删除编号对应的标签
+            emit d->tabBar->tabCloseRequested(i);
+        } else {
+            bOtherTab = true;
+        }
+    }
 }
 
 void DFileManagerWindow::showNewTabButton()
@@ -578,6 +728,8 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
         }
 
         switchToView(tab->fileView());
+        // bug 32988 进入标签先刷新一次，解决保险箱重命名文件夹，在标签目录下出现重复文件夹
+        tab->fileView()->refresh();
 
 //        if (currentUrl().isSearchFile()) {
 //            if (!d->toolbar->getSearchBar()->isVisible()) {
@@ -694,7 +846,7 @@ bool DFileManagerWindow::cdForTabByView(DFMBaseView *view, const DUrl &fileUrl)
     Q_D(DFileManagerWindow);
 
     for (int i = 0; i < d->tabBar->count(); ++i) {
-        Tab *tab =d->tabBar->tabAt(i);
+        Tab *tab = d->tabBar->tabAt(i);
 
         if (tab->fileView() == view) {
             return d->cdForTab(tab, fileUrl);
@@ -819,6 +971,12 @@ void DFileManagerWindow::keyPressEvent(QKeyEvent *event)
 
 bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 {
+    Q_D(DFileManagerWindow);
+
+    if (watched == titlebar()) {
+        return d->processTitleBarEvent(static_cast<QMouseEvent *>(event));
+    }
+
     if (!getFileView() || watched != getFileView()->widget()) {
         return false;
     }
@@ -826,8 +984,6 @@ bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
     if (event->type() != QEvent::KeyPress) {
         return false;
     }
-
-    Q_D(DFileManagerWindow);
 
     return d->processKeyPressEvent(static_cast<QKeyEvent *>(event));
 }
@@ -849,8 +1005,7 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
     case DFMEvent::Forward:
         d->toolbar->forward();
         return true;
-    case DFMEvent::OpenNewTab:
-    {
+    case DFMEvent::OpenNewTab: {
         if (event->windowId() != this->internalWinId()) {
             return false;
         }
@@ -916,29 +1071,19 @@ void DFileManagerWindow::initTitleBar()
 
     initTitleFrame();
 
-    QSet<MenuAction> disableList;
-    VaultController::VaultState state = VaultController::state();
-    if (state == VaultController::NotAvailable) {
-        disableList << MenuAction::Vault;
-    }
-
-    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu(disableList);
+    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu();
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
 
-    QAction * vaultAction = menu->actionAt(DFileMenuManager::getActionText(MenuAction::Vault));
-    if (vaultAction) {
-        connect(vaultAction, &QAction::triggered, this, [=](){
-            cd(VaultController::makeVaultUrl("/", "setup"));
-        });
-    }
-
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
     titlebar()->setCustomWidget(d->titleFrame, false);
     titlebar()->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+
+    // fix: titlebar的move事件在自定义的耗时异步事件时会失效，因此自行处理titlebar的事件
+    titlebar()->installEventFilter(this);
 }
 
 void DFileManagerWindow::initSplitter()
@@ -1092,7 +1237,7 @@ void DFileManagerWindow::initCentralWidget()
     QWidget *midWidget = new QWidget;
     QHBoxLayout *midLayout = new QHBoxLayout;
     midWidget->setLayout(midLayout);
-    //! lixiang start 设置后显示空间会大些 
+    //! lixiang start 设置后显示空间会大些
     midLayout->setContentsMargins(0, 0, 0, 0);
     //! lixiang end
     midLayout->addWidget(d->splitter);
@@ -1133,6 +1278,10 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
 
+    // 请求关闭窗口所有保险箱的标签
+    QObject::connect(fileSignalManager, &FileSignalManager::requestCloseAllTabOfVault,
+                     this, &DFileManagerWindow::closeAllTabOfVault);
+
     QObject::connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onCurrentTabChanged);
     QObject::connect(d->tabBar, &TabBar::tabCloseRequested, this, &DFileManagerWindow::onRequestCloseTab);
@@ -1147,15 +1296,25 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
 
     QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d] {
-        d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
-        emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
+        DUrl url = currentUrl();
 
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, currentUrl());
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+
+        if (VaultController::isVaultFile(url.toString()))
+        {
+            // 如果是快捷方式，则赋值为快捷方式的源文件路径，便于正常显示快捷方式的路径
+            if(info->isSymLink()){
+                url = info->symLinkTarget();
+                url = VaultController::localUrlToVault(url);
+            }
+        }
+        d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, url));
+        emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, url));
 
         if (info)
         {
             setWindowTitle(info->fileDisplayName());
-        } else if (currentUrl().isComputerFile())
+        } else if (url.isComputerFile())
         {
             setWindowTitle(systemPathManager->getSystemPathDisplayName("Computer"));
         }
@@ -1163,19 +1322,19 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
-    QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [d](){
-        if(d->rightDetailViewHolder){
+    QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [d]() {
+        if (d->rightDetailViewHolder) {
             d->rightDetailViewHolder->setVisible(!d->rightDetailViewHolder->isVisible());
             qDebug() << "File information window on the right";
         }
     });
 
-    QObject::connect(this, &DFileManagerWindow::selectUrlChanged, this, [d](/*const QList<DUrl> &urlList*/){
-        DFileView *fv = dynamic_cast<DFileView*>(d->currentView);
+    QObject::connect(this, &DFileManagerWindow::selectUrlChanged, this, [d](/*const QList<DUrl> &urlList*/) {
+        DFileView *fv = dynamic_cast<DFileView *>(d->currentView);
         if (d->detailView && fv) {
-           d->detailView->setUrl(fv->selectedUrls().value(0, fv->rootUrl()));
-           if (fv->selectedIndexCount()==0)
-               d->detailView->setTagWidgetVisible(false);
+            d->detailView->setUrl(fv->selectedUrls().value(0, fv->rootUrl()));
+            if (fv->selectedIndexCount() == 0)
+                d->detailView->setTagWidgetVisible(false);
         }
     });
 }
@@ -1247,6 +1406,10 @@ void DFileManagerWindow::initRenameBarState()
     if (DFileManagerWindow::flagForNewWindowFromTab.compare_exchange_strong(expected, false, std::memory_order_seq_cst)) {
 
         if (static_cast<bool>(DFileManagerWindow::renameBarState) == true) { //###: when we drag a tab to create a new window, but the RenameBar is showing in last window.
+            //多标签情况下，renamebar可能存在隐藏的情况，在新窗口中打开目录会出现renamebar指针失效的问题
+            //这种情况下需要跳过loadState
+            if (!d->renameBar || !d->renameBar->isVisible())
+                return;
             d->renameBar->loadState(DFileManagerWindow::renameBarState);
 
         } else { //###: when we drag a tab to create a new window, but the RenameBar is hiding.
@@ -1262,6 +1425,12 @@ void DFileManagerWindow::initRenameBarState()
 void DFileManagerWindow::requestToSelectUrls()
 {
     DFileManagerWindowPrivate *const d{ d_func() };
+
+    //多标签情况下，renamebar可能存在隐藏的情况，在新窗口中打开目录会出现renamebar指针失效的问题
+    //这种情况下需要跳过loadState
+    if (!d->renameBar || !d->renameBar->isVisible())
+        return;
+
     if (static_cast<bool>(DFileManagerWindow::renameBarState) == true) {
         d->renameBar->loadState(DFileManagerWindow::renameBarState);
 

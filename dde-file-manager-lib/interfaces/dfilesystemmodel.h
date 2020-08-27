@@ -37,12 +37,17 @@
 #include "durl.h"
 #include "dabstractfileinfo.h"
 
+#include <unistd.h>
+
 QT_BEGIN_NAMESPACE
 class QEventLoop;
 class QReadWriteLock;
 QT_END_NAMESPACE
 
-#define DRAG_EVENT_URLS "UrlsInDragEvent"
+//#define DRAG_EVENT_URLS "UrlsInDragEvent"
+#define DRAG_EVENT_URLS ((getuid()==0) ? (QString(getlogin())+"_RootUrlsInDragEvent") :(QString(getlogin())+"_UrlsInDragEvent"))
+//临时解决一普通用户使用共享内存的时候，其他用户不能访问问题，增加用户名可解决多个用户同时访问共享内存的问题
+//临时解决root用户使用共享内存后其它用户无法使用的问题，但可能会造成内存占用过大的问题 unistd.h在此处被使用，后面若有更换的解决办法，此处应被修改
 
 class FileSystemNode;
 class DAbstractFileInfo;
@@ -220,6 +225,7 @@ signals:
     void enabledSortChanged(bool enabledSort);
     void newFileByInternal(const DUrl &url);
     void requestSelectFiles(const QList<DUrl> &urls);
+    void sigJobFinished();
 
 protected:
     bool remove(const DUrl &url);
@@ -232,7 +238,8 @@ private:
 
     bool isDir(const FileSystemNodePointer &node) const;
 
-    bool sort(const DAbstractFileInfoPointer &parentInfo, QList<FileSystemNode *> &list) const;
+    bool sort(const DAbstractFileInfoPointer &parentInfo, QList<FileSystemNodePointer> &list) const;
+    bool doSortBusiness(bool emitDataChange);
 
     const FileSystemNodePointer createNode(FileSystemNode *parent, const DAbstractFileInfoPointer &info, QReadWriteLock *lock = nullptr);
 
@@ -249,8 +256,12 @@ private:
 
     bool beginRemoveRows(const QModelIndex &parent, int first, int last);
     void endRemoveRows();
+    //fix bug释放jobcontroller
+    bool releaseJobController();
     QDir::Filters m_filters; //仅记录非回收站文件过滤规则
     bool isFirstRun = true; //判断是否首次运行
+    bool isNeedToBreakBusyCase = false; // 停止那些忙的流程 // bug 26972, 27384
+    QMutex   m_mutex; // 对当前文件资源进行单操作 // bug 26972
 
 private:
 
@@ -273,6 +284,10 @@ private:
 
     Q_DECLARE_PRIVATE(DFileSystemModel)
     Q_DISABLE_COPY(DFileSystemModel)
+public:
+     bool ignoreDropFlag = false; //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时设置其为true，
+                                  //不调用candrop，节省时间,bug#10926
+     bool isDesktop = false; //紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
 };
 
 #endif // DFILESYSTEMMODEL_H

@@ -52,6 +52,9 @@ public:
     void initUiParameters();
     void initUiLayout();
 
+    QString filteringText(const QString& text); //bug 26533
+    void updateLineEditText(QLineEdit* lineEdit, const QString& defaultValue = ""); //bug 26533
+
     DDesktopRenameDialog* q_ptr{ nullptr };
 
     QLabel* m_titleLabel{ nullptr };
@@ -173,6 +176,7 @@ void DDesktopRenameDialogPrivate::initUiParameters()
     tagLabel = std::get<0>(m_modeThreeItemsForSNNumber);
     tagLabel->setText(QObject::tr("+SN:"));
     contentLineEdit = std::get<1>(m_modeThreeItemsForSNNumber);
+    contentLineEdit->setPlaceholderText(QObject::tr("Required"));
     contentLineEdit->setFixedSize(QSize{275, 25});
     contentLineEdit->setValidator(m_validator);
     contentLineEdit->setText(QString{"1"});
@@ -300,7 +304,26 @@ void DDesktopRenameDialogPrivate::initUiLayout()
     m_mainFrame->setLayout(m_mainLayout);
 }
 
+QString DDesktopRenameDialogPrivate::filteringText(const QString& text)
+{
+    if(text.isEmpty())
+        return text;
 
+    QString readyText = text;
+    return readyText.remove(QRegExp("[\\\\/:\\*\\?\"<>|%&]"));
+}
+
+void DDesktopRenameDialogPrivate::updateLineEditText(QLineEdit* lineEdit, const QString& defaultValue)
+{
+    QString olderText = lineEdit->text();
+    QString text = filteringText(olderText);
+    if(olderText != text){
+        lineEdit->setText(text);
+    }
+    if (text.isEmpty()) {
+        lineEdit->setText(defaultValue);
+    }
+}
 
 DDesktopRenameDialog::DDesktopRenameDialog(QWidget* const parent)
                   :DDialog{ parent },
@@ -336,6 +359,9 @@ void DDesktopRenameDialog::initConnect()
 
     connect(std::get<1>(d->m_modeOneItemsForFinding), &QLineEdit::textChanged, this, [=](){
         onVisibleChanged(true);
+    });
+    connect(std::get<1>(d->m_modeOneItemsForReplacing), &QLineEdit::textChanged, this, [=](){
+        onReplaceTextChanged();
     });
     connect(std::get<1>(d->m_modeTwoItemsForAdding), &QLineEdit::textChanged, this, [=](){
         onVisibleChanged(true);
@@ -432,6 +458,10 @@ QPair<QString, QString> DDesktopRenameDialog::getModeThreeContent()const noexcep
     QString fileName{ std::get<1>(d->m_modeThreeItemsForFileName)->text() };
     QString numberStr{ std::get<1>(d->m_modeThreeItemsForSNNumber)->text() };
 
+    if(numberStr.isEmpty()){ // if the number is empty should set one default value
+        numberStr = QString{"1"};
+    }
+
     return QPair<QString, QString>{ fileName, numberStr};
 }
 
@@ -491,7 +521,10 @@ void DDesktopRenameDialog::onContentChangedForCustomzedSN(const QString &content
         lineEditForSNNumber->setText(QString{"1"});
 
     }catch(...){
-        lineEditForSNNumber->setText(QString{"1"});
+        if(!numberStr.empty()) // bug 26538: can edit the number
+        {
+            lineEditForSNNumber->setText(QString{"1"});
+        }
     }
 }
 
@@ -508,6 +541,14 @@ void DDesktopRenameDialog::setVisible(bool visible)
     emit visibleChanged(visible);
 }
 
+void DDesktopRenameDialog::onReplaceTextChanged()noexcept
+{
+    DDesktopRenameDialogPrivate* const d{ d_func() };
+
+    QLineEdit* lineEdit{ std::get<1>(d->m_modeOneItemsForReplacing) };
+
+    d->updateLineEditText(lineEdit);
+}
 
 void DDesktopRenameDialog::onVisibleChanged(bool visible)noexcept
 {
@@ -519,7 +560,10 @@ void DDesktopRenameDialog::onVisibleChanged(bool visible)noexcept
         {
             case 0:
             {
-                QLineEdit* lineEdit{ std::get<1>(d->m_modeOneItemsForFinding) };
+                // for finding
+                QLineEdit* lineEdit = { std::get<1>(d->m_modeOneItemsForFinding) };
+
+                d->updateLineEditText(lineEdit);
                 setRenameButtonStatus(!lineEdit->text().isEmpty());
                 lineEdit->setFocus();
                 break;
@@ -527,6 +571,8 @@ void DDesktopRenameDialog::onVisibleChanged(bool visible)noexcept
             case 1:
             {
                 QLineEdit* lineEdit{ std::get<1>(d->m_modeTwoItemsForAdding) };
+
+                d->updateLineEditText(lineEdit);
                 setRenameButtonStatus(!lineEdit->text().isEmpty());
                 lineEdit->setFocus();
                 break;
@@ -534,8 +580,14 @@ void DDesktopRenameDialog::onVisibleChanged(bool visible)noexcept
             case 2:
             {
                 QLineEdit* lineEdit{ std::get<1>(d->m_modeThreeItemsForFileName) };
+
+                d->updateLineEditText(lineEdit);
                 setRenameButtonStatus(!lineEdit->text().isEmpty());
                 lineEdit->setFocus();
+
+                QLineEdit* lineEditForSNNumber{ std::get<1>(d->m_modeThreeItemsForSNNumber) };
+                d->updateLineEditText(lineEditForSNNumber,"1");
+
                 break;
             }
             default:

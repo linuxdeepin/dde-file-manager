@@ -27,6 +27,7 @@
 
 #include <QLabel>
 #include <QStack>
+#include <QScopedPointer>
 
 QT_BEGIN_NAMESPACE
 class QTextEdit;
@@ -34,6 +35,7 @@ class QGraphicsOpacityEffect;
 QT_END_NAMESPACE
 
 class FileIconItemEdit;
+class FileIconItemPrivate;
 class FileIconItem : public QFrame
 {
     Q_OBJECT
@@ -42,6 +44,7 @@ class FileIconItem : public QFrame
 
 public:
     explicit FileIconItem(QWidget *parent = 0);
+    ~FileIconItem() override;
 
     qreal opacity() const;
     void setOpacity(qreal opacity);
@@ -64,6 +67,13 @@ private slots:
     void popupEditContentMenu();
     void editUndo();
     void editRedo();
+
+    /**
+     * @brief showAlertMessage 显示提示信息
+     * @param text  提示内容
+     * @param duration  显示时间，默认3秒
+     */
+    void showAlertMessage(const QString &text, int duration = 3000);
 
 protected:
     void updateEditorGeometry();
@@ -90,6 +100,11 @@ private:
     friend class DIconItemDelegate;
     friend class DFileView;
     friend class DFileViewHelper;
+
+    QScopedPointer<FileIconItemPrivate> d_ptr;
+
+    Q_DECLARE_PRIVATE(FileIconItem)
+    Q_DISABLE_COPY(FileIconItem)
 };
 
 #endif // FILEITEM_H

@@ -19,419 +19,76 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmvaultrecoverykeypages.h"
+#include "vault/interfaceactivevault.h"
+#include "controllers/vaultcontroller.h"
 
-#include "singleton.h"
-#include "gvfs/secretmanager.h"
-#include "cryptoutils.h"
-
-#include <QLabel>
 #include <QPlainTextEdit>
+#include <QAbstractButton>
+#include <DToolTip>
+#include <DFloatingWidget>
+#include <QTimer>
 #include <QVBoxLayout>
-#include <QFileDialog>
 
-#include <DFloatingButton>
-#include <DPasswordEdit>
-#include <QSaveFile>
-
-DFM_BEGIN_NAMESPACE
-
-VaultAskCreateKeyPage::VaultAskCreateKeyPage(QWidget *parent)
-    : QWidget (parent)
+// 密钥最大长度
+#define MAX_KEY_LENGTH (32)
+DWIDGET_USE_NAMESPACE
+class DFMVaultRecoveryKeyPagesPrivate
 {
-    QLabel * description = new QLabel(tr("Do you want to generate a key in case that you forgot the password?"), this);
-    description->setAlignment(Qt::AlignHCenter);
-
-    m_nextButton = new QPushButton(tr("Generate key"), this);
-    m_skipButton = new QPushButton(tr("Skip"), this);
-
-    DIconButton * icon = new DIconButton(this);
-    icon->setFlat(true);
-    icon->setIcon(QIcon::fromTheme("dfm_lock"));
-    icon->setIconSize(QSize(64, 64));
-    icon->setWindowFlags(Qt::WindowTransparentForInput);
-    icon->setFocusPolicy(Qt::NoFocus);
-    icon->setMinimumHeight(64);
-
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    layout->addStretch();
-    layout->addWidget(icon);
-    layout->addWidget(description);
-    layout->addStretch();
-    layout->addWidget(m_nextButton);
-    layout->addWidget(m_skipButton);
-
-    connect(m_nextButton, &QAbstractButton::clicked, this, &VaultAskCreateKeyPage::next);
-    connect(m_skipButton, &QAbstractButton::clicked, this, &VaultAskCreateKeyPage::skip);
-}
-
-VaultAskCreateKeyPage::~VaultAskCreateKeyPage()
-{
-
-}
-
-void VaultAskCreateKeyPage::next()
-{
-    if (!Singleton<SecretManager>::instance()->lookupVaultPassword().isEmpty()) {
-        emit requestRedirect(VaultController::makeVaultUrl("/generated_key", "recovery_key"));
-    } else {
-        emit requestRedirect(VaultController::makeVaultUrl("/verify", "recovery_key"));
-    }
-}
-
-void VaultAskCreateKeyPage::skip()
-{
-    if (!Singleton<SecretManager>::instance()->lookupVaultPassword().isEmpty()) {
-        Singleton<SecretManager>::instance()->clearVaultPassword();
-    }
-    emit requestRedirect(VaultController::makeVaultUrl());
-}
-
-// ----------------------------------------------
-
-VaultVerifyUserPage::VaultVerifyUserPage(QWidget *parent)
-    : QWidget (parent)
-{
-    QLabel * description = new QLabel(tr("Enter the vault password"), this);
-    description->setAlignment(Qt::AlignHCenter);
-
-    m_unlockButton = new DFloatingButton(DStyle::SP_UnlockElement, this);
-    m_passwordEdit = new DPasswordEdit(this);
-
-    DIconButton * icon = new DIconButton(this);;
-    icon->setFlat(true);
-    icon->setIcon(QIcon::fromTheme("dfm_lock"));
-    icon->setIconSize(QSize(64, 64));
-    icon->setWindowFlags(Qt::WindowTransparentForInput);
-    icon->setFocusPolicy(Qt::NoFocus);
-    icon->setMinimumHeight(64);
-
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    layout->addStretch();
-    layout->addWidget(icon);
-    layout->addWidget(description);
-    layout->addWidget(m_passwordEdit);
-    layout->addWidget(m_unlockButton);
-    layout->addStretch();
-
-    layout->setAlignment(m_unlockButton, Qt::AlignHCenter);
-
-    connect(m_unlockButton, &QAbstractButton::clicked, this, &VaultVerifyUserPage::unlock);
-}
-
-VaultVerifyUserPage::~VaultVerifyUserPage()
-{
-
-}
-
-void VaultVerifyUserPage::unlock()
-{
-    m_unlockButton->setDisabled(true);
-    VaultController::lockVault();
-    DSecureString passwordString(m_passwordEdit->text());
-    bool succ = VaultController::unlockVault(passwordString);
-    if (succ) {
-        // save password to GNOME keyring so we can use it later.
-        Singleton<SecretManager>::instance()->storeVaultPassword(passwordString);
-        m_passwordEdit->clear();
-        emit requestRedirect(VaultController::makeVaultUrl("/generated_key", "recovery_key"));
-    }
-    m_unlockButton->setDisabled(false);
-}
-
-// ----------------------------------------------
-
-VaultGeneratedKeyPage::VaultGeneratedKeyPage(QWidget *parent)
-    : QWidget (parent)
-{
-    QVBoxLayout * layout = new QVBoxLayout(this);
-
-    DIconButton * icon = new DIconButton(this);
-    icon->setFlat(true);
-    icon->setIcon(QIcon::fromTheme("dfm_lock"));
-    icon->setIconSize(QSize(64, 64));
-    icon->setWindowFlags(Qt::WindowTransparentForInput);
-    icon->setFocusPolicy(Qt::NoFocus);
-    icon->setMinimumHeight(64);
-
-    QLabel * title = new QLabel(tr("Find your recovery key below") + '\n' +
-                                tr("Take good care of the recovery key by printing, writing down or saving it to a USB flash drive"), this);
-    QLabel * description = new QLabel(tr("Your recovery key is as important as your password. Do not save the key file on this computer"), this);
-    title->setAlignment(Qt::AlignHCenter);
-    title->setWordWrap(true);
-    description->setAlignment(Qt::AlignHCenter);
-    description->setWordWrap(true);
-    QFont font = title->font();
-    font.setBold(true);
-    title->setFont(font);
-
-    m_generatedKeyEdit = new QPlainTextEdit(this);
-    m_generatedKeyEdit->setReadOnly(true);
-
-    m_saveFileButton = new QPushButton(tr("Save"), this);
-    m_finishButton = new QPushButton(tr("Done"), this);
-
-    layout->addStretch();
-    layout->addWidget(icon);
-    layout->addWidget(title);
-    layout->addWidget(description);
-    layout->addWidget(m_generatedKeyEdit);
-    layout->addStretch();
-    layout->addWidget(m_saveFileButton);
-    layout->addWidget(m_finishButton);
-
-    connect(m_saveFileButton, &QAbstractButton::clicked, this, &VaultGeneratedKeyPage::saveKeyFile);
-    connect(m_finishButton, &QAbstractButton::clicked, this, &VaultGeneratedKeyPage::finishButtonPressed);
-}
-
-VaultGeneratedKeyPage::~VaultGeneratedKeyPage()
-{
-    clearData();
-}
-
-void VaultGeneratedKeyPage::startKeyGeneration()
-{
-    DSecureString password = Singleton<SecretManager>::instance()->lookupVaultPassword();
-
-    QFile encryptedFile(VaultController::makeVaultLocalPath("dde-vault.config", "vault_encrypted"));
-    encryptedFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
-    QDataStream fileStream(&encryptedFile);
-
-    CryptoUtils::byte key[CryptoUtils::AES_128_KEY_SIZE], iv[CryptoUtils::AES_128_BLOCK_SIZE];
-    CryptoUtils::secure_string origStr(password.toLatin1()), encryptedStr;
-    CryptoUtils::init_aes_128_cipher();
-    CryptoUtils::gen_aes_128_params(key, iv);
-    CryptoUtils::aes_128_encrypt(key, iv, origStr, encryptedStr);
-
-    int vaultConfigVersion = 1;
-    QByteArray encryptedData(encryptedStr.data(), encryptedStr.length());
-    QByteArray ivData((char *)iv, CryptoUtils::AES_128_BLOCK_SIZE);
-
-    fileStream << vaultConfigVersion << ivData << encryptedData;
-
-    encryptedFile.flush();
-    encryptedFile.close();
-
-    DSecureString ivHexStr(CryptoUtils::bin_to_hex(iv, CryptoUtils::AES_128_BLOCK_SIZE).data());
-    DSecureString keyHexStr(CryptoUtils::bin_to_hex(key, CryptoUtils::AES_128_KEY_SIZE).data());
-
-    m_generatedKeyEdit->setPlainText(createRecoveryKeyString(ivHexStr, keyHexStr));
-}
-
-void VaultGeneratedKeyPage::saveKeyFile()
-{
-    QString savePath = QFileDialog::getSaveFileName(this, tr("Save your vault recovery key"),
-                                                    QDir::home().absoluteFilePath(tr("File Vault Recovery Key")),
-                                                    tr("File Vault Recovery Key (*.txt)"));
-    if (savePath.isEmpty()) return;
-
-    QSaveFile file(savePath);
-    file.open(QIODevice::WriteOnly | QIODevice::Truncate);
-    QTextStream fileStream(&file);
-    fileStream << m_generatedKeyEdit->toPlainText();
-    file.commit();
-}
-
-void VaultGeneratedKeyPage::finishButtonPressed()
-{
-    clearData();
-    emit requestRedirect(VaultController::makeVaultUrl());
-}
-
-void VaultGeneratedKeyPage::clearData()
-{
-    Singleton<SecretManager>::instance()->clearVaultPassword();
-    m_generatedKeyEdit->clear();
-}
-
-DSecureString VaultGeneratedKeyPage::createRecoveryKeyString(const DSecureString &ivHexString, const DSecureString &keyHexString)
-{
-    return tr("File Vault Recovery Key") + '\n' + '\n' +
-           tr("To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.") + '\n' +
-           tr("Key ID: %1").arg(ivHexString) + '\n' + '\n' +
-           tr("If they are identical, then use the following key to retrieve your vault password.") + '\n' +
-           tr("Recovery Key: %1").arg(keyHexString) + '\n' + '\n' +
-           tr("If they do not match, then this is not the right key, please try another recovery key.") + '\n';
-}
-
-// ----------------------------------------------
-
-VaultVerifyRecoveryKeyPage::VaultVerifyRecoveryKeyPage(QWidget *parent)
-    : QWidget (parent)
-{
-    QVBoxLayout * layout = new QVBoxLayout(this);
-
-    DIconButton * icon = new DIconButton(this);
-    icon->setFlat(true);
-    icon->setIcon(QIcon::fromTheme("dfm_lock"));
-    icon->setIconSize(QSize(64, 64));
-    icon->setWindowFlags(Qt::WindowTransparentForInput);
-    icon->setFocusPolicy(Qt::NoFocus);
-    icon->setMinimumHeight(64);
-
-    QLabel * title = new QLabel(tr("Compare the following text with the key ID in your recovery key file") + '\n' +
-                                tr("If they are identical, input the recovery key below to retrieve your vault password"), this);
-    title->setAlignment(Qt::AlignHCenter);
-    title->setWordWrap(true);
-    QFont font = title->font();
-    font.setBold(true);
-    title->setFont(font);
-
-    m_verifyKeyEdit = new QLineEdit(this);
-    m_verifyKeyEdit->setReadOnly(true);
-    m_verifyKeyEdit->setFocusPolicy(Qt::NoFocus);
-    m_recoveryKeyEdit = new QLineEdit(this);
-
-    m_retrievePasswordButton = new QPushButton(tr("Retrieve password"), this);
-
-    layout->addStretch();
-    layout->addWidget(icon);
-    layout->addWidget(title);
-    layout->addWidget(m_verifyKeyEdit);
-    layout->addWidget(m_recoveryKeyEdit);
-    layout->addStretch();
-    layout->addWidget(m_retrievePasswordButton);
-
-    connect(m_retrievePasswordButton, &QAbstractButton::clicked, this, &VaultVerifyRecoveryKeyPage::startVerifyKey);
-}
-
-VaultVerifyRecoveryKeyPage::~VaultVerifyRecoveryKeyPage()
-{
-
-}
-
-void VaultVerifyRecoveryKeyPage::preparePage()
-{
-    QFile encryptedFile(VaultController::makeVaultLocalPath("dde-vault.config", "vault_encrypted"));
-    if (!encryptedFile.exists()) {
-        emit requestRedirect(VaultController::makeVaultUrl());
-    }
-
-    encryptedFile.open(QIODevice::ReadOnly);
-    QDataStream stream(&encryptedFile);
-
-    int version;
-    stream >> version;
-    stream >> m_ivData;
-    stream >> m_encryptedPasswordData;
-
-    encryptedFile.close();
-
-    CryptoUtils::secure_string ivHexStr = CryptoUtils::bin_to_hex((CryptoUtils::byte *)m_ivData.data(), m_ivData.length());
-    m_verifyKeyEdit->setText(ivHexStr.data());
-}
-
-void VaultVerifyRecoveryKeyPage::startVerifyKey()
-{
-    m_retrievePasswordButton->setDisabled(true);
-    bool succ = verifyKey();
-    if (succ) {
-        emit requestRedirect(VaultController::makeVaultUrl("/password", "recovery_key"));
-    }
-    m_retrievePasswordButton->setDisabled(false);
-}
-
-bool VaultVerifyRecoveryKeyPage::verifyKey()
-{
-    DSecureString encryptedKeyHexString(m_recoveryKeyEdit->text().trimmed());
-    if (!encryptedKeyHexString.isEmpty() && !m_verifyKeyEdit->text().isEmpty()) {
-        if (encryptedKeyHexString.length() != CryptoUtils::AES_128_KEY_SIZE * 2) {
-            return false;
+public:
+    ~DFMVaultRecoveryKeyPagesPrivate(){
+        if (tooltip){
+            tooltip->deleteLater();
         }
-        CryptoUtils::byte encryptedKeyData[CryptoUtils::AES_128_KEY_SIZE];
-        CryptoUtils::secure_string keyHexStr(encryptedKeyHexString.toLatin1()),
-                                   encryptedPasswordStr(m_encryptedPasswordData.data()),
-                                   retrievedPasswordStr;
-        CryptoUtils::hex_to_bin(keyHexStr, encryptedKeyData, CryptoUtils::AES_128_KEY_SIZE);
-        CryptoUtils::aes_128_decrypt(encryptedKeyData, (CryptoUtils::byte *)m_ivData.data(),
-                                     encryptedPasswordStr, retrievedPasswordStr);
-
-        DSecureString password(retrievedPasswordStr.data());
-        Singleton<SecretManager>::instance()->storeVaultPassword(password);
-
-        return true;
     }
 
-    return false;
-}
-
-// ----------------------------------------------
-
-VaultPasswordPage::VaultPasswordPage(QWidget *parent)
-    : QWidget (parent)
-{
-    QLabel * description = new QLabel(tr("Here is your vault password"), this);
-    description->setAlignment(Qt::AlignHCenter);
-
-    m_finishButton = new QPushButton(tr("OK"), this);
-    m_passwordEdit = new QLineEdit(this);
-    m_passwordEdit->setReadOnly(true);
-
-    DIconButton * icon = new DIconButton(this);
-    icon->setFlat(true);
-    icon->setIcon(QIcon::fromTheme("dfm_lock"));
-    icon->setIconSize(QSize(64, 64));
-    icon->setWindowFlags(Qt::WindowTransparentForInput);
-    icon->setFocusPolicy(Qt::NoFocus);
-    icon->setMinimumHeight(64);
-
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    layout->addStretch();
-    layout->addWidget(icon);
-    layout->addWidget(description);
-    layout->addWidget(m_passwordEdit);
-    layout->addStretch();
-    layout->addWidget(m_finishButton);
-
-    connect(m_finishButton, &QAbstractButton::clicked, this, &VaultPasswordPage::quitPasswordPage);
-}
-
-VaultPasswordPage::~VaultPasswordPage()
-{
-    m_passwordEdit->clear();
-}
-
-void VaultPasswordPage::showPassword()
-{
-    DSecureString password = Singleton<SecretManager>::instance()->lookupVaultPassword();
-    if (!password.isEmpty()) {
-        m_passwordEdit->setText(password);
-        Singleton<SecretManager>::instance()->clearVaultPassword();
-    }
-}
-
-void VaultPasswordPage::quitPasswordPage()
-{
-    m_passwordEdit->clear();
-    emit requestRedirect(VaultController::makeVaultUrl());
-}
-
-// ----------------------------------------------
+    DToolTip *tooltip {nullptr};
+    DFloatingWidget *frame {nullptr};
+};
 
 DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
-    : DFMVaultPages(parent)
+    : DFMVaultPageBase(parent)
+    , d_ptr(new DFMVaultRecoveryKeyPagesPrivate())
 {
-    VaultAskCreateKeyPage * askPage = new VaultAskCreateKeyPage(this);
-    VaultVerifyUserPage * verifyPage = new VaultVerifyUserPage(this);
-    VaultGeneratedKeyPage * generatedKeyPage = new VaultGeneratedKeyPage(this);
-    VaultVerifyRecoveryKeyPage * enterRecoveryKeyPage = new VaultVerifyRecoveryKeyPage(this);
-    VaultPasswordPage * vaultPasswordPage = new VaultPasswordPage(this);
+    this->setIcon(QIcon::fromTheme("dfm_vault"));
+    this->setFixedSize(396, 218);
 
-    connect(askPage, &VaultAskCreateKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
-    connect(verifyPage, &VaultVerifyUserPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
-    connect(generatedKeyPage, &VaultGeneratedKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
-    connect(enterRecoveryKeyPage, &VaultVerifyRecoveryKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
-    connect(vaultPasswordPage, &VaultPasswordPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
+    // 标题
+    QLabel *pTitle = new QLabel(tr("Unlock by Key"), this);
+    QFont font = pTitle->font();
+    font.setPixelSize(16);
+    pTitle->setFont(font);
+    pTitle->setAlignment(Qt::AlignHCenter);
 
-    insertPage("ask", askPage);
-    insertPage("verify", verifyPage);
-    insertPage("generated_key", generatedKeyPage);
-    insertPage("retrieve_password", enterRecoveryKeyPage);
-    insertPage("password", vaultPasswordPage);
+    // 密钥编辑框
+    m_recoveryKeyEdit = new QPlainTextEdit(this);
+    m_recoveryKeyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
+    m_recoveryKeyEdit->setMaximumBlockCount(MAX_KEY_LENGTH + 3);
+    m_recoveryKeyEdit->installEventFilter(this);
 
-    connect(this, &DFMVaultPages::rootPageChanged, this, &DFMVaultRecoveryKeyPages::onRootPageChanged);
-    connect(this, &DFMVaultRecoveryKeyPages::requestCreateRecoveryKey, generatedKeyPage, &VaultGeneratedKeyPage::startKeyGeneration);
-    connect(this, &DFMVaultRecoveryKeyPages::requestPrepareRetrievePasswordPage, enterRecoveryKeyPage, &VaultVerifyRecoveryKeyPage::preparePage);
-    connect(this, &DFMVaultRecoveryKeyPages::requestShowPassword, vaultPasswordPage, &VaultPasswordPage::showPassword);
+    // 主视图
+    QFrame *mainFrame = new QFrame(this);
+    // 布局
+    QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
+    mainLayout->setMargin(0);
+    mainLayout->addWidget(pTitle);
+    mainLayout->addWidget(m_recoveryKeyEdit);
+
+    mainFrame->setLayout(mainLayout);
+    addContent(mainFrame);
+
+    QStringList btnList({tr("Cancel"), tr("Unlock")});
+    addButton(btnList[0], false);
+    addButton(btnList[1], true, ButtonType::ButtonRecommend);
+    getButton(1)->setEnabled(false);
+
+
+    // 防止点击按钮后界面隐藏
+    setOnButtonClickedClose(false);
+
+    connect(this, &DFMVaultRecoveryKeyPages::buttonClicked, this, &DFMVaultRecoveryKeyPages::onButtonClicked);
+    connect(m_recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &DFMVaultRecoveryKeyPages::recoveryKeyChanged);
+    connect(VaultController::ins(), &VaultController::signalUnlockVault, this, &DFMVaultRecoveryKeyPages::onUnlockVault);
+    connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 }
 
 DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
@@ -439,51 +96,197 @@ DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
 
 }
 
-QPair<DUrl, bool> DFMVaultRecoveryKeyPages::requireRedirect(VaultController::VaultState state)
+DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
 {
-    switch (state) {
-    case VaultController::NotExisted:
-        return {VaultController::makeVaultUrl("/", "setup"), true};
-    default:
-        break;
-    }
-
-    return DFMVaultPages::requireRedirect(state);
+    static DFMVaultRecoveryKeyPages s_instance;
+    return &s_instance;
 }
 
-QString DFMVaultRecoveryKeyPages::pageString(const DUrl &url)
+void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duration)
 {
-    // ask -> verify -> generated_key
-    // recover_password -> password
-    if (url.path() == "/ask") {
-        return "ask";
+    Q_D(DFMVaultRecoveryKeyPages);
+
+    if (!d->tooltip){
+        d->tooltip = new DToolTip(text);
+        d->tooltip->setObjectName("AlertTooltip");
+        d->tooltip->setForegroundRole(DPalette::TextWarning);
+        d->tooltip->setWordWrap(true);
+
+        d->frame = new DFloatingWidget;
+        d->frame->setFramRadius(DStyle::pixelMetric(style(), DStyle::PM_FrameRadius));
+        d->frame->setStyleSheet("background-color: rgba(247, 247, 247, 0.6);");
+        d->frame->setWidget(d->tooltip);
     }
-    if (url.path() == "/verify") {
-        return "verify";
+
+    d->frame->setParent(m_recoveryKeyEdit);
+
+    d->tooltip->setText(text);
+    if(d->frame->parent()){
+        d->frame->setGeometry(0, 25, 68, 26);
+        d->frame->show();
+        d->frame->adjustSize();
+        d->frame->raise();
     }
-    if (url.path() == "/generated_key") {
-        return "generated_key";
+
+    if (duration < 0) {
+        return;
     }
-    if (url.path() == "/retrieve_password") {
-        return "retrieve_password";
-    }
-    if (url.path() == "/password") {
-        return "password";
-    }
-    return "verify";
+
+    QTimer::singleShot(duration, d->frame, [d] {
+        d->frame->close();
+    });
 }
 
-void DFMVaultRecoveryKeyPages::onRootPageChanged(QString pageStr)
+void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
 {
-    if (pageStr == "generated_key") {
-        if (!Singleton<SecretManager>::instance()->lookupVaultPassword().isEmpty()) {
-            emit requestCreateRecoveryKey();
+    if (index == 1){
+        QString strKey = m_recoveryKeyEdit->toPlainText();
+        strKey.replace("-", "");
+
+        QString strClipher("");
+        if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
+            m_bUnlockByKey = true;
+            VaultController::ins()->unlockVault(strClipher);
+        } else {
+            showAlertMessage(tr("Wrong recovery key"));
         }
-    } else if (pageStr == "retrieve_password") {
-        emit requestPrepareRetrievePasswordPage();
-    } else if (pageStr == "password") {
-        emit requestShowPassword();
+
+        return;
+    }
+
+    close();
+}
+
+int DFMVaultRecoveryKeyPages::afterRecoveryKeyChanged(QString &str)
+{
+    if (str.isEmpty()){
+        return -1;
+    }
+
+    int location = m_recoveryKeyEdit->textCursor().position(); // 计算当前光标位置
+    int srcLength = str.length();   // 用于计算原有字符串中的“-”数量
+    //清除所有的“-”
+    str.replace("-", "");
+    int minusNumber = srcLength - str.length(); // 原有字符串中的“-”数量
+
+    int index = 4;
+    int minusNum = 0;
+
+    int length = str.length();
+    while (index < length) {
+        if (index % 4 == 0){
+            str.insert(index + minusNum, "-");
+            minusNum++;
+        }
+        index++;
+    }
+
+    //计算添加“-”后，重新计算下光标的位置，
+    if (minusNum > minusNumber) {
+        location += minusNum - minusNumber;
+    }
+
+    if (location > str.length()) {
+        location = str.length();
+    } else if (location < 0) {
+        location = 0;
+    }
+
+    return location;
+}
+
+void DFMVaultRecoveryKeyPages::showEvent(QShowEvent *event)
+{
+    m_recoveryKeyEdit->clear();
+    m_bUnlockByKey = false;
+    event->accept();
+}
+
+void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
+{
+    QString key = m_recoveryKeyEdit->toPlainText();
+    int length = key.length();
+    int maxLength = MAX_KEY_LENGTH + 7;
+
+    if (key.isEmpty()){
+        getButton(1)->setEnabled(false);
+    } else {
+        getButton(1)->setEnabled(true);
+    }
+
+    // 限制密钥输入框只能输入数字、字母、以及+/-
+    QRegExp rx("[a-zA-Z0-9-+/]+");
+    QString res("");
+    int pos = 0;
+    while ((pos = rx.indexIn(key, pos)) != -1)
+    {
+        res += rx.cap(0);
+        pos += rx.matchedLength();
+    }
+    key = res;
+
+    m_recoveryKeyEdit->blockSignals(true);
+    // 限制输入的最大长度
+    if (length > maxLength){
+        int position = m_recoveryKeyEdit->textCursor().position();
+        QTextCursor textCursor = m_recoveryKeyEdit->textCursor();
+        key.remove(position-(length - maxLength), length - maxLength);
+        m_recoveryKeyEdit->setPlainText(key);
+        textCursor.setPosition(position - (length-maxLength));
+        m_recoveryKeyEdit->setTextCursor(textCursor);
+
+        m_recoveryKeyEdit->blockSignals(false);
+        return;
+    }
+
+    int position = afterRecoveryKeyChanged(key);
+    m_recoveryKeyEdit->setPlainText(key);
+
+    QTextCursor textCursor = m_recoveryKeyEdit->textCursor();
+    textCursor.setPosition(position);
+    m_recoveryKeyEdit->setTextCursor(textCursor);
+
+    m_recoveryKeyEdit->blockSignals(false);
+}
+
+void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
+{
+    if (m_bUnlockByKey){
+        if (state == 0){
+            // success
+            emit accepted();
+            close();
+        }else {
+            // others
+            QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
+            DDialog dialog(this);
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(errMsg);
+            dialog.addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+            dialog.exec();
+        }
+        m_bUnlockByKey = false;
     }
 }
 
-DFM_END_NAMESPACE
+bool DFMVaultRecoveryKeyPages::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress){
+        QPlainTextEdit *edit = qobject_cast<QPlainTextEdit *>(watched);
+        if (edit == m_recoveryKeyEdit) {
+            QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
+
+            switch (keyEvent->key()) {
+            case Qt::Key_Minus:
+            case Qt::Key_Enter:
+            case Qt::Key_Return:    // 过滤"-"以及换行操作
+                return true;
+            default:
+                break;
+            }
+        }
+    }
+
+    return DDialog::eventFilter(watched, event);
+}
+

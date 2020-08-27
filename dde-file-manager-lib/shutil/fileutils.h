@@ -63,7 +63,8 @@ public:
     static QIcon searchAppIcon(const DesktopFile &app,
       const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
     static QString formatSize(qint64 num , bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
-    static QString diskUsageString(quint64 usedSize, quint64 totalSize, QString strVolTag = "");
+    static QString diskUsageString(quint64 &usedSize, quint64 &totalSize, QString strVolTag = "");
+    static QString defaultOpticalSize(const QString &tagName, quint64 &usedSize, quint64 &totalSize);
     static DUrl newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString& baseName, const QString& suffix);
     static QString newDocmentName(QString targetdir, const QString& baseName, const QString& suffix);
     static bool cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix, WId windowId);
@@ -119,7 +120,9 @@ public:
     static void umountAVFS();
 
     static bool isDesktopFile(const QString& filePath);
+    static bool isDesktopFile(const QFileInfo &fileInfo);
     static bool isDesktopFileOptmise(const QString& filePath);
+    static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
 };
 
 #endif // FILEUTILS_H
