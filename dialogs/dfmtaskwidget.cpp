@@ -30,6 +30,7 @@
 #include <DGuiApplicationHelper>
 #include <QTimer>
 #include <QException>
+#include <QPainterPath>
 
 #include "app/define.h"
 #include "dfileservices.h"
