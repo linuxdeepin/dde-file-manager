@@ -1,194 +1,194 @@
-//#include "dialogs/dialogmanager.h"
-//#include "dfmevent.h"
-//#include "fileoperations/filejob.h"
+#include "dialogs/dialogmanager.h"
+#include "dfmevent.h"
+#include "fileoperations/filejob.h"
 
-//#include <gtest/gtest.h>
-//#include <QWidget>
+#include <gtest/gtest.h>
+#include <QWidget>
 
-//namespace  {
-//    class TestDialogManager : public testing::Test
-//    {
-//    public:
-//        void SetUp() override
-//        {
-//            m_pTester = new DialogManager();
-//            std::cout << "start TestDialogManager";
-//        }
-//        void TearDown() override
-//        {
-//            delete m_pTester;
-//            m_pTester = nullptr;
-//            std::cout << "end TestDialogManager";
-//        }
-//    public:
-//        DialogManager *m_pTester;
-//    };
-//}
+namespace  {
+    class TestDialogManager : public testing::Test
+    {
+    public:
+        void SetUp() override
+        {
+            m_pTester = new DialogManager();
+            std::cout << "start TestDialogManager";
+        }
+        void TearDown() override
+        {
+            delete m_pTester;
+            m_pTester = nullptr;
+            std::cout << "end TestDialogManager";
+        }
+    public:
+        DialogManager *m_pTester;
+    };
+}
 
-//TEST_F(TestDialogManager, testInit)
-//{
+TEST_F(TestDialogManager, testInit)
+{
+//    int a = 0;
+}
 
-//}
+TEST_F(TestDialogManager, testGetPropertyPos)
+{
+    int dialogWidth = 800;
+    int dialogHeight = 500;
+    QPoint result = m_pTester->getPropertyPos(dialogWidth, dialogHeight);
+    EXPECT_GT(result.x(), 0);
+    EXPECT_GT(result.y(), 0);
+}
 
-//TEST_F(TestDialogManager, testGetPropertyPos)
-//{
-//    int dialogWidth = 800;
-//    int dialogHeight = 500;
-//    QPoint result = m_pTester->getPropertyPos(dialogWidth, dialogHeight);
-//    EXPECT_GT(result.x(), 0);
-//    EXPECT_GT(result.y(), 0);
-//}
+TEST_F(TestDialogManager, testGetPerportyPos)
+{
+    int dialogWidth = 800;
+    int dialogHeight = 500;
+    int count = 10;
+    int index = 5;
+    QPoint result = m_pTester->getPerportyPos(dialogWidth, dialogHeight, count, index);
+    EXPECT_GT(result.x(), 0);
+    EXPECT_GT(result.y(), 0);
+}
 
-//TEST_F(TestDialogManager, testGetPerportyPos)
-//{
-//    int dialogWidth = 800;
-//    int dialogHeight = 500;
-//    int count = 10;
-//    int index = 5;
-//    QPoint result = m_pTester->getPerportyPos(dialogWidth, dialogHeight, count, index);
-//    EXPECT_GT(result.x(), 0);
-//    EXPECT_GT(result.y(), 0);
-//}
+TEST_F(TestDialogManager, testIsTaskDialogEmpty)
+{
+    EXPECT_TRUE(m_pTester->isTaskDialogEmpty());
+}
 
-//TEST_F(TestDialogManager, testIsTaskDialogEmpty)
-//{
-//    EXPECT_TRUE(m_pTester->isTaskDialogEmpty());
-//}
+TEST_F(TestDialogManager, testTaskDialog)
+{
+    DTaskDialog *pResult = m_pTester->taskDialog();
+    EXPECT_FALSE(pResult == nullptr);
+}
 
-//TEST_F(TestDialogManager, testTaskDialog)
-//{
-//    DTaskDialog *pResult = m_pTester->taskDialog();
-//    EXPECT_FALSE(pResult == nullptr);
-//}
+TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed0)
+{
+    FileJob job(FileJob::OpticalCheck);
+    job.setJobId("10000");
+    m_pTester->addJob(&job);
 
-//TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed0)
-//{
-//    FileJob job(FileJob::OpticalCheck);
+    QMap<QString, QString> jobDetail;
+    jobDetail.insert("jobId", "10000");
+    QMap<QString, QVariant> response;
+    response.insert("applyToAll", QVariant(false));
+    response.insert("code", QVariant(0));
+    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
+}
+
+TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed1)
+{
+    FileJob job(FileJob::OpticalImageBurn);
+    job.setJobId("10000");
+    m_pTester->addJob(&job);
+
+    QMap<QString, QString> jobDetail;
+    jobDetail.insert("jobId", "10000");
+    QMap<QString, QVariant> response;
+    response.insert("applyToAll", QVariant(false));
+    response.insert("code", QVariant(1));
+    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
+}
+
+TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed2)
+{
+    FileJob job(FileJob::OpticalBlank);
+    job.setJobId("10000");
+    m_pTester->addJob(&job);
+
+    QMap<QString, QString> jobDetail;
+    jobDetail.insert("jobId", "10000");
+    QMap<QString, QVariant> response;
+    response.insert("applyToAll", QVariant(false));
+    response.insert("code", QVariant(2));
+    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
+}
+
+TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed3)
+{
+    FileJob job(FileJob::OpticalBurn);
+    job.setJobId("10000");
+    m_pTester->addJob(&job);
+
+    QMap<QString, QString> jobDetail;
+    jobDetail.insert("jobId", "10000");
+    QMap<QString, QVariant> response;
+    response.insert("applyToAll", QVariant(false));
+    response.insert("code", QVariant(3));
+    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
+}
+
+TEST_F(TestDialogManager, testRemoveJob)
+{
+    FileJob job(FileJob::Restore);
+    job.setJobId("10000");
+    m_pTester->addJob(&job);
+
+    m_pTester->removeJob("10000", true);
+}
+
+TEST_F(TestDialogManager, testGetJobIdByUrl)
+{
+    QString jobId = "10000";
+    DUrl url("file://home");
+
+    FileJob job(FileJob::Delete);
+    job.setJobId(jobId);
+    job.setProperty("pathlist", QVariant(url.toLocalFile()));
+    m_pTester->addJob(&job);
+    QString result = m_pTester->getJobIdByUrl(url);
+
+    EXPECT_STREQ(jobId.toStdString().c_str(), result.toStdString().c_str());
+}
+
+TEST_F(TestDialogManager, testRemoveAllJobs)
+{
+    FileJob job(FileJob::Trash);
+    job.setJobId("10000");
+    m_pTester->addJob(&job);
+
+    m_pTester->removeAllJobs();
+}
+
+TEST_F(TestDialogManager, testUpdateJob)
+{
+//    FileJob job(FileJob::Move);
 //    job.setJobId("10000");
 //    m_pTester->addJob(&job);
 
-//    QMap<QString, QString> jobDetail;
-//    jobDetail.insert("jobId", "10000");
-//    QMap<QString, QVariant> response;
-//    response.insert("applyToAll", QVariant(false));
-//    response.insert("code", QVariant(0));
-//    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-//}
+    m_pTester->updateJob();
+}
 
-//TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed1)
-//{
-//    FileJob job(FileJob::OpticalImageBurn);
-//    job.setJobId("10000");
-//    m_pTester->addJob(&job);
+TEST_F(TestDialogManager, testStartAndStopUpdateJobTimer)
+{
+    m_pTester->startUpdateJobTimer();
 
-//    QMap<QString, QString> jobDetail;
-//    jobDetail.insert("jobId", "10000");
-//    QMap<QString, QVariant> response;
-//    response.insert("applyToAll", QVariant(false));
-//    response.insert("code", QVariant(1));
-//    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-//}
+    m_pTester->stopUpdateJobTimer();
+}
 
-//TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed2)
-//{
-//    FileJob job(FileJob::OpticalBlank);
-//    job.setJobId("10000");
-//    m_pTester->addJob(&job);
+TEST_F(TestDialogManager, testAbortJob)
+{
+    FileJob job(FileJob::Copy);
+    job.setJobId("10000");
+    m_pTester->addJob(&job);
 
-//    QMap<QString, QString> jobDetail;
-//    jobDetail.insert("jobId", "10000");
-//    QMap<QString, QVariant> response;
-//    response.insert("applyToAll", QVariant(false));
-//    response.insert("code", QVariant(2));
-//    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-//}
+    QMap<QString, QString> jobDetail;
+    jobDetail.insert("job1", "10000");
 
-//TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed3)
-//{
-//    FileJob job(FileJob::OpticalBurn);
-//    job.setJobId("10000");
-//    m_pTester->addJob(&job);
+    m_pTester->abortJob(jobDetail);
+}
 
-//    QMap<QString, QString> jobDetail;
-//    jobDetail.insert("jobId", "10000");
-//    QMap<QString, QVariant> response;
-//    response.insert("applyToAll", QVariant(false));
-//    response.insert("code", QVariant(3));
-//    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-//}
+TEST_F(TestDialogManager, testAbortJobByDestinationUrl)
+{
+    QString jobId = "10000";
+    DUrl url("file://home");
 
-//TEST_F(TestDialogManager, testRemoveJob)
-//{
-//    FileJob job(FileJob::Restore);
-//    job.setJobId("10000");
-//    m_pTester->addJob(&job);
+    FileJob job(FileJob::Delete);
+    job.setJobId(jobId);
+    job.setProperty("pathlist", QVariant(url.toLocalFile()));
+    m_pTester->addJob(&job);
 
-//    m_pTester->removeJob("10000", true);
-//}
-
-//TEST_F(TestDialogManager, testGetJobIdByUrl)
-//{
-//    QString jobId = "10000";
-//    DUrl url("file://home");
-
-//    FileJob job(FileJob::Delete);
-//    job.setJobId(jobId);
-//    job.setProperty("pathlist", QVariant(url.toLocalFile()));
-//    m_pTester->addJob(&job);
-//    QString result = m_pTester->getJobIdByUrl(url);
-
-//    EXPECT_STREQ(jobId.toStdString().c_str(), result.toStdString().c_str());
-//}
-
-//TEST_F(TestDialogManager, testRemoveAllJobs)
-//{
-//    FileJob job(FileJob::Trash);
-//    job.setJobId("10000");
-//    m_pTester->addJob(&job);
-
-//    m_pTester->removeAllJobs();
-//}
-
-//TEST_F(TestDialogManager, testUpdateJob)
-//{
-////    FileJob job(FileJob::Move);
-////    job.setJobId("10000");
-////    m_pTester->addJob(&job);
-
-//    m_pTester->updateJob();
-//}
-
-//TEST_F(TestDialogManager, testStartAndStopUpdateJobTimer)
-//{
-//    m_pTester->startUpdateJobTimer();
-
-//    m_pTester->stopUpdateJobTimer();
-//}
-
-//TEST_F(TestDialogManager, testAbortJob)
-//{
-//    FileJob job(FileJob::Copy);
-//    job.setJobId("10000");
-//    m_pTester->addJob(&job);
-
-//    QMap<QString, QString> jobDetail;
-//    jobDetail.insert("job1", "10000");
-
-//    m_pTester->abortJob(jobDetail);
-//}
-
-//TEST_F(TestDialogManager, testAbortJobByDestinationUrl)
-//{
-//    QString jobId = "10000";
-//    DUrl url("file://home");
-
-//    FileJob job(FileJob::Delete);
-//    job.setJobId(jobId);
-//    job.setProperty("pathlist", QVariant(url.toLocalFile()));
-//    m_pTester->addJob(&job);
-
-//    m_pTester->abortJobByDestinationUrl(url);
-//}
+    m_pTester->abortJobByDestinationUrl(url);
+}
 
 //TEST_F(TestDialogManager, testShowCopyMoveToSelfDialog)
 //{
@@ -198,11 +198,11 @@
 ////    m_pTester->showCopyMoveToSelfDialog(jobDetail);
 //}
 
-//TEST_F(TestDialogManager, testShowUrlWrongDialog)
-//{
-//    DUrl url("file://home");
-//    m_pTester->showUrlWrongDialog(url);
-//}
+TEST_F(TestDialogManager, testShowUrlWrongDialog)
+{
+    DUrl url("file://home");
+    m_pTester->showUrlWrongDialog(url);
+}
 
 //TEST_F(TestDialogManager, testShowRunExcutableScriptDialog)
 //{
@@ -409,66 +409,66 @@
 
 //}
 
-//TEST_F(TestDialogManager, testRemovePropertyDialog)
-//{
-//    DUrl url("file://home");
-//    m_pTester->removePropertyDialog(url);
-//}
+TEST_F(TestDialogManager, testRemovePropertyDialog)
+{
+    DUrl url("file://home");
+    m_pTester->removePropertyDialog(url);
+}
 
-//TEST_F(TestDialogManager, testCloseAllPropertyDialog)
-//{
-//    m_pTester->closeAllPropertyDialog();
-//}
+TEST_F(TestDialogManager, testCloseAllPropertyDialog)
+{
+    m_pTester->closeAllPropertyDialog();
+}
 
-//TEST_F(TestDialogManager, testUpdateCloseIndicator)
-//{
-//    m_pTester->updateCloseIndicator();
-//}
+TEST_F(TestDialogManager, testUpdateCloseIndicator)
+{
+    m_pTester->updateCloseIndicator();
+}
 
-//TEST_F(TestDialogManager, testRaiseAllPropertyDialog)
-//{
-//    m_pTester->raiseAllPropertyDialog();
-//}
+TEST_F(TestDialogManager, testRaiseAllPropertyDialog)
+{
+    m_pTester->raiseAllPropertyDialog();
+}
 
-//TEST_F(TestDialogManager, testHandleFocusChanged)
-//{
-//    QWidget old;
-//    QWidget now;
-//    m_pTester->handleFocusChanged(&old, &now);
-//}
+TEST_F(TestDialogManager, testHandleFocusChanged)
+{
+    QWidget old;
+    QWidget now;
+    m_pTester->handleFocusChanged(&old, &now);
+}
 
-//TEST_F(TestDialogManager, testShowTaskProgressDlgOnActive)
-//{
-//    m_pTester->showTaskProgressDlgOnActive();
-//}
+TEST_F(TestDialogManager, testShowTaskProgressDlgOnActive)
+{
+    m_pTester->showTaskProgressDlgOnActive();
+}
 
 //TEST_F(TestDialogManager, testShowUnableToLocateDir)
 //{
 
 //}
 
-//TEST_F(TestDialogManager, testRefreshPropertyDialogs)
-//{
-//    DUrl oldUrl("file://home");
-//    DUrl newUrl("file://home1");
-//    m_pTester->refreshPropertyDialogs(oldUrl, newUrl);
-//}
+TEST_F(TestDialogManager, testRefreshPropertyDialogs)
+{
+    DUrl oldUrl("file://home");
+    DUrl newUrl("file://home1");
+    m_pTester->refreshPropertyDialogs(oldUrl, newUrl);
+}
 
-//TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed)
-//{
-//    QMap<QString, QString> jobDetail;
-//    QMap<QString, QVariant> response;
-//    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-//}
+TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed)
+{
+    QMap<QString, QString> jobDetail;
+    QMap<QString, QVariant> response;
+    m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
+}
 
 //TEST_F(TestDialogManager, testShowMessageDialog)
 //{
 
 //}
 
-//TEST_F(TestDialogManager, testShowBluetoothTransferDlg)
-//{
-//    DUrlList files;
-//    files.push_back(DUrl("file://home"));
-//    m_pTester->showBluetoothTransferDlg(files);
-//}
+TEST_F(TestDialogManager, testShowBluetoothTransferDlg)
+{
+    DUrlList files;
+    files.push_back(DUrl("file://home"));
+    m_pTester->showBluetoothTransferDlg(files);
+}

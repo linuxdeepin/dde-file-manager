@@ -74,8 +74,10 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
         }
 
         emit onConflict(sourceInfo->fileUrl(), targetInfo->fileUrl());
-        emit job->currentJobChanged(sourceInfo->fileUrl(), targetInfo->fileUrl());
-        job->togglePause();
+        emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), sourceInfo ? targetInfo->fileUrl() : DUrl(),true);
+        if (job->state() != DFileCopyMoveJob::PausedState) {
+            job->togglePause();
+        }
     }
     break;
     case DFileCopyMoveJob::UnknowUrlError: {
@@ -87,7 +89,9 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
     case DFileCopyMoveJob::UnknowError:
         return DFileCopyMoveJob::CancelAction;
     default:
-        job->togglePause();
+        if (job->state() != DFileCopyMoveJob::PausedState) {
+            job->togglePause();
+        }
         emit onError(job->errorString());
         break;
     }
@@ -425,6 +429,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
             break;
         }
 
+        iserroroc.remove(QString::number(quintptr(job), 16));
+
         if (action == DFileCopyMoveJob::NoAction) {
             return;
         }
@@ -451,6 +457,12 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
         wid->setSpeedText(sp, rmTime);
     });
 
+    connect(job, &DFileCopyMoveJob::errorCanClear, wid, [job,this](){
+        if (iserroroc.contains(QString::number(quintptr(job), 16))) {
+            iserroroc.remove(QString::number(quintptr(job), 16));
+        }
+    });
+
     connect(job, &DFileCopyMoveJob::stateChanged, wid, &DFMTaskWidget::onStateChanged);
     connect(job, &DFileCopyMoveJob::fileStatisticsFinished, wid, [wid, job] {
         wid->setProperty("totalDataSize", job->totalDataSize());
@@ -458,7 +470,13 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
     wid->setProperty("totalDataSize", job->totalDataSize());
 
     // bug-35335 将wid设置为信号接收方，避免wid窗口回收后，继续接收currentJobChanged信号，执行曹函数，导致崩溃
-    connect(job, &DFileCopyMoveJob::currentJobChanged, wid, [this, job, wid](const DUrl from, const DUrl to) {
+    connect(job, &DFileCopyMoveJob::currentJobChanged, wid, [this, job, wid](const DUrl from, const DUrl to,const bool iseeroroc) {
+       QMutexLocker lk(&currentjobchangemutex);
+       if (!iseeroroc && iserroroc.contains(QString::number(quintptr(job), 16)) &&
+             iserroroc.value(QString::number(quintptr(job), 16))){
+            return ;
+       }
+
         //! 保存任务文件路径与状态
         m_flagMap.insert(from, false);
         //正在执行当前槽函数时，job线程一结束，判断job线程是否结束
@@ -510,11 +528,13 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
             if (job->error() == DFileCopyMoveJob::FileExistsError
                     || job->error() == DFileCopyMoveJob::DirectoryExistsError) {
                 data["status"] = "conflict";
+                iserroroc.insert(QString::number(quintptr(job), 16),true);
             } else if (job->error() != DFileCopyMoveJob::NoError) {
                 data["status"] = "error";
                 bool supprotRetry = job->supportActions(job->error()).testFlag(DFileCopyMoveJob::RetryAction);
                 data["supprotRetry"] = supprotRetry ? "true" : "false";
                 data["errorMsg"] = job->errorString();
+                iserroroc.insert(QString::number(quintptr(job), 16),true);
             }
         }
 
@@ -535,6 +555,7 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
             //! 有点击关闭任务窗口，进行窗口关闭
             if (isHaveVaultTask(job->sourceUrlList(), job->targetUrl())) {
                 this->close();
+                emit closed();
             }
         }
     });
@@ -651,6 +672,7 @@ void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail, bool adjus
 void DTaskDialog::removeTaskJob(void *job)
 {
     removeTaskByPath(QString::number(quintptr(job), 16));
+    iserroroc.remove(QString::number(quintptr(job), 16));
     adjustSize();
 }
 
@@ -837,6 +859,13 @@ bool DTaskDialog::getFlagMapValueIsTrue()
     return flg;
 }
 
+bool DTaskDialog::getIsErrorOc(const DFileCopyMoveJob *job)
+{
+    QMutexLocker lk(&errorocmutex);
+    return (iserroroc.contains(QString::number(quintptr(job), 16)) &&
+            iserroroc.value(QString::number(quintptr(job), 16)));
+}
+
 void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail,
                                          const QMap<QString, QString> &data)
 {
@@ -861,6 +890,7 @@ void DTaskDialog::closeEvent(QCloseEvent *event)
 {
     //! 记录是否点击关闭按钮
     m_flag = true;
+    iserroroc.clear();
     if (getFlagMapValueIsTrue()) {
         for (QListWidgetItem *item : m_jobIdItems.values()) {
             DFMTaskWidget *w = static_cast<DFMTaskWidget *>(m_taskListWidget->itemWidget(item));

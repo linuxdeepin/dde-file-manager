@@ -25,3 +25,9 @@ TEST_F(TestBurnOptDialog, testInit)
 {
 //    m_pTester->show();
 }
+
+TEST_F(TestBurnOptDialog, testSetIOSImage)
+{
+    DUrl image("file://test1/image");
+    m_pTester->setISOImage(image);
+}

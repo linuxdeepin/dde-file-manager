@@ -9,5 +9,13 @@ SOURCES += \
     $$PWD/ut-desktop-test.cpp \
     $$PWD/dbus/filedialog/ut_dbusfiledialogmanager_test.cpp \
     $$PWD/dbus/filedialog/ut_dbusfiledialoghandle_test.cpp \
-    $$PWD/dbus/filemanager1/ut_dbusfilemanager_test.cpp
+    $$PWD/dbus/filemanager1/ut_dbusfilemanager_test.cpp \
+    $$PWD/view/ut_canvasgridview_test.cpp \
+    $$PWD/view/ut_canvasviewmanager_test.cpp \
+    $$PWD/dde-wallpaper-chooser/ut-deepin_wm-test.cpp   \
+    $$PWD/dde-zone/ut-pushbuttonlist-test.cpp \
+    $$PWD/dde-zone/ut-hotzone-test.cpp \
+    $$PWD/dde-wallpaper-chooser/ut-thumbnailmanager-test.cpp \
+    $$PWD/dde-wallpaper-chooser/ut-frame-test.cpp \
+    $$PWD/dde-wallpaper-chooser/ut-checkbox-test.cpp
 

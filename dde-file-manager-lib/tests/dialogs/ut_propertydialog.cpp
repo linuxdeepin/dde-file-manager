@@ -1,7 +1,10 @@
-#include "dialogs/propertydialog.h"
+
 
 #include <gtest/gtest.h>
 #include <QWidget>
+
+#define protected public
+#include "dialogs/propertydialog.h"
 
 namespace  {
     class TestDFMRoundBackground : public testing::Test
@@ -76,6 +79,16 @@ TEST_F(TestNameTextEdit, testSetPlainText)
 {
     QString str("unit test");
     m_pTester->setPlainText(str);
+}
+
+TEST_F(TestNameTextEdit, testKeyPressEvent_Escape)
+{
+
+}
+
+TEST_F(TestNameTextEdit, testKeyPressEvent_Enter)
+{
+
 }
 
 namespace  {
