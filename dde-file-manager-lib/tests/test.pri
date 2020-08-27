@@ -97,4 +97,5 @@ SOURCES += \
     $$PWD/controllers/ut_searchcontroller.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
-    $$PWD/vfs/ut_dfmvfsdevice.cpp
+    $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    $$PWD/views/ut_dfmsidebarview.cpp
