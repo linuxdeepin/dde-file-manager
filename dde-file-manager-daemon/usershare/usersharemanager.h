@@ -34,7 +34,7 @@ class UserShareManager : public QObject, public QDBusContext
 {
     Q_OBJECT
 public:
-    explicit UserShareManager(QObject *parent = 0);
+    explicit UserShareManager(QObject *parent = nullptr);
     ~UserShareManager();
 
     static QString ObjectPath;
@@ -46,7 +46,7 @@ signals:
 public slots:
     bool addGroup(const QString &groupName);
     bool setUserSharePassword(const QString &username, const QString &passward);
-    bool closeSmbShareByShareName(const QString &sharename);
+    bool closeSmbShareByShareName(const QString &sharename,const bool bshow);
 private:
     UserShareAdaptor* m_userShareAdaptor = nullptr;
 };

@@ -58,6 +58,7 @@
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "views/dtagedit.h"
+#include "views/dfmopticalmediawidget.h"
 
 #include "gvfs/networkmanager.h"
 #include "gvfs/gvfsmountmanager.h"
@@ -113,12 +114,12 @@ template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
 const char *empty_recent_file =
-R"|(<?xml version="1.0" encoding="UTF-8"?>
-<xbel version="1.0"
-      xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
-      xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
->
-</xbel>)|";
+        R"|(<?xml version="1.0" encoding="UTF-8"?>
+        <xbel version="1.0"
+        xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
+        xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
+        >
+        </xbel>)|";
 
 QPair<DUrl, quint64> AppController::selectionAndRenameFile;
 QPair<DUrl, quint64> AppController::selectionFile;
@@ -138,7 +139,7 @@ AppController *AppController::instance()
 void AppController::registerUrlHandle()
 {
     DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
-//    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
+    //    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
     DFileService::setFileUrlHandler(TRASH_SCHEME, "", new TrashManager());
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
@@ -155,7 +156,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
     DFileService::dRegisterUrlHandler<MergedDesktopController>(DFMMD_SCHEME, "");
     DFileService::dRegisterUrlHandler<DFMRootController>(DFMROOT_SCHEME, "");
-    DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "files");
+    DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "");
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
@@ -167,8 +168,30 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
     }
 
     if (urls.size() > 1 || DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()) {
-        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::ForceOpenNewWindow);
+        // 选择多文件打开的时候调用函数 openFiles，单文件打开调用 openFile，部分 controller 没有实现 openFiles 函数，因此在这里转换成 file:// 的 url，
+        // 通过 fileController 来进行打开调用
+        DUrlList lstUrls;
+        for (DUrl u : urls) {
+            if (u.scheme() == RECENT_SCHEME) {
+                u = DUrl::fromLocalFile(u.path());
+            } else if (u.scheme() == SEARCH_SCHEME) { //搜索结果也存在右键批量打卡不成功的问题，这里做类似处理
+                u = u.searchedFileUrl();
+            } else if (u.scheme() == BURN_SCHEME) {
+                DAbstractFileInfoPointer info = fileService->createFileInfo(event->sender(), u);
+                if (!info)
+                    continue;
+                if (info->canRedirectionFileUrl())
+                    u = info->redirectedFileUrl();
+            }
+            lstUrls << u;
+        }
+        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
     } else {
+        //fix bug 30506 ,异步处理网路文件很卡的情况下，快速点击会崩溃，或者卡死
+        if (urls.size() > 0 && FileUtils::isGvfsMountFile(urls.first().path())) {
+            DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+            return;
+        }
         DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
     }
 }
@@ -183,6 +206,11 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (fi && fi->scheme() == DFMROOT_SCHEME) {
         mounted |= (!fi->redirectedFileUrl().isEmpty());
     }
+
+    QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+
+    if (fileUrl.path().contains("dfmroot:///sr") && blk->idUUID().isEmpty() && !drv->opticalBlank()) return; // 如果光驱的uuid为空（光盘未挂载）且不是空光盘的情况下
 
     if (!mounted) {
         m_fmEvent = event;
@@ -211,7 +239,7 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
                 if (mountPoint.length() > 0) {
                     QFile file(mountPoint);
                     if (!(QFile::ExeUser & file.permissions())) {
-                            return;
+                        return;
                     }
                 }
             }
@@ -223,7 +251,6 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
 
         const QSharedPointer<DFMUrlListBaseEvent> &e = dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << newUrl);
         e->setWindowId(event->windowId());
-
         actionOpen(e);
     }
 }
@@ -338,6 +365,12 @@ void AppController::actionOpenWithCustom(const QSharedPointer<DFMUrlBaseEvent> &
     emit fileSignalManager->requestShowOpenWithDialog(DFMUrlBaseEvent(event->sender(), event->url()));
 }
 
+//新加app打开多个url
+void AppController::actionOpenFilesWithCustom(const QSharedPointer<DFMUrlListBaseEvent> &event)
+{
+    emit fileSignalManager->requestShowOpenFilesWithDialog(DFMUrlListBaseEvent(event->sender(), event->urlList()));
+}
+
 void AppController::actionOpenFileLocation(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
     const DUrlList &urls = event->urlList();
@@ -345,6 +378,7 @@ void AppController::actionOpenFileLocation(const QSharedPointer<DFMUrlListBaseEv
         fileService->openFileLocation(event->sender(), url);
     }
 }
+
 
 void AppController::actionCompress(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
@@ -374,8 +408,10 @@ void AppController::actionCopy(const QSharedPointer<DFMUrlListBaseEvent> &event)
 
 void AppController::actionPaste(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    fileService->pasteFileByClipboard(event->sender(), event->url());
-}
+    // QTimer::singleshot目的: 多窗口下粘贴，右键拖动标题栏
+    QTimer::singleShot(0, [event] () {
+        fileService->pasteFileByClipboard(event->sender(), event->url());
+    });}
 
 void AppController::actionRename(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
@@ -396,12 +432,15 @@ void AppController::actionBookmarkRename(const QSharedPointer<DFMUrlBaseEvent> &
 
 void AppController::actionBookmarkRemove(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-     fileService->removeBookmark(event->sender(), event->url());
+    fileService->removeBookmark(event->sender(), event->url());
 }
 
 void AppController::actionDelete(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->moveToTrash(event->sender(), event->urlList());
+    // 使用 Qtimer 避免回收站有大量文件时，异步事件处理时间过长，导致窗口不能拖动
+    QTimer::singleShot(1, [event]() {
+        fileService->moveToTrash(event->sender(), event->urlList());
+    });
 }
 
 void AppController::actionCompleteDeletion(const QSharedPointer<DFMUrlListBaseEvent> &event)
@@ -453,6 +492,11 @@ void AppController::actionClearTrash(const QObject *sender)
 {
     DUrlList list;
     list << DUrl::fromTrashFile("/");
+    //fix bug 31324,判断当前是否是正在清空回收站，是返回，不是保存状态
+    if (DFileService::instance()->getDoClearTrashState()) {
+        return;
+    }
+    DFileService::instance()->setDoClearTrashState(true);
 
     bool ret = fileService->deleteFiles(sender, list);
 
@@ -509,6 +553,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         }
         // 断网时mount Samba无效
         if (blk->device().isEmpty()) {
+            dialogManager->showErrorDialog(tr("Mounting device error"), QString());
             qWarning() << "blockDevice is invalid, fileurl is " << fileUrl;
             return;
         }
@@ -525,26 +570,29 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
         QtConcurrent::run([=] {
-            getOpticalDriveMutex()->lock();
+            QMutexLocker locker(getOpticalDriveMutex()); //bug 31318 refine
+
             DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(fileUrl.query());
             if (dp.devid.length() == 0) {
                 if (blkdev->mountPoints().size()) {
                     blkdev->unmount({});
                 }
+                qDebug() << "============>fileUrl.query():" << fileUrl.query();
                 if (!ISOMaster->acquireDevice(fileUrl.query())) {
                     ISOMaster->releaseDevice();
-                    QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
                     blkdev->unmount({});
                     QThread::msleep(1000);
                     QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
                     diskdev->eject({});
-                    getOpticalDriveMutex()->unlock();
+                    if (diskdev->optical())
+                        QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
+
                     return;
                 }
                 dp = ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
             }
-            getOpticalDriveMutex()->unlock();
+
             if (!dp.formatted) {
                 //blkdev->mount({});
                 //We have to stick with 'UDisk'Listener until actionOpenDiskInNew*
@@ -565,7 +613,7 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
     args << archiveuri;
     QProcess *gioproc = new QProcess;
     gioproc->start("gio", args);
-    connect(gioproc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
+    connect(gioproc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
         if (ret) {
             dialogManager->showErrorDialog(tr("Mount error: unsupported image format"), QString());
         } else {
@@ -586,30 +634,27 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+
+        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
+        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+
         if (fi->suffix() == SUFFIX_UDISKS) {
-            QString udiskspath = fi->extraProperties()["udisksblk"].toString();
-            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-            QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
-            if (blkdev->isEncrypted()) {
-                blkdev.reset(DDiskManager::createBlockDevice(blkdev->cleartextDevice()));
-            }
-            blkdev->unmount({});
-            QDBusError err = blkdev->lastError();
-            if (err.isValid())
-                dialogManager->showErrorDialog(tr("Disk is busy, cannot unmount now"), QString());
+            //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
+            //在关闭窗口特效情况下，还会出现文管界面绘制不刷新出现重影的情况
+            //把unmount相关操作移至子线程
+            emit doUnmount(fi->extraProperties()["udisksblk"].toString());
         } else if (fi->suffix() == SUFFIX_GVFSMP) {
             QString path = fi->extraProperties()["rooturi"].toString();
-            if(path.isEmpty())
-            {
+            if (path.isEmpty()) {
                 //FIXME(zccrs): 为解决，无法访问smb共享地址时，点击卸载共享目录，创建的fileinfo拿到的path为""，所有就没办法umount，临时解决方案，重Durl中获取
                 path = QString("smb://");
                 QString mpp = QUrl::fromPercentEncoding(fileUrl.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
                 QStringList strlist = mpp.split(",");
                 if (strlist.size() >= 2) {
-                    if(strlist.at(0).contains(QString("="))){
+                    if (strlist.at(0).contains(QString("="))) {
                         path = path + strlist.at(0).split("=").at(1) + QString("/");
                     }
-                    if(strlist.at(1).contains(QString("="))){
+                    if (strlist.at(1).contains(QString("="))) {
                         path = path + strlist.at(1).split("=").at(1) + QString("/");
                     }
                 }
@@ -636,12 +681,17 @@ void AppController::actionRestoreAll(const QSharedPointer<DFMUrlBaseEvent> &even
 void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
+
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
-        QtConcurrent::run([fi](){
+
+        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
+        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+        QtConcurrent::run([fi]() {
+            qDebug() << fi->fileUrl().path();
+            QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
-            if ((FileJob::g_opticalBurnStatus == DISOMasterNS::DISOMaster::JobStatus::Running) || (FileJob::g_opticalBurnStatus == DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
-                FileJob::g_opticalBurnEjectCount++;
+            if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
                 QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
             } else {
                 bool err = false;
@@ -650,6 +700,19 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                 QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
                 if (!blk->mountPoints().empty()) {
                     blk->unmount({});
+                    QDBusError lastError = blk->lastError();
+
+                    if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
+                        qDebug() << "blk action has been canceled";
+                        return;
+                    }
+
+                    if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
+                        qDebug() << "action timeout with noreply response";
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Action timeout, action is canceled")),  Q_ARG(QString, ""));
+                        //dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
+                        return;
+                    }
                     err |= blk->lastError().isValid();
                 }
                 if (blk->cryptoBackingDevice().length() > 1) {
@@ -658,8 +721,14 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                 }
                 drv->eject({});
                 err |= drv->lastError().isValid();
+                QDBusError dbusError = drv->lastError();
                 if (err) {
-                    QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                    // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
+                    // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
+                    if (dbusError.isValid() && dbusError.type() != QDBusError::Other) {
+                        qDebug() << "disc eject error: " << dbusError.message() << dbusError.name() << dbusError.type();
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                    }
                 }
             }
         });
@@ -671,32 +740,17 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
+
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
-        //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
-        if ((FileJob::g_opticalBurnStatus == DISOMasterNS::DISOMaster::JobStatus::Running) || (FileJob::g_opticalBurnStatus == DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
-            FileJob::g_opticalBurnEjectCount++;
-            dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
-        } else {
-            DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
-            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
-            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-            QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
-            bool err = false;
-            if (!blk->mountPoints().empty()) {
-                blk->unmount({});
-                err |= blk->lastError().isValid();
-            }
-            if (blk->cryptoBackingDevice().length() > 1) {
-                cbblk->lock({});
-                err |= cbblk->lastError().isValid();
-                drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
-            }
-            drv->powerOff({});
-            err |= drv->lastError().isValid();
-            if (err) {
-                dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
-            }
-        }
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
+
+        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
+        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+
+        //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
+        //在关闭窗口特效情况下，还会出现文管界面绘制不刷新出现重影的情况
+        //把unmount相关操作移至子线程
+        emit doSaveRemove(fi->extraProperties()["udisksblk"].toString());
     } else {
         QString unix_device = fileUrl.query(DUrl::FullyEncoded);
         QString drive_unix_device = gvfsMountManager->getDriveUnixDevice(unix_device);
@@ -871,9 +925,9 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
         tmpWidget->show();
 
         connect(process, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-        tmpWidget, &QWidget::deleteLater);
+                tmpWidget, &QWidget::deleteLater);
         connect(process, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
-        tmpWidget, &QWidget::deleteLater);
+                tmpWidget, &QWidget::deleteLater);
     });
 
     connect(process, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -1018,7 +1072,7 @@ void AppController::actionOpenFileByApp()
     if (action->property("urls").isValid()) {
         DUrlList fileUrls = qvariant_cast<DUrlList>(action->property("urls"));
         QStringList fileUrlStrs;
-        for (const DUrl& url : fileUrls) {
+        for (const DUrl &url : fileUrls) {
             fileUrlStrs << url.toString();
         }
         FileUtils::openFilesByApp(app, fileUrlStrs);
@@ -1041,7 +1095,7 @@ void AppController::actionSendToRemovableDisk()
 
     // 如果从光驱内发送文件到其他移动设备，将光驱路径转换成本地挂载路径
     for (DUrl &u : urlList) {
-        if (u.scheme() == BURN_SCHEME) {
+        if (u.scheme() == BURN_SCHEME || u.scheme() == TAG_SCHEME || u.scheme() == SEARCH_SCHEME || u.scheme() == RECENT_SCHEME) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, u);
             if (fi)
                 u = fi->mimeDataUrl();
@@ -1049,9 +1103,14 @@ void AppController::actionSendToRemovableDisk()
     }
 
     //fix:修正临时拷贝文件到光盘的路径问题，不是挂载目录，而是临时缓存目录
-    QString iconName = action->property("iconName").toString();
-    if (iconName.contains("media-optical")) { //notice: dvd/cd/bd
-        DUrl tempTargetUrl = DUrl::fromLocalFile(DFileMenuManager::g_deleteDirPath);
+    QString blkDevice = action->property("blkDevice").toString();
+
+    if (blkDevice.startsWith("sr")) { // fix bug#27909
+        QString &strCachePath = DFMOpticalMediaWidget::g_mapCdStatusInfo[blkDevice].cachePath;
+        if (strCachePath.isEmpty()) { // fix 未打开文管加载光驱时，结构中cachePath为空，此时往暂存区中发送文件会触发错误流程
+            strCachePath = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/_dev_" + blkDevice;
+        }
+        DUrl tempTargetUrl = DUrl::fromLocalFile(strCachePath);
         fileService->pasteFile(action, DFMGlobal::CopyAction, tempTargetUrl, urlList);
     } else { // other: usb storage and so on
         fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
@@ -1084,7 +1143,7 @@ void AppController::actionStageFileForBurning()
     }
 
     DDiskManager diskm;
-    for(auto &blks : diskm.blockDevices()) {
+    for (auto &blks : diskm.blockDevices()) {
         QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blks));
         if (blkd->drive() == destdev) {
             DUrl dest = DUrl::fromBurnFile(QString(blkd->device()) + "/" BURN_SEG_STAGING "/");
@@ -1098,18 +1157,18 @@ QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFM
 {
     QList<QString> tags{};
 
-    if(static_cast<bool>(event) && (!event->urlList().isEmpty())){
+    if (static_cast<bool>(event) && (!event->urlList().isEmpty())) {
         tags = DFileService::instance()->getTagsThroughFiles(nullptr, event->urlList());
     }
 
     return tags;
 }
 
-bool AppController::actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event)
+bool AppController::actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event)
 {
     bool value{ false };
 
-    if(event && (event->url().isValid()) && !(event->tags().isEmpty())){
+    if (event && (event->url().isValid()) && !(event->tags().isEmpty())) {
         QList<QString> tags = event->tags();
         value = DFileService::instance()->removeTagsOfFile(this, event->url(), tags);
     }
@@ -1124,9 +1183,14 @@ void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorE
     TagManager::instance()->changeTagColor(tagName, newColor);
 }
 
-void AppController::showTagEdit(const QPoint &globalPos, const DUrlList &fileList)
+void AppController::showTagEdit(const QRect &parentRect, const QPoint &globalPos, const DUrlList &fileList)
 {
     DTagEdit *tagEdit = new DTagEdit();
+
+    auto subValue = parentRect.height() - globalPos.y();
+    if (subValue < 98) {
+        tagEdit->setArrowDirection(DArrowRectangle::ArrowDirection::ArrowBottom);
+    }
 
     tagEdit->setBaseSize(160, 98);
     tagEdit->setFilesForTagging(fileList);
@@ -1146,7 +1210,7 @@ void AppController::actionSetLabel(const DFMEvent &event)
 {
     if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
-//        auto_operation(const_cast<char*>(path.c_str()), "020100");
+        //        auto_operation(const_cast<char*>(path.c_str()), "020100");
         FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "020100");
         qDebug() << "020100" << "set label";
     }
@@ -1156,7 +1220,7 @@ void AppController::actionViewLabel(const DFMEvent &event)
 {
     if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
-//        auto_operation(const_cast<char*>(path.c_str()), "010101");
+        //        auto_operation(const_cast<char*>(path.c_str()), "010101");
         FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "010101");
         qDebug() << "010101" << "view label";
     }
@@ -1166,7 +1230,7 @@ void AppController::actionEditLabel(const DFMEvent &event)
 {
     if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
-//        auto_operation(const_cast<char*>(path.c_str()), "010201");
+        //        auto_operation(const_cast<char*>(path.c_str()), "010201");
         FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "010201");
         qDebug() << "010201" << "edit label";
     }
@@ -1176,7 +1240,7 @@ void AppController::actionPrivateFileToPublic(const DFMEvent &event)
 {
     if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
-//        auto_operation(const_cast<char*>(path.c_str()), "010501");
+        //        auto_operation(const_cast<char*>(path.c_str()), "010501");
         FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "010501");
         qDebug() << "010501" << "private file to public";
     }
@@ -1222,7 +1286,7 @@ QString AppController::createFile(const QString &sourceFile, const QString &targ
     }
 
     const QString &targetFile = FileUtils::newDocmentName(targetDir, baseFileName, info.suffix());
-//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
+    //    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
 
     if (DFileService::instance()->touchFile(WindowManager::getWindowById(windowId), DUrl::fromLocalFile(targetFile))) {
         QFile target(targetFile);
@@ -1254,10 +1318,25 @@ AppController::AppController(QObject *parent) : QObject(parent)
     registerUrlHandle();
 }
 
+AppController::~AppController()
+{
+    m_unmountThread.quit();
+    m_unmountThread.wait();
+}
+
 void AppController::initConnect()
 {
     connect(userShareManager, &UserShareManager::userShareCountChanged,
             fileSignalManager, &FileSignalManager::userShareCountChanged);
+
+    m_unmountWorker = new UnmountWorker;
+    m_unmountWorker->moveToThread(&m_unmountThread);
+    connect(&m_unmountThread, &QThread::finished, m_unmountWorker, &QObject::deleteLater);
+    connect(m_unmountWorker, &UnmountWorker::unmountResult, this, &AppController::showErrorDialog);
+    connect(this, &AppController::doUnmount, m_unmountWorker, &UnmountWorker::doUnmount);
+    connect(this, &AppController::doSaveRemove, m_unmountWorker, &UnmountWorker::doSaveRemove);
+
+    m_unmountThread.start();
 }
 
 void AppController::createGVfSManager()
@@ -1274,13 +1353,13 @@ void AppController::createUserShareManager()
 void AppController::createDBusInterface()
 {
     m_startManagerInterface = new StartManagerInterface("com.deepin.SessionManager",
-            "/com/deepin/StartManager",
-            QDBusConnection::sessionBus(),
-            this);
+                                                        "/com/deepin/StartManager",
+                                                        QDBusConnection::sessionBus(),
+                                                        this);
     m_introspectableInterface = new IntrospectableInterface("com.deepin.SessionManager",
-            "/com/deepin/StartManager",
-            QDBusConnection::sessionBus(),
-            this);
+                                                            "/com/deepin/StartManager",
+                                                            QDBusConnection::sessionBus(),
+                                                            this);
 
     QtConcurrent::run(QThreadPool::globalInstance(), [&] {
         QDBusPendingReply<QString> reply = m_introspectableInterface->Introspect();
@@ -1296,6 +1375,11 @@ void AppController::createDBusInterface()
             }
         }
     });
+}
+
+void AppController::showErrorDialog(const QString content)
+{
+    dialogManager->showErrorDialog(content, QString());
 }
 
 void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
@@ -1314,4 +1398,60 @@ bool AppController::hasLaunchAppInterface() const
 StartManagerInterface *AppController::startManagerInterface() const
 {
     return m_startManagerInterface;
+}
+
+void UnmountWorker::doUnmount(const QString &blkStr)
+{
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blkStr));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (blkdev->isEncrypted()) {
+        blkdev.reset(DDiskManager::createBlockDevice(blkdev->cleartextDevice()));
+    }
+    blkdev->unmount({});
+    QDBusError err = blkdev->lastError();
+    if (err.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
+        qDebug() << "action timeout with noreply response";
+        emit unmountResult(tr("Action timeout, action is canceled"));
+    }
+    // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
+    // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
+    else if (err.isValid() && err.type() != QDBusError::Other) {
+        qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
+        emit unmountResult(tr("Disk is busy, cannot unmount now"));
+    }
+}
+
+void UnmountWorker::doSaveRemove(const QString &blkStr)
+{
+    QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blkStr));
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+    QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
+
+    bool err = false;
+    if (!blk->mountPoints().empty()) {
+        blk->unmount({});
+        QDBusError lastError = blk->lastError();
+        if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
+            qDebug() << "blk action has been canceled";
+            return;
+        }
+
+        if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
+            qDebug() << "action timeout with noreply response";
+            emit unmountResult(tr("Action timeout, action is canceled"));
+            return;
+        }
+
+        err |= blk->lastError().isValid();
+    }
+    if (blk->cryptoBackingDevice().length() > 1) {
+        cbblk->lock({});
+        err |= cbblk->lastError().isValid();
+        drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
+    }
+    drv->powerOff({});
+    err |= drv->lastError().isValid();
+    if (err) {
+        emit unmountResult(tr("Disk is busy, cannot eject now"));
+    }
 }

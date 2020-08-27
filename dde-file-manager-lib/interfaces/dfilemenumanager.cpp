@@ -32,6 +32,7 @@
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 
+#include "controllers/vaultcontroller.h"
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 #include "models/desktopfileinfo.h"
@@ -66,11 +67,11 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QWidgetAction>
+#include <unistd.h>
 
 #include <plugins/dfmadditionalmenu.h>
 
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
-QString DFileMenuManager::g_deleteDirPath = nullptr;
 
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
@@ -147,9 +148,6 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
 
     actionKeys << MenuAction::NewWindow
                << MenuAction::Separator
-#ifdef QT_DEBUG
-               << MenuAction::Vault
-#endif // QT_DEBUG
                << MenuAction::ConnectToServer
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
@@ -168,7 +166,24 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         return menu;
     }
 
-    if (urlList.length() == 1) {
+    //! urlList中有保险箱的DUrl需要进行转换否则会出现报错或功能不可用
+    DUrlList urls = urlList;
+    for(int i = 0; i < urlList.size(); ++i)
+    {
+        if(urlList[i].isVaultFile())
+        {
+            urls[i] = VaultController::vaultToLocalUrl(urlList[i]);
+
+        }
+    }
+
+    // 选中保险箱中的文件，则屏蔽掉共享菜单选项
+    if (VaultController::isVaultFile(currentUrl.path()) || VaultController::isVaultFile(currentUrl.fragment()) || VaultController::isVaultFile(info->toQFileInfo().canonicalFilePath())){
+        unusedList << MenuAction::Share << MenuAction::UnShare;
+    }
+
+    DUrlList redirectedUrlList;
+    if (urls.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
         //修改在挂载的文件下面，不能删除，但是显示了删除
         //判定逻辑，如果是挂载盘，并且这个文件是对应的不是一个虚拟的项（表示有实体），那么这个文件就有彻底删除权限MenuAction::CompleteDeletion
@@ -178,6 +193,11 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         //所以这里要把MenuAction::CompleteDeletion权限不能用
         if (FileUtils::isGvfsMountFile(info->absoluteFilePath()) && !info->canRename()) {
             disableList << MenuAction::CompleteDeletion;
+        }
+        if (info->isDir()) { //判断是否目录
+            if (info->ownerId() != getuid() && getuid() != 0) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
+                disableList << MenuAction::UnShare << MenuAction::Share; //设置取消共享、取消共享不可选
+            }
         }
         foreach (MenuAction action, unusedList) {
             if (actions.contains(action)) {
@@ -190,14 +210,14 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         }
 
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
-        disableList += DFileMenuManager::getDisableActionList(urlList);
+        disableList += DFileMenuManager::getDisableActionList(urls);
         const bool &tabAddable = WindowManager::tabAddableByWinId(windowId);
         if (!tabAddable) {
             disableList << MenuAction::OpenInNewTab;
         }
 
         ///###: tag protocol.
-        if (!DFileMenuManager::whetherShowTagActions(urlList)) {
+        if (!DFileMenuManager::whetherShowTagActions(urls)) {
             actions.removeAll(MenuAction::TagInfo);
             actions.removeAll(MenuAction::TagFilesUseColor);
         }
@@ -209,8 +229,73 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 //        QMimeType fileMimeType;
         QStringList supportedMimeTypes;
         bool mime_displayOpenWith = true;
+        //fix bug 35546 【文件管理器】【5.1.2.2-1】【sp2】【sp1】选择多个只读文件夹，删除按钮没有置灰
+        //只判断当前选中的文件夹是否是只读文件夹
+        if (!info->isWritable() && !info->isFile() && !info->isSymLink()) {
+            disableList << MenuAction::Delete;
+        }
 
-        foreach (DUrl url, urlList) {
+#if 1   //!fix bug#29264.部分格式的文件在上面的MimesAppsManager::getDefaultAppDesktopFileByMimeType
+        //!调用中可以找到app打开，但是在后面的判断是由于该app的supportedMimeTypes中并没有本文件的mimeTypeList支持
+        //!导致了无法匹配，matched为false。因此这里加做一次判断，如果本次文件的后缀名与与上面查询app的文件后缀名一样，则直接匹配
+
+        //获取当前文件的app
+        if (supportedMimeTypes.isEmpty()) {
+            QMimeType fileMimeType = info->mimeType();
+            QString defaultAppDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(fileMimeType.name());
+            QSettings desktopFile(defaultAppDesktopFile, QSettings::IniFormat);
+            desktopFile.setIniCodec("UTF-8");
+            Properties mimeTypeList(defaultAppDesktopFile, "Desktop Entry");
+            supportedMimeTypes = mimeTypeList.value("MimeType").toString().split(';');
+            supportedMimeTypes.removeAll("");
+        }
+
+        redirectedUrlList.clear();
+        foreach (DUrl url, urls) {
+            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
+            // fix bug202007010011 优化文件判断效率，提升右键菜单响应速度
+            auto redirectedUrl = fileInfo->redirectedFileUrl();
+            if (redirectedUrl.isValid()) {
+                redirectedUrlList << redirectedUrl;
+            }
+
+            if (!FileUtils::isArchive(url.path())) {
+                isAllCompressedFiles = false;
+            }
+
+            if (systemPathManager->isSystemPath(fileInfo->fileUrl().toLocalFile())) {
+                isSystemPathIncluded = true;
+            }
+
+            if (!mime_displayOpenWith) {
+                continue;
+            }
+
+            QStringList mimeTypeList = { fileInfo->mimeType().name() };
+            mimeTypeList.append(fileInfo->mimeType().parentMimeTypes());
+            bool matched = false;
+
+            //后缀名相同直接匹配
+            if (fileInfo->suffix() == info->suffix()){
+                matched = true;
+            }
+            else{
+                for (const QString &oneMimeType : mimeTypeList) {
+                    if (supportedMimeTypes.contains(oneMimeType)) {
+                        matched = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!matched) {
+                mime_displayOpenWith = false;
+                disableList << MenuAction::Open << MenuAction::OpenWith;
+                break;
+            }
+        }
+#else  //原来的实现
+        foreach (DUrl url, urls) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
 
             if (!FileUtils::isArchive(url.path())) {
@@ -249,7 +334,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                 }
             }
         }
-
+#endif
         QVector<MenuAction> actions;
 
         if (isSystemPathIncluded) {
@@ -269,7 +354,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         }
 
         const QMap<MenuAction, QVector<MenuAction> > &subActions  = info->subMenuActionList();
-        disableList += DFileMenuManager::getDisableActionList(urlList);
+        disableList += DFileMenuManager::getDisableActionList(urls);
         const bool &tabAddable = WindowManager::tabAddableByWinId(windowId);
         if (!tabAddable) {
             disableList << MenuAction::OpenInNewTab;
@@ -282,7 +367,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         }
 
         ///###: tag protocol.
-        if (!DFileMenuManager::whetherShowTagActions(urlList)) {
+        if (!DFileMenuManager::whetherShowTagActions(urls)) {
             actions.removeAll(MenuAction::TagInfo);
             actions.removeAll(MenuAction::TagFilesUseColor);
         }
@@ -295,7 +380,10 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 
     if (openWithMenu && openWithMenu->isEnabled()) {
         QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->redirectedFileUrl());
-
+        recommendApps.removeOne("/usr/share/applications/dde-open.desktop"); //在右键菜单打开方式中屏蔽/usr/share/applications/dde-open.desktop，在此处更改不影响打开效果
+//        bug 20275 【桌面社区版版V20】【beta】【DDE】【 桌面】选中图片右键打开方式多了“ImageMagick”需隐藏
+        recommendApps.removeOne("/usr/share/applications/display-im6.q16.desktop"); //按产品经理要求屏蔽咯
+        recommendApps.removeOne("/usr/share/applications/display-im6.q16hdri.desktop"); //按产品经理要求屏蔽咯
         foreach (QString app, recommendApps) {
 //            const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
             //ignore no show apps
@@ -305,17 +393,19 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             QAction *action = new QAction(desktopFile.getDisplayName(), openWithMenu);
             action->setIcon(FileUtils::searchAppIcon(desktopFile));
             action->setProperty("app", app);
-            if (urlList.length() == 1) {
+            if (urls.length() == 1) {
                 action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
             } else {
+#if 0       // fix bug202007010011 优化文件判断效率，提升右键菜单响应速度
                 DUrlList redirectedUrlList;
-                for (auto url : urlList) {
+                for (auto url : urls) {
                     DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, url);
                     auto redirectedUrl = info->redirectedFileUrl();
                     if (redirectedUrl.isValid()) {
                         redirectedUrlList << redirectedUrl;
                     }
                 }
+#endif
                 action->setProperty("urls", QVariant::fromValue(redirectedUrlList));
             }
             openWithMenu->addAction(action);
@@ -331,42 +421,36 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 
     if (deviceListener->isMountedRemovableDiskExits()) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
+        if (currentUrl.path().contains("/dev/sr")
+                || (currentUrl.scheme() == SEARCH_SCHEME && currentUrl.query().contains("/dev/sr"))) // 禁用光盘搜索列表中的发送到选项
+            menu->removeAction(sendToMountedRemovableDiskAction);
+        else {
+            DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
+            if (sendToMountedRemovableDiskMenu) {
+                foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
+                    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
+                    qDebug() << "add send action: " << pDeviceinfo->getDiskInfo().name();
+                    QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
+                    action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
+                    action->setProperty("urlList", DUrl::toStringList(urls));
+                    //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
+                    QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
+                    action->setProperty("blkDevice", tempId);
 
-        DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
-        if (sendToMountedRemovableDiskMenu) {
-            foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
-                QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
-                action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
-                action->setProperty("urlList", DUrl::toStringList(urlList));
-                //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
-                action->setProperty("iconName", pDeviceinfo->getDiskInfo().iconName());
-                //id="/dev/sr1" -> tempId="sr1"
-                QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
-                //mounted_root_uri="file:///media/union/***" -> tempMediaAddr="union"
-                QString tempMountedRootUrl = pDeviceinfo->getDiskInfo().mounted_root_uri();
-                int tempAddrIndex = tempMountedRootUrl.lastIndexOf("/");
+                    // 禁用发送到列表中的本设备项
+                    if (urls.count() > 0) {
+                        DUrl url = urls[0];
+                        if (url.path().contains(pDeviceinfo->getDiskInfo().id()))
+                            action->setEnabled(false);
+                    }
 
-                //获取用户名有问题，fix
-//                QString tempMediaAddr= tempMountedRootUrl.mid(14, tempAddrIndex - 14);
-                QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-                //g_deleteDirPath="/home/union/.cache/deepin/discburn/_dev_sr1"
-//                DFileMenuManager::g_deleteDirPath = "/home/" + tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
-                DFileMenuManager::g_deleteDirPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
-                //获取用户名有问题，fix
-
-                // 禁用发送到列表中的本设备项
-                if (urlList.count() > 0) {
-                    DUrl url = urlList[0];
-                    if (url.path().contains(pDeviceinfo->getDiskInfo().id()))
-                        action->setEnabled(false);
+                    sendToMountedRemovableDiskMenu->addAction(action);
+                    connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk,Qt::QueuedConnection);//改为队列，防止exec无法退出，关联bug#25613
                 }
-
-                sendToMountedRemovableDiskMenu->addAction(action);
-                connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk);
             }
+
         }
     }
-
     if (menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
         QAction *stageAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning));
 
@@ -377,7 +461,8 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
             if (drv->mediaCompatibility().join(' ').contains("_r")) {
-                if ((currentUrl.scheme() == BURN_SCHEME && QString(blk->device()) == currentUrl.burnDestDevice()) || odrv.contains(drv->path())) {
+                if ((currentUrl.scheme() == BURN_SCHEME && QString(blk->device()) == currentUrl.burnDestDevice()) || odrv.contains(drv->path())
+                        || (currentUrl.scheme() == SEARCH_SCHEME && currentUrl.query().contains("/dev/sr"))) { // 禁用光盘搜索列表中的“添加到光盘刻录”选项
                     continue;
                 }
                 DUrl rootUrl(DFMROOT_ROOT + QString(blk->device()).mid(QString("/dev/").length()) + ".localdisk");
@@ -392,7 +477,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(odrv.front()));
             QString devID = dev->id();
             stageAction->setProperty("dest_drive", odrv.front());
-            stageAction->setProperty("urlList", DUrl::toStringList(urlList));
+            stageAction->setProperty("urlList", DUrl::toStringList(urls));
             connect(stageAction, &QAction::triggered, appController, &AppController::actionStageFileForBurning, Qt::UniqueConnection);
             DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
             if (stageMenu) {
@@ -417,7 +502,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     }
                     QAction *action = new QAction(devName, stageMenu);
                     action->setProperty("dest_drive", devs);
-                    action->setProperty("urlList", DUrl::toStringList(urlList));
+                    action->setProperty("urlList", DUrl::toStringList(urls));
                     stageMenu->addAction(action);
                     connect(action, &QAction::triggered, appController, &AppController::actionStageFileForBurning, Qt::UniqueConnection);
                 }
@@ -425,12 +510,13 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         }
     }
 
-    if (currentUrl == DesktopFileInfo::computerDesktopFileUrl() ||
-            currentUrl == DesktopFileInfo::trashDesktopFileUrl()) {
+    if (currentUrl == DesktopFileInfo::computerDesktopFileUrl()
+            || currentUrl == DesktopFileInfo::trashDesktopFileUrl()
+            || currentUrl == DesktopFileInfo::homeDesktopFileUrl()) {
         return menu;
     }
 
-    loadNormalPluginMenu(menu, urlList, currentUrl, onDesktop);
+    loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
 
@@ -507,7 +593,11 @@ QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrlList &urlList)
     QSet<MenuAction> disableList;
 
     for (const DUrl &fileUrl : urlList) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, fileUrl);
+        DUrl url = fileUrl;
+        if (VaultController::isVaultFile(url.path())){
+            url = VaultController::localUrlToVault(fileUrl);
+        }
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
 
         if (fileInfo) {
             disableList += fileInfo->disableMenuActionList();
@@ -612,6 +702,17 @@ void DFileMenuData::initData()
     //actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Burn");
     actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Add to disc");
 
+    // Vault
+    actionKeys[MenuAction::LockNow] = QObject::tr("Lock");
+    actionKeys[MenuAction::AutoLock] = QObject::tr("Auto lock");
+    actionKeys[MenuAction::Never] = QObject::tr("Never");
+    actionKeys[MenuAction::FiveMinutes] = QObject::tr("5 minutes");
+    actionKeys[MenuAction::TenMinutes] = QObject::tr("10 minutes");
+    actionKeys[MenuAction::TwentyMinutes] = QObject::tr("20 minutes");
+    actionKeys[MenuAction::DeleteVault] = QObject::tr("Remove File Vault");
+    actionKeys[MenuAction::UnLock] = QObject::tr("Unlock");
+    actionKeys[MenuAction::UnLockByKey] = QObject::tr("Unlock by key");
+
     // Action Icons:
     DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     if (settings.value("context-menu-icons").toBool()) {
@@ -648,29 +749,32 @@ void DFileMenuData::initActions()
         ///###: MenuAction::ChangeTagColor represents that you change the color of a present tag.
         ///###: They are different event.
         if (key == MenuAction::TagFilesUseColor || key == MenuAction::ChangeTagColor) {
-            DTagActionWidget *tagWidget{ new DTagActionWidget };
-            QWidgetAction *tagAction{ new QWidgetAction{ nullptr } };
+//为了解决在自动整理模式下，选择多个文件发送到一个没有空间的光驱上，在桌面上打开任意文件，
+//弹出很多文件的窗口并且右键菜单颜色标记出现英文问题。临时方案
+//将里面color相关的代码到外面初始化时重新加载
+//            DTagActionWidget *tagWidget{ new DTagActionWidget };
+//            QWidgetAction *tagAction{ new QWidgetAction{ nullptr } };
 
-            tagAction->setDefaultWidget(tagWidget);
+//            tagAction->setDefaultWidget(tagWidget);
 
-            switch (key) {
-            case MenuAction::TagFilesUseColor: {
-                tagAction->setText("Add color tags");
-                break;
-            }
-            case MenuAction::ChangeTagColor: {
-                tagAction->setText("Change color of present tag");
-                tagWidget->setExclusive(true);
-                tagWidget->setToolTipVisible(false);
-                break;
-            }
-            default:
-                break;
-            }
+//            switch (key) {
+//            case MenuAction::TagFilesUseColor: {
+//                tagAction->setText("Add color tags");
+//                break;
+//            }
+//            case MenuAction::ChangeTagColor: {
+//                tagAction->setText("Change color of present tag");
+//                tagWidget->setExclusive(true);
+//                tagWidget->setToolTipVisible(false);
+//                break;
+//            }
+//            default:
+//                break;
+//            }
 
-            tagAction->setData(key);
-            actions.insert(key, tagAction);
-            actionToMenuAction.insert(tagAction, key);
+//            tagAction->setData(key);
+//            actions.insert(key, tagAction);
+//            actionToMenuAction.insert(tagAction, key);
             continue;
         }
 
@@ -716,7 +820,46 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         if (!isAvailableAction(key)) {
             continue;
         }
+        /****************************************************************************/
+        //为了解决在自动整理模式下，选择多个文件发送到一个没有空间的光驱上，在桌面上打开任意文件，
+        //弹出很多文件的窗口并且右键菜单颜色标记出现英文问题。临时方案
+        //将里面color相关的代码到外面初始化时重新加载
+        if(key == MenuAction::TagFilesUseColor || key == MenuAction::ChangeTagColor){
+            DTagActionWidget *tagWidget{ new DTagActionWidget };
+            QWidgetAction *tagAction{ new QWidgetAction{ nullptr } };
 
+            tagAction->setDefaultWidget(tagWidget);
+
+            switch (key) {
+            case MenuAction::TagFilesUseColor: {
+                tagAction->setText("Add color tags");
+                break;
+            }
+            case MenuAction::ChangeTagColor: {
+                tagAction->setText("Change color of present tag");
+                tagWidget->setExclusive(true);
+                tagWidget->setToolTipVisible(false);
+                break;
+            }
+            default:
+                break;
+            }
+
+            tagAction->setData(key);
+            auto keyAction = DFileMenuData::actions.take(key);
+            if(keyAction){
+                QWidgetAction *widAction = dynamic_cast<QWidgetAction *>(keyAction);
+                if (widAction && widAction->defaultWidget()){
+                    widAction->defaultWidget()->deleteLater();
+                }
+
+                DFileMenuData::actionToMenuAction.remove(keyAction);
+                keyAction->deleteLater();
+            }
+            DFileMenuData::actions.insert(key, tagAction);
+            DFileMenuData::actionToMenuAction.insert(tagAction, key);
+        }
+        /****************************************************************************/
         if (key == MenuAction::Separator) {
             menu->addSeparator();
         } else {

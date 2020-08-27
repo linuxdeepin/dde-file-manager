@@ -23,6 +23,9 @@
 #include "dfmevent.h"
 #include "dfmglobal.h"
 #include "private/dabstractfilewatcher_p.h"
+#include "dialogs/dialogmanager.h"
+#include "shutil/fileutils.h"
+#include "app/define.h"
 
 #include <QFileSystemWatcher>
 #include <QXmlStreamReader>
@@ -270,7 +273,64 @@ bool RecentController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) c
 {
     return DFileService::instance()->openFile(event->sender(), DUrl::fromLocalFile(event->url().path()));
 }
+bool RecentController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
+{
+    DUrlList fileUrls = event->urlList();
+    DUrlList packUrl;
+    QStringList pathList;
+    bool result = false;
 
+    for (DUrl fileUrl : fileUrls) {
+        const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
+        if (!pfile) {
+            continue;
+        }
+        if (pfile->isSymLink()) {
+            const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
+
+            if (linkInfo && !linkInfo->exists()) {
+                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), DUrl(fileUrl.path().remove(RECENT_ROOT)));
+                continue;
+            }
+            fileUrl = linkInfo->redirectedFileUrl();
+        }
+
+        if (FileUtils::isExecutableScript(fileUrl.path().remove(RECENT_ROOT))) {
+            int code = dialogManager->showRunExcutableScriptDialog(DUrl(fileUrl.path().remove(RECENT_ROOT)), event->windowId());
+            result = FileUtils::openExcutableScriptFile(fileUrl.path().remove(RECENT_ROOT), code) || result;
+            continue;
+        }
+
+        if (FileUtils::isFileRunnable(fileUrl.path().remove(RECENT_ROOT)) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showRunExcutableFileDialog(DUrl(fileUrl.path().remove(RECENT_ROOT)), event->windowId());
+            result = FileUtils::openExcutableFile(fileUrl.path().remove(RECENT_ROOT), code) || result;
+            continue;
+        }
+
+        if (FileUtils::shouldAskUserToAddExecutableFlag(fileUrl.path().remove(RECENT_ROOT)) && !pfile->isDesktopFile()) {
+            int code = dialogManager->showAskIfAddExcutableFlagAndRunDialog(DUrl(fileUrl.path().remove(RECENT_ROOT)), event->windowId());
+            result = FileUtils::addExecutableFlagAndExecuse(fileUrl.path().remove(RECENT_ROOT), code) || result;
+            continue;
+        }
+
+        packUrl << fileUrl;
+        QString url = fileUrl.path().remove(RECENT_ROOT);
+        if (FileUtils::isFileWindowsUrlShortcut(url)) {
+            url = FileUtils::getInternetShortcutUrl(url);
+        }
+        pathList << url;
+    }
+    if (!pathList.empty()) {
+        result = FileUtils::openFiles(pathList);
+        if (!result) {
+            for (const DUrl &fileUrl : packUrl) {
+                DFileService::instance()->openFile(event->sender(), fileUrl);
+            }
+        }
+    }
+
+    return result;
+}
 bool RecentController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
     return DFileService::instance()->openFileByApp(event->sender(), event->appName(), DUrl::fromLocalFile(event->url().path()));
@@ -278,6 +338,9 @@ bool RecentController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent>
 
 bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
+    //最近使用文件不支持剪切，这里主要是屏蔽从ctrl+x快捷键操作过来的剪切事件。
+    if (event->action() == DFMGlobal::CutAction)
+        return false;
     return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(),
                                                            realUrlList(event->urlList()));
 }
@@ -302,14 +365,17 @@ bool RecentController::decompressFile(const QSharedPointer<DFMDecompressEvent> &
 
 bool RecentController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
-    return DFileService::instance()->createSymlink(event->sender(), DUrl::fromLocalFile(event->fileUrl().path()), event->toUrl());
+    return DFileService::instance()->createSymlink(event->sender(), DUrl::fromLocalFile(event->fileUrl().path()), event->toUrl(), event->force());
 }
 
 bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     QStringList list;
     for (const DUrl &url : event->urlList()) {
-        list << DUrl::fromLocalFile(url.path()).toString();
+        //list << DUrl::fromLocalFile(url.path()).toString();
+        //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
+        QString urlPath = url.path();
+        list << "file://" + urlPath;
     }
 
     DRecentManager::removeItems(list);
@@ -399,7 +465,7 @@ void RecentController::handleFileChanged()
         return;
     }
 
-    if(m_condition.wait(&m_xbelFileLock, 1000)) {
+    if (m_condition.wait(&m_xbelFileLock, 1000)) {
         // if the parser is interrupted.
         // we need a timeout long enough so that
         // virtually all execution time is spent here.
@@ -413,11 +479,12 @@ void RecentController::handleFileChanged()
         while (!reader.atEnd()) {
 
             if (!reader.readNextStartElement() ||
-                 reader.name() != "bookmark") {
+                    reader.name() != "bookmark") {
                 continue;
             }
 
             const QStringRef &location = reader.attributes().value("href");
+            const QStringRef &readTime = reader.attributes().value("modified");
 
             if (!location.isEmpty()) {
                 DUrl url = DUrl(location.toString());
@@ -428,13 +495,18 @@ void RecentController::handleFileChanged()
                 if (info.exists() && info.isFile()) {
                     urlList << recentUrl;
 
-                    DThreadUtil::runInMainThread([=]() {
+                    DThreadUtil::runInMainThread([ = ]() {
+//                        RecentPointer fileInfo();
                         if (!recentNodes.contains(recentUrl)) {
-                            RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
-                            recentNodes[recentUrl] = fileInfo;
-
+                            recentNodes[recentUrl] = new RecentFileInfo(recentUrl);
                             DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
                                                               &DAbstractFileWatcher::subfileCreated,
+                                                              recentUrl);
+                        }
+                        //如果readtime变更了，需要通知filesystemmodel重新排序
+                        else if (recentNodes[recentUrl]->readDateTime().toSecsSinceEpoch() != QDateTime::fromString(readTime.toString()).toSecsSinceEpoch()) {
+                            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                                              &DAbstractFileWatcher::fileModified,
                                                               recentUrl);
                         }
                     });
@@ -444,7 +516,7 @@ void RecentController::handleFileChanged()
     }
 
     // delete does not exist url.
-    for (auto iter = recentNodes.begin(); iter != recentNodes.end(); ) {
+    for (auto iter = recentNodes.begin(); iter != recentNodes.end();) {
         DUrl url = iter.key();
 
         if (!urlList.contains(url)) {

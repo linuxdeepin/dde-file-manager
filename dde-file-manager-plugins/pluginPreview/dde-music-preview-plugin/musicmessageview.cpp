@@ -145,19 +145,19 @@ void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
     if (status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia)
     {
-        qDebug() << m_player->isMetaDataAvailable();
-        m_title = m_player->metaData(QMediaMetaData::Title).toString();
+        MediaMeta meta = tagOpenMusicFile(m_uri);
+        m_title = meta.title;
         if(m_title.isEmpty())
         {
             QFileInfo file(m_uri);
             QString fileName = file.baseName();
             m_title = fileName;
         }
-        m_artist = m_player->metaData(QMediaMetaData::AlbumArtist).toString();
+        m_artist = meta.artist;
         if(m_artist.isEmpty())
             m_artist = QString(tr("unknown artist"));
 
-        m_album = m_player->metaData(QMediaMetaData::AlbumTitle).toString();
+        m_album = meta.album;
         if(m_album.isEmpty())
             m_album = QString(tr("unknown album"));
 

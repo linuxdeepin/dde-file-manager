@@ -30,6 +30,7 @@
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "controllers/dfmsidebarvaultitemhandler.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -46,6 +47,9 @@
 #include "models/dfmrootfileinfo.h"
 #include "models/computermodel.h"
 #include "computerviewitemdelegate.h"
+#include "views/dfmopticalmediawidget.h"
+#include "models/deviceinfoparser.h"
+#include "controllers/vaultcontroller.h"
 
 #include <dslider.h>
 
@@ -68,6 +72,7 @@
 #include <DApplication>
 #include <DLineEdit>
 #include <DStyle>
+#include <views/dfilemanagerwindow.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -86,9 +91,16 @@ protected:
             QKeyEvent *ke = static_cast<QKeyEvent*>(e);
             if (ke->key() == Qt::Key::Key_Return || ke->key() == Qt::Key::Key_Enter) {
                 QListView *v = qobject_cast<QListView*>(parent());
-                Q_ASSERT(v);
-                Q_EMIT entered(v->selectionModel()->currentIndex());
-                return true;
+                if (v) {
+                    auto model = v->model();
+                    const QModelIndex &curIdx = v->selectionModel()->currentIndex();
+                    // 目的是可移动设备的item重命名时，按enter键时，不应该进入对应的目录，因此直接返回false
+                    if (model->flags(curIdx) & Qt::ItemFlag::ItemIsEditable) {
+                        return false;
+                    }
+                    Q_EMIT entered(curIdx);
+                    return true;
+                }
             }
         }
         return false;
@@ -166,7 +178,15 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
             }
         }
         DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
+        if (!url.isValid())
+            return;
+        //判断网络文件是否可以到达
+        if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
+            return;
+        }
         if (url.path().endsWith(SUFFIX_USRDIR)) {
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+        } else if (url.scheme() == DFMVAULT_SCHEME) {
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
         } else {
             appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
@@ -229,6 +249,9 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(re, &ViewReturnEater::entered, std::bind(enterfunc, std::placeholders::_1, -1));
     connect(m_statusbar->scalingSlider(), &QSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);
+
+    connect(&DeviceInfoParser::Instance(), SIGNAL(loadFinished()), this, SLOT(repaint()));
+    connect(fileSignalManager, &FileSignalManager::requestUpdateComputerView, this, static_cast<void (ComputerView::*)()>(&ComputerView::update));
 }
 
 ComputerView::~ComputerView()
@@ -270,7 +293,13 @@ void ComputerView::contextMenu(const QPoint &pos)
         disabled.insert(MenuAction::OpenInNewTab);
         disabled.insert(MenuAction::OpenDiskInNewTab);
     }
-    if (!idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()) {
+
+    const QString &strVolTag = idx.data(ComputerModel::DataRoles::VolumeTagRole).value<QString>();
+    if (strVolTag.startsWith("sr") // fix bug#25921 仅针对光驱设备实行禁用操作
+            && idx.data(ComputerModel::DataRoles::DiscUUIDRole).value<QString>().isEmpty()
+            && !idx.data(ComputerModel::DataRoles::DiscOpticalRole).value<bool>()
+            && (!idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()
+            || idx.data(ComputerModel::DataRoles::SizeTotalRole).value<int>() == 0)) {
         //fix:光驱还没有加载成功前，右键点击光驱“挂载”，光驱自动弹出。
         disabled.insert(MenuAction::OpenDiskInNewWindow);
         disabled.insert(MenuAction::OpenDiskInNewTab);
@@ -281,10 +310,27 @@ void ComputerView::contextMenu(const QPoint &pos)
 
         disabled.insert(MenuAction::Property);
     }
-    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
+    if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) { // 如果当前光驱设备正在执行擦除/刻录，则禁用所有右键菜单选项
+        for (MenuAction act: av)
+            disabled.insert(act);
+    }
+
+
+    DFileMenu *menu = nullptr;
+    if (idx.data(ComputerModel::DataRoles::SchemeRole) == DFMVAULT_SCHEME) {
+        // 重新创建右键菜单
+        DFMSideBarVaultItemHandler handler;
+        quint64 wndId = WindowManager::getWindowId(this);
+        menu = handler.generateMenu(WindowManager::getWindowById(wndId));
+    } else {
+        menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
+    }
+
     menu->setEventData(DUrl(), {idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>()}, WindowManager::getWindowId(this), this);
+    //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
+    QPointer<ComputerView> me = this;
     menu->exec(this->mapToGlobal(pos));
-    menu->deleteLater();
+    menu->deleteLater(me);
 }
 
 void ComputerView::onRenameRequested(const DFMUrlBaseEvent &event)

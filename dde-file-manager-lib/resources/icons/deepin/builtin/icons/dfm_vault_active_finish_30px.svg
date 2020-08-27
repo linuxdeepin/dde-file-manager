@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.2 (81672) - https://sketch.com -->
+    <title>icon_toast_sucess</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#55C600" offset="0%"></stop>
+            <stop stop-color="#00C3B6" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="10" cy="10" r="10"></circle>
+        <filter x="-27.5%" y="-17.5%" width="155.0%" height="155.0%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0.835294118   0 0 0 0 0.270588235  0 0 0 0.3 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="组件" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="notify" transform="translate(-5.000000, -5.000000)">
+            <g id="icon_toast_sucess">
+                <g transform="translate(5.000000, 5.000000)">
+                    <g id="icon/ok" transform="translate(5.000000, 5.000000)">
+                        <g id="ok">
+                            <g id="Oval-127">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                                <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                            </g>
+                            <polyline id="Path-1766" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" points="5.23632962 10.0435227 8.86867992 14.4222887 16.2792863 5.66475667"></polyline>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

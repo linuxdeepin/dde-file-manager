@@ -39,10 +39,10 @@ bool UserShareAdaptor::addGroup(const QString &groupName)
     return parent()->addGroup(groupName);
 }
 
-bool UserShareAdaptor::closeSmbShareByShareName(const QString &sharename)
+bool UserShareAdaptor::closeSmbShareByShareName(const QString &sharename, bool bshow)
 {
     // handle method call com.deepin.filemanager.daemon.UserShareManager.closeSmbShareByShareName
-    return parent()->closeSmbShareByShareName(sharename);
+    return parent()->closeSmbShareByShareName(sharename, bshow);
 }
 
 bool UserShareAdaptor::setUserSharePassword(const QString &username, const QString &passward)

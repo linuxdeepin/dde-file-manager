@@ -137,7 +137,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
     int buffSize = 0;
     ioctl(inotifyFd, FIONREAD, (char *) &buffSize);
     QVarLengthArray<char, 4096> buffer(buffSize);
-    buffSize = read(inotifyFd, buffer.data(), buffSize);
+    buffSize = static_cast<int>(read(inotifyFd, buffer.data(), static_cast<size_t>(buffSize)));
     char *at = buffer.data();
     char * const end = at + buffSize;
 
@@ -148,7 +148,9 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
     QMultiMap<int, QString> cookieToFileName;
     QSet<int> hasMoveFromByCookie;
 #ifdef QT_DEBUG
+#if 0
     int exist_count = 0;
+#endif
 #endif
     while (at < end) {
         inotify_event *event = reinterpret_cast<inotify_event *>(at);
@@ -179,9 +181,11 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             }
 #ifdef QT_DEBUG
             else {
+#if 0 // not use these code because too much logs
                 qDebug() << "exist event:" << "event->wd" << event->wd <<
                             "event->mask" << event->mask <<
                             "event->cookie" << event->cookie << "exist counts " << ++exist_count;
+#endif
             }
 #endif
             const QList<QString> bps = batch_pathmap.values(id);
@@ -255,6 +259,8 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
                         if (isMove)
                             break;
+                    }else if(event.mask & IN_UNMOUNT){
+                        emit q->fileSystemUMount(path, QString(), DFileSystemWatcher::QPrivateSignal());
                     }
 
                     /// Keep watcher
@@ -354,7 +360,6 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
 void DFileSystemWatcherPrivate::onFileChanged(const QString &path, bool removed)
 {
-    Q_Q(DFileSystemWatcher);
     if (!files.contains(path)) {
         // the path was removed after a change was detected, but before we delivered the signal
         return;
@@ -367,7 +372,6 @@ void DFileSystemWatcherPrivate::onFileChanged(const QString &path, bool removed)
 
 void DFileSystemWatcherPrivate::onDirectoryChanged(const QString &path, bool removed)
 {
-    Q_Q(DFileSystemWatcher);
     if (!directories.contains(path)) {
         // perhaps the path was removed after a change was detected, but before we delivered the signal
         return;
@@ -489,7 +493,7 @@ DFileSystemWatcher::~DFileSystemWatcher()
 bool DFileSystemWatcher::addPath(const QString &path)
 {
     if (path.isEmpty()) {
-        qWarning("DFileSystemWatcher::addPath: path is empty");
+        //qWarning("DFileSystemWatcher::addPath: path is empty");
         return true;
     }
 
@@ -557,7 +561,7 @@ QStringList DFileSystemWatcher::addPaths(const QStringList &paths)
 bool DFileSystemWatcher::removePath(const QString &path)
 {
     if (path.isEmpty()) {
-        qWarning("DFileSystemWatcher::removePath: path is empty");
+      //  qWarning("DFileSystemWatcher::removePath: path is empty");
         return true;
     }
 

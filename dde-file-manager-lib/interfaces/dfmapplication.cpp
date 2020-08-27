@@ -23,7 +23,9 @@
 #if QT_HAS_INCLUDE("anything_interface.h")
 #include "anything_interface.h"
 #else
+#ifndef DISABLE_QUICK_SEARCH
 #define DISABLE_QUICK_SEARCH
+#endif
 #endif
 
 #include "dfmsettings.h"
@@ -57,7 +59,7 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
     if (group == QT_STRINGIFY(ApplicationAttribute)) {
         const QMetaEnum &me = QMetaEnum::fromType<DFMApplication::ApplicationAttribute>();
 
-        DFMApplication::ApplicationAttribute aa = (DFMApplication::ApplicationAttribute)me.keyToValue(QByteArray("AA_" + key.toLatin1()).constData());
+        DFMApplication::ApplicationAttribute aa = static_cast<DFMApplication::ApplicationAttribute>(me.keyToValue(QByteArray("AA_" + key.toLatin1()).constData()));
 
         if (edited)
             Q_EMIT self->appAttributeEdited(aa, value);
@@ -72,7 +74,7 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
     } else if (group == QT_STRINGIFY(GenericAttribute)) {
         const QMetaEnum &me = QMetaEnum::fromType<DFMApplication::GenericAttribute>();
 
-        DFMApplication::GenericAttribute ga = (DFMApplication::GenericAttribute)me.keyToValue(QByteArray("GA_" + key.toLatin1()).constData());
+        DFMApplication::GenericAttribute ga = static_cast<DFMApplication::GenericAttribute>(me.keyToValue(QByteArray("GA_" + key.toLatin1()).constData()));
 
         if (edited)
             Q_EMIT self->genericAttributeEdited(ga, value);
@@ -181,14 +183,10 @@ QVariant DFMApplication::genericAttribute(DFMApplication::GenericAttribute ga)
     if (ga == GA_IndexInternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexInternal();
-#else
-        return false;
 #endif
     } else if (ga == GA_IndexExternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexExternal();
-#else
-        return false;
 #endif
     }
 
@@ -204,14 +202,10 @@ void DFMApplication::setGenericAttribute(DFMApplication::GenericAttribute ga, co
     if (ga == GA_IndexInternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexInternal(value.toBool());
-#else
-        return;
 #endif
     } else if (ga == GA_IndexExternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexExternal(value.toBool());
-#else
-        return;
 #endif
     }
 

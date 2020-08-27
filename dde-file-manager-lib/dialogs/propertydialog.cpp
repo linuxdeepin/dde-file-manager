@@ -28,6 +28,7 @@
 #include "propertydialog.h"
 #include "dabstractfilewatcher.h"
 #include "dfileinfo.h"
+#include <sys/stat.h>
 
 #include "app/define.h"
 
@@ -44,6 +45,8 @@
 #include "models/dfmrootfileinfo.h"
 #include "deviceinfo/udisklistener.h"
 
+#include "controllers/vaultcontroller.h"
+
 #include "utils.h"
 
 #include "singleton.h"
@@ -59,6 +62,7 @@
 #include "dfmeventdispatcher.h"
 #include "views/dfmsidebar.h"
 #include "dfmapplication.h"
+#include "dstorageinfo.h"
 
 #include <DDrawer>
 #include <DDrawerGroup>
@@ -86,9 +90,12 @@
 #include <QScrollArea>
 #include <ddiskmanager.h>
 #include <QGuiApplication>
-#include "unistd.h"
+#include <unistd.h>
 #include <models/trashfileinfo.h>
 #include <views/dfmtagwidget.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 
 #include <dgiosettings.h>
 
@@ -99,7 +106,7 @@ bool DFMRoundBackground::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == parent() && event->type() == QEvent::Paint) {
         QWidget *w = dynamic_cast<QWidget *>(watched);
-        if(!w) {
+        if (!w) {
             return false;
         }
         int radius = property("radius").toInt();
@@ -230,7 +237,7 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     setObjectName("SectionKeyLabel");
     setFixedWidth(120);
     QFont font = this->font();
-    font.setWeight(QFont::Bold-8);
+    font.setWeight(QFont::Bold - 8);
     font.setPixelSize(13);
     setFont(font);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
@@ -303,7 +310,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_icon->setPixmap(icon.pixmap(128, 128));
         m_edit->setPlainText(name);
         m_editDisbaled = true;
-        const QList<QPair<QString, QString> > & properties = createLocalDeviceInfoWidget(fi);
+        const QList<QPair<QString, QString> > &properties = createLocalDeviceInfoWidget(fi);
         m_deviceInfoFrame = createInfoFrame(properties);
 
         QStringList titleList;
@@ -319,7 +326,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             devid.clear();
         }
 
-        DColoredProgressBar* progbdf = new DTK_WIDGET_NAMESPACE::DColoredProgressBar();
+        DColoredProgressBar *progbdf = new DTK_WIDGET_NAMESPACE::DColoredProgressBar();
         QLinearGradient lg(0, 0.5, 1, 0.5);
         lg.setCoordinateMode(QGradient::CoordinateMode::ObjectBoundingMode);
 
@@ -338,10 +345,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             QString strVolTag;
             if (pFileInfo)
                 strVolTag = pFileInfo->getVolTag();
-            dskspace = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
-            dskinuse = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
-//            dskspace = DFMOpticalMediaWidget::g_totalSize;
-//            dskinuse = DFMOpticalMediaWidget::g_usedSize;
+            dskspace = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
+            dskinuse = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
         }
 
         progbdf->setMaximum(10000);
@@ -353,14 +358,14 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         QString text = devid.isEmpty() ? tr("%1").arg(name) : tr("%1 (%2)").arg(name).arg(devid);
         //end
 
-        QLabel* lbdf_l = new SectionKeyLabel();
+        QLabel *lbdf_l = new SectionKeyLabel();
         QString fullText(text);
         text = lbdf_l->fontMetrics().elidedText(text, Qt::ElideMiddle, 150);
         lbdf_l->setText(text);
         if (text != fullText) {
             lbdf_l->setToolTip(fullText);
         }
-        QLabel* lbdf_r = new SectionKeyLabel(tr("%1 / %2").arg(FileUtils::formatSize(dskinuse)).arg(FileUtils::formatSize(dskspace)));
+        QLabel *lbdf_r = new SectionKeyLabel(tr("%1 / %2").arg(FileUtils::formatSize(dskinuse)).arg(FileUtils::formatSize(dskspace)));
         if (!~dskinuse) {
             lbdf_r->setText(FileUtils::formatSize(dskspace));
         }
@@ -368,7 +373,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         lbdf_r->setAlignment(Qt::AlignRight);
         lbdf_l->setMaximumWidth(QWIDGETSIZE_MAX);
         lbdf_r->setMaximumWidth(QWIDGETSIZE_MAX);
-        QWidget* wdfl = new QWidget();
+        QWidget *wdfl = new QWidget();
         wdfl->setLayout(new QHBoxLayout);
         wdfl->layout()->setMargin(0);
         wdfl->layout()->addWidget(lbdf_l);
@@ -381,7 +386,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_wdf->layout()->addWidget(wdfl);
         m_wdf->layout()->addWidget(progbdf);
         new DFMRoundBackground(m_wdf, 8);
-        qobject_cast<QVBoxLayout*>(m_scrollArea->widget()->layout())->insertWidget(0, m_wdf);
+        qobject_cast<QVBoxLayout *>(m_scrollArea->widget()->layout())->insertWidget(0, m_wdf);
 
     } else {
         // tagged file basicinfo not complete??
@@ -406,14 +411,17 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             titleList << basicInfo;
             if (!m_url.isTrashFile()) {
                 titleList << openWith;
-                titleList << authManager;
+                if (fileInfo->canManageAuth())
+                    titleList << authManager;
             }
         } else {
             titleList << basicInfo;
-            if (fileInfo->canShare()) {
+            //! 选中的文件是保险箱的，则屏蔽掉共享选项
+            if (fileInfo->canShare() && !VaultController::isVaultFile(fileInfo->toQFileInfo().canonicalFilePath())) {
                 titleList << shareManager;
             }
-            if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile()) {
+            if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() && fileInfo->canManageAuth() &&
+                    !VaultController::ins()->isRootDirectory(m_url.toLocalFile())) {
                 titleList << authManager;
             }
         }
@@ -503,7 +511,7 @@ void PropertyDialog::initUI()
     palette.setBrush(QPalette::Background, Qt::NoBrush);
     m_scrollArea->viewport()->setPalette(palette);
     m_scrollArea->setFrameShape(QFrame::Shape::NoFrame);
-    QFrame *infoframe= new QFrame;
+    QFrame *infoframe = new QFrame;
     QVBoxLayout *scrollWidgetLayout = new QVBoxLayout;
     scrollWidgetLayout->setContentsMargins(15, 0, 15, 0);
     scrollWidgetLayout->setSpacing(ArrowLineExpand_SPACING);
@@ -517,9 +525,29 @@ void PropertyDialog::initUI()
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
     layout->addLayout(scrolllayout, 1);
 
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
+    QFrame *tagFrame = initTagFrame(m_url);
+    if (tagFrame != nullptr) {
+        scrollWidgetLayout->addWidget(tagFrame);
+    }
+
+    setFixedWidth(350);
+}
+
+QFrame *PropertyDialog::initTagFrame(const DUrl &url)
+{
+    if (m_tagInfoFrame != nullptr) {
+        ((DFMTagWidget *)m_tagInfoFrame)->loadTags(url);
+        return m_tagInfoFrame;
+    }
+
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
+    DUrl t_url = url;
+    //! 保险箱中属性窗口中要获取标记需要真实路径，需要将虚拟路径转换为真实路径
+    if (url.isVaultFile()) {
+        t_url = VaultController::vaultToLocalUrl(url);
+    }
     if (fileInfo && fileInfo->canTag()) {
-        DFMTagWidget *tagInfoFrame = new DFMTagWidget(m_url, this);
+        DFMTagWidget *tagInfoFrame = new DFMTagWidget(t_url, this);
         new DFMRoundBackground(tagInfoFrame, 8);
         m_tagInfoFrame = tagInfoFrame;
 
@@ -528,10 +556,40 @@ void PropertyDialog::initUI()
         font.setPixelSize(17);
         tagInfoFrame->tagTitle()->setFont(font);
         m_tagInfoFrame->setMaximumHeight(150);
-        scrollWidgetLayout->addWidget(m_tagInfoFrame);
+
+        qDebug() << "tag frame is created for: " << t_url;
+
+        return m_tagInfoFrame;
     }
 
-    setFixedWidth(350);
+    return nullptr;
+}
+
+void PropertyDialog::updateInfo()
+{
+    initTagFrame(m_url);
+}
+
+const DUrl PropertyDialog::getRealUrl()
+{
+    if (m_url.isRecentFile()) {
+        return DUrl::fromLocalFile(m_url.path());
+    }
+
+    return m_url;
+}
+
+bool PropertyDialog::canChmod(const DAbstractFileInfoPointer &info)
+{
+    bool ret = true;
+    DUrl parentUrl = info->parentUrl();
+    QString parentScheme = parentUrl.scheme();
+
+    if (parentScheme == BURN_SCHEME) {
+        ret = false;
+    }
+
+    return ret;
 }
 
 void PropertyDialog::initConnect()
@@ -584,6 +642,7 @@ void PropertyDialog::renameFile()
     m_edit->setPlainText(fileName);
     m_editStackWidget->setCurrentIndex(0);
     m_edit->setFixedHeight(m_textShowFrame->height());
+    m_edit->setFocus();
 
     const DAbstractFileInfoPointer pfile = fileService->createFileInfo(this, m_url);
     int endPos = -1;
@@ -638,6 +697,15 @@ void PropertyDialog::showTextShowFrame()
         if (fileService->renameFile(this, oldUrl, newUrl)) {
             if (!fileInfo->isDesktopFile()) { // this is a dirty fix.
                 m_url = newUrl;
+                updateInfo();//bug 25419
+                onHideFileCheckboxChecked(false);    //bug 29958
+                if (m_basicInfoFrame) { //bug 29961
+                    QCheckBox *hideThisFile = m_basicInfoFrame->findChild<QCheckBox *>(QString("hideThisFileCheckBox"));
+                    if (hideThisFile) {
+                        hideThisFile->setChecked(false);
+                    }
+                }
+
                 dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
             }
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
@@ -659,10 +727,10 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
         return;
     }
     if (fileUrl == m_url) {
-        QTimer::singleShot(100,this, [=]{
+        QTimer::singleShot(100, this, [ = ] {
             this->close();
         });
-//        close();
+        //        close();
     }
 }
 
@@ -688,7 +756,7 @@ void PropertyDialog::flickFolderToSidebar()
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
     //QLabel *aniLabel = new QLabel(window);
-    m_aniLabel = new QLabel (window);
+    m_aniLabel = new QLabel(window);
     m_aniLabel->raise();
     m_aniLabel->setFixedSize(m_icon->size());
     m_aniLabel->setAttribute(Qt::WA_TranslucentBackground);
@@ -702,14 +770,14 @@ void PropertyDialog::flickFolderToSidebar()
         angle = -45;
     }
 
-   // QVariantAnimation *xani = new QVariantAnimation(this);
-    m_xani = new QVariantAnimation (this);
+    // QVariantAnimation *xani = new QVariantAnimation(this);
+    m_xani = new QVariantAnimation(this);
     m_xani->setStartValue(m_aniLabel->pos());
     m_xani->setEndValue(QPoint(targetPos.x(), angle));
     m_xani->setDuration(440);
 
     //QVariantAnimation *gani = new QVariantAnimation(this);
-    m_gani = new QVariantAnimation (this);
+    m_gani = new QVariantAnimation(this);
     m_gani->setStartValue(m_aniLabel->geometry());
     m_gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
     m_gani->setEasingCurve(QEasingCurve::InBack);
@@ -735,7 +803,7 @@ void PropertyDialog::flickFolderToSidebar()
 
     connect(m_gani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
         m_aniLabel->move(QPoint(m_aniLabel->x(),
-                              val.toRect().y() - val.toRect().width() / 2));
+                                val.toRect().y() - val.toRect().width() / 2));
         m_aniLabel->setFixedSize(val.toRect().size() * 2);
     });
     connect(m_gani, &QVariantAnimation::finished, [ = ] {
@@ -749,13 +817,14 @@ void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
 {
     if (w) {
         MimesAppsManager::setDefautlAppForTypeByGio(w->property("mimeTypeName").toString(),
-                w->property("appPath").toString());
+                                                    w->property("appPath").toString());
     }
 }
 
 void PropertyDialog::onHideFileCheckboxChecked(bool checked)
 {
-    QFileInfo info(m_url.toLocalFile());
+    DUrl url = getRealUrl();
+    QFileInfo info(url.toLocalFile());
     if (!info.exists()) return;
 
     DFMFileListFile flf(info.absolutePath());
@@ -800,9 +869,9 @@ void PropertyDialog::toggleFileExecutable(bool isChecked)
 {
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, m_url);
     if (isChecked) {
-        DFileService::instance()->setPermissions(this, m_url, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
+        DFileService::instance()->setPermissions(this, getRealUrl(), info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
     } else {
-        DFileService::instance()->setPermissions(this, m_url, info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
+        DFileService::instance()->setPermissions(this, getRealUrl(), info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
     }
 }
 
@@ -829,15 +898,15 @@ void PropertyDialog::raise()
 
 void PropertyDialog::hideEvent(QHideEvent *event)
 {
-    if(m_xani){
+    if (m_xani) {
         m_xani->stop();
         delete m_xani;
     }
-    if(m_gani){
+    if (m_gani) {
         m_gani->stop();
         delete m_gani;
     }
-    if(m_aniLabel)
+    if (m_aniLabel)
         delete  m_aniLabel;
     emit aboutToClosed(m_url);
     DDialog::hideEvent(event);
@@ -860,7 +929,10 @@ const QList<DDrawer *> &PropertyDialog::expandGroup() const
 int PropertyDialog::contentHeight() const
 {
     int expandsHeight = ArrowLineExpand_SPACING;
-    for (const DDrawer* expand : m_expandGroup) {
+    for (const DDrawer *expand : m_expandGroup) {
+        if (m_shareinfoFrame && m_shareinfoFrame->isHidden()) {
+            m_shareinfoFrame->show();
+        }
         expandsHeight += expand->height();
     }
 #define DIALOG_TITLEBAR_HEIGHT 50
@@ -870,8 +942,8 @@ int PropertyDialog::contentHeight() const
             expandsHeight +
             contentsMargins().top() +
             contentsMargins().bottom() +
-            (m_wdf ? m_wdf->height() : 0)+
-            (m_tagInfoFrame ? m_tagInfoFrame->height() : 0)+
+            (m_wdf ? m_wdf->height() : 0) +
+            (m_tagInfoFrame ? m_tagInfoFrame->height() : 0) +
             40);
 }
 
@@ -879,8 +951,8 @@ int PropertyDialog::getDialogHeight() const
 {
     int totalHeight = this->size().height() + contentHeight() ;
 
-    for (const DDrawer* expand : m_expandGroup) {
-       if(expand->expand())
+    for (const DDrawer *expand : m_expandGroup) {
+        if (expand->expand())
             totalHeight += expand->window()->height();
     }
 
@@ -916,15 +988,15 @@ void PropertyDialog::initExpand(QVBoxLayout *layout, DDrawer *expand)
     expand->setFixedHeight(ArrowLineExpand_HIGHT);
     QMargins cm = layout->contentsMargins();
     QRect rc = contentsRect();
-    expand->setFixedWidth(rc.width()-cm.left()-cm.right());
+    expand->setFixedWidth(rc.width() - cm.left() - cm.right());
     expand->setExpandedSeparatorVisible(false);
     expand->setSeparatorVisible(false);
     layout->addWidget(expand, 0, Qt::AlignTop);
 
     DEnhancedWidget *hanceedWidget = new DEnhancedWidget(expand, expand);
-    connect(hanceedWidget, &DEnhancedWidget::heightChanged, hanceedWidget, [=](){
+    connect(hanceedWidget, &DEnhancedWidget::heightChanged, hanceedWidget, [ = ]() {
         QRect rc = geometry();
-        rc.setHeight(contentHeight()+ArrowLineExpand_SPACING*2);
+        rc.setHeight(contentHeight() + ArrowLineExpand_SPACING * 2);
         setGeometry(rc);
     });
 }
@@ -1049,9 +1121,9 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(typeSectionLabel, typeLabel);
     }
 
+    SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
+    QLabel *locationPathLabel = nullptr;
     if (info->isSymLink()) {
-        SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
-
         LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->symlinkTargetPath());
         linkPathLabel->setToolTip(info->symlinkTargetPath());
         linkPathLabel->setLinkTargetUrl(info->redirectedFileUrl());
@@ -1059,9 +1131,22 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         linkPathLabel->setWordWrap(false);
         QString t = linkPathLabel->fontMetrics().elidedText(info->symlinkTargetPath(), Qt::ElideMiddle, 150);
         linkPathLabel->setText(t);
-        layout->addRow(linkPathSectionLabel, linkPathLabel);
+        locationPathLabel = linkPathLabel;
+    } else {
+        locationPathLabel = new SectionValueLabel();
+        QString absoluteFilePath = info->absoluteFilePath();
+        //! 在属性窗口中不显示保险箱中的文件真实路径
+        if (info->fileUrl().isVaultFile()) {
+            absoluteFilePath = VaultController::pathToVirtualPath(absoluteFilePath);
+        }
+        locationPathLabel->setText(absoluteFilePath);
+        locationPathLabel->setToolTip(absoluteFilePath);
+        QString t = locationPathLabel->fontMetrics().elidedText(absoluteFilePath, Qt::ElideMiddle, 150);
+        locationPathLabel->setWordWrap(false);
+        locationPathLabel->setText(t);
     }
 
+    layout->addRow(linkPathSectionLabel, locationPathLabel);
     if (!info->isVirtualEntry()) {
         layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
         layout->addRow(TimeReadSectionLabel, timeReadLabel);
@@ -1090,12 +1175,14 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 
     DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
 
-    if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())) {
+    if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())
+            && !VaultController::ins()->isRootDirectory(info->filePath())) {
         DFMFileListFile flf(QFileInfo(info->filePath()).absolutePath());
         QString fileName = info->fileName();
-        QCheckBox * hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
-//        hideThisFile->setToolTip("TODO: hint message?");
-        hideThisFile->setEnabled(DFMFileListFile::canHideByFile(info->filePath()));
+        QCheckBox *hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
+        hideThisFile->setObjectName(QString("hideThisFileCheckBox"));
+        //        hideThisFile->setToolTip("TODO: hint message?");
+        hideThisFile->setEnabled(DFMFileListFile::canHideByFile(info->filePath()) && !info->fileUrl().isTrashFile()); // fix bug#33763 回收站中不允许对文件属性进行编辑
         hideThisFile->setChecked(flf.contains(fileName));
         layout->addWidget(hideThisFile); // FIXME: do the UI thing later.
         connect(hideThisFile, &QCheckBox::clicked, this, &PropertyDialog::onHideFileCheckboxChecked);
@@ -1110,10 +1197,13 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPointer &info)
 {
     DAbstractFileInfoPointer infoPtr = info->canRedirectionFileUrl() ? DFileService::instance()->createFileInfo(nullptr, info->redirectedFileUrl())
-                                                                     : info;
+                                       : info;
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
     connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
+    //    connect(frame, &ShareInfoFrame::unfolderShared, this, [this](){
+    //        m_expandGroup.at(1)->setExpand(false);
+    //    });
 
     return frame;
 }
@@ -1131,8 +1221,28 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     quint64 fsUsed = info->extraProperties()["fsUsed"].toULongLong();
     quint64 fsSize = info->extraProperties()["fsSize"].toULongLong();
     quint64 fileCount = 0;
-    if (!info->redirectedFileUrl().isEmpty()) {
-        fileCount = FileUtils::filesCount(info->redirectedFileUrl().toLocalFile());
+    DUrl redirectedFileUrl = info->redirectedFileUrl();
+    if (!redirectedFileUrl.isEmpty()) {
+        if (redirectedFileUrl.burnIsOnDisc()) {
+            if (!redirectedFileUrl.burnDestDevice().isEmpty()) {
+                DUrl stagingUrl = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                                                      + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
+                                                      + redirectedFileUrl.burnDestDevice().replace('/', '_'));
+                QString stagingFilePath = stagingUrl.toLocalFile();
+                if (!stagingFilePath.isEmpty()) {
+                    fileCount = FileUtils::filesCount(stagingFilePath);
+                }
+            }
+
+            DAbstractFileInfoPointer fi = fileService->createFileInfo(this, redirectedFileUrl);
+            DUrl url = DUrl::fromLocalFile(fi->extraProperties()["mm_backer"].toString());
+            redirectedFileUrl = url;
+        }
+
+        QString localFilePath = redirectedFileUrl.toLocalFile();
+        if (!localFilePath.isEmpty()) {
+            fileCount += FileUtils::filesCount(localFilePath);
+        }
     }
 
     static QHash<DFMRootFileInfo::ItemType, QString> devtypemap = {
@@ -1151,15 +1261,13 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     //fix GvfsGPhoto2协议对Apple mobile device判断有问题，再增加一层判断
     {
         auto itemtype = static_cast<DFMRootFileInfo::ItemType>(info->fileType());
-        if (itemtype == DFMRootFileInfo::ItemType::GvfsGPhoto2)
-        {
+        if (itemtype == DFMRootFileInfo::ItemType::GvfsGPhoto2) {
             QString devicePath = info->redirectedFileUrl().path();
 
             qInfo() << "Deivce Type: DFMRootFileInfo::ItemType::GvfsGPhoto2 Device Path:" << devicePath;
 
             //判断host中是否有"Apple_Inc"，没有且不为空则改为安卓
-            if (!devicePath.isEmpty() && !devicePath.contains("Apple_Inc"))
-            {
+            if (!devicePath.isEmpty() && !devicePath.contains("Apple_Inc")) {
                 qWarning() << "Deivce Type is DFMRootFileInfo::ItemType::GvfsGPhoto2. Not find Apple_Inc in device path"
                            << devicePath << "Set Deivce Type [GvfsGPhoto2] to [GvfsMTP]";
                 itemtype = DFMRootFileInfo::ItemType::GvfsMTP;
@@ -1177,10 +1285,8 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
         QString strVolTag;
         if (pFileInfo)
             strVolTag = pFileInfo->getVolTag();
-        fsSize = DFMOpticalMediaWidget::g_totalSize;
-        fsUsed = DFMOpticalMediaWidget::g_usedSize;
-        fsSize = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
-        fsUsed = DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
+        fsSize = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
+        fsUsed = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
     }
 
     results.append({QObject::tr("Total space"), FileUtils::formatSize(fsSize)});
@@ -1193,7 +1299,7 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     return results;
 }
 
-QFrame *PropertyDialog::createInfoFrame(const QList<QPair<QString, QString> >& properties)
+QFrame *PropertyDialog::createInfoFrame(const QList<QPair<QString, QString> > &properties)
 {
     QFrame *widget = new QFrame(this);
 
@@ -1202,7 +1308,7 @@ QFrame *PropertyDialog::createInfoFrame(const QList<QPair<QString, QString> >& p
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
 
-    for (const QPair<QString, QString> & kv : properties) {
+    for (const QPair<QString, QString> &kv : properties) {
         SectionKeyLabel *keyLabel = new SectionKeyLabel(kv.first, widget);
         SectionValueLabel *valLabel = new SectionValueLabel(kv.second, widget);
         layout->addRow(keyLabel, valLabel);
@@ -1287,6 +1393,10 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     QComboBox *groupBox = new QComboBox;
     QComboBox *otherBox = new QComboBox;
 
+    DUrl parentUrl = info->parentUrl();
+    QString parentScheme = parentUrl.scheme();
+    DStorageInfo storageInfo(parentUrl.toLocalFile());
+    const QString &fsType = storageInfo.fileSystemType();
     // these are for file or folder, folder will with executable index.
     int readWriteIndex = 0, readOnlyIndex = 0;
 
@@ -1300,6 +1410,8 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
                   << QObject::tr("Read only")  // 5 with x
                   << QObject::tr("Read-write") // 6
                   << QObject::tr("Read-write"); // 7 with x
+
+    static QStringList canChmodFileType = {"vfat", "fuseblk"};
 
     if (info->isFile()) {
         // append `Executable` string
@@ -1344,11 +1456,21 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     // when change the index...
     auto onComboBoxChanged = [ = ]() {
-        DFileService::instance()->setPermissions(this, m_url,
+        struct stat fileStat;
+        stat(info->toLocalFile().toUtf8().data(), &fileStat);
+        auto preMode = fileStat.st_mode;
+        DFileService::instance()->setPermissions(this, getRealUrl(),
                                                  QFileDevice::Permissions(ownerBox->currentData().toInt()) |
                                                  /*(info->permissions() & 0x0700) |*/
                                                  QFileDevice::Permissions(groupBox->currentData().toInt()) |
                                                  QFileDevice::Permissions((otherBox->currentData().toInt())));
+        stat(info->toLocalFile().toUtf8().data(), &fileStat);
+        auto afterMode = fileStat.st_mode;
+        // 修改权限失败
+        // todo 回滚权限
+        if (preMode == afterMode) {
+            qDebug() << "chmod failed";
+        }
     };
 
     if (info->isDir()) {
@@ -1384,8 +1506,24 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         if (info->ownerId() != getuid()) {
             m_executableCheckBox->setDisabled(true);
         }
-        if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
-            m_executableCheckBox->setChecked(true);
+
+        QString filePath = info->path();
+        if (VaultController::ins()->isVaultFile(info->path())) { // Vault file need to use stat function to read file permission.
+            QString filePath = info->toLocalFile();
+            struct stat buf;
+            std::string stdStr = filePath.toStdString();
+            stat(stdStr.c_str(), &buf);
+            if ((buf.st_mode & S_IXUSR) || (buf.st_mode & S_IXGRP) || (buf.st_mode & S_IXOTH)) {
+                m_executableCheckBox->setChecked(true);
+            }
+        } else {
+            if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
+                m_executableCheckBox->setChecked(true);
+            }
+        }
+        // 一些文件系统不支持修改可执行权限
+        if (!canChmod(info) || canChmodFileType.contains(fsType)) {
+            m_executableCheckBox->setDisabled(true);
         }
         layout->addRow(m_executableCheckBox);
     }
@@ -1398,11 +1536,24 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     connect(groupBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
     connect(otherBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
 
-    if (info->ownerId() != getuid()) {
+    // 置灰：
+    // 1. 本身用户无权限
+    // 2. 所属文件系统无权限机制
+    if (info->ownerId() != getuid() ||
+            !canChmod(info) ||
+            fsType == "fuseblk") {
         ownerBox->setDisabled(true);
         groupBox->setDisabled(true);
         otherBox->setDisabled(true);
     }
 
+    // tmp: 暂时的处理
+    if (fsType == "vfat") {
+        groupBox->setDisabled(true);
+        otherBox->setDisabled(true);
+        if (info->isDir()) {
+            ownerBox->setDisabled(true);
+        }
+    }
     return widget;
 }

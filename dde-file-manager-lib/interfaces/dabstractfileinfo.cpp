@@ -35,6 +35,7 @@
 
 #include "controllers/bookmarkmanager.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 #include "dfileservices.h"
 #include "dmimedatabase.h"
 
@@ -76,10 +77,20 @@ DCORE_USE_NAMESPACE
 
 
 namespace FileSortFunction {
-QCollator sortCollator;
+//fix 多线程排序时，该处的全局变量在compareByString函数中可能导致软件崩溃
+//QCollator sortCollator;
+class DCollator : public QCollator
+{
+public:
+    DCollator() : QCollator() {
+        setNumericMode(true);
+        setCaseSensitivity(Qt::CaseInsensitive);
+    }
+};
 
 bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
+    thread_local static DCollator sortCollator;
     if (DFMGlobal::startWithHanzi(str1)) {
         if (!DFMGlobal::startWithHanzi(str2)) {
             return order == Qt::DescendingOrder;
@@ -118,9 +129,6 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
 
         urlToFileInfoMap[url] = qq;
     }
-
-    FileSortFunction::sortCollator.setNumericMode(true);
-    FileSortFunction::sortCollator.setCaseSensitivity(Qt::CaseInsensitive);
 }
 
 DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
@@ -161,7 +169,7 @@ DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
 {
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
     if (QThread::currentThread() && qApp && qApp->thread() && QThread::currentThread() != qApp->thread()) {
-        return 0;
+        return nullptr;
     }
 
     if (!fileUrl.isValid()) {
@@ -422,6 +430,13 @@ bool DAbstractFileInfo::makeAbsolute()
     return false;
 }
 
+bool DAbstractFileInfo::canManageAuth() const
+{
+    CALL_PROXY(canManageAuth());
+
+    return true;
+}
+
 DAbstractFileInfo::FileType DAbstractFileInfo::fileType() const
 {
     CALL_PROXY(fileType());
@@ -491,6 +506,9 @@ DUrl DAbstractFileInfo::rootSymLinkTarget() const
         }
 
         info = fileService->createFileInfo(Q_NULLPTR, targetUrl);
+        if (!info) {
+            return QUrl();
+        }
     }
 
     return info->fileUrl();
@@ -959,8 +977,14 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             }
         }
 
-        actionKeys << MenuAction::Delete
-                   << MenuAction::Separator
+        if (FileUtils::isGvfsMountFile(absoluteFilePath()) || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())) {
+            if (!isVirtualEntry()) {
+                actionKeys << MenuAction::CompleteDeletion;
+            }
+        } else {
+            actionKeys << MenuAction::Delete;
+        }
+        actionKeys << MenuAction::Separator
                    << MenuAction::Property;
 
         ///###: tag protocol.
@@ -1410,6 +1434,16 @@ bool DAbstractFileInfo::checkMpsStr(const QString &) const
     return false;
 }
 
+const QDateTime DAbstractFileInfo::getReadTime() const
+{
+    return QDateTime();
+}
+
+void DAbstractFileInfo::updateReadTime(const QDateTime &)
+{
+
+}
+
 void DAbstractFileInfo::makeToActive()
 {
     Q_D(DAbstractFileInfo);
@@ -1550,8 +1584,9 @@ static QVector<MenuAction> getMenuActionTypeListByAction(const QList<QAction *> 
     return type_list;
 }
 
-QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() const
+QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(MenuType type) const
 {
+    Q_UNUSED(type)
     QMap<MenuAction, QVector<MenuAction> > actions;
 
     QVector<MenuAction> openwithMenuActionKeys;

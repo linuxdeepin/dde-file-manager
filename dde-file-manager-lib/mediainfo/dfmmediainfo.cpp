@@ -22,58 +22,110 @@
 #include "MediaInfo/MediaInfo.h"
 #include <QApplication>
 #include <QTimer>
+#include <QQueue>
+#include <QMutex>
 
 #define MediaInfo_State_Finished 10000
 using namespace MediaInfoLib;
+Q_GLOBAL_STATIC(QQueue<MediaInfo *>, queueDestoryMediaInfo)
 
 DFM_BEGIN_NAMESPACE
-class DFMMediaInfoPrivate : public QSharedData {
+class DFMMediaInfoPrivate : public QSharedData
+{
 public:
-    DFMMediaInfoPrivate(DFMMediaInfo *qq, const QString &file) : q_ptr(qq){
+    DFMMediaInfoPrivate(DFMMediaInfo *qq, const QString &file) : q_ptr(qq)
+    {
+        m_isWorking.store(false);
+        m_file = file;
         m_mediaInfo = new MediaInfo;
-        m_mediaInfo->Option(__T("Thread"), __T("1")); // open file in thread..
-        m_mediaInfo->Option(__T("Inform"), __T("Text"));
-        m_mediaInfo->Open(file.toStdWString());
         m_timer = new QTimer(qq);
-        m_timer->setInterval(200);
-        m_timer->start();
-        QObject::connect(m_timer, &QTimer::timeout, qq, [this](){
-            if (m_mediaInfo) {
-                if (m_mediaInfo->State_Get() == MediaInfo_State_Finished) {
-                    emit q_ptr->Finished();
-                    m_timer->stop();
-                    return ;
-                }
-//                if (m_mediaInfo->Count_Get(Stream_Image)>0)
-//                    emit q_ptr->typeFinished("image");
-//                if (m_mediaInfo->Count_Get(Stream_Video)>0)
-//                    emit q_ptr->typeFinished("video");
-//                if (m_mediaInfo->Count_Get(Stream_Audio)>0)
-//                    emit q_ptr->typeFinished("audio");
-            }
-        });
     }
 
-    ~DFMMediaInfoPrivate(){
+    ~DFMMediaInfoPrivate()
+    {
         if (m_timer)
             m_timer->stop();
-        if (m_mediaInfo)
-            delete m_mediaInfo;
+        if (m_mediaInfo) {
+            // 由于当远程文件夹下存在大量图片文件时，析构mediainfo对象耗时会很长，造成文管卡
+            // 所以将对象添加到队列中，开启线程去释放对象
+            static QMutex lock;
+            lock.lock();
+            queueDestoryMediaInfo->enqueue(m_mediaInfo);
+            lock.unlock();
+
+            static bool isRunning = false;
+            if (!isRunning) {
+                isRunning = true;
+                std::thread thread(
+                []() {
+                    while (!queueDestoryMediaInfo->isEmpty()) {
+                        lock.lock();
+                        MediaInfo *mediaInfo = queueDestoryMediaInfo->dequeue();
+                        lock.unlock();
+
+                        // 这里会很慢
+                        delete mediaInfo;
+                        mediaInfo = nullptr;
+                    }
+                    isRunning = false;
+                });
+                thread.detach();
+            }
+        }
     }
 
-    QString Inform(){
+    /**
+     * @brief bug-35165, 将构造时读取media信息的方式改为独立的方法
+     * 以免造成构造对象时直接卡住
+     */
+    void start()
+    {
+
+        Q_Q(DFMMediaInfo);
+        if (m_isWorking.load())
+            return;
+//        m_isWorking.store(true);
+        m_mediaInfo->Option(__T("Thread"), __T("1")); // open file in thread..
+        m_mediaInfo->Option(__T("Inform"), __T("Text"));
+        if (m_mediaInfo->Open(m_file.toStdWString()) == 0) { // 可能耗时
+            m_timer->setInterval(200);
+            m_timer->start();
+            QObject::connect(m_timer, &QTimer::timeout, q, [this]() {
+                if (m_mediaInfo) {
+                    if (m_mediaInfo->State_Get() == MediaInfo_State_Finished) {
+                        emit q_ptr->Finished();
+                        m_timer->stop();
+                        return ;
+                    }
+                    //                if (m_mediaInfo->Count_Get(Stream_Image)>0)
+                    //                    emit q_ptr->typeFinished("image");
+                    //                if (m_mediaInfo->Count_Get(Stream_Video)>0)
+                    //                    emit q_ptr->typeFinished("video");
+                    //                if (m_mediaInfo->Count_Get(Stream_Audio)>0)
+                    //                    emit q_ptr->typeFinished("audio");
+                }
+            });
+        }
+        m_isWorking.store(false);
+    }
+
+    QString Inform()
+    {
         //m_mediaInfo->Option(__T("Inform"), __T("Text"));
         qDebug() << "state:" << m_mediaInfo->State_Get(); // 10000 is ok?
         QString info = QString::fromStdWString(m_mediaInfo->Inform());
         return info;
     }
 
-    QString Value(const QString &key, stream_t type){
+    QString Value(const QString &key, stream_t type)
+    {
         QString info = QString::fromStdWString(m_mediaInfo->Get(type, 0, key.toStdWString()));
         return info;
     }
 
 private:
+    std::atomic<bool>    m_isWorking;
+    QString m_file;
     MediaInfo     *m_mediaInfo {nullptr};
     QTimer        *m_timer {nullptr};
     DFMMediaInfo *q_ptr{ nullptr };
@@ -94,7 +146,7 @@ DFMMediaInfo::~DFMMediaInfo()
 
 QString DFMMediaInfo::generalInformation(const QString &filename)
 {
-    DFMMediaInfoPrivate info(nullptr ,filename);
+    DFMMediaInfoPrivate info(nullptr, filename);
     return info.Inform();
 }
 
@@ -102,6 +154,12 @@ QString DFMMediaInfo::Value(const QString &key, MeidiaType meidiaType/* = Genera
 {
     Q_D(DFMMediaInfo);
     return d->Value(key, static_cast<stream_t>(meidiaType));
+}
+
+void DFMMediaInfo::startReadInfo()
+{
+    Q_D(DFMMediaInfo);
+    d->start();
 }
 
 DFM_END_NAMESPACE

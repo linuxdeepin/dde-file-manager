@@ -40,6 +40,7 @@ public:
 
     bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const override;
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const override;
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;

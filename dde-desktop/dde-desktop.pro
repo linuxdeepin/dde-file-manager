@@ -11,7 +11,7 @@ include($$PWD/dbus/dbus.pri)
 include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
 include($$PWD/../dde-zone/dde-zone.pri)
 
-QT       += core gui widgets svg dbus x11extras network concurrent multimediawidgets multimedia
+QT       += core gui widgets dbus x11extras network concurrent multimedia #multimediawidgets svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 greaterThan(QT_MINOR_VERSION, 7): QT += gui-private
@@ -25,7 +25,9 @@ PKGCONFIG   += xcb xcb-ewmh xcb-shape dframeworkdbus gio-qt
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib\
                $$PWD/../utils \
-              $$PWD/../dde-file-manager-lib/interfaces
+              $$PWD/../dde-file-manager-lib/interfaces \
+                $$PWD/../dde-file-manager-lib/interfaces/plugins \
+                $$PWD/../dde-file-manager-lib/io
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
@@ -56,7 +58,18 @@ SOURCES += \
     presenter/gridcore.cpp \
     config/dfmdesktopsettings.cpp \
     view/backgroundhelper.cpp \
-    dbus/dbusmonitor.cpp
+    dbus/dbusmonitor.cpp \
+    screen/abstractscreen.cpp \
+    screen/abstractscreenmanager.cpp \
+    screen/screenmanager.cpp \
+    screen/screenobject.cpp \
+    view/backgroundmanager.cpp \
+    screen/screenhelper.cpp \
+    view/backgroundwidget.cpp \
+    screen/screenmanagerwayland.cpp \
+    screen/screenobjectwayland.cpp \
+    dbus/licenceInterface.cpp \
+    view/canvasviewmanager.cpp
 
 
 
@@ -83,8 +96,20 @@ HEADERS += \
     config/dfmdesktopsettings.h \
     view/backgroundhelper.h \
     dbus/dbusmonitor.h \
-    accessible/accessiblelist.h \
+    dbus/licenceInterface.h \
+    screen/abstractscreen.h \
+    screen/abstractscreenmanager.h \
+    screen/screenmanager.h \
+    screen/screenobject.h \
+    view/backgroundmanager.h \
+    screen/screenhelper.h \
+    view/backgroundwidget.h \
+    screen/screenmanagerwayland.h \
+    screen/screenobjectwayland.h \
+    view/canvasviewmanager.h
     accessible/frameaccessibledefine.h
+    accessible/accessiblelist.h
+
 
 RESOURCES +=
 
@@ -100,4 +125,3 @@ TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
 
 
 include($$PWD/development.pri)
-

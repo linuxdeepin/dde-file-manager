@@ -47,7 +47,8 @@ class OpenWithDialog : public BaseDialog
 {
     Q_OBJECT
 public:
-    explicit OpenWithDialog(const DUrl& url, QWidget *parent = nullptr);
+    explicit OpenWithDialog(const QList<DUrl>& urllist, QWidget *parent = nullptr);
+    explicit OpenWithDialog(const DUrl &url, QWidget *parent = nullptr);
     ~OpenWithDialog() override;
 
 public slots:
@@ -73,6 +74,7 @@ private:
     QCheckBox *m_setToDefaultCheckBox = nullptr;
     QPushButton *m_cancelButton = nullptr;
     QPushButton *m_chooseButton = nullptr;
+    QList<DUrl> m_urllist;
     DUrl m_url;
     QMimeType m_mimeType;
 

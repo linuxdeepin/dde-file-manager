@@ -40,20 +40,19 @@
 
 #undef signals
 extern "C" {
-    #include <gio/gio.h>
+#include <gio/gio.h>
 }
 #define signals public
 
 namespace DISOMasterNS {
-    class DISOMaster;
+class DISOMaster;
 }
 
 class FileJob : public QObject
 {
     Q_OBJECT
 public:
-    enum Status
-    {
+    enum Status {
         Started,
         Paused,
         Cancelled,
@@ -61,7 +60,7 @@ public:
         Conflicted
     };
 
-    enum JobType{
+    enum JobType {
         Copy,
         Move,
         Trash,
@@ -69,13 +68,10 @@ public:
         Restore,
         OpticalBurn,
         OpticalBlank,
-        OpticalImageBurn
+        OpticalImageBurn,
+        OpticalCheck
     };
     Q_ENUM(JobType)
-
-    //fix: 获取当前刻录的全局状态机，便于其它地方调用
-    static int g_opticalBurnStatus;
-    static int g_opticalBurnEjectCount;
 
     static int FileJobCount;
     static DUrlList CopyingFiles;
@@ -83,7 +79,7 @@ public:
     static qint64 Msec_For_Display;
     static qint64 Data_Block_Size;
     static qint64 Data_Flush_Size;
-    static bool setDirPermissions(const QString& scrPath, const QString& tarDirPath);
+    static bool setDirPermissions(const QString &scrPath, const QString &tarDirPath);
 
     explicit FileJob(JobType jobType, QObject *parent = 0);
     ~FileJob();
@@ -98,12 +94,12 @@ public:
     void resetCustomChoice();
     QString getTargetDir();
 
-    inline QMap<QString, QString> jobDetail(){ return m_jobDetail; }
+    inline QMap<QString, QString> jobDetail() { return m_jobDetail; }
     inline qint64 currentMsec() { return m_timer.elapsed(); }
     inline qint64 lastMsec() { return m_lastMsec; }
     inline bool isJobAdded() { return m_isJobAdded; }
 
-    void adjustSymlinkPath(QString& scrPath, QString& tarDirPath);
+    void adjustSymlinkPath(QString &scrPath, QString &tarDirPath);
 
     bool isAborted() const;
     void setIsAborted(bool isAborted);
@@ -124,38 +120,43 @@ public:
 
     bool getIsFinished() const;
 
+    void setRestoreProgress(qreal restoreProgress);
+    qreal getRestoreProgress() const;
+
+    bool getIsOpticalJob() const;
+
 signals:
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
-    void requestJobAdded(const QMap<QString, QString>& jobDetail);
+    void requestJobAdded(const QMap<QString, QString> &jobDetail);
 
     /*remove copy/move/delete job to taskdialog when copy/move/delete job finished*/
-    void requestJobRemoved(const QMap<QString, QString>& jobDetail);
+    void requestJobRemoved(const QMap<QString, QString> &jobDetail);
 
     /*remove copy/move/delelte job to taskdialog immediately*/
-    void requestJobRemovedImmediately(const QMap<QString, QString>& jobDetail);
+    void requestJobRemovedImmediately(const QMap<QString, QString> &jobDetail);
 
     /*update copy/move/delete job taskdialog ui*/
-    void requestJobDataUpdated(const QMap<QString, QString>& jobDetail,
-                           const QMap<QString, QString>& data);
+    void requestJobDataUpdated(const QMap<QString, QString> &jobDetail,
+                               const QMap<QString, QString> &data);
 
     /*abort copy/move/delete job taskdialog from ui*/
-    void requestAbortTask(const QMap<QString, QString>& jobDetail);
+    void requestAbortTask(const QMap<QString, QString> &jobDetail);
 
     /*copy/move job conflict dialog show */
-    void requestConflictDialogShowed(const QMap<QString, QString>& jobDetail);
+    void requestConflictDialogShowed(const QMap<QString, QString> &jobDetail);
 
     /*copy/move job tip dialog shows when src and target are same  */
-    void requestCopyMoveToSelfDialogShowed(const QMap<QString, QString>& jobDetail);
+    void requestCopyMoveToSelfDialogShowed(const QMap<QString, QString> &jobDetail);
 
     /*tip dialog show when target disk has no enough storage space for job needs*/
     void requestNoEnoughSpaceDialogShowed();
 
     /*tip dialog show when move file which size is large than of 1GB to trash*/
-    void requestCanNotMoveToTrashDialogShowed(const DUrlList& urls);
+    void requestCanNotMoveToTrashDialogShowed(const DUrlList &urls);
 
-    void requestOpticalJobFailureDialog(int type, const QString& err, const QStringList& details);
-    void requestOpticalJobCompletionDialog(const QString& msg, const QString& icon);
+    void requestOpticalJobFailureDialog(int type, const QString &err, const QStringList &details);
+    void requestOpticalJobCompletionDialog(const QString &msg, const QString &icon);
 
     void progressPercent(int value);
     void error(QString content);
@@ -171,7 +172,7 @@ public slots:
     void doDelete(const DUrlList &files);
     DUrlList doMoveToTrash(const DUrlList &files);
 
-    bool doTrashRestore(const QString &srcFilePath, const QString& tarFilePath);
+    bool doTrashRestore(const QString &srcFilePath, const QString &tarFilePath);
 
     void doOpticalBurn(const DUrl &device, QString volname, int speed, int flag); // unused
     void doOpticalBurnByChildProcess(const DUrl &device, QString volname, int speed, int flag); // fork
@@ -200,6 +201,7 @@ private:
     QMap<QString, QString> m_jobDetail;
     QMap<QString, QString> m_checkDiskJobDataDetail;
     bool m_isCheckingDisk = false;
+    bool m_isOpticalJob = false;
 
     bool m_isGvfsFileOperationUsed = false;
     bool m_needGhostFileCreateSignal = false;
@@ -208,16 +210,21 @@ private:
     qint64 m_totalSize = 1;
     qint64 m_bytesPerSec = 0;
     qint64 m_last_current_num_bytes = 0;
+    qint64 m_allCount = 1;
+    qint64 m_finishedCount = 0;
 
     QString m_progress;
     float m_factor;
     bool m_isJobAdded = false;
+    qreal m_restoreProgress = 0; // 0~1
+    QString m_trashFileName;
+    QString m_restoreFileName;
     QString m_srcFileName;
     QString m_tarDirName;
     QString m_srcPath;
     QString m_tarPath;
     QElapsedTimer m_timer;
-    qint64 m_lastMsec;
+    qint64 m_lastMsec = 0;
     bool m_applyToAll  = false;
     bool m_isReplaced = false;
     bool m_isSkip = false;
@@ -238,17 +245,17 @@ private:
     QString m_lastError; // 最后一个刻录失败的错误原因
     QStringList m_lastSrcError; // 底层抛出的原始错误原因
 
-    GCancellable* m_abortGCancellable = NULL;
+    GCancellable *m_abortGCancellable = NULL;
 
     DUrlList m_noPermissonUrls;
 
-    char* m_bufferAlign = nullptr;
-    char* m_buffer = nullptr;
+    char *m_bufferAlign = nullptr;
+    char *m_buffer = nullptr;
 
-    bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
+    bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved = false, QString *targetPath = 0);
     static void showProgress(goffset current_num_bytes, goffset total_num_bytes, gpointer user_data);
-    bool copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
-    bool copyDir(const QString &srcDir, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
+    bool copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved = false, QString *targetPath = 0);
+    bool copyDir(const QString &srcDir, const QString &tarDir, bool isMoved = false, QString *targetPath = 0);
     bool moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
     bool moveFileByGio(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
     bool moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath = 0);
@@ -265,20 +272,24 @@ private:
     bool writeTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
 
     //check disk space available before do copy/move job
-    bool checkDiskSpaceAvailable(const DUrlList& files, const DUrl& destination);
+    bool checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destination);
 
     //check if is moving to trash file out of size range of 1GB;
-    bool checkTrashFileOutOf1GB(const DUrl& url);
+    bool checkTrashFileOutOf1GB(const DUrl &url);
 
     bool checkFat32FileOutof4G(const QString &srcFile, const QString &tarDir);
 
     QString getNotExistsTrashFileName(const QString &fileName);
     bool checkUseGvfsFileOperation(const DUrlList &files, const DUrl &destination);
-    bool checkUseGvfsFileOperation(const QString& path);
+    bool checkUseGvfsFileOperation(const QString &path);
+
+    void handleOpticalJobFailure(int type, const QString &err, const QStringList &details);
 
     static QStorageInfo getStorageInfo(const QString &file);
     static bool canMove(const QString &filePath);
-    static QString getXorrisoErrorMsg(const QStringList& msg);
+    static QString getXorrisoErrorMsg(const QStringList &msg);
+
+    const QString TR_CONN_ERROR = tr("Device disconnected");
 
 #ifdef SW_LABEL
 public:

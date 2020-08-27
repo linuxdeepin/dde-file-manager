@@ -13,6 +13,7 @@
 #include <QAbstractItemView>
 #include <QScopedPointer>
 #include <dfilemenumanager.h>
+#include <QTime>
 
 #define DesktopCanvasPath           "/com/deepin/dde/desktop/canvas"
 #define DesktopCanvasInterface      "com.deepin.dde.desktop.Canvas"
@@ -33,7 +34,7 @@ public:
     static std::atomic<bool> m_flag;
     static QMap<DMD_TYPES, bool> virtualEntryExpandState;
 
-    explicit CanvasGridView(QWidget *parent = Q_NULLPTR);
+    explicit CanvasGridView(const QString &screen,QWidget *parent = Q_NULLPTR);
     ~CanvasGridView() Q_DECL_OVERRIDE;
 
 
@@ -82,28 +83,31 @@ public:
     void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
     void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    //void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
 
     bool event(QEvent *event) override;
 
-
     virtual void rowsInserted(const QModelIndex &index, int first, int last) override;
     virtual void keyboardSearch(const QString &search) override;
 
+#if QT_CONFIG(draganddrop)
+    virtual void startDrag(Qt::DropActions supportedActions) override;
+#endif
 
     void fakeDropEvent()noexcept;
-
     // list view function
+    QString canvansScreenName();
     QRect rectForIndex(const QModelIndex &index) const;
     DUrl currentUrl() const;
     bool setCurrentUrl(const DUrl &url);
     void initRootUrl();
     bool setRootUrl(const DUrl &url);
+    const DUrlList autoMergeSelectedUrls() const;
     const DUrlList selectedUrls() const;
-
+    void setScreenNum(int num);
     bool isSelected(const QModelIndex &index) const;
     void select(const QList<DUrl> &list);
     int selectedIndexCount() const;
@@ -116,17 +120,21 @@ public:
     double dodgeDuration() const;
 
     void openUrl(const DUrl &url);
-    void openUrls(const QList<DUrl> &urlList);
+    void openUrls(const QList<DUrl> &urls);
 
     QMargins cellMargins() const;
     QSize cellSize() const;
 
     WId winId() const;
-    bool autoMerge() const;
     void setAutoMerge(bool enabled = false);
-    void toggleAutoMerge(bool enabled = true);
     void toggleEntryExpandedState(const DUrl &url);
-
+    void updateEntryExpandedState(const DUrl &url);
+    void setGeometry(const QRect &rect);
+    void delayModelRefresh(int ms = 50);
+    DUrl currentCursorFile() const;
+    inline int screenNum() const {return m_screenNum;}
+    void syncIconLevel(int level);
+    void updateHiddenItems();
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
@@ -140,17 +148,21 @@ signals:
 
 public slots:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) Q_DECL_OVERRIDE;
-
     void setDodgeDuration(double dragMoveTime);
-
+    virtual void selectAll() override;
+protected slots:
+    void onRefreshFinished();
 // Debug interface
 public Q_SLOTS:
-    Q_SCRIPTABLE void EnableUIDebug();
+    Q_SCRIPTABLE void EnableUIDebug(bool enable);
     Q_SCRIPTABLE QString Size();
     Q_SCRIPTABLE QString Dump();
     Q_SCRIPTABLE QString DumpPos(qint32 x, qint32 y);
     Q_SCRIPTABLE void Refresh(); // 刷新桌面图标
-
+protected:
+    void delayAutoMerge(int ms = 50);
+    void delayArrage(int ms = 50);
+    void delayCustom(int ms = 50);
 private:
     Q_DISABLE_COPY(CanvasGridView)
 
@@ -158,7 +170,6 @@ private:
 
     void initUI();
     void initConnection();
-    void updateGeometry(const QRect &geometry);
     void updateCanvas();
 
     void setIconByLevel(int level);
@@ -184,15 +195,18 @@ private:
     bool isIndexEmpty();
     QModelIndex moveCursorGrid(CursorAction cursorAction, Qt::KeyboardModifiers modifiers);
 
-    void updateHiddenItems();
-
     void setGeometry(int, int, int, int) = delete;
-    void setGeometry(const QRect &rect);
     bool fetchDragEventUrlsFromSharedMemory();
 
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
     QList<QUrl> m_urlsForDragEvent;
+
+    QString m_screenName;
+    int     m_screenNum{1};
+
+    QTimer *m_refreshTimer = nullptr;
+    QTime m_rt; //刷新计时，可以删除
 };
 
 

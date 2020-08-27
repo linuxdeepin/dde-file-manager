@@ -67,6 +67,7 @@ public:
     FileHints fileHints() const;
 
     qint64 totalSize() const;
+    qint64 totalProgressSize() const;
     int filesCount() const;
     int directorysCount(bool includeSelf = true) const;
 

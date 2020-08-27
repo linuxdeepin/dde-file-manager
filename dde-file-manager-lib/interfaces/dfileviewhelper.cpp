@@ -23,12 +23,15 @@
 #include "dfmgenericfactory.h"
 #include "dialogs/filepreviewdialog.h"
 #include "controllers/appcontroller.h"
+#include "controllers/mergeddesktopcontroller.h"
 #include "dfmeventdispatcher.h"
 #include "dfilemenu.h"
 #include "tag/tagmanager.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 #include "dstorageinfo.h"
+#include "controllers/vaultcontroller.h"
+#include "dfmstandardpaths.h"
 
 #include "deviceinfo/udisklistener.h"
 
@@ -74,6 +77,10 @@ public:
         if (menu_event.selectedUrls().isEmpty())
             return false;
 
+        //! avoid error process when multi-tag.
+        if (menu_event.currentUrl() != viewHelper->currentUrl())
+            return false;
+
         const QModelIndex &index = viewHelper->model()->index(menu_event.selectedUrls().first());
         const QRect &rect = viewHelper->parent()->visualRect(index);
         QStyleOptionViewItem option = viewHelper->parent()->viewOptions();
@@ -86,9 +93,12 @@ public:
         int iconTopOffset = isCanvas ? 0 : (option.rect.height() - icon_rect.height()) / 3.0;
 
         const QPoint &edit_pos = QPoint(icon_rect.x() + icon_rect.width() / 2, icon_rect.bottom() + iconTopOffset);
-
-        appController->showTagEdit(viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
-
+        /****************************************************************************************************************************/
+        //在靠近边框底部不够显示编辑框时，编辑框的箭头出现在底部
+        //appController->showTagEdit(viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
+        const QRect &parentRect = viewHelper->parent()->geometry();
+        appController->showTagEdit(parentRect,viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
+        /****************************************************************************************************************************/
         return true;
     }
 
@@ -347,13 +357,34 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
         fileUrl = fileInfo->fileUrl().searchedFileUrl();
     }
 
+    //如果在tag的view下，获取的url是tag的，需要转为localfile的url
+    if (fileInfo->fileUrl().isTaggedFile()) {
+        fileUrl = DUrl::fromLocalFile(fileInfo->fileUrl().taggedLocalFilePath());
+    }
+
     //staging files are transparent
     if (currentUrl().scheme() == BURN_SCHEME && fileUrl.scheme() == BURN_SCHEME && !fileUrl.burnIsOnDisc()) {
         return true;
     }
 
+    // 解决在保险箱中执行剪切时，图标不灰显的问题
+    if (fileUrl.scheme() == DFMVAULT_SCHEME){
+        fileUrl = VaultController::vaultToLocalUrl(fileUrl);
+    }
+
+    // 将回收站路径转化成真实路径，解决在回收站中执行剪切时，图标不灰显的问题
+    if (fileUrl.scheme() == TRASH_SCHEME){
+        const QString &path = fileUrl.path();
+        fileUrl = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);
+    }
+
+    //为了防止自动整理下剪切与分类名相同的文件夹,如果是分类就不转真实路径了
+    auto isVPath = MergedDesktopController::isVirtualEntryPaths(fileUrl);
+    if (fileUrl.scheme() == DFMMD_SCHEME && !isVPath)
+        fileUrl = MergedDesktopController::convertToRealPath(fileUrl);
+
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-           && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
+            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
 }
 
 /*!
@@ -620,12 +651,10 @@ void DFileViewHelper::keyboardSearch(char key)
     Q_D(DFileViewHelper);
     QByteArray indexChar;
     d->keyboardSearchKeys.append(key);
-    qDebug() << "d->keyboardSearchKeys: " << d->keyboardSearchKeys << "key:" << key <<"indexKey: " << indexChar ;
     bool reverse_order = qApp->keyboardModifiers() == Qt::ShiftModifier;
     const QModelIndex &current_index = parent()->currentIndex();
 
     QModelIndex index = d->findIndex(d->keyboardSearchKeys, true, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
-    qDebug()<< "reverse_order " << reverse_order << "current_index" << current_index << "index: " << index;
 //    if (!index.isValid()) {
 //        // 使用 QString::contains 模式再次匹配
 //        index = d->findIndex(d->keyboardSearchKeys, false, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
@@ -692,21 +721,47 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
         if (urls.empty())
             return;
 
-        const DUrl from = urls.first();
-        const DUrl to = info->fileUrl();
         Qt::DropAction default_action = Qt::CopyAction;
+        {
+            const DUrl from = urls.first();
+            DUrl to = info->fileUrl();
 
-        if (qApp->keyboardModifiers() == Qt::AltModifier) {
-            default_action = Qt::MoveAction;
-        } else if (!DFMGlobal::keyCtrlIsPressed()) {
-            // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
-            if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
+            //fix bug#23703勾选自动整理，拖拽其他目录文件到桌面做得是复制操作
+            //因为自动整理的路径被DStorageInfo::inSameDevice判断为false，这里做转化
+            if (to.scheme() == DFMMD_SCHEME){
+                to = DUrl(info->absoluteFilePath());
+                to.setScheme(FILE_SCHEME);
+            }
+            //end
+
+            if (qApp->keyboardModifiers() == Qt::AltModifier) {
                 default_action = Qt::MoveAction;
+            } else if (!DFMGlobal::keyCtrlIsPressed()) {
+                // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
+                if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
+                    default_action = Qt::MoveAction;
+                }
             }
         }
 
         if (event->possibleActions().testFlag(default_action)) {
             event->setDropAction(default_action);
+        }
+
+        // 保险箱时，修改DropAction为Qt::MoveAction
+        if(VaultController::isVaultFile(info->fileUrl().toString())
+                || VaultController::isVaultFile(urls[0].toString())){
+            QString strFromPath = urls[0].toLocalFile();
+            QString strToPath = info->fileUrl().toLocalFile();
+            if(strFromPath.startsWith("/media") || strToPath.startsWith("/media")){   // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
+                event->setDropAction(Qt::CopyAction);
+            }else{
+                if(!DFMGlobal::keyCtrlIsPressed()){
+                    event->setDropAction(Qt::MoveAction);
+                }else {
+                    event->setDropAction(Qt::CopyAction);
+                }
+            }
         }
 
         if (!info->supportedDropActions().testFlag(event->dropAction())) {
@@ -731,6 +786,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
         event->setDropAction(Qt::MoveAction);
     } else {
+
         DAbstractFileInfoPointer info = model()->fileInfo(parent()->indexAt(event->pos()));
 
         if (!info)
@@ -744,8 +800,16 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
             return;
 
         const DUrl from = urls.first();
-        const DUrl to = info->fileUrl();
+        DUrl to = info->fileUrl();
         Qt::DropAction default_action = Qt::CopyAction;
+
+        //fix bug#23703勾选自动整理，拖拽其他目录文件到桌面做得是复制操作
+        //因为自动整理的路径被DStorageInfo::inSameDevice判断为false，这里做转化
+        if (to.scheme() == DFMMD_SCHEME) {
+            to = DUrl(info->absoluteFilePath());
+            to.setScheme(FILE_SCHEME);
+        }
+        //end
 
         if (qApp->keyboardModifiers() == Qt::AltModifier) {
             default_action = Qt::MoveAction;
@@ -758,6 +822,22 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
 
         if (event->possibleActions().testFlag(default_action)) {
             event->setDropAction(default_action);
+        }
+
+        // 保险箱时，修改DropAction为Qt::MoveAction
+        if(VaultController::isVaultFile(info->fileUrl().toString())
+                || VaultController::isVaultFile(urls[0].toString())){
+            QString strFromPath = urls[0].toLocalFile();
+            QString strToPath = info->fileUrl().toLocalFile();
+            if(strFromPath.startsWith("/media") || strToPath.startsWith("/media")){   // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
+                event->setDropAction(Qt::CopyAction);
+            }else{
+                if(!DFMGlobal::keyCtrlIsPressed()){
+                    event->setDropAction(Qt::MoveAction);
+                }else {
+                    event->setDropAction(Qt::CopyAction);
+                }
+            }
         }
 
         if (!info->supportedDropActions().testFlag(event->dropAction())) {
@@ -821,6 +901,12 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     }
 
     DUrl old_url = fileInfo->fileUrl();
+    //处理tag目录重命名了逻辑
+    if (old_url.isTaggedFile() && old_url.taggedLocalFilePath().isEmpty()) {
+        TagManager::instance()->changeTagName(qMakePair(old_url.tagName(), new_file_name));
+        return;
+    }
+
     DUrl new_url = fileInfo->getUrlByNewFileName(new_file_name);
 
     const DAbstractFileInfoPointer &newFileInfo = DFileService::instance()->createFileInfo(this, new_url);

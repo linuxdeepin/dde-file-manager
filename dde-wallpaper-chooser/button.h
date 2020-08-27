@@ -35,6 +35,9 @@ public:
     ~Button();
 
     void setAttract(bool);
+
+protected:
+    void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // BUTTON_H

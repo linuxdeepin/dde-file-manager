@@ -30,7 +30,7 @@
 #include <openssl/crypto.h>
 
 namespace CryptoUtils {
-
+#define UNUSED(x) (void)x;
 template <typename T>
 struct zallocator
 {
@@ -47,6 +47,7 @@ public:
     const_pointer address (const_reference v) const {return &v;}
 
     pointer allocate (size_type n, const void* hint = nullptr) {
+        UNUSED(hint)
         if (n > std::numeric_limits<size_type>::max() / sizeof(T))
             throw std::bad_alloc();
         return static_cast<pointer> (::operator new (n * sizeof (value_type)));

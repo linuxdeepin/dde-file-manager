@@ -39,6 +39,9 @@
 #include <gvfs/networkmanager.h>
 
 #include <QProcessEnvironment>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 class DFMRootFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
@@ -79,11 +82,11 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
     Q_ASSERT(blk && blk->path().length() > 0);
 
     blk->setLabel(event->toUrl().path(), {});
-    if (blk->lastError().type()!= QDBusError::NoError) {
+    if (blk->lastError().type() != QDBusError::NoError) {
         qDebug() << blk->lastError() << blk->lastError().name();
     }
 
-    return blk->lastError().type()== QDBusError::NoError;
+    return blk->lastError().type() == QDBusError::NoError;
 }
 
 const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
@@ -113,16 +116,29 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     }
 
     DDiskManager dummy;
-    for (auto blks : dummy.blockDevices()) {
+    QStringList blkds = dummy.blockDevices();
+    for (auto blks : blkds) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
         if (iswWayland && blks.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
-              qDebug()  <<" blDev->drive()"  << blks << blk->drive();
-              continue;
+            qDebug()  << " blDev->drive()"  << blks << blk->drive();
+            continue;
         }
 
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
+        }
+        //检查挂载目录下是否存在diskinfo文件
+        QByteArrayList mps = blk->mountPoints();
+        if (!mps.empty()) {
+            QString mpPath(mps.front());
+            if (mpPath.lastIndexOf("/") != (mpPath.length() - 1))
+                mpPath += "/";
+            QDir kidDir(mpPath + "UOSICON");
+            if (kidDir.exists()) {
+                QString jsonPath = kidDir.absolutePath();
+                loadDiskInfo(jsonPath);
+            }
         }
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             continue;
@@ -141,8 +157,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             gvfsvol->mount();
         }
     }
-    if (event->canconst())
-    {
+    if (event->canconst()) {
         return ret;
     }
     //寻找所有的移动设备（移动硬盘，手机，U盘等）
@@ -163,26 +178,22 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         bool bsame = false;
         //判断是否是苹果手机
         //判读ios手机，传输他慢，需要特殊处理优化
-        if(gvfsmp->name().startsWith("iPhone")) {
+        if (gvfsmp->name().startsWith("iPhone")) {
             url.setOptimise(true);
         }
         for (QString str : gvfsmp->themedIconNames()) {
-            if(str.startsWith("phone-apple"))
-            {
+            if (str.startsWith("phone-apple")) {
                 url.setOptimise(true);
                 break;
             }
         }
-        foreach(const QString &str,urllist)
-        {
-            if(str == QString("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP))
-            {
+        foreach (const QString &str, urllist) {
+            if (str == QString("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP)) {
                 bsame = true;
                 break;
             }
         }
-        if (bsame)
-        {
+        if (bsame) {
             continue;
         }
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(url));
@@ -205,6 +216,48 @@ DAbstractFileWatcher *DFMRootController::createFileWatcher(const QSharedPointer<
     return new DFMRootFileWatcher(event->url());
 }
 
+void DFMRootController::loadDiskInfo(const QString &jsonPath) const
+{
+    //不存在该目录
+    if (jsonPath.isEmpty()) {
+        return;
+    }
+
+    //读取本地json文件
+    QFile file(jsonPath + "/diskinfo.json");
+    if (!file.open(QIODevice::ReadWrite)) {
+        return;
+    }
+
+    //解析json文件
+    QJsonParseError jsonParserError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(file.readAll(), &jsonParserError);
+    if (jsonDocument.isNull() || jsonParserError.error != QJsonParseError::NoError) {
+        return;
+    }
+
+    if (jsonDocument.isObject()) {
+        QJsonObject jsonObject = jsonDocument.object();
+        if (jsonObject.contains("DISKINFO") && jsonObject.value("DISKINFO").isArray()) {
+            QJsonArray jsonArray = jsonObject.value("DISKINFO").toArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                if (jsonArray[i].isObject()) {
+                    QJsonObject jsonObjectInfo = jsonArray[i].toObject();
+                    DiskInfoStr str;
+                    if (jsonObjectInfo.contains("uuid"))
+                        str.uuid = jsonObjectInfo.value("uuid").toString();
+                    if (jsonObjectInfo.contains("drive"))
+                        str.driver = jsonObjectInfo.value("drive").toString();
+                    if (jsonObjectInfo.contains("label"))
+                        str.label = jsonObjectInfo.value("label").toString();
+
+                    DFMRootFileInfo::DiskInfoMap[str.uuid] = str;
+                }
+            }
+        }
+    }
+}
+
 DFMRootFileWatcher::DFMRootFileWatcher(const DUrl &url, QObject *parent):
     DAbstractFileWatcher(*new DFMRootFileWatcherPrivate(this), url, parent)
 {
@@ -214,7 +267,7 @@ DFMRootFileWatcher::DFMRootFileWatcher(const DUrl &url, QObject *parent):
 void DFMRootFileWatcherPrivate::initBlockDevConnections(QSharedPointer<DBlockDevice> blk, const QString &devs)
 {
     Q_Q(DFMRootFileWatcher);
-    DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher*>(q);
+    DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher *>(q);
     blkdevs.push_back(blk);
     blk->setWatchChanges(true);
     QString urlstr = DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
@@ -224,9 +277,8 @@ void DFMRootFileWatcherPrivate::initBlockDevConnections(QSharedPointer<DBlockDev
         QSharedPointer<DBlockDevice> ctblk(DDiskManager::createBlockDevice(blk->cleartextDevice()));
         blkdevs.push_back(ctblk);
         ctblk->setWatchChanges(true);
-        foreach(const QString &str,connectionsurl){
-            if (str == urlstr+QString("_en"))
-            {
+        foreach (const QString &str, connectionsurl) {
+            if (str == urlstr + QString("_en")) {
                 return;
             }
         }
@@ -239,11 +291,10 @@ void DFMRootFileWatcherPrivate::initBlockDevConnections(QSharedPointer<DBlockDev
         connections.push_back(QObject::connect(ctblk.data(), &DBlockDevice::mountPointsChanged, [wpar, url](const QByteArrayList &) {
             Q_EMIT wpar->fileAttributeChanged(url);
         }));
-        connectionsurl<<urlstr+QString("_en");
+        connectionsurl << urlstr + QString("_en");
     } else {
-        foreach(const QString &str,connectionsurl){
-            if (str == urlstr)
-            {
+        foreach (const QString &str, connectionsurl) {
+            if (str == urlstr) {
                 return;
             }
         }
@@ -263,7 +314,7 @@ void DFMRootFileWatcherPrivate::initBlockDevConnections(QSharedPointer<DBlockDev
         connections.push_back(QObject::connect(blk.data(), &DBlockDevice::cleartextDeviceChanged, [wpar, url](const QString &) {
             Q_EMIT wpar->fileAttributeChanged(url);
         }));
-        connectionsurl<<urlstr;
+        connectionsurl << urlstr;
     }
 }
 
@@ -284,7 +335,7 @@ bool DFMRootFileWatcherPrivate::start()
 
     udisksmgr->setWatchChanges(true);
 
-    DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher*>(q);
+    DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher *>(q);
 
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountAdded, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
         if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
@@ -303,12 +354,11 @@ bool DFMRootFileWatcherPrivate::start()
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
         //判读ios手机，传输他慢，需要特殊处理优化
-        if(mnt->name().startsWith("iPhone")) {
+        if (mnt->name().startsWith("iPhone")) {
             url.setOptimise(true);
         }
         for (QString str : mnt->themedIconNames()) {
-            if(str.startsWith("phone-apple"))
-            {
+            if (str.startsWith("phone-apple")) {
                 url.setOptimise(true);
                 break;
             }
@@ -324,9 +374,9 @@ bool DFMRootFileWatcherPrivate::start()
         url.setScheme(DFMROOT_SCHEME);
         QString path = mnt->getRootFile()->path();
         if (path.isNull() || path.isEmpty()) {
-            QStringList qq = mnt->getRootFile()->uri().replace("/","").split(":");
+            QStringList qq = mnt->getRootFile()->uri().replace("/", "").split(":");
             if (qq.size() >= 3) {
-                path = QString("/run/user/1000/gvfs/"+ qq.at(0)+ QString(":host=" + qq.at(1) + QString(",port=")+qq.at(2)));
+                path = QString("/run/user/1000/gvfs/" + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2)));
             }
         }
         qDebug() << path;
@@ -335,17 +385,17 @@ bool DFMRootFileWatcherPrivate::start()
         QString uri = mnt->getRootFile()->uri();
         qDebug() << uri << "mount removed";
         if (uri.contains("smb-share://") || uri.contains("smb://")) {
-              // remove NetworkNodes cache, so next time cd uri will fetchNetworks
-              QString smbUri = uri;
-              if (smbUri.endsWith("/")) {
-                  smbUri = smbUri.left(smbUri.length()-1);
-              }
-              DUrl uri(smbUri);
-              NetworkManager::NetworkNodes.remove(uri);
-              uri.setPath("");
-              NetworkManager::NetworkNodes.remove(uri);
+            // remove NetworkNodes cache, so next time cd uri will fetchNetworks
+            QString smbUri = uri;
+            if (smbUri.endsWith("/")) {
+                smbUri = smbUri.left(smbUri.length() - 1);
+            }
+            DUrl uri(smbUri);
+            NetworkManager::NetworkNodes.remove(uri);
+            uri.setPath("");
+            NetworkManager::NetworkNodes.remove(uri);
 
-              mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
+            mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
         }
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::volumeAdded, [](QExplicitlySharedDataPointer<DGioVolume> vol) {
@@ -353,7 +403,7 @@ bool DFMRootFileWatcherPrivate::start()
             vol->mount();
         }
     }));
-    connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceAdded, [wpar, this](const QString &blks) {
+    connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceAdded, [wpar, this](const QString & blks) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
@@ -368,11 +418,11 @@ bool DFMRootFileWatcherPrivate::start()
             return;
         }
 
-        initBlockDevConnections(blk ,blks);
+        initBlockDevConnections(blk, blks);
 
         Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
     }));
-    connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceRemoved, [wpar](const QString &blks) {
+    connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceRemoved, [wpar](const QString & blks) {
         Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
     }));
 
@@ -387,7 +437,7 @@ bool DFMRootFileWatcherPrivate::start()
             continue;
         }
 
-        initBlockDevConnections(blk ,devs);
+        initBlockDevConnections(blk, devs);
     }
 
     started = true;
@@ -402,7 +452,7 @@ bool DFMRootFileWatcherPrivate::stop()
 
     udisksmgr->setWatchChanges(false);
 
-    for(auto &conn : connections) {
+    for (auto &conn : connections) {
         QObject::disconnect(conn);
     }
     connections.clear();

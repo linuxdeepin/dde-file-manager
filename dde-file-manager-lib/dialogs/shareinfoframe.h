@@ -46,28 +46,30 @@ public:
     void initUI();
     void initConnect();
     void setFileinfo(const DAbstractFileInfoPointer &fileinfo);
+    bool checkShareName();
 
 signals:
-    void folderShared(const QString& filePath);
+    void folderShared(const QString &filePath);
+    void unfolderShared();
 
 public slots:
     void handleCheckBoxChanged(const bool &checked);
-    void handleShareNameChanged(const QString& name);
-    void handlePermissionComboxChanged(const int& index);
-    void handleAnonymityComboxChanged(const int& index);
+    void handleShareNameChanged();
+    void handlePermissionComboxChanged(const int &index);
+    void handleAnonymityComboxChanged(const int &index);
     void handShareInfoChanged();
     bool doShareInfoSetting();
-    void updateShareInfo(const QString& filePath);
+    void updateShareInfo(const QString &filePath);
     void activateWidgets();
     void disactivateWidgets();
 
 private:
     DAbstractFileInfoPointer m_fileinfo;
-    QCheckBox* m_shareCheckBox = NULL;
-    QLineEdit* m_shareNamelineEdit = NULL;
-    QComboBox* m_permissoComBox = NULL;
-    QComboBox* m_anonymityCombox = NULL;
-    QTimer* m_jobTimer;
+    QCheckBox *m_shareCheckBox = nullptr;
+    QLineEdit *m_shareNamelineEdit = nullptr;
+    QComboBox *m_permissoComBox = nullptr;
+    QComboBox *m_anonymityCombox = nullptr;
+    //QTimer *m_jobTimer;
 };
 
 #endif // SHAREINFOFRAME_H

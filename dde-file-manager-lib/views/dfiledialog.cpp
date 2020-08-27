@@ -69,7 +69,7 @@ public:
 
     DFileView *view = Q_NULLPTR;
     int currentNameFilterIndex = -1;
-    QDir::Filters filters = 0;
+    QDir::Filters filters = nullptr;
     QString currentInputName;
     mutable QModelIndexList orderedSelectedList;
     FileDialogStatusBar *statusBar;
@@ -88,16 +88,16 @@ QList<DUrl> DFileDialogPrivate::orderedSelectedUrls() const
     DUrlList list;
 
     QModelIndexList seclist = view->selectedIndexes();
-    if (seclist.size()<orderedSelectedList.size()) {
+    if (seclist.size() < orderedSelectedList.size()) {
         auto it = orderedSelectedList.begin();
-        while (it!=orderedSelectedList.end()) {
+        while (it != orderedSelectedList.end()) {
             if (seclist.contains(*it)) {
                 ++it;
             } else {
                 it = orderedSelectedList.erase(it);
             }
         }
-    } else if (seclist.size()>orderedSelectedList.size()) {
+    } else if (seclist.size() > orderedSelectedList.size()) {
         qWarning() << "oops, something was wrong...";
         // the reset may not be ordered
         QSet<QModelIndex> resetSet = seclist.toSet() - orderedSelectedList.toSet();
@@ -106,7 +106,7 @@ QList<DUrl> DFileDialogPrivate::orderedSelectedUrls() const
         }
     }
 
-    for(const QModelIndex &index : orderedSelectedList) {
+    for (const QModelIndex &index : orderedSelectedList) {
         if (index.parent() != rootIndex)
             continue;
 
@@ -153,8 +153,9 @@ DFileDialog::DFileDialog(QWidget *parent)
             this, &DFileDialog::selectedNameFilterChanged);
 
     statusBar()->lineEdit()->setMaxLength(255);
-    connect(statusBar()->lineEdit(), &QLineEdit::textChanged, [=]{
-        while (statusBar()->lineEdit()->text().toLocal8Bit().length() > 250) {  //预留5个字符用于后缀
+    connect(statusBar()->lineEdit(), &QLineEdit::textChanged, [ = ] {
+        while (statusBar()->lineEdit()->text().toLocal8Bit().length() > 250)    //预留5个字符用于后缀
+        {
             statusBar()->lineEdit()->setText(statusBar()->lineEdit()->text().chopped(1));
         }
     });
@@ -182,7 +183,7 @@ QDir DFileDialog::directory() const
 
 void DFileDialog::setDirectoryUrl(const DUrl &directory)
 {
-    if (!getFileView()){
+    if (!getFileView()) {
         return;
     }
     getFileView()->cd(directory);
@@ -190,10 +191,22 @@ void DFileDialog::setDirectoryUrl(const DUrl &directory)
 
 QUrl DFileDialog::directoryUrl() const
 {
-    if (!getFileView()){
+    if (!getFileView()) {
         return QUrl();
     }
-    return getFileView()->rootUrl();
+
+    // 保险箱QUrl->转换为文件QUrl
+    QUrl url = getFileView()->rootUrl();
+    QString strPath = url.path();
+    QString strScheme = url.scheme();
+    if (strScheme == DFMVAULT_SCHEME) {
+        QUrl urlVault;
+        urlVault.setScheme(FILE_SCHEME);
+        urlVault.setPath(strPath);
+        return urlVault;
+    }
+
+    return url;
 }
 
 void DFileDialog::selectFile(const QString &filename)
@@ -219,7 +232,7 @@ QStringList DFileDialog::selectedFiles() const
 
 void DFileDialog::selectUrl(const QUrl &url)
 {
-    if (!getFileView()){
+    if (!getFileView()) {
         return;
     }
     getFileView()->select(DUrlList() << url);
@@ -237,7 +250,7 @@ QList<QUrl> DFileDialog::selectedUrls() const
 {
     D_DC(DFileDialog);
 
-    if (!getFileView()){
+    if (!getFileView()) {
         return QList<QUrl>();
     }
     DUrlList list = d->orderedSelectedUrls();//getFileView()->selectedUrls();
@@ -398,22 +411,46 @@ void DFileDialog::selectNameFilterByIndex(int index)
         QString fileName = statusBar()->lineEdit()->text();
         const QString fileNameExtension = db.suffixForFileName(fileName);
 
-        for (const QString &filter : newNameFilters) {
-            newNameFilterExtension = db.suffixForFileName(filter);
+        for (const QString &filter : newNameFilters) { //从扩展名列表中轮询，目前发现的应用程序传入扩展名列表均只有一个
+            newNameFilterExtension = db.suffixForFileName(filter); //在QMimeDataBase里面查询扩展名是否存在（不能查询正则表达式）
+            if (newNameFilterExtension.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
+                QRegExp  regExp(filter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
+                qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << filter;
+                for (QMimeType m : db.allMimeTypes()) {
+                    for (QString suffixe : m.suffixes()) {
+                        if (regExp.exactMatch(suffixe)) {
+                            newNameFilterExtension = suffixe;
+                            qDebug() << "正则表达式查询到扩展名" << suffixe;
+                            break; //查询到后跳出循环
+                        }
+                    }
+                    if (!newNameFilterExtension.isEmpty()) {
+                        break; //查询到后跳出循环
+                    }
+                }
+            }
+
+            if (newNameFilterExtension.isEmpty()) {
+                qDebug() << "未查询到扩展名";
+            }
 
             QRegExp  re(newNameFilterExtension, Qt::CaseInsensitive, QRegExp::Wildcard);
 
-            if (re.exactMatch(fileNameExtension)) {
-                return getFileView()->setNameFilters(newNameFilters);
+            if (re.exactMatch(fileNameExtension)) { //原扩展名与新扩展名不匹配？
+                qDebug() << "设置新的过滤规则" << newNameFilters;
+                return getFileView()->setNameFilters(newNameFilters); //这里传递回去的有可能是一个正则表达式，它决定哪些文件不被置灰
             }
         }
-
-        newNameFilterExtension = db.suffixForFileName(newNameFilters.at(0));
+//        下面这部分内容似乎没有必要，因为上面已经查询到了第一个符合QMimeDataBase记录的扩展名
+//        newNameFilterExtension = db.suffixForFileName(newNameFilters.at(0));
 
         if (!fileNameExtension.isEmpty() && !newNameFilterExtension.isEmpty()) {
             const int fileNameExtensionLength = fileNameExtension.count();
             fileName.replace(fileName.count() - fileNameExtensionLength,
                              fileNameExtensionLength, newNameFilterExtension);
+            setCurrentInputName(fileName);
+        } else if (fileNameExtension.isEmpty() && !fileName.isEmpty() && !newNameFilterExtension.isEmpty()) {
+            fileName.append('.' + newNameFilterExtension);
             setCurrentInputName(fileName);
         }
     }
@@ -421,7 +458,7 @@ void DFileDialog::selectNameFilterByIndex(int index)
     // when d->fileMode == QFileDialog::DirectoryOnly or d->fileMode == QFileDialog::Directory
     // we use setNameFilters("/") to filter files (can't select file, select dir is ok)
     if ((d->fileMode == QFileDialog::DirectoryOnly ||
-         d->fileMode == QFileDialog::Directory) && QStringList("/")!=newNameFilters) {
+            d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters) { //是目录？
         newNameFilters = QStringList("/");
     }
 
@@ -485,7 +522,7 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         getFileView()->setNameFilters(QStringList("/"));
         getLeftSideBar()->setDisableUrlSchemes({"recent"}); // 打开目录时禁用recent
-        // fall through
+    // fall through
     default:
         getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::SingleSelection);
         break;
@@ -520,6 +557,7 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         statusBar()->setMode(FileDialogStatusBar::Save);
         getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
         getLeftSideBar()->setDisableUrlSchemes({"recent"}); // save mode disable recent
+        setFileMode(QFileDialog::DirectoryOnly);
 
         connect(statusBar()->lineEdit(), &QLineEdit::textChanged,
                 this, &DFileDialog::onCurrentInputNameChanged);
@@ -774,7 +812,7 @@ int DFileDialog::exec()
     if (guard.isNull()) {
         return QDialog::Rejected;
     }
-    d->eventLoop = 0;
+    d->eventLoop = nullptr;
 
     setAttribute(Qt::WA_ShowModal, wasShowModal);
 
@@ -1054,7 +1092,7 @@ void DFileDialog::handleNewView(DFMBaseView *view)
     });
 
     connect(fileView, &DFileView::rootUrlChanged,
-            this, [this](){
+    this, [this]() {
         Q_D(const DFileDialog);
 
         if (d->acceptMode == QFileDialog::AcceptSave) {
@@ -1065,19 +1103,19 @@ void DFileDialog::handleNewView(DFMBaseView *view)
     });
 
     connect(fileView->selectionModel(), &QItemSelectionModel::selectionChanged, fileView,
-            [d](const QItemSelection &selected, const QItemSelection &deselected){
+    [d](const QItemSelection & selected, const QItemSelection & deselected) {
 
         //qDebug() << "----selectionChanged" << "selected----";
-        for ( auto range : selected) {
+        for (auto range : selected) {
             for (QModelIndex idx : range.indexes()) {
                 if (!d->orderedSelectedList.contains(idx))
                     d->orderedSelectedList.append(idx);
             }
         }
         //qDebug() << "----unselected----";
-        for ( auto range : deselected) {
+        for (auto range : deselected) {
             QModelIndexList removeList = range.indexes();
-            if (removeList.size()==0 || d->orderedSelectedList.size()==0){
+            if (removeList.size() == 0 || d->orderedSelectedList.size() == 0) {
                 return;
             }
 
@@ -1146,6 +1184,7 @@ void DFileDialog::onAcceptButtonClicked()
             getFileView()->cd(getFileView()->selectedUrls().first());
             return;
         }
+
         if (!directoryUrl().isLocalFile()) {
             return;
         }
@@ -1154,7 +1193,51 @@ void DFileDialog::onAcceptButtonClicked()
             return;
         }
 
-        const QString &file_name = statusBar()->lineEdit()->text();
+        QString file_name = statusBar()->lineEdit()->text(); //文件名
+        bool suffixCheck = false; //后缀名检测
+        QStringList nameFilters = d->nameFilters;//当前所有后缀列表
+        qDebug() << "后缀名列表" << nameFilters;
+        for (QString nameFilterList : nameFilters) {
+            for (QString nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) { //清理掉多余的信息
+                QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
+                qDebug() << "检测后缀名" << nameFilter;
+                if (re.exactMatch(file_name)) {
+                    suffixCheck = true;
+                    break;
+                };
+            }
+            if (suffixCheck) {
+                break;
+            }
+        }
+        //无符合扩展名，补扩展名
+        if (!suffixCheck) { //文件名、扩展名匹配？
+            QMimeDatabase mdb;
+            QString nameFilter = modelCurrentNameFilter(); //当前设置扩展名
+            QString suffix = mdb.suffixForFileName(nameFilter);
+            if (suffix.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
+                QRegExp  regExp(nameFilter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
+                qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << nameFilter;
+                for (QMimeType m : mdb.allMimeTypes()) {
+                    for (QString suffixe : m.suffixes()) {
+                        if (regExp.exactMatch(suffixe)) {
+                            suffix = suffixe;
+                            qDebug() << "正则表达式查询到扩展名" << suffixe;
+                            break; //查询到后跳出循环
+                        }
+                    }
+                    if (!suffix.isEmpty()) {
+                        break; //查询到后跳出循环
+                    }
+                }
+            }
+            if (!suffix.isEmpty()) {
+                qDebug() << "扩展名补全" << suffix;
+                file_name.append('.' + suffix);
+                setCurrentInputName(file_name);
+            }
+            qDebug() << file_name;
+        }
 
         if (!file_name.isEmpty()) {
             if (file_name.startsWith(".")) {
@@ -1284,7 +1367,7 @@ void DFileDialog::onCurrentInputNameChanged()
     //statusBar()->acceptButton()->setDisabled(d->currentInputName.isEmpty());
     updateAcceptButtonState();
 
-    DFileSystemModel * model = getFileView()->model();
+    DFileSystemModel *model = getFileView()->model();
     if (!model->sortedUrls().isEmpty()) {
 
         const DAbstractFileInfoPointer &fileInfo = model->fileInfo(model->sortedUrls().first());
@@ -1313,7 +1396,7 @@ void DFileDialog::handleEnterPressed()
         return;
     }
 
-    if (!qobject_cast<DFMAddressBar*>(qApp->focusWidget())) {
+    if (!qobject_cast<DFMAddressBar *>(qApp->focusWidget())) {
         for (const QModelIndex &index : getFileView()->selectedIndexes()) {
             const DAbstractFileInfoPointer &info = getFileView()->model()->fileInfo(index);
             if (info->isDir()) {
@@ -1345,7 +1428,7 @@ void DFileDialog::updateAcceptButtonState()
         bool isSelectFiles = getFileView()->selectedIndexes().size() > 0;
         // 1.打开目录（非虚拟目录） 2.打开文件（选中文件）
         statusBar()->acceptButton()->setDisabled((isDirMode && fileInfo->isVirtualEntry()) ||
-                                                (!isDirMode && !isSelectFiles));
+                                                 (!isDirMode && !isSelectFiles));
     } else { // save mode
         statusBar()->acceptButton()->setDisabled(fileInfo->isVirtualEntry() || statusBar()->lineEdit()->text().trimmed().isEmpty());
     }

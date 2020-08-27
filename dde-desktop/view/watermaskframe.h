@@ -10,14 +10,23 @@
 #ifndef WATERMASKFRAME_H
 #define WATERMASKFRAME_H
 
+#include "dbus/licenceInterface.h"
+
 #include <QFrame>
 #include <QJsonObject>
 #include <QLabel>
 
+enum ActiveState {
+    Unauthorized = 0,  //未授权
+    Authorized,  //已授权
+    AuthorizedLapse,  //授权失效
+    TrialAuthorized, //试用期已授权
+    TrialExpired //试用期已过期
+};
+
 class WaterMaskFrame : public QFrame
 {
     Q_OBJECT
-
 public:
     explicit WaterMaskFrame(const QString& fileName, QWidget *parent = 0);
     ~WaterMaskFrame();
@@ -25,8 +34,13 @@ public:
     void loadConfig(const QString& fileName);
     void initUI();
 
+private:
+    bool isNeedState();
+    bool parseJson(QString key);
+
 public slots:
     void updatePosition();
+    void updateAuthorizationState();
 
 private:
     QString m_configFile;
@@ -38,6 +52,8 @@ private:
     int m_yRightBottom;
     int m_maskWidth;
     int m_maskHeight;
+
+    std::unique_ptr<ComDeepinLicenseInterface> m_licenseInterface;
 };
 
 #endif // WATERMASKFRAME_H

@@ -17,4 +17,9 @@
     <method name='Trash'>
         <arg type='as' name='URIs' direction='in'/>
     </method>
+    <method name="topTaskDialog">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="closeTask">
+    </method>
 </interface>

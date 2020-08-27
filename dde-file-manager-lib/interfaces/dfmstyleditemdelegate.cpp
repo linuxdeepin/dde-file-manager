@@ -30,7 +30,7 @@ DFMStyledItemDelegate::~DFMStyledItemDelegate()
 
 DFileViewHelper *DFMStyledItemDelegate::parent() const
 {
-    return static_cast<DFileViewHelper *>(QStyledItemDelegate::parent());
+    return dynamic_cast<DFileViewHelper *>(QStyledItemDelegate::parent());
 }
 
 QModelIndex DFMStyledItemDelegate::editingIndex() const
@@ -235,7 +235,7 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
         iconRealSize = iconSizeList.first();
     else
         iconRealSize = icon_size;
-    if (iconRealSize.width() == 0 || iconRealSize.height() == 0) {
+    if (iconRealSize.width() <= 0 || iconRealSize.height() <= 0) {
 //        return icon.pixmap(iconRealSize);
         return icon.pixmap(icon_size);
     }

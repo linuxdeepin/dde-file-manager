@@ -313,6 +313,8 @@
         <file>images/icons/tag_yellow_active.svg</file>
         <file>images/icons/tag_yellow_normal.svg</file>
         <file>images/icons/tag_normal.svg</file>
+        <file>images/icons/light_32px.svg</file>
+        <file>images/icons/jump_to_copy.svg</file>
     </qresource>
     <qresource prefix="/leftsidebar">
         <file>images/leftsidebar/android_active_16px.svg</file>

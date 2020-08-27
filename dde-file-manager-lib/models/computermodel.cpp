@@ -25,46 +25,108 @@
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "controllers/dfmrootcontroller.h"
+#include "controllers/vaultcontroller.h"
 #include "dfmrootfileinfo.h"
 #include "app/define.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
-
-#include <QStorageInfo>
+#include "deviceinfoparser.h"
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
 #include "computermodel.h"
 
-ComputerModel::ComputerModel(QObject *parent) :
-    QAbstractItemModel(parent),
-    m_diskm(new DDiskManager(this))
+#include <DSysInfo>
+
+ComputerModel::ComputerModel(QObject *parent)
+    : QAbstractItemModel(parent)
+    , m_diskm(new DDiskManager(this))
 {
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
     m_nitems = 0;
     addItem(makeSplitterUrl(tr("My Directories")));
-    getRootFile();
+    QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
+    bool splt = false;
+    m_nitems = 0;
+    bool opticalchanged = false;
+    for (auto chi : ch) {
+        if (chi->suffix() != SUFFIX_USRDIR && !splt) {
+            addItem(makeSplitterUrl(tr("Disks")));
+            splt = true;
+        }
+        if (splt) {
+            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
+                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+                                          return DFMRootFileInfo::typeCompare(a, b.fi);
+                                      });
+            if (r == m_items.end()) {
+                addItem(chi->fileUrl());
+            } else {
+                insertBefore(chi->fileUrl(), r->url);
+            }
+        } else {
+            addItem(chi->fileUrl());
+        }
 
-    connect(fileService,&DFileService::rootFileChange,this,&ComputerModel::onGetRootFile,Qt::QueuedConnection);
+        if (chi->fileUrl().path().contains("sr")) {
+            opticalchanged = true;
+        }
+    }
+
+    connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
+    if (opticalchanged) {
+        emit opticalChanged();
+    }
+
+    // 判断系统类型，决定是否启用保险箱
+    if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
+        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+        if(DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType){ // 如果系不是个人版和未知版
+            // 保险柜
+            addItem(makeSplitterUrl(QObject::tr("File Vault")));
+            addItem(VaultController::makeVaultUrl());
+        }
+    }
 
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
     m_watcher->startWatcher();
     connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
     connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
-            DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
-            if (!fi->exists()) {
-                return;
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
+        if (!fi->exists()) {
+            return;
+        }
+        //            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
+        //                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+        //                                            return DFMRootFileInfo::typeCompare(a, b.fi);
+        //                                      });
+        //            if (r == m_items.end()) {
+        //                addItem(url);
+        //            } else {
+        //                insertBefore(url, r->url);
+        //            }
+        int nIndex = findItem(makeSplitterUrl(QObject::tr("File Vault")));
+        if(nIndex != -1){   // 有保险箱的情况
+            if(m_items.count() > nIndex){
+                insertBefore(url, m_items[nIndex].url);
             }
-            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
+        }
+        else {  // 没有保险箱的情况
+            auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
                                       [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
-                                          return DFMRootFileInfo::typeCompare(a, b.fi);
-                                      });
+                return DFMRootFileInfo::typeCompare(a, b.fi);
+            });
             if (r == m_items.end()) {
                 addItem(url);
             } else {
                 insertBefore(url, r->url);
             }
+        }
+
+        if (url.path().contains("sr")) {
+            emit opticalChanged();
+        }
     });
     connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, [this](const DUrl &url) {
         int p;
@@ -132,12 +194,38 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DecorationRole) {
         if (pitmdata->fi) {
+
+            DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
+            if (itemType == DFMRootFileInfo::UDisksOptical) {
+                QString udisk = pitmdata->fi->extraProperties()["udisksblk"].toString();
+                QStringList strList = udisk.split("/");
+                QString device = strList.back();
+
+                bool isInternal = DeviceInfoParser::Instance().isInternalDevice(device);
+                if (!isInternal) {
+                    return QIcon::fromTheme("media-external");
+                }
+            }
+
             return QIcon::fromTheme(pitmdata->fi->iconName());
         }
     }
 
+    if (role == DataRoles::IconNameRole) {
+        return pitmdata->fi->iconName();
+    }
+
     if (role == DataRoles::FileSystemRole) {
-        //!!TODO: ?
+        QString fs_type = "";
+        if (pitmdata->fi) {
+            //! 添加文件系统格式数据
+            bool bMounted = pitmdata->fi->extraProperties()["mounted"].toBool();
+            if (bMounted) {
+                fs_type = pitmdata->fi->extraProperties()["fsType"].toString().toUpper();
+            }
+        }
+
+        return fs_type;
     }
 
     if (role == DataRoles::SizeInUseRole) {
@@ -149,17 +237,17 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 if (pFileInfo)
                     strVolTag = pFileInfo->getVolTag();
                 //fix: 探测光盘推进,弹出和挂载状态机标识
-                bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
-                bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
+                bool bVolFlag = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag;
+                bool bMntFlag = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bMntFlag;
                 if (!bVolFlag && !bMntFlag) { //CD/DVD
                     return 0;
-//                    DFMOpticalMediaWidget::g_usedSize = 0;
-//                    DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first = 0;
-//                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
                 } else {
-                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].first;
+                    return DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
                 }
             } else {
+                if (pitmdata->fi->fileUrl().scheme() == DFMVAULT_SCHEME) {
+                    return QString::number(pitmdata->fi->size());
+                }
                 return pitmdata->fi->extraProperties()["fsUsed"];
             }
         }
@@ -174,15 +262,12 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 if (pFileInfo)
                     strVolTag = pFileInfo->getVolTag();
                 //fix: 探测光盘推进,弹出和挂载状态机标识
-                bool bVolFlag = GvfsMountManager::g_mapCdStatus[strVolTag].first;
-                bool bMntFlag = GvfsMountManager::g_mapCdStatus[strVolTag].second;
+                bool bVolFlag = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bVolFlag;
+                bool bMntFlag = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bMntFlag;
                 if (!bVolFlag && !bMntFlag) { //CD/DVD
                     return 0;
-                    DFMOpticalMediaWidget::g_totalSize = 0;
-                    DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second = 0;
-                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
                 } else {
-                    return DFMOpticalMediaWidget::g_mapCDUsage[strVolTag].second;
+                    return DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
                 }
             } else {
                 return pitmdata->fi->extraProperties()["fsSize"];
@@ -196,6 +281,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == DataRoles::OpenUrlRole) {
         if (pitmdata->fi) {
+            // 用保险柜根目录
+            if (pitmdata->fi->scheme() == DFMVAULT_SCHEME) {
+                return QVariant::fromValue(pitmdata->fi->fileUrl());
+            }
             return QVariant::fromValue(pitmdata->fi->redirectedFileUrl());
         }
     }
@@ -226,6 +315,67 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         DFMRootFileInfo *file = dynamic_cast<DFMRootFileInfo *>(pitmdata->fi.data());
         if (file)
             return file->getVolTag();
+    }
+
+    if (role == DataRoles::ProgressRole) {
+
+        bool bProgressVisible = true;
+        if (pitmdata->fi) {
+            QString scheme = pitmdata->fi->fileUrl().scheme();
+            if (scheme == DFMVAULT_SCHEME) {
+                // vault not show progress.
+                bProgressVisible = false;
+            } else {
+                // optical and removable device not show progress when unmounted.
+                DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
+                if (itemType == DFMRootFileInfo::ItemType::UDisksOptical
+                        || itemType == DFMRootFileInfo::ItemType::UDisksRemovable) {
+
+                    bProgressVisible = pitmdata->fi->extraProperties()["mounted"].toBool();
+                }
+            }
+        }
+        return QVariant::fromValue(bProgressVisible);
+    }
+
+    if (role == DataRoles::SizeRole) {
+
+        bool bSizeVisible = true;
+        if (pitmdata->fi) {
+            // optical and removable device not show size when unmounted.
+            DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
+            if (itemType == DFMRootFileInfo::ItemType::UDisksOptical
+                    || itemType == DFMRootFileInfo::ItemType::UDisksRemovable) {
+
+                bSizeVisible = pitmdata->fi->extraProperties()["mounted"].toBool();
+
+            } else if (pitmdata->url.isVaultFile()) {
+                // not show vault size when locked or not created.
+                VaultController::VaultState state = VaultController::ins()->state();
+                if (state == VaultController::Encrypted
+                        || state == VaultController::NotExisted) {
+                    bSizeVisible = false;
+                }
+            }
+        }
+
+        return QVariant::fromValue(bSizeVisible);
+    }
+
+    if (role == DataRoles::SchemeRole) {
+        if (pitmdata->fi) {
+            return QVariant::fromValue(pitmdata->fi->fileUrl().scheme());
+        }
+    }
+    if (role == DataRoles::DiscUUIDRole) {
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
+        return blkdev->idUUID();
+    }
+
+    if (role == DataRoles::DiscOpticalRole) {
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
+        return drv->opticalBlank();
     }
 
     return QVariant();
@@ -370,6 +520,17 @@ void ComputerModel::onGetRootFile(const DAbstractFileInfoPointer &chi)
     } else {
         addItem(chi->fileUrl());
     }
+}
+
+void ComputerModel::onOpticalChanged()
+{
+    std::thread thread(
+                []()
+    {
+        DeviceInfoParser::Instance().refreshDabase();
+    }
+    );
+    thread.detach();
 }
 
 void ComputerModel::getRootFile()

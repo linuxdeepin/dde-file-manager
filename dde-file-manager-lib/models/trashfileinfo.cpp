@@ -73,8 +73,9 @@ void TrashFileInfoPrivate::updateInfo()
     const QString &basePath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
     const QString &fileBaseName = QDir::separator() + proxy->fileName();
 
-    if (QFile::exists(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo")) {
-        QSettings setting(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo", QSettings::NativeFormat);
+    QString location(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo");
+    if (QFile::exists(location)) {
+        QSettings setting(location, QSettings::NativeFormat);
 
         setting.beginGroup("Trash Info");
         setting.setIniCodec("utf-8");
@@ -195,7 +196,11 @@ bool TrashFileInfo::isDir() const
 QString TrashFileInfo::fileDisplayName() const
 {
     Q_D(const TrashFileInfo);
-
+    if(isDesktopFile()) {
+        QFileInfo f(absoluteFilePath());
+        DesktopFileInfo dfi(f);
+        return dfi.fileDisplayName();
+    }
     return d->displayName;
 }
 
@@ -235,6 +240,7 @@ QVector<MenuAction> TrashFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
         }
         actionKeys << MenuAction::Restore
                    << MenuAction::CompleteDeletion
+                   << MenuAction::Cut   // 添加回收站剪切菜单
                    << MenuAction::Copy
                    << MenuAction::Separator
                    << MenuAction::Property;
@@ -248,6 +254,7 @@ QVector<MenuAction> TrashFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
         }
         actionKeys << MenuAction::Restore
                    << MenuAction::CompleteDeletion
+                   << MenuAction::Cut   // 添加回收站剪切菜单
                    << MenuAction::Copy
                    << MenuAction::Separator
                    << MenuAction::Property;

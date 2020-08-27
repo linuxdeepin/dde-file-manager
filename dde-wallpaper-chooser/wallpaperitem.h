@@ -72,6 +72,8 @@ signals:
     void pressed();
     void hoverIn();
     void hoverOut();
+    void tab();
+    void backtab();
 
     void buttonClicked(const QString &id);
 
@@ -82,11 +84,15 @@ public slots:
     void setData(const QString &data);
     void setUseThumbnailManager(bool useThumbnailManager);
 
+    void focusLastButton();
+
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
     void refindPixmap();

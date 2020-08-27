@@ -59,6 +59,7 @@ public:
     void cleanTrash(const QObject *sender = 0) const;
 
     static bool isEmpty();
+    static bool isWorking();
 public slots:
     void trashFilesChanged(const DUrl &url);
 private:

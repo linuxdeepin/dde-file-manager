@@ -25,6 +25,7 @@
 #include "dfilemenu.h"
 #include "dfmevent.h"
 #include <QTimer>
+#include <QApplication>
 
 DFileMenu::DFileMenu(QWidget *parent)
     : QMenu(parent)
@@ -67,20 +68,11 @@ QAction *DFileMenu::actionAt(const QString &text) const
 
 QAction *DFileMenu::exec()
 {
-    setCanUse(false);
-    QTimer::singleShot(200,this,[this]{
-
-        setCanUse(true);
-    });
     return QMenu::exec(QCursor::pos());
 }
 
 QAction *DFileMenu::exec(const QPoint &pos, QAction *at)
 {
-    setCanUse(false);
-    QTimer::singleShot(200,this,[this]{
-        setCanUse(true);
-    });
     return QMenu::exec(pos,at);
 }
 
@@ -104,48 +96,18 @@ DUrlList DFileMenu::selectedUrls() const
     return m_selectedUrls;
 }
 
-bool DFileMenu::event(QEvent *event)
+// 重定义，防止多次右键点击造成崩溃
+void DFileMenu::deleteLater(QWidget *w)
 {
-    return QMenu::event(event);
+    if (w)
+        qApp->setActiveWindow(w);
+    QMenu::deleteLater();
 }
 
-void DFileMenu::keyPressEvent(QKeyEvent *event)
+void DFileMenu::mouseMoveEvent(QMouseEvent * event)
 {
-    if (!m_canuse) {
-        return;
-    }
-
-    QMenu::keyPressEvent(event);
+    QMenu::mouseMoveEvent(event);
+    update();
 }
 
-void DFileMenu::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (!m_canuse) {
-        return;
-    }
 
-    QMenu::mouseReleaseEvent(event);
-}
-
-void DFileMenu::mousePressEvent(QMouseEvent *event)
-{
-    if (!m_canuse) {
-        return;
-    }
-
-    QMenu::mousePressEvent(event);
-}
-
-void DFileMenu::actionEvent(QActionEvent *event)
-{
-    if (!m_canuse) {
-        return;
-    }
-
-    QMenu::actionEvent(event);
-}
-
-void DFileMenu::setCanUse(const bool canuse)
-{
-    m_canuse = canuse;
-}

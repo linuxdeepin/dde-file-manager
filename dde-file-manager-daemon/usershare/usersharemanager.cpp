@@ -51,11 +51,11 @@ bool UserShareManager::checkAuthentication()
     bool ret = false;
     qint64 pid = 0;
     QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
-    if(c.isConnected()) {
-       pid = c.interface()->servicePid(message().service()).value();
+    if (c.isConnected()) {
+        pid = c.interface()->servicePid(message().service()).value();
     }
 
-    if (pid){
+    if (pid) {
         ret = PolicyKitHelper::instance()->checkAuthorization(PolicyKitActionId, pid);
     }
 
@@ -100,14 +100,30 @@ bool UserShareManager::setUserSharePassword(const QString &username, const QStri
     return ret;
 }
 
-bool UserShareManager::closeSmbShareByShareName(const QString &sharename)
+bool UserShareManager::closeSmbShareByShareName(const QString &sharename, const bool bshow)
 {
-    if (!checkAuthentication()) {
-        qDebug() << "closeSmbShareByShareName failed" <<  sharename;
+    if (!bshow) {
+        return true;
+    }
+//    if (!checkAuthentication()) {
+//        qDebug() << "closeSmbShareByShareName failed" <<  sharename;
+//        return false;
+//    }
+    unsigned int suid = 0;
+    QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
+    if (!c.isConnected()) {
+        qDebug() << "连接DBus失败";
         return false;
     }
+    suid = c.interface()->serviceUid(message().service()).value(); //获取调用总线进程属主
 
-    qDebug() << sharename;
+    QString filename = sharename.toLower(); //文件名小写
+    QFileInfo info("/var/lib/samba/usershares/" + filename);
+    if (suid != info.ownerId() && suid != 0) { //对比文件属主与调用总线进程属主
+        qDebug() << "非属主用户" << info.path();
+        return  false;
+    }
+
     QProcess p;
     //取得所有连击的pid
     QString cmd = QString("smbcontrol smbd close-share %1").arg(sharename);

@@ -6,6 +6,7 @@ usr/bin/dde-property-dialog
 usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so
 
 usr/share/applications/dde-file-manager.desktop
+usr/share/applications/dde-open.desktop
 
 usr/share/polkit-1/actions/*.policy
 

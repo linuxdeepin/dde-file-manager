@@ -31,20 +31,21 @@ class AVFSFileInfoPrivate;
 class AVFSFileInfo : public DAbstractFileInfo
 {
 public:
-    AVFSFileInfo(const DUrl& avfsUrl);
+    AVFSFileInfo(const DUrl &avfsUrl);
 
     bool canRename() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
     bool canShare() const Q_DECL_OVERRIDE;
     bool canIteratorDir() const Q_DECL_OVERRIDE;
     bool isDir() const Q_DECL_OVERRIDE;
+    bool canManageAuth() const Q_DECL_OVERRIDE;
 
     QString toLocalFile() const override;
     DUrl parentUrl() const override;
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 
-    static DUrl realFileUrl(const DUrl& avfsUrl);
-    static DUrl realDirUrl(const DUrl& avfsUrl);
+    static DUrl realFileUrl(const DUrl &avfsUrl);
+    static DUrl realDirUrl(const DUrl &avfsUrl);
 protected:
     explicit AVFSFileInfo(AVFSFileInfoPrivate &dd);
 

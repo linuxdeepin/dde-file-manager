@@ -21,7 +21,13 @@
 #include "dfmsidebaritemdelegate.h"
 
 #include "interfaces/dfmsidebaritem.h"
-
+/*********************************************************/
+//bug 26937 书签目标目录不存在情况下还可以重命名问题。相关头文件添加
+#include "interface/dfmvaultcontentinterface.h"
+#include "interfaces/dfileservices.h"
+#include "dfmsidebarview.h"
+#include "models/dfmsidebarmodel.h"
+/*********************************************************/
 #include <QPainter>
 #include <QDebug>
 #include <QApplication>
@@ -73,15 +79,37 @@ void DFMSideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
 
 QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    /***************************************************************************************************************/
+    //此部分判断主要是为了解决书签目标目录不存在情况下仍可以对书签进行重命名并且重命名后可打开失效目录问题
+    //目前在标签对应目标路径不存在的情况下，右键重命名是失效的，所以也不应允许双击修改。故此处做规避
+    //有用过QFileInfo::exists直接path路径有问题所以改成了DAbstractFileInfoPointer
+    DFMSideBarView *sidebarView = dynamic_cast<DFMSideBarView*>(this->parent());
+    DFMSideBarModel *sidebarModel = dynamic_cast<DFMSideBarModel*>(sidebarView->model());
+    DFMSideBarItem *tgItem = sidebarModel->itemFromIndex(index);
+
+    const DAbstractFileInfoPointer &sourceInfo = DFileService::instance()->createFileInfo(nullptr, tgItem->url());
+    if(!sourceInfo->exists())
+        return nullptr;
+    /***************************************************************************************************************/
     QWidget *editor = DStyledItemDelegate::createEditor(parent, option, index);
     QLineEdit *qle = nullptr;
     if ((qle = dynamic_cast<QLineEdit *>(editor))) {
-        QRegExp regx("[^\\\\/:\\*\\?\"<>|%&]+");
+        QRegExp regx("[^\\\\/\':\\*\\?\"<>|%&]+"); //屏蔽特殊字符
         QValidator *validator = new QRegExpValidator(regx, qle);
         qle->setValidator(validator);
     }
 
     return editor;
+}
+
+void DFMSideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    Q_UNUSED(index);
+    DStyledItemDelegate::updateEditorGeometry(editor, option, index);
+
+    //DTK在计算editor宽度的时候没有考虑icon的宽度，导致editor超出view的范围，超出部分看不到了，这里需要调整editor的宽度。
+    DFMSideBarView *sidebarView = dynamic_cast<DFMSideBarView*>(this->parent());
+    editor->setFixedWidth(sidebarView->width() - 59);
 }
 
 void DFMSideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const

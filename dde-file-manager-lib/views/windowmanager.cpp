@@ -112,7 +112,8 @@ void WindowManager::loadWindowState(DFileManagerWindow *window)
     int width = state.value("width").toInt();
     int height = state.value("height").toInt();
     NetWmStates windowState = static_cast<NetWmStates>(state.value("state").toInt());
-    if ((m_windows.size() == 0) && ((windowState & (NetWmStateMaximizedHorz | NetWmStateMaximizedVert)) != 0))
+    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
+    if ((m_windows.size() == 0) && ((windowState & NetWmStateMaximizedHorz) != 0 && (windowState & NetWmStateMaximizedVert) != 0))
     {
             window->showMaximized();
     }
@@ -127,7 +128,8 @@ void WindowManager::saveWindowState(DFileManagerWindow *window)
     /// The power by dxcb platform plugin
     NetWmStates states = static_cast<NetWmStates>(window->window()->windowHandle()->property("_d_netWmStates").toInt());
     QVariantMap state;
-    if ((states & (NetWmStateMaximizedHorz | NetWmStateMaximizedVert)) == 0) {
+    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
+    if ((states & NetWmStateMaximizedHorz) == 0 || (states & NetWmStateMaximizedVert) == 0) {
         state["width"] = window->size().width();
         state["height"] = window->size().height();
     }
@@ -224,10 +226,10 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 
 quint64 WindowManager::getWindowId(const QWidget *window)
 {
-    int winId = m_windows.value(window->topLevelWidget(), 0);
+    int winId = static_cast<int>(m_windows.value(window->topLevelWidget(), 0));
 
     if (winId != 0)
-        return winId;
+        return static_cast<quint64>(winId);
 
     const QWidget *newW = window;
 
@@ -311,6 +313,7 @@ void WindowManager::onLastActivedWindowClosed(quint64 winId)
 
     if (QWidget *window = getWindowById(winId))
         window->close();
-
-    qApp->quit();
+    //fix bug 32774 在复制大量文件时，用菜单的退出按钮，会造成这里qApp退出（等待拷贝线程），dfilesystemmodel中的addfile中qApp->processEvents
+    //上的while循环等待，卡死主进程，所以复制进度条也卡死
+//    qApp->quit();
 }

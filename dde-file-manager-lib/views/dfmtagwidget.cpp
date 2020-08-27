@@ -22,6 +22,7 @@
 #include "dfileservices.h"
 #include "app/define.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 #include "singleton.h"
 #include <dfilemenumanager.h>
 #include <shutil/desktopfile.h>
@@ -82,6 +83,10 @@ DUrl DFMTagWidgetPrivate::redirectUrl(const DUrl &url)
     DUrl durl = url;
     if (url.isTaggedFile()) {
         durl = DUrl::fromLocalFile(url.fragment());
+    } else if (url.isSearchFile()) {
+        durl = url.searchedFileUrl();
+    }else if (url.isVaultFile()) {
+        durl = VaultController::vaultToLocalUrl(url);
     } else/* if (url.isRecentFile()) */{
         durl = DUrl::fromLocalFile(url.path());
     }
@@ -163,6 +168,7 @@ void DFMTagWidget::initConnection()
     });
 
     QObject::connect(d->m_tagActionWidget, &DTagActionWidget::checkedColorChanged, d->m_tagActionWidget, [=](const QColor &color){
+        Q_UNUSED(color)
         const QStringList tagNameList = TagManager::instance()->getTagsThroughFiles({d->m_url});
         QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tagNameList});
         DUrlList urlList{d->m_url};
@@ -295,7 +301,7 @@ bool DFMTagWidget::shouldShow(const DUrl& url)
     }
 
     bool showTags = !systemPathManager->isSystemPath(url.path()) &&
-             !isComputerOrTrash && DFileMenuManager::whetherShowTagActions({url});
+            !isComputerOrTrash && DFileMenuManager::whetherShowTagActions({url});
 
     return showTags;
 }

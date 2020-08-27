@@ -26,6 +26,7 @@
 #include "dfmtagwidget.h"
 #include "singleton.h"
 #include "controllers/pathmanager.h"
+#include "controllers/vaultcontroller.h"
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -167,6 +168,8 @@ void DFMRightDetailView::setUrl(const DUrl &url)
             iconName = systemPathManager->getSystemPathIconName("Network");
         } else if (url.isUserShareFile()) {
             iconName = systemPathManager->getSystemPathIconName("UserShare");
+        } else if (VaultController::isRootDirectory(url.path())) {
+            iconName = systemPathManager->getSystemPathIconName("Vault");
         }
 
         QIcon fileIcon = iconName.isEmpty() ? fileInfo->fileIcon() : QIcon::fromTheme(iconName);

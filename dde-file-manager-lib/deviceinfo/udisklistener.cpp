@@ -213,7 +213,6 @@ void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
 {
     m_list.removeOne(device);
     m_map.remove(device->getDiskInfo().id());
-
     if (device->getDiskInfo().drive_unix_device().contains("/dev/sr")) {
         m_nCDRomCount--;
         if (m_nCDRomCount == 0) {
@@ -463,6 +462,7 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
         if (info && !info->getMountPointUrl().isEmpty()) {
 
             bool t_ok = info->getId().contains("/dev/sr");
+            Q_UNUSED(t_ok)
             //获取空白光盘路径有问题，fix
             if (info->getMountPointUrl().toString() == "burn:///" || info->getId().contains("/dev/sr")) {
                 return UDiskDeviceInfoPointer();
@@ -510,6 +510,8 @@ QMap<QString, UDiskDeviceInfoPointer> UDiskListener::getMountedRemovableDiskDevi
             infos.insert(info->getDiskInfo().id(), info);
         }
     }
+    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
+    qDebug() << infos;
     return infos;
 }
 
@@ -522,6 +524,8 @@ QMap<QString, UDiskDeviceInfoPointer> UDiskListener::getCanSendDisksByUrl(QStrin
         }
         infos.insert(info->getDiskInfo().id(), info);
     }
+    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
+    qDebug() << infos;
     return infos;
 }
 

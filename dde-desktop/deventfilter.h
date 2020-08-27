@@ -82,17 +82,26 @@ public:
 //            break;
 //        }
 
-        CanvasGridView *view{ qobject_cast<CanvasGridView *>(watched) };
-
+        CanvasGridView *view = qobject_cast<CanvasGridView *>(watched);
+#if 0   //old
         if (view && Desktop::instance()->getView() == view && event->type() == QEvent::DragEnter) {
             CanvasGridView::m_flag.store(true, std::memory_order_release);
         }
-
+#else
+        if (view && event->type() == QEvent::DragEnter) {
+            CanvasGridView::m_flag.store(true, std::memory_order_release);
+        }
+#endif
         bool expected{ true };
+#if 0
         if (QEvent::Hide == event->type() && CanvasGridView::m_flag.compare_exchange_strong(expected, false, std::memory_order_release)) {
             Desktop::instance()->getView()->fakeDropEvent();
         }
-
+#else
+        if (QEvent::Hide == event->type() && CanvasGridView::m_flag.compare_exchange_strong(expected, false, std::memory_order_release)) {
+            view->fakeDropEvent();
+        }
+#endif
         return false;
     }
 };

@@ -289,7 +289,6 @@ void DListItemDelegate::paint(QPainter *painter,
 void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int lineHeight, const QRect &rect, const QVariant &data,
         bool drawBackground, QPainter *painter, const int &column) const
 {
-    Q_D(const DListItemDelegate);
 
     const DFileSystemModel *model = parent()->model();
     const DAbstractFileInfoPointer &fileInfo = model->fileInfo(model->rootUrl());

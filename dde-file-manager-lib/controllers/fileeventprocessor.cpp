@@ -28,6 +28,8 @@
 #endif // DISABLE_QUICK_SEARCH
 #include "shutil/dsqlitehandle.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
+#include "interfaces/dfileservices.h"
+#include "controllers/vaultcontroller.h"
 
 #include "dcrumbedit.h"
 #include "../app/filesignalmanager.h"
@@ -162,28 +164,64 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         break;
     }
     case DFMGlobal::Open:
-        AppController::instance()->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        //判断网络文件是否可以到达
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+            }
+        }
         break;
     case DFMGlobal::OpenDisk:
-        AppController::instance()->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        //判断网络文件是否可以到达
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+            }
+        }
         break;
     case DFMGlobal::OpenInNewWindow:
-        AppController::instance()->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        //判断网络文件是否可以到达
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+            }
+        }
         break;
     case DFMGlobal::OpenInNewTab:
-        AppController::instance()->actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        //判断网络文件是否可以到达
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+            }
+        }
         break;
     case DFMGlobal::OpenDiskInNewWindow:
-        AppController::instance()->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        //判断网络文件是否可以到达
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+            }
+        }
         break;
     case DFMGlobal::OpenDiskInNewTab:
-        AppController::instance()->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        //判断网络文件是否可以到达
+        if (!event->selectedUrls().isEmpty()) {
+            if (!DFileService::instance()->checkGvfsMountfileBusy(event->selectedUrls().first())) {
+                AppController::instance()->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+            }
+        }
         break;
     case DFMGlobal::OpenAsAdmin:
         AppController::instance()->actionOpenAsAdmin(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().isEmpty() ? event->currentUrl() : event->selectedUrls().first()));
         break;
     case DFMGlobal::OpenWithCustom:
-        AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        if (event->selectedUrls().size() == 1) {
+            AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        }
+        else {
+            AppController::instance()->actionOpenFilesWithCustom(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        }
+
         break;
     case DFMGlobal::OpenFileLocation:
         AppController::instance()->actionOpenFileLocation(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
@@ -321,7 +359,8 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         AppController::instance()->actionOpticalBlank(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
     case DFMGlobal::RemoveFromRecent:
-        if (event->urlList().first().isRecentFile()) {
+        /*解决在最近使用的文档里面搜索以后删除不了的问题*/
+        if (event->urlList().first().isRecentFile()||event->urlList().first().isSearchFile()) {
             DFileService::instance()->deleteFiles(event->sender(), event->urlList(), false, true);
         }
     }
@@ -365,6 +404,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         //end
 
         foreach (DUrl url, e->urlList()) {
+
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
             if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()

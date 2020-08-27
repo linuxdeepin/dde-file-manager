@@ -29,12 +29,15 @@
 #include <QtConcurrent>
 #include <models/dfmsidebarmodel.h>
 
-#define DRAG_EVENT_URLS "UrlsInDragEvent"
+#include <unistd.h>
+
+//#define DRAG_EVENT_URLS "UrlsInDragEvent"
+#define DRAG_EVENT_URLS ((getuid()==0) ? (QString(getlogin())+"_RootUrlsInDragEvent") :(QString(getlogin())+"_UrlsInDragEvent"))
 
 DFM_BEGIN_NAMESPACE
 
 DFMSideBarView::DFMSideBarView(QWidget *parent)
-    : DListView (parent)
+    : DListView(parent)
 {
     setVerticalScrollMode(ScrollPerPixel);
     setIconSize(QSize(16, 16));
@@ -48,17 +51,27 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
     //QListView拖拽时会先插入后删除，于是可以通过rowCountChanged()信号来判断拖拽操作是否结束
     connect(this, &DFMSideBarView::rowCountChanged, this, &DFMSideBarView::onRowCountChanged);  //Qt5风格
     connect(this, static_cast<void (DListView::*)(const QModelIndex &)>(&DListView::currentChanged), this, &DFMSideBarView::currentChanged);
+
+    m_lastOpTime = 0;
 }
 
 void DFMSideBarView::mousePressEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::RightButton)
-    {
-        if(m_current != indexAt(event->pos()))
-        {
+    //频繁点击操作与网络或挂载设备的加载效率低两个因素的共同作用下 会导致侧边栏可能出现显示错误
+    //暂时抛去部分频繁点击来规避这个问题
+    if (!checkOpTime())
+        return;
+
+    if (event->button() == Qt::RightButton) {
+#if 1   //fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上
+        event->accept();
+        return;
+#else
+        if (m_current != indexAt(event->pos())) {
             DListView::mousePressEvent(event);
-            return  setCurrentIndex(m_previous);
+            return setCurrentIndex(m_previous);
         }
+#endif
     }
     DListView::mousePressEvent(event);
 }
@@ -128,26 +141,48 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         return DListView::dropEvent(event);
     }
 
-    DUrlList urls;
+    // bug case 24499, 这里需要区分哪些是可读的文件 或文件夹，因为其权限是不一样的，所以需要对不同权限的文件进行区分处理
+    // 主要有4种场景：1.都是可读写的场景; 2.文件夹是只读属性，子集是可读写的; 3.文件夹或文件是可读写的; 4.拖动的包含 可读写的和只读的
+    DUrlList urls, copyUrls;
     for (const QUrl &url : event->mimeData()->urls()) {
         if (DUrl(url).parentUrl() == item->url()) {
             qDebug() << "skip the same dir file..." << url;
         } else {
-            urls << url;
+            QFileInfo folderinfo(DUrl(url).parentUrl().path()); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
+            QFileInfo fileinfo(url.path());
+            if (!fileinfo.isWritable() || !folderinfo.isWritable()) {
+                copyUrls << url;
+                qDebug() << "this is a unwriteable case:" << url;
+            } else {
+                urls << url;
+            }
         }
     }
 
-    Qt::DropAction action = canDropMimeData(item, event->mimeData(), Qt::MoveAction);
-    if (action == Qt::IgnoreAction) {
-        action = canDropMimeData(item, event->mimeData(), event->possibleActions());
+    bool isActionDone = false;
+    if (!urls.isEmpty()) {
+        Qt::DropAction action = canDropMimeData(item, event->mimeData(), Qt::MoveAction);
+        if (action == Qt::IgnoreAction) {
+            action = canDropMimeData(item, event->mimeData(), event->possibleActions());
+        }
+
+        if (urls.size() > 0 && onDropData(urls, item->url(), action)) {
+            event->setDropAction(action);
+            isActionDone = true;
+        }
+    }
+    if (!copyUrls.isEmpty()) {
+        if (onDropData(copyUrls, item->url(), Qt::CopyAction)) {  // 对于只读权限的，只能进行 copy动作
+            event->setDropAction(Qt::CopyAction);
+            isActionDone = true;
+        }
     }
 
-    if (urls.size() > 0 && onDropData(urls, item->url(), action)) {
-        event->setDropAction(action);
+    if (isActionDone) {
         event->accept();
-        return;
+    } else {
+        DListView::dropEvent(event);
     }
-    DListView::dropEvent(event);
 }
 
 QModelIndex DFMSideBarView::indexAt(const QPoint &p) const
@@ -202,7 +237,7 @@ bool DFMSideBarView::onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction ac
     switch (action) {
     case Qt::CopyAction:
         // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
-        QtConcurrent::run([=](){
+        QtConcurrent::run([ = ]() {
             fileService->pasteFile(this, DFMGlobal::CopyAction, dstUrl, srcUrls);
         });
         break;
@@ -236,6 +271,7 @@ DFMSideBarItem *DFMSideBarView::itemAt(const QPoint &pt)
 
 Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
 {
+    Q_UNUSED(data)
     // Got a copy of urls so whatever data was changed, it won't affact the following code.
     QList<QUrl> urls = m_urlsForDragEvent;
 
@@ -293,9 +329,9 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
     }
 
     if (action != Qt::IgnoreAction) {
-       event->setDropAction(action);
-       event->accept();
-       accept = true;
+        event->setDropAction(action);
+        event->accept();
+        accept = true;
     }
 
     return accept;
@@ -304,16 +340,16 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
 //添加此函数为解决拖拽后不选中拖拽项目问题
 void DFMSideBarView::onRowCountChanged()
 {
-    if(previousRowCount == model()->rowCount())
-    {
-        setCurrentIndex(indexAt(dropPos));
-        if(dragItemName != model()->data(currentIndex()).toString())
-        {
-            setCurrentIndex(model()->index(currentIndex().row()+ (dragRow > currentIndex().row() ? 1:-1), currentIndex().column()));
-        }
+    if (isHidden()) {
+        return; //在显示前不处理
     }
-    else
-    {
+
+    if (previousRowCount == model()->rowCount()) {
+        setCurrentIndex(indexAt(dropPos));
+        if (dragItemName != model()->data(currentIndex()).toString()) {
+            setCurrentIndex(model()->index(currentIndex().row() + (dragRow > currentIndex().row() ? 1 : -1), currentIndex().column()));
+        }
+    } else {
         dragItemName = model()->data(currentIndex()).toString();
         dragRow = currentIndex().row();
     }
@@ -337,13 +373,24 @@ bool DFMSideBarView::fetchDragEventUrlsFromSharedMemory()
 
     sm.lock();
     //用缓冲区得到共享内存关联后得到的数据和数据大小
-    buffer.setData((char*)sm.constData(), sm.size());
+    buffer.setData((char *)sm.constData(), sm.size());
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
     in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
     sm.unlock();    //解锁
     sm.detach();//与共享内存空间分离
 
     return true;
+}
+
+bool DFMSideBarView::checkOpTime()
+{
+    //如果两次操作时间间隔足够长，则返回true
+    if (QDateTime::currentDateTime().toMSecsSinceEpoch() - m_lastOpTime > 200) {
+        m_lastOpTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        return true;
+    }
+
+    return false;
 }
 
 DFM_END_NAMESPACE

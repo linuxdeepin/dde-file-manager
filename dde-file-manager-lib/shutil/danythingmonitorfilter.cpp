@@ -37,8 +37,7 @@
 #include <QTextStream>
 
 
-namespace detail
-{
+namespace detail {
 
 static const std::map<QString, QString> StrTableOfEscapeChar{
     {"\\007", "\a"},
@@ -156,6 +155,9 @@ void DAnythingMonitorFilterPrivate::get_home_path_of_all_users()
             QString line_content{ in.readLine() };
             if (line_content.isEmpty()) continue;
             QList<QString> contents{ line_content.split(':') };
+            if (contents.size() < 2) {
+                continue;
+            }
             QString path_remove_ESC{ detail::restoreEscapedChar(contents[contents.size() - 2]) };
             m_user_name_and_home_path[contents[0]] = path_remove_ESC;
         }

@@ -63,6 +63,8 @@ signals:
 public slots:
     void onFinishButtonPressed();
 
+    void slotSetup(int state);
+
 private:
     DPasswordEdit * m_enterPassword;
     DPasswordEdit * m_confirmPassword;

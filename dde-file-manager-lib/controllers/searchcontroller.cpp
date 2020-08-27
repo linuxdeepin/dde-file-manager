@@ -186,11 +186,17 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
             newToUrl = fileUrl();
             newToUrl.setSearchedFileUrl(toUrl);
 
-            addWatcher(toUrl);
+            /*fix bug34957,搜索模式下，删除文件到回收站的文件不再加入到watcher中，不然会一直删除不掉*/
+            if(toUrl.path().contains("/.local/share/Trash/files",Qt::CaseSensitive)){
+               return;
+           }
+           else {
+               addWatcher(toUrl);
+           }
         }
     }
 
-    removeWatcher(fromUrl);
+//    removeWatcher(fromUrl); // fix task 21431 临时解决方案。
 
     emit fileMoved(newFromUrl, newToUrl);
 }
@@ -501,6 +507,11 @@ bool SearchController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent>
     return DFileService::instance()->openFileByApp(event->sender(), event->appName(), realUrl(event->url()));
 }
 
+bool SearchController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
+{
+    return DFileService::instance()->openFilesByApp(event->sender(), event->appName(), realUrlList(event->urlList()));
+}
+
 bool SearchController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
     return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), realUrlList(event->urlList()));
@@ -529,9 +540,9 @@ bool SearchController::renameFile(const QSharedPointer<DFMRenameEvent> &event) c
 bool SearchController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
 {
     DUrl url = event->url();
-
+    /*解决搜索状态下修改文件属性会修改到当前用户的属性*/
     if (!url.searchTargetUrl().isEmpty()) {
-        return DFileService::instance()->setPermissions(event->sender(), url.searchTargetUrl(), event->permissions());
+        return DFileService::instance()->setPermissions(event->sender(), DUrl(url.fragment()), event->permissions());
     }
 
     return false;
@@ -559,7 +570,7 @@ bool SearchController::removeBookmark(const QSharedPointer<DFMRemoveBookmarkEven
 
 bool SearchController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
-    return DFileService::instance()->createSymlink(event->sender(), realUrl(event->fileUrl()), event->toUrl());
+    return DFileService::instance()->createSymlink(event->sender(), realUrl(event->fileUrl()), event->toUrl(), event->force());
 }
 
 bool SearchController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const

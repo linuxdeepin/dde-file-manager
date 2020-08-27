@@ -55,7 +55,8 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                            << QString(FTP_SCHEME)
                            << QString(SFTP_SCHEME)
                            << QString(DAV_SCHEME)
-                           << QString{ TAG_SCHEME };
+                           << QString(TAG_SCHEME)
+                           << QString(DFMVAULT_SCHEME); // 文件保险柜
 
 DUrl::DUrl()
     : QUrl()
@@ -246,6 +247,11 @@ bool DUrl::isTaggedFile() const
 bool DUrl::isOptimise() const
 {
     return m_boptimise;
+}
+
+bool DUrl::isVaultFile() const
+{
+    return (this->scheme() == DFMVAULT_SCHEME);
 }
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
@@ -606,6 +612,15 @@ DUrl DUrl::fromBurnFile(const QString &filePath)
     return ret;
 }
 
+DUrl DUrl::fromVaultFile(const QString &filePath)
+{
+    DUrl url;
+    url.setScheme(DFMVAULT_SCHEME, false);
+    url.setPath(filePath);
+
+    return url;
+}
+
 DUrlList DUrl::fromStringList(const QStringList &urls, QUrl::ParsingMode mode)
 {
     QList<DUrl> urlList;
@@ -800,7 +815,9 @@ QString DUrl::toLocalFile() const
         return taggedLocalFilePath();
     } else if (isUserShareFile()) {
         return QString(path()).remove(USERSHARE_ROOT);
-    } else {
+    } else if (isVaultFile()){
+        return path();
+    }else {
         return QUrl::toLocalFile();
     }
 }

@@ -23,6 +23,7 @@
 #include "app/define.h"
 #include "utils/singleton.h"
 #include "controllers/pathmanager.h"
+#include "app/filesignalmanager.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -33,10 +34,18 @@
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
+#include <unistd.h>
 
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QTextCodec>
+
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
+#include <QTimer>
+
 
 class DFMRootFileInfoPrivate
 {
@@ -52,16 +61,22 @@ public:
     QString label;
     QString fs;
     QString udispname;
+    QString idUUID;
+    QString currentUUID;
+    QString backupUUID;
     bool isod;
     bool encrypted;
     DFMRootFileInfo *q_ptr;
     Q_DECLARE_PUBLIC(DFMRootFileInfo)
 };
 
+QMap<QString, DiskInfoStr> DFMRootFileInfo::DiskInfoMap = QMap<QString, DiskInfoStr>();
+
 DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
     DAbstractFileInfo(url),
     d_ptr(new DFMRootFileInfoPrivate)
 {
+//    loadDiskInfo();
     if (suffix() == SUFFIX_USRDIR) {
         QStandardPaths::StandardLocation loc = QStandardPaths::StandardLocation::HomeLocation;
         if (baseName() == "desktop") {
@@ -102,8 +117,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
         if (pathList.size() == 0) {
             qWarning() << url << "not existed";
             //fix 临时解决方案，彻底解决需要DDiskManager::resolveDeviceNode往下追踪
-            for (int i = 0;i < 20; ++i)
-            {
+            for (int i = 0; i < 20; ++i) {
                 QThread::msleep(50);
 
                 pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
@@ -132,7 +146,10 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             d_ptr->blk->setWatchChanges(true);
             checkCache();
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idLabelChanged, [this] {this->checkCache();});
-            QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] {this->checkCache();});
+            QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] {
+//                this->loadDiskInfo();
+                this->checkCache();
+            });
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::sizeChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idTypeChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::cleartextDeviceChanged, [this] {this->checkCache();});
@@ -305,8 +322,7 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
                     ret = ItemType::UDisksRemovable;
                 }
             }
-        }
-        else {
+        } else {
             ret = ItemType::UDisksRemovable;
         }
     }
@@ -324,7 +340,7 @@ QString DFMRootFileInfo::iconName() const
     if (suffix() == SUFFIX_USRDIR) {
         return systemPathManager->getSystemPathIconNameByPath(redirectedFileUrl().path());
     } else if (suffix() == SUFFIX_GVFSMP) {
-        if(!d->gmnt || d->gmnt->themedIconNames().size() == 0) {
+        if (!d->gmnt || d->gmnt->themedIconNames().size() == 0) {
             return "";
         }
         return d->gmnt ? d->gmnt->themedIconNames().front() : "";
@@ -349,6 +365,7 @@ QString DFMRootFileInfo::iconName() const
 QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     Q_D(const DFMRootFileInfo);
+    Q_UNUSED(type)
     bool protectUnmountOrEject = false;
     DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     QVector<MenuAction> ret;
@@ -440,12 +457,21 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
     } else if (suffix() == SUFFIX_GVFSMP) {
         return DUrl::fromLocalFile(d->backer_url);
     } else if (suffix() == SUFFIX_UDISKS) {
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
-        if (drv->optical()) {
-            return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
+        if (d->blk) {
+            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
+            if (drv->optical()) {
+                return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
+            }
         }
         if (d->mps.size()) {
-            return DUrl::fromLocalFile(d->mps.first());
+            DUrl rootUrl = DUrl::fromLocalFile(d->mps.first());
+
+            //点击数据盘直接跳转到主目录
+            if (rootUrl == DUrl::fromLocalFile("/data")) {
+                QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+                rootUrl = DUrl::fromLocalFile("/data" + userPath);
+            }
+            return rootUrl;
         }
     }
     return DUrl();
@@ -489,10 +515,9 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["fsType"] = d->fs;
         ret["encrypted"] = d->encrypted;
         ret["unlocked"] = !d->encrypted || d->ctblk;
-        if(d->ctblk) {
+        if (d->ctblk) {
             ret["udisksblk"] = d->ctblk->path();
-        }
-        else if (d->blk) {
+        } else if (d->blk) {
             ret["udisksblk"] = d->blk->path();
         }
         ret["mounted"] = !d->mps.empty();
@@ -520,16 +545,14 @@ void DFMRootFileInfo::checkCache()
     d->mps = blk->mountPoints();
     d->size = blk->size();
     d->label = blk->idLabel();
+
     //FAT32的卷标编码为ascii，idLabel中取不到中文，这里需要从symlink中取出label
     //symlink中的label编码有问题，这里做进一步处理
     QString idVersion = blk->idVersion().toUpper();
-    if(idVersion == "FAT32")
-    {
-        for (QByteArray ba : blk->symlinks())
-        {
+    if (idVersion == "FAT32") {
+        for (QByteArray ba : blk->symlinks()) {
             QString link(ba);
-            if (link.contains("/by-label/"))
-            {
+            if (link.contains("/by-label/") && link.contains("\\x")) {
                 QByteArray t_destByteArray;
                 QByteArray t_tmpByteArray;
                 for (int i = 0; i < ba.size(); i++) {
@@ -574,13 +597,25 @@ void DFMRootFileInfo::checkCache()
             }
         }
     }
+    loadDiskInfo();
     d->fs = blk->idType();
+    d->idUUID = blk->idUUID();
     d->udispname = udisksDisplayName();
 }
 
 QString DFMRootFileInfo::udisksDisplayName()
 {
     Q_D(DFMRootFileInfo);
+
+    //windows分区需要显示该分区在windows下的盘符或卷标
+    if (DFMRootFileInfo::DiskInfoMap.contains(d->idUUID)) {
+        const DiskInfoStr info = DFMRootFileInfo::DiskInfoMap.value(d->idUUID);
+        if (!info.label.isEmpty()) {
+            return info.label;
+        } else {
+            return info.driver;
+        }
+    }
 
     static QMap<QString, const char *> i18nMap {
         {"data", "Data Disk"}
@@ -618,10 +653,49 @@ QString DFMRootFileInfo::udisksDisplayName()
 
     if (d->mps.contains(QByteArray("/\0", 2))) {
         return QCoreApplication::translate("PathManager", "System Disk");
+    } else if (!d->idUUID.isEmpty()) {
+        if (d->currentUUID.isEmpty() || d->backupUUID.isEmpty()) {
+            QFile recoveryFile(QString("/etc/%1/ab-recovery.json").arg(qApp->organizationName()));
+
+            if (recoveryFile.open(QIODevice::ReadOnly)) {
+
+                QByteArray recoveryData = recoveryFile.readAll();
+                recoveryFile.close();
+
+                QJsonParseError parseJsonErr;
+                QJsonDocument jsonDoc(QJsonDocument::fromJson(recoveryData, &parseJsonErr));
+                if (!(parseJsonErr.error == QJsonParseError::NoError)) {
+                    qDebug() << "decode json file error, create new json data！";
+                } else {
+                    QJsonObject rootObj = jsonDoc.object();
+                    const QString currentcurrentUUIDKey = "Current";
+                    const QString backupUUIDKey = "Backup";
+                    if (rootObj.contains(currentcurrentUUIDKey)) {
+                        d->currentUUID = rootObj[currentcurrentUUIDKey].toString();
+                    }
+                    if (rootObj.contains(backupUUIDKey)) {
+                        d->backupUUID = rootObj[backupUUIDKey].toString();
+                    }
+                }
+            }
+        }
+        if (d->currentUUID == d->idUUID || d->backupUUID == d->idUUID) {
+            return QCoreApplication::translate("PathManager", "System Disk");
+        }
     }
+
     if (d->label.length() == 0) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
-        if (!drv->mediaAvailable() && drv->mediaCompatibility().join(" ").contains("optical")) {
+        if (drv->opticalBlank()) {
+            return QCoreApplication::translate("DeepinStorage", "Blank %1 Disc").arg(opticalmediamap[drv->media()]);
+        }
+        // TODO xust，暂时先屏蔽判定uuid的语句，该语句会导致无法正常挂载的盘连盘符都不显示，引入该改动是为解决自动光驱弹出托盘后界面不刷新的问题，此处之后再找其他的方式调整。
+        if ((!drv->mediaAvailable()/* || d->idUUID.isEmpty()*/) && drv->mediaCompatibility().join(" ").contains("optical")) { // uuid 为空认为光盘未挂载或已卸载（托盘已弹出），此时强制使用无光盘的名称
+            d->blk->unmount({});
+            d->size = 0;
+            QTimer::singleShot(100, [] {
+                emit fileSignalManager->requestUpdateComputerView();
+            });
             QString maxmediacompat;
             for (auto i = opticalmediakv.rbegin(); i != opticalmediakv.rend(); ++i) {
                 if (drv->mediaCompatibility().contains(i->first)) {
@@ -631,14 +705,12 @@ QString DFMRootFileInfo::udisksDisplayName()
             }
             return QCoreApplication::translate("DeepinStorage", "%1 Drive").arg(maxmediacompat);
         }
-        if (drv->opticalBlank()) {
-            return QCoreApplication::translate("DeepinStorage", "Blank %1 Disc").arg(opticalmediamap[drv->media()]);
-        }
         if (d->blk->isEncrypted() && !d->ctblk) {
             return QCoreApplication::translate("DeepinStorage", "%1 Encrypted").arg(FileUtils::formatSize(d->size));
         }
         return QCoreApplication::translate("DeepinStorage", "%1 Volume").arg(FileUtils::formatSize(d->size));
     }
+
     return d->label;
 }
 
@@ -653,8 +725,7 @@ bool DFMRootFileInfo::checkMpsStr(const QString &path) const
 {
     Q_D(const DFMRootFileInfo);
 
-    for (QByteArray ba : d->mps)
-    {
+    for (QByteArray ba : d->mps) {
         QString baStr(ba.data());
         if (baStr == path)
             return true;
@@ -678,11 +749,64 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
         {ItemType::GvfsGPhoto2,  6},
         {ItemType::GvfsGeneric,  7}
     };
-    if (!a->exists()) {
+    if (!a || !a->exists()) {
         return false;
     }
-    if (!b->exists()) {
+    if (!b || !b->exists()) {
         return true;
     }
     return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
+}
+
+void DFMRootFileInfo::loadDiskInfo()
+{
+    Q_D(const DFMRootFileInfo);
+
+    if (d->mps.empty())
+        return;
+
+    QDir dir(QString(d->mps.front()) + "/UOSICON");
+    if (!dir.exists()) {
+        return;
+    }
+
+    QString jsonPath = dir.absolutePath();
+    //不存在该目录
+    if (jsonPath.isEmpty()) {
+        return;
+    }
+
+    //读取本地json文件
+    QFile file(jsonPath + "/diskinfo.json");
+    if (!file.open(QIODevice::ReadWrite)) {
+        return;
+    }
+
+    //解析json文件
+    QJsonParseError jsonParserError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(file.readAll(), &jsonParserError);
+    if (jsonDocument.isNull() || jsonParserError.error != QJsonParseError::NoError) {
+        return;
+    }
+
+    if (jsonDocument.isObject()) {
+        QJsonObject jsonObject = jsonDocument.object();
+        if (jsonObject.contains("DISKINFO") && jsonObject.value("DISKINFO").isArray()) {
+            QJsonArray jsonArray = jsonObject.value("DISKINFO").toArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                if (jsonArray[i].isObject()) {
+                    QJsonObject jsonObjectInfo = jsonArray[i].toObject();
+                    DiskInfoStr str;
+                    if (jsonObjectInfo.contains("uuid"))
+                        str.uuid = jsonObjectInfo.value("uuid").toString();
+                    if (jsonObjectInfo.contains("drive"))
+                        str.driver = jsonObjectInfo.value("drive").toString();
+                    if (jsonObjectInfo.contains("label"))
+                        str.label = jsonObjectInfo.value("label").toString();
+
+                    DFMRootFileInfo::DiskInfoMap[str.uuid] = str;
+                }
+            }
+        }
+    }
 }

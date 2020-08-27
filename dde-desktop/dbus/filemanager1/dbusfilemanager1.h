@@ -41,6 +41,10 @@ public:
 
     // debug function
     QStringList GetMonitorFiles() const;
+public slots:
+    // 保险箱使用
+    bool topTaskDialog();
+    void closeTask();
 };
 
 #endif // DBUSFILEMANAGER1_H

@@ -22,11 +22,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QProcess>
+
 #include "dbusfilemanager1.h"
 #include "dfilewatcher.h"
 #include "dfileservices.h"
+#include "app/define.h"
+#include "dialogs/dialogmanager.h"
+#include "../dialogs/dtaskdialog.h"
 
-#include <QProcess>
+
 #include <QDebug>
 
 DBusFileManager1::DBusFileManager1(QObject *parent)
@@ -79,4 +84,28 @@ void DBusFileManager1::Trash(const QStringList &URIs)
 QStringList DBusFileManager1::GetMonitorFiles() const
 {
     return DFileWatcher::getMonitorFiles();
+}
+
+bool DBusFileManager1::topTaskDialog()
+{
+    // 如果正在有保险箱的移动、粘贴操作，置顶弹出任务框
+    DTaskDialog *pTaskDlg = dialogManager->taskDialog();
+    if(pTaskDlg){
+        if(pTaskDlg->bHaveNotCompletedVaultTask()){
+            pTaskDlg->showDialogOnTop();
+            return true;
+        }
+    }
+    return false;
+}
+
+void DBusFileManager1::closeTask()
+{
+    // 如果正在有保险箱的移动、粘贴、删除操作，强行结束任务
+    DTaskDialog *pTaskDlg = dialogManager->taskDialog();
+    if(pTaskDlg){
+        if(pTaskDlg->bHaveNotCompletedVaultTask()){
+            pTaskDlg->stopVaultTask();
+        }
+    }
 }

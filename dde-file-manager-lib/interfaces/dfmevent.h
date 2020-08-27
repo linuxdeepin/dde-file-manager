@@ -97,6 +97,7 @@ public:
         ChangeTagColor,
         GetTagsThroughFiles,
         OpenFiles,  //fix 修改多文件选中右键打开只启动一次应用，传多个参数
+        OpenFilesByApp,//fix 修改选择多个文件时，选择默认程序，只传了一个
         // user custom
         CustomBase = 1000                            // first user event id
     };
@@ -320,6 +321,16 @@ public:
     QString appName() const;
 
     static QSharedPointer<DFMOpenFileByAppEvent> fromJson(const QJsonObject &json);
+};
+
+class DFMOpenFilesByAppEvent : public DFMOpenFilesEvent
+{
+public:
+    explicit DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url);
+
+    QString appName() const;
+
+    static QSharedPointer<DFMOpenFilesByAppEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMCompressEvent : public DFMUrlListBaseEvent

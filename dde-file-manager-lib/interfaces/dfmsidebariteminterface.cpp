@@ -28,6 +28,7 @@
 #include "views/windowmanager.h"
 #include "interfaces/dfmsidebaritem.h"
 #include "interfaces/dfilemenu.h"
+#include "controllers/vaultcontroller.h"
 
 
 DFMSideBarItemInterface::DFMSideBarItemInterface(QObject *parent) : QObject(parent)
@@ -40,6 +41,7 @@ void DFMSideBarItemInterface::cdAction(const DFMSideBar *sidebar, const DFMSideB
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     if (item->itemType() != DFMSideBarItem::Separator) {
         qDebug() << " item->url() " << item->url();
+
         wnd->cd(item->url()); // don't `setChecked` here, wait for a signal.
     }
 }
@@ -72,6 +74,8 @@ QMenu *DFMSideBarItemInterface::contextMenu(const DFMSideBar *sidebar, const DFM
 
 void DFMSideBarItemInterface::rename(const DFMSideBarItem *item, QString name)
 {
+    Q_UNUSED(item)
+    Q_UNUSED(name)
     //no-op
 }
 

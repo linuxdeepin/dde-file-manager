@@ -160,6 +160,11 @@ void WallpaperList::scrollList(int step, int duration)
 
 void WallpaperList::prevPage()
 {
+    if (gridSize().width() < 1){
+        qCritical() << "error gridSize().width() " << gridSize().width();
+        return;
+    }
+
     int c = width() / gridSize().width();
 
     scrollList((2 - c) * (m_contentLayout->spacing() + ItemWidth), 500);
@@ -167,20 +172,52 @@ void WallpaperList::prevPage()
 
 void WallpaperList::nextPage()
 {
-    int c = width() / gridSize().width();
+    if (gridSize().width() < 1){
+        qCritical() << "error gridSize().width() " << gridSize().width();
+        return;
+    }
 
+    int c = width() / gridSize().width();
     scrollList((c - 2) * (m_contentLayout->spacing() + ItemWidth), 500);
+}
+
+void WallpaperList::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Right:
+    //选中下一壁纸
+        setCurrentIndex(m_index+1);
+        break;
+    case Qt::Key_Left:
+    //选中上一壁纸
+        setCurrentIndex(m_index-1);
+        break;
+    default:
+    //保持按键事件传递
+        event->ignore();
+        break;
+    }
 }
 
 void WallpaperList::resizeEvent(QResizeEvent *event)
 {
     QFrame::resizeEvent(event);
+    if (width() < ItemWidth){
+        qCritical() << "error. widget width is less than ItemWidth" <<
+                   width() << "<" << ItemWidth
+                    << "resize" << event->size();
+    }
 
     int screen_item_count = width() / ItemWidth;
-
     if (width() % ItemWidth == 0)
         --screen_item_count;
 
+    if (screen_item_count < 1){
+        qCritical() << "screen_item_count: " << screen_item_count
+                    << "set to 1";
+        screen_item_count = 1;
+    }
     setGridSize(QSize(width() / screen_item_count, ItemHeight));
 }
 
@@ -205,8 +242,11 @@ void WallpaperList::setGridSize(const QSize &size)
 {
     if (m_gridSize == size)
         return;
-
-    int c = width() / size.width();
+    int c = 0;
+    if (width() == 0 || size.width() == 0)
+        c = 0;
+    else
+        c = width() / size.width();
 
     m_gridSize = size;
     m_contentLayout->setSpacing(qRound((width() - c * ItemWidth) / qreal(c + 1) - 0.500001) + 1);
@@ -225,8 +265,10 @@ void WallpaperList::addItem(WallpaperItem *item)
 
 QWidget *WallpaperList::item(int index) const
 {
-    if (index >= m_contentLayout->count())
-        return 0;
+    if (index >= m_contentLayout->count() || index < 0){
+        qCritical() << "error index" << index << "gridsie" << m_gridSize << this->geometry();
+        return nullptr;
+    }
 
     return m_contentLayout->itemAt(index)->widget();
 }
@@ -239,6 +281,10 @@ QWidget *WallpaperList::itemAt(const QPoint &pos) const
 QWidget *WallpaperList::itemAt(int x, int y) const
 {
     Q_UNUSED(y)
+    if (gridSize().width() < 1){
+        qCritical() << "error gridSize().width() " << gridSize().width();
+        return nullptr;
+    }
 
     return item((horizontalScrollBar()->value() + x) / gridSize().width());
 }
@@ -261,6 +307,7 @@ void WallpaperList::clear()
 
 void WallpaperList::updateItemThumb()
 {
+    qDebug() << "items" << m_items.size();
     m_contentWidget->adjustSize();
 
     showDeleteButtonForItem(static_cast<WallpaperItem *>(itemAt(mapFromGlobal(QCursor::pos()))));
@@ -274,12 +321,11 @@ void WallpaperList::updateItemThumb()
     updateBothEndsItem();
 }
 
-void WallpaperList::wallpaperItemPressed()
+void WallpaperList::setCurrentIndex(int index)
 {
-    WallpaperItem *item = qobject_cast<WallpaperItem *>(sender());
-
-    if (item == prevItem || item == nextItem)
+    if(index<0 || index>=count())
         return;
+    WallpaperItem *item = m_items.at(index);
 
     for (int i = 0; i < count(); i++) {
         WallpaperItem *wallpaper = qobject_cast<WallpaperItem *>(this->item(i));
@@ -294,6 +340,27 @@ void WallpaperList::wallpaperItemPressed()
             }
         }
     }
+
+    //动画，保持被选中壁纸、屏保居中
+    int visualCount = width() / (ItemWidth + m_contentLayout->spacing()); //计算显示壁纸数
+    scrollAnimation.setDuration(500);
+    int prevIndex = m_items.indexOf(qobject_cast<WallpaperItem *>(itemAt(ItemWidth / 2, ItemHeight / 2)),0);
+    int nextIndex = m_items.indexOf(qobject_cast<WallpaperItem *>(itemAt(width() - ItemWidth / 2, ItemHeight / 2)),0);
+    scrollAnimation.setStartValue(((prevIndex+nextIndex)/2-visualCount/2) * (ItemWidth+m_contentLayout->spacing()));
+    scrollAnimation.setEndValue((index-visualCount/2) * (ItemWidth+m_contentLayout->spacing()));
+    scrollAnimation.start();
+    m_index = m_items.indexOf(item, 0);
+}
+
+WallpaperItem *WallpaperList::getCurrentItem()
+{
+    return m_items.at(m_index);
+}
+
+void WallpaperList::wallpaperItemPressed()
+{
+    WallpaperItem *item = qobject_cast<WallpaperItem *>(sender());
+    setCurrentIndex(m_items.indexOf(item,0));
 }
 
 void WallpaperList::wallpaperItemHoverIn()
@@ -345,7 +412,7 @@ void WallpaperList::updateBothEndsItem()
 
 void WallpaperList::showDeleteButtonForItem(WallpaperItem const *item) const
 {
-    if (item && item->getDeletable()) {
+    if (item && item->getDeletable() && item != prevItem && item != nextItem ) {
         // we can't get a correct item if content image geometry is not available to use.
         if (item->contentImageGeometry().isNull()) {
             return;

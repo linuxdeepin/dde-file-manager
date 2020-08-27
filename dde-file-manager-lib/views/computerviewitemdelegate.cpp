@@ -21,7 +21,7 @@
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DPalette>
-
+#include <sys/stat.h>
 #include <QLineEdit>
 
 #include "models/computermodel.h"
@@ -114,18 +114,60 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     font.setWeight(66);
     painter->setFont(font);
     painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
-    QString text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
+
+    QString fileSysType = index.data(ComputerModel::DataRoles::FileSystemRole).toString();
+    int fstw = par->fontMetrics().width(fileSysType);
+    QString text;
+    if (!fileSysType.isEmpty()) {
+        text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width - fstw - 7);
+    } else {
+        text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
+    }
+
     painter->drawText(textrect, Qt::TextWrapAnywhere, text, &otextrect);
 
-    //otextrect.moveLeft(otextrect.right() + 12);
-    //int fstw = par->fontMetrics().width(index.data(ComputerModel::DataRoles::FileSystemRole).toString());
-    //otextrect.setWidth(fstw);
-    //otextrect.setHeight(fontpixelsize + 4);
-    //otextrect.adjust(-4, 0, 4, 0);
-    //painter->setBrush(QColor(0xFF99EE));
-    //painter->setPen(QColor(0xAA3399));
-    //painter->drawRoundedRect(otextrect, 8, 8);
-    //painter->drawText(otextrect, Qt::AlignCenter, index.data(ComputerModel::DataRoles::FileSystemRole).toString());
+    // 添加对文件系统格式的显示
+    if (!fileSysType.isEmpty()) {
+
+        // 使用细线进行绘制
+        font.setWeight(12);
+        painter->setFont(font);
+
+        otextrect.moveLeft(otextrect.right() + 12);
+        otextrect.moveBottom(otextrect.bottom() + 2);
+        otextrect.setWidth(fstw);
+        otextrect.setHeight(fontpixelsize + 4);
+        otextrect.adjust(-5, 0, 5, 0);
+
+        QColor brushColor(0xD2D2D2);
+        QColor penColor(0x5D5D5D);
+        QColor borderColor(0xA5A5A5);
+
+        if (fileSysType == "EXT2"
+                || fileSysType == "EXT3"
+                || fileSysType == "EXT4"
+                || fileSysType == "VFAT") {
+
+            brushColor = QColor(0xA1E4FF);
+            penColor = QColor(0x0081B2);
+            borderColor = QColor(0x73C7EE);
+
+        } else if (fileSysType == "NTFS"
+                   || fileSysType == "FAT16"
+                   || fileSysType == "FAT32"
+                   || fileSysType == "EXFAT") {
+
+            brushColor = QColor(0xFFDDA1);
+            penColor = QColor(0x502504);
+            borderColor = QColor(0xEEB273);
+        }
+
+        painter->setBrush(brushColor);
+        painter->setPen(borderColor);
+        painter->drawRoundedRect(otextrect, 7.5, 7.5);
+        painter->setPen(penColor);
+        painter->drawText(otextrect, Qt::AlignCenter, fileSysType);
+    }
 
     QFont smallf(par->font());
     smallf.setPixelSize(int(fontpixelsize * 0.85));
@@ -140,7 +182,19 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     quint64 sizetotal = index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong();
     QString strVolTag = index.data(ComputerModel::DataRoles::VolumeTagRole).toString();
     painter->setPen(pl.color(DPalette::TextTips));
-    painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal, strVolTag));
+
+
+    // Paint size.
+    bool bSizeVisible = index.data(ComputerModel::DataRoles::SizeRole).toBool();
+    if (bSizeVisible) {
+        QString scheme = index.data(ComputerModel::DataRoles::SchemeRole).toString();
+        if (scheme == DFMVAULT_SCHEME) {
+            // vault only show size.
+            painter->drawText(textrect, Qt::AlignLeft, FileUtils::formatSize(static_cast<qint64>(sizeinuse)));
+        } else {
+            painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal, strVolTag));
+        }
+    }
 
     QRect usgplrect(option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize), QSize(text_max_width, 6));
     QStyle *sty = option.widget && option.widget->style() ? option.widget->style() : qApp->style();
@@ -164,14 +218,20 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     plopt.palette = option.widget ? option.widget->palette() : qApp->palette();
     plopt.palette.setColor(QPalette::ColorRole::Highlight, plcolor);
     painter->setPen(Qt::PenStyle::NoPen);
-    sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
-    sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
+
+    // Paint progress
+    bool bProgressVisible = index.data(ComputerModel::DataRoles::ProgressRole).toBool();
+    if (bProgressVisible) {
+        sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
+        sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
+    }
 
     painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 }
 
 QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option)
     ComputerModelItemData::Category cat = ComputerModelItemData::Category(index.data(ComputerModel::DataRoles::ICategoryRole).toInt());
     if (cat == ComputerModelItemData::Category::cat_widget) {
         return static_cast<ComputerModelItemData*>(index.internalPointer())->widget->size();
@@ -192,10 +252,13 @@ QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, con
 
 QWidget* ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option)
+    Q_UNUSED(index)
     QLineEdit *le = new QLineEdit(parent);
     le->setFrame(false);
     le->setTextMargins(0, 0, 0, 0);
-    le->setAutoFillBackground(true);
+    //消除编辑框背后多余的填充色
+//    le->setAutoFillBackground(true);
     le->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     return le;
 }

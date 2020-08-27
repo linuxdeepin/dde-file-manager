@@ -60,7 +60,8 @@ public:
         NetworkRootPath,
         UserShareRootPath,
         ComputerRootPath,
-        Root
+        Root,
+        Vault
     };
 
     static QString location(StandardLocation type);

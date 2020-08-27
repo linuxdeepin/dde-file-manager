@@ -38,7 +38,7 @@ int getProcIdByName(string procName)
 
     // Open the /proc directory
     DIR *dp = opendir("/proc");
-    if (dp != NULL) {
+    if (dp != nullptr) {
         // Enumerate all entries in directory until process found
         struct dirent *dirp;
         while (pid < 0 && (dirp = readdir(dp))) {
@@ -117,7 +117,7 @@ DFMSocketInterface::~DFMSocketInterface()
 // echo $json |socat - $XDG_RUNTIME_DIR/dde-file-manager;
 void DFMSocketInterface::showProperty(const QStringList &paths)
 {
-    Q_D(DFMSocketInterface);
+    //Q_D(DFMSocketInterface);
 
     DDesktopServices::showFileItemProperties(paths);
 }

@@ -39,11 +39,15 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
     if (url.burnDestDevice().length() == 0) {
         return;
     }
-    QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
+    QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
+    if (rootDeviceNode.isEmpty()) {
+        return;
+    }
+    QString udiskspath = rootDeviceNode.first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
 
-    if(url.burnIsOnDisc()) {
+    if (url.burnIsOnDisc()) {
         if (diskdev->opticalBlank()) {
             //blank media contains no files on disc, duh!
             return;
@@ -56,8 +60,7 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
             }
 
             m_backerUrl = DUrl::fromLocalFile(mntpoint + url.burnFilePath());
-        }
-        else m_backerUrl = DUrl();
+        } else m_backerUrl = DUrl();
     } else {
         m_backerUrl = MasteredMediaController::getStagingFolder(url);
     }
@@ -90,6 +93,8 @@ bool MasteredMediaFileInfo::isReadable() const
 
 bool MasteredMediaFileInfo::isWritable() const
 {
+    if (!m_backerUrl.burnIsOnDisc())
+        return true;
     return ISOMaster->getDevicePropertyCached(fileUrl().burnDestDevice()).avail > 0;
 }
 
@@ -171,13 +176,19 @@ QVector<MenuAction> MasteredMediaFileInfo::menuActionList(MenuType type) const
 
 bool MasteredMediaFileInfo::canRedirectionFileUrl() const
 {
+    if (isDir())
+        return isSymLink(); // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
     return !isDir();
 }
 
 DUrl MasteredMediaFileInfo::redirectedFileUrl() const
 {
     Q_D(const DAbstractFileInfo);
-    return d->proxy->fileUrl();
+    if (d->proxy) {
+        return d->proxy->fileUrl();
+    }
+
+    return DAbstractFileInfo::fileUrl();
 }
 
 DUrl MasteredMediaFileInfo::mimeDataUrl() const
@@ -192,9 +203,8 @@ DUrl MasteredMediaFileInfo::mimeDataUrl() const
 
 bool MasteredMediaFileInfo::canIteratorDir() const
 {
-    Q_D(const DAbstractFileInfo);
-
-    return !d->proxy;
+    return true; // fix 27116 光驱中使用搜索无效。通过这种方式，点击搜索结果中的文件夹将会跳转到文件的实际挂载目录，如果要回到刻录页面，需要点击返回或者侧边栏，点击顶部的面包屑导航也只能到挂载根目录
+//    return !d->proxy;
 }
 
 DUrl MasteredMediaFileInfo::parentUrl() const
@@ -258,3 +268,45 @@ QSet<MenuAction> MasteredMediaFileInfo::disableMenuActionList() const
 
     return list;
 }
+
+void MasteredMediaFileInfo::refresh()
+{
+    Q_D(const DAbstractFileInfo);
+
+    DAbstractFileInfo::refresh();
+    if (d->proxy) {
+        return;
+    }
+
+    DUrl url = fileUrl();
+    if (url.burnDestDevice().length() == 0) {
+        return;
+    }
+    QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
+    if (rootDeviceNode.isEmpty()) {
+        return;
+    }
+    QString udiskspath = rootDeviceNode.first();
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+
+    if (url.burnIsOnDisc()) {
+        if (diskdev->opticalBlank()) {
+            //blank media contains no files on disc, duh!
+            return;
+        }
+
+        if (blkdev->mountPoints().size() > 0) {
+            QString mntpoint = QString(blkdev->mountPoints().front());
+            while (*mntpoint.rbegin() == '/') {
+                mntpoint.chop(1);
+            }
+
+            m_backerUrl = DUrl::fromLocalFile(mntpoint + url.burnFilePath());
+        } else m_backerUrl = DUrl();
+    } else {
+        m_backerUrl = MasteredMediaController::getStagingFolder(url);
+    }
+    setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
+}
+

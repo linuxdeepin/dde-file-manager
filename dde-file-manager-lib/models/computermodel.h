@@ -22,6 +22,7 @@
 #define COMPUTERMODEL_H
 
 #include "ddiskmanager.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <QAbstractItemModel>
 
@@ -67,7 +68,13 @@ public:
         MountOpenUrlRole = Qt::UserRole + 7,//DUrl
         ActionVectorRole = Qt::UserRole + 8,//QVector<MenuAction>
         DFMRootUrlRole = Qt::UserRole + 9,  //DUrl
-        VolumeTagRole = Qt::UserRole + 10   //卷标 sr0
+        VolumeTagRole = Qt::UserRole + 10,  //卷标 sr0
+        IconNameRole = Qt::UserRole + 11,   //图标名称
+        SchemeRole = Qt::UserRole + 12, //QString
+        ProgressRole = Qt::UserRole + 13, // Bool(Progress visible)
+        SizeRole = Qt::UserRole + 14, // Bool(Size visible)
+        DiscUUIDRole = Qt::UserRole + 15,   //设备UUID
+        DiscOpticalRole = Qt::UserRole + 16,//光盘是否是空盘
     };
     Q_ENUM(DataRoles)
 
@@ -92,10 +99,11 @@ public Q_SLOTS:
     void insertBefore(const DUrl &url, const DUrl &ref, QWidget *w = nullptr);
     void removeItem(const DUrl &url);
     void onGetRootFile(const DAbstractFileInfoPointer &chi);
-
+    void onOpticalChanged();
 
 Q_SIGNALS:
     void itemCountChanged(int nitems);
+    void opticalChanged();
 
 private:
     ComputerView* par;

@@ -28,6 +28,7 @@
 #include "tag/tagmanagerdaemon.h"
 #include "usershare/usersharemanager.h"
 #include "acesscontrol/acesscontrolmanager.h"
+#include "vault/vaultmanager.h"
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
@@ -45,6 +46,7 @@ void AppController::initControllers()
     m_acessController = new AcessControlManager(this);
     m_userShareManager = new UserShareManager(this);
     m_tagManagerDaemon = new TagManagerDaemon{ this };
+    m_vaultManager = new VaultManager(this);
 }
 
 void AppController::initConnect()

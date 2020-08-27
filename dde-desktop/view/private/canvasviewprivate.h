@@ -20,7 +20,6 @@
 #include <QTimer>
 #include <QLabel>
 #include <QEventLoop>
-
 #include <dfilesystemwatcher.h>
 
 #include "../../global/coorinate.h"
@@ -54,7 +53,7 @@ public:
         cellMargins = QMargins(2, 2, 2, 2);
         selectRect = QRect(-1, -1, 1, 1);
         mousePressed = false;
-        resortCount = 0;
+        bReloadItem = false;
         dodgeDelayTimer.setInterval(200);
 
         if (qgetenv("_DDE_DESKTOP_DEBUG_SHOW_GRID") == "TRUE") {
@@ -69,18 +68,35 @@ public:
 
     void updateCanvasSize(const QSize &szSceeen, const QSize &szCanvas, const QMargins &geometryMargins, const QSize &szItem)
     {
+        qInfo() << "screen size" << szSceeen << "canvas" << szCanvas << "item size" << szItem;
         QMargins miniMargin = QMargins(2, 2, 2, 2);
         auto miniCellWidth = szItem.width() + miniMargin.left() + miniMargin.right();
         colCount = (szSceeen.width() - dockReserveArea.width()) / miniCellWidth;
-        cellWidth = szCanvas.width() / colCount;
+
+        if (colCount < 1){
+            qCritical() << "!!!!! colCount is 0!!! set it 1 and set cellWidth to " << szCanvas.width();
+            cellWidth = szCanvas.width();
+            colCount = 1;
+        }
+        else {
+            cellWidth = szCanvas.width() / colCount;
+        }
+        if (cellWidth < 1)
+            cellWidth = 1;
 
         auto miniCellHeigh = szItem.height() + miniMargin.top() + miniMargin.bottom();
-//        qDebug() << szItem.height() << miniCellHeigh;
         rowCount = (szSceeen.height() - dockReserveArea.height()) / miniCellHeigh;
+        if (rowCount < 1){
+            qCritical() << "!!!!! rowCount is 0!!! set it and set cellHeight to" << szCanvas.height();
+            cellHeight = szCanvas.height();
+            rowCount = 1;
+        }else {
+            cellHeight = szCanvas.height() / rowCount;
+        }
 
-        cellHeight = szCanvas.height() / rowCount;
-//        qDebug() << szSceeen.height() << dockReserveArea.height()
-//                 << rowCount << cellHeight;
+        if (cellHeight < 1)
+            cellHeight = 1;
+
         updateCellMargins(szItem, QSize(cellWidth, cellHeight));
 
         auto horizontalMargin = (szCanvas.width() - cellWidth * colCount);
@@ -90,12 +106,6 @@ public:
         auto topMargin = verticalMargin / 2;
         auto bottom = verticalMargin - topMargin;
         viewMargins = geometryMargins + QMargins(leftMargin, topMargin, rightMargin, bottom);
-
-//        qDebug() << "------------------------------";
-//        qDebug() << miniCellWidth << miniCellHeigh;
-//        qDebug() << szCanvas << colCount << rowCount;
-//        qDebug() << viewMargins << cellWidth << cellHeight;
-//        qDebug() << "------------------------------";
     }
 
     Coordinate indexCoordinate(int index)
@@ -113,6 +123,12 @@ public:
         return (coord.position().x() >= 0 && coord.position().x() < colCount)
                && (coord.position().y() >= 0 && coord.position().y() < rowCount);
     }
+
+//    static QPair<int,QPoint> *lastMenuPos()
+//    {
+//        static QPair<int,QPoint> pos = qMakePair(0,QPoint(0,0));
+//        return &pos;
+//    }
 
 public:
     QRect    dockReserveArea = QRect(0, 0, 80, 80);
@@ -152,7 +168,7 @@ public:
     QRect               canvasRect;
     CanvasViewHelper    *fileViewHelper = nullptr;
 
-    int                 resortCount;
+    bool                 bReloadItem;
 
     // secice system up
 //    QTimer              *syncTimer          = nullptr;
@@ -160,12 +176,11 @@ public:
     DAbstractFileWatcher  *filesystemWatcher  = nullptr;
     WaterMaskFrame *waterMaskFrame          = nullptr;
 
-    DBusDock            *dbusDock           = nullptr;
+    //DBusDock            *dbusDock           = nullptr;
     QEventLoop          *menuLoop           = nullptr;
 
     // debug
     bool                _debug_log          = false;
     bool                _debug_show_grid    = false;
     bool                _debug_profiler     = false;
-
 };

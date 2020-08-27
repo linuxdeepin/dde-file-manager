@@ -109,7 +109,8 @@ bool DFMFileListFilePrivate::write(QIODevice &device) const
 
 QString DFMFileListFilePrivate::filePath() const
 {
-    return QDir(dirPath).absoluteFilePath(".hidden");
+    QString strPath = QDir(dirPath).absoluteFilePath(".hidden");
+    return strPath;
 }
 
 bool DFMFileListFilePrivate::loadFile()
@@ -195,7 +196,7 @@ bool DFMFileListFile::save() const
         bool ok = false;
         bool createFile = false;
         QFileInfo fileInfo(d->dirPath);
-
+#if 0 //fix bug#30019 屏蔽QSaveFile实现
 #if !defined(QT_BOOTSTRAPPED) && QT_CONFIG(temporaryfile)
         QSaveFile sf(filePath());
         sf.setDirectWriteFallback(true);
@@ -214,7 +215,16 @@ bool DFMFileListFile::save() const
             ok = sf.commit();
         }
 #endif
-
+#else //!使用QFile实现，QSaveFile会导致filewatcher无法监视到.hidden文件改变
+      //!导致界面无法实时响应文件显示隐藏
+    QFile sf(filePath());
+    if (!sf.open(QIODevice::WriteOnly)) {
+        d->setStatus(DFMFileListFile::AccessError);
+        return false;
+    }
+    ok = d->write(sf);
+    sf.close();
+#endif
         if (ok) {
             // If we have created the file, apply the file perms
             if (createFile) {

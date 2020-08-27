@@ -155,7 +155,7 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
 
 UnknowFilePreview::~UnknowFilePreview()
 {
-    if (m_contentWidget){
+    if (m_contentWidget) {
         m_contentWidget->deleteLater();
     }
 
@@ -256,7 +256,7 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
 
 FilePreviewDialog::~FilePreviewDialog()
 {
-    if (m_preview){
+    if (m_preview) {
         m_preview->deleteLater();
         QGuiApplication::changeOverrideCursor(QCursor(Qt::ArrowCursor));
     }
@@ -264,13 +264,18 @@ FilePreviewDialog::~FilePreviewDialog()
 
 void FilePreviewDialog::updatePreviewList(const DUrlList &previewUrllist)
 {
+    // 视频预览的前一秒禁止再次播放
+    if (m_playingVideo) {
+        return;
+    }
+
     m_fileList = previewUrllist;
     m_currentPageIndex = -1;
 
     if (previewUrllist.count() < 2) {
         m_statusBar->preButton()->hide();
         m_statusBar->nextButton()->hide();
-    }else{
+    } else {
         m_statusBar->preButton()->show();
         m_statusBar->nextButton()->show();
     }
@@ -305,10 +310,18 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
     return DAbstractDialog::closeEvent(event);
 }
 
+void FilePreviewDialog::resizeEvent(QResizeEvent *event)
+{
+    DAbstractDialog::resizeEvent(event);
+    QTimer::singleShot(50, this, [=]() { //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
+        repaint(); //通过重绘来解决调整大小前的窗口残留的问题
+    });
+}
+
 bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
-        const QKeyEvent *e = static_cast<QKeyEvent*>(event);
+        const QKeyEvent *e = static_cast<QKeyEvent *>(event);
         switch (e->key()) {
         case Qt::Key_Left:
         case Qt::Key_Up:
@@ -320,7 +333,11 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
             if (!e->isAutoRepeat())
                 nextPage();
             break;
-        case Qt::Key_Space:{
+        case Qt::Key_Space: {
+            // 视频预览的前一秒禁止再次播放
+            if (m_playingVideo) {
+                break;
+            }
             if (m_preview) {
                 m_preview->stop();
             }
@@ -341,7 +358,7 @@ void FilePreviewDialog::initUI()
     m_closeButton->setObjectName("CloseButton");
     m_closeButton->setFocusPolicy(Qt::NoFocus);
     m_closeButton->setIconSize({50, 50});
-    m_closeButton->setFixedSize({50,50});
+    m_closeButton->setFixedSize({50, 50});
     QColor base_color = palette().base().color();
     DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
     if (ct == DGuiApplicationHelper::LightType) {
@@ -458,21 +475,20 @@ void FilePreviewDialog::switchToPage(int index)
         if (preview) {
             preview->initialize(this, m_statusBar);
 
-            if (preview->setFileUrl(m_fileList.at(index)))
+            if (info->canRedirectionFileUrl() && preview->setFileUrl(info->redirectedFileUrl()))
                 break;
-            else if (info->canRedirectionFileUrl() && preview->setFileUrl(info->redirectedFileUrl()))
+            else if (preview->setFileUrl(m_fileList.at(index)))
                 break;
             else
                 preview->deleteLater();
         }
     }
     if (!preview) {
-        if (qobject_cast<UnknowFilePreview*>(m_preview)) {
+        if (qobject_cast<UnknowFilePreview *>(m_preview)) {
             m_preview->setFileUrl(m_fileList.at(index));
             m_statusBar->openButton()->setFocus();
             return;
         } else {
-
             preview = new UnknowFilePreview(this);
             preview->initialize(this, m_statusBar);
             preview->setFileUrl(m_fileList.at(index));
@@ -488,16 +504,16 @@ void FilePreviewDialog::switchToPage(int index)
         m_preview->deleteLater();
 
     if (m_preview) {
-        static_cast<QVBoxLayout*>(layout())->removeWidget(m_preview->contentWidget());
+        static_cast<QVBoxLayout *>(layout())->removeWidget(m_preview->contentWidget());
     }
 
-    static_cast<QVBoxLayout*>(layout())->insertWidget(0, preview->contentWidget());
+    static_cast<QVBoxLayout *>(layout())->insertWidget(0, preview->contentWidget());
 
     if (m_preview)
-        static_cast<QHBoxLayout*>(m_statusBar->layout())->removeWidget(m_preview->statusBarWidget());
+        static_cast<QHBoxLayout *>(m_statusBar->layout())->removeWidget(m_preview->statusBarWidget());
 
-    if (QWidget * w = preview->statusBarWidget())
-        static_cast<QHBoxLayout*>(m_statusBar->layout())->insertWidget(3, w, 0, preview->statusBarWidgetAlignment());
+    if (QWidget *w = preview->statusBarWidget())
+        static_cast<QHBoxLayout *>(m_statusBar->layout())->insertWidget(3, w, 0, preview->statusBarWidgetAlignment());
 
     m_separator->setVisible(preview->showStatusBarSeparator());
     m_preview = preview;
@@ -516,7 +532,7 @@ void FilePreviewDialog::setEntryUrlList(const DUrlList &entryUrlList)
     if (entryUrlList.isEmpty())
         return;
     DUrl currentUrl = m_fileList.at(m_currentPageIndex);
-    if (entryUrlList.contains(currentUrl)){
+    if (entryUrlList.contains(currentUrl)) {
         m_entryUrlList = entryUrlList;
         m_fileList = m_entryUrlList;
         m_currentPageIndex = m_entryUrlList.indexOf(currentUrl);
@@ -537,6 +553,12 @@ void FilePreviewDialog::done(int r)
 void FilePreviewDialog::playCurrentPreviewFile()
 {
     if (m_preview) {
+        if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
+            m_playingVideo = true;
+            QTimer::singleShot(1000, [this] () {
+               m_playingVideo = false;
+            });
+        }
         m_preview->play();
     }
 
@@ -546,6 +568,8 @@ void FilePreviewDialog::previousPage()
 {
     if (m_currentPageIndex < 1)
         return;
+    if (m_playingVideo)
+        return;
 
     switchToPage(m_currentPageIndex - 1);
 }
@@ -553,6 +577,8 @@ void FilePreviewDialog::previousPage()
 void FilePreviewDialog::nextPage()
 {
     if (m_currentPageIndex > m_fileList.count() - 2)
+        return;
+    if (m_playingVideo)
         return;
 
     switchToPage(m_currentPageIndex + 1);
@@ -563,10 +589,9 @@ void FilePreviewDialog::updateTitle()
     QFont font = m_statusBar->title()->font();
     QFontMetrics fm(font);
     QString elidedText;
-    if (!m_statusBar->preButton()->isVisible()){
-        elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 -
-                                   m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() -30);
-    }else{
+    if (!m_statusBar->preButton()->isVisible()) {
+        elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() - 30);
+    } else {
         elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->preButton()->width() -
                                    m_statusBar->nextButton()->width() - m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() * 3 - 30);
     }

@@ -73,12 +73,15 @@ public:
     void clear();
 
     void updateItemThumb();
+    void setCurrentIndex(int index);
+    WallpaperItem *getCurrentItem();
 
 signals:
     void itemPressed(QString data) const;
     void mouseOverItemChanged(QString path, QPoint pos) const;
 
 protected:
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
@@ -108,6 +111,7 @@ private:
     void showDeleteButtonForItem(const WallpaperItem *item) const;
 
     friend class Frame;
+    int m_index;
 
 private slots:
     void wallpaperItemPressed();

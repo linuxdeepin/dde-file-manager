@@ -477,7 +477,7 @@ QString DFMGlobal::getUser()
 
 int DFMGlobal::getUserId()
 {
-    return getuid();
+    return static_cast<int>(getuid());
 }
 
 bool DFMGlobal::isRootUser()
@@ -554,7 +554,7 @@ void DFMGlobal::refreshPlugins()
 void DFMGlobal::wordWrapText(QTextLayout *layout, qreal width, QTextOption::WrapMode wrapMode,
                              qreal lineHeight, QStringList *lines)
 {
-    elideText(layout, QSize(width, INT_MAX), wrapMode, Qt::ElideNone, lineHeight, 0, lines);
+    elideText(layout, QSize(static_cast<int>(width), INT_MAX), wrapMode, Qt::ElideNone, lineHeight, 0, lines);
 }
 
 void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::WrapMode wordWrap,
@@ -741,7 +741,7 @@ QString DFMGlobal::elideText(const QString &text, const QSizeF &size,
 
     QStringList lines;
 
-    elideText(&textLayout, size, wordWrap, mode, lineHeight, flags, &lines);
+    elideText(&textLayout, size, wordWrap, mode, lineHeight, static_cast<int>(flags), &lines);
 
     return lines.join('\n');
 }
@@ -758,7 +758,8 @@ bool DFMGlobal::startWithHanzi(const QString &text)
 
     return text.at(0).script() == QChar::Script_Han;
 }
-
+#if 0
+//解决定义未使用警告
 static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
 {
     QTextDecoder decoder(QTextCodec::codecForName(codecName));
@@ -767,6 +768,7 @@ static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
 
     return decoder.hasFailure() ? QString() : text;
 }
+#endif
 
 ///###: forward-declare.
 static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);
@@ -1103,7 +1105,7 @@ QString DFMGlobal::cutString(const QString &text, int dataByteSize, const QTextC
 namespace DThreadUtil {
 FunctionCallProxy::FunctionCallProxy(QThread *thread)
 {
-    connect(this, &FunctionCallProxy::callInLiveThread, this, [this] (FunctionType * func) {
+    connect(this, &FunctionCallProxy::callInLiveThread, this, [] (FunctionType * func) {
         (*func)();
     }, Qt::QueuedConnection);
     connect(thread, &QThread::finished, this, [this] {
@@ -1197,10 +1199,10 @@ float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, co
         return 1.0f;
     }
 
-    float c = qreal(hep_count) / non_base_latin_count / 1.2;
+    float c = static_cast<float>(qreal(hep_count) / non_base_latin_count / 1.2);
 
-    c -= qreal(replacement_count) / non_base_latin_count;
-    c -= qreal(unidentification_count) / non_base_latin_count;
+    c -= static_cast<float>(qreal(replacement_count) / non_base_latin_count);
+    c -= static_cast<float>(qreal(unidentification_count) / non_base_latin_count);
 
     return qMax(0.0f, c);
 }

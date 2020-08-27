@@ -21,6 +21,7 @@
 #include <gio/gio.h>
 
 #include "dstorageinfo.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QRegularExpression>
 
@@ -62,7 +63,9 @@ DStorageInfo::DStorageInfo()
 DStorageInfo::DStorageInfo(const QString &path, PathHints hints)
     : DStorageInfo()
 {
-    setPath(preprocessPath(path, hints));
+    //! 如果是保险箱就不进行setpath处理,增加访问速度
+    if(!VaultController::isVaultFile(path))
+        setPath(preprocessPath(path, hints));
 }
 
 DStorageInfo::DStorageInfo(const QDir &dir, PathHints hints)
@@ -92,6 +95,7 @@ DStorageInfo &DStorageInfo::operator=(const DStorageInfo &other)
 
 void DStorageInfo::setPath(const QString &path, PathHints hints)
 {
+
     QStorageInfo::setPath(preprocessPath(path, hints));
 
     Q_D(DStorageInfo);
@@ -104,7 +108,7 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
         d->gioInfo = g_file_query_filesystem_info(file, "filesystem::*", nullptr, &error);
 
         if (error) {
-            qWarning() << QString::fromLocal8Bit(error->message);
+//            qWarning() << QString::fromLocal8Bit(error->message);
 
             g_error_free(error);
             error = nullptr;
@@ -113,7 +117,7 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
         GMount *mount = g_file_find_enclosing_mount(file, nullptr, &error);
 
         if (error) {
-            qWarning() << QString::fromLocal8Bit(error->message);
+//            qWarning() << QString::fromLocal8Bit(error->message);
 
             g_error_free(error);
         } else {
@@ -176,7 +180,7 @@ qint64 DStorageInfo::bytesTotal() const
     Q_D(const DStorageInfo);
 
     if (d->gioInfo)
-        return g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+        return static_cast<qint64>(g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE));
 
     return QStorageInfo::bytesTotal();
 }
@@ -188,7 +192,7 @@ qint64 DStorageInfo::bytesFree() const
     if (d->gioInfo) {
         quint64 used = g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
 
-        return bytesTotal() - used;
+        return bytesTotal() - static_cast<qint64>(used);
     }
 
     return QStorageInfo::bytesFree();
@@ -199,7 +203,7 @@ qint64 DStorageInfo::bytesAvailable() const
     Q_D(const DStorageInfo);
 
     if (d->gioInfo) {
-        return g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+        return static_cast<qint64>(g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE));
     }
 
     return QStorageInfo::bytesAvailable();
@@ -234,15 +238,11 @@ bool DStorageInfo::isLowSpeedDevice() const
 
 bool DStorageInfo::isValid() const
 {
-    Q_D(const DStorageInfo);
-
     return QStorageInfo::isValid();
 }
 
 void DStorageInfo::refresh()
 {
-    Q_D(DStorageInfo);
-
     QStorageInfo::refresh();
     setPath(rootPath());
 }
@@ -311,12 +311,18 @@ bool DStorageInfo::isLocalDevice(const QString &path)
     if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
         return false;
 
-    return DStorageInfo(path).device().startsWith("/dev/");
+    // 保险箱路径直接返回真
+    if (VaultController::isVaultFile(path)){
+        return true;
+    }
+
+    QString device = DStorageInfo(path).device();    
+    return (device.startsWith("/dev/"));
 }
 
 bool DStorageInfo::isLowSpeedDevice(const QString &path)
 {
-    static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):.+/",
+    static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                      QRegularExpression::DotMatchesEverythingOption
                                      | QRegularExpression::DontCaptureOption
                                      | QRegularExpression::OptimizeOnFirstUsageOption);
@@ -327,7 +333,7 @@ bool DStorageInfo::isLowSpeedDevice(const QString &path)
     if (match.hasMatch()) {
         const QString &scheme = match.captured("scheme");
 
-        return (scheme == "mtp" || scheme == "gphoto" || scheme == "gphoto2" || scheme == "smb-share");
+        return (scheme == "mtp" || scheme == "gphoto" || scheme == "gphoto2" || scheme == "smb-share" || scheme == "smb");
     }
 
     return DStorageInfo(path).isLowSpeedDevice();

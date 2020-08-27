@@ -30,6 +30,7 @@
 #include <QByteArray>
 
 std::once_flag FileBatchProcess::flag;
+const static QString MIMETYPE_APP_DESKTOP = "application/x-desktop";
 
 QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUrls, const QPair<QString, QString> &pair) const
 {
@@ -45,8 +46,12 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUr
         if (!info)
             continue;
 
+
+        // debug case 25414: failure to rename desktop app name
+        bool isDeskTopApp = info->mimeTypeName().contains(MIMETYPE_APP_DESKTOP);
+
         ///###: symlink is also processed here.
-        QString fileBaseName{ info->baseName() };
+        QString fileBaseName = isDeskTopApp? info->fileDisplayName(): info->baseName();
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
         fileBaseName.replace(pair.first, pair.second);
 
@@ -61,7 +66,10 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUr
             fileBaseName = DFMGlobal::cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
         }
 
-        DUrl changedUrl{ info->getUrlByNewFileName(fileBaseName + suffix) };
+        if(!isDeskTopApp){
+            fileBaseName += suffix;
+        }
+        DUrl changedUrl{ info->getUrlByNewFileName(fileBaseName) };
 
         if (changedUrl != url)
             result->insert(url, changedUrl);
@@ -84,7 +92,12 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::addText(const QList<DUrl> &originUrls, 
         if (!info)
             continue;
 
-        QString fileBaseName{ info->baseName() };
+        // debug case 25414: failure to rename desktop app name
+        bool isDeskTopApp = info->mimeTypeName().contains(MIMETYPE_APP_DESKTOP);
+
+        QString fileBaseName = isDeskTopApp? info->fileDisplayName(): info->baseName();//{ info->baseName() };
+        QString oldFileName = fileBaseName;
+
         QString add_text = pair.first;
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
         int max_length = MAX_FILE_NAME_CHAR_COUNT - info->fileName().toLocal8Bit().size();
@@ -99,7 +112,14 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::addText(const QList<DUrl> &originUrls, 
             fileBaseName.append(add_text);
         }
 
-        DUrl changedUrl{ info->getUrlByNewFileName(fileBaseName + suffix) };
+        if(!isDeskTopApp){
+            fileBaseName += suffix;
+        }
+        DUrl changedUrl = { info->getUrlByNewFileName(fileBaseName) };
+
+        if(isDeskTopApp) {
+            qDebug()<<"this is desktop app case,file name will be changed { "<< oldFileName << " } to { " << fileBaseName << " } for path:" << info->fileUrl();
+        }
 
         if (changedUrl != url)
             result->insert(url, changedUrl);
@@ -131,6 +151,9 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
         if (!info)
             continue;
 
+        // debug case 25414: failure to rename desktop app name
+        bool isDeskTopApp = info->mimeTypeName().contains(MIMETYPE_APP_DESKTOP);
+
         QString fileBaseName{ pair.first };
         const QString &index_string = QString::number(index);
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
@@ -140,8 +163,13 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
             fileBaseName = DFMGlobal::cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
         }
 
-        DUrl beModifieddUrl{ info->getUrlByNewFileName(fileBaseName + index_string + suffix) };
+        fileBaseName = isDeskTopApp ? (fileBaseName + index_string) : (fileBaseName + index_string + suffix);
+        DUrl beModifieddUrl = { info->getUrlByNewFileName(fileBaseName) };
         result->insert(url, beModifieddUrl);
+
+        if(isDeskTopApp) {
+            qDebug()<<"this is desktop app case,file name will be changed as { "<< fileBaseName << " } for path:" << info->fileUrl();
+        }
 
         ++index;
     }

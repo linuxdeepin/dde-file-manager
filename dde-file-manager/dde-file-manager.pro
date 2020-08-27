@@ -63,9 +63,11 @@ target.path = $$BINDIR
 
 desktop.path = $${PREFIX}/share/applications/
 isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
-    desktop.files = $$PWD/mips/$${TARGET}.desktop
+    desktop.files = $$PWD/mips/$${TARGET}.desktop \
+                    dde-open.desktop
 }else{
-    desktop.files = $${TARGET}.desktop
+    desktop.files = $${TARGET}.desktop \
+                    dde-open.desktop
 }
 
 policy.path = $${PREFIX}/share/polkit-1/actions/
@@ -117,7 +119,8 @@ DISTFILES += \
     mips/dde-computer.sh \
     mips/dde-trash.sh \
     mips/file-manager.sh \
-    generate_translations.sh
+    generate_translations.sh \
+    dde-open.desktop
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}-app.ts \
     $$PWD/translations/$${TARGET}-app_zh_CN.ts
