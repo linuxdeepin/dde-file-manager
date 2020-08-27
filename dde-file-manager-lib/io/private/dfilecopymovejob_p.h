@@ -131,28 +131,28 @@ public:
     bool checkFreeSpace(qint64 needSize);
     QString formatFileName(const QString &name) const;
 
-    static QString getNewFileName(const DAbstractFileInfoPointer &sourceFileInfo, const DAbstractFileInfoPointer &targetDirectory);
+    static QString getNewFileName(const DAbstractFileInfoPointer sourceFileInfo, const DAbstractFileInfoPointer targetDirectory);
 
-    bool doProcess(const DUrl &from, const DAbstractFileInfoPointer &source_info, const DAbstractFileInfoPointer &target_info, const bool isNew = false);
-    bool mergeDirectory(DFileHandler *handler, const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo);
-    bool doCopyFile(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo ,DFileHandler *handler, int blockSize = 1048576);
-    bool doRemoveFile(DFileHandler *handler, const DAbstractFileInfoPointer &fileInfo);
-    bool doRenameFile(DFileHandler *handler, const DAbstractFileInfoPointer &oldInfo, const DAbstractFileInfoPointer &newInfo);
-    bool doLinkFile(DFileHandler *handler, const DAbstractFileInfoPointer &fileInfo, const QString &linkPath);
+    bool doProcess(const DUrl &from, const DAbstractFileInfoPointer source_info, const DAbstractFileInfoPointer target_info, const bool isNew = false);
+    bool mergeDirectory(DFileHandler *handler, const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo);
+    bool doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo ,DFileHandler *handler, int blockSize = 1048576);
+    bool doRemoveFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo);
+    bool doRenameFile(DFileHandler *handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
+    bool doLinkFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
 
-    bool process(const DUrl &from, const DAbstractFileInfoPointer &target_info);
-    bool process(const DUrl &from, const DAbstractFileInfoPointer &source_info, const DAbstractFileInfoPointer &target_info, const bool isNew = false);
-    bool copyFile(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, DFileHandler *handler, int blockSize = 1048576);
-    bool removeFile(DFileHandler *handler, const DAbstractFileInfoPointer &fileInfo);
-    bool renameFile(DFileHandler *handler, const DAbstractFileInfoPointer &oldInfo, const DAbstractFileInfoPointer &newInfo);
-    bool linkFile(DFileHandler *handler, const DAbstractFileInfoPointer &fileInfo, const QString &linkPath);
+    bool process(const DUrl from, const DAbstractFileInfoPointer target_info);
+    bool process(const DUrl from, const DAbstractFileInfoPointer source_info, const DAbstractFileInfoPointer target_info, const bool isNew = false);
+    bool copyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, DFileHandler *handler, int blockSize = 1048576);
+    bool removeFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo);
+    bool renameFile(DFileHandler *handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
+    bool linkFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
 
-    void beginJob(JobInfo::Type type, const DUrl &from, const DUrl &target,const bool isNew = false);
+    void beginJob(JobInfo::Type type, const DUrl from, const DUrl target,const bool isNew = false);
     void endJob(const bool isNew = false);
-    void enterDirectory(const DUrl &from, const DUrl &to);
+    void enterDirectory(const DUrl from, const DUrl to);
     void leaveDirectory();
-    void joinToCompletedFileList(const DUrl &from, const DUrl &target, qint64 dataSize);
-    void joinToCompletedDirectoryList(const DUrl &from, const DUrl &target, qint64 dataSize);
+    void joinToCompletedFileList(const DUrl from, const DUrl target, qint64 dataSize);
+    void joinToCompletedDirectoryList(const DUrl from, const DUrl target, qint64 dataSize);
     void updateProgress();
     void updateCopyProgress();
     void updateMoveProgress();
@@ -161,21 +161,21 @@ public:
     void countrefinesize(const qint64 &size);
 
     //第二版优化
-    bool mergeDirectoryRefine(DFileHandler *handler, const DAbstractFileInfoPointer &fromInfo,
-                               const DAbstractFileInfoPointer &toInfo);
-    bool processRefine(const DUrl &from, const DAbstractFileInfoPointer &source_info,
-                      const DAbstractFileInfoPointer &target_info,const bool ischeck = false);
-    bool copyFileRefine(const FileCopyInfoPointer &copyinfo);
-    bool doProcessRefine(const DUrl &from, const DAbstractFileInfoPointer &source_info,
-                          const DAbstractFileInfoPointer &target_info, const bool ischeck = false);
-    bool doCopyFileRefine(const FileCopyInfoPointer &copyinfo);
-    bool doCopyFileRefineReadAndWrite(const FileCopyInfoPointer &copyinfo);
+    bool mergeDirectoryRefine(DFileHandler *handler, const DAbstractFileInfoPointer fromInfo,
+                               const DAbstractFileInfoPointer toInfo);
+    bool processRefine(const DUrl from, const DAbstractFileInfoPointer source_info,
+                      const DAbstractFileInfoPointer target_info,const bool ischeck = false);
+    bool copyFileRefine(const FileCopyInfoPointer copyinfo);
+    bool doProcessRefine(const DUrl from, const DAbstractFileInfoPointer source_info,
+                          const DAbstractFileInfoPointer target_info, const bool ischeck = false);
+    bool doCopyFileRefine(const FileCopyInfoPointer copyinfo);
+    bool doCopyFileRefineReadAndWrite(const FileCopyInfoPointer copyinfo);
     bool openRefineThread();
-    bool openRefine(const FileCopyInfoPointer &copyinfo);
+    bool openRefine(const FileCopyInfoPointer copyinfo);
     bool readRefineThread();
-    bool readRefine(const DFileCopyMoveJobPrivate::FileCopyInfoPointer &copyinfo);
+    bool readRefine(const DFileCopyMoveJobPrivate::FileCopyInfoPointer copyinfo);
     bool copyReadAndWriteRefineThread();
-    bool copyReadAndWriteRefineRefine(const DFileCopyMoveJobPrivate::FileCopyInfoPointer &copyinfo);
+    bool copyReadAndWriteRefineRefine(const DFileCopyMoveJobPrivate::FileCopyInfoPointer copyinfo);
     bool writeRefineThread();
     bool writeRefine();
     void addRefinePermissions();
@@ -280,7 +280,7 @@ public:
     QAtomicInteger<bool>btaskdailogclose = false;
 
 
-    QAtomicInt refinestat = DFileCopyMoveJob::MoreThreadAndMainRefine;
+    QAtomicInt refinestat = DFileCopyMoveJob::MoreThreadRefine;
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
     //优化拷贝时异步线程状态
