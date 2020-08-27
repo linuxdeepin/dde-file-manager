@@ -148,7 +148,7 @@ public:
                                    const DAbstractFileInfo *sourceInfo,
                                    const DAbstractFileInfo *targetInfo) = 0;
         virtual QString getNewFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer sourceInfo);
-        virtual QString getNonExistsFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer &sourceInfo, const DAbstractFileInfoPointer &targetDirectory);
+        virtual QString getNonExistsFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer sourceInfo, const DAbstractFileInfoPointer targetDirectory);
     };
 
     explicit DFileCopyMoveJob(QObject *parent = nullptr);
@@ -203,8 +203,9 @@ Q_SIGNALS:
     // 问题现象一般为，槽函数中的参数是个无效的对象(内存中已被销毁)，不知是否和槽函数形参也为
     // 引用类型有关
     void stateChanged(State state);
+    void errorCanClear();
     void errorChanged(Error error);
-    void currentJobChanged(const DUrl from, const DUrl to);
+    void currentJobChanged(const DUrl from, const DUrl to, const bool iserroeroc);
     void finished(const DUrl from, const DUrl to);
     void completedFilesCountChanged(int count);
     void fileStatisticsFinished();
