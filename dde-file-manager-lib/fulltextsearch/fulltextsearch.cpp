@@ -401,7 +401,7 @@ void DFMFullTextSearchManager::updateIndex(const QString &filePath)
             }
             reader->close();
         } catch (LuceneException &ex) {
-            qDebug() << QString::fromStdWString(ex.getError());;
+            qDebug() << QString::fromStdWString(ex.getError());
         }
     }
 }
