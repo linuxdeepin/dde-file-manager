@@ -27,7 +27,7 @@
         }
     },
     "FileName": {
-        "non-allowableCharacters": "(^\\s+|[\"'/\\\\\[\\\]:|<>+=;,?*\r\n])",
+        "non-allowableCharacters": "(^\\s+|[\"'/\\\\\[\\\]:|<>+=;,?*\r\n\t])",
         "non-allowableEmptyCharactersOfEnd": true
     }
 }
