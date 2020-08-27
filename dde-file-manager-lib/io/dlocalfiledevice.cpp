@@ -27,24 +27,33 @@ DFM_BEGIN_NAMESPACE
 
 DLocalFileDevicePrivate::DLocalFileDevicePrivate(DLocalFileDevice *qq)
     : DFileIODeviceProxyPrivate(qq)
+    , file(new QFile())
 {
+}
 
+DLocalFileDevicePrivate::~DLocalFileDevicePrivate()
+{
+    if (file) {
+        file->close();
+        delete file;
+    }
 }
 
 DLocalFileDevice::DLocalFileDevice(QObject *parent)
     : DFileIODeviceProxy(*new DLocalFileDevicePrivate(this), parent)
 {
-    setDevice(&d_func()->file);
+    setDevice(d_func()->file);
 }
 
 bool DLocalFileDevice::setFileUrl(const DUrl &url)
 {
     Q_D(DLocalFileDevice);
 
-    if (!url.isLocalFile())
+    if (!url.isLocalFile() || !d->file)
         return false;
+    QString filename = url.toLocalFile();
 
-    d->file.setFileName(url.toLocalFile());
+    d->file->setFileName(filename);
 
     return DFileDevice::setFileUrl(url);
 }
@@ -58,28 +67,44 @@ int DLocalFileDevice::handle() const
 {
     Q_D(const DLocalFileDevice);
 
-    return d->file.handle();
+    if (!d->file) {
+        return -1;
+    }
+
+    return d->file->handle();
 }
 
 bool DLocalFileDevice::resize(qint64 size)
 {
     Q_D(DLocalFileDevice);
 
-    return d->file.resize(size);
+    if (!d->file) {
+        return false;
+    }
+
+    return d->file->resize(size);
 }
 
 bool DLocalFileDevice::flush()
 {
     Q_D(DLocalFileDevice);
 
-    return d->file.flush();
+    if (!d->file) {
+        return false;
+    }
+
+    return d->file->flush();
 }
 
 bool DLocalFileDevice::syncToDisk()
 {
     Q_D(DLocalFileDevice);
 
-    int ret = fdatasync(d->file.handle());
+    if (!d->file) {
+        return false;
+    }
+
+    int ret = fdatasync(d->file->handle());
 
     if (ret != 0) {
         setErrorString(QString::fromLocal8Bit(strerror(errno)));
