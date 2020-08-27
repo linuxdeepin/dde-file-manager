@@ -370,7 +370,7 @@ bool DFMFullTextSearchManager::updateIndex(const QString &filePath)
                     writer->close();
                     res = true;
                 } catch (LuceneException &ex) {
-                    qDebug() << QString::fromStdWString(ex.getError());
+                    qDebug() << "Add file error:" << QString::fromStdWString(ex.getError());
                 }
 
             } else {
@@ -394,7 +394,7 @@ bool DFMFullTextSearchManager::updateIndex(const QString &filePath)
                         writer->close();
                         res = true;
                     } catch (LuceneException &ex) {
-                        qDebug() << QString::fromStdWString(ex.getError());
+                        qDebug() << "Update file error:" << QString::fromStdWString(ex.getError());
                     }
                 }
             }
