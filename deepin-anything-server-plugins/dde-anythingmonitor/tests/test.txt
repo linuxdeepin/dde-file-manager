@@ -1,0 +1,1 @@
+m_tagHandle = new TagHandle(nullptr);

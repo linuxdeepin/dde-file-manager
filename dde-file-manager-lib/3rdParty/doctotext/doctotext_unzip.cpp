@@ -43,6 +43,7 @@
 #include <unzip.h>
 #include "zlib.h"
 
+#include <QDateTime>
 const int CASESENSITIVITY = 1;
 
 //data for reading from buffer (insted of file)
@@ -234,7 +235,9 @@ bool DocToTextUnzip::read(const std::string &file_name, std::string *contents, i
 {
 #warning TODO: Add support for unzip command if Impl->m_from_memory_buffer == true
     if (unzip_command != "" && Impl->m_from_memory_buffer == false) {
-        std::string temp_dir = tempnam(NULL, NULL);
+        QString currentTime = QDateTime::currentDateTime().toString("yyyyMMddHHmmss");
+        std::string temp_dir = "/tmp/file";//tempnam(NULL, NULL);
+        temp_dir += currentTime.toStdString();
         std::string cmd = unzip_command;
         size_t d_pos = cmd.find("%d");
         if (d_pos == std::string::npos) {

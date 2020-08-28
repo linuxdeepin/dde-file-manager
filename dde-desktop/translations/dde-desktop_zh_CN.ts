@@ -4,52 +4,44 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3269"/>
-        <location filename="../view/canvasgridview.cpp" line="3446"/>
+        <location filename="../view/canvasgridview.cpp" line="3070"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3275"/>
-        <location filename="../view/canvasgridview.cpp" line="3454"/>
+        <location filename="../view/canvasgridview.cpp" line="3078"/>
         <source>Auto merge</source>
         <translation>自动整理</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3290"/>
-        <location filename="../view/canvasgridview.cpp" line="3466"/>
+        <location filename="../view/canvasgridview.cpp" line="3090"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3347"/>
-        <location filename="../view/canvasgridview.cpp" line="3351"/>
-        <location filename="../view/canvasgridview.cpp" line="3521"/>
-        <location filename="../view/canvasgridview.cpp" line="3526"/>
+        <location filename="../view/canvasgridview.cpp" line="3145"/>
+        <location filename="../view/canvasgridview.cpp" line="3150"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3353"/>
-        <location filename="../view/canvasgridview.cpp" line="3524"/>
+        <location filename="../view/canvasgridview.cpp" line="3148"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁纸与屏保</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3668"/>
+        <location filename="../view/canvasgridview.cpp" line="3292"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3330"/>
-        <location filename="../view/canvasgridview.cpp" line="3505"/>
+        <location filename="../view/canvasgridview.cpp" line="3129"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3339"/>
         <source>Corner Settings</source>
-        <translation>热区设置</translation>
+        <translation type="vanished">热区设置</translation>
     </message>
 </context>
 <context>
@@ -83,7 +75,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="142"/>
+        <location filename="../main.cpp" line="135"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
@@ -91,57 +83,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="713"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="655"/>
         <source>Wallpaper Slideshow</source>
         <translation>自动更换壁纸</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="758"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="700"/>
         <source>When login</source>
         <translation>登录时</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="760"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="702"/>
         <source>When wakeup</source>
         <translation>唤醒时</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="815"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="757"/>
         <source>Require a password on wakeup</source>
         <translation>恢复时需要密码</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="847"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="789"/>
         <source>Never</source>
         <translation>从不</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="849"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="791"/>
         <source>Wait:</source>
         <translation>闲置时间：</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="882"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="824"/>
         <source>Wallpaper</source>
         <translation>壁纸</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="896"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="838"/>
         <source>Screensaver</source>
         <translation>屏保</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="972"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="914"/>
         <source>Only desktop</source>
         <translation>仅设置桌面</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="973"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="915"/>
         <source>Only lock screen</source>
         <translation>仅设置锁屏</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1027"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="969"/>
         <source>Apply</source>
         <translation>设置屏保</translation>
     </message>

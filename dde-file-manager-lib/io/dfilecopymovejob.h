@@ -61,8 +61,9 @@ public:
 
     Q_ENUM(State)
 
-    enum RefineState{
+    enum RefineState {
         NoRefine,
+        Refine,
         MoreThreadRefine,
         MoreThreadAndMainRefine,
         MoreThreadAndMainAndReadRefine,
@@ -71,7 +72,7 @@ public:
 
     Q_ENUM(RefineState)
 
-    enum RefineCopyProccessSate{
+    enum RefineCopyProccessSate {
         NoProccess,
         MainProccessOver,
         OpenFromFileProccessOver,
@@ -141,14 +142,16 @@ public:
     Q_ENUM(Action)
     Q_DECLARE_FLAGS(Actions, Action)
 
-    class Handle {
+    class Handle
+    {
     public:
         virtual ~Handle() {}
         virtual Action handleError(DFileCopyMoveJob *job, Error error,
-                                   const DAbstractFileInfo *sourceInfo,
-                                   const DAbstractFileInfo *targetInfo) = 0;
+                                   const DAbstractFileInfoPointer sourceInfo,
+                                   const DAbstractFileInfoPointer targetInfo) = 0;
         virtual QString getNewFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer sourceInfo);
-        virtual QString getNonExistsFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer sourceInfo, const DAbstractFileInfoPointer targetDirectory);
+        virtual QString getNonExistsFileName(const DAbstractFileInfoPointer sourceInfo,
+                                             const DAbstractFileInfoPointer targetDirectory);
     };
 
     explicit DFileCopyMoveJob(QObject *parent = nullptr);
