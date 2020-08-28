@@ -119,12 +119,14 @@ FileIconItem::FileIconItem(QWidget *parent) :
         QVector<uint> list = text.toUcs4();
         int cursor_pos = edit->textCursor().position() - text_length + text.length();
 
-        while (text.toLocal8Bit().size() > maxCharSize)
-        {
-            list.removeAt(--cursor_pos);
+        //        while (text.toLocal8Bit().size() > maxCharSize)
+        //        {
+        //            list.removeAt(--cursor_pos);
 
-            text = QString::fromUcs4(list.data(), list.size());
-        }
+        //            text = QString::fromUcs4(list.data(), list.size());
+        //        }
+        while (text.toLocal8Bit().size() > maxCharSize)
+            text.chop(1);
 
         if (text.count() != old_text.count())
         {
