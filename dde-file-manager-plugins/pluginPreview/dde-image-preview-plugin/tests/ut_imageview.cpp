@@ -53,12 +53,12 @@ namespace  {
 
 TEST_F(TestImageView, can_set_file){
     QByteArray format = QImageReader::imageFormat(m_url.toLocalFile());
-    m_imageView->setFile(url.toLocalFile(), format);
+    m_imageView->setFile(m_url.toLocalFile(), format);
     EXPECT_TRUE((!format.isEmpty()));
 }
 
 TEST_F(TestImageView, get_source_size){
     QByteArray format = QImageReader::imageFormat(m_url.toLocalFile());
-    m_imageView->setFile(url.toLocalFile(), format);
+    m_imageView->setFile(m_url.toLocalFile(), format);
     EXPECT_TRUE(m_imageView->sourceSize().isValid());
 }
