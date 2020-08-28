@@ -213,6 +213,10 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
 {
     Q_EMIT requestEPFinished(url, ep);
 
+    if (info == nullptr) {
+        return;
+    }
+
     QVariantHash oldEP;
 
     if (!dirtyFileInfos.contains(info)) {
