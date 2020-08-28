@@ -19,7 +19,7 @@ LIBS += -L$$OUT_PWD/../../../../build-filemanager-unknown-Debug/dde-file-manager
 DISTFILES += dde-music-preview-plugin.json
 
 
-QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
+QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0 -DGTEST
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 include(dde-music-preview-plugin.pri)
