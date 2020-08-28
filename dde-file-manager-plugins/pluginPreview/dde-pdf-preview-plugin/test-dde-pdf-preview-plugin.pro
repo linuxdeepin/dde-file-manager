@@ -19,8 +19,8 @@ LIBS += -L$$OUT_PWD/../../../../build-filemanager-unknown-Debug/dde-file-manager
 
 DISTFILES += dde-pdf-preview-plugin.json
 
-QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
-QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
+QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0 -DGTEST
+QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0 -DGTEST
 
 include(dde-pdf-preview-plugin.pri)
 include(../../../third-party/googletest/gtest_dependency.pri)
