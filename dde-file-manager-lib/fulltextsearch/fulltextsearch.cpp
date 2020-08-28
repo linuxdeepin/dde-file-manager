@@ -284,8 +284,8 @@ void DFMFullTextSearchManager::readFileName(const char *filePath, QStringList &r
             pathLevel++;
         }
     });
-
-    if (pathLevel > 10) {
+    /*目录级数限定*/
+    if (pathLevel > 20) {
         return;
     }
 
@@ -310,6 +310,9 @@ void DFMFullTextSearchManager::readFileName(const char *filePath, QStringList &r
     while ((dent = readdir (dir))) {
         if (!dent->d_name[0] == '.') {
             // file is dotfile, skip
+            continue;
+        }
+        if ((QString(dent->d_name).at(0) == '.') && !QString(dent->d_name).startsWith(".local")) {
             continue;
         }
         if (!strcmp (dent->d_name, ".") || !strcmp (dent->d_name, "..") || !strcmp (dent->d_name, ".avfs")) {
