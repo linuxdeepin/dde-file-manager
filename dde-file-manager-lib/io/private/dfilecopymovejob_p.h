@@ -122,7 +122,9 @@ public:
     void setState(DFileCopyMoveJob::State s);
     void setError(DFileCopyMoveJob::Error e, const QString &es = QString());
     void unsetError();
-    DFileCopyMoveJob::Action handleError(const DAbstractFileInfo *sourceInfo, const DAbstractFileInfo *targetInfo);
+    DFileCopyMoveJob::Action handleError(const DAbstractFileInfoPointer sourceInfo, const DAbstractFileInfoPointer targetInfo);
+    DFileCopyMoveJob::Action setAndhandleError(DFileCopyMoveJob::Error e, const DAbstractFileInfoPointer sourceInfo,
+                                               const DAbstractFileInfoPointer targetInfo, const QString &es = QString());
 
     bool isRunning(); // bug 26333, add state function to check the job status
     bool jobWait();
@@ -135,7 +137,7 @@ public:
 
     bool doProcess(const DUrl &from, const DAbstractFileInfoPointer source_info, const DAbstractFileInfoPointer target_info, const bool isNew = false);
     bool mergeDirectory(DFileHandler *handler, const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo);
-    bool doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo ,DFileHandler *handler, int blockSize = 1048576);
+    bool doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, DFileHandler *handler, int blockSize = 1048576);
     bool doRemoveFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo);
     bool doRenameFile(DFileHandler *handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
     bool doLinkFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
@@ -147,7 +149,7 @@ public:
     bool renameFile(DFileHandler *handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
     bool linkFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
 
-    void beginJob(JobInfo::Type type, const DUrl from, const DUrl target,const bool isNew = false);
+    void beginJob(JobInfo::Type type, const DUrl from, const DUrl target, const bool isNew = false);
     void endJob(const bool isNew = false);
     void enterDirectory(const DUrl from, const DUrl to);
     void leaveDirectory();
@@ -162,12 +164,12 @@ public:
 
     //第二版优化
     bool mergeDirectoryRefine(DFileHandler *handler, const DAbstractFileInfoPointer fromInfo,
-                               const DAbstractFileInfoPointer toInfo);
+                              const DAbstractFileInfoPointer toInfo);
     bool processRefine(const DUrl from, const DAbstractFileInfoPointer source_info,
-                      const DAbstractFileInfoPointer target_info,const bool ischeck = false);
+                       const DAbstractFileInfoPointer target_info, const bool ischeck = false);
     bool copyFileRefine(const FileCopyInfoPointer copyinfo);
     bool doProcessRefine(const DUrl from, const DAbstractFileInfoPointer source_info,
-                          const DAbstractFileInfoPointer target_info, const bool ischeck = false);
+                         const DAbstractFileInfoPointer target_info, const bool ischeck = false);
     bool doCopyFileRefine(const FileCopyInfoPointer copyinfo);
     bool doCopyFileRefineReadAndWrite(const FileCopyInfoPointer copyinfo);
     bool openRefineThread();
@@ -226,13 +228,13 @@ public:
     qint64 m_write = 0;
     qint64 m_sart = 0;
 
-    DFileCopyQueue<QSharedPointer<DFileDevice>> closetodevicesqueue,closefromdevicequeue;
+    DFileCopyQueue<QSharedPointer<DFileDevice>> closetodevicesqueue, closefromdevicequeue;
     DFileCopyQueue<FileCopyInfoPointer> readfileinfoqueue;
-    DFileCopyQueue<FileCopyInfoPointer> writefilequeue,openfromfilequeue;
+    DFileCopyQueue<FileCopyInfoPointer> writefilequeue, openfromfilequeue;
     QAtomicInt copyrefineflag = DFileCopyMoveJob::NoProccess;
     QAtomicInt filerefinefd = 0;
     DFileCopyQueue<FileCopyInfoPointer> addfilepermissionsqueue;
-    QFuture<void> closefromresult,addper,closedevice,openfrom,copyresult,writeresult,syncresult;
+    QFuture<void> closefromresult, addper, closedevice, openfrom, copyresult, writeresult, syncresult;
 
 
     // 是否可以使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
@@ -277,10 +279,10 @@ public:
 
     int currentthread = 0;
 
-    QAtomicInteger<bool>btaskdailogclose = false;
+    QAtomicInteger<bool> btaskdailogclose = false;
 
 
-    QAtomicInt refinestat = DFileCopyMoveJob::MoreThreadRefine;
+    QAtomicInt refinestat = DFileCopyMoveJob::Refine;
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
     //优化拷贝时异步线程状态
@@ -289,7 +291,7 @@ public:
     QAtomicInteger<bool> bsysncquitstate = false;
     QAtomicInteger<bool> bdestLocal = false;
     qint64 refinecpsize = 0;
-    QMutex m_refinemutex,m_errormutex;
+    QMutex m_refinemutex, m_errormutex;
     QList<DUrl> errorurllist;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)

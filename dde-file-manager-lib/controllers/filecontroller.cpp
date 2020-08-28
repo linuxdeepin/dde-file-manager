@@ -736,8 +736,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
     // 该现象发生于从搜索列表中往光驱中发送文件夹还不被支持的时候。现已可以从搜索列表、最近列表、标签列表中往光驱中发送文件
     QSharedPointer<DFileCopyMoveJob> job = QSharedPointer<DFileCopyMoveJob>(new DFileCopyMoveJob());
     //! 当前拷贝如果是退回到回收站，如要在job中保存回收站中文件原路径
-    if(!event.isNull() && !qvariant_cast<DUrlList>(event->cutData()).isEmpty())
-    {
+    if (!event.isNull() && !qvariant_cast<DUrlList>(event->cutData()).isEmpty()) {
         job->setCurTrashData(event->cutData());
     }
     // 当前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
@@ -800,15 +799,16 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
 
         // 处理任务对话框显示之前的错误, 无法处理的错误将立即弹出对话框处理
         DFileCopyMoveJob::Action handleError(DFileCopyMoveJob *job, DFileCopyMoveJob::Error error,
-                                             const DAbstractFileInfo *sourceInfo,
-                                             const DAbstractFileInfo *targetInfo) override
+                                             const DAbstractFileInfoPointer sourceInfo,
+                                             const DAbstractFileInfoPointer targetInfo) override
         {
             if (slient) {
                 return DFileCopyMoveJob::SkipAction;
             }
 
             if (error == DFileCopyMoveJob::DirectoryExistsError || error == DFileCopyMoveJob::FileExistsError) {
-                if (sourceInfo->fileUrl() == targetInfo->fileUrl() || DStorageInfo::isSameFile(sourceInfo->fileUrl().path(),targetInfo->fileUrl().path())) {
+                if (sourceInfo->fileUrl() == targetInfo->fileUrl() ||
+                        DStorageInfo::isSameFile(sourceInfo->fileUrl().path(), targetInfo->fileUrl().path())) {
                     return DFileCopyMoveJob::CoexistAction;
                 }
             }
@@ -818,14 +818,13 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
                 timer_id = 0;
             }
 
-            DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job,true);
-            emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), targetInfo ? targetInfo->fileUrl() :DUrl(), true);
+            DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job, true);
+            emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), targetInfo ? targetInfo->fileUrl() : DUrl(), true);
 
             if (!handle) {
                 qWarning() << "addTaskJob create handle failed!!";
                 return DFileCopyMoveJob::SkipAction;
             }
-
             return handle->handleError(job, error, sourceInfo, targetInfo);
         }
 
@@ -845,7 +844,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
             if (!fileJob->isFinished()) {
                 dialogManager->taskDialog()->addTaskJob(fileJob.data(), true);
-                emit fileJob->currentJobChanged(currentJob.first, currentJob.second,false);
+                emit fileJob->currentJobChanged(currentJob.first, currentJob.second, false);
             }
         }
 
@@ -945,11 +944,9 @@ void FileController::dealpasteEnd(const DUrlList &list, const QSharedPointer<DFM
             return;
         }
         //! 新增剪切回收站路径event->urlList()
-        if(targetDir.startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
-        {
+        if (targetDir.startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
             DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files, event->urlList()), true);
-        }
-        else {
+        } else {
             DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
         }
     }

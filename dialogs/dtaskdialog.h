@@ -48,12 +48,12 @@ class ErrorHandle : public QObject, public DFileCopyMoveJob::Handle
 {
     Q_OBJECT
 public:
-    ErrorHandle(QObject *parent):QObject(parent){}
+    ErrorHandle(QObject *parent): QObject(parent) {}
     virtual ~ErrorHandle() override;
     DFileCopyMoveJob::Action handleError(DFileCopyMoveJob *job, DFileCopyMoveJob::Error error,
-                                         const DAbstractFileInfo *sourceInfo,  const DAbstractFileInfo *targetInfo) override;
+                                         const DAbstractFileInfoPointer sourceInfo,  const DAbstractFileInfoPointer targetInfo) override;
 
-    void setActionOfError(DFileCopyMoveJob::Action action){ m_actionOfError = action; }
+    void setActionOfError(DFileCopyMoveJob::Action action) { m_actionOfError = action; }
 Q_SIGNALS:
     void onConflict(const DUrl &src, const DUrl &dst);
     void onError(const QString &err);
@@ -71,7 +71,7 @@ public:
     void initUI();
     void initConnect();
     static int MaxHeight;
-    QListWidget* getTaskListWidget();
+    QListWidget *getTaskListWidget();
 
     void updateData(DFMTaskWidget *wid, const QMap<QString, QString> &data);
 
@@ -88,11 +88,11 @@ public:
      */
     bool getFlagMapValueIsTrue();
 
-    bool getIsErrorOc(const DFileCopyMoveJob * job);
+    bool getIsErrorOc(const DFileCopyMoveJob *job);
 
 signals:
-    void abortTask(const QMap<QString, QString>& jobDetail);
-    void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
+    void abortTask(const QMap<QString, QString> &jobDetail);
+    void conflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void closed();
 
     // 结束当前未完成任务
@@ -101,21 +101,21 @@ signals:
 public slots:
     void setTitle(QString title);
     void setTitle(int taskCount);
-    void addTask(const QMap<QString, QString>& jobDetail);
-    DFileCopyMoveJob::Handle *addTaskJob(DFileCopyMoveJob *job,const bool ischecksamejob = false);
-    void handleTaskClose(const QMap<QString, QString>& jobDetail);
-    void removeTask(const QMap<QString, QString>& jobDetail, bool adjustSize = true);
+    void addTask(const QMap<QString, QString> &jobDetail);
+    DFileCopyMoveJob::Handle *addTaskJob(DFileCopyMoveJob *job, const bool ischecksamejob = false);
+    void handleTaskClose(const QMap<QString, QString> &jobDetail);
+    void removeTask(const QMap<QString, QString> &jobDetail, bool adjustSize = true);
     void removeTaskJob(void *job);
-    void removeTaskImmediately(const QMap<QString, QString>& jobDetail);
-    void delayRemoveTask(const QMap<QString, QString>& jobDetail);
+    void removeTaskImmediately(const QMap<QString, QString> &jobDetail);
+    void delayRemoveTask(const QMap<QString, QString> &jobDetail);
     void removeTaskByPath(QString jobId);
-    void handleUpdateTaskWidget(const QMap<QString, QString>& jobDetail,
-                                const QMap<QString, QString>& data);
+    void handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail,
+                                const QMap<QString, QString> &data);
     void adjustSize();
-    void moveYCenter(); 
+    void moveYCenter();
 
 protected:
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
     void blockShutdown();
@@ -137,15 +137,15 @@ private:
     //QLabel* m_titleLabel=NULL;
     //QPushButton* m_titlebarMinimizeButton;
     //QPushButton* m_titlebarCloseButton;
-    QListWidget* m_taskListWidget=nullptr;
-    QMultiMap<QString, QListWidgetItem*> m_jobIdItems;
-    DTitlebar* m_titlebar;
+    QListWidget *m_taskListWidget = nullptr;
+    QMultiMap<QString, QListWidgetItem *> m_jobIdItems;
+    DTitlebar *m_titlebar;
     QDBusReply<QDBusUnixFileDescriptor> m_reply; // ~QDBusUnixFileDescriptor() will disposes of the Unix file descriptor that it contained.
 
     // 记录当前未完成的保险箱任务
-    QSet<DFileCopyMoveJob*> mapNotCompleteVaultTask;
-    QMutex adjustmutex,addtaskmutex,removetaskmutex,currentjobchangemutex,errorocmutex;
-    QHash<QString,bool> iserroroc;
+    QSet<DFileCopyMoveJob *> mapNotCompleteVaultTask;
+    QMutex adjustmutex, addtaskmutex, removetaskmutex, currentjobchangemutex, errorocmutex;
+    QHash<QString, bool> iserroroc;
 
     //! 记录当前是否完成一个文件的删除或拷贝工作
     QMap<DUrl, bool> m_flagMap;
