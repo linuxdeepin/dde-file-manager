@@ -29,6 +29,7 @@
 #include "singleton.h"
 #include "app/define.h"
 #include "dfileservices.h"
+#include "dialogmanager.h"
 
 #include <QFormLayout>
 #include <QProcess>
@@ -71,6 +72,12 @@ void ShareInfoFrame::initUI()
     m_shareNamelineEdit->setObjectName("ShareNameEdit");
     m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
     m_shareNamelineEdit->setFixedWidth(fieldWidth);
+    // sp3需求 共享文件名设置限制
+    // 设置只能输入大小写字母、数字和部分符号的正则表达式
+    QRegExp regx("^[^\\[\\]\"'/\\\\:|<>+=;,?*\r\n\t]*$");
+    // 创建验证器
+    QValidator *validator = new QRegExpValidator(regx, this);
+    m_shareNamelineEdit->setValidator(validator);
 
     SectionKeyLabel *permissionLabel = new SectionKeyLabel(tr("Permission:"));
     permissionLabel->setFixedWidth(labelWidth);
@@ -145,6 +152,13 @@ void ShareInfoFrame::handleShareNameChanged()
     const QString &name = m_shareNamelineEdit->text();
     if (name.isEmpty() || name == "") {
         //m_jobTimer->stop();
+        return;
+    }
+    // 修复BUG-44947
+    // 当共享文件名为“..”或“.”时，弹出提示框
+    if(name == ".." || name == "."){
+        QString strMsg = tr("The share file name must not be .. or .");
+        dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
         return;
     }
     doShareInfoSetting();
