@@ -194,7 +194,6 @@ DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
     }
     m_pool.clear();
     if (updateSpeedTimer) {
-        updateSpeedTimer->stop();
         updateSpeedTimer->deleteLater();
         updateSpeedTimer = nullptr;
     }
@@ -4211,8 +4210,8 @@ DFileCopyMoveJob::DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent)
     : QThread(parent)
     , d_d_ptr(&dd)
 {
-    dd.fileStatistics = new DFileStatisticsJob(this);
-    dd.updateSpeedTimer = new QTimer(this);
+    dd.fileStatistics = new DFileStatisticsJob();
+    dd.updateSpeedTimer = new QTimer;
 
     connect(dd.fileStatistics, &DFileStatisticsJob::finished, this, &DFileCopyMoveJob::fileStatisticsFinished, Qt::DirectConnection);
     connect(dd.updateSpeedTimer, SIGNAL(timeout()), this, SLOT(_q_updateProgress()), Qt::DirectConnection);
@@ -4229,6 +4228,7 @@ void DFileCopyMoveJob::run()
 //    }
 
 //    qCDebug(fileJob()) << "start job, mode:" << d->mode << "file url list:" << d->sourceUrlList << ", target url:" << d->targetUrl;
+    qCDebug(fileJob()) << "start job, mode:" << d->mode << "file url list:" << ", target url:" << d->targetUrl;
     qint64 timesec = QDateTime::currentMSecsSinceEpoch();
     d->m_sart = timesec;
 
