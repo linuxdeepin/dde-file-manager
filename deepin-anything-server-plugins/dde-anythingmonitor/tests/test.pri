@@ -12,4 +12,5 @@ HEADERS += \
     $$PWD/interfaces/tst_all_interfaces.h
 
 SOURCES += \
-    $$PWD/test-main.cpp
+    $$PWD/test-main.cpp \
+    $$PWD/ut_taghandle.cpp

@@ -1,58 +1,189 @@
-#include <gtest/gtest.h>
-#include "models/vaultfileinfo.h"
-#include "interfaces/dfmstandardpaths.h"
+/*
 
-namespace {
+ * Copyright (C) 2020 ~ 2020 Deepin Technology Co., Ltd.
+
+ *
+
+ * Author:     lixiang
+
+ *
+
+ * Maintainer: lixianga@uniontech.com
+
+ *
+
+ * brief:
+
+ *
+
+ * date:    2020-08-28
+
+ */
+
+
+#include <gtest/gtest.h>
+
+#include "durl.h"
+
+#define private public
+
+#include "models/vaultfileinfo.h"
+
+
+
 class TestVaultFileInfo : public testing::Test
 {
 public:
     void SetUp() override
     {
-        std::cout << "start TestVaultFileInfo";
-        info = new VaultFileInfo(DUrl("dfmvault:///"));
+        m_url = DUrl("dfmvault:///" + QDir::homePath() + "/.local/share/applications");
+        m_vaultFileInfo = new VaultFileInfo(m_url);
     }
 
     void TearDown() override
     {
-        std::cout << "end TestVaultFileInfo";
-        delete info;
-        info = nullptr;
+        delete m_vaultFileInfo;
+        m_vaultFileInfo = nullptr;
     }
 
 public:
-    VaultFileInfo *info;
+    VaultFileInfo * m_vaultFileInfo;
+    DUrl m_url;
 };
-} // namespace
 
-TEST_F(TestVaultFileInfo, BoolPropertyTest)
+TEST_F(TestVaultFileInfo, get_exists)
 {
-    EXPECT_TRUE(info->exists());
-    EXPECT_FALSE(info->canRename());
-    EXPECT_TRUE(info->isReadable());
-    EXPECT_TRUE(info->isWritable());
-    EXPECT_FALSE(info->canShare());
-    EXPECT_TRUE(info->isDir());
-    EXPECT_TRUE(info->canIteratorDir());
-    EXPECT_FALSE(info->makeAbsolute());
-    EXPECT_FALSE(info->canRedirectionFileUrl());
-    EXPECT_FALSE(info->isSymLink());
-    EXPECT_FALSE(info->canTag());
-    EXPECT_FALSE(info->canDrop());
+    EXPECT_TRUE(m_vaultFileInfo->exists());
 }
 
-TEST_F(TestVaultFileInfo, UrlTest)
+TEST_F(TestVaultFileInfo, get_parent_url)
 {
-    EXPECT_STREQ("", info->parentUrl().path().toStdString().c_str());
-    EXPECT_STREQ(DFMStandardPaths::location(DFMStandardPaths::HomePath).toStdString().c_str(),
-                 info->goToUrlWhenDeleted().path().toStdString().c_str());
-    EXPECT_TRUE(info->redirectedFileUrl().path().contains(".local/share/applications/vault_unlocked/"));
-    EXPECT_TRUE(info->mimeDataUrl().path().contains(".local/share/applications/vault_unlocked"));
+    EXPECT_TRUE(m_vaultFileInfo->parentUrl().isValid());
 }
 
-TEST_F(TestVaultFileInfo, StringPropertyTest)
+TEST_F(TestVaultFileInfo, get_icon_name)
 {
-    EXPECT_STREQ("My Vault", info->fileDisplayName().toStdString().c_str());
-    EXPECT_STREQ("Folder is empty", info->subtitleForEmptyFloder().toStdString().c_str());
-    EXPECT_STREQ("dfm_safebox", info->iconName().toStdString().c_str());
-    EXPECT_STREQ("folder", info->genericIconName().toStdString().c_str());
+    EXPECT_TRUE(!m_vaultFileInfo->iconName().isEmpty());
+}
+
+TEST_F(TestVaultFileInfo, get_generic_icon_name)
+{
+    EXPECT_TRUE(!m_vaultFileInfo->genericIconName().isEmpty());
+}
+
+TEST_F(TestVaultFileInfo, get_mime_data_url)
+{
+    EXPECT_TRUE(m_vaultFileInfo->mimeDataUrl().isValid());
+}
+
+TEST_F(TestVaultFileInfo, can_redirection_file_url)
+{
+    EXPECT_TRUE(m_vaultFileInfo->canRedirectionFileUrl());
+}
+
+TEST_F(TestVaultFileInfo, get_redirected_file_url)
+{
+    EXPECT_TRUE(m_vaultFileInfo->redirectedFileUrl().isValid());
+}
+
+TEST_F(TestVaultFileInfo, can_iterator_dir)
+{
+    EXPECT_TRUE(m_vaultFileInfo->canIteratorDir());
+}
+
+TEST_F(TestVaultFileInfo, get_subtitle_for_empty_floder)
+{
+    EXPECT_TRUE(!m_vaultFileInfo->subtitleForEmptyFloder().isEmpty());
+}
+
+TEST_F(TestVaultFileInfo, get_url_bynew_file_name)
+{
+    EXPECT_TRUE(m_vaultFileInfo->getUrlByNewFileName(QString("applications")));
+}
+
+TEST_F(TestVaultFileInfo, get_additional_icon)
+{
+    EXPECT_TRUE(!m_vaultFileInfo->additionalIcon().isEmpty());
+}
+
+TEST_F(TestVaultFileInfo, can_is_Writable)
+{
+    EXPECT_TRUE(m_vaultFileInfo->isWritable());
+}
+
+TEST_F(TestVaultFileInfo, can_is_symLink)
+{
+    EXPECT_TRUE(m_vaultFileInfo->isSymLink());
+}
+
+TEST_F(TestVaultFileInfo, get_permissions)
+{
+    EXPECT_TRUE(m_vaultFileInfo->permissions());
+}
+
+TEST_F(TestVaultFileInfo, get_disable_menu_action_list)
+{
+    EXPECT_TRUE(!m_vaultFileInfo->disableMenuActionList().isEmpty());
+}
+
+TEST_F(TestVaultFileInfo, get_menu_action_list)
+{
+    EXPECT_TRUE(!m_vaultFileInfo->menuActionList(DAbstractFileInfo::SingleFile).isEmpty());
+}
+
+TEST_F(TestVaultFileInfo, get_sub_menu_action_list)
+{
+    EXPECT_TRUE(!m_vaultFileInfo->subMenuActionList().isEmpty());
+}
+
+TEST_F(TestVaultFileInfo, get_file_display_name)
+{
+    EXPECT_TRUE(!m_vaultFileInfo->fileDisplayName().isEmpty());
+}
+
+TEST_F(TestVaultFileInfo, can_rename)
+{
+    EXPECT_TRUE(m_vaultFileInfo->canRename());
+}
+
+TEST_F(TestVaultFileInfo, can_share)
+{
+    EXPECT_TRUE(m_vaultFileInfo->canShare());
+}
+
+TEST_F(TestVaultFileInfo, can_tag)
+{
+    EXPECT_TRUE(m_vaultFileInfo->canTag());
+}
+
+TEST_F(TestVaultFileInfo, get_file_icon)
+{
+    EXPECT_TRUE(m_vaultFileInfo->fileIcon().isNull());
+}
+
+TEST_F(TestVaultFileInfo, get_size)
+{
+    EXPECT_TRUE(m_vaultFileInfo->size());
+}
+
+TEST_F(TestVaultFileInfo, get_is_dir)
+{
+    EXPECT_TRUE(m_vaultFileInfo->isDir());
+}
+
+TEST_F(TestVaultFileInfo, can_drop)
+{
+    EXPECT_TRUE(m_vaultFileInfo->canDrop());
+}
+
+TEST_F(TestVaultFileInfo, get_is_ancestors_url)
+{
+    DUrl url ("dfmvault:///" + QDir::homePath() + "/.local/share/applications");
+    QList<DUrl> urlList;
+    EXPECT_TRUE(m_vaultFileInfo->isAncestorsUrl(url, &urlList));
+}
+
+TEST_F(TestVaultFileInfo, get_is_root_directory)
+{
+    EXPECT_TRUE(m_vaultFileInfo->isRootDirectory());
 }
