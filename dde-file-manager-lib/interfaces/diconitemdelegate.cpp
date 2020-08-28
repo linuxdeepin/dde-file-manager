@@ -963,7 +963,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     const QString &selectionWhenEditing = parent()->baseName(index);
     int endPos = selectionWhenEditing.isEmpty() ? -1 : selectionWhenEditing.length();
 
-    if (endPos == -1 || donot_show_suffix) {
+    if (endPos == -1 || donot_show_suffix || selectionWhenEditing != item->edit->toPlainText()) {
         item->edit->selectAll();
     } else {
         QTextCursor cursor = item->edit->textCursor();
