@@ -149,6 +149,19 @@ int FileUtils::filesCount(const QString &dir)
     return entryList.size();
 }
 
+QStringList FileUtils::filesList(const QString& dir)
+{
+    QStringList appNames;
+    QDirIterator it(dir,
+                    QDir::Files | QDir::NoDotAndDotDot,
+                    QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        it.next();
+        appNames.append(it.filePath());
+    }
+    return appNames;
+}
+
 qint64 FileUtils::totalSize(const QString &targetFile)
 {
     qint64 total = 0;

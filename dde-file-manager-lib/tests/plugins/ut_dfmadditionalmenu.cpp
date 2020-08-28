@@ -29,9 +29,22 @@ TEST_F(TestDFMAdditionalMenu, testInit)
 
 }
 
-TEST_F(TestDFMAdditionalMenu, testActions)
+TEST_F(TestDFMAdditionalMenu, testActions_ZeroSize)
 {
     QStringList files;
-    files << "/test1";
+    m_pTester->actions(files);
+}
+
+TEST_F(TestDFMAdditionalMenu, testActions_OneSize)
+{
+    QStringList files;
+    files << "file:///test1";
+    m_pTester->actions(files);
+}
+
+TEST_F(TestDFMAdditionalMenu, testActions_TwoSize)
+{
+    QStringList files;
+    files << "file:///test1" << "file:///test2";
     m_pTester->actions(files);
 }

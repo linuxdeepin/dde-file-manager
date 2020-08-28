@@ -62,7 +62,7 @@ namespace  {
         void SetUp() override
         {
             DUrlList previewUrllist;
-//            previewUrllist << DUrl("file:///test3") << DUrl("file:///test4");
+            previewUrllist << DUrl("file:///test1");
             m_pTester = new FilePreviewDialog(previewUrllist, nullptr);
             std::cout << "start TestFilePreviewDialog";
         }
@@ -77,32 +77,32 @@ namespace  {
     };
 }
 
-//TEST_F(TestFilePreviewDialog, testInit)
-//{
-////    m_pTester->show();
-//}
+TEST_F(TestFilePreviewDialog, testInit)
+{
+    m_pTester->show();
+}
 
-//TEST_F(TestFilePreviewDialog, testUpdatePreviewList)
-//{
-//    DUrlList previewUrllist;
-//    previewUrllist << DUrl("file:///test3") << DUrl("file:///test4");
-//    m_pTester->updatePreviewList(previewUrllist);
-//}
+TEST_F(TestFilePreviewDialog, testUpdatePreviewList)
+{
+    DUrlList previewUrllist;
+    previewUrllist << DUrl("file:///test2");
+    m_pTester->updatePreviewList(previewUrllist);
+}
 
-//TEST_F(TestFilePreviewDialog, testSetEntryUrlList)
-//{
-//    DUrlList entryUrlList;
-//    entryUrlList << DUrl("file:///test3") << DUrl("file:///test4");
-//    m_pTester->setEntryUrlList(entryUrlList);
-//}
+TEST_F(TestFilePreviewDialog, testSetEntryUrlList)
+{
+    DUrlList entryUrlList;
+    entryUrlList << DUrl("file:///test3");
+    m_pTester->setEntryUrlList(entryUrlList);
+}
 
-//TEST_F(TestFilePreviewDialog, testDone)
-//{
-//    int r = 1;
-//    m_pTester->done(r);
-//}
+TEST_F(TestFilePreviewDialog, testDone)
+{
+    int r = 1;
+    m_pTester->done(r);
+}
 
-//TEST_F(TestFilePreviewDialog, testPlayCurrentPreviewFile)
-//{
-//    m_pTester->playCurrentPreviewFile();
-//}
+TEST_F(TestFilePreviewDialog, testPlayCurrentPreviewFile)
+{
+    m_pTester->playCurrentPreviewFile();
+}

@@ -395,6 +395,8 @@ bool DFMRootFileWatcherPrivate::start()
             // 对于满足外层条件的可移动设备，并且分区不该被过滤的，提示格式化
             if (!FileUtils::deviceShouldBeIgnore(blk->device()))
                 dialogManager->showFormatDialog(blk->device());
+            else
+                return;
         }
 
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {

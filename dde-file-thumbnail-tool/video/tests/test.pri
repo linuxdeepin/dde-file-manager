@@ -10,9 +10,9 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/interfaces/tst_all_interfaces.h \
-    $$PWD/funcwrapper.h
+    $$PWD/../funcwrapper.h
 
 SOURCES += \
     $$PWD/test-main.cpp \
-    $$PWD/funcwrapper.cpp \
-    $$PWD/ut_funcwrapper.cpp
+    $$PWD/ut_funcwrapper.cpp \
+    $$PWD/../funcwrapper.cpp

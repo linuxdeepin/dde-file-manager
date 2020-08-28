@@ -12,4 +12,6 @@ HEADERS += \
     $$PWD/interfaces/tst_all_interfaces.h
 
 SOURCES += \
-    $$PWD/main-test.cpp
+    $$PWD/main-test.cpp \
+    $$PWD/ut_pdfpreview.cpp \
+    $$PWD/ut_pdfwidget.cpp

@@ -53,11 +53,12 @@
 
 ErrorHandle::~ErrorHandle()
 {
+    qDebug() << "dtaskdialog    ErrorHandle";
 }
 
 DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCopyMoveJob::Error error,
-                                                  const DAbstractFileInfo *sourceInfo,
-                                                  const DAbstractFileInfo *targetInfo)
+                                                  const DAbstractFileInfoPointer sourceInfo,
+                                                  const DAbstractFileInfoPointer targetInfo)
 {
     if (m_actionOfError != DFileCopyMoveJob::NoAction) {
         DFileCopyMoveJob::Action action = m_actionOfError;
@@ -65,7 +66,6 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
 
         return action;
     }
-
     switch (error) {
     case DFileCopyMoveJob::FileExistsError:
     case DFileCopyMoveJob::DirectoryExistsError: {
@@ -74,7 +74,7 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
         }
 
         emit onConflict(sourceInfo->fileUrl(), targetInfo->fileUrl());
-        emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), sourceInfo ? targetInfo->fileUrl() : DUrl(),true);
+        emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), sourceInfo ? targetInfo->fileUrl() : DUrl(), true);
         if (job->state() != DFileCopyMoveJob::PausedState) {
             job->togglePause();
         }
@@ -89,6 +89,7 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
     case DFileCopyMoveJob::UnknowError:
         return DFileCopyMoveJob::CancelAction;
     default:
+        emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), targetInfo ? targetInfo->fileUrl() : DUrl(), true);
         if (job->state() != DFileCopyMoveJob::PausedState) {
             job->togglePause();
         }
@@ -223,7 +224,7 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
         DFMTaskWidget *wid = new DFMTaskWidget;
         wid->setTaskId(jobDetail.value("jobId"));
         // task 29264， 光驱相关的操作，“对于永久无用的按钮，系统设计中通用的处理方式为不展示”
-        FileJob *job = qobject_cast<FileJob*>(sender());
+        FileJob *job = qobject_cast<FileJob *>(sender());
         if (job) {
             QList<FileJob::JobType> opticalTypes{FileJob::JobType::OpticalBurn, FileJob::JobType::OpticalBlank, FileJob::JobType::OpticalImageBurn};
             auto curType = job->jobType();
@@ -364,8 +365,7 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
     }
     if (nullptr == wid) {
         wid = new DFMTaskWidget;
-    }
-    else {
+    } else {
         wid->disconnect();
         haswid = true;
     }
@@ -457,7 +457,7 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
         wid->setSpeedText(sp, rmTime);
     });
 
-    connect(job, &DFileCopyMoveJob::errorCanClear, wid, [job,this](){
+    connect(job, &DFileCopyMoveJob::errorCanClear, wid, [job, this]() {
         if (iserroroc.contains(QString::number(quintptr(job), 16))) {
             iserroroc.remove(QString::number(quintptr(job), 16));
         }
@@ -470,12 +470,12 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
     wid->setProperty("totalDataSize", job->totalDataSize());
 
     // bug-35335 将wid设置为信号接收方，避免wid窗口回收后，继续接收currentJobChanged信号，执行曹函数，导致崩溃
-    connect(job, &DFileCopyMoveJob::currentJobChanged, wid, [this, job, wid](const DUrl from, const DUrl to,const bool iseeroroc) {
-       QMutexLocker lk(&currentjobchangemutex);
-       if (!iseeroroc && iserroroc.contains(QString::number(quintptr(job), 16)) &&
-             iserroroc.value(QString::number(quintptr(job), 16))){
+    connect(job, &DFileCopyMoveJob::currentJobChanged, wid, [this, job, wid](const DUrl from, const DUrl to, const bool iseeroroc) {
+        QMutexLocker lk(&currentjobchangemutex);
+        if (!iseeroroc && iserroroc.contains(QString::number(quintptr(job), 16)) &&
+                iserroroc.value(QString::number(quintptr(job), 16))) {
             return ;
-       }
+        }
 
         //! 保存任务文件路径与状态
         m_flagMap.insert(from, false);
@@ -528,13 +528,13 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
             if (job->error() == DFileCopyMoveJob::FileExistsError
                     || job->error() == DFileCopyMoveJob::DirectoryExistsError) {
                 data["status"] = "conflict";
-                iserroroc.insert(QString::number(quintptr(job), 16),true);
+                iserroroc.insert(QString::number(quintptr(job), 16), true);
             } else if (job->error() != DFileCopyMoveJob::NoError) {
                 data["status"] = "error";
                 bool supprotRetry = job->supportActions(job->error()).testFlag(DFileCopyMoveJob::RetryAction);
                 data["supprotRetry"] = supprotRetry ? "true" : "false";
                 data["errorMsg"] = job->errorString();
-                iserroroc.insert(QString::number(quintptr(job), 16),true);
+                iserroroc.insert(QString::number(quintptr(job), 16), true);
             }
         }
 
@@ -634,7 +634,7 @@ void DTaskDialog::removeTaskByPath(QString jobId)
     QMutexLocker lock(&removetaskmutex);
     if (m_jobIdItems.contains(jobId)) {
         QList<QListWidgetItem *> items = m_jobIdItems.values(jobId);
-        for(auto item : items) {
+        for (auto item : items) {
             m_taskListWidget->removeItemWidget(item);
             m_taskListWidget->takeItem(m_taskListWidget->row(item));
         }
@@ -848,7 +848,7 @@ void DTaskDialog::stopVaultTask()
 
 bool DTaskDialog::getFlagMapValueIsTrue()
 {
-    if(m_flagMap.isEmpty())
+    if (m_flagMap.isEmpty())
         return true;
 
     bool flg = false;

@@ -26,7 +26,7 @@
 
 namespace  {
 
-class DFMVfsManager: public testing::Test {
+class TestDFMVfsManager: public testing::Test {
 public:
     DFM_NAMESPACE::DFMVfsManager *m_manager {nullptr};
     void SetUp() override
@@ -41,17 +41,17 @@ public:
 };
 }
 
-TEST_F(DFMVfsManager, getVfsList)
+TEST_F(TestDFMVfsManager, getVfsList)
 {
     EXPECT_EQ(m_manager->getVfsList().size(), 0);
 }
 
-TEST_F(DFMVfsManager, attach)
+TEST_F(TestDFMVfsManager, attach)
 {
     EXPECT_FALSE(m_manager->attach(DUrl::fromLocalFile("/")));
 }
 
-TEST_F(DFMVfsManager, handler)
+TEST_F(TestDFMVfsManager, handler)
 {
     m_manager->setEventHandler(nullptr);
     EXPECT_EQ(m_manager->eventHandler(), nullptr);
