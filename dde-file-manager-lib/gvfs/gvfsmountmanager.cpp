@@ -55,6 +55,7 @@
 #include <QJsonArray>
 #include <QProcess>
 #include <QStandardPaths>
+#include <QRegularExpression>
 
 #include <views/windowmanager.h>
 
@@ -788,7 +789,29 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
         choiceList << oneOption;
     }
 
-    choice = DThreadUtil::runInMainThread(requestAnswerDialog, MountEvent.windowId(), oneMessage, choiceList);
+    QString newmsg = oneMessage;
+    if (oneMessage.startsWith("Can’t verify the identity of") &&
+            oneMessage.endsWith("If you want to be absolutely sure it is safe to continue, contact the system administrator.")) {
+        QString arg1,arg2;
+        QRegularExpression ovrex("“.*?”");
+        auto ovrxm = ovrex.match(oneMessage);
+        if (ovrxm.hasMatch()) {
+            arg1 = ovrxm.captured(0);
+            newmsg = newmsg.replace(arg1,"");
+            auto ovrxm = ovrex.match(newmsg);
+            arg2 = ovrxm.captured(0);
+            newmsg = tr("Can’t verify the identity of %1.\n\
+                        This happens when you log in to a computer the first time.\n\
+                        The identity sent by the remote computer is \n\
+                        %2.\n\
+                        If you want to be absolutely sure it is safe to continue, contact the system administrator.").
+                             arg(arg1).arg(arg2);
+        }
+        newmsg = newmsg.replace("\\r\\n","\n");
+        qDebug() << newmsg;
+    }
+
+    choice = DThreadUtil::runInMainThread(requestAnswerDialog, MountEvent.windowId(), newmsg, choiceList);
     qCDebug(mountManager()) << "ask_question_cb() user choice(start at 0): " << choice;
 
     // check if choose is invalid
