@@ -785,6 +785,9 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
             }
+            else {
+                moveToThread(qApp->thread());
+            }
         }
 
         ~ErrorHandle() override
