@@ -204,6 +204,9 @@ signals:
     /*show retore failed dialog for permission*/
     void requestShowRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
 
+    /*show restore failed dialog for ource file does not exist*/
+    void requestShowRestoreFailedSourceNotExist(const DUrlList& urlList);
+
     /*show dialog for no permission operation*/
     void requestShowNoPermissionDialog(const DFMUrlListBaseEvent& event);
 

@@ -226,7 +226,8 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
         // task 29264， 光驱相关的操作，“对于永久无用的按钮，系统设计中通用的处理方式为不展示”
         FileJob *job = qobject_cast<FileJob *>(sender());
         if (job) {
-            QList<FileJob::JobType> opticalTypes{FileJob::JobType::OpticalBurn, FileJob::JobType::OpticalBlank, FileJob::JobType::OpticalImageBurn};
+            QList<FileJob::JobType> opticalTypes{FileJob::JobType::OpticalBurn, FileJob::JobType::OpticalBlank,
+                        FileJob::JobType::OpticalImageBurn, FileJob::JobType::Trash};
             auto curType = job->jobType();
             if (opticalTypes.contains(curType)) {
                 wid->setHoverEnable(false);

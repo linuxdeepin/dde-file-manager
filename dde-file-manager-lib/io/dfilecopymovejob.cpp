@@ -409,6 +409,7 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
             //updateSpeedTimer->stop();
             QMetaObject::invokeMethod(updateSpeedTimer, "stop");
         }
+        updateProgress();
 
         return lastErrorHandleAction;
     }
@@ -753,7 +754,15 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     // 回收站可能重名文件，因此回收站中的文件实际filename是经过处理的,这里需要取真正需要展示的filename
     if (source_info->filePath().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
         QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(DUrl::fromTrashFile("/" + source_info->fileName())));
-        file_name = info->fileDisplayName();
+
+        // fix bug45213 从回收站复制/剪切2个计算机图标到桌面，计算机图标变成普通文件
+        QFileInfo actual_info(info->sourceFilePath());
+        if (!actual_info.isSymLink() && FileUtils::isDesktopFile(actual_info)) {
+            //目标文件是桌面程序文件时，需要使用原名字作为文件名来创建文件(createFileInfo)，否则将导致新创建的文件不是桌面程序文件
+            file_name = actual_info.fileName();
+        } else {
+            file_name = info->fileDisplayName();
+        }
     }
 create_new_file_info:
     const DAbstractFileInfoPointer &new_file_info = DFileService::instance()->createFileInfo(nullptr, target_info->getUrlByChildFileName(file_name));
@@ -4211,7 +4220,7 @@ DFileCopyMoveJob::DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent)
     , d_d_ptr(&dd)
 {
     dd.fileStatistics = new DFileStatisticsJob();
-    dd.updateSpeedTimer = new QTimer;
+    dd.updateSpeedTimer = new QTimer(this);
 
     connect(dd.fileStatistics, &DFileStatisticsJob::finished, this, &DFileCopyMoveJob::fileStatisticsFinished, Qt::DirectConnection);
     connect(dd.updateSpeedTimer, SIGNAL(timeout()), this, SLOT(_q_updateProgress()), Qt::DirectConnection);

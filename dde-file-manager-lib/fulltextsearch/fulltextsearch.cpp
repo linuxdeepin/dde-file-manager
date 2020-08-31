@@ -202,8 +202,17 @@ void DFMFullTextSearchManager::doPagingSearch(const SearcherPtr &searcher, const
             DocumentPtr doc = searcher->doc(hits[i]->doc);
             String path = doc->get(L"path");
             if (!path.empty()) {
-                qDebug() << QString::number(i + 1) << " " << QString::fromStdWString(path.c_str());
-                searchResults.append(StringUtils::toUTF8(path).c_str());
+                /*fix bug 45096 对搜索结果里面的修改时间进行判断，如果时间不一样则表示文件已经更改，搜索结果不出现该文件*/
+                QFileInfo info(QString::fromStdWString(path));
+                QString modifyTime = info.lastModified().toString("yyyyMMddHHmmss");
+                String storeTime = doc->get(L"modified");
+                if (modifyTime.toStdWString() != storeTime) {
+                    continue;
+                } else {
+                    searchResults.append(StringUtils::toUTF8(path).c_str());
+                    qDebug() << QString::number(i + 1) << " " << QString::fromStdWString(path.c_str());
+                }
+
             } else {
                 qDebug() << QString::number(i + 1).append(". No path for this document");
             }

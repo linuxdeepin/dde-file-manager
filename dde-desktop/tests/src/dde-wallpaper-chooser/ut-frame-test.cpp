@@ -5,68 +5,67 @@
 
 #include "../dde-wallpaper-chooser/frame.h"
 
-
-
 using namespace testing;
 
 namespace {
-    class FrameTest : public Test{
+    class FrameTest : public Test {
     public:
-        FrameTest() : Test(){
+        FrameTest() : Test()
+        {
 
         }
 
-        virtual void SetUp() override{
-            frame = new Frame("screen-name");
+        virtual void SetUp() override
+        {
+            m_frame = new Frame("screen-name");
         }
 
-        virtual void TearDown() override{
-            delete frame;
+        virtual void TearDown() override
+        {
+            delete m_frame;
         }
 
-        Frame* frame;
+        Frame *m_frame = nullptr;
     };
 }
 
-TEST_F(FrameTest,show)
+TEST_F(FrameTest, show)
 {
-    bool isFfirst = frame->isHidden();
-    frame->show();
-    bool isSecond = frame->isHidden();
-    EXPECT_EQ(isFfirst, true);
-    EXPECT_NE(isFfirst, isSecond);
+    bool bfirst = m_frame->isHidden();
+    m_frame->show();
+    bool bsecond = m_frame->isHidden();
+    EXPECT_EQ(bfirst, true);
+    EXPECT_NE(bfirst, bsecond);
 }
 
 
-TEST_F(FrameTest,hide)
+TEST_F(FrameTest, hide)
 {
-    frame->show();
-    bool First = frame->isHidden();
-    frame->hide();
-    bool Second = frame->isHidden();
-    EXPECT_EQ(First,false);
-    EXPECT_NE(First,Second);
+    m_frame->show();
+    bool bfirst = m_frame->isHidden();
+    m_frame->hide();
+    bool bsecond = m_frame->isHidden();
+    EXPECT_EQ(bfirst, false);
+    EXPECT_NE(bfirst, bsecond);
 }
 
-TEST_F(FrameTest,onItemPressed)
+TEST_F(FrameTest, on_item_ispressed)
 {
-    frame->onItemPressed("close");
-    EXPECT_EQ(frame->m_desktopWallpaper,frame->m_lockWallpaper);
+    m_frame->onItemPressed("close");
+    EXPECT_EQ(m_frame->m_desktopWallpaper, m_frame->m_lockWallpaper);
 }
 
-TEST_F(FrameTest,getWallpaperSlideShow)
+TEST_F(FrameTest, get_wallpaperslideshow)
 {
-
-    frame->setWallpaperSlideShow("hh");
-    QString temp = frame->getWallpaperSlideShow();
-    EXPECT_FALSE(temp.isEmpty());
-
+    m_frame->setWallpaperSlideShow("hh");
+    QString str = m_frame->getWallpaperSlideShow();
+    EXPECT_FALSE(str.isEmpty());
 }
 
-TEST_F(FrameTest,onItemButtonClicked)
+TEST_F(FrameTest, on_itembutton_isclicked)
 {
-    frame->onItemPressed("close");
-    EXPECT_FALSE(frame->m_desktopWallpaper.isEmpty());
-    frame->onItemButtonClicked("lock-screen");
-    EXPECT_TRUE(frame->isHidden());
+    m_frame->onItemPressed("close");
+    EXPECT_FALSE(m_frame->m_desktopWallpaper.isEmpty());
+    m_frame->onItemButtonClicked("lock-screen");
+    EXPECT_TRUE(m_frame->isHidden());
 }
