@@ -2649,6 +2649,9 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                         //                            if (!result)
                         //                                return false;
                     } else if (toInfo.isFile() || toInfo.isSymLink()) {
+                        if (!from.exists()) {
+                            return false;
+                        }
                         to.remove();
                         //                            qDebug() << to.error() << to.errorString();
                     }
