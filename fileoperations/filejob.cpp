@@ -808,7 +808,8 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             obj["speed"] = job_isomaster->getCurrentSpeed();
             obj["msg"] = QJsonArray::fromStringList(job_isomaster->getInfoMessages());
             QByteArray bytes = QJsonDocument(obj).toJson();
-            if (bytes.size() < BUFFERSIZE) {
+            if (bytes.size() < BUFFERSIZE)
+            {
                 strncpy(progressBuf, bytes.data(), BUFFERSIZE);
                 write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
             }
@@ -1098,7 +1099,8 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             obj["speed"] = job_isomaster->getCurrentSpeed();
             obj["msg"] = QJsonArray::fromStringList(job_isomaster->getInfoMessages());
             QByteArray bytes = QJsonDocument(obj).toJson();
-            if (bytes.size() < BUFFERSIZE) {
+            if (bytes.size() < BUFFERSIZE)
+            {
                 strncpy(progressBuf, bytes.data(), BUFFERSIZE);
                 write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
             }
@@ -1293,7 +1295,7 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
         return;
     }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
-        && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
+            && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
         ++m_opticalJobPhase;
     }
     if (status == DISOMasterNS::DISOMaster::JobStatus::Running && jobisom) {
@@ -1318,7 +1320,7 @@ void FileJob::opticalJobUpdatedByParentProcess(int status, int progress, const Q
         return;
     }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
-        && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
+            && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
         ++m_opticalJobPhase;
     }
     if (status == DISOMasterNS::DISOMaster::JobStatus::Running) {
@@ -1703,7 +1705,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     int out_fd = 0;
 #else
     if (!m_bufferAlign) {
-        m_buffer = static_cast<char*>(malloc(static_cast<size_t>(Data_Block_Size + getpagesize())));
+        m_buffer = static_cast<char *>(malloc(static_cast<size_t>(Data_Block_Size + getpagesize())));
         m_bufferAlign = ptr_align(m_buffer, static_cast<size_t>(getpagesize()));
     }
 #endif
@@ -2075,7 +2077,11 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     m_tarDirName = targetDir.dirName();
 
     if (m_jobType != Trash) {
-        m_tarPath = tarDir + "/" + m_srcFileName;
+        if (m_jobType == Restore && targetPath) {
+            m_tarPath = *targetPath;
+        } else {
+            m_tarPath = tarDir + "/" + m_srcFileName;
+        }
     } else {
         if (targetPath) {
             m_tarPath = *targetPath;
@@ -2190,7 +2196,8 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             break;
         case Cancelled:
             return false;
-        default: break;
+        default:
+            break;
         }
     }
 
@@ -2487,8 +2494,8 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                 } else {
                     QDirIterator tmp_iterator(scrFileInfo.absoluteFilePath(),
                                               QDir::AllEntries | QDir::System
-                                                  | QDir::NoDotAndDotDot
-                                                  | QDir::Hidden);
+                                              | QDir::NoDotAndDotDot
+                                              | QDir::Hidden);
 
                     while (tmp_iterator.hasNext()) {
                         if (m_isAborted)
@@ -2649,6 +2656,9 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                         //                            if (!result)
                         //                                return false;
                     } else if (toInfo.isFile() || toInfo.isSymLink()) {
+                        if (!from.exists()) {
+                            return false;
+                        }
                         to.remove();
                         //                            qDebug() << to.error() << to.errorString();
                     }
@@ -2979,10 +2989,10 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
 //    UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(destination.path()); // get disk info from mount point
 //    if(!info)
 //        info = deviceListener->getDeviceByFilePath(destination.path()); // get disk infor from mount mount point sub path
-if (FileUtils::isGvfsMountFile(destination.toLocalFile())) {
-    m_totalSize = FileUtils::totalSize(files);
-    return true;
-}
+    if (FileUtils::isGvfsMountFile(destination.toLocalFile())) {
+        m_totalSize = FileUtils::totalSize(files);
+        return true;
+    }
 
     qint64 freeBytes;
     freeBytes = getStorageInfo(destination.toLocalFile()).bytesFree();
@@ -3100,8 +3110,8 @@ QStorageInfo FileJob::getStorageInfo(const QString &file)
     QFileInfo info(file);
 
     return info.isSymLink()
-               ? QStorageInfo(info.absolutePath())
-               : QStorageInfo(info.absoluteFilePath());
+           ? QStorageInfo(info.absolutePath())
+           : QStorageInfo(info.absoluteFilePath());
 }
 
 bool FileJob::canMove(const QString &filePath)

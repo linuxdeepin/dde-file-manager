@@ -849,143 +849,143 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="194"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="206"/>
         <source>Permission error</source>
         <translation>Permission error</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="196"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="208"/>
         <source>The action is denied</source>
         <translation>The action is denied</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="202"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="214"/>
         <source>Failed to open the file</source>
         <translation>Failed to open the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="204"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="216"/>
         <source>Failed to read the file</source>
         <translation>Failed to read the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="206"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="218"/>
         <source>Failed to write the file</source>
         <translation>Failed to write the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="208"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
         <source>Failed to create the directory</source>
         <translation>Failed to create the directory</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="210"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
         <source>Failed to delete the file</source>
         <translation>Failed to delete the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="212"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
         <source>Failed to move the file</source>
         <translation>Failed to move the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="214"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
         <source>Original file does not exist</source>
         <translation>Original file does not exist</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="216"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>Failed, file size must be less than 4GB</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="218"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
         <source>Not enough free space on the target disk</source>
         <translation>Not enough free space on the target disk</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
         <source>File integrity was damaged</source>
         <translation>File integrity was damaged</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
         <source>The target device is read only</source>
         <translation>The target device is read only</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
         <source>Target folder is inside the source folder</source>
         <translation>Target folder is inside the source folder</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="612"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="643"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>copy</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="945"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1983"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="975"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2024"/>
         <source>Failed to open the dir, cause: File name too long</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="955"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1992"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="985"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2034"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Failed to create the directory, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1086"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2462"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2600"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3071"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1123"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2490"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2629"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3102"/>
         <source>Failed to open the file, cause: File name too long</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1098"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1124"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2475"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2612"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2638"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3084"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3418"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1135"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1159"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2503"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2642"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2668"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3116"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3445"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Failed to open the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1213"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2528"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2716"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3210"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1248"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2557"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2746"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3242"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Failed to read the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1265"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1343"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2769"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2836"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3488"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3566"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1302"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1382"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2799"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2869"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3512"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3591"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Failed to write the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1469"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2939"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1512"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2972"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>File integrity was damaged, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1543"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1586"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Failed to delete the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1649"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1689"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Fail to create symlink, cause: %1</translation>
     </message>
@@ -1185,7 +1185,7 @@
         <translation>This action is not supported</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="344"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="345"/>
         <source>The File Vault is progressing delete task, please do nothing!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1390,6 +1390,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="885"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1221"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1316"/>
+        <location filename="../dialogs/dialogmanager.h" line="148"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -2179,45 +2180,54 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="831"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1470"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1478"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1483"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="803"/>
+        <source>Can’t verify the identity of %1.
+                        This happens when you log in to a computer the first time.
+                        The identity sent by the remote computer is 
+                        %2.
+                        If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
+        <translation>无法确认%1的身份.\r\n当您首次登录时会看到这个提示.\r\n远程电脑发送的身份信息为 \r\n%2\r\n若想确认继续操作是否安全，请联系系统管理员。</translation>
+    </message>
+    <message>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="854"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1493"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1501"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1506"/>
         <source>Mounting device error</source>
         <translation>Mounting device error</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1607"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1630"/>
         <source>No key available to unlock device</source>
         <translation>No key available to unlock device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1690"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1713"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1693"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1703"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1731"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1852"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1883"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1716"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1726"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1754"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1875"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1906"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1700"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1880"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1723"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1903"/>
         <source>Cannot find the mounting device</source>
         <translation>Cannot find the mounting device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1728"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1751"/>
         <source>Cannot unmount the device</source>
         <translation>Cannot unmount the device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1848"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1871"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Cannot eject the device &quot;%1&quot;</translation>
     </message>
@@ -3373,12 +3383,12 @@
         <translation>Text</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="210"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="211"/>
         <source>1 task in progress</source>
         <translation>1 task in progress</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="212"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="213"/>
         <source>%1 tasks in progress</source>
         <translation>%1 tasks in progress</translation>
     </message>
@@ -3627,7 +3637,7 @@
         <translation>Free Space %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="277"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="278"/>
         <source>Files are being processed</source>
         <translation>Files are being processed</translation>
     </message>
@@ -3695,10 +3705,6 @@
         <location filename="../dialogs/shareinfoframe.cpp" line="160"/>
         <source>The share file name must not be .. or .</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation type="obsolete">Confirm</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="282"/>

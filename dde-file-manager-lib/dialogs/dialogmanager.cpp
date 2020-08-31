@@ -163,6 +163,8 @@ void DialogManager::initConnect()
             this, &DialogManager::showRestoreFailedDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowRestoreFailedPerssionDialog,
             this, &DialogManager::showRestoreFailedPerssionDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowRestoreFailedSourceNotExist,
+            this, &DialogManager::showRestoreFailedSourceNotExists);
     connect(fileSignalManager, &FileSignalManager::requestShowNoPermissionDialog,
             this, &DialogManager::showNoPermissionDialog);
 
@@ -1057,6 +1059,20 @@ void DialogManager::showRestoreFailedPerssionDialog(const QString &srcPath, cons
     DDialog d;
     d.setTitle(tr("Operation failed!"));
     d.setMessage(tr("You do not have permission to operate file/folder!"));
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.exec();
+}
+
+void DialogManager::showRestoreFailedSourceNotExists(const DUrlList &urlList)
+{
+    DDialog d;
+    d.setTitle(tr("Operation failed!"));
+    if (urlList.count() == 1) {
+        d.setMessage(tr("Failed to restore %1 file, the source file does not exist").arg(QString::number(1)));
+    } else if (urlList.count() > 1) {
+        d.setMessage(tr("Failed to restore %1 files, the source files does not exist").arg(QString::number(urlList.count())));
+    }
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
