@@ -76,7 +76,15 @@ public:
 
     void addItem(int screenNum, GIndex index, const QString &item)
     {
-        Q_ASSERT(index < m_cellStatus.value(screenNum).length());
+        //bug#45219，当出现错误的index时，放入堆叠
+        if (index < 0 || index >= m_cellStatus.value(screenNum).length()){
+            qWarning() << "screen" << screenNum << "error index" << index << item;
+            if (!overlapItems.contains(item)){
+                overlapItems << item;
+            }
+            return;
+        }
+
         if (!m_cellStatus.contains(screenNum)) {
             qDebug()<< "can not find num :" << screenNum;
             return;
@@ -182,7 +190,12 @@ public:
 
     inline GPos pos(int screenNum, const QString &item) const
     {
-        return itemGrids.value(screenNum).value(item);
+        if (itemGrids.value(screenNum).contains(item)){
+            return itemGrids.value(screenNum).value(item);
+        } else {
+            auto coordInfo = screensCoordInfo.value(screenNum);
+            return GPos(coordInfo.first - 1, coordInfo.second - 1);
+        }
     }
 
     GIndex findEmptyForward(int screenNum, GIndex index, int emptyCount)
