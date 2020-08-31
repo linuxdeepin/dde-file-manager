@@ -409,6 +409,7 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
             //updateSpeedTimer->stop();
             QMetaObject::invokeMethod(updateSpeedTimer, "stop");
         }
+        updateProgress();
 
         return lastErrorHandleAction;
     }
