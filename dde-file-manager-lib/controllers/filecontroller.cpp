@@ -977,7 +977,9 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             }
 
             if (error == DFileCopyMoveJob::DirectoryExistsError || error == DFileCopyMoveJob::FileExistsError) {
-                if (sourceInfo->fileUrl() == targetInfo->fileUrl()) {
+                auto sourceUrl = sourceInfo->fileUrl();
+                auto targetUrl = targetInfo->fileUrl();
+                if (sourceUrl == targetUrl || DStorageInfo::isSameFile(sourceUrl.path(), targetUrl.path())) {
                     return DFileCopyMoveJob::CoexistAction;
                 }
             }
