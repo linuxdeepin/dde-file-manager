@@ -130,6 +130,7 @@ public slots:
     void showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList &entryUrls);
     void showRestoreFailedDialog(const DUrlList &urlList);
     void showRestoreFailedPerssionDialog(const QString &srcPath, const QString &targetPath);
+    void showRestoreFailedSourceNotExists(const DUrlList &urlList);
     void showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls);
     void showAddUserShareFailedDialog(const QString &sharePath);
     void showNoPermissionDialog(const DFMUrlListBaseEvent &event);
