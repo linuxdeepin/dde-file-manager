@@ -344,6 +344,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         return true;
 
     DUrlList restoreFailedList;
+    DUrlList restoreFailedSourceNotExist;
     DUrlList restoreFileOriginUrlList;
 
     DUrlList urlist;
@@ -425,6 +426,8 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
         if (!ret && info->exists()) {
             restoreFailedList << info->fileUrl();
+        } else if (!ret && !info->exists()) {
+            restoreFailedSourceNotExist << info->fileUrl();
         } else {
             restoreFileOriginUrlList << info->originUrl();
         }
@@ -436,6 +439,10 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
     if (!ok && restoreFailedList.count() > 0) {
         emit fileSignalManager->requestShowRestoreFailedDialog(restoreFailedList);
+    }
+
+    if (!ok && restoreFailedSourceNotExist.count() > 0) {
+        emit fileSignalManager->requestShowRestoreFailedSourceNotExist(restoreFailedSourceNotExist);
     }
 
     if (restoreOriginUrls)
