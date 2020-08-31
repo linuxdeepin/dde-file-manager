@@ -177,10 +177,16 @@ void BluetoothTransDialog::initConn()
         if (sessionPath != m_currSessionPath)
             return;
 
+        if (transferred > total) // 过滤异常数据
+            return;
+
         if (m_progressUpdateShouldBeIgnore) {
+            m_firstTransSize = transferred; // fix bug 45296 记录被忽略的第一次的请求头的数据段长度，如果之后信号触发依然是这个数据长度则认为未接收传输请求。
             m_progressUpdateShouldBeIgnore = false;
             return;
         }
+        if (m_firstTransSize == transferred)
+            return;
 
         if (m_stack->currentIndex() != TransferPage && m_stack->currentIndex() != FailedPage)
             m_stack->setCurrentIndex(TransferPage);
@@ -515,6 +521,7 @@ void BluetoothTransDialog::sendFiles()
         DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
         if (info && !info->exists()) {
             dialogManager->showMessageDialog(DialogManager::msgErr, TXT_FILE_NOEXIST, "", TXT_OKAY);
+            close();
             return;
         }
         if (info && info->size() > FILE_TRANSFER_LIMITS) {
@@ -532,6 +539,7 @@ void BluetoothTransDialog::sendFiles()
     m_subTitleOfSuccessPage->setText(TXT_SENDING_SUCC.arg(m_selectedDevice));
 
     m_progressUpdateShouldBeIgnore = true;
+    m_firstTransSize = 0;
     m_progressBar->setValue(0); // retry 时需要重置进度
 
     m_currSessionPath = bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
