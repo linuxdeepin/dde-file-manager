@@ -4211,7 +4211,7 @@ DFileCopyMoveJob::DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent)
     , d_d_ptr(&dd)
 {
     dd.fileStatistics = new DFileStatisticsJob();
-    dd.updateSpeedTimer = new QTimer;
+    dd.updateSpeedTimer = new QTimer(this);
 
     connect(dd.fileStatistics, &DFileStatisticsJob::finished, this, &DFileCopyMoveJob::fileStatisticsFinished, Qt::DirectConnection);
     connect(dd.updateSpeedTimer, SIGNAL(timeout()), this, SLOT(_q_updateProgress()), Qt::DirectConnection);
