@@ -170,6 +170,7 @@ private:
     QString m_selectedDeviceId;
     QString m_currSessionPath; // 当前发送进程的 obex 会话路径，用于取消当前传输会话
     bool m_progressUpdateShouldBeIgnore = true; // 忽略每次调用 sendFile 发送过来的第一次更新进度的信号，此时接收方还未同意接收文件，信号被触发可能是因为创建链路的时候携带有部分请求信息导致 transferred 数据的更新
+    qulonglong m_firstTransSize = 0;
 
     QStringList m_connectedAdapter;
 };
