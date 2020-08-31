@@ -75,6 +75,7 @@ public:
     static bool isLocalDevice(const QString &path);
     static bool isLowSpeedDevice(const QString &path);
     static bool isCdRomDevice(const QString &path);
+    static bool isSameFile(const QString &filePath1, const QString &filePath2);     //通过文件(文件夹)的inode，判断是否是同一个文件(文件夹)
 
 private:
     friend bool operator==(const DStorageInfo &first, const DStorageInfo &second);
