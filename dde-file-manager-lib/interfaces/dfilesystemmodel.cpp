@@ -2650,8 +2650,17 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         job->start();
     }
 
-    qDebug() << "finish update children. file count = " << node->childrenCount();
-    emit sigJobFinished();
+    qDebug() << "finish update children. file count = " << node->childrenCount() << (job ? -1 : job->state());
+    if (job) {
+        //刷新完成标志
+        bool finished = job->isUpdatedFinished();
+        qDebug() << "isUpdatedFinished" << finished;
+        //若刷新完成通知桌面重新获取文件
+        if (finished)
+            emit sigJobFinished();
+    }
+    else
+        emit sigJobFinished();
 }
 
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
