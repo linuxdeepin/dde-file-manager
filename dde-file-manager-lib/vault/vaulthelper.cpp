@@ -35,6 +35,9 @@ DFM_BEGIN_NAMESPACE
 
 using namespace Dtk::Core;
 
+// 初始化静态变量
+bool VaultHelper::isModel = false;
+
 VaultHelper::VaultHelper(QObject *parent) : QObject(parent)
 {
 

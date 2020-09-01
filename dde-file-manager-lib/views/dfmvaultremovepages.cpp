@@ -1,6 +1,7 @@
 #include "dfmvaultremovepages.h"
 #include "vault/interfaceactivevault.h"
 #include "vault/vaultlockmanager.h"
+#include "vault/vaulthelper.h"
 #include "controllers/vaultcontroller.h"
 #include "app/define.h"
 #include "dfmvaultremoveprogressview.h"
@@ -119,8 +120,8 @@ void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
     m_progressView->clear();
     m_bRemoveVault = false;
     showVerifyWidget();
-
-    DDialog::closeEvent(event);
+    // 调用基类关闭事件
+    DFMVaultPageBase::closeEvent(event);
 }
 
 DFMVaultRemovePages *DFMVaultRemovePages::instance()
@@ -134,6 +135,8 @@ void DFMVaultRemovePages::showTop()
     activateWindow();
     show();
     raise();
+    // 设置当前保险箱处于模态弹窗状态
+    DFM_NAMESPACE::VaultHelper::isModel = true;
 }
 
 void DFMVaultRemovePages::onButtonClicked(int index)

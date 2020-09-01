@@ -16,13 +16,15 @@
  ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 #include "dfmvaultpagebase.h"
-
+#include "vault/vaulthelper.h"
 #include "controllers/vaultcontroller.h"
 #include "dfilemanagerwindow.h"
 
 DFMVaultPageBase::DFMVaultPageBase(QWidget *parent)
     : DDialog(parent)
 {
+    // 修复BUG-45226 设置该弹窗为模态弹窗
+    this->setModal(true);
 }
 
 void DFMVaultPageBase::enterVaultDir()
@@ -31,6 +33,13 @@ void DFMVaultPageBase::enterVaultDir()
     DUrl vaultUrl = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath());
     DFileManagerWindow *wnd = dynamic_cast<DFileManagerWindow *>(m_wndptr);
     AppController::instance()->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(wnd, DUrlList() << vaultUrl));
+}
+
+void DFMVaultPageBase::closeEvent(QCloseEvent *event)
+{
+    // 记录当前退出模态对话框状态
+    VaultHelper::isModel = false;
+    DDialog::closeEvent(event);
 }
 
 void DFMVaultPageBase::setWndPtr(QWidget *wnd)
@@ -48,4 +57,6 @@ void DFMVaultPageBase::showTop()
     this->activateWindow();
     this->showNormal();
     this->raise();
+    // 记录当前处于模态弹窗状态
+    VaultHelper::isModel = true;
 }
