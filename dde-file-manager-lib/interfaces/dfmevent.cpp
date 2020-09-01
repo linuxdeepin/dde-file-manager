@@ -333,7 +333,27 @@ DFMUrlListBaseEvent::DFMUrlListBaseEvent(const QObject *sender, const DUrlList &
 DFMUrlListBaseEvent::DFMUrlListBaseEvent(DFMEvent::Type type, const QObject *sender, const DUrlList &list)
     : DFMEvent(type, sender)
 {
-    setData(list);
+    //从数据盘删除文件到回收站实际是同一目录下的操作
+    //处理数据盘下的url 使其与回收站路径开头相同 保证后续删除还原逻辑判断正确
+    if (type == MoveToTrash) {
+        DUrlList urls;
+        //遍历传入的urllist
+        for(DUrl url : list) {
+            //判断是否是来自数据盘路径
+            if (url.path().startsWith("/data/")) {
+                //去掉数据盘路径开头
+                url.setPath(url.path().mid(sizeof ("/data") - 1));
+            }
+            //将处理后的url添加到临时list
+            urls.append(url);
+        }
+        //设置事件的url列表
+        setData(urls);
+    }
+    //暂时只处理movetotrash事件
+    else {
+        setData(list);
+    }
 }
 
 QSharedPointer<DFMUrlListBaseEvent> DFMUrlListBaseEvent::fromJson(Type type, const QJsonObject &json)
