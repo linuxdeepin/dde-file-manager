@@ -141,9 +141,11 @@ void JobController::setCountCeiling(int countCeiling)
 
 void JobController::run()
 {
+    m_updateFinished = false;
     if (!m_iterator) {
         const auto &&list = DFileService::instance()->getChildren(this, m_fileUrl, m_nameFilters, m_filters, QDirIterator::NoIteratorFlags, m_silent);
 
+        m_updateFinished = true;
         emit childrenUpdated(list);
         emit addChildrenList(list);
 
@@ -211,6 +213,8 @@ void JobController::run()
 
         }
     }
+    //刷新已完成
+    m_updateFinished = true;
 
     if (timer) {
         delete timer;
