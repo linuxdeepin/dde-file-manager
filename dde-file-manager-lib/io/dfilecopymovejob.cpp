@@ -372,7 +372,9 @@ void DFileCopyMoveJobPrivate::setError(DFileCopyMoveJob::Error e, const QString 
 
     Q_Q(DFileCopyMoveJob);
 
-    Q_EMIT q->errorChanged(e);
+    if (actionOfError[error] == DFileCopyMoveJob::NoAction) {
+        Q_EMIT q->errorChanged(e);
+    }
     if (DFileCopyMoveJob::CancelError < e) {
         qCDebug(fileJob()) << "new error, type=" << e << ", message=" << es;
     }
@@ -4180,6 +4182,8 @@ void DFileCopyMoveJob::togglePause()
     if (d->state == StoppedState) {
         return;
     }
+
+    d->updateProgress();
 
     d->fileStatistics->togglePause();
 
