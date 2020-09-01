@@ -51,6 +51,9 @@ public:
      */
     static bool isVaultEnabled();
 
+    // 定义静态变量，记录当前保险箱是否处于模态弹窗状态
+    static bool isModel;
+
 signals:
 
 public slots:
