@@ -48,7 +48,7 @@ DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const D
     }
     action->setIcon(QIcon::fromTheme("media-eject-symbolic"));
 
-    QObject::connect(action, &QAction::triggered, action, [url](){
+    QObject::connect(action, &QAction::triggered, [url](){
         const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
         const QVector<MenuAction> menuactions = infoPointer->menuActionList();
         if (static_cast<DFMRootFileInfo::ItemType>(infoPointer->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
