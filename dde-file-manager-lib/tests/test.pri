@@ -27,9 +27,14 @@ SOURCES += \
     $$PWD/io/ut_dlocalfilehandler.cpp \
     $$PWD/views/ut_computerviewitemdelegate.cpp \
     $$PWD/views/ut_dcomputerlistview.cpp \
+    $$PWD/views/ut_ddetailview.cpp \
     $$PWD/views/ut_dfiledialog.cpp \
     $$PWD/views/ut_computerview.cpp \
     $$PWD/views/ut_dfilemanagerwindow.cpp \
+    $$PWD/views/ut_dfileview.cpp \
+    $$PWD/views/ut_dfmactionbutton.cpp \
+    $$PWD/views/ut_dfmaddressbar.cpp \
+    $$PWD/views/ut_dfmadvancesearchbar.cpp \
     $$PWD/views/ut_dtagactionwidget.cpp \
     $$PWD/views/ut_dtagedit.cpp \
     $$PWD/views/ut_dtoolbar.cpp \
@@ -133,4 +138,5 @@ SOURCES += \
     $$PWD/shutil/ut_properties.cpp \
     $$PWD/shutil/ut_shortcut.cpp \
     $$PWD/models/ut_vaultfileinfo.cpp
+
 

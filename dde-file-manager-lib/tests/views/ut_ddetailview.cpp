@@ -24,6 +24,8 @@ namespace  {
     };
 }
 
-
-// something to do.
+TEST_F(TestDDetailView, can_create_obj)
+{
+    ASSERT_NE(nullptr, m_detailView);
+}
 
