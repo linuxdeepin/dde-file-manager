@@ -24,6 +24,8 @@ public:
 
     // 文件打开接口
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    // 权限设置接口
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
     bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const override;
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const override;
 
