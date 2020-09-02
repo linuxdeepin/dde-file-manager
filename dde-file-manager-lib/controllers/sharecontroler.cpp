@@ -125,6 +125,17 @@ bool ShareControler::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
     return DFileService::instance()->openFile(event->sender(), fileUrl);
 }
 
+bool ShareControler::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    // 需要将共享URL转换为普通url
+    const DUrl &fileUrl = realUrl(event->url());
+
+    if (!fileUrl.isValid())
+        return false;
+
+    return DFileService::instance()->setPermissions(event->sender(), fileUrl, event->permissions());
+}
+
 bool ShareControler::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
 {
     return DFileService::instance()->shareFolder(event->sender(), realUrl(event->url()),
