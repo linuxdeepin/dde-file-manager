@@ -107,6 +107,16 @@ SOURCES += \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
     $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    $$PWD/views/ut_dstatusbar.cpp \
+    $$PWD/views/ut_droundbutton.cpp \
+    $$PWD/views/ut_drenamebar.cpp \
+    $$PWD/views/ut_dfmrightdetailview.cpp \
+    $$PWD/views/ut_dfmopticalmediawidget.cpp \
+    $$PWD/views/ut_dfmheaderview.cpp \
+    $$PWD/views/ut_dfmfilebasicinfowidget.cpp \
+    $$PWD/views/ut_dfmtagwidget.cpp \
+    $$PWD/views/ut_dfmsplitter.cpp \
+    $$PWD/views/ut_dfmsidebaritemdelegate.cpp \
     $$PWD/views/ut_dfmsidebarview.cpp \
     $$PWD/views/ut_dfmvaultactivefinishedview.cpp \
     $$PWD/views/ut_dfmvaultactivesavekeyview.cpp \
