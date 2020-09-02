@@ -573,6 +573,10 @@ void BluetoothTransDialog::showBluetoothSetting()
 
 void BluetoothTransDialog::onBtnClicked(const int &nIdx)
 {
+    static qint64 lastTriggerTime = 0;
+    if (QDateTime::currentMSecsSinceEpoch() - lastTriggerTime <= 200) // 间隔 200ms 触发一次操作，限制操作频率
+        return;
+
     Page currpage = static_cast<Page>(m_stack->currentIndex());
     switch (currpage) {
     case SelectDevicePage:
@@ -596,6 +600,7 @@ void BluetoothTransDialog::onBtnClicked(const int &nIdx)
         close();
         break;
     }
+    lastTriggerTime = QDateTime::currentMSecsSinceEpoch();
 }
 
 void BluetoothTransDialog::onPageChagned(const int &nIdx)
