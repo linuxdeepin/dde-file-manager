@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets multimedia
+QT       += core gui widgets multimedia quick
 
 TARGET = test-dde-music-preview-plugin
 TEMPLATE = app

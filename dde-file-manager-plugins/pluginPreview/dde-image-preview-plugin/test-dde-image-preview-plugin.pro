@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets
+QT       += widgets   quick
 
 TARGET = test-dde-image-preview-plugin
 TEMPLATE = app

@@ -25,6 +25,7 @@
 
 #include "taghandle.h"
 
+namespace  {
 class TestTagHandle : public testing::Test
 {
 public:
@@ -62,3 +63,5 @@ TEST_F(TestTagHandle, on_file_rename)
     files << temp;
     m_tagHandle->onFileRename(files);
 }
+}
+

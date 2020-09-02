@@ -142,3 +142,4 @@ system(find $$OUT_PWD -name "*.gcda" -print0 | xargs -0 rm -f)
 
 include(../third-party/googletest/gtest_dependency.pri)
 include(tests/test.pri)
+LIBS += -lgcov
