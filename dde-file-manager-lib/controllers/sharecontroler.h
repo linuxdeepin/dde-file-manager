@@ -22,6 +22,8 @@ public:
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
+    // 文件打开接口
+    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
     bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const override;
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const override;
 
