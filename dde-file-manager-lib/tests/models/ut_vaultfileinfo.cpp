@@ -29,8 +29,7 @@
 
 #include "models/vaultfileinfo.h"
 
-
-
+namespace  {
 class TestVaultFileInfo : public testing::Test
 {
 public:
@@ -50,6 +49,7 @@ public:
     VaultFileInfo * m_vaultFileInfo;
     DUrl m_url;
 };
+}
 
 TEST_F(TestVaultFileInfo, get_exists)
 {
@@ -98,7 +98,7 @@ TEST_F(TestVaultFileInfo, get_subtitle_for_empty_floder)
 
 TEST_F(TestVaultFileInfo, get_url_bynew_file_name)
 {
-    EXPECT_TRUE(m_vaultFileInfo->getUrlByNewFileName(QString("applications")));
+    EXPECT_TRUE(m_vaultFileInfo->getUrlByNewFileName(QString("applications")).isValid());
 }
 
 TEST_F(TestVaultFileInfo, get_additional_icon)
@@ -187,3 +187,4 @@ TEST_F(TestVaultFileInfo, get_is_root_directory)
 {
     EXPECT_TRUE(m_vaultFileInfo->isRootDirectory());
 }
+

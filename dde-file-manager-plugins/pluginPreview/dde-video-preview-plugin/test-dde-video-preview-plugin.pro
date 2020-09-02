@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui widgets quick
 
 TARGET = test-dde-video-preview-plugin
 TEMPLATE = app
