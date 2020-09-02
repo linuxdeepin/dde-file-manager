@@ -2650,7 +2650,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         job->start();
     }
 
-    qDebug() << "finish update children. file count = " << node->childrenCount() << (job ? -1 : job->state());
+    qDebug() << "finish update children. file count = " << node->childrenCount() << (job ? job->state() : -1);
     if (job) {
         //刷新完成标志
         bool finished = job->isUpdatedFinished();
