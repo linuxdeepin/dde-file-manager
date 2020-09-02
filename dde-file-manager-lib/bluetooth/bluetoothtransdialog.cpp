@@ -412,8 +412,8 @@ QWidget *BluetoothTransDialog::initSuccessPage()
 
 DStandardItem *BluetoothTransDialog::getStyledItem(const BluetoothDevice *dev)
 {
-    // 只有已配对、已信任且状态为已连接的设备才显示在设备列表中
-    if (!(dev->paired() && dev->trusted() && dev->state() == BluetoothDevice::StateConnected))
+    // 只有已配对、状态为已连接的设备才显示在设备列表中
+    if (!(dev->paired() && dev->state() == BluetoothDevice::StateConnected))
         return nullptr;
 
     if (findItemByIdRole(dev)) // 列表中已有此设备
