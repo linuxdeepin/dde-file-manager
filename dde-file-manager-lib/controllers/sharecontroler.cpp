@@ -56,7 +56,7 @@ bool ShareFileWatcherPrivate::start()
     Q_Q(ShareFileWatcher);
 
     return q->connect(userShareManager, &UserShareManager::userShareAdded, q, &ShareFileWatcher::onUserShareAdded)
-               && q->connect(userShareManager, &UserShareManager::userShareDeleted, q, &ShareFileWatcher::onUserShareDeleted);
+           && q->connect(userShareManager, &UserShareManager::userShareDeleted, q, &ShareFileWatcher::onUserShareDeleted);
 }
 
 bool ShareFileWatcherPrivate::stop()
@@ -112,6 +112,17 @@ DAbstractFileWatcher *ShareControler::createFileWatcher(const QSharedPointer<DFM
         return nullptr;
 
     return new ShareFileWatcher();
+}
+
+bool ShareControler::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
+{
+    // 需要将共享URL转换为普通url
+    const DUrl &fileUrl = realUrl(event->url());
+
+    if (!fileUrl.isValid())
+        return false;
+
+    return DFileService::instance()->openFile(event->sender(), fileUrl);
 }
 
 bool ShareControler::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
