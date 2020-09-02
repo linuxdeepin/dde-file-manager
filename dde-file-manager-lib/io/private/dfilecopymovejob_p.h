@@ -111,6 +111,7 @@ public:
     void updateMoveProgress();
     void updateSpeed();
     void _q_updateProgress();
+    void checkTagetNeedSync();//检测目标目录是网络文件就每次拷贝去同步，否则网络很卡时会因为同步卡死
 
     DFileCopyMoveJob *q_ptr;
 
@@ -167,6 +168,9 @@ public:
     long tid = -1;
 
     qreal lastProgress = 0.01; // 上次刷新的进度
+
+    //是否需要每读写一次同步
+    bool iseveryreadandwritesync = false;
 
     bool btaskdailogclose = false;
 

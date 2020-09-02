@@ -1187,15 +1187,11 @@ write_data:
                 return false;
             }
         }
+
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
-        const DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
-        if (targetStorageInfo.isValid()) {
-            const QString &fs_type = targetStorageInfo.fileSystemType();
-            if (fs_type == "vfat") {
-                toDevice->inherits("");
-                if (size_write > 0)
-                    toDevice->syncToDisk();
-            }
+        if (iseveryreadandwritesync && size_write > 0) {
+            toDevice->inherits("");
+            toDevice->syncToDisk();
         }
 
         if (Q_UNLIKELY(size_write != size_read)) {
@@ -1786,6 +1782,22 @@ DFileCopyMoveJob::Handle *DFileCopyMoveJob::errorHandle() const
     return d->handle;
 }
 
+
+void DFileCopyMoveJobPrivate::checkTagetNeedSync()
+{
+    if (!targetUrl.isValid()) {
+        return;
+    }
+    iseveryreadandwritesync = FileUtils::isGvfsMountFile(targetUrl.path());
+    qDebug() << targetUrl.toLocalFile();
+    DStorageInfo targetStorageInfo(targetUrl.toLocalFile());
+    if (!iseveryreadandwritesync && targetStorageInfo.isValid()) {
+        const QString &fs_type = targetStorageInfo.fileSystemType();
+        iseveryreadandwritesync =  (fs_type == "vfat" || fs_type == "cifs");
+    }
+}
+
+
 void DFileCopyMoveJob::setErrorHandle(DFileCopyMoveJob::Handle *handle, QThread *threadOfHandle)
 {
     Q_D(DFileCopyMoveJob);
@@ -2059,6 +2071,9 @@ void DFileCopyMoveJob::run()
     d->completedDataSizeOnBlockDevice = 0;
     d->completedFilesCount = 0;
     d->tid = qt_gettid();
+
+    //检查是否需要每次读写都去同步
+    d->checkTagetNeedSync();
 
     DAbstractFileInfoPointer target_info;
     bool mayExecSync = false;
