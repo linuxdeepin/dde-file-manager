@@ -16,6 +16,8 @@ public:
     void TearDown() override
     {
         std::cout << "end TestComputerModel";
+
+        delete model;
     }
 
 public:

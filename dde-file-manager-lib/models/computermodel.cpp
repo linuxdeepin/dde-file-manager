@@ -213,6 +213,7 @@ ComputerModel::~ComputerModel()
     m_initThread.first = true; //强制退出
     m_initThread.second.waitForFinished();
 #endif
+    fileService->clearThread();
 }
 
 QModelIndex ComputerModel::index(int row, int column, const QModelIndex &parent) const
