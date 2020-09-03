@@ -421,6 +421,7 @@ QList<QIcon> DFileInfo::additionalIcon() const
     return icons;
 }
 
+// 此函数高频调用，使用 DFileInfo 会降低性能
 static bool fileIsWritable(const QString &path, uint ownerId)
 {
     Q_UNUSED(ownerId)
@@ -430,17 +431,13 @@ static bool fileIsWritable(const QString &path, uint ownerId)
         return true;
     }
 
-    DFileInfo info(path);
-    if (!info.isWritable())
-        return false;
+    // check user's permissions for a file
+    int result = access(path.toLocal8Bit().data(), W_OK);
+    if (result == 0) {
+        return true;
+    }
 
-    struct stat statinfo;
-    int filestat = stat(path.toStdString().c_str(), &statinfo);
-    // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
-    if (filestat == 0 && (statinfo.st_mode & S_ISVTX) && ownerId != getuid())
-        return false;
-
-    return true;
+    return false;
 }
 
 bool DFileInfo::canRename() const
