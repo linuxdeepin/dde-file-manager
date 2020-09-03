@@ -784,8 +784,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             if (!slient) {
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
-            }
-            else {
+            } else {
                 moveToThread(qApp->thread());
             }
         }
@@ -1180,6 +1179,10 @@ bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
 
     if (ok) {
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
+    } else {
+        // 创建文件夹失败，提示错误信息
+        QString strErr = tr("Unable to create folder \"%1\":%2").arg(event->url().fileName()).arg(strerror(errno));
+        dialogManager->showMessageDialog(DialogManager::msgWarn, strErr);
     }
 
     return ok;
@@ -1195,6 +1198,10 @@ bool FileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
     if (file.open(QIODevice::WriteOnly)) {
         file.close();
     } else {
+        // 创建文件失败，提示错误信息
+        QString strErr = tr("Unable to create file \"%1\":%2").arg(event->url().fileName()).arg(strerror(errno));
+        dialogManager->showMessageDialog(DialogManager::msgWarn, strErr);
+
         return false;
     }
 
