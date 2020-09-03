@@ -3775,31 +3775,36 @@
         <translation>共享文件名不能为“..”或“.”</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="282"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="274"/>
+        <source>Hidden folders do not support sharing</source>
+        <translation>隐藏文件夹不支持共享</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="290"/>
         <source>The share name is used by another user.</source>
         <translatorcomment>该共享名已被其他用户使用。</translatorcomment>
         <translation>该共享名已被其他用户使用。</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="283"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="291"/>
         <source>OK</source>
         <translatorcomment>确定</translatorcomment>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="285"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="293"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translatorcomment>该共享名已存在。是否替换原有共享文件夹？</translatorcomment>
         <translation>该共享名已存在。是否替换原有共享文件夹？</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="286"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="294"/>
         <source>Cancel</source>
         <translatorcomment>取消</translatorcomment>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="287"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="295"/>
         <source>Replace</source>
         <translatorcomment>替换</translatorcomment>
         <translation>替换</translation>
