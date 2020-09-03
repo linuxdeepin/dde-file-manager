@@ -170,10 +170,10 @@
         <location filename="../models/computermodel.cpp" line="78"/>
         <location filename="../models/computermodel.cpp" line="163"/>
         <location filename="../models/computermodel.cpp" line="174"/>
-        <location filename="../models/computermodel.cpp" line="586"/>
-        <location filename="../models/computermodel.cpp" line="590"/>
-        <location filename="../models/computermodel.cpp" line="627"/>
-        <location filename="../models/computermodel.cpp" line="631"/>
+        <location filename="../models/computermodel.cpp" line="587"/>
+        <location filename="../models/computermodel.cpp" line="591"/>
+        <location filename="../models/computermodel.cpp" line="628"/>
+        <location filename="../models/computermodel.cpp" line="632"/>
         <source>Disks</source>
         <translation>Disks</translation>
     </message>
@@ -1041,41 +1041,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1647"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1643"/>
         <location filename="../models/trashfileinfo.cpp" line="339"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1096"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1649"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1645"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
         <translation>Time modified</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1651"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1647"/>
         <source>Size</source>
         <translation>Size</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1653"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1649"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1655"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1651"/>
         <source>Time created</source>
         <translation>Time created</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1657"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1653"/>
         <source>Last access</source>
         <translation>Last access</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1659"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1655"/>
         <location filename="../models/recentfileinfo.cpp" line="194"/>
         <location filename="../models/searchfileinfo.cpp" line="129"/>
         <location filename="../models/searchfileinfo.cpp" line="134"/>
@@ -1660,6 +1660,16 @@
         <location filename="../controllers/filecontroller.cpp" line="573"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Please install File Roller first and then continue</translation>
+    </message>
+    <message>
+        <location filename="../controllers/filecontroller.cpp" line="1184"/>
+        <source>Unable to create folder &quot;%1&quot;:%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/filecontroller.cpp" line="1202"/>
+        <source>Unable to create file &quot;%1&quot;:%2</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3329,7 +3339,7 @@
         <translation>%1 items</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1438"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1429"/>
         <source>Shortcut</source>
         <translation>Shortcut</translation>
     </message>
@@ -3684,7 +3694,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="161"/>
         <location filename="../models/computermodel.cpp" line="172"/>
-        <location filename="../models/computermodel.cpp" line="562"/>
+        <location filename="../models/computermodel.cpp" line="563"/>
         <source>Disks</source>
         <translation type="unfinished">Disks</translation>
     </message>
