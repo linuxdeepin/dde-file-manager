@@ -262,7 +262,7 @@ void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
             dialog.setTitle(errMsg);
-            dialog.addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+            dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
             dialog.exec();
         }
         m_bUnlockByKey = false;

@@ -800,12 +800,12 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
             newmsg = newmsg.replace(arg1,"");
             auto ovrxm = ovrex.match(newmsg);
             arg2 = ovrxm.captured(0);
-            newmsg = tr("Can’t verify the identity of %1.\n\
-                        This happens when you log in to a computer the first time.\n\
-                        The identity sent by the remote computer is \n\
-                        %2.\n\
-                        If you want to be absolutely sure it is safe to continue, contact the system administrator.").
-                             arg(arg1).arg(arg2);
+            // 修复文管文案问题
+            newmsg = tr("Can’t verify the identity of %1.").arg(arg1) + '\n' +
+                     tr("This happens when you log in to a computer the first time.") + '\n' +
+                     tr("The identity sent by the remote computer is") + '\n' +
+                     tr("%2.").arg(arg2) + '\n' +
+                     tr("If you want to be absolutely sure it is safe to continue, contact the system administrator.");
         }
         newmsg = newmsg.replace("\\r\\n","\n");
         qDebug() << newmsg;

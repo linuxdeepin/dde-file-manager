@@ -101,7 +101,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             return;
         QFileInfoList lstFilesInStage = dirStage.entryInfoList(filter);
         if (lstFilesInStage.count() == 0) {
-            dialogManager->showMessageDialog(DialogManager::msgWarn, tr("No file to burn."));
+            dialogManager->showMessageDialog(DialogManager::msgWarn, tr("No file to burn"));
             return;
         }
 
@@ -124,7 +124,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
         lstFilesInStage = dirStage.entryInfoList(filter);
         if (lstFilesInStage.count() == 0) {
-            QString errTitle = bDeletedValidFile ? tr("No file to burn. Duplicated files will be ignore.") : tr("No file to burn.");
+            QString errTitle = bDeletedValidFile ? tr("No file to burn, Duplicated files will be ignore") : tr("No file to burn");
             dialogManager->showMessageDialog(DialogManager::msgWarn, errTitle);
             return;
         }
