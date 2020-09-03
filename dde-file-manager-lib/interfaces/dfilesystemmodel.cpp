@@ -1129,20 +1129,16 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
         return;
     }
 
-    //最近使用文件更新最后访问时间后需要重新排序，这里需要先重新设定model中存储的fileinfo对应的readtime。
-    DAbstractFileInfoPointer newFileInfo = fileService->createFileInfo(nullptr, fileUrl);
     if (const DAbstractFileInfoPointer &fileInfo = q->fileInfo(index)) {
         fileInfo->refresh();
-        if (fileUrl.scheme() == RECENT_SCHEME) {
-            fileInfo->updateReadTime(newFileInfo->getReadTime());
-        }
     }
 
     q->parent()->parent()->update(index);
 //    emit q->dataChanged(index, index);
-    //这里调用refresh重刷界面
-    if (fileUrl.scheme() == RECENT_SCHEME) {
-        q->refresh(node->fileInfo->fileUrl());
+    //recentfile变更需要调整排序
+    if (fileUrl.isRecentFile()) {
+        //fileinfo已在recentcontroller中更新，只需要重排序
+        q->sort();
     }
 }
 
@@ -2413,7 +2409,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
         return false;
     }
 
-    qDebug() << "start the sort business";
+//    qDebug() << "start the sort business";
 
     QList<FileSystemNodePointer> list = node->getChildrenList();
 
@@ -2426,7 +2422,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
         }
     }
 
-    qDebug() << "end the sort business";
+//    qDebug() << "end the sort business";
     return ok;
 }
 
@@ -2579,7 +2575,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
 
-    qDebug() << "Begin update chidren. file list count " <<  list.count();
+//    qDebug() << "Begin update chidren. file list count " <<  list.count();
     const FileSystemNodePointer &node = d->rootNode;
 
     if (!node) {
@@ -2632,7 +2628,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (enabledSort())
         sort(node->fileInfo, fileList);
 
-    qDebug() << "begin insert rows count = " << QString::number(list.count());
+//    qDebug() << "begin insert rows count = " << QString::number(list.count());
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     node->setChildrenMap(fileHash);
@@ -2650,11 +2646,11 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         job->start();
     }
 
-    qDebug() << "finish update children. file count = " << node->childrenCount() << (job ? job->state() : -1);
+//    qDebug() << "finish update children. file count = " << node->childrenCount() << (job ? job->state() : -1);
     if (job) {
         //刷新完成标志
         bool finished = job->isUpdatedFinished();
-        qDebug() << "isUpdatedFinished" << finished;
+//        qDebug() << "isUpdatedFinished" << finished;
         //若刷新完成通知桌面重新获取文件
         if (finished)
             emit sigJobFinished();
