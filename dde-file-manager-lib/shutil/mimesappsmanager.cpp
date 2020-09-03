@@ -376,6 +376,13 @@ bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const 
     }
 
     GError* error = NULL;
+    //如果是xml类型的文件，需要同时设置application/xml和text/xml字段
+    if (mimeType == "application/xml") {
+        QString spMimeType = "text/xml";
+        g_app_info_set_as_default_for_type(app,
+                                           spMimeType.toLocal8Bit().constData(),
+                                           &error);
+    }
     g_app_info_set_as_default_for_type(app,
                                        mimeType.toLocal8Bit().constData(),
                                        &error);
