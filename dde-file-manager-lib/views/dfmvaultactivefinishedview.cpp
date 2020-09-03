@@ -129,7 +129,7 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
         // Reset autolock time config.
         VaultLockManager::getInstance().resetConfig();
     }else{
-        QMessageBox::warning(this, QString(tr("warning")), QString(tr("create vault failure, the error code is %1!").arg(nState)));
+        QMessageBox::warning(this, QString(), QString(tr("create vault failure, the error code is %1!").arg(nState)));
     }
 }
 
@@ -175,7 +175,7 @@ void DFMVaultActiveFinishedView::slotTimeout()
     m_pWidget1->setVisible(false);
     m_pWidget2->setVisible(false);
     m_pWidget3->setVisible(true);
-    m_pFinishedBtn->setText(tr("ok"));
+    m_pFinishedBtn->setText(tr("OK"));
     m_pFinishedBtn->setEnabled(true);
     // 显示右上角关闭按钮
     if(parentWidget()){

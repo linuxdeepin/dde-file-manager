@@ -102,7 +102,7 @@ void DFMVaultRemovePages::showRemoveWidget()
 
     setCloseButtonVisible(false);
     clearButtons();
-    addButton(tr("Ok"), true, ButtonType::ButtonRecommend);
+    addButton(tr("OK"), true, ButtonType::ButtonRecommend);
     getButton(0)->setEnabled(false);
     m_stackedWidget->setCurrentIndex(2);
 }
@@ -207,7 +207,7 @@ void DFMVaultRemovePages::onLockVault(int state)
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
             dialog.setTitle(errMsg);
-            dialog.addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+            dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
             dialog.exec();
         }
         m_bRemoveVault = false;

@@ -26,7 +26,7 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     pLabelTitle->setAlignment(Qt::AlignHCenter);
 
     // 提示标签
-    m_pTipsLabel = new DLabel(tr("Generate a recovery key in case that you forget the password"), this);
+    m_pTipsLabel = new DLabel(tr("Generate a recovery key in case that you forgot the password"), this);
 
     DButtonBox *m_pButtonBox = new DButtonBox(this);
     m_pButtonBox->setFixedSize(200, 36);
