@@ -1113,17 +1113,8 @@ DAbstractFileWatcher *DFileService::rootFileWather() const
 void DFileService::clearThread()
 {
     if (d_ptr->m_jobcontroller && !d_ptr->m_jobcontroller->isFinished()) {
-        d_ptr->m_jobcontroller->stop();
-        d_ptr->m_jobcontroller->quit();
-        QEventLoop eventLoop;
-
-        connect(d_ptr->m_jobcontroller, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
-        if (!d_ptr->m_jobcontroller->isFinished()) {
-            eventLoop.exec();
-        }
-        d_ptr->m_jobcontroller = nullptr;
+        d_ptr->m_jobcontroller->wait();
     }
-
 }
 
 void DFileService::setCursorBusyState(const bool bbusy)
