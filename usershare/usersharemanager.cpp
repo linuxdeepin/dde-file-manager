@@ -284,7 +284,8 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
     m_sharePathToNames.clear();
 
     QDir d(UserSharePath());
-    QFileInfoList infolist = d.entryInfoList(QDir::Files);
+    // 修复BUG-46217 增加筛选条件，将以"."开头的文件筛选出来
+    QFileInfoList infolist = d.entryInfoList(QDir::Files | QDir::Hidden);
     foreach (const QFileInfo &f, infolist) {
         ShareInfo shareInfo;
         QMap<QString, QString> info;
