@@ -58,7 +58,7 @@ class DFMUrlListBaseEvent;
 class QSharedMemory;
 
 enum _asb_LabelIndex {
-    SEARCH_RANGE, FILE_TYPE, SIZE_RANGE, DATE_RANGE, LABEL_COUNT,
+    SEARCH_RANGE, FILE_TYPE, SIZE_RANGE, DATE_RANGE, ACCESS_DATE_RANGE, CREATE_DATE_RANGE, LABEL_COUNT,
     TRIGGER_SEARCH = 114514
 };
 
@@ -68,6 +68,10 @@ typedef struct fileFilter {
     QPair<quint64, quint64> f_sizeRange;
     QDateTime f_dateRangeStart;
     QDateTime f_dateRangeEnd;
+    QDateTime f_accessDateRangeStart;
+    QDateTime f_accessDateRangeEnd;
+    QDateTime f_createDateRangeStart;
+    QDateTime f_createDateRangeEnd;
     QString f_typeString;
     bool f_includeSubDir;
     bool f_comboValid[LABEL_COUNT];
@@ -104,6 +108,9 @@ public:
         FileSuffixOfRenameRole = Qt::UserRole + 16,
         FileSizeInKiloByteRole = Qt::UserRole + 17,
         FileLastModifiedDateTimeRole = Qt::UserRole + 18,
+        FileIconModelToolTipRole = Qt::UserRole + 19, // 用于返回图标视图下的tooltip
+        FileLastReadDateTimeRole = Qt::UserRole + 20,   //文件最近访问时间
+        FileCreatedDateTimeRole = Qt::UserRole + 21,    //文件创建时间
         FileUserRole = Qt::UserRole + 99,
         UnknowRole = Qt::UserRole + 999
     };
@@ -226,6 +233,8 @@ signals:
     void newFileByInternal(const DUrl &url);
     void requestSelectFiles(const QList<DUrl> &urls);
     void sigJobFinished();
+    void requestRedirect(const DUrl &rootUrl, const DUrl &newUrl);
+    void showFilterButton();
 
 protected:
     bool remove(const DUrl &url);
@@ -285,9 +294,9 @@ private:
     Q_DECLARE_PRIVATE(DFileSystemModel)
     Q_DISABLE_COPY(DFileSystemModel)
 public:
-     bool ignoreDropFlag = false; //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时设置其为true，
-                                  //不调用candrop，节省时间,bug#10926
-     bool isDesktop = false; //紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
+    bool ignoreDropFlag = false; //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时设置其为true，
+    //不调用candrop，节省时间,bug#10926
+    bool isDesktop = false; //紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
 };
 
 #endif // DFILESYSTEMMODEL_H

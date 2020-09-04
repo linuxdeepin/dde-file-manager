@@ -44,6 +44,7 @@ VaultManager::VaultManager(QObject *parent)
     m_curUser = getCurrentUser();
     m_mapUserClock.insert(m_curUser, m_curVaultClock);
 
+    // monitor system user changed.
     QDBusConnection::systemBus().connect(
                 "com.deepin.dde.LockService",
                 "/com/deepin/dde/LockService",
@@ -109,9 +110,23 @@ bool VaultManager::checkAuthentication(QString type)
     return ret;
 }
 
+bool VaultManager::isLockEventTriggered() const
+{
+    return m_curVaultClock->isLockEventTriggered();
+}
+
+void VaultManager::triggerLockEvent()
+{
+    m_curVaultClock->triggerLockEvent();
+}
+
+void VaultManager::clearLockEvent()
+{
+    m_curVaultClock->clearLockEvent();
+}
+
 QString VaultManager::getCurrentUser() const
 {
-    // Aquire current acount.
     QString user = m_curUser;
 
     QDBusInterface sessionManagerIface("com.deepin.dde.LockService",

@@ -30,10 +30,10 @@
 #include "dbus/deepin_wm.h"
 #include "thumbnailmanager.h"
 #include "appearance_interface.h"
-#include "backgroundhelper.h"
 #include "screen/screenhelper.h"
 #include "dbusinterface/introspectable_interface.h"
 #include "screensavercontrol.h"
+#include "button.h"
 
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
@@ -56,6 +56,7 @@
 #include <DApplicationHelper>
 #include <QProcessEnvironment>
 #include <QPushButton>
+#include <QLabel>
 
 #define DESKTOP_BUTTON_ID "desktop"
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
@@ -67,6 +68,7 @@ DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 using namespace com::deepin;
+
 static bool previewBackground()
 {
     if (DWindowManagerHelper::instance()->windowManagerName() == DWindowManagerHelper::DeepinWM)
@@ -105,36 +107,6 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
     initUI();
     initSize();
 
-#if 0
-    DesktopInfo desktoInfo;
-    if (desktoInfo.waylandDectected()) {
-        connect(Display::instance(), &Display::primaryScreenChanged, this, [=]{
-            if(!isHidden()) close();
-        });
-        connect(Display::instance(), &Display::primaryChanged, this, [=]{
-            if(!isHidden()) close();
-        });
-        connect(Display::instance(), &Display::sigDisplayModeChanged, this, [=]{
-            if(!isHidden()) close();
-        });
-        connect(Display::instance(), &Display::sigMonitorsChanged, this, [=]{
-            if(!isHidden()) close();
-        });
-    } else {
-        connect(qGuiApp, &QGuiApplication::screenAdded, this, [=]{
-            if(!isHidden()) close();
-        });
-        connect(qGuiApp, &QGuiApplication::screenRemoved, this, [=]{
-            if(!isHidden()) close();
-        });
-        connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, [=]{
-            if(!isHidden()) close();
-        });
-        connect(qGuiApp->primaryScreen(), &QScreen::availableGeometryChanged, this, [=]{
-            if(!isHidden()) close();
-        });
-    }
-#endif
     connect(m_mouseArea, &DRegionMonitor::buttonPress, [this](const QPoint & p, const int button) {
         if (button == 4) {
             m_wallpaperList->prevPage();
@@ -210,26 +182,13 @@ void Frame::show()
             m_dbusDeepinWM->deleteLater();
             m_dbusDeepinWM = nullptr;
         }
-/*** old code begin ***/
-//        if (!m_backgroundHelper) {
-//            m_backgroundHelper = new BackgroundHelper(true, this);
-//            // 防止壁纸设置窗口被背景窗口覆盖
-//            connect(m_backgroundHelper, &BackgroundHelper::backgroundAdded, this, &Frame::activateWindow);
-//        }
-/*** old code end ***/
+
         if (!m_backgroundManager) {
             m_backgroundManager = new BackgroundManager(true, this);
 
             connect(m_backgroundManager, SIGNAL(sigBackgroundBuilded(int)),this,SLOT(onRest()));
         }
     } else if (!m_dbusDeepinWM) {
-/*** old code begin ***/
-//        if (m_backgroundHelper) {
-//            // 销毁不需要的资源
-//            m_backgroundHelper->deleteLater();
-//            m_backgroundHelper = nullptr;
-//        }
-/*** old code end ***/
         if (m_backgroundManager) {
             // 销毁不需要的资源
             m_backgroundManager->deleteLater();
@@ -263,11 +222,6 @@ void Frame::setMode(Frame::Mode mode)
         return;
 
     if (m_mode == ScreenSaverMode) {
-/*****old code begin*****/
-//        if (m_backgroundHelper) {
-//            m_backgroundHelper->setVisible(true);
-//        }
-/*****old code end*****/
         if (m_backgroundManager) {
             m_backgroundManager->setVisible(true);
         }
@@ -280,12 +234,6 @@ void Frame::setMode(Frame::Mode mode)
     refreshList();
 }
 
-/*** old code begin ***/
-//QString Frame::desktopBackground() const
-//{
-//    return m_desktopWallpaper;
-//}
-/*** old code end ***/
 QPair<QString, QString> Frame::desktopBackground() const
 {
     return QPair<QString, QString>(m_screenName, m_desktopWallpaper);
@@ -380,12 +328,6 @@ void Frame::hideEvent(QHideEvent *event)
         m_dbusDeepinWM = nullptr;
     }
 
-/*** old code begin ***/
-//    if (m_backgroundHelper) {
-//        m_backgroundHelper->deleteLater();
-//        m_backgroundHelper = nullptr;
-//    }
-/*** old code end ***/
     if (m_backgroundManager) {
         m_backgroundManager->setVisible(false);
         m_backgroundManager->deleteLater();
@@ -417,9 +359,14 @@ void Frame::keyPressEvent(QKeyEvent *event)
         //是否需要密码按钮
         widgetList << m_lockScreenBox;
     }
-    //模式切换按钮组
-    for (QAbstractButton *button: m_switchModeControl->buttonList()) {
-        widgetList << qobject_cast<QWidget *>(button);
+
+    if (!widgetList.contains(focusWidget())) {
+        widgetList.clear();
+
+        //模式切换按钮组
+        for (QAbstractButton *button: m_switchModeControl->buttonList()) {
+            widgetList << qobject_cast<QWidget *>(button);
+        }
     }
 
     switch(event->key())
@@ -436,15 +383,16 @@ void Frame::keyPressEvent(QKeyEvent *event)
         }
         break;
     case Qt::Key_Left:
+        qDebug() << "Left";
         //选中列表上一控件
         if (widgetList.indexOf(focusWidget(),0) > 0) {
             widgetList.at(widgetList.indexOf(focusWidget(),0)-1)->setFocus();
         }
         break;
     default:
+        DBlurEffectWidget::keyPressEvent(event);
         break;
     }
-    DBlurEffectWidget::keyPressEvent(event);
 }
 
 void Frame::paintEvent(QPaintEvent *event)
@@ -474,42 +422,66 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *key = static_cast<QKeyEvent *>(event);
         qDebug() << "keyPress";
+        if(!key) {
+            qDebug()<<"key is null.";
+            return false;
+        }
 
         if (key->key() == Qt::Key_Tab) {
             qDebug() << "Tab";
 
+            //第一个区域发出tab信号，则跳转到第二个区域的第一个控件上
+            if (object == m_wallpaperCarouselCheckBox
+                    || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
+                    || object == m_lockScreenBox
+                    || m_waitControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                m_switchModeControl->buttonList().first()->setFocus();
+                return  true;
+            }
 
-            if (object == m_switchModeControl->buttonList().last()) {
-                if (m_mode == WallpaperMode) {
-                    return  false;
-                }
-                else {
+            //第二个区域tab跳转到第三个区域的当前选项（WallpaperItem）的第一个控件（Button）上
+            if (m_switchModeControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                if (nullptr == m_wallpaperList->getCurrentItem()) {
                     return false;
+                }
+                QList<Button *> childButtons = m_wallpaperList->getCurrentItem()->findChildren<Button *>();
+                if (!childButtons.isEmpty()) {
+                    childButtons.first()->setFocus();
+                    return true;
                 }
             }
 
-            QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier, QString(""));
-            keyPressEvent(&keyEvent); //Tab键转右方向键
-            return true; //屏蔽Tab按键事件
+            //第三个区域tab跳转到第一个区域：已连接WallpaperItem的tab信号进行处理
         }
         else if (key->key() == Qt::Key_Backtab) { //BackTab
             qDebug() << "BackTab(Shift Tab)";
 
-            if (m_mode == WallpaperMode) {
-                if (object == m_wallpaperCarouselCheckBox) {
+            //第一个区域发出backtab信号，则跳转到第三个区域的当前选项（WallpaperItem）的第一个控件（Button）上
+            if (object == m_wallpaperCarouselCheckBox
+                    || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
+                    || object == m_lockScreenBox
+                    || m_waitControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                if (nullptr == m_wallpaperList->getCurrentItem()) {
                     return false;
                 }
-            }
-            else if (m_mode == ScreenSaverMode) {
-                if (object == m_waitControl->buttonList().first()) {
-                    m_wallpaperList->getCurrentItem()->focusLastButton();
-                    return  true;
+                QList<Button *> childButtons = m_wallpaperList->getCurrentItem()->findChildren<Button *>();
+                if (!childButtons.isEmpty()) {
+                    childButtons.first()->setFocus();
+                    return true;
                 }
             }
 
-            QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier, QString(""));
-            keyPressEvent(&keyEvent); //Shitf + Tab(BackTab)键转左方向键
-            return true; //屏蔽Shift + Tab(BackTab)按键事件
+            //第三个区域backtab跳转到第二个区域：已连接WallpaperItem的backtab信号进行处理
+
+            //第二个区域发出backtab信号，则跳转到第一个区域的第一个控件上
+            if (m_switchModeControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                if (m_mode == WallpaperMode) {
+                    m_wallpaperCarouselCheckBox->setFocus();
+                } else {
+                    m_waitControl->buttonList().first()->setFocus();
+                }
+                return true;
+            }
         }
         else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left) { //[Q]CheckBox会将方向键当作Tab键处理
             //if (QString(object->metaObject()->className()) == "CheckBox") { //其它类型别发送，不然会接收到两次按键事件
@@ -858,7 +830,6 @@ void Frame::initUI()
 
     if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
 
-
     if (!ScreenSaverCtrlFunction::needShowScreensaver()) {
         m_switchModeControl->setButtonList({wallpaperBtn}, true);
         wallpaperBtn->setChecked(true);
@@ -945,6 +916,7 @@ void Frame::refreshList()
                     item->show();
                     connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
                     connect(item, &WallpaperItem::tab, this, [=](){
+                        //第三个区域发出tab信号，则跳转到第一个区域的第一个控件上
                         if (m_mode == WallpaperMode) {
                             m_wallpaperCarouselCheckBox->setFocus();
                         }
@@ -953,7 +925,8 @@ void Frame::refreshList()
                         }
                     });
                     connect(item, &WallpaperItem::backtab, this, [=](){
-                        m_switchModeControl->buttonList().last()->setFocus();
+                        //第三个区域发出backtab信号，则跳转到第二个区域的第一个控件上
+                        m_switchModeControl->buttonList().first()->setFocus();
                     });
 
                     //首次进入时，选中当前设置壁纸
@@ -1004,7 +977,7 @@ void Frame::refreshList()
                 }
             });
             connect(item, &WallpaperItem::backtab, this, [=](){
-                m_switchModeControl->buttonList().last()->setFocus();
+                m_switchModeControl->buttonList().first()->setFocus();
             });
             connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
             //首次进入时，选中当前设置屏保
@@ -1026,10 +999,7 @@ void Frame::onItemPressed(const QString &data)
     if (m_mode == WallpaperMode) {
         if (m_dbusDeepinWM)
             m_dbusDeepinWM->SetTransientBackground(data);
-/*** old code begin ***/
-//        if (m_backgroundHelper)
-//            m_backgroundHelper->setBackground(data);
-/*** old code end ***/
+
         if (m_backgroundManager)
             m_backgroundManager->setBackgroundImage(m_screenName, data);
 
@@ -1064,13 +1034,6 @@ void Frame::onItemPressed(const QString &data)
     else if (m_mode == ScreenSaverMode) {
         m_dbusScreenSaver->Preview(data, 1);
         qDebug() << "screensaver start" << data;
-        // 防止壁纸背景盖住屏保预览窗口
-/*** old code begin ***/
-//        if (m_backgroundHelper && m_backgroundHelper->visible()) {
-//            QThread::msleep(300); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
-//            m_backgroundHelper->setVisible(false);
-//        }
-/*** old code end ***/
         if (m_backgroundManager && m_backgroundManager->isVisible()) {
             QThread::msleep(300); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
             m_backgroundManager->setVisible(false);

@@ -37,5 +37,9 @@ public slots:
     void enterVaultDir();
 
 protected:
+    // 重载基类关闭事件
+    void closeEvent(QCloseEvent *event) override;
+
+protected:
     QWidget *m_wndptr = nullptr; //! current window pointer.
 };

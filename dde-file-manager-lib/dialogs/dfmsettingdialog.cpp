@@ -44,6 +44,11 @@
 #include "app/define.h"
 #include "singleton.h"
 #include "dfmapplication.h"
+#include "app/filesignalmanager.h"
+#include "dfmsettings.h"
+
+#define FULLTEXT_KEY      "IndexFullTextSearch"
+#define FULLTEXT_GROUP             "GenericAttribute"
 
 DFM_USE_NAMESPACE
 
@@ -128,6 +133,7 @@ private:
         {"base.hidden_files.show_recent", DFMApplication::GA_ShowRecentFileEntry},
         {"advance.index.index_internal", DFMApplication::GA_IndexInternal},
         {"advance.index.index_external", DFMApplication::GA_IndexExternal},
+        {"advance.index.index_search", DFMApplication::GA_IndexFullTextSearch},
         {"advance.search.show_hidden", DFMApplication::GA_ShowedHiddenOnSearch},
         {"advance.preview.compress_file_preview", DFMApplication::GA_PreviewCompressFile},
         {"advance.preview.text_file_preview", DFMApplication::GA_PreviewTextFile},
@@ -192,6 +198,13 @@ void SettingBackend::doSetOption(const QString &key, const QVariant &value)
     Q_ASSERT(attribute >= 0);
 
     DFMApplication::instance()->setGenericAttribute(static_cast<DFMApplication::GenericAttribute>(attribute), value);
+
+    //fix bug 39785 【专业版 sp3】【文件管理器】【5.2.0.8-1】文管菜单设置隐藏系统盘，关闭所有文管窗口，再打开新文管窗口，系统盘没有隐藏
+    if (key == QString("advance.other.hide_system_partition")) {
+        fileSignalManager->requestHideSystemPartition(value.toBool());
+    }
+
+
 }
 
 void SettingBackend::onValueChanged(int attribute, const QVariant &value)
@@ -315,7 +328,7 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     /*fix task 22667,针对ARM下不能使用anything,所以去掉整个索引配置项
     */
     //解析
-    auto const& jdoc = QJsonDocument::fromJson(data);
+    auto const &jdoc = QJsonDocument::fromJson(data);
     QJsonObject RootObject = jdoc.object();
     QJsonValueRef ArrayRef = RootObject.find("groups").value();
     QJsonArray Array = ArrayRef.toArray();
@@ -327,24 +340,28 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     QJsonArray::iterator ArrayIterator2 = Array2.begin();
     QJsonValueRef ElementOneValueRef2 = ArrayIterator2[0];
     QJsonObject ElementOneObject2 = ElementOneValueRef2.toObject();
-    ElementOneObject2.remove("key");
-    ElementOneObject2.remove("name");
-    ElementOneObject2.remove("options");
+    /*使能全文搜索在ARM下能正常工作*/
+    QJsonValueRef indexArrayRef = ElementOneObject2.find("options").value();
+    QJsonArray indexArray = indexArrayRef.toArray();
+    indexArray.removeFirst();
+    indexArray.removeFirst();
+    indexArrayRef = indexArray;
+
     ElementOneValueRef2 = ElementOneObject2;
     ArrayRef2 = Array2;
     ElementOneValueRef = ElementOneObject;
     ArrayRef = Array;
-    qDebug()<<RootObject;
-    QByteArray arr=QJsonDocument(RootObject).toJson();
+    qDebug() << RootObject;
+    QByteArray arr = QJsonDocument(RootObject).toJson();
 
     return DSettings::fromJson(arr);
- #endif
+#endif
 
     return DSettings::fromJson(data);
 }
 
-QCheckBox *DFMSettingDialog::AutoMountCheckBox = nullptr;
-QCheckBox *DFMSettingDialog::AutoMountOpenCheckBox = nullptr;
+QPointer<QCheckBox> DFMSettingDialog::AutoMountCheckBox = nullptr;
+QPointer<QCheckBox> DFMSettingDialog::AutoMountOpenCheckBox = nullptr;
 
 DFMSettingDialog::DFMSettingDialog(QWidget *parent):
     DSettingsDialog(parent)
@@ -375,6 +392,12 @@ DFMSettingDialog::DFMSettingDialog(QWidget *parent):
 
     //load conf value
     auto backen = new SettingBackend(this);
+    //fulltext fix 42500 配置文件无FULLTEXT_KEY 导致第一次索引失败
+    QVariant var = DFMApplication::genericSetting()->value(FULLTEXT_GROUP, FULLTEXT_KEY);
+    if (!var.isValid()) {
+        DFMApplication::genericSetting()->setValue(FULLTEXT_GROUP, FULLTEXT_KEY, QVariant(false));
+
+    }
 
     m_settings->setParent(this);
     m_settings->setBackend(backen);

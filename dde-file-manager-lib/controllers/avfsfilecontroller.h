@@ -34,7 +34,7 @@ class AVFSFileController : public DAbstractFileController
     Q_OBJECT
 
 public:
-    explicit AVFSFileController(QObject* parent = 0);
+    explicit AVFSFileController(QObject* parent = nullptr);
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
 

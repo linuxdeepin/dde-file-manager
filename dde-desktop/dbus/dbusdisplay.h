@@ -93,7 +93,7 @@ public:
     }
 
 public:
-    DBusDisplay(QObject *parent = 0);
+    DBusDisplay(QObject *parent = nullptr);
 
     ~DBusDisplay();
 
@@ -299,7 +299,7 @@ class DBusAppearance: public QDBusAbstractInterface
         }
     }
 public:
-    DBusAppearance(QObject *parent = 0);
+    DBusAppearance(QObject *parent = nullptr);
 
     ~DBusAppearance();
 public:

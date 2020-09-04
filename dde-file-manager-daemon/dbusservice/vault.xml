@@ -1,6 +1,9 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="com.deepin.filemanager.daemon.VaultManager">
+    <method name="sysUserChanged">
+      <arg name="curUser" type="s" direction="in"/>
+    </method>
     <method name="setRefreshTime">
       <arg name="time" type="t" direction="in"/>
     </method>
@@ -9,6 +12,17 @@
     </method>
     <method name="getSelfTime">
       <arg type="t" direction="out"/>
+    </method>
+    <method name="checkAuthentication">
+      <arg type="b" direction="out"/>
+      <arg name="type" type="s" direction="in"/>
+    </method>
+    <method name="isLockEventTriggered">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="triggerLockEvent">
+    </method>
+    <method name="clearLockEvent">
     </method>
   </interface>
 </node>

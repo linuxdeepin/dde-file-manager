@@ -73,6 +73,22 @@ public slots:
     */
     bool checkAuthentication(QString type);
 
+    /**
+     * @brief isLockEventTriggered 是否存在已触发的锁定事件
+     * @return
+     */
+    bool isLockEventTriggered() const;
+
+    /**
+     * @brief triggerLockEvent 触发锁定事件
+     */
+    void triggerLockEvent();
+
+    /**
+     * @brief clearLockEvent 清除锁定事件
+     */
+    void clearLockEvent();
+
 private:
     /**
      * @brief getCurrentUser 获取当前用户
@@ -80,7 +96,6 @@ private:
      */
     QString getCurrentUser() const;
 
-private:
     VaultAdaptor* m_vaultAdaptor = nullptr;
 
     QMap<QString, VaultClock*> m_mapUserClock; // map user and timer.

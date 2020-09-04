@@ -49,7 +49,7 @@ public slots:
     void doUnmount(const QString &blkStr);
     void doSaveRemove(const QString &blkStr);
 signals:
-    void unmountResult(const QString &result);
+    void unmountResult(const QString &title, const QString &msg);
 };
 
 class AppController : public QObject, public Subscriber
@@ -67,16 +67,16 @@ public:
     static void registerUrlHandle();
 
 public slots:
-    void actionOpen(const QSharedPointer<DFMUrlListBaseEvent>& event);
+    void actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void asyncOpenDisk(const QString& path);
+    void asyncOpenDisk(const QString &path);
 
     void actionOpenInNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionOpenInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void asyncOpenDiskInNewTab(const QString& path);
+    void asyncOpenDiskInNewTab(const QString &path);
     void actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void asyncOpenDiskInNewWindow(const QString& path);
+    void asyncOpenDiskInNewWindow(const QString &path);
     void actionOpenAsAdmin(const QSharedPointer<DFMUrlBaseEvent> &event);
 
     void actionOpenWithCustom(const QSharedPointer<DFMUrlBaseEvent> &event);
@@ -95,12 +95,13 @@ public slots:
     void actionCompleteDeletion(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionCreateSymlink(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionSendToDesktop(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionSendToBluetooth();
     void actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionSelectAll(quint64 winId);
-    void actionClearRecent(const QSharedPointer<DFMMenuActionEvent>& event);
+    void actionClearRecent(const QSharedPointer<DFMMenuActionEvent> &event);
     void actionClearRecent();
-    void actionClearTrash(const QObject *sender = 0);
+    void actionClearTrash(const QObject *sender = nullptr);
     void actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event);
@@ -143,16 +144,16 @@ public slots:
 
     ///###: tag protocol
     QList<QString> actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event);
-    bool actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event);
-    void actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent>& event);
-    void showTagEdit(const QRect& parentRect, const QPoint &globalPos, const DUrlList &fileList);
+    bool actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event);
+    void actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent> &event);
+    void showTagEdit(const QRect &parentRect, const QPoint &globalPos, const DUrlList &fileList);
 
 #ifdef SW_LABEL
-    void actionSetLabel(const DFMEvent& event);
-    void actionViewLabel(const DFMEvent& event);
-    void actionEditLabel(const DFMEvent& event);
-    void actionPrivateFileToPublic(const DFMEvent& event);
-    void actionByIds(const DFMEvent& event, QString actionId);
+    void actionSetLabel(const DFMEvent &event);
+    void actionViewLabel(const DFMEvent &event);
+    void actionEditLabel(const DFMEvent &event);
+    void actionPrivateFileToPublic(const DFMEvent &event);
+    void actionByIds(const DFMEvent &event, QString actionId);
 #endif
 
     // Subscriber interface
@@ -166,7 +167,7 @@ signals:
     void doSaveRemove(const QString &blk);
 
 protected:
-    explicit AppController(QObject *parent = 0);
+    explicit AppController(QObject *parent = nullptr);
     ~AppController();
 
 private:
@@ -174,17 +175,18 @@ private:
     void createGVfSManager();
     void createUserShareManager();
     void createDBusInterface();
-    void showErrorDialog(const QString content);
+    void showErrorDialog(const QString &title, const QString &content);
 
     QSharedPointer<DFMEvent> m_fmEvent;
     static QPair<DUrl, quint64> selectionAndRenameFile;        //###: for creating new file.
     static QPair<DUrl, quint64> selectionFile;                //###: rename a file which must be existance.
 
-    StartManagerInterface* m_startManagerInterface;
-    IntrospectableInterface* m_introspectableInterface;
+    StartManagerInterface *m_startManagerInterface;
+    IntrospectableInterface *m_introspectableInterface;
     bool m_hasLaunchAppInterface = false;
     QThread m_unmountThread;
     UnmountWorker *m_unmountWorker;
+    bool m_creatingDBusInterface = false; //是否正在创建dbus接口
 
     friend class FileController;
     friend class MergedDesktopController;

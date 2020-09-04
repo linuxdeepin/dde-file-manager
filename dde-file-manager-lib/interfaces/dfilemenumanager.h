@@ -53,6 +53,7 @@ public:
     static DFileMenu *createToolBarSettingsMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
 
     static DFileMenu *createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop);
+    static DFileMenu *createVaultMenu(QWidget *topWidget, const QObject *sender = nullptr);
 
     static QList<QAction *> loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl, bool onDesktop);
     static QList<QAction *> loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop);

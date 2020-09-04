@@ -67,6 +67,7 @@ QStringList DFileSystemWatcherPrivate::addPaths(const QStringList &paths, QStrin
                                        | IN_DELETE
                                        | IN_DELETE_SELF
                                        | IN_MODIFY
+                                       | IN_UNMOUNT
                                        )
                                     : (0
                                        | IN_ATTRIB
@@ -181,11 +182,9 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             }
 #ifdef QT_DEBUG
             else {
-#if 0 // not use these code because too much logs
-                qDebug() << "exist event:" << "event->wd" << event->wd <<
-                            "event->mask" << event->mask <<
-                            "event->cookie" << event->cookie << "exist counts " << ++exist_count;
-#endif
+//                qDebug() << "exist event:" << "event->wd" << event->wd <<
+//                            "event->mask" << event->mask <<
+//                            "event->cookie" << event->cookie << "exist counts " << ++exist_count;
             }
 #endif
             const QList<QString> bps = batch_pathmap.values(id);
@@ -259,7 +258,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
                         if (isMove)
                             break;
-                    }else if(event.mask & IN_UNMOUNT){
+                    } else if(event.mask & IN_UNMOUNT){//! 文件系统没卸载进行信号发送处理
                         emit q->fileSystemUMount(path, QString(), DFileSystemWatcher::QPrivateSignal());
                     }
 

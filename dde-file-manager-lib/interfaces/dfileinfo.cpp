@@ -213,6 +213,10 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
 {
     Q_EMIT requestEPFinished(url, ep);
 
+    if (info == nullptr) {
+        return;
+    }
+
     QVariantHash oldEP;
 
     if (!dirtyFileInfos.contains(info)) {
@@ -309,13 +313,9 @@ bool DFileInfo::exists(const DUrl &fileUrl)
     return QFileInfo::exists(fileUrl.toLocalFile());
 }
 
-QMimeType DFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const bool boptimise)
+QMimeType DFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode)
 {
     static DMimeDatabase db;
-    //判读ios手机，传输慢，需要特殊处理优化
-    if (boptimise) {
-        return db.mimeTypeForFileOptimise(filePath, mode);
-    }
     return db.mimeTypeForFile(filePath, mode);
 }
 
@@ -423,24 +423,22 @@ QList<QIcon> DFileInfo::additionalIcon() const
 
 static bool fileIsWritable(const QString &path, uint ownerId)
 {
-    QFileInfo dir_info(path);
-    if (!dir_info.isWritable())
-        return false;
+    Q_UNUSED(ownerId)
 
-#ifdef Q_OS_LINUX
     // 如果是root，则拥有权限
-    if (getuid() == 0) {
+    if (DFMGlobal::isRootUser()) {
         return true;
     }
 
-    QT_STATBUF statBuffer;
-    if (QT_LSTAT(QFile::encodeName(dir_info.absoluteFilePath()), &statBuffer) == 0) {
-        // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
-        if ((statBuffer.st_mode & S_ISVTX) && ownerId != getuid()) {
-            return false;
-        }
-    }
-#endif
+    DFileInfo info(path);
+    if (!info.isWritable())
+        return false;
+
+    struct stat statinfo;
+    int filestat = stat(path.toStdString().c_str(), &statinfo);
+    // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
+    if (filestat == 0 && (statinfo.st_mode & S_ISVTX) && ownerId != getuid())
+        return false;
 
     return true;
 }
@@ -536,7 +534,11 @@ bool DFileInfo::isWritable() const
     //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
     if (d->gvfsMountFile) {
         if (d->cacheCanWrite < 0) {
-            d->cacheCanWrite = d->fileInfo.isWritable();
+            struct stat statinfo;
+            int filestat = stat(d->fileInfo.absoluteFilePath().toStdString().c_str(), &statinfo);
+            d->cacheCanWrite = (filestat == 0) && (statinfo.st_mode & S_IWRITE);
+            if (d->inode == 0)
+                d->inode = statinfo.st_ino;
         }
         return d->cacheCanWrite;
     }
@@ -816,11 +818,8 @@ QMimeType DFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
     if (!d->mimeType.isValid() || d->mimeTypeMode != mode) {
         //优化是苹果的就用新的minetype
         DUrl url = fileUrl();
-        if (url.isOptimise() && isDir()) {
-            d->mimeType = mimeType(absoluteFilePath() + QString("/"), mode, url.isOptimise());
-        } else {
-            d->mimeType = mimeType(absoluteFilePath(), mode, url.isOptimise());
-        }
+
+        d->mimeType = mimeType(absoluteFilePath(), mode);
         d->mimeTypeMode = mode;
     }
 
@@ -907,8 +906,10 @@ void DFileInfo::refresh()
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
 {
-    if (deviceListener->isInDeviceFolder(absoluteFilePath())
-            || absoluteFilePath().startsWith("/run/user" /*for gvfs mount point*/)) {
+    QString absFilePath = absoluteFilePath();
+    if (deviceListener->isInDeviceFolder(absFilePath) ||
+        absFilePath.startsWith("/run/user" /*for gvfs mount point*/) ||
+        absFilePath.startsWith("/media/")) {
         return DUrl::fromLocalFile(QDir::homePath());
     }
 
@@ -1099,6 +1100,12 @@ QVariantHash DFileInfo::extraProperties() const
     }
 
     return d->extraProperties;
+}
+
+quint64 DFileInfo::inode() const
+{
+    Q_D(const DFileInfo);
+    return d->inode;
 }
 
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)

@@ -112,18 +112,21 @@ FileIconItem::FileIconItem(QWidget *parent) :
         QString tmpText = text;
         text = DFMGlobal::preprocessingFileName(text);
         if (tmpText != text){
-            showAlertMessage(tr("Contains invalid characters (any of \\ /: *? \"< >|)"));
+            // 修改文件的命名规则
+            showAlertMessage(tr("Contains invalid characters (any of \"\'/\\[]:|<>+=;,?*)"));
         }
 
         QVector<uint> list = text.toUcs4();
         int cursor_pos = edit->textCursor().position() - text_length + text.length();
 
-        while (text.toLocal8Bit().size() > maxCharSize)
-        {
-            list.removeAt(--cursor_pos);
+        //        while (text.toLocal8Bit().size() > maxCharSize)
+        //        {
+        //            list.removeAt(--cursor_pos);
 
-            text = QString::fromUcs4(list.data(), list.size());
-        }
+        //            text = QString::fromUcs4(list.data(), list.size());
+        //        }
+        while (text.toLocal8Bit().size() > maxCharSize)
+            text.chop(1);
 
         if (text.count() != old_text.count())
         {
@@ -313,7 +316,7 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
 
         QKeyEvent *event = static_cast<QKeyEvent *>(ee);
 
-        if (event->key() != Qt::Key_Enter && event->key() != Qt::Key_Return) {
+        if (event->key() != Qt::Key_Enter && event->key() != Qt::Key_Return && event->key() != Qt::Key_Tab) {
             if (event == QKeySequence::Undo) {
                 editUndo();
             } else if (event == QKeySequence::Redo) {

@@ -90,6 +90,17 @@ protected slots:
      */
     void slotUnlockVault(int msg);
 
+    /**
+     * @brief processLockEvent 处理加锁事件
+     */
+    void processLockEvent();
+
+    /**
+     * @brief slotLockEvent 上锁事件
+     * @param user
+     */
+    void slotLockEvent(const QString &user);
+
 protected:
     /**
      * @brief loadConfig 加载配置文件
@@ -116,9 +127,9 @@ protected:
     quint64 dbusGetSelfTime() const;
 
     /**
-     * @brief terminateTask 终止拷贝、删除等操作
+     * @brief dbusClearLockEvent 清除锁定事件
      */
-    void terminateTask();
+    void dbusClearLockEvent();
 
 private:
     explicit VaultLockManager(QObject *parent = nullptr);

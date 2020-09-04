@@ -29,6 +29,7 @@
 #include "singleton.h"
 #include "app/define.h"
 #include "dfileservices.h"
+#include "dialogmanager.h"
 
 #include <QFormLayout>
 #include <QProcess>
@@ -71,6 +72,12 @@ void ShareInfoFrame::initUI()
     m_shareNamelineEdit->setObjectName("ShareNameEdit");
     m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
     m_shareNamelineEdit->setFixedWidth(fieldWidth);
+    // sp3需求 共享文件名设置限制
+    // 设置只能输入大小写字母、数字和部分符号的正则表达式
+    QRegExp regx("^[^\\[\\]\"'/\\\\:|<>+=;,?*\r\n\t]*$");
+    // 创建验证器
+    QValidator *validator = new QRegExpValidator(regx, this);
+    m_shareNamelineEdit->setValidator(validator);
 
     SectionKeyLabel *permissionLabel = new SectionKeyLabel(tr("Permission:"));
     permissionLabel->setFixedWidth(labelWidth);
@@ -130,7 +137,7 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
 
     if (ret) {
         if (checked) {
-            emit folderShared(m_fileinfo->absoluteFilePath());
+//            emit folderShared(m_fileinfo->absoluteFilePath());
             activateWidgets();
         }
     } else {
@@ -145,6 +152,13 @@ void ShareInfoFrame::handleShareNameChanged()
     const QString &name = m_shareNamelineEdit->text();
     if (name.isEmpty() || name == "") {
         //m_jobTimer->stop();
+        return;
+    }
+    // 修复BUG-44947
+    // 当共享文件名为“..”或“.”时，弹出提示框
+    if(name == ".." || name == "."){
+        QString strMsg = tr("The share file name must not be .. or .");
+        dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
         return;
     }
     doShareInfoSetting();
@@ -254,6 +268,14 @@ void ShareInfoFrame::setFileinfo(const DAbstractFileInfoPointer &fileinfo)
 
 bool ShareInfoFrame::checkShareName() //返回值表示是否继续
 {
+    // 修复bug-45917
+    // 当为共享隐藏文件夹或者共享文件名以“.”开头，弹框提示“隐藏文件夹不支持共享”
+    if(m_fileinfo->fileName().startsWith('.') || m_shareNamelineEdit->text().startsWith('.')){
+        QString strMsg = tr("Hidden folders do not support sharing");
+        dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
+        return false;
+    }
+
     if (m_fileinfo->fileSharedName().toLower() == m_shareNamelineEdit->text().toLower()) { //共享名未更改（不区分大小写）时，直接返回true
         return true;
     }

@@ -31,7 +31,7 @@
 class DBusFileDialogManager : public QObject
 {
 public:
-    explicit DBusFileDialogManager(QObject *parent = 0);
+    explicit DBusFileDialogManager(QObject *parent = nullptr);
 
     QDBusObjectPath createDialog(QString key);
     void destroyDialog(const QDBusObjectPath &path);
@@ -43,6 +43,8 @@ public:
 
     QStringList globPatternsForMime(const QString &mimeType) const;
     QStringList monitorFiles() const;
+
+    void showBluetoothTransDialog(const QString &id, const QStringList &URIs);
 
 private:
     void onDialogDestroy();

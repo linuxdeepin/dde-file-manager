@@ -37,8 +37,7 @@ public:
     ~DFileInfo();
 
     static bool exists(const DUrl &fileUrl);
-    static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
-                              const bool boptimise = false);
+    static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
 
     bool exists() const Q_DECL_OVERRIDE;
     bool isPrivate() const Q_DECL_OVERRIDE;
@@ -113,6 +112,8 @@ public:
     QIODevice *createIODevice() const override;
 
     QVariantHash extraProperties() const Q_DECL_OVERRIDE;
+
+    quint64 inode() const Q_DECL_OVERRIDE;
 
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);

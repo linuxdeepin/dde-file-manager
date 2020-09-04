@@ -40,7 +40,7 @@
 #include "qobjecthelper.h"
 
 #include "singleton.h"
-
+#include "vault/vaulthelper.h"
 #include "shutil/fileutils.h"
 #include <DApplication>
 
@@ -219,9 +219,11 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
         window->moveCenter(currentScreenGeometry.center());
     }
 
-    qApp->setActiveWindow(window);
+    // 修复bug-45226 文管弹出一个模态窗后，再次弹出文管框，
+    // 该模态框将失去焦点，无法正常显示
+    if(!VaultHelper::isModel)
+        qApp->setActiveWindow(window);
 }
-
 
 
 quint64 WindowManager::getWindowId(const QWidget *window)

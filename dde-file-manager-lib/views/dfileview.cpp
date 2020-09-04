@@ -82,6 +82,7 @@
 #include <QMutex>
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
+#include <DSysInfo>
 
 DWIDGET_USE_NAMESPACE
 
@@ -922,7 +923,27 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+                //与桌面的enter行为同步
+                // fix bug#41296 回收站中选择多个文件打开,弹出多个提示框
+                bool openTrashFileHint = false; // 回收站打开文件是否已经提示了
+                if (urls.size() == 1) {
+                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+                } else {
+                    for (auto url : urls) {
+                        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+                        if (!info || info->isVirtualEntry() || (url.isTrashFile() && info->isFile())) {
+                            // 只提示一次
+                            if (!openTrashFileHint) {
+                                QString strMsg = tr("Unable to open items in the trash,please restore it first");
+                                dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
+                                openTrashFileHint = true;
+                            }
+                            continue;
+                        }
+
+                        DFileService::instance()->openFile(this, url);
+                    }
+                }
 
                 return;
             }
@@ -949,7 +970,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                         d->isVaultDelSigConnected = true;
                     }
                 }
-                qDebug() << "action delete --------------------------------";
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             }
             break;
@@ -1179,6 +1199,10 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
                 return;
             }
+        } else if (DFMGlobal::keyShiftIsPressed()) { // 如果按住shit键，鼠标左键点击某项
+            if (!selectionModel()->isSelected(index)) { // 如果该项没有被选择
+                DListView::mousePressEvent(event);  // 选择该项
+            }
         }
 
         d->mouseLastPressedIndex = QModelIndex();
@@ -1360,9 +1384,17 @@ void DFileView::updateStatusBar()
 
 void DFileView::openIndexByOpenAction(const int &action, const QModelIndex &index)
 {
-    if (action == DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt())
+    if (action == DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt()) {
+        //在dfiledialog中单击打开文件时 需要判断文件是否处于enable的状态 否则会引起dialog崩溃
+        if (action == 0) {
+            Qt::ItemFlags flags = model()->flags(index);
+            if (!flags.testFlag(Qt::ItemIsEnabled))
+                return;
+        }
+
         if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
             openIndex(index);
+    }
 }
 
 void DFileView::setIconSizeBySizeIndex(const int &sizeIndex)
@@ -1580,6 +1612,18 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 
             return;
         }
+
+        //部分文件不能复制或剪切，需要在拖拽时忽略
+        if (!fileInfo->canMoveOrCopy()) {
+            event->ignore();
+            return;
+        }
+
+        //防止不可添加tag的文件被拖进tag目录从而获取tag属性
+        if (model()->rootUrl().isTaggedFile() && !fileInfo->canTag()) {
+            event->ignore();
+            return;
+        }
     }
 
     Q_D(const DFileView);
@@ -1698,6 +1742,16 @@ void DFileView::dropEvent(QDropEvent *event)
         stopAutoScroll();
         setState(NoState);
         viewport()->update();
+    }
+    //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
+    QWidget *parentptr = parentWidget();
+    QWidget *curwindow = nullptr;
+    while (parentptr) {
+        curwindow = parentptr;
+        parentptr = parentptr->parentWidget();
+    }
+    if (curwindow) {
+        qApp->setActiveWindow(curwindow);
     }
 
     if (DFileDragClient::checkMimeData(event->mimeData())) {
@@ -2142,6 +2196,12 @@ void DFileView::initConnects()
         else
             setViewModeToList();
     });
+
+    // fix bug#44171 【专业版 sp3】【文件管理器】【5.2.0.28-1】有搜索结果时才展示高级筛选面板
+    connect(model(), &DFileSystemModel::showFilterButton, this, [this]() {
+        DFileManagerWindow *w = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(windowId()));
+        w->showFilterButton();
+    });
 }
 
 void DFileView::increaseIcon()
@@ -2245,12 +2305,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     if (fileUrl.scheme() == BURN_SCHEME) {
         Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
 
-        // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
         QString strVolTag = DFMOpticalMediaWidget::getVolTag(fileUrl);
-        if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
-            emit fileSignalManager->activeTaskDlg();
-            return false;
-        }
 
         QString devpath = fileUrl.burnDestDevice();
         QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(devpath, {});
@@ -2267,6 +2322,8 @@ bool DFileView::setRootUrl(const DUrl &url)
         if (!dp.devid.length()) {
             //QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
             DFileService::instance()->setCursorBusyState(true);
+            if (DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(strVolTag))
+                DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bLoading = true;
 
             QSharedPointer<QFutureWatcher<bool>> fw(new QFutureWatcher<bool>);
             connect(fw.data(), &QFutureWatcher<bool>::finished, this, [ = ] {
@@ -2644,10 +2701,14 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
-    const QVector<MenuAction> &actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
+    QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
 
     if (actions.isEmpty())
         return;
+    // sp3 feature: root用户和服务器版本用户不需要以管理员身份打开的功能
+    if (DFMGlobal::isRootUser() || DFMGlobal::isServerSys()) {
+        actions.removeAll(MenuAction::OpenAsAdmin);
+    }
 
     const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList(DAbstractFileInfo::SpaceArea);
 
@@ -2771,7 +2832,12 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         qDebug() << "reject show menu";
         return;
     }
-    menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(windowId()), false);
+    if (VaultController::isRootDirectory(info->fileUrl().fragment())) {
+        //! create vault menu.
+        menu = DFileMenuManager::createVaultMenu(this->topLevelWidget());
+    } else {
+        menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(windowId()), false);
+    }
     lock = true;
 
     if (!menu) {
@@ -3210,6 +3276,11 @@ void DFileViewPrivate::doFileNameColResize()
         int targetWidth = q->width() - columnWidthSumOmitFileName;
         if (targetWidth >= headerView->minimumSectionSize()) {
             headerView->resizeSection(fileNameColRole, q->width() - columnWidthSumOmitFileName);
+        } else {
+            // fix bug#39026 文件管理器列表视图的窗口拖至最窄，点击最大化，点击还原，文管窗口未自适应大小
+            // 当文管窗口拖至最窄时，targetWidth的值小于headerView->minimumSectionSize()（80），
+            // 所以不会走上面的if，导致还原时显示的还是最大化时候的值
+            headerView->resizeSection(fileNameColRole, headerView->minimumSectionSize());
         }
     }
 }

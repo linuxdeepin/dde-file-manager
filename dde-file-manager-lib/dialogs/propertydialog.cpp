@@ -391,6 +391,14 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     } else {
         // tagged file basicinfo not complete??
         DUrl realUrl = m_url.isTaggedFile() ? DUrl::fromLocalFile(m_url.fragment()) : m_url;
+
+        //! bug#40608 解决通过标记访问保险箱，属性菜单显示不正确的问题.
+        bool isVaultFile = VaultController::isRootDirectory(realUrl.toLocalFile());
+        if (isVaultFile) {
+            //! set scheme to get vault file info.
+            realUrl.setScheme(DFMVAULT_SCHEME);
+        }
+
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, realUrl);
         if (!fileInfo) {
             close();
@@ -1200,11 +1208,17 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
                                        : info;
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
-    connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
+//    connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
     //    connect(frame, &ShareInfoFrame::unfolderShared, this, [this](){
     //        m_expandGroup.at(1)->setExpand(false);
     //    });
 
+    // 侧边栏创建完成共享标签后再执行动画
+    DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
+    if (window) {
+        DFMSideBar *sideBar = window->getLeftSideBar();
+        connect(sideBar, &DFMSideBar::addUserShareItemFinished, this, &PropertyDialog::flickFolderToSidebar);
+    }
     return frame;
 }
 

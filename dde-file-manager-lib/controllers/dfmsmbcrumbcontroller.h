@@ -30,7 +30,7 @@ DFM_BEGIN_NAMESPACE
 class DFMSmbCrumbController : public DFMCrumbInterface
 {
 public:
-    explicit DFMSmbCrumbController(QObject *parent = 0);
+    explicit DFMSmbCrumbController(QObject *parent = nullptr);
     ~DFMSmbCrumbController();
 
     bool supportedUrl(DUrl url) override;

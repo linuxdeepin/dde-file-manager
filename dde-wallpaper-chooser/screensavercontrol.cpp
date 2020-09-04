@@ -20,7 +20,6 @@ bool needShowScreensaver()
         return false;
     }
 
-
     //2 判断是否安装屏保程序
     QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ListActivatableNames");
     QDBusMessage response = QDBusConnection::sessionBus().call(msg);

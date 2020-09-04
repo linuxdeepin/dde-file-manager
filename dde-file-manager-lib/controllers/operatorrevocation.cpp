@@ -38,13 +38,19 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
     Q_UNUSED(event)
     Q_UNUSED(resultData)
 
-    switch ((int)event->type()) {
+    switch (static_cast<DFMEvent::Type>(event->type())) {
     case DFMEvent::SaveOperator: {
         DFMSaveOperatorEvent *e = static_cast<DFMSaveOperatorEvent*>(event.data());
 
         if (e->iniaiator() && e->iniaiator()->property("_dfm_is_revocaion_event").toBool())
             return true;
 
+        //fix bug44556、44632文件多次删除、剪切、撤销出现撤销失败（根据产品需求，限制最多连续撤销两次）
+        if (REVOCATION_TIMES == operatorStack.count()) {
+            DFMEvent tmp = operatorStack.pop();
+            operatorStack.clear();
+            operatorStack.push(tmp);
+        }
         operatorStack.push(*event.data());
         return true;
     }

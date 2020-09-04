@@ -83,6 +83,7 @@ public:
     static QStringList Lsblk_Keys;
 
     static bool AskingPassword;
+    static bool AskedPasswordWhileMountDisk;
     static QJsonObject SMBLoginObj;
     static DFMUrlBaseEvent MountEvent;
 

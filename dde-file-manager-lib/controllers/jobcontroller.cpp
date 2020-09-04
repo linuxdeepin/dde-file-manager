@@ -24,6 +24,7 @@
 
 #include "jobcontroller.h"
 #include "dfileservices.h"
+#include "fulltextsearch.h"
 
 #include <QtConcurrent/QtConcurrent>
 
@@ -140,9 +141,11 @@ void JobController::setCountCeiling(int countCeiling)
 
 void JobController::run()
 {
+    m_updateFinished = false;
     if (!m_iterator) {
         const auto &&list = DFileService::instance()->getChildren(this, m_fileUrl, m_nameFilters, m_filters, QDirIterator::NoIteratorFlags, m_silent);
 
+        m_updateFinished = true;
         emit childrenUpdated(list);
         emit addChildrenList(list);
 
@@ -167,9 +170,6 @@ void JobController::run()
         emit childrenUpdated(fileInfoQueue);
         emit addChildrenList(fileInfoQueue);
     }
-    //获取目录是否优化
-    bool boptimise = m_fileUrl.isOptimise();
-    m_iterator->setOptimise(boptimise);
     while (m_iterator->hasNext()) {
         if (m_state == Paused) {
             mutex.lock();
@@ -182,12 +182,9 @@ void JobController::run()
         }
 
         m_iterator->next();
-        //判读ios手机，传输慢，需要特殊处理优化
         DAbstractFileInfoPointer fileinfo;
-        if (boptimise) {
-            fileinfo = m_iterator->optimiseFileInfo();
-        }
-        if(!boptimise || !fileinfo) {
+        fileinfo = m_iterator->optimiseFileInfo();
+        if (!fileinfo) {
             fileinfo = m_iterator->fileInfo();
         }
         if (update_children) {
@@ -216,6 +213,8 @@ void JobController::run()
 
         }
     }
+    //刷新已完成
+    m_updateFinished = true;
 
     if (timer) {
         delete timer;
@@ -237,5 +236,6 @@ void JobController::setState(JobController::State state)
 
     m_state = state;
 
+    DFMFullTextSearchManager::getInstance()->setSearchState(state);
     emit stateChanged(state);
 }

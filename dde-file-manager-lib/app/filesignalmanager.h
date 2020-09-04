@@ -204,6 +204,9 @@ signals:
     /*show retore failed dialog for permission*/
     void requestShowRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
 
+    /*show restore failed dialog for ource file does not exist*/
+    void requestShowRestoreFailedSourceNotExist(const DUrlList& urlList);
+
     /*show dialog for no permission operation*/
     void requestShowNoPermissionDialog(const DFMUrlListBaseEvent& event);
 
@@ -226,6 +229,16 @@ signals:
 
     // 强制刷新计算机页面
     void requestUpdateComputerView();
+
+    // 请求重定向tab页
+    void requestRedirectTabUrl(const DUrl &tabRootUrl, const DUrl &newUrl);
+
+    // 请求关闭tab页
+    void requestCloseTab(const DUrl &tabRootUrl);
+
+    //隐藏系统盘状态发生改变消息
+    void requestHideSystemPartition(bool ishide);
+
 
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */

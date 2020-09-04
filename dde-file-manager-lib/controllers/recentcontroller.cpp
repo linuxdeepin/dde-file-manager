@@ -504,7 +504,9 @@ void RecentController::handleFileChanged()
                                                               recentUrl);
                         }
                         //如果readtime变更了，需要通知filesystemmodel重新排序
-                        else if (recentNodes[recentUrl]->readDateTime().toSecsSinceEpoch() != QDateTime::fromString(readTime.toString()).toSecsSinceEpoch()) {
+                        else if (recentNodes[recentUrl]->readDateTime().toSecsSinceEpoch() != QDateTime::fromString(readTime.toString(), Qt::ISODate).toSecsSinceEpoch()) {
+                            //先更新info数据
+                            recentNodes[recentUrl]->updateInfo();
                             DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
                                                               &DAbstractFileWatcher::fileModified,
                                                               recentUrl);

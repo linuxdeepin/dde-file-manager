@@ -32,7 +32,7 @@ class BaseJob : public QObject, public QDBusContext
 {
     Q_OBJECT
 public:
-    explicit BaseJob(QObject *parent = 0);
+    explicit BaseJob(QObject *parent = nullptr);
     ~BaseJob();
 
 

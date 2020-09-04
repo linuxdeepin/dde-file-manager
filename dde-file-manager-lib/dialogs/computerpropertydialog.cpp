@@ -203,9 +203,9 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
 
     //! 从com.deepin.system.SystemInfo中获取实际安装的内存的大小
     QDBusInterface *deepin_systemInfo = new QDBusInterface("com.deepin.system.SystemInfo",
-                                                      "/com/deepin/system/SystemInfo",
-                                                      "com.deepin.system.SystemInfo",
-                                                      QDBusConnection::systemBus(), this);
+                                                           "/com/deepin/system/SystemInfo",
+                                                           "com.deepin.system.SystemInfo",
+                                                           QDBusConnection::systemBus(), this);
 
     //部分数据优先从dbus读取，如果dbus没有，则从dtk读数据
     if (m_systemInfo->isValid()) {
@@ -221,10 +221,10 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         if (Edition.isEmpty()) {
             Edition = m_systemInfo->version();
             QStringList temp = Edition.split(' ');
-            if(temp.size() > 1){
+            if (temp.size() > 1) {
                 version = temp[0];
                 Edition = temp[1];
-            }else if(!temp.isEmpty()){
+            } else if (!temp.isEmpty()) {
                 Edition = temp[0];
             }
         }
@@ -235,7 +235,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         Edition = DSysInfo::uosEditionName();
         //! 获取系统版本号
         version = DSysInfo::majorVersion();
-        if(!deepin_systemInfo->isValid()){
+        if (!deepin_systemInfo->isValid()) {
             //! 获取安装的内存总量
             memoryInstallStr = formatCap(static_cast<qulonglong>(DSysInfo::memoryInstalledSize()), 1024, 0);
             //! 获取实际可以内存总量

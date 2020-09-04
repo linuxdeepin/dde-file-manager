@@ -189,10 +189,26 @@ const DAbstractFileInfoPointer TrashManager::createFileInfo(const QSharedPointer
 
 bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
+    // fix bug#41297 回收站的文件夹预览,点击打开,应该不能弹出提示框
+    // 判断url为文件夹则不弹出提示框，新开一个文管打开
+    DUrl fileUrl = event->url();
+    QFileInfo fileInfo(fileUrl.toLocalFile());
+    if (fileInfo.isFile()) {
+        QString strMsg = tr("Unable to open items in the trash,please restore it first");
+        dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
+        return false;
+    }
+
+    // 预览打开文件夹
+    return DFileService::instance()->openFile(event->sender(), DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + event->url().path()));
+}
+
+bool TrashManager::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
+{
     Q_UNUSED(event)
 
-    qWarning() << "trash open action is disable : " << event->url();
-//    return FileServices::instance()->openFile(DUrl::fromLocalFile(TRASHFILEPATH + fileUrl.path()));
+    QString strMsg = tr("Unable to open items in the trash,please restore it first");
+    dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
     return false;
 }
 
@@ -328,6 +344,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         return true;
 
     DUrlList restoreFailedList;
+    DUrlList restoreFailedSourceNotExist;
     DUrlList restoreFileOriginUrlList;
 
     DUrlList urlist;
@@ -393,8 +410,8 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
 //            return restoreTrashFile(list, restoreOriginUrls);
 //        } else {
-++i;
-job->setRestoreProgress(double(i) / total);
+        ++i;
+        job->setRestoreProgress(double(i) / total);
 //        }
 
         //###(zccrs): 必须通过 DAbstractFileInfoPointer 使用
@@ -409,6 +426,8 @@ job->setRestoreProgress(double(i) / total);
 
         if (!ret && info->exists()) {
             restoreFailedList << info->fileUrl();
+        } else if (!ret && !info->exists()) {
+            restoreFailedSourceNotExist << info->fileUrl();
         } else {
             restoreFileOriginUrlList << info->originUrl();
         }
@@ -420,6 +439,10 @@ job->setRestoreProgress(double(i) / total);
 
     if (!ok && restoreFailedList.count() > 0) {
         emit fileSignalManager->requestShowRestoreFailedDialog(restoreFailedList);
+    }
+
+    if (!ok && restoreFailedSourceNotExist.count() > 0) {
+        emit fileSignalManager->requestShowRestoreFailedSourceNotExist(restoreFailedSourceNotExist);
     }
 
     if (restoreOriginUrls)

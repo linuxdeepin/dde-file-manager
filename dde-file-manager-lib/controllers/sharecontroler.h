@@ -16,12 +16,16 @@ class ShareControler : public DAbstractFileController
 {
     Q_OBJECT
 public:
-    explicit ShareControler(QObject *parent = 0);
+    explicit ShareControler(QObject *parent = nullptr);
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
+    // 文件打开接口
+    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    // 权限设置接口
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
     bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const override;
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const override;
 

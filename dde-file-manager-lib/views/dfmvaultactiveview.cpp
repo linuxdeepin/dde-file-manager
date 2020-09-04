@@ -58,9 +58,11 @@ void DFMVaultActiveView::setBeginingState()
     this->setCloseButtonVisible(true);
 }
 
-void DFMVaultActiveView::closeEvent(QCloseEvent *)
+void DFMVaultActiveView::closeEvent(QCloseEvent *event)
 {
     setBeginingState();
+    // 响应基类关闭事件
+    DFMVaultPageBase::closeEvent(event);
 }
 
 void DFMVaultActiveView::slotNextWidget()

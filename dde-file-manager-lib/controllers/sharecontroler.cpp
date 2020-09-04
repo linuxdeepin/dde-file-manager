@@ -23,7 +23,7 @@ class ShareFileWatcherPrivate;
 class ShareFileWatcher : public DAbstractFileWatcher
 {
 public:
-    explicit ShareFileWatcher(QObject *parent = 0);
+    explicit ShareFileWatcher(QObject *parent = nullptr);
 
 private slots:
     void onUserShareAdded(const QString &filePath);
@@ -56,14 +56,14 @@ bool ShareFileWatcherPrivate::start()
     Q_Q(ShareFileWatcher);
 
     return q->connect(userShareManager, &UserShareManager::userShareAdded, q, &ShareFileWatcher::onUserShareAdded)
-               && q->connect(userShareManager, &UserShareManager::userShareDeleted, q, &ShareFileWatcher::onUserShareDeleted);
+           && q->connect(userShareManager, &UserShareManager::userShareDeleted, q, &ShareFileWatcher::onUserShareDeleted);
 }
 
 bool ShareFileWatcherPrivate::stop()
 {
     Q_Q(ShareFileWatcher);
 
-    return q->disconnect(userShareManager, 0, q, 0);
+    return q->disconnect(userShareManager, nullptr, q, nullptr);
 }
 
 void ShareFileWatcher::onUserShareAdded(const QString &filePath)
@@ -109,9 +109,31 @@ const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const QSharedP
 DAbstractFileWatcher *ShareControler::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     if (event->url().path() != "/")
-        return 0;
+        return nullptr;
 
     return new ShareFileWatcher();
+}
+
+bool ShareControler::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
+{
+    // 需要将共享URL转换为普通url
+    const DUrl &fileUrl = realUrl(event->url());
+
+    if (!fileUrl.isValid())
+        return false;
+
+    return DFileService::instance()->openFile(event->sender(), fileUrl);
+}
+
+bool ShareControler::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    // 需要将共享URL转换为普通url
+    const DUrl &fileUrl = realUrl(event->url());
+
+    if (!fileUrl.isValid())
+        return false;
+
+    return DFileService::instance()->setPermissions(event->sender(), fileUrl, event->permissions());
 }
 
 bool ShareControler::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const

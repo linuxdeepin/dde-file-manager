@@ -38,7 +38,7 @@ public:
     { return "com.deepin.daemon.DiskMount"; }
 
 public:
-    DiskMountInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    DiskMountInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~DiskMountInterface();
 

@@ -31,13 +31,11 @@
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
-
 #include "controllers/vaultcontroller.h"
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 #include "models/desktopfileinfo.h"
 #include "shutil/mimetypedisplaymanager.h"
-
 #include "singleton.h"
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
@@ -52,8 +50,17 @@
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "views/dtagactionwidget.h"
+#include "plugins/dfmadditionalmenu.h"
+#include "models/dfmrootfileinfo.h"
+#include "bluetooth/bluetoothmanager.h"
+#include "bluetooth/bluetoothmodel.h"
+#include "io/dstorageinfo.h"
+#include "vault/vaultlockmanager.h"
+#include "vault/vaulthelper.h"
+#include "app/filesignalmanager.h"
+#include "views/dfilemanagerwindow.h"
 
-#include <dgiosettings.h>
+#include <DSysInfo>
 
 #include <QMetaObject>
 #include <QMetaEnum>
@@ -67,9 +74,10 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QWidgetAction>
+
+#include <dgiosettings.h>
 #include <unistd.h>
 
-#include <plugins/dfmadditionalmenu.h>
 
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
 
@@ -166,6 +174,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         return menu;
     }
 
+    bool enableSendToBluetooth = true; // feat 蓝牙：当选中的列表中包含文件夹时不予启用蓝牙发送选项
     //! urlList中有保险箱的DUrl需要进行转换否则会出现报错或功能不可用
     DUrlList urls = urlList;
     for(int i = 0; i < urlList.size(); ++i)
@@ -174,6 +183,13 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         {
             urls[i] = VaultController::vaultToLocalUrl(urlList[i]);
 
+        }
+
+        // feat 蓝牙：当选中的列表中包含文件夹时不予启用蓝牙发送选项
+        if (bluetoothManager->model()->adapters().count() > 0 && enableSendToBluetooth) {
+            DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, urls[i]);
+            if (fileInfo && fileInfo->isDir())
+                enableSendToBluetooth = false;
         }
     }
 
@@ -195,7 +211,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             disableList << MenuAction::CompleteDeletion;
         }
         if (info->isDir()) { //判断是否目录
-            if (info->ownerId() != getuid() && getuid() != 0) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
+            if (info->ownerId() != getuid() && !DFMGlobal::isRootUser()) { //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
                 disableList << MenuAction::UnShare << MenuAction::Share; //设置取消共享、取消共享不可选
             }
         }
@@ -220,6 +236,11 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         if (!DFileMenuManager::whetherShowTagActions(urls)) {
             actions.removeAll(MenuAction::TagInfo);
             actions.removeAll(MenuAction::TagFilesUseColor);
+        }
+
+        // sp3 feature: root用户和服务器版本用户不需要以管理员身份打开的功能
+        if (DFMGlobal::isRootUser() || DFMGlobal::isServerSys()) {
+            actions.removeAll(MenuAction::OpenAsAdmin);
         }
 
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
@@ -419,7 +440,11 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         DFileMenuData::actionToMenuAction[action] = MenuAction::OpenWithCustom;
     }
 
-    if (deviceListener->isMountedRemovableDiskExits()) {
+    if (deviceListener->isMountedRemovableDiskExits()
+#ifdef BLUETOOTH_ENABLE
+        || bluetoothManager->model()->adapters().count() > 0
+#endif
+    ) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
         if (currentUrl.path().contains("/dev/sr")
                 || (currentUrl.scheme() == SEARCH_SCHEME && currentUrl.query().contains("/dev/sr"))) // 禁用光盘搜索列表中的发送到选项
@@ -427,14 +452,32 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         else {
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
+#ifdef BLUETOOTH_ENABLE // (暂时屏蔽蓝牙入口，还未开发完成)
+                if (bluetoothManager->model()->adapters().count() > 0) { // 如果有蓝牙设备
+                    QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
+                    sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
+                    sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
+                    connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
+
+                    if (!enableSendToBluetooth)
+                        sendToBluetooth->setEnabled(false);
+                }
+#endif
+
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
-                    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
-                    qDebug() << "add send action: " << pDeviceinfo->getDiskInfo().name();
-                    QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
-                    action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
-                    action->setProperty("urlList", DUrl::toStringList(urls));
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
                     QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
+                    DUrl gvfsmpurl;
+                    gvfsmpurl.setScheme(DFMROOT_SCHEME);
+                    gvfsmpurl.setPath("/" + QUrl::toPercentEncoding(tempId) + "." SUFFIX_UDISKS);
+
+                    DAbstractFileInfoPointer fp(new DFMRootFileInfo(gvfsmpurl)); // 通过DFMRootFileInfo 拿到与桌面显示一致的 名字
+
+                    qDebug() << "add send action: [ diskinfoname:" << pDeviceinfo->getDiskInfo().name() << " to RootFileInfo: " << fp->fileDisplayName();
+
+                    QAction *action = new QAction(fp->fileDisplayName(), sendToMountedRemovableDiskMenu);
+                    action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
+                    action->setProperty("urlList", DUrl::toStringList(urls));
                     action->setProperty("blkDevice", tempId);
 
                     // 禁用发送到列表中的本设备项
@@ -519,6 +562,113 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
+
+    return menu;
+}
+
+DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *sender)
+{
+    DFileMenu *menu = nullptr;
+
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topWidget);
+    VaultController *controller = VaultController::ins();
+
+    VaultController::VaultState vaultState = controller->state();
+
+    DUrl url = controller->vaultToLocalUrl(controller->makeVaultUrl());
+    url.setScheme(DFMVAULT_SCHEME);
+    const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
+
+    QSet<MenuAction> disableList;
+    if (!VaultLockManager::getInstance().isValid()) {
+        disableList << MenuAction::FiveMinutes
+                    << MenuAction::TenMinutes
+                    << MenuAction::TwentyMinutes;
+    }
+
+    menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList(), false);
+    menu->setEventData(DUrl(), {url}, WindowManager::getWindowId(wnd), sender);
+
+    auto lockNow = [](DFileManagerWindow *wnd)->bool
+    {
+        //! Is there a vault task, top it if exist.
+        if(!VaultHelper::topVaultTasks()) {
+            emit fileSignalManager->requestCloseAllTabOfVault(wnd->windowId());
+            VaultController::ins()->lockVault();
+        }
+
+        return true;
+    };
+
+    auto autoLock = [](int lockState)->bool
+    {
+        return VaultLockManager::getInstance().autoLock(static_cast<VaultLockManager::AutoLockState>(lockState));
+    };
+
+    auto showView = [&](QWidget *wndPtr, QString host)
+    {
+        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(wndPtr);
+        wnd->cd(VaultController::makeVaultUrl("/", host));
+    };
+
+    if (vaultState == VaultController::Unlocked) {
+
+        //! 立即上锁
+        QAction *action = DFileMenuManager::getAction(MenuAction::LockNow);
+        QObject::connect(action, &QAction::triggered, action, [&, wnd](){
+            lockNow(wnd);
+        });
+
+        //! 自动上锁
+        VaultLockManager::AutoLockState lockState = VaultLockManager::getInstance().autoLockState();
+
+        QAction *actionNever = DFileMenuManager::getAction(MenuAction::Never);
+        QObject::connect(actionNever, &QAction::triggered, actionNever, [&](){
+            autoLock(VaultLockManager::Never);
+        });
+        actionNever->setCheckable(true);
+        actionNever->setChecked(lockState == VaultLockManager::Never ? true : false);
+
+        QAction *actionFiveMins = DFileMenuManager::getAction(MenuAction::FiveMinutes);
+        QObject::connect(actionFiveMins, &QAction::triggered, actionFiveMins, [&](){
+            autoLock(VaultLockManager::FiveMinutes);
+        });
+        actionFiveMins->setCheckable(true);
+        actionFiveMins->setChecked(lockState == VaultLockManager::FiveMinutes ? true : false);
+
+        QAction *actionTenMins = DFileMenuManager::getAction(MenuAction::TenMinutes);
+        QObject::connect(actionTenMins, &QAction::triggered, actionTenMins, [&](){
+            autoLock(VaultLockManager::TenMinutes);
+        });
+        actionTenMins->setCheckable(true);
+        actionTenMins->setChecked(lockState == VaultLockManager::TenMinutes ? true : false);
+
+        QAction *actionTwentyMins = DFileMenuManager::getAction(MenuAction::TwentyMinutes);
+        QObject::connect(actionTwentyMins, &QAction::triggered, actionTwentyMins, [&](){
+            autoLock(VaultLockManager::TwentyMinutes);
+        });
+        actionTwentyMins->setCheckable(true);
+        actionTwentyMins->setChecked(lockState == VaultLockManager::TwentyMinutes ? true : false);
+
+        //! 删除保险柜
+        action = DFileMenuManager::getAction(MenuAction::DeleteVault);
+        QObject::connect(action, &QAction::triggered, action, [&, topWidget](){
+            showView(topWidget, "delete");
+        });
+    } else if (vaultState == VaultController::Encrypted) {
+
+        //! 解锁
+        QAction *action = DFileMenuManager::getAction(MenuAction::UnLock);
+        QObject::connect(action, &QAction::triggered, action, [&, topWidget](){
+            showView(topWidget, "unlock");
+        });
+
+        //! 使用恢复凭证
+        action = DFileMenuManager::getAction(MenuAction::UnLockByKey);
+        QObject::connect(action, &QAction::triggered, action, [&, topWidget](){
+            showView(topWidget, "certificate");
+        });
+    }
 
     return menu;
 }
@@ -641,6 +791,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     actionKeys[MenuAction::SendToRemovableDisk] = QObject::tr("Send to");
+    actionKeys[MenuAction::SendToBluetooth] = QObject::tr("Send to Bluetooth");
     actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
     actionKeys[MenuAction::Delete] = QObject::tr("Delete");
     actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Delete");
@@ -1002,6 +1153,14 @@ bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
         if (!temp) {
             return false;
         }
+
+        //多选文件中包含一下文件时 则不展示标记信息菜单项
+        if (info->fileUrl() == DesktopFileInfo::computerDesktopFileUrl()
+                || info->fileUrl() == DesktopFileInfo::trashDesktopFileUrl()
+                || info->fileUrl() == DesktopFileInfo::homeDesktopFileUrl())
+        {
+            return false;
+        }
     }
 
     return true;
@@ -1039,6 +1198,19 @@ void DFileMenuManager::actionTriggered(QAction *action)
             qDebug() << typeAction->text() << action->text();
             if (typeAction->text() == action->text()) {
                 const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
+
+                // fix bug 39754 【sp3专业版】【文件管理器】【5.2.0.8-1】挂载磁盘右键菜单，拔出挂载磁盘，选择任意右键菜单列表-属性，界面展示大小异常
+                // 按照测试期望处理，当 url 构造出来的文件信息不存在的时候，不执行后续的事件处理
+                const DUrlList &selUrls = event->selectedUrls();
+                if (selUrls.count() > 0) {
+                    const DUrl &u = selUrls.first();
+                    if (u.isValid() && !DStorageInfo::isLowSpeedDevice(u.path())) { // 这里只针对非低速设备做判定，否则可能导致正常情况下的右键菜单响应过慢
+                        DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
+                        if (info && !info->exists())
+                            return;
+                    }
+                }
+
                 DFMEventDispatcher::instance()->processEvent(event);
             }
         }

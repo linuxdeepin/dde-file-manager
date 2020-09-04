@@ -51,6 +51,22 @@ public slots:
      */
     quint64 getSelfTime() const;
 
+    /**
+     * @brief isLockEventTriggered 是否存在已触发的锁定事件
+     * @return
+     */
+    bool isLockEventTriggered() const;
+
+    /**
+     * @brief triggerLockEvent 触发锁定事件
+     */
+    void triggerLockEvent();
+
+    /**
+     * @brief clearLockEvent 清除锁定事件
+     */
+    void clearLockEvent();
+
 protected:
     /**
      * @brief tick 秒针
@@ -62,6 +78,8 @@ private:
 
     QTimer m_selfTimer;
     quint64 m_selfTime;
+
+    bool m_isLockEventTriggerd = false;
 };
 
 #endif // VAULTCLOCK_H

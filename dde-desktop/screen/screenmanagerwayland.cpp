@@ -170,7 +170,8 @@ void ScreenManagerWayland::onMonitorChanged()
             disconnectScreen(sp);
         }
     }
-    emit sigScreenChanged();
+    //emit sigScreenChanged();
+    appendEvent(Screen);
 }
 
 void ScreenManagerWayland::onDockChanged()
@@ -184,17 +185,19 @@ void ScreenManagerWayland::onDockChanged()
     emit sigScreenAvailableGeometryChanged(screen, screen->availableGeometry());
 #else
     //新增动态dock区功能，dock区不再只是在主屏幕,随鼠标移动
-    emit sigScreenAvailableGeometryChanged(nullptr, QRect());
+    //emit sigScreenAvailableGeometryChanged(nullptr, QRect());
+    appendEvent(AvailableGeometry);
 #endif
 }
 
 void ScreenManagerWayland::onScreenGeometryChanged(const QRect &rect)
 {
-    ScreenObjectWayland *sc = SCREENOBJECT(sender());
-    if (sc != nullptr && m_screens.contains(sc->path())) {
-        ScreenPointer sp = m_screens.value(sc->path());
-        emit sigScreenGeometryChanged(sp, rect);
-    }
+//    ScreenObjectWayland *sc = SCREENOBJECT(sender());
+//    if (sc != nullptr && m_screens.contains(sc->path())) {
+//        ScreenPointer sp = m_screens.value(sc->path());
+//        emit sigScreenGeometryChanged(sp, rect);
+//    }
+    appendEvent(Geometry);
 }
 
 void ScreenManagerWayland::init()
@@ -204,15 +207,18 @@ void ScreenManagerWayland::init()
     //先尝试使用Qt信号，若有问题再使用DBUS的信号
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManagerWayland::onMonitorChanged);
     connect(m_display, &DBusDisplay::MonitorsChanged, this, &ScreenManagerWayland::onMonitorChanged);
-    connect(m_display, &DBusDisplay::PrimaryChanged, this, &AbstractScreenManager::sigScreenChanged);
+    //connect(m_display, &DBusDisplay::PrimaryChanged, this, &AbstractScreenManager::sigScreenChanged);
+    connect(m_display, &DBusDisplay::PrimaryChanged, this, [this](){
+        this->appendEvent(Screen);
+    });
 #ifdef UNUSE_TEMP
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
 #else
     //临时方案，
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this](){
+        //emit sigDisplayModeChanged();
         m_lastMode = m_display->GetRealDisplayMode();
-        qDebug() << "mode changed" << m_lastMode;
-        emit sigDisplayModeChanged();
+        this->appendEvent(Mode);
     });
 
     //临时方案，使用PrimaryRectChanged信号作为拆分/合并信号
@@ -222,8 +228,11 @@ void ScreenManagerWayland::init()
         if (m_lastMode == mode)
             return;
         m_lastMode = mode;
-        emit sigDisplayModeChanged();
+        //emit sigDisplayModeChanged();
+        this->appendEvent(Mode);
     });
+
+    m_lastMode = m_display->GetRealDisplayMode();
 #endif
 
     //dock区处理

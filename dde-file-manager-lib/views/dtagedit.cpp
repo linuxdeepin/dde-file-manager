@@ -13,7 +13,7 @@
 #include <QKeyEvent>
 #include <QApplication>
 
-DTagEdit::DTagEdit(QWidget * const parent)
+DTagEdit::DTagEdit(QWidget *const parent)
     : DArrowRectangle{ DArrowRectangle::ArrowTop,  parent }
 {
     this->initializeWidgets();
@@ -33,39 +33,44 @@ void DTagEdit::setFocusOutSelfClosing(bool value)noexcept
     m_flagForShown.compare_exchange_strong(excepted, value, std::memory_order_release);
 }
 
-void DTagEdit::setFilesForTagging(const QList<DUrl>& files)
+void DTagEdit::setFilesForTagging(const QList<DUrl> &files)
 {
     m_files = files;
 }
 
 void DTagEdit::setDefaultCrumbs(const QStringList &list)
 {
+    //由于crumbEdit变更响应被优化合并这里的改动不再被需要，先注释掉
+    //TODO 等过几个版本这块功能没有问题了再删除该处冗余注释
+    //设置初始值会按顺序添加，多标签情况下会多次触发processTag，这样可能会导致文件被移除再添加等不可控的问题出现
+    //所以这里先断开信号槽链接 等list被append完毕之后主动调用processTag，再连接信号槽
+//    QObject::disconnect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, &DTagEdit::processTags);
     for (const QString &crumb : list)
         m_crumbEdit->appendCrumb(crumb);
+//    if (list.length() > 0)
+//        processTags();
+//    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, &DTagEdit::processTags);
 }
 
 void DTagEdit::onFocusOut()
 {
-    if(m_flagForShown.load(std::memory_order_acquire)){
+    if (m_flagForShown.load(std::memory_order_acquire)) {
         this->processTags();
         this->close();
     }
 }
 
-void DTagEdit::keyPressEvent(QKeyEvent* event)
+void DTagEdit::keyPressEvent(QKeyEvent *event)
 {
-    switch(event->key())
-    {
-    case Qt::Key_Escape:
-    {
+    switch (event->key()) {
+    case Qt::Key_Escape: {
         this->processTags();
         event->accept();
         this->close();
         break;
     }
     case Qt::Key_Enter:
-    case Qt::Key_Return:
-    {
+    case Qt::Key_Return: {
         QObject::disconnect(this, &DTagEdit::windowDeactivate, this, &DTagEdit::onFocusOut);
         this->processTags();
         event->accept();
@@ -88,8 +93,8 @@ void DTagEdit::initializeWidgets()
 {
     m_crumbEdit = new DCrumbEdit;
     m_promptLabel = new QLabel{
-                                QObject::tr("Input tag info, such as work, family. A comma is used between two tags.")
-                              };
+        QObject::tr("Input tag info, such as work, family. A comma is used between two tags.")
+    };
     m_totalLayout = new QVBoxLayout;
     m_BGFrame = new QFrame;
 }
@@ -129,14 +134,20 @@ void DTagEdit::initializeLayout()
 void DTagEdit::initializeConnect()
 {
     QObject::connect(this, &DTagEdit::windowDeactivate, this, &DTagEdit::onFocusOut);
-    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, m_crumbEdit, [=](){
-        processTags();
+
+    //为避免crumbEdit频繁变更 导致processTags被高频大量调用 这里做一个变更合并机制
+    m_waitForMoreCrumbChanged.setSingleShot(true);
+    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, [=]{
+        m_waitForMoreCrumbChanged.start(500);   //500毫秒内的crumb连续变更会合并为一次crumb变更操作
     });
+    QObject::connect(&m_waitForMoreCrumbChanged, &QTimer::timeout, this, &DTagEdit::processTags);
 }
 
 void DTagEdit::processTags()
 {
     QList<QString> tagList{ m_crumbEdit->crumbList() };
+    //防止DTagEdit对象被析构后m_files无法访问
+    QList<DUrl> files = m_files;
 
-    DFileService::instance()->makeTagsOfFiles(this, m_files, tagList);
+    DFileService::instance()->makeTagsOfFiles(this, files, tagList);
 }

@@ -81,6 +81,7 @@ public:
 
 signals:
     void disableUrlSchemesChanged();
+    void addUserShareItemFinished();
 public slots:
     void onRootFileChange(const DAbstractFileInfoPointer &fi);
 private slots:

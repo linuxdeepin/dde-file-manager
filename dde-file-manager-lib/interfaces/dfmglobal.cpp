@@ -52,6 +52,7 @@
 #include <dfmstandardpaths.h>
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "bluetooth/bluetoothmanager.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -77,9 +78,11 @@
 #include <locale>
 #include <sstream>
 #include <fstream>
+#include <sys/stat.h>
 
 #include <KCodecs>
 #include <KEncodingProber>
+#include <DSysInfo>
 
 #include <QMimeType>
 #include <QMimeDatabase>
@@ -98,11 +101,13 @@ extern "C"
 
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
+static QList<quint64> clipbordFileinode;
 static DFMGlobal::ClipboardAction clipboardAction = DFMGlobal::UnknowAction;
 
 void onClipboardDataChanged()
 {
     clipboardFileUrls.clear();
+    clipbordFileinode.clear();
     const QByteArray &data = qApp->clipboard()->mimeData()->data("x-special/gnome-copied-files");
 
     if (data.startsWith("cut")) {
@@ -118,6 +123,11 @@ void onClipboardDataChanged()
             url.setScheme("file");
         }
         clipboardFileUrls << url;
+        struct stat statInfo;
+        int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
+        if (0 == fileStat) {
+            clipbordFileinode << statInfo.st_ino;
+        }
     }
 }
 
@@ -468,6 +478,11 @@ void DFMGlobal::initThumbnailConnection()
     });
 }
 
+void DFMGlobal::initBluetoothManager()
+{
+    bluetoothManager;
+}
+
 QString DFMGlobal::getUser()
 {
     static QString user = QString::fromLocal8Bit(qgetenv("USER"));
@@ -485,9 +500,29 @@ bool DFMGlobal::isRootUser()
     return getUserId() == 0;
 }
 
+bool DFMGlobal::isServerSys()
+{
+    return DSysInfo::deepinType() == DSysInfo::DeepinServer;
+}
+
+bool DFMGlobal::isDesktopSys()
+{
+    return !(DFMGlobal::isServerSys());
+}
+
+bool DFMGlobal::isOpenAsAdmin()
+{
+    return DFMGlobal::isRootUser() && DFMGlobal::isDesktopSys();
+}
+
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const
 {
     return GlobalData::clipboardFileUrls;
+}
+
+QList<quint64> DFMGlobal::clipboardFileInodeList() const
+{
+    return  GlobalData::clipbordFileinode;
 }
 
 DFMGlobal::ClipboardAction DFMGlobal::clipboardAction() const
@@ -758,6 +793,17 @@ bool DFMGlobal::startWithHanzi(const QString &text)
 
     return text.at(0).script() == QChar::Script_Han;
 }
+
+bool DFMGlobal::startWithSymbol(const QString &text)
+{
+    if (text.isEmpty())
+        return false;
+
+    //匹配字母、数字和中文开头的字符串
+    QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5].*$");
+    return !regExp.exactMatch(text);
+}
+
 #if 0
 //解决定义未使用警告
 static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
