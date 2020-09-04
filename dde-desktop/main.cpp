@@ -223,6 +223,7 @@ int main(int argc, char *argv[])
         DFMGlobal::initDeviceListener();
         DFMGlobal::initGvfsMountManager();
         DFMGlobal::initBluetoothManager();
+        DFMGlobal::initRootFileManager();
     });
 
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.

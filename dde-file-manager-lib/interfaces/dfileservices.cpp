@@ -88,11 +88,7 @@ public:
     static QMultiHash<const HandlerType, DAbstractFileController *> controllerHash;
     static QHash<const DAbstractFileController *, HandlerType> handlerHash;
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
-    static QMap<DUrl, DAbstractFileInfoPointer> rootfilelist;
-    static QMutex rootfileMtx;
-    QAtomicInteger<bool> m_bRootFileInited = false;
     QAtomicInteger<bool>  bstartonce = false;
-    DAbstractFileWatcher *m_rootFileWatcher = nullptr;
 
     bool m_bcursorbusy = false;
     bool m_bonline = false;
@@ -107,8 +103,6 @@ public:
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
 QHash<const DAbstractFileController *, HandlerType> DFileServicePrivate::handlerHash;
 QMultiHash<const HandlerType, HandlerCreatorType> DFileServicePrivate::controllerCreatorHash;
-QMap<DUrl, DAbstractFileInfoPointer> DFileServicePrivate::rootfilelist; //本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
-QMutex DFileServicePrivate::rootfileMtx;
 
 DFileService::DFileService(QObject *parent)
     : QObject(parent)
@@ -134,8 +128,6 @@ DFileService::DFileService(QObject *parent)
             d_ptr->m_loop->exit();
         }
     });
-
-    connect(fileSignalManager,&FileSignalManager::requestHideSystemPartition,this,&DFileService::hideSystemPartition);
 
 }
 
@@ -977,146 +969,6 @@ DStorageInfo *DFileService::createStorageInfo(const QObject *sender, const DUrl 
     return qvariant_cast<DStorageInfo *>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
-QList<DAbstractFileInfoPointer> DFileService::getRootFile()
-{
-    QMutexLocker lk(&d_ptr->rootfileMtx);
-    QList<DAbstractFileInfoPointer> ret = d_ptr->rootfilelist.values();
-    lk.unlock();
-
-    //setCursorBusyState(true);
-//    for (auto url : d_ptr->rootfilelist)
-//    {
-//        DAbstractFileInfoPointer rootinfo = createFileInfo(nullptr,url);
-//        if (rootinfo->exists()) {
-//            ret.push_back(rootinfo);
-//        }
-//    }
-
-    if (!ret.isEmpty()) {
-        // fix 25778 每次打开文管，"我的目录" 顺序随机排列
-        static const QList<QString> udir = {"desktop", "videos", "music", "pictures", "documents", "downloads"};
-        for (int i = 0; i < udir.count(); i++) {
-            for (int j = 0; j < ret.count(); j++) {
-                if (ret[j]->fileUrl().path().contains(udir[i]) && ret[j]->suffix() == SUFFIX_USRDIR && i != j) {
-                    ret.move(j, i);
-                    break;
-                }
-            }
-        }
-    }
-
-    //setCursorBusyState(false);
-    return ret;
-}
-
-bool DFileService::isRootFileInited() const
-{
-    return d_ptr->m_bRootFileInited.load();
-}
-
-void DFileService::changeRootFile(const DUrl &fileurl, const bool bcreate)
-{
-    QMutexLocker lk(&d_ptr->rootfileMtx);
-    if (bcreate) {
-        if (!d_ptr->rootfilelist.contains(fileurl)) {
-            DAbstractFileInfoPointer info = createFileInfo(nullptr, fileurl);
-            if (info->exists()) {
-                d_ptr->rootfilelist.insert(fileurl, info);
-                qDebug() << "  insert   " << fileurl;
-            }
-        }
-    } else {
-        qDebug() << "  remove   " << d_ptr->rootfilelist;
-        if (d_ptr->rootfilelist.contains(fileurl)) {
-            qDebug() << "  remove   " << fileurl;
-            d_ptr->rootfilelist.remove(fileurl);
-        }
-    }
-}
-
-void DFileService::startQuryRootFile()
-{
-    if (!d_ptr->bstartonce) {
-        d_ptr->bstartonce = true;
-
-        DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
-        Q_CHECK_PTR(devicesWatcher);
-        d_ptr->m_rootFileWatcher = devicesWatcher;
-        if (qApp->thread() != devicesWatcher->thread()) {
-            devicesWatcher->moveToThread(qApp->thread());
-            devicesWatcher->setParent(this);
-        }
-
-        QTimer::singleShot(1000, devicesWatcher, [devicesWatcher]() {
-            devicesWatcher->startWatcher();
-        });
-
-        connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl & url) {
-            changeRootFile(url);
-        });
-
-        connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl & url) {
-            changeRootFile(url, false);
-        });
-    }
-
-    qDebug() << "start thread    startQuryRootFile   ===== " << d_ptr->rootfilelist.size() << QThread::currentThread();
-    QMutexLocker lk(&d_ptr->rootfileMtx);
-    if (d_ptr->m_jobcontroller){
-        qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
-        return;
-    }
-    else {
-        //启用异步线程去读取
-        d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
-    }
-    lk.unlock();
-
-    connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this](const DAbstractFileInfoPointer & chi) {
-        QMutexLocker lk(&d_ptr->rootfileMtx);
-        if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
-            d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
-            lk.unlock();
-            qDebug() << "  addChildren " << chi->fileUrl();
-            emit rootFileChange(chi);
-        }
-    }, Qt::DirectConnection);
-
-    connect(d_ptr->m_jobcontroller, &JobController::addChildrenList, this, [this](QList<DAbstractFileInfoPointer> ch) {
-        for (auto chi : ch) {
-            QMutexLocker lk(&d_ptr->rootfileMtx);
-            if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
-                d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
-                lk.unlock();
-                qDebug() << "  addChildrenlist " << chi->fileUrl();
-                emit rootFileChange(chi);
-            }
-        }
-    }, Qt::DirectConnection);
-    connect(d_ptr->m_jobcontroller, &JobController::finished, this, [this]() {
-        QMutexLocker lk(&d_ptr->rootfileMtx);
-        d_ptr->m_jobcontroller->deleteLater();
-        qDebug() << "获取 m_jobcontroller  finished  " << QThread::currentThreadId() << d_ptr->rootfilelist.size();
-        d_ptr->m_jobcontroller = nullptr;
-        d_ptr->m_bRootFileInited.store(true);
-        lk.unlock();
-        emit queryRootFileFinsh();
-    });
-    d_ptr->m_jobcontroller->start();
-}
-
-DAbstractFileWatcher *DFileService::rootFileWather() const
-{
-    return d_ptr->m_rootFileWatcher;
-}
-
-void DFileService::clearThread()
-{
-    if (d_ptr->m_jobcontroller && !d_ptr->m_jobcontroller->isFinished()) {
-        d_ptr->m_jobcontroller->wait();
-    }
-}
-
 void DFileService::setCursorBusyState(const bool bbusy)
 {
     //fix bug 34594,当快速点击左边侧边栏会出现鼠标一直在转圈圈, 去掉全局判断，直接调用鼠标状态
@@ -1299,16 +1151,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     return !bvist;
 }
 
-void DFileService::changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo)
-{
-    QMutexLocker lk(&d_ptr->rootfileMtx);
-    for (const DAbstractFileInfoPointer &fi : rootinfo) {
-        DUrl url = fi->fileUrl();
-        if (!d_ptr->rootfilelist.contains(url) && fi->exists()) {
-            d_ptr->rootfilelist.insert(url, fi);
-        }
-    }
-}
 
 bool DFileService::isNetWorkOnline()
 {
@@ -1384,11 +1226,6 @@ void DFileService::dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUr
             QProcess::execute("chmod -R u+w " + strStagingPath); // 之前尝试使用 DLocalFileHandler 去处理权限问题但是会失败，因此这里采用命令去更改权限
         }
     }
-}
-
-bool DFileService::isRootFileContain(const DUrl &url)
-{
-    return d_ptr->rootfilelist.contains(url);
 }
 
 bool DFileService::isSmbFtpContain(const DUrl &url)
@@ -1488,17 +1325,6 @@ void DFileService::slotError(QNetworkReply::NetworkError err)
     qDebug() << static_cast<QNetworkReply *>(sender())->errorString() << err;
 }
 
-void DFileService::hideSystemPartition()
-{
-    QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
-            getChildren(this, DUrl(DFMROOT_ROOT),QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
-    d_ptr->rootfileMtx.lock();
-    d_ptr->rootfilelist.clear();
-    d_ptr->rootfileMtx.unlock();
-    changRootFile(fileist);
-
-    emit serviceHideSystemPartition();
-}
 
 ///###: replace
 bool DFileService::multiFilesReplaceName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const

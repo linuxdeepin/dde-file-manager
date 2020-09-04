@@ -47,6 +47,7 @@ QMutex *getOpticalDriveMutex();
 #define dialogManager getDialogManager(true)
 #define appController AppController::instance()
 #define fileService DFileService::instance()
+#define rootFileManager DRootFileManager::instance()
 #define deviceListener getUDiskListener(true)
 #define mimeAppsManager Singleton<MimesAppsManager>::instance()
 #define systemPathManager Singleton<PathManager>::instance()

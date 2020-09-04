@@ -294,6 +294,7 @@ public:
     static void initTagManagerConnect();
     static void initThumbnailConnection();
     static void initBluetoothManager();
+    static void initRootFileManager();
 
     static QString getUser();
     static int getUserId();

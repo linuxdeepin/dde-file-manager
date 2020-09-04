@@ -235,7 +235,6 @@ int main(int argc, char *argv[])
     if (isSingleInstance) {
         // init app
         Q_UNUSED(FileManagerApp::instance())
-        DFileService::instance()->startQuryRootFile();
         if (CommandLineManager::instance()->isSet("d")) {
             fileManagerApp;
             app.setQuitOnLastWindowClosed(false);

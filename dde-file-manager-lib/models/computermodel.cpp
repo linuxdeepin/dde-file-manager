@@ -33,6 +33,7 @@
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
 #include "deviceinfoparser.h"
+#include "drootfilemanager.h"
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
@@ -99,8 +100,8 @@ ComputerModel::ComputerModel(QObject *parent)
             }
         };
 
-        connect(fileService,&DFileService::queryRootFileFinsh,this,[this,rootInit](){
-            QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+        connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this,rootInit](){
+            QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
             rootInit(ch);
 
@@ -109,11 +110,11 @@ ComputerModel::ComputerModel(QObject *parent)
             addItem(VaultController::makeVaultUrl());
         });
 
-        connect(fileService,&DFileService::serviceHideSystemPartition,this,[this,rootInit](){
+        connect(DRootFileManager::instance(),&DRootFileManager::serviceHideSystemPartition,this,[this,rootInit](){
             m_items.clear();
             m_nitems = 0;
             addItem(makeSplitterUrl(tr("My Directories")));
-            QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+            QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
             rootInit(ch);
 
@@ -122,10 +123,9 @@ ComputerModel::ComputerModel(QObject *parent)
             addItem(VaultController::makeVaultUrl());
         });
 
-        if (fileService->isRootFileInited()) {
-            disconnect(fileService,&DFileService::queryRootFileFinsh,this, nullptr);
+        if (DRootFileManager::instance()->isRootFileInited()) {
 
-            QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+            QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "get root file now" << ch.size();
             rootInit(ch);
 
@@ -140,10 +140,10 @@ ComputerModel::ComputerModel(QObject *parent)
         }
         else {
             qDebug() << "root file not inited,wait signal";
-            fileService->startQuryRootFile();
+            DRootFileManager::instance()->startQuryRootFile();
         }
 
-        m_watcher = fileService->rootFileWather();
+        m_watcher = DRootFileManager::instance()->rootFileWather();
         connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
         connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
@@ -213,7 +213,7 @@ ComputerModel::~ComputerModel()
     m_initThread.first = true; //强制退出
     m_initThread.second.waitForFinished();
 #endif
-    fileService->clearThread();
+    rootFileManager->clearThread();
 }
 
 QModelIndex ComputerModel::index(int row, int column, const QModelIndex &parent) const
@@ -615,7 +615,7 @@ void ComputerModel::onOpticalChanged()
 
 void ComputerModel::getRootFile()
 {
-    QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+    QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
     qDebug() << "获取 ComputerModel  getRootFile start" << ch.size() << QThread::currentThread() << qApp->thread();
     if (ch.isEmpty())
         return;

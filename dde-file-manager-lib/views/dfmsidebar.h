@@ -77,13 +77,12 @@ public:
 
     static const int minimumWidth = 120;
     static const int maximumWidth = 200;
-    void rootFileChange();
+    void rootFileResult();
 
 signals:
     void disableUrlSchemesChanged();
     void addUserShareItemFinished();
-public slots:
-    void onRootFileChange(const DAbstractFileInfoPointer &fi);
+
 private slots:
     void onItemActivated(const QModelIndex &index);
     void onContextMenuRequested(const QPoint &pos);
