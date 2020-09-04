@@ -27,6 +27,7 @@
 #include "dfileservices.h"
 #include "singleton.h"
 #include "app/define.h"
+#include "drootfilemanager.h"
 
 #include "dfmsidebarmanager.h"
 #include "interfaces/dfmsidebariteminterface.h"
@@ -341,9 +342,9 @@ DFMSideBar::GroupName DFMSideBar::groupFromName(const QString &name)
     return Unknow;
 }
 
-void DFMSideBar::rootFileChange()
+void DFMSideBar::rootFileResult()
 {
-    QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
+    QList<DAbstractFileInfoPointer> filist  = rootFileManager->getRootFile();
     qDebug() << "DFileService::instance()->getRootFile() filist:" << filist.size();
     if (filist.isEmpty())
         return;
@@ -363,22 +364,6 @@ void DFMSideBar::rootFileChange()
                 addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
                 devitems.push_back(fi->fileUrl());
             }
-        }
-    }
-}
-
-void DFMSideBar::onRootFileChange(const DAbstractFileInfoPointer &fi)
-{
-    //QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
-    qDebug() << "insert root file" << fi->fileUrl() << fi->fileType();
-    if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
-        if (devitems.contains(fi->fileUrl())) {
-            devitems.removeOne(fi->fileUrl());
-            removeItem(fi->fileUrl(), groupName(Device));
-        }
-        if (Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
-            addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
-            devitems.push_back(fi->fileUrl());
         }
     }
 }
@@ -697,17 +682,15 @@ void DFMSideBar::initDeviceConnection()
     connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
 #else
 
-    DFileService::instance()->startQuryRootFile();
-    connect(DFileService::instance(),&DFileService::queryRootFileFinsh,this,[this](){
-        rootFileChange();
+    // 获取遍历结果进行显示
+    connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this](){
+        rootFileResult();
     },Qt::QueuedConnection);
 
-    connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
-
-    connect(DFileService::instance(),&DFileService::serviceHideSystemPartition,this,[this](){
+    connect(DRootFileManager::instance(),&DRootFileManager::serviceHideSystemPartition,this,[this](){
         QList<DUrl> removelist;
         for (auto itemurl : devitems) {
-            if (!DFileService::instance()->isRootFileContain(itemurl)) {
+            if (!DRootFileManager::instance()->isRootFileContain(itemurl)) {
                 removelist.push_back(itemurl);
             }
         }
@@ -715,15 +698,17 @@ void DFMSideBar::initDeviceConnection()
             devitems.removeOne(removeurl);
             removeItem(removeurl, groupName(Device));
         }
-        rootFileChange();
+        rootFileResult();
     },Qt::QueuedConnection);
 
-    if (fileService->isRootFileInited()) {
-        disconnect(DFileService::instance(),&DFileService::queryRootFileFinsh, this, nullptr);
-
-        rootFileChange();
-        connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
+    // 已经初始化了就直接拿结果
+    if (DRootFileManager::instance()->isRootFileInited()) {
+        rootFileResult();
     }
+    else { // 否则开启遍历线程
+        DRootFileManager::instance()->startQuryRootFile();
+    }
+
 #if 0 //性能优化,使用已有的watcher
     DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
     Q_CHECK_PTR(devicesWatcher);
@@ -739,7 +724,7 @@ void DFMSideBar::initDeviceConnection()
     else
         devicesWatcher->startWatcher();
 #else
-    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->rootFileWather();
+    DAbstractFileWatcher *devicesWatcher = rootFileManager->rootFileWather();
 #endif
 #if 0 //未发现被使用，待观察，2020-06-16 性能优化
     qDebug() << "createFileWatcher" << kTime.elapsed();
