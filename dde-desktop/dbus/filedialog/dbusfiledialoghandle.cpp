@@ -145,7 +145,7 @@ void DBusFileDialogHandle::setOption(int option, bool on)
 
 int DBusFileDialogHandle::options() const
 {
-    return DFileDialogHandle::options();
+    return static_cast<int>(DFileDialogHandle::options());
 }
 
 bool DBusFileDialogHandle::testOption(int option) const

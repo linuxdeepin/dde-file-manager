@@ -49,6 +49,7 @@ public:
     static void recurseFolder(const QString &path, const QString &parent,
                             QStringList *list);
     static int filesCount(const QString& dir);
+    static QStringList filesList(const QString& dir);
     static qint64 totalSize(const QString& dir);
     static qint64 totalSize(const DUrlList &files);
     static qint64 totalSize(const DUrlList &files, const qint64& maxLimit, bool &isInLimit);
@@ -121,8 +122,9 @@ public:
 
     static bool isDesktopFile(const QString& filePath);
     static bool isDesktopFile(const QFileInfo &fileInfo);
-    static bool isDesktopFileOptmise(const QString& filePath);
     static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
+
+    static bool deviceShouldBeIgnore(const QString &devId); // devId = /dev/sdb(N)
 };
 
 #endif // FILEUTILS_H

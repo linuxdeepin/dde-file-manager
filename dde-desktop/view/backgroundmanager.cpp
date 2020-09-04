@@ -121,24 +121,29 @@ void BackgroundManager::onRestBackgroundManager()
     }
 }
 
-void BackgroundManager::onScreenGeometryChanged(ScreenPointer sp)
+void BackgroundManager::onScreenGeometryChanged()
 {
-    BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
-    qInfo() << "screen geometry changed" << sp.get() << bw.get();
-    if (bw.get() != nullptr) {
-        qInfo() << "background geometry change from" << bw->geometry() << "to" << sp->geometry()
-                << "screen name" << sp->name();
-        //bw->windowHandle()->handle()->setGeometry(sp->handleGeometry()); //不能设置，设置了widget的geometry会被乱改
-        //fix bug32166 bug32205
-        if (bw->geometry() == sp->geometry()) {
-            qDebug() << "background geometry is equal to screen geometry,and discard changes";
-            return;
+    bool changed = false;
+    for (ScreenPointer sp : m_backgroundMap.keys()) {
+        BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
+        qInfo() << "screen geometry change:" << sp.get() << bw.get();
+        if (bw.get() != nullptr) {
+            //bw->windowHandle()->handle()->setGeometry(sp->handleGeometry()); //不能设置，设置了widget的geometry会被乱改
+            //fix bug32166 bug32205
+            if (bw->geometry() == sp->geometry()) {
+                qDebug() << "background geometry is equal to screen geometry,and discard changes" << bw->geometry();
+                continue;
+            }
+            qInfo() << "background geometry change from" << bw->geometry() << "to" << sp->geometry()
+                    << "screen name" << sp->name();
+            bw->setGeometry(sp->geometry());
+            changed = true;
         }
-        bw->setGeometry(sp->geometry());
-
-        //todo 背景处理
-        onResetBackgroundImage();
     }
+
+    //背景处理
+    if (changed)
+        onResetBackgroundImage();
 }
 
 void BackgroundManager::init()
@@ -172,19 +177,6 @@ void BackgroundManager::pullImageSettings()
             m_backgroundImagePath.insert(sc->name(), path);
         }
     }
-
-
-//    if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())
-//            // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
-//            // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
-//            || (!path.startsWith("/") && !path.startsWith("file:"))) {
-//        path = gsettings->value("background-uris").toStringList().value(currentWorkspaceIndex);
-
-//        if (path.isEmpty()) {
-//            qWarning() << "invalid path, will not setbackground";
-//            //return;
-//        }
-    //    }
 }
 
 QString BackgroundManager::getBackgroundFromWm(const QString &screen)

@@ -45,6 +45,7 @@
 #define MAX_FILE_NAME_CHAR_COUNT 255
 #define DDE_TRASH_ID "dde-trash"
 #define DDE_COMPUTER_ID "dde-computer"
+#define REVOCATION_TIMES 2
 
 #define ASYN_CALL(Fun, Code, captured...) {\
     QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\
@@ -164,6 +165,7 @@ public:
         CreateSymlink,
         SendToDesktop,
         SendToRemovableDisk,
+        SendToBluetooth,
         AddToBookMark,
         Delete,
         Property,
@@ -291,10 +293,14 @@ public:
     static void initOperatorRevocation();
     static void initTagManagerConnect();
     static void initThumbnailConnection();
+    static void initBluetoothManager();
 
     static QString getUser();
     static int getUserId();
     static bool isRootUser();
+    static bool isServerSys();
+    static bool isDesktopSys();
+    static bool isOpenAsAdmin();
 
     //check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
     static bool isDesktopFile(const DUrl& url);
@@ -306,6 +312,7 @@ public:
     static bool isComputerDesktopFileUrl(const DUrl& url);
 
     QList<QUrl> clipboardFileUrlList() const;
+    QList<quint64> clipboardFileInodeList() const;
     ClipboardAction clipboardAction() const;
     QIcon standardIcon(Icon iconType) const;
 
@@ -343,6 +350,12 @@ public:
     template<typename T>
     static bool startWithHanzi(T)
     { return false;}
+    /**
+     * @brief startWithSymbol 判断字符串是由符号开头
+     * @param text
+     * @return
+     */
+    static bool startWithSymbol(const QString &text);
 
     static bool keyShiftIsPressed();
     static bool keyCtrlIsPressed();

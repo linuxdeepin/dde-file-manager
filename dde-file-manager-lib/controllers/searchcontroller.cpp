@@ -31,6 +31,9 @@
 #include "models/searchfileinfo.h"
 #include "ddiriterator.h"
 #include "shutil/dfmregularexpression.h"
+#include "shutil/dfmfilelistfile.h"
+#include "dfmapplication.h"
+#include "dfmstandardpaths.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -44,6 +47,7 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <QQueue>
+#include "fulltextsearch/fulltextsearch.h"
 
 class SearchFileWatcherPrivate;
 class SearchFileWatcher : public DAbstractFileWatcher
@@ -187,12 +191,12 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
             newToUrl.setSearchedFileUrl(toUrl);
 
             /*fix bug34957,搜索模式下，删除文件到回收站的文件不再加入到watcher中，不然会一直删除不掉*/
-            if(toUrl.path().contains("/.local/share/Trash/files",Qt::CaseSensitive)){
-               return;
-           }
-           else {
-               addWatcher(toUrl);
-           }
+            if (toUrl.path().contains("/.local/share/Trash/files", Qt::CaseSensitive)) {
+                return;
+            } else {
+                /*fix bug 44187 修改搜索结果名称，文件夹会从搜索结果消失，因为watcher里面增加的是真实路径不是搜索路径*/
+                addWatcher(newToUrl);
+            }
         }
     }
 
@@ -250,6 +254,7 @@ public:
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     DUrl url() const Q_DECL_OVERRIDE;
     void close() Q_DECL_OVERRIDE;
+    void fullTextSearch(const QString &searchPath) const;
 
     SearchController *parent;
     DAbstractFileInfoPointer currentFileInfo;
@@ -273,6 +278,8 @@ public:
 #endif
 
     bool closed = false;
+    mutable bool hasExecuteFullTextSearch = false;/*全文搜索状态判断，false表示搜索未开始，true表示搜索已经完成。全文搜索只运行一次就出结果，其他搜索需要多次运行*/
+    mutable bool hasUpdateIndex = false;
 };
 
 SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFilters,
@@ -287,7 +294,6 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
 {
     targetUrl = url.searchTargetUrl();
     keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(url.searchKeyword());
-
     regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;
 
@@ -297,8 +303,8 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
 
         if (info.isValid()) {
             ComDeepinAnythingInterface *interface = new ComDeepinAnythingInterface("com.deepin.anything",
-                                                                                   "/com/deepin/anything",
-                                                                                   QDBusConnection::systemBus());
+                                                                                       "/com/deepin/anything",
+                                                                                       QDBusConnection::systemBus());
 
             dbusWatcher = new QDBusPendingCallWatcher(interface->hasLFTSubdirectories(info.rootPath()));
             interface->setTimeout(3);
@@ -307,7 +313,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
             // 先将列表设置为适用于任意目录, 等取到异步结果后再更新此值
             hasLFTSubdirectories.append("/");
             QObject::connect(dbusWatcher, &QDBusPendingCallWatcher::finished,
-                             dbusWatcher, [this] (QDBusPendingCallWatcher *call) {
+            dbusWatcher, [this] (QDBusPendingCallWatcher * call) {
                 QDBusPendingReply<QStringList> result = *call;
 
                 hasLFTSubdirectories = result.value();
@@ -341,9 +347,72 @@ DUrl SearchDiriterator::next()
     return DUrl();
 }
 
+// 全文搜索
+void SearchDiriterator::fullTextSearch(const QString &searchPath) const
+{
+    // 判断文件是否为隐藏文件
+    std::function<bool(const DUrl &)> isHidden;
+    isHidden = [ =, &isHidden](const DUrl & fileUrl) ->bool {
+        DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
+        DUrl parentUrl = fileUrl.parentUrl();
+
+        QString targetPath = targetUrl.toLocalFile();
+        QString filePath = parentUrl.toLocalFile();
+        DFMFileListFile hiddenFiles(parentUrl.toLocalFile());
+        if (fileInfo->isHidden() || hiddenFiles.contains(fileInfo->fileName()))
+        {
+            return true;
+        } else if (targetPath.startsWith(filePath))
+        {
+            return false;
+        } else if (isHidden(parentUrl))
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
+    for (QString res : searchResult) {
+        if (DFMFullTextSearchManager::getInstance()->getSearchState() == JobController::Stoped) {
+            return;
+        }
+        if (res.startsWith(searchPath.endsWith("/") ? searchPath : (searchPath + "/"))) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
+            // 隐藏文件不显示
+            if (isHidden(DUrl::fromLocalFile(res))) {
+                continue;
+            }
+
+            DUrl url = m_fileUrl;
+            DUrl realUrl = DUrl::fromUserInput(res);
+            // 回收站的文件右键菜单比较特殊，需要将文件url转换为回收站类型的URL
+            if (targetUrl.isTrashFile()) {
+                realUrl = DUrl::fromTrashFile(realUrl.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+            }
+            url.setSearchedFileUrl(realUrl);
+
+            if (!childrens.contains(url))
+                childrens << url;
+        }
+    }
+}
+
 bool SearchDiriterator::hasNext() const
 {
     if (!childrens.isEmpty()) {
+        return true;
+    }
+    if (!hasExecuteFullTextSearch && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
+        DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
+        if (fileInfo->isVirtualEntry()) {
+            hasExecuteFullTextSearch = true;
+            return true;
+        }
+
+        QString searchPath = fileInfo->filePath();
+        fullTextSearch(searchPath);
+        hasExecuteFullTextSearch = true;
         return true;
     }
 
@@ -413,7 +482,8 @@ bool SearchDiriterator::hasNext() const
                 const DUrl &realUrl = fileInfo->fileUrl();
 
                 url.setSearchedFileUrl(realUrl);
-                childrens << url;
+                if (!childrens.contains(url))
+                    childrens << url;
 
                 return true;
             }
@@ -435,14 +505,29 @@ bool SearchDiriterator::hasNext() const
 
 //                qDebug() << "search matched url = " << realUrl.path() + "/" + realUrl.fileName();
                 url.setSearchedFileUrl(realUrl);
-
-                childrens << url;
+                if (!childrens.contains(url))/*去重*/
+                    childrens << url;
 
                 return true;
             }
         }
 
         it.clear();
+    }
+
+    if (!hasUpdateIndex && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
+        DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
+        if (fileInfo->isVirtualEntry()) {
+            hasUpdateIndex = true;
+            return true;
+        }
+
+        QString searchPath = fileInfo->filePath();
+        if (DFMFullTextSearchManager::getInstance()->updateIndex(searchPath)) {
+            fullTextSearch(searchPath);
+        }
+        hasUpdateIndex = true;
+        return true;
     }
 
     return false;
@@ -494,7 +579,7 @@ const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPoi
 
 bool SearchController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    return DTK_WIDGET_NAMESPACE::DDesktopServices::showFileItem(realUrl(event->url()));
+    return DFileService::instance()->openFileLocation(event->sender(), realUrl(event->url()));
 }
 
 bool SearchController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
@@ -576,7 +661,7 @@ bool SearchController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent>
 bool SearchController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
 {
     return DFileService::instance()->shareFolder(event->sender(), realUrl(event->url()),
-            event->name(), event->isWritable(), event->allowGuest());
+                                                 event->name(), event->isWritable(), event->allowGuest());
 }
 
 bool SearchController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
@@ -592,8 +677,8 @@ bool SearchController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEven
 const DDirIteratorPointer SearchController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
     SearchDiriterator *diriterator = new SearchDiriterator(event->url(), event->nameFilters(),
-            event->filters(), event->flags(),
-            const_cast<SearchController *>(this));
+                                                           event->filters(), event->flags(),
+                                                           const_cast<SearchController *>(this));
 
     return DDirIteratorPointer(diriterator);
 }

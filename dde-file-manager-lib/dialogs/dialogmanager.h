@@ -61,6 +61,13 @@ DWIDGET_END_NAMESPACE
 class DialogManager : public QObject
 {
     Q_OBJECT
+public:
+    enum messageType
+    {
+        msgInfo = 1,
+        msgWarn = 2,
+        msgErr = 3
+    };
 
 public:
     explicit DialogManager(QObject *parent = 0);
@@ -77,7 +84,7 @@ public:
 public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob *job);
-    void removeJob(const QString &jobId);
+    void removeJob(const QString &jobId,bool clearAllbuffer = false);
     QString getJobIdByUrl(const DUrl &url);
     void removeAllJobs();
     void updateJob();
@@ -94,6 +101,8 @@ public slots:
     int showRunExcutableFileDialog(const DUrl &url, quint64 winId);
     int showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint64 winId);
     int showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event);
+    // 重命名文件时，如果文件名为..，则弹出警告对话框
+    int showRenameNameDotDotErrorDialog(const DFMEvent &event);
     int showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event);
     int showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event);
     void showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details);
@@ -121,6 +130,7 @@ public slots:
     void showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList &entryUrls);
     void showRestoreFailedDialog(const DUrlList &urlList);
     void showRestoreFailedPerssionDialog(const QString &srcPath, const QString &targetPath);
+    void showRestoreFailedSourceNotExists(const DUrlList &urlList);
     void showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls);
     void showAddUserShareFailedDialog(const QString &sharePath);
     void showNoPermissionDialog(const DFMUrlListBaseEvent &event);
@@ -136,7 +146,10 @@ public slots:
 
     void refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl);
 
-    int showMessageDialog(int messageLevel, const QString &message);
+    int showMessageDialog(messageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm"));
+    void showBluetoothTransferDlg(const DUrlList &files);
+
+    void showFormatDialog(const QString &devId); // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化
 
 #ifdef SW_LABEL
     void onJobFailed_SW(int nRet, const QString &jobType, const QString &srcfilename);

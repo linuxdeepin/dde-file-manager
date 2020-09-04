@@ -60,7 +60,7 @@ public:
     { return "com.deepin.daemon.Zone"; }
 
 public:
-    ZoneInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    ZoneInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~ZoneInterface();
 

@@ -40,7 +40,7 @@ class BookMarkManager : public DAbstractFileController
 {
     Q_OBJECT
 public:
-    explicit BookMarkManager(QObject *parent = 0);
+    explicit BookMarkManager(QObject *parent = nullptr);
     ~BookMarkManager();
 
     bool checkExist(const DUrl &url);

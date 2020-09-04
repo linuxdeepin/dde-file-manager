@@ -28,6 +28,8 @@
 #include "dabstractfilewatcher.h"
 #include "dfmstyleditemdelegate.h"
 #include "dfmapplication.h"
+#include "views/dfileview.h"
+#include "dfmstandardpaths.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -133,6 +135,10 @@ public:
             return fileInfo->fileDisplayPinyinName();
         case Role::ExtraProperties:
             return fileInfo->extraProperties();
+        case Role::FileLastReadDateTimeRole:
+            return fileInfo->lastRead();
+        case Role::FileCreatedDateTimeRole:
+            return fileInfo->created();
         default: {
             return QVariant();
         }
@@ -174,7 +180,8 @@ public:
         if (filter->f_comboValid[SEARCH_RANGE] && !filter->f_includeSubDir) {
             DUrl parentUrl = fileInfo->parentUrl().isSearchFile() ? fileInfo->parentUrl().searchTargetUrl() : fileInfo->parentUrl();
             QString filePath = dataByRole(DFileSystemModel::FilePathRole).toString();
-            filePath.remove(parentUrl.path() + '/');
+            // fix bug 44185 【专业版 sp3】【文件管理器】【5.2.0.28-1】多标签操作筛选搜索结果，回退路径时出现空白页面
+            filePath.remove(parentUrl.toLocalFile().endsWith("/") ?  parentUrl.toLocalFile() : parentUrl.toLocalFile() + '/');
             if (filePath.contains('/')) return true;
         }
 
@@ -196,6 +203,16 @@ public:
         if (filter->f_comboValid[DATE_RANGE]) {
             QDateTime filemtime = dataByRole(DFileSystemModel::FileLastModifiedDateTimeRole).toDateTime();
             if (filemtime < filter->f_dateRangeStart || filemtime > filter->f_dateRangeEnd) return true;
+        }
+
+        if (filter->f_comboValid[ACCESS_DATE_RANGE]) {
+            QDateTime filemtime = dataByRole(DFileSystemModel::FileLastReadDateTimeRole).toDateTime();
+            if (filemtime < filter->f_accessDateRangeStart || filemtime > filter->f_accessDateRangeEnd) return true;
+        }
+
+        if (filter->f_comboValid[CREATE_DATE_RANGE]) {
+            QDateTime filemtime = dataByRole(DFileSystemModel::FileCreatedDateTimeRole).toDateTime();
+            if (filemtime < filter->f_createDateRangeStart || filemtime > filter->f_createDateRangeEnd) return true;
         }
 
         return false;
@@ -729,6 +746,9 @@ begin:
 
             const QPair<EventType, DAbstractFileInfoPointer> &v = fileQueue.dequeue();
             const DAbstractFileInfoPointer &fileInfo = v.second;
+            if (!fileInfo) {
+                continue;
+            }
             const DUrl &fileUrl = fileInfo->fileUrl();
 
             if (v.first == AddFile || v.first == AppendFile) {
@@ -1109,20 +1129,16 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
         return;
     }
 
-    //最近使用文件更新最后访问时间后需要重新排序，这里需要先重新设定model中存储的fileinfo对应的readtime。
-    DAbstractFileInfoPointer newFileInfo = fileService->createFileInfo(nullptr, fileUrl);
     if (const DAbstractFileInfoPointer &fileInfo = q->fileInfo(index)) {
         fileInfo->refresh();
-        if (fileUrl.scheme() == RECENT_SCHEME) {
-            fileInfo->updateReadTime(newFileInfo->getReadTime());
-        }
     }
 
     q->parent()->parent()->update(index);
 //    emit q->dataChanged(index, index);
-    //这里调用refresh重刷界面
-    if (fileUrl.scheme() == RECENT_SCHEME) {
-        q->refresh(node->fileInfo->fileUrl());
+    //recentfile变更需要调整排序
+    if (fileUrl.isRecentFile()) {
+        //fileinfo已在recentcontroller中更新，只需要重排序
+        q->sort();
     }
 }
 
@@ -1156,8 +1172,19 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
 
 void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 {
+    Q_Q(DFileSystemModel);
+
     //如果被重命名的目录是root目录，则不刷新该目录,而是直接退回到上层目录
-    if (from.isLocalFile() && from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
+    bool isLocalFile = from.isLocalFile() || (from.isVaultFile() || to.isVaultFile());
+    if (isLocalFile && from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
+        QString trashPath = DFMStandardPaths::location(DFMStandardPaths::TrashPath);
+        bool isMoveToTrash = to.toLocalFile().contains(trashPath);
+        if (!isMoveToTrash && !to.toLocalFile().isEmpty()) {
+            // re-enter directory if tab root directory renamed.
+            DFileView *fileview = static_cast<DFileView *>(q->parent()->parent());
+            fileSignalManager->requestRedirectTabUrl(fileview->rootUrl(), to);
+        }
+
         return;
     }
 
@@ -1209,10 +1236,15 @@ void DFileSystemModelPrivate::_q_processFileEvent()
                 nparentUrl.setPath(nparentUrl.path() + "/");
             }
         }
+
         if (nfileUrl == rootUrl) {
             if (event.first == RmFile) {
+                //! close tab if root url deleted.
+                emit fileSignalManager->requestCloseTab(nfileUrl);
+                //! return to parent.
                 emit q->rootUrlDeleted(rootUrl);
             }
+
             // It must be refreshed when the root url itself is deleted or newly created
             q->refresh();
             continue;
@@ -1228,6 +1260,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         } else {// rm file event
             // todo: 此处引起效率变低，暂时注释
             // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
+
             q->remove(fileUrl);
         }
         if (!me) {
@@ -1545,6 +1578,21 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     }
     case ExtraProperties:
         return indexNode->dataByRole(role);
+    case FileIconModelToolTipRole: { // fix bug 202007010029 由于 list 视图处理 tooltip 的代码通用性太弱，所以这里新增一个 role 用来返回 tooltip
+        QString strToolTip = data(index, FileNameRole).toString();
+        QStyleOptionViewItem option;
+
+        option.init(parent()->parent());
+        parent()->initStyleOption(&option, index);
+        option.rect = parent()->parent()->visualRect(index);
+        const QList<QRect> &geometries = parent()->itemDelegate()->paintGeomertys(option, index);
+        if (geometries.count() < 3)
+            return QString();
+        if (option.fontMetrics.width(strToolTip) > geometries[1].width() * 2)
+            return strToolTip;
+        return QString();
+    }
+
     default: {
         const DAbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
 
@@ -2132,53 +2180,60 @@ void DFileSystemModel::setAdvanceSearchFilter(const QMap<int, QVariant> &formDat
         advanceSearchFilter()->f_sizeRange = advanceSearchFilter()->filterRule[SIZE_RANGE].value<QPair<quint64, quint64> >();
     }
 
-    int dateRange = advanceSearchFilter()->filterRule[DATE_RANGE].toInt();
-    advanceSearchFilter()->f_comboValid[DATE_RANGE] = (dateRange != 0);
-    if (advanceSearchFilter()->f_comboValid[DATE_RANGE]) {
+    // 计算时间过滤条件
+    auto calDateFilter = [ = ](_asb_LabelIndex labelIndex, QDateTime & startTime, QDateTime & endTime) {
+        int dateRange = advanceSearchFilter()->filterRule[labelIndex].toInt();
+        advanceSearchFilter()->f_comboValid[labelIndex] = (dateRange != 0);
 
-        int firstDayOfWeek = QLocale::system().firstDayOfWeek();
-        QDate today = QDate::currentDate();
-        QDate tomorrow = QDate::currentDate().addDays(+1);
-        int dayDist = today.dayOfWeek() - firstDayOfWeek;
-        if (dayDist < 0) dayDist += 7;
+        if (advanceSearchFilter()->f_comboValid[labelIndex]) {
+            int firstDayOfWeek = QLocale::system().firstDayOfWeek();
+            QDate today = QDate::currentDate();
+            QDate tomorrow = QDate::currentDate().addDays(+1);
+            int dayDist = today.dayOfWeek() - firstDayOfWeek;
+            if (dayDist < 0) dayDist += 7;
 
-        switch (dateRange) { // see DFMAdvanceSearchBar::initUI() for all cases
-        case 1:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(today);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
-            break;
-        case 2:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(-1);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(today);
-            break;
-        case 7:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(0 - dayDist);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
-            break;
-        case 14:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(-7 - dayDist);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(today).addDays(0 - dayDist);
-            break;
-        case 30:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), today.month(), 1));
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
-            break;
-        case 60:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), today.month(), 1)).addMonths(-1);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(QDate(today.year(), today.month(), 1));
-            break;
-        case 365:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), 1, 1));
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
-            break;
-        case 730:
-            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), 1, 1)).addYears(-1);
-            advanceSearchFilter()->f_dateRangeEnd = QDateTime(QDate(today.year(), 1, 1));
-            break;
-        default:
-            break;
+            switch (dateRange) { // see DFMAdvanceSearchBar::initUI() for all cases
+            case 1:
+                startTime = QDateTime(today);
+                endTime = QDateTime(tomorrow);
+                break;
+            case 2:
+                startTime = QDateTime(today).addDays(-1);
+                endTime = QDateTime(today);
+                break;
+            case 7:
+                startTime = QDateTime(today).addDays(0 - dayDist);
+                endTime = QDateTime(tomorrow);
+                break;
+            case 14:
+                startTime = QDateTime(today).addDays(-7 - dayDist);
+                endTime = QDateTime(today).addDays(0 - dayDist);
+                break;
+            case 30:
+                startTime = QDateTime(QDate(today.year(), today.month(), 1));
+                endTime = QDateTime(tomorrow);
+                break;
+            case 60:
+                startTime = QDateTime(QDate(today.year(), today.month(), 1)).addMonths(-1);
+                endTime = QDateTime(QDate(today.year(), today.month(), 1));
+                break;
+            case 365:
+                startTime = QDateTime(QDate(today.year(), 1, 1));
+                endTime = QDateTime(tomorrow);
+                break;
+            case 730:
+                startTime = QDateTime(QDate(today.year(), 1, 1)).addYears(-1);
+                endTime = QDateTime(QDate(today.year(), 1, 1));
+                break;
+            default:
+                break;
+            }
         }
-    }
+    };
+
+    calDateFilter(DATE_RANGE, advanceSearchFilter()->f_dateRangeStart, advanceSearchFilter()->f_dateRangeEnd);
+    calDateFilter(ACCESS_DATE_RANGE, advanceSearchFilter()->f_accessDateRangeStart, advanceSearchFilter()->f_accessDateRangeEnd);
+    calDateFilter(CREATE_DATE_RANGE, advanceSearchFilter()->f_createDateRangeStart, advanceSearchFilter()->f_createDateRangeEnd);
 
     if (updateView) {
         applyAdvanceSearchFilter();
@@ -2354,7 +2409,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
         return false;
     }
 
-    qDebug() << "start the sort business";
+//    qDebug() << "start the sort business";
 
     QList<FileSystemNodePointer> list = node->getChildrenList();
 
@@ -2367,7 +2422,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
         }
     }
 
-    qDebug() << "end the sort business";
+//    qDebug() << "end the sort business";
     return ok;
 }
 
@@ -2520,7 +2575,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
 
-    qDebug() << "Begin update chidren. file list count " <<  list.count();
+//    qDebug() << "Begin update chidren. file list count " <<  list.count();
     const FileSystemNodePointer &node = d->rootNode;
 
     if (!node) {
@@ -2566,13 +2621,14 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
             fileHash[fileInfo->fileUrl()] = chileNode;
             fileList << chileNode;
+            emit showFilterButton();
         }
     }
 
     if (enabledSort())
         sort(node->fileInfo, fileList);
 
-    qDebug() << "begin insert rows count = " << QString::number(list.count());
+//    qDebug() << "begin insert rows count = " << QString::number(list.count());
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     node->setChildrenMap(fileHash);
@@ -2590,8 +2646,17 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         job->start();
     }
 
-    qDebug() << "finish update children. file count = " << node->childrenCount();
-    emit sigJobFinished();
+//    qDebug() << "finish update children. file count = " << node->childrenCount() << (job ? job->state() : -1);
+    if (job) {
+        //刷新完成标志
+        bool finished = job->isUpdatedFinished();
+//        qDebug() << "isUpdatedFinished" << finished;
+        //若刷新完成通知桌面重新获取文件
+        if (finished)
+            emit sigJobFinished();
+    }
+    else
+        emit sigJobFinished();
 }
 
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
@@ -2910,6 +2975,7 @@ void DFileSystemModel::onJobAddChildren(const DAbstractFileInfoPointer &fileInfo
 //    mutex.unlock();
     Q_D(DFileSystemModel);
     d->rootNodeManager->addFile(fileInfo, FileNodeManagerThread::AppendFile);
+    emit showFilterButton();
 }
 
 void DFileSystemModel::onJobFinished()

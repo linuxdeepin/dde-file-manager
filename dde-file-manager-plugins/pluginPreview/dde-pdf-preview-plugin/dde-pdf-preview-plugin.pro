@@ -14,15 +14,8 @@ PKGCONFIG += poppler-cpp
 CONFIG += c++11 plugin link_pkgconfig
 
 include(../../../common/common.pri)
+include(dde-pdf-preview-plugin.pri)
 
-SOURCES += \
-    pdfwidget.cpp \
-    main.cpp \
-    pdfpreview.cpp
-
-HEADERS += \
-    pdfwidget.h \
-    pdfpreview.h
 DISTFILES += dde-pdf-preview-plugin.json
 
 PLUGIN_INSTALL_DIR = $$PLUGINDIR/previews
@@ -33,6 +26,3 @@ unix {
     target.path = $$PLUGIN_INSTALL_DIR
     INSTALLS += target
 }
-
-RESOURCES += \
-    theme.qrc

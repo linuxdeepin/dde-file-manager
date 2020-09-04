@@ -56,7 +56,8 @@ bool DLocalFileHandler::touch(const DUrl &url)
     if (file.exists())
         return false;
 
-    if (file.open(QIODevice::WriteOnly)) {
+    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        file.close();
         return true;
     }
 

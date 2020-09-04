@@ -25,6 +25,7 @@
 #include "deviceinfo/udisklistener.h"
 
 #include <QAbstractItemModel>
+#include <QFuture>
 
 #include "durl.h"
 #include "interfaces/dabstractfileinfo.h"
@@ -112,10 +113,14 @@ private:
     DAbstractFileWatcher* m_watcher;
     int m_nitems;
 
+#ifdef ENABLE_ASYNCINIT
+    QPair<bool,QFuture<void>> m_initThread; //初始化线程，first为是否强制结束线程
+#endif
     void initItemData(ComputerModelItemData &data, const DUrl &url, QWidget *w);
     int findItem(const DUrl &url);
 
     static DUrl makeSplitterUrl(QString text);
+    int findNextSplitter(const int &index);
 };
 
 

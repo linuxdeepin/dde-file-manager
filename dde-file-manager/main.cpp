@@ -60,6 +60,7 @@
 
 #include <pwd.h>
 #include <DApplicationSettings>
+#include <QtConcurrent>
 
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
@@ -83,10 +84,44 @@ void handleSIGTERM(int sig)
     }
 }
 
+// Within an SSH session, I can use gvfs-mount provided that
+// dbus-daemon is launched first and the environment variable DBUS_SESSION_BUS_ADDRESS is set.
+
+// gvfs-mount and other GVFS utilities must all talk to the same D-Bus session. Hence,
+// if you use multiple SSH sessions or otherwise use mounts across login sessions, you must:
+// - start D-Bus the first time it is needed, at the latest;
+// - take care not to let D-Bus end with the session, as long as there are mounted GVFS filesystems;
+// - reuse the existing D-Bus session at login time if there is one.
+// see https://unix.stackexchange.com/questions/44317/reuse-d-bus-sessions-across-login-sessions for that.
+void handleEnvOfOpenAsAdmin()
+{
+    QProcess p;
+    p.start("bash", QStringList() << "-c"
+                                  << "echo $(dbus-launch)");
+    p.waitForFinished();
+    QString envName("DBUS_SESSION_BUS_ADDRESS");
+    QString output(p.readAllStandardOutput());
+    QStringList group(output.split(" "));
+    for (const QString &vals : group) {
+        const QStringList &envGroup = vals.split(",");
+        for (const QString &env : envGroup) {
+            int mid = env.indexOf("=");
+            if (env.startsWith(envName) && mid >= envName.size()) {
+                QString v(env.mid(mid + 1));
+                int ret = setenv(envName.toLocal8Bit().data(), v.toLocal8Bit().data(), 1);
+                qDebug() << "set " << env << "=" << v << "ret=" << ret;
+                return;
+            }
+        }
+    }
+}
+
 DWIDGET_USE_NAMESPACE
 
+extern QPair<bool,QMutex> winId_mtx;
 int main(int argc, char *argv[])
 {
+    winId_mtx.first = false;
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
 #endif
@@ -96,6 +131,11 @@ int main(int argc, char *argv[])
     if (qEnvironmentVariableIsSet("PKEXEC_UID")) {
         const quint32 pkexecUID = qgetenv("PKEXEC_UID").toUInt();
         DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
+    }
+
+    // fix "Error mounting location: volume doesn't implement mount” when ope as admin (bug-42653)
+    if (DFMGlobal::isOpenAsAdmin()) {
+        handleEnvOfOpenAsAdmin();
     }
 
     SingleApplication::loadDXcbPlugin();
@@ -116,16 +156,25 @@ int main(int argc, char *argv[])
                                                                "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-#ifdef DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
-    app.setQuitOnLastWindowClosed(false);
-#endif
-
     DApplicationSettings setting;
 
     DFMGlobal::installTranslator();
 
     LogUtil::registerLogger();
 
+    //使用异步加载win相关的插件
+    auto windPluginLoader = QtConcurrent::run([](){
+        winId_mtx.second.lock();
+        if (winId_mtx.first){
+            winId_mtx.second.unlock();
+            return;
+        }
+        QWidget *w = new QWidget;
+        w->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
+        w->winId();
+        winId_mtx.second.unlock();
+        w->deleteLater();
+    });
     // init application object
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
@@ -163,6 +212,7 @@ int main(int argc, char *argv[])
         args.removeAll(QStringLiteral("--working-dir"));
         QProcess::startDetached("dde-file-manager-pkexec", args, QDir::currentPath());
 
+        windPluginLoader.waitForFinished();
         return 0;
     }
 
@@ -172,29 +222,28 @@ int main(int argc, char *argv[])
 
     QString uniqueKey = app.applicationName();
 
-    bool isSingleInstance  = app.setSingleInstance(uniqueKey);
+    bool isSingleInstance  = true;
+    // cannot open the filemanager when multiple users as an administrator
+    // to open the filemanager(bug-42832). therefore, we have to give up single application mode.
+    if (DFMGlobal::isOpenAsAdmin()) {
+        qDebug() << "oepn as admin";
+        isSingleInstance = true;
+    } else {
+        isSingleInstance = app.setSingleInstance(uniqueKey);
+    }
 
     if (isSingleInstance) {
         // init app
         Q_UNUSED(FileManagerApp::instance())
-
+        DFileService::instance()->startQuryRootFile();
         if (CommandLineManager::instance()->isSet("d")) {
             fileManagerApp;
-#ifdef AUTO_RESTART_DEAMON
-            QWidget w;
-            w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
-            w.setAttribute(Qt::WA_TranslucentBackground);
-            w.resize(0, 0);
-            w.show();
-#endif
+            app.setQuitOnLastWindowClosed(false);
         } else {
             CommandLineManager::instance()->processCommand();
         }
 
         signal(SIGTERM, handleSIGTERM);
-//        修复root用户无法接收程序退出信号导致程序异常卡死
-//        signal(SIGBUS, SIG_IGN); // 硬件问题引起coredump
-//        signal(SIGCHLD, SIG_IGN);
 
 #ifdef ENABLE_PPROF
         int request = app.exec();
@@ -204,9 +253,11 @@ int main(int argc, char *argv[])
         return request;
 #else
         int ret = app.exec();
-#ifdef AUTO_RESTART_DEAMON
-        app.closeServer();
-        QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
+#ifdef ENABLE_DAEMON
+        if (!DFMGlobal::isOpenAsAdmin()) {
+            app.closeServer();
+            QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
+        }
 #endif
         return ret;
 #endif
@@ -230,19 +281,13 @@ int main(int argc, char *argv[])
             data.chop(1);
 
         QLocalSocket *socket = SingleApplication::newClientProcess(uniqueKey, data);
-        QWidget w;
-        w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
-        w.setAttribute(Qt::WA_TranslucentBackground);
-        w.resize(1, 1);
-        w.show();
-
         if (is_set_get_monitor_files && socket->error() == QLocalSocket::UnknownSocketError) {
             socket->waitForReadyRead();
 
             for (const QByteArray &i : socket->readAll().split(' '))
                 qDebug() << QString::fromLocal8Bit(QByteArray::fromBase64(i));
         }
-
+        windPluginLoader.waitForFinished();
         return 0;
     }
 }

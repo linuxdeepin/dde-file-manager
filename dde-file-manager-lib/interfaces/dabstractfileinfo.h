@@ -129,13 +129,13 @@ public:
         SocketFile,
         RegularFile,
         //
-        Executable,
         Documents,
         Images,
         Videos,
         Audios,
         Archives,
         DesktopApplication,
+        Executable,
         Backups,
         Unknown,
         CustomType = 0x100
@@ -186,6 +186,11 @@ public:
      * @return
      */
     virtual bool canManageAuth() const;
+    /**
+     * @brief canMoveOrCopy 是否可以复制或剪切
+     * @return
+     */
+    virtual bool canMoveOrCopy() const;
 
     // only for base file type
     virtual FileType fileType() const;
@@ -320,6 +325,8 @@ public:
     //为recentInfo提供接口
     virtual const QDateTime getReadTime() const;
     virtual void updateReadTime(const QDateTime &);
+
+    virtual quint64 inode() const;
 
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);

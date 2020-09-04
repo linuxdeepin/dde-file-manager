@@ -23,6 +23,7 @@
  */
 
 #include "pathmanager.h"
+
 #include <QStandardPaths>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -32,11 +33,12 @@
 #include <QDir>
 
 #include "controllers/vaultcontroller.h"
-
+#include "usershare/usersharemanager.h"
+#include "models/dfmrootfileinfo.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
-
 #include "interfaces/dfmstandardpaths.h"
+#include "interfaces/dfmglobal.h"
 
 DFM_USE_NAMESPACE
 
@@ -164,6 +166,33 @@ QString PathManager::getSystemPathIconNameByPath(QString path)
     return QString();
 }
 
+/**
+ * @brief 系统盘&数据盘路径
+ * @return
+ */
+QStringList PathManager::getSystemDiskAndDataDiskPathGroup()
+{
+    const QString &userName = UserShareManager::getCurrentUserName();
+    QStringList group {"/", "/data", QString("/home/%1").arg(userName), QString("/data/home/%1").arg(userName)};
+    return group;
+}
+
+/**
+ * @brief 指定的挂载点
+ * @return
+ */
+QStringList PathManager::getMountRangePathGroup()
+{
+    const QString &userName = UserShareManager::getCurrentUserName();
+    QStringList ranges {
+        QString("/mnt"),
+        QString("/home/%1").arg(userName),
+        QString("/media/%1").arg(userName),
+        QString("/data/home/%1").arg(userName),
+    };
+    return ranges;
+}
+
 void PathManager::loadSystemPaths()
 {
     m_systemPathsMap["Home"] = DFMStandardPaths::location(DFMStandardPaths::HomePath);
@@ -215,6 +244,68 @@ bool PathManager::isSystemPath(QString path) const
     cleanPath(path);
 
     return m_systemPathsSet.contains(path);
+}
+
+/**
+ * sp3 feature: 计算机页面展示分区范围说明
+ * 分区识别范围：
+ * 1. 系统指定的分区
+ *  /，显示为系统盘
+ *  /data，显示为数据盘
+ *  /home/username/
+ *  /media/username/
+ *  /mnt/
+ * 2. 除上述之外的挂载分区，不在系统文管中展示；
+ *
+ * @return 返回 true 则计算机页面显示该分区
+ */
+bool PathManager::isVisiblePartitionPath(const DAbstractFileInfoPointer &fi)
+{
+#ifdef SP3_UNSTABLE_FEATURE_ENABLE
+    QString suffix = fi->suffix();
+    if (DFMGlobal::isRootUser()) { // root 用户不受限
+        return true;
+    } else if (suffix == SUFFIX_USRDIR || suffix == SUFFIX_GVFSMP) { // 系统路径，MTP等不受限
+        return true;
+    } else { // localdisk
+        DUrl url = fi->redirectedFileUrl();
+        DUrl parentUrl = url.parentUrl();
+        const QString &path = url.toLocalFile();
+        const QString &parentPath = parentUrl.toLocalFile();
+
+        // [0] 光驱
+        if (isOptical(fi))
+            return true;
+
+        // [1] 当打开文管时挂载U盘，进入到此函数时，很可能还没挂载完成,获取不到path
+        // 为了避免这种情况下无法显示，因此直接返回true
+        // todo：此处可能会被报bug，但目前没有想到更好的方案，待优化
+        if (path.isEmpty())
+            return true;
+
+        // [2] 排除系统盘 & 数据盘
+        const QStringList &sysRanges = getSystemDiskAndDataDiskPathGroup();
+        if (sysRanges.contains(path))
+            return true;
+
+        // [3] 挂载只显示挂载到以下挂载点的内容
+        const QStringList &parentRanges = getMountRangePathGroup();
+        if (parentRanges.contains(parentPath))
+            return true;
+    }
+    qDebug() << "partition ignore path:" << fi->redirectedFileUrl().toLocalFile();
+
+    return false;
+#else
+    Q_UNUSED(fi)
+    return true;
+#endif
+}
+
+bool PathManager::isOptical(const DAbstractFileInfoPointer &fi)
+{
+    QString path = fi->fileUrl().toString();
+    return path.contains("dfmroot:///sr") ? true : false;
 }
 
 QMap<QString, QString> PathManager::systemPathsMap() const

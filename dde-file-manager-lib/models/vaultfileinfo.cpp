@@ -218,7 +218,10 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
         }
     }
 
-    return DAbstractFileInfo::menuActionList(type);
+    //! 移除提权操作
+    QVector<MenuAction> menuActions = DAbstractFileInfo::menuActionList(type);
+    menuActions.removeAll(MenuAction::OpenAsAdmin);
+    return menuActions;
 }
 
 QMap<MenuAction, QVector<MenuAction> > VaultFileInfo::subMenuActionList(MenuType type) const

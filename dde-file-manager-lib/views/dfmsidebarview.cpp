@@ -22,12 +22,15 @@
 #include "dfmsidebaritem.h"
 #include "dfileservices.h"
 #include "app/define.h"
+#include "dfmopticalmediawidget.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QDebug>
 #include <dstorageinfo.h>
 #include <qmimedata.h>
 #include <QtConcurrent>
 #include <models/dfmsidebarmodel.h>
+#include <QApplication>
 
 #include <unistd.h>
 
@@ -44,7 +47,7 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
 //    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-//    setMouseTracking(true);
+    setMouseTracking(true); // sp3 feature 35，解除注释以便鼠标在移动时就能触发 mousemoveevent
 
     setDragDropMode(QAbstractItemView::InternalMove);
     setDragDropOverwriteMode(false);
@@ -61,6 +64,9 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
     //暂时抛去部分频繁点击来规避这个问题
     if (!checkOpTime())
         return;
+
+    // 鼠标按下时记录当前点击item的唯一key
+    m_strItemUniqueKey = model()->data(indexAt(event->pos()), DFMSideBarItem::ItemUniqueKeyRole).toString();
 
     if (event->button() == Qt::RightButton) {
 #if 1   //fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上
@@ -79,18 +85,32 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
 void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 {
     DListView::mouseMoveEvent(event);
-#if QT_CONFIG(draganddrop)
-    if (state() == DraggingState) {
-        startDrag(Qt::MoveAction);
-        setState(NoState); // the startDrag will return when the dnd operation is done
-        stopAutoScroll();
-        QPoint pt = mapFromGlobal(QCursor::pos());
-        QRect rc = geometry();
-        if (!rc.contains(pt)) {
-            emit requestRemoveItem(); //model()->removeRow(currentIndex().row());
+    // sp3 feature 35，光标悬浮到光驱item上如果正在加载，需要显示为繁忙光标。添加判定避免额外操作
+    if (event->button() == Qt::NoButton) {
+        const QModelIndex &idx = indexAt(event->pos());
+        QString voltag = idx.data(DFMSideBarItem::ItemVolTagRole).toString();
+        if (!voltag.isEmpty() && voltag.startsWith("sr")
+            && DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(voltag)
+            && DFMOpticalMediaWidget::g_mapCdStatusInfo[voltag].bLoading) {
+            // 设置光标为繁忙状态
+            DFileService::instance()->setCursorBusyState(true);
+        } else {
+            DFileService::instance()->setCursorBusyState(false);
         }
-    }
+    } else {
+#if QT_CONFIG(draganddrop)
+        if (state() == DraggingState) {
+            startDrag(Qt::MoveAction);
+            setState(NoState); // the startDrag will return when the dnd operation is done
+            stopAutoScroll();
+            QPoint pt = mapFromGlobal(QCursor::pos());
+            QRect rc = geometry();
+            if (!rc.contains(pt)) {
+                emit requestRemoveItem(); //model()->removeRow(currentIndex().row());
+            }
+        }
 #endif // QT_CONFIG(draganddrop)
+    }
 }
 
 void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
@@ -148,9 +168,26 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         if (DUrl(url).parentUrl() == item->url()) {
             qDebug() << "skip the same dir file..." << url;
         } else {
-            QFileInfo folderinfo(DUrl(url).parentUrl().path()); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
-            QFileInfo fileinfo(url.path());
-            if (!fileinfo.isWritable() || !folderinfo.isWritable()) {
+            QString folderPath = DUrl(url).parentUrl().path();
+            QString filePath = url.path();
+
+            bool isFolderWritable = false;
+            bool isFileWritable = false;
+
+            if (VaultController::isVaultFile(folderPath)
+                    || VaultController::isVaultFile(filePath)) {
+                //! vault file get permissions separatly
+                isFolderWritable = VaultController::getPermissions(folderPath) & QFileDevice::WriteUser;
+                isFileWritable = VaultController::getPermissions(filePath) & QFileDevice::WriteUser;
+            } else {
+                QFileInfo folderinfo(folderPath); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
+                QFileInfo fileinfo(filePath);
+
+                isFolderWritable = fileinfo.isWritable();
+                isFileWritable = folderinfo.isWritable();
+            }
+
+            if (!isFolderWritable || !isFileWritable) {
                 copyUrls << url;
                 qDebug() << "this is a unwriteable case:" << url;
             } else {
@@ -179,6 +216,18 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     }
 
     if (isActionDone) {
+        //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
+        QWidget *parentptr = parentWidget();
+        QWidget *curwindow = nullptr;
+        while(parentptr)
+        {
+            curwindow = parentptr;
+            parentptr = parentptr->parentWidget();
+        }
+        if (curwindow){
+            qApp->setActiveWindow(curwindow);
+        }
+
         event->accept();
     } else {
         DListView::dropEvent(event);
@@ -284,6 +333,14 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         if (!fileInfo || !fileInfo->isReadable()) {
             return Qt::IgnoreAction;
         }
+        //部分文件不能复制或剪切，需要在拖拽时忽略
+        if (!fileInfo->canMoveOrCopy()) {
+            return Qt::IgnoreAction;
+        }
+        //防止不可添加tag的文件被拖进tag目录从而获取tag属性
+        if (item->url().isTaggedFile() && !fileInfo->canTag()) {
+            return Qt::IgnoreAction;
+        }
     }
 
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, item->url());
@@ -291,28 +348,30 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     if (!info || !info->canDrop()) {
         return Qt::IgnoreAction;
     }
-
+    Qt::DropAction action = Qt::IgnoreAction;
     const Qt::DropActions support_actions = info->supportedDropActions() & actions;
 
     if (DStorageInfo::inSameDevice(urls.first(), item->url())) {
         if (support_actions.testFlag(Qt::MoveAction)) {
-            return Qt::MoveAction;
+            action = Qt::MoveAction;
         }
     }
 
     if (support_actions.testFlag(Qt::CopyAction)) {
-        return Qt::CopyAction;
+        action = Qt::CopyAction;
     }
 
     if (support_actions.testFlag(Qt::MoveAction)) {
-        return Qt::MoveAction;
+        action = Qt::MoveAction;
     }
 
     if (support_actions.testFlag(Qt::LinkAction)) {
-        return Qt::LinkAction;
+        action = Qt::LinkAction;
     }
-
-    return Qt::IgnoreAction;
+    if ((action == Qt::MoveAction) && DFMGlobal::keyCtrlIsPressed()) {
+        action = Qt::CopyAction;
+    }
+    return action;
 }
 
 bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
@@ -340,18 +399,19 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
 //添加此函数为解决拖拽后不选中拖拽项目问题
 void DFMSideBarView::onRowCountChanged()
 {
-    if (isHidden()) {
-        return; //在显示前不处理
-    }
-
-    if (previousRowCount == model()->rowCount()) {
-        setCurrentIndex(indexAt(dropPos));
-        if (dragItemName != model()->data(currentIndex()).toString()) {
-            setCurrentIndex(model()->index(currentIndex().row() + (dragRow > currentIndex().row() ? 1 : -1), currentIndex().column()));
+    // 重写该函数，之前的实现方式会导致在频繁添加、移除书签或是进行其他影响侧边栏item数量的操作时，左侧item的高亮选项错误跳动
+    if (m_strItemUniqueKey.isEmpty())
+        return;
+    DFMSideBarModel *pModel = dynamic_cast<DFMSideBarModel *>(model());
+    if (!pModel)
+        return;
+    for (int i = 0; i < pModel->rowCount(); i++) {
+        QModelIndex currIdx = pModel->index(i, 0);
+        if (pModel->data(currIdx, DFMSideBarItem::ItemUniqueKeyRole).toString() == m_strItemUniqueKey) {
+            setCurrentIndex(currIdx);
+            QTimer::singleShot(50, nullptr, [this] { m_strItemUniqueKey.clear(); }); // 发生拖拽排序的时候该函数会在短时间内触发两次，第二次才是准确数据，触发间隔时间 << 50ms，因此这里设置50ms后清空记录的key
+            return;
         }
-    } else {
-        dragItemName = model()->data(currentIndex()).toString();
-        dragRow = currentIndex().row();
     }
 }
 

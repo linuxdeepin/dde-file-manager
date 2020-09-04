@@ -51,9 +51,9 @@ public:
         Stoped
     };
 
-    explicit JobController(const DUrl &fileUrl, const DDirIteratorPointer &iterator, bool silent = false, QObject *parent = 0);
+    explicit JobController(const DUrl &fileUrl, const DDirIteratorPointer &iterator, bool silent = false, QObject *parent = nullptr);
     explicit JobController(const DUrl &fileUrl, const QStringList &nameFilters,
-                           QDir::Filters filters, bool silent = false, QObject *parent = 0);
+                           QDir::Filters filters, bool silent = false, QObject *parent = nullptr);
 
     ~JobController();
 
@@ -61,7 +61,7 @@ public:
 
     int timeCeiling() const;
     int countCeiling() const;
-
+    inline bool isUpdatedFinished() const {return m_updateFinished;}
 public slots:
     void start();
     void pause();
@@ -92,6 +92,7 @@ private:
 
     int m_timeCeiling = 2000;
     int m_countCeiling = 9999999;
+    volatile bool m_updateFinished = true; //刷新完成标志
 
     void run() Q_DECL_OVERRIDE;
     void setState(State state);

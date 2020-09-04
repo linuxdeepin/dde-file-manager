@@ -22,10 +22,11 @@
 #define DFILECOPYMOVEJOB_H
 
 #include <QObject>
-
 #include <dfmglobal.h>
 
 class DAbstractFileInfo;
+
+typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
 
 DFM_BEGIN_NAMESPACE
 
@@ -36,7 +37,7 @@ class DFileCopyMoveJob : public QThread
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_d_ptr), DFileCopyMoveJob)
 
     Q_PROPERTY(Mode mode READ mode WRITE setMode)
-//    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(FileHints fileHints READ fileHints WRITE setFileHints)
     Q_PROPERTY(QString errorString READ errorString CONSTANT)
@@ -60,6 +61,29 @@ public:
 
     Q_ENUM(State)
 
+    enum RefineState {
+        NoRefine,
+        Refine,
+        MoreThreadRefine,
+        MoreThreadAndMainRefine,
+        MoreThreadAndMainAndReadRefine,
+        MoreThreadAndMainAndOpenRefine,
+    };
+
+    Q_ENUM(RefineState)
+
+    enum RefineCopyProccessSate {
+        NoProccess,
+        MainProccessOver,
+        OpenFromFileProccessOver,
+        ReadFileProccessOver,
+        ReadAndWriteFileProccessOver,
+        AddPermissionProccessOver,
+    };
+
+    Q_ENUM(RefineCopyProccessSate)
+
+
     enum Error {
         NoError,
         CancelError,
@@ -82,12 +106,13 @@ public:
         NotEnoughSpaceError,
         TargetReadOnlyError,
         TargetIsSelfError,
-        UnknowError
+        UnknowError,
     };
 
     Q_ENUM(Error)
 
     enum FileHint {
+        NoHint = 0x00,
         FollowSymlink = 0x01,
         Attributes = 0x02, // 复制文件时携带它的扩展属性
         AttributesOnly = 0x04, // 只复制文件的扩展属性
@@ -117,14 +142,16 @@ public:
     Q_ENUM(Action)
     Q_DECLARE_FLAGS(Actions, Action)
 
-    class Handle {
+    class Handle
+    {
     public:
         virtual ~Handle() {}
         virtual Action handleError(DFileCopyMoveJob *job, Error error,
-                                   const DAbstractFileInfo *sourceInfo,
-                                   const DAbstractFileInfo *targetInfo) = 0;
-        virtual QString getNewFileName(DFileCopyMoveJob *job, const DAbstractFileInfo *sourceInfo);
-        virtual QString getNonExistsFileName(DFileCopyMoveJob *job, const DAbstractFileInfo *sourceInfo, const DAbstractFileInfo *targetDirectory);
+                                   const DAbstractFileInfoPointer sourceInfo,
+                                   const DAbstractFileInfoPointer targetInfo) = 0;
+        virtual QString getNewFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer sourceInfo);
+        virtual QString getNonExistsFileName(const DAbstractFileInfoPointer sourceInfo,
+                                             const DAbstractFileInfoPointer targetDirectory);
     };
 
     explicit DFileCopyMoveJob(QObject *parent = nullptr);
@@ -150,6 +177,18 @@ public:
     int totalFilesCount() const;
     QList<QPair<DUrl, DUrl> > completedFiles() const;
     QList<QPair<DUrl, DUrl> > completedDirectorys() const;
+    //优化拷贝时，异步线程去同步的一些状态使用
+    bool getSysncState();
+    bool getSysncQuitState();
+    void setSysncState(const bool &state);
+    void setSysncQuitState(const bool &quitstate);
+    //判断当前盘是否是可以卸载的u盘，手机，光驱或者gvfs
+    bool destIsLocal(const QString &rootpath);
+    void setRefine(const RefineState &refinestat);
+    void waitSysncEnd();
+    void waitRefineThreadOver();
+
+    void setCurTrashData(QVariant fileNameList);
 
     static Actions supportActions(Error error);
 
@@ -167,8 +206,9 @@ Q_SIGNALS:
     // 问题现象一般为，槽函数中的参数是个无效的对象(内存中已被销毁)，不知是否和槽函数形参也为
     // 引用类型有关
     void stateChanged(State state);
+    void errorCanClear();
     void errorChanged(Error error);
-    void currentJobChanged(const DUrl from, const DUrl to);
+    void currentJobChanged(const DUrl from, const DUrl to, const bool iserroeroc);
     void finished(const DUrl from, const DUrl to);
     void completedFilesCountChanged(int count);
     void fileStatisticsFinished();

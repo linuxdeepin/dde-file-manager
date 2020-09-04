@@ -94,23 +94,17 @@ static bool registerFileManager1DBus()
     return true;
 }
 
-static QTime gTime;
 int main(int argc, char *argv[])
 {
-    gTime.start();
     QString tmp;
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
     DApplication::loadDXcbPlugin();
-    tmp += QString(" end loadDXcbPlugin %0").arg(gTime.elapsed());
     DApplication app(argc, argv);
-    tmp += QString(" end DApplication %0").arg(gTime.elapsed());
 
 //    AppController::instance();
-//    tmp += QString(" end AppController::instance %0").arg(gTime.elapsed());
     //QAccessible::installFactory(accessibleFactory);
- // tmp += QString(" end installFactory %0").arg(gTime.elapsed());
 
     bool preload = false;
     bool fileDialogOnly = false;
@@ -135,15 +129,13 @@ int main(int argc, char *argv[])
     if (fileDialogOnly) {
         app.setQuitOnLastWindowClosed(false);
     }
-    tmp += QString(" begin loadTranslator %0").arg(gTime.elapsed());
+
     app.loadTranslator();
-    tmp += QString(" end loadTranslator %0").arg(gTime.elapsed());
     app.setOrganizationName("deepin");
     app.setApplicationDisplayName(app.translate("DesktopMain", "Desktop"));
     app.setApplicationVersion(DApplication::buildVersion((GIT_VERSION)));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    tmp += QString(" app inited %0").arg(gTime.elapsed());
     const QString m_format = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
     DLogManager::setLogFormat(m_format);
     DLogManager::registerConsoleAppender();
@@ -151,15 +143,13 @@ int main(int argc, char *argv[])
     if (!preload) {
         DLogManager::registerFileAppender();
     }
-    qDebug() << tmp;
     tmp.clear();
-    qDebug() << "registerFileAppender " <<  gTime.elapsed();
 
     // init application object
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
 
-    qDebug() << "start " << app.applicationName() << app.applicationVersion() << gTime.elapsed();
+    qDebug() << "start " << app.applicationName() << app.applicationVersion();
     if (!preload && !fileDialogOnly) {
         QDBusConnection conn = QDBusConnection::sessionBus();
 
@@ -175,15 +165,12 @@ int main(int argc, char *argv[])
             qDebug() << "registerObject Failed" << conn.lastError();
             exit(0x0003);
         }
-
-        Desktop::instance()->initDebugDBus(conn);
     }
-#if 1
+
     if  (!preload) {
         // Notify dde-desktop start up
         if (!fileDialogOnly) {
             Dde::Session::RegisterDdeSession();
-            qDebug() << "end RegisterDdeSession" <<  gTime.elapsed();
         }
 
         // ---------------------------------------------------------------------------
@@ -199,8 +186,6 @@ int main(int argc, char *argv[])
             qWarning() << "Register org.freedesktop.FileManager1 DBus service is failed";
         }
     }
-#endif
-    qDebug() << "register desktop" <<  gTime.elapsed();
 
     // init pixmap cache size limit, 20MB * devicePixelRatio
     QPixmapCache::setCacheLimit(static_cast<int>(20 * 1024 * app.devicePixelRatio()));
@@ -210,7 +195,6 @@ int main(int argc, char *argv[])
     if (!fileDialogOnly) {
         Desktop::instance()->preInit();
         Config::instance();
-        qDebug() << "Desktop inited" << gTime.elapsed();
     }
 
     DFMGlobal::installTranslator();
@@ -223,91 +207,24 @@ int main(int argc, char *argv[])
         QTimer::singleShot(1000, &app, &QCoreApplication::quit);
     } else {
         if (!fileDialogOnly) {
-#if 0 //old
-            qDebug() << "begin load view" <<  gTime.elapsed();
-            Desktop::instance()->Show();
-#endif
             Desktop::instance()->loadView();
-            qDebug() << "end load view" <<  gTime.elapsed();
         }
     }
 
     QTimer::singleShot(100,[](){
-        qDebug() << "begin load plugin " <<  gTime.elapsed();
-
         AppController::instance();
-        qDebug() << "end AppController::instance "<< gTime.elapsed();
-
         DFMGlobal::autoLoadDefaultPlugins();
-        qDebug() << "end autoLoadDefaultPlugins" <<  gTime.elapsed();
         DFMGlobal::initPluginManager();
-        qDebug() << "end initPluginManager" <<  gTime.elapsed();
         DFMGlobal::initMimesAppsManager();
-        qDebug() << "end initMimesAppsManager" <<  gTime.elapsed();
         DFMGlobal::initDialogManager();
-        qDebug() << "end initDialogManager" <<  gTime.elapsed();
         DFMGlobal::initOperatorRevocation();
-        qDebug() << "end initOperatorRevocation" <<  gTime.elapsed();
         DFMGlobal::initTagManagerConnect();
-        qDebug() << "end initTagManagerConnect" <<  gTime.elapsed();
         DFMGlobal::initThumbnailConnection();
-        qDebug() << "end initThumbnailConnection" <<  gTime.elapsed();
         DFMGlobal::initDeviceListener();
-        qDebug() << "end initDeviceListener" <<  gTime.elapsed(); //高耗时
         DFMGlobal::initGvfsMountManager();
-        qDebug() << "end initGvfsMountManager and load plugin" <<  gTime.elapsed();
+        DFMGlobal::initBluetoothManager();
     });
-#if 0
-    qDebug() << "begin load plugin " <<  gTime.elapsed();
-    DFMGlobal::autoLoadDefaultPlugins();
-    qDebug() << "end autoLoadDefaultPlugins" <<  gTime.elapsed();
-    DFMGlobal::initPluginManager();
-    qDebug() << "end initPluginManager" <<  gTime.elapsed();
-    DFMGlobal::initMimesAppsManager();
-    qDebug() << "end initMimesAppsManager" <<  gTime.elapsed();
-    DFMGlobal::initDialogManager();
-    qDebug() << "end initDialogManager" <<  gTime.elapsed();
-    DFMGlobal::initOperatorRevocation();
-    qDebug() << "end initOperatorRevocation" <<  gTime.elapsed();
-    DFMGlobal::initTagManagerConnect();
-    qDebug() << "end initTagManagerConnect" <<  gTime.elapsed();
-    DFMGlobal::initThumbnailConnection();
-    qDebug() << "end initThumbnailConnection" <<  gTime.elapsed();
-    DFMGlobal::initDeviceListener();
-    qDebug() << "end initDeviceListener" <<  gTime.elapsed(); //高耗时
-    DFMGlobal::initGvfsMountManager();
-    qDebug() << "end initGvfsMountManager and load plugin" <<  gTime.elapsed();
-#endif
 
-#if 0
-    if  (!preload) {
-        // Notify dde-desktop start up
-        if (!fileDialogOnly) {
-            Dde::Session::RegisterDdeSession();
-            QApplication::processEvents();
-            qDebug() << "end RegisterDdeSession" <<  gTime.elapsed();
-        }
-
-        // ---------------------------------------------------------------------------
-        // ability to show file selection dialog
-        if (!registerDialogDBus()) {
-            qWarning() << "Register dialog dbus failed.";
-            if (fileDialogOnly) {
-                return 1;
-            }
-        }
-
-        if (!registerFileManager1DBus()) {
-            qWarning() << "Register org.freedesktop.FileManager1 DBus service is failed";
-        }
-    }
-#endif
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.
-    // ---------------------------------------------------------------------------
-
-//    DEventFilter *event_filter{ new DEventFilter{&app} };
-//    app.installEventFilter(event_filter);
-
-
     return app.exec();
 }

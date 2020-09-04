@@ -62,6 +62,7 @@
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
 #include "dialogs/dmultifilepropertydialog.h"
+#include "bluetooth/bluetoothtransdialog.h"
 #include "plugins/pluginmanager.h"
 #include "preview/previewinterface.h"
 #include "views/dfmopticalmediawidget.h"
@@ -162,6 +163,8 @@ void DialogManager::initConnect()
             this, &DialogManager::showRestoreFailedDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowRestoreFailedPerssionDialog,
             this, &DialogManager::showRestoreFailedPerssionDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowRestoreFailedSourceNotExist,
+            this, &DialogManager::showRestoreFailedSourceNotExists);
     connect(fileSignalManager, &FileSignalManager::requestShowNoPermissionDialog,
             this, &DialogManager::showNoPermissionDialog);
 
@@ -293,12 +296,18 @@ void DialogManager::addJob(FileJob *job)
 }
 
 
-void DialogManager::removeJob(const QString &jobId)
+void DialogManager::removeJob(const QString &jobId, bool clearAllbuffer)
 {
+    if (clearAllbuffer && m_Opticaljobs.contains(jobId)) { // 最后的时候需要删除所有buffer的数据，否则形成脏数据
+        m_Opticaljobs.remove(jobId);
+        qDebug() << "remove job " << jobId << "from m_Opticaljobs";
+    }
+
     if (m_jobs.contains(jobId)) {
         FileJob *job = m_jobs.value(jobId);
-        if (job->getIsOpticalJob() && !job->getIsFinished()) {
+        if (!clearAllbuffer && job->getIsOpticalJob() && !job->getIsFinished()) {// 最后的时候需要删除所有buffer的数据，就不能再插入了
             m_Opticaljobs.insert(jobId, job); // 备份刻录、擦除任务以便再次点击光驱的时候可以激活当前进度
+            qDebug() << "insert job " << jobId << "to m_Opticaljobs";
         }
         job->setIsAborted(true);
         job->setApplyToAll(true);
@@ -485,6 +494,22 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     buttonTexts << tr("Confirm");
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
+{
+    // 获取父对话框字体特性
+    DDialog d(WindowManager::getWindowById(event.windowId()));
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("The file name must not contain two dots(..)"));
+    QStringList buttonTexts;
+    buttonTexts << tr("Confirm");
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    // 设置对话框icon
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     int code = d.exec();
     return code;
@@ -801,7 +826,7 @@ void DialogManager::showComputerPropertyDialog()
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
     },
-                     this)
+    this)
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
@@ -1039,6 +1064,20 @@ void DialogManager::showRestoreFailedPerssionDialog(const QString &srcPath, cons
     d.exec();
 }
 
+void DialogManager::showRestoreFailedSourceNotExists(const DUrlList &urlList)
+{
+    DDialog d;
+    d.setTitle(tr("Operation failed!"));
+    if (urlList.count() == 1) {
+        d.setMessage(tr("Failed to restore %1 file, the source file does not exist").arg(QString::number(1)));
+    } else if (urlList.count() > 1) {
+        d.setMessage(tr("Failed to restore %1 files, the source files does not exist").arg(QString::number(urlList.count())));
+    }
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.exec();
+}
+
 void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 {
     DUrlList urls = event.urlList();
@@ -1047,14 +1086,14 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         return;
     }
 
-    int ret = 0;
     QFont f;
     f.setPixelSize(16);
     QFontMetrics fm(f);
     int maxWith = qApp->primaryScreen()->size().width() * 3 / 4;
+    DDialog d;
 
     if (urls.count() == 1) {
-        DDialog d;
+
         d.setTitle(tr("You do not have permission to operate file/folder!"));
         QString message = urls.at(0).toLocalFile();
 
@@ -1064,11 +1103,8 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
         d.setMessage(message);
         d.setIcon(m_dialogWarningIcon, QSize(64, 64));
-        d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-        ret = d.exec();
     } else {
 
-        DDialog d;
         QFrame *contentFrame = new QFrame;
 
         QLabel *iconLabel = new QLabel;
@@ -1102,25 +1138,15 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         contentFrame->setLayout(contentLayout);
 
         d.addContent(contentFrame, Qt::AlignCenter);
-        d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
-        d.addButton(tr("View"), true, DDialog::ButtonRecommend);
-        ret = d.exec();
     }
-    if (ret) {
-        QWidget *window = WindowManager::getWindowById(event.windowId());
-        if (window) {
-            DFileManagerWindow *w = static_cast<DFileManagerWindow *>(window);
-            DUrl parentUrl = event.urlList().at(0).parentUrl();
-            w->cd(parentUrl);
-            window->raise();
-            QTimer::singleShot(1000, [ = ] { emit fileSignalManager->requestSelectFile(event); });
-        }
-    }
+
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.exec();
 }
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 {
-    QTimer::singleShot(1000, [=] {
+    QTimer::singleShot(1000, [ = ] {
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
             QStringList &&udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
@@ -1355,20 +1381,19 @@ void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString>
     }
 }
 
-int DialogManager::showMessageDialog(int messageLevel, const QString &message)
+int DialogManager::showMessageDialog(messageType messageLevel, const QString &title, const QString &message, QString btnTxt)
 {
-    DDialog d;
+    DDialog d(title, message);
     d.moveToCenter();
-    d.setTitle(message);
     QStringList buttonTexts;
-    buttonTexts << tr("Confirm");
+    buttonTexts << btnTxt;
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
-    if (messageLevel == 1) {
+    if (messageLevel == msgInfo) {
         d.setIcon(m_dialogInfoIcon, QSize(64, 64));
-    } else if (messageLevel == 2) {
+    } else if (messageLevel == msgWarn) {
         d.setIcon(m_dialogWarningIcon, QSize(64, 64));
-    } else if (messageLevel == 3) {
+    } else if (messageLevel == msgErr) {
         d.setIcon(m_dialogErrorIcon, QSize(64, 64));
     } else {
         d.setIcon(m_dialogInfoIcon, QSize(64, 64));
@@ -1378,6 +1403,51 @@ int DialogManager::showMessageDialog(int messageLevel, const QString &message)
     return code;
 }
 
+void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
+{
+    QStringList paths;
+    foreach (auto u, files) {
+        if (u.scheme() == RECENT_SCHEME) {
+            u = DUrl::fromLocalFile(u.path());
+        } else if (u.scheme() == SEARCH_SCHEME) { //搜索结果也存在右键批量打卡不成功的问题，这里做类似处理
+            u = u.searchedFileUrl();
+        } else if (u.scheme() == BURN_SCHEME) {
+            DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
+            if (!info)
+                continue;
+            if (info->canRedirectionFileUrl())
+                u = info->redirectedFileUrl();
+        } else if (u.scheme() == TAG_SCHEME) {
+            u = DUrl::fromLocalFile(u.toLocalFile());
+        }
+        paths << u.path();
+    }
+
+    BluetoothTransDialog *dlg = new BluetoothTransDialog(paths);
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    dlg->show();
+}
+
+void DialogManager::showFormatDialog(const QString &devId)
+{
+    if (devId.isEmpty())
+        return;
+    if (devId.startsWith("/dev/sr")) // optical disk canot format(bug-42414)
+        return;
+
+    DDialog dlg;
+    dlg.setIcon(m_dialogWarningIcon);
+    dlg.addButton(tr("Cancle"));
+    dlg.addButton(tr("Format"), true, DDialog::ButtonRecommend);
+    dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
+    if (dlg.exec() == 1) {
+        // 显示格式化窗口
+        QProcess *p = new QProcess;
+        connect(p, static_cast<void (QProcess::*)(int)>(&QProcess::finished), p, &QProcess::deleteLater);
+        connect(p, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), p, &QProcess::deleteLater);
+        p->startDetached("dde-device-formatter", QStringList {devId});
+    }
+}
 
 void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 {

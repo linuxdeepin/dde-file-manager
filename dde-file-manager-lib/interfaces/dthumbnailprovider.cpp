@@ -124,6 +124,7 @@ void DThumbnailProviderPrivate::init()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/ief"), 1024 * 1024 * 80);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/tiff"), 1024 * 1024 * 80);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/x-tiff-multipage"), 1024 * 1024 * 80);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/vnd.djvu+multipage"), 1024 * 1024 * 80);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/x-adobe-dng"), 1024 * 1024 * 80);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/jpeg"), 1024 * 1024 * 30);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/png"), 1024 * 1024 * 30);
@@ -212,9 +213,9 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
 
     if (Q_LIKELY(mime == "text/plain" || mimeTypeList.contains("application/pdf")
 //            || mime == "application/vnd.adobe.flash.movie"
-            || mime == "application/vnd.rn-realmedia"
-            || mime == "application/vnd.ms-asf"
-            || mime == "application/mxf")) {
+                 || mime == "application/vnd.rn-realmedia"
+                 || mime == "application/vnd.ms-asf"
+                 || mime == "application/mxf")) {
         DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
 
         return true;
@@ -249,9 +250,9 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
 
     QImageReader ir(thumbnail, QByteArray(FORMAT).mid(1));
     if (!ir.canRead()) {
-      QFile::remove(thumbnail);
-      emit thumbnailChanged(absoluteFilePath, QString());
-      return QString();
+        QFile::remove(thumbnail);
+        emit thumbnailChanged(absoluteFilePath, QString());
+        return QString();
     }
     ir.setAutoDetectImageFormat(false);
 
@@ -323,7 +324,59 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
     QStringList mimeTypeList = {mime.name()};
     mimeTypeList.append(mime.parentMimeTypes());
 
-    if (mime.name().startsWith("image/")) {
+    //! 新增djvu格式文件缩略图预览
+    if (mime.name().contains("image/vnd.djvu")) {
+        thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
+        d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
+
+        if (d->errorString.isEmpty()) {
+            emit createThumbnailFinished(absoluteFilePath, thumbnail);
+            emit thumbnailChanged(absoluteFilePath, thumbnail);
+
+            return thumbnail;
+        } else {
+            QString readerBinary = QStandardPaths::findExecutable("deepin-reader");
+            if (readerBinary.isEmpty())
+                return thumbnail;
+            //! 使用子进程来调用deepin-reader程序生成djvu格式文件缩略图
+            QProcess process;
+            QStringList arguments;
+            //! 生成缩略图缓存地址
+            QString saveImage = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
+            arguments << "--thumbnail" << "-f" << absoluteFilePath << "-t" << saveImage;
+            process.start(readerBinary, arguments);
+
+            if (!process.waitForFinished()) {
+                d->errorString = process.errorString();
+
+                goto _return;
+            }
+
+            if (process.exitCode() != 0) {
+                const QString &error = process.readAllStandardError();
+
+                if (error.isEmpty()) {
+                    d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(readerBinary);
+                } else {
+                    d->errorString = error;
+                }
+
+                goto _return;
+            }
+
+            QFile file(saveImage);
+            if (file.open(QIODevice::ReadOnly)) {
+                QByteArray output = file.readAll();
+                //QByteArray png_data = QByteArray::fromBase64(output);
+                Q_ASSERT(!output.isEmpty());
+
+                if (image->loadFromData(output, "png")) {
+                    d->errorString.clear();
+                }
+                file.close();
+            }
+        }
+    } else if (mime.name().startsWith("image/")) {
         mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
 
         QImageReader reader(absoluteFilePath, mime.preferredSuffix().toLatin1());
@@ -337,7 +390,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
         //fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
         //这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
-        if(!imageSize.isValid()){
+        if (!imageSize.isValid()) {
             d->errorString = "Fail to read image file attribute data:" + info.absoluteFilePath();
             goto _return;
         }
@@ -425,13 +478,13 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             d->errorString = QStringLiteral("Image format is invalid");
             goto _return;
         case poppler::image::format_mono:
-            img = QImage((uchar*)imageData.data(), imageData.width(), imageData.height(), QImage::Format_Mono);
+            img = QImage((uchar *)imageData.data(), imageData.width(), imageData.height(), QImage::Format_Mono);
             break;
         case poppler::image::format_rgb24:
-            img = QImage((uchar*)imageData.data(),imageData.width(),imageData.height(),QImage::Format_ARGB6666_Premultiplied);
+            img = QImage((uchar *)imageData.data(), imageData.width(), imageData.height(), QImage::Format_ARGB6666_Premultiplied);
             break;
         case poppler::image::format_argb32:
-            img = QImage((uchar*)imageData.data(), imageData.width(), imageData.height(), QImage::Format_ARGB32);
+            img = QImage((uchar *)imageData.data(), imageData.width(), imageData.height(), QImage::Format_ARGB32);
             break;
         default:
             break;
@@ -532,7 +585,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             } else {
                 //过滤video tool的其他输出信息
                 QString processResult(output);
-                processResult = processResult.split(QRegExp("[\n]"),QString::SkipEmptyParts).last();
+                processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
                 const QByteArray png_data = QByteArray::fromBase64(processResult.toUtf8());
                 Q_ASSERT(!png_data.isEmpty());
                 if (image->loadFromData(png_data, "png")) {

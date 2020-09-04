@@ -136,6 +136,7 @@ public:
     bool createSymlink(const QObject *sender, const DUrl &fileUrl) const;
     bool createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl, bool force = false) const;
     bool sendToDesktop(const QObject *sender, const DUrlList &urlList) const;
+    void sendToBluetooth(const DUrlList &urlList) const;
 
     bool shareFolder(const QObject *sender, const DUrl &fileUrl, const QString &name, bool isWritable = false, bool allowGuest = false);
     bool unShareFolder(const QObject *sender, const DUrl &fileUrl) const;
@@ -164,8 +165,10 @@ public:
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
     DStorageInfo *createStorageInfo(const QObject *sender, const DUrl &url);
     QList<DAbstractFileInfoPointer> getRootFile();
-    void changeRootFile(const DUrl &fileurl, const bool bcreate = true);
+    bool isRootFileInited() const;
+    void changeRootFile(const DUrl &fileurl,const bool bcreate = true);
     void startQuryRootFile();
+    DAbstractFileWatcher *rootFileWather() const;
     void clearThread();
 
     //set cursor busy status
@@ -185,7 +188,10 @@ public:
     void setDoClearTrashState(const bool bdoing);
     //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
     void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
-
+    //处理rootfilelist中是否包含某个durl
+    bool isRootFileContain(const DUrl &url);
+    //判断当前的可访问的smb和ftp中是否包含某个url
+    bool isSmbFtpContain(const DUrl &url);
 signals:
     void fileOpened(const DUrl &fileUrl) const;
     void fileCopied(const DUrl &source, const DUrl &target) const;
@@ -194,8 +200,10 @@ signals:
     void fileRenamed(const DUrl &from, const DUrl &to) const;
     void rootFileChange(const DAbstractFileInfoPointer &chi) const;
     void queryRootFileFinsh() const;
+    void serviceHideSystemPartition() const;
 public Q_SLOTS:
     void slotError(QNetworkReply::NetworkError err);
+    void hideSystemPartition();
 
 private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;

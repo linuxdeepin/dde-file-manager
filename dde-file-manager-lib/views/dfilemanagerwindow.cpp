@@ -42,6 +42,7 @@
 #include "dfmsettings.h"
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
+#include "dfmopticalmediawidget.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
@@ -332,6 +333,16 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         return false;
     }
 
+    if (fileUrl.scheme() == BURN_SCHEME) {
+
+        // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
+        QString strVolTag = DFMOpticalMediaWidget::getVolTag(fileUrl);
+        if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
+            emit fileSignalManager->activeTaskDlg();
+            return false;
+        }
+    }
+
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
         if (fi->suffix() == SUFFIX_USRDIR) {
@@ -344,12 +355,19 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         }
     }
 
-    if (fileUrl.scheme() == DFMVAULT_SCHEME) {
+    if (fileUrl.scheme() == DFMVAULT_SCHEME ||
+            VaultController::isVaultFile(fileUrl.fragment())) {
         if (VaultController::Unlocked != VaultController::ins()->state()
                 || fileUrl.host() == "delete") {
-            DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
+
+            DUrl realUrl = fileUrl.isTaggedFile() ? DUrl::fromLocalFile(fileUrl.fragment()) : fileUrl;
+
+            //! set scheme to get vault file info.
+            realUrl.setScheme(DFMVAULT_SCHEME);
+
+            DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(realUrl);
             view->widget()->setParent(q);
-            bool ret = view->setRootUrl(fileUrl);
+            bool ret = view->setRootUrl(realUrl);
             delete view;
             view = nullptr;
             return ret;
@@ -423,7 +441,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
     if (current_view) {
         // 为了解决 bug 34363: [4K屏]下且[缩放]，[ICON视图]下[浏览大量文件]，同时[疯狂滚动 scrollbar] 导致的崩溃问题
-        auto fileView = dynamic_cast<DFileView*>(current_view);
+        auto fileView = dynamic_cast<DFileView *>(current_view);
         if (fileView && fileView->isIconViewMode()) {
             auto model = fileView->model();
             if (model) {
@@ -547,13 +565,20 @@ DFileManagerWindow::DFileManagerWindow(QWidget *parent)
 {
 }
 
+QPair<bool, QMutex> winId_mtx;  //异步初始化win插件
 DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
     /// init global AppController
     setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-
+    if (!winId_mtx.first) {
+        //等待异步加载完成
+        winId_mtx.second.lock();
+        winId_mtx.first = true;
+        winId_mtx.second.unlock();
+    }
+    winId();
     initData();
     initUI();
     initConnect();
@@ -1014,7 +1039,8 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
         return true;
     }
-    default: break;
+    default:
+        break;
     }
 
     return false;
@@ -1303,7 +1329,7 @@ void DFileManagerWindow::initConnect()
         if (VaultController::isVaultFile(url.toString()))
         {
             // 如果是快捷方式，则赋值为快捷方式的源文件路径，便于正常显示快捷方式的路径
-            if(info->isSymLink()){
+            if (info->isSymLink()) {
                 url = info->symLinkTarget();
                 url = VaultController::localUrlToVault(url);
             }
@@ -1337,6 +1363,10 @@ void DFileManagerWindow::initConnect()
                 d->detailView->setTagWidgetVisible(false);
         }
     });
+
+    //! redirect when tab root url changed.
+    QObject::connect(fileSignalManager, &FileSignalManager::requestRedirectTabUrl, this, &DFileManagerWindow::onRequestRedirectUrl);
+    QObject::connect(fileSignalManager, &FileSignalManager::requestCloseTab, this, &DFileManagerWindow::onRequestCloseTabByUrl);
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
@@ -1386,6 +1416,53 @@ void DFileManagerWindow::onReuqestCacheRenameBarState()const
 {
     const DFileManagerWindowPrivate *const d{ d_func() };
     DFileManagerWindow::renameBarState = d->renameBar->getCurrentState();//###: record current state, when a new window is created from a already has tab.
+}
+
+void DFileManagerWindow::onRequestRedirectUrl(const DUrl &tabRootUrl, const DUrl &newUrl)
+{
+    D_D(DFileManagerWindow);
+
+    int curIndex = d->tabBar->currentIndex();
+    int tabCount = d->tabBar->count();
+    if (tabCount > 1) {
+        for (int i = 0; i < tabCount; i++) {
+            Tab *tab = d->tabBar->tabAt(i);
+            if (tabRootUrl == tab->fileView()->rootUrl()) {
+                onRequestCloseTab(i, false);
+                openNewTab(newUrl);
+                d->tabBar->setCurrentIndex(curIndex);
+            }
+        }
+    }
+}
+
+void DFileManagerWindow::onRequestCloseTabByUrl(const DUrl &rootUrl)
+{
+    D_D(DFileManagerWindow);
+    if (rootUrl.toString() == TRASH_ROOT) {
+        return;
+    }
+    int originIndex = d->tabBar->currentIndex();
+    if (d->tabBar->count() > 1) {
+        for (int i = 0; i < d->tabBar->count(); i++) {
+            Tab *tab = d->tabBar->tabAt(i);
+            if (tab->fileView()) {
+                if (rootUrl == tab->fileView()->rootUrl()) {
+                    onRequestCloseTab(i, false);
+                    i--;
+                }
+            }
+            if (d->tabBar->count() <= 1) {
+                break;
+            }
+        }
+        int curIndex = d->tabBar->currentIndex();
+        if (curIndex != originIndex) {
+            if (originIndex < d->tabBar->count()) {
+                d->tabBar->setCurrentIndex(originIndex);
+            }
+        }
+    }
 }
 
 void DFileManagerWindow::showEvent(QShowEvent *event)
@@ -1465,4 +1542,11 @@ void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
     if (d->advanceSearchBar && resetForm) {
         d->advanceSearchBar->resetForm(false);
     }
+}
+
+void DFileManagerWindow::showFilterButton()
+{
+    Q_D(DFileManagerWindow);
+
+    d->toolbar->showFilterButton();
 }

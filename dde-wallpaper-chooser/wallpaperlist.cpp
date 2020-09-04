@@ -185,13 +185,18 @@ void WallpaperList::keyPressEvent(QKeyEvent *event)
 {
     switch(event->key())
     {
-    case Qt::Key_Right:
-    //选中下一壁纸
-        setCurrentIndex(m_index+1);
-        break;
     case Qt::Key_Left:
-    //选中上一壁纸
-        setCurrentIndex(m_index-1);
+    case Qt::Key_Right:
+        //fix bug#39948,按住不放时需等待切换结束再继续切换
+        if (event->isAutoRepeat() && scrollAnimation.state() == QAbstractAnimation::Running){
+            event->accept();
+            return;
+        }
+        //选中下一壁纸
+        if (event->key() == Qt::Key_Right)
+            setCurrentIndex(m_index+1);
+        else    //选中上一壁纸
+            setCurrentIndex(m_index-1);
         break;
     default:
     //保持按键事件传递
@@ -312,8 +317,12 @@ void WallpaperList::updateItemThumb()
 
     showDeleteButtonForItem(static_cast<WallpaperItem *>(itemAt(mapFromGlobal(QCursor::pos()))));
 
+    //fix bug44918 首次打开壁纸库，点击图片切换到下一页图片，过程中会出现短暂空库
+    QRect r = rect();
+    //判断区域增加前一页，当前页，下一页的壁纸缩略图
+    QRect cacheRect(r.x() - r.width(), r.y(),r.width() * 3, r.height());
     for (WallpaperItem *item : m_items) {
-        if (rect().intersects(QRect(item->mapTo(this, QPoint()), item->size()))) {
+        if (cacheRect.intersects(QRect(item->mapTo(this, QPoint()), item->size()))) {
             item->initPixmap();
         }
     }
@@ -354,6 +363,14 @@ void WallpaperList::setCurrentIndex(int index)
 
 WallpaperItem *WallpaperList::getCurrentItem()
 {
+    // fix bug42257进入到“壁纸与屏保”界面，按TAB键，桌面崩溃
+    if(m_index<0 || m_index>=count()) {
+        if (m_items.isEmpty()) {
+            return nullptr;
+        } else {
+            return m_items.first();
+        }
+    }
     return m_items.at(m_index);
 }
 

@@ -317,7 +317,8 @@ DUrlList MergedDesktopController::pasteFile(const QSharedPointer<DFMPasteEvent> 
 bool MergedDesktopController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     DUrlList urlList = convertToRealPaths(event->urlList());
-    return DFileService::instance()->deleteFiles(event->sender(), urlList);
+    // 注意这里第三个参数 confirmationDialog, 在函数体内并未使用，但需要后面的两个参数所以给第三个参数赋值true
+    return DFileService::instance()->deleteFiles(event->sender(), urlList, true, event->silent(), event->force());
 }
 
 bool MergedDesktopController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
@@ -502,7 +503,7 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
     if (arrangedFileUrls[typeInfo].contains(url)) {
         qWarning() << url << "existed, it must be a bug!!!!!!!!";
         return; //不return会崩溃，不知道为什么 todo
-        arrangedFileUrls[typeInfo].removeAll(url);
+//        arrangedFileUrls[typeInfo].removeAll(url);//return后不执行，导致警告屏蔽之
     }
     arrangedFileUrls[typeInfo].append(url);
     aful.unlock();

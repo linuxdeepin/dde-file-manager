@@ -39,22 +39,13 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase:
 {
     return mimeTypeForFile(QFileInfo(fileName), mode);
 }
-//判读ios手机，传输慢，需要特殊处理优化
-QMimeType DMimeDatabase::mimeTypeForFileOptimise(const QString &fileName, QMimeDatabase::MatchMode mode) const
-{
-    QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileName);
-    if (!results.isEmpty()) {
-        return results.first();
-    }
-    return mimeTypeForFile(fileName,mode);
-}
 
 QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode) const
 {
     // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
     QMimeType result;
     QString path = fileInfo.path();
-    bool bMatchExtension = false;
+    bool isMatchExtension = false;
     //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
             || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
@@ -66,9 +57,13 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
         const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
                                                             QRegularExpression::DontCheckSubjectStringMatchOption);
 
-        bMatchExtension = match.hasMatch();
+        isMatchExtension = match.hasMatch();
+    } else {
+        // filemanger will be blocked when blacklist contais the filepath.
+        static const QStringList blacklist {"/sys/kernel/security/apparmor/revision", "/sys/power/wakeup_count", "/proc/kmsg"};
+        isMatchExtension = blacklist.contains(fileInfo.absoluteFilePath()) ? true : false;
     }
-    if (DStorageInfo::isLowSpeedDevice(path) || bMatchExtension) {
+    if (DStorageInfo::isLowSpeedDevice(path) || isMatchExtension) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);

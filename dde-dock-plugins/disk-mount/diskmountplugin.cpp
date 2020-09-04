@@ -37,6 +37,26 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
 
       m_pluginAdded(false),
       m_pluginLoaded(false),
+      m_usingAppLoader(true),
+
+      m_tipsLabel(new TipsWidget),
+      m_diskPluginItem(new DiskPluginItem),
+      m_diskControlApplet(nullptr)
+{
+    qDebug() << "===============init=============";
+    m_diskPluginItem->setVisible(false);
+
+    m_tipsLabel->setObjectName("diskmount");
+    m_tipsLabel->setVisible(false);
+    m_tipsLabel->setText(tr("Disk"));
+}
+
+DiskMountPlugin::DiskMountPlugin(bool usingAppLoader, QObject *parent)
+    : QObject(parent),
+
+      m_pluginAdded(false),
+      m_pluginLoaded(false),
+      m_usingAppLoader(usingAppLoader),
 
       m_tipsLabel(new TipsWidget),
       m_diskPluginItem(new DiskPluginItem),
@@ -60,7 +80,9 @@ void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
     // blumia: we are using i10n translation from DFM so...     qApp->loadTranslator();
     QString applicationName = qApp->applicationName();
     qApp->setApplicationName("dde-disk-mount-plugin");
-    qDebug() << qApp->loadTranslator();
+    if(m_usingAppLoader){
+        qDebug() << qApp->loadTranslator();
+    }
     qApp->setApplicationName(applicationName);
     qDebug() << "===============init==proxyInter===========";
     m_proxyInter = proxyInter;
@@ -116,7 +138,7 @@ const QString DiskMountPlugin::itemContextMenu(const QString &itemKey)
 
     QMap<QString, QVariant> unmountAll;
     unmountAll["itemId"] = UNMOUNT_ALL;
-    unmountAll["itemText"] = tr("Unmount all");
+    unmountAll["itemText"] = tr("Eject all");
     unmountAll["isActive"] = true;
     items.push_back(unmountAll);
 

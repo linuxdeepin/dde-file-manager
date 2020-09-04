@@ -313,7 +313,7 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
 void FilePreviewDialog::resizeEvent(QResizeEvent *event)
 {
     DAbstractDialog::resizeEvent(event);
-    QTimer::singleShot(50, this, [=]() { //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
+    QTimer::singleShot(50, this, [ = ]() { //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
         repaint(); //通过重绘来解决调整大小前的窗口残留的问题
     });
 }
@@ -400,12 +400,16 @@ void FilePreviewDialog::initUI()
     connect(m_statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
-        if (DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex))) {
+        /*fix 45499 我的共享目录，选中一个文件夹按空格键预览，点击打开按钮无反应 预览里面没有实现openfile方法，所以这里传递的时候需要使用实际的url*/
+        DUrl url = DUrl::fromLocalFile(m_fileList.at(m_currentPageIndex).path());
+        if (DFileService::instance()->openFile(this, url))
+        {
             close();
         }
     });
     connect(shortcut_action, &QAction::triggered, this, [this] {
-        if (m_preview) {
+        if (m_preview)
+        {
             m_preview->copyFile();
         }
     });
@@ -555,8 +559,9 @@ void FilePreviewDialog::playCurrentPreviewFile()
     if (m_preview) {
         if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
             m_playingVideo = true;
+            // 1s 后才能重新预览视频，原因是快速切换预览视频会因为视频插件内部的崩溃引起文管崩溃
             QTimer::singleShot(1000, [this] () {
-               m_playingVideo = false;
+                m_playingVideo = false;
             });
         }
         m_preview->play();
@@ -586,6 +591,10 @@ void FilePreviewDialog::nextPage()
 
 void FilePreviewDialog::updateTitle()
 {
+    // 在频繁启动关闭的场景下，m_preview可能会意外释放，引起空指针造成的崩溃
+    if (!m_preview)
+        return;
+
     QFont font = m_statusBar->title()->font();
     QFontMetrics fm(font);
     QString elidedText;

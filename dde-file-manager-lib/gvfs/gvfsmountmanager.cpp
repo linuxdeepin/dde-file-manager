@@ -55,6 +55,7 @@
 #include <QJsonArray>
 #include <QProcess>
 #include <QStandardPaths>
+#include <QRegularExpression>
 
 #include <views/windowmanager.h>
 
@@ -76,6 +77,7 @@ MountSecretDiskAskPasswordDialog* GvfsMountManager::mountSecretDiskAskPasswordDi
 MountAskPasswordDialog *GvfsMountManager::askPasswordDialog = nullptr;
 
 bool GvfsMountManager::AskingPassword = false;
+bool GvfsMountManager::AskedPasswordWhileMountDisk = false;
 QJsonObject GvfsMountManager::SMBLoginObj = {};
 DFMUrlBaseEvent GvfsMountManager::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl());
 QPointer<QEventLoop> GvfsMountManager::eventLoop;
@@ -787,7 +789,29 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
         choiceList << oneOption;
     }
 
-    choice = DThreadUtil::runInMainThread(requestAnswerDialog, MountEvent.windowId(), oneMessage, choiceList);
+    QString newmsg = oneMessage;
+    if (oneMessage.startsWith("Can’t verify the identity of") &&
+            oneMessage.endsWith("If you want to be absolutely sure it is safe to continue, contact the system administrator.")) {
+        QString arg1,arg2;
+        QRegularExpression ovrex("“.*?”");
+        auto ovrxm = ovrex.match(oneMessage);
+        if (ovrxm.hasMatch()) {
+            arg1 = ovrxm.captured(0);
+            newmsg = newmsg.replace(arg1,"");
+            auto ovrxm = ovrex.match(newmsg);
+            arg2 = ovrxm.captured(0);
+            // 修复文管文案问题
+            newmsg = tr("Can’t verify the identity of %1.").arg(arg1) + '\n' +
+                     tr("This happens when you log in to a computer the first time.") + '\n' +
+                     tr("The identity sent by the remote computer is") + '\n' +
+                     tr("%2.").arg(arg2) + '\n' +
+                     tr("If you want to be absolutely sure it is safe to continue, contact the system administrator.");
+        }
+        newmsg = newmsg.replace("\\r\\n","\n");
+        qDebug() << newmsg;
+    }
+
+    choice = DThreadUtil::runInMainThread(requestAnswerDialog, MountEvent.windowId(), newmsg, choiceList);
     qCDebug(mountManager()) << "ask_question_cb() user choice(start at 0): " << choice;
 
     // check if choose is invalid
@@ -917,6 +941,8 @@ void GvfsMountManager::ask_disk_password_cb(GMountOperation *op, const char *mes
         return;
     }
 
+    AskedPasswordWhileMountDisk = true;
+
     g_print ("%s\n", message);
 
     bool anonymous = g_mount_operation_get_anonymous(op);
@@ -999,6 +1025,7 @@ QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
     }
     if (!info.isValid()) {
         qDebug() << "获取磁盘信息失败";
+        dialogManager->showFormatDialog(path);
     }
     info.updateGvfsFileSystemInfo();
     return info;
@@ -1050,12 +1077,10 @@ void GvfsMountManager::startMonitor()
 {
     if (DFMGlobal::isRootUser()){
         listMountsBylsblk();
-    }else{
-        listDrives();
-        listVolumes();
-        listMounts();
-//        updateDiskInfos();
     }
+    listVolumes();
+    listMounts();
+    listDrives();
     updateDiskInfos(); //磁盘信息root用户也需要刷新,否则会出现root用户只能挂载不能卸载的情况
 #ifdef DFM_MINIMUM
     qDebug() << "Don't auto mount disk";
@@ -1465,7 +1490,8 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 //        }
         if (showWarnDlg) {
                     DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                                 tr("Mounting device error"), QString(error->message));
+                                                 tr("Mounting device error"), QString());
+                    qDebug() << "Mounting device error: " << QString(error->message);
         }
         else {
             //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
@@ -1591,6 +1617,7 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
     volume = G_VOLUME (object);
 
     succeeded = g_volume_mount_finish (volume, res, &error);
+    QVolume qVolume = gVolumeToqVolume(volume);
 
     if (!succeeded) {
         qCDebug(mountManager()) << "Error mounting: " << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)
@@ -1598,18 +1625,20 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
 
         //! 下面这样做只是为了字符串翻译，因为错误信息是底层返回的
         QString err = QString::fromLocal8Bit(error->message);
-         switch(error->code)
-        {
-         case 0:
+        switch (error->code) {
+        case 0:
             err = QString(tr("No key available to unlock device"));
             break;
-         default:
-             break;
+        default:
+            break;
         }
-        if (!silent && !errorCodeNeedSilent(error->code)) {
-            fileSignalManager->requestShowErrorDialog(err, QString(" "));
+        if (AskedPasswordWhileMountDisk) { // 显示过密码框的设备，说明该设备可解锁，但密码不一定正确或取消了，不需要提示用户格式化
+            if (!silent && !errorCodeNeedSilent(error->code)) {
+                fileSignalManager->requestShowErrorDialog(err, QString(" "));
+            }
+        } else {
+            dialogManager->showFormatDialog(qVolume.drive_unix_device());
         }
-
     } else {
         GMount *mount;
         GFile *root;
@@ -1622,6 +1651,7 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
         g_object_unref (root);
         g_free (mount_path);
     }
+    AskedPasswordWhileMountDisk = false;
 }
 
 void GvfsMountManager::unmount(const QDiskInfo &diskInfo)

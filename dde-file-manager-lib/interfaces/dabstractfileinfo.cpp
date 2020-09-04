@@ -51,6 +51,11 @@
 #include "ddiskmanager.h"
 #include "ddiskdevice.h"
 
+#include "bluetooth/bluetoothmanager.h"
+#include "bluetooth/bluetoothmodel.h"
+
+#include "io/dstorageinfo.h"
+
 #include <DDesktopEntry>
 
 #include <QDateTime>
@@ -91,6 +96,13 @@ public:
 bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
     thread_local static DCollator sortCollator;
+    //其他符号要排在最后，需要在中文前先做判断
+    if (DFMGlobal::startWithSymbol(str1)) {
+        if (!DFMGlobal::startWithSymbol(str2))
+            return order == Qt::DescendingOrder;
+    } else if (DFMGlobal::startWithSymbol(str2))
+        return order != Qt::DescendingOrder;
+
     if (DFMGlobal::startWithHanzi(str1)) {
         if (!DFMGlobal::startWithHanzi(str2)) {
             return order == Qt::DescendingOrder;
@@ -437,6 +449,13 @@ bool DAbstractFileInfo::canManageAuth() const
     return true;
 }
 
+bool DAbstractFileInfo::canMoveOrCopy() const
+{
+    CALL_PROXY(canMoveOrCopy());
+
+    return true;
+}
+
 DAbstractFileInfo::FileType DAbstractFileInfo::fileType() const
 {
     CALL_PROXY(fileType());
@@ -763,7 +782,7 @@ bool DAbstractFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) 
             ancestors->append(parentUrl);
         }
 
-        if (parentUrl == url) {
+        if (parentUrl == url || DStorageInfo::isSameFile(parentUrl.path(), url.path())) {
             return true;
         }
 
@@ -797,6 +816,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Separator
                    << MenuAction::DisplayAs
                    << MenuAction::SortBy
+                   << MenuAction::OpenAsAdmin
                    << MenuAction::OpenInTerminal
                    << MenuAction::Separator
                    << MenuAction::Paste
@@ -809,6 +829,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
+                       << MenuAction::OpenAsAdmin
                        << MenuAction::Separator
                        << MenuAction::Copy
                        << MenuAction::Separator
@@ -839,7 +860,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
             if (isDir()) {
                 actionKeys << MenuAction::OpenInNewWindow
-                           << MenuAction::OpenInNewTab;
+                           << MenuAction::OpenInNewTab
+                           << MenuAction::OpenAsAdmin;
             } else {
                 QSet<QString> mountable = {"application/x-cd-image", "application/x-iso9660-image"};
                 if (mountable.contains(mimeTypeName())) {
@@ -891,7 +913,11 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::CreateSymlink
                        << MenuAction::SendToDesktop;
 
-            if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0) {
+            if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
+#ifdef BLUETOOTH_ENABLE
+                || bluetoothManager->model()->adapters().count() > 0
+#endif
+            ) {
                 actionKeys << MenuAction::SendToRemovableDisk;
             }
 
@@ -964,7 +990,11 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Compress
                    << MenuAction::SendToDesktop;
 
-        if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0) {
+        if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
+#ifdef BLUETOOTH_ENABLE
+            || bluetoothManager->model()->adapters().count() > 0
+#endif
+        ) {
             actionKeys << MenuAction::SendToRemovableDisk;
         }
 
@@ -1444,6 +1474,11 @@ void DAbstractFileInfo::updateReadTime(const QDateTime &)
 
 }
 
+quint64 DAbstractFileInfo::inode() const
+{
+    return 0;
+}
+
 void DAbstractFileInfo::makeToActive()
 {
     Q_D(DAbstractFileInfo);
@@ -1645,7 +1680,11 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(Menu
 
     actions.insert(MenuAction::SortBy, sortByMenuActionKeys);
 
-    if (deviceListener->isMountedRemovableDiskExits()) {
+    if (deviceListener->isMountedRemovableDiskExits()
+#ifdef BLUETOOTH_ENABLE
+        || bluetoothManager->model()->adapters().count() > 0
+#endif
+    ) {
         QVector<MenuAction> diskMenuActionKeys;
         actions.insert(MenuAction::SendToRemovableDisk, diskMenuActionKeys);
     }

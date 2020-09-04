@@ -30,13 +30,14 @@
 #include <QSet>
 
 #include "durl.h"
+#include "dabstractfileinfo.h"
 
 class PathManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PathManager(QObject *parent = 0);
+    explicit PathManager(QObject *parent = nullptr);
     ~PathManager();
 
     void initPaths();
@@ -46,11 +47,15 @@ public:
     QString getSystemPathDisplayNameByPath(QString path);
     QString getSystemPathIconName(QString key);
     QString getSystemPathIconNameByPath(QString path);
+    QStringList getSystemDiskAndDataDiskPathGroup();
+    QStringList getMountRangePathGroup();
 
     QMap<QString, QString> systemPathsMap() const;
     QMap<QString, QString> systemPathDisplayNamesMap() const;
 
     bool isSystemPath(QString path) const;
+    bool isVisiblePartitionPath(const DAbstractFileInfoPointer &fi);
+    bool isOptical(const DAbstractFileInfoPointer &fi);
 
 public slots:
     void loadSystemPaths();

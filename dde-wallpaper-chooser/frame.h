@@ -27,7 +27,7 @@
 
 #include "view/backgroundmanager.h"
 #include <DBlurEffectWidget>
-#include <dregionmonitor.h>
+#include <DRegionMonitor>
 #include <com_deepin_sessionmanager.h>
 
 DWIDGET_BEGIN_NAMESPACE
@@ -67,7 +67,6 @@ public:
     void show();
     void hide();
 
-    //QString desktopBackground() const; /*** old code ***/
     QPair<QString,QString> desktopBackground() const;
 
 signals:
@@ -127,9 +126,6 @@ private:
 
     QString m_formerWallpaper;
     QMap<QString, bool> m_deletableInfo;
-#if 0
-    BackgroundHelper *m_backgroundHelper = nullptr;
-#endif
     BackgroundManager *m_backgroundManager = nullptr;
 
     bool m_isExistFeatureInterface;

@@ -46,6 +46,8 @@
 #include <DApplicationHelper>
 #include "dstyleoption.h"
 #include <DStyle>
+#include <QToolTip>
+#include <DApplication>
 
 DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
@@ -691,9 +693,14 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     if (!isCanvas && isSelected) {
         QRect rc = option.rect;
-        rc.setSize({30,30});
-        rc.moveTopRight(QPoint(option.rect.right(),option.rect.top()));
-        m_checkedIcon.paint(painter, rc);
+        rc.setSize({20, 20});
+        rc.moveTopRight(QPoint(option.rect.right() - 5, option.rect.top() + 5));
+
+        DStyleOptionButton check;
+        check.state = DStyle::State_On;
+        check.rect = rc;
+
+        DApplication::style()->drawPrimitive(DStyle::PE_IndicatorItemViewItemCheck, &check, painter);
     }
 
     if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {
@@ -709,7 +716,8 @@ void DIconItemDelegate::paint(QPainter *painter,
     label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2*backgroundMargin - ICON_MODE_BACK_RADIUS);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS/2);
 
-    if (isSelected && isCanvas) {
+    //文管窗口拖拽时的字体保持白色
+    if ((isSelected && isCanvas) || isDragMode) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
     } else {
         painter->setPen(opt.palette.color(QPalette::Text));
@@ -759,8 +767,10 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     if (isSelected || !d->enabledTextShadow || isDragMode) {// do not draw text background color
-        const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,
-                                              isSelected && isCanvas ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush),
+
+        //图标拖拽时保持蓝底
+        auto tempBackground = isDragMode ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight)) : (isCanvas ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush));
+        const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,tempBackground,
                                               QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
 
         const QColor &border_color = focusTextBackgroundBorderColor();
@@ -799,6 +809,37 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     painter->setOpacity(1);
+}
+
+bool DIconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (event->type() == QEvent::ToolTip) {
+        const QString tooltip = index.data(DFileSystemModel::Roles::FileIconModelToolTipRole).toString();
+
+        if (tooltip.isEmpty()) { // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
+            QWidgetList qwl = QApplication::topLevelWidgets();
+            for (QWidget *qw : qwl) {
+                if (QStringLiteral("QTipLabel") == qw->metaObject()->className()) {
+                    qw->close();
+                }
+            }
+        } else {
+            int tooltipsize = tooltip.size();
+            const int nlong = 32;
+            int lines = tooltipsize / nlong + 1;
+            QString strtooltip;
+            for (int i = 0; i < lines; ++i) {
+                strtooltip.append(tooltip.mid(i * nlong, nlong));
+                strtooltip.append("\n");
+            }
+            strtooltip.chop(1);
+            QToolTip::showText(event->globalPos(), strtooltip, view);
+        }
+
+        return true;
+    }
+
+    return DFMStyledItemDelegate::helpEvent(event, view, option, index);
 }
 
 QSize DIconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const
@@ -922,7 +963,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     const QString &selectionWhenEditing = parent()->baseName(index);
     int endPos = selectionWhenEditing.isEmpty() ? -1 : selectionWhenEditing.length();
 
-    if (endPos == -1 || donot_show_suffix) {
+    if (endPos == -1 || donot_show_suffix || selectionWhenEditing != item->edit->toPlainText()) {
         item->edit->selectAll();
     } else {
         QTextCursor cursor = item->edit->textCursor();

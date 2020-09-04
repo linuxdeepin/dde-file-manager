@@ -30,7 +30,7 @@ DFM_BEGIN_NAMESPACE
 class DFMAvfsCrumbController : public DFMFileCrumbController
 {
 public:
-    explicit DFMAvfsCrumbController(QObject *parent = 0);
+    explicit DFMAvfsCrumbController(QObject *parent = nullptr);
     ~DFMAvfsCrumbController();
 
     bool supportedUrl(DUrl url) override;

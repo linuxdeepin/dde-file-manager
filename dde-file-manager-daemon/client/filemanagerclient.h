@@ -33,7 +33,7 @@ class FileManagerClient : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileManagerClient(QObject *parent = 0);
+    explicit FileManagerClient(QObject *parent = nullptr);
     ~FileManagerClient();
 
 signals:
@@ -42,7 +42,7 @@ public slots:
     void testNewNameJob(const QString &oldFile, const QString &newFile);
 
 private:
-    FileOperationInterface* m_fileOperationInterface = NULL;
+    FileOperationInterface* m_fileOperationInterface = nullptr;
 
 };
 

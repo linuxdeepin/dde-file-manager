@@ -54,6 +54,7 @@
 
 #include "singleton.h"
 #include "interfaces/dfmglobal.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include "appcontroller.h"
 #include "singleton.h"
@@ -124,16 +125,14 @@ public:
 
         return DAbstractFileInfoPointer(new DFileInfo(info));
     }
-    //判读ios手机，传输慢，需要特殊处理优化
     const DAbstractFileInfoPointer optimiseFileInfo() const override
     {
         const QFileInfo &info = iterator.fileInfo();
         DUrl url = DUrl::fromLocalFile(info.absoluteFilePath());
-        url.setOptimise(true);
         QString abfilepath = info.absoluteFilePath();
         if (info.isDir())
             abfilepath += QString("/");
-        if (!info.isSymLink() && FileUtils::isDesktopFileOptmise(abfilepath)) {
+        if (!info.isSymLink() && FileUtils::isDesktopFile(abfilepath)) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(url));
         }
 
@@ -354,21 +353,9 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
     DUrl url = event->url();
     QString localFile = url.toLocalFile();
     QFileInfo info(localFile);
-    //处理苹果文件是否优化
-    bool boptimise = url.isOptimise();
-    if (boptimise) {
-        QString abfilepath = info.absoluteFilePath();
-        if (info.isDir())
-            abfilepath += QString("/");
-        if (!info.isSymLink() && FileUtils::isDesktopFileOptmise(abfilepath)) {
-            return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
-        }
-    } else {
-        if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
-            return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
-        }
+    if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
+        return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
-
 
     return DAbstractFileInfoPointer(new DFileInfo(event->url()));
 }
@@ -592,7 +579,23 @@ bool FileController::decompressFileHere(const QSharedPointer<DFMDecompressEvent>
 
 bool FileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
-    DFMGlobal::setUrlsToClipboard(DUrl::toQUrlList(event->urlList()), event->action());
+    //计算机和回收站桌面文件不能被复制或剪切，从这里过滤通过快捷键复制剪切的计算机和回收站桌面文件url
+    DUrlList urlList;
+    for (const DUrl &url : event->urlList()) {
+        if ((DesktopFileInfo::computerDesktopFileUrl() == url) ||
+                (DesktopFileInfo::trashDesktopFileUrl() == url) ||
+                (DesktopFileInfo::homeDesktopFileUrl() == url)) {
+            continue;
+        }
+
+        urlList.append(url);
+    }
+
+    if (urlList.isEmpty()) {
+        return false;
+    }
+
+    DFMGlobal::setUrlsToClipboard(DUrl::toQUrlList(urlList), event->action());
 
     return true;
 }
@@ -674,7 +677,7 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 
 bool FileController::isExtDeviceJobCase(void *curJob, const DUrl &url) const
 {
-    DFileCopyMoveJob *thisJob = (DFileCopyMoveJob *)curJob;
+    DFileCopyMoveJob *thisJob = static_cast<DFileCopyMoveJob *>(curJob);
     QString filePath = url.path();
     DUrlList srcUrlList = thisJob->sourceUrlList();
     DUrl targetUrl = thisJob->targetUrl();
@@ -699,7 +702,7 @@ bool FileController::isExtDeviceJobCase(void *curJob, const DUrl &url) const
 
 bool FileController::isDiscburnJobCase(void *curJob, const DUrl &url) const
 {
-    DFileCopyMoveJob *thisJob = (DFileCopyMoveJob *)curJob;
+    DFileCopyMoveJob *thisJob = static_cast<DFileCopyMoveJob *>(curJob);
 
     QString burnDestDevice = url.burnDestDevice();
 
@@ -725,15 +728,19 @@ bool FileController::isDiscburnJobCase(void *curJob, const DUrl &url) const
 
     return  isDiscCase;
 }
-//fix bug 35855修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程
+// fix bug 35855修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程
 DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event, DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient, bool force, bool bold) const
 {
     // fix bug 27109 在某种情况下，存在 FileCopyMoveJob 还没被析构，但其中的成员 StatisticJob 已经被析构，又在 FileCopyMoveJob 的函数中调用了 StatisticJob 的对象，导致崩溃
     // 所以这里将原来的普通指针以 deleteLater 析构的内存管理方式交给智能指针去判定。测试百次左右没有再发生崩溃的现象。
     // 该现象发生于从搜索列表中往光驱中发送文件夹还不被支持的时候。现已可以从搜索列表、最近列表、标签列表中往光驱中发送文件
     QSharedPointer<DFileCopyMoveJob> job = QSharedPointer<DFileCopyMoveJob>(new DFileCopyMoveJob());
-    //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
-    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+    //! 当前拷贝如果是退回到回收站，如要在job中保存回收站中文件原路径
+    if (!event.isNull() && !qvariant_cast<DUrlList>(event->cutData()).isEmpty()) {
+        job->setCurTrashData(event->cutData());
+    }
+    // 当前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
+    // fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
     bool bdoingcleartrash = DFileService::instance()->getDoClearTrashState();
     if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
             list.first().toString().endsWith(".local/share/Trash/files")) {
@@ -741,12 +748,13 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             DFileService::instance()->setDoClearTrashState(false);
         });
     }
-    //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
 
     if (force) {
         job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
     }
 
+    // sp3 feature： 复制时不进行校验，后面调整为独立的功能
+    job->setFileHints(job->fileHints() | DFileCopyMoveJob::DontIntegrityChecking);
     if (action == DFMGlobal::CutAction && !target.isValid()) {
         // for remove mode
         job->setActionOfErrorType(DFileCopyMoveJob::NonexistenceError, DFileCopyMoveJob::SkipAction);
@@ -777,27 +785,33 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
             }
+            else {
+                moveToThread(qApp->thread());
+            }
         }
 
-        ~ErrorHandle()
+        ~ErrorHandle() override
         {
             if (timer_id > 0) {
                 killTimer(timer_id);
             }
+            dialogManager->taskDialog()->removeTaskJob(fileJob.data());
+            fileJob->disconnect();
             qDebug() << " ErrorHandle() ";
         }
 
         // 处理任务对话框显示之前的错误, 无法处理的错误将立即弹出对话框处理
         DFileCopyMoveJob::Action handleError(DFileCopyMoveJob *job, DFileCopyMoveJob::Error error,
-                                             const DAbstractFileInfo *sourceInfo,
-                                             const DAbstractFileInfo *targetInfo) override
+                                             const DAbstractFileInfoPointer sourceInfo,
+                                             const DAbstractFileInfoPointer targetInfo) override
         {
             if (slient) {
                 return DFileCopyMoveJob::SkipAction;
             }
 
             if (error == DFileCopyMoveJob::DirectoryExistsError || error == DFileCopyMoveJob::FileExistsError) {
-                if (sourceInfo->fileUrl() == targetInfo->fileUrl()) {
+                if (sourceInfo->fileUrl() == targetInfo->fileUrl() ||
+                        DStorageInfo::isSameFile(sourceInfo->fileUrl().path(), targetInfo->fileUrl().path())) {
                     return DFileCopyMoveJob::CoexistAction;
                 }
             }
@@ -807,14 +821,13 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
                 timer_id = 0;
             }
 
-            DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job);
-            emit job->currentJobChanged(currentJob.first, currentJob.second);
+            DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job, true);
+            emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), targetInfo ? targetInfo->fileUrl() : DUrl(), true);
 
             if (!handle) {
                 qWarning() << "addTaskJob create handle failed!!";
                 return DFileCopyMoveJob::SkipAction;
             }
-
             return handle->handleError(job, error, sourceInfo, targetInfo);
         }
 
@@ -833,8 +846,8 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             //这里会出现pasteFilesV2函数线程和当前线程是同时在执行，会出现在1处pasteFilesV2所在线程 没结束，但是这时pasteFilesV2所在线程 结束
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
             if (!fileJob->isFinished()) {
-                dialogManager->taskDialog()->addTaskJob(fileJob.data());
-                emit fileJob->currentJobChanged(currentJob.first, currentJob.second);
+                dialogManager->taskDialog()->addTaskJob(fileJob.data(), true);
+                emit fileJob->currentJobChanged(currentJob.first, currentJob.second, false);
             }
         }
 
@@ -894,8 +907,9 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
         return job->targetUrlList();
     }
     //fix bug 35855走新流程不去阻塞主线程，拷贝线程自己去运行，主线程返回，当拷贝线程结束了再去处理以前的相应处理
-    connect(job.data(), &QThread::finished, dialogManager->taskDialog(), [this, job, error_handle, slient, event] {
-        dialogManager->taskDialog()->removeTaskJob(job.data());
+    connect(job.data(), &QThread::finished, dialogManager->taskDialog(), [this, thisJob, error_handle, slient, event] {
+        dialogManager->taskDialog()->removeTaskJob(thisJob);
+        DUrlList targetUrlList = thisJob->targetUrlList();
         if (slient)
         {
             error_handle->deleteLater();
@@ -904,7 +918,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             QMetaObject::invokeMethod(error_handle, "deleteLater");
         }
         //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
-        this->dealpasteEnd(job->targetUrlList(), event);
+        this->dealpasteEnd(targetUrlList, event);
     });
 
     return job->targetUrlList();
@@ -932,8 +946,12 @@ void FileController::dealpasteEnd(const DUrlList &list, const QSharedPointer<DFM
             DFileService::instance()->dealPasteEnd(event, list);
             return;
         }
-
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
+        //! 新增剪切回收站路径event->urlList()
+        if (targetDir.startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+            DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files, event->urlList()), true);
+        } else {
+            DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
+        }
     }
 
     //到dfileservice里面作处理
@@ -973,14 +991,14 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
 DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
     FileJob job(FileJob::Trash);
-    job.setWindowId(event->windowId());
+    job.setWindowId(static_cast<int>(event->windowId()));
     dialogManager->addJob(&job);
     DUrlList list = job.doMoveToTrash(event->urlList());
     dialogManager->removeJob(job.getJobId());
 
     // save event
     const QVariant &result = DFMEventDispatcher::instance()->processEvent<DFMGetChildrensEvent>(event->sender(), DUrl::fromTrashFile("/"),
-                                                                                                QStringList(), QDir::AllEntries);
+                                                                                                QStringList(), QDir::AllEntries | QDir::Hidden);
     const QList<DAbstractFileInfoPointer> &infos = qvariant_cast<QList<DAbstractFileInfoPointer>>(result);
 
     if (infos.isEmpty()) {
@@ -1040,7 +1058,7 @@ static DUrlList pasteFilesV1(const QSharedPointer<DFMPasteEvent> &event)
 
         if (parentUrl != event->targetUrl()) {
             FileJob job(FileJob::Move);
-            job.setWindowId(event->windowId());
+            job.setWindowId(static_cast<int>(event->windowId()));
             dialogManager->addJob(&job);
 
             list = job.doMove(urlList, event->targetUrl());
@@ -1051,7 +1069,7 @@ static DUrlList pasteFilesV1(const QSharedPointer<DFMPasteEvent> &event)
     } else {
 
         FileJob job(FileJob::Copy);
-        job.setWindowId(event->windowId());
+        job.setWindowId(static_cast<int>(event->windowId()));
         dialogManager->addJob(&job);
 
         list = job.doCopy(urlList, event->targetUrl());
@@ -1068,10 +1086,7 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
     bool use_old_filejob = false;
 
 #ifdef SW_LABEL
-    /*fix bug 38276 【服务器UOS】【sw64】【SP1 update1(B11)】【DDE-UOS】【文件管理器】 复制文件到有相同的文件名存在的目录时，弹窗提示异常
-     *针对申威平台做针对性处理，如果io文件存在即内核做了优化则走pasteFilesV2函数，否则走pasteFilesV1
-    */
-    use_old_filejob = !QFile("/proc/thread-self/io").exists();
+    use_old_filejob = true;
 #endif
 
     const DUrlList &urlList = event->urlList();
@@ -1112,8 +1127,8 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
 
 #ifdef SW_LABEL
     /*fix bug 38276 【服务器UOS】【sw64】【SP1 update1(B11)】【DDE-UOS】【文件管理器】 复制文件到有相同的文件名存在的目录时，弹窗提示异常
-     *针对申威平台做针对性处理，如果io文件存在即内核做了优化则走pasteFilesV2函数，否则走pasteFilesV1
-    */
+         *针对申威平台做针对性处理，如果io文件存在即内核做了优化则走pasteFilesV2函数，否则走pasteFilesV1
+        */
     use_old_filejob = !QFile("/proc/thread-self/io").exists();
 #endif
 

@@ -444,8 +444,8 @@ int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &ls
     const char* cmd = sCmd.c_str();
 
     // 命令为空
-    if(cmd == nullptr){
-        qDebug() << "cmd is NULL!";
+    if(strCmd.isEmpty()) {
+        qDebug() << "cmd is empty!";
         return -1;
     }
 

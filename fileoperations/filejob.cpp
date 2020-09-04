@@ -42,6 +42,7 @@
 #include "ddiskdevice.h"
 #include "disomaster.h"
 #include "views/dfmopticalmediawidget.h"
+#include "controllers/vaultcontroller.h"
 
 #include "tag/tagmanager.h"
 
@@ -141,6 +142,11 @@ FileJob::~FileJob()
     qDebug() << "close pipe";
 #endif
     free(m_buffer);
+}
+
+FileJob::JobType FileJob::jobType()
+{
+    return m_jobType;
 }
 
 void FileJob::setStatus(FileJob::Status status)
@@ -254,7 +260,7 @@ DUrlList FileJob::doCopy(const DUrlList &files, const DUrl &destination)
     DUrlList result = doMoveCopyJob(files, destination);
     if (!m_noPermissonUrls.isEmpty()) {
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
-        noPermissionEvent.setWindowId(getWindowId());
+        noPermissionEvent.setWindowId(static_cast<quint64>(getWindowId()));
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
     }
     m_noPermissonUrls.clear();
@@ -280,7 +286,7 @@ DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
 
     if (!m_noPermissonUrls.isEmpty()) {
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
-        noPermissionEvent.setWindowId(getWindowId());
+        noPermissionEvent.setWindowId(static_cast<quint64>(getWindowId()));
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
     }
 
@@ -377,6 +383,13 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                             deleteDir(srcPath);
                 }
             } else if (m_jobType == Trash) {
+                if (VaultController::isVaultFile(srcPath)) {//! vault file could not move to trash
+                    qDebug() << "vault file could not move to trash : " << url.toLocalFile();
+                    continue;
+                }
+                if (url.path().startsWith( destination.path())) {
+                    continue;
+                }
                 bool canTrash = moveDirToTrash(srcPath, &targetPath);
                 if (m_isInSameDisk) {
                     if (canTrash) {
@@ -412,6 +425,14 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                     }
                 }
             } else if (m_jobType == Trash) {
+                if (VaultController::isVaultFile(srcPath)) { //! vault file could not move to trash
+                    qDebug() << "vault file could not move to trash : " << url.toLocalFile();
+                    continue;
+                }
+
+                if (url.path().startsWith( destination.path())) {
+                    continue;
+                }
                 bool canTrash = moveFileToTrash(srcPath, &targetPath);
                 if (m_isInSameDisk) {
                     if (canTrash) {
@@ -480,7 +501,7 @@ void FileJob::doDelete(const DUrlList &files)
     qDebug() << "Do delete is done!";
     if (!m_noPermissonUrls.isEmpty()) {
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
-        noPermissionEvent.setWindowId(getWindowId());
+        noPermissionEvent.setWindowId(static_cast<quint64>(getWindowId()));
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
     }
     m_noPermissonUrls.clear();
@@ -787,7 +808,8 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             obj["speed"] = job_isomaster->getCurrentSpeed();
             obj["msg"] = QJsonArray::fromStringList(job_isomaster->getInfoMessages());
             QByteArray bytes = QJsonDocument(obj).toJson();
-            if (bytes.size() < BUFFERSIZE) {
+            if (bytes.size() < BUFFERSIZE)
+            {
                 strncpy(progressBuf, bytes.data(), BUFFERSIZE);
                 write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
             }
@@ -1077,7 +1099,8 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             obj["speed"] = job_isomaster->getCurrentSpeed();
             obj["msg"] = QJsonArray::fromStringList(job_isomaster->getInfoMessages());
             QByteArray bytes = QJsonDocument(obj).toJson();
-            if (bytes.size() < BUFFERSIZE) {
+            if (bytes.size() < BUFFERSIZE)
+            {
                 strncpy(progressBuf, bytes.data(), BUFFERSIZE);
                 write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
             }
@@ -1272,7 +1295,7 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
         return;
     }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
-        && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
+            && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
         ++m_opticalJobPhase;
     }
     if (status == DISOMasterNS::DISOMaster::JobStatus::Running && jobisom) {
@@ -1297,7 +1320,7 @@ void FileJob::opticalJobUpdatedByParentProcess(int status, int progress, const Q
         return;
     }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
-        && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
+            && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
         ++m_opticalJobPhase;
     }
     if (status == DISOMasterNS::DISOMaster::JobStatus::Running) {
@@ -1384,7 +1407,7 @@ void FileJob::jobUpdated()
             jobDataDetail.insert("progress", QString::number(1));
         } else {
             if (m_finishedCount > 0 && m_finishedCount < m_allCount && m_allCount > 0)
-                jobDataDetail.insert("progress", QString::number((double)m_finishedCount / m_allCount));
+                jobDataDetail.insert("progress", QString::number(static_cast<double>(m_finishedCount) / m_allCount));
         }
     } else {
         if (!m_isFinished) {
@@ -1407,7 +1430,7 @@ void FileJob::jobUpdated()
                     m_totalSize = m_bytesCopied;
                     cancelled();
                 } else {
-                    int remainTime = (m_totalSize - m_bytesCopied) / m_bytesPerSec;
+                    int remainTime = static_cast<int>((m_totalSize - m_bytesCopied) / m_bytesPerSec);
 
                     if (remainTime < 60) {
                         jobDataDetail.insert("remainTime", tr("%1 s").arg(QString::number(remainTime)));
@@ -1682,8 +1705,8 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     int out_fd = 0;
 #else
     if (!m_bufferAlign) {
-        m_buffer = (char *) malloc(Data_Block_Size + getpagesize());
-        m_bufferAlign = ptr_align(m_buffer, getpagesize());
+        m_buffer = static_cast<char *>(malloc(static_cast<size_t>(Data_Block_Size + getpagesize())));
+        m_bufferAlign = ptr_align(m_buffer, static_cast<size_t>(getpagesize()));
     }
 #endif
 
@@ -1932,11 +1955,11 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
     }
 
     GError *error;
-    GFile *source = NULL, *target = NULL;
+    GFile *source = nullptr, *target = nullptr;
     GFileCopyFlags flags;
 
     flags = static_cast<GFileCopyFlags>(G_FILE_COPY_NONE | G_FILE_COPY_ALL_METADATA);
-    error = NULL;
+    error = nullptr;
     bool result = false;
     while (true) {
         switch (m_status) {
@@ -1988,7 +2011,7 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
 
             if (!g_file_copy(source, target, flags, m_abortGCancellable, progress_callback, this, &error)) {
                 if (error) {
-                    qDebug() << error->message << g_file_error_from_errno(error->domain);
+                    qDebug() << error->message << g_file_error_from_errno(static_cast<gint>(error->domain));
                     if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)) {
                         m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
                     } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
@@ -2054,7 +2077,11 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     m_tarDirName = targetDir.dirName();
 
     if (m_jobType != Trash) {
-        m_tarPath = tarDir + "/" + m_srcFileName;
+        if (m_jobType == Restore && targetPath) {
+            m_tarPath = *targetPath;
+        } else {
+            m_tarPath = tarDir + "/" + m_srcFileName;
+        }
     } else {
         if (targetPath) {
             m_tarPath = *targetPath;
@@ -2169,7 +2196,8 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             break;
         case Cancelled:
             return false;
-        default: break;
+        default:
+            break;
         }
     }
 
@@ -2271,11 +2299,11 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
     }
 
     GError *error;
-    GFile *source = NULL, *target = NULL;
+    GFile *source = nullptr, *target = nullptr;
     GFileCopyFlags flags;
 
     flags = static_cast<GFileCopyFlags>(G_FILE_COPY_NONE | G_FILE_COPY_ALL_METADATA);
-    error = NULL;
+    error = nullptr;
 
     bool result = false;
 
@@ -2324,7 +2352,7 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
 
             if (!g_file_move(source, target, flags, m_abortGCancellable, progress_callback, this, &error)) {
                 if (error) {
-                    qDebug() << error->message << g_file_error_from_errno(error->domain);
+                    qDebug() << error->message << g_file_error_from_errno(static_cast<gint>(error->domain));
                     if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)) {
                         m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
                     } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
@@ -2466,8 +2494,8 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                 } else {
                     QDirIterator tmp_iterator(scrFileInfo.absoluteFilePath(),
                                               QDir::AllEntries | QDir::System
-                                                  | QDir::NoDotAndDotDot
-                                                  | QDir::Hidden);
+                                              | QDir::NoDotAndDotDot
+                                              | QDir::Hidden);
 
                     while (tmp_iterator.hasNext()) {
                         if (m_isAborted)
@@ -2542,9 +2570,11 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
             if (m_jobType != Trash) {
                 m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
             } else {
-                bool canTrash = moveFileToTrash(srcFile, targetPath);
-                if (canTrash && targetPath) {
-                    m_tarPath = *targetPath;
+                if (!srcFile.startsWith(tarDir)) {
+                    bool canTrash = moveFileToTrash(srcFile, targetPath);
+                    if (canTrash && targetPath) {
+                        m_tarPath = *targetPath;
+                    }
                 }
             }
             m_status = Run;
@@ -2626,6 +2656,9 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                         //                            if (!result)
                         //                                return false;
                     } else if (toInfo.isFile() || toInfo.isSymLink()) {
+                        if (!from.exists()) {
+                            return false;
+                        }
                         to.remove();
                         //                            qDebug() << to.error() << to.errorString();
                     }
@@ -2731,13 +2764,13 @@ bool FileJob::deleteFileByGio(const QString &srcFile)
 {
 //    qDebug() << "delete file by gvfs" << srcFile;
     GFile *source;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     std::string std_srcPath = srcFile.toStdString();
     source = g_file_new_for_path(std_srcPath.data());
 
     bool result = false;
-    if (!g_file_delete(source, NULL, &error)) {
+    if (!g_file_delete(source, nullptr, &error)) {
         if (error) {
             qDebug() << error->message;
             g_error_free(error);
@@ -2956,10 +2989,10 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
 //    UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(destination.path()); // get disk info from mount point
 //    if(!info)
 //        info = deviceListener->getDeviceByFilePath(destination.path()); // get disk infor from mount mount point sub path
-if (FileUtils::isGvfsMountFile(destination.toLocalFile())) {
-    m_totalSize = FileUtils::totalSize(files);
-    return true;
-}
+    if (FileUtils::isGvfsMountFile(destination.toLocalFile())) {
+        m_totalSize = FileUtils::totalSize(files);
+        return true;
+    }
 
     qint64 freeBytes;
     freeBytes = getStorageInfo(destination.toLocalFile()).bytesFree();
@@ -3077,16 +3110,29 @@ QStorageInfo FileJob::getStorageInfo(const QString &file)
     QFileInfo info(file);
 
     return info.isSymLink()
-               ? QStorageInfo(info.absolutePath())
-               : QStorageInfo(info.absoluteFilePath());
+           ? QStorageInfo(info.absolutePath())
+           : QStorageInfo(info.absoluteFilePath());
 }
 
 bool FileJob::canMove(const QString &filePath)
 {
     QFileInfo file_info(filePath);
-    QFileInfo dir_info(file_info.dir().absolutePath());
+    QString folderPath = file_info.dir().absolutePath();
+    QFileInfo dir_info(folderPath);
 
-    if (!dir_info.permission(QFile::WriteUser))
+    bool isFolderWritable = false;
+
+    if (VaultController::isVaultFile(folderPath)
+            || VaultController::isVaultFile(filePath)) {
+        //! vault file get permissions separatly
+        isFolderWritable = VaultController::getPermissions(folderPath) & QFileDevice::WriteUser;
+    } else {
+        QFileInfo folderinfo(folderPath); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
+
+        isFolderWritable = folderinfo.isWritable();
+    }
+
+    if (!isFolderWritable)
         return false;
 
 #ifdef Q_OS_LINUX

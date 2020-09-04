@@ -236,8 +236,8 @@ void DiskControlItem::showEvent(QShowEvent *e)
                 QJsonObject tagItem = jsonBurnValueList.toObject();
                 if (tagItem.contains(m_tagName)) {
                     QJsonObject burnItem = tagItem[m_tagName].toObject();
-                    burnCapacityTotalSize =  burnItem["BurnCapacityTotalSize"].toDouble();
-                    burnCapacityUsedSize =  burnItem["BurnCapacityUsedSize"].toDouble();
+                    burnCapacityTotalSize =  static_cast<quint64>(burnItem["BurnCapacityTotalSize"].toDouble());
+                    burnCapacityUsedSize =  static_cast<quint64>(burnItem["BurnCapacityUsedSize"].toDouble());
                     burnStatus = burnItem["BurnCapacityStatus"].toInt();
                     burnExt = burnItem["BurnCapacityExt"].toInt();
                 }
@@ -259,7 +259,7 @@ void DiskControlItem::showEvent(QShowEvent *e)
         }
 
         if (bytesTotal > 0) {
-            m_capacityValueBar->setValue(100 * (bytesTotal - bytesFree) / bytesTotal);
+            m_capacityValueBar->setValue(static_cast<int>(100 * (bytesTotal - bytesFree) / bytesTotal));
         }
     }
 

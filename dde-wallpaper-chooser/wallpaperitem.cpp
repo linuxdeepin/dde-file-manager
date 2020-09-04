@@ -267,21 +267,14 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
 bool WallpaperItem::eventFilter(QObject *object, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
-        qDebug() << "我要测试";
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Tab) {
-            if (object == m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()) {
-                qDebug() << "TAB";
-                emit tab();
-                return true;
-            }
+            emit tab();
+            return true;
         }
         else if (keyEvent->key() == Qt::Key_Backtab) {
-            if (object == m_buttonLayout->itemAt(0)->widget()) {
-                qDebug() << "BACKTAB";
-                emit backtab();
-                return true;
-            }
+            emit backtab();
+            return true;
         }
     }
     return false;
@@ -321,7 +314,10 @@ void WallpaperItem::setDeletable(bool deletable)
 
 void WallpaperItem::setOpacity(qreal opacity)
 {
-    if (m_wrapper->m_opacity == opacity)
+    //qreal类型是double类型，这里是设置透明度，根据Qt文档描述取值范围是0.0-1.0
+    //这里精度应当足够了。
+    const double tempEps = 1e-6;
+    if(fabs(m_wrapper->m_opacity - opacity) < tempEps)
         return;
 
     m_wrapper->m_opacity = opacity;

@@ -45,6 +45,7 @@ public:
     mutable qint8 cacheCanWrite = -1;//fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
     mutable qint64 cacheFileSize = -1; // bug 27247 远程连接FTP,使用大小排序反应很慢
     mutable qint32 cacheFileCount = -1;// bug 27247 远程连接FTP,使用大小排序反应很慢
+    mutable quint64 inode = 0;
 
     bool gvfsMountFile = false;
 

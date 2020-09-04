@@ -36,7 +36,7 @@ public slots:
     void onResetBackgroundImage();
 protected slots:
     void onRestBackgroundManager(); //重置背景，响应窗管改变
-    void onScreenGeometryChanged(ScreenPointer);    //响应屏幕大小改变
+    void onScreenGeometryChanged();    //响应屏幕大小改变
 private:
     void init();
     void pullImageSettings();

@@ -100,13 +100,14 @@ public:
     void requestToSelectUrls();
     bool isAdvanceSearchBarVisible();
     void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
+    void showFilterButton();
 
 signals:
     void aboutToClose();
     void positionChanged(const QPoint &pos);
     void currentUrlChanged();
     void currentViewStateChanged();
-    void selectUrlChanged(const QList<DUrl>& urlList);
+    void selectUrlChanged(const QList<DUrl> &urlList);
 
 public slots:
     void moveCenter(const QPoint &cp);
@@ -116,7 +117,7 @@ public slots:
 
     bool cd(const DUrl &fileUrl);
     bool cdForTab(int tabIndex, const DUrl &fileUrl);
-    bool cdForTabByView(DFMBaseView *view , const DUrl &fileUrl);
+    bool cdForTabByView(DFMBaseView *view, const DUrl &fileUrl);
 
     bool openNewTab(DUrl fileUrl);
     void switchToView(DFMBaseView *view);
@@ -137,6 +138,10 @@ public slots:
     void onShowRenameBar(const DFMUrlListBaseEvent &event)noexcept;
     void onTabBarCurrentIndexChange(const int &index)noexcept;
     void onReuqestCacheRenameBarState() const;
+    //! re-direct url when root directory renamed.
+    void onRequestRedirectUrl(const DUrl &tabRootUrl, const DUrl &newUrl);
+    //! close tab when root directory deleted.
+    void onRequestCloseTabByUrl(const DUrl &rootUrl);
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -147,7 +152,6 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-
     bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) override;
     QObject *object() const Q_DECL_OVERRIDE;
 

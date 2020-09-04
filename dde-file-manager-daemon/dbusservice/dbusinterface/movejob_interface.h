@@ -31,7 +31,7 @@ public:
     { return "com.deepin.filemanager.daemon.RenameJob"; }
 
 public:
-    MoveJobInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
+    MoveJobInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~MoveJobInterface();
 

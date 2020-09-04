@@ -26,7 +26,7 @@
 #include "utils/singleton.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-
+#include "shutil/fileutils.h"
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
 #include <dgiomount.h>
@@ -35,6 +35,8 @@
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
+
+#include "dialogs/dialogmanager.h"
 
 #include <gvfs/networkmanager.h>
 
@@ -126,8 +128,13 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         }
 
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
-            continue;
+            if (!drv->removable()) // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
+                continue;
+
+            if (FileUtils::deviceShouldBeIgnore(blk->device())) // 对于可移动设备，根据设备描述符选择过滤（sp3 需求，异常设备需要显示，以提供格式化入口）
+                continue;
         }
+
         //检查挂载目录下是否存在diskinfo文件
         QByteArrayList mps = blk->mountPoints();
         if (!mps.empty()) {
@@ -175,25 +182,8 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP);
-        bool bsame = false;
-        //判断是否是苹果手机
-        //判读ios手机，传输他慢，需要特殊处理优化
-        if (gvfsmp->name().startsWith("iPhone")) {
-            url.setOptimise(true);
-        }
-        for (QString str : gvfsmp->themedIconNames()) {
-            if (str.startsWith("phone-apple")) {
-                url.setOptimise(true);
-                break;
-            }
-        }
-        foreach (const QString &str, urllist) {
-            if (str == QString("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP)) {
-                bsame = true;
-                break;
-            }
-        }
-        if (bsame) {
+
+        if (urllist.contains(QString("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP))) {
             continue;
         }
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(url));
@@ -353,16 +343,6 @@ bool DFMRootFileWatcherPrivate::start()
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
-        //判读ios手机，传输他慢，需要特殊处理优化
-        if (mnt->name().startsWith("iPhone")) {
-            url.setOptimise(true);
-        }
-        for (QString str : mnt->themedIconNames()) {
-            if (str.startsWith("phone-apple")) {
-                url.setOptimise(true);
-                break;
-            }
-        }
         Q_EMIT wpar->subfileCreated(url);
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
@@ -376,7 +356,8 @@ bool DFMRootFileWatcherPrivate::start()
         if (path.isNull() || path.isEmpty()) {
             QStringList qq = mnt->getRootFile()->uri().replace("/", "").split(":");
             if (qq.size() >= 3) {
-                path = QString("/run/user/1000/gvfs/" + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2)));
+                path = QString("/run/user/")+ QString::number(getuid()) +
+                                      QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
             }
         }
         qDebug() << path;
@@ -408,8 +389,16 @@ bool DFMRootFileWatcherPrivate::start()
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
-            return;
+            if (!drv->removable()) // 对于本地磁盘，直接按照以前的方式，满足外围条件直接 return
+                return;
+
+            // 对于满足外层条件的可移动设备，并且分区不该被过滤的，提示格式化
+            if (!FileUtils::deviceShouldBeIgnore(blk->device()))
+                dialogManager->showFormatDialog(blk->device());
+            else
+                return;
         }
+
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             return;
         }

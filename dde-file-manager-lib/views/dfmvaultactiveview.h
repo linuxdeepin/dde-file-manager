@@ -25,7 +25,8 @@ public:
     }
 
 protected:
-    void closeEvent(QCloseEvent *) override;
+    // 重写基类关闭事件
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
     void slotNextWidget();

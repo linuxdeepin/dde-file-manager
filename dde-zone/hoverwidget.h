@@ -18,7 +18,7 @@ class HoverWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit HoverWidget(QWidget *parent = 0);
+    explicit HoverWidget(QWidget *parent = nullptr);
     ~HoverWidget();
 
     void enterEvent(QEvent *);

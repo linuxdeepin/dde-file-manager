@@ -222,6 +222,9 @@ VaultController::VaultController(QObject *parent)
     connect(this, &VaultController::signalUnlockVault, this, &VaultController::refreshTotalSize);
     connect(this, &VaultController::signalLockVault, this, &VaultController::refreshTotalSize);
 
+    // 保险箱大小计算线程结束后，再次计算一次大小
+    connect(m_sizeWorker, &QThread::finished, this, &VaultController::onFinishCalcSize);
+
     // 初始化时，记录保险箱状态
     m_enVaultState = state();
 }
@@ -272,6 +275,8 @@ const DDirIteratorPointer VaultController::createDirIterator(const QSharedPointe
 DAbstractFileWatcher *VaultController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     QString urlPath = event->url().toLocalFile();
+    if (urlPath.isEmpty()) return nullptr;
+
     DUrl url = makeVaultUrl(urlPath);
     auto watcher = new DFileProxyWatcher(url,
                                          new DFileWatcher(urlPath),
@@ -744,7 +749,10 @@ bool VaultController::isRootDirectory(QString path)
 {
     bool bRootDir = false;
     QString localFilePath = makeVaultLocalPath();
-    if (localFilePath == path || makeVaultUrl().toString() == path) {
+    QString pathNoSplash = localFilePath;
+    pathNoSplash.chop(1);
+    if (localFilePath == path || makeVaultUrl().toString() == path
+            || pathNoSplash == path) {
         bRootDir = true;
     }
     return bRootDir;
@@ -833,6 +841,26 @@ QString VaultController::getErrorInfo(int state)
     return strErr;
 }
 
+QString VaultController::toInternalPath(const QString &externalPath)
+{
+    QString ret = externalPath;
+    DUrl url(externalPath);
+    if (url.isVaultFile()) {
+        QString path = url.toString();
+        ret = path.replace(DFMVAULT_ROOT, VaultController::makeVaultUrl(VaultController::makeVaultLocalPath()).toString());
+    }
+    return ret;
+}
+
+QString VaultController::toExternalPath(const QString &internalPath)
+{
+    QString retPath = internalPath;
+    QString vaultRootPath = VaultController::makeVaultUrl(VaultController::makeVaultLocalPath()).toString();
+    retPath = retPath.replace(vaultRootPath, DFMVAULT_ROOT);
+
+    return retPath;
+}
+
 qint64 VaultController::totalsize() const
 {
     return m_totalSize;
@@ -855,9 +883,11 @@ bool VaultController::isVaultFile(QString path)
     if (rootPath.back() == "/") {
         rootPath.chop(1);
     }
-    if (path.contains(rootPath)) {
+
+    if (path.contains(rootPath) && path.left(6) != "search") {
         bVaultFile = true;
     }
+
     return bVaultFile;
 }
 
@@ -1018,12 +1048,25 @@ QString VaultController::vaultUnlockPath()
 
 void VaultController::refreshTotalSize()
 {
-    if (m_sizeWorker->isRunning()) {
-        m_sizeWorker->stop();
-        m_sizeWorker->wait();
+    // 修复BUG-42897 打开正在拷贝或剪贴的文件夹时，主界面卡死问题
+    // 当保险箱大小计算线程没有结束时，直接返回
+    if(m_sizeWorker->isRunning()){
+        m_bNeedRefreshSize = true;
+        return;
     }
+
     DUrl url = vaultToLocalUrl(makeVaultUrl());
     m_sizeWorker->start({url});
+}
+
+void VaultController::onFinishCalcSize()
+{
+    // 但保险箱大小计算完成后，再次计算一次保险箱的大小
+    if (m_bNeedRefreshSize) {
+        DUrl url = vaultToLocalUrl(makeVaultUrl());
+        m_sizeWorker->start({url});
+    }
+    m_bNeedRefreshSize = false;
 }
 
 // 创建保险箱，执行该槽函数,通知保险箱创建成功与否，并更新保险箱的状态

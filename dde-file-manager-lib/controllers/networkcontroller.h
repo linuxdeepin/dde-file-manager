@@ -33,7 +33,7 @@ class NetworkController: public DAbstractFileController
     Q_OBJECT
 
 public:
-    explicit NetworkController(QObject *parent = 0);
+    explicit NetworkController(QObject *parent = nullptr);
     ~NetworkController();
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;

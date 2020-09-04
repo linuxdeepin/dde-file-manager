@@ -48,7 +48,7 @@ DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const D
     }
     action->setIcon(QIcon::fromTheme("media-eject-symbolic"));
 
-    QObject::connect(action, &QAction::triggered, action, [url](){
+    QObject::connect(action, &QAction::triggered, [url](){
         const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
         const QVector<MenuAction> menuactions = infoPointer->menuActionList();
         if (static_cast<DFMRootFileInfo::ItemType>(infoPointer->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
@@ -124,7 +124,7 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
     }
     //fix:光驱还没有加载成功前，右键点击光驱“挂载”，光驱自动弹出。
     if ((!info["mounted"].toBool()) && \
-            (info["fsType"].toString() ==  NULL) && \
+            (info["fsType"].toString().isEmpty()) && \
             (info["fsSize"].toLongLong() ==  0)) {
         disabled.insert(MenuAction::OpenDiskInNewWindow);
         disabled.insert(MenuAction::OpenDiskInNewTab);

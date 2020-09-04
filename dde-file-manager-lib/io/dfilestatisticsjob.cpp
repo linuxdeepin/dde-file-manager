@@ -74,7 +74,7 @@ void DFileStatisticsJobPrivate::setState(DFileStatisticsJob::State s)
 
     state = s;
 
-    if (notifyDataTimer->thread()->loopLevel() <= 0) {
+    if (notifyDataTimer->thread() && notifyDataTimer->thread()->loopLevel() <= 0) {
         qWarning() << "The thread of notify data timer no event loop" << notifyDataTimer->thread();
     }
 
@@ -171,7 +171,9 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
                 Q_EMIT q_ptr->sizeChanged(totalSize);
             }
             // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
-            totalProgressSize += size <= 0 ? 4096 : size;
+            // fix bug 202007010033【文件管理器】【5.1.2.10-1】【sp2】复制软连接的文件，进度条显示1%
+            // 判断文件是否是链接文件
+            totalProgressSize += (size <= 0 || info->isSymLink()) ? 4096 : size;
         } while (false);
 
         ++filesCount;
@@ -309,6 +311,9 @@ void DFileStatisticsJob::start(const DUrlList &sourceUrls)
             it->setUrl(it->taggedLocalFilePath());
             it->setScheme(FILE_SCHEME);
         }
+        if (it->scheme() == SEARCH_SCHEME && !it->fragment().isEmpty()) {
+            it->setUrl(it->fragment());
+        }
         it++;
     }
 
@@ -363,7 +368,7 @@ void DFileStatisticsJob::run()
     Q_EMIT dataNotify(0, 0, 0);
 
     QQueue<DUrl> directory_queue;
-
+    int fileCount = 0;
     if (d->fileHints.testFlag(ExcludeSourceFile)) {
         for (const DUrl &url : d->sourceUrlList) {
             if (!d->stateCheck()) {
@@ -377,6 +382,12 @@ void DFileStatisticsJob::run()
             if (!info) {
                 qDebug() << "Url not yet supported: " << url;
                 continue;
+            }
+
+            if (info->isDir() && d->fileHints.testFlag(SingleDepth)) {
+                fileCount += info->filesCount();
+            } else {
+                fileCount++;
             }
 
             if (info->isSymLink()) {
@@ -411,20 +422,23 @@ void DFileStatisticsJob::run()
         }
     }
 
+    if (d->fileHints.testFlag(SingleDepth)) {
+        d->filesCount = fileCount;
+        directory_queue.clear();
+        return;
+    }
+
     while (!directory_queue.isEmpty()) {
         const DUrl &directory_url = directory_queue.dequeue();
         const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(nullptr, directory_url, QStringList(),
-                                              QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot, 0, true);
+                                              QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot, nullptr, true);
 
         if (!iterator) {
             qWarning() << "Failed on create dir iterator, for url:" << directory_url;
             continue;
         }
-        iterator->setOptimise(directory_url.isOptimise());
         while (iterator->hasNext()) {
-            //判读ios手机，传输慢，需要特殊处理优化
             DUrl url = iterator->next();
-            url.setOptimise(directory_url.isOptimise());
             d->processFile(url, directory_queue);
 
             if (!d->stateCheck()) {

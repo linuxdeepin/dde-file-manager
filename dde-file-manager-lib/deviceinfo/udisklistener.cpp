@@ -35,6 +35,7 @@
 #include "controllers/subscriber.h"
 #include "singleton.h"
 
+#include "views/dfmopticalmediawidget.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "udiskdeviceinfo.h"
 #include "dblockdevice.h"
@@ -562,17 +563,21 @@ void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
     }
 
     qDebug() << m_subscribers;
-    foreach (Subscriber *sub, m_subscribers) {
+    for (Subscriber *sub : m_subscribers) {
         QString url = device->getMountPointUrl().toString();
         QStringList devList = DDiskManager::resolveDeviceNode(device->getId(), {});
-        if (devList.isEmpty()) continue;
-        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devList.first()));
-        QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
-        if (drive->optical()) {
-            url = DUrl::fromBurnFile(device->getId() + "/" + BURN_SEG_ONDISC + "/").toString();
+        if (!devList.isEmpty()) {
+            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devList.first()));
+            QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+            if (drive->optical()) {
+                url = DUrl::fromBurnFile(device->getId() + "/" + BURN_SEG_ONDISC + "/").toString();
+            }
+            qDebug() << url;
+            sub->doSubscriberAction(url);
+        } else {
+            if (DFMGlobal::isOpenAsAdmin())
+                sub->doSubscriberAction(url);
         }
-        qDebug() << url;
-        sub->doSubscriberAction(url);
     }
 
 
@@ -677,12 +682,44 @@ void UDiskListener::changeVolumeDiskInfo(const QDiskInfo &diskInfo)
         device->setDiskInfo(diskInfo);
         emit volumeChanged(device);
     }
+
+    // sp3 feature 35 光盘正在加载时，光标移动到光盘图标（左侧tab和计算机页面item），光标显示繁忙状态，加载完成后显示为正常指针
+    if (diskInfo.id().contains("sr") && !diskInfo.mounted_root_uri().isEmpty()) { // 光盘已挂载上后挂载路径有值
+        const QString &volTag = diskInfo.id().mid(5);
+        if (DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(volTag)) {
+            DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].bLoading = false;
+            DFileService::instance()->setCursorBusyState(false); // 上面一行代码用于设置光标在移动时的判定条件，如果没有移动不会触发更新，因此这里要手动刷新一次状态
+        }
+    }
 }
 
 void UDiskListener::mount(const QString &path)
 {
     qDebug() << path;
-    GvfsMountManager::mount(path);
+    // The gio's method cannot mount block device, use the UDisks's method replace it.(bug 42690)
+    if (DFMGlobal::isOpenAsAdmin() && mountByUDisks(path)) {
+        return;
+    } else {
+        GvfsMountManager::mount(path);
+    }
+}
+
+bool UDiskListener::mountByUDisks(const QString &path)
+{
+    const QStringList &rootDeviceNode = DDiskManager::resolveDeviceNode(path, {});
+    if (rootDeviceNode.isEmpty()) {
+        return false;
+    }
+
+    const QString &udiskspath = rootDeviceNode.first();
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    if (blkdev) {
+        const QString &mountedPath = blkdev->mount({});
+        qDebug() << "mounted path by udisks:" << mountedPath;
+        return mountedPath.isEmpty() ? false : true;
+    }
+
+    return false;
 }
 
 void UDiskListener::unmount(const QString &path)

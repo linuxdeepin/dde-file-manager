@@ -34,9 +34,6 @@ private:
 protected:
     QMap<QScreen *,ScreenPointer> m_screens;
     DBusDisplay *m_display = nullptr;
-#ifndef UNUSE_TEMP //临时方案，过滤多次信号
-    int m_lastMode = -1;
-#endif
 };
 
 #endif // SCREENMANAGER_H

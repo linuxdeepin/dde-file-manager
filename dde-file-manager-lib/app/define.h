@@ -39,6 +39,7 @@ UDiskListener *getUDiskListener(bool doConstruct = false);
 DISOMasterNS::DISOMaster *getDISOMaster(bool doContruct = false);
 QMutex *getOpticalDriveMutex();
 
+#define bluetoothManager BluetoothManager::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define bookmarkManager  Singleton<BookMarkManager>::instance()
 #define fileMenuManger  Singleton<DFileMenuManager>::instance()

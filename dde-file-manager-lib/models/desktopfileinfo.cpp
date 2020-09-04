@@ -266,7 +266,10 @@ QVector<MenuAction> DesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     Q_D(const DesktopFileInfo);
 
 
-    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer" || (d->deepinID == "dde-file-manager" && d->exec.contains("-O"))) {
+    if (d->deepinID == "dde-trash"
+            || d->deepinID == "dde-home"
+            || d->deepinID == "dde-computer"
+            || (d->deepinID == "dde-file-manager" && d->exec.contains("-O"))) {
         QVector<MenuAction> actions;
         actions << MenuAction::Open
                 << MenuAction::Separator;
@@ -330,21 +333,42 @@ bool DesktopFileInfo::canTag() const
     if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
         return false;
 
+    //桌面主目录不支持添加tag功能
+    if (d->deepinID == "dde-file-manager" && d->exec.contains(" -O "))
+        return false;
+
     return DFileInfo::canTag();
+}
+
+bool DesktopFileInfo::canMoveOrCopy() const
+{
+    //部分桌面文件不允许复制或剪切
+    Q_D(const DesktopFileInfo);
+    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
+        return false;
+
+    //exec执行字符串中“-O”参数表示打开主目录
+    if (d->deepinID == "dde-file-manager" && d->exec.contains(" -O "))
+        return false;
+
+    return true;
 }
 
 DUrl DesktopFileInfo::trashDesktopFileUrl()
 {
+    //TODO 存在终端修改文件名之后url变更的情况，暂不考虑
     return DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath) + "/dde-trash.desktop");
 }
 
 DUrl DesktopFileInfo::computerDesktopFileUrl()
 {
+    //TODO 存在终端修改文件名之后url变更的情况，暂不考虑
     return DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath) + "/dde-computer.desktop");
 }
 
 DUrl DesktopFileInfo::homeDesktopFileUrl()
 {
+    //TODO 存在终端修改文件名之后url变更的情况，暂不考虑
     return DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath) + "/dde-home.desktop");
 }
 

@@ -41,11 +41,13 @@ class TrashManager : public DAbstractFileController
     Q_OBJECT
 
 public:
-    explicit TrashManager(QObject *parent = 0);
+    explicit TrashManager(QObject *parent = nullptr);
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
 
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
+    //! 多文件打开入口
+    bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const Q_DECL_OVERRIDE;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const Q_DECL_OVERRIDE;
     bool restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const Q_DECL_OVERRIDE;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const Q_DECL_OVERRIDE;
@@ -55,8 +57,8 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
-    static bool restoreTrashFile(const DUrlList &list, DUrlList *restoreOriginUrls = 0);
-    void cleanTrash(const QObject *sender = 0) const;
+    static bool restoreTrashFile(const DUrlList &list, DUrlList *restoreOriginUrls = nullptr);
+    void cleanTrash(const QObject *sender = nullptr) const;
 
     static bool isEmpty();
     static bool isWorking();
@@ -64,7 +66,7 @@ public slots:
     void trashFilesChanged(const DUrl &url);
 private:
     bool m_isTrashEmpty;
-    DFileWatcher* m_trashFileWatcher;
+    DFileWatcher *m_trashFileWatcher;
 };
 
 #endif // TRASHMANAGER_H
