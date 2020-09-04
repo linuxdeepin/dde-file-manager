@@ -268,14 +268,6 @@ void ShareInfoFrame::setFileinfo(const DAbstractFileInfoPointer &fileinfo)
 
 bool ShareInfoFrame::checkShareName() //返回值表示是否继续
 {
-    // 修复bug-45917
-    // 当为共享隐藏文件夹或者共享文件名以“.”开头，弹框提示“隐藏文件夹不支持共享”
-    if(m_fileinfo->fileName().startsWith('.') || m_shareNamelineEdit->text().startsWith('.')){
-        QString strMsg = tr("Hidden folders do not support sharing");
-        dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
-        return false;
-    }
-
     if (m_fileinfo->fileSharedName().toLower() == m_shareNamelineEdit->text().toLower()) { //共享名未更改（不区分大小写）时，直接返回true
         return true;
     }
