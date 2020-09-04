@@ -77,7 +77,8 @@ bool DFMFileListFilePrivate::isWritable() const
     if (fileInfo.exists()) {
 #endif
         QFile file(q->filePath());
-        return file.open(QFile::ReadWrite);
+        /*fix bug45741 smb的时候勾选文件夹里面的隐藏文件夹不能生效*/
+        return file.open(QFile::WriteOnly);
 #ifndef QT_NO_TEMPORARYFILE
     } else {
         // Create the directories to the file.
@@ -216,20 +217,20 @@ bool DFMFileListFile::save() const
         }
 #endif
 #else //!使用QFile实现，QSaveFile会导致filewatcher无法监视到.hidden文件改变
-      //!导致界面无法实时响应文件显示隐藏
-    QFile sf(filePath());
-    if (!sf.open(QIODevice::WriteOnly)) {
-        d->setStatus(DFMFileListFile::AccessError);
-        return false;
-    }
-    ok = d->write(sf);
-    sf.close();
+        //!导致界面无法实时响应文件显示隐藏
+        QFile sf(filePath());
+        if (!sf.open(QIODevice::WriteOnly)) {
+            d->setStatus(DFMFileListFile::AccessError);
+            return false;
+        }
+        ok = d->write(sf);
+        sf.close();
 #endif
         if (ok) {
             // If we have created the file, apply the file perms
             if (createFile) {
                 QFile::Permissions perms = fileInfo.permissions() | QFile::ReadOwner | QFile::WriteOwner
-                                                                  | QFile::ReadGroup | QFile::ReadOther;
+                                           | QFile::ReadGroup | QFile::ReadOther;
                 QFile(filePath()).setPermissions(perms);
             }
             return true;
