@@ -1132,9 +1132,7 @@ void DFileService::setCursorBusyState(const bool bbusy)
 bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog)
 {
     //找出url的rootfile路径，判断rootfile是否存在
-//    qDebug() << url << QThread::currentThreadId();
     Q_D(DFileService);
-    QMutexLocker lk(&d->checkgvfsmtx);
     if (!url.isValid()) {
         return false;
     }
