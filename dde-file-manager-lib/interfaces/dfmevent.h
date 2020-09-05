@@ -328,7 +328,9 @@ public:
 class DFMOpenFilesEvent : public DFMUrlListBaseEvent
 {
 public:
-    explicit DFMOpenFilesEvent(const QObject *sender, const DUrlList &list);
+    explicit DFMOpenFilesEvent(const QObject *sender, const DUrlList &list, const bool isenter);
+
+    bool isEnter() const;
 
     static QSharedPointer<DFMOpenFilesEvent> fromJson(const QJsonObject &json);
 };
@@ -346,7 +348,7 @@ public:
 class DFMOpenFilesByAppEvent : public DFMOpenFilesEvent
 {
 public:
-    explicit DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url);
+    explicit DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url,const bool isenter = false);
 
     QString appName() const;
 
@@ -641,9 +643,10 @@ public:
         ForceOpenNewWindow
     };
 
-    explicit DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DirOpenMode mode);
+    explicit DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DirOpenMode mode,const bool isenter = false);
 
     DirOpenMode dirOpenMode() const;
+    bool isEnter() const;
 
     static QSharedPointer<DFMOpenUrlEvent> fromJson(const QJsonObject &json);
 };

@@ -439,7 +439,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             if (fileList.size() == 1)
                 DThreadUtil::runInMainThread(DFileService::instance(), &DFileService::openFile, event->sender(), fileList[0]);
             else
-                DThreadUtil::runInMainThread(DFileService::instance(), &DFileService::openFiles, event->sender(), fileList);
+                DThreadUtil::runInMainThread(DFileService::instance(), &DFileService::openFiles, event->sender(), fileList, e->isEnter());
         }
 #else
             if (fileInfo) {

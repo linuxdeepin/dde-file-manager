@@ -460,7 +460,12 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
     }
 
     if (!pathList.empty()) {
-        result = FileUtils::openFiles(pathList);
+        if (event->isEnter()) {
+            result = FileUtils::openEnterFiles(pathList);
+        }
+        else {
+            result = FileUtils::openFiles(pathList);
+        }
         if (!result) {
             for (const DUrl &fileUrl : packUrl) {
                 AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(), fileUrl)); // requestShowOpenWithDialog
