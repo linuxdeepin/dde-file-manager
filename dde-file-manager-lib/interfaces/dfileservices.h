@@ -158,7 +158,7 @@ public:
     JobController *getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
 
-    DAbstractFileWatcher *createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent = 0) const;
+    DAbstractFileWatcher *createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent = nullptr) const;
     bool setExtraProperties(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const;
 
     DFileDevice *createFileDevice(const QObject *sender, const DUrl &url);
