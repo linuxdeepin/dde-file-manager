@@ -353,11 +353,16 @@ bool DFMRootFileWatcherPrivate::start()
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         QString path = mnt->getRootFile()->path();
+        // 此处 Gio Wrapper 或许有 bug， 有时可以获取 uri，但无法获取 path, 因此有了以下略丑的代码
+        // 目的是将已知的 uri 拼装成 path，相关 bug：46021
         if (path.isNull() || path.isEmpty()) {
             QStringList qq = mnt->getRootFile()->uri().replace("/", "").split(":");
             if (qq.size() >= 3) {
                 path = QString("/run/user/")+ QString::number(getuid()) +
                                       QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
+            } else if (qq.size() == 2) {
+                path = QString("/run/user/")+ QString::number(getuid()) +
+                                                            QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
             }
         }
         qDebug() << path;
