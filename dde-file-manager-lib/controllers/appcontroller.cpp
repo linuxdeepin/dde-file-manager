@@ -159,7 +159,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "");
 }
 
-void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
+void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event, const bool isEnter)
 {
     const DUrlList &urls = event->urlList();
 
@@ -188,9 +188,9 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
 
         //! bug 38585 判断是不是保险箱以及是否是解锁状态，如果是就发送processEventAsync事件OpenInCurrentWindow走解锁流程
         if (VaultController::ins()->state() != VaultController::Unlocked && lstUrls.size() == 1 && lstUrls.first().isVaultFile()) {
-            DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+            DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow, isEnter);
         } else {
-            DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
+            DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow, isEnter);
         }
     } else {
         //fix bug 30506 ,异步处理网路文件很卡的情况下，快速点击会崩溃，或者卡死

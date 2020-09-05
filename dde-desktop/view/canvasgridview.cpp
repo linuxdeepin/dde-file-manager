@@ -1007,9 +1007,17 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
+                DUrlList lst;
                 for (const DUrl &url : selectUrlsMap) {
-                    openUrl(url);
+                    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+                    if (!info || info->isVirtualEntry()) {
+                        // we do expand the virtual entry on single click, so no longer need to do that here.
+                        // toggleEntryExpandedState(url);
+                        continue;
+                    }
+                    lst << url;
                 }
+                DFileService::instance()->openFiles(this, lst,true);
                 return;
             }
             break;

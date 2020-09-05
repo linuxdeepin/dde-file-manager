@@ -923,27 +923,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-                //与桌面的enter行为同步
-                // fix bug#41296 回收站中选择多个文件打开,弹出多个提示框
-                bool openTrashFileHint = false; // 回收站打开文件是否已经提示了
-                if (urls.size() == 1) {
-                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
-                } else {
-                    for (auto url : urls) {
-                        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-                        if (!info || info->isVirtualEntry() || (url.isTrashFile() && info->isFile())) {
-                            // 只提示一次
-                            if (!openTrashFileHint) {
-                                QString strMsg = tr("Unable to open items in the trash,please restore it first");
-                                dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
-                                openTrashFileHint = true;
-                            }
-                            continue;
-                        }
-
-                        DFileService::instance()->openFile(this, url);
-                    }
-                }
+                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls), true);
 
                 return;
             }

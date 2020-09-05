@@ -610,9 +610,9 @@ bool DFileService::openFile(const QObject *sender, const DUrl &url) const
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileEvent>(sender, url)).toBool();
 }
 
-bool DFileService::openFiles(const QObject *sender, const DUrlList &list) const
+bool DFileService::openFiles(const QObject *sender, const DUrlList &list, const bool isEnter) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFilesEvent>(sender, list)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFilesEvent>(sender, list, isEnter)).toBool();
 }
 
 bool DFileService::openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const
@@ -620,9 +620,9 @@ bool DFileService::openFileByApp(const QObject *sender, const QString &appName, 
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileByAppEvent>(sender, appName, url)).toBool();
 }
 
-bool DFileService::openFilesByApp(const QObject *sender, const QString &appName, const QList<DUrl> &urllist) const
+bool DFileService::openFilesByApp(const QObject *sender, const QString &appName, const QList<DUrl> &urllist, const bool isenter) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFilesByAppEvent>(sender, appName, urllist)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFilesByAppEvent>(sender, appName, urllist, isenter)).toBool();
 }
 
 bool DFileService::compressFiles(const QObject *sender, const DUrlList &list) const

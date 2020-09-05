@@ -321,7 +321,12 @@ bool RecentController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event)
         pathList << url;
     }
     if (!pathList.empty()) {
-        result = FileUtils::openFiles(pathList);
+        if (event->isEnter()) {
+            result = FileUtils::openEnterFiles(pathList);
+        }
+        else {
+            result = FileUtils::openFiles(pathList);
+        }
         if (!result) {
             for (const DUrl &fileUrl : packUrl) {
                 DFileService::instance()->openFile(event->sender(), fileUrl);

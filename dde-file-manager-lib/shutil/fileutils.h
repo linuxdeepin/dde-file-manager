@@ -72,6 +72,7 @@ public:
 
     static bool openFile(const QString& filePath);
     static bool openFiles(const QStringList& filePaths);
+    static bool openEnterFiles(const QStringList& filePaths);
     static bool launchApp(const QString& desktopFile, const QStringList& filePaths = {}); // open filePaths by desktopFile
     static bool launchAppByDBus(const QString& desktopFile, const QStringList& filePaths = {});
     static bool launchAppByGio(const QString& desktopFile, const QStringList& filePaths = {});

@@ -594,7 +594,7 @@ bool SearchController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent>
 
 bool SearchController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
 {
-    return DFileService::instance()->openFilesByApp(event->sender(), event->appName(), realUrlList(event->urlList()));
+    return DFileService::instance()->openFilesByApp(event->sender(), event->appName(), realUrlList(event->urlList()), event->isEnter());
 }
 
 bool SearchController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const

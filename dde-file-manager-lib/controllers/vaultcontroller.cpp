@@ -343,7 +343,12 @@ bool VaultController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) 
     }
 
     if (!pathList.empty()) {
-        result = FileUtils::openFiles(pathList);
+        if (event->isEnter()) {
+            result = FileUtils::openEnterFiles(pathList);
+        }
+        else {
+            result = FileUtils::openFiles(pathList);
+        }
         if (!result) {
             for (const DUrl &fileUrl : packUrl) {
                 AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(), fileUrl)); // requestShowOpenWithDialog

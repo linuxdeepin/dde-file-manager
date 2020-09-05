@@ -761,6 +761,104 @@ bool FileUtils::openFiles(const QStringList &filePaths)
     return result;
 }
 
+bool FileUtils::openEnterFiles(const QStringList &filePaths)
+{
+    QStringList rePath = filePaths;
+    bool ret = false;
+    for (const QString &filePath : filePaths) {
+        if (QFileInfo(filePath).suffix() == "desktop") {
+            ret = FileUtils::launchApp(filePath) || ret; //有一个成功就成功
+            rePath.removeOne(filePath);
+            continue;
+        }
+    }
+    if (rePath.isEmpty())
+        return ret;
+    //fix bug 33136 在选中3过文件，mimetype有3种不同，但是用enter键打开，这里只处理了
+    //第一个文件的mimetype，根据mimetype，选定desktop，传入了3个文件地址，所以后面两个
+    //打开失败，处理所有的文件的mimetype，相同的就用同一个desktop启动
+    QHash<QString, QStringList> openinfo;
+    QHash<QString, QString> mimetypeinfo;
+    foreach (const QString &filePath, rePath) {
+        /*********************************************************/
+        //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
+        //QString mimetype = getFileMimetype(filePath);
+        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
+        QString mimetype = QString();
+        if (info && info->size() == 0 && info->exists()) {
+            mimetype = info->mimeType().name();
+        } else {
+            mimetype = getFileMimetype(filePath);
+        }
+        mimetypeinfo.insert(DUrl::fromLocalFile(filePath).toString(), mimetype);
+        /*********************************************************/
+
+        QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+        if (defaultDesktopFile.isEmpty()) {
+            qDebug() << "no default application for" << rePath;
+            continue;
+        }
+
+        if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory") {
+            QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
+            recommendApps.removeOne(defaultDesktopFile);
+            if (recommendApps.count() > 0) {
+                defaultDesktopFile = recommendApps.first();
+            } else {
+                qDebug() << "no default application for" << rePath;
+                continue;
+            }
+        }
+        if (!defaultDesktopFile.isEmpty()) {
+            QStringList value = openinfo.contains(defaultDesktopFile) ? openinfo.value(defaultDesktopFile) : QStringList();
+            value << DUrl::fromLocalFile(filePath).toString();
+            openinfo.insert(defaultDesktopFile, value);
+        }
+    }
+
+    QStringList appAgrs;
+    for (const QString &tmp : rePath)
+        appAgrs << DUrl::fromLocalFile(tmp).toString();
+    bool result = false;
+    foreach (const QString &defaultDesktopFile, openinfo.keys()) {
+        bool temresult = launchApp(defaultDesktopFile, openinfo.value(defaultDesktopFile));
+        if (temresult) {
+            // workaround since DTK apps doesn't support the recent file spec.
+            // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
+            // the correct approach: let the app add it to the recent list.
+            // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+            for (const QString &tmp : openinfo.value(defaultDesktopFile)) {
+                QString filePath = DUrl::fromUserInput(tmp).toLocalFile();
+                DesktopFile df(defaultDesktopFile);
+                addRecentFile(filePath, df, mimetypeinfo.value(tmp));
+            }
+            result = true;
+        }
+    }
+    //只要一次成功就返回
+    if (result) {
+        return result;
+    }
+
+    const QString filePath = rePath.first();
+    if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop") {
+        QProcess::startDetached("gio", QStringList() << "open" << rePath);
+        QTimer::singleShot(200, [ = ] {
+            QProcess::startDetached("gio", QStringList() << "open" << rePath);
+        });
+        return true;
+    }
+
+    result = QProcess::startDetached("gio", QStringList() << "open" << rePath);
+
+    if (!result) {
+        result = false;
+        for (const QString &tmp : rePath)
+            result = QDesktopServices::openUrl(QUrl::fromLocalFile(tmp)) || result; //有一个成功就成功
+    }
+    return result;
+}
+
 bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePaths)
 {
     if (isFileManagerSelf(desktopFile) && filePaths.count() > 1) {
