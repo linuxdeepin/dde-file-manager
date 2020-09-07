@@ -778,6 +778,7 @@ create_new_file_info:
         if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode) &&
                 (new_file_info->fileUrl() == from || DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()))) {
             // 不用再进行后面的操作
+            q_ptr->stop();
             return true;
         }
 
@@ -800,12 +801,6 @@ create_new_file_info:
         bool target_is_file = new_file_info->isFile() || new_file_info->isSymLink();
         DFileCopyMoveJob::Error errortype =  target_is_file ?
                                              DFileCopyMoveJob::FileExistsError : DFileCopyMoveJob::DirectoryExistsError;
-
-//        if (target_is_file) {
-//            setError(DFileCopyMoveJob::FileExistsError);
-//        } else {
-//            setError(DFileCopyMoveJob::DirectoryExistsError);
-//        }
 
         switch (setAndhandleError(errortype, source_info, new_file_info)) {
         case DFileCopyMoveJob::ReplaceAction:

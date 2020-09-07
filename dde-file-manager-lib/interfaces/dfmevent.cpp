@@ -395,8 +395,8 @@ QSharedPointer<DFMOpenFileByAppEvent> DFMOpenFileByAppEvent::fromJson(const QJso
     return dMakeEventPointer<DFMOpenFileByAppEvent>(Q_NULLPTR, json["appName"].toString(), DUrl::fromUserInput(json["url"].toString()));
 }
 
-DFMOpenFilesByAppEvent::DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url, const bool isenter)
-    : DFMOpenFilesEvent(sender, url, isenter)
+DFMOpenFilesByAppEvent::DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url, const bool isEnter)
+    : DFMOpenFilesEvent(sender, url, isEnter)
 {
     m_type = OpenFilesByApp;
     setProperty(QT_STRINGIFY(DFMOpenFilesByAppEvent::appName), appName);
@@ -872,11 +872,11 @@ QSharedPointer<DFMOpenNewTabEvent> DFMOpenNewTabEvent::fromJson(const QJsonObjec
     return DFMUrlBaseEvent::fromJson(OpenNewTab, json).staticCast<DFMOpenNewTabEvent>();
 }
 
-DFMOpenUrlEvent::DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DFMOpenUrlEvent::DirOpenMode mode, const bool isenter)
+DFMOpenUrlEvent::DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DFMOpenUrlEvent::DirOpenMode mode, const bool isEnter)
     : DFMUrlListBaseEvent(OpenUrl, sender, list)
 {
     setProperty(QT_STRINGIFY(DFMOpenUrlEvent::dirOpenMode), mode);
-    setProperty(QT_STRINGIFY(DFMOpenUrlEvent::isenter), isenter);
+    setProperty(QT_STRINGIFY(DFMOpenUrlEvent::isEnter), isEnter);
 }
 
 DFMOpenUrlEvent::DirOpenMode DFMOpenUrlEvent::dirOpenMode() const
@@ -886,7 +886,7 @@ DFMOpenUrlEvent::DirOpenMode DFMOpenUrlEvent::dirOpenMode() const
 
 bool DFMOpenUrlEvent::isEnter() const
 {
-    return property(QT_STRINGIFY(DFMOpenUrlEvent::isenter)).toBool();
+    return property(QT_STRINGIFY(DFMOpenUrlEvent::isEnter)).toBool();
 }
 
 QSharedPointer<DFMOpenUrlEvent> DFMOpenUrlEvent::fromJson(const QJsonObject &json)
@@ -894,7 +894,7 @@ QSharedPointer<DFMOpenUrlEvent> DFMOpenUrlEvent::fromJson(const QJsonObject &jso
     const QSharedPointer<DFMOpenUrlEvent> &event = DFMUrlListBaseEvent::fromJson(OpenUrl, json).staticCast<DFMOpenUrlEvent>();
 
     event->setProperty(QT_STRINGIFY(DFMOpenUrlEvent::dirOpenMode), static_cast<DFMOpenUrlEvent::DirOpenMode>(json["mode"].toInt()));
-    event->setProperty(QT_STRINGIFY(DFMOpenUrlEvent::isenter), json["isenter"].toBool());
+    event->setProperty(QT_STRINGIFY(DFMOpenUrlEvent::isEnter), json["isEnter"].toBool());
 
     return event;
 }
@@ -934,7 +934,7 @@ QSharedPointer<DFMMenuActionEvent> DFMMenuActionEvent::fromJson(const QJsonObjec
     int action = DFMGlobal::instance()->metaObject()->enumerator(DFMGlobal::instance()->metaObject()->indexOfEnumerator("MenuAction")).keyToValue(json["action"].toString().toLocal8Bit().constData());
 
     event->setProperty(QT_STRINGIFY(DFMMenuActionEvent::currentUrl), DUrl::fromUserInput(json["currentUrl"].toString()));
-    event->setProperty(QT_STRINGIFY(DFMMenuActionEvent::action), (DFMGlobal::MenuAction)action);
+    event->setProperty(QT_STRINGIFY(DFMMenuActionEvent::action), static_cast<DFMGlobal::MenuAction>(action));
 
     return event;
 }
@@ -966,7 +966,7 @@ QSharedPointer<DFMForwardEvent> DFMForwardEvent::fromJson(const QJsonObject &jso
 }
 
 DFMSaveOperatorEvent::DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &iniaiator, const QSharedPointer<DFMEvent> &event, bool async)
-    : DFMEvent(SaveOperator, 0)
+    : DFMEvent(SaveOperator, nullptr)
 {
     setProperty(QT_STRINGIFY(DFMSaveOperatorEvent::iniaiator), QVariant::fromValue(iniaiator));
     setProperty(QT_STRINGIFY(DFMSaveOperatorEvent::event), QVariant::fromValue(event));
@@ -974,7 +974,7 @@ DFMSaveOperatorEvent::DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &iniai
 }
 
 DFMSaveOperatorEvent::DFMSaveOperatorEvent()
-    : DFMEvent(SaveOperator, 0)
+    : DFMEvent(SaveOperator, nullptr)
 {
     setProperty(QT_STRINGIFY(DFMSaveOperatorEvent::split), true);
 }
@@ -1100,15 +1100,15 @@ QFileDevice::Permissions DFMSetPermissionEvent::permissions() const
     return static_cast<QFileDevice::Permissions>(property(QT_STRINGIFY(DFMSetPermissionEvent::permissions)).toInt());
 }
 
-DFMOpenFilesEvent::DFMOpenFilesEvent(const QObject *sender, const DUrlList &list, const bool isenter)
+DFMOpenFilesEvent::DFMOpenFilesEvent(const QObject *sender, const DUrlList &list, const bool isEnter)
         : DFMUrlListBaseEvent(OpenFiles, sender, list)
 {
-    setProperty(QT_STRINGIFY(DFMOpenFilesEvent::isenter), isenter);
+    setProperty(QT_STRINGIFY(DFMOpenFilesEvent::isEnter), isEnter);
 }
 
 bool DFMOpenFilesEvent::isEnter() const
 {
-    return property(QT_STRINGIFY(DFMOpenFilesEvent::isenter)).toBool();
+    return property(QT_STRINGIFY(DFMOpenFilesEvent::isEnter)).toBool();
 }
 
 QSharedPointer<DFMOpenFilesEvent> DFMOpenFilesEvent::fromJson(const QJsonObject &json)
@@ -1119,5 +1119,5 @@ QSharedPointer<DFMOpenFilesEvent> DFMOpenFilesEvent::fromJson(const QJsonObject 
         list << DUrl::fromUserInput(value.toString());
     }
 
-    return dMakeEventPointer<DFMOpenFilesEvent>(Q_NULLPTR, list, json["isenter"].toBool());
+    return dMakeEventPointer<DFMOpenFilesEvent>(Q_NULLPTR, list, json["isEnter"].toBool());
 }
