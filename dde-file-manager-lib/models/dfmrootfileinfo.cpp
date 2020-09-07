@@ -496,6 +496,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
 {
     Q_D(const DFMRootFileInfo);
     QVariantHash ret;
+    ret["fsFreeSize"] = 0;
     if (suffix() == SUFFIX_GVFSMP) {
         if (d->gfsi) {
             ret["fsUsed"] = d->gfsi->fsTotalBytes() - d->gfsi->fsFreeBytes();
@@ -510,6 +511,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         } else {
             QStorageInfo si(d->mps.front());
             ret["fsUsed"] = quint64(si.bytesTotal() - si.bytesFree());
+            ret["fsFreeSize"] = quint64(si.bytesFree());
         }
         ret["fsSize"] = quint64(d->size);
         ret["fsType"] = d->fs;

@@ -1233,6 +1233,7 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
 
     QString fsType = info->extraProperties()["fsType"].toString();
     quint64 fsUsed = info->extraProperties()["fsUsed"].toULongLong();
+    quint64 fsFreeSize = info->extraProperties()["fsFreeSize"].toULongLong();
     quint64 fsSize = info->extraProperties()["fsSize"].toULongLong();
     quint64 fileCount = 0;
     DUrl redirectedFileUrl = info->redirectedFileUrl();
@@ -1308,7 +1309,9 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
         results.append({QObject::tr("File system"), fsType});
     }
     results.append({QObject::tr("Contains"), (fileCount != 1 ? QObject::tr("%1 items") : QObject::tr("%1 item")).arg(fileCount)});
-    results.append({QObject::tr("Free space"), FileUtils::formatSize(fsSize - fsUsed)});
+
+    quint64 fsFreeSizeSet = fsFreeSize > 0 ? fsFreeSize:(fsSize - fsUsed);
+    results.append({QObject::tr("Free space"), FileUtils::formatSize(fsFreeSizeSet)});
 
     return results;
 }
