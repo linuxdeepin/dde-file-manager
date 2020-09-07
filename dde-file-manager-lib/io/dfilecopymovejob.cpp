@@ -698,6 +698,12 @@ create_new_file_info:
 
         bool source_is_file = source_info->isFile() || source_info->isSymLink();
         bool target_is_file = new_file_info->isFile() || new_file_info->isSymLink();
+        //当目标文件存在时，判断源文件和目标文件是否同是目录或者同是文件，不同是就重新命名一次
+        if (source_is_file != target_is_file) {
+            file_name = handle ? handle->getNonExistsFileName(q_ptr, source_info.constData(), target_info)
+                        : getNewFileName(source_info.constData(), target_info);
+            goto create_new_file_info;
+        }
 
         if (target_is_file) {
             setError(DFileCopyMoveJob::FileExistsError);
