@@ -155,11 +155,8 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
         QVector<uint> list = text.toUcs4();
         int cursor_pos = this->textCursor().position() - text_length + text.length();
 
-        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT)
-        {
-            list.removeAt(--cursor_pos);
-
-            text = QString::fromUcs4(list.data(), list.size());
+        while (text.toLocal8Bit().count() > MAX_FILE_NAME_CHAR_COUNT) {
+            text.chop(1);
         }
 
         if (text.count() != old_text.count())
@@ -636,7 +633,7 @@ void PropertyDialog::renameFile()
 {
     bool donotShowSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
 
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
+    const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, m_url);
 
     QString fileName;
     if (donotShowSuffix &&
@@ -652,15 +649,14 @@ void PropertyDialog::renameFile()
     m_edit->setFixedHeight(m_textShowFrame->height());
     m_edit->setFocus();
 
-    const DAbstractFileInfoPointer pfile = fileService->createFileInfo(this, m_url);
     int endPos = -1;
-    if (pfile->isFile()) {
+    if (fileInfo->isFile()) {
 
-        QString suffixStr{ pfile->suffix() };
-        if (suffixStr.isEmpty() || donotShowSuffix || pfile->isDesktopFile()) {
+        QString suffixStr{ fileInfo->suffix() };
+        if (suffixStr.isEmpty() || donotShowSuffix || fileInfo->isDesktopFile()) {
             endPos = m_edit->toPlainText().length();
-        } else {
-            endPos = m_edit->toPlainText().length() - pfile->suffix().length() - 1;
+        } else if (m_edit->toPlainText().endsWith(suffixStr)) {
+            endPos = m_edit->toPlainText().length() - fileInfo->suffix().length() - 1;
         }
     }
     if (endPos == -1) {
@@ -671,7 +667,6 @@ void PropertyDialog::renameFile()
     cursor.setPosition(0);
     cursor.setPosition(endPos, QTextCursor::KeepAnchor);
     m_edit->setTextCursor(cursor);
-
 }
 
 void PropertyDialog::showTextShowFrame()
