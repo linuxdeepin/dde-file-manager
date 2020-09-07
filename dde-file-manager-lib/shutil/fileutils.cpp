@@ -922,9 +922,17 @@ bool FileUtils::setBackground(const QString &pictureFilePath)
 
         if (value.contains("SetMonitorBackground")) {
             QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", "com.deepin.daemon.Appearance", "SetMonitorBackground");
-            msg.setArguments({qApp->primaryScreen()->name(), pictureFilePath});
+            if(DesktopInfo().waylandDectected()) {
+                   QDBusInterface interface("com.deepin.daemon.Display", "/com/deepin/daemon/Display", "com.deepin.daemon.Display");
+                   QString screenname = qvariant_cast< QString >(interface.property("Primary"));
+                   msg.setArguments({screenname, pictureFilePath});
+             }
+          
+            else {
+                   msg.setArguments({qApp->primaryScreen()->name(), pictureFilePath});
+             }
+          
             QDBusConnection::sessionBus().asyncCall(msg);
-
             qDebug() << "FileUtils::setBackground call Appearance SetMonitorBackground";
             return true;
         }
