@@ -313,7 +313,7 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
     adjustSize();
     setModal(false);
     show();
-    QTimer::singleShot(100, this, &DTaskDialog::raise);
+    QTimer::singleShot(100, this, &DTaskDialog::activateWindow);
 }
 
 bool DTaskDialog::isHaveVaultTask(const DUrlList &sourceUrls, const DUrl &targetUrl)
