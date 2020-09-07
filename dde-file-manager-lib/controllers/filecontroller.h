@@ -38,7 +38,7 @@ class FileController : public DAbstractFileController
     Q_OBJECT
 
 public:
-    explicit FileController(QObject *parent = 0);
+    explicit FileController(QObject *parent = nullptr);
 
     static bool findExecutable(const QString &executableName, const QStringList &paths = QStringList());
 

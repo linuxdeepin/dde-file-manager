@@ -73,6 +73,7 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
         }
 
         emit onConflict(sourceInfo->fileUrl(), targetInfo->fileUrl());
+        emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), sourceInfo ? targetInfo->fileUrl() : DUrl());
         job->togglePause();
     }
     break;
@@ -85,6 +86,7 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
     case DFileCopyMoveJob::UnknowError:
         return DFileCopyMoveJob::CancelAction;
     default:
+        emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), targetInfo ? targetInfo->fileUrl() : DUrl());
         job->togglePause();
         emit onError(job->errorString());
         break;
@@ -346,9 +348,23 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     raise();
 }
 
-DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
+DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const bool ischecksamejob)
 {
-    DFMTaskWidget *wid = new DFMTaskWidget;
+    QMutexLocker lock(&addtaskmutex);
+    DFMTaskWidget *wid = nullptr;
+    bool haswid = false;
+    if (ischecksamejob && m_jobIdItems.contains(QString::number(quintptr(job), 16))) {
+        auto item = m_jobIdItems.value(QString::number(quintptr(job), 16));
+        wid = item ? static_cast<DFMTaskWidget *>(item->listWidget()->itemWidget(item)) : nullptr;
+
+    }
+    if (nullptr == wid) {
+        wid = new DFMTaskWidget;
+    } else {
+        wid->disconnect();
+        haswid = true;
+    }
+
     wid->setTaskId(QString::number(quintptr(job), 16));
 
     // 判断任务是否属于保险箱任务,如果是，记录到容器
@@ -518,6 +534,7 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
             //! 有点击关闭任务窗口，进行窗口关闭
             if (isHaveVaultTask(job->sourceUrlList(), job->targetUrl())) {
                 this->close();
+                emit closed();
             }
         }
     });
@@ -543,16 +560,21 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
                 VaultController::ins()->setBigFileIsDeleting(true);
             }
         } else {
-            addTaskWidget(wid);
+            if (!haswid) {
+                addTaskWidget(wid);
+            }
         }
     } else {
-        addTaskWidget(wid);
+        if (!haswid) {
+            addTaskWidget(wid);
+        }
     }
 
     return handle;
 }
 void DTaskDialog::adjustSize()
 {
+    QMutexLocker lock(&adjustmutex);
     int listHeight = 2;
     for (int i = 0; i < m_taskListWidget->count(); i++) {
         QListWidgetItem *item = m_taskListWidget->item(i);
@@ -588,17 +610,16 @@ void DTaskDialog::moveYCenter()
 
 void DTaskDialog::removeTaskByPath(QString jobId)
 {
+    QMutexLocker lock(&removetaskmutex);
     if (m_jobIdItems.contains(jobId)) {
-        QListWidgetItem *item = m_jobIdItems.value(jobId);
-        if (item) {
-            QWidget *wid = m_taskListWidget->itemWidget(item);
+        QList<QListWidgetItem *> items = m_jobIdItems.values(jobId);
+        for (auto item : items) {
             m_taskListWidget->removeItemWidget(item);
             m_taskListWidget->takeItem(m_taskListWidget->row(item));
             m_jobIdItems.remove(jobId);
             //有几率出现wid被移除，但未释放，依然显示在任务窗口出现重叠问题，这里将其隐藏
-            if (wid)
-                wid->hide();
         }
+        m_jobIdItems.remove(jobId);
 
         setTitle(m_taskListWidget->count());
         if (m_taskListWidget->count() == 0) {
@@ -824,13 +845,15 @@ void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail
     if (jobDetail.contains("jobId")) {
         QString jobId = jobDetail.value("jobId");
         if (m_jobIdItems.contains(jobId)) {
-            QListWidgetItem *item = m_jobIdItems.value(jobId);
-            DFMTaskWidget *w = item ? static_cast<DFMTaskWidget *>(item->listWidget()->itemWidget(item)) : nullptr;
-            if (w) {
-                updateData(w, data);
-                // 预防界面不刷，pangu出现过界面不会刷新的问题
-                w->repaint();
-                qApp->processEvents();
+            QList<QListWidgetItem *> items = m_jobIdItems.values(jobId);
+            for (auto item : items) {
+                DFMTaskWidget *w = item ? static_cast<DFMTaskWidget *>(item->listWidget()->itemWidget(item)) : nullptr;
+                if (w) {
+                    updateData(w, data);
+                    // 预防界面不刷，pangu出现过界面不会刷新的问题
+                    w->repaint();
+                    qApp->processEvents();
+                }
             }
         }
     }

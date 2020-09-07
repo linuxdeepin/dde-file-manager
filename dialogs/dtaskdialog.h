@@ -100,7 +100,7 @@ public slots:
     void setTitle(QString title);
     void setTitle(int taskCount);
     void addTask(const QMap<QString, QString>& jobDetail);
-    DFileCopyMoveJob::Handle *addTaskJob(DFileCopyMoveJob *job);
+    DFileCopyMoveJob::Handle *addTaskJob(DFileCopyMoveJob *job, const bool ischecksamejob = false);
     void handleTaskClose(const QMap<QString, QString>& jobDetail);
     void removeTask(const QMap<QString, QString>& jobDetail, bool adjustSize = true);
     void removeTaskJob(void *job);
@@ -135,13 +135,14 @@ private:
     //QLabel* m_titleLabel=NULL;
     //QPushButton* m_titlebarMinimizeButton;
     //QPushButton* m_titlebarCloseButton;
-    QListWidget* m_taskListWidget=NULL;
-    QMap<QString, QListWidgetItem*> m_jobIdItems;
-    DTitlebar* m_titlebar;
+    QListWidget *m_taskListWidget = nullptr;
+    QMultiMap<QString, QListWidgetItem *> m_jobIdItems;
+    DTitlebar *m_titlebar;
     QDBusReply<QDBusUnixFileDescriptor> m_reply; // ~QDBusUnixFileDescriptor() will disposes of the Unix file descriptor that it contained.
 
     // 记录当前未完成的保险箱任务
-    QSet<DFileCopyMoveJob*> mapNotCompleteVaultTask;
+    QSet<DFileCopyMoveJob *> mapNotCompleteVaultTask;
+    QMutex adjustmutex, addtaskmutex, removetaskmutex, currentjobchangemutex, errorocmutex;
 
     //! 记录当前是否完成一个文件的删除或拷贝工作
     QMap<DUrl, bool> m_flagMap;
