@@ -328,7 +328,7 @@ public:
 class DFMOpenFilesEvent : public DFMUrlListBaseEvent
 {
 public:
-    explicit DFMOpenFilesEvent(const QObject *sender, const DUrlList &list, const bool isenter);
+    explicit DFMOpenFilesEvent(const QObject *sender, const DUrlList &list, const bool isEnter = false);
 
     bool isEnter() const;
 
@@ -348,7 +348,7 @@ public:
 class DFMOpenFilesByAppEvent : public DFMOpenFilesEvent
 {
 public:
-    explicit DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url,const bool isenter = false);
+    explicit DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url,const bool isEnter = false);
 
     QString appName() const;
 
@@ -643,7 +643,7 @@ public:
         ForceOpenNewWindow
     };
 
-    explicit DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DirOpenMode mode,const bool isenter = false);
+    explicit DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DirOpenMode mode,const bool isEnter = false);
 
     DirOpenMode dirOpenMode() const;
     bool isEnter() const;
