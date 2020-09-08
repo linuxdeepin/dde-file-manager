@@ -849,9 +849,13 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
                 return;
             //这里会出现pasteFilesV2函数线程和当前线程是同时在执行，会出现在1处pasteFilesV2所在线程 没结束，但是这时pasteFilesV2所在线程 结束
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
-            if (!fileJob->isFinished()) {
+            if (!fileJob->isFinished() && fileJob->isCanShowProgress()) {
                 dialogManager->taskDialog()->addTaskJob(fileJob.data(), true);
                 emit fileJob->currentJobChanged(currentJob.first, currentJob.second, false);
+            }
+            //在移动到同一个目录时，先不现实进度条，当有其他目录到同一个目录时，才会去显示
+            if (!fileJob->isFinished() && !fileJob->isCanShowProgress()) {
+                timer_id = startTimer(1000);
             }
         }
 

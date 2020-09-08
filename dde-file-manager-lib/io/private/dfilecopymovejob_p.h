@@ -293,6 +293,8 @@ public:
     qint64 refinecpsize = 0;
     QMutex m_refinemutex, m_errormutex;
     QList<DUrl> errorurllist;
+    //是否可以现实进度条
+    QAtomicInteger<bool> m_iscanshowprogress = false;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };

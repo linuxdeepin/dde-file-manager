@@ -720,7 +720,8 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     // only remove
     if (!target_info) {
         bool ok = false;
-
+        //可以显示进度条
+        m_iscanshowprogress = true;
         qint64 size = source_info->isSymLink() ? 0 : source_info->size();
 
         if (source_info->isFile() || source_info->isSymLink()) {
@@ -778,9 +779,10 @@ create_new_file_info:
         if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode) &&
                 (new_file_info->fileUrl() == from || DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()))) {
             // 不用再进行后面的操作
-            q_ptr->stop();
             return true;
         }
+        //可以显示进度条
+        m_iscanshowprogress = true;
 
         // 禁止目录复制/移动到自己里面
         if (new_file_info->isAncestorsUrl(source_info->fileUrl())) {
@@ -836,6 +838,8 @@ create_new_file_info:
             return false;
         }
     }
+
+    m_iscanshowprogress = true;
 
     if (source_info->isSymLink()) {
         bool ok = false;
@@ -2286,6 +2290,7 @@ create_new_file_info:
                         : getNewFileName(source_info, target_info);
             goto create_new_file_info;
         }
+
         DFileCopyMoveJob::Error errortype = target_is_file ? DFileCopyMoveJob::FileExistsError : DFileCopyMoveJob::DirectoryExistsError;
 
         switch (setAndhandleError(errortype, source_info, new_file_info)) {
@@ -4018,6 +4023,12 @@ QList<QPair<DUrl, DUrl>> DFileCopyMoveJob::completedDirectorys() const
     Q_ASSERT(d->state != RunningState);
 
     return d->completedDirectoryList;
+}
+//获取当前是否可以显示进度条
+bool DFileCopyMoveJob::isCanShowProgress() const
+{
+    Q_D(const DFileCopyMoveJob);
+    return d->m_iscanshowprogress;
 }
 
 bool DFileCopyMoveJob::getSysncState()
