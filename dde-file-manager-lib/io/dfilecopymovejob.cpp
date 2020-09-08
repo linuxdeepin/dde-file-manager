@@ -799,6 +799,12 @@ create_new_file_info:
 
         bool source_is_file = source_info->isFile() || source_info->isSymLink();
         bool target_is_file = new_file_info->isFile() || new_file_info->isSymLink();
+        //如果目标目录有相同名称的文件，但是拷贝的是目录，或者相反，就直接创建一个新的名称
+        if (source_is_file != target_is_file) {
+            file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
+                        : getNewFileName(source_info, target_info);
+            goto create_new_file_info;
+        }
         DFileCopyMoveJob::Error errortype =  target_is_file ?
                                              DFileCopyMoveJob::FileExistsError : DFileCopyMoveJob::DirectoryExistsError;
 
@@ -2274,7 +2280,12 @@ create_new_file_info:
 
         bool source_is_file = source_info->isFile() || source_info->isSymLink();
         bool target_is_file = new_file_info->isFile() || new_file_info->isSymLink();
-
+        //如果目标目录有相同名称的文件，但是拷贝的是目录，或者相反，就直接创建一个新的名称
+        if (source_is_file != target_is_file) {
+            file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
+                        : getNewFileName(source_info, target_info);
+            goto create_new_file_info;
+        }
         DFileCopyMoveJob::Error errortype = target_is_file ? DFileCopyMoveJob::FileExistsError : DFileCopyMoveJob::DirectoryExistsError;
 
         switch (setAndhandleError(errortype, source_info, new_file_info)) {
