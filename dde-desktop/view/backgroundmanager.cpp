@@ -237,7 +237,7 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     qInfo() << "screen name" << screen->name() << "geometry" << screen->geometry() << bwp.get();
 
     if (m_preview) {
-        bwp->setWindowFlags(bwp->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
+        DesktopUtil::set_prview_window(bwp.data());
     } else {
 //        Xcb::XcbMisc::instance().set_window_type(bwp->winId(), Xcb::XcbMisc::Desktop);
         DesktopUtil::set_desktop_window(bwp.data());

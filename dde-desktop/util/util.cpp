@@ -64,5 +64,23 @@ QCursor *loadQCursorFromX11Cursor(const char* theme, const char* cursorName, int
     delete images;
     return cursor;
 }
+
+void set_prview_window(QWidget *w)
+{
+    if (!w)
+        return;
+
+    w->setWindowFlags(w->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
+    if (DesktopInfo().waylandDectected()) {
+        w->winId(); //must be called
+        QWindow *window = w->windowHandle();
+        if (!window){
+            qWarning() << w << "windowHandle is null";
+            return;
+        }
+        qDebug() << "wayland set role dock";
+        window->setProperty("_d_dwayland_window-type","wallpaper");
+    }
+}
 }
 

@@ -34,7 +34,7 @@
 #include "screen/screenhelper.h"
 #include "dbusinterface/introspectable_interface.h"
 #include "screensavercontrol.h"
-
+#include "desktopinfo.h"
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
 #endif
@@ -100,7 +100,16 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
     setFocusPolicy(Qt::NoFocus);
     setWindowFlags(Qt::BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
-
+    if (DesktopInfo().waylandDectected()){
+        winId();
+        auto win = windowHandle();
+        if (win){
+            qDebug() << "set wayland role override";
+            win->setProperty("_d_dwayland_window-type","wallpaper-set");
+        }else {
+            qCritical() << "wayland role error,windowHandle is nullptr!";
+        }
+    }
     setBlendMode(DBlurEffectWidget::BehindWindowBlend);
     initUI();
     initSize();
@@ -918,6 +927,8 @@ void Frame::initListView()
 
 void Frame::refreshList()
 {
+    initSize();
+
     m_wallpaperList->hide();
     m_wallpaperList->clear();
     m_wallpaperList->show();
