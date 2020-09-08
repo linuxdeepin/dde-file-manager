@@ -3025,7 +3025,13 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
                 d->columnForRoleHiddenMap[action->text()] = action->isChecked();
 
                 d->headerView->setSectionHidden(i, action->isChecked());
-                updateColumnWidth();
+
+                // fix bug#36610 增加或减少排序方式分类列表未自适应
+                if (d->allowedAdjustColumnSize) {
+                    updateListHeaderViewProperty();
+                } else {
+                    updateColumnWidth();
+                }
             });
 
             menu->addAction(action);
