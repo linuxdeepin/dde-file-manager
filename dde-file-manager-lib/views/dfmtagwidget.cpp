@@ -201,7 +201,6 @@ void DFMTagWidget::loadTags(const DUrl& durl)
     DUrl url = d->redirectUrl(durl);
     if (!d->m_tagCrumbEdit || !d->m_tagActionWidget || !shouldShow(url))
         return;
-
     const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
     QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
     QSet<QString> defaultColors = TagManager::instance()->allTagOfDefaultColors();
@@ -235,9 +234,7 @@ void DFMTagWidget::loadTags(const DUrl& durl)
         int editheight = d->m_tagCrumbEdit->height();
         setFixedHeight(editheight+100);
     }
-
     d->m_tagActionWidget->setCheckedColorList(selectColors);
-
     if (!d->m_devicesWatcher || d->m_url != url) {
         d->m_url = url;
 
@@ -245,7 +242,6 @@ void DFMTagWidget::loadTags(const DUrl& durl)
             d->m_devicesWatcher->stopWatcher();
             d->m_devicesWatcher->deleteLater();
         }
-
         d->m_devicesWatcher = DFileService::instance()->createFileWatcher(this, d->m_url, this);
         if (d->m_devicesWatcher) {
             d->m_devicesWatcher->startWatcher();
@@ -255,7 +251,6 @@ void DFMTagWidget::loadTags(const DUrl& durl)
                     loadTags(d->m_url);
                 }
             });
-
             //当文件被删除时需要在这里把watcher移除，否则可能导致再创建同名文件无法正确添加watcher
             connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [=]{
                 if (d->m_devicesWatcher) {
@@ -295,9 +290,9 @@ DCrumbEdit *DFMTagWidget::tagCrumbEdit()
 bool DFMTagWidget::shouldShow(const DUrl& url)
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
-    if (!fileInfo || fileInfo->isVirtualEntry() || DStorageInfo::isLowSpeedDevice(url.toAbsolutePathUrl().path()))
+    //如果是网络挂载（gvfs）文件就返回
+    if (!fileInfo || fileInfo->isVirtualEntry() || fileInfo->isGvfsMountFile() || DStorageInfo::isLowSpeedDevice(url.toAbsolutePathUrl().path()))
         return false;
-
     bool isComputerOrTrash = false;
     DUrl realTargetUrl = fileInfo->fileUrl();
     if (fileInfo && fileInfo->isSymLink()) {
@@ -311,7 +306,6 @@ bool DFMTagWidget::shouldShow(const DUrl& url)
 
     bool showTags = !systemPathManager->isSystemPath(url.path()) &&
             !isComputerOrTrash && DFileMenuManager::whetherShowTagActions({url});
-
     return showTags;
 }
 

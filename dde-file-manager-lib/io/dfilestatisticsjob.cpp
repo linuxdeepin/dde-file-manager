@@ -296,7 +296,7 @@ void DFileStatisticsJob::start(const DUrlList &sourceUrls)
 {
     Q_ASSERT(!isRunning());
     Q_D(DFileStatisticsJob);
-
+    qDebug() << sourceUrls;
     d->sourceUrlList = sourceUrls;
     //fix bug 35044 【文件管理器】【5.1.2-1】【sp2】我的共享和标记栏目下，预览文件夹，文件大小和文件个数显示错误
     // 传入的scheme为USERSHARE_SCHEME设置为FILE_SCHEME,传入的scheme是TAG_SCHEME判断taggedLocalFilePath是否为空，

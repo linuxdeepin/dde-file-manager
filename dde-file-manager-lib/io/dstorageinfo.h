@@ -73,7 +73,7 @@ public:
 
     static bool inSameDevice(QString path1, QString path2, PathHints hints = PathHint::NoHint);
     static bool inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hints = PathHint::NoHint);
-    static bool isLocalDevice(const QString &path);
+    static bool isLocalDevice(const QString &path,const bool &isEx = false);
     static bool isLowSpeedDevice(const QString &path);
     static bool isCdRomDevice(const QString &path);
     static bool isSameFile(const QString &filePath1, const QString &filePath2);     //通过文件(文件夹)的inode，判断是否是同一个文件(文件夹)

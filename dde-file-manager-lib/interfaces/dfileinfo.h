@@ -31,13 +31,14 @@ class DFileInfoPrivate;
 class DFileInfo : public DAbstractFileInfo
 {
 public:
-    explicit DFileInfo(const QString& filePath, bool hasCache = true);
-    explicit DFileInfo(const DUrl& fileUrl, bool hasCache = true);
-    explicit DFileInfo(const QFileInfo &fileInfo, bool hasCache = true);
-    ~DFileInfo();
+    explicit DFileInfo(const QString& filePath, bool hasCache = false);
+    explicit DFileInfo(const DUrl& fileUrl, bool hasCache = false);
+    explicit DFileInfo(const QFileInfo &fileInfo, bool hasCache = false);
+    ~DFileInfo() override;
 
     static bool exists(const DUrl &fileUrl);
-    static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
+    static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
+                              const QString inod = QString(),const bool isgvfs = false);
 
     bool exists() const Q_DECL_OVERRIDE;
     bool isPrivate() const Q_DECL_OVERRIDE;
@@ -99,7 +100,7 @@ public:
 
     QString fileDisplayName() const Q_DECL_OVERRIDE;
 
-    void refresh() Q_DECL_OVERRIDE;
+    void refresh(const bool isForce = false) Q_DECL_OVERRIDE;
     DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
 
     void makeToActive() Q_DECL_OVERRIDE;
@@ -114,6 +115,9 @@ public:
     QVariantHash extraProperties() const Q_DECL_OVERRIDE;
 
     quint64 inode() const Q_DECL_OVERRIDE;
+
+    // 此函数高频调用，使用 DFileInfo 会降低性能
+    static bool fileIsWritable(const QString &path, uint ownerId);
 
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);

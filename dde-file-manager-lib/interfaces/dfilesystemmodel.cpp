@@ -1054,8 +1054,9 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl, bool isPickU
     Q_Q(DFileSystemModel);
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
-//    qDebug() << fileUrl;
-
+    if (info) {
+        info->refresh(true);
+    }
     if ((!info || !passFileFilters(info)) && !isPickUpQueue) {
         return;
     }
@@ -1130,7 +1131,7 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
     }
 
     if (const DAbstractFileInfoPointer &fileInfo = q->fileInfo(index)) {
-        fileInfo->refresh();
+        fileInfo->refresh(true);
     }
 
     q->parent()->parent()->update(index);
@@ -1149,7 +1150,9 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
     const FileSystemNodePointer &node = rootNode;
     //fix 27828 文件属性改变刷新一次缓存数据
     DAbstractFileInfoPointer newFileInfo = fileService->createFileInfo(nullptr, fileUrl);
-
+    if (newFileInfo) {
+        newFileInfo->refresh(true);
+    }
     if (!node) {
         return;
     }
@@ -1221,7 +1224,10 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         if (!info) {
             continue;
         }
-
+        if (event.first != AddFile)
+        {
+            info->refresh(true);
+        }
         const DUrl &rootUrl = q->rootUrl();
         const DAbstractFileInfoPointer rootinfo = fileService->createFileInfo(q, rootUrl);
         DUrl nparentUrl(info->parentUrl());
@@ -1751,13 +1757,13 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 //            }
 //        }
 //    }
-
-    d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
+    qDebug() << " fetchMore +{ " << parentNode->fileInfo->fileUrl() << parentNode->fileInfo->isGvfsMountFile();
+    d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters,
+                                                   QDirIterator::NoIteratorFlags, false, parentNode->fileInfo->isGvfsMountFile());
 
     if (!d->jobController) {
         return;
     }
-
     if (!d->rootNode->fileInfo->hasOrderly()) {
         // 对于无需列表, 较少返回结果的等待时间
         d->jobController->setTimeCeiling(100);
@@ -1766,15 +1772,12 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     connect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren, Qt::QueuedConnection);
     connect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished, Qt::QueuedConnection);
     connect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread, Qt::DirectConnection);
-
     /// make root file to active
     d->rootNode->fileInfo->makeToActive();
-
     /// start file watcher
     if (d->watcher) {
         d->watcher->startWatcher();
     }
-
     parentNode->populatedChildren = true;
 
     setState(Busy);
@@ -1998,6 +2001,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
         m_filters = d->filters;
         isFirstRun = false;
     }
+    qDebug() << fileUrl;
     //非回收站还原规则
     if (!fileUrl.isTrashFile()) {
         d->filters = m_filters;
@@ -2051,7 +2055,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 //    d->rootNode = d->urlToNode.value(fileUrl);
 
     d->rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(this, fileUrl), &d->rootNodeRWLock);
-    qDebug() << "child count = " << d->rootNode->childrenCount();
+
     d->rootNodeManager->stop();
     d->rootNodeManager->setRootNode(d->rootNode);
     d->watcher = DFileService::instance()->createFileWatcher(this, fileUrl);
@@ -2587,7 +2591,6 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (job) {
         job->pause();
     }
-
     node->clearChildren();
 
     QHash<DUrl, FileSystemNodePointer> fileHash;
@@ -2595,7 +2598,6 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 
     fileHash.reserve(list.size());
     fileList.reserve(list.size());
-
     for (const DAbstractFileInfoPointer &fileInfo : list) {
         if (d->needQuitUpdateChildren) {
             break;
@@ -2627,13 +2629,11 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 
     if (enabledSort())
         sort(node->fileInfo, fileList);
-
 //    qDebug() << "begin insert rows count = " << QString::number(list.count());
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     node->setChildrenMap(fileHash);
     node->setChildrenList(fileList);
-
     endInsertRows();
 
     if (!d->jobController || d->jobController->isFinished()) {

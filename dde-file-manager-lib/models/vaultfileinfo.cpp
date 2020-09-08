@@ -32,7 +32,7 @@
 class VaultFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
-    VaultFileInfoPrivate(const DUrl &url, VaultFileInfo *qq) : DAbstractFileInfoPrivate(url, qq, true) {}
+    VaultFileInfoPrivate(const DUrl &url, VaultFileInfo *qq) : DAbstractFileInfoPrivate(url, qq, false) {}
 };
 
 VaultFileInfo::VaultFileInfo(const DUrl &url)

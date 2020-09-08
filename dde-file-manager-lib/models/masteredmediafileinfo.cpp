@@ -269,8 +269,9 @@ QSet<MenuAction> MasteredMediaFileInfo::disableMenuActionList() const
     return list;
 }
 
-void MasteredMediaFileInfo::refresh()
+void MasteredMediaFileInfo::refresh(const bool isForce)
 {
+    Q_UNUSED(isForce)
     Q_D(const DAbstractFileInfo);
 
     DAbstractFileInfo::refresh();

@@ -124,7 +124,7 @@ class MergedDesktopFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     MergedDesktopFileInfoPrivate(const DUrl &url, MergedDesktopFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq, true) {}
+        : DAbstractFileInfoPrivate(url, qq, false) {}
 
     DUrl m_parentUrl;
 };
