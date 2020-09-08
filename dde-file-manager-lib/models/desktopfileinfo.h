@@ -52,7 +52,7 @@ public:
     QString baseNameOfRename() const override;
     QString suffixOfRename() const override;
 
-    void refresh() Q_DECL_OVERRIDE;
+    void refresh(const bool isForce = false) Q_DECL_OVERRIDE;
 
     QString iconName() const Q_DECL_OVERRIDE;
     QString genericIconName() const Q_DECL_OVERRIDE;

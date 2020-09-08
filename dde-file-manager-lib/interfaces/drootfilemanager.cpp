@@ -153,7 +153,6 @@ void DRootFileManager::startQuryRootFile()
         });
     }
 
-    qDebug() << "start thread    startQuryRootFile   ===== " << d_ptr->rootfilelist.size() << QThread::currentThread();
     QMutexLocker lk(&d_ptr->rootfileMtx);
     if (d_ptr->m_jobcontroller){
         qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
@@ -170,7 +169,6 @@ void DRootFileManager::startQuryRootFile()
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
             d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
             lk.unlock();
-            qDebug() << "  addChildren " << chi->fileUrl();
             emit rootFileChange(chi); // 其实中间结果没有必要,直接拿最终结果就行了,但保留接口，以后便于扩展
         }
     }, Qt::DirectConnection);
@@ -181,7 +179,6 @@ void DRootFileManager::startQuryRootFile()
             if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
                 d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
                 lk.unlock();
-                qDebug() << "  addChildrenlist " << chi->fileUrl();
                 emit rootFileChange(chi); // 其实中间结果没有必要,直接拿最终结果就行了,但保留接口，以后便于扩展
             }
         }

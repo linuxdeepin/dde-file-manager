@@ -898,17 +898,17 @@ const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sende
         info->refresh();
         return info;
     }
-
     const auto &&event = dMakeEventPointer<DFMCreateFileInfoEvent>(sender, fileUrl);
 
     return qvariant_cast<DAbstractFileInfoPointer>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
 const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
+                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent,bool isgvfs) const
 {
-    const auto &&event = dMakeEventPointer<DFMCreateDiriterator>(sender, fileUrl, nameFilters, filters, flags, silent);
 
+
+    const auto &&event = dMakeEventPointer<DFMCreateDiriterator>(sender, fileUrl, nameFilters, filters, flags, silent, isgvfs);
     return qvariant_cast<DDirIteratorPointer>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
@@ -921,9 +921,9 @@ const QList<DAbstractFileInfoPointer> DFileService::getChildren(const QObject *s
 }
 
 JobController *DFileService::getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                            QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
+                                            QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, const bool isgfvs) const
 {
-    const auto &&event = dMakeEventPointer<DFMCreateGetChildrensJob>(sender, fileUrl, nameFilters, filters, flags, silent);
+    const auto &&event = dMakeEventPointer<DFMCreateGetChildrensJob>(sender, fileUrl, nameFilters, filters, flags, silent, isgfvs);
 
     return qvariant_cast<JobController *>(DFMEventDispatcher::instance()->processEvent(event));
 }
@@ -1044,11 +1044,9 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
         rooturl.setScheme(DFMROOT_SCHEME);
         rooturl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
     }
-
     if (isSmbFtpContain(rooturl)) {
         return d->m_rootsmbftpurllist.value(rooturl);
     }
-
     bool isbusy = checkGvfsMountfileBusy(rooturl, rootfilename, showdailog);
     d->m_rootsmbftpurllist.insert(rooturl,isbusy);
     QTimer::singleShot(500,this,[rooturl,d](){

@@ -73,7 +73,7 @@ class RequestEP : public QThread
 public:
     static RequestEP *instance();
 
-    ~RequestEP();
+    ~RequestEP() override;
 
     // Request get the file extra properties
     QQueue<QPair<DUrl, DFileInfoPrivate *>> requestEPFiles;
@@ -93,7 +93,7 @@ private Q_SLOTS:
     void processEPChanged(const DUrl &url, DFileInfoPrivate *info, const QVariantHash &ep);
 
 private:
-    explicit RequestEP(QObject *parent = 0);
+    explicit RequestEP(QObject *parent = nullptr);
 };
 
 RequestEP::RequestEP(QObject *parent)
@@ -259,8 +259,7 @@ DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache
     : DAbstractFileInfoPrivate(url, qq, hasCache)
 {
     fileInfo.setFile(url.toLocalFile());
-
-    gvfsMountFile = FileUtils::isGvfsMountFile(url.toLocalFile());
+    gvfsMountFile = 0;
 }
 
 DFileInfoPrivate::~DFileInfoPrivate()
@@ -298,19 +297,6 @@ DFileInfo::DFileInfo(const QString &filePath, bool hasCache)
 DFileInfo::DFileInfo(const DUrl &fileUrl, bool hasCache)
     : DAbstractFileInfo(*new DFileInfoPrivate(fileUrl, this, hasCache))
 {
-    Q_D(const DFileInfo);
-    //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
-    if (d->gvfsMountFile) {
-        canRename();
-        isWritable();
-        isSymLink();
-        mimeType();
-        size();
-        //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
-        //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
-        //所以ftp和smb挂载点没有了，显示文件已被删除
-//        filesCount();
-    }
 }
 
 DFileInfo::DFileInfo(const QFileInfo &fileInfo, bool hasCache)
@@ -329,21 +315,18 @@ bool DFileInfo::exists(const DUrl &fileUrl)
     return QFileInfo::exists(fileUrl.toLocalFile());
 }
 
-QMimeType DFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode)
+QMimeType DFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const QString inod, const bool isgvfs)
 {
     static DMimeDatabase db;
+    if (isgvfs) {
+        return db.mimeTypeForFile(filePath, mode, inod, isgvfs);
+    }
     return db.mimeTypeForFile(filePath, mode);
 }
 
 bool DFileInfo::exists() const
 {
     Q_D(const DFileInfo);
-
-    if ((d->isLowSpeedFile() || d->gvfsMountFile) && d->cacheFileExists < 0)
-        d->cacheFileExists = d->fileInfo.exists() || d->fileInfo.isSymLink();
-
-    if (d->cacheFileExists >= 0)
-        return d->cacheFileExists;
 
     return d->fileInfo.exists() || d->fileInfo.isSymLink();
 }
@@ -438,7 +421,7 @@ QList<QIcon> DFileInfo::additionalIcon() const
 }
 
 // 此函数高频调用，使用 DFileInfo 会降低性能
-static bool fileIsWritable(const QString &path, uint ownerId)
+bool DFileInfo::fileIsWritable(const QString &path, uint ownerId)
 {
     Q_UNUSED(ownerId)
 
@@ -448,7 +431,8 @@ static bool fileIsWritable(const QString &path, uint ownerId)
     }
 
     // check user's permissions for a file
-    int result = access(path.toLocal8Bit().data(), W_OK);
+    const char *cpath = path.toLocal8Bit().data();
+    int result = access(cpath, W_OK);
     if (result == 0) {
         return true;
     }
@@ -460,15 +444,7 @@ bool DFileInfo::canRename() const
 {
     if (systemPathManager->isSystemPath(absoluteFilePath()))
         return false;
-
     Q_D(const DFileInfo);
-    //fix bug 27828 修改gvfsMountFile属性时，也要缓存属性，才不会造成ftp和smb卡死
-    if (d->cacheCanRename < 0 && (d->isLowSpeedFile() || d->gvfsMountFile)) {
-        d->cacheCanRename = fileIsWritable(d->fileInfo.absolutePath(), d->fileInfo.ownerId());
-    }
-
-    if (d->cacheCanRename >= 0)
-        return d->cacheCanRename;
 
     return fileIsWritable(d->fileInfo.absolutePath(), d->fileInfo.ownerId());
 }
@@ -544,17 +520,7 @@ bool DFileInfo::isWritable() const
         return false;
 
     Q_D(const DFileInfo);
-    //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
-    if (d->gvfsMountFile) {
-        if (d->cacheCanWrite < 0) {
-            struct stat statinfo;
-            int filestat = stat(d->fileInfo.absoluteFilePath().toStdString().c_str(), &statinfo);
-            d->cacheCanWrite = (filestat == 0) && (statinfo.st_mode & S_IWRITE);
-            if (d->inode == 0)
-                d->inode = statinfo.st_ino;
-        }
-        return d->cacheCanWrite;
-    }
+
     return d->fileInfo.isWritable();
 }
 
@@ -663,13 +629,6 @@ bool DFileInfo::isDir() const
 bool DFileInfo::isSymLink() const
 {
     Q_D(const DFileInfo);
-    //fix bug 27828 修改gvfsMountFile属性时，也要缓存属性，才不会造成ftp和smb卡死
-    if ((d->isLowSpeedFile() || d->gvfsMountFile) && d->cacheIsSymLink < 0) {
-        d->cacheIsSymLink = d->fileInfo.isSymLink();
-    }
-
-    if (d->cacheIsSymLink >= 0)
-        return d->cacheIsSymLink != 0;
 
     return d->fileInfo.isSymLink();
 }
@@ -680,7 +639,7 @@ QString DFileInfo::symlinkTargetPath() const
 
     if (d->fileInfo.isSymLink()) {
         char s[PATH_MAX + 1];
-        int len = readlink(d->fileInfo.absoluteFilePath().toLocal8Bit().constData(), s, PATH_MAX);
+        int len = static_cast<int>(readlink(d->fileInfo.absoluteFilePath().toLocal8Bit().constData(), s, PATH_MAX));
 
         return QString::fromLocal8Bit(s, len);
     }
@@ -750,29 +709,11 @@ qint64 DFileInfo::size() const
 {
     Q_D(const DFileInfo);
 
-    if (d->gvfsMountFile) {
-        if (d->cacheFileSize < 0) {
-            d->cacheFileSize = d->fileInfo.size();
-        }
-        return d->cacheFileSize;
-    }
-
     return d->fileInfo.size();
 }
 
 int DFileInfo::filesCount() const
 {
-    Q_D(const DFileInfo);
-
-    if (d->gvfsMountFile) {
-        if (d->cacheFileCount < 0) {
-            if (isDir())
-                d->cacheFileCount = FileUtils::filesCount(absoluteFilePath());
-            else
-                return -1;
-        }
-        return d->cacheFileCount;
-    }
 
     if (isDir())
         return FileUtils::filesCount(absoluteFilePath());
@@ -804,7 +745,7 @@ QDateTime DFileInfo::lastModified() const
         struct stat attrib;
 
         if (lstat(d->fileInfo.filePath().toLocal8Bit().constData(), &attrib) >= 0)
-            return QDateTime::fromTime_t(attrib.st_mtime);
+            return QDateTime::fromTime_t(static_cast<uint>(attrib.st_mtime));
     }
 
     return d->fileInfo.lastModified();
@@ -818,7 +759,7 @@ QDateTime DFileInfo::lastRead() const
         struct stat attrib;
 
         if (lstat(d->fileInfo.filePath().toLocal8Bit().constData(), &attrib) >= 0)
-            return QDateTime::fromTime_t(attrib.st_atime);
+            return QDateTime::fromTime_t(static_cast<uint>(attrib.st_mtime));
     }
 
     return d->fileInfo.lastRead();
@@ -832,7 +773,7 @@ QMimeType DFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
         //优化是苹果的就用新的minetype
         DUrl url = fileUrl();
 
-        d->mimeType = mimeType(absoluteFilePath(), mode);
+        d->mimeType = mimeType(fileUrl().path(), mode);
         d->mimeTypeMode = mode;
     }
 
@@ -889,32 +830,18 @@ QString DFileInfo::fileDisplayName() const
     return fileName();
 }
 
-void DFileInfo::refresh()
+void DFileInfo::refresh(const bool isForce)
 {
     Q_D(DFileInfo);
+
+    Q_UNUSED(isForce)
 
     d->fileInfo.refresh();
     d->icon = QIcon();
     d->epInitialized = false;
     d->hasThumbnail = -1;
     d->mimeType = QMimeType();
-    //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
-    if (d->gvfsMountFile) {
-        d->cacheCanWrite = -1;
-        d->cacheCanRename = -1;
-        d->cacheIsSymLink = -1;
-        //fix bug 35831 cacheFileExists也需要清空 否则文件存在会被误判
-        d->cacheFileExists = -1;
-        canRename();
-        isWritable();
-        isSymLink();
-        mimeType();
-        size();
-        //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
-        //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
-        //所以ftp和smb挂载点没有了，显示文件已被删除
-//        filesCount();
-    }
+    d->inode = 0;
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
@@ -1103,7 +1030,7 @@ QVariantHash DFileInfo::extraProperties() const
             d->getEPTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
         }
 
-        QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url, this] {
+        QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url] {
             d->requestEP = RequestEP::instance();
             d->requestEP->requestEP(url, const_cast<DFileInfoPrivate *>(d));
             d->getEPTimer->deleteLater();
@@ -1118,6 +1045,17 @@ QVariantHash DFileInfo::extraProperties() const
 quint64 DFileInfo::inode() const
 {
     Q_D(const DFileInfo);
+    if (d->inode != 0) {
+        return d->inode;
+    }
+
+    struct stat statinfo;
+    int filestat = stat(d->fileInfo.absoluteFilePath().toStdString().c_str(), &statinfo);
+    if (filestat != 0) {
+        return 0;
+    }
+    d->inode = statinfo.st_ino;
+
     return d->inode;
 }
 

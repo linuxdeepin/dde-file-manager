@@ -38,7 +38,7 @@ class AVFSFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     AVFSFileInfoPrivate(const DUrl &url, AVFSFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq, true)
+        : DAbstractFileInfoPrivate(url, qq, false)
     {
     }
 };

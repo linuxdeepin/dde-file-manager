@@ -85,7 +85,6 @@ void JobController::start()
 
         return;
     }
-
     setState(Started);
     QThread::start(TimeCriticalPriority);
 }
@@ -164,7 +163,6 @@ void JobController::run()
     bool update_children = true;
 
     const DAbstractFileInfoPointer &rootInfo = DFileService::instance()->createFileInfo(this, m_fileUrl);
-
     if (rootInfo && !rootInfo->hasOrderly() && fileInfoQueue.count() > 0) {
         update_children = false;
         emit childrenUpdated(fileInfoQueue);
@@ -180,19 +178,14 @@ void JobController::run()
         if (m_state == Stoped) {
             break;
         }
-
         m_iterator->next();
         DAbstractFileInfoPointer fileinfo;
-        fileinfo = m_iterator->optimiseFileInfo();
-        if (!fileinfo) {
-            fileinfo = m_iterator->fileInfo();
-        }
+        fileinfo = m_iterator->fileInfo();
         if (update_children) {
             fileInfoQueue.enqueue(fileinfo);
 
             if (timer->elapsed() > m_timeCeiling || fileInfoQueue.count() > m_countCeiling) {
                 update_children = false;
-
                 emit childrenUpdated(fileInfoQueue);
                 emit addChildrenList(fileInfoQueue);
 
@@ -220,7 +213,6 @@ void JobController::run()
         delete timer;
         timer = Q_NULLPTR;
     }
-
     if (update_children) {
         emit childrenUpdated(fileInfoQueue);
         emit addChildrenList(fileInfoQueue);

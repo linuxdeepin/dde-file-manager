@@ -135,7 +135,8 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
     , fileUrl(url)
 {
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
-    if (hasCache && url.isValid() && (QThread::currentThread()) &&  qApp && qApp->thread() && QThread::currentThread() == qApp->thread()) {
+    //hasCache强制缓存，不管主线程和还是子线程，目前是优化gvfs挂载文件
+    if (hasCache || (url.isValid() && (QThread::currentThread()) &&  qApp && qApp->thread() && QThread::currentThread() == qApp->thread())) {
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
 
@@ -179,10 +180,10 @@ void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
 
 DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
 {
-    //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
-    if (QThread::currentThread() && qApp && qApp->thread() && QThread::currentThread() != qApp->thread()) {
-        return nullptr;
-    }
+    //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题,优化都可以
+//    if (QThread::currentThread() && qApp && qApp->thread() && QThread::currentThread() != qApp->thread()) {
+//        return nullptr;
+//    }
 
     if (!fileUrl.isValid()) {
         return nullptr;
@@ -195,6 +196,12 @@ DAbstractFileInfo::DAbstractFileInfo(const DUrl &url, bool hasCache)
     : d_ptr(new DAbstractFileInfoPrivate(url, this, hasCache))
 {
 
+}
+
+DAbstractFileInfo::DAbstractFileInfo(const DUrl &url, const QMimeType &mimetype, bool hasCache)
+    : d_ptr(new DAbstractFileInfoPrivate(url, this, hasCache))
+{
+    Q_UNUSED(mimetype);
 }
 
 DAbstractFileInfo::~DAbstractFileInfo()
@@ -807,7 +814,7 @@ bool DAbstractFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) 
 QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
-
+    Q_D(const DAbstractFileInfo);
     if (type == SpaceArea) {
         actionKeys.reserve(9);
 
@@ -872,8 +879,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                        << MenuAction::Cut
                        << MenuAction::Copy
                        << MenuAction::Rename;
-
-            if (FileUtils::isGvfsMountFile(absoluteFilePath()) || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())) {
+            const_cast<DAbstractFileInfo *>(this)->checkMountFile();
+            if (isGvfsMountFile() || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())) {
                 if (!isVirtualEntry()) {
                     actionKeys << MenuAction::CompleteDeletion;
                 }
@@ -1006,8 +1013,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                 break;
             }
         }
-
-        if (FileUtils::isGvfsMountFile(absoluteFilePath()) || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())) {
+        const_cast<DAbstractFileInfo *>(this)->checkMountFile();
+        if (isGvfsMountFile() || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())) {
             if (!isVirtualEntry()) {
                 actionKeys << MenuAction::CompleteDeletion;
             }
@@ -1474,6 +1481,29 @@ void DAbstractFileInfo::updateReadTime(const QDateTime &)
 
 }
 
+bool DAbstractFileInfo::isGvfsMountFile() const
+{
+    Q_D(const DAbstractFileInfo);
+    if (-1 == d->gvfsMountFile) {
+        return false;
+    }
+    return d->gvfsMountFile > 0;
+}
+
+qint8 DAbstractFileInfo::gvfsMountFile() const
+{
+    Q_D(const DAbstractFileInfo);
+    return d->gvfsMountFile;
+}
+
+void DAbstractFileInfo::checkMountFile()
+{
+    Q_D(DAbstractFileInfo);
+    if (-1 == gvfsMountFile()) {
+        d->gvfsMountFile = FileUtils::isGvfsMountFile(absoluteFilePath());
+    }
+}
+
 quint64 DAbstractFileInfo::inode() const
 {
     return 0;
@@ -1482,11 +1512,9 @@ quint64 DAbstractFileInfo::inode() const
 void DAbstractFileInfo::makeToActive()
 {
     Q_D(DAbstractFileInfo);
-
     if (d->proxy) {
         d->proxy->makeToActive();
     }
-
     if (d->active) {
         return;
     }
@@ -1505,9 +1533,9 @@ bool DAbstractFileInfo::isActive() const
     return d->active;
 }
 
-void DAbstractFileInfo::refresh()
+void DAbstractFileInfo::refresh(const bool isForce)
 {
-    CALL_PROXY(refresh());
+    CALL_PROXY(refresh(isForce));
 #ifdef SW_LABEL
     updateLabelMenuItems();
 #endif

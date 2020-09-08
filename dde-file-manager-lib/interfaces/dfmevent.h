@@ -571,10 +571,10 @@ class DFMCreateDiriterator : public DFMGetChildrensEvent
 {
 public:
     explicit DFMCreateDiriterator(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false);
+                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false, bool isgvfs = false);
     explicit DFMCreateDiriterator(const QObject *sender, const DUrl &url,
-                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false);
-
+                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false,bool isgvfs = false);
+    bool isGvfsFile() const;
     static QSharedPointer<DFMCreateDiriterator> fromJson(const QJsonObject &json);
 };
 
@@ -582,10 +582,9 @@ class DFMCreateGetChildrensJob : public DFMCreateDiriterator
 {
 public:
     explicit DFMCreateGetChildrensJob(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                      QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent = false);
+                                      QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent = false, const bool isgvfsfile = false);
     explicit DFMCreateGetChildrensJob(const QObject *sender, const DUrl &url,
-                                      const QStringList &nameFilters, QDir::Filters filters, bool silent = false);
-
+                                      const QStringList &nameFilters, QDir::Filters filters, bool silent = false, const bool isgvfsfile = false);
     static QSharedPointer<DFMCreateGetChildrensJob> fromJson(const QJsonObject &json);
 };
 

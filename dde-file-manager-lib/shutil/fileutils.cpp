@@ -1447,12 +1447,12 @@ DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
     }
 }
 
-bool FileUtils::isGvfsMountFile(const QString &filePath)
+bool FileUtils::isGvfsMountFile(const QString &filePath, const bool &isEx)
 {
     if (filePath.isEmpty())
         return false;
 
-    return !DStorageInfo::isLocalDevice(filePath);
+    return !DStorageInfo::isLocalDevice(filePath, isEx);
 }
 
 bool FileUtils::isFileExists(const QString &filePath)
@@ -1460,7 +1460,7 @@ bool FileUtils::isFileExists(const QString &filePath)
     GFile *file;
     std::string fstdPath = filePath.toStdString();
     file = g_file_new_for_path(fstdPath.data());
-    bool isExists = g_file_query_exists(file, NULL);
+    bool isExists = g_file_query_exists(file, nullptr);
     g_object_unref(file);
     return isExists;
 }
@@ -1591,4 +1591,21 @@ bool FileUtils::isDesktopFile(const QFileInfo &fileInfo)
 {
     QMimeType mt = DMimeDatabase().mimeTypeForFile(fileInfo);
     return mt.name() == "application/x-desktop" && mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+}
+
+bool FileUtils::isDesktopFile(const QString &filePath, QMimeType &mimetype)
+{
+    QMimeType mt = DMimeDatabase().mimeTypeForFile(filePath,QMimeDatabase::MatchExtension);
+    mimetype = mt;
+    return mt.name() == "application/x-desktop" &&
+            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+}
+
+bool FileUtils::isDesktopFile(const QFileInfo &fileInfo, QMimeType &mimetyp)
+{
+    QMimeType mt = DMimeDatabase().mimeTypeForFile(fileInfo,QMimeDatabase::MatchExtension);
+    mimetyp = mt;
+    return mt.name() == "application/x-desktop" &&
+            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+
 }

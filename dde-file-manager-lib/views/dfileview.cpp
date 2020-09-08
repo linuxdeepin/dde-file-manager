@@ -1287,7 +1287,6 @@ void DFileView::updateModelActiveIndex()
     }
 
     d->visibleIndexRande = rande;
-
     for (int i = rande.first; i <= rande.second; ++i) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
 
@@ -1335,7 +1334,6 @@ void DFileView::updateStatusBar()
     Q_D(DFileView);
     if (model()->state() != DFileSystemModel::Idle)
         return;
-
     DFMEvent event(this);
     event.setWindowId(windowId());
     //来自搜索目录的url需要处理转换为localfile，否则statusBar上的展示会不正确
@@ -1348,16 +1346,13 @@ void DFileView::updateStatusBar()
             corectUrls << srcUrl;
         }
     }
-
     event.setData(corectUrls);
     int count = selectedIndexCount();
     //判断网络文件是否可以到达
     if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
         return;
     }
-
     notifySelectUrlChanged(corectUrls);
-
     if (count == 0) {
         d->statusBar->itemCounted(event, this->count());
     } else {

@@ -182,11 +182,11 @@ QIcon DesktopFileInfo::fileIcon() const
     return d->icon;
 }
 
-void DesktopFileInfo::refresh()
+void DesktopFileInfo::refresh(const bool isForce)
 {
     Q_D(DesktopFileInfo);
 
-    DFileInfo::refresh();
+    DFileInfo::refresh(isForce);
     d->updateInfo(fileUrl());
 }
 

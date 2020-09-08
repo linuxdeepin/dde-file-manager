@@ -51,7 +51,7 @@ class TrashFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     TrashFileInfoPrivate(const DUrl &url, TrashFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq, true)
+        : DAbstractFileInfoPrivate(url, qq, false)
     {
         columnCompact = false;
     }

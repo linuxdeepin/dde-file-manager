@@ -90,7 +90,7 @@ public:
 
     QVariantHash extraProperties() const override;
 
-    void refresh() override;
+    void refresh(const bool isForce = false) override;
     void checkCache();
     QString udisksDisplayName();
     QString getVolTag(); // ....../dev/sr0 -> sr0

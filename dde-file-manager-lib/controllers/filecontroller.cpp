@@ -27,6 +27,7 @@
 #include "fileoperations/filejob.h"
 #include "dfilewatcher.h"
 #include "dfileinfo.h"
+#include "dgvfsfileinfo.h"
 #include "trashmanager.h"
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
@@ -89,8 +90,10 @@ public:
     DFMQDirIterator(const QString &path,
                     const QStringList &nameFilters,
                     QDir::Filters filter,
-                    QDirIterator::IteratorFlags flags)
+                    QDirIterator::IteratorFlags flags,
+                    const bool isgvfs = false)
         : iterator(path, nameFilters, filter, flags)
+        , isgvfs(isgvfs)
     {
 
     }
@@ -118,25 +121,28 @@ public:
     const DAbstractFileInfoPointer fileInfo() const override
     {
         const QFileInfo &info = iterator.fileInfo();
+        bool isnotsyslink = !info.isSymLink();
+        //父目录是gvfs目录，那么子目录和子文件必须是gvfs文件
 
-        if (!info.isSymLink() && FileUtils::isDesktopFile(info)) {
+        bool currentisgvfs = isgvfs ? true : FileUtils::isGvfsMountFile(info.path(),true);
+        QMimeType mimetype;
+        bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(info, mimetype) :
+                                         FileUtils::isDesktopFile(info);
+        if (isnotsyslink && isdesktop) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(info));
         }
 
-        return DAbstractFileInfoPointer(new DFileInfo(info));
-    }
-    const DAbstractFileInfoPointer optimiseFileInfo() const override
-    {
-        const QFileInfo &info = iterator.fileInfo();
-        DUrl url = DUrl::fromLocalFile(info.absoluteFilePath());
-        QString abfilepath = info.absoluteFilePath();
-        if (info.isDir())
-            abfilepath += QString("/");
-        if (!info.isSymLink() && FileUtils::isDesktopFile(abfilepath)) {
-            return DAbstractFileInfoPointer(new DesktopFileInfo(url));
-        }
+        if (currentisgvfs) {
+            DUrl fileurl = DUrl::fromLocalFile(info.absoluteFilePath());
+            const DAbstractFileInfoPointer &newinfo = DAbstractFileInfo::getFileInfo(fileurl);
 
-        return DAbstractFileInfoPointer(new DFileInfo(url));
+            if (newinfo) {
+                newinfo->refresh(true);
+                return newinfo;
+            }
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(info, mimetype, isgvfs));
+        }
+        return DAbstractFileInfoPointer(new DFileInfo(info));
     }
 
     DUrl url() const override
@@ -146,6 +152,7 @@ public:
 
 private:
     QDirIterator iterator;
+    bool isgvfs = false;
 };
 
 class DFMSortInodeDirIterator : public DDirIterator
@@ -157,7 +164,7 @@ public:
 
     }
 
-    ~DFMSortInodeDirIterator()
+    ~DFMSortInodeDirIterator() override
     {
         if (sortFiles) {
             free(sortFiles);
@@ -203,6 +210,11 @@ public:
 
     const DAbstractFileInfoPointer fileInfo() const override
     {
+        //判断是否是gvfs文件，是就创建DGvfsFileInfo
+        bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(),true);
+        if (currentisgvfs) {
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo));
+        }
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
 
@@ -286,6 +298,10 @@ public:
 
     const DAbstractFileInfoPointer fileInfo() const override
     {
+        bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(),true);
+        if (currentisgvfs) {
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo));
+        }
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
 
@@ -314,7 +330,8 @@ public:
     FileDirIterator(const QString &url,
                     const QStringList &nameFilters,
                     QDir::Filters filter,
-                    QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+                    QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
+                    const bool gvfs = false);
     ~FileDirIterator() override;
 
     DUrl next() Q_DECL_OVERRIDE;
@@ -323,8 +340,6 @@ public:
     QString fileName() const Q_DECL_OVERRIDE;
     DUrl fileUrl() const override;
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    //判读ios手机，传输慢，需要特殊处理优化
-    const DAbstractFileInfoPointer optimiseFileInfo() const Q_DECL_OVERRIDE;
     DUrl url() const Q_DECL_OVERRIDE;
 
     bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
@@ -333,8 +348,9 @@ public:
 
 private:
     DDirIterator *iterator = nullptr;
-    bool nextIsCached = false;
     QDir::Filters filters;
+    bool nextIsCached = false;
+    QHash<DUrl,DAbstractFileInfoPointer> nextInofCached;
 };
 
 FileController::FileController(QObject *parent)
@@ -353,17 +369,25 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
     DUrl url = event->url();
     QString localFile = url.toLocalFile();
     QFileInfo info(localFile);
-    if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
+    bool isnotsyslink = !info.isSymLink();
+    //父目录是gvfs目录，那么子目录和子文件必须是gvfs文件
+    bool currentisgvfs = FileUtils::isGvfsMountFile(url.toLocalFile(), true);
+    QMimeType mimetype;
+    bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(localFile, mimetype) :
+                                     FileUtils::isDesktopFile(localFile);
+    if (isnotsyslink && isdesktop) {
         return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
-
+    if (currentisgvfs) {
+        return DAbstractFileInfoPointer(new DGvfsFileInfo(event->url()));
+    }
     return DAbstractFileInfoPointer(new DFileInfo(event->url()));
 }
 
 const DDirIteratorPointer FileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
     return DDirIteratorPointer(new FileDirIterator(event->url().toLocalFile(), event->nameFilters(),
-                                                   event->filters(), event->flags()));
+                                                   event->filters(), event->flags(),event->isGvfsFile()));
 }
 
 bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
@@ -789,7 +813,8 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             if (!slient) {
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
-            } else {
+            }
+            else {
                 moveToThread(qApp->thread());
             }
         }
@@ -1476,7 +1501,7 @@ QString FileController::checkDuplicateName(const QString &name) const
 }
 
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,
-                                 QDir::Filters filter, QDirIterator::IteratorFlags flags)
+                                 QDir::Filters filter, QDirIterator::IteratorFlags flags,const bool gvfs)
     : DDirIterator()
     , filters(filter)
 {
@@ -1485,7 +1510,7 @@ FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFil
     if (sort_inode) {
         iterator = new DFMSortInodeDirIterator(path);
     } else {
-        iterator = new DFMQDirIterator(path, nameFilters, filter, flags);
+        iterator = new DFMQDirIterator(path, nameFilters, filter, flags, gvfs);
     }
 
     // misc, not related to the file iterator at all.
@@ -1525,15 +1550,10 @@ bool FileDirIterator::hasNext() const
     if (!hasNext) {
         return false;
     }
-
     bool showHidden = filters.testFlag(QDir::Hidden);
     DAbstractFileInfoPointer info;
-
     do {
         const_cast<FileDirIterator *>(this)->iterator->next();
-        if (m_boptimise) {
-            info = iterator->optimiseFileInfo();
-        }
         if (!info) {
             info = iterator->fileInfo();
         }
@@ -1547,8 +1567,8 @@ bool FileDirIterator::hasNext() const
 
     // file is exists
     if (info) {
+        const_cast<FileDirIterator *>(this)->nextInofCached.insert(info->fileUrl(), info);
         const_cast<FileDirIterator *>(this)->nextIsCached = true;
-
         return true;
     }
 
@@ -1567,12 +1587,14 @@ DUrl FileDirIterator::fileUrl() const
 
 const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
+    DAbstractFileInfoPointer newinfo = const_cast<FileDirIterator *>\
+            (this)->nextInofCached.value(iterator->fileUrl());
+    if (newinfo) {
+        const_cast<FileDirIterator *>\
+                    (this)->nextInofCached.remove(iterator->fileUrl());
+        return newinfo;
+    }
     return iterator->fileInfo();
-}
-//判读ios手机，传输慢，需要特殊处理优化
-const DAbstractFileInfoPointer FileDirIterator::optimiseFileInfo() const
-{
-    return iterator->optimiseFileInfo();
 }
 
 DUrl FileDirIterator::url() const

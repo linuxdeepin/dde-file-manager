@@ -150,13 +150,14 @@ public:
 
     const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
+                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false,bool isgvfs = false) const;
 
     const QList<DAbstractFileInfoPointer> getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
                                                       QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false, bool canconst = false) const;
 
     JobController *getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
+                                  QDir::Filters filters,
+                                  QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false, const bool isgfvs = false) const;
 
     DAbstractFileWatcher *createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent = nullptr) const;
     bool setExtraProperties(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const;

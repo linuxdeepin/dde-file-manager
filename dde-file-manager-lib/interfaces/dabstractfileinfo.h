@@ -147,6 +147,7 @@ public:
     }
 
     explicit DAbstractFileInfo(const DUrl &url, bool hasCache = true);
+    explicit DAbstractFileInfo(const DUrl &url, const QMimeType &mimetype, bool hasCache = true);
     virtual ~DAbstractFileInfo();
 
     static const DAbstractFileInfoPointer getFileInfo(const DUrl &fileUrl);
@@ -308,7 +309,8 @@ public:
     virtual void makeToInactive();
     virtual void makeToActive();
     bool isActive() const;
-    virtual void refresh();
+    //优化gvfs文件卡，其他文件不改变，只有gvfs文件，传入true为强制刷新
+    virtual void refresh(const bool isForce = false);
 
     virtual DUrl goToUrlWhenDeleted() const;
     virtual QString toLocalFile() const;
@@ -325,6 +327,9 @@ public:
     //为recentInfo提供接口
     virtual const QDateTime getReadTime() const;
     virtual void updateReadTime(const QDateTime &);
+    virtual bool isGvfsMountFile() const;
+    virtual qint8 gvfsMountFile() const;
+    virtual void checkMountFile();
 
     virtual quint64 inode() const;
 

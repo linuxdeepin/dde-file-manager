@@ -758,17 +758,24 @@ QSharedPointer<DFMGetChildrensEvent> DFMGetChildrensEvent::fromJson(const QJsonO
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent)
+        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, bool isgvfs)
     : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters, flags, silent)
 {
     m_type = CreateDiriterator;
+    setProperty(QT_STRINGIFY(DFMCreateDiriterator::isgvfsfile), isgvfs);
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, bool silent)
+        QDir::Filters filters, bool silent,bool isgvfs)
     : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters, silent)
 {
     m_type = CreateDiriterator;
+    setProperty(QT_STRINGIFY(DFMCreateDiriterator::isgvfsfile), isgvfs);
+}
+
+bool DFMCreateDiriterator::isGvfsFile() const
+{
+    return property<bool>(QT_STRINGIFY(DFMCreateDiriterator::isgvfsfile));
 }
 
 QSharedPointer<DFMCreateDiriterator> DFMCreateDiriterator::fromJson(const QJsonObject &json)
@@ -781,15 +788,15 @@ QSharedPointer<DFMCreateDiriterator> DFMCreateDiriterator::fromJson(const QJsonO
 }
 
 DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent)
-    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, flags, silent)
+        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, const bool isgvfsfile)
+    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, flags, silent, isgvfsfile)
 {
     m_type = CreateGetChildrensJob;
 }
 
 DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, bool silent)
-    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, silent)
+        QDir::Filters filters, bool silent, const bool isgvfsfile)
+    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, silent, isgvfsfile)
 {
     m_type = CreateGetChildrensJob;
 }

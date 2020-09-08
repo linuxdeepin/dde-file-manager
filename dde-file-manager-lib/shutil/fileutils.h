@@ -110,7 +110,7 @@ public:
     static QMap<QString, QString> getKernelParameters();
 
     static DFMGlobal::MenuExtension getMenuExtension(const DUrlList& urlList);
-    static bool isGvfsMountFile(const QString &filePath);
+    static bool isGvfsMountFile(const QString &filePath,const bool &isEx = false);
     static bool isFileExists(const QString& filePath);
 
     static QJsonObject getJsonObjectFromFile(const QString& filePath);
@@ -123,6 +123,8 @@ public:
 
     static bool isDesktopFile(const QString& filePath);
     static bool isDesktopFile(const QFileInfo &fileInfo);
+    static bool isDesktopFile(const QString& filePath, QMimeType &mimetype);
+    static bool isDesktopFile(const QFileInfo &fileInfo,QMimeType &mimetyp);
     static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
 
     static bool deviceShouldBeIgnore(const QString &devId); // devId = /dev/sdb(N)

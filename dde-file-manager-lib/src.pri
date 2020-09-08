@@ -224,7 +224,9 @@ HEADERS += \
     $$PWD/bluetooth/bluetoothdevice.h \
     $$PWD/bluetooth/bluetoothmodel.h \
     $$PWD/bluetooth/bluetoothtransdialog.h \
-    $$PWD/interfaces/drootfilemanager.h
+    $$PWD/interfaces/drootfilemanager.h \
+    $$PWD/interfaces/dgvfsfileinfo.h \
+    $$PWD/interfaces/private/dgvfsfileinfo_p.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -431,7 +433,8 @@ SOURCES += \
     $$PWD/bluetooth/bluetoothdevice.cpp \
     $$PWD/bluetooth/bluetoothmodel.cpp \
     $$PWD/bluetooth/bluetoothtransdialog.cpp \
-    $$PWD/interfaces/drootfilemanager.cpp
+    $$PWD/interfaces/drootfilemanager.cpp \
+    $$PWD/interfaces/dgvfsfileinfo.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h
