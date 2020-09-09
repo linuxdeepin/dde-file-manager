@@ -431,6 +431,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
 
 void DiskControlWidget::onDriveDisconnected()
 {
+    qDebug() << "changed from drive_disconnected";
     DDesktopServices::playSystemSoundEffect("device-removed");
     NotifyMsg(QObject::tr("The device has been safely removed"));
     onDiskListChanged();
@@ -438,12 +439,14 @@ void DiskControlWidget::onDriveDisconnected()
 
 void DiskControlWidget::onMountAdded()
 {
+    qDebug() << "changed from mount_add";
     onDiskListChanged();
 }
 
 void DiskControlWidget::onMountRemoved(const QString &blockDevicePath, const QByteArray &mountPoint)
 {
     Q_UNUSED(mountPoint);
+    qDebug() << "changed from mount_remove:" << blockDevicePath;
     QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blockDevicePath));
     if (blDev) {
         QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
@@ -459,16 +462,19 @@ void DiskControlWidget::onMountRemoved(const QString &blockDevicePath, const QBy
 
 void DiskControlWidget::onVolumeAdded()
 {
+    qDebug() << "changed from volume_add";
     onDiskListChanged();
 }
 
 void DiskControlWidget::onVolumeRemoved()
 {
+    qDebug() << "changed from volume_remove";
     onDiskListChanged();
 }
 
 void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount> mount)
 {
+    qDebug() << "changed from VfsMount";
     QExplicitlySharedDataPointer<DGioFile> file = mount->getRootFile();
     QString uriStr = file->uri();
     QUrl url(uriStr);
