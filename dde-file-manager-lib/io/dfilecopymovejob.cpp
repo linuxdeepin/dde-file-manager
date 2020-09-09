@@ -776,8 +776,9 @@ create_new_file_info:
     }
 
     if (new_file_info->exists()) {
+        //忽略DStorageInfo::isSameFile判断链接文件的结果
         if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode) &&
-                (new_file_info->fileUrl() == from || DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()))) {
+                (new_file_info->fileUrl() == from || (DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()) && !new_file_info->isSymLink()))) {
             // 不用再进行后面的操作
             return true;
         }
