@@ -146,6 +146,7 @@ SOURCES += \
     $$PWD/shutil/ut_mimetypedisplaymanager.cpp \
     $$PWD/shutil/ut_properties.cpp \
     $$PWD/shutil/ut_shortcut.cpp \
-    $$PWD/models/ut_vaultfileinfo.cpp
+    $$PWD/models/ut_vaultfileinfo.cpp \
+    $$PWD/interfaces/ut_dfmsettings.cpp
 
 
