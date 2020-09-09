@@ -51,6 +51,14 @@
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
 
+#include "models/trashfileinfo.h"
+
+namespace FileSortFunction
+{
+//! 定义根据路径排序函数
+COMPARE_FUN_DEFINE(sourceFilePath, TrashFilePath, TrashFileInfo)
+}
+
 static bool kWorking = false; // tmp
 class TrashDirIterator : public DDirIterator
 {
@@ -203,6 +211,16 @@ DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &ev
     return DUrlList();
 }
 
+void TrashManager::sortByOriginPath(DUrlList &list) const
+{
+    DAbstractFileInfo::CompareFunction sortFun = FileSortFunction::compareFileListByTrashFilePath;
+    qSort(list.begin(), list.end(), [sortFun, this](const DUrl url1, const DUrl url2) {
+        const auto &&event1 = dMakeEventPointer<DFMCreateFileInfoEvent>(this, url1);
+        const auto &&event2 = dMakeEventPointer<DFMCreateFileInfoEvent>(this, url2);
+        return sortFun(TrashManager::createFileInfo(event1), TrashManager::createFileInfo(event2), Qt::AscendingOrder);
+    });
+}
+
 bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const
 {
     ::kWorking = true;
@@ -215,6 +233,10 @@ bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &e
         for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden))
             urlList << info->fileUrl();
     }
+
+    //! fix bug#36608 按照原始路径排序，避免恢复时冲突
+    sortByOriginPath(urlList);
+
     bool ok = restoreTrashFile(urlList, &originUrls);
 
     if (ok && !originUrls.isEmpty()) {
