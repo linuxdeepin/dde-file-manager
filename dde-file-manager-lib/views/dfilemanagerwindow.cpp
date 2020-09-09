@@ -348,9 +348,10 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         if (fi->suffix() == SUFFIX_USRDIR) {
             return cdForTab(tab, fi->redirectedFileUrl());
         } else if (fi->suffix() == SUFFIX_UDISKS) {
-            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+            QString blkDevicePath = fi->extraProperties()["udisksblk"].toString();
+            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blkDevicePath));
             if (blk->mountPoints().empty()) {
-                blk->mount({});
+                qDebug() << "mount the device{" << blkDevicePath <<" } at:" << blk->mount({});
             }
         }
     }
