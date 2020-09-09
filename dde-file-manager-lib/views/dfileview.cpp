@@ -1653,6 +1653,8 @@ void DFileView::dropEvent(QDropEvent *event)
     // clean old index area
     update();
 
+    const QMimeData *data = event->mimeData();
+
     d->fileViewHelper->preproccessDropEvent(event);
 
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {

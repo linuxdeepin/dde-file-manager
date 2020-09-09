@@ -1045,7 +1045,13 @@ open_file: {
                 qCDebug(fileJob()) << "open error:" << toInfo->fileUrl();
 
                 if (!toInfo->exists() || toInfo->isWritable()) {
-                    setError(DFileCopyMoveJob::OpenError, qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()));
+                    // 修复KLU TASK-36488 翻译汉化问题
+                    if(toDevice->errorString() == "Permission denied"){
+                        setError(DFileCopyMoveJob::OpenError, qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: Permission denied"));
+                    } else {
+                        setError(DFileCopyMoveJob::OpenError, qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()));
+                    }
+
                 } else {
                     setError(DFileCopyMoveJob::PermissionError);
                 }
