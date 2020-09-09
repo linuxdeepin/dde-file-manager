@@ -416,11 +416,15 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
                 //         using mount scheme with udisks sub-scheme to give user a *device is mounting* feedback.
                 if (mountAndOpen && !QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
                     QString mountUrlStr = DFMROOT_ROOT + blDevStr.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
+                    qDebug() << "using dus udisks2 to mount device { " << deviceId << " } at:" << mountUrlStr;
+
                     QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
-                    return;
+                    continue;
                 }
 
                 QString mountPoint = blDev->mount({});
+                qDebug() << "mount device { " << deviceId << " } at:" << mountPoint;
+
                 if (mountAndOpen && !mountPoint.isEmpty()) {
                     DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));
                 }
