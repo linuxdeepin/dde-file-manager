@@ -62,7 +62,7 @@ DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
 target.path = $$BINDIR
 
 desktop.path = $${PREFIX}/share/applications/
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) {
     desktop.files = $$PWD/mips/$${TARGET}.desktop \
                     dde-open.desktop
 }else{
@@ -83,7 +83,7 @@ propertyDialogShell.files = dde-property-dialog
 
 INSTALLS += target desktop policy pkexec propertyDialogShell
 
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) {
     dde-mips-shs.path = $$BINDIR
     dde-mips-shs.files = $$PWD/mips/dde-computer.sh \
                          $$PWD/mips/dde-trash.sh \
