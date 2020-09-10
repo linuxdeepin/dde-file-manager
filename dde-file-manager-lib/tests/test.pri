@@ -148,6 +148,7 @@ SOURCES += \
     $$PWD/shutil/ut_shortcut.cpp \
     $$PWD/models/ut_vaultfileinfo.cpp \
     $$PWD/interfaces/ut_dfmsettings.cpp \
-    $$PWD/interfaces/ut_dfmviewmanager.cpp
+    $$PWD/interfaces/ut_dfmviewmanager.cpp \
+    $$PWD/controllers/ut_bookmarkmanager.cpp
 
 

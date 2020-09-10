@@ -56,13 +56,14 @@ public:
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
+    bool onFileRenamed(const DUrl &from, const DUrl &to);
+
 private:
     BookMarkPointer findBookmark(const DUrl &url) const;
     mutable QMap<DUrl, BookMarkPointer> m_bookmarks;
 
     void update(const QVariant &value);
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);
-    void onFileRenamed(const DUrl & from, const DUrl & to);
 //    std::deque<QExplicitlySharedDataPointer<BookMark>> m_tagBookmarks{};
 };
 
