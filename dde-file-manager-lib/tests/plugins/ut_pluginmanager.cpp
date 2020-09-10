@@ -1,55 +1,88 @@
-#include "plugins/pluginmanager.h"
-
 #include <gtest/gtest.h>
 
+#define private public
+#define protected public
+
+#include "plugins/pluginmanager.h"
+
 namespace  {
-    class TestPluginManager : public testing::Test
+    class PluginManagerTest : public testing::Test
     {
     public:
-        static void SetUpTestCase()
-        {
-
+        void SetUp() override {
+            p_manager = PluginManager::instance();
         }
-        static void TearDownTestCase()
-        {
-
+        void TearDown() override {
+            p_manager = nullptr;
         }
+
+        PluginManager   *p_manager = nullptr;
     };
 }
 
-TEST_F(TestPluginManager, testInit)
+TEST_F(PluginManagerTest, get_plugin_dir)
 {
-    PluginManager::instance();
-}
+    ASSERT_NE(p_manager, nullptr);
 
-TEST_F(TestPluginManager, testPluginDir)
-{
-    QString result = PluginManager::instance()->PluginDir();
+    QString result = p_manager->PluginDir();
     EXPECT_FALSE(result.isEmpty());
 }
 
-TEST_F(TestPluginManager, testLoadPlugin)
+TEST_F(PluginManagerTest, load_plugin_success)
 {
-    PluginManager::instance()->loadPlugin();
+    ASSERT_NE(p_manager, nullptr);
+
+    p_manager->loadPlugin();
 }
 
-TEST_F(TestPluginManager, testGetExpandInfoInterfaces)
+TEST_F(PluginManagerTest, get_expandInfo_interfaces)
 {
-    PluginManager::instance()->getViewInterfaces();
+    ASSERT_NE(p_manager, nullptr);
+
+    QList<PropertyDialogExpandInfoInterface *> result = p_manager->getExpandInfoInterfaces();
+    EXPECT_EQ(result.count(), p_manager->d_func()->expandInfoInterfaces.count());
 }
 
-TEST_F(TestPluginManager, testGetViewInterfaces)
+TEST_F(PluginManagerTest, get_view_interfaces)
 {
-    PluginManager::instance()->getViewInterfacesMap();
+    ASSERT_NE(p_manager, nullptr);
+
+    QList<ViewInterface *> result = p_manager->getViewInterfaces();
+    EXPECT_EQ(result.count(), p_manager->d_func()->viewInterfaces.count());
 }
 
-TEST_F(TestPluginManager, testGetPreviewInterfaces)
+TEST_F(PluginManagerTest, get_view_interfacesMap)
 {
-    PluginManager::instance()->getPreviewInterfaces();
+    ASSERT_NE(p_manager, nullptr);
+
+    QMap<QString, ViewInterface *> result = p_manager->getViewInterfacesMap();
+    EXPECT_EQ(result.count(), p_manager->d_func()->viewInterfacesMap.count());
 }
 
-TEST_F(TestPluginManager, testGetViewInterfaceByScheme)
+TEST_F(PluginManagerTest, get_preview_inteefaces)
 {
+    ASSERT_NE(p_manager, nullptr);
+
+    QList<PreviewInterface *> result = p_manager->getPreviewInterfaces();
+    EXPECT_EQ(result.count(), p_manager->d_func()->previewInterfaces.count());
+}
+
+TEST_F(PluginManagerTest, get_view_interfaceByScheme)
+{
+    ASSERT_NE(p_manager, nullptr);
+
     QString scheme = "file";
-    PluginManager::instance()->getViewInterfaceByScheme(scheme);
+    ViewInterface * result = p_manager->getViewInterfaceByScheme(scheme);
+    if(p_manager->d_func()->viewInterfacesMap.contains(scheme)) {
+        EXPECT_EQ(result, p_manager->d_func()->viewInterfacesMap.value(scheme));
+    } else {
+        EXPECT_EQ(result, nullptr);
+    }
+
+    QMap<QString, ViewInterface *> tmpMap = p_manager->getViewInterfacesMap();
+    if (!tmpMap.isEmpty()) {
+        scheme = tmpMap.firstKey();
+        result = p_manager->getViewInterfaceByScheme(scheme);
+        ASSERT_NE(result, nullptr);
+    }
 }
