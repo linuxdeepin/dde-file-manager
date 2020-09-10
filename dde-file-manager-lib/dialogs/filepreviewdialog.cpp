@@ -400,12 +400,12 @@ void FilePreviewDialog::initUI()
     connect(m_statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
-        /*fix 45499 我的共享目录，选中一个文件夹按空格键预览，点击打开按钮无反应 预览里面没有实现openfile方法，所以这里传递的时候需要使用实际的url*/
-        DUrl url = DUrl::fromLocalFile(m_fileList.at(m_currentPageIndex).path());
-        if (DFileService::instance()->openFile(this, url))
+        /*fix bug 47136 在回收站预览打开不了，url传入错误，因为在回收站里面实现了openfile，所以这里倒回到以前代码*/
+        if (DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex)))
         {
             close();
         }
+
     });
     connect(shortcut_action, &QAction::triggered, this, [this] {
         if (m_preview)
