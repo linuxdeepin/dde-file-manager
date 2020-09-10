@@ -79,6 +79,8 @@ public:
     QQueue<QPair<DUrl, DFileInfoPrivate *>> requestEPFiles;
     QReadWriteLock requestEPFilesLock;
     QSet<DFileInfoPrivate *> dirtyFileInfos;
+    QMutex requestEPCancelLock;
+    bool isCanceled;
 
     void run() override;
     void requestEP(const DUrl &url, DFileInfoPrivate *info);
@@ -189,6 +191,10 @@ void RequestEP::requestEP(const DUrl &url, DFileInfoPrivate *info)
 
 void RequestEP::cancelRequestEP(DFileInfoPrivate *info)
 {
+    requestEPCancelLock.lock();
+    isCanceled = true;
+    requestEPCancelLock.unlock();
+
     dirtyFileInfos << info;
     requestEPFilesLock.lockForRead();
 
@@ -217,6 +223,14 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
         return;
     }
 
+    if (isCanceled) {
+        return;
+    }
+
+    requestEPCancelLock.lock();
+    if (isCanceled) {
+        return;
+    }
     QVariantHash oldEP;
 
     if (!dirtyFileInfos.contains(info)) {
@@ -237,6 +251,7 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
             info->epInitialized = true;
         }
     }
+    requestEPCancelLock.unlock();
 }
 
 DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache)
