@@ -296,7 +296,7 @@ void BookMarkManager::onFileEdited(const QString &group, const QString &key, con
     update(value);
 }
 
-void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
+bool BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
 {
     //make bookMarkDUrl
 //    QString fromPath = from.scheme() + "://" + from.path();
@@ -315,7 +315,7 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
 
     BookMarkPointer item = findBookmark(bookMarkFrom);
     if (!item) {
-        return;
+        return false;
     }
 
     QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
@@ -356,9 +356,11 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             m_bookmarks[bookMarkTo.bookmarkTargetUrl()] = new_item;
 
             DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, bookMarkFrom, bookMarkTo);
-            break;
+            return true;
         }
     }
+
+    return false;
 }
 
 const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
