@@ -62,6 +62,10 @@ unix {
     }
     isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
         DEFINES += __mips__
+        #mips编译优化-pg是用于测试性能提升
+        #QMAKE_CXX += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi #-mmsa 龙芯4000使用的编译优化参数
+        QMAKE_CXXFLAGS += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi -Wl,as-needed -fPIE#-mmsa 龙芯4000使用的编译优化参数
+        QMAKE_LFLAGS += -pie
     }
 
     isEmpty(LIB_INSTALL_DIR) {
