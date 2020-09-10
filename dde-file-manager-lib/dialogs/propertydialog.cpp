@@ -1412,6 +1412,12 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     // these are for file or folder, folder will with executable index.
     int readWriteIndex = 0, readOnlyIndex = 0;
 
+    int readOnlyFlag = 4;
+    int readOnlyWithXFlag = 5;
+
+    int readWriteFlag = 6;
+    int readWriteWithXFlag = 7;
+
     QStringList authorityList;
 
     authorityList << QObject::tr("Access denied") // 0
@@ -1433,14 +1439,14 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         authorityList[7] += append;
 
         // file: read is read, read-write is read-write
-        readOnlyIndex = 4;
-        readWriteIndex = 6;
+        readOnlyIndex = readOnlyFlag;
+        readWriteIndex = readWriteFlag;
     }
 
     if (info->isDir()) {
         // folder: read is read and executable, read-write is read-write and executable
-        readOnlyIndex = 5;
-        readWriteIndex = 7;
+        readOnlyIndex = readOnlyWithXFlag;
+        readWriteIndex = readWriteWithXFlag;
     }
 
     // enumFlag should be 0~7, this is just a check to avoid runtime error
@@ -1456,9 +1462,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     // set QComboBox, notice this permission number is not just 0~7
     auto setComboBoxByPermission = [ = ](QComboBox * cb, int permission, int offset) {
         int index = permission >> offset;
-        if (index == readWriteIndex) {
+        if (index == readWriteFlag || index == readWriteWithXFlag) {
             cb->setCurrentIndex(0);
-        } else if (index == readOnlyIndex) {
+        } else if (index == readOnlyFlag || index == readOnlyWithXFlag) {
             cb->setCurrentIndex(1);
         } else {
             cb->addItem(getPermissionString(index), QVariant(permission));
@@ -1471,11 +1477,22 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         struct stat fileStat;
         stat(info->toLocalFile().toUtf8().data(), &fileStat);
         auto preMode = fileStat.st_mode;
+
+        int ownerFlags = ownerBox->currentData().toInt();
+        int groupFlags = groupBox->currentData().toInt();
+        int otherFlags = otherBox->currentData().toInt();
+
+        QFile::Permissions permissions = info->permissions();
+        if (info->isDir()) { //! 文件夹保持原有的执行权限
+            ownerFlags |= (permissions & QFile::ExeOwner);
+            groupFlags |= (permissions & QFile::ExeGroup);
+            otherFlags |= (permissions & QFile::ExeOther);
+        }
         DFileService::instance()->setPermissions(this, getRealUrl(),
-                                                 QFileDevice::Permissions(ownerBox->currentData().toInt()) |
+                                                 QFileDevice::Permissions(ownerFlags) |
                                                  /*(info->permissions() & 0x0700) |*/
-                                                 QFileDevice::Permissions(groupBox->currentData().toInt()) |
-                                                 QFileDevice::Permissions((otherBox->currentData().toInt())));
+                                                 QFileDevice::Permissions(groupFlags) |
+                                                 QFileDevice::Permissions(otherFlags));
         stat(info->toLocalFile().toUtf8().data(), &fileStat);
         auto afterMode = fileStat.st_mode;
         // 修改权限失败
@@ -1485,22 +1502,12 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         }
     };
 
-    if (info->isDir()) {
-        ownerBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOwner | QFile::ReadOwner | QFile::ExeOwner));
-        ownerBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOwner | QFile::ExeOwner));
-        groupBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteGroup | QFile::ReadGroup | QFile::ExeGroup));
-        groupBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadGroup | QFile::ExeGroup));
-        otherBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOther | QFile::ReadOther | QFile::ExeOther));
-        otherBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOther | QFile::ExeOther));
-    } else {
-        ownerBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOwner | QFile::ReadOwner));
-        ownerBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOwner));
-        groupBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteGroup | QFile::ReadGroup));
-        groupBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadGroup));
-        otherBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOther | QFile::ReadOther));
-        otherBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOther));
-    }
-
+    ownerBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOwner | QFile::ReadOwner));
+    ownerBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOwner));
+    groupBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteGroup | QFile::ReadGroup));
+    groupBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadGroup));
+    otherBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOther | QFile::ReadOther));
+    otherBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOther));
 
     setComboBoxByPermission(ownerBox, info->permissions() & 0x7000, 12);
     setComboBoxByPermission(groupBox, info->permissions() & 0x0070, 4);
