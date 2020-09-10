@@ -1166,7 +1166,7 @@ open_file: {
         }
 
         do {
-            if (toDevice->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Append)) {
+            if (toDevice->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
                 action = DFileCopyMoveJob::NoAction;
             } else {
                 qCDebug(fileJob()) << "open error:" << toInfo->fileUrl();
