@@ -222,13 +222,14 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
     if (info == nullptr) {
         return;
     }
-
+    //fix bug 44093,taks 36486 文件多次创建删除会崩溃的问题
     if (isCanceled) {
         return;
     }
 
     requestEPCancelLock.lock();
     if (isCanceled) {
+        requestEPCancelLock.unlock();
         return;
     }
     QVariantHash oldEP;
