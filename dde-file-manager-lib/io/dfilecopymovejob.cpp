@@ -1172,9 +1172,17 @@ open_file: {
                 qCDebug(fileJob()) << "open error:" << toInfo->fileUrl();
                 DFileCopyMoveJob::Error errortype = (!toInfo->exists() || toInfo->isWritable()) ? DFileCopyMoveJob::OpenError :
                                                     DFileCopyMoveJob::PermissionError;
-                QString errorstr = (!toInfo->exists() || toInfo->isWritable()) ?
-                                   qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()) :
-                                   QString();
+                // task-36496 "Permission denied"没有被翻译 翻译为“没有权限”
+                QString errorstr("");
+                if("Permission denied" == toDevice->errorString()){
+                    errorstr = (!toInfo->exists() || toInfo->isWritable()) ?
+                                                       qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: Permission denied") :
+                                                       QString();
+                } else {
+                    errorstr = (!toInfo->exists() || toInfo->isWritable()) ?
+                                                       qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()) :
+                                                       QString();
+                }
 
                 action = setAndhandleError(errortype, toInfo, DAbstractFileInfoPointer(nullptr), errorstr);
                 //防止卡死
