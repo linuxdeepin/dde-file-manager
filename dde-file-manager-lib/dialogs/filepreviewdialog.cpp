@@ -250,7 +250,7 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
         m_statusBar->preButton()->hide();
         m_statusBar->nextButton()->hide();
     }
-
+    m_firstEnterSwitchToPage = true;
     switchToPage(0);
 }
 
@@ -279,7 +279,7 @@ void FilePreviewDialog::updatePreviewList(const DUrlList &previewUrllist)
         m_statusBar->preButton()->show();
         m_statusBar->nextButton()->show();
     }
-
+    m_firstEnterSwitchToPage = true;
     switchToPage(0);
 }
 
@@ -523,10 +523,29 @@ void FilePreviewDialog::switchToPage(int index)
     m_preview = preview;
 
     QTimer::singleShot(0, this, [this] {
-        adjustSize();
         updateTitle();
         m_statusBar->openButton()->setFocus();
-        playCurrentPreviewFile();
+        if (m_firstEnterSwitchToPage)
+        {
+            adjustSize();
+        } else
+        {
+            if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
+                adjustSize();
+            } else {
+                /*fix bug 45465 对视频和图片的切换进行size整理，adjustSize有不成功的可能，所以需要二次resize*/
+                this->resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
+                QSize end_zoompin = size();
+                adjustSize();
+                if (end_zoompin.width() > size().width()) {
+                    /*m_preview->contentWidget()->size().width() * 2 2和1.5是adjustSize的自适应值*/
+                    resize((double)m_preview->contentWidget()->size().width() * 2, (double)m_preview->contentWidget()->size().height() * 1.5);
+                } else if (end_zoompin.width() == size().width()) {
+                    resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
+                }
+            }
+        }
+	playCurrentPreviewFile();
         moveToCenter();
     });
 }
@@ -575,7 +594,7 @@ void FilePreviewDialog::previousPage()
         return;
     if (m_playingVideo)
         return;
-
+    m_firstEnterSwitchToPage = false;
     switchToPage(m_currentPageIndex - 1);
 }
 
@@ -585,7 +604,7 @@ void FilePreviewDialog::nextPage()
         return;
     if (m_playingVideo)
         return;
-
+    m_firstEnterSwitchToPage = false;
     switchToPage(m_currentPageIndex + 1);
 }
 
