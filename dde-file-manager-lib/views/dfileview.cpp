@@ -1191,6 +1191,9 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::RightButton: {
+        // 47203 【专业版 sp3】【文件管理器】【5.2.0.41】创建链接后，先打开桌面文件菜单，会将创建链接弹窗内的菜单改变
+        // 弹出文件选择框后，左键选择文件之前右键选择其中的文件无法触发focusInEvent事件，这里手动设置焦点
+        setFocus();
         DListView::mousePressEvent(event);
         break;
     }
