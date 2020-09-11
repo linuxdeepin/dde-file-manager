@@ -253,7 +253,15 @@ void BookMarkManager::update(const QVariant &value)
         const QDateTime &create_time = QDateTime::fromString(item.value("created").toString(), Qt::ISODate);
         const QDateTime &last_modified_time = QDateTime::fromString(item.value("lastModified").toString(), Qt::ISODate);
         const QString &mount_point = item.value("mountPoint").toString();
-        const QString &locate_url = item.value("locateUrl").toString();
+        //兼容以前未转base64版本（sp2update2之前），先判断locateUrl，保证存入bookmark中的是base64
+        QByteArray ba;
+        if (item.value("locateUrl").toString().contains("/")) {
+            ba = item.value("locateUrl").toString().toLocal8Bit().toBase64();
+        }
+        else {
+            ba = item.value("locateUrl").toString().toLocal8Bit();
+        }
+        const QString &locate_url = QString(ba);
 
         BookMark *bm_info = new BookMark(name, url);
 
