@@ -47,8 +47,9 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <QQueue>
+#ifdef  FULLTEXTSEARCH_ENABLE
 #include "fulltextsearch/fulltextsearch.h"
-
+#endif
 class SearchFileWatcherPrivate;
 class SearchFileWatcher : public DAbstractFileWatcher
 {
@@ -346,7 +347,7 @@ DUrl SearchDiriterator::next()
 
     return DUrl();
 }
-
+#ifdef  FULLTEXTSEARCH_ENABLE
 // 全文搜索
 void SearchDiriterator::fullTextSearch(const QString &searchPath) const
 {
@@ -397,12 +398,13 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
         }
     }
 }
-
+#endif
 bool SearchDiriterator::hasNext() const
 {
     if (!childrens.isEmpty()) {
         return true;
     }
+#ifdef  FULLTEXTSEARCH_ENABLE
     if (!hasExecuteFullTextSearch && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
         DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
         if (fileInfo->isVirtualEntry()) {
@@ -415,7 +417,7 @@ bool SearchDiriterator::hasNext() const
         hasExecuteFullTextSearch = true;
         return true;
     }
-
+#endif
     forever {
         if (closed) {
             return false;
@@ -514,7 +516,7 @@ bool SearchDiriterator::hasNext() const
 
         it.clear();
     }
-
+#ifdef  FULLTEXTSEARCH_ENABLE
     if (!hasUpdateIndex && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
         DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
         if (fileInfo->isVirtualEntry()) {
@@ -529,7 +531,7 @@ bool SearchDiriterator::hasNext() const
         hasUpdateIndex = true;
         return true;
     }
-
+#endif
     return false;
 }
 

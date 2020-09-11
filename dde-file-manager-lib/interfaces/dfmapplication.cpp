@@ -29,7 +29,9 @@
 #endif
 
 #include "dfmsettings.h"
+#ifdef FULLTEXTSEARCH_ENABLE
 #include "fulltextsearch/fulltextsearch.h"
+#endif
 
 #include <QCoreApplication>
 #include <QMetaEnum>
@@ -102,11 +104,13 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
         case DFMApplication::GA_ShowCsdCrumbBarClickableArea:
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
             break;
+#ifdef FULLTEXTSEARCH_ENABLE
         case DFMApplication::GA_IndexFullTextSearch:
             if (value.toBool()) {
                 DFMFullTextSearchManager::getInstance()->fulltextIndex("/");/*全文搜索建立索引*/
             }
             break;
+#endif
         default:
             break;
         }
