@@ -397,11 +397,10 @@ bool DFMRootFileWatcherPrivate::start()
             if (!drv->removable()) // 对于本地磁盘，直接按照以前的方式，满足外围条件直接 return
                 return;
 
-            // 对于满足外层条件的可移动设备，并且分区不该被过滤的，提示格式化
-            if (!FileUtils::deviceShouldBeIgnore(blk->device()))
-                dialogManager->showFormatDialog(blk->device());
-            else
+            if (FileUtils::deviceShouldBeIgnore(blk->device())) // 设备需要被滤去，比如 /dev/sda 下还包含 /dev/sda1 时，需要滤去 sda
                 return;
+
+//            dialogManager->showFormatDialog(blk->device()); // 暂时取消监听设备接入时的格式化提示，只在用户进入不可读取的磁盘时提示格式化
         }
 
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
