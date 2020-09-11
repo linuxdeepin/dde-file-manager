@@ -1209,7 +1209,7 @@ bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
     //Todo:: check if mkdir is ok
     AppController::selectionAndRenameFile = qMakePair(event->url(), event->windowId());
 
-    bool ok = QDir::current().mkdir(event->url().toLocalFile());
+    bool ok = QDir::current().mkpath(event->url().toLocalFile());
 
     if (ok) {
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
