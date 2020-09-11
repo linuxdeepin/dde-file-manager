@@ -955,7 +955,6 @@ QList<DAbstractFileInfoPointer> DFileService::getRootFile()
     QList<DAbstractFileInfoPointer> ret;
     QMutex mex;
     mex.lock();
-    setCursorBusyState(true);
     for (auto url : d_ptr->rootfilelist) {
         DAbstractFileInfoPointer rootinfo = createFileInfo(nullptr, url);
         if (rootinfo->exists()) {
@@ -1058,7 +1057,7 @@ void DFileService::setCursorBusyState(const bool bbusy)
     if (bbusy) {
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     } else {
-        QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+        QApplication::restoreOverrideCursor();
     }
 
 }
