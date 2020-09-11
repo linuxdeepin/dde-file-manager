@@ -189,7 +189,7 @@ public:
     void runRefineWriteAndCloseThread();
     void setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     bool checkRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
-
+    void checkTagetNeedSync();//检测目标目录是网络文件就每次拷贝去同步，否则网络很卡时会因为同步卡死
     /**
      * @brief setCutTrashData    保存剪切回收站文件路径
      * @param fileNameList       文件路径
@@ -297,6 +297,8 @@ public:
     QList<DUrl> errorurllist;
     //是否可以现实进度条
     QAtomicInteger<bool> m_iscanshowprogress = false;
+    //是否需要每读写一次同步
+    bool m_isEveryReadAndWritesSnc = false;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
