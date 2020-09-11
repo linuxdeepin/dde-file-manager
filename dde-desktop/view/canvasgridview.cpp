@@ -1327,7 +1327,11 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
     QModelIndex targetIndex = indexAt(event->pos());
 
-    QSet<QString> selectLocalFiles;
+    //list保持顺序
+    QList<QString> selectLocalFiles;
+    //辅助selectLocalFiles做查找，判断是否重复
+    QHash<QString,bool> selectLocalFileMap;
+
     auto selects = selectionModel()->selectedIndexes();
     bool dropOnSelf = false;
     for (auto index : selects) {
@@ -1341,9 +1345,16 @@ void CanvasGridView::dropEvent(QDropEvent *event)
             dropOnSelf = true;
         }
 
-        selectLocalFiles << info->fileUrl().toString();
+        const QString fileUrl = info->fileUrl().toString();
+        //重复的不再添加
+        if (!selectLocalFileMap.contains(fileUrl)){
+            selectLocalFiles << fileUrl;
+            selectLocalFileMap.insert(fileUrl,0);
+        }
+
     }
 
+    qDebug() << "selectLocalFiles urls:" << selectLocalFiles;
     DAbstractFileInfoPointer targetInfo = model()->fileInfo(indexAt(event->pos()));
     if (!targetInfo || dropOnSelf) {
         targetInfo = model()->fileInfo(rootIndex());
@@ -1405,10 +1416,16 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
 
                 QList<QUrl> urls = event->mimeData()->urls();
+                qDebug() << "event urls:" << urls;
                 for (auto url : urls){
-                    selectLocalFiles << url.toString();
+                    const QString fielUrl = url.toString();
+                    if (!selectLocalFileMap.contains(fielUrl)){
+                        selectLocalFiles << fielUrl;
+                        selectLocalFileMap.insert(fielUrl,0);
+                    }
                 }
 
+                qDebug() << "selectLocalFiles2222 urls:" << selectLocalFiles;
                 QPair<int,QPoint> orgpos;
                 //找项目源
                 if (!selectLocalFiles.isEmpty()
@@ -1417,14 +1434,14 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                         //获取焦点
                         QString current = sourceView->currentCursorFile().toString();
                         qDebug() << "move " << m_screenNum << "focus" << current << "count" << selectLocalFiles.size();
-                        GridManager::instance()->move(m_screenNum, selectLocalFiles.toList(), current, row, col);
+                        GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
                     }
                     else {  //跨屏
                         //获取源屏幕的焦点
                         QString current = sourceView->currentCursorFile().toString();
                         qDebug() << "move form" << orgpos.first << "to" << m_screenNum
                                  << "focus" << current << selectLocalFiles.size();
-                        GridManager::instance()->move(orgpos.first,m_screenNum, selectLocalFiles.toList(), current, row, col);
+                        GridManager::instance()->move(orgpos.first,m_screenNum, selectLocalFiles, current, row, col);
                     }
                 }
 
