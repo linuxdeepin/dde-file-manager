@@ -56,7 +56,7 @@ public:
 };
 
 DFMFullTextSearchManager::DFMFullTextSearchManager(QObject *parent)
-    : QThread (parent)
+    : QObject (parent)
 {
     status = false;
     indexStorePath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()

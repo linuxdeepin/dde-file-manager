@@ -7,7 +7,7 @@
 include(../common/common.pri)
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-QT += network concurrent
+QT += network concurrent multimedia
 
 isEmpty(TARGET) {
     TARGET = $$ProjectName

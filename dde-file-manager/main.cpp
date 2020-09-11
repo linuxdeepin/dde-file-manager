@@ -61,6 +61,8 @@
 #include <pwd.h>
 #include <DApplicationSettings>
 #include <QtConcurrent>
+#include <QMediaPlayer>
+#include <QMediaMetaData>
 
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
@@ -97,7 +99,7 @@ void handleEnvOfOpenAsAdmin()
 {
     QProcess p;
     p.start("bash", QStringList() << "-c"
-                                  << "echo $(dbus-launch)");
+            << "echo $(dbus-launch)");
     p.waitForFinished();
     QString envName("DBUS_SESSION_BUS_ADDRESS");
     QString output(p.readAllStandardOutput());
@@ -118,7 +120,7 @@ void handleEnvOfOpenAsAdmin()
 
 DWIDGET_USE_NAMESPACE
 
-extern QPair<bool,QMutex> winId_mtx;
+extern QPair<bool, QMutex> winId_mtx;
 int main(int argc, char *argv[])
 {
     winId_mtx.first = false;
@@ -150,10 +152,10 @@ int main(int argc, char *argv[])
     app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     app.setApplicationDescription(app.translate("Application", "File Manager is a powerful and "
-                                                               "easy-to-use file management tool, "
-                                                               "featured with searching, copying, "
-                                                               "trash, compression/decompression, file property "
-                                                               "and other useful functions."));
+                                                "easy-to-use file management tool, "
+                                                "featured with searching, copying, "
+                                                "trash, compression/decompression, file property "
+                                                "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     DApplicationSettings setting;
@@ -163,16 +165,20 @@ int main(int argc, char *argv[])
     LogUtil::registerLogger();
 
     //使用异步加载win相关的插件
-    auto windPluginLoader = QtConcurrent::run([](){
+    auto windPluginLoader = QtConcurrent::run([]() {
         winId_mtx.second.lock();
-        if (winId_mtx.first){
+        if (winId_mtx.first) {
             winId_mtx.second.unlock();
+            /* 针对bug47144音乐预览加载缓慢的问题，在初始化的时候调用QMediaPlayer::hasSupport，下次调用就快很多*/
+            QMediaPlayer::hasSupport("application/octet-stream");
             return;
         }
         QWidget *w = new QWidget;
         w->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
         w->winId();
         winId_mtx.second.unlock();
+        /* 针对bug47144音乐预览加载缓慢的问题，在初始化的时候调用QMediaPlayer::hasSupport，下次调用就快很多*/
+        QMediaPlayer::hasSupport("application/octet-stream");
         w->deleteLater();
     });
     // init application object
@@ -241,7 +247,7 @@ int main(int argc, char *argv[])
         } else {
             CommandLineManager::instance()->processCommand();
         }
-
+        
         signal(SIGTERM, handleSIGTERM);
 
 #ifdef ENABLE_PPROF

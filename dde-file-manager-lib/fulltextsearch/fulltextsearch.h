@@ -31,7 +31,7 @@
 
 using namespace Lucene;
 DFM_BEGIN_NAMESPACE
-class DFMFullTextSearchManager : public QThread
+class DFMFullTextSearchManager : public QObject
 {
     Q_OBJECT
 
