@@ -34,6 +34,7 @@ public slots:
     void onBackgroundBuild();       //创建背景窗口
     void onSkipBackgroundBuild();   //不创建背景窗口，直接发完成信号
     void onResetBackgroundImage();
+    void onWmDbusStarted(QString name, QString oldOwner, QString newOwner); //窗管dbus服务启动完成
 protected slots:
     void onRestBackgroundManager(); //重置背景，响应窗管改变
     void onScreenGeometryChanged();    //响应屏幕大小改变
@@ -41,6 +42,7 @@ private:
     void init();
     void pullImageSettings();
     QString getBackgroundFromWm(const QString &screen);
+    QString getBackgroundFromWmConfig(const QString &screen);
     QString getDefaultBackground() const;
     BackgroundWidgetPointer createBackgroundWidget(ScreenPointer);
 protected:
@@ -50,7 +52,7 @@ protected:
 private:
     bool m_preview = false; //壁纸预览
     bool m_visible = true;
-    int currentWorkspaceIndex = 0;
+    int currentWorkspaceIndex = 1;
 
     QMap<ScreenPointer,BackgroundWidgetPointer> m_backgroundMap;
 
