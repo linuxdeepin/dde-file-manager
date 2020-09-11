@@ -11,6 +11,7 @@ BackgroundManager::BackgroundManager(bool preview, QObject *parent)
     , m_preview(preview)
 {
     init();
+    QDBusConnection::sessionBus().connect("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",  "NameOwnerChanged", this, SLOT(onWmDbusStarted(QString, QString, QString)));
 }
 
 BackgroundManager::~BackgroundManager()
@@ -28,6 +29,7 @@ BackgroundManager::~BackgroundManager()
     windowManagerHelper = nullptr;
 
     m_backgroundMap.clear();
+    QDBusConnection::sessionBus().disconnect("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",  "NameOwnerChanged", this, SLOT(onWmDbusStarted(QString, QString, QString)));
 }
 
 void BackgroundManager::onRestBackgroundManager()
@@ -169,9 +171,14 @@ void BackgroundManager::pullImageSettings()
             qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 qCritical() << "get background fail path :" << path << "screen" << sc->name();
-                if (defaultPath.isEmpty())
-                    continue;
-                path = defaultPath;
+
+                path = getBackgroundFromWmConfig(sc->name());
+                if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
+                    qCritical() << "get background fail from wm config file path :" << path << "screen" << sc->name();
+                    if (defaultPath.isEmpty())
+                        continue;
+                    path = defaultPath;
+                }
             }
             qDebug() << "screen" << sc->name() << "set background " << path;
             m_backgroundImagePath.insert(sc->name(), path);
@@ -186,15 +193,55 @@ QString BackgroundManager::getBackgroundFromWm(const QString &screen)
 //        QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(screen);
         QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);//wm 新接口获取屏幕壁纸
         if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
-            ret = getDefaultBackground();
-            qCritical() << "get background fail path :" << path << "screen" << screen
-                        << "use default:" << ret;
+            path = getBackgroundFromWmConfig(screen);
+            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
+                ret = getDefaultBackground();
+                qCritical() << "get background fail path :" << path << "screen" << screen
+                            << "use default:" << ret;
+            } else {
+                ret = path;
+                qCritical() << "get background fail path :" << path << "screen" << screen
+                            << "use wm config file:" << ret;
+            }
         } else {
             qDebug() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
             ret = path;
         }
     }
     return ret;
+}
+
+QString BackgroundManager::getBackgroundFromWmConfig(const QString &screen)
+{
+    QString imagePath;
+
+    QString homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+    QFile wmFile(homePath + "/.config/deepinwmrc");
+    if (wmFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+
+        // 根据工作区和屏幕名称查找对应的壁纸
+        while (!wmFile.atEnd()) {
+            QString line = wmFile.readLine();
+            int index = line.indexOf("@");
+            int indexEQ = line.indexOf("=");
+            if (index <= 0 || indexEQ <= index+1) {
+                continue;
+            }
+
+            int workspaceIndex = line.left(index).toInt();
+            QString screenName = line.mid(index+1, indexEQ-index-1);
+            if (workspaceIndex != currentWorkspaceIndex || screenName != screen) {
+                continue;
+            }
+
+            imagePath = line.mid(indexEQ+1).trimmed();
+            break;
+        }
+
+        wmFile.close();
+    }
+
+    return imagePath;
 }
 
 QString BackgroundManager::getDefaultBackground() const
@@ -213,6 +260,10 @@ QString BackgroundManager::getDefaultBackground() const
                 break;
             }
         }
+    }
+    // 设置默认壁纸
+    if (defaultPath.isEmpty()) {
+        defaultPath = QString("file:///usr/share/backgrounds/default_background.jpg");
     }
     return defaultPath;
 }
@@ -387,4 +438,15 @@ void BackgroundManager::onResetBackgroundImage()
 
     //更新壁纸
     m_backgroundImagePath = recorder;
+}
+
+void BackgroundManager::onWmDbusStarted(QString name, QString oldOwner, QString newOwner)
+{
+    Q_UNUSED(oldOwner)
+    Q_UNUSED(newOwner)
+    if (name == QString("com.deepin.wm") && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm")) {
+        qDebug()<<"dbus server com.deepin.wm started.";
+        pullImageSettings();
+        onResetBackgroundImage();
+    }
 }
