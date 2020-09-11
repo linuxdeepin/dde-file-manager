@@ -24,7 +24,9 @@
 
 #include "jobcontroller.h"
 #include "dfileservices.h"
+#ifdef  FULLTEXTSEARCH_ENABLE
 #include "fulltextsearch.h"
+#endif
 
 #include <QtConcurrent/QtConcurrent>
 
@@ -227,7 +229,8 @@ void JobController::setState(JobController::State state)
         return;
 
     m_state = state;
-
+#ifdef  FULLTEXTSEARCH_ENABLE
     DFMFullTextSearchManager::getInstance()->setSearchState(state);
+#endif
     emit stateChanged(state);
 }
