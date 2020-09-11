@@ -792,6 +792,8 @@ create_new_file_info:
                                                                 source_info, new_file_info);
 
             if (action == DFileCopyMoveJob::SkipAction) {
+                //跳过文件大小统计
+                skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
                 return true;
             }
 
@@ -830,6 +832,8 @@ create_new_file_info:
                 return false;
             }
         case DFileCopyMoveJob::SkipAction:
+            //跳过文件大小统计
+            skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
             return true;
         case DFileCopyMoveJob::CoexistAction:
             file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
@@ -1927,6 +1931,8 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
     //优化
     dataSize = (refinestat > DFileCopyMoveJob::MoreThreadRefine && bdestLocal) ? refinecpsize : dataSize;
 
+    dataSize += skipFileSize;
+
     if (totalSize == 0)
         return;
 
@@ -2283,6 +2289,8 @@ create_new_file_info:
                                                                 source_info, new_file_info);
 
             if (action == DFileCopyMoveJob::SkipAction) {
+                //跳过文件大小统计
+                skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
                 return true;
             }
 
@@ -2321,6 +2329,8 @@ create_new_file_info:
                 return false;
             }
         case DFileCopyMoveJob::SkipAction:
+            //跳过文件大小统计
+            skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
             return true;
         case DFileCopyMoveJob::CoexistAction:
             file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
