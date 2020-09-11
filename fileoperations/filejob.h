@@ -126,6 +126,12 @@ public:
 
     bool getIsOpticalJob() const;
 
+    /**
+     * @brief isCanShowProgress 是否可以展示进度条界面
+     * @return
+     */
+    bool isCanShowProgress() const;
+
 signals:
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
@@ -249,6 +255,7 @@ private:
     GCancellable *m_abortGCancellable = nullptr;
 
     DUrlList m_noPermissonUrls;
+    bool m_isCanShowProgress = true; //记录是否可以展示进度界面
 
     char *m_bufferAlign = nullptr;
     char *m_buffer = nullptr;

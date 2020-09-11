@@ -357,6 +357,9 @@ void DialogManager::updateJob()
     foreach (QString jobId, m_jobs.keys()) {
         FileJob *job = m_jobs.value(jobId);
         if (job) {
+            if (!job->isCanShowProgress())
+                return;
+
             if (job->currentMsec() - job->lastMsec() > FileJob::Msec_For_Display) {
                 if (!job->isJobAdded()) {
                     job->jobAdded();
