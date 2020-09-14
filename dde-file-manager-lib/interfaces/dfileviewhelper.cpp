@@ -387,8 +387,19 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
     if (fileUrl.scheme() == DFMMD_SCHEME && !isVPath)
         fileUrl = MergedDesktopController::convertToRealPath(fileUrl);
 
-    return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-           && (DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl) || DFMGlobal::instance()->clipboardFileInodeList().contains(fileInfo->inode()));
+    //判断该文件是否被剪切
+    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction) {
+        if (DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl))
+            return true;
+
+        //链接文件只判断url，不判断inode，因为链接文件的inode与源文件的inode是一致的
+        if (!fileInfo->isSymLink()) {
+            if (DFMGlobal::instance()->clipboardFileInodeList().contains(fileInfo->inode()))
+                return true;
+        }
+    }
+
+    return false;
 }
 
 /*!
