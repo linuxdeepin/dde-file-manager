@@ -222,6 +222,7 @@ public:
     QAtomicInteger<bool> isreadwriteseparate = false;
     QAtomicInteger<bool> isbigfile = false;
     QAtomicInteger<bool> cansetnoerror = true;
+    QAtomicInteger<bool> isFromLocalUrls = false;
 
     qint64 m_tatol = 0;
     qint64 m_readtime = 0;

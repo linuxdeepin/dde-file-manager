@@ -185,7 +185,8 @@ public:
     void setSysncState(const bool &state);
     void setSysncQuitState(const bool &quitstate);
     //判断当前盘是否是可以卸载的u盘，手机，光驱或者gvfs
-    bool destIsLocal(const QString &rootpath);
+    bool isLocalFile(const QString &rootpath);
+    bool isFromLocalFile(const DUrlList &urls);
     void setRefine(const RefineState &refinestat);
     void waitSysncEnd();
     void waitRefineThreadOver();
