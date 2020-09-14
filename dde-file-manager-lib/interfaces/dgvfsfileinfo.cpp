@@ -176,7 +176,7 @@ bool DGvfsFileInfo::isWritable() const
         struct stat statinfo;
         int filestat = stat(d->fileInfo.absoluteFilePath().toStdString().c_str(), &statinfo);
         if (filestat == 0) {
-            d->cacheCanWrite  = access(d->fileInfo.absoluteFilePath().toStdString().c_str(), W_OK) == 0 ? 1 : 0;
+            d->cacheCanWrite = access(d->fileInfo.absoluteFilePath().toStdString().c_str(), W_OK) == 0 ? 1 : 0;
         }
     }
     if ( d->cacheCanWrite >= 0) {

@@ -431,8 +431,7 @@ bool DFileInfo::fileIsWritable(const QString &path, uint ownerId)
     }
 
     // check user's permissions for a file
-    const char *cpath = path.toLocal8Bit().data();
-    int result = access(cpath, W_OK);
+    int result = access(path.toLocal8Bit().data(), W_OK);
     if (result == 0) {
         return true;
     }
