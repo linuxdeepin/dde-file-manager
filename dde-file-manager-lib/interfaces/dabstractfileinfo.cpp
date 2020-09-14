@@ -135,8 +135,7 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
     , fileUrl(url)
 {
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
-    //hasCache强制缓存，不管主线程和还是子线程，目前是优化gvfs挂载文件
-    if (hasCache || (url.isValid() && (QThread::currentThread()) &&  qApp && qApp->thread() && QThread::currentThread() == qApp->thread())) {
+    if (hasCache && (url.isValid() && (QThread::currentThread()) &&  qApp && qApp->thread() && QThread::currentThread() == qApp->thread())) {
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
 
