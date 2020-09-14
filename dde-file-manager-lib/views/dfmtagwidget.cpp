@@ -232,7 +232,8 @@ void DFMTagWidget::loadTags(const DUrl& durl)
         int height = qMin(qMax(docLen, 56), 150);
         d->m_tagCrumbEdit->setFixedHeight(height);
         int editheight = d->m_tagCrumbEdit->height();
-        setFixedHeight(editheight+100);
+        // 修复bug-47113 UI显示问题
+        setFixedHeight(editheight+10);
     }
     d->m_tagActionWidget->setCheckedColorList(selectColors);
     if (!d->m_devicesWatcher || d->m_url != url) {

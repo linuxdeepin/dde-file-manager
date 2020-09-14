@@ -518,7 +518,8 @@ void PropertyDialog::initUI()
     m_scrollArea->setFrameShape(QFrame::Shape::NoFrame);
     QFrame *infoframe = new QFrame;
     QVBoxLayout *scrollWidgetLayout = new QVBoxLayout;
-    scrollWidgetLayout->setContentsMargins(15, 0, 15, 0);
+    // 修复BUG-47133 UI显示不对
+    scrollWidgetLayout->setContentsMargins(10, 0, 10, 20);
     scrollWidgetLayout->setSpacing(ArrowLineExpand_SPACING);
     infoframe->setLayout(scrollWidgetLayout);
     m_scrollArea->setWidget(infoframe);
@@ -1345,6 +1346,8 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     QListWidget *listWidget = new QListWidget(this);
     listWidget->setSpacing(8);
     listWidget->setObjectName("OpenWithListWidget");
+    // 修复BUG-47133 UI显示问题
+    listWidget->setFrameShape(QFrame::HLine);
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
