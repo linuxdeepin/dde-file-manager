@@ -623,10 +623,22 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 
 void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
+    qDebug() << "mount image:" << event->url();
+
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, event->url());
+
+    QString archiveuri = "";
+    if(info && info->canRedirectionFileUrl()) {
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->redirectedFileUrl().toString()));
+        qDebug() << "redirect the url to:" << info->redirectedFileUrl();
+    }
+    else {
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(event->url().toString()));
+    }
+
     QStringList args;
-    args << "mount";
-    QString archiveuri = "archive://" + QString(QUrl::toPercentEncoding(event->url().toString()));
-    args << archiveuri;
+    args << "mount" << archiveuri;
+
     QProcess *gioproc = new QProcess;
     gioproc->start("gio", args);
     connect(gioproc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [ = ](int ret) {
