@@ -17,7 +17,7 @@ namespace  {
     public:
         QStringList getPicturelist()
         {
-            return FileUtils::filesList("/home/max/Pictures/Wallpapers");
+            return FileUtils::filesList(QString("%1/Pictures/Wallpapers").arg(QDir::homePath()));
         }
     };
 }
