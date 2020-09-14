@@ -199,9 +199,9 @@ TEST_F(TestFileUtils, can_get_app_file_details)
     filelist.clear();
     EXPECT_FALSE( FileUtils::openFilesByApp(desktopfilePath,filelist));
 
-    filelist.push_back("/home/max/Desktop");
-    filelist.push_back("/home/max/Videos");
-    filelist.push_back("/home/max/Pictures");
+    filelist.push_back(QString("%1/Desktop").arg(QDir::homePath()));//"/home/max/Desktop");
+    filelist.push_back(QString("%1/Videos").arg(QDir::homePath()));//"/home/max/Videos");
+    filelist.push_back(QString("%1/Pictures").arg(QDir::homePath()));//"/home/max/Pictures");
     EXPECT_TRUE( FileUtils::openFilesByApp(desktopfilePath,filelist));
     EXPECT_FALSE( FileUtils::searchAppIcon(desktopfile).isNull());
 
@@ -217,11 +217,7 @@ TEST_F(TestFileUtils, can_format_Udisk_Size)
 {
     quint64 usedSize = 0,totalSize = 0;
 
-    QString srcfile = "/home/max/.config/deepin/dde-file-manager/dde-file-manager.json";
     QString destdir = DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath);
-    QString destfile = QString("%1/dde-file-manager.json").arg(destdir);
-
-    copyFileToPath(srcfile, destdir, destfile);
 
     EXPECT_EQ( "0 B", FileUtils::formatSize(0));
     EXPECT_EQ( "0 B", FileUtils::formatSize(-1));
@@ -312,7 +308,7 @@ TEST_F(TestFileUtils, can_not_run_normalfile_as_ex)
 
 TEST_F(TestFileUtils, can_set_the_background)
 {
-    QString sysPicturePath = "/home/max/Pictures/Wallpapers";
+    QString sysPicturePath = QString("%1/Pictures/Wallpapers").arg(QDir::homePath());//"/home/max/Pictures/Wallpapers";
     EXPECT_TRUE(FileUtils::displayPath(sysPicturePath).contains("~"));
 
     EXPECT_EQ("png", FileUtils::imageFormatName(QImage::Format_ARGB32) );
