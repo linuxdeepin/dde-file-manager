@@ -124,6 +124,12 @@ void onClipboardDataChanged()
             url.setScheme("file");
         }
         clipboardFileUrls << url;
+
+        //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
+        if (fileInfo->isSymLink()) {
+            continue;
+        }
         struct stat statInfo;
         int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
         if (0 == fileStat) {
