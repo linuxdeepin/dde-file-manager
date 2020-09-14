@@ -31,6 +31,7 @@
 #include <QCursor>
 #include <QDesktopWidget>
 #include <QHBoxLayout>
+#include <QProcessEnvironment>
 
 DFM_BEGIN_NAMESPACE
 
@@ -354,17 +355,27 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 
 void FilePreviewDialog::initUI()
 {
-    m_closeButton = new DWindowCloseButton(this);
-    m_closeButton->setObjectName("CloseButton");
-    m_closeButton->setFocusPolicy(Qt::NoFocus);
-    m_closeButton->setIconSize({50, 50});
-    m_closeButton->setFixedSize({50, 50});
-    QColor base_color = palette().base().color();
-    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
-    if (ct == DGuiApplicationHelper::LightType) {
-        m_closeButton->setStyleSheet("background-color:rgba(255, 255, 255, 25);");
-    } else {
-        m_closeButton->setStyleSheet("background-color:rgba(0, 0, 0, 25);");
+    //wayland 暂时不用 task 36991
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+    if ((XDG_SESSION_TYPE != QLatin1String("wayland")) &&
+            !WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)){
+        m_closeButton = new DWindowCloseButton(this);
+        m_closeButton->setObjectName("CloseButton");
+        m_closeButton->setFocusPolicy(Qt::NoFocus);
+        m_closeButton->setIconSize({50, 50});
+        m_closeButton->setFixedSize({50, 50});
+        QColor base_color = palette().base().color();
+        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+        if (ct == DGuiApplicationHelper::LightType) {
+            m_closeButton->setStyleSheet("background-color:rgba(255, 255, 255, 25);");
+        } else {
+            m_closeButton->setStyleSheet("background-color:rgba(0, 0, 0, 25);");
+        }
+
+        DAnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
+        connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
     }
 
     m_separator = new DHorizontalLine(this);
@@ -374,8 +385,6 @@ void FilePreviewDialog::initUI()
     m_statusBar->setObjectName("StatusBar");
     m_statusBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_statusBar->openButton()->setFocus();
-
-    DAnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -396,7 +405,6 @@ void FilePreviewDialog::initUI()
     shortcut_action->setShortcut(QKeySequence::Copy);
     addAction(shortcut_action);
 
-    connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
     connect(m_statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
