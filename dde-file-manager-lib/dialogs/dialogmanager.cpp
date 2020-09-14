@@ -1404,12 +1404,17 @@ int DialogManager::showMessageDialog(messageType messageLevel, const QString &ti
 }
 
 void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
-{
+{    
+    if (!BluetoothTransDialog::canSendFiles()) {
+        showMessageDialog(messageType::msgInfo, tr("Sending files now, please try later"));
+        return;
+    }
+
     QStringList paths;
     foreach (auto u, files) {
         if (u.scheme() == RECENT_SCHEME) {
             u = DUrl::fromLocalFile(u.path());
-        } else if (u.scheme() == SEARCH_SCHEME) { //搜索结果也存在右键批量打卡不成功的问题，这里做类似处理
+        } else if (u.scheme() == SEARCH_SCHEME) { //搜索结果也存在右键批量打开不成功的问题，这里做类似处理
             u = u.searchedFileUrl();
         } else if (u.scheme() == BURN_SCHEME) {
             DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);

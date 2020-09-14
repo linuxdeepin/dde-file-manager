@@ -400,3 +400,12 @@ bool BluetoothManager::cancelTransfer(const QString &sessionPath)
 #endif
     return true;
 }
+
+bool BluetoothManager::canSendBluetoothRequest()
+{
+#ifdef BLUETOOTH_ENABLE
+    Q_D(BluetoothManager);
+    return d->m_bluetoothInter->transportable();
+#endif
+    return false;
+}

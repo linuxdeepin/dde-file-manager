@@ -401,18 +401,6 @@
         <translation>没有文件需要刻录，重复文件将被忽略</translation>
     </message>
     <message>
-        <source>No file to burn.</source>
-        <translation type="vanished">没有文件需要刻录。</translation>
-    </message>
-    <message>
-        <source>No file to burn, Duplicated files will be ignore.</source>
-        <translation type="vanished">没有文件需要刻录，重复文件将被忽略</translation>
-    </message>
-    <message>
-        <source>No file to burn. Duplicated files will be ignore.</source>
-        <translation type="vanished">没有文件需要刻录，重复文件将被忽略。</translation>
-    </message>
-    <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="145"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>目标磁盘剩余空间不足，无法进行刻录！</translation>
@@ -535,10 +523,6 @@
         <translation>加密已完成</translation>
     </message>
     <message>
-        <source>ok</source>
-        <translation type="vanished">确定</translation>
-    </message>
-    <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="132"/>
         <source>create vault failure, the error code is %1!</source>
         <translation></translation>
@@ -555,10 +539,6 @@
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="22"/>
         <source>Recovery Key</source>
         <translation>文件保险箱恢复密钥</translation>
-    </message>
-    <message>
-        <source>Generate a recovery key in case that you forget the password</source>
-        <translation type="vanished">如果忘记密码，可以使用该密钥恢复访问</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="29"/>
@@ -702,10 +682,6 @@
         <translation>确定</translation>
     </message>
     <message>
-        <source>Ok</source>
-        <translation type="vanished">确定</translation>
-    </message>
-    <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="64"/>
         <source>Input the 32-digit recovery key</source>
         <translation>请输入32位恢复密钥</translation>
@@ -802,10 +778,6 @@
         <translation>正在删除...</translation>
     </message>
     <message>
-        <source>Ok</source>
-        <translation type="vanished">好的</translation>
-    </message>
-    <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="206"/>
         <source>Remove File Vault failed.%1</source>
         <translation>删除保险箱失败。%1</translation>
@@ -847,10 +819,6 @@
         <location filename="../views/dfmvaultunlockpages.cpp" line="234"/>
         <source>OK</source>
         <translation>确定</translation>
-    </message>
-    <message>
-        <source>Ok</source>
-        <translation type="vanished">确定</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="57"/>
@@ -1066,12 +1034,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1167"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1168"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1175"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1176"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -1124,16 +1092,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <source>Unable to open items in the trash,please restore it first</source>
-        <translation type="vanished">无法打开回收站中的文件，请先将其还原。</translation>
-    </message>
-    <message>
-        <location filename="../views/dfileview.cpp" line="2350"/>
+        <location filename="../views/dfileview.cpp" line="2353"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>此光盘中的镜像已损坏，无法挂载，请擦除后使用</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2990"/>
+        <location filename="../views/dfileview.cpp" line="2993"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1356,7 +1320,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1063"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1077"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1143"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1493"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1498"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
@@ -1424,12 +1388,9 @@
         <location filename="../dialogs/dialogmanager.cpp" line="887"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1237"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1332"/>
+        <location filename="../dialogs/dialogmanager.h" line="149"/>
         <source>Confirm</source>
         <translation>确定</translation>
-    </message>
-    <message>
-        <source>The file name must not contain ..</source>
-        <translation type="vanished">..禁止作为文件名使用</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="520"/>
@@ -1595,22 +1556,27 @@
         <translation>访问 %1 失败！</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1440"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1409"/>
+        <source>Sending files now, please try later</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1445"/>
         <source>Cancle</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1441"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1446"/>
         <source>Format</source>
         <translation>格式化</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1442"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>需要格式化磁盘才能访问此设备，是否继续？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1491"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1496"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>共享文件夹不能和当前用户名重名</translation>
     </message>
@@ -2236,15 +2202,6 @@
 </context>
 <context>
     <name>GvfsMountManager</name>
-    <message>
-        <source>Can’t verify the identity of %1.
-                        This happens when you log in to a computer the first time.
-                        The identity sent by the remote computer is 
-                        %2.
-                        If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
-        <translatorcomment>无法确认%1的身份.\r\n当您首次登录时会看到这个提示.\r\n远程电脑发送的身份信息为 \r\n%2\r\n若想确认继续操作是否安全，请联系系统管理员。</translatorcomment>
-        <translation type="vanished">无法确认%1的身份.\r\n当您首次登录时会看到这个提示.\r\n远程电脑发送的身份信息为 \r\n%2\r\n若想确认继续操作是否安全，请联系系统管理员。</translation>
-    </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="804"/>
         <source>Can’t verify the identity of %1.</source>
@@ -3076,7 +3033,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="106"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1176"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1177"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
@@ -3408,19 +3365,19 @@
         <translation>正在加载...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="836"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="852"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="838"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="846"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="852"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="854"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="862"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="868"/>
         <source>You do not have permission to access this folder</source>
         <translation>您没有权限读取此文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="872"/>
         <location filename="../models/recentfileinfo.cpp" line="247"/>
         <location filename="../models/trashfileinfo.cpp" line="384"/>
         <location filename="../models/vaultfileinfo.cpp" line="138"/>
@@ -3612,7 +3569,7 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1457"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1462"/>
         <source>Rename %1 Files</source>
         <translation>给%1个文件重命名</translation>
     </message>
@@ -3787,10 +3744,6 @@
         <location filename="../dialogs/shareinfoframe.cpp" line="160"/>
         <source>The share file name must not be .. or .</source>
         <translation>共享文件名不能为“..”或“.”</translation>
-    </message>
-    <message>
-        <source>Hidden folders do not support sharing</source>
-        <translation type="vanished">隐藏文件夹不支持共享</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="282"/>

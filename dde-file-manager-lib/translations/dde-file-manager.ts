@@ -1033,12 +1033,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1167"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1168"/>
         <source>Trash</source>
         <translation>Trash</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1175"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1176"/>
         <source>Empty</source>
         <translation>Empty</translation>
     </message>
@@ -1091,12 +1091,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2350"/>
+        <location filename="../views/dfileview.cpp" line="2353"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>The disc image was corrupted, cannot mount now, please erase the disc first</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2990"/>
+        <location filename="../views/dfileview.cpp" line="2993"/>
         <source>(Reverse)</source>
         <translation>(Reverse)</translation>
     </message>
@@ -1319,7 +1319,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1063"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1077"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1143"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1493"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1498"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -1387,6 +1387,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="887"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1237"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1332"/>
+        <location filename="../dialogs/dialogmanager.h" line="149"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -1554,22 +1555,27 @@
         <translation>访问 %1 失败！</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1440"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1409"/>
+        <source>Sending files now, please try later</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1445"/>
         <source>Cancle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1441"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1446"/>
         <source>Format</source>
         <translation type="unfinished">Format</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1442"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1491"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1496"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Share folder can&apos;t be named after the current username</translation>
     </message>
@@ -2195,14 +2201,6 @@
 </context>
 <context>
     <name>GvfsMountManager</name>
-    <message>
-        <source>Can’t verify the identity of %1.
-                        This happens when you log in to a computer the first time.
-                        The identity sent by the remote computer is 
-                        %2.
-                        If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
-        <translation type="vanished">无法确认%1的身份.\r\n当您首次登录时会看到这个提示.\r\n远程电脑发送的身份信息为 \r\n%2\r\n若想确认继续操作是否安全，请联系系统管理员。</translation>
-    </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="804"/>
         <source>Can’t verify the identity of %1.</source>
@@ -3034,7 +3032,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="106"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1176"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1177"/>
         <source>Empty Trash</source>
         <translation>Empty Trash</translation>
     </message>
@@ -3366,19 +3364,19 @@
         <translation>Loading...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="836"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="852"/>
         <source>File has been moved or deleted</source>
         <translation>File has been moved or deleted</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="838"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="846"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="852"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="854"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="862"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="868"/>
         <source>You do not have permission to access this folder</source>
         <translation>You do not have permission to access this folder</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="872"/>
         <location filename="../models/recentfileinfo.cpp" line="247"/>
         <location filename="../models/trashfileinfo.cpp" line="384"/>
         <location filename="../models/vaultfileinfo.cpp" line="138"/>
@@ -3570,7 +3568,7 @@
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1457"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1462"/>
         <source>Rename %1 Files</source>
         <translation>Rename %1 Files</translation>
     </message>
