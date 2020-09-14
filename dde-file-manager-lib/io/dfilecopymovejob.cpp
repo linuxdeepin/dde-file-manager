@@ -1909,9 +1909,9 @@ void DFileCopyMoveJobPrivate::updateProgress()
 
 void DFileCopyMoveJobPrivate::updateCopyProgress()
 {
-    // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
-//    const qint64 totalSize = fileStatistics->totalProgressSize();
-    const qint64 totalSize = refinestat > DFileCopyMoveJob::MoreThreadRefine ? totalsize : fileStatistics->totalProgressSize();
+    // 网络文件使用统计线程的值获取总大小. 非网络文件使用 fts_* 系统 API 统计函数同步统计总大小
+    bool fromLocal = (isFromLocalUrls && targetUrl.isValid());
+    const qint64 totalSize = fromLocal ? totalsize : fileStatistics->totalProgressSize();
     //通过getCompletedDataSize取出的已传输的数据大小后期会远超实际数据大小，这种情况下直接使用completedDataSize
     qint64 dataSize(getCompletedDataSize());
     // completedDataSize 可能一直为 0
@@ -1932,8 +1932,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
         return;
 
 //    if (fileStatistics->isFinished()) {
-    if ((refinestat <= DFileCopyMoveJob::Refine && fileStatistics->isFinished())
-            || (refinestat > DFileCopyMoveJob::Refine && iscountsizeover)) {
+    if ((fromLocal && iscountsizeover) || fileStatistics->isFinished()) {
         qreal realProgress = qreal(dataSize) / totalSize;
         if (realProgress > lastProgress)
             lastProgress = realProgress;
@@ -4087,7 +4086,7 @@ void DFileCopyMoveJob::setSysncQuitState(const bool &quitstate)
     d->bsysncquitstate = quitstate;
 }
 
-bool DFileCopyMoveJob::destIsLocal(const QString &rootpath)
+bool DFileCopyMoveJob::isLocalFile(const QString &rootpath)
 {
     bool isLocal = true;
     GFile *dest_dir_file = g_file_new_for_path(rootpath.toUtf8().constData());
@@ -4098,6 +4097,17 @@ bool DFileCopyMoveJob::destIsLocal(const QString &rootpath)
     }
     g_object_unref(dest_dir_file);
     return isLocal;
+}
+
+bool DFileCopyMoveJob::isFromLocalFile(const DUrlList &urls)
+{
+    if (urls.isEmpty())
+        return true;
+
+    // 一个 job 的原 urllist 目前未发现有同时来自本地和网络的情况
+    // 因此只取首个 url 就可判断是否为本地文件, 不必遍历所有文件
+    const DUrl &url(urls.at(0));
+    return !FileUtils::isGvfsMountFile(url.path());
 }
 
 void DFileCopyMoveJob::setRefine(const RefineState &refinestat)
@@ -4290,8 +4300,10 @@ void DFileCopyMoveJob::run()
     qint64 timesec = QDateTime::currentMSecsSinceEpoch();
     d->m_sart = timesec;
 
-    //启动遍历线程统计文件大小
-    if (d->targetUrl.isValid() && d->refinestat > MoreThreadRefine) {
+    // 本地文件使用 countAllCopyFile 统计大小非常快, 因此不必开辟线程去统计大小. 同步等待文件大小统计完成
+    // 网络文件使用以下方式反而会更慢, 因此使用线程统计类
+    d->isFromLocalUrls = isFromLocalFile(d->sourceUrlList);
+    if (d->targetUrl.isValid() && d->isFromLocalUrls) {
         d->countAllCopyFile();
     }
 
@@ -4347,7 +4359,7 @@ void DFileCopyMoveJob::run()
         if (targetStorageInfo) {
             d->targetRootPath = targetStorageInfo->rootPath();
             QString rootpath = d->targetRootPath;
-            d->bdestLocal = destIsLocal(rootpath);
+            d->bdestLocal = isLocalFile(rootpath);
             d->isreadwriteseparate = (d->isbigfile && (!d->bdestLocal || 1 == d->totalfilecount));
             if (d->isreadwriteseparate && d->refinestat == MoreThreadAndMainRefine) {
                 d->runRefineWriteAndCloseThread();
