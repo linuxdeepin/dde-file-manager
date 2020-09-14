@@ -87,6 +87,14 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     //   DFMSideBarManager::instance();
 }
 
+DFMSideBar::~DFMSideBar()
+{
+#ifdef ENABLE_ASYNCINIT
+    m_initDevThread.first = true;
+    m_initDevThread.second.waitForFinished();
+#endif
+}
+
 QWidget *DFMSideBar::sidebarView()
 {
     return m_sidebarView;
@@ -351,14 +359,15 @@ void DFMSideBar::rootFileResult()
     std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
 
     for (const DAbstractFileInfoPointer &fi : filist) {
+#ifdef ENABLE_ASYNCINIT
+        if (m_initDevThread.first){
+            qDebug() << "thrad cancled" << this;
+            return;
+        }
+#endif
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
             if (devitems.contains(fi->fileUrl())) {
-#if 1 //性能优化 2020-06-17
                 continue;
-#else //移除后再添加？？？
-                devitems.removeOne(fi->fileUrl());
-                removeItem(fi->fileUrl(), groupName(Device));
-#endif
             }
             if (Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
                 addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
@@ -544,7 +553,8 @@ void DFMSideBar::initConnection()
 
     initBookmarkConnection();
 #ifdef ENABLE_ASYNCINIT
-    QtConcurrent::run([this](){initDeviceConnection();});
+    m_initDevThread.first = false;
+    m_initDevThread.second = QtConcurrent::run([this](){initDeviceConnection();});
 #else
     initDeviceConnection();
 #endif
@@ -652,36 +662,6 @@ void DFMSideBar::initBookmarkConnection()
 
 void DFMSideBar::initDeviceConnection()
 {
-#if 0 //to delete.
-    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
-    Q_CHECK_PTR(devicesWatcher);
-    devicesWatcher->startWatcher();
-
-    m_udisks2DiskManager.reset(new DDiskManager);
-    m_udisks2DiskManager->setWatchChanges(true);
-
-    QList<DAbstractFileInfoPointer> filist = DFileService::instance()->getChildren(this, DUrl(DFMROOT_ROOT),
-                                                                                   QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false, true);
-
-    std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
-    DFileService::instance()->changRootFile(filist);
-
-    for (const DAbstractFileInfoPointer &fi : filist) {
-        if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
-            if (devitems.contains(fi->fileUrl())) {
-                devitems.removeOne(fi->fileUrl());
-                removeItem(fi->fileUrl(), groupName(Device));
-            }
-            addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
-            devitems.push_back(fi->fileUrl());
-        }
-    }
-
-    DFileService::instance()->startQuryRootFile();
-    rootFileChange();
-    connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
-#else
-
     // 获取遍历结果进行显示
     connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this](){
         rootFileResult();
@@ -709,39 +689,7 @@ void DFMSideBar::initDeviceConnection()
         DRootFileManager::instance()->startQuryRootFile();
     }
 
-#if 0 //性能优化,使用已有的watcher
-    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
-    Q_CHECK_PTR(devicesWatcher);
-    if (async){
-        devicesWatcher->moveToThread(qApp->thread());
-        devicesWatcher->setParent(this);
-        //QMetaObject::invokeMethod(devicesWatcher,[devicesWatcher](){
-        QTimer::singleShot(1000,devicesWatcher,[devicesWatcher](){
-            devicesWatcher->startWatcher();
-            qDebug() << "devicesWatcher->startWatcher" << QThread::currentThread() << qApp->thread();
-        });
-    }
-    else
-        devicesWatcher->startWatcher();
-#else
     DAbstractFileWatcher *devicesWatcher = rootFileManager->rootFileWather();
-#endif
-#if 0 //未发现被使用，待观察，2020-06-16 性能优化
-    qDebug() << "createFileWatcher" << kTime.elapsed();
-    m_udisks2DiskManager.reset(new DDiskManager);
-    if (async){
-        m_udisks2DiskManager->moveToThread(qApp->thread());
-        //QMetaObject::invokeMethod(m_udisks2DiskManager.data(),"setWatchChanges",Q_ARG(bool,true));
-        QTimer::singleShot(1000,this,[this](){
-            m_udisks2DiskManager->setWatchChanges(true);
-        });
-    }
-    else {
-        m_udisks2DiskManager->setWatchChanges(true);
-    }
-    qDebug() << "m_udisks2DiskManager" << kTime.elapsed();
-#endif
-#endif
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
         auto fi = fileService->createFileInfo(nullptr, url);
         if (!fi->exists()) {

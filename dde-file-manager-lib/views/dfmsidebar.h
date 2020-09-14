@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QMenu>
+#include <QFuture>
 
 #include "durl.h"
 #include "dfmglobal.h"
@@ -49,6 +50,7 @@ public:
     };
 
     explicit DFMSideBar(QWidget *parent = nullptr);
+    ~DFMSideBar();
     QWidget *sidebarView(); // return m_sidebarView
 
     QRect groupGeometry(const QString &groupName);
@@ -117,6 +119,10 @@ private:
 
     QDateTime m_lastToggleTime;
     DFMSideBarItem *m_pLastToggleItem = nullptr;
+
+#ifdef ENABLE_ASYNCINIT
+    QPair<bool,QFuture<void>> m_initDevThread; //初始化initDeviceConnection线程，first为是否强制结束线程
+#endif
 };
 
 DFM_END_NAMESPACE
