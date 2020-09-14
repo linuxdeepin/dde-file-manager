@@ -221,6 +221,10 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
     //! 移除提权操作
     QVector<MenuAction> menuActions = DAbstractFileInfo::menuActionList(type);
     menuActions.removeAll(MenuAction::OpenAsAdmin);
+
+    //! 禁止保险箱内的挂载操作
+    menuActions.removeAll(MenuAction::MountImage);
+
     return menuActions;
 }
 
