@@ -893,7 +893,12 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     if (code == 1) {
         DUrlList urls;
         urls << linkfile;
-        fileService->moveToTrash(this, urls);
+        // fix bug#47512 回收站的无效链接需要单独处理，直接删除
+        if (linkfile.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+            QProcess::execute("rm -rf \"" + linkfile.toLocalFile() + "\"");
+        } else {
+            fileService->moveToTrash(this, urls);
+        }
     }
 }
 
