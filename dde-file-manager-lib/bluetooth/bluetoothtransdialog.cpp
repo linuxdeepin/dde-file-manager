@@ -90,6 +90,11 @@ void BluetoothTransDialog::sendFilesToDevice(const QString &devId)
     }
 }
 
+bool BluetoothTransDialog::canSendFiles()
+{
+    return bluetoothManager->canSendBluetoothRequest();
+}
+
 void BluetoothTransDialog::initUI()
 {
     setIcon(QIcon::fromTheme(ICON_CONNECT));

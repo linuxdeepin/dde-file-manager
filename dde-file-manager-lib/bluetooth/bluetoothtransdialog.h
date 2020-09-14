@@ -57,6 +57,8 @@ public:
 
     BluetoothTransDialog(const QStringList &urls, TransferMode mode = Default, QString targetDevId = QString(), QWidget *parent = nullptr);
 
+    static bool canSendFiles();
+
 protected:
     void closeEvent(QCloseEvent *event) override;
 
