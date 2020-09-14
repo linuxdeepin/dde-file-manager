@@ -1069,7 +1069,9 @@ void VaultController::onFinishCalcSize()
     // 但保险箱大小计算完成后，再次计算一次保险箱的大小
     if (m_bNeedRefreshSize) {
         DUrl url = vaultToLocalUrl(makeVaultUrl());
-        m_sizeWorker->start({url});
+        // 修复BUG-47507 增加判断，如果该线程正在启动，不要再次进入该线程
+        if(!m_sizeWorker->isRunning())
+            m_sizeWorker->start({url});
     }
     m_bNeedRefreshSize = false;
 }
