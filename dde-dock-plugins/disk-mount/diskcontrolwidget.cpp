@@ -281,7 +281,7 @@ const QList<QExplicitlySharedDataPointer<DGioMount> > DiskControlWidget::getVfsM
 #ifdef QT_DEBUG
         if (!url.isValid()) {
             qWarning() << "Gio uri is not a vaild QUrl!" << uriStr;
-            qFatal("See the above warning for reason");
+            //qFatal("See the above warning for reason");
         }
 #endif // QT_DEBUG
 
@@ -486,7 +486,7 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
 #ifdef QT_DEBUG
     if (!url.isValid()) {
         qWarning() << "Gio uri is not a vaild QUrl!" << uriStr;
-        qFatal("See the above warning for reason");
+        //qFatal("See the above warning for reason");
     }
 #endif // QT_DEBUG
 
