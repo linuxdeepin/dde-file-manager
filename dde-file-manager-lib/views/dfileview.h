@@ -51,6 +51,33 @@ class DAbstractFileInfo;
 class DStatusBar;
 class FileViewHelper;
 class DFileViewPrivate;
+
+// 修复KLU TASK-37638 添加子线程，完成“选择当前拷贝或剪贴过来的文件”
+class SelectWork : public QThread
+{
+    Q_OBJECT
+public:
+    explicit SelectWork(QObject *parent = nullptr);
+    // 设置初始数据，（未处理的文件 文件模型）
+    void setInitData(QList<DUrl> lst, DFileSystemModel *model);
+    // 开始线程
+    void startWork();
+    // 结束线程
+    void stopWork();
+
+signals:
+    // 发送该信号，选择文件模型
+    void sigSetSelect(DUrl url);
+
+protected:
+    void run() override;
+
+private:
+    QList<DUrl> m_lstNoValid;
+    DFileSystemModel *m_pModel;
+    bool m_bStop;
+};
+
 class DFileView : public DListView, public DFMBaseView
 {
     Q_OBJECT
@@ -138,6 +165,8 @@ public slots:
     bool cdUp();
     bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event) Q_DECL_OVERRIDE;
     void select(const QList<DUrl> &list);
+    // 修复KLU TASK-37638 添加槽函数，选中文件
+    void slotSetSelect(DUrl url);
     inline void setViewModeToList()
     { setViewMode(ListMode);}
     inline void setViewModeToIcon()
@@ -249,6 +278,9 @@ private:
     bool m_isRemovingCase = false;
     QScopedPointer<DFileViewPrivate> d_ptr;
     QList<QUrl> m_urlsForDragEvent;
+
+    // 处理选择文件的子线程对象
+    SelectWork  *m_pSelectWork{nullptr};
 
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
     Q_PRIVATE_SLOT(d_ptr, void _q_onSectionHandleDoubleClicked(int))

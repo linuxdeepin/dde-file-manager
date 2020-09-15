@@ -91,6 +91,53 @@ DWIDGET_USE_NAMESPACE
 
 #define DEFAULT_HEADER_SECTION_WIDTH 140
 
+SelectWork::SelectWork(QObject *parent)
+    : QThread(parent)
+    , m_pModel(nullptr)
+    , m_bStop(false)
+{
+
+}
+
+void SelectWork::setInitData(QList<DUrl> lst, DFileSystemModel *model)
+{
+    m_lstNoValid = lst;
+    m_pModel = model;
+}
+
+void SelectWork::startWork()
+{
+    m_bStop = false;
+    start();
+}
+
+void SelectWork::stopWork()
+{
+    m_bStop = true;
+}
+
+void SelectWork::run()
+{
+    msleep(10);
+    // 判断当前是否存在未处理的文件
+    if(!m_lstNoValid.isEmpty()){
+        QList<DUrl>::iterator itr = m_lstNoValid.begin();
+        while(itr != m_lstNoValid.end()){
+            msleep(10);
+            if(m_bStop)
+                break;
+            const QModelIndex &index = m_pModel->index(*itr);
+            if(index.isValid()){
+                // 发送信号选中该文件
+                emit sigSetSelect(*itr);
+                itr = m_lstNoValid.erase(itr);
+            }
+        }
+    }
+    // 刷新模型
+    m_pModel->update();
+}
+
 class DFileViewPrivate
 {
 public:
@@ -209,6 +256,12 @@ DFileView::DFileView(QWidget *parent)
     initModel();
     initDelegate();
     initConnects();
+
+    // 修复KLU TASK-37638
+    // 初始化子线程
+    m_pSelectWork = new SelectWork();
+    connect(m_pSelectWork, &SelectWork::sigSetSelect,
+            this, &DFileView::slotSetSelect);
 
     setIconSizeBySizeIndex(DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel).toInt());
     d->updateStatusBarTimer = new QTimer;
@@ -668,10 +721,18 @@ void DFileView::select(const QList<DUrl> &list)
     const QModelIndex &root = rootIndex();
     clearSelection();
 
+    // 修复KLU TASK-37638 缓存为选中的拷贝或剪贴文件
+    QList<DUrl> lstNoValid;
+
     for (const DUrl &url : list) {
         const QModelIndex &index = model()->index(url);
 
-        if (index == root || !index.isValid()) {
+        if(!index.isValid()){
+            lstNoValid.push_back(url);
+            continue;
+        }
+
+        if (index == root) {
             continue;
         }
 
@@ -688,6 +749,24 @@ void DFileView::select(const QList<DUrl> &list)
 
     if (firstIndex.isValid())
         scrollTo(firstIndex, PositionAtTop);
+
+    // 修复KLU TASK-37638 启动子线程，选中为选中的拷贝或剪贴的文件
+    if(!lstNoValid.isEmpty()){
+        if(m_pSelectWork->isRunning()){
+            m_pSelectWork->stopWork();
+            m_pSelectWork->wait();
+        }
+        // 启动子线程
+        m_pSelectWork->setInitData(lstNoValid, model());
+        m_pSelectWork->startWork();
+    }
+}
+
+void DFileView::slotSetSelect(DUrl url)
+{
+    const QModelIndex &index = model()->index(url);
+    if(index.isValid())
+        selectionModel()->select(index, QItemSelectionModel::Select);
 }
 
 void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
