@@ -40,7 +40,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     lstItems << tr("Manual")/* << tr("Random")*/;
     m_pTypeCombo->addItems(lstItems);
     connect(m_pTypeCombo, SIGNAL(currentIndexChanged(int)),
-                      this, SLOT(slotTypeChanged(int)));
+            this, SLOT(slotTypeChanged(int)));
 
     // 设置只能输入大小写字母、数字和部分符号的正则表达式
     QRegExp regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~\'\"|]+");
@@ -48,10 +48,10 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     QValidator *validator = new QRegExpValidator(regx, this);
 
     // 设置密码
-    m_pPasswordLabel = new DLabel(tr("Password"),this);
+    m_pPasswordLabel = new DLabel(tr("Password"), this);
     m_pPassword = new DPasswordEdit(this);
     m_pPassword->lineEdit()->setValidator(validator);   // 设置验证器
-    m_pPassword->lineEdit()->setPlaceholderText(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
+    m_pPassword->lineEdit()->setPlaceholderText(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"));
     m_pPassword->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
     connect(m_pPassword, &DPasswordEdit::textEdited,
             this, &DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength);
@@ -137,7 +137,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     play1->addWidget(m_pTypeCombo, 0, 1, 1, 5);
 
     play1->addWidget(m_pPasswordLabel, 1, 0, 1, 1, Qt::AlignLeft);
-    play1->addWidget(m_pPassword, 1, 1, 1,5);
+    play1->addWidget(m_pPassword, 1, 1, 1, 5);
 
     play1->addWidget(m_pRepeatPasswordLabel, 2, 0, 1, 1, Qt::AlignLeft);
     play1->addWidget(m_pRepeatPassword, 2, 1, 1, 5);
@@ -154,7 +154,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     play->addWidget(m_pNext, 0, Qt::AlignCenter);
 
     // 创建文件夹与目录
-    if(!OperatorCenter::getInstance().createDirAndFile()) return;
+    if (!OperatorCenter::getInstance().createDirAndFile()) return;
 }
 
 void DFMVaultActiveSetUnlockMethodView::clearText()
@@ -172,7 +172,7 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditing()
 {
     bool ok = checkPassword(m_pPassword->text());
     if (ok) {
-        if(checkInputInfo()){
+        if (checkInputInfo()) {
             m_pNext->setEnabled(true);
         }
     }
@@ -182,12 +182,12 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditing()
 void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
 {
     bool ok = checkPassword(m_pPassword->text());
-    if(!ok){
+    if (!ok) {
         m_pNext->setEnabled(false);
         m_pPassword->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
-        m_pPassword->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"),TIPS_TIME);
+        m_pPassword->showAlertMessage(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"), TIPS_TIME);
     } else {
-        if(checkInputInfo()){
+        if (checkInputInfo()) {
             m_pNext->setEnabled(true);
         }
     }
@@ -195,7 +195,7 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
 
 void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFocusChanged(bool bFocus)
 {
-    if(bFocus){
+    if (bFocus) {
         m_pPassword->lineEdit()->setStyleSheet("");
         m_pPassword->hideAlertMessage();
     }
@@ -204,7 +204,7 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFocusChanged(bool bFocus
 void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished()
 {
     bool ok = checkRepeatPassword();
-    if(!ok){
+    if (!ok) {
         m_pRepeatPassword->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
         m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"), TIPS_TIME);
     }
@@ -222,7 +222,7 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditing()
                 m_pNext->setEnabled(true);
                 return;
             } else {
-                 m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"));
+                m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"));
             }
         }
     }
@@ -231,7 +231,7 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditing()
 
 void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged(bool bFocus)
 {
-    if(bFocus){
+    if (bFocus) {
         m_pRepeatPassword->lineEdit()->setStyleSheet("");
         m_pRepeatPassword->hideAlertMessage();
     }
@@ -239,9 +239,9 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged(bool 
 
 void DFMVaultActiveSetUnlockMethodView::slotGenerateEditChanged(const QString &str)
 {
-    if(!checkPassword(str)){
+    if (!checkPassword(str)) {
         m_pNext->setEnabled(false);
-    }else{
+    } else {
         m_pNext->setEnabled(true);
     }
 }
@@ -250,14 +250,14 @@ void DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked()
 {
     QString strPassword = m_pPassword->text();
     QString strPasswordHint = m_pTips->text();
-    if(OperatorCenter::getInstance().saveSaltAndClipher(strPassword, strPasswordHint)
+    if (OperatorCenter::getInstance().saveSaltAndClipher(strPassword, strPasswordHint)
             && OperatorCenter::getInstance().createKey(strPassword, USER_KEY_LENGTH))
         emit sigAccepted();
 }
 
 void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 {
-    if(index){  // 随机
+    if (index) { // 随机
 
         play1->removeWidget(m_pPasswordLabel);
         play1->removeWidget(m_pPassword);
@@ -290,7 +290,7 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
         // 检测密码的正确性
 //        slotGenerateEditChanged(m_pResultEdit->text());
 
-    }else{  // 手动
+    } else { // 手动
 
         play1->addWidget(m_pPasswordLabel, 2, 0, 1, 1, Qt::AlignLeft);
         play1->addWidget(m_pPassword, 2, 1, 1, 5);
@@ -342,8 +342,8 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 
 void DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength(const QString &password)
 {
-    DPasswordEdit* pPasswordEdit = qobject_cast<DPasswordEdit*>(sender());
-    if(password.length() > PASSWORD_LENGHT_MAX){
+    DPasswordEdit *pPasswordEdit = qobject_cast<DPasswordEdit *>(sender());
+    if (password.length() > PASSWORD_LENGHT_MAX) {
         pPasswordEdit->setText(password.mid(0, PASSWORD_LENGHT_MAX));
     }
 }
@@ -363,7 +363,7 @@ bool DFMVaultActiveSetUnlockMethodView::checkPassword(const QString &password)
     int pos = 0;
     QValidator::State res;
     res = v.validate(strPassword, pos);
-    if(QValidator::Acceptable != res){
+    if (QValidator::Acceptable != res) {
         return false;
 
     } else {
@@ -375,8 +375,7 @@ bool DFMVaultActiveSetUnlockMethodView::checkRepeatPassword()
 {
     const QString &strRepeatPassword = m_pRepeatPassword->text();
     const QString &strPassword = m_pPassword->text();
-    if(strRepeatPassword != strPassword)
-    {
+    if (strRepeatPassword != strPassword) {
         return false;
     } else {
         return true;
@@ -385,7 +384,7 @@ bool DFMVaultActiveSetUnlockMethodView::checkRepeatPassword()
 
 bool DFMVaultActiveSetUnlockMethodView::checkInputInfo()
 {
-    if(checkPassword(m_pPassword->text()) && checkRepeatPassword()){
+    if (checkPassword(m_pPassword->text()) && checkRepeatPassword()) {
         return true;
     } else {
         return false;
