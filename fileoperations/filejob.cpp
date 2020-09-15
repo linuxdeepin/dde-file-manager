@@ -605,13 +605,15 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
             ok = !result.isEmpty();
         } else if (srcInfo.isDir()) {
             if (copyDir(srcFilePath, tarDir, true, &_tarFilePath)) {
-                deleteDir(srcFilePath);
-                ok = QFile::rename(_tarFilePath, tarFilePath);
+                bool delOk = deleteDir(srcFilePath);
+                bool renameOk = QFile::rename(_tarFilePath, tarFilePath);
+                ok = (_tarFilePath == tarFilePath) ? delOk : renameOk;
             }
         } else if (srcInfo.isFile() || srcInfo.isSymLink()) {
             if (copyFile(srcFilePath, tarDir, true, &_tarFilePath) && !getIsSkip()) {
-                deleteFile(srcFilePath);
-                ok = QFile::rename(_tarFilePath, tarFilePath);
+                bool delOk = deleteFile(srcFilePath);
+                bool renameOk = QFile::rename(_tarFilePath, tarFilePath);
+                ok = (_tarFilePath == tarFilePath) ? delOk : renameOk;
             }
         }
     }
