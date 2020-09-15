@@ -2808,10 +2808,18 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
 
     // 在上一个菜单没有结束前，拒绝下一个菜单
     static bool lock = false;
-    if (lock) {
+    qint64 curTime = QDateTime::currentMSecsSinceEpoch();
+    static qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
+
+    // 两次右键菜单的间隔时间, < 500 毫秒说明点击过于频繁, 进行限制
+    // 目的是为了防止右键菜单产生新的模态对话框, exec() 函数无法结束, lock状态无法重置
+    // 相关bug: 47478
+    qint64 intervalime = curTime - lastTime;
+    if (lock && (intervalime < 500)) {
         qDebug() << "reject show menu";
         return;
     }
+
     if (VaultController::isRootDirectory(info->fileUrl().fragment())) {
         //! create vault menu.
         menu = DFileMenuManager::createVaultMenu(this->topLevelWidget());
@@ -2833,6 +2841,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
     //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
     QPointer<QWidget> window = qApp->activeWindow();
+    lastTime = QDateTime::currentMSecsSinceEpoch();
     menu->exec();
     menu->deleteLater(window);
     lock = false;
