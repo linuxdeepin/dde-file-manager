@@ -19,26 +19,26 @@
         <translation>此光盘中的镜像已损坏，无法挂载，请擦除后使用</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="634"/>
+        <location filename="../controllers/appcontroller.cpp" line="646"/>
         <source>Mount error: unsupported image format</source>
         <translation>挂载错误，镜像文件格式不支持</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="712"/>
-        <location filename="../controllers/appcontroller.cpp" line="748"/>
+        <location filename="../controllers/appcontroller.cpp" line="724"/>
+        <location filename="../controllers/appcontroller.cpp" line="760"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="712"/>
-        <location filename="../controllers/appcontroller.cpp" line="748"/>
+        <location filename="../controllers/appcontroller.cpp" line="724"/>
+        <location filename="../controllers/appcontroller.cpp" line="760"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="729"/>
+        <location filename="../controllers/appcontroller.cpp" line="741"/>
         <source>Action timeout, action is canceled</source>
-        <translation>当前操作超时，操作已被取消！</translation>
+        <translation>认证超时！</translation>
     </message>
 </context>
 <context>
@@ -398,7 +398,7 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="127"/>
         <source>No file to burn, Duplicated files will be ignore</source>
-        <translation>没有文件需要刻录，重复文件将被忽略</translation>
+        <translation>没有文件需要刻录</translation>
     </message>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="145"/>
@@ -1043,7 +1043,7 @@
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1103"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1102"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1651"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
@@ -1095,7 +1095,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="602"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="613"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>添加标记“%1”</translation>
     </message>
@@ -1420,7 +1420,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="589"/>
         <source>Checking process failed</source>
-        <translation></translation>
+        <translation>数据校验失败</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="592"/>
@@ -1799,7 +1799,7 @@
     <message>
         <location filename="../../fileoperations/filejob.h" line="300"/>
         <source>Device disconnected</source>
-        <translation>设备断开连接</translation>
+        <translation>光驱设备未连接</translation>
     </message>
 </context>
 <context>
@@ -2357,7 +2357,7 @@
         <translation>备份文件</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="675"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="674"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation>未知</translation>
@@ -3218,14 +3218,14 @@
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
         <location filename="../dialogs/propertydialog.cpp" line="1307"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="695"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="694"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
         <location filename="../dialogs/propertydialog.cpp" line="1307"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="697"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="696"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
@@ -3252,24 +3252,24 @@
         <translation>删除时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1312"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1311"/>
         <source>Loading...</source>
         <translation>正在加载...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="793"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="792"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="795"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="803"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="809"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="794"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="802"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="808"/>
         <source>You do not have permission to access this folder</source>
         <translation>您没有权限读取此文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="813"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="812"/>
         <location filename="../models/recentfileinfo.cpp" line="247"/>
         <location filename="../models/trashfileinfo.cpp" line="384"/>
         <location filename="../models/vaultfileinfo.cpp" line="138"/>
@@ -4090,34 +4090,34 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1439"/>
-        <location filename="../controllers/appcontroller.cpp" line="1463"/>
+        <location filename="../controllers/appcontroller.cpp" line="1451"/>
+        <location filename="../controllers/appcontroller.cpp" line="1475"/>
         <source>Action timeout, action is canceled</source>
-        <translation>当前操作超时，操作已被取消！</translation>
+        <translation>认证超时！</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1446"/>
-        <location filename="../controllers/appcontroller.cpp" line="1468"/>
+        <location filename="../controllers/appcontroller.cpp" line="1458"/>
+        <location filename="../controllers/appcontroller.cpp" line="1480"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁盘文件被占用或无权限，无法卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1446"/>
+        <location filename="../controllers/appcontroller.cpp" line="1458"/>
         <source>The device was unmounted insecurely</source>
         <translation>设备没有正常卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1468"/>
+        <location filename="../controllers/appcontroller.cpp" line="1480"/>
         <source>The device was removed insecurely</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1482"/>
+        <location filename="../controllers/appcontroller.cpp" line="1494"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1482"/>
+        <location filename="../controllers/appcontroller.cpp" line="1494"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
