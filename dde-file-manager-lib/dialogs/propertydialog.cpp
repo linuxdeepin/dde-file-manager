@@ -155,7 +155,8 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
         QVector<uint> list = text.toUcs4();
         int cursor_pos = this->textCursor().position() - text_length + text.length();
 
-        while (text.toLocal8Bit().count() > MAX_FILE_NAME_CHAR_COUNT) {
+        while (text.toLocal8Bit().count() > MAX_FILE_NAME_CHAR_COUNT)
+        {
             text.chop(1);
         }
 
@@ -324,17 +325,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         }
 
         DColoredProgressBar *progbdf = new DTK_WIDGET_NAMESPACE::DColoredProgressBar();
-        QLinearGradient lg(0, 0.5, 1, 0.5);
-        lg.setCoordinateMode(QGradient::CoordinateMode::ObjectBoundingMode);
-
-        lg.setStops({{0, 0xFF0080FF}, {0.72, 0xFF0397FE}, {1, 0xFF06BEFD}});
-        progbdf->addThreshold(0, lg);
-
-        lg.setStops({{0, 0xFFFFAE00}, {0.72, 0xFFFFD007}, {1, 0xFFF6FF0D}});
-        progbdf->addThreshold(7000, lg);
-
-        lg.setStops({{0, 0xFFFF0000}, {0.72, 0xFFFF237A}, {1, 0xFFFF9393}});
-        progbdf->addThreshold(9000, lg);
+        // fix bug#47111 由于addThreshold接口不支持渐变色类（QLinearGradient），暂时采用固定颜色
+        progbdf->addThreshold(0, QColor(0xFF0080FF));
+        progbdf->addThreshold(7000, QColor(0xFFFFAE00));
+        progbdf->addThreshold(9000, QColor(0xFFFF0000));
 
         //fixed:CD display size error
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
@@ -1306,7 +1300,7 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     }
     results.append({QObject::tr("Contains"), (fileCount != 1 ? QObject::tr("%1 items") : QObject::tr("%1 item")).arg(fileCount)});
 
-    quint64 fsFreeSizeSet = fsFreeSize > 0 ? fsFreeSize:(fsSize - fsUsed);
+    quint64 fsFreeSizeSet = fsFreeSize > 0 ? fsFreeSize : (fsSize - fsUsed);
     results.append({QObject::tr("Free space"), FileUtils::formatSize(fsFreeSizeSet)});
 
     return results;
