@@ -255,7 +255,7 @@ void BookMarkManager::update(const QVariant &value)
         const QString &mount_point = item.value("mountPoint").toString();
         //兼容以前未转base64版本（sp2update2之前），先判断locateUrl，保证存入bookmark中的是base64
         QByteArray ba;
-        if (item.value("locateUrl").toString().contains("/")) {
+        if (item.value("locateUrl").toString().startsWith("/")) {   //转base64的路径不会以'\'开头
             ba = item.value("locateUrl").toString().toLocal8Bit().toBase64();
         }
         else {
