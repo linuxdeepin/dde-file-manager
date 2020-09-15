@@ -145,7 +145,10 @@ void DFMTagWidget::initUi()
     d->m_tagCrumbEdit->setFrameShape(QFrame::Shape::NoFrame);
     d->m_tagCrumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
     d->m_mainLayout->addWidget(d->m_tagCrumbEdit);
-    d->m_mainLayout->addStretch();
+
+    // 修复bug-47113 UI显示问题
+//    d->m_mainLayout->addStretch();
+    d->m_mainLayout->setContentsMargins(10, 10, 10, 10);
 
     loadTags(d->m_url);
 }
@@ -225,16 +228,6 @@ void DFMTagWidget::loadTags(const DUrl& durl)
     }
     d->m_tagCrumbEdit->setProperty("LoadFileTags", false);
 
-    auto vsb = d->m_tagCrumbEdit->verticalScrollBar();
-    if (vsb) {
-        d->m_tagCrumbEdit->setFixedHeight(20);
-        int docLen = vsb->maximum() - vsb->minimum() + vsb->pageStep();
-        int height = qMin(qMax(docLen, 56), 150);
-        d->m_tagCrumbEdit->setFixedHeight(height);
-        int editheight = d->m_tagCrumbEdit->height();
-        // 修复bug-47113 UI显示问题
-        setFixedHeight(editheight+10);
-    }
     d->m_tagActionWidget->setCheckedColorList(selectColors);
     if (!d->m_devicesWatcher || d->m_url != url) {
         d->m_url = url;
