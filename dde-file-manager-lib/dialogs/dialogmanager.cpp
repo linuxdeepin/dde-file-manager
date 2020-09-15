@@ -586,7 +586,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
         failure_type = tr("Burn process failed");
         break;
     case FileJob::OpticalCheck:
-        failure_type = tr("Checking process failed");
+        failure_type = tr("Data verification failed");
         break;
     }
     QString failure_str = QString(tr("%1: %2")).arg(failure_type).arg(err);
@@ -1334,7 +1334,7 @@ void DialogManager::showTaskProgressDlgOnActive()
 int DialogManager::showUnableToLocateDir(const QString &dir)
 {
     DDialog d;
-    d.setTitle(tr("Locate to %1 failed!").arg(dir));
+    d.setTitle(tr("Unable to access %1").arg(dir));
     d.setMessage(" ");
     QStringList buttonTexts;
     buttonTexts << tr("Confirm");

@@ -19,26 +19,30 @@
         <translation>The disc image was corrupted, cannot mount now, please erase the disc first</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="646"/>
+        <location filename="../controllers/appcontroller.cpp" line="645"/>
         <source>Mount error: unsupported image format</source>
         <translation>Mount error: unsupported image format</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="724"/>
-        <location filename="../controllers/appcontroller.cpp" line="760"/>
+        <location filename="../controllers/appcontroller.cpp" line="723"/>
+        <location filename="../controllers/appcontroller.cpp" line="759"/>
         <source>The device was not safely removed</source>
         <translation type="unfinished">The device was not safely removed</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="724"/>
-        <location filename="../controllers/appcontroller.cpp" line="760"/>
+        <location filename="../controllers/appcontroller.cpp" line="723"/>
+        <location filename="../controllers/appcontroller.cpp" line="759"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation type="unfinished">Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="741"/>
+        <location filename="../controllers/appcontroller.cpp" line="740"/>
+        <source>Authentication timed out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Action timeout, action is canceled</source>
-        <translation>Authentication timed out!</translation>
+        <translation type="vanished">Authentication timed out!</translation>
     </message>
 </context>
 <context>
@@ -389,18 +393,21 @@
 <context>
     <name>DFMOpticalMediaWidget</name>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="104"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="127"/>
         <source>No file to burn</source>
-        <translation>No files to burn</translation>
+        <translation type="vanished">No files to burn</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="127"/>
         <source>No file to burn, Duplicated files will be ignore</source>
-        <translation>No files to burn</translation>
+        <translation type="vanished">No files to burn</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="145"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="106"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="131"/>
+        <source>No files to burn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="149"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>No files to burn</translation>
     </message>
@@ -590,7 +597,7 @@
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="54"/>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="188"/>
-        <source>At least 8 characters, and contain A-Z, a-z, 0-9, and symbols</source>
+        <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -989,11 +996,6 @@
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1256"/>
-        <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../views/dfiledialog.cpp" line="1297"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 already exists, do you want to replace it?</translation>
@@ -1003,6 +1005,11 @@
         <location filename="../views/dfiledialog.cpp" line="1298"/>
         <source>Cancel</source>
         <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="../views/dfiledialog.cpp" line="1256"/>
+        <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1258"/>
@@ -1377,7 +1384,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="890"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1245"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1340"/>
-        <location filename="../dialogs/dialogmanager.h" line="149"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -1417,9 +1423,8 @@
         <translation>Burn process failed</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="589"/>
         <source>Checking process failed</source>
-        <translation>Data verification failed</translation>
+        <translation type="vanished">Data verification failed</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="592"/>
@@ -1540,9 +1545,13 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1337"/>
+        <source>Unable to access %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Locate to %1 failed!</source>
         <translatorcomment>访问 %1 失败！</translatorcomment>
-        <translation>访问 %1 失败！</translation>
+        <translation type="vanished">访问 %1 失败！</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1417"/>
@@ -1596,6 +1605,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="589"/>
+        <source>Data verification failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../dialogs/dialogmanager.cpp" line="858"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disk is busy, cannot unmount now</translation>
@@ -1644,27 +1658,23 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="564"/>
-        <location filename="../controllers/filecontroller.cpp" line="583"/>
-        <location filename="../controllers/filecontroller.cpp" line="602"/>
+        <location filename="../controllers/filecontroller.cpp" line="563"/>
+        <location filename="../controllers/filecontroller.cpp" line="582"/>
+        <location filename="../controllers/filecontroller.cpp" line="601"/>
         <source>Kindly Reminder</source>
         <translation>Kindly Reminder</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="564"/>
-        <location filename="../controllers/filecontroller.cpp" line="583"/>
-        <location filename="../controllers/filecontroller.cpp" line="602"/>
+        <location filename="../controllers/filecontroller.cpp" line="563"/>
+        <location filename="../controllers/filecontroller.cpp" line="582"/>
+        <location filename="../controllers/filecontroller.cpp" line="601"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Please install File Roller first and then continue</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1218"/>
-        <source>Unable to create folder &quot;%1&quot;:%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../controllers/filecontroller.cpp" line="1236"/>
-        <source>Unable to create file &quot;%1&quot;:%2</source>
+        <location filename="../controllers/filecontroller.cpp" line="1216"/>
+        <location filename="../controllers/filecontroller.cpp" line="1234"/>
+        <source>Unable to create files here: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1722,76 +1732,76 @@
         <translation>copy</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="755"/>
-        <location filename="../../fileoperations/filejob.cpp" line="968"/>
-        <location filename="../../fileoperations/filejob.cpp" line="977"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1052"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1263"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1272"/>
+        <location filename="../../fileoperations/filejob.cpp" line="757"/>
+        <location filename="../../fileoperations/filejob.cpp" line="970"/>
+        <location filename="../../fileoperations/filejob.cpp" line="979"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1054"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1265"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1274"/>
         <source>Data verification successful.</source>
         <translation>Data verification successful.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="755"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1052"/>
+        <location filename="../../fileoperations/filejob.cpp" line="757"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1054"/>
         <source>Data verification failed.</source>
         <translation>Data verification failed.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="759"/>
-        <location filename="../../fileoperations/filejob.cpp" line="981"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1056"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1276"/>
+        <location filename="../../fileoperations/filejob.cpp" line="761"/>
+        <location filename="../../fileoperations/filejob.cpp" line="983"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1058"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1278"/>
         <source>Burn process completed</source>
         <translation>Burn process completed</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1440"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1442"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1444"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1446"/>
         <source>%1 m %2 s</source>
         <translation>%1 m %2 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1449"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1451"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 h %2 m %3 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1456"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1458"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 d %2 h %3 m %4 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3171"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3173"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1 is a duplicate file.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3174"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3176"/>
         <source>Insufficient disc space.</source>
         <translation>Insufficient disc space.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3177"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3179"/>
         <source>Lost connection to drive.</source>
         <translation>Lost connection to drive.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3180"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3182"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>The CD/DVD drive is not ready. Try another disc.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3183"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3185"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3190"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3192"/>
         <source>Unknown error</source>
         <translation>Unknown error</translation>
     </message>
@@ -3086,7 +3096,7 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="149"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="292"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="296"/>
         <source>Burn</source>
         <translation>Burn</translation>
     </message>
@@ -3378,8 +3388,12 @@
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="177"/>
+        <source>Start at:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>+SN:</source>
-        <translation>+SN:</translation>
+        <translation type="vanished">+SN:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="146"/>
@@ -3421,6 +3435,11 @@
         <translation>Add</translation>
     </message>
     <message>
+        <location filename="../views/drenamebar.cpp" line="278"/>
+        <source>Start at</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../dialogs/propertydialog.cpp" line="1128"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
         <location filename="../views/drenamebar.cpp" line="264"/>
@@ -3443,9 +3462,8 @@
         <translation>Duration</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="278"/>
         <source>+SN</source>
-        <translation>+SN</translation>
+        <translation type="vanished">+SN</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="285"/>
@@ -3562,7 +3580,7 @@
         <translation>Edit address</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="320"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="325"/>
         <source>Free Space %1</source>
         <translation>Free Space %1</translation>
     </message>
@@ -4044,9 +4062,9 @@
 <context>
     <name>TrashManager</name>
     <message>
-        <location filename="../controllers/trashmanager.cpp" line="205"/>
-        <location filename="../controllers/trashmanager.cpp" line="218"/>
-        <source>Unable to open items in the trash,please restore it first</source>
+        <location filename="../controllers/trashmanager.cpp" line="204"/>
+        <location filename="../controllers/trashmanager.cpp" line="217"/>
+        <source>Unable to open items in the trash, please restore it first</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4084,34 +4102,42 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1451"/>
-        <location filename="../controllers/appcontroller.cpp" line="1475"/>
         <source>Action timeout, action is canceled</source>
-        <translation>Authentication timed out!</translation>
+        <translation type="vanished">Authentication timed out!</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1458"/>
-        <location filename="../controllers/appcontroller.cpp" line="1480"/>
+        <location filename="../controllers/appcontroller.cpp" line="1457"/>
+        <location filename="../controllers/appcontroller.cpp" line="1478"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disk is busy, cannot unmount now</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1458"/>
         <source>The device was unmounted insecurely</source>
-        <translation>The device was not safely unmounted</translation>
+        <translation type="vanished">The device was not safely unmounted</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1480"/>
         <source>The device was removed insecurely</source>
-        <translation>The device was not safely removed</translation>
+        <translation type="vanished">The device was not safely removed</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1494"/>
+        <location filename="../controllers/appcontroller.cpp" line="1450"/>
+        <location filename="../controllers/appcontroller.cpp" line="1474"/>
+        <source>Authentication timed out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/appcontroller.cpp" line="1457"/>
+        <source>The device was not safely unmounted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/appcontroller.cpp" line="1478"/>
+        <location filename="../controllers/appcontroller.cpp" line="1492"/>
         <source>The device was not safely removed</source>
         <translation>The device was not safely removed</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1494"/>
+        <location filename="../controllers/appcontroller.cpp" line="1492"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
@@ -4135,20 +4161,24 @@
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="455"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="471"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="489"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="470"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="488"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="470"/>
-        <source>Share name %1 contains invalid characters (any of %&lt;&gt;*?|/\+=;:&quot;,)</source>
+        <location filename="../../usershare/usersharemanager.cpp" line="469"/>
+        <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="488"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="487"/>
+        <source>Failed to share %1. The share name is too long.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Failed to add share %1. The share name is too long.</source>
-        <translation>Failed to add share %1. The share name is too long.</translation>
+        <translation type="vanished">Failed to add share %1. The share name is too long.</translation>
     </message>
 </context>
 <context>

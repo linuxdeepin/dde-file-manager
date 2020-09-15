@@ -193,7 +193,7 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event,
         }
     } else {
         //fix bug 30506 ,异步处理网路文件很卡的情况下，快速点击会崩溃，或者卡死,使用fileinfo中的是否是gvfsmount
-        if (urls.size() > 0 && DFileService::instance()->createFileInfo(nullptr,urls.first())->isGvfsMountFile()/*FileUtils::isGvfsMountFile(urls.first().path())*/) {
+        if (urls.size() > 0 && DFileService::instance()->createFileInfo(nullptr, urls.first())->isGvfsMountFile()/*FileUtils::isGvfsMountFile(urls.first().path())*/) {
             DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
             return;
         }
@@ -628,11 +628,10 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, event->url());
 
     QString archiveuri = "";
-    if(info && info->canRedirectionFileUrl()) {
+    if (info && info->canRedirectionFileUrl()) {
         archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->redirectedFileUrl().toString()));
         qDebug() << "redirect the url to:" << info->redirectedFileUrl();
-    }
-    else {
+    } else {
         archiveuri = "archive://" + QString(QUrl::toPercentEncoding(event->url().toString()));
     }
 
@@ -738,8 +737,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 
                     if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
                         qDebug() << "action timeout with noreply response";
-                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Action timeout, action is canceled")),  Q_ARG(QString, ""));
-                        //dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Authentication timed out")),  Q_ARG(QString, ""));
+                        //dialogManager->showErrorDialog(tr("Authentication timed out"), QString());
                         return;
                     }
                     err |= blk->lastError().isValid();
@@ -1448,14 +1447,14 @@ void UnmountWorker::doUnmount(const QString &blkStr)
     QDBusError err = blkdev->lastError();
     if (err.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
         qDebug() << "action timeout with noreply response";
-        emit unmountResult(tr("Action timeout, action is canceled"), "");
+        emit unmountResult(tr("Authentication timed out"), "");
     }
     // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
     // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
-    else if (err.isValid() ) {
+    else if (err.isValid()) {
         QDBusError::ErrorType thistyep = err.type();
         qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-        emit unmountResult(tr("The device was unmounted insecurely"), tr("Disk is busy, cannot unmount now"));
+        emit unmountResult(tr("The device was not safely unmounted"), tr("Disk is busy, cannot unmount now"));
     }
 }
 
@@ -1472,12 +1471,11 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
 
         if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
             qDebug() << "action timeout with noreply response";
-            emit unmountResult(tr("Action timeout, action is canceled"), "");
+            emit unmountResult(tr("Authentication timed out"), "");
             return;
-        }
-        else if ( lastError.isValid() ) {
+        } else if (lastError.isValid()) {
             qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
-            emit unmountResult(tr("The device was removed insecurely"), tr("Disk is busy, cannot unmount now") );
+            emit unmountResult(tr("The device was not safely removed"), tr("Disk is busy, cannot unmount now"));
             return;
         }
 

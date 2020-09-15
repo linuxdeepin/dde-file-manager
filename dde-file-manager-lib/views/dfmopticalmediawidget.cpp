@@ -82,14 +82,15 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 
-    connect(d->pb_burn, &DPushButton::clicked, this, [=] {
+    connect(d->pb_burn, &DPushButton::clicked, this, [ = ] {
         QDir::Filters filter = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
 
         DUrl urlOfStage = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
                                               + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/', '_') + "/");
         // 1、获取暂存区内文件列表信息，去除与当前光盘中有交集的部分（当前 isomaster 库不提供覆盖写入的选项，后或可优化）
         QDir dirMnt(d->strMntPath);
-        if (!dirMnt.exists()) {
+        if (!dirMnt.exists())
+        {
             qWarning() << "Mount points doesn't exist: " << d->strMntPath;
             return;
         }
@@ -100,14 +101,16 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         if (!dirStage.exists())
             return;
         QFileInfoList lstFilesInStage = dirStage.entryInfoList(filter);
-        if (lstFilesInStage.count() == 0) {
-            dialogManager->showMessageDialog(DialogManager::msgWarn, tr("No file to burn"));
+        if (lstFilesInStage.count() == 0)
+        {
+            dialogManager->showMessageDialog(DialogManager::msgWarn, tr("No files to burn"));
             return;
         }
 
         bool bDeletedValidFile = false; // 在点击进入光驱中文件夹时，因解决bug#27870时，在暂存区中手动创建了本不存在的目录
         // 如果光盘挂载根目录与暂存区根目录中有同名文件或文件夹，则移除暂存区中的相关文件或文件夹；
-        for (QFileInfo fOn : lstFilesOnDisc) {
+        for (QFileInfo fOn : lstFilesOnDisc)
+        {
             for (QFileInfo fStage : lstFilesInStage) {
                 if (fStage.fileName() != fOn.fileName())
                     continue;
@@ -123,8 +126,9 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         }
 
         lstFilesInStage = dirStage.entryInfoList(filter);
-        if (lstFilesInStage.count() == 0) {
-            QString errTitle = bDeletedValidFile ? tr("No file to burn, Duplicated files will be ignore") : tr("No file to burn");
+        if (lstFilesInStage.count() == 0)
+        {
+            QString errTitle(tr("No files to burn"));
             dialogManager->showMessageDialog(DialogManager::msgWarn, errTitle);
             return;
         }
@@ -135,7 +139,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         m_pStatisticWorker->start({urlOfStage});
     });
 
-    connect(m_pStatisticWorker, &DFileStatisticsJob::finished, this, [=] {
+    connect(m_pStatisticWorker, &DFileStatisticsJob::finished, this, [ = ] {
         DeviceProperty dp = ISOMaster->getDevicePropertyCached(d->getCurrentDevice());
 
         if (dp.avail == 0 || static_cast<quint64>(m_pStatisticWorker->totalSize()) > dp.avail) // 可用空间为0时也禁止刻录
@@ -313,7 +317,8 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
         {MediaType::DVD_PLUS_RW, "DVD+RW"},
         {MediaType::BD_ROM, "BD-ROM"},
         {MediaType::BD_R, "BD-R"},
-        {MediaType::BD_RE, "BD-RE"}};
+        {MediaType::BD_RE, "BD-RE"}
+    };
     //fix: 没有选择文件时防止误操作,故默认禁止操作
     //pb_burn->setEnabled(dp.avail > 0);
 //    pb_burn->setEnabled(false);
@@ -338,7 +343,7 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
     DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].cachePath = cachePath;
     DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].bLoading = false;
 
-    qDebug() << "get " << strKey <<" catch path:" << cachePath;
+    qDebug() << "get " << strKey << " catch path:" << cachePath;
 }
 
 QString DFMOpticalMediaWidgetPrivate::getCurrentDevice() const

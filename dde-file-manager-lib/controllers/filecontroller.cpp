@@ -124,10 +124,10 @@ public:
         bool isnotsyslink = !info.isSymLink();
         //父目录是gvfs目录，那么子目录和子文件必须是gvfs文件
 
-        bool currentisgvfs = isgvfs ? true : FileUtils::isGvfsMountFile(info.path(),true);
+        bool currentisgvfs = isgvfs ? true : FileUtils::isGvfsMountFile(info.path(), true);
         QMimeType mimetype;
         bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(info, mimetype) :
-                                         FileUtils::isDesktopFile(info);
+                         FileUtils::isDesktopFile(info);
         if (isnotsyslink && isdesktop) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(info));
         }
@@ -211,7 +211,7 @@ public:
     const DAbstractFileInfoPointer fileInfo() const override
     {
         //判断是否是gvfs文件，是就创建DGvfsFileInfo
-        bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(),true);
+        bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(), true);
         if (currentisgvfs) {
             return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo));
         }
@@ -298,7 +298,7 @@ public:
 
     const DAbstractFileInfoPointer fileInfo() const override
     {
-        bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(),true);
+        bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(), true);
         if (currentisgvfs) {
             return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo));
         }
@@ -350,7 +350,7 @@ private:
     DDirIterator *iterator = nullptr;
     QDir::Filters filters;
     bool nextIsCached = false;
-    QHash<DUrl,DAbstractFileInfoPointer> nextInofCached;
+    QHash<DUrl, DAbstractFileInfoPointer> nextInofCached;
 };
 
 FileController::FileController(QObject *parent)
@@ -374,7 +374,7 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
     bool currentisgvfs = FileUtils::isGvfsMountFile(url.toLocalFile(), true);
     QMimeType mimetype;
     bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(localFile, mimetype) :
-                                     FileUtils::isDesktopFile(localFile);
+                     FileUtils::isDesktopFile(localFile);
     if (isnotsyslink && isdesktop) {
         return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
@@ -387,7 +387,7 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
 const DDirIteratorPointer FileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
     return DDirIteratorPointer(new FileDirIterator(event->url().toLocalFile(), event->nameFilters(),
-                                                   event->filters(), event->flags(),event->isGvfsFile()));
+                                                   event->filters(), event->flags(), event->isGvfsFile()));
 }
 
 bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
@@ -486,8 +486,7 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
     if (!pathList.empty()) {
         if (event->isEnter()) {
             result = FileUtils::openEnterFiles(pathList);
-        }
-        else {
+        } else {
             result = FileUtils::openFiles(pathList);
         }
         if (!result) {
@@ -813,8 +812,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             if (!slient) {
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
-            }
-            else {
+            } else {
                 moveToThread(qApp->thread());
             }
         }
@@ -1215,7 +1213,7 @@ bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
     } else {
         // 创建文件夹失败，提示错误信息
-        QString strErr = tr("Unable to create folder \"%1\":%2").arg(event->url().fileName()).arg(strerror(errno));
+        QString strErr = tr("Unable to create files here: %1").arg(strerror(errno));
         dialogManager->showMessageDialog(DialogManager::msgWarn, strErr);
     }
 
@@ -1233,7 +1231,7 @@ bool FileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
         file.close();
     } else {
         // 创建文件失败，提示错误信息
-        QString strErr = tr("Unable to create file \"%1\":%2").arg(event->url().fileName()).arg(strerror(errno));
+        QString strErr = tr("Unable to create files here: %1").arg(strerror(errno));
         dialogManager->showMessageDialog(DialogManager::msgWarn, strErr);
 
         return false;
@@ -1501,7 +1499,7 @@ QString FileController::checkDuplicateName(const QString &name) const
 }
 
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,
-                                 QDir::Filters filter, QDirIterator::IteratorFlags flags,const bool gvfs)
+                                 QDir::Filters filter, QDirIterator::IteratorFlags flags, const bool gvfs)
     : DDirIterator()
     , filters(filter)
 {
@@ -1588,10 +1586,10 @@ DUrl FileDirIterator::fileUrl() const
 const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
     DAbstractFileInfoPointer newinfo = const_cast<FileDirIterator *>\
-            (this)->nextInofCached.value(iterator->fileUrl());
+                                       (this)->nextInofCached.value(iterator->fileUrl());
     if (newinfo) {
         const_cast<FileDirIterator *>\
-                    (this)->nextInofCached.remove(iterator->fileUrl());
+        (this)->nextInofCached.remove(iterator->fileUrl());
         return newinfo;
     }
     return iterator->fileInfo();
