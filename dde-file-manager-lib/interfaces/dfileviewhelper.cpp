@@ -763,22 +763,6 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
             event->setDropAction(default_action);
         }
 
-        // 保险箱时，修改DropAction为Qt::MoveAction
-        if(VaultController::isVaultFile(info->fileUrl().toString())
-                || VaultController::isVaultFile(urls[0].toString())){
-            QString strFromPath = urls[0].toLocalFile();
-            QString strToPath = info->fileUrl().toLocalFile();
-            if(strFromPath.startsWith("/media") || strToPath.startsWith("/media")){   // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
-                event->setDropAction(Qt::CopyAction);
-            }else{
-                if(!DFMGlobal::keyCtrlIsPressed()){
-                    event->setDropAction(Qt::MoveAction);
-                }else {
-                    event->setDropAction(Qt::CopyAction);
-                }
-            }
-        }
-
         if (!info->supportedDropActions().testFlag(event->dropAction())) {
             QList<Qt::DropAction> actions;
 
@@ -790,6 +774,24 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
                 if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
                     event->setDropAction(action);
                     break;
+                }
+            }
+        }
+
+        // 保险箱时，修改DropAction为Qt::MoveAction
+        if(VaultController::isVaultFile(info->fileUrl().toString())
+                || VaultController::isVaultFile(urls[0].toString())){
+            QString strFromPath = urls[0].toLocalFile();
+            QString strToPath = info->fileUrl().toLocalFile();
+            if(strFromPath.startsWith("/media") || strToPath.startsWith("/media")){   // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
+                event->setDropAction(Qt::CopyAction);
+            } else if (TRASH_SCHEME == info->fileUrl().scheme()) {  // 修复BUG-47739 保险箱拖拽到回收站时，忽略该操作
+                event->setDropAction(Qt::IgnoreAction);
+            } else {
+                if(!DFMGlobal::keyCtrlIsPressed()){
+                    event->setDropAction(Qt::MoveAction);
+                }else {
+                    event->setDropAction(Qt::CopyAction);
                 }
             }
         }
