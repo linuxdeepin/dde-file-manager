@@ -804,7 +804,7 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
             newmsg = tr("Can’t verify the identity of %1.").arg(arg1) + '\n' +
                      tr("This happens when you log in to a computer the first time.") + '\n' +
                      tr("The identity sent by the remote computer is") + '\n' +
-                     tr("%2.").arg(arg2) + '\n' +
+                     arg2 + '\n' +
                      tr("If you want to be absolutely sure it is safe to continue, contact the system administrator.");
         }
         newmsg = newmsg.replace("\\r\\n","\n");

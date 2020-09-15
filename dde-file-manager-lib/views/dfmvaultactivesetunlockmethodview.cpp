@@ -79,10 +79,10 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
             this, &DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged);
 
     // 提示信息
-    m_pPasswordHintLabel = new DLabel(tr("Hint"), this);
+    m_pPasswordHintLabel = new DLabel(tr("Password hint"), this);
     m_pTips = new QLineEdit(this);
     m_pTips->setMaxLength(14);
-    m_pTips->setPlaceholderText(tr("Password Hint"));
+    m_pTips->setPlaceholderText(tr("Optional"));
 
 
 
