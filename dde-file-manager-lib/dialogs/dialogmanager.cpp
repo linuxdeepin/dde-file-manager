@@ -898,7 +898,7 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
         urls << linkfile;
         // fix bug#47512 回收站的无效链接需要单独处理，直接删除
         if (linkfile.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
-            QProcess::execute("rm -rf \"" + linkfile.toLocalFile() + "\"");
+            fileService->deleteFiles(this, urls, false, true, true);
         } else {
             fileService->moveToTrash(this, urls);
         }
@@ -1412,7 +1412,7 @@ int DialogManager::showMessageDialog(messageType messageLevel, const QString &ti
 }
 
 void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
-{    
+{
     if (!BluetoothTransDialog::canSendFiles()) {
         showMessageDialog(messageType::msgInfo, tr("Sending files now, please try later"));
         return;

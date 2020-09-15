@@ -53,8 +53,7 @@
 
 #include "models/trashfileinfo.h"
 
-namespace FileSortFunction
-{
+namespace FileSortFunction {
 //! 定义根据路径排序函数
 COMPARE_FUN_DEFINE(sourceFilePath, TrashFilePath, TrashFileInfo)
 }
@@ -320,7 +319,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
         }
     }
 
-    fileService->deleteFiles(event->sender(), localList, false, event->silent());
+    fileService->deleteFiles(event->sender(), localList, false, event->silent(), true);
 
     return true;
 }
