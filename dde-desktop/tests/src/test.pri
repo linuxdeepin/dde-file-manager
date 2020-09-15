@@ -19,5 +19,8 @@ SOURCES += \
     $$PWD/dde-zone/ut-hotzone-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-thumbnailmanager-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-frame-test.cpp \
-    $$PWD/dde-wallpaper-chooser/ut-checkbox-test.cpp
+    $$PWD/dde-wallpaper-chooser/ut-checkbox-test.cpp \
+    $$PWD/model/ut-dfileselectionmodel.cpp \
+    $$PWD/presenter/ut-gridcore-test.cpp \
+    $$PWD/dde-wallpaper-chooser/ut-button-test.cpp 
 
