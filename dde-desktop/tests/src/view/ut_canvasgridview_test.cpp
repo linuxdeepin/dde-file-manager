@@ -13,6 +13,8 @@
 #include "util/xcb/xcb.h"
 #include <QWidget>
 #include <QTest>
+#include <QEventLoop>
+#include "../../view/desktopitemdelegate.h"
 
 
 class CanvasGridViewTest : public testing::Test
@@ -375,3 +377,60 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_mouseReleaseEvent){
 //TEST_F(CanvasGridViewTest, CanvasGridViewTest_showEmptyAreaMenu){
 //todo
 //}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
+{
+    QModelIndex current = m_canvasGridView->d->currentCursorIndex;
+    auto url = m_canvasGridView->model()->getUrlByIndex(current);
+    auto pos = GridManager::instance()->position(1, url.toString());
+    m_canvasGridView->moveCursorGrid(QAbstractItemView::MoveLeft, Qt::ShiftModifier);
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_setIconByLevel)
+{
+    m_canvasGridView->setIconByLevel(3);
+    QTimer timer;
+    timer.start(500);
+    QEventLoop loop;
+    QObject::connect(m_canvasGridView, &CanvasGridView::changeIconLevel, [&]{
+        loop.exit();
+    });
+    QObject::connect(&timer, &QTimer::timeout, [&]{
+        timer.stop();
+        loop.exit();
+    });
+    loop.exec();
+    DesktopItemDelegate* p =m_canvasGridView->itemDelegate();
+    EXPECT_EQ(3, p->iconSizeLevel());
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_handleContextMenuAction)
+{
+    m_canvasGridView->m_screenName = "HDMI-0";
+    m_canvasGridView->handleContextMenuAction(MenuAction::SelectAll);
+    m_canvasGridView->handleContextMenuAction(CanvasGridView::AutoMerge);
+    QTimer timer;
+    timer.start(500);
+    QEventLoop loop;
+    QObject::connect(m_canvasGridView, &CanvasGridView::autoMergeToggled, [&]{
+        EXPECT_TRUE(true);
+        loop.exit();
+    });
+    QObject::connect(&timer, &QTimer::timeout, [&]{
+        timer.stop();
+        loop.exit();
+    });
+    loop.exec();
+    m_canvasGridView->handleContextMenuAction(MenuAction::LastModifiedDate);
+    EXPECT_TRUE(m_canvasGridView->model()->enabledSort());
+    EXPECT_EQ(DFileSystemModel::FileLastModifiedRole, m_canvasGridView->model()->sortRole());
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
+{
+     QKeyEvent test(QEvent::KeyPress, Qt::Key_Up,  Qt::NoModifier);
+     m_canvasGridView->keyPressEvent(&test);
+     QString name = qApp->applicationName();
+     QKeyEvent test1(QEvent::KeyPress, Qt::Key_F1,  Qt::NoModifier);
+     EXPECT_EQ(name, qApp->applicationName());
+}
