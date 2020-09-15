@@ -33,7 +33,7 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
 {
     //密码输入框
     m_pwdEdit = new DPasswordEdit(this);
-    m_pwdEdit->lineEdit()->setPlaceholderText(tr("Verify your password"));
+    m_pwdEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     // 提示按钮
@@ -50,8 +50,8 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     connect(m_tipsBtn, &QPushButton::clicked, [this]{
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
-            strPwdHint.insert(0, tr("Password hint:"));
-            showToolTip(strPwdHint, 3000, EN_ToolTip::Information);
+            QString hint = tr("Password hint: %1").arg(strPwdHint);
+            showToolTip(hint, 3000, EN_ToolTip::Information);
         }
     });
 }

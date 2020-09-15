@@ -73,8 +73,7 @@ void DFMVaultRemovePages::initConnect()
 
 void DFMVaultRemovePages::showVerifyWidget()
 {
-    setInfo(tr("Once removed, the files in it will be permanently deleted,") + '\n' +
-            tr("please confirm and continue"));
+    setInfo(tr("Once removed, the files in it will be permanently deleted"));
 
     setCloseButtonVisible(true);
     clearButtons();
@@ -203,7 +202,7 @@ void DFMVaultRemovePages::onLockVault(int state)
             m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
         }else{
             // error tips
-            QString errMsg = tr("Remove File Vault failed.%1").arg(VaultController::getErrorInfo(state));
+            QString errMsg = tr("Failed to remove file vault");
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
             dialog.setTitle(errMsg);

@@ -42,7 +42,7 @@
 #define TXT_CANC BluetoothTransDialog::tr("Cancel")
 #define TXT_DONE BluetoothTransDialog::tr("Done")
 #define TXT_RTRY BluetoothTransDialog::tr("Retry")
-#define TXT_OKAY BluetoothTransDialog::tr("Ok")
+#define TXT_OKAY BluetoothTransDialog::tr("OK")
 
 static const QString ICON_CONNECT = "notification-bluetooth-connected";
 static const QString ICON_DISCONN = "notification-bluetooth-disconnected";

@@ -157,7 +157,7 @@ void ShareInfoFrame::handleShareNameChanged()
     // 修复BUG-44947
     // 当共享文件名为“..”或“.”时，弹出提示框
     if(name == ".." || name == "."){
-        QString strMsg = tr("The share file name must not be .. or .");
+        QString strMsg = tr("The share name must not be two dots (..) or one dot (.)");
         dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
         return;
     }

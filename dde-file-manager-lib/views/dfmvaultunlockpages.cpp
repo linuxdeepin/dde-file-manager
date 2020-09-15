@@ -94,8 +94,8 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(m_tipsButton, &QPushButton::clicked, [this]{
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
-            strPwdHint.insert(0, tr("Password hint:"));
-            showToolTip(strPwdHint, 3000, EN_ToolTip::Information);
+            QString hint = tr("Password hint: %1").arg(strPwdHint);
+            showToolTip(hint, 3000, EN_ToolTip::Information);
         }
     });
     connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
@@ -227,7 +227,7 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
             }
         } else {
             // error tips
-            QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
+            QString errMsg = tr("Failed to unlock file vault");
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
             dialog.setTitle(errMsg);
