@@ -19,26 +19,26 @@
         <translation>The disc image was corrupted, cannot mount now, please erase the disc first</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="634"/>
+        <location filename="../controllers/appcontroller.cpp" line="646"/>
         <source>Mount error: unsupported image format</source>
         <translation>Mount error: unsupported image format</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="712"/>
-        <location filename="../controllers/appcontroller.cpp" line="748"/>
+        <location filename="../controllers/appcontroller.cpp" line="724"/>
+        <location filename="../controllers/appcontroller.cpp" line="760"/>
         <source>The device was not safely removed</source>
         <translation type="unfinished">The device was not safely removed</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="712"/>
-        <location filename="../controllers/appcontroller.cpp" line="748"/>
+        <location filename="../controllers/appcontroller.cpp" line="724"/>
+        <location filename="../controllers/appcontroller.cpp" line="760"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation type="unfinished">Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="729"/>
+        <location filename="../controllers/appcontroller.cpp" line="741"/>
         <source>Action timeout, action is canceled</source>
-        <translation>Action is timeout, and canceled!</translation>
+        <translation>Authentication timed out!</translation>
     </message>
 </context>
 <context>
@@ -392,17 +392,17 @@
         <location filename="../views/dfmopticalmediawidget.cpp" line="104"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="127"/>
         <source>No file to burn</source>
-        <translation type="unfinished"></translation>
+        <translation>No files to burn</translation>
     </message>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="127"/>
         <source>No file to burn, Duplicated files will be ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>No files to burn</translation>
     </message>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="145"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation type="unfinished"></translation>
+        <translation>No files to burn</translation>
     </message>
 </context>
 <context>
@@ -1042,7 +1042,7 @@
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1103"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1102"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1651"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
@@ -1094,7 +1094,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="602"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="613"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Add tag &quot;%1&quot;</translation>
     </message>
@@ -1419,7 +1419,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="589"/>
         <source>Checking process failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Data verification failed</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="592"/>
@@ -2356,7 +2356,7 @@
         <translation>Backup file</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="675"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="674"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation>Unknown</translation>
@@ -3217,14 +3217,14 @@
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
         <location filename="../dialogs/propertydialog.cpp" line="1307"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="695"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="694"/>
         <source>%1 item</source>
         <translation>%1 item</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
         <location filename="../dialogs/propertydialog.cpp" line="1307"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="697"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="696"/>
         <source>%1 items</source>
         <translation>%1 items</translation>
     </message>
@@ -3251,24 +3251,24 @@
         <translation>Time deleted</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1312"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1311"/>
         <source>Loading...</source>
         <translation>Loading...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="793"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="792"/>
         <source>File has been moved or deleted</source>
         <translation>File has been moved or deleted</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="795"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="803"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="809"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="794"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="802"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="808"/>
         <source>You do not have permission to access this folder</source>
         <translation>You do not have permission to access this folder</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="813"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="812"/>
         <location filename="../models/recentfileinfo.cpp" line="247"/>
         <location filename="../models/trashfileinfo.cpp" line="384"/>
         <location filename="../models/vaultfileinfo.cpp" line="138"/>
@@ -4084,34 +4084,34 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1439"/>
-        <location filename="../controllers/appcontroller.cpp" line="1463"/>
+        <location filename="../controllers/appcontroller.cpp" line="1451"/>
+        <location filename="../controllers/appcontroller.cpp" line="1475"/>
         <source>Action timeout, action is canceled</source>
-        <translation>Action is timeout, and canceled!</translation>
+        <translation>Authentication timed out!</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1446"/>
-        <location filename="../controllers/appcontroller.cpp" line="1468"/>
+        <location filename="../controllers/appcontroller.cpp" line="1458"/>
+        <location filename="../controllers/appcontroller.cpp" line="1480"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disk is busy, cannot unmount now</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1446"/>
+        <location filename="../controllers/appcontroller.cpp" line="1458"/>
         <source>The device was unmounted insecurely</source>
-        <translation>The device was unmounted insecurely</translation>
+        <translation>The device was not safely unmounted</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1468"/>
+        <location filename="../controllers/appcontroller.cpp" line="1480"/>
         <source>The device was removed insecurely</source>
-        <translation>The device was removed insecurely</translation>
+        <translation>The device was not safely removed</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1482"/>
+        <location filename="../controllers/appcontroller.cpp" line="1494"/>
         <source>The device was not safely removed</source>
         <translation>The device was not safely removed</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1482"/>
+        <location filename="../controllers/appcontroller.cpp" line="1494"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
