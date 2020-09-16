@@ -44,6 +44,7 @@ class FileUtils {
 public:
 
     static QString XDG_RUNTIME_DIR;
+    static QStringList CURRENT_ISGVFSFILE_PATH;
 
     static bool removeRecurse(const QString &path, const QString &name);
     static void recurseFolder(const QString &path, const QString &parent,

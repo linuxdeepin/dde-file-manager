@@ -123,8 +123,8 @@ public:
         const QFileInfo &info = iterator.fileInfo();
         bool isnotsyslink = !info.isSymLink();
         //父目录是gvfs目录，那么子目录和子文件必须是gvfs文件
-
-        bool currentisgvfs = isgvfs ? true : FileUtils::isGvfsMountFile(info.path(), true);
+        QString path = info.path();
+        bool currentisgvfs = isgvfs ? true : FileUtils::isGvfsMountFile(path, true);
         QMimeType mimetype;
         bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(info, mimetype) :
                          FileUtils::isDesktopFile(info);
