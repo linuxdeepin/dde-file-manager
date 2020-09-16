@@ -704,6 +704,9 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {
+        if(d->expandedItem && d->expandedItem->index == index) {
+            d->expandedItem->option = opt;
+        }
         return;
     }
 
