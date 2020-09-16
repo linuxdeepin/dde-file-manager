@@ -301,6 +301,9 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     if (m_url.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, m_url);
         Q_ASSERT(fi);
+        if (fi) {
+            fi->refresh(true);
+        }
 
         QString name = fi->fileDisplayName();
         QIcon icon = QIcon::fromTheme(fi->iconName());
@@ -395,6 +398,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             close();
             return;
         }
+        fileInfo->refresh(true);
         m_icon->setPixmap(fileInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(fileInfo->fileDisplayName());
         m_edit->setAlignment(Qt::AlignHCenter);
