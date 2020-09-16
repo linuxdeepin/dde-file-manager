@@ -2788,6 +2788,11 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
 #endif
 
+    if (!info || !info->exists()) {
+        qDebug() << "info is null or not exists,so exit";
+        return;
+    }
+
     QSet<MenuAction> disableList;
     QSet<MenuAction> unusedList;
 
