@@ -696,12 +696,16 @@ void UDiskListener::changeVolumeDiskInfo(const QDiskInfo &diskInfo)
 void UDiskListener::mount(const QString &path)
 {
     qDebug() << path;
+    // main.cpp : handleEnvOfOpenAsAdmin 已经解决 gio root 用户下的挂载问题
+    GvfsMountManager::mount(path);
+#if 0
     // The gio's method cannot mount block device, use the UDisks's method replace it.(bug 42690)
     if (DFMGlobal::isOpenAsAdmin() && mountByUDisks(path)) {
         return;
     } else {
         GvfsMountManager::mount(path);
     }
+#endif
 }
 
 bool UDiskListener::mountByUDisks(const QString &path)
