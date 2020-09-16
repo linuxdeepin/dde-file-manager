@@ -96,6 +96,10 @@ public:
     QMutex checkgvfsmtx,smbftpmutex;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
     QEventLoop *m_loop = nullptr;
+
+    QTimer m_tagEditorChangeTimer;
+    DUrlList m_tagEditorFiles;
+    QStringList m_tagEditorTags;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
@@ -127,6 +131,10 @@ DFileService::DFileService(QObject *parent)
         }
     });
 
+    d_ptr->m_tagEditorChangeTimer.setSingleShot(true);
+    connect(&d_ptr->m_tagEditorChangeTimer, &QTimer::timeout, this, [=]{
+        makeTagsOfFiles(nullptr, d_ptr->m_tagEditorFiles, d_ptr->m_tagEditorTags);
+    });
 }
 
 DFileService::~DFileService()
@@ -856,8 +864,10 @@ bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlLis
         }
     }
 
+    bool loopEvent = urlList.length() > 5;
+    QList<DFMSetFileTagsEvent *> eventList;
     for (const DUrl &url : urlList) {
-        QStringList tags_of_file = getTagsThroughFiles(sender, {url});
+        QStringList tags_of_file = getTagsThroughFiles(sender, {url}, loopEvent);
         QSet<QString> tags_of_file_set = tags_set;
 
         tags_of_file_set += QSet<QString>::fromList(tags_of_file);
@@ -866,8 +876,13 @@ bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlLis
             tags_of_file_set.remove(dirty_tag);
         }
 
-        QSharedPointer<DFMSetFileTagsEvent> event(new DFMSetFileTagsEvent(sender, url, tags_of_file_set.toList()));
-        bool result = DFMEventDispatcher::instance()->processEventWithEventLoop(event).toBool();
+        DFMSetFileTagsEvent *event = new DFMSetFileTagsEvent(sender, url, tags_of_file_set.toList());
+        eventList.append(event);
+    }
+
+    for (DFMSetFileTagsEvent *event : eventList) {
+        QSharedPointer<DFMSetFileTagsEvent> spEvent(event);
+        bool result = DFMEventDispatcher::instance()->processEventWithEventLoop(spEvent).toBool();
 
         if (!result)
             return false;
@@ -882,9 +897,9 @@ bool DFileService::removeTagsOfFile(const QObject *sender, const DUrl &url, cons
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMRemoveTagsOfFileEvent>(sender, url, tags)).toBool();
 }
 
-QList<QString> DFileService::getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls) const
+QList<QString> DFileService::getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls, const bool loopEvent) const
 {
-    if (urls.count() > 10)
+    if (urls.count() > 10 || loopEvent)
         return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(sender, urls)).value<QList<QString>>();
 
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(sender, urls)).value<QList<QString>>();
@@ -1228,6 +1243,23 @@ bool DFileService::isSmbFtpContain(const DUrl &url)
 {
     QMutexLocker lk(&d_ptr->smbftpmutex);
     return d_ptr->m_rootsmbftpurllist.contains(url);
+}
+
+void DFileService::onTagEditorChanged(const QStringList &tags, const DUrlList &files)
+{
+    Q_D(DFileService);
+
+    //暂停timer
+    d->m_tagEditorChangeTimer.stop();
+
+    //重设tag数据和files
+    d->m_tagEditorTags.clear();
+    d->m_tagEditorTags.append(tags);
+    d->m_tagEditorFiles.clear();
+    d->m_tagEditorFiles.append(files);
+
+    //开始timer计时，500毫秒内连续的editor被编辑改变合并为一次改变
+    d->m_tagEditorChangeTimer.start(500);
 }
 
 QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
