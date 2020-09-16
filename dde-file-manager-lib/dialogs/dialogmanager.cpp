@@ -1079,7 +1079,7 @@ void DialogManager::showRestoreFailedSourceNotExists(const DUrlList &urlList)
     if (urlList.count() == 1) {
         d.setMessage(tr("Failed to restore %1 file, the source file does not exist").arg(QString::number(1)));
     } else if (urlList.count() > 1) {
-        d.setMessage(tr("Failed to restore %1 files, the source files does not exist").arg(QString::number(urlList.count())));
+        d.setMessage(tr("Failed to restore %1 files, the source files do not exist").arg(QString::number(urlList.count())));
     }
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
@@ -1450,7 +1450,7 @@ void DialogManager::showFormatDialog(const QString &devId)
 
     DDialog dlg;
     dlg.setIcon(m_dialogWarningIcon);
-    dlg.addButton(tr("Cancle"));
+    dlg.addButton(tr("Cancel"));
     dlg.addButton(tr("Format"), true, DDialog::ButtonRecommend);
     dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
     if (dlg.exec() == 1) {
