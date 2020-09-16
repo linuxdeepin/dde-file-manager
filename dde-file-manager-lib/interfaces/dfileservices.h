@@ -146,7 +146,7 @@ public:
     bool setFileTags(const QObject *sender, const DUrl &url, const QList<QString> &tags) const;
     bool makeTagsOfFiles(const QObject *sender, const DUrlList &urlList, const QStringList &tags, const QSet<QString> dirtyTagFilter = QSet<QString>()) const;
     bool removeTagsOfFile(const QObject *sender, const DUrl &url, const QList<QString> &tags) const;
-    QList<QString> getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls) const;
+    QList<QString> getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls, const bool loopEvent = false) const;
 
     const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
@@ -184,6 +184,8 @@ public:
     void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
     //判断当前的可访问的smb和ftp中是否包含某个url
     bool isSmbFtpContain(const DUrl &url);
+
+    void onTagEditorChanged(const QStringList &tags, const DUrlList &files);
 signals:
     void fileOpened(const DUrl &fileUrl) const;
     void fileCopied(const DUrl &source, const DUrl &target) const;

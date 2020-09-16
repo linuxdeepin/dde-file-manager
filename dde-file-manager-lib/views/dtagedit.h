@@ -59,6 +59,7 @@ private:
 
     std::atomic<bool> m_flagForShown{ false };
 
+    bool m_isSettingDefault = false;
     QTimer m_waitForMoreCrumbChanged;   //用于等待短时间内的多次CrumbChanged
 };
 
