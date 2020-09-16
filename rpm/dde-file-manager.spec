@@ -168,6 +168,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/dde-home.desktop ||:
 %{_datadir}/dde-file-manager/templates/newDoc.wps
 %{_datadir}/dde-file-manager/templates/newExcel.et
 %{_datadir}/dde-file-manager/templates/newPowerPoint.dps
+%{_datadir}/dde-file-manager/templates/newDoc.doc
+%{_datadir}/dde-file-manager/templates/newExcel.xls
+%{_datadir}/dde-file-manager/templates/newPowerPoint.ppt
 %{_datadir}/dde-file-manager/templates/newTxt.txt
 %{_datadir}/dde-file-manager/translations/
 %{_datadir}/deepin/dde-file-manager/oem-menuextensions/.readme
