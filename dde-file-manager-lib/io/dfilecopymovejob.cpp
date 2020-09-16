@@ -993,7 +993,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
                 QString strDirName = strPath.section("/", -1, -1);
                 if (strDirName.toUtf8().length() > 255) {
                     action = setAndhandleError(DFileCopyMoveJob::MkdirError, fromInfo, toInfo,
-                                               qApp->translate("DFileCopyMoveJob", "Failed to open the dir, cause: File name too long"));
+                                               qApp->translate("DFileCopyMoveJob", "Failed to open the directory, cause: file name too long"));
                     break;
                 }
             }
@@ -1141,7 +1141,7 @@ open_file: {
                     qCDebug(fileJob()) << "open error:" << fromInfo->fileUrl();
                     action = setAndhandleError(DFileCopyMoveJob::OpenError, fromInfo,
                                                DAbstractFileInfoPointer(nullptr),
-                                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
+                                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: file name too long"));
                     break;
                 }
             }
@@ -1178,14 +1178,14 @@ open_file: {
                                                     DFileCopyMoveJob::PermissionError;
                 // task-36496 "Permission denied"没有被翻译 翻译为“没有权限”
                 QString errorstr("");
-                if("Permission denied" == toDevice->errorString()){
+                if ("Permission denied" == toDevice->errorString()) {
                     errorstr = (!toInfo->exists() || toInfo->isWritable()) ?
-                                                       qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: Permission denied") :
-                                                       QString();
+                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: Permission denied") :
+                               QString();
                 } else {
                     errorstr = (!toInfo->exists() || toInfo->isWritable()) ?
-                                                       qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()) :
-                                                       QString();
+                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()) :
+                               QString();
                 }
 
                 action = setAndhandleError(errortype, toInfo, DAbstractFileInfoPointer(nullptr), errorstr);
@@ -2046,7 +2046,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectoryRefine(DFileHandler *handler, const 
                 QString strDirName = strPath.section("/", -1, -1);
                 if (strDirName.toUtf8().length() > 255) {
                     action = setAndhandleError(DFileCopyMoveJob::MkdirError, fromInfo, toInfo,
-                                               qApp->translate("DFileCopyMoveJob", "Failed to open the dir, cause: File name too long"));
+                                               qApp->translate("DFileCopyMoveJob", "Failed to open the directory, cause: file name too long"));
                     break;
                 }
             }
@@ -2173,7 +2173,7 @@ void DFileCopyMoveJobPrivate::checkTagetNeedSync()
     DStorageInfo targetStorageInfo(targetUrl.toLocalFile());
     if (!m_isEveryReadAndWritesSnc && targetStorageInfo.isValid()) {
         const QString &fs_type = targetStorageInfo.fileSystemType();
-        m_isEveryReadAndWritesSnc =  (fs_type == "vfat" || fs_type == "cifs");
+        m_isEveryReadAndWritesSnc = (fs_type == "vfat" || fs_type == "cifs");
     }
 }
 
@@ -2536,7 +2536,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileRefine(const FileCopyInfoPointer copyinf
             QString strFileName = strPath.section("/", -1, -1);
             if (strFileName.toUtf8().length() > 255) {
                 action = setAndhandleError(DFileCopyMoveJob::OpenError, copyinfo->frominfo, DAbstractFileInfoPointer(nullptr),
-                                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
+                                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: file name too long"));
                 break;
             }
         }
@@ -2675,7 +2675,7 @@ open_file: {
                 if (strFileName.toUtf8().length() > 255) {
                     qCDebug(fileJob()) << "open error:" << copyinfo->frominfo->fileUrl();
                     action = setAndhandleError(DFileCopyMoveJob::OpenError, copyinfo->frominfo, DAbstractFileInfoPointer(nullptr),
-                                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
+                                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: file name too long"));
                     break;
                 }
             }
@@ -3148,7 +3148,7 @@ bool DFileCopyMoveJobPrivate::openRefine(const DFileCopyMoveJobPrivate::FileCopy
             if (strFileName.toUtf8().length() > 255) {
                 qCDebug(fileJob()) << "open error:" << copyinfo->frominfo->fileUrl();
                 action = setAndhandleError(DFileCopyMoveJob::OpenError, copyinfo->frominfo, DAbstractFileInfoPointer(nullptr),
-                                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
+                                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: file name too long"));
                 break;
             }
         }
