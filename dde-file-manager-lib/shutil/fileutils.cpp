@@ -1455,9 +1455,15 @@ bool FileUtils::isGvfsMountFile(const QString &filePath, const bool &isEx)
     //在获取是否是gvfs文件时，先缓存这个filepath，多线程访问时，判断线程是否访问的同一个文件
     static QMutex mutex;
     mutex.lock();
-    if (CURRENT_ISGVFSFILE_PATH.contains(filePath)) {
+    bool iscontains = CURRENT_ISGVFSFILE_PATH.contains(filePath);
+    mutex.unlock();
+    while (iscontains) {
         QThread::msleep(10);
+        mutex.lock();
+        iscontains = CURRENT_ISGVFSFILE_PATH.contains(filePath);
+        mutex.unlock();
     }
+    mutex.lock();
     CURRENT_ISGVFSFILE_PATH.push_back(filePath);
     mutex.unlock();
 

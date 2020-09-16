@@ -1919,8 +1919,6 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
         dataSize = completedDataSize;
     }
 
-    dataSize = targetIsRemovable <= 0 ? completedDataSizeOnBlockDevice : dataSize;
-
     dataSize += completedProgressDataSize;
 
     //优化
