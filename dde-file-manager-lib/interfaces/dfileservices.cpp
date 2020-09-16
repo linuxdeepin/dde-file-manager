@@ -1089,7 +1089,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     }
 
     //是网络文件，就去确定host和port端口号
-    bool bvist = false;
+    bool bvist = true;
     QString host,port;
     QStringList ipinfolist = rootfilename.split(",");
     if (ipinfolist.count() >= 1) {
