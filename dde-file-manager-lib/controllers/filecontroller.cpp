@@ -140,7 +140,7 @@ public:
                 newinfo->refresh(true);
                 return newinfo;
             }
-            return DAbstractFileInfoPointer(new DGvfsFileInfo(info, mimetype, isgvfs));
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(info, mimetype, false));
         }
         return DAbstractFileInfoPointer(new DFileInfo(info));
     }
@@ -213,7 +213,7 @@ public:
         //判断是否是gvfs文件，是就创建DGvfsFileInfo
         bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(), true);
         if (currentisgvfs) {
-            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo));
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo, false));
         }
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
@@ -300,7 +300,7 @@ public:
     {
         bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(), true);
         if (currentisgvfs) {
-            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo));
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo,false));
         }
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
@@ -379,7 +379,7 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
         return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
     if (currentisgvfs) {
-        return DAbstractFileInfoPointer(new DGvfsFileInfo(event->url()));
+        return DAbstractFileInfoPointer(new DGvfsFileInfo(event->url(),false));
     }
     return DAbstractFileInfoPointer(new DFileInfo(event->url()));
 }
