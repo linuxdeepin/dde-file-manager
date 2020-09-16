@@ -759,11 +759,6 @@ QRegion CanvasGridView::visualRegionForSelection(const QItemSelection &selection
     return region;
 }
 
-void CanvasGridView::enterEvent(QEvent *e)
-{
-    updateFrameCursor();
-    QAbstractItemView::enterEvent(e);
-}
 
 void CanvasGridView::mouseMoveEvent(QMouseEvent *event)
 {
@@ -2747,6 +2742,7 @@ void CanvasGridView::decreaseIcon()
     updateCanvas();
 }
 
+#if 0
 void CanvasGridView::updateFrameCursor()
 {
     static QCursor *lastArrowCursor = nullptr;
@@ -2767,6 +2763,7 @@ void CanvasGridView::updateFrameCursor()
         lastArrowCursor = cursor;
     }
 }
+#endif
 
 inline QPoint CanvasGridView::gridAt(const QPoint &pos) const
 {

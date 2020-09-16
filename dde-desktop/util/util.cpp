@@ -17,7 +17,7 @@
 #include <QWindow>
 #include <QDebug>
 
-#include <X11/Xcursor/Xcursor.h>
+//#include <X11/Xcursor/Xcursor.h>
 //for xcb
 #include <QtPlatformHeaders/QXcbWindowFunctions>
 
@@ -45,6 +45,7 @@ void set_desktop_window(QWidget *w)
     }
 }
 
+#if 0
 QCursor *loadQCursorFromX11Cursor(const char* theme, const char* cursorName, int cursorSize)
 {
     if (theme == nullptr || cursorName == nullptr || cursorSize <= 0)
@@ -64,6 +65,7 @@ QCursor *loadQCursorFromX11Cursor(const char* theme, const char* cursorName, int
     delete images;
     return cursor;
 }
+#endif
 
 void set_prview_window(QWidget *w)
 {
