@@ -76,6 +76,7 @@ DFM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
 QString FileUtils::XDG_RUNTIME_DIR = "";
+QStringList FileUtils::CURRENT_ISGVFSFILE_PATH;
 
 /**
  * @brief Recursive removes file or directory
@@ -1451,8 +1452,21 @@ bool FileUtils::isGvfsMountFile(const QString &filePath, const bool &isEx)
 {
     if (filePath.isEmpty())
         return false;
+    //在获取是否是gvfs文件时，先缓存这个filepath，多线程访问时，判断线程是否访问的同一个文件
+    static QMutex mutex;
+    mutex.lock();
+    if (CURRENT_ISGVFSFILE_PATH.contains(filePath)) {
+        QThread::msleep(10);
+    }
+    CURRENT_ISGVFSFILE_PATH.push_back(filePath);
+    mutex.unlock();
 
-    return !DStorageInfo::isLocalDevice(filePath, isEx);
+    bool isgvfsfile = !DStorageInfo::isLocalDevice(filePath, isEx);
+    //移除缓存
+    mutex.lock();
+    CURRENT_ISGVFSFILE_PATH.removeOne(filePath);
+    mutex.unlock();
+    return isgvfsfile;
 }
 
 bool FileUtils::isFileExists(const QString &filePath)
