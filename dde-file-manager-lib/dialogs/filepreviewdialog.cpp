@@ -314,7 +314,7 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
 void FilePreviewDialog::resizeEvent(QResizeEvent *event)
 {
     DAbstractDialog::resizeEvent(event);
-    QTimer::singleShot(50, this, [=]() { //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
+    QTimer::singleShot(50, this, [ = ]() { //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
         repaint(); //通过重绘来解决调整大小前的窗口残留的问题
     });
 }
@@ -360,7 +360,7 @@ void FilePreviewDialog::initUI()
     QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
     QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
     if ((XDG_SESSION_TYPE != QLatin1String("wayland")) &&
-            !WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)){
+            !WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
         m_closeButton = new DWindowCloseButton(this);
         m_closeButton->setObjectName("CloseButton");
         m_closeButton->setFocusPolicy(Qt::NoFocus);
@@ -408,12 +408,14 @@ void FilePreviewDialog::initUI()
     connect(m_statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
-        if (DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex))) {
+        if (DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex)))
+        {
             close();
         }
     });
     connect(shortcut_action, &QAction::triggered, this, [this] {
-        if (m_preview) {
+        if (m_preview)
+        {
             m_preview->copyFile();
         }
     });
@@ -564,7 +566,7 @@ void FilePreviewDialog::playCurrentPreviewFile()
         if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
             m_playingVideo = true;
             QTimer::singleShot(1000, [this] () {
-               m_playingVideo = false;
+                m_playingVideo = false;
             });
         }
         m_preview->play();
@@ -597,7 +599,13 @@ void FilePreviewDialog::updateTitle()
     QFont font = m_statusBar->title()->font();
     QFontMetrics fm(font);
     QString elidedText;
+
     if (!m_statusBar->preButton()->isVisible()) {
+        /*fix bug 46804 smb 中一直按着空格预览，m_preview 已经析构了，但是定时器的timeout事件已经执行，这里使用智能指针进行判断*/
+        if (!m_preview) {
+            qDebug() << "m_preview is null,so exit";
+            return;
+        }
         elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() - 30);
     } else {
         elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->preButton()->width() -
