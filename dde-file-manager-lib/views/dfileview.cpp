@@ -1113,35 +1113,35 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     }
     case Qt::LeftButton: {
         // 当事件source为MouseEventSynthesizedByQt，认为此事件为TouchBegin转换而来
-        if (event->source() == Qt::MouseEventSynthesizedByQt) {
-            d->lastTouchBeginPos = event->pos();
+//        if (event->source() == Qt::MouseEventSynthesizedByQt) {
+//            d->lastTouchBeginPos = event->pos();
 
-            // 清空触屏滚动操作，因为在鼠标按下时还不知道即将进行的是触屏滚动还是文件框选
-            if (QScroller::hasScroller(this)) {
-                // 不可使用 ungrab，会导致应用崩溃，或许是Qt的bug
-                QScroller::scroller(this)->deleteLater();
-            }
+//            // 清空触屏滚动操作，因为在鼠标按下时还不知道即将进行的是触屏滚动还是文件框选
+//            if (QScroller::hasScroller(this)) {
+//                // 不可使用 ungrab，会导致应用崩溃，或许是Qt的bug
+//                QScroller::scroller(this)->deleteLater();
+//            }
 
-            if (d->updateEnableSelectionByMouseTimer) {
-                d->updateEnableSelectionByMouseTimer->stop();
-            } else {
-                d->updateEnableSelectionByMouseTimer = new QTimer(this);
-                d->updateEnableSelectionByMouseTimer->setSingleShot(true);
+//            if (d->updateEnableSelectionByMouseTimer) {
+//                d->updateEnableSelectionByMouseTimer->stop();
+//            } else {
+//                d->updateEnableSelectionByMouseTimer = new QTimer(this);
+//                d->updateEnableSelectionByMouseTimer->setSingleShot(true);
 
-                static QObject *theme_settings = reinterpret_cast<QObject *>(qvariant_cast<quintptr>(qApp->property("_d_theme_settings_object")));
-                QVariant touchFlickBeginMoveDelay;
+//                static QObject *theme_settings = reinterpret_cast<QObject *>(qvariant_cast<quintptr>(qApp->property("_d_theme_settings_object")));
+//                QVariant touchFlickBeginMoveDelay;
 
-                if (theme_settings) {
-                    touchFlickBeginMoveDelay = theme_settings->property("touchFlickBeginMoveDelay");
-                }
+//                if (theme_settings) {
+//                    touchFlickBeginMoveDelay = theme_settings->property("touchFlickBeginMoveDelay");
+//                }
 
-                d->updateEnableSelectionByMouseTimer->setInterval(touchFlickBeginMoveDelay.isValid() ? touchFlickBeginMoveDelay.toInt() : 300);
+//                d->updateEnableSelectionByMouseTimer->setInterval(touchFlickBeginMoveDelay.isValid() ? touchFlickBeginMoveDelay.toInt() : 300);
 
-                connect(d->updateEnableSelectionByMouseTimer, &QTimer::timeout, d->updateEnableSelectionByMouseTimer, &QTimer::deleteLater);
-            }
+//                connect(d->updateEnableSelectionByMouseTimer, &QTimer::timeout, d->updateEnableSelectionByMouseTimer, &QTimer::deleteLater);
+//            }
 
-            d->updateEnableSelectionByMouseTimer->start();
-        }
+//            d->updateEnableSelectionByMouseTimer->start();
+//        }
 
         bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
@@ -1162,10 +1162,10 @@ void DFileView::mousePressEvent(QMouseEvent *event)
                 }
 
                 // 避免通过触屏拖动视图时当前选中被清除
-                if (event->source() != Qt::MouseEventSynthesizedByQt) {
-                    clearSelection();
-                    update();
-                }
+//                if (event->source() != Qt::MouseEventSynthesizedByQt) {
+//                    clearSelection();
+//                    update();
+//                }
             }
         } else if (DFMGlobal::keyCtrlIsPressed()) {
             //const QModelIndex &index = indexAt(event->pos());
@@ -1207,27 +1207,27 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
     Q_D(const DFileView);
 
     // source为此类型时认为是触屏事件
-    if (event->source() == Qt::MouseEventSynthesizedByQt) {
-        if (QScroller::hasScroller(this))
-            return;
+//    if (event->source() == Qt::MouseEventSynthesizedByQt) {
+//        if (QScroller::hasScroller(this))
+//            return;
 
-        // 在定时器期间收到鼠标move事件且距离大于一定值则认为触发视图滚动
-        if (d->updateEnableSelectionByMouseTimer
-                && d->updateEnableSelectionByMouseTimer->isActive()) {
-            const QPoint difference_pos = event->pos() - d->lastTouchBeginPos;
+//        // 在定时器期间收到鼠标move事件且距离大于一定值则认为触发视图滚动
+//        if (d->updateEnableSelectionByMouseTimer
+//                && d->updateEnableSelectionByMouseTimer->isActive()) {
+//            const QPoint difference_pos = event->pos() - d->lastTouchBeginPos;
 
-            if (qAbs(difference_pos.x()) > d->touchTapDistance
-                    || qAbs(difference_pos.y()) > d->touchTapDistance) {
-                QScroller::grabGesture(this);
-                QScroller *scroller = QScroller::scroller(this);
+//            if (qAbs(difference_pos.x()) > d->touchTapDistance
+//                    || qAbs(difference_pos.y()) > d->touchTapDistance) {
+//                QScroller::grabGesture(this);
+//                QScroller *scroller = QScroller::scroller(this);
 
-                scroller->handleInput(QScroller::InputPress, event->localPos(), static_cast<qint64>(event->timestamp()));
-                scroller->handleInput(QScroller::InputMove, event->localPos(), static_cast<qint64>(event->timestamp()));
-            }
+//                scroller->handleInput(QScroller::InputPress, event->localPos(), static_cast<qint64>(event->timestamp()));
+//                scroller->handleInput(QScroller::InputMove, event->localPos(), static_cast<qint64>(event->timestamp()));
+//            }
 
-            return;
-        }
-    }
+//            return;
+//        }
+//    }
 
     return DListView::mouseMoveEvent(event);
 }
