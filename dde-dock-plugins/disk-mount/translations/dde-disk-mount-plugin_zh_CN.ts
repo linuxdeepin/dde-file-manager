@@ -12,7 +12,7 @@
     <name>DiskControlItem</name>
     <message>
         <source>Unknown</source>
-        <translation>容量未知</translation>
+        <translation>未知</translation>
     </message>
 </context>
 <context>
