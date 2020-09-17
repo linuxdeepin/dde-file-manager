@@ -283,6 +283,13 @@ public:
             }
         }
 
+        // 如果路径中存在链接，需要将其还原，用于展示
+        if (m_hasSymLink) {
+            for (auto &path : searchResults) {
+                path.replace(m_newPrefix, m_oldPrefix);
+            }
+        }
+
         return !searchResults.isEmpty();
     }
 
@@ -300,7 +307,7 @@ public:
     {
         bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(), true);
         if (currentisgvfs) {
-            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo,false));
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo, false));
         }
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
@@ -308,6 +315,19 @@ public:
     DUrl url() const override
     {
         return DUrl::fromLocalFile(dir.absolutePath());
+    }
+
+    ///
+    /// \brief setSymLink 如果搜索路径中存在链接目录，记录一些参数用于搜索结果还原
+    /// \param hasSymLink 是否存在链接目录
+    /// \param oldPrefix 原始前缀
+    /// \param newPrefix 修改后的前缀
+    ///
+    void setSymLink(bool hasSymLink, const QString &oldPrefix, const QString &newPrefix)
+    {
+        m_hasSymLink = hasSymLink;
+        m_oldPrefix = oldPrefix;
+        m_newPrefix = newPrefix;
     }
 
 private:
@@ -318,6 +338,10 @@ private:
     mutable QStringList searchDirList;
     mutable quint32 searchStartOffset = 0, searchEndOffset = 0;
     mutable QStringList searchResults;
+
+    bool m_hasSymLink = false;
+    QString m_oldPrefix;
+    QString m_newPrefix;
 
     QDir dir;
     QFileInfo currentFileInfo;
@@ -343,6 +367,15 @@ public:
     DUrl url() const Q_DECL_OVERRIDE;
 
     bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
+
+    ///
+    /// \brief hasSymLinkDir 用于判断当前路径中是否存在快捷方式
+    /// \param path 路径
+    /// \param tmp 临时变量，存储快捷方式之后的路径
+    /// \param oldPrefix 链接目录
+    /// \return
+    ///
+    bool hasSymLinkDir(QString &path, QString &tmp, QString &oldPrefix);
 
     DFMFileListFile *hiddenFiles = nullptr;
 
@@ -379,7 +412,7 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
         return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
     if (currentisgvfs) {
-        return DAbstractFileInfoPointer(new DGvfsFileInfo(event->url(),false));
+        return DAbstractFileInfoPointer(new DGvfsFileInfo(event->url(), false));
     }
     return DAbstractFileInfoPointer(new DFileInfo(event->url()));
 }
@@ -1606,10 +1639,19 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
     Q_UNUSED(keyword);
     return false;
 #else // !DISABLE_QUICK_SEARCH
-    const QString pathForSearching = iterator->url().toLocalFile();
+    QString pathForSearching = iterator->url().toLocalFile();
 
     static ComDeepinAnythingInterface anything("com.deepin.anything", "/com/deepin/anything",
                                                QDBusConnection::systemBus());
+
+    // fix bug#48091 当文件路径中存在快捷方式时，将其转换为真实地址
+    QString tmp, oldPrefix, newPrefix;
+    bool hasLink = false;
+    if (hasSymLinkDir(pathForSearching, tmp, oldPrefix)) {
+        hasLink = true;
+        newPrefix = pathForSearching;
+        pathForSearching.append(tmp);
+    }
 
     if (!anything.hasLFT(pathForSearching)) {
         return false;
@@ -1621,7 +1663,26 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
         delete iterator;
 
     iterator = new DFMAnythingDirIterator(&anything, pathForSearching, keyword);
+    static_cast<DFMAnythingDirIterator *>(iterator)->setSymLink(hasLink, oldPrefix, newPrefix);
 
     return true;
 #endif // DISABLE_QUICK_SEARCH
+}
+
+bool FileDirIterator::hasSymLinkDir(QString &path, QString &tmp, QString &oldPrefix)
+{
+    QFileInfo info(path);
+    if (info.isSymLink()) {
+        oldPrefix = path;
+        path = info.symLinkTarget();
+        return true;
+    } else {
+        int last_dir_split_pos = path.lastIndexOf('/');
+        if (last_dir_split_pos < 0)
+            return false;
+
+        tmp.prepend(path.mid(last_dir_split_pos));
+        path = path.left(last_dir_split_pos);
+        return hasSymLinkDir(path, tmp, oldPrefix);
+    }
 }
