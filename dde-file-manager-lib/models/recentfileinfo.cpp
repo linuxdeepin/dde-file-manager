@@ -37,10 +37,16 @@ COMPARE_FUN_DEFINE(toLocalFile, RecentFilePath, RecentFileInfo)
 RecentFileInfo::RecentFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
+    QMutexLocker lk(&m_mutex);
     if (url.path() != "/") {
         setProxy(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.path())));
     }
     updateInfo();
+}
+
+RecentFileInfo::~RecentFileInfo()
+{
+    QMutexLocker lk(&m_mutex);
 }
 
 bool RecentFileInfo::makeAbsolute()
