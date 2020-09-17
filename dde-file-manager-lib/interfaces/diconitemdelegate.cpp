@@ -538,6 +538,7 @@ DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent)
     : DFMStyledItemDelegate(*new DIconItemDelegatePrivate(this), parent)
     , m_checkedIcon(QIcon::fromTheme("emblem-checked"))
 {
+    QMutexLocker lk(&m_mutex);
     Q_D(DIconItemDelegate);
 
     d->expandedItem = new ExpandedItem(this, parent->parent()->viewport());
@@ -556,10 +557,11 @@ DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent)
 
 DIconItemDelegate::~DIconItemDelegate()
 {
+    QMutexLocker lk(&m_mutex);
     Q_D(DIconItemDelegate);
 
     if (d->expandedItem) {
-        d->expandedItem->setParent(0);
+        d->expandedItem->setParent(nullptr);
         d->expandedItem->canDeferredDelete = true;
         d->expandedItem->deleteLater();
     }
@@ -573,11 +575,12 @@ void DIconItemDelegate::paint(QPainter *painter,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const
 {
+    QMutexLocker lk(&(const_cast<DIconItemDelegate*>(this)->m_mutex));
     Q_D(const DIconItemDelegate);
 
     bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
-    bool isDragMode = ((QPaintDevice *)parent()->parent()->viewport() != painter->device());
+    bool isDragMode = (static_cast<QPaintDevice*>(parent()->parent()->viewport()) != painter->device());
     bool isEnabled = option.state & QStyle::State_Enabled;
     bool hasFocus = option.state & QStyle::State_HasFocus;
 
