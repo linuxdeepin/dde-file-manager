@@ -2087,7 +2087,9 @@ DUrl DFileSystemModel::rootUrl() const
 DUrlList DFileSystemModel::sortedUrls()
 {
     Q_D(const DFileSystemModel);
-
+    if (!d->rootNode) {
+        return DUrlList();
+    }
     return d->rootNode->getChildrenUrlList();
 }
 
