@@ -110,6 +110,9 @@ void Desktop::showWallpaperSettings(QString name, int mode)
     }
 
     if (d->wallpaperSettings) {
+        //防止暴力操作，高频调用接口
+        if (d->wallpaperSettings->isVisible())
+            return;
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;
     }

@@ -840,7 +840,7 @@ void Frame::initUI()
         screensaverBtn->setMinimumWidth(40);
         //screensaverBtn->setFocusPolicy(Qt::NoFocus);
         m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
-        wallpaperBtn->setChecked(true);
+        screensaverBtn->setChecked(true);
     }
     connect(m_waitControl, &DButtonBox::buttonToggled, this, [this, time_array] (QAbstractButton * toggleBtn, bool) {
         int index = m_waitControl->buttonList().indexOf(toggleBtn);
