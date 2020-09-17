@@ -120,14 +120,14 @@ void SelectWork::run()
 {
     msleep(10);
     // 判断当前是否存在未处理的文件
-    if(!m_lstNoValid.isEmpty()){
+    if (!m_lstNoValid.isEmpty()) {
         QList<DUrl>::iterator itr = m_lstNoValid.begin();
-        while(itr != m_lstNoValid.end()){
+        while (itr != m_lstNoValid.end()) {
             msleep(10);
-            if(m_bStop)
+            if (m_bStop)
                 break;
             const QModelIndex &index = m_pModel->index(*itr);
-            if(index.isValid()){
+            if (index.isValid()) {
                 // 发送信号选中该文件
                 emit sigSetSelect(*itr);
                 itr = m_lstNoValid.erase(itr);
@@ -231,7 +231,7 @@ public:
 
     bool isVaultDelSigConnected = false; //is vault delete signal connected.
 
-	Q_DECLARE_PUBLIC(DFileView)
+    Q_DECLARE_PUBLIC(DFileView)
 };
 
 DFileView::DFileView(QWidget *parent)
@@ -727,7 +727,7 @@ void DFileView::select(const QList<DUrl> &list)
     for (const DUrl &url : list) {
         const QModelIndex &index = model()->index(url);
 
-        if(!index.isValid()){
+        if (!index.isValid()) {
             lstNoValid.push_back(url);
             continue;
         }
@@ -751,8 +751,8 @@ void DFileView::select(const QList<DUrl> &list)
         scrollTo(firstIndex, PositionAtTop);
 
     // 修复KLU TASK-37638 启动子线程，选中为选中的拷贝或剪贴的文件
-    if(!lstNoValid.isEmpty()){
-        if(m_pSelectWork->isRunning()){
+    if (!lstNoValid.isEmpty()) {
+        if (m_pSelectWork->isRunning()) {
             m_pSelectWork->stopWork();
             m_pSelectWork->wait();
         }
@@ -765,7 +765,7 @@ void DFileView::select(const QList<DUrl> &list)
 void DFileView::slotSetSelect(DUrl url)
 {
     const QModelIndex &index = model()->index(url);
-    if(index.isValid())
+    if (index.isValid())
         selectionModel()->select(index, QItemSelectionModel::Select);
 }
 
@@ -1409,7 +1409,7 @@ void DFileView::updateStatusBar()
     Q_D(DFileView);
     if (model()->state() != DFileSystemModel::Idle)
         return;
-
+    QPointer<DFileView> me = this;
     DFMEvent event(this);
     event.setWindowId(windowId());
     //来自搜索目录的url需要处理转换为localfile，否则statusBar上的展示会不正确
@@ -1429,7 +1429,10 @@ void DFileView::updateStatusBar()
     if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
         return;
     }
-
+    if (!me) {
+        qDebug() << "DFileView is null,so exit";
+        return;
+    }
     notifySelectUrlChanged(corectUrls);
 
     if (count == 0) {
@@ -3064,9 +3067,11 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
                 d->headerView->setSectionHidden(i, action->isChecked());
 
                 // fix bug#36610 增加或减少排序方式分类列表未自适应
-                if (d->allowedAdjustColumnSize) {
+                if (d->allowedAdjustColumnSize)
+                {
                     updateListHeaderViewProperty();
-                } else {
+                } else
+                {
                     updateColumnWidth();
                 }
             });
