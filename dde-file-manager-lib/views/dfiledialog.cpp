@@ -1368,7 +1368,7 @@ void DFileDialog::onCurrentInputNameChanged()
     updateAcceptButtonState();
 
     DFileSystemModel *model = getFileView()->model();
-    if (!model->sortedUrls().isEmpty()) {
+    if (model && !model->sortedUrls().isEmpty()) {
 
         const DAbstractFileInfoPointer &fileInfo = model->fileInfo(model->sortedUrls().first());
         if (fileInfo) {
