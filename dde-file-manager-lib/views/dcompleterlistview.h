@@ -46,11 +46,6 @@ protected:
 signals:
     void listCurrentChanged(const QModelIndex &current);
     void listSelectionChanged(const QItemSelection &selected);
-private:
-    bool m_bgrabmouse = false;
-    bool m_bshow = false;
-    QTimer *m_timer;
-    QPoint m_windowpos = QPoint();
 
 };
 
