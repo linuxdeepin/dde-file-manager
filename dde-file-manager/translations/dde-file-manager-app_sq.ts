@@ -2,22 +2,14 @@
 <context>
     <name>Application</name>
     <message>
-        <source>Deepin File Manager</source>
-        <translation type="vanished">Deepin File Manager</translation>
-    </message>
-    <message>
-        <location filename="../main.cpp" line="108"/>
+        <location filename="../main.cpp" line="150"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Përgjegjës Kartelash</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="112"/>
+        <location filename="../main.cpp" line="154"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation type="vanished">File Manager eshte nje dosje qe menaxhimi e krijuar e pavarur nga Deepin Technology, e paisur me kerkim, kopjim, kosh, ngjeshje/c&apos;gjeshje, dosjen e prones dhe funksione te tjera menaxhimi.</translation>
+        <translation>Përgjegjësi i Kartelave është një mjet i fuqishëm dhe i kollajtë për t’u përdorur për administrim kartelash, që përmban kërkim, kopjim, shpënie te hedhurinat, ngjeshje/çhngjeshje, veti kartelash dhe funksione të tjera të dobishme.</translation>
     </message>
 </context>
 </TS>

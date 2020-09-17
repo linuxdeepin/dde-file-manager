@@ -2,44 +2,40 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3070"/>
+        <location filename="../view/canvasgridview.cpp" line="3095"/>
         <source>Icon size</source>
         <translation>རྟགས་རིས་ཆེ་ཆུང་།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3078"/>
+        <location filename="../view/canvasgridview.cpp" line="3103"/>
         <source>Auto merge</source>
         <translation>རང་འགུལ་ལེགས་སྒྲིག</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3090"/>
+        <location filename="../view/canvasgridview.cpp" line="3115"/>
         <source>Auto arrange</source>
         <translation>སྟར་རང་སྒྲིག</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3145"/>
-        <location filename="../view/canvasgridview.cpp" line="3150"/>
+        <location filename="../view/canvasgridview.cpp" line="3170"/>
+        <location filename="../view/canvasgridview.cpp" line="3175"/>
         <source>Set Wallpaper</source>
         <translation>རྒྱབ་ཤོག་སྒྲིག་འགོད།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3148"/>
+        <location filename="../view/canvasgridview.cpp" line="3173"/>
         <source>Wallpaper and Screensaver</source>
         <translation>རྒྱབ་ཤོག་དང་འཆར་སྲུང་།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3292"/>
+        <location filename="../view/canvasgridview.cpp" line="3317"/>
         <source>Properties</source>
         <translation>ངོ་བོ།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3129"/>
+        <location filename="../view/canvasgridview.cpp" line="3154"/>
         <source>Display Settings</source>
         <translation>སྒྲིག་འགོད་མངོན་སྟོན།</translation>
-    </message>
-    <message>
-        <source>Corner Settings</source>
-        <translation type="vanished">ཚ་གནས་སྒྲིག་འགོད།</translation>
     </message>
 </context>
 <context>
@@ -73,9 +69,9 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="135"/>
+        <location filename="../main.cpp" line="136"/>
         <source>Desktop</source>
-        <translation>ཅོག་ངོས་མངོན་སྟོན།</translation>
+        <translation>ཅོག་ངོས།</translation>
     </message>
 </context>
 <context>
