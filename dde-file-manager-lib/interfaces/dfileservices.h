@@ -187,6 +187,8 @@ public:
     void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
     //处理rootfilelist中是否包含某个durl
     bool isRootFileContain(const DUrl &url);
+	//判断当前的可访问的smb和ftp中是否包含某个url
+    bool isSmbFtpContain(const DUrl &url);
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;
