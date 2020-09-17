@@ -889,6 +889,13 @@ void Frame::initListView()
 
 void Frame::refreshList()
 {
+    //fix bug 47159
+    //使用dbus接口打开屏保设置，在设置窗口显示前，在桌面快速点击左键，会导致屏保无法退出
+    //在该函数进入前，由于在桌面点了左键主窗口已经隐藏，后面继续起动屏保就没有设置窗口
+    //这里如果窗口已经隐藏就直接结束
+    if (!isVisible())
+        return;
+
     m_wallpaperList->hide();
     m_wallpaperList->clear();
     m_wallpaperList->show();
