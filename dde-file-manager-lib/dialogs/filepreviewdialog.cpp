@@ -530,6 +530,11 @@ void FilePreviewDialog::switchToPage(int index)
             adjustSize();
         } else
         {
+            /*fix bug 48357 预览图片快速切换导致预览析构了定时器还在工作，使用智能指针对其进行判断*/
+            if (!m_preview) {
+                qDebug() << "switchToPage m_preview is null,so exit";
+                return;
+            }
             if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
                 adjustSize();
             } else {
@@ -545,7 +550,7 @@ void FilePreviewDialog::switchToPage(int index)
                 }
             }
         }
-	playCurrentPreviewFile();
+        playCurrentPreviewFile();
         moveToCenter();
     });
 }
