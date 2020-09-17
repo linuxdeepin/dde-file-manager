@@ -422,7 +422,15 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             }
             if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() && fileInfo->canManageAuth() &&
                     !VaultController::ins()->isRootDirectory(m_url.toLocalFile())) {
-                titleList << authManager;
+                //在回收站搜索文件，需要使搜索结果的文件属性面板与回收站文件属性面板保持一致
+                if (m_url.isSearchFile()) {
+                    if (!fileInfo->redirectedFileUrl().isTrashFile()) {
+                        titleList << authManager;
+                    }
+                }
+                else {
+                    titleList << authManager;
+                }
             }
         }
         m_expandGroup = addExpandWidget(titleList);
@@ -1153,15 +1161,28 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
     }
 
+    //在回收站搜索文件，需要使搜索结果的文件属性面板与回收站文件属性面板保持一致
+    QString trashSourcePath = "";
+    if (info->fileUrl().isSearchFile() && info->redirectedFileUrl().isTrashFile()) {
+        const DAbstractFileInfoPointer &trashfileInfo = DFileService::instance()->createFileInfo(this, info->redirectedFileUrl());
+        trashSourcePath = static_cast<const TrashFileInfo *>(trashfileInfo.constData())->sourceFilePath();
+    }
+
     if (info->fileUrl().isTrashFile()) {
-        QString pathStr = static_cast<const TrashFileInfo *>(info.constData())->sourceFilePath();
-        SectionValueLabel *sourcePathLabel = new SectionValueLabel(pathStr);
-        QString elidedStr = sourcePathLabel->fontMetrics().elidedText(pathStr, Qt::ElideMiddle, 150);
-        sourcePathLabel->setToolTip(pathStr);
+        trashSourcePath = static_cast<const TrashFileInfo *>(info.constData())->sourceFilePath();
+    }
+
+    //添加回收站文件原始路径
+    if (!trashSourcePath.isEmpty()) {
+        SectionValueLabel *sourcePathLabel = new SectionValueLabel(trashSourcePath);
+        QString elidedStr = sourcePathLabel->fontMetrics().elidedText(trashSourcePath, Qt::ElideMiddle, 150);
+        sourcePathLabel->setToolTip(trashSourcePath);
         sourcePathLabel->setWordWrap(false);
         sourcePathLabel->setText(elidedStr);
         layout->addRow(sourcePathSectionLabel, sourcePathLabel);
     }
+
+
 
     if (info->fileUrl().isRecentFile()) {
         QString pathStr = info->filePath();
@@ -1182,7 +1203,19 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         QCheckBox *hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
         hideThisFile->setObjectName(QString("hideThisFileCheckBox"));
         //        hideThisFile->setToolTip("TODO: hint message?");
-        hideThisFile->setEnabled(DFMFileListFile::canHideByFile(info->filePath()) && !info->fileUrl().isTrashFile()); // fix bug#33763 回收站中不允许对文件属性进行编辑
+
+        //在回收站搜索文件，需要使搜索结果的文件属性面板与回收站文件属性面板保持一致
+        bool canHide = false;
+        if (DFMFileListFile::canHideByFile(info->filePath()) && !info->fileUrl().isTrashFile()) {   // fix bug#33763 回收站中不允许对文件属性进行编辑
+            canHide = true;
+            if (info->fileUrl().isSearchFile()) {
+                DUrl url = info->redirectedFileUrl();
+                if (url.isTrashFile())
+                    canHide = false;
+            }
+        }
+
+        hideThisFile->setEnabled(canHide);
         hideThisFile->setChecked(flf.contains(fileName));
         layout->addWidget(hideThisFile); // FIXME: do the UI thing later.
         connect(hideThisFile, &QCheckBox::clicked, this, &PropertyDialog::onHideFileCheckboxChecked);
