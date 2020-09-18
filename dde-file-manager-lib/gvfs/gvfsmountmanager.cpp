@@ -1625,9 +1625,13 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
 
         //! 下面这样做只是为了字符串翻译，因为错误信息是底层返回的
         QString err = QString::fromLocal8Bit(error->message);
+        bool format = true; // 根据错误的种类, 选择是否需要格式化, 这里仅对于错误 G_IO_ERROR_DBUS_ERROR 不处理, 后续可能会扩充
         switch (error->code) {
-        case 0:
+        case G_IO_ERROR_FAILED:
             err = QString(tr("No key available to unlock device"));
+            break;
+        case G_IO_ERROR_DBUS_ERROR:
+            format = false;
             break;
         default:
             break;
@@ -1637,7 +1641,9 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
                 fileSignalManager->requestShowErrorDialog(err, QString(" "));
             }
         } else {
-            dialogManager->showFormatDialog(qVolume.drive_unix_device());
+            if (format) {
+                dialogManager->showFormatDialog(qVolume.drive_unix_device());
+            }
         }
     } else {
         GMount *mount;
