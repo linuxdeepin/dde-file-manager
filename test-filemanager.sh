@@ -5,11 +5,13 @@ build_dir=$(cd ../$(dirname $0)/build-test-filemanager-unknown-Debug; pwd)
 extract_path="*/dde-file-manager/*"
 remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/*"
 
+#dde-file-manager 测试报告
+./third-party/test-prj-running.sh $build_dir/dde-file-manager test-dde-file-manager "$extract_path" "$remove_path"
 #dde-file-manager-lib 测试报告
 ./third-party/test-prj-running.sh $build_dir/dde-file-manager-lib test-dde-file-manager-lib "$extract_path" "$remove_path"
 
 #dde-desktop 测试报告
-#./third-party/test-prj-running.sh $build_dir/dde-desktop test-dde-desktop "$extract_path" "$remove_path"
+./third-party/test-prj-running.sh $build_dir/dde-desktop test-dde-desktop "$extract_path" "$remove_path"
 
 #dde-dock-plugins/disk-mount 测试报告
 cp dde-dock-plugins/test-dde-disk-mount-plugin $build_dir/dde-dock-plugins/disk-mount
