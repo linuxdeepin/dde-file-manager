@@ -226,7 +226,6 @@ signals:
     void newFileByInternal(const DUrl &url);
     void requestSelectFiles(const QList<DUrl> &urls);
     void sigJobFinished();
-    void showFilterButton();
 
 protected:
     bool remove(const DUrl &url);
@@ -286,9 +285,9 @@ private:
     Q_DECLARE_PRIVATE(DFileSystemModel)
     Q_DISABLE_COPY(DFileSystemModel)
 public:
-    bool ignoreDropFlag = false; //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时设置其为true，
-    //不调用candrop，节省时间,bug#10926
-    bool isDesktop = false; //紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
+     bool ignoreDropFlag = false; //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时设置其为true，
+                                  //不调用candrop，节省时间,bug#10926
+     bool isDesktop = false; //紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
 };
 
 #endif // DFILESYSTEMMODEL_H

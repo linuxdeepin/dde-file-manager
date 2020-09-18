@@ -53,7 +53,7 @@
 #include <QtGlobal>
 #ifdef __arm__
 // arm
-#include "./search/myfsearch.h"
+    #include "./search/myfsearch.h"
 #endif
 const int DToolBar::ButtonWidth = 24;
 const int DToolBar::ButtonHeight = 24;
@@ -103,7 +103,7 @@ void DToolBar::initUI()
     m_detailButton->setIconSize(iconSize);
     m_detailButton->setFixedSize(36, 36);
 
-    QHBoxLayout *mainLayout = new QHBoxLayout;
+    QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
     mainLayout->addSpacing(22);
     mainLayout->addWidget(m_contollerToolBar);
@@ -122,7 +122,7 @@ void DToolBar::initAddressToolBar()
     m_addressToolBar->setObjectName("AddressToolBar");
     //m_addressToolBar->setFixedHeight(40);
 
-    QHBoxLayout *backForwardLayout = new QHBoxLayout;
+    QHBoxLayout * backForwardLayout = new QHBoxLayout;
 
     m_backButton = new DButtonBoxButton(QStyle::SP_ArrowBack);
     m_backButton->setDisabled(true);
@@ -132,10 +132,10 @@ void DToolBar::initAddressToolBar()
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFixedWidth(36);
 
-    QList<DButtonBoxButton *> buttonList;
+    QList<DButtonBoxButton*> buttonList;
     buttonList << m_backButton << m_forwardButton;
 
-    DButtonBox *buttonBox = new DButtonBox(this);
+    DButtonBox* buttonBox = new DButtonBox(this);
     buttonBox->setButtonList(buttonList, false);
     buttonBox->setFocusPolicy(Qt::NoFocus);
 
@@ -153,11 +153,11 @@ void DToolBar::initAddressToolBar()
     backForwardLayout->setContentsMargins(0, 0, 0, 0);
 
 
-    QFrame *crumbAndSearch = new QFrame;
+    QFrame * crumbAndSearch = new QFrame;
     m_crumbWidget = new DFMCrumbBar(this);
     crumbAndSearch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    QHBoxLayout *comboLayout = new QHBoxLayout;
+    QHBoxLayout * comboLayout = new QHBoxLayout;
     comboLayout->addWidget(m_crumbWidget);
     comboLayout->addWidget(m_searchButton);
     comboLayout->setSpacing(10);
@@ -165,7 +165,7 @@ void DToolBar::initAddressToolBar()
 
     crumbAndSearch->setLayout(comboLayout);
 
-    QHBoxLayout *mainLayout = new QHBoxLayout;
+    QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addLayout(backForwardLayout);
     mainLayout->addWidget(crumbAndSearch);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -187,11 +187,11 @@ void DToolBar::initContollerToolBar()
 
 void DToolBar::initConnect()
 {
-    connect(m_detailButton, &QAbstractButton::clicked, this, &DToolBar::detailButtonClicked);
+    connect(m_detailButton, &QAbstractButton::clicked,this, &DToolBar::detailButtonClicked);
     connect(m_backButton, &DButtonBoxButton::clicked, this, &DToolBar::onBackButtonClicked);
     connect(m_forwardButton, &DButtonBoxButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
-    connect(m_crumbWidget, &DFMCrumbBar::crumbListItemSelected, this, [this](const DUrl & url) {
+    connect(m_crumbWidget, &DFMCrumbBar::crumbListItemSelected, this, [this](const DUrl &url){
         //判断网络文件是否可以到达
         if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
             return;
@@ -206,7 +206,7 @@ void DToolBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
     connect(this, &DToolBar::toolbarUrlChanged, m_crumbWidget, &DFMCrumbBar::updateCurrentUrl);
 
-    DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(parent());
+    DFileManagerWindow *window = qobject_cast<DFileManagerWindow*>(parent());
 
     if (window) {
         connect(window, &DFileManagerWindow::currentViewStateChanged, this, [this, window] {
@@ -249,11 +249,11 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
     }
 #ifdef __arm__
 // arm
-    fsearch_Find(text.toStdString().c_str());//fsearch 开始搜索
-    qDebug() << "fsearch text" << text;
+        fsearch_Find(text.toStdString().c_str());//fsearch 开始搜索
+        qDebug()<<"fsearch text"<<text;
 #endif
     const QString &currentDir = QDir::currentPath();
-    const DUrl &currentUrl = qobject_cast<DFileManagerWindow *>(topLevelWidget())->currentUrl();
+    const DUrl &currentUrl = qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl();
 
     if (currentUrl.isLocalFile()) {
         QDir::setCurrent(currentUrl.toLocalFile());
@@ -275,7 +275,7 @@ void DToolBar::onSearchButtonClicked()
         m_crumbWidget->showAddressBar("");
     } else {
         // toggle asb visible
-        DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window());
+        DFileManagerWindow* dfmWindow = qobject_cast<DFileManagerWindow*>(window());
         bool oldState = dfmWindow->isAdvanceSearchBarVisible();
         dfmWindow->toggleAdvanceSearchBar(!oldState);
         m_searchButton->setDown(!oldState);
@@ -301,11 +301,7 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
 
     pushUrlToHistoryStack(event.fileUrl());
 }
-void DToolBar::showFilterButton()
-{
-    if (m_searchButton->isHidden())
-        m_searchButton->setHidden(false);
-}
+
 void DToolBar::back()
 {
     DUrl url = m_navStack->back();
@@ -313,7 +309,8 @@ void DToolBar::back()
     if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
         return;
     }
-    if (!url.isEmpty()) {
+    if(!url.isEmpty())
+    {
         updateBackForwardButtonsState();
         DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, window());
     }
@@ -326,7 +323,8 @@ void DToolBar::forward()
     if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
         return;
     }
-    if (!url.isEmpty()) {
+    if(!url.isEmpty())
+    {
         updateBackForwardButtonsState();
         DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, window());
     }
@@ -342,7 +340,7 @@ void DToolBar::handleHotkeyCtrlF(quint64 winId)
 void DToolBar::handleHotkeyCtrlL(quint64 winId)
 {
     if (winId == WindowManager::getWindowId(this)) {
-        m_crumbWidget->showAddressBar(qobject_cast<DFileManagerWindow *>(topLevelWidget())->currentUrl());
+        m_crumbWidget->showAddressBar(qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl());
     }
 }
 
@@ -356,15 +354,13 @@ void DToolBar::pushUrlToHistoryStack(DUrl url)
     updateBackForwardButtonsState();
 }
 
-void DToolBar::addHistoryStack()
-{
+void DToolBar::addHistoryStack(){
     m_navStacks.append(new HistoryStack(65536));
 }
 
-void DToolBar::switchHistoryStack(const int index)
-{
+void DToolBar::switchHistoryStack(const int index){
     m_navStack = m_navStacks.at(index);
-    if (!m_navStack)
+    if(!m_navStack)
         return;
     updateBackForwardButtonsState();
 }
@@ -390,7 +386,6 @@ void DToolBar::toggleSearchButtonState(bool asb)
     }
 
     if (asb) {
-        m_searchButton->setHidden(true);
         m_searchButton->setObjectName("filterButton");
         m_searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
         m_searchButton->style()->unpolish(m_searchButton);
@@ -400,69 +395,66 @@ void DToolBar::toggleSearchButtonState(bool asb)
 #ifdef __arm__
 // arm
         fsearch_Init();//fsearch 搜索引擎初始化
-        qDebug() << "fsearch init";
+        qDebug()<<"fsearch init";
 #endif
     } else {
-        m_searchButton->setHidden(false);
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setIcon(QIcon::fromTheme("search"));
         m_searchButton->setDown(false);
         m_searchButtonAsbState = false;
-        DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window());
+        DFileManagerWindow* dfmWindow = qobject_cast<DFileManagerWindow*>(window());
         dfmWindow->toggleAdvanceSearchBar(false);
 #ifdef __arm__
 // arm
         fsearch_Close();;//fsearch 搜索引擎关闭
-        qDebug() << "fsearch close";
+        qDebug()<<"fsearch close";
 #endif
     }
 }
 
-void DToolBar::removeNavStackAt(int index)
-{
+void DToolBar::removeNavStackAt(int index){
     m_navStacks.removeAt(index);
 
-    if (index < m_navStacks.count())
+    if(index < m_navStacks.count())
         m_navStack = m_navStacks.at(index);
     else
-        m_navStack = m_navStacks.at(m_navStacks.count() - 1);
+        m_navStack = m_navStacks.at(m_navStacks.count()-1);
 
-    if (!m_navStack)
+    if(!m_navStack)
         return;
-    if (m_navStack->size() > 1)
+    if(m_navStack->size() > 1)
         m_backButton->setEnabled(true);
     else
         m_backButton->setEnabled(false);
 
-    if (m_navStack->isLast())
+    if(m_navStack->isLast())
         m_forwardButton->setEnabled(false);
     else
         m_forwardButton->setEnabled(true);
 }
 
-void DToolBar::moveNavStacks(int from, int to)
-{
-    m_navStacks.move(from, to);
+void DToolBar::moveNavStacks(int from, int to){
+    m_navStacks.move(from,to);
 }
 
-int DToolBar::navStackCount() const
-{
+int DToolBar::navStackCount() const{
     return m_navStacks.count();
 }
 
 void DToolBar::updateBackForwardButtonsState()
 {
-    if (m_navStack->size() <= 1) {
+    if(m_navStack->size() <= 1){
         m_backButton->setEnabled(false);
         m_forwardButton->setEnabled(false);
-    } else {
-        if (m_navStack->isFirst())
+    }
+    else{
+        if(m_navStack->isFirst())
             m_backButton->setEnabled(false);
         else
             m_backButton->setEnabled(true);
 
-        if (m_navStack->isLast())
+        if(m_navStack->isLast())
             m_forwardButton->setEnabled(false);
         else
             m_forwardButton->setEnabled(true);
@@ -473,7 +465,7 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
 {
     m_actionList = list;
 
-    for (DFMActionButton *button : m_contollerToolBar->findChildren<DFMActionButton *>()) {
+    for (DFMActionButton *button : m_contollerToolBar->findChildren<DFMActionButton*>()) {
         m_contollerToolBarContentLayout->removeWidget(button);
         button->deleteLater();
     }
@@ -496,7 +488,7 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
 
     if (m_detailButton) {
         m_detailButton->setHidden(list.isEmpty());
-        if (m_detailButton->isChecked() && list.isEmpty())
+        if(m_detailButton->isChecked() && list.isEmpty())
             m_detailButton->click();
     }
 }
@@ -512,10 +504,10 @@ void DToolBar::triggerActionByIndex(int index)
 
 void DToolBar::onBackButtonClicked()
 {
-    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMBackEvent>(this), qobject_cast<DFileManagerWindow *>(window()));
+    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMBackEvent>(this), qobject_cast<DFileManagerWindow*>(window()));
 }
 
 void DToolBar::onForwardButtonClicked()
 {
-    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMForwardEvent>(this), qobject_cast<DFileManagerWindow *>(window()));
+    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMForwardEvent>(this), qobject_cast<DFileManagerWindow*>(window()));
 }

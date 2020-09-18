@@ -2599,15 +2599,15 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
             //        if (fileHash.contains(fileInfo->fileUrl())) {
             //            continue;
             //        }
-            if (!fileInfo) {
-                continue;
-            }
-            //挂载设备下目录添加tag后 移除该挂载设备 目录已不存在但其URL依然还保存在tag集合中
-            //该问题导致这些不存在的目录依然会添加到tag的fileview下 引起其他被标记文件可能标记数据获取失败
-            //为了避免引起其他问题 暂时只对tag的目录做处理
-            if (fileInfo->fileUrl().scheme() == TAG_SCHEME && !fileInfo->exists()) {
-                continue;
-            }
+                    if (!fileInfo) {
+            continue;
+        }
+        //挂载设备下目录添加tag后 移除该挂载设备 目录已不存在但其URL依然还保存在tag集合中
+        //该问题导致这些不存在的目录依然会添加到tag的fileview下 引起其他被标记文件可能标记数据获取失败
+        //为了避免引起其他问题 暂时只对tag的目录做处理
+        if (fileInfo->fileUrl().scheme() == TAG_SCHEME && !fileInfo->exists()) {
+            continue;
+        }
 
 
             //qDebug() << "update node url = " << fileInfo->filePath();
@@ -2639,13 +2639,12 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
             continue;
         }
 
-        // qDebug() << "update node url = " << fileInfo->filePath();
+       // qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
         //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
         if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
             fileHash[fileInfo->fileUrl()] = chileNode;
             fileList << chileNode;
-            emit showFilterButton();
         }
     }
 #endif
