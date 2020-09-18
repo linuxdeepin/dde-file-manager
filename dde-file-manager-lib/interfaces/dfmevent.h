@@ -34,6 +34,7 @@
 #include <QDirIterator>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QModelIndex>
 
 #include <functional>
 
@@ -102,7 +103,7 @@ public:
         CustomBase = 1000                            // first user event id
     };
 
-    explicit DFMEvent(const QObject *sender = 0);
+    explicit DFMEvent(const QObject *sender = nullptr);
     explicit DFMEvent(Type type, const QObject *sender);
 
     DFMEvent(const DFMEvent &other);
@@ -656,12 +657,13 @@ class DFMMenuActionEvent : public DFMUrlListBaseEvent
 {
 public:
     explicit DFMMenuActionEvent(const QObject *sender, const DFileMenu *menu, const DUrl &currentUrl,
-                                const DUrlList &selectedUrls, DFMGlobal::MenuAction action);
+                                const DUrlList &selectedUrls, DFMGlobal::MenuAction action, const QModelIndex &index = QModelIndex());
 
     const DFileMenu *menu() const;
     const DUrl currentUrl() const;
     const DUrlList selectedUrls() const;
     DFMGlobal::MenuAction action() const;
+    const QModelIndex clickedIndex() const; //当前右键点击的index
 
     static QSharedPointer<DFMMenuActionEvent> fromJson(const QJsonObject &json);
 };

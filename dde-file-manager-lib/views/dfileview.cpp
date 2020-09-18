@@ -2838,7 +2838,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         return;
     }
 
-    menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
+    menu->setEventData(rootUrl(), selectedUrls(), windowId(), this, index);
 
     fileViewHelper()->handleMenu(menu);
     // 若此处使用this，那么当切换到其台view时，当前view释放，会造成野指针引起崩溃

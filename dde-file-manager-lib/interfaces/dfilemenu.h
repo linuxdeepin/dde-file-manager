@@ -30,17 +30,19 @@
 #include "dfmglobal.h"
 #include "durl.h"
 
+#include <QModelIndex>
+
 class DFMMenuActionEvent;
 class DFileMenu : public QMenu
 {
     Q_OBJECT
 
 public:
-    explicit DFileMenu(QWidget * parent = 0);
-    ~DFileMenu(){ }
+    explicit DFileMenu(QWidget * parent = nullptr);
+    ~DFileMenu() override { }
 
     const QSharedPointer<DFMMenuActionEvent> makeEvent(DFMGlobal::MenuAction action) const;
-    void setEventData(const DUrl &currentUrl, const DUrlList &selectedUrls, quint64 eventId = 0, const QObject *sender = 0);
+    void setEventData(const DUrl &currentUrl, const DUrlList &selectedUrls, quint64 eventId = 0, const QObject *sender = nullptr, const QModelIndex &index = QModelIndex());
 
     QAction *actionAt(int index) const;
     QAction *actionAt(const QString &text) const;
@@ -67,6 +69,7 @@ private:
     quint64 m_eventId = 0;
     const QObject *m_sender = Q_NULLPTR;
     QSet<DFMGlobal::MenuAction> m_ignoreMenuActions; //Don't handle MenuAction list in libdde-file-manager in m_ignoreMenuActions;
+    QModelIndex m_clickedIndex;  //右键点击的index
 };
 
 #endif // DFILEMENU_H
