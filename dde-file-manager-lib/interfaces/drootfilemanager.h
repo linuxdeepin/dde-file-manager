@@ -61,6 +61,8 @@ public:
     void changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo);
     //处理rootfilelist中是否包含某个durl
     bool isRootFileContain(const DUrl &url);
+    //get root file info cache
+    static const DAbstractFileInfoPointer getFileInfo(const DUrl &fileUrl);
 
 signals:
     void rootFileChange(const DAbstractFileInfoPointer &chi) const;
@@ -71,7 +73,7 @@ public Q_SLOTS:
     void hideSystemPartition();
 
 private:
-    explicit DRootFileManager(QObject *parent = 0);
+    explicit DRootFileManager(QObject *parent = nullptr);
     ~DRootFileManager();
 
     QScopedPointer<DRootFileManagerPrivate> d_ptr;

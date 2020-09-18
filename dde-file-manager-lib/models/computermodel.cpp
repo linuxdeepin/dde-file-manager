@@ -656,7 +656,21 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
         data.cat = ComputerModelItemData::Category::cat_widget;
         data.widget = w;
     } else {
-        data.fi = fileService->createFileInfo(this, url);
+        //这里不用去创建fileinfo，已经缓存了rootfileinfo //get root file info cache
+        if (url.toString().endsWith(SUFFIX_GVFSMP))
+        {
+            const DAbstractFileInfoPointer &info = DRootFileManager::getFileInfo(url);
+            if (info) {
+                info->refresh();
+                data.fi = info;
+            }
+            else {
+                data.fi = fileService->createFileInfo(this, url);
+            }
+        }
+        else {
+            data.fi = fileService->createFileInfo(this, url);
+        }
         if (data.fi->suffix() == SUFFIX_USRDIR) {
             data.cat = ComputerModelItemData::Category::cat_user_directory;
         } else {
