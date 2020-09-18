@@ -85,7 +85,8 @@ public:
                 return false;
         }
 
-        const QModelIndex &index = viewHelper->model()->index(menu_event.selectedUrls().first());
+        //优先取当前点击的index作为tagedit的基点
+        const QModelIndex &index = menu_event.clickedIndex() != QModelIndex() ? menu_event.clickedIndex() : viewHelper->model()->index(menu_event.selectedUrls().first());
         const QRect &rect = viewHelper->parent()->visualRect(index);
         QStyleOptionViewItem option = viewHelper->parent()->viewOptions();
 

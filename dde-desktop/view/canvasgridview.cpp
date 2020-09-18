@@ -3319,7 +3319,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         menu->addAction(property);
     }
 
-    menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+    menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
 
     //断开连接，桌面优先处理
     //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突，
@@ -3376,10 +3376,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         //将取消共享文件夹的选中路径提到里面
         case MenuAction::Share: {
             if(info->fileUrl().scheme() == DFMMD_SCHEME){
-                menu->setEventData(curUrl, realList, winId(), this);
+                menu->setEventData(curUrl, realList, winId(), this, index);
             }
             else {
-                menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+                menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
             }
             break;
         }

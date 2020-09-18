@@ -319,7 +319,7 @@ QSharedPointer<DFMUrlBaseEvent> DFMUrlBaseEvent::fromJson(Type type, const QJson
 }
 
 DFMUrlListBaseEvent::DFMUrlListBaseEvent()
-    : DFMUrlListBaseEvent(0, DUrlList())
+    : DFMUrlListBaseEvent(nullptr, DUrlList())
 {
 
 }
@@ -907,12 +907,13 @@ QSharedPointer<DFMOpenUrlEvent> DFMOpenUrlEvent::fromJson(const QJsonObject &jso
 }
 
 DFMMenuActionEvent::DFMMenuActionEvent(const QObject *sender, const DFileMenu *menu, const DUrl &currentUrl,
-                                       const DUrlList &selectedUrls, DFMGlobal::MenuAction action)
+                                       const DUrlList &selectedUrls, DFMGlobal::MenuAction action, const QModelIndex &index)
     : DFMUrlListBaseEvent(MenuAction, sender, selectedUrls)
 {
     setProperty(QT_STRINGIFY(DFMMenuActionEvent::menu), (quintptr)menu);
     setProperty(QT_STRINGIFY(DFMMenuActionEvent::currentUrl), currentUrl);
     setProperty(QT_STRINGIFY(DFMMenuActionEvent::action), action);
+    setProperty(QT_STRINGIFY(DFMMenuActionEvent::clickedIndex), index);
 }
 
 const DFileMenu *DFMMenuActionEvent::menu() const
@@ -933,6 +934,11 @@ const DUrlList DFMMenuActionEvent::selectedUrls() const
 DFMGlobal::MenuAction DFMMenuActionEvent::action() const
 {
     return property(QT_STRINGIFY(DFMMenuActionEvent::action), DFMGlobal::Unknow);
+}
+
+const QModelIndex DFMMenuActionEvent::clickedIndex() const
+{
+    return property(QT_STRINGIFY(DFMMenuActionEvent::clickedIndex), QModelIndex());
 }
 
 QSharedPointer<DFMMenuActionEvent> DFMMenuActionEvent::fromJson(const QJsonObject &json)
