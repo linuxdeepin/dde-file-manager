@@ -220,7 +220,14 @@ void DRootFileManager::changRootFile(const QList<DAbstractFileInfoPointer> &root
 
 bool DRootFileManager::isRootFileContain(const DUrl &url)
 {
+    QMutexLocker lk(&d_ptr->rootfileMtx);
     return d_ptr->rootfilelist.contains(url);
+}
+
+const DAbstractFileInfoPointer DRootFileManager::getFileInfo(const DUrl &fileUrl)
+{
+    QMutexLocker lk(&DRootFileManagerPrivate::rootfileMtx);
+    return DRootFileManagerPrivate::rootfilelist.value(fileUrl);
 }
 
 void DRootFileManager::hideSystemPartition()
