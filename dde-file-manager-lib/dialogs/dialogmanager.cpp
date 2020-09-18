@@ -1124,11 +1124,11 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         ret = d.exec();
     }
     if (ret) {
-        QWidget *window = WindowManager::getWindowById(event.windowId());
+        QWidget *w = WindowManager::getWindowById(event.windowId());
+        DFileManagerWindow *window = dynamic_cast<DFileManagerWindow *>(w);
         if (window) {
-            DFileManagerWindow *w = static_cast<DFileManagerWindow *>(window);
             DUrl parentUrl = event.urlList().at(0).parentUrl();
-            w->cd(parentUrl);
+            window->cd(parentUrl);
             window->raise();
             QTimer::singleShot(1000, [ = ] { emit fileSignalManager->requestSelectFile(event); });
         }
