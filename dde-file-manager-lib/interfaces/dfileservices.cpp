@@ -986,6 +986,8 @@ void DFileService::setCursorBusyState(const bool bbusy)
 {
     //fix bug 34594,当快速点击左边侧边栏会出现鼠标一直在转圈圈, 去掉全局判断，直接调用鼠标状态
     if (bbusy) {
+        if (QApplication::overrideCursor() && QApplication::overrideCursor()->shape() == Qt::WaitCursor)
+            return;
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     } else {
 //        QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
