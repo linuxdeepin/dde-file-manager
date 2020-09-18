@@ -1127,7 +1127,7 @@ void AppController::actionSendToRemovableDisk()
         if (u.scheme() == BURN_SCHEME || u.scheme() == TAG_SCHEME || u.scheme() == SEARCH_SCHEME || u.scheme() == RECENT_SCHEME) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, u);
             if (fi)
-                u = fi->mimeDataUrl();
+                u = fi->redirectedFileUrl();
         }
     }
 
@@ -1157,7 +1157,8 @@ void AppController::actionStageFileForBurning()
     QString destdev = action->property("dest_drive").toString();
     DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
     for (DUrl &u : urlList) {
-        for (DAbstractFileInfoPointer fi = fileService->createFileInfo(sender(), u); fi->canRedirectionFileUrl(); fi = fileService->createFileInfo(sender(), u)) {
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(sender(), u);
+        if(fi){ // MasteredMediaFileInfo::canRedirectionFileUrl() 有问题，现在暂时不知道怎么修改
             u = fi->redirectedFileUrl();
         }
     }
