@@ -370,7 +370,7 @@ bool DFMRootFileWatcherPrivate::start()
         Q_EMIT wpar->fileDeleted(url);
         QString uri = mnt->getRootFile()->uri();
         qDebug() << uri << "mount removed";
-        if (uri.contains("smb-share://") || uri.contains("smb://")) {
+        if (uri.contains("smb-share://") || uri.contains("smb://") || uri.contains("ftp://") || uri.contains("sftp://")) {
             // remove NetworkNodes cache, so next time cd uri will fetchNetworks
             QString smbUri = uri;
             if (smbUri.endsWith("/")) {
