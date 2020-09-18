@@ -100,13 +100,14 @@ public:
     void requestToSelectUrls();
     bool isAdvanceSearchBarVisible();
     void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
+    void showFilterButton();
 
 signals:
     void aboutToClose();
     void positionChanged(const QPoint &pos);
     void currentUrlChanged();
     void currentViewStateChanged();
-    void selectUrlChanged(const QList<DUrl>& urlList);
+    void selectUrlChanged(const QList<DUrl> &urlList);
 
 public slots:
     void moveCenter(const QPoint &cp);
@@ -116,7 +117,7 @@ public slots:
 
     bool cd(const DUrl &fileUrl);
     bool cdForTab(int tabIndex, const DUrl &fileUrl);
-    bool cdForTabByView(DFMBaseView *view , const DUrl &fileUrl);
+    bool cdForTabByView(DFMBaseView *view, const DUrl &fileUrl);
 
     bool openNewTab(DUrl fileUrl);
     void switchToView(DFMBaseView *view);

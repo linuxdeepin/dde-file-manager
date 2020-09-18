@@ -2226,6 +2226,12 @@ void DFileView::initConnects()
         else
             setViewModeToList();
     });
+
+    // fix bug#47473 有搜索结果时才展示高级筛选面板
+    connect(model(), &DFileSystemModel::showFilterButton, this, [this]() {
+        DFileManagerWindow *w = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(windowId()));
+        w->showFilterButton();
+    });
 }
 
 void DFileView::increaseIcon()

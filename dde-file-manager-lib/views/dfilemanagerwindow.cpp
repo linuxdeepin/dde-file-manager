@@ -1,26 +1,26 @@
-    /*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*
+* Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
+*               2016 ~ 2018 dragondjf
+*
+* Author:     dragondjf<dingjiangfeng@deepin.com>
+*
+* Maintainer: dragondjf<dingjiangfeng@deepin.com>
+*             zccrs<zhangjide@deepin.com>
+*             Tangtong<tangtong@deepin.com>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "dfilemanagerwindow.h"
 #include "dtoolbar.h"
@@ -423,7 +423,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
     if (current_view) {
         // 为了解决 bug 34363: [4K屏]下且[缩放]，[ICON视图]下[浏览大量文件]，同时[疯狂滚动 scrollbar] 导致的崩溃问题
-        auto fileView = dynamic_cast<DFileView*>(current_view);
+        auto fileView = dynamic_cast<DFileView *>(current_view);
         if (fileView && fileView->isIconViewMode()) {
             auto model = fileView->model();
             if (model) {
@@ -1014,7 +1014,8 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
         return true;
     }
-    default: break;
+    default:
+        break;
     }
 
     return false;
@@ -1303,7 +1304,7 @@ void DFileManagerWindow::initConnect()
         if (VaultController::isVaultFile(url.toString()))
         {
             // 如果是快捷方式，则赋值为快捷方式的源文件路径，便于正常显示快捷方式的路径
-            if(info->isSymLink()){
+            if (info->isSymLink()) {
                 url = info->symLinkTarget();
                 url = VaultController::localUrlToVault(url);
             }
@@ -1465,4 +1466,10 @@ void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
     if (d->advanceSearchBar && resetForm) {
         d->advanceSearchBar->resetForm(false);
     }
+}
+void DFileManagerWindow::showFilterButton()
+{
+    Q_D(DFileManagerWindow);
+
+    d->toolbar->showFilterButton();
 }
