@@ -30,6 +30,7 @@
 #include <DGuiApplicationHelper>
 #include <QTimer>
 #include <QException>
+#include <QPainterPath>
 
 #include "app/define.h"
 #include "dfileservices.h"
@@ -112,7 +113,7 @@ private:
     QTimer *m_timer;
     bool m_isSettingValue;
     bool m_isEnableHover;
-	bool ispausestate = false;
+    bool ispausestate = false;
 
     DFMTaskWidget *q_ptr;
     Q_DECLARE_PUBLIC(DFMTaskWidget)

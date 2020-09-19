@@ -86,6 +86,7 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QStorageInfo>
+#include <QPainterPath>
 //#include <QVariantAnimation>
 #include <QScrollArea>
 #include <ddiskmanager.h>

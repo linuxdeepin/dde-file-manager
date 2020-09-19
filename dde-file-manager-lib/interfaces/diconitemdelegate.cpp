@@ -41,6 +41,7 @@
 #include <QApplication>
 #include <QAbstractItemView>
 #include <QVBoxLayout>
+#include <QPainterPath>
 #include <dgiosettings.h>
 #include <private/qtextengine_p.h>
 #include <DApplicationHelper>
@@ -115,7 +116,7 @@ QPainterPath boundingPath(QList<QRectF> rects, qreal radius, qreal padding)
         return path;
     }
 
-    auto joinRightCorner = [&] (const QRectF &rect, const QRectF &prevRect, const QRectF &nextRect) {
+    auto joinRightCorner = [&] (const QRectF & rect, const QRectF & prevRect, const QRectF & nextRect) {
         if (Q_LIKELY(prevRect.isValid())) {
             qreal new_radius = qMin(radius, qAbs(prevRect.right() - rect.right()) / 2);
 
@@ -141,7 +142,7 @@ QPainterPath boundingPath(QList<QRectF> rects, qreal radius, qreal padding)
         }
     };
 
-    auto joinLeftCorner = [&] (const QRectF &rect, const QRectF &prevRect, const QRectF &nextRect) {
+    auto joinLeftCorner = [&] (const QRectF & rect, const QRectF & prevRect, const QRectF & nextRect) {
         if (Q_LIKELY(nextRect.isValid())) {
             qreal new_radius = qMin(radius, qAbs(nextRect.x() - rect.x()) / 2);
 
@@ -167,7 +168,7 @@ QPainterPath boundingPath(QList<QRectF> rects, qreal radius, qreal padding)
         }
     };
 
-    auto preproccess = [&] (QRectF &rect, const QRectF &prev) {
+    auto preproccess = [&] (QRectF & rect, const QRectF & prev) {
         if (qAbs(rect.x() - prev.x()) < radius) {
             rect.setLeft(prev.x());
         }
@@ -263,7 +264,7 @@ QSizeF FileTagObjectInterface::intrinsicSize(QTextDocument *doc, int posInDocume
     Q_UNUSED(posInDocument)
     Q_UNUSED(doc)
 
-    const TagTextFormat &f = static_cast<const TagTextFormat&>(format);
+    const TagTextFormat &f = static_cast<const TagTextFormat &>(format);
     const QList<QColor> &colors = f.colors();
     const int diameter = f.diameter();
 
@@ -278,7 +279,7 @@ void FileTagObjectInterface::drawObject(QPainter *painter, const QRectF &rect, Q
     Q_UNUSED(posInDocument)
     Q_UNUSED(doc)
 
-    const TagTextFormat &f = static_cast<const TagTextFormat&>(format);
+    const TagTextFormat &f = static_cast<const TagTextFormat &>(format);
     const QList<QColor> &colors = f.colors();
     const QColor borderColor = f.borderColor();
     qreal diameter = f.diameter();
@@ -576,12 +577,12 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
-    bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
+    bool isDragMode = ((QPaintDevice *)parent()->parent()->viewport() != painter->device());
     bool isEnabled = option.state & QStyle::State_Enabled;
     bool hasFocus = option.state & QStyle::State_HasFocus;
 
     if (index == d->expandedIndex && !parent()->isSelected(index))
-        const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
+        const_cast<DIconItemDelegate *>(this)->hideNotEditingIndexWidget();
 
     painter->setOpacity(parent()->isTransparent(index) ? 0.3 : 1.0);
 
@@ -600,7 +601,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         if (editing_widget)
             editing_widget->setFont(opt.font);
 
-        const_cast<DIconItemDelegate*>(this)->updateItemSizeHint();
+        const_cast<DIconItemDelegate *>(this)->updateItemSizeHint();
 //        parent()->parent()->updateEditorGeometries();
     }
 
@@ -621,11 +622,11 @@ void DIconItemDelegate::paint(QPainter *painter,
         }
     }
 
-    if ((isDropTarget && !isSelected) ||option.state & QStyle::StateFlag::State_Selected) {
+    if ((isDropTarget && !isSelected) || option.state & QStyle::StateFlag::State_Selected) {
         if (isCanvas) {
             c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
         } else {
-            c.setAlpha(c.alpha()+30);
+            c.setAlpha(c.alpha() + 30);
         }
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
         c = c.lighter();
@@ -642,7 +643,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
     path.addRoundedRect(rect, ICON_MODE_BACK_RADIUS, ICON_MODE_BACK_RADIUS);
 
-    if (!isCanvas && !isDragMode){ // 桌面和拖拽的图标不画背景
+    if (!isCanvas && !isDragMode) { // 桌面和拖拽的图标不画背景
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->fillPath(path, c);
         painter->setRenderHint(QPainter::Antialiasing, false);
@@ -691,8 +692,8 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     if (!isCanvas && isSelected) {
         QRect rc = option.rect;
-        rc.setSize({30,30});
-        rc.moveTopRight(QPoint(option.rect.right(),option.rect.top()));
+        rc.setSize({30, 30});
+        rc.moveTopRight(QPoint(option.rect.right(), option.rect.top()));
         m_checkedIcon.paint(painter, rc);
     }
 
@@ -706,8 +707,8 @@ void DIconItemDelegate::paint(QPainter *painter,
     QRectF label_rect = opt.rect;
 
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
-    label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2*backgroundMargin - ICON_MODE_BACK_RADIUS);
-    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS/2);
+    label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
+    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
 
     if (isSelected && isCanvas) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
@@ -719,7 +720,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     bool singleSelected = parent()->selectedIndexsCount() < 2;
 
     if (isSelected && singleSelected) {
-        const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
+        const_cast<DIconItemDelegate *>(this)->hideNotEditingIndexWidget();
 
         int height = 0;
 
@@ -754,7 +755,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         }
     } else {
         if (!singleSelected) {
-            const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
+            const_cast<DIconItemDelegate *>(this)->hideNotEditingIndexWidget();
         }
     }
 
@@ -856,7 +857,7 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
     editor->setFixedWidth(option.rect.width());
 
-    FileIconItem *item = qobject_cast<FileIconItem*>(editor);
+    FileIconItem *item = qobject_cast<FileIconItem *>(editor);
 
     if (!item)
         return;
@@ -866,7 +867,7 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     if (icon_size.height() != icon->size().height()) {
         bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
         int topoffset =  isCanvas ? 0 : (opt.rect.height() - icon_size.height()) / 3;//update edit pos
-        icon->setFixedHeight(icon_size.height()+topoffset);
+        icon->setFixedHeight(icon_size.height() + topoffset);
     }
 }
 
@@ -880,14 +881,14 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
     const QSize &icon_size = parent()->parent()->iconSize();
 
-    if (ExpandedItem *item = qobject_cast<ExpandedItem*>(editor)) {
+    if (ExpandedItem *item = qobject_cast<ExpandedItem *>(editor)) {
         item->iconHeight = icon_size.height();
         item->setOpacity(parent()->isTransparent(index) ? 0.3 : 1);
 
         return;
     }
 
-    FileIconItem *item = qobject_cast<FileIconItem*>(editor);
+    FileIconItem *item = qobject_cast<FileIconItem *>(editor);
 
     if (!item)
         return;
@@ -916,7 +917,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     item->edit->document()->setTextWidth(d->itemSizeHint.width());
     item->setOpacity(parent()->isTransparent(index) ? 0.3 : 1);
 
-    if(item->edit->isReadOnly())
+    if (item->edit->isReadOnly())
         return;
 
     const QString &selectionWhenEditing = parent()->baseName(index);
@@ -979,8 +980,8 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
     int backgroundMargin = isCanvas ? 0 : COLUMU_PADDING;
 
-    label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING - 2*backgroundMargin - ICON_MODE_BACK_RADIUS);
-    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS/2);
+    label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
+    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
 
     QStyleOptionViewItem opt = option;
@@ -1010,7 +1011,7 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     // background rect
     QRect background_rect = option.rect;
     if (!isCanvas) {
-         // 为了让对勾右上角， 缩小框框
+        // 为了让对勾右上角， 缩小框框
         background_rect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
         geometries << background_rect;
     }
@@ -1128,8 +1129,8 @@ void DIconItemDelegate::updateItemSizeHint()
     d->textLineHeight = parent()->parent()->fontMetrics().height();
 
     int width = parent()->parent()->iconSize().width() + 30;
-    int height = parent()->parent()->iconSize().height() + 2*COLUMU_PADDING
-            + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight;
+    int height = parent()->parent()->iconSize().height() + 2 * COLUMU_PADDING
+                 + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight;
     int size = qMax(width, height);
     d->itemSizeHint = QSize(size, size);
     //d->itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight);
@@ -1176,7 +1177,7 @@ void DIconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *la
     if (!colors.isEmpty()) {
         if (!layout->engine()->block.docHandle()) {
             if (!d->document)
-                const_cast<DIconItemDelegatePrivate*>(d)->document = new QTextDocument(const_cast<DIconItemDelegate*>(this));
+                const_cast<DIconItemDelegatePrivate *>(d)->document = new QTextDocument(const_cast<DIconItemDelegate *>(this));
 
             d->document->setPlainText(layout->text());
             layout->engine()->block = d->document->firstBlock();
@@ -1194,7 +1195,7 @@ void DIconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *la
 bool DIconItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
-        QKeyEvent *e = static_cast<QKeyEvent*>(event);
+        QKeyEvent *e = static_cast<QKeyEvent *>(event);
 
         if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
             e->accept();
@@ -1217,7 +1218,7 @@ QList<QRectF> DIconItemDelegate::drawText(const QModelIndex &index, QPainter *pa
 {
     Q_D(const DIconItemDelegate);
 
-    const_cast<DIconItemDelegatePrivate*>(d)->drawTextBackgroundOnLast = background != Qt::NoBrush;
+    const_cast<DIconItemDelegatePrivate *>(d)->drawTextBackgroundOnLast = background != Qt::NoBrush;
 
     return DFMStyledItemDelegate::drawText(index, painter, layout, boundingRect, radius, background, wordWrap, mode, flags, shadowColor);
 }
@@ -1235,7 +1236,7 @@ void DIconItemDelegate::onTriggerEdit(const QModelIndex &index)
 {
     Q_D(DIconItemDelegate);
 
-    if(index == d->expandedIndex) {
+    if (index == d->expandedIndex) {
         parent()->setIndexWidget(index, 0);
         d->expandedItem->hide();
         d->expandedIndex = QModelIndex();
