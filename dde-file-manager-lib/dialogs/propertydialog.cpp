@@ -1379,17 +1379,29 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
 
     }
 
-    int listHeight = 2;
-    for (int i = 0; i < listWidget->count(); i++) {
+    int listHeight = 0;
+    int count = listWidget->count();
+    for (int i = 0; i < count; i++) {
         QListWidgetItem *item = listWidget->item(i);
         item->setFlags(Qt::NoItemFlags);
         int h = listWidget->itemWidget(item)->height();
         item->setSizeHint(QSize(item->sizeHint().width(), h));
-        listHeight += h;
+        // 乘以2是因为item与item之间有两个spacing
+        listHeight += h + listWidget->spacing()*2;
     }
+    // 加上最后一个spacing
+    listHeight += listWidget->spacing();
 
-    listWidget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
+    // 修复UI-BUG-48789 自动设置listwidget的高度，使得根据内容延展其面板的长度
+    if(count < 1){
+        // 当没有打开方式时，设置一个固定大小
+        listWidget->setFixedHeight(ArrowLineExpand_HIGHT);
+    } else {
+        listWidget->setFixedHeight(listHeight);
+    }
     listWidget->setFixedWidth(300);
+    // 隐藏垂直滚动条
+    listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     connect(m_OpenWithButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)),
             this, SLOT(onOpenWithBntsChecked(QAbstractButton *)));
