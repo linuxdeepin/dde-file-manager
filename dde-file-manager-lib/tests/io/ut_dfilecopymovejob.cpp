@@ -132,7 +132,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_cut) {
     urlsour.setScheme(FILE_SCHEME);
     target.setScheme(FILE_SCHEME);
     urlsour.setPath("/etc/apt");
-    target.setPath("~/test/etc2");
+    target.setPath("~/test/etc4");
     QProcess::execute("mkdir " + target.toLocalFile());
     if (QThread::currentThread()->loopLevel() <= 0) {
         // 确保对象所在线程有事件循环
@@ -164,7 +164,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_MoreThreadAndMainAndOpenRefine) {
     urlsour.setScheme(FILE_SCHEME);
     target.setScheme(FILE_SCHEME);
     urlsour.setPath("/etc/apt");
-    target.setPath("~/test/etc2");
+    target.setPath("~/test/etc5");
     QProcess::execute("mkdir " + target.toLocalFile());
     if (QThread::currentThread()->loopLevel() <= 0) {
         // 确保对象所在线程有事件循环
@@ -229,7 +229,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_more) {
     EXPECT_EQ(true,job->totalDataSize() != -1);
     EXPECT_EQ(true,job->totalFilesCount() != -1);
     EXPECT_EQ(DFileCopyMoveJob::NoError,job->error());
-    EXPECT_EQ(true,job->isCanShowProgress());
+    EXPECT_EQ(false,job->isCanShowProgress());
 
     while(!job->isFinished()) {
         QThread::msleep(100);
