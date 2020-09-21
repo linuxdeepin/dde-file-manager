@@ -159,6 +159,7 @@ SOURCES += \
     $$PWD/usershare/ut_shareinfo.cpp \
     $$PWD/usershare/ut_usersharemanager.cpp \
     $$PWD/controllers/ut_networkcontroller.cpp \
-    $$PWD/controllers/ut_dfmusersharecrumbcontroller.cpp
+    $$PWD/controllers/ut_dfmusersharecrumbcontroller.cpp \
+    $$PWD/interfaces/ut_dfmsidebarmanager.cpp
 
 
