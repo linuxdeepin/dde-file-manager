@@ -1534,7 +1534,7 @@ int DialogManager::showPrivilegeDialog_SW(int nRet, const QString &srcfilename)
             qDebug() << "错误描述:" << QString::fromStdString(serrordst);
             qDebug() << "错误级别:" << nerrorlevel;
             QString message = QString("%1 %2").arg(QFileInfo(srcfilename).fileName(), QString::fromStdString(serrordst));
-            int code = showMessageDialog(nerrorlevel, message);
+            int code = showMessageDialog(messageType(nerrorlevel), message);
             return code;
 
         } else {

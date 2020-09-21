@@ -331,6 +331,26 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
             break;
         }
     }
+
+#ifndef FULLTEXTSEARCH_ENABLE
+    auto const &jdoc = QJsonDocument::fromJson(data);
+    QJsonObject RootObject = jdoc.object();
+    QJsonValueRef ArrayRef = RootObject.find("groups").value();
+    QJsonArray Array = ArrayRef.toArray();
+    QJsonArray::iterator ArrayIterator = Array.begin();
+    QJsonValueRef ElementOneValueRef = ArrayIterator[1];
+    QJsonObject ElementOneObject = ElementOneValueRef.toObject();
+    QJsonValueRef ArrayRef2 = ElementOneObject.find("groups").value();
+    QJsonArray Array2 = ArrayRef2.toArray();
+    Array2.removeFirst();
+    ArrayRef2 = Array2;
+    ElementOneValueRef = ElementOneObject;
+    ArrayRef = Array;
+    qDebug() << RootObject;
+    QByteArray arr = QJsonDocument(RootObject).toJson();
+
+    return DSettings::fromJson(arr);
+#else
 #ifdef DISABLE_QUICK_SEARCH
     /*fix task 22667,针对ARM下不能使用anything,所以去掉整个索引配置项
     */
@@ -362,27 +382,9 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     QByteArray arr = QJsonDocument(RootObject).toJson();
 
     return DSettings::fromJson(arr);
-#endif
-#ifndef FULLTEXTSEARCH_ENABLE
-    auto const &jdoc = QJsonDocument::fromJson(data);
-    QJsonObject RootObject = jdoc.object();
-    QJsonValueRef ArrayRef = RootObject.find("groups").value();
-    QJsonArray Array = ArrayRef.toArray();
-    QJsonArray::iterator ArrayIterator = Array.begin();
-    QJsonValueRef ElementOneValueRef = ArrayIterator[1];
-    QJsonObject ElementOneObject = ElementOneValueRef.toObject();
-    QJsonValueRef ArrayRef2 = ElementOneObject.find("groups").value();
-    QJsonArray Array2 = ArrayRef2.toArray();
-    Array2.removeFirst();
-    ArrayRef2 = Array2;
-    ElementOneValueRef = ElementOneObject;
-    ArrayRef = Array;
-    qDebug() << RootObject;
-    QByteArray arr = QJsonDocument(RootObject).toJson();
-
-    return DSettings::fromJson(arr);
 #else
     return DSettings::fromJson(data);
+#endif
 #endif
 }
 
