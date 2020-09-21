@@ -40,7 +40,7 @@
   </action>
   <action id="com.deepin.filemanager.daemon.VaultManager.Remove">
     <description>vault manager</description>
-    <message>Authentication is required to remove the file vault</message>
+    <message>Authentication is required to delete the file vault</message>
     <message xml:lang="zh_CN">删除文件保险箱需要认证</message>
     <icon_name>folder</icon_name>
     <defaults>

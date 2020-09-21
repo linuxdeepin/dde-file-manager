@@ -168,12 +168,12 @@
     <message>
         <location filename="../models/computermodel.cpp" line="75"/>
         <location filename="../models/computermodel.cpp" line="79"/>
-        <location filename="../models/computermodel.cpp" line="163"/>
-        <location filename="../models/computermodel.cpp" line="174"/>
-        <location filename="../models/computermodel.cpp" line="587"/>
-        <location filename="../models/computermodel.cpp" line="591"/>
-        <location filename="../models/computermodel.cpp" line="628"/>
-        <location filename="../models/computermodel.cpp" line="632"/>
+        <location filename="../models/computermodel.cpp" line="165"/>
+        <location filename="../models/computermodel.cpp" line="176"/>
+        <location filename="../models/computermodel.cpp" line="589"/>
+        <location filename="../models/computermodel.cpp" line="593"/>
+        <location filename="../models/computermodel.cpp" line="630"/>
+        <location filename="../models/computermodel.cpp" line="634"/>
         <source>Disks</source>
         <translation>磁盘</translation>
     </message>
@@ -711,12 +711,12 @@
     <name>DFMVaultRemovePages</name>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="32"/>
-        <source>Remove File Vault</source>
+        <source>Delete File Vault</source>
         <translation>删除保险箱</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="76"/>
-        <source>Once removed, the files in it will be permanently deleted</source>
+        <source>Once deleted, the files in it will be permanently deleted</source>
         <translation>删除保险箱后，其中的所有内容将会被永久删除，请确认后继续</translation>
     </message>
     <message>
@@ -732,7 +732,7 @@
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
-        <source>Remove</source>
+        <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
@@ -758,23 +758,23 @@
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="205"/>
-        <source>Failed to remove file vault</source>
+        <source>Failed to delete file vault</source>
         <translation>删除保险箱失败</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="219"/>
+        <source>Deleted successfully</source>
+        <translation>删除成功</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="221"/>
+        <source>Failed to delete</source>
+        <translation>删除失败</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="100"/>
         <source>Removing...</source>
         <translation>正在删除...</translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="219"/>
-        <source>Removed successfully</source>
-        <translation>删除成功</translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="221"/>
-        <source>Failed to remove</source>
-        <translation>删除失败</translation>
     </message>
 </context>
 <context>
@@ -1066,7 +1066,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1661"/>
-        <location filename="../models/recentfileinfo.cpp" line="194"/>
+        <location filename="../models/recentfileinfo.cpp" line="200"/>
         <location filename="../models/searchfileinfo.cpp" line="129"/>
         <location filename="../models/searchfileinfo.cpp" line="134"/>
         <source>Path</source>
@@ -1089,7 +1089,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="613"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="614"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>添加标记“%1”</translation>
     </message>
@@ -1373,6 +1373,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="890"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1245"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1340"/>
+        <location filename="../dialogs/dialogmanager.h" line="149"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -1633,22 +1634,22 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="563"/>
-        <location filename="../controllers/filecontroller.cpp" line="582"/>
-        <location filename="../controllers/filecontroller.cpp" line="601"/>
+        <location filename="../controllers/filecontroller.cpp" line="596"/>
+        <location filename="../controllers/filecontroller.cpp" line="615"/>
+        <location filename="../controllers/filecontroller.cpp" line="634"/>
         <source>Kindly Reminder</source>
         <translation>温馨提示</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="563"/>
-        <location filename="../controllers/filecontroller.cpp" line="582"/>
-        <location filename="../controllers/filecontroller.cpp" line="601"/>
+        <location filename="../controllers/filecontroller.cpp" line="596"/>
+        <location filename="../controllers/filecontroller.cpp" line="615"/>
+        <location filename="../controllers/filecontroller.cpp" line="634"/>
         <source>Please install File Roller first and then continue</source>
         <translation>请先安装归档管理器然后继续</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1216"/>
-        <location filename="../controllers/filecontroller.cpp" line="1234"/>
+        <location filename="../controllers/filecontroller.cpp" line="1249"/>
+        <location filename="../controllers/filecontroller.cpp" line="1267"/>
         <source>Unable to create files here: %1</source>
         <translation>不能在此创建文件：%1</translation>
     </message>
@@ -2198,44 +2199,44 @@
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="854"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1493"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1501"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1506"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1495"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1503"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1508"/>
         <source>Mounting device error</source>
         <translation>挂载设备出错</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1630"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1633"/>
         <source>No key available to unlock device</source>
         <translation>没有密钥解锁设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1713"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1721"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>磁盘由用户“%1”挂载，您没有卸载权限。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1716"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1726"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1754"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1875"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1906"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1724"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1734"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1762"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1883"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1914"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1723"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1903"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1731"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1911"/>
         <source>Cannot find the mounting device</source>
         <translation>找不到对应的挂载设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1751"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1759"/>
         <source>Cannot unmount the device</source>
         <translation>无法卸载设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1871"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1879"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>无法弹出设备 &quot;%1&quot;</translation>
     </message>
@@ -2848,7 +2849,6 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="108"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="82"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
@@ -3000,6 +3000,7 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
@@ -3036,9 +3037,9 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
         <location filename="../models/computermodel.cpp" line="109"/>
-        <location filename="../models/computermodel.cpp" line="122"/>
-        <location filename="../models/computermodel.cpp" line="138"/>
-        <location filename="../models/computermodel.cpp" line="158"/>
+        <location filename="../models/computermodel.cpp" line="123"/>
+        <location filename="../models/computermodel.cpp" line="140"/>
+        <location filename="../models/computermodel.cpp" line="160"/>
         <source>File Vault</source>
         <translation>保险箱</translation>
     </message>
@@ -3214,7 +3215,7 @@
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1292"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1294"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
@@ -3254,7 +3255,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="812"/>
-        <location filename="../models/recentfileinfo.cpp" line="247"/>
+        <location filename="../models/recentfileinfo.cpp" line="253"/>
         <location filename="../models/trashfileinfo.cpp" line="384"/>
         <location filename="../models/vaultfileinfo.cpp" line="138"/>
         <source>Folder is empty</source>
@@ -3567,9 +3568,9 @@
         <translation>我的保险箱</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="161"/>
-        <location filename="../models/computermodel.cpp" line="172"/>
-        <location filename="../models/computermodel.cpp" line="563"/>
+        <location filename="../models/computermodel.cpp" line="163"/>
+        <location filename="../models/computermodel.cpp" line="174"/>
+        <location filename="../models/computermodel.cpp" line="565"/>
         <source>Disks</source>
         <translation>磁盘</translation>
     </message>
@@ -4069,30 +4070,30 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1457"/>
-        <location filename="../controllers/appcontroller.cpp" line="1478"/>
+        <location filename="../controllers/appcontroller.cpp" line="1458"/>
+        <location filename="../controllers/appcontroller.cpp" line="1479"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1450"/>
-        <location filename="../controllers/appcontroller.cpp" line="1474"/>
+        <location filename="../controllers/appcontroller.cpp" line="1451"/>
+        <location filename="../controllers/appcontroller.cpp" line="1475"/>
         <source>Authentication timed out</source>
         <translation>认证超时</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1457"/>
+        <location filename="../controllers/appcontroller.cpp" line="1458"/>
         <source>The device was not safely unmounted</source>
         <translation>设备没有正常卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1478"/>
-        <location filename="../controllers/appcontroller.cpp" line="1492"/>
+        <location filename="../controllers/appcontroller.cpp" line="1479"/>
+        <location filename="../controllers/appcontroller.cpp" line="1493"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1492"/>
+        <location filename="../controllers/appcontroller.cpp" line="1493"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
