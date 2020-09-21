@@ -157,6 +157,7 @@ SOURCES += \
     $$PWD/gvfs/ut_secretmanager.cpp \
     $$PWD/interfaces/ut_dmimedatabase.cpp \
     $$PWD/usershare/ut_shareinfo.cpp \
-    $$PWD/usershare/ut_usersharemanager.cpp
+    $$PWD/usershare/ut_usersharemanager.cpp \
+    $$PWD/controllers/ut_networkcontroller.cpp
 
 
