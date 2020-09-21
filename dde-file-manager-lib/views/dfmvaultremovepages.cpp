@@ -29,7 +29,7 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     this->setFixedSize(396, 248);
 
     // 标题
-    DLabel *pTitle = new DLabel(tr("Remove File Vault"), this);
+    DLabel *pTitle = new DLabel(tr("Delete File Vault"), this);
     QFont font = pTitle->font();
     font.setPixelSize(18);
     pTitle->setFont(font);
@@ -73,11 +73,11 @@ void DFMVaultRemovePages::initConnect()
 
 void DFMVaultRemovePages::showVerifyWidget()
 {
-    setInfo(tr("Once removed, the files in it will be permanently deleted"));
+    setInfo(tr("Once deleted, the files in it will be permanently deleted"));
 
     setCloseButtonVisible(true);
     clearButtons();
-    QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Remove")});
+    QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Delete")});
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
     addButton(buttonTexts[2], true, DDialog::ButtonWarning);
@@ -202,7 +202,7 @@ void DFMVaultRemovePages::onLockVault(int state)
             m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
         }else{
             // error tips
-            QString errMsg = tr("Failed to remove file vault");
+            QString errMsg = tr("Failed to delete file vault");
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
             dialog.setTitle(errMsg);
@@ -216,9 +216,9 @@ void DFMVaultRemovePages::onLockVault(int state)
 void DFMVaultRemovePages::onVualtRemoveFinish(bool result)
 {
     if (result){
-        setInfo(tr("Removed successfully"));
+        setInfo(tr("Deleted successfully"));
     }else {
-        setInfo(tr("Failed to remove"));
+        setInfo(tr("Failed to delete"));
     }
 
     this->getButton(0)->setEnabled(true);
