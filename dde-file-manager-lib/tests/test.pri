@@ -149,6 +149,11 @@ SOURCES += \
     $$PWD/models/ut_vaultfileinfo.cpp \
     $$PWD/interfaces/ut_dfmsettings.cpp \
     $$PWD/interfaces/ut_dfmviewmanager.cpp \
-    $$PWD/controllers/ut_bookmarkmanager.cpp
+    $$PWD/controllers/ut_bookmarkmanager.cpp \
+    $$PWD/gvfs/ut_mountaskpassworddialog.cpp \
+    $$PWD/gvfs/ut_mountsecretdiskaskpassworddialog.cpp \
+    $$PWD/gvfs/ut_qdrive.cpp \
+    $$PWD/gvfs/ut_gvfsmountmanager.cpp \
+    $$PWD/gvfs/ut_secretmanager.cpp
 
 
