@@ -32,7 +32,7 @@ TEST_F(DMimeDatabaseTest, can_get_mimeTypeForFile)
     url.setScheme(FILE_SCHEME);
     url.setPath("/etc/presage.xml");
     EXPECT_TRUE(db.mimeTypeForFile(url.toLocalFile()).name().contains("xml"));
-    EXPECT_TRUE(db.mimeTypeForFile(QString("/proc/kmsg"),QMimeDatabase::MatchExtension).name().contains("xml"));
+    EXPECT_FALSE(db.mimeTypeForFile(QString("/proc/kmsg"),QMimeDatabase::MatchExtension).name().contains("xml"));
 }
 
 TEST_F(DMimeDatabaseTest, can_get_mimeTypeForFile_othertype)
@@ -49,7 +49,7 @@ TEST_F(DMimeDatabaseTest, can_get_mimeTypeForFile_gvfs)
     url.setScheme(FILE_SCHEME);
     url.setPath("/etc/presage.xml");
     EXPECT_TRUE(db.mimeTypeForFile(url.toLocalFile(),QMimeDatabase::MatchExtension, QString("qwerty"),false).name().contains("xml"));
-    EXPECT_TRUE(db.mimeTypeForFile(QString("/etc"),QMimeDatabase::MatchExtension, QString("asdasda"),false).name().contains("xml"));
+    EXPECT_FALSE(db.mimeTypeForFile(QString("/etc"),QMimeDatabase::MatchExtension, QString("asdasda"),false).name().contains("xml"));
     EXPECT_TRUE(db.mimeTypeForFile(url.toLocalFile(),QMimeDatabase::MatchExtension, QString("qwerty"),false).name().contains("xml"));
     EXPECT_TRUE(db.mimeTypeForFile(url.toLocalFile(),QMimeDatabase::MatchDefault, QString("fdsafd"),false).name().contains("xml"));
     EXPECT_TRUE(db.mimeTypeForFile(url.toLocalFile(),QMimeDatabase::MatchDefault, QString("fdsafed"),true).name().contains("xml"));

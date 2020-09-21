@@ -155,6 +155,8 @@ SOURCES += \
     $$PWD/gvfs/ut_qdrive.cpp \
     $$PWD/gvfs/ut_gvfsmountmanager.cpp \
     $$PWD/gvfs/ut_secretmanager.cpp \
-    $$PWD/interfaces/ut_dmimedatabase.cpp
+    $$PWD/interfaces/ut_dmimedatabase.cpp \
+    $$PWD/usershare/ut_shareinfo.cpp \
+    $$PWD/usershare/ut_usersharemanager.cpp
 
 
