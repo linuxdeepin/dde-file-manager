@@ -142,13 +142,13 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_cut) {
 
     EXPECT_EQ(target.toString(),job->targetUrl().toString());
     EXPECT_EQ(-1,job->totalDataSize());
-    EXPECT_EQ(-1,job->totalFilesCount());
+    EXPECT_EQ(0,job->totalFilesCount());
 
     QThread::msleep(300);
     EXPECT_EQ(true,job->totalDataSize() != -1);
     EXPECT_EQ(true,job->totalFilesCount() != -1);
     EXPECT_EQ(DFileCopyMoveJob::NoError,job->error());
-    EXPECT_EQ(true,job->isCanShowProgress());
+    EXPECT_EQ(false,job->isCanShowProgress());
 
     job->stop();
 
@@ -174,13 +174,13 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_MoreThreadAndMainAndOpenRefine) {
 
     EXPECT_EQ(target.toString(),job->targetUrl().toString());
     EXPECT_EQ(-1,job->totalDataSize());
-    EXPECT_EQ(-1,job->totalFilesCount());
+    EXPECT_EQ(0,job->totalFilesCount());
 
     QThread::msleep(300);
     EXPECT_EQ(true,job->totalDataSize() != -1);
     EXPECT_EQ(true,job->totalFilesCount() != -1);
     EXPECT_EQ(DFileCopyMoveJob::NoError,job->error());
-    EXPECT_EQ(true,job->isCanShowProgress());
+    EXPECT_EQ(false,job->isCanShowProgress());
 
     job->stop();
 
@@ -237,7 +237,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_more) {
 }
 
 TEST_F(DFileCopyMoveJobTest,can_job_running_remove) {
-    job->setMode(DFileCopyMoveJob::CopyMode);
+    job->setMode(DFileCopyMoveJob::CutMode);
     job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
     DUrl urlsour,target;
     urlsour.setScheme(FILE_SCHEME);
@@ -255,7 +255,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_remove) {
 }
 
 TEST_F(DFileCopyMoveJobTest,can_job_running_remove_all) {
-    job->setMode(DFileCopyMoveJob::CopyMode);
+    job->setMode(DFileCopyMoveJob::CutMode);
     job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
     DUrl urlsour;
     urlsour.setScheme(FILE_SCHEME);
