@@ -48,6 +48,7 @@
 #include <QStandardPaths>
 #include <QScroller>
 #include <QCommandLinkButton>
+#include <QPainterPath>
 #include <DHorizontalLine>
 #include <DStyle>
 #include <DIconButton>

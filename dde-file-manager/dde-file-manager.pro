@@ -101,7 +101,7 @@ isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
-else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager -lKF5Codecs
 
 CONFIG(debug, debug|release) {
     DEPENDPATH += $$PWD/../dde-file-manager-lib

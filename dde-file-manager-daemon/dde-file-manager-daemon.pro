@@ -20,7 +20,7 @@ CONFIG(release, release|debug) {
 }
 CONFIG += c++11 link_pkgconfig
 
-LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager -lKF5Codecs
 
 CONFIG(debug, debug|release) {
     DEPENDPATH += $$PWD/../dde-file-manager-lib
