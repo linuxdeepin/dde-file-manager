@@ -228,7 +228,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_more) {
     QThread::msleep(300);
     EXPECT_EQ(true,job->totalDataSize() != -1);
     EXPECT_EQ(true,job->totalFilesCount() != -1);
-    EXPECT_EQ(DFileCopyMoveJob::NoError,job->error());
+    EXPECT_EQ(DFileCopyMoveJob::NonexistenceError,job->error());
     EXPECT_EQ(false,job->isCanShowProgress());
 
     while(!job->isFinished()) {
