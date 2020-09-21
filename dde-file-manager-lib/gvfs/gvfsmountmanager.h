@@ -150,7 +150,7 @@ public:
 
     static void printVolumeMounts();
 
-    static QDiskInfo getDiskInfo(const QString& path);
+    static QDiskInfo getDiskInfo(const QString& path, bool bupdate = true);
     static bool isDVD(const QVolume& volume);
     static bool isIgnoreUnusedMounts(const QMount& mount);
 

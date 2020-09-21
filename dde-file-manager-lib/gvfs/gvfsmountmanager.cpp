@@ -1005,7 +1005,7 @@ void GvfsMountManager::printVolumeMounts()
     qDebug() << "==============================";
 }
 
-QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
+QDiskInfo GvfsMountManager::getDiskInfo(const QString &path, bool bupdate)
 {
     QDiskInfo info;
     foreach (const QDiskInfo& diskInfo, DiskInfos.values()) {
@@ -1027,7 +1027,9 @@ QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
         qDebug() << "获取磁盘信息失败";
         dialogManager->showFormatDialog(path);
     }
-    info.updateGvfsFileSystemInfo();
+    if (bupdate) {
+        info.updateGvfsFileSystemInfo();
+    }
     return info;
 }
 
@@ -1669,7 +1671,7 @@ void GvfsMountManager::unmount(const QDiskInfo &diskInfo)
 
 void GvfsMountManager::unmount(const QString &id)
 {
-    QDiskInfo diskInfo = getDiskInfo(id);
+    QDiskInfo diskInfo = getDiskInfo(id,false);
     unmount(diskInfo);
 }
 
