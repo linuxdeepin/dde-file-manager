@@ -17,8 +17,18 @@ namespace  {
 
 }
 
-TEST_F(SingleApplicationTest, registerLogger)
+TEST_F(SingleApplicationTest, setSingleInstance)
 {
-//    SingleApplication::initSources();
-//    SingleApplication app(argc, argv);
+    int argc = 1;
+    char *argv[10];
+    argv[0] = const_cast<char *>("SingleApplicationTest");
+    SingleApplication::initSources();
+    SingleApplication app(argc, argv);
+
+    QString uniqueKey = app.applicationName();
+
+    bool isSingleInstance = app.setSingleInstance(uniqueKey);
+    ASSERT_TRUE(isSingleInstance);
+    isSingleInstance = app.setSingleInstance(uniqueKey);
+    ASSERT_FALSE(isSingleInstance);
 }

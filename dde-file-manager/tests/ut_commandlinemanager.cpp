@@ -63,22 +63,21 @@ TEST_F(CommandLineManagerTest, addOptions)
     ASSERT_EQ(greeting, CommandLineManager::instance()->value("x"));
 }
 
-TEST_F(CommandLineManagerTest, processCommand_set_p)
-{
-    QStringList arguments;
-    arguments << "dde-file-manager" << "-p" << "/home/yngty/Workspace/uos/dde-file-manager";
-    int argc = 2;
-    char *argv[10];
-    argv[0] = const_cast<char *>("CommandLineManager_Test");
-    argv[1] = const_cast<char *>("-p");
-    argv[2] = const_cast<char *>("/home/yngty/Workspace/uos/dde-file-manager");
-    QApplication app(argc, argv);
-
-    CommandLineManager::instance()->process(arguments);
-    CommandLineManager::instance()->processCommand();
-    QTimer::singleShot(1000, nullptr, [&app] {
-         app.closeAllWindows();
-    });
-    int r = app.exec();
-    ASSERT_EQ(r, 0);
-}
+//TEST_F(CommandLineManagerTest, processCommand_set_p)
+//{
+//    QStringList arguments;
+//    arguments << "dde-file-manager" << "-p" << "~";
+//    int argc = 2;
+//    char *argv[10];
+//    argv[0] = const_cast<char *>("CommandLineManager_Test");
+//    argv[1] = const_cast<char *>("-p");
+//    argv[2] = const_cast<char *>("~");
+//    QApplication app(argc, argv);
+//    CommandLineManager::instance()->process(arguments);
+//    CommandLineManager::instance()->processCommand();
+//    QTimer::singleShot(1000, nullptr, [&] {
+//         app.closeAllWindows();
+//    });
+//    int r = app.exec();
+//    ASSERT_EQ(r, 0);
+//}
