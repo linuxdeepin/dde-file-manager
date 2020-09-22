@@ -9,7 +9,6 @@
 
 DFM_USE_NAMESPACE
 
-#define viewManager DFMViewManager::instance()
 namespace {
 class TestDFMSideBarManager : public testing::Test
 {

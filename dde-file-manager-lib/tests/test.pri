@@ -161,7 +161,8 @@ SOURCES += \
     $$PWD/controllers/ut_networkcontroller.cpp \
     $$PWD/controllers/ut_dfmusersharecrumbcontroller.cpp \
     $$PWD/interfaces/ut_dfmsidebarmanager.cpp \
-    $$PWD/interfaces/ut_dthumbnailprovider.cpp
+    $$PWD/interfaces/ut_dthumbnailprovider.cpp \
+    $$PWD/interfaces/ut_dfmcrumbmanager.cpp
 
 RESOURCES += \
     $$PWD/resources/test.qrc
