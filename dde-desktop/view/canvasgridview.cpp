@@ -877,6 +877,9 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
             }
         }
     }
+    //fix bug#22277 后续影响待观察
+    clearFocus();
+
     update();
 }
 
@@ -1722,7 +1725,9 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 
 void CanvasGridView::focusInEvent(QFocusEvent *event)
 {
-    QAbstractItemView::focusInEvent(event);
+    //fix bug#22277 后续影响待观察
+    //QAbstractItemView::focusInEvent(event);
+    QAbstractScrollArea::focusInEvent(event);
     itemDelegate()->commitDataAndCloseActiveEditor();
 
     /// set menu actions filter
