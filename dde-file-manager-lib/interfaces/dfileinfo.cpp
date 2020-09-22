@@ -80,7 +80,7 @@ public:
     QReadWriteLock requestEPFilesLock;
     QSet<DFileInfoPrivate *> dirtyFileInfos;
     QMutex requestEPCancelLock;
-    bool isCanceled;
+    bool isCanceled = false;
 
     void run() override;
     void requestEP(const DUrl &url, DFileInfoPrivate *info);
@@ -222,6 +222,7 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
     if (info == nullptr) {
         return;
     }
+
     //fix bug 44093 和 task 36486 文件的多次创建和删除崩溃
     if (isCanceled) {
         return;
@@ -229,7 +230,7 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
 
     requestEPCancelLock.lock();
     if (isCanceled) {
-      	requestEPCancelLock.unlock();
+        requestEPCancelLock.unlock();
         return;
     }
     QVariantHash oldEP;
@@ -1031,6 +1032,12 @@ QVariantHash DFileInfo::extraProperties() const
 
         QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url] {
             d->requestEP = RequestEP::instance();
+
+            //线程run之前先确保fileinfo未被析构时request不会被取消
+            d->requestEP->requestEPCancelLock.lock();
+            d->requestEP->isCanceled = false;
+            d->requestEP->requestEPCancelLock.unlock();
+
             d->requestEP->requestEP(url, const_cast<DFileInfoPrivate *>(d));
             d->getEPTimer->deleteLater();
         });
