@@ -3,8 +3,6 @@
 #include <dfmevent.h>
 
 #include "controllers/networkcontroller.h"
-#include <QProcess>
-#include <QDebug>
 
 using namespace testing;
 
