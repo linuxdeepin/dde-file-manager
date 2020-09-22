@@ -397,7 +397,7 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="149"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation>No files to burn</translation>
+        <translation>Unable to burn. Not enough free space on the target disk.</translation>
     </message>
 </context>
 <context>
@@ -712,12 +712,12 @@
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="32"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>Delete File Vault</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="76"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>Once deleted, the files in it will be permanently deleted</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
@@ -733,7 +733,7 @@
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="104"/>
@@ -759,17 +759,17 @@
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="205"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to delete file vault</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="219"/>
         <source>Deleted successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Deleted successfully</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="221"/>
         <source>Failed to delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to delete</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="100"/>
@@ -2609,7 +2609,7 @@
         <translation>Hide this file</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1524"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1536"/>
         <source>Allow to execute as program</source>
         <translation>Allow to execute as program</translation>
     </message>
@@ -2656,41 +2656,41 @@
         <translation>Total space</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1424"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1436"/>
         <source>Access denied</source>
         <translation>Access denied</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1425"/>
         <location filename="../dialogs/propertydialog.cpp" line="1437"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1449"/>
         <source>Executable</source>
         <translation>Executable</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1426"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1427"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1438"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1439"/>
         <source>Write only</source>
         <translation>Write only</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1428"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1429"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1440"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1441"/>
         <source>Read only</source>
         <translation>Read only</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1430"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1431"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1442"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1443"/>
         <source>Read-write</source>
         <translation>Read-write</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1520"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1532"/>
         <source>Others</source>
         <translation>Others</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1518"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1530"/>
         <source>Owner</source>
         <translation>Owner</translation>
     </message>
@@ -2705,7 +2705,7 @@
         <translation>File system</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1519"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1531"/>
         <source>Group</source>
         <translation>Group</translation>
     </message>
@@ -2745,6 +2745,11 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>20 minutes</source>
         <translation>20 minutes</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <source>Delete File Vault</source>
+        <translation>Delete File Vault</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
@@ -3000,7 +3005,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Delete</source>
         <translation>Delete</translation>
     </message>
@@ -3049,12 +3053,12 @@
         <translation>Add to disc</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="437"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="439"/>
         <source>Auto mount</source>
         <translation>Auto mount</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="475"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="477"/>
         <source>Open after auto mount</source>
         <translation>Open after auto mount</translation>
     </message>
