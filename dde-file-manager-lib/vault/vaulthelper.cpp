@@ -147,8 +147,9 @@ bool VaultHelper::killVaultTasks()
 bool VaultHelper::isVaultEnabled()
 {
     if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
-       DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        if(DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType){ // 如果不是个人版和未知版
+        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+        // 如果是专业版
+        if(DSysInfo::DeepinType::DeepinProfessional == deepinType){
             return true;
         }
     }

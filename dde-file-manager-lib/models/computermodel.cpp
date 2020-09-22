@@ -105,9 +105,12 @@ ComputerModel::ComputerModel(QObject *parent)
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
             rootInit(ch);
 
-            // 保险柜
-            addItem(makeSplitterUrl(QObject::tr("File Vault")));
-            addItem(VaultController::makeVaultUrl());
+            // 判断是否启用保险箱
+            if ( VaultHelper::isVaultEnabled() ) {
+                // 保险柜
+                addItem(makeSplitterUrl(QObject::tr("File Vault")));
+                addItem(VaultController::makeVaultUrl());
+            }
         });
 
         connect(DRootFileManager::instance(),&DRootFileManager::serviceHideSystemPartition,this,[this,rootInit](){
