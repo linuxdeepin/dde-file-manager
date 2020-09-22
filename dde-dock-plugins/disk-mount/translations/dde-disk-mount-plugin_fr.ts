@@ -21,11 +21,11 @@
     </message>
     <message>
         <source>The device was not safely removed</source>
-        <translation>L&apos;appareil n&apos;a pas été retiré en toute sécurité</translation>
+        <translation>Le périphérique n&apos;a pas été retiré en toute sécurité</translation>
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Cliquer sur &quot;Retirer en toute sécurité&quot;, puis déconnecter-le la prochaine fois</translation>
+        <translation>Cliquez sur &quot;Supprimer en toute sécurité&quot; et ensuite déconnectez-le </translation>
     </message>
 </context>
 <context>
