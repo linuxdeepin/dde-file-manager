@@ -828,8 +828,6 @@ void Frame::initUI()
     m_switchModeControl = new DButtonBox(this);
     m_switchModeControl->setFocusPolicy(Qt::NoFocus);
 
-    if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
-
     if (!ScreenSaverCtrlFunction::needShowScreensaver()) {
         m_switchModeControl->setButtonList({wallpaperBtn}, true);
         wallpaperBtn->setChecked(true);
@@ -840,8 +838,15 @@ void Frame::initUI()
         screensaverBtn->setMinimumWidth(40);
         //screensaverBtn->setFocusPolicy(Qt::NoFocus);
         m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
-        screensaverBtn->setChecked(true);
+        if (m_mode == ScreenSaverMode) {
+            screensaverBtn->setChecked(true);
+        }
     }
+
+    if (m_mode == WallpaperMode) {
+        wallpaperBtn->setChecked(true);
+    }
+
     connect(m_waitControl, &DButtonBox::buttonToggled, this, [this, time_array] (QAbstractButton * toggleBtn, bool) {
         int index = m_waitControl->buttonList().indexOf(toggleBtn);
         m_dbusScreenSaver->setBatteryScreenSaverTimeout(time_array[index]);
