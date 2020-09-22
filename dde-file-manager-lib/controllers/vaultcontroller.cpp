@@ -47,7 +47,7 @@
 #include <QProcess>
 #include <QStandardPaths>
 #include <QStorageInfo>
-
+#include <DSysInfo>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 #include <qplatformdefs.h>
@@ -841,6 +841,18 @@ qint64 VaultController::totalsize() const
 void VaultController::setBigFileIsDeleting(const bool isDeleting)
 {
     m_isBigFileDeleting = isDeleting;
+}
+
+bool VaultController::isVaultEnabled()
+{
+    if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
+        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+        // 如果是专业版
+        if(DSysInfo::DeepinType::DeepinProfessional == deepinType){
+            return true;
+        }
+    }
+    return false;
 }
 
 void VaultController::updateFolderSizeLabel(const qint64 size) noexcept

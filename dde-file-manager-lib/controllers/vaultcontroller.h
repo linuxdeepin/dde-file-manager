@@ -216,6 +216,9 @@ public:
      */
     void setBigFileIsDeleting(bool const isDeleting);
 
+    // 根据系统类型判断是否启动保险箱
+    static bool isVaultEnabled();
+
 public slots:
 
     void updateFolderSizeLabel(const qint64 size) noexcept;

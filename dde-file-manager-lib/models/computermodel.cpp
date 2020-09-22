@@ -80,13 +80,10 @@ ComputerModel::ComputerModel(QObject *parent)
     }
 
     // 判断系统类型，决定是否启用保险箱
-    if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
-        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        if(DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType){ // 如果系不是个人版和未知版
-            // 保险柜
-            addItem(makeSplitterUrl(QObject::tr("File Vault")));
-            addItem(VaultController::makeVaultUrl());
-        }
+    if(VaultController::isVaultEnabled()){
+        // 保险柜
+        addItem(makeSplitterUrl(QObject::tr("File Vault")));
+        addItem(VaultController::makeVaultUrl());
     }
 
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
@@ -135,13 +132,10 @@ ComputerModel::ComputerModel(QObject *parent)
 
         // 保险柜
         // 判断系统类型，决定是否启用保险箱
-        if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
-            DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-            if(DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType){ // 如果系不是个人版和未知版
-                // 保险柜
-                addItem(makeSplitterUrl(QObject::tr("File Vault")));
-                addItem(VaultController::makeVaultUrl());
-            }
+        if(VaultController::isVaultEnabled()){
+            // 保险柜
+            addItem(makeSplitterUrl(QObject::tr("File Vault")));
+            addItem(VaultController::makeVaultUrl());
         }
     });
     connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, [this](const DUrl &url) {
