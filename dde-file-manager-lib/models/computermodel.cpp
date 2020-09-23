@@ -139,9 +139,12 @@ ComputerModel::ComputerModel(QObject *parent)
             if (m_initThread.first)
                 return;
 #endif
-            // 保险柜
-            addItem(makeSplitterUrl(QObject::tr("File Vault")));
-            addItem(VaultController::makeVaultUrl());
+            // 根据系统类型，判断是否启用保险柜
+            if ( VaultHelper::isVaultEnabled() ) {
+                // 保险柜
+                addItem(makeSplitterUrl(QObject::tr("File Vault")));
+                addItem(VaultController::makeVaultUrl());
+            }
         }
         else {
             qDebug() << "root file not inited,wait signal";
