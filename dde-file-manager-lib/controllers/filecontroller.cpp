@@ -1245,9 +1245,15 @@ bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
     if (ok) {
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
     } else {
+        QString path = event->url().toString();
         // 创建文件夹失败，提示错误信息
-        QString strErr = tr("Unable to create files here: %1").arg(strerror(errno));
-        dialogManager->showMessageDialog(DialogManager::msgWarn, strErr);
+        if (QFileInfo(path).isDir()) {
+            QString strErr = tr("Unable to create files here: %1").arg(strerror(errno));
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showMessageDialog,
+                                         DialogManager::msgWarn, strErr, "", tr("Confirm"));
+        } else {
+            qDebug() << "Unable to create files here:" << strerror(errno);
+        }
     }
 
     return ok;
