@@ -60,12 +60,14 @@ unix {
         DEFINES += arm
         DEFINES += __arm__
     }
+    #优化通过指定 -Wl,--as-needed 选项，链接过程中，链接器会检查所有的依赖库，没有实际被引用的库，不再写入可执行文件头。最终生成的可执行文件头中包含的都是必要的链接库信息
+    QMAKE_CXX += -Wl,--as-need -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,-O1
+    QMAKE_CXXFLAGS += -Wl,--as-need -fPIE -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,-O1
+    QMAKE_LFLAGS += -Wl,--as-needed -pie
     isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
-        DEFINES += __mips__
         #mips编译优化-pg是用于测试性能提升
-        #QMAKE_CXX += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi #-mmsa 龙芯4000使用的编译优化参数
-        QMAKE_CXXFLAGS += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi -Wl,as-needed -fPIE#-mmsa 龙芯4000使用的编译优化参数
-        QMAKE_LFLAGS += -pie
+        QMAKE_CXX += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi #-mmsa #龙芯4000使用的编译优化参数
+        QMAKE_CXXFLAGS += -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi #-mmsa #龙芯4000使用的编译优化参数
     }
 
     isEmpty(LIB_INSTALL_DIR) {
