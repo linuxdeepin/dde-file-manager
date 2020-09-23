@@ -15,8 +15,11 @@
 #include <QTest>
 #include <QEventLoop>
 #include "../../view/desktopitemdelegate.h"
+#include <QThread>
+using namespace std;
 
 
+class QAbstractItemModel;
 class CanvasGridViewTest : public testing::Test
 {
 public:
@@ -378,14 +381,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_mouseReleaseEvent){
 //todo
 //}
 
-TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
-{
-    QModelIndex current = m_canvasGridView->d->currentCursorIndex;
-    auto url = m_canvasGridView->model()->getUrlByIndex(current);
-    auto pos = GridManager::instance()->position(1, url.toString());
-    m_canvasGridView->moveCursorGrid(QAbstractItemView::MoveLeft, Qt::ShiftModifier);
-}
-
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setIconByLevel)
 {
     m_canvasGridView->setIconByLevel(3);
@@ -406,7 +401,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setIconByLevel)
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_handleContextMenuAction)
 {
-    m_canvasGridView->m_screenName = "HDMI-0";
+    m_canvasGridView->m_screenName = "1";
     m_canvasGridView->handleContextMenuAction(MenuAction::SelectAll);
     m_canvasGridView->handleContextMenuAction(CanvasGridView::AutoMerge);
     QTimer timer;
@@ -428,9 +423,105 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_handleContextMenuAction)
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
 {
-     QKeyEvent test(QEvent::KeyPress, Qt::Key_Up,  Qt::NoModifier);
+     QKeyEvent test(QEvent::KeyPress, Qt::Key_Return,  Qt::KeyboardModifier::KeypadModifier);
      m_canvasGridView->keyPressEvent(&test);
      QString name = qApp->applicationName();
      QKeyEvent test1(QEvent::KeyPress, Qt::Key_F1,  Qt::NoModifier);
      EXPECT_EQ(name, qApp->applicationName());
 }
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection)
+{
+    EXPECT_NE(m_canvasGridView, nullptr);
+    m_canvasGridView->d->mousePressed = false;
+    m_canvasGridView->d->showSelectRect = true;
+    m_canvasGridView->setSelection(QRect(QPoint(2, 3),QPoint(6, 8)), QItemSelectionModel::Select);
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_refresh)
+{
+    ASSERT_NE(m_canvasGridView, nullptr);
+    m_canvasGridView->setAutoMerge(true);
+    EXPECT_TRUE(GridManager().instance()->autoMerge());
+
+    m_canvasGridView->delayAutoMerge(0.5);
+    m_canvasGridView->delayAutoMerge(0.5);
+    EXPECT_EQ(nullptr, m_canvasGridView->m_refreshTimer);
+
+    m_canvasGridView->m_refreshTimer = new QTimer();
+    m_canvasGridView->delayModelRefresh(0.1);
+    m_canvasGridView->delayModelRefresh(0.1);
+    EXPECT_EQ(nullptr, m_canvasGridView->m_refreshTimer);
+//    QTimer timer;
+//    timer.start(500);
+//    QEventLoop loop;
+//    QObject::connect(GridManager().instance(), &GridManager::sigSyncOperation, [&]{
+//        timer.stop();
+//        loop.exit();
+//    });
+//    QObject::connect(&timer, &QTimer::timeout, [&]{
+//        EXPECT_TRUE(false);
+//        timer.stop();
+//        loop.exit();
+//    });
+//    loop.exec();
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
+{
+    auto selectionModel = m_canvasGridView->selectionModel();
+    auto headIndex = m_canvasGridView->firstIndex();
+    auto tailIndex = m_canvasGridView->lastIndex();
+    QModelIndex *temp = new QModelIndex();
+    temp->r = 2;
+    temp->c = 2;
+    temp->m = new DFileSystemModel(nullptr);
+    m_canvasGridView->d->currentCursorIndex = *temp;
+    QModelIndex current = m_canvasGridView->d->currentCursorIndex;
+    QString mycurrent = current.data().toString();
+    QList<DUrl> lists;
+    lists << DUrl(mycurrent);
+    m_canvasGridView->select(lists);
+//    if (!current.isValid() || !selectionModel->isSelected(current)) {
+//        EXPECT_TRUE(false);
+//    }
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_dragMoveEvent)
+{
+    QDragMoveEvent devent(QPoint(2,1), Qt::DropAction::MoveAction, new QMimeData(), Qt::MouseButton::BackButton, Qt::KeyboardModifier::AltModifier);
+    m_canvasGridView->dragMoveEvent(&devent);
+    QDropEvent dropevent(QPoint(4,2), Qt::DropAction::IgnoreAction, new QMimeData(), Qt::MouseButton::LeftButton, Qt::KeyboardModifier::ShiftModifier);
+    m_canvasGridView->dropEvent(&dropevent);
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_toggleEntryExpandedState)
+{
+    DUrl url = m_canvasGridView->currentUrl();
+    url.setScheme(DFMMD_SCHEME);
+    if (!url.isValid() || url.scheme() != DFMMD_SCHEME) {
+        EXPECT_TRUE(false);
+    }
+    m_canvasGridView->toggleEntryExpandedState(url);
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursor)
+{
+    m_canvasGridView->d->currentCursorIndex = QModelIndex();
+    m_canvasGridView->moveCursor(QAbstractItemView::MoveDown, Qt::KeyboardModifier::MetaModifier);
+    EXPECT_TRUE(m_canvasGridView->firstIndex() == m_canvasGridView->d->currentCursorIndex);
+}
+
+//TEST_F(CanvasGridViewTest, CanvasGridViewTest_contextMenuEvent)
+//{
+//    QContextMenuEvent textevent(QContextMenuEvent::Mouse, QPoint(2,2));
+//    m_canvasGridView->contextMenuEvent(&textevent);
+//    QEventLoop loop;
+//    QTimer::singleShot(100,&loop,[&](){
+//        m_canvasGridView->hide();
+//        loop.exit();
+//    });
+//    loop.exec();
+//    EXPECT_TRUE(0 == m_canvasGridView->selectedIndexCount());
+//}
+
