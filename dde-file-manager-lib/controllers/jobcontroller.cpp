@@ -183,6 +183,12 @@ void JobController::run()
         m_iterator->next();
         DAbstractFileInfoPointer fileinfo;
         fileinfo = m_iterator->fileInfo();
+        if (fileinfo) {
+            /*fix bug 49039 解决多次调用m_iterator->hasNext导致有重复结果，这里去重*/
+            if (fileInfoQueue.contains(fileinfo)) {
+                continue;
+            }
+        }
         if (update_children) {
             fileInfoQueue.enqueue(fileinfo);
 
