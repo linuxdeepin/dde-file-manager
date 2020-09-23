@@ -126,6 +126,7 @@ void SelectWork::run()
             msleep(10);
             if (m_bStop)
                 break;
+            if(!m_pModel) break;
             const QModelIndex &index = m_pModel->index(*itr);
             if (index.isValid()) {
                 // 发送信号选中该文件
@@ -729,6 +730,34 @@ void DFileView::select(const QList<DUrl> &list)
     QModelIndex lastIndex;
     const QModelIndex &root = rootIndex();
     clearSelection();
+    for (const DUrl &url : list) {
+        const QModelIndex &index = model()->index(url);
+
+        if (!index.isValid() || index == root) {
+            continue;
+        }
+
+        selectionModel()->select(index, QItemSelectionModel::Select);
+
+        if (!firstIndex.isValid())
+            firstIndex = index;
+
+        lastIndex = index;
+    }
+
+    if (lastIndex.isValid())
+        selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
+
+    if (firstIndex.isValid())
+        scrollTo(firstIndex, PositionAtTop);
+}
+
+void DFileView::selectAllAfterCutOrCopy(const QList<DUrl> &list)
+{
+    QModelIndex firstIndex;
+    QModelIndex lastIndex;
+    const QModelIndex &root = rootIndex();
+    clearSelection();
 
     // 修复KLU TASK-37638 缓存为选中的拷贝或剪贴文件
     QList<DUrl> lstNoValid;
@@ -736,6 +765,7 @@ void DFileView::select(const QList<DUrl> &list)
     for (const DUrl &url : list) {
         const QModelIndex &index = model()->index(url);
 
+        // 缓存没有刷新的文件对象
         if (!index.isValid()) {
             lstNoValid.push_back(url);
             continue;
@@ -745,6 +775,7 @@ void DFileView::select(const QList<DUrl> &list)
             continue;
         }
 
+        // 将文件对象设置成选中状态
         selectionModel()->select(index, QItemSelectionModel::Select);
 
         if (!firstIndex.isValid())
