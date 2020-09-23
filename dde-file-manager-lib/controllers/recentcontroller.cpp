@@ -341,6 +341,17 @@ bool RecentController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent>
     return DFileService::instance()->openFileByApp(event->sender(), event->appName(), DUrl::fromLocalFile(event->url().path()));
 }
 
+bool RecentController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
+{
+    //RecentController::openFilesByApp负责将所有recentUrl转成fileUrl然后走filecontroller::openFilesByApp的逻辑流程
+    const DUrlList recentUrls = event.data()->urlList();
+    DUrlList fileUrls;
+    for (const DUrl &url : recentUrls) {
+        fileUrls.append(DUrl::fromLocalFile(url.path()));
+    }
+    return DFileService::instance()->openFilesByApp(event->sender(), event->appName(), fileUrls);
+}
+
 bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
     //最近使用文件不支持剪切，这里主要是屏蔽从ctrl+x快捷键操作过来的剪切事件。
