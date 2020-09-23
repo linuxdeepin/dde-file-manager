@@ -150,6 +150,10 @@ public:
 
     /// drag drop
     QModelIndex dragMoveHoverIndex;
+    //析构锁，当其他信号正在处理时，不要析构
+    QMutex m_mutex;
+    //析构锁，当更新updatestatusbar正在处理时，不要析构
+    QMutex m_mutexUpdateStatusBar;
 
     /// list mode column visible
     QMap<QString, bool> columnForRoleHiddenMap;
@@ -184,6 +188,7 @@ public:
     char justAvoidWaringOfAlignmentBoundary[2];//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
 
     bool isVaultDelSigConnected = false; //is vault delete signal connected.
+
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -226,6 +231,11 @@ DFileView::~DFileView()
 {
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
+
+    //所有的槽函数必须跑完才能析构
+    QMutexLocker lk(&d_ptr->m_mutex);
+    QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
+
 }
 
 DFileSystemModel *DFileView::model() const
@@ -873,6 +883,13 @@ void DFileView::openWithActionTriggered(QAction *action)
 
 void DFileView::onRowCountChanged()
 {
+    //所有的槽函数必须跑完才能析构
+    QPointer<DFileView> me = this;
+    QMutexLocker lk(&d_ptr->m_mutex);
+    if (!me) {
+        return;
+    }
+
 #ifndef CLASSICAL_SECTION
     static_cast<DFileSelectionModel *>(selectionModel())->m_selectedList.clear();
 #endif
@@ -1316,7 +1333,6 @@ void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex 
 void DFileView::delayUpdateStatusBar()
 {
     Q_D(DFileView);
-
     // when QItemSelectionModel::selectionChanged emit we get selectedUrls() were old selecturls
     // so we wait...
     d->updateStatusBarTimer->start();
@@ -1332,6 +1348,12 @@ void DFileView::delayUpdateStatusBar()
 void DFileView::updateStatusBar()
 {
     Q_D(DFileView);
+    //智能指针和枷锁处理等待判断当前对象是否被析构
+    QPointer<DFileView> me = this;
+    QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
+    if (!me) {
+        return;
+    }
     if (model()->state() != DFileSystemModel::Idle)
         return;
     DFMEvent event(this);

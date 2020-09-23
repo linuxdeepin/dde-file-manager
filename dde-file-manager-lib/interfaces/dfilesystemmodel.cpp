@@ -978,6 +978,8 @@ public:
 
     bool beginRemoveRowsFlag = false;
     QMutex mutex;
+    //防止析构后，添加flags崩溃锁
+    QMutex mutexFlags;
 
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
@@ -1339,6 +1341,7 @@ DFileSystemModel::~DFileSystemModel()
     }
 
     QMutexLocker locker(&m_mutex); // 必须等待其他 资源性线程结束，否则 要崩溃
+    QMutexLocker lk(&d_ptr->mutexFlags);
 
     qDebug() << "DFileSystemModel is released soon!";
 }
@@ -1791,6 +1794,11 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 {
     Q_D(const DFileSystemModel);
+    QPointer<DFileSystemModel> me = const_cast<DFileSystemModel*>(this);
+    QMutexLocker lk(&d_ptr->mutexFlags);
+    if (!me){
+        return Qt::NoItemFlags;
+    }
 
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     if (!index.isValid()) {
@@ -1821,7 +1829,7 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         }
         if (indexNode && indexNode->fileInfo && indexNode->fileInfo->isWritable()) {
             //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时ignoreDropFlag为true，不调用candrop，节省时间,bug#10926
-            if (!ignoreDropFlag && indexNode->fileInfo->canDrop()) {
+            if (!ignoreDropFlag && indexNode && indexNode->fileInfo && indexNode->fileInfo->canDrop()) {
                 flags |= Qt::ItemIsDropEnabled;
             } else {
                 flags |= Qt::ItemNeverHasChildren;
@@ -2652,7 +2660,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (job) {
         //刷新完成标志
         bool finished = job->isUpdatedFinished();
-//        qDebug() << "isUpdatedFinished" << finished;
+        qDebug() << "isUpdatedFinished" << finished;
         //若刷新完成通知桌面重新获取文件
         if (finished)
             emit sigJobFinished();
@@ -2664,6 +2672,11 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
+    QPointer<DFileSystemModel> me = this;
+    QMutexLocker locker(&m_mutex);
+    if (!me) {
+        return;
+    }
 
     if (d->jobController) {
         d->jobController->pause();
