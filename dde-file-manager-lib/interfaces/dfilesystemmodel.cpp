@@ -963,6 +963,8 @@ public:
 
     bool beginRemoveRowsFlag = false;
     QMutex mutex;
+    //防止析构后，添加flags崩溃锁
+    QMutex mutexFlags;
 
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
@@ -1309,6 +1311,7 @@ DFileSystemModel::~DFileSystemModel()
     }
 
     QMutexLocker locker(&m_mutex); // 必须等待其他 资源性线程结束，否则 要崩溃
+    QMutexLocker lk(&d_ptr->mutexFlags);
 
     qDebug() << "DFileSystemModel is released soon!";
 }
@@ -1749,6 +1752,11 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 {
     Q_D(const DFileSystemModel);
+    QPointer<DFileSystemModel> me = const_cast<DFileSystemModel*>(this);
+    QMutexLocker lk(&d_ptr->mutexFlags);
+    if (!me){
+        return Qt::NoItemFlags;
+    }
 
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     if (!index.isValid()) {
@@ -2044,7 +2052,9 @@ DUrl DFileSystemModel::rootUrl() const
 DUrlList DFileSystemModel::sortedUrls()
 {
     Q_D(const DFileSystemModel);
-
+    if (!d->rootNode) {
+        return DUrlList();
+    }
     return d->rootNode->getChildrenUrlList();
 }
 
@@ -2677,6 +2687,11 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
+    QPointer<DFileSystemModel> me = this;
+    QMutexLocker locker(&m_mutex);
+    if (!me) {
+        return;
+    }
 
     if (d->jobController) {
         d->jobController->pause();
