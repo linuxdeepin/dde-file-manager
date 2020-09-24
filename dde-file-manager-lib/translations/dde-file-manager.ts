@@ -395,7 +395,7 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="149"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation>No files to burn</translation>
+        <translation>Unable to burn. Not enough free space on the target disk.</translation>
     </message>
 </context>
 <context>
@@ -1654,7 +1654,7 @@
     <message>
         <location filename="../controllers/filecontroller.cpp" line="1253"/>
         <source>Confirm</source>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
 </context>
 <context>

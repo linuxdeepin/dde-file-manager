@@ -201,7 +201,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
         <source>Version</source>
-        <translation>版本</translation>
+        <translation>版本号</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="105"/>
@@ -395,7 +395,7 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="149"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation>没有文件需要刻录</translation>
+        <translation>目标磁盘剩余空间不足，无法进行刻录！</translation>
     </message>
 </context>
 <context>
