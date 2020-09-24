@@ -9,7 +9,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3103"/>
         <source>Auto merge</source>
-        <translation>Automatisch verbinden</translation>
+        <translation>Automatisch zusammenführen</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3115"/>
@@ -25,7 +25,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3173"/>
         <source>Wallpaper and Screensaver</source>
-        <translation>Hintergrund und Bildschirmschoner</translation>
+        <translation>Hintergrundbild und Bildschirmschoner</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3317"/>
@@ -79,12 +79,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="655"/>
         <source>Wallpaper Slideshow</source>
-        <translation>Hintergrund-Slideshow</translation>
+        <translation>Hintergrundbild-Slideshow</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="700"/>
         <source>When login</source>
-        <translation>Beim Login</translation>
+        <translation>Bei der Anmeldung</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="702"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="824"/>
         <source>Wallpaper</source>
-        <translation>Hintergrund</translation>
+        <translation>Hintergrundbild</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="838"/>
@@ -137,7 +137,7 @@
     <message>
         <location filename="../view/watermaskframe.cpp" line="253"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>Nicht autorisiert</translation>
     </message>
     <message>
         <location filename="../view/watermaskframe.cpp" line="261"/>

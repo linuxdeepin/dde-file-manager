@@ -159,19 +159,19 @@
     <name>ComputerModel</name>
     <message>
         <location filename="../models/computermodel.cpp" line="57"/>
-        <location filename="../models/computermodel.cpp" line="116"/>
+        <location filename="../models/computermodel.cpp" line="119"/>
         <source>My Directories</source>
         <translation>Mine mapper</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="75"/>
         <location filename="../models/computermodel.cpp" line="79"/>
-        <location filename="../models/computermodel.cpp" line="165"/>
-        <location filename="../models/computermodel.cpp" line="176"/>
-        <location filename="../models/computermodel.cpp" line="589"/>
-        <location filename="../models/computermodel.cpp" line="593"/>
-        <location filename="../models/computermodel.cpp" line="630"/>
-        <location filename="../models/computermodel.cpp" line="634"/>
+        <location filename="../models/computermodel.cpp" line="168"/>
+        <location filename="../models/computermodel.cpp" line="179"/>
+        <location filename="../models/computermodel.cpp" line="592"/>
+        <location filename="../models/computermodel.cpp" line="596"/>
+        <location filename="../models/computermodel.cpp" line="633"/>
+        <location filename="../models/computermodel.cpp" line="637"/>
         <source>Disks</source>
         <translation>Diske</translation>
     </message>
@@ -2607,7 +2607,7 @@
         <translation>Skjul filen</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1524"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1536"/>
         <source>Allow to execute as program</source>
         <translation>Tillad eksekvering som program</translation>
     </message>
@@ -2654,41 +2654,41 @@
         <translation>Samlet plads</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1424"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1436"/>
         <source>Access denied</source>
         <translation>Adgang nægtet</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1425"/>
         <location filename="../dialogs/propertydialog.cpp" line="1437"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1449"/>
         <source>Executable</source>
         <translation>Eksekverbar</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1426"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1427"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1438"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1439"/>
         <source>Write only</source>
         <translation>Kun skrive</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1428"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1429"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1440"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1441"/>
         <source>Read only</source>
         <translation>Kun læse</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1430"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1431"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1442"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1443"/>
         <source>Read-write</source>
         <translation>Læse-skrive</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1520"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1532"/>
         <source>Others</source>
         <translation>Andre</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1518"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1530"/>
         <source>Owner</source>
         <translation>Ejer</translation>
     </message>
@@ -2703,7 +2703,7 @@
         <translation>Filsystem</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1519"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1531"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
@@ -2742,6 +2742,11 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>20 minutes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <source>Delete File Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -2998,7 +3003,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Delete</source>
         <translation>Slet</translation>
     </message>
@@ -3034,10 +3038,10 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
-        <location filename="../models/computermodel.cpp" line="109"/>
-        <location filename="../models/computermodel.cpp" line="123"/>
-        <location filename="../models/computermodel.cpp" line="140"/>
-        <location filename="../models/computermodel.cpp" line="160"/>
+        <location filename="../models/computermodel.cpp" line="111"/>
+        <location filename="../models/computermodel.cpp" line="126"/>
+        <location filename="../models/computermodel.cpp" line="143"/>
+        <location filename="../models/computermodel.cpp" line="163"/>
         <source>File Vault</source>
         <translation>Filboks</translation>
     </message>
@@ -3047,12 +3051,12 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="437"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="439"/>
         <source>Auto mount</source>
         <translation>Montér automatisk</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="475"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="477"/>
         <source>Open after auto mount</source>
         <translation>Åbn efter automatisk montering</translation>
     </message>
@@ -3566,9 +3570,9 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="163"/>
-        <location filename="../models/computermodel.cpp" line="174"/>
-        <location filename="../models/computermodel.cpp" line="565"/>
+        <location filename="../models/computermodel.cpp" line="166"/>
+        <location filename="../models/computermodel.cpp" line="177"/>
+        <location filename="../models/computermodel.cpp" line="568"/>
         <source>Disks</source>
         <translation>Diske</translation>
     </message>

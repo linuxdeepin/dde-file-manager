@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -203,7 +201,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
         <source>Version</source>
-        <translation>版本号</translation>
+        <translation>版本</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="105"/>
@@ -2754,7 +2752,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished">删除保险箱</translation>
+        <translation>删除保险箱</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>

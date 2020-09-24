@@ -137,12 +137,12 @@
     <message>
         <location filename="../view/watermaskframe.cpp" line="253"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>No autorizado</translation>
     </message>
     <message>
         <location filename="../view/watermaskframe.cpp" line="261"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
+        <translation>En periodo de prueba</translation>
     </message>
 </context>
 <context>
