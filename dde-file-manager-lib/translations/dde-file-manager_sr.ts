@@ -159,19 +159,19 @@
     <name>ComputerModel</name>
     <message>
         <location filename="../models/computermodel.cpp" line="57"/>
-        <location filename="../models/computermodel.cpp" line="116"/>
+        <location filename="../models/computermodel.cpp" line="119"/>
         <source>My Directories</source>
         <translation>Моји директоријуми</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="75"/>
         <location filename="../models/computermodel.cpp" line="79"/>
-        <location filename="../models/computermodel.cpp" line="165"/>
-        <location filename="../models/computermodel.cpp" line="176"/>
-        <location filename="../models/computermodel.cpp" line="589"/>
-        <location filename="../models/computermodel.cpp" line="593"/>
-        <location filename="../models/computermodel.cpp" line="630"/>
-        <location filename="../models/computermodel.cpp" line="634"/>
+        <location filename="../models/computermodel.cpp" line="168"/>
+        <location filename="../models/computermodel.cpp" line="179"/>
+        <location filename="../models/computermodel.cpp" line="592"/>
+        <location filename="../models/computermodel.cpp" line="596"/>
+        <location filename="../models/computermodel.cpp" line="633"/>
+        <location filename="../models/computermodel.cpp" line="637"/>
         <source>Disks</source>
         <translation>Дискови</translation>
     </message>
@@ -710,12 +710,12 @@
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="32"/>
         <source>Delete File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Обриши трезор</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="76"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation type="unfinished"/>
+        <translation>Након уклањања, све припадајуће датотеке ће бити трајно обрисане</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
@@ -757,17 +757,17 @@
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="205"/>
         <source>Failed to delete file vault</source>
-        <translation type="unfinished"/>
+        <translation>Неуспешно брисање трезора</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="219"/>
         <source>Deleted successfully</source>
-        <translation type="unfinished"/>
+        <translation>Успешно обрисано</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="221"/>
         <source>Failed to delete</source>
-        <translation type="unfinished"/>
+        <translation>Неуспешно брисање</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="100"/>
@@ -1601,7 +1601,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1082"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
-        <translation type="unfinished"/>
+        <translation>Неуспешно враћање %1 датотеке/а, изворна датотека не постоји</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
@@ -2607,7 +2607,7 @@
         <translation>Сакриј датотеку</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1524"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1536"/>
         <source>Allow to execute as program</source>
         <translation>Дозволи покретање као програм</translation>
     </message>
@@ -2654,41 +2654,41 @@
         <translation>Укупан простор</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1424"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1436"/>
         <source>Access denied</source>
         <translation>Приступ забрањен</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1425"/>
         <location filename="../dialogs/propertydialog.cpp" line="1437"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1449"/>
         <source>Executable</source>
         <translation>Извршна</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1426"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1427"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1438"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1439"/>
         <source>Write only</source>
         <translation>Само уписивање</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1428"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1429"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1440"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1441"/>
         <source>Read only</source>
         <translation>Само читање</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1430"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1431"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1442"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1443"/>
         <source>Read-write</source>
         <translation>Читање-уписивање</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1520"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1532"/>
         <source>Others</source>
         <translation>Остали</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1518"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1530"/>
         <source>Owner</source>
         <translation>Власник</translation>
     </message>
@@ -2703,7 +2703,7 @@
         <translation>Систем датотека</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1519"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1531"/>
         <source>Group</source>
         <translation>Група</translation>
     </message>
@@ -2743,6 +2743,11 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>20 minutes</source>
         <translation>20 минута</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <source>Delete File Vault</source>
+        <translation>Обриши трезор</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
@@ -2998,7 +3003,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Delete</source>
         <translation>Обриши</translation>
     </message>
@@ -3034,10 +3038,10 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
-        <location filename="../models/computermodel.cpp" line="109"/>
-        <location filename="../models/computermodel.cpp" line="123"/>
-        <location filename="../models/computermodel.cpp" line="140"/>
-        <location filename="../models/computermodel.cpp" line="160"/>
+        <location filename="../models/computermodel.cpp" line="111"/>
+        <location filename="../models/computermodel.cpp" line="126"/>
+        <location filename="../models/computermodel.cpp" line="143"/>
+        <location filename="../models/computermodel.cpp" line="163"/>
         <source>File Vault</source>
         <translation>Трезор датотека</translation>
     </message>
@@ -3047,12 +3051,12 @@
         <translation>Додај на диск</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="437"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="439"/>
         <source>Auto mount</source>
         <translation>Самомонтирај</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="475"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="477"/>
         <source>Open after auto mount</source>
         <translation>Отвори након самомонтирања</translation>
     </message>
@@ -3566,9 +3570,9 @@
         <translation>Мој трезор</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="163"/>
-        <location filename="../models/computermodel.cpp" line="174"/>
-        <location filename="../models/computermodel.cpp" line="565"/>
+        <location filename="../models/computermodel.cpp" line="166"/>
+        <location filename="../models/computermodel.cpp" line="177"/>
+        <location filename="../models/computermodel.cpp" line="568"/>
         <source>Disks</source>
         <translation>Дискови</translation>
     </message>
