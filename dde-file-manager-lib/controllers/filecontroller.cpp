@@ -319,7 +319,7 @@ void Delay_MSec(unsigned int msec)
 {
     QTime dieTime = QTime::currentTime().addMSecs(msec);
 
-    while ( QTime::currentTime() < dieTime )
+    while (QTime::currentTime() < dieTime)
 
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 
@@ -352,7 +352,7 @@ QString printList(BTreeNode *pNode)
     QString t_prefix = pathList.at(1);
 
     if (t_prefix == "boot" || t_prefix == "dev" || t_prefix == "proc" || t_prefix == "sys"
-            || t_prefix == "root" || t_prefix == "run" || t_prefix == "home") {
+            || t_prefix == "root" || t_prefix == "run") {
         return "";
     }
 
@@ -1062,15 +1062,15 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
     if (bold) {
         job->wait();
 
-    QTimer::singleShot(200, dialogManager->taskDialog(), [job] {
-        dialogManager->taskDialog()->removeTaskJob(job.data());
-    });
-    //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
-    if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
-            list.first().toString().endsWith(".local/share/Trash/files")) {
-        DFileService::instance()->setDoClearTrashState(false);
-    }
-    //当前线程不要去处理error_handle所在的线程资源
+        QTimer::singleShot(200, dialogManager->taskDialog(), [job] {
+            dialogManager->taskDialog()->removeTaskJob(job.data());
+        });
+        //fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
+        if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
+                list.first().toString().endsWith(".local/share/Trash/files")) {
+            DFileService::instance()->setDoClearTrashState(false);
+        }
+        //当前线程不要去处理error_handle所在的线程资源
 //    error_handle->currentJob = nullptr;
 //    error_handle->fileJob = nullptr;
 
