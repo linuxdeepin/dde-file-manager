@@ -162,7 +162,8 @@ SOURCES += \
     $$PWD/controllers/ut_dfmusersharecrumbcontroller.cpp \
     $$PWD/interfaces/ut_dfmsidebarmanager.cpp \
     $$PWD/interfaces/ut_dthumbnailprovider.cpp \
-    $$PWD/interfaces/ut_dfmcrumbmanager.cpp
+    $$PWD/interfaces/ut_dfmcrumbmanager.cpp \
+    $$PWD/interfaces/ut_dfmevent.cpp
 
 RESOURCES += \
     $$PWD/resources/test.qrc
