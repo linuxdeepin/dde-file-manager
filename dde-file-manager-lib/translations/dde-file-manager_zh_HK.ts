@@ -166,12 +166,12 @@
     <message>
         <location filename="../models/computermodel.cpp" line="75"/>
         <location filename="../models/computermodel.cpp" line="79"/>
-        <location filename="../models/computermodel.cpp" line="168"/>
-        <location filename="../models/computermodel.cpp" line="179"/>
-        <location filename="../models/computermodel.cpp" line="592"/>
-        <location filename="../models/computermodel.cpp" line="596"/>
-        <location filename="../models/computermodel.cpp" line="633"/>
-        <location filename="../models/computermodel.cpp" line="637"/>
+        <location filename="../models/computermodel.cpp" line="171"/>
+        <location filename="../models/computermodel.cpp" line="182"/>
+        <location filename="../models/computermodel.cpp" line="595"/>
+        <location filename="../models/computermodel.cpp" line="599"/>
+        <location filename="../models/computermodel.cpp" line="636"/>
+        <location filename="../models/computermodel.cpp" line="640"/>
         <source>Disks</source>
         <translation>磁盤</translation>
     </message>
@@ -201,7 +201,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
         <source>Version</source>
-        <translation>版本</translation>
+        <translation>版本號</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="105"/>
@@ -395,7 +395,7 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="149"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation>沒有文件需要刻錄</translation>
+        <translation>目標磁盤剩餘空間不足，無法進行刻錄！</translation>
     </message>
 </context>
 <context>
@@ -1029,41 +1029,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1649"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1652"/>
         <location filename="../models/trashfileinfo.cpp" line="339"/>
         <source>Name</source>
         <translation>名稱</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1102"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1651"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1654"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
         <translation>修改時間</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1653"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1656"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1655"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1658"/>
         <source>Type</source>
         <translation>類型</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1657"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1660"/>
         <source>Time created</source>
         <translation>創建時間</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1659"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1662"/>
         <source>Last access</source>
         <translation>最近訪問時間</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1661"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1664"/>
         <location filename="../models/recentfileinfo.cpp" line="200"/>
         <location filename="../models/searchfileinfo.cpp" line="129"/>
         <location filename="../models/searchfileinfo.cpp" line="134"/>
@@ -1074,12 +1074,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2350"/>
+        <location filename="../views/dfileview.cpp" line="2372"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>此光盤中的鏡像已損壞，無法掛載，請擦除後使用</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3004"/>
+        <location filename="../views/dfileview.cpp" line="3026"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1646,10 +1646,15 @@
         <translation>請先安裝歸檔管理器然後繼續</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1249"/>
-        <location filename="../controllers/filecontroller.cpp" line="1267"/>
+        <location filename="../controllers/filecontroller.cpp" line="1251"/>
+        <location filename="../controllers/filecontroller.cpp" line="1273"/>
         <source>Unable to create files here: %1</source>
         <translation>不能在此創建文件：%1</translation>
+    </message>
+    <message>
+        <location filename="../controllers/filecontroller.cpp" line="1253"/>
+        <source>Confirm</source>
+        <translation>確定</translation>
     </message>
 </context>
 <context>
@@ -3040,8 +3045,8 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
         <location filename="../models/computermodel.cpp" line="111"/>
         <location filename="../models/computermodel.cpp" line="126"/>
-        <location filename="../models/computermodel.cpp" line="143"/>
-        <location filename="../models/computermodel.cpp" line="163"/>
+        <location filename="../models/computermodel.cpp" line="145"/>
+        <location filename="../models/computermodel.cpp" line="166"/>
         <source>File Vault</source>
         <translation>保險箱</translation>
     </message>
@@ -3244,19 +3249,19 @@
         <translation>正在加載......</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="792"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="793"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移動或刪除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="794"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="802"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="808"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="795"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="803"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="809"/>
         <source>You do not have permission to access this folder</source>
         <translation>您沒有權限讀取此文件夾</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="812"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="813"/>
         <location filename="../models/recentfileinfo.cpp" line="253"/>
         <location filename="../models/trashfileinfo.cpp" line="384"/>
         <location filename="../models/vaultfileinfo.cpp" line="138"/>
@@ -3570,9 +3575,9 @@
         <translation>我的保險箱</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="166"/>
-        <location filename="../models/computermodel.cpp" line="177"/>
-        <location filename="../models/computermodel.cpp" line="568"/>
+        <location filename="../models/computermodel.cpp" line="169"/>
+        <location filename="../models/computermodel.cpp" line="180"/>
+        <location filename="../models/computermodel.cpp" line="571"/>
         <source>Disks</source>
         <translation>磁盤</translation>
     </message>
