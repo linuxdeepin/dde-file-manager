@@ -70,6 +70,8 @@
 #include <dblockdevice.h>
 #include <denhancedwidget.h>
 #include <DColoredProgressBar>
+#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
 #include <QScrollBar>
 
 #include <QTextEdit>
@@ -347,6 +349,25 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         progbdf->setValue(dskspace && ~dskinuse ? int(10000. * dskinuse / dskspace) : 0);
         progbdf->setMaximumHeight(8);
         progbdf->setTextVisible(false);
+
+        // fix bug#47111 在浅色模式下，手动设置进度条背景色
+        if (DGuiApplicationHelper::LightType == DGuiApplicationHelper::instance()->themeType()) {
+            DPalette palette = progbdf->palette();
+            palette.setBrush(DPalette::ObviousBackground, QColor("#ededed"));
+            DApplicationHelper::instance()->setPalette(progbdf, palette);
+        }
+
+        // 进度条背景色跟随主题变化而变化
+        connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [ = ](DGuiApplicationHelper::ColorType type) {
+            DPalette palette = progbdf->palette();
+            if (type == DGuiApplicationHelper::LightType) {
+                palette.setBrush(DPalette::ObviousBackground, QColor("#ededed"));
+                DApplicationHelper::instance()->setPalette(progbdf, palette);
+            } else {
+                palette.setBrush(DPalette::ObviousBackground, QColor("#4e4e4e"));
+                DApplicationHelper::instance()->setPalette(progbdf, palette);
+            }
+        });
 
         //fix 没有devid则只显示名称
         QString text = devid.isEmpty() ? tr("%1").arg(name) : tr("%1 (%2)").arg(name).arg(devid);
@@ -1387,13 +1408,13 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
         int h = listWidget->itemWidget(item)->height();
         item->setSizeHint(QSize(item->sizeHint().width(), h));
         // 乘以2是因为item与item之间有两个spacing
-        listHeight += h + listWidget->spacing()*2;
+        listHeight += h + listWidget->spacing() * 2;
     }
     // 加上最后一个spacing
     listHeight += listWidget->spacing();
 
     // 修复UI-BUG-48789 自动设置listwidget的高度，使得根据内容延展其面板的长度
-    if(count < 1){
+    if (count < 1) {
         // 当没有打开方式时，设置一个固定大小
         listWidget->setFixedHeight(ArrowLineExpand_HIGHT);
     } else {
