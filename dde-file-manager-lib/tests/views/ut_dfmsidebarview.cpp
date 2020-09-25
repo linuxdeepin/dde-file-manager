@@ -172,8 +172,7 @@ TEST_F(DFMSideBarViewTest, featch_drag_memory)
     DFMSideBarView *t_p = bar->m_sidebarView;
     ASSERT_NE(t_p, nullptr);
 
-    bool result = t_p->fetchDragEventUrlsFromSharedMemory();
-    EXPECT_FALSE(result);
+    EXPECT_NO_FATAL_FAILURE(t_p->fetchDragEventUrlsFromSharedMemory());
 }
 
 TEST_F(DFMSideBarViewTest, check_op_time)
