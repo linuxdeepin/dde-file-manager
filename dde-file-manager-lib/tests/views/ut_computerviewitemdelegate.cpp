@@ -1,12 +1,14 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+#include <QAbstractItemModel>
+#include <QMouseEvent>
+#include "models/computermodel.h"
+#include "views/computerview.h"
+
 #include "views/computerviewitemdelegate.h"
 #include "dfmevent.h"
-#include <QMouseEvent>
 #include "views/dfilemanagerwindow.h"
-
-
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -24,13 +26,10 @@ namespace  {
             m_computerView = dynamic_cast<ComputerView*>(m_window->getFileView());
 
             m_computerViewItemDelegate = dynamic_cast<ComputerViewItemDelegate*>(m_computerView->view()->itemDelegate());
-
-            std::cout << "start TestComputerViewItemDelegate" << std::endl;
         }
 
         virtual void TearDown() override
         {
-            std::cout << "end TestComputerViewItemDelegate" << std::endl;
         }
     };
 }
@@ -40,7 +39,15 @@ TEST_F(TestComputerViewItemDelegate, tst_paint)
 {
     QPainter painter;
     QStyleOptionViewItem option;
+    ComputerModel model;
     QModelIndex index;
+    model.setData(index, ComputerModelItemData::Category::cat_splitter, ComputerModel::DataRoles::ICategoryRole);
+    m_computerViewItemDelegate->paint(&painter, option, index);
+
+    model.setData(index, ComputerModelItemData::Category::cat_widget, ComputerModel::DataRoles::ICategoryRole);
+    m_computerViewItemDelegate->paint(&painter, option, index);
+
+    model.setData(index, ComputerModelItemData::Category::cat_user_directory, ComputerModel::DataRoles::ICategoryRole);
     m_computerViewItemDelegate->paint(&painter, option, index);
 }
 
