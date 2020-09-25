@@ -434,19 +434,25 @@ QWidget *BluetoothTransDialog::initFailedPage()
 {
     QWidget *w = new QWidget(this);
     QVBoxLayout *pLay = new QVBoxLayout(w);
+    pLay->setSpacing(0);
+    pLay->setMargin(0);
+    // w->setStyleSheet("border: 1px solid red;");
     w->setLayout(pLay);
 
     m_subTitleOfFailedPage = new DLabel("Failed to send files to ...");
     m_subTitleOfFailedPage->setAlignment(Qt::AlignCenter);
+    m_subTitleOfFailedPage->setContentsMargins(0, 46, 0, 10);
     setObjTextStyle(m_subTitleOfFailedPage, 14, false);
     changeLabelTheme(m_subTitleOfFailedPage);
     pLay->addWidget(m_subTitleOfFailedPage);
 
     DLabel *txt2 = new DLabel(TXT_ERROR_REASON, this);
+    txt2->setMargin(0);
     txt2->setAlignment(Qt::AlignCenter);
     setObjTextStyle(txt2, 12, false);
     changeLabelTheme(txt2);
     pLay->addWidget(txt2);
+    pLay->addStretch(1);
 
     return w;
 }
