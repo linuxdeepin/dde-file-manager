@@ -771,6 +771,24 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
     return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
 }
 
+bool DFMRootFileInfo::typeCompareByUrl(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)
+{
+    static const QHash<ItemType, int> priomap = {
+        {ItemType::UserDirectory, -1},
+        {ItemType::UDisksRoot,  0},
+        {ItemType::UDisksData,  1},
+        {ItemType::UDisksFixed,  2},
+        {ItemType::UDisksRemovable,  3},
+        {ItemType::UDisksOptical,  4},
+        {ItemType::GvfsMTP,  5},
+        {ItemType::GvfsGPhoto2,  5},
+        {ItemType::GvfsGeneric,  6},
+        {ItemType::GvfsSMB,  7},
+        {ItemType::GvfsFTP,  7}
+    };
+    return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
+}
+
 void DFMRootFileInfo::loadDiskInfo()
 {
     Q_D(const DFMRootFileInfo);

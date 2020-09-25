@@ -98,6 +98,8 @@ public:
     bool checkMpsStr(const QString &path) const override;
 
     static bool typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b);
+    //fix bug 49348 if unable network,ftp smb sort the last
+    static bool typeCompareByUrl(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b);
 
     static QMap<QString, DiskInfoStr> DiskInfoMap;
 private:
