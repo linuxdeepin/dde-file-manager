@@ -48,8 +48,8 @@
 static const QString ICON_CONNECT = "notification-bluetooth-connected";
 static const QString ICON_DISCONN = "notification-bluetooth-disconnected";
 
-#define lightIcon "://icons/deepin/builtin/light/bluetooth_"
-#define darkIcon "://icons/deepin/builtin/dark/bluetooth_"
+static const QString lightIcon = ":/icons/deepin/builtin/light/icons/bluetooth_";
+static const QString darkIcon = ":/icons/deepin/builtin/dark/icons/bluetooth_";
 
 static const QString PXMP_NO_DEV_LIGHT = "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg";
 static const QString PXMP_NO_DEV_DARKY = "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg";
@@ -478,7 +478,18 @@ DStandardItem *BluetoothTransDialog::getStyledItem(const BluetoothDevice *dev)
     DViewItemActionList actLst;
     DViewItemAction *act = new DViewItemAction(Qt::AlignVCenter | Qt::AlignLeft, QSize(22, 22), QSize(), false);
     actLst.append(act);
-    act->setIcon(QIcon::fromTheme(dev->icon()));
+
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+            act, [act, dev](DGuiApplicationHelper::ColorType themeType){
+        QString iconPath = QString("%1%2%3").arg(themeType == DGuiApplicationHelper::DarkType ? darkIcon : lightIcon)
+                .arg(dev->icon())
+                .arg(themeType == DGuiApplicationHelper::DarkType ? "_dark.svg" : "_light.svg");
+        act->setIcon(QIcon(iconPath));
+    });
+
+    // 初始化一次主题变更以添加图标
+    emit DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::instance()->themeType());
+
 
     DStandardItem *item = new DStandardItem();
     item->setData(dev->id(), DevIdRole);
