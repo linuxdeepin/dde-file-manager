@@ -163,7 +163,8 @@ SOURCES += \
     $$PWD/interfaces/ut_dfmsidebarmanager.cpp \
     $$PWD/interfaces/ut_dthumbnailprovider.cpp \
     $$PWD/interfaces/ut_dfmcrumbmanager.cpp \
-    $$PWD/interfaces/ut_dfmevent.cpp
+    $$PWD/interfaces/ut_dfmevent.cpp \
+    $$PWD/interfaces/ut_dfmstandardpaths.cpp
 
 RESOURCES += \
     $$PWD/resources/test.qrc
