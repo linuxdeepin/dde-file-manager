@@ -103,6 +103,7 @@ ComputerModel::ComputerModel(QObject *parent)
         connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this,rootInit](){
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
+            std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
             rootInit(ch);
 
             // 判断是否启用保险箱
@@ -119,6 +120,7 @@ ComputerModel::ComputerModel(QObject *parent)
             addItem(makeSplitterUrl(tr("My Directories")));
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
+            std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
             rootInit(ch);
 
             if ( VaultHelper::isVaultEnabled() ) {
@@ -132,6 +134,7 @@ ComputerModel::ComputerModel(QObject *parent)
 
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "get root file now" << ch.size();
+            std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
             rootInit(ch);
 
 #ifdef ENABLE_ASYNCINIT
@@ -230,7 +233,7 @@ QModelIndex ComputerModel::index(int row, int column, const QModelIndex &parent)
     if (row >= rowCount() || row < 0) {
         return QModelIndex();
     }
-    return createIndex(row, column, (void*)&m_items[row]);
+    return createIndex(row, column, const_cast<ComputerModelItemData*>(&m_items[row]));
 }
 
 QModelIndex ComputerModel::parent(const QModelIndex &index) const
@@ -628,7 +631,7 @@ void ComputerModel::getRootFile()
     if (ch.isEmpty())
         return;
 
-    std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompare);
+    std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
     bool splt = false;
     m_nitems = 0;
     for (auto chi : ch) {
