@@ -20,14 +20,15 @@
 #include <QPointer>
 #include <QDebug>
 #include <QTimer>
+#include <QPalette>
 
 #define TITLE_BT_TRANS_FILE BluetoothTransDialog::tr("Bluetooth File Transfer")
 #define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
 #define TITLE_BT_TRANS_FAIL BluetoothTransDialog::tr("File Transfer Failed")
 
-#define TXT_SENDING_FILE BluetoothTransDialog::tr("Sending files to \"%1\"")
-#define TXT_SENDING_FAIL BluetoothTransDialog::tr("Failed to send files to \"%1\"")
-#define TXT_SENDING_SUCC BluetoothTransDialog::tr("Sent to \"%1\" successfully")
+#define TXT_SENDING_FILE BluetoothTransDialog::tr("Sending files to \"<b>%1</b>\"")
+#define TXT_SENDING_FAIL BluetoothTransDialog::tr("Failed to send files to \"<b>%1</b>\"")
+#define TXT_SENDING_SUCC BluetoothTransDialog::tr("Sent to \"<b>%1</b>\" successfully")
 #define TXT_SELECT_DEVIC BluetoothTransDialog::tr("Select a Bluetooth device to receive files")
 #define TXT_NO_DEV_FOUND BluetoothTransDialog::tr("Cannot find the connected Bluetooth device")
 #define TXT_WAIT_FOR_RCV BluetoothTransDialog::tr("Waiting to be received...")
@@ -46,6 +47,9 @@
 
 static const QString ICON_CONNECT = "notification-bluetooth-connected";
 static const QString ICON_DISCONN = "notification-bluetooth-disconnected";
+
+#define lightIcon ":/icons/deepin/builtin/light/buletooth_"
+#define darkIcon ":icons/deepin/builtin/dark/buletooth_"
 
 static const QString PXMP_NO_DEV_LIGHT = "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg";
 static const QString PXMP_NO_DEV_DARKY = "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg";
@@ -90,6 +94,34 @@ void BluetoothTransDialog::sendFilesToDevice(const QString &devId)
     }
 }
 
+void BluetoothTransDialog::changeLabelTheme(QLabel *obj, bool isTitle)
+{
+    if (!obj)
+        return;
+
+    double alpha = isTitle ? 0.9 : 0.7;
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+            obj, [obj, alpha](DGuiApplicationHelper::ColorType themeType){
+        QPalette pal = obj->palette();
+        pal.setColor(QPalette::WindowText, themeType == DGuiApplicationHelper::DarkType
+                     ? QColor::fromRgbF(1, 1, 1, alpha)
+                     : QColor::fromRgbF(0, 0, 0, alpha));
+        obj->setPalette(pal);
+    });
+}
+
+void BluetoothTransDialog::setObjTextStyle(QWidget *obj, int size, bool bold)
+{
+    if (!obj)
+        return;
+    QFont f = obj->font();
+    f.setFamily("SourceHanSansSC");
+    f.setPixelSize(size);
+    f.setWeight(bold ? QFont::DemiBold : QFont::Normal);
+    f.setStyle(QFont::StyleNormal);
+    obj->setFont(f);
+}
+
 bool BluetoothTransDialog::canSendFiles()
 {
     return bluetoothManager->canSendBluetoothRequest();
@@ -113,11 +145,9 @@ void BluetoothTransDialog::initUI()
 
     // public title
     m_titleOfDialog = new DLabel(TITLE_BT_TRANS_FILE, this);
-    QFont fnt = m_titleOfDialog->font();
-    fnt.setBold(true);
-    fnt.setPixelSize(14);
-    m_titleOfDialog->setFont(fnt);
     m_titleOfDialog->setAlignment(Qt::AlignCenter);
+    setObjTextStyle(m_titleOfDialog, 14, true);
+    changeLabelTheme(m_titleOfDialog, true);
     pLayout->addWidget(m_titleOfDialog);
 
     // stacked area
@@ -136,6 +166,9 @@ void BluetoothTransDialog::initUI()
     m_stack->addWidget(initSuccessPage());
 
     setOnButtonClickedClose(false);
+
+    // 防止窗口初始化的时候字体颜色不更改，手动触发一次该信号
+    emit DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::instance()->themeType());
 }
 
 void BluetoothTransDialog::initConn()
@@ -254,10 +287,10 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
 
     DLabel *statusTxt = new DLabel(TXT_SELECT_DEVIC, this);
     statusTxt->setAlignment(Qt::AlignCenter);
-    QFont f = statusTxt->font();
-    f.setPixelSize(14);
-    statusTxt->setFont(f);
+    setObjTextStyle(statusTxt, 14, false);
+    changeLabelTheme(statusTxt);
     pLayout->addWidget(statusTxt);
+
     m_devicesList = new DListView(this);
     m_devModel = new QStandardItemModel(this);
     m_devicesList->setFixedHeight(88);
@@ -270,6 +303,7 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
     m_devicesList->setFrameShape(QFrame::NoFrame);
     m_devicesList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_devicesList->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_devicesList->setBackgroundType(DStyledItemDelegate::BackgroundType::ClipCornerBackground);
     m_devicesList->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
     m_devicesList->setViewportMargins(0, 0, 0, 0);
     m_devicesList->setItemSpacing(1);
@@ -277,6 +311,7 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
 
     pLayout->addWidget(m_devicesList);
     DCommandLinkButton *linkBtn = new DCommandLinkButton(TXT_GOTO_BT_SETS, this);
+    setObjTextStyle(linkBtn, 12, true);
     connect(linkBtn, &DCommandLinkButton::clicked, this, &BluetoothTransDialog::showBluetoothSetting);
     QHBoxLayout *pLay = new QHBoxLayout(this);
     pLay->setMargin(0);
@@ -299,12 +334,12 @@ QWidget *BluetoothTransDialog::initNonDevicePage()
 
     DLabel *statusTxt = new DLabel(TXT_NO_DEV_FOUND, this);
     statusTxt->setAlignment(Qt::AlignCenter);
-    QFont f = statusTxt->font();
-    f.setPixelSize(14);
-    statusTxt->setFont(f);
+    setObjTextStyle(statusTxt, 14, false);
+    changeLabelTheme(statusTxt);
     pLay->addWidget(statusTxt);
 
     DCommandLinkButton *linkBtn = new DCommandLinkButton(TXT_GOTO_BT_SETS, this);
+    setObjTextStyle(linkBtn, 12, true);
     connect(linkBtn, &DCommandLinkButton::clicked, this, &BluetoothTransDialog::showBluetoothSetting);
     QHBoxLayout *pHLay = new QHBoxLayout(w);
     pHLay->addStretch(1);
@@ -345,10 +380,9 @@ QWidget *BluetoothTransDialog::initWaitForRecvPage()
 
     m_subTitleForWaitPage = new DLabel("Sending files to ...");
     m_subTitleForWaitPage->setAlignment(Qt::AlignCenter);
-    QFont f = m_subTitleForWaitPage->font();
-    f.setPixelSize(14);
-    m_subTitleForWaitPage->setFont(f);
     m_subTitleForWaitPage->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+    setObjTextStyle(m_subTitleForWaitPage, 14, false);
+    changeLabelTheme(m_subTitleForWaitPage);
     pLay->addWidget(m_subTitleForWaitPage);
 
     QVBoxLayout *spinnerLayout = new QVBoxLayout;
@@ -361,9 +395,9 @@ QWidget *BluetoothTransDialog::initWaitForRecvPage()
 
     DLabel *txt2 = new DLabel(TXT_WAIT_FOR_RCV, this);
     txt2->setAlignment(Qt::AlignCenter);
-    f.setPixelSize(12);
-    txt2->setFont(f);
     txt2->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+    setObjTextStyle(txt2, 12, false);
+    changeLabelTheme(txt2);
     pLay->addWidget(txt2);
 
     return w;
@@ -377,9 +411,8 @@ QWidget *BluetoothTransDialog::initTranferingPage()
 
     m_subTitleOfTransPage = new DLabel("Sending files to ...");
     m_subTitleOfTransPage->setAlignment(Qt::AlignCenter);
-    QFont f = m_subTitleOfTransPage->font();
-    f.setPixelSize(14);
-    m_subTitleOfTransPage->setFont(f);
+    setObjTextStyle(m_subTitleOfTransPage, 14, false);
+    changeLabelTheme(m_subTitleOfTransPage);
     pLay->addWidget(m_subTitleOfTransPage);
 
     m_progressBar = new DProgressBar(this);
@@ -390,8 +423,8 @@ QWidget *BluetoothTransDialog::initTranferingPage()
 
     m_sendingStatus = new DLabel(TXT_SEND_PROGRES, this);
     m_sendingStatus->setAlignment(Qt::AlignCenter);
-    f.setPixelSize(12);
-    m_sendingStatus->setFont(f);
+    setObjTextStyle(m_sendingStatus, 12, false);
+    changeLabelTheme(m_sendingStatus);
     pLay->addWidget(m_sendingStatus);
 
     return w;
@@ -405,15 +438,14 @@ QWidget *BluetoothTransDialog::initFailedPage()
 
     m_subTitleOfFailedPage = new DLabel("Failed to send files to ...");
     m_subTitleOfFailedPage->setAlignment(Qt::AlignCenter);
-    QFont f = m_subTitleOfFailedPage->font();
-    f.setPixelSize(14);
-    m_subTitleOfFailedPage->setFont(f);
+    setObjTextStyle(m_subTitleOfFailedPage, 14, false);
+    changeLabelTheme(m_subTitleOfFailedPage);
     pLay->addWidget(m_subTitleOfFailedPage);
 
     DLabel *txt2 = new DLabel(TXT_ERROR_REASON, this);
     txt2->setAlignment(Qt::AlignCenter);
-    f.setPixelSize(12);
-    txt2->setFont(f);
+    setObjTextStyle(txt2, 12, false);
+    changeLabelTheme(txt2);
     pLay->addWidget(txt2);
 
     return w;
@@ -427,9 +459,8 @@ QWidget *BluetoothTransDialog::initSuccessPage()
 
     m_subTitleOfSuccessPage = new DLabel("Sent to ... successfully");
     m_subTitleOfSuccessPage->setAlignment(Qt::AlignCenter);
-    QFont f = m_subTitleOfSuccessPage->font();
-    f.setPixelSize(14);
-    m_subTitleOfSuccessPage->setFont(f);
+    setObjTextStyle(m_subTitleOfSuccessPage, 14, false);
+    changeLabelTheme(m_subTitleOfSuccessPage);
     pLay->addWidget(m_subTitleOfSuccessPage);
 
     return w;
@@ -447,7 +478,7 @@ DStandardItem *BluetoothTransDialog::getStyledItem(const BluetoothDevice *dev)
     DViewItemActionList actLst;
     DViewItemAction *act = new DViewItemAction(Qt::AlignVCenter | Qt::AlignLeft, QSize(22, 22), QSize(), false);
     actLst.append(act);
-    act->setIcon(QIcon::fromTheme(dev->icon()));
+    act->setIcon(QIcon(lightIcon + dev->icon() + "_light.svg"));
 
     DStandardItem *item = new DStandardItem();
     item->setData(dev->id(), DevIdRole);
