@@ -1922,7 +1922,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
     dataSize += completedProgressDataSize;
 
     //优化
-    dataSize = (refinestat > DFileCopyMoveJob::MoreThreadRefine && bdestLocal) ? refinecpsize : dataSize;
+    dataSize = bdestLocal ? refinecpsize : dataSize;
 
     dataSize += skipFileSize;
 
