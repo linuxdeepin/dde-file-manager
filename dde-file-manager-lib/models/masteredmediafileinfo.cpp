@@ -217,7 +217,8 @@ DUrl MasteredMediaFileInfo::parentUrl() const
 
 DUrl MasteredMediaFileInfo::goToUrlWhenDeleted() const
 {
-    if (m_backerUrl.isEmpty() || fileUrl().burnFilePath().contains(QRegularExpression("^(/*)$"))) {
+    //if (m_backerUrl.isEmpty() || fileUrl().burnFilePath().contains(QRegularExpression("^(/*)$"))) {
+    if (!fileUrl().burnFilePath().isEmpty()) { // 光盘路径是不能被删除的，有删除动作一般是弹出了，所以直接到homepath
         return DUrl::fromLocalFile(QDir::homePath());
     }
     return DAbstractFileInfo::goToUrlWhenDeleted();
