@@ -48,8 +48,8 @@
 static const QString ICON_CONNECT = "notification-bluetooth-connected";
 static const QString ICON_DISCONN = "notification-bluetooth-disconnected";
 
-#define lightIcon ":/icons/deepin/builtin/light/buletooth_"
-#define darkIcon ":icons/deepin/builtin/dark/buletooth_"
+#define lightIcon "://icons/deepin/builtin/light/bluetooth_"
+#define darkIcon "://icons/deepin/builtin/dark/bluetooth_"
 
 static const QString PXMP_NO_DEV_LIGHT = "://icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg";
 static const QString PXMP_NO_DEV_DARKY = "://icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg";
@@ -117,7 +117,7 @@ void BluetoothTransDialog::setObjTextStyle(QWidget *obj, int size, bool bold)
     QFont f = obj->font();
     f.setFamily("SourceHanSansSC");
     f.setPixelSize(size);
-    f.setWeight(bold ? QFont::DemiBold : QFont::Normal);
+    f.setWeight(bold ? QFont::Medium : QFont::Normal);
     f.setStyle(QFont::StyleNormal);
     obj->setFont(f);
 }
@@ -478,7 +478,7 @@ DStandardItem *BluetoothTransDialog::getStyledItem(const BluetoothDevice *dev)
     DViewItemActionList actLst;
     DViewItemAction *act = new DViewItemAction(Qt::AlignVCenter | Qt::AlignLeft, QSize(22, 22), QSize(), false);
     actLst.append(act);
-    act->setIcon(QIcon(lightIcon + dev->icon() + "_light.svg"));
+    act->setIcon(QIcon::fromTheme(dev->icon()));
 
     DStandardItem *item = new DStandardItem();
     item->setData(dev->id(), DevIdRole);
