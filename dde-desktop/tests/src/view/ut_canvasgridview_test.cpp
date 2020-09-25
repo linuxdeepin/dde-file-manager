@@ -195,79 +195,6 @@ TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_setGeometry){
 }
 
 
-#if 0
-//select相关无法设置成功
-//todo
-TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_select){
-    ASSERT_NE(m_canvasGridView, nullptr);
-
-    m_canvasGridView->setCurrentIndex(QModelIndex());
-    m_canvasGridView->clearSelection();
-
-    auto tempItemIds = GridManager::instance()->itemIds(1);
-    QList<DUrl> list = DUrl::fromStringList(tempItemIds);
-    m_canvasGridView->select(list);
-    m_canvasGridView->show();
-
-//    m_cvmgr->onSyncSelection(m_canvasGridView, list);
-    auto temppp = m_canvasGridView->selectedUrls().size();
-    EXPECT_EQ(temppp, list.size());
-    auto tempIdxs = m_canvasGridView->selectionModel()->selectedIndexes();
-    for(auto tpIdx : tempIdxs){
-        auto info = m_canvasGridView->model()->fileInfo(tpIdx);
-        if (info) {
-            auto one = info->fileUrl().toString();
-            if(tempItemIds.contains(one))
-                tempItemIds.removeOne(one);
-        }
-    }
-    EXPECT_TRUE(0 == tempItemIds.size());
-}
-
-//select相关无法设置成功
-TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedUrls){
-    ASSERT_NE(m_canvasGridView, nullptr);
-    m_canvasGridView->setCurrentIndex(QModelIndex());
-    m_canvasGridView->clearSelection();
-    auto temp = m_canvasGridView->selectedUrls().size();
-    EXPECT_TRUE(0 == temp);
-
-    auto tempItemIds = GridManager::instance()->itemIds(1);
-    QList<DUrl> list = DUrl::fromStringList(tempItemIds);
-    m_canvasGridView->select(list);
-
-    auto tempp = m_canvasGridView->selectedUrls().size();
-    EXPECT_TRUE(list.size() == tempp);
-}
-
-//select相关无法设置成功
-TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedIndexCount){
-    ASSERT_NE(m_canvasGridView, nullptr);
-    m_canvasGridView->setCurrentIndex(QModelIndex());
-    m_canvasGridView->clearSelection();
-
-    auto tempItem = GridManager::instance()->firstItemId(1);
-    DUrl tempTp(tempItem);
-    auto index = m_canvasGridView->model()->index(tempTp);
-    m_canvasGridView->selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Select);
-
-    EXPECT_TRUE(1 == m_canvasGridView->selectedIndexCount());
-
-    auto tempItemIds = GridManager::instance()->itemIds(1);
-    QModelIndexList tpIndexs;
-    QList<DUrl> list;
-    for (auto temp : tempItemIds) {
-        DUrl tempUrl(temp);
-        list.append(tempUrl);
-        auto index = m_canvasGridView->model()->index(tempUrl);
-        if(index.isValid())
-            tpIndexs.append(index);
-    }
-    m_canvasGridView->select(list);
-    EXPECT_EQ(list.size(), m_canvasGridView->selectedIndexCount());
-}
-#endif
-
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setAutoMerge){
     ASSERT_NE(m_canvasGridView, nullptr);
     m_canvasGridView->setAutoMerge(true);
@@ -303,27 +230,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayModelRefresh){
     }
 }
 
-#if 0
-//select相关无法设置成功
-TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent){
-    ASSERT_NE(m_canvasGridView, nullptr);
-    m_canvasGridView->setCurrentIndex(QModelIndex());
-    m_canvasGridView->clearSelection();
-    auto temp0 = m_canvasGridView->selectedUrls().size();
-    EXPECT_TRUE(0 == temp0);
-
-    QTest::keyClick(m_canvasGridView, Qt::Key_H, Qt::ControlModifier);
-    QTest::keyClick(m_canvasGridView, Qt::Key_A, Qt::ControlModifier);
-    auto temp1 = m_canvasGridView->selectedUrls().size();
-    auto temp2 = GridManager::instance()->itemIds(1).size();
-    EXPECT_TRUE(temp1 == temp2);
-
-    //    QTest::keyClick(m_canvasGridView, Qt::Key_F5, Qt::KeypadModifier);
-    //    QTest::keyClick(m_canvasGridView, Qt::Key_M, Qt::AltModifier);
-    //    QTest::keyClick(m_canvasGridView, Qt::Key_Escape, Qt::NoModifier);
-
-}
-#endif
 
 //TEST_F(CanvasGridViewTest, CanvasGridViewTest_paintEvent){
 //    m_canvasGridView->show();
@@ -350,36 +256,50 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_mouseReleaseEvent){
     m_canvasGridView->mouseReleaseEvent(&me);
 }
 
-//与select相关会有问题
-//TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection){
-//    ASSERT_NE(m_canvasGridView, nullptr);
-//    m_canvasGridView->setCurrentIndex(QModelIndex());
-//    m_canvasGridView->clearSelection();
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_contextMenuEvent){
+    //根据Desktop文件夹下文件以及桌面排序情况可能会触发两种右键菜单的某一种
+    QTimer timer;
+    QObject::connect(&timer, &QTimer::timeout, [&]{
+        timer.stop();
+          QWidget tempWdg;
+          tempWdg.show();
+          tempWdg.close();
+    });
+    QContextMenuEvent ent(QContextMenuEvent::Reason::Mouse,QPoint(100, 100),m_canvasGridView->mapToGlobal(QPoint(100, 100)),Qt::KeyboardModifiers());
+    timer.start(2000);
+    m_canvasGridView->contextMenuEvent(&ent);
+}
 
-//    m_canvasGridView->d->showSelectRect = true;
-//    m_canvasGridView->cursor().setPos(QPoint(0,0));
-////    QMouseEvent me(QEvent::User, QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::KeyboardModifiers());
-//    QMouseEvent me(QEvent::MouseMove, QPoint(0, 0), m_canvasGridView->mapToGlobal(QPoint(0, 0)), Qt::LeftButton, Qt::LeftButton, Qt::KeyboardModifiers());
-//    m_canvasGridView->mouseMoveEvent(&me);
-//    auto temp = m_canvasGridView->selectedUrls().size();
-//    EXPECT_TRUE(0 != temp);
-//}
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_showNormalMenu){
+    QTimer timer;
+    QObject::connect(&timer, &QTimer::timeout, [&]{
+        timer.stop();
+          QWidget tempWdg;
+          tempWdg.show();
+          tempWdg.close();
+    });
 
-//菜单show出来会被阻塞，所以此用例又不行了
-//TEST_F(CanvasGridViewTest, CanvasGridViewTest_contextMenuEvent){
-////    QContextMenuEvent ent(QContextMenuEvent::Reason::Mouse,QPoint(500, 600),m_canvasGridView->mapToGlobal(QPoint(500, 500)),Qt::KeyboardModifiers());
+    auto tempFlags = (Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);// (0x00a7)
+    auto localFile = GridManager::instance()->firstItemId(m_canvasGridView->m_screenNum);
+    auto tempIndex = m_canvasGridView->model()->index(DUrl(localFile));
+    timer.start(2000);
+    m_canvasGridView->showNormalMenu(tempIndex, tempFlags);
+}
 
-//    QContextMenuEvent ent(QContextMenuEvent::Reason::Mouse,QPoint(10, 10),m_canvasGridView->mapToGlobal(QPoint(10, 10)),Qt::KeyboardModifiers());
-//    m_canvasGridView->contextMenuEvent(&ent);
-//}
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_showEmptyAreaMenu){
+    QTimer timer;
+    QObject::connect(&timer, &QTimer::timeout, [&]{
+        timer.stop();
+          QWidget tempWdg;
+          tempWdg.show();
+          tempWdg.close();
+    });
 
-//TEST_F(CanvasGridViewTest, CanvasGridViewTest_showNormalMenu){
-//todo
-//}
+    auto tempFlags = (Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);// (0x00a5)
+    timer.start(2000);
+    m_canvasGridView->showEmptyAreaMenu(tempFlags);
+}
 
-//TEST_F(CanvasGridViewTest, CanvasGridViewTest_showEmptyAreaMenu){
-//todo
-//}
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setIconByLevel)
 {
@@ -430,13 +350,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
      EXPECT_EQ(name, qApp->applicationName());
 }
 
-TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection)
-{
-    EXPECT_NE(m_canvasGridView, nullptr);
-    m_canvasGridView->d->mousePressed = false;
-    m_canvasGridView->d->showSelectRect = true;
-    m_canvasGridView->setSelection(QRect(QPoint(2, 3),QPoint(6, 8)), QItemSelectionModel::Select);
-}
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_refresh)
 {
@@ -512,16 +425,46 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursor)
     EXPECT_TRUE(m_canvasGridView->firstIndex() == m_canvasGridView->d->currentCursorIndex);
 }
 
-//TEST_F(CanvasGridViewTest, CanvasGridViewTest_contextMenuEvent)
-//{
-//    QContextMenuEvent textevent(QContextMenuEvent::Mouse, QPoint(2,2));
-//    m_canvasGridView->contextMenuEvent(&textevent);
-//    QEventLoop loop;
-//    QTimer::singleShot(100,&loop,[&](){
-//        m_canvasGridView->hide();
-//        loop.exit();
-//    });
-//    loop.exec();
-//    EXPECT_TRUE(0 == m_canvasGridView->selectedIndexCount());
-//}
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_firstIndex)
+{
+    auto localFile = GridManager::instance()->firstItemId(m_canvasGridView->m_screenNum);
+    auto tempIndex = m_canvasGridView->model()->index(DUrl(localFile));
+    auto tempIndexCanvs = m_canvasGridView->firstIndex();
+    bool theSameOne = tempIndex == tempIndexCanvs;
+    EXPECT_TRUE(theSameOne);
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_lastIndex)
+{
+    auto localFile = GridManager::instance()->lastItemTop(m_canvasGridView->m_screenNum);
+    auto tempIndex = m_canvasGridView->model()->index(DUrl(localFile));
+    auto tempIndexCanvs = m_canvasGridView->lastIndex();
+    bool theSameOne = tempIndex == tempIndexCanvs;
+    EXPECT_TRUE(theSameOne);
+}
+
+TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_select){
+    ASSERT_NE(m_canvasGridView, nullptr);
+    //todo
+}
+
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection){
+    ASSERT_NE(m_canvasGridView, nullptr);
+    m_canvasGridView->d->mousePressed = false;
+    m_canvasGridView->d->showSelectRect = true;
+    m_canvasGridView->setSelection(QRect(QPoint(2, 3),QPoint(6, 8)), QItemSelectionModel::Select);
+}
+
+
+TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedIndexCount){
+    ASSERT_NE(m_canvasGridView, nullptr);
+    //todo
+}
+
+TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedUrls){
+    ASSERT_NE(m_canvasGridView, nullptr);
+    //todo
+}
+
 
