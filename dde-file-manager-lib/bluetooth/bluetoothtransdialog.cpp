@@ -67,7 +67,7 @@ BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTra
         sendFilesToDevice(targetDevId);
 
     // 调试布局
-    //    setStyleSheet("border: 1px solid blue;");
+   // setStyleSheet("border: 1px solid blue;");
 }
 
 void BluetoothTransDialog::sendFilesToDevice(const QString &devId)
@@ -99,14 +99,16 @@ void BluetoothTransDialog::initUI()
 {
     setIcon(QIcon::fromTheme(ICON_CONNECT));
     setFixedSize(381, 271);
+    layout()->setMargin(0);
+    layout()->setSpacing(0);
 
     // main structure
     QFrame *mainFrame = new QFrame(this);
-    QVBoxLayout *pLayout = new QVBoxLayout(mainFrame);
+    QVBoxLayout *pLayout = new QVBoxLayout;
     pLayout->setSpacing(0);
     pLayout->setMargin(0);
-
     mainFrame->setLayout(pLayout);
+
     addContent(mainFrame);
 
     // public title
@@ -120,6 +122,8 @@ void BluetoothTransDialog::initUI()
 
     // stacked area
     m_stack = new QStackedWidget(this);
+    m_stack->layout()->setMargin(0);
+    m_stack->layout()->setSpacing(0);
 
     pLayout->addWidget(m_stack);
 
@@ -243,7 +247,10 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
     // device selector page
     QWidget *w = new QWidget(this);
     QVBoxLayout *pLayout = new QVBoxLayout(w);
+    pLayout->setSpacing(0);
+    pLayout->setMargin(0);
     w->setLayout(pLayout);
+   // w->setStyleSheet("border: 1px solid red;");
 
     DLabel *statusTxt = new DLabel(TXT_SELECT_DEVIC, this);
     statusTxt->setAlignment(Qt::AlignCenter);
@@ -253,6 +260,7 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
     pLayout->addWidget(statusTxt);
     m_devicesList = new DListView(this);
     m_devModel = new QStandardItemModel(this);
+    m_devicesList->setFixedHeight(88);
     m_devicesList->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     m_devicesList->setEditTriggers(QListView::NoEditTriggers);
     m_devicesList->setIconSize(QSize(32, 32));
@@ -268,7 +276,6 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
     m_devicesList->setModel(m_devModel);
 
     pLayout->addWidget(m_devicesList);
-
     DCommandLinkButton *linkBtn = new DCommandLinkButton(TXT_GOTO_BT_SETS, this);
     connect(linkBtn, &DCommandLinkButton::clicked, this, &BluetoothTransDialog::showBluetoothSetting);
     QHBoxLayout *pLay = new QHBoxLayout(this);
@@ -286,6 +293,8 @@ QWidget *BluetoothTransDialog::initNonDevicePage()
 {
     QWidget *w = new QWidget(this);
     QVBoxLayout *pLay = new QVBoxLayout(w);
+    pLay->setSpacing(0);
+    pLay->setMargin(0);
     w->setLayout(pLay);
 
     DLabel *statusTxt = new DLabel(TXT_NO_DEV_FOUND, this);
@@ -304,6 +313,7 @@ QWidget *BluetoothTransDialog::initNonDevicePage()
     pLay->addLayout(pHLay);
 
     DLabel *pIconLab = new DLabel(this);
+    pIconLab->setFixedHeight(80);
     pIconLab->setAlignment(Qt::AlignCenter);
     pIconLab->setPixmap(QPixmap(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType
                                     ? PXMP_NO_DEV_DARKY
@@ -328,22 +338,32 @@ QWidget *BluetoothTransDialog::initWaitForRecvPage()
 {
     QWidget *w = new QWidget(this);
     QVBoxLayout *pLay = new QVBoxLayout(w);
+    pLay->setSpacing(0);
+    pLay->setContentsMargins(0, 6, 0, 16);
     w->setLayout(pLay);
+    // w->setStyleSheet("border: 1px solid red;");
 
     m_subTitleForWaitPage = new DLabel("Sending files to ...");
     m_subTitleForWaitPage->setAlignment(Qt::AlignCenter);
     QFont f = m_subTitleForWaitPage->font();
     f.setPixelSize(14);
     m_subTitleForWaitPage->setFont(f);
+    m_subTitleForWaitPage->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
     pLay->addWidget(m_subTitleForWaitPage);
 
+    QVBoxLayout *spinnerLayout = new QVBoxLayout;
     m_spinner = new DSpinner(this);
-    pLay->addWidget(m_spinner);
+    m_spinner->setFixedHeight(48);
+    spinnerLayout->addStretch(1);
+    spinnerLayout->addWidget(m_spinner);
+    spinnerLayout->addStretch(1);
+    pLay->addLayout(spinnerLayout);
 
     DLabel *txt2 = new DLabel(TXT_WAIT_FOR_RCV, this);
     txt2->setAlignment(Qt::AlignCenter);
     f.setPixelSize(12);
     txt2->setFont(f);
+    txt2->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
     pLay->addWidget(txt2);
 
     return w;
