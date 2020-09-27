@@ -176,7 +176,8 @@ public slots:
     void renameFile();
     void showTextShowFrame();
     void onChildrenRemoved(const DUrl &fileUrl);
-    void flickFolderToSidebar();
+    // fileUrl:共享文件夹路径
+    void flickFolderToSidebar(const DUrl &fileUrl);
     void onOpenWithBntsChecked(QAbstractButton *w);
     void onHideFileCheckboxChecked(bool checked);
 
