@@ -763,6 +763,15 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
     QString udiskspath = devicePaths.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+
+    // 卸载设备前遍历挂载点，获取挂载点下所有文件的全路径信息，以便后面对 ;1 问题进行处理
+    QStringList lstFilesInDisc;
+    const QByteArrayList &mountPoints = blkdev->mountPoints();
+    if (mountPoints.count() > 0) {
+        const QString &mountPoint = mountPoints[0];
+        lstFilesInDisc = getAllFiles(mountPoint);
+    }
+
     if (drive->opticalBlank()) {
         QString filePath = device.path() + "/" BURN_SEG_STAGING;
         qDebug() << "ghostSignal path" << filePath;
@@ -817,6 +826,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             m_opticalJobPhase = 1;
         }
         job_isomaster->stageFiles({{stagingurl, QUrl("/")}});
+        job_isomaster->setDiscFiles(lstFilesInDisc);
         bool wret = job_isomaster->commit(speed, flag & 1, volname);
         job_isomaster->releaseDevice();
 
@@ -3164,6 +3174,26 @@ QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
         }
     }
     return tr("Unknown error");
+}
+
+QStringList FileJob::getAllFiles(const QString &path, const QString &prefixDir)
+{
+    QDir d(path);
+    if (!d.exists())
+        return QStringList();
+    QStringList dirs = d.entryList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden);
+    QStringList files = d.entryList(QDir::Files | QDir::Hidden);
+    foreach (auto dir, dirs) {
+        files << getAllFiles(path + QDir::separator() + dir, dir);
+    }
+
+    for (int i = 0; i < files.count(); i++) {
+        if (!prefixDir.isEmpty())
+            files[i] = prefixDir + QDir::separator() + files[i];
+        if (!files[i].endsWith(";1"))
+            files[i] += ";1";
+    }
+    return files;
 }
 
 #ifdef SW_LABEL

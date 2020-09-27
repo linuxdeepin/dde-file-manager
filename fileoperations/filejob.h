@@ -292,6 +292,8 @@ private:
 
     const QString TR_CONN_ERROR = tr("Device disconnected");
 
+    QStringList getAllFiles(const QString &path, const QString &prefixDir = QString());
+
 #ifdef SW_LABEL
 public:
     static bool isLabelFile(const QString &srcFileName);
