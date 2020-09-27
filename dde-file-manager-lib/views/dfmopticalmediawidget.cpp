@@ -83,14 +83,19 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 
     connect(d->pb_burn, &DPushButton::clicked, this, [ = ] {
+
+        QString volTag = d->getVolTag();
+        CdStatusInfo& statusInfo = DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag];
+        statusInfo.bReadyToBurn = true;
+
         QDir::Filters filter = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
 
         DUrl urlOfStage = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
                                               + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/', '_') + "/");
         // 1、获取暂存区内文件列表信息，去除与当前光盘中有交集的部分（当前 isomaster 库不提供覆盖写入的选项，后或可优化）
         QDir dirMnt(d->strMntPath);
-        if (!dirMnt.exists())
-        {
+        if (!dirMnt.exists()) {
+            statusInfo.bReadyToBurn = false;
             qWarning() << "Mount points doesn't exist: " << d->strMntPath;
             return;
         }
@@ -98,11 +103,13 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(filter);
 
         QDir dirStage(urlOfStage.path());
-        if (!dirStage.exists())
+        if (!dirStage.exists()){
+            statusInfo.bReadyToBurn = false;
             return;
+        }
         QFileInfoList lstFilesInStage = dirStage.entryInfoList(filter);
-        if (lstFilesInStage.count() == 0)
-        {
+        if (lstFilesInStage.count() == 0) {
+            statusInfo.bReadyToBurn = false;
             dialogManager->showMessageDialog(DialogManager::msgWarn, tr("No files to burn"));
             return;
         }
@@ -130,16 +137,19 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         {
             QString errTitle(tr("No files to burn"));
             dialogManager->showMessageDialog(DialogManager::msgWarn, errTitle);
+            statusInfo.bReadyToBurn = false;
             return;
         }
 
         // 2、启动worker线程计算缓存区文件大小
-        if (!m_pStatisticWorker)
-            return;
         m_pStatisticWorker->start({urlOfStage});
     });
 
     connect(m_pStatisticWorker, &DFileStatisticsJob::finished, this, [ = ] {
+
+        QString volTag = d->getVolTag();
+        CdStatusInfo& statusInfo = DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag];
+
         DeviceProperty dp = ISOMaster->getDevicePropertyCached(d->getCurrentDevice());
 
         if (dp.avail == 0 || static_cast<quint64>(m_pStatisticWorker->totalSize()) > dp.avail) // 可用空间为0时也禁止刻录
@@ -147,12 +157,14 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
             //fix: 光盘容量小于刻录项目，对话框提示：目标磁盘剩余空间不足，无法进行刻录！
             qDebug() << d->m_selectBurnFilesSize / 1024 / 1024 << "MB" << dp.avail / 1024 / 1024 << "MB";
             dialogManager->showMessageDialog(DialogManager::msgWarn, tr("Unable to burn. Not enough free space on the target disk."));
+            statusInfo.bReadyToBurn = false;
             return;
         }
 
         QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
         bd->setJobWindowId(static_cast<int>(this->window()->winId()));
         bd->exec();
+        statusInfo.bReadyToBurn = false;
     });
 }
 
@@ -274,6 +286,15 @@ bool DFMOpticalMediaWidget::hasVolProcessBusy()
             return true;
     }
     return false;
+}
+
+CdStatusInfo* DFMOpticalMediaWidget::getCdStatusInfo(const QString& dev)
+{
+    QMap<QString, CdStatusInfo>::iterator ite = g_mapCdStatusInfo.find(dev);
+    if(ite != g_mapCdStatusInfo.end()) {
+        return &(ite.value());
+    }
+    return nullptr;
 }
 
 DFMOpticalMediaWidgetPrivate::DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q) :

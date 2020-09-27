@@ -58,6 +58,11 @@ public:
     void refresh(const bool isForce = false) Q_DECL_OVERRIDE;
 
 private:
+    QString getVolTag(const QString & burnPath) const;
+
+    void backupInfo(const DUrl &url);
+
+private:
     DUrl m_backerUrl;
 };
 

@@ -32,39 +32,12 @@
 #include "ddiskmanager.h"
 #include <QRegularExpression>
 #include "controllers/masteredmediacontroller.h"
+#include "views/dfmopticalmediawidget.h"
 
 MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-    if (url.burnDestDevice().length() == 0) {
-        return;
-    }
-    QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
-    if (rootDeviceNode.isEmpty()) {
-        return;
-    }
-    QString udiskspath = rootDeviceNode.first();
-    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-    QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
-
-    if (url.burnIsOnDisc()) {
-        if (diskdev->opticalBlank()) {
-            //blank media contains no files on disc, duh!
-            return;
-        }
-
-        if (blkdev->mountPoints().size() > 0) {
-            QString mntpoint = QString(blkdev->mountPoints().front());
-            while (*mntpoint.rbegin() == '/') {
-                mntpoint.chop(1);
-            }
-
-            m_backerUrl = DUrl::fromLocalFile(mntpoint + url.burnFilePath());
-        } else m_backerUrl = DUrl();
-    } else {
-        m_backerUrl = MasteredMediaController::getStagingFolder(url);
-    }
-    setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
+    backupInfo(url);
 }
 
 bool MasteredMediaFileInfo::exists() const
@@ -217,8 +190,15 @@ DUrl MasteredMediaFileInfo::parentUrl() const
 
 DUrl MasteredMediaFileInfo::goToUrlWhenDeleted() const
 {
-    //if (m_backerUrl.isEmpty() || fileUrl().burnFilePath().contains(QRegularExpression("^(/*)$"))) {
-    if (!fileUrl().burnFilePath().isEmpty()) { // 光盘路径是不能被删除的，有删除动作一般是弹出了，所以直接到homepath
+    QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(fileUrl().burnDestDevice(), {});
+    if (rootDeviceNode.isEmpty() || this->m_backerUrl.isEmpty()) {
+       return DUrl::fromLocalFile(QDir::homePath());
+    }
+
+    QString volTotag = getVolTag(rootDeviceNode.first());
+    CdStatusInfo* pStatusInfo = DFMOpticalMediaWidget::getCdStatusInfo(volTotag);
+
+    if (!fileUrl().burnFilePath().isEmpty() && pStatusInfo != nullptr && !pStatusInfo->bReadyToBurn) { // 光盘路径是不能被删除的，有删除动作一般是弹出了，所以直接到homepath
         return DUrl::fromLocalFile(QDir::homePath());
     }
     return DAbstractFileInfo::goToUrlWhenDeleted();
@@ -280,10 +260,25 @@ void MasteredMediaFileInfo::refresh(const bool isForce)
         return;
     }
 
-    DUrl url = fileUrl();
+    backupInfo(fileUrl());
+}
+
+
+QString MasteredMediaFileInfo::getVolTag(const QString & burnPath) const
+{
+    QString strKey;
+    QStringList lst = burnPath.split("/", QString::SkipEmptyParts); // /dev/sr0 -> { dev, sr0 }
+    if (lst.count() >= 1)
+        strKey = lst[lst.count() - 1]; // strKey =
+    return strKey;
+}
+
+void MasteredMediaFileInfo::backupInfo(const DUrl &url)
+{
     if (url.burnDestDevice().length() == 0) {
         return;
     }
+
     QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {});
     if (rootDeviceNode.isEmpty()) {
         return;
@@ -311,4 +306,3 @@ void MasteredMediaFileInfo::refresh(const bool isForce)
     }
     setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
 }
-
