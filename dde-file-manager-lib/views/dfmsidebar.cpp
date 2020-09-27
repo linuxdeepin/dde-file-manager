@@ -596,7 +596,7 @@ void DFMSideBar::initUserShareItem()
             //            DFileService::instance()->changeRootFile(url,false);
             m_sidebarView->setRowHidden(index, false);
         }
-        emit addUserShareItemFinished();
+        emit addUserShareItemFinished(url);
     };
 
     connect(userShareFileWatcher, &DAbstractFileWatcher::fileDeleted, this, deleteUserShareLambda);

@@ -83,7 +83,8 @@ public:
 
 signals:
     void disableUrlSchemesChanged();
-    void addUserShareItemFinished();
+    // 侧边栏添加共享item信号，url为共享文件夹的路径
+    void addUserShareItemFinished(const DUrl &url);
 
 private slots:
     void onItemActivated(const QModelIndex &index);

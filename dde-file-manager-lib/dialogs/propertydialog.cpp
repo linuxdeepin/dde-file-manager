@@ -757,8 +757,13 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
     }
 }
 
-void PropertyDialog::flickFolderToSidebar()
+void PropertyDialog::flickFolderToSidebar(const DUrl &fileUrl)
 {
+    //! 只处理当前触发的对话框
+    if (fileUrl.toLocalFile() != this->getUrl().toLocalFile()) {
+        return;
+    }
+
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
     if (!window) {
         return;
