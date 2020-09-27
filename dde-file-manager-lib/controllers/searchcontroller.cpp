@@ -314,7 +314,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
             // 先将列表设置为适用于任意目录, 等取到异步结果后再更新此值
             hasLFTSubdirectories.append("/");
             QObject::connect(dbusWatcher, &QDBusPendingCallWatcher::finished,
-            dbusWatcher, [this] (QDBusPendingCallWatcher * call) {
+            dbusWatcher, [this](QDBusPendingCallWatcher * call) {
                 QDBusPendingReply<QStringList> result = *call;
 
                 hasLFTSubdirectories = result.value();
@@ -527,6 +527,9 @@ bool SearchDiriterator::hasNext() const
             fullTextSearch(searchPath);
         }
         hasUpdateIndex = true;
+        if (childrens.isEmpty()) {
+            return false;
+        }
         return true;
     }
 #endif
