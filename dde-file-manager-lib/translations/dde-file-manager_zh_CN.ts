@@ -60,18 +60,18 @@
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="29"/>
-        <source>Sending files to &quot;&lt;b&gt;%1&lt;/b&gt;&quot;</source>
-        <translation>正在向“&lt;b&gt;%1&lt;/b&gt;”传送文件</translation>
+        <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
+        <translation>正在向“&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;”传送文件</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="30"/>
-        <source>Failed to send files to &quot;&lt;b&gt;%1&lt;/b&gt;&quot;</source>
-        <translation>向“&lt;b&gt;%1&lt;/b&gt;”传送文件失败</translation>
+        <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
+        <translation>向“&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;”传送文件失败</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
-        <source>Sent to &quot;&lt;b&gt;%1&lt;/b&gt;&quot; successfully</source>
-        <translation>向“&lt;b&gt;%1&lt;/b&gt;”传送文件成功</translation>
+        <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
+        <translation>向“&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;”传送文件成功</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>

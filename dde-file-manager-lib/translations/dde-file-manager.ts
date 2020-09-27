@@ -60,17 +60,17 @@
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="29"/>
-        <source>Sending files to &quot;&lt;b&gt;%1&lt;/b&gt;&quot;</source>
+        <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="30"/>
-        <source>Failed to send files to &quot;&lt;b&gt;%1&lt;/b&gt;&quot;</source>
+        <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
-        <source>Sent to &quot;&lt;b&gt;%1&lt;/b&gt;&quot; successfully</source>
+        <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
