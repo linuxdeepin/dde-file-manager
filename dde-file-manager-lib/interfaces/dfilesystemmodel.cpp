@@ -76,8 +76,8 @@ public:
                    QReadWriteLock *lock = nullptr)
         : fileInfo(info)
         , parent(parent)
-        , rwLock(lock)
         , m_dFileSystemModel(dFileSystemModel)
+        , rwLock(lock)
     {
     }
 
@@ -142,8 +142,6 @@ public:
             return QVariant();
         }
         }
-
-        return QVariant();
     }
 
     void setNodeVisible(const FileSystemNodePointer &node, bool visible)
@@ -162,7 +160,6 @@ public:
     void applyFileFilter(std::shared_ptr<FileFilter> filter)
     {
         if (!filter) return;
-
         visibleChildren.clear();
 
         for (auto node : children) {
@@ -325,6 +322,7 @@ public:
     {
         rwLock->lockForWrite();
         visibleChildren = list;
+
         rwLock->unlock();
     }
 
@@ -419,7 +417,7 @@ private:
     QHash<DUrl, FileSystemNodePointer> children;
     //fix bug 31225,if children clear,another thread useing visibleChildren will crush,so use FileSystemNodePointer
     QList<FileSystemNodePointer> visibleChildren;
-    DFileSystemModel *m_dFileSystemModel;
+    DFileSystemModel *m_dFileSystemModel = nullptr;
     QReadWriteLock *rwLock = nullptr;
 };
 
@@ -549,7 +547,7 @@ public:
         connect(waitTimer, &QTimer::timeout, this, &FileNodeManagerThread::start);
     }
 
-    ~FileNodeManagerThread()
+    ~FileNodeManagerThread() override
     {
         stop();
     }
@@ -965,6 +963,7 @@ public:
     QMutex mutex;
     //防止析构后，添加flags崩溃锁
     QMutex mutexFlags;
+    QAtomicInteger<bool> currentRemove = false;
 
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
@@ -1167,7 +1166,6 @@ void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
     if (from.isLocalFile() && from.path() == rootNode->dataByRole(DFileSystemModel::Roles::FilePathRole).toString()) {
         return;
     }
-
     _q_onFileDeleted(from);
     _q_onFileCreated(to);
 }
@@ -1237,7 +1235,6 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->addFile(info);
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event
-            // todo: 此处引起效率变低，暂时注释
             // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
             q->remove(fileUrl);
         }
@@ -1246,15 +1243,6 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         }
     }
     _q_processFileEvent_runing.store(false);
-//    if( !laterFileEventQueue.isEmpty()) { //解决最后一个队列没有被处理导致文管不能正确显示文件列表的问题 fix 29294 【字体管理器】【5.6.4】【修改引入】安装字体后，文管中没有显示
-//        DUrl url;
-//        if (laterFileEventQueue.last().first == AddFile) {
-//            _q_onFileCreated(url, true);
-//        }
-//        else if (laterFileEventQueue.last().first == RmFile) {
-//            _q_onFileDeleted(url);
-//        }
-    //    }
 }
 
 bool DFileSystemModelPrivate::checkFileEventQueue()
@@ -2729,7 +2717,6 @@ void DFileSystemModel::refresh(const DUrl &fileUrl)
     node->populatedChildren = false;
 
     const QModelIndex &index = createIndex(node, 0);
-
     if (beginRemoveRows(index, 0, rowCount(index) - 1)) {
         node->clearChildren();
         endRemoveRows();
@@ -2783,13 +2770,15 @@ bool DFileSystemModel::removeRows(int row, int count, const QModelIndex &parent)
         fileInfo->refresh();
         if (fileInfo->exists())
             return true;
+        if (d->currentRemove) {
+            return true;
+        }
         if (beginRemoveRows(createIndex(parentNode, 0), row, row + count - 1)) {
             for (int i = 0; i < count; ++i) {
                 Q_UNUSED(parentNode->takeNodeByIndex(row));
             }
             endRemoveRows();
         }
-
     }
 
     return true;
@@ -2803,15 +2792,15 @@ bool DFileSystemModel::remove(const DUrl &url)
 
     if (parentNode && parentNode->populatedChildren) {
         int index = parentNode->indexOfChild(url);
-
         if (index < 0) {
             return false;
         }
-
+        d->currentRemove = true;
         if (beginRemoveRows(createIndex(parentNode, 0), index, index)) {
             Q_UNUSED(parentNode->takeNodeByIndex(index));
             endRemoveRows();
         }
+        d->currentRemove = false;
 
         return true;
     }
@@ -2958,12 +2947,10 @@ void DFileSystemModel::clear()
     QMutexLocker locker(&m_mutex); // bug 26972, while the sort case is ruuning, there should be crashed ASAP, so add locker here!
 
     const QModelIndex &index = createIndex(d->rootNode, 0);
-
     if (beginRemoveRows(index, 0, d->rootNode->childrenCount() - 1)) {
         deleteNode(d->rootNode);
         endRemoveRows();
     }
-
     qWarning() << "done the clear items process";
 }
 
@@ -3086,11 +3073,9 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
                     }
                 });
             }
-//            result.waitForFinished();
             while (!result.isFinished()) {
                 qApp->processEvents();
             }
-//            qDebug() << "~~~~~ processevent finished";
         }
         if (!me) {
             return;
