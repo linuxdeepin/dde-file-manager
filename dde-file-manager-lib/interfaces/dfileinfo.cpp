@@ -79,6 +79,7 @@ public:
     QQueue<QPair<DUrl, DFileInfoPrivate *>> requestEPFiles;
     QReadWriteLock requestEPFilesLock;
     QSet<DFileInfoPrivate *> dirtyFileInfos;
+    QMutex dirtyFileInfosMutex;
     QMutex requestEPCancelLock;
     bool isCanceled = false;
 
@@ -103,6 +104,7 @@ RequestEP::RequestEP(QObject *parent)
     qRegisterMetaType<DFileInfoPrivate *>();
 
     connect(this, &RequestEP::finished, this, [this] {
+        QMutexLocker  lk(&dirtyFileInfosMutex);
         dirtyFileInfos.clear();
     });
 }
@@ -195,7 +197,10 @@ void RequestEP::cancelRequestEP(DFileInfoPrivate *info)
     isCanceled = true;
     requestEPCancelLock.unlock();
 
+    dirtyFileInfosMutex.lock();
     dirtyFileInfos << info;
+    dirtyFileInfosMutex.unlock();
+
     requestEPFilesLock.lockForRead();
 
     for (int i = 0; i < requestEPFiles.count(); ++i) {
@@ -207,7 +212,10 @@ void RequestEP::cancelRequestEP(DFileInfoPrivate *info)
             requestEPFiles.removeAt(i);
             requestEPFilesLock.unlock();
             info->requestEP = nullptr;
+
+            dirtyFileInfosMutex.lock();
             dirtyFileInfos.remove(info);
+            dirtyFileInfosMutex.unlock();
             return;
         }
     }
@@ -235,15 +243,17 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
     }
     QVariantHash oldEP;
 
+    dirtyFileInfosMutex.lock();
     if (!dirtyFileInfos.contains(info)) {
         oldEP = info->extraProperties;
         info->extraProperties = ep;
         info->epInitialized = true;
         info->requestEP = nullptr;
     } else {
-        dirtyFileInfos.remove(info);
+        dirtyFileInfos.remove(info);     
         info = nullptr;
     }
+    dirtyFileInfosMutex.unlock();
 
     if (!ep.isEmpty() || oldEP != ep) {
         DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url, 0); // source is internal signal
