@@ -26,9 +26,9 @@
 #define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
 #define TITLE_BT_TRANS_FAIL BluetoothTransDialog::tr("File Transfer Failed")
 
-#define TXT_SENDING_FILE BluetoothTransDialog::tr("Sending files to \"<b>%1</b>\"")
-#define TXT_SENDING_FAIL BluetoothTransDialog::tr("Failed to send files to \"<b>%1</b>\"")
-#define TXT_SENDING_SUCC BluetoothTransDialog::tr("Sent to \"<b>%1</b>\" successfully")
+#define TXT_SENDING_FILE BluetoothTransDialog::tr("Sending files to \"<b style=\"font-weight: 550;\">%1</b>\"")
+#define TXT_SENDING_FAIL BluetoothTransDialog::tr("Failed to send files to \"<b style=\"font-weight: 550;\">%1</b>\"")
+#define TXT_SENDING_SUCC BluetoothTransDialog::tr("Sent to \"<b style=\"font-weight: 550;\">%1</b>\" successfully")
 #define TXT_SELECT_DEVIC BluetoothTransDialog::tr("Select a Bluetooth device to receive files")
 #define TXT_NO_DEV_FOUND BluetoothTransDialog::tr("Cannot find the connected Bluetooth device")
 #define TXT_WAIT_FOR_RCV BluetoothTransDialog::tr("Waiting to be received...")
