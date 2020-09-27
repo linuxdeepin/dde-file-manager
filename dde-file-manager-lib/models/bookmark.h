@@ -43,6 +43,7 @@ public:
 
     DUrl sourceUrl() const;
     QString getName() const;
+    QString getMountPoint() const;
 
     bool exists() const override;
 
