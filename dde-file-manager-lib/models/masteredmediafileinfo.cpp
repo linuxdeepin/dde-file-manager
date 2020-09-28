@@ -296,8 +296,9 @@ void MasteredMediaFileInfo::refresh()
             return;
         }
 
-        if (blkdev->mountPoints().size() > 0) {
-            QString mntpoint = QString(blkdev->mountPoints().front());
+        auto points = blkdev->mountPoints();
+        if (points.size() > 0) {
+            QString mntpoint = QString(points.front());
             while (*mntpoint.rbegin() == '/') {
                 mntpoint.chop(1);
             }

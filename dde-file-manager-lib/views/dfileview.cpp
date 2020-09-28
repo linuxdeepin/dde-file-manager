@@ -2459,13 +2459,14 @@ bool DFileView::setRootUrl(const DUrl &url)
             }));
             return false;
         } else {
+            auto points = blkdev->mountPoints();
             d->headerOpticalDisc->updateDiscInfo(fileUrl.burnDestDevice());
             d->headerOpticalDisc->show();
-            if (blkdev->mountPoints().empty()) {
+            if (points.empty()) {
                 blkdev->mount({});
             }
-            if (!blkdev->mountPoints().empty()) {
-                d->headerOpticalDisc->setDiscMountPoint(blkdev->mountPoints()[0]);
+            if (!points.empty()) {
+                d->headerOpticalDisc->setDiscMountPoint(points[0]);
             } else {
                 d->headerOpticalDisc->setDiscMountPoint("");
             }
