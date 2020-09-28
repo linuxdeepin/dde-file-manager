@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QPalette>
+#include <QSvgWidget>
 
 #define TITLE_BT_TRANS_FILE BluetoothTransDialog::tr("Bluetooth File Transfer")
 #define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
@@ -347,21 +348,25 @@ QWidget *BluetoothTransDialog::initNonDevicePage()
     pHLay->addStretch(1);
     pLay->addLayout(pHLay);
 
-    DLabel *pIconLab = new DLabel(this);
-    pIconLab->setFixedHeight(80);
-    pIconLab->setAlignment(Qt::AlignCenter);
-    pIconLab->setPixmap(QPixmap(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType
-                                    ? PXMP_NO_DEV_DARKY
-                                    : PXMP_NO_DEV_LIGHT));
-    pLay->addWidget(pIconLab);
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [pIconLab](DGuiApplicationHelper::ColorType t) {
+    QSvgWidget *pIconWid = new QSvgWidget(this);
+    pIconWid->setFixedSize(80, 80);
+    QWidget *pIconWidContainer = new QWidget(this);
+    QHBoxLayout *iconLay = new QHBoxLayout(pIconWidContainer);
+    iconLay->addStretch(1);
+    iconLay->addWidget(pIconWid);
+    iconLay->addStretch(1);
+    iconLay->setMargin(0);
+    iconLay->setSpacing(0);
+    pLay->addWidget(pIconWidContainer);
+
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [pIconWid](DGuiApplicationHelper::ColorType t) {
         switch (t) {
         case DGuiApplicationHelper::UnknownType:
         case DGuiApplicationHelper::LightType:
-            pIconLab->setPixmap(QPixmap(PXMP_NO_DEV_LIGHT));
+            pIconWid->load(PXMP_NO_DEV_LIGHT);
             break;
         case DGuiApplicationHelper::DarkType:
-            pIconLab->setPixmap(QPixmap(PXMP_NO_DEV_DARKY));
+            pIconWid->load(PXMP_NO_DEV_DARKY);
             break;
         }
     });
