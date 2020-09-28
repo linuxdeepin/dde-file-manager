@@ -81,6 +81,8 @@ public:
 
 signals:
     void disableUrlSchemesChanged();
+    // 侧边栏添加共享item信号，url为共享文件夹路径
+    void addUserShareItemFinished(const DUrl &url);
 public slots:
     void onRootFileChange(const DAbstractFileInfoPointer &fi);
 private slots:

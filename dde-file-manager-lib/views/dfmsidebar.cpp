@@ -560,7 +560,15 @@ void DFMSideBar::initUserShareItem()
     Q_CHECK_PTR(userShareFileWatcher);
     userShareFileWatcher->startWatcher();
 
-    auto userShareLambda = [=](const DUrl &url) {
+    auto deleteUserShareLambda = [ = ](const DUrl & url) {
+        Q_UNUSED(url)
+        int cnt = DFileService::instance()->getChildren(nullptr, DUrl::fromUserShareFile("/"),
+                                                        QStringList(), QDir::AllEntries).count();
+        int index = findItem(DUrl::fromUserShareFile("/"));
+        m_sidebarView->setRowHidden(index, cnt == 0);
+    };
+
+    auto addUserShareLambda = [ = ](const DUrl & url) {
         Q_UNUSED(url)
         int cnt = DFileService::instance()->getChildren(nullptr, DUrl::fromUserShareFile("/"),
                                                         QStringList(), QDir::AllEntries).count();
@@ -570,12 +578,13 @@ void DFMSideBar::initUserShareItem()
                 addItem(DFMSideBarDefaultItemHandler::createItem("UserShare"), groupName(Network));
             }
         } else {
-            m_sidebarView->setRowHidden(index, cnt == 0);
+            m_sidebarView->setRowHidden(index, false);
         }
+        emit addUserShareItemFinished(url);
     };
 
-    connect(userShareFileWatcher, &DAbstractFileWatcher::fileDeleted, this, userShareLambda);
-    connect(userShareFileWatcher, &DAbstractFileWatcher::subfileCreated, this, userShareLambda);
+    connect(userShareFileWatcher, &DAbstractFileWatcher::fileDeleted, this, deleteUserShareLambda);
+    connect(userShareFileWatcher, &DAbstractFileWatcher::subfileCreated, this, addUserShareLambda);
 }
 
 void DFMSideBar::initRecentItem()

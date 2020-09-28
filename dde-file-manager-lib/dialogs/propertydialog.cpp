@@ -743,8 +743,13 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
     }
 }
 
-void PropertyDialog::flickFolderToSidebar()
+void PropertyDialog::flickFolderToSidebar(const DUrl &fileUrl)
 {
+    //! 只处理当前触发的对话框
+    if (fileUrl.toLocalFile() != this->getUrl().toLocalFile()) {
+        return;
+    }
+
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
     if (!window) {
         return;
@@ -783,14 +788,14 @@ void PropertyDialog::flickFolderToSidebar()
     m_xani = new QVariantAnimation(this);
     m_xani->setStartValue(m_aniLabel->pos());
     m_xani->setEndValue(QPoint(targetPos.x(), angle));
-    m_xani->setDuration(440);
+    m_xani->setDuration(700);
 
     //QVariantAnimation *gani = new QVariantAnimation(this);
     m_gani = new QVariantAnimation(this);
     m_gani->setStartValue(m_aniLabel->geometry());
     m_gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
     m_gani->setEasingCurve(QEasingCurve::InBack);
-    m_gani->setDuration(440);
+    m_gani->setDuration(700);
 
     connect(m_xani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
         if (m_aniLabel) {
@@ -1234,11 +1239,12 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
                                        : info;
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
-    connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
-    //    connect(frame, &ShareInfoFrame::unfolderShared, this, [this](){
-    //        m_expandGroup.at(1)->setExpand(false);
-    //    });
-
+    // 侧边栏创建完成共享标签后再执行动画
+    DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
+    if (window) {
+        DFMSideBar *sideBar = window->getLeftSideBar();
+        connect(sideBar, &DFMSideBar::addUserShareItemFinished, this, &PropertyDialog::flickFolderToSidebar);
+    }
     return frame;
 }
 
