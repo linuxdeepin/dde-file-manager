@@ -57,8 +57,11 @@
 #include "interfaces/dfmglobal.h"
 #include "singleton.h"
 #include "models/dfmrootfileinfo.h"
+#include "shutil/checknetwork.h"
 
 #include <ddialog.h>
+#include "execinfo.h"
+#include "math.h"
 
 #include <QUrl>
 #include <QDebug>
@@ -93,11 +96,11 @@ public:
     bool m_bonline = false;
     bool m_bdoingcleartrash = false;
     QHash<DUrl,bool> m_rootsmbftpurllist;
-    QMutex checkgvfsmtx,smbftpmutex;
+    QMutex checkgvfsmtx,smbftpmutex,timerMutex;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
-    QEventLoop *m_loop = nullptr;
 
     QTimer m_tagEditorChangeTimer;
+    CheckNetwork m_checknetwork;
     DUrlList m_tagEditorFiles;
     QStringList m_tagEditorTags;
 };
@@ -123,12 +126,8 @@ DFileService::DFileService(QObject *parent)
     //判断当前自己的网络状态
     d_ptr->m_networkmgr = new QNetworkConfigurationManager();
     d_ptr->m_bonline = d_ptr->m_networkmgr->isOnline();
-    d_ptr->m_loop = new QEventLoop();
     connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [this](bool state) {
         d_ptr->m_bonline = state;
-        if (d_ptr->m_loop) {
-            d_ptr->m_loop->exit();
-        }
     });
 
     d_ptr->m_tagEditorChangeTimer.setSingleShot(true);
@@ -1000,12 +999,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
 {
     //找出url的rootfile路径，判断rootfile是否存在
     Q_D(DFileService);
-    if (!url.isValid()) {
-        return false;
-    }
-    if (d_ptr->m_loop) {
-        d_ptr->m_loop->exit();
-    }
+//    printStacktrace(6);
     //还原设置鼠标状态
     setCursorBusyState(false);
 
@@ -1055,28 +1049,38 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             path = urlstr + urllast.left(qi);
         }
         if (path.isNull() || path.isEmpty() ||
-                !(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME))) {
+                !(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME) || rootfilename.startsWith(SFTP_SCHEME))) {
             return false;
         }
         rooturl.setScheme(DFMROOT_SCHEME);
         rooturl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
     }
     if (isSmbFtpContain(rooturl)) {
-        return d->m_rootsmbftpurllist.value(rooturl);
+        //文件不存在弹提示框
+        d->smbftpmutex.lock();
+        bool bbusy = d->m_rootsmbftpurllist.value(rooturl);
+        qDebug() << bbusy;
+        d->smbftpmutex.unlock();
+        if (bbusy && showdailog) {
+            dialogManager->showUnableToLocateDir(rootfilename);
+        }
+        return bbusy;
     }
     bool isbusy = checkGvfsMountfileBusy(rooturl, rootfilename, showdailog);
+    d->smbftpmutex.lock();
     d->m_rootsmbftpurllist.insert(rooturl,isbusy);
+    d->smbftpmutex.unlock();
     QTimer::singleShot(500,this,[rooturl,d](){
         QMutexLocker lk(&d->smbftpmutex);
         d->m_rootsmbftpurllist.remove(rooturl);
     });
-
     return isbusy;
-
 }
 
 bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog)
 {
+    Q_D(DFileService);
+
     if (!rootUrl.isValid()) {
         return false;
     }
@@ -1120,30 +1124,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
         port = ipinfolist[1].replace("port=","");
     }
 
-
-    QNetworkAccessManager manager;//QNetworkAccessManager 允许发送网络请求和接收回复
-    qDebug() << "loop sart ===========";
-
-    connect(&manager, &QNetworkAccessManager::finished, this, [&](QNetworkReply * reply) {
-        qDebug() << reply->error() << reply->errorString();
-        bvist = QNetworkReply::UnknownNetworkError < reply->error() ||  QNetworkReply::NoError >= reply->error();
-        if (d_ptr->m_loop) {
-            d_ptr->m_loop->exit();
-        }
-    });
-
-    connect(&manager, &QNetworkAccessManager::sslErrors, this, [&](QNetworkReply * reply,const QList<QSslError> &errors) {
-        qDebug() << reply->error() << reply->errorString();
-        qDebug() << errors;
-        bvist = QNetworkReply::UnknownNetworkError < reply->error() ||  QNetworkReply::NoError >= reply->error();
-        if (d_ptr->m_loop) {
-            d_ptr->m_loop->exit();
-        }
-    });
-    manager.connectToHost(host,port.toUShort() == 0 ? 21 : port.toUShort());
-    if (d_ptr->m_loop && !d_ptr->m_loop->isRunning()) {
-        d_ptr->m_loop->exec();
-    }
+    bvist = d->m_checknetwork.isHostAndPortConnect(host,port);
 
     bonline = isNetWorkOnline();
     if (!bonline) {
@@ -1154,13 +1135,14 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
         }
         return true;
     }
-    qDebug() << bvist;
+
     setCursorBusyState(false);
 
     //文件不存在弹提示框
     if (!bvist && showdailog) {
         dialogManager->showUnableToLocateDir(rootfilename);
     }
+    qDebug() << bvist;
     return !bvist;
 }
 
@@ -1392,4 +1374,19 @@ bool DFileService::checkMultiSelectionFilesCache()
     }
 
     return true;
+}
+
+//打印函数的调用堆栈
+void DFileService::printStacktrace(int level)
+{
+    int size = 16;
+    void * array[16];
+    int stack_num = backtrace(array, size);
+    char ** stacktrace = backtrace_symbols(array, stack_num);
+    int total = std::min(level,stack_num);
+    for (int i = 0; i < total; ++i)
+    {
+        printf("%s\n", stacktrace[i]);
+    }
+    free(stacktrace);
 }
