@@ -1,6 +1,14 @@
 #!/bin/sh
 
+#file-manager.sh
 data="ZmlsZS1tYW5hZ2VyLnNo"
+
+#dde-file-manager
+executable="ZGRlLWZpbGUtbWFuYWdlcg=="
+
+#-n
+newWindow="LW4="
+
 for i in "$@"
 do
         arg_base64=`echo -n $i|base64 -w 0`
@@ -17,7 +25,7 @@ if [ ! -S $target ];then
         fi
 fi
 
-echo -n $data|socat - $target
+echo $executable $newWindow | socat - $target
 
 if [ $? != 0 ]; then
         dde-file-manager "$@"
