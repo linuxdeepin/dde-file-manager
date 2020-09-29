@@ -90,6 +90,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <DSysInfo>
+#include <ddiskdevice.h>
 
 DTK_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -1443,17 +1444,29 @@ void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
 
 void DialogManager::showFormatDialog(const QString &devId)
 {
-    if (devId.isEmpty())
-        return;
-    if (devId.startsWith("/dev/sr")) // optical disk canot format(bug-42414)
+    if (!devId.startsWith("/dev/"))
         return;
 
+    // fix 50005, 弹出格式化提示框仅针对可移动磁盘，且无法读取文件系统的设备，避免smb、mtp等设备也弹出提示框
+    QString volTag = devId.mid(5);
+    static const QString udisksPrefix = "/org/freedesktop/UDisks2/block_devices/";
+    QScopedPointer<DBlockDevice> dev(DDiskManager::createBlockDevice(udisksPrefix + volTag));
+    if (!dev || dev->hasFileSystem())
+        return;
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(dev->drive()));
+    if (!drive)
+        return;
+    if (drive->optical() || !drive->removable()) // 光驱不管，非移动存储设备不管
+        return;
+
+    qDebug() << "device formatter has shown: " << devId;
     DDialog dlg;
     dlg.setIcon(m_dialogWarningIcon);
     dlg.addButton(tr("Cancel"));
     dlg.addButton(tr("Format"), true, DDialog::ButtonRecommend);
     dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
     if (dlg.exec() == 1) {
+        qDebug() << "start format " << devId;
         // 显示格式化窗口
         QProcess *p = new QProcess;
         connect(p, static_cast<void (QProcess::*)(int)>(&QProcess::finished), p, &QProcess::deleteLater);
