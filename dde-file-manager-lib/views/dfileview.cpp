@@ -2459,11 +2459,13 @@ bool DFileView::setRootUrl(const DUrl &url)
             }));
             return false;
         } else {
-            auto points = blkdev->mountPoints();
             d->headerOpticalDisc->updateDiscInfo(fileUrl.burnDestDevice());
             d->headerOpticalDisc->show();
+            auto points = blkdev->mountPoints();
             if (points.empty()) {
                 blkdev->mount({});
+                // 挂载后更新缓存的挂载点
+                points = blkdev->mountPoints();
             }
             if (!points.empty()) {
                 d->headerOpticalDisc->setDiscMountPoint(points[0]);

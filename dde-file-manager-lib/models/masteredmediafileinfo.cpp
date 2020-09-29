@@ -53,8 +53,9 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
             return;
         }
 
-        if (blkdev->mountPoints().size() > 0) {
-            QString mntpoint = QString(blkdev->mountPoints().front());
+        auto points = blkdev->mountPoints();
+        if (!points.isEmpty()) {
+            QString mntpoint = QString(points.front());
             while (*mntpoint.rbegin() == '/') {
                 mntpoint.chop(1);
             }
@@ -297,7 +298,7 @@ void MasteredMediaFileInfo::refresh()
         }
 
         auto points = blkdev->mountPoints();
-        if (points.size() > 0) {
+        if (!points.isEmpty()) {
             QString mntpoint = QString(points.front());
             while (*mntpoint.rbegin() == '/') {
                 mntpoint.chop(1);

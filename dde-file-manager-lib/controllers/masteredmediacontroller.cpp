@@ -33,8 +33,9 @@ public:
         QString udiskspath = nodes.isEmpty() ? QString() : nodes.first();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
-        if (blkdev->mountPoints().size()) {
-            DUrl mnturl = DUrl::fromLocalFile(QString(blkdev->mountPoints().front()));
+        auto points = blkdev->mountPoints();
+        if (!points.isEmpty()) {
+            DUrl mnturl = DUrl::fromLocalFile(QString(points.front()));
             mntpoint = mnturl.toLocalFile();
         }
         while (*mntpoint.rbegin() == '/') {
