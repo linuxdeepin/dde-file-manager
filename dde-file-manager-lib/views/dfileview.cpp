@@ -233,7 +233,6 @@ DFileView::~DFileView()
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
 
     //所有的槽函数必须跑完才能析构
-    QMutexLocker lk(&d_ptr->m_mutex);
     QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
 
 }
@@ -885,18 +884,23 @@ void DFileView::onRowCountChanged()
 {
     //所有的槽函数必须跑完才能析构
     QPointer<DFileView> me = this;
-    QMutexLocker lk(&d_ptr->m_mutex);
-    if (!me) {
-        return;
-    }
 
 #ifndef CLASSICAL_SECTION
     static_cast<DFileSelectionModel *>(selectionModel())->m_selectedList.clear();
 #endif
 
     delayUpdateStatusBar();
+    if (!me) {
+        return;
+    }
     updateContentLabel();
+    if (!me) {
+        return;
+    }
     updateModelActiveIndex();
+    if (!me) {
+        return;
+    }
 }
 
 void DFileView::wheelEvent(QWheelEvent *event)
@@ -1335,14 +1339,12 @@ void DFileView::delayUpdateStatusBar()
     Q_D(DFileView);
     // when QItemSelectionModel::selectionChanged emit we get selectedUrls() were old selecturls
     // so we wait...
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+        d->updateStatusBarTimer->stop();
+        return;
+    }
     d->updateStatusBarTimer->start();
-
-
-//    if (FileUtils::isGvfsMountFile(rootUrl().toLocalFile())){
-//        d->updateStatusBarTimer->start();
-//    }else{
-//        updateStatusBar();
-//    }
 }
 
 void DFileView::updateStatusBar()
@@ -1370,10 +1372,7 @@ void DFileView::updateStatusBar()
     }
     event.setData(corectUrls);
     int count = selectedIndexCount();
-    //判断网络文件是否可以到达
-    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
-        return;
-    }
+
     notifySelectUrlChanged(corectUrls);
     if (count == 0) {
         d->statusBar->itemCounted(event, this->count());

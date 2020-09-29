@@ -64,6 +64,42 @@
 
 DFM_USE_NAMESPACE
 
+
+int countFileCount(const char *name, bool isloop = false)
+{
+    DIR *dir;
+    struct dirent *entry;
+    int fileCount = 0;
+
+    if (!(dir = opendir(name)))
+        return fileCount;
+    if (!(entry = readdir(dir)))
+        return fileCount;
+
+    do {
+        char path[1024];
+        int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
+        path[len] = 0;
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+        if (entry->d_type == DT_DIR) {
+            if (isloop) {
+                fileCount += countFileCount(path, isloop);
+            }
+            else {
+                fileCount++;
+            }
+        }
+        else {
+            fileCount++;
+        }
+    } while ((entry = readdir(dir)));
+    closedir(dir);
+    return fileCount;
+}
+
+
+
 DGvfsFileInfoPrivate::DGvfsFileInfoPrivate(const DUrl &url, DGvfsFileInfo *qq, bool hasCache)
     : DFileInfoPrivate(url, qq, hasCache)
 {
@@ -92,7 +128,7 @@ DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, bool hasCache)
     //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
     //所以ftp和smb挂载点没有了，显示文件已被删除
-//        filesCount();
+    filesCount();
 }
 
 DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, const QMimeType &mimetype, bool hasCache)
@@ -114,6 +150,7 @@ DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, const QMimeType &mimetype, boo
         mimeType();
     }
     size();
+    filesCount();
     //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
     //所以ftp和smb挂载点没有了，显示文件已被删除
@@ -289,8 +326,9 @@ int DGvfsFileInfo::filesCount() const
     Q_D(const DGvfsFileInfo);
 
     if (d->cacheFileCount < 0) {
-        if (isDir())
-            d->cacheFileCount = FileUtils::filesCount(absoluteFilePath());
+        if (isDir()) {
+            d->cacheFileCount = countFileCount(absoluteFilePath().toUtf8().toStdString().c_str());
+        }
         else
             return -1;
     }
@@ -344,6 +382,7 @@ void DGvfsFileInfo::refresh(const bool isForce)
         mimeType();
     }
     size();
+    filesCount();
     //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
     //所以ftp和smb挂载点没有了，显示文件已被删除

@@ -97,6 +97,8 @@ public:
 
     static void initHandlersByCreators();
 
+    static void printStacktrace(int level = 4);
+
     static DFileService *instance();
 
     static bool setFileUrlHandler(const QString &scheme, const QString &host,
@@ -200,10 +202,10 @@ private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;
 
 private:
-    explicit DFileService(QObject *parent = 0);
-    ~DFileService();
+    explicit DFileService(QObject *parent = nullptr);
+    ~DFileService() override;
 
-    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0) Q_DECL_OVERRIDE;
+    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) Q_DECL_OVERRIDE;
 
     static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
     static void insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator);
