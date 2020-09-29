@@ -65,6 +65,7 @@ private:
     DFMOpticalMediaWidget *q_ptr;
     QString curdev;
     QString strMntPath;
+    QString defaultDiscName;
     Q_DECLARE_PUBLIC(DFMOpticalMediaWidget)
 };
 
@@ -158,7 +159,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
         QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
         bd->setJobWindowId(static_cast<int>(this->window()->winId()));
-        bd->setDefaultVolName(dp.volid);
+        bd->setDefaultVolName(d->defaultDiscName);
         bd->exec();
     });
 }
@@ -232,6 +233,12 @@ void DFMOpticalMediaWidget::setDiscMountPoint(const QString &strMntPath)
 {
     Q_D(DFMOpticalMediaWidget);
     d->strMntPath = strMntPath;
+}
+
+void DFMOpticalMediaWidget::setDefaultDiscName(const QString &name)
+{
+    Q_D(DFMOpticalMediaWidget);
+    d->defaultDiscName = name;
 }
 
 bool DFMOpticalMediaWidget::hasFileInDir(QDir dir)

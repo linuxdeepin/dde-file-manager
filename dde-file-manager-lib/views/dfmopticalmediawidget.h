@@ -44,6 +44,7 @@ public:
 
     void updateDiscInfo(QString dev);
     void setDiscMountPoint(const QString &strMntPath);
+    void setDefaultDiscName(const QString &name);
     bool hasFileInDir(QDir dir);
     QString getDiscMountPoint();
     //fix: 设置光盘容量属性

@@ -2470,6 +2470,7 @@ bool DFileView::setRootUrl(const DUrl &url)
             } else {
                 d->headerOpticalDisc->setDiscMountPoint("");
             }
+            d->headerOpticalDisc->setDefaultDiscName(blkdev->idLabel());
         }
     } else {
         d->headerOpticalDisc->hide();
