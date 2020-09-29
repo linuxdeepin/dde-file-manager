@@ -663,7 +663,7 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
 
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+        //emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
 
         if (fi->suffix() == SUFFIX_UDISKS) {
             //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
@@ -713,7 +713,7 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+        //emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
         QtConcurrent::run([fi]() {
             qDebug() << fi->fileUrl().path();
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
