@@ -410,7 +410,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         QStringList titleList;
         if (fileInfo->isFile()) {
             titleList << basicInfo;
-            if (!m_url.isTrashFile()) {
+            //在回收站搜索文件，需要使搜索结果的文件属性面板与回收站文件属性面板保持一致
+            if (!m_url.isTrashFile() && !(m_url.isSearchFile() && fileInfo->redirectedFileUrl().isTrashFile())) {
                 titleList << openWith;
                 if (fileInfo->canManageAuth())
                     titleList << authManager;
