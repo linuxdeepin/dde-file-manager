@@ -751,7 +751,7 @@ void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-//        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl()); // task 38582 期望复制过程中弹出设备提示用户设备正忙
+        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
 
         //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
         //在关闭窗口特效情况下，还会出现文管界面绘制不刷新出现重影的情况
@@ -1424,9 +1424,6 @@ void UnmountWorker::doUnmount(const QString &blkStr)
     else if (err.isValid() && err.type() != QDBusError::Other) {
         qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
         emit unmountResult(tr("Disk is busy, cannot unmount now"));
-    } else if (err.isValid() && err.message().contains("target is busy")) {
-        qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-        emit unmountResult(tr("Disk is busy, cannot unmount now"));
     }
 }
 
@@ -1440,11 +1437,6 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
     if (!blk->mountPoints().empty()) {
         blk->unmount({});
         QDBusError lastError = blk->lastError();
-        if (lastError.type() == QDBusError::Other && lastError.message().contains("target is busy")) {
-            qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
-            emit unmountResult(tr("Disk is busy, cannot unmount now"));
-            return;
-        }
         if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
             qDebug() << "blk action has been canceled";
             return;
