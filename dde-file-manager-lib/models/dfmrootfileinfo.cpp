@@ -469,7 +469,10 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
             //点击数据盘直接跳转到主目录
             if (rootUrl == DUrl::fromLocalFile("/data")) {
                 QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-                rootUrl = DUrl::fromLocalFile("/data" + userPath);
+                //确认/data目录下是否挂载了home目录
+                QDir dir("/data" + userPath);
+                if (dir.exists())
+                    rootUrl = DUrl::fromLocalFile("/data" + userPath);
             }
             return rootUrl;
         }
