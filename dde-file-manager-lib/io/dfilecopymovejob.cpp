@@ -495,6 +495,10 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::setAndhandleError(DFileCopyMov
                                                                     const QString &es)
 {
     QMutexLocker lk(&m_errormutex);
+    if ((DFileCopyMoveJob::FileExistsError == e || DFileCopyMoveJob::DirectoryExistsError == e)
+            && (sourceInfo->fileUrl() == targetInfo->fileUrl() || DStorageInfo::isSameFile(sourceInfo->fileUrl().path(), targetInfo->fileUrl().path()))) {
+        return DFileCopyMoveJob::CoexistAction;
+    }
     setError(e, es);
     if (DFileCopyMoveJob::NoError == e) {
         return DFileCopyMoveJob::NoAction;

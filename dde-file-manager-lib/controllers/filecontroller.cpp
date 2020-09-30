@@ -641,16 +641,10 @@ bool FileController::decompressFileHere(const QSharedPointer<DFMDecompressEvent>
 bool FileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
     //计算机和回收站桌面文件不能被复制或剪切，从这里过滤通过快捷键复制剪切的计算机和回收站桌面文件url
-    DUrlList urlList;
-    for (const DUrl &url : event->urlList()) {
-        if ((DesktopFileInfo::computerDesktopFileUrl() == url) ||
-                (DesktopFileInfo::trashDesktopFileUrl() == url) ||
-                (DesktopFileInfo::homeDesktopFileUrl() == url)) {
-            continue;
-        }
-
-        urlList.append(url);
-    }
+    DUrlList urlList = event->urlList();
+    urlList.removeAll(DesktopFileInfo::computerDesktopFileUrl());
+    urlList.removeAll(DesktopFileInfo::trashDesktopFileUrl());
+    urlList.removeAll(DesktopFileInfo::homeDesktopFileUrl());
 
     if (urlList.isEmpty()) {
         return false;

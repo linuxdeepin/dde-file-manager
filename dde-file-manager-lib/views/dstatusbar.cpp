@@ -36,6 +36,7 @@
 
 #include "dfileservices.h"
 #include "dfilestatisticsjob.h"
+#include <sys/stat.h>
 
 #include "singleton.h"
 #include <QComboBox>
@@ -315,7 +316,6 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
      * started more than once.
      * A fix better than the current one should eventually be applied.
      */
-
     if (!m_fileStatisticsJob) {
         m_fileStatisticsJob = new DFileStatisticsJob(this);
         m_fileStatisticsJob->setFileHints(DFileStatisticsJob::ExcludeSourceFile | DFileStatisticsJob::SingleDepth);
@@ -323,7 +323,6 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         m_fileStatisticsJob->stop();
         m_fileStatisticsJob->wait();
     }
-
     if (m_isjobDisconnect) {
         m_isjobDisconnect = false;
         initJobConnection();
@@ -337,7 +336,6 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
     //fix: 动态获取刻录选中文件的字节大小
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
-
     if (number > 1) {
         DUrl fileUrl;
         if (event.fileUrlList().count() > 0){
@@ -347,17 +345,19 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         }
 
         bool isInGVFs = FileUtils::isGvfsMountFile(fileUrl.toLocalFile());
-
+        DUrlList folderList;
         foreach (DUrl url, event.fileUrlList()) {
-            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
-            if (fileInfo->isDir()) {
+            struct stat statInfo;
+            int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
+            if (0 != fileStat) {
+                continue;
+            }
+            if (S_ISDIR(statInfo.st_mode)) {
                 m_folderCount += 1;
-                if (!isInGVFs){
-//                    m_folderContains += fileInfo->filesCount();
-                }
+                folderList << url;
             } else {
                 if (!isInGVFs){
-                    m_fileSize += fileInfo->size();
+                    m_fileSize += statInfo.st_size;
                 }
                 m_fileCount += 1;
             }
@@ -376,7 +376,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
              QFuture<int> folderFuture = QtConcurrent::run(this, &DStatusBar::computerFolderContains, event.fileUrlList());
              folderWatcher->setFuture(folderFuture);
         } else {
-            m_fileStatisticsJob->start(event.fileUrlList());
+            m_fileStatisticsJob->start(folderList);
         }
 
         updateStatusMessage();
