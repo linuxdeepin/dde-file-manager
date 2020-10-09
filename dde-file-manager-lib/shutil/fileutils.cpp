@@ -355,7 +355,7 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app,
     }
 
     // Last chance
-    QDir appIcons("/usr/share/pixmaps", "", 0, QDir::Files | QDir::NoDotAndDotDot);
+    QDir appIcons("/usr/share/pixmaps", "", nullptr, QDir::Files | QDir::NoDotAndDotDot);
     QStringList iconFiles = appIcons.entryList();
     QStringList searchIcons = iconFiles.filter(name);
     if (searchIcons.count() > 0) {
@@ -461,7 +461,7 @@ QString FileUtils::diskUsageString(quint64 &usedSize, quint64 &totalSize, QStrin
     const QStringList unitDisplayText = {"B", "K", "M", "G", "T"};
 
     if (!~usedSize) {
-        return FileUtils::formatSize(totalSize, true, 0, totalSize < mb ? 2 : -1, unitDisplayText);
+        return FileUtils::formatSize(static_cast<qint64>(totalSize), true, 0, totalSize < mb ? 2 : -1, unitDisplayText);
     }
 
     // todo: too ugly! should be beaufify
@@ -567,8 +567,6 @@ DUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, con
             return fileUrl;
         }
     }
-
-    return DUrl();
 }
 
 QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, const QString &suffix)
@@ -591,8 +589,6 @@ QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, co
             return filePath;
         }
     }
-
-    return QString();
 }
 
 bool FileUtils::cpTemplateFileToTargetDir(const QString &targetdir, const QString &baseName, const QString &suffix, WId windowId)
@@ -892,13 +888,13 @@ bool FileUtils::launchAppByDBus(const QString &desktopFile, const QStringList &f
             DesktopFile deskfile(desktopFile);
             if (deskfile.getExec().contains("%U")) { //exc标志 为%F时也可以打开多个 %U不行
                 for (const QString &path : filePaths) {
-                    appController->startManagerInterface()->LaunchApp(desktopFile, QX11Info::getTimestamp(), {path});
+                    appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), {path});
                 }
                 return true;
             }
         }
 
-        appController->startManagerInterface()->LaunchApp(desktopFile, QX11Info::getTimestamp(), filePaths);
+        appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), filePaths);
         return true;
     }
     return false;
@@ -1176,7 +1172,7 @@ QString FileUtils::getFileMimetype(const QString &path)
     QString result;
 
     file = g_file_new_for_path(path.toUtf8());
-    info = g_file_query_info(file, "standard::content-type", G_FILE_QUERY_INFO_NONE, NULL, NULL);
+    info = g_file_query_info(file, "standard::content-type", G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
     result = g_file_info_get_content_type(info);
 
     g_object_unref(file);
@@ -1385,7 +1381,7 @@ void FileUtils::migrateConfigFileFromCache(const QString &key)
         QFile desFile(newPath);
         ret = desFile.open(QIODevice::WriteOnly);
         if (ret) {
-            int code = desFile.write(data);
+            qint64 code = desFile.write(data);
             if (code < 0) {
                 qDebug() << "Error occurred when writing data";
                 ret = false;
@@ -1514,7 +1510,7 @@ QJsonObject FileUtils::getJsonObjectFromFile(const QString &filePath)
     QByteArray data = file.readAll();
     file.close();
 
-    QJsonParseError *jsError = NULL;
+    QJsonParseError *jsError = nullptr;
     doc = QJsonDocument::fromJson(data, jsError);
 
     if (jsError) {
@@ -1543,7 +1539,7 @@ QJsonArray FileUtils::getJsonArrayFromFile(const QString &filePath)
     QByteArray data = file.readAll();
     file.close();
 
-    QJsonParseError *jsError = NULL;
+    QJsonParseError *jsError = nullptr;
     doc = QJsonDocument::fromJson(data, jsError);
 
     if (jsError) {
