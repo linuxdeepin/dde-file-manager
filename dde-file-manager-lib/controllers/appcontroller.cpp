@@ -641,8 +641,8 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
 
-        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-        //emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+        // huawei 50143: 卸载时有任务，提示设备繁忙并且不能中断传输
+//        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
 
         if (fi->suffix() == SUFFIX_UDISKS) {
             //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
@@ -691,7 +691,7 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
-        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
+        // huawei 50143: 卸载时有任务，提示设备繁忙并且不能中断传输
         //emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
         QtConcurrent::run([fi]() {
             qDebug() << fi->fileUrl().path();
@@ -1421,7 +1421,8 @@ void UnmountWorker::doUnmount(const QString &blkStr)
     }
     // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
     // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
-    else if (err.isValid() && err.type() != QDBusError::Other) {
+    else if ((err.isValid() && err.type() != QDBusError::Other)
+             || (err.isValid() && err.message().contains("target is busy"))) {
         qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
         emit unmountResult(tr("Disk is busy, cannot unmount now"));
     }
