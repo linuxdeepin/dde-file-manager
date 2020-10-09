@@ -285,7 +285,7 @@ public:
     QAtomicInteger<bool> btaskdailogclose = false;
 
 
-    QAtomicInt refinestat = DFileCopyMoveJob::Refine;
+    QAtomicInt refinestat = DFileCopyMoveJob::MoreThreadRefine;
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
     //优化拷贝时异步线程状态

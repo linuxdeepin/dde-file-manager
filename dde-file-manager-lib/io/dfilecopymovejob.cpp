@@ -1533,7 +1533,7 @@ open_file: {
         qint64 size = toDevice->read(data1, blockSize);
 
         if (Q_UNLIKELY(size <= 0)) {
-            if (toDevice->atEnd()) {
+            if (size == 0 && toDevice->atEnd()) {
                 break;
             }
 
@@ -1992,7 +1992,7 @@ void DFileCopyMoveJobPrivate::updateMoveProgress()
 void DFileCopyMoveJobPrivate::updateSpeed()
 {
     const qint64 time = updateSpeedElapsedTimer->elapsed();
-    const qint64 total_size = refinestat >= DFileCopyMoveJob::MoreThreadRefine ? refinecpsize : getCompletedDataSize();
+    const qint64 total_size = bdestLocal ? refinecpsize : getCompletedDataSize();
     if (time == 0)
         return;
 
@@ -2175,7 +2175,7 @@ void DFileCopyMoveJobPrivate::checkTagetNeedSync()
     DStorageInfo targetStorageInfo(targetUrl.toLocalFile());
     if (!m_isEveryReadAndWritesSnc && targetStorageInfo.isValid()) {
         const QString &fs_type = targetStorageInfo.fileSystemType();
-        m_isEveryReadAndWritesSnc = (fs_type == "vfat" || fs_type == "cifs");
+        m_isEveryReadAndWritesSnc = (fs_type == "cifs");
     }
 }
 
@@ -3830,6 +3830,8 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
 
     iscountsizeover = true;
 
+    emit q_ptr->fileStatisticsFinished();
+
     qDebug() << " dir time " << QDateTime::currentMSecsSinceEpoch() - times << totalsize;
 //    }
 
@@ -4013,7 +4015,7 @@ qint64 DFileCopyMoveJob::totalDataSize() const
 {
     Q_D(const DFileCopyMoveJob);
 
-    if (d->refinestat > MoreThreadRefine) {
+    if (d->isFromLocalUrls) {
         if (!d->iscountsizeover) {
             return -1;
         }
