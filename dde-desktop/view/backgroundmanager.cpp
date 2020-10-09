@@ -47,14 +47,14 @@ void BackgroundManager::onRestBackgroundManager()
             connect(wmInter, &WMInter::WorkspaceSwitched, this, [this] (int, int to) {
                 currentWorkspaceIndex = to;
                 pullImageSettings();
-                onResetBackgroundImage(); //todo
+                onResetBackgroundImage();
             });
 
             connect(gsettings, &DGioSettings::valueChanged, this, [this] (const QString & key, const QVariant & value) {
                 Q_UNUSED(value);
                 if (key == "background-uris") {
                     pullImageSettings();
-                    onResetBackgroundImage(); //todo
+                    onResetBackgroundImage();
                 }
             });
         }
@@ -248,8 +248,7 @@ QString BackgroundManager::getDefaultBackground() const
 {
     //获取默认壁纸
     QString defaultPath;
-    if (gsettings)
-    {
+    if (gsettings) {
         for (const QString &path : gsettings->value("background-uris").toStringList()){
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 continue;
@@ -343,7 +342,7 @@ void BackgroundManager::onBackgroundBuild()
         BackgroundWidgetPointer bwp = createBackgroundWidget(primary);
         m_backgroundMap.insert(primary, bwp);
 
-        //todo 设置壁纸
+        //设置壁纸
         onResetBackgroundImage();
 
         if (m_visible)
@@ -354,8 +353,6 @@ void BackgroundManager::onBackgroundBuild()
         for (ScreenPointer sc : ScreenMrg->logicScreens()) {
             BackgroundWidgetPointer bwp = createBackgroundWidget(sc);
             m_backgroundMap.insert(sc, bwp);
-
-            //todo 设置壁纸
 
             if (m_visible)
                 bwp->show();
@@ -376,7 +373,6 @@ void BackgroundManager::onSkipBackgroundBuild()
     emit sigBackgroundBuilded(ScreenMrg->displayMode());
 }
 
-//临时使用
 void BackgroundManager::onResetBackgroundImage()
 {
     auto getPix = [](const QString & path, const QPixmap & defalutPixmap)->QPixmap{
@@ -387,8 +383,7 @@ void BackgroundManager::onResetBackgroundImage()
         QPixmap backgroundPixmap(currentWallpaper);
         // fix whiteboard shows when a jpeg file with filename xxx.png
         // content formart not epual to extension
-        if (backgroundPixmap.isNull())
-        {
+        if (backgroundPixmap.isNull()) {
             QImageReader reader(currentWallpaper);
             reader.setDecideFormatFromContent(true);
             backgroundPixmap = QPixmap::fromImage(reader.read());
@@ -444,6 +439,7 @@ void BackgroundManager::onWmDbusStarted(QString name, QString oldOwner, QString 
 {
     Q_UNUSED(oldOwner)
     Q_UNUSED(newOwner)
+    //窗管服务注销也会进入该函数，因此需要判断服务是否已注册
     if (name == QString("com.deepin.wm") && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm")) {
         qDebug()<<"dbus server com.deepin.wm started.";
         pullImageSettings();
