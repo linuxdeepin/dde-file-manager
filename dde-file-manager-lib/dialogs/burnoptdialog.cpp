@@ -56,6 +56,20 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
     connect(this, &BurnOptDialog::buttonClicked, this,
         [=](int index, const QString &text) {
             Q_UNUSED(text);
+            int flag = 0;
+            if(index ==1 ){
+                d->cb_checkdisc->isChecked() && (flag |= 4);
+                d->cb_eject->isChecked() && (flag |= 2);
+                !d->cb_iclose->isChecked() && (flag |= 1);
+            }
+            else {
+                d->cb_checkdisc->isChecked() && (flag |= 4);
+                d->cb_eject->isChecked() && (flag |= 2);
+            }
+
+            int nSpeeds = d->speedmap[d->cb_writespeed->currentText()];
+            QString volName = d->le_volname->text();
+
             if (index == 1) {
                 emit fileSignalManager->stopCdScanTimer(device);
                 if (d->image_file.path().length() == 0) {
@@ -67,14 +81,9 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
 
                         DUrl dev(device);
 
-                        int flag = 0;
-                        d->cb_checkdisc->isChecked() && (flag |= 4);
-                        d->cb_eject->isChecked() && (flag |= 2);
-                        !d->cb_iclose->isChecked() && (flag |= 1);
-
                         // fix: use fork() burn files
                         qDebug() << "start burn files";
-                        job->doOpticalBurnByChildProcess(dev, d->le_volname->text(), d->speedmap[d->cb_writespeed->currentText()], flag);
+                        job->doOpticalBurnByChildProcess(dev, volName, nSpeeds, flag);
                         dialogManager->removeJob(job->getJobId(), true ); // 清除所有数据，防止脏数据出现
                         job->deleteLater();
                     });
@@ -89,13 +98,9 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                         //just to ensure we still have access to the image url even after 'this' is deleted
                         DUrl img(d->image_file);
 
-                        int flag = 0;
-                        d->cb_checkdisc->isChecked() && (flag |= 4);
-                        d->cb_eject->isChecked() && (flag |= 2);
-
                         // fix: use fork() burn image
                         qDebug() << "start burn image";
-                        job->doOpticalImageBurnByChildProcess(dev, img, d->speedmap[d->cb_writespeed->currentText()], flag);
+                        job->doOpticalImageBurnByChildProcess(dev, img, nSpeeds, flag);
                         dialogManager->removeJob(job->getJobId(), true );// 清除所有数据，防止脏数据出现
                         job->deleteLater();
                     });
