@@ -108,9 +108,17 @@ ComputerModel::ComputerModel(QObject *parent)
 
             // 判断是否启用保险箱
             if ( VaultHelper::isVaultEnabled() ) {
-                // 保险柜
-                addItem(makeSplitterUrl(QObject::tr("File Vault")));
-                addItem(VaultController::makeVaultUrl());
+                const DUrl vaultUrl = VaultController::makeVaultUrl();
+                const DUrl vaultUrlTag = makeSplitterUrl(QObject::tr("File Vault"));
+                const int vaultIndex = findItem(vaultUrl);
+                //保险箱不是最后一个则移除，再添加，保证在最后一个
+                if (vaultIndex != rowCount() - 1){
+                    removeItem(vaultUrl);
+                    removeItem(vaultUrlTag);
+                }
+
+                addItem(vaultUrlTag);
+                addItem(vaultUrl);
             }
         });
 
@@ -149,10 +157,8 @@ ComputerModel::ComputerModel(QObject *parent)
                 addItem(VaultController::makeVaultUrl());
             }
         }
-        else {
-            qDebug() << "root file not inited,wait signal";
-            DRootFileManager::instance()->startQuryRootFile();
-        }
+        //使用分区工具，不显示磁盘问题，再刷一次
+        DRootFileManager::instance()->startQuryRootFile();
 
         m_watcher = DRootFileManager::instance()->rootFileWather();
         connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
