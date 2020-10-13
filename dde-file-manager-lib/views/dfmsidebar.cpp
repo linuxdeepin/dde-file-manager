@@ -682,12 +682,11 @@ void DFMSideBar::initDeviceConnection()
     },Qt::QueuedConnection);
 
     // 已经初始化了就直接拿结果
-    if (DRootFileManager::instance()->isRootFileInited()) {
+   if (DRootFileManager::instance()->isRootFileInited()) {
         rootFileResult();
     }
-    else { // 否则开启遍历线程
-        DRootFileManager::instance()->startQuryRootFile();
-    }
+    // 开启遍历线程,刷新一次root，修复分区问题
+    DRootFileManager::instance()->startQuryRootFile();
 
     DAbstractFileWatcher *devicesWatcher = rootFileManager->rootFileWather();
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
