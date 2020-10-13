@@ -529,6 +529,9 @@ QPixmap DIconItemDelegatePrivate::getFileIconPixmap(const QModelIndex &index, co
     const QList<QIcon> &cornerIconList = q->parent()->additionalIcon(index);
 
     for (int i = 0; i < cornerIconList.count(); ++i) {
+        if (cornerIconList.at(i).isNull()) {
+            continue;
+        }
         cornerIconList.at(i).paint(&painter, cornerGeometryList.at(i).toRect());
     }
 
@@ -691,6 +694,9 @@ void DIconItemDelegate::paint(QPainter *painter,
     const QList<QIcon> &cornerIconList = parent()->additionalIcon(index);
 
     for (int i = 0; i < cornerIconList.count(); ++i) {
+        if (cornerIconList.at(i).isNull()) {
+            continue;
+        }
         cornerIconList.at(i).paint(painter, cornerGeometryList.at(i).toRect());
     }
 

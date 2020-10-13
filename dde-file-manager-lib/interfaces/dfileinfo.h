@@ -125,6 +125,21 @@ protected:
 private:
     Q_DECLARE_PRIVATE(DFileInfo)
 
+    /**
+     * @brief setEmblemIcon 设置徽标到角标列表中
+     * @param iconList 角标列表
+     * @return 返回是否添加成功
+     */
+    bool setEmblemIcon(QList<QIcon> &iconList) const;
+
+    /**
+     * @brief loadEmblem 从gio加载徽标
+     * @param emblem 徽标icon
+     * @param pos 指定的徽标位置
+     * @return
+     */
+    bool loadEmblem(QIcon &emblem, QString &pos) const;
+
     friend class RequestEP;
 };
 
