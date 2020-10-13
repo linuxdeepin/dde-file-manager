@@ -75,6 +75,7 @@
 //         config file will never got saved.
 // blumia: Handling SIGTERM is a workaround way to fix that issue, but we still need to add
 //         session management support to DDE.
+
 void handleSIGTERM(int sig)
 {
     qDebug() << "!SIGTERM!" << sig;
