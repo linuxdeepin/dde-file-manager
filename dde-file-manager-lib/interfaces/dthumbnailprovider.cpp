@@ -377,10 +377,12 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             }
         }
     } else if (mime.name().startsWith("image/")) {
-        mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
+//        mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
+//        QImageReader reader(absoluteFilePath, mime.preferredSuffix().toLatin1());
 
-        QImageReader reader(absoluteFilePath, mime.preferredSuffix().toLatin1());
-
+        //! fix bug#49451 因为使用mime.preferredSuffix(),会导致后续image.save崩溃，具体原因还需进一步跟进
+        //! QImageReader构造时不传format参数，让其自行判断
+        QImageReader reader(absoluteFilePath);
         if (!reader.canRead()) {
             d->errorString = reader.errorString();
             goto _return;
