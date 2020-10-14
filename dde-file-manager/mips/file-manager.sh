@@ -1,13 +1,7 @@
 #!/bin/sh
 
-#file-manager.sh
-data="ZmlsZS1tYW5hZ2VyLnNo"
-
 #dde-file-manager
-executable="ZGRlLWZpbGUtbWFuYWdlcg=="
-
-#-n
-newWindow="LW4="
+data="ZGRlLWZpbGUtbWFuYWdlcg=="
 
 for i in "$@"
 do
@@ -25,7 +19,7 @@ if [ ! -S $target ];then
         fi
 fi
 
-echo $executable $newWindow | socat - $target
+echo $data | socat - $target
 
 if [ $? != 0 ]; then
         dde-file-manager "$@"
