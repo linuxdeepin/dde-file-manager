@@ -3349,13 +3349,15 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menu->addAction(&display);
 
     //热区设置，新版无热区设置需求
-    //    QAction corner(menu);
-    //    DGioSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
-    //    if (gsetting.keys().contains("enable-hotzone-settings") && gsetting.value("enable-hotzone-settings").toBool()) {
-    //        corner.setText(tr("Corner Settings"));
-    //        corner.setData(CornerSettings);
-    //        menu->addAction(&corner);
-    //    }
+#ifndef DISABLE_ZONE
+    QAction corner(menu);
+    DGioSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
+    if (gsetting.keys().contains("enable-hotzone-settings") && gsetting.value("enable-hotzone-settings").toBool()) {
+        corner.setText(tr("Corner Settings"));
+        corner.setData(CornerSettings);
+        menu->addAction(&corner);
+    }
+#endif
 
     //壁纸和屏保设置
     QAction wallpaper(menu);

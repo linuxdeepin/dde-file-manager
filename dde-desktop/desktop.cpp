@@ -355,9 +355,9 @@ void Desktop::showWallpaperSettings(QString name, int mode)
     //d->wallpaperSettings->grabKeyboard(); //设计按键交互功能QWindow *window = d->wallpaperSettings->windowHandle();
 }
 
-#ifndef DISABLE_ZONE
 void Desktop::showZoneSettings()
 {
+#ifndef DISABLE_ZONE
     if (d->zoneSettings) {
         d->zoneSettings->deleteLater();
         d->zoneSettings = nullptr;
@@ -371,9 +371,10 @@ void Desktop::showZoneSettings()
 
     d->zoneSettings->show();
     d->zoneSettings->grabKeyboard();
-}
-
+#else
+    qWarning() << "Zone is disabled";
 #endif
+}
 
 void Desktop::initDebugDBus(QDBusConnection &conn)
 {
