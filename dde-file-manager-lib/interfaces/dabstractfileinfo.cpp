@@ -22,6 +22,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "gio/gio.h"
+
 #include "dabstractfileinfo.h"
 #include "private/dabstractfileinfo_p.h"
 #include "views/dfileview.h"
@@ -1817,6 +1819,134 @@ void DAbstractFileInfo::setUrl(const DUrl &url)
     Q_D(DAbstractFileInfo);
 
     d->setUrl(url, false);
+}
+
+bool DAbstractFileInfo::loadFileEmblems(QList<QIcon> &iconList) const
+{
+    //如果没有位置可以显示徽标，则不显示
+    if (iconList.length() >= 4) {
+        return false;
+    }
+
+    std::string str = filePath().toStdString();
+
+    //获取gfileinfo
+    GFile *g_file = g_file_new_for_path(str.c_str());
+    GError *g_error = nullptr;
+    GFileInfo *g_fileInfo = g_file_query_info(g_file, "*", GFileQueryInfoFlags::G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, &g_error);
+
+    if (g_error != nullptr) {
+        //report error
+        return false;
+    }
+
+    //通过gfileinfo获取文件徽标的值
+    char **emblemStr = g_file_info_get_attribute_stringv(g_fileInfo, "metadata::emblems");
+    if (!emblemStr) {
+        return false;
+    }
+
+    QString emStr(*emblemStr);
+    if (!emStr.isEmpty()) {
+        QList<QIcon> newIcons = {QIcon(), QIcon(), QIcon(), QIcon()};
+        //设置了多条徽标的情况
+        if (emStr.contains("|")) {
+            QStringList emblems = emStr.split("|");
+            for (int i = 0; i < emblems.length(); i++) {
+                QString pos;
+                QIcon emblem;
+                if (parseEmblemString(emblem, pos, emblems.at(i))) {
+                    setEmblemIntoIcons(pos, emblem, newIcons);
+                }
+            }
+        }
+        //只设置了一条徽标的情况
+        else {
+            QString pos;
+            QIcon emblem;
+            if (parseEmblemString(emblem, pos, emStr)) {
+                setEmblemIntoIcons(pos, emblem, newIcons);
+            }
+        }
+
+        for (int i = 0; i < iconList.length(); i++) {
+            newIcons[i] = iconList.at(i);
+        }
+
+        iconList = newIcons;
+    }
+
+    return false;
+}
+
+bool DAbstractFileInfo::parseEmblemString(QIcon &emblem, QString &pos, const QString &emblemStr) const
+{
+    //默认位置在右下
+    pos = "rd";
+
+    if (!emblemStr.isEmpty()) {
+        QIcon emblemIcon;
+        QString imgPath;
+        //位置参数和徽标图标由 ; 隔开
+        if (emblemStr.contains(";")) {
+            QStringList emStrList = emblemStr.split(";");
+            imgPath = emStrList.at(0);
+            pos = emStrList.at(1);
+        }
+        else {
+            imgPath = emblemStr;
+        }
+
+        //修正主目录为标准路径
+        if (imgPath.startsWith("~/")) {
+             imgPath.replace(0, 1, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        }
+
+//        QFile imgFile(imgPath);
+        QFileInfo fileInfo(imgPath);
+        if (fileInfo.exists()) {
+            if (fileInfo.size() > 102400) { //图片大小大于100不显示
+                return false;
+            }
+
+            //只支持部分格式的图片作为徽标图源
+            if (fileInfo.completeSuffix() != "svg" &&
+                    fileInfo.completeSuffix() != "png" &&
+                    fileInfo.completeSuffix() != "gif" &&
+                    fileInfo.completeSuffix() != "bmp" &&
+                    fileInfo.completeSuffix() != "jpg") {
+                return false;
+            }
+
+            emblemIcon = QIcon(imgPath);
+            if (!emblemIcon.isNull()) {
+                emblem = emblemIcon;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void DAbstractFileInfo::setEmblemIntoIcons(const QString &pos, const QIcon &emblem, QList<QIcon> &iconList) const
+{
+    int emblemIndex = 0;    //徽标目标位置,默认位置右下rd=0
+
+    //左下
+    if (pos == "ld") {
+        emblemIndex = 1;
+    }
+    //左上
+    else if (pos == "lu") {
+        emblemIndex = 2;
+    }
+    //右上
+    else if (pos == "ru") {
+        emblemIndex = 3;
+    }
+
+    iconList[emblemIndex] = emblem;
 }
 
 #ifdef SW_LABEL
