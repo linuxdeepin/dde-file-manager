@@ -26,7 +26,7 @@
 class MountFileInfo : public DAbstractFileInfo
 {
 public:
-    MountFileInfo(const DUrl &url);
+    explicit MountFileInfo(const DUrl &url);
     ~MountFileInfo();
 
     bool canFetch() const override;

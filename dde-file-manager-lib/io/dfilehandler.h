@@ -46,7 +46,7 @@ public:
 
 protected:
     DFileHandler();
-    DFileHandler(DFileHandlerPrivate &dd);
+    explicit DFileHandler(DFileHandlerPrivate &dd);
 
     QScopedPointer<DFileHandlerPrivate> d_ptr;
 

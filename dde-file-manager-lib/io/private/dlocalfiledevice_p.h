@@ -28,7 +28,7 @@ DFM_BEGIN_NAMESPACE
 class DLocalFileDevicePrivate : public DFileIODeviceProxyPrivate
 {
 public:
-    DLocalFileDevicePrivate(dde_file_manager::DLocalFileDevice *qq);
+    explicit DLocalFileDevicePrivate(dde_file_manager::DLocalFileDevice *qq);
 
     ~DLocalFileDevicePrivate();
 

@@ -489,14 +489,14 @@ DFileSystemWatcher::~DFileSystemWatcher()
 
     \sa addPaths(), removePath()
 */
-bool DFileSystemWatcher::addPath(const QString &path)
+bool DFileSystemWatcher::addPath(const QString &file)
 {
-    if (path.isEmpty()) {
+    if (file.isEmpty()) {
         //qWarning("DFileSystemWatcher::addPath: path is empty");
         return true;
     }
 
-    QStringList paths = addPaths(QStringList(path));
+    QStringList paths = addPaths(QStringList(file));
     return paths.isEmpty();
 }
 

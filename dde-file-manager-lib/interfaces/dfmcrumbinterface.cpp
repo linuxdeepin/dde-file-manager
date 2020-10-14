@@ -59,30 +59,31 @@ CrumbData::CrumbData(DUrl url, QString displayText, QString iconName, QString ic
 
 CrumbData::operator QString() const
 {
-     QString ret = "url='" + url.toString();
+    QString ret = "url='" + url.toString();
 
-     if (!displayText.isEmpty()) {
+    if (!displayText.isEmpty()) {
         ret += "' displayText='" + displayText;
-     }
+    }
 
-     if (!iconName.isEmpty()) {
+    if (!iconName.isEmpty()) {
         ret += "' iconName='" + iconName;
-     }
+    }
 
-     if (!iconName.isEmpty() && !iconKey.isEmpty()) {
+    if (!iconName.isEmpty() && !iconKey.isEmpty()) {
         ret += "' iconKey='" + iconKey;
-     }
+    }
 
-     return QStringLiteral("CrumbData(") + ret + QStringLiteral(")");
+    return QStringLiteral("CrumbData(") + ret + QStringLiteral(")");
 }
 
-class DFMCrumbInterfacePrivate {
+class DFMCrumbInterfacePrivate
+{
 
 public:
     DFMCrumbInterfacePrivate(DFMCrumbInterface *qq);
 
     QPointer<JobController> folderCompleterJobPointer;
-    DFMCrumbBar* crumbBar = nullptr;
+    DFMCrumbBar *crumbBar = nullptr;
 
     DFMCrumbInterface *q_ptr;
 
@@ -199,7 +200,7 @@ QList<CrumbData> DFMCrumbInterface::seprateUrl(const DUrl &url)
     // Push urls into crumb list
     DUrlList::const_reverse_iterator iter = urlList.crbegin();
     while (iter != urlList.crend()) {
-        const DUrl & oneUrl = *iter;
+        const DUrl &oneUrl = *iter;
 
         QString displayText = oneUrl.fileName();
         // Check for possible display text.
@@ -210,7 +211,7 @@ QList<CrumbData> DFMCrumbInterface::seprateUrl(const DUrl &url)
         CrumbData data(oneUrl, displayText);
         list.append(data);
 
-        iter++;
+        ++iter;
     }
 
     return list;
@@ -238,12 +239,12 @@ void DFMCrumbInterface::requestCompletionList(const DUrl &url)
         d->folderCompleterJobPointer->stopAndDeleteLater();
     }
 
-    d->folderCompleterJobPointer = DFileService::instance()->getChildrenJob(this, url, QStringList(), QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot,QDirIterator::NoIteratorFlags, true, false);
+    d->folderCompleterJobPointer = DFileService::instance()->getChildrenJob(this, url, QStringList(), QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags, true, false);
     if (!d->folderCompleterJobPointer) {
         return;
     }
 
-    connect(d->folderCompleterJobPointer, &JobController::addChildrenList, this, [this](const QList<DAbstractFileInfoPointer> &infoList){
+    connect(d->folderCompleterJobPointer, &JobController::addChildrenList, this, [this](const QList<DAbstractFileInfoPointer> &infoList) {
         QStringList list;
         for (const DAbstractFileInfoPointer &infoPointer : infoList) {
             if (infoPointer.data())
@@ -252,7 +253,7 @@ void DFMCrumbInterface::requestCompletionList(const DUrl &url)
         emit completionFound(list);
     }, Qt::DirectConnection);
 
-    connect(d->folderCompleterJobPointer, &JobController::finished, this, [this](){
+    connect(d->folderCompleterJobPointer, &JobController::finished, this, [this]() {
         emit completionListTransmissionCompleted();
     }, Qt::QueuedConnection);
 
@@ -270,7 +271,7 @@ void DFMCrumbInterface::cancelCompletionListTransmission()
 {
     Q_D(DFMCrumbInterface);
 
-    if (d->folderCompleterJobPointer && d->folderCompleterJobPointer) {
+    if (d->folderCompleterJobPointer) {
         d->folderCompleterJobPointer->stopAndDeleteLater();
     }
 }

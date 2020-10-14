@@ -46,7 +46,7 @@ public:
     };
 
     DFMDeviceInfo();
-    DFMDeviceInfo(const DUrl &url);
+    explicit DFMDeviceInfo(const DUrl &url);
 
     void setUdisks2DeviceInfo(const QString &dbusPath);
     void setVfsDeviceInfo(const DUrl &url);

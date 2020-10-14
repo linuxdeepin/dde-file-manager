@@ -29,7 +29,7 @@
 class MasteredMediaFileInfo : public DAbstractFileInfo
 {
 public:
-    MasteredMediaFileInfo(const DUrl &url);
+    explicit MasteredMediaFileInfo(const DUrl &url);
 
     bool exists() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;

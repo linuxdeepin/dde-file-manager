@@ -54,7 +54,7 @@ public:
         UDisksOptical
     };
 
-    DFMRootFileInfo(const DUrl &url);
+    explicit DFMRootFileInfo(const DUrl &url);
     bool exists() const override;
 
     QString suffix() const override;

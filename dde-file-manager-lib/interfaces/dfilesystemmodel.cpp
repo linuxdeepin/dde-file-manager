@@ -735,7 +735,7 @@ private:
             return false;
         };
 
-begin:
+    begin:
 
         while (!fileQueue.isEmpty()) {
             if (!enable) {
@@ -928,7 +928,7 @@ public:
     bool passNameFilters(const FileSystemNodePointer &node) const;
     bool passFileFilters(const DAbstractFileInfoPointer &info) const;
 
-    void _q_onFileCreated(const DUrl &fileUrl, bool isPickUpQeueu = false);
+    void _q_onFileCreated(const DUrl &fileUrl, bool isPickUpQueue = false);
     void _q_onFileDeleted(const DUrl &fileUrl);
     void _q_onFileUpdated(const DUrl &fileUrl);
     void _q_onFileUpdated(const DUrl &fileUrl, const int &isExternalSource);
@@ -1224,8 +1224,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         if (!info) {
             continue;
         }
-        if (event.first != AddFile)
-        {
+        if (event.first != AddFile) {
             info->refresh(true);
         }
         const DUrl &rootUrl = q->rootUrl();
@@ -1782,9 +1781,9 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 {
     Q_D(const DFileSystemModel);
-    QPointer<DFileSystemModel> me = const_cast<DFileSystemModel*>(this);
+    QPointer<DFileSystemModel> me = const_cast<DFileSystemModel *>(this);
     QMutexLocker lk(&d_ptr->mutexFlags);
-    if (!me){
+    if (!me) {
         return Qt::NoItemFlags;
     }
 
@@ -2652,8 +2651,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         //若刷新完成通知桌面重新获取文件
         if (finished)
             emit sigJobFinished();
-    }
-    else
+    } else
         emit sigJobFinished();
 }
 

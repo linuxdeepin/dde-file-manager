@@ -34,18 +34,22 @@
 #include <dstorageinfo.h>
 DFM_BEGIN_NAMESPACE
 
-class DFMCrumbEdit : public DCrumbEdit{
+class DFMCrumbEdit : public DCrumbEdit
+{
 public:
-    DFMCrumbEdit(QWidget *parent = nullptr):DCrumbEdit(parent){
+    explicit DFMCrumbEdit(QWidget *parent = nullptr): DCrumbEdit(parent)
+    {
         auto doc = QTextEdit::document();
-        doc->setDocumentMargin(doc->documentMargin()+5);
+        doc->setDocumentMargin(doc->documentMargin() + 5);
     }
 
-    bool isEditing(){
+    bool isEditing()
+    {
         return m_isEditByDoubleClick;
     }
 protected:
-    void mouseDoubleClickEvent(QMouseEvent *event) override{
+    void mouseDoubleClickEvent(QMouseEvent *event) override
+    {
         m_isEditByDoubleClick = true;
         DCrumbEdit::mouseDoubleClickEvent(event);
         m_isEditByDoubleClick = false;
@@ -58,7 +62,7 @@ private:
 class DFMTagWidgetPrivate : public QSharedData
 {
 public:
-    explicit DFMTagWidgetPrivate(DFMTagWidget *qq, const DUrl& url);
+    explicit DFMTagWidgetPrivate(DFMTagWidget *qq, const DUrl &url);
     virtual ~DFMTagWidgetPrivate();
 
 protected:
@@ -85,9 +89,9 @@ DUrl DFMTagWidgetPrivate::redirectUrl(const DUrl &url)
         durl = DUrl::fromLocalFile(url.fragment());
     } else if (url.isSearchFile()) {
         durl = url.searchedFileUrl();
-    }else if (url.isVaultFile()) {
+    } else if (url.isVaultFile()) {
         durl = VaultController::vaultToLocalUrl(url);
-    } else/* if (url.isRecentFile()) */{
+    } else { /* if (url.isRecentFile()) */
         durl = DUrl::fromLocalFile(url.path());
     }
 
@@ -107,7 +111,7 @@ DFMTagWidgetPrivate::~DFMTagWidgetPrivate()
 }
 
 DFMTagWidget::DFMTagWidget(DUrl url, QWidget *parent/*=nullptr*/)
-    : QFrame (parent)
+    : QFrame(parent)
     , d_private(new DFMTagWidgetPrivate(this, url))
 {
     initUi();
@@ -159,7 +163,7 @@ void DFMTagWidget::initConnection()
     if (!d->m_tagCrumbEdit || !d->m_tagActionWidget)
         return;
 
-    QObject::connect(d->m_tagCrumbEdit, &DCrumbEdit::crumbListChanged, d->m_tagCrumbEdit, [=](){
+    QObject::connect(d->m_tagCrumbEdit, &DCrumbEdit::crumbListChanged, d->m_tagCrumbEdit, [ = ]() {
         if (!d->m_tagCrumbEdit->isEditing() && !d->m_tagCrumbEdit->property("LoadFileTags").toBool()) {
             bool ret = DFileService::instance()->makeTagsOfFiles(nullptr, {d->m_url}, d->m_tagCrumbEdit->crumbList());
 
@@ -170,7 +174,7 @@ void DFMTagWidget::initConnection()
         }
     });
 
-    QObject::connect(d->m_tagActionWidget, &DTagActionWidget::checkedColorChanged, d->m_tagActionWidget, [=](const QColor &color){
+    QObject::connect(d->m_tagActionWidget, &DTagActionWidget::checkedColorChanged, d->m_tagActionWidget, [ = ](const QColor & color) {
         Q_UNUSED(color)
         const QStringList tagNameList = TagManager::instance()->getTagsThroughFiles({d->m_url});
         QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tagNameList});
@@ -187,7 +191,7 @@ void DFMTagWidget::initConnection()
             newTagNames << tagName;
         }
 
-        for (auto it = nameColors.begin(); it!=nameColors.end();++it) {
+        for (auto it = nameColors.begin(); it != nameColors.end(); ++it) {
             if (!defaultNames.contains(it.key())) {
                 newTagNames << it.key();
             }
@@ -198,7 +202,7 @@ void DFMTagWidget::initConnection()
     });
 }
 
-void DFMTagWidget::loadTags(const DUrl& durl)
+void DFMTagWidget::loadTags(const DUrl &durl)
 {
     Q_D(DFMTagWidget);
     DUrl url = d->redirectUrl(durl);
@@ -211,7 +215,7 @@ void DFMTagWidget::loadTags(const DUrl& durl)
 
     d->m_tagCrumbEdit->setProperty("LoadFileTags", true);
     d->m_tagCrumbEdit->clear();
-    for(auto it = nameColors.begin();it != nameColors.end(); ++it) {
+    for (auto it = nameColors.begin(); it != nameColors.end(); ++it) {
         DCrumbTextFormat format = d->m_tagCrumbEdit->makeTextFormat();
         format.setText(it.key());
         // 默认名字的颜色才勾选 checkbox
@@ -240,14 +244,15 @@ void DFMTagWidget::loadTags(const DUrl& durl)
         if (d->m_devicesWatcher) {
             d->m_devicesWatcher->startWatcher();
 
-            connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [=](const DUrl &url) {
-                if (url == d->m_url){
+            connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [ = ](const DUrl & url) {
+                if (url == d->m_url) {
                     loadTags(d->m_url);
                 }
             });
             //当文件被删除时需要在这里把watcher移除，否则可能导致再创建同名文件无法正确添加watcher
-            connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [=]{
-                if (d->m_devicesWatcher) {
+            connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [ = ] {
+                if (d->m_devicesWatcher)
+                {
                     d->m_devicesWatcher->stopWatcher();
                     d->m_devicesWatcher->deleteLater();
                     d->m_devicesWatcher = nullptr;
@@ -281,7 +286,7 @@ DCrumbEdit *DFMTagWidget::tagCrumbEdit()
     return d->m_tagCrumbEdit;
 }
 
-bool DFMTagWidget::shouldShow(const DUrl& url)
+bool DFMTagWidget::shouldShow(const DUrl &url)
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
     //如果是网络挂载（gvfs）文件就返回
@@ -299,7 +304,7 @@ bool DFMTagWidget::shouldShow(const DUrl& url)
     }
 
     bool showTags = !systemPathManager->isSystemPath(url.path()) &&
-            !isComputerOrTrash && DFileMenuManager::whetherShowTagActions({url});
+                    !isComputerOrTrash && DFileMenuManager::whetherShowTagActions({url});
     return showTags;
 }
 

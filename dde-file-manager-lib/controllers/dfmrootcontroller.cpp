@@ -48,7 +48,7 @@
 class DFMRootFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    DFMRootFileWatcherPrivate(DFMRootFileWatcher *qq)
+    explicit DFMRootFileWatcherPrivate(DFMRootFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override;

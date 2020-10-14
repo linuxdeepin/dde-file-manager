@@ -31,7 +31,7 @@ class DFMMasteredMediaCrumbController : public DFMCrumbInterface
 {
     Q_OBJECT
 public:
-    DFMMasteredMediaCrumbController(QObject *parent = nullptr);
+    explicit DFMMasteredMediaCrumbController(QObject *parent = nullptr);
     ~DFMMasteredMediaCrumbController();
 
     bool supportedUrl(DUrl url) override;

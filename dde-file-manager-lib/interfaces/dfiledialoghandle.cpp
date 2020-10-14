@@ -33,7 +33,7 @@ DWIDGET_USE_NAMESPACE
 class DFileDialogHandlePrivate
 {
 public:
-    DFileDialogHandlePrivate(DFileDialogHandle *qq)
+    explicit DFileDialogHandlePrivate(DFileDialogHandle *qq)
         : q_ptr(qq) {}
 
     ~DFileDialogHandlePrivate()
@@ -367,15 +367,15 @@ void DFileDialogHandle::show()
     //解决打开文件对话框无焦点问题
     QWindow *window = d->dialog->windowHandle();
     bool isFirst = true; //仅首次激活
-    connect(window, &QWindow::activeChanged, this, [=]()
+    connect(window, &QWindow::activeChanged, this, [ = ]()
     mutable{ //matable使isFisrt可修改
-        if(!isFirst)
+        if (!isFirst)
             return;
         isFirst = false; //仅首次激活
         //激活窗口
         d->dialog->activateWindow();
         //50毫秒后再次检测
-        QTimer::singleShot(50,this,[=]()
+        QTimer::singleShot(50, this, [ = ]()
         {
             if (!d->dialog->isActiveWindow())
                 d->dialog->activateWindow();

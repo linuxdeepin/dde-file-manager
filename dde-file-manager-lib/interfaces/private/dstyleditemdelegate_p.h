@@ -15,7 +15,7 @@
 class DFMStyledItemDelegatePrivate
 {
 public:
-    DFMStyledItemDelegatePrivate(DFMStyledItemDelegate *qq)
+    explicit DFMStyledItemDelegatePrivate(DFMStyledItemDelegate *qq)
         : q_ptr(qq) {}
 
     void init();

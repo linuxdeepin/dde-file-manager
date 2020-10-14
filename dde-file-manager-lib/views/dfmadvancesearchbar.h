@@ -39,7 +39,7 @@ class DFMAdvanceSearchBar : public DBoxWidget
 {
     Q_OBJECT
 public:
-    DFMAdvanceSearchBar(QWidget *parent = nullptr);
+    explicit DFMAdvanceSearchBar(QWidget *parent = nullptr);
 
     void resetForm(bool updateView = true);
 

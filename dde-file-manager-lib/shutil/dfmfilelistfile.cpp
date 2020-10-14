@@ -32,7 +32,7 @@
 class DFMFileListFilePrivate
 {
 public:
-    DFMFileListFilePrivate(const QString &filePath, DFMFileListFile *qq);
+    DFMFileListFilePrivate(const QString &dirPath, DFMFileListFile *qq);
     ~DFMFileListFilePrivate();
 
     bool isWritable() const;
@@ -162,7 +162,7 @@ void DFMFileListFilePrivate::setStatus(const DFMFileListFile::Status &newStatus)
 
 
 DFMFileListFile::DFMFileListFile(const QString &dirPath, QObject *parent)
-    : QObject (parent)
+    : QObject(parent)
     , d_ptr(new DFMFileListFilePrivate(dirPath, this))
 
 {
@@ -197,26 +197,7 @@ bool DFMFileListFile::save() const
         bool ok = false;
         bool createFile = false;
         QFileInfo fileInfo(d->dirPath);
-#if 0 //fix bug#30019 屏蔽QSaveFile实现
-#if !defined(QT_BOOTSTRAPPED) && QT_CONFIG(temporaryfile)
-        QSaveFile sf(filePath());
-        sf.setDirectWriteFallback(true);
-#else
-        QFile sf(d->filePath);
-#endif
-        if (!sf.open(QIODevice::WriteOnly)) {
-            d->setStatus(DFMFileListFile::AccessError);
-            return false;
-        }
-
-        ok = d->write(sf);
-
-#if !defined(QT_BOOTSTRAPPED) && QT_CONFIG(temporaryfile)
-        if (ok) {
-            ok = sf.commit();
-        }
-#endif
-#else //!使用QFile实现，QSaveFile会导致filewatcher无法监视到.hidden文件改变
+        //!使用QFile实现，QSaveFile会导致filewatcher无法监视到.hidden文件改变
         //!导致界面无法实时响应文件显示隐藏
         QFile sf(filePath());
         if (!sf.open(QIODevice::WriteOnly)) {
@@ -225,7 +206,6 @@ bool DFMFileListFile::save() const
         }
         ok = d->write(sf);
         sf.close();
-#endif
         if (ok) {
             // If we have created the file, apply the file perms
             if (createFile) {

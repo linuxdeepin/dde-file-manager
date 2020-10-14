@@ -26,8 +26,7 @@ public:
 private slots:
     void onFileDeleted(const QString &path, const QString &name);
     void onFileAttributeChanged(const QString &path, const QString &name);
-    void onFileMoved(const QString &fromPath, const QString &fromName,
-                   const QString &toPath, const QString &toName);
+    void onFileMoved(const QString &from, const QString &fname, const QString &to, const QString &tname);
     void onFileCreated(const QString &path, const QString &name);
     void onFileModified(const QString &path, const QString &name);
     void onFileClosed(const QString &path, const QString &name);

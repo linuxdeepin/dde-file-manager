@@ -1549,7 +1549,7 @@ void GvfsMountManager::mount_mounted(const QString &mounted_root_uri, bool silen
     g_object_unref (file);
 }
 
-void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult *res, gpointer silent)
+void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult *res, gpointer user_data)
 {
     gboolean succeeded;
     GError *error = nullptr;
@@ -1559,7 +1559,7 @@ void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult
     if (!succeeded)
     {
         qCDebug(mountManager()) << "Error mounting location: " << error->message << error->code;
-        if (!silent && !errorCodeNeedSilent(error->code)) {
+        if (!user_data && !errorCodeNeedSilent(error->code)) {
             fileSignalManager->requestShowErrorDialog(QString::fromLocal8Bit(error->message), QString(" "));
         }
     }
@@ -1610,7 +1610,7 @@ void GvfsMountManager::mount_device(const QString &unix_device, bool silent)
     g_object_unref (volume_monitor);
 }
 
-void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer silent)
+void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer user_data)
 {
     GVolume *volume;
     gboolean succeeded;
@@ -1623,7 +1623,7 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
 
     if (!succeeded) {
         qCDebug(mountManager()) << "Error mounting: " << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)
-                                << error->message << silent << error->code;
+                                << error->message << user_data << error->code;
 
         //! 下面这样做只是为了字符串翻译，因为错误信息是底层返回的
         QString err = QString::fromLocal8Bit(error->message);
@@ -1639,7 +1639,7 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
             break;
         }
         if (AskedPasswordWhileMountDisk) { // 显示过密码框的设备，说明该设备可解锁，但密码不一定正确或取消了，不需要提示用户格式化
-            if (!silent && !errorCodeNeedSilent(error->code)) {
+            if (!user_data && !errorCodeNeedSilent(error->code)) {
                 fileSignalManager->requestShowErrorDialog(err, QString(" "));
             }
         } else {

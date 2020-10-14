@@ -69,7 +69,7 @@ public:
     static std::size_t getRandomNumber(const std::pair<std::size_t, std::size_t>& scope);
 
 private slots:
-   void updateFolderSizeLabel(const qint64 size)noexcept;
+   void updateFolderSizeLabel(const qint64 foldersSize)noexcept;
 
 private:
 

@@ -51,7 +51,6 @@ struct ComputerModelItemData
     QString sptext;
     QWidget* widget = nullptr;
     Category cat;
-    bool selected;
 };
 
 class ComputerModel : public QAbstractItemModel

@@ -59,7 +59,7 @@ class DFMCrumbBarPrivate
     Q_DECLARE_PUBLIC(DFMCrumbBar)
 
 public:
-    DFMCrumbBarPrivate(DFMCrumbBar *qq);
+    explicit DFMCrumbBarPrivate(DFMCrumbBar *qq);
 
     // UI
     QPushButton leftArrow;
@@ -137,9 +137,9 @@ void DFMCrumbBarPrivate::updateController(const DUrl &url)
         }
         // 修复bug41522-保险箱内，右键文件管理器打开文件夹，面包屑显示不对问题
         DUrl newurl;
-        if(VaultController::isVaultFile(url.toString())){
+        if (VaultController::isVaultFile(url.toString())) {
             newurl = VaultController::localUrlToVault(url);
-        }else{
+        } else {
             newurl = url;
         }
         crumbController = DFMCrumbManager::instance()->createControllerByUrl(newurl, q);
@@ -392,7 +392,7 @@ static QString getIconName(const CrumbData &c)
     QString iconName = c.iconName;
     if (c.url == DUrl(TRASH_ROOT)) {
         iconName = systemPathManager->getSystemPathIconName("Trash");
-    } else if (c.url.isNetWorkFile() || c.url.isSMBFile() ) {
+    } else if (c.url.isNetWorkFile() || c.url.isSMBFile()) {
         iconName = systemPathManager->getSystemPathIconName("Network");
     }
 

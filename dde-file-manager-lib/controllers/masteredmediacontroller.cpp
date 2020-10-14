@@ -130,7 +130,7 @@ private:
 class MasteredMediaFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    MasteredMediaFileWatcherPrivate(MasteredMediaFileWatcher *qq)
+    explicit MasteredMediaFileWatcherPrivate(MasteredMediaFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override;

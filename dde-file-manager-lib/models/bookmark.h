@@ -37,7 +37,7 @@ typedef QExplicitlySharedDataPointer<BookMark> BookMarkPointer;
 class BookMark : public DAbstractFileInfo
 {
 public:
-    BookMark(const DUrl &url);
+    explicit BookMark(const DUrl &url);
     BookMark(const QString &name, const DUrl &sourceUrl);
     ~BookMark();
 

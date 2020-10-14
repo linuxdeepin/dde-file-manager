@@ -964,7 +964,7 @@ bool VaultController::isBigFileDeleting()
     return m_isBigFileDeleting;
 }
 
-void VaultController::createVault(const DSecureString &passWord, QString lockBaseDir, QString unlockFileDir)
+void VaultController::createVault(const DSecureString &password, QString lockBaseDir, QString unlockFileDir)
 {
     auto createIfNotExist = [](const QString & path) {
         if (!QFile::exists(path)) {
@@ -983,7 +983,7 @@ void VaultController::createVault(const DSecureString &passWord, QString lockBas
 
         emit sigCreateVault(makeVaultLocalPath("", VAULT_ENCRYPY_DIR_NAME),
                             makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME),
-                            passWord);
+                            password);
     } else {
         if (state(lockBaseDir) != NotExisted) {
             emit signalCreateVault(static_cast<int>(ErrorCode::EncryptedExist));
@@ -992,11 +992,11 @@ void VaultController::createVault(const DSecureString &passWord, QString lockBas
 
         createIfNotExist(lockBaseDir);
         createIfNotExist(unlockFileDir);
-        emit sigCreateVault(lockBaseDir, unlockFileDir, passWord);
+        emit sigCreateVault(lockBaseDir, unlockFileDir, password);
     }
 }
 
-void VaultController::unlockVault(const DSecureString &passWord, QString lockBaseDir, QString unlockFileDir)
+void VaultController::unlockVault(const DSecureString &password, QString lockBaseDir, QString unlockFileDir)
 {
     if (lockBaseDir.isEmpty() || unlockFileDir.isEmpty()) {
         if (state() != Encrypted) {
@@ -1006,13 +1006,13 @@ void VaultController::unlockVault(const DSecureString &passWord, QString lockBas
 
         emit sigUnlockVault(makeVaultLocalPath("", VAULT_ENCRYPY_DIR_NAME),
                             makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME),
-                            passWord);
+                            password);
     } else {
         if (state(lockBaseDir) != Encrypted) {
             emit signalUnlockVault(static_cast<int>(ErrorCode::MountpointNotEmpty));
             return;
         }
-        emit sigUnlockVault(lockBaseDir, unlockFileDir, passWord);
+        emit sigUnlockVault(lockBaseDir, unlockFileDir, password);
     }
 }
 

@@ -51,9 +51,9 @@ public:
     };
 
     UDiskDeviceInfo();
-    UDiskDeviceInfo(UDiskDeviceInfoPointer info);
-    UDiskDeviceInfo(const DUrl &url);
-    UDiskDeviceInfo(const QString &url);
+    explicit UDiskDeviceInfo(UDiskDeviceInfoPointer info);
+    explicit UDiskDeviceInfo(const DUrl &url);
+    explicit UDiskDeviceInfo(const QString &url);
 
     ~UDiskDeviceInfo();
     void setDiskInfo(QDiskInfo diskInfo);

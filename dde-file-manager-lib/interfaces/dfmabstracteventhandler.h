@@ -20,7 +20,7 @@ public:
     virtual QObject *object() const;
 
 protected:
-    DFMAbstractEventHandler(bool autoInstallHandler = true);
+    explicit DFMAbstractEventHandler(bool autoInstallHandler = true);
     virtual ~DFMAbstractEventHandler();
 
     virtual bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0);
