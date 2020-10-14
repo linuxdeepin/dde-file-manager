@@ -11,8 +11,9 @@ SOURCES += \
     $$PWD/global/ut_singleton_test.cpp \
     $$PWD/view/ut_canvasgridview_test.cpp \
     $$PWD/view/ut_canvasviewmanager_test.cpp \
-    $$PWD/dde-zone/ut-pushbuttonlist-test.cpp \
-    $$PWD/dde-zone/ut-hotzone-test.cpp \
+#屏蔽热区
+#    $$PWD/dde-zone/ut-pushbuttonlist-test.cpp \
+#    $$PWD/dde-zone/ut-hotzone-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-thumbnailmanager-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-frame-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-checkbox-test.cpp \

@@ -3,7 +3,9 @@ include($$PWD/util/util.pri)
 include($$PWD/dbus/dbus.pri)
 
 include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
-include($$PWD/../dde-zone/dde-zone.pri)
+#无热区设置
+#include($$PWD/../dde-zone/dde-zone.pri)
+DEFINES += DISABLE_ZONE
 
 QT       += core gui widgets dbus x11extras network concurrent multimedia #multimediawidgets svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

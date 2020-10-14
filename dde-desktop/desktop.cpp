@@ -53,11 +53,12 @@ public:
             delete wallpaperSettings;
             wallpaperSettings = nullptr;
         }
-
+#ifndef DISABLE_ZONE
         if (zoneSettings){
             delete zoneSettings;
             zoneSettings = nullptr;
         }
+#endif
     }
     BackgroundManager *m_background = nullptr;
     CanvasViewManager *m_canvas = nullptr;
@@ -151,9 +152,10 @@ void Desktop::showWallpaperSettings(QString name, int mode)
     });
 }
 
-#ifndef DISABLE_ZONE
+
 void Desktop::showZoneSettings()
 {
+#ifndef DISABLE_ZONE
     if (d->zoneSettings) {
         d->zoneSettings->deleteLater();
         d->zoneSettings = nullptr;
@@ -167,8 +169,11 @@ void Desktop::showZoneSettings()
 
     d->zoneSettings->show();
     d->zoneSettings->grabKeyboard();
-}
+#else
+    qWarning() << "Zone is disabled";
 #endif
+}
+
 
 void Desktop::EnableUIDebug(bool enable)
 {
