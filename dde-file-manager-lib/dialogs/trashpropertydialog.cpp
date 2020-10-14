@@ -32,6 +32,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPainter>
+#include <QWindow>
 
 DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
@@ -49,6 +50,17 @@ TrashPropertyDialog::~TrashPropertyDialog()
 
 void TrashPropertyDialog::initUI()
 {
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
+
     setFixedWidth(320);
     setTitle(tr("Trash"));
 

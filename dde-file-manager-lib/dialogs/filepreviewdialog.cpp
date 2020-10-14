@@ -356,11 +356,17 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 void FilePreviewDialog::initUI()
 {
     //wayland 暂时不用 task 36991
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-    if ((XDG_SESSION_TYPE != QLatin1String("wayland")) &&
-            !WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
+    else {
         m_closeButton = new DWindowCloseButton(this);
         m_closeButton->setObjectName("CloseButton");
         m_closeButton->setFocusPolicy(Qt::NoFocus);
@@ -377,6 +383,8 @@ void FilePreviewDialog::initUI()
         DAnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
         connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
     }
+
+
 
     m_separator = new DHorizontalLine(this);
     m_separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);

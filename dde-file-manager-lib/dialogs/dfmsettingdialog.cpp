@@ -29,6 +29,7 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QProcessEnvironment>
+#include <QWindow>
 
 #include <dtkcore_global.h>
 #include <DSettingsOption>
@@ -370,12 +371,15 @@ DFMSettingDialog::DFMSettingDialog(QWidget *parent):
 #endif
 #endif
 
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
         this->setFixedSize(QSize(700, 700));
     }
 

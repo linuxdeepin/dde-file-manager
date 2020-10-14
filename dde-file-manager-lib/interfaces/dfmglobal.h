@@ -305,6 +305,12 @@ public:
     static bool isTrashDesktopFileUrl(const DUrl& url);
     static bool isComputerDesktopFileUrl(const DUrl& url);
 
+    /**
+     * @brief isWayLand 判断是否是wayland
+     * @return true or false
+     */
+    static bool isWayLand();
+
     QList<QUrl> clipboardFileUrlList() const;
     ClipboardAction clipboardAction() const;
     QIcon standardIcon(Icon iconType) const;

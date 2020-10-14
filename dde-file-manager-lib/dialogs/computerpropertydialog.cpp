@@ -43,6 +43,7 @@
 #include <QRegularExpression>
 #include <QPainter>
 #include <DGraphicsClipEffect>
+#include <QWindow>
 
 #include "dbus/dbussysteminfo.h"
 
@@ -59,14 +60,15 @@ void ComputerPropertyDialog::initUI()
 {
     QLabel *iconLabel = new QLabel(this);
 
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    //在wayland平台下设置固定大小，解决属性框最大化问题
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
         this->setFixedSize(320, 420);
     }
 

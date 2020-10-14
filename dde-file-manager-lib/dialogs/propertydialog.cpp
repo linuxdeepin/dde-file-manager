@@ -71,7 +71,7 @@
 #include <denhancedwidget.h>
 #include <DColoredProgressBar>
 #include <QScrollBar>
-
+#include <QWindow>
 #include <QTextEdit>
 #include <QFormLayout>
 #include <QDateTime>
@@ -289,11 +289,24 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 {
     setSizeGripEnabled(true);
 
-    setAttribute(Qt::WA_DeleteOnClose);
-    setWindowFlags(windowFlags()
-                   & ~ Qt::WindowMaximizeButtonHint
-                   & ~ Qt::WindowMinimizeButtonHint
-                   & ~ Qt::WindowSystemMenuHint);
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
+    else {
+        setAttribute(Qt::WA_DeleteOnClose);
+        setWindowFlags(windowFlags()
+                       & ~ Qt::WindowMaximizeButtonHint
+                       & ~ Qt::WindowMinimizeButtonHint
+                       & ~ Qt::WindowSystemMenuHint);
+    }
+
     QString basicInfo = tr("Basic info");
     QString openWith = tr("Open with");
     QString shareManager = tr("Sharing");

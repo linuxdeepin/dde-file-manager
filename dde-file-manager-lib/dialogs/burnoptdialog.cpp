@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QtConcurrent>
 #include <QDebug>
+#include <QWindow>
 
 #include <unistd.h>
 #include <sys/wait.h>
@@ -52,6 +53,17 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
     DDialog(parent),
     d_ptr(new BurnOptDialogPrivate(this))
 {
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
+
     Q_D(BurnOptDialog);
     d->setDevice(device);
     d->setupUi();
