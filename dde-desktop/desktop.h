@@ -30,8 +30,8 @@ public:
     void preInit();
     void loadData();
     void loadView();
-
     void showZoneSettings();
+
 public slots:
     void ShowWallpaperChooser(const QString &screen = QString());
     void ShowScreensaverChooser(const QString &screen = QString());
