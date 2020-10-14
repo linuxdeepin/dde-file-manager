@@ -56,6 +56,8 @@ public:
 
     QHash<DUrl,bool> m_rootsmbftpurllist;
     JobController *m_jobcontroller = nullptr;
+
+    volatile bool m_rootChanged = false; //用于判断是否需要发送查询完毕信号，通知外部刷新
 };
 
 QMap<DUrl, DAbstractFileInfoPointer> DRootFileManagerPrivate::rootfilelist; //本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
@@ -168,6 +170,7 @@ void DRootFileManager::startQuryRootFile()
         QMutexLocker lk(&d_ptr->rootfileMtx);
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
             d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
+            d_ptr->m_rootChanged = true;
             lk.unlock();
             emit rootFileChange(chi); // 其实中间结果没有必要,直接拿最终结果就行了,但保留接口，以后便于扩展
         }
@@ -178,6 +181,7 @@ void DRootFileManager::startQuryRootFile()
             QMutexLocker lk(&d_ptr->rootfileMtx);
             if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
                 d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
+                d_ptr->m_rootChanged = true;
                 lk.unlock();
                 emit rootFileChange(chi); // 其实中间结果没有必要,直接拿最终结果就行了,但保留接口，以后便于扩展
             }
@@ -190,7 +194,11 @@ void DRootFileManager::startQuryRootFile()
         d_ptr->m_jobcontroller = nullptr;
         d_ptr->m_bRootFileInited.store(true);
         lk.unlock();
-        emit queryRootFileFinsh();
+
+        if (d_ptr->m_rootChanged)
+            emit queryRootFileFinsh();
+
+        d_ptr->m_rootChanged = false;
     });
     d_ptr->m_jobcontroller->start();
 }
