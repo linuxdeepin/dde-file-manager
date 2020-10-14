@@ -12,7 +12,7 @@ class ScreenManager : public AbstractScreenManager
 {
     Q_OBJECT
 public:
-    ScreenManager(QObject *parent = nullptr);
+    explicit ScreenManager(QObject *parent = nullptr);
     ~ScreenManager() Q_DECL_OVERRIDE;
     ScreenPointer primaryScreen() Q_DECL_OVERRIDE;
     QVector<ScreenPointer> screens() const Q_DECL_OVERRIDE;

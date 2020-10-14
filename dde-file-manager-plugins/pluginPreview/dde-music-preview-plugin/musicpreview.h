@@ -40,7 +40,7 @@ class MusicPreview : public DFMFilePreview
     Q_OBJECT
 
 public:
-    MusicPreview(QObject *parent = 0);
+    explicit MusicPreview(QObject *parent = nullptr);
     ~MusicPreview();
 
     bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;

@@ -35,7 +35,7 @@ class DBlockDevice;
 class DAttachedUdisks2Device : public DAttachedDeviceInterface
 {
 public:
-    DAttachedUdisks2Device(const DBlockDevice *blockDevicePointer);
+    explicit DAttachedUdisks2Device(const DBlockDevice *blockDevicePointer);
 
     bool isValid() override;
     bool detachable() override;

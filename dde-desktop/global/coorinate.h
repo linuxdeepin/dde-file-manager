@@ -21,7 +21,7 @@ public:
         d.y = _y;
     }
 
-    Coordinate(QPoint pos)
+    explicit Coordinate(QPoint pos)
     {
         d.x = pos.x();
         d.y = pos.y();

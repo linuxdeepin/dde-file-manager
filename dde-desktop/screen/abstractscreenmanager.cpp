@@ -6,7 +6,7 @@
 class ScreenManagerPrivate
 {
 public:
-    ScreenManagerPrivate(AbstractScreenManager *p) : q(p){}
+    explicit ScreenManagerPrivate(AbstractScreenManager *p) : q(p){}
     ~ScreenManagerPrivate(){
         if (m_eventShot)
             delete m_eventShot;
