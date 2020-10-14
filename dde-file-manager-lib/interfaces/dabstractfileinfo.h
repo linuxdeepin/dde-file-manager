@@ -338,6 +338,28 @@ protected:
     void setProxy(const DAbstractFileInfoPointer &proxy);
     Q_DECL_DEPRECATED_X("!!!!!!!!!!!!!!!!!!!!!!!") virtual void setUrl(const DUrl &url);
 
+    /**
+     * @brief loadFileEmblems 加载文件的自定义徽标
+     * @param iconList 角标列表
+     * @return 是否成功加载
+     */
+    bool loadFileEmblems(QList<QIcon> &iconList) const;
+    /**
+     * @brief parseEmblemString 解析徽标设置的字符串
+     * @param emblem 图标对象
+     * @param pos 位置
+     * @param emblemStr 徽标字符串
+     * @return 是否解析成功
+     */
+    bool parseEmblemString(QIcon &emblem, QString &pos, const QString &emblemStr) const;
+    /**
+     * @brief setEmblemIntoIcons 设置徽标icon到要显示的iconlist
+     * @param pos 徽标位置
+     * @param emblem 图标对象
+     * @param iconList 显示的角标列表
+     */
+    void setEmblemIntoIcons(const QString &pos, const QIcon &emblem, QList<QIcon> &iconList) const;
+
     QScopedPointer<DAbstractFileInfoPrivate> d_ptr;
     Q_DECLARE_PRIVATE(DAbstractFileInfo)
 

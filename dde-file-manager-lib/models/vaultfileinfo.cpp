@@ -148,13 +148,20 @@ DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
 QList<QIcon> VaultFileInfo::additionalIcon() const
 {
     QList<QIcon> icons;
+
+    bool needEmblem = true;
     if (isSymLink()) {
         icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
+        needEmblem = false;
     }
 
     if (!isWritable()) {
         icons << QIcon::fromTheme("emblem-readonly", DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon));
     }
+
+    //部分文件和目录不显示徽标
+    if (needEmblem && fileUrl().parentUrl().path() != "/" && fileUrl().parentUrl().path() != "/data")
+        loadFileEmblems(icons);
 
     return icons;
 }

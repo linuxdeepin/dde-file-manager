@@ -22,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gio/gio.h"
+//#include "gio/gio.h"
 
 #include "dfileinfo.h"
 #include "private/dfileinfo_p.h"
@@ -408,6 +408,7 @@ QList<QIcon> DFileInfo::additionalIcon() const
     bool needEmblem = true;
     if (isSymLink()) {
         icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
+        //链接文件不显示自定义标记
         needEmblem = false;
     }
 
@@ -420,14 +421,21 @@ QList<QIcon> DFileInfo::additionalIcon() const
             icons << QIcon::fromTheme("emblem-unreadable", DFMGlobal::instance()->standardIcon(DFMGlobal::UnreadableIcon));
         }
     }
+    //网络文件不显示自定义标记
+    else {
+        needEmblem = false;
+    }
 
     if (isShared()) {
         icons << QIcon::fromTheme("emblem-shared", DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon));
     }
 
     //部分文件和目录不显示徽标
-    if (needEmblem && fileUrl().parentUrl().path() != "/" && fileUrl().parentUrl().path() != "/data")
-        setEmblemIcon(icons);
+    if (needEmblem &&
+            fileUrl().parentUrl().path() != "/" &&
+            fileUrl().parentUrl().path() != "/data" &&
+            !fileUrl().path().startsWith("/media"))
+        loadFileEmblems(icons);
 
 #ifdef SW_LABEL
     QString labelIconPath = getLabelIcon();
@@ -1087,104 +1095,6 @@ DFileInfo::DFileInfo(DFileInfoPrivate &dd)
     : DAbstractFileInfo(dd)
 {
 
-}
-
-
-bool DFileInfo::setEmblemIcon(QList<QIcon> &iconList) const
-{
-    //如果没有位置可以显示徽标，则不显示
-    if (iconList.length() >= 4) {
-        return false;
-    }
-
-    QIcon emblem;   //徽标icon
-    QString pos;    //徽标位置
-
-    if (loadEmblem(emblem, pos)) {
-        int offset = 0;         //徽标位置偏移量
-        int emblemIndex = 0;    //徽标目标位置
-
-        //左下
-        if (pos == "ld") {
-            emblemIndex = 1;
-            offset = emblemIndex - iconList.length();
-        }
-        //左上
-        else if (pos == "lu") {
-            emblemIndex = 2;
-            offset = emblemIndex - iconList.length();
-        }
-        //右上
-        else if (pos == "ru") {
-            emblemIndex = 3;
-            offset = emblemIndex - iconList.length();
-        }
-
-        //如果角标数量不够则填补空icon，保证徽标可以插入到期望的位置
-        for (int i = 0; i < offset; i++) {
-            iconList.append(QIcon());
-        }
-
-        iconList.insert(emblemIndex, emblem);
-        return true;
-    }
-
-    return false;
-}
-
-bool DFileInfo::loadEmblem(QIcon &emblem, QString &pos) const
-{
-    //默认位置在右下
-    pos = "rd";
-    std::string str = filePath().toStdString();
-
-    //获取gfileinfo
-    GFile *g_file = g_file_new_for_path(str.c_str());
-    GError *g_error = nullptr;
-    GFileInfo *g_fileInfo = g_file_query_info(g_file, "*", GFileQueryInfoFlags::G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, &g_error);
-
-    if (g_error != nullptr) {
-        //report error
-        return false;
-    }
-
-    //通过gfileinfo获取文件徽标的值
-    char **emblemStr = g_file_info_get_attribute_stringv(g_fileInfo, "metadata::emblems");
-    if (!emblemStr) {
-        return false;
-    }
-
-    QString emStr(*emblemStr);
-    if (!emStr.isEmpty()) {
-        QIcon emblemIcon;
-        QString imgPath;
-        //位置参数和徽标图标由 ; 隔开
-        if (emStr.contains(";")) {
-            QStringList emStrList = emStr.split(";");
-            imgPath = emStrList.at(0);
-            pos = emStrList.at(1);
-        }
-        else {
-            imgPath = emStr;
-        }
-
-        //修正主目录为标准路径
-        if (imgPath.startsWith("~/")) {
-             imgPath.replace(0, 1, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        }
-
-        QFile imgFile(imgPath);
-        if (imgFile.exists()) {
-            emblemIcon = QIcon(imgPath);
-
-            if (!emblemIcon.isNull()) {
-                emblem = emblemIcon;
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 
 #include "dfileinfo.moc"
