@@ -38,7 +38,7 @@ DFM_BEGIN_NAMESPACE
 class DFMSettingsPrivate
 {
 public:
-    DFMSettingsPrivate(DFMSettings *qq);
+    explicit DFMSettingsPrivate(DFMSettings *qq);
 
     bool autoSync = false;
     bool watchChanges = false;

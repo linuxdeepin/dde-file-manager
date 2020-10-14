@@ -50,7 +50,7 @@ class BookMarkFileWatcher;
 class BookMarkFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    BookMarkFileWatcherPrivate(DAbstractFileWatcher *qq)
+    explicit BookMarkFileWatcherPrivate(DAbstractFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override

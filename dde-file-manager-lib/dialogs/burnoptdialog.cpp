@@ -23,7 +23,7 @@ DWIDGET_USE_NAMESPACE
 class BurnOptDialogPrivate
 {
 public:
-    BurnOptDialogPrivate(BurnOptDialog *q);
+    explicit BurnOptDialogPrivate(BurnOptDialog *q);
     ~BurnOptDialogPrivate();
     void setupUi();
     void setDevice(const QString &device);

@@ -16,7 +16,7 @@
 class DAbstractFileWatcherPrivate
 {
 public:
-    DAbstractFileWatcherPrivate(DAbstractFileWatcher *qq);
+    explicit DAbstractFileWatcherPrivate(DAbstractFileWatcher *qq);
 
     virtual bool start() = 0;
     virtual bool stop() = 0;

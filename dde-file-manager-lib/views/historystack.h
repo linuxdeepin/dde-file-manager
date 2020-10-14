@@ -32,7 +32,7 @@
 class HistoryStack
 {
 public:
-    HistoryStack(int threshold);
+    explicit HistoryStack(int threshold);
     void append(DUrl url);
     DUrl back();
     DUrl forward();

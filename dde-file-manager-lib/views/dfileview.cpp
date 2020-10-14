@@ -95,7 +95,7 @@ DWIDGET_USE_NAMESPACE
 class DFileViewPrivate
 {
 public:
-    DFileViewPrivate(DFileView *qq)
+    explicit DFileViewPrivate(DFileView *qq)
         : q_ptr(qq) {}
 
     int iconModeColumnCount(int itemWidth = 0) const;

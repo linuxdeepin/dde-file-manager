@@ -33,7 +33,7 @@ class DCompleterListView : public QListView
     Q_OBJECT
 
 public:
-    DCompleterListView(QWidget *parent = nullptr);
+    explicit DCompleterListView(QWidget *parent = nullptr);
     void keyPressEvent(QKeyEvent *e) override;
 
     void showMe();

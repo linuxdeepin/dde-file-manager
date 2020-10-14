@@ -158,7 +158,7 @@ private:
 class DFMSortInodeDirIterator : public DDirIterator
 {
 public:
-    DFMSortInodeDirIterator(const QString &path)
+    explicit DFMSortInodeDirIterator(const QString &path)
         : dir(path)
     {
 
@@ -1139,46 +1139,6 @@ static DUrlList pasteFilesV1(const QSharedPointer<DFMPasteEvent> &event)
 
 DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
-    //以前的老代码
-#if 0
-    bool use_old_filejob = false;
-
-#ifdef SW_LABEL
-    use_old_filejob = true;
-#endif
-
-    const DUrlList &urlList = event->urlList();
-    DUrlList list;
-
-    if (use_old_filejob) {
-        list = pasteFilesV1(event);
-    } else {
-        list = pasteFilesV2(event->action(), urlList, event->targetUrl());
-    }
-
-    DUrlList valid_files = list;
-
-    valid_files.removeAll(DUrl());
-
-    if (valid_files.isEmpty()) {
-        return list;
-    }
-
-    if (event->action() == DFMGlobal::CopyAction) {
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, valid_files, true), true);
-    } else {
-        const QString targetDir(QFileInfo(urlList.first().toLocalFile()).absolutePath());
-
-        if (targetDir.isEmpty()) {
-            return list;
-        }
-
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
-    }
-
-    return list;
-#endif
-
     //新代码,修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作
 
     bool use_old_filejob = false;

@@ -40,7 +40,7 @@ public:
     static DTK_WIDGET_NAMESPACE::DViewItemAction * createUnmountOrEjectAction(const DUrl &url, bool withText);
     static DFMSideBarItem * createItem(const DUrl &url);
 
-    DFMSideBarDeviceItemHandler(QObject *parent = nullptr);
+    explicit DFMSideBarDeviceItemHandler(QObject *parent = nullptr);
 
     void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
     QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;

@@ -177,10 +177,8 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     bool enableSendToBluetooth = true; // feat 蓝牙：当选中的列表中包含文件夹时不予启用蓝牙发送选项
     //! urlList中有保险箱的DUrl需要进行转换否则会出现报错或功能不可用
     DUrlList urls = urlList;
-    for(int i = 0; i < urlList.size(); ++i)
-    {
-        if(urlList[i].isVaultFile())
-        {
+    for (int i = 0; i < urlList.size(); ++i) {
+        if (urlList[i].isVaultFile()) {
             urls[i] = VaultController::vaultToLocalUrl(urlList[i]);
 
         }
@@ -194,7 +192,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     }
 
     // 选中保险箱中的文件，则屏蔽掉共享菜单选项
-    if (VaultController::isVaultFile(currentUrl.path()) || VaultController::isVaultFile(currentUrl.fragment()) || VaultController::isVaultFile(info->toQFileInfo().canonicalFilePath())){
+    if (VaultController::isVaultFile(currentUrl.path()) || VaultController::isVaultFile(currentUrl.fragment()) || VaultController::isVaultFile(info->toQFileInfo().canonicalFilePath())) {
         unusedList << MenuAction::Share << MenuAction::UnShare;
     }
 
@@ -297,10 +295,9 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             bool matched = false;
 
             //后缀名相同直接匹配
-            if (fileInfo->suffix() == info->suffix()){
+            if (fileInfo->suffix() == info->suffix()) {
                 matched = true;
-            }
-            else{
+            } else {
                 for (const QString &oneMimeType : mimeTypeList) {
                     if (supportedMimeTypes.contains(oneMimeType)) {
                         matched = true;
@@ -442,9 +439,9 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 
     if (deviceListener->isMountedRemovableDiskExits()
 #ifdef BLUETOOTH_ENABLE
-        || bluetoothManager->model()->adapters().count() > 0
+            || bluetoothManager->model()->adapters().count() > 0
 #endif
-    ) {
+       ) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
         if (currentUrl.path().contains("/dev/sr")
                 || (currentUrl.scheme() == SEARCH_SCHEME && currentUrl.query().contains("/dev/sr"))) // 禁用光盘搜索列表中的发送到选项
@@ -488,7 +485,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     }
 
                     sendToMountedRemovableDiskMenu->addAction(action);
-                    connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk,Qt::QueuedConnection);//改为队列，防止exec无法退出，关联bug#25613
+                    connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk, Qt::QueuedConnection); //改为队列，防止exec无法退出，关联bug#25613
                 }
             }
 
@@ -589,10 +586,10 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
     menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList(), false);
     menu->setEventData(DUrl(), {url}, WindowManager::getWindowId(wnd), sender);
 
-    auto lockNow = [](DFileManagerWindow *wnd)->bool
-    {
+    auto lockNow = [](DFileManagerWindow * wnd)->bool {
         //! Is there a vault task, top it if exist.
-        if(!VaultHelper::topVaultTasks()) {
+        if (!VaultHelper::topVaultTasks())
+        {
             emit fileSignalManager->requestCloseAllTabOfVault(wnd->windowId());
             VaultController::ins()->lockVault();
         }
@@ -600,13 +597,11 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
         return true;
     };
 
-    auto autoLock = [](int lockState)->bool
-    {
+    auto autoLock = [](int lockState)->bool {
         return VaultLockManager::getInstance().autoLock(static_cast<VaultLockManager::AutoLockState>(lockState));
     };
 
-    auto showView = [&](QWidget *wndPtr, QString host)
-    {
+    auto showView = [&](QWidget * wndPtr, QString host) {
         DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(wndPtr);
         wnd->cd(VaultController::makeVaultUrl("/", host));
     };
@@ -615,7 +610,7 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
 
         //! 立即上锁
         QAction *action = DFileMenuManager::getAction(MenuAction::LockNow);
-        QObject::connect(action, &QAction::triggered, action, [&, wnd](){
+        QObject::connect(action, &QAction::triggered, action, [ &, wnd]() {
             lockNow(wnd);
         });
 
@@ -623,28 +618,28 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
         VaultLockManager::AutoLockState lockState = VaultLockManager::getInstance().autoLockState();
 
         QAction *actionNever = DFileMenuManager::getAction(MenuAction::Never);
-        QObject::connect(actionNever, &QAction::triggered, actionNever, [&](){
+        QObject::connect(actionNever, &QAction::triggered, actionNever, [&]() {
             autoLock(VaultLockManager::Never);
         });
         actionNever->setCheckable(true);
         actionNever->setChecked(lockState == VaultLockManager::Never ? true : false);
 
         QAction *actionFiveMins = DFileMenuManager::getAction(MenuAction::FiveMinutes);
-        QObject::connect(actionFiveMins, &QAction::triggered, actionFiveMins, [&](){
+        QObject::connect(actionFiveMins, &QAction::triggered, actionFiveMins, [&]() {
             autoLock(VaultLockManager::FiveMinutes);
         });
         actionFiveMins->setCheckable(true);
         actionFiveMins->setChecked(lockState == VaultLockManager::FiveMinutes ? true : false);
 
         QAction *actionTenMins = DFileMenuManager::getAction(MenuAction::TenMinutes);
-        QObject::connect(actionTenMins, &QAction::triggered, actionTenMins, [&](){
+        QObject::connect(actionTenMins, &QAction::triggered, actionTenMins, [&]() {
             autoLock(VaultLockManager::TenMinutes);
         });
         actionTenMins->setCheckable(true);
         actionTenMins->setChecked(lockState == VaultLockManager::TenMinutes ? true : false);
 
         QAction *actionTwentyMins = DFileMenuManager::getAction(MenuAction::TwentyMinutes);
-        QObject::connect(actionTwentyMins, &QAction::triggered, actionTwentyMins, [&](){
+        QObject::connect(actionTwentyMins, &QAction::triggered, actionTwentyMins, [&]() {
             autoLock(VaultLockManager::TwentyMinutes);
         });
         actionTwentyMins->setCheckable(true);
@@ -652,20 +647,20 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
 
         //! 删除保险柜
         action = DFileMenuManager::getAction(MenuAction::DeleteVault);
-        QObject::connect(action, &QAction::triggered, action, [&, topWidget](){
+        QObject::connect(action, &QAction::triggered, action, [ &, topWidget]() {
             showView(topWidget, "delete");
         });
     } else if (vaultState == VaultController::Encrypted) {
 
         //! 解锁
         QAction *action = DFileMenuManager::getAction(MenuAction::UnLock);
-        QObject::connect(action, &QAction::triggered, action, [&, topWidget](){
+        QObject::connect(action, &QAction::triggered, action, [ &, topWidget]() {
             showView(topWidget, "unlock");
         });
 
         //! 使用恢复凭证
         action = DFileMenuManager::getAction(MenuAction::UnLockByKey);
-        QObject::connect(action, &QAction::triggered, action, [&, topWidget](){
+        QObject::connect(action, &QAction::triggered, action, [ &, topWidget]() {
             showView(topWidget, "certificate");
         });
     }
@@ -744,7 +739,7 @@ QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrlList &urlList)
 
     for (const DUrl &fileUrl : urlList) {
         DUrl url = fileUrl;
-        if (VaultController::isVaultFile(url.path())){
+        if (VaultController::isVaultFile(url.path())) {
             url = VaultController::localUrlToVault(fileUrl);
         }
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
@@ -975,7 +970,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         //为了解决在自动整理模式下，选择多个文件发送到一个没有空间的光驱上，在桌面上打开任意文件，
         //弹出很多文件的窗口并且右键菜单颜色标记出现英文问题。临时方案
         //将里面color相关的代码到外面初始化时重新加载
-        if(key == MenuAction::TagFilesUseColor || key == MenuAction::ChangeTagColor){
+        if (key == MenuAction::TagFilesUseColor || key == MenuAction::ChangeTagColor) {
             DTagActionWidget *tagWidget{ new DTagActionWidget };
             QWidgetAction *tagAction{ new QWidgetAction{ nullptr } };
 
@@ -998,9 +993,9 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
             tagAction->setData(key);
             auto keyAction = DFileMenuData::actions.take(key);
-            if(keyAction){
+            if (keyAction) {
                 QWidgetAction *widAction = dynamic_cast<QWidgetAction *>(keyAction);
-                if (widAction && widAction->defaultWidget()){
+                if (widAction && widAction->defaultWidget()) {
                     widAction->defaultWidget()->deleteLater();
                 }
 
@@ -1157,8 +1152,7 @@ bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
         //多选文件中包含一下文件时 则不展示标记信息菜单项
         if (info->fileUrl() == DesktopFileInfo::computerDesktopFileUrl()
                 || info->fileUrl() == DesktopFileInfo::trashDesktopFileUrl()
-                || info->fileUrl() == DesktopFileInfo::homeDesktopFileUrl())
-        {
+                || info->fileUrl() == DesktopFileInfo::homeDesktopFileUrl()) {
             return false;
         }
     }

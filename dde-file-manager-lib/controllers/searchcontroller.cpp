@@ -75,7 +75,7 @@ private:
 class SearchFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    SearchFileWatcherPrivate(SearchFileWatcher *qq)
+    explicit SearchFileWatcherPrivate(SearchFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() Q_DECL_OVERRIDE;

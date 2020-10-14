@@ -150,7 +150,7 @@ int FileUtils::filesCount(const QString &dir)
     return entryList.size();
 }
 
-QStringList FileUtils::filesList(const QString& dir)
+QStringList FileUtils::filesList(const QString &dir)
 {
     QStringList appNames;
     QDirIterator it(dir,
@@ -509,7 +509,7 @@ QString FileUtils::defaultOpticalSize(const QString &tagName, quint64 &usedSize,
 
         QJsonParseError parseJsonErr;
         QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData, &parseJsonErr));
-        if(!(parseJsonErr.error == QJsonParseError::NoError)) {
+        if (!(parseJsonErr.error == QJsonParseError::NoError)) {
             qDebug() << "decode json file error！";
             return size;
         }
@@ -700,8 +700,7 @@ bool FileUtils::openFiles(const QStringList &filePaths)
     QString mimetype = QString();
     if (info && info->size() == 0 && info->exists()) {
         mimetype = info->mimeType().name();
-    }
-    else {
+    } else {
         mimetype = getFileMimetype(filePath);
     }
     /*********************************************************/
@@ -1601,7 +1600,7 @@ bool FileUtils::deviceShouldBeIgnore(const QString &devId)
     QString volTag = devId.mid(devId.lastIndexOf("/") + 1); // 当传入设备 id 是 /dev/sdb 时，如果包含 /dev/sdbN，则忽略 /dev/sdb
     QProcess p;
     p.start("bash", QStringList() << "-c"
-                                  << "ls /dev/ | grep " + volTag);
+            << "ls /dev/ | grep " + volTag);
     p.waitForFinished();
     QString output(p.readAllStandardOutput());
     QStringList devices = output.split("\n", QString::SkipEmptyParts);
@@ -1623,17 +1622,17 @@ bool FileUtils::isDesktopFile(const QFileInfo &fileInfo)
 
 bool FileUtils::isDesktopFile(const QString &filePath, QMimeType &mimetype)
 {
-    QMimeType mt = DMimeDatabase().mimeTypeForFile(filePath,QMimeDatabase::MatchExtension);
+    QMimeType mt = DMimeDatabase().mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
     mimetype = mt;
     return mt.name() == "application/x-desktop" &&
-            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+           mt.suffixes().contains("desktop", Qt::CaseInsensitive);
 }
 
 bool FileUtils::isDesktopFile(const QFileInfo &fileInfo, QMimeType &mimetyp)
 {
-    QMimeType mt = DMimeDatabase().mimeTypeForFile(fileInfo,QMimeDatabase::MatchExtension);
+    QMimeType mt = DMimeDatabase().mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     mimetyp = mt;
     return mt.name() == "application/x-desktop" &&
-            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+           mt.suffixes().contains("desktop", Qt::CaseInsensitive);
 
 }

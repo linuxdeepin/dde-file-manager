@@ -152,7 +152,7 @@ private:
 
 
 public:
-    DRenameBarPrivate(DRenameBar *const qPtr);
+    explicit DRenameBarPrivate(DRenameBar *const qPtr);
     ~DRenameBarPrivate() = default;
 
     ///###: in fact, you can not also std::move too.

@@ -19,14 +19,14 @@ class DFileSystemWatcher : public QObject
     Q_DECLARE_PRIVATE(DFileSystemWatcher)
 
 public:
-    DFileSystemWatcher(QObject *parent = Q_NULLPTR);
+    explicit DFileSystemWatcher(QObject *parent = Q_NULLPTR);
     DFileSystemWatcher(const QStringList &paths, QObject *parent = Q_NULLPTR);
     ~DFileSystemWatcher();
 
     bool addPath(const QString &file);
-    QStringList addPaths(const QStringList &files);
-    bool removePath(const QString &file);
-    QStringList removePaths(const QStringList &files);
+    QStringList addPaths(const QStringList &paths);
+    bool removePath(const QString &path);
+    QStringList removePaths(const QStringList &paths);
 
     QStringList files() const;
     QStringList directories() const;

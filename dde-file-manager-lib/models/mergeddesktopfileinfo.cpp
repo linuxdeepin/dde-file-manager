@@ -32,7 +32,7 @@
 class VirtualEntryInfo : public DAbstractFileInfo
 {
 public:
-    VirtualEntryInfo(const DUrl &url) : DAbstractFileInfo(url) {}
+    explicit VirtualEntryInfo(const DUrl &url) : DAbstractFileInfo(url) {}
 
     QString iconName() const override
     {

@@ -121,7 +121,7 @@ DFMEvent::DFMEvent(DFMEvent::Type type, const QObject *sender)
 }
 
 DFMEvent::DFMEvent(const DFMEvent &other)
-    : DFMEvent((DFMEvent::Type)other.m_type, other.m_sender)
+    : DFMEvent(static_cast<DFMEvent::Type>(other.m_type), other.m_sender)
 {
     m_accept = other.m_accept;
     m_data = other.m_data;
@@ -149,8 +149,8 @@ DFMEvent &DFMEvent::operator =(const DFMEvent &other)
 DFMEvent::Type DFMEvent::nameToType(const QString &name)
 {
     for (int i = UnknowType; i <= CustomBase; ++i) {
-        if (fmeventType2String((DFMEvent::Type)i) == name) {
-            return DFMEvent::Type(i);
+        if (fmeventType2String(static_cast<DFMEvent::Type>(i)) == name) {
+            return static_cast<DFMEvent::Type>(i);
         }
     }
 
@@ -218,7 +218,7 @@ DUrlList DFMEvent::handleUrlList() const
 
 const QSharedPointer<DFMEvent> DFMEvent::fromJson(DFMEvent::Type type, const QJsonObject &json)
 {
-    switch ((int)type) {
+    switch (static_cast<int>(type)) {
     case OpenFile:
         return DFMOpenFileEvent::fromJson(json);
     case OpenFileByApp:
@@ -338,11 +338,11 @@ DFMUrlListBaseEvent::DFMUrlListBaseEvent(DFMEvent::Type type, const QObject *sen
     if (type == MoveToTrash) {
         DUrlList urls;
         //遍历传入的urllist
-        for(DUrl url : list) {
+        for (DUrl url : list) {
             //判断是否是来自数据盘路径
             if (url.path().startsWith("/data/")) {
                 //去掉数据盘路径开头
-                url.setPath(url.path().mid(sizeof ("/data") - 1));
+                url.setPath(url.path().mid(sizeof("/data") - 1));
             }
             //将处理后的url添加到临时list
             urls.append(url);
@@ -452,8 +452,8 @@ QSharedPointer<DFMDecompressHereEvent> DFMDecompressHereEvent::fromJson(const QJ
 }
 
 DFMWriteUrlsToClipboardEvent::DFMWriteUrlsToClipboardEvent(const QObject *sender,
-        DFMGlobal::ClipboardAction action,
-        const DUrlList &list)
+                                                           DFMGlobal::ClipboardAction action,
+                                                           const DUrlList &list)
     : DFMUrlListBaseEvent(WriteUrlsToClipboard, sender, list)
 {
     setProperty(QT_STRINGIFY(DFMWriteUrlsToClipboardEvent::action), action);
@@ -547,7 +547,7 @@ QSharedPointer<DFMRestoreFromTrashEvent> DFMRestoreFromTrashEvent::fromJson(cons
 }
 
 DFMPasteEvent::DFMPasteEvent(const QObject *sender, DFMGlobal::ClipboardAction action,
-                             const DUrl &targetUrl, const DUrlList &list, const DUrlList & cutList)
+                             const DUrl &targetUrl, const DUrlList &list, const DUrlList &cutList)
     : DFMUrlListBaseEvent(PasteFile, sender, list)
 {
     setData(list);
@@ -644,7 +644,7 @@ DUrlList DFMCreateSymlinkEvent::handleUrlList() const
 QSharedPointer<DFMCreateSymlinkEvent> DFMCreateSymlinkEvent::fromJson(const QJsonObject &json)
 {
     const QSharedPointer<DFMCreateSymlinkEvent> &event = dMakeEventPointer<DFMCreateSymlinkEvent>(Q_NULLPTR, DUrl::fromUserInput(json["fileUrl"].toString()),
-            DUrl::fromUserInput(json["toUrl"].toString()));
+                                                                                                  DUrl::fromUserInput(json["toUrl"].toString()));
     event->setProperty(QT_STRINGIFY(DFMDeleteEvent::force), json["force"].toBool());
     return event;
 }
@@ -676,7 +676,7 @@ bool DFMFileShareEvent::allowGuest() const
 QSharedPointer<DFMFileShareEvent> DFMFileShareEvent::fromJson(const QJsonObject &json)
 {
     return dMakeEventPointer<DFMFileShareEvent>(Q_NULLPTR, DUrl::fromUserInput(json["url"].toString()), json["name"].toString(),
-            json["isWritable"].toBool(), json["allowGuest"].toBool());
+                                                json["isWritable"].toBool(), json["allowGuest"].toBool());
 }
 
 DFMCancelFileShareEvent::DFMCancelFileShareEvent(const QObject *sender, const DUrl &url)
@@ -702,7 +702,7 @@ QSharedPointer<DFMOpenInTerminalEvent> DFMOpenInTerminalEvent::fromJson(const QJ
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient,bool canconst)
+                                           QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient, bool canconst)
     : DFMUrlBaseEvent(GetChildrens, sender, url)
 {
     setProperty(QT_STRINGIFY(DFMGetChildrensEvent::nameFilters), nameFilters);
@@ -713,8 +713,8 @@ DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &ur
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-        QDir::Filters filters, bool slient,bool canconst)
-    : DFMGetChildrensEvent(sender, url, nameFilters, filters, QDirIterator::NoIteratorFlags, slient,canconst)
+                                           QDir::Filters filters, bool slient, bool canconst)
+    : DFMGetChildrensEvent(sender, url, nameFilters, filters, QDirIterator::NoIteratorFlags, slient, canconst)
 {
 
 }
@@ -753,12 +753,12 @@ QSharedPointer<DFMGetChildrensEvent> DFMGetChildrensEvent::fromJson(const QJsonO
     }
 
     return dMakeEventPointer<DFMGetChildrensEvent>(Q_NULLPTR, DUrl::fromUserInput(json["url"].toString()),
-            nameFilters, (QDir::Filters)json["filters"].toInt(), QDirIterator::NoIteratorFlags,
-            json["silent"].toBool());
+                                                   nameFilters, (QDir::Filters)json["filters"].toInt(), QDirIterator::NoIteratorFlags,
+                                                   json["silent"].toBool());
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, bool isgvfs)
+                                           QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, bool isgvfs)
     : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters, flags, silent)
 {
     m_type = CreateDiriterator;
@@ -766,7 +766,7 @@ DFMCreateDiriterator::DFMCreateDiriterator(const QObject *sender, const DUrl &fi
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, bool silent,bool isgvfs)
+                                           QDir::Filters filters, bool silent, bool isgvfs)
     : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters, silent)
 {
     m_type = CreateDiriterator;
@@ -787,16 +787,16 @@ QSharedPointer<DFMCreateDiriterator> DFMCreateDiriterator::fromJson(const QJsonO
     return event;
 }
 
-DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, const bool isgvfsfile)
-    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, flags, silent, isgvfsfile)
+DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
+                                                   QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, const bool isgvfsfile)
+    : DFMCreateDiriterator(sender, url, nameFilters, filters, flags, silent, isgvfsfile)
 {
     m_type = CreateGetChildrensJob;
 }
 
-DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, bool silent, const bool isgvfsfile)
-    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, silent, isgvfsfile)
+DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
+                                                   QDir::Filters filters, bool silent, const bool isgvfsfile)
+    : DFMCreateDiriterator(sender, url, nameFilters, filters, silent, isgvfsfile)
 {
     m_type = CreateGetChildrensJob;
 }
@@ -1067,28 +1067,28 @@ QList<QString> DFMRemoveTagsOfFileEvent::tags() const
 
 
 
-DFMChangeTagColorEvent::DFMChangeTagColorEvent(const QObject* sender, const QColor& color, const DUrl& tagUrl)
-                        :DFMEvent{ Type::ChangeTagColor, sender },
-                         m_newColorForTag{ color },
-                         m_tagUrl{ tagUrl }
+DFMChangeTagColorEvent::DFMChangeTagColorEvent(const QObject *sender, const QColor &color, const DUrl &tagUrl)
+    : DFMEvent{ Type::ChangeTagColor, sender },
+      m_newColorForTag{ color },
+      m_tagUrl{ tagUrl }
 {
 }
 
-QSharedPointer<DFMChangeTagColorEvent> DFMChangeTagColorEvent::fromJson(const QJsonObject& json)
+QSharedPointer<DFMChangeTagColorEvent> DFMChangeTagColorEvent::fromJson(const QJsonObject &json)
 {
     (void)json;
-    return QSharedPointer<DFMChangeTagColorEvent>{ nullptr };
+    return QSharedPointer<DFMChangeTagColorEvent> { nullptr };
 }
 
-DFMGetTagsThroughFilesEvent::DFMGetTagsThroughFilesEvent(const QObject* sender, const QList<DUrl>& files)
-                           :DFMUrlListBaseEvent{ Type::GetTagsThroughFiles, sender, files }
+DFMGetTagsThroughFilesEvent::DFMGetTagsThroughFilesEvent(const QObject *sender, const QList<DUrl> &files)
+    : DFMUrlListBaseEvent{ Type::GetTagsThroughFiles, sender, files }
 {
 }
 
 QSharedPointer<DFMGetTagsThroughFilesEvent> DFMGetTagsThroughFilesEvent::fromJson(const QJsonObject &json)
 {
     (void)json;
-    return QSharedPointer<DFMGetTagsThroughFilesEvent>{ nullptr };
+    return QSharedPointer<DFMGetTagsThroughFilesEvent> { nullptr };
 }
 
 DFMSetFileExtraProperties::DFMSetFileExtraProperties(const QObject *sender, const DUrl &url, const QVariantHash &ep)
@@ -1103,7 +1103,7 @@ QVariantHash DFMSetFileExtraProperties::extraProperties() const
 }
 
 DFMSetPermissionEvent::DFMSetPermissionEvent(const QObject *sender, const DUrl &url, const QFileDevice::Permissions &permissions)
-                    :DFMUrlBaseEvent{ Type::SetPermission, sender, url }
+    : DFMUrlBaseEvent{ Type::SetPermission, sender, url }
 {
     setProperty(QT_STRINGIFY(DFMSetPermissionEvent::permissions), static_cast<int>(permissions));
 }
@@ -1114,7 +1114,7 @@ QFileDevice::Permissions DFMSetPermissionEvent::permissions() const
 }
 
 DFMOpenFilesEvent::DFMOpenFilesEvent(const QObject *sender, const DUrlList &list, const bool isEnter)
-        : DFMUrlListBaseEvent(OpenFiles, sender, list)
+    : DFMUrlListBaseEvent(OpenFiles, sender, list)
 {
     setProperty(QT_STRINGIFY(DFMOpenFilesEvent::isEnter), isEnter);
 }

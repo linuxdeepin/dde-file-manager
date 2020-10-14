@@ -32,7 +32,7 @@ class DFMVfsDevice;
 class DFMVfsDeviceInfo : public DFMAbstractDeviceInterface
 {
 public:
-    DFMVfsDeviceInfo(const QUrl mountpointUrl);
+    explicit DFMVfsDeviceInfo(const QUrl mountpointUrl);
 
     void mount() override;
 

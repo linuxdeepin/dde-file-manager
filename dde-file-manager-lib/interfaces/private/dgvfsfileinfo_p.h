@@ -23,7 +23,7 @@ class RequestGvfsEP;
 class DGvfsFileInfoPrivate : public DFileInfoPrivate
 {
 public:
-    DGvfsFileInfoPrivate(const DUrl &fileUrl, DGvfsFileInfo *qq, bool hasCache = true);
+    DGvfsFileInfoPrivate(const DUrl &url, DGvfsFileInfo *qq, bool hasCache = true);
     ~DGvfsFileInfoPrivate();
 
     mutable qint8 cacheFileExists = -1;
@@ -40,6 +40,6 @@ public:
     mutable int ownerid = -1;//当前文件的所以
 };
 
-Q_DECLARE_METATYPE(DGvfsFileInfoPrivate*)
+Q_DECLARE_METATYPE(DGvfsFileInfoPrivate *)
 
 #endif // DGVFSFILEINFO_P_H

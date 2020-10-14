@@ -105,7 +105,7 @@ public:
     };
     typedef QSharedPointer<FileCopyInfo> FileCopyInfoPointer;
 
-    DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq);
+    explicit DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq);
     ~DFileCopyMoveJobPrivate();
 
     static QString errorToString(DFileCopyMoveJob::Error error);

@@ -30,7 +30,7 @@
 class SearchFileInfo : public DAbstractFileInfo
 {
 public:
-    SearchFileInfo(const DUrl &url);
+    explicit SearchFileInfo(const DUrl &url);
 
     bool exists() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;

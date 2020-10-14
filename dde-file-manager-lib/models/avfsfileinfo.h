@@ -31,7 +31,7 @@ class AVFSFileInfoPrivate;
 class AVFSFileInfo : public DAbstractFileInfo
 {
 public:
-    AVFSFileInfo(const DUrl &avfsUrl);
+    explicit AVFSFileInfo(const DUrl &avfsUrl);
 
     bool canRename() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;

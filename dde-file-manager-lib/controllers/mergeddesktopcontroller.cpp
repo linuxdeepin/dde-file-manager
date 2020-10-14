@@ -57,7 +57,7 @@ private:
 class MergedDesktopWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    MergedDesktopWatcherPrivate(DAbstractFileWatcher *qq)
+    explicit MergedDesktopWatcherPrivate(DAbstractFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override

@@ -42,7 +42,7 @@ using DBusControlcenter = com::deepin::dde::ControlCenter;
 class BluetoothManagerPrivate
 {
 public:
-    BluetoothManagerPrivate(BluetoothManager *qq);
+    explicit BluetoothManagerPrivate(BluetoothManager *qq);
 
     /**
      * @brief 解析蓝牙设备, 获取适配器和设备信息

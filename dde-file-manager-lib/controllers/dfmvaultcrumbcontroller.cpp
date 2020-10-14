@@ -86,7 +86,7 @@ QList<CrumbData> DFMVaultCrumbController::seprateUrl(const DUrl &url)
             CrumbData data(oneUrl, displayText);
             list.append(data);
         }
-        iter++;
+        ++iter;
     }
 
     return list;

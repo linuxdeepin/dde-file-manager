@@ -87,7 +87,7 @@ class NameTextEdit: public QTextEdit
     Q_OBJECT
 
 public:
-    explicit NameTextEdit(const QString &text="", QWidget *parent=0);
+    explicit NameTextEdit(const QString &text="", QWidget *parent=nullptr);
 
     bool isCanceled() const;
     void setIsCanceled(bool isCanceled);
@@ -153,7 +153,7 @@ class PropertyDialog : public DDialog
     Q_OBJECT
 
 public:
-    explicit PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *parent = 0);
+    explicit PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *parent = nullptr);
 
 public:
     void initUI();

@@ -102,7 +102,7 @@ private:
 class TaggedFileWatcherPrivate final : public DAbstractFileWatcherPrivate
 {
 public:
-    TaggedFileWatcherPrivate(TaggedFileWatcher* qq)
+    explicit TaggedFileWatcherPrivate(TaggedFileWatcher* qq)
         :DAbstractFileWatcherPrivate{qq}{}
 
     virtual bool start() override;

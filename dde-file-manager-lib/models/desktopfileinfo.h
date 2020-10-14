@@ -35,8 +35,8 @@ class DesktopFileInfoPrivate;
 class DesktopFileInfo : public DFileInfo
 {
 public:
-    DesktopFileInfo(const DUrl &fileUrl);
-    DesktopFileInfo(const QFileInfo &fileInfo);
+    explicit DesktopFileInfo(const DUrl &fileUrl);
+    explicit DesktopFileInfo(const QFileInfo &fileInfo);
 
     ~DesktopFileInfo();
 

@@ -268,10 +268,10 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
     requestEPCancelLock.unlock();
 }
 
-DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache)
-    : DAbstractFileInfoPrivate(url, qq, hasCache)
+DFileInfoPrivate::DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq, bool hasCache)
+    : DAbstractFileInfoPrivate(fileUrl, qq, hasCache)
 {
-    fileInfo.setFile(url.toLocalFile());
+    fileInfo.setFile(fileUrl.toLocalFile());
     gvfsMountFile = 0;
 }
 

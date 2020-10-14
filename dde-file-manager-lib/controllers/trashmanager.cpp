@@ -370,14 +370,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
     DUrlList urlist;
     QStringList pathlist;
-    bool isRestoreAll = false;
     for (const DUrl &url : list) {
-//        if (url == DUrl::fromTrashFile("/")) {
-//            isRestoreAll = true;
-//            urlist << url;
-//            break;
-//        }
-
         QString jid = dialogManager->getJobIdByUrl(url);
         if (jid.isEmpty() && !urlist.contains(url)) {
             urlist << url;
@@ -387,7 +380,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         }
     }
 
-    if (!isRestoreAll && urlist.size() == 0) {
+    if (urlist.size() == 0) {
         DTaskDialog *dlg = dialogManager->taskDialog();
         if (dlg && dlg->getTaskListWidget() && dlg->getTaskListWidget()->count() > 0) {
             dlg->raise();
@@ -406,35 +399,14 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
     QScopedPointer<FileJob, ScopedPointerCustomDeleter> job(new FileJob(FileJob::Restore));
     job->setProperty("pathlist", pathlist);
     job->setManualRemoveJob(true);
-//    if (isRestoreAll) {
-//        if (urlist.size() != 1)
-//            dialogManager->addJob(job.data());
-//    }
-//    else {
     dialogManager->addJob(job.data());
-    //    }
-
     job->jobPrepared();
+
     int i = 0;
     int total = urlist.size();
     for (const DUrl &url : urlist) {
-
-//        if (url == DUrl::fromTrashFile("/")) {
-//            // restore all
-//            DUrlList list;
-
-//            for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System))
-//                list << info->fileUrl();
-
-//            if (list.isEmpty())
-//                return true;
-
-//            return restoreTrashFile(list, restoreOriginUrls);
-//        } else {
         ++i;
         job->setRestoreProgress(double(i) / total);
-//        }
-
         //###(zccrs): 必须通过 DAbstractFileInfoPointer 使用
         //            因为对象会被缓存，所以有可能在其它线程中被使用
         //            如果直接定义一个TrashFileInfo对象，就可能存在对象被重复释放

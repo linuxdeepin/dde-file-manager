@@ -43,7 +43,7 @@ qint64 DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
 class DFMOpticalMediaWidgetPrivate
 {
 public:
-    DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q);
+    explicit DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q);
     ~DFMOpticalMediaWidgetPrivate();
     void setupUi();
     void setDeviceProperty(DeviceProperty dp);
@@ -85,7 +85,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     connect(d->pb_burn, &DPushButton::clicked, this, [ = ] {
 
         QString volTag = d->getVolTag();
-        CdStatusInfo& statusInfo = DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag];
+        CdStatusInfo &statusInfo = DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag];
         statusInfo.bReadyToBurn = true;
 
         QDir::Filters filter = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
@@ -94,7 +94,8 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
                                               + "/" DISCBURN_STAGING "/" + d->getCurrentDevice().replace('/', '_') + "/");
         // 1、获取暂存区内文件列表信息，去除与当前光盘中有交集的部分（当前 isomaster 库不提供覆盖写入的选项，后或可优化）
         QDir dirMnt(d->strMntPath);
-        if (!dirMnt.exists()) {
+        if (!dirMnt.exists())
+        {
             statusInfo.bReadyToBurn = false;
             qWarning() << "Mount points doesn't exist: " << d->strMntPath;
             return;
@@ -103,12 +104,14 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         QFileInfoList lstFilesOnDisc = d->strMntPath.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(filter);
 
         QDir dirStage(urlOfStage.path());
-        if (!dirStage.exists()){
+        if (!dirStage.exists())
+        {
             statusInfo.bReadyToBurn = false;
             return;
         }
         QFileInfoList lstFilesInStage = dirStage.entryInfoList(filter);
-        if (lstFilesInStage.count() == 0) {
+        if (lstFilesInStage.count() == 0)
+        {
             statusInfo.bReadyToBurn = false;
             dialogManager->showMessageDialog(DialogManager::msgWarn, tr("No files to burn"));
             return;
@@ -148,7 +151,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     connect(m_pStatisticWorker, &DFileStatisticsJob::finished, this, [ = ] {
 
         QString volTag = d->getVolTag();
-        CdStatusInfo& statusInfo = DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag];
+        CdStatusInfo &statusInfo = DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag];
 
         DeviceProperty dp = ISOMaster->getDevicePropertyCached(d->getCurrentDevice());
 
@@ -288,10 +291,10 @@ bool DFMOpticalMediaWidget::hasVolProcessBusy()
     return false;
 }
 
-CdStatusInfo* DFMOpticalMediaWidget::getCdStatusInfo(const QString& dev)
+CdStatusInfo *DFMOpticalMediaWidget::getCdStatusInfo(const QString &dev)
 {
     QMap<QString, CdStatusInfo>::iterator ite = g_mapCdStatusInfo.find(dev);
-    if(ite != g_mapCdStatusInfo.end()) {
+    if (ite != g_mapCdStatusInfo.end()) {
         return &(ite.value());
     }
     return nullptr;

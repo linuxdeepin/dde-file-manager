@@ -36,7 +36,7 @@ private:
 class ShareFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    ShareFileWatcherPrivate(ShareFileWatcher *qq)
+    explicit ShareFileWatcherPrivate(ShareFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() Q_DECL_OVERRIDE;

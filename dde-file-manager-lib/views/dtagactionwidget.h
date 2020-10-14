@@ -18,7 +18,7 @@ class DTagActionWidget final : public QFrame
     Q_PROPERTY(bool exclusive READ exclusive WRITE setExclusive)
 
 public:
-    DTagActionWidget(QWidget* const parent = nullptr);
+    explicit DTagActionWidget(QWidget* const parent = nullptr);
     virtual ~DTagActionWidget()=default;
 
     DTagActionWidget(const DTagActionWidget& other)=delete;

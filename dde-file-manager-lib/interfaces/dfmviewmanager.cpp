@@ -23,7 +23,7 @@ DFM_BEGIN_NAMESPACE
 class DFMViewManagerPrivate
 {
 public:
-    DFMViewManagerPrivate(DFMViewManager *qq);
+    explicit DFMViewManagerPrivate(DFMViewManager *qq);
 
     DFMViewManager *q_ptr;
 

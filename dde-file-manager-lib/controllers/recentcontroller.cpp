@@ -61,7 +61,7 @@ private:
 class RecentFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    RecentFileWatcherPrivate(DAbstractFileWatcher *qq)
+    explicit RecentFileWatcherPrivate(DAbstractFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override

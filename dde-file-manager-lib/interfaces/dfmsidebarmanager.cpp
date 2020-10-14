@@ -33,7 +33,7 @@ DFM_BEGIN_NAMESPACE
 class DFMSideBarManagerPrivate
 {
 public:
-    DFMSideBarManagerPrivate(DFMSideBarManager *qq);
+    explicit DFMSideBarManagerPrivate(DFMSideBarManager *qq);
 
     QMultiHash<const DFMSideBarManager::KeyType, DFMSideBarManager::SideBarInterfaceCreaterType> controllerCreatorHash;
 
@@ -75,8 +75,8 @@ DFMSideBarItemInterface *DFMSideBarManager::createByIdentifier(const QString &id
 
     const QList<SideBarInterfaceCreaterType> creatorList = d->controllerCreatorHash.values(theType);
 
-    if (!creatorList.isEmpty()){
-        DFMSideBarItemInterface* i = (creatorList.first().second)();
+    if (!creatorList.isEmpty()) {
+        DFMSideBarItemInterface *i = (creatorList.first().second)();
         return i;
     }
 

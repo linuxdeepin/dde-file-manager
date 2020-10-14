@@ -68,7 +68,7 @@ inline QByteArray dataToMd5Hex(const QByteArray &data)
 class DThumbnailProviderPrivate
 {
 public:
-    DThumbnailProviderPrivate(DThumbnailProvider *qq);
+    explicit DThumbnailProviderPrivate(DThumbnailProvider *qq);
 
     void init();
 
