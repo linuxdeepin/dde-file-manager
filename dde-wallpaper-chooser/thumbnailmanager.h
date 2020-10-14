@@ -34,7 +34,7 @@ class ThumbnailManager : public QObject
 {
     Q_OBJECT
 public:
-    ThumbnailManager(qreal scale);
+    explicit ThumbnailManager(qreal scale);
     ~ThumbnailManager();
 
     void clear();

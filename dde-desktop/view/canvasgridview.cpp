@@ -100,7 +100,7 @@ namespace  {
     class IgnoreDropFlag
     {
     public:
-        IgnoreDropFlag (DFileSystemModel *m) : model(m)
+        explicit IgnoreDropFlag (DFileSystemModel *m) : model(m)
         {
             if (model)
                 model->ignoreDropFlag = true;
@@ -1708,9 +1708,9 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 
             QRect end = QRect(x, y, d->cellWidth, d->cellHeight).marginsRemoved(d->cellMargins);
 
-            auto current = dodgeDuration();
-            auto nx = option.rect.x() + (end.x() - option.rect.x()) * current;
-            auto ny = option.rect.y() + (end.y() - option.rect.y()) * current;
+            auto tempCurrent = dodgeDuration();
+            auto nx = option.rect.x() + (end.x() - option.rect.x()) * tempCurrent;
+            auto ny = option.rect.y() + (end.y() - option.rect.y()) * tempCurrent;
             option.rect.setX(static_cast<int>(nx));
             option.rect.setY(static_cast<int>(ny));
             option.rect.setSize(end.size());

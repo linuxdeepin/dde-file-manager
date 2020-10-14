@@ -46,26 +46,26 @@
 
 class PdfWidgetPrivate{
 public:
-    PdfWidgetPrivate(PdfWidget* qq):
+    explicit PdfWidgetPrivate(PdfWidget* qq):
         q_ptr(qq){}
 
-    DListWidget* thumbListWidget = NULL;
-    DListWidget* pageListWidget = NULL;
-    QHBoxLayout* mainLayout = NULL;
-    QScrollBar* thumbScrollBar = NULL;
-    QScrollBar* pageScrollBar = NULL;
-    QButtonGroup* thumbButtonGroup = NULL;
+    DListWidget* thumbListWidget = nullptr;
+    DListWidget* pageListWidget = nullptr;
+    QHBoxLayout* mainLayout = nullptr;
+    QScrollBar* thumbScrollBar = nullptr;
+    QScrollBar* pageScrollBar = nullptr;
+    QButtonGroup* thumbButtonGroup = nullptr;
 
-    QTimer* pageWorkTimer = NULL;
-    QTimer* thumbWorkTimer = NULL;
+    QTimer* pageWorkTimer = nullptr;
+    QTimer* thumbWorkTimer = nullptr;
     bool isBadDoc = false;
 
     QSharedPointer<poppler::document> doc;
 
-    PdfInitWorker* pdfInitWorker = NULL;
+    PdfInitWorker* pdfInitWorker = nullptr;
     QMap<int, QImage> pageMap;
 
-    PdfWidget* q_ptr = NULL;
+    PdfWidget* q_ptr = nullptr;
     Q_DECLARE_PUBLIC(PdfWidget)
 };
 

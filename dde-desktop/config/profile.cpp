@@ -27,7 +27,7 @@
 class ProfilePrivate
 {
 public:
-    ProfilePrivate(Profile *parent) : q_ptr(parent){}
+    explicit ProfilePrivate(Profile *parent) : q_ptr(parent){}
 
     Profile *q_ptr;
     Q_DECLARE_PUBLIC(Profile)

@@ -31,7 +31,7 @@ class Button : public QPushButton
 {
     Q_OBJECT
 public:
-    Button(QWidget * parent = nullptr);
+    explicit Button(QWidget * parent = nullptr);
     ~Button();
 
     void setAttract(bool);

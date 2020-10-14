@@ -213,7 +213,7 @@ public:
     static DockInfo *ins();
     DBusDock *dock() const;
 private:
-    DockInfo(QObject *parent = nullptr);
+    explicit DockInfo(QObject *parent = nullptr);
     DBusDock *m_dock = nullptr;
 };
 

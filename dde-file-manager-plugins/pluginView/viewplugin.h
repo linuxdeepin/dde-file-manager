@@ -34,21 +34,21 @@ class ViewPlugin : public QObject, public ViewInterface
     Q_PLUGIN_METADATA(IID ViewInterface_iid FILE "pluginView.json")
     Q_INTERFACES(ViewInterface)
 public:
-    ViewPlugin(QObject *parent = 0);
+    explicit ViewPlugin(QObject *parent = nullptr);
 
-    QString bookMarkText();
-    QIcon bookMarkNormalIcon();
-    QIcon bookMarkHoverIcon();
-    QIcon bookMarkPressedIcon();
-    QIcon bookMarkCheckedIcon();
-    QString crumbText();
-    QIcon crumbNormalIcon();
-    QIcon crumbHoverIcon();
-    QIcon crumbPressedIcon();
-    QIcon crumbCheckedIcon();
-    bool isAddSeparator();
-    QString scheme();
-    QWidget* createView();
+    QString bookMarkText() override;
+    QIcon bookMarkNormalIcon() override;
+    QIcon bookMarkHoverIcon() override;
+    QIcon bookMarkPressedIcon() override;
+    QIcon bookMarkCheckedIcon() override;
+    QString crumbText() override;
+    QIcon crumbNormalIcon() override;
+    QIcon crumbHoverIcon() override;
+    QIcon crumbPressedIcon() override;
+    QIcon crumbCheckedIcon() override;
+    bool isAddSeparator() override;
+    QString scheme() override;
+    QWidget* createView() override;
 };
 
 #endif // VIEWPLUGIN_H

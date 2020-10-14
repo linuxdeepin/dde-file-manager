@@ -318,7 +318,7 @@ void DiskControlWidget::onDiskListChanged()
             class ErrHandle : public ErrorHandleInfc, public QObject
             {
             public:
-                ErrHandle(QObject *parent): QObject(parent) {}
+                explicit ErrHandle(QObject *parent): QObject(parent) {}
                 virtual void onError(DAttachedDeviceInterface *device)
                 {
                     DAttachedUdisks2Device *drv = dynamic_cast<DAttachedUdisks2Device *>(device);
