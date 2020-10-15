@@ -43,6 +43,7 @@ void ScreenManager::onScreenRemoved(QScreen *screen)
 
 void ScreenManager::onScreenGeometryChanged(const QRect &rect)
 {
+    Q_UNUSED(rect)
 //    ScreenObject *sc = SCREENOBJECT(sender());
 //    if (sc != nullptr && m_screens.contains(sc->screen())) {
 //        emit sigScreenGeometryChanged(m_screens.value(sc->screen()), rect);
@@ -52,6 +53,7 @@ void ScreenManager::onScreenGeometryChanged(const QRect &rect)
 
 void ScreenManager::onScreenAvailableGeometryChanged(const QRect &rect)
 {
+    Q_UNUSED(rect)
 //    ScreenObject *sc = SCREENOBJECT(sender());
 //    if (sc != nullptr && m_screens.contains(sc->screen())) {
 //        emit sigScreenAvailableGeometryChanged(m_screens.value(sc->screen()), rect);
@@ -220,7 +222,7 @@ AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
         int mode = pending.argumentAt(0).toInt();
         qDebug() << "GetRealDisplayMode resulet" << mode;
         if (mode > 0 && mode < 4)
-            return (AbstractScreenManager::DisplayMode)mode;
+            return static_cast<AbstractScreenManager::DisplayMode>(mode);
         else
             return AbstractScreenManager::Custom;
     }
