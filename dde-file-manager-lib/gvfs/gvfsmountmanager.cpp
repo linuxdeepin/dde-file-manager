@@ -726,17 +726,9 @@ void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GV
 
         QVolume qVolume = gVolumeToqVolume(volume);
         QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
-//        Volumes.insert(qVolume.unix_device(), qVolume);
         DiskInfos.insert(diskInfo.id(), diskInfo);
         qCDebug(mountManager()) << diskInfo;
         emit gvfsMountManager->volume_changed(diskInfo);
-
-        // 部分光驱（自动式）托盘弹出的时候还未触发 mount_changed / volume_remove 等信号，所以在这里判定到 uuid 为空了并且是光驱设备，表示光驱弹出，此时移除路径以让文管跳转到主目录
-        if (diskInfo.uuid().isEmpty() && diskInfo.drive_unix_device().contains("/dev/sr")) {
-            static const QString strUrl = QString("burn://%1/disc_files/");
-            DUrl discUrl = DUrl(strUrl.arg(diskInfo.drive_unix_device()));
-            DAbstractFileWatcher::ghostSignal(discUrl, &DAbstractFileWatcher::fileDeleted, discUrl);
-        }
     }else{
         qCDebug(mountManager()) << "==============================changed volume empty==============================" ;
     }
