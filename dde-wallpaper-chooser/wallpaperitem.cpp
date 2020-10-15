@@ -266,6 +266,7 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
 
 bool WallpaperItem::eventFilter(QObject *object, QEvent *event)
 {
+    Q_UNUSED(object)
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Tab) {

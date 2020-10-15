@@ -1003,6 +1003,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             break;
         }
     // fall through
+    //为解决fall through警告而添加的下面一句
+    Q_FALLTHROUGH();
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
