@@ -80,8 +80,8 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
     const QSize &dsize = qApp->desktop()->size();
     qreal device_pixel_ratio = this->devicePixelRatioF();
 
-    QPixmap pixmap = QPixmap::fromImageReader(&reader).scaled(QSize(qMin((int)(dsize.width() * 0.7 * device_pixel_ratio), m_sourceSize.width()),
-                                                                    qMin((int)(dsize.height() * 0.8 * device_pixel_ratio), m_sourceSize.height())),
+    QPixmap pixmap = QPixmap::fromImageReader(&reader).scaled(QSize(qMin(static_cast<int>(dsize.width() * 0.7 * device_pixel_ratio), m_sourceSize.width()),
+                                                                    qMin(static_cast<int>(dsize.height() * 0.8 * device_pixel_ratio), m_sourceSize.height())),
                                                               Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
     pixmap.setDevicePixelRatio(device_pixel_ratio);

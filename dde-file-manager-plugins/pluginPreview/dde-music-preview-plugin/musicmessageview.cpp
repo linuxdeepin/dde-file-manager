@@ -256,13 +256,13 @@ MediaMeta MusicMessageView::tagOpenMusicFile(const QString &path)
     }
 
     MediaMeta meta;
-    characterEncodingTransform(meta, (void*)tag);
+    characterEncodingTransform(meta, static_cast<void*>(tag));
     return meta;
 }
 
 void MusicMessageView::characterEncodingTransform(MediaMeta & meta, void * obj)
 {
-    TagLib::Tag *tag = (TagLib::Tag *)obj;
+    TagLib::Tag *tag = static_cast<TagLib::Tag *>(obj);
     bool encode = true;
     encode &= tag->title().isNull() ? true : tag->title().isLatin1();
     encode &= tag->artist().isNull() ? true : tag->artist().isLatin1();

@@ -38,7 +38,7 @@ class ToolBarFrame : public QFrame
 {
     Q_OBJECT
 public:
-    explicit ToolBarFrame(const QString& uri, QWidget *parent = 0);
+    explicit ToolBarFrame(const QString& uri, QWidget *parent = nullptr);
 
     void initUI();
     void initConnections();

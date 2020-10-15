@@ -46,7 +46,7 @@ class PdfWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit PdfWidget(const QString &file, QWidget *parent = 0);
+    explicit PdfWidget(const QString &file, QWidget *parent = nullptr);
     ~PdfWidget();
 
     void initDoc(const QString &file);

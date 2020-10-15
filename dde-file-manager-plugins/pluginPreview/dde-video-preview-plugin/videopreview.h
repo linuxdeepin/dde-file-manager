@@ -39,7 +39,7 @@ class VideoPreview : public DFMFilePreview
     Q_OBJECT
 
 public:
-    explicit VideoPreview(QObject* parent = 0);
+    explicit VideoPreview(QObject* parent = nullptr);
     ~VideoPreview();
 
     bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;

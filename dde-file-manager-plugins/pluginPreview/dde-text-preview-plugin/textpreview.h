@@ -43,7 +43,7 @@ class TextPreview : public DFMFilePreview
     Q_OBJECT
 
 public:
-    explicit TextPreview(QObject* parent = 0);
+    explicit TextPreview(QObject* parent = nullptr);
     ~TextPreview();
 
     bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;

@@ -44,7 +44,7 @@ class MusicMessageView : public QFrame
 {
     Q_OBJECT
 public:
-    explicit MusicMessageView(const QString& uri = "", QWidget *parent = 0);
+    explicit MusicMessageView(const QString& uri = "", QWidget *parent = nullptr);
     void initUI();
     void updateElidedText();
 
