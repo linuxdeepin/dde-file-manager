@@ -45,7 +45,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     // 设置密码
     m_pPasswordLabel = new DLabel(tr("Password"),this);
     m_pPassword = new DPasswordEdit(this);
-    m_pPassword->lineEdit()->setPlaceholderText(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"));
+    m_pPassword->lineEdit()->setPlaceholderText(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"));
     m_pPassword->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
     connect(m_pPassword, &DPasswordEdit::textEdited,
             this, &DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength);
@@ -178,7 +178,7 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
     if(!ok){
         m_pNext->setEnabled(false);
         m_pPassword->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
-        m_pPassword->showAlertMessage(tr("At least 8 characters, and contain A-Z, a-z, 0-9, and symbols"),TIPS_TIME);
+        m_pPassword->showAlertMessage(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"),TIPS_TIME);
     } else {
         if(checkInputInfo()){
             m_pNext->setEnabled(true);
