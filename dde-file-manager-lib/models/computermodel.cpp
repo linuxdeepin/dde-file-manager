@@ -42,6 +42,7 @@
 
 #include <QtConcurrent>
 
+bool ComputerModel::m_isQueryRootFileFinshed = false;
 ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
     , m_diskm(new DDiskManager(this))
@@ -49,6 +50,9 @@ ComputerModel::ComputerModel(QObject *parent)
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
     m_nitems = 0;
+
+    // 光驱事件
+    connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
 
 #ifdef ENABLE_ASYNCINIT
     m_initThread.first = false;
@@ -94,9 +98,12 @@ ComputerModel::ComputerModel(QObject *parent)
                 }
             }
 
-            connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
-            if (opticalchanged) {
-                emit opticalChanged();
+            if (!m_isQueryRootFileFinshed) {
+                // 获取完根目录信息后刷新光驱信息，用于区分内外置光驱。
+                if (opticalchanged) {
+                    emit opticalChanged();
+                }
+                m_isQueryRootFileFinshed = true;
             }
         };
 
