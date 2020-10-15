@@ -139,7 +139,7 @@ void ToolBarFrame::onPlayControlButtonClicked()
 
 void ToolBarFrame::updateProgress()
 {
-    m_progressSlider->setValue(m_player->position());
+    m_progressSlider->setValue(static_cast<int>(m_player->position()));
 }
 
 void ToolBarFrame::seekPosition(const int &pos)

@@ -127,8 +127,8 @@ void PdfWidget::initUI()
     }
 
     setContentsMargins(0, 0, 0, 0);
-    setFixedSize(qMin(DEFAULT_VIEW_SIZE.width(), (int)(qApp->desktop()->width() * 0.8)),
-                 qMin(DEFAULT_VIEW_SIZE.height(), (int)(qApp->desktop()->height() * 0.8)));
+    setFixedSize(qMin(DEFAULT_VIEW_SIZE.width(), static_cast<int>(qApp->desktop()->width() * 0.8)),
+                 qMin(DEFAULT_VIEW_SIZE.height(), static_cast<int>(qApp->desktop()->height() * 0.8)));
 
     d->thumbListWidget = new DListWidget(this);
     d->thumbListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -618,10 +618,10 @@ QImage PdfInitWorker::getRenderedPageImage(const int &index) const
 
         for(int y = 0; y < h; y ++){
             for(int x = 0; x < w; x++){
-                uchar b = (uchar)pdata[(x * offset) + (y * w * offset)];
-                uchar g = (uchar)pdata[(x * offset) + (y * w * offset) + 1];
-                uchar r = (uchar)pdata[(x * offset) + (y * w * offset) + 2];
-                uchar a = (uchar)pdata[(x * offset) + (y * w * offset) + 3];
+                uchar b = static_cast<uchar> (pdata[(x * offset) + (y * w * offset)]);
+                uchar g = static_cast<uchar> (pdata[(x * offset) + (y * w * offset) + 1]);
+                uchar r = static_cast<uchar> (pdata[(x * offset) + (y * w * offset) + 2]);
+                uchar a = static_cast<uchar> (pdata[(x * offset) + (y * w * offset) + 3]);
 
                 img.setPixelColor(x, y, QColor((int)r, (int)g, (int)b, (int)a));
             }

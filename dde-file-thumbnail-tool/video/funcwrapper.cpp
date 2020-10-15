@@ -15,7 +15,7 @@ char *toBase64(const unsigned char *data, int size, int options)
     int padlen = 0;
 
     int tmp_size = (size + 2) / 3 * 4;
-    char *tmp = new char[tmp_size + 1];
+    char *tmp = new char[static_cast<unsigned int>(tmp_size) + 1];
     tmp[tmp_size] = '\0';
 
     int i = 0;
@@ -61,9 +61,9 @@ char *toBase64(const unsigned char *data, int size, int options)
 
     if (options & OmitTrailingEquals) {
         int new_size = out - tmp;
-        char *new_tmp = new char[new_size + 1];
+        char *new_tmp = new char[static_cast<unsigned int>(new_size) + 1];
 
-        memcpy(new_tmp, tmp, new_size);
+        memcpy(new_tmp, tmp, static_cast<unsigned int>(new_size));
         delete[] tmp;
 
         tmp = new_tmp;
