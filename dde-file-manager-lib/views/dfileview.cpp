@@ -1350,6 +1350,7 @@ void DFileView::delayUpdateStatusBar()
 void DFileView::updateStatusBar()
 {
     Q_D(DFileView);
+
     //智能指针和枷锁处理等待判断当前对象是否被析构
     QPointer<DFileView> me = this;
     QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
@@ -1358,6 +1359,14 @@ void DFileView::updateStatusBar()
     }
     if (model()->state() != DFileSystemModel::Idle)
         return;
+  
+    //若处于触摸滑动中，延时该更新，因为当前版本QT加速回弹动画会被子节点setText打断
+    if (QScroller::hasScroller(this)) {
+        d_ptr->updateStatusBarTimer->stop();
+        d_ptr->updateStatusBarTimer->start();
+        return;
+    }
+
     DFMEvent event(this);
     event.setWindowId(windowId());
     //来自搜索目录的url需要处理转换为localfile，否则statusBar上的展示会不正确
