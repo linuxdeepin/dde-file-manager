@@ -57,7 +57,7 @@ public:
     QHash<DUrl,bool> m_rootsmbftpurllist;
     JobController *m_jobcontroller = nullptr;
 
-    volatile bool m_rootChanged = false; //用于判断是否需要发送查询完毕信号，通知外部刷新
+    volatile bool m_rootChanged = true; //用于判断是否需要发送查询完毕信号，通知外部刷新。
 };
 
 QMap<DUrl, DAbstractFileInfoPointer> DRootFileManagerPrivate::rootfilelist; //本地跟踪root目录，本地磁盘，外部磁盘挂载，网络文件挂载
