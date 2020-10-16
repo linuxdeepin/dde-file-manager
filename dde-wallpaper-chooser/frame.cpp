@@ -38,6 +38,7 @@
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
 #endif
+#include "dfileservices.h"
 
 #include <DButtonBox>
 #include <DIconButton>
@@ -66,6 +67,7 @@
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 DCORE_USE_NAMESPACE
+DFM_USE_NAMESPACE
 using namespace com::deepin;
 static bool previewBackground()
 {
@@ -944,6 +946,14 @@ void Frame::refreshList()
                 QDBusReply<QString> reply = call.reply();
                 QString value = reply.value();
                 QStringList strings = processListReply(value);
+                QString currentPath = QString(m_backgroundManager->backgroundImages().value(m_screenName));
+                if (currentPath.contains("/usr/share/backgrounds/default_background.jpg")) {
+                    DAbstractFileInfoPointer tempInfo = DFileService::instance()->createFileInfo(nullptr, DUrl(currentPath));
+                    if (tempInfo) {
+                        currentPath = tempInfo->rootSymLinkTarget().toString();
+                    }
+                }
+
                 foreach (QString path, strings) {
                     if (m_needDeleteList.contains(QUrl(path).path())) {
                         continue;
@@ -967,12 +977,13 @@ void Frame::refreshList()
                         m_switchModeControl->buttonList().last()->setFocus();
                     });
 
+
                     //首次进入时，选中当前设置壁纸
                     if (m_backgroundManager == nullptr){
                         qCritical() << "Critical!" << "m_backgroundManager has deleted!";
                         this->hide();
                         return;
-                    } else if(path.remove("file://") == QString(m_backgroundManager->backgroundImages().value(m_screenName)).remove("file://")) //均有机会出现头部为file:///概率
+                    } else if(path.remove("file://") == currentPath.remove("file://")) //均有机会出现头部为file:///概率
                     {
                         item->pressed();
                     }
