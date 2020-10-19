@@ -865,6 +865,17 @@ void PropertyDialog::onHideFileCheckboxChecked(bool checked)
     flf.save();
 }
 
+void PropertyDialog::onCancelShare()
+{
+    if (m_xani.data()) {
+        m_xani->setDuration(0);
+    }
+
+    if (m_gani.data()) {
+        m_gani->setDuration(0);
+    }
+}
+
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
 {
     if (m_edit->isVisible()) {
@@ -1259,6 +1270,9 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
         DFMSideBar *sideBar = window->getLeftSideBar();
         connect(sideBar, &DFMSideBar::addUserShareItemFinished, this, &PropertyDialog::flickFolderToSidebar);
     }
+    // 取消共享时停止动画效果
+    connect(frame, &ShareInfoFrame::unfolderShared, this, &PropertyDialog::onCancelShare);
+
     return frame;
 }
 
