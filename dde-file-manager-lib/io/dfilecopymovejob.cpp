@@ -323,10 +323,10 @@ void DFileCopyMoveJobPrivate::setError(DFileCopyMoveJob::Error e, const QString 
     Q_Q(DFileCopyMoveJob);
 
     if (actionOfError[error] == DFileCopyMoveJob::NoAction) {
-       Q_EMIT q->errorChanged(e);
+        Q_EMIT q->errorChanged(e);
     }
     if (DFileCopyMoveJob::CancelError < e) {
-       qCDebug(fileJob()) << "new error, type=" << e << ", message=" << es;
+        qCDebug(fileJob()) << "new error, type=" << e << ", message=" << es;
     }
 }
 
@@ -911,7 +911,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
                 action = handleError(fromInfo, toInfo);
             }
 
-        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
         if (action != DFileCopyMoveJob::NoAction) {
             return action == DFileCopyMoveJob::SkipAction;
@@ -1030,7 +1030,7 @@ open_file: {
 
                 action = handleError(fromInfo, nullptr);
             }
-        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() ); // bug: 26333, while set the stop status shoule break the process!
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());  // bug: 26333, while set the stop status shoule break the process!
 
         if (action == DFileCopyMoveJob::SkipAction) {
             return true;
@@ -1046,7 +1046,7 @@ open_file: {
 
                 if (!toInfo->exists() || toInfo->isWritable()) {
                     // 修复KLU TASK-36488 翻译汉化问题
-                    if(toDevice->errorString() == "Permission denied"){
+                    if (toDevice->errorString() == "Permission denied") {
                         setError(DFileCopyMoveJob::OpenError, qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: Permission denied"));
                     } else {
                         setError(DFileCopyMoveJob::OpenError, qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()));
@@ -1058,7 +1058,7 @@ open_file: {
 
                 action = handleError(toInfo, nullptr);
             }
-        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+        } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
         if (action == DFileCopyMoveJob::SkipAction) {
             return true;
@@ -1074,7 +1074,7 @@ open_file: {
                     setError(DFileCopyMoveJob::ResizeError, toDevice->errorString());
                     action = handleError(toInfo, nullptr);
                 }
-            } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+            } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
             if (action == DFileCopyMoveJob::SkipAction) {
                 return true;
@@ -1088,11 +1088,11 @@ open_file: {
     // 开启读取优化，告诉内核，我们将顺序读取此文件
 
     if (fromDevice->handle() > 0) {
-        posix_fadvise (fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
     }
 
     if (toDevice->handle() > 0) {
-        posix_fadvise (toDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(toDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
     }
 #endif
 
@@ -1104,7 +1104,7 @@ open_file: {
 
     Q_FOREVER {
         qint64 current_pos = fromDevice->pos();
-read_data:
+    read_data:
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
@@ -1143,7 +1143,7 @@ read_data:
         }
 
         current_pos = toDevice->pos();
-write_data:
+    write_data:
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
@@ -1382,7 +1382,7 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
             }
         }
 
-        if(canRemove) {
+        if (canRemove) {
             if (is_file ? handler->remove(fileInfo->fileUrl()) : handler->rmdir(fileInfo->fileUrl())) {
                 return true;
             }
@@ -1394,7 +1394,7 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
         }
 
         action = handleError(fileInfo, nullptr);
-    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning() );
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
     return action == DFileCopyMoveJob::SkipAction;
 }
@@ -1674,8 +1674,6 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
         dataSize = completedDataSize;
     }
 
-    dataSize = targetIsRemovable <= 0 ? completedDataSizeOnBlockDevice : dataSize;
-
     dataSize += completedProgressDataSize;
 
     if (totalSize == 0)
@@ -1799,7 +1797,7 @@ void DFileCopyMoveJobPrivate::checkTagetNeedSync()
     DStorageInfo targetStorageInfo(targetUrl.toLocalFile());
     if (!iseveryreadandwritesync && targetStorageInfo.isValid()) {
         const QString &fs_type = targetStorageInfo.fileSystemType();
-        iseveryreadandwritesync =  (fs_type == "vfat" || fs_type == "cifs");
+        iseveryreadandwritesync = (fs_type == "vfat" || fs_type == "cifs");
     }
 }
 
@@ -1972,7 +1970,7 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
     d->fileStatistics->start(sourceUrls);
 
     // DFileStatisticsJob 统计数量很慢，自行统计
-    QtConcurrent::run([sourceUrls, d] () {
+    QtConcurrent::run([sourceUrls, d]() {
         if (d->mode == MoveMode || d->mode == CutMode) {
             d->countStatisticsFinished = false;
             for (const auto &url : sourceUrls) {
@@ -2144,7 +2142,7 @@ void DFileCopyMoveJob::run()
                                 if (!ok) {
                                     d->targetLogSecionSize = 512;
 
-                                    qCWarning(fileJob(), );
+                                    qCWarning(fileJob(),);
                                 }
 
                                 if (d->targetIsRemovable) {
