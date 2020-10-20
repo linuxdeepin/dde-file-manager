@@ -4196,7 +4196,8 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
     d->sourceUrlList = sourceUrls;
     d->targetUrl = targetUrl;
-    if (d->refinestat < MoreThreadRefine) {
+    d->isFromLocalUrls = isFromLocalFile(d->sourceUrlList);
+    if (!d->isFromLocalUrls) {
         if (d->fileStatistics->isRunning()) {
             d->fileStatistics->stop();
             d->fileStatistics->wait();
@@ -4306,7 +4307,6 @@ void DFileCopyMoveJob::run()
 
     // 本地文件使用 countAllCopyFile 统计大小非常快, 因此不必开辟线程去统计大小. 同步等待文件大小统计完成
     // 网络文件使用以下方式反而会更慢, 因此使用线程统计类
-    d->isFromLocalUrls = isFromLocalFile(d->sourceUrlList);
     if (d->targetUrl.isValid() && d->isFromLocalUrls) {
         d->countAllCopyFile();
     }
