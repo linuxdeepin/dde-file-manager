@@ -95,8 +95,8 @@ public:
     bool m_bcursorbusy = false;
     bool m_bonline = false;
     bool m_bdoingcleartrash = false;
-    QHash<DUrl,bool> m_rootsmbftpurllist;
-    QMutex checkgvfsmtx,smbftpmutex,timerMutex;
+    QHash<DUrl, bool> m_rootsmbftpurllist;
+    QMutex checkgvfsmtx, smbftpmutex, timerMutex;
     QNetworkConfigurationManager *m_networkmgr = nullptr;
 
     QTimer m_tagEditorChangeTimer;
@@ -124,14 +124,14 @@ DFileService::DFileService(QObject *parent)
         }));
     }
     //判断当前自己的网络状态
-    d_ptr->m_networkmgr = new QNetworkConfigurationManager();
+    d_ptr->m_networkmgr = new QNetworkConfigurationManager(this);
     d_ptr->m_bonline = d_ptr->m_networkmgr->isOnline();
     connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [this](bool state) {
         d_ptr->m_bonline = state;
     });
 
     d_ptr->m_tagEditorChangeTimer.setSingleShot(true);
-    connect(&d_ptr->m_tagEditorChangeTimer, &QTimer::timeout, this, [=]{
+    connect(&d_ptr->m_tagEditorChangeTimer, &QTimer::timeout, this, [ = ] {
         makeTagsOfFiles(nullptr, d_ptr->m_tagEditorFiles, d_ptr->m_tagEditorTags);
     });
 }
@@ -918,7 +918,7 @@ const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sende
 }
 
 const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent,bool isgvfs) const
+                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, bool isgvfs) const
 {
 
 
@@ -1068,9 +1068,9 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
     }
     bool isbusy = checkGvfsMountfileBusy(rooturl, rootfilename, showdailog);
     d->smbftpmutex.lock();
-    d->m_rootsmbftpurllist.insert(rooturl,isbusy);
+    d->m_rootsmbftpurllist.insert(rooturl, isbusy);
     d->smbftpmutex.unlock();
-    QTimer::singleShot(500,this,[rooturl,d](){
+    QTimer::singleShot(500, this, [rooturl, d]() {
         QMutexLocker lk(&d->smbftpmutex);
         d->m_rootsmbftpurllist.remove(rooturl);
     });
@@ -1111,20 +1111,19 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
 
     //是网络文件，就去确定host和port端口号
     bool bvist = true;
-    QString host,port;
+    QString host, port;
     QStringList ipinfolist = rootfilename.split(",");
     if (ipinfolist.count() >= 1) {
-        host = ipinfolist[0].replace(FTP_HOST,"");
-    }
-    else {
+        host = ipinfolist[0].replace(FTP_HOST, "");
+    } else {
         return true;
     }
 
-    if (ipinfolist.count() >=2 && -1 != ipinfolist[1].indexOf("port=")) {
-        port = ipinfolist[1].replace("port=","");
+    if (ipinfolist.count() >= 2 && -1 != ipinfolist[1].indexOf("port=")) {
+        port = ipinfolist[1].replace("port=", "");
     }
 
-    bvist = d->m_checknetwork.isHostAndPortConnect(host,port);
+    bvist = d->m_checknetwork.isHostAndPortConnect(host, port);
 
     bonline = isNetWorkOnline();
     if (!bonline) {
@@ -1380,12 +1379,11 @@ bool DFileService::checkMultiSelectionFilesCache()
 void DFileService::printStacktrace(int level)
 {
     int size = 16;
-    void * array[16];
+    void *array[16];
     int stack_num = backtrace(array, size);
-    char ** stacktrace = backtrace_symbols(array, stack_num);
-    int total = std::min(level,stack_num);
-    for (int i = 0; i < total; ++i)
-    {
+    char **stacktrace = backtrace_symbols(array, stack_num);
+    int total = std::min(level, stack_num);
+    for (int i = 0; i < total; ++i) {
         printf("%s\n", stacktrace[i]);
     }
     free(stacktrace);
