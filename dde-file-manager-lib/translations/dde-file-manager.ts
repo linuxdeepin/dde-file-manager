@@ -612,74 +612,69 @@
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="31"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="32"/>
         <source>Remove File Vault</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="81"/>
+        <source>Once removed, the files in it will be permanently deleted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
         <source>Cancel</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="150"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="155"/>
         <source>Use Key</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
         <source>Remove</source>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="147"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="152"/>
         <source>Use Password</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="162"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="167"/>
         <source>Wrong password</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="172"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="177"/>
         <source>Wrong recovery key</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="100"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="105"/>
         <source>Removing...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="75"/>
-        <source>Once removed, the files in it will be permanently deleted,</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="76"/>
-        <source>please confirm and continue</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="104"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="207"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="109"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="212"/>
         <source>Ok</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="203"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="208"/>
         <source>Remove File Vault failed.%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="217"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="222"/>
         <source>Removed successfully</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="219"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="224"/>
         <source>Failed to remove</source>
         <translation></translation>
     </message>
