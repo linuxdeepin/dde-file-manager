@@ -140,7 +140,10 @@ void AppController::registerUrlHandle()
 {
     DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
     //    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
-    DFileService::setFileUrlHandler(TRASH_SCHEME, "", new TrashManager());
+    //sanitinizer工具检测到DFileService::setFileUrlHandler(TRASH_SCHEME, "", new TrashManager());泄露
+    auto *tempTrashMgr = new TrashManager();
+    tempTrashMgr->setObjectName("trashMgr");
+    DFileService::setFileUrlHandler(TRASH_SCHEME, "", tempTrashMgr);
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
