@@ -26,22 +26,25 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     , m_stackedWidget(new QStackedWidget(this))
 {
     setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
-    this->setFixedSize(396, 248);
+    // 修复bug-41001 提示信息显示不全
+    this->setFixedWidth(396);
 
     // 标题
     DLabel *pTitle = new DLabel(tr("Delete File Vault"), this);
-    QFont font = pTitle->font();
-    font.setPixelSize(18);
-    pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
 
     // 信息
     m_pInfo = new QLabel(this);
     m_pInfo->setAlignment(Qt::AlignHCenter);
+    // 修复bug-41001 提示信息显示不全
+    m_pInfo->setWordWrap(true);
+    m_pInfo->setFixedHeight(60);
 
     // 主界面
     QFrame *mainFrame = new QFrame(this);
 
+    // 修复bug-41001 提示信息显示不全
+    m_stackedWidget->setFixedHeight(72);
     m_stackedWidget->addWidget(m_passwordView);
     m_stackedWidget->addWidget(m_recoverykeyView);
     m_stackedWidget->addWidget(m_progressView);
