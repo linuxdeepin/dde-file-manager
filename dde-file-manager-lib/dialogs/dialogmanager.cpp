@@ -1008,15 +1008,7 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
 
     if (!m_filePreviewDialog) {
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-        bool isWayland = false;
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-            isWayland = true;
-        }
-        if (!isWayland)
+        if (!DFMGlobal::isWayLand())
             DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
     } else {
         m_filePreviewDialog->updatePreviewList(canPreivewlist);

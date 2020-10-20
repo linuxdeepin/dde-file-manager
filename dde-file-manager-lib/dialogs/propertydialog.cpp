@@ -802,14 +802,24 @@ void PropertyDialog::flickFolderToSidebar(const DUrl &fileUrl)
     m_xani = new QVariantAnimation(this);
     m_xani->setStartValue(m_aniLabel->pos());
     m_xani->setEndValue(QPoint(targetPos.x(), angle));
-    m_xani->setDuration(700);
+    if(DFMGlobal::isWayLand()){
+        m_xani->setDuration(700);
+    }
+    else {
+        m_xani->setDuration(440);
+    }
 
     //QVariantAnimation *gani = new QVariantAnimation(this);
     m_gani = new QVariantAnimation(this);
     m_gani->setStartValue(m_aniLabel->geometry());
     m_gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
     m_gani->setEasingCurve(QEasingCurve::InBack);
-    m_gani->setDuration(700);
+    if(DFMGlobal::isWayLand()){
+        m_gani->setDuration(700);
+    }
+    else {
+        m_gani->setDuration(440);
+    }
 
     connect(m_xani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
         if (m_aniLabel) {
@@ -1270,8 +1280,11 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
         DFMSideBar *sideBar = window->getLeftSideBar();
         connect(sideBar, &DFMSideBar::addUserShareItemFinished, this, &PropertyDialog::flickFolderToSidebar);
     }
-    // 取消共享时停止动画效果
-    connect(frame, &ShareInfoFrame::unfolderShared, this, &PropertyDialog::onCancelShare);
+
+    if(DFMGlobal::isWayLand()){
+        // 取消共享时停止动画效果
+        connect(frame, &ShareInfoFrame::unfolderShared, this, &PropertyDialog::onCancelShare);
+    }
 
     return frame;
 }

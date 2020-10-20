@@ -89,9 +89,8 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    bool isWayland = false;
-    if (DesktopInfo().waylandDectected()) {
-        isWayland = true;
+
+    if (DFMGlobal::isWayLand()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
     }
 
@@ -106,8 +105,10 @@ int main(int argc, char *argv[])
         DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
     }
 
-    if (!isWayland) //wayland下不加载xcb
+    if (!DFMGlobal::isWayLand()){
+        //wayland下不加载xcb
         SingleApplication::loadDXcbPlugin();
+    }
     SingleApplication::initSources();
     SingleApplication app(argc, argv);
 
@@ -151,7 +152,7 @@ int main(int argc, char *argv[])
 
     // open as root
     if (CommandLineManager::instance()->isSet("r")) {
-        if (isWayland) {
+        if (DFMGlobal::isWayLand()) {
             QString cmd = "xhost";
             QStringList args;
             args << "+";
