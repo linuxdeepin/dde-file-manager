@@ -42,9 +42,16 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     connect(m_pTypeCombo, SIGNAL(currentIndexChanged(int)),
                       this, SLOT(slotTypeChanged(int)));
 
+    // 修复klu-bug-51515 设置只能输入自定义的字符当做密码
+    // 设置只能输入大小写字母、数字和部分符号的正则表达式
+    QRegExp regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~\'\"|]+");
+    // 创建验证器
+    QValidator *validator = new QRegExpValidator(regx, this);
+
     // 设置密码
     m_pPasswordLabel = new DLabel(tr("Password"),this);
     m_pPassword = new DPasswordEdit(this);
+    m_pPassword->lineEdit()->setValidator(validator);   // 设置验证器
     m_pPassword->lineEdit()->setPlaceholderText(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"));
     m_pPassword->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
     connect(m_pPassword, &DPasswordEdit::textEdited,
@@ -60,6 +67,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     // 重复密码
     m_pRepeatPasswordLabel = new DLabel(tr("Repeat password"), this);
     m_pRepeatPassword = new DPasswordEdit(this);
+    m_pRepeatPassword->lineEdit()->setValidator(validator);   // 设置验证器
     m_pRepeatPassword->lineEdit()->setPlaceholderText(tr("Input the password again"));
     m_pRepeatPassword->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
     connect(m_pRepeatPassword, &DPasswordEdit::textEdited,
