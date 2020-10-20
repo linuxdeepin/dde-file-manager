@@ -2181,6 +2181,11 @@ void DFileCopyMoveJob::run()
             source = source.searchedFileUrl();
         }
 
+        //! fix: 将保险箱路径转换为本地路径
+        if (source.isVaultFile()) {
+            source = VaultController::vaultToLocalUrl(source);
+        }
+
         const DAbstractFileInfoPointer &source_info = DFileService::instance()->createFileInfo(nullptr, source);
         if (!source_info) {
             qWarning() << "Url not yet supported: " << source;
