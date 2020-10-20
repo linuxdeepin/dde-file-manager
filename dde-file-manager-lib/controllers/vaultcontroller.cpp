@@ -199,7 +199,7 @@ VaultController::VaultController(QObject *parent)
     : DAbstractFileController(parent), d_ptr(new VaultControllerPrivate(this))
 {
     Q_D(VaultController);
-    d->m_cryFsHandle = new CryFsHandle;
+    d->m_cryFsHandle = new CryFsHandle(this);
     connect(this, &VaultController::sigCreateVault, d->m_cryFsHandle, &CryFsHandle::createVault);
     connect(this, &VaultController::sigUnlockVault, d->m_cryFsHandle, &CryFsHandle::unlockVault);
     connect(this, &VaultController::sigLockVault, d->m_cryFsHandle, &CryFsHandle::lockVault);
@@ -345,8 +345,7 @@ bool VaultController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) 
     if (!pathList.empty()) {
         if (event->isEnter()) {
             result = FileUtils::openEnterFiles(pathList);
-        }
-        else {
+        } else {
             result = FileUtils::openFiles(pathList);
         }
         if (!result) {
@@ -1055,7 +1054,7 @@ void VaultController::refreshTotalSize()
 {
     // 修复BUG-42897 打开正在拷贝或剪贴的文件夹时，主界面卡死问题
     // 当保险箱大小计算线程没有结束时，直接返回
-    if(m_sizeWorker->isRunning()){
+    if (m_sizeWorker->isRunning()) {
         m_bNeedRefreshSize = true;
         return;
     }
@@ -1070,7 +1069,7 @@ void VaultController::onFinishCalcSize()
     if (m_bNeedRefreshSize) {
         DUrl url = vaultToLocalUrl(makeVaultUrl());
         // 修复BUG-47507 增加判断，如果该线程正在启动，不要再次进入该线程
-        if(!m_sizeWorker->isRunning())
+        if (!m_sizeWorker->isRunning())
             m_sizeWorker->start({url});
     }
     m_bNeedRefreshSize = false;
@@ -1079,7 +1078,7 @@ void VaultController::onFinishCalcSize()
 // 创建保险箱，执行该槽函数,通知保险箱创建成功与否，并更新保险箱的状态
 void VaultController::slotCreateVault(int state)
 {
-    if(state == static_cast<int>(ErrorCode::Success)){
+    if (state == static_cast<int>(ErrorCode::Success)) {
         m_enVaultState = Unlocked;
     }
     emit signalCreateVault(state);
