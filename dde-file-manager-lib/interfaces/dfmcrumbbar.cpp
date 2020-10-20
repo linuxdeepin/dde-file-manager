@@ -409,7 +409,13 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
         return;
     }
 
-    QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
+    // 回收站预览打开文件夹时传过来的是真实路径，所以将其转换为虚拟路径
+    DUrl fileUrl = url;
+    if (url.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+        fileUrl = DUrl::fromTrashFile(url.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+    }
+
+    QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(fileUrl);
     for (const CrumbData& c : crumbDataList) {
         if (d->crumbListviewModel) {
             QString iconName = getIconName(c);

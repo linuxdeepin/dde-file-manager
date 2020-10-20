@@ -197,11 +197,18 @@ const DAbstractFileInfoPointer TrashManager::createFileInfo(const QSharedPointer
 
 bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
-    Q_UNUSED(event)
+    // fix bug#41297 回收站的文件夹预览,点击打开,应该不能弹出提示框
+    // 判断url为文件夹则不弹出提示框，新开一个文管打开
+    DUrl fileUrl = event->url();
+    QFileInfo fileInfo(fileUrl.toLocalFile());
+    if (fileInfo.isFile()) {
+        QString strMsg = tr("Unable to open items in the trash,please restore it first");
+        dialogManager->showMessageDialog(2, strMsg);
+        return false;
+    }
 
-    qWarning() << "trash open action is disable : " << event->url();
-//    return FileServices::instance()->openFile(DUrl::fromLocalFile(TRASHFILEPATH + fileUrl.path()));
-    return false;
+    // 预览打开文件夹
+    return DFileService::instance()->openFile(event->sender(), DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + event->url().path()));
 }
 
 DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
