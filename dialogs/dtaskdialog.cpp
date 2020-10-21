@@ -333,6 +333,9 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     }
     blockShutdown();
     QListWidgetItem *item = new QListWidgetItem();
+    // 修复KLU BUG-51238 QListWidgetItem大小显示不对问题
+    // 设置Item的大小
+    item->setSizeHint(QSize(wid->width(), wid->height()));
     item->setFlags(Qt::NoItemFlags);
     m_taskListWidget->addItem(item);
     m_taskListWidget->setItemWidget(item, wid);
