@@ -54,6 +54,11 @@ quint64 VaultClock::getSelfTime() const
     return m_selfTime;
 }
 
+void VaultClock::addTickTime(qint64 seconds)
+{
+    m_selfTime += static_cast<quint64>(seconds);
+}
+
 bool VaultClock::isLockEventTriggered() const
 {
     return m_isLockEventTriggerd;
