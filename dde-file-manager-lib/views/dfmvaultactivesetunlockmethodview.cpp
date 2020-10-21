@@ -161,10 +161,12 @@ void DFMVaultActiveSetUnlockMethodView::clearText()
 {
     m_pPassword->clear();
     m_pPassword->hideAlertMessage();
-    m_pPassword->lineEdit()->setStyleSheet("");
+    // 修复BUG-51508 取消密码框警告状态
+    m_pPassword->setAlert(false);
     m_pRepeatPassword->clear();
     m_pRepeatPassword->hideAlertMessage();
-    m_pRepeatPassword->lineEdit()->setStyleSheet("");
+    // 修复BUG-51508 取消密码框警告状态
+    m_pRepeatPassword->setAlert(false);
     m_pTips->clear();
 }
 
@@ -184,7 +186,8 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
     bool ok = checkPassword(m_pPassword->text());
     if (!ok) {
         m_pNext->setEnabled(false);
-        m_pPassword->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+        // 修复BUG-51508 激活密码框警告状态
+        m_pPassword->setAlert(true);
         m_pPassword->showAlertMessage(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"), TIPS_TIME);
     } else {
         if (checkInputInfo()) {
@@ -196,7 +199,8 @@ void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFinished()
 void DFMVaultActiveSetUnlockMethodView::slotPasswordEditFocusChanged(bool bFocus)
 {
     if (bFocus) {
-        m_pPassword->lineEdit()->setStyleSheet("");
+        // 修复BUG-51508 取消密码框警告状态
+        m_pPassword->setAlert(false);
         m_pPassword->hideAlertMessage();
     }
 }
@@ -205,7 +209,8 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished()
 {
     bool ok = checkRepeatPassword();
     if (!ok) {
-        m_pRepeatPassword->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+        // 修复BUG-51508 激活密码框警告状态
+        m_pRepeatPassword->setAlert(true);
         m_pRepeatPassword->showAlertMessage(tr("Passwords do not match"), TIPS_TIME);
     }
 }
@@ -232,7 +237,8 @@ void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditing()
 void DFMVaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged(bool bFocus)
 {
     if (bFocus) {
-        m_pRepeatPassword->lineEdit()->setStyleSheet("");
+        // 修复BUG-51508 取消密码框警告状态
+        m_pRepeatPassword->setAlert(false);
         m_pRepeatPassword->hideAlertMessage();
     }
 }

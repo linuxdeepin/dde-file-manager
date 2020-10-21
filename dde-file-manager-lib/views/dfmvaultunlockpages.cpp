@@ -176,7 +176,8 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
             VaultController::ins()->unlockVault(strClipher);
         }else {
             // 设置密码输入框颜色
-            m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+            // 修复bug-51508 激活密码框警告状态
+            m_passwordEdit->setAlert(true);
             showToolTip(tr("Wrong password"), 3000, EN_ToolTip::Warning);
         }
         return;
@@ -189,9 +190,8 @@ void DFMVaultUnlockPages::onPasswordChanged(const QString &pwd)
 {
     if (!pwd.isEmpty()){
         getButton(1)->setEnabled(true);
-        QLineEdit edit;
-        QPalette palette = edit.palette();
-        m_passwordEdit->lineEdit()->setPalette(palette);
+        // 修复bug-51508 取消密码框警告状态
+        m_passwordEdit->setAlert(false);
     }else {
         getButton(1)->setEnabled(false);
     }
