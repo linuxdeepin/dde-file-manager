@@ -18,13 +18,15 @@
 
 #include "vault/vaultmanager.h"
 #include "dbusservice/dbusadaptor/vault_adaptor.h"
+#include "app/policykithelper.h"
+#include "vaultclock.h"
+
 #include <QDBusConnection>
 #include <QDBusPendingCall>
 #include <QDBusVariant>
 #include <QProcess>
 #include <QDebug>
-#include "app/policykithelper.h"
-#include "vaultclock.h"
+#include <QDateTime>
 
 
 QString VaultManager::ObjectPath = "/com/deepin/filemanager/daemon/VaultManager";
@@ -35,6 +37,7 @@ VaultManager::VaultManager(QObject *parent)
     : QObject(parent)
     , QDBusContext()
     , m_curVaultClock(nullptr)
+    , m_pcTime(0)
 {
     QDBusConnection::systemBus().registerObject(ObjectPath, this);
     m_vaultAdaptor = new VaultAdaptor(this);
@@ -52,6 +55,14 @@ VaultManager::VaultManager(QObject *parent)
                 "UserChanged",
                 this,
                 SLOT(sysUserChanged(QString)));
+
+    QDBusConnection::systemBus().connect(
+                  "org.freedesktop.login1",
+                  "/org/freedesktop/login1",
+                  "org.freedesktop.login1.Manager",
+                  "PrepareForSleep",
+                  this,
+                  SLOT(computerSleep(bool)));
 }
 
 VaultManager::~VaultManager()
@@ -123,6 +134,23 @@ void VaultManager::triggerLockEvent()
 void VaultManager::clearLockEvent()
 {
     m_curVaultClock->clearLockEvent();
+}
+
+void VaultManager::computerSleep(bool bSleep)
+{
+    if (bSleep) {
+        m_pcTime = QDateTime::currentSecsSinceEpoch();
+    } else {
+        qint64 diffTime = QDateTime::currentSecsSinceEpoch() - m_pcTime;
+        if (diffTime > 0) {
+            for (auto key : m_mapUserClock.keys()) {
+                VaultClock *vaultClock = m_mapUserClock.value(key);
+                if (vaultClock) {
+                    vaultClock->addTickTime(diffTime);
+                }
+            }
+        }
+    }
 }
 
 QString VaultManager::getCurrentUser() const
