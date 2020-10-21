@@ -29,11 +29,13 @@
 #include "dfileservices.h"
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QCoreApplication>
 #include <QDebug>
+
 
 DFM_USE_NAMESPACE
 
@@ -188,6 +190,11 @@ void CommandLineManager::processCommand()
         }
 
         DUrl url = DUrl::fromUserInput(path);
+
+        //! 如果为保险箱路径，则进行转换，确保可以在保险中打开
+        if (VaultController::isVaultFile(url.toString())) {
+            url = VaultController::localUrlToVault(url);
+        }
 
         if (CommandLineManager::instance()->isSet("show-item")) {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
