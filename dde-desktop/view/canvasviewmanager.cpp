@@ -5,6 +5,7 @@
 #include "desktopitemdelegate.h"
 #include "dfilesystemmodel.h"
 #include "util/util.h"
+#include "util/dde/desktopinfo.h"
 
 #include <QPair>
 
@@ -151,7 +152,9 @@ void CanvasViewManager::onBackgroundEnableChanged()
             CanvasViewPointer mView = m_canvasMap.value(sp);
             mView->setParent(nullptr);
             mView->setWindowFlag(Qt::FramelessWindowHint, true);
-//            Xcb::XcbMisc::instance().set_window_type(mView->winId(), Xcb::XcbMisc::Desktop);
+            if(!DesktopInfo().waylandDectected()){
+                Xcb::XcbMisc::instance().set_window_type(mView->winId(), Xcb::XcbMisc::Desktop);
+            }
             DesktopUtil::set_desktop_window(mView.data());
 #ifndef UNUSED_SMARTDOCK
             mView->setGeometry(sp->availableGeometry());
