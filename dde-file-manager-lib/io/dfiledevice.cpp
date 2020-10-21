@@ -71,6 +71,11 @@ void DFileDevice::closeWriteReadFailed(const bool bwrite)
     Q_UNUSED(bwrite);
 }
 
+void DFileDevice::cancelAllOperate()
+{
+
+}
+
 DFileDevice::DFileDevice(QObject *parent)
     : DFileDevice(*new DFileDevicePrivate(this), parent)
 {

@@ -32,6 +32,7 @@
 #include "controllers/vaultcontroller.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "shutil/fileutils.h"
+#include "dgiofiledevice.h"
 
 #include <QMutex>
 #include <QTimer>
@@ -1101,6 +1102,19 @@ open_file: {
 
 //    int writtenDataSize = 0;
     uLong source_checksum = adler32(0L, nullptr, 0);
+    DGIOFileDevice *fromgio = qobject_cast<DGIOFileDevice *>(fromDevice.data());
+    DGIOFileDevice *togio = qobject_cast<DGIOFileDevice *>(toDevice.data());
+    if (fromgio) {
+        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[fromgio](){
+            fromgio->cancelAllOperate();
+        });
+    }
+    if (togio) {
+        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[togio](){
+            togio->cancelAllOperate();
+        });
+    }
+
 
     Q_FOREVER {
         qint64 current_pos = fromDevice->pos();
@@ -1111,6 +1125,9 @@ open_file: {
 
         char data[blockSize + 1];
         qint64 size_read = fromDevice->read(data, blockSize);
+        if (Q_UNLIKELY(!stateCheck())) {
+            return false;
+        }
 
         if (Q_UNLIKELY(size_read <= 0)) {
             if (fromDevice->atEnd()) {
@@ -1148,6 +1165,9 @@ open_file: {
             return false;
         }
         qint64 size_write = toDevice->write(data, size_read);
+        if (Q_UNLIKELY(!stateCheck())) {
+            return false;
+        }
         //如果写失败了，直接推出
         if (size_write < 0) {
             if (!stateCheck()) {
@@ -1215,8 +1235,10 @@ open_file: {
 
                         surplus_data += size_write;
                         surplus_size -= size_write;
-
                         size_write = toDevice->write(surplus_data, surplus_size);
+                        if (Q_UNLIKELY(!stateCheck())) {
+                            return false;
+                        }
                     } while (size_write > 0 && size_write != surplus_size);
 
                     // 表示全部数据写入完成
@@ -1225,6 +1247,9 @@ open_file: {
                     }
                 }
 
+                if (Q_UNLIKELY(!stateCheck())) {
+                    return false;
+                }
                 if (checkFreeSpace(currentJobDataSizeInfo.first - currentJobDataSizeInfo.second)) {
                     setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
                 } else {
@@ -1275,6 +1300,8 @@ open_file: {
     } else if (Q_UNLIKELY(!stateCheck())) {
         return false;
     }
+
+    q_ptr->disconnect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,nullptr);
 
     if (fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking)) {
         return true;
@@ -1997,6 +2024,8 @@ void DFileCopyMoveJob::stop()
 
     d->setState(StoppedState);
     d->waitCondition.wakeAll();
+
+    emit stopAllGioDervic();
 }
 
 void DFileCopyMoveJob::togglePause()

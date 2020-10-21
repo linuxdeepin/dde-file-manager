@@ -33,7 +33,7 @@ class DGIOFileDevice : public DFileDevice
 
 public:
     explicit DGIOFileDevice(const DUrl &url, QObject *parent = nullptr);
-    ~DGIOFileDevice();
+    ~DGIOFileDevice() override;
 
     bool setFileUrl(const DUrl &url) override;
 
@@ -48,6 +48,7 @@ public:
     bool flush() override;
     bool syncToDisk() override;
     void closeWriteReadFailed(const bool bwrite) override;
+    void cancelAllOperate() override;
 
 protected:
     qint64 readData(char *data, qint64 maxlen) override;

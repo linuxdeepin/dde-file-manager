@@ -43,6 +43,7 @@ public:
     virtual bool flush();
     virtual bool syncToDisk();
     virtual void closeWriteReadFailed(const bool bwrite);
+    virtual void cancelAllOperate();
 
 protected:
     virtual bool setFileUrl(const DUrl &url);
