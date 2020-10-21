@@ -110,9 +110,14 @@ void SearchFileWatcher::setEnabledSubfileWatcher(const DUrl &subfileUrl, bool en
 
     if (enabled) {
         addWatcher(subfileUrl.searchedFileUrl());
-    } else {
-        removeWatcher(subfileUrl.searchedFileUrl());
-    }
+    } 
+    //这里removeWatcher的逻辑是在文件超出可视区域时，就不监控其变化
+    //但这样会导致在一些特殊目录下搜索后，做一些特殊操作（例如最近使用目录中移除文件 、标记目录中取消文件标记等）时，
+    //在可视区域外的文件不会从搜索结果中移除
+    //宗上，将该行代码注释
+    //else {
+    //    removeWatcher(subfileUrl.searchedFileUrl());
+    //}
 }
 
 void SearchFileWatcher::addWatcher(const DUrl &url)
