@@ -91,6 +91,9 @@ DWIDGET_USE_NAMESPACE
 
 #define DEFAULT_HEADER_SECTION_WIDTH 140
 
+#define LOOPNUM             10      // 判断文件是否存在的循环次数
+#define WAITTIME            10     // 判断没有文件是否存在的间隔时间
+
 SelectWork::SelectWork(QObject *parent)
     : QThread(parent)
     , m_pModel(nullptr)
@@ -101,6 +104,16 @@ SelectWork::SelectWork(QObject *parent)
 
 void SelectWork::setInitData(QList<DUrl> lst, DFileSystemModel *model)
 {
+    // 修复bug-51429 bug-51039 bug-51503
+    // 解决拷贝/剪贴文件到保险箱,文件没有选中问题
+    QList<DUrl>::iterator itr = lst.begin();
+    for(; itr != lst.end(); ++itr) {
+        QString path = (*itr).toLocalFile();
+        if(VaultController::isVaultFile(path)){
+            DUrl url(VaultController::localToVault(path));
+            *itr = url;
+        }
+    }
     m_lstNoValid = lst;
     m_pModel = model;
 }
@@ -118,20 +131,29 @@ void SelectWork::stopWork()
 
 void SelectWork::run()
 {
-    msleep(10);
+    msleep(WAITTIME);
     // 判断当前是否存在未处理的文件
     if (!m_lstNoValid.isEmpty()) {
         QList<DUrl>::iterator itr = m_lstNoValid.begin();
+        int loopNum = 0;
         while (itr != m_lstNoValid.end()) {
-            msleep(10);
+            msleep(WAITTIME);
+            // 修复bug-51429 bug-51039 bug-51503
+            // 增加一个结束判断,当重复判断一个文件LOOPNUM次都不存在后,不在选中该文件
+            if(loopNum > LOOPNUM)
+                itr = m_lstNoValid.erase(itr);
             if (m_bStop)
                 break;
-            if(!m_pModel) break;
+            if(!m_pModel)
+                break;
             const QModelIndex &index = m_pModel->index(*itr);
             if (index.isValid()) {
                 // 发送信号选中该文件
                 emit sigSetSelect(*itr);
                 itr = m_lstNoValid.erase(itr);
+                loopNum = 0;
+            } else {
+                ++loopNum;
             }
         }
     }
