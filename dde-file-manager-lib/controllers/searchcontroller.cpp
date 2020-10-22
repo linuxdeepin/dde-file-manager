@@ -34,7 +34,7 @@
 #include "shutil/dfmfilelistfile.h"
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
-
+#include "vaultcontroller.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
@@ -393,8 +393,13 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
             }
             url.setSearchedFileUrl(realUrl);
 
-            if (!childrens.contains(url))
+            if (!childrens.contains(url)) {
+                // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
+                if(!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())){
+                    continue;
+                }
                 childrens << url;
+            }
         }
     }
 }
@@ -482,8 +487,13 @@ bool SearchDiriterator::hasNext() const
                 const DUrl &realUrl = fileInfo->fileUrl();
 
                 url.setSearchedFileUrl(realUrl);
-                if (!childrens.contains(url))
+                if (!childrens.contains(url)) {
+                    // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
+                    if(!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())){
+                        continue;
+                    }
                     childrens << url;
+                }
 
                 return true;
             }
@@ -505,8 +515,13 @@ bool SearchDiriterator::hasNext() const
 
 //                qDebug() << "search matched url = " << realUrl.path() + "/" + realUrl.fileName();
                 url.setSearchedFileUrl(realUrl);
-                if (!childrens.contains(url))/*去重*/
+                if (!childrens.contains(url)) {/*去重*/
+                    // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
+                    if(!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())){
+                        continue;
+                    }
                     childrens << url;
+                }
 
                 return true;
             }
