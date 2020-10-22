@@ -194,6 +194,10 @@ void ScreenManagerWayland::onScreenGeometryChanged(const QRect &rect)
     if (sc != nullptr && m_screens.contains(sc->path())) {
         ScreenPointer sp = m_screens.value(sc->path());
         emit sigScreenGeometryChanged(sp, rect);
+
+        //fix wayland下切换合并/拆分，当主屏的geometry在合并拆分前后没有改变时，不会发送PrimaryRectChanged，而在主线能发送出来。
+        //这导致没法判断到显示模式改变，这里补充触发
+        emit m_display->PrimaryRectChanged();
     }
 }
 
