@@ -1,6 +1,11 @@
+%define specrelease 8%{?dist}
+%if 0%{?openeuler}
+%define specrelease 8
+%endif
+
 Name:           dde-file-manager
-Version:        5.2.0.46
-Release:        7%{?dist}
+Version:        5.2.0.56
+Release:        %{specrelease}
 Summary:        Deepin File Manager
 License:        GPLv3
 URL:            https://github.com/linuxdeepin/dde-file-manager
