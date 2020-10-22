@@ -23,29 +23,31 @@
 #这个搜索引擎是利用C语言和GTK代码编写，文件搜索速度相当快，是移植的开源代码fsearch的核心部分
 #-------------------------------------------------
 HEADERS += \ 
-    $$PWD/array.h \
-    $$PWD/btree.h \
-    $$PWD/database_search.h \
-    $$PWD/database.h \
-    $$PWD/fsearch_config.h \
-    $$PWD/fsearch_limits.h \
-    $$PWD/fsearch_thread_pool.h \
-    $$PWD/fsearch.h \
-    $$PWD/myfsearch.h \
-    $$PWD/query.h \
-    $$PWD/string_utils.h \
-    $$PWD/utf8.h
+    $$PWD/dfsearch.h \
+    $$PWD/fsearch/array.h \
+    $$PWD/fsearch/btree.h \
+    $$PWD/fsearch/database_search.h \
+    $$PWD/fsearch/database.h \
+    $$PWD/fsearch/fsearch_config.h \
+    $$PWD/fsearch/fsearch_limits.h \
+    $$PWD/fsearch/fsearch_thread_pool.h \
+    $$PWD/fsearch/fsearch.h \
+    $$PWD/fsearch/query.h \
+    $$PWD/fsearch/string_utils.h \
+    $$PWD/fsearch/utf8.h
 
 SOURCES += \ 
-    $$PWD/array.c \
-    $$PWD/btree.c \
-    $$PWD/database_search.c \
-    $$PWD/database.c \
-    $$PWD/fsearch_config.c \
-    $$PWD/fsearch_thread_pool.c \
-    $$PWD/fsearch.c \
-    $$PWD/myfsearch.c \
-    $$PWD/query.c \
-    $$PWD/string_utils.c
+    $$PWD/dfsearch.cpp \
+    $$PWD/fsearch/array.c \
+    $$PWD/fsearch/btree.c \
+    $$PWD/fsearch/database_search.c \
+    $$PWD/fsearch/database.c \
+    $$PWD/fsearch/fsearch_config.c \
+    $$PWD/fsearch/fsearch_thread_pool.c \
+    $$PWD/fsearch/fsearch.c \
+    $$PWD/fsearch/query.c \
+    $$PWD/fsearch/string_utils.c
 
 CONFIG += link_pkgconfig
+
+INCLUDEPATH += $$PWD/fsearch

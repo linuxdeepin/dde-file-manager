@@ -65,7 +65,7 @@ static DatabaseLocation *
 db_location_get_for_path (Database *db, const char *path);
 
 static DatabaseLocation *
-db_location_build_tree (const char *dname, void (*callback)(const char *));
+db_location_build_tree (const char *dname, FsearchConfig *cfg, void (*callback)(const char *));
 
 static DatabaseLocation *
 db_location_new (void);
@@ -468,9 +468,9 @@ db_location_walk_tree_recursive (DatabaseLocation *location,
     }
     return WALK_OK;
 }
-extern FsearchApplication* app;
+
 static DatabaseLocation *
-db_location_build_tree (const char *dname, void (*callback)(const char *))
+db_location_build_tree (const char *dname, FsearchConfig *cfg, void (*callback)(const char *))
 {
     const char *root_name = NULL;
     if (!strcmp (dname, "/")) {
@@ -482,7 +482,7 @@ db_location_build_tree (const char *dname, void (*callback)(const char *))
     BTreeNode *root = btree_node_new (root_name, 0, 0, 0, true);
     DatabaseLocation *location = db_location_new ();
     location->entries = root;
-    FsearchConfig *config = app->config;
+    FsearchConfig *config = cfg;
 
     int spec = 0;
     if (!config->exclude_hidden_items) {
@@ -739,13 +739,14 @@ db_location_load (Database *db, const char *location_name)
 bool
 db_location_add (Database *db,
                  const char *location_name,
+                 FsearchConfig *config,
                  void (*callback)(const char *))
 {
     assert (db != NULL);
     db_lock (db);
 //    trace ("load location: %s\n", location_name);
 
-    DatabaseLocation *location = db_location_build_tree (location_name, callback);
+    DatabaseLocation *location = db_location_build_tree (location_name, config, callback);
 
     if (location) {
 //        trace ("location num entries: %d\n", location->num_items);

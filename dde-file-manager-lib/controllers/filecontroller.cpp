@@ -83,7 +83,7 @@
 #include "anything_interface.h"
 #endif
 #ifdef DISABLE_QUICK_SEARCH
-#include "./search/myfsearch.h"
+#include "./search/dfsearch.h"
 #endif
 
 class DFMQDirIterator : public DDirIterator
@@ -358,9 +358,7 @@ QString printList(BTreeNode *pNode)
 
     return fullPath;
 }
-QStringList searchResult;
-bool mDone = false;
-QString filepath = "";
+
 class DFMAnythingDirIterator : public DDirIterator
 {
 public:
@@ -368,27 +366,25 @@ public:
         : keyword(k)
         , dir(path)
     {
-        /*fix task 30348 当前目录初始化*/
-        filepath = path;
-        fsearch_Close();
-        fsearch_Init(path.toLocal8Bit().data());
-//        QTimer::singleShot(1000, [this] {
-//            fsearch_Find(keyword.toStdString().c_str(),callbackFunc);
-//        });
-
-//        keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(keyword);
+        dfsearch = new DFSearch(path, this);
     }
 
     ~DFMAnythingDirIterator() override
     {
-//       fsearch_Close();
+        if (dfsearch) {
+            delete dfsearch;
+            dfsearch = nullptr;
+        }
     }
-    static void callbackFunc(void *back)
+    static void callbackFunc(void *back, void *self)
     {
+        if (!self) {
+            return;
+        }
+        DFMAnythingDirIterator *it = static_cast<DFMAnythingDirIterator *>(self);
         uint32_t num_folders;
         uint32_t num_files;
         uint32_t num_results = 0;
-        searchResult.clear();
         DatabaseSearch *result = static_cast<DatabaseSearch *>(back);
         GPtrArray *results = result->results;
         if (results) {
@@ -397,18 +393,17 @@ public:
             num_results = results->len;
             for (uint32_t j = 0; j < num_results; j++) {
                 DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
-//                searchResult.append(printList(entry->node));
                 QString strResult = printList(entry->node);
                 if (!strResult.isEmpty()) {
                     /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
                     QFileInfo fileInfo(strResult);
                     QString fullPath = fileInfo.absoluteFilePath();
                     QString filePath = fileInfo.absolutePath();
-                    if (filePath.startsWith(filepath) && !searchResult.contains(fullPath))
-                        searchResult.append(strResult);
+                    if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath))
+                        it->searchResults.append(strResult);
                 }
             }
-            mDone = true;
+            it->mDone = true;
             qDebug() << "-------callback:" << num_results;
         }
     }
@@ -426,11 +421,10 @@ public:
 
             if (searchDirList.isEmpty() || searchDirList.first() != dir_path) {
                 searchDirList.prepend(dir_path);
-                fsearch_Find(keyword.toStdString().c_str(), callbackFunc);
+                dfsearch->searchByKeyWord(keyword, callbackFunc);
                 qDebug() << "*******************************find";
                 mDone = false;
             }
-            searchResult.clear();
             searchResults.clear();
             initialized = true;
         }
@@ -444,16 +438,8 @@ public:
             }
         }
 
-        if (searchResult.size()) {
-            if (searchResults.isEmpty() && !resultinit) {
-                searchResults = searchResult;
-
-                resultinit = true;
-                searchDirList.removeAt(0);
-                return !searchResults.isEmpty();
-            }
-        }
-
+        resultinit = true;
+        searchDirList.removeAt(0);
         return !searchResults.isEmpty();
     }
 
@@ -484,6 +470,8 @@ private:
     mutable quint32 searchStartOffset = 0, searchEndOffset = 0;
     mutable QStringList searchResults;
 
+    mutable bool mDone = false;
+    DFSearch *dfsearch = nullptr;
     QDir dir;
     QFileInfo currentFileInfo;
 };

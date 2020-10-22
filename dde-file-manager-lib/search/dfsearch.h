@@ -18,18 +18,36 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __MYFSEARCH_H__
-#define __MYFSEARCH_H__
+#ifndef __DFSEARCH_H__
+#define __DFSEARCH_H__
+
+#include <QObject>
+
 extern "C"
 {
-#include "database_search.h"
-    void fsearch_Init(const char*path);
-//    void fsearch_DeInit(char*path);
-    void fsearch_Find(const char*text,void (*callback)(void *));
-//    void fsearch_Find(const char*text);
-    void fsearch_Close(void);
-    void fsearch_UpdateDb(char*path);
-    GPtrArray * get_Result(void);
-    unsigned int get_ResultLen(void);
+#include "fsearch.h"
 }
+
+class DFSearch
+{
+    typedef void (*callbackFunc)(void *, void *);
+public:
+    DFSearch(const QString &searchPath, void *parent = nullptr);
+
+    ~DFSearch();
+
+    void searchByKeyWord(const QString &key, void (*callback)(void *, void *));
+
+private:
+    static void fsearch_application_window_update_results(void *data, void *sender);
+
+    static gboolean update_model_cb(gpointer user_data, gpointer sender);
+private:
+    FsearchApplication *app = nullptr;
+    callbackFunc cbFunc;
+    GPtrArray *results;
+    uint  num_results = 0;
+    void *caller = nullptr;
+};
+
 #endif

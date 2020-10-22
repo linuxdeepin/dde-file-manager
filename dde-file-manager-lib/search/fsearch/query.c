@@ -14,8 +14,9 @@
 
 FsearchQuery *
 fsearch_query_new (const char *query,
-                   void (*callback)(void *),
+                   void (*callback)(void *, void *),
                    void *callback_data,
+                   void *sender,
                    bool match_case,
                    bool enable_regex,
                    bool auto_search_in_path,
@@ -28,6 +29,7 @@ fsearch_query_new (const char *query,
     }
     q->callback = callback;
     q->callback_data = callback_data;
+    q->sender = sender;
     q->match_case = match_case;
     q->enable_regex = enable_regex;
     q->auto_search_in_path = auto_search_in_path;

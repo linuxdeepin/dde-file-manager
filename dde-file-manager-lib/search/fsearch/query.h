@@ -18,14 +18,16 @@ typedef struct
     bool auto_search_in_path;
     bool search_in_path;
 
-    void (*callback)(void *);
+    void (*callback)(void *, void*);
     void *callback_data;
+    void *sender;
 } FsearchQuery;
 
 FsearchQuery *
 fsearch_query_new (const char *query,
-                   void (*callback)(void *),
+                   void (*callback)(void *, void *),
                    void *callback_data,
+                   void *sender,
                    bool match_case,
                    bool enable_regex,
                    bool auto_search_in_path,

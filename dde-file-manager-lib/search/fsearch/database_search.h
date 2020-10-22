@@ -120,7 +120,7 @@ void
 db_search_remove_entry (DatabaseSearch *search, DatabaseSearchEntry *entry);
 
 void
-db_perform_search (DatabaseSearch *search, void (*callback)(void *), void *callback_data);
+db_perform_search (DatabaseSearch *search, void (*callback)(void *, void *), void *callback_data, void *sender);
 
  DatabaseSearchResult *
 db_search (DatabaseSearch *search, FsearchQuery *q);

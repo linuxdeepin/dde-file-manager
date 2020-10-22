@@ -18,6 +18,8 @@ typedef struct _Database Database;
 
 typedef struct _DatabaseLocation DatabaseLocation;
 
+typedef struct _FsearchConfig FsearchConfig;
+
 void
 db_location_free (DatabaseLocation *location);
 
@@ -27,6 +29,7 @@ db_location_load (Database *db, const char *location_name);
 bool
 db_location_add (Database *db,
                  const char *location_name,
+                 FsearchConfig *config,
                  void (*callback)(const char *));
 
 bool

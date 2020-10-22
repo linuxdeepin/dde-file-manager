@@ -92,7 +92,7 @@ fsearch_search_thread (gpointer user_data)
                 result = db_search (search, query);
             }            
             result->cb_data = query->callback_data;
-            query->callback (result);          
+            query->callback (result, query->sender);
             usleep(100);
             printf("+++++++++++++++++++++++++++++++++++++++++++query->callback\n");
             fsearch_query_free (query);
@@ -760,7 +760,7 @@ db_search_queue (DatabaseSearch *search, FsearchQuery *query)
 }
 
 void
-db_perform_search (DatabaseSearch *search, void (*callback)(void *), void *callback_data)
+db_perform_search (DatabaseSearch *search, void (*callback)(void *, void *), void *callback_data, void *sender)
 {
     assert (search != NULL);
     if (search->entries == NULL) {
@@ -769,7 +769,6 @@ db_perform_search (DatabaseSearch *search, void (*callback)(void *), void *callb
 
     db_search_results_clear (search);
 
-    FsearchQuery *q = fsearch_query_new (search->query, callback, callback_data, false, false, false, false);
+    FsearchQuery *q = fsearch_query_new (search->query, callback, callback_data, sender, false, false, false, false);
     db_search_queue (search, q);
 }
-
