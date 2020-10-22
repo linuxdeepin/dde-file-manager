@@ -34,6 +34,7 @@ DFMVaultPageBase::DFMVaultPageBase(QWidget *parent)
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+        this->moveToCenter();
     }
 }
 
