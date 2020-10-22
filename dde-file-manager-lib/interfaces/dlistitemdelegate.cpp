@@ -82,7 +82,7 @@ void DListItemDelegate::paint(QPainter *painter,
     opt.rect += QMargins(-LIST_MODE_LEFT_MARGIN, 0, -LIST_MODE_RIGHT_MARGIN, 0);
 
     /// draw background
-    //列表拖拽时要绘制蓝底
+    //列表拖拽时要绘制活动色
     bool drawBackground =/* !isDragMode &&*/ (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
 
     QPalette::ColorGroup cg = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))

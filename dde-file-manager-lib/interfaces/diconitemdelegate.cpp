@@ -780,7 +780,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     if (isSelected || !d->enabledTextShadow || isDragMode) {// do not draw text background color
 
-        //图标拖拽时保持蓝底
+        //图标拖拽时保持活动色
         auto tempBackground = isDragMode ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight)) : (isCanvas ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush));
         const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS, tempBackground,
                                               QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);

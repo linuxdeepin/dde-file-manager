@@ -235,20 +235,32 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
     // Loads .desktop file (read from 'Desktop Entry' group)
     Properties desktop(fileUrl.path(), "Desktop Entry");
 
-    const QString &name = desktop.value("Name[" + QLocale::system().name() + "]", settings.value("Name[" + QLocale::system().name() + "]")).toString();
-    const QString &genericName = desktop.value("GenericName[" + QLocale::system().name() + "]", settings.value("GenericName[" + QLocale::system().name() + "]")).toString();
+    //由于获取的系统语言简写与.desktop的语言简写存在不对应关系，经决定先采用获取的系统值匹配
+    //若没匹配到则采用系统值"_"左侧的字符串进行匹配，均为匹配到，才走原未匹配流程
+    auto getValueFromSys = [&desktop,&settings](const QString &type, const QString &sysName)->QString {
+        const QString key = QString("%0[%1]").arg(type).arg(sysName);
+        return desktop.value(key, settings.value(key)).toString();
+    };
 
-    if (name.isEmpty()) {
-        map["Name"] = desktop.value("Name", settings.value("Name"));
-    } else {
-        map["Name"] = name;
-    }
+    auto getNameByType = [&desktop,&settings,&getValueFromSys](const QString &type)->QString{
+        QString tempSysName = QLocale::system().name();
+        QString targetName = getValueFromSys(type, tempSysName);
+        if (targetName.isEmpty()) {
+            auto strSize = tempSysName.trimmed().split("_");
+            if (!strSize.isEmpty()){
+                tempSysName = strSize.first();
+                targetName = getValueFromSys(type,tempSysName);
+            }
 
-    if (genericName.isEmpty()) {
-        map["GenericName"] = desktop.value("GenericName", settings.value("GenericName"));
-    } else {
-        map["GenericName"] = genericName;
-    }
+            if (targetName.isEmpty())
+                targetName = desktop.value(type, settings.value(type)).toString();
+        }
+
+        return targetName;
+    };
+
+    map["Name"] = getNameByType("Name");
+    map["GenericName"] = getNameByType("GenericName");
 
     map["Exec"] = desktop.value("Exec", settings.value("Exec"));
     map["Icon"] = desktop.value("Icon", settings.value("Icon"));
