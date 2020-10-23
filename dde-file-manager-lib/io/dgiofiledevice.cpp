@@ -348,16 +348,19 @@ bool DGIOFileDevice::flush()
     return ok;
 }
 
-bool DGIOFileDevice::syncToDisk()
+bool DGIOFileDevice::syncToDisk(bool isVfat)
 {
-    //fix 修复卡死问题，在vfat格式的U盘g_output_stream_flush无效，使用关闭再打开强制刷新
-    close();
-    if (!open(QIODevice::WriteOnly | QIODevice::Append))
-        return false;
-    return true;
-    //old
-//    return flush();
-    //end
+    if(!isVfat) {
+        //fix 函数g_io_stream_close()后并没有如期望的(官方API描述)那样同步文件. 在特殊情况(vfat文件系统)下,仍用g_output_stream_flush进行同步
+        return flush();
+    } else {
+        //fix 修复卡死问题，在vfat格式的U盘g_output_stream_flush无效，使用关闭再打开强制刷新
+        close();
+        if (!open(QIODevice::WriteOnly | QIODevice::Append)) {
+            return false;
+        }
+        return true;
+    }
 }
 
 void DGIOFileDevice::closeWriteReadFailed(const bool bwrite)
