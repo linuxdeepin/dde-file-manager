@@ -101,6 +101,7 @@ public:
     bool isAdvanceSearchBarVisible();
     void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
     void showFilterButton();
+    void closeUnAvailableTabs();
 
 signals:
     void aboutToClose();
