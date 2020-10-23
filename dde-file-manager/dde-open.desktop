@@ -7,6 +7,5 @@ Icon=dde-file-manager
 NoDisplay=true
 StartupNotify=true
 Name=DDE Open Dialog
-StartupNotify=true
 Terminal=false
 Type=Application
