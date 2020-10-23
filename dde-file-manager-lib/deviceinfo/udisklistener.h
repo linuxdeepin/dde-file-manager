@@ -132,10 +132,6 @@ private:
     QMap<QString, QString> m_volumeLetters;
 
     QList<Subscriber *> m_subscribers;
-
-    QTimer *m_diskTimer;
-    int m_nCDRomCount = 0; // 光驱接入个数
-
 };
 
 #endif // UDISKLISTENER_H
