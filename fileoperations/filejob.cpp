@@ -647,7 +647,6 @@ void FileJob::doOpticalBlank(const DUrl &device)
     rdevice = DUrl(blkdev->device());
     m_tarPath = rdevice.path();
 
-    emit fileSignalManager->stopCdScanTimer(m_tarPath);
     // 执行擦除的时候设置光驱相关标志位为true
     DFMOpticalMediaWidget::g_mapCdStatusInfo[m_tarPath.mid(5)].bBurningOrErasing = true;
     if (drive->opticalBlank()) {
@@ -686,7 +685,6 @@ void FileJob::doOpticalBlank(const DUrl &device)
     job_isomaster->releaseDevice();
 
 
-    emit fileSignalManager->restartCdScanTimer(m_tarPath);
 
     blkdev->rescan({});
     ISOMaster->nullifyDevicePropertyCache(rdevice.path());
@@ -954,7 +952,6 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         if (m_isJobAdded)
             jobRemoved();
         emit finished();
-        emit fileSignalManager->restartCdScanTimer(""); // 刻录完成后可能需要重启定时器（如果当前只有一个光驱，定时器不会被重启）
         DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = false; // 刻录结束，把刻录标志置位false
 
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Failed) {
@@ -1246,7 +1243,6 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         if (m_isJobAdded)
             jobRemoved();
         emit finished();
-        emit fileSignalManager->restartCdScanTimer(""); // 刻录完成后可能需要重启定时器（如果当前只有一个光驱，定时器不会被重启）
         // 开始执行刻录的时候把当前光驱的刻录状态置位true，好在刻录的时候，如果双击加载光驱可以做是否加载的判定
         // 刻录结束后置位false
         DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = false;
