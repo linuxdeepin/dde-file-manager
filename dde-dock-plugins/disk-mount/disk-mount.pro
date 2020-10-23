@@ -26,7 +26,8 @@ HEADERS += \
     $$PWD/../../dde-file-manager-lib/interfaces/durl.h \
     dattacheddeviceinterface.h \
     dattachedudisks2device.h \
-    dattachedvfsdevice.h
+    dattachedvfsdevice.h \
+    diskglobal.h
 
 SOURCES += \
     diskmountplugin.cpp \
@@ -37,7 +38,8 @@ SOURCES += \
     $$PWD/../../dde-file-manager-lib/interfaces/dfmstandardpaths.cpp \
     $$PWD/../../dde-file-manager-lib/interfaces/durl.cpp \
     dattachedudisks2device.cpp \
-    dattachedvfsdevice.cpp
+    dattachedvfsdevice.cpp \
+    diskglobal.cpp
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts
