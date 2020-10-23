@@ -724,6 +724,12 @@ void DFMSideBar::initDeviceConnection()
         DFileService::instance()->changeRootFile(url, false);
         this->removeItem(url, this->groupName(Device));
         devitems.removeAll(url);
+
+        //清除可能由于卸载出现的无效目录
+        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(this->topLevelWidget());
+        if (wnd) {
+            wnd->closeUnAvailableTabs();
+        }
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl &url) {
         int index = findItem(url, groupName(Device));

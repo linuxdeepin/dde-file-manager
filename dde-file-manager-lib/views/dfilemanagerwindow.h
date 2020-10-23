@@ -101,6 +101,8 @@ public:
     bool isAdvanceSearchBarVisible();
     void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
 
+    void closeUnAvailableTabs();
+
 signals:
     void aboutToClose();
     void positionChanged(const QPoint &pos);
