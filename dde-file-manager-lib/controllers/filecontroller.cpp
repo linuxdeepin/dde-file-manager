@@ -60,7 +60,7 @@
 
 #include "models/sharefileinfo.h"
 #include "usershare/usersharemanager.h"
-
+#include "vaultcontroller.h"
 #include "fileoperations/sort.h"
 
 #include <QDesktopServices>
@@ -399,8 +399,13 @@ public:
                     QFileInfo fileInfo(strResult);
                     QString fullPath = fileInfo.absoluteFilePath();
                     QString filePath = fileInfo.absolutePath();
-                    if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath))
+                    if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath)) {
+                        // 修复klu-bug-51754
+                        // 刷选出保险箱内的文件,使其不被检索出来
+                        if(!VaultController::isVaultFile(it->dir.absolutePath()) && VaultController::isVaultFile(fullPath))
+                            continue;
                         it->searchResults.append(strResult);
+                    }
                 }
             }
             it->mDone = true;
