@@ -31,11 +31,13 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
 
     // 标题
     DLabel *pTitle = new DLabel(tr("Delete File Vault"), this);
-    pTitle->setAlignment(Qt::AlignHCenter);
+    // 文本水平并垂直居中
+    pTitle->setAlignment(Qt::AlignCenter);
 
     // 信息
     m_pInfo = new QLabel(this);
-    m_pInfo->setAlignment(Qt::AlignHCenter);
+    // 文本水平并垂直居中
+    m_pInfo->setAlignment(Qt::AlignCenter);
     // 修复bug-41001 提示信息显示不全
     m_pInfo->setWordWrap(true);
     m_pInfo->setFixedHeight(60);
