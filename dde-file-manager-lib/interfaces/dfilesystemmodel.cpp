@@ -1584,8 +1584,17 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         const QList<QRect> &geometries = parent()->itemDelegate()->paintGeomertys(option, index);
         if (geometries.count() < 3)
             return QString();
-        if (option.fontMetrics.width(strToolTip) > geometries[1].width() * 2)
+        if (option.fontMetrics.width(strToolTip) > geometries[1].width() * 2) {
+            //主目录下的用户文件是做过特殊处理的（文档、音乐等），在这里也需要对长度达标的目录做特殊过滤
+            //否则文档和下载目录会显示hoverTip
+            const QString filePath = data(index, FilePathRole).toString();
+            const QString stdDocPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DocumentsLocation);
+            const QString stdDownPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DownloadLocation);
+            if (filePath == stdDocPath || filePath == stdDownPath || filePath == "/data" + stdDocPath || filePath == "/data" + stdDownPath)
+                return QString();
+
             return strToolTip;
+        }
         return QString();
     }
 
