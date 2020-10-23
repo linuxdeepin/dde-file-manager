@@ -61,8 +61,9 @@ bool DFileDevice::flush()
     return false;
 }
 
-bool DFileDevice::syncToDisk()
+bool DFileDevice::syncToDisk(bool isVfat)
 {
+    Q_UNUSED(isVfat);
     return false;
 }
 

@@ -1373,7 +1373,7 @@ open_file: {
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
         if (m_isEveryReadAndWritesSnc && size_write > 0) {
             toDevice->inherits("");
-            toDevice->syncToDisk();
+            toDevice->syncToDisk(m_isVfat);
         }
         countrefinesize(size_write);
 
@@ -2172,6 +2172,7 @@ void DFileCopyMoveJobPrivate::checkTagetNeedSync()
     if (!m_isEveryReadAndWritesSnc && targetStorageInfo.isValid()) {
         const QString &fs_type = targetStorageInfo.fileSystemType();
         m_isEveryReadAndWritesSnc = (fs_type == "vfat" || fs_type == "cifs");
+        m_isVfat = fs_type.contains("vfat");
     }
 }
 

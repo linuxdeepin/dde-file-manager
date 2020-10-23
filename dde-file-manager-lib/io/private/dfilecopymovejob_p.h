@@ -300,7 +300,7 @@ public:
     QAtomicInteger<bool> m_iscanshowprogress = false;
     //是否需要每读写一次同步
     bool m_isEveryReadAndWritesSnc = false;
-
+    bool m_isVfat = false;
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
 
