@@ -72,14 +72,16 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
     QString strClipherText("");
     uchar *out = reinterpret_cast<uchar*>(malloc(size_t(clipherByteNum/2 + 1)));
     memset(out, 0, size_t(clipherByteNum/2 + 1));
-    char *pwd = password.toUtf8().data();
+    // 修复klu-bug-51478 QString转换成char*
+    const char *pwd = password.toStdString().c_str();
     if(PKCS5_PBKDF2_HMAC_SHA1(pwd, password.length(),
                               salt_value, randSalt.length(),
                               iteration,
                               nClipherLength,
                               out) != 0){
         char *pstr = octet_string_hex_string(reinterpret_cast<char*>(out), nClipherLength);
-        strClipherText = QString::fromUtf8(pstr);
+        // 修复klu-bug-51478 char*转换成QString
+        strClipherText = QString(pstr);
     }else{
         qDebug() << "PKCS5_PBKDF2_HMAC_SHA1 failed";
     }
