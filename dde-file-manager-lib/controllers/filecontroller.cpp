@@ -63,6 +63,9 @@
 #include "vaultcontroller.h"
 #include "fileoperations/sort.h"
 
+#include "deviceinfo/udisklistener.h"
+#include "deviceinfo/udiskdeviceinfo.h"
+
 #include <QDesktopServices>
 #include <QDirIterator>
 #include <QFileInfo>
@@ -848,26 +851,37 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 bool FileController::isExtDeviceJobCase(void *curJob, const DUrl &url) const
 {
     DFileCopyMoveJob *thisJob = (DFileCopyMoveJob *)curJob;
-    QString filePath = url.path();
     DUrlList srcUrlList = thisJob->sourceUrlList();
     DUrl targetUrl = thisJob->targetUrl();
 
-    bool isDiscCase = false; // 查看是否是一般case 路径，比如FAT32 U盘直接写数据
-    if (targetUrl.path().contains(filePath)) {
-        isDiscCase = true;
-    }
-
-    foreach (DUrl oneUrl, srcUrlList) {
-        if (oneUrl.path().contains(filePath)) {
-            isDiscCase = true;
-            break;
+    QString devId;
+    QString filePath = url.path();; // 转换光盘路径为实际挂载路径
+    if (url.scheme() == BURN_SCHEME) {
+        devId = url.path().remove("/disc_files/").replace("/", "_");
+        foreach (auto d, deviceListener->getDeviceList()) {
+            qDebug() << d->getMountPoint();
+            if (url.path().contains(d->getId())) {
+                filePath = d->getMountPoint();
+                filePath.remove("file://");
+                break;
+            }
         }
     }
 
-    if (isDiscCase)
+    static const QString stagingPathPrefix = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/";
+    QString stagingPath;
+    if (!devId.isEmpty())
+        stagingPath = stagingPathPrefix + devId;
+    else
+        stagingPath = filePath; // 不为光驱时，目标路径就是设备的挂载点
+    // 源路径为光盘文件或目标路径为暂存路径
+    if (!stagingPath.isEmpty() && targetUrl.path().contains(stagingPath))
         return true;
-
-    return  isDiscburnJobCase(curJob, url);
+    foreach (auto u, srcUrlList) {
+        if (u.path().contains(filePath))
+            return true;
+    }
+    return isDiscburnJobCase(curJob, url);
 }
 
 bool FileController::isDiscburnJobCase(void *curJob, const DUrl &url) const
