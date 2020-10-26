@@ -43,6 +43,7 @@ public:
     QPair<quint64, quint64> deviceUsage() override;
     QString iconName() override;
     QUrl mountpointUrl() override;
+    QUrl accessPointUrl() override;
 
 private:
     QScopedPointer<DGioMount> dgioMount;
