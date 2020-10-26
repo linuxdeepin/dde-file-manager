@@ -67,6 +67,12 @@ public slots:
      */
     void clearLockEvent();
 
+    /**
+     * @brief addTickTime 增加时钟
+     * @param seconds
+     */
+    void addTickTime(qint64 seconds);
+
 protected:
     /**
      * @brief tick 秒针
