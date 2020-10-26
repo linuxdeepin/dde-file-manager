@@ -89,6 +89,13 @@ public slots:
      */
     void clearLockEvent();
 
+    /**
+     * @brief computerSleep 通过dbus接口获取电脑休眠状态
+     * 该函数将主机休眠时间记录到时钟
+     * @param bSleep true为正要进入休眠，false为进入唤醒状态
+     */
+    void computerSleep(bool bSleep);
+
 private:
     /**
      * @brief getCurrentUser 获取当前用户
@@ -101,6 +108,7 @@ private:
     QMap<QString, VaultClock*> m_mapUserClock; // map user and timer.
     VaultClock *m_curVaultClock; // current user clock.
     QString m_curUser; // current system user.
+    qint64 m_pcTime; // 主机时间
 };
 
 #endif // VAULTMANAGER_H
