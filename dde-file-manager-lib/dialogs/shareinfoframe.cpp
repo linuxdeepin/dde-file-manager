@@ -156,7 +156,7 @@ void ShareInfoFrame::handleShareNameChanged()
     }
     // 修复BUG-44947
     // 当共享文件名为“..”或“.”时，弹出提示框
-    if(name == ".." || name == "."){
+    if (name == ".." || name == ".") {
         QString strMsg = tr("The share name must not be two dots (..) or one dot (.)");
         dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
         return;
@@ -193,13 +193,13 @@ bool ShareInfoFrame::doShareInfoSetting()
 //        hide();
         return DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
     }
-
+    // fix bug#51124 【KLU1022】【文管5.2.0102.42】只读共享文件夹，修改“匿名访问”，此文件夹权限改变
+    // 用户权限保持不变，修改组、其他权限为可读写
     if (m_permissoComBox->currentIndex() == 0 && m_anonymityCombox->currentIndex() != 0) {
-        QString cmd = "chmod";
-        QStringList args;
-        args << "777" << m_fileinfo->fileUrl().toLocalFile();
-        QProcess::startDetached(cmd, args);
-        qDebug() << cmd << args;
+        DUrl localUrl = DUrl::fromLocalFile(m_fileinfo->fileUrl().toLocalFile());
+        fileService->setPermissions(nullptr, localUrl,
+                                    m_fileinfo->permissions() | QFileDevice::ReadOther | QFileDevice::WriteOther
+                                    | QFileDevice::ReadGroup | QFileDevice::WriteGroup);
     }
 
     bool ret = DFileService::instance()->shareFolder(this, m_fileinfo->fileUrl(), m_shareNamelineEdit->text(),
