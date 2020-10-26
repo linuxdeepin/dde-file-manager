@@ -34,6 +34,7 @@ public:
 
     mutable QString pinyinName;
     bool active = false;
+    qint8 gvfsMountFile = -1;
 
     DAbstractFileInfoPointer proxy;
     static DMimeDatabase mimeDatabase;

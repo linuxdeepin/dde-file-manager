@@ -2,44 +2,40 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3070"/>
+        <location filename="../view/canvasgridview.cpp" line="3095"/>
         <source>Icon size</source>
         <translation>圖標大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3078"/>
+        <location filename="../view/canvasgridview.cpp" line="3103"/>
         <source>Auto merge</source>
         <translation>自動整理</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3090"/>
+        <location filename="../view/canvasgridview.cpp" line="3115"/>
         <source>Auto arrange</source>
         <translation>自動排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3145"/>
-        <location filename="../view/canvasgridview.cpp" line="3150"/>
+        <location filename="../view/canvasgridview.cpp" line="3170"/>
+        <location filename="../view/canvasgridview.cpp" line="3175"/>
         <source>Set Wallpaper</source>
         <translation>設置壁紙</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3148"/>
+        <location filename="../view/canvasgridview.cpp" line="3173"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁紙與屏保</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3292"/>
+        <location filename="../view/canvasgridview.cpp" line="3317"/>
         <source>Properties</source>
         <translation>屬性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3129"/>
+        <location filename="../view/canvasgridview.cpp" line="3154"/>
         <source>Display Settings</source>
         <translation>顯示設置</translation>
-    </message>
-    <message>
-        <source>Corner Settings</source>
-        <translation type="vanished">熱區設置</translation>
     </message>
 </context>
 <context>
@@ -73,9 +69,9 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="135"/>
+        <location filename="../main.cpp" line="136"/>
         <source>Desktop</source>
-        <translation>顯示桌面</translation>
+        <translation>桌面</translation>
     </message>
 </context>
 <context>
@@ -141,12 +137,12 @@
     <message>
         <location filename="../view/watermaskframe.cpp" line="253"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>未經授權</translation>
     </message>
     <message>
         <location filename="../view/watermaskframe.cpp" line="261"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
+        <translation>試用期</translation>
     </message>
 </context>
 <context>

@@ -250,7 +250,7 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
         m_statusBar->preButton()->hide();
         m_statusBar->nextButton()->hide();
     }
-
+    m_firstEnterSwitchToPage = true;
     switchToPage(0);
 }
 
@@ -279,7 +279,7 @@ void FilePreviewDialog::updatePreviewList(const DUrlList &previewUrllist)
         m_statusBar->preButton()->show();
         m_statusBar->nextButton()->show();
     }
-
+    m_firstEnterSwitchToPage = true;
     switchToPage(0);
 }
 
@@ -400,12 +400,12 @@ void FilePreviewDialog::initUI()
     connect(m_statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
-        /*fix 45499 我的共享目录，选中一个文件夹按空格键预览，点击打开按钮无反应 预览里面没有实现openfile方法，所以这里传递的时候需要使用实际的url*/
-        DUrl url = DUrl::fromLocalFile(m_fileList.at(m_currentPageIndex).path());
-        if (DFileService::instance()->openFile(this, url))
+        /*fix bug 47136 在回收站预览打开不了，url传入错误，因为在回收站里面实现了openfile，所以这里倒回到以前代码*/
+        if (DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex)))
         {
             close();
         }
+
     });
     connect(shortcut_action, &QAction::triggered, this, [this] {
         if (m_preview)
@@ -523,9 +523,33 @@ void FilePreviewDialog::switchToPage(int index)
     m_preview = preview;
 
     QTimer::singleShot(0, this, [this] {
-        adjustSize();
         updateTitle();
         m_statusBar->openButton()->setFocus();
+        if (m_firstEnterSwitchToPage)
+        {
+            adjustSize();
+        } else
+        {
+            /*fix bug 48357 预览图片快速切换导致预览析构了定时器还在工作，使用智能指针对其进行判断*/
+            if (!m_preview) {
+                qDebug() << "switchToPage m_preview is null,so exit";
+                return;
+            }
+            if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
+                adjustSize();
+            } else {
+                /*fix bug 45465 对视频和图片的切换进行size整理，adjustSize有不成功的可能，所以需要二次resize*/
+                this->resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
+                QSize end_zoompin = size();
+                adjustSize();
+                if (end_zoompin.width() > size().width()) {
+                    /*m_preview->contentWidget()->size().width() * 2 2和1.5是adjustSize的自适应值*/
+                    resize((double)m_preview->contentWidget()->size().width() * 2, (double)m_preview->contentWidget()->size().height() * 1.5);
+                } else if (end_zoompin.width() == size().width()) {
+                    resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
+                }
+            }
+        }
         playCurrentPreviewFile();
         moveToCenter();
     });
@@ -575,7 +599,7 @@ void FilePreviewDialog::previousPage()
         return;
     if (m_playingVideo)
         return;
-
+    m_firstEnterSwitchToPage = false;
     switchToPage(m_currentPageIndex - 1);
 }
 
@@ -585,7 +609,7 @@ void FilePreviewDialog::nextPage()
         return;
     if (m_playingVideo)
         return;
-
+    m_firstEnterSwitchToPage = false;
     switchToPage(m_currentPageIndex + 1);
 }
 

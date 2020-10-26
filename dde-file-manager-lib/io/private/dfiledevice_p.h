@@ -29,7 +29,7 @@ DFM_BEGIN_NAMESPACE
 class DFileDevicePrivate
 {
 public:
-    DFileDevicePrivate(DFileDevice *qq);
+    explicit DFileDevicePrivate(DFileDevice *qq);
 
     DFileDevice *q_ptr;
     DUrl url;

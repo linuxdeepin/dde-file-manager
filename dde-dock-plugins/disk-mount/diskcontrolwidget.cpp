@@ -281,7 +281,7 @@ const QList<QExplicitlySharedDataPointer<DGioMount> > DiskControlWidget::getVfsM
 #ifdef QT_DEBUG
         if (!url.isValid()) {
             qWarning() << "Gio uri is not a vaild QUrl!" << uriStr;
-            qFatal("See the above warning for reason");
+            //qFatal("See the above warning for reason");
         }
 #endif // QT_DEBUG
 
@@ -318,7 +318,7 @@ void DiskControlWidget::onDiskListChanged()
             class ErrHandle : public ErrorHandleInfc, public QObject
             {
             public:
-                ErrHandle(QObject *parent): QObject(parent) {}
+                explicit ErrHandle(QObject *parent): QObject(parent) {}
                 virtual void onError(DAttachedDeviceInterface *device)
                 {
                     DAttachedUdisks2Device *drv = dynamic_cast<DAttachedUdisks2Device *>(device);
@@ -416,11 +416,15 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
                 //         using mount scheme with udisks sub-scheme to give user a *device is mounting* feedback.
                 if (mountAndOpen && !QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
                     QString mountUrlStr = DFMROOT_ROOT + blDevStr.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
+                    qDebug() << "using dus udisks2 to mount device { " << deviceId << " } at:" << mountUrlStr;
+
                     QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
-                    return;
+                    continue;
                 }
 
                 QString mountPoint = blDev->mount({});
+                qDebug() << "mount device { " << deviceId << " } at:" << mountPoint;
+
                 if (mountAndOpen && !mountPoint.isEmpty()) {
                     DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));
                 }
@@ -431,6 +435,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
 
 void DiskControlWidget::onDriveDisconnected()
 {
+    qDebug() << "changed from drive_disconnected";
     DDesktopServices::playSystemSoundEffect("device-removed");
     NotifyMsg(QObject::tr("The device has been safely removed"));
     onDiskListChanged();
@@ -438,12 +443,14 @@ void DiskControlWidget::onDriveDisconnected()
 
 void DiskControlWidget::onMountAdded()
 {
+    qDebug() << "changed from mount_add";
     onDiskListChanged();
 }
 
 void DiskControlWidget::onMountRemoved(const QString &blockDevicePath, const QByteArray &mountPoint)
 {
     Q_UNUSED(mountPoint);
+    qDebug() << "changed from mount_remove:" << blockDevicePath;
     QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blockDevicePath));
     if (blDev) {
         QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
@@ -459,16 +466,19 @@ void DiskControlWidget::onMountRemoved(const QString &blockDevicePath, const QBy
 
 void DiskControlWidget::onVolumeAdded()
 {
+    qDebug() << "changed from volume_add";
     onDiskListChanged();
 }
 
 void DiskControlWidget::onVolumeRemoved()
 {
+    qDebug() << "changed from volume_remove";
     onDiskListChanged();
 }
 
 void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount> mount)
 {
+    qDebug() << "changed from VfsMount";
     QExplicitlySharedDataPointer<DGioFile> file = mount->getRootFile();
     QString uriStr = file->uri();
     QUrl url(uriStr);
@@ -476,7 +486,7 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
 #ifdef QT_DEBUG
     if (!url.isValid()) {
         qWarning() << "Gio uri is not a vaild QUrl!" << uriStr;
-        qFatal("See the above warning for reason");
+        //qFatal("See the above warning for reason");
     }
 #endif // QT_DEBUG
 

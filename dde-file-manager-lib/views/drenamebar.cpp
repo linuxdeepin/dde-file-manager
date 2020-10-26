@@ -49,7 +49,7 @@ using namespace Dtk::Widget;
 
 
 template<typename Type, typename ...Types>
-RecordRenameBarState::RecordRenameBarState(Type &&arg, Types&&... args)
+RecordRenameBarState::RecordRenameBarState(Type &&arg, Types &&... args)
 {
     static_assert(sizeof...(args) == 6, "Must be 6 parameters!");
     auto tuple = std::make_tuple(std::forward<Types>(args)...);
@@ -72,57 +72,57 @@ RecordRenameBarState::RecordRenameBarState(Type &&arg, Types&&... args)
 
 
 RecordRenameBarState::RecordRenameBarState(const RecordRenameBarState &other)
-                     :m_patternFirst{ other.m_patternFirst },
-                      m_patternSecond{ other.m_patternSecond },
-                      m_patternThird{ other.m_patternThird },
-                      m_buttonStateInThreePattern{ other.m_buttonStateInThreePattern },
-                      m_currentPattern{ other.m_currentPattern },
-                      m_selectedUrls{ other.m_selectedUrls }
+    : m_patternFirst{ other.m_patternFirst },
+      m_patternSecond{ other.m_patternSecond },
+      m_patternThird{ other.m_patternThird },
+      m_buttonStateInThreePattern{ other.m_buttonStateInThreePattern },
+      m_currentPattern{ other.m_currentPattern },
+      m_selectedUrls{ other.m_selectedUrls }
 {
     m_visible.store(other.m_visible.load(std::memory_order_seq_cst), std::memory_order_seq_cst);
 }
 
 
-RecordRenameBarState::RecordRenameBarState(RecordRenameBarState&& other)
-                     :m_patternFirst{ std::move(other.m_patternFirst) },
-                      m_patternSecond{ std::move(other.m_patternSecond) },
-                      m_patternThird{ std::move(other.m_patternThird) },
-                      m_buttonStateInThreePattern{ std::move(other.m_buttonStateInThreePattern) },
-                      m_currentPattern{ std::move(other.m_currentPattern) },
-                      m_selectedUrls{ std::move(other.m_selectedUrls) }
+RecordRenameBarState::RecordRenameBarState(RecordRenameBarState &&other)
+    : m_patternFirst{ std::move(other.m_patternFirst) },
+      m_patternSecond{ std::move(other.m_patternSecond) },
+      m_patternThird{ std::move(other.m_patternThird) },
+      m_buttonStateInThreePattern{ std::move(other.m_buttonStateInThreePattern) },
+      m_currentPattern{ std::move(other.m_currentPattern) },
+      m_selectedUrls{ std::move(other.m_selectedUrls) }
 {
     m_visible.store(other.m_visible.load(std::memory_order_seq_cst), std::memory_order_seq_cst);
 }
 
 
 
-RecordRenameBarState& RecordRenameBarState::operator=(const RecordRenameBarState& other)
+RecordRenameBarState &RecordRenameBarState::operator=(const RecordRenameBarState &other)
 {
-     m_patternFirst = other.m_patternFirst;
-     m_patternSecond = other.m_patternSecond;
-     m_patternThird = other.m_patternThird;
-     m_buttonStateInThreePattern = other.m_buttonStateInThreePattern;
-     m_currentPattern = other.m_currentPattern;
-     m_selectedUrls = other.m_selectedUrls;
-     m_visible.store(other.m_visible.load(std::memory_order_seq_cst), std::memory_order_seq_cst);
+    m_patternFirst = other.m_patternFirst;
+    m_patternSecond = other.m_patternSecond;
+    m_patternThird = other.m_patternThird;
+    m_buttonStateInThreePattern = other.m_buttonStateInThreePattern;
+    m_currentPattern = other.m_currentPattern;
+    m_selectedUrls = other.m_selectedUrls;
+    m_visible.store(other.m_visible.load(std::memory_order_seq_cst), std::memory_order_seq_cst);
 
-     return *this;
+    return *this;
 }
 
 
 
 
-RecordRenameBarState& RecordRenameBarState::operator=(RecordRenameBarState&& other)
+RecordRenameBarState &RecordRenameBarState::operator=(RecordRenameBarState &&other)
 {
-     m_patternFirst = std::move(other.m_patternFirst);
-     m_patternSecond = std::move(other.m_patternSecond);
-     m_patternThird = std::move(other.m_patternThird);
-     m_buttonStateInThreePattern = std::move(other.m_buttonStateInThreePattern);
-     m_currentPattern = std::move(other.m_currentPattern);
-     m_selectedUrls = std::move(other.m_selectedUrls);
-     m_visible.store(other.m_visible.load(std::memory_order_seq_cst), std::memory_order_seq_cst);
+    m_patternFirst = std::move(other.m_patternFirst);
+    m_patternSecond = std::move(other.m_patternSecond);
+    m_patternThird = std::move(other.m_patternThird);
+    m_buttonStateInThreePattern = std::move(other.m_buttonStateInThreePattern);
+    m_currentPattern = std::move(other.m_currentPattern);
+    m_selectedUrls = std::move(other.m_selectedUrls);
+    m_visible.store(other.m_visible.load(std::memory_order_seq_cst), std::memory_order_seq_cst);
 
-     return *this;
+    return *this;
 }
 
 void RecordRenameBarState::clear()
@@ -133,7 +133,7 @@ void RecordRenameBarState::clear()
     m_patternSecond.second = DFileService::AddTextFlags::Before;
     m_patternThird.first.clear();
     m_patternThird.second.clear();
-    m_buttonStateInThreePattern = std::array<bool, 3>{false, false, false};
+    m_buttonStateInThreePattern = std::array<bool, 3> {false, false, false};
     m_currentPattern = 0;
     m_selectedUrls.clear();
     m_visible.store(false, std::memory_order_seq_cst);
@@ -152,56 +152,56 @@ private:
 
 
 public:
-    DRenameBarPrivate(DRenameBar * const qPtr);
-    ~DRenameBarPrivate()=default;
+    explicit DRenameBarPrivate(DRenameBar *const qPtr);
+    ~DRenameBarPrivate() = default;
 
     ///###: in fact, you can not also std::move too.
-    DRenameBarPrivate(const DRenameBarPrivate&)=delete;
-    DRenameBarPrivate& operator=(DRenameBarPrivate&&)=delete;
+    DRenameBarPrivate(const DRenameBarPrivate &) = delete;
+    DRenameBarPrivate &operator=(DRenameBarPrivate &&) = delete;
 
 
     void initUi();
     void setUiParameters();
     void layoutItems()noexcept;
-    void setRenameBtnStatus(const bool& value)noexcept;
+    void setRenameBtnStatus(const bool &value)noexcept;
 
-    QString filteringText(const QString& text); //bug 26533
-    void updateLineEditText(QLineEdit* lineEdit, const QString& defaultValue = "");//bug 26533
+    QString filteringText(const QString &text); //bug 26533
+    void updateLineEditText(QLineEdit *lineEdit, const QString &defaultValue = "");//bug 26533
 
 
-    DRenameBar* q_ptr{ nullptr };
-    QHBoxLayout* m_mainLayout{ nullptr };
-    QComboBox* m_comboBox{ nullptr };
-    QFrame* m_frame{ nullptr };
-    QStackedWidget* m_stackWidget{ nullptr };
+    DRenameBar *q_ptr{ nullptr };
+    QHBoxLayout *m_mainLayout{ nullptr };
+    QComboBox *m_comboBox{ nullptr };
+    QFrame *m_frame{ nullptr };
+    QStackedWidget *m_stackWidget{ nullptr };
     QArray<3> m_renameButtonStates{{false}};  //###: this is a array for recording the state of rename button in current pattern.
     std::size_t m_currentPattern{0};               //###: this number record current pattern.
     QList<DUrl> m_urlList{};                      //###: this list stores the url of file which is waiting to be modified!
     DFileService::AddTextFlags m_flag{ DFileService::AddTextFlags::Before }; //###: the loacation of text should be added.
 
-    QTuple<QLabel*, QLineEdit*, QLabel*, QLineEdit*> m_replaceOperatorItems{};
-    QPair<QHBoxLayout*, QFrame*> m_frameForLayoutReplaceArea{};
+    QTuple<QLabel *, QLineEdit *, QLabel *, QLineEdit *> m_replaceOperatorItems{};
+    QPair<QHBoxLayout *, QFrame *> m_frameForLayoutReplaceArea{};
 
-    QTuple<QLabel*, QLineEdit*, QLabel*, QComboBox*> m_addOperatorItems{};
-    QPair<QHBoxLayout*, QFrame*> m_frameForLayoutAddArea{};
-
-
-    QTuple<QLabel*, QLineEdit*, QLabel*, QLineEdit*, QLabel*> m_customOPeratorItems{};
-    QPair<QHBoxLayout*, QFrame*> m_frameForLayoutCustomArea{};
-    QRegExpValidator* m_validator{ nullptr };
+    QTuple<QLabel *, QLineEdit *, QLabel *, QComboBox *> m_addOperatorItems{};
+    QPair<QHBoxLayout *, QFrame *> m_frameForLayoutAddArea{};
 
 
-    QTuple<QPushButton*, QPushButton*, QHBoxLayout*, QFrame*> m_buttonsArea{};
+    QTuple<QLabel *, QLineEdit *, QLabel *, QLineEdit *, QLabel *> m_customOPeratorItems{};
+    QPair<QHBoxLayout *, QFrame *> m_frameForLayoutCustomArea{};
+    QRegExpValidator *m_validator{ nullptr };
+
+
+    QTuple<QPushButton *, QPushButton *, QHBoxLayout *, QFrame *> m_buttonsArea{};
 
 
 
 public slots:
-    void onRenamePatternChanged(const int& index)noexcept;
+    void onRenamePatternChanged(const int &index)noexcept;
 };
 
 
-DRenameBarPrivate::DRenameBarPrivate(DRenameBar * const qPtr)
-                  :q_ptr{ qPtr }
+DRenameBarPrivate::DRenameBarPrivate(DRenameBar *const qPtr)
+    : q_ptr{ qPtr }
 {
     this->initUi();
     this->setUiParameters();
@@ -216,13 +216,13 @@ void DRenameBarPrivate::initUi()
     m_stackWidget = new QStackedWidget;
 
     m_replaceOperatorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit);
-    m_frameForLayoutReplaceArea = QPair<QHBoxLayout*, QFrame*>{ new QHBoxLayout, new QFrame };
+    m_frameForLayoutReplaceArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
 
     m_addOperatorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QComboBox);
-    m_frameForLayoutAddArea = QPair<QHBoxLayout*, QFrame*>{ new QHBoxLayout, new QFrame };
+    m_frameForLayoutAddArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
 
     m_customOPeratorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit, new QLabel);
-    m_frameForLayoutCustomArea = QPair<QHBoxLayout*, QFrame*>{ new QHBoxLayout, new QFrame };
+    m_frameForLayoutCustomArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
 
     QRegExp regStr{ QString{"[0-9]+"} };
     m_validator = new QRegExpValidator{ regStr };
@@ -233,11 +233,11 @@ void DRenameBarPrivate::initUi()
 
 void DRenameBarPrivate::setUiParameters()
 {
-    m_comboBox->addItems(QList<QString>{ QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
+    m_comboBox->addItems(QList<QString> { QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
 
-    QComboBox* comboBox{ nullptr };
-    QLabel* label{ std::get<0>(m_replaceOperatorItems) };
-    QLineEdit* lineEdit{ std::get<1>(m_replaceOperatorItems) };
+    QComboBox *comboBox{ nullptr };
+    QLabel *label{ std::get<0>(m_replaceOperatorItems) };
+    QLineEdit *lineEdit{ std::get<1>(m_replaceOperatorItems) };
 
     label->setText(QObject::tr("Find"));
     label->setObjectName(QString{"DRenameBarLabel"});
@@ -262,7 +262,7 @@ void DRenameBarPrivate::setUiParameters()
     label->setObjectName(QString{"DRenameBarLabel"});
     comboBox = std::get<3>(m_addOperatorItems);
     label->setText(QObject::tr("Location"));
-    comboBox->addItems(QList<QString>{ QObject::tr("Before file name"), QObject::tr("After file name") });
+    comboBox->addItems(QList<QString> { QObject::tr("Before file name"), QObject::tr("After file name") });
     label->setBuddy(comboBox);
 
     label = std::get<0>(m_customOPeratorItems);
@@ -275,7 +275,7 @@ void DRenameBarPrivate::setUiParameters()
     label = std::get<2>(m_customOPeratorItems);
     label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit = std::get<3>(m_customOPeratorItems);
-    label->setText(QObject::tr("+SN"));
+    label->setText(QObject::tr("Start at"));
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     lineEdit->setText(QString{"1"});
     lineEdit->setValidator(m_validator);
@@ -284,7 +284,7 @@ void DRenameBarPrivate::setUiParameters()
     label->setObjectName(QString{"DRenameBarLabel"});
     label->setText(QObject::tr("Tips: Sort by selected file order"));
 
-    QPushButton* button{ std::get<0>(m_buttonsArea) };
+    QPushButton *button{ std::get<0>(m_buttonsArea) };
     button->setText(QObject::tr("Cancel"));
     button = std::get<1>(m_buttonsArea);
     button->setText(QObject::tr("Rename"));
@@ -294,8 +294,8 @@ void DRenameBarPrivate::setUiParameters()
 
 void DRenameBarPrivate::layoutItems()noexcept
 {
-    QHBoxLayout* hBoxLayout{ nullptr };
-    QFrame* frame{ nullptr };
+    QHBoxLayout *hBoxLayout{ nullptr };
+    QFrame *frame{ nullptr };
 
     hBoxLayout = m_frameForLayoutReplaceArea.first;
     frame = m_frameForLayoutReplaceArea.second;
@@ -374,25 +374,25 @@ void DRenameBarPrivate::layoutItems()noexcept
 
 void DRenameBarPrivate::setRenameBtnStatus(const bool &value)noexcept
 {
-    QPushButton* button{ std::get<1>(m_buttonsArea) };
+    QPushButton *button{ std::get<1>(m_buttonsArea) };
 
     button->setEnabled(value);
 }
 
-QString DRenameBarPrivate::filteringText(const QString& text)
+QString DRenameBarPrivate::filteringText(const QString &text)
 {
-    if(text.isEmpty())
+    if (text.isEmpty())
         return text;
 
     QString readyText = text;
     return readyText.remove(QRegExp("[\\\\/:\\*\\?\"<>|%&]"));
 }
 
-void DRenameBarPrivate::updateLineEditText(QLineEdit* lineEdit, const QString& defaultValue)
+void DRenameBarPrivate::updateLineEditText(QLineEdit *lineEdit, const QString &defaultValue)
 {
     QString olderText = lineEdit->text();
     QString text = filteringText(olderText);
-    if(olderText != text){
+    if (olderText != text) {
         lineEdit->setText(text);
     }
     if (text.isEmpty()) {
@@ -401,8 +401,8 @@ void DRenameBarPrivate::updateLineEditText(QLineEdit* lineEdit, const QString& d
 }
 
 DRenameBar::DRenameBar(QWidget *parent)
-        : QFrame{parent},
-          d_ptr{ new DRenameBarPrivate{this} }
+    : QFrame{parent},
+      d_ptr{ new DRenameBarPrivate{this} }
 {
     this->initConnect();
     this->hide();
@@ -412,7 +412,7 @@ DRenameBar::DRenameBar(QWidget *parent)
 
 void DRenameBar::onRenamePatternChanged(const int &index)noexcept
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
     d->m_currentPattern = static_cast<std::size_t>(index);
 
@@ -427,16 +427,16 @@ void DRenameBar::onRenamePatternChanged(const int &index)noexcept
 
 void DRenameBar::onReplaceOperatorFileNameChanged(const QString &text)noexcept
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
-    QLineEdit* lineEdit{ std::get<1>(d->m_replaceOperatorItems) };
+    QLineEdit *lineEdit{ std::get<1>(d->m_replaceOperatorItems) };
     d->updateLineEditText(lineEdit);
 
-    if(text.isEmpty() == true){
-         d->m_renameButtonStates[0] = false; //###: record the states of rename button
+    if (text.isEmpty() == true) {
+        d->m_renameButtonStates[0] = false; //###: record the states of rename button
 
-         d->setRenameBtnStatus(false);
-         return;
+        d->setRenameBtnStatus(false);
+        return;
     }
 
     d->m_renameButtonStates[0] = true;   //###: record the states of rename button
@@ -445,23 +445,23 @@ void DRenameBar::onReplaceOperatorFileNameChanged(const QString &text)noexcept
     return;
 }
 
-void DRenameBar::onReplaceOperatorDestNameChanged(const QString& textChanged)noexcept
+void DRenameBar::onReplaceOperatorDestNameChanged(const QString &textChanged)noexcept
 {
     Q_UNUSED(textChanged);
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
-    QLineEdit* lineEdit{ std::get<3>(d->m_replaceOperatorItems) };
+    QLineEdit *lineEdit{ std::get<3>(d->m_replaceOperatorItems) };
     d->updateLineEditText(lineEdit);
 }
 
 void DRenameBar::onAddOperatorAddedContentChanged(const QString &text)noexcept
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
-    QLineEdit* lineEdit{ std::get<1>(d->m_addOperatorItems )};
+    QLineEdit *lineEdit{ std::get<1>(d->m_addOperatorItems)};
     d->updateLineEditText(lineEdit);
 
-    if(text.isEmpty() == true){
+    if (text.isEmpty() == true) {
         d->m_renameButtonStates[1] = false;
 
         d->setRenameBtnStatus(false);
@@ -477,11 +477,11 @@ void DRenameBar::onAddOperatorAddedContentChanged(const QString &text)noexcept
 
 void DRenameBar::eventDispatcher()
 {
-    DRenameBarPrivate* const d { d_func() };
+    DRenameBarPrivate *const d { d_func() };
 
     bool value{ false };
 
-    if(d->m_currentPattern == 0){ //###: replace
+    if (d->m_currentPattern == 0) { //###: replace
         QString forFindingStr{ std::get<1>(d->m_replaceOperatorItems)->text() };
         QString forReplaceStr{ std::get<3>(d->m_replaceOperatorItems)->text() };
 
@@ -489,14 +489,14 @@ void DRenameBar::eventDispatcher()
 
         value = DFileService::instance()->multiFilesReplaceName(d->m_urlList, pair);
 
-    }else if(d->m_currentPattern == 1){ //###: add
+    } else if (d->m_currentPattern == 1) { //###: add
         QString forAddingStr{ std::get<1>(d->m_addOperatorItems)->text() };
 
         QPair<QString, DFileService::AddTextFlags> pair{ forAddingStr, d->m_flag };
 
         value = DFileService::instance()->multiFilesAddStrToName(d->m_urlList, pair);
 
-    }else if(d->m_currentPattern == 2){ //###:  custom
+    } else if (d->m_currentPattern == 2) { //###:  custom
         QString forCustomStr{ std::get<1>(d->m_customOPeratorItems)->text() };
         QString numberStr{ std::get<3>(d->m_customOPeratorItems)->text() };
 
@@ -505,8 +505,8 @@ void DRenameBar::eventDispatcher()
         value = DFileService::instance()->multiFilesCustomName(d->m_urlList, pair);
     }
 
-    if(value == true){
-        if(QWidget* const parent = dynamic_cast<QWidget*>(this->parent())){
+    if (value == true) {
+        if (QWidget *const parent = dynamic_cast<QWidget *>(this->parent())) {
             quint64 windowId{ WindowManager::getWindowId(parent) };
             AppController::multiSelectionFilesCache.second = windowId;
         }
@@ -518,11 +518,11 @@ void DRenameBar::eventDispatcher()
 
 void DRenameBar::onAddTextPatternChanged(const int &index)noexcept
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
-    if(index == 0){ //###: add text to the front of filename.
+    if (index == 0) { //###: add text to the front of filename.
         d->m_flag = DFileService::AddTextFlags::Before;
-    }else{        //###: add text to the back of filename.
+    } else {       //###: add text to the back of filename.
         d->m_flag = DFileService::AddTextFlags::After;
     }
 
@@ -533,25 +533,25 @@ void DRenameBar::onAddTextPatternChanged(const int &index)noexcept
 
 void DRenameBar::onCustomOperatorFileNameChanged()noexcept
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
-    QLineEdit* lineEditForFileName{ std::get<1>(d->m_customOPeratorItems) };
+    QLineEdit *lineEditForFileName{ std::get<1>(d->m_customOPeratorItems) };
 
     d->updateLineEditText(lineEditForFileName);
 
-    if(lineEditForFileName->text().isEmpty() == true){ //###: must be input filename.
+    if (lineEditForFileName->text().isEmpty() == true) { //###: must be input filename.
         d->m_renameButtonStates[2] = false;
         d->setRenameBtnStatus(false);
 
-    }else{
+    } else {
 
-        QLineEdit* lineEditForSNNumber{ std::get<3>(d->m_customOPeratorItems) };
+        QLineEdit *lineEditForSNNumber{ std::get<3>(d->m_customOPeratorItems) };
 
-        if(lineEditForSNNumber->text().isEmpty() == true){
+        if (lineEditForSNNumber->text().isEmpty() == true) {
             d->m_renameButtonStates[2] = false;
             d->setRenameBtnStatus(false);
 
-        }else{
+        } else {
             d->m_renameButtonStates[2] = true;
             d->setRenameBtnStatus(true);
 
@@ -562,22 +562,22 @@ void DRenameBar::onCustomOperatorFileNameChanged()noexcept
 
 void DRenameBar::onCustomOperatorSNNumberChanged()
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
-    QLineEdit* lineEditForSNNumber{ std::get<3>(d->m_customOPeratorItems) };
-    if(lineEditForSNNumber->text().isEmpty() == true){ //###: must be input filename.
+    QLineEdit *lineEditForSNNumber{ std::get<3>(d->m_customOPeratorItems) };
+    if (lineEditForSNNumber->text().isEmpty() == true) { //###: must be input filename.
         d->m_renameButtonStates[2] = false;
         d->setRenameBtnStatus(false);
 
-    }else{
+    } else {
 
-        QLineEdit* lineEditForFileName{ std::get<3>(d->m_customOPeratorItems) };
+        QLineEdit *lineEditForFileName{ std::get<3>(d->m_customOPeratorItems) };
 
-        if(lineEditForFileName->text().isEmpty() == true){
+        if (lineEditForFileName->text().isEmpty() == true) {
             d->m_renameButtonStates[2] = false;
             d->setRenameBtnStatus(false);
 
-        }else{
+        } else {
             d->m_renameButtonStates[2] = true;
             d->setRenameBtnStatus(true);
 
@@ -585,14 +585,14 @@ void DRenameBar::onCustomOperatorSNNumberChanged()
 
         ///###: renew from exception.
         std::string content{ lineEditForSNNumber->text().toStdString() };
-        try{
+        try {
             std::stoull(content);
 
-        }catch(const std::out_of_range& err){
+        } catch (const std::out_of_range &err) {
             (void)err;
             lineEditForSNNumber->setText(QString{"1"});
 
-        }catch(...){
+        } catch (...) {
             lineEditForSNNumber->setText(QString{"1"});
         }
 
@@ -605,13 +605,13 @@ void DRenameBar::onCustomOperatorSNNumberChanged()
 
 void DRenameBar::storeUrlList(const QList<DUrl> &list)noexcept
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
     d->m_urlList = list;
 }
 
 void DRenameBar::initConnect()
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
     using funcType = void (QComboBox::*)(int index);
 
 
@@ -636,10 +636,10 @@ void DRenameBar::initConnect()
 
 void DRenameBar::resetRenameBar()noexcept
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
     ///replace
-    QLineEdit* lineEdit{ std::get<1>(d->m_replaceOperatorItems) };
+    QLineEdit *lineEdit{ std::get<1>(d->m_replaceOperatorItems) };
     lineEdit->clear();
     lineEdit = std::get<3>(d->m_replaceOperatorItems);
     lineEdit->clear();
@@ -656,7 +656,7 @@ void DRenameBar::resetRenameBar()noexcept
 
     d->m_flag = DFileService::AddTextFlags::Before;
     d->m_currentPattern = 0;
-    d->m_renameButtonStates = std::array<bool, 3>{false, false, false};
+    d->m_renameButtonStates = std::array<bool, 3> {false, false, false};
 
     d->m_comboBox->setCurrentIndex(0);
     d->m_stackWidget->setCurrentIndex(0);
@@ -665,12 +665,12 @@ void DRenameBar::resetRenameBar()noexcept
 
 std::unique_ptr<RecordRenameBarState> DRenameBar::getCurrentState()const
 {
-    const DRenameBarPrivate* const d{ d_func() };
+    const DRenameBarPrivate *const d{ d_func() };
     QPair<QString, QString> patternOneContent{ std::get<1>(d->m_replaceOperatorItems)->text(),
                                                std::get<3>(d->m_replaceOperatorItems)->text()
                                              };
     QPair<QString, DFileService::AddTextFlags> patternTwoContent{ std::get<1>(d->m_addOperatorItems)->text(),
-                                                    d->m_flag };
+                                                                  d->m_flag };
     QPair<QString, QString> patternThreeContent{ std::get<1>(d->m_customOPeratorItems)->text(),
                                                  std::get<3>(d->m_customOPeratorItems)->text()
                                                };
@@ -682,17 +682,18 @@ std::unique_ptr<RecordRenameBarState> DRenameBar::getCurrentState()const
     bool visibleValue{ this->isVisible() };
 
     std::unique_ptr<RecordRenameBarState> state{
-                                                  new RecordRenameBarState{ patternOneContent, patternTwoContent, patternThreeContent,
-                                                                            buttonsState, currentPattern, selectedUrls, visibleValue }
-                                               };
+        new RecordRenameBarState{
+            patternOneContent, patternTwoContent, patternThreeContent,
+            buttonsState, currentPattern, selectedUrls, visibleValue }
+    };
     return state;
 }
 
-void DRenameBar::loadState(std::unique_ptr<RecordRenameBarState>& state)
+void DRenameBar::loadState(std::unique_ptr<RecordRenameBarState> &state)
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
-    if(static_cast<bool>(state) == true){
+    if (static_cast<bool>(state) == true) {
 
         QPair<QString, QString> patternOneContent{ state->getPatternFirstItemContent() };
         std::get<1>(d->m_replaceOperatorItems)->setText(patternOneContent.first);
@@ -717,18 +718,15 @@ void DRenameBar::loadState(std::unique_ptr<RecordRenameBarState>& state)
     }
 }
 
-void DRenameBar::keyPressEvent(QKeyEvent* event)
+void DRenameBar::keyPressEvent(QKeyEvent *event)
 {
-    switch(event->key())
-    {
+    switch (event->key()) {
     case Qt::Key_Return:
-    case Qt::Key_Enter:
-    {
+    case Qt::Key_Enter: {
         emit this->clickRenameButton();
         break;
     }
-    case Qt::Key_Escape:
-    {
+    case Qt::Key_Escape: {
         emit this->clickCancelButton();
         break;
     }
@@ -745,37 +743,31 @@ void DRenameBar::setVisible(bool value)
 
 void DRenameBar::onVisibleChanged(bool value)noexcept
 {
-    DRenameBarPrivate* const d{ d_func() };
+    DRenameBarPrivate *const d{ d_func() };
 
-    if(value == true){
+    if (value == true) {
 
-        switch (d->m_currentPattern)
-        {
-        case 0:
-        {
-            QLineEdit* lineEdit{ std::get<1>(d->m_replaceOperatorItems) };
+        switch (d->m_currentPattern) {
+        case 0: {
+            QLineEdit *lineEdit{ std::get<1>(d->m_replaceOperatorItems) };
             lineEdit->setFocus();
             break;
         }
-        case 1:
-        {
-            QLineEdit* lineEdit{ std::get<1>(d->m_addOperatorItems) };
+        case 1: {
+            QLineEdit *lineEdit{ std::get<1>(d->m_addOperatorItems) };
             lineEdit->setFocus();
             break;
         }
-        case 2:
-        {
-            QLineEdit* lineEdit{ std::get<1>(d->m_customOPeratorItems) };
+        case 2: {
+            QLineEdit *lineEdit{ std::get<1>(d->m_customOPeratorItems) };
             lineEdit->setFocus();
             break;
         }
-        default:
-        {
+        default: {
             break;
         }
         }
-    }
-    else {
+    } else {
         //还原焦点
         if (parentWidget()) {
             parentWidget()->setFocus();

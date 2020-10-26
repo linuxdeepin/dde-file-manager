@@ -60,7 +60,7 @@ public:
     const QLatin1String SUPPORT_SCHEMES_KEY {"X-DFM-SupportSchemes"}; // file, trash, tag..
     const QLatin1String SUPPORT_SUFFIX_KEY {"X-DFM-SupportSuffix"}; // for deepin-compress *.7z.001,*.7z.002,*.7z.003...
 
-    DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq);
+    explicit DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq);
 
     QStringList getValues(XdgDesktopFile &file, const QLatin1String &key, const QStringList &whiteList = {});
     bool isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes);
@@ -69,7 +69,7 @@ public:
     bool isSchemeSupport(QAction *action, const DUrl &url);
     bool isSuffixSupport(QAction *action, const DUrl &url, const bool ballEx7z = false);
     //都是7z分卷压缩文件
-    bool isAllEx7zFile(const QStringList &url);
+    bool isAllEx7zFile(const QStringList &files);
     QList<QAction *> emptyAreaActoins(const QString &currentDir, bool onDesktop);
 private:
     QList<QAction *> actionList;

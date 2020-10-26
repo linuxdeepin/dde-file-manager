@@ -43,27 +43,33 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase:
 QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode) const
 {
     // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
+    if (fileInfo.isDir()) {
+        return QMimeDatabase::mimeTypeForFile(QFileInfo("/home"), mode);
+    }
     QMimeType result;
     QString path = fileInfo.path();
-    bool isMatchExtension = false;
-    //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
-    if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
-            || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
-        QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
-                                             QRegularExpression::DotMatchesEverythingOption
-                                             | QRegularExpression::DontCaptureOption
-                                             | QRegularExpression::OptimizeOnFirstUsageOption);
+    bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
+    if (!isMatchExtension) {
+        //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+        if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
+                || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
+            QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
+                                                 QRegularExpression::DotMatchesEverythingOption
+                                                 | QRegularExpression::DontCaptureOption
+                                                 | QRegularExpression::OptimizeOnFirstUsageOption);
 
-        const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
-                                                            QRegularExpression::DontCheckSubjectStringMatchOption);
+            const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
+                                                                QRegularExpression::DontCheckSubjectStringMatchOption);
 
-        isMatchExtension = match.hasMatch();
-    } else {
-        // filemanger will be blocked when blacklist contais the filepath.
-        static const QStringList blacklist {"/sys/kernel/security/apparmor/revision", "/sys/power/wakeup_count", "/proc/kmsg"};
-        isMatchExtension = blacklist.contains(fileInfo.absoluteFilePath()) ? true : false;
+            isMatchExtension = match.hasMatch();
+        } else {
+            // filemanger will be blocked when blacklist contais the filepath.
+            static const QStringList blacklist {"/sys/kernel/security/apparmor/revision", "/sys/power/wakeup_count", "/proc/kmsg"};
+            isMatchExtension = blacklist.contains(fileInfo.absoluteFilePath()) ? true : false;
+        }
     }
-    if (DStorageInfo::isLowSpeedDevice(path) || isMatchExtension) {
+
+    if (isMatchExtension || DStorageInfo::isLowSpeedDevice(path)) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
@@ -81,13 +87,92 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     static QStringList wrongMimeTypeNames {
         "application/x-ole-storage", "application/zip"
     };
+
     if (officeSuffixList.contains(fileInfo.suffix()) && wrongMimeTypeNames.contains(result.name())) {
         QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo.fileName());
         if (!results.isEmpty()) {
             return results.first();
         }
     }
+    return result;
+}
 
+QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase::MatchMode mode, const QString inod, const bool isgvfs) const
+{
+
+    if (!inod.isEmpty() && inodmimetypecache.contains(inod)) {
+        return inodmimetypecache.value(inod);
+    }
+    return mimeTypeForFile(QFileInfo(fileName), mode, inod, isgvfs);
+
+}
+
+QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode, const QString inod, const bool isgvfs) const
+{
+    // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
+    bool cancache = !inod.isEmpty();
+    if (!inod.isEmpty() && inodmimetypecache.contains(inod)) {
+        return inodmimetypecache.value(inod);
+    }
+    if (fileInfo.isDir()) {
+        return QMimeDatabase::mimeTypeForFile(QFileInfo("/home"), mode);
+    }
+    QMimeType result;
+    QString path = fileInfo.path();
+    bool isMatchExtension = isgvfs;
+    isMatchExtension = isMatchExtension ? isMatchExtension : mode == QMimeDatabase::MatchExtension;
+    if (!isMatchExtension) {
+        //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+        if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
+                || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
+            QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
+                                                 QRegularExpression::DotMatchesEverythingOption
+                                                 | QRegularExpression::DontCaptureOption
+                                                 | QRegularExpression::OptimizeOnFirstUsageOption);
+
+            const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
+                                                                QRegularExpression::DontCheckSubjectStringMatchOption);
+
+            isMatchExtension = match.hasMatch();
+        }
+        else {
+            // filemanger will be blocked when blacklist contais the filepath.
+            static const QStringList blacklist {"/sys/kernel/security/apparmor/revision", "/sys/power/wakeup_count", "/proc/kmsg"};
+            isMatchExtension = blacklist.contains(fileInfo.absoluteFilePath()) ? true : false;
+        }
+    }
+
+    if (isMatchExtension || mode == QMimeDatabase::MatchExtension || DStorageInfo::isLowSpeedDevice(path)) {
+        result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
+    } else {
+        result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
+    }
+
+    // temporary dirty fix, once WPS get installed, the whole mimetype database thing get fscked up.
+    // we used to patch our Qt to fix this issue but the patch no longer works, we don't have time to
+    // look into this issue ATM.
+    // https://bugreports.qt.io/browse/QTBUG-71640
+    // https://codereview.qt-project.org/c/qt/qtbase/+/244887
+    // `file` command works but libmagic didn't even comes with any pkg-config support..
+    static QStringList officeSuffixList {
+        "docx", "xlsx", "pptx", "doc", "ppt", "xls"
+    };
+    static QStringList wrongMimeTypeNames {
+        "application/x-ole-storage", "application/zip"
+    };
+
+    if (officeSuffixList.contains(fileInfo.suffix()) && wrongMimeTypeNames.contains(result.name())) {
+        QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo.fileName());
+        if (!results.isEmpty()) {
+            if (cancache) {
+                const_cast<DMimeDatabase *>(this)->inodmimetypecache.insert(inod,results.first());
+            }
+            return results.first();
+        }
+    }
+    if (cancache) {
+        const_cast<DMimeDatabase *>(this)->inodmimetypecache.insert(inod,result);
+    }
     return result;
 }
 

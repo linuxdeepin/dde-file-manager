@@ -30,7 +30,7 @@ DFM_BEGIN_NAMESPACE
 class DFileIODeviceProxyPrivate : public DFileDevicePrivate
 {
 public:
-    DFileIODeviceProxyPrivate(DFileIODeviceProxy *qq);
+    explicit DFileIODeviceProxyPrivate(DFileIODeviceProxy *qq);
 
     QPointer<QIODevice> device = nullptr;
 };

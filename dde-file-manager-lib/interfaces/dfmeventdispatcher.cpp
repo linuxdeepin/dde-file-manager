@@ -20,7 +20,7 @@ DFM_BEGIN_NAMESPACE
 class DFMEventDispatcherPrivate
 {
 public:
-    DFMEventDispatcherPrivate(DFMEventDispatcher *qq)
+    explicit DFMEventDispatcherPrivate(DFMEventDispatcher *qq)
         : q_ptr(qq) {}
 
     DFMEventDispatcher *q_ptr;
@@ -109,12 +109,11 @@ void DFMEventFuture::operator =(const DFMEventFuture &other)
     m_future = other.m_future;
 }
 
-namespace DFMEventDispatcherData
-{
-    static QList<DFMAbstractEventHandler*> eventHandler;
-    static QList<DFMAbstractEventHandler*> eventFilter;
+namespace DFMEventDispatcherData {
+static QList<DFMAbstractEventHandler *> eventHandler;
+static QList<DFMAbstractEventHandler *> eventFilter;
 
-    Q_GLOBAL_STATIC(QThreadPool, threadPool)
+Q_GLOBAL_STATIC(QThreadPool, threadPool)
 }
 
 class DFMEventDispatcher_ : public DFMEventDispatcher {};

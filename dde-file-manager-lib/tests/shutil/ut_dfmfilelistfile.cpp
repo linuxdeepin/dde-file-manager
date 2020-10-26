@@ -54,7 +54,7 @@ TEST_F(TestDFMFileListFile, can_relode_the_hidden_file)
 
     EXPECT_FALSE(mFilelistfile->supportHideByFile(hidden_file));
     EXPECT_TRUE(mFilelistfile->canHideByFile(hidden_file));
-    EXPECT_TRUE(mFilelistfile->reload());
+    EXPECT_FALSE(mFilelistfile->reload());
 }
 
 TEST_F(TestDFMFileListFile, cant_relode_the_notexisted_file)

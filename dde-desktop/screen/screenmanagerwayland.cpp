@@ -128,7 +128,7 @@ AbstractScreenManager::DisplayMode ScreenManagerWayland::displayMode() const
         int mode = pending.argumentAt(0).toInt();
         qDebug() << "GetRealDisplayMode resulet" << mode;
         if (mode > 0 && mode < 4)
-            return (AbstractScreenManager::DisplayMode)mode;
+            return static_cast<AbstractScreenManager::DisplayMode>(mode);
         else
             return AbstractScreenManager::Custom;
     }
@@ -192,6 +192,7 @@ void ScreenManagerWayland::onDockChanged()
 
 void ScreenManagerWayland::onScreenGeometryChanged(const QRect &rect)
 {
+    Q_UNUSED(rect)
 //    ScreenObjectWayland *sc = SCREENOBJECT(sender());
 //    if (sc != nullptr && m_screens.contains(sc->path())) {
 //        ScreenPointer sp = m_screens.value(sc->path());

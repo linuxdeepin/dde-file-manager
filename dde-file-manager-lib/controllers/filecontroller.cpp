@@ -27,6 +27,7 @@
 #include "fileoperations/filejob.h"
 #include "dfilewatcher.h"
 #include "dfileinfo.h"
+#include "dgvfsfileinfo.h"
 #include "trashmanager.h"
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
@@ -89,8 +90,10 @@ public:
     DFMQDirIterator(const QString &path,
                     const QStringList &nameFilters,
                     QDir::Filters filter,
-                    QDirIterator::IteratorFlags flags)
+                    QDirIterator::IteratorFlags flags,
+                    const bool isgvfs = false)
         : iterator(path, nameFilters, filter, flags)
+        , isgvfs(isgvfs)
     {
 
     }
@@ -118,25 +121,28 @@ public:
     const DAbstractFileInfoPointer fileInfo() const override
     {
         const QFileInfo &info = iterator.fileInfo();
-
-        if (!info.isSymLink() && FileUtils::isDesktopFile(info)) {
+        bool isnotsyslink = !info.isSymLink();
+        //父目录是gvfs目录，那么子目录和子文件必须是gvfs文件
+        QString path = info.path();
+        bool currentisgvfs = isgvfs ? true : FileUtils::isGvfsMountFile(path, true);
+        QMimeType mimetype;
+        bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(info, mimetype) :
+                         FileUtils::isDesktopFile(info);
+        if (isnotsyslink && isdesktop) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(info));
         }
 
-        return DAbstractFileInfoPointer(new DFileInfo(info));
-    }
-    const DAbstractFileInfoPointer optimiseFileInfo() const override
-    {
-        const QFileInfo &info = iterator.fileInfo();
-        DUrl url = DUrl::fromLocalFile(info.absoluteFilePath());
-        QString abfilepath = info.absoluteFilePath();
-        if (info.isDir())
-            abfilepath += QString("/");
-        if (!info.isSymLink() && FileUtils::isDesktopFile(abfilepath)) {
-            return DAbstractFileInfoPointer(new DesktopFileInfo(url));
-        }
+        if (currentisgvfs) {
+            DUrl fileurl = DUrl::fromLocalFile(info.absoluteFilePath());
+            const DAbstractFileInfoPointer &newinfo = DAbstractFileInfo::getFileInfo(fileurl);
 
-        return DAbstractFileInfoPointer(new DFileInfo(url));
+            if (newinfo) {
+                newinfo->refresh(true);
+                return newinfo;
+            }
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(info, mimetype, false));
+        }
+        return DAbstractFileInfoPointer(new DFileInfo(info));
     }
 
     DUrl url() const override
@@ -146,18 +152,19 @@ public:
 
 private:
     QDirIterator iterator;
+    bool isgvfs = false;
 };
 
 class DFMSortInodeDirIterator : public DDirIterator
 {
 public:
-    DFMSortInodeDirIterator(const QString &path)
+    explicit DFMSortInodeDirIterator(const QString &path)
         : dir(path)
     {
 
     }
 
-    ~DFMSortInodeDirIterator()
+    ~DFMSortInodeDirIterator() override
     {
         if (sortFiles) {
             free(sortFiles);
@@ -203,6 +210,11 @@ public:
 
     const DAbstractFileInfoPointer fileInfo() const override
     {
+        //判断是否是gvfs文件，是就创建DGvfsFileInfo
+        bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(), true);
+        if (currentisgvfs) {
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo, false));
+        }
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
 
@@ -271,6 +283,13 @@ public:
             }
         }
 
+        // 如果路径中存在链接，需要将其还原，用于展示
+        if (m_hasSymLink) {
+            for (auto &path : searchResults) {
+                path.replace(m_newPrefix, m_oldPrefix);
+            }
+        }
+
         return !searchResults.isEmpty();
     }
 
@@ -286,12 +305,29 @@ public:
 
     const DAbstractFileInfoPointer fileInfo() const override
     {
+        bool currentisgvfs = FileUtils::isGvfsMountFile(currentFileInfo.path(), true);
+        if (currentisgvfs) {
+            return DAbstractFileInfoPointer(new DGvfsFileInfo(currentFileInfo, false));
+        }
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
 
     DUrl url() const override
     {
         return DUrl::fromLocalFile(dir.absolutePath());
+    }
+
+    ///
+    /// \brief setSymLink 如果搜索路径中存在链接目录，记录一些参数用于搜索结果还原
+    /// \param hasSymLink 是否存在链接目录
+    /// \param oldPrefix 原始前缀
+    /// \param newPrefix 修改后的前缀
+    ///
+    void setSymLink(bool hasSymLink, const QString &oldPrefix, const QString &newPrefix)
+    {
+        m_hasSymLink = hasSymLink;
+        m_oldPrefix = oldPrefix;
+        m_newPrefix = newPrefix;
     }
 
 private:
@@ -302,6 +338,10 @@ private:
     mutable QStringList searchDirList;
     mutable quint32 searchStartOffset = 0, searchEndOffset = 0;
     mutable QStringList searchResults;
+
+    bool m_hasSymLink = false;
+    QString m_oldPrefix;
+    QString m_newPrefix;
 
     QDir dir;
     QFileInfo currentFileInfo;
@@ -314,7 +354,8 @@ public:
     FileDirIterator(const QString &url,
                     const QStringList &nameFilters,
                     QDir::Filters filter,
-                    QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+                    QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
+                    const bool gvfs = false);
     ~FileDirIterator() override;
 
     DUrl next() Q_DECL_OVERRIDE;
@@ -323,18 +364,26 @@ public:
     QString fileName() const Q_DECL_OVERRIDE;
     DUrl fileUrl() const override;
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    //判读ios手机，传输慢，需要特殊处理优化
-    const DAbstractFileInfoPointer optimiseFileInfo() const Q_DECL_OVERRIDE;
     DUrl url() const Q_DECL_OVERRIDE;
 
     bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
+
+    ///
+    /// \brief hasSymLinkDir 用于判断当前路径中是否存在快捷方式
+    /// \param path 路径
+    /// \param tmp 临时变量，存储快捷方式之后的路径
+    /// \param oldPrefix 链接目录
+    /// \return
+    ///
+    bool hasSymLinkDir(QString &path, QString &tmp, QString &oldPrefix);
 
     DFMFileListFile *hiddenFiles = nullptr;
 
 private:
     DDirIterator *iterator = nullptr;
-    bool nextIsCached = false;
     QDir::Filters filters;
+    bool nextIsCached = false;
+    QHash<DUrl, DAbstractFileInfoPointer> nextInofCached;
 };
 
 FileController::FileController(QObject *parent)
@@ -353,17 +402,25 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
     DUrl url = event->url();
     QString localFile = url.toLocalFile();
     QFileInfo info(localFile);
-    if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
+    bool isnotsyslink = !info.isSymLink();
+    //父目录是gvfs目录，那么子目录和子文件必须是gvfs文件
+    bool currentisgvfs = FileUtils::isGvfsMountFile(url.toLocalFile(), true);
+    QMimeType mimetype;
+    bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(localFile, mimetype) :
+                     FileUtils::isDesktopFile(localFile);
+    if (isnotsyslink && isdesktop) {
         return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
-
+    if (currentisgvfs) {
+        return DAbstractFileInfoPointer(new DGvfsFileInfo(event->url(), false));
+    }
     return DAbstractFileInfoPointer(new DFileInfo(event->url()));
 }
 
 const DDirIteratorPointer FileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
     return DDirIteratorPointer(new FileDirIterator(event->url().toLocalFile(), event->nameFilters(),
-                                                   event->filters(), event->flags()));
+                                                   event->filters(), event->flags(), event->isGvfsFile()));
 }
 
 bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
@@ -460,7 +517,11 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
     }
 
     if (!pathList.empty()) {
-        result = FileUtils::openFiles(pathList);
+        if (event->isEnter()) {
+            result = FileUtils::openEnterFiles(pathList);
+        } else {
+            result = FileUtils::openFiles(pathList);
+        }
         if (!result) {
             for (const DUrl &fileUrl : packUrl) {
                 AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(), fileUrl)); // requestShowOpenWithDialog
@@ -580,16 +641,10 @@ bool FileController::decompressFileHere(const QSharedPointer<DFMDecompressEvent>
 bool FileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
     //计算机和回收站桌面文件不能被复制或剪切，从这里过滤通过快捷键复制剪切的计算机和回收站桌面文件url
-    DUrlList urlList;
-    for (const DUrl &url : event->urlList()) {
-        if ((DesktopFileInfo::computerDesktopFileUrl() == url) ||
-                (DesktopFileInfo::trashDesktopFileUrl() == url) ||
-                (DesktopFileInfo::homeDesktopFileUrl() == url)) {
-            continue;
-        }
-
-        urlList.append(url);
-    }
+    DUrlList urlList = event->urlList();
+    urlList.removeAll(DesktopFileInfo::computerDesktopFileUrl());
+    urlList.removeAll(DesktopFileInfo::trashDesktopFileUrl());
+    urlList.removeAll(DesktopFileInfo::homeDesktopFileUrl());
 
     if (urlList.isEmpty()) {
         return false;
@@ -784,8 +839,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             if (!slient) {
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
-            }
-            else {
+            } else {
                 moveToThread(qApp->thread());
             }
         }
@@ -845,9 +899,13 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
                 return;
             //这里会出现pasteFilesV2函数线程和当前线程是同时在执行，会出现在1处pasteFilesV2所在线程 没结束，但是这时pasteFilesV2所在线程 结束
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
-            if (!fileJob->isFinished()) {
+            if (!fileJob->isFinished() && fileJob->isCanShowProgress()) {
                 dialogManager->taskDialog()->addTaskJob(fileJob.data(), true);
                 emit fileJob->currentJobChanged(currentJob.first, currentJob.second, false);
+            }
+            //在移动到同一个目录时，先不现实进度条，当有其他目录到同一个目录时，才会去显示
+            if (!fileJob->isFinished() && !fileJob->isCanShowProgress()) {
+                timer_id = startTimer(1000);
             }
         }
 
@@ -1081,46 +1139,6 @@ static DUrlList pasteFilesV1(const QSharedPointer<DFMPasteEvent> &event)
 
 DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
-    //以前的老代码
-#if 0
-    bool use_old_filejob = false;
-
-#ifdef SW_LABEL
-    use_old_filejob = true;
-#endif
-
-    const DUrlList &urlList = event->urlList();
-    DUrlList list;
-
-    if (use_old_filejob) {
-        list = pasteFilesV1(event);
-    } else {
-        list = pasteFilesV2(event->action(), urlList, event->targetUrl());
-    }
-
-    DUrlList valid_files = list;
-
-    valid_files.removeAll(DUrl());
-
-    if (valid_files.isEmpty()) {
-        return list;
-    }
-
-    if (event->action() == DFMGlobal::CopyAction) {
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, valid_files, true), true);
-    } else {
-        const QString targetDir(QFileInfo(urlList.first().toLocalFile()).absolutePath());
-
-        if (targetDir.isEmpty()) {
-            return list;
-        }
-
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
-    }
-
-    return list;
-#endif
-
     //新代码,修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作
 
     bool use_old_filejob = false;
@@ -1176,10 +1194,20 @@ bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
     //Todo:: check if mkdir is ok
     AppController::selectionAndRenameFile = qMakePair(event->url(), event->windowId());
 
-    bool ok = QDir::current().mkdir(event->url().toLocalFile());
+    bool ok = QDir::current().mkpath(event->url().toLocalFile());
 
     if (ok) {
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
+    } else {
+        QString path = event->url().toString();
+        // 创建文件夹失败，提示错误信息
+        if (QFileInfo(path).isDir()) {
+            QString strErr = tr("Unable to create files here: %1").arg(strerror(errno));
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showMessageDialog,
+                                         DialogManager::msgWarn, strErr, "", tr("Confirm"));
+        } else {
+            qDebug() << "Unable to create files here:" << strerror(errno);
+        }
     }
 
     return ok;
@@ -1195,6 +1223,10 @@ bool FileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
     if (file.open(QIODevice::WriteOnly)) {
         file.close();
     } else {
+        // 创建文件失败，提示错误信息
+        QString strErr = tr("Unable to create files here: %1").arg(strerror(errno));
+        dialogManager->showMessageDialog(DialogManager::msgWarn, strErr);
+
         return false;
     }
 
@@ -1269,7 +1301,11 @@ bool FileController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &
 
         QUrlQuery query;
         query.addQueryItem("mount_point", devStr);
-        query.addQueryItem("locate_url", locateUrl);
+//        query.addQueryItem("locate_url", locateUrl);
+        //为防止locateUrl传入QUrl被转码，locateUrl统一保存为base64
+        QByteArray ba = locateUrl.toLocal8Bit().toBase64();
+        query.addQueryItem("locate_url", ba);
+
         bookmarkUrl.setQuery(query);
     }
 
@@ -1460,7 +1496,7 @@ QString FileController::checkDuplicateName(const QString &name) const
 }
 
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,
-                                 QDir::Filters filter, QDirIterator::IteratorFlags flags)
+                                 QDir::Filters filter, QDirIterator::IteratorFlags flags, const bool gvfs)
     : DDirIterator()
     , filters(filter)
 {
@@ -1469,7 +1505,7 @@ FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFil
     if (sort_inode) {
         iterator = new DFMSortInodeDirIterator(path);
     } else {
-        iterator = new DFMQDirIterator(path, nameFilters, filter, flags);
+        iterator = new DFMQDirIterator(path, nameFilters, filter, flags, gvfs);
     }
 
     // misc, not related to the file iterator at all.
@@ -1509,15 +1545,10 @@ bool FileDirIterator::hasNext() const
     if (!hasNext) {
         return false;
     }
-
     bool showHidden = filters.testFlag(QDir::Hidden);
     DAbstractFileInfoPointer info;
-
     do {
         const_cast<FileDirIterator *>(this)->iterator->next();
-        if (m_boptimise) {
-            info = iterator->optimiseFileInfo();
-        }
         if (!info) {
             info = iterator->fileInfo();
         }
@@ -1531,8 +1562,8 @@ bool FileDirIterator::hasNext() const
 
     // file is exists
     if (info) {
+        const_cast<FileDirIterator *>(this)->nextInofCached.insert(info->fileUrl(), info);
         const_cast<FileDirIterator *>(this)->nextIsCached = true;
-
         return true;
     }
 
@@ -1551,12 +1582,14 @@ DUrl FileDirIterator::fileUrl() const
 
 const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
+    DAbstractFileInfoPointer newinfo = const_cast<FileDirIterator *>\
+                                       (this)->nextInofCached.value(iterator->fileUrl());
+    if (newinfo) {
+        const_cast<FileDirIterator *>\
+        (this)->nextInofCached.remove(iterator->fileUrl());
+        return newinfo;
+    }
     return iterator->fileInfo();
-}
-//判读ios手机，传输慢，需要特殊处理优化
-const DAbstractFileInfoPointer FileDirIterator::optimiseFileInfo() const
-{
-    return iterator->optimiseFileInfo();
 }
 
 DUrl FileDirIterator::url() const
@@ -1570,10 +1603,19 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
     Q_UNUSED(keyword);
     return false;
 #else // !DISABLE_QUICK_SEARCH
-    const QString pathForSearching = iterator->url().toLocalFile();
+    QString pathForSearching = iterator->url().toLocalFile();
 
     static ComDeepinAnythingInterface anything("com.deepin.anything", "/com/deepin/anything",
                                                QDBusConnection::systemBus());
+
+    // fix bug#48091 当文件路径中存在快捷方式时，将其转换为真实地址
+    QString tmp, oldPrefix, newPrefix;
+    bool hasLink = false;
+    if (hasSymLinkDir(pathForSearching, tmp, oldPrefix)) {
+        hasLink = true;
+        newPrefix = pathForSearching;
+        pathForSearching.append(tmp);
+    }
 
     if (!anything.hasLFT(pathForSearching)) {
         return false;
@@ -1585,7 +1627,26 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
         delete iterator;
 
     iterator = new DFMAnythingDirIterator(&anything, pathForSearching, keyword);
+    static_cast<DFMAnythingDirIterator *>(iterator)->setSymLink(hasLink, oldPrefix, newPrefix);
 
     return true;
 #endif // DISABLE_QUICK_SEARCH
+}
+
+bool FileDirIterator::hasSymLinkDir(QString &path, QString &tmp, QString &oldPrefix)
+{
+    QFileInfo info(path);
+    if (info.isSymLink()) {
+        oldPrefix = path;
+        path = info.symLinkTarget();
+        return true;
+    } else {
+        int last_dir_split_pos = path.lastIndexOf('/');
+        if (last_dir_split_pos < 0)
+            return false;
+
+        tmp.prepend(path.mid(last_dir_split_pos));
+        path = path.left(last_dir_split_pos);
+        return hasSymLinkDir(path, tmp, oldPrefix);
+    }
 }

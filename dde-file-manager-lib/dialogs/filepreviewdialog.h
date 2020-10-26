@@ -59,7 +59,7 @@ private:
     QLabel *m_nameLabel;
     QLabel *m_sizeLabel;
     QLabel *m_typeLabel;
-    DFileStatisticsJob* m_sizeWorker = nullptr;
+    DFileStatisticsJob *m_sizeWorker = nullptr;
 };
 
 
@@ -101,6 +101,7 @@ private:
     FilePreviewDialogStatusBar *m_statusBar;
 
     bool m_playingVideo = false;
+    bool m_firstEnterSwitchToPage = false;
     int m_currentPageIndex = -1;
     DFMFilePreview *m_preview = nullptr;
 

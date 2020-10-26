@@ -10,7 +10,7 @@ class ScreenManagerWayland : public AbstractScreenManager
 {
     Q_OBJECT
 public:
-    ScreenManagerWayland(QObject *parent = nullptr);
+    explicit ScreenManagerWayland(QObject *parent = nullptr);
     ~ScreenManagerWayland() Q_DECL_OVERRIDE;
     ScreenPointer primaryScreen() Q_DECL_OVERRIDE;
     QVector<ScreenPointer> screens() const Q_DECL_OVERRIDE;

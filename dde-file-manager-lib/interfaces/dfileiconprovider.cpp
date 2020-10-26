@@ -26,6 +26,7 @@
 
 #include "dfileiconprovider.h"
 #include "dfileinfo.h"
+#include "dgvfsfileinfo.h"
 
 #include <QLibrary>
 #include <QDebug>
@@ -147,6 +148,31 @@ QIcon DFileIconProvider::icon(const QFileInfo &info, const QIcon &feedback) cons
 }
 
 QIcon DFileIconProvider::icon(const DFileInfo &info, const QIcon &feedback) const
+{
+    Q_D(const DFileIconProvider);
+
+    QIcon icon = d->fromTheme(info.iconName());
+
+    if (Q_LIKELY(!icon.isNull()))
+        return icon;
+
+    icon = this->icon(info.toQFileInfo());
+
+    if (Q_LIKELY(!icon.isNull()))
+        return icon;
+
+    icon = d->fromTheme(info.genericIconName());
+
+    if (icon.isNull())
+        icon = d->fromTheme("unknown");
+
+    if (icon.isNull())
+        return feedback;
+
+    return icon;
+}
+
+QIcon DFileIconProvider::icon(const DGvfsFileInfo &info, const QIcon &feedback) const
 {
     Q_D(const DFileIconProvider);
 

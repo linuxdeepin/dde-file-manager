@@ -51,6 +51,13 @@
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
 
+#include "models/trashfileinfo.h"
+
+namespace FileSortFunction {
+//! 定义根据路径排序函数
+COMPARE_FUN_DEFINE(sourceFilePath, TrashFilePath, TrashFileInfo)
+}
+
 static bool kWorking = false; // tmp
 class TrashDirIterator : public DDirIterator
 {
@@ -194,7 +201,7 @@ bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
     DUrl fileUrl = event->url();
     QFileInfo fileInfo(fileUrl.toLocalFile());
     if (fileInfo.isFile()) {
-        QString strMsg = tr("Unable to open items in the trash,please restore it first");
+        QString strMsg = tr("Unable to open items in the trash, please restore it first");
         dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
         return false;
     }
@@ -207,7 +214,7 @@ bool TrashManager::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) con
 {
     Q_UNUSED(event)
 
-    QString strMsg = tr("Unable to open items in the trash,please restore it first");
+    QString strMsg = tr("Unable to open items in the trash, please restore it first");
     dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
     return false;
 }
@@ -217,6 +224,16 @@ DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &ev
     fileService->deleteFiles(event->sender(), event->urlList(), true, false, true);
 
     return DUrlList();
+}
+
+void TrashManager::sortByOriginPath(DUrlList &list) const
+{
+    DAbstractFileInfo::CompareFunction sortFun = FileSortFunction::compareFileListByTrashFilePath;
+    qSort(list.begin(), list.end(), [sortFun, this](const DUrl url1, const DUrl url2) {
+        const auto &&event1 = dMakeEventPointer<DFMCreateFileInfoEvent>(this, url1);
+        const auto &&event2 = dMakeEventPointer<DFMCreateFileInfoEvent>(this, url2);
+        return sortFun(TrashManager::createFileInfo(event1), TrashManager::createFileInfo(event2), Qt::AscendingOrder);
+    });
 }
 
 bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const
@@ -231,6 +248,10 @@ bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &e
         for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden))
             urlList << info->fileUrl();
     }
+
+    //! fix bug#36608 按照原始路径排序，避免恢复时冲突
+    sortByOriginPath(urlList);
+
     bool ok = restoreTrashFile(urlList, &originUrls);
 
     if (ok && !originUrls.isEmpty()) {
@@ -298,7 +319,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
         }
     }
 
-    fileService->deleteFiles(event->sender(), localList, false, event->silent());
+    fileService->deleteFiles(event->sender(), localList, false, event->silent(), true);
 
     return true;
 }
@@ -349,14 +370,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
     DUrlList urlist;
     QStringList pathlist;
-    bool isRestoreAll = false;
     for (const DUrl &url : list) {
-//        if (url == DUrl::fromTrashFile("/")) {
-//            isRestoreAll = true;
-//            urlist << url;
-//            break;
-//        }
-
         QString jid = dialogManager->getJobIdByUrl(url);
         if (jid.isEmpty() && !urlist.contains(url)) {
             urlist << url;
@@ -366,7 +380,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         }
     }
 
-    if (!isRestoreAll && urlist.size() == 0) {
+    if (urlist.size() == 0) {
         DTaskDialog *dlg = dialogManager->taskDialog();
         if (dlg && dlg->getTaskListWidget() && dlg->getTaskListWidget()->count() > 0) {
             dlg->raise();
@@ -385,35 +399,14 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
     QScopedPointer<FileJob, ScopedPointerCustomDeleter> job(new FileJob(FileJob::Restore));
     job->setProperty("pathlist", pathlist);
     job->setManualRemoveJob(true);
-//    if (isRestoreAll) {
-//        if (urlist.size() != 1)
-//            dialogManager->addJob(job.data());
-//    }
-//    else {
     dialogManager->addJob(job.data());
-    //    }
-
     job->jobPrepared();
+
     int i = 0;
     int total = urlist.size();
     for (const DUrl &url : urlist) {
-
-//        if (url == DUrl::fromTrashFile("/")) {
-//            // restore all
-//            DUrlList list;
-
-//            for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System))
-//                list << info->fileUrl();
-
-//            if (list.isEmpty())
-//                return true;
-
-//            return restoreTrashFile(list, restoreOriginUrls);
-//        } else {
         ++i;
         job->setRestoreProgress(double(i) / total);
-//        }
-
         //###(zccrs): 必须通过 DAbstractFileInfoPointer 使用
         //            因为对象会被缓存，所以有可能在其它线程中被使用
         //            如果直接定义一个TrashFileInfo对象，就可能存在对象被重复释放

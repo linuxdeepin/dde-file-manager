@@ -152,6 +152,9 @@ void FileManagerApp::initApp()
     /*init bluetooth manager*/
     DFMGlobal::initBluetoothManager();
 
+    /*init rootfile manager*/
+    DFMGlobal::initRootFileManager();
+
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 }
 

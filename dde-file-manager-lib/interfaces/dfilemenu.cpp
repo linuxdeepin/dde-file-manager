@@ -35,19 +35,21 @@ DFileMenu::DFileMenu(QWidget *parent)
 
 const QSharedPointer<DFMMenuActionEvent> DFileMenu::makeEvent(DFMGlobal::MenuAction action) const
 {
-    DFMMenuActionEvent *event = new DFMMenuActionEvent(m_sender, this, m_currentUrl, m_selectedUrls, action);
+    DFMMenuActionEvent *event = new DFMMenuActionEvent(m_sender, this, m_currentUrl, m_selectedUrls, action, m_clickedIndex);
 
     event->setWindowId(m_eventId);
 
     return QSharedPointer<DFMMenuActionEvent>(event);
 }
 
-void DFileMenu::setEventData(const DUrl &currentUrl, const DUrlList &selectedUrls, quint64 eventId, const QObject *sender)
+void DFileMenu::setEventData(const DUrl &currentUrl, const DUrlList &selectedUrls, quint64 eventId, const QObject *sender, const QModelIndex &index)
 {
     m_currentUrl = currentUrl;
     m_selectedUrls = selectedUrls;
     m_eventId = eventId;
     m_sender = sender;
+    //设置当前点击的index
+    m_clickedIndex = index;
 }
 
 QAction *DFileMenu::actionAt(int index) const

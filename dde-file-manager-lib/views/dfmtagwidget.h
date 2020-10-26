@@ -36,16 +36,16 @@ class DFMTagWidget : public QFrame
 {
     Q_OBJECT
 public:
-    DFMTagWidget(DUrl url, QWidget *parent=nullptr);
+    DFMTagWidget(DUrl url, QWidget *parent = nullptr);
     ~DFMTagWidget();
 
-    void loadTags(const DUrl& url);
+    void loadTags(const DUrl &durl);
     QWidget *tagTitle();
     QWidget *tagLeftTitle();
     DTagActionWidget *tagActionWidget();
     DCrumbEdit *tagCrumbEdit();
 
-    static bool shouldShow(const DUrl& url);
+    static bool shouldShow(const DUrl &url);
 
 protected:
     void initUi();

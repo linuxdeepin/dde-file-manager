@@ -39,9 +39,9 @@ class DFMVaultRemoveByPasswordView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DFMVaultRemoveByPasswordView(QWidget *patent = nullptr);
+    explicit DFMVaultRemoveByPasswordView(QWidget *parent = nullptr);
     ~DFMVaultRemoveByPasswordView() override;
-    enum EN_ToolTip{
+    enum EN_ToolTip {
         Warning = 0,
         Information
     };

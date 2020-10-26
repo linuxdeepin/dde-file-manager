@@ -34,6 +34,7 @@
 #include "dbusinterface/introspectable_interface.h"
 #include "screensavercontrol.h"
 #include "button.h"
+#include "dfileservices.h"
 
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
@@ -67,6 +68,7 @@
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 DCORE_USE_NAMESPACE
+DFM_USE_NAMESPACE
 using namespace com::deepin;
 
 static bool previewBackground()
@@ -828,8 +830,6 @@ void Frame::initUI()
     m_switchModeControl = new DButtonBox(this);
     m_switchModeControl->setFocusPolicy(Qt::NoFocus);
 
-    if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
-
     if (!ScreenSaverCtrlFunction::needShowScreensaver()) {
         m_switchModeControl->setButtonList({wallpaperBtn}, true);
         wallpaperBtn->setChecked(true);
@@ -840,8 +840,15 @@ void Frame::initUI()
         screensaverBtn->setMinimumWidth(40);
         //screensaverBtn->setFocusPolicy(Qt::NoFocus);
         m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
+        if (m_mode == ScreenSaverMode) {
+            screensaverBtn->setChecked(true);
+        }
+    }
+
+    if (m_mode == WallpaperMode) {
         wallpaperBtn->setChecked(true);
     }
+
     connect(m_waitControl, &DButtonBox::buttonToggled, this, [this, time_array] (QAbstractButton * toggleBtn, bool) {
         int index = m_waitControl->buttonList().indexOf(toggleBtn);
         m_dbusScreenSaver->setBatteryScreenSaverTimeout(time_array[index]);
@@ -889,6 +896,13 @@ void Frame::initListView()
 
 void Frame::refreshList()
 {
+    //fix bug 47159
+    //使用dbus接口打开屏保设置，在设置窗口显示前，在桌面快速点击左键，会导致屏保无法退出
+    //在该函数进入前，由于在桌面点了左键主窗口已经隐藏，后面继续起动屏保就没有设置窗口
+    //这里如果窗口已经隐藏就直接结束
+    if (!isVisible())
+        return;
+
     m_wallpaperList->hide();
     m_wallpaperList->clear();
     m_wallpaperList->show();
@@ -904,6 +918,14 @@ void Frame::refreshList()
                 QDBusReply<QString> reply = call.reply();
                 QString value = reply.value();
                 QStringList strings = processListReply(value);
+                QString currentPath = QString(m_backgroundManager->backgroundImages().value(m_screenName));
+                if (currentPath.contains("/usr/share/backgrounds/default_background.jpg")) {
+                    DAbstractFileInfoPointer tempInfo = DFileService::instance()->createFileInfo(nullptr, DUrl(currentPath));
+                    if (tempInfo) {
+                        currentPath = tempInfo->rootSymLinkTarget().toString();
+                    }
+                }
+
                 foreach (QString path, strings) {
                     if (m_needDeleteList.contains(QUrl(path).path())) {
                         continue;
@@ -929,12 +951,13 @@ void Frame::refreshList()
                         m_switchModeControl->buttonList().first()->setFocus();
                     });
 
+
                     //首次进入时，选中当前设置壁纸
                     if (m_backgroundManager == nullptr){
                         qCritical() << "Critical!" << "m_backgroundManager has deleted!";
                         this->hide();
                         return;
-                    } else if(path.remove("file://") == QString(m_backgroundManager->backgroundImages().value(m_screenName)).remove("file://")) //均有机会出现头部为file:///概率
+                    } else if(path.remove("file://") == currentPath.remove("file://")) //均有机会出现头部为file:///概率
                     {
                         item->pressed();
                     }

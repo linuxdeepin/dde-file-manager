@@ -352,8 +352,10 @@ void DFMStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRe
     for (const QColor &color : colors) {
         QPainterPath circle;
 
+        //根据tag颜色设置笔刷
+        painter->setBrush(QBrush(color));
         circle.addEllipse(QRectF(QPointF(boundingRect.right() - diameter, boundingRect.top()), boundingRect.bottomRight()));
-        painter->fillPath(circle, color);
+//        painter->fillPath(circle, color);
         painter->drawPath(circle);
         boundingRect.setRight(boundingRect.right() - diameter / 2);
     }

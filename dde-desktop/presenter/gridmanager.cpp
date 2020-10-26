@@ -864,8 +864,8 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
         originPosList << oldPos;
         destPosMap.remove(oldPos);
         destUsedGrids[d->indexOfGridPos(screenNum, oldPos)] = false;
-        auto destPos = oldPos + offset;
-        destPosList << destPos;
+        auto tempDestPos = oldPos + offset;
+        destPosList << tempDestPos;
     }
 
     bool conflict = false;
@@ -958,8 +958,8 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
         orgItemMap.remove(id);
         orgUsedGrids[d->indexOfGridPos(fromScreen, oldPos)] = false;
 
-        auto destPos = oldPos + offset;
-        destPosList << destPos;
+        auto tempDestPos = oldPos + offset;
+        destPosList << tempDestPos;
     }
 
     bool conflict = false;

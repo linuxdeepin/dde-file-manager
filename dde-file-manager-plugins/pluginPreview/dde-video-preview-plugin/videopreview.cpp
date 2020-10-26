@@ -34,7 +34,7 @@ DFM_BEGIN_NAMESPACE
 class VideoWidget : public dmr::PlayerWidget
 {
 public:
-    VideoWidget(VideoPreview *preview)
+    explicit VideoWidget(VideoPreview *preview)
         : dmr::PlayerWidget(nullptr)
         , p(preview)
         , title(new QLabel(this))
@@ -79,7 +79,7 @@ public:
 class VideoStatusBar : public QWidget
 {
 public:
-    VideoStatusBar(VideoPreview *preview)
+    explicit VideoStatusBar(VideoPreview *preview)
         : QWidget(nullptr)
         , p(preview)
         , slider(new QSlider(this))

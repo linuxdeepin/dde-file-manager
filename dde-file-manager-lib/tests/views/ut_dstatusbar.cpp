@@ -1,10 +1,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+#include "dfmevent.h"
+#include <QComboBox>
 
 #define private public
 #include <views/dstatusbar.h>
-#include <QComboBox>
+
 
 TEST(DstatusbarTest,init){
     DStatusBar w;
@@ -101,14 +103,56 @@ TEST(DFMElidLabelTest, setText){
     EXPECT_TRUE(ww.m_text == "aa");
 }
 
-//TEST(DstatusbarTest, computerSize){
-//}
+TEST(DstatusbarTest, computerSize){
+    int pid = getpid();
+    const QString path = QString("file:///proc/%0/exe").arg(pid);
+    DStatusBar w;
+    DUrlList list = {DUrl(path)};
+    EXPECT_NE(0,w.computerSize(list));
+}
 
-//TEST(DstatusbarTest, computerFolderContains){
-//}
+TEST(DstatusbarTest, computerFolderContains){
+    int pid = getpid();
+    const QString path = QString("file:///proc/%0").arg(pid);
+    DStatusBar w;
+    w.initJobConnection();
+    DUrlList list = {DUrl(path)};
+    EXPECT_NE(0,w.computerFolderContains(list));
+}
 
+TEST(DstatusbarTest, setLoadingIncatorVisible){
+    DStatusBar w;
+    w.setLoadingIncatorVisible(false,"ok");
+    EXPECT_TRUE(w.m_label->text().isEmpty());
 
+    w.setLoadingIncatorVisible(true,"ok");
+    EXPECT_EQ(QString("ok"),w.m_label->text());
+}
 
+TEST(DstatusbarTest, updateStatusMessage){
+    DStatusBar w;
+    w.updateStatusMessage();
+    EXPECT_TRUE(w.m_label->text().isEmpty());
+
+    w.m_folderCount = 1;
+    w.m_folderContains = 1;
+    w.updateStatusMessage();
+    EXPECT_FALSE(w.m_label->text().isEmpty());
+
+    w.m_fileCount = 1;
+    w.updateStatusMessage();
+    EXPECT_FALSE(w.m_label->text().isEmpty());
+}
+
+TEST(DstatusbarTest, itemSelected_with_empty){
+    DStatusBar w;
+    DFMEvent event(&w);
+    event.setWindowId(0);
+    event.setData({});
+    w.itemSelected(event, 1);
+
+    EXPECT_NE(nullptr,w.m_fileStatisticsJob);
+}
 
 
 

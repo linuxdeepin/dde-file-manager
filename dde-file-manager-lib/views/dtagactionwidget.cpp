@@ -16,17 +16,17 @@ DWIDGET_USE_NAMESPACE
 class DTagActionWidgetPrivate
 {
 public:
-    DTagActionWidgetPrivate(DTagActionWidget* const qPtr);
+    explicit DTagActionWidgetPrivate(DTagActionWidget *const qPtr);
 
 
     void setParameters()noexcept;
     void initUiElement();
 
 
-    std::array<DRoundButton*, 8> m_roundButtons{ {nullptr} };
+    std::array<DRoundButton *, 8> m_roundButtons{ {nullptr} };
     QVBoxLayout *mainLayout{ nullptr };
-    QHBoxLayout* m_HBoxLayout{ nullptr };
-    DTagActionWidget* q_ptr{ nullptr };
+    QHBoxLayout *m_HBoxLayout{ nullptr };
+    DTagActionWidget *q_ptr{ nullptr };
     QStringList checkedColorList;
     QLabel *toolTip{ nullptr };
     bool exclusive = false;
@@ -34,8 +34,8 @@ public:
 
 
 
-DTagActionWidgetPrivate::DTagActionWidgetPrivate(DTagActionWidget * const qPtr)
-                        :q_ptr{ qPtr }
+DTagActionWidgetPrivate::DTagActionWidgetPrivate(DTagActionWidget *const qPtr)
+    : q_ptr{ qPtr }
 {
     this->initUiElement();
 }
@@ -48,50 +48,50 @@ void DTagActionWidgetPrivate::setParameters()noexcept
 void DTagActionWidgetPrivate::initUiElement()
 {
     m_roundButtons[0] = new DRoundButton{
-                                            { QColor{"#ff9311"}, QColor{"#ffa503"} },
-                                            { QColor{"#d8d8d8"}, QColor{"#cecece"} }
-                                        };
+        { QColor{"#ff9311"}, QColor{"#ffa503"} },
+        { QColor{"#d8d8d8"}, QColor{"#cecece"} }
+    };
 
     m_roundButtons[1] = new DRoundButton{
-                                            { QColor{"#ec1640"}, QColor{"#ff1c49"} },
-                                            { QColor{"#d8d8d8"}, QColor{"#cecece"} }
-                                        };
+        { QColor{"#ec1640"}, QColor{"#ff1c49"} },
+        { QColor{"#d8d8d8"}, QColor{"#cecece"} }
+    };
 
     m_roundButtons[2] = new DRoundButton{
-                                            { QColor{"#8e08de"}, QColor{"#9023fc"} },
-                                            { QColor{"#d8d8d8"}, QColor{"#cecece"} }
-                                        };
+        { QColor{"#8e08de"}, QColor{"#9023fc"} },
+        { QColor{"#d8d8d8"}, QColor{"#cecece"} }
+    };
 
     m_roundButtons[3] = new DRoundButton{
-                                            { QColor{"#0956e7"}, QColor{"#3468ff"} },
-                                            { QColor{"#d8d8d8"}, QColor{"#cecece"} }
-                                        };
+        { QColor{"#0956e7"}, QColor{"#3468ff"} },
+        { QColor{"#d8d8d8"}, QColor{"#cecece"} }
+    };
 
     m_roundButtons[4] = new DRoundButton{
-                                            { QColor{"#00c7e1"}, QColor{"#00b5ff"} },
-                                            { QColor{"#d8d8d8"}, QColor{"#cecece"} }
-                                        };
+        { QColor{"#00c7e1"}, QColor{"#00b5ff"} },
+        { QColor{"#d8d8d8"}, QColor{"#cecece"} }
+    };
 
     m_roundButtons[5] = new DRoundButton{
-                                            { QColor{"#60cb00"}, QColor{"#58df0a"} },
-                                            { QColor{"#d8d8d8"}, QColor{"#cecece"} }
-                                        };
+        { QColor{"#60cb00"}, QColor{"#58df0a"} },
+        { QColor{"#d8d8d8"}, QColor{"#cecece"} }
+    };
 
     m_roundButtons[6] = new DRoundButton{
-                                            { QColor{"#f4e710"}, QColor{"#fef144"} },
-                                            { QColor{"#d8d8d8"}, QColor{"#cecece"} }
-                                        };
+        { QColor{"#f4e710"}, QColor{"#fef144"} },
+        { QColor{"#d8d8d8"}, QColor{"#cecece"} }
+    };
 
     m_roundButtons[7] = new DRoundButton{
-                                            { QColor{"#ababab"}, QColor{"#cccccc"} },
-                                            { QColor{"#d8d8d8"}, QColor{"#cecece"} }
-                                        };
+        { QColor{"#ababab"}, QColor{"#cccccc"} },
+        { QColor{"#d8d8d8"}, QColor{"#cecece"} }
+    };
 
 
     m_HBoxLayout = new QHBoxLayout;
 
     m_HBoxLayout->addSpacing(21);
-    for(std::size_t index = 0; index != 8; ++index){
+    for (std::size_t index = 0; index != 8; ++index) {
         m_roundButtons[index]->setContentsMargins(0, 0, 0, 0);
         m_roundButtons[index]->setRadius(20);
         m_HBoxLayout->addWidget(m_roundButtons[index], Qt::AlignCenter);
@@ -115,9 +115,9 @@ void DTagActionWidgetPrivate::initUiElement()
 
 
 
-DTagActionWidget::DTagActionWidget(QWidget * const parent)
-                 :QFrame{ parent },
-                  d_ptr{ new DTagActionWidgetPrivate{ this } }
+DTagActionWidget::DTagActionWidget(QWidget *const parent)
+    : QFrame{ parent },
+      d_ptr{ new DTagActionWidgetPrivate{ this } }
 {
     this->setCentralLayout();
     this->initConnect();
@@ -181,7 +181,7 @@ void DTagActionWidget::clearToolTipText()
 
 void DTagActionWidget::setCentralLayout()noexcept
 {
-    DTagActionWidgetPrivate* const d{ d_func() };
+    DTagActionWidgetPrivate *const d{ d_func() };
     this->setLayout(d->mainLayout);
 }
 
@@ -197,12 +197,13 @@ void DTagActionWidget::initConnect()
             emit hoverColorChanged(QColor());
         });
         connect(button, &DRoundButton::checkedChanged, this, [this, button, d] {
-             if (button->isChecked() && exclusive()) {
-                 for (DRoundButton *b : d->m_roundButtons) {
-                     if (b != button)
-                         b->setChecked(false);
-                 }
-             }
+            if (button->isChecked() && exclusive())
+            {
+                for (DRoundButton *b : d->m_roundButtons) {
+                    if (b != button)
+                        b->setChecked(false);
+                }
+            }
         });
         connect(button, &DRoundButton::click, this, [this](QColor color) {
             emit checkedColorChanged(color);

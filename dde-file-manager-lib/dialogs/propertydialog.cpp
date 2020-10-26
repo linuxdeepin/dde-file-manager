@@ -70,6 +70,8 @@
 #include <dblockdevice.h>
 #include <denhancedwidget.h>
 #include <DColoredProgressBar>
+#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
 #include <QScrollBar>
 
 #include <QTextEdit>
@@ -155,11 +157,9 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
         QVector<uint> list = text.toUcs4();
         int cursor_pos = this->textCursor().position() - text_length + text.length();
 
-        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT)
+        while (text.toLocal8Bit().count() > MAX_FILE_NAME_CHAR_COUNT)
         {
-            list.removeAt(--cursor_pos);
-
-            text = QString::fromUcs4(list.data(), list.size());
+            text.chop(1);
         }
 
         if (text.count() != old_text.count())
@@ -303,6 +303,9 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     if (m_url.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, m_url);
         Q_ASSERT(fi);
+        if (fi) {
+            fi->refresh(true);
+        }
 
         QString name = fi->fileDisplayName();
         QIcon icon = QIcon::fromTheme(fi->iconName());
@@ -327,17 +330,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         }
 
         DColoredProgressBar *progbdf = new DTK_WIDGET_NAMESPACE::DColoredProgressBar();
-        QLinearGradient lg(0, 0.5, 1, 0.5);
-        lg.setCoordinateMode(QGradient::CoordinateMode::ObjectBoundingMode);
-
-        lg.setStops({{0, 0xFF0080FF}, {0.72, 0xFF0397FE}, {1, 0xFF06BEFD}});
-        progbdf->addThreshold(0, lg);
-
-        lg.setStops({{0, 0xFFFFAE00}, {0.72, 0xFFFFD007}, {1, 0xFFF6FF0D}});
-        progbdf->addThreshold(7000, lg);
-
-        lg.setStops({{0, 0xFFFF0000}, {0.72, 0xFFFF237A}, {1, 0xFFFF9393}});
-        progbdf->addThreshold(9000, lg);
+        // fix bug#47111 由于addThreshold接口不支持渐变色类（QLinearGradient），暂时采用固定颜色
+        progbdf->addThreshold(0, QColor(0xFF0080FF));
+        progbdf->addThreshold(7000, QColor(0xFFFFAE00));
+        progbdf->addThreshold(9000, QColor(0xFFFF0000));
 
         //fixed:CD display size error
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
@@ -353,6 +349,25 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         progbdf->setValue(dskspace && ~dskinuse ? int(10000. * dskinuse / dskspace) : 0);
         progbdf->setMaximumHeight(8);
         progbdf->setTextVisible(false);
+
+        // fix bug#47111 在浅色模式下，手动设置进度条背景色
+        if (DGuiApplicationHelper::LightType == DGuiApplicationHelper::instance()->themeType()) {
+            DPalette palette = progbdf->palette();
+            palette.setBrush(DPalette::ObviousBackground, QColor("#ededed"));
+            DApplicationHelper::instance()->setPalette(progbdf, palette);
+        }
+
+        // 进度条背景色跟随主题变化而变化
+        connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [ = ](DGuiApplicationHelper::ColorType type) {
+            DPalette palette = progbdf->palette();
+            if (type == DGuiApplicationHelper::LightType) {
+                palette.setBrush(DPalette::ObviousBackground, QColor("#ededed"));
+                DApplicationHelper::instance()->setPalette(progbdf, palette);
+            } else {
+                palette.setBrush(DPalette::ObviousBackground, QColor("#4e4e4e"));
+                DApplicationHelper::instance()->setPalette(progbdf, palette);
+            }
+        });
 
         //fix 没有devid则只显示名称
         QString text = devid.isEmpty() ? tr("%1").arg(name) : tr("%1 (%2)").arg(name).arg(devid);
@@ -404,6 +419,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             close();
             return;
         }
+        fileInfo->refresh(true);
         m_icon->setPixmap(fileInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(fileInfo->fileDisplayName());
         m_edit->setAlignment(Qt::AlignHCenter);
@@ -521,7 +537,8 @@ void PropertyDialog::initUI()
     m_scrollArea->setFrameShape(QFrame::Shape::NoFrame);
     QFrame *infoframe = new QFrame;
     QVBoxLayout *scrollWidgetLayout = new QVBoxLayout;
-    scrollWidgetLayout->setContentsMargins(15, 0, 15, 0);
+    // 修复BUG-47113 UI显示不对
+    scrollWidgetLayout->setContentsMargins(10, 0, 10, 20);
     scrollWidgetLayout->setSpacing(ArrowLineExpand_SPACING);
     infoframe->setLayout(scrollWidgetLayout);
     m_scrollArea->setWidget(infoframe);
@@ -636,7 +653,7 @@ void PropertyDialog::renameFile()
 {
     bool donotShowSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
 
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
+    const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, m_url);
 
     QString fileName;
     if (donotShowSuffix &&
@@ -652,15 +669,14 @@ void PropertyDialog::renameFile()
     m_edit->setFixedHeight(m_textShowFrame->height());
     m_edit->setFocus();
 
-    const DAbstractFileInfoPointer pfile = fileService->createFileInfo(this, m_url);
     int endPos = -1;
-    if (pfile->isFile()) {
+    if (fileInfo->isFile()) {
 
-        QString suffixStr{ pfile->suffix() };
-        if (suffixStr.isEmpty() || donotShowSuffix || pfile->isDesktopFile()) {
+        QString suffixStr{ fileInfo->suffix() };
+        if (suffixStr.isEmpty() || donotShowSuffix || fileInfo->isDesktopFile()) {
             endPos = m_edit->toPlainText().length();
-        } else {
-            endPos = m_edit->toPlainText().length() - pfile->suffix().length() - 1;
+        } else if (m_edit->toPlainText().endsWith(suffixStr)) {
+            endPos = m_edit->toPlainText().length() - fileInfo->suffix().length() - 1;
         }
     }
     if (endPos == -1) {
@@ -671,7 +687,6 @@ void PropertyDialog::renameFile()
     cursor.setPosition(0);
     cursor.setPosition(endPos, QTextCursor::KeepAnchor);
     m_edit->setTextCursor(cursor);
-
 }
 
 void PropertyDialog::showTextShowFrame()
@@ -742,8 +757,13 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
     }
 }
 
-void PropertyDialog::flickFolderToSidebar()
+void PropertyDialog::flickFolderToSidebar(const DUrl &fileUrl)
 {
+    //! 只处理当前触发的对话框
+    if (fileUrl.toLocalFile() != this->getUrl().toLocalFile()) {
+        return;
+    }
+
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
     if (!window) {
         return;
@@ -1233,6 +1253,7 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
 
     QString fsType = info->extraProperties()["fsType"].toString();
     quint64 fsUsed = info->extraProperties()["fsUsed"].toULongLong();
+    quint64 fsFreeSize = info->extraProperties()["fsFreeSize"].toULongLong();
     quint64 fsSize = info->extraProperties()["fsSize"].toULongLong();
     quint64 fileCount = 0;
     DUrl redirectedFileUrl = info->redirectedFileUrl();
@@ -1308,7 +1329,9 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
         results.append({QObject::tr("File system"), fsType});
     }
     results.append({QObject::tr("Contains"), (fileCount != 1 ? QObject::tr("%1 items") : QObject::tr("%1 item")).arg(fileCount)});
-    results.append({QObject::tr("Free space"), FileUtils::formatSize(fsSize - fsUsed)});
+
+    quint64 fsFreeSizeSet = fsFreeSize > 0 ? fsFreeSize : (fsSize - fsUsed);
+    results.append({QObject::tr("Free space"), FileUtils::formatSize(fsFreeSizeSet)});
 
     return results;
 }
@@ -1347,6 +1370,8 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     QListWidget *listWidget = new QListWidget(this);
     listWidget->setSpacing(8);
     listWidget->setObjectName("OpenWithListWidget");
+    // 修复BUG-47113 UI显示问题
+    listWidget->setFrameShape(QFrame::HLine);
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -1380,17 +1405,29 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
 
     }
 
-    int listHeight = 2;
-    for (int i = 0; i < listWidget->count(); i++) {
+    int listHeight = 0;
+    int count = listWidget->count();
+    for (int i = 0; i < count; i++) {
         QListWidgetItem *item = listWidget->item(i);
         item->setFlags(Qt::NoItemFlags);
         int h = listWidget->itemWidget(item)->height();
         item->setSizeHint(QSize(item->sizeHint().width(), h));
-        listHeight += h;
+        // 乘以2是因为item与item之间有两个spacing
+        listHeight += h + listWidget->spacing() * 2;
     }
+    // 加上最后一个spacing
+    listHeight += listWidget->spacing();
 
-    listWidget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
+    // 修复UI-BUG-48789 自动设置listwidget的高度，使得根据内容延展其面板的长度
+    if (count < 1) {
+        // 当没有打开方式时，设置一个固定大小
+        listWidget->setFixedHeight(ArrowLineExpand_HIGHT);
+    } else {
+        listWidget->setFixedHeight(listHeight);
+    }
     listWidget->setFixedWidth(300);
+    // 隐藏垂直滚动条
+    listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     connect(m_OpenWithButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)),
             this, SLOT(onOpenWithBntsChecked(QAbstractButton *)));
@@ -1414,6 +1451,12 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     // these are for file or folder, folder will with executable index.
     int readWriteIndex = 0, readOnlyIndex = 0;
 
+    int readOnlyFlag = 4;
+    int readOnlyWithXFlag = 5;
+
+    int readWriteFlag = 6;
+    int readWriteWithXFlag = 7;
+
     QStringList authorityList;
 
     authorityList << QObject::tr("Access denied") // 0
@@ -1435,14 +1478,14 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         authorityList[7] += append;
 
         // file: read is read, read-write is read-write
-        readOnlyIndex = 4;
-        readWriteIndex = 6;
+        readOnlyIndex = readOnlyFlag;
+        readWriteIndex = readWriteFlag;
     }
 
     if (info->isDir()) {
         // folder: read is read and executable, read-write is read-write and executable
-        readOnlyIndex = 5;
-        readWriteIndex = 7;
+        readOnlyIndex = readOnlyWithXFlag;
+        readWriteIndex = readWriteWithXFlag;
     }
 
     // enumFlag should be 0~7, this is just a check to avoid runtime error
@@ -1458,9 +1501,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     // set QComboBox, notice this permission number is not just 0~7
     auto setComboBoxByPermission = [ = ](QComboBox * cb, int permission, int offset) {
         int index = permission >> offset;
-        if (index == readWriteIndex) {
+        if (index == readWriteFlag || index == readWriteWithXFlag) {
             cb->setCurrentIndex(0);
-        } else if (index == readOnlyIndex) {
+        } else if (index == readOnlyFlag || index == readOnlyWithXFlag) {
             cb->setCurrentIndex(1);
         } else {
             cb->addItem(getPermissionString(index), QVariant(permission));
@@ -1473,11 +1516,22 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         struct stat fileStat;
         stat(info->toLocalFile().toUtf8().data(), &fileStat);
         auto preMode = fileStat.st_mode;
+
+        int ownerFlags = ownerBox->currentData().toInt();
+        int groupFlags = groupBox->currentData().toInt();
+        int otherFlags = otherBox->currentData().toInt();
+
+        QFile::Permissions permissions = info->permissions();
+        if (info->isDir()) { //! 文件夹保持原有的执行权限
+            ownerFlags |= (permissions & QFile::ExeOwner);
+            groupFlags |= (permissions & QFile::ExeGroup);
+            otherFlags |= (permissions & QFile::ExeOther);
+        }
         DFileService::instance()->setPermissions(this, getRealUrl(),
-                                                 QFileDevice::Permissions(ownerBox->currentData().toInt()) |
+                                                 QFileDevice::Permissions(ownerFlags) |
                                                  /*(info->permissions() & 0x0700) |*/
-                                                 QFileDevice::Permissions(groupBox->currentData().toInt()) |
-                                                 QFileDevice::Permissions((otherBox->currentData().toInt())));
+                                                 QFileDevice::Permissions(groupFlags) |
+                                                 QFileDevice::Permissions(otherFlags));
         stat(info->toLocalFile().toUtf8().data(), &fileStat);
         auto afterMode = fileStat.st_mode;
         // 修改权限失败
@@ -1487,22 +1541,12 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         }
     };
 
-    if (info->isDir()) {
-        ownerBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOwner | QFile::ReadOwner | QFile::ExeOwner));
-        ownerBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOwner | QFile::ExeOwner));
-        groupBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteGroup | QFile::ReadGroup | QFile::ExeGroup));
-        groupBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadGroup | QFile::ExeGroup));
-        otherBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOther | QFile::ReadOther | QFile::ExeOther));
-        otherBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOther | QFile::ExeOther));
-    } else {
-        ownerBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOwner | QFile::ReadOwner));
-        ownerBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOwner));
-        groupBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteGroup | QFile::ReadGroup));
-        groupBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadGroup));
-        otherBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOther | QFile::ReadOther));
-        otherBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOther));
-    }
-
+    ownerBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOwner | QFile::ReadOwner));
+    ownerBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOwner));
+    groupBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteGroup | QFile::ReadGroup));
+    groupBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadGroup));
+    otherBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOther | QFile::ReadOther));
+    otherBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOther));
 
     setComboBoxByPermission(ownerBox, info->permissions() & 0x7000, 12);
     setComboBoxByPermission(groupBox, info->permissions() & 0x0070, 4);

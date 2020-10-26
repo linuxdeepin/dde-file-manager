@@ -44,7 +44,7 @@ public:
     { return "/com/deepin/daemon/SystemInfo"; }
 
 public:
-    DBusSystemInfo(QObject *parent = 0);
+    explicit DBusSystemInfo(QObject *parent = nullptr);
     ~DBusSystemInfo();
 
     Q_PROPERTY(qint64 SystemType READ systemType)

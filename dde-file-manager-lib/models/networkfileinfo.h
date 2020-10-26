@@ -33,7 +33,7 @@
 class NetworkFileInfo: public DAbstractFileInfo
 {
 public:
-    NetworkFileInfo(const DUrl &url);
+    explicit NetworkFileInfo(const DUrl &url);
     ~NetworkFileInfo();
 
     QString filePath() const Q_DECL_OVERRIDE;

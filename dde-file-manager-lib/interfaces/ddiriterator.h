@@ -46,16 +46,11 @@ public:
     // Returns the full file url for the current directory entry.
     virtual DUrl fileUrl() const = 0;
     virtual const DAbstractFileInfoPointer fileInfo() const = 0;
-    //判读ios手机，传输慢，需要特殊处理优化
-    virtual const DAbstractFileInfoPointer optimiseFileInfo() const{return DAbstractFileInfoPointer(nullptr);}
     // Returns the base url of the iterator.
     virtual DUrl url() const = 0;
-    //判读ios手机，传输慢，需要特殊处理优化
-    inline void setOptimise(const bool boptimise){m_boptimise = boptimise;}
 
     virtual bool enableIteratorByKeyword(const QString &keyword) {Q_UNUSED(keyword); return false;}
 public:
-    bool m_boptimise = false;
 };
 
 typedef QSharedPointer<DDirIterator> DDirIteratorPointer;

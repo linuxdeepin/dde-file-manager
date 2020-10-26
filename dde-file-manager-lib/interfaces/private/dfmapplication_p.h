@@ -29,7 +29,7 @@ class DFMApplication;
 class DFMApplicationPrivate
 {
 public:
-    DFMApplicationPrivate(dde_file_manager::DFMApplication *qq);
+    explicit DFMApplicationPrivate(dde_file_manager::DFMApplication *qq);
 
     void _q_onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value, bool edited = false);
     void _q_onSettingsValueEdited(const QString &group, const QString &key, const QVariant &value);

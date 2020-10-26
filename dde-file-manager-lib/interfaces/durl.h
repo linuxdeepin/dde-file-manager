@@ -101,7 +101,7 @@ public:
     QDataStream &operator<<(QDataStream &out);
     QDataStream &operator>>(QDataStream &in);
 
-    explicit DUrl(const QString &url, ParsingMode mode = TolerantMode);
+    DUrl(const QString &url, ParsingMode mode = TolerantMode);
 
     void setPath(const QString &path, ParsingMode mode = DecodedMode, bool makeAbsolutePath = true);
     void setScheme(const QString &scheme, bool makeAbsolutePath = true);

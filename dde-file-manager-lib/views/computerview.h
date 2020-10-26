@@ -84,7 +84,7 @@ class ComputerListView : public QListView
 {
     Q_OBJECT
 public:
-    ComputerListView(QWidget *parent = nullptr);
+    explicit ComputerListView(QWidget *parent = nullptr);
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;

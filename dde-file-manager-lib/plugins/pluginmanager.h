@@ -38,7 +38,7 @@ class PreviewInterface;
 class PluginManagerPrivate {
 
 public:
-    PluginManagerPrivate(PluginManager* parent);
+    explicit PluginManagerPrivate(PluginManager* parent);
 
     QList<PropertyDialogExpandInfoInterface*> expandInfoInterfaces;
     QList<ViewInterface*> viewInterfaces;

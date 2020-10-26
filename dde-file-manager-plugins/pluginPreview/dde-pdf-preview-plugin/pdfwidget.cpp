@@ -46,26 +46,26 @@
 
 class PdfWidgetPrivate{
 public:
-    PdfWidgetPrivate(PdfWidget* qq):
+    explicit PdfWidgetPrivate(PdfWidget* qq):
         q_ptr(qq){}
 
-    DListWidget* thumbListWidget = NULL;
-    DListWidget* pageListWidget = NULL;
-    QHBoxLayout* mainLayout = NULL;
-    QScrollBar* thumbScrollBar = NULL;
-    QScrollBar* pageScrollBar = NULL;
-    QButtonGroup* thumbButtonGroup = NULL;
+    DListWidget* thumbListWidget = nullptr;
+    DListWidget* pageListWidget = nullptr;
+    QHBoxLayout* mainLayout = nullptr;
+    QScrollBar* thumbScrollBar = nullptr;
+    QScrollBar* pageScrollBar = nullptr;
+    QButtonGroup* thumbButtonGroup = nullptr;
 
-    QTimer* pageWorkTimer = NULL;
-    QTimer* thumbWorkTimer = NULL;
+    QTimer* pageWorkTimer = nullptr;
+    QTimer* thumbWorkTimer = nullptr;
     bool isBadDoc = false;
 
     QSharedPointer<poppler::document> doc;
 
-    PdfInitWorker* pdfInitWorker = NULL;
+    PdfInitWorker* pdfInitWorker = nullptr;
     QMap<int, QImage> pageMap;
 
-    PdfWidget* q_ptr = NULL;
+    PdfWidget* q_ptr = nullptr;
     Q_DECLARE_PUBLIC(PdfWidget)
 };
 
@@ -127,8 +127,8 @@ void PdfWidget::initUI()
     }
 
     setContentsMargins(0, 0, 0, 0);
-    setFixedSize(qMin(DEFAULT_VIEW_SIZE.width(), (int)(qApp->desktop()->width() * 0.8)),
-                 qMin(DEFAULT_VIEW_SIZE.height(), (int)(qApp->desktop()->height() * 0.8)));
+    setFixedSize(qMin(DEFAULT_VIEW_SIZE.width(), static_cast<int>(qApp->desktop()->width() * 0.8)),
+                 qMin(DEFAULT_VIEW_SIZE.height(), static_cast<int>(qApp->desktop()->height() * 0.8)));
 
     d->thumbListWidget = new DListWidget(this);
     d->thumbListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -618,10 +618,10 @@ QImage PdfInitWorker::getRenderedPageImage(const int &index) const
 
         for(int y = 0; y < h; y ++){
             for(int x = 0; x < w; x++){
-                uchar b = (uchar)pdata[(x * offset) + (y * w * offset)];
-                uchar g = (uchar)pdata[(x * offset) + (y * w * offset) + 1];
-                uchar r = (uchar)pdata[(x * offset) + (y * w * offset) + 2];
-                uchar a = (uchar)pdata[(x * offset) + (y * w * offset) + 3];
+                uchar b = static_cast<uchar> (pdata[(x * offset) + (y * w * offset)]);
+                uchar g = static_cast<uchar> (pdata[(x * offset) + (y * w * offset) + 1]);
+                uchar r = static_cast<uchar> (pdata[(x * offset) + (y * w * offset) + 2]);
+                uchar a = static_cast<uchar> (pdata[(x * offset) + (y * w * offset) + 3]);
 
                 img.setPixelColor(x, y, QColor((int)r, (int)g, (int)b, (int)a));
             }

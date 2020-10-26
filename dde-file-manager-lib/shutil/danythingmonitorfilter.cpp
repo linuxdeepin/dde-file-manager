@@ -86,7 +86,7 @@ class DAnythingMonitorFilterPrivate
 {
 public:
 
-    DAnythingMonitorFilterPrivate(DAnythingMonitorFilter *const q_q);
+    explicit DAnythingMonitorFilterPrivate(DAnythingMonitorFilter *const q_q);
     ~DAnythingMonitorFilterPrivate() = default;
     DAnythingMonitorFilterPrivate(const DAnythingMonitorFilterPrivate &) = delete;
     DAnythingMonitorFilterPrivate &operator=(const DAnythingMonitorFilterPrivate &) = delete;

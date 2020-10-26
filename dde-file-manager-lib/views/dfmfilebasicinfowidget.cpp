@@ -46,7 +46,7 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     setObjectName("SectionKeyLabel");
     setFixedWidth(100);
     QFont font = this->font();
-    font.setWeight(QFont::Bold-8);
+    font.setWeight(QFont::Bold - 8);
     font.setPixelSize(13);
     setFont(font);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
@@ -63,8 +63,7 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
 
 bool SectionValueLabel::event(QEvent *e)
 {
-    if(e->type() == QEvent::FontChange)
-    {
+    if (e->type() == QEvent::FontChange) {
         //! 根据字体大小来设置label的宽度
         setFixedWidth(this->fontMetrics().horizontalAdvance(this->text()));
     }
@@ -74,8 +73,7 @@ bool SectionValueLabel::event(QEvent *e)
 void SectionValueLabel::showEvent(QShowEvent *e)
 {
     QString txt = this->text();
-    if(!txt.isEmpty())
-    {
+    if (!txt.isEmpty()) {
         //! 根据字体大小来设置label的宽度
         setFixedWidth(this->fontMetrics().horizontalAdvance(txt));
     }
@@ -107,7 +105,7 @@ void LinkSectionValueLabel::setLinkTargetUrl(const DUrl &linkTargetUrl)
 class DFMFileBasicInfoWidgetPrivate
 {
 public:
-    DFMFileBasicInfoWidgetPrivate(DFMFileBasicInfoWidget *qq);
+    explicit DFMFileBasicInfoWidgetPrivate(DFMFileBasicInfoWidget *qq);
     ~DFMFileBasicInfoWidgetPrivate();
 
     void setUrl(const DUrl &url);
@@ -124,14 +122,14 @@ private:
     bool         m_showMediaInfo{ false };
     bool         m_showSummaryOnly{ false };
 
-    DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
+    DFM_NAMESPACE::DFileStatisticsJob *m_sizeWorker{ nullptr };
 
     DFMFileBasicInfoWidget *q_ptr;
     Q_DECLARE_PUBLIC(DFMFileBasicInfoWidget)
 };
 
 DFMFileBasicInfoWidgetPrivate::DFMFileBasicInfoWidgetPrivate(DFMFileBasicInfoWidget *qq)
-    :q_ptr(qq)
+    : q_ptr(qq)
 {
     initUI();
 }
@@ -191,9 +189,9 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     if (!info)
         return;
 
-     QStackedLayout *stackedLayout = qobject_cast<QStackedLayout*>(q->layout());
-     if (!stackedLayout)
-         return;
+    QStackedLayout *stackedLayout = qobject_cast<QStackedLayout *>(q->layout());
+    if (!stackedLayout)
+        return;
 
     if (stackedLayout->currentWidget()) {
         if (m_sizeWorker)
@@ -211,7 +209,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     stackedLayout->setCurrentWidget(layoutWidget);
 
     int frameHeight = 160;
-    if (m_showFileName){
+    if (m_showFileName) {
         QLabel *fileNameKeyLabel = new SectionKeyLabel(QObject::tr("Name"));
         QLabel *fileNameLabel = new SectionValueLabel(info->fileDisplayName());
         QString text = info->fileDisplayName();
@@ -259,17 +257,17 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
             break;
         }
 
-        if (mediaType!= DFMMediaInfo::Other){
+        if (mediaType != DFMMediaInfo::Other) {
             const QString &filePath = info->filePath();
             DFMMediaInfo *mediaInfo = nullptr;
             // iphone 中读media文件很慢，因此特殊处理
             if (filePath.contains(IPHONE_STAGING) && filePath.startsWith(MOBILE_ROOT_PATH)) {
                 mediaInfo = new DFMMediaInfo(filePath, nullptr);
                 // startReadInfo 可能会很慢，因此延时1秒后，待后面的代码执行完后再执行
-                QTimer::singleShot(1000, [mediaInfo] () {
+                QTimer::singleShot(1000, [mediaInfo]() {
                     mediaInfo->startReadInfo();
                     // 立即析构会导致读取media的任务无法完成，因此延时析构，5s是实验后比较稳定的值
-                    QTimer::singleShot(5000, [mediaInfo] () {
+                    QTimer::singleShot(5000, [mediaInfo]() {
                         mediaInfo->deleteLater();
                     });
                 });
@@ -277,7 +275,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
                 mediaInfo = new DFMMediaInfo(filePath, layoutWidget);
                 mediaInfo->startReadInfo();
             }
-            QObject::connect(mediaInfo, &DFMMediaInfo::Finished, layout, [=](){
+            QObject::connect(mediaInfo, &DFMMediaInfo::Finished, layout, [ = ]() {
                 int frameHeight = q->height();
                 QString duration = mediaInfo->Value("Duration", mediaType);
                 if (duration.isEmpty()) {
@@ -365,7 +363,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 }
 
 DFMFileBasicInfoWidget::DFMFileBasicInfoWidget(QWidget *parent)
-    : QFrame (parent)
+    : QFrame(parent)
     , d_private(new DFMFileBasicInfoWidgetPrivate(this))
 {
 

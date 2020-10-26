@@ -29,7 +29,7 @@ class DFMSideBarItem;
 class DFMSideBarModel : public QStandardItemModel
 {
 public:
-    DFMSideBarModel(QObject *parent = nullptr);
+    explicit DFMSideBarModel(QObject *parent = nullptr);
 
     bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
     QMimeData *mimeData(const QModelIndexList &indexes) const override;

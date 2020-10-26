@@ -34,7 +34,7 @@
 #include "shutil/dfmfilelistfile.h"
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
-
+#include "vaultcontroller.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
@@ -47,8 +47,9 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <QQueue>
+#ifdef  FULLTEXTSEARCH_ENABLE
 #include "fulltextsearch/fulltextsearch.h"
-
+#endif
 class SearchFileWatcherPrivate;
 class SearchFileWatcher : public DAbstractFileWatcher
 {
@@ -74,7 +75,7 @@ private:
 class SearchFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    SearchFileWatcherPrivate(SearchFileWatcher *qq)
+    explicit SearchFileWatcherPrivate(SearchFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() Q_DECL_OVERRIDE;
@@ -109,9 +110,14 @@ void SearchFileWatcher::setEnabledSubfileWatcher(const DUrl &subfileUrl, bool en
 
     if (enabled) {
         addWatcher(subfileUrl.searchedFileUrl());
-    } else {
-        removeWatcher(subfileUrl.searchedFileUrl());
-    }
+    } 
+    //这里removeWatcher的逻辑是在文件超出可视区域时，就不监控其变化
+    //但这样会导致在一些特殊目录下搜索后，做一些特殊操作（例如最近使用目录中移除文件 、标记目录中取消文件标记等）时，
+    //在可视区域外的文件不会从搜索结果中移除
+    //宗上，将该行代码注释
+    //else {
+    //    removeWatcher(subfileUrl.searchedFileUrl());
+    //}
 }
 
 void SearchFileWatcher::addWatcher(const DUrl &url)
@@ -313,7 +319,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
             // 先将列表设置为适用于任意目录, 等取到异步结果后再更新此值
             hasLFTSubdirectories.append("/");
             QObject::connect(dbusWatcher, &QDBusPendingCallWatcher::finished,
-            dbusWatcher, [this] (QDBusPendingCallWatcher * call) {
+            dbusWatcher, [this](QDBusPendingCallWatcher * call) {
                 QDBusPendingReply<QStringList> result = *call;
 
                 hasLFTSubdirectories = result.value();
@@ -346,7 +352,7 @@ DUrl SearchDiriterator::next()
 
     return DUrl();
 }
-
+#ifdef  FULLTEXTSEARCH_ENABLE
 // 全文搜索
 void SearchDiriterator::fullTextSearch(const QString &searchPath) const
 {
@@ -392,30 +398,34 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
             }
             url.setSearchedFileUrl(realUrl);
 
-            if (!childrens.contains(url))
+            if (!childrens.contains(url)) {
+                // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
+                if(!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())){
+                    continue;
+                }
                 childrens << url;
+            }
         }
     }
 }
-
+#endif
 bool SearchDiriterator::hasNext() const
 {
     if (!childrens.isEmpty()) {
         return true;
     }
+#ifdef  FULLTEXTSEARCH_ENABLE
     if (!hasExecuteFullTextSearch && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
         DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
         if (fileInfo->isVirtualEntry()) {
             hasExecuteFullTextSearch = true;
-            return true;
         }
 
         QString searchPath = fileInfo->filePath();
         fullTextSearch(searchPath);
         hasExecuteFullTextSearch = true;
-        return true;
     }
-
+#endif
     forever {
         if (closed) {
             return false;
@@ -482,8 +492,13 @@ bool SearchDiriterator::hasNext() const
                 const DUrl &realUrl = fileInfo->fileUrl();
 
                 url.setSearchedFileUrl(realUrl);
-                if (!childrens.contains(url))
+                if (!childrens.contains(url)) {
+                    // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
+                    if(!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())){
+                        continue;
+                    }
                     childrens << url;
+                }
 
                 return true;
             }
@@ -505,8 +520,13 @@ bool SearchDiriterator::hasNext() const
 
 //                qDebug() << "search matched url = " << realUrl.path() + "/" + realUrl.fileName();
                 url.setSearchedFileUrl(realUrl);
-                if (!childrens.contains(url))/*去重*/
+                if (!childrens.contains(url)) {/*去重*/
+                    // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
+                    if(!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())){
+                        continue;
+                    }
                     childrens << url;
+                }
 
                 return true;
             }
@@ -514,7 +534,7 @@ bool SearchDiriterator::hasNext() const
 
         it.clear();
     }
-
+#ifdef  FULLTEXTSEARCH_ENABLE
     if (!hasUpdateIndex && DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexFullTextSearch).toBool()) {
         DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
         if (fileInfo->isVirtualEntry()) {
@@ -527,9 +547,12 @@ bool SearchDiriterator::hasNext() const
             fullTextSearch(searchPath);
         }
         hasUpdateIndex = true;
+        if (childrens.isEmpty()) {
+            return false;
+        }
         return true;
     }
-
+#endif
     return false;
 }
 
@@ -594,7 +617,7 @@ bool SearchController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent>
 
 bool SearchController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
 {
-    return DFileService::instance()->openFilesByApp(event->sender(), event->appName(), realUrlList(event->urlList()));
+    return DFileService::instance()->openFilesByApp(event->sender(), event->appName(), realUrlList(event->urlList()), event->isEnter());
 }
 
 bool SearchController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const

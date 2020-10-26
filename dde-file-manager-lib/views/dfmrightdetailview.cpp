@@ -145,19 +145,16 @@ void DFMRightDetailView::setUrl(const DUrl &url)
         return;
 
     d->m_url = url;
-
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, d->m_url);
     if (d->scrollArea)
         d->scrollArea->setVisible(fileInfo);
     if (!fileInfo)
         return;
-
     bool shouldShowTags = fileInfo->canTag();
     setTagWidgetVisible(shouldShowTags);
     if (d->tagInfoWidget) {
         d->tagInfoWidget->loadTags(d->m_url);
     }
-
     if (d->iconLabel) {
         QString iconName;
         if (url == DUrl(RECENT_ROOT)) {
@@ -171,11 +168,9 @@ void DFMRightDetailView::setUrl(const DUrl &url)
         } else if (VaultController::isRootDirectory(url.path())) {
             iconName = systemPathManager->getSystemPathIconName("Vault");
         }
-
         QIcon fileIcon = iconName.isEmpty() ? fileInfo->fileIcon() : QIcon::fromTheme(iconName);
         d->iconLabel->setPixmap(fileIcon.pixmap(256, 160));
     }
-
     if (d->baseInfoWidget){
         d->mainLayout->removeWidget(d->baseInfoWidget);
         d->baseInfoWidget->setHidden(true);
@@ -188,7 +183,6 @@ void DFMRightDetailView::setUrl(const DUrl &url)
     basicInfoWidget->setShowMediaInfo(true);
     basicInfoWidget->setShowSummary(fileInfo->isDir());
     basicInfoWidget->setUrl(d->m_url);
-
     d->mainLayout->insertWidget(2, d->baseInfoWidget);
 }
 

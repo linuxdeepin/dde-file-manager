@@ -189,8 +189,8 @@ void DFileDialog::setDirectoryUrl(const DUrl &directory)
     }
     // 修复BUG-44160
     DUrl url(directory);
-    if(VaultController::isVaultFile(directory.path())){ // 判断是否是保险箱路径
-        if(VaultController::Encrypted == VaultController::ins()->state()){  // 判断保险箱当前状态,如果处于加密状态
+    if (VaultController::isVaultFile(directory.path())) { // 判断是否是保险箱路径
+        if (VaultController::Encrypted == VaultController::ins()->state()) { // 判断保险箱当前状态,如果处于加密状态
             url.setPath(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first());
         }
     }
@@ -1253,7 +1253,7 @@ void DFileDialog::onAcceptButtonClicked()
                 DDialog dialog(this);
 
                 dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-                dialog.setTitle(tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
+                dialog.setTitle(tr("This file will be hidden if the file name starts with a dot (.). Do you want to hide it?"));
                 dialog.addButton(tr("Cancel"), true);
                 dialog.addButton(tr("Confirm"), false, DDialog::ButtonWarning);
 
@@ -1376,7 +1376,7 @@ void DFileDialog::onCurrentInputNameChanged()
     updateAcceptButtonState();
 
     DFileSystemModel *model = getFileView()->model();
-    if (!model->sortedUrls().isEmpty()) {
+    if (model && !model->sortedUrls().isEmpty()) {
 
         const DAbstractFileInfoPointer &fileInfo = model->fileInfo(model->sortedUrls().first());
         if (fileInfo) {

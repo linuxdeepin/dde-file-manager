@@ -5,7 +5,6 @@
 #include "../dde-wallpaper-chooser/frame.h"
 #include "view/canvasviewmanager.h"
 #include "screen/screenhelper.h"
-
 #include <QApplication>
 #include <QScreen>
 #include <QTest>
@@ -101,4 +100,19 @@ TEST(DesktopTest,set_visible)
         EXPECT_EQ(true,view->isVisible());
     }
     desktop.Reset();
+}
+
+TEST(DesktopTest, print_info)
+{
+    Desktop desktop;
+    char *base = (char *)(desktop.d.data());
+    char *viewVar = base + sizeof (void *);
+    void *viewManager1 = (void *)*(long * )(viewVar);
+    desktop.preInit();
+    desktop.loadData();
+    desktop.loadView();
+    void *viewManager2 = (void *)*(long * )(viewVar);
+    EXPECT_EQ(viewManager1,nullptr);
+    EXPECT_NE(viewManager2,nullptr);
+    desktop.PrintInfo();
 }

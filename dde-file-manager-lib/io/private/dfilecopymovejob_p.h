@@ -105,7 +105,7 @@ public:
     };
     typedef QSharedPointer<FileCopyInfo> FileCopyInfoPointer;
 
-    DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq);
+    explicit DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq);
     ~DFileCopyMoveJobPrivate();
 
     static QString errorToString(DFileCopyMoveJob::Error error);
@@ -189,7 +189,7 @@ public:
     void runRefineWriteAndCloseThread();
     void setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     bool checkRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
-
+    void checkTagetNeedSync();//检测目标目录是网络文件就每次拷贝去同步，否则网络很卡时会因为同步卡死
     /**
      * @brief setCutTrashData    保存剪切回收站文件路径
      * @param fileNameList       文件路径
@@ -222,6 +222,7 @@ public:
     QAtomicInteger<bool> isreadwriteseparate = false;
     QAtomicInteger<bool> isbigfile = false;
     QAtomicInteger<bool> cansetnoerror = true;
+    QAtomicInteger<bool> isFromLocalUrls = false;
 
     qint64 m_tatol = 0;
     qint64 m_readtime = 0;
@@ -262,6 +263,8 @@ public:
     int totalMoveFilesCount = 1;
     qint64 completedDataSize = 0;
     qint64 completedProgressDataSize = 0;
+    //跳过文件大小统计
+    qint64 skipFileSize = 0;
     // 已经写入到block设备的总大小
     qint64 completedDataSizeOnBlockDevice = 0;
     QPair<qint64 /*total*/, qint64 /*writed*/> currentJobDataSizeInfo;
@@ -293,6 +296,10 @@ public:
     qint64 refinecpsize = 0;
     QMutex m_refinemutex, m_errormutex;
     QList<DUrl> errorurllist;
+    //是否可以现实进度条
+    QAtomicInteger<bool> m_iscanshowprogress = false;
+    //是否需要每读写一次同步
+    bool m_isEveryReadAndWritesSnc = false;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };

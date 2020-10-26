@@ -53,6 +53,7 @@
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 #include "bluetooth/bluetoothmanager.h"
+#include "drootfilemanager.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -117,15 +118,12 @@ void onClipboardDataChanged()
     } else {
         clipboardAction = DFMGlobal::UnknowAction;
     }
-
+    clipboardFileUrls = qApp->clipboard()->mimeData()->urls();
     for (QUrl url : qApp->clipboard()->mimeData()->urls()) {
-        if (url.scheme().isEmpty()) {
-            url.setScheme("file");
-        }
-        clipboardFileUrls << url;
+        //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
         struct stat statInfo;
         int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
-        if (0 == fileStat) {
+        if (0 == fileStat && !S_ISLNK(statInfo.st_mode)) {
             clipbordFileinode << statInfo.st_ino;
         }
     }
@@ -481,6 +479,11 @@ void DFMGlobal::initThumbnailConnection()
 void DFMGlobal::initBluetoothManager()
 {
     bluetoothManager;
+}
+
+void DFMGlobal::initRootFileManager()
+{
+    rootFileManager;
 }
 
 QString DFMGlobal::getUser()

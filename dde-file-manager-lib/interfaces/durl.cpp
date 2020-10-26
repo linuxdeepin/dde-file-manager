@@ -131,11 +131,11 @@ DUrl::DUrl(const QString &url, QUrl::ParsingMode mode)
     updateVirtualPath();
 }
 
-void DUrl::setPath(const QString &path, QUrl::ParsingMode mode, bool makeAbsolute)
+void DUrl::setPath(const QString &path, QUrl::ParsingMode mode, bool makeAbsolutePath)
 {
     QUrl::setPath(path, mode);
 
-    if (makeAbsolute) {
+    if (makeAbsolutePath) {
         this->makeAbsolutePath();
     }
 
@@ -797,9 +797,9 @@ QString DUrl::toLocalFile() const
         return taggedLocalFilePath();
     } else if (isUserShareFile()) {
         return QString(path()).remove(USERSHARE_ROOT);
-    } else if (isVaultFile()){
+    } else if (isVaultFile()) {
         return path();
-    }else {
+    } else {
         return QUrl::toLocalFile();
     }
 }

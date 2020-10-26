@@ -31,8 +31,7 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     pLabelTitle->setAlignment(Qt::AlignHCenter);
 
     // 加密提示
-    m_pTips = new DLabel(tr("Click 'Encrypt' and input the user password to finish the setup wizard.") + '\n' +
-                         tr("It will take several minutes, please wait..."), this);
+    m_pTips = new DLabel(tr("Click 'Encrypt' and input the user password."), this);
     m_pTips->setAlignment(Qt::AlignHCenter);
 
     // 加密保险箱图片
@@ -45,7 +44,7 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     m_pWaterProgress->setValue(1);
     m_pWaterProgress->setFixedSize(98, 98);
     // 进度条提示
-    m_pTips3 = new DLabel(tr("Encrypted..."), this);
+    m_pTips3 = new DLabel(tr("Encrypting..."), this);
     m_pTips3->setAlignment(Qt::AlignHCenter);
 
     // 加密完成完成图片
@@ -129,7 +128,7 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
         // Reset autolock time config.
         VaultLockManager::getInstance().resetConfig();
     }else{
-        QMessageBox::warning(this, QString(), QString(tr("create vault failure, the error code is %1!").arg(nState)));
+        QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
     }
 }
 

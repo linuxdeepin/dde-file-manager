@@ -42,51 +42,51 @@
 class DDesktopRenameDialogPrivate
 {
 public:
-    explicit DDesktopRenameDialogPrivate(DDesktopRenameDialog* const qPtr);
-    ~DDesktopRenameDialogPrivate()=default;
-    DDesktopRenameDialogPrivate(const DDesktopRenameDialogPrivate& other)=delete;
-    DDesktopRenameDialogPrivate& operator=(const DDesktopRenameDialogPrivate& other)=delete;
+    explicit DDesktopRenameDialogPrivate(DDesktopRenameDialog *const qPtr);
+    ~DDesktopRenameDialogPrivate() = default;
+    DDesktopRenameDialogPrivate(const DDesktopRenameDialogPrivate &other) = delete;
+    DDesktopRenameDialogPrivate &operator=(const DDesktopRenameDialogPrivate &other) = delete;
 
 
     void initUi();
     void initUiParameters();
     void initUiLayout();
 
-    QString filteringText(const QString& text); //bug 26533
-    void updateLineEditText(QLineEdit* lineEdit, const QString& defaultValue = ""); //bug 26533
+    QString filteringText(const QString &text); //bug 26533
+    void updateLineEditText(QLineEdit *lineEdit, const QString &defaultValue = ""); //bug 26533
 
-    DDesktopRenameDialog* q_ptr{ nullptr };
+    DDesktopRenameDialog *q_ptr{ nullptr };
 
-    QLabel* m_titleLabel{ nullptr };
+    QLabel *m_titleLabel{ nullptr };
 
-    std::tuple<QLabel*, QComboBox*, QHBoxLayout*, QFrame*> m_itemsForSelecting{};
-    QStackedLayout* m_stackedLayout{ nullptr };
+    std::tuple<QLabel *, QComboBox *, QHBoxLayout *, QFrame *> m_itemsForSelecting{};
+    QStackedLayout *m_stackedLayout{ nullptr };
 
-    std::tuple<QLabel*, QLineEdit*, QHBoxLayout*> m_modeOneItemsForFinding{};
-    std::tuple<QLabel*, QLineEdit*, QHBoxLayout*> m_modeOneItemsForReplacing{};
-    QPair<QVBoxLayout*, QFrame*> m_modeOneLayout{};
-
-
-    std::tuple<QLabel*, QLineEdit*, QHBoxLayout*> m_modeTwoItemsForAdding{};
-    std::tuple<QLabel*, QComboBox*, QHBoxLayout*> m_modeTwoItemsForLocating{};
-    QPair<QVBoxLayout*, QFrame*> m_modeTwoLayout{};
+    std::tuple<QLabel *, QLineEdit *, QHBoxLayout *> m_modeOneItemsForFinding{};
+    std::tuple<QLabel *, QLineEdit *, QHBoxLayout *> m_modeOneItemsForReplacing{};
+    QPair<QVBoxLayout *, QFrame *> m_modeOneLayout{};
 
 
-    std::tuple<QLabel*, QLineEdit*, QHBoxLayout*> m_modeThreeItemsForFileName{};
-    std::tuple<QLabel*, QLineEdit*, QHBoxLayout*> m_modeThreeItemsForSNNumber{};
-    QPair<QVBoxLayout*, QFrame*> m_modeThreeLayout{};
-    QRegExpValidator* m_validator{ nullptr };
+    std::tuple<QLabel *, QLineEdit *, QHBoxLayout *> m_modeTwoItemsForAdding{};
+    std::tuple<QLabel *, QComboBox *, QHBoxLayout *> m_modeTwoItemsForLocating{};
+    QPair<QVBoxLayout *, QFrame *> m_modeTwoLayout{};
 
-    QVBoxLayout* m_mainLayout{ nullptr };
-    QFrame* m_mainFrame{ nullptr };
+
+    std::tuple<QLabel *, QLineEdit *, QHBoxLayout *> m_modeThreeItemsForFileName{};
+    std::tuple<QLabel *, QLineEdit *, QHBoxLayout *> m_modeThreeItemsForSNNumber{};
+    QPair<QVBoxLayout *, QFrame *> m_modeThreeLayout{};
+    QRegExpValidator *m_validator{ nullptr };
+
+    QVBoxLayout *m_mainLayout{ nullptr };
+    QFrame *m_mainFrame{ nullptr };
     std::size_t m_currentmode{ 0 };      //###: reocord current mode.
     std::array<bool, 3>  m_currentEnabled{{ false }}; //###: this array record current status of renamebutton at current mode.
     DFileService::AddTextFlags m_flagForAdding{ DFileService::AddTextFlags::Before }; //###: this flag is useful in mode 2. It record what to append str to name.
 };
 
 
-DDesktopRenameDialogPrivate::DDesktopRenameDialogPrivate(DDesktopRenameDialog * const qPtr)
-                        :q_ptr{ qPtr}
+DDesktopRenameDialogPrivate::DDesktopRenameDialogPrivate(DDesktopRenameDialog *const qPtr)
+    : q_ptr{ qPtr}
 {
     this->initUi();
     this->initUiParameters();
@@ -104,17 +104,17 @@ void DDesktopRenameDialogPrivate::initUi()
 
     m_modeOneItemsForFinding = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout{});
     m_modeOneItemsForReplacing = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout{});
-    m_modeOneLayout = QPair<QVBoxLayout*, QFrame*>{new QVBoxLayout{}, new QFrame{}};
+    m_modeOneLayout = QPair<QVBoxLayout *, QFrame *> {new QVBoxLayout{}, new QFrame{}};
 
 
     m_modeTwoItemsForAdding = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout);
     m_modeTwoItemsForLocating = std::make_tuple(new QLabel{}, new QComboBox{}, new QHBoxLayout{});
-    m_modeTwoLayout = QPair<QVBoxLayout*, QFrame*>{new QVBoxLayout{}, new QFrame{}};
+    m_modeTwoLayout = QPair<QVBoxLayout *, QFrame *> {new QVBoxLayout{}, new QFrame{}};
 
 
     m_modeThreeItemsForFileName = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout{});
     m_modeThreeItemsForSNNumber = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout{});
-    m_modeThreeLayout = QPair<QVBoxLayout*, QFrame*>{new QVBoxLayout{}, new QFrame{}};
+    m_modeThreeLayout = QPair<QVBoxLayout *, QFrame *> {new QVBoxLayout{}, new QFrame{}};
 
     QRegExp regStr{ QString{"[0-9]+"} };
     m_validator = new QRegExpValidator{ regStr };
@@ -128,14 +128,14 @@ void DDesktopRenameDialogPrivate::initUiParameters()
 {
     m_titleLabel->setAlignment(Qt::AlignCenter);
 
-    QLabel* tagLabel{ nullptr };
-    QComboBox* modeChoseBox{ nullptr };
-    QLineEdit* contentLineEdit{ nullptr };
+    QLabel *tagLabel{ nullptr };
+    QComboBox *modeChoseBox{ nullptr };
+    QLineEdit *contentLineEdit{ nullptr };
 
     tagLabel = std::get<0>(m_itemsForSelecting);
     tagLabel->setText(QObject::tr("Mode:"));
     modeChoseBox = std::get<1>(m_itemsForSelecting);
-    modeChoseBox->addItems(QList<QString>{ QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
+    modeChoseBox->addItems(QList<QString> { QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
     modeChoseBox->setFixedSize(QSize{275, 25});
 
     ///###: mode 1
@@ -163,8 +163,8 @@ void DDesktopRenameDialogPrivate::initUiParameters()
     tagLabel = std::get<0>(m_modeTwoItemsForLocating);
     tagLabel->setText(QObject::tr("Location:"));
     modeChoseBox = std::get<1>(m_modeTwoItemsForLocating);
-    modeChoseBox->addItems(QList<QString>{ QObject::tr("Before file name"), QObject::tr("After file name") });
-    modeChoseBox->setFixedSize( QSize{275, 25} );
+    modeChoseBox->addItems(QList<QString> { QObject::tr("Before file name"), QObject::tr("After file name") });
+    modeChoseBox->setFixedSize(QSize{275, 25});
 
     ///###: mode3
     tagLabel = std::get<0>(m_modeThreeItemsForFileName);
@@ -174,7 +174,7 @@ void DDesktopRenameDialogPrivate::initUiParameters()
     contentLineEdit->setFixedSize(QSize{275, 25});
 
     tagLabel = std::get<0>(m_modeThreeItemsForSNNumber);
-    tagLabel->setText(QObject::tr("+SN:"));
+    tagLabel->setText(QObject::tr("Start at:"));
     contentLineEdit = std::get<1>(m_modeThreeItemsForSNNumber);
     contentLineEdit->setPlaceholderText(QObject::tr("Required"));
     contentLineEdit->setFixedSize(QSize{275, 25});
@@ -188,10 +188,10 @@ void DDesktopRenameDialogPrivate::initUiParameters()
 
 void DDesktopRenameDialogPrivate::initUiLayout()
 {
-    QLabel* tagLabel{ nullptr };
-    QComboBox* modeChoseBox{ nullptr };
-    QLineEdit* contentLineEdit{ nullptr };
-    QHBoxLayout* hLayout{ nullptr };
+    QLabel *tagLabel{ nullptr };
+    QComboBox *modeChoseBox{ nullptr };
+    QLineEdit *contentLineEdit{ nullptr };
+    QHBoxLayout *hLayout{ nullptr };
 
 
     tagLabel = std::get<0>(m_itemsForSelecting);
@@ -304,20 +304,20 @@ void DDesktopRenameDialogPrivate::initUiLayout()
     m_mainFrame->setLayout(m_mainLayout);
 }
 
-QString DDesktopRenameDialogPrivate::filteringText(const QString& text)
+QString DDesktopRenameDialogPrivate::filteringText(const QString &text)
 {
-    if(text.isEmpty())
+    if (text.isEmpty())
         return text;
 
     QString readyText = text;
     return readyText.remove(QRegExp("[\\\\/:\\*\\?\"<>|%&]"));
 }
 
-void DDesktopRenameDialogPrivate::updateLineEditText(QLineEdit* lineEdit, const QString& defaultValue)
+void DDesktopRenameDialogPrivate::updateLineEditText(QLineEdit *lineEdit, const QString &defaultValue)
 {
     QString olderText = lineEdit->text();
     QString text = filteringText(olderText);
-    if(olderText != text){
+    if (olderText != text) {
         lineEdit->setText(text);
     }
     if (text.isEmpty()) {
@@ -325,9 +325,9 @@ void DDesktopRenameDialogPrivate::updateLineEditText(QLineEdit* lineEdit, const 
     }
 }
 
-DDesktopRenameDialog::DDesktopRenameDialog(QWidget* const parent)
-                  :DDialog{ parent },
-                   d_ptr{ new DDesktopRenameDialogPrivate{ this } }
+DDesktopRenameDialog::DDesktopRenameDialog(QWidget *const parent)
+    : DDialog{ parent },
+      d_ptr{ new DDesktopRenameDialogPrivate{ this } }
 {
     this->initUi();
     this->initConnect();
@@ -357,30 +357,30 @@ void DDesktopRenameDialog::initConnect()
     QObject::connect(std::get<1>(d->m_modeThreeItemsForSNNumber), &QLineEdit::textChanged, this, &DDesktopRenameDialog::onContentChangedForCustomzedSN);
     QObject::connect(this, &DDesktopRenameDialog::visibleChanged, this, &DDesktopRenameDialog::onVisibleChanged);
 
-    connect(std::get<1>(d->m_modeOneItemsForFinding), &QLineEdit::textChanged, this, [=](){
+    connect(std::get<1>(d->m_modeOneItemsForFinding), &QLineEdit::textChanged, this, [ = ]() {
         onVisibleChanged(true);
     });
-    connect(std::get<1>(d->m_modeOneItemsForReplacing), &QLineEdit::textChanged, this, [=](){
+    connect(std::get<1>(d->m_modeOneItemsForReplacing), &QLineEdit::textChanged, this, [ = ]() {
         onReplaceTextChanged();
     });
-    connect(std::get<1>(d->m_modeTwoItemsForAdding), &QLineEdit::textChanged, this, [=](){
+    connect(std::get<1>(d->m_modeTwoItemsForAdding), &QLineEdit::textChanged, this, [ = ]() {
         onVisibleChanged(true);
     });
-    connect(std::get<1>(d->m_modeThreeItemsForFileName), &QLineEdit::textChanged, this, [=](){
+    connect(std::get<1>(d->m_modeThreeItemsForFileName), &QLineEdit::textChanged, this, [ = ]() {
         onVisibleChanged(true);
     });
 
-    try{
+    try {
 
-        if(QPushButton* cancelButton = dynamic_cast<QPushButton*>(this->getButton(0))){
+        if (QPushButton *cancelButton = dynamic_cast<QPushButton *>(this->getButton(0))) {
             QObject::connect(this, &DDesktopRenameDialog::clickCancelButton, cancelButton, &QPushButton::click);
         }
 
-        if(QPushButton* renameButton = dynamic_cast<QPushButton*>(this->getButton(1))){
+        if (QPushButton *renameButton = dynamic_cast<QPushButton *>(this->getButton(1))) {
             QObject::connect(this, &DDesktopRenameDialog::clickRenameButton, renameButton, &QPushButton::click);
         }
 
-    }catch(const std::bad_cast& error){
+    } catch (const std::bad_cast &error) {
         (void)error;
 
         throw std::runtime_error{ "badly dynamic cast in DDesktopRenameDialog" };
@@ -391,7 +391,7 @@ void DDesktopRenameDialog::initConnect()
 
 void DDesktopRenameDialog::onCurrentModeChanged(const std::size_t &index)noexcept
 {
-    DDesktopRenameDialogPrivate* const d{ d_func() };
+    DDesktopRenameDialogPrivate *const d{ d_func() };
 
     d->m_currentmode = index;
     d->m_stackedLayout->setCurrentIndex(index);
@@ -402,12 +402,12 @@ void DDesktopRenameDialog::onCurrentModeChanged(const std::size_t &index)noexcep
 
 void DDesktopRenameDialog::onCurrentAddModeChanged(const std::size_t &index)noexcept
 {
-    DDesktopRenameDialogPrivate* d{ d_func() };
+    DDesktopRenameDialogPrivate *d{ d_func() };
 
-    if(index == 0){
+    if (index == 0) {
         d->m_flagForAdding = DFileService::AddTextFlags::Before;
 
-    }else{
+    } else {
         d->m_flagForAdding = DFileService::AddTextFlags::After;
     }
 
@@ -417,52 +417,52 @@ void DDesktopRenameDialog::onCurrentAddModeChanged(const std::size_t &index)noex
 
 std::size_t DDesktopRenameDialog::getCurrentModeIndex()const noexcept
 {
-    const DDesktopRenameDialogPrivate* const d{ d_func() };
+    const DDesktopRenameDialogPrivate *const d{ d_func() };
 
     return d->m_currentmode;
 }
 
 DFileService::AddTextFlags DDesktopRenameDialog::getAddMode()const noexcept
 {
-    const DDesktopRenameDialogPrivate* const d{ d_func() };
+    const DDesktopRenameDialogPrivate *const d{ d_func() };
 
     return d->m_flagForAdding;
 }
 
 QPair<QString, QString> DDesktopRenameDialog::getModeOneContent()const noexcept
 {
-    const DDesktopRenameDialogPrivate* const d{ d_func() };
+    const DDesktopRenameDialogPrivate *const d{ d_func() };
 
     QString findStr{ std::get<1>(d->m_modeOneItemsForFinding)->text() };
     QString replaceStr{ std::get<1>(d->m_modeOneItemsForReplacing)->text() };
 
-    return QPair<QString, QString>{ findStr, replaceStr };
+    return QPair<QString, QString> { findStr, replaceStr };
 }
 
 
 QPair<QString, DFileService::AddTextFlags> DDesktopRenameDialog::getModeTwoContent()const noexcept
 {
-    const DDesktopRenameDialogPrivate* const d{ d_func() };
+    const DDesktopRenameDialogPrivate *const d{ d_func() };
 
     QString addStr{ std::get<1>(d->m_modeTwoItemsForAdding)->text() };
     DFileService::AddTextFlags flag{ d->m_flagForAdding };
 
-    return QPair<QString, DFileService::AddTextFlags>{ addStr, flag };
+    return QPair<QString, DFileService::AddTextFlags> { addStr, flag };
 }
 
 
 QPair<QString, QString> DDesktopRenameDialog::getModeThreeContent()const noexcept
 {
-    const DDesktopRenameDialogPrivate* const d{ d_func() };
+    const DDesktopRenameDialogPrivate *const d{ d_func() };
 
     QString fileName{ std::get<1>(d->m_modeThreeItemsForFileName)->text() };
     QString numberStr{ std::get<1>(d->m_modeThreeItemsForSNNumber)->text() };
 
-    if(numberStr.isEmpty()){ // if the number is empty should set one default value
+    if (numberStr.isEmpty()) { // if the number is empty should set one default value
         numberStr = QString{"1"};
     }
 
-    return QPair<QString, QString>{ fileName, numberStr};
+    return QPair<QString, QString> { fileName, numberStr};
 }
 
 
@@ -470,7 +470,7 @@ QPair<QString, QString> DDesktopRenameDialog::getModeThreeContent()const noexcep
 ///     style sheet.
 void DDesktopRenameDialog::setRenameButtonStatus(const bool &enabled)
 {
-    if(QPushButton* renameButton = dynamic_cast<QPushButton*>(this->getButton(1))){
+    if (QPushButton *renameButton = dynamic_cast<QPushButton *>(this->getButton(1))) {
 
         renameButton->setEnabled(enabled);
     }
@@ -479,13 +479,13 @@ void DDesktopRenameDialog::setRenameButtonStatus(const bool &enabled)
 
 void DDesktopRenameDialog::onContentChangedForFinding(const QString &content)
 {
-    DDesktopRenameDialogPrivate* const d{ d_func() };
+    DDesktopRenameDialogPrivate *const d{ d_func() };
 
-    if(content.isEmpty() == false){
+    if (content.isEmpty() == false) {
         d->m_currentEnabled[0] = true;
         this->setRenameButtonStatus(true);
 
-    }else{
+    } else {
         d->m_currentEnabled[0] = false;
         this->setRenameButtonStatus(false);
     }
@@ -494,13 +494,13 @@ void DDesktopRenameDialog::onContentChangedForFinding(const QString &content)
 
 void DDesktopRenameDialog::onContentChangedForAdding(const QString &content)
 {
-    DDesktopRenameDialogPrivate* const d{ d_func() };
+    DDesktopRenameDialogPrivate *const d{ d_func() };
 
-    if(content.isEmpty() == false){
+    if (content.isEmpty() == false) {
         d->m_currentEnabled[1] = true;
         this->setRenameButtonStatus(true);
 
-    }else{
+    } else {
         d->m_currentEnabled[1] = false;
         this->setRenameButtonStatus(false);
     }
@@ -508,21 +508,20 @@ void DDesktopRenameDialog::onContentChangedForAdding(const QString &content)
 
 void DDesktopRenameDialog::onContentChangedForCustomzedSN(const QString &content)
 {
-    DDesktopRenameDialogPrivate* d{ d_func() };
+    DDesktopRenameDialogPrivate *d{ d_func() };
 
-    QLineEdit* lineEditForSNNumber{ std::get<1>(d->m_modeThreeItemsForSNNumber) };
+    QLineEdit *lineEditForSNNumber{ std::get<1>(d->m_modeThreeItemsForSNNumber) };
 
     std::string numberStr{ content.toStdString() };
-    try{
+    try {
         std::stoull(numberStr);
 
-    }catch(const std::out_of_range& err){
+    } catch (const std::out_of_range &err) {
         (void)err;
         lineEditForSNNumber->setText(QString{"1"});
 
-    }catch(...){
-        if(!numberStr.empty()) // bug 26538: can edit the number
-        {
+    } catch (...) {
+        if (!numberStr.empty()) { // bug 26538: can edit the number
             lineEditForSNNumber->setText(QString{"1"});
         }
     }
@@ -530,7 +529,7 @@ void DDesktopRenameDialog::onContentChangedForCustomzedSN(const QString &content
 
 void DDesktopRenameDialog::setDialogTitle(const QString &tile)noexcept
 {
-    DDesktopRenameDialogPrivate* const d{ d_func() };
+    DDesktopRenameDialogPrivate *const d{ d_func() };
     d->m_titleLabel->setText(tile);
 }
 
@@ -543,55 +542,51 @@ void DDesktopRenameDialog::setVisible(bool visible)
 
 void DDesktopRenameDialog::onReplaceTextChanged()noexcept
 {
-    DDesktopRenameDialogPrivate* const d{ d_func() };
+    DDesktopRenameDialogPrivate *const d{ d_func() };
 
-    QLineEdit* lineEdit{ std::get<1>(d->m_modeOneItemsForReplacing) };
+    QLineEdit *lineEdit{ std::get<1>(d->m_modeOneItemsForReplacing) };
 
     d->updateLineEditText(lineEdit);
 }
 
 void DDesktopRenameDialog::onVisibleChanged(bool visible)noexcept
 {
-    DDesktopRenameDialogPrivate* const d{ d_func() };
+    DDesktopRenameDialogPrivate *const d{ d_func() };
 
-    if(visible == true){
+    if (visible == true) {
 
-        switch(d->m_currentmode)
-        {
-            case 0:
-            {
-                // for finding
-                QLineEdit* lineEdit = { std::get<1>(d->m_modeOneItemsForFinding) };
+        switch (d->m_currentmode) {
+        case 0: {
+            // for finding
+            QLineEdit *lineEdit = { std::get<1>(d->m_modeOneItemsForFinding) };
 
-                d->updateLineEditText(lineEdit);
-                setRenameButtonStatus(!lineEdit->text().isEmpty());
-                lineEdit->setFocus();
-                break;
-            }
-            case 1:
-            {
-                QLineEdit* lineEdit{ std::get<1>(d->m_modeTwoItemsForAdding) };
+            d->updateLineEditText(lineEdit);
+            setRenameButtonStatus(!lineEdit->text().isEmpty());
+            lineEdit->setFocus();
+            break;
+        }
+        case 1: {
+            QLineEdit *lineEdit{ std::get<1>(d->m_modeTwoItemsForAdding) };
 
-                d->updateLineEditText(lineEdit);
-                setRenameButtonStatus(!lineEdit->text().isEmpty());
-                lineEdit->setFocus();
-                break;
-            }
-            case 2:
-            {
-                QLineEdit* lineEdit{ std::get<1>(d->m_modeThreeItemsForFileName) };
+            d->updateLineEditText(lineEdit);
+            setRenameButtonStatus(!lineEdit->text().isEmpty());
+            lineEdit->setFocus();
+            break;
+        }
+        case 2: {
+            QLineEdit *lineEdit{ std::get<1>(d->m_modeThreeItemsForFileName) };
 
-                d->updateLineEditText(lineEdit);
-                setRenameButtonStatus(!lineEdit->text().isEmpty());
-                lineEdit->setFocus();
+            d->updateLineEditText(lineEdit);
+            setRenameButtonStatus(!lineEdit->text().isEmpty());
+            lineEdit->setFocus();
 
-                QLineEdit* lineEditForSNNumber{ std::get<1>(d->m_modeThreeItemsForSNNumber) };
-                d->updateLineEditText(lineEditForSNNumber,"1");
+            QLineEdit *lineEditForSNNumber{ std::get<1>(d->m_modeThreeItemsForSNNumber) };
+            d->updateLineEditText(lineEditForSNNumber, "1");
 
-                break;
-            }
-            default:
-                break;
+            break;
+        }
+        default:
+            break;
 
         }
     }

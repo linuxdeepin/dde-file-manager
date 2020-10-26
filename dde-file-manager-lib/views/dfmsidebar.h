@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QMenu>
+#include <QFuture>
 
 #include "durl.h"
 #include "dfmglobal.h"
@@ -49,6 +50,7 @@ public:
     };
 
     explicit DFMSideBar(QWidget *parent = nullptr);
+    ~DFMSideBar();
     QWidget *sidebarView(); // return m_sidebarView
 
     QRect groupGeometry(const QString &groupName);
@@ -77,13 +79,13 @@ public:
 
     static const int minimumWidth = 120;
     static const int maximumWidth = 200;
-    void rootFileChange();
+    void rootFileResult();
 
 signals:
     void disableUrlSchemesChanged();
-    void addUserShareItemFinished();
-public slots:
-    void onRootFileChange(const DAbstractFileInfoPointer &fi);
+    // 侧边栏添加共享item信号，url为共享文件夹的路径
+    void addUserShareItemFinished(const DUrl &url);
+
 private slots:
     void onItemActivated(const QModelIndex &index);
     void onContextMenuRequested(const QPoint &pos);
@@ -118,6 +120,10 @@ private:
 
     QDateTime m_lastToggleTime;
     DFMSideBarItem *m_pLastToggleItem = nullptr;
+
+#ifdef ENABLE_ASYNCINIT
+    QPair<bool,QFuture<void>> m_initDevThread; //初始化initDeviceConnection线程，first为是否强制结束线程
+#endif
 };
 
 DFM_END_NAMESPACE

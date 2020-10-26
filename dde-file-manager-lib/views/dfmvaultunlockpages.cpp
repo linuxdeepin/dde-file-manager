@@ -94,8 +94,8 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(m_tipsButton, &QPushButton::clicked, [this]{
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
-            strPwdHint.insert(0, tr("Password hint:"));
-            showToolTip(strPwdHint, 3000, EN_ToolTip::Information);
+            QString hint = tr("Password hint: %1").arg(strPwdHint);
+            showToolTip(hint, 3000, EN_ToolTip::Information);
         }
     });
     connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
@@ -176,7 +176,8 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
             VaultController::ins()->unlockVault(strClipher);
         }else {
             // 设置密码输入框颜色
-            m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+            // 修复bug-51508 激活密码框警告状态
+            m_passwordEdit->setAlert(true);
             showToolTip(tr("Wrong password"), 3000, EN_ToolTip::Warning);
         }
         return;
@@ -189,9 +190,8 @@ void DFMVaultUnlockPages::onPasswordChanged(const QString &pwd)
 {
     if (!pwd.isEmpty()){
         getButton(1)->setEnabled(true);
-        QLineEdit edit;
-        QPalette palette = edit.palette();
-        m_passwordEdit->lineEdit()->setPalette(palette);
+        // 修复bug-51508 取消密码框警告状态
+        m_passwordEdit->setAlert(false);
     }else {
         getButton(1)->setEnabled(false);
     }
@@ -227,7 +227,7 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
             }
         } else {
             // error tips
-            QString errMsg = tr("Unlock File Vault failed.%1").arg(VaultController::getErrorInfo(state));
+            QString errMsg = tr("Failed to unlock file vault");
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
             dialog.setTitle(errMsg);

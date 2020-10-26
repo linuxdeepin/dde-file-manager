@@ -199,7 +199,7 @@ VaultController::VaultController(QObject *parent)
     : DAbstractFileController(parent), d_ptr(new VaultControllerPrivate(this))
 {
     Q_D(VaultController);
-    d->m_cryFsHandle = new CryFsHandle;
+    d->m_cryFsHandle = new CryFsHandle(this);
     connect(this, &VaultController::sigCreateVault, d->m_cryFsHandle, &CryFsHandle::createVault);
     connect(this, &VaultController::sigUnlockVault, d->m_cryFsHandle, &CryFsHandle::unlockVault);
     connect(this, &VaultController::sigLockVault, d->m_cryFsHandle, &CryFsHandle::lockVault);
@@ -343,7 +343,11 @@ bool VaultController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) 
     }
 
     if (!pathList.empty()) {
-        result = FileUtils::openFiles(pathList);
+        if (event->isEnter()) {
+            result = FileUtils::openEnterFiles(pathList);
+        } else {
+            result = FileUtils::openFiles(pathList);
+        }
         if (!result) {
             for (const DUrl &fileUrl : packUrl) {
                 AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(), fileUrl)); // requestShowOpenWithDialog
@@ -763,76 +767,76 @@ QString VaultController::getErrorInfo(int state)
     QString strErr("");
     switch (state) {
     case 10:
-        strErr = tr("The command line arguments are invalid.");
+        strErr = "The command line arguments are invalid.";
         break;
     case 11:
-        strErr = tr("Couldn't load config file. Probably the password is wrong");
+        strErr = "Couldn't load config file. Probably the password is wrong";
         break;
     case 12:
-        strErr = tr("Password cannot be empty");
+        strErr = "Password cannot be empty";
         break;
     case 13:
-        strErr = tr("The file system format is too new for this CryFS version. Please update your CryFS version.");
+        strErr = "The file system format is too new for this CryFS version. Please update your CryFS version.";
         break;
     case 14:
-        strErr = tr("The file system format is too old for this CryFS version. Run with --allow-filesystem-upgrade to upgrade it.");
+        strErr = "The file system format is too old for this CryFS version. Run with --allow-filesystem-upgrade to upgrade it.";
         break;
     case 15:
-        strErr = tr("The file system uses a different cipher than the one specified on the command line using the --cipher argument.");
+        strErr = "The file system uses a different cipher than the one specified on the command line using the --cipher argument.";
         break;
     case 16:
-        strErr = tr("Base directory doesn't exist or is inaccessible (i.e. not read or writable or not a directory)");
+        strErr = "Base directory doesn't exist or is inaccessible (i.e. not read or writable or not a directory)";
         break;
     case 17:
-        strErr = tr("Mount directory doesn't exist or is inaccessible (i.e. not read or writable or not a directory)");
+        strErr = "Mount directory doesn't exist or is inaccessible (i.e. not read or writable or not a directory)";
         break;
     case 18:
-        strErr = tr("Base directory can't be a subdirectory of the mount directory");
+        strErr = "Base directory can't be a subdirectory of the mount directory";
         break;
     case 19:
-        strErr = tr("Something's wrong with the file system.");
+        strErr = "Something's wrong with the file system.";
         break;
     case 20:
-        strErr = tr("The filesystem id in the config file is different to the last time we loaded a filesystem from this basedir. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.");
+        strErr = "The filesystem id in the config file is different to the last time we loaded a filesystem from this basedir. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.";
         break;
     case 21:
-        strErr = tr("The filesystem encryption key differs from the last time we loaded this filesystem. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.");
+        strErr = "The filesystem encryption key differs from the last time we loaded this filesystem. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.";
         break;
     case 22:
-        strErr = tr("The command line options and the file system disagree on whether missing blocks should be treated as integrity violations.");
+        strErr = "The command line options and the file system disagree on whether missing blocks should be treated as integrity violations.";
         break;
     case 23:
-        strErr = tr("File system is in single-client mode and can only be used from the client that created it.");
+        strErr = "File system is in single-client mode and can only be used from the client that created it.";
         break;
     case 24:
-        strErr = tr("A previous run of the file system detected an integrity violation. Preventing access to make sure the user notices. The file system will be accessible again after the user deletes the integrity state file.");
+        strErr = "A previous run of the file system detected an integrity violation. Preventing access to make sure the user notices. The file system will be accessible again after the user deletes the integrity state file.";
         break;
     case 25:
-        strErr = tr("An integrity violation was detected and the file system unmounted to make sure the user notices.");
+        strErr = "An integrity violation was detected and the file system unmounted to make sure the user notices.";
         break;
     case 26:
-        strErr = tr("Mount directory is not empty.");
+        strErr = "Mount directory is not empty.";
         break;
     case 27:
-        strErr = tr("Mount directory in use.");
+        strErr = "Mount directory in use.";
         break;
     case 28:
-        strErr = tr("Cryfs not installed.");
+        strErr = "Cryfs not installed.";
         break;
     case 29:
-        strErr = tr("Mount directory doesn't exist.");
+        strErr = "Mount directory doesn't exist.";
         break;
     case 30:
-        strErr = tr("Mounted directory encrypted.");
+        strErr = "Mounted directory encrypted.";
         break;
     case 31:
-        strErr = tr("No permissions.");
+        strErr = "No permissions.";
         break;
     case 32:
-        strErr = tr("Fusermount does not exist");
+        strErr = "Fusermount does not exist";
         break;
     case 33:
-        strErr = tr("An encrypted folder created by Cryfs already exists.");
+        strErr = "An encrypted folder created by Cryfs already exists.";
         break;
     default:
         break;
@@ -959,7 +963,7 @@ bool VaultController::isBigFileDeleting()
     return m_isBigFileDeleting;
 }
 
-void VaultController::createVault(const DSecureString &passWord, QString lockBaseDir, QString unlockFileDir)
+void VaultController::createVault(const DSecureString &password, QString lockBaseDir, QString unlockFileDir)
 {
     auto createIfNotExist = [](const QString & path) {
         if (!QFile::exists(path)) {
@@ -978,7 +982,7 @@ void VaultController::createVault(const DSecureString &passWord, QString lockBas
 
         emit sigCreateVault(makeVaultLocalPath("", VAULT_ENCRYPY_DIR_NAME),
                             makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME),
-                            passWord);
+                            password);
     } else {
         if (state(lockBaseDir) != NotExisted) {
             emit signalCreateVault(static_cast<int>(ErrorCode::EncryptedExist));
@@ -987,11 +991,11 @@ void VaultController::createVault(const DSecureString &passWord, QString lockBas
 
         createIfNotExist(lockBaseDir);
         createIfNotExist(unlockFileDir);
-        emit sigCreateVault(lockBaseDir, unlockFileDir, passWord);
+        emit sigCreateVault(lockBaseDir, unlockFileDir, password);
     }
 }
 
-void VaultController::unlockVault(const DSecureString &passWord, QString lockBaseDir, QString unlockFileDir)
+void VaultController::unlockVault(const DSecureString &password, QString lockBaseDir, QString unlockFileDir)
 {
     if (lockBaseDir.isEmpty() || unlockFileDir.isEmpty()) {
         if (state() != Encrypted) {
@@ -1001,13 +1005,13 @@ void VaultController::unlockVault(const DSecureString &passWord, QString lockBas
 
         emit sigUnlockVault(makeVaultLocalPath("", VAULT_ENCRYPY_DIR_NAME),
                             makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME),
-                            passWord);
+                            password);
     } else {
         if (state(lockBaseDir) != Encrypted) {
             emit signalUnlockVault(static_cast<int>(ErrorCode::MountpointNotEmpty));
             return;
         }
-        emit sigUnlockVault(lockBaseDir, unlockFileDir, passWord);
+        emit sigUnlockVault(lockBaseDir, unlockFileDir, password);
     }
 }
 
@@ -1050,7 +1054,7 @@ void VaultController::refreshTotalSize()
 {
     // 修复BUG-42897 打开正在拷贝或剪贴的文件夹时，主界面卡死问题
     // 当保险箱大小计算线程没有结束时，直接返回
-    if(m_sizeWorker->isRunning()){
+    if (m_sizeWorker->isRunning()) {
         m_bNeedRefreshSize = true;
         return;
     }
@@ -1064,7 +1068,9 @@ void VaultController::onFinishCalcSize()
     // 但保险箱大小计算完成后，再次计算一次保险箱的大小
     if (m_bNeedRefreshSize) {
         DUrl url = vaultToLocalUrl(makeVaultUrl());
-        m_sizeWorker->start({url});
+        // 修复BUG-47507 增加判断，如果该线程正在启动，不要再次进入该线程
+        if (!m_sizeWorker->isRunning())
+            m_sizeWorker->start({url});
     }
     m_bNeedRefreshSize = false;
 }
@@ -1072,7 +1078,7 @@ void VaultController::onFinishCalcSize()
 // 创建保险箱，执行该槽函数,通知保险箱创建成功与否，并更新保险箱的状态
 void VaultController::slotCreateVault(int state)
 {
-    if(state == static_cast<int>(ErrorCode::Success)){
+    if (state == static_cast<int>(ErrorCode::Success)) {
         m_enVaultState = Unlocked;
     }
     emit signalCreateVault(state);

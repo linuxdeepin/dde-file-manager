@@ -52,83 +52,83 @@ private:
 
 
 public:
-    RecordRenameBarState()=default;
-    ~RecordRenameBarState()=default;
+    RecordRenameBarState() = default;
+    ~RecordRenameBarState() = default;
 
 
     ///###: copy!
-    RecordRenameBarState(const RecordRenameBarState& other);
-    RecordRenameBarState(RecordRenameBarState&& other);
+    RecordRenameBarState(const RecordRenameBarState &other);
+    RecordRenameBarState(RecordRenameBarState &&other);
 
     ///###: move!
-    RecordRenameBarState& operator=(const RecordRenameBarState& other);
-    RecordRenameBarState& operator=(RecordRenameBarState&& other);
+    RecordRenameBarState &operator=(const RecordRenameBarState &other);
+    RecordRenameBarState &operator=(RecordRenameBarState &&other);
 
     ///###: clear!
     void clear();
 
     ///###: set!
     template<typename Type, typename ...Types>
-    RecordRenameBarState(Type&& arg, Types&&... args);
+    RecordRenameBarState(Type &&arg, Types &&... args);
 
-    inline void setPatternFirstItemContent(const QPair<QString, QString>& patternOneItemsContent)
+    inline void setPatternFirstItemContent(const QPair<QString, QString> &patternOneItemsContent)
     {
         m_patternFirst = patternOneItemsContent;
     }
 
-    inline void setPatternSecondItemContent(const QPair<QString, DFileService::AddTextFlags>& patternTwoItemsContent)
+    inline void setPatternSecondItemContent(const QPair<QString, DFileService::AddTextFlags> &patternTwoItemsContent)
     {
         m_patternSecond = patternTwoItemsContent;
     }
 
-    inline void setPatternThirdItemContent(const QPair<QString, QString>& patternThreeItemsContent)
+    inline void setPatternThirdItemContent(const QPair<QString, QString> &patternThreeItemsContent)
     {
         m_patternThird = patternThreeItemsContent;
     }
 
-    inline void setbuttonStateInThreePattern(const std::array<bool, 3>& buttonsState)
+    inline void setbuttonStateInThreePattern(const std::array<bool, 3> &buttonsState)
     {
         m_buttonStateInThreePattern = buttonsState;
     }
 
-    inline void setCurrentPattern(const std::size_t& currentPattern)
+    inline void setCurrentPattern(const std::size_t &currentPattern)
     {
         m_currentPattern = currentPattern;
     }
 
-    inline void setSelectedUrls(const QList<DUrl>& urlList)
+    inline void setSelectedUrls(const QList<DUrl> &urlList)
     {
         m_selectedUrls = urlList;
     }
 
-    inline void setStoredValueOfVisible(const bool& value)
+    inline void setStoredValueOfVisible(const bool &value)
     {
         m_visible.store(value, std::memory_order_seq_cst);
     }
 
 
     ///###: get!
-    inline const QPair<QString, QString>& getPatternFirstItemContent()const noexcept
+    inline const QPair<QString, QString> &getPatternFirstItemContent()const noexcept
     {
         return m_patternFirst;
     }
-    inline const QPair<QString, DFileService::AddTextFlags>& getPatternSecondItemContent()const noexcept
+    inline const QPair<QString, DFileService::AddTextFlags> &getPatternSecondItemContent()const noexcept
     {
         return m_patternSecond;
     }
-    inline const QPair<QString, QString>& getPatternThirdItemContent()const noexcept
+    inline const QPair<QString, QString> &getPatternThirdItemContent()const noexcept
     {
         return m_patternThird;
     }
-    inline const std::array<bool, 3>& getbuttonStateInThreePattern()const noexcept
+    inline const std::array<bool, 3> &getbuttonStateInThreePattern()const noexcept
     {
         return m_buttonStateInThreePattern;
     }
-    inline const std::size_t& getCurrentPattern()const noexcept
+    inline const std::size_t &getCurrentPattern()const noexcept
     {
         return m_currentPattern;
     }
-    inline const QList<DUrl>& getSelectedUrl()const noexcept
+    inline const QList<DUrl> &getSelectedUrl()const noexcept
     {
         return m_selectedUrls;
     }
@@ -147,19 +147,19 @@ public:
     explicit DRenameBar(QWidget *parent = nullptr);//###: init widgets and layout widgets when constructing DRenameBarPrivate.
     virtual ~DRenameBar() override = default;
 
-    DRenameBar(const DRenameBar&)=delete;
-    DRenameBar& operator=(const DRenameBar&)=delete;
+    DRenameBar(const DRenameBar &) = delete;
+    DRenameBar &operator=(const DRenameBar &) = delete;
 
 
     void storeUrlList(const QList<DUrl> &list)noexcept;
     void resetRenameBar()noexcept; //###: do not delete item! just clear content
     std::unique_ptr<RecordRenameBarState> getCurrentState()const;// return state and parameters by this function.
-    void loadState(std::unique_ptr<RecordRenameBarState>& state);
+    void loadState(std::unique_ptr<RecordRenameBarState> &state);
 
     virtual void setVisible(bool value) override;
 
 protected:
-    virtual void keyPressEvent(QKeyEvent* event)override;
+    virtual void keyPressEvent(QKeyEvent *event)override;
 
 signals:
     void requestReplaceOperator();
@@ -171,12 +171,12 @@ signals:
 
 private slots:
     void onVisibleChanged(bool value)noexcept;
-    void onRenamePatternChanged(const int& index)noexcept;
+    void onRenamePatternChanged(const int &index)noexcept;
 
-    void onReplaceOperatorFileNameChanged(const QString& text)noexcept;
-    void onReplaceOperatorDestNameChanged(const QString& text)noexcept;
-    void onAddOperatorAddedContentChanged(const QString& text)noexcept;
-    void onAddTextPatternChanged(const int& index)noexcept;
+    void onReplaceOperatorFileNameChanged(const QString &text)noexcept;
+    void onReplaceOperatorDestNameChanged(const QString &textChanged)noexcept;
+    void onAddOperatorAddedContentChanged(const QString &text)noexcept;
+    void onAddTextPatternChanged(const int &index)noexcept;
     void onCustomOperatorFileNameChanged()noexcept;
     void onCustomOperatorSNNumberChanged();
     void eventDispatcher();

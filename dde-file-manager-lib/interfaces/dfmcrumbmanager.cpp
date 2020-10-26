@@ -44,7 +44,7 @@ DFM_BEGIN_NAMESPACE
 class DFMCrumbManagerPrivate
 {
 public:
-    DFMCrumbManagerPrivate(DFMCrumbManager *qq);
+    explicit DFMCrumbManagerPrivate(DFMCrumbManager *qq);
 
     QMultiHash<const DFMCrumbManager::KeyType, DFMCrumbManager::CrumbCreaterType> controllerCreatorHash;
 
@@ -115,8 +115,8 @@ DFMCrumbInterface *DFMCrumbManager::createControllerByUrl(const DUrl &fileUrl, D
 
     Q_CHECK_PTR(crumbBar);
 
-    if (!creatorList.isEmpty()){
-        DFMCrumbInterface* i = (creatorList.first().second)();
+    if (!creatorList.isEmpty()) {
+        DFMCrumbInterface *i = (creatorList.first().second)();
         i->setCrumbBar(crumbBar);
         return i;
     }

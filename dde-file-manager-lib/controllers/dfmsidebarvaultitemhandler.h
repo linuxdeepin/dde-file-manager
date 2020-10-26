@@ -47,7 +47,7 @@ public:
      * @brief 构造函数
      * @param parent
      */
-    DFMSideBarVaultItemHandler(QObject *parent = nullptr);
+    explicit DFMSideBarVaultItemHandler(QObject *parent = nullptr);
 
     /**
      * @brief 打开操作

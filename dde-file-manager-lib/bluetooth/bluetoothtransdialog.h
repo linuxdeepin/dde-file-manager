@@ -57,6 +57,8 @@ public:
 
     BluetoothTransDialog(const QStringList &urls, TransferMode mode = Default, QString targetDevId = QString(), QWidget *parent = nullptr);
 
+    static bool canSendFiles();
+
 protected:
     void closeEvent(QCloseEvent *event) override;
 
@@ -110,6 +112,21 @@ private:
      * @param devId 接收方id
      */
     void sendFilesToDevice(const QString &devId);
+
+    /**
+     * @brief changeLabelTheme 跟随主题变换对话框部分字体文案的颜色
+     * @param obj 需要控制颜色的QLabel对象
+     * @param isTitle 是否是主标题，主标题的透明度与其他文案有差别
+     */
+    void changeLabelTheme(QLabel *obj, bool isTitle = false);
+
+    /**
+     * @brief setObjTextStyle 设置各控件的字体属性
+     * @param obj   目标控件
+     * @param size  字体尺寸
+     * @param bold  字体加粗
+     */
+    void setObjTextStyle(QWidget *obj, int size, bool bold);
 
 private Q_SLOTS:
     void showBluetoothSetting();

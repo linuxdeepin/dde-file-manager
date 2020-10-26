@@ -87,7 +87,7 @@ class NameTextEdit: public QTextEdit
     Q_OBJECT
 
 public:
-    explicit NameTextEdit(const QString &text="", QWidget *parent=0);
+    explicit NameTextEdit(const QString &text="", QWidget *parent=nullptr);
 
     bool isCanceled() const;
     void setIsCanceled(bool isCanceled);
@@ -153,7 +153,7 @@ class PropertyDialog : public DDialog
     Q_OBJECT
 
 public:
-    explicit PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *parent = 0);
+    explicit PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *parent = nullptr);
 
 public:
     void initUI();
@@ -176,7 +176,8 @@ public slots:
     void renameFile();
     void showTextShowFrame();
     void onChildrenRemoved(const DUrl &fileUrl);
-    void flickFolderToSidebar();
+    // fileUrl:共享文件夹路径
+    void flickFolderToSidebar(const DUrl &fileUrl);
     void onOpenWithBntsChecked(QAbstractButton *w);
     void onHideFileCheckboxChecked(bool checked);
 

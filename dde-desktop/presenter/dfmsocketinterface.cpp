@@ -80,7 +80,7 @@ extern void startProcessDetached(const QString &program,
 class DFMSocketInterfacePrivate
 {
 public:
-    DFMSocketInterfacePrivate(DFMSocketInterface *parent) : q_ptr(parent) {}
+    explicit DFMSocketInterfacePrivate(DFMSocketInterface *parent) : q_ptr(parent) {}
 
     QLocalSocket *socket = nullptr;
 

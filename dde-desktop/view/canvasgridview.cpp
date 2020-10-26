@@ -100,7 +100,7 @@ namespace  {
     class IgnoreDropFlag
     {
     public:
-        IgnoreDropFlag (DFileSystemModel *m) : model(m)
+        explicit IgnoreDropFlag (DFileSystemModel *m) : model(m)
         {
             if (model)
                 model->ignoreDropFlag = true;
@@ -877,6 +877,7 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
             }
         }
     }
+
     update();
 }
 
@@ -1002,14 +1003,24 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             break;
         }
     // fall through
+    //为解决fall through警告而添加的下面一句
+    Q_FALLTHROUGH();
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
+                DUrlList lst;
                 for (const DUrl &url : selectUrlsMap) {
-                    openUrl(url);
+                    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+                    if (!info || info->isVirtualEntry()) {
+                        // we do expand the virtual entry on single click, so no longer need to do that here.
+                        // toggleEntryExpandedState(url);
+                        continue;
+                    }
+                    lst << url;
                 }
+                DFileService::instance()->openFiles(this, lst,true);
                 return;
             }
             break;
@@ -1319,7 +1330,11 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
     QModelIndex targetIndex = indexAt(event->pos());
 
-    QSet<QString> selectLocalFiles;
+    //list保持顺序
+    QList<QString> selectLocalFiles;
+    //辅助selectLocalFiles做查找，判断是否重复
+    QHash<QString,bool> selectLocalFileMap;
+
     auto selects = selectionModel()->selectedIndexes();
     bool dropOnSelf = false;
     for (auto index : selects) {
@@ -1333,9 +1348,16 @@ void CanvasGridView::dropEvent(QDropEvent *event)
             dropOnSelf = true;
         }
 
-        selectLocalFiles << info->fileUrl().toString();
+        const QString fileUrl = info->fileUrl().toString();
+        //重复的不再添加
+        if (!selectLocalFileMap.contains(fileUrl)){
+            selectLocalFiles << fileUrl;
+            selectLocalFileMap.insert(fileUrl,0);
+        }
+
     }
 
+    qDebug() << "selectLocalFiles urls:" << selectLocalFiles;
     DAbstractFileInfoPointer targetInfo = model()->fileInfo(indexAt(event->pos()));
     if (!targetInfo || dropOnSelf) {
         targetInfo = model()->fileInfo(rootIndex());
@@ -1397,10 +1419,16 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
 
                 QList<QUrl> urls = event->mimeData()->urls();
+                qDebug() << "event urls:" << urls;
                 for (auto url : urls){
-                    selectLocalFiles << url.toString();
+                    const QString fielUrl = url.toString();
+                    if (!selectLocalFileMap.contains(fielUrl)){
+                        selectLocalFiles << fielUrl;
+                        selectLocalFileMap.insert(fielUrl,0);
+                    }
                 }
 
+                qDebug() << "selectLocalFiles2222 urls:" << selectLocalFiles;
                 QPair<int,QPoint> orgpos;
                 //找项目源
                 if (!selectLocalFiles.isEmpty()
@@ -1409,14 +1437,14 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                         //获取焦点
                         QString current = sourceView->currentCursorFile().toString();
                         qDebug() << "move " << m_screenNum << "focus" << current << "count" << selectLocalFiles.size();
-                        GridManager::instance()->move(m_screenNum, selectLocalFiles.toList(), current, row, col);
+                        GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
                     }
                     else {  //跨屏
                         //获取源屏幕的焦点
                         QString current = sourceView->currentCursorFile().toString();
                         qDebug() << "move form" << orgpos.first << "to" << m_screenNum
                                  << "focus" << current << selectLocalFiles.size();
-                        GridManager::instance()->move(orgpos.first,m_screenNum, selectLocalFiles.toList(), current, row, col);
+                        GridManager::instance()->move(orgpos.first,m_screenNum, selectLocalFiles, current, row, col);
                     }
                 }
 
@@ -1682,9 +1710,9 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 
             QRect end = QRect(x, y, d->cellWidth, d->cellHeight).marginsRemoved(d->cellMargins);
 
-            auto current = dodgeDuration();
-            auto nx = option.rect.x() + (end.x() - option.rect.x()) * current;
-            auto ny = option.rect.y() + (end.y() - option.rect.y()) * current;
+            auto tempCurrent = dodgeDuration();
+            auto nx = option.rect.x() + (end.x() - option.rect.x()) * tempCurrent;
+            auto ny = option.rect.y() + (end.y() - option.rect.y()) * tempCurrent;
             option.rect.setX(static_cast<int>(nx));
             option.rect.setY(static_cast<int>(ny));
             option.rect.setSize(end.size());
@@ -3131,13 +3159,15 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menu->addAction(&display);
 
     //热区设置，新版无热区设置需求
-    //    QAction corner(menu);
-    //    DGioSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
-    //    if (gsetting.keys().contains("enable-hotzone-settings") && gsetting.value("enable-hotzone-settings").toBool()) {
-    //        corner.setText(tr("Corner Settings"));
-    //        corner.setData(CornerSettings);
-    //        menu->addAction(&corner);
-    //    }
+#ifndef DISABLE_ZONE
+    QAction corner(menu);
+    DGioSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
+    if (gsetting.keys().contains("enable-hotzone-settings") && gsetting.value("enable-hotzone-settings").toBool()) {
+        corner.setText(tr("Corner Settings"));
+        corner.setData(CornerSettings);
+        menu->addAction(&corner);
+    }
+#endif
 
     //壁纸和屏保设置
     QAction wallpaper(menu);
@@ -3294,7 +3324,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         menu->addAction(property);
     }
 
-    menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+    menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
 
     //断开连接，桌面优先处理
     //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突，
@@ -3351,10 +3381,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         //将取消共享文件夹的选中路径提到里面
         case MenuAction::Share: {
             if(info->fileUrl().scheme() == DFMMD_SCHEME){
-                menu->setEventData(curUrl, realList, winId(), this);
+                menu->setEventData(curUrl, realList, winId(), this, index);
             }
             else {
-                menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+                menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
             }
             break;
         }

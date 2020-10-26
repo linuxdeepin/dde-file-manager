@@ -40,7 +40,12 @@ public:
 
     QMimeType mimeTypeForFile(const QString &fileName, MatchMode mode = MatchDefault) const;
     QMimeType mimeTypeForFile(const QFileInfo &fileInfo, MatchMode mode = MatchDefault) const;
+    QMimeType mimeTypeForFile(const QString &fileName, MatchMode mode, const QString inod,const bool isgvfs = false) const;
+    QMimeType mimeTypeForFile(const QFileInfo &fileInfo, MatchMode mode, const QString inod,const bool isgvfs = false) const;
     QMimeType mimeTypeForUrl(const QUrl &url) const;
+
+private:
+    QHash<QString, QMimeType> inodmimetypecache;
 };
 
 DFM_END_NAMESPACE

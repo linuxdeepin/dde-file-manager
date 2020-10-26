@@ -31,7 +31,7 @@ class DFMSideBarItemDelegate : public DStyledItemDelegate
 {
     Q_OBJECT
 public:
-    DFMSideBarItemDelegate(QAbstractItemView *parent = nullptr);
+    explicit DFMSideBarItemDelegate(QAbstractItemView *parent = nullptr);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;

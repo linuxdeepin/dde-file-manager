@@ -227,7 +227,7 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
         FileJob *job = qobject_cast<FileJob *>(sender());
         if (job) {
             QList<FileJob::JobType> opticalTypes{FileJob::JobType::OpticalBurn, FileJob::JobType::OpticalBlank,
-                        FileJob::JobType::OpticalImageBurn, FileJob::JobType::Trash};
+                        FileJob::JobType::OpticalImageBurn, FileJob::JobType::Trash, FileJob::JobType::Restore};
             auto curType = job->jobType();
             if (opticalTypes.contains(curType)) {
                 wid->setHoverEnable(false);
@@ -313,7 +313,7 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
     adjustSize();
     setModal(false);
     show();
-    QTimer::singleShot(100, this, &DTaskDialog::raise);
+    QTimer::singleShot(100, this, &DTaskDialog::activateWindow);
 }
 
 bool DTaskDialog::isHaveVaultTask(const DUrlList &sourceUrls, const DUrl &targetUrl)
@@ -343,7 +343,7 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
 
     wid->progressStart();
     wid->setObjectName(QString("%1_%2").arg(DIALOGS_TASK_DIALOG_TASK_LIST_ITEM).arg(m_taskListWidget->count()));
-    m_titlebar->setTitle(tr("The File Vault is progressing delete task, please do nothing!"));
+    m_titlebar->setTitle(tr("Removing file vault, please try later"));
 
     // 因为对话框为模态对话框，点击最小化按钮窗口并不能最小化，故隐藏最小化按钮
     setWindowFlags(Qt::WindowCloseButtonHint);

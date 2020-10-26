@@ -57,7 +57,7 @@ class OpenWithDialogListItem : public QWidget
     Q_OBJECT
 
 public:
-    explicit OpenWithDialogListItem(const QIcon &icon, const QString &text, QWidget *parent = 0);
+    explicit OpenWithDialogListItem(const QIcon &icon, const QString &text, QWidget *parent = nullptr);
 
     void setChecked(bool checked);
     QString text() const;
@@ -154,13 +154,13 @@ void OpenWithDialogListItem::paintEvent(QPaintEvent *e)
 
     path.addRoundedRect(rect(), 6, 6);
     pa.setRenderHint(QPainter::Antialiasing);
-    pa.fillPath(path, QColor(0, 0, 0, 0.05 * 255));
+    pa.fillPath(path, QColor(0, 0, 0, static_cast<int>(0.05 * 255)));
 }
 
 class OpenWithDialogListSparerItem : public QWidget
 {
 public:
-    explicit OpenWithDialogListSparerItem(const QString &title, QWidget *parent = 0);
+    explicit OpenWithDialogListSparerItem(const QString &title, QWidget *parent = nullptr);
 
 private:
     DHorizontalLine *m_separator;

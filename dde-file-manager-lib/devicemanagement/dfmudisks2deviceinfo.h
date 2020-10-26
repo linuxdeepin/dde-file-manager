@@ -33,8 +33,8 @@ DFM_BEGIN_NAMESPACE
 class DFMUdisks2DeviceInfo : public DFMAbstractDeviceInterface
 {
 public:
-    DFMUdisks2DeviceInfo(const DBlockDevice *blockDevicePointer);
-    DFMUdisks2DeviceInfo(const QString &dbusPath);
+    explicit DFMUdisks2DeviceInfo(const DBlockDevice *blockDevicePointer);
+    explicit DFMUdisks2DeviceInfo(const QString &dbusPath);
 
     void mount() override;
 
@@ -60,7 +60,6 @@ public:
 
     enum DeviceClassType deviceClassType() override;
 
-    QString unixPath(); // "/dev/sdx"
     DBlockDevice* blockDevice();
     const DBlockDevice* blockDeviceConst() const;
 

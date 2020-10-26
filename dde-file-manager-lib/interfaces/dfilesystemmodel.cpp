@@ -73,8 +73,8 @@ public:
                    QReadWriteLock *lock = nullptr)
         : fileInfo(info)
         , parent(parent)
-        , rwLock(lock)
         , m_dFileSystemModel(dFileSystemModel)
+        , rwLock(lock)
     {
     }
 
@@ -143,8 +143,6 @@ public:
             return QVariant();
         }
         }
-
-        return QVariant();
     }
 
     void setNodeVisible(const FileSystemNodePointer &node, bool visible)
@@ -163,7 +161,6 @@ public:
     void applyFileFilter(std::shared_ptr<FileFilter> filter)
     {
         if (!filter) return;
-
         visibleChildren.clear();
 
         for (auto node : children) {
@@ -337,6 +334,7 @@ public:
     {
         rwLock->lockForWrite();
         visibleChildren = list;
+
         rwLock->unlock();
     }
 
@@ -431,7 +429,7 @@ private:
     QHash<DUrl, FileSystemNodePointer> children;
     //fix bug 31225,if children clear,another thread useing visibleChildren will crush,so use FileSystemNodePointer
     QList<FileSystemNodePointer> visibleChildren;
-    DFileSystemModel *m_dFileSystemModel;
+    DFileSystemModel *m_dFileSystemModel = nullptr;
     QReadWriteLock *rwLock = nullptr;
 };
 
@@ -561,7 +559,7 @@ public:
         connect(waitTimer, &QTimer::timeout, this, &FileNodeManagerThread::start);
     }
 
-    ~FileNodeManagerThread()
+    ~FileNodeManagerThread() override
     {
         stop();
     }
@@ -737,7 +735,7 @@ private:
             return false;
         };
 
-begin:
+    begin:
 
         while (!fileQueue.isEmpty()) {
             if (!enable) {
@@ -930,7 +928,7 @@ public:
     bool passNameFilters(const FileSystemNodePointer &node) const;
     bool passFileFilters(const DAbstractFileInfoPointer &info) const;
 
-    void _q_onFileCreated(const DUrl &fileUrl, bool isPickUpQeueu = false);
+    void _q_onFileCreated(const DUrl &fileUrl, bool isPickUpQueue = false);
     void _q_onFileDeleted(const DUrl &fileUrl);
     void _q_onFileUpdated(const DUrl &fileUrl);
     void _q_onFileUpdated(const DUrl &fileUrl, const int &isExternalSource);
@@ -978,6 +976,9 @@ public:
 
     bool beginRemoveRowsFlag = false;
     QMutex mutex;
+    //防止析构后，添加flags崩溃锁
+    QMutex mutexFlags;
+    QAtomicInteger<bool> currentRemove = false;
 
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
@@ -1054,8 +1055,9 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl, bool isPickU
     Q_Q(DFileSystemModel);
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
-//    qDebug() << fileUrl;
-
+    if (info) {
+        info->refresh(true);
+    }
     if ((!info || !passFileFilters(info)) && !isPickUpQueue) {
         return;
     }
@@ -1130,7 +1132,7 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
     }
 
     if (const DAbstractFileInfoPointer &fileInfo = q->fileInfo(index)) {
-        fileInfo->refresh();
+        fileInfo->refresh(true);
     }
 
     q->parent()->parent()->update(index);
@@ -1149,7 +1151,9 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
     const FileSystemNodePointer &node = rootNode;
     //fix 27828 文件属性改变刷新一次缓存数据
     DAbstractFileInfoPointer newFileInfo = fileService->createFileInfo(nullptr, fileUrl);
-
+    if (newFileInfo) {
+        newFileInfo->refresh(true);
+    }
     if (!node) {
         return;
     }
@@ -1187,7 +1191,6 @@ void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 
         return;
     }
-
     _q_onFileDeleted(from);
     _q_onFileCreated(to);
 }
@@ -1221,7 +1224,9 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         if (!info) {
             continue;
         }
-
+        if (event.first != AddFile) {
+            info->refresh(true);
+        }
         const DUrl &rootUrl = q->rootUrl();
         const DAbstractFileInfoPointer rootinfo = fileService->createFileInfo(q, rootUrl);
         DUrl nparentUrl(info->parentUrl());
@@ -1258,9 +1263,8 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->addFile(info);
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event
-            // todo: 此处引起效率变低，暂时注释
             // q->update();/*解决文管多窗口删除文件的时候，文官会崩溃的问题*/
-
+            // todo: 此处引起效率变低，暂时注释
             q->remove(fileUrl);
         }
         if (!me) {
@@ -1268,15 +1272,6 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         }
     }
     _q_processFileEvent_runing.store(false);
-//    if( !laterFileEventQueue.isEmpty()) { //解决最后一个队列没有被处理导致文管不能正确显示文件列表的问题 fix 29294 【字体管理器】【5.6.4】【修改引入】安装字体后，文管中没有显示
-//        DUrl url;
-//        if (laterFileEventQueue.last().first == AddFile) {
-//            _q_onFileCreated(url, true);
-//        }
-//        else if (laterFileEventQueue.last().first == RmFile) {
-//            _q_onFileDeleted(url);
-//        }
-    //    }
 }
 
 bool DFileSystemModelPrivate::checkFileEventQueue()
@@ -1333,6 +1328,7 @@ DFileSystemModel::~DFileSystemModel()
     }
 
     QMutexLocker locker(&m_mutex); // 必须等待其他 资源性线程结束，否则 要崩溃
+    QMutexLocker lk(&d_ptr->mutexFlags);
 
     qDebug() << "DFileSystemModel is released soon!";
 }
@@ -1588,8 +1584,17 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         const QList<QRect> &geometries = parent()->itemDelegate()->paintGeomertys(option, index);
         if (geometries.count() < 3)
             return QString();
-        if (option.fontMetrics.width(strToolTip) > geometries[1].width() * 2)
+        if (option.fontMetrics.width(strToolTip) > geometries[1].width() * 2) {
+            //主目录下的用户文件是做过特殊处理的（文档、音乐等），在这里也需要对长度达标的目录做特殊过滤
+            //否则文档和下载目录会显示hoverTip
+            const QString filePath = data(index, FilePathRole).toString();
+            const QString stdDocPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DocumentsLocation);
+            const QString stdDownPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DownloadLocation);
+            if (filePath == stdDocPath || filePath == stdDownPath || filePath == "/data" + stdDocPath || filePath == "/data" + stdDownPath)
+                return QString();
+
             return strToolTip;
+        }
         return QString();
     }
 
@@ -1751,13 +1756,13 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 //            }
 //        }
 //    }
-
-    d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
+    qDebug() << " fetchMore +{ " << parentNode->fileInfo->fileUrl() << parentNode->fileInfo->isGvfsMountFile();
+    d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters,
+                                                   QDirIterator::NoIteratorFlags, false, parentNode->fileInfo->isGvfsMountFile());
 
     if (!d->jobController) {
         return;
     }
-
     if (!d->rootNode->fileInfo->hasOrderly()) {
         // 对于无需列表, 较少返回结果的等待时间
         d->jobController->setTimeCeiling(100);
@@ -1766,15 +1771,12 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     connect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren, Qt::QueuedConnection);
     connect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished, Qt::QueuedConnection);
     connect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread, Qt::DirectConnection);
-
     /// make root file to active
     d->rootNode->fileInfo->makeToActive();
-
     /// start file watcher
     if (d->watcher) {
         d->watcher->startWatcher();
     }
-
     parentNode->populatedChildren = true;
 
     setState(Busy);
@@ -1788,6 +1790,11 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 {
     Q_D(const DFileSystemModel);
+    QPointer<DFileSystemModel> me = const_cast<DFileSystemModel *>(this);
+    QMutexLocker lk(&d_ptr->mutexFlags);
+    if (!me) {
+        return Qt::NoItemFlags;
+    }
 
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     if (!index.isValid()) {
@@ -1818,7 +1825,7 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         }
         if (indexNode && indexNode->fileInfo && indexNode->fileInfo->isWritable()) {
             //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时ignoreDropFlag为true，不调用candrop，节省时间,bug#10926
-            if (!ignoreDropFlag && indexNode->fileInfo->canDrop()) {
+            if (!ignoreDropFlag && indexNode && indexNode->fileInfo && indexNode->fileInfo->canDrop()) {
                 flags |= Qt::ItemIsDropEnabled;
             } else {
                 flags |= Qt::ItemNeverHasChildren;
@@ -1998,6 +2005,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
         m_filters = d->filters;
         isFirstRun = false;
     }
+    qDebug() << fileUrl;
     //非回收站还原规则
     if (!fileUrl.isTrashFile()) {
         d->filters = m_filters;
@@ -2051,7 +2059,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 //    d->rootNode = d->urlToNode.value(fileUrl);
 
     d->rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(this, fileUrl), &d->rootNodeRWLock);
-    qDebug() << "child count = " << d->rootNode->childrenCount();
+
     d->rootNodeManager->stop();
     d->rootNodeManager->setRootNode(d->rootNode);
     d->watcher = DFileService::instance()->createFileWatcher(this, fileUrl);
@@ -2083,7 +2091,9 @@ DUrl DFileSystemModel::rootUrl() const
 DUrlList DFileSystemModel::sortedUrls()
 {
     Q_D(const DFileSystemModel);
-
+    if (!d->rootNode) {
+        return DUrlList();
+    }
     return d->rootNode->getChildrenUrlList();
 }
 
@@ -2587,7 +2597,6 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (job) {
         job->pause();
     }
-
     node->clearChildren();
 
     QHash<DUrl, FileSystemNodePointer> fileHash;
@@ -2595,7 +2604,6 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 
     fileHash.reserve(list.size());
     fileList.reserve(list.size());
-
     for (const DAbstractFileInfoPointer &fileInfo : list) {
         if (d->needQuitUpdateChildren) {
             break;
@@ -2627,13 +2635,11 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 
     if (enabledSort())
         sort(node->fileInfo, fileList);
-
 //    qDebug() << "begin insert rows count = " << QString::number(list.count());
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     node->setChildrenMap(fileHash);
     node->setChildrenList(fileList);
-
     endInsertRows();
 
     if (!d->jobController || d->jobController->isFinished()) {
@@ -2650,18 +2656,22 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (job) {
         //刷新完成标志
         bool finished = job->isUpdatedFinished();
-//        qDebug() << "isUpdatedFinished" << finished;
+        qDebug() << "isUpdatedFinished" << finished;
         //若刷新完成通知桌面重新获取文件
         if (finished)
             emit sigJobFinished();
-    }
-    else
+    } else
         emit sigJobFinished();
 }
 
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
+    QPointer<DFileSystemModel> me = this;
+    QMutexLocker locker(&m_mutex);
+    if (!me) {
+        return;
+    }
 
     if (d->jobController) {
         d->jobController->pause();
@@ -2699,7 +2709,6 @@ void DFileSystemModel::refresh(const DUrl &fileUrl)
     node->populatedChildren = false;
 
     const QModelIndex &index = createIndex(node, 0);
-
     if (beginRemoveRows(index, 0, rowCount(index) - 1)) {
         node->clearChildren();
         endRemoveRows();
@@ -2753,13 +2762,15 @@ bool DFileSystemModel::removeRows(int row, int count, const QModelIndex &parent)
         fileInfo->refresh();
         if (fileInfo->exists())
             return true;
+        if (d->currentRemove) {
+            return true;
+        }
         if (beginRemoveRows(createIndex(parentNode, 0), row, row + count - 1)) {
             for (int i = 0; i < count; ++i) {
                 Q_UNUSED(parentNode->takeNodeByIndex(row));
             }
             endRemoveRows();
         }
-
     }
 
     return true;
@@ -2773,15 +2784,15 @@ bool DFileSystemModel::remove(const DUrl &url)
 
     if (parentNode && parentNode->populatedChildren) {
         int index = parentNode->indexOfChild(url);
-
         if (index < 0) {
             return false;
         }
-
+        d->currentRemove = true;
         if (beginRemoveRows(createIndex(parentNode, 0), index, index)) {
             Q_UNUSED(parentNode->takeNodeByIndex(index));
             endRemoveRows();
         }
+        d->currentRemove = false;
 
         return true;
     }
@@ -2928,12 +2939,10 @@ void DFileSystemModel::clear()
     QMutexLocker locker(&m_mutex); // bug 26972, while the sort case is ruuning, there should be crashed ASAP, so add locker here!
 
     const QModelIndex &index = createIndex(d->rootNode, 0);
-
     if (beginRemoveRows(index, 0, d->rootNode->childrenCount() - 1)) {
         deleteNode(d->rootNode);
         endRemoveRows();
     }
-
     qWarning() << "done the clear items process";
 }
 
@@ -3057,11 +3066,9 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
                     }
                 });
             }
-//            result.waitForFinished();
             while (!result.isFinished()) {
                 qApp->processEvents();
             }
-//            qDebug() << "~~~~~ processevent finished";
         }
         if (!me) {
             return;

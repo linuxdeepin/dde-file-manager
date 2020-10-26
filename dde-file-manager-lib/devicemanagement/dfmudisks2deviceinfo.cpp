@@ -166,7 +166,7 @@ quint64 DFMUdisks2DeviceInfo::availableBytes() const
         return static_cast<quint64>(storage_info.bytesAvailable());
     }
 
-    return -1;
+    return static_cast<quint64>(-1);
 }
 
 quint64 DFMUdisks2DeviceInfo::freeBytes() const
@@ -177,7 +177,7 @@ quint64 DFMUdisks2DeviceInfo::freeBytes() const
         return static_cast<quint64>(storage_info.bytesFree());
     }
 
-    return -1;
+    return static_cast<quint64>(-1);
 }
 
 quint64 DFMUdisks2DeviceInfo::totalBytes() const
@@ -199,11 +199,6 @@ QString DFMUdisks2DeviceInfo::mountpointPath() const
 DFMAbstractDeviceInterface::DeviceClassType DFMUdisks2DeviceInfo::deviceClassType()
 {
     return udisks2;
-}
-
-QString DFMUdisks2DeviceInfo::unixPath()
-{
-    return blockDevice()->path();
 }
 
 DBlockDevice *DFMUdisks2DeviceInfo::blockDevice()

@@ -11,6 +11,7 @@ BackgroundManager::BackgroundManager(bool preview, QObject *parent)
     , m_preview(preview)
 {
     init();
+    QDBusConnection::sessionBus().connect("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",  "NameOwnerChanged", this, SLOT(onWmDbusStarted(QString, QString, QString)));
 }
 
 BackgroundManager::~BackgroundManager()
@@ -28,6 +29,7 @@ BackgroundManager::~BackgroundManager()
     windowManagerHelper = nullptr;
 
     m_backgroundMap.clear();
+    QDBusConnection::sessionBus().disconnect("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",  "NameOwnerChanged", this, SLOT(onWmDbusStarted(QString, QString, QString)));
 }
 
 void BackgroundManager::onRestBackgroundManager()
@@ -45,14 +47,14 @@ void BackgroundManager::onRestBackgroundManager()
             connect(wmInter, &WMInter::WorkspaceSwitched, this, [this] (int, int to) {
                 currentWorkspaceIndex = to;
                 pullImageSettings();
-                onResetBackgroundImage(); //todo
+                onResetBackgroundImage();
             });
 
             connect(gsettings, &DGioSettings::valueChanged, this, [this] (const QString & key, const QVariant & value) {
                 Q_UNUSED(value);
                 if (key == "background-uris") {
                     pullImageSettings();
-                    onResetBackgroundImage(); //todo
+                    onResetBackgroundImage();
                 }
             });
         }
@@ -162,16 +164,21 @@ void BackgroundManager::pullImageSettings()
 {
     QString defaultPath = getDefaultBackground();
     m_backgroundImagePath.clear();
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter) {
+    if (wmInter) {
         for (ScreenPointer sc : ScreenMrg->logicScreens()) {
 //            QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
             QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
             qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 qCritical() << "get background fail path :" << path << "screen" << sc->name();
-                if (defaultPath.isEmpty())
-                    continue;
-                path = defaultPath;
+
+                path = getBackgroundFromWmConfig(sc->name());
+                if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
+                    qCritical() << "get background fail from wm config file path :" << path << "screen" << sc->name();
+                    if (defaultPath.isEmpty())
+                        continue;
+                    path = defaultPath;
+                }
             }
             qDebug() << "screen" << sc->name() << "set background " << path;
             m_backgroundImagePath.insert(sc->name(), path);
@@ -182,13 +189,20 @@ void BackgroundManager::pullImageSettings()
 QString BackgroundManager::getBackgroundFromWm(const QString &screen)
 {
     QString ret;
-    if (!screen.isEmpty() && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm") && wmInter) {
+    if (!screen.isEmpty() && wmInter) {
 //        QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(screen);
         QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);//wm 新接口获取屏幕壁纸
         if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
-            ret = getDefaultBackground();
-            qCritical() << "get background fail path :" << path << "screen" << screen
-                        << "use default:" << ret;
+            path = getBackgroundFromWmConfig(screen);
+            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
+                ret = getDefaultBackground();
+                qCritical() << "get background fail path :" << path << "screen" << screen
+                            << "use default:" << ret;
+            } else {
+                ret = path;
+                qCritical() << "get background fail path :" << path << "screen" << screen
+                            << "use wm config file:" << ret;
+            }
         } else {
             qDebug() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
             ret = path;
@@ -197,12 +211,44 @@ QString BackgroundManager::getBackgroundFromWm(const QString &screen)
     return ret;
 }
 
+QString BackgroundManager::getBackgroundFromWmConfig(const QString &screen)
+{
+    QString imagePath;
+
+    QString homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+    QFile wmFile(homePath + "/.config/deepinwmrc");
+    if (wmFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+
+        // 根据工作区和屏幕名称查找对应的壁纸
+        while (!wmFile.atEnd()) {
+            QString line = wmFile.readLine();
+            int index = line.indexOf("@");
+            int indexEQ = line.indexOf("=");
+            if (index <= 0 || indexEQ <= index+1) {
+                continue;
+            }
+
+            int workspaceIndex = line.left(index).toInt();
+            QString screenName = line.mid(index+1, indexEQ-index-1);
+            if (workspaceIndex != currentWorkspaceIndex || screenName != screen) {
+                continue;
+            }
+
+            imagePath = line.mid(indexEQ+1).trimmed();
+            break;
+        }
+
+        wmFile.close();
+    }
+
+    return imagePath;
+}
+
 QString BackgroundManager::getDefaultBackground() const
 {
     //获取默认壁纸
     QString defaultPath;
-    if (gsettings)
-    {
+    if (gsettings) {
         for (const QString &path : gsettings->value("background-uris").toStringList()){
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 continue;
@@ -213,6 +259,10 @@ QString BackgroundManager::getDefaultBackground() const
                 break;
             }
         }
+    }
+    // 设置默认壁纸
+    if (defaultPath.isEmpty()) {
+        defaultPath = QString("file:///usr/share/backgrounds/default_background.jpg");
     }
     return defaultPath;
 }
@@ -292,7 +342,7 @@ void BackgroundManager::onBackgroundBuild()
         BackgroundWidgetPointer bwp = createBackgroundWidget(primary);
         m_backgroundMap.insert(primary, bwp);
 
-        //todo 设置壁纸
+        //设置壁纸
         onResetBackgroundImage();
 
         if (m_visible)
@@ -303,8 +353,6 @@ void BackgroundManager::onBackgroundBuild()
         for (ScreenPointer sc : ScreenMrg->logicScreens()) {
             BackgroundWidgetPointer bwp = createBackgroundWidget(sc);
             m_backgroundMap.insert(sc, bwp);
-
-            //todo 设置壁纸
 
             if (m_visible)
                 bwp->show();
@@ -325,7 +373,6 @@ void BackgroundManager::onSkipBackgroundBuild()
     emit sigBackgroundBuilded(ScreenMrg->displayMode());
 }
 
-//临时使用
 void BackgroundManager::onResetBackgroundImage()
 {
     auto getPix = [](const QString & path, const QPixmap & defalutPixmap)->QPixmap{
@@ -336,8 +383,7 @@ void BackgroundManager::onResetBackgroundImage()
         QPixmap backgroundPixmap(currentWallpaper);
         // fix whiteboard shows when a jpeg file with filename xxx.png
         // content formart not epual to extension
-        if (backgroundPixmap.isNull())
-        {
+        if (backgroundPixmap.isNull()) {
             QImageReader reader(currentWallpaper);
             reader.setDecideFormatFromContent(true);
             backgroundPixmap = QPixmap::fromImage(reader.read());
@@ -387,4 +433,16 @@ void BackgroundManager::onResetBackgroundImage()
 
     //更新壁纸
     m_backgroundImagePath = recorder;
+}
+
+void BackgroundManager::onWmDbusStarted(QString name, QString oldOwner, QString newOwner)
+{
+    Q_UNUSED(oldOwner)
+    Q_UNUSED(newOwner)
+    //窗管服务注销也会进入该函数，因此需要判断服务是否已注册
+    if (name == QString("com.deepin.wm") && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm")) {
+        qDebug()<<"dbus server com.deepin.wm started.";
+        pullImageSettings();
+        onResetBackgroundImage();
+    }
 }

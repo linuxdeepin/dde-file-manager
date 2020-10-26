@@ -2,44 +2,40 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2482"/>
+        <location filename="../view/canvasgridview.cpp" line="3095"/>
         <source>Icon size</source>
-        <translation>Madhesia e ikonave</translation>
+        <translation>Madhësi ikonash</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2488"/>
+        <location filename="../view/canvasgridview.cpp" line="3103"/>
         <source>Auto merge</source>
-        <translation>Bashko automatikisht</translation>
+        <translation>Vetëpërzieji</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2503"/>
+        <location filename="../view/canvasgridview.cpp" line="3115"/>
         <source>Auto arrange</source>
-        <translation>Rreshtoi automatikisht</translation>
+        <translation>Vetësistemim</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2559"/>
+        <location filename="../view/canvasgridview.cpp" line="3170"/>
+        <location filename="../view/canvasgridview.cpp" line="3175"/>
         <source>Set Wallpaper</source>
-        <translation>Vendos letren e murit</translation>
+        <translation>Caktoni Sfond</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2561"/>
+        <location filename="../view/canvasgridview.cpp" line="3173"/>
         <source>Wallpaper and Screensaver</source>
-        <translation>Letra e murit dhe ruajtesi i ekranit</translation>
+        <translation>Sfond dhe Ekrankursyes</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2642"/>
+        <location filename="../view/canvasgridview.cpp" line="3317"/>
         <source>Properties</source>
-        <translation>Te dhenat</translation>
+        <translation>Veti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2543"/>
+        <location filename="../view/canvasgridview.cpp" line="3154"/>
         <source>Display Settings</source>
-        <translation>Rregullimet e ekranit</translation>
-    </message>
-    <message>
-        <location filename="../view/canvasgridview.cpp" line="2552"/>
-        <source>Corner Settings</source>
-        <translation>Regullimet e cepeve</translation>
+        <translation>Rregullime Ekrani</translation>
     </message>
 </context>
 <context>
@@ -47,12 +43,12 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Tiny</source>
-        <translation>Te imta</translation>
+        <translation>Të vockla</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Small</source>
-        <translation>Te vogla</translation>
+        <translation>Të vogla</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="42"/>
@@ -62,78 +58,91 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="43"/>
         <source>Large</source>
-        <translation>Te medha</translation>
+        <translation>Të mëdha</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="44"/>
         <source>Super large</source>
-        <translation>Super te medha</translation>
+        <translation>Super të mëdha</translation>
     </message>
 </context>
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="131"/>
+        <location filename="../main.cpp" line="136"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Desktop</translation>
     </message>
 </context>
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="655"/>
         <source>Wallpaper Slideshow</source>
-        <translation>Letra e murit paraqitje</translation>
+        <translation>Parakalim Sfondesh</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="482"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="700"/>
         <source>When login</source>
-        <translation>Kur te kycesh</translation>
+        <translation>Gjatë hyrjes</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="484"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="702"/>
         <source>When wakeup</source>
-        <translation>Kur zgjohet</translation>
+        <translation>Gjatë zgjimesh</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="528"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="757"/>
         <source>Require a password on wakeup</source>
-        <translation>Kerko fjalekalim ne zgjim</translation>
+        <translation>Gjatë zgjimi kërko doemos fjalëkalim</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="558"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="789"/>
         <source>Never</source>
-        <translation>Kurre</translation>
+        <translation>Kurrë</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="559"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="791"/>
         <source>Wait:</source>
-        <translation>Prit:</translation>
+        <translation>Pritni:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="592"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="824"/>
         <source>Wallpaper</source>
-        <translation>Leter muri</translation>
+        <translation>Sfond</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="593"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="838"/>
         <source>Screensaver</source>
-        <translation>Ruajtesi i ekranit</translation>
+        <translation>Ekrankursyes</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="666"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="914"/>
         <source>Only desktop</source>
-        <translation>Vetem ne desktop</translation>
+        <translation>Vetëm për desktop</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="667"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="915"/>
         <source>Only lock screen</source>
-        <translation>Vetem kyc ekranin</translation>
+        <translation>Vetëm për kyçje ekrani</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="695"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="969"/>
         <source>Apply</source>
-        <translation>Zbato</translation>
+        <translation>Zbatoje</translation>
+    </message>
+</context>
+<context>
+    <name>WaterMaskFrame</name>
+    <message>
+        <location filename="../view/watermaskframe.cpp" line="253"/>
+        <source>Not authorized</source>
+        <translation>E paautorizuar</translation>
+    </message>
+    <message>
+        <location filename="../view/watermaskframe.cpp" line="261"/>
+        <source>In trial period</source>
+        <translation>Në periudhë prove</translation>
     </message>
 </context>
 <context>
@@ -141,21 +150,17 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Fast Screen Off</source>
-        <translation>Ekrani shpejte fiket</translation>
-    </message>
-    <message>
-        <source>Control Center</source>
-        <translation type="vanished">Qendra e ngjyrave</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>All Windows</source>
-        <translation>Te gjitha dritaret</translation>
+        <translation>Krejt Dritaret</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Launcher</source>
-        <translation>Leshuesi</translation>
+        <translation>Nisës</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
@@ -165,12 +170,12 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>None</source>
-        <translation>Asni</translation>
+        <translation>Asnjë</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="58"/>
         <source>Close Window</source>
-        <translation>Mbyll dritaren</translation>
+        <translation>Mbylle Dritaren</translation>
     </message>
 </context>
 </TS>

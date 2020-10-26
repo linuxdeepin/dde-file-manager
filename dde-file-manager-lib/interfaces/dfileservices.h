@@ -97,6 +97,8 @@ public:
 
     static void initHandlersByCreators();
 
+    static void printStacktrace(int level = 4);
+
     static DFileService *instance();
 
     static bool setFileUrlHandler(const QString &scheme, const QString &host,
@@ -109,9 +111,9 @@ public:
                                                                 bool ignoreScheme = false);
 
     bool openFile(const QObject *sender, const DUrl &url) const;
-    bool openFiles(const QObject *sender, const DUrlList &list) const;
+    bool openFiles(const QObject *sender, const DUrlList &list,const bool isEnter = false) const;
     bool openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const;
-    bool openFilesByApp(const QObject *sender, const QString &appName, const QList<DUrl> &urllist) const;
+    bool openFilesByApp(const QObject *sender, const QString &appName, const QList<DUrl> &urllist, const bool isenter = false) const;
     bool compressFiles(const QObject *sender, const DUrlList &list) const;
     bool decompressFile(const QObject *sender, const DUrlList &list) const;
     bool decompressFileHere(const QObject *sender, const DUrlList &list) const;
@@ -146,38 +148,32 @@ public:
     bool setFileTags(const QObject *sender, const DUrl &url, const QList<QString> &tags) const;
     bool makeTagsOfFiles(const QObject *sender, const DUrlList &urlList, const QStringList &tags, const QSet<QString> dirtyTagFilter = QSet<QString>()) const;
     bool removeTagsOfFile(const QObject *sender, const DUrl &url, const QList<QString> &tags) const;
-    QList<QString> getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls) const;
+    QList<QString> getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls, const bool loopEvent = false) const;
 
     const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
+                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false,bool isgvfs = false) const;
 
     const QList<DAbstractFileInfoPointer> getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
                                                       QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false, bool canconst = false) const;
 
     JobController *getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
+                                  QDir::Filters filters,
+                                  QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false, const bool isgfvs = false) const;
 
-    DAbstractFileWatcher *createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent = 0) const;
+    DAbstractFileWatcher *createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent = nullptr) const;
     bool setExtraProperties(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const;
 
     DFileDevice *createFileDevice(const QObject *sender, const DUrl &url);
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
     DStorageInfo *createStorageInfo(const QObject *sender, const DUrl &url);
-    QList<DAbstractFileInfoPointer> getRootFile();
-    bool isRootFileInited() const;
-    void changeRootFile(const DUrl &fileurl,const bool bcreate = true);
-    void startQuryRootFile();
-    DAbstractFileWatcher *rootFileWather() const;
-    void clearThread();
+
 
     //set cursor busy status
     void setCursorBusyState(const bool bbusy);
     //check networkfile is busy(or network is unline)
     bool checkGvfsMountfileBusy(const DUrl &url, const bool showdailog = true);
     bool checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog = true);
-    //chang rootfile
-    void changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo);
     //judge me net work is online
     bool isNetWorkOnline();
     //judge network can visit host
@@ -188,31 +184,28 @@ public:
     void setDoClearTrashState(const bool bdoing);
     //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
     void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
-    //处理rootfilelist中是否包含某个durl
-    bool isRootFileContain(const DUrl &url);
     //判断当前的可访问的smb和ftp中是否包含某个url
     bool isSmbFtpContain(const DUrl &url);
+
+    void onTagEditorChanged(const QStringList &tags, const DUrlList &files);
 signals:
     void fileOpened(const DUrl &fileUrl) const;
     void fileCopied(const DUrl &source, const DUrl &target) const;
     void fileDeleted(const DUrl &fileUrl) const;
     void fileMovedToTrash(const DUrl &from, const DUrl &to) const;
     void fileRenamed(const DUrl &from, const DUrl &to) const;
-    void rootFileChange(const DAbstractFileInfoPointer &chi) const;
-    void queryRootFileFinsh() const;
-    void serviceHideSystemPartition() const;
+
 public Q_SLOTS:
     void slotError(QNetworkReply::NetworkError err);
-    void hideSystemPartition();
 
 private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;
 
 private:
-    explicit DFileService(QObject *parent = 0);
-    ~DFileService();
+    explicit DFileService(QObject *parent = nullptr);
+    ~DFileService() override;
 
-    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0) Q_DECL_OVERRIDE;
+    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) Q_DECL_OVERRIDE;
 
     static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
     static void insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator);

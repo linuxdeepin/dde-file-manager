@@ -726,17 +726,9 @@ void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GV
 
         QVolume qVolume = gVolumeToqVolume(volume);
         QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
-//        Volumes.insert(qVolume.unix_device(), qVolume);
         DiskInfos.insert(diskInfo.id(), diskInfo);
         qCDebug(mountManager()) << diskInfo;
         emit gvfsMountManager->volume_changed(diskInfo);
-
-        // 部分光驱（自动式）托盘弹出的时候还未触发 mount_changed / volume_remove 等信号，所以在这里判定到 uuid 为空了并且是光驱设备，表示光驱弹出，此时移除路径以让文管跳转到主目录
-        if (diskInfo.uuid().isEmpty() && diskInfo.drive_unix_device().contains("/dev/sr")) {
-            static const QString strUrl = QString("burn://%1/disc_files/");
-            DUrl discUrl = DUrl(strUrl.arg(diskInfo.drive_unix_device()));
-            DAbstractFileWatcher::ghostSignal(discUrl, &DAbstractFileWatcher::fileDeleted, discUrl);
-        }
     }else{
         qCDebug(mountManager()) << "==============================changed volume empty==============================" ;
     }
@@ -804,7 +796,7 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
             newmsg = tr("Can’t verify the identity of %1.").arg(arg1) + '\n' +
                      tr("This happens when you log in to a computer the first time.") + '\n' +
                      tr("The identity sent by the remote computer is") + '\n' +
-                     tr("%2.").arg(arg2) + '\n' +
+                     arg2 + '\n' +
                      tr("If you want to be absolutely sure it is safe to continue, contact the system administrator.");
         }
         newmsg = newmsg.replace("\\r\\n","\n");
@@ -1005,7 +997,7 @@ void GvfsMountManager::printVolumeMounts()
     qDebug() << "==============================";
 }
 
-QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
+QDiskInfo GvfsMountManager::getDiskInfo(const QString &path, bool bupdate)
 {
     QDiskInfo info;
     foreach (const QDiskInfo& diskInfo, DiskInfos.values()) {
@@ -1027,7 +1019,9 @@ QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
         qDebug() << "获取磁盘信息失败";
         dialogManager->showFormatDialog(path);
     }
-    info.updateGvfsFileSystemInfo();
+    if (bupdate) {
+        info.updateGvfsFileSystemInfo();
+    }
     return info;
 }
 
@@ -1547,7 +1541,7 @@ void GvfsMountManager::mount_mounted(const QString &mounted_root_uri, bool silen
     g_object_unref (file);
 }
 
-void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult *res, gpointer silent)
+void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult *res, gpointer user_data)
 {
     gboolean succeeded;
     GError *error = nullptr;
@@ -1557,7 +1551,7 @@ void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult
     if (!succeeded)
     {
         qCDebug(mountManager()) << "Error mounting location: " << error->message << error->code;
-        if (!silent && !errorCodeNeedSilent(error->code)) {
+        if (!user_data && !errorCodeNeedSilent(error->code)) {
             fileSignalManager->requestShowErrorDialog(QString::fromLocal8Bit(error->message), QString(" "));
         }
     }
@@ -1608,7 +1602,7 @@ void GvfsMountManager::mount_device(const QString &unix_device, bool silent)
     g_object_unref (volume_monitor);
 }
 
-void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer silent)
+void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer user_data)
 {
     GVolume *volume;
     gboolean succeeded;
@@ -1621,23 +1615,29 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
 
     if (!succeeded) {
         qCDebug(mountManager()) << "Error mounting: " << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)
-                                << error->message << silent << error->code;
+                                << error->message << user_data << error->code;
 
         //! 下面这样做只是为了字符串翻译，因为错误信息是底层返回的
         QString err = QString::fromLocal8Bit(error->message);
+        bool format = true; // 根据错误的种类, 选择是否需要格式化, 这里仅对于错误 G_IO_ERROR_DBUS_ERROR 不处理, 后续可能会扩充
         switch (error->code) {
-        case 0:
+        case G_IO_ERROR_FAILED:
             err = QString(tr("No key available to unlock device"));
+            break;
+        case G_IO_ERROR_DBUS_ERROR:
+            format = false;
             break;
         default:
             break;
         }
         if (AskedPasswordWhileMountDisk) { // 显示过密码框的设备，说明该设备可解锁，但密码不一定正确或取消了，不需要提示用户格式化
-            if (!silent && !errorCodeNeedSilent(error->code)) {
+            if (!user_data && !errorCodeNeedSilent(error->code)) {
                 fileSignalManager->requestShowErrorDialog(err, QString(" "));
             }
         } else {
-            dialogManager->showFormatDialog(qVolume.drive_unix_device());
+            if (format) {
+                dialogManager->showFormatDialog(qVolume.drive_unix_device());
+            }
         }
     } else {
         GMount *mount;
@@ -1663,7 +1663,7 @@ void GvfsMountManager::unmount(const QDiskInfo &diskInfo)
 
 void GvfsMountManager::unmount(const QString &id)
 {
-    QDiskInfo diskInfo = getDiskInfo(id);
+    QDiskInfo diskInfo = getDiskInfo(id,false);
     unmount(diskInfo);
 }
 
