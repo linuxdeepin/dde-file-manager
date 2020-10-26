@@ -712,8 +712,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
-        // huawei 50143: 卸载时有任务，提示设备繁忙并且不能中断传输
-        //emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+        // Only optical media has eject option, should terminate all oprations while ejecting...
+        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
         QtConcurrent::run([fi]() {
             qDebug() << fi->fileUrl().path();
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
