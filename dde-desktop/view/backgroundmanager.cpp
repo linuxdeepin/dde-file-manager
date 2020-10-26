@@ -2,8 +2,10 @@
 #include "screen/screenhelper.h"
 #include "util/xcb/xcb.h"
 
+#include <DSysInfo>
 #include <qpa/qplatformwindow.h>
 #include <QImageReader>
+
 
 BackgroundManager::BackgroundManager(bool preview, QObject *parent)
     : QObject(parent)
@@ -157,6 +159,13 @@ void BackgroundManager::init()
                 this, &BackgroundManager::onRestBackgroundManager);
     }
 
+    // 如果开启--video-wallpaper，使用指定的窗口作为桌面
+    if (Dtk::Core::DSysInfo::isCommunityEdition()) {
+        QVariant videoWindowId = qApp->property("video-window-id");
+        if (videoWindowId.isValid())
+            Xcb::XcbMisc::instance().set_window_type(videoWindowId.toULongLong(), Xcb::XcbMisc::Desktop);
+    }
+
     onRestBackgroundManager();
 }
 
@@ -280,7 +289,14 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     if (m_preview) {
         bwp->setWindowFlags(bwp->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
     } else {
-        Xcb::XcbMisc::instance().set_window_type(bwp->winId(), Xcb::XcbMisc::Desktop);
+        // Xcb::XcbMisc::instance().set_window_type(bwp->winId(), Xcb::XcbMisc::Desktop);
+        // 如果开启--video-wallpaper，不使用原来的桌面
+        if (Dtk::Core::DSysInfo::isCommunityEdition() &&  qApp->property("video-window-id").isValid()) {
+            bwp->setWindowFlag(Qt::FramelessWindowHint);
+            bwp->setWindowFlag(Qt::WindowStaysOnBottomHint);
+        } else {
+            Xcb::XcbMisc::instance().set_window_type(bwp->winId(), Xcb::XcbMisc::Desktop);
+        }
     }
 
     return bwp;
