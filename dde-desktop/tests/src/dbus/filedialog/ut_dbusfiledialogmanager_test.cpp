@@ -32,37 +32,37 @@ namespace  {
     };
 }
 
-TEST_F(DBusFileDialogManagerTest, create_dialog)
-{
-    QString key("test");
-    QDBusObjectPath pathObj("/com/deepin/filemanager/filedialog/" + key);
+//TEST_F(DBusFileDialogManagerTest, create_dialog)
+//{
+//    QString key("test");
+//    QDBusObjectPath pathObj("/com/deepin/filemanager/filedialog/" + key);
 
-    QDBusObjectPath result = p_manager->createDialog(key);
-    EXPECT_EQ(pathObj, result);
-    EXPECT_TRUE(p_manager->m_dialogObjectMap.contains(pathObj));
-    p_manager->destroyDialog(result);
-}
+//    QDBusObjectPath result = p_manager->createDialog(key);
+//    EXPECT_EQ(pathObj, result);
+//    EXPECT_TRUE(p_manager->m_dialogObjectMap.contains(pathObj));
+//    p_manager->destroyDialog(result);
+//}
 
-TEST_F(DBusFileDialogManagerTest, destory_dialog)
-{
-    QString key("test");
-    QDBusObjectPath pathObj("/com/deepin/filemanager/filedialog/" + key);
+//TEST_F(DBusFileDialogManagerTest, destory_dialog)
+//{
+//    QString key("test");
+//    QDBusObjectPath pathObj("/com/deepin/filemanager/filedialog/" + key);
 
-    QDBusObjectPath result = p_manager->createDialog(key);
-    p_manager->destroyDialog(result);
-    EXPECT_FALSE(p_manager->m_dialogObjectMap.contains(pathObj));
-}
+//    QDBusObjectPath result = p_manager->createDialog(key);
+//    p_manager->destroyDialog(result);
+//    EXPECT_FALSE(p_manager->m_dialogObjectMap.contains(pathObj));
+//}
 
-TEST_F(DBusFileDialogManagerTest, get_all_dialogs)
-{
-    QString key("test");
-    QDBusObjectPath pathObj("/com/deepin/filemanager/filedialog/" + key);
+//TEST_F(DBusFileDialogManagerTest, get_all_dialogs)
+//{
+//    QString key("test");
+//    QDBusObjectPath pathObj("/com/deepin/filemanager/filedialog/" + key);
 
-    p_manager->createDialog(key);
+//    p_manager->createDialog(key);
 
-    QList<QDBusObjectPath> result = p_manager->dialogs();
-    EXPECT_EQ(result, p_manager->m_dialogObjectMap.keys());
-}
+//    QList<QDBusObjectPath> result = p_manager->dialogs();
+//    EXPECT_EQ(result, p_manager->m_dialogObjectMap.keys());
+//}
 
 TEST_F(DBusFileDialogManagerTest, get_err_string)
 {
@@ -115,14 +115,14 @@ TEST_F(DBusFileDialogManagerTest, show_blue_dialog)
 //    p_manager->showBluetoothTransDialog(id, urls);
 }
 
-TEST_F(DBusFileDialogManagerTest, handle_destroy_dialog)
-{
-    QString key("test");
-    QDBusObjectPath pathObj("/com/deepin/filemanager/filedialog/" + key);
+//TEST_F(DBusFileDialogManagerTest, handle_destroy_dialog)
+//{
+//    QString key("test");
+//    QDBusObjectPath pathObj("/com/deepin/filemanager/filedialog/" + key);
 
-    QDBusObjectPath result = p_manager->createDialog(key);
-    p_manager->destroyDialog(pathObj);
-    p_manager->onDialogDestroy();
+//    QDBusObjectPath result = p_manager->createDialog(key);
+//    p_manager->destroyDialog(pathObj);
+//    p_manager->onDialogDestroy();
 
-    EXPECT_FALSE(p_manager->m_dialogObjectMap.contains(pathObj));
-}
+//    EXPECT_FALSE(p_manager->m_dialogObjectMap.contains(pathObj));
+//}

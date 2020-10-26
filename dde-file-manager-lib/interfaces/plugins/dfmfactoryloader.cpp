@@ -113,7 +113,7 @@ void DFMFactoryLoader::update()
 
 #ifdef QT_SHARED
     Q_D(DFMFactoryLoader);
-
+    qDebug() << "DFMFactoryLoader::DFMFactoryLoader() checking directory path";
     const QStringList &paths = d->pluginPaths;
     for (int i = 0; i < paths.count(); ++i) {
         const QString &pluginDir = paths.at(i);
@@ -131,7 +131,7 @@ void DFMFactoryLoader::update()
             continue;
 
         QStringList plugins = QDir(path).entryList(QDir::Files);
-        QPluginLoader *loader = 0;
+        QPluginLoader *loader = nullptr;
 
 #ifdef Q_OS_MAC
         // Loading both the debug and release version of the cocoa plugins causes the objective-c runtime

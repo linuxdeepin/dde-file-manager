@@ -51,7 +51,6 @@ struct ComputerModelItemData
     QString sptext;
     QWidget* widget = nullptr;
     Category cat;
-    bool selected;
 };
 
 class ComputerModel : public QAbstractItemModel
@@ -112,6 +111,7 @@ private:
     QList<ComputerModelItemData> m_items;
     DAbstractFileWatcher* m_watcher;
     int m_nitems;
+    static bool m_isQueryRootFileFinshed; // 查询跟目录是否完成
 
 #ifdef ENABLE_ASYNCINIT
     QPair<bool,QFuture<void>> m_initThread; //初始化线程，first为是否强制结束线程

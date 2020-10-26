@@ -302,7 +302,7 @@ bool DStorageInfo::inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hi
     return url1.host() == url2.host() && url1.port() == url1.port();
 }
 
-bool DStorageInfo::isLocalDevice(const QString &path)
+bool DStorageInfo::isLocalDevice(const QString &path, const bool &isEx)
 {
     static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
                                      QRegularExpression::DotMatchesEverythingOption
@@ -317,7 +317,10 @@ bool DStorageInfo::isLocalDevice(const QString &path)
         return true;
     }
 
-    QString device = DStorageInfo(path).device();    
+    QString device = DStorageInfo(path).device();
+    if (isEx && device.isEmpty()) {
+        return true;
+    }
     return (device.startsWith("/dev/"));
 }
 

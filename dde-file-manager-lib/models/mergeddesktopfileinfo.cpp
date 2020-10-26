@@ -32,7 +32,7 @@
 class VirtualEntryInfo : public DAbstractFileInfo
 {
 public:
-    VirtualEntryInfo(const DUrl &url) : DAbstractFileInfo(url) {}
+    explicit VirtualEntryInfo(const DUrl &url) : DAbstractFileInfo(url) {}
 
     QString iconName() const override
     {
@@ -124,7 +124,7 @@ class MergedDesktopFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     MergedDesktopFileInfoPrivate(const DUrl &url, MergedDesktopFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq, true) {}
+        : DAbstractFileInfoPrivate(url, qq, false) {}
 
     DUrl m_parentUrl;
 };

@@ -16,6 +16,7 @@ struct CdStatusInfo {
     bool bMntFlag = false;
     quint64 nUsage = 0;
     quint64 nTotal = 0;
+    bool bReadyToBurn = false;
     bool bBurningOrErasing = false;
     bool bProcessLocked = false;
     QString cachePath=""; // bug202007010027:添加文件缓存区，进行统一管理
@@ -56,6 +57,7 @@ public:
     //判断当前磁盘是否正忙碌
     static bool hasVolProcessBusy();
 
+    static CdStatusInfo* getCdStatusInfo(const QString& dev);
     //fix: 动态更新光驱磁盘状态
 private slots:
     void selectBurnFilesOptionUpdate();

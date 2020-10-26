@@ -21,6 +21,7 @@
 #define RECENTFILEINFO_H
 
 #include "dabstractfileinfo.h"
+#include <QMutex>
 
 class RecentFileInfo;
 typedef QExplicitlySharedDataPointer<RecentFileInfo> RecentPointer;
@@ -29,6 +30,7 @@ class RecentFileInfo : public DAbstractFileInfo
 {
 public:
     explicit RecentFileInfo(const DUrl &url);
+    ~RecentFileInfo() override;
 
     bool makeAbsolute() override;
     bool exists() const override;
@@ -73,6 +75,7 @@ public:
 private:
     QDateTime m_lastReadTime;
     QString m_lastReadTimeStr;
+    QMutex m_mutex;
 };
 
 #endif // RECENTFILEINFO_H

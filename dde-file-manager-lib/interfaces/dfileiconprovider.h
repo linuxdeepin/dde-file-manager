@@ -30,6 +30,7 @@
 #include "dfmglobal.h"
 
 class DFileInfo;
+class DGvfsFileInfo;
 
 DFM_BEGIN_NAMESPACE
 
@@ -38,13 +39,14 @@ class DFileIconProvider : public QFileIconProvider
 {
 public:
     DFileIconProvider();
-    ~DFileIconProvider();
+    ~DFileIconProvider() override;
 
     static DFileIconProvider *globalProvider();
 
     QIcon icon(const QFileInfo &info) const Q_DECL_OVERRIDE;
     QIcon icon(const QFileInfo &info, const QIcon &feedback) const;
     QIcon icon(const DFileInfo &info, const QIcon &feedback = QIcon()) const;
+    QIcon icon(const DGvfsFileInfo &info, const QIcon &feedback = QIcon()) const;
 
 private:
     QScopedPointer<DFileIconProviderPrivate> d_ptr;

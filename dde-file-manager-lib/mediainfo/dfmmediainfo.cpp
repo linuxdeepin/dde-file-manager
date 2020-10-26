@@ -144,12 +144,6 @@ DFMMediaInfo::~DFMMediaInfo()
 
 }
 
-QString DFMMediaInfo::generalInformation(const QString &filename)
-{
-    DFMMediaInfoPrivate info(nullptr, filename);
-    return info.Inform();
-}
-
 QString DFMMediaInfo::Value(const QString &key, MeidiaType meidiaType/* = General*/)
 {
     Q_D(DFMMediaInfo);

@@ -90,7 +90,7 @@ public:
 
     bool event(QEvent *event) override;
 
-    virtual void rowsInserted(const QModelIndex &index, int first, int last) override;
+    virtual void rowsInserted(const QModelIndex &parent, int first, int last) override;
     virtual void keyboardSearch(const QString &search) override;
 
 #if QT_CONFIG(draganddrop)
@@ -150,7 +150,7 @@ signals:
 
 public slots:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) Q_DECL_OVERRIDE;
-    void setDodgeDuration(double dragMoveTime);
+    void setDodgeDuration(double dodgeDuration);
     virtual void selectAll() override;
 protected slots:
     void onRefreshFinished();

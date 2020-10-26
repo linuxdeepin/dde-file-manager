@@ -56,5 +56,9 @@
         <file>icons/deepin/builtin/dark/icons/dfm_vault_active_start_128px.svg</file>
         <file>icons/deepin/builtin/dark/icons/dfm_bluetooth_empty_dark.svg</file>
         <file>icons/deepin/builtin/light/icons/dfm_bluetooth_empty_light.svg</file>
+        <file>icons/deepin/builtin/dark/icons/bluetooth_phone_dark.svg</file>
+        <file>icons/deepin/builtin/light/icons/bluetooth_phone_light.svg</file>
+        <file>icons/deepin/builtin/light/icons/bluetooth_computer_light.svg</file>
+        <file>icons/deepin/builtin/dark/icons/bluetooth_computer_dark.svg</file>
     </qresource>
 </RCC>

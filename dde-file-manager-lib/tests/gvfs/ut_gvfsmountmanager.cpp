@@ -65,10 +65,10 @@ TEST_F(TestGvfsMountManager, qMountToqDiskinfo)
 
 TEST_F(TestGvfsMountManager, mount)
 {
-    GvfsMountManager::mount("/dev/sdb");
+    GvfsMountManager::mount("/dev/sda1");
 }
 
 TEST_F(TestGvfsMountManager, eject)
 {
-    GvfsMountManager::mount("/dev/sr0");
+    GvfsMountManager::mount("/dev/sda1");
 }

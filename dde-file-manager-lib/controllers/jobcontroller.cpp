@@ -24,7 +24,9 @@
 
 #include "jobcontroller.h"
 #include "dfileservices.h"
+#ifdef  FULLTEXTSEARCH_ENABLE
 #include "fulltextsearch.h"
+#endif
 
 #include <QtConcurrent/QtConcurrent>
 
@@ -85,7 +87,6 @@ void JobController::start()
 
         return;
     }
-
     setState(Started);
     QThread::start(TimeCriticalPriority);
 }
@@ -164,7 +165,6 @@ void JobController::run()
     bool update_children = true;
 
     const DAbstractFileInfoPointer &rootInfo = DFileService::instance()->createFileInfo(this, m_fileUrl);
-
     if (rootInfo && !rootInfo->hasOrderly() && fileInfoQueue.count() > 0) {
         update_children = false;
         emit childrenUpdated(fileInfoQueue);
@@ -177,22 +177,23 @@ void JobController::run()
             mutex.unlock();
         }
 
-        if (m_state == Stoped) {
+        if (m_state == Stoped || !m_iterator->next().isValid()) {
             break;
         }
 
-        m_iterator->next();
         DAbstractFileInfoPointer fileinfo;
-        fileinfo = m_iterator->optimiseFileInfo();
-        if (!fileinfo) {
-            fileinfo = m_iterator->fileInfo();
+        fileinfo = m_iterator->fileInfo();
+        if (fileinfo) {
+            /*fix bug 49039 解决多次调用m_iterator->hasNext导致有重复结果，这里去重*/
+            if (fileInfoQueue.contains(fileinfo)) {
+                continue;
+            }
         }
         if (update_children) {
             fileInfoQueue.enqueue(fileinfo);
 
             if (timer->elapsed() > m_timeCeiling || fileInfoQueue.count() > m_countCeiling) {
                 update_children = false;
-
                 emit childrenUpdated(fileInfoQueue);
                 emit addChildrenList(fileInfoQueue);
 
@@ -220,7 +221,6 @@ void JobController::run()
         delete timer;
         timer = Q_NULLPTR;
     }
-
     if (update_children) {
         emit childrenUpdated(fileInfoQueue);
         emit addChildrenList(fileInfoQueue);
@@ -235,7 +235,8 @@ void JobController::setState(JobController::State state)
         return;
 
     m_state = state;
-
+#ifdef  FULLTEXTSEARCH_ENABLE
     DFMFullTextSearchManager::getInstance()->setSearchState(state);
+#endif
     emit stateChanged(state);
 }

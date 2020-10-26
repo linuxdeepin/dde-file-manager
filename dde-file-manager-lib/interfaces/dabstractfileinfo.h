@@ -147,6 +147,7 @@ public:
     }
 
     explicit DAbstractFileInfo(const DUrl &url, bool hasCache = true);
+    explicit DAbstractFileInfo(const DUrl &url, const QMimeType &mimetype, bool hasCache = true);
     virtual ~DAbstractFileInfo();
 
     static const DAbstractFileInfoPointer getFileInfo(const DUrl &fileUrl);
@@ -308,7 +309,8 @@ public:
     virtual void makeToInactive();
     virtual void makeToActive();
     bool isActive() const;
-    virtual void refresh();
+    //优化gvfs文件卡，其他文件不改变，只有gvfs文件，传入true为强制刷新
+    virtual void refresh(const bool isForce = false);
 
     virtual DUrl goToUrlWhenDeleted() const;
     virtual QString toLocalFile() const;
@@ -325,6 +327,9 @@ public:
     //为recentInfo提供接口
     virtual const QDateTime getReadTime() const;
     virtual void updateReadTime(const QDateTime &);
+    virtual bool isGvfsMountFile() const;
+    virtual qint8 gvfsMountFile() const;
+    virtual void checkMountFile();
 
     virtual quint64 inode() const;
 
@@ -332,6 +337,28 @@ protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);
     void setProxy(const DAbstractFileInfoPointer &proxy);
     Q_DECL_DEPRECATED_X("!!!!!!!!!!!!!!!!!!!!!!!") virtual void setUrl(const DUrl &url);
+
+    /**
+     * @brief loadFileEmblems 加载文件的自定义徽标
+     * @param iconList 角标列表
+     * @return 是否成功加载
+     */
+    bool loadFileEmblems(QList<QIcon> &iconList) const;
+    /**
+     * @brief parseEmblemString 解析徽标设置的字符串
+     * @param emblem 图标对象
+     * @param pos 位置
+     * @param emblemStr 徽标字符串
+     * @return 是否解析成功
+     */
+    bool parseEmblemString(QIcon &emblem, QString &pos, const QString &emblemStr) const;
+    /**
+     * @brief setEmblemIntoIcons 设置徽标icon到要显示的iconlist
+     * @param pos 徽标位置
+     * @param emblem 图标对象
+     * @param iconList 显示的角标列表
+     */
+    void setEmblemIntoIcons(const QString &pos, const QIcon &emblem, QList<QIcon> &iconList) const;
 
     QScopedPointer<DAbstractFileInfoPrivate> d_ptr;
     Q_DECLARE_PRIVATE(DAbstractFileInfo)

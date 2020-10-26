@@ -324,7 +324,7 @@ bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 {
     Q_Q(DFileManagerWindow);
-
+    qDebug() << "  cd   to " << fileUrl;
     DFMBaseView *current_view = tab->fileView();
 
     // fix 6942 取消判断先后请求地址差异判断
@@ -348,13 +348,13 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         if (fi->suffix() == SUFFIX_USRDIR) {
             return cdForTab(tab, fi->redirectedFileUrl());
         } else if (fi->suffix() == SUFFIX_UDISKS) {
-            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+            QString blkDevicePath = fi->extraProperties()["udisksblk"].toString();
+            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blkDevicePath));
             if (blk->mountPoints().empty()) {
-                blk->mount({});
+                qDebug() << "mount the device{" << blkDevicePath <<" } at:" << blk->mount({});
             }
         }
     }
-
     if (fileUrl.scheme() == DFMVAULT_SCHEME ||
             VaultController::isVaultFile(fileUrl.fragment())) {
         if (VaultController::Unlocked != VaultController::ins()->state()
@@ -373,10 +373,8 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
             return ret;
         }
     }
-
     if (!current_view || !DFMViewManager::instance()->isSuited(fileUrl, current_view)) {
         DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
-
         if (view) {
             viewStackLayout->addWidget(view->widget());
 
@@ -428,9 +426,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         if (current_view) {
             current_view->deleteLater();
         }
-
         tab->setFileView(view);
-
         if (tab == tabBar->currentTab())
             setCurrentView(view);
 
@@ -438,7 +434,6 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     }
 
     bool ok = false;
-
     if (current_view) {
         // 为了解决 bug 34363: [4K屏]下且[缩放]，[ICON视图]下[浏览大量文件]，同时[疯狂滚动 scrollbar] 导致的崩溃问题
         auto fileView = dynamic_cast<DFileView *>(current_view);
@@ -458,12 +453,10 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
                 }
             }
         }
-
         ok = current_view->setRootUrl(fileUrl);
 
         if (ok) {
             tab->onFileRootUrlChanged(fileUrl);
-
             if (tab == tabBar->currentTab()) {
                 emit q_ptr->currentUrlChanged();
             }

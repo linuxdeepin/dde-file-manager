@@ -15,7 +15,7 @@ class TagManagerDaemonController final : public QObject
     Q_OBJECT
 public:
     virtual ~TagManagerDaemonController()=default;
-    TagManagerDaemonController(QObject* const parent = nullptr);
+    explicit TagManagerDaemonController(QObject* const parent = nullptr);
     TagManagerDaemonController(const TagManagerDaemonController& other)=delete;
     TagManagerDaemonController& operator=(const TagManagerDaemonController& other)=delete;
 

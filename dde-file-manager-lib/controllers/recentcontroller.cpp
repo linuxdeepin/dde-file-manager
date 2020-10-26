@@ -61,7 +61,7 @@ private:
 class RecentFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    RecentFileWatcherPrivate(DAbstractFileWatcher *qq)
+    explicit RecentFileWatcherPrivate(DAbstractFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override
@@ -321,7 +321,12 @@ bool RecentController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event)
         pathList << url;
     }
     if (!pathList.empty()) {
-        result = FileUtils::openFiles(pathList);
+        if (event->isEnter()) {
+            result = FileUtils::openEnterFiles(pathList);
+        }
+        else {
+            result = FileUtils::openFiles(pathList);
+        }
         if (!result) {
             for (const DUrl &fileUrl : packUrl) {
                 DFileService::instance()->openFile(event->sender(), fileUrl);
@@ -334,6 +339,17 @@ bool RecentController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event)
 bool RecentController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
     return DFileService::instance()->openFileByApp(event->sender(), event->appName(), DUrl::fromLocalFile(event->url().path()));
+}
+
+bool RecentController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
+{
+    //RecentController::openFilesByApp负责将所有recentUrl转成fileUrl然后走filecontroller::openFilesByApp的逻辑流程
+    const DUrlList recentUrls = event.data()->urlList();
+    DUrlList fileUrls;
+    for (const DUrl &url : recentUrls) {
+        fileUrls.append(DUrl::fromLocalFile(url.path()));
+    }
+    return DFileService::instance()->openFilesByApp(event->sender(), event->appName(), fileUrls);
 }
 
 bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const

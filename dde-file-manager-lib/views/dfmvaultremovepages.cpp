@@ -26,22 +26,27 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     , m_stackedWidget(new QStackedWidget(this))
 {
     setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
-    this->setFixedSize(396, 248);
+    // 修复bug-41001 提示信息显示不全
+    this->setFixedWidth(396);
 
     // 标题
-    DLabel *pTitle = new DLabel(tr("Remove File Vault"), this);
-    QFont font = pTitle->font();
-    font.setPixelSize(18);
-    pTitle->setFont(font);
-    pTitle->setAlignment(Qt::AlignHCenter);
+    DLabel *pTitle = new DLabel(tr("Delete File Vault"), this);
+    // 文本水平并垂直居中
+    pTitle->setAlignment(Qt::AlignCenter);
 
     // 信息
     m_pInfo = new QLabel(this);
-    m_pInfo->setAlignment(Qt::AlignHCenter);
+    // 文本水平并垂直居中
+    m_pInfo->setAlignment(Qt::AlignCenter);
+    // 修复bug-41001 提示信息显示不全
+    m_pInfo->setWordWrap(true);
+    m_pInfo->setFixedHeight(60);
 
     // 主界面
     QFrame *mainFrame = new QFrame(this);
 
+    // 修复bug-41001 提示信息显示不全
+    m_stackedWidget->setFixedHeight(72);
     m_stackedWidget->addWidget(m_passwordView);
     m_stackedWidget->addWidget(m_recoverykeyView);
     m_stackedWidget->addWidget(m_progressView);
@@ -73,12 +78,11 @@ void DFMVaultRemovePages::initConnect()
 
 void DFMVaultRemovePages::showVerifyWidget()
 {
-    setInfo(tr("Once removed, the files in it will be permanently deleted,") + '\n' +
-            tr("please confirm and continue"));
+    setInfo(tr("Once deleted, the files in it will be permanently deleted"));
 
     setCloseButtonVisible(true);
     clearButtons();
-    QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Remove")});
+    QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Delete")});
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
     addButton(buttonTexts[2], true, DDialog::ButtonWarning);
@@ -203,7 +207,7 @@ void DFMVaultRemovePages::onLockVault(int state)
             m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
         }else{
             // error tips
-            QString errMsg = tr("Remove File Vault failed.%1").arg(VaultController::getErrorInfo(state));
+            QString errMsg = tr("Failed to delete file vault");
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
             dialog.setTitle(errMsg);
@@ -217,9 +221,9 @@ void DFMVaultRemovePages::onLockVault(int state)
 void DFMVaultRemovePages::onVualtRemoveFinish(bool result)
 {
     if (result){
-        setInfo(tr("Removed successfully"));
+        setInfo(tr("Deleted successfully"));
     }else {
-        setInfo(tr("Failed to remove"));
+        setInfo(tr("Failed to delete"));
     }
 
     this->getButton(0)->setEnabled(true);

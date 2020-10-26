@@ -469,7 +469,10 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
             //点击数据盘直接跳转到主目录
             if (rootUrl == DUrl::fromLocalFile("/data")) {
                 QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-                rootUrl = DUrl::fromLocalFile("/data" + userPath);
+                //确认/data目录下是否挂载了home目录
+                QDir dir("/data" + userPath);
+                if (dir.exists())
+                    rootUrl = DUrl::fromLocalFile("/data" + userPath);
             }
             return rootUrl;
         }
@@ -496,6 +499,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
 {
     Q_D(const DFMRootFileInfo);
     QVariantHash ret;
+    ret["fsFreeSize"] = 0;
     if (suffix() == SUFFIX_GVFSMP) {
         if (d->gfsi) {
             ret["fsUsed"] = d->gfsi->fsTotalBytes() - d->gfsi->fsFreeBytes();
@@ -510,6 +514,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         } else {
             QStorageInfo si(d->mps.front());
             ret["fsUsed"] = quint64(si.bytesTotal() - si.bytesFree());
+            ret["fsFreeSize"] = quint64(si.bytesFree());
         }
         ret["fsSize"] = quint64(d->size);
         ret["fsType"] = d->fs;
@@ -525,8 +530,9 @@ QVariantHash DFMRootFileInfo::extraProperties() const
     return ret;
 }
 
-void DFMRootFileInfo::refresh()
-{   
+void DFMRootFileInfo::refresh(const bool isForce)
+{
+    Q_UNUSED(isForce)
     //udisk的refresh函数中的proxy为空指针，没有实际意义
     //由于优化性能后，u盘挂载文件信息会被缓存，因此需要在此增加刷新U盘的挂载数据
     if (suffix() == SUFFIX_UDISKS)
@@ -765,6 +771,24 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
     if (!b || !b->exists()) {
         return true;
     }
+    return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
+}
+
+bool DFMRootFileInfo::typeCompareByUrl(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)
+{
+    static const QHash<ItemType, int> priomap = {
+        {ItemType::UserDirectory, -1},
+        {ItemType::UDisksRoot,  0},
+        {ItemType::UDisksData,  1},
+        {ItemType::UDisksFixed,  2},
+        {ItemType::UDisksRemovable,  3},
+        {ItemType::UDisksOptical,  4},
+        {ItemType::GvfsMTP,  5},
+        {ItemType::GvfsGPhoto2,  5},
+        {ItemType::GvfsGeneric,  6},
+        {ItemType::GvfsSMB,  7},
+        {ItemType::GvfsFTP,  7}
+    };
     return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
 }
 

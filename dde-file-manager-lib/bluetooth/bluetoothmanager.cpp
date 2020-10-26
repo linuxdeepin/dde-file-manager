@@ -42,7 +42,7 @@ using DBusControlcenter = com::deepin::dde::ControlCenter;
 class BluetoothManagerPrivate
 {
 public:
-    BluetoothManagerPrivate(BluetoothManager *qq);
+    explicit BluetoothManagerPrivate(BluetoothManager *qq);
 
     /**
      * @brief 解析蓝牙设备, 获取适配器和设备信息
@@ -399,4 +399,13 @@ bool BluetoothManager::cancelTransfer(const QString &sessionPath)
     qDebug() << sessionPath;
 #endif
     return true;
+}
+
+bool BluetoothManager::canSendBluetoothRequest()
+{
+#ifdef BLUETOOTH_ENABLE
+    Q_D(BluetoothManager);
+    return d->m_bluetoothInter->transportable();
+#endif
+    return false;
 }

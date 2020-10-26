@@ -146,6 +146,29 @@ SOURCES += \
     $$PWD/shutil/ut_mimetypedisplaymanager.cpp \
     $$PWD/shutil/ut_properties.cpp \
     $$PWD/shutil/ut_shortcut.cpp \
-    $$PWD/models/ut_vaultfileinfo.cpp
+    $$PWD/models/ut_vaultfileinfo.cpp \
+    $$PWD/interfaces/ut_dfmsettings.cpp \
+    $$PWD/interfaces/ut_dfmviewmanager.cpp \
+    $$PWD/controllers/ut_bookmarkmanager.cpp \
+    $$PWD/gvfs/ut_mountaskpassworddialog.cpp \
+    $$PWD/gvfs/ut_mountsecretdiskaskpassworddialog.cpp \
+    $$PWD/gvfs/ut_qdrive.cpp \
+    $$PWD/gvfs/ut_gvfsmountmanager.cpp \
+    $$PWD/gvfs/ut_secretmanager.cpp \
+    $$PWD/interfaces/ut_dmimedatabase.cpp \
+    $$PWD/usershare/ut_shareinfo.cpp \
+    $$PWD/usershare/ut_usersharemanager.cpp \
+    $$PWD/controllers/ut_networkcontroller.cpp \
+    $$PWD/controllers/ut_dfmusersharecrumbcontroller.cpp \
+    $$PWD/interfaces/ut_dfmsidebarmanager.cpp \
+    $$PWD/interfaces/ut_dthumbnailprovider.cpp \
+    $$PWD/interfaces/ut_dfmcrumbmanager.cpp \
+    $$PWD/interfaces/ut_dfmevent.cpp \
+    $$PWD/interfaces/ut_dfmstandardpaths.cpp
+
+RESOURCES += \
+    $$PWD/resources/test.qrc
+
+
 
 

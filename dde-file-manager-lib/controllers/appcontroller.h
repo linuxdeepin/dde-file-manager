@@ -67,7 +67,7 @@ public:
     static void registerUrlHandle();
 
 public slots:
-    void actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event,const bool isEnter = false);
     void actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event);
     void asyncOpenDisk(const QString &path);
 

@@ -37,11 +37,11 @@ public:
     void initCustom(QStringList &items);
     void initCustom(const QStringList &orderedItems, const QHash<QString, bool> &indexHash);
 
-    bool add(int screenNum, QPoint pos, const QString &itemId);
-    bool add(int screenNum, const QString &itemId);
-    bool move(int screenNum, const QStringList &selectedIds, const QString &itemId, int x, int y);
+    bool add(int screenNum, QPoint pos, const QString &id);
+    bool add(int screenNum, const QString &id);
+    bool move(int screenNum, const QStringList &selecteds, const QString &current, int x, int y);
     bool move(int fromScreen, int toScreen, const QStringList &selectedIds, const QString &itemId, int x, int y);
-    bool remove(int screenNum, const QString &itemId);
+    bool remove(int screenNum, const QString &id);
     void popOverlap(); //弹出堆叠
     int addToOverlap(const QString &itemId);
     int emptyPostionCount(int screenNum) const;
@@ -56,8 +56,8 @@ public:
     QStringList itemIds(int screenNum);
     QStringList allItems() const;
 
-    bool contains(int screebNum, const QString &itemId);
-    QPoint position(int screenNum, const QString &itemId);
+    bool contains(int screebNum, const QString &id);
+    QPoint position(int screenNum, const QString &id);
     bool find(const QString &itemId, QPair<int,QPoint> &pos);
     QString itemId(int screenNum, int x, int y);
     QString itemId(int screenNum, QPoint pos);
@@ -106,7 +106,7 @@ signals:
     void sigSyncSelection(class CanvasGridView *, DUrlList url);
 protected:
     //bool remove(int screenNum, int x, int y, const QString &itemId);
-    bool remove(int screenNum, QPoint pos, const QString &itemId);
+    bool remove(int screenNum, QPoint pos, const QString &id);
 
     friend class Singleton<GridManager>;
 

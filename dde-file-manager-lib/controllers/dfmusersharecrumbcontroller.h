@@ -31,7 +31,7 @@ class DFMUserShareCrumbController : public DFMCrumbInterface
 {
 public:
     explicit DFMUserShareCrumbController(QObject *parent = nullptr);
-    ~DFMUserShareCrumbController();
+    ~DFMUserShareCrumbController() override;
 
     bool supportedUrl(DUrl url) override;
     QList<CrumbData> seprateUrl(const DUrl &url) override;

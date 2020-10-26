@@ -23,7 +23,7 @@ DFM_BEGIN_NAMESPACE
 class DFMViewManagerPrivate
 {
 public:
-    DFMViewManagerPrivate(DFMViewManager *qq);
+    explicit DFMViewManagerPrivate(DFMViewManager *qq);
 
     DFMViewManager *q_ptr;
 
@@ -69,7 +69,6 @@ void DFMViewManager::clearUrlView(const QString &scheme, const QString &host)
 DFMBaseView *DFMViewManager::createViewByUrl(const DUrl &fileUrl) const
 {
     Q_D(const DFMViewManager);
-
     QList<KeyType> handlerTypeList;
 
     handlerTypeList << KeyType(fileUrl.scheme(), fileUrl.host());
@@ -87,20 +86,17 @@ DFMBaseView *DFMViewManager::createViewByUrl(const DUrl &fileUrl) const
             return new DFileView();
         }
     }
-
     return nullptr;
 }
 
 QString DFMViewManager::suitedViewTypeNameByUrl(const DUrl &fileUrl) const
 {
     Q_D(const DFMViewManager);
-
     QList<KeyType> handlerTypeList;
 
     handlerTypeList << KeyType(fileUrl.scheme(), fileUrl.host());
     handlerTypeList << KeyType(QString(), fileUrl.host());
     handlerTypeList << KeyType(fileUrl.scheme(), QString());
-
     for (const KeyType &handlerType : handlerTypeList) {
         const QList<ViewCreatorType> creatorList = d->controllerCreatorHash.values(handlerType);
 

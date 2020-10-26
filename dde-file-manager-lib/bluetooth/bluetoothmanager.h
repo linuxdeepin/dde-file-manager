@@ -84,6 +84,8 @@ public Q_SLOTS:
      */
     bool cancelTransfer(const QString &sessionPath);
 
+    bool canSendBluetoothRequest();
+
 Q_SIGNALS:
 
     /**

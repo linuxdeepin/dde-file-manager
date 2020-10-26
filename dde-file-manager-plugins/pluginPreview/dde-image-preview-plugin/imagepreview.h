@@ -45,7 +45,7 @@ class ImagePreview : public DFMFilePreview
     Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-image-preview-plugin.json")
     Q_INTERFACES(PreviewInterface)
 public:
-    explicit ImagePreview(QObject *parent = 0);
+    explicit ImagePreview(QObject *parent = nullptr);
     ~ImagePreview();
 
     bool canPreview(const QUrl &url, QByteArray *format = nullptr) const;

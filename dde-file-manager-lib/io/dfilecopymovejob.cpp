@@ -495,6 +495,10 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::setAndhandleError(DFileCopyMov
                                                                     const QString &es)
 {
     QMutexLocker lk(&m_errormutex);
+    if ((DFileCopyMoveJob::FileExistsError == e || DFileCopyMoveJob::DirectoryExistsError == e)
+            && (sourceInfo->fileUrl() == targetInfo->fileUrl() || DStorageInfo::isSameFile(sourceInfo->fileUrl().path(), targetInfo->fileUrl().path()))) {
+        return DFileCopyMoveJob::CoexistAction;
+    }
     setError(e, es);
     if (DFileCopyMoveJob::NoError == e) {
         return DFileCopyMoveJob::NoAction;
@@ -720,7 +724,8 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     // only remove
     if (!target_info) {
         bool ok = false;
-
+        //可以显示进度条
+        m_iscanshowprogress = true;
         qint64 size = source_info->isSymLink() ? 0 : source_info->size();
 
         if (source_info->isFile() || source_info->isSymLink()) {
@@ -775,11 +780,14 @@ create_new_file_info:
     }
 
     if (new_file_info->exists()) {
+        //忽略DStorageInfo::isSameFile判断链接文件的结果
         if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode) &&
-                (new_file_info->fileUrl() == from || DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()))) {
+                (new_file_info->fileUrl() == from || (DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()) && !new_file_info->isSymLink()))) {
             // 不用再进行后面的操作
             return true;
         }
+        //可以显示进度条
+        m_iscanshowprogress = true;
 
         // 禁止目录复制/移动到自己里面
         if (new_file_info->isAncestorsUrl(source_info->fileUrl())) {
@@ -788,6 +796,8 @@ create_new_file_info:
                                                                 source_info, new_file_info);
 
             if (action == DFileCopyMoveJob::SkipAction) {
+                //跳过文件大小统计
+                skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
                 return true;
             }
 
@@ -798,14 +808,14 @@ create_new_file_info:
 
         bool source_is_file = source_info->isFile() || source_info->isSymLink();
         bool target_is_file = new_file_info->isFile() || new_file_info->isSymLink();
+        //如果目标目录有相同名称的文件，但是拷贝的是目录，或者相反，就直接创建一个新的名称
+        if (source_is_file != target_is_file) {
+            file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
+                        : getNewFileName(source_info, target_info);
+            goto create_new_file_info;
+        }
         DFileCopyMoveJob::Error errortype =  target_is_file ?
                                              DFileCopyMoveJob::FileExistsError : DFileCopyMoveJob::DirectoryExistsError;
-
-//        if (target_is_file) {
-//            setError(DFileCopyMoveJob::FileExistsError);
-//        } else {
-//            setError(DFileCopyMoveJob::DirectoryExistsError);
-//        }
 
         switch (setAndhandleError(errortype, source_info, new_file_info)) {
         case DFileCopyMoveJob::ReplaceAction:
@@ -826,6 +836,8 @@ create_new_file_info:
                 return false;
             }
         case DFileCopyMoveJob::SkipAction:
+            //跳过文件大小统计
+            skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
             return true;
         case DFileCopyMoveJob::CoexistAction:
             file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
@@ -835,6 +847,8 @@ create_new_file_info:
             return false;
         }
     }
+
+    m_iscanshowprogress = true;
 
     if (source_info->isSymLink()) {
         bool ok = false;
@@ -983,7 +997,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
                 QString strDirName = strPath.section("/", -1, -1);
                 if (strDirName.toUtf8().length() > 255) {
                     action = setAndhandleError(DFileCopyMoveJob::MkdirError, fromInfo, toInfo,
-                                               qApp->translate("DFileCopyMoveJob", "Failed to open the dir, cause: File name too long"));
+                                               qApp->translate("DFileCopyMoveJob", "Failed to open the directory, cause: file name too long"));
                     break;
                 }
             }
@@ -1131,7 +1145,7 @@ open_file: {
                     qCDebug(fileJob()) << "open error:" << fromInfo->fileUrl();
                     action = setAndhandleError(DFileCopyMoveJob::OpenError, fromInfo,
                                                DAbstractFileInfoPointer(nullptr),
-                                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
+                                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: file name too long"));
                     break;
                 }
             }
@@ -1160,15 +1174,23 @@ open_file: {
         }
 
         do {
-            if (toDevice->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Append)) {
+            if (toDevice->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
                 action = DFileCopyMoveJob::NoAction;
             } else {
                 qCDebug(fileJob()) << "open error:" << toInfo->fileUrl();
                 DFileCopyMoveJob::Error errortype = (!toInfo->exists() || toInfo->isWritable()) ? DFileCopyMoveJob::OpenError :
                                                     DFileCopyMoveJob::PermissionError;
-                QString errorstr = (!toInfo->exists() || toInfo->isWritable()) ?
-                                   qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()) :
-                                   QString();
+                // task-36496 "Permission denied"没有被翻译 翻译为“没有权限”
+                QString errorstr("");
+                if ("Permission denied" == toDevice->errorString()) {
+                    errorstr = (!toInfo->exists() || toInfo->isWritable()) ?
+                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: Permission denied") :
+                               QString();
+                } else {
+                    errorstr = (!toInfo->exists() || toInfo->isWritable()) ?
+                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()) :
+                               QString();
+                }
 
                 action = setAndhandleError(errortype, toInfo, DAbstractFileInfoPointer(nullptr), errorstr);
                 //防止卡死
@@ -1353,15 +1375,10 @@ open_file: {
             }
         }
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
-//        const DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
-//        if (targetStorageInfo.isValid()) {
-//            const QString &fs_type = targetStorageInfo.fileSystemType();
-//            if (fs_type == "vfat") {
-//                toDevice->inherits("");
-//                if (size_write > 0)
-//                    toDevice->syncToDisk();
-//            }
-//        }
+        if (m_isEveryReadAndWritesSnc && size_write > 0) {
+            toDevice->inherits("");
+            toDevice->syncToDisk();
+        }
         countrefinesize(size_write);
 
         if (Q_UNLIKELY(size_write != size_read)) {
@@ -1516,7 +1533,7 @@ open_file: {
         qint64 size = toDevice->read(data1, blockSize);
 
         if (Q_UNLIKELY(size <= 0)) {
-            if (toDevice->atEnd()) {
+            if (size == 0 && toDevice->atEnd()) {
                 break;
             }
 
@@ -1896,9 +1913,9 @@ void DFileCopyMoveJobPrivate::updateProgress()
 
 void DFileCopyMoveJobPrivate::updateCopyProgress()
 {
-    // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
-//    const qint64 totalSize = fileStatistics->totalProgressSize();
-    const qint64 totalSize = refinestat > DFileCopyMoveJob::MoreThreadRefine ? totalsize : fileStatistics->totalProgressSize();
+    // 网络文件使用统计线程的值获取总大小. 非网络文件使用 fts_* 系统 API 统计函数同步统计总大小
+    bool fromLocal = (isFromLocalUrls && targetUrl.isValid());
+    const qint64 totalSize = fromLocal ? totalsize : fileStatistics->totalProgressSize();
     //通过getCompletedDataSize取出的已传输的数据大小后期会远超实际数据大小，这种情况下直接使用completedDataSize
     qint64 dataSize(getCompletedDataSize());
     // completedDataSize 可能一直为 0
@@ -1906,19 +1923,18 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
         dataSize = completedDataSize;
     }
 
-    dataSize = targetIsRemovable <= 0 ? completedDataSizeOnBlockDevice : dataSize;
-
     dataSize += completedProgressDataSize;
 
     //优化
-    dataSize = (refinestat > DFileCopyMoveJob::MoreThreadRefine && bdestLocal) ? refinecpsize : dataSize;
+    dataSize = bdestLocal ? refinecpsize : dataSize;
+
+    dataSize += skipFileSize;
 
     if (totalSize == 0)
         return;
 
 //    if (fileStatistics->isFinished()) {
-    if ((refinestat <= DFileCopyMoveJob::Refine && fileStatistics->isFinished())
-            || (refinestat > DFileCopyMoveJob::Refine && iscountsizeover)) {
+    if ((fromLocal && iscountsizeover) || fileStatistics->isFinished()) {
         qreal realProgress = qreal(dataSize) / totalSize;
         if (realProgress > lastProgress)
             lastProgress = realProgress;
@@ -1976,7 +1992,7 @@ void DFileCopyMoveJobPrivate::updateMoveProgress()
 void DFileCopyMoveJobPrivate::updateSpeed()
 {
     const qint64 time = updateSpeedElapsedTimer->elapsed();
-    const qint64 total_size = refinestat >= DFileCopyMoveJob::MoreThreadRefine ? refinecpsize : getCompletedDataSize();
+    const qint64 total_size = bdestLocal ? refinecpsize : getCompletedDataSize();
     if (time == 0)
         return;
 
@@ -2032,7 +2048,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectoryRefine(DFileHandler *handler, const 
                 QString strDirName = strPath.section("/", -1, -1);
                 if (strDirName.toUtf8().length() > 255) {
                     action = setAndhandleError(DFileCopyMoveJob::MkdirError, fromInfo, toInfo,
-                                               qApp->translate("DFileCopyMoveJob", "Failed to open the dir, cause: File name too long"));
+                                               qApp->translate("DFileCopyMoveJob", "Failed to open the directory, cause: file name too long"));
                     break;
                 }
             }
@@ -2147,6 +2163,20 @@ bool DFileCopyMoveJobPrivate::mergeDirectoryRefine(DFileHandler *handler, const 
 
     // 完成操作后删除原目录
     return removeFile(handler, fromInfo);
+}
+
+void DFileCopyMoveJobPrivate::checkTagetNeedSync()
+{
+    if (!targetUrl.isValid()) {
+        return;
+    }
+    m_isEveryReadAndWritesSnc = FileUtils::isGvfsMountFile(targetUrl.path());
+    qDebug() << targetUrl.toLocalFile();
+    DStorageInfo targetStorageInfo(targetUrl.toLocalFile());
+    if (!m_isEveryReadAndWritesSnc && targetStorageInfo.isValid()) {
+        const QString &fs_type = targetStorageInfo.fileSystemType();
+        m_isEveryReadAndWritesSnc = (fs_type == "cifs");
+    }
 }
 
 bool DFileCopyMoveJobPrivate::processRefine(const DUrl from, const DAbstractFileInfoPointer source_info,
@@ -2269,6 +2299,8 @@ create_new_file_info:
                                                                 source_info, new_file_info);
 
             if (action == DFileCopyMoveJob::SkipAction) {
+                //跳过文件大小统计
+                skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
                 return true;
             }
 
@@ -2279,6 +2311,12 @@ create_new_file_info:
 
         bool source_is_file = source_info->isFile() || source_info->isSymLink();
         bool target_is_file = new_file_info->isFile() || new_file_info->isSymLink();
+        //如果目标目录有相同名称的文件，但是拷贝的是目录，或者相反，就直接创建一个新的名称
+        if (source_is_file != target_is_file) {
+            file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
+                        : getNewFileName(source_info, target_info);
+            goto create_new_file_info;
+        }
 
         DFileCopyMoveJob::Error errortype = target_is_file ? DFileCopyMoveJob::FileExistsError : DFileCopyMoveJob::DirectoryExistsError;
 
@@ -2301,6 +2339,8 @@ create_new_file_info:
                 return false;
             }
         case DFileCopyMoveJob::SkipAction:
+            //跳过文件大小统计
+            skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
             return true;
         case DFileCopyMoveJob::CoexistAction:
             file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
@@ -2498,7 +2538,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileRefine(const FileCopyInfoPointer copyinf
             QString strFileName = strPath.section("/", -1, -1);
             if (strFileName.toUtf8().length() > 255) {
                 action = setAndhandleError(DFileCopyMoveJob::OpenError, copyinfo->frominfo, DAbstractFileInfoPointer(nullptr),
-                                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
+                                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: file name too long"));
                 break;
             }
         }
@@ -2637,7 +2677,7 @@ open_file: {
                 if (strFileName.toUtf8().length() > 255) {
                     qCDebug(fileJob()) << "open error:" << copyinfo->frominfo->fileUrl();
                     action = setAndhandleError(DFileCopyMoveJob::OpenError, copyinfo->frominfo, DAbstractFileInfoPointer(nullptr),
-                                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
+                                               qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: file name too long"));
                     break;
                 }
             }
@@ -3110,7 +3150,7 @@ bool DFileCopyMoveJobPrivate::openRefine(const DFileCopyMoveJobPrivate::FileCopy
             if (strFileName.toUtf8().length() > 255) {
                 qCDebug(fileJob()) << "open error:" << copyinfo->frominfo->fileUrl();
                 action = setAndhandleError(DFileCopyMoveJob::OpenError, copyinfo->frominfo, DAbstractFileInfoPointer(nullptr),
-                                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: File name too long"));
+                                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: file name too long"));
                 break;
             }
         }
@@ -3790,6 +3830,8 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
 
     iscountsizeover = true;
 
+    emit q_ptr->fileStatisticsFinished();
+
     qDebug() << " dir time " << QDateTime::currentMSecsSinceEpoch() - times << totalsize;
 //    }
 
@@ -3973,7 +4015,7 @@ qint64 DFileCopyMoveJob::totalDataSize() const
 {
     Q_D(const DFileCopyMoveJob);
 
-    if (d->refinestat > MoreThreadRefine) {
+    if (d->isFromLocalUrls) {
         if (!d->iscountsizeover) {
             return -1;
         }
@@ -4013,6 +4055,12 @@ QList<QPair<DUrl, DUrl>> DFileCopyMoveJob::completedDirectorys() const
 
     return d->completedDirectoryList;
 }
+//获取当前是否可以显示进度条
+bool DFileCopyMoveJob::isCanShowProgress() const
+{
+    Q_D(const DFileCopyMoveJob);
+    return d->m_iscanshowprogress;
+}
 
 bool DFileCopyMoveJob::getSysncState()
 {
@@ -4042,7 +4090,7 @@ void DFileCopyMoveJob::setSysncQuitState(const bool &quitstate)
     d->bsysncquitstate = quitstate;
 }
 
-bool DFileCopyMoveJob::destIsLocal(const QString &rootpath)
+bool DFileCopyMoveJob::isLocalFile(const QString &rootpath)
 {
     bool isLocal = true;
     GFile *dest_dir_file = g_file_new_for_path(rootpath.toUtf8().constData());
@@ -4053,6 +4101,17 @@ bool DFileCopyMoveJob::destIsLocal(const QString &rootpath)
     }
     g_object_unref(dest_dir_file);
     return isLocal;
+}
+
+bool DFileCopyMoveJob::isFromLocalFile(const DUrlList &urls)
+{
+    if (urls.isEmpty())
+        return true;
+
+    // 一个 job 的原 urllist 目前未发现有同时来自本地和网络的情况
+    // 因此只取首个 url 就可判断是否为本地文件, 不必遍历所有文件
+    const DUrl &url(urls.at(0));
+    return !FileUtils::isGvfsMountFile(url.path());
 }
 
 void DFileCopyMoveJob::setRefine(const RefineState &refinestat)
@@ -4137,7 +4196,8 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
     d->sourceUrlList = sourceUrls;
     d->targetUrl = targetUrl;
-    if (d->refinestat < MoreThreadRefine) {
+    d->isFromLocalUrls = isFromLocalFile(d->sourceUrlList);
+    if (!d->isFromLocalUrls) {
         if (d->fileStatistics->isRunning()) {
             d->fileStatistics->stop();
             d->fileStatistics->wait();
@@ -4245,8 +4305,9 @@ void DFileCopyMoveJob::run()
     qint64 timesec = QDateTime::currentMSecsSinceEpoch();
     d->m_sart = timesec;
 
-    //启动遍历线程统计文件大小
-    if (d->targetUrl.isValid() && d->refinestat > MoreThreadRefine) {
+    // 本地文件使用 countAllCopyFile 统计大小非常快, 因此不必开辟线程去统计大小. 同步等待文件大小统计完成
+    // 网络文件使用以下方式反而会更慢, 因此使用线程统计类
+    if (d->targetUrl.isValid() && d->isFromLocalUrls) {
         d->countAllCopyFile();
     }
 
@@ -4262,6 +4323,9 @@ void DFileCopyMoveJob::run()
     d->completedDataSizeOnBlockDevice = 0;
     d->completedFilesCount = 0;
     d->tid = qt_gettid();
+
+    //检查是否需要每次读写都去同步
+    d->checkTagetNeedSync();
 
     DAbstractFileInfoPointer target_info;
     bool mayExecSync = false;
@@ -4299,7 +4363,7 @@ void DFileCopyMoveJob::run()
         if (targetStorageInfo) {
             d->targetRootPath = targetStorageInfo->rootPath();
             QString rootpath = d->targetRootPath;
-            d->bdestLocal = destIsLocal(rootpath);
+            d->bdestLocal = isLocalFile(rootpath);
             d->isreadwriteseparate = (d->isbigfile && (!d->bdestLocal || 1 == d->totalfilecount));
             if (d->isreadwriteseparate && d->refinestat == MoreThreadAndMainRefine) {
                 d->runRefineWriteAndCloseThread();

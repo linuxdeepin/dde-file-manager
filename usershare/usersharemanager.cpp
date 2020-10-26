@@ -268,7 +268,7 @@ void UserShareManager::handleShareChanged(const QString &filePath)
     if (filePath.contains(":tmp"))
         return;
     m_shareInfosChangedTimer->start();
-    QTimer::singleShot(1000, this, [=](){
+    QTimer::singleShot(1000, this, [ = ]() {
         emit fileSignalManager->requestRefreshFileModel(DUrl::fromUserShareFile("/"));
     });
 }
@@ -284,7 +284,8 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
     m_sharePathToNames.clear();
 
     QDir d(UserSharePath());
-    QFileInfoList infolist = d.entryInfoList(QDir::Files);
+    // 修复BUG-46217 增加筛选条件，将以"."开头的文件筛选出来
+    QFileInfoList infolist = d.entryInfoList(QDir::Files | QDir::Hidden);
     foreach (const QFileInfo &f, infolist) {
         ShareInfo shareInfo;
         QMap<QString, QString> info;
@@ -461,12 +462,11 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             }
 
             // 共享文件的共享名输入特殊字符会报这个错误信息
-            if (err.contains("contains invalid characters")){
+            if (err.contains("contains invalid characters")) {
                 DDialog dialog;
                 dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
                 QFontMetrics fontMetrics(dialog.font());
-                QString shareName= fontMetrics.elidedText(_info.shareName(), Qt::ElideMiddle, 150);
-                dialog.setTitle(tr("Share name %1 contains invalid characters (any of %<>*?|/\\+=;:\",)").arg(shareName));
+                dialog.setTitle(tr("The share name must not contain %<>*?|/\\+=;:,\""));
                 dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
 
                 if (dialog.exec() == DDialog::Accepted) {
@@ -479,12 +479,12 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             // net usershare add: failed to add share sharename. Error was 文件名过长
             // 共享文件的共享名太长，会报上面这个错误信息，最后居然还是中文
             QString strErr = "net usershare add: failed to add share %1. Error was";
-            if (err.contains(strErr.arg(_info.shareName()))){
+            if (err.contains(strErr.arg(_info.shareName()))) {
                 DDialog dialog;
                 dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
                 QFontMetrics fontMetrics(dialog.font());
-                QString shareName= fontMetrics.elidedText(_info.shareName(), Qt::ElideMiddle, 150);
-                dialog.setTitle(tr("Failed to add share %1. The share name is too long.").arg(shareName));
+                QString shareName = fontMetrics.elidedText(_info.shareName(), Qt::ElideMiddle, 150);
+                dialog.setTitle(tr("Failed to share %1. The share name is too long.").arg(shareName));
                 dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
 
                 if (dialog.exec() == DDialog::Accepted) {

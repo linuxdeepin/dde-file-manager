@@ -48,47 +48,47 @@
 #define REVOCATION_TIMES 2
 
 #define ASYN_CALL(Fun, Code, captured...) {\
-    QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\
-    auto onFinished = [watcher, captured]{\
-        const QVariantList & args = watcher->reply().arguments();\
-        Q_UNUSED(args);\
-        Code;\
-        watcher->deleteLater();\
-    };\
-    if(watcher->isFinished()) onFinished();\
-    else QObject::connect(watcher, &QDBusPendingCallWatcher::finished, watcher, onFinished);}
+        QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\
+        auto onFinished = [watcher, captured]{\
+                                              const QVariantList & args = watcher->reply().arguments();\
+                                              Q_UNUSED(args);\
+                                              Code;\
+                                              watcher->deleteLater();\
+                                             };\
+        if(watcher->isFinished()) onFinished();\
+        else QObject::connect(watcher, &QDBusPendingCallWatcher::finished, watcher, onFinished);}
 
 #if QT_VERSION >= 0x050500
 #define TIMER_SINGLESHOT(Time, Code, captured...){ \
-    QTimer::singleShot(Time, [captured] {Code;});\
-}
+        QTimer::singleShot(Time, [captured] {Code;});\
+    }
 #else
 #define TIMER_SINGLESHOT(Time, Code, captured...){ \
-    QTimer *timer = new QTimer;\
-    timer->setSingleShot(true);\
-    timer->setInterval(Time);\
-    timer->moveToThread(qApp->thread());\
-    QObject::connect(timer, &QTimer::timeout, timer, [timer, captured] {\
-        timer->deleteLater();\
-        Code;\
-    });\
-    if (QThread::currentThread() == qApp->thread()) timer->start();\
-    else QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);\
-}
+        QTimer *timer = new QTimer;\
+        timer->setSingleShot(true);\
+        timer->setInterval(Time);\
+        timer->moveToThread(qApp->thread());\
+        QObject::connect(timer, &QTimer::timeout, timer, [timer, captured] {\
+                                                                            timer->deleteLater();\
+                                                                            Code;\
+                                                                           });\
+        if (QThread::currentThread() == qApp->thread()) timer->start();\
+        else QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);\
+    }
 #endif
 
 #define TIMER_SINGLESHOT_CONNECT_TYPE(Obj, Time, Code, ConnectType, captured...){ \
-    QTimer *timer = new QTimer;\
-    timer->setSingleShot(true);\
-    timer->setInterval(Time);\
-    timer->moveToThread(qApp->thread());\
-    QObject::connect(timer, &QTimer::timeout, Obj, [timer, captured] {\
-        timer->deleteLater();\
-        Code;\
-    }, ConnectType);\
-    if (QThread::currentThread() == qApp->thread()) timer->start();\
-    else QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);\
-}
+        QTimer *timer = new QTimer;\
+        timer->setSingleShot(true);\
+        timer->setInterval(Time);\
+        timer->moveToThread(qApp->thread());\
+        QObject::connect(timer, &QTimer::timeout, Obj, [timer, captured] {\
+                                                                          timer->deleteLater();\
+                                                                          Code;\
+                                                                         }, ConnectType);\
+        if (QThread::currentThread() == qApp->thread()) timer->start();\
+        else QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);\
+    }
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
 #define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...)\
@@ -268,8 +268,8 @@ public:
     static void clearClipboard();
     static void clearTrash();
 
-    static void addPluginLibraryPath(const QString& path);
-    static void addPluginLibraryPaths(const QStringList& paths);
+    static void addPluginLibraryPath(const QString &path);
+    static void addPluginLibraryPaths(const QStringList &paths);
 
     static void autoLoadDefaultPlugins();
 
@@ -294,6 +294,7 @@ public:
     static void initTagManagerConnect();
     static void initThumbnailConnection();
     static void initBluetoothManager();
+    static void initRootFileManager();
 
     static QString getUser();
     static int getUserId();
@@ -303,13 +304,13 @@ public:
     static bool isOpenAsAdmin();
 
     //check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
-    static bool isDesktopFile(const DUrl& url);
-    static bool isTrashDesktopFile(const DUrl& url);
-    static bool isComputerDesktopFile(const DUrl& url);
+    static bool isDesktopFile(const DUrl &url);
+    static bool isTrashDesktopFile(const DUrl &url);
+    static bool isComputerDesktopFile(const DUrl &url);
 
     //check the unique trash/computer dekstop file on desktop
-    static bool isTrashDesktopFileUrl(const DUrl& url);
-    static bool isComputerDesktopFileUrl(const DUrl& url);
+    static bool isTrashDesktopFileUrl(const DUrl &url);
+    static bool isComputerDesktopFileUrl(const DUrl &url);
 
     QList<QUrl> clipboardFileUrlList() const;
     QList<quint64> clipboardFileInodeList() const;
@@ -342,7 +343,7 @@ public:
                           const QColor &shadowColor = QColor(),
                           const QPointF &shadowOffset = QPointF(0, 1),
                           const QBrush &background = QBrush(Qt::NoBrush),
-                          qreal backgroundReaius = 4,
+                          qreal backgroundRadius = 4,
                           QList<QRectF> *boundingRegion = 0);
 
     static QString toPinyin(const QString &text);
@@ -363,18 +364,18 @@ public:
     static bool fileNameCorrection(const QByteArray &filePath);
 
 
-    static void showMultiFilesRenameDialog(const QList<DUrl>& selectedFiles);
+    static void showMultiFilesRenameDialog(const QList<DUrl> &selectedFiles);
 
-    static void showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList& entryUrls);
+    static void showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList &entryUrls);
 
     ///###: this function is special, if select files is more than 16 show a dialog for multiple files.
-    static void showPropertyDialog(QObject* const sender, const QList<DUrl>& selectedFiles);
+    static void showPropertyDialog(QObject *const sender, const QList<DUrl> &selectedFiles);
 
     static QString toUnicode(const QByteArray &data, const QString &fileName = QString());
     static QString cutString(const QString &text, int dataByteSize, const QTextCodec *codec);
 
     ///###: this function detect what the charset of str is.
-    static QByteArray detectCharset(const QByteArray& data, const QString& fileName = QString{});
+    static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString{});
     static QString preprocessingFileName(QString name);
 
 signals:
@@ -409,13 +410,13 @@ class _TMP
 {
 public:
     template <typename Fun, typename... Args>
-    static ReturnType runInThread(QSemaphore *s, QThread *thread, Fun fun, Args&&... args)
+    static ReturnType runInThread(QSemaphore *s, QThread *thread, Fun fun, Args &&... args)
     {
         if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
         ReturnType result;
-        FunctionType proxyFun = [&] () {
+        FunctionType proxyFun = [&]() {
             result = fun(std::forward<Args>(args)...);
             s->release();
         };
@@ -438,12 +439,12 @@ class _TMP<void>
 {
 public:
     template <typename Fun, typename... Args>
-    static void runInThread(QSemaphore *s, QThread *thread, Fun fun, Args&&... args)
+    static void runInThread(QSemaphore *s, QThread *thread, Fun fun, Args &&... args)
     {
         if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
-        FunctionType proxyFun = [&] () {
+        FunctionType proxyFun = [&]() {
             fun(std::forward<Args>(args)...);
             s->release();
         };
@@ -461,12 +462,12 @@ public:
 };
 
 template <typename Fun, typename... Args>
-auto runInThread(QSemaphore *s, QThread *thread, Fun fun, Args&&... args) -> decltype(fun(args...))
+auto runInThread(QSemaphore *s, QThread *thread, Fun fun, Args &&... args) -> decltype(fun(args...))
 {
     return _TMP<decltype(fun(args...))>::runInThread(s, thread, fun, std::forward<Args>(args)...);
 }
 template <typename Fun, typename... Args>
-typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QSemaphore *s, QThread *thread, typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
+typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QSemaphore *s, QThread *thread, typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args &&... args)
 {
     return _TMP<typename QtPrivate::FunctionPointer<Fun>::ReturnType>::runInThread(s, thread, [&] {
         return (obj->*fun)(std::forward<Args>(args)...);
@@ -474,14 +475,14 @@ typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QSemaphore *s, 
 }
 
 template <typename Fun, typename... Args>
-auto runInThread(QThread *thread, Fun fun, Args&&... args) -> decltype(fun(args...))
+auto runInThread(QThread *thread, Fun fun, Args &&... args) -> decltype(fun(args...))
 {
     QSemaphore s;
 
     return runInThread(&s, thread, fun, std::forward<Args>(args)...);
 }
 template <typename Fun, typename... Args>
-typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QThread *thread, typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
+typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QThread *thread, typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args &&... args)
 {
     QSemaphore s;
 
@@ -489,7 +490,7 @@ typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QThread *thread
 }
 
 template <typename Fun, typename... Args>
-auto runInMainThread(Fun fun, Args&&... args) -> decltype(fun(args...))
+auto runInMainThread(Fun fun, Args &&... args) -> decltype(fun(args...))
 {
     if (!QCoreApplication::instance()) {
         return fun(std::forward<Args>(args)...);
@@ -498,7 +499,7 @@ auto runInMainThread(Fun fun, Args&&... args) -> decltype(fun(args...))
     return runInThread(QCoreApplication::instance()->thread(), fun, std::forward<Args>(args)...);
 }
 template <typename Fun, typename... Args>
-typename QtPrivate::FunctionPointer<Fun>::ReturnType runInMainThread(typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
+typename QtPrivate::FunctionPointer<Fun>::ReturnType runInMainThread(typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args &&... args)
 {
     if (!QCoreApplication::instance()) {
         return (obj->*fun)(std::forward<Args>(args)...);

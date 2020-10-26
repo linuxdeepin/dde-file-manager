@@ -33,7 +33,7 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
 {
     //密码输入框
     m_pwdEdit = new DPasswordEdit(this);
-    m_pwdEdit->lineEdit()->setPlaceholderText(tr("Verify your password"));
+    m_pwdEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     // 提示按钮
@@ -50,8 +50,8 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     connect(m_tipsBtn, &QPushButton::clicked, [this]{
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
-            strPwdHint.insert(0, tr("Password hint:"));
-            showToolTip(strPwdHint, 3000, EN_ToolTip::Information);
+            QString hint = tr("Password hint: %1").arg(strPwdHint);
+            showToolTip(hint, 3000, EN_ToolTip::Information);
         }
     });
 }
@@ -78,7 +78,8 @@ void DFMVaultRemoveByPasswordView::clear()
 
 void DFMVaultRemoveByPasswordView::showAlertMessage(const QString &text, int duration)
 {
-    m_pwdEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+    // 修复bug-51508 激活密码框的警告状态
+    m_pwdEdit->setAlert(true);
     m_pwdEdit->showAlertMessage(text, duration);
 }
 
@@ -95,7 +96,8 @@ void DFMVaultRemoveByPasswordView::showToolTip(const QString &text, int duration
         m_frame->setWidget(m_tooltip);
     }
     if(EN_ToolTip::Warning == enType){
-        m_pwdEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+        // 修复bug-51508 激活密码框的警告状态
+        m_pwdEdit->setAlert(true);
         m_tooltip->setForegroundRole(DPalette::TextWarning);
     }
     else{
@@ -111,7 +113,11 @@ void DFMVaultRemoveByPasswordView::showToolTip(const QString &text, int duration
 
     m_tooltip->setText(text);
     if(m_frame->parent()){
-        m_frame->setGeometry(6, 180, 68, 26);
+        // 优化调整 调整悬浮框的显示位置
+        QWidget *pWidget = static_cast<QWidget*>(m_frame->parent());
+        if(pWidget){
+            m_frame->setGeometry(6, pWidget->height()-78, 68, 26);
+        }
         m_frame->show();
         m_frame->adjustSize();
         m_frame->raise();
@@ -134,8 +140,7 @@ void DFMVaultRemoveByPasswordView::setTipsButtonVisible(bool visible)
 void DFMVaultRemoveByPasswordView::onPasswordChanged(const QString &password)
 {
     if (!password.isEmpty()){
-        QLineEdit edit;
-        QPalette palette = edit.palette();
-        m_pwdEdit->lineEdit()->setPalette(palette);
+        // 修复bug-51508 取消密码框的警告状态
+        m_pwdEdit->setAlert(false);
     }
 }

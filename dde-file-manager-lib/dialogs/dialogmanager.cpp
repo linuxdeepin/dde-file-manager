@@ -90,6 +90,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <DSysInfo>
+#include <ddiskdevice.h>
 
 DTK_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -357,6 +358,9 @@ void DialogManager::updateJob()
     foreach (QString jobId, m_jobs.keys()) {
         FileJob *job = m_jobs.value(jobId);
         if (job) {
+            if (!job->isCanShowProgress())
+                return;
+
             if (job->currentMsec() - job->lastMsec() > FileJob::Msec_For_Display) {
                 if (!job->isJobAdded()) {
                     job->jobAdded();
@@ -583,7 +587,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
         failure_type = tr("Burn process failed");
         break;
     case FileJob::OpticalCheck:
-        failure_type = tr("Checking process failed");
+        failure_type = tr("Data verification failed");
         break;
     }
     QString failure_str = QString(tr("%1: %2")).arg(failure_type).arg(err);
@@ -893,7 +897,12 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     if (code == 1) {
         DUrlList urls;
         urls << linkfile;
-        fileService->moveToTrash(this, urls);
+        // fix bug#47512 回收站的无效链接需要单独处理，直接删除
+        if (linkfile.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+            fileService->deleteFiles(this, urls, false, true, true);
+        } else {
+            fileService->moveToTrash(this, urls);
+        }
     }
 }
 
@@ -1071,7 +1080,7 @@ void DialogManager::showRestoreFailedSourceNotExists(const DUrlList &urlList)
     if (urlList.count() == 1) {
         d.setMessage(tr("Failed to restore %1 file, the source file does not exist").arg(QString::number(1)));
     } else if (urlList.count() > 1) {
-        d.setMessage(tr("Failed to restore %1 files, the source files does not exist").arg(QString::number(urlList.count())));
+        d.setMessage(tr("Failed to restore %1 files, the source files do not exist").arg(QString::number(urlList.count())));
     }
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
@@ -1326,7 +1335,7 @@ void DialogManager::showTaskProgressDlgOnActive()
 int DialogManager::showUnableToLocateDir(const QString &dir)
 {
     DDialog d;
-    d.setTitle(tr("Locate to %1 failed!").arg(dir));
+    d.setTitle(tr("Unable to access %1").arg(dir));
     d.setMessage(" ");
     QStringList buttonTexts;
     buttonTexts << tr("Confirm");
@@ -1405,11 +1414,16 @@ int DialogManager::showMessageDialog(messageType messageLevel, const QString &ti
 
 void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
 {
+    if (!BluetoothTransDialog::canSendFiles()) {
+        showMessageDialog(messageType::msgInfo, tr("Sending files now, please try later"));
+        return;
+    }
+
     QStringList paths;
     foreach (auto u, files) {
         if (u.scheme() == RECENT_SCHEME) {
             u = DUrl::fromLocalFile(u.path());
-        } else if (u.scheme() == SEARCH_SCHEME) { //搜索结果也存在右键批量打卡不成功的问题，这里做类似处理
+        } else if (u.scheme() == SEARCH_SCHEME) { //搜索结果也存在右键批量打开不成功的问题，这里做类似处理
             u = u.searchedFileUrl();
         } else if (u.scheme() == BURN_SCHEME) {
             DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
@@ -1430,17 +1444,29 @@ void DialogManager::showBluetoothTransferDlg(const DUrlList &files)
 
 void DialogManager::showFormatDialog(const QString &devId)
 {
-    if (devId.isEmpty())
-        return;
-    if (devId.startsWith("/dev/sr")) // optical disk canot format(bug-42414)
+    if (!devId.startsWith("/dev/"))
         return;
 
+    // fix 50005, 弹出格式化提示框仅针对可移动磁盘，且无法读取文件系统的设备，避免smb、mtp等设备也弹出提示框
+    QString volTag = devId.mid(5);
+    static const QString udisksPrefix = "/org/freedesktop/UDisks2/block_devices/";
+    QScopedPointer<DBlockDevice> dev(DDiskManager::createBlockDevice(udisksPrefix + volTag));
+    if (!dev || dev->hasFileSystem())
+        return;
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(dev->drive()));
+    if (!drive)
+        return;
+    if (drive->optical() || !drive->removable()) // 光驱不管，非移动存储设备不管
+        return;
+
+    qDebug() << "device formatter has shown: " << devId;
     DDialog dlg;
     dlg.setIcon(m_dialogWarningIcon);
-    dlg.addButton(tr("Cancle"));
+    dlg.addButton(tr("Cancel"));
     dlg.addButton(tr("Format"), true, DDialog::ButtonRecommend);
     dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
     if (dlg.exec() == 1) {
+        qDebug() << "start format " << devId;
         // 显示格式化窗口
         QProcess *p = new QProcess;
         connect(p, static_cast<void (QProcess::*)(int)>(&QProcess::finished), p, &QProcess::deleteLater);
@@ -1521,7 +1547,7 @@ int DialogManager::showPrivilegeDialog_SW(int nRet, const QString &srcfilename)
             qDebug() << "错误描述:" << QString::fromStdString(serrordst);
             qDebug() << "错误级别:" << nerrorlevel;
             QString message = QString("%1 %2").arg(QFileInfo(srcfilename).fileName(), QString::fromStdString(serrordst));
-            int code = showMessageDialog(nerrorlevel, message);
+            int code = showMessageDialog(messageType(nerrorlevel), message);
             return code;
 
         } else {

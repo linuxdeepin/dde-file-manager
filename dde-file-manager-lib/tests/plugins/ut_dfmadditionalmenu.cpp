@@ -1,50 +1,61 @@
-#include "plugins/dfmadditionalmenu.h"
-
 #include <gtest/gtest.h>
+
+#define private public
+#define protected public
+#include "plugins/dfmadditionalmenu.h"
+#include "plugins/dfmadditionalmenu.cpp"
 
 DFM_USE_NAMESPACE
 
 namespace  {
-    class TestDFMAdditionalMenu : public testing::Test
+    class DFMAdditionalMenuTest : public testing::Test
     {
     public:
-        void SetUp() override
-        {
-            m_pTester = new DFMAdditionalMenu();
-            std::cout << "start TestDFMAdditionalMenu";
+        void SetUp() override {
+            p_menu = new DFMAdditionalMenu();
         }
-        void TearDown() override
-        {
-            delete m_pTester;
-            m_pTester = nullptr;
-            std::cout << "end TestDFMAdditionalMenu";
+        void TearDown() override {
+            delete p_menu;
+            p_menu = nullptr;
         }
-    public:
-        DFMAdditionalMenu   *m_pTester;
+
+        DFMAdditionalMenu   *p_menu = nullptr;
     };
 }
 
-TEST_F(TestDFMAdditionalMenu, testInit)
+TEST_F(DFMAdditionalMenuTest, testActions_ZeroSize)
 {
+    ASSERT_NE(p_menu, nullptr);
 
-}
-
-TEST_F(TestDFMAdditionalMenu, testActions_ZeroSize)
-{
     QStringList files;
-    m_pTester->actions(files);
+    QList<QAction *> result = p_menu->actions(files);
+    EXPECT_TRUE(result.isEmpty());
 }
 
-TEST_F(TestDFMAdditionalMenu, testActions_OneSize)
+TEST_F(DFMAdditionalMenuTest, testActions_OneSize)
 {
+    ASSERT_NE(p_menu, nullptr);
+
     QStringList files;
     files << "file:///test1";
-    m_pTester->actions(files);
+    QList<QAction *> result = p_menu->actions(files);
+    EXPECT_EQ(result.count(), 1);
 }
 
-TEST_F(TestDFMAdditionalMenu, testActions_TwoSize)
+TEST_F(DFMAdditionalMenuTest, testActions_TwoSize)
 {
+    ASSERT_NE(p_menu, nullptr);
+
     QStringList files;
     files << "file:///test1" << "file:///test2";
-    m_pTester->actions(files);
+    QList<QAction *> result = p_menu->actions(files);
+    EXPECT_EQ(result.count(), 1);
+}
+
+TEST_F(DFMAdditionalMenuTest, load_desktop_file)
+{
+    ASSERT_NE(p_menu, nullptr);
+
+    p_menu->loadDesktopFile();
+    EXPECT_NE(p_menu->d_func()->menuActionHolder, nullptr);
 }

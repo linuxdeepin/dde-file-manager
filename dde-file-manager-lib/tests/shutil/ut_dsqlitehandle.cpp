@@ -72,7 +72,7 @@ TEST_F(TestDSqliteHandle, can_dispose_clientDatas)
     EXPECT_FALSE( DSqliteHandle::instance()->disposeClientData(filesAndTags, 13).toBool());
 
     QString fileName = "sql1.txt";
-    QStringList pictureList = FileUtils::filesList("/home/max/Pictures/Wallpapers");
+    QStringList pictureList = FileUtils::filesList(QString("%1/Pictures/Wallpapers").arg(QDir::homePath()));
     EXPECT_TRUE( pictureList.count() > 3 );
 
     QList<QString> tags;

@@ -177,13 +177,16 @@ public:
     int totalFilesCount() const;
     QList<QPair<DUrl, DUrl> > completedFiles() const;
     QList<QPair<DUrl, DUrl> > completedDirectorys() const;
+    //获取当前是否可以显示进度条
+    bool isCanShowProgress() const;
     //优化拷贝时，异步线程去同步的一些状态使用
     bool getSysncState();
     bool getSysncQuitState();
     void setSysncState(const bool &state);
     void setSysncQuitState(const bool &quitstate);
     //判断当前盘是否是可以卸载的u盘，手机，光驱或者gvfs
-    bool destIsLocal(const QString &rootpath);
+    bool isLocalFile(const QString &rootpath);
+    bool isFromLocalFile(const DUrlList &urls);
     void setRefine(const RefineState &refinestat);
     void waitSysncEnd();
     void waitRefineThreadOver();

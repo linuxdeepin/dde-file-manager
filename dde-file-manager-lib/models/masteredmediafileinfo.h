@@ -29,7 +29,7 @@
 class MasteredMediaFileInfo : public DAbstractFileInfo
 {
 public:
-    MasteredMediaFileInfo(const DUrl &url);
+    explicit MasteredMediaFileInfo(const DUrl &url);
 
     bool exists() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
@@ -55,7 +55,12 @@ public:
     bool canTag() const Q_DECL_OVERRIDE;
     bool canRename() const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
-    void refresh() Q_DECL_OVERRIDE;
+    void refresh(const bool isForce = false) Q_DECL_OVERRIDE;
+
+private:
+    QString getVolTag(const QString & burnPath) const;
+
+    void backupInfo(const DUrl &url);
 
 private:
     DUrl m_backerUrl;

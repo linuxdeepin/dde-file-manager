@@ -48,7 +48,7 @@
 class DFMRootFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    DFMRootFileWatcherPrivate(DFMRootFileWatcher *qq)
+    explicit DFMRootFileWatcherPrivate(DFMRootFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override;
@@ -353,11 +353,16 @@ bool DFMRootFileWatcherPrivate::start()
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         QString path = mnt->getRootFile()->path();
+        // 此处 Gio Wrapper 或许有 bug， 有时可以获取 uri，但无法获取 path, 因此有了以下略丑的代码
+        // 目的是将已知的 uri 拼装成 path，相关 bug：46021
         if (path.isNull() || path.isEmpty()) {
             QStringList qq = mnt->getRootFile()->uri().replace("/", "").split(":");
             if (qq.size() >= 3) {
                 path = QString("/run/user/")+ QString::number(getuid()) +
                                       QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
+            } else if (qq.size() == 2) {
+                path = QString("/run/user/")+ QString::number(getuid()) +
+                                                            QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
             }
         }
         qDebug() << path;
@@ -365,7 +370,7 @@ bool DFMRootFileWatcherPrivate::start()
         Q_EMIT wpar->fileDeleted(url);
         QString uri = mnt->getRootFile()->uri();
         qDebug() << uri << "mount removed";
-        if (uri.contains("smb-share://") || uri.contains("smb://")) {
+        if (uri.contains("smb-share://") || uri.contains("smb://") || uri.contains("ftp://") || uri.contains("sftp://")) {
             // remove NetworkNodes cache, so next time cd uri will fetchNetworks
             QString smbUri = uri;
             if (smbUri.endsWith("/")) {
@@ -392,11 +397,10 @@ bool DFMRootFileWatcherPrivate::start()
             if (!drv->removable()) // 对于本地磁盘，直接按照以前的方式，满足外围条件直接 return
                 return;
 
-            // 对于满足外层条件的可移动设备，并且分区不该被过滤的，提示格式化
-            if (!FileUtils::deviceShouldBeIgnore(blk->device()))
-                dialogManager->showFormatDialog(blk->device());
-            else
+            if (FileUtils::deviceShouldBeIgnore(blk->device())) // 设备需要被滤去，比如 /dev/sda 下还包含 /dev/sda1 时，需要滤去 sda
                 return;
+
+//            dialogManager->showFormatDialog(blk->device()); // 暂时取消监听设备接入时的格式化提示，只在用户进入不可读取的磁盘时提示格式化
         }
 
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {

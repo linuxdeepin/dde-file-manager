@@ -82,8 +82,8 @@ void DBusFileManager1::Trash(const QStringList &URIs)
 {
     DUrlList urls;
     foreach (const QString& path, URIs) {
-        DUrl url = DUrl::fromUserInput(path);
-        urls << url;
+        DUrl tempUrl = DUrl::fromUserInput(path);
+        urls << tempUrl;
     }
    DFileService::instance()->moveToTrash(this, urls);
 

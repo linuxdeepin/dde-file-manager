@@ -23,7 +23,7 @@ class RequestEP;
 class DFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
-    DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq, bool hasCache = true);
+    DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq, bool hasCache = false);
     ~DFileInfoPrivate();
 
     bool isLowSpeedFile() const;
@@ -39,15 +39,7 @@ public:
     // 小于0时表示此值未初始化，0表示不支持，1表示支持
     mutable qint8 hasThumbnail = -1;
     mutable qint8 lowSpeedFile = -1;
-    mutable qint8 cacheFileExists = -1;
-    mutable qint8 cacheCanRename = -1;
-    mutable qint8 cacheIsSymLink = -1;
-    mutable qint8 cacheCanWrite = -1;//fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
-    mutable qint64 cacheFileSize = -1; // bug 27247 远程连接FTP,使用大小排序反应很慢
-    mutable qint32 cacheFileCount = -1;// bug 27247 远程连接FTP,使用大小排序反应很慢
     mutable quint64 inode = 0;
-
-    bool gvfsMountFile = false;
 
     mutable QVariantHash extraProperties;
     mutable bool epInitialized = false;

@@ -8,7 +8,7 @@
 class TagFileInfo : public DAbstractFileInfo
 {
 public:
-    TagFileInfo(const DUrl &url);
+    explicit TagFileInfo(const DUrl &url);
     virtual ~TagFileInfo() = default;
 
     virtual bool isDir() const override;

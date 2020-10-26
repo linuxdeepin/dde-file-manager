@@ -47,7 +47,7 @@ public:
     QStringList getLshwCDRomList();
 
     // cdrom是否是内部设备
-    bool isInternalDevice(const QString &cdrom);
+    bool isInternalDevice(const QString &device);
 
 signals:
     void loadFinished();

@@ -40,7 +40,7 @@ class PDFPreview : public DFMFilePreview
     Q_OBJECT
 
 public:
-    PDFPreview(QObject *parent = 0);
+    explicit PDFPreview(QObject *parent = nullptr);
     ~PDFPreview();
 
     bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;

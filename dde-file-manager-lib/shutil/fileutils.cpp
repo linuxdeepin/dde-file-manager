@@ -76,6 +76,7 @@ DFM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
 QString FileUtils::XDG_RUNTIME_DIR = "";
+QStringList FileUtils::CURRENT_ISGVFSFILE_PATH;
 
 /**
  * @brief Recursive removes file or directory
@@ -149,7 +150,7 @@ int FileUtils::filesCount(const QString &dir)
     return entryList.size();
 }
 
-QStringList FileUtils::filesList(const QString& dir)
+QStringList FileUtils::filesList(const QString &dir)
 {
     QStringList appNames;
     QDirIterator it(dir,
@@ -354,7 +355,7 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app,
     }
 
     // Last chance
-    QDir appIcons("/usr/share/pixmaps", "", 0, QDir::Files | QDir::NoDotAndDotDot);
+    QDir appIcons("/usr/share/pixmaps", "", nullptr, QDir::Files | QDir::NoDotAndDotDot);
     QStringList iconFiles = appIcons.entryList();
     QStringList searchIcons = iconFiles.filter(name);
     if (searchIcons.count() > 0) {
@@ -460,7 +461,7 @@ QString FileUtils::diskUsageString(quint64 &usedSize, quint64 &totalSize, QStrin
     const QStringList unitDisplayText = {"B", "K", "M", "G", "T"};
 
     if (!~usedSize) {
-        return FileUtils::formatSize(totalSize, true, 0, totalSize < mb ? 2 : -1, unitDisplayText);
+        return FileUtils::formatSize(static_cast<qint64>(totalSize), true, 0, totalSize < mb ? 2 : -1, unitDisplayText);
     }
 
     // todo: too ugly! should be beaufify
@@ -508,7 +509,7 @@ QString FileUtils::defaultOpticalSize(const QString &tagName, quint64 &usedSize,
 
         QJsonParseError parseJsonErr;
         QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData, &parseJsonErr));
-        if(!(parseJsonErr.error == QJsonParseError::NoError)) {
+        if (!(parseJsonErr.error == QJsonParseError::NoError)) {
             qDebug() << "decode json file error！";
             return size;
         }
@@ -566,8 +567,6 @@ DUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, con
             return fileUrl;
         }
     }
-
-    return DUrl();
 }
 
 QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, const QString &suffix)
@@ -590,8 +589,6 @@ QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, co
             return filePath;
         }
     }
-
-    return QString();
 }
 
 bool FileUtils::cpTemplateFileToTargetDir(const QString &targetdir, const QString &baseName, const QString &suffix, WId windowId)
@@ -703,8 +700,7 @@ bool FileUtils::openFiles(const QStringList &filePaths)
     QString mimetype = QString();
     if (info && info->size() == 0 && info->exists()) {
         mimetype = info->mimeType().name();
-    }
-    else {
+    } else {
         mimetype = getFileMimetype(filePath);
     }
     /*********************************************************/
@@ -761,6 +757,104 @@ bool FileUtils::openFiles(const QStringList &filePaths)
     return result;
 }
 
+bool FileUtils::openEnterFiles(const QStringList &filePaths)
+{
+    QStringList rePath = filePaths;
+    bool ret = false;
+    for (const QString &filePath : filePaths) {
+        if (QFileInfo(filePath).suffix() == "desktop") {
+            ret = FileUtils::launchApp(filePath) || ret; //有一个成功就成功
+            rePath.removeOne(filePath);
+            continue;
+        }
+    }
+    if (rePath.isEmpty())
+        return ret;
+    //fix bug 33136 在选中3过文件，mimetype有3种不同，但是用enter键打开，这里只处理了
+    //第一个文件的mimetype，根据mimetype，选定desktop，传入了3个文件地址，所以后面两个
+    //打开失败，处理所有的文件的mimetype，相同的就用同一个desktop启动
+    QHash<QString, QStringList> openinfo;
+    QHash<QString, QString> mimetypeinfo;
+    foreach (const QString &filePath, rePath) {
+        /*********************************************************/
+        //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
+        //QString mimetype = getFileMimetype(filePath);
+        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
+        QString mimetype = QString();
+        if (info && info->size() == 0 && info->exists()) {
+            mimetype = info->mimeType().name();
+        } else {
+            mimetype = getFileMimetype(filePath);
+        }
+        mimetypeinfo.insert(DUrl::fromLocalFile(filePath).toString(), mimetype);
+        /*********************************************************/
+
+        QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+        if (defaultDesktopFile.isEmpty()) {
+            qDebug() << "no default application for" << rePath;
+            continue;
+        }
+
+        if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory") {
+            QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
+            recommendApps.removeOne(defaultDesktopFile);
+            if (recommendApps.count() > 0) {
+                defaultDesktopFile = recommendApps.first();
+            } else {
+                qDebug() << "no default application for" << rePath;
+                continue;
+            }
+        }
+        if (!defaultDesktopFile.isEmpty()) {
+            QStringList value = openinfo.contains(defaultDesktopFile) ? openinfo.value(defaultDesktopFile) : QStringList();
+            value << DUrl::fromLocalFile(filePath).toString();
+            openinfo.insert(defaultDesktopFile, value);
+        }
+    }
+
+    QStringList appAgrs;
+    for (const QString &tmp : rePath)
+        appAgrs << DUrl::fromLocalFile(tmp).toString();
+    bool result = false;
+    foreach (const QString &defaultDesktopFile, openinfo.keys()) {
+        bool temresult = launchApp(defaultDesktopFile, openinfo.value(defaultDesktopFile));
+        if (temresult) {
+            // workaround since DTK apps doesn't support the recent file spec.
+            // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
+            // the correct approach: let the app add it to the recent list.
+            // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+            for (const QString &tmp : openinfo.value(defaultDesktopFile)) {
+                QString filePath = DUrl::fromUserInput(tmp).toLocalFile();
+                DesktopFile df(defaultDesktopFile);
+                addRecentFile(filePath, df, mimetypeinfo.value(tmp));
+            }
+            result = true;
+        }
+    }
+    //只要一次成功就返回
+    if (result) {
+        return result;
+    }
+
+    const QString filePath = rePath.first();
+    if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop") {
+        QProcess::startDetached("gio", QStringList() << "open" << rePath);
+        QTimer::singleShot(200, [ = ] {
+            QProcess::startDetached("gio", QStringList() << "open" << rePath);
+        });
+        return true;
+    }
+
+    result = QProcess::startDetached("gio", QStringList() << "open" << rePath);
+
+    if (!result) {
+        result = false;
+        for (const QString &tmp : rePath)
+            result = QDesktopServices::openUrl(QUrl::fromLocalFile(tmp)) || result; //有一个成功就成功
+    }
+    return result;
+}
+
 bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePaths)
 {
     if (isFileManagerSelf(desktopFile) && filePaths.count() > 1) {
@@ -787,7 +881,19 @@ bool FileUtils::launchAppByDBus(const QString &desktopFile, const QStringList &f
 {
     if (appController->hasLaunchAppInterface()) {
         qDebug() << "launchApp by dbus:" << desktopFile << filePaths;
-        appController->startManagerInterface()->LaunchApp(desktopFile, QX11Info::getTimestamp(), filePaths);
+        //多个wps文件同时打开应用会报出文件不存在的错误，而单个打开不会
+        //对wps文件做特殊处理，一个一个分别打开
+        if (desktopFile.endsWith("wps-office-wps.desktop")) {
+            DesktopFile deskfile(desktopFile);
+            if (deskfile.getExec().contains("%U")) { //exc标志 为%F时也可以打开多个 %U不行
+                for (const QString &path : filePaths) {
+                    appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), {path});
+                }
+                return true;
+            }
+        }
+
+        appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), filePaths);
         return true;
     }
     return false;
@@ -1065,7 +1171,7 @@ QString FileUtils::getFileMimetype(const QString &path)
     QString result;
 
     file = g_file_new_for_path(path.toUtf8());
-    info = g_file_query_info(file, "standard::content-type", G_FILE_QUERY_INFO_NONE, NULL, NULL);
+    info = g_file_query_info(file, "standard::content-type", G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
     result = g_file_info_get_content_type(info);
 
     g_object_unref(file);
@@ -1274,7 +1380,7 @@ void FileUtils::migrateConfigFileFromCache(const QString &key)
         QFile desFile(newPath);
         ret = desFile.open(QIODevice::WriteOnly);
         if (ret) {
-            int code = desFile.write(data);
+            qint64 code = desFile.write(data);
             if (code < 0) {
                 qDebug() << "Error occurred when writing data";
                 ret = false;
@@ -1349,12 +1455,31 @@ DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
     }
 }
 
-bool FileUtils::isGvfsMountFile(const QString &filePath)
+bool FileUtils::isGvfsMountFile(const QString &filePath, const bool &isEx)
 {
     if (filePath.isEmpty())
         return false;
+    //在获取是否是gvfs文件时，先缓存这个filepath，多线程访问时，判断线程是否访问的同一个文件
+    static QMutex mutex;
+    mutex.lock();
+    bool iscontains = CURRENT_ISGVFSFILE_PATH.contains(filePath);
+    mutex.unlock();
+    while (iscontains) {
+        QThread::msleep(10);
+        mutex.lock();
+        iscontains = CURRENT_ISGVFSFILE_PATH.contains(filePath);
+        mutex.unlock();
+    }
+    mutex.lock();
+    CURRENT_ISGVFSFILE_PATH.push_back(filePath);
+    mutex.unlock();
 
-    return !DStorageInfo::isLocalDevice(filePath);
+    bool isgvfsfile = !DStorageInfo::isLocalDevice(filePath, isEx);
+    //移除缓存
+    mutex.lock();
+    CURRENT_ISGVFSFILE_PATH.removeOne(filePath);
+    mutex.unlock();
+    return isgvfsfile;
 }
 
 bool FileUtils::isFileExists(const QString &filePath)
@@ -1362,7 +1487,7 @@ bool FileUtils::isFileExists(const QString &filePath)
     GFile *file;
     std::string fstdPath = filePath.toStdString();
     file = g_file_new_for_path(fstdPath.data());
-    bool isExists = g_file_query_exists(file, NULL);
+    bool isExists = g_file_query_exists(file, nullptr);
     g_object_unref(file);
     return isExists;
 }
@@ -1384,7 +1509,7 @@ QJsonObject FileUtils::getJsonObjectFromFile(const QString &filePath)
     QByteArray data = file.readAll();
     file.close();
 
-    QJsonParseError *jsError = NULL;
+    QJsonParseError *jsError = nullptr;
     doc = QJsonDocument::fromJson(data, jsError);
 
     if (jsError) {
@@ -1413,7 +1538,7 @@ QJsonArray FileUtils::getJsonArrayFromFile(const QString &filePath)
     QByteArray data = file.readAll();
     file.close();
 
-    QJsonParseError *jsError = NULL;
+    QJsonParseError *jsError = nullptr;
     doc = QJsonDocument::fromJson(data, jsError);
 
     if (jsError) {
@@ -1475,7 +1600,7 @@ bool FileUtils::deviceShouldBeIgnore(const QString &devId)
     QString volTag = devId.mid(devId.lastIndexOf("/") + 1); // 当传入设备 id 是 /dev/sdb 时，如果包含 /dev/sdbN，则忽略 /dev/sdb
     QProcess p;
     p.start("bash", QStringList() << "-c"
-                                  << "ls /dev/ | grep " + volTag);
+            << "ls /dev/ | grep " + volTag);
     p.waitForFinished();
     QString output(p.readAllStandardOutput());
     QStringList devices = output.split("\n", QString::SkipEmptyParts);
@@ -1493,4 +1618,21 @@ bool FileUtils::isDesktopFile(const QFileInfo &fileInfo)
 {
     QMimeType mt = DMimeDatabase().mimeTypeForFile(fileInfo);
     return mt.name() == "application/x-desktop" && mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+}
+
+bool FileUtils::isDesktopFile(const QString &filePath, QMimeType &mimetype)
+{
+    QMimeType mt = DMimeDatabase().mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
+    mimetype = mt;
+    return mt.name() == "application/x-desktop" &&
+           mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+}
+
+bool FileUtils::isDesktopFile(const QFileInfo &fileInfo, QMimeType &mimetyp)
+{
+    QMimeType mt = DMimeDatabase().mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
+    mimetyp = mt;
+    return mt.name() == "application/x-desktop" &&
+           mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+
 }

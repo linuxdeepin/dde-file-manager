@@ -303,6 +303,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     // 用于统计 movetotrash 进度
     m_allCount = files.size();
     m_finishedCount = 0;
+    m_isCanShowProgress = true;
 
     m_isGvfsFileOperationUsed = checkUseGvfsFileOperation(files, destination);
 
@@ -397,6 +398,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                         if (!sourceDir.rename(srcPath, targetPath)) {
                             if (QProcess::execute("mv -T \"" + srcPath.toUtf8() + "\" \"" + targetPath.toUtf8() + "\"") != 0) {
                                 qDebug() << "Unable to trash dir:" << srcPath;
+                                //这种情况可能是权限问题，就不显示进度了
+                                m_isCanShowProgress = false;
                             }
                         }
                     }
@@ -464,6 +467,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     }
     m_finishedCount = 0;
     m_allCount = 1;
+    m_isCanShowProgress = true;
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
@@ -601,13 +605,15 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
             ok = !result.isEmpty();
         } else if (srcInfo.isDir()) {
             if (copyDir(srcFilePath, tarDir, true, &_tarFilePath)) {
-                deleteDir(srcFilePath);
-                ok = QFile::rename(_tarFilePath, tarFilePath);
+                bool delOk = deleteDir(srcFilePath);
+                bool renameOk = QFile::rename(_tarFilePath, tarFilePath);
+                ok = (_tarFilePath == tarFilePath) ? delOk : renameOk;
             }
         } else if (srcInfo.isFile() || srcInfo.isSymLink()) {
             if (copyFile(srcFilePath, tarDir, true, &_tarFilePath) && !getIsSkip()) {
-                deleteFile(srcFilePath);
-                ok = QFile::rename(_tarFilePath, tarFilePath);
+                bool delOk = deleteFile(srcFilePath);
+                bool renameOk = QFile::rename(_tarFilePath, tarFilePath);
+                ok = (_tarFilePath == tarFilePath) ? delOk : renameOk;
             }
         }
     }
@@ -1544,6 +1550,11 @@ void FileJob::jobConflicted()
 bool FileJob::getIsOpticalJob() const
 {
     return m_isOpticalJob;
+}
+
+bool FileJob::isCanShowProgress() const
+{
+    return m_isCanShowProgress;
 }
 
 qreal FileJob::getRestoreProgress() const

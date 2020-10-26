@@ -28,6 +28,7 @@
 #include "dfmstyleditemdelegate.h"
 
 #include <QPointer>
+#include <QMutex>
 
 class FileIconItem;
 QT_BEGIN_NAMESPACE
@@ -101,6 +102,7 @@ private:
     void onTriggerEdit(const QModelIndex &index);
     QSize iconSizeByIconSizeLevel() const;
     QIcon m_checkedIcon;
+    QMutex m_mutex; //析构和构造索
 
     Q_DECLARE_PRIVATE(DIconItemDelegate)
 

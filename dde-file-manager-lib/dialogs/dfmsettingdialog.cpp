@@ -39,6 +39,11 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #endif
+#ifndef FULLTEXTSEARCH_ENABLE
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
+#endif
 
 #include "dfmglobal.h"
 #include "app/define.h"
@@ -133,7 +138,9 @@ private:
         {"base.hidden_files.show_recent", DFMApplication::GA_ShowRecentFileEntry},
         {"advance.index.index_internal", DFMApplication::GA_IndexInternal},
         {"advance.index.index_external", DFMApplication::GA_IndexExternal},
+#ifdef FULLTEXTSEARCH_ENABLE
         {"advance.index.index_search", DFMApplication::GA_IndexFullTextSearch},
+#endif
         {"advance.search.show_hidden", DFMApplication::GA_ShowedHiddenOnSearch},
         {"advance.preview.compress_file_preview", DFMApplication::GA_PreviewCompressFile},
         {"advance.preview.text_file_preview", DFMApplication::GA_PreviewTextFile},
@@ -324,6 +331,26 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
             break;
         }
     }
+
+#ifndef FULLTEXTSEARCH_ENABLE
+    auto const &jdoc = QJsonDocument::fromJson(data);
+    QJsonObject RootObject = jdoc.object();
+    QJsonValueRef ArrayRef = RootObject.find("groups").value();
+    QJsonArray Array = ArrayRef.toArray();
+    QJsonArray::iterator ArrayIterator = Array.begin();
+    QJsonValueRef ElementOneValueRef = ArrayIterator[1];
+    QJsonObject ElementOneObject = ElementOneValueRef.toObject();
+    QJsonValueRef ArrayRef2 = ElementOneObject.find("groups").value();
+    QJsonArray Array2 = ArrayRef2.toArray();
+    Array2.removeFirst();
+    ArrayRef2 = Array2;
+    ElementOneValueRef = ElementOneObject;
+    ArrayRef = Array;
+    qDebug() << RootObject;
+    QByteArray arr = QJsonDocument(RootObject).toJson();
+
+    return DSettings::fromJson(arr);
+#else
 #ifdef DISABLE_QUICK_SEARCH
     /*fix task 22667,针对ARM下不能使用anything,所以去掉整个索引配置项
     */
@@ -355,9 +382,10 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     QByteArray arr = QJsonDocument(RootObject).toJson();
 
     return DSettings::fromJson(arr);
-#endif
-
+#else
     return DSettings::fromJson(data);
+#endif
+#endif
 }
 
 QPointer<QCheckBox> DFMSettingDialog::AutoMountCheckBox = nullptr;
@@ -392,13 +420,14 @@ DFMSettingDialog::DFMSettingDialog(QWidget *parent):
 
     //load conf value
     auto backen = new SettingBackend(this);
+#ifdef FULLTEXTSEARCH_ENABLE
     //fulltext fix 42500 配置文件无FULLTEXT_KEY 导致第一次索引失败
     QVariant var = DFMApplication::genericSetting()->value(FULLTEXT_GROUP, FULLTEXT_KEY);
     if (!var.isValid()) {
         DFMApplication::genericSetting()->setValue(FULLTEXT_GROUP, FULLTEXT_KEY, QVariant(false));
 
     }
-
+#endif
     m_settings->setParent(this);
     m_settings->setBackend(backen);
     updateSettings("GenerateSettingTranslate", m_settings);

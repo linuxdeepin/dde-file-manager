@@ -54,7 +54,7 @@ public:
         UDisksOptical
     };
 
-    DFMRootFileInfo(const DUrl &url);
+    explicit DFMRootFileInfo(const DUrl &url);
     bool exists() const override;
 
     QString suffix() const override;
@@ -90,7 +90,7 @@ public:
 
     QVariantHash extraProperties() const override;
 
-    void refresh() override;
+    void refresh(const bool isForce = false) override;
     void checkCache();
     QString udisksDisplayName();
     QString getVolTag(); // ....../dev/sr0 -> sr0
@@ -98,6 +98,8 @@ public:
     bool checkMpsStr(const QString &path) const override;
 
     static bool typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b);
+    //fix bug 49348 if unable network,ftp smb sort the last
+    static bool typeCompareByUrl(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b);
 
     static QMap<QString, DiskInfoStr> DiskInfoMap;
 private:

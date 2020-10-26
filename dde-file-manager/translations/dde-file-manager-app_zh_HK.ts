@@ -2,22 +2,14 @@
 <context>
     <name>Application</name>
     <message>
-        <source>Deepin File Manager</source>
-        <translation type="vanished">深度檔案管理員</translation>
-    </message>
-    <message>
-        <location filename="../main.cpp" line="108"/>
+        <location filename="../main.cpp" line="150"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>檔案管理員</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="112"/>
+        <location filename="../main.cpp" line="154"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation type="unfinished"/>
+        <translation>檔案管理員是一款功能強大的文件管理工具， 它包括搜索、複製、回收站、壓縮/解壓縮， 文件屬性等管理功能。</translation>
     </message>
 </context>
 </TS>

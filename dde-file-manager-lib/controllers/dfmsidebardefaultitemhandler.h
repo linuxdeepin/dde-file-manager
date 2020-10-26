@@ -32,7 +32,7 @@ class DFMSideBarDefaultItemHandler : public DFMSideBarItemInterface
 public:
     static DFMSideBarItem * createItem(const QString &pathKey);
 
-    DFMSideBarDefaultItemHandler(QObject *parent = nullptr);
+    explicit DFMSideBarDefaultItemHandler(QObject *parent = nullptr);
 
     void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
     QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;

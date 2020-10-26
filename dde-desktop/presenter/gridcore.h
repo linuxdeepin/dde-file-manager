@@ -314,6 +314,6 @@ public:
         return ret;
     }
 
-    QStringList reloacle(int screenNum, GIndex index, int emptyBefore, int emptyAfter);
+    QStringList reloacle(int screenNum, GIndex targetIndex, int emptyBefore, int emptyAfter);
 };
 

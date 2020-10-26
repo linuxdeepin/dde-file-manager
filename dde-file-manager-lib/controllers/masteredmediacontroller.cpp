@@ -130,7 +130,7 @@ private:
 class MasteredMediaFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    MasteredMediaFileWatcherPrivate(MasteredMediaFileWatcher *qq)
+    explicit MasteredMediaFileWatcherPrivate(MasteredMediaFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override;
@@ -275,7 +275,7 @@ bool MasteredMediaController::openFilesByApp(const QSharedPointer<DFMOpenFilesBy
             lst.append(transUrl);
         }
     }
-    return fileService->openFilesByApp(event->sender(), event->appName(), lst);
+    return fileService->openFilesByApp(event->sender(), event->appName(), lst, event->isEnter());
 }
 
 bool MasteredMediaController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const

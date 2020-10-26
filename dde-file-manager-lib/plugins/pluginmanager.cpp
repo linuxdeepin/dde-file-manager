@@ -74,27 +74,25 @@ void PluginManager::loadPlugin()
         foreach (QString childDir, pluginChildDirs) {
             QDir childPluginDir(pluginDir.absoluteFilePath(childDir));
             qDebug() << "load plugin in: " << childPluginDir.absolutePath();
-            foreach (QString fileName, childPluginDir.entryList(QDir::Files))
-            {
+            foreach (QString fileName, childPluginDir.entryList(QDir::Files)) {
                 QPluginLoader pluginLoader(childPluginDir.absoluteFilePath(fileName));
                 QObject *plugin = pluginLoader.instance();
-                if (plugin)
-                {
+                if (plugin) {
                     qDebug() << plugin;
 
-                    PropertyDialogExpandInfoInterface *expandInfoInterface = qobject_cast<PropertyDialogExpandInfoInterface*>(plugin);
-                    if(expandInfoInterface){
+                    PropertyDialogExpandInfoInterface *expandInfoInterface = qobject_cast<PropertyDialogExpandInfoInterface *>(plugin);
+                    if (expandInfoInterface) {
                         d->expandInfoInterfaces.append(expandInfoInterface);
                     }
 
                     ViewInterface *viewInterface = qobject_cast<ViewInterface *>(plugin);
-                    if (viewInterface){
+                    if (viewInterface) {
                         d->viewInterfaces.append(viewInterface);
                         d->viewInterfacesMap.insert(viewInterface->scheme(), viewInterface);
                     }
 
-                    PreviewInterface* previewInterface = qobject_cast<PreviewInterface*> (plugin);
-                    if(previewInterface){
+                    PreviewInterface *previewInterface = qobject_cast<PreviewInterface *> (plugin);
+                    if (previewInterface) {
                         static int counter = 0;
                         counter ++;
                         d->previewInterfaces << previewInterface;
@@ -103,8 +101,8 @@ void PluginManager::loadPlugin()
             }
         }
     }
-    qDebug(  ) << "expand info size:" << d->expandInfoInterfaces.size();
-    qDebug(  ) << "view size:" << d->viewInterfaces.size();
+    qDebug() << "expand info size:" << d->expandInfoInterfaces.size();
+    qDebug() << "view size:" << d->viewInterfaces.size();
 }
 
 QList<PropertyDialogExpandInfoInterface *> PluginManager::getExpandInfoInterfaces()
@@ -134,8 +132,8 @@ QList<PreviewInterface *> PluginManager::getPreviewInterfaces()
 ViewInterface *PluginManager::getViewInterfaceByScheme(const QString &scheme)
 {
     Q_D(PluginManager);
-    if (d->viewInterfacesMap.contains(scheme)){
+    if (d->viewInterfacesMap.contains(scheme)) {
         return d->viewInterfacesMap.value(scheme);
     }
-    return NULL;
+    return nullptr;
 }

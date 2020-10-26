@@ -34,6 +34,7 @@
 #include <QDirIterator>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QModelIndex>
 
 #include <functional>
 
@@ -102,7 +103,7 @@ public:
         CustomBase = 1000                            // first user event id
     };
 
-    explicit DFMEvent(const QObject *sender = 0);
+    explicit DFMEvent(const QObject *sender = nullptr);
     explicit DFMEvent(Type type, const QObject *sender);
 
     DFMEvent(const DFMEvent &other);
@@ -328,7 +329,9 @@ public:
 class DFMOpenFilesEvent : public DFMUrlListBaseEvent
 {
 public:
-    explicit DFMOpenFilesEvent(const QObject *sender, const DUrlList &list);
+    explicit DFMOpenFilesEvent(const QObject *sender, const DUrlList &list, const bool isEnter = false);
+
+    bool isEnter() const;
 
     static QSharedPointer<DFMOpenFilesEvent> fromJson(const QJsonObject &json);
 };
@@ -346,7 +349,7 @@ public:
 class DFMOpenFilesByAppEvent : public DFMOpenFilesEvent
 {
 public:
-    explicit DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url);
+    explicit DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url,const bool isEnter = false);
 
     QString appName() const;
 
@@ -569,10 +572,10 @@ class DFMCreateDiriterator : public DFMGetChildrensEvent
 {
 public:
     explicit DFMCreateDiriterator(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false);
+                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false, bool isgvfs = false);
     explicit DFMCreateDiriterator(const QObject *sender, const DUrl &url,
-                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false);
-
+                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false,bool isgvfs = false);
+    bool isGvfsFile() const;
     static QSharedPointer<DFMCreateDiriterator> fromJson(const QJsonObject &json);
 };
 
@@ -580,10 +583,9 @@ class DFMCreateGetChildrensJob : public DFMCreateDiriterator
 {
 public:
     explicit DFMCreateGetChildrensJob(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                      QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent = false);
+                                      QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent = false, const bool isgvfsfile = false);
     explicit DFMCreateGetChildrensJob(const QObject *sender, const DUrl &url,
-                                      const QStringList &nameFilters, QDir::Filters filters, bool silent = false);
-
+                                      const QStringList &nameFilters, QDir::Filters filters, bool silent = false, const bool isgvfsfile = false);
     static QSharedPointer<DFMCreateGetChildrensJob> fromJson(const QJsonObject &json);
 };
 
@@ -641,9 +643,10 @@ public:
         ForceOpenNewWindow
     };
 
-    explicit DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DirOpenMode mode);
+    explicit DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DirOpenMode mode,const bool isEnter = false);
 
     DirOpenMode dirOpenMode() const;
+    bool isEnter() const;
 
     static QSharedPointer<DFMOpenUrlEvent> fromJson(const QJsonObject &json);
 };
@@ -654,12 +657,13 @@ class DFMMenuActionEvent : public DFMUrlListBaseEvent
 {
 public:
     explicit DFMMenuActionEvent(const QObject *sender, const DFileMenu *menu, const DUrl &currentUrl,
-                                const DUrlList &selectedUrls, DFMGlobal::MenuAction action);
+                                const DUrlList &selectedUrls, DFMGlobal::MenuAction action, const QModelIndex &index = QModelIndex());
 
     const DFileMenu *menu() const;
     const DUrl currentUrl() const;
     const DUrlList selectedUrls() const;
     DFMGlobal::MenuAction action() const;
+    const QModelIndex clickedIndex() const; //当前右键点击的index
 
     static QSharedPointer<DFMMenuActionEvent> fromJson(const QJsonObject &json);
 };

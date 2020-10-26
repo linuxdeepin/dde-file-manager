@@ -31,7 +31,7 @@ static QString joinFilePath(const QString &path, const QString &name)
 class DFileWatcherPrivate : DAbstractFileWatcherPrivate
 {
 public:
-    DFileWatcherPrivate(DFileWatcher *qq)
+    explicit DFileWatcherPrivate(DFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
 

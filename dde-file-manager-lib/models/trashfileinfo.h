@@ -33,7 +33,7 @@ class TrashFileInfoPrivate;
 class TrashFileInfo : public DAbstractFileInfo
 {
 public:
-    TrashFileInfo(const DUrl &url);
+    explicit TrashFileInfo(const DUrl &url);
 
     bool exists() const Q_DECL_OVERRIDE;
     bool canRename() const Q_DECL_OVERRIDE;

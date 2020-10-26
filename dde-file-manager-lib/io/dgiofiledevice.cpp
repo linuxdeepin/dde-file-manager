@@ -29,7 +29,7 @@ DFM_BEGIN_NAMESPACE
 class DGIOFileDevicePrivate : public DFileDevicePrivate
 {
 public:
-    DGIOFileDevicePrivate(DGIOFileDevice *qq);
+    explicit DGIOFileDevicePrivate(DGIOFileDevice *qq);
 
     Q_DECLARE_PUBLIC(DGIOFileDevice)
 

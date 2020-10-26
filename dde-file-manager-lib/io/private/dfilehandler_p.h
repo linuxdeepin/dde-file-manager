@@ -28,7 +28,7 @@ DFM_BEGIN_NAMESPACE
 class DFileHandlerPrivate
 {
 public:
-    DFileHandlerPrivate(DFileHandler *qq);
+    explicit DFileHandlerPrivate(DFileHandler *qq);
 
     void setErrorString(const QString &es);
 

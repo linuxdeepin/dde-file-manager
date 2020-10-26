@@ -29,7 +29,7 @@ class VaultFileInfoPrivate;
 class VaultFileInfo : public DAbstractFileInfo
 {
 public:
-    VaultFileInfo(const DUrl &url);
+    explicit VaultFileInfo(const DUrl &url);
     ~VaultFileInfo();
 
     bool exists() const override;

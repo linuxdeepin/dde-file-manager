@@ -120,11 +120,12 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (fileDialogOnly && getuid() != 0) {
-        // --file-dialog-only should only used by `root`.
-        qDebug() << "Current UID != 0, the `--file-dialog-only` argument is ignored.";
-        fileDialogOnly = false;
-    }
+    //因bug#46452，--file-dialog-only不再判断root
+//    if (fileDialogOnly && getuid() != 0) {
+//        // --file-dialog-only should only used by `root`.
+//        qDebug() << "Current UID != 0, the `--file-dialog-only` argument is ignored.";
+//        fileDialogOnly = false;
+//    }
 
     if (fileDialogOnly) {
         app.setQuitOnLastWindowClosed(false);
@@ -223,6 +224,7 @@ int main(int argc, char *argv[])
         DFMGlobal::initDeviceListener();
         DFMGlobal::initGvfsMountManager();
         DFMGlobal::initBluetoothManager();
+        DFMGlobal::initRootFileManager();
     });
 
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.

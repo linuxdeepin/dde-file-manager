@@ -34,7 +34,7 @@ class DFMSideBarTagItemHandler : public DFMSideBarItemInterface
 public:
     static DFMSideBarItem * createItem(const DUrl &url);
 
-    DFMSideBarTagItemHandler(QObject *parent = nullptr);
+    explicit DFMSideBarTagItemHandler(QObject *parent = nullptr);
 
     QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
 

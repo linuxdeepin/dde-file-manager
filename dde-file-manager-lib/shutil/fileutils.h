@@ -40,63 +40,66 @@
  * @class FileUtils
  * @brief Utility class providing static helper methods for file management
  */
-class FileUtils {
+class FileUtils
+{
 public:
 
     static QString XDG_RUNTIME_DIR;
+    static QStringList CURRENT_ISGVFSFILE_PATH;
 
     static bool removeRecurse(const QString &path, const QString &name);
     static void recurseFolder(const QString &path, const QString &parent,
-                            QStringList *list);
-    static int filesCount(const QString& dir);
-    static QStringList filesList(const QString& dir);
-    static qint64 totalSize(const QString& dir);
+                              QStringList *list);
+    static int filesCount(const QString &dir);
+    static QStringList filesList(const QString &dir);
+    static qint64 totalSize(const QString &targetFile);
     static qint64 totalSize(const DUrlList &files);
-    static qint64 totalSize(const DUrlList &files, const qint64& maxLimit, bool &isInLimit);
-    static bool isArchive(const QString& path);
-    static bool canFastReadArchive(const QString& path);
+    static qint64 totalSize(const DUrlList &files, const qint64 &maxLimit, bool &isInLimit);
+    static bool isArchive(const QString &path);
+    static bool canFastReadArchive(const QString &path);
     static QStringList getApplicationNames();
     static QString getRealSuffix(const QString &name);
     static QIcon searchGenericIcon(const QString &category,
-       const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
+                                   const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
     static QIcon searchMimeIcon(QString mime,
-      const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
+                                const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
     static QIcon searchAppIcon(const DesktopFile &app,
-      const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
-    static QString formatSize(qint64 num , bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
+                               const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
+    static QString formatSize(qint64 num, bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
     static QString diskUsageString(quint64 &usedSize, quint64 &totalSize, QString strVolTag = "");
     static QString defaultOpticalSize(const QString &tagName, quint64 &usedSize, quint64 &totalSize);
-    static DUrl newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString& baseName, const QString& suffix);
-    static QString newDocmentName(QString targetdir, const QString& baseName, const QString& suffix);
-    static bool cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix, WId windowId);
+    static DUrl newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix);
+    static QString newDocmentName(QString targetdir, const QString &baseName, const QString &suffix);
+    static bool cpTemplateFileToTargetDir(const QString &targetdir, const QString &baseName, const QString &suffix, WId windowId);
 
-    static bool openFile(const QString& filePath);
-    static bool openFiles(const QStringList& filePaths);
-    static bool launchApp(const QString& desktopFile, const QStringList& filePaths = {}); // open filePaths by desktopFile
-    static bool launchAppByDBus(const QString& desktopFile, const QStringList& filePaths = {});
-    static bool launchAppByGio(const QString& desktopFile, const QStringList& filePaths = {});
+    static bool openFile(const QString &filePath);
+    static bool openFiles(const QStringList &filePaths);
+    static bool openEnterFiles(const QStringList &filePaths);
+    static bool launchApp(const QString &desktopFile, const QStringList &filePaths = {}); // open filePaths by desktopFile
+    static bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths = {});
+    static bool launchAppByGio(const QString &desktopFile, const QStringList &filePaths = {});
 
-    static bool openFilesByApp(const QString& desktopFile, const QStringList &filePaths);
-    static bool isFileManagerSelf(const QString& desktopFile);
+    static bool openFilesByApp(const QString &desktopFile, const QStringList &filePaths);
+    static bool isFileManagerSelf(const QString &desktopFile);
     static QString defaultTerminalPath();
 
-    static bool setBackground(const QString& pictureFilePath);
+    static bool setBackground(const QString &pictureFilePath);
 
-    static QString md5(const QString& data);
+    static QString md5(const QString &fpath);
     static QByteArray md5(QFile *file, const QString &filePath);
 
-    static bool isFileExecutable(const QString& path);
-    static bool shouldAskUserToAddExecutableFlag(const QString& path);
-    static bool isFileRunnable(const QString& path);
-    static bool isFileWindowsUrlShortcut(const QString& path); /*check file is windows url shortcut*/
-    static QString getInternetShortcutUrl(const QString& path);/*get InternetShortcut url of windows url shortcut*/
+    static bool isFileExecutable(const QString &path);
+    static bool shouldAskUserToAddExecutableFlag(const QString &path);
+    static bool isFileRunnable(const QString &path);
+    static bool isFileWindowsUrlShortcut(const QString &path); /*check file is windows url shortcut*/
+    static QString getInternetShortcutUrl(const QString &path);/*get InternetShortcut url of windows url shortcut*/
 
-    static QString getFileMimetype(const QString& path);
-    static bool isExecutableScript(const QString& path);
-    static bool openExcutableScriptFile(const QString& path, int flag);
-    static bool addExecutableFlagAndExecuse(const QString& path, int flag);
-    static bool openExcutableFile(const QString& path, int flag);
-    static bool runCommand(const QString& cmd, const QStringList& args, const QString& wd = QString());
+    static QString getFileMimetype(const QString &path);
+    static bool isExecutableScript(const QString &path);
+    static bool openExcutableScriptFile(const QString &path, int flag);
+    static bool addExecutableFlagAndExecuse(const QString &path, int flag);
+    static bool openExcutableFile(const QString &path, int flag);
+    static bool runCommand(const QString &cmd, const QStringList &args, const QString &wd = QString());
 
     static void mkpath(const DUrl &path);
     static QString displayPath(const QString &pathStr);
@@ -104,24 +107,26 @@ public:
     static QByteArray imageFormatName(QImage::Format f);
 
     static QString getFileContent(const QString &file);
-    static bool writeTextFile(const QString& filePath, const QString& content);
-    static void migrateConfigFileFromCache(const QString& key);
+    static bool writeTextFile(const QString &filePath, const QString &content);
+    static void migrateConfigFileFromCache(const QString &key);
     static QMap<QString, QString> getKernelParameters();
 
-    static DFMGlobal::MenuExtension getMenuExtension(const DUrlList& urlList);
-    static bool isGvfsMountFile(const QString &filePath);
-    static bool isFileExists(const QString& filePath);
+    static DFMGlobal::MenuExtension getMenuExtension(const DUrlList &urlList);
+    static bool isGvfsMountFile(const QString &filePath, const bool &isEx = false);
+    static bool isFileExists(const QString &filePath);
 
-    static QJsonObject getJsonObjectFromFile(const QString& filePath);
-    static QJsonArray getJsonArrayFromFile(const QString& filePath);
-    static bool writeJsonObjectFile(const QString& filePath, const QJsonObject& obj);
-    static bool writeJsonnArrayFile(const QString& filePath, const QJsonArray& array);
+    static QJsonObject getJsonObjectFromFile(const QString &filePath);
+    static QJsonArray getJsonArrayFromFile(const QString &filePath);
+    static bool writeJsonObjectFile(const QString &filePath, const QJsonObject &obj);
+    static bool writeJsonnArrayFile(const QString &filePath, const QJsonArray &array);
 
     static void mountAVFS();
     static void umountAVFS();
 
-    static bool isDesktopFile(const QString& filePath);
+    static bool isDesktopFile(const QString &filePath);
     static bool isDesktopFile(const QFileInfo &fileInfo);
+    static bool isDesktopFile(const QString &filePath, QMimeType &mimetype);
+    static bool isDesktopFile(const QFileInfo &fileInfo, QMimeType &mimetyp);
     static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
 
     static bool deviceShouldBeIgnore(const QString &devId); // devId = /dev/sdb(N)

@@ -1,6 +1,8 @@
 #!/bin/sh
 
-data="ZmlsZS1tYW5hZ2VyLnNo"
+#dde-file-manager
+data="ZGRlLWZpbGUtbWFuYWdlcg=="
+
 for i in "$@"
 do
         arg_base64=`echo -n $i|base64 -w 0`
@@ -17,7 +19,7 @@ if [ ! -S $target ];then
         fi
 fi
 
-echo -n $data|socat - $target
+echo $data | socat - $target
 
 if [ $? != 0 ]; then
         dde-file-manager "$@"

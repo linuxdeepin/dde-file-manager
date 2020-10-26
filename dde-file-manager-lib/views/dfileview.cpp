@@ -95,7 +95,7 @@ DWIDGET_USE_NAMESPACE
 class DFileViewPrivate
 {
 public:
-    DFileViewPrivate(DFileView *qq)
+    explicit DFileViewPrivate(DFileView *qq)
         : q_ptr(qq) {}
 
     int iconModeColumnCount(int itemWidth = 0) const;
@@ -150,6 +150,10 @@ public:
 
     /// drag drop
     QModelIndex dragMoveHoverIndex;
+    //析构锁，当其他信号正在处理时，不要析构
+    QMutex m_mutex;
+    //析构锁，当更新updatestatusbar正在处理时，不要析构
+    QMutex m_mutexUpdateStatusBar;
 
     /// list mode column visible
     QMap<QString, bool> columnForRoleHiddenMap;
@@ -184,6 +188,7 @@ public:
     char justAvoidWaringOfAlignmentBoundary[2];//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
 
     bool isVaultDelSigConnected = false; //is vault delete signal connected.
+
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -226,6 +231,10 @@ DFileView::~DFileView()
 {
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
+
+    //所有的槽函数必须跑完才能析构
+    QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
+
 }
 
 DFileSystemModel *DFileView::model() const
@@ -873,13 +882,25 @@ void DFileView::openWithActionTriggered(QAction *action)
 
 void DFileView::onRowCountChanged()
 {
+    //所有的槽函数必须跑完才能析构
+    QPointer<DFileView> me = this;
+
 #ifndef CLASSICAL_SECTION
     static_cast<DFileSelectionModel *>(selectionModel())->m_selectedList.clear();
 #endif
 
     delayUpdateStatusBar();
+    if (!me) {
+        return;
+    }
     updateContentLabel();
+    if (!me) {
+        return;
+    }
     updateModelActiveIndex();
+    if (!me) {
+        return;
+    }
 }
 
 void DFileView::wheelEvent(QWheelEvent *event)
@@ -923,27 +944,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-                //与桌面的enter行为同步
-                // fix bug#41296 回收站中选择多个文件打开,弹出多个提示框
-                bool openTrashFileHint = false; // 回收站打开文件是否已经提示了
-                if (urls.size() == 1) {
-                    appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
-                } else {
-                    for (auto url : urls) {
-                        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-                        if (!info || info->isVirtualEntry() || (url.isTrashFile() && info->isFile())) {
-                            // 只提示一次
-                            if (!openTrashFileHint) {
-                                QString strMsg = tr("Unable to open items in the trash,please restore it first");
-                                dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
-                                openTrashFileHint = true;
-                            }
-                            continue;
-                        }
-
-                        DFileService::instance()->openFile(this, url);
-                    }
-                }
+                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls), true);
 
                 return;
             }
@@ -1133,35 +1134,35 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     }
     case Qt::LeftButton: {
         // 当事件source为MouseEventSynthesizedByQt，认为此事件为TouchBegin转换而来
-        if (event->source() == Qt::MouseEventSynthesizedByQt) {
-            d->lastTouchBeginPos = event->pos();
+//        if (event->source() == Qt::MouseEventSynthesizedByQt) {
+//            d->lastTouchBeginPos = event->pos();
 
-            // 清空触屏滚动操作，因为在鼠标按下时还不知道即将进行的是触屏滚动还是文件框选
-            if (QScroller::hasScroller(this)) {
-                // 不可使用 ungrab，会导致应用崩溃，或许是Qt的bug
-                QScroller::scroller(this)->deleteLater();
-            }
+//            // 清空触屏滚动操作，因为在鼠标按下时还不知道即将进行的是触屏滚动还是文件框选
+//            if (QScroller::hasScroller(this)) {
+//                // 不可使用 ungrab，会导致应用崩溃，或许是Qt的bug
+//                QScroller::scroller(this)->deleteLater();
+//            }
 
-            if (d->updateEnableSelectionByMouseTimer) {
-                d->updateEnableSelectionByMouseTimer->stop();
-            } else {
-                d->updateEnableSelectionByMouseTimer = new QTimer(this);
-                d->updateEnableSelectionByMouseTimer->setSingleShot(true);
+//            if (d->updateEnableSelectionByMouseTimer) {
+//                d->updateEnableSelectionByMouseTimer->stop();
+//            } else {
+//                d->updateEnableSelectionByMouseTimer = new QTimer(this);
+//                d->updateEnableSelectionByMouseTimer->setSingleShot(true);
 
-                static QObject *theme_settings = reinterpret_cast<QObject *>(qvariant_cast<quintptr>(qApp->property("_d_theme_settings_object")));
-                QVariant touchFlickBeginMoveDelay;
+//                static QObject *theme_settings = reinterpret_cast<QObject *>(qvariant_cast<quintptr>(qApp->property("_d_theme_settings_object")));
+//                QVariant touchFlickBeginMoveDelay;
 
-                if (theme_settings) {
-                    touchFlickBeginMoveDelay = theme_settings->property("touchFlickBeginMoveDelay");
-                }
+//                if (theme_settings) {
+//                    touchFlickBeginMoveDelay = theme_settings->property("touchFlickBeginMoveDelay");
+//                }
 
-                d->updateEnableSelectionByMouseTimer->setInterval(touchFlickBeginMoveDelay.isValid() ? touchFlickBeginMoveDelay.toInt() : 300);
+//                d->updateEnableSelectionByMouseTimer->setInterval(touchFlickBeginMoveDelay.isValid() ? touchFlickBeginMoveDelay.toInt() : 300);
 
-                connect(d->updateEnableSelectionByMouseTimer, &QTimer::timeout, d->updateEnableSelectionByMouseTimer, &QTimer::deleteLater);
-            }
+//                connect(d->updateEnableSelectionByMouseTimer, &QTimer::timeout, d->updateEnableSelectionByMouseTimer, &QTimer::deleteLater);
+//            }
 
-            d->updateEnableSelectionByMouseTimer->start();
-        }
+//            d->updateEnableSelectionByMouseTimer->start();
+//        }
 
         bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
@@ -1182,10 +1183,10 @@ void DFileView::mousePressEvent(QMouseEvent *event)
                 }
 
                 // 避免通过触屏拖动视图时当前选中被清除
-                if (event->source() != Qt::MouseEventSynthesizedByQt) {
-                    clearSelection();
-                    update();
-                }
+//                if (event->source() != Qt::MouseEventSynthesizedByQt) {
+//                    clearSelection();
+//                    update();
+//                }
             }
         } else if (DFMGlobal::keyCtrlIsPressed()) {
             //const QModelIndex &index = indexAt(event->pos());
@@ -1211,6 +1212,9 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::RightButton: {
+        // 47203 【专业版 sp3】【文件管理器】【5.2.0.41】创建链接后，先打开桌面文件菜单，会将创建链接弹窗内的菜单改变
+        // 弹出文件选择框后，左键选择文件之前右键选择其中的文件无法触发focusInEvent事件，这里手动设置焦点
+        setFocus(Qt::ActiveWindowFocusReason);
         DListView::mousePressEvent(event);
         break;
     }
@@ -1224,27 +1228,27 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
     Q_D(const DFileView);
 
     // source为此类型时认为是触屏事件
-    if (event->source() == Qt::MouseEventSynthesizedByQt) {
-        if (QScroller::hasScroller(this))
-            return;
+//    if (event->source() == Qt::MouseEventSynthesizedByQt) {
+//        if (QScroller::hasScroller(this))
+//            return;
 
-        // 在定时器期间收到鼠标move事件且距离大于一定值则认为触发视图滚动
-        if (d->updateEnableSelectionByMouseTimer
-                && d->updateEnableSelectionByMouseTimer->isActive()) {
-            const QPoint difference_pos = event->pos() - d->lastTouchBeginPos;
+//        // 在定时器期间收到鼠标move事件且距离大于一定值则认为触发视图滚动
+//        if (d->updateEnableSelectionByMouseTimer
+//                && d->updateEnableSelectionByMouseTimer->isActive()) {
+//            const QPoint difference_pos = event->pos() - d->lastTouchBeginPos;
 
-            if (qAbs(difference_pos.x()) > d->touchTapDistance
-                    || qAbs(difference_pos.y()) > d->touchTapDistance) {
-                QScroller::grabGesture(this);
-                QScroller *scroller = QScroller::scroller(this);
+//            if (qAbs(difference_pos.x()) > d->touchTapDistance
+//                    || qAbs(difference_pos.y()) > d->touchTapDistance) {
+//                QScroller::grabGesture(this);
+//                QScroller *scroller = QScroller::scroller(this);
 
-                scroller->handleInput(QScroller::InputPress, event->localPos(), static_cast<qint64>(event->timestamp()));
-                scroller->handleInput(QScroller::InputMove, event->localPos(), static_cast<qint64>(event->timestamp()));
-            }
+//                scroller->handleInput(QScroller::InputPress, event->localPos(), static_cast<qint64>(event->timestamp()));
+//                scroller->handleInput(QScroller::InputMove, event->localPos(), static_cast<qint64>(event->timestamp()));
+//            }
 
-            return;
-        }
-    }
+//            return;
+//        }
+//    }
 
     return DListView::mouseMoveEvent(event);
 }
@@ -1304,7 +1308,6 @@ void DFileView::updateModelActiveIndex()
     }
 
     d->visibleIndexRande = rande;
-
     for (int i = rande.first; i <= rande.second; ++i) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
 
@@ -1334,24 +1337,35 @@ void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex 
 void DFileView::delayUpdateStatusBar()
 {
     Q_D(DFileView);
-
     // when QItemSelectionModel::selectionChanged emit we get selectedUrls() were old selecturls
     // so we wait...
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+        d->updateStatusBarTimer->stop();
+        return;
+    }
     d->updateStatusBarTimer->start();
-
-
-//    if (FileUtils::isGvfsMountFile(rootUrl().toLocalFile())){
-//        d->updateStatusBarTimer->start();
-//    }else{
-//        updateStatusBar();
-//    }
 }
 
 void DFileView::updateStatusBar()
 {
     Q_D(DFileView);
+
+    //智能指针和枷锁处理等待判断当前对象是否被析构
+    QPointer<DFileView> me = this;
+    QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
+    if (!me) {
+        return;
+    }
     if (model()->state() != DFileSystemModel::Idle)
         return;
+  
+    //若处于触摸滑动中，延时该更新，因为当前版本QT加速回弹动画会被子节点setText打断
+    if (QScroller::hasScroller(this)) {
+        d_ptr->updateStatusBarTimer->stop();
+        d_ptr->updateStatusBarTimer->start();
+        return;
+    }
 
     DFMEvent event(this);
     event.setWindowId(windowId());
@@ -1365,16 +1379,10 @@ void DFileView::updateStatusBar()
             corectUrls << srcUrl;
         }
     }
-
     event.setData(corectUrls);
     int count = selectedIndexCount();
-    //判断网络文件是否可以到达
-    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
-        return;
-    }
 
     notifySelectUrlChanged(corectUrls);
-
     if (count == 0) {
         d->statusBar->itemCounted(event, this->count());
     } else {
@@ -2200,7 +2208,9 @@ void DFileView::initConnects()
     // fix bug#44171 【专业版 sp3】【文件管理器】【5.2.0.28-1】有搜索结果时才展示高级筛选面板
     connect(model(), &DFileSystemModel::showFilterButton, this, [this]() {
         DFileManagerWindow *w = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(windowId()));
-        w->showFilterButton();
+        if (w) {
+            w->showFilterButton();
+        }
     });
 }
 
@@ -2808,6 +2818,11 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
 #endif
 
+    if (!info || !info->exists()) {
+        qDebug() << "info is null or not exists,so exit";
+        return;
+    }
+
     QSet<MenuAction> disableList;
     QSet<MenuAction> unusedList;
 
@@ -2828,10 +2843,18 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
 
     // 在上一个菜单没有结束前，拒绝下一个菜单
     static bool lock = false;
-    if (lock) {
+    qint64 curTime = QDateTime::currentMSecsSinceEpoch();
+    static qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
+
+    // 两次右键菜单的间隔时间, < 500 毫秒说明点击过于频繁, 进行限制
+    // 目的是为了防止右键菜单产生新的模态对话框, exec() 函数无法结束, lock状态无法重置
+    // 相关bug: 47478
+    qint64 intervalime = curTime - lastTime;
+    if (lock && (intervalime < 500)) {
         qDebug() << "reject show menu";
         return;
     }
+
     if (VaultController::isRootDirectory(info->fileUrl().fragment())) {
         //! create vault menu.
         menu = DFileMenuManager::createVaultMenu(this->topLevelWidget());
@@ -2845,7 +2868,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         return;
     }
 
-    menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
+    menu->setEventData(rootUrl(), selectedUrls(), windowId(), this, index);
 
     fileViewHelper()->handleMenu(menu);
     // 若此处使用this，那么当切换到其台view时，当前view释放，会造成野指针引起崩溃
@@ -2853,6 +2876,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，
     //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
     QPointer<QWidget> window = qApp->activeWindow();
+    lastTime = QDateTime::currentMSecsSinceEpoch();
     menu->exec();
     menu->deleteLater(window);
     lock = false;
@@ -3047,7 +3071,15 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
                 d->columnForRoleHiddenMap[action->text()] = action->isChecked();
 
                 d->headerView->setSectionHidden(i, action->isChecked());
-                updateColumnWidth();
+
+                // fix bug#36610 增加或减少排序方式分类列表未自适应
+                if (d->allowedAdjustColumnSize)
+                {
+                    updateListHeaderViewProperty();
+                } else
+                {
+                    updateColumnWidth();
+                }
             });
 
             menu->addAction(action);

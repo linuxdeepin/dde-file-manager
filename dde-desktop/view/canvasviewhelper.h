@@ -18,7 +18,7 @@ class CanvasViewHelper : public DFileViewHelper
 {
     Q_OBJECT
 public:
-    CanvasViewHelper(CanvasGridView *parent);
+    explicit CanvasViewHelper(CanvasGridView *parent);
 
     CanvasGridView *parent() const;
 

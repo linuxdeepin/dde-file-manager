@@ -33,6 +33,7 @@
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
 #include "deviceinfoparser.h"
+#include "drootfilemanager.h"
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
@@ -41,6 +42,7 @@
 
 #include <QtConcurrent>
 
+bool ComputerModel::m_isQueryRootFileFinshed = false;
 ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
     , m_diskm(new DDiskManager(this))
@@ -48,6 +50,9 @@ ComputerModel::ComputerModel(QObject *parent)
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
     m_nitems = 0;
+
+    // 光驱事件
+    connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
 
 #ifdef ENABLE_ASYNCINIT
     m_initThread.first = false;
@@ -93,40 +98,58 @@ ComputerModel::ComputerModel(QObject *parent)
                 }
             }
 
-            connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
-            if (opticalchanged) {
-                emit opticalChanged();
+            if (!m_isQueryRootFileFinshed) {
+                // 获取完根目录信息后刷新光驱信息，用于区分内外置光驱。
+                if (opticalchanged) {
+                    emit opticalChanged();
+                }
+                m_isQueryRootFileFinshed = true;
             }
         };
 
-        connect(fileService,&DFileService::queryRootFileFinsh,this,[this,rootInit](){
-            QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+        connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this,rootInit](){
+            QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
+            std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
             rootInit(ch);
 
-            // 保险柜
-            addItem(makeSplitterUrl(QObject::tr("File Vault")));
-            addItem(VaultController::makeVaultUrl());
+            // 判断是否启用保险箱
+            if ( VaultHelper::isVaultEnabled() ) {
+                const DUrl vaultUrl = VaultController::makeVaultUrl();
+                const DUrl vaultUrlTag = makeSplitterUrl(QObject::tr("File Vault"));
+                const int vaultIndex = findItem(vaultUrl);
+                //保险箱不是最后一个则移除，再添加，保证在最后一个
+                if (vaultIndex != rowCount() - 1){
+                    removeItem(vaultUrl);
+                    removeItem(vaultUrlTag);
+                }
+
+                addItem(vaultUrlTag);
+                addItem(vaultUrl);
+            }
         });
 
-        connect(fileService,&DFileService::serviceHideSystemPartition,this,[this,rootInit](){
+        connect(DRootFileManager::instance(),&DRootFileManager::serviceHideSystemPartition,this,[this,rootInit](){
             m_items.clear();
             m_nitems = 0;
             addItem(makeSplitterUrl(tr("My Directories")));
-            QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+            QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
+            std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
             rootInit(ch);
 
-            // 保险柜
-            addItem(makeSplitterUrl(QObject::tr("File Vault")));
-            addItem(VaultController::makeVaultUrl());
+            if ( VaultHelper::isVaultEnabled() ) {
+                // 保险柜
+                addItem(makeSplitterUrl(QObject::tr("File Vault")));
+                addItem(VaultController::makeVaultUrl());
+            }
         });
 
-        if (fileService->isRootFileInited()) {
-            disconnect(fileService,&DFileService::queryRootFileFinsh,this, nullptr);
+        if (DRootFileManager::instance()->isRootFileInited()) {
 
-            QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+            QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "get root file now" << ch.size();
+            std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
             rootInit(ch);
 
 #ifdef ENABLE_ASYNCINIT
@@ -134,16 +157,17 @@ ComputerModel::ComputerModel(QObject *parent)
             if (m_initThread.first)
                 return;
 #endif
-            // 保险柜
-            addItem(makeSplitterUrl(QObject::tr("File Vault")));
-            addItem(VaultController::makeVaultUrl());
+            // 根据系统类型，判断是否启用保险柜
+            if ( VaultHelper::isVaultEnabled() ) {
+                // 保险柜
+                addItem(makeSplitterUrl(QObject::tr("File Vault")));
+                addItem(VaultController::makeVaultUrl());
+            }
         }
-        else {
-            qDebug() << "root file not inited,wait signal";
-            fileService->startQuryRootFile();
-        }
+        //使用分区工具，不显示磁盘问题，再刷一次
+        DRootFileManager::instance()->startQuryRootFile();
 
-        m_watcher = fileService->rootFileWather();
+        m_watcher = DRootFileManager::instance()->rootFileWather();
         connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
         connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
@@ -213,7 +237,7 @@ ComputerModel::~ComputerModel()
     m_initThread.first = true; //强制退出
     m_initThread.second.waitForFinished();
 #endif
-    fileService->clearThread();
+    rootFileManager->clearThread();
 }
 
 QModelIndex ComputerModel::index(int row, int column, const QModelIndex &parent) const
@@ -222,7 +246,7 @@ QModelIndex ComputerModel::index(int row, int column, const QModelIndex &parent)
     if (row >= rowCount() || row < 0) {
         return QModelIndex();
     }
-    return createIndex(row, column, (void*)&m_items[row]);
+    return createIndex(row, column, const_cast<ComputerModelItemData*>(&m_items[row]));
 }
 
 QModelIndex ComputerModel::parent(const QModelIndex &index) const
@@ -615,12 +639,12 @@ void ComputerModel::onOpticalChanged()
 
 void ComputerModel::getRootFile()
 {
-    QList<DAbstractFileInfoPointer> ch = fileService->getRootFile();
+    QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
     qDebug() << "获取 ComputerModel  getRootFile start" << ch.size() << QThread::currentThread() << qApp->thread();
     if (ch.isEmpty())
         return;
 
-    std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompare);
+    std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
     bool splt = false;
     m_nitems = 0;
     for (auto chi : ch) {
@@ -654,7 +678,21 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
         data.cat = ComputerModelItemData::Category::cat_widget;
         data.widget = w;
     } else {
-        data.fi = fileService->createFileInfo(this, url);
+        //这里不用去创建fileinfo，已经缓存了rootfileinfo //get root file info cache
+        if (url.toString().endsWith(SUFFIX_GVFSMP))
+        {
+            const DAbstractFileInfoPointer &info = DRootFileManager::getFileInfo(url);
+            if (info) {
+                info->refresh();
+                data.fi = info;
+            }
+            else {
+                data.fi = fileService->createFileInfo(this, url);
+            }
+        }
+        else {
+            data.fi = fileService->createFileInfo(this, url);
+        }
         if (data.fi->suffix() == SUFFIX_USRDIR) {
             data.cat = ComputerModelItemData::Category::cat_user_directory;
         } else {

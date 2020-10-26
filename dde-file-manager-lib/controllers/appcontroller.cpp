@@ -159,10 +159,9 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "");
 }
 
-void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
+void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event, const bool isEnter)
 {
     const DUrlList &urls = event->urlList();
-
     if (urls.isEmpty()) {
         return;
     }
@@ -188,13 +187,13 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
 
         //! bug 38585 判断是不是保险箱以及是否是解锁状态，如果是就发送processEventAsync事件OpenInCurrentWindow走解锁流程
         if (VaultController::ins()->state() != VaultController::Unlocked && lstUrls.size() == 1 && lstUrls.first().isVaultFile()) {
-            DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+            DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow, isEnter);
         } else {
-            DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow);
+            DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), lstUrls, DFMOpenUrlEvent::ForceOpenNewWindow, isEnter);
         }
     } else {
-        //fix bug 30506 ,异步处理网路文件很卡的情况下，快速点击会崩溃，或者卡死
-        if (urls.size() > 0 && FileUtils::isGvfsMountFile(urls.first().path())) {
+        //fix bug 30506 ,异步处理网路文件很卡的情况下，快速点击会崩溃，或者卡死,使用fileinfo中的是否是gvfsmount
+        if (urls.size() > 0 && DFileService::instance()->createFileInfo(nullptr, urls.first())->isGvfsMountFile()/*FileUtils::isGvfsMountFile(urls.first().path())*/) {
             DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
             return;
         }
@@ -624,10 +623,21 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 
 void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
+    qDebug() << "mount image:" << event->url();
+
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, event->url());
+
+    QString archiveuri = "";
+    if (info && info->canRedirectionFileUrl()) {
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->redirectedFileUrl().toString()));
+        qDebug() << "redirect the url to:" << info->redirectedFileUrl();
+    } else {
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(event->url().toString()));
+    }
+
     QStringList args;
-    args << "mount";
-    QString archiveuri = "archive://" + QString(QUrl::toPercentEncoding(event->url().toString()));
-    args << archiveuri;
+    args << "mount" << archiveuri;
+
     QProcess *gioproc = new QProcess;
     gioproc->start("gio", args);
     connect(gioproc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [ = ](int ret) {
@@ -652,8 +662,8 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
 
-        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+        // huawei 50143: 卸载时有任务，提示设备繁忙并且不能中断传输
+//        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
 
         if (fi->suffix() == SUFFIX_UDISKS) {
             //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
@@ -702,8 +712,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
-        // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+        // huawei 50143: 卸载时有任务，提示设备繁忙并且不能中断传输
+        //emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
         QtConcurrent::run([fi]() {
             qDebug() << fi->fileUrl().path();
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
@@ -727,8 +737,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 
                     if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
                         qDebug() << "action timeout with noreply response";
-                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Action timeout, action is canceled")),  Q_ARG(QString, ""));
-                        //dialogManager->showErrorDialog(tr("Action timeout, action is canceled"), QString());
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Authentication timed out")),  Q_ARG(QString, ""));
+                        //dialogManager->showErrorDialog(tr("Authentication timed out"), QString());
                         return;
                     }
                     err |= blk->lastError().isValid();
@@ -1117,7 +1127,7 @@ void AppController::actionSendToRemovableDisk()
         if (u.scheme() == BURN_SCHEME || u.scheme() == TAG_SCHEME || u.scheme() == SEARCH_SCHEME || u.scheme() == RECENT_SCHEME) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, u);
             if (fi)
-                u = fi->mimeDataUrl();
+                u = fi->redirectedFileUrl();
         }
     }
 
@@ -1147,7 +1157,8 @@ void AppController::actionStageFileForBurning()
     QString destdev = action->property("dest_drive").toString();
     DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
     for (DUrl &u : urlList) {
-        for (DAbstractFileInfoPointer fi = fileService->createFileInfo(sender(), u); fi->canRedirectionFileUrl(); fi = fileService->createFileInfo(sender(), u)) {
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(sender(), u);
+        if(fi){ // MasteredMediaFileInfo::canRedirectionFileUrl() 有问题，现在暂时不知道怎么修改
             u = fi->redirectedFileUrl();
         }
     }
@@ -1437,14 +1448,14 @@ void UnmountWorker::doUnmount(const QString &blkStr)
     QDBusError err = blkdev->lastError();
     if (err.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
         qDebug() << "action timeout with noreply response";
-        emit unmountResult(tr("Action timeout, action is canceled"), "");
+        emit unmountResult(tr("Authentication timed out"), "");
     }
     // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
     // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
-    else if (err.isValid() ) {
-        QDBusError::ErrorType thistyep = err.type();
+    else if ((err.isValid() && err.type() != QDBusError::Other)
+             || (err.isValid() && err.message().contains("target is busy"))) {
         qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-        emit unmountResult(tr("The device was unmounted insecurely"), tr("Disk is busy, cannot unmount now"));
+        emit unmountResult(tr("The device was not safely unmounted"), tr("Disk is busy, cannot unmount now"));
     }
 }
 
@@ -1461,12 +1472,11 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
 
         if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
             qDebug() << "action timeout with noreply response";
-            emit unmountResult(tr("Action timeout, action is canceled"), "");
+            emit unmountResult(tr("Authentication timed out"), "");
             return;
-        }
-        else if ( lastError.isValid() ) {
+        } else if (lastError.isValid()) {
             qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
-            emit unmountResult(tr("The device was removed insecurely"), tr("Disk is busy, cannot unmount now") );
+            emit unmountResult(tr("The device was not safely removed"), tr("Disk is busy, cannot unmount now"));
             return;
         }
 

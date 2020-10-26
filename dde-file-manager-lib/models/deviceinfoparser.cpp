@@ -104,7 +104,7 @@ bool DeviceInfoParser::isInternalDevice(const QString &device)
 
 bool DeviceInfoParser::loadLshwDatabase()
 {
-    if ( false == executeProcess("lshw")) {
+    if (false == executeProcess("lshw")) {
         return false;
     }
 

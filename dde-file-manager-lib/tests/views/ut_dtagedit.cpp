@@ -66,7 +66,12 @@ TEST(DTagEditTest,key_press_event_escape)
     DTagEdit w;
     w.show(0,0);
     EXPECT_EQ(true,w.isVisible());
-    QTest::keyClick(&w,Qt::Key_Escape);
+    QTest::keyPress(&w,Qt::Key_Escape);
+    QEventLoop loop;
+    QTimer::singleShot(100,&loop,[&loop](){
+        loop.quit();
+    });
+    loop.exec();
     EXPECT_EQ(false,w.isVisible());
 }
 
@@ -75,7 +80,12 @@ TEST(DTagEditTest,key_press_event_enter)
     DTagEdit w;
     w.show(0,0);
     EXPECT_EQ(true,w.isVisible());
-    QTest::keyClick(&w,Qt::Key_Enter);
+    QTest::keyPress(&w,Qt::Key_Enter);
+    QEventLoop loop;
+    QTimer::singleShot(100,&loop,[&loop](){
+        loop.quit();
+    });
+    loop.exec();
     EXPECT_EQ(false,w.isVisible());
 }
 
@@ -84,6 +94,11 @@ TEST(DTagEditTest,key_press_event_return)
     DTagEdit w;
     w.show(0,0);
     EXPECT_EQ(true,w.isVisible());
-    QTest::keyClick(&w,Qt::Key_Return);
+    QTest::keyPress(&w,Qt::Key_Return);
+    QEventLoop loop;
+    QTimer::singleShot(100,&loop,[&loop](){
+        loop.quit();
+    });
+    loop.exec();
     EXPECT_EQ(false,w.isVisible());
 }

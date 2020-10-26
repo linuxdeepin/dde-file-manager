@@ -231,7 +231,7 @@ void WaterMaskFrame::initUI()
         const QSize &mask_image_size = mask_image_reader.size();
 
         if (maskLogoUri.endsWith(".svg") || (mask_image_size.width() >= mask_size.width()
-                                             && mask_image_size.height() >= mask_image_size.height())) {
+                                             && mask_image_size.height() >= mask_size.height())) {
             mask_image_reader.setScaledSize(mask_size);
         } else {
             mask_image_reader.setScaledSize(QSize(maskLogoWidth, maskLogoHeight));

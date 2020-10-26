@@ -200,17 +200,17 @@ void QDiskInfo::updateGvfsFileSystemInfo(int retryTimes/*=3*/)
     GFileInfo *info;
     GError *error;
     file = g_file_new_for_uri(file_uri.data());
-    if (file == NULL) {
+    if (file == nullptr) {
         return;
     }
-    error = NULL;
-    systemInfo = g_file_query_filesystem_info(file, "*", NULL, &error);
+    error = nullptr;
+    systemInfo = g_file_query_filesystem_info(file, "*", nullptr, &error);
     if (error) {
         g_error_free(error);
-        error = NULL;
+        error = nullptr;
     }
-    info = g_file_query_info(file, "*", G_FILE_QUERY_INFO_NONE, NULL, &error);
-    if (info == NULL && error) {
+    info = g_file_query_info(file, "*", G_FILE_QUERY_INFO_NONE, nullptr, &error);
+    if (info == nullptr && error) {
         g_object_unref(systemInfo);
         g_object_unref(file);
         qWarning() << "g_file_query_filesystem_info" << error->message << error->code;
