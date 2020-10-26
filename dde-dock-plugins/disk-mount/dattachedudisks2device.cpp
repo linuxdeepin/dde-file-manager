@@ -162,6 +162,19 @@ QUrl DAttachedUdisks2Device::mountpointUrl()
     return QUrl::fromLocalFile(mountPoint);
 }
 
+QUrl DAttachedUdisks2Device::accessPointUrl()
+{
+    QUrl url = mountpointUrl();
+    auto blk = blockDevice();
+    if (blk) {
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        if (drv && drv->optical()) {
+            url = DUrl::fromBurnFile(QString(blk->device()) + "/" + BURN_SEG_ONDISC + "/");
+        }
+    }
+    return url;
+}
+
 DBlockDevice *DAttachedUdisks2Device::blockDevice()
 {
     return c_blockDevice.data();

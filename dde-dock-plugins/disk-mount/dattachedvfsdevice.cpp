@@ -94,3 +94,8 @@ QUrl DAttachedVfsDevice::mountpointUrl()
     QExplicitlySharedDataPointer<DGioFile> file = dgioMount->getRootFile();
     return QUrl::fromLocalFile(file->path());
 }
+
+QUrl DAttachedVfsDevice::accessPointUrl()
+{
+    return mountpointUrl();
+}
