@@ -32,8 +32,9 @@
 #include <QApplication>
 #include <QDebug>
 #include <QStorageInfo>
-#include <dgiosettings.h>
+#include <QProcess>
 
+#include <dgiosettings.h>
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
@@ -195,7 +196,22 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 
     DGioSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
     if (gsettings.value("filemanager-integration").toBool()) {
-        DDesktopServices::showFolder(attachedDevice->mountpointUrl());
+        DUrl url = attachedDevice->accessPointUrl();
+        if (url.scheme() == BURN_SCHEME) {
+            // 1. 当前熊默认文件管理器为 dde-file-manager 时，使用它打开光盘
+            // 2. 默认文件管理器为其他时，依然采用打开挂载点的方式
+            if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
+                QString &&path = url.path();
+                QString opticalPath = QString("burn://%1").arg(path);
+                qDebug() << "open optical path =>" << opticalPath;
+                QProcess::startDetached(QStringLiteral("dde-file-manager"), {opticalPath});
+            } else {
+                url = attachedDevice->mountpointUrl();
+                DDesktopServices::showFolder(url);
+            }
+        } else {
+            DDesktopServices::showFolder(url);
+        }
     }
 }
 
