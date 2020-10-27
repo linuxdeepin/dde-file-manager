@@ -231,6 +231,14 @@ Qt::Alignment VideoPreview::statusBarWidgetAlignment() const
     return Qt::Alignment();
 }
 
+void VideoPreview::DoneCurrent()
+{
+    //非wayland平台请注释掉这段代码
+#ifdef __arm__
+    playerWidget->DoneCurrent();
+#endif
+}
+
 void VideoPreview::play()
 {
     if (playerWidget) {

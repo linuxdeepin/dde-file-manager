@@ -1006,12 +1006,21 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
         return;
     }
 
-    if (!m_filePreviewDialog) {
+    if(DFMGlobal::isWayLand()){
+        if(m_filePreviewDialog){
+            m_filePreviewDialog->deleteLater();
+            m_filePreviewDialog = nullptr;
+        }
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
-        if (!DFMGlobal::isWayLand())
-            DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
-    } else {
-        m_filePreviewDialog->updatePreviewList(canPreivewlist);
+    }
+    else {
+        if (!m_filePreviewDialog) {
+            m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
+            if (!DFMGlobal::isWayLand())
+                DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
+        } else {
+            m_filePreviewDialog->updatePreviewList(canPreivewlist);
+        }
     }
 
     if (canPreivewlist.count() == 1) {

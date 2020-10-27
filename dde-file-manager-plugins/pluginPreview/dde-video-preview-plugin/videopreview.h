@@ -51,9 +51,13 @@ public:
     bool showStatusBarSeparator() const Q_DECL_OVERRIDE;
     Qt::Alignment statusBarWidgetAlignment() const override;
 
+    virtual void DoneCurrent();
+
     void play() override;
     void pause() override;
     void stop() override;
+
+
 
 private:
     QUrl videoUrl;

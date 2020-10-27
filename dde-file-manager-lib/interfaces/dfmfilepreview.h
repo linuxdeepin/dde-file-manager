@@ -34,6 +34,11 @@ public:
     virtual QString title() const;
     virtual bool showStatusBarSeparator() const;
 
+    /**
+     * @brief DoneCurrent 释放surface
+     */
+    virtual void DoneCurrent();
+
     virtual void play(); /*play media if file is music or video*/
     virtual void pause(); /*pause playing if file is music or video*/
     virtual void stop(); /*stop playing if file is music or video*/
