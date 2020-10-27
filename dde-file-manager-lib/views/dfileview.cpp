@@ -140,8 +140,10 @@ void SelectWork::run()
             msleep(WAITTIME);
             // 修复bug-51429 bug-51039 bug-51503
             // 增加一个结束判断,当重复判断一个文件LOOPNUM次都不存在后,不在选中该文件
-            if(loopNum > LOOPNUM)
+            if(loopNum > LOOPNUM) {
                 itr = m_lstNoValid.erase(itr);
+                continue;
+            }
             if (m_bStop)
                 break;
             if(!m_pModel)
@@ -158,7 +160,8 @@ void SelectWork::run()
         }
     }
     // 刷新模型
-    m_pModel->update();
+    if(m_pModel)
+        m_pModel->update();
 }
 
 class DFileViewPrivate
