@@ -59,6 +59,7 @@
 #include <QProcess>
 #include <QLocalSocket>
 #include <QPixmapCache>
+#include <QSurfaceFormat>
 
 #include <pwd.h>
 #include <DApplicationSettings>
@@ -129,6 +130,11 @@ int main(int argc, char *argv[])
 
     if (DFMGlobal::isWayLand()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
+        //以下代码用于视频预览使用
+        setenv("PULSE_PROP_media.role", "video", 1);
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        format.setDefaultFormat(format);
     }
 
     winId_mtx.first = false;

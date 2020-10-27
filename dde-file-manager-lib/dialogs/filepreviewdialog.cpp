@@ -259,6 +259,7 @@ FilePreviewDialog::~FilePreviewDialog()
 {
     if (m_preview) {
         m_preview->deleteLater();
+        m_preview = nullptr;
         QGuiApplication::changeOverrideCursor(QCursor(Qt::ArrowCursor));
     }
 }
@@ -304,8 +305,13 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
     if (m_preview) {
         m_preview->stop();
-        m_preview->deleteLater();
-        m_preview = nullptr;
+        if(DFMGlobal::isWayLand()){
+            m_preview->DoneCurrent();
+        }
+        else {
+            m_preview->deleteLater();
+            m_preview = nullptr;
+        }
     }
 
     return DAbstractDialog::closeEvent(event);
@@ -589,8 +595,13 @@ void FilePreviewDialog::done(int r)
 
     if (m_preview) {
         m_preview->stop();
-        m_preview->deleteLater();
-        m_preview = nullptr;
+        if(DFMGlobal::isWayLand()){
+            m_preview->DoneCurrent();
+        }
+        else {
+            m_preview->deleteLater();
+            m_preview = nullptr;
+        }
     }
 }
 
