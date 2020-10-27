@@ -453,6 +453,13 @@ void DFMCrumbBar::stopAddressBarAnimation()
     d->addressBar->stopAnimation();
 }
 
+void DFMCrumbBar::hideCompleterView()
+{
+    Q_D(DFMCrumbBar);
+    if(d->addressBar)
+        d->addressBar->hideCompleterView();
+}
+
 /*!
  * \brief Call when toolbar url got changed.
  *

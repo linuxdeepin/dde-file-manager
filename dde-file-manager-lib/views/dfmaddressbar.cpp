@@ -193,6 +193,13 @@ void DFMAddressBar::stopAnimation()
     animationSpinner = nullptr;
 }
 
+// 隐藏自动补全视图
+void DFMAddressBar::hideCompleterView()
+{
+    if(completerView)
+        completerView->hideMe();
+}
+
 void DFMAddressBar::hide()
 {
     QLineEdit::hide();

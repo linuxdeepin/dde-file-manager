@@ -110,6 +110,9 @@ signals:
     void currentViewStateChanged();
     void selectUrlChanged(const QList<DUrl>& urlList);
 
+    // 窗口大小变化后,发送次信号
+    void sigSizeChange();
+
 public slots:
     void moveCenter(const QPoint &cp);
     void moveTopRight();

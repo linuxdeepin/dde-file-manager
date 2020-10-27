@@ -59,7 +59,7 @@
 #include "dtagactionwidget.h"
 #include "droundbutton.h"
 #include "dfmrightdetailview.h"
-
+#include "dfmcrumbbar.h"
 #include "drenamebar.h"
 #include "singleton.h"
 #include "dfileservices.h"
@@ -990,6 +990,11 @@ bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {
+    if(DFMGlobal::isWayLand()) {
+        // 抛出信号,窗口大小即将发生变化
+        emit sigSizeChange();
+    }
+
     DMainWindow::resizeEvent(event);
 }
 
@@ -1268,6 +1273,11 @@ void DFileManagerWindow::initCentralWidget()
 void DFileManagerWindow::initConnect()
 {
     D_D(DFileManagerWindow);
+
+    // 关联信号,窗口大小变化后,隐藏自动补全视图
+    if(d->toolbar) {
+        QObject::connect(this, &DFileManagerWindow::sigSizeChange, d->toolbar, &DToolBar::slotHideCompleterView);
+    }
 
     if (titlebar()) {
         QObject::connect(titlebar(), SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));

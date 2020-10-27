@@ -365,6 +365,14 @@ void DToolBar::switchHistoryStack(const int index){
     updateBackForwardButtonsState();
 }
 
+void DToolBar::slotHideCompleterView()
+{
+    DFMCrumbBar *pCrumn = getCrumbWidget();
+    if(pCrumn) {
+        pCrumn->hideCompleterView();
+    }
+}
+
 namespace DEEPIN_QT_THEME {
 extern QThreadStorage<QString> colorScheme;
 extern void(*setFollowColorScheme)(bool);

@@ -95,6 +95,9 @@ public slots:
     void removeNavStackAt(int index);
     void switchHistoryStack(const int index );
 
+    // 隐藏自动补全视图
+    void slotHideCompleterView();
+
 private:
     void toggleSearchButtonState(bool asb = true);
     void pushUrlToHistoryStack(DUrl url);

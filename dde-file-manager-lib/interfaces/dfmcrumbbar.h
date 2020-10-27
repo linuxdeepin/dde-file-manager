@@ -43,6 +43,9 @@ public:
     void playAddressBarAnimation();
     void stopAddressBarAnimation();
 
+    // 隐藏自动补全视图
+    void hideCompleterView();
+
 public Q_SLOTS:
     void updateCurrentUrl(const DUrl &url);
 

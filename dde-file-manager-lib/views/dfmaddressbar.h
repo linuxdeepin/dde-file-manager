@@ -73,6 +73,9 @@ public:
     void playAnimation();
     void stopAnimation();
 
+    // 隐藏自动补全视图
+    void hideCompleterView();
+
 public slots:
     void hide();
 
