@@ -785,6 +785,11 @@ void DFileView::selectAllAfterCutOrCopy(const QList<DUrl> &list)
     QList<DUrl> lstNoValid;
 
     for (const DUrl &url : list) {
+
+        // 判断url是否为空路径
+        if(!url.isValid())
+            continue;
+
         const QModelIndex &index = model()->index(url);
 
         // 缓存没有刷新的文件对象
