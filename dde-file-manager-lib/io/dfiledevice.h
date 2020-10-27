@@ -41,7 +41,7 @@ public:
     virtual int handle() const;
     virtual bool resize(qint64 size);
     virtual bool flush();
-    virtual bool syncToDisk();
+    virtual bool syncToDisk(bool isVfat = false);
     virtual void closeWriteReadFailed(const bool bwrite);
     virtual void cancelAllOperate();
 

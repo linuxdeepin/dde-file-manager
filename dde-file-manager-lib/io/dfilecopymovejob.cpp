@@ -1824,6 +1824,8 @@ void DFileCopyMoveJobPrivate::checkTagetNeedSync()
     DStorageInfo targetStorageInfo(targetUrl.toLocalFile());
     if (!iseveryreadandwritesync && targetStorageInfo.isValid()) {
         const QString &fs_type = targetStorageInfo.fileSystemType();
+        m_isVfat = fs_type.contains("vfat");
+
         iseveryreadandwritesync = (fs_type == "vfat" || fs_type == "cifs");
     }
 }

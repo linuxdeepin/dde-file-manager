@@ -75,8 +75,9 @@ bool DLocalFileDevice::flush()
     return d->file.flush();
 }
 
-bool DLocalFileDevice::syncToDisk()
+bool DLocalFileDevice::syncToDisk(bool isVfat)
 {
+    Q_UNUSED(isVfat);
     Q_D(DLocalFileDevice);
 
     int ret = fdatasync(d->file.handle());

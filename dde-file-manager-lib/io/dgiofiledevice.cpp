@@ -389,23 +389,28 @@ bool DGIOFileDevice::flush()
     return ok;
 }
 
-bool DGIOFileDevice::syncToDisk()
+bool DGIOFileDevice::syncToDisk(bool isVfat)
 {
-    //fix 修复卡死问题，在vfat格式的U盘g_output_stream_flush无效，使用关闭再打开强制刷新
     Q_D(DGIOFileDevice);
+
     if (d->m_cancel.load()){
         return false;
     }
-    close();
-    if (d->m_cancel.load()){
-        return false;
+
+    if(!isVfat) {
+        return flush();
+    } else {
+        //fix 修复卡死问题，在vfat格式的U盘g_output_stream_flush无效，使用关闭再打开强制刷新
+        close();
+
+        if (d->m_cancel.load()){
+            return false;
+        }
+
+        if (!open(QIODevice::WriteOnly | QIODevice::Append))
+            return false;
+        return true;
     }
-    if (!open(QIODevice::WriteOnly | QIODevice::Append))
-        return false;
-    return true;
-    //old
-//    return flush();
-    //end
 }
 
 void DGIOFileDevice::closeWriteReadFailed(const bool bwrite)

@@ -174,6 +174,8 @@ public:
 
     bool btaskdailogclose = false;
 
+    bool m_isVfat = false;
+
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
 
