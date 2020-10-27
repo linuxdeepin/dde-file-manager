@@ -29,6 +29,7 @@
 #include "dfileservices.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include <dwidgetutil.h>
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -203,6 +204,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
                                    //     will select these files again in new window.
 
     if (m_windows.count() == 1){
+#if 0
         QPoint pos = QCursor::pos();
         QRect currentScreenGeometry;
 
@@ -216,7 +218,12 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
             currentScreenGeometry = qApp->primaryScreen()->geometry();
         }
 
+        // 使用下面的代码，该行代码在多屏模式下不居中
         window->moveCenter(currentScreenGeometry.center());
+#endif
+
+        // 解决多屏模式下，文管不在主屏幕的问题
+        Dtk::Widget::moveToCenter(window);
     }
 
     qApp->setActiveWindow(window);
