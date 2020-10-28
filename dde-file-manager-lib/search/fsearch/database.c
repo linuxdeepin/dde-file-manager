@@ -770,7 +770,9 @@ db_update_sort_index (Database *db)
 
     for (uint32_t i = 0; i < db->num_entries; ++i) {
         BTreeNode *node = darray_get_item (db->entries, i);
-        node->pos = i;
+        if (node) {
+            node->pos = i;
+        }
     }
 }
 
@@ -917,6 +919,13 @@ sort_by_name (const void *a, const void *b)
 {
     BTreeNode *node_a = *(BTreeNode **)a;
     BTreeNode *node_b = *(BTreeNode **)b;
+
+    if(!node_a) {
+        return -1;
+    }
+    if (!node_b) {
+        return 1;
+    }
 
     const bool is_dir_a = node_a->is_dir;
     const bool is_dir_b = node_b->is_dir;
