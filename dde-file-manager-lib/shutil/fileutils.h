@@ -35,6 +35,7 @@
 #include "durl.h"
 #include "dfmglobal.h"
 #include "dabstractfileinfo.h"
+#include "desktopinfo.h"
 
 /**
  * @class FileUtils

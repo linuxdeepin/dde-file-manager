@@ -20,11 +20,22 @@
 #include "controllers/vaultcontroller.h"
 #include "dfilemanagerwindow.h"
 
+#include <QWindow>
+
 DFMVaultPageBase::DFMVaultPageBase(QWidget *parent)
     : DDialog(parent)
 {
-    // 修复BUG-45226 设置该弹窗为模态弹窗
-    this->setModal(true);
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+        this->moveToCenter();
+    }
 }
 
 void DFMVaultPageBase::enterVaultDir()

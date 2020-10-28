@@ -137,6 +137,10 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
     int buffSize = 0;
     ioctl(inotifyFd, FIONREAD, (char *) &buffSize);
+    // fix task#36123 【自测】【桌面专业版】【SP2】【KLU】【Kirin990】【uos-20-klu-daliy-20200828-build004-4.19】【文件管理器】 文件管理器概率出现卡死
+    if (buffSize == 0) {
+        return;
+    }
     QVarLengthArray<char, 4096> buffer(buffSize);
     buffSize = static_cast<int>(read(inotifyFd, buffer.data(), static_cast<size_t>(buffSize)));
     char *at = buffer.data();

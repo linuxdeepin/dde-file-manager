@@ -56,7 +56,12 @@
 #include <QSharedPointer>
 #include <QAbstractItemView>
 #include <QtConcurrent/QtConcurrent>
+#include <QtGlobal>
 
+#ifdef __arm__
+// arm
+#include "./search/myfsearch.h"
+#endif
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 0
 
@@ -1222,6 +1227,10 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
 
         if (!info) {
+            // 华为mtp下删除，直接刷新
+            if (fileUrl.isMTPFile() && event.first == RmFile) {
+                q->refresh();
+            }
             continue;
         }
         if (event.first != AddFile) {
@@ -2612,7 +2621,6 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        if (fileHash.contains(fileInfo->fileUrl())) {
 //            continue;
 //        }
-        //fix bug 29914 fileInof为nullptr
         if (!fileInfo) {
             continue;
         }
@@ -2623,7 +2631,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
             continue;
         }
 
-//        qDebug() << "update node url = " << fileInfo->filePath();
+       // qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
         //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
         if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {

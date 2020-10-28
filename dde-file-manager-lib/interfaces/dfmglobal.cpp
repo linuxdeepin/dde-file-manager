@@ -72,6 +72,7 @@
 #include <QMediaPlayer>
 #include <QDBusObjectPath>
 #include <QRegularExpression>
+#include <QPainterPath>
 
 #include <private/qtextengine_p.h>
 
@@ -808,7 +809,6 @@ bool DFMGlobal::startWithSymbol(const QString &text)
 }
 
 #if 0
-//解决定义未使用警告
 static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
 {
     QTextDecoder decoder(QTextCodec::codecForName(codecName));
@@ -1063,6 +1063,20 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
 {
     if (DesktopFileInfo::computerDesktopFileUrl() == url)
         return isComputerDesktopFile(url);
+    return false;
+}
+
+bool DFMGlobal::isWayLand()
+{
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+    //在wayland平台下设置固定大小，解决属性框最大化问题
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        return true;
+    }
     return false;
 }
 

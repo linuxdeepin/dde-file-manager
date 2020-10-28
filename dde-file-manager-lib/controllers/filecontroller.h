@@ -90,6 +90,8 @@ private:
     void dealpasteEnd(const DUrlList &lsit, const QSharedPointer<DFMPasteEvent> &event) const;
     bool isExtDeviceJobCase(void *curJob, const DUrl &url) const;
     bool isDiscburnJobCase(void *curJob, const DUrl &url) const;
+    bool fileAdded(const DUrl &url) const;
+
 };
 
 #endif // FILECONTROLLER_H

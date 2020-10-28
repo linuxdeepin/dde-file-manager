@@ -30,6 +30,7 @@
 #include <DGuiApplicationHelper>
 #include <QTimer>
 #include <QException>
+#include <QPainterPath>
 
 #include "app/define.h"
 #include "dfileservices.h"
@@ -40,6 +41,7 @@ DWIDGET_USE_NAMESPACE
 
 #define MSG_LABEL_WITH 350
 #define SPEED_LABEL_WITH 100
+#define PausedState 2
 
 DFMElidedLable::DFMElidedLable(QWidget *parent)
     : QLabel(parent)
@@ -647,7 +649,6 @@ void DFMTaskWidget::onSpeedUpdated(qint64 speed)
 
 void DFMTaskWidget::onStateChanged(int state)
 {
-#define PausedState 2
     Q_D(DFMTaskWidget);
     if ((PausedState == state) == d->m_isPauseState) {
         return;

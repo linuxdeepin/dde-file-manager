@@ -589,7 +589,6 @@ void DFMSideBar::initUserShareItem()
         int index = findItem(DUrl::fromUserShareFile("/"));
         if (index == -1) {
             if (cnt > 0) {
-                //                DFileService::instance()->changeRootFile(url);
                 addItem(DFMSideBarDefaultItemHandler::createItem("UserShare"), groupName(Network));
             }
         } else {

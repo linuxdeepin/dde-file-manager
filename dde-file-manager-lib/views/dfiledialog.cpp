@@ -1285,7 +1285,7 @@ void DFileDialog::onAcceptButtonClicked()
                     DDialog dialog(this);
 
                     // NOTE(zccrs): dxcb bug
-                    if (!DPlatformWindowHandle::isEnabledDXcb(this)
+                    if ( (!DFMGlobal::isWayLand() && !DPlatformWindowHandle::isEnabledDXcb(this))
 #if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
                             || pwPluginVersionGreaterThen("1.1.8.3")
 #endif
