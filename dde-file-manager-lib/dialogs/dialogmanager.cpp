@@ -74,6 +74,7 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
+#include "utils/desktopinfo.h"
 
 #ifdef SW_LABEL
 #include "sw_label/llsdeepinlabellibrary.h"
@@ -622,6 +623,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
     d.exec();
+
 }
 
 void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)
@@ -1034,7 +1036,8 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
 
     if (!m_filePreviewDialog) {
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
-        DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
+        if (!DFMGlobal::isWayLand())
+            DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
     } else {
         m_filePreviewDialog->updatePreviewList(canPreivewlist);
     }
@@ -1293,7 +1296,9 @@ void DialogManager::raiseAllPropertyDialog()
         qDebug() << d->getUrl() << d->isVisible() << d->windowState();
 //        d->showMinimized();
         d->showNormal();
-        QtX11::utils::ShowNormalWindow(d);
+        if (!DesktopInfo().waylandDectected()) {
+            QtX11::utils::ShowNormalWindow(d);
+        }
         qobject_cast<QWidget *>(d)->showNormal();
         d->show();
         d->raise();

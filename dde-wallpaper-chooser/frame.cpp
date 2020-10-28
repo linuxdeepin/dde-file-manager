@@ -35,10 +35,12 @@
 #include "screensavercontrol.h"
 #include "button.h"
 #include "dfileservices.h"
+#include "desktopinfo.h"
 
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
 #endif
+#include "dfileservices.h"
 
 #include <DButtonBox>
 #include <DIconButton>
@@ -70,7 +72,6 @@ DGUI_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DFM_USE_NAMESPACE
 using namespace com::deepin;
-
 static bool previewBackground()
 {
     if (DWindowManagerHelper::instance()->windowManagerName() == DWindowManagerHelper::DeepinWM)
@@ -104,7 +105,16 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
     setFocusPolicy(Qt::NoFocus);
     setWindowFlags(Qt::BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
-
+    if (DesktopInfo().waylandDectected()){
+        winId();
+        auto win = windowHandle();
+        if (win){
+            qDebug() << "set wayland role override";
+            win->setProperty("_d_dwayland_window-type","wallpaper-set");
+        }else {
+            qCritical() << "wayland role error,windowHandle is nullptr!";
+        }
+    }
     setBlendMode(DBlurEffectWidget::BehindWindowBlend);
     initUI();
     initSize();

@@ -41,6 +41,7 @@
 #include <QApplication>
 #include <QAbstractItemView>
 #include <QVBoxLayout>
+#include <QPainterPath>
 #include <dgiosettings.h>
 #include <private/qtextengine_p.h>
 #include <DApplicationHelper>

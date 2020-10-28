@@ -180,6 +180,8 @@ public slots:
     void flickFolderToSidebar(const DUrl &fileUrl);
     void onOpenWithBntsChecked(QAbstractButton *w);
     void onHideFileCheckboxChecked(bool checked);
+    // 取消共享时停止动画效果
+    void onCancelShare();
 
 signals:
     void closed(const DUrl& url);

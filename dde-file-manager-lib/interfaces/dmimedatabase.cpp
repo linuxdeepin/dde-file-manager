@@ -119,27 +119,28 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     }
     QMimeType result;
     QString path = fileInfo.path();
-    bool isMatchExtension = isgvfs;
-    isMatchExtension = isMatchExtension ? isMatchExtension : mode == QMimeDatabase::MatchExtension;
-    if (!isMatchExtension) {
-        //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
-        if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
-                || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
-            QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
-                                                 QRegularExpression::DotMatchesEverythingOption
-                                                 | QRegularExpression::DontCaptureOption
-                                                 | QRegularExpression::OptimizeOnFirstUsageOption);
+    //fix bug 29124 #CPM2020070800063# 【Pangu-WBY0B 5.7.0.26(C233)+ BIOS 1.22】【HUAWEI】【OS】【VN1】【非用例】
+    // 系统盘右键打开属性窗口，关闭or不关闭，之后在文件管理器随意点击文件，文件管理器卡死。(一般+必现+不常用功能)（使用MatchExtension去获取mimetype）
+    bool isMatchExtension = (fileInfo.absoluteFilePath() == QString("/sys/kernel/security/apparmor/revision") ||
+                            fileInfo.absoluteFilePath() == QString("/sys/power/wakeup_count"))?
+                true : false;
+    //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
+    if (!isMatchExtension && (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
+                              || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile"))) {
+        QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
+                                  QRegularExpression::DotMatchesEverythingOption
+                                  | QRegularExpression::DontCaptureOption
+                                  | QRegularExpression::OptimizeOnFirstUsageOption);
 
-            const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
-                                                                QRegularExpression::DontCheckSubjectStringMatchOption);
+        const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
+                                                            QRegularExpression::DontCheckSubjectStringMatchOption);
 
-            isMatchExtension = match.hasMatch();
-        }
-        else {
-            // filemanger will be blocked when blacklist contais the filepath.
-            static const QStringList blacklist {"/sys/kernel/security/apparmor/revision", "/sys/power/wakeup_count", "/proc/kmsg"};
-            isMatchExtension = blacklist.contains(fileInfo.absoluteFilePath()) ? true : false;
-        }
+        isMatchExtension = match.hasMatch();
+    }
+    else {
+        // filemanger will be blocked when blacklist contais the filepath.
+        static const QStringList blacklist {"/sys/kernel/security/apparmor/revision", "/sys/power/wakeup_count", "/proc/kmsg"};
+        isMatchExtension = blacklist.contains(fileInfo.absoluteFilePath()) ? true : false;
     }
 
     if (isMatchExtension || mode == QMimeDatabase::MatchExtension || DStorageInfo::isLowSpeedDevice(path)) {

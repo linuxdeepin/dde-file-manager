@@ -29,6 +29,7 @@
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
+#include "desktopinfo.h"
 
 #include "filemanagerapp.h"
 #include "logutil.h"
@@ -78,6 +79,7 @@
 //         config file will never got saved.
 // blumia: Handling SIGTERM is a workaround way to fix that issue, but we still need to add
 //         session management support to DDE.
+
 void handleSIGTERM(int sig)
 {
     qDebug() << "!SIGTERM!" << sig;
@@ -124,6 +126,11 @@ DWIDGET_USE_NAMESPACE
 extern QPair<bool, QMutex> winId_mtx;
 int main(int argc, char *argv[])
 {
+
+    if (DFMGlobal::isWayLand()) {
+        qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
+    }
+
     winId_mtx.first = false;
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
@@ -136,12 +143,15 @@ int main(int argc, char *argv[])
         DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
     }
 
+    if (!DFMGlobal::isWayLand()){
+        //wayland下不加载xcb
+        SingleApplication::loadDXcbPlugin();
+    }
     // fix "Error mounting location: volume doesn't implement mount” when ope as admin (bug-42653)
     if (DFMGlobal::isOpenAsAdmin()) {
         handleEnvOfOpenAsAdmin();
     }
 
-    SingleApplication::loadDXcbPlugin();
     SingleApplication::initSources();
     SingleApplication app(argc, argv);
 
@@ -198,12 +208,7 @@ int main(int argc, char *argv[])
 
     // open as root
     if (CommandLineManager::instance()->isSet("r")) {
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        if (DFMGlobal::isWayLand()) {
             QString cmd = "xhost";
             QStringList args;
             args << "+";

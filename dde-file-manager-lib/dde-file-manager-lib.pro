@@ -11,6 +11,7 @@ include(../common/common.pri)
 QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs network
 #private
 QT       += gui-private
+LIBS	 += -lKF5Codecs
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -140,6 +141,9 @@ isEqual(BUILD_MINIMUM, YES){
     templateFiles.files = skin/templates/newDoc.doc \
         skin/templates/newExcel.xls \
         skin/templates/newPowerPoint.ppt \
+        skin/templates/newDoc.wps \
+        skin/templates/newExcel.et \
+        skin/templates/newPowerPoint.dps \
         skin/templates/newTxt.txt
 }
 

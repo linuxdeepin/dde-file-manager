@@ -521,23 +521,29 @@ void AppController::actionClearTrash(const QObject *sender)
 
 void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    quint64 windowId = event->windowId();
+    int windowId = event->windowId();
+    bool wayland = DesktopInfo().waylandDectected();
+    QString suffix = wayland ? "wps" : "doc";
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
-    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Document"), "doc", windowId);
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Document"), suffix, windowId);
 }
 
 void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    quint64 windowId = event->windowId();
+    int windowId = event->windowId();
+    bool wayland = DesktopInfo().waylandDectected();
+    QString suffix = wayland ? "et" : "xls";
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
-    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Spreadsheet"), "xls", windowId);
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Spreadsheet"), suffix, windowId);
 }
 
 void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    quint64 windowId = event->windowId();
+    int windowId = event->windowId();
+    bool wayland = DesktopInfo().waylandDectected();
+    QString suffix = wayland ? "dps" : "ppt";
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
-    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Presentation"), "ppt", windowId);
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Presentation"), suffix, windowId);
 }
 
 void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
