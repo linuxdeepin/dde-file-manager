@@ -51,10 +51,7 @@
 #include <QToolButton>
 #include <QPushButton>
 #include <QtGlobal>
-#ifdef __arm__
-// arm
-    #include "./search/myfsearch.h"
-#endif
+
 const int DToolBar::ButtonWidth = 24;
 const int DToolBar::ButtonHeight = 24;
 static const QSize iconSize(16, 16);
@@ -247,11 +244,7 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
         //m_searchBar->clearText();
         return;
     }
-#ifdef __arm__
-// arm
-        fsearch_Find(text.toStdString().c_str());//fsearch 开始搜索
-        qDebug()<<"fsearch text"<<text;
-#endif
+
     const QString &currentDir = QDir::currentPath();
     const DUrl &currentUrl = qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl();
 
@@ -400,11 +393,6 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setFlat(true);
         m_searchButtonAsbState = true;
-#ifdef __arm__
-// arm
-        fsearch_Init();//fsearch 搜索引擎初始化
-        qDebug()<<"fsearch init";
-#endif
     } else {
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
@@ -413,11 +401,6 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButtonAsbState = false;
         DFileManagerWindow* dfmWindow = qobject_cast<DFileManagerWindow*>(window());
         dfmWindow->toggleAdvanceSearchBar(false);
-#ifdef __arm__
-// arm
-        fsearch_Close();;//fsearch 搜索引擎关闭
-        qDebug()<<"fsearch close";
-#endif
     }
 }
 

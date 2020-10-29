@@ -1008,10 +1008,17 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
 
     if(DFMGlobal::isWayLand()){
         if(m_filePreviewDialog){
-            m_filePreviewDialog->deleteLater();
+            m_filePreviewDialog->close();
             m_filePreviewDialog = nullptr;
         }
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
+        //! 对话框关闭时回收FilePreviewDialog对象
+        m_filePreviewDialog->setAttribute(Qt::WA_DeleteOnClose);
+        //! 对话框关闭时m_filePreviewDialog对象置空
+        connect(m_filePreviewDialog, &FilePreviewDialog::signalCloseEvent, this, [=](){
+            m_filePreviewDialog->DoneCurrent();
+            m_filePreviewDialog = nullptr;
+        });
     }
     else {
         if (!m_filePreviewDialog) {
