@@ -81,6 +81,10 @@ include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
 include(src.pri)
 
+isEqual(ARCH, aarch64){
+    include(search/dfsearch.pri)
+}
+
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
