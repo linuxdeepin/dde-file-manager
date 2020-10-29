@@ -30,8 +30,12 @@
 #include "dlocalfiledevice.h"
 #include "models/trashfileinfo.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/masteredmediacontroller.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "shutil/fileutils.h"
+#include "dgiofiledevice.h"
+#include "deviceinfo/udisklistener.h"
+#include "app/define.h"
 
 #include <QMutex>
 #include <QTimer>
@@ -1020,12 +1024,12 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
     }
 
     if (fromInfo->filesCount() <= 0 && mode == DFileCopyMoveJob::CopyMode) {
-        QFileDevice::Permissions permissions;
+        QFileDevice::Permissions permissions = fromInfo->permissions();
         QString filePath = fromInfo->fileUrl().toLocalFile();
         if (VaultController::ins()->isVaultFile(filePath)) {
             permissions = VaultController::ins()->getPermissions(filePath);
-        } else {
-            permissions = fromInfo->permissions();
+        } else if (deviceListener->isFileFromDisc(fromInfo->path())) {
+            permissions |= MasteredMediaController::getPermissionsCopyToLocal();
         }
 
         handler->setPermissions(toInfo->fileUrl(), permissions);
@@ -1081,12 +1085,12 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
     if (toInfo) {
 
         // vault file fetch permissons separately.
-        QFileDevice::Permissions permissions;
+        QFileDevice::Permissions permissions = fromInfo->permissions();
         QString filePath = fromInfo->fileUrl().toLocalFile();
         if (VaultController::ins()->isVaultFile(filePath)) {
             permissions = VaultController::ins()->getPermissions(filePath);
-        } else {
-            permissions = fromInfo->permissions();
+        } else if (deviceListener->isFileFromDisc(fromInfo->path())) {
+            permissions |= MasteredMediaController::getPermissionsCopyToLocal();
         }
 
         handler->setPermissions(toInfo->fileUrl(), permissions);
@@ -1483,6 +1487,8 @@ open_file: {
     QString path = fromInfo->fileUrl().path();
     if (VaultController::isVaultFile(path)) {
         permissions = VaultController::getPermissions(path);
+    } else if (deviceListener->isFileFromDisc(fromInfo->path())) { // fix bug 52610: 从光盘中复制出来的文件权限为只读，与 ubuntu 策略保持一致，拷贝出来权限为 rw-rw-r--
+        permissions |= MasteredMediaController::getPermissionsCopyToLocal();
     }
 
     handler->setPermissions(toInfo->fileUrl(), /*source_info->permissions()*/permissions);

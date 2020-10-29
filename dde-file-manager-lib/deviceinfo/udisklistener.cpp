@@ -465,6 +465,18 @@ bool UDiskListener::isMountedRemovableDiskExits()
     return false;
 }
 
+bool UDiskListener::isFileFromDisc(const QString &filePath)
+{
+    const QMap<QString, UDiskDeviceInfoPointer> &&devices = getMountedRemovableDiskDeviceInfos();
+    foreach (auto d, devices) {
+        // d.getMountPoint() = file:///media/$USER/$DISKNAME while filePath = /media/$USER/$DISKNAME/$FILENAME
+        // so we should remove the schema to compare
+        if (d->optical() && filePath.startsWith("/" + d->getMountPoint().remove(FILE_ROOT)))
+            return true;
+    }
+    return false;
+}
+
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
 {
     qDebug() << diskInfo;
