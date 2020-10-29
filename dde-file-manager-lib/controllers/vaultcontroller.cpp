@@ -946,6 +946,16 @@ void VaultController::createVault(const DSecureString &passWord, QString lockBas
     auto createIfNotExist = [](const QString & path) {
         if (!QFile::exists(path)) {
             QDir().mkpath(path);
+        } else {    // 修复bug-52351 创建保险箱前，如果文件夹存在，则清空
+            QDir dir(path);
+            if(!dir.isEmpty()) {
+                QDirIterator dirsIterator(path, QDir::AllEntries | QDir::NoDotAndDotDot);
+                while(dirsIterator.hasNext()) {
+                    if(!dir.remove(dirsIterator.next())) {
+                        QDir(dirsIterator.filePath()).removeRecursively();
+                    }
+                }
+            }
         }
     };
 
