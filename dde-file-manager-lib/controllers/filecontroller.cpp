@@ -89,6 +89,7 @@
 #endif
 #ifdef DISABLE_QUICK_SEARCH
 #include "./search/dfsearch.h"
+#include "vaultcontroller.h"
 #endif
 
 class DFMQDirIterator : public DDirIterator
@@ -418,9 +419,10 @@ public:
             dfsearch = nullptr;
         }
     }
+
     static void callbackFunc(void *back, void *self)
     {
-        if (!self) {
+        if (!self || !back) {
             return;
         }
         DFMAnythingDirIterator *it = static_cast<DFMAnythingDirIterator *>(self);
@@ -428,27 +430,41 @@ public:
         uint32_t num_files;
         uint32_t num_results = 0;
         DatabaseSearch *result = static_cast<DatabaseSearch *>(back);
+        if (!result)
+            return;
         GPtrArray *results = result->results;
-        if (results) {
+        if (results && results->len > 0) {
             num_folders = result->num_folders;;
             num_files = result->num_files;
             num_results = results->len;
             for (uint32_t j = 0; j < num_results; j++) {
-                DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
-                QString strResult = printList(entry->node);
-                if (!strResult.isEmpty()) {
-                    /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
-                    QFileInfo fileInfo(strResult);
-                    QString fullPath = fileInfo.absoluteFilePath();
-                    QString filePath = fileInfo.absolutePath();
-                    if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath))
-                        it->searchResults.append(strResult);
+                if (results->len > 0 && results->pdata) {
+                    DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
+                    QString strResult = "";
+                    if (entry && entry->node) {
+                        strResult = printList(entry->node);
+                    }
+
+                    if (!strResult.isEmpty()) {
+                        /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
+                        QFileInfo fileInfo(strResult);
+                        QString fullPath = fileInfo.absoluteFilePath();
+                        QString filePath = fileInfo.absolutePath();
+                        if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath)) {
+                            // 修复klu-bug-51754
+                            // 刷选出保险箱内的文件,使其不被检索出来
+                            if (!VaultController::isVaultFile(it->dir.absolutePath()) && VaultController::isVaultFile(fullPath))
+                                continue;
+                            it->searchResults.append(strResult);
+                        }
+                    }
                 }
             }
             it->mDone = true;
             qDebug() << "-------callback:" << num_results;
         }
     }
+
     DUrl next() override
     {
         currentFileInfo.setFile(searchResults.takeFirst());
