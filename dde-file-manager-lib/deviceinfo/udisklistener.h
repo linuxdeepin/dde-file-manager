@@ -98,6 +98,8 @@ public:
 
     bool isMountedRemovableDiskExits();
 
+    bool isFileFromDisc(const QString &filePath); // 文件是否来自光盘
+
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);
     void volumeRemoved(UDiskDeviceInfoPointer device);

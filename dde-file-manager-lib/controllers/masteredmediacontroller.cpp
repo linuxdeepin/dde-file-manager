@@ -478,5 +478,14 @@ DUrl MasteredMediaController::getStagingFolder(DUrl dst)
     return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
                   + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
                   + dst.burnDestDevice().replace('/','_')
-                  + dst.burnFilePath());
+                               + dst.burnFilePath());
+}
+
+QFileDevice::Permissions MasteredMediaController::getPermissionsCopyToLocal()
+{
+    // 基础的 rw-rw-r-- 权限
+    static const QFileDevice::Permissions permissionsToLocal = (QFileDevice::WriteUser | QFileDevice::ReadUser
+            | QFileDevice::WriteGroup | QFileDevice::ReadGroup
+            | QFileDevice::ReadOther);
+    return permissionsToLocal;
 }
