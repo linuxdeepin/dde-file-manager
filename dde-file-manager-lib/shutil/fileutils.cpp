@@ -136,7 +136,9 @@ void FileUtils::recurseFolder(const QString &path, const QString &parent,
         QString current = parent + QDir::separator() + files.at(i);
         QString next = path + QDir::separator() + files.at(i);
         list->append(current);
-        if (QFileInfo(next).isDir()) {
+
+        // fix bug#52386 【x86】【robot】【文件管理器】删除~/.deepinwine目录下的文件夹导致系统内存泄露
+        if (QFileInfo(next).isDir() && !QFileInfo(next).isSymLink()) {
             recurseFolder(next, current, list);
         }
     }
