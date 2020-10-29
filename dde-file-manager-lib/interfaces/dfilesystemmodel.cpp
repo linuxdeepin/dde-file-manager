@@ -58,10 +58,6 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QtGlobal>
 
-#ifdef __arm__
-// arm
-#include "./search/myfsearch.h"
-#endif
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 0
 

@@ -303,6 +303,7 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
 
 void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
+    emit signalCloseEvent();
     if (m_preview) {
         m_preview->stop();
         if(DFMGlobal::isWayLand()){
@@ -602,6 +603,13 @@ void FilePreviewDialog::done(int r)
             m_preview->deleteLater();
             m_preview = nullptr;
         }
+    }
+}
+
+void FilePreviewDialog::DoneCurrent()
+{
+    if(m_preview){
+        m_preview->DoneCurrent();
     }
 }
 

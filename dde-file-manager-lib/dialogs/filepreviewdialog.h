@@ -76,6 +76,11 @@ public:
 
     void done(int r) override;
 
+    void DoneCurrent();
+
+signals:
+    void signalCloseEvent();
+
 public slots:
     void playCurrentPreviewFile();
 
