@@ -54,6 +54,7 @@ public:
 
 public:
     static DUrl getStagingFolder(DUrl dst);
+    static QFileDevice::Permissions getPermissionsCopyToLocal();
 };
 
 #endif // MASTEREDMEDIACONTROLLER_H

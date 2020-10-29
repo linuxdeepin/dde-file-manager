@@ -30,9 +30,12 @@
 #include "dlocalfiledevice.h"
 #include "models/trashfileinfo.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/masteredmediacontroller.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "shutil/fileutils.h"
 #include "dgiofiledevice.h"
+#include "deviceinfo/udisklistener.h"
+#include "app/define.h"
 
 #include <QMutex>
 #include <QTimer>
@@ -830,6 +833,8 @@ process_file:
                 QString path = source_info->fileUrl().path();
                 if (VaultController::isVaultFile(path)) {
                     permissions = VaultController::getPermissions(path);
+                } else if (deviceListener->isFileFromDisc(source_info->path())) {
+                    permissions |= MasteredMediaController::getPermissionsCopyToLocal();
                 }
 
                 handler->setPermissions(new_file_info->fileUrl(), /*source_info->permissions()*/permissions);
@@ -962,12 +967,12 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
     if (toInfo) {
 
         // vault file fetch permissons separately.
-        QFileDevice::Permissions permissions;
+        QFileDevice::Permissions permissions = fromInfo->permissions();
         QString filePath = fromInfo->fileUrl().toLocalFile();
         if (VaultController::ins()->isVaultFile(filePath)) {
             permissions = VaultController::ins()->getPermissions(filePath);
-        } else {
-            permissions = fromInfo->permissions();
+        } else if (deviceListener->isFileFromDisc(fromInfo->path())) {
+            permissions |= MasteredMediaController::getPermissionsCopyToLocal();
         }
 
         handler->setPermissions(toInfo->fileUrl(), permissions);
