@@ -1217,7 +1217,7 @@ open_file: {
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
         if (iseveryreadandwritesync && size_write > 0) {
             toDevice->inherits("");
-            toDevice->syncToDisk();
+            toDevice->syncToDisk(m_isVfat);
         }
 
         if (Q_UNLIKELY(size_write != size_read)) {
