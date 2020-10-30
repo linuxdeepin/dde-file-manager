@@ -215,6 +215,12 @@ signals:
     /*rename a tag*/
     void requestRenameTag(const DUrl& oldTagUrl);
 
+    /*stop cd scan timer，擦除光盘、刻录光盘时停止定时器*/
+    void stopCdScanTimer(const QString &strDevice);
+
+    // 在擦除光盘完成后重启定时器
+    void restartCdScanTimer(const QString &strDevice);
+
     // 激活任务进度对话框
     void activeTaskDlg();
 

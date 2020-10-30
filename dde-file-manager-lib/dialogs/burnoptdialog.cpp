@@ -87,6 +87,7 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                                          : d->le_volname->text().trimmed();
 
             if (index == 1) {
+                emit fileSignalManager->stopCdScanTimer(device);
                 if (d->image_file.path().length() == 0) {
                     QtConcurrent::run([=] {
                         FileJob *job = new FileJob(FileJob::OpticalBurn);

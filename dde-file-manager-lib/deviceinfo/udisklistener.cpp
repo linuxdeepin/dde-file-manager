@@ -48,11 +48,13 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
+#include <DSysInfo>
 #include <QSettings>
 #include <QProcess>
 #include <QStorageInfo>
 #include <QUrlQuery>
 
+DCORE_USE_NAMESPACE
 
 class UDiskFileWatcher;
 class UDiskFileWatcherPrivate : public DAbstractFileWatcherPrivate
@@ -97,11 +99,60 @@ UDiskListener::UDiskListener(QObject *parent):
 void UDiskListener::initDiskManager()
 {
     m_diskMgr = new DDiskManager(this);
+    m_diskTimer = new QTimer(this);
     m_diskMgr->setWatchChanges(true);
     QStringList blDevList = m_diskMgr->blockDevices();
     for (const QString &str : blDevList) {
         insertFileSystemDevice(str);
     }
+
+// 以下这段定时器代码可解决打开光驱访问文件后，物理弹出光驱，文管界面却没能卸载光驱设备的问题。
+    connect(m_diskTimer, &QTimer::timeout, this, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
+        // 服务器版本会刷系统日志
+        if (DSysInfo::deepinType() == DSysInfo::DeepinServer)
+            return;
+        for (int i = 0; i < m_list.size(); i++) {
+            UDiskDeviceInfoPointer info = m_list.at(i);
+            //qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
+            QString t_device = info->getDiskInfo().drive_unix_device();
+
+            //监测光驱托盘是否被弹出
+            if (t_device.contains("/dev/sr")) {
+
+                int t_cdromfd;
+                /* only try to open read/write if not root, since it doesn't seem
+                 * to make a difference for root and can have negative side-effects
+                 */
+                if (geteuid()) {
+                    t_cdromfd = open(t_device.toLatin1().data(), O_RDWR | O_NONBLOCK);
+                    if (t_cdromfd != -1) {
+                        close(t_cdromfd);
+//                        t_cdromfd = open(t_device.toLatin1().data(), O_RDONLY | O_NONBLOCK);
+//                        if (t_cdromfd == -1) {
+//                            qDebug() << "unable to open" << t_device.toLatin1().data();
+//                        }
+
+//                        int t_status;
+//                        t_status = ioctl(t_cdromfd, CDROM_DRIVE_STATUS);
+//                        qDebug() << "t_cdromfd " << t_status;
+//                        if (t_status == CDS_TRAY_OPEN) {
+////                            unmount(t_device);
+//                            close(t_cdromfd);
+//                        }
+
+//                        close(t_cdromfd);
+                    }
+                }
+
+//                QStringList t_arglst;
+
+//                t_arglst << "-t";
+//                t_arglst << t_device;
+
+//                QProcess::execute("eject", t_arglst);
+            }
+        }
+    });
 }
 
 void UDiskListener::initConnect()
@@ -115,6 +166,21 @@ void UDiskListener::initConnect()
     connect(gvfsMountManager, &GvfsMountManager::volume_added, this, &UDiskListener::addVolumeDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::volume_removed, this, &UDiskListener::removeVolumeDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::volume_changed, this, &UDiskListener::changeVolumeDiskInfo);
+
+    connect(fileSignalManager, &FileSignalManager::stopCdScanTimer, this, [ = ](const QString &strDev) {
+        Q_UNUSED(strDev)
+        if (m_diskTimer->isActive()) {
+            m_diskTimer->stop();
+            qDebug() << "timer stop, curr cdrom:" << m_nCDRomCount;
+        }
+    });
+    connect(fileSignalManager, &FileSignalManager::restartCdScanTimer, this, [ = ](const QString &strDev) {
+        Q_UNUSED(strDev)
+        if (m_nCDRomCount > 0 && !m_diskTimer->isActive()) {
+            m_diskTimer->start(3000);
+            qDebug() << "timer restart, curr cdrom:" << m_nCDRomCount;
+        }
+    });
 }
 
 UDiskDeviceInfoPointer UDiskListener::getDevice(const QString &id)
@@ -136,7 +202,15 @@ void UDiskListener::addDevice(UDiskDeviceInfoPointer device)
                                       &DAbstractFileWatcher::subfileCreated,
                                       DUrl::fromDeviceId(device->getId()));
 
-
+    if (device->getDiskInfo().drive_unix_device().contains("/dev/sr")) {// 探测到有光驱设备接入，启动光驱设备检测定时器
+        m_nCDRomCount++;
+        if (!m_diskTimer)
+            m_diskTimer = new QTimer;
+        if (!m_diskTimer->isActive()) {
+            m_diskTimer->start(3000);
+            qDebug() << "timer start, curr cdrom:" << m_nCDRomCount;
+        }
+    }
     emit volumeAdded(device);
 }
 
@@ -144,6 +218,13 @@ void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
 {
     m_list.removeOne(device);
     m_map.remove(device->getDiskInfo().id());
+    if (device->getDiskInfo().drive_unix_device().contains("/dev/sr")) {
+        m_nCDRomCount--;
+        if (m_nCDRomCount == 0) {
+            m_diskTimer->stop();
+            qDebug() << "timer stop, curr cdrom: " << m_nCDRomCount;
+        }
+    }
 
     DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
                                       &DAbstractFileWatcher::fileDeleted,
