@@ -210,7 +210,17 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
         d->proxyOnDisk = QPointer<DAbstractFileWatcher>(new DFileWatcher(url_mountpoint.path()));
         d->proxyOnDisk->moveToThread(thread());
         d->proxyOnDisk->setParent(this);
-        connect(d->proxyOnDisk, &DAbstractFileWatcher::fileDeleted, this, [this, url] {emit fileDeleted(url);});
+        connect(d->proxyOnDisk, &DAbstractFileWatcher::fileDeleted, this, [this, url, url_mountpoint] (DUrl deletedUrl) {
+            // 光盘挂载点中的文件可能被删除 (如:wps 打开文件时会创建一个临时文件, 关闭时删除) 导致此信号被触发
+            // 此时若使用 url 会导致意外跳转主目录
+            QString mountPath = url_mountpoint.toLocalFile();
+            QString deletedPath = deletedUrl.toLocalFile();
+            if (QUrl(mountPath) == QUrl(deletedPath)) {
+                emit fileDeleted(url);
+            } else {
+                emit fileDeleted(deletedUrl);
+            }
+        });
     }
     /*
      * blank disc doesn't mount
