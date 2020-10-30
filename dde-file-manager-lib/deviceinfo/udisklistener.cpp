@@ -470,10 +470,10 @@ bool UDiskListener::isFileFromDisc(const QString &filePath)
 {
     const QMap<QString, UDiskDeviceInfoPointer> &&devices = getMountedRemovableDiskDeviceInfos();
     foreach (auto d, devices) {
-        // d.getMountPoint() = file:///media/$USER/$DISKNAME while filePath = /media/$USER/$DISKNAME/$FILENAME
-        // so we should remove the schema to compare
-        if (d->optical() && filePath.startsWith("/" + d->getMountPoint().remove(FILE_ROOT)))
+        if (d->optical() && filePath.startsWith(d->getMountPointUrl().path())) {
+            qDebug() << "copy src file from disc!";
             return true;
+        }
     }
     return false;
 }
