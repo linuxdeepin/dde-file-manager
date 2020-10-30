@@ -23,11 +23,10 @@
  */
 
 #include "logutil.h"
-#include "commandlinemanager.h"
-#include <DLog>
+#include "log/dfmLogManager.h"
+#include "log/filterAppender.h"
 
-DCORE_USE_NAMESPACE
-
+DFM_USE_NAMESPACE
 LogUtil::LogUtil()
 {
 
@@ -40,9 +39,8 @@ LogUtil::~LogUtil()
 
 void LogUtil::registerLogger()
 {
-//#if !defined(QT_NO_DEBUG)
-    DLogManager::registerConsoleAppender();
-//#endif
-    DLogManager::registerFileAppender();
-    Logger::globalInstance()->logToGlobalInstance("file.job", true);
+    DFMLogManager::registerConsoleAppender();
+    DFMLogManager::registerFileAppender();
+
+    DFMLogManager::getLogger()->logToGlobalInstance("file.job", true);
 }

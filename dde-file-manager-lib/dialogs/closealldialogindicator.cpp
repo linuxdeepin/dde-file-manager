@@ -28,12 +28,13 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QKeyEvent>
+#include <QDBusInterface>
 #include "shutil/fileutils.h"
 #include "accessible/libframenamedefine.h"
 
 CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : DAbstractDialog(parent)
 {
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setFocusPolicy(Qt::NoFocus);
     setObjectName(DIALOGS_CLOSE_ALL_DIALOG_INDICATOR);
 
@@ -89,9 +90,25 @@ void CloseAllDialogIndicator::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
+    //! task 36981 使用Dbus获取dock高度计算对话框显示位置
+    QDBusInterface deepin_dockInfo("com.deepin.dde.daemon.Dock",
+                                   "/com/deepin/dde/daemon/Dock",
+                                   "com.deepin.dde.daemon.Dock",
+                                   QDBusConnection::sessionBus(), this);
+
+    int dockHeight = 0;
+    if(deepin_dockInfo.isValid())
+    {
+        QVariant temp = deepin_dockInfo.property("WindowSizeEfficient");
+        dockHeight = temp.toInt();
+    }
+
     QRect screenGeometry = qApp->desktop()->availableGeometry();
 
-    move((screenGeometry.width() - width()) / 2, screenGeometry.height() - height());
+    int geometryHeight = screenGeometry.height() - dockHeight;
+    int geometryWidth = screenGeometry.width();
+
+    move((geometryWidth - width()) / 2, geometryHeight - height());
 
     return DAbstractDialog::showEvent(event);
 }

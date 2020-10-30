@@ -42,35 +42,35 @@ public:
 
     static bool findExecutable(const QString &executableName, const QStringList &paths = QStringList());
 
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
-    const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
+    const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
 
-    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
-    bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const Q_DECL_OVERRIDE;
-    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const Q_DECL_OVERRIDE;
-    bool openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const Q_DECL_OVERRIDE;
-    bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const Q_DECL_OVERRIDE;
-    bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const Q_DECL_OVERRIDE;
-    bool decompressFileHere(const QSharedPointer<DFMDecompressEvent> &event) const Q_DECL_OVERRIDE;
-    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const Q_DECL_OVERRIDE;
-    bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const Q_DECL_OVERRIDE;
-    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
-    DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const Q_DECL_OVERRIDE;
-    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const Q_DECL_OVERRIDE;
-    bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const Q_DECL_OVERRIDE;
-    bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const Q_DECL_OVERRIDE;
+    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const override;
+    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
+    bool openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const override;
+    bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const override;
+    bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const override;
+    bool decompressFileHere(const QSharedPointer<DFMDecompressEvent> &event) const override;
+    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
+    bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
+    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
+    DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
+    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
+    bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const override;
+    bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const override;
 
     bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
 
-    bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const Q_DECL_OVERRIDE;
-    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;
-    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const Q_DECL_OVERRIDE;
+    bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const override;
+    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const override;
+    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const override;
 
     bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const override;
     bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const override;
-    bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const Q_DECL_OVERRIDE;
+    bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
-    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
     DFM_NAMESPACE::DFileDevice *createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
     DFM_NAMESPACE::DFileHandler *createFileHandler(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
     DFM_NAMESPACE::DStorageInfo *createStorageInfo(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
@@ -78,9 +78,9 @@ public:
     static bool customHiddenFileMatch(const QString &absolutePath, const QString &fileName);
     static bool privateFileMatch(const QString &absolutePath, const QString &fileName);
 
-    bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const Q_DECL_OVERRIDE;
-    bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const Q_DECL_OVERRIDE;
-    QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
+    bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
+    bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
+    QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const override;
 
 private:
     QString checkDuplicateName(const QString &name) const;
@@ -90,6 +90,8 @@ private:
     void dealpasteEnd(const DUrlList &lsit, const QSharedPointer<DFMPasteEvent> &event) const;
     bool isExtDeviceJobCase(void *curJob, const DUrl &url) const;
     bool isDiscburnJobCase(void *curJob, const DUrl &url) const;
+    bool fileAdded(const DUrl &url) const;
+
 };
 
 #endif // FILECONTROLLER_H

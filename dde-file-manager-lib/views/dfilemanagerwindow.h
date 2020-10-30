@@ -101,6 +101,7 @@ public:
     bool isAdvanceSearchBarVisible();
     void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
     void showFilterButton();
+    void closeUnAvailableTabs();
 
 signals:
     void aboutToClose();
@@ -147,13 +148,13 @@ protected:
     void showEvent(QShowEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
-    void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void moveEvent(QMoveEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
     bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) override;
-    QObject *object() const Q_DECL_OVERRIDE;
+    QObject *object() const override;
 
     virtual void handleNewView(DFMBaseView *view);
 

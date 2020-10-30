@@ -50,6 +50,8 @@
 #include <QDebug>
 #include <QToolButton>
 #include <QPushButton>
+#include <QtGlobal>
+
 const int DToolBar::ButtonWidth = 24;
 const int DToolBar::ButtonHeight = 24;
 static const QSize iconSize(16, 16);

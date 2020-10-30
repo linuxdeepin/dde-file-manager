@@ -19,8 +19,8 @@ public:
     explicit DFileProxyWatcherPrivate(DFileProxyWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
-    bool start() Q_DECL_OVERRIDE;
-    bool stop() Q_DECL_OVERRIDE;
+    bool start() override;
+    bool stop() override;
 
     QPointer<DAbstractFileWatcher> proxy;
     std::function<DUrl(const DUrl &)> urlConvertFun;

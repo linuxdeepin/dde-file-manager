@@ -34,7 +34,7 @@ class SectionKeyLabel: public QLabel
     Q_OBJECT
 
 public:
-    explicit SectionKeyLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
+    explicit SectionKeyLabel(const QString &text = "", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 };
 
 class SectionValueLabel: public QLabel
@@ -42,13 +42,13 @@ class SectionValueLabel: public QLabel
     Q_OBJECT
 
 public:
-    explicit SectionValueLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
+    explicit SectionValueLabel(const QString &text = "", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 
 protected:
     //! Set the width of the label after the font is changed
     virtual bool event(QEvent *e) override;
     //! Set the width of the label after the selected file changes
-    virtual void showEvent(QShowEvent * e) override;
+    virtual void showEvent(QShowEvent *e) override;
 };
 
 class LinkSectionValueLabel: public SectionValueLabel
@@ -56,13 +56,13 @@ class LinkSectionValueLabel: public SectionValueLabel
     Q_OBJECT
 
 public:
-    explicit LinkSectionValueLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
+    explicit LinkSectionValueLabel(const QString &text = "", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 
     DUrl linkTargetUrl() const;
     void setLinkTargetUrl(const DUrl &linkTargetUrl);
 
 protected:
-    void mouseReleaseEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     DUrl m_linkTargetUrl;

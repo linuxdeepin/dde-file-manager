@@ -46,7 +46,7 @@ class WallpaperItem : public QFrame
 
 public:
     WallpaperItem(QFrame *parent = nullptr, const QString &path = "");
-    ~WallpaperItem();
+    ~WallpaperItem() override;
 
     void slideUp();
     void slideDown();
@@ -87,11 +87,11 @@ public slots:
     void focusLastButton();
 
 protected:
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
-    void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
@@ -105,11 +105,11 @@ private:
 
     QVBoxLayout *m_buttonLayout = nullptr;
 
-    WrapperWidget * m_wrapper = nullptr;
-    QPropertyAnimation * m_upAnim = nullptr;
-    QPropertyAnimation * m_downAnim = nullptr;
+    WrapperWidget *m_wrapper = nullptr;
+    QPropertyAnimation *m_upAnim = nullptr;
+    QPropertyAnimation *m_downAnim = nullptr;
 
-    QFutureWatcher<QPixmap> * m_thumbnailerWatcher = nullptr;
+    QFutureWatcher<QPixmap> *m_thumbnailerWatcher = nullptr;
 
     void initUI();
     void initAnimation();

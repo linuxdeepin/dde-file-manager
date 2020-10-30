@@ -92,6 +92,76 @@ DWIDGET_USE_NAMESPACE
 
 #define DEFAULT_HEADER_SECTION_WIDTH 140
 
+#define LOOPNUM             10      // 判断文件是否存在的循环次数
+#define WAITTIME            10     // 判断没有文件是否存在的间隔时间
+
+SelectWork::SelectWork(QObject *parent)
+    : QThread(parent)
+    , m_pModel(nullptr)
+    , m_bStop(false)
+{
+
+}
+
+void SelectWork::setInitData(QList<DUrl> lst, DFileSystemModel *model)
+{
+    // 修复bug-51429 bug-51039 bug-51503
+    // 解决拷贝/剪贴文件到保险箱,文件没有选中问题
+    QList<DUrl>::iterator itr = lst.begin();
+    for (; itr != lst.end(); ++itr) {
+        QString path = (*itr).toLocalFile();
+        if (VaultController::isVaultFile(path)) {
+            DUrl url(VaultController::localToVault(path));
+            *itr = url;
+        }
+    }
+    m_lstNoValid = lst;
+    m_pModel = model;
+}
+
+void SelectWork::startWork()
+{
+    m_bStop = false;
+    start();
+}
+
+void SelectWork::stopWork()
+{
+    m_bStop = true;
+}
+
+void SelectWork::run()
+{
+    msleep(WAITTIME);
+    // 判断当前是否存在未处理的文件
+    if (!m_lstNoValid.isEmpty()) {
+        QList<DUrl>::iterator itr = m_lstNoValid.begin();
+        int loopNum = 0;
+        while (itr != m_lstNoValid.end()) {
+            msleep(WAITTIME);
+            // 修复bug-51429 bug-51039 bug-51503
+            // 增加一个结束判断,当重复判断一个文件LOOPNUM次都不存在后,不在选中该文件
+            if (loopNum > LOOPNUM)
+                itr = m_lstNoValid.erase(itr);
+            if (m_bStop)
+                break;
+            if (!m_pModel)
+                break;
+            const QModelIndex &index = m_pModel->index(*itr);
+            if (index.isValid()) {
+                // 发送信号选中该文件
+                emit sigSetSelect(*itr);
+                itr = m_lstNoValid.erase(itr);
+                loopNum = 0;
+            } else {
+                ++loopNum;
+            }
+        }
+    }
+    // 刷新模型
+    m_pModel->update();
+}
+
 class DFileViewPrivate
 {
 public:
@@ -179,7 +249,7 @@ public:
     int lastVisibleColumn = -1;
     int cachedViewWidth = -1;
     int touchTapDistance = -1;
-
+    int showCount = 0;  //记录showEvent次数，为了在第一次时去调整列表模式的表头宽度
     DFileView::RandeIndex visibleIndexRande;
 
     bool allowedAdjustColumnSize = true;
@@ -215,6 +285,12 @@ DFileView::DFileView(QWidget *parent)
     initDelegate();
     initConnects();
 
+    // 修复KLU TASK-37638
+    // 初始化子线程
+    m_pSelectWork = new SelectWork();
+    connect(m_pSelectWork, &SelectWork::sigSetSelect,
+            this, &DFileView::slotSetSelect);
+
     setIconSizeBySizeIndex(DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel).toInt());
     d->updateStatusBarTimer = new QTimer;
     d->updateStatusBarTimer->setInterval(100);
@@ -233,6 +309,7 @@ DFileView::~DFileView()
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
 
     //所有的槽函数必须跑完才能析构
+    QMutexLocker lk(&d_ptr->m_mutex);
     QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
 
 }
@@ -676,11 +753,10 @@ void DFileView::select(const QList<DUrl> &list)
     QModelIndex lastIndex;
     const QModelIndex &root = rootIndex();
     clearSelection();
-
     for (const DUrl &url : list) {
         const QModelIndex &index = model()->index(url);
 
-        if (index == root || !index.isValid()) {
+        if (!index.isValid() || index == root) {
             continue;
         }
 
@@ -697,6 +773,63 @@ void DFileView::select(const QList<DUrl> &list)
 
     if (firstIndex.isValid())
         scrollTo(firstIndex, PositionAtTop);
+}
+
+void DFileView::selectAllAfterCutOrCopy(const QList<DUrl> &list)
+{
+    QModelIndex firstIndex;
+    QModelIndex lastIndex;
+    const QModelIndex &root = rootIndex();
+    clearSelection();
+
+    // 修复KLU TASK-37638 缓存为选中的拷贝或剪贴文件
+    QList<DUrl> lstNoValid;
+
+    for (const DUrl &url : list) {
+        const QModelIndex &index = model()->index(url);
+
+        // 缓存没有刷新的文件对象
+        if (!index.isValid()) {
+            lstNoValid.push_back(url);
+            continue;
+        }
+
+        if (index == root) {
+            continue;
+        }
+
+        // 将文件对象设置成选中状态
+        selectionModel()->select(index, QItemSelectionModel::Select);
+
+        if (!firstIndex.isValid())
+            firstIndex = index;
+
+        lastIndex = index;
+    }
+
+    if (lastIndex.isValid())
+        selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
+
+    if (firstIndex.isValid())
+        scrollTo(firstIndex, PositionAtTop);
+
+    // 修复KLU TASK-37638 启动子线程，选中为选中的拷贝或剪贴的文件
+    if (!lstNoValid.isEmpty()) {
+        if (m_pSelectWork->isRunning()) {
+            m_pSelectWork->stopWork();
+            m_pSelectWork->wait();
+        }
+        // 启动子线程
+        m_pSelectWork->setInitData(lstNoValid, model());
+        m_pSelectWork->startWork();
+    }
+}
+
+void DFileView::slotSetSelect(DUrl url)
+{
+    const QModelIndex &index = model()->index(url);
+    if (index.isValid())
+        selectionModel()->select(index, QItemSelectionModel::Select);
 }
 
 void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
@@ -884,6 +1017,10 @@ void DFileView::onRowCountChanged()
 {
     //所有的槽函数必须跑完才能析构
     QPointer<DFileView> me = this;
+    QMutexLocker lk(&d_ptr->m_mutex);
+    if (!me) {
+        return;
+    }
 
 #ifndef CLASSICAL_SECTION
     static_cast<DFileSelectionModel *>(selectionModel())->m_selectedList.clear();
@@ -1116,6 +1253,7 @@ void DFileView::showEvent(QShowEvent *event)
     DFileMenuManager::setActionWhitelist(d->menuWhitelist);
     DFileMenuManager::setActionBlacklist(d->menuBlacklist);
 
+    d->showCount++;
     setFocus();
 }
 
@@ -1359,7 +1497,7 @@ void DFileView::updateStatusBar()
     }
     if (model()->state() != DFileSystemModel::Idle)
         return;
-  
+
     //若处于触摸滑动中，延时该更新，因为当前版本QT加速回弹动画会被子节点setText打断
     if (QScroller::hasScroller(this)) {
         d_ptr->updateStatusBarTimer->stop();
@@ -1381,7 +1519,14 @@ void DFileView::updateStatusBar()
     }
     event.setData(corectUrls);
     int count = selectedIndexCount();
-
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+        return;
+    }
+    if (!me) {
+        qDebug() << "DFileView is null,so exit";
+        return;
+    }
     notifySelectUrlChanged(corectUrls);
     if (count == 0) {
         d->statusBar->itemCounted(event, this->count());
@@ -1612,7 +1757,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
         return;
 
     for (const auto &url : m_urlsForDragEvent) {
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
 
         // a symlink that points to a non-existing file QFileInfo::isReadAble() returns false
         if (!fileInfo || (!fileInfo->isSymLink() && !fileInfo->isReadable())) {
@@ -2391,14 +2536,18 @@ bool DFileView::setRootUrl(const DUrl &url)
         } else {
             d->headerOpticalDisc->updateDiscInfo(fileUrl.burnDestDevice());
             d->headerOpticalDisc->show();
-            if (blkdev->mountPoints().empty()) {
+            auto points = blkdev->mountPoints();
+            if (points.empty()) {
                 blkdev->mount({});
+                // 挂载后更新缓存的挂载点
+                points = blkdev->mountPoints();
             }
             if (!blkdev->mountPoints().empty()) {
                 d->headerOpticalDisc->setDiscMountPoint(blkdev->mountPoints()[0]);
             } else {
                 d->headerOpticalDisc->setDiscMountPoint("");
             }
+            d->headerOpticalDisc->setDefaultDiscName(blkdev->idLabel());
         }
     } else {
         d->headerOpticalDisc->hide();
@@ -3276,6 +3425,13 @@ void DFileViewPrivate::updateHorizontalScrollBarPosition()
 void DFileViewPrivate::pureResizeEvent(QResizeEvent *event)
 {
     Q_Q(DFileView);
+
+    if (currentViewMode == DFileView::ListMode) { //修复分非列表模式启动崩溃
+        if (showCount == 1) { //fix 任务25717 文件管理器窗口默认以列表视图显示时，开启文件管理器窗口，列表视图未适配窗口大小。
+            adjustFileNameCol = q->width() >= headerView->width();
+            showCount ++; //次数比实际次数多一次，跳过1
+        }
+    }
 
     if (!allowedAdjustColumnSize) {
         // auto switch list mode

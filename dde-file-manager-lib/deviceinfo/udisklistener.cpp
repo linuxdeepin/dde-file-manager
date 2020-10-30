@@ -59,7 +59,7 @@ class UDiskFileWatcher;
 class UDiskFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    UDiskFileWatcherPrivate(DAbstractFileWatcher *qq)
+    explicit UDiskFileWatcherPrivate(DAbstractFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override
@@ -106,7 +106,10 @@ void UDiskListener::initDiskManager()
     }
 
 // 以下这段定时器代码可解决打开光驱访问文件后，物理弹出光驱，文管界面却没能卸载光驱设备的问题。
-    connect(m_diskTimer, &QTimer::timeout, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
+    connect(m_diskTimer, &QTimer::timeout, this, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
+        // 服务器版本会刷系统日志
+        if (DFMGlobal::isServerSys())
+            return;
         for (int i = 0; i < m_list.size(); i++) {
             UDiskDeviceInfoPointer info = m_list.at(i);
             //qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
@@ -455,8 +458,9 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByPath(const QString &path)
     }
     return UDiskDeviceInfoPointer();
 }
-
-UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
+// fix task 29259 ,在判断空白光驱时就返回，是没有找到要用的UDiskDeviceInfoPointer，需要找的info在m_list中的位置在空白光驱之后，所以就不能直接返回
+// 使用bshareuse，是在判断可以共享时，根据路径取得UDiskDeviceInfoPointer,找到空白光驱就跳过，查询完m_list所有的元素
+UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path, const bool bshareuse)
 {
     for (int i = 0; i < m_list.size(); i++) {
         UDiskDeviceInfoPointer info = m_list.at(i);
@@ -465,13 +469,13 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
             bool t_ok = info->getId().contains("/dev/sr");
             Q_UNUSED(t_ok)
             //获取空白光盘路径有问题，fix
-            if (info->getMountPointUrl().toString() == "burn:///" || info->getId().contains("/dev/sr")) {
+            if (!bshareuse && (info->getMountPointUrl().toString() == "burn:///" || info->getId().contains("/dev/sr"))) {
                 return UDiskDeviceInfoPointer();
             }
             //获取空白光盘路径有问题，fix
-
+            // fix task 29259增加一个判断info->getMountPointUrl()，因为有可能空光盘的挂载点是空
             bool flag = (DUrl::fromLocalFile(path) == info->getMountPointUrl());
-            if (!flag && path.startsWith(QString("%1").arg(info->getMountPointUrl().toLocalFile()))) {
+            if (!flag && !info->getMountPointUrl().toLocalFile().isEmpty() && path.startsWith(QString("%1").arg(info->getMountPointUrl().toLocalFile()))) {
                 return info;
             }
         }
@@ -511,8 +515,6 @@ QMap<QString, UDiskDeviceInfoPointer> UDiskListener::getMountedRemovableDiskDevi
             infos.insert(info->getDiskInfo().id(), info);
         }
     }
-    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
-    qDebug() << infos;
     return infos;
 }
 
@@ -525,8 +527,6 @@ QMap<QString, UDiskDeviceInfoPointer> UDiskListener::getCanSendDisksByUrl(QStrin
         }
         infos.insert(info->getDiskInfo().id(), info);
     }
-    qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>";
-    qDebug() << infos;
     return infos;
 }
 
@@ -535,6 +535,18 @@ bool UDiskListener::isMountedRemovableDiskExits()
     for (int i = 0; i < m_list.size(); i++) {
         UDiskDeviceInfoPointer info = m_list.at(i);
         if (info->getDiskInfo().is_removable() && info->getDiskInfo().can_unmount()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool UDiskListener::isFileFromDisc(const QString &filePath)
+{
+    const QMap<QString, UDiskDeviceInfoPointer> &&devices = getMountedRemovableDiskDeviceInfos();
+    foreach (auto d, devices) {
+        if (d->optical() && filePath.startsWith(d->getMountPointUrl().path())) {
+            qDebug() << "copy src file from disc!";
             return true;
         }
     }

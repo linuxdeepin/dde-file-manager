@@ -50,10 +50,10 @@ class WallpaperList : public QScrollArea
     Q_OBJECT
 
 public:
-    explicit WallpaperList(QWidget * parent = 0);
-    ~WallpaperList();
+    explicit WallpaperList(QWidget *parent = 0);
+    ~WallpaperList() override;
 
-    WallpaperItem * addWallpaper(const QString &path);
+    WallpaperItem *addWallpaper(const QString &path);
     void removeWallpaper(const QString &path);
 
     void scrollList(int step, int duration = 100);
@@ -81,10 +81,10 @@ signals:
     void mouseOverItemChanged(QString path, QPoint pos) const;
 
 protected:
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-    void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
     QWidget *m_contentWidget;
@@ -103,7 +103,7 @@ private:
 
     QSize m_gridSize;
 
-    QList<WallpaperItem*> m_items;
+    QList<WallpaperItem *> m_items;
 
     QTimer *m_updateTimer;
 

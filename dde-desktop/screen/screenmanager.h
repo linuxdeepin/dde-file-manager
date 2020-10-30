@@ -13,14 +13,14 @@ class ScreenManager : public AbstractScreenManager
     Q_OBJECT
 public:
     explicit ScreenManager(QObject *parent = nullptr);
-    ~ScreenManager() Q_DECL_OVERRIDE;
-    ScreenPointer primaryScreen() Q_DECL_OVERRIDE;
-    QVector<ScreenPointer> screens() const Q_DECL_OVERRIDE;
-    QVector<ScreenPointer> logicScreens() const Q_DECL_OVERRIDE;
-    ScreenPointer screen(const QString &name) const Q_DECL_OVERRIDE;
-    qreal devicePixelRatio() const Q_DECL_OVERRIDE;
-    DisplayMode displayMode() const Q_DECL_OVERRIDE;
-    void reset() Q_DECL_OVERRIDE;
+    ~ScreenManager() override;
+    ScreenPointer primaryScreen() override;
+    QVector<ScreenPointer> screens() const override;
+    QVector<ScreenPointer> logicScreens() const override;
+    ScreenPointer screen(const QString &name) const override;
+    qreal devicePixelRatio() const override;
+    DisplayMode displayMode() const override;
+    void reset() override;
 protected slots:
     void onScreenAdded(QScreen *screen);
     void onScreenRemoved(QScreen *screen);
@@ -32,7 +32,7 @@ private:
     void connectScreen(ScreenPointer);
     void disconnectScreen(ScreenPointer);
 protected:
-    QMap<QScreen *,ScreenPointer> m_screens;
+    QMap<QScreen *, ScreenPointer> m_screens;
     DBusDisplay *m_display = nullptr;
 };
 

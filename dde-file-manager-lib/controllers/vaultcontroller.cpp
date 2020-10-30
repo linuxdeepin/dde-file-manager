@@ -27,6 +27,8 @@
 #include "vaulterrorcode.h"
 #include "dfmeventdispatcher.h"
 #include "dfilestatisticsjob.h"
+#include "log/dfmLogManager.h"
+#include "log/filterAppender.h"
 
 #include "appcontroller.h"
 #include "singleton.h"
@@ -199,7 +201,12 @@ VaultController::VaultController(QObject *parent)
     : DAbstractFileController(parent), d_ptr(new VaultControllerPrivate(this))
 {
     Q_D(VaultController);
+
+    //! 屏蔽保险箱内的文件信息写入到日志文件
+    DFMLogManager::getFilterAppender()->addFilter(VAULT_DECRYPT_DIR_NAME);
+
     d->m_cryFsHandle = new CryFsHandle(this);
+
     connect(this, &VaultController::sigCreateVault, d->m_cryFsHandle, &CryFsHandle::createVault);
     connect(this, &VaultController::sigUnlockVault, d->m_cryFsHandle, &CryFsHandle::unlockVault);
     connect(this, &VaultController::sigLockVault, d->m_cryFsHandle, &CryFsHandle::lockVault);
@@ -997,6 +1004,23 @@ void VaultController::createVault(const DSecureString &password, QString lockBas
 
 void VaultController::unlockVault(const DSecureString &password, QString lockBaseDir, QString unlockFileDir)
 {
+    // 修复bug-52351
+    // 保险箱解锁前,创建挂载目录
+    QString strPath = makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME);
+    if(QFile::exists(strPath)) {    // 如果存在,则清空目录
+        QDir dir(strPath);
+        if(!dir.isEmpty()) {
+            QDirIterator dirsIterator(strPath, QDir::AllEntries | QDir::NoDotAndDotDot);
+            while(dirsIterator.hasNext()) {
+                if(!dir.remove(dirsIterator.next())) {
+                    QDir(dirsIterator.filePath()).removeRecursively();
+                }
+            }
+        }
+    } else {    // 如果不存在,则创建目录
+        QDir().mkpath(strPath);
+    }
+
     if (lockBaseDir.isEmpty() || unlockFileDir.isEmpty()) {
         if (state() != Encrypted) {
             emit signalUnlockVault(static_cast<int>(ErrorCode::MountpointNotEmpty));

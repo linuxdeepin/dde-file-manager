@@ -31,21 +31,21 @@ class DesktopItemDelegate : public DIconItemDelegate
     Q_OBJECT
 public:
     explicit DesktopItemDelegate(DFileViewHelper *parent);
-    virtual ~DesktopItemDelegate();
+    virtual ~DesktopItemDelegate() override;
 
-    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const Q_DECL_OVERRIDE;
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const override;
     QString iconSizeLevelDescription(int i) const;
-    int iconSizeLevel() const Q_DECL_OVERRIDE;
-    int minimumIconSizeLevel() const Q_DECL_OVERRIDE;
-    int maximumIconSizeLevel() const Q_DECL_OVERRIDE;
+    int iconSizeLevel() const override;
+    int minimumIconSizeLevel() const override;
+    int maximumIconSizeLevel() const override;
 
-    int increaseIcon() Q_DECL_OVERRIDE;
-    int decreaseIcon() Q_DECL_OVERRIDE;
-    int setIconSizeByIconSizeLevel(int level) Q_DECL_OVERRIDE;
+    int increaseIcon() override;
+    int decreaseIcon() override;
+    int setIconSizeByIconSizeLevel(int level) override;
     QSize iconSizeByIconSizeLevel() const;
 
-    void updateItemSizeHint() Q_DECL_OVERRIDE;
-    void hideAllIIndexWidget() Q_DECL_OVERRIDE;
+    void updateItemSizeHint() override;
+    void hideAllIIndexWidget() override;
 private:
     QStringList iconSizeDescriptions;
     QList<int> iconSizes;

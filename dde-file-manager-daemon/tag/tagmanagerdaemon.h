@@ -38,7 +38,7 @@ class TagManagerDaemon : public QObject
 {
     Q_OBJECT
 public:
-    TagManagerDaemon(QObject *const parent);
+    explicit TagManagerDaemon(QObject *const parent);
     virtual ~TagManagerDaemon() = default;
     TagManagerDaemon(const TagManagerDaemon &other) = delete;
     TagManagerDaemon &operator=(const TagManagerDaemon &other) = delete;

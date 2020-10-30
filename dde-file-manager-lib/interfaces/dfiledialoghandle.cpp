@@ -112,7 +112,7 @@ void DFileDialogHandle::setDirectoryUrl(const QUrl &directory)
 {
     D_D(DFileDialogHandle);
 
-    d->dialog->setDirectoryUrl(directory);
+    d->dialog->setDirectoryUrl(DUrl(directory));
 }
 
 QUrl DFileDialogHandle::directoryUrl() const

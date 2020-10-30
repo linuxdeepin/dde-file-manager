@@ -49,31 +49,31 @@ public:
 
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,
-               const QModelIndex &index) const Q_DECL_OVERRIDE;
+               const QModelIndex &index) const override;
 
-    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const Q_DECL_OVERRIDE;
-    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const Q_DECL_OVERRIDE;
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const override;
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const override;
 
-    void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex &) const Q_DECL_OVERRIDE;
-    void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE;
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const override;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const override;
 
-    QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const Q_DECL_OVERRIDE;
+    QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const override;
 
-    QModelIndexList hasWidgetIndexs() const Q_DECL_OVERRIDE;
-    void hideNotEditingIndexWidget() Q_DECL_OVERRIDE;
+    QModelIndexList hasWidgetIndexs() const override;
+    void hideNotEditingIndexWidget() override;
 
     QModelIndex expandedIndex() const;
     QWidget *expandedIndexWidget() const;
 
-    int iconSizeLevel() const Q_DECL_OVERRIDE;
-    int minimumIconSizeLevel() const Q_DECL_OVERRIDE;
-    int maximumIconSizeLevel() const Q_DECL_OVERRIDE;
+    int iconSizeLevel() const override;
+    int minimumIconSizeLevel() const override;
+    int maximumIconSizeLevel() const override;
 
-    int increaseIcon() Q_DECL_OVERRIDE;
-    int decreaseIcon() Q_DECL_OVERRIDE;
-    int setIconSizeByIconSizeLevel(int level) Q_DECL_OVERRIDE;
+    int increaseIcon() override;
+    int decreaseIcon() override;
+    int setIconSizeByIconSizeLevel(int level) override;
 
-    void updateItemSizeHint() Q_DECL_OVERRIDE;
+    void updateItemSizeHint() override;
 
     QColor focusTextBackgroundBorderColor() const;
     bool enabledTextShadow() const;
@@ -85,7 +85,7 @@ public slots:
 protected:
     void initTextLayout(const QModelIndex &index, QTextLayout *layout) const override;
 
-    bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *object, QEvent *event) override;
 
     QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
                            const QRectF &boundingRect, qreal radius, const QBrush &background,

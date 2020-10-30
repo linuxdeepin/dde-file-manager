@@ -43,6 +43,11 @@ bool DFMFilePreview::showStatusBarSeparator() const
     return false;
 }
 
+void DFMFilePreview::DoneCurrent()
+{
+
+}
+
 void DFMFilePreview::play()
 {
 

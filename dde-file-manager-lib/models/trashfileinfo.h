@@ -35,51 +35,51 @@ class TrashFileInfo : public DAbstractFileInfo
 public:
     explicit TrashFileInfo(const DUrl &url);
 
-    bool exists() const Q_DECL_OVERRIDE;
-    bool canRename() const Q_DECL_OVERRIDE;
-    bool isReadable() const Q_DECL_OVERRIDE;
-    bool isWritable() const Q_DECL_OVERRIDE;
-    bool canShare() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
+    bool exists() const override;
+    bool canRename() const override;
+    bool isReadable() const override;
+    bool isWritable() const override;
+    bool canShare() const override;
+    bool isDir() const override;
 
-    QString fileDisplayName() const Q_DECL_OVERRIDE;
-    QFile::Permissions permissions() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const override;
+    QFile::Permissions permissions() const override;
 
-    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
-    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
+    QVector<MenuAction> menuActionList(MenuType type) const override;
+    QSet<MenuAction> disableMenuActionList() const override;
 
-    void setColumnCompact(bool) Q_DECL_OVERRIDE;
-    QList<int> userColumnRoles() const Q_DECL_OVERRIDE;
-    QVariant userColumnData(int userColumnRole) const Q_DECL_OVERRIDE;
-    QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;
+    void setColumnCompact(bool) override;
+    QList<int> userColumnRoles() const override;
+    QVariant userColumnData(int userColumnRole) const override;
+    QVariant userColumnDisplayName(int userColumnRole) const override;
 
-    QList<int> userColumnChildRoles(int column) const Q_DECL_OVERRIDE;
+    QList<int> userColumnChildRoles(int column) const override;
 
-    int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
+    int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const override;
     QString subtitleForEmptyFloder() const override;
-//    int userRowHeight(const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
+//    int userRowHeight(const QFontMetrics &fontMetrics) const override;
 
-    CompareFunction compareFunByColumn(int columnRole) const Q_DECL_OVERRIDE;
-    bool columnDefaultVisibleForRole(int userColumnRole) const Q_DECL_OVERRIDE;
+    CompareFunction compareFunByColumn(int columnRole) const override;
+    bool columnDefaultVisibleForRole(int userColumnRole) const override;
 
 
-    MenuAction menuActionByColumnRole(int userColumnRole) const Q_DECL_OVERRIDE;
-    QList<int> sortSubMenuActionUserColumnRoles() const Q_DECL_OVERRIDE;
+    MenuAction menuActionByColumnRole(int userColumnRole) const override;
+    QList<int> sortSubMenuActionUserColumnRoles() const override;
 
-    bool canIteratorDir() const Q_DECL_OVERRIDE;
-    bool makeAbsolute() Q_DECL_OVERRIDE;
+    bool canIteratorDir() const override;
+    bool makeAbsolute() override;
 
     DUrl originUrl() const;
-    DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
-    Qt::DropActions supportedDragActions() const Q_DECL_OVERRIDE;
-    Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
+    DUrl mimeDataUrl() const override;
+    Qt::DropActions supportedDragActions() const override;
+    Qt::DropActions supportedDropActions() const override;
 
-    QIcon fileIcon() const Q_DECL_OVERRIDE;
-    QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;
+    QIcon fileIcon() const override;
+    QList<QIcon> additionalIcon() const override;
 
-    DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
+    DUrl goToUrlWhenDeleted() const override;
 
-    bool restore(FileJob *job=nullptr) const;
+    bool restore(FileJob *job = nullptr) const;
     QDateTime deletionDate() const;
     QString sourceFilePath() const;
 

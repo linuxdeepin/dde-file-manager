@@ -48,6 +48,7 @@
 #include <QStandardPaths>
 #include <QScroller>
 #include <QCommandLinkButton>
+#include <QPainterPath>
 #include <DHorizontalLine>
 #include <DStyle>
 #include <DIconButton>
@@ -63,10 +64,10 @@ public:
     QString text() const;
 
 protected:
-    void resizeEvent(QResizeEvent *e) Q_DECL_OVERRIDE;
-    void enterEvent(QEvent *e) Q_DECL_OVERRIDE;
-    void leaveEvent(QEvent *e) Q_DECL_OVERRIDE;
-    void paintEvent(QPaintEvent *e) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *e) override;
+    void enterEvent(QEvent *e) override;
+    void leaveEvent(QEvent *e) override;
+    void paintEvent(QPaintEvent *e) override;
 
 private:
     QIcon m_icon;
@@ -219,6 +220,16 @@ OpenWithDialog::~OpenWithDialog()
 
 void OpenWithDialog::initUI()
 {
+    if (DFMGlobal::isWayLand()) {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
+
     setFixedSize(710, 450);
     setTitle(tr("Open with"));
 

@@ -39,7 +39,7 @@ public:
     int handle() const override;
     bool resize(qint64 size) override;
     bool flush() override;
-    bool syncToDisk() override;
+    bool syncToDisk(bool isVfat = false) override;
 
 private:
     using DFileIODeviceProxy::setDevice;

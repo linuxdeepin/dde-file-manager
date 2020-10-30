@@ -7,12 +7,12 @@
 class ScreenObject : public AbstractScreen
 {
 public:
-    ScreenObject(QScreen *sc,QObject *parent = nullptr);
-    ~ScreenObject() Q_DECL_OVERRIDE;
-    QString name() const Q_DECL_OVERRIDE;
-    QRect geometry() const Q_DECL_OVERRIDE;
-    QRect availableGeometry() const Q_DECL_OVERRIDE;
-    QRect handleGeometry() const Q_DECL_OVERRIDE;
+    ScreenObject(QScreen *sc, QObject *parent = nullptr);
+    ~ScreenObject() override;
+    QString name() const override;
+    QRect geometry() const override;
+    QRect availableGeometry() const override;
+    QRect handleGeometry() const override;
 public:
     QScreen *screen() const;
 private:

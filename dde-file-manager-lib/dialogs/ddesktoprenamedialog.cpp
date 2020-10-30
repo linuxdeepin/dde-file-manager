@@ -100,7 +100,6 @@ void DDesktopRenameDialogPrivate::initUi()
     m_titleLabel = new QLabel{};
 
     m_itemsForSelecting = std::make_tuple(new QLabel{}, new QComboBox{}, new QHBoxLayout{}, new QFrame{});
-    m_stackedLayout = new QStackedLayout{};
 
     m_modeOneItemsForFinding = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout{});
     m_modeOneItemsForReplacing = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout{});
@@ -119,8 +118,8 @@ void DDesktopRenameDialogPrivate::initUi()
     QRegExp regStr{ QString{"[0-9]+"} };
     m_validator = new QRegExpValidator{ regStr };
 
-    m_mainLayout = new QVBoxLayout{};
-    m_mainFrame = new QFrame{};
+    m_mainFrame = new QFrame(this->q_ptr);
+    m_mainLayout = new QVBoxLayout(m_mainFrame);
 }
 
 
@@ -287,18 +286,24 @@ void DDesktopRenameDialogPrivate::initUiLayout()
     m_modeThreeLayout.second->setLayout(m_modeThreeLayout.first);
 
     ///###: total layout.
-    m_stackedLayout->addWidget(m_modeOneLayout.second);
-    m_stackedLayout->addWidget(m_modeTwoLayout.second);
-    m_stackedLayout->addWidget(m_modeThreeLayout.second);
-    m_stackedLayout->setCurrentIndex(0);
-
     m_mainLayout->setSpacing(0);
     m_mainLayout->setMargin(0);
     m_mainLayout->addWidget(m_titleLabel);
     m_mainLayout->addSpacing(30);
     m_mainLayout->addLayout(std::get<2>(m_itemsForSelecting));
     m_mainLayout->addSpacing(10);
+
+    ///（Qt5.15.0）wayland下必须在此处创建m_stackedLayout并设置父子关系
+    ///不设置父子关系会导致在m_stackedLayout中点击鼠标时无法获取焦点
+    ///提前创建对象，再在此处设置父子关系无效，依然存在点击鼠标无焦点问题
+    ///提前创建对象并设置父子关系，会导致m_stackedLayout位置在布局的最上面
+    m_stackedLayout = new QStackedLayout(m_mainLayout);
+    m_stackedLayout->addWidget(m_modeOneLayout.second);
+    m_stackedLayout->addWidget(m_modeTwoLayout.second);
+    m_stackedLayout->addWidget(m_modeThreeLayout.second);
+    m_stackedLayout->setCurrentIndex(0);
     m_mainLayout->addLayout(m_stackedLayout);
+
     m_mainLayout->addSpacing(15);
 
     m_mainFrame->setLayout(m_mainLayout);
@@ -340,6 +345,17 @@ DDesktopRenameDialog::DDesktopRenameDialog(QWidget *const parent)
 ///   and other widgets in DDesktopRenameDialog is initialized when new DDesktopRenameDialogPrivate.
 void DDesktopRenameDialog::initUi()
 {
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
+
     Q_D(const DDesktopRenameDialog);
     this->addContent(d->m_mainFrame, Qt::AlignCenter);
     this->addButton(QObject::tr("Cancel"));

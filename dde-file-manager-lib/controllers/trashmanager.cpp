@@ -68,13 +68,13 @@ public:
                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
     ~TrashDirIterator() override;
 
-    DUrl next() Q_DECL_OVERRIDE;
-    bool hasNext() const Q_DECL_OVERRIDE;
+    DUrl next() override;
+    bool hasNext() const override;
 
-    QString fileName() const Q_DECL_OVERRIDE;
-    DUrl fileUrl() const Q_DECL_OVERRIDE;
-    const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    DUrl url() const Q_DECL_OVERRIDE;
+    QString fileName() const override;
+    DUrl fileUrl() const override;
+    const DAbstractFileInfoPointer fileInfo() const override;
+    DUrl url() const override;
 
     DFMFileListFile *hiddenFiles = nullptr;
 private:

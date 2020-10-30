@@ -33,9 +33,9 @@ public:
     QModelIndex editingIndex() const;
     QWidget *editingIndexWidget() const;
 
-    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const Q_DECL_OVERRIDE;
-    void destroyEditor(QWidget *editor, const QModelIndex &index) const Q_DECL_OVERRIDE;
-    QString displayText(const QVariant &value, const QLocale &locale) const Q_DECL_OVERRIDE;
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const override;
+    void destroyEditor(QWidget *editor, const QModelIndex &index) const override;
+    QString displayText(const QVariant &value, const QLocale &locale) const override;
 
     virtual QModelIndexList hasWidgetIndexs() const;
     virtual void hideAllIIndexWidget();
@@ -73,7 +73,7 @@ protected:
     DFMStyledItemDelegate(DFMStyledItemDelegatePrivate &dd, DFileViewHelper *parent);
 
     virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const;
-    void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const Q_DECL_OVERRIDE;
+    void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     QList<QRectF> getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const;
 
     static void paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,

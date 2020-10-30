@@ -78,15 +78,15 @@ public:
     bool isInDeviceFolder(const QString &path) const;
     bool isInRemovableDeviceFolder(const QString &path) const;
 
-    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
-    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
+    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
     UDiskDeviceInfoPointer getDeviceByDevicePath(const QString &deveicePath);
     UDiskDeviceInfoPointer getDeviceByMountPoint(const QString &mountPoint);
     UDiskDeviceInfoPointer getDeviceByMountPointFilePath(const QString &filePath);
     UDiskDeviceInfoPointer getDeviceByPath(const QString &path);
-    UDiskDeviceInfoPointer getDeviceByFilePath(const QString &path);
+    UDiskDeviceInfoPointer getDeviceByFilePath(const QString &path, const bool bshareuse = false);
     UDiskDeviceInfoPointer getDeviceByDeviceID(const QString &deviceID);
 
     void loadCustomVolumeLetters();
@@ -97,6 +97,8 @@ public:
     QMap<QString, UDiskDeviceInfoPointer> getCanSendDisksByUrl(QString filepath);
 
     bool isMountedRemovableDiskExits();
+
+    bool isFileFromDisc(const QString &filePath); // 文件是否来自光盘
 
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);

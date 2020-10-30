@@ -73,7 +73,7 @@
 #include <DApplicationHelper>
 #include <DGuiApplicationHelper>
 #include <QScrollBar>
-
+#include <QWindow>
 #include <QTextEdit>
 #include <QFormLayout>
 #include <QDateTime>
@@ -88,6 +88,7 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QStorageInfo>
+#include <QPainterPath>
 //#include <QVariantAnimation>
 #include <QScrollArea>
 #include <ddiskmanager.h>
@@ -288,11 +289,24 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 {
     setSizeGripEnabled(true);
 
-    setAttribute(Qt::WA_DeleteOnClose);
-    setWindowFlags(windowFlags()
-                   & ~ Qt::WindowMaximizeButtonHint
-                   & ~ Qt::WindowMinimizeButtonHint
-                   & ~ Qt::WindowSystemMenuHint);
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
+    else {
+        setAttribute(Qt::WA_DeleteOnClose);
+        setWindowFlags(windowFlags()
+                       & ~ Qt::WindowMaximizeButtonHint
+                       & ~ Qt::WindowMinimizeButtonHint
+                       & ~ Qt::WindowSystemMenuHint);
+    }
+
     QString basicInfo = tr("Basic info");
     QString openWith = tr("Open with");
     QString shareManager = tr("Sharing");
@@ -433,7 +447,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         QStringList titleList;
         if (fileInfo->isFile()) {
             titleList << basicInfo;
-            if (!m_url.isTrashFile()) {
+            //在回收站搜索文件，需要使搜索结果的文件属性面板与回收站文件属性面板保持一致
+            if (!m_url.isTrashFile() && !(m_url.isSearchFile() && fileInfo->redirectedFileUrl().isTrashFile())) {
                 titleList << openWith;
                 if (fileInfo->canManageAuth())
                     titleList << authManager;
@@ -446,7 +461,15 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             }
             if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile() && fileInfo->canManageAuth() &&
                     !VaultController::ins()->isRootDirectory(m_url.toLocalFile())) {
-                titleList << authManager;
+                //在回收站搜索文件，需要使搜索结果的文件属性面板与回收站文件属性面板保持一致
+                if (m_url.isSearchFile()) {
+                    if (!fileInfo->redirectedFileUrl().isTrashFile()) {
+                        titleList << authManager;
+                    }
+                }
+                else {
+                    titleList << authManager;
+                }
             }
         }
         m_expandGroup = addExpandWidget(titleList);
@@ -802,14 +825,24 @@ void PropertyDialog::flickFolderToSidebar(const DUrl &fileUrl)
     m_xani = new QVariantAnimation(this);
     m_xani->setStartValue(m_aniLabel->pos());
     m_xani->setEndValue(QPoint(targetPos.x(), angle));
-    m_xani->setDuration(440);
+    if(DFMGlobal::isWayLand()){
+        m_xani->setDuration(700);
+    }
+    else {
+        m_xani->setDuration(440);
+    }
 
     //QVariantAnimation *gani = new QVariantAnimation(this);
     m_gani = new QVariantAnimation(this);
     m_gani->setStartValue(m_aniLabel->geometry());
     m_gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
     m_gani->setEasingCurve(QEasingCurve::InBack);
-    m_gani->setDuration(440);
+    if(DFMGlobal::isWayLand()){
+        m_gani->setDuration(700);
+    }
+    else {
+        m_gani->setDuration(440);
+    }
 
     connect(m_xani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
         if (m_aniLabel) {
@@ -863,6 +896,17 @@ void PropertyDialog::onHideFileCheckboxChecked(bool checked)
         flf.remove(info.fileName());
     }
     flf.save();
+}
+
+void PropertyDialog::onCancelShare()
+{
+    if (m_xani.data()) {
+        m_xani->setDuration(0);
+    }
+
+    if (m_gani.data()) {
+        m_gani->setDuration(0);
+    }
 }
 
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
@@ -1181,15 +1225,28 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
     }
 
+    //在回收站搜索文件，需要使搜索结果的文件属性面板与回收站文件属性面板保持一致
+    QString trashSourcePath = "";
+    if (info->fileUrl().isSearchFile() && info->redirectedFileUrl().isTrashFile()) {
+        const DAbstractFileInfoPointer &trashfileInfo = DFileService::instance()->createFileInfo(this, info->redirectedFileUrl());
+        trashSourcePath = static_cast<const TrashFileInfo *>(trashfileInfo.constData())->sourceFilePath();
+    }
+
     if (info->fileUrl().isTrashFile()) {
-        QString pathStr = static_cast<const TrashFileInfo *>(info.constData())->sourceFilePath();
-        SectionValueLabel *sourcePathLabel = new SectionValueLabel(pathStr);
-        QString elidedStr = sourcePathLabel->fontMetrics().elidedText(pathStr, Qt::ElideMiddle, 150);
-        sourcePathLabel->setToolTip(pathStr);
+        trashSourcePath = static_cast<const TrashFileInfo *>(info.constData())->sourceFilePath();
+    }
+
+    //添加回收站文件原始路径
+    if (!trashSourcePath.isEmpty()) {
+        SectionValueLabel *sourcePathLabel = new SectionValueLabel(trashSourcePath);
+        QString elidedStr = sourcePathLabel->fontMetrics().elidedText(trashSourcePath, Qt::ElideMiddle, 150);
+        sourcePathLabel->setToolTip(trashSourcePath);
         sourcePathLabel->setWordWrap(false);
         sourcePathLabel->setText(elidedStr);
         layout->addRow(sourcePathSectionLabel, sourcePathLabel);
     }
+
+
 
     if (info->fileUrl().isRecentFile()) {
         QString pathStr = info->filePath();
@@ -1210,7 +1267,19 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         QCheckBox *hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
         hideThisFile->setObjectName(QString("hideThisFileCheckBox"));
         //        hideThisFile->setToolTip("TODO: hint message?");
-        hideThisFile->setEnabled(DFMFileListFile::canHideByFile(info->filePath()) && !info->fileUrl().isTrashFile()); // fix bug#33763 回收站中不允许对文件属性进行编辑
+
+        //在回收站搜索文件，需要使搜索结果的文件属性面板与回收站文件属性面板保持一致
+        bool canHide = false;
+        if (DFMFileListFile::canHideByFile(info->filePath()) && !info->fileUrl().isTrashFile()) {   // fix bug#33763 回收站中不允许对文件属性进行编辑
+            canHide = true;
+            if (info->fileUrl().isSearchFile()) {
+                DUrl url = info->redirectedFileUrl();
+                if (url.isTrashFile())
+                    canHide = false;
+            }
+        }
+
+        hideThisFile->setEnabled(canHide);
         hideThisFile->setChecked(flf.contains(fileName));
         layout->addWidget(hideThisFile); // FIXME: do the UI thing later.
         connect(hideThisFile, &QCheckBox::clicked, this, &PropertyDialog::onHideFileCheckboxChecked);
@@ -1228,17 +1297,18 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
                                        : info;
     ShareInfoFrame *frame = new ShareInfoFrame(infoPtr, this);
     //play animation after a folder is shared
-//    connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
-    //    connect(frame, &ShareInfoFrame::unfolderShared, this, [this](){
-    //        m_expandGroup.at(1)->setExpand(false);
-    //    });
-
     // 侧边栏创建完成共享标签后再执行动画
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
     if (window) {
         DFMSideBar *sideBar = window->getLeftSideBar();
         connect(sideBar, &DFMSideBar::addUserShareItemFinished, this, &PropertyDialog::flickFolderToSidebar);
     }
+
+    if(DFMGlobal::isWayLand()){
+        // 取消共享时停止动画效果
+        connect(frame, &ShareInfoFrame::unfolderShared, this, &PropertyDialog::onCancelShare);
+    }
+
     return frame;
 }
 

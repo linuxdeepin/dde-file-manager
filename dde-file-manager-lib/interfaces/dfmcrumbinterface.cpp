@@ -80,7 +80,7 @@ class DFMCrumbInterfacePrivate
 {
 
 public:
-    DFMCrumbInterfacePrivate(DFMCrumbInterface *qq);
+    explicit DFMCrumbInterfacePrivate(DFMCrumbInterface *qq);
 
     QPointer<JobController> folderCompleterJobPointer;
     DFMCrumbBar *crumbBar = nullptr;

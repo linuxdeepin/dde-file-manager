@@ -94,7 +94,7 @@ private:
     int m_countCeiling = 9999999;
     volatile bool m_updateFinished = true; //刷新完成标志
 
-    void run() Q_DECL_OVERRIDE;
+    void run() override;
     void setState(State state);
 };
 

@@ -30,8 +30,12 @@
 #include "dlocalfiledevice.h"
 #include "models/trashfileinfo.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/masteredmediacontroller.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "shutil/fileutils.h"
+#include "dgiofiledevice.h"
+#include "deviceinfo/udisklistener.h"
+#include "app/define.h"
 
 #include <QMutex>
 #include <QTimer>
@@ -325,8 +329,6 @@ void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
 
     Q_Q(DFileCopyMoveJob);
 
-    Q_EMIT q->stateChanged(s);
-
     if (updateSpeedTimer->thread()->loopLevel() <= 0) {
         qWarning() << "The thread of update speed timer no event loop" << updateSpeedTimer->thread();
     }
@@ -347,6 +349,8 @@ void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
 
         QMetaObject::invokeMethod(updateSpeedTimer, "stop");
     }
+
+    Q_EMIT q->stateChanged(s);
 
     qCDebug(fileJob()) << "state changed, new state:" << s;
 }
@@ -1020,12 +1024,12 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
     }
 
     if (fromInfo->filesCount() <= 0 && mode == DFileCopyMoveJob::CopyMode) {
-        QFileDevice::Permissions permissions;
+        QFileDevice::Permissions permissions = fromInfo->permissions();
         QString filePath = fromInfo->fileUrl().toLocalFile();
         if (VaultController::ins()->isVaultFile(filePath)) {
             permissions = VaultController::ins()->getPermissions(filePath);
-        } else {
-            permissions = fromInfo->permissions();
+        } else if (deviceListener->isFileFromDisc(fromInfo->path())) {
+            permissions |= MasteredMediaController::getPermissionsCopyToLocal();
         }
 
         handler->setPermissions(toInfo->fileUrl(), permissions);
@@ -1081,12 +1085,12 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
     if (toInfo) {
 
         // vault file fetch permissons separately.
-        QFileDevice::Permissions permissions;
+        QFileDevice::Permissions permissions = fromInfo->permissions();
         QString filePath = fromInfo->fileUrl().toLocalFile();
         if (VaultController::ins()->isVaultFile(filePath)) {
             permissions = VaultController::ins()->getPermissions(filePath);
-        } else {
-            permissions = fromInfo->permissions();
+        } else if (deviceListener->isFileFromDisc(fromInfo->path())) {
+            permissions |= MasteredMediaController::getPermissionsCopyToLocal();
         }
 
         handler->setPermissions(toInfo->fileUrl(), permissions);
@@ -1248,6 +1252,18 @@ open_file: {
     currentJobFileHandle = toDevice->handle();
     bool teestqq = false;
     uLong source_checksum = adler32(0L, nullptr, 0);
+    DGIOFileDevice *fromgio = qobject_cast<DGIOFileDevice *>(fromDevice.data());
+    DGIOFileDevice *togio = qobject_cast<DGIOFileDevice *>(toDevice.data());
+    if (fromgio) {
+        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[fromgio](){
+            fromgio->cancelAllOperate();
+        });
+    }
+    if (togio) {
+        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[togio](){
+            togio->cancelAllOperate();
+        });
+    }
 
     qint64 block_Size = fromInfo->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN : fromInfo->size();
 
@@ -1318,6 +1334,9 @@ open_file: {
             return false;
         }
         qint64 size_write = toDevice->write(data, size_read);
+        if (Q_UNLIKELY(!stateCheck())) {
+            return false;
+        }
         //如果写失败了，直接推出
         if (size_write < 0) {
             if (!stateCheck()) {
@@ -1374,10 +1393,11 @@ open_file: {
                 return false;
             }
         }
+
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
         if (m_isEveryReadAndWritesSnc && size_write > 0) {
             toDevice->inherits("");
-            toDevice->syncToDisk();
+            toDevice->syncToDisk(m_isVfat);
         }
         countrefinesize(size_write);
 
@@ -1396,8 +1416,10 @@ open_file: {
 
                         surplus_data += size_write;
                         surplus_size -= size_write;
-
                         size_write = toDevice->write(surplus_data, surplus_size);
+                        if (Q_UNLIKELY(!stateCheck())) {
+                            return false;
+                        }
                     } while (size_write > 0 && size_write != surplus_size);
 
                     // 表示全部数据写入完成
@@ -1483,6 +1505,8 @@ open_file: {
     QString path = fromInfo->fileUrl().path();
     if (VaultController::isVaultFile(path)) {
         permissions = VaultController::getPermissions(path);
+    } else if (deviceListener->isFileFromDisc(fromInfo->path())) { // fix bug 52610: 从光盘中复制出来的文件权限为只读，与 ubuntu 策略保持一致，拷贝出来权限为 rw-rw-r--
+        permissions |= MasteredMediaController::getPermissionsCopyToLocal();
     }
 
     handler->setPermissions(toInfo->fileUrl(), /*source_info->permissions()*/permissions);
@@ -1491,6 +1515,8 @@ open_file: {
     if (Q_UNLIKELY(!stateCheck())) {
         return false;
     }
+
+    q_ptr->disconnect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,nullptr);
 
     if (fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking)) {
         return true;
@@ -2175,6 +2201,8 @@ void DFileCopyMoveJobPrivate::checkTagetNeedSync()
     DStorageInfo targetStorageInfo(targetUrl.toLocalFile());
     if (!m_isEveryReadAndWritesSnc && targetStorageInfo.isValid()) {
         const QString &fs_type = targetStorageInfo.fileSystemType();
+        m_isVfat = fs_type.contains("vfat");
+
         m_isEveryReadAndWritesSnc = (fs_type == "cifs");
     }
 }
@@ -4233,6 +4261,8 @@ void DFileCopyMoveJob::stop()
 
     d->setState(StoppedState);
     d->waitCondition.wakeAll();
+
+    emit stopAllGioDervic();
 }
 
 void DFileCopyMoveJob::togglePause()

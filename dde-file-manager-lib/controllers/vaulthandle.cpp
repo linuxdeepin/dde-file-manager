@@ -31,6 +31,7 @@
 #include <QFile>
 #include <QDir>
 #include <QMutex>
+#include <unistd.h>
 
 CryFsHandle::CryFsHandle(QObject *parent) : QObject(parent)
 {
@@ -117,8 +118,16 @@ int CryFsHandle::lockVaultProcess(QString unlockFileDir)
     m_process->waitForFinished();
     m_process->terminate();
 
-    if(m_process->exitStatus() == QProcess::NormalExit && m_process->exitCode() == 0)
+    if(m_process->exitStatus() == QProcess::NormalExit && m_process->exitCode() == 0) {
+        // 修复bug-52351
+        // 保险箱上锁成功后,删除挂载目录
+        if(rmdir(unlockFileDir.toStdString().c_str()) == -1) {
+            qDebug() << "Vault Info: remove vault unlock dir failure";
+        } else {
+            qDebug() << "Vault Info: remove vault unlock dir success";
+        }
         return static_cast<int>(ErrorCode::Success);
+    }
     else
         return m_process->exitCode();
 }

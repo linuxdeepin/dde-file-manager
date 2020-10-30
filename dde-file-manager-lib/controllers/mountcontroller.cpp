@@ -77,7 +77,7 @@ const QList<DAbstractFileInfoPointer> MountController::getChildren(const QShared
         }
 
         if (!mountPoint.isEmpty()) {
-            mountPointUrl = QUrl::fromLocalFile(mountPoint);
+            mountPointUrl = DUrl(QUrl::fromLocalFile(mountPoint));
         }
     }
 

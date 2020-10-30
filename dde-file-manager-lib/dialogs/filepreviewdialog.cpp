@@ -31,6 +31,7 @@
 #include <QCursor>
 #include <QDesktopWidget>
 #include <QHBoxLayout>
+#include <QProcessEnvironment>
 
 DFM_BEGIN_NAMESPACE
 
@@ -258,6 +259,7 @@ FilePreviewDialog::~FilePreviewDialog()
 {
     if (m_preview) {
         m_preview->deleteLater();
+        m_preview = nullptr;
         QGuiApplication::changeOverrideCursor(QCursor(Qt::ArrowCursor));
     }
 }
@@ -301,10 +303,16 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
 
 void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
+    emit signalCloseEvent();
     if (m_preview) {
         m_preview->stop();
-        m_preview->deleteLater();
-        m_preview = nullptr;
+        if(DFMGlobal::isWayLand()){
+            m_preview->DoneCurrent();
+        }
+        else {
+            m_preview->deleteLater();
+            m_preview = nullptr;
+        }
     }
 
     return DAbstractDialog::closeEvent(event);
@@ -354,18 +362,36 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 
 void FilePreviewDialog::initUI()
 {
-    m_closeButton = new DWindowCloseButton(this);
-    m_closeButton->setObjectName("CloseButton");
-    m_closeButton->setFocusPolicy(Qt::NoFocus);
-    m_closeButton->setIconSize({50, 50});
-    m_closeButton->setFixedSize({50, 50});
-    QColor base_color = palette().base().color();
-    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
-    if (ct == DGuiApplicationHelper::LightType) {
-        m_closeButton->setStyleSheet("background-color:rgba(255, 255, 255, 25);");
-    } else {
-        m_closeButton->setStyleSheet("background-color:rgba(0, 0, 0, 25);");
+    //wayland 暂时不用 task 36991
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
     }
+    else {
+        m_closeButton = new DWindowCloseButton(this);
+        m_closeButton->setObjectName("CloseButton");
+        m_closeButton->setFocusPolicy(Qt::NoFocus);
+        m_closeButton->setIconSize({50, 50});
+        m_closeButton->setFixedSize({50, 50});
+        QColor base_color = palette().base().color();
+        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+        if (ct == DGuiApplicationHelper::LightType) {
+            m_closeButton->setStyleSheet("background-color:rgba(255, 255, 255, 25);");
+        } else {
+            m_closeButton->setStyleSheet("background-color:rgba(0, 0, 0, 25);");
+        }
+
+        DAnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
+        connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
+    }
+
+
 
     m_separator = new DHorizontalLine(this);
     m_separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -374,8 +400,6 @@ void FilePreviewDialog::initUI()
     m_statusBar->setObjectName("StatusBar");
     m_statusBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_statusBar->openButton()->setFocus();
-
-    DAnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -396,7 +420,6 @@ void FilePreviewDialog::initUI()
     shortcut_action->setShortcut(QKeySequence::Copy);
     addAction(shortcut_action);
 
-    connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
     connect(m_statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
@@ -573,8 +596,20 @@ void FilePreviewDialog::done(int r)
 
     if (m_preview) {
         m_preview->stop();
-        m_preview->deleteLater();
-        m_preview = nullptr;
+        if(DFMGlobal::isWayLand()){
+            m_preview->DoneCurrent();
+        }
+        else {
+            m_preview->deleteLater();
+            m_preview = nullptr;
+        }
+    }
+}
+
+void FilePreviewDialog::DoneCurrent()
+{
+    if(m_preview){
+        m_preview->DoneCurrent();
     }
 }
 
@@ -622,7 +657,13 @@ void FilePreviewDialog::updateTitle()
     QFont font = m_statusBar->title()->font();
     QFontMetrics fm(font);
     QString elidedText;
+
     if (!m_statusBar->preButton()->isVisible()) {
+        /*fix bug 46804 smb 中一直按着空格预览，m_preview 已经析构了，但是定时器的timeout事件已经执行，这里使用智能指针进行判断*/
+        if (!m_preview) {
+            qDebug() << "m_preview is null,so exit";
+            return;
+        }
         elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() - 30);
     } else {
         elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->preButton()->width() -

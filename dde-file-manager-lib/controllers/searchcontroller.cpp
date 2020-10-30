@@ -57,7 +57,7 @@ public:
     explicit SearchFileWatcher(const DUrl &url, QObject *parent = nullptr);
     ~SearchFileWatcher() override;
 
-    void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true) Q_DECL_OVERRIDE;
+    void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true) override;
 
 private:
     void addWatcher(const DUrl &url);
@@ -78,8 +78,8 @@ public:
     explicit SearchFileWatcherPrivate(SearchFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
-    bool start() Q_DECL_OVERRIDE;
-    bool stop() Q_DECL_OVERRIDE;
+    bool start() override;
+    bool stop() override;
 
     QMap<DUrl, DAbstractFileWatcher *> urlToWatcherMap;
 
@@ -110,7 +110,7 @@ void SearchFileWatcher::setEnabledSubfileWatcher(const DUrl &subfileUrl, bool en
 
     if (enabled) {
         addWatcher(subfileUrl.searchedFileUrl());
-    } 
+    }
     //这里removeWatcher的逻辑是在文件超出可视区域时，就不监控其变化
     //但这样会导致在一些特殊目录下搜索后，做一些特殊操作（例如最近使用目录中移除文件 、标记目录中取消文件标记等）时，
     //在可视区域外的文件不会从搜索结果中移除
@@ -252,14 +252,14 @@ public:
                       QDirIterator::IteratorFlags flags, SearchController *parent);
     ~SearchDiriterator() override;
 
-    DUrl next() Q_DECL_OVERRIDE;
-    bool hasNext() const Q_DECL_OVERRIDE;
+    DUrl next() override;
+    bool hasNext() const override;
 
-    QString fileName() const Q_DECL_OVERRIDE;
-    DUrl fileUrl() const Q_DECL_OVERRIDE;
-    const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    DUrl url() const Q_DECL_OVERRIDE;
-    void close() Q_DECL_OVERRIDE;
+    QString fileName() const override;
+    DUrl fileUrl() const override;
+    const DAbstractFileInfoPointer fileInfo() const override;
+    DUrl url() const override;
+    void close() override;
     void fullTextSearch(const QString &searchPath) const;
 
     SearchController *parent;
@@ -281,6 +281,12 @@ public:
     // 所有支持快速搜索的子目录(可包含待搜索目录本身)
     QStringList hasLFTSubdirectories;
     QDBusPendingCallWatcher *dbusWatcher = nullptr;
+#endif
+
+#ifdef DISABLE_QUICK_SEARCH
+    // 所有支持快速搜索的子目录(可包含待搜索目录本身)
+    QStringList hasLFTSubdirectories;
+//    QDBusPendingCallWatcher *dbusWatcher = nullptr;
 #endif
 
     bool closed = false;
@@ -329,6 +335,33 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
         }
     }
 #endif
+
+#ifdef DISABLE_QUICK_SEARCH
+//    if (targetUrl.isLocalFile()) {
+//        QStorageInfo info(targetUrl.toLocalFile());
+
+//        if (info.isValid()) {
+//            ComDeepinAnythingInterface *interface = new ComDeepinAnythingInterface("com.deepin.anything",
+//                                                                                   "/com/deepin/anything",
+//                                                                                   QDBusConnection::systemBus());
+
+//            dbusWatcher = new QDBusPendingCallWatcher(interface->hasLFTSubdirectories(info.rootPath()));
+//            interface->setTimeout(3);
+//            interface->setParent(dbusWatcher);
+
+    // 先将列表设置为适用于任意目录, 等取到异步结果后再更新此值
+    hasLFTSubdirectories.append("/");
+//            QObject::connect(dbusWatcher, &QDBusPendingCallWatcher::finished,
+//                             dbusWatcher, [this] (QDBusPendingCallWatcher *call) {
+//                QDBusPendingReply<QStringList> result = *call;
+
+//                hasLFTSubdirectories = result.value();
+//                dbusWatcher->deleteLater();
+//                dbusWatcher = nullptr;
+//            });
+//        }
+//    }
+#endif
 }
 
 SearchDiriterator::~SearchDiriterator()
@@ -337,6 +370,10 @@ SearchDiriterator::~SearchDiriterator()
     if (dbusWatcher) {
         dbusWatcher->deleteLater();
     }
+#endif
+
+#ifdef DISABLE_QUICK_SEARCH
+    //FSEARCH CLOSE
 #endif
 }
 
@@ -400,7 +437,7 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
 
             if (!childrens.contains(url)) {
                 // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
-                if(!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())){
+                if (!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())) {
                     continue;
                 }
                 childrens << url;
@@ -466,9 +503,29 @@ bool SearchDiriterator::hasNext() const
                     m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
             } else
 #endif
-            {
-                m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
-            }
+#ifdef DISABLE_QUICK_SEARCH
+                if (url.isLocalFile()) { // 针对本地文件, 先判断此目录是否是索引数据的子目录, 可以依此过滤掉很多目录, 减少对anything dbus接口的调用
+                    const QString &file = url.toLocalFile().append("/");
+
+                    for (const QString &path : hasLFTSubdirectories) {
+                        if (path == "/") {
+                            m_hasIteratorByKeywordOfCurrentIt = true;
+                            break;
+                        }
+
+                        if (file.startsWith(path + "/")) {
+                            m_hasIteratorByKeywordOfCurrentIt = true;
+                            break;
+                        }
+                    }
+
+                    if (m_hasIteratorByKeywordOfCurrentIt)
+                        m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
+                } else
+#endif
+                {
+                    m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
+                }
         }
 
         while (it->hasNext()) {
@@ -494,7 +551,7 @@ bool SearchDiriterator::hasNext() const
                 url.setSearchedFileUrl(realUrl);
                 if (!childrens.contains(url)) {
                     // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
-                    if(!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())){
+                    if (!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())) {
                         continue;
                     }
                     childrens << url;
@@ -522,7 +579,7 @@ bool SearchDiriterator::hasNext() const
                 url.setSearchedFileUrl(realUrl);
                 if (!childrens.contains(url)) {/*去重*/
                     // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
-                    if(!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())){
+                    if (!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())) {
                         continue;
                     }
                     childrens << url;

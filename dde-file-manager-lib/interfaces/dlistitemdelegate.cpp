@@ -20,6 +20,7 @@
 #include <QLineEdit>
 #include <QApplication>
 #include <QToolTip>
+#include <QPainterPath>
 
 #define ICON_SPACING 16
 #define LIST_MODE_RECT_RADIUS 2

@@ -41,15 +41,15 @@ class PDFPreview : public DFMFilePreview
 
 public:
     explicit PDFPreview(QObject *parent = nullptr);
-    ~PDFPreview();
+    ~PDFPreview() override;
 
-    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    bool setFileUrl(const DUrl &url) override;
     DUrl fileUrl() const override;
 
-    QWidget *contentWidget() const Q_DECL_OVERRIDE;
+    QWidget *contentWidget() const override;
 
-    QString title() const Q_DECL_OVERRIDE;
-    bool showStatusBarSeparator() const Q_DECL_OVERRIDE;
+    QString title() const override;
+    bool showStatusBarSeparator() const override;
 
 private:
     DUrl m_url;
