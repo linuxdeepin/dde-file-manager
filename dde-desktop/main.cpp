@@ -21,6 +21,8 @@
 #include <dfmglobal.h>
 #include <dfmapplication.h>
 
+#include "log/dfmLogManager.h"
+
 #include "util/dde/ddesession.h"
 
 #include "config/config.h"
@@ -152,11 +154,11 @@ int main(int argc, char *argv[])
 
     tmp += QString(" app inited %0").arg(gTime.elapsed());
     const QString m_format = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
-    DLogManager::setLogFormat(m_format);
-    DLogManager::registerConsoleAppender();
+    DFMLogManager::setLogFormat(m_format);
+    DFMLogManager::registerConsoleAppender();
 
     if (!preload) {
-        DLogManager::registerFileAppender();
+        DFMLogManager::registerFileAppender();
     }
     qDebug() << tmp;
     tmp.clear();

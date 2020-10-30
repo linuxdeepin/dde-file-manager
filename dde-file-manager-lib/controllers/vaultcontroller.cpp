@@ -27,6 +27,8 @@
 #include "vaulterrorcode.h"
 #include "dfmeventdispatcher.h"
 #include "dfilestatisticsjob.h"
+#include "log/dfmLogManager.h"
+#include "log/filterAppender.h"
 
 #include "appcontroller.h"
 #include "singleton.h"
@@ -199,6 +201,10 @@ VaultController::VaultController(QObject *parent)
     : DAbstractFileController(parent), d_ptr(new VaultControllerPrivate(this))
 {
     Q_D(VaultController);
+
+    //! 屏蔽保险箱内的文件信息写入到日志文件
+    DFMLogManager::getFilterAppender()->addFilter(VAULT_DECRYPT_DIR_NAME);
+
     d->m_cryFsHandle = new CryFsHandle;
     connect(this, &VaultController::sigCreateVault, d->m_cryFsHandle, &CryFsHandle::createVault);
     connect(this, &VaultController::sigUnlockVault, d->m_cryFsHandle, &CryFsHandle::unlockVault);
