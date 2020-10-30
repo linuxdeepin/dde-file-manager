@@ -31,6 +31,7 @@
 #include "app/global.h"
 #include "app/filemanagerdaemon.h"
 #include "client/filemanagerclient.h"
+#include "log/dfmLogManager.h"
 
 #include "ddiskmanager.h"
 
@@ -71,9 +72,9 @@ int main(int argc, char *argv[])
     }
 
     QDBusConnection connection = QDBusConnection::systemBus();
-    DTK_CORE_NAMESPACE::DLogManager::setlogFilePath(logPath + QCoreApplication::applicationName() + ".log");
-    DTK_CORE_NAMESPACE::DLogManager::registerConsoleAppender();
-    DTK_CORE_NAMESPACE::DLogManager::registerFileAppender();
+    DFM_NAMESPACE::DFMLogManager::setlogFilePath(logPath + QCoreApplication::applicationName() + ".log");
+    DFM_NAMESPACE::DFMLogManager::registerConsoleAppender();
+    DFM_NAMESPACE::DFMLogManager::registerFileAppender();
 
     if (!connection.interface()->isServiceRegistered(DaemonServicePath)){
         qDebug() << connection.registerService(DaemonServicePath) << "register" << DaemonServicePath << "success";

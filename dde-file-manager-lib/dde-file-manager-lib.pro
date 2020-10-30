@@ -68,6 +68,8 @@ include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
 include(vault/vault.pri)
+include(log/log.pri)
+
 isEqual(ARCH, sw_64){
     DEFINES += SW_LABEL
     include(./sw_label/sw_label.pri)
