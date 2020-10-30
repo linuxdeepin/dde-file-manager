@@ -149,18 +149,6 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
 
 void ShareInfoFrame::handleShareNameChanged()
 {
-    const QString &name = m_shareNamelineEdit->text();
-    if (name.isEmpty() || name == "") {
-        //m_jobTimer->stop();
-        return;
-    }
-    // 修复BUG-44947
-    // 当共享文件名为“..”或“.”时，弹出提示框
-    if (name == ".." || name == ".") {
-        QString strMsg = tr("The share name must not be two dots (..) or one dot (.)");
-        dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
-        return;
-    }
     doShareInfoSetting();
     //handShareInfoChanged();
 }
@@ -268,6 +256,19 @@ void ShareInfoFrame::setFileinfo(const DAbstractFileInfoPointer &fileinfo)
 
 bool ShareInfoFrame::checkShareName() //返回值表示是否继续
 {
+    // 共享名不能为空
+    const QString &name = m_shareNamelineEdit->text();
+    if (name.isEmpty() || name == "") {
+        return false;
+    }
+    // 修复BUG-44972
+    // 当共享文件名为“..”或“.”时，弹出提示框
+    if (name == ".." || name == ".") {
+        QString strMsg = tr("The share name must not be two dots (..) or one dot (.)");
+        dialogManager->showMessageDialog(DialogManager::msgWarn, strMsg);
+        return false;
+    }
+
     if (m_fileinfo->fileSharedName().toLower() == m_shareNamelineEdit->text().toLower()) { //共享名未更改（不区分大小写）时，直接返回true
         return true;
     }
