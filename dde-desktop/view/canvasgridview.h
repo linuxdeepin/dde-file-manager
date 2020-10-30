@@ -34,8 +34,8 @@ public:
     static std::atomic<bool> m_flag;
     static QMap<DMD_TYPES, bool> virtualEntryExpandState;
 
-    explicit CanvasGridView(const QString &screen,QWidget *parent = Q_NULLPTR);
-    ~CanvasGridView() Q_DECL_OVERRIDE;
+    explicit CanvasGridView(const QString &screen, QWidget *parent = Q_NULLPTR);
+    ~CanvasGridView() override;
 
 
     enum ContextMenuAction {
@@ -58,35 +58,35 @@ public:
     Q_ENUM(ContextMenuAction)
 
     // inherint prue virtual function of QAbstractItemView
-    virtual QRect visualRect(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    virtual QModelIndex indexAt(const QPoint &point) const Q_DECL_OVERRIDE;
+    virtual QRect visualRect(const QModelIndex &index) const override;
+    virtual QModelIndex indexAt(const QPoint &point) const override;
     virtual void scrollTo(const QModelIndex &index,
-                          ScrollHint hint = EnsureVisible) Q_DECL_OVERRIDE;
+                          ScrollHint hint = EnsureVisible) override;
     virtual QModelIndex moveCursor(CursorAction cursorAction,
-                                   Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
-    virtual int horizontalOffset() const Q_DECL_OVERRIDE;
-    virtual int verticalOffset() const Q_DECL_OVERRIDE;
-    virtual bool isIndexHidden(const QModelIndex &index) const Q_DECL_OVERRIDE;
+                                   Qt::KeyboardModifiers modifiers) override;
+    virtual int horizontalOffset() const override;
+    virtual int verticalOffset() const override;
+    virtual bool isIndexHidden(const QModelIndex &index) const override;
     virtual void setSelection(const QRect &rect,
-                              QItemSelectionModel::SelectionFlags command) Q_DECL_OVERRIDE;
-    virtual QRegion visualRegionForSelection(const QItemSelection &selection) const Q_DECL_OVERRIDE;
+                              QItemSelectionModel::SelectionFlags command) override;
+    virtual QRegion visualRegionForSelection(const QItemSelection &selection) const override;
 
     // event override
-    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
-    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
-    void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
-    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
-    void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
-    //void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-    void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
-    void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
-    void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    void paintEvent(QPaintEvent *) override;
+    //void resizeEvent(QResizeEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
     bool event(QEvent *event) override;
 
@@ -149,7 +149,7 @@ signals:
     void itemCreated(const DUrl &url);
 
 public slots:
-    bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) Q_DECL_OVERRIDE;
+    bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
     void setDodgeDuration(double dodgeDuration);
     virtual void selectAll() override;
 protected slots:

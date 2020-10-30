@@ -11,11 +11,11 @@ class BackgroundWidget : public QWidget
     Q_OBJECT
 public:
     explicit BackgroundWidget(QWidget *parent = nullptr);
-    ~BackgroundWidget();
+    ~BackgroundWidget() override;
     void setPixmap(const QPixmap &pixmap);
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent *event) override;
     void setView(const QSharedPointer<CanvasGridView> &);
-    inline QPixmap pixmap() const{return m_pixmap;}
+    inline QPixmap pixmap() const {return m_pixmap;}
 private:
     QPixmap m_pixmap;
     QPixmap m_noScalePixmap;

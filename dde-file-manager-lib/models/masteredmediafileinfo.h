@@ -31,34 +31,34 @@ class MasteredMediaFileInfo : public DAbstractFileInfo
 public:
     explicit MasteredMediaFileInfo(const DUrl &url);
 
-    bool exists() const Q_DECL_OVERRIDE;
-    bool isReadable() const Q_DECL_OVERRIDE;
-    bool isWritable() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
+    bool exists() const override;
+    bool isReadable() const override;
+    bool isWritable() const override;
+    bool isDir() const override;
 
-    int filesCount() const Q_DECL_OVERRIDE;
-    QString fileDisplayName() const Q_DECL_OVERRIDE;
+    int filesCount() const override;
+    QString fileDisplayName() const override;
 
-    QVariantHash extraProperties() const Q_DECL_OVERRIDE;
-    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
+    QVariantHash extraProperties() const override;
+    QVector<MenuAction> menuActionList(MenuType type) const override;
 
-    bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
-    DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
-    DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
+    bool canRedirectionFileUrl() const override;
+    DUrl redirectedFileUrl() const override;
+    DUrl mimeDataUrl() const override;
 
-    bool canIteratorDir() const Q_DECL_OVERRIDE;
-    DUrl parentUrl() const Q_DECL_OVERRIDE;
-    DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
-    QString toLocalFile() const Q_DECL_OVERRIDE;
+    bool canIteratorDir() const override;
+    DUrl parentUrl() const override;
+    DUrl goToUrlWhenDeleted() const override;
+    QString toLocalFile() const override;
 
-    bool canDrop() const Q_DECL_OVERRIDE;
-    bool canTag() const Q_DECL_OVERRIDE;
-    bool canRename() const Q_DECL_OVERRIDE;
-    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
-    void refresh(const bool isForce = false) Q_DECL_OVERRIDE;
+    bool canDrop() const override;
+    bool canTag() const override;
+    bool canRename() const override;
+    QSet<MenuAction> disableMenuActionList() const override;
+    void refresh(const bool isForce = false) override;
 
 private:
-    QString getVolTag(const QString & burnPath) const;
+    QString getVolTag(const QString &burnPath) const;
 
     void backupInfo(const DUrl &url);
 

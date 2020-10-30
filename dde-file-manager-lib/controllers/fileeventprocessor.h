@@ -20,7 +20,7 @@ public:
     FileEventProcessor();
 
 private:
-    virtual bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData) Q_DECL_OVERRIDE;
+    virtual bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData) override;
 };
 
 DFM_END_NAMESPACE

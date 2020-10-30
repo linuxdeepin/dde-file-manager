@@ -30,7 +30,7 @@ class VaultFileInfo : public DAbstractFileInfo
 {
 public:
     explicit VaultFileInfo(const DUrl &url);
-    ~VaultFileInfo();
+    ~VaultFileInfo() override;
 
     bool exists() const override;
 
@@ -42,18 +42,18 @@ public:
 
     bool canRedirectionFileUrl() const override;
     DUrl redirectedFileUrl() const override;
-    bool canIteratorDir() const Q_DECL_OVERRIDE;
+    bool canIteratorDir() const override;
 
     QString subtitleForEmptyFloder() const override;
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
     QList<QIcon> additionalIcon() const override;
-    bool isWritable() const Q_DECL_OVERRIDE;
-    bool isSymLink() const Q_DECL_OVERRIDE;
+    bool isWritable() const override;
+    bool isSymLink() const override;
 
     QFile::Permissions permissions() const override;
-    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
+    QSet<MenuAction> disableMenuActionList() const override;
 
     // 右键菜单
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;

@@ -34,24 +34,24 @@ class AVFSFileController : public DAbstractFileController
     Q_OBJECT
 
 public:
-    explicit AVFSFileController(QObject* parent = nullptr);
+    explicit AVFSFileController(QObject *parent = nullptr);
 
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
 
-    const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const Q_DECL_OVERRIDE;
+    const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
 
-    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
-    bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const Q_DECL_OVERRIDE;
+    bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const override;
 
-    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
-    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const Q_DECL_OVERRIDE;
-    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const Q_DECL_OVERRIDE;
+    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
+    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
 
-    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const Q_DECL_OVERRIDE;
+    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const override;
 
-    static DUrl realUrl(const DUrl& url);
-    static QString findArchFileRootPath(const DUrl& url);
+    static DUrl realUrl(const DUrl &url);
+    static QString findArchFileRootPath(const DUrl &url);
 private:
 };
 

@@ -51,9 +51,9 @@ public:
     void endAddCustomWidget();
 
 private:
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
     void updateLayout();
     void onWindowTitleChanged(const QString &title);
@@ -72,8 +72,8 @@ private:
     QPushButton *m_acceptButton;
     QPushButton *m_rejectButton;
 
-    QList<QPair<QLabel*, QLineEdit*>> m_customLineEditList;
-    QList<QPair<QLabel*, QComboBox*>> m_customComboBoxList;
+    QList<QPair<QLabel *, QLineEdit *>> m_customLineEditList;
+    QList<QPair<QLabel *, QComboBox *>> m_customComboBoxList;
 
     friend class DFileDialog;
 };

@@ -41,18 +41,18 @@ class MusicPreview : public DFMFilePreview
 
 public:
     explicit MusicPreview(QObject *parent = nullptr);
-    ~MusicPreview();
+    ~MusicPreview() override;
 
-    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    bool setFileUrl(const DUrl &url) override;
     DUrl fileUrl() const override;
 
-    QWidget *contentWidget() const Q_DECL_OVERRIDE;
-    QWidget *statusBarWidget() const Q_DECL_OVERRIDE;
-    Qt::Alignment statusBarWidgetAlignment() const Q_DECL_OVERRIDE;
+    QWidget *contentWidget() const override;
+    QWidget *statusBarWidget() const override;
+    Qt::Alignment statusBarWidgetAlignment() const override;
 
-    void play() Q_DECL_OVERRIDE;
-    void pause() Q_DECL_OVERRIDE;
-    void stop() Q_DECL_OVERRIDE;
+    void play() override;
+    void pause() override;
+    void stop() override;
 
     bool canPreview(const DUrl &url) const;
 

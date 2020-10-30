@@ -39,7 +39,7 @@ class BookMark : public DAbstractFileInfo
 public:
     explicit BookMark(const DUrl &url);
     BookMark(const QString &name, const DUrl &sourceUrl);
-    ~BookMark();
+    ~BookMark() override;
 
     DUrl sourceUrl() const;
     QString getName() const;
@@ -47,12 +47,12 @@ public:
 
     bool exists() const override;
 
-    QString fileDisplayName() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const override;
 
-    bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
-    DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+    bool canRedirectionFileUrl() const override;
+    DUrl redirectedFileUrl() const override;
 
-    DUrl parentUrl() const Q_DECL_OVERRIDE;
+    DUrl parentUrl() const override;
 
     DUrl getUrlByNewFileName(const QString &name) const override;
 

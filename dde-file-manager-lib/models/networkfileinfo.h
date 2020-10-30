@@ -34,39 +34,39 @@ class NetworkFileInfo: public DAbstractFileInfo
 {
 public:
     explicit NetworkFileInfo(const DUrl &url);
-    ~NetworkFileInfo();
+    ~NetworkFileInfo() override;
 
-    QString filePath() const Q_DECL_OVERRIDE;
-    QString absoluteFilePath() const Q_DECL_OVERRIDE;
-    bool exists() const Q_DECL_OVERRIDE;
+    QString filePath() const override;
+    QString absoluteFilePath() const override;
+    bool exists() const override;
 
-    bool isReadable() const Q_DECL_OVERRIDE;
-    bool isWritable() const Q_DECL_OVERRIDE;
-    bool isVirtualEntry() const Q_DECL_OVERRIDE;
-    virtual bool canDrop() const Q_DECL_OVERRIDE;
+    bool isReadable() const override;
+    bool isWritable() const override;
+    bool isVirtualEntry() const override;
+    virtual bool canDrop() const override;
 
-    bool canRename() const Q_DECL_OVERRIDE;
+    bool canRename() const override;
     bool canIteratorDir() const override;
-//    QIcon fileIcon() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
-    DUrl parentUrl() const Q_DECL_OVERRIDE;
-    QString fileDisplayName() const Q_DECL_OVERRIDE;
+//    QIcon fileIcon() const override;
+    bool isDir() const override;
+    DUrl parentUrl() const override;
+    QString fileDisplayName() const override;
 
-//    QString mimeTypeName(DMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const Q_DECL_OVERRIDE;
+//    QString mimeTypeName(DMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const override;
 
     NetworkNode networkNode() const;
-    void setNetworkNode(const NetworkNode& networkNode);
+    void setNetworkNode(const NetworkNode &networkNode);
 
-    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
+    QVector<MenuAction> menuActionList(MenuType type) const override;
 
-    QList<SelectionMode> supportSelectionModes() const Q_DECL_OVERRIDE;
-    Qt::ItemFlags fileItemDisableFlags() const Q_DECL_OVERRIDE;
+    QList<SelectionMode> supportSelectionModes() const override;
+    Qt::ItemFlags fileItemDisableFlags() const override;
 
-    quint8 supportViewMode() const Q_DECL_OVERRIDE;
+    quint8 supportViewMode() const override;
 
     int filesCount() const override;
 
-    QString iconName() const Q_DECL_OVERRIDE;
+    QString iconName() const override;
 
     bool canRedirectionFileUrl() const override;
     DUrl redirectedFileUrl() const override;

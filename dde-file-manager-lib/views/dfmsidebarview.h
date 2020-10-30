@@ -33,12 +33,12 @@ class DFMSideBarView : public DListView
     Q_OBJECT
 public:
     explicit DFMSideBarView(QWidget *parent = nullptr);
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
-    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
-    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
-    QModelIndex indexAt(const QPoint &p) const Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    QModelIndex indexAt(const QPoint &p) const override;
     QModelIndex getPreviousIndex() const;
     QModelIndex getCurrentIndex() const;
     void currentChanged(const QModelIndex &previous);
@@ -46,7 +46,7 @@ public:
 
 protected:
     bool onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction action) const;
-    Qt::DropAction canDropMimeData(DFMSideBarItem *item,const QMimeData *data, Qt::DropActions actions) const;
+    Qt::DropAction canDropMimeData(DFMSideBarItem *item, const QMimeData *data, Qt::DropActions actions) const;
     bool isAccepteDragEvent(DFMDragEvent *event);
 signals:
     void requestRemoveItem();

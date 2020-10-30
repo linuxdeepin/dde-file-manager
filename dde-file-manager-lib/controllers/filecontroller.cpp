@@ -545,15 +545,15 @@ public:
                     const bool gvfs = false);
     ~FileDirIterator() override;
 
-    DUrl next() Q_DECL_OVERRIDE;
-    bool hasNext() const Q_DECL_OVERRIDE;
+    DUrl next() override;
+    bool hasNext() const override;
 
-    QString fileName() const Q_DECL_OVERRIDE;
+    QString fileName() const override;
     DUrl fileUrl() const override;
-    const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    DUrl url() const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer fileInfo() const override;
+    DUrl url() const override;
 
-    bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
+    bool enableIteratorByKeyword(const QString &keyword) override;
 
     ///
     /// \brief hasSymLinkDir 用于判断当前路径中是否存在快捷方式

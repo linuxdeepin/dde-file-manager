@@ -41,7 +41,7 @@ class BookMarkManager : public DAbstractFileController
     Q_OBJECT
 public:
     explicit BookMarkManager(QObject *parent = nullptr);
-    ~BookMarkManager();
+    ~BookMarkManager() override;
 
     bool checkExist(const DUrl &url);
 
@@ -52,9 +52,9 @@ public:
 
     bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const override;
 
-    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
-    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
+    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
     bool onFileRenamed(const DUrl &from, const DUrl &to);
 

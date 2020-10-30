@@ -45,7 +45,7 @@ public:
     explicit WrapperWidget(QWidget *parent = nullptr) : QWidget(parent) {}
 
 protected:
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE
+    void paintEvent(QPaintEvent *event) override
     {
         if (m_pixmap.isNull()) return;
 
@@ -96,7 +96,7 @@ void WallpaperItem::initUI()
     m_wrapper->setFixedSize(ItemWidth, ItemHeight * 2);
     m_wrapper->setAttribute(Qt::WA_TranslucentBackground);
 
-    QFrame * buttonArea = new QFrame(m_wrapper);
+    QFrame *buttonArea = new QFrame(m_wrapper);
     buttonArea->setFixedSize(ItemWidth, ItemHeight);
     buttonArea->move(0, ItemHeight);
 
@@ -165,8 +165,7 @@ void WallpaperItem::slideUp()
     m_upAnim->setEndValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));
     m_upAnim->start();
     //当按钮浮起，设置按钮可获得焦点
-    for(int i=0; i<m_buttonLayout->count(); i++)
-    {
+    for (int i = 0; i < m_buttonLayout->count(); i++) {
         m_buttonLayout->itemAt(i)->widget()->setFocusPolicy(Qt::StrongFocus);
     }
     //设置第一个按钮为焦点
@@ -182,8 +181,7 @@ void WallpaperItem::slideDown()
     m_downAnim->setEndValue(QPoint(0, 0));
     m_downAnim->start();
     //当按钮下沉，设置按钮不可获得焦点
-    for(int i=0; i<m_buttonLayout->count(); i++)
-    {
+    for (int i = 0; i < m_buttonLayout->count(); i++) {
         m_buttonLayout->itemAt(i)->widget()->setFocusPolicy(Qt::NoFocus);
     }
 }
@@ -222,16 +220,15 @@ void WallpaperItem::mousePressEvent(QMouseEvent *event)
 
 void WallpaperItem::keyPressEvent(QKeyEvent *event)
 {
-    switch(event->key())
-    {
+    switch (event->key()) {
     case Qt::Key_Up:
         m_buttonLayout->itemAt(0)->widget()->setFocus();
         break;
     case Qt::Key_Down:
-        m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()->setFocus();
+        m_buttonLayout->itemAt(m_buttonLayout->count() - 1)->widget()->setFocus();
         break;
     default:
-    //保持按键事件传递
+        //保持按键事件传递
         event->ignore();
         break;
     }
@@ -272,8 +269,7 @@ bool WallpaperItem::eventFilter(QObject *object, QEvent *event)
         if (keyEvent->key() == Qt::Key_Tab) {
             emit tab();
             return true;
-        }
-        else if (keyEvent->key() == Qt::Key_Backtab) {
+        } else if (keyEvent->key() == Qt::Key_Backtab) {
             emit backtab();
             return true;
         }
@@ -283,7 +279,7 @@ bool WallpaperItem::eventFilter(QObject *object, QEvent *event)
 
 void WallpaperItem::focusLastButton()
 {
-    m_buttonLayout->itemAt(m_buttonLayout->count()-1)->widget()->setFocus();
+    m_buttonLayout->itemAt(m_buttonLayout->count() - 1)->widget()->setFocus();
 }
 
 void WallpaperItem::refindPixmap()
@@ -318,7 +314,7 @@ void WallpaperItem::setOpacity(qreal opacity)
     //qreal类型是double类型，这里是设置透明度，根据Qt文档描述取值范围是0.0-1.0
     //这里精度应当足够了。
     const double tempEps = 1e-6;
-    if(fabs(m_wrapper->m_opacity - opacity) < tempEps)
+    if (fabs(m_wrapper->m_opacity - opacity) < tempEps)
         return;
 
     m_wrapper->m_opacity = opacity;

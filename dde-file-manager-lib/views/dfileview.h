@@ -101,7 +101,7 @@ public:
     DStatusBar *statusBar() const;
     FileViewHelper *fileViewHelper() const;
 
-    DUrl rootUrl() const Q_DECL_OVERRIDE;
+    DUrl rootUrl() const override;
     ViewState viewState() const override;
     QList<DUrl> selectedUrls() const;
 
@@ -131,14 +131,14 @@ public:
 
     bool testViewMode(ViewModes modes, ViewMode mode) const;
 
-    int horizontalOffset() const Q_DECL_OVERRIDE;
+    int horizontalOffset() const override;
 
     bool isSelected(const QModelIndex &index) const;
     int selectedIndexCount() const;
-    QModelIndexList selectedIndexes() const Q_DECL_OVERRIDE;
+    QModelIndexList selectedIndexes() const override;
 
-    QModelIndex indexAt(const QPoint &point) const Q_DECL_OVERRIDE;
-    QRect visualRect(const QModelIndex &index) const Q_DECL_OVERRIDE;
+    QModelIndex indexAt(const QPoint &point) const override;
+    QRect visualRect(const QModelIndex &index) const override;
 
     typedef QPair<int, int> RandeIndex;
     typedef QList<RandeIndex> RandeIndexList;
@@ -157,13 +157,13 @@ public:
     void setEnabledSelectionModes(const QSet<SelectionMode> &list);
     QSet<SelectionMode> enabledSelectionModes() const;
 
-    QWidget *widget() const Q_DECL_OVERRIDE;
-    QList<QAction*> toolBarActionList() const Q_DECL_OVERRIDE;
+    QWidget *widget() const override;
+    QList<QAction *> toolBarActionList() const override;
 
 public slots:
     bool cd(const DUrl &url);
     bool cdUp();
-    bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event) Q_DECL_OVERRIDE;
+    bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
     void select(const QList<DUrl> &list);
     // 修复KLU BUG-38453 重新添加一个函数，当拷贝和剪贴过后，调用该函数选择全部文件对象
     void selectAllAfterCutOrCopy(const QList<DUrl> &list);
@@ -193,9 +193,9 @@ public slots:
 
     void delayUpdateStatusBar();
     void updateStatusBar();
-    void openIndexByOpenAction(const int &action, const QModelIndex& index);
+    void openIndexByOpenAction(const int &action, const QModelIndex &index);
 
-    void setIconSizeBySizeIndex(const int& sizeIndex);
+    void setIconSizeBySizeIndex(const int &sizeIndex);
 
     bool setRootUrl(const DUrl &url) override;
 
@@ -209,42 +209,42 @@ signals:
     void viewStateChanged();
 
 private slots:
-    void dislpayAsActionTriggered(QAction * action);
-    void sortByActionTriggered(QAction * action);
-    void openWithActionTriggered(QAction * action);
+    void dislpayAsActionTriggered(QAction *action);
+    void sortByActionTriggered(QAction *action);
+    void openWithActionTriggered(QAction *action);
     void onRowCountChanged();
     void updateModelActiveIndex();
-    void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
+    void handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles = QVector<int>());
     void onRootUrlDeleted(const DUrl &rootUrl);
     void freshView();
     void loadViewState(const DUrl &url);
     void saveViewState();
     void onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
-    void onDriveOpticalChanged(const QString& path);
+    void onDriveOpticalChanged(const QString &path);
     void reset() override;
     void setRootIndex(const QModelIndex &index) override;
 
 protected:
-    void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void wheelEvent(QWheelEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-    void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
-    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
-    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
-    void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
-    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
-    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) Q_DECL_OVERRIDE;
-    QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
-    void rowsAboutToBeRemoved(const QModelIndex & parent, int start, int end) Q_DECL_OVERRIDE;
-    void rowsInserted(const QModelIndex & parent, int start, int end) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) override;
+    QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
+    void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override;
+    void rowsInserted(const QModelIndex &parent, int start, int end) override;
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
-                     const QVector<int> &roles = QVector<int>()) Q_DECL_OVERRIDE;
-    bool event(QEvent *e) Q_DECL_OVERRIDE;
+                     const QVector<int> &roles = QVector<int>()) override;
+    bool event(QEvent *e) override;
     void updateGeometries() override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -259,7 +259,7 @@ private:
     void increaseIcon();
     void decreaseIcon();
     void openIndex(const QModelIndex &index);
-    void keyboardSearch(const QString & search) Q_DECL_OVERRIDE;
+    void keyboardSearch(const QString &search) override;
     void updateHorizontalOffset();
     void switchViewMode(ViewMode mode);
     void showEmptyAreaMenu(const Qt::ItemFlags &indexFlags);
@@ -270,11 +270,11 @@ private:
     void popupHeaderViewContextMenu(const QPoint &pos);
     void onModelStateChanged(int state);
     void updateContentLabel();
-    void updateToolBarActions(QWidget* widget = nullptr, QString theme = "");
+    void updateToolBarActions(QWidget *widget = nullptr, QString theme = "");
 
     using DListView::setOrientation;
 
-    void refresh() Q_DECL_OVERRIDE;
+    void refresh() override;
     bool fetchDragEventUrlsFromSharedMemory();
 
     bool m_isRemovingCase = false;
