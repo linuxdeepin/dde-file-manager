@@ -168,6 +168,9 @@ DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
 void DFMVaultUnlockPages::onButtonClicked(const int &index)
 {
     if (index == 1){
+        // 点击解锁后,灰化解锁按钮
+        getButton(1)->setEnabled(false);
+
         QString strPwd = m_passwordEdit->text();
 
         QString strClipher("");
