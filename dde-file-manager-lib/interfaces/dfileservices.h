@@ -111,7 +111,7 @@ public:
                                                                 bool ignoreScheme = false);
 
     bool openFile(const QObject *sender, const DUrl &url) const;
-    bool openFiles(const QObject *sender, const DUrlList &list,const bool isEnter = false) const;
+    bool openFiles(const QObject *sender, const DUrlList &list, const bool isEnter = false) const;
     bool openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const;
     bool openFilesByApp(const QObject *sender, const QString &appName, const QList<DUrl> &urllist, const bool isenter = false) const;
     bool compressFiles(const QObject *sender, const DUrlList &list) const;
@@ -152,7 +152,7 @@ public:
 
     const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false,bool isgvfs = false) const;
+                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false, bool isgvfs = false) const;
 
     const QList<DAbstractFileInfoPointer> getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
                                                       QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false, bool canconst = false) const;
@@ -205,7 +205,7 @@ private:
     explicit DFileService(QObject *parent = nullptr);
     ~DFileService() override;
 
-    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) Q_DECL_OVERRIDE;
+    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) override;
 
     static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
     static void insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator);

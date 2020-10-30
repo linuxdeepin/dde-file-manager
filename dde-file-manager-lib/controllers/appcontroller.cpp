@@ -521,23 +521,29 @@ void AppController::actionClearTrash(const QObject *sender)
 
 void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    quint64 windowId = event->windowId();
+    int windowId = event->windowId();
+    bool wayland = DesktopInfo().waylandDectected();
+    QString suffix = wayland ? "wps" : "doc";
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
-    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Document"), "doc", windowId);
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Document"), suffix, windowId);
 }
 
 void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    quint64 windowId = event->windowId();
+    int windowId = event->windowId();
+    bool wayland = DesktopInfo().waylandDectected();
+    QString suffix = wayland ? "et" : "xls";
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
-    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Spreadsheet"), "xls", windowId);
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Spreadsheet"), suffix, windowId);
 }
 
 void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    quint64 windowId = event->windowId();
+    int windowId = event->windowId();
+    bool wayland = DesktopInfo().waylandDectected();
+    QString suffix = wayland ? "dps" : "ppt";
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
-    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Presentation"), "ppt", windowId);
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Presentation"), suffix, windowId);
 }
 
 void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -712,8 +718,8 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
-        // huawei 50143: 卸载时有任务，提示设备繁忙并且不能中断传输
-        //emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+        // Only optical media has eject option, should terminate all oprations while ejecting...
+        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
         QtConcurrent::run([fi]() {
             qDebug() << fi->fileUrl().path();
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标

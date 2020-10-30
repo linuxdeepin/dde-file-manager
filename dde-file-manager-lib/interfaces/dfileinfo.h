@@ -31,90 +31,90 @@ class DFileInfoPrivate;
 class DFileInfo : public DAbstractFileInfo
 {
 public:
-    explicit DFileInfo(const QString& filePath, bool hasCache = false);
-    explicit DFileInfo(const DUrl& fileUrl, bool hasCache = false);
+    explicit DFileInfo(const QString &filePath, bool hasCache = false);
+    explicit DFileInfo(const DUrl &fileUrl, bool hasCache = false);
     explicit DFileInfo(const QFileInfo &fileInfo, bool hasCache = false);
     ~DFileInfo() override;
 
     static bool exists(const DUrl &fileUrl);
     static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault,
-                              const QString inod = QString(),const bool isgvfs = false);
+                              const QString inod = QString(), const bool isgvfs = false);
 
-    bool exists() const Q_DECL_OVERRIDE;
-    bool isPrivate() const Q_DECL_OVERRIDE;
+    bool exists() const override;
+    bool isPrivate() const override;
 
-    QString path() const Q_DECL_OVERRIDE;
-    QString filePath() const Q_DECL_OVERRIDE;
-    QString absolutePath() const Q_DECL_OVERRIDE;
-    QString absoluteFilePath() const Q_DECL_OVERRIDE;
-    QString fileName() const Q_DECL_OVERRIDE;
-    QString fileSharedName() const Q_DECL_OVERRIDE;
+    QString path() const override;
+    QString filePath() const override;
+    QString absolutePath() const override;
+    QString absoluteFilePath() const override;
+    QString fileName() const override;
+    QString fileSharedName() const override;
 
     QList<QIcon> additionalIcon() const override;
 
-    bool canRename() const Q_DECL_OVERRIDE;
-    bool canShare() const Q_DECL_OVERRIDE;
-    bool canFetch() const Q_DECL_OVERRIDE;
-    bool canTag() const Q_DECL_OVERRIDE;
+    bool canRename() const override;
+    bool canShare() const override;
+    bool canFetch() const override;
+    bool canTag() const override;
 
-    bool isReadable() const Q_DECL_OVERRIDE;
-    bool isWritable() const Q_DECL_OVERRIDE;
-    bool isExecutable() const Q_DECL_OVERRIDE;
-    bool isHidden() const Q_DECL_OVERRIDE;
-    bool isRelative() const Q_DECL_OVERRIDE;
-    bool isAbsolute() const Q_DECL_OVERRIDE;
-    bool isShared() const Q_DECL_OVERRIDE;
-    bool isWritableShared() const Q_DECL_OVERRIDE;
-    bool isAllowGuestShared() const Q_DECL_OVERRIDE;
-    bool makeAbsolute() Q_DECL_OVERRIDE;
+    bool isReadable() const override;
+    bool isWritable() const override;
+    bool isExecutable() const override;
+    bool isHidden() const override;
+    bool isRelative() const override;
+    bool isAbsolute() const override;
+    bool isShared() const override;
+    bool isWritableShared() const override;
+    bool isAllowGuestShared() const override;
+    bool makeAbsolute() override;
 
     FileType fileType() const override;
-    bool isFile() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
-    bool isSymLink() const Q_DECL_OVERRIDE;
+    bool isFile() const override;
+    bool isDir() const override;
+    bool isSymLink() const override;
 
     QString symlinkTargetPath() const override;
-    DUrl symLinkTarget() const Q_DECL_OVERRIDE;
+    DUrl symLinkTarget() const override;
 
-    QString owner() const Q_DECL_OVERRIDE;
-    uint ownerId() const Q_DECL_OVERRIDE;
-    QString group() const Q_DECL_OVERRIDE;
-    uint groupId() const Q_DECL_OVERRIDE;
+    QString owner() const override;
+    uint ownerId() const override;
+    QString group() const override;
+    uint groupId() const override;
 
-    bool permission(QFile::Permissions permissions) const Q_DECL_OVERRIDE;
-    QFile::Permissions permissions() const Q_DECL_OVERRIDE;
+    bool permission(QFile::Permissions permissions) const override;
+    QFile::Permissions permissions() const override;
 
-    qint64 size() const Q_DECL_OVERRIDE;
-    int filesCount() const Q_DECL_OVERRIDE;
+    qint64 size() const override;
+    int filesCount() const override;
     QString sizeDisplayName() const override;
 
-    QDateTime created() const Q_DECL_OVERRIDE;
-    QDateTime lastModified() const Q_DECL_OVERRIDE;
-    QDateTime lastRead() const Q_DECL_OVERRIDE;
+    QDateTime created() const override;
+    QDateTime lastModified() const override;
+    QDateTime lastRead() const override;
 
-    QMimeType mimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const Q_DECL_OVERRIDE;
+    QMimeType mimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const override;
 
-    bool canIteratorDir() const Q_DECL_OVERRIDE;
+    bool canIteratorDir() const override;
 
-    QString subtitleForEmptyFloder() const Q_DECL_OVERRIDE;
+    QString subtitleForEmptyFloder() const override;
 
-    QString fileDisplayName() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const override;
 
-    void refresh(const bool isForce = false) Q_DECL_OVERRIDE;
-    DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
+    void refresh(const bool isForce = false) override;
+    DUrl goToUrlWhenDeleted() const override;
 
-    void makeToActive() Q_DECL_OVERRIDE;
-    void makeToInactive() Q_DECL_OVERRIDE;
-    QIcon fileIcon() const Q_DECL_OVERRIDE;
+    void makeToActive() override;
+    void makeToInactive() override;
+    QIcon fileIcon() const override;
 
-    QString iconName() const Q_DECL_OVERRIDE;
+    QString iconName() const override;
 
-    QFileInfo toQFileInfo() const Q_DECL_OVERRIDE;
+    QFileInfo toQFileInfo() const override;
     QIODevice *createIODevice() const override;
 
-    QVariantHash extraProperties() const Q_DECL_OVERRIDE;
+    QVariantHash extraProperties() const override;
 
-    quint64 inode() const Q_DECL_OVERRIDE;
+    quint64 inode() const override;
 
     // 此函数高频调用，使用 DFileInfo 会降低性能
     static bool fileIsWritable(const QString &path, uint ownerId);

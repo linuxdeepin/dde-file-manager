@@ -48,7 +48,7 @@ class ErrorHandle : public QObject, public DFileCopyMoveJob::Handle
 {
     Q_OBJECT
 public:
-    ErrorHandle(QObject *parent): QObject(parent) {}
+    explicit ErrorHandle(QObject *parent): QObject(parent) {}
     virtual ~ErrorHandle() override;
     DFileCopyMoveJob::Action handleError(DFileCopyMoveJob *job, DFileCopyMoveJob::Error error,
                                          const DAbstractFileInfoPointer sourceInfo,  const DAbstractFileInfoPointer targetInfo) override;

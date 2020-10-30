@@ -37,7 +37,7 @@ class DFileCopyMoveJob : public QThread
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_d_ptr), DFileCopyMoveJob)
 
     Q_PROPERTY(Mode mode READ mode WRITE setMode)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+//    Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(FileHints fileHints READ fileHints WRITE setFileHints)
     Q_PROPERTY(QString errorString READ errorString CONSTANT)
@@ -218,6 +218,7 @@ Q_SIGNALS:
     void progressChanged(qreal progress, qint64 writeData);
     void currentFileProgressChanged(qreal progress, qint64 writeData);
     void speedUpdated(qint64 speed);
+    void stopAllGioDervic();
 
 protected:
     DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent);

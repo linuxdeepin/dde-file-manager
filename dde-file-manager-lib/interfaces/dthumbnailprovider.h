@@ -57,8 +57,8 @@ public:
 
     QString thumbnailFilePath(const QFileInfo &info, Size size) const;
 
-    QString createThumbnail(const QFileInfo &info, Size size);
-    typedef std::function<void(const QString&)> CallBack;
+    typedef std::function<void(const QString &)> CallBack;
+    QString createThumbnail(const QFileInfo &info, Size size, const CallBack &callback);
     void appendToProduceQueue(const QFileInfo &info, Size size, CallBack callback = 0);
     void removeInProduceQueue(const QFileInfo &info, Size size);
 
@@ -77,9 +77,9 @@ signals:
 
 protected:
     explicit DThumbnailProvider(QObject *parent = 0);
-    ~DThumbnailProvider();
+    ~DThumbnailProvider() override;
 
-    void run() Q_DECL_OVERRIDE;
+    void run() override;
 
 private:
     QScopedPointer<DThumbnailProviderPrivate> d_ptr;

@@ -124,12 +124,14 @@ public:
 //            button_mask->show();
         });
         connect(&p->playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, [this, control_button] {
-            if (p->playerWidget->engine().state() == dmr::PlayerEngine::Playing) {
+            if (p->playerWidget->engine().state() == dmr::PlayerEngine::Playing)
+            {
 //                button_mask->show();
                 control_button->setNormalPic(":/icons/icons/pause_normal.png");
                 control_button->setPressPic(":/icons/icons/pause_pressed.png");
                 control_button->setHoverPic(":/icons/icons/pause_hover.png");
-            } else {
+            } else
+            {
                 control_button->setNormalPic(":/icons/icons/start_normal.png");
                 control_button->setPressPic(":/icons/icons/start_pressed.png");
                 control_button->setHoverPic(":/icons/icons/start_hover.png");
@@ -146,7 +148,8 @@ public:
             sliderIsPressed = false;
         });
         connect(&p->playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, [this] {
-            if (!sliderIsPressed) {
+            if (!sliderIsPressed)
+            {
                 QSignalBlocker blocker(slider);
                 Q_UNUSED(blocker)
                 slider->setValue(static_cast<int>(p->playerWidget->engine().elapsed()));
@@ -208,7 +211,7 @@ bool VideoPreview::setFileUrl(const DUrl &url)
 
 DUrl VideoPreview::fileUrl() const
 {
-    return videoUrl;
+    return DUrl(videoUrl);
 }
 
 QWidget *VideoPreview::contentWidget() const
@@ -229,6 +232,16 @@ bool VideoPreview::showStatusBarSeparator() const
 Qt::Alignment VideoPreview::statusBarWidgetAlignment() const
 {
     return Qt::Alignment();
+}
+
+void VideoPreview::DoneCurrent()
+{
+    //非wayland平台请注释掉这段代码
+    if (DFMGlobal::isWayLand()) {
+#ifdef __armKul__
+        playerWidget->DoneCurrent();
+#endif
+    }
 }
 
 void VideoPreview::play()

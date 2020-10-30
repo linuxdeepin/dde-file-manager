@@ -54,13 +54,16 @@ DFM_END_NAMESPACE
 DFM_USE_NAMESPACE
 
 
-class DFMElidLabel : public QLabel {
+class DFMElidLabel : public QLabel
+{
 public:
-    explicit DFMElidLabel(QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags())
-        :QLabel(parent, f) {
+    explicit DFMElidLabel(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags())
+        : QLabel(parent, f)
+    {
     }
-    explicit DFMElidLabel(const QString &text, QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags())
-    :QLabel(text, parent, f) {
+    explicit DFMElidLabel(const QString &text, QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags())
+        : QLabel(text, parent, f)
+    {
 
     }
     ~DFMElidLabel() {}
@@ -87,7 +90,7 @@ public:
         DialogSave
     };
 
-    explicit DStatusBar(QWidget * parent = nullptr);
+    explicit DStatusBar(QWidget *parent = nullptr);
 
     void initUI();
     void initConnect();
@@ -96,16 +99,16 @@ public:
     void setMode(Mode mode);
     void setComBoxItems(const QStringList &filters);
 
-    QSlider* scalingSlider() const;
+    QSlider *scalingSlider() const;
     QPushButton *acceptButton() const;
     QPushButton *rejectButton() const;
     QLineEdit *lineEdit() const;
     QComboBox *comboBox() const;
 
-    QSize sizeHint() const Q_DECL_OVERRIDE;
+    QSize sizeHint() const override;
 
-    qint64 computerSize(const DUrlList& urllist);
-    int computerFolderContains(const DUrlList& urllist);
+    qint64 computerSize(const DUrlList &urllist);
+    int computerFolderContains(const DUrlList &urllist);
 
 signals:
     void modeChanged();
@@ -119,7 +122,7 @@ public slots:
     void setLoadingIncatorVisible(bool visible, const QString &tipText = QString());
 
 protected:
-    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     void clearLayoutAndAnchors();
@@ -141,12 +144,12 @@ private:
     int m_folderCount = 0;
     int m_folderContains = 0;
 
-    QHBoxLayout * m_layout;
-    DFMElidLabel * m_label = Q_NULLPTR;
-    DPictureSequenceView* m_loadingIndicator;
+    QHBoxLayout *m_layout;
+    DFMElidLabel *m_label = Q_NULLPTR;
+    DPictureSequenceView *m_loadingIndicator;
     bool m_loadingIndicatorInited = false;
 
-    QSlider* m_scaleSlider;
+    QSlider *m_scaleSlider;
 
     QPushButton *m_acceptButton = Q_NULLPTR;
     QPushButton *m_rejectButton = Q_NULLPTR;

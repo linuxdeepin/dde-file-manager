@@ -89,7 +89,8 @@ namespace FileSortFunction {
 class DCollator : public QCollator
 {
 public:
-    DCollator() : QCollator() {
+    DCollator() : QCollator()
+    {
         setNumericMode(true);
         setCaseSensitivity(Qt::CaseInsensitive);
     }
@@ -534,7 +535,7 @@ DUrl DAbstractFileInfo::rootSymLinkTarget() const
 
         info = fileService->createFileInfo(Q_NULLPTR, targetUrl);
         if (!info) {
-            return QUrl();
+            return DUrl();
         }
     }
 
@@ -923,9 +924,9 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
             if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
 #ifdef BLUETOOTH_ENABLE
-                || bluetoothManager->model()->adapters().count() > 0
+                    || bluetoothManager->model()->adapters().count() > 0
 #endif
-            ) {
+               ) {
                 actionKeys << MenuAction::SendToRemovableDisk;
             }
 
@@ -1000,9 +1001,9 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
         if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
 #ifdef BLUETOOTH_ENABLE
-            || bluetoothManager->model()->adapters().count() > 0
+                || bluetoothManager->model()->adapters().count() > 0
 #endif
-        ) {
+           ) {
             actionKeys << MenuAction::SendToRemovableDisk;
         }
 
@@ -1711,9 +1712,9 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(Menu
 
     if (deviceListener->isMountedRemovableDiskExits()
 #ifdef BLUETOOTH_ENABLE
-        || bluetoothManager->model()->adapters().count() > 0
+            || bluetoothManager->model()->adapters().count() > 0
 #endif
-    ) {
+       ) {
         QVector<MenuAction> diskMenuActionKeys;
         actions.insert(MenuAction::SendToRemovableDisk, diskMenuActionKeys);
     }
@@ -1892,14 +1893,13 @@ bool DAbstractFileInfo::parseEmblemString(QIcon &emblem, QString &pos, const QSt
             QStringList emStrList = emblemStr.split(";");
             imgPath = emStrList.at(0);
             pos = emStrList.at(1);
-        }
-        else {
+        } else {
             imgPath = emblemStr;
         }
 
         //修正主目录为标准路径
         if (imgPath.startsWith("~/")) {
-             imgPath.replace(0, 1, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+            imgPath.replace(0, 1, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         }
 
 //        QFile imgFile(imgPath);

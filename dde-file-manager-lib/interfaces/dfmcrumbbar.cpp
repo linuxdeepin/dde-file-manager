@@ -253,7 +253,7 @@ void DFMCrumbBarPrivate::initConnections()
 
     QObject::connect(&crumbListView, &QListView::clicked, q, [q](const QModelIndex & index) {
         if (index.isValid()) {
-            emit q->crumbListItemSelected(index.data(DFMCrumbListviewModel::FileUrlRole).toUrl());
+            emit q->crumbListItemSelected(DUrl(index.data(DFMCrumbListviewModel::FileUrlRole).toUrl()));
         }
     });
 
@@ -580,7 +580,7 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
         return ;
 
     DFileMenu *menu = new DFileMenu();
-    DUrl url = index.data(DFMCrumbListviewModel::FileUrlRole).toUrl();
+    DUrl url = DUrl(index.data(DFMCrumbListviewModel::FileUrlRole).toUrl());
     DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     bool displayIcon = settings.value("context-menu-icons").toBool();
     QIcon copyIcon, newWndIcon,  newTabIcon, editIcon;

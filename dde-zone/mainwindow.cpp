@@ -16,6 +16,7 @@
 #include <QMediaPlaylist>
 #include <QPainter>
 #include <dgiosettings.h>
+#include "desktopinfo.h"
 
 ZoneMainWindow::ZoneMainWindow(QWidget *parent)
     : QWidget(parent)
@@ -24,7 +25,15 @@ ZoneMainWindow::ZoneMainWindow(QWidget *parent)
     m_dbusZoneInter = new ZoneInterface("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this);
 
     // let the app start without system animation
-    setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
+//    setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
+
+    if (!DesktopInfo().waylandDectected()) {
+        setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
+    } else {
+        setWindowFlags(Qt::WindowStaysOnTopHint);
+    }
+
+
     // let background be transparent
     setAttribute(Qt::WA_TranslucentBackground, true);
 

@@ -35,8 +35,8 @@ public:
         : DAbstractFileWatcherPrivate(qq) {}
 
 
-    bool start() Q_DECL_OVERRIDE;
-    bool stop() Q_DECL_OVERRIDE;
+    bool start() override;
+    bool stop() override;
     bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1) override;
     bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType2 signal, const DUrl &arg1, const DUrl &arg2) override;
 
@@ -181,17 +181,24 @@ bool DFileWatcherPrivate::stop()
 
 bool DFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1)
 {
-    if (!targetUrl.isLocalFile())
+    if (!targetUrl.isLocalFile() && !arg1.isMTPFile()) // 华为版本，MTP删除文件自行刷新
         return false;
 
+    Q_Q(DFileWatcher);
+
     if (signal == &DAbstractFileWatcher::fileDeleted) {
-        for (const QString &path : watchFileList) {
-            const DUrl &url = DUrl::fromLocalFile(path);
+        if (arg1.isMTPFile()) {
+            q_ptr->fileDeleted(arg1);
+            return true;
+        } else {
+            for (const QString &path : watchFileList) {
+                const DUrl &url = DUrl::fromLocalFile(path);
 
-            if (url == arg1) {
-                q_ptr->fileDeleted(this->url);
+                if (url == arg1) {
+                    q_ptr->fileDeleted(this->url);
 
-                return true;
+                    return true;
+                }
             }
         }
     } else {

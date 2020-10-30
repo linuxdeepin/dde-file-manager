@@ -39,19 +39,19 @@ class AVFSIterator : public DDirIterator
 {
 public:
     AVFSIterator(const DUrl &url,
-                     const QStringList &nameFilters,
-                     QDir::Filters filter,
-                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+                 const QStringList &nameFilters,
+                 QDir::Filters filter,
+                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
 
-    ~AVFSIterator();
+    ~AVFSIterator() override;
 
-    DUrl next() Q_DECL_OVERRIDE;
-    bool hasNext() const Q_DECL_OVERRIDE;
+    DUrl next() override;
+    bool hasNext() const override;
 
-    QString fileName() const Q_DECL_OVERRIDE;
-    DUrl fileUrl() const Q_DECL_OVERRIDE;
-    const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    DUrl url() const Q_DECL_OVERRIDE;
+    QString fileName() const override;
+    DUrl fileUrl() const override;
+    const DAbstractFileInfoPointer fileInfo() const override;
+    DUrl url() const override;
 
 private:
     QDirIterator *iterator;
@@ -149,7 +149,7 @@ bool AVFSFileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrls
 {
     DUrlList realUrlList;
 
-    foreach (const DUrl& url, event->urlList()) {
+    foreach (const DUrl &url, event->urlList()) {
         realUrlList << realUrl(url);
     }
 
@@ -169,14 +169,14 @@ DUrl AVFSFileController::realUrl(const DUrl &url)
 QString AVFSFileController::findArchFileRootPath(const DUrl &url)
 {
     QStringList items = url.path().split("/");
-    for(int i = 0; i< items.size(); i++){
+    for (int i = 0; i < items.size(); i++) {
         QString path = "";
-        for(int j = 0; j<=i; j++){
+        for (int j = 0; j <= i; j++) {
             path += (items.at(j) + "/");
         }
-        if(path.endsWith("/"))
+        if (path.endsWith("/"))
             path.chop(1);
-        if(FileUtils::isArchive(path))
+        if (FileUtils::isArchive(path))
             return path;
     }
     return QString();

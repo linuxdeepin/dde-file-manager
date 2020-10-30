@@ -406,6 +406,13 @@ QList<QIcon> DFileInfo::additionalIcon() const
     QList<QIcon> icons;
 
     bool needEmblem = true;
+    // KLU TASK-38720 修复重命名文件时，文件图标有小锁显示的问题，
+    // 当为快捷方式时，有源文件文件不存在的情况，所以增加特殊判断
+    if(!isSymLink()){
+        if(access(fileUrl().toLocalFile().toStdString().c_str(), F_OK) == -1)
+            return icons;
+    }
+
     if (isSymLink()) {
         icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
         //链接文件不显示自定义标记
@@ -488,8 +495,8 @@ bool DFileInfo::canShare() const
         if (absoluteFilePath().startsWith(userPath)) {
             return true;
         }
-
-        UDiskDeviceInfoPointer info = deviceListener->getDeviceByFilePath(filePath());
+        //fix fix task 29259,说明是共享使用true
+        UDiskDeviceInfoPointer info = deviceListener->getDeviceByFilePath(filePath(),true);
 
         if (info) {
             if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() != UDiskDeviceInfo::network)

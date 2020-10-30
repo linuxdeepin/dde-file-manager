@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QtConcurrent>
 #include <QDebug>
+#include <QWindow>
 
 #include <unistd.h>
 #include <sys/wait.h>
@@ -17,6 +18,7 @@
 #include "dialogmanager.h"
 #include "singleton.h"
 #include "app/filesignalmanager.h"
+#include "utils/desktopinfo.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -42,6 +44,7 @@ private:
     QHash<QString, int> speedmap;
     DUrl image_file;
     int window_id;
+    QString lastVolName;
 
     Q_DECLARE_PUBLIC(BurnOptDialog)
 };
@@ -50,6 +53,17 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
     DDialog(parent),
     d_ptr(new BurnOptDialogPrivate(this))
 {
+    if(DFMGlobal::isWayLand())
+    {
+        //设置对话框窗口最大最小化按钮隐藏
+        this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        this->setAttribute(Qt::WA_NativeWindow);
+        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
+        this->windowHandle()->setProperty("_d_dwayland_resizable", false);
+    }
+
     Q_D(BurnOptDialog);
     d->setDevice(device);
     d->setupUi();
@@ -129,6 +143,18 @@ void BurnOptDialog::setJobWindowId(int wid)
 {
     Q_D(BurnOptDialog);
     d->window_id = wid;
+}
+
+void BurnOptDialog::setDefaultVolName(const QString &volName)
+{
+    if (DesktopInfo().waylandDectected()) { // 该需求仅针对华为分支
+        Q_D(BurnOptDialog);
+        d->le_volname->clear();
+        d->le_volname->setText(volName);
+        d->le_volname->setSelection(0, volName.length());
+        d->le_volname->setFocus();
+        d->lastVolName = volName;
+    }
 }
 
 BurnOptDialog::~BurnOptDialog()

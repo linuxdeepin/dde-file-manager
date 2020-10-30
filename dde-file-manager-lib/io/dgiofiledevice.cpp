@@ -37,12 +37,22 @@ public:
     GInputStream *input_stream = nullptr;
     GOutputStream *output_stream = nullptr;
     GIOStream *total_stream = nullptr;
+    GCancellable *m_writeCancel = nullptr;
+    GCancellable *m_readCancel = nullptr;
+    GCancellable *m_closeOutCancel = nullptr;
+    GCancellable *m_closeTotalCancel = nullptr;
+    GCancellable *m_closeInCancel = nullptr;
+    QAtomicInteger<bool> m_cancel = false;
 };
 
 DGIOFileDevicePrivate::DGIOFileDevicePrivate(DGIOFileDevice *qq)
     : DFileDevicePrivate(qq)
 {
-
+    m_writeCancel = g_cancellable_new();
+    m_readCancel = g_cancellable_new();
+    m_closeOutCancel = g_cancellable_new();
+    m_closeTotalCancel = g_cancellable_new();
+    m_closeInCancel = g_cancellable_new();
 }
 
 DGIOFileDevice::DGIOFileDevice(const DUrl &url, QObject *parent)
@@ -66,21 +76,21 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
 {
     if (isOpen())
         return false;
-
     if ((mode & ~(ReadWrite | Append | Truncate)) != 0)
         return false;
 
     Q_D(DGIOFileDevice);
 
     GError *error = nullptr;
-
+    if (d->m_cancel.load()){
+        return false;
+    }
     if (mode.testFlag(ReadWrite) && !mode.testFlag(Append)) {
         if (mode.testFlag(Truncate)) {
             d->total_stream = G_IO_STREAM(g_file_replace_readwrite(d->file, nullptr, false, G_FILE_CREATE_NONE, nullptr, &error));
         } else {
             d->total_stream = G_IO_STREAM(g_file_open_readwrite(d->file, nullptr, &error));
         }
-
         if (error) {
             setErrorString(QString::fromLocal8Bit(error->message));
 
@@ -88,7 +98,6 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
 
             return false;
         }
-
         d->input_stream = g_io_stream_get_input_stream(d->total_stream);
         d->output_stream = g_io_stream_get_output_stream(d->total_stream);
 
@@ -135,7 +144,13 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
                 g_error_free(error);
 
                 if (d->input_stream) {
-                    g_input_stream_close(d->input_stream, nullptr, nullptr);
+                    if (d->m_cancel.load()){
+                        return false;
+                    }
+                    g_input_stream_close(d->input_stream, d->m_closeInCancel, nullptr);
+                    if (d->m_cancel.load()){
+                        return false;
+                    }
                     g_object_unref(d->input_stream);
                 }
 
@@ -162,11 +177,22 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
                 }
 
                 if (d->input_stream) {
-                    g_input_stream_close(d->input_stream, nullptr, nullptr);
+                    if (d->m_cancel.load()){
+                        return false;
+                    }
+                    g_input_stream_close(d->input_stream, d->m_closeInCancel, nullptr);
+                    if (d->m_cancel.load()){
+                        return false;
+                    }
                     g_object_unref(d->input_stream);
                 }
-
-                g_output_stream_close(d->output_stream, nullptr, nullptr);
+                if (d->m_cancel.load()){
+                    return false;
+                }
+                g_output_stream_close(d->output_stream, d->m_closeOutCancel, nullptr);
+                if (d->m_cancel.load()){
+                    return false;
+                }
                 g_object_unref(d->output_stream);
 
                 return false;
@@ -183,13 +209,19 @@ void DGIOFileDevice::close()
 {
     if (!isOpen())
         return;
-
     DFileDevice::close();
 
     Q_D(DGIOFileDevice);
 
+    if (d->m_cancel.load()){
+        return;
+    }
+
     if (d->total_stream) {
-        g_io_stream_close(d->total_stream, nullptr, nullptr);
+        g_io_stream_close(d->total_stream, d->m_closeTotalCancel, nullptr);
+        if (d->m_cancel.load()){
+            return;
+        }
         g_object_unref(d->total_stream);
 
         d->total_stream = nullptr;
@@ -197,17 +229,26 @@ void DGIOFileDevice::close()
         d->output_stream = nullptr;
     } else {
         if (d->input_stream) {
-            g_input_stream_close(d->input_stream, nullptr, nullptr);
+            if (d->m_cancel.load()){
+                return;
+            }
+            g_input_stream_close(d->input_stream, d->m_closeInCancel, nullptr);
+            if (d->m_cancel.load()){
+                return;
+            }
             g_object_unref(d->input_stream);
-
             d->input_stream = nullptr;
         }
-
         if (d->output_stream) {
             //todo vfat文件格式的U盘在close的时候耗时很长,卡死的根源
-            g_output_stream_close(d->output_stream, nullptr, nullptr);
+            if (d->m_cancel.load()){
+                return;
+            }
+            g_output_stream_close(d->output_stream, d->m_closeOutCancel, nullptr);
+            if (d->m_cancel.load()){
+                return;
+            }
             g_object_unref(d->output_stream);
-
             d->output_stream = nullptr;
         }
     }
@@ -348,16 +389,19 @@ bool DGIOFileDevice::flush()
     return ok;
 }
 
-bool DGIOFileDevice::syncToDisk()
+bool DGIOFileDevice::syncToDisk(bool isVfat)
 {
-    //fix 修复卡死问题，在vfat格式的U盘g_output_stream_flush无效，使用关闭再打开强制刷新
-    close();
-    if (!open(QIODevice::WriteOnly | QIODevice::Append))
-        return false;
-    return true;
-    //old
-//    return flush();
-    //end
+    if(!isVfat) {
+        //fix 函数g_io_stream_close()后并没有如期望的(官方API描述)那样同步文件. 在特殊情况(vfat文件系统)下,仍用g_output_stream_flush进行同步
+        return flush();
+    } else {
+        //fix 修复卡死问题，在vfat格式的U盘g_output_stream_flush无效，使用关闭再打开强制刷新
+        close();
+        if (!open(QIODevice::WriteOnly | QIODevice::Append)) {
+            return false;
+        }
+        return true;
+    }
 }
 
 void DGIOFileDevice::closeWriteReadFailed(const bool bwrite)
@@ -369,9 +413,17 @@ void DGIOFileDevice::closeWriteReadFailed(const bool bwrite)
 
 
     Q_D(DGIOFileDevice);
-
+    if (d->m_cancel.load()){
+        return;
+    }
     if (d->total_stream) {
+        if (d->m_cancel.load()){
+            return;
+        }
         g_io_stream_close(d->total_stream, nullptr, nullptr);
+        if (d->m_cancel.load()){
+            return;
+        }
         g_object_unref(d->total_stream);
 
         d->total_stream = nullptr;
@@ -380,7 +432,13 @@ void DGIOFileDevice::closeWriteReadFailed(const bool bwrite)
     } else {
         if (d->input_stream) {
             if (bwrite) {
-                g_input_stream_close(d->input_stream, nullptr, nullptr);
+                if (d->m_cancel.load()){
+                    return;
+                }
+                g_input_stream_close(d->input_stream, d->m_closeInCancel, nullptr);
+                if (d->m_cancel.load()){
+                    return;
+                }
                 g_object_unref(d->input_stream);
             }
 
@@ -390,7 +448,13 @@ void DGIOFileDevice::closeWriteReadFailed(const bool bwrite)
         if (d->output_stream) {
             //todo vfat文件格式的U盘在close的时候耗时很长,卡死的根源
             if (!bwrite) {
-                g_output_stream_close(d->output_stream, nullptr, nullptr);
+                if (d->m_cancel.load()){
+                    return;
+                }
+                g_output_stream_close(d->output_stream, d->m_closeOutCancel, nullptr);
+                if (d->m_cancel.load()){
+                    return;
+                }
                 g_object_unref(d->output_stream);
             }
 
@@ -399,18 +463,43 @@ void DGIOFileDevice::closeWriteReadFailed(const bool bwrite)
     }
 }
 
+void DGIOFileDevice::cancelAllOperate()
+{
+    Q_D(DGIOFileDevice);
+    if (d->m_cancel.load()) {
+        return;
+    }
+    g_cancellable_cancel(d->m_writeCancel);
+    g_cancellable_cancel(d->m_readCancel);
+    g_cancellable_cancel(d->m_closeOutCancel);
+    g_cancellable_cancel(d->m_closeInCancel);
+    g_cancellable_cancel(d->m_closeTotalCancel);
+    closeWriteReadFailed(true);
+    closeWriteReadFailed(false);
+    d->m_cancel.store(true);
+    qDebug() << "stop all cancels";
+}
+
 qint64 DGIOFileDevice::readData(char *data, qint64 maxlen)
 {
     Q_D(DGIOFileDevice);
 
     GError *error = nullptr;
-    qint64 size = g_input_stream_read(d->input_stream, data, maxlen, nullptr, &error);
+    if (d->m_cancel.load()){
+        return -1;
+    }
+
+    qint64 size = g_input_stream_read(d->input_stream, data, static_cast<gsize>(maxlen), d->m_readCancel, &error);
 
     if (error) {
         setErrorString(QString::fromLocal8Bit(error->message));
 
         g_error_free(error);
 
+        return -1;
+    }
+
+    if (d->m_cancel.load()){
         return -1;
     }
 
@@ -422,13 +511,20 @@ qint64 DGIOFileDevice::writeData(const char *data, qint64 len)
     Q_D(DGIOFileDevice);
 
     GError *error = nullptr;
-    qint64 size = g_output_stream_write(d->output_stream, data, len, nullptr, &error);
+    if (d->m_cancel.load()){
+        return -1;
+    }
+    qint64 size = g_output_stream_write(d->output_stream, data, static_cast<gsize>(len), d->m_writeCancel, &error);
 
     if (error) {
         setErrorString(QString::fromLocal8Bit(error->message));
 
         g_error_free(error);
 
+        return -1;
+    }
+
+    if (d->m_cancel.load()){
         return -1;
     }
 

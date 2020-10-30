@@ -47,6 +47,7 @@
 #include <QJsonArray>
 #include <QProcess>
 #include <QDebug>
+#include <QtConcurrent>
 
 // use original poppler api
 #include <poppler-document.h>
@@ -59,6 +60,7 @@
 DFM_BEGIN_NAMESPACE
 
 #define FORMAT ".png"
+#define CREATE_VEDIO_THUMB "CreateVedioThumbnail"
 
 inline QByteArray dataToMd5Hex(const QByteArray &data)
 {
@@ -279,7 +281,7 @@ static QString generalKey(const QString &key)
     return key;
 }
 
-QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailProvider::Size size)
+QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailProvider::Size size, const CallBack &callback)
 {
     Q_D(DThumbnailProvider);
 
@@ -740,10 +742,12 @@ void DThumbnailProvider::run()
 
         locker.unlock();
 
-        const QString &thumbnail = createThumbnail(task.fileInfo, task.size);
+        const QString &thumbnail = createThumbnail(task.fileInfo, task.size, task.callback);
 
-        if (task.callback)
-            task.callback(thumbnail);
+        if (thumbnail != CREATE_VEDIO_THUMB) {
+            if (task.callback)
+                task.callback(thumbnail);
+        }
     }
 }
 

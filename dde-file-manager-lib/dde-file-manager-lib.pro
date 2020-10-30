@@ -11,6 +11,7 @@ include(../common/common.pri)
 QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs network
 #private
 QT       += gui-private
+LIBS	 += -lKF5Codecs
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -67,6 +68,8 @@ include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
 include(vault/vault.pri)
+include(log/log.pri)
+
 isEqual(ARCH, sw_64){
     DEFINES += SW_LABEL
     include(./sw_label/sw_label.pri)
@@ -79,6 +82,10 @@ isEqual(ARCH, sw_64){
 include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
 include(src.pri)
+
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64){
+    include(search/dfsearch.pri)
+}
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
@@ -140,6 +147,9 @@ isEqual(BUILD_MINIMUM, YES){
     templateFiles.files = skin/templates/newDoc.doc \
         skin/templates/newExcel.xls \
         skin/templates/newPowerPoint.ppt \
+        skin/templates/newDoc.wps \
+        skin/templates/newExcel.et \
+        skin/templates/newPowerPoint.dps \
         skin/templates/newTxt.txt
 }
 

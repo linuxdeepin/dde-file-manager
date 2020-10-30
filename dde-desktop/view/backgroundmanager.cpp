@@ -1,6 +1,7 @@
 #include "backgroundmanager.h"
 #include "screen/screenhelper.h"
 #include "util/xcb/xcb.h"
+#include "util/util.h"
 
 #include <qpa/qplatformwindow.h>
 #include <QImageReader>
@@ -278,9 +279,9 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     qInfo() << "screen name" << screen->name() << "geometry" << screen->geometry() << bwp.get();
 
     if (m_preview) {
-        bwp->setWindowFlags(bwp->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
+        DesktopUtil::set_prview_window(bwp.data());
     } else {
-        Xcb::XcbMisc::instance().set_window_type(bwp->winId(), Xcb::XcbMisc::Desktop);
+        DesktopUtil::set_desktop_window(bwp.data());
     }
 
     return bwp;
@@ -289,7 +290,8 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
 bool BackgroundManager::isEnabled() const
 {
     // 只支持kwin，或未开启混成的桌面环境
-    return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
+//    return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
+    return true;
 }
 
 void BackgroundManager::setVisible(bool visible)

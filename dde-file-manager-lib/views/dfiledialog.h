@@ -48,11 +48,11 @@ public:
     explicit DFileDialog(QWidget *parent = nullptr);
     ~DFileDialog() override;
 
-    void setDirectory(const QString & directory);
-    void setDirectory(const QDir & directory);
+    void setDirectory(const QString &directory);
+    void setDirectory(const QDir &directory);
     QDir directory() const;
 
-    void setDirectoryUrl(const DUrl & directory);
+    void setDirectoryUrl(const DUrl &directory);
     QUrl directoryUrl() const;
 
     void selectFile(const QString &filename);
@@ -120,15 +120,15 @@ public Q_SLOTS:
     void reject();
 
 protected:
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
     void adjustPosition(QWidget *w);
 
-    bool fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target = 0, QVariant *resultData = 0) Q_DECL_OVERRIDE;
+    bool fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target = 0, QVariant *resultData = 0) override;
 
 private:
-    void handleNewView(DFMBaseView *view) Q_DECL_OVERRIDE;
+    void handleNewView(DFMBaseView *view) override;
     FileDialogStatusBar *statusBar() const;
 
     void onAcceptButtonClicked();

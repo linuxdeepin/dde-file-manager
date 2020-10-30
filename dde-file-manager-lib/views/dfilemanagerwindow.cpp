@@ -1,4 +1,4 @@
-/*
+    /*
  * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
  *               2016 ~ 2018 dragondjf
  *
@@ -1443,6 +1443,39 @@ void DFileManagerWindow::onRequestCloseTabByUrl(const DUrl &rootUrl)
                 if (rootUrl == tab->fileView()->rootUrl()) {
                     onRequestCloseTab(i, false);
                     i--;
+                }
+            }
+            if (d->tabBar->count() <= 1) {
+                break;
+            }
+        }
+        int curIndex = d->tabBar->currentIndex();
+        if (curIndex != originIndex) {
+            if (originIndex < d->tabBar->count()) {
+                d->tabBar->setCurrentIndex(originIndex);
+            }
+        }
+    }
+}
+
+void DFileManagerWindow::closeUnAvailableTabs()
+{
+    D_D(DFileManagerWindow);
+    qDebug() << "close un available url.";
+
+    int originIndex = d->tabBar->currentIndex();
+    if (d->tabBar->count() > 1) {
+        for (int i = 0; i < d->tabBar->count(); i++) {
+            Tab *tab = d->tabBar->tabAt(i);
+            if (tab->fileView()) {
+                QString tabUrl = tab->fileView()->rootUrl().toLocalFile();
+                qDebug() << "check tab url: " << tabUrl;
+                if (!QFile::exists(tabUrl)){
+                    qDebug() << "close!";
+                    onRequestCloseTab(i, false);
+                    i--;
+                } else {
+                    qDebug() << "keep!";
                 }
             }
             if (d->tabBar->count() <= 1) {

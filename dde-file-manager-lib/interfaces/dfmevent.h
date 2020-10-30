@@ -174,7 +174,7 @@ public:
         return qvariant_cast<T>(m_data);
     }
     //! 设置剪切文件在回收站的路径
-    inline void setCutData(const QVariant & data)
+    inline void setCutData(const QVariant &data)
     {
         m_cutData = data;
     }
@@ -349,7 +349,7 @@ public:
 class DFMOpenFilesByAppEvent : public DFMOpenFilesEvent
 {
 public:
-    explicit DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url,const bool isEnter = false);
+    explicit DFMOpenFilesByAppEvent(const QObject *sender, const QString &appName, const QList<DUrl> &url, const bool isEnter = false);
 
     QString appName() const;
 
@@ -404,7 +404,7 @@ public:
         return qvariant_cast<QPair<DUrl, DUrl>>(m_data).second;
     }
 
-    DUrlList handleUrlList() const Q_DECL_OVERRIDE;
+    DUrlList handleUrlList() const override;
 
     bool silent() const;
 
@@ -453,7 +453,7 @@ public:
     DFMGlobal::ClipboardAction action() const;
     DUrl targetUrl() const;
 
-    DUrlList handleUrlList() const Q_DECL_OVERRIDE;
+    DUrlList handleUrlList() const override;
 
     static QSharedPointer<DFMPasteEvent> fromJson(const QJsonObject &json);
 };
@@ -510,7 +510,7 @@ public:
         return qvariant_cast<QPair<DUrl, DUrl>>(m_data).second;
     }
 
-    DUrlList handleUrlList() const Q_DECL_OVERRIDE;
+    DUrlList handleUrlList() const override;
 
     inline static QVariant makeData(const DUrl &url, const DUrl &to)
     {
@@ -552,9 +552,9 @@ class DFMGetChildrensEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false,bool canconst = false);
+                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false, bool canconst = false);
     explicit DFMGetChildrensEvent(const QObject *sender, const DUrl &url,
-                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false,bool canconst = false);
+                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false, bool canconst = false);
 
     QStringList nameFilters() const;
     QDir::Filters filters() const;
@@ -574,7 +574,7 @@ public:
     explicit DFMCreateDiriterator(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false, bool isgvfs = false);
     explicit DFMCreateDiriterator(const QObject *sender, const DUrl &url,
-                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false,bool isgvfs = false);
+                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false, bool isgvfs = false);
     bool isGvfsFile() const;
     static QSharedPointer<DFMCreateDiriterator> fromJson(const QJsonObject &json);
 };
@@ -643,7 +643,7 @@ public:
         ForceOpenNewWindow
     };
 
-    explicit DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DirOpenMode mode,const bool isEnter = false);
+    explicit DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DirOpenMode mode, const bool isEnter = false);
 
     DirOpenMode dirOpenMode() const;
     bool isEnter() const;
@@ -756,9 +756,9 @@ public:
 class DFMGetTagsThroughFilesEvent final : public DFMUrlListBaseEvent
 {
 public:
-    explicit DFMGetTagsThroughFilesEvent(const QObject* sender, const QList<DUrl>& files);
+    explicit DFMGetTagsThroughFilesEvent(const QObject *sender, const QList<DUrl> &files);
 
-    static QSharedPointer<DFMGetTagsThroughFilesEvent> fromJson(const QJsonObject& json);
+    static QSharedPointer<DFMGetTagsThroughFilesEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMSetFileExtraProperties : public DFMUrlBaseEvent

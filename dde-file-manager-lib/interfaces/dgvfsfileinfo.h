@@ -32,29 +32,29 @@ class DGvfsFileInfoPrivate;
 class DGvfsFileInfo : public DFileInfo
 {
 public:
-    explicit DGvfsFileInfo(const QString& filePath, bool hasCache = true);
-    explicit DGvfsFileInfo(const DUrl& fileUrl, bool hasCache = true);
-    explicit DGvfsFileInfo(const DUrl& fileUrl, const QMimeType &mimetype, bool hasCache = true);
+    explicit DGvfsFileInfo(const QString &filePath, bool hasCache = true);
+    explicit DGvfsFileInfo(const DUrl &fileUrl, bool hasCache = true);
+    explicit DGvfsFileInfo(const DUrl &fileUrl, const QMimeType &mimetype, bool hasCache = true);
     explicit DGvfsFileInfo(const QFileInfo &fileInfo, bool hasCache = true);
     explicit DGvfsFileInfo(const QFileInfo &fileInfo, const QMimeType &mimetype, bool hasCache = true);
     ~DGvfsFileInfo() override;
 
-    bool exists() const Q_DECL_OVERRIDE;
-    bool canRename() const Q_DECL_OVERRIDE;
-    bool isWritable() const Q_DECL_OVERRIDE;
-    bool makeAbsolute() Q_DECL_OVERRIDE;
-    bool isSymLink() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
-    QDateTime lastRead() const Q_DECL_OVERRIDE;
-    QDateTime lastModified() const Q_DECL_OVERRIDE;
-    uint ownerId() const Q_DECL_OVERRIDE;
-    qint64 size() const Q_DECL_OVERRIDE;
-    int filesCount() const Q_DECL_OVERRIDE;
-    QMimeType mimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchExtension) const Q_DECL_OVERRIDE;
+    bool exists() const override;
+    bool canRename() const override;
+    bool isWritable() const override;
+    bool makeAbsolute() override;
+    bool isSymLink() const override;
+    bool isDir() const override;
+    QDateTime lastRead() const override;
+    QDateTime lastModified() const override;
+    uint ownerId() const override;
+    qint64 size() const override;
+    int filesCount() const override;
+    QMimeType mimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchExtension) const override;
 
-    void refresh(const bool isForce = false) Q_DECL_OVERRIDE;
-    void makeToActive() Q_DECL_OVERRIDE;
-    quint64 inode() const Q_DECL_OVERRIDE;
+    void refresh(const bool isForce = false) override;
+    void makeToActive() override;
+    quint64 inode() const override;
 
     void refreshCachesByStat();
 

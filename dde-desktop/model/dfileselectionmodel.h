@@ -24,7 +24,7 @@ public:
     QModelIndexList selectedIndexes() const;
 
 protected:
-    void select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command) Q_DECL_OVERRIDE;
+    void select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command) override;
 
 private:
     void updateSelecteds();

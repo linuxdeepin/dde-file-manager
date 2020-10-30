@@ -46,8 +46,9 @@ public:
     qint64 pos() const override;
     bool seek(qint64 pos) override;
     bool flush() override;
-    bool syncToDisk() override;
+    bool syncToDisk(bool isVfat = false) override;
     void closeWriteReadFailed(const bool bwrite) override;
+    void cancelAllOperate() override;
 
 protected:
     qint64 readData(char *data, qint64 maxlen) override;

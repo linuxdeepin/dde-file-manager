@@ -312,6 +312,12 @@ public:
     static bool isTrashDesktopFileUrl(const DUrl &url);
     static bool isComputerDesktopFileUrl(const DUrl &url);
 
+    /**
+     * @brief isWayLand 判断是否是wayland
+     * @return true or false
+     */
+    static bool isWayLand();
+
     QList<QUrl> clipboardFileUrlList() const;
     QList<quint64> clipboardFileInodeList() const;
     ClipboardAction clipboardAction() const;

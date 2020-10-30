@@ -53,7 +53,7 @@ DWIDGET_USE_NAMESPACE
 class MenuActionEventHandler : public DFMAbstractEventHandler
 {
 public:
-    MenuActionEventHandler(DFileViewHelper *helper)
+    explicit MenuActionEventHandler(DFileViewHelper *helper)
         : DFMAbstractEventHandler(false)
         , viewHelper(helper) {}
 
@@ -114,7 +114,7 @@ private:
 class DFileViewHelperPrivate
 {
 public:
-    DFileViewHelperPrivate(DFileViewHelper *qq)
+    explicit DFileViewHelperPrivate(DFileViewHelper *qq)
         : menuEventHandler(new MenuActionEventHandler(qq))
         , q_ptr(qq)
     {
@@ -739,7 +739,7 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
 
         Qt::DropAction default_action = Qt::CopyAction;
         {
-            const DUrl from = urls.first();
+            const DUrl from = DUrl(urls.first());
             DUrl to = info->fileUrl();
 
             //fix bug#23703勾选自动整理，拖拽其他目录文件到桌面做得是复制操作
@@ -817,7 +817,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
         if (urls.empty())
             return;
 
-        const DUrl from = urls.first();
+        const DUrl from = DUrl(urls.first());
         DUrl to = info->fileUrl();
         Qt::DropAction default_action = Qt::CopyAction;
 

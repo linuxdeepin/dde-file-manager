@@ -16,39 +16,39 @@
 class ShareFileInfo : public DAbstractFileInfo
 {
 public:
-    explicit ShareFileInfo(const DUrl& url);
-    ~ShareFileInfo();
-    bool exists() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
-    bool canRename() const Q_DECL_OVERRIDE;
-    bool isReadable() const Q_DECL_OVERRIDE;
-    bool isWritable() const Q_DECL_OVERRIDE;
+    explicit ShareFileInfo(const DUrl &url);
+    ~ShareFileInfo() override;
+    bool exists() const override;
+    bool isDir() const override;
+    bool canRename() const override;
+    bool isReadable() const override;
+    bool isWritable() const override;
 
-    QString fileDisplayName() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const override;
 
-    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
-    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
+    QVector<MenuAction> menuActionList(MenuType type) const override;
+    QSet<MenuAction> disableMenuActionList() const override;
 
-    bool columnDefaultVisibleForRole(int userColumnRole) const Q_DECL_OVERRIDE;
+    bool columnDefaultVisibleForRole(int userColumnRole) const override;
 
-    MenuAction menuActionByColumnRole(int userColumnRole) const Q_DECL_OVERRIDE;
+    MenuAction menuActionByColumnRole(int userColumnRole) const override;
 
-    bool canIteratorDir() const Q_DECL_OVERRIDE;
-    bool makeAbsolute() Q_DECL_OVERRIDE;
+    bool canIteratorDir() const override;
+    bool makeAbsolute() override;
 
-    DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
-    DUrl parentUrl() const Q_DECL_OVERRIDE;
+    DUrl mimeDataUrl() const override;
+    DUrl parentUrl() const override;
 
-    bool isShared() const Q_DECL_OVERRIDE;
-    bool canTag() const Q_DECL_OVERRIDE;
-    bool isVirtualEntry() const Q_DECL_OVERRIDE;
-    virtual bool canDrop() const Q_DECL_OVERRIDE;
+    bool isShared() const override;
+    bool canTag() const override;
+    bool isVirtualEntry() const override;
+    virtual bool canDrop() const override;
 
-    Qt::ItemFlags fileItemDisableFlags() const Q_DECL_OVERRIDE;
-    QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;
+    Qt::ItemFlags fileItemDisableFlags() const override;
+    QList<QIcon> additionalIcon() const override;
 
-    virtual bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
-    virtual DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+    virtual bool canRedirectionFileUrl() const override;
+    virtual DUrl redirectedFileUrl() const override;
 
 private:
     QString m_displayName;

@@ -430,7 +430,7 @@ void DUrl::setBookmarkName(const QString &name)
 
 DUrl DUrl::fromLocalFile(const QString &filePath)
 {
-    return QUrl::fromLocalFile(filePath);
+    return DUrl(QUrl::fromLocalFile(filePath));
 }
 
 DUrl DUrl::fromTrashFile(const QString &filePath)
@@ -619,7 +619,7 @@ DUrlList DUrl::fromQUrlList(const QList<QUrl> &urls)
     QList<DUrl> urlList;
 
     for (const QUrl &url : urls) {
-        urlList << url;
+        urlList << DUrl(url);
     }
 
     return urlList;
@@ -634,7 +634,7 @@ DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory,
                          bool preferredLocalPath, QUrl::UserInputResolutionOptions options)
 {
     if (options != AssumeLocalFile) {
-        return QUrl::fromUserInput(userInput, workingDirectory, options);
+        return DUrl(QUrl::fromUserInput(userInput, workingDirectory, options));
     }
 
     if ((userInput.startsWith("~") && preferredLocalPath) || userInput.startsWith("~/")) {

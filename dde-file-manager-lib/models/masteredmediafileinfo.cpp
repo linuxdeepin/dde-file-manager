@@ -293,8 +293,9 @@ void MasteredMediaFileInfo::backupInfo(const DUrl &url)
             return;
         }
 
-        if (blkdev->mountPoints().size() > 0) {
-            QString mntpoint = QString(blkdev->mountPoints().front());
+        auto points = blkdev->mountPoints();
+        if (!points.isEmpty()) {
+            QString mntpoint = QString(points.front());
             while (*mntpoint.rbegin() == '/') {
                 mntpoint.chop(1);
             }
