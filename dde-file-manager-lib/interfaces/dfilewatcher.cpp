@@ -35,8 +35,8 @@ public:
         : DAbstractFileWatcherPrivate(qq) {}
 
 
-    bool start() Q_DECL_OVERRIDE;
-    bool stop() Q_DECL_OVERRIDE;
+    bool start() override;
+    bool stop() override;
     bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1) override;
     bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType2 signal, const DUrl &arg1, const DUrl &arg2) override;
 

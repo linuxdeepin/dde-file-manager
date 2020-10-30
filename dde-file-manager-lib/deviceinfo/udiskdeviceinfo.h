@@ -74,35 +74,35 @@ public:
     bool opticalReuseable() const;
     qulonglong getFree();
     qulonglong getTotal();
-    qint64 size() const Q_DECL_OVERRIDE;
+    qint64 size() const override;
     QString fileName() const override;
-    QString fileDisplayName() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const override;
     MediaType getMediaType() const;
     QString deviceTypeDisplayName() const;
-    QString sizeDisplayName() const Q_DECL_OVERRIDE;
-    int filesCount() const Q_DECL_OVERRIDE;
+    QString sizeDisplayName() const override;
+    int filesCount() const override;
 
-    bool isReadable() const Q_DECL_OVERRIDE;
-    bool isWritable() const Q_DECL_OVERRIDE;
+    bool isReadable() const override;
+    bool isWritable() const override;
 
     bool canRename() const override;
-    QIcon fileIcon() const Q_DECL_OVERRIDE;
+    QIcon fileIcon() const override;
     QIcon fileIcon(int width, int height) const;
-    bool isDir() const Q_DECL_OVERRIDE;
-    DUrl parentUrl() const Q_DECL_OVERRIDE;
+    bool isDir() const override;
+    DUrl parentUrl() const override;
 
-    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
-    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
+    QVector<MenuAction> menuActionList(MenuType type) const override;
+    QSet<MenuAction> disableMenuActionList() const override;
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
     DUrl getUrlByChildFileName(const QString &fileName) const override;
 
-    bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
-    DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+    bool canRedirectionFileUrl() const override;
+    DUrl redirectedFileUrl() const override;
 
-    QVariantHash extraProperties() const Q_DECL_OVERRIDE;
+    QVariantHash extraProperties() const override;
 
-    bool exists() const Q_DECL_OVERRIDE;
+    bool exists() const override;
 
 private:
     QDiskInfo m_diskInfo;

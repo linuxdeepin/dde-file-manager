@@ -39,19 +39,19 @@ class VideoPreview : public DFMFilePreview
     Q_OBJECT
 
 public:
-    explicit VideoPreview(QObject* parent = nullptr);
-    ~VideoPreview();
+    explicit VideoPreview(QObject *parent = nullptr);
+    ~VideoPreview() override;
 
-    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    bool setFileUrl(const DUrl &url) override;
     DUrl fileUrl() const override;
 
-    QWidget *contentWidget() const Q_DECL_OVERRIDE;
+    QWidget *contentWidget() const override;
     QWidget *statusBarWidget() const override;
 
-    bool showStatusBarSeparator() const Q_DECL_OVERRIDE;
+    bool showStatusBarSeparator() const override;
     Qt::Alignment statusBarWidgetAlignment() const override;
 
-    virtual void DoneCurrent();
+    virtual void DoneCurrent() override;
 
     void play() override;
     void pause() override;

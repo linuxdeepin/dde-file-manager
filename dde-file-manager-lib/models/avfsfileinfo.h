@@ -33,16 +33,16 @@ class AVFSFileInfo : public DAbstractFileInfo
 public:
     explicit AVFSFileInfo(const DUrl &avfsUrl);
 
-    bool canRename() const Q_DECL_OVERRIDE;
-    bool isWritable() const Q_DECL_OVERRIDE;
-    bool canShare() const Q_DECL_OVERRIDE;
-    bool canIteratorDir() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
-    bool canManageAuth() const Q_DECL_OVERRIDE;
+    bool canRename() const override;
+    bool isWritable() const override;
+    bool canShare() const override;
+    bool canIteratorDir() const override;
+    bool isDir() const override;
+    bool canManageAuth() const override;
 
     QString toLocalFile() const override;
     DUrl parentUrl() const override;
-    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
+    QVector<MenuAction> menuActionList(MenuType type) const override;
 
     static DUrl realFileUrl(const DUrl &avfsUrl);
     static DUrl realDirUrl(const DUrl &avfsUrl);

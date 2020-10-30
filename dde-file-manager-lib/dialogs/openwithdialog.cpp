@@ -64,10 +64,10 @@ public:
     QString text() const;
 
 protected:
-    void resizeEvent(QResizeEvent *e) Q_DECL_OVERRIDE;
-    void enterEvent(QEvent *e) Q_DECL_OVERRIDE;
-    void leaveEvent(QEvent *e) Q_DECL_OVERRIDE;
-    void paintEvent(QPaintEvent *e) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *e) override;
+    void enterEvent(QEvent *e) override;
+    void leaveEvent(QEvent *e) override;
+    void paintEvent(QPaintEvent *e) override;
 
 private:
     QIcon m_icon;
@@ -220,8 +220,7 @@ OpenWithDialog::~OpenWithDialog()
 
 void OpenWithDialog::initUI()
 {
-    if(DFMGlobal::isWayLand())
-    {
+    if (DFMGlobal::isWayLand()) {
         //设置对话框窗口最大最小化按钮隐藏
         this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
         this->setAttribute(Qt::WA_NativeWindow);

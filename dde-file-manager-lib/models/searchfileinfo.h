@@ -32,52 +32,52 @@ class SearchFileInfo : public DAbstractFileInfo
 public:
     explicit SearchFileInfo(const DUrl &url);
 
-    bool exists() const Q_DECL_OVERRIDE;
-    bool isReadable() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
-    virtual bool isVirtualEntry() const Q_DECL_OVERRIDE;
+    bool exists() const override;
+    bool isReadable() const override;
+    bool isDir() const override;
+    virtual bool isVirtualEntry() const override;
 
-    int filesCount() const Q_DECL_OVERRIDE;
+    int filesCount() const override;
 
-    DUrl parentUrl() const Q_DECL_OVERRIDE;
+    DUrl parentUrl() const override;
 
-    void setColumnCompact(bool) Q_DECL_OVERRIDE;
-    QList<int> userColumnRoles() const Q_DECL_OVERRIDE;
-    QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;
+    void setColumnCompact(bool) override;
+    QList<int> userColumnRoles() const override;
+    QVariant userColumnDisplayName(int userColumnRole) const override;
     /// get custom column data
-    QVariant userColumnData(int userColumnRole) const Q_DECL_OVERRIDE;
-    QList<int> userColumnChildRoles(int column) const Q_DECL_OVERRIDE;
-    bool columnDefaultVisibleForRole(int role) const Q_DECL_OVERRIDE;
+    QVariant userColumnData(int userColumnRole) const override;
+    QList<int> userColumnChildRoles(int column) const override;
+    bool columnDefaultVisibleForRole(int role) const override;
 
-    bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
-    DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+    bool canRedirectionFileUrl() const override;
+    DUrl redirectedFileUrl() const override;
 
-    bool canIteratorDir() const Q_DECL_OVERRIDE;
+    bool canIteratorDir() const override;
 
-    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const Q_DECL_OVERRIDE;
-    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
-    int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
-//    int userRowHeight(const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
+    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
+    QSet<MenuAction> disableMenuActionList() const override;
+    int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const override;
+//    int userRowHeight(const QFontMetrics &fontMetrics) const override;
 
-    MenuAction menuActionByColumnRole(int userColumnRole) const Q_DECL_OVERRIDE;
-    QList<int> sortSubMenuActionUserColumnRoles() const Q_DECL_OVERRIDE;
+    MenuAction menuActionByColumnRole(int userColumnRole) const override;
+    QList<int> sortSubMenuActionUserColumnRoles() const override;
 
-    bool isEmptyFloder(const QDir::Filters &filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System) const Q_DECL_OVERRIDE;
+    bool isEmptyFloder(const QDir::Filters &filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System) const override;
 
-    CompareFunction compareFunByColumn(int columnRole) const Q_DECL_OVERRIDE;
-    bool hasOrderly() const Q_DECL_OVERRIDE;
+    CompareFunction compareFunByColumn(int columnRole) const override;
+    bool hasOrderly() const override;
 
-    DUrl getUrlByNewFileName(const QString &fileName) const Q_DECL_OVERRIDE;
+    DUrl getUrlByNewFileName(const QString &fileName) const override;
 
-    QString loadingTip() const Q_DECL_OVERRIDE;
-    QString subtitleForEmptyFloder() const Q_DECL_OVERRIDE;
+    QString loadingTip() const override;
+    QString subtitleForEmptyFloder() const override;
 
-    QString fileDisplayName() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const override;
 
-    DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
+    DUrl mimeDataUrl() const override;
 
-    QString toLocalFile() const Q_DECL_OVERRIDE;
-    virtual QIcon fileIcon() const Q_DECL_OVERRIDE;
+    QString toLocalFile() const override;
+    virtual QIcon fileIcon() const override;
 
 private:
     DUrl m_parentUrl;

@@ -46,18 +46,18 @@ class ImagePreview : public DFMFilePreview
     Q_INTERFACES(PreviewInterface)
 public:
     explicit ImagePreview(QObject *parent = nullptr);
-    ~ImagePreview();
+    ~ImagePreview() override;
 
     bool canPreview(const QUrl &url, QByteArray *format = nullptr) const;
 
-    void initialize(QWidget *window, QWidget *statusBar) Q_DECL_OVERRIDE;
+    void initialize(QWidget *window, QWidget *statusBar) override;
 
-    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    bool setFileUrl(const DUrl &url) override;
     DUrl fileUrl() const override;
 
-    QWidget *contentWidget() const Q_DECL_OVERRIDE;
+    QWidget *contentWidget() const override;
 
-    QString title() const Q_DECL_OVERRIDE;
+    QString title() const override;
 
     void copyFile() const override;
 

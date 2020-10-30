@@ -25,20 +25,20 @@ public:
 
     DFileView *parent() const;
 
-    quint64 windowId() const Q_DECL_OVERRIDE;
-    bool isSelected(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    bool isDropTarget(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    int selectedIndexsCount() const Q_DECL_OVERRIDE;
-    int rowCount() const Q_DECL_OVERRIDE;
-    int indexOfRow(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    DFMStyledItemDelegate *itemDelegate() const Q_DECL_OVERRIDE;
-    DFileSystemModel *model() const Q_DECL_OVERRIDE;
-    const DUrlList selectedUrls() const Q_DECL_OVERRIDE;
-    DUrl currentUrl() const Q_DECL_OVERRIDE;
-    QList<int> columnRoleList() const Q_DECL_OVERRIDE;
-    int columnWidth(int columnIndex) const Q_DECL_OVERRIDE;
-    void select(const QList<DUrl> &list) Q_DECL_OVERRIDE;
+    quint64 windowId() const override;
+    bool isSelected(const QModelIndex &index) const override;
+    bool isDropTarget(const QModelIndex &index) const override;
+    int selectedIndexsCount() const override;
+    int rowCount() const override;
+    int indexOfRow(const QModelIndex &index) const override;
+    const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const override;
+    DFMStyledItemDelegate *itemDelegate() const override;
+    DFileSystemModel *model() const override;
+    const DUrlList selectedUrls() const override;
+    DUrl currentUrl() const override;
+    QList<int> columnRoleList() const override;
+    int columnWidth(int columnIndex) const override;
+    void select(const QList<DUrl> &list) override;
 
 public slots:
     // helper fm event

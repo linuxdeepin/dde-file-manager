@@ -43,8 +43,8 @@ public:
 
     static DFileIconProvider *globalProvider();
 
-    QIcon icon(const QFileInfo &info) const Q_DECL_OVERRIDE;
-    QIcon icon(const QFileInfo &info, const QIcon &feedback) const;
+    QIcon icon(const QFileInfo &info) const override;
+    QIcon icon(const QFileInfo &info, const QIcon &feedback) const ;
     QIcon icon(const DFileInfo &info, const QIcon &feedback = QIcon()) const;
     QIcon icon(const DGvfsFileInfo &info, const QIcon &feedback = QIcon()) const;
 

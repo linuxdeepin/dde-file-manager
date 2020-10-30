@@ -65,14 +65,17 @@ DFM_BEGIN_NAMESPACE
 class DFileStatisticsJob;
 DFM_END_NAMESPACE
 
-class DFMRoundBackground : public QObject{
+class DFMRoundBackground : public QObject
+{
     Q_OBJECT
 public:
-    DFMRoundBackground(QWidget *parent, int radius):QObject (parent){
+    DFMRoundBackground(QWidget *parent, int radius): QObject(parent)
+    {
         parent->installEventFilter(this);
         setProperty("radius", radius);
     }
-    ~DFMRoundBackground(){
+    ~DFMRoundBackground()
+    {
         parent()->removeEventFilter(this);
     }
 
@@ -87,7 +90,7 @@ class NameTextEdit: public QTextEdit
     Q_OBJECT
 
 public:
-    explicit NameTextEdit(const QString &text="", QWidget *parent=nullptr);
+    explicit NameTextEdit(const QString &text = "", QWidget *parent = nullptr);
 
     bool isCanceled() const;
     void setIsCanceled(bool isCanceled);
@@ -96,11 +99,11 @@ signals:
     void editFinished();
 
 public slots:
-    void setPlainText(const QString & text);
+    void setPlainText(const QString &text);
 
 protected:
-    void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
+    void focusOutEvent(QFocusEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     bool m_isCanceled = false;
@@ -112,7 +115,7 @@ class GroupTitleLabel: public QLabel
     Q_OBJECT
 
 public:
-    explicit GroupTitleLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
+    explicit GroupTitleLabel(const QString &text = "", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 };
 
 class SectionKeyLabel: public QLabel
@@ -120,7 +123,7 @@ class SectionKeyLabel: public QLabel
     Q_OBJECT
 
 public:
-    explicit SectionKeyLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
+    explicit SectionKeyLabel(const QString &text = "", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 };
 
 class SectionValueLabel: public QLabel
@@ -128,7 +131,7 @@ class SectionValueLabel: public QLabel
     Q_OBJECT
 
 public:
-    explicit SectionValueLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
+    explicit SectionValueLabel(const QString &text = "", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 };
 
 class LinkSectionValueLabel: public SectionValueLabel
@@ -136,13 +139,13 @@ class LinkSectionValueLabel: public SectionValueLabel
     Q_OBJECT
 
 public:
-    explicit LinkSectionValueLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
+    explicit LinkSectionValueLabel(const QString &text = "", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 
     DUrl linkTargetUrl() const;
     void setLinkTargetUrl(const DUrl &linkTargetUrl);
 
 protected:
-    void mouseReleaseEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     DUrl m_linkTargetUrl;
@@ -184,19 +187,19 @@ public slots:
     void onCancelShare();
 
 signals:
-    void closed(const DUrl& url);
-    void aboutToClosed(const DUrl& url);
+    void closed(const DUrl &url);
+    void aboutToClosed(const DUrl &url);
     void raised();
 
 protected:
-    void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
-    void hideEvent(QHideEvent* event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
     void initExpand(QVBoxLayout *layout, DDrawer *expand);
 
 private:
-    QFrame * initTagFrame(const DUrl& url);
+    QFrame *initTagFrame(const DUrl &url);
     void updateInfo(); // when any property has been changed should update the linked properties ASAP, bug 25419
     //属性框的URL需要重定向
     const DUrl getRealUrl();
@@ -212,21 +215,21 @@ private:
     QLabel *m_icon{ nullptr };
     NameTextEdit *m_edit{ nullptr };
     QStackedWidget *m_editStackWidget{ nullptr };
-    QFrame* m_textShowFrame{ nullptr };
-    DIconButton* m_editButton{ nullptr };
-    QCheckBox * m_executableCheckBox{ nullptr };
-    SectionValueLabel* m_folderSizeLabel{ nullptr };
-    SectionValueLabel* m_containSizeLabel{ nullptr };
+    QFrame *m_textShowFrame{ nullptr };
+    DIconButton *m_editButton{ nullptr };
+    QCheckBox *m_executableCheckBox{ nullptr };
+    SectionValueLabel *m_folderSizeLabel{ nullptr };
+    SectionValueLabel *m_containSizeLabel{ nullptr };
     QFrame *m_basicInfoFrame{ nullptr };
-    ShareInfoFrame* m_shareinfoFrame{ nullptr };
-    QFrame* m_authorityManagementFrame{ nullptr };
+    ShareInfoFrame *m_shareinfoFrame{ nullptr };
+    QFrame *m_authorityManagementFrame{ nullptr };
     QFrame *m_deviceInfoFrame{ nullptr };
-    QListWidget* m_OpenWithListWidget{ nullptr };
-    QButtonGroup* m_OpenWithButtonGroup{ nullptr };
+    QListWidget *m_OpenWithListWidget{ nullptr };
+    QButtonGroup *m_OpenWithButtonGroup{ nullptr };
     QList<DDrawer *> m_expandGroup;
-    DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
-    QVBoxLayout* m_mainLayout{ nullptr };
-    QFrame* m_wdf{ nullptr };
+    DFM_NAMESPACE::DFileStatisticsJob *m_sizeWorker{ nullptr };
+    QVBoxLayout *m_mainLayout{ nullptr };
+    QFrame *m_wdf{ nullptr };
     QScrollArea *m_scrollArea{ nullptr };
     QFrame      *m_tagInfoFrame{ nullptr };
     QPointer<QVariantAnimation> m_xani {nullptr};
@@ -236,9 +239,9 @@ private:
 
     QList<DDrawer *> addExpandWidget(const QStringList &titleList);
 
-    void initTextShowFrame(const QString& text);
+    void initTextShowFrame(const QString &text);
     QFrame *createBasicInfoWidget(const DAbstractFileInfoPointer &info);
-    ShareInfoFrame* createShareInfoFrame(const DAbstractFileInfoPointer &info);
+    ShareInfoFrame *createShareInfoFrame(const DAbstractFileInfoPointer &info);
     QList<QPair<QString, QString> > createLocalDeviceInfoWidget(const DAbstractFileInfoPointer &info);
     QFrame *createInfoFrame(const QList<QPair<QString, QString> > &properties);
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);

@@ -77,9 +77,9 @@ signals:
 
 protected:
     explicit DThumbnailProvider(QObject *parent = 0);
-    ~DThumbnailProvider();
+    ~DThumbnailProvider() override;
 
-    void run() Q_DECL_OVERRIDE;
+    void run() override;
 
 private:
     QScopedPointer<DThumbnailProviderPrivate> d_ptr;

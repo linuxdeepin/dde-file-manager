@@ -50,11 +50,11 @@ public:
     void setOpacity(qreal opacity);
     void setMaxCharSize(int maxSize);
 
-    QSize sizeHint() const Q_DECL_OVERRIDE;
+    QSize sizeHint() const override;
 
-    inline QLabel* getIconLabel() const
+    inline QLabel *getIconLabel() const
     { return icon; }
-    inline QTextEdit* getTextEdit() const
+    inline QTextEdit *getTextEdit() const
     { return edit; }
 
 
@@ -77,8 +77,8 @@ private slots:
 
 protected:
     void updateEditorGeometry();
-    bool event(QEvent *ee) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *obj, QEvent *ee) Q_DECL_OVERRIDE;
+    bool event(QEvent *ee) override;
+    bool eventFilter(QObject *obj, QEvent *ee) override;
 
 private:
     void updateStyleSheet();

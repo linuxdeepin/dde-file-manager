@@ -47,7 +47,7 @@ class PdfWidget : public QWidget
     Q_OBJECT
 public:
     explicit PdfWidget(const QString &file, QWidget *parent = nullptr);
-    ~PdfWidget();
+    ~PdfWidget() override;
 
     void initDoc(const QString &file);
 
@@ -59,21 +59,21 @@ public:
 public slots:
     void onThumbAdded(int index, QImage img);
     void onpageAdded(int index, QImage img);
-    void onThumbScrollBarValueChanged(const int& val);
-    void onPageScrollBarvalueChanged(const int& val);
+    void onThumbScrollBarValueChanged(const int &val);
+    void onPageScrollBarvalueChanged(const int &val);
     void startLoadCurrentPages();
     void startLoadCurrentThumbs();
 
 protected:
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
 
-    void renderBorder(QImage& img);
-    void emptyBorder(QImage& img);
+    void renderBorder(QImage &img);
+    void emptyBorder(QImage &img);
 
-    void loadPageSync(const int& index);
-    void loadThumbSync(const int& index);
+    void loadPageSync(const int &index);
+    void loadThumbSync(const int &index);
     void initEmptyPages();
 
     void resizeCurrentPage();
@@ -82,21 +82,22 @@ private:
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), PdfWidget)
 };
 
-class PdfInitWorker: public QObject{
+class PdfInitWorker: public QObject
+{
     Q_OBJECT
 public:
-    explicit PdfInitWorker(QSharedPointer<poppler::document> doc, QObject* parent = 0);
+    explicit PdfInitWorker(QSharedPointer<poppler::document> doc, QObject *parent = 0);
 
     void startGetPageThumb(int index);
     void startGetPageImage(int index);
 
 signals:
-    void pageAdded(const int& index, const QImage& img);
-    void thumbAdded(const int& index, const QImage& img);
+    void pageAdded(const int &index, const QImage &img);
+    void thumbAdded(const int &index, const QImage &img);
 
 private:
-    QImage getPageThumb(const QImage& img) const;
-    QImage getRenderedPageImage(const int& index) const;
+    QImage getPageThumb(const QImage &img) const;
+    QImage getRenderedPageImage(const int &index) const;
 
     QList<int> m_gotThumbIndexes;
     QList<int> m_gotPageIndexes;
@@ -104,12 +105,13 @@ private:
     QSharedPointer<poppler::document> m_doc;
 };
 
-class DListWidget: public QListWidget{
+class DListWidget: public QListWidget
+{
     Q_OBJECT
 public:
-    explicit DListWidget(QWidget* parent = 0);
+    explicit DListWidget(QWidget *parent = 0);
 protected:
-    void mouseMoveEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *e) override;
 
 };
 

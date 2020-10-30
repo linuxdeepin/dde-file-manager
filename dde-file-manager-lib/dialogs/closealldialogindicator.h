@@ -36,8 +36,8 @@ class CloseAllDialogIndicator : public DAbstractDialog
 {
     Q_OBJECT
 public:
-    explicit CloseAllDialogIndicator(QWidget *parent = 0);
-    ~CloseAllDialogIndicator();
+    explicit CloseAllDialogIndicator(QWidget *parent = nullptr);
+    ~CloseAllDialogIndicator() override;
 
     void initUI();
     void initConnect();
@@ -50,12 +50,12 @@ public slots:
 
 protected:
 //    void showEvent(QShowEvent* event);
-    void keyPressEvent(QKeyEvent* event);
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
-    QLabel* m_messageLabel;
-    QPushButton* m_closeButton;
+    QLabel *m_messageLabel;
+    QPushButton *m_closeButton;
 };
 
 #endif // CLOSEALLDIALOGINDICATOR_H

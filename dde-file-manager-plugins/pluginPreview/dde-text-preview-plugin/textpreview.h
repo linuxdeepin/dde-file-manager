@@ -43,18 +43,18 @@ class TextPreview : public DFMFilePreview
     Q_OBJECT
 
 public:
-    explicit TextPreview(QObject* parent = nullptr);
-    ~TextPreview();
+    explicit TextPreview(QObject *parent = nullptr);
+    ~TextPreview() override;
 
-    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    bool setFileUrl(const DUrl &url) override;
     DUrl fileUrl() const override;
 
-    QWidget *contentWidget() const Q_DECL_OVERRIDE;
+    QWidget *contentWidget() const override;
 
-    QString title() const Q_DECL_OVERRIDE;
-    bool showStatusBarSeparator() const Q_DECL_OVERRIDE;
+    QString title() const override;
+    bool showStatusBarSeparator() const override;
 
-    QWidget* previewWidget();
+    QWidget *previewWidget();
 
 public slots:
     /**

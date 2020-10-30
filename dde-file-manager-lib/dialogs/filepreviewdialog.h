@@ -40,11 +40,11 @@ public:
     explicit UnknowFilePreview(QObject *parent = nullptr);
     ~UnknowFilePreview() override;
 
-    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    bool setFileUrl(const DUrl &url) override;
     DUrl fileUrl() const override;
     void setFileInfo(const DAbstractFileInfoPointer &info);
 
-    QWidget *contentWidget() const Q_DECL_OVERRIDE;
+    QWidget *contentWidget() const override;
 
 signals:
     void requestStartFolderSize();

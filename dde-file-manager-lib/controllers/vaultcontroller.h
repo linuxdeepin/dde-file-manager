@@ -65,8 +65,8 @@ public:
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
-    bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const Q_DECL_OVERRIDE;
-    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
+    bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const override;
+    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
     DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
@@ -76,21 +76,21 @@ public:
      * @param event       共享的信息事件
      * @return            是否共享成功
      */
-    bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const Q_DECL_OVERRIDE;
+    bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const override;
 
     /**
      * @brief unShareFolder 取消文件夹共享
      * @param event         关闭共享信息事件
      * @return              是否取消成功
      */
-    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;
+    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const override;
 
     /**
      * @brief openInTerminal  右键菜单打开当前路径终端
      * @param event           打开终端信息事件
      * @return                是否打开终端成功
      */
-    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const Q_DECL_OVERRIDE;
+    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const override;
 
     /**
      * @brief addToBookmark   添加当前文件夹书签
@@ -111,33 +111,33 @@ public:
      * @param event          创建快捷方式信息事件
      * @return               是否创建成功
      */
-    bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const Q_DECL_OVERRIDE;
+    bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
     /**
      * @brief setFileTags    设置文件标记信息
      * @param event          设置文件标记信息事件
      * @return               是否标记成功
      */
-    bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const Q_DECL_OVERRIDE;
+    bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
 
     /**
      * @brief removeTagsOfFile  移除文件标记信息
      * @param event             移除文件标记信息事件
      * @return                  是否移除文件标记
      */
-    bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const Q_DECL_OVERRIDE;
+    bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
 
     /**
      * @brief getTagsThroughFiles   获取文件标记信息
      * @param event                 获取文件标记信息事件
      * @return                      标记信息列表
      */
-    QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
+    QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const override;
 
-    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const Q_DECL_OVERRIDE;
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
 
-    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const Q_DECL_OVERRIDE;
-    bool openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const Q_DECL_OVERRIDE;
+    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
+    bool openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const override;
 
     void updateFileInfo(const DUrlList &fileUrls);
     FileBaseInfo getFileInfo(const DUrl &fileUrl);
