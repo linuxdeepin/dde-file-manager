@@ -1688,15 +1688,6 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
 
     handler->setFileTime(newInfo->fileUrl(), oldInfo->lastRead(), oldInfo->lastModified());
 
-    //! use stat function to read vault file permission.
-    QFileDevice::Permissions permissions = oldInfo->permissions();
-    QString path = oldInfo->fileUrl().path();
-    if (VaultController::isVaultFile(path)) {
-        permissions = VaultController::getPermissions(path);
-    }
-
-    handler->setPermissions(newInfo->fileUrl(), /*oldInfo->permissions()*/permissions);
-
     if (!doRemoveFile(handler, oldInfo)) {
         return false;
     }
