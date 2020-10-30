@@ -108,9 +108,9 @@ void SelectWork::setInitData(QList<DUrl> lst, DFileSystemModel *model)
     // 修复bug-51429 bug-51039 bug-51503
     // 解决拷贝/剪贴文件到保险箱,文件没有选中问题
     QList<DUrl>::iterator itr = lst.begin();
-    for(; itr != lst.end(); ++itr) {
+    for (; itr != lst.end(); ++itr) {
         QString path = (*itr).toLocalFile();
-        if(VaultController::isVaultFile(path)){
+        if (VaultController::isVaultFile(path)) {
             DUrl url(VaultController::localToVault(path));
             *itr = url;
         }
@@ -141,11 +141,11 @@ void SelectWork::run()
             msleep(WAITTIME);
             // 修复bug-51429 bug-51039 bug-51503
             // 增加一个结束判断,当重复判断一个文件LOOPNUM次都不存在后,不在选中该文件
-            if(loopNum > LOOPNUM)
+            if (loopNum > LOOPNUM)
                 itr = m_lstNoValid.erase(itr);
             if (m_bStop)
                 break;
-            if(!m_pModel)
+            if (!m_pModel)
                 break;
             const QModelIndex &index = m_pModel->index(*itr);
             if (index.isValid()) {
@@ -1497,7 +1497,7 @@ void DFileView::updateStatusBar()
     }
     if (model()->state() != DFileSystemModel::Idle)
         return;
-  
+
     //若处于触摸滑动中，延时该更新，因为当前版本QT加速回弹动画会被子节点setText打断
     if (QScroller::hasScroller(this)) {
         d_ptr->updateStatusBarTimer->stop();
@@ -1757,7 +1757,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
         return;
 
     for (const auto &url : m_urlsForDragEvent) {
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
 
         // a symlink that points to a non-existing file QFileInfo::isReadAble() returns false
         if (!fileInfo || (!fileInfo->isSymLink() && !fileInfo->isReadable())) {

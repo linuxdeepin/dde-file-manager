@@ -34,10 +34,10 @@ DWIDGET_USE_NAMESPACE
 class DFMVaultUnlockPages : public DFMVaultPageBase
 {
     Q_OBJECT
-public:            
+public:
     static DFMVaultUnlockPages *instance();
 
-    enum EN_ToolTip{
+    enum EN_ToolTip {
         Warning = 0,
         Information
     };
@@ -50,7 +50,7 @@ public slots:
     void onVaultUlocked(int state);
 
 private:
-    DFMVaultUnlockPages(QWidget * parent = nullptr);
+    explicit DFMVaultUnlockPages(QWidget *parent = nullptr);
     ~DFMVaultUnlockPages() override {}
 
     void showEvent(QShowEvent *event) override;
@@ -58,8 +58,8 @@ private:
     void showToolTip(const QString &text, int duration, EN_ToolTip enType);
 
 private:
-    DPasswordEdit * m_passwordEdit {nullptr};
-    QPushButton * m_tipsButton {nullptr};
+    DPasswordEdit *m_passwordEdit {nullptr};
+    QPushButton *m_tipsButton {nullptr};
     bool m_bUnlockByPwd = false;
 
     DToolTip *m_tooltip {nullptr};

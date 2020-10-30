@@ -59,7 +59,7 @@ class UDiskFileWatcher;
 class UDiskFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    UDiskFileWatcherPrivate(DAbstractFileWatcher *qq)
+    explicit UDiskFileWatcherPrivate(DAbstractFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override

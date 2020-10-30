@@ -90,8 +90,8 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
         const QModelIndex &idx = indexAt(event->pos());
         QString voltag = idx.data(DFMSideBarItem::ItemVolTagRole).toString();
         if (!voltag.isEmpty() && voltag.startsWith("sr")
-            && DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(voltag)
-            && DFMOpticalMediaWidget::g_mapCdStatusInfo[voltag].bLoading) {
+                && DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(voltag)
+                && DFMOpticalMediaWidget::g_mapCdStatusInfo[voltag].bLoading) {
             // 设置光标为繁忙状态
             DFileService::instance()->setCursorBusyState(true);
         } else {
@@ -191,10 +191,10 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
             }
 
             if (!isFolderWritable || !isFileWritable) {
-                copyUrls << url;
+                copyUrls << DUrl(url);
                 qDebug() << "this is a unwriteable case:" << url;
             } else {
-                urls << url;
+                urls << DUrl(url);
             }
         }
     }
@@ -222,12 +222,11 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
         QWidget *parentptr = parentWidget();
         QWidget *curwindow = nullptr;
-        while(parentptr)
-        {
+        while (parentptr) {
             curwindow = parentptr;
             parentptr = parentptr->parentWidget();
         }
-        if (curwindow){
+        if (curwindow) {
             qApp->setActiveWindow(curwindow);
         }
 
@@ -332,7 +331,7 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     }
 
     for (const QUrl &url : urls) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, DUrl(url));
         if (!fileInfo || !fileInfo->isReadable()) {
             return Qt::IgnoreAction;
         }
@@ -354,7 +353,7 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     Qt::DropAction action = Qt::IgnoreAction;
     const Qt::DropActions support_actions = info->supportedDropActions() & actions;
 
-    if (DStorageInfo::inSameDevice(urls.first(), item->url())) {
+    if (DStorageInfo::inSameDevice(DUrl(urls.first()), item->url())) {
         if (support_actions.testFlag(Qt::MoveAction)) {
             action = Qt::MoveAction;
         }

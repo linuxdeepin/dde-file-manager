@@ -36,7 +36,7 @@ class DFMDeviceWatcher;
 class DFMDeviceWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
-    DFMDeviceWatcherPrivate(DAbstractFileWatcher *qq)
+    explicit DFMDeviceWatcherPrivate(DAbstractFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
     bool start() override
@@ -97,7 +97,7 @@ void DFMDeviceController::initVfsManager()
 
     QList<QUrl> vfsdevList = m_vfsMgr->getVfsList();
     for (const QUrl &url : vfsdevList) {
-         virualFileSystemDeviceAttached(url);
+        virualFileSystemDeviceAttached(url);
     }
 
     connect(m_vfsMgr.data(), &DFMVfsManager::vfsAttached, this, &DFMDeviceController::virualFileSystemDeviceAttached);
@@ -111,13 +111,13 @@ const QList<DAbstractFileInfoPointer> DFMDeviceController::getChildren(const QSh
     QList<DAbstractFileInfoPointer> list;
 
     // local
-    for (const QString &key: m_fsDevMap.keys()) {
+    for (const QString &key : m_fsDevMap.keys()) {
         list.append(DAbstractFileInfoPointer(new DFMDeviceInfo(DUrl::fromDeviceId(key))));
     }
 
     // vfs
     for (const QUrl &url : m_vfsDevSet) {
-        list.append(DAbstractFileInfoPointer(new DFMDeviceInfo(url)));
+        list.append(DAbstractFileInfoPointer(new DFMDeviceInfo(DUrl(url))));
     }
 
     return list;
@@ -202,7 +202,7 @@ void DFMDeviceController::forceUnmount(const QString &id)
  */
 void DFMDeviceController::fileSystemDeviceAdded(const QString dbusPath)
 {
-    DBlockDevice* blDev = DDiskManager::createBlockDevice(dbusPath);
+    DBlockDevice *blDev = DDiskManager::createBlockDevice(dbusPath);
     if (blDev->hasFileSystem()) {
         blDev->setWatchChanges(true);
         connect(blDev, &DBlockDevice::idLabelChanged, this, &DFMDeviceController::fileSystemDeviceIdLabelChanged);
@@ -227,7 +227,7 @@ void DFMDeviceController::fileSystemDeviceRemoved(const QString dbusPath)
 
 void DFMDeviceController::fileSystemDeviceIdLabelChanged(const QString &labelName)
 {
-    DBlockDevice* blDev = qobject_cast<DBlockDevice*>(QObject::sender());
+    DBlockDevice *blDev = qobject_cast<DBlockDevice *>(QObject::sender());
     DUrl oldUrl, newUrl;
     oldUrl.setScheme(DEVICE_SCHEME);
     oldUrl.setPath(blDev->drive());

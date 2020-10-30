@@ -32,7 +32,7 @@ class DebugObejct : public QObject
 {
 
 public:
-    DebugObejct(QObject *parent = 0);
+    explicit DebugObejct(QObject *parent = 0);
 
 private:
     friend QDebug operator<<(QDebug dbg, const QObject &obj);

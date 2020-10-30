@@ -231,8 +231,9 @@ QStringList DFileDialog::selectedFiles() const
 {
     QStringList list;
 
-    for (const DUrl &url : selectedUrls()) {
-        list << url.toLocalFile();
+    for (const QUrl &url : selectedUrls()) {
+        DUrl fileUrl(url);
+        list << fileUrl.toLocalFile();
     }
 
     return list;
@@ -243,9 +244,9 @@ void DFileDialog::selectUrl(const QUrl &url)
     if (!getFileView()) {
         return;
     }
-    getFileView()->select(DUrlList() << url);
+    getFileView()->select(DUrlList() << DUrl(url));
 
-    const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
+    const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(DUrl(url));
 
     if (fileInfo && fileInfo->exists()) {
         return;
@@ -297,7 +298,7 @@ QList<QUrl> DFileDialog::selectedUrls() const
     if (list.isEmpty() && (d->fileMode == QFileDialog::Directory
                            || d->fileMode == QFileDialog::DirectoryOnly)) {
         if (directoryUrl().isLocalFile())
-            list << directoryUrl();
+            list << DUrl(directoryUrl());
     }
 
     return DUrl::toQUrlList(list);
@@ -1285,7 +1286,7 @@ void DFileDialog::onAcceptButtonClicked()
                     DDialog dialog(this);
 
                     // NOTE(zccrs): dxcb bug
-                    if ( (!DFMGlobal::isWayLand() && !DPlatformWindowHandle::isEnabledDXcb(this))
+                    if ((!DFMGlobal::isWayLand() && !DPlatformWindowHandle::isEnabledDXcb(this))
 #if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
                             || pwPluginVersionGreaterThen("1.1.8.3")
 #endif

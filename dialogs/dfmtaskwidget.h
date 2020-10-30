@@ -29,7 +29,7 @@ class DFMElidedLable : public QLabel
 {
     Q_OBJECT
 public:
-    DFMElidedLable(QWidget *parent = nullptr);
+    explicit DFMElidedLable(QWidget *parent = nullptr);
     virtual ~DFMElidedLable();
     void setText(const QString &text);
 };

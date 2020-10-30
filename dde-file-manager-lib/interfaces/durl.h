@@ -90,7 +90,7 @@ class DUrl : public QUrl
 
 public:
     DUrl();
-    DUrl(const QUrl &copy);
+    explicit DUrl(const QUrl &copy);
 
     virtual ~DUrl() = default;
     DUrl(const DUrl &other);

@@ -388,7 +388,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                     qDebug() << "vault file could not move to trash : " << url.toLocalFile();
                     continue;
                 }
-                if (url.path().startsWith( destination.path())) {
+                if (url.path().startsWith(destination.path())) {
                     continue;
                 }
                 bool canTrash = moveDirToTrash(srcPath, &targetPath);
@@ -433,7 +433,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                     continue;
                 }
 
-                if (url.path().startsWith( destination.path())) {
+                if (url.path().startsWith(destination.path())) {
                     continue;
                 }
                 bool canTrash = moveFileToTrash(srcPath, &targetPath);
@@ -576,7 +576,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
 //    qDebug() << srcFile << tarFile;
     qDebug() << "Do restore trash file is started";
     DUrlList files;
-    files << QUrl::fromLocalFile(srcFilePath);
+    files << DUrl(QUrl::fromLocalFile(srcFilePath));
     m_totalSize = FileUtils::totalSize(files);
     // jobPrepared();
 

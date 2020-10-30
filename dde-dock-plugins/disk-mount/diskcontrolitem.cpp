@@ -196,7 +196,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 
     DGioSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
     if (gsettings.value("filemanager-integration").toBool()) {
-        DUrl url = attachedDevice->accessPointUrl();
+        DUrl url = DUrl(attachedDevice->accessPointUrl());
         if (url.scheme() == BURN_SCHEME) {
             // 1. 当前熊默认文件管理器为 dde-file-manager 时，使用它打开光盘
             // 2. 默认文件管理器为其他时，依然采用打开挂载点的方式
@@ -206,7 +206,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
                 qDebug() << "open optical path =>" << opticalPath;
                 QProcess::startDetached(QStringLiteral("dde-file-manager"), {opticalPath});
             } else {
-                url = attachedDevice->mountpointUrl();
+                url = DUrl(attachedDevice->mountpointUrl());
                 DDesktopServices::showFolder(url);
             }
         } else {
@@ -241,7 +241,7 @@ void DiskControlItem::showEvent(QShowEvent *e)
 
             QJsonParseError parseJsonErr;
             QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData, &parseJsonErr));
-            if(!(parseJsonErr.error == QJsonParseError::NoError)) {
+            if (!(parseJsonErr.error == QJsonParseError::NoError)) {
                 qDebug() << "decode json file error！";
                 return;
             }
