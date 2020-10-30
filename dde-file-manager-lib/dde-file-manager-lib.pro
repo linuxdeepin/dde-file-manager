@@ -81,7 +81,7 @@ include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
 include(src.pri)
 
-isEqual(ARCH, aarch64){
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64){
     include(search/dfsearch.pri)
 }
 
