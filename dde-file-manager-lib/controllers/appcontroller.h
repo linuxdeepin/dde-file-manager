@@ -67,7 +67,7 @@ public:
     static void registerUrlHandle();
 
 public slots:
-    void actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event,const bool isEnter = false);
+    void actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event, const bool isEnter = false);
     void actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event);
     void asyncOpenDisk(const QString &path);
 
@@ -158,7 +158,7 @@ public slots:
 
     // Subscriber interface
 public:
-    void doSubscriberAction(const QString &path);
+    void doSubscriberAction(const QString &path) override;
 
     static QString createFile(const QString &sourceFile, const QString &targetDir, const QString &baseFileName, WId windowId);
 

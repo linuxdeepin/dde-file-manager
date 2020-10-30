@@ -1594,7 +1594,7 @@ DStorageInfo *FileController::createStorageInfo(const QSharedPointer<DFMUrlBaseE
 class Match
 {
 public:
-    Match(const QString &group)
+    explicit Match(const QString &group)
     {
         for (const QString &key : DFMApplication::genericObtuselySetting()->keys(group)) {
             const QString &value = DFMApplication::genericObtuselySetting()->value(group, key).toString();

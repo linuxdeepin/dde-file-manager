@@ -80,7 +80,7 @@ DFMDeviceInfo::DFMDeviceInfo(const DUrl &url)
 
     switch (devType) {
     case ClassType::gvfs:
-        setVfsDeviceInfo(gvfsUrl);
+        setVfsDeviceInfo(DUrl(gvfsUrl));
         break;
     case ClassType::udisks2:
         setUdisks2DeviceInfo(udisksDBusPath);

@@ -32,7 +32,7 @@ private slots:
     void slotNextWidget();
 
 private:
-    DFMVaultActiveView(QWidget *parent = nullptr);
+    explicit DFMVaultActiveView(QWidget *parent = nullptr);
 
     // 复原操作
     void setBeginingState();

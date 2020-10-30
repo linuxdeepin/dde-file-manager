@@ -70,7 +70,7 @@ void DFMElidedLable::setText(const QString &text)
 class DFMTaskWidgetPrivate
 {
 public:
-    DFMTaskWidgetPrivate(DFMTaskWidget *qq): q_ptr(qq)
+    explicit DFMTaskWidgetPrivate(DFMTaskWidget *qq): q_ptr(qq)
     {
         initUI();
         initConnection();
