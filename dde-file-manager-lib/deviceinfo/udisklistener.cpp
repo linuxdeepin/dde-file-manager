@@ -106,7 +106,10 @@ void UDiskListener::initDiskManager()
     }
 
 // 以下这段定时器代码可解决打开光驱访问文件后，物理弹出光驱，文管界面却没能卸载光驱设备的问题。
-    connect(m_diskTimer, &QTimer::timeout, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
+    connect(m_diskTimer, &QTimer::timeout, this, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
+        // 服务器版本会刷系统日志
+        if (DFMGlobal::isServerSys())
+            return;
         for (int i = 0; i < m_list.size(); i++) {
             UDiskDeviceInfoPointer info = m_list.at(i);
             //qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
