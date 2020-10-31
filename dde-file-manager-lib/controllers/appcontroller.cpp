@@ -692,7 +692,7 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
         // Only optical media has eject option, should terminate all oprations while ejecting...
-        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+//        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
         QtConcurrent::run([fi]() {
             qDebug() << fi->fileUrl().path();
             QString strVolTag = fi->fileUrl().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾取卷标
@@ -707,6 +707,12 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                 if (!blk->mountPoints().empty()) {
                     blk->unmount({});
                     QDBusError lastError = blk->lastError();
+
+                    if (lastError.message().contains("target is busy")) {
+                        qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
+                        QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                        return;
+                    }
 
                     if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
                         qDebug() << "blk action has been canceled";
@@ -751,7 +757,7 @@ void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+//        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
 
         //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
         //在关闭窗口特效情况下，还会出现文管界面绘制不刷新出现重影的情况
@@ -1438,6 +1444,11 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
     if (!blk->mountPoints().empty()) {
         blk->unmount({});
         QDBusError lastError = blk->lastError();
+        if (lastError.message().contains("target is busy")) {
+            qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
+            emit unmountResult(tr("Disk is busy, cannot unmount now"));
+            return;
+        }
         if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
             qDebug() << "blk action has been canceled";
             return;
