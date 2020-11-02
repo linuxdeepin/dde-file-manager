@@ -27,6 +27,7 @@
 #include "dattachedudisks2device.h"
 #include "dattachedvfsdevice.h"
 #include "models/dfmrootfileinfo.h"
+#include "diskglobal.h"
 
 #include <dgiovolumemanager.h>
 #include <dgiomount.h>
@@ -153,7 +154,7 @@ void DiskControlWidget::doStartupAutoMount()
     for (const QString &blDevStr : blDevList) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
 
-        if (DFMGlobal::isWayLand() && blDevStr.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
+        if (DiskGlobal::isWayLand() && blDevStr.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
             continue;
         }
 
