@@ -15,6 +15,7 @@
 
 #include <DLog>
 #include <DApplication>
+#include <DSysInfo>
 
 #include <unistd.h>
 
@@ -125,6 +126,16 @@ int main(int argc, char *argv[])
         if (arg == "--file-dialog-only") {
             fileDialogOnly = true;
             break;
+        }
+    }
+
+    // video-wallpaper
+    if (DSysInfo::isCommunityEdition()) {
+        for (int i = 0; i < app.arguments().count() - 1; i++) {
+            if (app.arguments()[i] == "--video-wallpaper") {
+                app.setProperty("video-window-id", app.arguments()[i+1].toULongLong());
+                break;
+            }
         }
     }
 
