@@ -126,6 +126,9 @@ public:
         delete menuEventHandler;
     }
 
+    DFileViewHelperPrivate(DFileViewHelperPrivate &) = delete;
+    DFileViewHelperPrivate &operator=(DFileViewHelperPrivate &) = delete;
+
     void init();
     QModelIndex findIndex(const QByteArray &keys, bool matchStart,
                           int current, bool reverse_order, bool excludeCurrent) const;

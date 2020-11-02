@@ -926,6 +926,9 @@ public:
 
     ~DFileSystemModelPrivate();
 
+    DFileSystemModelPrivate(DFileSystemModelPrivate &) = delete;
+    DFileSystemModelPrivate &operator=(DFileSystemModelPrivate &) = delete;
+
     bool passNameFilters(const FileSystemNodePointer &node) const;
     bool passFileFilters(const DAbstractFileInfoPointer &info) const;
 
