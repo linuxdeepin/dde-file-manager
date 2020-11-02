@@ -40,7 +40,8 @@ public slots:
     void sync();
 private:
     explicit Config();
-    Q_DISABLE_COPY(Config)
+    Config(const Config &) = delete;
+    Config &operator=(const Config &) = delete;
     friend class Singleton<Config>;
 
     QMutex  m_mtxLock;
