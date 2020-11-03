@@ -1035,17 +1035,31 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
     }
 
     if(DFMGlobal::isWayLand()){
+        //! 判断当前预览是否于新的预览列表相同
+        if(m_filePreviewDialog && DUrlListCompare(canPreivewlist)){
+            m_filePreviewDialog->show();
+            m_filePreviewDialog->raise();
+            m_filePreviewDialog->activateWindow();
+           return;
+        }
+
         if(m_filePreviewDialog){
             m_filePreviewDialog->close();
             m_filePreviewDialog = nullptr;
         }
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
+
+        //! 记录预览列表
+        for(const DUrl &url : canPreivewlist){
+            m_urlList << url;
+        }
         //! 对话框关闭时回收FilePreviewDialog对象
         m_filePreviewDialog->setAttribute(Qt::WA_DeleteOnClose);
         //! 对话框关闭时m_filePreviewDialog对象置空
         connect(m_filePreviewDialog, &FilePreviewDialog::signalCloseEvent, this, [=](){
             m_filePreviewDialog->DoneCurrent();
             m_filePreviewDialog = nullptr;
+            m_urlList.clear();
         });
     }
     else {
@@ -1495,6 +1509,22 @@ void DialogManager::showFormatDialog(const QString &devId)
         p->startDetached("dde-device-formatter", QStringList {devId});
     }
 }
+
+bool DialogManager::DUrlListCompare(DUrlList urls)
+{
+    if(urls.size() != m_urlList.size()){
+        return false;
+    }
+    else {
+        for(int i = 0; i < urls.size(); ++i){
+            if(urls[i] != m_urlList[i]){
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
 
 void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 {
