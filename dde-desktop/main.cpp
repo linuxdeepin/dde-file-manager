@@ -141,9 +141,12 @@ int main(int argc, char *argv[])
         fileDialogOnly = false;
     }
 
-    if (fileDialogOnly) {
-        app.setQuitOnLastWindowClosed(false);
-    }
+//    if (fileDialogOnly) {
+//        app.setQuitOnLastWindowClosed(false);
+//    }
+    //设置无window时桌面仍不退出，以便防止在多屏且副屏设置为主屏时插拔导致桌面退出
+    app.setQuitOnLastWindowClosed(false);
+
     tmp += QString(" begin loadTranslator %0").arg(gTime.elapsed());
     app.loadTranslator();
     tmp += QString(" end loadTranslator %0").arg(gTime.elapsed());

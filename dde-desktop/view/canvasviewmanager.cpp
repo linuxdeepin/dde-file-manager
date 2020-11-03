@@ -39,6 +39,12 @@ CanvasViewManager::~CanvasViewManager()
 
 void CanvasViewManager::onCanvasViewBuild(int imode)
 {
+    //在画布创建时做保护先判断背景，无背景信息，清空画布
+    if (m_background->allbackgroundWidgets().isEmpty()){
+        m_canvasMap.clear();
+        qWarning() << "not get background.....,current mode: "<< imode;
+        return;
+    }
     //屏幕模式判断
     AbstractScreenManager::DisplayMode mode = static_cast<AbstractScreenManager::DisplayMode>(imode);
 

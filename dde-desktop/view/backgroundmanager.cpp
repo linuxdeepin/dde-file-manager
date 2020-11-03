@@ -297,6 +297,9 @@ void BackgroundManager::onBackgroundBuild()
         ScreenPointer primary = ScreenMrg->primaryScreen();
         if (primary == nullptr) {
             qCritical() << "get primary screen failed return";
+            //清空并通知view重建
+            m_backgroundMap.clear();
+            emit sigBackgroundBuilded(mode);
             return;
         }
 
