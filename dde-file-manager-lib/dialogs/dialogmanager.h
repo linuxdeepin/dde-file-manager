@@ -151,6 +151,11 @@ public slots:
 
     void showFormatDialog(const QString &devId); // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化
 
+    /**
+    * DUrlListCompare 用于判断传入url列表是否与m_urlList一样
+    */
+    bool DUrlListCompare(DUrlList urls);
+
 #ifdef SW_LABEL
     void onJobFailed_SW(int nRet, const QString &jobType, const QString &srcfilename);
     int showPrivilegeDialog_SW(int nRet, const QString &srcfilename);
@@ -173,6 +178,9 @@ private:
     Dtk::Widget::DDialog *m_noPemesrsionDialog {nullptr};
 
     std::unique_ptr<DMultiFilePropertyDialog> m_multiFilesPropertyDialog;
+
+    //! Klu视频预览当前预览列表
+    DUrlList m_urlList;
 };
 
 #endif // DIALOGMANAGER_H
