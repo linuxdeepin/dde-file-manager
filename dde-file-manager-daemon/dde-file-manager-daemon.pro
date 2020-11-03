@@ -138,7 +138,7 @@ services.path = /usr/share/dbus-1/system-services
 services.files = dbusservice/com.deepin.filemanager.daemon.service
 
 systemd_service.files = dbusservice/dde-filemanager-daemon.service
-systemd_service.path = /usr/lib/systemd/system
+systemd_service.path = /lib/systemd/system
 
 INSTALLS += target poliktpolicy systembusconf services systemd_service
 
