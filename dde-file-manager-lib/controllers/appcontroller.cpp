@@ -780,7 +780,7 @@ void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+//        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
 
         //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
         //在关闭窗口特效情况下，还会出现文管界面绘制不刷新出现重影的情况
