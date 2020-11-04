@@ -84,12 +84,7 @@ DiskControlWidget::~DiskControlWidget()
 
 void DiskControlWidget::initConnect()
 {
-    connect(m_diskManager, &DDiskManager::diskDeviceAdded, this, [this](const QString & path) {
-        // blumia: Workaround. Wait for udisks2 add new device to device list.
-        QTimer::singleShot(500, this, [ = ]() {
-            onDriveConnected(path);
-        });
-    });
+    connect(m_diskManager, &DDiskManager::blockDeviceAdded, this, &DiskControlWidget::onBlockDeviceAdded);
     connect(m_diskManager, &DDiskManager::diskDeviceRemoved, this, &DiskControlWidget::onDriveDisconnected);
     connect(m_diskManager, &DDiskManager::mountAdded, this, &DiskControlWidget::onMountAdded);
     connect(m_diskManager, &DDiskManager::mountRemoved, this, &DiskControlWidget::onMountRemoved);
@@ -140,11 +135,13 @@ void DiskControlWidget::doStartupAutoMount()
     // check if we are in live system, don't do auto mount if we are in live system.
     static QMap<QString, QString> cmdline = getKernelParameters();
     if (cmdline.value("boot", "") == QStringLiteral("live")) {
-        autoMountDisabled = true;
+        m_isInLiveSystem = true;
         return;
     }
 
-    if (getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool() == false) {
+    // 插件启动的时候判定是否挂载所有块设备
+    m_autoMountEnable = getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool();
+    if (!m_autoMountEnable) {
         return;
     }
 
@@ -159,8 +156,7 @@ void DiskControlWidget::doStartupAutoMount()
         iswWayland = true;
     }
 
-    QStringList blDevList = m_diskManager->blockDevices();
-
+    QStringList blDevList = m_diskManager->blockDevices({});
     for (const QString &blDevStr : blDevList) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
 
@@ -176,14 +172,6 @@ void DiskControlWidget::doStartupAutoMount()
             blDev->mount({{"auth.no_user_interaction", true}});
         }
     }
-
-    qDebug() << "call desktop.canvas.reFresh";
-    // call desktop.canvas.reFresh
-    DDBusSender()
-    .service("com.deepin.dde.desktop")
-    .path("/com/deepin/dde/desktop/canvas")
-    .interface("com.deepin.dde.desktop.Canvas")
-    .method(QString("Refresh")).call();
 }
 
 bool isProtectedDevice(DBlockDevice *blk)
@@ -363,76 +351,6 @@ void DiskControlWidget::onDiskListChanged()
     verticalScrollBar()->setMaximum(contentHeight - maxHeight);
 }
 
-void DiskControlWidget::onDriveConnected(const QString &deviceId)
-{
-    QScopedPointer<DDiskDevice> diskDevice(DDiskManager::createDiskDevice(deviceId));
-    if (diskDevice->removable()) {
-        DDesktopServices::playSystemSoundEffect("device-added");
-
-        if (autoMountDisabled) {
-            return;
-        }
-
-        bool mountAndOpen = false;
-
-        // Check if we need do auto mount..
-        getGsGlobal()->reload();
-        if (getGsGlobal()->value("GenericAttribute", "AutoMountAndOpen", false).toBool()) {
-            // mount and open
-            mountAndOpen = true;
-        } else if (getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool()) {
-            // mount
-            // no flag there..
-        } else {
-            // no need to do auto mount, return.
-            return;
-        }
-
-        QDBusInterface loginManager("org.freedesktop.login1",
-                                    "/org/freedesktop/login1/user/self",
-                                    "org.freedesktop.login1.User",
-                                    QDBusConnection::systemBus());
-        QVariant replay = loginManager.property(("State"));
-        if (replay.isValid()) {
-            QString state = replay.toString();
-            if (state != "active") {
-                return;
-            }
-        }
-
-        // Do auto mount stuff..
-        QStringList blDevList = DDiskManager::blockDevices({});
-        for (const QString &blDevStr : blDevList) {
-            QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
-
-            if (isProtectedDevice(blDev.data())) continue;
-            if (blDev->drive() != deviceId) continue;
-            if (blDev->isEncrypted()) continue;
-            if (blDev->hintIgnore()) continue;
-
-            if (blDev->hasFileSystem() && blDev->mountPoints().isEmpty()) {
-
-                // blumia: if mount&open enabled and dde-file-manager also got installed, use dde-file-manager.
-                //         using mount scheme with udisks sub-scheme to give user a *device is mounting* feedback.
-                if (mountAndOpen && !QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-                    QString mountUrlStr = DFMROOT_ROOT + blDevStr.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
-                    qDebug() << "using dus udisks2 to mount device { " << deviceId << " } at:" << mountUrlStr;
-
-                    QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
-                    continue;
-                }
-
-                QString mountPoint = blDev->mount({});
-                qDebug() << "mount device { " << deviceId << " } at:" << mountPoint;
-
-                if (mountAndOpen && !mountPoint.isEmpty()) {
-                    DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));
-                }
-            }
-        }
-    }
-}
-
 void DiskControlWidget::onDriveDisconnected()
 {
     qDebug() << "changed from drive_disconnected";
@@ -493,6 +411,61 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
     if (url.scheme() == "file") return;
 
     onDiskListChanged();
+}
+
+void DiskControlWidget::onBlockDeviceAdded(const QString &path)
+{
+    static const QString msg = "device add canceld: ";
+    DDesktopServices::playSystemSoundEffect("device-added");
+    // 刷新一次配置信息当有新的设备接入时，保证每次都是最新的配置生效
+    getGsGlobal()->reload();
+    m_autoMountEnable = getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool();
+    m_autoMountAndOpenEnable = getGsGlobal()->value("GenericAttribute", "AutoMountAndOpen", false).toBool();
+
+    if (m_isInLiveSystem || !m_autoMountEnable) {
+        qDebug() << msg + "isInLiveSys-" << m_isInLiveSystem << "\tautoMountEnable-" << m_autoMountEnable;
+        return;
+    }
+    // 以前的逻辑，应该是判定当前用户是否是激活状态（登录系统状态）
+    QDBusInterface loginManager("org.freedesktop.login1",
+                                "/org/freedesktop/login1/user/self",
+                                "org.freedesktop.login1.User",
+                                QDBusConnection::systemBus());
+    QVariant replay = loginManager.property(("State"));
+    if (replay.isValid()) {
+        QString state = replay.toString();
+        if (state != "active") {
+            qDebug() << msg + "user state is not active";
+            return;
+        }
+    }
+
+    QScopedPointer<DBlockDevice> blkDev(DDiskManager::createBlockDevice(path));
+
+    // 如果已经在 onDriveConnected 函数中挂载上了的设备直接忽略
+    if (!blkDev || !blkDev->mountPoints().isEmpty()) return;
+    // 以下皆是以前的逻辑
+    if (isProtectedDevice(blkDev.data())) return;
+    if (blkDev->isEncrypted()) return;
+    if (blkDev->hintIgnore()) return;
+    if (!blkDev->hasFileSystem()) return;
+
+    QString mountPoint = blkDev->mount({});
+    if (mountPoint.isEmpty() || blkDev->lastError().type() != QDBusError::NoError) {
+        qDebug() << "auto mount error: " << blkDev->lastError().type() << blkDev->lastError().message();
+        qDebug() << msg + "mount error occured";
+        return;
+    }
+    if (m_autoMountAndOpenEnable) {
+        // 不太明白为什么要保留这段代码
+        if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
+            QString mountUrlStr = DFMROOT_ROOT + path.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
+            QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
+            qDebug() << "open by dde-file-manager: " << mountUrlStr;
+            return;
+        }
+        DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));
+    }
 }
 
 void DiskControlWidget::NotifyMsg(QString msg)
