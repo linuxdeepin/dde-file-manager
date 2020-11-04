@@ -856,13 +856,25 @@ void PropertyDialog::onHideFileCheckboxChecked(bool checked)
     if (!info.exists()) return;
 
     DFMFileListFile flf(info.absolutePath());
+    const QString fileName = info.fileName();
+
+    //隐藏属性无变动，则不保存文件。task#40201
+    bool save = false;
     qDebug() << info.absolutePath();
     if (checked) {
-        flf.insert(info.fileName());
+        if (!flf.contains(fileName)){
+            flf.insert(fileName);
+            save = true;
+        }
     } else {
-        flf.remove(info.fileName());
+        if (flf.contains(fileName)){
+            flf.remove(info.fileName());
+            save = true;
+        }
     }
-    flf.save();
+
+    if (save)
+        flf.save();
 }
 
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
