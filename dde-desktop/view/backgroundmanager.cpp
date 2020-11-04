@@ -239,7 +239,6 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     if (m_preview) {
         DesktopUtil::set_prview_window(bwp.data());
     } else {
-//        Xcb::XcbMisc::instance().set_window_type(bwp->winId(), Xcb::XcbMisc::Desktop);
         DesktopUtil::set_desktop_window(bwp.data());
     }
 

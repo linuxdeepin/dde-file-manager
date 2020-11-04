@@ -40,7 +40,7 @@ CanvasViewManager::~CanvasViewManager()
 void CanvasViewManager::onCanvasViewBuild(int imode)
 {
     //在画布创建时做保护先判断背景，无背景信息，清空画布
-    if (m_background->allbackgroundWidgets().isEmpty()){
+    if (m_background->allbackgroundWidgets().isEmpty() && m_background->isEnabled()){
         m_canvasMap.clear();
         qWarning() << "not get background.....,current mode: "<< imode;
         return;
@@ -55,6 +55,7 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
 
         ScreenPointer primary = ScreenMrg->primaryScreen();
         if (primary == nullptr){
+            m_canvasMap.clear();
             qCritical() << "get primary screen failed return";
             return;
         }
@@ -158,9 +159,7 @@ void CanvasViewManager::onBackgroundEnableChanged()
             CanvasViewPointer mView = m_canvasMap.value(sp);
             mView->setParent(nullptr);
             mView->setWindowFlag(Qt::FramelessWindowHint, true);
-            if(!DesktopInfo().waylandDectected()){
-                Xcb::XcbMisc::instance().set_window_type(mView->winId(), Xcb::XcbMisc::Desktop);
-            }
+
             DesktopUtil::set_desktop_window(mView.data());
 #ifndef UNUSED_SMARTDOCK
             mView->setGeometry(sp->availableGeometry());
