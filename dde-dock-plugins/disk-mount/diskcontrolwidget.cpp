@@ -90,6 +90,7 @@ void DiskControlWidget::initConnect()
             onDriveConnected(path);
         });
     });
+    connect(m_diskManager, &DDiskManager::blockDeviceAdded, this, &DiskControlWidget::onBlockDeviceAdded);
     connect(m_diskManager, &DDiskManager::diskDeviceRemoved, this, &DiskControlWidget::onDriveDisconnected);
     connect(m_diskManager, &DDiskManager::mountAdded, this, &DiskControlWidget::onMountAdded);
     connect(m_diskManager, &DDiskManager::mountRemoved, this, &DiskControlWidget::onMountRemoved);
@@ -493,6 +494,17 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
     if (url.scheme() == "file") return;
 
     onDiskListChanged();
+}
+
+void DiskControlWidget::onBlockDeviceAdded(const QString &path)
+{
+    QScopedPointer<DBlockDevice> blkDev(DDiskManager::createBlockDevice(path));
+    if (!blkDev || !blkDev->mountPoints().isEmpty())
+        return;
+    QString mountPoint = blkDev->mount({});
+    qDebug() << path << "has been mounted on: " << mountPoint << "\n"
+             << "error code: " << blkDev->lastError().type() << "\n"
+             << "error message: " << blkDev->lastError().message();
 }
 
 void DiskControlWidget::NotifyMsg(QString msg)
