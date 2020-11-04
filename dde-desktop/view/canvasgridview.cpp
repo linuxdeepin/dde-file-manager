@@ -1956,12 +1956,14 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
 
     d->filesystemWatcher = model()->fileWatcher();
 
+#if 0 //!由于model中已做了刷新，故无需下面代码 task#40201
     //fix bug#30019 当.hidden文件改变时刷新model,用于实时更新隐藏文件
     connect(d->filesystemWatcher, &DAbstractFileWatcher::fileModified, this, [this](const DUrl & url) {
         if (url.fileName() == ".hidden" && !(model()->filters() & QDir::Hidden))
             delayModelRefresh();
     });
     //end
+#endif
 
     connect(d->filesystemWatcher, &DAbstractFileWatcher::subfileCreated,
     this, [ = ](const DUrl & url) {
