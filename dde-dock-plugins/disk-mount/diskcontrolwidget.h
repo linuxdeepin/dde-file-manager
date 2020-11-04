@@ -66,11 +66,14 @@ private slots:
     void onVolumeRemoved();
     void onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount> mount);
     void unmountDisk(const QString &diskId) const;
+    void onBlockDeviceAdded(const QString &path);
 
 private:
     QVBoxLayout *m_centralLayout;
     QWidget *m_centralWidget;
-    bool autoMountDisabled = false;
+    bool isInLiveSystem = false; // 当处于 liveSys 的时候禁用自动挂载（以前的逻辑）
+    bool autoMountEnable = false; // 配置项中的自动挂载
+    bool autoMountAndOpenEnable = false; // 配置项中的挂载并打开
 
     DDiskManager *m_diskManager;
 
