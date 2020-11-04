@@ -66,7 +66,6 @@ private slots:
     void onVolumeAdded();
     void onVolumeRemoved();
     void onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount> mount);
-    void onBlockDeviceAdded(const QString &path);
 
 private:
     QVBoxLayout *m_centralLayout;
