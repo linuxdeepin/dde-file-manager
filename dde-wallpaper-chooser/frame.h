@@ -43,7 +43,7 @@ class QLabel;
 QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
-
+class WaitItem;
 class WallpaperList;
 class WallpaperListView;
 class ComDeepinDaemonAppearanceInterface;
@@ -130,9 +130,9 @@ private:
 
     bool m_isExistFeatureInterface;
 
+    void loading();
     void initUI();
     void initSize();
-    void initListView();
     void refreshList();
     void onItemPressed(const QString &data);
     void onItemButtonClicked(const QString &buttonID);
@@ -145,6 +145,8 @@ private:
     void setBackground();
 
     QString m_screenName;
+
+    WaitItem* m_itemwait = nullptr;
 };
 
 #endif // FRAME_H

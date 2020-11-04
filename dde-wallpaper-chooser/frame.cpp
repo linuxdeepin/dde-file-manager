@@ -36,7 +36,7 @@
 #include "button.h"
 #include "dfileservices.h"
 #include "desktopinfo.h"
-
+#include "waititem.h"
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
 #endif
@@ -164,8 +164,7 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
     connect(m_sessionManagerInter, &SessionManager::LockedChanged, this, [this](bool locked){
         this->setVisible(!locked);
     });
-
-    QTimer::singleShot(0, this, &Frame::initListView);
+    loading();
 }
 
 Frame::~Frame()
@@ -184,6 +183,11 @@ Frame::~Frame()
     });
 
     disconnect(ScreenMrg, nullptr,this,nullptr);
+    //释放资源
+    if (m_itemwait) {
+        delete m_itemwait;
+        m_itemwait = nullptr;
+    }
 }
 
 void Frame::show()
@@ -899,11 +903,27 @@ void Frame::initSize()
     qDebug() << "this move : " << this->geometry() << m_wallpaperList->geometry();
 }
 
-void Frame::initListView()
+void Frame::loading()
 {
+    if (m_itemwait == nullptr) {
+        m_itemwait = new WaitItem;
+    }
 
+    m_itemwait->initSize(m_wallpaperList->size());
+    m_wallpaperList->m_contentLayout->addWidget(m_itemwait);
+    m_wallpaperList->m_contentWidget->adjustSize();
+
+    QString lablecontant;
+
+    if (m_mode == WallpaperMode) {
+        lablecontant = QString(tr("Loading wallpapers..."));
+    }
+    else {
+        lablecontant = QString(tr("Loading screensavers..."));
+    }
+
+    m_itemwait->setContantText(lablecontant);
 }
-
 void Frame::refreshList()
 {
     //fix bug 47159
@@ -915,6 +935,9 @@ void Frame::refreshList()
 
     m_wallpaperList->hide();
     m_wallpaperList->clear();
+
+    loading();
+
     m_wallpaperList->show();
     if (m_mode == WallpaperMode) {
         QDBusPendingCall call = m_dbusAppearance->List("background");
@@ -925,6 +948,14 @@ void Frame::refreshList()
                 qWarning() << "failed to get all backgrounds: " << call.error().message();
             } else
             {
+                //remove itemwait and delete itemwait
+                m_wallpaperList->m_contentLayout->removeWidget(m_itemwait);
+
+                if (m_itemwait != nullptr) {
+                    delete m_itemwait;
+                    m_itemwait = nullptr;
+                }
+
                 QDBusReply<QString> reply = call.reply();
                 QString value = reply.value();
                 QStringList strings = processListReply(value);
@@ -987,6 +1018,13 @@ void Frame::refreshList()
         }
 
         const QStringList &saver_name_list = m_dbusScreenSaver->allScreenSaver();
+        //remove itemwait and delete itemwait
+        m_wallpaperList->m_contentLayout->removeWidget(m_itemwait);
+
+        if (m_itemwait != nullptr) {
+            delete m_itemwait;
+            m_itemwait = nullptr;
+        }
 
         for (const QString &name : saver_name_list) {
             if("flurry" == name){
