@@ -129,10 +129,7 @@ int main(int argc, char *argv[])
 //        fileDialogOnly = false;
 //    }
 
-    if (fileDialogOnly) {
-        app.setQuitOnLastWindowClosed(false);
-    }
-
+    app.setQuitOnLastWindowClosed(false);
     app.loadTranslator();
     app.setOrganizationName("deepin");
     app.setApplicationDisplayName(app.translate("DesktopMain", "Desktop"));
