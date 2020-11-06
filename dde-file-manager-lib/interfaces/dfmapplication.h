@@ -70,7 +70,8 @@ public:
         GA_DisableNonRemovableDeviceUnmount, // 禁用本地磁盘卸载功能
         GA_HiddenSystemPartition, // 隐藏系统分区
         GA_ShowRecentFileEntry, // 在侧边栏显示“最近文件”入口
-        GA_ShowCsdCrumbBarClickableArea // 在面包屑栏预留可供点击以进入地址栏编辑状态的区域
+        GA_ShowCsdCrumbBarClickableArea, // 在面包屑栏预留可供点击以进入地址栏编辑状态的区域
+        GA_ShowFileSystemTagOnDiskIcon, // 在磁盘图标上显示文件系统信息
     };
 
     Q_ENUM(GenericAttribute)

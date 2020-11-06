@@ -275,6 +275,12 @@
                             "type": "checkbox",
                             "default": false,
                             "hide": true
+                        },
+                        {
+                            "key": "show_filesystemtag_on_diskicon",
+                            "text": qsTranslate("GenerateSettingTranslate", "Show file system tag on disk icon"),
+                            "type": "checkbox",
+                            "default": false
                         }
                     ]
                 }
