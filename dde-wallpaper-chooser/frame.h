@@ -128,8 +128,6 @@ private:
     QMap<QString, bool> m_deletableInfo;
     BackgroundManager *m_backgroundManager = nullptr;
 
-    bool m_isExistFeatureInterface;
-
     void loading();
     void initUI();
     void initSize();
@@ -138,8 +136,6 @@ private:
     void onItemButtonClicked(const QString &buttonID);
     QStringList processListReply(const QString &reply);
 
-    void featureInterface();
-
     QString getWallpaperSlideShow();
     void setWallpaperSlideShow(QString slideShow);
     void setBackground();
@@ -147,6 +143,7 @@ private:
     QString m_screenName;
 
     WaitItem* m_itemwait = nullptr;
+    QTimer m_loadTimer;
 };
 
 #endif // FRAME_H
