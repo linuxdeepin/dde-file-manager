@@ -1066,18 +1066,28 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
     return false;
 }
 
+//! 限制wayland判断次数
+static int wayland = 0;
+//! 保存是否是wayland平台
+static bool isWland = false;
 bool DFMGlobal::isWayLand()
 {
-    auto e = QProcessEnvironment::systemEnvironment();
-    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-    //在wayland平台下设置固定大小，解决属性框最大化问题
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        return true;
+    if(wayland > 0){
+        return isWland;
     }
-    return false;
+    else {
+        auto e = QProcessEnvironment::systemEnvironment();
+        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+        //在wayland平台下设置固定大小，解决属性框最大化问题
+        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+            isWland = true;
+        }
+        wayland = 1;
+    }
+    return isWland;
 }
 
 void DFMGlobal::showMultiFilesRenameDialog(const QList<DUrl> &selectedFiles)
