@@ -27,6 +27,7 @@
 #include "models/computermodel.h"
 #include "shutil/fileutils.h"
 #include "computerviewitemdelegate.h"
+#include "dfmapplication.h"
 
 ComputerViewItemDelegate::ComputerViewItemDelegate(QObject *parent) : QStyledItemDelegate (parent)
 {
@@ -127,7 +128,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     painter->drawText(textrect, Qt::TextWrapAnywhere, text, &otextrect);
 
     // 添加对文件系统格式的显示
-    if (!fileSysType.isEmpty()) {
+    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowFileSystemTagOnDiskIcon).toBool() && !fileSysType.isEmpty()) {
 
         // 使用细线进行绘制
         font.setWeight(12);
