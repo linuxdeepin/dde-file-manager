@@ -67,7 +67,8 @@ protected:
 
 private:
     WindowManager* m_windowManager = nullptr;
-    QFileSystemWatcher* m_sysPathWatcher;
+    // 临时方案 拖着主目录卡顿问题
+//    QFileSystemWatcher* m_sysPathWatcher;
 };
 
 #endif // FILEMANAGERAPP_H
