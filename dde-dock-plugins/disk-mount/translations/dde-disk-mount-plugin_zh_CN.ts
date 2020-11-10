@@ -29,6 +29,18 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>无法卸载设备</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>磁盘由用户“%1”挂载，您没有卸载权限。</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounting device</source>
+        <translation>找不到对应的挂载设备</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
