@@ -179,7 +179,7 @@ private:
 
     std::unique_ptr<DMultiFilePropertyDialog> m_multiFilesPropertyDialog;
 
-    //! Klu视频预览当前预览列表
+    //! wayland视频预览当前预览列表
     DUrlList m_urlList;
 };
 

@@ -105,7 +105,7 @@ int FileViewHelper::columnWidth(int columnIndex) const
 void FileViewHelper::select(const QList<DUrl> &list)
 {
     if(DFMGlobal::isWayLand()) {
-        // 修复KLU BUG-38453 拷贝或剪贴过后，调用该函数选择全部对象
+        // 修复wayland BUG-38453 拷贝或剪贴过后，调用该函数选择全部对象
         parent()->selectAllAfterCutOrCopy(list);
     } else {
         parent()->select(list);
