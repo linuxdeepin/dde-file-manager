@@ -10,6 +10,9 @@
 #include "dfilesystemwatcher.h"
 #include "private/dfilesystemwatcher_p.h"
 #include "dfmglobal.h"
+#include "singleton.h"
+#include "app/define.h"
+#include "controllers/pathmanager.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -233,7 +236,18 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
         const QString &name = QString::fromUtf8(event.name);
 
         for (auto &path : paths) {
-//            qDebug() << "event for path" << path;
+            // 判断是否是主目录
+            if(path == QDir::homePath()) {
+                // 判断是否是删除或移动事件
+                if(event.mask & IN_DELETE|| event.mask & IN_MOVED_FROM) {
+                    // 判断发生变化的是否是系统目录
+                    if(name == DESKTOP_DIR_NAME || name == VIDEOS_DIR_NAME || name == MUSIC_DIR_NAME
+                            || name == PICTURES_DIR_NAME || name == DOCUMENTS_DIR_NAME || name == DOWNLOADS_DIR_NAME) {
+                        // 重新加载系统目录
+                        systemPathManager->loadSystemPaths();
+                    }
+                }
+            }
 
             /// TODO: Existence of invalid utf8 characters QFile can not read the file information
             if (event.name != QString::fromLocal8Bit(event.name).toLocal8Bit()) {

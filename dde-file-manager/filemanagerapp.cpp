@@ -175,15 +175,11 @@ void FileManagerApp::lazyRunInitServiceTask()
 
 void FileManagerApp::initSysPathWatcher()
 {
-    // 临时方案 拖着主目录卡顿问题
-//    m_sysPathWatcher = new QFileSystemWatcher(this);
-//    m_sysPathWatcher->addPath(QDir::homePath());
+
 }
 
 void FileManagerApp::initConnect()
 {
-    // 临时方案 拖着主目录卡顿问题
-//    connect(m_sysPathWatcher, &QFileSystemWatcher::directoryChanged, systemPathManager, &PathManager::loadSystemPaths);
     connect(DFMApplication::instance(), &DFMApplication::previewCompressFileChanged, this, [] (bool enable) {
         if (enable)
             FileUtils::mountAVFS();

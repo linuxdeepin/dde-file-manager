@@ -31,6 +31,13 @@
 
 #include "durl.h"
 
+#define DESKTOP_DIR_NAME            "Desktop"
+#define VIDEOS_DIR_NAME             "Videos"
+#define MUSIC_DIR_NAME              "Music"
+#define PICTURES_DIR_NAME           "Pictures"
+#define DOCUMENTS_DIR_NAME          "Documents"
+#define DOWNLOADS_DIR_NAME          "Downloads"
+
 class PathManager : public QObject
 {
     Q_OBJECT
