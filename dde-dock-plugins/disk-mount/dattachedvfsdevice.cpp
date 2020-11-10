@@ -18,49 +18,123 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <gio/gio.h>
+#include <QFileInfo>
+#include <QDir>
+#include "diskcontrolwidget.h"
 
 #include "dattachedvfsdevice.h"
-
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
+
+namespace {
+void unmount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data)
+{
+    Q_UNUSED(user_data);
+
+    gboolean succeeded;
+    GError *error = nullptr;
+    succeeded = g_mount_unmount_with_operation_finish (G_MOUNT (object), res, &error);
+
+    if (!succeeded) {
+        DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Cannot unmount the device"), DiskControlWidget::tr("") );
+    }
+    g_object_unref (G_MOUNT (object));
+}
+
+void unmount_mounted(const QString &mount_path)
+{
+    if (mount_path.isEmpty())
+        return;
+
+    GFile *file = g_file_new_for_path(QFile::encodeName(mount_path));
+    if (file == nullptr)
+        return;
+
+    GError *error = nullptr;
+    GMount *mount = g_file_find_enclosing_mount (file, nullptr, &error);
+    if (mount == nullptr) {
+        bool no_permission = false;
+
+        QFileInfo fileInfo(QUrl(mount_path).toLocalFile());
+
+        while (!fileInfo.exists() && fileInfo.fileName() != QDir::rootPath() && !fileInfo.absolutePath().isEmpty()) {
+            fileInfo.setFile(fileInfo.absolutePath());
+        }
+
+        if (fileInfo.exists()) {
+            if (getuid() == fileInfo.ownerId()) {
+                if (!fileInfo.permission(QFile::ReadOwner | QFile::ExeOwner))
+                    no_permission = true;
+            } else if (getgid() == fileInfo.groupId()) {
+                if (!fileInfo.permission(QFile::ReadGroup | QFile::ExeGroup))
+                    no_permission = true;
+            } else if (!fileInfo.permission(QFile::ReadOther | QFile::ExeOther)) {
+                no_permission = true;
+            }
+        }
+
+        if (no_permission) {
+            QString user_name = fileInfo.owner();
+
+            if (fileInfo.absoluteFilePath().startsWith("/media/")) {
+                user_name = fileInfo.baseName();
+            }
+            DiskControlWidget::NotifyMsg(DiskControlWidget::tr("The disk is mounted by user \"%1\", you cannot unmount it."), DiskControlWidget::tr("") );
+            return;
+        }
+
+        DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Cannot find the mounting device"), DiskControlWidget::tr("") );
+        return;
+    }
+
+    GMountOperation *mount_op = g_mount_operation_new ();
+    GMountUnmountFlags flags = G_MOUNT_UNMOUNT_NONE;
+    GAsyncReadyCallback callback = unmount_done_cb;
+    g_mount_unmount_with_operation(mount, flags, mount_op, nullptr, callback, nullptr);
+    g_object_unref (mount_op);
+    g_object_unref (file);
+}
+}
 
 /*!
  * \class DAttachedVfsDevice
  *
  * \brief An attached (mounted) virtual filesystem device from gio
  */
-
-
-DAttachedVfsDevice::DAttachedVfsDevice(const QString mountpointPath)
+DAttachedVfsDevice::DAttachedVfsDevice(const QString &mountpointPath)
 {
-    dgioMount.reset(DGioMount::createFromPath(mountpointPath));
+    m_dgioMount.reset(DGioMount::createFromPath(mountpointPath));
+    m_mountpointPath = mountpointPath;
 }
 
 bool DAttachedVfsDevice::isValid()
 {
-    return !dgioMount.isNull();
+    return !m_dgioMount.isNull();
 }
 
 bool DAttachedVfsDevice::detachable()
 {
-    return dgioMount->canUnmount();
+    return m_dgioMount->canUnmount();
 }
 
 void DAttachedVfsDevice::detach()
 {
-    dgioMount->unmount();
+    //使用dgioMount->unmount()不能提供失败警告，需要替换为一个有状态返回的卸载方式。 BUG 51596
+    //dgioMount->unmount();
+    unmount_mounted(m_mountpointPath);
 }
 
 QString DAttachedVfsDevice::displayName()
 {
-    return dgioMount ? dgioMount->name() : QStringLiteral("-");
+    return m_dgioMount ? m_dgioMount->name() : QStringLiteral("-");
 }
 
 bool DAttachedVfsDevice::deviceUsageValid()
 {
-    if (dgioMount.isNull()) return false;
+    if (m_dgioMount.isNull()) return false;
 
-    QExplicitlySharedDataPointer<DGioFile> file = dgioMount->getRootFile();
+    QExplicitlySharedDataPointer<DGioFile> file = m_dgioMount->getRootFile();
     QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo("filesystem::*");
 
     return fsInfo;
@@ -68,7 +142,7 @@ bool DAttachedVfsDevice::deviceUsageValid()
 
 QPair<quint64, quint64> DAttachedVfsDevice::deviceUsage()
 {
-    QExplicitlySharedDataPointer<DGioFile> file = dgioMount->getRootFile();
+    QExplicitlySharedDataPointer<DGioFile> file = m_dgioMount->getRootFile();
     QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo("filesystem::*");
 
     if (fsInfo) {
@@ -80,7 +154,7 @@ QPair<quint64, quint64> DAttachedVfsDevice::deviceUsage()
 
 QString DAttachedVfsDevice::iconName()
 {
-    QStringList iconList = dgioMount ? dgioMount->themedIconNames() : QStringList();
+    QStringList iconList = m_dgioMount ? m_dgioMount->themedIconNames() : QStringList();
 
     if (iconList.empty()) {
         return QStringLiteral("drive-network");
@@ -91,7 +165,7 @@ QString DAttachedVfsDevice::iconName()
 
 QUrl DAttachedVfsDevice::mountpointUrl()
 {
-    QExplicitlySharedDataPointer<DGioFile> file = dgioMount->getRootFile();
+    QExplicitlySharedDataPointer<DGioFile> file = m_dgioMount->getRootFile();
     return QUrl::fromLocalFile(file->path());
 }
 

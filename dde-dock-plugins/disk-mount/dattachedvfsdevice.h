@@ -33,7 +33,7 @@
 class DAttachedVfsDevice : public DAttachedDeviceInterface
 {
 public:
-    DAttachedVfsDevice(const QString mountpointPath);
+    explicit DAttachedVfsDevice(const QString &mountpointPath);
 
     bool isValid() override;
     bool detachable() override;
@@ -46,7 +46,8 @@ public:
     QUrl accessPointUrl() override;
 
 private:
-    QScopedPointer<DGioMount> dgioMount;
+    QScopedPointer<DGioMount> m_dgioMount;
+    QString m_mountpointPath;
 };
 
 #endif // DATTACHEDVFSDEVICE_H
