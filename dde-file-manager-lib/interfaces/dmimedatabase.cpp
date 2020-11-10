@@ -54,7 +54,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
     QMimeType result;
     QString path = fileInfo.path();
-    //fix bug 29124 #CPM2020070800063# 【Pangu-WBY0B 5.7.0.26(C233)+ BIOS 1.22】【HUAWEI】【OS】【VN1】【非用例】
+    //fix bug 29124 #CPM2020070800063# pg
     // 系统盘右键打开属性窗口，关闭or不关闭，之后在文件管理器随意点击文件，文件管理器卡死。(一般+必现+不常用功能)（使用MatchExtension去获取mimetype）
     bool bMatchExtension = (fileInfo.absoluteFilePath() == QString("/sys/kernel/security/apparmor/revision") ||
                             fileInfo.absoluteFilePath() == QString("/sys/power/wakeup_count"))?

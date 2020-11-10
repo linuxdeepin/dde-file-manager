@@ -176,7 +176,7 @@ bool ShareInfoFrame::doShareInfoSetting()
         return DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
     }
 
-    // fix bug#51124 【KLU1022】【文管5.2.0102.42】只读共享文件夹，修改“匿名访问”，此文件夹权限改变
+    // fix bug#51124 【wayland】【文管5.2.0102.42】只读共享文件夹，修改“匿名访问”，此文件夹权限改变
     // 用户权限保持不变，修改组、其他权限为可读写
     if (m_permissoComBox->currentIndex() == 0 && m_anonymityCombox->currentIndex() != 0) {
         fileService->setPermissions(nullptr, m_fileinfo->fileUrl(),

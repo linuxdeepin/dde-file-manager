@@ -410,7 +410,7 @@ public:
                         QString fullPath = fileInfo.absoluteFilePath();
                         QString filePath = fileInfo.absolutePath();
                         if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath)) {
-                            // 修复klu-bug-51754
+                            // 修复wayland-bug-51754
                             // 刷选出保险箱内的文件,使其不被检索出来
                             if (!VaultController::isVaultFile(it->dir.absolutePath()) && VaultController::isVaultFile(fullPath))
                                 continue;

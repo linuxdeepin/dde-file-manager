@@ -52,7 +52,7 @@ class DStatusBar;
 class FileViewHelper;
 class DFileViewPrivate;
 
-// 修复KLU TASK-37638 添加子线程，完成“选择当前拷贝或剪贴过来的文件”
+// 修复wayland TASK-37638 添加子线程，完成“选择当前拷贝或剪贴过来的文件”
 class SelectWork : public QThread
 {
     Q_OBJECT
@@ -165,9 +165,9 @@ public slots:
     bool cdUp();
     bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event) Q_DECL_OVERRIDE;
     void select(const QList<DUrl> &list);
-    // 修复KLU BUG-38453 重新添加一个函数，当拷贝和剪贴过后，调用该函数选择全部文件对象
+    // 修复wayland BUG-38453 重新添加一个函数，当拷贝和剪贴过后，调用该函数选择全部文件对象
     void selectAllAfterCutOrCopy(const QList<DUrl> &list);
-    // 修复KLU TASK-37638 添加槽函数，选中文件
+    // 修复wayland TASK-37638 添加槽函数，选中文件
     void slotSetSelect(DUrl url);
     inline void setViewModeToList()
     { setViewMode(ListMode);}

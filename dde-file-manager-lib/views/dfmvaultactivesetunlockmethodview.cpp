@@ -42,7 +42,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     connect(m_pTypeCombo, SIGNAL(currentIndexChanged(int)),
                       this, SLOT(slotTypeChanged(int)));
 
-    // 修复klu-bug-51515 设置只能输入自定义的字符当做密码
+    // 修复wayland-bug-51515 设置只能输入自定义的字符当做密码
     // 设置只能输入大小写字母、数字和部分符号的正则表达式
     QRegExp regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~\'\"|]+");
     // 创建验证器

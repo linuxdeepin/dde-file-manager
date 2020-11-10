@@ -246,7 +246,7 @@ void DFMCrumbInterface::requestCompletionList(const DUrl &url)
     connect(d->folderCompleterJobPointer, &JobController::addChildrenList, this, [this](const QList<DAbstractFileInfoPointer> &infoList){
         QStringList list;
         for (const DAbstractFileInfoPointer &infoPointer : infoList) {
-            // 修复klu-bug-51753 infoPointer没有判空，导致崩溃
+            // 修复wayland-bug-51753 infoPointer没有判空，导致崩溃
             if(infoPointer){
                 list.append(infoPointer->fileName());
             }
