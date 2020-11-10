@@ -46,8 +46,6 @@ DesktopFile::DesktopFile(const QString &fileName) {
     settings.beginGroup("Desktop Entry");
     // Loads .desktop file (read from 'Desktop Entry' group)
     Properties desktop(fileName, "Desktop Entry");
-    m_name = desktop.value("Name", settings.value("Name")).toString();
-    m_genericName = desktop.value("GenericName", settings.value("GenericName")).toString();
 
     if(desktop.contains("X-Deepin-AppID")){
         m_deepinId = desktop.value("X-Deepin-AppID", settings.value("X-Deepin-AppID")).toString();
@@ -57,26 +55,38 @@ DesktopFile::DesktopFile(const QString &fileName) {
         m_deepinVendor = desktop.value("X-Deepin-Vendor", settings.value("X-Deepin-Vendor")).toString();
     }
 
-    QString nLocalKey = QString("Name[%1]").arg(QLocale::system().name());
-    if (desktop.contains(nLocalKey)){
-        m_localName = desktop.value(nLocalKey, m_name).toString();
-    }else{
-        m_localName = m_name;
-    }
-
-    QString gnlocalKey = QString("GenericName[%1]").arg(QLocale::system().name());
-    if (desktop.contains(gnlocalKey)){
-        m_genericName = desktop.value(gnlocalKey, m_name).toString();
-    }else{
-        m_genericName = m_name;
-    }
-
     if(desktop.contains("NoDisplay")){
         m_noDisplay = desktop.value("NoDisplay", settings.value("NoDisplay").toBool()).toBool();
     }
     if(desktop.contains("Hidden")){
         m_hidden = desktop.value("Hidden", settings.value("Hidden").toBool()).toBool();
     }
+
+    //由于获取的系统语言简写与.desktop的语言简写存在不对应关系，经决定先采用获取的系统值匹配
+    //若没匹配到则采用系统值"_"左侧的字符串进行匹配，均为匹配到，才走原未匹配流程
+    auto getValueFromSys = [&desktop,&settings](const QString &type, const QString &sysName)->QString {
+        const QString key = QString("%0[%1]").arg(type).arg(sysName);
+        return desktop.value(key, settings.value(key)).toString();
+    };
+
+    auto getNameByType = [&desktop,&settings,&getValueFromSys](const QString &type)->QString{
+        QString tempSysName = QLocale::system().name();
+        QString targetName = getValueFromSys(type, tempSysName);
+        if (targetName.isEmpty()) {
+            auto strSize = tempSysName.trimmed().split("_");
+            if (!strSize.isEmpty()){
+                tempSysName = strSize.first();
+                targetName = getValueFromSys(type,tempSysName);
+            }
+
+            if (targetName.isEmpty())
+                targetName = desktop.value(type, settings.value(type)).toString();
+        }
+
+        return targetName;
+    };
+    m_localName = getNameByType("Name");
+    m_genericName = getNameByType("GenericName");
 
     m_exec = desktop.value("Exec", settings.value("Exec")).toString();
     m_icon = desktop.value("Icon", settings.value("Icon")).toString();
