@@ -220,8 +220,6 @@ public:
 
     /// drag drop
     QModelIndex dragMoveHoverIndex;
-    //析构锁，当其他信号正在处理时，不要析构
-    QMutex m_mutex;
     //析构锁，当更新updatestatusbar正在处理时，不要析构
     QMutex m_mutexUpdateStatusBar;
 
@@ -309,7 +307,6 @@ DFileView::~DFileView()
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
 
     //所有的槽函数必须跑完才能析构
-    QMutexLocker lk(&d_ptr->m_mutex);
     QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
 
 }
@@ -1017,7 +1014,6 @@ void DFileView::onRowCountChanged()
 {
     //所有的槽函数必须跑完才能析构
     QPointer<DFileView> me = this;
-    QMutexLocker lk(&d_ptr->m_mutex);
     if (!me) {
         return;
     }
