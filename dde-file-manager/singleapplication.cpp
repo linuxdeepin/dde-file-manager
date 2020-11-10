@@ -46,7 +46,11 @@
 
 QString SingleApplication::UserID = "1000";
 
+#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
 SingleApplication::SingleApplication(int &argc, char **argv, int): DApplication(argc, argv)
+#else
+SingleApplication::SingleApplication()
+#endif
 {
     m_localServer = new QLocalServer;
     initConnect();
@@ -101,6 +105,7 @@ QString SingleApplication::userId()
     return UserID;
 }
 
+#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
 bool SingleApplication::loadTranslator(QList<QLocale> localeFallback)
 {
     DApplication::loadTranslator(localeFallback);
@@ -147,6 +152,7 @@ bool SingleApplication::loadTranslator(QList<QLocale> localeFallback)
 
     return false;
 }
+#endif
 
 QString SingleApplication::getUserID()
 {
