@@ -851,11 +851,14 @@ void VaultController::setBigFileIsDeleting(const bool isDeleting)
 
 bool VaultController::isVaultEnabled()
 {
-    if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
-        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        // 如果是专业版
-        if(DSysInfo::DeepinType::DeepinProfessional == deepinType){
-            return true;
+    // 如果不是wayland平台
+    if(!DFMGlobal::isWayLand()){
+        if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
+            DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+            // 如果是专业版
+            if(DSysInfo::DeepinType::DeepinProfessional == deepinType){
+                return true;
+            }
         }
     }
     return false;

@@ -860,6 +860,7 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         if (!m_disableUrlSchemes.contains(COMPUTER_SCHEME)) {
             appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
         }
+
         // 判断系统类型，决定是否启用保险箱
         if(VaultController::isVaultEnabled()){
             // 添加保险库
