@@ -149,7 +149,12 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
 
 void ShareInfoFrame::handleShareNameChanged()
 {
-    doShareInfoSetting();
+    // 修复bug-54080
+    // 当失去焦点时，判断文件名是否符合规则
+    if(!m_shareNamelineEdit->hasFocus())
+        doShareInfoSetting();
+    else    // 如果焦点存在，将焦点设置到下一个控件
+        m_permissoComBox->setFocus();
     //handShareInfoChanged();
 }
 
