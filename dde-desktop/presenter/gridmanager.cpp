@@ -942,7 +942,6 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
     QList<QPoint> destPosList;
     // check dest is empty;
     QMap<QPoint, QString> &destPosMap = d->m_gridItems[toScreen];
-    QVector<bool> &destUsedGrids = d->m_cellStatus[toScreen];
 
     //源
     QMap<QPoint, QString> &orgPosMap = d->m_gridItems[fromScreen];
@@ -973,6 +972,7 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
 
     // no need to resize
     if (conflict) {
+        QVector<bool> &destUsedGrids = d->m_cellStatus[toScreen];
         auto selectedHeadCount = sortItems.indexOf(itemId);
         // find free grid before destPos
         auto destIndex = d->indexOfGridPos(toScreen, destPos);

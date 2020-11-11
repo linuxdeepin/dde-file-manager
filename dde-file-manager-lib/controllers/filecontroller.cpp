@@ -371,10 +371,10 @@ QString printList(BTreeNode *pNode)
 {
 
     QString fullPath("");
-    int i = 0;
     if (pNode == nullptr) {
         return "";
     } else {
+        int i = 0;
         while (pNode != nullptr) {
             if (pNode->name != nullptr) {
                 fullPath.insert(0, pNode->name);
@@ -426,17 +426,12 @@ public:
             return;
         }
         DFMAnythingDirIterator *it = static_cast<DFMAnythingDirIterator *>(self);
-        uint32_t num_folders;
-        uint32_t num_files;
-        uint32_t num_results = 0;
         DatabaseSearch *result = static_cast<DatabaseSearch *>(back);
         if (!result)
             return;
         GPtrArray *results = result->results;
         if (results && results->len > 0) {
-            num_folders = result->num_folders;;
-            num_files = result->num_files;
-            num_results = results->len;
+            uint32_t num_results = results->len;
             for (uint32_t j = 0; j < num_results; j++) {
                 if (results->len > 0 && results->pdata) {
                     DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
