@@ -128,7 +128,7 @@ DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, bool hasCache)
     //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
     //所以ftp和smb挂载点没有了，显示文件已被删除
-    filesCount();
+    // filesCount();
 }
 
 DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, const QMimeType &mimetype, bool hasCache)
@@ -150,7 +150,8 @@ DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, const QMimeType &mimetype, boo
         mimeType();
     }
     size();
-    filesCount();
+
+    //filesCount();
     //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
     //所以ftp和smb挂载点没有了，显示文件已被删除
