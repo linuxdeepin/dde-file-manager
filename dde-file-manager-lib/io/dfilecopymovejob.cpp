@@ -1282,6 +1282,13 @@ open_file: {
 
 //        char data[blockSize + 1];
         qint64 size_read = fromDevice->read(data, block_Size);
+        if (Q_UNLIKELY(!stateCheck())) {
+            if (!bdestLocal) {
+                toDevice->closeWriteReadFailed(true);
+            }
+            delete[] data;
+            return false;
+        }
 
         if (Q_UNLIKELY(size_read <= 0)) {
             if (size_read == 0 && fromDevice->atEnd()) {
@@ -1335,7 +1342,12 @@ open_file: {
         }
         qint64 size_write = toDevice->write(data, size_read);
         if (Q_UNLIKELY(!stateCheck())) {
+            if (!bdestLocal) {
+                toDevice->closeWriteReadFailed(true);
+            }
             return false;
+
+
         }
         //如果写失败了，直接推出
         if (size_write < 0) {
