@@ -62,9 +62,8 @@ public:
     static QString userServerName(const QString& key);
     static QString userId();
 
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
     bool loadTranslator(QList<QLocale> localeFallback = QList<QLocale>() << QLocale::system());
-#endif
+
 
 signals:
     void screenDevicePixelRatioChanged(QScreen *s);
