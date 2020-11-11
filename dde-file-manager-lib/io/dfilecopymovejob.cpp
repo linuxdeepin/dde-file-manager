@@ -1255,13 +1255,19 @@ open_file: {
     DGIOFileDevice *fromgio = qobject_cast<DGIOFileDevice *>(fromDevice.data());
     DGIOFileDevice *togio = qobject_cast<DGIOFileDevice *>(toDevice.data());
     if (fromgio) {
-        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[fromgio](){
-            fromgio->cancelAllOperate();
+        QPointer<DGIOFileDevice> frompointer = fromgio;
+        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[frompointer](){
+            if (frompointer) {
+                frompointer->cancelAllOperate();
+            }
         });
     }
     if (togio) {
-        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[togio](){
-            togio->cancelAllOperate();
+        QPointer<DGIOFileDevice> topointer = fromgio;
+        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[topointer](){
+            if (topointer) {
+                topointer->cancelAllOperate();
+            }
         });
     }
 
