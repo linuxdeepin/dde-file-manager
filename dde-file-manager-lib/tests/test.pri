@@ -171,7 +171,13 @@ SOURCES += \
     $$PWD/interfaces/ut_dfmevent.cpp \
     $$PWD/interfaces/ut_dfmstandardpaths.cpp \
     $$PWD/app/ut_FileSignalManager.cpp  \
-
+    $$PWD/controllers/ut_dfmmdcrumbcontrooler.cpp \
+    $$PWD/controllers/ut_dfmmtpcrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmnetworkcrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmrecentcrumbcontroller.cpp \
+    $$PWD/controllers/ut_filecontroller.cpp \
+    $$PWD/interfaces/ut_dfiledialoghandle.cpp \
+    $$PWD/interfaces/ut_dfileiconprovider.cpp
 
 RESOURCES += \
     $$PWD/resources/test.qrc
