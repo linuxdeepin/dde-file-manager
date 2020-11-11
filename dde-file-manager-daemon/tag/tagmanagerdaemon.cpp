@@ -36,7 +36,7 @@ std::atomic<int> counter{ 0 };
 TagManagerDaemon::TagManagerDaemon(QObject *const parent)
     : QObject{ parent },
       adaptor{ new TagManagerDaemonAdaptor{ this } },
-      m_anything_monitor{ new DAnythingMonitorFilter{this} }
+m_anything_monitor{ new DAnythingMonitorFilter{this} }
 {
 
     this->init_connection();
@@ -59,9 +59,10 @@ QDBusVariant TagManagerDaemon::disposeClientData(const QMap<QString, QVariant> &
             QString key{ Tag::escaping_en_skim(cbeg.key()) };
             QList<QString> values{};
 
-            for (const QString &qstr : cbeg.value().toStringList()) {
-                values.push_back(Tag::escaping_en_skim(qstr));
-            }
+            auto lst = cbeg.value().toStringList();
+            std::transform(lst.begin(), lst.end(), std::back_inserter(values), [](const QString & qstr) {
+                return Tag::escaping_en_skim(qstr);
+            });
 
             filesAndTagsName[key] = values;
         }

@@ -860,11 +860,12 @@ bool DFileService::setFileTags(const QObject *sender, const DUrl &url, const QLi
 bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlList, const QStringList &tags, const QSet<QString> dirtyTagFilter) const
 {
     QRegExp rx("[\\\\/\':\\*\\?\"<>|%&]");
-    for (const QString &tag : tags) {
-        if (tag.indexOf(rx) >= 0) {
-            return false;
-        }
-    }
+    auto ret = std::any_of(tags.begin(), tags.end(), [rx](const QString & tag) {
+        return tag.indexOf(rx) >= 0;
+    });
+
+    if (ret)
+        return false;
 
     QStringList old_tagNames = getTagsThroughFiles(sender, urlList);//###: the mutual tags of multi files.
     QStringList dirty_tagNames; //###: for deleting.

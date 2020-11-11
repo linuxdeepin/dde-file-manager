@@ -116,9 +116,14 @@ void FileDialogStatusBar::addLineEdit(QLabel *label, QLineEdit *edit)
 
 QString FileDialogStatusBar::getLineEditValue(const QString &text) const
 {
-    for (auto i : m_customLineEditList)
-        if (i.first->text() == text)
-            return i.second->text();
+    auto iter = std::find_if(m_customLineEditList.begin(), m_customLineEditList.end(),
+    [text](const QPair<QLabel *, QLineEdit *> &i) {
+        return i.first->text() == text;
+    });
+
+    if (iter != m_customLineEditList.end()) {
+        return iter->second->text();
+    }
 
     return QString();
 }
@@ -141,9 +146,14 @@ void FileDialogStatusBar::addComboBox(QLabel *label, QComboBox *box)
 
 QString FileDialogStatusBar::getComboBoxValue(const QString &text) const
 {
-    for (auto i : m_customComboBoxList)
-        if (i.first->text() == text)
-            return i.second->currentText();
+    auto iter = std::find_if(m_customComboBoxList.begin(), m_customComboBoxList.end(),
+    [text](const QPair<QLabel *, QComboBox *> &i) {
+        return i.first->text() == text;
+    });
+
+    if (iter != m_customComboBoxList.end()) {
+        return iter->second->currentText();
+    }
 
     return QString();
 }
@@ -208,15 +218,15 @@ bool FileDialogStatusBar::eventFilter(QObject *watched, QEvent *event)
 
     if (event->type() == QEvent::FocusIn) {
         TIMER_SINGLESHOT_OBJECT(this, 10, {
-                                    QMimeDatabase db;
-                                    const QString &name = m_fileNameEdit->text();
-                                    const QString &suffix = db.suffixForFileName(name);
+            QMimeDatabase db;
+            const QString &name = m_fileNameEdit->text();
+            const QString &suffix = db.suffixForFileName(name);
 
-                                    if (suffix.isEmpty())
-                                        m_fileNameEdit->selectAll();
-                                    else
-                                        m_fileNameEdit->setSelection(0, name.length() - suffix.length() - 1);
-                                }, this)
+            if (suffix.isEmpty())
+                m_fileNameEdit->selectAll();
+            else
+                m_fileNameEdit->setSelection(0, name.length() - suffix.length() - 1);
+        }, this)
     } else if (event->type() == QEvent::Show) {
         TIMER_SINGLESHOT_OBJECT(this, 500, m_fileNameEdit->setFocus(), this);
     }

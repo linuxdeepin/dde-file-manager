@@ -195,11 +195,13 @@ QPoint DialogManager::getPropertyPos(int dialogWidth, int dialogHeight)
     const QScreen *cursor_screen = Q_NULLPTR;
     const QPoint &cursor_pos = QCursor::pos();
 
-    for (const QScreen *screen : qApp->screens()) {
-        if (screen->geometry().contains(cursor_pos)) {
-            cursor_screen = screen;
-            break;
-        }
+    auto screens = qApp->screens();
+    auto iter = std::find_if(screens.begin(), screens.end(), [cursor_pos](const QScreen * screen) {
+        return screen->geometry().contains(cursor_pos);
+    });
+
+    if (iter != screens.end()) {
+        cursor_screen = *iter;
     }
 
     if (!cursor_screen) {
@@ -221,11 +223,13 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
     const QScreen *cursor_screen = Q_NULLPTR;
     const QPoint &cursor_pos = QCursor::pos();
 
-    for (const QScreen *screen : qApp->screens()) {
-        if (screen->geometry().contains(cursor_pos)) {
-            cursor_screen = screen;
-            break;
-        }
+    auto screens = qApp->screens();
+    auto iter = std::find_if(screens.begin(), screens.end(), [cursor_pos](const QScreen * screen) {
+        return screen->geometry().contains(cursor_pos);
+    });
+
+    if (iter != screens.end()) {
+        cursor_screen = *iter;
     }
 
     if (!cursor_screen) {
@@ -333,12 +337,15 @@ QString DialogManager::getJobIdByUrl(const DUrl &url)
         FileJob *job = m_jobs.value(jobId);
         bool ret = false;
         QStringList pathlist = job->property("pathlist").toStringList();
-        for (const QString &path : pathlist) {
-            if (path == url.toLocalFile()) {
-                ret = true;
-                break;
-            }
+
+        auto iter = std::find_if(pathlist.begin(), pathlist.end(), [url](const QString & path) {
+            return path == url.toLocalFile();
+        });
+
+        if (iter != pathlist.end()) {
+            ret = true;
         }
+
         if (ret) {
             return job->getJobId();
         }

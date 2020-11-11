@@ -554,9 +554,11 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
 
         const QList<QRect> &list = itemDelegate()->paintGeomertys(option, tmp_index);
 
-        for (const QRect &rect : list)
-            if (rect.contains(pos))
-                return tmp_index;
+        auto ret = std::any_of(list.begin(), list.end(), [pos](const QRect & rect) {
+            return rect.contains(pos);
+        });
+        if (ret)
+            return tmp_index;
 
         return  QModelIndex();
     }

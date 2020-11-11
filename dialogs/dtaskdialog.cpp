@@ -227,7 +227,7 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
         FileJob *job = qobject_cast<FileJob *>(sender());
         if (job) {
             QList<FileJob::JobType> opticalTypes{FileJob::JobType::OpticalBurn, FileJob::JobType::OpticalBlank,
-                        FileJob::JobType::OpticalImageBurn, FileJob::JobType::Trash, FileJob::JobType::Restore};
+                                                 FileJob::JobType::OpticalImageBurn, FileJob::JobType::Trash, FileJob::JobType::Restore};
             auto curType = job->jobType();
             if (opticalTypes.contains(curType)) {
                 wid->setHoverEnable(false);
@@ -859,9 +859,8 @@ bool DTaskDialog::getFlagMapValueIsTrue()
         return true;
 
     bool flg = false;
-    for (bool i : m_flagMap.values()) {
-        flg = i;
-    }
+    auto values = m_flagMap.values();
+    flg = values.last();
 
     return flg;
 }

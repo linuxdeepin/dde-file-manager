@@ -1211,14 +1211,17 @@ QPoint GridManager::position(int screenNum, const QString &id)
 bool GridManager::find(const QString &itemId, QPair<int, QPoint> &pos)
 {
     bool ret = false;
-    for (int screen : d->screenCode()) {
-        if (contains(screen, itemId)) {
-            pos.first = screen;
-            pos.second = position(screen, itemId);
-            ret = true;
-            break;
-        }
+    auto screenOrder = d->screenCode();
+    auto iter = std::find_if(screenOrder.begin(), screenOrder.end(), [this, itemId](const int &screen) {
+        return contains(screen, itemId);
+    });
+
+    if (iter != screenOrder.end()) {
+        pos.first = *iter;
+        pos.second = position(*iter, itemId);
+        ret = true;
     }
+
     return ret;
 }
 
@@ -1313,10 +1316,11 @@ void GridManager::reArrange()
 
 int GridManager::gridCount() const
 {
-    int totalCount = 0;
-    for (auto coordInfo : d->screensCoordInfo.values()) {
-        totalCount += coordInfo.first * coordInfo.second;
-    }
+    auto screens = d->screensCoordInfo.values();
+    int totalCount = std::accumulate(screens.begin(), screens.end(), 0, [](int total, const QPair<int, int> &coordInfo) {
+        return total += coordInfo.first * coordInfo.second;
+    });
+
     return  totalCount;
 }
 
