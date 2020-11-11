@@ -176,6 +176,10 @@ int main(int argc, char *argv[])
     app->setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app->setApplicationName(QMAKE_TARGET);
     app->loadTranslator();
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 4, 0, 0))
+    singleApp->loadTranslator();
+#endif
+
     app->setApplicationDisplayName(app->translate("Application", "File Manager"));
     app->setApplicationVersion(DApplication::buildVersion((QMAKE_VERSION)));
     app->setProductIcon(QIcon::fromTheme("dde-file-manager"));
