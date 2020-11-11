@@ -899,7 +899,9 @@ void DFileView::onRowCountChanged()
         return;
     }
     updateModelActiveIndex();
-
+    if (!me) {
+        return;
+    }
 }
 
 void DFileView::wheelEvent(QWheelEvent *event)

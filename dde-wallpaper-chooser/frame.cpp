@@ -35,7 +35,6 @@
 #include "screensavercontrol.h"
 #include "button.h"
 #include "dfileservices.h"
-#include "desktopinfo.h"
 #include "waititem.h"
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
