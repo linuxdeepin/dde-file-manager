@@ -710,12 +710,11 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
         option.rect = rect;
 
         const QList<QRect> &geometry_list = itemDelegate()->paintGeomertys(option, index);
-
-        for (const QRect &rect : geometry_list) {
-            if (rect.contains(pos)) {
-                return false;
-            }
-        }
+        auto ret = std::any_of(geometry_list.begin(), geometry_list.end(), [pos](const QRect & rect) {
+            return rect.contains(pos);
+        });
+        if (ret)
+            return false;
     }
 
     return index.isValid();//true;

@@ -3438,9 +3438,10 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughF
     this->closeSqlDatabase();
     QList<QString> tags_backup{};
 
-    for (const QString &tag : tags) {
-        tags_backup.push_back(Tag::restore_escaped_en_skim(tag));
-    }
+    std::transform(tags.begin(), tags.end(), std::back_inserter(tags_backup),
+    [](const QString & tag) {
+        return Tag::restore_escaped_en_skim(tag);
+    });
 
     return tags_backup;
 }
@@ -3492,9 +3493,10 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThrough
     this->closeSqlDatabase();
     QList<QString> files_backup{};
 
-    for (const QString &file : files) {
-        files_backup.push_back(Tag::restore_escaped_en_skim(file));
-    }
+    std::transform(files.begin(), files.end(), std::back_inserter(files_backup),
+    [](const QString & file) {
+        return Tag::restore_escaped_en_skim(file);
+    });
 
     return files_backup;
 }
@@ -3535,10 +3537,10 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDi
 //#endif //QT_DEBUG
 
     QList<QString> total_tags_names_backup{};
-
-    for (const QString &tag_name : totalTagsNames) {
-        total_tags_names_backup.push_back(Tag::restore_escaped_en_skim(tag_name));
-    }
+    std::transform(totalTagsNames.begin(), totalTagsNames.end(), std::back_inserter(total_tags_names_backup),
+    [](const QString & tag_name) {
+        return Tag::restore_escaped_en_skim(tag_name);
+    });
 
     return total_tags_names_backup;
 }

@@ -17,7 +17,7 @@ ScreenManagerWayland::ScreenManagerWayland(QObject *parent)
 
 ScreenManagerWayland::~ScreenManagerWayland()
 {
-    if (m_display){
+    if (m_display) {
         m_display->deleteLater();
         m_display = nullptr;
     }
@@ -30,8 +30,8 @@ ScreenPointer ScreenManagerWayland::primaryScreen()
         qCritical() << "get primary name failed";
 
     ScreenPointer ret;
-    for ( ScreenPointer sp : m_screens.values()) {
-        if (sp->name() == primaryName){
+    for (ScreenPointer sp : m_screens.values()) {
+        if (sp->name() == primaryName) {
             ret = sp;
             break;
         }
@@ -42,14 +42,14 @@ ScreenPointer ScreenManagerWayland::primaryScreen()
 QVector<ScreenPointer> ScreenManagerWayland::screens() const
 {
     QVector<ScreenPointer> order;
-    for (const QDBusObjectPath &path : m_display->monitors()){
-        if (m_screens.contains(path.path())){
+    for (const QDBusObjectPath &path : m_display->monitors()) {
+        if (m_screens.contains(path.path())) {
             ScreenPointer sp = m_screens.value(path.path());
             ScreenObjectWayland *screen = SCREENOBJECT(sp.data());
-            if (screen){
+            if (screen) {
                 if (screen->enabled())
                     order.append(sp);
-            }else
+            } else
                 order.append(sp);
         }
     }
@@ -64,27 +64,26 @@ QVector<ScreenPointer> ScreenManagerWayland::logicScreens() const
         qCritical() << "get primary name failed";
 
     //调整主屏幕到第一
-    for (const QDBusObjectPath &path : m_display->monitors()){
-        if (path.path().isEmpty()){
+    for (const QDBusObjectPath &path : m_display->monitors()) {
+        if (path.path().isEmpty()) {
             qWarning() << "monitor: QDBusObjectPath is empty";
             continue;
         }
 
-        if (m_screens.contains(path.path())){
+        if (m_screens.contains(path.path())) {
             ScreenPointer sp = m_screens.value(path.path());
-            if (sp == nullptr){
+            if (sp == nullptr) {
                 qCritical() << "get scrreen failed path" << path.path();
                 continue;
             }
-            if (sp->name() == primaryName){
+            if (sp->name() == primaryName) {
                 order.push_front(sp);
-            }
-            else{
+            } else {
                 ScreenObjectWayland *screen = SCREENOBJECT(sp.data());
-                if (screen){
+                if (screen) {
                     if (screen->enabled())
                         order.push_back(sp);
-                }else
+                } else
                     order.push_back(sp);
             }
         }
@@ -95,12 +94,15 @@ QVector<ScreenPointer> ScreenManagerWayland::logicScreens() const
 ScreenPointer ScreenManagerWayland::screen(const QString &name) const
 {
     ScreenPointer ret;
-    for (const ScreenPointer &sp : m_screens.values()) {
-        if (sp->name() == name){
-            ret = sp;
-            break;
-        }
+    auto screens = m_screens.values();
+    auto iter = std::find_if(screens.begin(), screens.end(), [name](const ScreenPointer & sp) {
+        return sp->name() == name;
+    });
+
+    if (iter != screens.end()) {
+        ret = *iter;
     }
+
     return ret;
 }
 
@@ -114,11 +116,11 @@ AbstractScreenManager::DisplayMode ScreenManagerWayland::displayMode() const
 {
     auto pending = m_display->GetRealDisplayMode();
     pending.waitForFinished();
-    if (pending.isError()){
+    if (pending.isError()) {
         qWarning() << "Display GetRealDisplayMode Error:" << pending.error().name() << pending.error().message();
         AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
         return ret;
-    }else {
+    } else {
         /*
         DisplayModeMirror: 1
         DisplayModeExtend: 2
@@ -136,7 +138,7 @@ AbstractScreenManager::DisplayMode ScreenManagerWayland::displayMode() const
 
 void ScreenManagerWayland::reset()
 {
-    if (m_display){
+    if (m_display) {
         delete m_display;
         m_display = nullptr;
     }
@@ -149,23 +151,23 @@ void ScreenManagerWayland::onMonitorChanged()
 {
     QStringList monitors;
     //检查新增的屏幕
-    for (auto objectPath : m_display->monitors()){
+    for (auto objectPath : m_display->monitors()) {
         QString path = objectPath.path();
         if (path.isEmpty())
             continue;
 
         //新增的
-        if (!m_screens.contains(path)){
+        if (!m_screens.contains(path)) {
             ScreenPointer sp(new ScreenObjectWayland(new DBusMonitor(path)));
-            m_screens.insert(path,sp);
+            m_screens.insert(path, sp);
             connectScreen(sp);
         }
         monitors << path;
     }
 
     //检查移除的屏幕
-    for (const QString &path : m_screens.keys()){
-        if (!monitors.contains(path)){
+    for (const QString &path : m_screens.keys()) {
+        if (!monitors.contains(path)) {
             ScreenPointer sp = m_screens.take(path);
             disconnectScreen(sp);
         }
@@ -178,7 +180,7 @@ void ScreenManagerWayland::onDockChanged()
 {
 #ifdef UNUSED_SMARTDOCK
     auto screen = primaryScreen();
-    if (screen == nullptr){
+    if (screen == nullptr) {
         qCritical() << "primaryScreen() return nullptr!!!";
         return;
     }
@@ -213,21 +215,21 @@ void ScreenManagerWayland::init()
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManagerWayland::onMonitorChanged);
     connect(m_display, &DBusDisplay::MonitorsChanged, this, &ScreenManagerWayland::onMonitorChanged);
     //connect(m_display, &DBusDisplay::PrimaryChanged, this, &AbstractScreenManager::sigScreenChanged);
-    connect(m_display, &DBusDisplay::PrimaryChanged, this, [this](){
+    connect(m_display, &DBusDisplay::PrimaryChanged, this, [this]() {
         this->appendEvent(Screen);
     });
 #ifdef UNUSE_TEMP
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
 #else
     //临时方案，
-    connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this](){
+    connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this]() {
         //emit sigDisplayModeChanged();
         m_lastMode = m_display->GetRealDisplayMode();
         this->appendEvent(Mode);
     });
 
     //临时方案，使用PrimaryRectChanged信号作为拆分/合并信号
-    connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [this](){
+    connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [this]() {
         int mode = m_display->GetRealDisplayMode();
         qDebug() << "deal merge and split" << mode << m_lastMode;
         if (m_lastMode == mode)
@@ -241,27 +243,27 @@ void ScreenManagerWayland::init()
 #endif
 
     //dock区处理
-    connect(DockInfoIns,&DBusDock::FrontendWindowRectChanged,this, &ScreenManagerWayland::onDockChanged);
-    connect(DockInfoIns,&DBusDock::HideModeChanged,this, &ScreenManagerWayland::onDockChanged);
+    connect(DockInfoIns, &DBusDock::FrontendWindowRectChanged, this, &ScreenManagerWayland::onDockChanged);
+    connect(DockInfoIns, &DBusDock::HideModeChanged, this, &ScreenManagerWayland::onDockChanged);
     //connect(DockInfoIns,&DBusDock::PositionChanged,this, &ScreenManagerWayland::onDockChanged);不关心位子改变，有bug#25148，全部由区域改变触发
 
     //初始化屏幕
-    for (auto objectPath : m_display->monitors()){
+    for (auto objectPath : m_display->monitors()) {
         const QString path = objectPath.path();
         ScreenPointer sp(new ScreenObjectWayland(new DBusMonitor(path)));
-        m_screens.insert(path,sp);
+        m_screens.insert(path, sp);
         connectScreen(sp);
     }
 }
 
 void ScreenManagerWayland::connectScreen(ScreenPointer sp)
 {
-    connect(sp.get(),&AbstractScreen::sigGeometryChanged,this,
+    connect(sp.get(), &AbstractScreen::sigGeometryChanged, this,
             &ScreenManagerWayland::onScreenGeometryChanged);
 }
 
 void ScreenManagerWayland::disconnectScreen(ScreenPointer sp)
 {
-    disconnect(sp.get(),&AbstractScreen::sigGeometryChanged,this,
-            &ScreenManagerWayland::onScreenGeometryChanged);
+    disconnect(sp.get(), &AbstractScreen::sigGeometryChanged, this,
+               &ScreenManagerWayland::onScreenGeometryChanged);
 }

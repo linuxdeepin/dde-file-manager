@@ -48,11 +48,12 @@ bool DFMViewManager::isRegisted(const QString &scheme, const QString &host, cons
     Q_D(const DFMViewManager);
 
     const KeyType &type = KeyType(scheme, host);
-
-    for (const ViewCreatorType &value : d->controllerCreatorHash.values(type)) {
-        if (value.first == info.name())
-            return true;
-    }
+    auto values = d->controllerCreatorHash.values(type);
+    auto ret = std::any_of(values.begin(), values.end(), [&info](const ViewCreatorType & value) {
+        return value.first == info.name();
+    });
+    if (ret)
+        return true;
 
     return info == typeid(DFileView) && DFileService::instance()->isRegisted(scheme, host);
 }

@@ -411,10 +411,13 @@ void OpenWithDialog::useOtherApplication()
     target_desktop_file_name = target_desktop_file_name.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(m_mimeType.name().replace("/", "-"));
 
     if (file_path.endsWith(".desktop")) {
-        for (const OpenWithDialog *w : m_recommandLayout->parentWidget()->findChildren<OpenWithDialog *>()) {
-            if (w->property("app").toString() == file_path)
-                return;
-        }
+        auto list = m_recommandLayout->parentWidget()->findChildren<OpenWithDialog *>();
+        auto ret = std::any_of(list.begin(), list.end(), [file_path](const OpenWithDialog * w) {
+            return w->property("app").toString() == file_path;
+        });
+
+        if (ret)
+            return;
 
         Properties desktop(file_path, "Desktop Entry");
 

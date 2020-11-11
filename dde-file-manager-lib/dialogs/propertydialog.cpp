@@ -289,8 +289,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 {
     setSizeGripEnabled(true);
 
-    if(DFMGlobal::isWayLand())
-    {
+    if (DFMGlobal::isWayLand()) {
         //设置对话框窗口最大最小化按钮隐藏
         this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
         this->setAttribute(Qt::WA_NativeWindow);
@@ -298,8 +297,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
-    }
-    else {
+    } else {
         setAttribute(Qt::WA_DeleteOnClose);
         setWindowFlags(windowFlags()
                        & ~ Qt::WindowMaximizeButtonHint
@@ -466,8 +464,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
                     if (!fileInfo->redirectedFileUrl().isTrashFile()) {
                         titleList << authManager;
                     }
-                }
-                else {
+                } else {
                     titleList << authManager;
                 }
             }
@@ -825,10 +822,9 @@ void PropertyDialog::flickFolderToSidebar(const DUrl &fileUrl)
     m_xani = new QVariantAnimation(this);
     m_xani->setStartValue(m_aniLabel->pos());
     m_xani->setEndValue(QPoint(targetPos.x(), angle));
-    if(DFMGlobal::isWayLand()){
+    if (DFMGlobal::isWayLand()) {
         m_xani->setDuration(700);
-    }
-    else {
+    } else {
         m_xani->setDuration(440);
     }
 
@@ -837,10 +833,9 @@ void PropertyDialog::flickFolderToSidebar(const DUrl &fileUrl)
     m_gani->setStartValue(m_aniLabel->geometry());
     m_gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
     m_gani->setEasingCurve(QEasingCurve::InBack);
-    if(DFMGlobal::isWayLand()){
+    if (DFMGlobal::isWayLand()) {
         m_gani->setDuration(700);
-    }
-    else {
+    } else {
         m_gani->setDuration(440);
     }
 
@@ -895,12 +890,12 @@ void PropertyDialog::onHideFileCheckboxChecked(bool checked)
     bool save = false;
     qDebug() << info.absolutePath();
     if (checked) {
-        if (!flf.contains(fileName)){
+        if (!flf.contains(fileName)) {
             flf.insert(fileName);
             save = true;
         }
     } else {
-        if (flf.contains(fileName)){
+        if (flf.contains(fileName)) {
             flf.remove(info.fileName());
             save = true;
         }
@@ -1034,11 +1029,11 @@ int PropertyDialog::contentHeight() const
 int PropertyDialog::getDialogHeight() const
 {
     int totalHeight = this->size().height() + contentHeight() ;
-
-    for (const DDrawer *expand : m_expandGroup) {
+    totalHeight = std::accumulate(m_expandGroup.begin(), m_expandGroup.end(), 0, [](int total, const DDrawer * expand) {
         if (expand->expand())
-            totalHeight += expand->window()->height();
-    }
+            return total += expand->window()->height();
+        return total;
+    });
 
     return totalHeight;
 }
@@ -1316,7 +1311,7 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
         connect(sideBar, &DFMSideBar::addUserShareItemFinished, this, &PropertyDialog::flickFolderToSidebar);
     }
 
-    if(DFMGlobal::isWayLand()){
+    if (DFMGlobal::isWayLand()) {
         // 取消共享时停止动画效果
         connect(frame, &ShareInfoFrame::unfolderShared, this, &PropertyDialog::onCancelShare);
     }

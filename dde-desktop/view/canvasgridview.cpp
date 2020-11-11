@@ -168,11 +168,12 @@ QModelIndex CanvasGridView::indexAt(const QPoint &point) const
         }
     }
 
-    for (const QRect &rect : list) {
-        if (rect.contains(pos)) {
-            return rowIndex;
-        }
-    }
+    auto ret = std::any_of(list.begin(), list.end(), [pos](const QRect & rect) {
+        return rect.contains(pos);
+    });
+
+    if (ret)
+        return rowIndex;
 
     return QModelIndex();
 }
