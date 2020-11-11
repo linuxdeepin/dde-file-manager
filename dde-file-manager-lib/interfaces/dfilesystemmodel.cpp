@@ -1772,22 +1772,19 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 {
     Q_D(const DFileSystemModel);
     QPointer<DFileSystemModel> me = const_cast<DFileSystemModel *>(this);
-    QMutexLocker lk(&d_ptr->mutexFlags);
+//    QMutexLocker lk(&d_ptr->mutexFlags);
     if (!me) {
         return Qt::NoItemFlags;
     }
-
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     if (!index.isValid()) {
         return flags;
     }
-
     const FileSystemNodePointer &indexNode = getNodeByIndex(index);
 
     if (!indexNode) {
         return flags;
     }
-
     if (!d->passNameFilters(indexNode)) {
         flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         // ### TODO you shouldn't be able to set this as the current item, task 119433
@@ -1795,7 +1792,6 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
     }
 
     flags |= Qt::ItemIsDragEnabled;
-
     if ((index.column() == 0)) {
         if (d->readOnly) {
             return flags;
@@ -1815,7 +1811,6 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
     } else {
         flags = flags & ~Qt::ItemIsSelectable;
     }
-
     return flags & ~ indexNode->fileInfo->fileItemDisableFlags();
 }
 
@@ -1935,7 +1930,6 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 //    data->setData("forDragEvent", urls.first().toEncoded());
 //    FOR_DRAGEVENT = urls;
 //    qDebug() << "Set FOR_DRAGEVENT urls FOR_DRAGEVENT count = " << FOR_DRAGEVENT.length();
-
     m_smForDragEvent->setKey(DRAG_EVENT_URLS);
     //qDebug() << DRAG_EVENT_URLS;
     if (m_smForDragEvent->isAttached()) {
@@ -1943,7 +1937,6 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
             return data;
         }
     }
-
     QBuffer buffer;
     buffer.open(QBuffer::ReadWrite);
     QDataStream out(&buffer);
@@ -1963,7 +1956,6 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
         m_smForDragEvent->unlock();
         qDebug() << " write mem finish. " << m_smForDragEvent->errorString() << m_smForDragEvent->size();
     }
-
     return data;
 }
 

@@ -309,7 +309,6 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
 {
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
-
     /* remark 190412:
      * This function is triggered by multiple different events when
      * using keyboard navigation, causing DFileStatisticsJob to be
@@ -327,7 +326,6 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         m_isjobDisconnect = false;
         initJobConnection();
     }
-
     m_fileCount = 0;
     m_fileSize = 0;
     m_folderCount = 0;
@@ -343,23 +341,37 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         }else{
             fileUrl = event.fileUrl();
         }
-
         bool isInGVFs = FileUtils::isGvfsMountFile(fileUrl.toLocalFile());
         DUrlList folderList;
-        foreach (DUrl url, event.fileUrlList()) {
-            struct stat statInfo;
-            int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
-            if (0 != fileStat) {
-                continue;
-            }
-            if (S_ISDIR(statInfo.st_mode)) {
-                m_folderCount += 1;
-                folderList << url;
-            } else {
-                if (!isInGVFs){
-                    m_fileSize += statInfo.st_size;
+        if (isInGVFs) {
+            foreach (DUrl url, event.fileUrlList()) {
+                struct stat statInfo;
+                int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
+                if (0 != fileStat) {
+                    continue;
                 }
-                m_fileCount += 1;
+                if (S_ISDIR(statInfo.st_mode)) {
+                    m_folderCount += 1;
+                    folderList << url;
+                } else {
+                    if (!isInGVFs){
+                        m_fileSize += statInfo.st_size;
+                    }
+                    m_fileCount += 1;
+                }
+            }
+        }
+        else {
+            foreach (DUrl url, event.fileUrlList()) {
+                const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
+                if (fileInfo->isDir()) {
+                    m_folderCount += 1;
+                } else {
+                    if (!isInGVFs){
+                        m_fileSize += fileInfo->size();
+                    }
+                    m_fileCount += 1;
+                }
             }
         }
 
@@ -378,7 +390,6 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         } else {
             m_fileStatisticsJob->start(folderList);
         }
-
         updateStatusMessage();
     } else {
         if (number == 1) {
@@ -410,7 +421,6 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
             }
         }
     }
-
     //fix: 动态获取刻录选中文件夹的个数
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = m_folderCount;
 }
