@@ -68,8 +68,8 @@ public:
     QMap<int, QMap<QString, GPos>> itemGrids;
     QMap<int, bool>             m_screenFullStatus;//屏幕图标状态
     QMap<int, QVector<bool>>    m_cellStatus;//<screenNum, QVector<bool>>
-    QMap<int,QString>           positionProfiles;
-    QMap<int,QPair<int, int>>   screensCoordInfo;//<screenNum,<coordWidth,coordHeight>>
+    QMap<int, QString>           positionProfiles;
+    QMap<int, QPair<int, int>>   screensCoordInfo; //<screenNum,<coordWidth,coordHeight>>
 
 public:
     GridCore();
@@ -77,37 +77,37 @@ public:
     void addItem(int screenNum, GIndex index, const QString &item)
     {
         //bug#45219，当出现错误的index时，放入堆叠
-        if (index < 0 || index >= m_cellStatus.value(screenNum).length()){
+        if (index < 0 || index >= m_cellStatus.value(screenNum).length()) {
             qWarning() << "screen" << screenNum << "error index" << index << item;
-            if (!overlapItems.contains(item)){
+            if (!overlapItems.contains(item)) {
                 overlapItems << item;
             }
             return;
         }
 
         if (!m_cellStatus.contains(screenNum)) {
-            qDebug()<< "can not find num :" << screenNum;
+            qDebug() << "can not find num :" << screenNum;
             return;
         }
         auto cellStatusItor = m_cellStatus.find(screenNum);
         cellStatusItor.value()[index] = true;
-        auto pos = toPos(screenNum, index);
+        auto position = toPos(screenNum, index);
 
         if (!itemGrids.contains(screenNum)
-                ||!gridItems.contains(screenNum)) {
-            qDebug()<< "can not find num :" << screenNum;
+                || !gridItems.contains(screenNum)) {
+            qDebug() << "can not find num :" << screenNum;
             return;
         }
         auto tempGridItemsItor = gridItems.find(screenNum);
         auto tempItemGridsItor = itemGrids.find(screenNum);
-        tempItemGridsItor->insert(item,pos);
-        tempGridItemsItor->insert(pos,item);
+        tempItemGridsItor->insert(item, position);
+        tempGridItemsItor->insert(position, item);
     }
 
     void removeItem(int screenNum, GPos pos)
     {
-        if(!gridItems.contains(screenNum) || !itemGrids.contains(screenNum) ){
-            qDebug()<< "can not find num :" << screenNum;
+        if (!gridItems.contains(screenNum) || !itemGrids.contains(screenNum)) {
+            qDebug() << "can not find num :" << screenNum;
             return;
         }
         auto tempGridItemsItor = gridItems.find(screenNum);
@@ -118,57 +118,57 @@ public:
         tempItemGridsItor.value().remove(item);
 
         if (!m_cellStatus.contains(screenNum)) {
-            qDebug()<< "can not find num :" << screenNum;
+            qDebug() << "can not find num :" << screenNum;
             return;
         }
         Q_ASSERT(index < m_cellStatus.value(screenNum).length());
-         auto cellStatusItor = m_cellStatus.find(screenNum);
+        auto cellStatusItor = m_cellStatus.find(screenNum);
         cellStatusItor.value()[index] = false;
     }
 
     void removeItem(int screenNum, GIndex index)
     {
-        if(!gridItems.contains(screenNum) || !itemGrids.contains(screenNum) ){
-            qDebug()<< "can not find num :" << screenNum;
+        if (!gridItems.contains(screenNum) || !itemGrids.contains(screenNum)) {
+            qDebug() << "can not find num :" << screenNum;
             return;
         }
         auto tempGridItemsItor = gridItems.find(screenNum);
         auto tempItemGridsItor = itemGrids.find(screenNum);
 
 
-        auto pos = toPos(screenNum, index);
-        auto item = tempGridItemsItor.value().take(pos);
+        auto position = toPos(screenNum, index);
+        auto item = tempGridItemsItor.value().take(position);
         tempItemGridsItor.value().remove(item);
 
 
         if (!m_cellStatus.contains(screenNum)) {
-            qDebug()<< "can not find num :" << screenNum;
+            qDebug() << "can not find num :" << screenNum;
             return;
         }
         Q_ASSERT(index < m_cellStatus.value(screenNum).length());
-         auto cellStatusItor = m_cellStatus.find(screenNum);
+        auto cellStatusItor = m_cellStatus.find(screenNum);
         cellStatusItor.value()[index] = false;
     }
 
     void removeItem(int screenNum, const QString &item)
     {
-        if(!gridItems.contains(screenNum) || !itemGrids.contains(screenNum) ){
-            qDebug()<< "can not find num :" << screenNum;
+        if (!gridItems.contains(screenNum) || !itemGrids.contains(screenNum)) {
+            qDebug() << "can not find num :" << screenNum;
             return;
         }
         auto tempGridItemsItor = gridItems.find(screenNum);
         auto tempItemGridsItor = itemGrids.find(screenNum);
 
-        auto pos = tempItemGridsItor.value().take(item);
-        auto index = toIndex(screenNum, pos);
-        tempGridItemsItor.value().take(pos);
+        auto position = tempItemGridsItor.value().take(item);
+        auto index = toIndex(screenNum, position);
+        tempGridItemsItor.value().take(position);
 
         if (!m_cellStatus.contains(screenNum)) {
-            qDebug()<< "can not find num :" << screenNum;
+            qDebug() << "can not find num :" << screenNum;
             return;
         }
         Q_ASSERT(index < m_cellStatus.value(screenNum).length());
-         auto cellStatusItor = m_cellStatus.find(screenNum);
+        auto cellStatusItor = m_cellStatus.find(screenNum);
         cellStatusItor.value()[index] = false;
 
     }
@@ -190,7 +190,7 @@ public:
 
     inline GPos pos(int screenNum, const QString &item) const
     {
-        if (itemGrids.value(screenNum).contains(item)){
+        if (itemGrids.value(screenNum).contains(item)) {
             return itemGrids.value(screenNum).value(item);
         } else {
             auto coordInfo = screensCoordInfo.value(screenNum);
@@ -204,7 +204,7 @@ public:
             return index;
         }
         if (!m_cellStatus.contains(screenNum)) {
-            qDebug()<< "can not find num :" << screenNum;
+            qDebug() << "can not find num :" << screenNum;
             return index;//return right?
         }
         auto cellStatusItor = m_cellStatus.find(screenNum);
@@ -223,26 +223,26 @@ public:
     QStringList reloacleForward(int screenNum, GIndex start, GIndex end)
     {
         QStringList items;
-        if(!gridItems.contains(screenNum) || !itemGrids.contains(screenNum) ){
-            qDebug()<< "can not find num :" << screenNum;
+        if (!gridItems.contains(screenNum) || !itemGrids.contains(screenNum)) {
+            qDebug() << "can not find num :" << screenNum;
             return items;
         }
         auto tempGridItemsItor = gridItems.find(screenNum);
         auto tempItemGridsItor = itemGrids.find(screenNum);
 
         for (auto i = start; i <= end; ++i) {
-            auto pos = toPos(screenNum, i);
-            if (tempGridItemsItor.value().contains(pos)) {
-                items << tempGridItemsItor.value().value(pos);
-                tempGridItemsItor.value().remove(pos);
+            auto position = toPos(screenNum, i);
+            if (tempGridItemsItor.value().contains(position)) {
+                items << tempGridItemsItor.value().value(position);
+                tempGridItemsItor.value().remove(position);
             }
         }
 
         for (auto i = start; i < start + items.length(); ++i) {
-            auto pos = toPos(screenNum,i);
+            auto position = toPos(screenNum, i);
             auto item = items.value(i - start);
-            tempGridItemsItor.value().insert(pos, item);
-            tempItemGridsItor.value().insert(item, pos);
+            tempGridItemsItor.value().insert(position, item);
+            tempItemGridsItor.value().insert(item, position);
         }
         return items;
     }
@@ -250,7 +250,7 @@ public:
     GIndex findEmptyBackward(int screenNum, GIndex index, int emptyCount)
     {
         if (!m_cellStatus.contains(screenNum)) {
-            qDebug()<< "can not find num :" << screenNum;
+            qDebug() << "can not find num :" << screenNum;
             return index;//return right?
         }
         auto cellStatusItor = m_cellStatus.find(screenNum);
@@ -274,31 +274,32 @@ public:
     QStringList reloacleBackward(int screenNum, GIndex start, GIndex end)
     {
         QStringList items;
-        if(!gridItems.contains(screenNum) || !itemGrids.contains(screenNum) ){
-            qDebug()<< "can not find num :" << screenNum;
+        if (!gridItems.contains(screenNum) || !itemGrids.contains(screenNum)) {
+            qDebug() << "can not find num :" << screenNum;
             return items;
         }
         auto tempGridItemsItor = gridItems.find(screenNum);
         auto tempItemGridsItor = itemGrids.find(screenNum);
 
         for (auto i = end; i >= start; --i) {
-            auto pos = toPos(screenNum, i);
-            if (tempGridItemsItor.value().contains(pos)) {
-                items << tempGridItemsItor.value().value(pos);
-                tempGridItemsItor.value().remove(pos);
+            auto position = toPos(screenNum, i);
+            if (tempGridItemsItor.value().contains(position)) {
+                items << tempGridItemsItor.value().value(position);
+                tempGridItemsItor.value().remove(position);
             }
         }
 
         for (auto i = end; i > end - items.length(); --i) {
-            auto pos = toPos(screenNum, i);
+            auto position = toPos(screenNum, i);
             auto item = items.value(end - i);
-            tempGridItemsItor.value().insert(pos, item);
-            tempItemGridsItor.value().insert(item, pos);
+            tempGridItemsItor.value().insert(position, item);
+            tempItemGridsItor.value().insert(item, position);
         }
         return items;
     }
 
-    QList<GIndex> emptyPostion(int screenNum) const {
+    QList<GIndex> emptyPostion(int screenNum) const
+    {
         QList<GIndex> ret;
         if (!m_cellStatus.contains(screenNum)) {
             qDebug() << "can not find num :" << screenNum;
