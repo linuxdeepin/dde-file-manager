@@ -1110,12 +1110,12 @@ open_file: {
     DGIOFileDevice *fromgio = qobject_cast<DGIOFileDevice *>(fromDevice.data());
     DGIOFileDevice *togio = qobject_cast<DGIOFileDevice *>(toDevice.data());
     if (fromgio) {
-        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[fromgio](){
+        fromgio->connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[fromgio](){
             fromgio->cancelAllOperate();
         });
     }
     if (togio) {
-        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[togio](){
+        togio->connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[togio](){
             togio->cancelAllOperate();
         });
     }
