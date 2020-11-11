@@ -789,9 +789,8 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
 {
     DUrl url = event.fileUrlList().first();
     showPropertyDialog(event);
-    PropertyDialog *dialog;
     if (m_propertyDialogs.contains(url)) {
-        dialog = m_propertyDialogs.value(url);
+        PropertyDialog *dialog = m_propertyDialogs.value(url);
         if (dialog->expandGroup().count() > 1) {
             dialog->expandGroup().at(1)->setExpand(true);
         }
@@ -1034,35 +1033,34 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
         return;
     }
 
-    if(DFMGlobal::isWayLand()){
+    if (DFMGlobal::isWayLand()) {
         //! 判断当前预览是否于新的预览列表相同
-        if(m_filePreviewDialog && DUrlListCompare(canPreivewlist)){
+        if (m_filePreviewDialog && DUrlListCompare(canPreivewlist)) {
             m_filePreviewDialog->show();
             m_filePreviewDialog->raise();
             m_filePreviewDialog->activateWindow();
-           return;
+            return;
         }
 
-        if(m_filePreviewDialog){
+        if (m_filePreviewDialog) {
             m_filePreviewDialog->close();
             m_filePreviewDialog = nullptr;
         }
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
 
         //! 记录预览列表
-        for(const DUrl &url : canPreivewlist){
+        for (const DUrl &url : canPreivewlist) {
             m_urlList << url;
         }
         //! 对话框关闭时回收FilePreviewDialog对象
         m_filePreviewDialog->setAttribute(Qt::WA_DeleteOnClose);
         //! 对话框关闭时m_filePreviewDialog对象置空
-        connect(m_filePreviewDialog, &FilePreviewDialog::signalCloseEvent, this, [=](){
+        connect(m_filePreviewDialog, &FilePreviewDialog::signalCloseEvent, this, [ = ]() {
             m_filePreviewDialog->DoneCurrent();
             m_filePreviewDialog = nullptr;
             m_urlList.clear();
         });
-    }
-    else {
+    } else {
         if (!m_filePreviewDialog) {
             m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
             if (!DFMGlobal::isWayLand())
@@ -1512,12 +1510,11 @@ void DialogManager::showFormatDialog(const QString &devId)
 
 bool DialogManager::DUrlListCompare(DUrlList urls)
 {
-    if(urls.size() != m_urlList.size()){
+    if (urls.size() != m_urlList.size()) {
         return false;
-    }
-    else {
-        for(int i = 0; i < urls.size(); ++i){
-            if(urls[i] != m_urlList[i]){
+    } else {
+        for (int i = 0; i < urls.size(); ++i) {
+            if (urls[i] != m_urlList[i]) {
                 return false;
             }
         }
@@ -1534,12 +1531,11 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
     renameDialog.setDialogTitle(QObject::tr("Rename %1 Files").arg(QString::fromStdString(std::to_string(selectedUrls.size()))));
 
     std::size_t code{ static_cast<size_t>(renameDialog.exec()) };
-    std::size_t modeIndex{ renameDialog.getCurrentModeIndex() };
 
     AppController::flagForDDesktopRenameBar.store(true, std::memory_order_seq_cst);
 
     if (static_cast<bool>(code) == true) { //###: yes!
-
+        std::size_t modeIndex{ renameDialog.getCurrentModeIndex() };
         if (modeIndex == 0) {
             QPair<QString, QString> replaceModeValue{ renameDialog.getModeOneContent() };
             DFileService::instance()->multiFilesReplaceName(selectedUrls, replaceModeValue);

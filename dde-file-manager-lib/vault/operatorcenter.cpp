@@ -23,15 +23,15 @@ QString OperatorCenter::makeVaultLocalPath(const QString &before, const QString 
 {
     return VAULT_BASE_PATH
 //            + QDir::separator() + CONFIG_DIR_NAME
-            + (before.isEmpty() ? QString("") : QDir::separator()) + before
-            + (behind.isEmpty() ? QString("") : QDir::separator()) + behind;
+           + (before.isEmpty() ? QString("") : QDir::separator()) + before
+           + (behind.isEmpty() ? QString("") : QDir::separator()) + behind;
 }
 
 bool OperatorCenter::runCmd(const QString &cmd)
 {
     QProcess process_;
     int mescs = 10000;
-    if(cmd.startsWith(ROOT_PROXY)){
+    if (cmd.startsWith(ROOT_PROXY)) {
         mescs = -1;
     }
     process_.start(cmd);
@@ -39,13 +39,13 @@ bool OperatorCenter::runCmd(const QString &cmd)
     bool res = process_.waitForFinished(mescs);
     standOutput_ = process_.readAllStandardOutput();
     int exitCode = process_.exitCode();
-    if(cmd.startsWith(ROOT_PROXY) && (exitCode == 127 || exitCode == 126)){
+    if (cmd.startsWith(ROOT_PROXY) && (exitCode == 127 || exitCode == 126)) {
         QString strOut = "Run \'" + cmd + "\' fauled: Password Error! " + QString::number(exitCode) + "\n";
         qDebug() << strOut;
         return false;
     }
 
-    if(res == false){
+    if (res == false) {
         QString strOut = "Run \'" + cmd + "\' failed\n";
         qDebug() << strOut;
     }
@@ -55,7 +55,7 @@ bool OperatorCenter::runCmd(const QString &cmd)
 
 bool OperatorCenter::executeProcess(const QString &cmd)
 {
-    if ( false == cmd.startsWith("sudo") ) {
+    if (false == cmd.startsWith("sudo")) {
         return runCmd(cmd);
     }
 
@@ -80,9 +80,9 @@ bool OperatorCenter::createDirAndFile()
     // 创建配置文件目录
     QString strConfigDir = makeVaultLocalPath();
     QDir configDir(strConfigDir);
-    if(!configDir.exists()){
+    if (!configDir.exists()) {
         bool ok = configDir.mkpath(strConfigDir);
-        if(!ok){
+        if (!ok) {
             qDebug() << "create config dir failure!";
             return false;
         }
@@ -91,7 +91,7 @@ bool OperatorCenter::createDirAndFile()
     // 创建密码文件
     QString strPasswordFile = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile passwordFile(strPasswordFile);
-    if(!passwordFile.open(QIODevice::WriteOnly | QIODevice::Append)){
+    if (!passwordFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         qDebug() << "create password file failure!";
         return false;
     }
@@ -100,7 +100,7 @@ bool OperatorCenter::createDirAndFile()
     // 创建存放rsa公钥的文件
     QString strPriKeyFile = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile prikeyFile(strPriKeyFile);
-    if(!prikeyFile.open(QIODevice::WriteOnly | QIODevice::Append)){
+    if (!prikeyFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         qDebug() << "create rsa private key file failure!";
         return false;
     }
@@ -109,7 +109,7 @@ bool OperatorCenter::createDirAndFile()
     // 创建存放rsa公钥加密后密文的文件
     QString strRsaClipher = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
     QFile rsaClipherFile(strRsaClipher);
-    if(!rsaClipherFile.open(QIODevice::WriteOnly | QIODevice::Append)){
+    if (!rsaClipherFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         qDebug() << "create rsa clipher file failure!";
         return false;
     }
@@ -118,7 +118,7 @@ bool OperatorCenter::createDirAndFile()
     // 创建密码提示信息文件
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
-    if(!passwordHintFile.open(QIODevice::WriteOnly | QIODevice:: Append)){
+    if (!passwordHintFile.open(QIODevice::WriteOnly | QIODevice:: Append)) {
         qDebug() << "create password hint file failure!";
         return false;
     }
@@ -138,7 +138,7 @@ bool OperatorCenter::saveSaltAndClipher(const QString &password, const QString &
     QString strSaltAndClipherText = strRandomSalt + strClipherText;
     QString strPasswordFile = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile passwordFile(strPasswordFile);
-    if(!passwordFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
+    if (!passwordFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
         qDebug() << "write cliphertext failure!";
         return false;
     }
@@ -149,7 +149,7 @@ bool OperatorCenter::saveSaltAndClipher(const QString &password, const QString &
     // 保存密码提示信息
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
-    if(!passwordHintFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
+    if (!passwordHintFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
         qDebug() << "write password hint failure";
         return false;
     }
@@ -175,7 +175,7 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
 
     // 将公钥分成两部分（一部分用于保存到本地，一部分生成二维码，提供给用户）
     QString strSaveToLocal("");
-    if(strPubKey.length() < 2 * USER_KEY_INTERCEPT_INDEX + bytes){
+    if (strPubKey.length() < 2 * USER_KEY_INTERCEPT_INDEX + bytes) {
         qDebug() << "USER_KEY_LENGTH is to long!";
         return false;
     }
@@ -188,7 +188,7 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     // 保存部分公钥
     QString publicFilePath = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile publicFile(publicFilePath);
-    if(!publicFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
+    if (!publicFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
         qDebug() << "open public key file failure!";
         return false;
     }
@@ -199,7 +199,7 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     // 保存密文
     QString strClipherFilePath = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
     QFile clipherFile(strClipherFilePath);
-    if(!clipherFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
+    if (!clipherFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
         qDebug() << "open rsa clipher file failure!";
         return false;
     }
@@ -215,7 +215,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &clipher)
     // 获得本地盐及密文
     QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile file(strfilePath);
-    if(!file.open(QIODevice::Text | QIODevice::ReadOnly)){
+    if (!file.open(QIODevice::Text | QIODevice::ReadOnly)) {
         qDebug() << "open pbkdf2clipher file failure!";
         return false;
     }
@@ -227,7 +227,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &clipher)
     // pbkdf2加密密码,获得密文
     QString strNewClipher = pbkdf2::pbkdf2EncrypyPassword(password, strSalt, ITERATION, PASSWORD_CLIPHER_LENGTH);
     QString strNewSaltAndClipher = strSalt + strNewClipher;
-    if(strNewSaltAndClipher != strSaltAndClipher){
+    if (strNewSaltAndClipher != strSaltAndClipher) {
         qDebug() << "password error!";
         return  false;
     }
@@ -239,7 +239,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &clipher)
 
 bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
 {
-    if(userKey.length() != USER_KEY_LENGTH){
+    if (userKey.length() != USER_KEY_LENGTH) {
         qDebug() << "user key length error!";
         return  false;
     }
@@ -247,7 +247,7 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
     // 结合本地公钥和用户密钥，还原完整公钥
     QString strLocalPubKeyFilePath = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile localPubKeyfile(strLocalPubKeyFilePath);
-    if(!localPubKeyfile.open(QIODevice::Text | QIODevice::ReadOnly)){
+    if (!localPubKeyfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
         qDebug() << "cant't open local public key file!";
         return false;
     }
@@ -259,7 +259,7 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
     // 利用完整公钥解密密文，得到密码
     QString strRSAClipherFilePath = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
     QFile rsaClipherfile(strRSAClipherFilePath);
-    if(!rsaClipherfile.open(QIODevice::Text | QIODevice::ReadOnly)){
+    if (!rsaClipherfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
         qDebug() << "cant't open rsa clipher file!";
         return false;
     }
@@ -269,7 +269,7 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
     QString strNewPassword = rsam::rsa_pub_decrypt_base64(strRsaClipher, strNewPubKey);
 
     // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
-    if(!checkPassword(strNewPassword, clipher)){
+    if (!checkPassword(strNewPassword, clipher)) {
         qDebug() << "user key error!";
         return false;
     }
@@ -286,7 +286,7 @@ bool OperatorCenter::getPasswordHint(QString &passwordHint)
 {
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
-    if(!passwordHintFile.open(QIODevice::Text | QIODevice::ReadOnly)){
+    if (!passwordHintFile.open(QIODevice::Text | QIODevice::ReadOnly)) {
         qDebug() << "open password hint file failure";
         return false;
     }
@@ -298,7 +298,7 @@ bool OperatorCenter::getPasswordHint(QString &passwordHint)
 
 bool OperatorCenter::createQRCode(const QString &srcStr, int width, int height, QPixmap &pix)
 {
-    if(width < 1 || height < 1){
+    if (width < 1 || height < 1) {
         qDebug() << "QR code width or height error";
         return false;
     }
@@ -326,10 +326,10 @@ bool OperatorCenter::createQRCode(const QString &srcStr, int width, int height, 
 
     QColor foreground(Qt::black);
     painter.setBrush(foreground);
-    for(qint32 y = 0; y < qrcode_width; y++){
-        for(qint32 x = 0; x < qrcode_width; x++){
+    for (qint32 y = 0; y < qrcode_width; y++) {
+        for (qint32 x = 0; x < qrcode_width; x++) {
             unsigned char b = qrcode->data[y * qrcode_width + x];
-            if(b & 0x01){
+            if (b & 0x01) {
                 QRectF r(x * scale_x, y * scale_y, scale_x, scale_y);
                 painter.drawRects(&r, 1);
             }
@@ -363,7 +363,7 @@ QString OperatorCenter::getSaltAndPasswordClipher()
 {
     QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile file(strfilePath);
-    if(!file.open(QIODevice::Text | QIODevice::ReadOnly)){
+    if (!file.open(QIODevice::Text | QIODevice::ReadOnly)) {
         qDebug() << "open pbkdf2clipher file failure!";
         return "";
     }
@@ -396,25 +396,24 @@ QStringList OperatorCenter::getConfigFilePath()
 
 QString OperatorCenter::autoGeneratePassword(int length)
 {
-    if(length < 3) return "";
+    if (length < 3) return "";
     qsrand(uint(QTime(0, 0, 0).secsTo(QTime::currentTime())));
 
     QString strPassword("");
 
     QString strNum("0123456789");
-    strPassword += strNum.at(qrand()%10);
+    strPassword += strNum.at(qrand() % 10);
 
     QString strSpecialChar("`~!@#$%^&*");
-    strPassword += strSpecialChar.at(qrand()%10);
+    strPassword += strSpecialChar.at(qrand() % 10);
 
     QString strABC("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    strPassword += strABC.at(qrand()%10);
+    strPassword += strABC.at(qrand() % 10);
 
     QString strAllChar = strNum + strSpecialChar + strABC;
     int nCount = length - 3;
-    for(int i = 0; i < nCount; ++i)
-    {
-        strPassword += strAllChar.at(qrand()%52);
+    for (int i = 0; i < nCount; ++i) {
+        strPassword += strAllChar.at(qrand() % 52);
     }
     return strPassword;
 }
@@ -423,11 +422,11 @@ bool OperatorCenter::getRootPassword()
 {
     // 判断当前是否是管理员登陆
     bool res = runCmd("id -un");  // file path is fixed. So write cmd direct
-    if ( res == true && standOutput_.trimmed() == "root" ) {
+    if (res == true && standOutput_.trimmed() == "root") {
         return true;
     }
 
-    if ( false == executeProcess("sudo whoami")) {
+    if (false == executeProcess("sudo whoami")) {
         return false;
     }
 
@@ -437,36 +436,36 @@ bool OperatorCenter::getRootPassword()
 int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &lstShellOutput)
 {
     FILE *fp;
-    int res;
-    char buf[MAXLINE] = {'\0'};
 
     std::string sCmd = strCmd.toStdString();
-    const char* cmd = sCmd.c_str();
+    const char *cmd = sCmd.c_str();
 
     // 命令为空
-    if(strCmd.isEmpty()) {
+    if (strCmd.isEmpty()) {
         qDebug() << "cmd is empty!";
         return -1;
     }
 
-    if((fp = popen(cmd, "r")) == nullptr){
+    if ((fp = popen(cmd, "r")) == nullptr) {
         perror("popen");
         qDebug() << QString("popen error: %s").arg(strerror(errno));
         return -1;
-    }else{
-        while(fgets(buf, sizeof(buf), fp)){ // 获得每行输出
+    } else {
+        char buf[MAXLINE] = {'\0'};
+        while (fgets(buf, sizeof(buf), fp)) { // 获得每行输出
             QString strLineOutput(buf);
-            if(strLineOutput.endsWith('\n'))
+            if (strLineOutput.endsWith('\n'))
                 strLineOutput.chop(1);
             lstShellOutput.push_back(strLineOutput);
         }
 
-        if((res = pclose(fp)) == -1){
+        int res;
+        if ((res = pclose(fp)) == -1) {
             qDebug() << "close popen file pointer fp error!";
             return res;
-        }else if(res == 0){
+        } else if (res == 0) {
             return res;
-        }else{
+        } else {
             qDebug() << QString("popen res is : %1").arg(res);
             return res;
         }

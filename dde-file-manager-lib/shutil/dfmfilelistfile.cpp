@@ -195,7 +195,6 @@ bool DFMFileListFile::save() const
     // write to file.
     if (d->isWritable()) {
         bool ok = false;
-        bool createFile = false;
         QFileInfo fileInfo(d->dirPath);
         //!使用QFile实现，QSaveFile会导致filewatcher无法监视到.hidden文件改变
         //!导致界面无法实时响应文件显示隐藏
@@ -207,12 +206,6 @@ bool DFMFileListFile::save() const
         ok = d->write(sf);
         sf.close();
         if (ok) {
-            // If we have created the file, apply the file perms
-            if (createFile) {
-                QFile::Permissions perms = fileInfo.permissions() | QFile::ReadOwner | QFile::WriteOwner
-                                           | QFile::ReadGroup | QFile::ReadOther;
-                QFile(filePath()).setPermissions(perms);
-            }
             return true;
         } else {
             d->setStatus(DFMFileListFile::AccessError);

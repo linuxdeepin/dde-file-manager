@@ -600,10 +600,10 @@ void DFileService::clearFileUrlHandler(const QString &scheme, const QString &hos
 {
     const HandlerType handler(scheme, host);
     //sanitinizer工具检测到dde-file-manager-lib/controllers/appcontroller.cpp中143泄露,故添加
-    if(TRASH_SCHEME == scheme && DFileServicePrivate::controllerHash.contains(handler)){
+    if (TRASH_SCHEME == scheme && DFileServicePrivate::controllerHash.contains(handler)) {
         auto temp = DFileServicePrivate::controllerHash.values(handler);
-        for(auto tempTrash : temp){
-            if("trashMgr" == tempTrash->objectName()){
+        for (auto tempTrash : temp) {
+            if ("trashMgr" == tempTrash->objectName()) {
                 tempTrash->deleteLater();
                 DFileServicePrivate::controllerHash.remove(handler);
                 DFileServicePrivate::controllerCreatorHash.remove(handler);
@@ -1101,7 +1101,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     setCursorBusyState(true);
     //check network online
     bool bonline = isNetWorkOnline();
-    bool fileexit = false;
     if (!bonline) {
         setCursorBusyState(false);
         //文件不存在弹提示框
@@ -1113,7 +1112,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
 
     if (rootfilename.startsWith(SMB_SCHEME)) {
         DAbstractFileInfoPointer rootptr = createFileInfo(nullptr, rootUrl);
-        fileexit = rootptr->exists();
+        bool fileexit = rootptr->exists();
         setCursorBusyState(false);
         //文件不存在弹提示框
         if (!fileexit && showdailog) {

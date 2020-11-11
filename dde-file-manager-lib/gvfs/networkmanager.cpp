@@ -105,7 +105,7 @@ QStringList NetworkManager::SupportScheme = {
     "sftp"
 };
 QMap<DUrl, NetworkNodeList> NetworkManager::NetworkNodes = {};
-GCancellable* NetworkManager::m_networks_fetching_cancellable = NULL;
+GCancellable *NetworkManager::m_networks_fetching_cancellable = NULL;
 QPointer<QEventLoop> NetworkManager::eventLoop;
 
 NetworkManager::NetworkManager(QObject *parent) : QObject(parent)
@@ -132,7 +132,7 @@ void NetworkManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestFetchNetworks, this, &NetworkManager::fetchNetworks);
 }
 
-bool NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
+bool NetworkManager::fetch_networks(gchar *url, DFMEvent *e)
 {
     QPointer<QEventLoop> oldEventLoop = eventLoop;
     QEventLoop event_loop;
@@ -140,13 +140,13 @@ bool NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
     eventLoop = &event_loop;
 
     GFile *network_file;
-    network_file = g_file_new_for_uri (url);
+    network_file = g_file_new_for_uri(url);
 
     if (m_networks_fetching_cancellable) {
         g_cancellable_cancel(m_networks_fetching_cancellable);
         g_clear_object(&m_networks_fetching_cancellable);
     }
-    m_networks_fetching_cancellable = g_cancellable_new ();
+    m_networks_fetching_cancellable = g_cancellable_new();
 
     int ret = EventLoopCode::FetchFailed;
 
@@ -176,31 +176,28 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
     GError *error;
 
     error = NULL;
-    enumerator = g_file_enumerate_children_finish (G_FILE (source_object), res, &error);
+    enumerator = g_file_enumerate_children_finish(G_FILE(source_object), res, &error);
 
     qDebug() << "network_enumeration_finished";
 
     if (error) {
-        DFMUrlBaseEvent* event = static_cast<DFMUrlBaseEvent*>(user_data);
-        if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
-            !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED)){
-            qWarning ("Failed to fetch network locations: %s", error->message);
+        DFMUrlBaseEvent *event = static_cast<DFMUrlBaseEvent *>(user_data);
+        if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
+                !g_error_matches(error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED)) {
+            qWarning("Failed to fetch network locations: %s", error->message);
             if (event->fileUrl() == DUrl::fromNetworkFile("/")) {
                 NetworkManager::restartGVFSD();
             }
         }
         qDebug() << error->message;
         MountStatus status = gvfsMountManager->mount_sync(*event);
-        g_clear_error (&error);
+        g_clear_error(&error);
 
         if (eventLoop) {
             // 挂载完成时, 返回 1, 在fetch_networks中再次调用g_file_enumerate_children_async获取列表
-            if(status == MOUNT_SUCCESS || status == MOUNT_PASSWORD_WRONG)
-            {
+            if (status == MOUNT_SUCCESS || status == MOUNT_PASSWORD_WRONG) {
                 eventLoop->exit(EventLoopCode::MountFinished);
-            }
-            else
-            {
+            } else {
                 eventLoop->exit(EventLoopCode::FetchFailed);
             }
         }
@@ -213,12 +210,12 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             return;
         }
 
-        g_file_enumerator_next_files_async (enumerator,
-                                            G_MAXINT32,
-                                            G_PRIORITY_DEFAULT,
-                                            m_networks_fetching_cancellable,
-                                            network_enumeration_next_files_finished,
-                                            user_data);
+        g_file_enumerator_next_files_async(enumerator,
+                                           G_MAXINT32,
+                                           G_PRIORITY_DEFAULT,
+                                           m_networks_fetching_cancellable,
+                                           network_enumeration_next_files_finished,
+                                           user_data);
     }
 }
 
@@ -229,22 +226,22 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
 
     error = NULL;
 
-    detected_networks = g_file_enumerator_next_files_finish (G_FILE_ENUMERATOR (source_object),
-                                                           res, &error);
+    detected_networks = g_file_enumerator_next_files_finish(G_FILE_ENUMERATOR(source_object),
+                                                            res, &error);
 
     if (error) {
-        if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)){
-            qWarning ("Failed to fetch network locations: %s", error->message);
-            DFMEvent* event = static_cast<DFMEvent*>(user_data);
-            if (event->fileUrl() == DUrl::fromNetworkFile("/")){
+        if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+            qWarning("Failed to fetch network locations: %s", error->message);
+            DFMEvent *event = static_cast<DFMEvent *>(user_data);
+            if (event->fileUrl() == DUrl::fromNetworkFile("/")) {
                 NetworkManager::restartGVFSD();
             }
         }
-        g_clear_error (&error);
+        g_clear_error(&error);
     } else {
-        populate_networks (G_FILE_ENUMERATOR (source_object), detected_networks, user_data);
+        populate_networks(G_FILE_ENUMERATOR(source_object), detected_networks, user_data);
 
-        g_list_free_full (detected_networks, g_object_unref);
+        g_list_free_full(detected_networks, g_object_unref);
     }
 
     if (eventLoop) {
@@ -259,28 +256,24 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     GFile *activatable_file;
     gchar *uri;
     GFileType type;
-    GIcon *icon;
 //    gchar *name;
-    gchar *display_name;
-    gchar* iconPath;
 
     NetworkNodeList nodeList;
 
-    for (l = detected_networks; l != NULL; l = l->next)
-    {
-        GFileInfo* fileInfo = static_cast<GFileInfo*>(l->data);
-        file = g_file_enumerator_get_child (enumerator, fileInfo);
-        type = g_file_info_get_file_type (fileInfo);
+    for (l = detected_networks; l != NULL; l = l->next) {
+        GFileInfo *fileInfo = static_cast<GFileInfo *>(l->data);
+        file = g_file_enumerator_get_child(enumerator, fileInfo);
+        type = g_file_info_get_file_type(fileInfo);
         if (type == G_FILE_TYPE_SHORTCUT || type == G_FILE_TYPE_MOUNTABLE)
-            uri = g_file_info_get_attribute_as_string (fileInfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+            uri = g_file_info_get_attribute_as_string(fileInfo, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
         else
-            uri = g_file_get_uri (file);
+            uri = g_file_get_uri(file);
 
-        activatable_file = g_file_new_for_uri (uri);
+        activatable_file = g_file_new_for_uri(uri);
 //        name = g_file_info_get_attribute_as_string (fileInfo, G_FILE_ATTRIBUTE_STANDARD_NAME);
-        display_name = g_file_info_get_attribute_as_string (fileInfo, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME);
-        icon = g_file_info_get_icon (fileInfo);
-        iconPath = g_icon_to_string(icon);
+        gchar *display_name = g_file_info_get_attribute_as_string(fileInfo, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME);
+        GIcon *icon = g_file_info_get_icon(fileInfo);
+        gchar *iconPath = g_icon_to_string(icon);
 
         // URL Cleanup:
         // blumia: sometimes it will happend in weird Mac mini device with a url format like: `smb://[10.0.61.210]:445/`
@@ -302,14 +295,14 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
 
         nodeList.append(node);
 
-        g_free (uri);
-        g_free (display_name);
-        g_free (iconPath);
-        g_clear_object (&file);
-        g_clear_object (&activatable_file);
+        g_free(uri);
+        g_free(display_name);
+        g_free(iconPath);
+        g_clear_object(&file);
+        g_clear_object(&activatable_file);
     }
 
-    DFMUrlBaseEvent* event = static_cast<DFMUrlBaseEvent*>(user_data);
+    DFMUrlBaseEvent *event = static_cast<DFMUrlBaseEvent *>(user_data);
     NetworkNodes.remove(event->fileUrl());
     NetworkNodes.insert(event->fileUrl(), nodeList);
     qDebug() << "request NetworkNodeList successfully";
@@ -331,7 +324,7 @@ void NetworkManager::restartGVFSD()
 void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
 {
     qDebug() << event;
-    DFMEvent* e = new DFMEvent(event);
+    DFMEvent *e = new DFMEvent(event);
     QString path = event.fileUrl().toString();
 
     UDiskDeviceInfoPointer p1 = deviceListener->getDeviceByMountPoint(path);
@@ -341,7 +334,7 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
 
     if (p1) {
         e->setData(p1->getMountPointUrl());
-        if (DUrl(path) != p1->getMountPointUrl()){
+        if (DUrl(path) != p1->getMountPointUrl()) {
             DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, e->fileUrl(), WindowManager::getWindowById(e->windowId()));
         } else {
             qWarning() << p1->getMountPointUrl() << "can't get data";
@@ -349,7 +342,7 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
         delete e;
     } else {
         std::string stdPath = path.toStdString();
-        gchar *url = const_cast<gchar*>(stdPath.c_str());
+        gchar *url = const_cast<gchar *>(stdPath.c_str());
 
         if (fetch_networks(url, e)) {
             QWidget *main_window = WindowManager::getWindowById(e->windowId());
@@ -358,7 +351,8 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
             QTimer::singleShot(0, this, [path, main_window] {
                 const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, DUrl(path));
 
-                if (!info->canRedirectionFileUrl()) {
+                if (!info->canRedirectionFileUrl())
+                {
                     return;
                 }
 

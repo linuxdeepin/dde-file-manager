@@ -523,12 +523,11 @@ QString DSqliteHandle::restoreEscapedChar(const QString &value)
 
     if (!tempValue.isEmpty() && !tempValue.isNull()) {
 
-        int pos{ -1 };
         std::map<QString, QString>::const_iterator tableCBeg{ StrTableOfEscapeChar.cbegin() };
         std::map<QString, QString>::const_iterator tableCEnd{ StrTableOfEscapeChar.cend() };
 
         for (; tableCBeg != tableCEnd; ++tableCBeg) {
-            pos = tempValue.indexOf(tableCBeg->first);
+            int pos = tempValue.indexOf(tableCBeg->first);
 
             if (pos != -1) {
 
@@ -554,10 +553,8 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>> &f
         return var;
     }
 
-    std::size_t numberOfType{ static_cast<std::size_t>(type) };
-
     if (!filesAndTags.isEmpty() && type != 0) {
-
+        std::size_t numberOfType{ static_cast<std::size_t>(type) };
         switch (numberOfType) {
         case 1: { ///###: tag files!!!!
             std::lock_guard<std::mutex> raiiLock{ m_mutex };
@@ -2730,11 +2727,9 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
                     }
 
                     if (!sqlStrs.empty()) {
-                        bool value{ false };
-
                         if (m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()) {
-                            value = this->helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
-                            std::list<std::tuple<QString, QString, QString, QString, QString, QString>>, bool>(sqlStrs, cbeg.key());
+                            bool value = this->helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
+                                 std::list<std::tuple<QString, QString, QString, QString, QString, QString>>, bool>(sqlStrs, cbeg.key());
 
                             if (value) {
 

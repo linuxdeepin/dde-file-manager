@@ -820,7 +820,6 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
 
         DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
         connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, [&](int status, int progress) mutable {
-            char progressBuf[BUFFERSIZE] = {0};
             QJsonObject obj;
             obj["phase"] = m_opticalJobPhase;
             obj["status"] = status;
@@ -830,6 +829,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             QByteArray bytes = QJsonDocument(obj).toJson();
             if (bytes.size() < BUFFERSIZE)
             {
+                char progressBuf[BUFFERSIZE] = {0};
                 strncpy(progressBuf, bytes.data(), BUFFERSIZE);
                 write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
             }
@@ -1124,7 +1124,6 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
 
         DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
         connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, [&](int status, int progress) mutable {
-            char progressBuf[BUFFERSIZE] = {0};
             QJsonObject obj;
             obj["phase"] = m_opticalJobPhase;
             obj["status"] = status;
@@ -1134,6 +1133,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             QByteArray bytes = QJsonDocument(obj).toJson();
             if (bytes.size() < BUFFERSIZE)
             {
+                char progressBuf[BUFFERSIZE] = {0};
                 strncpy(progressBuf, bytes.data(), BUFFERSIZE);
                 write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
             }
