@@ -1127,7 +1127,6 @@ open_file: {
         if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
-
         char data[blockSize + 1];
         qint64 size_read = fromDevice->read(data, blockSize);
         if (Q_UNLIKELY(!stateCheck())) {
