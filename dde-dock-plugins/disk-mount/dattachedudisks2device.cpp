@@ -66,7 +66,7 @@ void DAttachedUdisks2Device::detach()
             if (diskDev->ejectable()) {
                 diskDev->eject({});
                 if (diskDev->lastError().isValid()) {
-                    DiskControlWidget::NotifyMsg(DiskControlWidget::tr("The device was not safely removed"), DiskControlWidget::tr("Click \"Safely Remove\" and then disconnect it next time") );
+                    DiskControlWidget::NotifyMsg(DiskControlWidget::tr("The device is busy, cannot eject now"));
                 }
                 return;
             }
@@ -75,7 +75,7 @@ void DAttachedUdisks2Device::detach()
         if (diskDev->removable()) {
             diskDev->eject({});
             if (diskDev->lastError().isValid()) {
-                DiskControlWidget::NotifyMsg(DiskControlWidget::tr("The device was not safely removed"), DiskControlWidget::tr("Click \"Safely Remove\" and then disconnect it next time"));
+                DiskControlWidget::NotifyMsg(DiskControlWidget::tr("The device is busy, cannot remove now"));
             }
         }
 

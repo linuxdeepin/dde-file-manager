@@ -41,6 +41,14 @@
         <source>Cannot find the mounting device</source>
         <translation>找不到对应的挂载设备</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>磁盘文件被占用，无法移除</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>磁盘文件被占用，无法弹出</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
