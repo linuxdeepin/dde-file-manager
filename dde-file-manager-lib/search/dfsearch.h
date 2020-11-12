@@ -36,6 +36,9 @@ public:
 
     ~DFSearch();
 
+    DFSearch(DFSearch &) = delete;
+    DFSearch &operator=(DFSearch &) = delete;
+
     void searchByKeyWord(const QString &key, void (*callback)(void *, void *));
 
 private:

@@ -44,6 +44,8 @@ class BluetoothManagerPrivate
 public:
     explicit BluetoothManagerPrivate(BluetoothManager *qq);
 
+    BluetoothManagerPrivate(BluetoothManagerPrivate &) = delete;
+    BluetoothManagerPrivate &operator=(BluetoothManagerPrivate &) = delete;
     /**
      * @brief 解析蓝牙设备, 获取适配器和设备信息
      * @param req
@@ -192,11 +194,11 @@ void BluetoothManagerPrivate::initConnects()
     });
 
 #ifdef BLUETOOTH_ENABLE
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferCreated, q, [this](const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath) {
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferCreated, q, [this](const QString & file, const QDBusObjectPath & transferPath, const QDBusObjectPath & sessionPath) {
         qDebug() << file << transferPath.path() << sessionPath.path();
     });
 
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferRemoved, q, [this](const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath, bool done) {
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferRemoved, q, [this](const QString & file, const QDBusObjectPath & transferPath, const QDBusObjectPath & sessionPath, bool done) {
         Q_Q(BluetoothManager);
         if (!done) {
             Q_EMIT q->transferCancledByRemote(sessionPath.path());
@@ -205,20 +207,20 @@ void BluetoothManagerPrivate::initConnects()
         }
     });
 
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionCreated, q, [this](const QDBusObjectPath &sessionPath) {
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionCreated, q, [this](const QDBusObjectPath & sessionPath) {
         qDebug() << sessionPath.path();
     });
 
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionRemoved, q, [this](const QDBusObjectPath &sessionPath) {
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionRemoved, q, [this](const QDBusObjectPath & sessionPath) {
         qDebug() << sessionPath.path();
     });
 
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionProgress, q, [this](const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIdx) {
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionProgress, q, [this](const QDBusObjectPath & sessionPath, qulonglong totalSize, qulonglong transferred, int currentIdx) {
         Q_Q(BluetoothManager);
         Q_EMIT q->transferProgressUpdated(sessionPath.path(), totalSize, transferred, currentIdx);
     });
 
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferFailed, q, [this](const QString &file, const QDBusObjectPath &sessionPath, const QString &errInfo) {
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferFailed, q, [this](const QString & file, const QDBusObjectPath & sessionPath, const QString & errInfo) {
         Q_Q(BluetoothManager);
         Q_EMIT q->transferFailed(sessionPath.path(), file, errInfo);
     });
@@ -245,13 +247,15 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
     QDBusPendingCall call = m_bluetoothInter->GetDevices(dPath);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
     QObject::connect(watcher, &QDBusPendingCallWatcher::finished, q, [this, watcher, adapterPointer, call] {
-        if (!adapterPointer) {
+        if (!adapterPointer)
+        {
             qDebug() << "adapterPointer released!";
             watcher->deleteLater();
             return;
         }
         BluetoothAdapter *adapter = adapterPointer.data();
-        if (!call.isError()) {
+        if (!call.isError())
+        {
             QStringList tmpList;
 
             QDBusReply<QString> reply = call.reply();
@@ -284,7 +288,8 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
                     }
                 }
             }
-        } else {
+        } else
+        {
             qWarning() << call.error().message();
         }
 
@@ -340,10 +345,12 @@ void BluetoothManager::refresh()
     QDBusPendingCall call = d->m_bluetoothInter->GetAdapters();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
-        if (!call.isError()) {
+        if (!call.isError())
+        {
             QDBusReply<QString> reply = call.reply();
             d->resolve(reply);
-        } else {
+        } else
+        {
             qWarning() << call.error().message();
         }
         watcher->deleteLater();

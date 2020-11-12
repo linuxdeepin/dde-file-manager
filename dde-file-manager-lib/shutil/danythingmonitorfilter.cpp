@@ -59,12 +59,11 @@ static QString restoreEscapedChar(const QString &value)
     QString tempValue{ value };
 
     if (!tempValue.isEmpty() && !tempValue.isNull()) {
-        int pos{ -1 };
         std::map<QString, QString>::const_iterator table_beg{ StrTableOfEscapeChar.cbegin() };
         std::map<QString, QString>::const_iterator table_end{ StrTableOfEscapeChar.cend() };
 
         for (; table_beg != table_end; ++table_beg) {
-            pos = tempValue.indexOf(table_beg->first);
+            int pos = tempValue.indexOf(table_beg->first);
 
             if (pos != -1) {
 

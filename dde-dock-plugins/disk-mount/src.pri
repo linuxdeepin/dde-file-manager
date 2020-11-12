@@ -12,6 +12,7 @@ HEADERS += \
     $$PWD/diskcontrolwidget.h \
     $$PWD/diskpluginitem.h \
     $$PWD/diskcontrolitem.h \
+    $$PWD/diskglobal.h \
     $$PWD/dattacheddeviceinterface.h \
     $$PWD/dattachedudisks2device.h \
     $$PWD/dattachedvfsdevice.h \
@@ -24,6 +25,7 @@ SOURCES += \
     $$PWD/diskcontrolwidget.cpp \
     $$PWD/diskpluginitem.cpp \
     $$PWD/diskcontrolitem.cpp \
+    $$PWD/diskglobal.cpp \
     $$PWD/dattachedudisks2device.cpp \
     $$PWD/dattachedvfsdevice.cpp \
     $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.cpp \

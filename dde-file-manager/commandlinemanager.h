@@ -40,16 +40,16 @@ class DUrl;
 class CommandLineManager
 {
 public:
-    static CommandLineManager* instance();
+    static CommandLineManager *instance();
 
-    bool isSet(const QString& name) const;
-    QString value(const QString& name) const;
+    bool isSet(const QString &name) const;
+    QString value(const QString &name) const;
 
     void process();
     void process(const QStringList &arguments);
 
-    void addOption(const QCommandLineOption& option);
-    void addOptions(const QList<QCommandLineOption> & options);
+    void addOption(const QCommandLineOption &option);
+    void addOptions(const QList<QCommandLineOption> &options);
     QStringList positionalArguments() const;
     QStringList unknownOptionNames() const;
 
@@ -57,10 +57,12 @@ public:
 
 private:
     explicit CommandLineManager();
+    CommandLineManager(CommandLineManager &) = delete;
+    CommandLineManager &operator=(CommandLineManager &) = delete;
     void initOptions();
 
     ~CommandLineManager();
-    QCommandLineParser* m_commandParser;
+    QCommandLineParser *m_commandParser;
 };
 
 #endif // COMMANDLINEMANAGER_H

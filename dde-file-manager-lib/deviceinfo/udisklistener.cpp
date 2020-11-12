@@ -118,12 +118,11 @@ void UDiskListener::initDiskManager()
             //监测光驱托盘是否被弹出
             if (t_device.contains("/dev/sr")) {
 
-                int t_cdromfd;
                 /* only try to open read/write if not root, since it doesn't seem
                  * to make a difference for root and can have negative side-effects
                  */
                 if (geteuid()) {
-                    t_cdromfd = open(t_device.toLatin1().data(), O_RDWR | O_NONBLOCK);
+                    int t_cdromfd = open(t_device.toLatin1().data(), O_RDWR | O_NONBLOCK);
                     if (t_cdromfd != -1) {
                         close(t_cdromfd);
 //                        t_cdromfd = open(t_device.toLatin1().data(), O_RDONLY | O_NONBLOCK);
@@ -166,14 +165,14 @@ void UDiskListener::initConnect()
     connect(gvfsMountManager, &GvfsMountManager::volume_removed, this, &UDiskListener::removeVolumeDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::volume_changed, this, &UDiskListener::changeVolumeDiskInfo);
 
-    connect(fileSignalManager, &FileSignalManager::stopCdScanTimer, this, [ = ](const QString &strDev) {
+    connect(fileSignalManager, &FileSignalManager::stopCdScanTimer, this, [ = ](const QString & strDev) {
         Q_UNUSED(strDev)
         if (m_diskTimer->isActive()) {
             m_diskTimer->stop();
             qDebug() << "timer stop, curr cdrom:" << m_nCDRomCount;
         }
     });
-    connect(fileSignalManager, &FileSignalManager::restartCdScanTimer, this, [ = ](const QString &strDev) {
+    connect(fileSignalManager, &FileSignalManager::restartCdScanTimer, this, [ = ](const QString & strDev) {
         Q_UNUSED(strDev)
         if (m_nCDRomCount > 0 && !m_diskTimer->isActive()) {
             m_diskTimer->start(3000);

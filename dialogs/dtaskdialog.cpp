@@ -300,7 +300,7 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
     }
     blockShutdown();
     QListWidgetItem *item = new QListWidgetItem();
-    // KLU TASK-38670 修复QListWidgetItem大小显示不对问题
+    // wayland TASK-38670 修复QListWidgetItem大小显示不对问题
     // 设置Item的大小
     item->setSizeHint(QSize(wid->width(), wid->height()));
     item->setFlags(Qt::NoItemFlags);
@@ -339,7 +339,7 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     }
     blockShutdown();
     QListWidgetItem *item = new QListWidgetItem();
-    // 修复KLU BUG-51238 QListWidgetItem大小显示不对问题
+    // 修复wayland BUG-51238 QListWidgetItem大小显示不对问题
     // 设置Item的大小
     item->setSizeHint(QSize(wid->width(), wid->height()));
     item->setFlags(Qt::NoItemFlags);
@@ -884,7 +884,7 @@ void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail
                 DFMTaskWidget *w = item ? static_cast<DFMTaskWidget *>(item->listWidget()->itemWidget(item)) : nullptr;
                 if (w) {
                     updateData(w, data);
-                    // 预防界面不刷，pangu出现过界面不会刷新的问题
+                    // 预防界面不刷，pg出现过界面不会刷新的问题
                     w->repaint();
                     qApp->processEvents();
                 }

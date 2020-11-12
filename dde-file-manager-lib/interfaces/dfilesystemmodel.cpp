@@ -926,6 +926,9 @@ public:
 
     ~DFileSystemModelPrivate();
 
+    DFileSystemModelPrivate(DFileSystemModelPrivate &) = delete;
+    DFileSystemModelPrivate &operator=(DFileSystemModelPrivate &) = delete;
+
     bool passNameFilters(const FileSystemNodePointer &node) const;
     bool passFileFilters(const DAbstractFileInfoPointer &info) const;
 
@@ -1116,6 +1119,7 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
     Q_Q(DFileSystemModel);
 
     //fix 31327， 监控./.hidden文件更改
+    //bug#30019 task#40201 补充
     if ((fileUrl.fileName() == ".hidden") && !(q->filters() & QDir::Hidden)) {
         q->refresh();
     }
@@ -1705,7 +1709,17 @@ int DFileSystemModel::roleToColumn(int role) const
     return -1;
 }
 
+// fetchMore 不能有丝毫阻塞,否则会造成界面卡顿假象,故将其具体执行移到doFecthMore
 void DFileSystemModel::fetchMore(const QModelIndex &parent)
+{
+    Q_D(DFileSystemModel);
+
+    QTimer::singleShot(0, [&] {
+        doFetchMore(parent);
+    });
+}
+
+void DFileSystemModel::doFetchMore(const QModelIndex &parent)
 {
     Q_D(DFileSystemModel);
 
@@ -1721,50 +1735,12 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    //
     if (!releaseJobController()) {
         return;
     }
-//    if (d->jobController) {
-//        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
-//        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
-//        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
 
-//        if (d->jobController->isFinished()) {
-//            d->jobController->deleteLater();
-//        } else {
-//            QEventLoop eventLoop;
-//            QPointer<DFileSystemModel> me = this;
-//            d->eventLoop = &eventLoop;
-
-//            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
-
-//            d->jobController->stopAndDeleteLater();
-
-//            int code = eventLoop.exec();
-
-//            d->eventLoop = Q_NULLPTR;
-
-//            if (code != 0) {
-//                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
-//                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
-//                    //此时d->jobController有可能已经在析构了，不能调用terminate
-////                    d->jobController->terminate();
-//                    d->jobController->quit();
-//                    d->jobController.clear();
-//                }
-//                return;
-//            }
-
-//            if (!me) {
-//                return;
-//            }
-//        }
-//    }
-    qDebug() << " fetchMore +{ " << parentNode->fileInfo->fileUrl() << parentNode->fileInfo->isGvfsMountFile();
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters,
                                                    QDirIterator::NoIteratorFlags, false, parentNode->fileInfo->isGvfsMountFile());
-
     if (!d->jobController) {
         return;
     }
@@ -1787,7 +1763,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     setState(Busy);
 
     d->childrenUpdated = false;
-    //
+
     d->jobController->start();
     d->rootNodeManager->setEnable(true);
 }
@@ -1796,22 +1772,19 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 {
     Q_D(const DFileSystemModel);
     QPointer<DFileSystemModel> me = const_cast<DFileSystemModel *>(this);
-    QMutexLocker lk(&d_ptr->mutexFlags);
+//    QMutexLocker lk(&d_ptr->mutexFlags);
     if (!me) {
         return Qt::NoItemFlags;
     }
-
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     if (!index.isValid()) {
         return flags;
     }
-
     const FileSystemNodePointer &indexNode = getNodeByIndex(index);
 
     if (!indexNode) {
         return flags;
     }
-
     if (!d->passNameFilters(indexNode)) {
         flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         // ### TODO you shouldn't be able to set this as the current item, task 119433
@@ -1819,7 +1792,6 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
     }
 
     flags |= Qt::ItemIsDragEnabled;
-
     if ((index.column() == 0)) {
         if (d->readOnly) {
             return flags;
@@ -1839,7 +1811,6 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
     } else {
         flags = flags & ~Qt::ItemIsSelectable;
     }
-
     return flags & ~ indexNode->fileInfo->fileItemDisableFlags();
 }
 
@@ -1959,7 +1930,6 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 //    data->setData("forDragEvent", urls.first().toEncoded());
 //    FOR_DRAGEVENT = urls;
 //    qDebug() << "Set FOR_DRAGEVENT urls FOR_DRAGEVENT count = " << FOR_DRAGEVENT.length();
-
     m_smForDragEvent->setKey(DRAG_EVENT_URLS);
     //qDebug() << DRAG_EVENT_URLS;
     if (m_smForDragEvent->isAttached()) {
@@ -1967,7 +1937,6 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
             return data;
         }
     }
-
     QBuffer buffer;
     buffer.open(QBuffer::ReadWrite);
     QDataStream out(&buffer);
@@ -1987,7 +1956,6 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
         m_smForDragEvent->unlock();
         qDebug() << " write mem finish. " << m_smForDragEvent->errorString() << m_smForDragEvent->size();
     }
-
     return data;
 }
 
