@@ -54,7 +54,7 @@ public:
     QAtomicInteger<bool>  bstartonce = false;
     DAbstractFileWatcher *m_rootFileWatcher = nullptr;
 
-    QHash<DUrl,bool> m_rootsmbftpurllist;
+    QHash<DUrl, bool> m_rootsmbftpurllist;
     JobController *m_jobcontroller = nullptr;
 
     volatile bool m_rootChanged = true; //用于判断是否需要发送查询完毕信号，通知外部刷新。
@@ -67,7 +67,7 @@ DRootFileManager::DRootFileManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DRootFileManagerPrivate())
 {
-    connect(fileSignalManager,&FileSignalManager::requestHideSystemPartition,this,&DRootFileManager::hideSystemPartition);
+    connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::hideSystemPartition);
 }
 
 DRootFileManager::~DRootFileManager()
@@ -156,11 +156,10 @@ void DRootFileManager::startQuryRootFile()
     }
 
     QMutexLocker lk(&d_ptr->rootfileMtx);
-    if (d_ptr->m_jobcontroller){
+    if (d_ptr->m_jobcontroller) {
         qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
         return;
-    }
-    else {
+    } else {
         //启用异步线程去读取
         d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
     }
@@ -219,9 +218,9 @@ void DRootFileManager::changRootFile(const QList<DAbstractFileInfoPointer> &root
 {
     QMutexLocker lk(&d_ptr->rootfileMtx);
     for (const DAbstractFileInfoPointer &fi : rootinfo) {
-        DUrl url = fi->fileUrl();
-        if (!d_ptr->rootfilelist.contains(url) && fi->exists()) {
-            d_ptr->rootfilelist.insert(url, fi);
+        DUrl durl = fi->fileUrl();
+        if (!d_ptr->rootfilelist.contains(durl) && fi->exists()) {
+            d_ptr->rootfilelist.insert(durl, fi);
         }
     }
 }
@@ -241,7 +240,7 @@ const DAbstractFileInfoPointer DRootFileManager::getFileInfo(const DUrl &fileUrl
 void DRootFileManager::hideSystemPartition()
 {
     QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
-            getChildren(this, DUrl(DFMROOT_ROOT),QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
+                                              getChildren(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
     d_ptr->rootfileMtx.lock();
     d_ptr->rootfilelist.clear();
     d_ptr->rootfileMtx.unlock();

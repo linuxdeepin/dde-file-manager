@@ -466,9 +466,9 @@ public:
 
     bool isEmpty() const
     {
-        Node *head = m_head.load();
+        Node *_head = m_head.load();
 
-        return head->next == nullptr;
+        return _head->next == nullptr;
     }
 
     T dequeue()

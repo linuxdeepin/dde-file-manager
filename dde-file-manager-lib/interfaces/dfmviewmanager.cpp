@@ -138,9 +138,9 @@ DFMViewManager::DFMViewManager(QObject *parent)
 
     // register plugins
     for (const QString &key : DFMViewFactory::keys()) {
-        const DUrl url(key);
+        const DUrl durl(key);
 
-        insertToCreatorHash(KeyType(url.scheme(), url.host()), ViewCreatorType(typeid(DFMViewFactory).name(), [key] {
+        insertToCreatorHash(KeyType(durl.scheme(), durl.host()), ViewCreatorType(typeid(DFMViewFactory).name(), [key] {
             return DFMViewFactory::create(key);
         }));
     }

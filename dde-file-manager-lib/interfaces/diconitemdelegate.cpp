@@ -286,11 +286,11 @@ void FileTagObjectInterface::drawObject(QPainter *painter, const QRectF &rect, Q
     const QColor borderColor = f.borderColor();
     qreal diameter = f.diameter();
     const qreal padding = diameter / 10.0;
-    QRectF boundingRect = rect.marginsRemoved(QMarginsF(padding, padding, padding, padding));
+    QRectF bounding_rect = rect.marginsRemoved(QMarginsF(padding, padding, padding, padding));
 
     diameter -= padding * 2;
 
-    DFMStyledItemDelegate::paintCircleList(painter, boundingRect, diameter, colors, borderColor);
+    DFMStyledItemDelegate::paintCircleList(painter, bounding_rect, diameter, colors, borderColor);
 }
 
 class ExpandedItem : public QWidget
@@ -300,7 +300,7 @@ class ExpandedItem : public QWidget
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
 public:
-    explicit ExpandedItem(DIconItemDelegate *d, QWidget *parent = 0)
+    explicit ExpandedItem(DIconItemDelegate *d, QWidget *parent = nullptr)
         : QWidget(parent)
         , delegate(d)
     {
