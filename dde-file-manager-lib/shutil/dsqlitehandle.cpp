@@ -2644,11 +2644,11 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
 
     if (!filesAndTags.isEmpty()) {
 
-        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist("/home", ".__main.db") };
+//        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist("/home", ".__main.db") };
 
-        if (return_code != DSqliteHandle::ReturnCode::Exist) {
-            return false;
-        }
+//        if (return_code != DSqliteHandle::ReturnCode::Exist) {
+//            return false;
+//        }
 
         this->connectToShareSqlite("/home", ".__main.db");
         bool the_result{ true };
@@ -3304,11 +3304,11 @@ template<>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(const QMap<QString, QList<QString>> &filesAndTags)
 {
     if (!filesAndTags.isEmpty()) {
-        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist("/home", ".__main.db") };
+//        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist("/home", ".__main.db") };
 
-        if (return_code != DSqliteHandle::ReturnCode::Exist) {
-            return false;
-        }
+//        if (return_code != DSqliteHandle::ReturnCode::Exist) {
+//            return false;
+//        }
 
         this->connectToShareSqlite("/home", ".__main.db");
         bool the_result{ true };
