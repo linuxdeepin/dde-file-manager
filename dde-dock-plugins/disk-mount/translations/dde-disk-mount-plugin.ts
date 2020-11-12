@@ -25,6 +25,10 @@
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
+    <message>
+        <source>Disk is busy, cannot remove now</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

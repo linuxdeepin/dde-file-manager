@@ -75,7 +75,7 @@ void DAttachedUdisks2Device::detach()
         if (diskDev->removable()) {
             diskDev->eject({});
             if (diskDev->lastError().isValid()) {
-                DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Disk is busy, cannot eject now"));
+                DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Disk is busy, cannot remove now"));
             }
         }
 

@@ -1446,7 +1446,7 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
         QDBusError lastError = blk->lastError();
         if (lastError.message().contains("target is busy")) {
             qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
-            emit unmountResult(tr("Disk is busy, cannot unmount now"));
+            emit unmountResult(tr("Disk is busy, cannot remove now"));
             return;
         }
         if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
