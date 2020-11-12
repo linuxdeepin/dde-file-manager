@@ -1479,7 +1479,7 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
             return;
         } else if (lastError.isValid()) {
             qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
-            emit unmountResult(tr("The device was not safely removed"), tr("Disk is busy, cannot unmount now"));
+            emit unmountResult(tr("The device was not safely removed"), tr("Disk is busy, cannot remove now"));
             return;
         }
 
