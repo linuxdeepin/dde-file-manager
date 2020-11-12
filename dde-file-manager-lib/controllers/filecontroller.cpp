@@ -371,10 +371,10 @@ QString printList(BTreeNode *pNode)
 {
 
     QString fullPath("");
-    int i = 0;
     if (pNode == nullptr) {
         return "";
     } else {
+        int i = 0;
         while (pNode != nullptr) {
             if (pNode->name != nullptr) {
                 fullPath.insert(0, pNode->name);
@@ -426,17 +426,12 @@ public:
             return;
         }
         DFMAnythingDirIterator *it = static_cast<DFMAnythingDirIterator *>(self);
-        uint32_t num_folders;
-        uint32_t num_files;
-        uint32_t num_results = 0;
         DatabaseSearch *result = static_cast<DatabaseSearch *>(back);
         if (!result)
             return;
         GPtrArray *results = result->results;
         if (results && results->len > 0) {
-            num_folders = result->num_folders;;
-            num_files = result->num_files;
-            num_results = results->len;
+            uint32_t num_results = results->len;
             for (uint32_t j = 0; j < num_results; j++) {
                 if (results->len > 0 && results->pdata) {
                     DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
@@ -451,7 +446,7 @@ public:
                         QString fullPath = fileInfo.absoluteFilePath();
                         QString filePath = fileInfo.absolutePath();
                         if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath)) {
-                            // 修复klu-bug-51754
+                            // 修复wayland-bug-51754
                             // 刷选出保险箱内的文件,使其不被检索出来
                             if (!VaultController::isVaultFile(it->dir.absolutePath()) && VaultController::isVaultFile(fullPath))
                                 continue;
@@ -1874,7 +1869,7 @@ bool FileDirIterator::hasSymLinkDir(QString &path, QString &tmp, QString &oldPre
         return true;
     } else {
         int last_dir_split_pos = path.lastIndexOf('/');
-        if (last_dir_split_pos < 0)
+        if (last_dir_split_pos <= 0)
             return false;
 
         tmp.prepend(path.mid(last_dir_split_pos));

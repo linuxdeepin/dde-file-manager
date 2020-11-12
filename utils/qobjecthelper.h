@@ -34,28 +34,31 @@ class QObject;
 QT_END_NAMESPACE
 
 
-class QObjectHelper {
-    public:
-      QObjectHelper();
-      ~QObjectHelper();
+class QObjectHelper
+{
+public:
+    QObjectHelper();
+    ~QObjectHelper();
 
 
-    static QVariantMap qobject2qvariant( const QObject* object,
-                                  const QStringList& ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
+    static QVariantMap qobject2qvariant(const QObject *object,
+                                        const QStringList &ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
 
 
-    static QString qobject2json( const QObject* object,
-                                  const QStringList& ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
+    static QString qobject2json(const QObject *object,
+                                const QStringList &ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
 
 
-    static void qvariant2qobject(const QVariantMap& variant, QObject* object);
+    static void qvariant2qobject(const QVariantMap &variant, QObject *object);
 
-    static void json2qobject(const QString& json, QObject* object);
+    static void json2qobject(const QString &json, QObject *object);
 
-    private:
-      Q_DISABLE_COPY(QObjectHelper)
-      class QObjectHelperPrivate;
-      QObjectHelperPrivate* const d;
+private:
+    QObjectHelper(QObjectHelper &) = delete;
+    QObjectHelper &operator=(QObjectHelper &) = delete;
+    Q_DISABLE_COPY(QObjectHelper)
+    class QObjectHelperPrivate;
+    QObjectHelperPrivate *const d;
 };
 
 

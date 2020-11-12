@@ -27,9 +27,10 @@ class GridManager: public QObject, public Singleton<GridManager>
 {
     Q_OBJECT
 public:
-    enum SyncOperation{soAutoMerge,soRename,soIconSize,soSort
-                       ,soHideEditing,soUpdate,soAutoMergeUpdate
-                       ,soHidenSwitch,soGsettingUpdate};
+    enum SyncOperation {soAutoMerge, soRename, soIconSize, soSort
+    , soHideEditing, soUpdate, soAutoMergeUpdate
+    , soHidenSwitch, soGsettingUpdate
+                       };
     DUrl getInitRootUrl();
     void initGridItemsInfos();
     void initAutoMerge(const QList<DAbstractFileInfoPointer> &items);
@@ -58,7 +59,7 @@ public:
 
     bool contains(int screebNum, const QString &id);
     QPoint position(int screenNum, const QString &id);
-    bool find(const QString &itemId, QPair<int,QPoint> &pos);
+    bool find(const QString &itemId, QPair<int, QPoint> &pos);
     QString itemId(int screenNum, int x, int y);
     QString itemId(int screenNum, QPoint pos);
     QString itemTop(int screenNum, int x, int y); //调整显示方式，如果是堆叠，则将最后一个pos的换成堆叠的最后一个项目
@@ -102,7 +103,7 @@ public:
     static void sortMainDesktopFile(QStringList &list, int role, Qt::SortOrder order);
     QString m_needRenameItem; //用于排完顺序后打开编辑框
 signals:
-    void sigSyncOperation(int so,QVariant var = QVariant());
+    void sigSyncOperation(int so, QVariant var = QVariant());
     void sigSyncSelection(class CanvasGridView *, DUrlList url);
 protected:
     //bool remove(int screenNum, int x, int y, const QString &itemId);

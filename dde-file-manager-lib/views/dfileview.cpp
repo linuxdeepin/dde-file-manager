@@ -220,8 +220,6 @@ public:
 
     /// drag drop
     QModelIndex dragMoveHoverIndex;
-    //析构锁，当其他信号正在处理时，不要析构
-    QMutex m_mutex;
     //析构锁，当更新updatestatusbar正在处理时，不要析构
     QMutex m_mutexUpdateStatusBar;
 
@@ -285,7 +283,7 @@ DFileView::DFileView(QWidget *parent)
     initDelegate();
     initConnects();
 
-    // 修复KLU TASK-37638
+    // 修复wayland TASK-37638
     // 初始化子线程
     m_pSelectWork = new SelectWork();
     connect(m_pSelectWork, &SelectWork::sigSetSelect,
@@ -309,7 +307,6 @@ DFileView::~DFileView()
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
 
     //所有的槽函数必须跑完才能析构
-    QMutexLocker lk(&d_ptr->m_mutex);
     QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
 
 }
@@ -782,7 +779,7 @@ void DFileView::selectAllAfterCutOrCopy(const QList<DUrl> &list)
     const QModelIndex &root = rootIndex();
     clearSelection();
 
-    // 修复KLU TASK-37638 缓存为选中的拷贝或剪贴文件
+    // 修复wayland TASK-37638 缓存为选中的拷贝或剪贴文件
     QList<DUrl> lstNoValid;
 
     for (const DUrl &url : list) {
@@ -813,7 +810,7 @@ void DFileView::selectAllAfterCutOrCopy(const QList<DUrl> &list)
     if (firstIndex.isValid())
         scrollTo(firstIndex, PositionAtTop);
 
-    // 修复KLU TASK-37638 启动子线程，选中为选中的拷贝或剪贴的文件
+    // 修复wayland TASK-37638 启动子线程，选中为选中的拷贝或剪贴的文件
     if (!lstNoValid.isEmpty()) {
         if (m_pSelectWork->isRunning()) {
             m_pSelectWork->stopWork();
@@ -839,7 +836,7 @@ void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
 
     const DUrl &root_url = rootUrl();
 
-    //fix task klu 21328 当切换到列表显示时自动适应列宽度
+    //fix task wayland 21328 当切换到列表显示时自动适应列宽度
     if (d->allowedAdjustColumnSize) {
         setResizeMode(QListView::Adjust);
     }
@@ -1017,7 +1014,6 @@ void DFileView::onRowCountChanged()
 {
     //所有的槽函数必须跑完才能析构
     QPointer<DFileView> me = this;
-    QMutexLocker lk(&d_ptr->m_mutex);
     if (!me) {
         return;
     }
@@ -2834,7 +2830,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             horizontalScrollBar()->parentWidget()->installEventFilter(this);
             // 初始化列宽调整
             d->cachedViewWidth = this->width();
-            //fix task klu 21328 当切换到列表显示时自动适应列宽度
+            //fix task wayland 21328 当切换到列表显示时自动适应列宽度
             d->adjustFileNameCol = true; //fix 31609 无论如何在切换显示模式时都去调整列表宽度
             updateListHeaderViewProperty();
         }

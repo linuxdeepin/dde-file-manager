@@ -1255,13 +1255,19 @@ open_file: {
     DGIOFileDevice *fromgio = qobject_cast<DGIOFileDevice *>(fromDevice.data());
     DGIOFileDevice *togio = qobject_cast<DGIOFileDevice *>(toDevice.data());
     if (fromgio) {
-        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[fromgio](){
-            fromgio->cancelAllOperate();
+        QPointer<DGIOFileDevice> frompointer = fromgio;
+        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[frompointer](){
+            if (frompointer) {
+                frompointer->cancelAllOperate();
+            }
         });
     }
     if (togio) {
-        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[togio](){
-            togio->cancelAllOperate();
+        QPointer<DGIOFileDevice> topointer = fromgio;
+        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[topointer](){
+            if (topointer) {
+                topointer->cancelAllOperate();
+            }
         });
     }
 
@@ -1282,6 +1288,13 @@ open_file: {
 
 //        char data[blockSize + 1];
         qint64 size_read = fromDevice->read(data, block_Size);
+        if (Q_UNLIKELY(!stateCheck())) {
+            if (!bdestLocal) {
+                toDevice->closeWriteReadFailed(true);
+            }
+            delete[] data;
+            return false;
+        }
 
         if (Q_UNLIKELY(size_read <= 0)) {
             if (size_read == 0 && fromDevice->atEnd()) {
@@ -1335,7 +1348,12 @@ open_file: {
         }
         qint64 size_write = toDevice->write(data, size_read);
         if (Q_UNLIKELY(!stateCheck())) {
+            if (!bdestLocal) {
+                toDevice->closeWriteReadFailed(true);
+            }
             return false;
+
+
         }
         //如果写失败了，直接推出
         if (size_write < 0) {
@@ -1707,15 +1725,6 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
     }
 
     handler->setFileTime(newInfo->fileUrl(), oldInfo->lastRead(), oldInfo->lastModified());
-
-    //! use stat function to read vault file permission.
-    QFileDevice::Permissions permissions = oldInfo->permissions();
-    QString path = oldInfo->fileUrl().path();
-    if (VaultController::isVaultFile(path)) {
-        permissions = VaultController::getPermissions(path);
-    }
-
-    handler->setPermissions(newInfo->fileUrl(), /*oldInfo->permissions()*/permissions);
 
     if (!doRemoveFile(handler, oldInfo)) {
         return false;

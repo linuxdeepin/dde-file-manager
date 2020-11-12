@@ -149,7 +149,12 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
 
 void ShareInfoFrame::handleShareNameChanged()
 {
-    doShareInfoSetting();
+    // 修复bug-54080
+    // 当失去焦点时，判断文件名是否符合规则
+    if(!m_shareNamelineEdit->hasFocus())
+        doShareInfoSetting();
+    else    // 如果焦点存在，将焦点设置到下一个控件
+        m_permissoComBox->setFocus();
     //handShareInfoChanged();
 }
 
@@ -181,7 +186,7 @@ bool ShareInfoFrame::doShareInfoSetting()
 //        hide();
         return DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
     }
-    // fix bug#51124 【KLU1022】【文管5.2.0102.42】只读共享文件夹，修改“匿名访问”，此文件夹权限改变
+    // fix bug#51124 【wayland1022】【文管5.2.0102.42】只读共享文件夹，修改“匿名访问”，此文件夹权限改变
     // 用户权限保持不变，修改组、其他权限为可读写
     if (m_permissoComBox->currentIndex() == 0 && m_anonymityCombox->currentIndex() != 0) {
         DUrl localUrl = DUrl::fromLocalFile(m_fileinfo->fileUrl().toLocalFile());

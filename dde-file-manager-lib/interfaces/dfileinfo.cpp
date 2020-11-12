@@ -48,6 +48,7 @@
 #include "dstorageinfo.h"
 #include "shutil/danythingmonitorfilter.h"
 #include "dfmapplication.h"
+#include "dfmstandardpaths.h"
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -252,7 +253,7 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
         info->epInitialized = true;
         info->requestEP = nullptr;
     } else {
-        dirtyFileInfos.remove(info);     
+        dirtyFileInfos.remove(info);
         info = nullptr;
     }
     dirtyFileInfosMutex.unlock();
@@ -406,10 +407,10 @@ QList<QIcon> DFileInfo::additionalIcon() const
     QList<QIcon> icons;
 
     bool needEmblem = true;
-    // KLU TASK-38720 修复重命名文件时，文件图标有小锁显示的问题，
+    // wayland TASK-38720 修复重命名文件时，文件图标有小锁显示的问题，
     // 当为快捷方式时，有源文件文件不存在的情况，所以增加特殊判断
-    if(!isSymLink()){
-        if(access(fileUrl().toLocalFile().toStdString().c_str(), F_OK) == -1)
+    if (!isSymLink()) {
+        if (access(fileUrl().toLocalFile().toStdString().c_str(), F_OK) == -1)
             return icons;
     }
 
@@ -496,7 +497,7 @@ bool DFileInfo::canShare() const
             return true;
         }
         //fix fix task 29259,说明是共享使用true
-        UDiskDeviceInfoPointer info = deviceListener->getDeviceByFilePath(filePath(),true);
+        UDiskDeviceInfoPointer info = deviceListener->getDeviceByFilePath(filePath(), true);
 
         if (info) {
             if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() != UDiskDeviceInfo::network)
@@ -618,9 +619,17 @@ DAbstractFileInfo::FileType DFileInfo::fileType() const
 {
     Q_D(const DFileInfo);
 
+    // fix bug#52950 【专业版1030】【文管5.2.0.72】回收站删除指向块设备的链接文件时，删除失败
+    // QT_STATBUF判断链接文件属性时，判断的是指向文件的属性，使用QFileInfo判断
+    QString absoluteFilePath = d->fileInfo.absoluteFilePath();
+    if (absoluteFilePath.startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))
+            && d->fileInfo.isSymLink()) {
+        return RegularFile;
+    }
+
     // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
     // In addition we want to follow symlinks.
-    const QByteArray &nativeFilePath = QFile::encodeName(d->fileInfo.absoluteFilePath());
+    const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
         if (S_ISDIR(statBuffer.st_mode))
@@ -881,8 +890,8 @@ DUrl DFileInfo::goToUrlWhenDeleted() const
 {
     QString absFilePath = absoluteFilePath();
     if (deviceListener->isInDeviceFolder(absFilePath) ||
-        absFilePath.startsWith("/run/user" /*for gvfs mount point*/) ||
-        absFilePath.startsWith("/media/")) {
+            absFilePath.startsWith("/run/user" /*for gvfs mount point*/) ||
+            absFilePath.startsWith("/media/")) {
         return DUrl::fromLocalFile(QDir::homePath());
     }
 

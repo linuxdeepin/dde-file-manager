@@ -140,7 +140,10 @@ void AppController::registerUrlHandle()
 {
     DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
     //    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
-    DFileService::setFileUrlHandler(TRASH_SCHEME, "", new TrashManager());
+    //sanitinizer工具检测到DFileService::setFileUrlHandler(TRASH_SCHEME, "", new TrashManager());泄露
+    auto *tempTrashMgr = new TrashManager();
+    tempTrashMgr->setObjectName("trashMgr");
+    DFileService::setFileUrlHandler(TRASH_SCHEME, "", tempTrashMgr);
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
@@ -780,7 +783,7 @@ void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
 
         // bug 29419 期望在外设进行卸载，弹出时，终止复制操作
-        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
+//        emit fileSignalManager->requestAsynAbortJob(fi->redirectedFileUrl());
 
         //在主线程去调用unmount时如果弹出权限认证窗口，会导致文管界面挂起，
         //在关闭窗口特效情况下，还会出现文管界面绘制不刷新出现重影的情况

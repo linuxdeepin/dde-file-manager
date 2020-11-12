@@ -128,7 +128,7 @@ DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, bool hasCache)
     //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
     //所以ftp和smb挂载点没有了，显示文件已被删除
-    filesCount();
+    // filesCount();
 }
 
 DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, const QMimeType &mimetype, bool hasCache)
@@ -150,7 +150,8 @@ DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, const QMimeType &mimetype, boo
         mimeType();
     }
     size();
-    filesCount();
+
+    //filesCount();
     //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
     //ftp挂载的系统proc中的文件夹获取filesCount，调用QDir和调用QDirIterator时，是gvfs文件的权限变成？？？
     //所以ftp和smb挂载点没有了，显示文件已被删除
@@ -428,4 +429,141 @@ DGvfsFileInfo::DGvfsFileInfo(DGvfsFileInfoPrivate &dd)
     : DFileInfo(dd)
 {
 
+}
+
+QIcon DGvfsFileInfo::fileIcon() const
+{
+    Q_D(const DFileInfo);
+
+    if (!d->icon.isNull() && !d->needThumbnail && (!d->iconFromTheme || !d->icon.name().isEmpty())) {
+        return d->icon;
+    }
+
+    d->iconFromTheme = false;
+
+    const DUrl &fileUrl = this->fileUrl();
+
+#ifdef DFM_MINIMUM
+    d->hasThumbnail = 0;
+#else
+    if (fileUrl.toString().contains(VaultController::makeVaultLocalPath())) {
+        d->hasThumbnail = DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
+    } else {
+        d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
+    }
+#endif
+    if (d->needThumbnail || d->hasThumbnail > 0) {
+        d->needThumbnail = true;
+
+        const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(d->fileInfo, DThumbnailProvider::Large));
+
+        if (!icon.isNull()) {
+            QPixmap pixmap = icon.pixmap(DThumbnailProvider::Large, DThumbnailProvider::Large);
+            QPainter pa(&pixmap);
+
+            pa.setPen(Qt::gray);
+            pa.drawPixmap(0, 0, pixmap);
+            d->icon.addPixmap(pixmap);
+            d->iconFromTheme = false;
+            d->needThumbnail = false;
+
+            return d->icon;
+        }
+
+        if (d->getIconTimer) {
+            QMetaObject::invokeMethod(d->getIconTimer, "start", Qt::QueuedConnection);
+        } else if (isActive()) {
+            QTimer *timer = new QTimer();
+            const QExplicitlySharedDataPointer<DGvfsFileInfo> me(const_cast<DGvfsFileInfo *>(this));
+
+            d->getIconTimer = timer;
+            timer->setSingleShot(true);
+            timer->moveToThread(qApp->thread());
+            timer->setInterval(500);
+
+            QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, me] {
+                DThumbnailProvider::instance()->appendToProduceQueue(me->d_func()->fileInfo, DThumbnailProvider::Large,
+                                                                     [me](const QString & path)
+                {
+                    DThreadUtil::runInMainThread([me, path]() {
+                        if (path.isEmpty()) {
+                            me->d_func()->iconFromTheme = true;
+                        } else {
+                            // clean old icon
+                            me->d_func()->icon = QIcon();
+                        }
+
+                        me->d_func()->needThumbnail = false;
+                    });
+
+                });
+                me->d_func()->requestingThumbnail = true;
+                timer->deleteLater();
+            });
+
+            QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);
+        }
+
+        if (d->icon.isNull())
+            d->icon = DFileIconProvider::globalProvider()->icon(*this);
+
+        return d->icon;
+    } else {
+        d->needThumbnail = false;
+    }
+
+    if (isSymLink()) {
+        const DUrl &symLinkTarget = this->symLinkTarget();
+
+        if (symLinkTarget != fileUrl) {
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, symLinkTarget);
+
+            if (fileInfo) {
+                d->icon = fileInfo->fileIcon();
+                d->iconFromTheme = false;
+
+                return d->icon;
+            }
+        }
+    }
+
+    d->icon = DFileIconProvider::globalProvider()->icon(*this);
+    d->iconFromTheme = true;
+
+    return d->icon;
+}
+
+
+QList<QIcon> DGvfsFileInfo::additionalIcon() const
+{
+    Q_D(const DFileInfo);
+
+    if (d->proxy)
+        return d->proxy->additionalIcon();
+
+    QList<QIcon> icons;
+
+    // wayland TASK-38720 修复重命名文件时，文件图标有小锁显示的问题，
+    // 当为快捷方式时，有源文件文件不存在的情况，所以增加特殊判断
+    if (!isSymLink()) {
+        if (exists())
+            return icons;
+    }
+
+    if (isSymLink()) {
+        icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
+    }
+
+    if (isShared()) {
+        icons << QIcon::fromTheme("emblem-shared", DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon));
+    }
+
+#ifdef SW_LABEL
+    QString labelIconPath = getLabelIcon();
+    if (!labelIconPath.isEmpty()) {
+        icons << QIcon(labelIconPath);
+    }
+#endif
+
+    return icons;
 }
