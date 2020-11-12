@@ -192,9 +192,9 @@ bool DFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFile
             return true;
         } else {
             for (const QString &path : watchFileList) {
-                const DUrl &url = DUrl::fromLocalFile(path);
+                const DUrl &_url = DUrl::fromLocalFile(path);
 
-                if (url == arg1) {
+                if (_url == arg1) {
                     q_ptr->fileDeleted(this->url);
 
                     return true;

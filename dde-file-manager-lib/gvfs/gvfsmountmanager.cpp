@@ -1663,29 +1663,29 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
     if (mount == nullptr) {
         bool no_permission = false;
 
-        QFileInfo fileInfo(QUrl(mounted_root_uri).toLocalFile());
+        QFileInfo info(QUrl(mounted_root_uri).toLocalFile());
 
-        while (!fileInfo.exists() && fileInfo.fileName() != QDir::rootPath() && !fileInfo.absolutePath().isEmpty()) {
-            fileInfo.setFile(fileInfo.absolutePath());
+        while (!info.exists() && info.fileName() != QDir::rootPath() && !info.absolutePath().isEmpty()) {
+            info.setFile(info.absolutePath());
         }
 
-        if (fileInfo.exists()) {
-            if (getuid() == fileInfo.ownerId()) {
-                if (!fileInfo.permission(QFile::ReadOwner | QFile::ExeOwner))
+        if (info.exists()) {
+            if (getuid() == info.ownerId()) {
+                if (!info.permission(QFile::ReadOwner | QFile::ExeOwner))
                     no_permission = true;
-            } else if (getgid() == fileInfo.groupId()) {
-                if (!fileInfo.permission(QFile::ReadGroup | QFile::ExeGroup))
+            } else if (getgid() == info.groupId()) {
+                if (!info.permission(QFile::ReadGroup | QFile::ExeGroup))
                     no_permission = true;
-            } else if (!fileInfo.permission(QFile::ReadOther | QFile::ExeOther)) {
+            } else if (!info.permission(QFile::ReadOther | QFile::ExeOther)) {
                 no_permission = true;
             }
         }
 
         if (no_permission) {
-            QString user_name = fileInfo.owner();
+            QString user_name = info.owner();
 
-            if (fileInfo.absoluteFilePath().startsWith("/media/")) {
-                user_name = fileInfo.baseName();
+            if (info.absoluteFilePath().startsWith("/media/")) {
+                user_name = info.baseName();
             }
 
             DDialog error_dilaog(tr("The disk is mounted by user \"%1\", you cannot unmount it.").arg(user_name), QString(" "));
@@ -1737,8 +1737,8 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
 
         if (local_mount_point) {
             // 由于卸载gvfs设备时不会触发文件系统的inotify, 所以此处手动模拟文件夹被移除的信号
-            const DUrl url = DUrl::fromLocalFile(local_mount_point);
-            DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileDeleted, url);
+            const DUrl durl = DUrl::fromLocalFile(local_mount_point);
+            DAbstractFileWatcher::ghostSignal(durl.parentUrl(), &DAbstractFileWatcher::fileDeleted, durl);
 
             g_free(local_mount_point);
         }
@@ -1757,8 +1757,8 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
                 }
             }
 
-            for (const DUrl &url : dirty_list)
-                NetworkManager::NetworkNodes.remove(url);
+            for (const DUrl &durl : dirty_list)
+                NetworkManager::NetworkNodes.remove(durl);
         }
 
         g_free(root_uri);

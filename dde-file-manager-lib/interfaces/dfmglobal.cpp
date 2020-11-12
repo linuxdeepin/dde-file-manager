@@ -120,10 +120,10 @@ void onClipboardDataChanged()
         clipboardAction = DFMGlobal::UnknowAction;
     }
     clipboardFileUrls = qApp->clipboard()->mimeData()->urls();
-    for (QUrl url : qApp->clipboard()->mimeData()->urls()) {
+    for (QUrl _url : qApp->clipboard()->mimeData()->urls()) {
         //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
         struct stat statInfo;
-        int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
+        int fileStat = stat(_url.path().toStdString().c_str(), &statInfo);
         if (0 == fileStat && !S_ISLNK(statInfo.st_mode)) {
             clipbordFileinode << statInfo.st_ino;
         }
@@ -193,34 +193,34 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
     QDataStream stream(&iconBa, QIODevice::WriteOnly);
 
     int maxIconsNum = 3;
-    for (const QUrl &url : list) {
+    for (const QUrl &qurl : list) {
         ba.append("\n");
-        ba.append(url.toString());
+        ba.append(qurl.toString());
 
-        const QString &path = url.toLocalFile();
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, DUrl(url));
+        const QString &path = qurl.toLocalFile();
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, DUrl(qurl));
 
-        if (!fileInfo)
+        if (!info)
             continue;
         if (maxIconsNum-- > 0) {
             QStringList iconList;
-            if (fileInfo->isSymLink()) {
+            if (info->isSymLink()) {
                 iconList << "emblem-symbolic-link";
             }
-            if (!fileInfo->isWritable()) {
+            if (!info->isWritable()) {
                 iconList << "emblem-readonly";
             }
-            if (!fileInfo->isReadable()) {
+            if (!info->isReadable()) {
                 iconList << "emblem-unreadable";
             }
 
             // 多文件时只显示文件图标, 一个文件时显示缩略图(如果有的话)
-            DFileInfo *fi = dynamic_cast<DFileInfo *>(fileInfo.data());
+            DFileInfo *fi = dynamic_cast<DFileInfo *>(info.data());
             QIcon icon = fi ? DFileIconProvider::globalProvider()->icon(*fi) :
-                         DFileIconProvider::globalProvider()->icon(fileInfo->toQFileInfo());
-            DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(fileInfo->mimeTypeName());
+                         DFileIconProvider::globalProvider()->icon(info->toQFileInfo());
+            DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(info->mimeTypeName());
             if (list.size() == 1 && fileType == DAbstractFileInfo::FileType::Images) {
-                QIcon thumb(DThumbnailProvider::instance()->thumbnailFilePath(fileInfo->toQFileInfo(), DThumbnailProvider::Large));
+                QIcon thumb(DThumbnailProvider::instance()->thumbnailFilePath(info->toQFileInfo(), DThumbnailProvider::Large));
                 if (thumb.isNull()) {
                     //qWarning() << "thumbnail file faild " << fileInfo->absoluteFilePath();
                 } else {
@@ -398,8 +398,8 @@ void DFMGlobal::initTagManagerConnect()
             const QStringList &files = TagManager::instance()->getFilesThroughTag(tag_name);
 
             for (const QString &file : files) {
-                DUrl url = DUrl::fromLocalFile(file);
-                DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+                DUrl durl = DUrl::fromLocalFile(file);
+                DAbstractFileWatcher::ghostSignal(durl.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, durl);
             }
 
             // for tag watcher
@@ -414,8 +414,8 @@ void DFMGlobal::initTagManagerConnect()
             if (i.key().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
                 return;
 
-            DUrl url = DUrl::fromLocalFile(i.key());
-            DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+            DUrl durl = DUrl::fromLocalFile(i.key());
+            DAbstractFileWatcher::ghostSignal(durl.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, durl);
 
             // for tag watcher
             for (const QString &tag : i.value()) {
@@ -428,8 +428,8 @@ void DFMGlobal::initTagManagerConnect()
     });
     connect(TagManager::instance(), &TagManager::untagFiles, [](const QMap<QString, QList<QString>> &tag_be_removed_files) {
         for (auto i = tag_be_removed_files.constBegin(); i != tag_be_removed_files.constEnd(); ++i) {
-            DUrl url = DUrl::fromLocalFile(i.key());
-            DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+            DUrl durl = DUrl::fromLocalFile(i.key());
+            DAbstractFileWatcher::ghostSignal(durl.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, durl);
 
             // for tag watcher
             for (const QString &tag : i.value()) {
@@ -466,14 +466,14 @@ void DFMGlobal::initTagManagerConnect()
 void DFMGlobal::initThumbnailConnection()
 {
     connect(DThumbnailProvider::instance(), &DThumbnailProvider::createThumbnailFinished, [ = ](const QString & filePath) {
-        const DUrl &fileUrl = DUrl::fromLocalFile(filePath);
+        const DUrl &durl = DUrl::fromLocalFile(filePath);
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, durl);
 
-        if (!fileInfo)
+        if (!info)
             return;
 
-        DAbstractFileWatcher::ghostSignal(fileInfo->parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, fileUrl);
+        DAbstractFileWatcher::ghostSignal(info->parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, durl);
     });
 }
 
@@ -1072,10 +1072,9 @@ static int wayland = 0;
 static bool isWland = false;
 bool DFMGlobal::isWayLand()
 {
-    if(wayland > 0){
+    if (wayland > 0) {
         return isWland;
-    }
-    else {
+    } else {
         auto e = QProcessEnvironment::systemEnvironment();
         QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
         QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
