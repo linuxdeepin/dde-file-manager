@@ -1752,16 +1752,6 @@ void DFileView::dropEvent(QDropEvent *event)
         setState(NoState);
         viewport()->update();
     }
-    //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
-    QWidget *parentptr = parentWidget();
-    QWidget *curwindow = nullptr;
-    while (parentptr) {
-        curwindow = parentptr;
-        parentptr = parentptr->parentWidget();
-    }
-    if (curwindow) {
-        qApp->setActiveWindow(curwindow);
-    }
 
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         QModelIndex index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
