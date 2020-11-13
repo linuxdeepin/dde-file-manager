@@ -348,11 +348,11 @@ bool DFMRootFileWatcherPrivate::start()
         if (path.isNull() || path.isEmpty()) {
             QStringList qq = mnt->getRootFile()->uri().replace("/", "").split(":");
             if (qq.size() >= 3) {
-                path = QString("/run/user/")+ QString::number(getuid()) +
-                                      QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
+                path = QString("/run/user/") + QString::number(getuid()) +
+                       QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
             } else if (qq.size() == 2) {
-                path = QString("/run/user/")+ QString::number(getuid()) +
-                                                            QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
+                path = QString("/run/user/") + QString::number(getuid()) +
+                       QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
             }
         }
         qDebug() << path;
@@ -366,10 +366,10 @@ bool DFMRootFileWatcherPrivate::start()
             if (smbUri.endsWith("/")) {
                 smbUri = smbUri.left(smbUri.length() - 1);
             }
-            DUrl uri(smbUri);
-            NetworkManager::NetworkNodes.remove(uri);
-            uri.setPath("");
-            NetworkManager::NetworkNodes.remove(uri);
+            DUrl smbUrl(smbUri);
+            NetworkManager::NetworkNodes.remove(smbUrl);
+            smbUrl.setPath("");
+            NetworkManager::NetworkNodes.remove(smbUrl);
 
             mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
         }

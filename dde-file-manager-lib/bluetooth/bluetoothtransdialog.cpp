@@ -72,7 +72,7 @@ BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTra
         sendFilesToDevice(targetDevId);
 
     // 调试布局
-   // setStyleSheet("border: 1px solid blue;");
+    // setStyleSheet("border: 1px solid blue;");
 }
 
 void BluetoothTransDialog::sendFilesToDevice(const QString &devId)
@@ -102,7 +102,7 @@ void BluetoothTransDialog::changeLabelTheme(QLabel *obj, bool isTitle)
 
     double alpha = isTitle ? 0.9 : 0.7;
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
-            obj, [obj, alpha](DGuiApplicationHelper::ColorType themeType){
+    obj, [obj, alpha](DGuiApplicationHelper::ColorType themeType) {
         QPalette pal = obj->palette();
         pal.setColor(QPalette::WindowText, themeType == DGuiApplicationHelper::DarkType
                      ? QColor::fromRgbF(1, 1, 1, alpha)
@@ -185,7 +185,7 @@ void BluetoothTransDialog::initConn()
     connect(m_stack, &QStackedWidget::currentChanged, this, &BluetoothTransDialog::onPageChagned);
     connect(this, &BluetoothTransDialog::buttonClicked, this, &BluetoothTransDialog::onBtnClicked);
 
-    connect(m_devicesList, &DListView::clicked, this, [this](const QModelIndex &curr) {
+    connect(m_devicesList, &DListView::clicked, this, [this](const QModelIndex & curr) {
         for (int i = 0; i < m_devModel->rowCount(); i++) {
             DStandardItem *item = dynamic_cast<DStandardItem *>(m_devModel->item(i));
             if (!item)
@@ -199,24 +199,24 @@ void BluetoothTransDialog::initConn()
         }
     });
 
-    connect(bluetoothManager->model(), &BluetoothModel::adapterAdded, this, [=](const BluetoothAdapter *adapter) {
+    connect(bluetoothManager->model(), &BluetoothModel::adapterAdded, this, [ = ](const BluetoothAdapter * adapter) {
         connectAdapter(adapter);
     });
 
-    connect(bluetoothManager->model(), &BluetoothModel::adapterRemoved, this, [this](const BluetoothAdapter *adapter) {
+    connect(bluetoothManager->model(), &BluetoothModel::adapterRemoved, this, [this](const BluetoothAdapter * adapter) {
         if (m_connectedAdapter.contains(adapter->id()))
             m_connectedAdapter.removeAll(adapter->id());
 
         adapter->disconnect();
         QMap<QString, const BluetoothDevice *> devices = adapter->devices();
-        QMapIterator<QString, const BluetoothDevice *> iter(devices);
-        while (iter.hasNext()) {
-            iter.next();
-            iter.value()->disconnect();
+        QMapIterator<QString, const BluetoothDevice *> it(devices);
+        while (it.hasNext()) {
+            it.next();
+            it.value()->disconnect();
         }
     });
 
-    connect(bluetoothManager, &BluetoothManager::transferProgressUpdated, this, [this](const QString &sessionPath, qulonglong total, qulonglong transferred, int currFileIndex) {
+    connect(bluetoothManager, &BluetoothManager::transferProgressUpdated, this, [this](const QString & sessionPath, qulonglong total, qulonglong transferred, int currFileIndex) {
         if (sessionPath != m_currSessionPath)
             return;
 
@@ -250,14 +250,14 @@ void BluetoothTransDialog::initConn()
         }
     });
 
-    connect(bluetoothManager, &BluetoothManager::transferCancledByRemote, this, [this](const QString &sessionPath) {
+    connect(bluetoothManager, &BluetoothManager::transferCancledByRemote, this, [this](const QString & sessionPath) {
         if (sessionPath != m_currSessionPath)
             return;
         m_stack->setCurrentIndex(FailedPage);
         bluetoothManager->cancelTransfer(sessionPath);
     });
 
-    connect(bluetoothManager, &BluetoothManager::transferFailed, this, [this](const QString &sessionPath, const QString &filePath, const QString &errMsg) {
+    connect(bluetoothManager, &BluetoothManager::transferFailed, this, [this](const QString & sessionPath, const QString & filePath, const QString & errMsg) {
         if (sessionPath != m_currSessionPath)
             return;
         m_stack->setCurrentIndex(FailedPage);
@@ -266,7 +266,7 @@ void BluetoothTransDialog::initConn()
                  << "\nerrorMsg: " << errMsg;
     });
 
-    connect(bluetoothManager, &BluetoothManager::fileTransferFinished, this, [this](const QString &sessionPath, const QString &filePath) {
+    connect(bluetoothManager, &BluetoothManager::fileTransferFinished, this, [this](const QString & sessionPath, const QString & filePath) {
         if (sessionPath != m_currSessionPath)
             return;
         m_finishedUrls << filePath;
@@ -284,7 +284,7 @@ QWidget *BluetoothTransDialog::initDeviceSelectorPage()
     pLayout->setSpacing(0);
     pLayout->setMargin(0);
     w->setLayout(pLayout);
-   // w->setStyleSheet("border: 1px solid red;");
+    // w->setStyleSheet("border: 1px solid red;");
 
     DLabel *statusTxt = new DLabel(TXT_SELECT_DEVIC, this);
     statusTxt->setAlignment(Qt::AlignCenter);
@@ -491,10 +491,10 @@ DStandardItem *BluetoothTransDialog::getStyledItem(const BluetoothDevice *dev)
     actLst.append(act);
 
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
-            act, [act, dev](DGuiApplicationHelper::ColorType themeType){
+    act, [act, dev](DGuiApplicationHelper::ColorType themeType) {
         QString iconPath = QString("%1%2%3").arg(themeType == DGuiApplicationHelper::DarkType ? darkIcon : lightIcon)
-                .arg(dev->icon())
-                .arg(themeType == DGuiApplicationHelper::DarkType ? "_dark.svg" : "_light.svg");
+                           .arg(dev->icon())
+                           .arg(themeType == DGuiApplicationHelper::DarkType ? "_dark.svg" : "_light.svg");
         act->setIcon(QIcon(iconPath));
     });
 
@@ -638,8 +638,8 @@ void BluetoothTransDialog::closeEvent(QCloseEvent *event)
     DDialog::closeEvent(event);
 
     if (m_stack->currentIndex() == WaitForRecvPage
-        || m_stack->currentIndex() == TransferPage
-        || m_stack->currentIndex() == FailedPage) {
+            || m_stack->currentIndex() == TransferPage
+            || m_stack->currentIndex() == FailedPage) {
         bluetoothManager->cancelTransfer(m_currSessionPath);
     }
 }
@@ -720,19 +720,19 @@ void BluetoothTransDialog::connectAdapter(const BluetoothAdapter *adapter)
         return;
     m_connectedAdapter.append(adapter->id());
 
-    connect(adapter, &BluetoothAdapter::deviceAdded, this, [this](const BluetoothDevice *dev) {
+    connect(adapter, &BluetoothAdapter::deviceAdded, this, [this](const BluetoothDevice * dev) {
         addDevice(dev);
         connectDevice(dev);
     });
 
-    connect(adapter, &BluetoothAdapter::deviceRemoved, this, [this](const QString &deviceId) {
+    connect(adapter, &BluetoothAdapter::deviceRemoved, this, [this](const QString & deviceId) {
         removeDevice(deviceId);
     });
 }
 
 void BluetoothTransDialog::connectDevice(const BluetoothDevice *dev)
 {
-    connect(dev, &BluetoothDevice::stateChanged, this, [this](const BluetoothDevice::State &state) {
+    connect(dev, &BluetoothDevice::stateChanged, this, [this](const BluetoothDevice::State & state) {
         BluetoothDevice *device = dynamic_cast<BluetoothDevice *>(sender());
         if (!device)
             return;

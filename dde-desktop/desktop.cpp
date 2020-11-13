@@ -38,23 +38,24 @@ using ZoneSettings = ZoneMainWindow;
 class DesktopPrivate
 {
 public:
-    ~DesktopPrivate(){
-        if (m_background){
+    ~DesktopPrivate()
+    {
+        if (m_background) {
             delete m_background;
             m_background = nullptr;
         }
 
-        if (m_canvas){
+        if (m_canvas) {
             delete m_canvas;
             m_canvas = nullptr;
         }
 
-        if (wallpaperSettings){
+        if (wallpaperSettings) {
             delete wallpaperSettings;
             wallpaperSettings = nullptr;
         }
 #ifndef DISABLE_ZONE
-        if (zoneSettings){
+        if (zoneSettings) {
             delete zoneSettings;
             zoneSettings = nullptr;
         }
@@ -101,8 +102,8 @@ void Desktop::loadView()
 
 void Desktop::showWallpaperSettings(QString name, int mode)
 {
-    if(name.isNull() || name.isEmpty()){
-        if (ScreenHelper::screenManager()->primaryScreen() == nullptr){
+    if (name.isNull() || name.isEmpty()) {
+        if (ScreenHelper::screenManager()->primaryScreen() == nullptr) {
             qCritical() << "get primary screen failed! stop show wallpaper";
             return;
         }
@@ -127,7 +128,8 @@ void Desktop::showWallpaperSettings(QString name, int mode)
 
     connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
         WallpaperSettings *setting = dynamic_cast<WallpaperSettings *>(sender());
-        if (setting){
+        if (setting)
+        {
             QPair<QString, QString> screenImage = setting->desktopBackground();
             d->m_background->setBackgroundImage(screenImage.first, screenImage.second);
         }
@@ -138,14 +140,13 @@ void Desktop::showWallpaperSettings(QString name, int mode)
 
     //监控窗口状态
     QWindow *window = d->wallpaperSettings->windowHandle();
-    connect(window, &QWindow::activeChanged, d->wallpaperSettings, [=]() {
-        if(d->wallpaperSettings == nullptr || d->wallpaperSettings->isActiveWindow())
+    connect(window, &QWindow::activeChanged, d->wallpaperSettings, [ = ]() {
+        if (d->wallpaperSettings == nullptr || d->wallpaperSettings->isActiveWindow())
             return;
         //激活窗口
         d->wallpaperSettings->activateWindow();
         //10毫秒后再次检测
-        QTimer::singleShot(10,d->wallpaperSettings,[=]()
-        {
+        QTimer::singleShot(10, d->wallpaperSettings, [ = ]() {
             if (d->wallpaperSettings && !d->wallpaperSettings->isActiveWindow())
                 d->wallpaperSettings->windowHandle()->activeChanged();
         });
@@ -177,7 +178,7 @@ void Desktop::showZoneSettings()
 
 void Desktop::EnableUIDebug(bool enable)
 {
-    for (CanvasViewPointer view: d->m_canvas->canvas().values()){
+    for (CanvasViewPointer view : d->m_canvas->canvas().values()) {
         view->EnableUIDebug(enable);
         view->update();
     }
@@ -187,7 +188,7 @@ void Desktop::SetVisible(int screenNum, bool v)
 {
     --screenNum;
     QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
-    if (screens.size() > screenNum && screenNum >= 0){
+    if (screens.size() > screenNum && screenNum >= 0) {
         ScreenPointer sp = screens[screenNum];
         BackgroundWidgetPointer bw = d->m_background->allbackgroundWidgets().value(sp);
         if (bw)
@@ -203,7 +204,7 @@ void Desktop::FixGeometry(int screenNum)
 {
     --screenNum;
     QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
-    if (screens.size() > screenNum && screenNum >= 0){
+    if (screens.size() > screenNum && screenNum >= 0) {
         ScreenPointer sp = screens[screenNum];
         emit ScreenMrg->sigScreenGeometryChanged();
     }
@@ -212,10 +213,9 @@ void Desktop::FixGeometry(int screenNum)
 void Desktop::Reset()
 {
     ScreenMrg->reset();
-    if (d->m_background->isEnabled()){
+    if (d->m_background->isEnabled()) {
         d->m_background->onBackgroundBuild();
-    }
-    else {
+    } else {
         d->m_background->onSkipBackgroundBuild();
     }
 }
@@ -237,13 +237,13 @@ void Desktop::PrintInfo()
     qInfo() << "*****************Screens  Mode " << ScreenMrg->displayMode()
             << "********************";
     int num = 1;
-    for (ScreenPointer screen : ScreenMrg->logicScreens()){
-        if (screen){
+    for (ScreenPointer screen : ScreenMrg->logicScreens()) {
+        if (screen) {
             qInfo() << screen.get() << "screen name " << screen->name()
                     << "num" << num << "geometry" << screen->geometry()
                     << "handle geometry"   << screen->handleGeometry();
             ++num;
-        }else {
+        } else {
             qCritical() << "error! empty screen pointer!";
         }
     }
@@ -258,27 +258,26 @@ void Desktop::PrintInfo()
                 << d->m_background->backgroundImages().value(iter.key()->name())
                 << "pixmap" << iter.value()->pixmap();
 
-        if (iter.value()->windowHandle()){
+        if (iter.value()->windowHandle()) {
             qInfo() << "window geometry" << iter.value()->windowHandle()->geometry()
-                << iter.value()->windowHandle()->screen()->geometry();
+                    << iter.value()->windowHandle()->screen()->geometry();
         }
     }
 
     qInfo() << "*****************Canvas Grid" << "**********************";
-    if (d->m_canvas){
+    if (d->m_canvas) {
         auto canvas = d->m_canvas->canvas();
         GridCore *core = GridManager::instance()->core();
-        for (auto iter = canvas.begin(); iter != canvas.end(); ++iter){
-            int num = iter.value()->screenNum();
+        for (auto iter = canvas.begin(); iter != canvas.end(); ++iter) {
+            int screenNum = iter.value()->screenNum();
             qInfo() << "canvas" << iter.value().get() << "on screen" << iter.value()->canvansScreenName()
-                    << "num" << num << "geometry" << iter.value()->geometry()
+                    << "num" << screenNum << "geometry" << iter.value()->geometry()
                     << "background" << iter.value()->parentWidget() << "screen" << iter.key().get();
-            if (core->screensCoordInfo.contains(num)){
-                auto coord = core->screensCoordInfo.value(num);
+            if (core->screensCoordInfo.contains(screenNum)) {
+                auto coord = core->screensCoordInfo.value(screenNum);
                 qInfo() << "coord " << coord.first << "*" << coord.second
-                        << "display items count" << core->itemGrids.value(num).size();
-            }
-            else {
+                        << "display items count" << core->itemGrids.value(screenNum).size();
+            } else {
                 qCritical() << "Grid" << iter.value()->screenNum() << "not find coordinfo";
             }
 
@@ -286,8 +285,7 @@ void Desktop::PrintInfo()
 
         qInfo() << "overlap items count" << core->overlapItems.size();
         delete core;
-    }
-    else {
+    } else {
         qWarning() << "not load canvasgridview";
     }
     qInfo() << "************Desktop Infomation End **************";
@@ -296,26 +294,26 @@ void Desktop::PrintInfo()
 void Desktop::Refresh()
 {
     if (d->m_canvas)
-        for (CanvasViewPointer view: d->m_canvas->canvas().values()){
+        for (CanvasViewPointer view : d->m_canvas->canvas().values()) {
             view->Refresh();
         }
 }
 
 void Desktop::ShowWallpaperChooser(const QString &screen)
 {
-    showWallpaperSettings(screen,Frame::WallpaperMode);
+    showWallpaperSettings(screen, Frame::WallpaperMode);
 }
 
 void Desktop::ShowScreensaverChooser(const QString &screen)
 {
-    showWallpaperSettings(screen,Frame::ScreenSaverMode);
+    showWallpaperSettings(screen, Frame::ScreenSaverMode);
 }
 
 QList<int> Desktop::GetIconSize()
 {
-    QSize iconSize{0,0};
+    QSize iconSize{0, 0};
     if (d->m_canvas && !d->m_canvas->canvas().isEmpty())
         iconSize = d->m_canvas->canvas().first()->iconSize();
-    QList<int> size{iconSize.width(),iconSize.height()};
+    QList<int> size{iconSize.width(), iconSize.height()};
     return  size;
 }

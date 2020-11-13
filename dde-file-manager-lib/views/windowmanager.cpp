@@ -70,7 +70,7 @@ enum NetWmState {
 
 Q_DECLARE_FLAGS(NetWmStates, NetWmState)
 
-QHash<const QWidget*, quint64> WindowManager::m_windows;
+QHash<const QWidget *, quint64> WindowManager::m_windows;
 int WindowManager::m_count = 0;
 
 WindowManager::WindowManager(QObject *parent) : QObject(parent)
@@ -113,11 +113,9 @@ void WindowManager::loadWindowState(DFileManagerWindow *window)
     int height = state.value("height").toInt();
     NetWmStates windowState = static_cast<NetWmStates>(state.value("state").toInt());
     // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
-    if ((m_windows.size() == 0) && ((windowState & NetWmStateMaximizedHorz) != 0 && (windowState & NetWmStateMaximizedVert) != 0))
-    {
-            window->showMaximized();
-    }
-    else {
+    if ((m_windows.size() == 0) && ((windowState & NetWmStateMaximizedHorz) != 0 && (windowState & NetWmStateMaximizedVert) != 0)) {
+        window->showMaximized();
+    } else {
         window->resize(width, height);
     }
 }
@@ -132,8 +130,7 @@ void WindowManager::saveWindowState(DFileManagerWindow *window)
     if ((states & NetWmStateMaximizedHorz) == 0 || (states & NetWmStateMaximizedVert) == 0) {
         state["width"] = window->size().width();
         state["height"] = window->size().height();
-    }
-    else {
+    } else {
         const QVariantMap &state1 = DFMApplication::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
         state["width"] = state1.value("width").toInt();
         state["height"] = state1.value("height").toInt();
@@ -144,17 +141,17 @@ void WindowManager::saveWindowState(DFileManagerWindow *window)
 
 DUrl WindowManager::getUrlByWindowId(quint64 windowId)
 {
-    if (getWindowById(windowId)){
-         DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(getWindowById(windowId));
-         return window->currentUrl();
+    if (getWindowById(windowId)) {
+        DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(getWindowById(windowId));
+        return window->currentUrl();
     }
     return DUrl::fromLocalFile(QDir::homePath());
 }
 
 bool WindowManager::tabAddableByWinId(const quint64 &winId)
 {
-    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(getWindowById(winId));
-    if(window)
+    DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(getWindowById(winId));
+    if (window)
         return window->tabAddable();
     return false;
 
@@ -169,14 +166,14 @@ bool WindowManager::enableAutoQuit() const
 #endif
 }
 
-void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
+void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
 {
-    if (!isNewWindow){
-        for(int i=0; i< m_windows.count(); i++){
-            QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
+    if (!isNewWindow) {
+        for (int i = 0; i < m_windows.count(); i++) {
+            QWidget *window = const_cast<QWidget *>(m_windows.keys().at(i));
             DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
-            if (currentUrl == url){
-                DFileManagerWindow * wd = static_cast<DFileManagerWindow *>(window);
+            if (currentUrl == url) {
+                DFileManagerWindow *wd = static_cast<DFileManagerWindow *>(window);
                 qDebug() << currentUrl << wd;
                 if (wd->isMinimized()) {
                     wd->setWindowState(wd->windowState() & ~Qt::WindowMinimized);
@@ -200,9 +197,9 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 
     m_windows.insert(window, window->winId());
     window->requestToSelectUrls(); //###: here, when selected files and then drag a tab to create a new window.
-                                   //     will select these files again in new window.
+    //     will select these files again in new window.
 
-    if (m_windows.count() == 1){
+    if (m_windows.count() == 1) {
         QPoint pos = QCursor::pos();
         QRect currentScreenGeometry;
 
@@ -221,7 +218,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 
     // 修复bug-45226 文管弹出一个模态窗后，再次弹出文管框，
     // 该模态框将失去焦点，无法正常显示
-    if(!VaultHelper::isModel)
+    if (!VaultHelper::isModel)
         qApp->setActiveWindow(window);
 }
 
@@ -254,11 +251,11 @@ QWidget *WindowManager::getWindowById(quint64 winId)
     const QWidget *widget = m_windows.key(winId);
 
     if (widget)
-        return const_cast<QWidget*>(widget);
+        return const_cast<QWidget *>(widget);
 
-    for (QWidget *widget : qApp->topLevelWidgets()) {
-        if (widget->internalWinId() == winId)
-            return widget;
+    for (QWidget *top_level_widget : qApp->topLevelWidgets()) {
+        if (top_level_widget->internalWinId() == winId)
+            return top_level_widget;
     }
 
     return Q_NULLPTR;
@@ -266,8 +263,8 @@ QWidget *WindowManager::getWindowById(quint64 winId)
 
 void WindowManager::reastartAppProcess()
 {
-    if (m_windows.count() == 0){
-        if (dialogManager->isTaskDialogEmpty()){
+    if (m_windows.count() == 0) {
+        if (dialogManager->isTaskDialogEmpty()) {
             // 当没有顶级窗口时才允许应用自动退出
             if (qApp->topLevelWindows().isEmpty()) {
                 qApp->quit();
@@ -296,19 +293,19 @@ void WindowManager::setEnableAutoQuit(bool enableAutoQuit)
 
 void WindowManager::onWindowClosed()
 {
-    if (m_windows.count() == 1){
-        DFileManagerWindow* window = static_cast<DFileManagerWindow*>(sender());
+    if (m_windows.count() == 1) {
+        DFileManagerWindow *window = static_cast<DFileManagerWindow *>(sender());
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
     }
-    m_windows.remove(static_cast<const QWidget*>(sender()));
+    m_windows.remove(static_cast<const QWidget *>(sender()));
 }
 
 void WindowManager::onLastActivedWindowClosed(quint64 winId)
 {
     QList<quint64> winIds = m_windows.values();
     foreach (quint64 id, winIds) {
-        if (id != winId){
+        if (id != winId) {
             getWindowById(id)->close();
         }
     }
