@@ -148,7 +148,7 @@ bool NetworkManager::fetch_networks(gchar *url, DFMEvent *e)
     }
     m_networks_fetching_cancellable = g_cancellable_new();
 
-    int ret = EventLoopCode::FetchFailed;
+    int ret = 0;
 
     do {
         g_file_enumerate_children_async(network_file,

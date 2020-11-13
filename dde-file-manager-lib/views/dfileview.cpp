@@ -2485,8 +2485,6 @@ bool DFileView::setRootUrl(const DUrl &url)
             fw->setFuture(QtConcurrent::run([ = ] {
                 if (pCdStatusInfo->bProcessLocked)
                     return false;
-                pCdStatusInfo->bProcessLocked = true;
-
                 QMutexLocker locker(getOpticalDriveMutex());
                 blkdev->unmount({});
 

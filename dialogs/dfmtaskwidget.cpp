@@ -593,7 +593,7 @@ void DFMTaskWidget::paintEvent(QPaintEvent *event)
         bgRect.setSize(size());
         QPainterPath path;
         path.addRoundedRect(bgRect, radius, radius);
-        QColor bgColor = palette().background().color();
+        QColor bgColor;
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
             bgColor = QColor(0, 0, 0, 13); //rgba(0,0,0,13); border-radius: 8px
         } else {

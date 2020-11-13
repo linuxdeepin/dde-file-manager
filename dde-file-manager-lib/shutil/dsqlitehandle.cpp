@@ -1989,11 +1989,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
                 std::size_t tagAmount{ itrForUpdatingOrDeleting->second.size() };
 
                 if (tagAmount >= 3) {
-                    sqlForUpdatingOrDeleting = sqlItr->second.arg(itrForUpdatingOrDeleting->second[tagAmount - 3]);
-                    sqlForUpdatingOrDeleting = sqlItr->second.arg(itrForUpdatingOrDeleting->second[tagAmount - 2]);
-                    sqlForUpdatingOrDeleting = sqlItr->second.arg(itrForUpdatingOrDeleting->second[tagAmount - 1]);
                     sqlForUpdatingOrDeleting = sqlItr->second.arg(itrForUpdatingOrDeleting->first);
-
                 } else if (tagAmount == 0) {
                     QString sqlForDeletingRowInFileProperty{ "DELETE FROM file_property WHERE file_property.file_name = \'%1\'" };
                     sqlForUpdatingOrDeleting = sqlForDeletingRowInFileProperty.arg(itrForUpdatingOrDeleting->first);

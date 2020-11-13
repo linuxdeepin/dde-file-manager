@@ -390,9 +390,10 @@ void DFileWatcher::onFileClosed(const QString &path, const QString &name)
 
 void DFileWatcher::onFileSystemUMount(const QString &path, const QString &name)
 {
+    Q_UNUSED(name)
+
     d_func()->filePathToWatcherCount.remove(path);
-    bool ok = true;
-    ok = ok && watcher_file_private->removePath(path);
+    watcher_file_private->removePath(path);
     d_func()->watchFileList.removeOne(path);
 }
 

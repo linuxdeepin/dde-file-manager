@@ -629,7 +629,7 @@ bool FileUtils::openFile(const QString &filePath)
     //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
     //QString mimetype = getFileMimetype(filePath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
-    QString mimetype = QString();
+    QString mimetype;
     if (info && info->size() == 0 && info->exists()) {
         mimetype = info->mimeType().name();
     } else {
@@ -699,7 +699,7 @@ bool FileUtils::openFiles(const QStringList &filePaths)
     //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
     //QString mimetype = getFileMimetype(filePath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
-    QString mimetype = QString();
+    QString mimetype;
     if (info && info->size() == 0 && info->exists()) {
         mimetype = info->mimeType().name();
     } else {
@@ -782,7 +782,7 @@ bool FileUtils::openEnterFiles(const QStringList &filePaths)
         //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
         //QString mimetype = getFileMimetype(filePath);
         DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
-        QString mimetype = QString();
+        QString mimetype;
         if (info && info->size() == 0 && info->exists()) {
             mimetype = info->mimeType().name();
         } else {

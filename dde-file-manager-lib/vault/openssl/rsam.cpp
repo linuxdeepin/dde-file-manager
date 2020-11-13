@@ -15,9 +15,8 @@ bool rsam::createRsaKey(QString &strPubKey, QString &strPriKey)
     RSA *pRsa = RSA_new();
     int ret = 0;
     BIGNUM *bne = BN_new();
-    ret = BN_set_word(bne, RSA_F4);
     ret = RSA_generate_key_ex(pRsa, KEY_LENGTH, bne, nullptr);
-    if(ret != 1){
+    if (ret != 1) {
         return false;
     }
 
@@ -57,13 +56,13 @@ QString rsam::rsa_pri_encrypt_base64(const QString &strClearData, const QString 
     QByteArray priKeyArry = strPriKey.toUtf8();
     uchar *pPriKey = reinterpret_cast<uchar *>(priKeyArry.data());
     BIO *pKeyBio = BIO_new_mem_buf(pPriKey, strPriKey.length());
-    if(pKeyBio == nullptr){
+    if (pKeyBio == nullptr) {
         return "";
     }
 
-    RSA* pRsa = RSA_new();
+    RSA *pRsa = RSA_new();
     pRsa = PEM_read_bio_RSAPrivateKey(pKeyBio, &pRsa, nullptr, nullptr);
-    if(pRsa == nullptr){
+    if (pRsa == nullptr) {
         BIO_free_all(pKeyBio);
         return "";
     }
@@ -81,7 +80,7 @@ QString rsam::rsa_pri_encrypt_base64(const QString &strClearData, const QString 
                                     RSA_PKCS1_PADDING);
 
     QString strEncryptData = "";
-    if(nSize >= 0){
+    if (nSize >= 0) {
         QByteArray arry(pEncryptBuf, nSize);
         strEncryptData = arry.toBase64();
     }
@@ -101,16 +100,16 @@ QString rsam::rsa_pri_encrypt_base64(const QString &strClearData, const QString 
 QString rsam::rsa_pub_decrypt_base64(const QString &strDecryptData, const QString &strPubKey)
 {
     QByteArray pubKeyArry = strPubKey.toUtf8();
-    uchar *pPubKey = reinterpret_cast<uchar*>(pubKeyArry.data());
+    uchar *pPubKey = reinterpret_cast<uchar *>(pubKeyArry.data());
     BIO *pKeyBio = BIO_new_mem_buf(pPubKey, strPubKey.length());
-    if(pKeyBio == nullptr){
+    if (pKeyBio == nullptr) {
         return "";
     }
 
     RSA *pRsa = RSA_new();
-    if(strPubKey.contains(BEGIN_RSA_PUBLIC_KEY)){
+    if (strPubKey.contains(BEGIN_RSA_PUBLIC_KEY)) {
         pRsa = PEM_read_bio_RSAPublicKey(pKeyBio, &pRsa, nullptr, nullptr);
-    }else{
+    } else {
         pRsa = PEM_read_bio_RSA_PUBKEY(pKeyBio, &pRsa, nullptr, nullptr);
     }
 
@@ -122,14 +121,14 @@ QString rsam::rsa_pub_decrypt_base64(const QString &strDecryptData, const QStrin
     QByteArray decryptDataArry = strDecryptData.toUtf8();
     decryptDataArry = QByteArray::fromBase64(decryptDataArry);
     int nDecryptDataLen = decryptDataArry.length();
-    uchar *pDecryptData = reinterpret_cast<uchar*>(decryptDataArry.data());
+    uchar *pDecryptData = reinterpret_cast<uchar *>(decryptDataArry.data());
     int nSize = RSA_public_decrypt(nDecryptDataLen,
                                    pDecryptData,
-                                   reinterpret_cast<uchar*>(pClearBuf),
+                                   reinterpret_cast<uchar *>(pClearBuf),
                                    pRsa,
                                    RSA_PKCS1_PADDING);
     QString strClearData = "";
-    if(nSize >= 0){
+    if (nSize >= 0) {
         strClearData = QByteArray(pClearBuf, nSize);
     }
 
@@ -147,17 +146,17 @@ QString rsam::rsa_pub_encrypt_base64(const QString &strClearData, const QString 
     QByteArray pubKeyArry = strPubKey.toUtf8();
     uchar *pPubKey = reinterpret_cast<uchar *>(pubKeyArry.data());
     BIO *pKeyBio = BIO_new_mem_buf(pPubKey, pubKeyArry.length());
-    if(pKeyBio == nullptr){
+    if (pKeyBio == nullptr) {
         return "";
     }
 
     RSA *pRsa = RSA_new();
-    if(strPubKey.contains(BEGIN_RSA_PUBLIC_KEY)){
+    if (strPubKey.contains(BEGIN_RSA_PUBLIC_KEY)) {
         pRsa = PEM_read_bio_RSAPublicKey(pKeyBio, &pRsa, nullptr, nullptr);
-    }else{
+    } else {
         pRsa = PEM_read_bio_RSA_PUBKEY(pKeyBio, &pRsa, nullptr, nullptr);
     }
-    if(pRsa == nullptr){
+    if (pRsa == nullptr) {
         BIO_free_all(pKeyBio);
         return "";
     }
@@ -175,7 +174,7 @@ QString rsam::rsa_pub_encrypt_base64(const QString &strClearData, const QString 
                                    pRsa,
                                    RSA_PKCS1_PADDING);
     QString strEncryptData = "";
-    if(nSize >= 0){
+    if (nSize >= 0) {
         QByteArray arry(pEncryptBuf, nSize);
         strEncryptData = arry.toBase64();
     }
@@ -196,13 +195,13 @@ QString rsam::rsa_pri_decrypt_base64(const QString &strDecryptData, const QStrin
     QByteArray priKeyArry = strPriKey.toUtf8();
     uchar *pPriKey = reinterpret_cast<uchar *>(priKeyArry.data());
     BIO *pKeyBio = BIO_new_mem_buf(pPriKey, priKeyArry.length());
-    if(pKeyBio == nullptr){
+    if (pKeyBio == nullptr) {
         return "";
     }
 
     RSA *pRsa = RSA_new();
     pRsa = PEM_read_bio_RSAPrivateKey(pKeyBio, &pRsa, nullptr, nullptr);
-    if(pRsa == nullptr){
+    if (pRsa == nullptr) {
         BIO_free_all(pKeyBio);
         return "";
     }
@@ -220,7 +219,7 @@ QString rsam::rsa_pri_decrypt_base64(const QString &strDecryptData, const QStrin
                                     pRsa,
                                     RSA_PKCS1_PADDING);
     QString strClearData = "";
-    if(nSize >= 0){
+    if (nSize >= 0) {
         strClearData = QByteArray(pClearBuf, nSize);
     }
 
@@ -256,7 +255,7 @@ void rsam::test()
     QString strClear = "hello";
 
     qDebug() << "password:\n" << strClear;
-    qDebug() << "public key:\n"<< strPubKey;
+    qDebug() << "public key:\n" << strPubKey;
     qDebug() << "private key:\n" << strPriKey;
     qDebug() << endl;
 
