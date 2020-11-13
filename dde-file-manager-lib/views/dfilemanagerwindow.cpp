@@ -611,6 +611,13 @@ void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainSt
     d->viewStackLayout->removeWidget(view->widget());
     view->deleteLater();
 
+    // delete 之后某些逻辑任然被误触发, 设置标志让 view 自己能判断这种情况
+    // 若 QObject 更直接的方式判断, 可以直接修改
+    DFileView *dfileview = dynamic_cast<DFileView *>(view);
+    if (dfileview) {
+        dfileview->setDestroyFlag(true);
+    }
+
     d->toolbar->removeNavStackAt(index);
     d->tabBar->removeTab(index, remainState);
 }
@@ -1435,58 +1442,24 @@ void DFileManagerWindow::onRequestCloseTabByUrl(const DUrl &rootUrl)
     if (rootUrl.toString() == TRASH_ROOT) {
         return;
     }
-    int originIndex = d->tabBar->currentIndex();
-    if (d->tabBar->count() > 1) {
-        for (int i = 0; i < d->tabBar->count(); i++) {
-            Tab *tab = d->tabBar->tabAt(i);
-            if (tab->fileView()) {
-                if (rootUrl == tab->fileView()->rootUrl()) {
-                    onRequestCloseTab(i, false);
-                    i--;
-                }
-            }
-            if (d->tabBar->count() <= 1) {
-                break;
-            }
-        }
-        int curIndex = d->tabBar->currentIndex();
-        if (curIndex != originIndex) {
-            if (originIndex < d->tabBar->count()) {
-                d->tabBar->setCurrentIndex(originIndex);
+    TabBar *tabBar = d->tabBar;
+    if (tabBar->count() <= 1) {
+        return;
+    }
+    int originIndex = tabBar->currentIndex();
+    for (int i = tabBar->count()-1; i >= 0 && tabBar->count() > 1; i--) {
+        Tab *tab = tabBar->tabAt(i);
+        if (tab->fileView()) {
+            DUrl tabUrl = tab->fileView()->rootUrl();
+            if (FileUtils::isAncestorUrl(rootUrl, tabUrl)) {
+                onRequestCloseTab(i, false);
             }
         }
     }
-}
-
-void DFileManagerWindow::closeUnAvailableTabs()
-{
-    D_D(DFileManagerWindow);
-    qDebug() << "close un available url.";
-
-    int originIndex = d->tabBar->currentIndex();
-    if (d->tabBar->count() > 1) {
-        for (int i = 0; i < d->tabBar->count(); i++) {
-            Tab *tab = d->tabBar->tabAt(i);
-            if (tab->fileView()) {
-                QString tabUrl = tab->fileView()->rootUrl().toLocalFile();
-                qDebug() << "check tab url: " << tabUrl;
-                if (!QFile::exists(tabUrl)) {
-                    qDebug() << "close!";
-                    onRequestCloseTab(i, false);
-                    i--;
-                } else {
-                    qDebug() << "keep!";
-                }
-            }
-            if (d->tabBar->count() <= 1) {
-                break;
-            }
-        }
-        int curIndex = d->tabBar->currentIndex();
-        if (curIndex != originIndex) {
-            if (originIndex < d->tabBar->count()) {
-                d->tabBar->setCurrentIndex(originIndex);
-            }
+    int curIndex = tabBar->currentIndex();
+    if (curIndex != originIndex) {
+        if (originIndex < tabBar->count()) {
+            tabBar->setCurrentIndex(originIndex);
         }
     }
 }

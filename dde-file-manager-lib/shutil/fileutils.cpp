@@ -116,6 +116,28 @@ bool FileUtils::removeRecurse(const QString &path, const QString &name)
 //---------------------------------------------------------------------------
 
 /**
+ * @brief Check ancestor
+ * @param
+ * @param
+ * @param
+ */
+bool FileUtils::isAncestorUrl(const DUrl &ancestor, const DUrl &url)
+{
+    if (!ancestor.isValid() || !url.isValid()) {
+        return false;
+    }
+    QString ancestorDir(ancestor.toLocalFile());
+    QString urlDir(url.toLocalFile());
+    if (!ancestorDir.endsWith("/")) {
+        ancestorDir.append('/');
+    }
+    if (!urlDir.endsWith("/")) {
+        urlDir.append('/');
+    }
+    return urlDir.startsWith(ancestorDir);
+}
+
+/**
  * @brief Collects all file names in given path (recursive)
  * @param path path
  * @param parent parent path
