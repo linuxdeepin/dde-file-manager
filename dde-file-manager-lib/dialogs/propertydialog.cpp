@@ -1029,7 +1029,7 @@ int PropertyDialog::contentHeight() const
 int PropertyDialog::getDialogHeight() const
 {
     int totalHeight = this->size().height() + contentHeight() ;
-    totalHeight = std::accumulate(m_expandGroup.begin(), m_expandGroup.end(), 0, [](int total, const DDrawer * expand) {
+    totalHeight += std::accumulate(m_expandGroup.begin(), m_expandGroup.end(), 0, [](int total, const DDrawer * expand) {
         if (expand->expand())
             return total += expand->window()->height();
         return total;
