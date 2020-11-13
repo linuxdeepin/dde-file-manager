@@ -1027,9 +1027,7 @@ bool GvfsMountManager::isDVD(const QVolume &volume)
 bool GvfsMountManager::isIgnoreUnusedMounts(const QMount &mount)
 {
     /*the following protocol has two mounts event, ignore unused one*/
-    if (mount.mounted_root_uri().startsWith("afc://") ||
-            mount.mounted_root_uri().startsWith("mtp://") ||
-            mount.mounted_root_uri().startsWith("gphoto2://")) {
+    if (mount.mounted_root_uri().startsWith("mtp://") || mount.mounted_root_uri().startsWith("gphoto2://")) {
         return true;
     }
     return false;
