@@ -157,7 +157,6 @@ public:
 
     bool canFetchMore(const QModelIndex &parent) const override;
     void fetchMore(const QModelIndex &parent) override;
-    void doFetchMore(const QModelIndex &parent);
 
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 

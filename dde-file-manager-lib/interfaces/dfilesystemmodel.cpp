@@ -1709,17 +1709,7 @@ int DFileSystemModel::roleToColumn(int role) const
     return -1;
 }
 
-// fetchMore 不能有丝毫阻塞,否则会造成界面卡顿假象,故将其具体执行移到doFecthMore
 void DFileSystemModel::fetchMore(const QModelIndex &parent)
-{
-    Q_D(DFileSystemModel);
-
-    QTimer::singleShot(0, [&] {
-        doFetchMore(parent);
-    });
-}
-
-void DFileSystemModel::doFetchMore(const QModelIndex &parent)
 {
     Q_D(DFileSystemModel);
 
@@ -1735,12 +1725,50 @@ void DFileSystemModel::doFetchMore(const QModelIndex &parent)
         return;
     }
 
+    //
     if (!releaseJobController()) {
         return;
     }
+//    if (d->jobController) {
+//        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+//        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+//        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
 
+//        if (d->jobController->isFinished()) {
+//            d->jobController->deleteLater();
+//        } else {
+//            QEventLoop eventLoop;
+//            QPointer<DFileSystemModel> me = this;
+//            d->eventLoop = &eventLoop;
+
+//            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+
+//            d->jobController->stopAndDeleteLater();
+
+//            int code = eventLoop.exec();
+
+//            d->eventLoop = Q_NULLPTR;
+
+//            if (code != 0) {
+//                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+//                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+//                    //此时d->jobController有可能已经在析构了，不能调用terminate
+////                    d->jobController->terminate();
+//                    d->jobController->quit();
+//                    d->jobController.clear();
+//                }
+//                return;
+//            }
+
+//            if (!me) {
+//                return;
+//            }
+//        }
+//    }
+    qDebug() << " fetchMore +{ " << parentNode->fileInfo->fileUrl() << parentNode->fileInfo->isGvfsMountFile();
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters,
                                                    QDirIterator::NoIteratorFlags, false, parentNode->fileInfo->isGvfsMountFile());
+
     if (!d->jobController) {
         return;
     }
@@ -1763,7 +1791,7 @@ void DFileSystemModel::doFetchMore(const QModelIndex &parent)
     setState(Busy);
 
     d->childrenUpdated = false;
-
+    //
     d->jobController->start();
     d->rootNodeManager->setEnable(true);
 }
