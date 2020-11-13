@@ -151,27 +151,39 @@ void CommandLineManager::processCommand()
 
     foreach (QString path, positionalArguments()) {
         if (!CommandLineManager::instance()->isSet("raw")) {
-            //路径中带file://的情况下在生成durl的时候不会调用fromLocalFile，导致少了qurl转码的过程
-            //而在界面使用该url的时候会调toLocalFile会做一次反转，这时有可能一些含特殊符号的路径打开出错
-            if (path.startsWith("file://")) {
-                path = path.mid(sizeof ("file://") - 1);
-            }
 
-            //非本地文件路径需要做特殊转码处理
-            if (!QDir().exists(path) && !path.startsWith("./")
-                           && !path.startsWith("../") && !path.startsWith("/")) {
-                // 路径中包含特殊字符的全部uri编码
-                QRegExp regexp("[#&@\\!\\?]");
-                if (path.contains(regexp)) {
-                    QString left, right, encode;
-                    int idx = path.indexOf(regexp);
-                    while (idx != -1) {
-                        left = path.left(idx);
-                        right = path.mid(idx + 1);
-                        encode = QUrl::toPercentEncoding(path.mid(idx, 1));
-                        path = left + encode + right;
-                        idx = path.indexOf(regexp);
-                    }
+//            QDir t_dir(path);
+
+//            if (t_dir.exists(path)) {
+//                if (!path.startsWith("file://")) {
+//                    path = "file://" + t_dir.absolutePath();
+//                    QRegExp regexp("[%]");
+//                    if (path.contains(regexp)) {
+//                        QString left, right, encode;
+//                        int idx = path.indexOf(regexp);
+//                        while (idx != -1) {
+//                            left = path.left(idx);
+//                            right = path.mid(idx + 1);
+//                            encode = QUrl::toPercentEncoding(path.mid(idx, 1));
+//                            path = left + encode + right;
+//                            idx = path.indexOf(regexp, idx + 1);
+//                        }
+//                    }
+//                }
+//            }
+
+
+            // 路径中包含特殊字符的全部uri编码
+            QRegExp regexp("[#&@\\!\\?]");
+            if (path.contains(regexp)) {
+                QString left, right, encode;
+                int idx = path.indexOf(regexp);
+                while (idx != -1) {
+                    left = path.left(idx);
+                    right = path.mid(idx + 1);
+                    encode = QUrl::toPercentEncoding(path.mid(idx, 1));
+                    path = left + encode + right;
+                    idx = path.indexOf(regexp);
                 }
             }
         }
