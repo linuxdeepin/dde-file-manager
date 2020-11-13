@@ -155,14 +155,21 @@ void DRootFileManager::startQuryRootFile()
         });
     }
 
+    bool openAsAdmin = DFMGlobal::isOpenAsAdmin();
     QMutexLocker lk(&d_ptr->rootfileMtx);
-    if (d_ptr->m_jobcontroller && d_ptr->m_jobcontroller->isRunning()) {
+    if (openAsAdmin && d_ptr->m_jobcontroller && d_ptr->m_jobcontroller->isRunning()) {
         qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
         return;
-    } else {
-        //启用异步线程去读取
-        d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
     }
+
+    if (!openAsAdmin && d_ptr->m_jobcontroller) {
+        qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
+        return;
+    }
+
+    //启用异步线程去读取
+    d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
+
     lk.unlock();
 
     connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this](const DAbstractFileInfoPointer & chi) {
@@ -198,9 +205,10 @@ void DRootFileManager::startQuryRootFile()
             emit queryRootFileFinsh();
 
         d_ptr->m_rootChanged = false;
-    }, Qt::DirectConnection);
+    }, openAsAdmin ? Qt::DirectConnection : Qt::AutoConnection);
     d_ptr->m_jobcontroller->start();
 }
+
 
 DAbstractFileWatcher *DRootFileManager::rootFileWather() const
 {
