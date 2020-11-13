@@ -156,11 +156,10 @@ void DRootFileManager::startQuryRootFile()
     }
 
     QMutexLocker lk(&d_ptr->rootfileMtx);
-    if (d_ptr->m_jobcontroller){
+    if (d_ptr->m_jobcontroller && d_ptr->m_jobcontroller->isRunning()) {
         qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
         return;
-    }
-    else {
+    } else {
         //启用异步线程去读取
         d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
     }
@@ -199,7 +198,7 @@ void DRootFileManager::startQuryRootFile()
             emit queryRootFileFinsh();
 
         d_ptr->m_rootChanged = false;
-    });
+    }, Qt::DirectConnection);
     d_ptr->m_jobcontroller->start();
 }
 
