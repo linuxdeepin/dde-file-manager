@@ -31,9 +31,9 @@ class DFileInfoPrivate;
 class DFileInfo : public DAbstractFileInfo
 {
 public:
-    explicit DFileInfo(const QString& filePath, bool hasCache = false);
-    explicit DFileInfo(const DUrl& fileUrl, bool hasCache = false);
-    explicit DFileInfo(const QFileInfo &fileInfo, bool hasCache = false);
+    explicit DFileInfo(const QString& filePath, bool hasCache = true);
+    explicit DFileInfo(const DUrl& fileUrl, bool hasCache = true);
+    explicit DFileInfo(const QFileInfo &fileInfo, bool hasCache = true);
     ~DFileInfo() override;
 
     static bool exists(const DUrl &fileUrl);
