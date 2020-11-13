@@ -133,6 +133,9 @@ public:
     QWidget *widget() const Q_DECL_OVERRIDE;
     QList<QAction*> toolBarActionList() const Q_DECL_OVERRIDE;
 
+    // 设置已被销毁标志
+    void setDestroyFlag(bool flag);
+
 public slots:
     bool cd(const DUrl &url);
     bool cdUp();
@@ -249,6 +252,7 @@ private:
     bool m_isRemovingCase = false;
     QScopedPointer<DFileViewPrivate> d_ptr;
     QList<QUrl> m_urlsForDragEvent;
+    bool m_destroyFlag = false;
 
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
     Q_PRIVATE_SLOT(d_ptr, void _q_onSectionHandleDoubleClicked(int))

@@ -812,6 +812,11 @@ QList<QAction *> DFileView::toolBarActionList() const
     return d->toolbarActionGroup->actions();
 }
 
+void DFileView::setDestroyFlag(bool flag)
+{
+    m_destroyFlag = flag;
+}
+
 void DFileView::setFilters(QDir::Filters filters)
 {
     model()->setFilters(filters);
@@ -1338,8 +1343,14 @@ void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex 
 void DFileView::delayUpdateStatusBar()
 {
     Q_D(DFileView);
+
     // when QItemSelectionModel::selectionChanged emit we get selectedUrls() were old selecturls
     // so we wait...
+
+    if (m_destroyFlag) {
+        return;
+    }
+
     //判断网络文件是否可以到达
     if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
         d->updateStatusBarTimer->stop();

@@ -733,11 +733,6 @@ void DFMSideBar::initDeviceConnection()
         //DFileService::instance()->changeRootFile(url,false); //性能优化，注释
         this->removeItem(url, this->groupName(Device));
         devitems.removeAll(url);
-
-        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(this->topLevelWidget());
-        if (wnd) {
-            wnd->closeUnAvailableTabs();
-        }
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl & url) {
         int index = findItem(url, groupName(Device));
