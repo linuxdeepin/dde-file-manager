@@ -734,9 +734,9 @@ bool FileUtils::openFiles(const QStringList &filePaths)
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
         for (const QString &tmp : rePath) {
-            QString filePath = DUrl::fromLocalFile(tmp).toLocalFile();
+            QString file_path = DUrl::fromLocalFile(tmp).toLocalFile();
             DesktopFile df(defaultDesktopFile);
-            addRecentFile(filePath, df, mimetype);
+            addRecentFile(file_path, df, mimetype);
         }
         return result;
     }

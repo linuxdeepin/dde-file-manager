@@ -191,10 +191,10 @@ void DListItemDelegate::paint(QPainter *painter,
                 }
 
                 if (role == DFileSystemModel::FileDisplayNameRole) {
-                    const auto file_name = index.data(DFileSystemModel::FileNameRole);
+                    const auto fileName = index.data(DFileSystemModel::FileNameRole);
                     const auto file_display_name = index.data(DFileSystemModel::FileDisplayNameRole);
 
-                    if (file_name != file_display_name) {
+                    if (fileName != file_display_name) {
                         break;
                     }
                 }
@@ -242,46 +242,46 @@ void DListItemDelegate::paint(QPainter *painter,
             continue;
         }
 
-        QRect rect = opt.rect;
+        QRect rec = opt.rect;
 
-        rect.setLeft(column_x + COLUMU_PADDING);
+        rec.setLeft(column_x + COLUMU_PADDING);
 
-        if (rect.left() >= rect.right()) {
+        if (rec.left() >= rec.right()) {
             break;
         }
 
         column_x += column_width;
 
-        rect.setRight(qMin(column_x, opt.rect.right()));
+        rec.setRight(qMin(column_x, opt.rect.right()));
 
-        int role = columnRoleList.at(i);
+        int rol = columnRoleList.at(i);
 
-        QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(role), index.internalId());
+        QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(rol), index.internalId());
 
-        const QVariant &data = index.data(role);
+        const QVariant &data = index.data(rol);
 
         if (data.canConvert<QString>()) {
-            const QString &text = DFMGlobal::elideText(index.data(role).toString(), rect.size(),
+            const QString &text = DFMGlobal::elideText(index.data(rol).toString(), rec.size(),
                                                        QTextOption::NoWrap, opt.font,
                                                        Qt::ElideRight, d->textLineHeight);
 
-            painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
+            painter->drawText(rec, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
         } else {
-            drawNotStringData(opt, d->textLineHeight, rect, data, drawBackground, painter, i);
+            drawNotStringData(opt, d->textLineHeight, rec, data, drawBackground, painter, i);
         }
     }
 
     if (isDropTarget && !drawBackground) {
         QPen pen;
-        QRectF rect = opt.rect;
+        QRectF rec = opt.rect;
 
-        rect += QMarginsF(-0.5 + LEFT_PADDING, -0.5, -0.5 + RIGHT_PADDING, -0.5);
+        rec += QMarginsF(-0.5 + LEFT_PADDING, -0.5, -0.5 + RIGHT_PADDING, -0.5);
 
         pen.setColor(opt.backgroundBrush.color());
 
         painter->setPen(pen);
         painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->drawRoundedRect(rect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
+        painter->drawRoundedRect(rec, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(Qt::black);
     }
@@ -533,27 +533,27 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     geomertys << rect;
 
     for (int i = 1; i < columnRoleList.count(); ++i) {
-        QRect rect = opt_rect;
+        QRect rec = opt_rect;
 
-        rect.setLeft(column_x + COLUMU_PADDING);
+        rec.setLeft(column_x + COLUMU_PADDING);
 
-        if (rect.left() >= opt_rect.right()) {
+        if (rec.left() >= opt_rect.right()) {
             return geomertys;
         }
 
-        int role = columnRoleList.at(i);
+        int rol = columnRoleList.at(i);
 
         if (sizeHintMode) {
-            rect.setWidth(dataWidth(option, index, role));
-            column_x += rect.width();
+            rec.setWidth(dataWidth(option, index, rol));
+            column_x += rec.width();
         } else {
             column_x += parent()->columnWidth(i) - 1;
 
-            rect.setRight(qMin(column_x, opt_rect.right()));
-            rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
+            rec.setRight(qMin(column_x, opt_rect.right()));
+            rec.setWidth(qMin(rec.width(), dataWidth(option, index, rol)));
         }
 
-        geomertys << rect;
+        geomertys << rec;
     }
 
     return geomertys;

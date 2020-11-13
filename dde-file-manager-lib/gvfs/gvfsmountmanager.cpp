@@ -787,8 +787,8 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
         if (ovrxm.hasMatch()) {
             arg1 = ovrxm.captured(0);
             newmsg = newmsg.replace(arg1, "");
-            auto ovrxm = ovrex.match(newmsg);
-            arg2 = ovrxm.captured(0);
+            auto ovr_xm = ovrex.match(newmsg);
+            arg2 = ovr_xm.captured(0);
             // 修复文管文案问题
             newmsg = tr("Can’t verify the identity of %1.").arg(arg1) + '\n' +
                      tr("This happens when you log in to a computer the first time.") + '\n' +

@@ -602,8 +602,8 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
     };
 
     auto showView = [&](QWidget * wndPtr, QString host) {
-        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(wndPtr);
-        wnd->cd(VaultController::makeVaultUrl("/", host));
+        DFileManagerWindow *file_mng_wnd = qobject_cast<DFileManagerWindow *>(wndPtr);
+        file_mng_wnd->cd(VaultController::makeVaultUrl("/", host));
     };
 
     if (vaultState == VaultController::Unlocked) {

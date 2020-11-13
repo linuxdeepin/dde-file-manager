@@ -166,33 +166,33 @@ void DRootFileManager::startQuryRootFile()
     lk.unlock();
 
     connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this](const DAbstractFileInfoPointer & chi) {
-        QMutexLocker lk(&d_ptr->rootfileMtx);
+        QMutexLocker locker(&d_ptr->rootfileMtx);
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
             d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
             d_ptr->m_rootChanged = true;
-            lk.unlock();
+            locker.unlock();
             emit rootFileChange(chi); // 其实中间结果没有必要,直接拿最终结果就行了,但保留接口，以后便于扩展
         }
     }, Qt::DirectConnection);
 
     connect(d_ptr->m_jobcontroller, &JobController::addChildrenList, this, [this](QList<DAbstractFileInfoPointer> ch) {
         for (auto chi : ch) {
-            QMutexLocker lk(&d_ptr->rootfileMtx);
+            QMutexLocker locker(&d_ptr->rootfileMtx);
             if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
                 d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
                 d_ptr->m_rootChanged = true;
-                lk.unlock();
+                locker.unlock();
                 emit rootFileChange(chi); // 其实中间结果没有必要,直接拿最终结果就行了,但保留接口，以后便于扩展
             }
         }
     }, Qt::DirectConnection);
     connect(d_ptr->m_jobcontroller, &JobController::finished, this, [this]() {
-        QMutexLocker lk(&d_ptr->rootfileMtx);
+        QMutexLocker locker(&d_ptr->rootfileMtx);
         d_ptr->m_jobcontroller->deleteLater();
         qDebug() << "获取 m_jobcontroller  finished  " << QThread::currentThreadId() << d_ptr->rootfilelist.size();
         d_ptr->m_jobcontroller = nullptr;
         d_ptr->m_bRootFileInited.store(true);
-        lk.unlock();
+        locker.unlock();
 
         if (d_ptr->m_rootChanged)
             emit queryRootFileFinsh();

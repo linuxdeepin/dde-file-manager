@@ -233,14 +233,14 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
             newUrl = fi->redirectedFileUrl();
         }
 
-        DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), newUrl);
+        DAbstractFileInfoPointer info = fileService->createFileInfo(event->sender(), newUrl);
         if (newUrl.scheme() == BURN_SCHEME) {
             Q_ASSERT(newUrl.burnDestDevice().length() > 0);
             QString devpath = newUrl.burnDestDevice();
             QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
             QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-            bool mounted = blkdev->mountPoints().count() != 0;
-            if (mounted) {
+            bool isMounted = blkdev->mountPoints().count() != 0;
+            if (isMounted) {
                 QString  mountPoint = blkdev->mountPoints().first();
                 if (mountPoint.length() > 0) {
                     QFile file(mountPoint);
@@ -250,7 +250,7 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
                 }
             }
         } else {
-            QFile file(fi->filePath());
+            QFile file(info->filePath());
             if (!(QFile::ExeUser & file.permissions()))
                 return;
         }
@@ -1167,7 +1167,7 @@ void AppController::actionStageFileForBurning()
     DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
     for (DUrl &u : urlList) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(sender(), u);
-        if(fi){ // MasteredMediaFileInfo::canRedirectionFileUrl() 有问题，现在暂时不知道怎么修改
+        if (fi) { // MasteredMediaFileInfo::canRedirectionFileUrl() 有问题，现在暂时不知道怎么修改
             u = fi->redirectedFileUrl();
         }
     }
@@ -1175,8 +1175,8 @@ void AppController::actionStageFileForBurning()
     QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(destdev));
     if (!dev->optical()) {
         QtConcurrent::run([destdev]() {
-            QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(destdev));
-            dev->eject({});
+            QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(destdev));
+            diskDev->eject({});
         });
         return;
     }

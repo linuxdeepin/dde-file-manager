@@ -751,12 +751,12 @@ void PropertyDialog::showTextShowFrame()
 
                 dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
             }
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
+            const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, m_url);
 
-            initTextShowFrame(fileInfo->fileDisplayName());
+            initTextShowFrame(info->fileDisplayName());
 
             if (m_shareinfoFrame) {
-                m_shareinfoFrame->setFileinfo(fileInfo);
+                m_shareinfoFrame->setFileinfo(info);
             }
         } else {
             m_editStackWidget->setCurrentIndex(1);
@@ -1074,9 +1074,9 @@ void PropertyDialog::initExpand(QVBoxLayout *layout, DDrawer *expand)
 
     DEnhancedWidget *hanceedWidget = new DEnhancedWidget(expand, expand);
     connect(hanceedWidget, &DEnhancedWidget::heightChanged, hanceedWidget, [ = ]() {
-        QRect rc = geometry();
-        rc.setHeight(contentHeight() + ArrowLineExpand_SPACING * 2);
-        setGeometry(rc);
+        QRect rect = geometry();
+        rect.setHeight(contentHeight() + ArrowLineExpand_SPACING * 2);
+        setGeometry(rect);
     });
 }
 
@@ -1644,9 +1644,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
         QString filePath = info->path();
         if (VaultController::ins()->isVaultFile(info->path())) { // Vault file need to use stat function to read file permission.
-            QString filePath = info->toLocalFile();
+            QString localFile = info->toLocalFile();
             struct stat buf;
-            std::string stdStr = filePath.toStdString();
+            std::string stdStr = localFile.toStdString();
             stat(stdStr.c_str(), &buf);
             if ((buf.st_mode & S_IXUSR) || (buf.st_mode & S_IXGRP) || (buf.st_mode & S_IXOTH)) {
                 m_executableCheckBox->setChecked(true);
