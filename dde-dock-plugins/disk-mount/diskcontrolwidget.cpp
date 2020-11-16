@@ -85,6 +85,7 @@ DiskControlWidget::~DiskControlWidget()
 
 void DiskControlWidget::initConnect()
 {
+    connect(m_diskManager, &DDiskManager::diskDeviceAdded, this, &DiskControlWidget::onDriveConnected);
     connect(m_diskManager, &DDiskManager::blockDeviceAdded, this, &DiskControlWidget::onBlockDeviceAdded);
     connect(m_diskManager, &DDiskManager::diskDeviceRemoved, this, &DiskControlWidget::onDriveDisconnected);
     connect(m_diskManager, &DDiskManager::mountAdded, this, &DiskControlWidget::onMountAdded);
@@ -341,11 +342,19 @@ void DiskControlWidget::onDiskListChanged()
     verticalScrollBar()->setMaximum(contentHeight - maxHeight);
 }
 
+void DiskControlWidget::onDriveConnected(const QString &deviceId)
+{
+    QScopedPointer<DDiskDevice> diskDevice(DDiskManager::createDiskDevice(deviceId));
+    if (diskDevice->removable()) {
+        DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceAdded);
+    }
+}
+
 void DiskControlWidget::onDriveDisconnected()
 {
     qDebug() << "changed from drive_disconnected";
-    DDesktopServices::playSystemSoundEffect("device-removed");
     NotifyMsg(QObject::tr("The device has been safely removed"));
+    DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceRemoved);
     onDiskListChanged();
 }
 
@@ -406,7 +415,6 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
 void DiskControlWidget::onBlockDeviceAdded(const QString &path)
 {
     static const QString msg = "device add canceld: ";
-    DDesktopServices::playSystemSoundEffect("device-added");
     // 刷新一次配置信息当有新的设备接入时，保证每次都是最新的配置生效
     getGsGlobal()->reload();
     m_autoMountEnable = getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool();
