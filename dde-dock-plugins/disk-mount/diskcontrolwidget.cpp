@@ -85,13 +85,7 @@ DiskControlWidget::~DiskControlWidget()
 
 void DiskControlWidget::initConnect()
 {
-    connect(m_diskManager, &DDiskManager::diskDeviceAdded, this, [this](const QString & path) {
-        // blumia: Workaround. Wait for udisks2 add new device to device list.
-        QTimer::singleShot(500, this, [ = ]() {
-            onDriveConnected(path);
-        });
-    });
-
+    connect(m_diskManager, &DDiskManager::diskDeviceAdded, this, &DiskControlWidget::onDriveConnected);
     connect(m_diskManager, &DDiskManager::blockDeviceAdded, this, &DiskControlWidget::onBlockDeviceAdded);
     connect(m_diskManager, &DDiskManager::diskDeviceRemoved, this, &DiskControlWidget::onDriveDisconnected);
     connect(m_diskManager, &DDiskManager::mountAdded, this, &DiskControlWidget::onMountAdded);
@@ -350,63 +344,13 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
 {
     QScopedPointer<DDiskDevice> diskDevice(DDiskManager::createDiskDevice(deviceId));
     if (diskDevice->removable()) {
-        DDesktopServices::playSystemSoundEffect("device-added");
-
-        // 刷新一次配置信息当有新的设备接入时，保证每次都是最新的配置生效
-        getGsGlobal()->reload();
-        autoMountEnable = getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool();
-        autoMountAndOpenEnable = getGsGlobal()->value("GenericAttribute", "AutoMountAndOpen", false).toBool();
-        if (isInLiveSystem || !autoMountEnable) {
-            return;
-        }
-
-        QDBusInterface loginManager("org.freedesktop.login1",
-                                    "/org/freedesktop/login1/user/self",
-                                    "org.freedesktop.login1.User",
-                                    QDBusConnection::systemBus());
-        QVariant replay = loginManager.property(("State"));
-        if (replay.isValid()) {
-            QString state = replay.toString();
-            if (state != "active") {
-                return;
-            }
-        }
-
-        // Do auto mount stuff..
-        QStringList blDevList = DDiskManager::blockDevices({});
-        for (const QString &blDevStr : blDevList) {
-            QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
-
-            if (isProtectedDevice(blDev.data())) continue;
-            if (blDev->drive() != deviceId) continue;
-            if (blDev->isEncrypted()) continue;
-            if (blDev->hintIgnore()) continue;
-            if (!blDev->hasFileSystem()) continue;
-
-            auto mountPoints = blDev->mountPoints();
-            QString mountPoint;
-            if (mountPoints.isEmpty()) { // 挂载点为空，则执行挂载
-                mountPoint = blDev->mount({});
-                if (mountPoint.isEmpty() || blDev->lastError().type() != QDBusError::NoError)
-                    continue;
-                if (autoMountAndOpenEnable) {
-                    // 不太明白为什么要保留这段代码，强制使用我方文管打开
-                    if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-                        QString mountUrlStr = DFMROOT_ROOT + blDevStr.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
-                        QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
-                        qDebug() << "open by dde-file-manager in onDriveConnected: " << mountUrlStr;
-                        continue;
-                    }
-                    DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));
-                }
-            }
-        }
+        DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceAdded);
     }
 }
 
 void DiskControlWidget::onDriveDisconnected()
 {
-    DDesktopServices::playSystemSoundEffect("device-removed");
+    DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceRemoved);
     NotifyMsg(QObject::tr("Device has been removed"));
     onDiskListChanged();
 }
@@ -462,7 +406,6 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
 
 void DiskControlWidget::onBlockDeviceAdded(const QString &path)
 {
-    DDesktopServices::playSystemSoundEffect("device-added");
     // 刷新一次配置信息当有新的设备接入时，保证每次都是最新的配置生效
     getGsGlobal()->reload();
     autoMountEnable = getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool();
