@@ -552,6 +552,17 @@ bool UDiskListener::isFileFromDisc(const QString &filePath)
     return false;
 }
 
+void UDiskListener::appendHiddenDirs(const QString &path)
+{
+    if (!m_hiddenDirs.contains(path))
+        m_hiddenDirs.append(path);
+}
+
+QStringList UDiskListener::hiddenDirs()
+{
+    return m_hiddenDirs;
+}
+
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
 {
     qDebug() << diskInfo;

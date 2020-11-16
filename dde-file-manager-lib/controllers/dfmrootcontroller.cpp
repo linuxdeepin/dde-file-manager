@@ -37,6 +37,7 @@
 #include <ddiskdevice.h>
 
 #include "dialogs/dialogmanager.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <gvfs/networkmanager.h>
 
@@ -412,6 +413,16 @@ bool DFMRootFileWatcherPrivate::start()
     for (auto devs : udisksmgr->blockDevices({})) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+
+        auto mountPoints = blk->mountPoints();
+        if (!drv->removable() && !mountPoints.isEmpty()) { // feature: hide the specified dir of unremovable devices
+            QString mountPoint = mountPoints[0];
+            if (!mountPoint.endsWith("/"))
+                mountPoint += "/";
+            // no permission to create files under '/', cannot create .hidden file, so just hardcode here.
+            deviceListener->appendHiddenDirs(mountPoint + "root");
+            deviceListener->appendHiddenDirs(mountPoint + "lost+found");
+        }
 
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
