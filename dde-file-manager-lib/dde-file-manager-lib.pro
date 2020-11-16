@@ -89,6 +89,7 @@ isEqual(ARCH, sw_64){
 }
 include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
+include(interfaces/customization/customization.pri)
 include(src.pri)
 
 isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64){
