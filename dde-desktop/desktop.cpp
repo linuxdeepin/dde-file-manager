@@ -449,6 +449,8 @@ void Desktop::PrintInfo()
 
     qInfo() << "*****************Screens  Mode " << ScreenMrg->displayMode()
             << "********************";
+    qInfo() << "*****************last changed  Mode " << ScreenMrg->lastChangedMode()
+            << "********************";
     int num = 1;
     for (ScreenPointer screen : ScreenMrg->logicScreens()){
         if (screen){

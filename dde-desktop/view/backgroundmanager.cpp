@@ -283,7 +283,7 @@ void BackgroundManager::setBackgroundImage(const QString &screen, const QString 
 void BackgroundManager::onBackgroundBuild()
 {
     //屏幕模式判断
-    AbstractScreenManager::DisplayMode mode = ScreenMrg->displayMode();
+    AbstractScreenManager::DisplayMode mode = ScreenMrg->lastChangedMode();
     qDebug() << "screen mode" << mode << "screen count" << ScreenMrg->screens().size();
 
     //删除不存在的屏
@@ -335,7 +335,7 @@ void BackgroundManager::onBackgroundBuild()
 void BackgroundManager::onSkipBackgroundBuild()
 {
     //通知view重建
-    emit sigBackgroundBuilded(ScreenMrg->displayMode());
+    emit sigBackgroundBuilded(ScreenMrg->lastChangedMode());
 }
 
 //临时使用

@@ -99,6 +99,7 @@ void ScreenManager::init()
         m_lastMode = mode;
         emit sigDisplayModeChanged();
     });
+    m_lastMode = m_display->GetRealDisplayMode();
 #endif
 
     //dock区处理
@@ -213,6 +214,11 @@ AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
         else
             return AbstractScreenManager::Custom;
     }
+}
+
+AbstractScreenManager::DisplayMode ScreenManager::lastChangedMode() const
+{
+    return static_cast<AbstractScreenManager::DisplayMode>(m_lastMode);
 }
 
 void ScreenManager::reset()
