@@ -35,10 +35,15 @@ DCORE_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 DFMLogManager::DFMLogManager()
+    : m_filterAppender(nullptr)
 {
 }
 
-void DFMLogManager::initFilterAppender(){
+void DFMLogManager::initFilterAppender()
+{
+    if (m_filterAppender)
+        return;
+
     m_filterAppender = new FilterAppender(DLogManager::getlogFilePath());
     m_filterAppender->setFormat(
                 "%{time}{yyyy-MM-dd, HH:mm:ss.zzz} [%{type:-7}] [%{file:-20} %{function:-35} %{line}] %{message}\n");
@@ -49,6 +54,9 @@ void DFMLogManager::initFilterAppender(){
 
 FilterAppender *DFMLogManager::filterAppender()
 {
+    if (!m_filterAppender) {
+        initFilterAppender();
+    }
     return m_filterAppender;
 }
 
@@ -56,7 +64,8 @@ FilterAppender *DFMLogManager::filterAppender()
 /**
  * \sa registerFileAppender
  */
-void DFMLogManager::registerConsoleAppender(){
+void DFMLogManager::registerConsoleAppender()
+{
     DLogManager::registerConsoleAppender();
 }
 
@@ -65,7 +74,8 @@ void DFMLogManager::registerConsoleAppender(){
  * \sa getlogFilePath
  * \sa registerConsoleAppender
  */
-void DFMLogManager::registerFileAppender() {
+void DFMLogManager::registerFileAppender()
+{
     DFMLogManager::instance()->initFilterAppender();
 }
 
@@ -73,7 +83,8 @@ void DFMLogManager::registerFileAppender() {
 /**
  * \sa registerFileAppender
  */
-QString DFMLogManager::getlogFilePath(){
+QString DFMLogManager::getlogFilePath()
+{
     return DLogManager::getlogFilePath();
 }
 
@@ -99,6 +110,5 @@ FilterAppender *DFMLogManager::getFilterAppender()
 
 DFMLogManager::~DFMLogManager()
 {
-
 }
 DFM_END_NAMESPACE
