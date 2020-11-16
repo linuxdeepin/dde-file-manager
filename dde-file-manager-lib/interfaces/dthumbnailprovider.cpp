@@ -60,7 +60,7 @@
 DFM_BEGIN_NAMESPACE
 
 #define FORMAT ".png"
-#define CREATE_VEDIO_THUMB "CreateVedioThumbnail"
+//#define CREATE_VEDIO_THUMB "CreateVedioThumbnail"
 
 inline QByteArray dataToMd5Hex(const QByteArray &data)
 {
@@ -281,7 +281,7 @@ static QString generalKey(const QString &key)
     return key;
 }
 
-QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailProvider::Size size, const CallBack &callback)
+QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailProvider::Size size)
 {
     Q_D(DThumbnailProvider);
 
@@ -747,12 +747,10 @@ void DThumbnailProvider::run()
 
         locker.unlock();
 
-        const QString &thumbnail = createThumbnail(task.fileInfo, task.size, task.callback);
+        const QString &thumbnail = createThumbnail(task.fileInfo, task.size);
 
-        if (thumbnail != CREATE_VEDIO_THUMB) {
-            if (task.callback)
-                task.callback(thumbnail);
-        }
+        if (task.callback)
+            task.callback(thumbnail);
     }
 }
 
