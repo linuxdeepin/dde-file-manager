@@ -58,6 +58,7 @@ signals:
     void diskCountChanged(const int count) const;
 
 private slots:
+    void onDriveConnected(const QString &deviceId);
     void onDiskListChanged();
     void onDriveDisconnected();
     void onMountAdded();
