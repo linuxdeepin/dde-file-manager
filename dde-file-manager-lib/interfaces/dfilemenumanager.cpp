@@ -497,7 +497,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         QMap<QString, DUrl> diskUrlsMap;
         QStringList odrv;
         DDiskManager diskm;
-        for (auto &blks : diskm.blockDevices()) {
+        for (auto &blks : diskm.blockDevices({})) {
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
             if (drv->mediaCompatibility().join(' ').contains("_r")) {

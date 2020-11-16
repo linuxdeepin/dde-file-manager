@@ -108,7 +108,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     }
 
     DDiskManager dummy;
-    QStringList blkds = dummy.blockDevices();
+    QStringList blkds = dummy.blockDevices({});
     for (auto blks : blkds) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
@@ -409,7 +409,7 @@ bool DFMRootFileWatcherPrivate::start()
         Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
     }));
 
-    for (auto devs : udisksmgr->blockDevices()) {
+    for (auto devs : udisksmgr->blockDevices({})) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 

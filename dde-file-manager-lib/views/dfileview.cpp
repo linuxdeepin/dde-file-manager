@@ -1663,7 +1663,7 @@ void DFileView::onDriveOpticalChanged(const QString &path)
 {
     Q_D(DFileView);
 
-    for (auto i : d->diskmgr->blockDevices()) {
+    for (auto i : d->diskmgr->blockDevices({})) {
         QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(i));
         if (path == blkdev->drive()) {
             qDebug() << QString(blkdev->device());
