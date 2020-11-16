@@ -1277,6 +1277,9 @@ void DFileManagerWindow::initConnect()
     // 关联信号,窗口大小变化后,隐藏自动补全视图
     if(d->toolbar) {
         QObject::connect(this, &DFileManagerWindow::sigSizeChange, d->toolbar, &DToolBar::slotHideCompleterView);
+        // 修复klu-task-45808
+        // 窗口移动时，隐藏自动补全
+        QObject::connect(this, &DFileManagerWindow::positionChanged, d->toolbar, &DToolBar::slotHideCompleterView);
     }
 
     if (titlebar()) {
