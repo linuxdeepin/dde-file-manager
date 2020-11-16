@@ -2623,6 +2623,11 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
             continue;
         }
 
+        // feature: hide specified dirs of unremovable devices directly under devices' mountpoint
+        if (!filters().testFlag(QDir::Hidden) && fileInfo->isDir() && deviceListener->hiddenDirs().contains(fileInfo->filePath())) {
+            continue;
+        }
+
         // qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
         //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
