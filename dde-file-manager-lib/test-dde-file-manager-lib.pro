@@ -66,6 +66,7 @@ include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
 include(vault/vault.pri)
 include(fulltextsearch/fulltextsearch.pri)
+include(log/log.pri)
 
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
