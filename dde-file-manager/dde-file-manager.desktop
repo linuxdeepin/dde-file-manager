@@ -13,7 +13,6 @@ Type=Application
 Version=1.0
 X-Deepin-DEComponent=true
 X-Deepin-Vendor=deepin
-X-Deepin-TurboType=dtkwidget
 
 # Translations:
 # Do not manually modify!

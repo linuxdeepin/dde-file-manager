@@ -66,10 +66,6 @@
 #include <QtConcurrent>
 #include <QMediaPlayer>
 #include <QMediaMetaData>
-#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 4, 0, 0))
-#include <DVtableHook>
-#endif
-
 
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
@@ -155,7 +151,7 @@ int main(int argc, char *argv[])
 
     if (!DFMGlobal::isWayLand()){
         //wayland下不加载xcb
-        DApplication::loadDXcbPlugin();
+        SingleApplication::loadDXcbPlugin();
     }
     // fix "Error mounting location: volume doesn't implement mount” when ope as admin (bug-42653)
     if (DFMGlobal::isOpenAsAdmin()) {
@@ -163,29 +159,21 @@ int main(int argc, char *argv[])
     }
 
     SingleApplication::initSources();
-    DApplication *app = nullptr;
-    // 适配deepin-turbo 启动加速
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
-    app = new SingleApplication(argc, argv);
-#else
-    app = DApplication::globalApplication(argc, argv);
-    SingleApplication *singleApp = new SingleApplication();
-    Dtk::Core::DVtableHook::overrideVfptrFun(app, &DApplication::handleQuitAction, singleApp, &SingleApplication::handleQuitAction);
-#endif
+    SingleApplication app(argc, argv);
 
-    app->setOrganizationName(QMAKE_ORGANIZATION_NAME);
-    app->setApplicationName(QMAKE_TARGET);
-    app->loadTranslator();
-    app->setApplicationDisplayName(app->translate("Application", "File Manager"));
-    app->setApplicationVersion(DApplication::buildVersion((QMAKE_VERSION)));
-    app->setProductIcon(QIcon::fromTheme("dde-file-manager"));
-    app->setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
-    app->setApplicationDescription(app->translate("Application", "File Manager is a powerful and "
+    app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
+    app.setApplicationName(QMAKE_TARGET);
+    app.loadTranslator();
+    app.setApplicationDisplayName(app.translate("Application", "File Manager"));
+    app.setApplicationVersion(DApplication::buildVersion((QMAKE_VERSION)));
+    app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
+    app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
+    app.setApplicationDescription(app.translate("Application", "File Manager is a powerful and "
                                                 "easy-to-use file management tool, "
                                                 "featured with searching, copying, "
                                                 "trash, compression/decompression, file property "
                                                 "and other useful functions."));
-    app->setAttribute(Qt::AA_UseHighDpiPixmaps);
+    app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     DApplicationSettings setting;
 
@@ -208,14 +196,14 @@ int main(int argc, char *argv[])
         winId_mtx.second.unlock();
         /* 针对bug47144音乐预览加载缓慢的问题，在初始化的时候调用QMediaPlayer::hasSupport，下次调用就快很多*/
         QMediaPlayer::hasSupport("application/octet-stream");
-        delete w; //w->deleteLater();
+        w->deleteLater();
     });
     // init application object
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
 
     // init pixmap cache size limit, 20MB * devicePixelRatio
-    QPixmapCache::setCacheLimit(static_cast<int>(20 * 1024 * app->devicePixelRatio()));
+    QPixmapCache::setCacheLimit(static_cast<int>(20 * 1024 * app.devicePixelRatio()));
 
     CommandLineManager::instance()->process();
 
@@ -235,7 +223,7 @@ int main(int argc, char *argv[])
             p.waitForFinished();
         }
 
-        QStringList args = app->arguments().mid(1);
+        QStringList args = app.arguments().mid(1);
         args.removeAll(QStringLiteral("-r"));
         args.removeAll(QStringLiteral("--root"));
         args.removeAll(QStringLiteral("-w"));
@@ -247,10 +235,10 @@ int main(int argc, char *argv[])
     }
 
     if (CommandLineManager::instance()->isSet("h") || CommandLineManager::instance()->isSet("v")) {
-        return app->exec();
+        return app.exec();
     }
 
-    QString uniqueKey = app->applicationName();
+    QString uniqueKey = app.applicationName();
 
     bool isSingleInstance  = true;
     // cannot open the filemanager when multiple users as an administrator
@@ -259,11 +247,7 @@ int main(int argc, char *argv[])
         qDebug() << "oepn as admin";
         isSingleInstance = true;
     } else {
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
-    isSingleInstance = app->setSingleInstance(uniqueKey);
-#else
-    isSingleInstance = singleApp->setSingleInstance(uniqueKey);
-#endif
+        isSingleInstance = app.setSingleInstance(uniqueKey);
     }
 
     if (isSingleInstance) {
@@ -275,7 +259,7 @@ int main(int argc, char *argv[])
 
         if (CommandLineManager::instance()->isSet("d")) {
             fileManagerApp;
-            app->setQuitOnLastWindowClosed(false);
+            app.setQuitOnLastWindowClosed(false);
         } else {
             CommandLineManager::instance()->processCommand();
         }
@@ -283,22 +267,16 @@ int main(int argc, char *argv[])
         signal(SIGTERM, handleSIGTERM);
 
 #ifdef ENABLE_PPROF
-        int request = app->exec();
+        int request = app.exec();
 
         ProfilerStop();
 
         return request;
 #else
-        int ret = app->exec();
+        int ret = app.exec();
 #ifdef ENABLE_DAEMON
         if (!DFMGlobal::isOpenAsAdmin()) {
-
-            #if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
-                dynamic_cast<SingleApplication*>(app)->closeServer();
-            #else
-                singleApp->closeServer();
-            #endif
-
+            app.closeServer();
             QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
         }
 #endif
@@ -308,7 +286,7 @@ int main(int argc, char *argv[])
         QByteArray data;
         bool is_set_get_monitor_files = false;
 
-        for (const QString &arg : app->arguments()) {
+        for (const QString &arg : app.arguments()) {
             if (arg == "--get-monitor-files")
                 is_set_get_monitor_files = true;
 
