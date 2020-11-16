@@ -81,7 +81,7 @@ void DFMDeviceController::initDiskManager()
     m_diskMgr->setWatchChanges(true);
 
     // "init" mounted filesystem device.
-    QStringList blDevList = m_diskMgr->blockDevices();
+    QStringList blDevList = m_diskMgr->blockDevices({});
     for (const QString &str : blDevList) {
         fileSystemDeviceAdded(str);
     }

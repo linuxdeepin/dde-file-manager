@@ -1182,7 +1182,7 @@ void AppController::actionStageFileForBurning()
     }
 
     DDiskManager diskm;
-    for (auto &blks : diskm.blockDevices()) {
+    for (auto &blks : diskm.blockDevices({})) {
         QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blks));
         if (blkd->drive() == destdev) {
             DUrl dest = DUrl::fromBurnFile(QString(blkd->device()) + "/" BURN_SEG_STAGING "/");

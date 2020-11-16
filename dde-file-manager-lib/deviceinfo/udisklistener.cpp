@@ -100,7 +100,7 @@ void UDiskListener::initDiskManager()
     m_diskMgr = new DDiskManager(this);
     m_diskTimer = new QTimer(this);
     m_diskMgr->setWatchChanges(true);
-    QStringList blDevList = m_diskMgr->blockDevices();
+    QStringList blDevList = m_diskMgr->blockDevices({});
     for (const QString &str : blDevList) {
         insertFileSystemDevice(str);
     }

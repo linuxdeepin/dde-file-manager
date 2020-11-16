@@ -191,7 +191,7 @@ bool isProtectedDevice(DBlockDevice *blk)
 
 void DiskControlWidget::unmountAll()
 {
-    QStringList blockDevices = m_diskManager->blockDevices();
+    QStringList blockDevices = m_diskManager->blockDevices({});
 
     QtConcurrent::run([blockDevices]() {
         for (const QString &blDevStr : blockDevices) {
