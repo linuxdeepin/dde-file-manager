@@ -105,17 +105,17 @@ QString SingleApplication::userId()
     return UserID;
 }
 
-
+#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
 bool SingleApplication::loadTranslator(QList<QLocale> localeFallback)
 {
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
-        DApplication::loadTranslator(localeFallback);
-#endif
+    DApplication::loadTranslator(localeFallback);
+
     QStringList translateDirs;
 
     const QStringList &dataDirs = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
+
     for (QString path : dataDirs) {
-        translateDirs << path.append("/").append(qAppName()).append("/translations");
+        translateDirs << path.append("/").append(applicationName()).append("/translations");
     }
 
     const QString name = QStringLiteral("dde-file-manager-app");
@@ -128,7 +128,7 @@ bool SingleApplication::loadTranslator(QList<QLocale> localeFallback)
                 qDebug() << "load translate" << translatePath;
                 QTranslator *translator = new QTranslator(this);
                 translator->load(translatePath);
-                qApp->installTranslator(translator);
+                installTranslator(translator);
                 return true;
             }
         }
@@ -143,7 +143,7 @@ bool SingleApplication::loadTranslator(QList<QLocale> localeFallback)
                     qDebug() << "translatePath after feedback:" << translatePath;
                     QTranslator *translator = new QTranslator(this);
                     translator->load(translatePath);
-                    qApp->installTranslator(translator);
+                    installTranslator(translator);
                     return true;
                 }
             }
@@ -152,7 +152,7 @@ bool SingleApplication::loadTranslator(QList<QLocale> localeFallback)
 
     return false;
 }
-
+#endif
 
 QString SingleApplication::getUserID()
 {
