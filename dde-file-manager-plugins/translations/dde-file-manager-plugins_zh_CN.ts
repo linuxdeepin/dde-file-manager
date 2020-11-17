@@ -14,12 +14,12 @@
         <translation>专辑:</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="158"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="156"/>
         <source>unknown artist</source>
         <translation>未知歌手</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="162"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="160"/>
         <source>unknown album</source>
         <translation>未知专辑</translation>
     </message>
