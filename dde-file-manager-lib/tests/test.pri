@@ -138,7 +138,12 @@ SOURCES += \
     $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
     $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
-    $$PWD/controllers/ut_dfmsidebartagitemhandler_test.cpp \
+    $$PWD/controllers/ut_tagmanagerdaemon_interface.cpp \
+    $$PWD/controllers/ut_dfmavfscrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmbookmarkcrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmcomputercrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmfilecrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmmasteredmediacrumbcontroller.cpp \
     $$PWD/shutil/ut_filebatchprocess.cpp \
     $$PWD/shutil/ut_fileutils.cpp \
     $$PWD/shutil/ut_dsqlitehandle.cpp \
@@ -164,7 +169,9 @@ SOURCES += \
     $$PWD/interfaces/ut_dthumbnailprovider.cpp \
     $$PWD/interfaces/ut_dfmcrumbmanager.cpp \
     $$PWD/interfaces/ut_dfmevent.cpp \
-    $$PWD/interfaces/ut_dfmstandardpaths.cpp
+    $$PWD/interfaces/ut_dfmstandardpaths.cpp \
+    $$PWD/app/ut_FileSignalManager.cpp  \
+
 
 RESOURCES += \
     $$PWD/resources/test.qrc
