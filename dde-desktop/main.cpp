@@ -12,6 +12,7 @@
 #include <QDBusConnection>
 #include <QThreadPool>
 #include <QPixmapCache>
+#include <QSurfaceFormat>
 
 #include <DLog>
 #include <DApplication>
@@ -105,6 +106,12 @@ int main(int argc, char *argv[])
 
     if (DesktopInfo().waylandDectected()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION","kwayland-shell"); //wayland shell
+
+        //! 以下代码用于视频预览使用
+        setenv("PULSE_PROP_media.role", "video", 1);
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        format.setDefaultFormat(format);
     } else {
         DApplication::loadDXcbPlugin();//wayland下不加载xcb
     }
