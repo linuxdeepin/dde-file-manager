@@ -16,11 +16,11 @@ public:
     QSharedPointer<DFileCopyMoveJob> job;
     virtual void SetUp() override{
         job.reset(new DFileCopyMoveJob());
-        std::cout << "start DFileCopyQueueTest" << std::endl;
+        std::cout << "start DFileCopyMoveJobTest" << std::endl;
     }
 
     virtual void TearDown() override{
-        std::cout << "end DFileCopyQueueTest" << std::endl;
+        std::cout << "end DFileCopyMoveJobTest" << std::endl;
     }
 };
 
@@ -249,6 +249,23 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_remove) {
         job->moveToThread(qApp->thread());
     }
     job->start(DUrlList() << urlsour, DUrl());
+    while(!job->isFinished()) {
+        QThread::msleep(100);
+    }
+}
+
+TEST_F(DFileCopyMoveJobTest,can_job_running_error) {
+    job->setMode(DFileCopyMoveJob::CopyMode);
+    DUrl urlsour,target;
+    urlsour.setScheme(FILE_SCHEME);
+    target.setScheme(FILE_SCHEME);
+    urlsour.setPath("~/Wallpapers");
+    target.setPath("/usr/bin");
+    if (QThread::currentThread()->loopLevel() <= 0) {
+        // 确保对象所在线程有事件循环
+        job->moveToThread(qApp->thread());
+    }
+    job->start(DUrlList() << urlsour, target);
     while(!job->isFinished()) {
         QThread::msleep(100);
     }

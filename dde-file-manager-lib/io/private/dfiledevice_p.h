@@ -30,6 +30,7 @@ class DFileDevicePrivate
 {
 public:
     explicit DFileDevicePrivate(DFileDevice *qq);
+    virtual ~DFileDevicePrivate();
 
     DFileDevice *q_ptr;
     DUrl url;
