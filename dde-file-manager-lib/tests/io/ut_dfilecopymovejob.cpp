@@ -223,7 +223,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_more) {
 
     EXPECT_EQ(target.toString(),job->targetUrl().toString());
     EXPECT_EQ(-1,job->totalDataSize());
-    EXPECT_EQ(-1,job->totalFilesCount());
+    EXPECT_EQ(0,job->totalFilesCount());
 
     QThread::msleep(300);
     EXPECT_EQ(true,job->totalDataSize() != -1);
