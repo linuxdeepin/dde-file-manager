@@ -134,6 +134,17 @@ void CanvasViewManager::onBackgroundEnableChanged()
         for (const ScreenPointer &sp : m_canvasMap.keys()){
             CanvasViewPointer mView = m_canvasMap.value(sp);
             BackgroundWidgetPointer bw = m_background->backgroundWidget(sp);
+            //fix bug52928 主屏数据不同步导致桌面崩溃(插上扩展屏后模式切换为复制模式，背景管理类中获取主屏为VGA，画布管理类中再次获取变成了HDMI）
+            if (bw == nullptr) {
+                auto datas = m_background->allbackgroundWidgets();
+                for (auto bsp : datas.keys()) {
+                    qDebug()<<"BackgroundManager give screen:"<<bsp->name();
+                }
+                qDebug()<<"CanvasViewManager give screen:"<<sp->name();
+                m_canvasMap.clear();
+                qCritical() << "ERROR!! The screen data obtained by CanvasViewManager is inconsistent with that obtained by BackGroundManager.";
+                return;
+            }
             mView->setAttribute(Qt::WA_NativeWindow, false);
             bw->setView(mView);
             QRect avRect;
@@ -382,5 +393,5 @@ void CanvasViewManager::init()
     connect(GridManager::instance(), &GridManager::sigSyncSelection,
             this,&CanvasViewManager::onSyncSelection,Qt::DirectConnection);
 
-    onCanvasViewBuild(ScreenMrg->displayMode());
+    onCanvasViewBuild(ScreenMrg->lastChangedMode());
 }

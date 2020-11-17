@@ -230,6 +230,11 @@ AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
     }
 }
 
+AbstractScreenManager::DisplayMode ScreenManager::lastChangedMode() const
+{
+    return static_cast<AbstractScreenManager::DisplayMode>(m_lastMode);
+}
+
 void ScreenManager::reset()
 {
     if (m_display) {

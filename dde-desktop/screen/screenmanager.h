@@ -20,6 +20,7 @@ public:
     ScreenPointer screen(const QString &name) const override;
     qreal devicePixelRatio() const override;
     DisplayMode displayMode() const override;
+    DisplayMode lastChangedMode() const override;
     void reset() override;
 protected slots:
     void onScreenAdded(QScreen *screen);
