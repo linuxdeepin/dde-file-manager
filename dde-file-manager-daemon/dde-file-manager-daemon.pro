@@ -46,17 +46,17 @@ SOURCES += \
 
 target.path = /usr/bin
 
-poliktpolicy.path = /usr/share/polkit-1/actions
+poliktpolicy.path = $$PREFIX/share/polkit-1/actions
 poliktpolicy.files = dbusservice/com.deepin.filemanager.daemon.policy
 
 systembusconf.path = /etc/dbus-1/system.d
 systembusconf.files = dbusservice/com.deepin.filemanager.daemon.conf
 
-services.path = /usr/share/dbus-1/system-services
+services.path = $$PREFIX/share/dbus-1/system-services
 services.files = dbusservice/com.deepin.filemanager.daemon.service
 
 systemd_service.files = dbusservice/dde-filemanager-daemon.service
-systemd_service.path = /lib/systemd/system
+systemd_service.path = $$PREFIX/lib/systemd/system
 
 INSTALLS += target poliktpolicy systembusconf services systemd_service
 

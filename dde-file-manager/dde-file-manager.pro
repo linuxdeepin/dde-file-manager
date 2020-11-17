@@ -30,12 +30,6 @@ isEmpty(QMAKE_ORGANIZATION_NAME) {
     DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
 }
 
-isEmpty(PREFIX){
-    PREFIX = /usr
-}
-
-
-
 CONFIG(release, debug|release) {
     !system($$PWD/translate_ts2desktop.sh): error("Failed to generate translation")
 }
