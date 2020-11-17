@@ -2,6 +2,10 @@ TEMPLATE  = subdirs
 
 include(./common/common.pri)
 
+isEmpty(PREFIX){
+    PREFIX = /usr
+}
+
 SUBDIRS  += \
     dde-file-manager \
     dde-file-manager-daemon \
