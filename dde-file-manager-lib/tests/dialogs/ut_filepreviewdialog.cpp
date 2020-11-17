@@ -62,7 +62,7 @@ namespace  {
         void SetUp() override
         {
             DUrlList previewUrllist;
-            previewUrllist << DUrl("file:///test1");
+            previewUrllist << DUrl("file://~/test1");
             m_pTester = new FilePreviewDialog(previewUrllist, nullptr);
             std::cout << "start TestFilePreviewDialog";
         }
@@ -85,14 +85,14 @@ TEST_F(TestFilePreviewDialog, testInit)
 TEST_F(TestFilePreviewDialog, testUpdatePreviewList)
 {
     DUrlList previewUrllist;
-    previewUrllist << DUrl("file:///test2");
+    previewUrllist << DUrl("file://~/test2");
     m_pTester->updatePreviewList(previewUrllist);
 }
 
 TEST_F(TestFilePreviewDialog, testSetEntryUrlList)
 {
     DUrlList entryUrlList;
-    entryUrlList << DUrl("file:///test3");
+    entryUrlList.clear();
     m_pTester->setEntryUrlList(entryUrlList);
 }
 
