@@ -893,7 +893,10 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     const QSize &icon_size = parent()->parent()->iconSize();
 
     editor->move(option.rect.topLeft());
-    editor->setMinimumHeight(option.rect.height());
+
+    //bug 54404
+    //编辑框设置的最小高度为grid的高度, gird 整个高度为icon+editor+ 间隙,导致文字出现截断的问题
+    //editor->setMinimumHeight(option.rect.height());
 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
