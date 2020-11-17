@@ -53,6 +53,7 @@ private:
     bool m_preview = false; //壁纸预览
     bool m_visible = true;
     int currentWorkspaceIndex = 1;
+    bool m_backgroundEnable = true;
 
     QMap<ScreenPointer,BackgroundWidgetPointer> m_backgroundMap;
 

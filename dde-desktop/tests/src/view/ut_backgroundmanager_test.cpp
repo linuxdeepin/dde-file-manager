@@ -12,6 +12,9 @@
 #include "view/backgroundwidget.h"
 #include "view/canvasviewmanager.h"
 #include "screen/screenhelper.h"
+#include "screen/abstractscreenmanager.h"
+#include "screen/screenmanager.h"
+#include "util/dde/desktopinfo.h"
 
 using namespace testing;
 namespace  {
@@ -118,13 +121,48 @@ TEST_F(BackgroundManagerTest, setBackgroundImage)
 
 TEST_F(BackgroundManagerTest, onBackgroundBuild)
 {
-    QObject::connect(m_manager, &BackgroundManager::sigBackgroundBuilded, [=](int mode){
-        EXPECT_EQ(mode, ScreenMrg->displayMode());
-    });
+    int oriMode = ScreenMrg->m_lastMode;
+
+    //测试单屏代码
+    ScreenMrg->m_lastMode = AbstractScreenManager::Showonly;
     m_manager->onBackgroundBuild();
-    EXPECT_EQ(m_manager->m_backgroundMap.size(), screens.size());
     ASSERT_EQ(m_manager->m_backgroundMap.keys().contains(primaryScreen), true);
     EXPECT_EQ(m_manager->m_backgroundMap.value(primaryScreen)->geometry(), primaryScreen->geometry());
+
+    //测试多屏代码
+    if (DesktopInfo().waylandDectected()) {
+        qputenv("XDG_SESSION_TYPE","");
+        qputenv("WAYLAND_DISPLAY","");
+    }
+
+    ScreenManager *screenManager = static_cast<ScreenManager*>(ScreenMrg);
+    QMap<QScreen *, ScreenPointer>  oriScreens;
+
+    if (screenManager) {
+        oriScreens = screenManager->m_screens;
+        if (screenManager->m_screens.count() == 1) {
+        ScreenPointer sp = screenManager->m_screens.first();
+        screenManager->m_screens.insert(nullptr, sp);
+        }
+    }
+    if (screenManager && screenManager->m_screens.count() != 1) {
+        ScreenMrg->m_lastMode = AbstractScreenManager::Custom;
+        m_manager->onBackgroundBuild();
+        EXPECT_EQ(m_manager->m_backgroundMap.size(), screens.size());
+        ASSERT_EQ(m_manager->m_backgroundMap.keys().contains(primaryScreen), true);
+        EXPECT_EQ(m_manager->m_backgroundMap.value(primaryScreen)->geometry(), primaryScreen->geometry());
+    }
+
+    //测试单屏代码中主屏获取错误
+    if (screenManager) {
+        screenManager->m_screens.clear();
+        ScreenMrg->m_lastMode = AbstractScreenManager::Showonly;
+        m_manager->onBackgroundBuild();
+        EXPECT_TRUE(m_manager->m_backgroundMap.isEmpty());
+
+        screenManager->m_screens = oriScreens;
+    }
+    ScreenMrg->m_lastMode = oriMode;
 }
 
 TEST_F(BackgroundManagerTest, onSkipBackgroundBuild)
@@ -166,6 +204,19 @@ TEST_F(BackgroundManagerTest, onRestBackgroundManager)
         EXPECT_EQ(m_manager->wmInter, nullptr);
         EXPECT_EQ(m_manager->gsettings, nullptr);
     }
+
+    bool ori = m_manager->m_backgroundEnable;
+    m_manager->m_backgroundEnable = false;
+    unknow = m_manager->m_preview || m_manager->isEnabled();
+    m_manager->onRestBackgroundManager();
+    if(unknow) {
+        EXPECT_NE(m_manager->wmInter, nullptr);
+        EXPECT_NE(m_manager->gsettings, nullptr);
+    } else {
+        EXPECT_EQ(m_manager->wmInter, nullptr);
+        EXPECT_EQ(m_manager->gsettings, nullptr);
+    }
+    m_manager->m_backgroundEnable = ori;
 }
 
 TEST_F(BackgroundManagerTest, onScreenGeometryChanged)

@@ -291,7 +291,7 @@ bool BackgroundManager::isEnabled() const
 {
     // 只支持kwin，或未开启混成的桌面环境
 //    return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
-    return true;
+    return m_backgroundEnable;
 }
 
 void BackgroundManager::setVisible(bool visible)
