@@ -28,29 +28,46 @@
 
 class DCustomActionData : public QObject
 {
+    friend class DCustomActionParser;
+    friend class DCustomActionBuilder;
     Q_OBJECT
 public:
     explicit DCustomActionData(QObject *parent = nullptr);
     DCustomActionData(const DCustomActionData &other);
-
+    bool isMenu() const;
+    bool isAction() const;
+    QString name() const;
+    int position() const;
+    QString icon() const;
+    QString command() const;
+    DCustomActionDefines::Separator separator() const;
+    QList<DCustomActionData> acitons() const;
 signals:
 
 public slots:
 protected:
     QString m_name;
-    QString m_genericName;
     int m_position;     //显示位置
     DCustomActionDefines::Separator m_separator;
     QString m_command;     //菜单执行动作
     QList<DCustomActionData> m_childrenActions;     //当前action的子actions
+    QString m_icon;
 };
 
 class DCustomActionFile : public QObject
 {
+    friend class DCustomActionParser;
+    friend class DCustomActionBuilder;
     Q_OBJECT
 public:
     explicit DCustomActionFile(QObject *parent = nullptr);
     DCustomActionFile(const DCustomActionFile &other);
+    QString package() const;
+    QString version() const;
+    QString comment() const;
+    DCustomActionDefines::FileComboTypes fileCombo() const;
+    QStringList mimeTypes() const;
+    QList<DCustomActionData> rootActions() const;
 protected:
     QString m_package;  //配置文件名
     QString m_version;  //版本
