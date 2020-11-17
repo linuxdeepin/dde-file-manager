@@ -42,6 +42,7 @@
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmactionbutton.h"
 #include "models/networkfileinfo.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <DButtonBox>
 
@@ -69,6 +70,9 @@ static const QSize iconSize(16, 16);
 
 DToolBar::DToolBar(QWidget *parent) : QFrame(parent)
 {
+    AC_SET_OBJECT_NAME( this, AC_COMPUTER_TITLE_BAR);
+    AC_SET_ACCESSIBLE_NAME( this, AC_COMPUTER_TITLE_BAR);
+
     initData();
     initUI();
     initConnect();
@@ -94,6 +98,7 @@ void DToolBar::initUI()
     m_detailButton->setFixedWidth(ButtonWidth);
     m_detailButton->setFixedHeight(ButtonHeight);
     m_detailButton->setObjectName("detailButton");
+    AC_SET_ACCESSIBLE_NAME( m_detailButton, AC_COMPUTER_TITLE_BAR_DETAIL_BTN);
     m_detailButton->setCheckable(true);
     m_detailButton->setFocusPolicy(Qt::NoFocus);
     m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
@@ -117,15 +122,20 @@ void DToolBar::initAddressToolBar()
 {
     m_addressToolBar = new QFrame;
     m_addressToolBar->setObjectName("AddressToolBar");
+    AC_SET_OBJECT_NAME( m_addressToolBar, AC_COMPUTER_TITLE_BAR_ADRESS);
     //m_addressToolBar->setFixedHeight(40);
 
     QHBoxLayout *backForwardLayout = new QHBoxLayout;
 
     m_backButton = new DButtonBoxButton(QStyle::SP_ArrowBack);
+    AC_SET_OBJECT_NAME( m_backButton, AC_COMPUTER_TITLE_BAR_BACK_BTN);
+    AC_SET_ACCESSIBLE_NAME( m_backButton, AC_COMPUTER_TITLE_BAR_BACK_BTN);
     m_backButton->setDisabled(true);
     m_backButton->setFixedWidth(36);
 
     m_forwardButton = new DButtonBoxButton(QStyle::SP_ArrowForward);
+    AC_SET_OBJECT_NAME( m_forwardButton, AC_COMPUTER_TITLE_BAR_FORWARD_BTN);
+    AC_SET_ACCESSIBLE_NAME( m_forwardButton, AC_COMPUTER_TITLE_BAR_FORWARD_BTN);
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFixedWidth(36);
 
@@ -133,11 +143,14 @@ void DToolBar::initAddressToolBar()
     buttonList << m_backButton << m_forwardButton;
 
     DButtonBox *buttonBox = new DButtonBox(this);
+    AC_SET_OBJECT_NAME( buttonBox, AC_COMPUTER_TITLE_BAR_BTN_BOX);
+    AC_SET_ACCESSIBLE_NAME( buttonBox, AC_COMPUTER_TITLE_BAR_BTN_BOX);
     buttonBox->setButtonList(buttonList, false);
     buttonBox->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new QPushButton(this);
     m_searchButton->setObjectName("searchButton");
+    AC_SET_ACCESSIBLE_NAME( m_searchButton, AC_COMPUTER_TITLE_BAR_SERACH_BTN);
     m_searchButton->setFixedSize(ButtonWidth, ButtonHeight);
     m_searchButton->setFocusPolicy(Qt::NoFocus);
     m_searchButton->setFlat(true);
@@ -153,6 +166,8 @@ void DToolBar::initAddressToolBar()
     QFrame *crumbAndSearch = new QFrame;
     m_crumbWidget = new DFMCrumbBar(this);
     crumbAndSearch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    AC_SET_OBJECT_NAME( crumbAndSearch, AC_COMPUTER_TITLE_BAR_CRUMB_SERACH_FRAME);
+    AC_SET_ACCESSIBLE_NAME( crumbAndSearch, AC_COMPUTER_TITLE_BAR_CRUMB_SERACH_FRAME);
 
     QHBoxLayout *comboLayout = new QHBoxLayout;
     comboLayout->addWidget(m_crumbWidget);
@@ -174,6 +189,8 @@ void DToolBar::initContollerToolBar()
 {
     m_contollerToolBar = new QFrame;
     m_contollerToolBar->setObjectName("ContollerToolBar");
+    AC_SET_ACCESSIBLE_NAME( m_contollerToolBar, AC_COMPUTER_TITLE_BAR_CONTOLLER_TOOL_BAR);
+
     m_contollerToolBar->setFrameShape(QFrame::NoFrame);
     m_contollerToolBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -469,6 +486,10 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
         button->setFocusPolicy(Qt::NoFocus);
         button->setAction(list.at(i));
         button->setIconSize(iconSize);
+
+        QString acMark = QString("action_botton_%1").arg(i+1);
+        AC_SET_OBJECT_NAME( button, acMark);
+        AC_SET_ACCESSIBLE_NAME( button, acMark);
 
         m_contollerToolBarContentLayout->addWidget(button);
 

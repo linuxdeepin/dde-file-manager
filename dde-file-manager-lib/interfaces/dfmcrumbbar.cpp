@@ -49,6 +49,7 @@
 #include "controllers/pathmanager.h"
 #include "controllers/vaultcontroller.h"
 #include "interfaces/dfilemenu.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -114,6 +115,8 @@ void DFMCrumbBarPrivate::checkArrowVisiable()
     QScrollBar *sb = crumbListView.horizontalScrollBar();
     if (!sb)
         return;
+    AC_SET_OBJECT_NAME(sb, AC_COMPUTER_CRUMB_BAR_SCROLL_BAR);
+    AC_SET_ACCESSIBLE_NAME(sb, AC_COMPUTER_CRUMB_BAR_SCROLL_BAR);
 
     leftArrow.setVisible(!addressBar->isVisible() && sb->maximum() > 0);
     rightArrow.setVisible(!addressBar->isVisible() && sb->maximum() > 0);
@@ -174,6 +177,11 @@ void DFMCrumbBarPrivate::initUI()
 
     // Arrows
     QSize size(24, 24), iconSize(16, 16);
+    AC_SET_OBJECT_NAME((&leftArrow), AC_COMPUTER_CRUMB_BAR_LEFT_ARROW);
+    AC_SET_ACCESSIBLE_NAME((&leftArrow), AC_COMPUTER_CRUMB_BAR_LEFT_ARROW);
+    AC_SET_OBJECT_NAME((&rightArrow), AC_COMPUTER_CRUMB_BAR_RIGHT_ARROW);
+    AC_SET_ACCESSIBLE_NAME((&rightArrow), AC_COMPUTER_CRUMB_BAR_RIGHT_ARROW);
+
     leftArrow.setFocusPolicy(Qt::NoFocus);
     leftArrow.setIcon(QIcon::fromTheme("go-previous"));
     rightArrow.setIcon(QIcon::fromTheme("go-next"));
@@ -190,6 +198,9 @@ void DFMCrumbBarPrivate::initUI()
 
     // Crumb List Layout
     crumbListView.setObjectName("DCrumbListScrollArea");
+    AC_SET_OBJECT_NAME((&crumbListView), AC_COMPUTER_CRUMB_BAR_LIST_VIEW);
+    AC_SET_ACCESSIBLE_NAME((&crumbListView), AC_COMPUTER_CRUMB_BAR_LIST_VIEW);
+
     crumbListView.setItemSpacing(10);
     crumbListView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbListView.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -317,6 +328,8 @@ DFMCrumbBar::DFMCrumbBar(QWidget *parent)
     : QFrame(parent)
     , d_ptr(new DFMCrumbBarPrivate(this))
 {
+    AC_SET_OBJECT_NAME(this, AC_COMPUTER_CRUMB_BAR);
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_CRUMB_BAR);
     setFrameShape(QFrame::NoFrame);
 }
 
@@ -581,6 +594,7 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
 
     DFileMenu *menu = new DFileMenu();
     DUrl url = DUrl(index.data(DFMCrumbListviewModel::FileUrlRole).toUrl());
+    menu->setAccessibleInfo(AC_FILE_MENU_CRUMB_BAR);
     DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     bool displayIcon = settings.value("context-menu-icons").toBool();
     QIcon copyIcon, newWndIcon,  newTabIcon, editIcon;

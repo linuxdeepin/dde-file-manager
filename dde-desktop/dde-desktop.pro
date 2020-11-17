@@ -9,9 +9,19 @@ include($$PWD/util/util.pri)
 include($$PWD/dbus/dbus.pri)
 
 include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
+# 集成测试标签
+include($$PWD/../third-party/accessibility/accessibility-suite.pri)
 #无热区设置
 #include($$PWD/../dde-zone/dde-zone.pri)
 DEFINES += DISABLE_ZONE
+
+# 获取标签系统设置
+AC_FUNC_ENABLE = $$(ENABLE_AC_FUNC)
+# 检查集成测试标签
+equals( AC_FUNC_ENABLE, true ){
+    DEFINES += ENABLE_ACCESSIBILITY
+    message("dde-desktop enabled accessibility function with set: " $$AC_FUNC_ENABLE)
+}
 
 QT       += core gui widgets dbus x11extras network concurrent multimedia #multimediawidgets svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -104,10 +114,9 @@ HEADERS += \
     view/backgroundwidget.h \
     screen/screenmanagerwayland.h \
     screen/screenobjectwayland.h \
-    view/canvasviewmanager.h
-    accessible/frameaccessibledefine.h
-    accessible/accessiblelist.h
-
+    view/canvasviewmanager.h \
+    accessibility/ac-desktop-define.h \
+    accessibility/acobjectlist.h
 
 RESOURCES +=
 
@@ -120,6 +129,5 @@ CONFIG(release, debug|release) {
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
                 $$PWD/translations/$${TARGET}_zh_CN.ts
-
 
 include($$PWD/development.pri)

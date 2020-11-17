@@ -1,5 +1,6 @@
 #include "backgroundwidget.h"
 #include "canvasgridview.h"
+#include "accessibility/ac-desktop-define.h"
 
 #include <QPaintEvent>
 #include <QBackingStore>
@@ -14,7 +15,8 @@
 BackgroundWidget::BackgroundWidget(QWidget *parent)
     : QWidget(parent)
 {
-
+    AC_SET_OBJECT_NAME( this, AC_SCREEN_BACKGROUND);
+    AC_SET_ACCESSIBLE_NAME( this, AC_SCREEN_BACKGROUND);
 }
 
 BackgroundWidget::~BackgroundWidget()
@@ -55,4 +57,13 @@ void BackgroundWidget::setView(const QSharedPointer<CanvasGridView> &v)
 {
     v->setParent(this);
     m_view = v;
+}
+
+void BackgroundWidget::setAccessableInfo(const QString& info)
+{
+    if(info.isEmpty())
+        return;
+
+    AC_SET_OBJECT_NAME( this, info);
+    AC_SET_ACCESSIBLE_NAME( this, info);
 }

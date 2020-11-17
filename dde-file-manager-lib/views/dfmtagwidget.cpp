@@ -23,6 +23,7 @@
 #include "app/define.h"
 #include "controllers/pathmanager.h"
 #include "controllers/vaultcontroller.h"
+#include "accessibility/ac-lib-file-manager.h"
 #include "singleton.h"
 #include <dfilemenumanager.h>
 #include <shutil/desktopfile.h>
@@ -114,6 +115,8 @@ DFMTagWidget::DFMTagWidget(DUrl url, QWidget *parent/*=nullptr*/)
     : QFrame(parent)
     , d_private(new DFMTagWidgetPrivate(this, url))
 {
+    AC_SET_OBJECT_NAME(this, AC_TAG_WIDGET);
+    AC_SET_ACCESSIBLE_NAME(this, AC_TAG_WIDGET);
     initUi();
     initConnection();
 }
@@ -132,12 +135,18 @@ void DFMTagWidget::initUi()
     //tr("Tag"); // dde_file_manager::DFMTagWidget not found in .ts
     QString name = qApp->translate("DFMTagWidget", "Tag");
     d->m_tagLable = new QLabel(name, this);
+    d->m_tagLable->setObjectName(name);
+    AC_SET_ACCESSIBLE_NAME(d->m_tagLable, AC_TAG_LABLE);
+
     d->m_mainLayout->addWidget(d->m_tagLable);
     d->m_tagLeftLable = new QLabel(name, this);
+    d->m_tagLeftLable->setObjectName(name);
+    AC_SET_ACCESSIBLE_NAME(d->m_tagLeftLable, AC_TAG_LEFT_LABLE);
 
     d->m_tagActionWidget =  new DTagActionWidget(this);
     d->m_tagActionWidget->setMaximumHeight(20);
     d->m_tagActionWidget->setObjectName("tagActionWidget");
+    AC_SET_ACCESSIBLE_NAME(d->m_tagActionWidget, AC_TAG_ACTION_WIDGET);
     QHBoxLayout *tagActionLayout = new QHBoxLayout;
     tagActionLayout->addWidget(d->m_tagLeftLable);
     tagActionLayout->addWidget(d->m_tagActionWidget);
@@ -146,6 +155,7 @@ void DFMTagWidget::initUi()
 
     d->m_tagCrumbEdit = new DFMCrumbEdit(this);
     d->m_tagCrumbEdit->setObjectName("tagCrumbEdit");
+    AC_SET_ACCESSIBLE_NAME(d->m_tagCrumbEdit, AC_TAG_CRUMB_EDIT);
     d->m_tagCrumbEdit->setFrameShape(QFrame::Shape::NoFrame);
     d->m_tagCrumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
     d->m_mainLayout->addWidget(d->m_tagCrumbEdit);

@@ -24,13 +24,14 @@
 
 #include "dfilemenu.h"
 #include "dfmevent.h"
+#include "accessibility/acintelfunctions.h"
 #include <QTimer>
 #include <QApplication>
 
 DFileMenu::DFileMenu(QWidget *parent)
     : QMenu(parent)
 {
-
+    this->setAccessibleInfo(AC_FILE_MENU_DEFAULT);
 }
 
 const QSharedPointer<DFMMenuActionEvent> DFileMenu::makeEvent(DFMGlobal::MenuAction action) const
@@ -112,4 +113,8 @@ void DFileMenu::mouseMoveEvent(QMouseEvent * event)
     update();
 }
 
-
+void DFileMenu::setAccessibleInfo(const QString& name)
+{
+    AC_SET_OBJECT_NAME(this,name);
+    AC_SET_ACCESSIBLE_NAME(this,name);
+}
