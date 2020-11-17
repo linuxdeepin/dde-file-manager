@@ -15,6 +15,7 @@ bool rsam::createRsaKey(QString &strPubKey, QString &strPriKey)
     RSA *pRsa = RSA_new();
     int ret = 0;
     BIGNUM *bne = BN_new();
+    BN_set_word(bne, RSA_F4);
     ret = RSA_generate_key_ex(pRsa, KEY_LENGTH, bne, nullptr);
     if (ret != 1) {
         return false;
