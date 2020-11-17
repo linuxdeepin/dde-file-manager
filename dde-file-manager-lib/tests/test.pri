@@ -177,7 +177,9 @@ SOURCES += \
     $$PWD/controllers/ut_dfmrecentcrumbcontroller.cpp \
     $$PWD/controllers/ut_filecontroller.cpp \
     $$PWD/interfaces/ut_dfiledialoghandle.cpp \
-    $$PWD/interfaces/ut_dfileiconprovider.cpp
+    $$PWD/interfaces/ut_dfileiconprovider.cpp \
+    $$PWD/fileoperations/ut_filejob.cpp \
+    $$PWD/io/ut_dfiledevice.cpp
 
 RESOURCES += \
     $$PWD/resources/test.qrc
