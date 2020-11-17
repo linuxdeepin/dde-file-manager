@@ -136,6 +136,11 @@ AbstractScreenManager::DisplayMode ScreenManagerWayland::displayMode() const
     }
 }
 
+AbstractScreenManager::DisplayMode ScreenManagerWayland::lastChangedMode() const
+{
+    return static_cast<AbstractScreenManager::DisplayMode>(m_lastMode);
+}
+
 void ScreenManagerWayland::reset()
 {
     if (m_display) {
@@ -224,7 +229,11 @@ void ScreenManagerWayland::init()
     //临时方案，
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this]() {
         //emit sigDisplayModeChanged();
-        m_lastMode = m_display->GetRealDisplayMode();
+        int mode = m_display->GetRealDisplayMode();
+        qDebug() << "deal display mode changed " << mode;
+        if (m_lastMode == mode)
+            return;
+        m_lastMode = mode;
         this->appendEvent(Mode);
     });
 
