@@ -1,6 +1,6 @@
 #include "dcustomactiondata.h"
 
-DCustomActionData::DCustomActionData(QObject *parent) : QObject(parent)
+DCustomActionData::DCustomActionData()
 {
 
 }
@@ -8,6 +8,7 @@ DCustomActionData::DCustomActionData(QObject *parent) : QObject(parent)
 DCustomActionData::DCustomActionData(const DCustomActionData &other)
 {
     m_name = other.m_name;
+    m_icon = other.m_icon;
     m_position = other.m_position;
     m_separator = other.m_separator;
     m_command = other.m_command;
@@ -55,7 +56,7 @@ QList<DCustomActionData> DCustomActionData::acitons() const
 }
 
 
-DCustomActionFile::DCustomActionFile(QObject *parent) : QObject(parent)
+DCustomActionFile::DCustomActionFile()
 {
 
 }

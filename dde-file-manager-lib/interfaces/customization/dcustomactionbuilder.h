@@ -24,17 +24,20 @@
 
 #include <QObject>
 #include <QIcon>
-#include <QMenu>
 
 #include "dcustomactiondata.h"
 
+class QMenu;
+class QAction;
 class DCustomActionBuilder : public QObject
 {
     Q_OBJECT
 public:
     explicit DCustomActionBuilder(QObject *parent = nullptr);
-    QMenu *buildMenu(const DCustomActionData &) const;
-    QAction *buildAciton(const DCustomActionData &) const;
+    QAction *buildAciton(const DCustomActionData &, QWidget *parentForSubmenu) const;
+protected:
+    QAction *createMenu(const DCustomActionData &, QWidget *parentForSubmenu) const;
+    QAction *createAciton(const DCustomActionData &) const;
 signals:
 
 public slots:

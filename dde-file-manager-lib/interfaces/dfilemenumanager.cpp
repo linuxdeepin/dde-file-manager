@@ -1167,6 +1167,18 @@ void DFileMenuManager::actionTriggered(QAction *action)
     if (!(menu->property("ToolBarSettingsMenu").isValid() && menu->property("ToolBarSettingsMenu").toBool())) {
         disconnect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
     }
+
+    //WIP: 扩展菜单
+    if (action->property("Custom_Action_Flag").isValid()) {
+        QString cmd = action->property("Custom_Action_Command").toString();
+        qDebug() << "extend" << action->text() << cmd
+                 << menu->selectedUrls();
+        QStringList argvs;
+        for(const DUrl &url : menu->selectedUrls())
+            argvs << url.toLocalFile();
+        FileUtils::runCommand(cmd, argvs);
+    }
+
     if (action->data().isValid()) {
         bool flag = false;
         int _type = action->data().toInt(&flag);

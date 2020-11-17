@@ -26,13 +26,12 @@
 
 #include "dcustomactiondefine.h"
 
-class DCustomActionData : public QObject
+class DCustomActionData
 {
     friend class DCustomActionParser;
     friend class DCustomActionBuilder;
-    Q_OBJECT
 public:
-    explicit DCustomActionData(QObject *parent = nullptr);
+    explicit DCustomActionData();
     DCustomActionData(const DCustomActionData &other);
     bool isMenu() const;
     bool isAction() const;
@@ -47,20 +46,19 @@ signals:
 public slots:
 protected:
     QString m_name;
+    QString m_icon;
+    QString m_command;     //菜单执行动作
     int m_position;     //显示位置
     DCustomActionDefines::Separator m_separator;
-    QString m_command;     //菜单执行动作
     QList<DCustomActionData> m_childrenActions;     //当前action的子actions
-    QString m_icon;
 };
 
-class DCustomActionFile : public QObject
+class DCustomActionFile
 {
     friend class DCustomActionParser;
     friend class DCustomActionBuilder;
-    Q_OBJECT
 public:
-    explicit DCustomActionFile(QObject *parent = nullptr);
+    explicit DCustomActionFile();
     DCustomActionFile(const DCustomActionFile &other);
     QString package() const;
     QString version() const;

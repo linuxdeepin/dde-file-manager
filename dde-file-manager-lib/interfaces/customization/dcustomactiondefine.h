@@ -22,6 +22,8 @@
 #ifndef DCUSTOMACTIONDEFINE_H
 #define DCUSTOMACTIONDEFINE_H
 
+#include <QString>
+
 namespace DCustomActionDefines
 {
     //分割线
@@ -41,5 +43,11 @@ namespace DCustomActionDefines
         MultiDirs = 1 << 3,  //多个文件夹
         FileAndDir = 1 << 4 //文件和文件夹，必须都包含
     };
+
+    static const char* const kCustomActionFlag = "Custom_Action_Flag";
+    static const char* const kCustomActionCommand = "Custom_Action_Command";
+    static const int kCustomMaxNumOne = 30;
+    static const int kCustomMaxNumTwo = 50;
+    static const int kCustomMaxNumThree = 50;
 }
 #endif // DCUSTOMACTIONDEFINE_H

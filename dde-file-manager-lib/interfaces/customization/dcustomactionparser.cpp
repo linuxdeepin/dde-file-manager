@@ -1,6 +1,6 @@
 #include "dcustomactionparser.h"
 
-#include<QDir>
+#include <QDir>
 
 DCustomActionParser::DCustomActionParser(QObject *parent) : QObject(parent)
 {
