@@ -23,16 +23,23 @@
 #define DCUSTOMACTIONBUILDER_H
 
 #include <QObject>
+#include <QIcon>
+#include <QMenu>
+
+#include "dcustomactiondata.h"
 
 class DCustomActionBuilder : public QObject
 {
     Q_OBJECT
 public:
     explicit DCustomActionBuilder(QObject *parent = nullptr);
-
+    QMenu *buildMenu(const DCustomActionData &) const;
+    QAction *buildAciton(const DCustomActionData &) const;
 signals:
 
 public slots:
+protected:
+    QIcon getIcon(const QString &iconName) const;
 };
 
 #endif // DCUSTOMACTIONBUILDER_H
