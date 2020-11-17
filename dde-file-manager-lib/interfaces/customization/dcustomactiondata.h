@@ -31,6 +31,7 @@ class DCustomActionData : public QObject
     Q_OBJECT
 public:
     explicit DCustomActionData(QObject *parent = nullptr);
+    DCustomActionData(const DCustomActionData &other);
 
 signals:
 
@@ -41,6 +42,7 @@ protected:
     int m_position;     //显示位置
     DCustomActionDefines::Separator m_separator;
     QString m_command;     //菜单执行动作
+    QList<DCustomActionData> m_childrenActions;     //当前action的子actions
 };
 
 class DCustomActionFile : public QObject
@@ -48,6 +50,7 @@ class DCustomActionFile : public QObject
     Q_OBJECT
 public:
     explicit DCustomActionFile(QObject *parent = nullptr);
+    DCustomActionFile(const DCustomActionFile &other);
 protected:
     QString m_package;  //配置文件名
     QString m_version;  //版本
