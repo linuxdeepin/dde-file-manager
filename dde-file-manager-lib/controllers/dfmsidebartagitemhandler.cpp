@@ -57,6 +57,8 @@ DFMSideBarTagItemHandler::DFMSideBarTagItemHandler(QObject *parent)
 QMenu *DFMSideBarTagItemHandler::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     DFileMenu *menu = new DFileMenu();
+    menu->setAccessibleInfo(AC_FILE_MENU_SIDEBAR_TAGITEM);
+
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
     DTagActionWidget* tagWidget{ new DTagActionWidget };

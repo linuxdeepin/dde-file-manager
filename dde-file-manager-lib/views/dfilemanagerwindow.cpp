@@ -73,6 +73,7 @@
 #include "controllers/vaultcontroller.h"
 #include "dfmsplitter.h"
 #include "views/dfmvaultactiveview.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
@@ -556,6 +557,8 @@ void DFileManagerWindowPrivate::storeUrlListToRenameBar(const QList<DUrl> &list)
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
     : DFileManagerWindow(DUrl(), parent)
 {
+    AC_SET_OBJECT_NAME(this, AC_COMPUTER_MIAN_WINDOW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_MIAN_WINDOW);
 }
 
 QPair<bool, QMutex> winId_mtx;  //异步初始化win插件
@@ -563,6 +566,8 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
+    AC_SET_OBJECT_NAME(this, AC_COMPUTER_MIAN_WINDOW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_MIAN_WINDOW);
     /// init global AppController
     setWindowIcon(QIcon::fromTheme("dde-file-manager"));
     if (!winId_mtx.first) {
@@ -1080,6 +1085,8 @@ void DFileManagerWindow::initTitleFrame()
     titlebar()->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
     d->titleFrame = new QFrame;
     d->titleFrame->setObjectName("TitleBar");
+    AC_SET_OBJECT_NAME(d->titleFrame, AC_COMPUTER_CUSTOM_TITLE_BAR);
+    AC_SET_ACCESSIBLE_NAME(d->titleFrame, AC_COMPUTER_CUSTOM_TITLE_BAR);
     QHBoxLayout *titleLayout = new QHBoxLayout;
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
@@ -1149,6 +1156,8 @@ void DFileManagerWindow::initRightView()
     initTabBar();
     initViewLayout();
     d->rightView = new QFrame;
+    AC_SET_OBJECT_NAME(d->rightView, AC_DM_RIGHT_VIEW);
+    AC_SET_ACCESSIBLE_NAME(d->rightView, AC_DM_RIGHT_VIEW);
 
     QSizePolicy sp = d->rightView->sizePolicy();
 
@@ -1162,8 +1171,13 @@ void DFileManagerWindow::initRightView()
 
     d->emptyTrashHolder = new QFrame(this);
     d->emptyTrashHolder->setFrameShape(QFrame::NoFrame);
+    AC_SET_OBJECT_NAME(d->emptyTrashHolder, AC_DM_RIGHT_VIEW_TRASH_HOLDER);
+    AC_SET_ACCESSIBLE_NAME(d->emptyTrashHolder, AC_DM_RIGHT_VIEW_TRASH_HOLDER);
+
     QHBoxLayout *emptyTrashLayout = new QHBoxLayout(d->emptyTrashHolder);
     QLabel *trashLabel = new QLabel(this);
+    AC_SET_OBJECT_NAME(trashLabel, AC_DM_RIGHT_VIEW_TRASH_LABEL);
+    AC_SET_ACCESSIBLE_NAME(trashLabel, AC_DM_RIGHT_VIEW_TRASH_LABEL);
     trashLabel->setText(tr("Trash"));
     QFont f = trashLabel->font();
     f.setPixelSize(17);
@@ -1172,6 +1186,7 @@ void DFileManagerWindow::initRightView()
     QPushButton *emptyTrashButton = new QPushButton{ this };
     emptyTrashButton->setContentsMargins(0, 0, 0, 0);
     emptyTrashButton->setObjectName("EmptyTrashButton");
+    AC_SET_ACCESSIBLE_NAME(emptyTrashButton, AC_DM_RIGHT_VIEW_EMPTY_TRASH_BUTTON);
     emptyTrashButton->setText(tr("Empty"));
     emptyTrashButton->setToolTip(QObject::tr("Empty Trash"));
     emptyTrashButton->setFixedSize({86, 36});
@@ -1188,6 +1203,8 @@ void DFileManagerWindow::initRightView()
     emptyTrashLayout->addWidget(emptyTrashButton, 0, Qt::AlignRight);
 
     d->emptyTrashSplitLine = new DHorizontalLine(this);
+    AC_SET_OBJECT_NAME(d->emptyTrashSplitLine, AC_DM_RIGHT_VIEW_TRASH_SPLIT_LINE);
+    AC_SET_ACCESSIBLE_NAME(d->emptyTrashSplitLine, AC_DM_RIGHT_VIEW_TRASH_SPLIT_LINE);
 
     QHBoxLayout *tabBarLayout = new QHBoxLayout;
     tabBarLayout->setMargin(0);
@@ -1218,6 +1235,8 @@ void DFileManagerWindow::initToolBar()
 
     d->toolbar = new DToolBar(this);
     d->toolbar->setObjectName("ToolBar");
+
+    AC_SET_ACCESSIBLE_NAME(d->toolbar, AC_DM_TOOLBAR);
 }
 
 void DFileManagerWindow::initTabBar()
@@ -1229,6 +1248,7 @@ void DFileManagerWindow::initTabBar()
 
     d->newTabButton = new DIconButton(this);
     d->newTabButton->setObjectName("NewTabButton");
+    AC_SET_ACCESSIBLE_NAME(d->newTabButton, AC_VIEW_TAB_BAR_NEW_BUTTON);
     d->newTabButton->setFixedSize(36, 36);
     d->newTabButton->setIconSize({24, 24});
     d->newTabButton->setIcon(QIcon::fromTheme("dfm_tab_new"));
@@ -1236,7 +1256,12 @@ void DFileManagerWindow::initTabBar()
     d->newTabButton->hide();
 
     d->tabTopLine = new DHorizontalLine(this);
+    AC_SET_OBJECT_NAME(d->tabTopLine, AC_VIEW_TAB_BAR_TOP_LINE);
+    AC_SET_ACCESSIBLE_NAME(d->tabTopLine, AC_VIEW_TAB_BAR_TOP_LINE);
+
     d->tabBottomLine = new DHorizontalLine(this);
+    AC_SET_OBJECT_NAME(d->tabBottomLine, AC_VIEW_TAB_BAR_BOTTOM_LINE);
+    AC_SET_ACCESSIBLE_NAME(d->tabBottomLine, AC_VIEW_TAB_BAR_BOTTOM_LINE);
 
     d->tabTopLine->hide();
     d->tabBottomLine->hide();
@@ -1258,10 +1283,14 @@ void DFileManagerWindow::initCentralWidget()
 
     d->centralWidget = new QFrame(this);
     d->centralWidget->setObjectName("CentralWidget");
+    AC_SET_ACCESSIBLE_NAME(d->centralWidget, AC_COMPUTER_CENTRAL_WIDGET);
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
     QWidget *midWidget = new QWidget;
     QHBoxLayout *midLayout = new QHBoxLayout;
+    AC_SET_OBJECT_NAME(midWidget, AC_VIEW_MID_WIDGET);
+    AC_SET_ACCESSIBLE_NAME(midWidget, AC_VIEW_MID_WIDGET);
+
     midWidget->setLayout(midLayout);
     //! lixiang start 设置后显示空间会大些
     midLayout->setContentsMargins(0, 0, 0, 0);
@@ -1270,6 +1299,7 @@ void DFileManagerWindow::initCentralWidget()
 
     d->rightDetailViewHolder = new QFrame;
     d->rightDetailViewHolder->setObjectName("rightviewHolder");
+    AC_SET_ACCESSIBLE_NAME(d->rightDetailViewHolder, AC_DM_RIGHT_VIEW_HOLDER);
     d->rightDetailViewHolder->setAutoFillBackground(true);
     d->rightDetailViewHolder->setBackgroundRole(QPalette::ColorRole::Base);
     d->rightDetailViewHolder->setFixedWidth(320);
@@ -1278,6 +1308,8 @@ void DFileManagerWindow::initCentralWidget()
 
     d->detailView = new DFMRightDetailView(currentUrl());
     QFrame *rightDetailVLine = new QFrame;
+    AC_SET_OBJECT_NAME(rightDetailVLine, AC_DM_RIGHT_VIEW_DETAIL_VLINE);
+    AC_SET_ACCESSIBLE_NAME(rightDetailVLine, AC_DM_RIGHT_VIEW_DETAIL_VLINE);
     rightDetailVLine->setFrameShape(QFrame::VLine);
     rvLayout->addWidget(rightDetailVLine);
     rvLayout->addWidget(d->detailView, 1);
@@ -1288,6 +1320,8 @@ void DFileManagerWindow::initCentralWidget()
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
+    AC_SET_OBJECT_NAME(d->centralWidget, AC_COMPUTER_CENTRAL_WIDGET);
+    AC_SET_ACCESSIBLE_NAME(d->centralWidget, AC_COMPUTER_CENTRAL_WIDGET);
     d->centralWidget->setLayout(mainLayout);
 }
 

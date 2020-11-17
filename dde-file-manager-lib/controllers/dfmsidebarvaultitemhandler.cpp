@@ -85,7 +85,9 @@ QMenu *DFMSideBarVaultItemHandler::contextMenu(const DFMSideBar *sidebar, const 
 
 DFileMenu *DFMSideBarVaultItemHandler::generateMenu(QWidget *topWidget, const DFMSideBar *sender)
 {
-    return DFileMenuManager::createVaultMenu(topWidget, sender);
+    DFileMenu * menu = DFileMenuManager::createVaultMenu(topWidget, sender);
+    if(menu){ menu -> setAccessibleInfo(AC_FILE_MENU_SIDEBAR_VAULT_ITEM);}
+    return  menu;
 }
 
 bool DFMSideBarVaultItemHandler::lockNow(DFileManagerWindow *wnd)

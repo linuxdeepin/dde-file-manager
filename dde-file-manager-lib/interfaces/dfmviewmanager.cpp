@@ -128,6 +128,9 @@ DFMViewManager::DFMViewManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMViewManagerPrivate(this))
 {
+
+    setObjectName(AC_FM_VIEW_MANAGER);
+
     dRegisterUrlView<ComputerView>(COMPUTER_SCHEME, QString());
 
     // vault view.

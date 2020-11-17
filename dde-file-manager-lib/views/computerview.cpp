@@ -41,7 +41,6 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "singleton.h"
-#include "../shutil/fileutils.h"
 #include "dabstractfilewatcher.h"
 #include "models/dfmrootfileinfo.h"
 #include "models/computermodel.h"
@@ -49,6 +48,8 @@
 #include "views/dfmopticalmediawidget.h"
 #include "models/deviceinfoparser.h"
 #include "controllers/vaultcontroller.h"
+#include "accessibility/ac-lib-file-manager.h"
+#include "../shutil/fileutils.h"
 
 #include <dslider.h>
 
@@ -114,6 +115,9 @@ Q_SIGNALS:
 
 ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
 {
+    AC_SET_OBJECT_NAME(this, AC_COMPUTER_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_VIEW);
+
     m_view = new ComputerListView(this);
     m_statusbar = new DStatusBar(this);
     m_statusbar->scalingSlider()->setMaximum(iconsizes.count() - 1);
@@ -383,6 +387,8 @@ bool ComputerView::eventFilter(QObject *obj, QEvent *event)
 ComputerListView::ComputerListView(QWidget *parent)
     : QListView(parent)
 {
+    AC_SET_OBJECT_NAME(this, AC_COMPUTER_LIST_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_LIST_VIEW);
     setMouseTracking(true);
 }
 

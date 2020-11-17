@@ -47,6 +47,7 @@
 #include "interfaces/dfilemenu.h"
 #include "dfmopticalmediawidget.h"
 #include "vault/vaulthelper.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -70,6 +71,9 @@ DFMSideBar::DFMSideBar(QWidget *parent)
       m_sidebarView(new DFMSideBarView(this)),
       m_sidebarModel(new DFMSideBarModel(this))
 {
+    AC_SET_OBJECT_NAME(this, AC_DM_SIDE_BAR);
+    AC_SET_ACCESSIBLE_NAME(this, AC_DM_SIDE_BAR);
+
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
     m_sidebarView->setItemDelegate(new DFMSideBarItemDelegate(m_sidebarView));

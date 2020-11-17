@@ -20,6 +20,7 @@
  */
 
 #include "dfmsplitter.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QDebug>
 #include <QGuiApplication>
@@ -46,7 +47,8 @@ void DFMSplitterHandle::leaveEvent(QEvent *)
 DFMSplitter::DFMSplitter(Qt::Orientation orientation, QWidget *parent)
     :QSplitter(orientation, parent)
 {
-
+    AC_SET_OBJECT_NAME(this, AC_DM_SPLITTER);
+    AC_SET_ACCESSIBLE_NAME(this, AC_DM_SPLITTER);
 }
 
 void DFMSplitter::moveSplitter(int pos, int index)

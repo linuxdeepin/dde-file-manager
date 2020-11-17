@@ -24,6 +24,7 @@
 #include "app/define.h"
 #include "dfmopticalmediawidget.h"
 #include "controllers/vaultcontroller.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QDebug>
 #include <dstorageinfo.h>
@@ -42,6 +43,9 @@ DFM_BEGIN_NAMESPACE
 DFMSideBarView::DFMSideBarView(QWidget *parent)
     : DListView(parent)
 {
+    AC_SET_OBJECT_NAME(this, AC_DM_SIDE_BAR_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_DM_SIDE_BAR_VIEW);
+
     setVerticalScrollMode(ScrollPerPixel);
     setIconSize(QSize(16, 16));
 //    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);

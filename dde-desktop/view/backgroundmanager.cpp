@@ -271,6 +271,7 @@ QString BackgroundManager::getDefaultBackground() const
 BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer screen)
 {
     BackgroundWidgetPointer bwp(new BackgroundWidget);
+    bwp->setAccessableInfo(screen->name());
     bwp->setProperty("isPreview", m_preview);
     bwp->setProperty("myScreen", screen->name()); // assert screen->name is unique
     //bwp->createWinId();   //不创建，4k下有bug
