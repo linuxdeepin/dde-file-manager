@@ -180,8 +180,12 @@ SOURCES += \
     $$PWD/interfaces/ut_dfileiconprovider.cpp \
     $$PWD/fileoperations/ut_filejob.cpp \
     $$PWD/interfaces/ut_dfilemenu.cpp   \
-    $$PWD/io/ut_dfiledevice.cpp
-    
+    $$PWD/io/ut_dfiledevice.cpp \
+    $$PWD/fileoperations/ut_sort.cpp \
+    $$PWD/interfaces/ut_dfileservices.cpp \
+    $$PWD/controllers/ut_jobcontroller.cpp \
+    $$PWD/interfaces/ut_dfmbaseview.cpp \
+    $$PWD/io/ut_dfilehandler.cpp
 
 RESOURCES += \
     $$PWD/resources/test.qrc

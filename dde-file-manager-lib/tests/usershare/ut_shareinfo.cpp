@@ -13,14 +13,14 @@ public:
     ShareInfo *info = nullptr;
     virtual void SetUp() override{
         info = new ShareInfo("share_info","/sys/power");
-        std::cout << "start DFileCopyQueueTest" << std::endl;
+        std::cout << "start ShareInfoTest" << std::endl;
     }
 
     virtual void TearDown() override{
         if (info) {
             delete info;
         }
-        std::cout << "end DFileCopyQueueTest" << std::endl;
+        std::cout << "end ShareInfoTest" << std::endl;
     }
 };
 

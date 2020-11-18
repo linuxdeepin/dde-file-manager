@@ -26,9 +26,7 @@
 #include "dfilemenumanager.h"
 
 #include "appcontroller.h"
-#include "movejobcontroller.h"
 #include "trashjobcontroller.h"
-#include "copyjobcontroller.h"
 #include "deletejobcontroller.h"
 #include "filecontroller.h"
 #include "trashmanager.h"
