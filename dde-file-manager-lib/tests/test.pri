@@ -8,6 +8,8 @@
 
 INCLUDEPATH += $$PWD
 
+THUMBNAIL_RESOURCE = $$PWD/resources/thumbnail/
+DEFINES += THUMBNAIL_RESOURCE=\\\"$$THUMBNAIL_RESOURCE\\\"
 HEADERS += \
 
 SOURCES += \
@@ -188,8 +190,6 @@ SOURCES += \
     $$PWD/io/ut_dfilehandler.cpp \
     $$PWD/controllers/ut_trashmanager.cpp
 
-RESOURCES += \
-    $$PWD/resources/test.qrc
 
 
 
