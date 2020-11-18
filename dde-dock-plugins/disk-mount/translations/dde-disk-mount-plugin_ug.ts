@@ -3,7 +3,7 @@
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>
-        <translation>%1 توم</translation>
+        <translation>%1 رايۇن</translation>
     </message>
 </context>
 <context>
@@ -17,7 +17,7 @@
     <name>DiskControlWidget</name>
     <message>
         <source>dde-file-manager</source>
-        <translation>dde ھۆججەت باشقۇرغۇچ</translation>
+        <translation>ھۆججەت باشقۇرغۇچ</translation>
     </message>
     <message>
         <source>The device was not safely removed</source>

@@ -61,17 +61,17 @@
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="30"/>
         <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
         <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
         <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
@@ -1373,6 +1373,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="899"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1284"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1381"/>
+        <location filename="../dialogs/dialogmanager.h" line="149"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -2095,7 +2096,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="282"/>
         <location filename="../configure/global-setting-template.js" line="281"/>
         <source>Show file system tag on disk icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Show file system tag on disk icon</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="188"/>
@@ -2220,7 +2221,7 @@
         <location filename="../gvfs/gvfsmountmanager.cpp" line="851"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1485"/>
         <source>Wrong username or password, please enter again</source>
-        <translation type="unfinished"></translation>
+        <translation>Wrong username or password, please enter again</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1609"/>
@@ -4115,7 +4116,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1488"/>
         <source>Disk is busy, cannot remove now</source>
-        <translation type="unfinished"></translation>
+        <translation>Disk is busy, cannot remove now</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1502"/>
