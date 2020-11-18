@@ -1831,20 +1831,26 @@ bool DAbstractFileInfo::loadFileEmblems(QList<QIcon> &iconList) const
     //获取gfileinfo
     GFile *g_file = g_file_new_for_path(str.c_str());
     GError *g_error = nullptr;
-    GFileInfo *g_fileInfo = g_file_query_info(g_file, "*", GFileQueryInfoFlags::G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, &g_error);
+    GFileInfo *g_fileInfo = g_file_query_info(g_file, "metadata::emblems", GFileQueryInfoFlags::G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, &g_error);
 
     if (g_error != nullptr) {
         //report error
+        g_object_unref(g_file);
+        g_object_unref(g_error);
         return false;
     }
 
     //通过gfileinfo获取文件徽标的值
     char **emblemStr = g_file_info_get_attribute_stringv(g_fileInfo, "metadata::emblems");
     if (!emblemStr) {
+        g_object_unref(g_fileInfo);
+        g_object_unref(g_file);
         return false;
     }
 
     QString emStr(*emblemStr);
+    g_object_unref(g_fileInfo);
+    g_object_unref(g_file);
     if (!emStr.isEmpty()) {
         QList<QIcon> newIcons = {QIcon(), QIcon(), QIcon(), QIcon()};
         //设置了多条徽标的情况
@@ -1872,6 +1878,8 @@ bool DAbstractFileInfo::loadFileEmblems(QList<QIcon> &iconList) const
         }
 
         iconList = newIcons;
+
+        return true;
     }
 
     return false;
