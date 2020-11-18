@@ -53,6 +53,7 @@
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
 #include <qpa/qplatformdialoghelper.h>
+#include <dwidgetutil.h>
 
 class DFileDialogPrivate
 {
@@ -159,6 +160,12 @@ DFileDialog::DFileDialog(QWidget *parent)
             statusBar()->lineEdit()->setText(statusBar()->lineEdit()->text().chopped(1));
         }
     });
+
+    // 修复bug-45176
+    // 如果是wanyland平台，将弹出的文件框居中
+    if(DFMGlobal::isWayLand()) {
+        Dtk::Widget::moveToCenter(this);
+    }
 }
 
 DFileDialog::~DFileDialog()
