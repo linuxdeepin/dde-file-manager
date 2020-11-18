@@ -518,6 +518,28 @@ bool DFMGlobal::isOpenAsAdmin()
     return DFMGlobal::isRootUser() && DFMGlobal::isDesktopSys();
 }
 
+bool DFMGlobal::isDeveloperMode()
+{
+    // 为了性能，开发者模式仅需获取一次，不必每次请求 dbus，因此此处使用静态变量
+    static bool hasAcquireDevMode = false;
+    static bool developerModel = false;
+
+    if (Q_UNLIKELY(!hasAcquireDevMode)) {
+        hasAcquireDevMode = true;
+        QString service("com.deepin.sync.Helper");
+        QString path("/com/deepin/sync/Helper");
+        QString interfaceName("com.deepin.sync.Helper");
+
+        QDBusInterface interface(service, path, interfaceName, QDBusConnection::systemBus());
+
+        QString func("IsDeveloperMode");
+        QDBusReply<bool> reply = interface.call(func);
+        developerModel = reply.value();
+    }
+
+    return developerModel;
+}
+
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const
 {
     return GlobalData::clipboardFileUrls;
