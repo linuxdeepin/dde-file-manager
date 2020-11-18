@@ -1657,7 +1657,7 @@ bool FileDirIterator::hasSymLinkDir(QString &path, QString &tmp, QString &oldPre
         return true;
     } else {
         int last_dir_split_pos = path.lastIndexOf('/');
-        if (last_dir_split_pos < 0)
+        if (last_dir_split_pos <= 0)
             return false;
 
         tmp.prepend(path.mid(last_dir_split_pos));
