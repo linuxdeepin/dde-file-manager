@@ -2861,8 +2861,8 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
     if (actions.isEmpty())
         return;
-    // sp3 feature: root用户和服务器版本用户不需要以管理员身份打开的功能
-    if (DFMGlobal::isRootUser() || DFMGlobal::isServerSys()) {
+    // sp3 feature: root用户, 服务器版本用户, 非开发者模式均不需要以管理员身份打开的功能
+    if (DFMGlobal::isRootUser() || DFMGlobal::isServerSys() || !DFMGlobal::isDeveloperMode()) {
         actions.removeAll(MenuAction::OpenAsAdmin);
     }
 
