@@ -22,9 +22,10 @@
 #ifndef DCUSTOMACTIONDATA_H
 #define DCUSTOMACTIONDATA_H
 
-#include <QObject>
 
 #include "dcustomactiondefine.h"
+
+#include <QObject>
 
 class DCustomActionData
 {
@@ -53,25 +54,26 @@ protected:
     QList<DCustomActionData> m_childrenActions;     //当前action的子actions
 };
 
-class DCustomActionFile
+//根项
+class DCustomActionEntry
 {
     friend class DCustomActionParser;
     friend class DCustomActionBuilder;
 public:
-    explicit DCustomActionFile();
-    DCustomActionFile(const DCustomActionFile &other);
+    explicit DCustomActionEntry();
+    DCustomActionEntry(const DCustomActionEntry &other);
     QString package() const;
     QString version() const;
     QString comment() const;
     DCustomActionDefines::FileComboTypes fileCombo() const;
     QStringList mimeTypes() const;
-    QList<DCustomActionData> rootActions() const;
+    DCustomActionData data() const;
 protected:
     QString m_package;  //配置文件名
     QString m_version;  //版本
     QString m_comment;  //描述
     DCustomActionDefines::FileComboTypes m_fileCombo;
     QStringList m_mimeTypes;    //支持的文件类型，目前需求不判断
-    QList<DCustomActionData> m_rootActions;    //一级菜单
+    DCustomActionData m_data;    //一级菜单项的数据
 };
 #endif // DCUSTOMACTIONDATA_H
