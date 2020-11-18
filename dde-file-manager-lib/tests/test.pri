@@ -185,7 +185,8 @@ SOURCES += \
     $$PWD/interfaces/ut_dfileservices.cpp \
     $$PWD/controllers/ut_jobcontroller.cpp \
     $$PWD/interfaces/ut_dfmbaseview.cpp \
-    $$PWD/io/ut_dfilehandler.cpp
+    $$PWD/io/ut_dfilehandler.cpp \
+    $$PWD/controllers/ut_trashmanager.cpp
 
 RESOURCES += \
     $$PWD/resources/test.qrc
