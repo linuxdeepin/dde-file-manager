@@ -1373,6 +1373,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="899"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1284"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1381"/>
+        <location filename="../dialogs/dialogmanager.h" line="149"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -2095,7 +2096,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="282"/>
         <location filename="../configure/global-setting-template.js" line="281"/>
         <source>Show file system tag on disk icon</source>
-        <translation>在磁盘图标上显示文件系统标签</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="188"/>
@@ -2220,7 +2221,7 @@
         <location filename="../gvfs/gvfsmountmanager.cpp" line="851"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1485"/>
         <source>Wrong username or password, please enter again</source>
-        <translation>用户名或密码错误，请重新输入</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1609"/>
@@ -4115,7 +4116,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1488"/>
         <source>Disk is busy, cannot remove now</source>
-        <translation>磁盘文件被占用，无法移除</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1502"/>
