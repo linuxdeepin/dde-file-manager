@@ -59,6 +59,7 @@
 #include "vault/vaulthelper.h"
 #include "app/filesignalmanager.h"
 #include "views/dfilemanagerwindow.h"
+#include "customization/dcustomactionbuilder.h"
 
 #include <DSysInfo>
 
@@ -1042,6 +1043,49 @@ QString DFileMenuManager::getActionString(MenuAction type)
     return DFileMenuData::actionKeys.value(type);
 }
 
+//WIP: 创建自定义菜单
+void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrlList &urlList)
+{
+    //for compile
+    static const QList<DCustomActionEntry> test_rootEntry;
+    //end
+
+    if (menu == nullptr)
+        return;
+
+    DCustomActionBuilder builder;
+    //获取文件列表的组合
+    auto fileCombo = DCustomActionDefines::BlankSpace;
+    if (isNormal) {
+        fileCombo = builder.checkFileCombo(urlList);
+        if (fileCombo == DCustomActionDefines::BlankSpace)
+            return;
+    }
+
+    //获取支持的菜单项
+    auto rootEntrys = builder.matchFileCombo(test_rootEntry, fileCombo);
+    if (rootEntrys.isEmpty())
+        return;
+
+    //根据配置信息创建菜单项
+    for (auto it = rootEntrys.begin(); it != rootEntrys.end(); ++it) {
+        const DCustomActionData &actionData = it->data();
+        auto *action = builder.buildAciton(actionData, menu);
+        if (action == nullptr)
+            continue;
+
+        //自动释放
+        action->setParent(menu);
+        if (actionData.position() > 0) {
+            //!todo 排序算法
+        }
+        else {  //没有配置位置，则直接添加
+            menu->addAction(action);
+        }
+    }
+
+}
+
 void DFileMenuManager::addActionWhitelist(MenuAction action)
 {
     DFileMenuData::whitelist << action;
@@ -1169,14 +1213,15 @@ void DFileMenuManager::actionTriggered(QAction *action)
     }
 
     //WIP: 扩展菜单
-    if (action->property("Custom_Action_Flag").isValid()) {
-        QString cmd = action->property("Custom_Action_Command").toString();
+    if (action->property(DCustomActionDefines::kCustomActionFlag).isValid()) {
+        QString cmd = action->property(DCustomActionDefines::kCustomActionCommand).toString();
         qDebug() << "extend" << action->text() << cmd
                  << menu->selectedUrls();
         QStringList argvs;
         for(const DUrl &url : menu->selectedUrls())
             argvs << url.toLocalFile();
         FileUtils::runCommand(cmd, argvs);
+        return;
     }
 
     if (action->data().isValid()) {

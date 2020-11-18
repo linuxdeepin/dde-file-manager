@@ -12,7 +12,7 @@ bool DCustomActionParser::loadDir(const QString &dirPath)
     return true;
 }
 
-QList<DCustomActionFile> DCustomActionParser::getActionFiles()
+QList<DCustomActionEntry> DCustomActionParser::getActionFiles()
 {
     return m_actionFiles;
 }

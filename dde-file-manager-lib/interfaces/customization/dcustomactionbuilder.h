@@ -22,10 +22,11 @@
 #ifndef DCUSTOMACTIONBUILDER_H
 #define DCUSTOMACTIONBUILDER_H
 
+#include "dcustomactiondata.h"
+#include "durl.h"
+
 #include <QObject>
 #include <QIcon>
-
-#include "dcustomactiondata.h"
 
 class QMenu;
 class QAction;
@@ -34,10 +35,13 @@ class DCustomActionBuilder : public QObject
     Q_OBJECT
 public:
     explicit DCustomActionBuilder(QObject *parent = nullptr);
-    QAction *buildAciton(const DCustomActionData &, QWidget *parentForSubmenu) const;
+    QAction *buildAciton(const DCustomActionData &actionData, QWidget *parentForSubmenu) const;
+    static DCustomActionDefines::FileComboTypes checkFileCombo(const DUrlList &files);
+    static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
+                                                 DCustomActionDefines::FileComboTypes type);
 protected:
-    QAction *createMenu(const DCustomActionData &, QWidget *parentForSubmenu) const;
-    QAction *createAciton(const DCustomActionData &) const;
+    QAction *createMenu(const DCustomActionData &actionData, QWidget *parentForSubmenu) const;
+    QAction *createAciton(const DCustomActionData &actionData) const;
 signals:
 
 public slots:

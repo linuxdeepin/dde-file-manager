@@ -73,6 +73,8 @@ public:
                                          bool isRecursiveCall = false);
     static QString getActionString(MenuAction type);
 
+    static void extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrlList &urlList = {});
+
     /// actions filter(global)
     static void addActionWhitelist(MenuAction action);
     static void setActionWhitelist(const QSet<MenuAction> &actionList);

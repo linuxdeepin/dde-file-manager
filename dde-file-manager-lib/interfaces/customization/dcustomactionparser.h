@@ -23,6 +23,7 @@
 #define DCUSTOMACTIONPARSER_H
 
 #include "dcustomactiondata.h"
+
 #include <QObject>
 
 class DCustomActionParser : public QObject
@@ -35,12 +36,12 @@ public:
     bool loadDir(const QString &dirPath);
 
     //获取遍历后的菜单配置信息
-    QList<DCustomActionFile> getActionFiles();
+    QList<DCustomActionEntry> getActionFiles();
 signals:
 
 public slots:
 private:
-    QList<DCustomActionFile> m_actionFiles;
+    QList<DCustomActionEntry> m_actionFiles;
 };
 
 #endif // DCUSTOMACTIONPARSER_H

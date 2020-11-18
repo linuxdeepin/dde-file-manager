@@ -1,10 +1,10 @@
 #include "dcustomactionbuilder.h"
+#include "dfilemenu.h"
+#include "interfaces/dfileservices.h"
 
 #include <QDir>
 #include <QUrl>
 #include <QMenu>
-
-#include "dfilemenu.h"
 
 DCustomActionBuilder::DCustomActionBuilder(QObject *parent) : QObject(parent)
 {
@@ -25,6 +25,54 @@ QAction *DCustomActionBuilder::buildAciton(const DCustomActionData &actionData, 
     }
     else {
         ret = createMenu(actionData, parentForSubmenu);
+    }
+
+    return ret;
+}
+
+/*!
+    检查 \a files 文件列表中的文件组合
+ */
+DCustomActionDefines::FileComboTypes DCustomActionBuilder::checkFileCombo(const DUrlList &files)
+{
+    int fileCount = 0;
+    int dirCount = 0;
+    for (const DUrl &url : files) {
+        if (url.isEmpty())
+            continue;
+
+        auto info = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
+        if (!info)
+            continue;
+
+        //目前只判断是否为文件夹
+        info->isDir() ? ++dirCount : ++fileCount;
+
+        //文件夹和文件同时存在
+        if (dirCount > 0 && fileCount > 0)
+            return DCustomActionDefines::FileAndDir;
+    }
+
+    //文件
+    if (fileCount > 0)
+        return fileCount > 1 ? DCustomActionDefines::MultiFiles : DCustomActionDefines::SingleFile;
+
+    //文件夹
+    if (dirCount > 0)
+        return dirCount > 1 ? DCustomActionDefines::MultiDirs : DCustomActionDefines::SingleDir;
+
+    return DCustomActionDefines::BlankSpace;
+}
+
+/*!
+    筛选 \a rootActions 中支持 \a type 文件组合的菜单项
+ */
+QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCustomActionEntry> &rootActions, DCustomActionDefines::FileComboTypes type)
+{
+    QList<DCustomActionEntry> ret;
+    for (auto it = rootActions.begin(); it != rootActions.end(); ++it) {
+        if (it->fileCombo() & type)
+            ret << *it;
     }
 
     return ret;

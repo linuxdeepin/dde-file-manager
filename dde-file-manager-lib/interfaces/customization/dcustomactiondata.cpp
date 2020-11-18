@@ -56,47 +56,47 @@ QList<DCustomActionData> DCustomActionData::acitons() const
 }
 
 
-DCustomActionFile::DCustomActionFile()
+DCustomActionEntry::DCustomActionEntry()
 {
 
 }
 
-DCustomActionFile::DCustomActionFile(const DCustomActionFile &other)
+DCustomActionEntry::DCustomActionEntry(const DCustomActionEntry &other)
 {
     m_package = other.m_package;
     m_version = other.m_version;
     m_comment = other.m_comment;
     m_fileCombo = other.m_fileCombo;
     m_mimeTypes = other.m_mimeTypes;
-    m_rootActions = other.m_rootActions;
+    m_data = other.m_data;
 }
 
-QString DCustomActionFile::package() const
+QString DCustomActionEntry::package() const
 {
     return m_package;
 }
 
-QString DCustomActionFile::version() const
+QString DCustomActionEntry::version() const
 {
     return m_version;
 }
 
-QString DCustomActionFile::comment() const
+QString DCustomActionEntry::comment() const
 {
     return m_comment;
 }
 
-DCustomActionDefines::FileComboTypes DCustomActionFile::fileCombo() const
+DCustomActionDefines::FileComboTypes DCustomActionEntry::fileCombo() const
 {
     return m_fileCombo;
 }
 
-QStringList DCustomActionFile::mimeTypes() const
+QStringList DCustomActionEntry::mimeTypes() const
 {
     return m_mimeTypes;
 }
 
-QList<DCustomActionData> DCustomActionFile::rootActions() const
+DCustomActionData DCustomActionEntry::data() const
 {
-    return m_rootActions;
+    return m_data;
 }
