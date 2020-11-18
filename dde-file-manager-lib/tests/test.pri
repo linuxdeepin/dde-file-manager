@@ -179,7 +179,9 @@ SOURCES += \
     $$PWD/interfaces/ut_dfiledialoghandle.cpp \
     $$PWD/interfaces/ut_dfileiconprovider.cpp \
     $$PWD/fileoperations/ut_filejob.cpp \
+    $$PWD/interfaces/ut_dfilemenu.cpp   \
     $$PWD/io/ut_dfiledevice.cpp
+    
 
 RESOURCES += \
     $$PWD/resources/test.qrc
