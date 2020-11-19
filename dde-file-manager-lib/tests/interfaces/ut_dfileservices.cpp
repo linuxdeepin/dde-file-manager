@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 #include <interfaces/dfileservices.h>
+#include "controllers/appcontroller.h"
+#include "controllers/networkcontroller.h"
 
 using namespace testing;
 DFM_USE_NAMESPACE
@@ -21,3 +23,12 @@ public:
         std::cout << "end DFileSeviceTest" << std::endl;
     }
 };
+
+TEST_F(DFileSeviceTest, can_isRegisted){
+    AppController::instance()->registerUrlHandle();
+    EXPECT_TRUE(service->isRegisted(SMB_SCHEME,"",typeid (NetworkController)));
+    EXPECT_TRUE(service->isRegisted(TRASH_SCHEME,""));
+    service->initHandlersByCreators();
+    DFileService::printStacktrace();
+    DFileService::printStacktrace(3);
+}
