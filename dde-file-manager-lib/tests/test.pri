@@ -11,6 +11,7 @@ INCLUDEPATH += $$PWD
 THUMBNAIL_RESOURCE = $$PWD/resources/thumbnail/
 DEFINES += THUMBNAIL_RESOURCE=\\\"$$THUMBNAIL_RESOURCE\\\"
 HEADERS += \
+    $$PWD/testhelper.h
 
 SOURCES += \
     $$PWD/main.cpp \
@@ -188,8 +189,8 @@ SOURCES += \
     $$PWD/controllers/ut_jobcontroller.cpp \
     $$PWD/interfaces/ut_dfmbaseview.cpp \
     $$PWD/io/ut_dfilehandler.cpp \
-    $$PWD/controllers/ut_trashmanager.cpp
-
+    $$PWD/controllers/ut_trashmanager.cpp \
+    $$PWD/controllers/ut_sharecontroller.cpp
 
 
 
