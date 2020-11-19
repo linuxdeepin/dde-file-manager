@@ -23,7 +23,10 @@
  */
 
 #include "movejobworker.h"
-#include "app/global.h"
+#include "app/define.h"
+#include "utils/utils.h"
+
+#include <QDebug>
 
 MovejobWorker::MovejobWorker(QStringList files, QString destination, QObject *parent) :
     QObject(parent),
