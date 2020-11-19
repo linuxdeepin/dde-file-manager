@@ -159,13 +159,7 @@ int main(int argc, char *argv[])
 
     app->setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app->setApplicationName(QMAKE_TARGET);
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
-    dynamic_cast<SingleApplication*>(app)->loadTranslator();
-#else
     app->loadTranslator();
-    singleApp->loadTranslator();
-#endif
-
     app->setApplicationDisplayName(app->translate("Application", "File Manager"));
     app->setApplicationVersion(DApplication::buildVersion((QMAKE_VERSION)));
     app->setProductIcon(QIcon::fromTheme("dde-file-manager"));
@@ -255,7 +249,7 @@ int main(int argc, char *argv[])
         isSingleInstance = true;
     } else {
 #if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
-    isSingleInstance = dynamic_cast<SingleApplication*>(app)->setSingleInstance(uniqueKey);
+    isSingleInstance = app->setSingleInstance(uniqueKey);
 #else
     isSingleInstance = singleApp->setSingleInstance(uniqueKey);
 #endif
