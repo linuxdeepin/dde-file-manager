@@ -35,13 +35,12 @@ TEST(sortFunc,empty_1)
 
     QList<float> orgin = {1.1,2.2,3.3};
     QList<float> out;
-
+    const QList<float> ret = orgin;
     DCustomActionDefines::sortFunc(locate, orgin, [&out](const QList<float> &data){
         for (auto it = data.begin(); it != data.end(); ++it)
             out.append(*it);
     });
 
-    const QList<float> ret = orgin;
     EXPECT_TRUE(orgin.isEmpty());
     EXPECT_EQ(ret, out);
 }
@@ -158,4 +157,23 @@ TEST(sortFunc,time_0)
     gettimeofday(&t2, 0);
     int ed = (t2.tv_sec - 1 - t1.tv_sec) * 1000000 + (t2.tv_usec - t1.tv_usec + 1000000);
     EXPECT_LE(ed, 1000);
+}
+
+TEST(sortFunc,norml_4)
+{
+    QMap<int, QList<float>> locate;
+    locate.insert(1,{1.1, 1.2});
+    locate.insert(3,{3.1, 3.2});
+    locate.insert(6,{6.1, 6.2});
+    QList<float> orgin = {2, 3, 4};
+    QList<float> out;
+
+    DCustomActionDefines::sortFunc(locate, orgin, [&out](const QList<float> &data){
+        for (auto it = data.begin(); it != data.end(); ++it)
+            out.append(*it);
+    });
+
+    const QList<float> ret = {1.1, 1.2, 3.1, 3.2, 2, 6.1, 6.2, 3, 4};
+    EXPECT_TRUE(orgin.isEmpty());
+    EXPECT_EQ(ret, out);
 }
