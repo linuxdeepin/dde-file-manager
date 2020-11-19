@@ -28,7 +28,6 @@ TEST_F(DFileSeviceTest, can_isRegisted){
     AppController::instance()->registerUrlHandle();
     EXPECT_TRUE(service->isRegisted(SMB_SCHEME,"",typeid (NetworkController)));
     EXPECT_TRUE(service->isRegisted(TRASH_SCHEME,""));
-    service->initHandlersByCreators();
     DFileService::printStacktrace();
     DFileService::printStacktrace(3);
 }
