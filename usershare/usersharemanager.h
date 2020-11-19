@@ -44,7 +44,7 @@ class UserShareManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit UserShareManager(QObject *parent = 0);
+    explicit UserShareManager(QObject *parent = nullptr);
     ~UserShareManager();
 
     inline static QString UserSharePath(){

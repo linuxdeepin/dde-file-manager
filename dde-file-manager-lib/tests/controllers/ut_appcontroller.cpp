@@ -30,6 +30,9 @@ namespace  {
     };
 }
 
+TEST_F(AppControllerTest,start_registerUrlHandle){
+    controller->registerUrlHandle();
+}
 
 TEST_F(AppControllerTest,start_manager_interface){
     StartManagerInterface *interface = controller->startManagerInterface();
@@ -54,3 +57,4 @@ TEST_F(AppControllerTest,can_create_file){
         file.remove();
     }
 }
+
