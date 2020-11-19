@@ -1063,12 +1063,19 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     }
 
     //获取支持的菜单项
-    auto rootEntrys = builder.matchFileCombo(test_rootEntry, fileCombo);
-    if (rootEntrys.isEmpty())
+    auto usedEntrys = builder.matchFileCombo(test_rootEntry, fileCombo);
+    if (usedEntrys.isEmpty())
         return;
 
+    //移除所有菜单项
+    auto systemActions = menu->actions();
+    for (auto it = systemActions.begin(); it != systemActions.end(); ++it)
+        menu->removeAction(*it);
+    Q_ASSERT(menu->actions().isEmpty());
+
+    QMap<int, QList<QAction*>> locate;
     //根据配置信息创建菜单项
-    for (auto it = rootEntrys.begin(); it != rootEntrys.end(); ++it) {
+    for (auto it = usedEntrys.begin(); it != usedEntrys.end(); ++it) {
         const DCustomActionData &actionData = it->data();
         auto *action = builder.buildAciton(actionData, menu);
         if (action == nullptr)
@@ -1076,14 +1083,31 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
 
         //自动释放
         action->setParent(menu);
-        if (actionData.position() > 0) {
-            //!todo 排序算法
+
+        //插入位置
+        auto pos = actionData.position();
+
+        //位置是否有效
+        if (pos > 0) {
+            auto temp = locate.find(pos);
+            if (temp == locate.end()) {
+                locate.insert(pos, {action});
+            }
+            else { //位置冲突，往后放
+                temp->append(action);
+            }
         }
         else {  //没有配置位置，则直接添加
-            menu->addAction(action);
+            systemActions.append(action);
         }
     }
 
+    //开始按顺序插入菜单
+    DCustomActionDefines::sortFunc(locate, systemActions, [menu](QList<QAction *> acs){
+        menu->addActions(acs);
+    });
+
+    Q_ASSERT(systemActions.isEmpty());
 }
 
 void DFileMenuManager::addActionWhitelist(MenuAction action)
