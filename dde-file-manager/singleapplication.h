@@ -27,9 +27,7 @@
 
 #include <QtGlobal>
 
-#define protected public
 #include <DApplication>
-#undef protected
 #include <durl.h>
 
 QT_BEGIN_NAMESPACE
@@ -39,22 +37,12 @@ QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
-    class SingleApplication : public DApplication
-#else
-    class SingleApplication : public QObject
-#endif
+class SingleApplication : public DApplication
 {
     Q_OBJECT
 public:
-
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
     explicit SingleApplication(int &argc, char **argv, int = ApplicationFlags);
-#else
-    explicit SingleApplication();
-#endif
-
-    ~SingleApplication() override;
+    ~SingleApplication();
     void initConnect();
 
     static void initSources();
@@ -62,9 +50,7 @@ public:
     static QString userServerName(const QString& key);
     static QString userId();
 
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
     bool loadTranslator(QList<QLocale> localeFallback = QList<QLocale>() << QLocale::system());
-#endif
 
 signals:
     void screenDevicePixelRatioChanged(QScreen *s);
@@ -75,17 +61,9 @@ public slots:
     void readData();
     void closeServer();
 
-
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
 private:
-    void handleQuitAction() override;
-#else
-public:
-    void handleQuitAction();
-#endif
+    void handleQuitAction() Q_DECL_OVERRIDE;
 
-
-private:
     static QString getUserID();
 
     static QString UserID;
