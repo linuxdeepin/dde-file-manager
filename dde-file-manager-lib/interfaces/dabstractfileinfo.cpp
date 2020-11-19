@@ -1837,7 +1837,7 @@ bool DAbstractFileInfo::loadFileEmblems(QList<QIcon> &iconList) const
     if (g_error != nullptr) {
         //report error
         g_object_unref(g_file);
-        g_object_unref(g_error);
+        g_error_free(g_error);
         return false;
     }
 
