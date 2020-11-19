@@ -23,6 +23,7 @@
 #define DCUSTOMACTIONDEFINE_H
 
 #include <QString>
+#include <QMap>
 
 namespace DCustomActionDefines
 {
@@ -43,6 +44,44 @@ namespace DCustomActionDefines
         MultiDirs = 1 << 3,  //多个文件夹
         FileAndDir = 1 << 4 //文件和文件夹，必须都包含
     };
+
+    template<typename Element, typename AddFunc>
+    void sortFunc(const QMap<int, QList<Element>> &locate, QList<Element> &orgin, AddFunc addfunc) {
+        int maxPos = locate.isEmpty() ? 0 : locate.lastKey();
+        int currentCount = 0;
+        auto nextIter = locate.begin();
+        for (int i = 1; i <= maxPos; ++i) {
+            auto current = locate.find(i);
+            if (current == locate.end()) {
+                if (orgin.isEmpty()) {
+                    //已经取完，剩下的全部按顺序放入
+                    for (; nextIter != locate.end(); ++nextIter) {
+                        currentCount += nextIter->size();
+                        addfunc(*nextIter);
+                    }
+                    break;
+                } else {
+                    //用原有数据占位
+                    int added = i - currentCount;
+                    for (int j = 0; j < added; ++j) {
+                        if (orgin.isEmpty())
+                            break;
+
+                        addfunc({orgin.takeFirst()});
+                        ++currentCount;
+                    }
+                }
+            } else {
+                currentCount += current->size();
+                addfunc(*current);
+                nextIter = current + 1;
+            }
+        }
+
+        //最后剩下的
+        addfunc(orgin);
+        orgin.clear();
+    }
 
     static const char* const kCustomActionFlag = "Custom_Action_Flag";
     static const char* const kCustomActionCommand = "Custom_Action_Command";
