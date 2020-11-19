@@ -4,7 +4,7 @@ SOURCES += \
     $$PWD/util/ut-xcbmisc-test.cpp \
     $$PWD/presenter/ut-presenter-test.cpp \
     $$PWD/view/ut-watermaskframe-test.cpp  \
-    $$PWD/view/ut_backgroundmanager_test.cpp \ 
+    $$PWD/view/ut_backgroundmanager_test.cpp \
     $$PWD/view/ut_backgroundwidget_test.cpp \
     $$PWD/ut-desktop-test.cpp \
     $$PWD/global/ut_coorinate_test.cpp \
@@ -25,4 +25,8 @@ SOURCES += \
 #    $$PWD/dbus/filedialog/ut_dbusfiledialoghandle_test.cpp \
 #    $$PWD/dbus/filemanager1/ut_dbusfilemanager_test.cpp \
 #    $$PWD/dde-wallpaper-chooser/ut-deepin_wm-test.cpp   \
+    $$PWD/presenter/ut-gridmanager-test.cpp \
+    $$PWD/dde-wallpaper-chooser/ut-waititem-test.cpp \
+    $$PWD/dde-wallpaper-chooser/ut-wallpaperitem-test.cpp \
+    $$PWD/dde-wallpaper-chooser/ut-wallpaperlist-test.cpp
 
