@@ -190,8 +190,8 @@ SOURCES += \
     $$PWD/interfaces/ut_dfmbaseview.cpp \
     $$PWD/io/ut_dfilehandler.cpp \
     $$PWD/controllers/ut_trashmanager.cpp \
-    $$PWD/controllers/ut_sharecontroller.cpp
-
+    $$PWD/controllers/ut_sharecontroller.cpp \
+    $$PWD/interfaces/ut_dabstractfilecontroller.cpp
 
 
 
