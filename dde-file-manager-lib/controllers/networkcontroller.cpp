@@ -82,12 +82,18 @@ public:
 
     QString fileName() const override
     {
-        return m_currentInfo->fileName();
+        if (m_currentInfo) {
+            return m_currentInfo->fileName();
+        }
+        else return "";
     }
 
     DUrl fileUrl() const override
     {
-        return m_currentInfo->fileUrl();
+        if (m_currentInfo) {
+            return m_currentInfo->fileUrl();
+        }
+        else return DUrl("");
     }
 
     const DAbstractFileInfoPointer fileInfo() const override
