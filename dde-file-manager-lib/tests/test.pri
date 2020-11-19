@@ -166,7 +166,6 @@ SOURCES += \
     $$PWD/interfaces/ut_dmimedatabase.cpp \
     $$PWD/usershare/ut_shareinfo.cpp \
     $$PWD/usershare/ut_usersharemanager.cpp \
-    $$PWD/controllers/ut_networkcontroller.cpp \
     $$PWD/controllers/ut_dfmusersharecrumbcontroller.cpp \
     $$PWD/interfaces/ut_dfmsidebarmanager.cpp \
     $$PWD/interfaces/ut_dthumbnailprovider.cpp \
@@ -191,7 +190,13 @@ SOURCES += \
     $$PWD/io/ut_dfilehandler.cpp \
     $$PWD/controllers/ut_trashmanager.cpp \
     $$PWD/controllers/ut_sharecontroller.cpp \
-    $$PWD/interfaces/ut_dabstractfilecontroller.cpp
+    $$PWD/interfaces/ut_dabstractfilecontroller.cpp \
+    $$PWD/controllers/ut_networkcontroller.cpp \
+    $$PWD/controllers/ut_dfmtrashcrumbcontroller.cpp \
+    $$PWD/interfaces/ut_dfileproxywatcher.cpp \
+    $$PWD/interfaces/ut_dfmsidebariteminterface.cpp \
+    $$PWD/interfaces/ut_dfmstyleditemdelegate.cpp
+
 
 
 
