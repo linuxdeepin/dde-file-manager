@@ -204,5 +204,5 @@ SOURCES += \
     $$PWD/interfaces/ut_dfmfilepreview.cpp\
     $$PWD/controllers/ut_tagcontroller.cpp \
     $$PWD/tag/ut_tagmanager.cpp \
-
+    $$PWD/controllers/ut_dfmtagcrumbcontroller.cpp \
 
