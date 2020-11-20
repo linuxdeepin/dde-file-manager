@@ -8,7 +8,6 @@
 #include <QFile>
 #include "dfmevent.h"
 
-#define private public
 #include "controllers/sharecontroler.h"
 #include "dabstractfilewatcher.h"
 #include "dfmglobal.h"

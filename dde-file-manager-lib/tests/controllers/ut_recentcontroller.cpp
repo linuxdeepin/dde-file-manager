@@ -26,7 +26,7 @@ namespace  {
         {
             std::cout << "end TestRecntController" << std::endl;
             QStringList tmpPaths;
-            tmpPaths << tmpFileUrl.path() << tmpDirUrl.path();
+            tmpPaths << tmpFileUrl.path() << tmpDirUrl.path() << tmpFileUrl2.path();
             TestHelper::deleteTmpFiles(tmpPaths);
         }
 
