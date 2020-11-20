@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
-#include <gtest/gtest.h>
+
 #define private public
 #include "singleapplication.h"
 #undef private
+#include "testhelper.h"
 
 static void noMessageHandler(QtMsgType type, const QMessageLogContext &context,
                                    const QString &message)
@@ -17,6 +18,8 @@ int main(int argc, char *argv[])
     ::testing::InitGoogleTest(&argc, argv);
     qInstallMessageHandler(noMessageHandler);
     int ret = RUN_ALL_TESTS();
-    app.handleQuitAction();
+    TestHelper::runInLoop([&]{
+        app.handleQuitAction();
+    });
     return ret;
 }

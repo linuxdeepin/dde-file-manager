@@ -14,3 +14,6 @@ SOURCES += \
     $$PWD/ut_commandlinemanager.cpp \
     $$PWD/ut_logutil.cpp \
     $$PWD/ut_singleapplication.cpp \
+
+HEADERS += \
+    $$PWD/testhelper.h
