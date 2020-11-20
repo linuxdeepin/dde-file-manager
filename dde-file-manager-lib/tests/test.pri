@@ -200,7 +200,8 @@ SOURCES += \
     $$PWD/controllers/ut_recentcontroller.cpp \
     $$PWD/interfaces/ut_dfmapplication.cpp\
     $$PWD/interfaces/ut_diconitemdelegate.cpp \
-    $$PWD/interfaces/ut_dlistitemdelegate.cpp
+    $$PWD/interfaces/ut_dlistitemdelegate.cpp \
+    $$PWD/interfaces/ut_dfmfilepreview.cpp\
 
 
 
