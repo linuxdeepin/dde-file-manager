@@ -69,5 +69,7 @@ TEST_F(DFileProxyWatcherTest,start)
 
     if(0 == QProcess::execute("rm", { "-rf", RunPath + rmAftFileName })) // N < 1
         qDebug() << "remove file ok:" << rmAftFileName;
+
+    qApp->processEvents(); //wait the callback function exectue
 }
 }
