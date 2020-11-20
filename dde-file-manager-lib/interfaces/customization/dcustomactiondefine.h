@@ -45,6 +45,13 @@ namespace DCustomActionDefines
         FileAndDir = 1 << 4 //文件和文件夹，必须都包含
     };
 
+    //支持菜单层级
+    enum MenuHierarchy {
+        One = 1,
+        Two,
+        Three
+    };
+
     template<typename Element, typename AddFunc>
     void sortFunc(const QMap<int, QList<Element>> &locate, QList<Element> &orgin, AddFunc addfunc) {
         int maxPos = locate.isEmpty() ? 0 : locate.lastKey();
@@ -88,5 +95,31 @@ namespace DCustomActionDefines
     static const int kCustomMaxNumOne = 30;
     static const int kCustomMaxNumTwo = 50;
     static const int kCustomMaxNumThree = 50;
+
+    //基本信息，置于一级菜单之中
+    static const QLatin1String kUosPrefix("Uos Entry");
+    static const QLatin1String kFileVersion("Version");
+    static const QLatin1String kComment("Comment");
+    static const QLatin1String kCombo("X-DFM-MenuTypes");
+
+    //菜单基本信息
+    static const QLatin1String kActionGenericName("GenericName");
+    static const QLatin1String kActionName("Name");
+    static const QLatin1String kActionPos("PosNum");
+    static const QLatin1String kActionSeparator("Separator");
+    static const QLatin1String kActionCmd("Exec");
+    static const QLatin1String kActionGroups("Actions");
+    static const QLatin1String kActionPrefix("Uos Action");
+
+    Q_DECLARE_FLAGS(ComboTypes, DCustomActionDefines::FileComboTypes);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(ComboTypes);
+
+    struct FileBasicInfos {
+        QString m_package;  //配置文件名
+        QString m_version;  //版本
+        QString m_comment;  //描述
+        ComboTypes m_fileCombo;   //支持的选中项类型
+    };
 }
+
 #endif // DCUSTOMACTIONDEFINE_H
