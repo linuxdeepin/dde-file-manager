@@ -178,6 +178,7 @@ SOURCES += \
     $$PWD/controllers/ut_dfmnetworkcrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmrecentcrumbcontroller.cpp \
     $$PWD/controllers/ut_filecontroller.cpp \
+    $$PWD/controllers/ut_dfmrootcontroller.cpp \
     $$PWD/interfaces/ut_dfiledialoghandle.cpp \
     $$PWD/interfaces/ut_dfileiconprovider.cpp \
     $$PWD/fileoperations/ut_filejob.cpp \
