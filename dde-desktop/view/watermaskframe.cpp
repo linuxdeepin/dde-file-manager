@@ -86,7 +86,7 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
 {
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly)) {
-        qDebug() << "WaterMask config file doesn't exist!";
+        qWarning() << "WaterMask config file doesn't exist!";
     }
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
@@ -94,7 +94,7 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
         m_configs = QJsonObject::fromVariantMap(doc.toVariant().toMap());
         initUI();
     } else {
-        qDebug() << error.errorString();
+        qCritical() << error.errorString();
     }
 
 }
@@ -253,6 +253,7 @@ void WaterMaskFrame::initUI()
 
     if(isNeedState()){
         ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
+        qInfo() << "get active state from com.deepin.license.Info property AuthorizationState and value:"<<stateType;
         switch (stateType) {
         case Unauthorized:
         case AuthorizedLapse:
@@ -353,7 +354,9 @@ void WaterMaskFrame::updatePosition()
 
 void WaterMaskFrame::updateAuthorizationState()
 {
+    qInfo() << "received com.deepin.license.Info::LicenseStateChange.";
     bool isConfigFileExist = checkConfigFile(m_configFile);
+    qInfo() << "isConfigFileExist:" << isConfigFileExist << "   configFile:" << m_configFile;
     if (isConfigFileExist) {
         loadConfig(m_configFile);
     }
