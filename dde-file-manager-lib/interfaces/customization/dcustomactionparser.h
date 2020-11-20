@@ -25,23 +25,39 @@
 #include "dcustomactiondata.h"
 
 #include <QObject>
+#include <QHash>
 
+class QSettings;
 class DCustomActionParser : public QObject
 {
     Q_OBJECT
 public:
     explicit DCustomActionParser(QObject *parent = nullptr);
 
-    //加载文件夹遍历文件
     bool loadDir(const QString &dirPath);
-
-    //获取遍历后的菜单配置信息
     QList<DCustomActionEntry> getActionFiles();
+
+    bool parseFile(QSettings &actionSetting);
+    void parseFile(QList<DCustomActionData> &childrenActions
+                   , QSettings &actionSetting
+                   , const QString &group
+                   , const DCustomActionDefines::FileBasicInfos& basicInfos
+                   , bool isTop = false);
+
+
+    void initHash();
+    QVariant getValue(QSettings &actionSetting, const QString &group, const QString &key);
+    bool actionFileInfos(DCustomActionDefines::FileBasicInfos &basicInfo, QSettings &actionSetting);
+
 signals:
 
 public slots:
+
 private:
-    QList<DCustomActionEntry> m_actionFiles;
+    QList<DCustomActionEntry> m_actionEntry;
+    QHash<QString, DCustomActionDefines::FileComboTypes> m_combos;
+    QHash<QString, DCustomActionDefines::Separator> m_separtor;
+    int hierarchyNum { 0 };
 };
 
 #endif // DCUSTOMACTIONPARSER_H

@@ -34,6 +34,7 @@ class DCustomActionData
 public:
     explicit DCustomActionData();
     DCustomActionData(const DCustomActionData &other);
+    DCustomActionData &operator=(const DCustomActionData &other);
     bool isMenu() const;
     bool isAction() const;
     QString name() const;
@@ -62,17 +63,18 @@ class DCustomActionEntry
 public:
     explicit DCustomActionEntry();
     DCustomActionEntry(const DCustomActionEntry &other);
+    DCustomActionEntry &operator=(const DCustomActionEntry &other);
     QString package() const;
     QString version() const;
     QString comment() const;
-    DCustomActionDefines::FileComboTypes fileCombo() const;
+    DCustomActionDefines::ComboTypes fileCombo() const;
     QStringList mimeTypes() const;
     DCustomActionData data() const;
 protected:
     QString m_package;  //配置文件名
     QString m_version;  //版本
     QString m_comment;  //描述
-    DCustomActionDefines::FileComboTypes m_fileCombo;
+    DCustomActionDefines::ComboTypes m_fileCombo;     //支持的选中项类型
     QStringList m_mimeTypes;    //支持的文件类型，目前需求不判断
     DCustomActionData m_data;    //一级菜单项的数据
 };
