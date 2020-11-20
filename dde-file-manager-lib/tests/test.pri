@@ -202,6 +202,6 @@ SOURCES += \
     $$PWD/interfaces/ut_diconitemdelegate.cpp \
     $$PWD/interfaces/ut_dlistitemdelegate.cpp \
     $$PWD/interfaces/ut_dfmfilepreview.cpp\
-
+    $$PWD/controllers/ut_tagcontroller.cpp \
 
 
