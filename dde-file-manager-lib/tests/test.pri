@@ -199,6 +199,8 @@ SOURCES += \
     $$PWD/interfaces/ut_dfmstyleditemdelegate.cpp\
     $$PWD/controllers/ut_recentcontroller.cpp \
     $$PWD/interfaces/ut_dfmapplication.cpp\
+    $$PWD/interfaces/ut_diconitemdelegate.cpp \
+    $$PWD/interfaces/ut_dlistitemdelegate.cpp
 
 
 
