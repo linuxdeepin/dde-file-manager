@@ -57,26 +57,6 @@ DFM_USE_NAMESPACE
 #define ICON_MODE_RECT_RADIUS TEXT_PADDING
 #define ICON_MODE_BACK_RADIUS 18
 
-QString trimmedEnd(QString str)
-{
-    while (!str.isEmpty()) {
-        switch (str.at(str.count() - 1).toLatin1()) {
-        case '\t':
-        case '\n':
-        case '\r':
-        case '\v':
-        case '\f':
-        case ' ':
-            str.chop(1);
-            break;
-        default:
-            return str;
-        }
-    }
-
-    return str;
-}
-
 QRectF boundingRect(const QList<QRectF> rects)
 {
     QRectF bounding;
@@ -439,8 +419,6 @@ public:
     {}
 
     QSize textSize(const QString &text, const QFontMetrics &metrics, int lineHeight = -1) const;
-    void drawText(QPainter *painter, const QRect &r, const QString &text,
-                  int lineHeight = -1, QRect *br = Q_NULLPTR) const;
     QPixmap getFileIconPixmap(const QModelIndex &index, const QIcon &icon, const QSize &icon_size, QIcon::Mode mode, qreal devicePixelRatio) const;
 
     QPointer<ExpandedItem> expandedItem;
@@ -492,31 +470,6 @@ QSize DIconItemDelegatePrivate::textSize(const QString &text, const QFontMetrics
 
     return QSize(max_width, height);
 }
-
-void DIconItemDelegatePrivate::drawText(QPainter *painter, const QRect &r, const QString &text, int lineHeight, QRect *br) const
-{
-    if (lineHeight <= 0)
-        lineHeight = textLineHeight;
-
-    QString str = text;
-
-    if (str.endsWith('\n'))
-        str.chop(1);
-
-    QRect textRect = QRect(0, r.top(), 0, 0);
-
-    for (const QString &line : str.split('\n')) {
-        QRect br;
-
-        painter->drawText(r.left(), textRect.bottom(), r.width(), lineHeight, Qt::AlignCenter, line, &br);
-        textRect.setWidth(qMax(textRect.width(), br.width()));
-        textRect.setBottom(textRect.bottom() + lineHeight);
-    }
-
-    if (br)
-        *br = textRect;
-}
-
 QPixmap DIconItemDelegatePrivate::getFileIconPixmap(const QModelIndex &index, const QIcon &icon, const QSize &icon_size, QIcon::Mode mode, qreal devicePixelRatio) const
 {
     Q_Q(const DIconItemDelegate);
