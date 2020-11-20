@@ -6,17 +6,19 @@
 #include <QDateTime>
 #include <QUrl>
 #include <QFile>
+#include <QEventLoop>
+#include <QTimer>
 
 class TestHelper
 {
 public:
     TestHelper();
 
-    static QString createTmpFile(QString suffix = "") {
+    static QString createTmpFile(QString suffix = "", QStandardPaths::StandardLocation location = QStandardPaths::TempLocation) {
         qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
         int random = qrand()%1000;
         QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()) +  QString::number(random) + suffix;
-        QString tempFilePath =  QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/" + fileName;
+        QString tempFilePath =  QStandardPaths::standardLocations(location).first() + "/" + fileName;
         QProcess::execute("touch " + tempFilePath);
         return tempFilePath;
     }
@@ -38,6 +40,21 @@ public:
     static void deleteTmpFile(QString path) {
          QProcess::execute("rm -rf  " + path);
     }
+
+    template <typename Fun>
+    static void runInLoop(Fun fun, int msc = 2000)
+    {
+        QEventLoop loop;
+        QTimer timer;
+        timer.start(msc);
+        fun();
+        QObject::connect(&timer, &QTimer::timeout, [&]{
+            timer.stop();
+            loop.exit();
+        });
+        loop.exec();
+    }
+
 };
 
 #endif // TESTHELPER_H

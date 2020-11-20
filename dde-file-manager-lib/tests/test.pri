@@ -196,8 +196,8 @@ SOURCES += \
     $$PWD/controllers/ut_dfmtrashcrumbcontroller.cpp \
     $$PWD/interfaces/ut_dfileproxywatcher.cpp \
     $$PWD/interfaces/ut_dfmsidebariteminterface.cpp \
-    $$PWD/interfaces/ut_dfmstyleditemdelegate.cpp
-
+    $$PWD/interfaces/ut_dfmstyleditemdelegate.cpp\
+    $$PWD/controllers/ut_recentcontroller.cpp \
 
 
 

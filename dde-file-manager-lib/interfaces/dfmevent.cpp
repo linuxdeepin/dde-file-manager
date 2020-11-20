@@ -524,10 +524,15 @@ QSharedPointer<DFMDeleteEvent> DFMDeleteEvent::fromJson(const QJsonObject &json)
     return event;
 }
 
-DFMMoveToTrashEvent::DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list)
+DFMMoveToTrashEvent::DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list, bool silent)
     : DFMUrlListBaseEvent(MoveToTrash, sender, list)
 {
+     setProperty(QT_STRINGIFY(DFMMoveToTrashEvent::silent), silent);
+}
 
+bool DFMMoveToTrashEvent::silent() const
+{
+    return property(QT_STRINGIFY(DFMMoveToTrashEvent::silent), false);
 }
 
 QSharedPointer<DFMMoveToTrashEvent> DFMMoveToTrashEvent::fromJson(const QJsonObject &json)
