@@ -206,4 +206,8 @@ SOURCES += \
     $$PWD/tag/ut_tagmanager.cpp \
     $$PWD/controllers/ut_dfmtagcrumbcontroller.cpp \
     $$PWD/controllers/ut_operatorrevocation.cpp \
+    $$PWD/interfaces/ut_dfmabstracteventhandler.cpp \
+    $$PWD/interfaces/ut_dabstractfilewatcher.cpp \
+    $$PWD/controllers/ut_searchhistroymanager.cpp \
+    $$PWD/controllers/ut_dfmsearchcrumbcontroller.cpp
 
