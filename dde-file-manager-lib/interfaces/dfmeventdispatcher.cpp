@@ -110,8 +110,8 @@ void DFMEventFuture::operator =(const DFMEventFuture &other)
 }
 
 namespace DFMEventDispatcherData {
-static QList<DFMAbstractEventHandler *> eventHandler;
-static QList<DFMAbstractEventHandler *> eventFilter;
+Q_GLOBAL_STATIC(QList<DFMAbstractEventHandler*>, eventHandler)
+Q_GLOBAL_STATIC(QList<DFMAbstractEventHandler*>, eventFilter)
 
 Q_GLOBAL_STATIC(QThreadPool, threadPool)
 }
@@ -138,7 +138,7 @@ QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event,
 
     QVariant result;
 
-    for (DFMAbstractEventHandler *handler : DFMEventDispatcherData::eventFilter) {
+    for (DFMAbstractEventHandler *handler : *DFMEventDispatcherData::eventFilter) {
         if (handler->fmEventFilter(event, target, &result))
             return result;
     }
@@ -146,7 +146,7 @@ QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event,
     if (target) {
         target->fmEvent(event, &result);
     } else {
-        for (DFMAbstractEventHandler *handler : DFMEventDispatcherData::eventHandler) {
+        for (DFMAbstractEventHandler *handler : *DFMEventDispatcherData::eventHandler) {
             if (handler->fmEvent(event, &result))
                 return result;
         }
@@ -179,14 +179,14 @@ QVariant DFMEventDispatcher::processEventWithEventLoop(const QSharedPointer<DFME
 
 void DFMEventDispatcher::installEventFilter(DFMAbstractEventHandler *handler)
 {
-    if (!DFMEventDispatcherData::eventFilter.contains(handler)) {
-        DFMEventDispatcherData::eventFilter.append(handler);
+    if (!DFMEventDispatcherData::eventFilter->contains(handler)) {
+        DFMEventDispatcherData::eventFilter->append(handler);
     }
 }
 
 void DFMEventDispatcher::removeEventFilter(DFMAbstractEventHandler *handler)
 {
-    DFMEventDispatcherData::eventFilter.removeOne(handler);
+    DFMEventDispatcherData::eventFilter->removeOne(handler);
 }
 
 DFMEventDispatcher::State DFMEventDispatcher::state() const
@@ -204,13 +204,13 @@ DFMEventDispatcher::DFMEventDispatcher()
 
 void DFMEventDispatcher::installEventHandler(DFMAbstractEventHandler *handler)
 {
-    if (!DFMEventDispatcherData::eventHandler.contains(handler))
-        DFMEventDispatcherData::eventHandler.append(handler);
+    if (!DFMEventDispatcherData::eventHandler->contains(handler))
+        DFMEventDispatcherData::eventHandler->append(handler);
 }
 
 void DFMEventDispatcher::removeEventHandler(DFMAbstractEventHandler *handler)
 {
-    DFMEventDispatcherData::eventHandler.removeOne(handler);
+    DFMEventDispatcherData::eventHandler->removeOne(handler);
 }
 
 DFM_END_NAMESPACE
