@@ -129,7 +129,8 @@ COMPARE_FUN_DEFINE(lastRead, LastRead, DAbstractFileInfo)
     Q_D(const DAbstractFileInfo);\
     if (d->proxy) return d->proxy->Fun;
 
-QMap<DUrl, DAbstractFileInfo *> DAbstractFileInfoPrivate::urlToFileInfoMap;
+using UrlToFileInfoMapType = QMap<DUrl, DAbstractFileInfo *>;
+Q_GLOBAL_STATIC(UrlToFileInfoMapType, urlToFileInfoMap)
 QReadWriteLock *DAbstractFileInfoPrivate::urlToFileInfoMapLock = new QReadWriteLock();
 DMimeDatabase DAbstractFileInfoPrivate::mimeDatabase;
 
@@ -142,18 +143,21 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
 
-        urlToFileInfoMap[url] = qq;
+        (*urlToFileInfoMap)[url] = qq;
     }
 }
 
 DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
 {
     QReadLocker locker(urlToFileInfoMapLock);
-    if (urlToFileInfoMap.value(fileUrl) == q_ptr) {
+    if (urlToFileInfoMap.isDestroyed()) {
+        return;
+    }
+    if (urlToFileInfoMap->value(fileUrl) == q_ptr) {
         locker.unlock();
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
-        urlToFileInfoMap.remove(fileUrl);
+        urlToFileInfoMap->remove(fileUrl);
     } else {
         locker.unlock();
     }
@@ -165,16 +169,16 @@ void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
         return;
     }
 
-    if (urlToFileInfoMap.value(fileUrl) == q_ptr) {
+    if (urlToFileInfoMap->value(fileUrl) == q_ptr) {
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
-        urlToFileInfoMap.remove(fileUrl);
+        urlToFileInfoMap->remove(fileUrl);
     }
 
     if (hasCache) {
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
-        urlToFileInfoMap[url] = q_ptr;
+        (*urlToFileInfoMap)[url] = q_ptr;
     }
 
     fileUrl = url;
@@ -191,7 +195,7 @@ DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
         return nullptr;
     }
 
-    return urlToFileInfoMap.value(fileUrl);
+    return urlToFileInfoMap->value(fileUrl);
 }
 
 DAbstractFileInfo::DAbstractFileInfo(const DUrl &url, bool hasCache)
