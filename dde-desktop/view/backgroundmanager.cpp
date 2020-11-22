@@ -433,11 +433,13 @@ void BackgroundManager::onResetBackgroundImage()
         qDebug() << sp->name() << "background path" << userPath << "truesize" << trueSize << "devicePixelRatio"
                  << bw->devicePixelRatioF() << pix << "widget" << bw.get();
         pix.setDevicePixelRatio(bw->devicePixelRatioF());
+        //更新壁纸
+        m_backgroundImagePath = recorder;
         bw->setPixmap(pix);
     }
 
-    //更新壁纸
-    m_backgroundImagePath = recorder;
+    
+    
 }
 
 void BackgroundManager::onWmDbusStarted(QString name, QString oldOwner, QString newOwner)
