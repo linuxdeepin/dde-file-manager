@@ -46,7 +46,6 @@ public:
 private:
     DUrl fileUrl;
     static QReadWriteLock *urlToFileInfoMapLock;
-    static QMap<DUrl, DAbstractFileInfo*> urlToFileInfoMap;
 };
 
 #endif // DABSTRACTFILEINFO_P_H
