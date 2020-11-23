@@ -164,12 +164,14 @@ void DFileViewHelperPrivate::init()
     });
     QObject::connect(qApp, &DApplication::iconThemeChanged, q->parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {
-        for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs())
-        {
-            QWidget *item = q->indexWidget(index);
+        if (q->itemDelegate()) {
+            for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs())
+            {
+                QWidget *item = q->indexWidget(index);
 
-            if (item) {
-                item->setProperty("opacity", q->isTransparent(index) ? 0.3 : 1);
+                if (item) {
+                    item->setProperty("opacity", q->isTransparent(index) ? 0.3 : 1);
+                }
             }
         }
 

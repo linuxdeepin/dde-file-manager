@@ -16,7 +16,7 @@ public:
 
     QSharedPointer<FileJob> job;
     virtual void SetUp() override{
-        job.reset(new FileJob(FileJob::Trash));
+        job.reset(new FileJob(FileJob::Copy));
         source.setScheme(FILE_SCHEME);
         dst.setScheme(FILE_SCHEME);
         std::cout << "start FileJobTest" << std::endl;
@@ -38,7 +38,7 @@ TEST_F(FileJobTest,start_setDirPermissions) {
 }
 
 TEST_F(FileJobTest,get_jobType) {
-    EXPECT_EQ(FileJob::Trash, job->jobType());
+    EXPECT_EQ(FileJob::Copy, job->jobType());
 }
 
 TEST_F(FileJobTest,start_setStatus) {
@@ -143,7 +143,7 @@ TEST_F(FileJobTest,start_doCopy) {
     source.setPath("~/Pictures/Wallpapers");
     dst.setPath("./");
     job->started();
-    EXPECT_FALSE(job->doCopy(DUrlList() << source, dst).count());
+    EXPECT_TRUE(job->doCopy(DUrlList() << source, dst).count());
     job->jobUpdated();
     job->paused();
     job->jobAdded();
@@ -159,12 +159,15 @@ TEST_F(FileJobTest,start_doCopy) {
 TEST_F(FileJobTest,start_doMove) {
     source.setPath("./Wallpapers");
     dst.setPath("../");
+    job.reset(new FileJob(FileJob::Move));
     job->started();
-    EXPECT_FALSE(job->doMove(DUrlList() << source, dst).count());
+    EXPECT_TRUE(job->doMove(DUrlList() << source, dst).count());
 }
 
 TEST_F(FileJobTest,start_doDelete) {
     source.setPath("../Wallpapers");
+    job.reset(new FileJob(FileJob::Delete));
+    job->started();
     job->doDelete(DUrlList() << source);
 }
 
@@ -172,10 +175,12 @@ TEST_F(FileJobTest,start_doMoveToTrash) {
     source.setPath("~/Pictures/Wallpapers");
     dst.setPath("./");
     job->started();
-    EXPECT_FALSE(job->doCopy(DUrlList() << source, dst).count());
+    EXPECT_TRUE(job->doCopy(DUrlList() << source, dst).count());
     source.setPath("./Wallpapers");
+    job.reset(new FileJob(FileJob::Trash));
+    job->started();
     DUrlList urllist = job->doMoveToTrash(DUrlList() << source);
-    EXPECT_FALSE(urllist.count());
+    EXPECT_TRUE(urllist.count());
     job->doTrashRestore(source.toLocalFile(),dst.toLocalFile());
 }
 
