@@ -57,7 +57,7 @@ private:
     QList<DCustomActionEntry> m_actionEntry;
     QHash<QString, DCustomActionDefines::ComboTypes> m_combos;
     QHash<QString, DCustomActionDefines::Separator> m_separtor;
-    int hierarchyNum { 0 };
+    int m_hierarchyNum = 0;
 };
 
 #endif // DCUSTOMACTIONPARSER_H

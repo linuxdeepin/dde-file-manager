@@ -55,8 +55,8 @@ namespace DCustomActionDefines
     //动态参数
     enum ActionArg {
         NoneArg = -1,
-        DirName = 0, //%d 文件夹名称
-        DirPath, //%p 文件夹路径
+        DirName = 0, //%d 当前文件夹名称
+        DirPath, //%p 当前文件夹路径
         BaseName, //%b 文件名，不含路径和扩展名
         FileName, //%a 文件全名，包含扩展名，不含路径
         FilePath,//%f 文件路径
@@ -107,15 +107,20 @@ namespace DCustomActionDefines
 
     static const char* const kCustomActionFlag = "Custom_Action_Flag";
     static const char* const kCustomActionCommand = "Custom_Action_Command";
-    static const int kCustomMaxNumOne = 30;
-    static const int kCustomMaxNumTwo = 50;
-    static const int kCustomMaxNumThree = 50;
+    static const char* const kCustomActionCommandArgFlag = "Custom_Action_Command_Arg_Flag";
+    static const char* const kCustomActionDataDir = "Custom_Action_Data_Dir";
+    static const char* const kCustomActionDataFoucsFile = "Custom_Action_Foucs_File";
+    static const char* const kCustomActionDataSelectedFiles = "Custom_Action_Seletcted_Files";
+    static const int kCustomMaxNumOne = 50;
+    static const int kCustomMaxNumTwo = 100;
+    static const int kCustomMaxNumThree = 100;
 
     //基本信息，置于一级菜单之中
     static const QLatin1String kUosPrefix("Uos Entry");
-    static const QLatin1String kFileVersion("Version");
-    static const QLatin1String kComment("Comment");
-    static const QLatin1String kCombo("X-DFM-MenuTypes");
+    static const QLatin1String kConfFileVersion("Version");
+    static const QLatin1String kConfComment("Comment");
+    static const QLatin1String kConfCombo("X-DFM-MenuTypes");
+    static const QLatin1String kConfSign("Sign");
 
     //菜单基本信息
     static const QLatin1String kActionGenericName("GenericName");

@@ -325,3 +325,182 @@ TEST(DCustomActionBuilder, make_name_basename_one)
     name = "%dname %a%b";
     EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "%dname %adde-desktop");
 }
+
+TEST(DCustomActionBuilder, split_cmd_empty)
+{
+    QString cmd = "";
+    QStringList ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_TRUE(ret.isEmpty());
+}
+
+TEST(DCustomActionBuilder, split_cmd_none_arg)
+{
+    QString cmd = "/usr/bin/dde-desktop";
+    QStringList exp = {"/usr/bin/dde-desktop"};
+    QStringList ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_EQ(ret, exp);
+
+    cmd = "/usr/bin/dde-desktop ";
+    exp = QStringList({"/usr/bin/dde-desktop"});
+    ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_EQ(ret, exp);
+}
+
+TEST(DCustomActionBuilder, split_cmd_arg)
+{
+    QString cmd = "/usr/bin/dde-desktop --filedialog-only";
+    QStringList exp = {"/usr/bin/dde-desktop","--filedialog-only"};
+    QStringList ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_EQ(ret, exp);
+
+    cmd = "/usr/bin/dde-desktop  --filedialog-only ";
+    exp = QStringList({"/usr/bin/dde-desktop","--filedialog-only"});
+    ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_EQ(ret, exp);
+}
+
+TEST(DCustomActionBuilder, split_cmd_arg_one)
+{
+    QString cmd = "/usr/bin/dde-desktop --filedialog-only %u";
+    QStringList exp = {"/usr/bin/dde-desktop","--filedialog-only","%u"};
+    QStringList ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_EQ(ret, exp);
+
+    cmd = "/usr/bin/dde-desktop  --filedialog-%u";
+    exp = QStringList({"/usr/bin/dde-desktop","--filedialog-%u"});
+    ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_EQ(ret, exp);
+}
+
+TEST(DCustomActionBuilder, split_cmd_arg_quotes)
+{
+    QString cmd = "/usr/bin/dde-desktop \"--filedialog-only %u\"";
+    QStringList exp = {"/usr/bin/dde-desktop","--filedialog-only %u"};
+    QStringList ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_EQ(ret, exp);
+
+    cmd = "/usr/bin/dde-desktop \"--filedialog-%u end\" --test";
+    exp = QStringList({"/usr/bin/dde-desktop","--filedialog-%u end","--test"});
+    ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_EQ(ret, exp);
+
+    cmd = "/usr/bin/dde-desktop '--filedialog-%u end' --test";
+    exp = QStringList({"/usr/bin/dde-desktop","--filedialog-%u end","--test"});
+    ret = DCustomActionBuilder::splitCommand(cmd);
+    EXPECT_EQ(ret, exp);
+}
+
+TEST(DCustomActionBuilder, make_command_empty)
+{
+    DUrl dir("file:///usr/bin");
+    DUrl foucs("file:///usr/bin/dde-desktop");
+    DUrlList selected = {DUrl("file:///usr/bin/dde-desktop"),DUrl("file:///usr/bin/dde-file-manager")};
+
+    QString cmd = "";
+    auto ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::NoneArg, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "");
+    EXPECT_EQ(ret.second, QStringList());
+}
+
+TEST(DCustomActionBuilder, make_command_none)
+{
+    DUrl dir("file:///usr/bin");
+    DUrl foucs("file:///usr/bin/dde-desktop");
+    DUrlList selected = {DUrl("file:///usr/bin/dde-desktop"),DUrl("file:///usr/bin/dde-file-manager")};
+
+    QString cmd = "/usr/bin/dde-desktop --file --test";
+    auto ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::NoneArg, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file","--test"}));
+
+    cmd = "/usr/bin/dde-desktop --file --test %u";
+    ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::DirPath, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file","--test","%u"}));
+}
+
+
+TEST(DCustomActionBuilder, make_command_dir)
+{
+    DUrl dir("file:///usr/bin");
+    DUrl foucs("file:///usr/bin/dde-desktop");
+    DUrlList selected = {DUrl("file:///usr/bin/dde-desktop"),DUrl("file:///usr/bin/dde-file-manager")};
+
+    QString cmd = "/usr/bin/dde-desktop %p --file --test";
+    auto ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::DirPath, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"/usr/bin","--file","--test"}));
+
+    cmd = "/usr/bin/dde-desktop --file '--test %p'";
+    ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::DirPath, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file","--test /usr/bin"}));
+}
+
+TEST(DCustomActionBuilder, make_command_file)
+{
+    DUrl dir("file:///usr/bin");
+    DUrl foucs("file:///usr/bin/dde-desktop");
+    DUrlList selected = {DUrl("file:///usr/bin/dde-desktop"),DUrl("file:///usr/bin/dde-file-manager")};
+
+    QString cmd = "/usr/bin/dde-desktop --file %f --test";
+    auto ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::FilePath, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file","/usr/bin/dde-desktop","--test"}));
+
+    cmd = "/usr/bin/dde-desktop '--file%f' --test";
+    ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::FilePath, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file/usr/bin/dde-desktop","--test"}));
+}
+
+TEST(DCustomActionBuilder, make_command_files)
+{
+    DUrl dir("file:///usr/bin");
+    DUrl foucs("file:///usr/bin/dde-desktop");
+    DUrlList selected = {DUrl("file:///usr/bin/dde-desktop"),DUrl("file:///usr/bin/dde-file-manager")};
+
+    QString cmd = "/usr/bin/dde-desktop --file %F --test";
+    auto ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::FilePaths, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file","/usr/bin/dde-desktop","/usr/bin/dde-file-manager","--test"}));
+
+    cmd = "/usr/bin/dde-desktop '--file %F' --test";
+    ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::FilePaths, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file %F","--test"}));
+}
+
+TEST(DCustomActionBuilder, make_command_file_url)
+{
+    DUrl dir("file:///usr/bin");
+    DUrl foucs("file:///usr/bin/dde-desktop");
+    DUrlList selected = {DUrl("file:///usr/bin/dde-desktop"),DUrl("file:///usr/bin/dde-file-manager")};
+
+    QString cmd = "/usr/bin/dde-desktop --file %u --test";
+    auto ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::UrlPath, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file","file:///usr/bin/dde-desktop","--test"}));
+
+    cmd = "/usr/bin/dde-desktop '--file%u' --test";
+    ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::UrlPath, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--filefile:///usr/bin/dde-desktop","--test"}));
+}
+
+TEST(DCustomActionBuilder, make_command_files_url)
+{
+    DUrl dir("file:///usr/bin");
+    DUrl foucs("file:///usr/bin/dde-desktop");
+    DUrlList selected = {DUrl("file:///usr/bin/dde-desktop"),DUrl("file:///usr/bin/dde-file-manager")};
+
+    QString cmd = "/usr/bin/dde-desktop --file %U --test";
+    auto ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::UrlPaths, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file","file:///usr/bin/dde-desktop","file:///usr/bin/dde-file-manager","--test"}));
+
+    cmd = "/usr/bin/dde-desktop '--file %U' --test";
+    ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::UrlPaths, dir, foucs, selected);
+    EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
+    EXPECT_EQ(ret.second, QStringList({"--file %U","--test"}));
+}

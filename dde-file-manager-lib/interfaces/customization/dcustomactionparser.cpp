@@ -64,7 +64,7 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
 
     auto actStr = getValue(actionSetting, kUosPrefix, kActionGroups);
     auto actList = actStr.toString().trimmed().split(":", QString::SkipEmptyParts);
-    hierarchyNum = 1;
+    m_hierarchyNum = 1;
     int actCount = 0;
     for(auto &once : actList) {
         QList<DCustomActionData> childrenActions;//这个实际上一级时没用
@@ -84,8 +84,8 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
 */
 void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, QSettings &actionSetting, const QString &group, const FileBasicInfos &basicInfos, bool isTop)
 {
-    hierarchyNum++;
-    if (4 < hierarchyNum) //超过三级不解（待与产品沟通，是否需要）
+    m_hierarchyNum++;
+    if (4 < m_hierarchyNum) //超过三级不解（待与产品沟通，是否需要）
         return;
 
     DCustomActionData actData;
@@ -130,10 +130,10 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
             actCount++;
             QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
             parseFile(tpChildrenActions, actionSetting, targetGroup, basicInfos);
-            hierarchyNum--;
-            if (2 == hierarchyNum && actCount == kCustomMaxNumTwo) //二级数量限制
+            m_hierarchyNum--;
+            if (2 == m_hierarchyNum && actCount == kCustomMaxNumTwo) //二级数量限制
                 break;
-            if (3 == hierarchyNum && actCount == kCustomMaxNumThree) //二级数量限制
+            if (3 == m_hierarchyNum && actCount == kCustomMaxNumThree) //二级数量限制
                 break;
         }
         if (0 == tpChildrenActions.size())
@@ -196,15 +196,15 @@ bool DCustomActionParser::actionFileInfos(FileBasicInfos &basicInfo, QSettings &
     basicInfo.m_package = actionSetting.fileName();
 
     //版本
-    basicInfo.m_version = getValue(actionSetting, kUosPrefix, kFileVersion).toString().trimmed();
+    basicInfo.m_version = getValue(actionSetting, kUosPrefix, kConfFileVersion).toString().trimmed();
     if (basicInfo.m_version.isEmpty())
         return false;
 
     //描述
-    basicInfo.m_comment = getValue(actionSetting, kUosPrefix, kComment).toString().trimmed();
+    basicInfo.m_comment = getValue(actionSetting, kUosPrefix, kConfComment).toString().trimmed();
 
     //支持类型
-    auto comboStr = getValue(actionSetting, kUosPrefix, kCombo).toString().trimmed();
+    auto comboStr = getValue(actionSetting, kUosPrefix, kConfCombo).toString().trimmed();
     if (comboStr.isEmpty()) {
         return false;//无支持选中类型默认该文件无效
     }

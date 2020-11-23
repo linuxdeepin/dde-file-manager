@@ -1044,13 +1044,13 @@ QString DFileMenuManager::getActionString(MenuAction type)
 }
 
 //WIP: 创建自定义菜单
-void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &select)
+void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected)
 {
     //for compile
     static const QList<DCustomActionEntry> test_rootEntry;
     //end
 
-    if (menu == nullptr)
+    if (menu == nullptr && test_rootEntry.isEmpty())
         return;
 
     DCustomActionBuilder builder;
@@ -1060,7 +1060,7 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     //获取文件列表的组合
     DCustomActionDefines::ComboTypes fileCombo = DCustomActionDefines::BlankSpace;
     if (isNormal) {
-        fileCombo = builder.checkFileCombo(select);
+        fileCombo = builder.checkFileCombo(selected);
         if (fileCombo == DCustomActionDefines::BlankSpace)
             return;
 
@@ -1072,6 +1072,15 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     auto usedEntrys = builder.matchFileCombo(test_rootEntry, fileCombo);
     if (usedEntrys.isEmpty())
         return;
+
+    //添加菜单响应所需的数据
+    menu->setProperty(DCustomActionDefines::kCustomActionDataDir, dir);
+    menu->setProperty(DCustomActionDefines::kCustomActionDataFoucsFile, focusFile);
+    {
+        QVariant var;
+        var.setValue(selected);
+        menu->setProperty(DCustomActionDefines::kCustomActionDataSelectedFiles,var);
+    }
 
     //移除所有菜单项
     auto systemActions = menu->actions();
@@ -1242,15 +1251,23 @@ void DFileMenuManager::actionTriggered(QAction *action)
         disconnect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
     }
 
-    //WIP: 扩展菜单
+    //扩展菜单
     if (action->property(DCustomActionDefines::kCustomActionFlag).isValid()) {
         QString cmd = action->property(DCustomActionDefines::kCustomActionCommand).toString();
-        qDebug() << "extend" << action->text() << cmd
-                 << menu->selectedUrls();
-        QStringList argvs;
-        for(const DUrl &url : menu->selectedUrls())
-            argvs << url.toLocalFile();
-        FileUtils::runCommand(cmd, argvs);
+        DCustomActionDefines::ActionArg argFlag = static_cast<DCustomActionDefines::ActionArg>
+                    (action->property(DCustomActionDefines::kCustomActionCommandArgFlag).toInt());
+        DUrl dir = menu->property(DCustomActionDefines::kCustomActionDataDir).value<DUrl>();
+        DUrl foucs = menu->property(DCustomActionDefines::kCustomActionDataFoucsFile).value<DUrl>();
+        DUrlList selected = menu->property(DCustomActionDefines::kCustomActionDataSelectedFiles).value<DUrlList>();
+
+        qDebug() << "argflag" << argFlag << "dir" << dir << "foucs" << foucs << "selected" << selected;
+        qInfo() << "extend" << action->text() << cmd;
+
+        QPair<QString, QStringList> runable = DCustomActionBuilder::makeCommand(cmd,argFlag,dir,foucs,selected);
+        qInfo () << "exec:" << runable.first << runable.second;
+
+        if (!runable.first.isEmpty())
+            FileUtils::runCommand(runable.first, runable.second);
         return;
     }
 
