@@ -60,3 +60,19 @@ TEST_F(TestAVFSFileInfo, parentUrl)
 {
     EXPECT_STREQ("/", info->parentUrl().path().toStdString().c_str());
 }
+
+TEST_F(TestAVFSFileInfo, tstMenuActionList)
+{
+    QVector<MenuAction> menus = info->menuActionList(DAbstractFileInfo::SingleFile);
+    EXPECT_TRUE(menus.count() > 0);
+    menus = info->menuActionList(DAbstractFileInfo::MultiFiles);
+    EXPECT_TRUE(menus.count() > 0);
+    menus = info->menuActionList(DAbstractFileInfo::SpaceArea);
+    EXPECT_TRUE(menus.count() > 0);
+}
+
+TEST_F(TestAVFSFileInfo, tstRealDirUrl)
+{
+    DUrl u = info->realDirUrl(DUrl("avfs:///test.file"));
+    EXPECT_TRUE(u.isValid());
+}
