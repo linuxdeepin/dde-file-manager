@@ -205,6 +205,9 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event,
 void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
+    if (!fileUrl.isValid()) {
+        return;
+    }
 
     bool mounted = QStorageInfo(fileUrl.toLocalFile()).isValid();
 
@@ -282,6 +285,10 @@ void AppController::actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent>
 {
     const DUrl &fileUrl = event->url();
 
+    if (!fileUrl.isValid()) {
+        return;
+    }
+
     bool mounted = QStorageInfo(fileUrl.toLocalFile()).isValid();
 
     DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
@@ -317,6 +324,10 @@ void AppController::asyncOpenDiskInNewTab(const QString &path)
 void AppController::actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
+
+    if (!fileUrl.isValid()) {
+        return;
+    }
 
     bool mounted = QStorageInfo(fileUrl.toLocalFile()).isValid();
 
@@ -1003,11 +1014,16 @@ void AppController::actionctrlF(quint64 winId)
 
 void AppController::actionExitCurrentWindow(quint64 winId)
 {
-    WindowManager::getWindowById(winId)->close();
+    if (WindowManager::getWindowById(winId)) {
+        WindowManager::getWindowById(winId)->close();
+    }
 }
 
 void AppController::actionShowHotkeyHelp(quint64 winId)
 {
+    if (!WindowManager::getWindowById(winId)) {
+        return;
+    }
     QRect rect = WindowManager::getWindowById(winId)->geometry();
     QPoint pos(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
     Shortcut sc;
@@ -1032,7 +1048,7 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
 {
     QString path;
     DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), event->url());
-    if (fi->suffix() == SUFFIX_GVFSMP) {
+    if (fi && fi->suffix() == SUFFIX_GVFSMP) {
         path = QUrl(fi->extraProperties()["rooturi"].toString()).toString();
     }
 
