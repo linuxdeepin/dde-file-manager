@@ -63,25 +63,10 @@ public:
 
     enum RefineState {
         NoRefine,
-        Refine,
-        MoreThreadRefine,
-        MoreThreadAndMainRefine,
-        MoreThreadAndMainAndReadRefine,
-        MoreThreadAndMainAndOpenRefine,
+        Refine
     };
 
     Q_ENUM(RefineState)
-
-    enum RefineCopyProccessSate {
-        NoProccess,
-        MainProccessOver,
-        OpenFromFileProccessOver,
-        ReadFileProccessOver,
-        ReadAndWriteFileProccessOver,
-        AddPermissionProccessOver,
-    };
-
-    Q_ENUM(RefineCopyProccessSate)
 
 
     enum Error {
@@ -189,8 +174,6 @@ public:
     bool isFromLocalFile(const DUrlList &urls);
     void setRefine(const RefineState &refinestat);
     void waitSysncEnd();
-    void waitRefineThreadOver();
-
     void setCurTrashData(QVariant fileNameList);
 
     static Actions supportActions(Error error);
