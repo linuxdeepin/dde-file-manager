@@ -43,14 +43,18 @@ public:
     QString command() const;
     DCustomActionDefines::Separator separator() const;
     QList<DCustomActionData> acitons() const;
+    DCustomActionDefines::ActionArg nameArg() const;
+    DCustomActionDefines::ActionArg commandArg() const;
 signals:
 
 public slots:
 protected:
+    int m_position;     //显示位置
+    DCustomActionDefines::ActionArg m_nameArg;  //菜单名参数
+    DCustomActionDefines::ActionArg m_cmdArg;   //命令参数
     QString m_name;
     QString m_icon;
     QString m_command;     //菜单执行动作
-    int m_position;     //显示位置
     DCustomActionDefines::Separator m_separator;
     QList<DCustomActionData> m_childrenActions;     //当前action的子actions
 };

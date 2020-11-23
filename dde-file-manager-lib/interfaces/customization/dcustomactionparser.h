@@ -55,7 +55,7 @@ public slots:
 
 private:
     QList<DCustomActionEntry> m_actionEntry;
-    QHash<QString, DCustomActionDefines::FileComboTypes> m_combos;
+    QHash<QString, DCustomActionDefines::ComboTypes> m_combos;
     QHash<QString, DCustomActionDefines::Separator> m_separtor;
     int hierarchyNum { 0 };
 };

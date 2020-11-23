@@ -161,12 +161,12 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 */
 void DCustomActionParser::initHash()
 {
-    m_combos.insert("SingleFile", DCustomActionDefines::FileComboTypes::SingleFile);
-    m_combos.insert("SingleDir", DCustomActionDefines::FileComboTypes::SingleDir);
-    m_combos.insert("MultiFiles", DCustomActionDefines::FileComboTypes::MultiFiles);
-    m_combos.insert("MultiDirs", DCustomActionDefines::FileComboTypes::MultiDirs);
-    m_combos.insert("FileAndDir", DCustomActionDefines::FileComboTypes::FileAndDir);
-    m_combos.insert("BlankSpace", DCustomActionDefines::FileComboTypes::BlankSpace);
+    m_combos.insert("SingleFile", DCustomActionDefines::ComboType::SingleFile);
+    m_combos.insert("SingleDir", DCustomActionDefines::ComboType::SingleDir);
+    m_combos.insert("MultiFiles", DCustomActionDefines::ComboType::MultiFiles);
+    m_combos.insert("MultiDirs", DCustomActionDefines::ComboType::MultiDirs);
+    m_combos.insert("FileAndDir", DCustomActionDefines::ComboType::FileAndDir);
+    m_combos.insert("BlankSpace", DCustomActionDefines::ComboType::BlankSpace);
 
     m_separtor.insert("None", DCustomActionDefines::Separator::None);
     m_separtor.insert("Top", DCustomActionDefines::Separator::Top);

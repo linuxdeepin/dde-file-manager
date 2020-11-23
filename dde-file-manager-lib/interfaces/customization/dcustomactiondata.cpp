@@ -1,12 +1,16 @@
 #include "dcustomactiondata.h"
 
-DCustomActionData::DCustomActionData()
+DCustomActionData::DCustomActionData() :
+    m_nameArg(DCustomActionDefines::NoneArg)
+    ,m_cmdArg(DCustomActionDefines::NoneArg)
 {
 
 }
 
 DCustomActionData::DCustomActionData(const DCustomActionData &other)
 {
+    m_nameArg = other.m_nameArg;
+    m_cmdArg = other.m_cmdArg;
     m_name = other.m_name;
     m_icon = other.m_icon;
     m_position = other.m_position;
@@ -19,6 +23,8 @@ DCustomActionData &DCustomActionData::operator=(const DCustomActionData &other)
 {
     if (this == &other)
         return *this;
+    m_nameArg = other.m_nameArg;
+    m_cmdArg = other.m_cmdArg;
     m_name = other.m_name;
     m_position = other.m_position;
     m_separator = other.m_separator;
@@ -65,6 +71,16 @@ DCustomActionDefines::Separator DCustomActionData::separator() const
 QList<DCustomActionData> DCustomActionData::acitons() const
 {
     return m_childrenActions;
+}
+
+DCustomActionDefines::ActionArg DCustomActionData::nameArg() const
+{
+    return m_nameArg;
+}
+
+DCustomActionDefines::ActionArg DCustomActionData::commandArg() const
+{
+    return m_cmdArg;
 }
 
 
