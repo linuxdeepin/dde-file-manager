@@ -31,9 +31,34 @@ QAction *DCustomActionBuilder::buildAciton(const DCustomActionData &actionData, 
 }
 
 /*!
+    设置菜单的文件夹 \a dir 。提取文件夹名称，用于菜单传参
+ */
+void DCustomActionBuilder::setActiveDir(const DUrl &dir)
+{
+    m_dirPath = dir;
+    auto fileInfo = DFileService::instance()->createFileInfo(nullptr, dir);
+    if (fileInfo)
+        m_dirName = fileInfo->fileName();
+}
+
+/*!
+    设置焦点文件 \a file ，即右键点击的文件。当为空白区域时，无需设置。
+    提取文件\a file 的不带扩展名的文件名称和文件完整名称，用于菜单传参
+ */
+void DCustomActionBuilder::setFocusFile(const DUrl &file)
+{
+    m_filePath = file;
+    auto fileInfo = DFileService::instance()->createFileInfo(nullptr, file);
+    if (fileInfo) {
+        m_fileFullName = fileInfo->fileName();
+        m_fileBaseName = fileInfo->baseName();
+    }
+}
+
+/*!
     检查 \a files 文件列表中的文件组合
  */
-DCustomActionDefines::FileComboTypes DCustomActionBuilder::checkFileCombo(const DUrlList &files)
+DCustomActionDefines::ComboTypes DCustomActionBuilder::checkFileCombo(const DUrlList &files)
 {
     int fileCount = 0;
     int dirCount = 0;
@@ -67,7 +92,7 @@ DCustomActionDefines::FileComboTypes DCustomActionBuilder::checkFileCombo(const 
 /*!
     筛选 \a rootActions 中支持 \a type 文件组合的菜单项
  */
-QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCustomActionEntry> &rootActions, DCustomActionDefines::FileComboTypes type)
+QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCustomActionEntry> &rootActions, DCustomActionDefines::ComboTypes type)
 {
     QList<DCustomActionEntry> ret;
     for (auto it = rootActions.begin(); it != rootActions.end(); ++it) {
@@ -83,7 +108,7 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCust
     通过获取 \a actionData 中的标题，图标等信息创建菜单项，并遍历创建子项和分割符号。
     返回值 QAction* 对象的生命周期由调用方控制。
 */
-QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData,QWidget *parentForSubmenu) const
+QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, QWidget *parentForSubmenu) const
 {
     QAction *action = new QAction;
     QMenu *menu = new DFileMenu(parentForSubmenu);
@@ -91,7 +116,7 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData,QW
     action->setProperty(DCustomActionDefines::kCustomActionFlag, true);
 
     //标题
-    action->setText(actionData.name());
+    action->setText(makeName(actionData.name(), actionData.nameArg()));
 
     //图标
     const QString &iconName = actionData.icon();
@@ -148,7 +173,7 @@ QAction *DCustomActionBuilder::createAciton(const DCustomActionData &actionData)
     action->setProperty(DCustomActionDefines::kCustomActionCommand, actionData.command());
 
     //标题
-    action->setText(actionData.name());
+    action->setText(makeName(actionData.name(), actionData.nameArg()));
 
     //图标
     const QString &iconName = actionData.icon();
@@ -184,5 +209,37 @@ QIcon DCustomActionBuilder::getIcon(const QString &iconName) const
         ret = QIcon::fromTheme(iconName);
     }
 
+    return ret;
+}
+
+/*!
+    使用当前文件或文件夹信息替换 \a name 中的 \a arg 参数。
+ */
+QString DCustomActionBuilder::makeName(const QString &name, DCustomActionDefines::ActionArg arg) const
+{
+    auto replace = [](QString input, const QString &before,const QString &after){
+        QString ret = input;
+        int index = input.indexOf(before);
+        if (index >= 0) {
+            ret = input.replace(index, before.size(), after);
+        }
+        return ret;
+    };
+
+    QString ret;
+    switch (arg) {
+    case DCustomActionDefines::DirName:
+        ret = replace(name, DCustomActionDefines::kStrActionArg[arg],m_dirName);
+        break;
+    case DCustomActionDefines::BaseName:
+        ret = replace(name, DCustomActionDefines::kStrActionArg[arg], m_fileBaseName);
+        break;
+    case DCustomActionDefines::FileName:
+        ret = replace(name, DCustomActionDefines::kStrActionArg[arg], m_fileFullName);
+        break;
+    default:
+        ret = name;
+        break;
+    }
     return ret;
 }

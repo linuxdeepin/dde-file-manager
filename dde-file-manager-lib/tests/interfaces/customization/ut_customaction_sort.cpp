@@ -135,15 +135,15 @@ TEST(sortFunc,cornor_0)
 TEST(sortFunc,time_0)
 {
     QMap<int, QList<float>> locate;
-    for (float i = 0; i < 30; i += (rand() % 1 + 1)) {
+    for (float i = 0; i < 50; i += (rand() % 1 + 1)) {
         QList<float> el;
-        for (float j = 0; j < 50; ++j)
+        for (float j = 0; j < 100; ++j)
             el << i + j / 100.0;
         locate.insert(i, el);
     }
 
     QList<float> orgin;
-    for (float j = 0; j < 30; ++j)
+    for (float j = 0; j < 10; ++j)
         orgin << j;
     QList<float> out;
 

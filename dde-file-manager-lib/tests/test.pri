@@ -217,4 +217,5 @@ SOURCES += \
     $$PWD/gvfs/ut_qvolume.cpp \
      $$PWD/interfaces/ut_dfilesystemmodel.cpp\
     # custom
-    $$PWD/interfaces/customization/ut_customaction_sort.cpp
+    $$PWD/interfaces/customization/ut_customaction_sort.cpp \
+    $$PWD/interfaces/customization/ut-dcustomactionbuilder.cpp

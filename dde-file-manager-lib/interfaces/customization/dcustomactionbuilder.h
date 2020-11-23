@@ -36,9 +36,11 @@ class DCustomActionBuilder : public QObject
 public:
     explicit DCustomActionBuilder(QObject *parent = nullptr);
     QAction *buildAciton(const DCustomActionData &actionData, QWidget *parentForSubmenu) const;
-    static DCustomActionDefines::FileComboTypes checkFileCombo(const DUrlList &files);
+    void setActiveDir(const DUrl &dir);
+    void setFocusFile(const DUrl &file);
+    static DCustomActionDefines::ComboTypes checkFileCombo(const DUrlList &files);
     static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
-                                                 DCustomActionDefines::FileComboTypes type);
+                                                 DCustomActionDefines::ComboTypes type);
 protected:
     QAction *createMenu(const DCustomActionData &actionData, QWidget *parentForSubmenu) const;
     QAction *createAciton(const DCustomActionData &actionData) const;
@@ -47,6 +49,13 @@ signals:
 public slots:
 protected:
     QIcon getIcon(const QString &iconName) const;
+    QString makeName(const QString &name, DCustomActionDefines::ActionArg arg) const;
+private:
+    QString m_dirName;
+    DUrl m_dirPath;
+    QString m_fileBaseName;
+    QString m_fileFullName;
+    DUrl m_filePath;
 };
 
 #endif // DCUSTOMACTIONBUILDER_H

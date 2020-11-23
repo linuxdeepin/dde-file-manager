@@ -36,7 +36,7 @@ namespace DCustomActionDefines
     };
 
     //支持的文件组合方式
-    enum FileComboTypes {
+    enum ComboType {
         BlankSpace = 0,      //空白区域
         SingleFile = 1,      //单个文件
         SingleDir = 1 << 1,  //单个文件夹
@@ -51,6 +51,21 @@ namespace DCustomActionDefines
         Two,
         Three
     };
+
+    //动态参数
+    enum ActionArg {
+        NoneArg = -1,
+        DirName = 0, //%d 文件夹名称
+        DirPath, //%p 文件夹路径
+        BaseName, //%b 文件名，不含路径和扩展名
+        FileName, //%a 文件全名，包含扩展名，不含路径
+        FilePath,//%f 文件路径
+        FilePaths, //%F 多个文件路径
+        UrlPath, //%u 使用url表示的文件路径
+        UrlPaths, //%U 多个url
+    };
+
+    static const QStringList kStrActionArg = {"%d","%p","%b","%a","%f","%F","%u","%U"};
 
     template<typename Element, typename AddFunc>
     void sortFunc(const QMap<int, QList<Element>> &locate, QList<Element> &orgin, AddFunc addfunc) {
@@ -111,7 +126,7 @@ namespace DCustomActionDefines
     static const QLatin1String kActionGroups("Actions");
     static const QLatin1String kActionPrefix("Uos Action");
 
-    Q_DECLARE_FLAGS(ComboTypes, DCustomActionDefines::FileComboTypes);
+    Q_DECLARE_FLAGS(ComboTypes, DCustomActionDefines::ComboType);
     Q_DECLARE_OPERATORS_FOR_FLAGS(ComboTypes);
 
     struct FileBasicInfos {

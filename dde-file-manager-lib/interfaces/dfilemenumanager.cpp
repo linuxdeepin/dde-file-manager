@@ -1044,7 +1044,7 @@ QString DFileMenuManager::getActionString(MenuAction type)
 }
 
 //WIP: 创建自定义菜单
-void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrlList &urlList)
+void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &select)
 {
     //for compile
     static const QList<DCustomActionEntry> test_rootEntry;
@@ -1054,12 +1054,18 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
         return;
 
     DCustomActionBuilder builder;
+    //呼出菜单的文件夹
+    builder.setActiveDir(dir);
+
     //获取文件列表的组合
-    auto fileCombo = DCustomActionDefines::BlankSpace;
+    DCustomActionDefines::ComboTypes fileCombo = DCustomActionDefines::BlankSpace;
     if (isNormal) {
-        fileCombo = builder.checkFileCombo(urlList);
+        fileCombo = builder.checkFileCombo(select);
         if (fileCombo == DCustomActionDefines::BlankSpace)
             return;
+
+        //右键单击作用的文件
+        builder.setFocusFile(focusFile);
     }
 
     //获取支持的菜单项
@@ -1103,7 +1109,7 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     }
 
     //开始按顺序插入菜单
-    DCustomActionDefines::sortFunc(locate, systemActions, [menu](QList<QAction *> acs){
+    DCustomActionDefines::sortFunc(locate, systemActions, [menu](const QList<QAction *> &acs){
         menu->addActions(acs);
     });
 
