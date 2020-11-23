@@ -8,6 +8,8 @@
 #include <QUrl>
 #include <QFile>
 
+#include "testhelper.h"
+
 using namespace testing;
 namespace  {
     class AppControllerTest : public Test {
@@ -15,6 +17,7 @@ namespace  {
     protected:
         QString tempFilePath;
         AppController *controller;
+        DUrl url;
     protected:
         void SetUp()
         {
@@ -58,3 +61,18 @@ TEST_F(AppControllerTest,can_create_file){
     }
 }
 
+TEST_F(AppControllerTest,start_openAction){
+    url.setScheme(FILE_SCHEME);
+    url.setPath("~/Desktop");
+    TestHelper::runInLoop([=]{
+        AppController::instance()->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << url));
+    },200);
+}
+
+TEST_F(AppControllerTest,start_actionOpenDisk){
+    url.setScheme(FILE_SCHEME);
+    url.setPath("~/Desktop");
+    TestHelper::runInLoop([=]{
+        AppController::instance()->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << url));
+    },200);
+}

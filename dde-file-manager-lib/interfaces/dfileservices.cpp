@@ -700,7 +700,7 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
             for (const DUrl &nd : list) {
                 if (org.isEmpty())
                     break;
-                org.removeOne(nd);
+                org.removeAll(nd);
             }
             if (org.isEmpty()) //没有文件则清空剪切板
                 DFMGlobal::clearClipboard();

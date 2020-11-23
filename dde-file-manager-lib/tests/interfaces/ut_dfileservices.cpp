@@ -17,9 +17,6 @@ public:
     }
 
     virtual void TearDown() override{
-        if (service) {
-            service->deleteLater();
-        }
         std::cout << "end DFileSeviceTest" << std::endl;
     }
 };
