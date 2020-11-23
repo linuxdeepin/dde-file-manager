@@ -41,6 +41,9 @@ public:
     static DCustomActionDefines::ComboTypes checkFileCombo(const DUrlList &files);
     static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
                                                  DCustomActionDefines::ComboTypes type);
+    static QPair<QString, QStringList> makeCommand(const QString &cmd, DCustomActionDefines::ActionArg arg,
+                               const DUrl &dir, const DUrl& foucs, const DUrlList &files);
+    static QStringList splitCommand(const QString &cmd);
 protected:
     QAction *createMenu(const DCustomActionData &actionData, QWidget *parentForSubmenu) const;
     QAction *createAciton(const DCustomActionData &actionData) const;
@@ -50,6 +53,7 @@ public slots:
 protected:
     QIcon getIcon(const QString &iconName) const;
     QString makeName(const QString &name, DCustomActionDefines::ActionArg arg) const;
+
 private:
     QString m_dirName;
     DUrl m_dirPath;
