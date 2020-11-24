@@ -7,15 +7,17 @@
 #include <QVBoxLayout>
 #include <DIconButton>
 #include <QLabel>
+
 #define private public
 #define protected public
+
 #include "../dde-wallpaper-chooser/button.h"
 #include "../dde-wallpaper-chooser/checkbox.h"
 #include "../dde-wallpaper-chooser/waititem.h"
 #include "../dde-wallpaper-chooser/wallpaperlist.h"
 #include "../dde-wallpaper-chooser/wallpaperitem.h"
 #include "../dde-wallpaper-chooser/frame.h"
-#include "../../dde-wallpaper-chooser/dbus/deepin_wm.h"
+#include "../dde-wallpaper-chooser/dbus/deepin_wm.h"
 #include "screen/screenhelper.h"
 
 using namespace testing;
@@ -47,6 +49,8 @@ TEST_F(FrameTest, test_frame)
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
     m_frame->show();
+    m_frame->m_wallpaperList->setCurrentIndex(0);
+    qApp->processEvents();
     QEventLoop loop1;
     QTimer::singleShot(1000, &loop1, [&loop1](){
         loop1.exit();
@@ -54,35 +58,42 @@ TEST_F(FrameTest, test_frame)
     loop1.exec();
 
     //模拟翻页，看显示情况
+    qApp->processEvents();
     QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [this] {
+    QTimer::singleShot(500, &loop, [this] {
+        qApp->processEvents();
         if (m_frame->m_wallpaperList->nextButton) {
-        QVariant firstvalue = m_frame->m_wallpaperList->scrollAnimation.endValue();
+        QVariant firstvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
         this->m_frame->m_mouseArea->buttonPress(QPoint(0, 0), 5);
-        QVariant secondvalue = m_frame->m_wallpaperList->scrollAnimation.endValue();
-        if (m_frame->m_wallpaperList->m_index != m_frame->m_wallpaperList->count() - 1) {
-            EXPECT_NE(firstvalue, secondvalue);
-        }
-        else {
-            EXPECT_EQ(firstvalue, secondvalue);
+        QVariant secondvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
+        if (firstvalue == secondvalue) {
+                QVariant endvalue1 = m_frame->m_wallpaperList->scrollAnimation.endValue();
+                QVariant endvalue = m_frame->m_wallpaperList->scrollAnimation.endValue();
+                EXPECT_EQ(endvalue1, endvalue);
         }
         }
     });
-    QTimer::singleShot(2000, &loop, [this] {
+    QTimer::singleShot(1000, &loop, [this] {
+        qApp->processEvents();
         if (m_frame->m_wallpaperList->prevButton) {
-        QVariant firstvalue = m_frame->m_wallpaperList->scrollAnimation.endValue();
+        QVariant firstvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
         this->m_frame->m_mouseArea->buttonPress(QPoint(0, 0), 4);
-        QVariant secondvalue = m_frame->m_wallpaperList->scrollAnimation.endValue();
-        EXPECT_NE(firstvalue, secondvalue);
+        QVariant secondvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
+        if (firstvalue == secondvalue) {
+                QVariant endvalue1 = m_frame->m_wallpaperList->scrollAnimation.endValue();
+                QVariant endvalue = m_frame->m_wallpaperList->scrollAnimation.endValue();
+                EXPECT_EQ(endvalue1, endvalue);
+        }
         }
     });
-    QTimer::singleShot(3000, &loop, [&loop, this] {
+    QTimer::singleShot(1500, &loop, [&loop, this] {
         this->m_frame->m_mouseArea->buttonPress(QPoint(0, 0), 1);
         loop.exit();
     });
     loop.exec();
 
     EXPECT_TRUE(m_frame->isTopLevel());
+    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_show)
@@ -104,6 +115,7 @@ TEST_F(FrameTest, test_show)
 
     EXPECT_NE(m_frame->m_backgroundManager, nullptr);
     EXPECT_TRUE(status);
+    m_frame->hide();
 }
 
 
@@ -148,6 +160,7 @@ TEST_F(FrameTest, test_onrest)
     }
 
     EXPECT_TRUE(m_frame->isTopLevel());
+    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_refreshlist)
@@ -169,6 +182,7 @@ TEST_F(FrameTest, test_refreshlist)
     emit itemsingnal->tab();
 
     EXPECT_NE(m_frame->m_wallpaperList->count(), 0);
+    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_onitemispressed)
@@ -177,6 +191,11 @@ TEST_F(FrameTest, test_onitemispressed)
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
     m_frame->show();
 
+    QEventLoop loop;
+    QTimer::singleShot(100, &loop, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
     QString data = QString("/usr/share/backgrounds/default_background.jpg");
     m_frame->onItemPressed(data);
     QMap<QString, QString> path = m_frame->m_backgroundManager->backgroundImages();
@@ -184,22 +203,7 @@ TEST_F(FrameTest, test_onitemispressed)
 
     EXPECT_EQ(data, backgroundpath);
     EXPECT_EQ(m_frame->m_desktopWallpaper, m_frame->m_lockWallpaper);
-}
-
-TEST_F(FrameTest, test_getwallpaperslideshow)
-{
-    ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
-    ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
-    m_frame->show();
-
-    QEventLoop loop;
-    QString temp1 = m_frame->getWallpaperSlideShow();
-    m_frame->m_isExistFeatureInterface = true;
-    QString temp2 = m_frame->getWallpaperSlideShow();
-    QTimer::singleShot(300, &loop, [&loop](){loop.exit();});
-    loop.exec();
-
-    EXPECT_EQ(temp1,temp2);
+    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_onitembuttonisclicked)
@@ -218,6 +222,7 @@ TEST_F(FrameTest, test_onitembuttonisclicked)
 
     emit item->buttonClicked("lock-screen");
     EXPECT_TRUE(m_frame->m_desktopWallpaper.isEmpty());
+    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_setmode)
@@ -320,6 +325,7 @@ TEST_F(FrameTest, test_keypressevent)
     delete eventesc;
     delete eventright;
     delete eventleft;
+    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_eventfilter)
@@ -381,6 +387,7 @@ TEST_F(FrameTest, test_eventfilter)
     delete eventtab;
     delete eventbacktab;
     delete eventkeyright;
+    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_initsize)
@@ -409,6 +416,7 @@ TEST_F(FrameTest, test_handleNeedclosebutton)
 
     m_frame->handleNeedCloseButton(currentPath, pos);
     EXPECT_TRUE(!m_frame->m_closeButton->isHidden());
+    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_reLayoutTools)
@@ -432,6 +440,7 @@ TEST_F(FrameTest, test_reLayoutTools)
     EXPECT_TRUE(m_frame->m_waitControl->isHidden());
     EXPECT_TRUE(m_frame->m_lockScreenBox->isHidden());
     EXPECT_EQ(m_frame->layout()->count(), count);
+    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_desktopbackground)
@@ -452,4 +461,67 @@ TEST_F(FrameTest, test_desktopbackground)
     QPair<QString, QString> compare = QPair<QString, QString>(m_frame->m_screenName, m_frame->m_desktopWallpaper);
 
     EXPECT_EQ(pair, compare);
+    m_frame->hide();
+}
+
+TEST_F(FrameTest, test_setwallpaperslideshow)
+{
+    m_frame->show();
+    QEventLoop loop;
+    QTimer::singleShot(1000, &loop, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
+
+    QString temp("30");
+    if (m_frame->m_dbusAppearance != nullptr) {
+        m_frame->setWallpaperSlideShow(temp);
+    }
+    m_frame->m_dbusAppearance = nullptr;
+    if (m_frame->m_dbusAppearance == nullptr) {
+        m_frame->setWallpaperSlideShow(temp);
+        QString ret = m_frame->getWallpaperSlideShow();
+        EXPECT_EQ(ret, QString());
+    }
+}
+
+TEST_F(FrameTest, test_setbackground)
+{
+    m_frame->show();
+    QEventLoop loop;
+    QTimer::singleShot(100, &loop, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
+
+    m_frame->m_wallpaperList->setCurrentIndex(0);
+    m_frame->m_desktopWallpaper = m_frame->m_wallpaperList->getCurrentItem()->getPath();
+
+    m_frame->setBackground();
+    WallpaperItem* item1 = m_frame->m_wallpaperList->getCurrentItem();
+    WallpaperItem* item2 = dynamic_cast<WallpaperItem*>(m_frame->m_wallpaperList->item(0));
+
+    EXPECT_EQ(item1->getPath(), item2->getPath());
+    m_frame->hide();
+}
+
+TEST_F(FrameTest, test_getwallpaperslideshow)
+{
+    ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
+    ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
+
+    m_frame->m_wallpaperList->setCurrentIndex(1);
+    QString str;
+    m_frame->show();
+    qApp->processEvents();
+
+    QString temp1 = m_frame->getWallpaperSlideShow();
+
+    if (m_frame->m_dbusAppearance != nullptr) {
+        EXPECT_NE(temp1, str);
+    }
+    else {
+        EXPECT_EQ(temp1, str);
+    }
+    m_frame->hide();
 }

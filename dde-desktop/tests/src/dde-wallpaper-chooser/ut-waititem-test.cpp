@@ -5,8 +5,8 @@
 #include <QLabel>
 #define private public
 
-#include "../../dde-wallpaper-chooser/waititem.h"
-#include "../../dde-wallpaper-chooser/waititem.cpp"
+#include "../dde-wallpaper-chooser/waititem.h"
+#include "../dde-wallpaper-chooser/waititem.cpp"
 
 using namespace testing;
 
@@ -44,7 +44,7 @@ TEST_F(WaitItemTest, initSize)
         int temp = sumwidth - (m_testitem->width() - static_cast<int>(m_testitem->m_movedistance));
         m_testitem->m_movedistance -= temp;
     }
-    int temp = m_testitem->m_movedistance;
+    int temp = static_cast<int>(m_testitem->m_movedistance);
 
     EXPECT_EQ(m_testitem->size(), QSize(400, 400));
     EXPECT_EQ(temp, static_cast<int>(m_testitem->m_movedistance));

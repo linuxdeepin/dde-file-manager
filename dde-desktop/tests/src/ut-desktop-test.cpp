@@ -1,14 +1,17 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#define private public
-#include "desktop.h"
-#include "../dde-wallpaper-chooser/frame.h"
-#include "view/canvasviewmanager.h"
-#include "screen/screenhelper.h"
 #include <QApplication>
 #include <QScreen>
 #include <QTest>
 #include <QTimer>
+
+#define private public
+#define protected public
+
+#include "desktop.h"
+#include "../dde-wallpaper-chooser/frame.h"
+#include "view/canvasviewmanager.h"
+#include "screen/screenhelper.h"
 
 TEST(DesktopTest,init)
 {
@@ -110,9 +113,94 @@ TEST(DesktopTest, print_info)
     void *viewManager1 = (void *)*(long * )(viewVar);
     desktop.preInit();
     desktop.loadData();
-    desktop.loadView();
-    void *viewManager2 = (void *)*(long * )(viewVar);
-    EXPECT_EQ(viewManager1,nullptr);
-    EXPECT_NE(viewManager2,nullptr);
     desktop.PrintInfo();
+    void *viewManager2 = (void *)*(long * )(viewVar);
+    EXPECT_EQ(viewManager1, nullptr);
+
+    desktop.loadView();
+    desktop.PrintInfo();
+    void *viewManager3 = (void *)*(long * )(viewVar);
+    EXPECT_NE(viewManager3, nullptr);
+}
+
+TEST(DesktopTest, show_wallpaper_setting)
+{
+    Desktop desktop;
+    char *base = (char *)(desktop.d.data());
+    char *view = base + sizeof (void *) * 2;
+    void *wset1 = (void *)*(long *)(view);
+    EXPECT_EQ(wset1, nullptr);
+    desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
+    void *wset2 = (void *)*(long *)(view);
+    EXPECT_NE(wset2, nullptr);
+
+    Frame *wset3 = (Frame *)*(long *)(view);
+    emit wset3->done();
+    QEventLoop loop;
+    QTimer::singleShot(100, &loop, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
+
+    void *wset4 = (void *)*(long *)(view);
+    EXPECT_EQ(wset4, nullptr);
+}
+
+TEST(DesktopTest, refresh)
+{
+    Desktop desktop;
+    char *base = (char *)(desktop.d.data());
+    char *view = base + sizeof (void *);
+    void *wset1 = (void *)*(long *)(view);
+    EXPECT_EQ(wset1, nullptr);
+
+    desktop.preInit();
+    desktop.loadView();
+    desktop.Refresh();
+
+    void *wset2 = (void *)*(long *)(view);
+    EXPECT_NE(wset2, nullptr);
+}
+
+TEST(DesktopTest, enable_ui_debug)
+{
+    Desktop desktop;
+    char *base = (char *)(desktop.d.data());
+    char *view = base + sizeof (void *);
+    void *wset1 = (void *)*(long *)(view);
+    EXPECT_EQ(wset1, nullptr);
+
+    desktop.preInit();
+    desktop.loadView();
+    desktop.EnableUIDebug(true);
+    void *wset2 = (void *)*(long *)(view);
+    EXPECT_NE(wset2, nullptr);
+}
+
+TEST(DesktopTest, get_icon_size)
+{
+    Desktop desktop;
+    char *base = (char *)(desktop.d.data());
+    char *view = base + sizeof (void *);
+    void *wset1 = (void *)*(long *)(view);
+    EXPECT_EQ(wset1, nullptr);
+
+    desktop.preInit();
+    desktop.loadView();
+    desktop.GetIconSize();
+
+    void *wset2 = (void *)*(long *)(view);
+    EXPECT_NE(wset2, nullptr);
+
+    CanvasViewManager* wset3 = (CanvasViewManager *) *(long *)(view);
+    QList<int> list;
+    if (!wset3->canvas().isEmpty()) {
+        list = desktop.GetIconSize();
+        EXPECT_EQ(list.at(0), wset3->canvas().first()->iconSize().width());
+        EXPECT_EQ(list.at(1), wset3->canvas().first()->iconSize().height());
+    }
+    else {
+        EXPECT_EQ(list.at(0), 0);
+        EXPECT_EQ(list.at(1), 0);
+    }
 }

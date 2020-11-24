@@ -48,6 +48,7 @@ namespace  {
 TEST_F(GridManagerTest, test_remove)
 {
     m_canvasGridView->selectAll();
+    QString filepath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     QEventLoop loop;
     QTimer::singleShot(1000, &loop, [&loop]{
         loop.exit();
@@ -56,7 +57,19 @@ TEST_F(GridManagerTest, test_remove)
 
     bool ret;
     DUrlList ulist = m_canvasGridView->selectedUrls();
-    QString string = ulist[0].toString();
+    QString string;
+    if (ulist.size()) {
+        string = ulist[0].toString();
+    }
+    else {
+        QFile fd;
+        string = filepath + '/' + "test.txt";
+        fd.setFileName(string);
+        if (!fd.exists()) {
+            fd.open(QIODevice::ReadWrite|QIODevice::Text);
+            fd.close();
+        }
+    }
     QMap<QString, QPoint> map;
 
     QPoint point = m_grid->position(m_canvasGridView->m_screenNum, string);
@@ -150,6 +163,12 @@ TEST_F(GridManagerTest, test_currentscreenmove)
     loop1.exec();
 
     emit m_grid->d->m_desktopSettings->valueChanged("desktop-computer", "1");
+    QEventLoop loop2;
+    QTimer::singleShot(100, &loop2, [&loop2]{
+        loop2.exit();
+    });
+    loop2.exec();
+
     m_grid->d->reAutoArrage();
     EXPECT_TRUE(movestatus);
     m_grid->move(m_canvasGridView->m_screenNum, strlist, url, fpoint.x(), fpoint.y());
@@ -186,8 +205,10 @@ TEST_F(GridManagerTest, test_sortmaindesktopfile)
     QDir dir(desktopUrl.toString());
     strlist << dir.filePath("dde-home.desktop") << dir.filePath("dde-trash.desktop");
     size = strlist.size();
+
     m_grid->sortMainDesktopFile(strlist, DFileSystemModel::FileMimeTypeRole, Qt::AscendingOrder);
     EXPECT_TRUE(strlist[0] == dir.filePath("dde-trash.desktop"));
+
     m_grid->sortMainDesktopFile(strlist, DFileSystemModel::FileMimeTypeRole, Qt::DescendingOrder);
     EXPECT_TRUE(strlist.last() == dir.filePath("dde-trash.desktop"));
     EXPECT_EQ(strlist.size(), size);
@@ -200,6 +221,7 @@ TEST_F(GridManagerTest, test_takeemptypos)
     QPair<int, QPoint> temp;
     temp = m_grid->d->takeEmptyPos();
     QPair<int, QPoint> compare;
+
     compare.first = m_grid->d->screenCode().last();
     compare.second = m_grid->d->overlapPos(compare.first);
     EXPECT_EQ(compare.first, temp.first);
@@ -210,6 +232,7 @@ TEST_F(GridManagerTest, test_add)
     bool ret;
     ret = m_grid->d->add(m_canvasGridView->m_screenNum, QPoint(), "");
     EXPECT_EQ(ret, false);
+
     m_canvasGridView->selectAll();
     m_grid->d->updateProfiles();
     QEventLoop loop;
@@ -253,9 +276,11 @@ TEST_F(GridManagerTest, test_addtooverlap)
     int result;
     result = m_grid->addToOverlap(test);
     EXPECT_EQ(result, 0);
+
     m_grid->d->m_overlapItems << test;
     result = m_grid->addToOverlap(test);
     EXPECT_EQ(result, 1);
+
     map.insert(test, QPoint());
     m_grid->d->m_itemGrids.insert(m_canvasGridView->m_screenNum, map);
     m_grid->d->m_overlapItems.clear();
@@ -283,6 +308,7 @@ TEST_F(GridManagerTest, test_popoverlap)
     bool mode;
     m_grid->setDisplayMode(false);
     EXPECT_EQ(false, m_grid->d->m_bSingleMode);
+
     m_grid->setDisplayMode(true);
     EXPECT_EQ(true, m_grid->d->m_bSingleMode);
 }
@@ -316,7 +342,20 @@ TEST_F(GridManagerTest, test_differentscreenmove)
     EXPECT_TRUE(movestatus);
     m_grid->move(m_canvasGridView->m_screenNum,m_canvasGridView->m_screenNum, strlist, url, point.x(), point.y());
 }
-TEST_F(GridManagerTest, test_getemptypos)
+TEST_F(GridManagerTest, test_getemptyposmorearg)
 {
-   //todo
+   QPair<int, QPoint> emptypos;
+   QPoint point;
+   m_grid->d->m_screenFullStatus[m_canvasGridView->m_screenNum] = true;
+   bool judge = m_grid->d->getEmptyPos(m_canvasGridView->m_screenNum, true, point);
+   EXPECT_EQ(QPoint(), point);
+   EXPECT_FALSE(judge);
+
+   m_grid->d->m_screenFullStatus[m_canvasGridView->m_screenNum] = false;
+   m_grid->d->m_cellStatus[m_canvasGridView->m_screenNum] = {0};
+   judge = m_grid->d->getEmptyPos(m_canvasGridView->m_screenNum, true, point);
+   EXPECT_TRUE(judge);
+   judge = m_grid->d->getEmptyPos(m_canvasGridView->m_screenNum, false, point);
+   EXPECT_TRUE(judge);
 }
+
