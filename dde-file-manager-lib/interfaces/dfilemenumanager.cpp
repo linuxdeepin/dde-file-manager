@@ -438,9 +438,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     }
 
     if (deviceListener->isMountedRemovableDiskExits()
-#ifdef BLUETOOTH_ENABLE
             || bluetoothManager->model()->adapters().count() > 0
-#endif
        ) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
         if (currentUrl.path().contains("/dev/sr")
@@ -449,7 +447,6 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         else {
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
-#ifdef BLUETOOTH_ENABLE // (暂时屏蔽蓝牙入口，还未开发完成)
                 if (bluetoothManager->model()->adapters().count() > 0) { // 如果有蓝牙设备
                     QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
                     sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
@@ -459,7 +456,6 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     if (!enableSendToBluetooth)
                         sendToBluetooth->setEnabled(false);
                 }
-#endif
 
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
