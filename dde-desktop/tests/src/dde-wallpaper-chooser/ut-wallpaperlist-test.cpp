@@ -4,6 +4,7 @@
 #include <QScreen>
 #include <QEventLoop>
 #include <QVBoxLayout>
+
 #define private public
 #define protected public
 
@@ -21,6 +22,7 @@ namespace  {
            }
 
            void TearDown() override {
+               m_frame->hide();
                delete m_frame;
            }
 

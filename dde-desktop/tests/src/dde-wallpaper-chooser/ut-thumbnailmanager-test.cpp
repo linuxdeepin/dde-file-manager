@@ -88,10 +88,12 @@ TEST_F(ThumbnailManagerTest, find_bysize_singnal)
     int size = m_manager->m_queuedRequests.size();
     bool bjudge = false;
     QTimer timer;
+    QString test("test");
     m_manager->find("test");
 
     timer.start(2000);
     QEventLoop loop;
+    qApp->processEvents();
     QObject::connect(m_manager, &ThumbnailManager::thumbnailFounded, &loop, [&]{
         EXPECT_NE(size, m_manager->m_queuedRequests.size());
         bjudge = true;
@@ -101,8 +103,13 @@ TEST_F(ThumbnailManagerTest, find_bysize_singnal)
         timer.stop();
         loop.exit();
     });
+    qApp->processEvents();
     loop.exec();
-    EXPECT_TRUE(bjudge);
+    QString file = QDir(m_manager->m_cacheDir).absoluteFilePath("test");
+    const QPixmap pixmap(file);
+    if (!pixmap.isNull()) {
+        EXPECT_TRUE(bjudge);
+    }
 }
 
 
