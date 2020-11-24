@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include <QIcon>
+#include <QFontMetrics>
 
 class QMenu;
 class QAction;
@@ -55,6 +56,7 @@ protected:
     QString makeName(const QString &name, DCustomActionDefines::ActionArg arg) const;
 
 private:
+    QFontMetrics m_fm;
     QString m_dirName;
     DUrl m_dirPath;
     QString m_fileBaseName;

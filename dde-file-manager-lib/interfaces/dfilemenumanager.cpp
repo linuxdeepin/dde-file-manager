@@ -1047,10 +1047,10 @@ QString DFileMenuManager::getActionString(MenuAction type)
 void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected)
 {
     //for compile
-    static const QList<DCustomActionEntry> test_rootEntry;
+    static QList<DCustomActionEntry> test_rootEntry;
     //end
 
-    if (menu == nullptr && test_rootEntry.isEmpty())
+    if (menu == nullptr || test_rootEntry.isEmpty())
         return;
 
     DCustomActionBuilder builder;
@@ -1074,13 +1074,20 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
         return;
 
     //添加菜单响应所需的数据
-    menu->setProperty(DCustomActionDefines::kCustomActionDataDir, dir);
-    menu->setProperty(DCustomActionDefines::kCustomActionDataFoucsFile, focusFile);
     {
         QVariant var;
+        var.setValue(dir);
+        menu->setProperty(DCustomActionDefines::kCustomActionDataDir, var);
+
+        var.setValue(focusFile);
+        menu->setProperty(DCustomActionDefines::kCustomActionDataFoucsFile, var);
+
         var.setValue(selected);
-        menu->setProperty(DCustomActionDefines::kCustomActionDataSelectedFiles,var);
+        menu->setProperty(DCustomActionDefines::kCustomActionDataSelectedFiles, var);
     }
+
+    //开启tooltips
+    menu->setToolTipsVisible(true);
 
     //移除所有菜单项
     auto systemActions = menu->actions();
@@ -1089,6 +1096,7 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     Q_ASSERT(menu->actions().isEmpty());
 
     QMap<int, QList<QAction*>> locate;
+    QMap<QAction*, DCustomActionDefines::Separator> actionsSeparator;
     //根据配置信息创建菜单项
     for (auto it = usedEntrys.begin(); it != usedEntrys.end(); ++it) {
         const DCustomActionData &actionData = it->data();
@@ -1098,6 +1106,10 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
 
         //自动释放
         action->setParent(menu);
+
+        //记录分隔线
+        if (actionData.separator() != DCustomActionDefines::None)
+            actionsSeparator.insert(action, actionData.separator());
 
         //插入位置
         auto pos = actionData.position();
@@ -1123,6 +1135,31 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     });
 
     Q_ASSERT(systemActions.isEmpty());
+
+    //插入分隔线
+    for (auto it = actionsSeparator.begin(); it != actionsSeparator.end(); ++it) {
+        //上分割线
+        if (it.value() & DCustomActionDefines::Top) {
+            menu->insertSeparator(it.key());
+        }
+
+        //下分割线
+        if ((it.value() & DCustomActionDefines::Bottom)) {
+            const QList<QAction*> &actionList = menu->actions();
+            int nextIndex = actionList.indexOf(it.key()) + 1;
+
+            //后一个action
+            if (nextIndex < actionList.size()) {
+                auto nextAction = menu->actionAt(nextIndex);
+
+                //不是分割线则插入
+                if (!nextAction->isSeparator()) {
+                    menu->insertSeparator(nextAction);
+                }
+            }
+        }
+
+    }
 }
 
 void DFileMenuManager::addActionWhitelist(MenuAction action)

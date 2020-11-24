@@ -37,12 +37,15 @@ namespace DCustomActionDefines
 
     //支持的文件组合方式
     enum ComboType {
-        BlankSpace = 0,      //空白区域
-        SingleFile = 1,      //单个文件
-        SingleDir = 1 << 1,  //单个文件夹
-        MultiFiles = 1 << 2, //多个文件
-        MultiDirs = 1 << 3,  //多个文件夹
-        FileAndDir = 1 << 4 //文件和文件夹，必须都包含
+        BlankSpace = 1,      //空白区域
+        SingleFile = 1 << 1,      //单个文件
+        SingleDir = 1 << 2,  //单个文件夹
+        MultiFiles = 1 << 3, //多个文件
+        MultiDirs = 1 << 4,  //多个文件夹
+        FileAndDir = 1 << 5, //文件和文件夹，必须都包含
+        AllFile = SingleFile | MultiFiles,
+        AllDir = SingleDir | MultiDirs,
+        AllCombo = BlankSpace | AllFile | AllDir | FileAndDir
     };
 
     //支持菜单层级

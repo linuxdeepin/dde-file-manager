@@ -29,8 +29,6 @@
 #include <danchors.h>
 #include <DUtil>
 #include <DApplication>
-#define private public
-#include <private/qhighdpiscaling_p.h>
 
 #include <durl.h>
 #include <dfmglobal.h>
@@ -3184,6 +3182,9 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menu->removeAction(propertyAction);
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
 
+    //扩展菜单
+    DFileMenuManager::extendCustomMenu(menu, false, currentUrl() ,{},{});
+
     connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
         qDebug() << "trigger action" << action->data();
         if (!action->data().isValid()) {
@@ -3284,7 +3285,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     //故重新更改成真实路径传递，可能对action后续的操作是否有影响
     auto curUrl = info->fileUrl();
     DUrlList realList;
-    DFileMenu *menu;
+    DFileMenu *menu = nullptr;
     if (curUrl.scheme() == DFMMD_SCHEME) {
         curUrl = MergedDesktopController::convertToRealPath(curUrl);
         for (auto url : list) {
@@ -3292,7 +3293,13 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         }
         menu = DFileMenuManager::createNormalMenu(curUrl, realList, disableList, unusedList, static_cast<int>(winId()), true);
     } else {
+        //realList给后面的扩展菜单使用
+        realList = list;
         menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(winId()), true);
+    }
+
+    if (!menu) {
+        return;
     }
 
     //totally use dde file manager libs for menu actions
@@ -3303,10 +3310,6 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     ignoreActions  << MenuAction::Open;
     menu->setIgnoreMenuActions(ignoreActions);
     menu->setAccessibleInfo(AC_FILE_MENU_DESKTOP);
-
-    if (!menu) {
-        return;
-    }
 
     auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
     if (propertyAction) {
@@ -3319,6 +3322,9 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     menu->addAction(property);
 
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
+
+    //扩展菜单
+    DFileMenuManager::extendCustomMenu(menu, true, currentUrl() , curUrl, realList);
 
     //断开连接，桌面优先处理
     //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突，

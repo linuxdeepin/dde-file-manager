@@ -5,8 +5,11 @@
 #include <QDir>
 #include <QUrl>
 #include <QMenu>
+#include <QFontMetrics>
 
-DCustomActionBuilder::DCustomActionBuilder(QObject *parent) : QObject(parent)
+DCustomActionBuilder::DCustomActionBuilder(QObject *parent)
+    : QObject(parent)
+    , m_fm(QFontMetrics(QAction().font()))
 {
 
 }
@@ -250,6 +253,8 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
 {
     QAction *action = new QAction;
     QMenu *menu = new DFileMenu(parentForSubmenu);
+    menu->setToolTipsVisible(true);
+
     action->setMenu(menu);
     action->setProperty(DCustomActionDefines::kCustomActionFlag, true);
 
@@ -280,7 +285,7 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
 
                 //不是分割线则插入
                 if (!lastAction->isSeparator()) {
-                    menu->addSeparator()->setParent(menu);
+                    menu->addSeparator();
                 }
             }
         }
@@ -290,7 +295,7 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
 
         //下分割线
         if ((separator & DCustomActionDefines::Bottom) && ((it + 1) != subActions.end())) {
-            menu->addSeparator()->setParent(menu);
+            menu->addSeparator();
         }
     }
 
@@ -312,7 +317,14 @@ QAction *DCustomActionBuilder::createAciton(const DCustomActionData &actionData)
     action->setProperty(DCustomActionDefines::kCustomActionCommandArgFlag, actionData.commandArg());
 
     //标题
-    action->setText(makeName(actionData.name(), actionData.nameArg()));
+    {
+        const QString &&name = makeName(actionData.name(), actionData.nameArg());
+        //TODO width是临时值，最终效果需设计定义
+        const QString &&elidedName = m_fm.elidedText(name, Qt::ElideMiddle, 150);
+        action->setText(elidedName);
+        if (elidedName != name)
+            action->setToolTip(name);
+    }
 
     //图标
     const QString &iconName = actionData.icon();
@@ -354,6 +366,7 @@ QIcon DCustomActionBuilder::getIcon(const QString &iconName) const
 /*!
     使用当前文件或文件夹信息替换 \a name 中的 \a arg 参数。
     只处理找到的一个有效的 \a arg 参数，后面的不再替换。
+    参数类型仅支持：DirName BaseName FileName
  */
 QString DCustomActionBuilder::makeName(const QString &name, DCustomActionDefines::ActionArg arg) const
 {

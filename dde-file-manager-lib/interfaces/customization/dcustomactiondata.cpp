@@ -96,6 +96,7 @@ DCustomActionEntry::DCustomActionEntry(const DCustomActionEntry &other)
     m_comment = other.m_comment;
     m_fileCombo = other.m_fileCombo;
     m_mimeTypes = other.m_mimeTypes;
+    m_sign = other.m_sign;
     m_data = other.m_data;
 }
 
@@ -106,7 +107,9 @@ DCustomActionEntry &DCustomActionEntry::operator=(const DCustomActionEntry &othe
     m_package = other.m_package;
     m_version = other.m_version;
     m_comment = other.m_comment;
+    m_fileCombo = other.m_fileCombo;
     m_mimeTypes = other.m_mimeTypes;
+    m_sign = other.m_sign;
     m_data = other.m_data;
     return *this;
 }
