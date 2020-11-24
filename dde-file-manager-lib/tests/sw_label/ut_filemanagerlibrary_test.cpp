@@ -39,6 +39,9 @@ TEST_F(FileManagerLibraryTest, load_library)
 {
     QString name("/usr/lib/sw_64-linux-gnu/dde-file-manager/libfilemanager.so");
     p_library->loadLibrary(name);
+
+    name = "libz";
+    p_library->loadLibrary(name);
 }
 
 TEST_F(FileManagerLibraryTest, auto_add_rightmenu)

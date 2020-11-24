@@ -39,6 +39,9 @@ TEST_F(LlsDeepinLabelLibraryTest, load_library)
 {
     QString name("/usr/lib/sw_64-linux-gnu/dde-file-manager/libllsdeeplabel.so");
     p_library->loadLibrary(name);
+
+    name = "libz";
+    p_library->loadLibrary(name);
 }
 
 TEST_F(LlsDeepinLabelLibraryTest, check_simple_label)
