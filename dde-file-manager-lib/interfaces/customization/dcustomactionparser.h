@@ -28,11 +28,13 @@
 #include <QHash>
 
 class QSettings;
+class QFileSystemWatcher;
 class DCustomActionParser : public QObject
 {
     Q_OBJECT
 public:
     explicit DCustomActionParser(QObject *parent = nullptr);
+    ~DCustomActionParser();
 
     bool loadDir(const QString &dirPath);
     QList<DCustomActionEntry> getActionFiles();
@@ -49,14 +51,20 @@ public:
     QVariant getValue(QSettings &actionSetting, const QString &group, const QString &key);
     bool actionFileInfos(DCustomActionDefines::FileBasicInfos &basicInfo, QSettings &actionSetting);
 
+    void actionNameDynamicArg(DCustomActionData &act);
+    void execDynamicArg(DCustomActionData &act);
+    bool comboPosForTopAction(QSettings &actionSetting, const QString&group, DCustomActionData &act);
+
 signals:
-
+    void customMenuChanged();
 public slots:
-
 private:
+    QFileSystemWatcher  *m_fileWatcher  = nullptr;
     QList<DCustomActionEntry> m_actionEntry;
-    QHash<QString, DCustomActionDefines::ComboTypes> m_combos;
+    QHash<QString, DCustomActionDefines::ComboType> m_combos;
     QHash<QString, DCustomActionDefines::Separator> m_separtor;
+    QHash<QString, DCustomActionDefines::ActionArg> m_actionNameArg;
+    QHash<QString, DCustomActionDefines::ActionArg> m_actionExecArg;
     int m_hierarchyNum = 0;
 };
 

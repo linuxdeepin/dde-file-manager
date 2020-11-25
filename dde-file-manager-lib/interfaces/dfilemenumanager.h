@@ -47,6 +47,7 @@ public:
     static QString fmblkDevice;
 
     DFileMenuManager();
+    ~DFileMenuManager();
 
     static DFileMenu *createDefaultBookMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createUserShareMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());

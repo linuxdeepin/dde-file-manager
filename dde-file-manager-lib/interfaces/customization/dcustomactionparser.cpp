@@ -3,14 +3,29 @@
 #include <QDir>
 #include <QDebug>
 #include <QSettings>
-#include <QTextCodec>
-
+#include <QFileSystemWatcher>
 
 using namespace DCustomActionDefines;
 
 DCustomActionParser::DCustomActionParser(QObject *parent) : QObject(parent)
 {
+    m_fileWatcher = new QFileSystemWatcher;
+    m_fileWatcher->addPath(kCustomMenuPath);
+    connect(m_fileWatcher, &QFileSystemWatcher::directoryChanged, [this]{
+        m_actionEntry.clear();
+        loadDir(kCustomMenuPath);
+    });
     initHash();
+    loadDir(kCustomMenuPath);
+    //暂时不考虑效率，todo后续优化考虑开线程处理此loadDir
+}
+
+DCustomActionParser::~DCustomActionParser()
+{
+    if (m_fileWatcher) {
+        m_fileWatcher->deleteLater();
+        m_fileWatcher = nullptr;
+    }
 }
 
 
@@ -51,18 +66,18 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
 {
     //基本信息，版本，选中类型,且选中类型无明确说明则认为是无效的配置文件
     FileBasicInfos basicInfos;
-    bool prefixExists = actionSetting.childGroups().contains(kUosPrefix);
+    bool prefixExists = actionSetting.childGroups().contains(kMenuPrefix);
     if (!prefixExists) { //关键入口信息没有，认为是无效的配置文件
         return false;
     }
     if (!actionFileInfos(basicInfos, actionSetting))
         return false;//关键信息无效则
 
-    auto actions = getValue(actionSetting, kUosPrefix, kActionGroups).toString().trimmed();
+    auto actions = getValue(actionSetting, kMenuPrefix, kActionGroups).toString().trimmed();
     if (actions.isEmpty())
         return false; //无一级菜单,无效文件
 
-    auto actStr = getValue(actionSetting, kUosPrefix, kActionGroups);
+    auto actStr = getValue(actionSetting, kMenuPrefix, kActionGroups);
     auto actList = actStr.toString().trimmed().split(":", QString::SkipEmptyParts);
     m_hierarchyNum = 1;
     int actCount = 0;
@@ -99,13 +114,13 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
             return; //无name无action
     }
     actData.m_name = name;
-    qDebug() << name;
+    actionNameDynamicArg(actData);
 
     //pos
     actData.m_position =  getValue(actionSetting, group, kActionPos).toInt();
 
     //separator
-    QString separator = getValue(actionSetting, group, kActionPos).toString().trimmed();
+    QString separator = getValue(actionSetting, group, kActionSeparator).toString().trimmed();
     actData.m_separator = m_separtor.value(separator, None);
 
     //actions 父子action级联与动作
@@ -118,6 +133,7 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         if (command.isEmpty())
             return; //无动作无子级
         actData.m_command = command;
+        execDynamicArg(actData);
     }
     else {
         //add 子菜单项，此时父级应当无动作
@@ -143,12 +159,31 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 
     if (isTop) {
         DCustomActionEntry tpEntry;
+
+        //支持类型combo
+        auto comboStr = getValue(actionSetting, group, kConfCombo).toString().trimmed();
+        if (comboStr.isEmpty()) {
+            return;//无支持选中类型默认该一级无效
+        }
+        else {
+            QStringList comboList = comboStr.split(":", QString::SkipEmptyParts);
+            ComboTypes target;
+            for (auto temp : comboList) {
+                auto tp = temp.trimmed();
+                if (m_combos.contains(tp))
+                    target = target | m_combos.value(temp);
+            }
+            tpEntry.m_fileCombo = target;
+        }
+        //todo支持的文件类型(mimeTypes)，目前无需求暂不判断
+
+        //comboPos
+        if (comboPosForTopAction(actionSetting, group, actData))
+            return;//没有指明该一级菜单项支持的类型，自动作为无效废弃项
         tpEntry.m_package = basicInfos.m_package;
         tpEntry.m_version = basicInfos.m_version;
         tpEntry.m_comment = basicInfos.m_comment;
-        tpEntry.m_fileCombo = basicInfos.m_fileCombo;
         tpEntry.m_data = actData;
-
         m_actionEntry.append(tpEntry);
     }
     else {
@@ -161,17 +196,29 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 */
 void DCustomActionParser::initHash()
 {
-    m_combos.insert("SingleFile", DCustomActionDefines::ComboType::SingleFile);
-    m_combos.insert("SingleDir", DCustomActionDefines::ComboType::SingleDir);
-    m_combos.insert("MultiFiles", DCustomActionDefines::ComboType::MultiFiles);
-    m_combos.insert("MultiDirs", DCustomActionDefines::ComboType::MultiDirs);
-    m_combos.insert("FileAndDir", DCustomActionDefines::ComboType::FileAndDir);
-    m_combos.insert("BlankSpace", DCustomActionDefines::ComboType::BlankSpace);
+    m_combos.insert("SingleFile", ComboType::SingleFile);
+    m_combos.insert("SingleDir", ComboType::SingleDir);
+    m_combos.insert("MultiFiles", ComboType::MultiFiles);
+    m_combos.insert("MultiDirs", ComboType::MultiDirs);
+    m_combos.insert("FileAndDir", ComboType::FileAndDir);
+    m_combos.insert("BlankSpace", ComboType::BlankSpace);
 
-    m_separtor.insert("None", DCustomActionDefines::Separator::None);
-    m_separtor.insert("Top", DCustomActionDefines::Separator::Top);
-    m_separtor.insert("Both", DCustomActionDefines::Separator::Both);
-    m_separtor.insert("Bottom", DCustomActionDefines::Separator::Bottom);
+    m_separtor.insert("None", Separator::None);
+    m_separtor.insert("Top", Separator::Top);
+    m_separtor.insert("Both", Separator::Both);
+    m_separtor.insert("Bottom", Separator::Bottom);
+
+    //name参数类型仅支持：DirName BaseName FileName
+    m_actionNameArg.insert(kStrActionArg[DirName], ActionArg::DirName);       //%d
+    m_actionNameArg.insert(kStrActionArg[BaseName], ActionArg::BaseName);     //%b
+    m_actionNameArg.insert(kStrActionArg[FileName], ActionArg::FileName);     //"%a",
+
+    //cmd参数类型只支持：DirPath FilePath FilePaths UrlPath UrlPaths
+    m_actionExecArg.insert(kStrActionArg[DirPath], ActionArg::DirPath);       //"%p"
+    m_actionExecArg.insert(kStrActionArg[FilePath], ActionArg::FilePath);     //"%f"
+    m_actionExecArg.insert(kStrActionArg[FilePaths], ActionArg::FilePaths);   //"%F"
+    m_actionExecArg.insert(kStrActionArg[UrlPath], ActionArg::UrlPath);       //"%u"
+    m_actionExecArg.insert(kStrActionArg[UrlPaths], ActionArg::UrlPaths);     //"%U"
 }
 
 /*!
@@ -195,31 +242,87 @@ bool DCustomActionParser::actionFileInfos(FileBasicInfos &basicInfo, QSettings &
     //文件名
     basicInfo.m_package = actionSetting.fileName();
 
+    //签名
+    basicInfo.m_sign = getValue(actionSetting, kMenuPrefix, kConfSign).toString().trimmed();
+
     //版本
-    basicInfo.m_version = getValue(actionSetting, kUosPrefix, kConfFileVersion).toString().trimmed();
+    basicInfo.m_version = getValue(actionSetting, kMenuPrefix, kConfFileVersion).toString().trimmed();
     if (basicInfo.m_version.isEmpty())
         return false;
 
     //描述
-    basicInfo.m_comment = getValue(actionSetting, kUosPrefix, kConfComment).toString().trimmed();
-
-    //支持类型
-    auto comboStr = getValue(actionSetting, kUosPrefix, kConfCombo).toString().trimmed();
-    if (comboStr.isEmpty()) {
-        return false;//无支持选中类型默认该文件无效
-    }
-    else {
-        QStringList comboList = comboStr.split(":", QString::SkipEmptyParts);
-        ComboTypes target;
-        for (auto temp : comboList) {
-            auto tp = temp.trimmed();
-            if (m_combos.contains(tp))
-                target = target | m_combos.value(temp);
-        }
-        basicInfo.m_fileCombo = target;
-    }
+    basicInfo.m_comment = getValue(actionSetting, kMenuPrefix, kConfComment).toString().trimmed();
     return true;
+}
 
-    //支持的文件类型(mimeTypes)，目前无需求暂不判断
+/*!
+    菜单项名字参数动态获取
+*/
+void DCustomActionParser::actionNameDynamicArg(DCustomActionData &act)
+{
+    //name参数类型仅支持：DirName BaseName FileName
+    int firstValidIndex = act.m_name.indexOf("%");
+    auto cnt = act.m_name.length() - 1;
+    if (0 == cnt || 0 > firstValidIndex) {
+        act.m_nameArg = NoneArg;
+        return;
+    }
 
+    while (cnt > firstValidIndex) {
+        auto tgStr = act.m_name.mid(firstValidIndex, 2);
+        auto tempValue = m_actionNameArg.value(tgStr, NoneArg);
+        if (NoneArg != tgStr) {
+            act.m_nameArg = tempValue;
+            break;
+        }
+        firstValidIndex = act.m_name.indexOf("%", firstValidIndex);
+    }
+}
+
+/*!
+    菜单项执行参数动态获取
+*/
+void DCustomActionParser::execDynamicArg(DCustomActionData &act)
+{
+    //cmd参数类型只支持：DirPath FilePath FilePaths UrlPath UrlPaths
+    int firstValidIndex = act.m_command.indexOf("%");
+    auto cnt = act.m_command.length() - 1;
+    if (0 == cnt || 0 > firstValidIndex) {
+        act.m_cmdArg = NoneArg;
+        return;
+    }
+
+    while (cnt > firstValidIndex) {
+        auto tgStr = act.m_command.mid(firstValidIndex, 2);
+        auto tempValue = m_actionExecArg.value(tgStr, NoneArg);
+        if (NoneArg != tgStr) {
+            act.m_cmdArg = tempValue;
+            break;
+        }
+    }
+}
+
+/*!
+    菜单项对应位置
+*/
+bool DCustomActionParser::comboPosForTopAction(QSettings &actionSetting, const QString &group, DCustomActionData &act)
+{
+    //能到这一步说明这个文件的有效性已经验证了
+    auto comboStr = getValue(actionSetting, group, kConfCombo).toString().trimmed();
+    QStringList comboList = comboStr.split(":", QString::SkipEmptyParts);
+
+    QString cPos;
+    for (auto temp : comboList) {
+        cPos = QString("%1-%2").arg(kActionPos, temp.trimmed());
+        auto ret = getValue(actionSetting, group, cPos);    //取出对应选中类型的pos
+        if (m_combos.contains(temp)) {
+            int pos = act.m_position;
+            if (ret.isValid())
+                pos = ret.toInt();
+            act.m_comboPos.insert(m_combos.value(temp), pos);
+        }
+        else {
+            return false;   //未指明一级菜单支持的选中类型，做无效处理
+        }
+    }
 }
