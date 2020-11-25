@@ -285,10 +285,14 @@ void DToolBar::onSearchButtonClicked()
         m_crumbWidget->showAddressBar("");
     } else {
         // toggle asb visible
-        DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window());
-        bool oldState = dfmWindow->isAdvanceSearchBarVisible();
-        dfmWindow->toggleAdvanceSearchBar(!oldState);
-        m_searchButton->setDown(!oldState);
+        if (DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window())) {
+            bool oldState = dfmWindow->isAdvanceSearchBarVisible();
+            dfmWindow->toggleAdvanceSearchBar(!oldState);
+            m_searchButton->setDown(!oldState);
+        }
+        else {
+            qCritical() << "DFileManagerWindow is null";
+        }
     }
 }
 
@@ -416,8 +420,12 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->setIcon(QIcon::fromTheme("search"));
         m_searchButton->setDown(false);
         m_searchButtonAsbState = false;
-        DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window());
-        dfmWindow->toggleAdvanceSearchBar(false);
+        if (DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window())) {
+            dfmWindow->toggleAdvanceSearchBar(false);
+        }
+        else {
+            qCritical() << "window() is null or faile to cast to DFileManagerWindow.";
+        }
     }
 }
 
