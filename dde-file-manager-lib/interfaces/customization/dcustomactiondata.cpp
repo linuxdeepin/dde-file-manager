@@ -1,7 +1,8 @@
 #include "dcustomactiondata.h"
 
 DCustomActionData::DCustomActionData() :
-    m_nameArg(DCustomActionDefines::NoneArg)
+    m_position(0)
+    ,m_nameArg(DCustomActionDefines::NoneArg)
     ,m_cmdArg(DCustomActionDefines::NoneArg)
 {
 
@@ -14,6 +15,7 @@ DCustomActionData::DCustomActionData(const DCustomActionData &other)
     m_name = other.m_name;
     m_icon = other.m_icon;
     m_position = other.m_position;
+    m_comboPos = other.m_comboPos;
     m_separator = other.m_separator;
     m_command = other.m_command;
     m_childrenActions = other.m_childrenActions;
@@ -26,6 +28,7 @@ DCustomActionData &DCustomActionData::operator=(const DCustomActionData &other)
     m_nameArg = other.m_nameArg;
     m_cmdArg = other.m_cmdArg;
     m_name = other.m_name;
+    m_comboPos = other.m_comboPos;
     m_position = other.m_position;
     m_separator = other.m_separator;
     m_command = other.m_command;
@@ -46,6 +49,15 @@ bool DCustomActionData::isAction() const
 QString DCustomActionData::name() const
 {
     return m_name;
+}
+
+int DCustomActionData::position(DCustomActionDefines::ComboType combo) const
+{
+    auto it = m_comboPos.find(combo);
+    if (it != m_comboPos.end())
+        return it.value();
+    else
+        return m_position;
 }
 
 int DCustomActionData::position() const

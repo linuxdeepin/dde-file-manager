@@ -39,7 +39,7 @@ public:
     QAction *buildAciton(const DCustomActionData &actionData, QWidget *parentForSubmenu) const;
     void setActiveDir(const DUrl &dir);
     void setFocusFile(const DUrl &file);
-    static DCustomActionDefines::ComboTypes checkFileCombo(const DUrlList &files);
+    static DCustomActionDefines::ComboType checkFileCombo(const DUrlList &files);
     static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
                                                  DCustomActionDefines::ComboTypes type);
     static QPair<QString, QStringList> makeCommand(const QString &cmd, DCustomActionDefines::ActionArg arg,

@@ -1058,7 +1058,7 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     builder.setActiveDir(dir);
 
     //获取文件列表的组合
-    DCustomActionDefines::ComboTypes fileCombo = DCustomActionDefines::BlankSpace;
+    DCustomActionDefines::ComboType fileCombo = DCustomActionDefines::BlankSpace;
     if (isNormal) {
         fileCombo = builder.checkFileCombo(selected);
         if (fileCombo == DCustomActionDefines::BlankSpace)
@@ -1111,8 +1111,8 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
         if (actionData.separator() != DCustomActionDefines::None)
             actionsSeparator.insert(action, actionData.separator());
 
-        //插入位置
-        auto pos = actionData.position();
+        //根据组合类型获取插入位置
+        auto pos = actionData.position(fileCombo);
 
         //位置是否有效
         if (pos > 0) {
