@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 #include <QProcess>
+#include <QIcon>
 
 namespace  {
 class TestSearchFileInfo : public testing::Test
@@ -87,6 +88,7 @@ TEST_F(TestSearchFileInfo, userColumnData)
     EXPECT_EQ("", displayName);
     displayName = info->userColumnData(DFileSystemModel::FilePathRole).toString();
     EXPECT_EQ("/tmp", displayName);
+    info->userColumnData(Qt::UserRole);
 }
 
 TEST_F(TestSearchFileInfo, userColumnChildRoles)
@@ -119,6 +121,7 @@ TEST_F(TestSearchFileInfo, canIteratorDir)
 TEST_F(TestSearchFileInfo, menuActionList)
 {
     EXPECT_TRUE(info->menuActionList().count() > 0);
+    EXPECT_TRUE(info->menuActionList(DAbstractFileInfo::MenuType::SpaceArea).count() > 0);
 }
 
 TEST_F(TestSearchFileInfo, disableMenuActionList)
@@ -177,4 +180,28 @@ TEST_F(TestSearchFileInfo, mimeDataUrl)
 TEST_F(TestSearchFileInfo, toLocalFile)
 {
     EXPECT_EQ("/tmp/1.txt", info->toLocalFile());
+}
+
+TEST_F(TestSearchFileInfo, tstSetColumnCompact)
+{
+    info->setColumnCompact(true);
+}
+
+TEST_F(TestSearchFileInfo, tstUserColumnWidth)
+{
+    QFont f;
+    QFontMetrics fm(f);
+    EXPECT_EQ(-1, info->userColumnWidth(DFileSystemModel::FileUserRole + 1, fm));
+    EXPECT_EQ(fm.width("0000/00/00 00:00:00"), info->userColumnWidth(DFileSystemModel::FileUserRole + 2, fm));
+}
+
+TEST_F(TestSearchFileInfo, tstCompareFunByColumn)
+{
+    EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FilePathRole));
+    EXPECT_TRUE(info->compareFunByColumn(Qt::UserRole));
+}
+
+TEST_F(TestSearchFileInfo, tstFileIcon)
+{
+    EXPECT_TRUE(info->fileIcon().isNull());
 }

@@ -1,5 +1,9 @@
 #include <gtest/gtest.h>
+#include <QIcon>
+
 #include "models/trashfileinfo.h"
+#include "dfilesystemmodel.h"
+#include "controllers/trashmanager.h"
 
 namespace {
 class TestTrashFileInfo : public testing::Test
@@ -34,6 +38,11 @@ TEST_F(TestTrashFileInfo, BoolPropertyTest)
     EXPECT_TRUE(info->canIteratorDir());
     EXPECT_TRUE(info->makeAbsolute());
     EXPECT_FALSE(info->restore());
+    info->setColumnCompact(true);
+    EXPECT_TRUE(Qt::CopyAction == info->supportedDragActions());
+    EXPECT_TRUE((Qt::MoveAction == info->supportedDropActions() || Qt::IgnoreAction == info->supportedDropActions()));
+    TrashFileInfo newTrash(DUrl("file:///test"));
+    EXPECT_FALSE(newTrash.restore());
 }
 
 TEST_F(TestTrashFileInfo, UrlTest)
@@ -48,4 +57,59 @@ TEST_F(TestTrashFileInfo, StringPropertyTest)
     EXPECT_STREQ("Trash", info->fileDisplayName().toStdString().c_str());
     EXPECT_STREQ("Folder is empty", info->subtitleForEmptyFloder().toStdString().c_str());
     EXPECT_STREQ("", info->sourceFilePath().toStdString().c_str());
+}
+
+TEST_F(TestTrashFileInfo, tstPermissions)
+{
+    EXPECT_TRUE(info->permissions() & ~QFileDevice::WriteOwner);
+}
+
+TEST_F(TestTrashFileInfo, tstMenuActionList)
+{
+    EXPECT_TRUE(7 <= info->menuActionList(DAbstractFileInfo::SpaceArea).count());
+    EXPECT_TRUE(6 <= info->menuActionList(DAbstractFileInfo::SingleFile).count());
+    EXPECT_TRUE(6 <= info->menuActionList(DAbstractFileInfo::MultiFiles).count());
+
+    EXPECT_TRUE(1 <= info->disableMenuActionList().count());
+}
+
+TEST_F(TestTrashFileInfo, tstFuncsWithRoles)
+{
+    EXPECT_TRUE(5 <= info->userColumnRoles().count());
+    EXPECT_TRUE((info->userColumnData(DFileSystemModel::FileUserRole + 1).value<QPair<QString, QString>>()).first.isEmpty());
+    EXPECT_TRUE((info->userColumnData(DFileSystemModel::FileUserRole + 2).value<QPair<QString, QString>>()).first.isEmpty());
+    EXPECT_TRUE(info->userColumnData(DFileSystemModel::FileUserRole + 3).isValid());
+    EXPECT_TRUE(info->userColumnData(DFileSystemModel::FileUserRole + 4).isValid());
+    EXPECT_TRUE(info->userColumnData(DFileSystemModel::FileUserRole + 5).isValid());
+
+    EXPECT_TRUE(qApp->translate("DFileSystemModel", "Name") == info->userColumnDisplayName(DFileSystemModel::FileUserRole + 1));
+    EXPECT_TRUE(QObject::tr("Time deleted") == info->userColumnDisplayName(DFileSystemModel::FileUserRole + 2));
+    EXPECT_TRUE(QObject::tr("Source Path", "TrashFileInfo") == info->userColumnDisplayName(DFileSystemModel::FileUserRole + 3));
+    EXPECT_TRUE(QObject::tr("Time deleted") == info->userColumnDisplayName(DFileSystemModel::FileUserRole + 4));
+    EXPECT_TRUE(!info->userColumnDisplayName(DFileSystemModel::FileUserRole + 5).toString().isEmpty());
+
+    EXPECT_TRUE(0 == info->userColumnChildRoles(0).count());
+
+    QFont f;
+    QFontMetrics fm(f);
+    EXPECT_TRUE(-1 == info->userColumnWidth(DFileSystemModel::FileUserRole + 1, fm));
+    EXPECT_TRUE(fm.width("0000/00/00 00:00:00") == info->userColumnWidth(DFileSystemModel::FileUserRole + 100, fm));
+
+    EXPECT_TRUE(info->columnDefaultVisibleForRole(0));
+
+    EXPECT_TRUE(MenuAction::SourcePath == info->menuActionByColumnRole(DFileSystemModel::FileUserRole + 3));
+    EXPECT_TRUE(MenuAction::DeletionDate == info->menuActionByColumnRole(DFileSystemModel::FileUserRole + 4));
+    EXPECT_TRUE(info->menuActionByColumnRole(Qt::UserRole) > 0);
+
+    EXPECT_TRUE(5 == info->sortSubMenuActionUserColumnRoles().count());
+
+    EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 3));
+    EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 4));
+    EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 5));
+}
+
+TEST_F(TestTrashFileInfo, tstFileIcon)
+{
+    EXPECT_TRUE(info->fileIcon().isNull());
+    EXPECT_TRUE(info->additionalIcon().isEmpty());
 }

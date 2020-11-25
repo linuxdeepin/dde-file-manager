@@ -15,6 +15,8 @@ public:
     void TearDown() override
     {
         std::cout << "end TestSearchHistory";
+        delete p;
+        p = nullptr;
     }
 
 public:
@@ -34,4 +36,12 @@ TEST_F(TestSearchHistory, searchKeyword)
     QString key = "test";
     p->setKeyword(key);
     EXPECT_STREQ("test", p->getKeyword().toStdString().c_str());
+}
+
+TEST_F(TestSearchHistory, tstConstructWithTime)
+{
+    QDateTime dt = QDateTime::currentDateTime();
+    SearchHistory i(dt, "tst", nullptr);
+    EXPECT_TRUE(dt == i.getDateTime());
+    EXPECT_TRUE("tst" == i.getKeyword());
 }
