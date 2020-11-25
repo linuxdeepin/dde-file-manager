@@ -241,7 +241,7 @@ bool ShareFileInfo::isVirtualEntry() const
     if (fileUrl() == DUrl(USERSHARE_ROOT))
         return true;
 
-    return d->proxy->isVirtualEntry();
+    return d->proxy && d->proxy->isVirtualEntry();
 }
 
 bool ShareFileInfo::canDrop() const
@@ -281,5 +281,5 @@ DUrl ShareFileInfo::redirectedFileUrl() const
 {
     Q_D(const DAbstractFileInfo);
 
-    return d->proxy->fileUrl();
+    return d->proxy ? d->proxy->fileUrl() : DUrl();
 }

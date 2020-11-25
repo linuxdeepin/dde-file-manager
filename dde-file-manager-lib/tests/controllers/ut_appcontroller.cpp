@@ -9,7 +9,7 @@
 #include <QFile>
 #include <QtConcurrent>
 
-#include "testhelper.h"
+#include "tests/testhelper.h"
 
 using namespace testing;
 namespace  {
