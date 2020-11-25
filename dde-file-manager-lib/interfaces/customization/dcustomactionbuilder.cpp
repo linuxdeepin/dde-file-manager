@@ -61,7 +61,7 @@ void DCustomActionBuilder::setFocusFile(const DUrl &file)
 /*!
     检查 \a files 文件列表中的文件组合
  */
-DCustomActionDefines::ComboTypes DCustomActionBuilder::checkFileCombo(const DUrlList &files)
+DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const DUrlList &files)
 {
     int fileCount = 0;
     int dirCount = 0;

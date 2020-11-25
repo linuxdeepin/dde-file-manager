@@ -38,6 +38,7 @@ public:
     bool isMenu() const;
     bool isAction() const;
     QString name() const;
+    int position(DCustomActionDefines::ComboType) const;
     int position() const;
     QString icon() const;
     QString command() const;
@@ -49,7 +50,8 @@ signals:
 
 public slots:
 protected:
-    int m_position;     //显示位置
+    QMap<DCustomActionDefines::ComboType,int> m_comboPos; //一级菜单，不同的文件组合时的位置
+    int m_position;     //显示位置，二,三级菜单的位置，一级菜单文件组合的默认位置
     DCustomActionDefines::ActionArg m_nameArg;  //菜单名参数
     DCustomActionDefines::ActionArg m_cmdArg;   //命令参数
     QString m_name;
