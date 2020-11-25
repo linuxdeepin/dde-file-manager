@@ -1870,12 +1870,10 @@ void GvfsMountManager::eject_mounted(const QString &mounted_root_uri)
     std::string file_uri = mounted_root_uri.toStdString();
     GFile *file;
     file = g_file_new_for_uri(file_uri.data());
-    if (file == nullptr)
-        return;
 
-    GMount *mount;
+    GMount *mount = nullptr;
     GError *error = nullptr;
-    GMountOperation *mount_op;
+    GMountOperation *mount_op = nullptr;
 
     if (file == nullptr)
         return;

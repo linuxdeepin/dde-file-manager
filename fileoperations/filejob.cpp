@@ -2743,7 +2743,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
             if (!result) {
                 if (srcFileinfo.isDir() && m_isReplaced) {
-                    return result;
+                    return false;
                 } else {
                     qDebug() << m_tarPath << from.error() << from.errorString();
                     result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);

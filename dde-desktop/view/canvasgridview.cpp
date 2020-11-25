@@ -123,8 +123,8 @@ CanvasGridView::CanvasGridView(const QString &screen, QWidget *parent)
     , d(new CanvasViewPrivate)
     , m_screenName(screen)
 {
-    AC_SET_OBJECT_NAME( this, AC_CANVAS_GRID_VIEW);
-    AC_SET_ACCESSIBLE_NAME( this, AC_CANVAS_GRID_VIEW);
+    AC_SET_OBJECT_NAME(this, AC_CANVAS_GRID_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_CANVAS_GRID_VIEW);
     initUI();
     initConnection();
 }
@@ -3240,7 +3240,6 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         return;
     }
 
-    bool showProperty = true;
     const DUrlList list = selectedUrls();
     qDebug() << "selectedUrls" << list;
 
@@ -3312,11 +3311,9 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     }
 
     QAction *property = new QAction(menu);
-    if (showProperty) {
-        property->setText(tr("Properties"));
-        property->setData(FileManagerProperty);
-        menu->addAction(property);
-    }
+    property->setText(tr("Properties"));
+    property->setData(FileManagerProperty);
+    menu->addAction(property);
 
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
 
