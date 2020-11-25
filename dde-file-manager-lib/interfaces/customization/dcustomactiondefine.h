@@ -119,7 +119,7 @@ namespace DCustomActionDefines
     static const int kCustomMaxNumThree = 100;
 
     //基本信息，置于一级菜单之中
-    static const QLatin1String kUosPrefix("Uos Entry");
+    static const QLatin1String kMenuPrefix("Menu Entry");
     static const QLatin1String kConfFileVersion("Version");
     static const QLatin1String kConfComment("Comment");
     static const QLatin1String kConfCombo("X-DFM-MenuTypes");
@@ -132,7 +132,10 @@ namespace DCustomActionDefines
     static const QLatin1String kActionSeparator("Separator");
     static const QLatin1String kActionCmd("Exec");
     static const QLatin1String kActionGroups("Actions");
-    static const QLatin1String kActionPrefix("Uos Action");
+    static const QLatin1String kActionPrefix("Menu Action");
+
+    //指定路径
+    static const QLatin1String kCustomMenuPath("/usr/share/applications/context-menus");
 
     Q_DECLARE_FLAGS(ComboTypes, DCustomActionDefines::ComboType);
     Q_DECLARE_OPERATORS_FOR_FLAGS(ComboTypes);
@@ -142,6 +145,7 @@ namespace DCustomActionDefines
         QString m_version;  //版本
         QString m_comment;  //描述
         ComboTypes m_fileCombo;   //支持的选中项类型
+        QString m_sign;     //签名
     };
 }
 

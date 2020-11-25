@@ -60,6 +60,7 @@
 #include "app/filesignalmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "customization/dcustomactionbuilder.h"
+#include "customization/dcustomactionparser.h"
 
 #include <DSysInfo>
 
@@ -93,6 +94,8 @@ static QSet<MenuAction> whitelist;
 static QSet<MenuAction> blacklist;
 static QQueue<MenuAction> availableUserActionQueue;
 static DFMAdditionalMenu *additionalMenu;
+static DCustomActionParser *customMenuParser;
+
 void initData();
 void initActions();
 
@@ -763,6 +766,14 @@ DFileMenuManager::DFileMenuManager()
     qRegisterMetaType<QList<QUrl>>(QT_STRINGIFY(QList<QUrl>));
 }
 
+DFileMenuManager::~DFileMenuManager()
+{
+    if (DFileMenuData::additionalMenu)
+        DFileMenuData::additionalMenu->deleteLater();
+    if (DFileMenuData::customMenuParser)
+        DFileMenuData::customMenuParser->deleteLater();
+}
+
 void DFileMenuData::initData()
 {
     actionKeys[MenuAction::Open] = QObject::tr("Open");
@@ -932,6 +943,7 @@ void DFileMenuData::initActions()
     }
 
     additionalMenu = new DFMAdditionalMenu;
+    customMenuParser = new DCustomActionParser;
 }
 
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
@@ -1047,10 +1059,11 @@ QString DFileMenuManager::getActionString(MenuAction type)
 void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected)
 {
     //for compile
-    static QList<DCustomActionEntry> test_rootEntry;
+    //有可能配置文件很多导致刷新不及时，考虑等待？
+    const QList<DCustomActionEntry> &rootEntry = DFileMenuData::customMenuParser->getActionFiles();
     //end
 
-    if (menu == nullptr || test_rootEntry.isEmpty())
+    if (menu == nullptr || rootEntry.isEmpty())
         return;
 
     DCustomActionBuilder builder;
@@ -1069,7 +1082,7 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     }
 
     //获取支持的菜单项
-    auto usedEntrys = builder.matchFileCombo(test_rootEntry, fileCombo);
+    auto usedEntrys = builder.matchFileCombo(rootEntry, fileCombo);
     if (usedEntrys.isEmpty())
         return;
 
