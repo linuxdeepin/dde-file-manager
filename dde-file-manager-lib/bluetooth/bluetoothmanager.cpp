@@ -19,12 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "bluetoothmanager.h"
+#include "bluetoothmanager_p.h"
 #include "bluetooth/bluetoothmodel.h"
 
-#include <QDBusConnection>
-#include <com_deepin_daemon_bluetooth.h>
-#include <com_deepin_dde_controlcenter.h>
 
 #define BluetoothService "com.deepin.daemon.Bluetooth"
 #define BluetoothPath "/com/deepin/daemon/Bluetooth"
@@ -32,54 +29,6 @@
 #define BluetoothPage "bluetooth"
 #define ControlcenterService "com.deepin.dde.ControlCenter"
 #define ControlcenterPath "/com/deepin/dde/ControlCenter"
-
-using DBusBluetooth = com::deepin::daemon::Bluetooth;
-using DBusControlcenter = com::deepin::dde::ControlCenter;
-
-/**
- * @brief This is BluetoothManagerPrivate class
- */
-class BluetoothManagerPrivate
-{
-public:
-    explicit BluetoothManagerPrivate(BluetoothManager *qq);
-
-    BluetoothManagerPrivate(BluetoothManagerPrivate &) = delete;
-    BluetoothManagerPrivate &operator=(BluetoothManagerPrivate &) = delete;
-    /**
-     * @brief 解析蓝牙设备, 获取适配器和设备信息
-     * @param req
-     */
-    void resolve(const QDBusReply<QString> &req);
-
-private:
-    /**
-     * @brief 蓝牙 dbus 信号的处理
-     */
-    void initConnects();
-
-    /**
-     * @brief 获取适配器信息
-     * @param adapter
-     * @param adapterObj
-     */
-    void inflateAdapter(BluetoothAdapter *adapter, const QJsonObject &adapterObj);
-
-    /**
-     * @brief 获取设备信息
-     * @param device
-     * @param deviceObj
-     */
-    void inflateDevice(BluetoothDevice *device, const QJsonObject &deviceObj);
-
-public:
-    BluetoothManager *q_ptr {nullptr};
-    BluetoothModel *m_model {nullptr};
-    DBusBluetooth *m_bluetoothInter {nullptr};
-    DBusControlcenter *m_controlcenterInter {nullptr};
-
-    Q_DECLARE_PUBLIC(BluetoothManager)
-};
 
 BluetoothManagerPrivate::BluetoothManagerPrivate(BluetoothManager *qq)
     : q_ptr(qq),
