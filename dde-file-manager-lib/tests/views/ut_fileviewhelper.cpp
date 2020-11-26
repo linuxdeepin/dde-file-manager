@@ -4,6 +4,10 @@
 #include <QStandardPaths>
 #include "views/dfileview.h"
 #include "interfaces/dfilesystemmodel.h"
+#include "app/filesignalmanager.h"
+#include "app/define.h"
+#include "utils/singleton.h"
+
 #define private public
 #include "views/fileviewhelper.h"
 
@@ -126,9 +130,97 @@ TEST_F(FileViewHelperTest,select)
 
 TEST_F(FileViewHelperTest,set_foucs)
 {
-    ASSERT_EQ(false,m_view->hasFocus());
+    EXPECT_EQ(false,m_view->hasFocus());
     m_fileViewHelper->setFoucsOnFileView(-1);
-    ASSERT_EQ(false,m_view->hasFocus());
+    EXPECT_EQ(false,m_view->hasFocus());
     m_fileViewHelper->setFoucsOnFileView(m_view->windowId());
-    ASSERT_EQ(false,m_view->hasFocus());
+    EXPECT_EQ(false,m_view->hasFocus());
+}
+
+TEST_F(FileViewHelperTest,preHandleCd_error_winid)
+{
+    DUrl to("file:///usr/bin");
+    DFMUrlBaseEvent event(nullptr, to);
+    auto org = m_fileViewHelper->currentUrl();
+    event.setWindowId(-1);
+    QVariant var;
+    var.setValue(to);
+    m_fileViewHelper->preHandleCd(event);
+    EXPECT_EQ(org, m_fileViewHelper->currentUrl());
+}
+
+TEST_F(FileViewHelperTest,preHandleCd)
+{
+    DUrl to("file:///usr/bin");
+    DFMUrlBaseEvent event(nullptr, to);
+    event.setWindowId(m_fileViewHelper->windowId());
+    QVariant var;
+    var.setValue(to);
+
+    bool net = false;
+    m_fileViewHelper->connect(fileSignalManager,&FileSignalManager::requestFetchNetworks,m_fileViewHelper,[&net](){
+        net = true;
+    });
+    qApp->processEvents();
+    m_fileViewHelper->preHandleCd(event);
+    qApp->processEvents();
+    EXPECT_FALSE(net);
+}
+
+TEST_F(FileViewHelperTest,preHandleCd_smb)
+{
+    DUrl to("smb:///127.0.0.1");
+    DFMUrlBaseEvent event(nullptr, to);
+    event.setWindowId(m_fileViewHelper->windowId());
+    QVariant var;
+    var.setValue(to);
+
+    bool net = false;
+    m_fileViewHelper->connect(fileSignalManager,&FileSignalManager::requestFetchNetworks,m_fileViewHelper,[&net](){
+        net = true;
+    });
+    qApp->processEvents();
+    m_fileViewHelper->preHandleCd(event);
+    qApp->processEvents();
+    EXPECT_TRUE(net);
+}
+
+TEST_F(FileViewHelperTest,preHandleCd_net)
+{
+    DUrl to("network:///127.0.0.1");
+    DFMUrlBaseEvent event(nullptr, to);
+    event.setWindowId(m_fileViewHelper->windowId());
+    QVariant var;
+    var.setValue(to);
+
+    bool net = false;
+    m_fileViewHelper->connect(fileSignalManager,&FileSignalManager::requestFetchNetworks,m_fileViewHelper,[&net](){
+        net = true;
+    });
+    qApp->processEvents();
+    m_fileViewHelper->preHandleCd(event);
+    qApp->processEvents();
+    EXPECT_TRUE(net);
+}
+
+TEST_F(FileViewHelperTest,cd_error_winid)
+{
+    DUrl to("file:///usr/bin");
+    DFMUrlBaseEvent event(nullptr, to);
+    event.setWindowId(-1);
+    QVariant var;
+    var.setValue(to);
+    EXPECT_NO_FATAL_FAILURE(m_fileViewHelper->cd(event));
+    EXPECT_NO_FATAL_FAILURE(m_fileViewHelper->cdUp(event));
+}
+
+TEST_F(FileViewHelperTest,cd_winid)
+{
+    DUrl to("file:///usr/bin");
+    DFMUrlBaseEvent event(nullptr, to);
+    event.setWindowId(m_fileViewHelper->windowId());
+    QVariant var;
+    var.setValue(to);
+    EXPECT_NO_FATAL_FAILURE(m_fileViewHelper->cd(event));
+    EXPECT_NO_FATAL_FAILURE(m_fileViewHelper->cdUp(event));
 }
