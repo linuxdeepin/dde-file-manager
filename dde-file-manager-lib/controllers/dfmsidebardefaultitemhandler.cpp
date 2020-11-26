@@ -78,6 +78,7 @@ QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMSideBar *sidebar, cons
 //    }
 
     DFileMenu *menu = new DFileMenu();
+    menu->setAccessibleInfo(AC_FILE_MENU_DEFAULT_SIDEBAR);
 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());

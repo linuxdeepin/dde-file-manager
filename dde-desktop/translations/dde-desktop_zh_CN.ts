@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CanvasGridView</name>
     <message>
@@ -21,7 +19,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3154"/>
         <source>Corner Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>热区设置</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3163"/>
@@ -76,7 +74,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="141"/>
+        <location filename="../main.cpp" line="144"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
@@ -84,67 +82,67 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="671"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="672"/>
         <source>Wallpaper Slideshow</source>
         <translation>自动更换壁纸</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="716"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="717"/>
         <source>When login</source>
         <translation>登录时</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="718"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="719"/>
         <source>When wakeup</source>
         <translation>唤醒时</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="773"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="774"/>
         <source>Require a password on wakeup</source>
         <translation>恢复时需要密码</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="805"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="806"/>
         <source>Never</source>
         <translation>从不</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="807"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="808"/>
         <source>Wait:</source>
         <translation>闲置时间：</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="840"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="841"/>
         <source>Wallpaper</source>
         <translation>壁纸</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="852"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="853"/>
         <source>Screensaver</source>
         <translation>屏保</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="919"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="925"/>
         <source>Loading wallpapers...</source>
-        <translation>壁纸加载中...</translation>
+        <translation>壁纸加载中…</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="922"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="928"/>
         <source>Loading screensavers...</source>
-        <translation>屏保加载中...</translation>
+        <translation>屏保加载中…</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="977"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="983"/>
         <source>Only desktop</source>
         <translation>仅设置桌面</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="978"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="984"/>
         <source>Only lock screen</source>
         <translation>仅设置锁屏</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1040"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1046"/>
         <source>Apply</source>
         <translation>设置屏保</translation>
     </message>

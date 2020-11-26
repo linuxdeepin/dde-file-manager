@@ -21,7 +21,7 @@
 #include <QImageReader>
 
 #include "util/xcb/xcb.h"
-#include "accessible/frameaccessibledefine.h"
+#include "accessibility/ac-desktop-define.h"
 
 DCORE_USE_NAMESPACE
 
@@ -29,6 +29,8 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     QFrame(parent),
     m_configFile(fileName)
 {
+    AC_SET_OBJECT_NAME( this, AC_WATER_MASK_FRAME);
+    AC_SET_ACCESSIBLE_NAME( this, AC_WATER_MASK_FRAME);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
     m_licenseInterface = std::unique_ptr<ComDeepinLicenseInterface> { new ComDeepinLicenseInterface {
             "com.deepin.license",
@@ -43,6 +45,12 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
 
     m_logoLabel = new QLabel(this);
     m_textLabel = new QLabel(this);
+
+
+    AC_SET_OBJECT_NAME( m_logoLabel, AC_WATER_MASK_LOGO_LABEL);
+    AC_SET_ACCESSIBLE_NAME( m_logoLabel, AC_WATER_MASK_LOGO_LABEL);
+    AC_SET_OBJECT_NAME( m_textLabel, AC_WATER_MASK_TEXT);
+    AC_SET_ACCESSIBLE_NAME( m_textLabel, AC_WATER_MASK_TEXT);
 
     bool isConfigFileExist = checkConfigFile(m_configFile);
     if (isConfigFileExist) {
@@ -78,7 +86,7 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
 {
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly)) {
-        qDebug() << "WaterMask config file doesn't exist!";
+        qWarning() << "WaterMask config file doesn't exist!";
     }
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
@@ -86,7 +94,7 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
         m_configs = QJsonObject::fromVariantMap(doc.toVariant().toMap());
         initUI();
     } else {
-        qDebug() << error.errorString();
+        qCritical() << error.errorString();
     }
 
 }
@@ -241,24 +249,30 @@ void WaterMaskFrame::initUI()
         mask_pixmap.setDevicePixelRatio(m_logoLabel->devicePixelRatioF());
 
         m_logoLabel->setPixmap(mask_pixmap);
-        m_logoLabel->setObjectName(WATER_MASK_LOGO_LABEL);
     }
 
     if(isNeedState()){
         ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
+        qInfo() << "get active state from com.deepin.license.Info property AuthorizationState and value:"<<stateType;
         switch (stateType) {
         case Unauthorized:
         case AuthorizedLapse:
-        case TrialExpired:
+        case TrialExpired:{
             m_textLabel->setText(tr("Not authorized"));
+            m_textLabel->setObjectName(tr("Not authorized"));
+            AC_SET_ACCESSIBLE_NAME( m_textLabel, AC_WATER_TEXT_LABEL_NO_AUTHORIZED);
+        }
             break;
         case Authorized:
             //2020-07-06 需求变更，已授权不显示
             //m_textLabel->setText(tr("authorized"));
             m_textLabel->setText("");
             break;
-        case TrialAuthorized:
+        case TrialAuthorized:{
             m_textLabel->setText(tr("In trial period"));
+            m_textLabel->setObjectName(tr("In trial period"));
+            AC_SET_ACCESSIBLE_NAME( m_textLabel, AC_WATER_TEXT_LABEL_IN_TRIAL);
+        }
             break;
         }
     }else {
@@ -340,7 +354,9 @@ void WaterMaskFrame::updatePosition()
 
 void WaterMaskFrame::updateAuthorizationState()
 {
+    qInfo() << "received com.deepin.license.Info::LicenseStateChange.";
     bool isConfigFileExist = checkConfigFile(m_configFile);
+    qInfo() << "isConfigFileExist:" << isConfigFileExist << "   configFile:" << m_configFile;
     if (isConfigFileExist) {
         loadConfig(m_configFile);
     }

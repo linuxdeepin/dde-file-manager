@@ -23,6 +23,15 @@ namespace  {
     };
 }
 
+TEST_F(DFMAdditionalMenuTest, test_appendParentMineType)
+{
+    ASSERT_NE(p_menu, nullptr);
+
+    QStringList files;
+    files << ".txt" ;
+    p_menu->appendParentMineType(files, files);
+}
+
 TEST_F(DFMAdditionalMenuTest, testActions_ZeroSize)
 {
     ASSERT_NE(p_menu, nullptr);
@@ -58,4 +67,18 @@ TEST_F(DFMAdditionalMenuTest, load_desktop_file)
 
     p_menu->loadDesktopFile();
     EXPECT_NE(p_menu->d_func()->menuActionHolder, nullptr);
+}
+
+TEST_F(DFMAdditionalMenuTest, test_emptyAreaActoins)
+{
+    ASSERT_NE(p_menu, nullptr);
+
+    QMap<QString, QList<QAction *> > &temp = p_menu->d_func()->actionListByType;
+    if (!temp.isEmpty() && !temp.contains(QString("EmptyArea"))) {
+        auto value = temp.first();
+        temp.insert(QString("EmptyArea"), value);
+    }
+
+    p_menu->d_func()->emptyAreaActoins(QString("/home/testa"), false);
+
 }

@@ -1,6 +1,7 @@
 #include "models/desktopfileinfo.h"
 
 #include <gtest/gtest.h>
+#include <QIcon>
 
 namespace {
 class TestDesktopFileInfo : public testing::Test
@@ -16,6 +17,7 @@ public:
     void TearDown() override
     {
         std::cout << "end TestDesktopFileInfo";
+        delete info;
     }
 
 public:
@@ -103,3 +105,17 @@ TEST_F(TestDesktopFileInfo, homeUrlScheme)
 {
     EXPECT_STREQ("file", info->homeDesktopFileUrl().scheme().toStdString().c_str());
 }
+
+TEST_F(TestDesktopFileInfo, tstConstructWithQFileInfo)
+{
+    DesktopFileInfo *p = new DesktopFileInfo(QFileInfo("/usr/bin/dde-file-manager"));
+    EXPECT_TRUE(p->getName() == "dde-file-manager");
+}
+
+TEST_F(TestDesktopFileInfo, tstFileIcon)
+{
+    info->refresh(true);
+    auto p = info->fileIcon();
+    EXPECT_TRUE(p.isNull());
+}
+

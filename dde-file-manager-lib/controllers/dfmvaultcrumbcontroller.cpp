@@ -56,7 +56,7 @@ QList<CrumbData> DFMVaultCrumbController::seprateUrl(const DUrl &url)
     }
     QStorageInfo storageInfo(path);
     QFile file(path);
-    if(file.exists())
+    if (file.exists())
         prefixPath = storageInfo.rootPath() + "/";
     else
         prefixPath = VaultController::makeVaultLocalPath();
@@ -73,7 +73,7 @@ QList<CrumbData> DFMVaultCrumbController::seprateUrl(const DUrl &url)
     // Push urls into crumb list (without prefix url)
     DUrlList::const_reverse_iterator iter = urlList.crbegin();
     while (iter != urlList.crend()) {
-        const DUrl & oneUrl = *iter;
+        const DUrl &oneUrl = *iter;
 
         QString localFile = oneUrl.toLocalFile();
         if (!prefixPath.startsWith(localFile)) {
@@ -83,8 +83,8 @@ QList<CrumbData> DFMVaultCrumbController::seprateUrl(const DUrl &url)
             if (infoPointer) {
                 displayText = infoPointer->fileDisplayName();
             }
-            CrumbData data(oneUrl, displayText);
-            list.append(data);
+            CrumbData crumbData(oneUrl, displayText);
+            list.append(crumbData);
         }
         ++iter;
     }

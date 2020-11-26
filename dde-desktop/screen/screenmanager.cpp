@@ -24,7 +24,7 @@ void ScreenManager::onScreenAdded(QScreen *screen)
         return;
 
     ScreenObjectPointer psc(new ScreenObject(screen));
-    m_screens.insert(screen,psc);
+    m_screens.insert(screen, psc);
     connectScreen(psc);
 
     //emit sigScreenChanged();
@@ -34,7 +34,7 @@ void ScreenManager::onScreenAdded(QScreen *screen)
 void ScreenManager::onScreenRemoved(QScreen *screen)
 {
     auto psc = m_screens.take(screen);
-    if (psc.get() != nullptr){
+    if (psc.get() != nullptr) {
         disconnectScreen(psc);
         //emit sigScreenChanged();
         appendEvent(Screen);
@@ -68,11 +68,10 @@ void ScreenManager::onDockChanged()
 //        return ;
 #ifdef UNUSED_SMARTDOCK
     auto primary = primaryScreen();
-    if (primary == nullptr){
+    if (primary == nullptr) {
         qCritical() << "get primary screen failed";
         return;
-    }
-    else {
+    } else {
         emit sigScreenAvailableGeometryChanged(primary, primary->availableGeometry());
     }
 #else
@@ -87,21 +86,21 @@ void ScreenManager::init()
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManager::onScreenAdded);
     connect(qApp, &QGuiApplication::screenRemoved, this, &ScreenManager::onScreenRemoved);
     //connect(qApp, &QGuiApplication::primaryScreenChanged, this, &AbstractScreenManager::sigScreenChanged);
-    connect(qApp, &QGuiApplication::primaryScreenChanged, this, [this](){
+    connect(qApp, &QGuiApplication::primaryScreenChanged, this, [this]() {
         this->appendEvent(Screen);
     });
 #ifdef UNUSE_TEMP
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
 #else
     //临时方案，
-    connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this](){
+    connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this]() {
         //emit sigDisplayModeChanged();
         m_lastMode = m_display->GetRealDisplayMode();
         this->appendEvent(Mode);
     });
 
     //临时方案，使用PrimaryRectChanged信号作为拆分/合并信号
-    connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [this](){
+    connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [this]() {
         int mode = m_display->GetRealDisplayMode();
         qDebug() << "deal merge and split" << mode << m_lastMode;
         if (m_lastMode == mode)
@@ -115,21 +114,21 @@ void ScreenManager::init()
 #endif
 
     //dock区处理
-    connect(DockInfoIns,&DBusDock::FrontendWindowRectChanged,this, &ScreenManager::onDockChanged);
-    connect(DockInfoIns,&DBusDock::HideModeChanged,this, &ScreenManager::onDockChanged);
+    connect(DockInfoIns, &DBusDock::FrontendWindowRectChanged, this, &ScreenManager::onDockChanged);
+    connect(DockInfoIns, &DBusDock::HideModeChanged, this, &ScreenManager::onDockChanged);
     //connect(DockInfoIns,&DBusDock::PositionChanged,this, &ScreenManager::onDockChanged); 不关心位子改变，有bug#25148，全部由区域改变触发
 
     m_screens.clear();
-    for (QScreen *sc : qApp->screens()){
+    for (QScreen *sc : qApp->screens()) {
         ScreenPointer psc(new ScreenObject(sc));
-        m_screens.insert(sc,psc);
+        m_screens.insert(sc, psc);
         connectScreen(psc);
     }
 }
 
 void ScreenManager::connectScreen(ScreenPointer psc)
 {
-    connect(psc.get(),&AbstractScreen::sigGeometryChanged,this,
+    connect(psc.get(), &AbstractScreen::sigGeometryChanged, this,
             &ScreenManager::onScreenGeometryChanged);
 //为了解决bug33117，
 //在dock时尚模式下，去切换dock位置后，会先触发QScreen的sigAvailableGeometryChanged，此时去获取
@@ -143,10 +142,10 @@ void ScreenManager::connectScreen(ScreenPointer psc)
 
 void ScreenManager::disconnectScreen(ScreenPointer psc)
 {
-    disconnect(psc.get(),&AbstractScreen::sigGeometryChanged,this,
+    disconnect(psc.get(), &AbstractScreen::sigGeometryChanged, this,
                &ScreenManager::onScreenGeometryChanged);
-    disconnect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
-                &ScreenManager::onScreenAvailableGeometryChanged);
+    disconnect(psc.get(), &AbstractScreen::sigAvailableGeometryChanged, this,
+               &ScreenManager::onScreenAvailableGeometryChanged);
 }
 
 ScreenPointer ScreenManager::primaryScreen()
@@ -160,9 +159,9 @@ ScreenPointer ScreenManager::primaryScreen()
 QVector<ScreenPointer> ScreenManager::screens() const
 {
     QVector<ScreenPointer> order;
-    for (QScreen *sc : qApp->screens()){
-        if (m_screens.contains(sc)){
-            if (sc->geometry().size() == QSize(0,0))
+    for (QScreen *sc : qApp->screens()) {
+        if (m_screens.contains(sc)) {
+            if (sc->geometry().size() == QSize(0, 0))
                 qCritical() << "screen error. does it is closed?";
             order.append(m_screens.value(sc));
         }
@@ -180,7 +179,7 @@ QVector<ScreenPointer> ScreenManager::logicScreens() const
     screens.removeOne(primary);
     screens.push_front(primary);
 
-    for (QScreen *sc : screens){
+    for (QScreen *sc : screens) {
         if (m_screens.contains(sc))
             order.append(m_screens.value(sc));
     }
@@ -190,12 +189,15 @@ QVector<ScreenPointer> ScreenManager::logicScreens() const
 ScreenPointer ScreenManager::screen(const QString &name) const
 {
     ScreenPointer ret;
-    for (const ScreenPointer &sp : m_screens.values()) {
-        if (sp->name() == name){
-            ret = sp;
-            break;
-        }
+    auto screens = m_screens.values();
+    auto iter = std::find_if(screens.begin(), screens.end(), [name](const ScreenPointer & sp) {
+        return sp->name() == name;
+    });
+
+    if (iter != screens.end()) {
+        ret = *iter;
     }
+
     return ret;
 }
 
@@ -208,11 +210,11 @@ AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
 {
     auto pending = m_display->GetRealDisplayMode();
     pending.waitForFinished();
-    if (pending.isError()){
+    if (pending.isError()) {
         qWarning() << "Display GetRealDisplayMode Error:" << pending.error().name() << pending.error().message();
         AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
         return ret;
-    }else {
+    } else {
         /*
         DisplayModeMirror: 1
         DisplayModeExtend: 2
@@ -228,10 +230,14 @@ AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
     }
 }
 
+AbstractScreenManager::DisplayMode ScreenManager::lastChangedMode() const
+{
+    return static_cast<AbstractScreenManager::DisplayMode>(m_lastMode);
+}
+
 void ScreenManager::reset()
 {
-    if (m_display)
-    {
+    if (m_display) {
         delete m_display;
         m_display = nullptr;
     }

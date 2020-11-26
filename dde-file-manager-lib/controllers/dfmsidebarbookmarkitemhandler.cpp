@@ -83,6 +83,8 @@ QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMSideBar *sidebar, con
     // or other workaround?
 
     DFileMenu *menu = new DFileMenu();
+    menu->setAccessibleInfo(AC_FILE_MENU_SIDEBAR_BOOK_MARK);
+
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     bool shouldEnable = WindowManager::tabAddableByWinId(wnd->windowId());
     const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(nullptr, item->url());

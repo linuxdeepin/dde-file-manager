@@ -23,7 +23,7 @@ class RequestEP;
 class DFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
-    DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq, bool hasCache = false);
+    DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq, bool hasCache = true);
     ~DFileInfoPrivate();
 
     bool isLowSpeedFile() const;

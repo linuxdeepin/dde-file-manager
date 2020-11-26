@@ -47,10 +47,9 @@ unix {
         #起动时，使用异步初始化，加载资源，提升起动速度
         DEFINES += ENABLE_ASYNCINIT
     } else {
-        #turbo 启动，libjemalloc有问题
-#        isEmpty(DISABLE_JEMALLOC) {
-#            LIBS += -ljemalloc
-#        }
+        isEmpty(DISABLE_JEMALLOC) {
+            LIBS += -ljemalloc
+        }
     }
 
     isEqual(ARCH, sw_64){

@@ -168,7 +168,7 @@ signals:
 
 protected:
     explicit AppController(QObject *parent = nullptr);
-    ~AppController();
+    ~AppController() override;
 
 private:
     void initConnect();

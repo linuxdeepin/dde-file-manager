@@ -140,6 +140,9 @@ void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duratio
 void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
 {
     if (index == 1){
+        // 点击解锁后，灰化解锁按钮
+        getButton(1)->setEnabled(false);
+
         QString strKey = m_recoveryKeyEdit->toPlainText();
         strKey.replace("-", "");
 

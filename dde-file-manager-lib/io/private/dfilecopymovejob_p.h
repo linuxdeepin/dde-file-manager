@@ -163,32 +163,7 @@ public:
     void countrefinesize(const qint64 &size);
 
     //第二版优化
-    bool mergeDirectoryRefine(DFileHandler *handler, const DAbstractFileInfoPointer fromInfo,
-                              const DAbstractFileInfoPointer toInfo);
-    bool processRefine(const DUrl from, const DAbstractFileInfoPointer source_info,
-                       const DAbstractFileInfoPointer target_info, const bool ischeck = false);
-    bool copyFileRefine(const FileCopyInfoPointer copyinfo);
-    bool doProcessRefine(const DUrl from, const DAbstractFileInfoPointer source_info,
-                         const DAbstractFileInfoPointer target_info, const bool ischeck = false);
-    bool doCopyFileRefine(const FileCopyInfoPointer copyinfo);
-    bool doCopyFileRefineReadAndWrite(const FileCopyInfoPointer copyinfo);
-    bool openRefineThread();
-    bool openRefine(const FileCopyInfoPointer copyinfo);
-    bool readRefineThread();
-    bool readRefine(const DFileCopyMoveJobPrivate::FileCopyInfoPointer copyinfo);
-    bool copyReadAndWriteRefineThread();
-    bool copyReadAndWriteRefineRefine(const DFileCopyMoveJobPrivate::FileCopyInfoPointer copyinfo);
-    bool writeRefineThread();
-    bool writeRefine();
-    void addRefinePermissions();
-    void addRefinePermissionsThread();
-    void closeRefineFromDeviceThread();
-    void closeRefineToDeviceThread();
     void countAllCopyFile();
-    void runRefineThread();
-    void runRefineWriteAndCloseThread();
-    void setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
-    bool checkRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     void checkTagetNeedSync();//检测目标目录是网络文件就每次拷贝去同步，否则网络很卡时会因为同步卡死
     /**
      * @brief setCutTrashData    保存剪切回收站文件路径
@@ -219,23 +194,13 @@ public:
     qint64 totalsize = 0;
     QAtomicInt totalfilecount = 0;
     QAtomicInteger<bool> iscountsizeover = false;
-    QAtomicInteger<bool> isreadwriteseparate = false;
-    QAtomicInteger<bool> isbigfile = false;
     QAtomicInteger<bool> cansetnoerror = true;
     QAtomicInteger<bool> isFromLocalUrls = false;
 
     qint64 m_tatol = 0;
-    qint64 m_readtime = 0;
-    qint64 m_write = 0;
     qint64 m_sart = 0;
 
-    DFileCopyQueue<QSharedPointer<DFileDevice>> closetodevicesqueue, closefromdevicequeue;
-    DFileCopyQueue<FileCopyInfoPointer> readfileinfoqueue;
-    DFileCopyQueue<FileCopyInfoPointer> writefilequeue, openfromfilequeue;
-    QAtomicInt copyrefineflag = DFileCopyMoveJob::NoProccess;
-    QAtomicInt filerefinefd = 0;
-    DFileCopyQueue<FileCopyInfoPointer> addfilepermissionsqueue;
-    QFuture<void> closefromresult, addper, closedevice, openfrom, copyresult, writeresult, syncresult;
+    QFuture<void> syncresult;
 
 
     // 是否可以使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
@@ -286,8 +251,6 @@ public:
 
 
     QAtomicInt refinestat = DFileCopyMoveJob::Refine;
-    //优化盘内拷贝，启用的线程池
-    QThreadPool m_pool;
     //优化拷贝时异步线程状态
     QAtomicInteger<bool> bsysncstate = false;
     //异步线程是否可以退出状体
@@ -295,7 +258,6 @@ public:
     QAtomicInteger<bool> bdestLocal = false;
     qint64 refinecpsize = 0;
     QMutex m_refinemutex, m_errormutex;
-    QList<DUrl> errorurllist;
     //是否可以现实进度条
     QAtomicInteger<bool> m_iscanshowprogress = false;
     //是否需要每读写一次同步

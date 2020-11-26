@@ -34,6 +34,7 @@
 
 #include <QLabel>
 #include <QPainter>
+#include <QPainterPath>
 #include <QTextEdit>
 #include <QLineEdit>
 #include <QTextBlock>
@@ -56,26 +57,6 @@ DFM_USE_NAMESPACE
 #define ICON_SPACING 16
 #define ICON_MODE_RECT_RADIUS TEXT_PADDING
 #define ICON_MODE_BACK_RADIUS 18
-
-QString trimmedEnd(QString str)
-{
-    while (!str.isEmpty()) {
-        switch (str.at(str.count() - 1).toLatin1()) {
-        case '\t':
-        case '\n':
-        case '\r':
-        case '\v':
-        case '\f':
-        case ' ':
-            str.chop(1);
-            break;
-        default:
-            return str;
-        }
-    }
-
-    return str;
-}
 
 QRectF boundingRect(const QList<QRectF> rects)
 {
@@ -286,11 +267,11 @@ void FileTagObjectInterface::drawObject(QPainter *painter, const QRectF &rect, Q
     const QColor borderColor = f.borderColor();
     qreal diameter = f.diameter();
     const qreal padding = diameter / 10.0;
-    QRectF boundingRect = rect.marginsRemoved(QMarginsF(padding, padding, padding, padding));
+    QRectF bounding_rect = rect.marginsRemoved(QMarginsF(padding, padding, padding, padding));
 
     diameter -= padding * 2;
 
-    DFMStyledItemDelegate::paintCircleList(painter, boundingRect, diameter, colors, borderColor);
+    DFMStyledItemDelegate::paintCircleList(painter, bounding_rect, diameter, colors, borderColor);
 }
 
 class ExpandedItem : public QWidget
@@ -300,7 +281,7 @@ class ExpandedItem : public QWidget
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
 public:
-    explicit ExpandedItem(DIconItemDelegate *d, QWidget *parent = 0)
+    explicit ExpandedItem(DIconItemDelegate *d, QWidget *parent = nullptr)
         : QWidget(parent)
         , delegate(d)
     {
@@ -439,8 +420,6 @@ public:
     {}
 
     QSize textSize(const QString &text, const QFontMetrics &metrics, int lineHeight = -1) const;
-    void drawText(QPainter *painter, const QRect &r, const QString &text,
-                  int lineHeight = -1, QRect *br = Q_NULLPTR) const;
     QPixmap getFileIconPixmap(const QModelIndex &index, const QIcon &icon, const QSize &icon_size, QIcon::Mode mode, qreal devicePixelRatio) const;
 
     QPointer<ExpandedItem> expandedItem;
@@ -492,31 +471,6 @@ QSize DIconItemDelegatePrivate::textSize(const QString &text, const QFontMetrics
 
     return QSize(max_width, height);
 }
-
-void DIconItemDelegatePrivate::drawText(QPainter *painter, const QRect &r, const QString &text, int lineHeight, QRect *br) const
-{
-    if (lineHeight <= 0)
-        lineHeight = textLineHeight;
-
-    QString str = text;
-
-    if (str.endsWith('\n'))
-        str.chop(1);
-
-    QRect textRect = QRect(0, r.top(), 0, 0);
-
-    for (const QString &line : str.split('\n')) {
-        QRect br;
-
-        painter->drawText(r.left(), textRect.bottom(), r.width(), lineHeight, Qt::AlignCenter, line, &br);
-        textRect.setWidth(qMax(textRect.width(), br.width()));
-        textRect.setBottom(textRect.bottom() + lineHeight);
-    }
-
-    if (br)
-        *br = textRect;
-}
-
 QPixmap DIconItemDelegatePrivate::getFileIconPixmap(const QModelIndex &index, const QIcon &icon, const QSize &icon_size, QIcon::Mode mode, qreal devicePixelRatio) const
 {
     Q_Q(const DIconItemDelegate);
@@ -893,7 +847,10 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     const QSize &icon_size = parent()->parent()->iconSize();
 
     editor->move(option.rect.topLeft());
-    editor->setMinimumHeight(option.rect.height());
+
+    //bug 54404
+    //编辑框设置的最小高度为grid的高度, gird 整个高度为icon+editor+ 间隙,导致文字出现截断的问题
+    //editor->setMinimumHeight(option.rect.height());
 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);

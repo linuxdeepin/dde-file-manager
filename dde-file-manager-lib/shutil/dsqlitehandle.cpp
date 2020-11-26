@@ -371,7 +371,7 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(DUrl url,
         std::pair<QString, QString> rootPathPartionAndMountpoint{};
         std::map<QString, std::multimap<QString, QString>>::const_iterator cbeg{ partionsAndMountPoints->cbegin() };
         std::map<QString, std::multimap<QString, QString>>::const_iterator cend{ partionsAndMountPoints->cend() };
-        bool flag{ false };
+        bool flg{ false };
 
         for (; cbeg != cend; ++cbeg) {
             std::multimap<QString, QString>::const_iterator itrOfPartionAndMountpoint{ cbeg->second.cbegin() };
@@ -386,17 +386,17 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(DUrl url,
                 if (itrOfPartionAndMountpoint->second != ROOTPATH && parentPath.startsWith(itrOfPartionAndMountpoint->second)) {
                     partionAndMountPoint.first = itrOfPartionAndMountpoint->first;
                     partionAndMountPoint.second = itrOfPartionAndMountpoint->second;
-                    flag = true;
+                    flg = true;
                     break;
                 }
             }
 
-            if (flag) {
+            if (flg) {
                 break;
             }
         }
 
-        if (!flag && parentPath.startsWith(ROOTPATH)) {
+        if (!flg && parentPath.startsWith(ROOTPATH)) {
             partionAndMountPoint.first = rootPathPartionAndMountpoint.first;
             partionAndMountPoint.second = rootPathPartionAndMountpoint.second;
         }
@@ -739,9 +739,9 @@ void DSqliteHandle::connectToSqlite(const QString &path, const QString &db_name)
                         }
 
                     } else {
-                        DSqliteHandle::ReturnCode code{ this->checkDBFileExist(path) };
+                        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist(path) };
 
-                        if (code != DSqliteHandle::ReturnCode::NoThisDir) {
+                        if (return_code != DSqliteHandle::ReturnCode::NoThisDir) {
 
                             if (!sqlQuery.exec(createFileProperty)) {
                                 qWarning() << sqlQuery.lastError().text();
@@ -771,9 +771,9 @@ void DSqliteHandle::connectToSqlite(const QString &path, const QString &db_name)
                         }
 
                     } else {
-                        DSqliteHandle::ReturnCode code{ this->checkDBFileExist(path) };
+                        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist(path) };
 
-                        if (code != DSqliteHandle::ReturnCode::NoThisDir) {
+                        if (return_code != DSqliteHandle::ReturnCode::NoThisDir) {
 
                             if (!sqlQuery.exec(createTagProperty)) {
                                 qWarning() << sqlQuery.lastError().text();
@@ -1063,14 +1063,14 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString
                 ++itrForCounterFileInFP; ++itrForCounterFileInFP;
                 QString sqlOfCountingFileInFP{ itrForCounterFileInFP->second.arg(*cbeg) };
 
-                int counter{ 0 };
+                int cnter{ 0 };
 
                 if (!m_flag.load(std::memory_order_acquire)) {
 
                     if (sqlQuery.exec(sqlOfCountingFileInFP)) {
 
                         if (sqlQuery.next()) {
-                            counter =  sqlQuery.value("counter").toInt();
+                            cnter =  sqlQuery.value("counter").toInt();
                         }
                     }
 
@@ -1080,7 +1080,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString
                     if (code == DSqliteHandle::ReturnCode::Exist) {
 
                         if (sqlQuery.exec(sqlOfCountingFileInFP)) {
-                            counter = sqlQuery.value("counter").toInt();
+                            cnter = sqlQuery.value("counter").toInt();
                         }
 
                     } else {
@@ -1099,7 +1099,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString
                 }
 
 
-                if (counter > 0) {
+                if (cnter > 0) {
                     std::multimap<DSqliteHandle::SqlType, QString>::const_iterator itrForUpdating{itr};
                     ++itrForUpdating;
 
@@ -1204,22 +1204,22 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
                     qWarning() << sqlQuery.lastError().text();
                 }
 
-                int counter{ 0 };
+                int cnter{ 0 };
 
                 if (sqlQuery.next()) {
-                    counter = sqlQuery.value("counter").toInt();
+                    cnter = sqlQuery.value("counter").toInt();
                 }
 
 
-                if (counter == 0) {
-                    bool flag{ true };
+                if (cnter == 0) {
+                    bool flg{ true };
 
                     if (!sqlQuery.exec(std::get<1>(*cbeg))) {
-                        flag = false;
+                        flg = false;
                         qWarning() << sqlQuery.lastError().text();
                     }
 
-                    if (flag) {
+                    if (flg) {
 
                         if (!sqlQuery.exec(std::get<2>(*cbeg))) {
                             qWarning() << sqlQuery.lastError().text();
@@ -1255,9 +1255,9 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
                             }
 
                             if (sqlQuery.next()) {
-                                int counter{ sqlQuery.value("counter").toInt() };
+                                int cter{ sqlQuery.value("counter").toInt() };
 
-                                if (counter == 0) {
+                                if (cter == 0) {
                                     QString sqlForInsertingNewRow{ std::get<3>(*cbeg) };
                                     sqlForInsertingNewRow = sqlForInsertingNewRow.arg(std::get<4>(*cbeg));
                                     sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*tagNameItr);
@@ -1304,22 +1304,22 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
                         qWarning() << sqlQuery.lastError().text();
                     }
 
-                    int counter{ 0 };
+                    int cnter{ 0 };
 
                     if (sqlQuery.next()) {
-                        counter = sqlQuery.value("counter").toInt();
+                        cnter = sqlQuery.value("counter").toInt();
                     }
 
 
-                    if (counter == 0) {
-                        bool flag{ true };
+                    if (cnter == 0) {
+                        bool flg{ true };
 
                         if (!sqlQuery.exec(std::get<1>(*cbeg))) {
-                            flag = false;
+                            flg = false;
                             qWarning() << sqlQuery.lastError().text();
                         }
 
-                        if (flag) {
+                        if (flg) {
 
                             if (!sqlQuery.exec(std::get<2>(*cbeg))) {
                                 qWarning() << sqlQuery.lastError().text();
@@ -1345,17 +1345,17 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
                                 }
 
                                 if (sqlQuery.next()) {
-                                    int counter{ sqlQuery.value("counter").toInt() };
+                                    int cter{ sqlQuery.value("counter").toInt() };
                                     std::list<QString>::const_iterator tagNameItr{ tagNames.cbegin() };
 
-                                    if (counter == 0) {
-                                        QString sqlForInsertingNewRow{ std::get<3>(*cbeg) };
-                                        sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*tagNameItr);
-                                        sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*(++tagNameItr));
-                                        sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*(++tagNameItr));
-                                        sqlForInsertingNewRow = sqlForInsertingNewRow.arg(std::get<4>(*cbeg));
+                                    if (cter == 0) {
+                                        QString sql_for_inserting_new_row{ std::get<3>(*cbeg) };
+                                        sql_for_inserting_new_row = sql_for_inserting_new_row.arg(*tagNameItr);
+                                        sql_for_inserting_new_row = sql_for_inserting_new_row.arg(*(++tagNameItr));
+                                        sql_for_inserting_new_row = sql_for_inserting_new_row.arg(*(++tagNameItr));
+                                        sql_for_inserting_new_row = sql_for_inserting_new_row.arg(std::get<4>(*cbeg));
 
-                                        if (!sqlQuery.exec(sqlForInsertingNewRow)) {
+                                        if (!sqlQuery.exec(sql_for_inserting_new_row)) {
                                             qWarning() << sqlQuery.lastError().text();
                                             result = false;
                                             break;
@@ -1619,9 +1619,9 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 
                             } else {
 
-                                DSqliteHandle::ReturnCode code{ this->checkDBFileExist(mountPoint) };
+                                DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist(mountPoint) };
 
-                                if (code == DSqliteHandle::ReturnCode::Exist) {
+                                if (return_code == DSqliteHandle::ReturnCode::Exist) {
 
                                     if (!sqlQuery.exec(deleteRowInFileProperty)) {
                                         qWarning() << sqlQuery.lastError().text();
@@ -1681,9 +1681,9 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 
                                 } else {
 
-                                    DSqliteHandle::ReturnCode code{ this->checkDBFileExist(mountPoint) };
+                                    DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist(mountPoint) };
 
-                                    if (code == DSqliteHandle::ReturnCode::Exist) {
+                                    if (return_code == DSqliteHandle::ReturnCode::Exist) {
 
                                         if (!sqlQuery.exec(updateRowInFileProperty)) {
                                             qWarning() << sqlQuery.lastError().text();
@@ -1989,11 +1989,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
                 std::size_t tagAmount{ itrForUpdatingOrDeleting->second.size() };
 
                 if (tagAmount >= 3) {
-                    sqlForUpdatingOrDeleting = sqlItr->second.arg(itrForUpdatingOrDeleting->second[tagAmount - 3]);
-                    sqlForUpdatingOrDeleting = sqlItr->second.arg(itrForUpdatingOrDeleting->second[tagAmount - 2]);
-                    sqlForUpdatingOrDeleting = sqlItr->second.arg(itrForUpdatingOrDeleting->second[tagAmount - 1]);
                     sqlForUpdatingOrDeleting = sqlItr->second.arg(itrForUpdatingOrDeleting->first);
-
                 } else if (tagAmount == 0) {
                     QString sqlForDeletingRowInFileProperty{ "DELETE FROM file_property WHERE file_property.file_name = \'%1\'" };
                     sqlForUpdatingOrDeleting = sqlForDeletingRowInFileProperty.arg(itrForUpdatingOrDeleting->first);
@@ -2182,22 +2178,22 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeTagsName,
 
             if (!m_flag.load(std::memory_order_consume)) {
 
-                QSqlQuery sqlQuery(*m_sqlDatabasePtr);
+                QSqlQuery sql_query(*m_sqlDatabasePtr);
 
-                if (!sqlQuery.exec(std::get<0>(*sqlCBeg))) {
-                    qWarning() << sqlQuery.lastError().text();
+                if (!sql_query.exec(std::get<0>(*sqlCBeg))) {
+                    qWarning() << sql_query.lastError().text();
                 }
 
-                if (!sqlQuery.exec(std::get<1>(*sqlCBeg))) {
-                    qWarning() << sqlQuery.lastError().text();
+                if (!sql_query.exec(std::get<1>(*sqlCBeg))) {
+                    qWarning() << sql_query.lastError().text();
                 }
 
-                if (!sqlQuery.exec(std::get<2>(*sqlCBeg))) {
-                    qWarning() << sqlQuery.lastError().text();
+                if (!sql_query.exec(std::get<2>(*sqlCBeg))) {
+                    qWarning() << sql_query.lastError().text();
                 }
 
-                if (!sqlQuery.exec(std::get<3>(*sqlCBeg))) {
-                    qWarning() << sqlQuery.lastError().text();
+                if (!sql_query.exec(std::get<3>(*sqlCBeg))) {
+                    qWarning() << sql_query.lastError().text();
                 }
 
             } else {
@@ -2390,9 +2386,9 @@ QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType:
 
                                 } else {
 
-                                    DSqliteHandle::ReturnCode code{this->checkDBFileExist(partion_itr_beg->second)};
+                                    DSqliteHandle::ReturnCode return_code{this->checkDBFileExist(partion_itr_beg->second)};
 
-                                    if (code == DSqliteHandle::ReturnCode::Exist) {
+                                    if (return_code == DSqliteHandle::ReturnCode::Exist) {
 
                                         if (sql_query.exec(sqlForGetFilesThroughTag)) {
 
@@ -2641,11 +2637,11 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
 
     if (!filesAndTags.isEmpty()) {
 
-        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist("/home", ".__main.db") };
+//        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist("/home", ".__main.db") };
 
-        if (return_code != DSqliteHandle::ReturnCode::Exist) {
-            return false;
-        }
+//        if (return_code != DSqliteHandle::ReturnCode::Exist) {
+//            return false;
+//        }
 
         this->connectToShareSqlite("/home", ".__main.db");
         bool the_result{ true };
@@ -3299,11 +3295,11 @@ template<>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(const QMap<QString, QList<QString>> &filesAndTags)
 {
     if (!filesAndTags.isEmpty()) {
-        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist("/home", ".__main.db") };
+//        DSqliteHandle::ReturnCode return_code{ this->checkDBFileExist("/home", ".__main.db") };
 
-        if (return_code != DSqliteHandle::ReturnCode::Exist) {
-            return false;
-        }
+//        if (return_code != DSqliteHandle::ReturnCode::Exist) {
+//            return false;
+//        }
 
         this->connectToShareSqlite("/home", ".__main.db");
         bool the_result{ true };
@@ -3438,9 +3434,10 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughF
     this->closeSqlDatabase();
     QList<QString> tags_backup{};
 
-    for (const QString &tag : tags) {
-        tags_backup.push_back(Tag::restore_escaped_en_skim(tag));
-    }
+    std::transform(tags.begin(), tags.end(), std::back_inserter(tags_backup),
+    [](const QString & tag) {
+        return Tag::restore_escaped_en_skim(tag);
+    });
 
     return tags_backup;
 }
@@ -3492,9 +3489,10 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThrough
     this->closeSqlDatabase();
     QList<QString> files_backup{};
 
-    for (const QString &file : files) {
-        files_backup.push_back(Tag::restore_escaped_en_skim(file));
-    }
+    std::transform(files.begin(), files.end(), std::back_inserter(files_backup),
+    [](const QString & file) {
+        return Tag::restore_escaped_en_skim(file);
+    });
 
     return files_backup;
 }
@@ -3535,10 +3533,10 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDi
 //#endif //QT_DEBUG
 
     QList<QString> total_tags_names_backup{};
-
-    for (const QString &tag_name : totalTagsNames) {
-        total_tags_names_backup.push_back(Tag::restore_escaped_en_skim(tag_name));
-    }
+    std::transform(totalTagsNames.begin(), totalTagsNames.end(), std::back_inserter(total_tags_names_backup),
+    [](const QString & tag_name) {
+        return Tag::restore_escaped_en_skim(tag_name);
+    });
 
     return total_tags_names_backup;
 }

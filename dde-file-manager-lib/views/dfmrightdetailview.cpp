@@ -27,6 +27,8 @@
 #include "singleton.h"
 #include "controllers/pathmanager.h"
 #include "controllers/vaultcontroller.h"
+#include "accessibility/ac-lib-file-manager.h"
+
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -71,6 +73,9 @@ DFMRightDetailView::DFMRightDetailView(const DUrl &fileUrl, QWidget *parent)
     :QFrame(parent)
     , d_private(new DFMRightDetailViewPrivate(this, fileUrl))
 {
+    AC_SET_OBJECT_NAME(this, AC_DM_RIGHT_VIEW_DETAIL_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_DM_RIGHT_VIEW_DETAIL_VIEW);
+
     initUI();
     setUrl(fileUrl);
 }
@@ -83,6 +88,8 @@ DFMRightDetailView::~DFMRightDetailView()
 static QFrame* createLine()
 {
     DHorizontalLine *line = new DHorizontalLine();
+    AC_SET_OBJECT_NAME(line, AC_DM_RIGHT_VIEW_MAIN_FRAME_LINE);
+    AC_SET_ACCESSIBLE_NAME(line, AC_DM_RIGHT_VIEW_MAIN_FRAME_LINE);
     line->setFixedHeight(1);
     line->setWindowFlags(Qt::WindowTransparentForInput);
     return line;
@@ -93,6 +100,7 @@ void DFMRightDetailView::initUI()
     Q_D(DFMRightDetailView);
     d->scrollArea = new QScrollArea(this);
     d->scrollArea->setObjectName("DFMRightDetailView-QScrollArea");
+    AC_SET_ACCESSIBLE_NAME(d->scrollArea, AC_DM_RIGHT_VIEW_MAIN_FRAME_SCROLLAREA);
     d->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     d->scrollArea->setAlignment(Qt::AlignTop);
     d->scrollArea->setFrameShape(Shape::NoFrame);
@@ -109,9 +117,14 @@ void DFMRightDetailView::initUI()
     d->mainLayout->setSpacing(5);
 
     QFrame *mainFrame = new QFrame;
+    AC_SET_OBJECT_NAME(mainFrame, AC_DM_RIGHT_VIEW_MAIN_FRAME);
+    AC_SET_ACCESSIBLE_NAME(mainFrame, AC_DM_RIGHT_VIEW_MAIN_FRAME);
     mainFrame->setLayout(d->mainLayout);
 
     d->iconLabel = new QLabel(this);
+    AC_SET_OBJECT_NAME(d->iconLabel, AC_DM_RIGHT_VIEW_MAIN_FRAME_ICON_LABEL);
+    AC_SET_ACCESSIBLE_NAME(d->iconLabel, AC_DM_RIGHT_VIEW_MAIN_FRAME_ICON_LABEL);
+
     d->iconLabel->setFixedHeight(160);
     d->mainLayout->addWidget(d->iconLabel, 1, Qt::AlignHCenter);
 

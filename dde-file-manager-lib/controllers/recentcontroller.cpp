@@ -401,7 +401,7 @@ bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) 
 
 DUrlList RecentController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    DFileService::instance()->deleteFiles(event->sender(), event->urlList(), false, false, true);
+    DFileService::instance()->deleteFiles(event->sender(), event->urlList(), false, event->silent(), true);
 
     return DUrlList();
 }

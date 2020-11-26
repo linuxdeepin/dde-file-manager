@@ -162,6 +162,11 @@ public:
     void applyFileFilter(std::shared_ptr<FileFilter> filter)
     {
         if (!filter) return;
+
+        // fix bug 54887 【专业版1030】【文管5.2.0.82】搜索结果页多次筛选后，再重置筛选结果，重置搜索界面页面，出现重复搜索界面
+        // 点击重置按钮，会触发所有combox的change信号，都会访问visibleChildren资源，因此加锁限制
+        static QMutex locker;
+        locker.lock();
         visibleChildren.clear();
 
         for (auto node : children) {
@@ -169,6 +174,7 @@ public:
                 visibleChildren.append(node);
             }
         }
+        locker.unlock();
     }
 
     bool shouldHideByFilterRule(std::shared_ptr<FileFilter> filter)
@@ -466,9 +472,9 @@ public:
 
     bool isEmpty() const
     {
-        Node *head = m_head.load();
+        Node *_head = m_head.load();
 
-        return head->next == nullptr;
+        return _head->next == nullptr;
     }
 
     T dequeue()
@@ -1709,17 +1715,7 @@ int DFileSystemModel::roleToColumn(int role) const
     return -1;
 }
 
-// fetchMore 不能有丝毫阻塞,否则会造成界面卡顿假象,故将其具体执行移到doFecthMore
 void DFileSystemModel::fetchMore(const QModelIndex &parent)
-{
-    Q_D(DFileSystemModel);
-
-    QTimer::singleShot(0, [&] {
-        doFetchMore(parent);
-    });
-}
-
-void DFileSystemModel::doFetchMore(const QModelIndex &parent)
 {
     Q_D(DFileSystemModel);
 
@@ -1735,12 +1731,50 @@ void DFileSystemModel::doFetchMore(const QModelIndex &parent)
         return;
     }
 
+    //
     if (!releaseJobController()) {
         return;
     }
+//    if (d->jobController) {
+//        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+//        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+//        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
 
+//        if (d->jobController->isFinished()) {
+//            d->jobController->deleteLater();
+//        } else {
+//            QEventLoop eventLoop;
+//            QPointer<DFileSystemModel> me = this;
+//            d->eventLoop = &eventLoop;
+
+//            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+
+//            d->jobController->stopAndDeleteLater();
+
+//            int code = eventLoop.exec();
+
+//            d->eventLoop = Q_NULLPTR;
+
+//            if (code != 0) {
+//                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
+//                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
+//                    //此时d->jobController有可能已经在析构了，不能调用terminate
+////                    d->jobController->terminate();
+//                    d->jobController->quit();
+//                    d->jobController.clear();
+//                }
+//                return;
+//            }
+
+//            if (!me) {
+//                return;
+//            }
+//        }
+//    }
+    qDebug() << " fetchMore +{ " << parentNode->fileInfo->fileUrl() << parentNode->fileInfo->isGvfsMountFile();
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters,
                                                    QDirIterator::NoIteratorFlags, false, parentNode->fileInfo->isGvfsMountFile());
+
     if (!d->jobController) {
         return;
     }
@@ -1763,7 +1797,7 @@ void DFileSystemModel::doFetchMore(const QModelIndex &parent)
     setState(Busy);
 
     d->childrenUpdated = false;
-
+    //
     d->jobController->start();
     d->rootNodeManager->setEnable(true);
 }
@@ -2592,6 +2626,11 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         //该问题导致这些不存在的目录依然会添加到tag的fileview下 引起其他被标记文件可能标记数据获取失败
         //为了避免引起其他问题 暂时只对tag的目录做处理
         if (fileInfo->fileUrl().scheme() == TAG_SCHEME && !fileInfo->exists()) {
+            continue;
+        }
+
+        // feature: hide specified dirs of unremovable devices directly under devices' mountpoint
+        if (!filters().testFlag(QDir::Hidden) && fileInfo->isDir() && deviceListener->hiddenDirs().contains(fileInfo->filePath())) {
             continue;
         }
 

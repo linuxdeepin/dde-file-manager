@@ -16,6 +16,7 @@ public:
     void TearDown() override
     {
         std::cout << "end TestDFMRootFileInfo";
+//        delete info;
     }
 
 public:
@@ -141,4 +142,26 @@ TEST_F(TestDFMRootFileInfo, redirectedFileUrl)
 TEST_F(TestDFMRootFileInfo, canDrop)
 {
     EXPECT_FALSE(info->canDrop());
+}
+
+TEST_F(TestDFMRootFileInfo, tstSupportedDragNDropActions)
+{
+    EXPECT_TRUE(Qt::DropAction::IgnoreAction == info->supportedDragActions());
+    EXPECT_TRUE(Qt::DropAction::IgnoreAction == info->supportedDropActions());
+}
+
+TEST_F(TestDFMRootFileInfo, tstGetVoltag)
+{
+    EXPECT_TRUE(!info->getVolTag().isEmpty());
+}
+
+
+TEST_F(TestDFMRootFileInfo, tstCheckMpsStr)
+{
+    EXPECT_FALSE(info->checkMpsStr("Test"));
+}
+
+TEST_F(TestDFMRootFileInfo, tstMenuActionList)
+{
+    EXPECT_TRUE(info->menuActionList().count() > 0);
 }

@@ -7,34 +7,34 @@
         <translation>Nová složka</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="570"/>
+        <location filename="../controllers/appcontroller.cpp" line="576"/>
         <source>Mounting device error</source>
         <translation>Chyba při připojování zařízení</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="603"/>
+        <location filename="../controllers/appcontroller.cpp" line="609"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>Obraz disku byl poškozen. Nyní ho nelze připojit. Nejprve disk vymažte</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="645"/>
+        <location filename="../controllers/appcontroller.cpp" line="651"/>
         <source>Mount error: unsupported image format</source>
         <translation>Chyba připojování: Nepodporovaný formát obrazu</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="723"/>
-        <location filename="../controllers/appcontroller.cpp" line="759"/>
+        <location filename="../controllers/appcontroller.cpp" line="729"/>
+        <location filename="../controllers/appcontroller.cpp" line="765"/>
         <source>The device was not safely removed</source>
         <translation>Zařízení nebylo bezpečně odebráno</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="723"/>
-        <location filename="../controllers/appcontroller.cpp" line="759"/>
+        <location filename="../controllers/appcontroller.cpp" line="729"/>
+        <location filename="../controllers/appcontroller.cpp" line="765"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Příště klikněte na „Bezpečně odebrat“ a až pak odpojte</translation>
+        <translation>Příště klepněte na „Bezpečně odebrat“, a až pak odpojte</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="740"/>
+        <location filename="../controllers/appcontroller.cpp" line="746"/>
         <source>Authentication timed out</source>
         <translation>Překročen časový limit pro ověření se</translation>
     </message>
@@ -42,102 +42,102 @@
 <context>
     <name>BluetoothTransDialog</name>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="24"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="26"/>
         <source>Bluetooth File Transfer</source>
         <translation>Přenos souborů přes Bluetooth</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="25"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="27"/>
         <source>File Transfer Successful</source>
         <translation>Přenos souboru úspěšný</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="26"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="28"/>
         <source>File Transfer Failed</source>
         <translation>Přenos souboru se nezdařil</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="28"/>
-        <source>Sending files to &quot;%1&quot;</source>
-        <translation>Odesílání souborů do „%1“</translation>
-    </message>
-    <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="29"/>
-        <source>Failed to send files to &quot;%1&quot;</source>
-        <translation>Nepodařilo se odeslat soubory do „%1“</translation>
-    </message>
-    <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="30"/>
-        <source>Sent to &quot;%1&quot; successfully</source>
-        <translation>Úspěšně odesláno do „%1“</translation>
+        <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
+        <translation>Odesílání souborů do „&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;“</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
+        <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
+        <translation>Nepodařilo se odeslat soubory do „&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;“</translation>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
+        <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
+        <translation>Odeslání do „&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;“ úspěšné</translation>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
         <source>Select a Bluetooth device to receive files</source>
         <translation>Vyberte Bluetooth zařízení, ze kterého obdržet soubory</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="34"/>
         <source>Cannot find the connected Bluetooth device</source>
         <translation>Nedaří se najít připojené Bluetooth zařízení</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="35"/>
         <source>Waiting to be received...</source>
         <translation>Čeká se na přijetí…</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="34"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="36"/>
         <source>Go to Bluetooth Settings</source>
         <translation>Přejít do nastavení Bluetooth</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="35"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="37"/>
         <source>%1/%2 Sent</source>
         <translation>Odesláno %1/%2</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="36"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
         <source>Error: the Bluetooth device is disconnected</source>
         <translation>Chyba: Bluetooth zařízení je odpojeno</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="37"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
         <source>Unable to send the file more than 2 GB</source>
         <translation>Není možné odesílat soubory větší než 2 GB</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
         <source>Unable to send 0 KB files</source>
         <translation>Není možné odesílat prázdné (0 KB) soubory</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
         <source>File doesn&apos;t exist</source>
         <translation>Soubor neexistuje</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
         <source>Next</source>
         <translation>Další</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
         <source>Done</source>
         <translation>Hotovo</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="46"/>
         <source>Retry</source>
         <translation>Zkusit znovu</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="47"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -145,12 +145,12 @@
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="56"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="57"/>
         <source>Close all</source>
         <translation>Zavřít vše</translation>
     </message>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="76"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="77"/>
         <source>Total size: %1, %2 files</source>
         <translation>Celková velikost: %1, %2 souborů</translation>
     </message>
@@ -158,20 +158,20 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="57"/>
-        <location filename="../models/computermodel.cpp" line="119"/>
+        <location filename="../models/computermodel.cpp" line="61"/>
+        <location filename="../models/computermodel.cpp" line="135"/>
         <source>My Directories</source>
         <translation>Moje složky</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="75"/>
         <location filename="../models/computermodel.cpp" line="79"/>
-        <location filename="../models/computermodel.cpp" line="171"/>
-        <location filename="../models/computermodel.cpp" line="182"/>
-        <location filename="../models/computermodel.cpp" line="595"/>
-        <location filename="../models/computermodel.cpp" line="599"/>
-        <location filename="../models/computermodel.cpp" line="636"/>
-        <location filename="../models/computermodel.cpp" line="640"/>
+        <location filename="../models/computermodel.cpp" line="83"/>
+        <location filename="../models/computermodel.cpp" line="187"/>
+        <location filename="../models/computermodel.cpp" line="198"/>
+        <location filename="../models/computermodel.cpp" line="611"/>
+        <location filename="../models/computermodel.cpp" line="615"/>
+        <location filename="../models/computermodel.cpp" line="652"/>
+        <location filename="../models/computermodel.cpp" line="656"/>
         <source>Disks</source>
         <translation>Disky</translation>
     </message>
@@ -179,53 +179,53 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="82"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="84"/>
         <source>Computer</source>
         <translation>Počítač</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="91"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="93"/>
         <source>Basic Info</source>
         <translation>Základní informace</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="102"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
         <source>Computer Name</source>
         <translation>Název počítače</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="103"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="105"/>
         <source>Edition</source>
         <translation>Vydání</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="106"/>
         <source>Version</source>
         <translation>Verze</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="105"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="107"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="106"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="108"/>
         <source>Processor</source>
         <translation>Procesor</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="107"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="140"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="109"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="142"/>
         <source>Memory</source>
         <translation>Paměť</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="219"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="221"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="253"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="255"/>
         <source>Available</source>
         <translation>K dispozici</translation>
     </message>
@@ -233,27 +233,27 @@
 <context>
     <name>ConnectToServerDialog</name>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="48"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="49"/>
         <source>Connect to Server</source>
         <translation>Připojit se k serveru</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="153"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="165"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="153"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="165"/>
         <source>Connect</source>
         <translation>Připojit</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="161"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="173"/>
         <source>My Favorites:</source>
         <translation>Moje oblíbené:</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="203"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="215"/>
         <source>Clear History</source>
         <translation>Smazat historii</translation>
     </message>
@@ -387,13 +387,13 @@
 <context>
     <name>DFMOpticalMediaWidget</name>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="106"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="131"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="117"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="142"/>
         <source>No files to burn</source>
         <translation>Žádné soubory pro vypálení</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="149"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="163"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>Není možné zapsat. Nedostatek volného prostoru na cílovém disku.</translation>
     </message>
@@ -409,7 +409,7 @@
 <context>
     <name>DFMTagWidget</name>
     <message>
-        <location filename="../views/dfmtagwidget.cpp" line="129"/>
+        <location filename="../views/dfmtagwidget.cpp" line="133"/>
         <source>Tag</source>
         <translation>Štítek</translation>
     </message>
@@ -417,65 +417,65 @@
 <context>
     <name>DFMTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="187"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="189"/>
         <source>Keep both</source>
         <translation>Ponechat oba</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="188"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="190"/>
         <source>Skip</source>
         <translation>Přeskočit</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="189"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="191"/>
         <source>Replace</source>
         <translation>Nahradit</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="207"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="209"/>
         <source>Do not ask again</source>
         <translation>Znovu se neptat</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="430"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="432"/>
         <source>Retry</source>
         <translation>Zkusit znovu</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="443"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="453"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="445"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="455"/>
         <source>Time modified: %1</source>
         <translation>Změněno: %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="446"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="457"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="448"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="459"/>
         <source>Contains: %1</source>
         <translation>Obsahuje: %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="449"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="460"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="451"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="462"/>
         <source>Size: %1</source>
         <translation>Velikost: %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="445"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="447"/>
         <source>Original folder</source>
         <translation>Původní složka</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="448"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="450"/>
         <source>Original file</source>
         <translation>Původní soubor</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="456"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="458"/>
         <source>Target folder</source>
         <translation>Cílová složka</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="459"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="461"/>
         <source>Target file</source>
         <translation>Cílový soubor</translation>
     </message>
@@ -490,7 +490,7 @@
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="34"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
-        <translation>Klikněte na „Zašifrovat“ a zadejte heslo uživatele</translation>
+        <translation>Klepněte na „Zašifrovat“ a zadejte heslo uživatele</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="47"/>
@@ -582,7 +582,7 @@
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="54"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="188"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="191"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>alespoň 8 znaků, obsahující A-Z, a-z, 0-9 a symboly</translation>
     </message>
@@ -612,8 +612,8 @@
         <translation>Další</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="209"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="225"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="214"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="230"/>
         <source>Passwords do not match</source>
         <translation>Zadání hesla se neshodují</translation>
     </message>
@@ -656,7 +656,7 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="79"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="79"/>
@@ -700,7 +700,7 @@
 <context>
     <name>DFMVaultRemoveByRecoverykeyView</name>
     <message>
-        <location filename="../views/dfmvaultremovebyrecoverykeyview.cpp" line="57"/>
+        <location filename="../views/dfmvaultremovebyrecoverykeyview.cpp" line="58"/>
         <source>Input the 32-digit recovery key</source>
         <translation>Zadejte obnovovací klíč (32 číslic)</translation>
     </message>
@@ -708,69 +708,69 @@
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="32"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="33"/>
         <source>Delete File Vault</source>
         <translation>Smazat trezor na soubory</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="76"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="81"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
         <translation>Po jeho smazání budou soubory v něm natrvalo smazány</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="152"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="157"/>
         <source>Use Key</source>
         <translation>Použít klíč</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="104"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="209"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="109"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="214"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="149"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="154"/>
         <source>Use Password</source>
         <translation>Použít heslo</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="164"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="169"/>
         <source>Wrong password</source>
         <translation>Nesprávné heslo</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="174"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="179"/>
         <source>Wrong recovery key</source>
         <translation>Nesprávný obnovovací klíč</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="205"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="210"/>
         <source>Failed to delete file vault</source>
         <translation>Nepodařilo se smazat trezor na soubory</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="219"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="224"/>
         <source>Deleted successfully</source>
         <translation>Úspěšně smazáno</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="221"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="226"/>
         <source>Failed to delete</source>
         <translation>Nepodařilo se smazat</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="100"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="105"/>
         <source>Removing...</source>
         <translation>Odebírání…</translation>
     </message>
@@ -790,7 +790,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="86"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="86"/>
@@ -803,12 +803,12 @@
         <translation>Nápověda pro heslo: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="230"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="233"/>
         <source>Failed to unlock file vault</source>
         <translation>Nepodařilo se odemknout trezor</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="234"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -818,8 +818,8 @@
         <translation>Heslo</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="180"/>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="225"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="184"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="228"/>
         <source>Wrong password</source>
         <translation>Nesprávné heslo</translation>
     </message>
@@ -827,148 +827,148 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="206"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="210"/>
         <source>Permission error</source>
         <translation>Chyba v oprávnění</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="208"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="212"/>
         <source>The action is denied</source>
         <translation>Tato akce je zakázána</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="214"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="218"/>
         <source>Failed to open the file</source>
         <translation>Soubor se nepodařilo otevřít</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="216"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
         <source>Failed to read the file</source>
         <translation>Soubor se nepodařilo přečíst</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="218"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
         <source>Failed to write the file</source>
         <translation>Do souboru se nepodařilo zapsat</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
         <source>Failed to create the directory</source>
         <translation>Složku se nepodařilo vytvořit</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
         <source>Failed to delete the file</source>
         <translation>Soubor se nepodařilo smazat</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
         <source>Failed to move the file</source>
         <translation>Soubor se nepodařilo přesunout</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
         <source>Original file does not exist</source>
         <translation>Původní soubor neexistuje</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>Nezdařilo se. Je třeba, aby velikost souboru byla menší než 4 GB.</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
         <source>Not enough free space on the target disk</source>
         <translation>Nedostatek volného místa na cílovém disku</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
         <source>File integrity was damaged</source>
         <translation>Soubor je poškozený</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="238"/>
         <source>The target device is read only</source>
         <translation>Cílové zařízení je pouze pro čtení</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="240"/>
         <source>Target folder is inside the source folder</source>
         <translation>Cílová složka je uvnitř zdrojové složky (nelze samo do sebe)</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="646"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="654"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>kopírovat</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="996"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2047"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1004"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2068"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>Nepodařilo se otevřít složku. Příčina: název souboru je příliš dlouhý</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1144"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2537"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2676"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3149"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1152"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2560"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2699"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3172"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>Nepodařilo se otevřít soubor. Příčina: název souboru je příliš dlouhý</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1006"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2057"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1014"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2078"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Složku se nepodařilo vytvořit – příčina: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1156"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1187"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2550"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2689"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2715"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3163"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3492"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1164"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1195"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2573"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2712"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2738"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3186"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3515"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Soubor se nepodařilo otevřít – příčina:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1183"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1191"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Soubor se nepodařilo otevřít – příčina: přístup odepřen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1277"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2604"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2793"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3289"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1297"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2627"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2816"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3312"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Ze souboru se nepodařilo číst – příčina:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1331"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1406"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2846"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2916"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3559"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3638"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1354"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1432"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2869"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2939"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3582"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3661"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Do souboru se nepodařilo zapsat – příčina: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1536"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3019"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1566"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3042"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Soubor je poškozený – důvod: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1610"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1640"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Soubor se nepodařilo smazat – příčina:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1713"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1734"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Symbolický odkaz se nepodařilo vytvořit – příčina: %1</translation>
     </message>
@@ -976,39 +976,39 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1107"/>
-        <location filename="../views/dfiledialog.cpp" line="1392"/>
+        <location filename="../views/dfiledialog.cpp" line="1108"/>
+        <location filename="../views/dfiledialog.cpp" line="1393"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1297"/>
+        <location filename="../views/dfiledialog.cpp" line="1298"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 už existuje. Chcete ji nahradit?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1257"/>
-        <location filename="../views/dfiledialog.cpp" line="1298"/>
+        <location filename="../views/dfiledialog.cpp" line="1258"/>
+        <location filename="../views/dfiledialog.cpp" line="1299"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1256"/>
+        <location filename="../views/dfiledialog.cpp" line="1257"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Pokud název souboru bude začínat na tečku (.), bude skrytý. Opravdu to chcete?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1258"/>
+        <location filename="../views/dfiledialog.cpp" line="1259"/>
         <source>Confirm</source>
         <translation>Potvrdit</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1299"/>
+        <location filename="../views/dfiledialog.cpp" line="1300"/>
         <source>Replace</source>
         <translation>Nahradit</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1389"/>
+        <location filename="../views/dfiledialog.cpp" line="1390"/>
         <source>Open</source>
         <translation>Otevřít</translation>
     </message>
@@ -1029,41 +1029,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1652"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1653"/>
         <location filename="../models/trashfileinfo.cpp" line="339"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1102"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1654"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1105"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1655"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
         <translation>Změněno</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1656"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1657"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1658"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1659"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1660"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1661"/>
         <source>Time created</source>
         <translation>Vytvořeno</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1662"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1663"/>
         <source>Last access</source>
         <translation>Poslední přístup</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1664"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1665"/>
         <location filename="../models/recentfileinfo.cpp" line="200"/>
         <location filename="../models/searchfileinfo.cpp" line="129"/>
         <location filename="../models/searchfileinfo.cpp" line="134"/>
@@ -1074,12 +1074,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2372"/>
+        <location filename="../views/dfileview.cpp" line="2525"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>Obraz disku byl poškozen. Nyní ho nelze připojit. Nejprve disk vymažte</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3026"/>
+        <location filename="../views/dfileview.cpp" line="3183"/>
         <source>(Reverse)</source>
         <translation>(obrácený)</translation>
     </message>
@@ -1095,57 +1095,57 @@
 <context>
     <name>DStatusBar</name>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="66"/>
+        <location filename="../views/dstatusbar.cpp" line="67"/>
         <source>%1 item</source>
         <translation>%1 položka</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="67"/>
+        <location filename="../views/dstatusbar.cpp" line="68"/>
         <source>%1 items</source>
         <translation>%1 položek</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="68"/>
+        <location filename="../views/dstatusbar.cpp" line="69"/>
         <source>%1 item selected</source>
         <translation>Vybrána %1 položka</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="69"/>
+        <location filename="../views/dstatusbar.cpp" line="70"/>
         <source>%1 items selected</source>
         <translation>Vybráno %1 položek</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="70"/>
+        <location filename="../views/dstatusbar.cpp" line="71"/>
         <source>%1 folder selected (contains %2)</source>
         <translation>Vybrána %1 složka (obsahuje %2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="71"/>
+        <location filename="../views/dstatusbar.cpp" line="72"/>
         <source>%1 folders selected (contains %2)</source>
         <translation>Vybráno %1 složek (obsahuje %2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="72"/>
+        <location filename="../views/dstatusbar.cpp" line="73"/>
         <source>%1 file selected (%2)</source>
         <translation>Vybrán %1 soubor (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="73"/>
+        <location filename="../views/dstatusbar.cpp" line="74"/>
         <source>%1 files selected (%2)</source>
         <translation>Vybráno %1 souborů (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="74"/>
+        <location filename="../views/dstatusbar.cpp" line="75"/>
         <source>%1 folder selected</source>
         <translation>Vybrána %1 složka</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="168"/>
+        <location filename="../views/dstatusbar.cpp" line="169"/>
         <source>Filter</source>
         <translation>Filtrovat</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="178"/>
+        <location filename="../views/dstatusbar.cpp" line="179"/>
         <source>Save as:</source>
         <translation>Uložit jako:</translation>
     </message>
@@ -1163,84 +1163,84 @@
         <translation>Tato akce není podporovaná</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="711"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="717"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>Maže se disk %1 – čekejte prosím…</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="712"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="718"/>
         <source>Burning disc %1, please wait...</source>
         <translation>Vypalování disku %1 – čekejte prosím…</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="717"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="723"/>
         <source>Writing data...</source>
         <translation>Zápis dat…</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="718"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="724"/>
         <source>Verifying data...</source>
         <translation>Ověřování dat…</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="768"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="774"/>
         <source>Copying %1</source>
         <translation>Kopíruje se %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="769"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="773"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="776"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="775"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="779"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="782"/>
         <source>to %2</source>
         <translation>do %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="792"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="798"/>
         <source>%1 already exists in target folder</source>
         <translation>%1 už v cílové složce existuje</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="793"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="799"/>
         <source>Original path %1 Target path %2</source>
         <translation>Původní umístění %1, cílové %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="772"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="778"/>
         <source>Moving %1</source>
         <translation>Přesunuje se %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="346"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="352"/>
         <source>Removing file vault, please try later</source>
         <translation>Odebírání trezoru pro soubory - zkuste to znovu později</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="775"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="781"/>
         <source>Restoring %1</source>
         <translation>Obnovuje se %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="778"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="784"/>
         <source>Deleting %1</source>
         <translation>Maže se %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="781"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="787"/>
         <source>Trashing %1</source>
         <translation>Přesouvání %1 do koše</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="789"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="795"/>
         <source>Calculating space, please wait</source>
         <translation>Počítá se místo – čekejte prosím</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="804"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="810"/>
         <source>Merge</source>
         <translation>Sloučit</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="807"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="813"/>
         <source>Replace</source>
         <translation>Nahradit</translation>
     </message>
@@ -1250,7 +1250,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="724"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="727"/>
         <source>%1 Volume</source>
         <translation>%1 svazek</translation>
     </message>
@@ -1261,17 +1261,17 @@
         <translation>Datový disk</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="719"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="722"/>
         <source>%1 Drive</source>
         <translation>%1 mechanika</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="703"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="706"/>
         <source>Blank %1 Disc</source>
         <translation>Prázdný %1 disk</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="722"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="725"/>
         <source>%1 Encrypted</source>
         <translation>%1 zašifrováno</translation>
     </message>
@@ -1279,352 +1279,351 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1053"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1068"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1078"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="414"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1073"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1088"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1098"/>
         <source>Operation failed!</source>
         <translation>Operace se nezdařila!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="415"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Cílová složka je uvnitř zdrojové složky (nelze samo do sebe)!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="415"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="631"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="974"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="987"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="996"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1014"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1060"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1071"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1085"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1151"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1506"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="417"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="634"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="977"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="990"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="999"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1017"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1080"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1091"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1105"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1171"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1540"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="438"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Chcete %1 spustit nebo zobrazit jeho obsah?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
         <source>It is an executable text file.</source>
         <translation>Je spustitelným textovým souborem.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="648"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="699"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="861"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="890"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1221"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1453"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="530"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="651"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="702"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="864"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="893"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1241"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1486"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="483"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="470"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
         <source>Run</source>
         <translation>Spustit</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="469"/>
         <source>Run in terminal</source>
         <translation>Spustit v terminálu</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
         <source>Display</source>
         <translation>Zobrazení</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="465"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
         <source>It is an executable file.</source>
         <translation>Je spustitelným textovým souborem.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="483"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Tento soubor není spustitelný. Chcete přidat oprávnění pro spouštění a spustit ho?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="495"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="497"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>„%1“ už existuje. Použijte jiný název.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="497"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="512"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="620"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="890"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1245"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1340"/>
-        <location filename="../dialogs/dialogmanager.h" line="149"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="499"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="514"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="622"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="893"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1265"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1362"/>
         <source>Confirm</source>
         <translation>Potvrdit</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="523"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="525"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>Opravdu chcete smazat všechna data na disku?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="530"/>
         <source>Erase</source>
         <translation>Vymazat</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="550"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="552"/>
         <source>How do you want to use this disc?</source>
         <translation>Jak chcete tento disk použít?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
         <source>Burn image</source>
         <translation>Vypálit obraz</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
         <source>Burn files</source>
         <translation>Vypálit soubory</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="582"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="584"/>
         <source>Disc erase failed</source>
         <translation>Disk se nepodařilo smazat</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="586"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="588"/>
         <source>Burn process failed</source>
         <translation>Vypalování se nezdařilo</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="592"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="594"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="609"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="619"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="611"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="621"/>
         <source>Show details</source>
         <translation>Zobrazit podrobnosti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="613"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
         <source>Hide details</source>
         <translation>Skrýt podrobnosti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="614"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="641"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
         <source>Permanently delete %1?</source>
         <translation>Nadobro smazat %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="642"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="645"/>
         <source>Permanently delete %1 items?</source>
         <translation>Nadobro smazat %1 položek?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="648"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="651"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="659"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="662"/>
         <source>Empty</source>
         <translation>Prázdný</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="696"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="699"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Je nám líto, ale nepodařilo najít složku s vašimi záložkami. Odstranit?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="699"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="702"/>
         <source>Remove</source>
         <translation>Odstranit</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="859"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="862"/>
         <source>Name: </source>
         <translation>Název:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="861"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="864"/>
         <source>Force unmount</source>
         <translation>Vynutit odpojení</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="884"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="887"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 odkazující na tuto zkratku byl změněn nebo přesunut</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="888"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="891"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Chcete smazat tuto klávesovou zkratku?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="985"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="988"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Nezdařilo se. Je třeba, aby velikost souboru byla menší než 4 GB.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="994"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="997"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Symbolický odkaz se nepodařilo vytvořit – příčina:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1012"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1015"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Vybrané soubory obsahují systémový soubor/složku, a nelze je proto smazat</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1069"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1105"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1089"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1125"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Nemáte oprávnění pro přistupování k této složce/souboru!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1080"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1100"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>Nepodařilo se obnovit %1 soubor, zdrojový soubor neexistuje</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1122"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Je nám líto, ale nemáte oprávnění pro přístup k následujícímu %1 souboru/složce(kám)!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1204"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1224"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
         <translation>2. V nastavení vypínání zrušte zaškrtnutí u „Zapnout rychlé spouštění“ a „Uspat na disk“ a restartujte</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1205"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1225"/>
         <source>3. Reboot and enter %1</source>
         <translation>3. Restartujte a vstupte do %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1337"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1359"/>
         <source>Unable to access %1</source>
         <translation>Nedaří se přistupovat k %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1417"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1439"/>
         <source>Sending files now, please try later</source>
         <translation>Soubory jsou nyní odesílány, zkuste to prosím později</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1454"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1487"/>
         <source>Format</source>
         <translation>Formát</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1455"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1488"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Aby bylo možné k zařízení přistupovat, je třeba ho nejprve naformátovat. Chcete to provést nyní?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1538"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Sdílenou složku nelze nazvat stejně jako uživatelské jméno, kterým jste právě přihlášení</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="464"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
         <source>Do you want to run %1?</source>
         <translation>Chcete %1 spustit?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="639"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="642"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Chcete smazat %1 položku?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="640"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Chcete smazat %1 položek?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="537"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="683"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="539"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="686"/>
         <source>This action cannot be undone</source>
         <translation>Tuto akci není možné vzít zpět</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="510"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="512"/>
         <source>The file name must not contain two dots(..)</source>
         <translation>Je třeba, aby název souboru neobsahoval dvě po sobě jdoucí tečky (..)</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="589"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="591"/>
         <source>Data verification failed</source>
         <translation>Ověření dat se nezdařilo</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="858"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="861"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disk je zaneprázdněn, nyní ho proto nelze odpojit</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="973"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="976"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Nelze zkopírovat. Nedostatek volného místa na cílovém disku.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1055"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1075"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Nepodařilo se obnovit %1 soubor, cílová složka je jen pro čtení</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1057"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1077"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Nepodařilo se obnovit %1 souborů, cílová složka je jen pro čtení</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1082"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1102"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>Nepodařilo se obnovit %1 souborů, zdrojové soubory neexistují</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1209"/>
         <source>Mount partition%1 to be read only</source>
         <translation>Připojit oddíl %1 pouze pro čtení</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1193"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1213"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation>Pokud v nastavení vypínání bude zaškrtnuto „Zapnout rychlé spouštění“ (doporučeno), disky v OS Windows nebude možné číst a zapisovat normálně</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1197"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1217"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation>Prosím obnovte pomocí následujících kroků pro normální přístup na disk s OS Windows</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1203"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1223"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Restartujte pro vstup do OS Windows</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1222"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1242"/>
         <source>Reboot</source>
         <translation>Restartovat</translation>
     </message>
@@ -1632,27 +1631,27 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="596"/>
-        <location filename="../controllers/filecontroller.cpp" line="615"/>
-        <location filename="../controllers/filecontroller.cpp" line="634"/>
+        <location filename="../controllers/filecontroller.cpp" line="783"/>
+        <location filename="../controllers/filecontroller.cpp" line="802"/>
+        <location filename="../controllers/filecontroller.cpp" line="821"/>
         <source>Kindly Reminder</source>
         <translation>Laskavá připomínka</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="596"/>
-        <location filename="../controllers/filecontroller.cpp" line="615"/>
-        <location filename="../controllers/filecontroller.cpp" line="634"/>
+        <location filename="../controllers/filecontroller.cpp" line="783"/>
+        <location filename="../controllers/filecontroller.cpp" line="802"/>
+        <location filename="../controllers/filecontroller.cpp" line="821"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Nejprve je třeba nainstalovat nástroj Správce archivů</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1251"/>
-        <location filename="../controllers/filecontroller.cpp" line="1273"/>
+        <location filename="../controllers/filecontroller.cpp" line="1417"/>
+        <location filename="../controllers/filecontroller.cpp" line="1440"/>
         <source>Unable to create files here: %1</source>
         <translation>Soubory zde není možné vytvářet: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1253"/>
+        <location filename="../controllers/filecontroller.cpp" line="1419"/>
         <source>Confirm</source>
         <translation>Potvrdit</translation>
     </message>
@@ -1672,7 +1671,7 @@
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="44"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="66"/>
@@ -1712,75 +1711,75 @@
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="757"/>
-        <location filename="../../fileoperations/filejob.cpp" line="970"/>
-        <location filename="../../fileoperations/filejob.cpp" line="979"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1054"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1265"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1274"/>
+        <location filename="../../fileoperations/filejob.cpp" line="984"/>
+        <location filename="../../fileoperations/filejob.cpp" line="993"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1068"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1292"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1301"/>
         <source>Data verification successful.</source>
         <translation>Data úspěšně ověřena.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="757"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1054"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1068"/>
         <source>Data verification failed.</source>
         <translation>Data se nepodařilo ověřit.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="761"/>
-        <location filename="../../fileoperations/filejob.cpp" line="983"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1058"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1278"/>
+        <location filename="../../fileoperations/filejob.cpp" line="997"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1072"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1305"/>
         <source>Burn process completed</source>
         <translation>Vypalování dokončeno</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1442"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1469"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1446"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1473"/>
         <source>%1 m %2 s</source>
         <translation>%1 m %2 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1451"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1478"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 h %2 m %3 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1458"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1485"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 d %2 h %3 m %4 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3173"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3200"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1 je kopie souboru.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3176"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3203"/>
         <source>Insufficient disc space.</source>
         <translation>Nedostatek místa na disku.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3179"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3206"/>
         <source>Lost connection to drive.</source>
         <translation>Spojení s mechanikou ztraceno.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3182"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3209"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>Mechanika CD/DVD není připravena. Zkuste jiný disk.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3185"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3212"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>Mechanika optických disků je zaneprázdněna. Ukončete program používající mechaniku a disk vložte znovu.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3192"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3219"/>
         <source>Unknown error</source>
         <translation>Neznámá chyba</translation>
     </message>
@@ -1825,14 +1824,14 @@
         <location filename="../configure/global-setting-template-pro.js" line="22"/>
         <location filename="../configure/global-setting-template.js" line="22"/>
         <source>Click</source>
-        <translation>Jedno kliknutí</translation>
+        <translation>Jedno klepnutí</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="23"/>
         <location filename="../configure/global-setting-template-pro.js" line="23"/>
         <location filename="../configure/global-setting-template.js" line="23"/>
         <source>Double click</source>
-        <translation>Dvojklik</translation>
+        <translation>Dvojklepnutí</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="31"/>
@@ -2181,65 +2180,65 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="804"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="796"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>Nedaří se ověřit identitu %1.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="805"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="797"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Toto se stává když se na počítač přihlašujete poprvé.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="806"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="798"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Identita poslaná vzdáleným počítačem je</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="808"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="800"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Pokud si chcete být zcela jistí, zda je bezpečné pokračovat, obraťte se na správce systému.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="854"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="846"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1487"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1495"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1503"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1508"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1500"/>
         <source>Mounting device error</source>
         <translation>Chyba při připojování zařízení</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1633"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1625"/>
         <source>No key available to unlock device</source>
         <translation>Není k dispozici žádný klíč pro odemknutí zařízení</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1721"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1713"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>Disk je připojený (mount) uživatelem „%1“ – vy ho odpojit nemůžete.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1724"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1734"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1762"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1883"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1914"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1716"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1726"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1754"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1875"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1906"/>
         <source>Confirm</source>
         <translation>Potvrdit</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1731"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1911"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1723"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1903"/>
         <source>Cannot find the mounting device</source>
         <translation>Nedaří se najít připojované zařízení</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1759"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1751"/>
         <source>Cannot unmount the device</source>
         <translation>Zařízení se nedaří odpojit</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1879"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1871"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Zařízení „%1“ není možné vysunout</translation>
     </message>
@@ -2345,7 +2344,7 @@
         <translation>Záložní soubor</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="674"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="677"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation>Neznámý</translation>
@@ -2356,7 +2355,7 @@
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="48"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="48"/>
@@ -2404,7 +2403,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="48"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="48"/>
@@ -2420,32 +2419,32 @@
 <context>
     <name>MoveToTrashConflictDialog</name>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="38"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="52"/>
         <source>Are you sure you want to permanently delete %1?</source>
         <translation>Opravdu chcete %1 nadobro smazat?</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="37"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="51"/>
         <source>This file is too big for the trash</source>
         <translation>Tento soubor je příliš velký pro přesunutí do koše</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="41"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="55"/>
         <source>The files are too big for the trash</source>
         <translation>Soubory jsou příliš velké pro přesunutí do koše</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="42"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="56"/>
         <source>Are you sure you want to permanently delete %1 files?</source>
         <translation>Opravdu chcete trvale smazat %1 souborů?</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="62"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="76"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="63"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="77"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
@@ -2453,37 +2452,37 @@
 <context>
     <name>OpenWithDialog</name>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="223"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="234"/>
         <source>Open with</source>
         <translation>Otevřít s</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="245"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="256"/>
         <source>Add other programs</source>
         <translation>Přidat ostatní programy</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="246"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="257"/>
         <source>Set as default</source>
         <translation>Nastavit jako výchozí</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="248"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="259"/>
         <source>Cancel</source>
-        <translation>Strorno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="249"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="260"/>
         <source>Confirm</source>
         <translation>Potvrdit</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="253"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="264"/>
         <source>Recommended Applications</source>
         <translation>Doporučené aplikace</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="255"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="266"/>
         <source>Other Applications</source>
         <translation>Ostatní aplikace</translation>
     </message>
@@ -2533,8 +2532,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="668"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="696"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="671"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="699"/>
         <source>System Disk</source>
         <translation>Systémový disk</translation>
     </message>
@@ -2567,52 +2566,52 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="294"/>
+        <location filename="../dialogs/propertydialog.cpp" line="310"/>
         <source>Basic info</source>
         <translation>Základní informace</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="295"/>
+        <location filename="../dialogs/propertydialog.cpp" line="311"/>
         <source>Open with</source>
         <translation>Otevřít s</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="296"/>
+        <location filename="../dialogs/propertydialog.cpp" line="312"/>
         <source>Sharing</source>
         <translation>Sdílení</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="297"/>
+        <location filename="../dialogs/propertydialog.cpp" line="313"/>
         <source>Permissions</source>
         <translation>Oprávnění</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="352"/>
+        <location filename="../dialogs/propertydialog.cpp" line="387"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="352"/>
+        <location filename="../dialogs/propertydialog.cpp" line="387"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="362"/>
+        <location filename="../dialogs/propertydialog.cpp" line="397"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1184"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1267"/>
         <source>Hide this folder</source>
         <translation>Skrýt tuto složku</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1184"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1267"/>
         <source>Hide this file</source>
         <translation>Skrýt tento soubor</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1536"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1632"/>
         <source>Allow to execute as program</source>
         <translation>Umožnit spouštět jako program</translation>
     </message>
@@ -2620,168 +2619,168 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1095"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="225"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1165"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="223"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1115"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1305"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="234"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1185"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1401"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="232"/>
         <source>Contains</source>
         <translation>Obsahuje</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1096"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="226"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1166"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="224"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1099"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="342"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1169"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="340"/>
         <source>Time modified</source>
         <translation>Změněno</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1308"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1404"/>
         <source>Free space</source>
         <translation>Volné místo</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1301"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1397"/>
         <source>Total space</source>
         <translation>Celkový prostor</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1436"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1532"/>
         <source>Access denied</source>
         <translation>Přístup odepřen</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1437"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1449"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1533"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1545"/>
         <source>Executable</source>
         <translation>Spustitelný</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1438"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1439"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1534"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1535"/>
         <source>Write only</source>
         <translation>Pouze zápis</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1440"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1441"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1536"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1537"/>
         <source>Read only</source>
         <translation>Pouze pro čtení</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1442"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1443"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1538"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1539"/>
         <source>Read-write</source>
         <translation>Čtení a zápis</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1532"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1628"/>
         <source>Others</source>
         <translation>Ostatní</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1530"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1626"/>
         <source>Owner</source>
         <translation>Vlastník</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1285"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1381"/>
         <source>Device type</source>
         <translation>Typ zařízení</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1303"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1399"/>
         <source>File system</source>
         <translation>Souborový systém</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1531"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1627"/>
         <source>Group</source>
         <translation>Skupina</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="82"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="772"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="83"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="767"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="770"/>
         <source>Open</source>
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
         <source>Lock</source>
         <translation>Zamknout</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Auto lock</source>
         <translation>Automatické zamykání</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Never</source>
         <translation>Nespouštět</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
         <source>5 minutes</source>
         <translation>5 minut</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <source>10 minutes</source>
         <translation>10 minut</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
         <source>20 minutes</source>
         <translation>20 minut</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <source>Delete File Vault</source>
         <translation>Smazat trezor na soubory</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
         <source>Unlock</source>
         <translation>Odemknout</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
         <source>Unlock by key</source>
         <translation>Odemknout klíčem</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="198"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="218"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="199"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="219"/>
         <source>Size: %1</source>
         <translation>Velikost: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="199"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="200"/>
         <source>Type: %1</source>
         <translation>Typ: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
         <source>Size: 0</source>
         <translation>Velikost: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="217"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="218"/>
         <source>Items: %1</source>
         <translation>Položek: %1</translation>
     </message>
@@ -2789,8 +2788,8 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="85"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="65"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="776"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="768"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="601"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="56"/>
         <source>Open in new window</source>
@@ -2800,55 +2799,55 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="95"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="89"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="69"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="777"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="769"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="772"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="605"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="60"/>
         <source>Open in new tab</source>
         <translation>Otevřít v nové kartě</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
         <source>Open with</source>
         <translation>Otevřít s</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="782"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="777"/>
         <source>Compress</source>
         <translation>Komprimovat</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
         <source>Extract</source>
         <translation>Rozbalit</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="784"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
         <source>Extract here</source>
         <translation>Rozbalit zde</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="785"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
         <source>Cut</source>
         <translation>Vyjmout</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="786"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
         <source>Copy</source>
         <translation>Kopírovat</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="787"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="782"/>
         <source>Paste</source>
         <translation>Vložit</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="101"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="75"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="346"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="789"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="362"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="784"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <location filename="../views/drenamebar.cpp" line="290"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
@@ -2856,412 +2855,412 @@
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="108"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="82"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
         <source>Remove</source>
         <translation>Odstranit</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="791"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="786"/>
         <source>Create link</source>
         <translation>Vytvořit odkaz</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="787"/>
         <source>Send to desktop</source>
         <translation>Odeslat na pracovní plochu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
         <source>Send to</source>
         <translation>Odeslat na</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="789"/>
         <source>Send to Bluetooth</source>
         <translation>Odeslat přes Bluetooth</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
         <source>Add to bookmark</source>
         <translation>Přidat do záložek</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="114"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="118"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="66"/>
         <source>Properties</source>
         <translation>Vlastnosti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
         <source>New folder</source>
         <translation>Nová složka</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <source>New window</source>
         <translation>Nové okno</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
         <source>Select all</source>
         <translation>Vybrat vše</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="96"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
         <source>Clear recent history</source>
         <translation>Smazat nedávnou historii</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="106"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <location filename="../views/dfilemanagerwindow.cpp" line="1169"/>
         <source>Empty Trash</source>
         <translation>Vyprázdnit koš</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
         <source>Display as</source>
         <translation>Zobrazit jako</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
         <source>Sort by</source>
         <translation>Seřadit podle</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
         <source>New document</source>
         <translation>Nový dokument</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1097"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1167"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
         <source>Time created</source>
         <translation>Čas vytvoření</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
         <source>Log out and unmount</source>
         <translation>Odhlásit se a odpojit</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1100"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="356"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1170"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="354"/>
         <source>Source path</source>
         <translation>Zdrojový popis umístění</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
         <source>Share folder</source>
         <translation>Sdílet složku</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
         <source>Cancel sharing</source>
         <translation>Zrušit sdílení</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
         <source>Connect to Server</source>
         <translation>Připojit se k serveru</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
         <source>Set share password</source>
         <translation>Nastavit heslo pro sdílení</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
         <source>Format</source>
         <translation>Formát</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
         <source>Tag information</source>
         <translation>Informace o značce</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
         <source>Open in new window as admin</source>
         <translation>Otevřít v novém okně jako správce</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
         <source>Select default program</source>
         <translation>Vybrat výchozí program</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="776"/>
         <source>Open file location</source>
         <translation>Otevřít umístění souboru</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="785"/>
         <source>Remove bookmark</source>
         <translation>Odstranit záložku</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="791"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
         <source>Office Text</source>
         <translation>Textový dokument</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
         <source>Spreadsheets</source>
         <translation>Tabulky</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
         <source>Plain Text</source>
         <translation>Neformátovaný text</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
         <source>Open in terminal</source>
         <translation>Otevřít v terminálu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
         <source>Restore</source>
         <translation>Obnovit</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
         <source>Restore all</source>
         <translation>Obnovit vše</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
-        <location filename="../models/computermodel.cpp" line="111"/>
-        <location filename="../models/computermodel.cpp" line="126"/>
-        <location filename="../models/computermodel.cpp" line="145"/>
-        <location filename="../models/computermodel.cpp" line="166"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
+        <location filename="../models/computermodel.cpp" line="119"/>
+        <location filename="../models/computermodel.cpp" line="143"/>
+        <location filename="../models/computermodel.cpp" line="163"/>
+        <location filename="../models/computermodel.cpp" line="182"/>
         <source>File Vault</source>
         <translation>Trezor na soubory</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
         <source>Add to disc</source>
         <translation>Přidat na disk</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="439"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="443"/>
         <source>Auto mount</source>
         <translation>Připojit automaticky</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="477"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="481"/>
         <source>Open after auto mount</source>
         <translation>Po automatickém připojení otevřít</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
         <source>Mount</source>
         <translation>Připojit</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="47"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
         <source>Unmount</source>
         <translation>Odpojit</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="149"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="296"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="180"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="328"/>
         <source>Burn</source>
         <translation>Vypálit</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="156"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="187"/>
         <source>Disc name:</source>
         <translation>Název disku:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="175"/>
-        <location filename="../dialogs/burnoptdialog.cpp" line="177"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="206"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="208"/>
         <source>Maximum</source>
         <translation>Maximum</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="188"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="219"/>
         <source>Allow files to be added later</source>
         <translation>Umožnit přidávat později další soubory (neuzavírat disk)</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="197"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="228"/>
         <source>Verify data</source>
         <translation>Ověřit data</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="171"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="202"/>
         <source>Write speed:</source>
         <translation>Rychlost zápisu:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="200"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
         <source>Eject</source>
         <translation>Vysunout</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
         <source>Safely Remove</source>
         <translation>Bezpečně odstranit</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="215"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="213"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
         <source>Settings</source>
         <translation>Nastavení</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
         <source>Exit</source>
         <translation>Ukončit</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
         <source>Icon</source>
         <translation>Ikony</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
         <source>List</source>
         <translation>Seznam</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
         <source>Extend</source>
         <translation>Rozšířit</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
         <source>Set as wallpaper</source>
         <translation>Nastavit jako pozadí</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="295"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1258"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1259"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1260"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1354"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1355"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1356"/>
         <source>Local disk</source>
         <translation>Pevný disk</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="297"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1261"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1357"/>
         <source>Removable disk</source>
         <translation>Vyměnitelný disk</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="299"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1263"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1264"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1359"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1360"/>
         <source>Network shared directory</source>
         <translation>Síťová sdílená složka</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="301"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1265"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1361"/>
         <source>Android mobile device</source>
         <translation>Android mobilní zařízení</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="303"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1266"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1362"/>
         <source>Apple mobile device</source>
         <translation>Apple mobilní zařízení</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="305"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1267"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1363"/>
         <source>Camera</source>
         <translation>Kamera</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="307"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1262"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1358"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="309"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1285"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1381"/>
         <source>Unknown device</source>
         <translation>Neznámé zařízení</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1305"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="694"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1401"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="697"/>
         <source>%1 item</source>
         <translation>%1 položka</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1305"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="696"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1401"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="699"/>
         <source>%1 items</source>
         <translation>%1 položek</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1294"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1275"/>
         <source>Shortcut</source>
         <translation>-odkaz_na</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="776"/>
+        <location filename="../interfaces/dfileservices.cpp" line="775"/>
         <source>Create symlink</source>
         <translation>Vytvořit symbolický odkaz</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
         <source>Path</source>
         <translation>Popis umístění</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
         <location filename="../models/trashfileinfo.cpp" line="343"/>
         <location filename="../models/trashfileinfo.cpp" line="351"/>
         <source>Time deleted</source>
         <translation>Smazáno</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1311"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1314"/>
         <source>Loading...</source>
         <translation>Načítání…</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="793"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="835"/>
         <source>File has been moved or deleted</source>
         <translation>Soubor byl přesunut nebo smazán</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="795"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="803"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="809"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="837"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="845"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="851"/>
         <source>You do not have permission to access this folder</source>
         <translation>Nemáte oprávnění pro přistupování k této složce</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="813"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="855"/>
         <location filename="../models/recentfileinfo.cpp" line="253"/>
         <location filename="../models/trashfileinfo.cpp" line="384"/>
         <location filename="../models/vaultfileinfo.cpp" line="138"/>
@@ -3285,23 +3284,23 @@
         <translation>Zdrojový popis umístění</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="526"/>
+        <location filename="../controllers/appcontroller.cpp" line="528"/>
         <source>Document</source>
         <translation>Dokument</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="533"/>
+        <location filename="../controllers/appcontroller.cpp" line="537"/>
         <source>Spreadsheet</source>
         <translation>Tabulka</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="540"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
+        <location filename="../controllers/appcontroller.cpp" line="546"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
         <source>Presentation</source>
         <translation>Prezentace</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="547"/>
+        <location filename="../controllers/appcontroller.cpp" line="553"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
@@ -3316,69 +3315,69 @@
         <translation>%1 probíhajících úloh</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="136"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="135"/>
         <source>Mode:</source>
         <translation>Režim:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="138"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="137"/>
         <location filename="../views/drenamebar.cpp" line="236"/>
         <source>Replace Text</source>
         <translation>Nahradit text</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="138"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="137"/>
         <location filename="../views/drenamebar.cpp" line="236"/>
         <source>Add Text</source>
         <translation>Přidat text</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="138"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="137"/>
         <location filename="../views/drenamebar.cpp" line="236"/>
         <source>Custom Text</source>
         <translation>Vlastní text</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="142"/>
         <source>Find:</source>
         <translation>Najít:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="150"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="149"/>
         <source>Replace:</source>
         <translation>Nahradit:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="152"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="151"/>
         <location filename="../views/drenamebar.cpp" line="251"/>
         <source>Optional</source>
         <translation>Volitelné</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="157"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="156"/>
         <source>Add:</source>
         <translation>Přidat:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="164"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
         <source>Location:</source>
         <translation>Umístění:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="171"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="170"/>
         <source>File name:</source>
         <translation>Název souboru:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="177"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="176"/>
         <source>Start at:</source>
         <translation>Začínat na:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="146"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="159"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="173"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="179"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="145"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="158"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="172"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="178"/>
         <location filename="../views/drenamebar.cpp" line="244"/>
         <location filename="../views/drenamebar.cpp" line="258"/>
         <location filename="../views/drenamebar.cpp" line="272"/>
@@ -3387,13 +3386,13 @@
         <translation>Požadováno</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="166"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="165"/>
         <location filename="../views/drenamebar.cpp" line="265"/>
         <source>Before file name</source>
         <translation>Před názvem souboru</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="166"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="165"/>
         <location filename="../views/drenamebar.cpp" line="265"/>
         <source>After file name</source>
         <translation>Za názvem souboru</translation>
@@ -3419,8 +3418,8 @@
         <translation>Začínat na</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1126"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1196"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="325"/>
         <location filename="../views/drenamebar.cpp" line="264"/>
         <source>Location</source>
         <translation>Umístění</translation>
@@ -3431,12 +3430,12 @@
         <translation>Název souboru</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="308"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="306"/>
         <source>Dimension</source>
         <translation>Rozměr</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="296"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="294"/>
         <source>Duration</source>
         <translation>Doba trvání</translation>
     </message>
@@ -3446,14 +3445,14 @@
         <translation>Tipy: Seřazujte podle pořadí vybraných souborů</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="148"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="345"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="179"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="361"/>
         <location filename="../views/drenamebar.cpp" line="288"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1470"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
         <source>Rename %1 Files</source>
         <translation>Přejmenovat %1 souborů</translation>
     </message>
@@ -3484,8 +3483,8 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1098"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="341"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1168"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="339"/>
         <source>Time accessed</source>
         <translation>Čas přístupu</translation>
     </message>
@@ -3540,7 +3539,7 @@
         <translation>Záložky</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
         <source>Erase</source>
         <translation>Vymazat</translation>
     </message>
@@ -3555,7 +3554,7 @@
         <translation>Upravit adresu</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="325"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="357"/>
         <source>Free Space %1</source>
         <translation>Volné místo %1</translation>
     </message>
@@ -3565,19 +3564,19 @@
         <translation>Soubory jsou zpracovávány</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="476"/>
+        <location filename="../shutil/fileutils.cpp" line="478"/>
         <source>Unknown</source>
         <translation>Neznámý</translation>
     </message>
     <message>
-        <location filename="../models/vaultfileinfo.cpp" line="257"/>
+        <location filename="../models/vaultfileinfo.cpp" line="264"/>
         <source>My Vault</source>
         <translation>Můj trezor</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="169"/>
-        <location filename="../models/computermodel.cpp" line="180"/>
-        <location filename="../models/computermodel.cpp" line="571"/>
+        <location filename="../models/computermodel.cpp" line="185"/>
+        <location filename="../models/computermodel.cpp" line="196"/>
+        <location filename="../models/computermodel.cpp" line="587"/>
         <source>Disks</source>
         <translation>Disky</translation>
     </message>
@@ -3625,32 +3624,32 @@
         <translation>Povolit</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="160"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="267"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Je třeba, aby název sdílení nebyl dvě tečky (..) nebo jedna tečka (.)</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="282"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="283"/>
         <source>The share name is used by another user.</source>
         <translation>Název pro sdílení je používán jiným uživatelem.</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="283"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="284"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="285"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="286"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Název pro sdílení už existuje. Přejete si sdílenou složku nahradit?</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="286"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="287"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="287"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="288"/>
         <source>Replace</source>
         <translation>Nahradit</translation>
     </message>
@@ -4046,22 +4045,22 @@
 <context>
     <name>TrashPropertyDialog</name>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="53"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="65"/>
         <source>Trash</source>
         <translation>Koš</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="69"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="81"/>
         <source>item</source>
         <translation>položku</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="71"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="83"/>
         <source>items</source>
         <translation>položek</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="74"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="86"/>
         <source>Contains %1 %2</source>
         <translation>Obsahuje %1 %2</translation>
     </message>
@@ -4069,7 +4068,7 @@
 <context>
     <name>UDiskListener</name>
     <message>
-        <location filename="../deviceinfo/udisklistener.cpp" line="270"/>
+        <location filename="../deviceinfo/udisklistener.cpp" line="273"/>
         <source>Failed to rename the label</source>
         <translation>Štítek se nepodařilo přejmenovat</translation>
     </message>
@@ -4077,32 +4076,32 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1458"/>
-        <location filename="../controllers/appcontroller.cpp" line="1479"/>
+        <location filename="../controllers/appcontroller.cpp" line="1464"/>
+        <location filename="../controllers/appcontroller.cpp" line="1485"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disk je zaneprázdněn, nyní ho proto nelze odpojit</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1451"/>
-        <location filename="../controllers/appcontroller.cpp" line="1475"/>
+        <location filename="../controllers/appcontroller.cpp" line="1457"/>
+        <location filename="../controllers/appcontroller.cpp" line="1481"/>
         <source>Authentication timed out</source>
         <translation>Překročen časový limit pro ověření se</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1458"/>
+        <location filename="../controllers/appcontroller.cpp" line="1464"/>
         <source>The device was not safely unmounted</source>
         <translation>Zařízení nebylo odebráno bezpečně</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1479"/>
-        <location filename="../controllers/appcontroller.cpp" line="1493"/>
+        <location filename="../controllers/appcontroller.cpp" line="1485"/>
+        <location filename="../controllers/appcontroller.cpp" line="1499"/>
         <source>The device was not safely removed</source>
         <translation>Zařízení nebylo bezpečně odebráno</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1493"/>
+        <location filename="../controllers/appcontroller.cpp" line="1499"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Příště klikněte na „Bezpečně odebrat“ a až pak odpojte</translation>
+        <translation>Příště klepněte na „Bezpečně odebrat“ a až pak odpojte</translation>
     </message>
 </context>
 <context>
@@ -4143,17 +4142,17 @@
 <context>
     <name>UserSharePasswordSettingDialog</name>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="38"/>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="39"/>
         <source>Enter a password to protect shared folders</source>
         <translation>Zadejte heslo, kterým chránit přístup do sdílených složek</translation>
     </message>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="46"/>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="47"/>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="46"/>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="47"/>
         <source>Confirm</source>
         <translation>Potvrdit</translation>
     </message>

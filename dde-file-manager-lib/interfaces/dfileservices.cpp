@@ -117,9 +117,9 @@ DFileService::DFileService(QObject *parent)
     AppController::registerUrlHandle();
     // register plugins
     for (const QString &key : DFMFileControllerFactory::keys()) {
-        const QUrl url(key);
+        const QUrl qurl(key);
 
-        insertToCreatorHash(HandlerType(url.scheme(), url.host()), HandlerCreatorType(typeid(DFMFileControllerFactory).name(), [key] {
+        insertToCreatorHash(HandlerType(qurl.scheme(), qurl.host()), HandlerCreatorType(typeid(DFMFileControllerFactory).name(), [key] {
             return DFMFileControllerFactory::create(key);
         }));
     }
@@ -149,12 +149,12 @@ QVariant eventProcess(DFileService *service, const QSharedPointer<DFMEvent> &eve
     QSet<DAbstractFileController *> controller_set;
     QSet<QString> scheme_set;
 
-    for (const DUrl &url : event->handleUrlList()) {
-        QList<DAbstractFileController *> list = service->getHandlerTypeByUrl(url);
-        if (!scheme_set.contains(url.scheme())) {
-            list << service->getHandlerTypeByUrl(url, true);
+    for (const DUrl &durl : event->handleUrlList()) {
+        QList<DAbstractFileController *> list = service->getHandlerTypeByUrl(durl);
+        if (!scheme_set.contains(durl.scheme())) {
+            list << service->getHandlerTypeByUrl(durl, true);
         } else {
-            scheme_set << url.scheme();
+            scheme_set << durl.scheme();
         }
 
         for (DAbstractFileController *controller : list) {
@@ -267,19 +267,19 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     }
     case DFMEvent::DeleteFiles: {
         // 解决撤销操作后文件删除不提示问题
-        for (const DUrl &url : event->fileUrlList()) {
+        for (const DUrl &durl : event->fileUrlList()) {
             //书签保存已删除目录，在这里剔除对书签文件是否存在的判断
-            if (url.scheme() == "bookmark") {
+            if (durl.scheme() == "bookmark") {
                 result = CALL_CONTROLLER(deleteFiles);
 
                 if (result.toBool()) {
-                    for (const DUrl &url : event->fileUrlList()) {
-                        emit fileDeleted(url);
+                    for (const DUrl &r : event->fileUrlList()) {
+                        emit fileDeleted(r);
                     }
                 }
                 break;
             }
-            const DAbstractFileInfoPointer &f = createFileInfo(this, url);
+            const DAbstractFileInfoPointer &f = createFileInfo(this, durl);
             if (f && f->exists()) {
                 static bool lock = false;
                 // 如果传入的 event 中 silent 为 true，就不再弹框询问是否删除
@@ -290,8 +290,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                     result = CALL_CONTROLLER(deleteFiles);
                     lock = false;
                     if (result.toBool()) {
-                        for (const DUrl &url : event->fileUrlList()) {
-                            emit fileDeleted(url);
+                        for (const DUrl &r : event->fileUrlList()) {
+                            emit fileDeleted(r);
                         }
                     }
                 }
@@ -299,8 +299,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 if (lock) {
                     result = CALL_CONTROLLER(deleteFiles);
                     if (result.toBool()) {
-                        for (const DUrl &url : event->fileUrlList()) {
-                            emit fileDeleted(url);
+                        for (const DUrl &r : event->fileUrlList()) {
+                            emit fileDeleted(r);
                         }
                     }
                 } else {
@@ -488,8 +488,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::OpenFiles:
         result = CALL_CONTROLLER(openFiles);
         if (result.toBool()) {
-            for (auto url : event->fileUrlList()) {
-                emit fileOpened(url);
+            for (auto durl : event->fileUrlList()) {
+                emit fileOpened(durl);
             }
         }
 //        if (result.toBool()) {
@@ -499,8 +499,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::OpenFilesByApp:
         result = CALL_CONTROLLER(openFilesByApp);
         if (result.toBool()) {
-            for (auto url : event->fileUrlList()) {
-                emit fileOpened(url);
+            for (auto durl : event->fileUrlList()) {
+                emit fileOpened(durl);
             }
         }
 //        if (result.toBool()) {
@@ -700,7 +700,7 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
             for (const DUrl &nd : list) {
                 if (org.isEmpty())
                     break;
-                org.removeOne(nd);
+                org.removeAll(nd);
             }
             if (org.isEmpty()) //没有文件则清空剪切板
                 DFMGlobal::clearClipboard();
@@ -820,10 +820,10 @@ bool DFileService::sendToDesktop(const QObject *sender, const DUrlList &urlList)
     const QDir &desktopDir(desktopPath);
     bool ok = true;
 
-    for (const DUrl &url : urlList) {
-        const QString &linkName = getSymlinkFileName(url, desktopDir);
+    for (const DUrl &durl : urlList) {
+        const QString &linkName = getSymlinkFileName(durl, desktopDir);
 
-        ok = ok && createSymlink(sender, url, DUrl::fromLocalFile(desktopDir.filePath(linkName)));
+        ok = ok && createSymlink(sender, durl, DUrl::fromLocalFile(desktopDir.filePath(linkName)));
     }
 
     return ok;
@@ -860,11 +860,12 @@ bool DFileService::setFileTags(const QObject *sender, const DUrl &url, const QLi
 bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlList, const QStringList &tags, const QSet<QString> dirtyTagFilter) const
 {
     QRegExp rx("[\\\\/\':\\*\\?\"<>|%&]");
-    for (const QString &tag : tags) {
-        if (tag.indexOf(rx) >= 0) {
-            return false;
-        }
-    }
+    auto ret = std::any_of(tags.begin(), tags.end(), [rx](const QString & tag) {
+        return tag.indexOf(rx) >= 0;
+    });
+
+    if (ret)
+        return false;
 
     QStringList old_tagNames = getTagsThroughFiles(sender, urlList);//###: the mutual tags of multi files.
     QStringList dirty_tagNames; //###: for deleting.
@@ -878,8 +879,8 @@ bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlLis
 
     bool loopEvent = urlList.length() > 5;
     QList<DFMSetFileTagsEvent *> eventList;
-    for (const DUrl &url : urlList) {
-        QStringList tags_of_file = getTagsThroughFiles(sender, {url}, loopEvent);
+    for (const DUrl &durl : urlList) {
+        QStringList tags_of_file = getTagsThroughFiles(sender, {durl}, loopEvent);
         QSet<QString> tags_of_file_set = tags_set;
 
         tags_of_file_set += QSet<QString>::fromList(tags_of_file);
@@ -888,7 +889,7 @@ bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlLis
             tags_of_file_set.remove(dirty_tag);
         }
 
-        DFMSetFileTagsEvent *event = new DFMSetFileTagsEvent(sender, url, tags_of_file_set.toList());
+        DFMSetFileTagsEvent *event = new DFMSetFileTagsEvent(sender, durl, tags_of_file_set.toList());
         eventList.append(event);
     }
 
@@ -1207,17 +1208,17 @@ void DFileService::dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUr
     const DUrlList new_list = result;
 
     for (int i = 0; i < new_list.count(); ++i) {
-        const DUrl &url = new_list.at(i);
+        const DUrl &durl = new_list.at(i);
 
-        if (url.isEmpty())
+        if (durl.isEmpty())
             continue;
 
         DFMGlobal::ClipboardAction action = event.staticCast<DFMPasteEvent>()->action();
 
         if (action == DFMGlobal::ClipboardAction::CopyAction) {
-            emit fileCopied(list.at(i), url);
+            emit fileCopied(list.at(i), durl);
         } else if (action == DFMGlobal::ClipboardAction::CutAction) {
-            emit fileRenamed(list.at(i), url);
+            emit fileRenamed(list.at(i), durl);
         }
     }
 

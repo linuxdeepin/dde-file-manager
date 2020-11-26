@@ -164,12 +164,14 @@ void DFileViewHelperPrivate::init()
     });
     QObject::connect(qApp, &DApplication::iconThemeChanged, q->parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {
-        for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs())
-        {
-            QWidget *item = q->indexWidget(index);
+        if (q->itemDelegate()) {
+            for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs())
+            {
+                QWidget *item = q->indexWidget(index);
 
-            if (item) {
-                item->setProperty("opacity", q->isTransparent(index) ? 0.3 : 1);
+                if (item) {
+                    item->setProperty("opacity", q->isTransparent(index) ? 0.3 : 1);
+                }
             }
         }
 
@@ -710,12 +712,11 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
         option.rect = rect;
 
         const QList<QRect> &geometry_list = itemDelegate()->paintGeomertys(option, index);
-
-        for (const QRect &rect : geometry_list) {
-            if (rect.contains(pos)) {
-                return false;
-            }
-        }
+        auto ret = std::any_of(geometry_list.begin(), geometry_list.end(), [pos](const QRect & rect) {
+            return rect.contains(pos);
+        });
+        if (ret)
+            return false;
     }
 
     return index.isValid();//true;

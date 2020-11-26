@@ -41,7 +41,6 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "singleton.h"
-#include "../shutil/fileutils.h"
 #include "dabstractfilewatcher.h"
 #include "models/dfmrootfileinfo.h"
 #include "models/computermodel.h"
@@ -49,6 +48,8 @@
 #include "views/dfmopticalmediawidget.h"
 #include "models/deviceinfoparser.h"
 #include "controllers/vaultcontroller.h"
+#include "accessibility/ac-lib-file-manager.h"
+#include "../shutil/fileutils.h"
 
 #include <dslider.h>
 
@@ -114,6 +115,9 @@ Q_SIGNALS:
 
 ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
 {
+    AC_SET_OBJECT_NAME(this, AC_COMPUTER_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_VIEW);
+
     m_view = new ComputerListView(this);
     m_statusbar = new DStatusBar(this);
     m_statusbar->scalingSlider()->setMaximum(iconsizes.count() - 1);
@@ -149,28 +153,28 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     m_statusbar->itemCounted(event, m_model->itemCount());
 
     connect(m_model, &ComputerModel::itemCountChanged, this, [this](int count) {
-        DFMEvent event(this);
-        event.setWindowId(this->window()->internalWinId());
+        DFMEvent dfmevent(this);
+        dfmevent.setWindowId(this->window()->internalWinId());
         if (this->m_view->selectionModel()->currentIndex().isValid()) {
             return;
         }
-        this->m_statusbar->itemCounted(event, count);
+        this->m_statusbar->itemCounted(dfmevent, count);
     });
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this] {
-        DFMEvent event(this);
-        event.setWindowId(this->window()->internalWinId());
+        DFMEvent dfmevent(this);
+        dfmevent.setWindowId(this->window()->internalWinId());
         if (this->m_view->selectionModel()->hasSelection())
         {
             QModelIndex curidx(this->m_view->selectionModel()->currentIndex());
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, curidx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>());
             if (fi && fi->suffix() == SUFFIX_USRDIR) {
                 DUrlList urlList{curidx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()};
-                event.setData(urlList);
+                dfmevent.setData(urlList);
             }
-            this->m_statusbar->itemSelected(event, 1);
+            this->m_statusbar->itemSelected(dfmevent, 1);
             return;
         }
-        this->m_statusbar->itemCounted(event, this->m_model->itemCount());
+        this->m_statusbar->itemCounted(dfmevent, this->m_model->itemCount());
     });
 
     connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView::contextMenu);
@@ -383,6 +387,8 @@ bool ComputerView::eventFilter(QObject *obj, QEvent *event)
 ComputerListView::ComputerListView(QWidget *parent)
     : QListView(parent)
 {
+    AC_SET_OBJECT_NAME(this, AC_COMPUTER_LIST_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_LIST_VIEW);
     setMouseTracking(true);
 }
 

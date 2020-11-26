@@ -138,6 +138,7 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
     }
     DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disabled);
     menu->setEventData(DUrl(), {item->url()}, WindowManager::getWindowId(wnd), sidebar);
+    menu->setAccessibleInfo(AC_FILE_MENU_SIDEBAR_DEVICE_ITEM);
 
     return menu;
 }

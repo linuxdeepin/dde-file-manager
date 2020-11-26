@@ -1,4 +1,6 @@
 #include "models/bookmark.h"
+#include "controllers/bookmarkmanager.h"
+#include "dfmevent.h"
 
 #include <gtest/gtest.h>
 
@@ -8,14 +10,15 @@ class TestBookMark : public testing::Test
 public:
     void SetUp() override
     {
-        std::cout << "start TestBookMark";
+        std::cout << "start TestBookMark\n";
 
-        bm = new BookMark(DUrl("bookmark:///test"));
+        bm = new BookMark("Test", DUrl("file:///usr/bin"));
     }
 
     void TearDown() override
     {
-        std::cout << "end TestBookMark";
+        std::cout << "end TestBookMark\n";
+        delete bm;
     }
 
 public:
@@ -23,37 +26,34 @@ public:
 };
 } // namespace
 
-TEST_F(TestBookMark, sourceUrl)
+TEST_F(TestBookMark, tstConstructorWithoutName)
 {
-    EXPECT_STREQ("/test", bm->sourceUrl().path().toStdString().c_str());
+    BookMark b(DUrl("/home"));
+    EXPECT_TRUE(b.exists());
 }
 
-TEST_F(TestBookMark, bookmarkName)
+TEST_F(TestBookMark, tstBasicProperties)
 {
-    EXPECT_STREQ("", bm->getName().toStdString().c_str());
-}
+    auto u = bm->sourceUrl();
+    EXPECT_TRUE(u.path() == "/usr/bin");
 
-TEST_F(TestBookMark, bookmarkIsExist)
-{
-    EXPECT_TRUE(bm->exists());
-}
+    auto name = bm->fileDisplayName();
+    EXPECT_TRUE(name == "Test");
 
-TEST_F(TestBookMark, fileDisplayName)
-{
-    EXPECT_STREQ("", bm->fileDisplayName().toStdString().c_str());
-}
+    auto mpt = bm->getMountPoint();
+    EXPECT_TRUE(!mpt.isEmpty());
 
-TEST_F(TestBookMark, canRedirectUrl)
-{
     EXPECT_TRUE(bm->canRedirectionFileUrl());
+
+    u = bm->redirectedFileUrl();
+    EXPECT_TRUE(!u.isValid());
+
+    u = bm->parentUrl();
+    EXPECT_TRUE(!u.isValid());
+
+    auto dt = bm->created();
+    EXPECT_TRUE(dt.isValid());
+    dt = bm->lastModified();
+    EXPECT_TRUE(dt.isValid());
 }
 
-TEST_F(TestBookMark, redirectUrl)
-{
-    EXPECT_STREQ("/test", bm->redirectedFileUrl().path().toStdString().c_str());
-}
-
-TEST_F(TestBookMark, parentUrl)
-{
-    EXPECT_STREQ("/", bm->parentUrl().path().toStdString().c_str());
-}

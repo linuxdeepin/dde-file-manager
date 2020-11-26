@@ -477,6 +477,8 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
 {
     if (role == Qt::EditRole) {
         ComputerModelItemData *pitmdata = &m_items[index.row()];
+        if (!pitmdata || !pitmdata->fi)
+            return false;
         if (!pitmdata->fi->canRename()) {
             return false;
         }

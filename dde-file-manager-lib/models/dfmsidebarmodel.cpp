@@ -39,7 +39,8 @@ DFMSideBarModel::DFMSideBarModel(QObject *parent)
 bool DFMSideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
     // when drag onto the empty space of the area, just return false.
-    if (column == -1 || row == -1) return false;
+    if (column == -1 || row == -1 || !data)
+        return false;
 
     Q_ASSERT(column == 0);
 
@@ -84,9 +85,9 @@ bool DFMSideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction acti
 QMimeData *DFMSideBarModel::mimeData(const QModelIndexList &indexes) const
 {
     QMimeData * data = QStandardItemModel::mimeData(indexes);
-
+    if (!data)
+        return nullptr;
     data->setData(MODELITEM_MIMETYPE, generateMimeData(indexes));
-
     return data;
 }
 
@@ -110,6 +111,8 @@ DFMSideBarItem *DFMSideBarModel::itemFromIndex(int index) const
 
 QByteArray DFMSideBarModel::generateMimeData(const QModelIndexList &indexes) const
 {
+    if (indexes.isEmpty())
+        return QByteArray();
     QByteArray encoded;
     QDataStream stream(&encoded, QIODevice::WriteOnly);
     stream << indexes.first().row();

@@ -271,6 +271,7 @@ QString BackgroundManager::getDefaultBackground() const
 BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer screen)
 {
     BackgroundWidgetPointer bwp(new BackgroundWidget);
+    bwp->setAccessableInfo(screen->name());
     bwp->setProperty("isPreview", m_preview);
     bwp->setProperty("myScreen", screen->name()); // assert screen->name is unique
     //bwp->createWinId();   //不创建，4k下有bug
@@ -291,7 +292,7 @@ bool BackgroundManager::isEnabled() const
 {
     // 只支持kwin，或未开启混成的桌面环境
 //    return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
-    return true;
+    return m_backgroundEnable;
 }
 
 void BackgroundManager::setVisible(bool visible)
@@ -325,7 +326,7 @@ void BackgroundManager::setBackgroundImage(const QString &screen, const QString 
 void BackgroundManager::onBackgroundBuild()
 {
     //屏幕模式判断
-    AbstractScreenManager::DisplayMode mode = ScreenMrg->displayMode();
+    AbstractScreenManager::DisplayMode mode = ScreenMrg->lastChangedMode();
     qDebug() << "screen mode" << mode << "screen count" << ScreenMrg->screens().size();
 
     //删除不存在的屏
@@ -375,7 +376,7 @@ void BackgroundManager::onBackgroundBuild()
 void BackgroundManager::onSkipBackgroundBuild()
 {
     //通知view重建
-    emit sigBackgroundBuilded(ScreenMrg->displayMode());
+    emit sigBackgroundBuilded(ScreenMrg->lastChangedMode());
 }
 
 void BackgroundManager::onResetBackgroundImage()

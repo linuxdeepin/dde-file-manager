@@ -66,6 +66,7 @@ include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
 include(vault/vault.pri)
 include(fulltextsearch/fulltextsearch.pri)
+include(log/log.pri)
 
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
@@ -142,4 +143,5 @@ system(find $$OUT_PWD -name "*.gcda" -print0 | xargs -0 rm -f)
 
 include(../third-party/googletest/gtest_dependency.pri)
 include(tests/test.pri)
+include(../third-party/cpp-stub/stub.pri)
 LIBS += -lgcov

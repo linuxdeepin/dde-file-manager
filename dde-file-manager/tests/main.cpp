@@ -1,7 +1,9 @@
-//#include "interfaces/tst_all_interfaces.h"
-
 #include <gtest/gtest.h>
-#include <QDebug>
+
+#define private public
+#include "singleapplication.h"
+#undef private
+#include "testhelper.h"
 
 static void noMessageHandler(QtMsgType type, const QMessageLogContext &context,
                                    const QString &message)
@@ -10,11 +12,14 @@ static void noMessageHandler(QtMsgType type, const QMessageLogContext &context,
 }
 int main(int argc, char *argv[])
 {
-    qDebug() << "start dde-file-manager test cases ..............";
     //不打印应用的输出日志
-    qInstallMessageHandler(noMessageHandler);
+    SingleApplication app(argc,argv);
+    SingleApplication::initSources();
     ::testing::InitGoogleTest(&argc, argv);
+    qInstallMessageHandler(noMessageHandler);
     int ret = RUN_ALL_TESTS();
-    qDebug() << "end dde-file-manager test cases ..............";
+    TestHelper::runInLoop([&]{
+        app.handleQuitAction();
+    });
     return ret;
 }

@@ -227,7 +227,10 @@ HEADERS += \
     $$PWD/interfaces/drootfilemanager.h \
     $$PWD/interfaces/dgvfsfileinfo.h \
     $$PWD/interfaces/private/dgvfsfileinfo_p.h \
-    $$PWD/shutil/checknetwork.h
+    $$PWD/shutil/checknetwork.h \
+    $$PWD/accessibility/ac-lib-file-manager.h \
+    $$PWD/accessibility/acintelfunctions.h \
+    $$PWD/bluetooth/bluetoothmanager_p.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \

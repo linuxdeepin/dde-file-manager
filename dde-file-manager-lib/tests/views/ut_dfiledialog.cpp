@@ -40,7 +40,7 @@ TEST_F(TestDFileDialog, can_set_get_dir)
 
 TEST_F(TestDFileDialog, can_set_get_url)
 {
-    m_fileDialog->setDirectoryUrl(QUrl::fromLocalFile("/home"));
+    m_fileDialog->setDirectoryUrl(DUrl(QUrl::fromLocalFile("/home")));
     QUrl url = m_fileDialog->directoryUrl();
 
     QString p = url.path();

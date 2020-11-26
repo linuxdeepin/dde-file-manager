@@ -80,12 +80,12 @@ void MusicMessageView::initUI()
     QHBoxLayout *artistLayout = new QHBoxLayout;
     artistLayout->addWidget(m_artistLabel);
     artistLayout->addSpacing(5);
-    artistLayout->addWidget(m_artistValue,1);
+    artistLayout->addWidget(m_artistValue, 1);
 
     QHBoxLayout *albumLayout = new QHBoxLayout;
     albumLayout->addWidget(m_albumLabel);
     albumLayout->addSpacing(5);
-    albumLayout->addWidget(m_albumValue,1);
+    albumLayout->addWidget(m_albumValue, 1);
 
     QVBoxLayout *messageLayout = new QVBoxLayout;
     messageLayout->setSpacing(0);
@@ -143,22 +143,20 @@ void MusicMessageView::updateElidedText()
 
 void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
-    if (status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia)
-    {
+    if (status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia) {
         MediaMeta meta = tagOpenMusicFile(m_uri);
         m_title = meta.title;
-        if(m_title.isEmpty())
-        {
+        if (m_title.isEmpty()) {
             QFileInfo file(m_uri);
             QString fileName = file.baseName();
             m_title = fileName;
         }
         m_artist = meta.artist;
-        if(m_artist.isEmpty())
+        if (m_artist.isEmpty())
             m_artist = QString(tr("unknown artist"));
 
         m_album = meta.album;
-        if(m_album.isEmpty())
+        if (m_album.isEmpty())
             m_album = QString(tr("unknown album"));
 
         QImage img = m_player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
@@ -218,8 +216,7 @@ QList<QByteArray> MusicMessageView::detectEncodings(const QByteArray &rawData)
         charsets.clear();
     }
 
-    for (int32_t match = 0; match < matchCount; match += 1)
-    {
+    for (int32_t match = 0; match < matchCount; match += 1) {
         const char *name = ucsdet_getName(csm[match], &status);
         const char *lang = ucsdet_getLanguage(csm[match], &status);
         if (lang == nullptr || strlen(lang) == 0) {
@@ -244,23 +241,21 @@ MediaMeta MusicMessageView::tagOpenMusicFile(const QString &path)
 
     TagLib::Tag *tag = f.tag();
 
-    if (!f.file())
-    {
+    if (!f.file()) {
         qCritical() << "TagLib: open file failed:" << path << f.file();
     }
 
-    if (!tag)
-    {
-       qWarning() << "TagLib: no tag for media file" << path;
-       return MediaMeta();
+    if (!tag) {
+        qWarning() << "TagLib: no tag for media file" << path;
+        return MediaMeta();
     }
 
     MediaMeta meta;
-    characterEncodingTransform(meta, static_cast<void*>(tag));
+    characterEncodingTransform(meta, static_cast<void *>(tag));
     return meta;
 }
 
-void MusicMessageView::characterEncodingTransform(MediaMeta & meta, void * obj)
+void MusicMessageView::characterEncodingTransform(MediaMeta &meta, void *obj)
 {
     TagLib::Tag *tag = static_cast<TagLib::Tag *>(obj);
     bool encode = true;
@@ -270,24 +265,23 @@ void MusicMessageView::characterEncodingTransform(MediaMeta & meta, void * obj)
 
     QByteArray detectByte;
     QByteArray detectCodec;
-    if (encode)
-    {
-        if (detectCodec.isEmpty())
-        {
+    if (encode) {
+        if (detectCodec.isEmpty()) {
             detectByte += tag->title().toCString();
             detectByte += tag->artist().toCString();
             detectByte += tag->album().toCString();
             auto allDetectCodecs = detectEncodings(detectByte);
             auto localeCode = localeCodes.value(QLocale::system().name());
 
-            for (auto curDetext : allDetectCodecs)
-            {
-                if (curDetext == "Big5" || curDetext == localeCode)
-                {
-                    detectCodec = curDetext;
-                    break;
-                }
+            auto iter = std::find_if(allDetectCodecs.begin(), allDetectCodecs.end(),
+            [localeCode](const QByteArray & curDetext) {
+                return (curDetext == "Big5" || curDetext == localeCode);
+            });
+
+            if (iter != allDetectCodecs.end()) {
+                detectCodec = *iter;
             }
+
             if (detectCodec.isEmpty())
                 detectCodec = allDetectCodecs.value(0);
 
@@ -296,44 +290,36 @@ void MusicMessageView::characterEncodingTransform(MediaMeta & meta, void * obj)
                 curStr = QString::fromLocal8Bit(tag->artist().toCString());
             if (curStr.isEmpty())
                 curStr = QString::fromLocal8Bit(tag->album().toCString());
-            for (auto ch : curStr)
-            {
-                if (isChinese(ch))
-                {
-                    detectCodec = "GB18030";
-                    break;
-                }
+
+            auto ret = std::any_of(curStr.begin(), curStr.end(), [this](const QChar & ch) {
+                return isChinese(ch);
+            });
+
+            if (ret) {
+                detectCodec = "GB18030";
             }
         }
 
         QString detectCodecStr(detectCodec);
-        if (detectCodecStr.compare("utf-8", Qt::CaseInsensitive) == 0)
-        {
+        if (detectCodecStr.compare("utf-8", Qt::CaseInsensitive) == 0) {
             meta.album = TStringToQString(tag->album());
             meta.artist = TStringToQString(tag->artist());
             meta.title = TStringToQString(tag->title());
             meta.codec = "UTF-8";  //info codec
-        }
-        else
-        {
+        } else {
             QTextCodec *codec = QTextCodec::codecForName(detectCodec);
-            if (codec == nullptr)
-            {
+            if (codec == nullptr) {
                 meta.album = TStringToQString(tag->album());
                 meta.artist = TStringToQString(tag->artist());
                 meta.title = TStringToQString(tag->title());
-            }
-            else
-            {
+            } else {
                 meta.album = codec->toUnicode(tag->album().toCString());
                 meta.artist = codec->toUnicode(tag->artist().toCString());
                 meta.title = codec->toUnicode(tag->title().toCString());
             }
             meta.codec = detectCodec;
         }
-    }
-    else
-    {
+    } else {
         meta.album = TStringToQString(tag->album());
         meta.artist = TStringToQString(tag->artist());
         meta.title = TStringToQString(tag->title());

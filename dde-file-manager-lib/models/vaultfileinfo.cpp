@@ -32,11 +32,11 @@
 class VaultFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
-    VaultFileInfoPrivate(const DUrl &url, VaultFileInfo *qq) : DAbstractFileInfoPrivate(url, qq, false) {}
+    VaultFileInfoPrivate(const DUrl &url, VaultFileInfo *qq) : DAbstractFileInfoPrivate(url, qq, true) {}
 };
 
 VaultFileInfo::VaultFileInfo(const DUrl &url)
-    : DAbstractFileInfo(url, false)
+    : DAbstractFileInfo(url, true)
 {
     // normal file map to..
     DUrl actualUrl = DUrl::fromLocalFile(VaultController::vaultToLocal(url));

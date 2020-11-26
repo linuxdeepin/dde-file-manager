@@ -82,12 +82,18 @@ public:
 
     QString fileName() const override
     {
-        return m_currentInfo->fileName();
+        if (m_currentInfo) {
+            return m_currentInfo->fileName();
+        }
+        else return "";
     }
 
     DUrl fileUrl() const override
     {
-        return m_currentInfo->fileUrl();
+        if (m_currentInfo) {
+            return m_currentInfo->fileUrl();
+        }
+        else return DUrl("");
     }
 
     const DAbstractFileInfoPointer fileInfo() const override
@@ -123,12 +129,13 @@ NetworkController::~NetworkController()
 const DAbstractFileInfoPointer NetworkController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     NetworkFileInfo *info = new NetworkFileInfo(event->url());
+    auto nodes = NetworkManager::NetworkNodes.value(DUrl(NETWORK_ROOT));
+    auto iter = std::find_if(nodes.begin(), nodes.end(), [event](const NetworkNode & node) {
+        return DUrl(node.url()) == event->url();
+    });
 
-    for (const NetworkNode &node : NetworkManager::NetworkNodes.value(DUrl(NETWORK_ROOT))) {
-        if (DUrl(node.url()) == event->url()) {
-            info->setNetworkNode(node);
-            break;
-        }
+    if (iter != nodes.end()) {
+        info->setNetworkNode(*iter);
     }
 
     return DAbstractFileInfoPointer(info);

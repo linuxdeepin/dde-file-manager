@@ -16,6 +16,7 @@ public:
     void paintEvent(QPaintEvent *event) override;
     void setView(const QSharedPointer<CanvasGridView> &);
     inline QPixmap pixmap() const {return m_pixmap;}
+    void setAccessableInfo(const QString& info);
 private:
     QPixmap m_pixmap;
     QPixmap m_noScalePixmap;

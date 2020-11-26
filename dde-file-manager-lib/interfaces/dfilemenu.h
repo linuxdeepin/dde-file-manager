@@ -29,7 +29,7 @@
 
 #include "dfmglobal.h"
 #include "durl.h"
-
+#include "accessibility/ac-lib-file-manager.h"
 #include <QModelIndex>
 
 class DFMMenuActionEvent;
@@ -59,6 +59,8 @@ public:
     DUrlList selectedUrls() const;
     void setCanUse(const bool canuse);
     void mouseMoveEvent(QMouseEvent * event) override;
+
+    void setAccessibleInfo(const QString& name);
 
 public Q_SLOTS:
     void deleteLater(QWidget *w = nullptr);

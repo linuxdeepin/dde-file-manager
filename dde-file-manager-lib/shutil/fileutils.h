@@ -49,6 +49,7 @@ public:
     static QStringList CURRENT_ISGVFSFILE_PATH;
 
     static bool removeRecurse(const QString &path, const QString &name);
+    static bool isAncestorUrl(const DUrl &ancestor, const DUrl &url);
     static void recurseFolder(const QString &path, const QString &parent,
                               QStringList *list);
     static int filesCount(const QString &dir);

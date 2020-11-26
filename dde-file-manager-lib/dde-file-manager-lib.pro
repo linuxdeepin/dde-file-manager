@@ -23,7 +23,6 @@ TEMPLATE = lib
 CONFIG += create_pc create_prl no_install_prl
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
-DEFINES += BLUETOOTH_ENABLE
 
 # sp3 不稳定的feature，使用宏 UNSTABLE_FEATURE_ENABLE 屏蔽，待稳定后放开
 #DEFINES += SP3_UNSTABLE_FEATURE_ENABLE
@@ -54,6 +53,15 @@ CONFIG(DISABLE_ANYTHING) {
     message("Quick search and tag support disabled dut to Anything support disabled.")
     DEFINES += DISABLE_QUICK_SEARCH
     DEFINES += DISABLE_TAG_SUPPORT
+}
+
+# 获取标签系统设置
+#AC_FUNC_ENABLE = true
+AC_FUNC_ENABLE = $$(ENABLE_AC_FUNC)
+# 检查集成测试标签
+equals( AC_FUNC_ENABLE, true ){
+    DEFINES += ENABLE_ACCESSIBILITY
+    message("lib-dde-file-manager enabled accessibility function with set: " $$AC_FUNC_ENABLE)
 }
 
 include(../dialogs/dialogs.pri)

@@ -278,6 +278,9 @@ DFileView::DFileView(QWidget *parent)
     d_ptr->touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 #endif
 
+    AC_SET_OBJECT_NAME(this, AC_FILE_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_FILE_VIEW);
+
     initUI();
     initModel();
     initDelegate();
@@ -554,9 +557,11 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
 
         const QList<QRect> &list = itemDelegate()->paintGeomertys(option, tmp_index);
 
-        for (const QRect &rect : list)
-            if (rect.contains(pos))
-                return tmp_index;
+        auto ret = std::any_of(list.begin(), list.end(), [pos](const QRect & rect) {
+            return rect.contains(pos);
+        });
+        if (ret)
+            return tmp_index;
 
         return  QModelIndex();
     }
@@ -942,6 +947,11 @@ QList<QAction *> DFileView::toolBarActionList() const
     Q_D(const DFileView);
 
     return d->toolbarActionGroup->actions();
+}
+
+void DFileView::setDestroyFlag(bool flag)
+{
+    m_destroyFlag = flag;
 }
 
 void DFileView::setFilters(QDir::Filters filters)
@@ -1471,8 +1481,14 @@ void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex 
 void DFileView::delayUpdateStatusBar()
 {
     Q_D(DFileView);
+
     // when QItemSelectionModel::selectionChanged emit we get selectedUrls() were old selecturls
     // so we wait...
+
+    if (m_destroyFlag) {
+        return;
+    }
+
     //判断网络文件是否可以到达
     if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
         d->updateStatusBarTimer->stop();
@@ -1650,7 +1666,7 @@ void DFileView::onDriveOpticalChanged(const QString &path)
 {
     Q_D(DFileView);
 
-    for (auto i : d->diskmgr->blockDevices()) {
+    for (auto i : d->diskmgr->blockDevices({})) {
         QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(i));
         if (path == blkdev->drive()) {
             qDebug() << QString(blkdev->device());
@@ -1891,16 +1907,6 @@ void DFileView::dropEvent(QDropEvent *event)
         stopAutoScroll();
         setState(NoState);
         viewport()->update();
-    }
-    //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
-    QWidget *parentptr = parentWidget();
-    QWidget *curwindow = nullptr;
-    while (parentptr) {
-        curwindow = parentptr;
-        parentptr = parentptr->parentWidget();
-    }
-    if (curwindow) {
-        qApp->setActiveWindow(curwindow);
     }
 
     if (DFileDragClient::checkMimeData(event->mimeData())) {
@@ -2493,8 +2499,6 @@ bool DFileView::setRootUrl(const DUrl &url)
             fw->setFuture(QtConcurrent::run([ = ] {
                 if (pCdStatusInfo->bProcessLocked)
                     return false;
-                pCdStatusInfo->bProcessLocked = true;
-
                 QMutexLocker locker(getOpticalDriveMutex());
                 blkdev->unmount({});
 
@@ -2860,8 +2864,8 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
     if (actions.isEmpty())
         return;
-    // sp3 feature: root用户和服务器版本用户不需要以管理员身份打开的功能
-    if (DFMGlobal::isRootUser() || DFMGlobal::isServerSys()) {
+    // sp3 feature: root用户, 服务器版本用户, 非开发者模式均不需要以管理员身份打开的功能
+    if (DFMGlobal::isRootUser() || DFMGlobal::isServerSys() || !DFMGlobal::isDeveloperMode()) {
         actions.removeAll(MenuAction::OpenAsAdmin);
     }
 
@@ -3005,6 +3009,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         menu = DFileMenuManager::createVaultMenu(this->topLevelWidget());
     } else {
         menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(windowId()), false);
+        menu->setAccessibleInfo(AC_FILE_MENU_FILEVIEW);
     }
     lock = true;
 

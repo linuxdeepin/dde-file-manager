@@ -85,6 +85,7 @@
 #include <QButtonGroup>
 #include <QProgressBar>
 #include <QPainter>
+#include <QPainterPath>
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QStorageInfo>
@@ -289,8 +290,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 {
     setSizeGripEnabled(true);
 
-    if(DFMGlobal::isWayLand())
-    {
+    if (DFMGlobal::isWayLand()) {
         //设置对话框窗口最大最小化按钮隐藏
         this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
         this->setAttribute(Qt::WA_NativeWindow);
@@ -298,8 +298,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
-    }
-    else {
+    } else {
         setAttribute(Qt::WA_DeleteOnClose);
         setWindowFlags(windowFlags()
                        & ~ Qt::WindowMaximizeButtonHint
@@ -466,8 +465,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
                     if (!fileInfo->redirectedFileUrl().isTrashFile()) {
                         titleList << authManager;
                     }
-                }
-                else {
+                } else {
                     titleList << authManager;
                 }
             }
@@ -754,12 +752,12 @@ void PropertyDialog::showTextShowFrame()
 
                 dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
             }
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
+            const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, m_url);
 
-            initTextShowFrame(fileInfo->fileDisplayName());
+            initTextShowFrame(info->fileDisplayName());
 
             if (m_shareinfoFrame) {
-                m_shareinfoFrame->setFileinfo(fileInfo);
+                m_shareinfoFrame->setFileinfo(info);
             }
         } else {
             m_editStackWidget->setCurrentIndex(1);
@@ -825,10 +823,9 @@ void PropertyDialog::flickFolderToSidebar(const DUrl &fileUrl)
     m_xani = new QVariantAnimation(this);
     m_xani->setStartValue(m_aniLabel->pos());
     m_xani->setEndValue(QPoint(targetPos.x(), angle));
-    if(DFMGlobal::isWayLand()){
+    if (DFMGlobal::isWayLand()) {
         m_xani->setDuration(700);
-    }
-    else {
+    } else {
         m_xani->setDuration(440);
     }
 
@@ -837,10 +834,9 @@ void PropertyDialog::flickFolderToSidebar(const DUrl &fileUrl)
     m_gani->setStartValue(m_aniLabel->geometry());
     m_gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
     m_gani->setEasingCurve(QEasingCurve::InBack);
-    if(DFMGlobal::isWayLand()){
+    if (DFMGlobal::isWayLand()) {
         m_gani->setDuration(700);
-    }
-    else {
+    } else {
         m_gani->setDuration(440);
     }
 
@@ -895,12 +891,12 @@ void PropertyDialog::onHideFileCheckboxChecked(bool checked)
     bool save = false;
     qDebug() << info.absolutePath();
     if (checked) {
-        if (!flf.contains(fileName)){
+        if (!flf.contains(fileName)) {
             flf.insert(fileName);
             save = true;
         }
     } else {
-        if (flf.contains(fileName)){
+        if (flf.contains(fileName)) {
             flf.remove(info.fileName());
             save = true;
         }
@@ -1034,11 +1030,11 @@ int PropertyDialog::contentHeight() const
 int PropertyDialog::getDialogHeight() const
 {
     int totalHeight = this->size().height() + contentHeight() ;
-
-    for (const DDrawer *expand : m_expandGroup) {
+    totalHeight += std::accumulate(m_expandGroup.begin(), m_expandGroup.end(), 0, [](int total, const DDrawer * expand) {
         if (expand->expand())
-            totalHeight += expand->window()->height();
-    }
+            return total += expand->window()->height();
+        return total;
+    });
 
     return totalHeight;
 }
@@ -1079,9 +1075,9 @@ void PropertyDialog::initExpand(QVBoxLayout *layout, DDrawer *expand)
 
     DEnhancedWidget *hanceedWidget = new DEnhancedWidget(expand, expand);
     connect(hanceedWidget, &DEnhancedWidget::heightChanged, hanceedWidget, [ = ]() {
-        QRect rc = geometry();
-        rc.setHeight(contentHeight() + ArrowLineExpand_SPACING * 2);
-        setGeometry(rc);
+        QRect rect = geometry();
+        rect.setHeight(contentHeight() + ArrowLineExpand_SPACING * 2);
+        setGeometry(rect);
     });
 }
 
@@ -1316,7 +1312,7 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
         connect(sideBar, &DFMSideBar::addUserShareItemFinished, this, &PropertyDialog::flickFolderToSidebar);
     }
 
-    if(DFMGlobal::isWayLand()){
+    if (DFMGlobal::isWayLand()) {
         // 取消共享时停止动画效果
         connect(frame, &ShareInfoFrame::unfolderShared, this, &PropertyDialog::onCancelShare);
     }
@@ -1649,9 +1645,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
         QString filePath = info->path();
         if (VaultController::ins()->isVaultFile(info->path())) { // Vault file need to use stat function to read file permission.
-            QString filePath = info->toLocalFile();
+            QString localFile = info->toLocalFile();
             struct stat buf;
-            std::string stdStr = filePath.toStdString();
+            std::string stdStr = localFile.toStdString();
             stat(stdStr.c_str(), &buf);
             if ((buf.st_mode & S_IXUSR) || (buf.st_mode & S_IXGRP) || (buf.st_mode & S_IXOTH)) {
                 m_executableCheckBox->setChecked(true);

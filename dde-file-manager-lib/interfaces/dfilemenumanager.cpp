@@ -144,7 +144,9 @@ DFileMenu *DFileMenuManager::createUserShareMarkMenu(const QSet<MenuAction> &dis
     actionKeys << MenuAction::OpenInNewWindow
                << MenuAction::OpenInNewTab;
 
-    return genereteMenuByKeys(actionKeys, disableList);
+    DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList);
+    menu->setAccessibleInfo(AC_FILE_MENU_USER_SHARE);
+    return menu;
 }
 
 DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &disableList)
@@ -160,7 +162,9 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
 
-    return genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
+    DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
+    menu->setAccessibleInfo(AC_FILE_MENU_TOOLBAR_SEETINGS);
+    return menu;
 }
 
 DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop)
@@ -185,8 +189,8 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 
         // feat 蓝牙：当选中的列表中包含文件夹时不予启用蓝牙发送选项
         if (bluetoothManager->model()->adapters().count() > 0 && enableSendToBluetooth) {
-            DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, urls[i]);
-            if (fileInfo && fileInfo->isDir())
+            DAbstractFileInfoPointer file_info = fileService->createFileInfo(nullptr, urls[i]);
+            if (file_info && file_info->isDir())
                 enableSendToBluetooth = false;
         }
     }
@@ -271,9 +275,9 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 
         redirectedUrlList.clear();
         foreach (DUrl url, urls) {
-            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
+            const DAbstractFileInfoPointer &file_info = fileService->createFileInfo(Q_NULLPTR, url);
             // fix bug202007010011 优化文件判断效率，提升右键菜单响应速度
-            auto redirectedUrl = fileInfo->redirectedFileUrl();
+            auto redirectedUrl = file_info->redirectedFileUrl();
             if (redirectedUrl.isValid()) {
                 redirectedUrlList << redirectedUrl;
             }
@@ -282,7 +286,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                 isAllCompressedFiles = false;
             }
 
-            if (systemPathManager->isSystemPath(fileInfo->fileUrl().toLocalFile())) {
+            if (systemPathManager->isSystemPath(file_info->fileUrl().toLocalFile())) {
                 isSystemPathIncluded = true;
             }
 
@@ -290,12 +294,12 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                 continue;
             }
 
-            QStringList mimeTypeList = { fileInfo->mimeType().name() };
-            mimeTypeList.append(fileInfo->mimeType().parentMimeTypes());
+            QStringList mimeTypeList = { file_info->mimeType().name() };
+            mimeTypeList.append(file_info->mimeType().parentMimeTypes());
             bool matched = false;
 
             //后缀名相同直接匹配
-            if (fileInfo->suffix() == info->suffix()) {
+            if (file_info->suffix() == info->suffix()) {
                 matched = true;
             } else {
                 for (const QString &oneMimeType : mimeTypeList) {
@@ -438,10 +442,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
     }
 
     if (deviceListener->isMountedRemovableDiskExits()
-#ifdef BLUETOOTH_ENABLE
-            || bluetoothManager->model()->adapters().count() > 0
-#endif
-       ) {
+            || bluetoothManager->model()->adapters().count() > 0) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
         if (currentUrl.path().contains("/dev/sr")
                 || (currentUrl.scheme() == SEARCH_SCHEME && currentUrl.query().contains("/dev/sr"))) // 禁用光盘搜索列表中的发送到选项
@@ -449,7 +450,6 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         else {
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
-#ifdef BLUETOOTH_ENABLE // (暂时屏蔽蓝牙入口，还未开发完成)
                 if (bluetoothManager->model()->adapters().count() > 0) { // 如果有蓝牙设备
                     QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
                     sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
@@ -459,7 +459,6 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     if (!enableSendToBluetooth)
                         sendToBluetooth->setEnabled(false);
                 }
-#endif
 
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
                     //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用 id="/dev/sr1" -> tempId="sr1"
@@ -479,8 +478,8 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
 
                     // 禁用发送到列表中的本设备项
                     if (urls.count() > 0) {
-                        DUrl url = urls[0];
-                        if (url.path().contains(pDeviceinfo->getDiskInfo().id()))
+                        DUrl durl = urls[0];
+                        if (durl.path().contains(pDeviceinfo->getDiskInfo().id()))
                             action->setEnabled(false);
                     }
 
@@ -497,7 +496,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         QMap<QString, DUrl> diskUrlsMap;
         QStringList odrv;
         DDiskManager diskm;
-        for (auto &blks : diskm.blockDevices()) {
+        for (auto &blks : diskm.blockDevices({})) {
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
             if (drv->mediaCompatibility().join(' ').contains("_r")) {
@@ -572,9 +571,9 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
 
     VaultController::VaultState vaultState = controller->state();
 
-    DUrl url = controller->vaultToLocalUrl(controller->makeVaultUrl());
-    url.setScheme(DFMVAULT_SCHEME);
-    const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
+    DUrl durl = controller->vaultToLocalUrl(controller->makeVaultUrl());
+    durl.setScheme(DFMVAULT_SCHEME);
+    const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, durl);
 
     QSet<MenuAction> disableList;
     if (!VaultLockManager::getInstance().isValid()) {
@@ -584,7 +583,8 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
     }
 
     menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList(), false);
-    menu->setEventData(DUrl(), {url}, WindowManager::getWindowId(wnd), sender);
+    menu->setEventData(DUrl(), {durl}, WindowManager::getWindowId(wnd), sender);
+    menu->setAccessibleInfo(AC_FILE_MENU_VAULT);
 
     auto lockNow = [](DFileManagerWindow * wnd)->bool {
         //! Is there a vault task, top it if exist.
@@ -602,8 +602,8 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
     };
 
     auto showView = [&](QWidget * wndPtr, QString host) {
-        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(wndPtr);
-        wnd->cd(VaultController::makeVaultUrl("/", host));
+        DFileManagerWindow *file_mng_wnd = qobject_cast<DFileManagerWindow *>(wndPtr);
+        file_mng_wnd->cd(VaultController::makeVaultUrl("/", host));
     };
 
     if (vaultState == VaultController::Unlocked) {
@@ -737,15 +737,15 @@ QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrlList &urlList)
 {
     QSet<MenuAction> disableList;
 
-    for (const DUrl &fileUrl : urlList) {
-        DUrl url = fileUrl;
-        if (VaultController::isVaultFile(url.path())) {
-            url = VaultController::localUrlToVault(fileUrl);
+    for (const DUrl &file_url : urlList) {
+        DUrl durl = file_url;
+        if (VaultController::isVaultFile(durl.path())) {
+            durl = VaultController::localUrlToVault(file_url);
         }
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
+        const DAbstractFileInfoPointer &file_info = fileService->createFileInfo(Q_NULLPTR, durl);
 
-        if (fileInfo) {
-            disableList += fileInfo->disableMenuActionList();
+        if (file_info) {
+            disableList += file_info->disableMenuActionList();
         }
     }
 
@@ -1137,8 +1137,8 @@ bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
     return false;
 #endif // DISABLE_TAG_SUPPORT
 
-    for (const DUrl &url : urls) {
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, url);
+    for (const DUrl &durl : urls) {
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, durl);
 
         if (!info)
             return false;
