@@ -8,6 +8,7 @@
 #include <QUrl>
 #include <QFile>
 #include <QtConcurrent>
+#include <QDebug>
 
 #include "tests/testhelper.h"
 
@@ -236,7 +237,7 @@ TEST_F(AppControllerTest,start_actionBookmarkandother){
     DUrl temp;
     temp.setScheme(FILE_SCHEME);
     QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
-    temp.setPath("./"+fileName+"_1.txt");
+    temp.setPath("./"+fileName+".txt");
     QProcess::execute("touch " + temp.toLocalFile());
     DUrl temp1 = temp;
     temp1.setPath("./"+fileName+"_sys.txt");
@@ -252,6 +253,10 @@ TEST_F(AppControllerTest,start_actionBookmarkandother){
 //    controller->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << temp));
     QProcess::execute("rm " + temp.toLocalFile());
     QProcess::execute("rm " + temp1.toLocalFile());
+    temp.setPath("~/Desktop/"+fileName+" Shortcut.txt");
+    qDebug() << temp;
+    AppController::instance()->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << temp));
+//    QProcess::execute("rm " + temp.toLocalFile());
 }
 
 TEST_F(AppControllerTest,start_actionNewFolder){
