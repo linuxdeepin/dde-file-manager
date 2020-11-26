@@ -20,111 +20,99 @@
 #include <QStandardPaths>
 #include <QProcess>
 
-class DFMShadowedDirIterator : public DDirIterator
+
+DFMShadowedDirIterator::DFMShadowedDirIterator(const QUrl &path, const QStringList &nameFilters, QDir::Filters filter, QDirIterator::IteratorFlags flags)
 {
-public:
-    DFMShadowedDirIterator(const QUrl &path,
-                           const QStringList &nameFilters,
-                           QDir::Filters filter,
-                           QDirIterator::IteratorFlags flags)
-    {
-        DUrl durl(path);
-        const QStringList &nodes = DDiskManager::resolveDeviceNode(durl.burnDestDevice(), {});
-        QString udiskspath = nodes.isEmpty() ? QString() : nodes.first();
-        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-        QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
-        auto points = blkdev->mountPoints();
-        if (!points.isEmpty()) {
-            DUrl mnturl = DUrl::fromLocalFile(QString(points.front()));
-            mntpoint = mnturl.toLocalFile();
-        }
-        while (*mntpoint.rbegin() == '/') {
-            mntpoint.chop(1);
-        }
-        devfile = durl.burnDestDevice();
-        if (diskdev->opticalBlank()) {
-            //blank disc
-            iterator.clear();
-            stagingiterator = QSharedPointer<QDirIterator>(
-                                  new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
-                                                   nameFilters, filter, flags)
-                              );
-            return;
-        }
-        QString realpath = mntpoint + durl.burnFilePath();
-        iterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filter, flags));
+    DUrl durl(path);
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(durl.burnDestDevice(), {});
+    QString udiskspath = nodes.isEmpty() ? QString() : nodes.first();
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+    auto points = blkdev->mountPoints();
+    if (!points.isEmpty()) {
+        DUrl mnturl = DUrl::fromLocalFile(QString(points.front()));
+        mntpoint = mnturl.toLocalFile();
+    }
+    while (*mntpoint.rbegin() == '/') {
+        mntpoint.chop(1);
+    }
+    devfile = durl.burnDestDevice();
+    if (diskdev->opticalBlank()) {
+        //blank disc
+        iterator.clear();
         stagingiterator = QSharedPointer<QDirIterator>(
-                              new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
-                                               nameFilters, filter, flags)
-                          );
+                    new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
+                                     nameFilters, filter, flags)
+                    );
+        return;
     }
+    QString realpath = mntpoint + durl.burnFilePath();
+    iterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filter, flags));
+    stagingiterator = QSharedPointer<QDirIterator>(
+                new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
+                                 nameFilters, filter, flags)
+                );
+}
 
-    DUrl next() override
-    {
-        return changeSchemeUpdate(DUrl::fromLocalFile(iterator && iterator->hasNext() ? iterator->next() : (iterator = QSharedPointer<QDirIterator>(Q_NULLPTR), stagingiterator->next())));
-    }
+DUrl DFMShadowedDirIterator::next()
+{
+    return changeSchemeUpdate(DUrl::fromLocalFile(iterator && iterator->hasNext() ? iterator->next() : (iterator = QSharedPointer<QDirIterator>(Q_NULLPTR), stagingiterator->next())));
+}
 
-    bool hasNext() const override
-    {
-        return (iterator && iterator->hasNext()) ||
-               (stagingiterator && stagingiterator->hasNext());
-    }
+bool DFMShadowedDirIterator::hasNext() const
+{
+    return (iterator && iterator->hasNext()) ||
+            (stagingiterator && stagingiterator->hasNext());
+}
 
-    QString fileName() const override
-    {
-        return iterator ? iterator->fileName() : stagingiterator->fileName();
-    }
+QString DFMShadowedDirIterator::fileName() const
+{
+    return iterator ? iterator->fileName() : stagingiterator->fileName();
+}
 
-    DUrl fileUrl() const override
-    {
-        return changeScheme(DUrl::fromLocalFile(iterator ? iterator->filePath() : stagingiterator->filePath()));
-    }
+DUrl DFMShadowedDirIterator::fileUrl() const
+{
+    return changeScheme(DUrl::fromLocalFile(iterator ? iterator->filePath() : stagingiterator->filePath()));
+}
 
-    const DAbstractFileInfoPointer fileInfo() const override
-    {
-        return DAbstractFileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
-    }
+const DAbstractFileInfoPointer DFMShadowedDirIterator::fileInfo() const
+{
+    return DAbstractFileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
+}
 
-    DUrl url() const override
-    {
-        return changeScheme(DUrl::fromLocalFile(iterator ? iterator->path() : stagingiterator->path()));
-    }
+DUrl DFMShadowedDirIterator::url() const
+{
+    return changeScheme(DUrl::fromLocalFile(iterator ? iterator->path() : stagingiterator->path()));
+}
 
-private:
-    QSharedPointer<QDirIterator> iterator;
-    QSharedPointer<QDirIterator> stagingiterator;
-    QString mntpoint;
-    QString devfile;
-    QSet<QString> seen;
-    QSet<DUrl> skip;
-    DUrl changeScheme(DUrl in) const
-    {
-        DUrl burntmp = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/");
-        QString stagingroot = burntmp.path() + QString(devfile).replace('/', '_');
-        DUrl ret;
-        QString path = in.path();
-        if (burntmp.isParentOf(in)) {
-            path.replace(stagingroot, devfile + "/" BURN_SEG_STAGING);
-        } else {
-            path.replace(mntpoint, devfile + "/" BURN_SEG_ONDISC);
-        }
-        ret = DUrl::fromBurnFile(path);
-        if (skip.contains(ret)) {
-            ret.setFragment("dup");
-        }
-        return ret;
+DUrl DFMShadowedDirIterator::changeScheme(DUrl in) const
+{
+    DUrl burntmp = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/");
+    QString stagingroot = burntmp.path() + QString(devfile).replace('/', '_');
+    DUrl ret;
+    QString path = in.path();
+    if (burntmp.isParentOf(in)) {
+        path.replace(stagingroot, devfile + "/" BURN_SEG_STAGING);
+    } else {
+        path.replace(mntpoint, devfile + "/" BURN_SEG_ONDISC);
     }
-    DUrl changeSchemeUpdate(DUrl in)
-    {
-        DUrl ret = changeScheme(in);
-        if (seen.contains(ret.burnFilePath())) {
-            skip.insert(ret);
-            return DUrl();
-        }
-        seen.insert(ret.burnFilePath());
-        return ret;
+    ret = DUrl::fromBurnFile(path);
+    if (skip.contains(ret)) {
+        ret.setFragment("dup");
     }
-};
+    return ret;
+}
+
+DUrl DFMShadowedDirIterator::changeSchemeUpdate(DUrl in)
+{
+    DUrl ret = changeScheme(in);
+    if (seen.contains(ret.burnFilePath())) {
+        skip.insert(ret);
+        return DUrl();
+    }
+    seen.insert(ret.burnFilePath());
+    return ret;
+}
 
 class MasteredMediaFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
@@ -365,9 +353,16 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
         QString dev(dst.burnDestDevice());
         bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
         if (!ISOMaster->getDevicePropertyCached(dev).devid.length()) {
-            QString udiskspath = DDiskManager::resolveDeviceNode(dev, {}).first();
+            auto nodes = DDiskManager::resolveDeviceNode(dev, {});
+            if (nodes.isEmpty())
+                return DUrlList();
+            QString udiskspath = nodes.first();
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
+            if (!blk)
+                return DUrlList();
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+            if (!drv)
+                return DUrlList();
             is_blank = drv->opticalBlank();
         }
         QString dstdirpath = getStagingFolder(DUrl::fromBurnFile(dev + "/" BURN_SEG_STAGING)).path();
@@ -375,7 +370,7 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
         dstdir.setFilter(QDir::Filter::AllEntries | QDir::Filter::NoDotAndDotDot);
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
         QSet<QString> image_types = {"application/x-cd-image", "application/x-iso9660-image"};
-        if (is_blank && image_types.contains(fi->mimeTypeName()) && dstdir.count() == 0) {
+        if (is_blank && fi && image_types.contains(fi->mimeTypeName()) && dstdir.count() == 0) {
             int r = DThreadUtil::runInMainThread(dialogManager, &DialogManager::showOpticalImageOpSelectionDialog, DFMUrlBaseEvent(event->sender(), dst));
             if (r == 1) {
                 DThreadUtil::runInMainThread([ = ] {
