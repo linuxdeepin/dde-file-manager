@@ -22,6 +22,7 @@ public:
     int selectedCount() const;
 
     QModelIndexList selectedIndexes() const;
+    void clearSelectedCaches();
 
 protected:
     void select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command) Q_DECL_OVERRIDE;

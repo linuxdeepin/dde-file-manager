@@ -82,6 +82,11 @@ QModelIndexList DFileSelectionModel::selectedIndexes() const
     return m_selectedList;
 }
 
+void DFileSelectionModel::clearSelectedCaches()
+{
+    m_selectedList.clear();
+}
+
 void DFileSelectionModel::select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command)
 {
     if (!command.testFlag(NoUpdate))
