@@ -212,5 +212,4 @@ SOURCES += \
     $$PWD/controllers/ut_searchhistroymanager.cpp \
     $$PWD/controllers/ut_dfmsearchcrumbcontroller.cpp \
     $$PWD/interfaces/ut_dfmcrumbinterface.cpp \
-    $$PWD/interfaces/ut_dfmcrumblistviewmodel.cpp 
-
+    $$PWD/interfaces/ut_dfmcrumblistviewmodel.cpp
