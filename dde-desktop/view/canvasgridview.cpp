@@ -2595,6 +2595,9 @@ void CanvasGridView::initConnection()
             selectionModel()->setCurrentIndex(QModelIndex(), QItemSelectionModel::Clear);
             setCurrentIndex(QModelIndex());
         }
+        //fix bug55930 桌面新建文本文件和文件夹，选中文本文件剪切到文件夹 ，重命名新的文件夹 ，弹出重命名窗口
+        //clear cache selected items,because index data updated
+        selectionModel()->clearSelectedCaches();
 
         if (!GridManager::instance()->remove(m_screenNum, url.toString()))
             return;
