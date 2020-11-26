@@ -43,7 +43,7 @@ SOURCES += \
     $$PWD/views/ut_dtoolbar.cpp \
     $$PWD/views/ut_extendview.cpp \
     $$PWD/views/ut_filedialogstatusbar.cpp\
-    $$PWD/views/ut_fileitem.cpp\
+    $$PWD/views/ut_fileiconitem.cpp\
     $$PWD/views/ut_fileviewhelper.cpp\
     $$PWD/views/ut_historystack.cpp\
     $$PWD/views/ut_windowmanager.cpp\
