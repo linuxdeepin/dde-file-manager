@@ -48,11 +48,12 @@ bool DFMViewManager::isRegisted(const QString &scheme, const QString &host, cons
     Q_D(const DFMViewManager);
 
     const KeyType &type = KeyType(scheme, host);
-
-    for (const ViewCreatorType &value : d->controllerCreatorHash.values(type)) {
-        if (value.first == info.name())
-            return true;
-    }
+    auto values = d->controllerCreatorHash.values(type);
+    auto ret = std::any_of(values.begin(), values.end(), [&info](const ViewCreatorType & value) {
+        return value.first == info.name();
+    });
+    if (ret)
+        return true;
 
     return info == typeid(DFileView) && DFileService::instance()->isRegisted(scheme, host);
 }
@@ -127,6 +128,9 @@ DFMViewManager::DFMViewManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMViewManagerPrivate(this))
 {
+
+    setObjectName(AC_FM_VIEW_MANAGER);
+
     dRegisterUrlView<ComputerView>(COMPUTER_SCHEME, QString());
 
     // vault view.
@@ -138,9 +142,9 @@ DFMViewManager::DFMViewManager(QObject *parent)
 
     // register plugins
     for (const QString &key : DFMViewFactory::keys()) {
-        const DUrl url(key);
+        const DUrl durl(key);
 
-        insertToCreatorHash(KeyType(url.scheme(), url.host()), ViewCreatorType(typeid(DFMViewFactory).name(), [key] {
+        insertToCreatorHash(KeyType(durl.scheme(), durl.host()), ViewCreatorType(typeid(DFMViewFactory).name(), [key] {
             return DFMViewFactory::create(key);
         }));
     }

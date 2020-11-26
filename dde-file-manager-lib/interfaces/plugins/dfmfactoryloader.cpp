@@ -43,8 +43,8 @@ public:
     ~DFMFactoryLoaderPrivate();
     mutable QMutex mutex;
     QByteArray iid;
-    QList<QPluginLoader*> pluginLoaderList;
-    QMultiMap<QString,QPluginLoader*> keyMap;
+    QList<QPluginLoader *> pluginLoaderList;
+    QMultiMap<QString, QPluginLoader *> keyMap;
     QString suffix;
     Qt::CaseSensitivity cs;
     bool rki;
@@ -141,7 +141,7 @@ void DFMFactoryLoader::update()
         // ### FIXME find a proper solution
         //
         const bool isLoadingDebugAndReleaseCocoa = plugins.contains(QStringLiteral("libqcocoa_debug.dylib"))
-                && plugins.contains(QStringLiteral("libqcocoa.dylib"));
+                                                   && plugins.contains(QStringLiteral("libqcocoa.dylib"));
 #endif
         for (int j = 0; j < plugins.count(); ++j) {
             QString fileName = QDir::cleanPath(path + QLatin1Char('/') + plugins.at(j));
@@ -149,11 +149,11 @@ void DFMFactoryLoader::update()
 #ifdef Q_OS_MAC
             if (isLoadingDebugAndReleaseCocoa) {
 #ifdef QT_DEBUG
-               if (fileName.contains(QStringLiteral("libqcocoa.dylib")))
-                   continue;    // Skip release plugin in debug mode
+                if (fileName.contains(QStringLiteral("libqcocoa.dylib")))
+                    continue;    // Skip release plugin in debug mode
 #else
-               if (fileName.contains(QStringLiteral("libqcocoa_debug.dylib")))
-                   continue;    // Skip debug plugin in release mode
+                if (fileName.contains(QStringLiteral("libqcocoa_debug.dylib")))
+                    continue;    // Skip debug plugin in release mode
 #endif
             }
 #endif
@@ -178,8 +178,8 @@ void DFMFactoryLoader::update()
                 metaDataOk = true;
 
                 QJsonArray k = object.value(keysKeyLiteral()).toArray();
-                for (int i = 0; i < k.size(); ++i)
-                    keys += d->cs ? k.at(i).toString() : k.at(i).toString().toLower();
+                for (int m = 0; m < k.size(); ++m)
+                    keys += d->cs ? k.at(m).toString() : k.at(m).toString().toLower();
             }
             if (dfm_debug_component())
                 qDebug() << "Got keys from plugin meta data" << keys;
@@ -275,7 +275,7 @@ QPluginLoader *DFMFactoryLoader::pluginLoader(const QString &key) const
     return d->keyMap.value(d->cs ? key : key.toLower());
 }
 
-QList<QPluginLoader*> DFMFactoryLoader::pluginLoaderList(const QString &key) const
+QList<QPluginLoader *> DFMFactoryLoader::pluginLoaderList(const QString &key) const
 {
     Q_D(const DFMFactoryLoader);
     return d->keyMap.values(d->cs ? key : key.toLower());
@@ -287,7 +287,7 @@ void DFMFactoryLoader::refreshAll()
     QMutexLocker locker(qt_factoryloader_mutex());
     QList<DFMFactoryLoader *> *loaders = qt_factory_loaders();
     for (QList<DFMFactoryLoader *>::const_iterator it = loaders->constBegin();
-         it != loaders->constEnd(); ++it) {
+            it != loaders->constEnd(); ++it) {
         (*it)->update();
     }
 }

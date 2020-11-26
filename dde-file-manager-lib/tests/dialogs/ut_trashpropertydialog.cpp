@@ -22,12 +22,12 @@ namespace  {
     };
 }
 
-TEST_F(TestTrashPropertyDialog, testInit)
-{
-    m_pTester->show();
-}
+//TEST_F(TestTrashPropertyDialog, testInit)
+//{
+//    m_pTester->show();
+//}
 
-TEST_F(TestTrashPropertyDialog, testUpdateFolderSize)
-{
-    m_pTester->updateFolderSize(1);
-}
+//TEST_F(TestTrashPropertyDialog, testUpdateFolderSize)
+//{
+//    m_pTester->updateFolderSize(1);
+//}

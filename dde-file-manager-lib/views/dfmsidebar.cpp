@@ -47,6 +47,7 @@
 #include "interfaces/dfilemenu.h"
 #include "dfmopticalmediawidget.h"
 #include "vault/vaulthelper.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -70,6 +71,9 @@ DFMSideBar::DFMSideBar(QWidget *parent)
       m_sidebarView(new DFMSideBarView(this)),
       m_sidebarModel(new DFMSideBarModel(this))
 {
+    AC_SET_OBJECT_NAME(this, AC_DM_SIDE_BAR);
+    AC_SET_ACCESSIBLE_NAME(this, AC_DM_SIDE_BAR);
+
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
     m_sidebarView->setItemDelegate(new DFMSideBarItemDelegate(m_sidebarView));
@@ -732,11 +736,6 @@ void DFMSideBar::initDeviceConnection()
         //DFileService::instance()->changeRootFile(url,false); //性能优化，注释
         this->removeItem(url, this->groupName(Device));
         devitems.removeAll(url);
-
-        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(this->topLevelWidget());
-        if (wnd) {
-            wnd->closeUnAvailableTabs();
-        }
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl & url) {
         int index = findItem(url, groupName(Device));

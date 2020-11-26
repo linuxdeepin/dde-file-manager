@@ -7,6 +7,7 @@
 #include "views/dfilemanagerwindow.h"
 #define private public
 #include "views/dtoolbar.h"
+#include "views/windowmanager.h"
 
 TEST(DToolBarTest,init)
 {
@@ -95,4 +96,60 @@ TEST(DToolBarTest,search_bartext_entered_empty)
     w.searchBarTextEntered("");
     EXPECT_EQ(path, QDir::currentPath());
     w.handleHotkeyCtrlL(1);
+}
+
+TEST(DToolBarTest,moveNavStacks)
+{
+    DToolBar w;
+    w.m_navStacks.clear();
+    w.m_navStacks.append(0);
+    HistoryStack h1(0);
+    w.m_navStacks.append(&h1);
+    EXPECT_EQ(2, w.navStackCount());
+
+    w.moveNavStacks(0,1);
+    EXPECT_EQ(w.m_navStacks[0], &h1);
+    EXPECT_EQ(w.m_navStacks[1], nullptr);
+
+    w.moveNavStacks(1,0);
+    EXPECT_EQ(w.m_navStacks[1], &h1);
+    EXPECT_EQ(w.m_navStacks[0], nullptr);
+
+    w.moveNavStacks(0,0);
+    EXPECT_EQ(w.m_navStacks[1], &h1);
+    EXPECT_EQ(w.m_navStacks[0], nullptr);
+}
+
+TEST(DToolBarTest,showFilterButton)
+{
+    DToolBar w;
+    w.show();
+    w.m_searchButton->setVisible(false);
+    w.showFilterButton();
+    EXPECT_TRUE(w.m_searchButton->isVisible());
+
+    w.m_searchButton->setVisible(true);
+    w.showFilterButton();
+    EXPECT_TRUE(w.m_searchButton->isVisible());
+}
+
+TEST(DToolBarTest,handleHotkeyCtrlF)
+{
+    DToolBar w;
+    WindowManager::m_windows.insert(w.topLevelWidget(),w.winId());
+    EXPECT_NO_FATAL_FAILURE(w.handleHotkeyCtrlF(w.winId()));
+    WindowManager::m_windows.remove(w.topLevelWidget());
+    EXPECT_NO_FATAL_FAILURE(w.handleHotkeyCtrlF(w.winId()));
+}
+
+TEST(DToolBarTest,searchBarActivated_Deactivated)
+{
+    DToolBar w;
+    w.show();
+    w.m_searchButton->setHidden(false);
+    w.searchBarActivated();
+    EXPECT_TRUE(w.m_searchButton->isHidden());
+
+    w.searchBarDeactivated();
+    EXPECT_TRUE(w.m_searchButton->isVisible());
 }

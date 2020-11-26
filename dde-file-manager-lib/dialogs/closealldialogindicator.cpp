@@ -30,13 +30,14 @@
 #include <QKeyEvent>
 #include <QDBusInterface>
 #include "shutil/fileutils.h"
-#include "accessible/libframenamedefine.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : DAbstractDialog(parent)
 {
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setFocusPolicy(Qt::NoFocus);
-    setObjectName(DIALOGS_CLOSE_ALL_DIALOG_INDICATOR);
+    AC_SET_OBJECT_NAME(this, AC_CLOSE_ALL_DLG_INDICATOR);
+    AC_SET_ACCESSIBLE_NAME(this, AC_CLOSE_ALL_DLG_INDICATOR);
 
     initUI();
     initConnect();
@@ -52,10 +53,12 @@ void CloseAllDialogIndicator::initUI()
     resize(QSize(400, 50));
 
     m_messageLabel = new QLabel(this);
-    m_messageLabel->setObjectName(DIALOGS_CLOSE_ALL_DIALOG_INDICATOR_MSG_LABEL);
+    AC_SET_OBJECT_NAME(m_messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
+    AC_SET_ACCESSIBLE_NAME(m_messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
 
     m_closeButton = new QPushButton(tr("Close all"), this);
-    m_closeButton->setObjectName(DIALOGS_CLOSE_ALL_DIALOG_INDICATOR_CLOSE_BUTTON);
+    AC_SET_OBJECT_NAME(m_closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
+    AC_SET_ACCESSIBLE_NAME(m_closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_messageLabel, Qt::AlignCenter);

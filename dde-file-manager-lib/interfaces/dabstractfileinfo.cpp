@@ -138,7 +138,7 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
     , fileUrl(url)
 {
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
-    if (hasCache || (url.isValid() && (QThread::currentThread()) &&  qApp && qApp->thread() && QThread::currentThread() == qApp->thread())) {
+    if (hasCache && (url.isValid() && (QThread::currentThread()) &&  qApp && qApp->thread() && QThread::currentThread() == qApp->thread())) {
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
 
@@ -148,14 +148,14 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
 
 DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
 {
-    QReadLocker locker(urlToFileInfoMapLock);
+    QReadLocker read_locker(urlToFileInfoMapLock);
     if (urlToFileInfoMap.value(fileUrl) == q_ptr) {
-        locker.unlock();
-        QWriteLocker locker(urlToFileInfoMapLock);
-        Q_UNUSED(locker)
+        read_locker.unlock();
+        QWriteLocker write_locker(urlToFileInfoMapLock);
+        Q_UNUSED(write_locker)
         urlToFileInfoMap.remove(fileUrl);
     } else {
-        locker.unlock();
+        read_locker.unlock();
     }
 }
 
@@ -176,21 +176,19 @@ void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
         Q_UNUSED(locker)
         urlToFileInfoMap[url] = q_ptr;
     }
-
     fileUrl = url;
 }
 
 DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
 {
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题,优化都可以
-    if (QThread::currentThread() && qApp && qApp->thread() && QThread::currentThread() != qApp->thread()) {
+    if (!QThread::currentThread() || !qApp  || !qApp->thread() || QThread::currentThread() != qApp->thread()) {
         return nullptr;
     }
 
     if (!fileUrl.isValid()) {
         return nullptr;
     }
-
     return urlToFileInfoMap.value(fileUrl);
 }
 
@@ -923,10 +921,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                        << MenuAction::SendToDesktop;
 
             if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
-#ifdef BLUETOOTH_ENABLE
-                    || bluetoothManager->model()->adapters().count() > 0
-#endif
-               ) {
+                    || bluetoothManager->model()->adapters().count() > 0) {
                 actionKeys << MenuAction::SendToRemovableDisk;
             }
 
@@ -1000,10 +995,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::SendToDesktop;
 
         if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
-#ifdef BLUETOOTH_ENABLE
-                || bluetoothManager->model()->adapters().count() > 0
-#endif
-           ) {
+                || bluetoothManager->model()->adapters().count() > 0) {
             actionKeys << MenuAction::SendToRemovableDisk;
         }
 
@@ -1711,10 +1703,7 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(Menu
     actions.insert(MenuAction::SortBy, sortByMenuActionKeys);
 
     if (deviceListener->isMountedRemovableDiskExits()
-#ifdef BLUETOOTH_ENABLE
-            || bluetoothManager->model()->adapters().count() > 0
-#endif
-       ) {
+            || bluetoothManager->model()->adapters().count() > 0) {
         QVector<MenuAction> diskMenuActionKeys;
         actions.insert(MenuAction::SendToRemovableDisk, diskMenuActionKeys);
     }
@@ -1834,20 +1823,26 @@ bool DAbstractFileInfo::loadFileEmblems(QList<QIcon> &iconList) const
     //获取gfileinfo
     GFile *g_file = g_file_new_for_path(str.c_str());
     GError *g_error = nullptr;
-    GFileInfo *g_fileInfo = g_file_query_info(g_file, "*", GFileQueryInfoFlags::G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, &g_error);
+    GFileInfo *g_fileInfo = g_file_query_info(g_file, "metadata::emblems", GFileQueryInfoFlags::G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nullptr, &g_error);
 
     if (g_error != nullptr) {
         //report error
+        g_object_unref(g_file);
+        g_error_free(g_error);
         return false;
     }
 
     //通过gfileinfo获取文件徽标的值
     char **emblemStr = g_file_info_get_attribute_stringv(g_fileInfo, "metadata::emblems");
     if (!emblemStr) {
+        g_object_unref(g_fileInfo);
+        g_object_unref(g_file);
         return false;
     }
 
     QString emStr(*emblemStr);
+    g_object_unref(g_fileInfo);
+    g_object_unref(g_file);
     if (!emStr.isEmpty()) {
         QList<QIcon> newIcons = {QIcon(), QIcon(), QIcon(), QIcon()};
         //设置了多条徽标的情况
@@ -1875,6 +1870,8 @@ bool DAbstractFileInfo::loadFileEmblems(QList<QIcon> &iconList) const
         }
 
         iconList = newIcons;
+
+        return true;
     }
 
     return false;

@@ -93,8 +93,7 @@ DFMSocketInterface::DFMSocketInterface(QObject *parent) : QObject(parent), d_ptr
     Q_D(DFMSocketInterface);
 
     d->socket = new QLocalSocket();
-    QString socketPath = qgetenv("XDG_RUNTIME_DIR") + "/dde-file-manager";
-    socketPath = QString("/var/run/user/%1/dde-file-manager").arg(getuid());
+    QString socketPath = QString("/var/run/user/%1/dde-file-manager").arg(getuid());
     qDebug() << "connect to socket" << socketPath;
     connect(d->socket, static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error),
     this, [ = ](QLocalSocket::LocalSocketError socketError) {

@@ -128,6 +128,13 @@ private:
      */
     void setObjTextStyle(QWidget *obj, int size, bool bold);
 
+    /**
+     * @brief humanizedStrOfObexErrMsg  处理 obex 的错误信息
+     * @param msg                obex 返回的错误信息
+     * @return                   可读性处理后的字符串
+     */
+    QString humanizedStrOfObexErrMsg(const QString &msg);
+
 private Q_SLOTS:
     void showBluetoothSetting();
 

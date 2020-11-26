@@ -96,4 +96,9 @@ DFileDevicePrivate::DFileDevicePrivate(DFileDevice *qq)
 
 }
 
+DFileDevicePrivate::~DFileDevicePrivate()
+{
+
+}
+
 DFM_END_NAMESPACE

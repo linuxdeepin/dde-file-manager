@@ -722,9 +722,10 @@ DUrl VaultController::vaultToLocalUrl(const DUrl &vaultUrl)
 
 DUrlList VaultController::vaultToLocalUrls(DUrlList vaultUrls)
 {
-    for (DUrl &url : vaultUrls) {
-        url = vaultToLocalUrl(url);
-    }
+    std::transform(vaultUrls.begin(), vaultUrls.end(), vaultUrls.begin(), [](const DUrl & url) {
+        return vaultToLocalUrl(url);
+    });
+
     return vaultUrls;
 }
 
@@ -1007,12 +1008,12 @@ void VaultController::unlockVault(const DSecureString &password, QString lockBas
     // 修复bug-52351
     // 保险箱解锁前,创建挂载目录
     QString strPath = makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME);
-    if(QFile::exists(strPath)) {    // 如果存在,则清空目录
+    if (QFile::exists(strPath)) {   // 如果存在,则清空目录
         QDir dir(strPath);
-        if(!dir.isEmpty()) {
+        if (!dir.isEmpty()) {
             QDirIterator dirsIterator(strPath, QDir::AllEntries | QDir::NoDotAndDotDot);
-            while(dirsIterator.hasNext()) {
-                if(!dir.remove(dirsIterator.next())) {
+            while (dirsIterator.hasNext()) {
+                if (!dir.remove(dirsIterator.next())) {
                     QDir(dirsIterator.filePath()).removeRecursively();
                 }
             }

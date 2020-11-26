@@ -25,7 +25,7 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>請點擊“安全移除”後，再斷開連接</translation>
+        <translation>請點擊「安全移除」後，再斷開連接</translation>
     </message>
 </context>
 <context>

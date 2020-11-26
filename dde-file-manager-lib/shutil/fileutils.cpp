@@ -116,6 +116,28 @@ bool FileUtils::removeRecurse(const QString &path, const QString &name)
 //---------------------------------------------------------------------------
 
 /**
+ * @brief Check ancestor
+ * @param
+ * @param
+ * @param
+ */
+bool FileUtils::isAncestorUrl(const DUrl &ancestor, const DUrl &url)
+{
+    if (!ancestor.isValid() || !url.isValid()) {
+        return false;
+    }
+    QString ancestorDir(ancestor.toLocalFile());
+    QString urlDir(url.toLocalFile());
+    if (!ancestorDir.endsWith("/")) {
+        ancestorDir.append('/');
+    }
+    if (!urlDir.endsWith("/")) {
+        urlDir.append('/');
+    }
+    return urlDir.startsWith(ancestorDir);
+}
+
+/**
  * @brief Collects all file names in given path (recursive)
  * @param path path
  * @param parent parent path
@@ -629,7 +651,7 @@ bool FileUtils::openFile(const QString &filePath)
     //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
     //QString mimetype = getFileMimetype(filePath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
-    QString mimetype = QString();
+    QString mimetype;
     if (info && info->size() == 0 && info->exists()) {
         mimetype = info->mimeType().name();
     } else {
@@ -699,7 +721,7 @@ bool FileUtils::openFiles(const QStringList &filePaths)
     //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
     //QString mimetype = getFileMimetype(filePath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
-    QString mimetype = QString();
+    QString mimetype;
     if (info && info->size() == 0 && info->exists()) {
         mimetype = info->mimeType().name();
     } else {
@@ -734,9 +756,9 @@ bool FileUtils::openFiles(const QStringList &filePaths)
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
         for (const QString &tmp : rePath) {
-            QString filePath = DUrl::fromLocalFile(tmp).toLocalFile();
+            QString file_path = DUrl::fromLocalFile(tmp).toLocalFile();
             DesktopFile df(defaultDesktopFile);
-            addRecentFile(filePath, df, mimetype);
+            addRecentFile(file_path, df, mimetype);
         }
         return result;
     }
@@ -782,7 +804,7 @@ bool FileUtils::openEnterFiles(const QStringList &filePaths)
         //解决空文本文件转其他非文本格式时打开仍然是文本方式打开的问题
         //QString mimetype = getFileMimetype(filePath);
         DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, DUrl(FILE_ROOT + filePath));
-        QString mimetype = QString();
+        QString mimetype;
         if (info && info->size() == 0 && info->exists()) {
             mimetype = info->mimeType().name();
         } else {

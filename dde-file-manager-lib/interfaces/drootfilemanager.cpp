@@ -54,7 +54,7 @@ public:
     QAtomicInteger<bool>  bstartonce = false;
     DAbstractFileWatcher *m_rootFileWatcher = nullptr;
 
-    QHash<DUrl,bool> m_rootsmbftpurllist;
+    QHash<DUrl, bool> m_rootsmbftpurllist;
     JobController *m_jobcontroller = nullptr;
 
     volatile bool m_rootChanged = true; //用于判断是否需要发送查询完毕信号，通知外部刷新。
@@ -67,7 +67,7 @@ DRootFileManager::DRootFileManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DRootFileManagerPrivate())
 {
-    connect(fileSignalManager,&FileSignalManager::requestHideSystemPartition,this,&DRootFileManager::hideSystemPartition);
+    connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::hideSystemPartition);
 }
 
 DRootFileManager::~DRootFileManager()
@@ -155,53 +155,61 @@ void DRootFileManager::startQuryRootFile()
         });
     }
 
+    bool openAsAdmin = DFMGlobal::isOpenAsAdmin();
     QMutexLocker lk(&d_ptr->rootfileMtx);
-    if (d_ptr->m_jobcontroller){
+
+    if (openAsAdmin && d_ptr->m_jobcontroller && d_ptr->m_jobcontroller->isRunning()) {
         qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
         return;
     }
-    else {
-        //启用异步线程去读取
-        d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
+
+    if (!openAsAdmin && d_ptr->m_jobcontroller) {
+        qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
+        return;
     }
+
+    //启用异步线程去读取
+    d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
+
     lk.unlock();
 
     connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this](const DAbstractFileInfoPointer & chi) {
-        QMutexLocker lk(&d_ptr->rootfileMtx);
+        QMutexLocker locker(&d_ptr->rootfileMtx);
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
             d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
             d_ptr->m_rootChanged = true;
-            lk.unlock();
+            locker.unlock();
             emit rootFileChange(chi); // 其实中间结果没有必要,直接拿最终结果就行了,但保留接口，以后便于扩展
         }
     }, Qt::DirectConnection);
 
     connect(d_ptr->m_jobcontroller, &JobController::addChildrenList, this, [this](QList<DAbstractFileInfoPointer> ch) {
         for (auto chi : ch) {
-            QMutexLocker lk(&d_ptr->rootfileMtx);
+            QMutexLocker locker(&d_ptr->rootfileMtx);
             if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
                 d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
                 d_ptr->m_rootChanged = true;
-                lk.unlock();
+                locker.unlock();
                 emit rootFileChange(chi); // 其实中间结果没有必要,直接拿最终结果就行了,但保留接口，以后便于扩展
             }
         }
     }, Qt::DirectConnection);
     connect(d_ptr->m_jobcontroller, &JobController::finished, this, [this]() {
-        QMutexLocker lk(&d_ptr->rootfileMtx);
+        QMutexLocker locker(&d_ptr->rootfileMtx);
         d_ptr->m_jobcontroller->deleteLater();
         qDebug() << "获取 m_jobcontroller  finished  " << QThread::currentThreadId() << d_ptr->rootfilelist.size();
         d_ptr->m_jobcontroller = nullptr;
         d_ptr->m_bRootFileInited.store(true);
-        lk.unlock();
+        locker.unlock();
 
         if (d_ptr->m_rootChanged)
             emit queryRootFileFinsh();
 
         d_ptr->m_rootChanged = false;
-    });
+    }, openAsAdmin ? Qt::DirectConnection : Qt::AutoConnection);
     d_ptr->m_jobcontroller->start();
 }
+
 
 DAbstractFileWatcher *DRootFileManager::rootFileWather() const
 {
@@ -219,9 +227,9 @@ void DRootFileManager::changRootFile(const QList<DAbstractFileInfoPointer> &root
 {
     QMutexLocker lk(&d_ptr->rootfileMtx);
     for (const DAbstractFileInfoPointer &fi : rootinfo) {
-        DUrl url = fi->fileUrl();
-        if (!d_ptr->rootfilelist.contains(url) && fi->exists()) {
-            d_ptr->rootfilelist.insert(url, fi);
+        DUrl durl = fi->fileUrl();
+        if (!d_ptr->rootfilelist.contains(durl) && fi->exists()) {
+            d_ptr->rootfilelist.insert(durl, fi);
         }
     }
 }
@@ -241,7 +249,7 @@ const DAbstractFileInfoPointer DRootFileManager::getFileInfo(const DUrl &fileUrl
 void DRootFileManager::hideSystemPartition()
 {
     QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
-            getChildren(this, DUrl(DFMROOT_ROOT),QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
+                                              getChildren(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
     d_ptr->rootfileMtx.lock();
     d_ptr->rootfilelist.clear();
     d_ptr->rootfileMtx.unlock();

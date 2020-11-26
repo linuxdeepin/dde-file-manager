@@ -577,6 +577,14 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
                 emit gvfsMountManager->mount_removed(diskInfo);
             }
         }
+
+        // 触发关闭标签的信号
+        GFile *root = g_mount_get_root(mount);
+        char *path = g_file_get_path(root);
+        DUrl url = DUrl::fromLocalFile(path);
+        g_free(path);
+        g_object_unref(root);
+        emit fileSignalManager->requestCloseTab(url);
     }
 }
 
@@ -787,8 +795,8 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
         if (ovrxm.hasMatch()) {
             arg1 = ovrxm.captured(0);
             newmsg = newmsg.replace(arg1, "");
-            auto ovrxm = ovrex.match(newmsg);
-            arg2 = ovrxm.captured(0);
+            auto ovr_xm = ovrex.match(newmsg);
+            arg2 = ovr_xm.captured(0);
             // 修复文管文案问题
             newmsg = tr("Can’t verify the identity of %1.").arg(arg1) + '\n' +
                      tr("This happens when you log in to a computer the first time.") + '\n' +
@@ -840,7 +848,7 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
         askPasswordDialog->deleteLater();
         askPasswordDialog = nullptr;
         DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                     tr("Mounting device error"), QString("用户名或密码错误，请重新输入"));
+                                     tr("Mounting device error"), tr("Wrong username or password, please enter again"));
         return;
     }
 
@@ -1027,9 +1035,7 @@ bool GvfsMountManager::isDVD(const QVolume &volume)
 bool GvfsMountManager::isIgnoreUnusedMounts(const QMount &mount)
 {
     /*the following protocol has two mounts event, ignore unused one*/
-    if (mount.mounted_root_uri().startsWith("afc://") ||
-            mount.mounted_root_uri().startsWith("mtp://") ||
-            mount.mounted_root_uri().startsWith("gphoto2://")) {
+    if (mount.mounted_root_uri().startsWith("mtp://") || mount.mounted_root_uri().startsWith("gphoto2://")) {
         return true;
     }
     return false;
@@ -1476,7 +1482,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
             //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
             if (status == MOUNT_PASSWORD_WRONG && bshow) {
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                             tr("Mounting device error"), QString("用户名或密码错误，请重新输入"));
+                                             tr("Mounting device error"), tr("Wrong username or password, please enter again"));
             } else if (status == MOUNT_CANCEL) {
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr(error->message));
@@ -1663,29 +1669,29 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
     if (mount == nullptr) {
         bool no_permission = false;
 
-        QFileInfo fileInfo(QUrl(mounted_root_uri).toLocalFile());
+        QFileInfo info(QUrl(mounted_root_uri).toLocalFile());
 
-        while (!fileInfo.exists() && fileInfo.fileName() != QDir::rootPath() && !fileInfo.absolutePath().isEmpty()) {
-            fileInfo.setFile(fileInfo.absolutePath());
+        while (!info.exists() && info.fileName() != QDir::rootPath() && !info.absolutePath().isEmpty()) {
+            info.setFile(info.absolutePath());
         }
 
-        if (fileInfo.exists()) {
-            if (getuid() == fileInfo.ownerId()) {
-                if (!fileInfo.permission(QFile::ReadOwner | QFile::ExeOwner))
+        if (info.exists()) {
+            if (getuid() == info.ownerId()) {
+                if (!info.permission(QFile::ReadOwner | QFile::ExeOwner))
                     no_permission = true;
-            } else if (getgid() == fileInfo.groupId()) {
-                if (!fileInfo.permission(QFile::ReadGroup | QFile::ExeGroup))
+            } else if (getgid() == info.groupId()) {
+                if (!info.permission(QFile::ReadGroup | QFile::ExeGroup))
                     no_permission = true;
-            } else if (!fileInfo.permission(QFile::ReadOther | QFile::ExeOther)) {
+            } else if (!info.permission(QFile::ReadOther | QFile::ExeOther)) {
                 no_permission = true;
             }
         }
 
         if (no_permission) {
-            QString user_name = fileInfo.owner();
+            QString user_name = info.owner();
 
-            if (fileInfo.absoluteFilePath().startsWith("/media/")) {
-                user_name = fileInfo.baseName();
+            if (info.absoluteFilePath().startsWith("/media/")) {
+                user_name = info.baseName();
             }
 
             DDialog error_dilaog(tr("The disk is mounted by user \"%1\", you cannot unmount it.").arg(user_name), QString(" "));
@@ -1737,8 +1743,8 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
 
         if (local_mount_point) {
             // 由于卸载gvfs设备时不会触发文件系统的inotify, 所以此处手动模拟文件夹被移除的信号
-            const DUrl url = DUrl::fromLocalFile(local_mount_point);
-            DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileDeleted, url);
+            const DUrl durl = DUrl::fromLocalFile(local_mount_point);
+            DAbstractFileWatcher::ghostSignal(durl.parentUrl(), &DAbstractFileWatcher::fileDeleted, durl);
 
             g_free(local_mount_point);
         }
@@ -1757,8 +1763,8 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
                 }
             }
 
-            for (const DUrl &url : dirty_list)
-                NetworkManager::NetworkNodes.remove(url);
+            for (const DUrl &durl : dirty_list)
+                NetworkManager::NetworkNodes.remove(durl);
         }
 
         g_free(root_uri);

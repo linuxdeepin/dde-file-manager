@@ -30,7 +30,7 @@ class DLocalFileDevicePrivate : public DFileIODeviceProxyPrivate
 public:
     explicit DLocalFileDevicePrivate(dde_file_manager::DLocalFileDevice *qq);
 
-    ~DLocalFileDevicePrivate();
+    ~DLocalFileDevicePrivate() override;
 
     QPointer<QFile> file = nullptr;
 

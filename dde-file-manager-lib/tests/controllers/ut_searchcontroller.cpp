@@ -176,6 +176,9 @@ TEST_F(TestSearchController, createDirIterator)
         iter->close();
     }
     EXPECT_TRUE(iter != nullptr);
+
+    // 处理消息队列，否则其余位置直[间]接调用会导致事件处理顺序问题而 crash
+    qApp->processEvents();
 }
 
 TEST_F(TestSearchController, createFileWatcher)

@@ -442,9 +442,9 @@ public:
 
                     if (!strResult.isEmpty()) {
                         /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
-                        QFileInfo fileInfo(strResult);
-                        QString fullPath = fileInfo.absoluteFilePath();
-                        QString filePath = fileInfo.absolutePath();
+                        QFileInfo info(strResult);
+                        QString fullPath = info.absoluteFilePath();
+                        QString filePath = info.absolutePath();
                         if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath)) {
                             // 修复wayland-bug-51754
                             // 刷选出保险箱内的文件,使其不被检索出来

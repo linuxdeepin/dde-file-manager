@@ -4,6 +4,7 @@
 #define protected public
 
 #include "plugins/pluginmanager.h"
+#include "interfaces/dfmglobal.h"
 
 namespace  {
     class PluginManagerTest : public testing::Test
@@ -32,6 +33,7 @@ TEST_F(PluginManagerTest, load_plugin_success)
 {
     ASSERT_NE(p_manager, nullptr);
 
+    DFMGlobal::PluginLibraryPaths.append(QStringList()<<QString("/")<<QString("/usr/lib"));
     p_manager->loadPlugin();
 }
 

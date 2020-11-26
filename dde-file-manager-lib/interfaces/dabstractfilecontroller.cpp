@@ -33,7 +33,7 @@ DWIDGET_USE_NAMESPACE
 class DefaultDiriterator : public DDirIterator
 {
 public:
-    DefaultDiriterator(const DAbstractFileController* controller, const QSharedPointer<DFMCreateDiriterator> &event) ;
+    DefaultDiriterator(const DAbstractFileController *controller, const QSharedPointer<DFMCreateDiriterator> &event) ;
 
     DUrl next() override;
     bool hasNext() const override;
@@ -45,14 +45,14 @@ public:
 
 private:
     mutable QList<DAbstractFileInfoPointer> m_children;
-    DAbstractFileController* m_controller;
+    DAbstractFileController *m_controller;
     mutable QSharedPointer<DFMCreateDiriterator> m_event;
     int m_current = -1;
 };
 
 DefaultDiriterator::DefaultDiriterator(const DAbstractFileController *controller, const QSharedPointer<DFMCreateDiriterator> &event)
 {
-    m_controller = const_cast<DAbstractFileController*>(controller);
+    m_controller = const_cast<DAbstractFileController *>(controller);
     m_event = event;
 }
 
@@ -209,28 +209,28 @@ bool DAbstractFileController::setPermissions(const QSharedPointer<DFMSetPermissi
 
 bool DAbstractFileController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    const DUrl &url = event->url();
+    const DUrl &durl = event->url();
     // why? because 'DDesktopServices::showFileItem(realUrl(event->url()))' will call session bus 'org.freedesktop.FileManager1'
     // but cannot find session bus when user is root!
     if (DFMGlobal::isRootUser()) {
-        QStringList urls{QStringList() << url.toLocalFile()};
+        QStringList urls{QStringList() << durl.toLocalFile()};
         // call by platform 'mips'
         if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" <<  urls << "--raw"))
             return true;
 
         return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  urls << "--raw");
     }
-    return DDesktopServices::showFileItem(url);
+    return DDesktopServices::showFileItem(durl);
 }
 
 const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    const_cast<DAbstractFileController*>(this)->setProperty("_d_call_createDirIterator_in_DAbstractFileController::getChildren", true);
+    const_cast<DAbstractFileController *>(this)->setProperty("_d_call_createDirIterator_in_DAbstractFileController::getChildren", true);
 
     const DDirIteratorPointer &iterator = createDirIterator(dMakeEventPointer<DFMCreateDiriterator>(event->sender(), event->url(), event->nameFilters(),
                                                                                                     event->filters(), event->flags()));
 
-    const_cast<DAbstractFileController*>(this)->setProperty("_d_call_createDirIterator_in_DAbstractFileController::getChildren", false);
+    const_cast<DAbstractFileController *>(this)->setProperty("_d_call_createDirIterator_in_DAbstractFileController::getChildren", false);
 
     QList<DAbstractFileInfoPointer> list;
 
@@ -312,7 +312,7 @@ bool DAbstractFileController::setFileTags(const QSharedPointer<DFMSetFileTagsEve
     return false;
 }
 
-bool DAbstractFileController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event) const
+bool DAbstractFileController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const
 {
     event->ignore();
     return false;
@@ -354,7 +354,7 @@ DFM_NAMESPACE::DStorageInfo *DAbstractFileController::createStorageInfo(const QS
 
 bool DAbstractFileController::setExtraProperties(const QSharedPointer<DFMSetFileExtraProperties> &event) const
 {
-    const auto && ep = event->extraProperties();
+    const auto &&ep = event->extraProperties();
     const QStringList &tag_name_list = ep.value("tag_name_list").toStringList();
 
     return setFileTags(dMakeEventPointer<DFMSetFileTagsEvent>(event->sender(), event->url(), tag_name_list));

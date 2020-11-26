@@ -100,7 +100,7 @@ void UDiskListener::initDiskManager()
     m_diskMgr = new DDiskManager(this);
     m_diskTimer = new QTimer(this);
     m_diskMgr->setWatchChanges(true);
-    QStringList blDevList = m_diskMgr->blockDevices();
+    QStringList blDevList = m_diskMgr->blockDevices({});
     for (const QString &str : blDevList) {
         insertFileSystemDevice(str);
     }
@@ -550,6 +550,17 @@ bool UDiskListener::isFileFromDisc(const QString &filePath)
         }
     }
     return false;
+}
+
+void UDiskListener::appendHiddenDirs(const QString &path)
+{
+    if (!m_hiddenDirs.contains(path))
+        m_hiddenDirs.append(path);
+}
+
+QStringList UDiskListener::hiddenDirs()
+{
+    return m_hiddenDirs;
 }
 
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)

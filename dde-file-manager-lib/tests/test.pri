@@ -8,7 +8,10 @@
 
 INCLUDEPATH += $$PWD
 
+THUMBNAIL_RESOURCE = $$PWD/resources/thumbnail/
+DEFINES += THUMBNAIL_RESOURCE=\\\"$$THUMBNAIL_RESOURCE\\\"
 HEADERS += \
+    $$PWD/testhelper.h
 
 SOURCES += \
     $$PWD/main.cpp \
@@ -138,7 +141,12 @@ SOURCES += \
     $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
     $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
-    $$PWD/controllers/ut_dfmsidebartagitemhandler_test.cpp \
+    $$PWD/controllers/ut_tagmanagerdaemon_interface.cpp \
+    $$PWD/controllers/ut_dfmavfscrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmbookmarkcrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmcomputercrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmfilecrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmmasteredmediacrumbcontroller.cpp \
     $$PWD/shutil/ut_filebatchprocess.cpp \
     $$PWD/shutil/ut_fileutils.cpp \
     $$PWD/shutil/ut_dsqlitehandle.cpp \
@@ -158,17 +166,51 @@ SOURCES += \
     $$PWD/interfaces/ut_dmimedatabase.cpp \
     $$PWD/usershare/ut_shareinfo.cpp \
     $$PWD/usershare/ut_usersharemanager.cpp \
-    $$PWD/controllers/ut_networkcontroller.cpp \
     $$PWD/controllers/ut_dfmusersharecrumbcontroller.cpp \
     $$PWD/interfaces/ut_dfmsidebarmanager.cpp \
     $$PWD/interfaces/ut_dthumbnailprovider.cpp \
     $$PWD/interfaces/ut_dfmcrumbmanager.cpp \
     $$PWD/interfaces/ut_dfmevent.cpp \
-    $$PWD/interfaces/ut_dfmstandardpaths.cpp
-
-RESOURCES += \
-    $$PWD/resources/test.qrc
-
-
-
+    $$PWD/interfaces/ut_dfmstandardpaths.cpp \
+    $$PWD/app/ut_FileSignalManager.cpp  \
+    $$PWD/controllers/ut_dfmmdcrumbcontrooler.cpp \
+    $$PWD/controllers/ut_dfmmtpcrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmnetworkcrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmrecentcrumbcontroller.cpp \
+    $$PWD/controllers/ut_filecontroller.cpp \
+    $$PWD/controllers/ut_dfmrootcontroller.cpp \
+    $$PWD/controllers/ut_fileeventprocessor.cpp \
+    $$PWD/interfaces/ut_dfiledialoghandle.cpp \
+    $$PWD/interfaces/ut_dfileiconprovider.cpp \
+    $$PWD/fileoperations/ut_filejob.cpp \
+    $$PWD/interfaces/ut_dfilemenu.cpp   \
+    $$PWD/io/ut_dfiledevice.cpp \
+    $$PWD/fileoperations/ut_sort.cpp \
+    $$PWD/interfaces/ut_dfileservices.cpp \
+    $$PWD/controllers/ut_jobcontroller.cpp \
+    $$PWD/interfaces/ut_dfmbaseview.cpp \
+    $$PWD/io/ut_dfilehandler.cpp \
+    $$PWD/controllers/ut_trashmanager.cpp \
+    $$PWD/controllers/ut_sharecontroller.cpp \
+    $$PWD/interfaces/ut_dabstractfilecontroller.cpp \
+    $$PWD/controllers/ut_networkcontroller.cpp \
+    $$PWD/controllers/ut_dfmtrashcrumbcontroller.cpp \
+    $$PWD/interfaces/ut_dfileproxywatcher.cpp \
+    $$PWD/interfaces/ut_dfmsidebariteminterface.cpp \
+    $$PWD/interfaces/ut_dfmstyleditemdelegate.cpp\
+    $$PWD/controllers/ut_recentcontroller.cpp \
+    $$PWD/interfaces/ut_dfmapplication.cpp\
+    $$PWD/interfaces/ut_diconitemdelegate.cpp \
+    $$PWD/interfaces/ut_dlistitemdelegate.cpp \
+    $$PWD/interfaces/ut_dfmfilepreview.cpp\
+    $$PWD/controllers/ut_tagcontroller.cpp \
+    $$PWD/tag/ut_tagmanager.cpp \
+    $$PWD/controllers/ut_dfmtagcrumbcontroller.cpp \
+    $$PWD/controllers/ut_operatorrevocation.cpp \
+    $$PWD/interfaces/ut_dfmabstracteventhandler.cpp \
+    $$PWD/interfaces/ut_dabstractfilewatcher.cpp \
+    $$PWD/controllers/ut_searchhistroymanager.cpp \
+    $$PWD/controllers/ut_dfmsearchcrumbcontroller.cpp \
+    $$PWD/interfaces/ut_dfmcrumbinterface.cpp \
+    $$PWD/interfaces/ut_dfmcrumblistviewmodel.cpp 
 

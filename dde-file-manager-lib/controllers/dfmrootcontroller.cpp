@@ -37,6 +37,7 @@
 #include <ddiskdevice.h>
 
 #include "dialogs/dialogmanager.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <gvfs/networkmanager.h>
 
@@ -108,7 +109,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     }
 
     DDiskManager dummy;
-    QStringList blkds = dummy.blockDevices();
+    QStringList blkds = dummy.blockDevices({});
     for (auto blks : blkds) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
@@ -348,11 +349,11 @@ bool DFMRootFileWatcherPrivate::start()
         if (path.isNull() || path.isEmpty()) {
             QStringList qq = mnt->getRootFile()->uri().replace("/", "").split(":");
             if (qq.size() >= 3) {
-                path = QString("/run/user/")+ QString::number(getuid()) +
-                                      QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
+                path = QString("/run/user/") + QString::number(getuid()) +
+                       QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
             } else if (qq.size() == 2) {
-                path = QString("/run/user/")+ QString::number(getuid()) +
-                                                            QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
+                path = QString("/run/user/") + QString::number(getuid()) +
+                       QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
             }
         }
         qDebug() << path;
@@ -366,10 +367,10 @@ bool DFMRootFileWatcherPrivate::start()
             if (smbUri.endsWith("/")) {
                 smbUri = smbUri.left(smbUri.length() - 1);
             }
-            DUrl uri(smbUri);
-            NetworkManager::NetworkNodes.remove(uri);
-            uri.setPath("");
-            NetworkManager::NetworkNodes.remove(uri);
+            DUrl smbUrl(smbUri);
+            NetworkManager::NetworkNodes.remove(smbUrl);
+            smbUrl.setPath("");
+            NetworkManager::NetworkNodes.remove(smbUrl);
 
             mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
         }
@@ -409,9 +410,19 @@ bool DFMRootFileWatcherPrivate::start()
         Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
     }));
 
-    for (auto devs : udisksmgr->blockDevices()) {
+    for (auto devs : udisksmgr->blockDevices({})) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+
+        auto mountPoints = blk->mountPoints();
+        if (!drv->removable() && !mountPoints.isEmpty()) { // feature: hide the specified dir of unremovable devices
+            QString mountPoint = mountPoints[0];
+            if (!mountPoint.endsWith("/"))
+                mountPoint += "/";
+            // no permission to create files under '/', cannot create .hidden file, so just hardcode here.
+            deviceListener->appendHiddenDirs(mountPoint + "root");
+            deviceListener->appendHiddenDirs(mountPoint + "lost+found");
+        }
 
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;

@@ -191,8 +191,8 @@ void DFMSettingsPrivate::fromJson(const QByteArray &json, Data *data)
         const QJsonObject &value_object = value.toObject();
         QVariantHash hash;
 
-        for (auto begin = value_object.constBegin(); begin != value_object.constEnd(); ++begin) {
-            hash[begin.key()] = begin.value().toVariant();
+        for (auto iter = value_object.constBegin(); iter != value_object.constEnd(); ++iter) {
+            hash[iter.key()] = iter.value().toVariant();
         }
 
         // private groups

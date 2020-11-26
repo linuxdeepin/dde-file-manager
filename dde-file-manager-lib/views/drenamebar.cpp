@@ -27,6 +27,7 @@
 #include "controllers/appcontroller.h"
 #include "views/dfilemanagerwindow.h"
 #include "interfaces/dfileservices.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QStackedWidget>
 #include <QHBoxLayout>
@@ -214,6 +215,13 @@ void DRenameBarPrivate::initUi()
     m_comboBox = new QComboBox;
     m_frame = new QFrame;
     m_stackWidget = new QStackedWidget;
+
+    AC_SET_OBJECT_NAME(m_comboBox, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
+    AC_SET_ACCESSIBLE_NAME(m_comboBox, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
+    AC_SET_OBJECT_NAME(m_frame, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
+    AC_SET_ACCESSIBLE_NAME(m_frame, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
+    AC_SET_OBJECT_NAME(m_stackWidget, AC_COMPUTER_RENAME_BAR_STACK_WIDGET);
+    AC_SET_ACCESSIBLE_NAME(m_stackWidget, AC_COMPUTER_RENAME_BAR_STACK_WIDGET);
 
     m_replaceOperatorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit);
     m_frameForLayoutReplaceArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
@@ -407,6 +415,7 @@ DRenameBar::DRenameBar(QWidget *parent)
     this->initConnect();
     this->hide();
     this->setObjectName(QString{"DRenameBar"});
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_RENAME_BAR);
 }
 
 

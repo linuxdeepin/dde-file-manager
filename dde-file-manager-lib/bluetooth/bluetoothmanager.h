@@ -62,20 +62,18 @@ public Q_SLOTS:
     void showBluetoothSettings();
 
     /**
-     * @brief 向设备发送文件
-     * @param device 设备对象
-     * @param filePath 文件路径
-     * @return 返回一个 sessionPath，用于对传输进行取消，返回空说明调用dbus接口时发生了错误
+     * @brief sendFiles      向设备发送文件
+     * @param device         蓝牙设备对象
+     * @param filePath       文件路径列表
      */
-    QString sendFiles(const BluetoothDevice &device, const QStringList &filePath);
+    void sendFiles(const BluetoothDevice &device, const QStringList &filePath);
 
     /**
-     * @brief 向设备发送文件
-     * @param id 设备对象中的id
-     * @param filePath 文件路径
-     * @return 返回一个 sessionPath，用于对传输进行取消，返回空说明调用dbus接口时发生了错误
+     * @brief sendFiles     向设备发送文件
+     * @param id            蓝牙设备 ID
+     * @param filePath      文件路径列表
      */
-    QString sendFiles(const QString &id, const QStringList &filePath);
+    void sendFiles(const QString &id, const QStringList &filePath);
 
     /**
      * @brief cancleTransfer 取消某个传输会话
@@ -105,6 +103,7 @@ Q_SIGNALS:
 
     void fileTransferFinished(const QString &sessionPath, const QString &filePath);
     void transferFailed(const QString &sessionPath, const QString &filePath, const QString &errMsg);
+    void transferEstablishFinish(const QString &sessionPath, const QString &errMsg);
 
 private:
     explicit BluetoothManager(QObject *parent = nullptr);

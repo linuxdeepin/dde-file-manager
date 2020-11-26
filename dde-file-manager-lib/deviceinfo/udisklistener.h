@@ -99,6 +99,8 @@ public:
     bool isMountedRemovableDiskExits();
 
     bool isFileFromDisc(const QString &filePath); // 文件是否来自光盘
+    void appendHiddenDirs(const QString &path);
+    QStringList hiddenDirs();
 
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);
@@ -139,6 +141,7 @@ private:
     QTimer *m_diskTimer;
     int m_nCDRomCount = 0; // 光驱接入个数
 
+    QStringList m_hiddenDirs; // feature: hide specified dirs of unremovable devices
 };
 
 #endif // UDISKLISTENER_H

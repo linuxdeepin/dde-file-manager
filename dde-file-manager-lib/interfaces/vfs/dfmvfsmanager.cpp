@@ -19,9 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dfmvfsmanager.h"
-#include "dfmvfsdevice.h"
-#include "private/dfmgiowrapper_p.h"
+
+#include "private/dfmvfsmanager_p.h"
 
 #include <unistd.h>
 
@@ -40,29 +39,6 @@ Q_LOGGING_CATEGORY(vfsManager, "vfs.manager", QtInfoMsg)
 
 DFM_BEGIN_NAMESPACE
 
-class DFMVfsManagerPrivate
-{
-    Q_DECLARE_PUBLIC(DFMVfsManager)
-
-public:
-    explicit DFMVfsManagerPrivate(DFMVfsManager *qq);
-    ~DFMVfsManagerPrivate();
-
-    QScopedPointer<GVolumeMonitor, ScopedPointerGObjectUnrefDeleter> m_GVolumeMonitor;
-    DFMVfsAbstractEventHandler *handler = nullptr;
-    QPointer<QThread> threadOfEventHandler;
-
-    static void GVolumeMonitorMountAddedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer);
-    static void GVolumeMonitorMountRemovedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer);
-    static void GVolumeMonitorMountChangedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer);
-
-
-    DFMVfsManager *q_ptr = nullptr;
-
-private:
-    void initConnect();
-};
-
 DFMVfsManagerPrivate::DFMVfsManagerPrivate(DFMVfsManager *qq)
     : q_ptr(qq)
 {
@@ -72,8 +48,8 @@ DFMVfsManagerPrivate::DFMVfsManagerPrivate(DFMVfsManager *qq)
 
 DFMVfsManagerPrivate::~DFMVfsManagerPrivate()
 {
-    if (handler) {
-        delete handler;
+    if (m_handler) {
+        delete m_handler;
     }
 }
 
@@ -218,15 +194,15 @@ DFMVfsAbstractEventHandler *DFMVfsManager::eventHandler() const
 {
     Q_D(const DFMVfsManager);
 
-    return d->handler;
+    return d->m_handler;
 }
 
 void DFMVfsManager::setEventHandler(DFMVfsAbstractEventHandler *handler, QThread *threadOfHandler)
 {
     Q_D(DFMVfsManager);
 
-    d->handler = handler;
-    d->threadOfEventHandler = threadOfHandler;
+    d->m_handler = handler;
+    d->m_threadOfEventHandler = threadOfHandler;
 }
 
 

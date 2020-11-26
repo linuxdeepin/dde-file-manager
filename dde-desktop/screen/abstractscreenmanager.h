@@ -21,7 +21,8 @@ public:
     virtual QVector<ScreenPointer> logicScreens() const = 0;    //主屏第一，其他按接入顺序
     virtual ScreenPointer screen(const QString &name) const = 0;
     virtual qreal devicePixelRatio() const = 0;
-    virtual DisplayMode displayMode() const = 0;
+    virtual DisplayMode displayMode() const = 0;        //从dbus获取后台最新mode
+    virtual DisplayMode lastChangedMode() const = 0;    //最后接收到改变后的mode
     virtual void reset() = 0;
 protected:
     void appendEvent(Event);    //添加屏幕事件

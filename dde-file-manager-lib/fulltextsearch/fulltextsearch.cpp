@@ -56,7 +56,7 @@ public:
 };
 
 DFMFullTextSearchManager::DFMFullTextSearchManager(QObject *parent)
-    : QObject (parent)
+    : QObject(parent)
 {
     status = false;
     indexStorePath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()
@@ -299,24 +299,24 @@ void DFMFullTextSearchManager::readFileName(const char *filePath, QStringList &r
     }
 
     DIR *dir = NULL;
-    if (!(dir = opendir (filePath))) {
+    if (!(dir = opendir(filePath))) {
         //trace ("can't open: %s\n", dname);
         return;
     }
     struct dirent *dent = NULL;
-    int len = strlen (filePath);
+    int len = strlen(filePath);
     if (len >= FILENAME_MAX - 1) {
         //trace ("filename too long: %s\n", dname);
         return;
     }
 
     char fn[FILENAME_MAX] = "";
-    strcpy (fn, filePath);
-    if (strcmp (filePath, "/")) {
+    strcpy(fn, filePath);
+    if (strcmp(filePath, "/")) {
         // TODO: use a more performant fix to handle root directory
         fn[len++] = '/';
     }
-    while ((dent = readdir (dir))) {
+    while ((dent = readdir(dir))) {
         if (!dent->d_name[0] == '.') {
             // file is dotfile, skip
             continue;
@@ -324,31 +324,31 @@ void DFMFullTextSearchManager::readFileName(const char *filePath, QStringList &r
         if ((QString(dent->d_name).at(0) == '.') && !QString(dent->d_name).startsWith(".local")) {
             continue;
         }
-        if (!strcmp (dent->d_name, ".") || !strcmp (dent->d_name, "..") || !strcmp (dent->d_name, ".avfs")) {
+        if (!strcmp(dent->d_name, ".") || !strcmp(dent->d_name, "..") || !strcmp(dent->d_name, ".avfs")) {
             continue;
         }
 
         struct stat st;
-        strncpy (fn + len, dent->d_name, FILENAME_MAX - len);
-        if (lstat (fn, &st) == -1) {
+        strncpy(fn + len, dent->d_name, FILENAME_MAX - len);
+        if (lstat(fn, &st) == -1) {
             //warn("Can't stat %s", fn);
             continue;
         }
-        const bool is_dir = S_ISDIR (st.st_mode);
+        const bool is_dir = S_ISDIR(st.st_mode);
         if (is_dir) {
             readFileName(fn, result);
         } else {
             QFileInfo fileInfo(fn);
             QString suffix = fileInfo.suffix();
-            QRegExp reg("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
-                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
-            if (reg.exactMatch(suffix)) {
+            QRegExp regExp("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
+                           "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
+            if (regExp.exactMatch(suffix)) {
                 result.append(fn);
             }
         }
     }
     if (dir) {
-        closedir (dir);
+        closedir(dir);
     }
 }
 

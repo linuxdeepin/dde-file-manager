@@ -81,6 +81,9 @@ static bool previewBackground()
            || !DWindowManagerHelper::instance()->hasBlurWindow();
 }
 
+//自动更换壁纸时间
+static const QByteArrayList array_policy {"30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup"};
+
 Frame::Frame(QString screenName, Mode mode, QWidget *parent)
     : DBlurEffectWidget(parent)
     , m_sessionManagerInter(new SessionManager(SessionManagerService,
@@ -97,9 +100,6 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
     , m_mouseArea(new DRegionMonitor(this))
     , m_screenName(screenName)
 {
-    // 截止到dtkwidget 2.0.10版本，在多个屏幕设置不同缩放比时
-    // DRegionMonitor 计算的缩放后的坐标可能是错误的
-    featureInterface();
     m_mouseArea->setCoordinateType(DRegionMonitor::Original);
 
     setFocusPolicy(Qt::NoFocus);
@@ -128,8 +128,6 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
             qDebug() << "button pressed on blank area, quit.";
 
             qreal scale = devicePixelRatioF();
-            //old
-            //const QRect sRect = this->windowHandle()->screen()->geometry();
             if(!ScreenHelper::screenManager()->screen(m_screenName)){
                 qCritical() << "lost screen " << m_screenName << "closed";
                 return ;
@@ -164,7 +162,12 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
     connect(m_sessionManagerInter, &SessionManager::LockedChanged, this, [this](bool locked){
         this->setVisible(!locked);
     });
+
     loading();
+    m_loadTimer.setSingleShot(true);
+    connect(&m_loadTimer,&QTimer::timeout,this,[this](){
+        this->refreshList();
+    });
 }
 
 Frame::~Frame()
@@ -319,7 +322,6 @@ void Frame::hideEvent(QHideEvent *event)
 
     if (m_mode == WallpaperMode) {
         if (!m_desktopWallpaper.isEmpty()){
-            //m_dbusAppearance->Set("background", m_desktopWallpaper);
             setBackground();
         }
 
@@ -546,8 +548,7 @@ void Frame::reLayoutTools()
         m_lockScreenBox->hide();
 #ifndef DISABLE_WALLPAPER_CAROUSEL
         // 服务器版本不支持自动更换桌面背景
-        if (DSysInfo::deepinType() != DSysInfo::DeepinServer)
-        {
+        if (DSysInfo::deepinType() != DSysInfo::DeepinServer) {
             m_wallpaperCarouselCheckBox->show();
             m_wallpaperCarouselControl->setVisible(m_wallpaperCarouselCheckBox->isChecked());
         }
@@ -675,8 +676,7 @@ void Frame::initUI()
         m_wallpaperCarouselCheckBox->setChecked(false);
         m_wallpaperCarouselCheckBox->setEnabled(false);
         m_wallpaperCarouselCheckBox->setVisible(false);
-    }
-    else {
+    } else {
         m_wallpaperCarouselCheckBox->setChecked(true);
     }
     QPalette wccPal = m_wallpaperCarouselCheckBox->palette();
@@ -688,17 +688,14 @@ void Frame::initUI()
     m_wallpaperCarouselCheckBox->setFocusPolicy(Qt::StrongFocus);
     m_wallpaperCarouselControl->setFocusPolicy(Qt::NoFocus);
     qDebug() << "DSysInfo::deepinType = " << QString::number(DSysInfo::DeepinProfessional);
-    QByteArrayList array_policy {"30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup"};
 
     {
-
-        //int current_policy_index = array_policy.indexOf(m_dbusAppearance->wallpaperSlideShow().toLatin1());
-        int current_policy_index = array_policy.indexOf(getWallpaperSlideShow().toLatin1());
-
+        QString slideShow = getWallpaperSlideShow();
+        int currentPolicyIndex = array_policy.indexOf(slideShow.toLatin1());
+#if 0   //!应产品需求，不会有其他值出现，若获取到其他值，则为无效值
         // 当值不存在此列表时插入此值
         if (current_policy_index < 0) {
-            //const QString &policy = m_dbusAppearance->wallpaperSlideShow();
-            const QString &policy = getWallpaperSlideShow();
+            const QString &policy = slideShow;
 
             if (!policy.isEmpty()) {
                 array_policy.prepend(policy.toLatin1());
@@ -709,7 +706,12 @@ void Frame::initUI()
             // wallpaper change default per 10 minutes
             current_policy_index = 3;
         }
-
+#else
+        if (currentPolicyIndex < 0) {
+            m_wallpaperCarouselCheckBox->setChecked(false);
+            currentPolicyIndex = 3;
+        }
+#endif
         for (const QByteArray &time : array_policy) {
             DButtonBoxButton *btn;
             if (time == "login") {
@@ -728,7 +730,7 @@ void Frame::initUI()
         }
 
         m_wallpaperCarouselControl->setButtonList(wallpaperSlideshowBtns, true);
-        wallpaperSlideshowBtns[current_policy_index]->setChecked(true);
+        wallpaperSlideshowBtns[currentPolicyIndex]->setChecked(true);
         m_wallpaperCarouselControl->setVisible(m_wallpaperCarouselCheckBox->isChecked());
     }
 
@@ -741,7 +743,7 @@ void Frame::initUI()
 
     layout->addLayout(m_wallpaperCarouselLayout);
 
-    connect(m_wallpaperCarouselCheckBox, &QCheckBox::clicked, this, [this, array_policy] (bool checked) {
+    connect(m_wallpaperCarouselCheckBox, &QCheckBox::clicked, this, [this] (bool checked) {
         m_wallpaperCarouselControl->setVisible(checked);
 #if !defined(DISABLE_SCREENSAVER) || !defined(DISABLE_WALLPAPER_CAROUSEL)
         adjustModeSwitcherPoint();
@@ -749,15 +751,12 @@ void Frame::initUI()
 
         int checkedIndex = m_wallpaperCarouselControl->buttonList().indexOf(m_wallpaperCarouselControl->checkedButton());
         if (!checked) {
-            //m_dbusAppearance->setWallpaperSlideShow(QString());
             setWallpaperSlideShow(QString());
         } else if (checkedIndex >= 0) {
-            //m_dbusAppearance->setWallpaperSlideShow(array_policy.at(checkedIndex));
             setWallpaperSlideShow(array_policy.at(checkedIndex));
         }
     });
-    connect(m_wallpaperCarouselControl, &DButtonBox::buttonToggled, this, [this, array_policy] (QAbstractButton * toggledBtn, bool state) {
-        //m_dbusAppearance->setWallpaperSlideShow(array_policy.at(m_wallpaperCarouselControl->buttonList().indexOf(toggledBtn)));
+    connect(m_wallpaperCarouselControl, &DButtonBox::buttonToggled, this, [this] (QAbstractButton * toggledBtn, bool state) {
         if(state){
             setWallpaperSlideShow(array_policy.at(m_wallpaperCarouselControl->buttonList().indexOf(toggledBtn)));
         }
@@ -882,8 +881,6 @@ void Frame::initUI()
 
 void Frame::initSize()
 {
-    //old
-    //const QRect primaryRect = qApp->primaryScreen()->geometry();
     if(!ScreenHelper::screenManager()->screen(m_screenName)){
         qCritical() << "lost screen " << m_screenName;
         return;
@@ -917,8 +914,7 @@ void Frame::loading()
 
     if (m_mode == WallpaperMode) {
         lablecontant = QString(tr("Loading wallpapers..."));
-    }
-    else {
+    } else {
         lablecontant = QString(tr("Loading screensavers..."));
     }
 
@@ -940,16 +936,18 @@ void Frame::refreshList()
 
     m_wallpaperList->show();
     if (m_mode == WallpaperMode) {
+        m_dbusAppearance->setTimeout(5000);
         QDBusPendingCall call = m_dbusAppearance->List("background");
         QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-        connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call] {
-            if (call.isError())
-            {
+        connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call,watcher] {
+            if (call.isError()) {
                 qWarning() << "failed to get all backgrounds: " << call.error().message();
-            } else
-            {
+                watcher->deleteLater();
+                m_loadTimer.start(5000);
+            } else {
                 //remove itemwait and delete itemwait
                 m_wallpaperList->m_contentLayout->removeWidget(m_itemwait);
+                m_loadTimer.stop();
 
                 if (m_itemwait != nullptr) {
                     delete m_itemwait;
@@ -987,19 +985,17 @@ void Frame::refreshList()
                             m_waitControl->buttonList().first()->setFocus();
                         }
                     });
-                    connect(item, &WallpaperItem::backtab, this, [=](){
+                    connect(item, &WallpaperItem::backtab, this, [=]() {
                         //第三个区域发出backtab信号，则跳转到第二个区域的第一个控件上
                         m_switchModeControl->buttonList().first()->setFocus();
                     });
 
-
                     //首次进入时，选中当前设置壁纸
-                    if (m_backgroundManager == nullptr){
+                    if (m_backgroundManager == nullptr) {
                         qCritical() << "Critical!" << "m_backgroundManager has deleted!";
                         this->hide();
                         return;
-                    } else if(path.remove("file://") == currentPath.remove("file://")) //均有机会出现头部为file:///概率
-                    {
+                    } else if (path.remove("file://") == currentPath.remove("file://")) { //均有机会出现头部为file:///概率
                         item->pressed();
                     }
                 }
@@ -1017,16 +1013,22 @@ void Frame::refreshList()
                                                                   QDBusConnection::sessionBus(), this);
         }
 
-        const QStringList &saver_name_list = m_dbusScreenSaver->allScreenSaver();
+        const QStringList &saverNameList = m_dbusScreenSaver->allScreenSaver();
+        if (saverNameList.isEmpty() && !m_dbusScreenSaver->isValid()) {
+            qWarning() << "com.deepin.ScreenSaver allScreenSaver fail. retry";
+            m_loadTimer.start(5000);
+            return;
+        }
+
         //remove itemwait and delete itemwait
         m_wallpaperList->m_contentLayout->removeWidget(m_itemwait);
-
+        m_loadTimer.stop();
         if (m_itemwait != nullptr) {
             delete m_itemwait;
             m_itemwait = nullptr;
         }
 
-        for (const QString &name : saver_name_list) {
+        for (const QString &name : saverNameList) {
             if("flurry" == name){
                 continue;//临时屏蔽名字为flurry的屏保
             }
@@ -1039,21 +1041,19 @@ void Frame::refreshList()
             item->setDeletable(false);
             item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply"));
             item->show();
-            connect(item, &WallpaperItem::tab, this, [=](){
+            connect(item, &WallpaperItem::tab, this, [=]() {
                 if (m_mode == WallpaperMode) {
                     m_wallpaperCarouselCheckBox->setFocus();
-                }
-                else {
+                } else {
                     m_waitControl->buttonList().first()->setFocus();
                 }
             });
-            connect(item, &WallpaperItem::backtab, this, [=](){
+            connect(item, &WallpaperItem::backtab, this, [=]() {
                 m_switchModeControl->buttonList().first()->setFocus();
             });
             connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
             //首次进入时，选中当前设置屏保
-            if(cover_path == m_dbusScreenSaver->GetScreenSaverCover(m_dbusScreenSaver->currentScreenSaver()))
-            {
+            if(cover_path == m_dbusScreenSaver->GetScreenSaverCover(m_dbusScreenSaver->currentScreenSaver())) {
                 item->pressed();
             }
         }
@@ -1152,75 +1152,36 @@ QStringList Frame::processListReply(const QString &reply)
     return result;
 }
 
-void Frame::featureInterface()
-{
-    m_isExistFeatureInterface = false;
-    IntrospectableInterface* introspectableInterface = new IntrospectableInterface(AppearanceServ,
-                AppearancePath,
-                QDBusConnection::sessionBus(),
-                this);
-    QDBusPendingReply<QString> reply = introspectableInterface->Introspect();
-    reply.waitForFinished();
-    if (reply.isFinished())
-    {
-        QString xmlCode = reply.argumentAt(0).toString();
-        m_isExistFeatureInterface = xmlCode.contains("SetMonitorBackground")
-                && xmlCode.contains("SetWallpaperSlideShow")
-                && xmlCode.contains("GetWallpaperSlideShow");
-    }
-
-    if (introspectableInterface) {
-        introspectableInterface->deleteLater();
-        introspectableInterface = nullptr;
-    }
-}
-
 QString Frame::getWallpaperSlideShow()
 {
-    if(nullptr == m_dbusAppearance){
+    if(nullptr == m_dbusAppearance) {
         qDebug() << "m_dbusAppearance is nullptr";
         return QString();
     }
 
-    QString wallpaperSlideShow;
-    if(m_isExistFeatureInterface){
-        wallpaperSlideShow = m_dbusAppearance->GetWallpaperSlideShow(m_screenName);
-        qDebug() << "dbus Appearance GetWallpaperSlideShow is called, result: " << wallpaperSlideShow;
-    } else {
-        wallpaperSlideShow = m_dbusAppearance->wallpaperSlideShow();
-        qDebug() << " dbus Appearance wallpaperSlideShow is called, result: " << wallpaperSlideShow;
-    }
+    QString wallpaperSlideShow = m_dbusAppearance->GetWallpaperSlideShow(m_screenName);
+    qInfo() << "dbus Appearance GetWallpaperSlideShow is called, result: " << wallpaperSlideShow;
     return wallpaperSlideShow;
 }
 
 void Frame::setWallpaperSlideShow(QString slideShow)
 {
-    if(nullptr == m_dbusAppearance){
+    if(nullptr == m_dbusAppearance) {
         qDebug() << "m_dbusAppearance is nullptr";
         return;
     }
 
-    if(m_isExistFeatureInterface){
-        qDebug() << "dbus Appearance SetWallpaperSlideShow is called";
-        m_dbusAppearance->SetWallpaperSlideShow(m_screenName, slideShow);
-    } else {
-        qDebug() << " dbus Appearance wallpaperSlideShow is called";
-        m_dbusAppearance->setWallpaperSlideShow(slideShow);
-    }
+    qDebug() << "dbus Appearance SetWallpaperSlideShow is called";
+    m_dbusAppearance->SetWallpaperSlideShow(m_screenName, slideShow);
 }
 
 void Frame::setBackground()
 {
-    if(nullptr == m_dbusAppearance){
+    if(nullptr == m_dbusAppearance) {
         qDebug() << "m_dbusAppearance is nullptr";
         return;
     }
 
-    if(m_isExistFeatureInterface){
-        qDebug() << "dbus Appearance SetMonitorBackground is called " << m_screenName << " " << m_desktopWallpaper;
-        m_dbusAppearance->SetMonitorBackground(m_screenName, m_desktopWallpaper);
-    } else {
-        qDebug() << " dbus Appearance Set background ";
-        m_dbusAppearance->Set("background", m_desktopWallpaper);
-    }
+    qDebug() << "dbus Appearance SetMonitorBackground is called " << m_screenName << " " << m_desktopWallpaper;
+    m_dbusAppearance->SetMonitorBackground(m_screenName, m_desktopWallpaper);
 }

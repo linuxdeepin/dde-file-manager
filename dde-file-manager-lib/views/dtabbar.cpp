@@ -48,6 +48,7 @@
 #include "view/viewinterface.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "views/dfilemanagerwindow.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <qdrawutil.h>
 #include <DGuiApplicationHelper>
@@ -527,10 +528,12 @@ void TabCloseButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 TabBar::TabBar(QWidget *parent): QGraphicsView(parent)
 {
-    m_scene = new QGraphicsScene(this);
     setObjectName("TabBar");
+    m_scene = new QGraphicsScene(this);
     m_scene->setSceneRect(0, 0, width(), height());
     setContentsMargins(0, 0, 0, 0);
+    AC_SET_OBJECT_NAME( this, AC_VIEW_TAB_BAR);
+    AC_SET_ACCESSIBLE_NAME( this, AC_VIEW_TAB_BAR);
     setScene(m_scene);
     m_scene->installEventFilter(this);
 

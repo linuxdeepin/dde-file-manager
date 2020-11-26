@@ -26,6 +26,15 @@ DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 
 DEFINES += QT_MESSAGELOGCONTEXT
 
+# 获取标签系统设置,具体环境变量还需要等集成测试统一安排
+#AC_FUNC_ENABLE = true
+AC_FUNC_ENABLE = $$(ENABLE_AC_FUNC)
+# 检查集成测试标签
+equals( AC_FUNC_ENABLE, true ){
+    DEFINES += ENABLE_ACCESSIBILITY
+    message("dde-file-manager enabled accessibility function with set: " $$AC_FUNC_ENABLE)
+}
+
 isEmpty(QMAKE_ORGANIZATION_NAME) {
     DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
 }
@@ -38,6 +47,9 @@ CONFIG(debug, debug|release) {
 #    LIBS += -lprofiler
 #    DEFINES += ENABLE_PPROF
 }
+
+# 集成测试标签
+include($$PWD/../third-party/accessibility/accessibility-suite.pri)
 
 SOURCES += \
     main.cpp \
@@ -107,7 +119,8 @@ HEADERS += \
     logutil.h \
     singleapplication.h \
     commandlinemanager.h \
-    desktopinfo.h
+    desktopinfo.h \
+    accessible/accessiblelist.h
 
 DISTFILES += \
     mips/dde-file-manager-autostart.desktop \

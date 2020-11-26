@@ -152,7 +152,8 @@ private:
         {"advance.mount.auto_mount_and_open", DFMApplication::GA_AutoMountAndOpen},
         {"advance.dialog.default_chooser_dialog", DFMApplication::GA_OverrideFileChooserDialog},
         {"advance.other.hide_system_partition", DFMApplication::GA_HiddenSystemPartition},
-        {"advance.other.show_crumbbar_clickable_area", DFMApplication::GA_ShowCsdCrumbBarClickableArea}
+        {"advance.other.show_crumbbar_clickable_area", DFMApplication::GA_ShowCsdCrumbBarClickableArea},
+        {"advance.other.show_filesystemtag_on_diskicon", DFMApplication::GA_ShowFileSystemTagOnDiskIcon},
     };
 };
 

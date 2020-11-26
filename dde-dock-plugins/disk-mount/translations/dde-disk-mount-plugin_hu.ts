@@ -32,7 +32,7 @@
     <name>DiskMountPlugin</name>
     <message>
         <source>Disk</source>
-        <translation>Tároló</translation>
+        <translation>Lemez</translation>
     </message>
     <message>
         <source>Open</source>

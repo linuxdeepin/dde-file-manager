@@ -1,6 +1,9 @@
 #include "models/recentfileinfo.h"
+#include "dfmglobal.h"
+#include "dfilesystemmodel.h"
 
 #include <gtest/gtest.h>
+#include <QTimer>
 
 namespace {
 class TestRecentFileInfo : public testing::Test
@@ -15,6 +18,12 @@ public:
     void TearDown() override
     {
         std::cout << "end TestRecentFileInfo";
+        QEventLoop loop;
+        QTimer::singleShot(200, nullptr, [&loop]{
+            loop.exit();
+        });
+        loop.exec();
+        delete info;
     }
 
 public:
@@ -112,4 +121,82 @@ TEST_F(TestRecentFileInfo, increaseCovrage)
     info->updateReadTime(curr);
     EXPECT_STREQ(curr.toString("yyyy-MM-dd hh:mm:ss").toStdString().c_str(),
                  info->getReadTime().toString("yyyy-MM-dd hh:mm:ss").toStdString().c_str());
+}
+
+
+//TEST_F(TestRecentFileInfo, tstPermissions)
+//{
+//    EXPECT_TRUE(info->permissions() == (QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther));
+//    RecentFileInfo f(DUrl("file:///usr/bin/dde-file-manager"));
+//    EXPECT_FALSE(f.permissions() == (QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther));
+//}
+
+TEST_F(TestRecentFileInfo, tstMenuActionList)
+{
+    EXPECT_TRUE(info->menuActionList(DAbstractFileInfo::MenuType::SpaceArea).count() == 3);
+    EXPECT_TRUE(info->menuActionList(DAbstractFileInfo::MenuType::SingleFile).count() > 3);
+}
+
+TEST_F(TestRecentFileInfo, tstDisableMenuActionList)
+{
+    EXPECT_TRUE(info->disableMenuActionList().count() == 0);
+    RecentFileInfo f(DUrl("recent:///"));
+    EXPECT_TRUE(f.disableMenuActionList().count() == 0);
+}
+
+TEST_F(TestRecentFileInfo, tstUserColumnRoles)
+{
+    EXPECT_TRUE(info->userColumnRoles().count() == 5);
+}
+
+TEST_F(TestRecentFileInfo, tstUserColumnData)
+{
+    EXPECT_TRUE(info->userColumnData(DFileSystemModel::FileLastReadRole).toString().isEmpty());
+    EXPECT_TRUE(info->userColumnData(DFileSystemModel::FileUserRole + 1).toString().isEmpty());
+    EXPECT_TRUE(info->userColumnData(DFileSystemModel::FileUserRole + 2).toString().isEmpty());
+}
+
+TEST_F(TestRecentFileInfo, tstUserColumnDisplayName)
+{
+    EXPECT_TRUE(!info->userColumnDisplayName(DFileSystemModel::FileUserRole + 1).toString().isEmpty());
+    EXPECT_TRUE(info->userColumnDisplayName(DFileSystemModel::FileUserRole + 2).toString().isEmpty());
+}
+
+TEST_F(TestRecentFileInfo, tstMenuActionByColumnRole)
+{
+    EXPECT_TRUE(info->menuActionByColumnRole(DFileSystemModel::FileUserRole + 1) == MenuAction::AbsolutePath);
+    EXPECT_TRUE(info->menuActionByColumnRole(DFileSystemModel::FileUserRole + 2) != MenuAction::AbsolutePath);
+}
+
+TEST_F(TestRecentFileInfo, tstUserColumnWidth)
+{
+    QFont f;
+    QFontMetrics fm(f);
+    EXPECT_TRUE(-1 == info->userColumnWidth(DFileSystemModel::FileNameRole, fm));
+    EXPECT_TRUE(80 == info->userColumnWidth(DFileSystemModel::FileSizeRole, fm));
+}
+
+TEST_F(TestRecentFileInfo, tstMimeDataUrl)
+{
+    EXPECT_TRUE(info->mimeDataUrl().isValid());
+}
+
+TEST_F(TestRecentFileInfo, tstParentUrl)
+{
+    EXPECT_TRUE(info->parentUrl() == DUrl(RECENT_ROOT));
+}
+
+TEST_F(TestRecentFileInfo, tstCompareFunByColumn)
+{
+    info->updateInfo();
+    EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FileLastReadRole));
+    EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 1));
+    EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 2));
+}
+
+TEST_F(TestRecentFileInfo, tstReadDateTime)
+{
+    QDateTime dt = QDateTime::currentDateTime();
+    info->setReadDateTime(dt.toString("yyyy-MM-dd hh:mm:ss"));
+    EXPECT_TRUE(dt == info->readDateTime());
 }

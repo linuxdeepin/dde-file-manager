@@ -1,6 +1,12 @@
 #include "models/computermodel.h"
+#include "app/define.h"
+#include "interfaces/drootfilemanager.h"
+#include "dabstractfilewatcher.h"
 
 #include <gtest/gtest.h>
+#include <QTimer>
+#include <QIcon>
+
 
 namespace {
 class TestComputerModel : public testing::Test
@@ -8,15 +14,13 @@ class TestComputerModel : public testing::Test
 public:
     void SetUp() override
     {
-        std::cout << "start TestComputerModel";
-
+        std::cout << "start TestComputerModel\n";
         model = new ComputerModel;
     }
 
     void TearDown() override
     {
-        std::cout << "end TestComputerModel";
-
+        std::cout << "end TestComputerModel\n";
         delete model;
     }
 
@@ -25,41 +29,154 @@ public:
 };
 } // namespace
 
-TEST_F(TestComputerModel, modexIndexIsNotValid)
+TEST_F(TestComputerModel, tstConstructors)
 {
-    EXPECT_FALSE(model->index(-1, -1).isValid());
+    QEventLoop loop;
+    QTimer t;
+    t.setInterval(2000);
+    QObject::connect(&t, &QTimer::timeout, &loop, [&loop]{
+        loop.exit();
+    });
+
+    DRootFileManager::instance()->startQuryRootFile();
+    t.start();
+    loop.exec();
+
+    emit DRootFileManager::instance()->hideSystemPartition();
+    t.start();
+    loop.exec();
+
+    emit DRootFileManager::instance()->rootFileWather()->subfileCreated(DUrl("file:///home"));
+    t.start();
+    loop.exec();
+
+    ComputerModel tmp;
 }
 
-TEST_F(TestComputerModel, modelParentIsNotValid)
+TEST_F(TestComputerModel, tstParent)
 {
-    EXPECT_FALSE(model->parent(model->index(0, 0)).isValid());
+    auto idx = model->parent(QModelIndex());
+    EXPECT_FALSE(idx.isValid());
 }
 
-TEST_F(TestComputerModel, modelRowCountIsZero)
+TEST_F(TestComputerModel, tstRowNColCount)
 {
-    EXPECT_TRUE(model->rowCount() == 0);
+    auto num = model->rowCount();
+    EXPECT_TRUE(num > 0);
+    num = model->columnCount();
+    EXPECT_EQ(1, num);
+    num = model->itemCount();
+    EXPECT_TRUE(num > 0);
 }
 
-TEST_F(TestComputerModel, modelHasColumn)
+TEST_F(TestComputerModel, tstIndex)
 {
-    EXPECT_TRUE(model->columnCount() != 0);
+    int row = model->rowCount() - 1;
+    auto idx = model->index(row, 0);
+    EXPECT_TRUE(idx.isValid());
 }
 
-//TEST_F(TestComputerModel, modelDataIsNull) {
-//    EXPECT_STREQ("", model->data(model->index(0, 0)).toString().toStdString().c_str());
-//}
-
-//TEST_F(TestComputerModel, modelCanSetData) {
-//    EXPECT_TRUE(model->setData(model->index(0, 0), "test"));
-//}
-
-TEST_F(TestComputerModel, modelCanNotFindItemByUrl)
+TEST_F(TestComputerModel, tstData)
 {
-    EXPECT_FALSE(model->findIndex(DUrl("/")).isValid());
+    QEventLoop loop;
+    QTimer t;
+    t.setInterval(2000);
+    QObject::connect(&t, &QTimer::timeout, &loop, [&loop]{
+        loop.exit();
+    });
+
+    DRootFileManager::instance()->startQuryRootFile();
+    t.start();
+    loop.exec();
+
+    auto idx = model->index(model->rowCount() - 1, 0);
+    auto val = model->data(idx, Qt::DisplayRole);
+    EXPECT_TRUE(!val.toString().isEmpty());
+
+    val = model->data(idx, Qt::DecorationRole);
+    EXPECT_FALSE(val.value<QIcon>().isNull());
+
+    val = model->data(idx, ComputerModel::IconNameRole);
+    EXPECT_TRUE(!val.toString().isEmpty());
+
+    val = model->data(idx, ComputerModel::FileSystemRole);
+    EXPECT_TRUE(val.toString().isEmpty());
+
+    val = model->data(idx, ComputerModel::SizeInUseRole);
+    EXPECT_TRUE(val.toInt() == 0);
+
+    val = model->data(idx, ComputerModel::SizeTotalRole);
+    EXPECT_TRUE(val.toInt() == 0);
+
+    val = model->data(idx, ComputerModel::ICategoryRole);
+    EXPECT_TRUE(val.toInt() <= 4);
+
+    val = model->data(idx, ComputerModel::OpenUrlRole);
+    EXPECT_TRUE(val.value<DUrl>().isValid());
+
+    val = model->data(idx, ComputerModel::MountOpenUrlRole);
+    EXPECT_TRUE(val.value<DUrl>().isValid());
+
+    val = model->data(idx, ComputerModel::ActionVectorRole);
+    EXPECT_TRUE(val.value<QVector<MenuAction>>().count() > 0);
+
+    val = model->data(idx, ComputerModel::DFMRootUrlRole);
+    EXPECT_TRUE(val.value<DUrl>().isValid());
+
+    val = model->data(idx, ComputerModel::VolumeTagRole);
+    EXPECT_TRUE(val.toString().startsWith("/dev"));
+
+    val = model->data(idx, ComputerModel::ProgressRole);
+    EXPECT_TRUE(val.toInt() <= 1 && val.toInt() >= 0);
+
+    val = model->data(idx, ComputerModel::SizeRole);
+    EXPECT_TRUE(val.toInt() <= 1 && val.toInt() >= 0);
+
+    val = model->data(idx, ComputerModel::SchemeRole);
+    EXPECT_TRUE(!val.toString().isEmpty());
+
+    val = model->data(idx, ComputerModel::DiscUUIDRole);
+    EXPECT_TRUE(!val.toString().isEmpty());
+
+    val = model->data(idx, ComputerModel::DiscOpticalRole);
+    EXPECT_FALSE(val.toBool());
+
+    val = model->data(idx, Qt::UserRole);
+    EXPECT_TRUE(val.isNull());
 }
 
-TEST_F(TestComputerModel, modelItemCountIsNotZero)
+TEST_F(TestComputerModel, tstGetRootFile)
 {
+    QEventLoop loop;
+    QTimer t;
+    t.setInterval(2000);
+    QObject::connect(&t, &QTimer::timeout, &loop, [&loop]{
+        loop.exit();
+    });
+
+    DRootFileManager::instance()->startQuryRootFile();
+    t.start();
+    loop.exec();
     model->getRootFile();
-    EXPECT_NE(int(0), model->itemCount());
+}
+
+TEST_F(TestComputerModel, tstSetDataNFlags)
+{
+    QEventLoop loop;
+    QTimer t;
+    t.setInterval(2000);
+    QObject::connect(&t, &QTimer::timeout, &loop, [&loop]{
+        loop.exit();
+    });
+
+    DRootFileManager::instance()->startQuryRootFile();
+    t.start();
+    loop.exec();
+
+    auto idx = model->index(0, 0);
+    auto rst = model->setData(idx, Qt::EditRole);
+    EXPECT_FALSE(rst);
+
+    auto flgs = model->flags(idx);
+    EXPECT_TRUE(flgs & Qt::ItemFlag::ItemNeverHasChildren);
 }
