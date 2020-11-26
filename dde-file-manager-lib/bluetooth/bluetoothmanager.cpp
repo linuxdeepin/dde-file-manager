@@ -22,6 +22,10 @@
 #include "bluetoothmanager_p.h"
 #include "bluetooth/bluetoothmodel.h"
 
+#include <QFuture>
+#include <QFutureWatcher>
+#include <QtConcurrent/QtConcurrent>
+
 
 #define BluetoothService "com.deepin.daemon.Bluetooth"
 #define BluetoothPath "/com/deepin/daemon/Bluetooth"
@@ -142,7 +146,6 @@ void BluetoothManagerPrivate::initConnects()
         }
     });
 
-#ifdef BLUETOOTH_ENABLE
     QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferCreated, q, [this](const QString & file, const QDBusObjectPath & transferPath, const QDBusObjectPath & sessionPath) {
         qDebug() << file << transferPath.path() << sessionPath.path();
     });
@@ -173,7 +176,6 @@ void BluetoothManagerPrivate::initConnects()
         Q_Q(BluetoothManager);
         Q_EMIT q->transferFailed(sessionPath.path(), file, errInfo);
     });
-#endif
 }
 
 void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJsonObject &adapterObj)
@@ -320,48 +322,53 @@ void BluetoothManager::showBluetoothSettings()
     d->m_controlcenterInter->ShowModule(BluetoothPage);
 }
 
-QString BluetoothManager::sendFiles(const BluetoothDevice &device, const QStringList &filePath)
+void BluetoothManager::sendFiles(const BluetoothDevice &device, const QStringList &filePath)
 {
     return sendFiles(device.id(), filePath);
 }
 
-QString BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
+void BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
 {
-#ifdef BLUETOOTH_ENABLE
     Q_D(BluetoothManager);
 
     // /org/bluez/hci0/dev_90_63_3B_DA_5A_4C  --》  90:63:3B:DA:5A:4C
     QString deviceAddress = id;
     deviceAddress.remove(QRegularExpression("/org/bluez/hci[0-9]*/dev_")).replace("_", ":");
 
-    QDBusPendingReply<QDBusObjectPath> reply = d->m_bluetoothInter->SendFiles(deviceAddress, filePath);
-    reply.waitForFinished();
-    if (reply.isError()) {
-        qDebug() << "Error" << reply.error();
-        return QString();
-    }
+    QFuture<QPair<QString, QString>> future = QtConcurrent::run([this, deviceAddress, filePath]{
+           Q_D(BluetoothManager);
+           QDBusPendingReply<QDBusObjectPath> reply = d->m_bluetoothInter->SendFiles(deviceAddress, filePath);
+           reply.waitForFinished();
+           return qMakePair<QString, QString>(reply.value().path(), reply.error().message());
+       });
 
-    return reply.value().path();
-#else
-    return QString();
-#endif
+       if (d->m_watcher) {
+           if (d->m_watcher->isRunning())
+               d->m_watcher->future().cancel();
+           delete d->m_watcher;
+           d->m_watcher = nullptr;
+       }
+
+       // 此处 watcher 在 run 完成之后会 delete，但无法在传输对话框关闭后立即 delete
+       d->m_watcher = new QFutureWatcher<QPair<QString, QString>>();
+       d->m_watcher->setFuture(future);
+       connect(d->m_watcher, &QFutureWatcher<QString>::finished, this, [d, this]{
+           emit transferEstablishFinish(d->m_watcher->result().first, d->m_watcher->result().second);
+           delete d->m_watcher;
+           d->m_watcher = nullptr;
+       });
 }
 
 bool BluetoothManager::cancelTransfer(const QString &sessionPath)
 {
-#ifdef BLUETOOTH_ENABLE
     Q_D(BluetoothManager);
     d->m_bluetoothInter->CancelTransferSession(QDBusObjectPath(sessionPath));
     qDebug() << sessionPath;
-#endif
     return true;
 }
 
 bool BluetoothManager::canSendBluetoothRequest()
 {
-#ifdef BLUETOOTH_ENABLE
     Q_D(BluetoothManager);
     return d->m_bluetoothInter->transportable();
-#endif
-    return false;
 }

@@ -123,6 +123,17 @@ void BluetoothTransDialog::setObjTextStyle(QWidget *obj, int size, bool bold)
     obj->setFont(f);
 }
 
+QString BluetoothTransDialog::humanizedStrOfObexErrMsg(const QString &msg)
+{
+    if (msg.contains("Timed out")) {
+        return tr("File sending request timed out");
+    } else if (msg.contains("0x53")) {
+        return tr("The service is busy and unable to process the request");
+    } else { // ...TO BE CONTINUE
+        return msg;
+    }
+}
+
 bool BluetoothTransDialog::canSendFiles()
 {
     return bluetoothManager->canSendBluetoothRequest();
@@ -199,11 +210,11 @@ void BluetoothTransDialog::initConn()
         }
     });
 
-    connect(bluetoothManager->model(), &BluetoothModel::adapterAdded, this, [ = ](const BluetoothAdapter * adapter) {
+    connect(bluetoothManager->model(), &BluetoothModel::adapterAdded, this, [this](const BluetoothAdapter *adapter) {
         connectAdapter(adapter);
     });
 
-    connect(bluetoothManager->model(), &BluetoothModel::adapterRemoved, this, [this](const BluetoothAdapter * adapter) {
+    connect(bluetoothManager->model(), &BluetoothModel::adapterRemoved, this, [this](const BluetoothAdapter *adapter) {
         if (m_connectedAdapter.contains(adapter->id()))
             m_connectedAdapter.removeAll(adapter->id());
 
@@ -216,7 +227,7 @@ void BluetoothTransDialog::initConn()
         }
     });
 
-    connect(bluetoothManager, &BluetoothManager::transferProgressUpdated, this, [this](const QString & sessionPath, qulonglong total, qulonglong transferred, int currFileIndex) {
+    connect(bluetoothManager, &BluetoothManager::transferProgressUpdated, this, [this](const QString &sessionPath, qulonglong total, qulonglong transferred, int currFileIndex) {
         if (sessionPath != m_currSessionPath)
             return;
 
@@ -250,14 +261,14 @@ void BluetoothTransDialog::initConn()
         }
     });
 
-    connect(bluetoothManager, &BluetoothManager::transferCancledByRemote, this, [this](const QString & sessionPath) {
+    connect(bluetoothManager, &BluetoothManager::transferCancledByRemote, this, [this](const QString &sessionPath) {
         if (sessionPath != m_currSessionPath)
             return;
         m_stack->setCurrentIndex(FailedPage);
         bluetoothManager->cancelTransfer(sessionPath);
     });
 
-    connect(bluetoothManager, &BluetoothManager::transferFailed, this, [this](const QString & sessionPath, const QString & filePath, const QString & errMsg) {
+    connect(bluetoothManager, &BluetoothManager::transferFailed, this, [this](const QString &sessionPath, const QString &filePath, const QString &errMsg) {
         if (sessionPath != m_currSessionPath)
             return;
         m_stack->setCurrentIndex(FailedPage);
@@ -266,13 +277,26 @@ void BluetoothTransDialog::initConn()
                  << "\nerrorMsg: " << errMsg;
     });
 
-    connect(bluetoothManager, &BluetoothManager::fileTransferFinished, this, [this](const QString & sessionPath, const QString & filePath) {
+    connect(bluetoothManager, &BluetoothManager::fileTransferFinished, this, [this](const QString &sessionPath, const QString &filePath) {
         if (sessionPath != m_currSessionPath)
             return;
         m_finishedUrls << filePath;
         if (m_finishedUrls.count() == m_urls.count()) {
             m_stack->setCurrentIndex(SuccessPage);
         }
+    });
+
+    connect(bluetoothManager, &BluetoothManager::transferEstablishFinish, this, [this](const QString &sessionPath, const QString &errMsg){
+        m_currSessionPath = sessionPath;
+        if (!sessionPath.isEmpty())
+            return;
+
+        if (m_devModel->rowCount() != 0)
+            m_stack->setCurrentIndex(SelectDevicePage);
+        else
+            m_stack->setCurrentIndex(NoneDevicePage);
+
+        dialogManager->showErrorDialog(TITLE_BT_TRANS_FAIL, humanizedStrOfObexErrMsg(errMsg));
     });
 }
 
@@ -620,14 +644,7 @@ void BluetoothTransDialog::sendFiles()
     m_firstTransSize = 0;
     m_progressBar->setValue(0); // retry 时需要重置进度
 
-    m_currSessionPath = bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
-    if (m_currSessionPath.isEmpty()) { // 执行重传也发生错误的时候，根据当前列表是否为空，决定返回到选择列表页面还是空列表页面
-        if (m_devModel->rowCount() != 0)
-            m_stack->setCurrentIndex(SelectDevicePage);
-        else
-            m_stack->setCurrentIndex(NoneDevicePage);
-        return;
-    }
+    bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
 
     m_stack->setCurrentIndex(WaitForRecvPage);
     m_spinner->start();
@@ -637,9 +654,10 @@ void BluetoothTransDialog::closeEvent(QCloseEvent *event)
 {
     DDialog::closeEvent(event);
 
-    if (m_stack->currentIndex() == WaitForRecvPage
+    if ((m_stack->currentIndex() == WaitForRecvPage
             || m_stack->currentIndex() == TransferPage
-            || m_stack->currentIndex() == FailedPage) {
+            || m_stack->currentIndex() == FailedPage)
+            && !m_currSessionPath.isEmpty()) {
         bluetoothManager->cancelTransfer(m_currSessionPath);
     }
 }
