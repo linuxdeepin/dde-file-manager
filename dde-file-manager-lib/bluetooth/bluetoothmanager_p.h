@@ -32,6 +32,8 @@
 using DBusBluetooth = com::deepin::daemon::Bluetooth;
 using DBusControlcenter = com::deepin::dde::ControlCenter;
 
+template<class T>
+class QFutureWatcher;
 
 class BluetoothManagerPrivate
 {
@@ -71,6 +73,7 @@ public:
     BluetoothModel *m_model {nullptr};
     DBusBluetooth *m_bluetoothInter {nullptr};
     DBusControlcenter *m_controlcenterInter {nullptr};
+    QFutureWatcher<QPair<QString, QString>> *m_watcher {nullptr};
 
     Q_DECLARE_PUBLIC(BluetoothManager)
 };
