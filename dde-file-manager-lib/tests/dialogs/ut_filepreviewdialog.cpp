@@ -1,6 +1,12 @@
-#include "dialogs/filepreviewdialog.h"
-
 #include <gtest/gtest.h>
+
+#include "app/define.h"
+#include "dfileservices.h"
+
+#define private public
+#include "dialogs/filepreviewdialog.h"
+#include "plugins/dfmfilepreviewfactory.h"
+
 
 DFM_USE_NAMESPACE
 
@@ -55,6 +61,13 @@ TEST_F(TestUnknowFilePreView, testUpdateFolderSize)
 //    m_pTester->updateFolderSize(size);
 }
 
+TEST_F(TestUnknowFilePreView, testSetFileInfo)
+{
+    DUrl url("file:///test1");
+    DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);;
+    m_pTester->setFileInfo(info);
+}
+
 namespace  {
     class TestFilePreviewDialog : public testing::Test
     {
@@ -79,7 +92,7 @@ namespace  {
 
 TEST_F(TestFilePreviewDialog, testInit)
 {
-    m_pTester->show();
+
 }
 
 TEST_F(TestFilePreviewDialog, testUpdatePreviewList)
@@ -96,13 +109,44 @@ TEST_F(TestFilePreviewDialog, testSetEntryUrlList)
     m_pTester->setEntryUrlList(entryUrlList);
 }
 
+TEST_F(TestFilePreviewDialog, testSetEntryUrlList2)
+{
+    m_pTester->m_fileList.push_back(DUrl("file:///test1"));
+    DUrlList entryUrlList;
+    entryUrlList << DUrl("file:///test1") << DUrl("file:///test2");
+    m_pTester->setEntryUrlList(entryUrlList);
+}
+
 TEST_F(TestFilePreviewDialog, testDone)
 {
     int r = 1;
     m_pTester->done(r);
 }
 
+TEST_F(TestFilePreviewDialog, testDoneCurrent)
+{
+    m_pTester->DoneCurrent();
+}
+
 TEST_F(TestFilePreviewDialog, testPlayCurrentPreviewFile)
 {
     m_pTester->playCurrentPreviewFile();
+}
+
+TEST_F(TestFilePreviewDialog, testShowEvent)
+{
+    QShowEvent event;
+    m_pTester->showEvent(&event);
+}
+
+TEST_F(TestFilePreviewDialog, testEventFilter)
+{
+    QObject obj;
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier);
+    m_pTester->eventFilter(&obj, &event);
+}
+
+TEST_F(TestFilePreviewDialog, testUpdateTitle)
+{
+    m_pTester->updateTitle();
 }

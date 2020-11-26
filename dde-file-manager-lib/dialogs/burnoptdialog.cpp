@@ -1,8 +1,5 @@
 #include "burnoptdialog.h"
-#include <DLineEdit>
 #include <QLabel>
-#include <QComboBox>
-#include <QCheckBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QtConcurrent>
@@ -22,33 +19,6 @@
 
 DWIDGET_USE_NAMESPACE
 
-class BurnOptDialogPrivate
-{
-public:
-    explicit BurnOptDialogPrivate(BurnOptDialog *q);
-    ~BurnOptDialogPrivate();
-    void setupUi();
-    void setDevice(const QString &device);
-private:
-    BurnOptDialog *q_ptr;
-    QWidget *w_content;
-    QLabel *lb_volname;
-    QLineEdit *le_volname;
-    QLabel *lb_writespeed;
-    QComboBox *cb_writespeed;
-    QCheckBox *cb_iclose;
-    QLabel *lb_postburn;
-    QCheckBox *cb_checkdisc;
-    QCheckBox *cb_eject;
-    QString dev;
-    QHash<QString, int> speedmap;
-    DUrl image_file;
-    int window_id;
-    QString lastVolName;
-
-    Q_DECLARE_PUBLIC(BurnOptDialog)
-};
-
 BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
     DDialog(parent),
     d_ptr(new BurnOptDialogPrivate(this))
@@ -67,60 +37,62 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
     Q_D(BurnOptDialog);
     d->setDevice(device);
     d->setupUi();
-    connect(this, &BurnOptDialog::buttonClicked, this,
-        [=](int index, const QString &text) {
-            Q_UNUSED(text);
-            int flag = 0;
-            if(index ==1 ){
-                d->cb_checkdisc->isChecked() && (flag |= 4);
-                d->cb_eject->isChecked() && (flag |= 2);
-                !d->cb_iclose->isChecked() && (flag |= 1);
-            }
-            else {
-                d->cb_checkdisc->isChecked() && (flag |= 4);
-                d->cb_eject->isChecked() && (flag |= 2);
-            }
+    connect(this, &BurnOptDialog::buttonClicked,
+            this, &BurnOptDialog::slotButtonClicked);
+//    connect(this, &BurnOptDialog::buttonClicked, this,
+//        [=](int index, const QString &text) {
+//            Q_UNUSED(text);
+//            int flag = 0;
+//            if(index ==1 ){
+//                d->cb_checkdisc->isChecked() && (flag |= 4);
+//                d->cb_eject->isChecked() && (flag |= 2);
+//                !d->cb_iclose->isChecked() && (flag |= 1);
+//            }
+//            else {
+//                d->cb_checkdisc->isChecked() && (flag |= 4);
+//                d->cb_eject->isChecked() && (flag |= 2);
+//            }
 
-            int nSpeeds = d->speedmap[d->cb_writespeed->currentText()];
-            QString volName = d->le_volname->text();
+//            int nSpeeds = d->speedmap[d->cb_writespeed->currentText()];
+//            QString volName = d->le_volname->text();
 
-            if (index == 1) {
-                emit fileSignalManager->stopCdScanTimer(device);
-                if (d->image_file.path().length() == 0) {
-                    QtConcurrent::run([=] {
-                        FileJob *job = new FileJob(FileJob::OpticalBurn);
-                        job->moveToThread(qApp->thread());
-                        job->setWindowId(d->window_id);
-                        dialogManager->addJob(job);
+//            if (index == 1) {
+//                emit fileSignalManager->stopCdScanTimer(device);
+//                if (d->image_file.path().length() == 0) {
+//                    QtConcurrent::run([=] {
+//                        FileJob *job = new FileJob(FileJob::OpticalBurn);
+//                        job->moveToThread(qApp->thread());
+//                        job->setWindowId(d->window_id);
+//                        dialogManager->addJob(job);
 
-                        DUrl dev(device);
+//                        DUrl dev(device);
 
-                        // fix: use fork() burn files
-                        qDebug() << "start burn files";
-                        job->doOpticalBurnByChildProcess(dev, volName, nSpeeds, flag);
-                        dialogManager->removeJob(job->getJobId(), true ); // 清除所有数据，防止脏数据出现
-                        job->deleteLater();
-                    });
-                } else {
-                    QtConcurrent::run([=] {
-                        FileJob *job = new FileJob(FileJob::OpticalImageBurn);
-                        job->moveToThread(qApp->thread());
-                        job->setWindowId(d->window_id);
-                        dialogManager->addJob(job);
+//                        // fix: use fork() burn files
+//                        qDebug() << "start burn files";
+//                        job->doOpticalBurnByChildProcess(dev, volName, nSpeeds, flag);
+//                        dialogManager->removeJob(job->getJobId(), true ); // 清除所有数据，防止脏数据出现
+//                        job->deleteLater();
+//                    });
+//                } else {
+//                    QtConcurrent::run([=] {
+//                        FileJob *job = new FileJob(FileJob::OpticalImageBurn);
+//                        job->moveToThread(qApp->thread());
+//                        job->setWindowId(d->window_id);
+//                        dialogManager->addJob(job);
 
-                        DUrl dev(device);
-                        //just to ensure we still have access to the image url even after 'this' is deleted
-                        DUrl img(d->image_file);
+//                        DUrl dev(device);
+//                        //just to ensure we still have access to the image url even after 'this' is deleted
+//                        DUrl img(d->image_file);
 
-                        // fix: use fork() burn image
-                        qDebug() << "start burn image";
-                        job->doOpticalImageBurnByChildProcess(dev, img, nSpeeds, flag);
-                        dialogManager->removeJob(job->getJobId(), true );// 清除所有数据，防止脏数据出现
-                        job->deleteLater();
-                    });
-                }
-            }
-    });
+//                        // fix: use fork() burn image
+//                        qDebug() << "start burn image";
+//                        job->doOpticalImageBurnByChildProcess(dev, img, nSpeeds, flag);
+//                        dialogManager->removeJob(job->getJobId(), true );// 清除所有数据，防止脏数据出现
+//                        job->deleteLater();
+//                    });
+//                }
+//            }
+//    });
 }
 
 void BurnOptDialog::setISOImage(DUrl image)
@@ -154,6 +126,62 @@ void BurnOptDialog::setDefaultVolName(const QString &volName)
         d->le_volname->setSelection(0, volName.length());
         d->le_volname->setFocus();
         d->lastVolName = volName;
+    }
+}
+
+void BurnOptDialog::slotButtonClicked(int index, const QString &text)
+{
+    Q_UNUSED(text);
+    Q_D(BurnOptDialog);
+    int flag = 0;
+    if(index ==1 ){
+        d->cb_checkdisc->isChecked() && (flag |= 4);
+        d->cb_eject->isChecked() && (flag |= 2);
+        !d->cb_iclose->isChecked() && (flag |= 1);
+    }
+    else {
+        d->cb_checkdisc->isChecked() && (flag |= 4);
+        d->cb_eject->isChecked() && (flag |= 2);
+    }
+
+    int nSpeeds = d->speedmap[d->cb_writespeed->currentText()];
+    QString volName = d->le_volname->text();
+
+    if (index == 1) {
+        emit fileSignalManager->stopCdScanTimer(d->dev);
+        if (d->image_file.path().length() == 0) {
+            QtConcurrent::run([=] {
+                FileJob *job = new FileJob(FileJob::OpticalBurn);
+                job->moveToThread(qApp->thread());
+                job->setWindowId(d->window_id);
+                dialogManager->addJob(job);
+
+                DUrl dev(d->dev);
+
+                // fix: use fork() burn files
+                qDebug() << "start burn files";
+                job->doOpticalBurnByChildProcess(dev, volName, nSpeeds, flag);
+                dialogManager->removeJob(job->getJobId(), true ); // 清除所有数据，防止脏数据出现
+                job->deleteLater();
+            });
+        } else {
+            QtConcurrent::run([=] {
+                FileJob *job = new FileJob(FileJob::OpticalImageBurn);
+                job->moveToThread(qApp->thread());
+                job->setWindowId(d->window_id);
+                dialogManager->addJob(job);
+
+                DUrl dev(d->dev);
+                //just to ensure we still have access to the image url even after 'this' is deleted
+                DUrl img(d->image_file);
+
+                // fix: use fork() burn image
+                qDebug() << "start burn image";
+                job->doOpticalImageBurnByChildProcess(dev, img, nSpeeds, flag);
+                dialogManager->removeJob(job->getJobId(), true );// 清除所有数据，防止脏数据出现
+                job->deleteLater();
+            });
+        }
     }
 }
 

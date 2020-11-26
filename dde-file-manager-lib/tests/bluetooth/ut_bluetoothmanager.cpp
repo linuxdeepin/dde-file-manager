@@ -54,7 +54,7 @@ TEST_F(TestBluetoothManager, model)
 TEST_F(TestBluetoothManager, sendFiles)
 {
     BluetoothDevice device;
-    EXPECT_TRUE(bluetoothManager->sendFiles(device, QStringList()).isEmpty());
+    bluetoothManager->sendFiles(device, QStringList());
 }
 
 TEST_F(TestBluetoothManager, cancleTransfer)

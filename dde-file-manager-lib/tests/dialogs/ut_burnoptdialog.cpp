@@ -23,7 +23,7 @@ namespace  {
 
 TEST_F(TestBurnOptDialog, testInit)
 {
-//    m_pTester->show();
+
 }
 
 TEST_F(TestBurnOptDialog, testSetIOSImage)
@@ -31,3 +31,26 @@ TEST_F(TestBurnOptDialog, testSetIOSImage)
     DUrl image("file://test1/image");
     m_pTester->setISOImage(image);
 }
+
+TEST_F(TestBurnOptDialog, testSetJobWindowId)
+{
+    int wid(12345678);
+    m_pTester->setJobWindowId(wid);
+}
+
+TEST_F(TestBurnOptDialog, testSetDefaultVolName)
+{
+    QString volName("test UT");
+    m_pTester->setDefaultVolName(volName);
+}
+
+TEST_F(TestBurnOptDialog, testSlotButtonClicked)
+{
+    m_pTester->slotButtonClicked(0, QString("test"));
+}
+
+TEST_F(TestBurnOptDialog, testSlotButtonClicked2)
+{
+    m_pTester->slotButtonClicked(1, QString("test"));
+}
+

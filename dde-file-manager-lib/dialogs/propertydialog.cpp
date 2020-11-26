@@ -204,6 +204,8 @@ void NameTextEdit::focusOutEvent(QFocusEvent *event)
 
 void NameTextEdit::keyPressEvent(QKeyEvent *event)
 {
+    QEvent::Type ty = event->type();
+    Qt::KeyboardModifiers modifiers = event->modifiers();
     if (event->key() == Qt::Key_Escape) {
         setIsCanceled(true);
         emit editFinished();
@@ -665,7 +667,8 @@ void PropertyDialog::initConnect()
 void PropertyDialog::updateFolderSize(qint64 size)
 {
     m_size = size;
-    m_fileCount = m_sizeWorker->filesCount() + m_sizeWorker->directorysCount(false);
+    if(m_sizeWorker)
+        m_fileCount = m_sizeWorker->filesCount() + m_sizeWorker->directorysCount(false);
     m_folderSizeLabel->setText(FileUtils::formatSize(size));
     m_containSizeLabel->setText(QString::number(m_fileCount));
 }
@@ -941,8 +944,9 @@ void PropertyDialog::startComputerFolderSize(const DUrl &url)
         m_sizeWorker = new DFileStatisticsJob(this);
 
     connect(m_sizeWorker, &DFileStatisticsJob::dataNotify, this, &PropertyDialog::updateFolderSize);
-
+#ifndef UTest
     m_sizeWorker->start(urls);
+#endif
 }
 
 void PropertyDialog::toggleFileExecutable(bool isChecked)
