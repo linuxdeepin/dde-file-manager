@@ -263,7 +263,11 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
     }
 
     const QString &currentDir = QDir::currentPath();
-    const DUrl &currentUrl = qobject_cast<DFileManagerWindow *>(topLevelWidget())->currentUrl();
+    DUrl currentUrl;
+    if (auto fmWindow = qobject_cast<DFileManagerWindow *>(topLevelWidget()))
+        currentUrl = fmWindow->currentUrl();
+    else
+        qCritical() << "DFileManagerWindow is null";
 
     if (currentUrl.isLocalFile()) {
         QDir::setCurrent(currentUrl.toLocalFile());

@@ -92,10 +92,25 @@ TEST(DToolBarTest,toggle_search_buttonstate_true)
 TEST(DToolBarTest,search_bartext_entered_empty)
 {
     DToolBar w;
-    QString path = QDir::currentPath();
-    w.searchBarTextEntered("");
-    EXPECT_EQ(path, QDir::currentPath());
-    w.handleHotkeyCtrlL(1);
+    EXPECT_NO_FATAL_FAILURE(w.searchBarTextEntered(""));
+}
+
+TEST(DToolBarTest,search_bartext_entered_none_window)
+{
+    DToolBar w;
+    QString homePath = "file:///home";
+    EXPECT_NO_FATAL_FAILURE(w.searchBarTextEntered(homePath););
+}
+
+TEST(DToolBarTest,search_bartext_entered_window)
+{
+    DFileManagerWindow wm;
+    DToolBar w(&wm);
+    QString homePath = "file:///home";
+    wm.cd(homePath);
+
+    w.searchBarTextEntered("/usr");
+    EXPECT_EQ("/usr", wm.currentUrl().toLocalFile());
 }
 
 TEST(DToolBarTest,moveNavStacks)
@@ -135,11 +150,22 @@ TEST(DToolBarTest,showFilterButton)
 
 TEST(DToolBarTest,handleHotkeyCtrlF)
 {
-    DToolBar w;
+    DFileManagerWindow wm;
+    DToolBar w(&wm);
     WindowManager::m_windows.insert(w.topLevelWidget(),w.winId());
     EXPECT_NO_FATAL_FAILURE(w.handleHotkeyCtrlF(w.winId()));
     WindowManager::m_windows.remove(w.topLevelWidget());
     EXPECT_NO_FATAL_FAILURE(w.handleHotkeyCtrlF(w.winId()));
+}
+
+TEST(DToolBarTest,handleHotkeyCtrlL)
+{
+    DFileManagerWindow wm;
+    DToolBar w(&wm);
+    WindowManager::m_windows.insert(w.topLevelWidget(),w.winId());
+    EXPECT_NO_FATAL_FAILURE(w.handleHotkeyCtrlL(w.winId()));
+    WindowManager::m_windows.remove(w.topLevelWidget());
+    EXPECT_NO_FATAL_FAILURE(w.handleHotkeyCtrlL(w.winId()));
 }
 
 TEST(DToolBarTest,searchBarActivated_Deactivated)
