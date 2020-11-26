@@ -1,13 +1,13 @@
-#include "dialogs/burnoptdialog.h"
-
 #include <gtest/gtest.h>
+
+#include "dialogs/burnoptdialog.h"
 
 namespace  {
     class TestBurnOptDialog : public testing::Test{
     public:
         void SetUp() override
         {
-            m_pTester = new BurnOptDialog("/media/jerry3");
+            m_pTester = new BurnOptDialog("file:///file");
             std::cout << "start TestBurnOptDialog";
         }
         void TearDown() override
@@ -42,15 +42,5 @@ TEST_F(TestBurnOptDialog, testSetDefaultVolName)
 {
     QString volName("test UT");
     m_pTester->setDefaultVolName(volName);
-}
-
-TEST_F(TestBurnOptDialog, testSlotButtonClicked)
-{
-    m_pTester->slotButtonClicked(0, QString("test"));
-}
-
-TEST_F(TestBurnOptDialog, testSlotButtonClicked2)
-{
-    m_pTester->slotButtonClicked(1, QString("test"));
 }
 

@@ -19,9 +19,6 @@ public:
     void setJobWindowId(int wid);
     void setDefaultVolName(const QString &volName);
 
-public slots:
-    void slotButtonClicked(int index, const QString &text);
-
 private:
     QScopedPointer<BurnOptDialogPrivate> d_ptr;
     Q_DECLARE_PRIVATE(BurnOptDialog)
@@ -46,7 +43,7 @@ private:
     QLabel *lb_postburn;
     QCheckBox *cb_checkdisc;
     QCheckBox *cb_eject;
-    QString dev;
+    QString dev{""};
     QHash<QString, int> speedmap;
     DUrl image_file;
     int window_id;
