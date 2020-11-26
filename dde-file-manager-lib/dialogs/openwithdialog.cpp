@@ -51,30 +51,6 @@
 #include <QPainterPath>
 #include <DHorizontalLine>
 #include <DStyle>
-#include <DIconButton>
-
-class OpenWithDialogListItem : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit OpenWithDialogListItem(const QIcon &icon, const QString &text, QWidget *parent = nullptr);
-
-    void setChecked(bool checked);
-    QString text() const;
-
-protected:
-    void resizeEvent(QResizeEvent *e) override;
-    void enterEvent(QEvent *e) override;
-    void leaveEvent(QEvent *e) override;
-    void paintEvent(QPaintEvent *e) override;
-
-private:
-    QIcon m_icon;
-    DIconButton *m_checkButton;
-    QLabel *m_iconLabel;
-    QLabel *m_label;
-};
 
 OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString &text, QWidget *parent)
     : QWidget(parent)
@@ -400,7 +376,11 @@ void OpenWithDialog::checkItem(OpenWithDialogListItem *item)
 
 void OpenWithDialog::useOtherApplication()
 {
+#ifndef UTest
     const QString &file_path = QFileDialog::getOpenFileName(this);
+#else
+    const QString &file_path = "/usr/bin/deepin-movie.desktop";
+#endif
 
     if (file_path.isEmpty())
         return;
@@ -535,4 +515,4 @@ bool OpenWithDialog::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
-#include "openwithdialog.moc"
+//#include "openwithdialog.moc"

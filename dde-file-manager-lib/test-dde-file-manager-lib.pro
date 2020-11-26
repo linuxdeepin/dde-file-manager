@@ -82,6 +82,7 @@ APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
 
+DEFINES += UTest
 
 isEmpty(INCLUDE_INSTALL_DIR) {
     includes.path = $$PREFIX/include/dde-file-manager

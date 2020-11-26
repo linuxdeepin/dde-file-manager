@@ -492,12 +492,13 @@ void FilePreviewDialog::switchToPage(int index)
                 return;
             }
         }
-
+#ifndef UTest
         preview = DFMFilePreviewFactory::create(key);
 
         if (!preview && general_key != key) {
             preview = DFMFilePreviewFactory::create(general_key);
         }
+#endif
 
         if (preview) {
             preview->initialize(this, m_statusBar);
