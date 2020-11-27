@@ -181,10 +181,8 @@ public slots:
 
     bool doTrashRestore(const QString &srcFilePath, const QString &tarFilePath);
 
-    void doOpticalBurn(const DUrl &device, QString volname, int speed, int flag); // unused
     void doOpticalBurnByChildProcess(const DUrl &device, QString volname, int speed, int flag); // fork
     void doOpticalBlank(const DUrl &device);
-    void doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag); // unused
     void doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &image, int speed, int flag); // fork
     void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress);
     void opticalJobUpdatedByParentProcess(int status, int progress, const QString &speed, const QStringList &msgs);
