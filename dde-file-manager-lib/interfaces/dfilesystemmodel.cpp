@@ -1682,6 +1682,9 @@ int DFileSystemModel::columnToRole(int column) const
 {
     Q_D(const DFileSystemModel);
 
+    if (!d->rootNode)
+        return UnknowRole;
+
     const DAbstractFileInfoPointer &fileInfo = d->rootNode->fileInfo;
 
     if (fileInfo) {
@@ -2260,7 +2263,8 @@ void DFileSystemModel::setAdvanceSearchFilter(const QMap<int, QVariant> &formDat
 void DFileSystemModel::applyAdvanceSearchFilter()
 {
     Q_D(DFileSystemModel);
-
+    if(!d->rootNode)
+        return;
     setState(Busy);
     d->rootNode->applyFileFilter(advanceSearchFilter());
     setState(Idle);
@@ -2273,30 +2277,6 @@ std::shared_ptr<FileFilter> DFileSystemModel::advanceSearchFilter()
 
     return d->advanceSearchFilter;
 }
-
-//void DFileSystemModel::setActiveIndex(const QModelIndex &index)
-//{
-//    int old_column_count = columnCount(d->activeIndex);
-
-//    d->activeIndex = index;
-
-//    int new_column_count = columnCount(index);
-
-//    if (old_column_count < new_column_count) {
-//        beginInsertColumns(index, old_column_count, new_column_count - 1);
-//        endInsertColumns();
-//    } else if (old_column_count > new_column_count) {
-//        beginRemoveColumns(index, new_column_count, old_column_count - 1);
-//        endRemoveColumns();
-//    }
-
-//    const FileSystemNodePointer &node = getNodeByIndex(index);
-
-//    if(!node || node->populatedChildren)
-//        return;
-
-//    node->visibleChildren.clear();
-//}
 
 Qt::SortOrder DFileSystemModel::sortOrder() const
 {

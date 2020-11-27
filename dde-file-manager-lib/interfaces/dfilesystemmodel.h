@@ -176,7 +176,6 @@ public:
 
     void setSortColumn(int column, Qt::SortOrder order = Qt::AscendingOrder);
     void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
-//    void setActiveIndex(const QModelIndex &index);
     void setNameFilters(const QStringList &nameFilters);
     void setFilters(QDir::Filters filters);
     void setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn, bool updateView);

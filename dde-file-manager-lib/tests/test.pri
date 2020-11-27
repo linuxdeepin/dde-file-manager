@@ -214,5 +214,5 @@ SOURCES += \
     $$PWD/interfaces/ut_dfmcrumbinterface.cpp \
     $$PWD/interfaces/ut_dfmcrumblistviewmodel.cpp \
     $$PWD/gvfs/ut_qmount.cpp \
-    $$PWD/gvfs/ut_qvolume.cpp
-
+    $$PWD/gvfs/ut_qvolume.cpp \
+     $$PWD/interfaces/ut_dfilesystemmodel.cpp\
