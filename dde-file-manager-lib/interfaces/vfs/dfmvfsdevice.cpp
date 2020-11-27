@@ -136,11 +136,13 @@ QStringList DFMVfsDevicePrivate::getThemedIconName(GThemedIcon *icon)
     char **names;
     char **iter;
     names = NULL;
-    g_object_get(icon, "names", &names, NULL);
-    for (iter = names; *iter; iter++) {
-        iconNames.append(QString(*iter));
+    if (icon) {
+        g_object_get(icon, "names", &names, NULL);
+        for (iter = names; *iter; iter++) {
+            iconNames.append(QString(*iter));
+        }
+        g_strfreev(names);
     }
-    g_strfreev(names);
     return iconNames;
 }
 
@@ -182,7 +184,7 @@ void DFMVfsDevicePrivate::GMountOperationAskPasswordCb(GMountOperation *op, cons
     qCDebug(vfsDevice()) << "GMountOperationAskPasswordCb() Default fields data" << obj;
 
     QJsonObject loginObj;
-    if (device->eventHandler()) {
+    if (device && device->eventHandler()) {
         DFMVfsAbstractEventHandler* handler = static_cast<DFMVfsAbstractEventHandler*>(device->eventHandler());
         loginObj = handler->handleAskPassword(obj);
     } else {
@@ -241,13 +243,13 @@ void DFMVfsDevicePrivate::GMountOperationAskQuestionCb(GMountOperation *op, cons
     QString oneMessage(message);
     qCDebug(vfsDevice()) << "GMountOperationAskQuestionCb() message: " << message;
 
-    while (*ptr) {
+    while (ptr && *ptr) {
         QString oneOption = QString::asprintf("%s", *ptr++);
         qCDebug(vfsDevice()) << "GMountOperationAskQuestionCb()  - option(s): " << oneOption;
         choiceList << oneOption;
     }
 
-    if (device->eventHandler()) {
+    if (device && device->eventHandler()) {
         DFMVfsAbstractEventHandler* handler = static_cast<DFMVfsAbstractEventHandler*>(device->eventHandler());
         choice = handler->handleAskQuestion(oneMessage, choiceList);
     } else {
@@ -276,7 +278,7 @@ void DFMVfsDevicePrivate::GFileMountDoneCb(GObject *object, GAsyncResult *res, g
 
     succeeded = g_file_mount_enclosing_volume_finish(G_FILE(object), res, &error);
 
-    if (!succeeded) {
+    if (!succeeded && error) {
         Q_ASSERT(error->domain == G_IO_ERROR);
 
         int errorCode = error->code;
@@ -313,7 +315,7 @@ void DFMVfsDevicePrivate::GFileUnmountDoneCb(GObject *object, GAsyncResult *res,
 
     succeeded = g_mount_unmount_with_operation_finish(G_MOUNT(object), res, &error);
 
-    if (!succeeded) {
+    if (!succeeded && error) {
         Q_ASSERT(error->domain == G_IO_ERROR);
 
         int errorCode = error->code;

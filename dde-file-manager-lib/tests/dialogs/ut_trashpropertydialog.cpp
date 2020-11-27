@@ -8,7 +8,7 @@ namespace  {
     public:
         void SetUp() override
         {
-            m_pTester = new TrashPropertyDialog(DUrl("file:///test1"));
+            m_pTester = new TrashPropertyDialog(DUrl::fromTrashFile("/"));
             std::cout << "start TestTrashPropertyDialog";
         }
         void TearDown() override
@@ -22,12 +22,12 @@ namespace  {
     };
 }
 
-//TEST_F(TestTrashPropertyDialog, testInit)
-//{
-//    m_pTester->show();
-//}
+TEST_F(TestTrashPropertyDialog, testInit)
+{
 
-//TEST_F(TestTrashPropertyDialog, testUpdateFolderSize)
-//{
-//    m_pTester->updateFolderSize(1);
-//}
+}
+
+TEST_F(TestTrashPropertyDialog, testUpdateFolderSize)
+{
+    m_pTester->updateFolderSize(1);
+}

@@ -3,6 +3,8 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QHBoxLayout>
+#include <QApplication>
 
 #define private public
 #include "views/filedialogstatusbar.h"
@@ -177,4 +179,56 @@ TEST(FileDialogStatusBarTest,begin_add_customwidget)
     EXPECT_EQ(0,w.m_customLineEditList.size());
     EXPECT_EQ(0,w.m_customComboBoxList.size());
     w.endAddCustomWidget();
+}
+
+TEST(FileDialogStatusBarTest,updateLayout_delete_layout)
+{
+    FileDialogStatusBar w;
+    QHBoxLayout *lay = new QHBoxLayout;
+    w.m_contentLayout->addLayout(lay);
+    w.m_mode = FileDialogStatusBar::Save;
+
+    w.updateLayout();
+    for (int i = 0; i < w.m_contentLayout->count(); ++i)
+        EXPECT_FALSE(w.m_contentLayout->itemAt(i) == lay);
+}
+
+TEST(FileDialogStatusBarTest,updateLayout_save)
+{
+    FileDialogStatusBar w;
+    w.m_mode = FileDialogStatusBar::Save;
+
+    w.updateLayout();
+    bool fileNameLabel = false;
+    bool fileNameEdit = false;
+    bool acceptButton = false;
+    bool rejectButton = false;
+
+    for (int i = 0; i < w.m_contentLayout->count(); ++i) {
+        auto wid = w.m_contentLayout->itemAt(i)->widget();
+        if (wid == w.m_fileNameEdit)
+            fileNameEdit = true;
+        else if (wid == w.m_fileNameLabel)
+            fileNameLabel = true;
+        else if (wid == (QWidget *)w.m_acceptButton)
+            acceptButton = true;
+        else if (wid == (QWidget *)w.m_rejectButton)
+            rejectButton = true;
+    }
+    EXPECT_TRUE(fileNameLabel);
+    EXPECT_TRUE(fileNameEdit);
+    EXPECT_TRUE(acceptButton);
+    EXPECT_TRUE(rejectButton);
+}
+
+TEST(FileDialogStatusBarTest,updateLayout_save_two)
+{
+    FileDialogStatusBar w;
+    w.m_mode = FileDialogStatusBar::Save;
+    w.show();
+    w.setComBoxItems({"1","2"});
+    w.updateLayout();
+
+    EXPECT_TRUE(w.m_filtersLabel->isVisible());
+    EXPECT_TRUE(w.m_filtersComboBox->isVisible());
 }

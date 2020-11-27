@@ -352,8 +352,16 @@ bool DFMRootFileWatcherPrivate::start()
                 path = QString("/run/user/") + QString::number(getuid()) +
                        QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
             } else if (qq.size() == 2) {
-                path = QString("/run/user/") + QString::number(getuid()) +
-                       QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
+                //修复bug55778,在mips合arm上这里切分出来就是2个
+                if (qq.at(0).startsWith("smb")) {
+                    QStringList smblist = mnt->getRootFile()->uri().replace(":/", "").split("/");
+                    path = smblist.count() >= 3 ? QString("/run/user/")+ QString::number(getuid()) + QString("/gvfs/") +
+                                        smblist.at(0) + QString("-share:server=" + smblist.at(1) + QString(",share=") + smblist.at(2)) : QString();
+                }
+                else {
+                    path = QString("/run/user/")+ QString::number(getuid()) +
+                                                                QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
+                }
             }
         }
         qDebug() << path;

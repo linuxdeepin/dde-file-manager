@@ -33,6 +33,7 @@
 
 #include <QObject>
 #include <QMimeType>
+#include <DIconButton>
 
 DWIDGET_USE_NAMESPACE
 
@@ -42,7 +43,29 @@ class QScrollArea;
 class QCheckBox;
 QT_END_NAMESPACE
 
-class OpenWithDialogListItem;
+class OpenWithDialogListItem : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit OpenWithDialogListItem(const QIcon &icon, const QString &text, QWidget *parent = nullptr);
+
+    void setChecked(bool checked);
+    QString text() const;
+
+protected:
+    void resizeEvent(QResizeEvent *e) override;
+    void enterEvent(QEvent *e) override;
+    void leaveEvent(QEvent *e) override;
+    void paintEvent(QPaintEvent *e) override;
+
+private:
+    QIcon m_icon;
+    DIconButton *m_checkButton;
+    QLabel *m_iconLabel;
+    QLabel *m_label;
+};
+
 class OpenWithDialog : public BaseDialog
 {
     Q_OBJECT

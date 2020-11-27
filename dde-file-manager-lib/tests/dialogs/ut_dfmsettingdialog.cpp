@@ -2,6 +2,7 @@
 #include "interfaces/dfmapplication.h"
 
 #include <gtest/gtest.h>
+#include <DSettingsOption>
 
 
 namespace  {
@@ -24,7 +25,19 @@ namespace  {
     };
 }
 
-//TEST_F(TestDFMSettingDialog, testInit)
-//{
-//    m_pTesting->show();
-//}
+TEST_F(TestDFMSettingDialog, testInit)
+{
+
+}
+
+TEST_F(TestDFMSettingDialog, testCreateAutoMountCheckBox)
+{
+    Dtk::Core::DSettingsOption opt;
+    m_pTesting->createAutoMountCheckBox(&opt);
+}
+
+TEST_F(TestDFMSettingDialog, testCreateAutoMountOpenCheckBox)
+{
+    Dtk::Core::DSettingsOption opt;
+    m_pTesting->createAutoMountOpenCheckBox(&opt);
+}

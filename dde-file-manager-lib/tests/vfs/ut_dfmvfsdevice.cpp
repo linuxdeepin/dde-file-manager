@@ -19,19 +19,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vfs/dfmvfsdevice.h"
+#include "vfs/private/dfmvfsdevice_p.h"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+using namespace dde_file_manager;
+
 namespace  {
 class TestDFMVfsDevice: public testing::Test {
 public:
-    dde_file_manager::DFMVfsDevice *m_service = {nullptr};
+    DFMVfsDevice *m_service {nullptr};
+    DFMVfsDevicePrivate *d {nullptr};
+
     void SetUp() override
     {
-        DUrl url = DUrl::fromLocalFile("smb://10.0.12.161:445/");
+        DUrl url = DUrl::fromLocalFile("smb://127.0.0.1:445/");
         url.setScheme(SMB_SCHEME);
         m_service = dde_file_manager::DFMVfsDevice::createUnsafe(url);
+
+        d = new DFMVfsDevicePrivate(url, m_service);
     }
 
     void TearDown() override
@@ -41,10 +48,21 @@ public:
 };
 }
 
+TEST_F(TestDFMVfsDevice, create)
+{
+    QUrl url = QUrl::fromLocalFile("smb://127.0.0.1:445/");
+    url.setScheme(SMB_SCHEME);
+    auto p = m_service->create(url, nullptr);
+
+    EXPECT_EQ(p, nullptr);
+
+    if (p)
+        p->deleteLater();
+}
+
 TEST_F(TestDFMVfsDevice, attach)
 {
-    // 别的机器会崩溃,暂时屏蔽
-    // EXPECT_FALSE(m_service->attach());
+    EXPECT_FALSE(m_service->attach());
 }
 
 TEST_F(TestDFMVfsDevice, detachAsync)
@@ -94,5 +112,66 @@ TEST_F(TestDFMVfsDevice, symbolicIconList)
     EXPECT_TRUE(m_service->symbolicIconList().size() >= 0);
 }
 
+TEST_F(TestDFMVfsDevice, defaultUri)
+{
+    const QUrl &url = m_service->defaultUri();
+    EXPECT_FALSE(url.isValid());
+}
+
+TEST_F(TestDFMVfsDevice, rootPath)
+{
+    const QString &path = m_service->rootPath();
+    EXPECT_TRUE(path.isEmpty());
+}
+
+TEST_F(TestDFMVfsDevice, defaultPath)
+{
+    const QString &path = m_service->defaultPath();
+    EXPECT_TRUE(path.isEmpty());
+}
+
+TEST_F(TestDFMVfsDevice, name)
+{
+    const QString &name = m_service->name();
+    EXPECT_TRUE(name.isEmpty());
+}
 
 
+// private
+TEST_F(TestDFMVfsDevice, p_getThemedIconName)
+{
+    EXPECT_EQ(d->getThemedIconName(nullptr).size(), 0);
+}
+
+TEST_F(TestDFMVfsDevice, p_GMountOperationAskPasswordCb)
+{
+    GMountOperation *op = DFMVfsDevicePrivate::GMountOperationNewMountOp(m_service);
+    GAskPasswordFlags f = G_ASK_PASSWORD_NEED_USERNAME ;
+    EXPECT_NO_FATAL_FAILURE (
+        DFMVfsDevicePrivate::GMountOperationAskPasswordCb(op, "test", "root", "localhost", f, m_service);
+    );
+}
+
+TEST_F(TestDFMVfsDevice, p_GMountOperationAskQuestionCb)
+{
+    GMountOperation *op = DFMVfsDevicePrivate::GMountOperationNewMountOp(m_service);
+    char *array[] = {"aaa", "bbb"};
+    GStrv strs = array;
+    EXPECT_NO_FATAL_FAILURE (
+        DFMVfsDevicePrivate::GMountOperationAskQuestionCb(op, "test", strs, m_service);
+    );
+}
+
+TEST_F(TestDFMVfsDevice, p_GFileMountDoneCb)
+{
+    EXPECT_NO_FATAL_FAILURE (
+        DFMVfsDevicePrivate::GFileMountDoneCb(nullptr, nullptr, m_service);
+    );
+}
+
+TEST_F(TestDFMVfsDevice, p_GFileUnmountDoneCb)
+{
+    EXPECT_NO_FATAL_FAILURE (
+        DFMVfsDevicePrivate::GFileUnmountDoneCb(nullptr, nullptr, m_service);
+    );
+}

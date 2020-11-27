@@ -3,6 +3,7 @@
 #include <QTest>
 #include <QTextEdit>
 #include <QTimer>
+#include <QMenu>
 
 #define private public
 #include "views/fileitem.h"
@@ -10,6 +11,7 @@
 TEST(FileIconItemTest,init)
 {
     FileIconItem w;
+    w.updateStyleSheet();
     EXPECT_NE(nullptr,w.icon);
     EXPECT_NE(nullptr,w.edit);
 }
@@ -111,4 +113,23 @@ TEST(FileIconItemTest,show_alert_message)
     FileIconItem w;
     QString str("test");
     EXPECT_NO_FATAL_FAILURE(w.showAlertMessage(str));
+}
+
+TEST(FileIconItemTest,popupEditContentMenu)
+{
+    FileIconItem w;
+    bool isExecMenu = false;
+    QTimer::singleShot(1,&w,[&w,&isExecMenu](){
+        for (QWidget *wid : qApp->topLevelWidgets()) {
+            if (QMenu *menu = qobject_cast<QMenu *>(wid)) {
+               isExecMenu = menu->parent() == w.edit;
+               if (isExecMenu) {
+                   menu->hide();
+                   return;
+               }
+            }
+        }
+    });
+    w.popupEditContentMenu();
+    EXPECT_TRUE(isExecMenu);
 }

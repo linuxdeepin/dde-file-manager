@@ -239,7 +239,9 @@ bool UDiskListener::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
 
     DAbstractFileInfo *info = oldDevicePointer.data();
     UDiskDeviceInfo *udiskInfo = dynamic_cast<UDiskDeviceInfo *>(info);
-    QString devicePath = udiskInfo->getDBusPath();
+    QString devicePath;
+    if (udiskInfo)
+        devicePath = udiskInfo->getDBusPath();
     QUrlQuery query(newUrl);
     QString newName = query.queryItemValue("new_name");
     DBlockDevice *partition = DDiskManager::createBlockDevice(devicePath, nullptr);
@@ -786,7 +788,8 @@ void UDiskListener::fileSystemDeviceIdLabelChanged(const QString &labelName)
     DBlockDevice *blDev = qobject_cast<DBlockDevice *>(QObject::sender());
     DUrl oldUrl, newUrl;
     oldUrl.setScheme(DEVICE_SCHEME);
-    oldUrl.setPath(QString::fromLatin1(blDev->device()));
+    if (blDev)
+        oldUrl.setPath(QString::fromLatin1(blDev->device()));
     newUrl = oldUrl;
     QUrlQuery query;
     query.addQueryItem("new_name", labelName);

@@ -14,6 +14,11 @@ class TestHelper
 public:
     TestHelper();
 
+    static QString createTmpFileName(QString name, QString dirPath = "/tmp") {
+        QString tempFilePath =  dirPath + "/" + name;
+        QProcess::execute("touch " + tempFilePath);
+        return tempFilePath;
+    }
     static QString createTmpFile(QString suffix = "", QStandardPaths::StandardLocation location = QStandardPaths::TempLocation) {
         qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
         int random = qrand()%1000;
@@ -40,7 +45,9 @@ public:
     static void deleteTmpFile(QString path) {
          QProcess::execute("rm -rf  " + path);
     }
-
+    static void rename(QString fromPath, QString toPath) {
+         QProcess::execute(QString("mv %1 %2").arg(fromPath).arg(toPath));
+    }
     template <typename Fun>
     static void runInLoop(Fun fun, int msc = 2000)
     {

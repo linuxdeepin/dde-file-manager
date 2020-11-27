@@ -8,8 +8,38 @@
 #include <QUrl>
 #include <QFile>
 #include <QtConcurrent>
+#include <QDebug>
+#include <QWidget>
+#include <ddiskdevice.h>
 
 #include "tests/testhelper.h"
+#include "stub.h"
+
+QString createTestIsoFile()
+{
+    QFile f("/tmp/test.sh");
+    if (f.open(QIODevice::WriteOnly|QIODevice::Truncate))
+    {
+        QTextStream in(&f);
+        in << "#!/bin/bash\n";
+        in << "if [ -d \"/tmp/tmpDirForIso\"] \nthen \n";
+        in << "    rm -rf /tmp/tmpDirForIso\nfi \n";
+        in << "if [ -f \"/tmp/utForFM.iso\"] \nthen \n";
+        in << "    rm /tmp/utForFM.iso\nfi \n";
+        in << "mkdir -p /tmp/tmpDirForIso && cd /tmp/tmpDirForIso\n";
+        in << "touch helloworld.txt\n";
+        in << "mkisofs -V TestISO -o /tmp/utForFM.iso /tmp/tmpDirForIso\n";
+        f.close();
+        f.setPermissions(f.permissions() | QFileDevice::ExeUser);
+        QProcess::execute("/bin/sh", QStringList() << QFileInfo(f).absoluteFilePath());
+        QProcess::execute("rm", QStringList() << QFileInfo(f).absoluteFilePath());
+        QProcess::execute("rm", QStringList() << "-rf" << "/tmp/tmpDirForIso");
+        QFile iso("/tmp/utForFM.iso");
+        if (iso.exists())
+            return "/tmp/utForFM.iso";
+    }
+    return QString();
+}
 
 using namespace testing;
 namespace  {
@@ -236,7 +266,7 @@ TEST_F(AppControllerTest,start_actionBookmarkandother){
     DUrl temp;
     temp.setScheme(FILE_SCHEME);
     QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
-    temp.setPath("./"+fileName+"_1.txt");
+    temp.setPath("./"+fileName+".txt");
     QProcess::execute("touch " + temp.toLocalFile());
     DUrl temp1 = temp;
     temp1.setPath("./"+fileName+"_sys.txt");
@@ -252,6 +282,10 @@ TEST_F(AppControllerTest,start_actionBookmarkandother){
 //    controller->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << temp));
     QProcess::execute("rm " + temp.toLocalFile());
     QProcess::execute("rm " + temp1.toLocalFile());
+    temp.setPath("~/Desktop/"+fileName+" Shortcut.txt");
+    qDebug() << temp;
+    AppController::instance()->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << temp));
+//    QProcess::execute("rm " + temp.toLocalFile());
 }
 
 TEST_F(AppControllerTest,start_actionNewFolder){
@@ -278,9 +312,62 @@ TEST_F(AppControllerTest,start_actionNewFile){
     AppController::instance()->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << url));
     controller->actionNewPowerpoint(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url));
     AppController::instance()->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << url));
-//    controller->actionMount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url));
     controller->actionRestore(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList() << url));
     controller->actionRestoreAll(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url));
+
+    Stub st;
+    bool (*optical_stub)(void *obj) = [](void *obj){return true;};
+    st.set(ADDR(DDiskDevice, optical), optical_stub);
+
+    url = DUrl("dfmroot:///sda1.localdisk");
+    controller->actionMount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+
+    url = DUrl("dfmroot:///");
+    controller->actionMount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+
+    QString isoPath = createTestIsoFile();
+    url = DUrl("file://" + isoPath);
+    controller->actionMountImage(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+    controller->actionMountImage(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, DUrl("file:///Empty.iso")));
+    QEventLoop loop;
+    QTimer::singleShot(1000, nullptr, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
+    QProcess::execute("rm", QStringList() << isoPath);
+
+    url = DUrl("dfmroot:///fakeDisk.gvfsmp");
+    controller->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+    url = DUrl("dfmroot:///sda1.localdisk");
+    controller->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+    url = DUrl("dfmroots:///justQuery");
+    url.setQuery("testQuery");
+    controller->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+
+
+    url = DUrl("dfmroot:///fakeDisk.gvfsmp");
+    controller->actionEject(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+    QTimer::singleShot(1000, nullptr, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
+    url = DUrl("dfmroots:///fakeDisk.gvfsmp");
+    controller->actionEject(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+
+    url = DUrl("dfmroot:///fakeDisk.gvfsmp");
+    controller->actionSafelyRemoveDrive(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+    url = DUrl("dfmroots:///fakeDisk.gvfsmp");
+    controller->actionSafelyRemoveDrive(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+
+    url = DUrl("dfmroot:///fakeDisk.localdisk");
+    QWidget w;
+    auto e = dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url);
+    e->setWindowId(w.winId());
+    controller->actionFormatDevice(e);
+    QTimer::singleShot(2000, nullptr, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
 }
 
 TEST_F(AppControllerTest, start_actionOpenInTerminal){

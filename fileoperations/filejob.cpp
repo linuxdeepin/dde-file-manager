@@ -701,74 +701,6 @@ void FileJob::doOpticalBlank(const DUrl &device)
     m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
 }
 
-/*
- * flag:
- * 1: close session?
- * 2: eject?
- * 4: check media?
- */
-void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int flag)
-{
-    m_tarPath = device.path();
-    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
-    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
-    if (drive->opticalBlank()) {
-        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
-    } else {
-        blkdev->unmount({});
-    }
-    m_opticalJobPhase = 1;
-    m_opticalOpSpeed.clear();
-    jobPrepared();
-
-    DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
-    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
-    job_isomaster->acquireDevice(device.path());
-    job_isomaster->getDeviceProperty();
-    QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
-                    + "/" DISCBURN_STAGING "/" + device.path().replace('/', '_') + "/");
-    job_isomaster->stageFiles({{stagingurl, QUrl("/")}});
-    bool wret = job_isomaster->commit(speed, flag & 1, volname);
-
-    double gud, slo, bad;
-    if ((flag & 4) && wret) {
-        m_opticalJobPhase = 2;
-        job_isomaster->checkmedia(&gud, &slo, &bad);
-    }
-    //fix:不同品牌的光盘或者光驱，刻录校验识别能力不同，对应获取到的bad数据也不一样，但是数据在校验前已经写入成功，根据厂商要求所以此处需要放开
-    //bool rst = ! ((flag & 4) && bad > 1e-6);
-    bool rst = !((flag & 4) && (bad > (2 + 1e-6)));
-    job_isomaster->releaseDevice();
-
-    if (flag & 2) {
-        QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
-        diskdev->eject({});
-    } else {
-        blkdev->rescan({});
-        ISOMaster->nullifyDevicePropertyCache(device.path());
-    }
-
-    if (m_isJobAdded)
-        jobRemoved();
-    emit finished();
-    if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
-        if (flag & 4) {
-            emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
-            //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
-            QThread::msleep(1000);
-        } else {
-            emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
-            //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
-            QThread::msleep(1000);
-        }
-
-        if (rst) {
-            doDelete({DUrl::fromLocalFile(stagingurl.path())});
-        }
-    }
-}
-
 void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, int speed, int flag)
 {
     qDebug() << "doOpticalBurnByChildProcess";
@@ -1009,70 +941,6 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
     } else {
         perror("fork()");
         return;
-    }
-}
-
-/*
- * flag:
- * 1: unused
- * 2: eject?
- * 4: check media?
- */
-void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag)
-{
-    m_tarPath = device.path();
-    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
-    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
-    if (drive->opticalBlank()) {
-        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
-    } else {
-        blkdev->unmount({});
-    }
-    m_opticalJobPhase = 0;
-    m_opticalOpSpeed.clear();
-    jobPrepared();
-
-    DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
-    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
-    job_isomaster->acquireDevice(device.path());
-    DISOMasterNS::DeviceProperty dp = job_isomaster->getDeviceProperty();
-    if (dp.formatted) {
-        m_opticalJobPhase = 1;
-    }
-    bool wret = job_isomaster->writeISO(image, speed);
-
-    double gud, slo, bad;
-    if ((flag & 4) && wret) {
-        m_opticalJobPhase = 2;
-        job_isomaster->checkmedia(&gud, &slo, &bad);
-    }
-    //fix:不同品牌的光盘或者光驱，刻录校验识别能力不同，对应获取到的bad数据也不一样，但是数据在校验前已经写入成功，根据厂商要求所以此处需要放开
-    //bool rst = ! ((flag & 4) && bad > 1e-6);
-    bool rst = !((flag & 4) && (bad > (2 + 1e-6)));
-    job_isomaster->releaseDevice();
-
-    if (flag & 2) {
-        QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
-        diskdev->eject({});
-    } else {
-        blkdev->rescan({});
-        ISOMaster->nullifyDevicePropertyCache(device.path());
-    }
-
-    if (m_isJobAdded)
-        jobRemoved();
-    emit finished();
-    if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
-        if (flag & 4) {
-            emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
-            //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
-            QThread::msleep(1000);
-        } else {
-            emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
-            //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
-            QThread::msleep(1000);
-        }
     }
 }
 
@@ -2743,7 +2611,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
             if (!result) {
                 if (srcFileinfo.isDir() && m_isReplaced) {
-                    return result;
+                    return false;
                 } else {
                     qDebug() << m_tarPath << from.error() << from.errorString();
                     result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);

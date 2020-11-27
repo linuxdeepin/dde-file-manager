@@ -107,15 +107,15 @@ void SecretManager::on_password_cleared(GObject *source, GAsyncResult *result, g
     Q_UNUSED(unused)
 
     qDebug() << "on_password_cleared";
-    GError *error = NULL;
+    GError *error = nullptr;
 
-    gboolean removed = secret_password_clear_finish (result, &error);
+    gboolean removed = secret_password_clear_finish(result, &error);
 
     qDebug() << removed;
 
-    if (error != NULL) {
+    if (error != nullptr) {
         /* ... handle the failure here */
-        g_error_free (error);
+        g_error_free(error);
 
     } else {
         /* removed will be TRUE if a password was removed */
@@ -125,14 +125,14 @@ void SecretManager::on_password_cleared(GObject *source, GAsyncResult *result, g
 
 bool SecretManager::storeVaultPassword(const DSecureString &string)
 {
-    GError *error = NULL;
+    GError *error = nullptr;
     secret_password_store_sync(VaultSecretSchema(), SECRET_COLLECTION_SESSION, "Vault session password", string.toStdString().c_str(),
-                               NULL, &error,
+                               nullptr, &error,
                                "user", "dde-file-manager",
-                               NULL);
-    if (error != NULL) {
+                               nullptr);
+    if (error != nullptr) {
         /* ... handle the failure here */
-        g_error_free (error);
+        g_error_free(error);
         return false;
     }
 
@@ -141,16 +141,16 @@ bool SecretManager::storeVaultPassword(const DSecureString &string)
 
 DSecureString SecretManager::lookupVaultPassword()
 {
-    GError *error = NULL;
-    gchar *password = secret_password_lookup_sync(VaultSecretSchema(), {}, NULL,
+    GError *error = nullptr;
+    gchar *password = secret_password_lookup_sync(VaultSecretSchema(), {}, &error,
                                                   "user", "dde-file-manager",
                                                   NULL);
     DSecureString result(password);
 
-    if (error != NULL) {
+    if (error != nullptr) {
         /* ... handle the failure here */
         g_error_free(error);
-    } else if (password == NULL) {
+    } else if (password == nullptr) {
         /* password will be null, if no matching password found */
     } else {
         /* ... do something with the password */
@@ -162,19 +162,19 @@ DSecureString SecretManager::lookupVaultPassword()
 
 bool SecretManager::clearVaultPassword()
 {
-    GError *error = NULL;
+    GError *error = nullptr;
 
     /*
      * The variable argument list is the attributes used to later
      * lookup the password. These attributes must conform to the schema.
      */
-    gboolean removed = secret_password_clear_sync (VaultSecretSchema(), NULL, &error,
-                                                   "user", "dde-file-manager",
-                                                   NULL);
+    gboolean removed = secret_password_clear_sync(VaultSecretSchema(), nullptr, &error,
+                                                  "user", "dde-file-manager",
+                                                  nullptr);
 
-    if (error != NULL) {
+    if (error != nullptr) {
         /* ... handle the failure here */
-        g_error_free (error);
+        g_error_free(error);
     } else {
         /* removed will be TRUE if a password was removed */
     }
@@ -183,19 +183,19 @@ bool SecretManager::clearVaultPassword()
 
 void SecretManager::clearPasswordByLoginObj(const QJsonObject &obj)
 {
-    if (obj.value("protocol") == "smb"){
-        secret_password_clear(SMBSecretSchema(), NULL, on_password_cleared, NULL,
+    if (obj.value("protocol") == "smb") {
+        secret_password_clear(SMBSecretSchema(), nullptr, on_password_cleared, nullptr,
                               "user", obj.value("user").toString().toStdString().c_str(),
                               "domain", obj.value("domain").toString().toStdString().c_str(),
                               "server", obj.value("server").toString().toStdString().c_str(),
                               "protocol", obj.value("protocol").toString().toStdString().c_str(),
-                              NULL);
-    }else if (obj.value("protocol") == "ftp" || obj.value("protocol") == "sftp"){
-        secret_password_clear(FTPSecretSchema(), NULL, on_password_cleared, NULL,
+                              nullptr);
+    } else if (obj.value("protocol") == "ftp" || obj.value("protocol") == "sftp") {
+        secret_password_clear(FTPSecretSchema(), nullptr, on_password_cleared, nullptr,
                               "user", obj.value("user").toString().toStdString().c_str(),
                               "server", obj.value("server").toString().toStdString().c_str(),
                               "protocol", obj.value("protocol").toString().toStdString().c_str(),
-                              NULL);
+                              nullptr);
     }
 }
 
@@ -227,8 +227,7 @@ void SecretManager::loadCache()
     FileUtils::migrateConfigFileFromCache("samba");
 
     QFile file(cachePath());
-    if (!file.open(QIODevice::ReadOnly))
-    {
+    if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Couldn't write samba file!";
         return;
     }
@@ -242,8 +241,7 @@ void SecretManager::loadCache()
 void SecretManager::saveCache()
 {
     QFile file(cachePath());
-    if (!file.open(QIODevice::WriteOnly))
-    {
+    if (!file.open(QIODevice::WriteOnly)) {
         qDebug() << "Couldn't write samba file!";
         return;
     }

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include <stub.h>
 
 #include "views/dfilemanagerwindow.h"
 #define private public
@@ -101,3 +102,58 @@ TEST_F(WindowManagerTest,tab_addable_by_winId)
     EXPECT_EQ(((DFileManagerWindow*)wm.m_windows.begin().key())->tabAddable(),
               wm.tabAddableByWinId(wm.m_windows.begin().key()->winId()));
 }
+
+TEST_F(WindowManagerTest,getUrlByWindowId_none)
+{
+    EXPECT_EQ(DUrl::fromLocalFile(QDir::homePath()),wm.getUrlByWindowId(0));
+}
+
+static bool kStubRet;
+TEST(WindowManagerTestTwo, onWindowClosed)
+{
+    kStubRet = false;
+
+    Stub st;
+    void (*func)() = [](){
+        kStubRet = true;
+    };
+    st.set(&WindowManager::saveWindowState,func);
+
+    WindowManager::instance()->onWindowClosed();
+    EXPECT_FALSE(kStubRet);
+
+    WindowManager::instance()->m_windows.insert(nullptr,2);
+    WindowManager::instance()->onWindowClosed();
+    EXPECT_TRUE(kStubRet);
+
+    WindowManager::instance()->m_windows.clear();
+}
+
+TEST(WindowManagerTestTwo, onLastActivedWindowClosed)
+{
+    WindowManager::instance()->m_windows.clear();
+
+    Stub st;
+    void (*func)() = [](){
+        kStubRet = true;
+    };
+    st.set(&QWidget::close,func);
+
+    QWidget wid;
+    kStubRet = false;
+    WindowManager::instance()->onLastActivedWindowClosed(wid.winId());
+    EXPECT_TRUE(kStubRet);
+
+    kStubRet = false;
+    WindowManager::instance()->onLastActivedWindowClosed(0);
+    EXPECT_FALSE(kStubRet);
+
+    kStubRet = false;
+    WindowManager::instance()->m_windows.insert(&wid, wid.winId());
+    WindowManager::instance()->onLastActivedWindowClosed(0);
+    EXPECT_TRUE(kStubRet);
+
+    WindowManager::instance()->m_windows.clear();
+}
+
+

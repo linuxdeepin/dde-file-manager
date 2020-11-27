@@ -17,6 +17,8 @@ SOURCES += \
     $$PWD/main.cpp \
     # vault
     $$PWD/vault/ut_interfaceactivevault.cpp \
+    $$PWD/shutil/ut_checknetwork.cpp \
+    $$PWD/io/ut_dfilecopymovejob.cpp \
     $$PWD/vault/ut_operatorcenter.cpp \
     $$PWD/vault/ut_vaulthelper.cpp \
     $$PWD/vault/ut_vaultlockmanager.cpp \
@@ -43,7 +45,7 @@ SOURCES += \
     $$PWD/views/ut_dtoolbar.cpp \
     $$PWD/views/ut_extendview.cpp \
     $$PWD/views/ut_filedialogstatusbar.cpp\
-    $$PWD/views/ut_fileitem.cpp\
+    $$PWD/views/ut_fileiconitem.cpp\
     $$PWD/views/ut_fileviewhelper.cpp\
     $$PWD/views/ut_historystack.cpp\
     $$PWD/views/ut_windowmanager.cpp\
@@ -69,12 +71,10 @@ SOURCES += \
     $$PWD/models/ut_tagfileinfo.cpp \
     $$PWD/models/ut_trashfileinfo.cpp \
     $$PWD/mediainfo/ut_dfmmediainfo.cpp \
-    $$PWD/io/ut_dfilecopyqueue.cpp \
     $$PWD/io/ut_dgiofiledevice.cpp \
     $$PWD/io/ut_dlocalfiledevice.cpp \
     $$PWD/io/ut_dfilestatisticsjob.cpp \
     $$PWD/io/ut_dstorageinfo.cpp \
-    $$PWD/io/ut_dfilecopymovejob.cpp \
     $$PWD/io/ut_dfileiodeviceproxy.cpp \
     $$PWD/bluetooth/ut_bluetoothdevice.cpp \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \
@@ -212,5 +212,7 @@ SOURCES += \
     $$PWD/controllers/ut_searchhistroymanager.cpp \
     $$PWD/controllers/ut_dfmsearchcrumbcontroller.cpp \
     $$PWD/interfaces/ut_dfmcrumbinterface.cpp \
-    $$PWD/interfaces/ut_dfmcrumblistviewmodel.cpp 
-
+    $$PWD/interfaces/ut_dfmcrumblistviewmodel.cpp \
+    $$PWD/gvfs/ut_qmount.cpp \
+    $$PWD/gvfs/ut_qvolume.cpp \
+     $$PWD/interfaces/ut_dfilesystemmodel.cpp\

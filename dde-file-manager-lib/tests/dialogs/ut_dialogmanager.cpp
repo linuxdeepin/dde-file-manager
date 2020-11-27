@@ -1,9 +1,12 @@
 #include "dialogs/dialogmanager.h"
 #include "dfmevent.h"
 #include "fileoperations/filejob.h"
+#include "gvfs/qdiskinfo.h"
 
 #include <gtest/gtest.h>
 #include <QWidget>
+
+
 
 namespace  {
     class TestDialogManager : public testing::Test
@@ -27,7 +30,7 @@ namespace  {
 
 TEST_F(TestDialogManager, testInit)
 {
-//    int a = 0;
+
 }
 
 TEST_F(TestDialogManager, testGetPropertyPos)
@@ -129,7 +132,7 @@ TEST_F(TestDialogManager, testRemoveJob)
 TEST_F(TestDialogManager, testGetJobIdByUrl)
 {
     QString jobId = "10000";
-    DUrl url("file://home");
+    DUrl url("file:///home");
 
     FileJob job(FileJob::Delete);
     job.setJobId(jobId);
@@ -180,7 +183,7 @@ TEST_F(TestDialogManager, testAbortJob)
 TEST_F(TestDialogManager, testAbortJobByDestinationUrl)
 {
     QString jobId = "10000";
-    DUrl url("file://home");
+    DUrl url("file:///home");
 
     FileJob job(FileJob::Delete);
     job.setJobId(jobId);
@@ -190,228 +193,298 @@ TEST_F(TestDialogManager, testAbortJobByDestinationUrl)
     m_pTester->abortJobByDestinationUrl(url);
 }
 
-//TEST_F(TestDialogManager, testShowCopyMoveToSelfDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    QMap<QString, QString> jobDetail;
-////    jobDetail.insert("job1", "10000");
-////    m_pTester->showCopyMoveToSelfDialog(jobDetail);
-//}
+TEST_F(TestDialogManager, testShowCopyMoveToSelfDialog)
+{
+    QMap<QString, QString> jobDetail;
+    jobDetail.insert("job1", "10000");
+    m_pTester->showCopyMoveToSelfDialog(jobDetail);
+}
 
 TEST_F(TestDialogManager, testShowUrlWrongDialog)
 {
-    DUrl url("file://home");
+    DUrl url("file:///home");
     m_pTester->showUrlWrongDialog(url);
 }
 
-//TEST_F(TestDialogManager, testShowRunExcutableScriptDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    DUrl url("file://home");
-////    quint64 winId = 12345678;
-////    m_pTester->showRunExcutableScriptDialog(url, winId);
-//}
+TEST_F(TestDialogManager, testShowRunExcutableScriptDialog)
+{
+    DUrl url("file:///home");
+    quint64 winId = 12345678;
+    m_pTester->showRunExcutableScriptDialog(url, winId);
+}
 
-//TEST_F(TestDialogManager, testShowAskIfAddExcutableFlagAndRunDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    DUrl url("file://home");
-////    quint64 winId = 12345678;
-////    m_pTester->showAskIfAddExcutableFlagAndRunDialog(url, winId);
-//}
+TEST_F(TestDialogManager, testShowRunExcutableFileDialog)
+{
+    DUrl url("file:///home");
+    quint64 winId = 12345678;
+    m_pTester->showRunExcutableFileDialog(url, winId);
+}
 
-//TEST_F(TestDialogManager, testShowRenameNameSameErrorDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    QString name = "unit_test_dialog";
-////    DFMEvent event;
-////    m_pTester->showRenameNameSameErrorDialog(name, event);
-//}
+TEST_F(TestDialogManager, testShowAskIfAddExcutableFlagAndRunDialog)
+{
+    DUrl url("file:///home");
+    quint64 winId = 12345678;
+    m_pTester->showAskIfAddExcutableFlagAndRunDialog(url, winId);
+}
 
-////! 测试文件命名为“..”时，弹出提示框
-//TEST_F(TestDialogManager, testShowRenameNameDotDotErrorDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    DFMEvent event;
-////    int result = m_pTester->showRenameNameDotDotErrorDialog(event);
-////    EXPECT_TRUE(result == 0 || result == 1);
-//}
+TEST_F(TestDialogManager, testShowRenameNameSameErrorDialog)
+{
+    QString name = "unit_test_dialog";
+    DFMEvent event;
+    m_pTester->showRenameNameSameErrorDialog(name, event);
+}
 
-//TEST_F(TestDialogManager, testShowOpticalBlankConfirmationDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    DUrl url("file://home");
-////    DFMUrlBaseEvent event(0, url);
-////    m_pTester->showOpticalBlankConfirmationDialog(event);
-//}
+// 测试文件命名为“..”时，弹出提示框
+TEST_F(TestDialogManager, testShowRenameNameDotDotErrorDialog)
+{
+    DFMEvent event;
+    int result = m_pTester->showRenameNameDotDotErrorDialog(event);
+    EXPECT_TRUE(result == 0 || result == 1);
+}
 
-//TEST_F(TestDialogManager, testShowOpticalImageOpSelectionDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    DUrl url("file://home");
-////    DFMUrlBaseEvent event(0, url);
-////    m_pTester->showOpticalImageOpSelectionDialog(event);
-//}
+TEST_F(TestDialogManager, testShowOpticalBlankConfirmationDialog)
+{
+    DUrl url("file:///home");
+    DFMUrlBaseEvent event(nullptr, url);
+    m_pTester->showOpticalBlankConfirmationDialog(event);
+}
 
-//TEST_F(TestDialogManager, testShowOpticalJobFailureDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    int type = FileJob::OpticalBlank;
-////    QString err("unit_test_info");
-////    QStringList details("");
-////    m_pTester->showOpticalJobFailureDialog(type, err, details);
-//}
+TEST_F(TestDialogManager, testShowOpticalImageOpSelectionDialog)
+{
+    DUrl url("file:///home");
+    DFMUrlBaseEvent event(nullptr, url);
+    m_pTester->showOpticalImageOpSelectionDialog(event);
+}
 
-//TEST_F(TestDialogManager, testShowOpticalJobCompletionDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    QString msg("unit_test_name");
-////    QString icon("dfm_vault");
-////    m_pTester->showOpticalJobCompletionDialog(msg, icon);
-//}
+TEST_F(TestDialogManager, testShowOpticalJobFailureDialog)
+{
+    int type = FileJob::OpticalBlank;
+    QString err("unit_test_info");
+    QStringList details("");
+    m_pTester->showOpticalJobFailureDialog(type, err, details);
+}
 
-//TEST_F(TestDialogManager, testShowDeleteFilesClearTrashDialog)
-//{
-//    // TODO 有模态弹框 以后处理
-////    DUrlList list;
-////    list.push_back(DUrl("file://home"));
-////    DFMUrlListBaseEvent event(0, list);
-////    m_pTester->showDeleteFilesClearTrashDialog(event);
-//}
+TEST_F(TestDialogManager, testShowOpticalJobCompletionDialog)
+{
+    QString msg("unit_test_name");
+    QString icon("dfm_vault");
+    m_pTester->showOpticalJobCompletionDialog(msg, icon);
+}
 
-//TEST_F(TestDialogManager, testShowRemoveBookMarkDialog)
-//{
+TEST_F(TestDialogManager, testShowDeleteFilesClearTrashDialog)
+{
+    DUrlList list;
+    list.push_back(DUrl("file:///home"));
+    DFMUrlListBaseEvent event(nullptr, list);
+    m_pTester->showDeleteFilesClearTrashDialog(event);
+}
 
-//}
+TEST_F(TestDialogManager, testShowRemoveBookMarkDialog)
+{
+    DFMEvent event;
+    m_pTester->showRemoveBookMarkDialog(event);
+}
 
-//TEST_F(TestDialogManager, testShowOpenWithDialog)
-//{
+TEST_F(TestDialogManager, testShowOpenWithDialog)
+{
+    DFMEvent event;
+    m_pTester->showOpenWithDialog(event);
+}
 
-//}
+TEST_F(TestDialogManager, testShowOpenFilesWithDialog)
+{
+    DFMEvent event;
+    m_pTester->showOpenFilesWithDialog(event);
+}
 
-//TEST_F(TestDialogManager, testShowOpenFilesWithDialog)
-//{
+TEST_F(TestDialogManager, testShowPropertyDialog)
+{
+    DUrlList list;
+    list.push_back(DUrl("file:///home"));
+    DFMUrlListBaseEvent event(nullptr, list);
+    m_pTester->showPropertyDialog(event);
+}
 
-//}
+TEST_F(TestDialogManager, testShowShareOptionsInPropertyDialog)
+{
+    DUrlList list;
+    list.push_back(DUrl("file:///home"));
+    DFMUrlListBaseEvent event(nullptr, list);
+    m_pTester->showShareOptionsInPropertyDialog(event);
+}
 
-//TEST_F(TestDialogManager, testShowPropertyDialog)
-//{
+TEST_F(TestDialogManager, testShowTrashPropertyDialog)
+{
+    DFMEvent event;
+    m_pTester->showTrashPropertyDialog(event);
+}
 
-//}
+TEST_F(TestDialogManager, testShowComputerPropertyDialog)
+{
+    m_pTester->showComputerPropertyDialog();
+}
 
-//TEST_F(TestDialogManager, testShowShareOptionsInPropertyDialog)
-//{
+TEST_F(TestDialogManager, testShowDevicePropertyDialog)
+{
+    DFMEvent event;
+    m_pTester->showDevicePropertyDialog(event);
+}
 
-//}
+TEST_F(TestDialogManager, testShowDiskErrorDialog)
+{
+    QString id = "123";
+    QString errorText = "test error";
+    m_pTester->showDiskErrorDialog(id, errorText);
+}
 
-//TEST_F(TestDialogManager, testShowTrashPropertyDialog)
-//{
+TEST_F(TestDialogManager, testShowBreakSymlinkDialog)
+{
+    QString targetName = "test";
+    DUrl linkfile("file:///file");
+    m_pTester->showBreakSymlinkDialog(targetName, linkfile);
+}
 
-//}
+TEST_F(TestDialogManager, testShowConnectToServerDialog)
+{
+    quint64 winId(12345678);
+    m_pTester->showConnectToServerDialog(winId);
+}
 
-//TEST_F(TestDialogManager, testShowComputerPropertyDialog)
-//{
+TEST_F(TestDialogManager, testShowUserSharePasswordSettingDialog)
+{
+    quint64 winId(12345678);
+    m_pTester->showUserSharePasswordSettingDialog(winId);
+}
 
-//}
+TEST_F(TestDialogManager, testShowGlobalSettingsDialog)
+{
+    quint64 winId(12345678);
+    m_pTester->showGlobalSettingsDialog(winId);
+}
 
-//TEST_F(TestDialogManager, testShowDevicePropertyDialog)
-//{
+TEST_F(TestDialogManager, testShowDiskSpaceOutOfUsedDialogLater)
+{
+    m_pTester->showDiskSpaceOutOfUsedDialogLater();
+}
 
-//}
+TEST_F(TestDialogManager, testShowDiskSpaceOutOfUsedDialog)
+{
+    m_pTester->showDiskSpaceOutOfUsedDialog();
+}
 
-//TEST_F(TestDialogManager, testShowDiskErrorDialog)
-//{
+TEST_F(TestDialogManager, testShow4gFat32Dialog)
+{
+    m_pTester->show4gFat32Dialog();
+}
 
-//}
+TEST_F(TestDialogManager, testShowFailToCreateSymlinkDialog)
+{
+    QString error("test error");
+    m_pTester->showFailToCreateSymlinkDialog(error);
+}
 
-//TEST_F(TestDialogManager, testShowBreakSymlinkDialog)
-//{
+TEST_F(TestDialogManager, testShowMoveToTrashConflictDialog)
+{
+    DUrlList lst;
+    m_pTester->showMoveToTrashConflictDialog(lst);
+}
 
-//}
+TEST_F(TestDialogManager, testShowDeleteSystemPathWarnDialog)
+{
+    quint64 winId(12345678);
+    m_pTester->showDeleteSystemPathWarnDialog(winId);
+}
 
-//TEST_F(TestDialogManager, testShowConnectToServerDialog)
-//{
+TEST_F(TestDialogManager, testShowFilePreviewDialog)
+{
+    DUrlList selectUrls;
+    selectUrls << DUrl("file:///testfile2");
+    DUrlList entryUrls;
+    entryUrls << DUrl("file:///testfile2");
+    m_pTester->showFilePreviewDialog(selectUrls, entryUrls);
+}
 
-//}
+TEST_F(TestDialogManager, testShowRestoreFailedDialog)
+{
+    DUrlList lst;
+    lst << DUrl("file:///testfile2");
+    m_pTester->showRestoreFailedDialog(lst);
+}
 
-//TEST_F(TestDialogManager, testShowUserSharePasswordSettingDialog)
-//{
+TEST_F(TestDialogManager, testShowRestoreFailedDialog2)
+{
+    DUrlList lst;
+    lst << DUrl("file:///testfile2") << DUrl("file:///testfile1");
+    m_pTester->showRestoreFailedDialog(lst);
+}
 
-//}
+TEST_F(TestDialogManager, testShowRestoreFailedPerssionDialog)
+{
+    QString srcPath("test srcPath");
+    QString targetPath("test targetPath");
+    m_pTester->showRestoreFailedPerssionDialog(srcPath, targetPath);
+}
 
-//TEST_F(TestDialogManager, testShowGlobalSettingsDialog)
-//{
+TEST_F(TestDialogManager, testShowRestoreFailedSourceNotExists)
+{
+    DUrlList lst;
+    lst << DUrl("file:///testfile2");
+    m_pTester->showRestoreFailedSourceNotExists(lst);
+}
 
-//}
+TEST_F(TestDialogManager, testShowRestoreFailedSourceNotExists2)
+{
+    DUrlList lst;
+    lst << DUrl("file:///testfile2") << DUrl("file:///testfile1");
+    m_pTester->showRestoreFailedSourceNotExists(lst);
+}
 
-//TEST_F(TestDialogManager, testShowDiskSpaceOutOfUsedDialogLater)
-//{
+TEST_F(TestDialogManager, testShowMultiFilesRenameDialog)
+{
+    QList<DUrl> selectedUrls;
+    selectedUrls << DUrl("file:///home");
+    m_pTester->showMultiFilesRenameDialog(selectedUrls);
+}
 
-//}
+TEST_F(TestDialogManager, testShowAddUserShareFailedDialog)
+{
+    QString sharePath("/home");
+    m_pTester->showAddUserShareFailedDialog(sharePath);
+}
 
-//TEST_F(TestDialogManager, testShowDiskSpaceOutOfUsedDialog)
-//{
+TEST_F(TestDialogManager, testShowNoPermissionDialog)
+{
+    DUrlList list;
+    list.push_back(DUrl("file:///home"));
+    DFMUrlListBaseEvent event(nullptr, list);
+    m_pTester->showNoPermissionDialog(event);
+}
 
-//}
+TEST_F(TestDialogManager, testShowNoPermissionDialog2)
+{
+    DUrlList list;
+    list.push_back(DUrl("file:///home"));
+    list.push_back(DUrl("file:///testfile1"));
+    DFMUrlListBaseEvent event(nullptr, list);
+    m_pTester->showNoPermissionDialog(event);
+}
 
-//TEST_F(TestDialogManager, testShowFailToCreateSymlinkDialog)
-//{
+TEST_F(TestDialogManager, testShowNtfsWarningDialog)
+{
+    QDiskInfo diskInfo;
+    m_pTester->showNtfsWarningDialog(diskInfo);
+}
 
-//}
-
-//TEST_F(TestDialogManager, testShowMoveToTrashConflictDialog)
-//{
-
-//}
-
-//TEST_F(TestDialogManager, testShowDeleteSystemPathWarnDialog)
-//{
-
-//}
-
-//TEST_F(TestDialogManager, testShowFilePreviewDialog)
-//{
-
-//}
-
-//TEST_F(TestDialogManager, testShowRestoreFailedDialog)
-//{
-
-//}
-
-//TEST_F(TestDialogManager, testShowRestoreFailedPerssionDialog)
-//{
-
-//}
-
-//TEST_F(TestDialogManager, testShowMultiFilesRenameDialog)
-//{
-
-//}
-
-//TEST_F(TestDialogManager, testShowAddUserShareFailedDialog)
-//{
-
-//}
-
-//TEST_F(TestDialogManager, testShowNoPermissionDialog)
-//{
-
-//}
-
-//TEST_F(TestDialogManager, testShowNtfsWarningDialog)
-//{
-
-//}
-
-//TEST_F(TestDialogManager, testShowErrorDialog)
-//{
-
-//}
+TEST_F(TestDialogManager, testShowErrorDialog)
+{
+    QString title("test title");
+    QString message("test message");
+    m_pTester->showErrorDialog(title, message);
+}
 
 TEST_F(TestDialogManager, testRemovePropertyDialog)
 {
-    DUrl url("file://home");
+    DUrl url("file:///home");
     m_pTester->removePropertyDialog(url);
 }
 
@@ -439,18 +512,19 @@ TEST_F(TestDialogManager, testHandleFocusChanged)
 
 TEST_F(TestDialogManager, testShowTaskProgressDlgOnActive)
 {
-//    m_pTester->showTaskProgressDlgOnActive();
+    m_pTester->showTaskProgressDlgOnActive();
 }
 
-//TEST_F(TestDialogManager, testShowUnableToLocateDir)
-//{
-
-//}
+TEST_F(TestDialogManager, testShowUnableToLocateDir)
+{
+    QString dir("/testfile");
+    m_pTester->showUnableToLocateDir(dir);
+}
 
 TEST_F(TestDialogManager, testRefreshPropertyDialogs)
 {
-    DUrl oldUrl("file://home");
-    DUrl newUrl("file://home1");
+    DUrl oldUrl("file:///home");
+    DUrl newUrl("file:///home1");
     m_pTester->refreshPropertyDialogs(oldUrl, newUrl);
 }
 
@@ -461,15 +535,49 @@ TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed)
     m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
 }
 
-//TEST_F(TestDialogManager, testShowMessageDialog)
-//{
+TEST_F(TestDialogManager, testShowMessageDialog)
+{
+    DialogManager::messageType messageLevel(DialogManager::msgInfo);
+    QString title("test title");
+    m_pTester->showMessageDialog(messageLevel, title);
+}
 
-//}
+TEST_F(TestDialogManager, testShowMessageDialog2)
+{
+    DialogManager::messageType messageLevel(DialogManager::msgWarn);
+    QString title("test title");
+    m_pTester->showMessageDialog(messageLevel, title);
+}
 
-// 有模态弹框,暂不处理
-//TEST_F(TestDialogManager, testShowBluetoothTransferDlg)
-//{
-//    DUrlList files;
-//    files.push_back(DUrl("file://home"));
-//    m_pTester->showBluetoothTransferDlg(files);
-//}
+TEST_F(TestDialogManager, testShowMessageDialog3)
+{
+    DialogManager::messageType messageLevel(DialogManager::msgErr);
+    QString title("test title");
+    m_pTester->showMessageDialog(messageLevel, title);
+}
+
+TEST_F(TestDialogManager, testShowBluetoothTransferDlg)
+{
+    DUrlList files;
+    files.push_back(DUrl("file:///home"));
+    m_pTester->showBluetoothTransferDlg(files);
+}
+
+TEST_F(TestDialogManager, testShowFormatDialog)
+{
+    QString devId("/dev/UTest");
+    m_pTester->showFormatDialog(devId);
+}
+
+TEST_F(TestDialogManager, testDUrlListCompare)
+{
+    DUrlList urls;
+    m_pTester->DUrlListCompare(urls);
+}
+
+TEST_F(TestDialogManager, testDUrlListCompare2)
+{
+    DUrlList urls;
+    urls << DUrl("file:///home");
+    m_pTester->DUrlListCompare(urls);
+}

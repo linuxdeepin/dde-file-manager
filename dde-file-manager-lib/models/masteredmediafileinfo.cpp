@@ -192,11 +192,11 @@ DUrl MasteredMediaFileInfo::goToUrlWhenDeleted() const
 {
     QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(fileUrl().burnDestDevice(), {});
     if (rootDeviceNode.isEmpty() || this->m_backerUrl.isEmpty()) {
-       return DUrl::fromLocalFile(QDir::homePath());
+        return DUrl::fromLocalFile(QDir::homePath());
     }
 
     QString volTotag = getVolTag(rootDeviceNode.first());
-    CdStatusInfo* pStatusInfo = DFMOpticalMediaWidget::getCdStatusInfo(volTotag);
+    CdStatusInfo *pStatusInfo = DFMOpticalMediaWidget::getCdStatusInfo(volTotag);
 
     if (!fileUrl().burnFilePath().isEmpty() && pStatusInfo != nullptr && !pStatusInfo->bReadyToBurn) { // 光盘路径是不能被删除的，有删除动作一般是弹出了，所以直接到homepath
         return DUrl::fromLocalFile(QDir::homePath());
@@ -239,9 +239,7 @@ QSet<MenuAction> MasteredMediaFileInfo::disableMenuActionList() const
              << MenuAction::Paste;
     }
 
-    if (!canRename()) {
-        list << MenuAction::Cut << MenuAction::Rename;// << MenuAction::Delete;
-    }
+    list << MenuAction::Cut << MenuAction::Rename;// << MenuAction::Delete;
 
     if (isVirtualEntry()) {
         list << MenuAction::Copy;
@@ -264,7 +262,7 @@ void MasteredMediaFileInfo::refresh(const bool isForce)
 }
 
 
-QString MasteredMediaFileInfo::getVolTag(const QString & burnPath) const
+QString MasteredMediaFileInfo::getVolTag(const QString &burnPath) const
 {
     QString strKey;
     QStringList lst = burnPath.split("/", QString::SkipEmptyParts); // /dev/sr0 -> { dev, sr0 }
