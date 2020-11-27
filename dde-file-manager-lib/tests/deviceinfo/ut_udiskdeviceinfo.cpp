@@ -64,6 +64,18 @@ public:
 };
 }
 
+TEST_F(TestUDiskDeviceInfo, construct2)
+{
+    UDiskDeviceInfoPointer p(new UDiskDeviceInfo());
+    EXPECT_NO_FATAL_FAILURE(UDiskDeviceInfo info(p));
+}
+
+TEST_F(TestUDiskDeviceInfo, construct3)
+{
+    QString path("/");
+    EXPECT_NO_FATAL_FAILURE(UDiskDeviceInfo info(path));
+}
+
 TEST_F(TestUDiskDeviceInfo, getDiskInfo)
 {
     QDiskInfo info(m_devInfo->getDiskInfo());
@@ -130,4 +142,42 @@ TEST_F(TestUDiskDeviceInfo, menuActionList)
 TEST_F(TestUDiskDeviceInfo, disableMenuActionList)
 {
     EXPECT_FALSE(m_devInfo->disableMenuActionList().isEmpty());
+}
+
+TEST_F(TestUDiskDeviceInfo, canUnmount)
+{
+    EXPECT_TRUE(m_devInfo->canUnmount());
+}
+
+TEST_F(TestUDiskDeviceInfo, getTotal)
+{
+    EXPECT_EQ(65536, m_devInfo->getTotal());
+}
+
+TEST_F(TestUDiskDeviceInfo, size)
+{
+    EXPECT_EQ(65536, m_devInfo->size());
+}
+
+TEST_F(TestUDiskDeviceInfo, fileName)
+{
+    EXPECT_EQ(QString("abc"), m_devInfo->fileName());
+}
+
+TEST_F(TestUDiskDeviceInfo, fileDisplayName)
+{
+    UDiskDeviceInfo info;
+    QDiskInfo disk;
+    info.setDiskInfo(disk);
+    EXPECT_FALSE(info.fileDisplayName().isEmpty());
+}
+
+TEST_F(TestUDiskDeviceInfo, getUrlByChildFileName)
+{
+    UDiskDeviceInfo info;
+    QDiskInfo disk;
+    disk.setUnix_device("/");
+    info.setDiskInfo(disk);
+    const DUrl &url = info.getUrlByChildFileName("tmp");
+    EXPECT_TRUE(url.isValid());
 }
