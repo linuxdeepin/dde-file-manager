@@ -1,7 +1,12 @@
 #include <gtest/gtest.h>
 #include <QDateTime>
 
+#define private public
+#define protected public
+
 #include "dfilecopymovejob.h"
+#include "private/dfilecopymovejob_p.h"
+#include "testhelper.h"
 #include "dfmglobal.h"
 #include <QThread>
 #include <QProcess>
@@ -150,4 +155,25 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_error) {
     while(!job->isFinished()) {
         QThread::msleep(100);
     }
+}
+
+TEST_F(DFileCopyMoveJobTest,get_errorToString) {
+    DFileCopyMoveJobPrivate * jobd = reinterpret_cast<DFileCopyMoveJobPrivate *>(qGetPtrHelper(job->d_ptr.data()));
+    ASSERT_TRUE(jobd);
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::PermissionError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::SpecialFileError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::FileExistsError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::DirectoryExistsError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::OpenError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::ReadError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::WriteError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::MkdirError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::RemoveError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::RenameError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::FileSizeTooBigError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::NotEnoughSpaceError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::IntegrityCheckingError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::TargetReadOnlyError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::TargetIsSelfError).isEmpty());
+    EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::UnknowError).isEmpty());
 }

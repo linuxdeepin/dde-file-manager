@@ -34,9 +34,6 @@
 #include <QQueue>
 
 #include "dfiledevice.h"
-#include "dfilecopyqueue.h"
-
-typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
 
 DFM_BEGIN_NAMESPACE
 

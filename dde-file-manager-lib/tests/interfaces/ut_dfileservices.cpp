@@ -23,8 +23,6 @@ public:
     }
 
     virtual void TearDown() override{
-        QProcess::execute("killall dde-file-manager");
-        QProcess::execute("killall deepin-editor");
         std::cout << "end DFileSeviceTest" << std::endl;
     }
 
@@ -170,7 +168,7 @@ TEST_F(DFileSeviceTest, start_fileOperations){
     EXPECT_TRUE(service->touchFile(nullptr,to));
     EXPECT_TRUE(service->openFileLocation(nullptr,url));
     EXPECT_TRUE(service->setPermissions(nullptr,to,QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner));
-    EXPECT_FALSE(service->addToBookmark(nullptr,to));
+    EXPECT_TRUE(service->addToBookmark(nullptr,to));
     EXPECT_TRUE(service->removeBookmark(nullptr,to));
 //    EXPECT_TRUE(service->createSymlink(nullptr,to));
     EXPECT_TRUE(service->createSymlink(nullptr,to,linkurl));
@@ -196,6 +194,9 @@ TEST_F(DFileSeviceTest, start_fileOperations){
     EXPECT_TRUE(service->createDirIterator(nullptr,url,QStringList(),QDir::AllEntries | QDir::System
                                            | QDir::NoDotAndDotDot | QDir::Hidden,
                                            QDirIterator::NoIteratorFlags));
+    EXPECT_TRUE(service->createDirIterator(nullptr,url,QStringList(),QDir::AllEntries | QDir::System
+                                           | QDir::NoDotAndDotDot | QDir::Hidden,
+                                           static_cast<QDirIterator::IteratorFlag>(DDirIterator::SortINode)));
     EXPECT_TRUE(service->getChildren(Q_NULLPTR, url, QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden).isEmpty());
     EXPECT_TRUE(QSharedPointer<JobController>(DFileService::instance()->getChildrenJob(nullptr, url, QStringList(), QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot,
                                                             QDirIterator::NoIteratorFlags, true, false)));
@@ -205,9 +206,10 @@ TEST_F(DFileSeviceTest, start_fileOperations){
     EXPECT_TRUE(QSharedPointer<DFileHandler>(service->createFileHandler(nullptr,to)));
     EXPECT_TRUE(QSharedPointer<DStorageInfo>(service->createStorageInfo(nullptr,to)));
 
-    TestHelper::runInLoop([=](){
-        service->moveToTrash(nullptr,DUrlList() << destinfo << linkurl << to << url);
-    });
+    service->moveToTrash(nullptr,DUrlList() << destinfo);
+    service->moveToTrash(nullptr,DUrlList() << linkurl);
+    service->moveToTrash(nullptr,DUrlList() << to);
+    service->moveToTrash(nullptr,DUrlList() << url);
 }
 
 TEST_F(DFileSeviceTest, start_otherOperations){
@@ -219,16 +221,16 @@ TEST_F(DFileSeviceTest, start_otherOperations){
     EXPECT_FALSE(service->checkGvfsMountfileBusy(urlvideos,false));
     urlvideos.setUrl("file:///run/user/1000/gvfs/smb-share:server=10.8.11.190,share=test");
     EXPECT_TRUE(service->checkGvfsMountfileBusy(urlvideos,false));
-    urlvideos.setUrl("dfmroot:///%252Frun%252Fuser%252F1000%252Fgvfs%252Fftp%253Ahost%253D10.8.0.116.gvfsmp");
+    urlvideos.setUrl("dfmroot:///%252Frun%252Fuser%252F1000%252Fgvfs%252Fftp%253Ahost%253D10.8.70.116.gvfsmp");
     EXPECT_TRUE(service->checkGvfsMountfileBusy(urlvideos,false));
-    EXPECT_TRUE(service->checkGvfsMountfileBusy(urlvideos,"ftp:host=10.8.0.116",false));
+    EXPECT_TRUE(service->checkGvfsMountfileBusy(urlvideos,"ftp:host=10.8.70.110",false));
     EXPECT_TRUE(service->isNetWorkOnline());
     service->setDoClearTrashState(true);
     EXPECT_TRUE(service->getDoClearTrashState());
     service->setDoClearTrashState(false);
     EXPECT_FALSE(service->getDoClearTrashState());
 //    service->dealPasteEnd(dMakeEventPointer<DFMEvent>(nullptr),DUrlList() << to);
-    EXPECT_TRUE(service->isSmbFtpContain(to));
+    EXPECT_FALSE(service->isSmbFtpContain(to));
     service->onTagEditorChanged(QStringList() << "tag_ut_test", DUrlList() << to);
     EXPECT_TRUE(service->removeTagsOfFile(nullptr,to,QStringList() << "ut_tag_test"));
 }
