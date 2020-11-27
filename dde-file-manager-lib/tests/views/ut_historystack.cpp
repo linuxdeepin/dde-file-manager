@@ -1,6 +1,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+#include <qdebug.h>
+#include <stub.h>
+
+#include "dfileservices.h"
 #define private public
 #include "views/historystack.h"
 
@@ -63,6 +67,7 @@ TEST(HistoryStackTest,append_out)
     h.append(u3);
     h.m_index = 3;
     h.append(u4);
+    qDebug() << h;
     EXPECT_EQ(3,h.size());
     EXPECT_EQ(u2,h.m_list.first());
 }
@@ -95,10 +100,31 @@ TEST(HistoryStackTest,back)
     HistoryStack h(10);
     h.append(DUrl("file:///home/"));
     h.append(DUrl("file:///usr/"));
+    h.append(DUrl("network://127.0.0.1"));
     h.m_index = 1;
     auto url = h.back();
     EXPECT_EQ(DUrl("file:///home/"),url);
 }
+
+TEST(HistoryStackTest,back_net)
+{
+    HistoryStack h(10);
+    h.append(DUrl("file:///home/"));
+    h.append(DUrl("file:///usr/"));
+    h.append(DUrl("network://127.0.0.1"));
+    h.m_list.append(DUrl("network://127.0.0.1"));
+    h.m_index = 3;
+    EXPECT_EQ(4,h.m_list.size());
+
+    Stub st;
+    bool (*func)() = [](){return true;};
+    bool (DFileService::*org)(const DUrl &,const bool) = &DFileService::checkGvfsMountfileBusy;
+    st.set(org,func);
+
+    h.back();
+    EXPECT_EQ(3,h.m_list.size());
+}
+
 
 TEST(HistoryStackTest,forward_with_end)
 {
@@ -114,9 +140,36 @@ TEST(HistoryStackTest,forward)
     HistoryStack h(10);
     h.append(DUrl("file:///home/"));
     h.append(DUrl("file:///usr"));
+    h.append(DUrl("computer://"));
+    h.append(DUrl("network://127.0.0.1"));
     h.m_index = 0;
     auto url = h.forward();
     EXPECT_EQ(DUrl("file:///usr"),url);
+
+    url = h.forward();
+    EXPECT_EQ(DUrl("computer://"),url);
+}
+
+TEST(HistoryStackTest,forward_net)
+{
+    HistoryStack h(10);
+    h.append(DUrl("file:///home/"));
+    h.append(DUrl("network://127.0.0.1"));
+    h.m_index = 0;
+
+    Stub st;
+    bool (*func)() = [](){return true;};
+    bool (DFileService::*org)(const DUrl &,const bool) = &DFileService::checkGvfsMountfileBusy;
+    st.set(org,func);
+
+    auto url = h.forward();
+    EXPECT_EQ(DUrl("network://127.0.0.1"),url);
+
+    h.m_list.append(DUrl("network://127.0.0.1"));
+    EXPECT_EQ(3, h.m_list.size());
+
+    url = h.forward();
+    EXPECT_EQ(2, h.m_list.size());
 }
 
 TEST(HistoryStackTest,remove)
