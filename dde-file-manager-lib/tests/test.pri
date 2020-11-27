@@ -17,6 +17,8 @@ SOURCES += \
     $$PWD/main.cpp \
     # vault
     $$PWD/vault/ut_interfaceactivevault.cpp \
+    $$PWD/shutil/ut_checknetwork.cpp \
+    $$PWD/io/ut_dfilecopymovejob.cpp \
     $$PWD/vault/ut_operatorcenter.cpp \
     $$PWD/vault/ut_vaulthelper.cpp \
     $$PWD/vault/ut_vaultlockmanager.cpp \
@@ -69,12 +71,10 @@ SOURCES += \
     $$PWD/models/ut_tagfileinfo.cpp \
     $$PWD/models/ut_trashfileinfo.cpp \
     $$PWD/mediainfo/ut_dfmmediainfo.cpp \
-    $$PWD/io/ut_dfilecopyqueue.cpp \
     $$PWD/io/ut_dgiofiledevice.cpp \
     $$PWD/io/ut_dlocalfiledevice.cpp \
     $$PWD/io/ut_dfilestatisticsjob.cpp \
     $$PWD/io/ut_dstorageinfo.cpp \
-    $$PWD/io/ut_dfilecopymovejob.cpp \
     $$PWD/io/ut_dfileiodeviceproxy.cpp \
     $$PWD/bluetooth/ut_bluetoothdevice.cpp \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \

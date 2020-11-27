@@ -23,8 +23,7 @@
 
 #include <QObject>
 #include <dfmglobal.h>
-
-class DAbstractFileInfo;
+#include "dabstractfileinfo.h"
 
 typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
 

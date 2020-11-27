@@ -9,8 +9,7 @@ HEADERS += \
     $$PWD/dlocalfilehandler.h \
     $$PWD/dfilestatisticsjob.h \
     $$PWD/dstorageinfo.h \
-    $$PWD/dgiofiledevice.h \
-    $$PWD/dfilecopyqueue.h
+    $$PWD/dgiofiledevice.h
 
 SOURCES += \
     $$PWD/dlocalfiledevice.cpp \
@@ -21,7 +20,6 @@ SOURCES += \
     $$PWD/dlocalfilehandler.cpp \
     $$PWD/dfilestatisticsjob.cpp \
     $$PWD/dstorageinfo.cpp \
-    $$PWD/dgiofiledevice.cpp \
-    $$PWD/dfilecopyqueue.cpp
+    $$PWD/dgiofiledevice.cpp
 
 include(private/private.pri)
