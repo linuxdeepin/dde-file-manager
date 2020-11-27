@@ -22,8 +22,13 @@
 #include "controllers/subscriber.h"
 #include "dfmevent.h"
 
+#include "stub.h"
+#include "addr_pri.h"
+
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+
+ACCESS_PRIVATE_FUN(UDiskListener, void(const QString &labelName), fileSystemDeviceIdLabelChanged);
 
 namespace {
 class TestUDiskListener: public testing::Test {
@@ -89,6 +94,25 @@ TEST_F(TestUDiskListener, device)
 
 TEST_F(TestUDiskListener, renameFile)
 {
+    // create test file
+    QString path1(QDir::homePath() + "/udisklistener_test1.txt");
+    if (!QFile::exists(path1)) {
+        QFile file1(path1);
+        file1.open(QIODevice::WriteOnly | QIODevice::Text);
+        file1.close();
+
+        QString path2(QDir::homePath() + "~/udisklistener_test2.txt");
+
+        if (!QFile::exists(path2)) {
+            DUrl from = DUrl::fromLocalFile(path1);
+            DUrl to = DUrl::fromLocalFile(path2);
+            QSharedPointer<DFMRenameEvent> event(new DFMRenameEvent(nullptr, from, to));
+
+            EXPECT_TRUE(m_listener->renameFile(event));
+            QFile::remove(path2);
+        }
+        QFile::remove(path1);
+    }
 }
 
 TEST_F(TestUDiskListener, lastPart)
@@ -147,6 +171,8 @@ TEST_F(TestUDiskListener, getDeviceByDevicePath)
 TEST_F(TestUDiskListener, getDeviceByMountPoint)
 {
     EXPECT_FALSE(m_listener->getDeviceByMountPoint("/"));
+    EXPECT_FALSE(m_listener->getDeviceByMountPoint("smb://127.0.0.1/"));
+
 }
 
 TEST_F(TestUDiskListener, getDeviceByMountPointFilePath)
@@ -204,4 +230,32 @@ TEST_F(TestUDiskListener, volumeInfos)
 TEST_F(TestUDiskListener, eject)
 {
     EXPECT_NO_FATAL_FAILURE(m_listener->eject("/dev/sr0"));
+}
+
+TEST_F(TestUDiskListener, mountByUDisks)
+{
+    EXPECT_FALSE(m_listener->mountByUDisks(""));
+    EXPECT_FALSE(m_listener->mountByUDisks("/dev/sda1"));
+}
+
+TEST_F(TestUDiskListener, unmount)
+{
+    EXPECT_NO_FATAL_FAILURE(m_listener->unmount("/dev/sdb1"));
+}
+
+TEST_F(TestUDiskListener, stopDrive)
+{
+    EXPECT_NO_FATAL_FAILURE(m_listener->stopDrive(""));
+}
+
+TEST_F(TestUDiskListener, forceUnmount)
+{
+    EXPECT_NO_FATAL_FAILURE(m_listener->forceUnmount(""));
+}
+
+TEST_F(TestUDiskListener, fileSystemDeviceIdLabelChanged)
+{
+    EXPECT_NO_FATAL_FAILURE (
+        call_private_fun::UDiskListenerfileSystemDeviceIdLabelChanged(*m_listener, "");
+    );
 }

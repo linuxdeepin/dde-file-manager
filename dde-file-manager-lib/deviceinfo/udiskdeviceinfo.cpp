@@ -238,7 +238,11 @@ QString UDiskDeviceInfo::fileDisplayName() const
         displayName = FileUtils::formatSize(size());
     }
 
-    QString letter = deviceListener->getVolumeLetters().value(m_diskInfo.uuid());
+    QString letter;
+    if (!m_diskInfo.uuid().isEmpty())
+        letter = deviceListener->getVolumeLetters().value(m_diskInfo.uuid());
+    else
+        qCritical() << "disk uuid is empty!";
 
     if (!letter.isEmpty()) {
         return QString("%1 (%2:)").arg(displayName, letter);
@@ -468,7 +472,7 @@ DUrl UDiskDeviceInfo::getUrlByNewFileName(const QString &fileName) const
 DUrl UDiskDeviceInfo::getUrlByChildFileName(const QString &fileName) const
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, redirectedFileUrl());
-    return fileInfo->getUrlByChildFileName(fileName);
+    return fileInfo ? fileInfo->getUrlByChildFileName(fileName) : DUrl();
 }
 
 bool UDiskDeviceInfo::canRedirectionFileUrl() const
@@ -480,7 +484,8 @@ DUrl UDiskDeviceInfo::redirectedFileUrl() const
 {
     DUrl ret = getMountPointUrl();
 
-    QString dbuspath = DDiskManager::resolveDeviceNode(m_diskInfo.unix_device(), {}).first();
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(m_diskInfo.unix_device(), {});
+    QString dbuspath = nodes.isEmpty() ? QString() : nodes.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dbuspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {

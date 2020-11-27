@@ -21,6 +21,7 @@
 #include "app/define.h"
 #include "bluetooth/bluetoothmodel.h"
 #include "bluetooth/bluetoothmanager.h"
+#include "bluetooth/bluetoothmanager_p.h"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
@@ -33,15 +34,18 @@ namespace  {
  */
 class TestBluetoothManager:  public testing::Test {
 public:
+    BluetoothManagerPrivate *d{nullptr};
+
     void SetUp() override
     {
         bluetoothManager;
         bluetoothManager->refresh();
+        d = new BluetoothManagerPrivate(bluetoothManager);
     }
 
     void TearDown() override
     {
-
+        delete d;
     }
 };
 }
@@ -64,6 +68,11 @@ TEST_F(TestBluetoothManager, cancleTransfer)
 
 TEST_F(TestBluetoothManager, showBluetoothSettings)
 {
-    bluetoothManager->showBluetoothSettings();
+    EXPECT_NO_FATAL_FAILURE(bluetoothManager->showBluetoothSettings());
+}
+
+TEST_F(TestBluetoothManager, p_resolve)
+{
+    EXPECT_NO_FATAL_FAILURE(d->resolve(QDBusReply<QString>()));
 }
 
