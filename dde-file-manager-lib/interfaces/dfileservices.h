@@ -176,8 +176,6 @@ public:
     bool checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog = true);
     //judge me net work is online
     bool isNetWorkOnline();
-    //judge network can visit host
-    bool checkNetWorkToVistHost(const QString &host);
     //获取是否是正在清空回收站 fix bug 31324,
     bool getDoClearTrashState() const;
     //设置当前是否是在清空回收站 fix bug 31324,
@@ -194,9 +192,6 @@ signals:
     void fileDeleted(const DUrl &fileUrl) const;
     void fileMovedToTrash(const DUrl &from, const DUrl &to) const;
     void fileRenamed(const DUrl &from, const DUrl &to) const;
-
-public Q_SLOTS:
-    void slotError(QNetworkReply::NetworkError err);
 
 private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;

@@ -6,7 +6,10 @@
 #include <QObject>
 #include <QTimer>
 
-#include "../../dde-wallpaper-chooser/button.h"
+#define private public
+#define protected public
+
+#include "../dde-wallpaper-chooser/button.h"
 
 using namespace testing;
 
@@ -42,16 +45,18 @@ TEST_F(ButtonTest, get_buttonsize)
 TEST_F(ButtonTest, key_pressevent_of_space)
 {
     QTimer timer;
-    timer.start(2000);
+    timer.start(100);
     bool bjudge = false;
-    QTest::keyPress(m_button, Qt::Key_Space);
-    QEventLoop loop;
-    QObject::connect(m_button, &Button::clicked, &loop, [&]{
+    QObject::connect(m_button, &Button::clicked, m_button, [&]{
         bjudge = true;
-        loop.exit();
     });
-    QObject::connect(&timer, &QTimer::timeout, [&]{
+    QObject::connect(&timer, &QTimer::timeout, m_button, [&]{
         timer.stop();
+    });
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier);
+    m_button->keyPressEvent(&event);
+    QEventLoop loop;
+    QObject::connect(&timer, &QTimer::timeout, &loop, [&loop]{
         loop.exit();
     });
     loop.exec();

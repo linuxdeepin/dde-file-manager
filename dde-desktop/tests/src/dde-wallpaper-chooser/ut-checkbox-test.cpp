@@ -14,7 +14,7 @@
 
 #define private public
 
-#include "../../dde-wallpaper-chooser/checkbox.h"
+#include "../dde-wallpaper-chooser/checkbox.h"
 
 using namespace testing;
 
@@ -47,19 +47,12 @@ TEST_F(CheckBoxTest, checkbox)
 
 TEST_F(CheckBoxTest, key_pressevent_of_enter)
 {
-    QTimer timer;
-    timer.start(2000);
-    bool bjudge = false;
-    QTest::keyPress(m_box, Qt::Key_Enter);
-    QEventLoop loop;
-    QObject::connect(m_box, &CheckBox::clicked, &loop, [&](){
-        bjudge = true;
-        loop.exit();
-    });
-    QObject::connect(&timer, &QTimer::timeout, [&]{
-        timer.stop();
-        loop.exit();
-    });
-    loop.exec();
-    EXPECT_TRUE(bjudge);
+    m_box->setChecked(false);
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+    m_box->keyPressEvent(&event);
+    EXPECT_EQ(m_box->isChecked(), true);
+
+    m_box->setChecked(true);
+    m_box->keyPressEvent(&event);
+    EXPECT_FALSE(m_box->isChecked());
 }

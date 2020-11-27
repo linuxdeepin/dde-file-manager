@@ -23,6 +23,7 @@ namespace  {
            }
 
            void TearDown() override {
+               m_frame->hide();
                delete m_frame;
            }
 

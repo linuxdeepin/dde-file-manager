@@ -9,13 +9,13 @@ namespace  {
         void SetUp() override
         {
             m_pTester = new UserSharePasswordSettingDialog();
-            std::cout << "start TestTrashPropertyDialog";
+            std::cout << "start TestUserSharePasswordSettingDialog";
         }
         void TearDown() override
         {
             delete m_pTester;
             m_pTester = nullptr;
-            std::cout << "end TestTrashPropertyDialog";
+            std::cout << "end TestUserSharePasswordSettingDialog";
         }
     public:
         UserSharePasswordSettingDialog  *m_pTester;
@@ -24,10 +24,10 @@ namespace  {
 
 TEST_F(TestUserSharePasswordSettingDialog, testInit)
 {
-    m_pTester->show();
+
 }
 
 TEST_F(TestUserSharePasswordSettingDialog, testOnButtonClicked)
 {
-    m_pTester->onButtonClicked(0);
+    m_pTester->onButtonClicked(1);
 }

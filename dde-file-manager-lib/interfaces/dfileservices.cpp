@@ -1164,23 +1164,6 @@ bool DFileService::isNetWorkOnline()
     return d_ptr->m_bonline;
 }
 
-bool DFileService::checkNetWorkToVistHost(const QString &host)
-{
-    if (host.isNull()) {
-        return false;
-    }
-    bool bvisit = false;
-    QEventLoop eventLoop;
-    QHostInfo::lookupHost(host, this, [&](QHostInfo & info) {
-        qDebug() << " -----       " << info.errorString() << info.hostName();
-        bvisit = info.error() == QHostInfo::NoError;
-        eventLoop.exit();
-    });
-    eventLoop.exec();
-
-    return bvisit;
-}
-
 bool DFileService::getDoClearTrashState() const
 {
     Q_D(const DFileService);
@@ -1343,12 +1326,6 @@ void DFileService::laterRequestSelectFiles(const DFMUrlListBaseEvent &event) con
         manager->requestSelectFile(event);
     }, event, manager)
 }
-
-void DFileService::slotError(QNetworkReply::NetworkError err)
-{
-    qDebug() << static_cast<QNetworkReply *>(sender())->errorString() << err;
-}
-
 
 ///###: replace
 bool DFileService::multiFilesReplaceName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const
