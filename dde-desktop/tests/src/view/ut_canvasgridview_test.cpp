@@ -21,6 +21,10 @@
 #include <QThread>
 #include <QProcess>
 #include <QScrollBar>
+#include "dfileviewhelper.h"
+#include "../third-party/cpp-stub/addr_pri.h"
+#include "../third-party/cpp-stub/stub.h"
+
 using namespace std;
 
 
@@ -37,6 +41,14 @@ public:
         }
     }
     virtual void SetUp() override{
+        //以防桌面没文件
+        QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+        path = path + '/' + "test.txt";
+        QFile file(path);
+        if (!file.exists()) {
+            file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+            file.close();
+        }
     }
     virtual void TearDown()override{
     }
@@ -585,7 +597,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_lastIndex)
 
 TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_select){
     ASSERT_NE(m_canvasGridView, nullptr);
-
     m_canvasGridView->selectionModel()->clearSelection();
     auto count1 = m_canvasGridView->selectionModel()->selectedCount();
     qApp->processEvents();
@@ -826,7 +837,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_autoMergeSelectedUrls)
     m_canvasGridView->selectAll();
     qApp->processEvents();
 
-    QTest::qSleep(5050);
+    QTest::qSleep(500);
     m_canvasGridView->autoMergeSelectedUrls();
 }
 
@@ -916,4 +927,197 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_openUrls)
     }
     QString temp = m_canvasGridView->canvansScreenName();
     EXPECT_EQ(temp, m_canvasGridView->m_screenName);
+}
+
+static bool increase = false;
+static bool decrease = false;
+static bool keyctrlispressed()
+{
+    return true;
+}
+
+static void increaseFunc()
+{
+    increase = true;
+}
+
+static void decreaseFunc()
+{
+    decrease = true;
+}
+
+TEST_F(CanvasGridViewTest, test_wheelEvent)
+{
+    Stub stu;
+    stu.set(ADDR(DFMGlobal,keyCtrlIsPressed), keyctrlispressed);
+    stu.set(ADDR(CanvasGridView,increaseIcon), increaseFunc);
+    stu.set(ADDR(CanvasGridView,decreaseIcon), decreaseFunc);
+
+    QWheelEvent event(QPointF(), 1, Qt::LeftButton, Qt::NoModifier);
+    m_canvasGridView->wheelEvent(&event);
+    EXPECT_TRUE(increase);
+    EXPECT_FALSE(decrease);
+
+    increase = false;
+    QWheelEvent event1(QPointF(), -1, Qt::LeftButton, Qt::NoModifier);
+    m_canvasGridView->wheelEvent(&event1);
+    EXPECT_TRUE(decrease);
+    EXPECT_FALSE(increase);
+}
+
+TEST_F(CanvasGridViewTest, test_mouseDoubleClickEvent)
+{
+    QMouseEvent event(QEvent::MouseButtonDblClick,{0,0},Qt::LeftButton,Qt::LeftButton,Qt::NoModifier);
+    m_canvasGridView->mouseDoubleClickEvent(&event);
+}
+
+TEST_F(CanvasGridViewTest, test_setscreenname)
+{
+    QString string = m_canvasGridView->m_screenName;
+    m_canvasGridView->setScreenName("test");
+
+    EXPECT_NE(string, m_canvasGridView->m_screenName);
+    m_canvasGridView->setScreenName(string);
+}
+
+TEST_F(CanvasGridViewTest, test_increaseIcon)
+{
+    m_canvasGridView->itemDelegate()->setIconSizeByIconSizeLevel(4);
+    m_canvasGridView->increaseIcon();
+    m_canvasGridView->itemDelegate()->setIconSizeByIconSizeLevel(2);
+    m_canvasGridView->increaseIcon();
+    int level = m_canvasGridView->itemDelegate()->iconSizeLevel();
+    EXPECT_EQ(3, level);
+}
+
+TEST_F(CanvasGridViewTest, test_decreaseIcon)
+{
+    m_canvasGridView->itemDelegate()->setIconSizeByIconSizeLevel(2);
+    m_canvasGridView->decreaseIcon();
+    int level = m_canvasGridView->itemDelegate()->iconSizeLevel();
+    EXPECT_EQ(1, level);
+}
+// test keyboardSearch
+static int bjudge = false;
+TEST_F(CanvasGridViewTest, test_keyboardSearch)
+{
+    void (*keysearch)(char) = [](char tmp){
+        bjudge = true;
+    };
+    EXPECT_EQ(bjudge, false);
+    Stub stu;
+    stu.set(ADDR(DFileViewHelper, keyboardSearch), keysearch);
+    m_canvasGridView->keyboardSearch("test");
+    EXPECT_TRUE(bjudge);
+}
+
+//test Size
+static QSize size;
+static bool judsize = false;
+
+TEST_F(CanvasGridViewTest, test_size)
+{
+    QSize (*mysize)() = [](){
+        judsize = true;
+        return size;
+    };
+    Stub stu;
+    stu.set(ADDR(GridManager, gridSize), mysize);
+    m_canvasGridView->Size();
+    EXPECT_TRUE(judsize);
+}
+
+TEST_F(CanvasGridViewTest, test_dragLeaveEvent)
+{
+    QDragLeaveEvent event;
+    m_canvasGridView->dragLeaveEvent(&event);
+    EXPECT_FALSE(m_canvasGridView->d->startDodge);
+    EXPECT_TRUE(!m_canvasGridView->d->dodgeDelayTimer.isActive());
+}
+
+TEST_F(CanvasGridViewTest, test_updateEntryExpandedState)
+{
+    DUrl url("file:///");
+    m_canvasGridView->updateEntryExpandedState(url);
+    DUrl ret = m_canvasGridView->currentUrl();
+    EXPECT_EQ(url, ret);
+}
+
+//Stub
+static bool test_dump = false;
+
+TEST_F(CanvasGridViewTest, test_dump)
+{
+    void (*mydump)() = [](){
+        test_dump = true;
+        return;
+    };
+    Stub tub;
+    tub.set(ADDR(GridManager, dump), mydump);
+    QString string = m_canvasGridView->Dump();
+    EXPECT_EQ(string, "");
+    EXPECT_TRUE(test_dump);
+}
+
+TEST_F(CanvasGridViewTest, test_DumpPos)
+{
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    path = path + '/' + "test.txt";
+    QFile file(path);
+    if (!file.exists()) {
+        file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+        file.close();
+    }
+
+    QString temp = m_canvasGridView->DumpPos(0, 0);
+    EXPECT_TRUE(!temp.isEmpty());
+    m_canvasGridView->Refresh();
+}
+
+TEST_F(CanvasGridViewTest, test_currentCursorFile)
+{
+    QCursor cur;
+    cur.setPos(10, 10);
+    m_canvasGridView->currentCursorFile();
+}
+
+TEST_F(CanvasGridViewTest, test_itemIconGeomerty)
+{
+    QModelIndex index = m_canvasGridView->firstIndex();
+    if (index.isValid()) {
+        QRect rect = m_canvasGridView->itemIconGeomerty(index);
+        EXPECT_NE(QRect(), rect);
+    }
+}
+
+TEST_F(CanvasGridViewTest, test_fakeDropEvent)
+{
+    m_canvasGridView->d->dodgeDelayTimer.start(100);
+    m_canvasGridView->fakeDropEvent();
+    EXPECT_FALSE(m_canvasGridView->d->startDodge);
+    EXPECT_TRUE(!m_canvasGridView->d->dodgeDelayTimer.isActive());
+}
+
+TEST_F(CanvasGridViewTest, test_dragEnterEvent)
+{
+    QPoint pos(10, 10);
+    QMimeData data;
+    QDragEnterEvent event(pos, Qt::CopyAction, &data, Qt::LeftButton, Qt::NoModifier);
+    m_canvasGridView->dragEnterEvent(&event);
+    data.setData("XdndDirectSave0", "XdndDirectSave0");
+    m_canvasGridView->dragEnterEvent(&event);
+}
+
+TEST_F(CanvasGridViewTest, test_openUrl)
+{
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    path = path + '/' + "test.txt";
+    QFile file(path);
+    if (!file.exists()) {
+        file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+        file.close();
+    }
+    DUrlList ulist = m_canvasGridView->selectedUrls();
+    DUrl url(DUrl::fromLocalFile(path));
+    m_canvasGridView->openUrl(url);
 }
