@@ -319,9 +319,7 @@ void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
 
     state = s;
 
-    Q_Q(DFileCopyMoveJob);
-
-    if (updateSpeedTimer->thread()->loopLevel() <= 0) {
+    if (updateSpeedTimer && updateSpeedTimer->thread() && updateSpeedTimer->thread()->loopLevel() <= 0) {
         qWarning() << "The thread of update speed timer no event loop" << updateSpeedTimer->thread();
     }
 
@@ -341,7 +339,7 @@ void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
 
         QMetaObject::invokeMethod(updateSpeedTimer, "stop");
     }
-
+    Q_Q(DFileCopyMoveJob);
     Q_EMIT q->stateChanged(s);
 
     qCDebug(fileJob()) << "state changed, new state:" << s;
@@ -438,7 +436,7 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
         }
 
         qCDebug(fileJob()) << "no handle," << "default action:" << lastErrorHandleAction
-                           << "source url:" << sourceInfo->fileUrl()
+                           << "source url:" << (sourceInfo ? sourceInfo->fileUrl() : DUrl())
                            << "target url:" << (targetInfo ? targetInfo->fileUrl() : DUrl());
 
         return lastErrorHandleAction;
@@ -466,10 +464,6 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
 
     if (state == DFileCopyMoveJob::SleepState) {
         setState(DFileCopyMoveJob::RunningState);
-    }
-
-    if (lastErrorHandleAction == DFileCopyMoveJob::NoAction) {
-        lastErrorHandleAction = DFileCopyMoveJob::CancelAction;
     }
 
     unsetError();
@@ -570,6 +564,9 @@ bool DFileCopyMoveJobPrivate::stateCheck()
 
 bool DFileCopyMoveJobPrivate::checkFileSize(qint64 size) const
 {
+    if (directoryStack.count() <= 0) {
+        return true;
+    }
     const DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
 
     if (!targetStorageInfo.isValid()) {
@@ -623,7 +620,9 @@ QString DFileCopyMoveJobPrivate::formatFileName(const QString &name) const
     if (fileHints.testFlag(DFileCopyMoveJob::DontFormatFileName)) {
         return name;
     }
-
+    if (directoryStack.count() <= 0) {
+        return name;
+    }
     const DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
 
     if (!targetStorageInfo.isValid()) {
@@ -651,16 +650,16 @@ QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfoPointer s
     QString suffix = sourceFileInfo->suffix();
     QString filename = sourceFileInfo->fileName();
     //在7z分卷压缩后的名称特殊处理7z.003
-//    if(filename.contains(QRegularExpression("\.7z\.[0-9]{3,10}$")))
-//    {
-//        file_base_name = filename.left(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$")));
-//        suffix = filename.mid(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$"))+1);
-//    }
-    //'\'没有转义为了避免警告加了转义
-    if (filename.contains(QRegularExpression("\\.7z\\.[0-9]{3,10}$"))) {
-        file_base_name = filename.left(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$")));
-        suffix = filename.mid(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$")) + 1);
+    if(filename.contains(QRegularExpression("\.7z\.[0-9]{3,10}$")))
+    {
+        file_base_name = filename.left(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$")));
+        suffix = filename.mid(filename.indexOf(QRegularExpression("\.7z\.[0-9]{3,10}$"))+1);
     }
+    //'\'没有转义为了避免警告加了转义
+//    if (filename.contains(QRegularExpression("\\.7z\\.[0-9]{3,10}$"))) {
+//        file_base_name = filename.left(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$")));
+//        suffix = filename.mid(filename.indexOf(QRegularExpression("\\.7z\\.[0-9]{3,10}$")) + 1);
+//    }
     int number = 0;
 
     QString new_file_name;
@@ -1234,19 +1233,13 @@ open_file: {
     DGIOFileDevice *fromgio = qobject_cast<DGIOFileDevice *>(fromDevice.data());
     DGIOFileDevice *togio = qobject_cast<DGIOFileDevice *>(toDevice.data());
     if (fromgio) {
-        QPointer<DGIOFileDevice> frompointer = fromgio;
-        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[frompointer](){
-            if (frompointer) {
-                frompointer->cancelAllOperate();
-            }
+        fromgio->connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[fromgio](){
+            fromgio->cancelAllOperate();
         });
     }
     if (togio) {
-        QPointer<DGIOFileDevice> topointer = fromgio;
-        QObject::connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[topointer](){
-            if (topointer) {
-                topointer->cancelAllOperate();
-            }
+        togio->connect(q_ptr,&DFileCopyMoveJob::stopAllGioDervic,q_ptr,[togio](){
+            togio->cancelAllOperate();
         });
     }
 
@@ -1265,7 +1258,6 @@ open_file: {
             return false;
         }
 
-//        char data[blockSize + 1];
         qint64 size_read = fromDevice->read(data, block_Size);
         if (Q_UNLIKELY(!stateCheck())) {
             if (!bdestLocal) {
@@ -1461,29 +1453,22 @@ open_file: {
         currentJobDataSizeInfo.second += size_write;
         completedDataSize += size_write;
         completedDataSizeOnBlockDevice += size_write;
-//        writtenDataSize += size_write;
 
         if (Q_LIKELY(!fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking))) {
-//            source_checksum = adler32(source_checksum, reinterpret_cast<Bytef *>(data), size_read);
             source_checksum = adler32(source_checksum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(size_read));
         }
 
-//        if (Q_UNLIKELY(writtenDataSize > 20000000)) {
-//            writtenDataSize = 0;
-//            toDevice->syncToDisk();
-//        }
     }
 // end forever
-//    qDebug() << "cope satart end >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " << fromInfo->fileUrl();
     // 关闭文件时可能会需要很长时间，因为内核可能要把内存里的脏数据回写到硬盘
-//    setState(DFileCopyMoveJob::IOWaitState);
+    setState(DFileCopyMoveJob::IOWaitState);
     delete[] data;
     fromDevice->close();
     toDevice->close();
     countrefinesize(fromInfo->size() <= 0 ? 4096 : 0);
-    /*if (state == DFileCopyMoveJob::IOWaitState) {
+    if (state == DFileCopyMoveJob::IOWaitState) {
         setState(DFileCopyMoveJob::RunningState);
-    } else */
+    }
 
     //对文件加权
     handler->setFileTime(toInfo->fileUrl(), fromInfo->lastRead(), fromInfo->lastModified());
@@ -1575,7 +1560,7 @@ open_file: {
     }
     delete [] data1;
 
-//    qCDebug(fileJob(), "Time spent of integrity check of the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed_time_checksum);
+    qCDebug(fileJob(), "Time spent of integrity check of the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed_time_checksum);
 
     if (source_checksum != target_checksum) {
         qCWarning(fileJob(), "Failed on file integrity checking, source file: 0x%lx, target file: 0x%lx", source_checksum, target_checksum);
@@ -1592,7 +1577,7 @@ open_file: {
         return false;
     }
 
-//    qCDebug(fileJob(), "adler value: 0x%lx", source_checksum);
+    qCDebug(fileJob(), "adler value: 0x%lx", source_checksum);
 
     return true;
 }

@@ -24,6 +24,7 @@
 #include "dfilecopymovejob.h"
 #include "dstorageinfo.h"
 
+#include "private/qobject_p.h"
 #include <QWaitCondition>
 #include <QPointer>
 #include <QStack>
@@ -209,9 +210,9 @@ public:
     // 记录任务开始时目标磁盘设备已写入扇区数
     qint64 targetDeviceStartSectorsWritten;
     // /sys/dev/block/x:x
-    QString targetSysDevPath;
+    QString targetSysDevPath = QString();
     // 目标设备所挂载的根目录
-    QString targetRootPath;
+    QString targetRootPath = QString();
 
     QPointer<QThread> threadOfErrorHandle;
     DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError] = {DFileCopyMoveJob::NoAction};
