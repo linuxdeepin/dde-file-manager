@@ -21,5 +21,6 @@ int main(int argc, char *argv[])
     TestHelper::runInLoop([&]{
         app.handleQuitAction();
     });
+    app.closeServer();
     return ret;
 }
