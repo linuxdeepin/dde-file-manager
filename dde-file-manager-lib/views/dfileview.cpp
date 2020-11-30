@@ -89,8 +89,11 @@ DWIDGET_USE_NAMESPACE
 #define ICON_VIEW_SPACING 5
 #define LIST_VIEW_SPACING 1
 #define LIST_VIEW_MINIMUM_WIDTH 80
-
 #define DEFAULT_HEADER_SECTION_WIDTH 140
+#define ICON_X_OFFSET 10
+#define ICON_Y_OFFSET 10
+#define ICON_WIDTH_OFFSET -20
+#define ICON_HEIGHT_OFFSET -20
 
 class DFileViewPrivate
 {
@@ -1824,8 +1827,36 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         }
 
 #ifndef CLASSICAL_SECTION
-        return selectionModel()->select(QItemSelection(rootIndex().child(list.first().first, 0),
-                                                       rootIndex().child(list.last().second, 0)), flags);
+        // sp4-task:文管框选内容不正确问题
+        // 判断是否是图标模式
+        if(isIconViewMode()) {
+            int nColumNum = model()->rowCount();
+            QVector<QModelIndex> selectItems;
+            for(int i = 0; i < nColumNum; ++i) {
+                QModelIndex index = model()->index(i, 0);
+                QRect itemRect = rectForIndex(index);
+                // 判断文件是否在选择区域内
+                QPoint offset(-horizontalOffset() + ICON_X_OFFSET, ICON_Y_OFFSET);
+                if(rect.contains((itemRect.topLeft()+offset))
+                        || rect.contains(itemRect.topRight()+offset+QPoint(ICON_HEIGHT_OFFSET, 0))
+                        || rect.contains(itemRect.bottomLeft()+offset+QPoint(0, ICON_WIDTH_OFFSET))
+                        || rect.contains(itemRect.bottomRight()+offset+QPoint(ICON_HEIGHT_OFFSET, ICON_WIDTH_OFFSET))) {
+                    selectItems.push_back(index);
+                }
+            }
+            // 清空选择项
+            clearSelection();
+            QVector<QModelIndex>::const_iterator itr = selectItems.begin();
+            for(; itr != selectItems.end(); ++itr) {
+                // 选中文件
+                selectionModel()->select(*itr, QItemSelectionModel::Select);
+            }
+            return;
+        } else {
+            return selectionModel()->select(QItemSelection(rootIndex().child(list.first().first, 0),
+                                                           rootIndex().child(list.last().second, 0)), flags);
+        }
+
 #else
         QItemSelection selection;
 
