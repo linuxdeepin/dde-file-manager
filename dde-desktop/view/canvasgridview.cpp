@@ -3245,8 +3245,6 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     }
 
     const DUrlList list = selectedUrls();
-    qDebug() << "selectedUrls" << list;
-
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     if (!info || info->isVirtualEntry()) {
         return;
@@ -3286,8 +3284,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     auto curUrl = info->fileUrl();
     DUrlList realList;
     DFileMenu *menu = nullptr;
+    auto dirUrl = currentUrl();
     if (curUrl.scheme() == DFMMD_SCHEME) {
         curUrl = MergedDesktopController::convertToRealPath(curUrl);
+        dirUrl = MergedDesktopController::convertToRealPath(dirUrl);
         for (auto url : list) {
             realList.append(MergedDesktopController::convertToRealPath(url));
         }
@@ -3324,7 +3324,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
 
     //扩展菜单
-    DFileMenuManager::extendCustomMenu(menu, true, currentUrl() , curUrl, realList);
+    DFileMenuManager::extendCustomMenu(menu, true, dirUrl, curUrl, realList);
 
     //断开连接，桌面优先处理
     //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突，
