@@ -230,7 +230,8 @@ HEADERS += \
     $$PWD/shutil/checknetwork.h \
     $$PWD/accessibility/ac-lib-file-manager.h \
     $$PWD/accessibility/acintelfunctions.h \
-    $$PWD/bluetooth/bluetoothmanager_p.h
+    $$PWD/bluetooth/bluetoothmanager_p.h \
+    $$PWD/models/virtualentryinfo.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \

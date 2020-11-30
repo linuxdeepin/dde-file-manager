@@ -20,6 +20,7 @@
  */
 
 #include "mergeddesktopfileinfo.h"
+#include "virtualentryinfo.h"
 #include "controllers/mergeddesktopcontroller.h"
 #include "dfileservices.h"
 
@@ -29,96 +30,93 @@
 #include <QIcon>
 #include <QStandardPaths>
 
-class VirtualEntryInfo : public DAbstractFileInfo
+
+VirtualEntryInfo::VirtualEntryInfo(const DUrl &url) : DAbstractFileInfo(url) {}
+
+QString VirtualEntryInfo::iconName() const
 {
-public:
-    explicit VirtualEntryInfo(const DUrl &url) : DAbstractFileInfo(url) {}
-
-    QString iconName() const override
-    {
-        switch (MergedDesktopController::entryTypeByName(fileName())) {
-        case DMD_APPLICATION:
-            return QStringLiteral("folder-applications-stack");
-        case DMD_DOCUMENT:
-            return QStringLiteral("folder-documents-stack");
-        case DMD_MUSIC:
-            return QStringLiteral("folder-music-stack");
-        case DMD_PICTURE:
-            return QStringLiteral("folder-images-stack");
-        case DMD_VIDEO:
-            return QStringLiteral("folder-video-stack");
-        case DMD_OTHER:
-            return QStringLiteral("folder-stack");
-        default:
-            qWarning() << "VirtualEntryInfo::iconName() no matched branch (it can be a bug!)";
-            qWarning() << "Url: " << fileUrl();
-        }
+    switch (MergedDesktopController::entryTypeByName(fileName())) {
+    case DMD_APPLICATION:
+        return QStringLiteral("folder-applications-stack");
+    case DMD_DOCUMENT:
+        return QStringLiteral("folder-documents-stack");
+    case DMD_MUSIC:
+        return QStringLiteral("folder-music-stack");
+    case DMD_PICTURE:
+        return QStringLiteral("folder-images-stack");
+    case DMD_VIDEO:
+        return QStringLiteral("folder-video-stack");
+    case DMD_OTHER:
         return QStringLiteral("folder-stack");
+    default:
+        qWarning() << "VirtualEntryInfo::iconName() no matched branch (it can be a bug!)";
+        qWarning() << "Url: " << fileUrl();
     }
+    return QStringLiteral("folder-stack");
+}
 
-    bool exists() const override
-    {
-        return true;
-    }
+bool VirtualEntryInfo::exists() const
+{
+    return true;
+}
 
-    bool isDir() const override
-    {
-        return true;
-    }
+bool VirtualEntryInfo::isDir() const
+{
+    return true;
+}
 
-    bool isVirtualEntry() const override
-    {
-        return true;
-    }
+bool VirtualEntryInfo::isVirtualEntry() const
+{
+    return true;
+}
 
-    bool canShare() const override
-    {
-        return false;
-    }
+bool VirtualEntryInfo::canShare() const
+{
+    return false;
+}
 
-    bool isReadable() const override
-    {
-        return true;
-    }
+bool VirtualEntryInfo::isReadable() const
+{
+    return true;
+}
 
-    bool isWritable() const override
-    {
-        return true;
-    }
+bool VirtualEntryInfo::isWritable() const
+{
+    return true;
+}
 
-    QString fileName() const override
-    {
-        QString path = fileUrl().path();
+QString VirtualEntryInfo::fileName() const
+{
+    QString path = fileUrl().path();
 
-        if (path.startsWith(VIRTUALENTRY_PATH)) {
-            if (path != VIRTUALENTRY_PATH) {
-                return DAbstractFileInfo::fileName();
-            } else {
-                return "Entry";
-            }
-        } else if (path.startsWith(VIRTUALFOLDER_PATH)) {
-            if (path != VIRTUALFOLDER_PATH) {
-                return DAbstractFileInfo::fileName();
-            } else {
-                return "Folder";
-            }
-        } else if (path.startsWith(MERGEDDESKTOP_PATH)) {
-            return "Merged Desktop";
+    if (path.startsWith(VIRTUALENTRY_PATH)) {
+        if (path != VIRTUALENTRY_PATH) {
+            return DAbstractFileInfo::fileName();
+        } else {
+            return "Entry";
         }
-
-        return DAbstractFileInfo::fileName() + "(?)";
+    } else if (path.startsWith(VIRTUALFOLDER_PATH)) {
+        if (path != VIRTUALFOLDER_PATH) {
+            return DAbstractFileInfo::fileName();
+        } else {
+            return "Folder";
+        }
+    } else if (path.startsWith(MERGEDDESKTOP_PATH)) {
+        return "Merged Desktop";
     }
 
-    Qt::ItemFlags fileItemDisableFlags() const override
-    {
-        return Qt::ItemIsDragEnabled;
-    }
+    return DAbstractFileInfo::fileName() + "(?)";
+}
 
-    DAbstractFileInfo::CompareFunction compareFunByColumn(int) const override
-    {
-        return nullptr;
-    }
-};
+Qt::ItemFlags VirtualEntryInfo::fileItemDisableFlags() const
+{
+    return Qt::ItemIsDragEnabled;
+}
+
+DAbstractFileInfo::CompareFunction VirtualEntryInfo::compareFunByColumn(int) const
+{
+    return nullptr;
+}
 
 class MergedDesktopFileInfoPrivate : public DAbstractFileInfoPrivate
 {
