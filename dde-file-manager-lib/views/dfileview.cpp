@@ -2888,6 +2888,10 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
         disableList << MenuAction::SelectAll;
 
     DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+    if (!menu) {
+        return;
+    }
+
     QAction *tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::DisplayAs));
     DFileMenu *displayAsSubMenu = static_cast<DFileMenu *>(tmp_action ? tmp_action->menu() : Q_NULLPTR);
     tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::SortBy));
@@ -2938,9 +2942,10 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
     DFileMenuManager::loadEmptyAreaPluginMenu(menu, rootUrl(), false);
 
-    if (!menu) {
-        return;
-    }
+    //扩展菜单
+    const DUrl &viewRootUrl = rootUrl();
+    if (!viewRootUrl.isVaultFile() && !viewRootUrl.isTrashFile() )
+        DFileMenuManager::extendCustomMenu(menu, false, rootUrl() ,{},{});
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
 
@@ -3017,6 +3022,11 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         lock = false;
         return;
     }
+
+    //扩展菜单,保险箱-回收站无扩展菜单
+    const DUrl &viewRootUrl = rootUrl();
+    if (!viewRootUrl.isVaultFile() && !viewRootUrl.isTrashFile() )
+        DFileMenuManager::extendCustomMenu(menu, true, viewRootUrl, info->fileUrl(), list);
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this, index);
 
