@@ -5,6 +5,7 @@
 #include <QDateTime>
 
 #include "fileoperations/filejob.h"
+#include "disomaster.h"
 
 
 using namespace testing;
@@ -184,5 +185,52 @@ TEST_F(FileJobTest,start_doMoveToTrash) {
     job->doTrashRestore(source.toLocalFile(),dst.toLocalFile());
 }
 
+TEST_F(FileJobTest, doOpticalBurnByChildProcess)
+{
+    DUrl url = DUrl::fromLocalFile("/dev/sr*");
+    EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(url, "test", 10, 4));
+}
 
+TEST_F(FileJobTest, doOpticalBlank)
+{
+    DUrl url = DUrl::fromLocalFile("/dev/sr*");
+    EXPECT_NO_FATAL_FAILURE(job->doOpticalBlank(url));
+}
 
+TEST_F(FileJobTest, doOpticalImageBurnByChildProcess)
+{
+    DUrl url = DUrl::fromLocalFile("/dev/sr*");
+    DUrl image;
+    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, 4));
+}
+
+TEST_F(FileJobTest, opticalJobUpdated)
+{
+    DISOMasterNS::DISOMaster master;
+    int status = DISOMasterNS::DISOMaster::JobStatus::Failed;
+    int progress = 50;
+
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdated(&master, status, progress));
+
+    status = DISOMasterNS::DISOMaster::JobStatus::Running;
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdated(&master, status, progress));
+
+    status = DISOMasterNS::DISOMaster::JobStatus::Stalled;
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdated(&master, status, progress));
+}
+
+TEST_F(FileJobTest, opticalJobUpdatedByParentProcess)
+{
+    int status = DISOMasterNS::DISOMaster::JobStatus::Failed;
+    int progress = 50;
+    QString speed("8x");
+    QStringList msgs;
+
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess(status, progress, speed, msgs));
+
+    status = DISOMasterNS::DISOMaster::JobStatus::Running;
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess(status, progress, speed, msgs));
+
+    status = DISOMasterNS::DISOMaster::JobStatus::Stalled;
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess(status, progress, speed, msgs));
+}
