@@ -1,6 +1,12 @@
-#include "models/mergeddesktopfileinfo.h"
-
 #include <gtest/gtest.h>
+
+
+#define protected public
+
+#include "models/mergeddesktopfileinfo.h"
+#include "models/virtualentryinfo.h"
+#include "controllers/mergeddesktopcontroller.h"
+#include "stub.h"
 
 namespace {
 class TestMergedDesktopFileInfo : public testing::Test
@@ -51,4 +57,89 @@ TEST_F(TestMergedDesktopFileInfo, canRedirectUrl)
 TEST_F(TestMergedDesktopFileInfo, redirectedFileUrl)
 {
     EXPECT_STREQ("/", info->redirectedFileUrl().path().toStdString().c_str());
+}
+
+
+namespace  {
+class TestVirtualEntryInfo: public testing::Test
+{
+public:
+    void SetUp() override
+    {
+        info = new VirtualEntryInfo(DUrl());
+    }
+
+    void TearDown() override
+    {
+        delete info;
+        info = nullptr;
+    }
+
+    VirtualEntryInfo *info;
+};
+}
+
+TEST_F(TestVirtualEntryInfo, tstIconName)
+{
+    Stub st;
+
+    DMD_TYPES (*entryTypeByName_stub_application)(QString) = [](QString){ return DMD_TYPES::DMD_APPLICATION; };
+    st.set(ADDR(MergedDesktopController, entryTypeByName), entryTypeByName_stub_application);
+    EXPECT_TRUE(QStringLiteral("folder-applications-stack") == info->iconName());
+
+    DMD_TYPES (*entryTypeByName_stub_documents)(QString) = [](QString){ return DMD_TYPES::DMD_DOCUMENT; };
+    st.set(ADDR(MergedDesktopController, entryTypeByName), entryTypeByName_stub_documents);
+    EXPECT_TRUE(QStringLiteral("folder-documents-stack") == info->iconName());
+
+    DMD_TYPES (*entryTypeByName_stub_music)(QString) = [](QString){ return DMD_TYPES::DMD_MUSIC; };
+    st.set(ADDR(MergedDesktopController, entryTypeByName), entryTypeByName_stub_music);
+    EXPECT_TRUE(QStringLiteral("folder-music-stack") == info->iconName());
+
+    DMD_TYPES (*entryTypeByName_stub_picture)(QString) = [](QString){ return DMD_TYPES::DMD_PICTURE; };
+    st.set(ADDR(MergedDesktopController, entryTypeByName), entryTypeByName_stub_picture);
+    EXPECT_TRUE(QStringLiteral("folder-images-stack") == info->iconName());
+
+    DMD_TYPES (*entryTypeByName_stub_video)(QString) = [](QString){ return DMD_TYPES::DMD_VIDEO; };
+    st.set(ADDR(MergedDesktopController, entryTypeByName), entryTypeByName_stub_video);
+    EXPECT_TRUE(QStringLiteral("folder-video-stack") == info->iconName());
+
+    DMD_TYPES (*entryTypeByName_stub_other)(QString) = [](QString){ return DMD_TYPES::DMD_OTHER; };
+    st.set(ADDR(MergedDesktopController, entryTypeByName), entryTypeByName_stub_other);
+    EXPECT_TRUE(QStringLiteral("folder-stack") == info->iconName());
+
+    DMD_TYPES (*entryTypeByName_stub_folder)(QString) = [](QString){ return DMD_TYPES::DMD_FOLDER; };
+    st.set(ADDR(MergedDesktopController, entryTypeByName), entryTypeByName_stub_folder);
+    EXPECT_TRUE(QStringLiteral("folder-stack") == info->iconName());
+}
+
+TEST_F(TestVirtualEntryInfo, tstSimpleFuncs)
+{
+    EXPECT_TRUE(info->exists());
+    EXPECT_TRUE(info->isDir());
+    EXPECT_TRUE(info->isVirtualEntry());
+    EXPECT_TRUE(info->isReadable());
+    EXPECT_TRUE(info->isWritable());
+    EXPECT_FALSE(info->canShare());
+
+    EXPECT_TRUE(info->fileItemDisableFlags() == Qt::ItemIsDragEnabled);
+    EXPECT_TRUE(info->compareFunByColumn(0) == nullptr);
+}
+
+TEST_F(TestVirtualEntryInfo, tstFileName)
+{
+    info->setUrl(DUrl("/entry/"));
+    EXPECT_TRUE("Entry" == info->fileName());
+    info->setUrl(DUrl("/entry/test"));
+    EXPECT_FALSE("Entry" == info->fileName());
+
+    info->setUrl(DUrl("/folder/"));
+    EXPECT_TRUE("Folder" == info->fileName());
+    info->setUrl(DUrl("/folder/test"));
+    EXPECT_FALSE("Folder" == info->fileName());
+
+    info->setUrl(DUrl("/mergeddesktop/"));
+    EXPECT_TRUE("Merged Desktop" == info->fileName());
+
+    info->setUrl(DUrl());
+    EXPECT_TRUE(info->fileName().contains("(?)"));
 }
