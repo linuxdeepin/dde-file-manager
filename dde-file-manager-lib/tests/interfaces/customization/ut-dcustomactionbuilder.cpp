@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include <stub.h>
+
+#include <QAction>
 
 #define private public
 #define protected public
@@ -503,4 +506,109 @@ TEST(DCustomActionBuilder, make_command_files_url)
     ret = DCustomActionBuilder::makeCommand(cmd, DCustomActionDefines::UrlPaths, dir, foucs, selected);
     EXPECT_EQ(ret.first, "/usr/bin/dde-desktop");
     EXPECT_EQ(ret.second, QStringList({"--file %U","--test"}));
+}
+
+TEST(DCustomActionBuilder, buildAciton)
+{
+    DCustomActionBuilder builder;
+    DCustomActionData ad;
+    Stub st;
+    QAction *(*createAciton)() = [](){return (QAction* )1;};
+    QAction *(*createMenu)() = [](){return (QAction* )2;};
+    st.set(&DCustomActionBuilder::createAciton,createAciton);
+    st.set(&DCustomActionBuilder::createMenu,createMenu);
+    QAction *ac = builder.buildAciton(ad, nullptr);
+
+    EXPECT_EQ(ac, (QAction *)1);
+
+    ad.m_childrenActions.append(ad);
+    ac = builder.buildAciton(ad, nullptr);
+    EXPECT_EQ(ac, (QAction *)2);
+}
+
+TEST(DCustomActionBuilder, checkFileCombo_empty)
+{
+    EXPECT_EQ(DCustomActionDefines::BlankSpace, DCustomActionBuilder::checkFileCombo({}));
+}
+
+TEST(DCustomActionBuilder, checkFileCombo_onefile)
+{
+    DUrlList list;
+    list.append({"file:///usr/bin/ls"});
+    EXPECT_EQ(DCustomActionDefines::SingleFile, DCustomActionBuilder::checkFileCombo(list));
+
+    list.append({""});
+    EXPECT_EQ(DCustomActionDefines::SingleFile, DCustomActionBuilder::checkFileCombo(list));
+}
+
+TEST(DCustomActionBuilder, checkFileCombo_mulfile)
+{
+    DUrlList list;
+    list.append({"file:///usr/bin/ls"});
+    list.append({"file:///usr/bin/ls"});
+    EXPECT_EQ(DCustomActionDefines::MultiFiles, DCustomActionBuilder::checkFileCombo(list));
+
+    list.append({"file:///usr/bin/ls"});
+    EXPECT_EQ(DCustomActionDefines::MultiFiles, DCustomActionBuilder::checkFileCombo(list));
+}
+
+TEST(DCustomActionBuilder, checkFileCombo_onedir)
+{
+    DUrlList list;
+    list.append({"file:///usr/bin"});
+    EXPECT_EQ(DCustomActionDefines::SingleDir, DCustomActionBuilder::checkFileCombo(list));
+
+    list.append({""});
+    EXPECT_EQ(DCustomActionDefines::SingleDir, DCustomActionBuilder::checkFileCombo(list));
+}
+
+TEST(DCustomActionBuilder, checkFileCombo_muldir)
+{
+    DUrlList list;
+    list.append({"file:///usr/bin"});
+    list.append({"file:///usr/bin"});
+    EXPECT_EQ(DCustomActionDefines::MultiDirs, DCustomActionBuilder::checkFileCombo(list));
+
+    list.append({"file:///usr/bin"});
+    EXPECT_EQ(DCustomActionDefines::MultiDirs, DCustomActionBuilder::checkFileCombo(list));
+}
+
+TEST(DCustomActionBuilder, checkFileCombo_file_and_dir)
+{
+    DUrlList list;
+    list.append({"file:///usr/bin"});
+    list.append({"file:///usr/bin/ls"});
+    EXPECT_EQ(DCustomActionDefines::FileAndDir, DCustomActionBuilder::checkFileCombo(list));
+
+    list.append({"file:///usr/bin"});
+    EXPECT_EQ(DCustomActionDefines::FileAndDir, DCustomActionBuilder::checkFileCombo(list));
+
+    list.append({"file:///usr/bin/ls"});
+    EXPECT_EQ(DCustomActionDefines::FileAndDir, DCustomActionBuilder::checkFileCombo(list));
+}
+
+TEST(DCustomActionBuilder, getIcon_invalid_path)
+{
+    DCustomActionBuilder build;
+    QString iconName = "/temp/dsadsa.das.ds.ad.sad.sa.";
+    QIcon icon = build.getIcon(iconName);
+    EXPECT_TRUE(icon.name().isEmpty());
+}
+
+TEST(DCustomActionBuilder, createAciton)
+{
+    DCustomActionBuilder builder;
+    DCustomActionData ad;
+    ad.m_icon = "dde-file-manager";
+    ad.m_name = "test";
+    ad.m_command = "dde-file-manager %u";
+    ad.m_cmdArg = DCustomActionDefines::UrlPath;
+
+    auto ac = builder.createAciton(ad);
+    ASSERT_NE(ac, nullptr);
+    EXPECT_EQ(ac->text(), ad.m_name);
+    EXPECT_TRUE(ac->property(DCustomActionDefines::kCustomActionFlag).toBool());
+    EXPECT_EQ(ac->property(DCustomActionDefines::kCustomActionCommand).toString(), ad.m_command);
+    EXPECT_EQ(ac->property(DCustomActionDefines::kCustomActionCommandArgFlag).toInt(), ad.m_cmdArg);
+    delete ac;
 }
