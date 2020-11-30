@@ -597,7 +597,12 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         return;
     }
 
-    QString udiskspath = DDiskManager::resolveDeviceNode(fileUrl.query(), {}).first();
+    QStringList deviceNode = DDiskManager::resolveDeviceNode(fileUrl.query(), {});
+    if(deviceNode.isEmpty()) {
+        qDebug()<<"============>DeviceNode for "<< fileUrl <<"is empty";
+        return;
+    }
+    QString udiskspath = deviceNode.first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
@@ -617,6 +622,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
                     QThread::msleep(1000);
                     QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
                     diskdev->eject({});
+
                     if (diskdev->optical())
                         QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
 
