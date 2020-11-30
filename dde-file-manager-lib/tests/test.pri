@@ -162,6 +162,7 @@ SOURCES += \
     $$PWD/gvfs/ut_mountsecretdiskaskpassworddialog.cpp \
     $$PWD/gvfs/ut_qdrive.cpp \
     $$PWD/gvfs/ut_gvfsmountmanager.cpp \
+    $$PWD/gvfs/ut_networkmanager.cpp \
     $$PWD/gvfs/ut_secretmanager.cpp \
     $$PWD/interfaces/ut_dmimedatabase.cpp \
     $$PWD/usershare/ut_shareinfo.cpp \
