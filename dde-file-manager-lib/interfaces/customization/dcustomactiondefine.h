@@ -47,6 +47,8 @@ namespace DCustomActionDefines
         AllDir = SingleDir | MultiDirs,
         AllCombo = BlankSpace | AllFile | AllDir | FileAndDir
     };
+    Q_DECLARE_FLAGS(ComboTypes, DCustomActionDefines::ComboType);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(ComboTypes);
 
     //支持菜单层级
     enum MenuHierarchy {
@@ -136,9 +138,6 @@ namespace DCustomActionDefines
 
     //指定路径
     static const QLatin1String kCustomMenuPath("/usr/share/applications/context-menus");
-
-    Q_DECLARE_FLAGS(ComboTypes, DCustomActionDefines::ComboType);
-    Q_DECLARE_OPERATORS_FOR_FLAGS(ComboTypes);
 
     struct FileBasicInfos {
         QString m_package;  //配置文件名

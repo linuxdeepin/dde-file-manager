@@ -77,7 +77,6 @@ isEqual(ARCH, sw_64){
 include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
 include(interfaces/customization/customization.pri)
-include(log/log.pri)
 include(src.pri)
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
