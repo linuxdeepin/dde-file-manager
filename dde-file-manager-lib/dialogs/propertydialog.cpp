@@ -1595,6 +1595,11 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     // when change the index...
     auto onComboBoxChanged = [ = ]() {
+
+        // 保险箱文件权限特殊处理,不要修改文件权限，保证文件出保险箱和进保险箱权限一直
+        if(VaultController::isVaultFile(info->fileUrl().toLocalFile()))
+            return;
+
         struct stat fileStat;
         stat(info->toLocalFile().toUtf8().data(), &fileStat);
         auto preMode = fileStat.st_mode;
@@ -1695,5 +1700,14 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
             ownerBox->setDisabled(true);
         }
     }
+
+    // 保险箱文件权限特殊处理
+    if(VaultController::isVaultFile(info->fileUrl().toLocalFile())) {
+        ownerBox->setCurrentIndex(0);
+        ownerBox->setDisabled(true);
+        groupBox->setDisabled(true);
+        otherBox->setDisabled(true);
+    }
+
     return widget;
 }
