@@ -1,13 +1,18 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+
+#include <QApplication>
+#include <QList>
+#include <qpa/qplatformscreen.h>
+
+#include "dbus/dbusdisplay.h"
+#define private public
 #include <screen/screenmanager.h>
+#include "screen/abstractscreenmanager_p.h"
 #include <screen/screenobject.h>
 #include <screen/screenhelper.h>
 #include <screen/screenmanagerwayland.h>
 #include <screen/screenobjectwayland.h>
-#include <QApplication>
-#include <QList>
-#include <qpa/qplatformscreen.h>
 
 using namespace testing;
 namespace  {
@@ -191,6 +196,112 @@ TEST_F(ScreenOperation, screen_reset)
     EXPECT_EQ(qApp->screens().size(),screens().size());
 }
 
+TEST_F(ScreenOperation, onScreenGeometryChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    this->onScreenGeometryChanged({});
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Geometry);
+}
+
+TEST_F(ScreenOperation, onDockChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    this->onDockChanged();
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::AvailableGeometry);
+}
+
+TEST_F(ScreenOperation, onScreenAvailableGeometryChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    this->onScreenAvailableGeometryChanged({});
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::AvailableGeometry);
+}
+
+TEST_F(ScreenOperation, lastChangedMode)
+{
+    EXPECT_EQ(m_lastMode, this->lastChangedMode());
+}
+
+TEST_F(ScreenOperation, screen)
+{
+    auto qscreen = qApp->primaryScreen();
+    auto screen = this->screen(qscreen->name());
+    EXPECT_EQ(screen->name(), qscreen->name());
+}
+
+TEST_F(ScreenOperation, screen_invaild)
+{
+    auto screen = this->screen("dsadsa/ds/a/dsa/");
+    EXPECT_EQ(screen.data(), nullptr);
+}
+
+namespace  {
+class ScreenOperationWayland : public Test , public ScreenManagerWayland
+{
+public:
+    ScreenOperationWayland() :
+            Test()
+          ,ScreenManagerWayland()
+    {}
+};
+}
+/**********************************************/
+
+TEST_F(ScreenOperationWayland, onMonitorChanged)
+{
+    m_screens.clear();
+    onMonitorChanged();
+    EXPECT_EQ(m_display->monitors().size(), screens().size());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Screen);
+}
+
+TEST_F(ScreenOperationWayland, screen_reset)
+{
+    m_screens.clear();
+    reset();
+    EXPECT_EQ(m_display->monitors().size(), screens().size());
+}
+
+TEST_F(ScreenOperationWayland, onScreenGeometryChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    this->onScreenGeometryChanged({});
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Geometry);
+}
+
+TEST_F(ScreenOperationWayland, onDockChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    this->onDockChanged();
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::AvailableGeometry);
+}
+
+TEST_F(ScreenOperationWayland, lastChangedMode)
+{
+    EXPECT_EQ(m_lastMode, this->lastChangedMode());
+}
+
+TEST_F(ScreenOperationWayland, screen)
+{
+    auto qscreen = m_display->primary();
+    auto screen = this->screen(qscreen);
+    EXPECT_EQ(screen->name(), qscreen);
+    EXPECT_EQ(this->primaryScreen()->name(), qscreen);
+}
+
+TEST_F(ScreenOperationWayland, screen_invaild)
+{
+    auto screen = this->screen("dsadsa/ds/a/dsa/");
+    EXPECT_EQ(screen.data(), nullptr);
+}
+
+/**********************************************/
+
 namespace  {
 class ScreenSignal : public Test , public ScreenManager
 {
@@ -281,4 +392,78 @@ TEST_F(ScreenSignal, sreen_available_geometry_changed)
     EXPECT_EQ(false,sreenChanged);
     EXPECT_EQ(false,sreenGeometryChanged);
     EXPECT_EQ(true,sreenAvailableGeometryChanged);
+}
+
+TEST_F(ScreenSignal, emit_DisplayModeChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    emit m_display->DisplayModeChanged();
+    qApp->processEvents();
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Mode);
+}
+
+TEST_F(ScreenSignal, emit_PrimaryRectChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    m_lastMode = m_display->GetRealDisplayMode();
+    emit m_display->PrimaryRectChanged();
+    qApp->processEvents();
+    ASSERT_TRUE(d->m_events.isEmpty());
+
+    m_lastMode = -1;
+    emit m_display->PrimaryRectChanged();
+    qApp->processEvents();
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Mode);
+}
+
+namespace  {
+class ScreenSignalWayland : public Test , public ScreenManagerWayland
+{
+public:
+    ScreenSignalWayland() :
+            Test()
+          ,ScreenManagerWayland()
+    {}
+};
+}
+
+TEST_F(ScreenSignalWayland, emit_PrimaryChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    emit m_display->PrimaryChanged();
+    qApp->processEvents();
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Screen);
+}
+
+TEST_F(ScreenSignalWayland, emit_DisplayModeChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    m_lastMode = m_display->GetRealDisplayMode();
+    emit m_display->DisplayModeChanged();
+    qApp->processEvents();
+    ASSERT_TRUE(d->m_events.isEmpty());
+
+    m_lastMode = -1;
+    emit m_display->PrimaryRectChanged();
+    qApp->processEvents();
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Mode);
+}
+
+TEST_F(ScreenSignalWayland, emit_PrimaryRectChanged)
+{
+    EXPECT_TRUE(d->m_events.isEmpty());
+    m_lastMode = m_display->GetRealDisplayMode();
+    emit m_display->PrimaryRectChanged();
+    qApp->processEvents();
+    ASSERT_TRUE(d->m_events.isEmpty());
+
+    m_lastMode = -1;
+    emit m_display->PrimaryRectChanged();
+    qApp->processEvents();
+    ASSERT_FALSE(d->m_events.isEmpty());
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Mode);
 }

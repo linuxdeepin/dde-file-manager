@@ -1,23 +1,7 @@
 #include "abstractscreenmanager.h"
-#include <QTimer>
-#include <QMultiMap>
-#include <QDebug>
+#include "abstractscreenmanager_p.h"
 
-class ScreenManagerPrivate
-{
-public:
-    explicit ScreenManagerPrivate(AbstractScreenManager *p) : q(p){}
-    ~ScreenManagerPrivate(){
-        if (m_eventShot)
-            delete m_eventShot;
-        m_eventShot = nullptr;
-    }
-    void readyShot(int wait = 50);
-public:
-    QTimer *m_eventShot = nullptr;      //延迟处理定时器
-    QMultiMap<AbstractScreenManager::Event,qint64> m_events;    //事件池
-    AbstractScreenManager *q;
-};
+#include <QDebug>
 
 void ScreenManagerPrivate::readyShot(int wait)
 {
