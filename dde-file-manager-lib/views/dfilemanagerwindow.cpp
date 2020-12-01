@@ -599,6 +599,11 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
 DFileManagerWindow::~DFileManagerWindow()
 {
     m_currentTab = nullptr;
+    auto menu = titlebar()->menu();
+    if (menu) {
+        delete menu;
+        menu = nullptr;
+    }
 }
 
 void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainState)
@@ -1481,7 +1486,7 @@ void DFileManagerWindow::onRequestCloseTabByUrl(const DUrl &rootUrl)
         return;
     }
     int originIndex = tabBar->currentIndex();
-    for (int i = tabBar->count()-1; i >= 0 && tabBar->count() > 1; i--) {
+    for (int i = tabBar->count() - 1; i >= 0 && tabBar->count() > 1; i--) {
         Tab *tab = tabBar->tabAt(i);
         if (tab->fileView()) {
             DUrl tabUrl = tab->fileView()->rootUrl();
