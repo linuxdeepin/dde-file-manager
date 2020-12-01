@@ -154,10 +154,10 @@ QList<QIcon> VaultFileInfo::additionalIcon() const
         icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
         needEmblem = false;
     }
-
-    if (!isWritable()) {
-        icons << QIcon::fromTheme("emblem-readonly", DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon));
-    }
+    // sp4-task:临时修改方案，保险箱内不用显示只读图标
+//    if (!isWritable()) {
+//        icons << QIcon::fromTheme("emblem-readonly", DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon));
+//    }
 
     //部分文件和目录不显示徽标
     if (needEmblem && fileUrl().parentUrl().path() != "/" && fileUrl().parentUrl().path() != "/data")
