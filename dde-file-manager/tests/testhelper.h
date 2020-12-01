@@ -32,6 +32,12 @@ public:
         return tempFilePath;
     }
 
+    static QString createTmpDir(QString dirName) {
+        QString tempFilePath =  QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/" + dirName;
+        QProcess::execute("mkdir " + tempFilePath);
+        return tempFilePath;
+    }
+
     static void deleteTmpFiles(QStringList paths) {
         for(QString path : paths) {
             deleteTmpFile(path);
