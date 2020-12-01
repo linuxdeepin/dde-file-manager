@@ -66,6 +66,7 @@ private:
     QHash<QString, DCustomActionDefines::ActionArg> m_actionNameArg;
     QHash<QString, DCustomActionDefines::ActionArg> m_actionExecArg;
     int m_hierarchyNum = 0;
+    int m_topActionCount = 0;
 };
 
 #endif // DCUSTOMACTIONPARSER_H

@@ -220,4 +220,5 @@ SOURCES += \
     $$PWD/controllers/ut_pathmanager.cpp \
     # custom
     $$PWD/interfaces/customization/ut_customaction_sort.cpp \
-    $$PWD/interfaces/customization/ut-dcustomactionbuilder.cpp
+    $$PWD/interfaces/customization/ut-dcustomactionbuilder.cpp \
+    $$PWD/interfaces/customization/ut_dcustomactionparser.cpp

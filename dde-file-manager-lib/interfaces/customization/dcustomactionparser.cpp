@@ -36,6 +36,9 @@ DCustomActionParser::~DCustomActionParser()
 */
 bool DCustomActionParser::loadDir(const QString &dirPath)
 {
+    if (dirPath.isEmpty())
+        return false;
+    m_topActionCount = 0;
     QDir dir(dirPath);
     if (!dir.exists())
         return false;
@@ -80,15 +83,13 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
     auto actStr = getValue(actionSetting, kMenuPrefix, kActionGroups);
     auto actList = actStr.toString().trimmed().split(":", QString::SkipEmptyParts);
     m_hierarchyNum = 1;
-    int actCount = 0;
     for(auto &once : actList) {
+        if (m_topActionCount == kCustomMaxNumOne) //一级数量限制
+            break;
         QList<DCustomActionData> childrenActions;//这个实际上一级时没用
         QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
-
-        actCount++;
         parseFile(childrenActions, actionSetting, targetGroup, basicInfos, true);
-        if (actCount == kCustomMaxNumOne) //一级数量限制
-            break;
+        m_topActionCount++;
     }
     return true;
 }
@@ -136,7 +137,7 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         execDynamicArg(actData);
     }
     else {
-        //add 子菜单项，此时父级应当无动作
+        //add 子菜单项，父级有子菜单，则忽略动作，即便子菜单无一有效，后续也不再添加动作
         QList<DCustomActionData> tpChildrenActions;
         auto actStr = getValue(actionSetting, group, kActionGroups);
         auto actList = actStr.toString().trimmed().split(":", QString::SkipEmptyParts);
@@ -149,11 +150,11 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
             m_hierarchyNum--;
             if (2 == m_hierarchyNum && actCount == kCustomMaxNumTwo) //二级数量限制
                 break;
-            if (3 == m_hierarchyNum && actCount == kCustomMaxNumThree) //二级数量限制
+            if (3 == m_hierarchyNum && actCount == kCustomMaxNumThree) //三级数量限制
                 break;
         }
         if (0 == tpChildrenActions.size())
-            return; //无动作无子级
+            return; //作为无动作无子级，不再为其添加已有动作
         actData.m_childrenActions = tpChildrenActions;
     }
 
@@ -271,11 +272,13 @@ void DCustomActionParser::actionNameDynamicArg(DCustomActionData &act)
     while (cnt > firstValidIndex) {
         auto tgStr = act.m_name.mid(firstValidIndex, 2);
         auto tempValue = m_actionNameArg.value(tgStr, NoneArg);
-        if (NoneArg != tgStr) {
+        if (NoneArg != tempValue) {
             act.m_nameArg = tempValue;
             break;
         }
-        firstValidIndex = act.m_name.indexOf("%", firstValidIndex);
+        firstValidIndex = act.m_name.indexOf("%", firstValidIndex + 1);
+        if (-1 == firstValidIndex)
+            break;
     }
 }
 
@@ -295,10 +298,13 @@ void DCustomActionParser::execDynamicArg(DCustomActionData &act)
     while (cnt > firstValidIndex) {
         auto tgStr = act.m_command.mid(firstValidIndex, 2);
         auto tempValue = m_actionExecArg.value(tgStr, NoneArg);
-        if (NoneArg != tgStr) {
+        if (NoneArg != tempValue) {
             act.m_cmdArg = tempValue;
             break;
         }
+        firstValidIndex = act.m_name.indexOf("%", firstValidIndex + 1);
+        if (-1 == firstValidIndex)
+            break;
     }
 }
 
@@ -325,4 +331,5 @@ bool DCustomActionParser::comboPosForTopAction(QSettings &actionSetting, const Q
             return false;   //未指明一级菜单支持的选中类型，做无效处理
         }
     }
+    return true;
 }
