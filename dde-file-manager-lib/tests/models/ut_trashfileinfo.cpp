@@ -1,9 +1,14 @@
 #include <gtest/gtest.h>
 #include <QIcon>
+#include "stub.h"
 
-#include "models/trashfileinfo.h"
 #include "dfilesystemmodel.h"
 #include "controllers/trashmanager.h"
+
+#define private public
+#define protected public
+#include "models/trashfileinfo.h"
+#include "models/trashfileinfo_p.h"
 
 namespace {
 class TestTrashFileInfo : public testing::Test
@@ -112,4 +117,16 @@ TEST_F(TestTrashFileInfo, tstFileIcon)
 {
     EXPECT_TRUE(info->fileIcon().isNull());
     EXPECT_TRUE(info->additionalIcon().isEmpty());
+}
+
+TEST_F(TestTrashFileInfo, tstUpdateInfo)
+{
+    bool (*exists_stub)(void *) = [](void *) { return true; };
+    bool (*QFile_exist)(const QString &) = &QFile::exists;
+    Stub st;
+    st.set(QFile_exist, exists_stub);
+    TrashFileInfo *trash = new TrashFileInfo(DUrl("trash:///tst.txt"));
+    trash->d_func()->updateInfo();
+    trash->d_func()->inheritParentTrashInfo();
+    trash->deletionDate();
 }
