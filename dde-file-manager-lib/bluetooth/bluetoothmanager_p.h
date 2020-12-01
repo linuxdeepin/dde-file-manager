@@ -48,7 +48,6 @@ public:
      */
     void resolve(const QDBusReply<QString> &req);
 
-private:
     /**
      * @brief 蓝牙 dbus 信号的处理
      */
