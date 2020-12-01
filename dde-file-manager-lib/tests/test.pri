@@ -221,4 +221,5 @@ SOURCES += \
     # custom
     $$PWD/interfaces/customization/ut_customaction_sort.cpp \
     $$PWD/interfaces/customization/ut-dcustomactionbuilder.cpp \
-    $$PWD/interfaces/customization/ut_dcustomactionparser.cpp
+    $$PWD/interfaces/customization/ut_dcustomactionparser.cpp \
+    $$PWD/interfaces/customization/ut_dcustomactiondata.cpp
