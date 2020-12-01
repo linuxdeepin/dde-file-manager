@@ -1,3 +1,4 @@
+#include <QDir>
 #include <gtest/gtest.h>
 
 #define private public
@@ -5,6 +6,7 @@
 
 #include "plugins/pluginmanager.h"
 #include "interfaces/dfmglobal.h"
+#include "stub.h"
 
 namespace  {
     class PluginManagerTest : public testing::Test
@@ -34,6 +36,11 @@ TEST_F(PluginManagerTest, load_plugin_success)
     ASSERT_NE(p_manager, nullptr);
 
     DFMGlobal::PluginLibraryPaths.append(QStringList()<<QString("/")<<QString("/usr/lib"));
+    p_manager->loadPlugin();
+
+    QStringList (*ut_entryList)() = [](){return QStringList() << QString("test1");};
+    Stub stub;
+    stub.set((QStringList(QDir::*)(QDir::Filters,QDir::SortFlags)const)ADDR(QDir, entryList), ut_entryList);
     p_manager->loadPlugin();
 }
 
