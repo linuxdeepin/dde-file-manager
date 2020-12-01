@@ -1,7 +1,16 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include <QThread>
+#include <QProcess>
+#include <QScrollBar>
+#include <QWidget>
+#include <QTest>
+#include <QEventLoop>
+#include <QAbstractScrollArea>
+
 #define private public
 #define protected public
+
 #include "screen/screenhelper.h"
 #include <view/canvasviewmanager.h>
 #include <view/backgroundmanager.h>
@@ -12,15 +21,9 @@
 #include "../dde-desktop/presenter/gridmanager.h"
 #include <private/canvasviewprivate.h>
 #include "util/xcb/xcb.h"
-#include <QWidget>
-#include <QTest>
-#include <QEventLoop>
 #include "view/desktopitemdelegate.h"
 #include "../dde-desktop/desktop.h"
 #include "../dde-desktop/desktop.cpp"
-#include <QThread>
-#include <QProcess>
-#include <QScrollBar>
 #include "dfileviewhelper.h"
 #include "../third-party/cpp-stub/addr_pri.h"
 #include "../third-party/cpp-stub/stub.h"
@@ -42,7 +45,7 @@ public:
     }
     virtual void SetUp() override{
         //以防桌面没文件
-        QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+        path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
         path = path + '/' + "test.txt";
         QFile file(path);
         if (!file.exists()) {
@@ -55,6 +58,7 @@ public:
 public:
     QScopedPointer<CanvasViewManager> m_cvmgr{new CanvasViewManager(new BackgroundManager())};
     CanvasGridView *m_canvasGridView{nullptr};
+    QString path;
 };
 
 TEST_F(CanvasGridViewTest, TEST_CanvasGridViewTest_indexAt){
@@ -1120,4 +1124,53 @@ TEST_F(CanvasGridViewTest, test_openUrl)
     DUrlList ulist = m_canvasGridView->selectedUrls();
     DUrl url(DUrl::fromLocalFile(path));
     m_canvasGridView->openUrl(url);
+}
+
+TEST_F(CanvasGridViewTest, test_screenName)
+{
+    QString name = m_canvasGridView->screenName();
+    EXPECT_EQ(name, m_canvasGridView->m_screenName);
+}
+
+TEST_F(CanvasGridViewTest, test_dragMoveEvent)
+{
+    QMimeData data;
+    QPoint pos(100, 100);
+    QDragMoveEvent event(pos, Qt::MoveAction, &data, Qt::LeftButton, Qt::NoModifier);
+    m_canvasGridView->dragMoveEvent(&event);
+}
+//stub
+QWidget* mywidget = nullptr;
+static bool judge = false;
+QWidget* myviewport()
+{
+    if(nullptr == mywidget) {
+        mywidget = new QWidget;
+    }
+    QRect rect;
+    rect.setLeft(10000);
+    rect.setTop(10000);
+    rect.setBottom(-1);
+    rect.setRight(-1);
+    mywidget->setGeometry(rect);
+    judge = true;
+    return mywidget;
+}
+
+TEST_F(CanvasGridViewTest, test_scrollTo)
+{
+    Stub stu;
+    stu.set(ADDR(QAbstractScrollArea, viewport), myviewport);
+    QModelIndex index = m_canvasGridView->firstIndex();
+    m_canvasGridView->scrollTo(index);
+    EXPECT_TRUE(judge);
+    delete mywidget;
+}
+
+TEST_F(CanvasGridViewTest, delete_file)
+{
+    QFile file(path);
+    if (file.exists()) {
+        QProcess::execute("rm" + path);
+    }
 }
