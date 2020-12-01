@@ -95,6 +95,7 @@ HEADERS += \
     $$PWD/view/backgroundwidget.h \
     $$PWD/screen/screenmanagerwayland.h \
     $$PWD/screen/screenobjectwayland.h \
-    $$PWD/view/canvasviewmanager.h
+    $$PWD/view/canvasviewmanager.h \
+    $$PWD/screen/abstractscreenmanager_p.h
     $$PWD/accessible/frameaccessibledefine.h
     $$PWD/accessible/accessiblelist.h
