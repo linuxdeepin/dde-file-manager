@@ -1,7 +1,7 @@
 PREFIX = /usr
 QT              += core widgets concurrent dbus testlib
 CONFIG          += plugin c++11 link_pkgconfig
-PKGCONFIG       += dtkwidget gio-qt udisks2-qt5
+PKGCONFIG       += dtkwidget gio-unix-2.0 gio-qt udisks2-qt5
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
@@ -31,4 +31,5 @@ QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 include(../../third-party/googletest/gtest_dependency.pri)
+include(../../third-party/cpp-stub/stub.pri)
 include(tests/test.pri)

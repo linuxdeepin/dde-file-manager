@@ -1,5 +1,6 @@
 #include "shutil/fileutils.h"
 #include "shutil/desktopfile.h"
+#include "shutil/mimesappsmanager.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "app/define.h"
 #include "dfileservices.h"
@@ -122,12 +123,14 @@ TEST_F(TestFileUtils, can_get_txt_files_info)
     QString defaultfolderPath = getTestFolder();
     QString fileutil_t1 = createDefaultFile("fileutil_t1.txt" );
     QString fileutil_t2 = createDefaultFile("fileutil_t2.txt" );
+
     QString subfolderPath = QString("%1/sub").arg(getTestFolder());
     QStringList filelist;
     filelist.push_back(filename);
 
     EXPECT_FALSE( FileUtils::openFile(filename));
     EXPECT_FALSE( FileUtils::openFiles(filelist));
+    FileUtils::openEnterFiles(filelist);
 
     QString filePath = createOneFile(filename,subfolderPath );
     filelist.clear();
@@ -137,11 +140,17 @@ TEST_F(TestFileUtils, can_get_txt_files_info)
     EXPECT_TRUE( FileUtils::isFileExists(filePath));
     EXPECT_TRUE( FileUtils::openFile(filePath));
     EXPECT_TRUE( FileUtils::openFiles(filelist));
+    EXPECT_TRUE( FileUtils::openEnterFiles(filelist));
+
     EXPECT_TRUE( FileUtils::getFileContent(filePath).contains("shutil/fileutils"));
 
     EXPECT_FALSE( FileUtils::getKernelParameters().isEmpty());
 
+    EXPECT_FALSE( FileUtils::searchGenericIcon(filename).isNull());
+
+    EXPECT_FALSE( FileUtils::searchMimeIcon(MimesAppsManager::getMimeType(filePath).name()).isNull());
     EXPECT_FALSE( FileUtils::searchGenericIcon(filePath).isNull());
+
     EXPECT_FALSE( FileUtils::isArchive(filePath));
     EXPECT_FALSE( FileUtils::isDesktopFile(filePath));
     EXPECT_FALSE( FileUtils::isFileRunnable(filePath));
@@ -165,14 +174,33 @@ TEST_F(TestFileUtils, can_get_txt_files_info)
     DUrlList fileurllist;
     EXPECT_EQ( DFMGlobal::MenuExtension::EmptyArea, FileUtils::getMenuExtension(fileurllist));
 
-    foreach (QString fileItem, listDefaultFiles) {
-        fileurllist.push_back(DUrl::fromLocalFile(fileItem));
-    }
+    fileurllist.push_back(DUrl::fromLocalFile(fileutil_t1));
+    EXPECT_EQ(  DFMGlobal::MenuExtension::SingleFile, FileUtils::getMenuExtension(fileurllist));
+    fileurllist.push_back(DUrl::fromLocalFile(fileutil_t2));
+    EXPECT_EQ(  DFMGlobal::MenuExtension::MultiFiles, FileUtils::getMenuExtension(fileurllist));
+
+    fileurllist.clear();
+    QString emptyFolder = QString("%1/test_shutil/fileutils_empty").arg(QDir::currentPath());
+    makeFolder(emptyFolder);
+    fileurllist.push_back(DUrl::fromLocalFile(emptyFolder));
+    EXPECT_EQ( DFMGlobal::MenuExtension::SingleDir, FileUtils::getMenuExtension(fileurllist));
+
+    QString emptyFolder_2 = QString("%1/test_shutil/fileutils_empty2").arg(QDir::currentPath());
+    makeFolder(emptyFolder_2);
+    fileurllist.push_back(DUrl::fromLocalFile(emptyFolder_2));
+    EXPECT_EQ( DFMGlobal::MenuExtension::MultiDirs, FileUtils::getMenuExtension(fileurllist));
+
+    fileurllist.push_back(DUrl::fromLocalFile(defaultfolderPath));
+    fileurllist.push_back(DUrl::fromLocalFile(fileutil_t1));
+    fileurllist.push_back(DUrl::fromLocalFile(fileutil_t2));
+    EXPECT_EQ( DFMGlobal::MenuExtension::MultiFileDirs, FileUtils::getMenuExtension(fileurllist));
+
     bool limited = false;
-    FileUtils::getMenuExtension(fileurllist);
+    fileurllist.clear();
+    fileurllist.push_back(DUrl::fromLocalFile(defaultfolderPath));
     qint64 total1 = FileUtils::totalSize(defaultfolderPath);
     qint64 total2 = FileUtils::totalSize(fileurllist);
-    qint64 total3 = FileUtils::totalSize(fileurllist,1000, limited);
+    qint64 total3 = FileUtils::totalSize(fileurllist,5000, limited);
 
     EXPECT_TRUE(total1);
     EXPECT_EQ(total2, total3);
@@ -188,26 +216,48 @@ TEST_F(TestFileUtils, can_get_app_file_details)
     EXPECT_FALSE( FileUtils::searchAppIcon(desktopEmptyfile).isNull()); // get default icon
 
     QString desktopfilePath = getDesktopFile("dde-computer.desktop");
+    QString ddefilemanagerPath = getDesktopFile("dde-file-manager.desktop");
+    QString wpsPath = getDesktopFile("wps-office-wps.desktop");
+    QString terminalPath = getDesktopFile("deepin-terminal.desktop");
     QStringList filelist;
     filelist.push_back(desktopfilePath);
 
     FileUtils::openFile(desktopfilePath);
     FileUtils::openFiles(filelist);
+    FileUtils::openEnterFiles(filelist);
     EXPECT_TRUE( FileUtils::isDesktopFile(desktopfilePath));
 
     DesktopFile desktopfile(desktopfilePath);
     filelist.clear();
+    EXPECT_FALSE( FileUtils::openFilesByApp("",filelist));
     EXPECT_FALSE( FileUtils::openFilesByApp(desktopfilePath,filelist));
 
-    filelist.push_back(QString("%1/Desktop").arg(QDir::homePath()));//"/home/max/Desktop");
-    filelist.push_back(QString("%1/Videos").arg(QDir::homePath()));//"/home/max/Videos");
+    QString fileutil_t1 = createDefaultFile("fileutil_t1.txt" );
+
+    QMimeType mimetype;
+    EXPECT_FALSE( FileUtils::isDesktopFile(fileutil_t1, mimetype));
+    EXPECT_FALSE( FileUtils::isDesktopFile(QFileInfo(fileutil_t1), mimetype));
+
+    EXPECT_TRUE( FileUtils::openFilesByApp(terminalPath,filelist));
+    EXPECT_TRUE( FileUtils::openFilesByApp(terminalPath,filelist));
+    EXPECT_TRUE( FileUtils::openFilesByApp(terminalPath,filelist));
+
     filelist.push_back(QString("%1/Pictures").arg(QDir::homePath()));//"/home/max/Pictures");
+    filelist.push_back(fileutil_t1);
+    EXPECT_FALSE( FileUtils::openFilesByApp(FileUtils::defaultTerminalPath(),filelist));
     EXPECT_TRUE( FileUtils::openFilesByApp(desktopfilePath,filelist));
+    EXPECT_TRUE( FileUtils::openFilesByApp(terminalPath,filelist));
+
     EXPECT_FALSE( FileUtils::searchAppIcon(desktopfile).isNull());
 
+    EXPECT_TRUE( FileUtils::launchApp(ddefilemanagerPath, filelist));
     EXPECT_TRUE( FileUtils::launchApp(desktopfilePath, filelist));
     EXPECT_TRUE( FileUtils::launchAppByGio(desktopfilePath,filelist));
     EXPECT_TRUE( FileUtils::launchAppByDBus(desktopfilePath,filelist));
+
+    filelist.clear();
+    filelist.push_back(fileutil_t1);
+    FileUtils::launchAppByDBus(wpsPath,filelist);
 
     EXPECT_FALSE( FileUtils::shouldAskUserToAddExecutableFlag(desktopfilePath));
 }
@@ -222,6 +272,7 @@ TEST_F(TestFileUtils, can_format_Udisk_Size)
     EXPECT_EQ( "0 B", FileUtils::formatSize(0));
     EXPECT_EQ( "0 B", FileUtils::formatSize(-1));
     EXPECT_EQ( "0M", FileUtils::diskUsageString(usedSize, totalSize, "dev/sr0"));
+    EXPECT_EQ( "0M", FileUtils::defaultOpticalSize("sdb1",usedSize, totalSize));
     EXPECT_EQ( "0M", FileUtils::defaultOpticalSize("dev/sr0",usedSize, totalSize));
 
     usedSize = 1024;
@@ -265,7 +316,7 @@ TEST_F(TestFileUtils, can_new_name_docment)
     EXPECT_TRUE( FileUtils::newDocumentUrl(info,filename,"").isValid());
 
     WId wid;
-    EXPECT_FALSE(FileUtils::cpTemplateFileToTargetDir(subfolderPath,"fileutil_file_new2","txt",wid));
+    EXPECT_TRUE(FileUtils::cpTemplateFileToTargetDir(subfolderPath,"fileutil_file_new2","txt",wid));
     EXPECT_EQ( "txt", FileUtils::getRealSuffix(filePath));
 }
 
@@ -282,11 +333,24 @@ TEST_F(TestFileUtils, can_encode_string)
     EXPECT_EQ(32, FileUtils::md5(&file,filePath).length());
 
     QFile emptyfile("fileutil_file_new111.txt");
-    EXPECT_EQ(32, FileUtils::md5(&file,filePath).length());
+    EXPECT_EQ(32, FileUtils::md5(&emptyfile,filePath).length());
+
+    QString sysPicturePath = QString("%1/Pictures/Wallpapers").arg(QDir::homePath());//"/home/max/Pictures/Wallpapers";
+    QStringList listPicutures = FileUtils::filesList(sysPicturePath);
+    EXPECT_FALSE(listPicutures.empty());
+
+    QString onePicture = listPicutures.at(0);
+    QFile bigfile(onePicture);
+    EXPECT_EQ(32, FileUtils::md5(&bigfile,filePath).length());
+
+    EXPECT_FALSE( FileUtils::shouldAskUserToAddExecutableFlag(onePicture));
+    EXPECT_FALSE( FileUtils::isFileRunnable(onePicture));
+    EXPECT_FALSE( FileUtils::isExecutableScript(onePicture));
 }
 
 TEST_F(TestFileUtils, can_not_run_normalfile_as_ex)
 {
+    QString nofile = "";
     QString filename = "fileutil_file_new1.txt";
     QString defaultfolderPath = getTestFolder();
     QString subfolderPath = QString("%1/sub").arg(getTestFolder());
@@ -294,16 +358,21 @@ TEST_F(TestFileUtils, can_not_run_normalfile_as_ex)
 
     EXPECT_FALSE(FileUtils::isFileExecutable(filePath));
     EXPECT_FALSE(FileUtils::openExcutableScriptFile(filePath,0));
+    EXPECT_FALSE(FileUtils::isAncestorUrl(nofile,nofile));
+    EXPECT_TRUE(FileUtils::isAncestorUrl(defaultfolderPath,filePath));
     EXPECT_TRUE(FileUtils::openExcutableScriptFile(filePath,1));
+    EXPECT_TRUE(FileUtils::openExcutableScriptFile(filePath,2));
+    EXPECT_TRUE(FileUtils::openExcutableScriptFile(filePath,3));
+    EXPECT_TRUE(FileUtils::openExcutableScriptFile(filePath,4));
 
     EXPECT_FALSE(FileUtils::addExecutableFlagAndExecuse(filePath,0));
     EXPECT_TRUE(FileUtils::addExecutableFlagAndExecuse(filePath,1));
+    EXPECT_TRUE(FileUtils::addExecutableFlagAndExecuse(filePath,2));
 
     EXPECT_FALSE(FileUtils::openExcutableFile(filePath,0));
     EXPECT_TRUE(FileUtils::openExcutableFile(filePath,1));
-
-    EXPECT_FALSE(FileUtils::openExcutableFile(filePath,0));
-    EXPECT_TRUE(FileUtils::openExcutableFile(filePath,1));
+    EXPECT_TRUE(FileUtils::openExcutableFile(filePath,2));
+    EXPECT_TRUE(FileUtils::openExcutableFile(filePath,3));
 }
 
 TEST_F(TestFileUtils, can_set_the_background)
@@ -352,4 +421,29 @@ TEST_F(TestFileUtils, can_read_write_json_file)
     EXPECT_EQ(1,jsonArry.at(0).toInt());
     EXPECT_EQ(2.2,jsonArry.at(1).toDouble());
     EXPECT_EQ("string",jsonArry.at(2).toString());
+}
+
+TEST_F(TestFileUtils, can_get_folder_totalSize)
+{
+    QString folderPath = getTestFolder();
+    QStringList fileList = FileUtils::filesList(folderPath);
+
+    EXPECT_TRUE(!fileList.isEmpty());
+
+    DUrlList urlFileList, urlFolderList;
+    urlFolderList << folderPath;
+
+    foreach (QString file, fileList) {
+        urlFileList << file;
+    }
+
+    EXPECT_EQ (FileUtils::totalSize(urlFileList), FileUtils::totalSize(urlFolderList) );
+
+    bool isInLimitFiles = false;
+    bool isInLimitFolder = false;
+    EXPECT_EQ (FileUtils::totalSize(urlFileList, 1024,isInLimitFiles), FileUtils::totalSize(urlFolderList, 1024,isInLimitFiles) );
+
+    EXPECT_EQ (FileUtils::totalSize(urlFileList), FileUtils::totalSize(urlFileList, 1024,isInLimitFiles));
+
+    EXPECT_EQ (FileUtils::totalSize(urlFolderList), FileUtils::totalSize(urlFolderList, 1024,isInLimitFiles) );
 }

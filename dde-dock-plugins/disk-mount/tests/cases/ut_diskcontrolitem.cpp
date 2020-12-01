@@ -1,9 +1,13 @@
+#include "ut_mock_stub_disk_gio.h"
 #include "diskcontrolitem.h"
 #include "ut_mock_dattacheddeviceinterface.h"
+#include "ut_mock_stub_diskdevice.h"
+
+#include "stub.h"
 
 #include <QWidget>
 #include <gtest/gtest.h>
-
+#include <QtTest/QtTest>
 
 
 namespace  {
@@ -93,4 +97,28 @@ TEST_F(TestDiskControlItem, showed_with_tagname_and_media_optical)
 
     mDiskContrlItem->show();
     mDiskContrlItem->hide();
+}
+
+TEST_F(TestDiskControlItem, kick_mouse_open_normal_path)
+{
+    EXPECT_CALL(*mockInterface,accessPointUrl).WillOnce(testing::Return(QUrl(getAppRunPath())));
+
+    QTest::mouseRelease(mDiskContrlItem.get(), Qt::MouseButton::LeftButton);
+}
+
+TEST_F(TestDiskControlItem, kick_mouse_open_optical_path)
+{
+    EXPECT_CALL(*mockInterface,accessPointUrl).WillOnce(testing::Return(QUrl("burn:/dev/sr0/disc_files/")));
+
+    QTest::mouseRelease(mDiskContrlItem.get(), Qt::MouseButton::LeftButton);
+}
+
+TEST_F(TestDiskControlItem, kick_mouse_open_optical_path_filemanager_notready)
+{
+    EXPECT_CALL(*mockInterface,accessPointUrl).WillOnce(testing::Return(QUrl("burn:/dev/sr0/disc_files/")));
+    EXPECT_CALL(*mockInterface,mountpointUrl).WillOnce(testing::Return(QUrl(getAppRunPath())));
+    Stub stub;
+    stub.set(ADDR(QStandardPaths, findExecutable), findExecutable_QStandardPaths_return_empty_stub);
+
+    QTest::mouseRelease(mDiskContrlItem.get(), Qt::MouseButton::LeftButton);
 }
