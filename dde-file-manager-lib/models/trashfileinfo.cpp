@@ -28,6 +28,7 @@
 #include "controllers/trashmanager.h"
 #include "dfileservices.h"
 #include "controllers/pathmanager.h"
+#include "trashfileinfo_p.h"
 
 #include "app/define.h"
 #include "interfaces/dfmstandardpaths.h"
@@ -47,25 +48,6 @@ COMPARE_FUN_DEFINE(deletionDate, DeletionDate, TrashFileInfo)
 COMPARE_FUN_DEFINE(sourceFilePath, SourceFilePath, TrashFileInfo)
 }
 
-class TrashFileInfoPrivate : public DAbstractFileInfoPrivate
-{
-public:
-    TrashFileInfoPrivate(const DUrl &url, TrashFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq, true)
-    {
-        columnCompact = false;
-    }
-
-    QString desktopIconName;
-    QString displayName;
-    QString originalFilePath;
-    QString displayDeletionDate;
-    QDateTime deletionDate;
-    QStringList tagNameList;
-
-    void updateInfo();
-    void inheritParentTrashInfo();
-};
 
 void TrashFileInfoPrivate::updateInfo()
 {

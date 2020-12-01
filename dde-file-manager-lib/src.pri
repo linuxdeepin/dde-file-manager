@@ -231,7 +231,8 @@ HEADERS += \
     $$PWD/accessibility/ac-lib-file-manager.h \
     $$PWD/accessibility/acintelfunctions.h \
     $$PWD/bluetooth/bluetoothmanager_p.h \
-    $$PWD/models/virtualentryinfo.h
+    $$PWD/models/virtualentryinfo.h \
+    $$PWD/models/trashfileinfo_p.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \

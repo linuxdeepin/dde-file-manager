@@ -1,5 +1,9 @@
 #include "models/avfsfileinfo.h"
+#include "dabstractfileinfo.h"
 #include <gtest/gtest.h>
+
+#include "stub.h"
+#include "shutil/fileutils.h"
 
 namespace {
 class TestAVFSFileInfo : public testing::Test
@@ -44,6 +48,10 @@ TEST_F(TestAVFSFileInfo, canIteratorDir)
 TEST_F(TestAVFSFileInfo, isDir)
 {
     EXPECT_FALSE(info->isDir());
+    Stub st;
+    bool (*isArchive_stub)(const QString &) = [](const QString &){ return true; };
+    st.set(&FileUtils::isArchive, isArchive_stub);
+    info->isDir();
 }
 
 TEST_F(TestAVFSFileInfo, canManageAuto)
@@ -59,6 +67,11 @@ TEST_F(TestAVFSFileInfo, toLocalFile)
 TEST_F(TestAVFSFileInfo, parentUrl)
 {
     EXPECT_STREQ("/", info->parentUrl().path().toStdString().c_str());
+    Stub st;
+    typedef DAbstractFileInfo::FileType (*vptr)();
+    DAbstractFileInfo::FileType (*fileType_stub)() = [](){ return DAbstractFileInfo::FileType::Directory; };
+    st.set((vptr)&DAbstractFileInfo::fileType, fileType_stub);
+    info->parentUrl();
 }
 
 TEST_F(TestAVFSFileInfo, tstMenuActionList)
@@ -73,6 +86,7 @@ TEST_F(TestAVFSFileInfo, tstMenuActionList)
 
 TEST_F(TestAVFSFileInfo, tstRealDirUrl)
 {
-    DUrl u = info->realDirUrl(DUrl("avfs:///test.file"));
+    DUrl u = info->realDirUrl(DUrl("avfs:///test.file/"));
     EXPECT_TRUE(u.isValid());
+    info->realFileUrl(DUrl("avfs:///test.file/"));
 }
