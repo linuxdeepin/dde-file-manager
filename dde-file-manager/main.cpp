@@ -188,9 +188,12 @@ int main(int argc, char *argv[])
     DFMGlobal::installTranslator();
 
     LogUtil::registerLogger();
+    CommandLineManager::instance()->process();
 
     //使用异步加载win相关的插件
     auto windPluginLoader = QtConcurrent::run([]() {
+        if (CommandLineManager::instance()->isSet("h") || CommandLineManager::instance()->isSet("v"))
+            return;
         winId_mtx.second.lock();
         if (winId_mtx.first) {
             winId_mtx.second.unlock();
@@ -212,8 +215,6 @@ int main(int argc, char *argv[])
 
     // init pixmap cache size limit, 20MB * devicePixelRatio
     QPixmapCache::setCacheLimit(static_cast<int>(20 * 1024 * app.devicePixelRatio()));
-
-    CommandLineManager::instance()->process();
 
     // working dir
     if (CommandLineManager::instance()->isSet("w")) {
