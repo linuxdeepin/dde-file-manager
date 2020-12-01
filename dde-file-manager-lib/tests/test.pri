@@ -216,7 +216,8 @@ SOURCES += \
     $$PWD/interfaces/ut_dfmcrumblistviewmodel.cpp \
     $$PWD/gvfs/ut_qmount.cpp \
     $$PWD/gvfs/ut_qvolume.cpp \
-     $$PWD/interfaces/ut_dfilesystemmodel.cpp\
+    $$PWD/interfaces/ut_dfilesystemmodel.cpp \
+    $$PWD/controllers/ut_pathmanager.cpp \
     # custom
     $$PWD/interfaces/customization/ut_customaction_sort.cpp \
     $$PWD/interfaces/customization/ut-dcustomactionbuilder.cpp
