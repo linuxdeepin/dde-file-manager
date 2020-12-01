@@ -244,6 +244,13 @@ bool DFMFileListFile::remove(const QString &fileName)
     return d->fileListSet.remove(fileName);
 }
 
+QSet<QString> DFMFileListFile::getHiddenFiles()
+{
+    Q_D(DFMFileListFile);
+
+    return d->fileListSet;
+}
+
 // Should we show the "Hide this file" checkbox?
 bool DFMFileListFile::supportHideByFile(const QString &fileFullPath)
 {

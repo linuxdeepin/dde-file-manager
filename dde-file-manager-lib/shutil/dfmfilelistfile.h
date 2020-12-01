@@ -38,7 +38,7 @@ public:
 
 public:
     // argument is a path, without filename.
-    explicit DFMFileListFile(const QString & dirPath, QObject * parent = nullptr);
+    explicit DFMFileListFile(const QString &dirPath, QObject *parent = nullptr);
     ~DFMFileListFile();
 
     QString filePath() const;
@@ -46,12 +46,13 @@ public:
 
     bool save() const;
 
-    bool contains(const QString & fileName) const;
-    void insert(const QString & fileName);
-    bool remove(const QString & fileName);
+    bool contains(const QString &fileName) const;
+    void insert(const QString &fileName);
+    bool remove(const QString &fileName);
+    QSet<QString> getHiddenFiles();
 
-    static bool supportHideByFile(const QString & fileFullPath);
-    static bool canHideByFile(const QString & fileFullPath);
+    static bool supportHideByFile(const QString &fileFullPath);
+    static bool canHideByFile(const QString &fileFullPath);
 
 public slots:
     bool reload();
