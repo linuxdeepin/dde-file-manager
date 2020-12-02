@@ -68,3 +68,13 @@ TEST_F(TestDFMVfsManager, p_GVolumeMonitorMountAddedCb)
 {
     EXPECT_NO_FATAL_FAILURE(d->GVolumeMonitorMountAddedCb(nullptr, nullptr, m_manager));
 }
+
+TEST_F(TestDFMVfsManager, p_GVolumeMonitorMountRemovedCb)
+{
+    EXPECT_NO_FATAL_FAILURE(d->GVolumeMonitorMountRemovedCb(nullptr, nullptr, m_manager));
+}
+
+TEST_F(TestDFMVfsManager, p_GVolumeMonitorMountChangedCb)
+{
+    EXPECT_NO_FATAL_FAILURE(d->GVolumeMonitorMountChangedCb(nullptr, nullptr, m_manager));
+}
