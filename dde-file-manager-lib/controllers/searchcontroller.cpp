@@ -427,6 +427,8 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
     }
 }
 
+#endif
+
 bool SearchDiriterator::searchFileIsHidden(const QString &fileName) const
 {
     QFileInfo fileInfo(fileName);
@@ -453,7 +455,6 @@ bool SearchDiriterator::searchFileIsHidden(const QString &fileName) const
     return hiddenFileMap[fileParentPath].contains(fileInfo.fileName());
 }
 
-#endif
 bool SearchDiriterator::hasNext() const
 {
     if (!childrens.isEmpty()) {
