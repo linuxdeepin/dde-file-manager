@@ -1,7 +1,9 @@
 #include <QProcess>
 #include <QTimer>
-
+#include "stub.h"
+#include <QMutex>
 #include <gtest/gtest.h>
+
 #include "controllers/mergeddesktopcontroller.h"
 #include "models/desktopfileinfo.h"
 #include "dfmevent.h"
@@ -11,6 +13,12 @@
 #include "dfilehandler.h"
 #include "dstorageinfo.h"
 #include "dabstractfilewatcher.h"
+#include "dfileservices.h"
+#include "dfmglobal.h"
+
+#define private public
+#define protected public
+#include "controllers/mergeddesktopcontroller_p.h"
 
 namespace {
 class TestMergedDesktopController : public testing::Test
@@ -38,6 +46,22 @@ public:
 public:
     MergedDesktopController *ctrl = nullptr;
 };
+
+class TestMergedDesktopWatcher: public testing::Test
+{
+public:
+    void SetUp()
+    {
+        watcher = new MergedDesktopWatcher(DUrl("computer:///"), nullptr);
+    }
+    void TearDown()
+    {
+        delete watcher;
+        watcher = nullptr;
+    }
+
+    MergedDesktopWatcher *watcher;
+};
 } // namespace
 
 TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
@@ -47,6 +71,15 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
 
     auto e2 = dMakeEventPointer<DFMGetChildrensEvent>(nullptr, DUrl("dfmmd:///"), QStringList(), QDir::Filters());
     EXPECT_FALSE(ctrl->getChildren(e2).isEmpty());
+
+    e2 = dMakeEventPointer<DFMGetChildrensEvent>(nullptr, DUrl("dfmmd:///entry/"), QStringList(), QDir::Filters());
+    ctrl->getChildren(e2);
+    e2 = dMakeEventPointer<DFMGetChildrensEvent>(nullptr, DUrl("dfmmd:///entry/test"), QStringList(), QDir::Filters());
+    ctrl->getChildren(e2);
+    e2 = dMakeEventPointer<DFMGetChildrensEvent>(nullptr, DUrl("dfmmd:///folder/"), QStringList(), QDir::Filters());
+    ctrl->getChildren(e2);
+    e2 = dMakeEventPointer<DFMGetChildrensEvent>(nullptr, DUrl("dfmmd:///mergeddesktop/"), QStringList(), QDir::Filters());
+    ctrl->getChildren(e2);
 
     auto e3 = dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl("dfmmd:///"));
     auto *watcher = ctrl->createFileWatcher(e3);
@@ -66,35 +99,58 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     auto e6 = dMakeEventPointer<DFMOpenFileByAppEvent>(nullptr, "dde-file-manager", DUrl("file:///"));
     EXPECT_TRUE(ctrl->openFileByApp(e6));
 
-    // 会崩
-//    QProcess::execute("touch", QStringList() << "/tmp/dde-file-manager-unit-test.txt");
-//    auto e7 = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << DUrl("file:///tmp/dde-file-manager-unit-test.txt"), true);
-//    EXPECT_TRUE(!ctrl->moveToTrash(e7).isEmpty());
+    // 原函数直接调用会崩
+    DUrlList (*moveToTrash_stub)(void *, const QObject *, const DUrlList &) = [](void *, const QObject *, const DUrlList &) {
+        return DUrlList();
+    };
+    Stub st;
+    st.set(ADDR(DFileService, moveToTrash), moveToTrash_stub);
+    QProcess::execute("touch", QStringList() << "/tmp/dde-file-manager-unit-test.txt");
+    auto e7 = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << DUrl("file:///tmp/dde-file-manager-unit-test.txt"), true);
+    EXPECT_TRUE(!ctrl->moveToTrash(e7).isEmpty());
+    st.reset(ADDR(DFileService, moveToTrash));
 
     auto e8 = dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CopyAction, DUrlList() << DUrl("file:///usr/bin/dde-file-manager"));
     EXPECT_TRUE(ctrl->writeFilesToClipboard(e8));
 
-    // 估计会崩
-//    pastFiles;
-//    deleteFiles;
+    DUrlList (*pastFile_stub)(void *, const QObject *, DFMGlobal::ClipboardAction, const DUrl &, const DUrlList &)
+            = [](void *, const QObject *, DFMGlobal::ClipboardAction, const DUrl &, const DUrlList &) {
+        return DUrlList();
+    };
+    st.set(ADDR(DFileService, pasteFile), pastFile_stub);
+    auto e9 = dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::ClipboardAction::CutAction, DUrl(), DUrlList());
+    ctrl->pasteFile(e9);
+    st.reset(ADDR(DFileService, pasteFile));
+
+    bool (*deleteFiles_stub)(void *, const QObject *, const DUrlList &, bool, bool, bool)
+            = [](void *, const QObject *, const DUrlList &, bool, bool, bool) {
+        return true;
+    };
+    st.set(ADDR(DFileService, deleteFiles), deleteFiles_stub);
+    auto e10 = dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList());
+    ctrl->deleteFiles(e10);
+    st.reset(ADDR(DFileService, deleteFiles));
 
     QProcess::execute("touch", QStringList() << "/tmp/dde-file-manager-unit-test.txt");
     auto e11 = dMakeEventPointer<DFMRenameEvent>(nullptr, DUrl("file:///tmp/dde-file-manager-unit-test.txt"), DUrl("file:///tmp/dde-file-manager-unit-test_new_name.txt"), true);
     EXPECT_TRUE(ctrl->renameFile(e11));
     QProcess::execute("rm", QStringList() << "/tmp/dde-file-manager-unit-test_new_name.txt");
 
-//    auto e12 = dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << DUrl("file:///tmp/dde-file-manager-unit-test_new_name.txt"), true, true);
-//    EXPECT_TRUE(ctrl->deleteFiles(e12));
-
     auto e13 = dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, DUrl("file:///home"));
     EXPECT_TRUE(ctrl->openInTerminal(e13));
 
-//    auto e14 = dMakeEventPointer<DFMMkdirEvent>(nullptr, DUrl("file:///tmp/dfm-test-dir"));
-//    EXPECT_TRUE(ctrl->mkdir(e14));
-//    QProcess::execute("rm", QStringList() << "rf" << "/tmp/dfm-test-dir");
+    bool (*mkdirAndTouch_stub)(void *, const QObject *, const DUrl &) = [](void *, const QObject *, const DUrl &){
+        return true;
+    };
+    st.set(ADDR(DFileService, mkdir), mkdirAndTouch_stub);
+    auto e14 = dMakeEventPointer<DFMMkdirEvent>(nullptr, DUrl("file:///tmp/dfm-test-dir"));
+    EXPECT_TRUE(ctrl->mkdir(e14));
+    st.reset(ADDR(DFileService, mkdir));
 
-//    auto e15 = dMakeEventPointer<DFMTouchFileEvent>(nullptr, DUrl("file:///tmp/test-create-by-touch.txt"));
-//    EXPECT_TRUE(ctrl->touch(e15));
+    st.set(ADDR(DFileService, touchFile), mkdirAndTouch_stub);
+    auto e15 = dMakeEventPointer<DFMTouchFileEvent>(nullptr, DUrl("file:///tmp/test-create-by-touch.txt"));
+    EXPECT_TRUE(ctrl->touch(e15));
+    st.reset(ADDR(DFileService, touchFile));
 
     QProcess::execute("touch", QStringList() << "/tmp/dde-file-manager-unit-test.txt");
     auto e16 = dMakeEventPointer<DFMSetPermissionEvent>(nullptr, DUrl("file:///tmp/dde-file-manager-unit-test.txt"), QFileDevice::ReadUser | QFileDevice::ReadOwner);
@@ -104,8 +160,22 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     auto e17 = dMakeEventPointer<DFMCompressEvent>(nullptr, DUrlList() << DUrl("file:///tmp/dde-file-manager-unit-test.txt"));
     EXPECT_TRUE(ctrl->compressFiles(e17));
 
-//    auto e18 = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, DUrl("file:///tmp/dde-file-manager-unit-test.txt"), DUrl("file:///home"), true);
-//    EXPECT_TRUE(ctrl->createSymlink(e18));
+    bool (*decompressFile_stub)(void *, const QObject *, const DUrlList &) = [](void *, const QObject *, const DUrlList &){
+        return true;
+    };
+    st.set(ADDR(DFileService, decompressFile), decompressFile_stub);
+    auto e17_2 = dMakeEventPointer<DFMDecompressEvent>(nullptr, DUrlList());
+    ctrl->decompressFile(e17_2);
+    st.reset(ADDR(DFileService, decompressFile));
+
+    bool (*createSymlink_stub)(void *, const QObject *, const DUrl &, const DUrl &, bool) = [](void *, const QObject *, const DUrl &, const DUrl &, bool){
+        return true;
+    };
+    bool (DFileService::*createSymlink)(const QObject *, const DUrl &, const DUrl &, bool) const = &DFileService::createSymlink;
+    st.set(createSymlink, createSymlink_stub);
+    auto e18 = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, DUrl("file:///tmp/dde-file-manager-unit-test.txt"), DUrl("file:///home"), true);
+    EXPECT_TRUE(ctrl->createSymlink(e18));
+    st.reset(createSymlink);
 
     auto e19 = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, DUrl("file:///tmp/dde-file-manager-unit-test.txt"), QList<QString>() << "Test1" << "Test2");
     EXPECT_TRUE(ctrl->setFileTags(e19));
@@ -174,4 +244,14 @@ TEST_F(TestMergedDesktopController, tstSlots)
     ctrl->desktopFilesCreated(DUrl("file:///home"));
     ctrl->desktopFilesRemoved(DUrl("file:///home"));
     ctrl->desktopFilesRenamed(DUrl(), DUrl());
+}
+
+TEST_F(TestMergedDesktopWatcher, tstFuncs)
+{
+    watcher->onFileAttributeChanged(DUrl("file:///home"));
+    watcher->onFileModified(DUrl("file:///home"));
+    watcher->startWatcher();
+    watcher->stopWatcher();
+    watcher->d_func()->start();
+    watcher->d_func()->stop();
 }
