@@ -32,6 +32,7 @@ HEADERS += \
     $$PWD/shutil/desktopfile.h \
     $$PWD/shutil/fileutils.h \
     $$PWD/shutil/properties.h \
+    $$PWD/views/dfilemanagerwindow_p.h  \
     $$PWD/views/dfilemanagerwindow.h \
     $$PWD/views/historystack.h\
     $$PWD/dialogs/propertydialog.h \

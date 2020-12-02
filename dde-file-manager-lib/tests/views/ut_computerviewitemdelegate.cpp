@@ -3,12 +3,18 @@
 
 #include <QAbstractItemModel>
 #include <QMouseEvent>
+#include <QLineEdit>
 #include "models/computermodel.h"
 #include "views/computerview.h"
+#include "dguiapplicationhelper.h"
+#include "interfaces/dfmapplication.h"
+
+#define private public
 
 #include "views/computerviewitemdelegate.h"
 #include "dfmevent.h"
 #include "views/dfilemanagerwindow.h"
+#include "stub.h"
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -37,27 +43,95 @@ namespace  {
 
 TEST_F(TestComputerViewItemDelegate, tst_paint)
 {
+    Stub stub;
+    static int myRole = ComputerModelItemData::Category::cat_splitter;
+    static QString myFileSysType = "EXT4";
+    static QString myScheme = DFMVAULT_SCHEME;
+    QVariant (*ut_data)(void *obj, int role) = [](void *obj, int role) {
+        switch (role) {
+        case ComputerModel::DataRoles::ICategoryRole: return QVariant(myRole);
+        case Qt::ItemDataRole::DisplayRole: return QVariant("utTest");
+        case Qt::ItemDataRole::DecorationRole: {
+            QIcon icon;
+            return QVariant::fromValue(icon);
+            };
+        case ComputerModel::DataRoles::FileSystemRole: return QVariant(myFileSysType);
+        case ComputerModel::DataRoles::SizeInUseRole: return QVariant(0);
+        case ComputerModel::DataRoles::SizeTotalRole: return QVariant(1);
+        case ComputerModel::DataRoles::VolumeTagRole: return QVariant("tstTagRole");
+        case ComputerModel::DataRoles::SizeRole: return QVariant(true);
+        case ComputerModel::DataRoles::SchemeRole: return QVariant(myScheme);
+        case ComputerModel::DataRoles::ProgressRole: return QVariant(true);
+        }
+        return QVariant();
+    };
+    stub.set(ADDR(QModelIndex, data), ut_data);
+
+//    DGuiApplicationHelper::ColorType (*ut_colorType)() = [](){return DGuiApplicationHelper::DarkType;};
+//    stub.set((DGuiApplicationHelper::ColorType(DGuiApplicationHelper::*)(const QColor &))ADDR(DGuiApplicationHelper, toColorType), ut_colorType);
+
+    QVariant (*ut_genericAttribut)() = [](){return QVariant(true);};
+    stub.set(ADDR(DFMApplication, genericAttribute), ut_genericAttribut);
+
+    QWidget widget;
     QPainter painter;
     QStyleOptionViewItem option;
-    ComputerModel model;
     QModelIndex index;
-    model.setData(index, ComputerModelItemData::Category::cat_splitter, ComputerModel::DataRoles::ICategoryRole);
+    option.widget = &widget;
+    option.state |= QStyle::StateFlag::State_Selected;
     m_computerViewItemDelegate->paint(&painter, option, index);
 
-    model.setData(index, ComputerModelItemData::Category::cat_widget, ComputerModel::DataRoles::ICategoryRole);
+    myRole = ComputerModelItemData::Category::cat_widget;
     m_computerViewItemDelegate->paint(&painter, option, index);
 
-    model.setData(index, ComputerModelItemData::Category::cat_user_directory, ComputerModel::DataRoles::ICategoryRole);
+    myRole = ComputerModelItemData::Category::cat_user_directory;
+    m_computerViewItemDelegate->paint(&painter, option, index);
+
+    option.state &= ~QStyle::StateFlag::State_Selected;
+    option.state |= QStyle::StateFlag::State_MouseOver;
+    m_computerViewItemDelegate->paint(&painter, option, index);
+
+    option.state &= ~QStyle::StateFlag::State_MouseOver;
+    m_computerViewItemDelegate->paint(&painter, option, index);
+
+    myRole = ComputerModelItemData::Category::cat_external_storage;
+    m_computerViewItemDelegate->paint(&painter, option, index);
+
+    myFileSysType = "FAT32";
+    m_computerViewItemDelegate->paint(&painter, option, index);
+
+    myFileSysType = "";
+    m_computerViewItemDelegate->paint(&painter, option, index);
+
+    myScheme = "";
     m_computerViewItemDelegate->paint(&painter, option, index);
 }
 
 TEST_F(TestComputerViewItemDelegate, tst_sizeHint)
 {
+    Stub stub;
+    static int myRole = ComputerModelItemData::Category::cat_splitter;
+    QVariant (*ut_data)() = []() {
+        return QVariant(myRole);
+    };
+    stub.set(ADDR(QModelIndex, data), ut_data);
+
     QStyleOptionViewItem option;
     QModelIndex index;
-    QSize size = m_computerViewItemDelegate->sizeHint(option, index);
-    EXPECT_NE(0, size.width());
-    EXPECT_NE(0, size.height());
+
+    QSize resultSize = m_computerViewItemDelegate->sizeHint(option, index);
+    QSize expectSize = QSize(m_computerViewItemDelegate->par->width() - 12 ,45);
+    EXPECT_EQ(expectSize, resultSize);
+
+    myRole = ComputerModelItemData::Category::cat_user_directory;
+    resultSize = m_computerViewItemDelegate->sizeHint(option, index);
+    int sz = m_computerViewItemDelegate->par->view()->iconSize().width() * 2 + 24;
+    expectSize = QSize(sz, sz);
+    EXPECT_EQ(expectSize, resultSize);
+
+    myRole = ComputerModelItemData::Category::cat_internal_storage;
+    resultSize = m_computerViewItemDelegate->sizeHint(option, index);
+    EXPECT_NE(expectSize, QSize(0, 0));
 }
 
 TEST_F(TestComputerViewItemDelegate, tst_createEditor)
@@ -78,16 +152,23 @@ TEST_F(TestComputerViewItemDelegate, tst_setEditorData)
     m_computerViewItemDelegate->setEditorData(widget, index);
 }
 
-TEST_F(TestComputerViewItemDelegate, tst_setModelData)
-{
-    //! somthing to do.
-}
-
 TEST_F(TestComputerViewItemDelegate, tst_updateEditorGeometry)
 {
     QStyleOptionViewItem option;
     QModelIndex index;
-    QWidget *widget = m_computerViewItemDelegate->createEditor(nullptr, option, index);
+    QSharedPointer<QWidget> widget = QSharedPointer<QWidget>(m_computerViewItemDelegate->createEditor(nullptr, option, index));
 
-    m_computerViewItemDelegate->updateEditorGeometry(widget, option, index);
+    Stub stub;
+    static int myRole = ComputerModelItemData::Category::cat_widget;
+    QVariant (*ut_data)() = []() {
+        return QVariant(myRole);
+    };
+    stub.set(ADDR(QModelIndex, data), ut_data);
+
+    m_computerViewItemDelegate->updateEditorGeometry(widget.data(), option, index);
+    EXPECT_EQ(widget.data()->geometry(), option.rect);
+
+    myRole = ComputerModelItemData::Category::cat_user_directory;
+    m_computerViewItemDelegate->updateEditorGeometry(widget.data(), option, index);
+    EXPECT_NE(widget.data()->geometry(), option.rect);
 }
