@@ -15,11 +15,11 @@
 #include "private/dabstractfilewatcher_p.h"
 #include "disomaster.h"
 #include "shutil/fileutils.h"
+#include "controllers/masteredmediacontroller_p.h"
 
 #include <QRegularExpression>
 #include <QStandardPaths>
 #include <QProcess>
-
 
 DFMShadowedDirIterator::DFMShadowedDirIterator(const QUrl &path, const QStringList &nameFilters, QDir::Filters filter, QDirIterator::IteratorFlags flags)
 {
@@ -113,23 +113,6 @@ DUrl DFMShadowedDirIterator::changeSchemeUpdate(DUrl in)
     seen.insert(ret.burnFilePath());
     return ret;
 }
-
-class MasteredMediaFileWatcherPrivate : public DAbstractFileWatcherPrivate
-{
-public:
-    explicit MasteredMediaFileWatcherPrivate(MasteredMediaFileWatcher *qq)
-        : DAbstractFileWatcherPrivate(qq) {}
-
-    bool start() override;
-    bool stop() override;
-    bool handleGhostSignal(const DUrl &target, DAbstractFileWatcher::SignalType1 signal, const DUrl &url) override;
-
-    QPointer<DAbstractFileWatcher> proxyStaging;
-    QPointer<DAbstractFileWatcher> proxyOnDisk;
-    QScopedPointer<DDiskManager> diskm;
-
-    Q_DECLARE_PUBLIC(MasteredMediaFileWatcher)
-};
 
 bool MasteredMediaFileWatcherPrivate::start()
 {

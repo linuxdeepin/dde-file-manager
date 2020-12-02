@@ -1,15 +1,26 @@
 #include <gtest/gtest.h>
 #include <QTimer>
 #include <QDir>
+#include <dblockdevice.h>
+#include <ddiskdevice.h>
 
 
-#include "controllers/masteredmediacontroller.h"
 #include "dfmevent.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "stub.h"
 #include "addr_pri.h"
+#include "disomaster.h"
+
+#define private public
+#define protected public
+#include "controllers/masteredmediacontroller.h"
+#include "controllers/masteredmediacontroller_p.h"
 
 namespace {
+
+QByteArrayList (*mountPoints_stub)(void *) = [](void *) {
+    return QByteArrayList() << QByteArray("test///");
+};
 class TestMasteredMediaController : public testing::Test
 {
 public:
@@ -59,6 +70,17 @@ TEST_F(TestMasteredMediaController, tstEventsFuncs)
     auto e5 = dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CopyAction, testUrl, DUrlList() << testUrl);
     EXPECT_EQ(int(0), ctrl->pasteFile(e5).count());
     e5 = dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CopyAction, testUrl, DUrlList() << testUrl << testUrl);
+    EXPECT_EQ(int(0), ctrl->pasteFile(e5).count());
+    Stub st;
+    st.set(ADDR(DBlockDevice, mountPoints), mountPoints_stub);
+    EXPECT_EQ(int(0), ctrl->pasteFile(e5).count());
+    DISOMasterNS::DeviceProperty (*getDevicePropertyCached_stub)(void *, QString) = [](void *, QString) {
+        DISOMasterNS::DeviceProperty dp;
+        dp.devid = "testId";
+        return dp;
+    };
+    st.set(&DISOMasterNS::DISOMaster::getDevicePropertyCached, getDevicePropertyCached_stub);
+    e5 = dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CopyAction, testUrl, DUrlList() << testUrl);
     EXPECT_EQ(int(0), ctrl->pasteFile(e5).count());
 
     auto e6 = dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << testUrl, true, true);
@@ -144,6 +166,12 @@ TEST_F(TestMasteredMediaFileWatcher, tstSlots)
     call_private_fun::MasteredMediaFileWatcheronFileDeleted(*watcher, DUrl());
     call_private_fun::MasteredMediaFileWatcheronFileAttributeChanged(*watcher, DUrl());
     call_private_fun::MasteredMediaFileWatcheronSubfileCreated(*watcher, DUrl());
+
+    MasteredMediaFileWatcherPrivate *pri = new MasteredMediaFileWatcherPrivate(watcher);
+    pri->start();
+    pri->stop();
+//    pri->handleGhostSignal(DUrl("burn:///dev/sr0/disc_files/test.file"), DAbstractFileWatcher::SignalType1(), DUrl());
+    pri->handleGhostSignal(DUrl("/fake/news/"), DAbstractFileWatcher::SignalType1(), DUrl());
 }
 
 namespace  {
@@ -174,4 +202,24 @@ TEST_F(TestDFMShadowedDirIterator, tstFuncs)
     EXPECT_TRUE(!iter->fileUrl().isValid());
     EXPECT_TRUE(!iter->fileInfo());
     EXPECT_TRUE(!iter->url().isVaultFile());
+
+
+    bool (*opticalBlank_stub)(void *) = [](void *) {
+        return true;
+    };
+    QString (*drive_stub)(void *) = [](void *) {
+        return QString("fakedev");
+    };
+    Stub st;
+    st.set(ADDR(DBlockDevice, drive), drive_stub);
+    st.set(ADDR(DBlockDevice, mountPoints), mountPoints_stub);
+    st.set(ADDR(DDiskDevice, opticalBlank), opticalBlank_stub);
+    MasteredMediaFileWatcher *watcher = new MasteredMediaFileWatcher(DUrl("burn:///dev/sr0/disc_files/test.file"));
+    DFMShadowedDirIterator *tmp = new DFMShadowedDirIterator(QUrl("burn:///dev/sr0/disc_files/test.file"), QStringList(),  QDir::Filters(), QDirIterator::IteratorFlags());
+    delete tmp;
+    st.reset(ADDR(DBlockDevice, mountPoints));
+    st.reset(ADDR(DDiskDevice, opticalBlank));
+
+    watcher->d_func()->proxyOnDisk->fileDeleted(DUrl("/fake/home"));
+    watcher->d_func()->diskm.data()->opticalChanged("fakedev");
 }

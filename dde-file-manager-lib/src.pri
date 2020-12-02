@@ -232,7 +232,9 @@ HEADERS += \
     $$PWD/accessibility/acintelfunctions.h \
     $$PWD/bluetooth/bluetoothmanager_p.h \
     $$PWD/models/virtualentryinfo.h \
-    $$PWD/models/trashfileinfo_p.h
+    $$PWD/models/trashfileinfo_p.h \
+    $$PWD/controllers/mergeddesktopcontroller_p.h \
+    $$PWD/controllers/masteredmediacontroller_p.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \

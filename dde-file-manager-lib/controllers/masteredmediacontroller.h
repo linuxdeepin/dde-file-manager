@@ -5,37 +5,6 @@
 #include "dabstractfilewatcher.h"
 #include "durl.h"
 
-class DFMShadowedDirIterator : public DDirIterator
-{
-public:
-    DFMShadowedDirIterator(const QUrl &path,
-                           const QStringList &nameFilters,
-                           QDir::Filters filter,
-                           QDirIterator::IteratorFlags flags);
-
-    DUrl next() override;
-
-    bool hasNext() const override;
-
-    QString fileName() const override;
-
-    DUrl fileUrl() const override;
-
-    const DAbstractFileInfoPointer fileInfo() const override;
-
-    DUrl url() const override;
-
-private:
-    QSharedPointer<QDirIterator> iterator;
-    QSharedPointer<QDirIterator> stagingiterator;
-    QString mntpoint;
-    QString devfile;
-    QSet<QString> seen;
-    QSet<DUrl> skip;
-    DUrl changeScheme(DUrl in) const;
-    DUrl changeSchemeUpdate(DUrl in);
-};
-
 class MasteredMediaFileWatcherPrivate;
 class MasteredMediaFileWatcher : public DAbstractFileWatcher
 {
