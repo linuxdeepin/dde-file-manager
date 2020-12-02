@@ -4,8 +4,10 @@
 #include <QApplication>
 #include <QList>
 #include <qpa/qplatformscreen.h>
-
+#include "stub.h"
 #include "dbus/dbusdisplay.h"
+#include "dbus/dbusdock.h"
+#include "dbus/dbusmonitor.h"
 #define private public
 #include <screen/screenmanager.h>
 #include "screen/abstractscreenmanager_p.h"
@@ -196,6 +198,176 @@ TEST_F(ScreenOperation, screen_reset)
     EXPECT_EQ(qApp->screens().size(),screens().size());
 }
 
+TEST_F(ScreenOperation, primaryScreen)
+{
+    auto primary = primaryScreen();
+    EXPECT_EQ(dynamic_cast<ScreenObject *>(primary.data())->screen(),qApp->primaryScreen());
+}
+
+TEST_F(ScreenOperation, availableGeometry_hide)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 1;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+    EXPECT_EQ(primary->availableGeometry(),primary->geometry());
+}
+
+TEST_F(ScreenOperation, availableGeometry_invaild)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 6;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
+    st.set(objgeo,geo_foo);
+
+    QRect geo = geo_foo();
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperation, availableGeometry_top)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{0,0,1920,50};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 1.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    QRect geo = geo_foo();
+    QRect dock = dockrect_foo().operator QRect();
+    geo.setY(dock.bottom());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperation, availableGeometry_top_2)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{0,0,1920,50};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 2.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    qreal ratio = ratio_foo();
+    QRect geo = geo_foo();
+
+    QRect dock = dockrect_foo().operator QRect();
+    dock = QRect(dock.x(),dock.y(), dock.width() / ratio,dock.height() / ratio);
+
+    geo.setY(dock.bottom());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperation, availableGeometry_right)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 1;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{1900,0,20,1080};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 1.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    QRect geo = geo_foo();
+    QRect dock = dockrect_foo().operator QRect();
+
+    geo.setWidth(dock.left() - geo.left());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperation, availableGeometry_bottom)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 2;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{0,1000,1920,80};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 1.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    QRect geo = geo_foo();
+    QRect dock = dockrect_foo().operator QRect();
+
+    geo.setHeight(dock.top() - geo.top());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperation, availableGeometry_left)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 3;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{0,0,50,1080};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 1.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    QRect geo = geo_foo();
+    QRect dock = dockrect_foo().operator QRect();
+
+    geo.setX(dock.right());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
 TEST_F(ScreenOperation, onScreenGeometryChanged)
 {
     EXPECT_TRUE(d->m_events.isEmpty());
@@ -249,6 +421,177 @@ public:
 };
 }
 /**********************************************/
+TEST_F(ScreenOperationWayland, primaryScreen)
+{
+    auto primary = primaryScreen();
+    DBusMonitor m(dynamic_cast<ScreenObjectWayland *>(primary.data())->path());
+    EXPECT_EQ(primary->name(), m.name());
+    EXPECT_EQ(primary->handleGeometry(), m.rect());
+}
+
+TEST_F(ScreenOperationWayland, availableGeometry_hide)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 1;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+    EXPECT_EQ(primary->availableGeometry(),primary->geometry());
+}
+
+TEST_F(ScreenOperationWayland, availableGeometry_invaild)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 6;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
+    st.set(objgeo,geo_foo);
+
+    QRect geo = geo_foo();
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperationWayland, availableGeometry_top)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{0,0,1920,50};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 1.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    QRect geo = geo_foo();
+    QRect dock = dockrect_foo().operator QRect();
+    geo.setY(dock.bottom());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperationWayland, availableGeometry_top_2)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{0,0,1920,50};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 2.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    qreal ratio = ratio_foo();
+    QRect geo = geo_foo();
+
+    QRect dock = dockrect_foo().operator QRect();
+    dock = QRect(dock.x(),dock.y(), dock.width() / ratio,dock.height() / ratio);
+
+    geo.setY(dock.bottom());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperationWayland, availableGeometry_right)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 1;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{1900,0,20,1080};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 1.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    QRect geo = geo_foo();
+    QRect dock = dockrect_foo().operator QRect();
+
+    geo.setWidth(dock.left() - geo.left());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperationWayland, availableGeometry_bottom)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 2;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{0,1000,1920,80};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 1.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    QRect geo = geo_foo();
+    QRect dock = dockrect_foo().operator QRect();
+
+    geo.setHeight(dock.top() - geo.top());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
+
+TEST_F(ScreenOperationWayland, availableGeometry_left)
+{
+    auto primary = primaryScreen();
+    Stub st;
+    auto hide_foo = (int(*)())([](){return 0;});
+    st.set(ADDR(DBusDock,hideMode),hide_foo);
+
+    auto pos_foo = (int(*)())([](){return 3;});
+    st.set(ADDR(DBusDock,position),pos_foo);
+
+    auto dockrect_foo = (DockRect(*)())([](){return DockRect{0,0,50,1080};});
+    st.set(ADDR(DBusDock,frontendWindowRect),dockrect_foo);
+
+    auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
+    auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
+    st.set(objgeo,geo_foo);
+
+    auto ratio_foo = (qreal(*)())([](){return 1.0;});
+    st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
+
+    QRect geo = geo_foo();
+    QRect dock = dockrect_foo().operator QRect();
+
+    geo.setX(dock.right());
+    EXPECT_EQ(primary->availableGeometry(),geo);
+}
 
 TEST_F(ScreenOperationWayland, onMonitorChanged)
 {
