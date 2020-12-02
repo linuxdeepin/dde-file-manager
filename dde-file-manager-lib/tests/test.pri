@@ -223,3 +223,4 @@ SOURCES += \
     $$PWD/interfaces/customization/ut-dcustomactionbuilder.cpp \
     $$PWD/interfaces/customization/ut_dcustomactionparser.cpp \
     $$PWD/interfaces/customization/ut_dcustomactiondata.cpp
+    $$PWD/interfaces/ut_drootfilemanager.cpp
