@@ -222,5 +222,8 @@ SOURCES += \
     $$PWD/interfaces/customization/ut_customaction_sort.cpp \
     $$PWD/interfaces/customization/ut-dcustomactionbuilder.cpp \
     $$PWD/interfaces/customization/ut_dcustomactionparser.cpp \
-    $$PWD/interfaces/customization/ut_dcustomactiondata.cpp
-    $$PWD/interfaces/ut_drootfilemanager.cpp
+    $$PWD/interfaces/customization/ut_dcustomactiondata.cpp \
+    $$PWD/interfaces/ut_drootfilemanager.cpp \
+    #log
+    $$PWD/log/ut_dfmlogmanager.cpp \
+    $$PWD/log/ut_filterappender.cpp \
