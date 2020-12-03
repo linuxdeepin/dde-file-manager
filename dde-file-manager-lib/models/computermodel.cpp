@@ -197,7 +197,7 @@ ComputerModel::ComputerModel(QObject *parent)
                 if (ndisksIndex == -1 ) {
                     addItem(makeSplitterUrl(tr("Disks")));
                 }
-                auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
+                auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) +1, m_items.end(), fi,
                                           [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                     return DFMRootFileInfo::typeCompare(a, b.fi);
                 });
