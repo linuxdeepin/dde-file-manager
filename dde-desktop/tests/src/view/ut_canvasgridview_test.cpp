@@ -8,6 +8,8 @@
 #include <QEventLoop>
 #include <QAbstractScrollArea>
 
+#include <dfilemenu.h>
+#include "stub.h"
 #define private public
 #define protected public
 
@@ -354,38 +356,72 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_contextMenuEvent){
     m_canvasGridView->contextMenuEvent(&ent2);
 }
 
+
+static int stubRet = 0;
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_showNormalMenu){
     ASSERT_NE(m_canvasGridView, nullptr);
-    QTimer timer;
-    QObject::connect(&timer, &QTimer::timeout, [&]{
-        timer.stop();
-          QWidget tempWdg;
-          tempWdg.show();
-          tempWdg.close();
-    });
-
     auto tempFlags = (Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);// (0x00a7)
     auto localFile = GridManager::instance()->firstItemId(m_canvasGridView->m_screenNum);
+    ASSERT_FALSE(localFile.isEmpty());
+    while (m_canvasGridView->model()->state() == DFileSystemModel::Busy) {
+        qApp->processEvents();
+    }
     auto tempIndex = m_canvasGridView->model()->index(DUrl(localFile));
-    timer.start(2000);
+    ASSERT_TRUE(tempIndex.isValid());
+
+    stubRet = 0;
+    Stub st;
+    auto exec_stub = (QAction* (*)())([](){
+        stubRet = 1;
+        return (QAction*)nullptr;
+    });
+    auto exec_foo = (QAction* (DFileMenu::*)())&DFileMenu::exec;
+    st.set(exec_foo, exec_stub);
+
+    auto noneWld = (bool(*)())([](){return false;});
+    st.set(ADDR(DesktopInfo,waylandDectected), noneWld);
     m_canvasGridView->showNormalMenu(tempIndex, tempFlags);
+    EXPECT_EQ(stubRet, 1);
+
+    stubRet = 0;
+    st.reset(ADDR(DesktopInfo,waylandDectected));
+    auto wld = (bool(*)())([](){return true;});
+    st.set(ADDR(DesktopInfo,waylandDectected), wld);
+
+    auto execlop_stub = (int (*)())([](){stubRet = 1; return 0;});
+    st.set(ADDR(QEventLoop,exec), execlop_stub);
+    m_canvasGridView->showNormalMenu(tempIndex, tempFlags);
+    EXPECT_EQ(stubRet, 1);
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_showEmptyAreaMenu){
     ASSERT_NE(m_canvasGridView, nullptr);
-    QTimer timer;
-    QObject::connect(&timer, &QTimer::timeout, [&]{
-        timer.stop();
-          QWidget tempWdg;
-          tempWdg.show();
-          tempWdg.close();
-    });
-
     auto tempFlags = (Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);// (0x00a5)
-    timer.start(2000);
-    m_canvasGridView->showEmptyAreaMenu(tempFlags);
-}
 
+    stubRet = 0;
+    Stub st;
+    auto exec_stub = (QAction* (*)())([](){
+        stubRet = 1;
+        return (QAction*)nullptr;
+    });
+    auto exec_foo = (QAction* (DFileMenu::*)())&DFileMenu::exec;
+    st.set(exec_foo, exec_stub);
+
+    auto noneWld = (bool(*)())([](){return false;});
+    st.set(ADDR(DesktopInfo,waylandDectected), noneWld);
+    m_canvasGridView->showEmptyAreaMenu(tempFlags);
+    EXPECT_EQ(stubRet, 1);
+
+    stubRet = 0;
+    st.reset(ADDR(DesktopInfo,waylandDectected));
+    auto wld = (bool(*)())([](){return true;});
+    st.set(ADDR(DesktopInfo,waylandDectected), wld);
+
+    auto execlop_stub = (int (*)())([](){stubRet = 1; return 0;});
+    st.set(ADDR(QEventLoop,exec), execlop_stub);
+    m_canvasGridView->showEmptyAreaMenu(tempFlags);
+    EXPECT_EQ(stubRet, 1);
+}
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setIconByLevel)
 {
