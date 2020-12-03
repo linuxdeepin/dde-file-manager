@@ -278,7 +278,7 @@ public:
     QDirIterator::IteratorFlags m_flags;
     mutable QList<DUrl> searchPathList;
     mutable DDirIteratorPointer it;
-    mutable bool m_hasIteratorByKeywordOfCurrentIt;
+    mutable bool m_hasIteratorByKeywordOfCurrentIt = false;
 
 #ifndef DISABLE_QUICK_SEARCH
     // 所有支持快速搜索的子目录(可包含待搜索目录本身)

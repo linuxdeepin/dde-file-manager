@@ -50,7 +50,7 @@ signals:
 
 public slots:
 protected:
-    QMap<DCustomActionDefines::ComboType,int> m_comboPos; //一级菜单，不同的文件组合时的位置
+    QMap<DCustomActionDefines::ComboType, int> m_comboPos; //一级菜单，不同的文件组合时的位置
     int m_position;     //显示位置，二,三级菜单的位置，一级菜单文件组合的默认位置
     DCustomActionDefines::ActionArg m_nameArg;  //菜单名参数
     DCustomActionDefines::ActionArg m_cmdArg;   //命令参数
@@ -68,7 +68,7 @@ class DCustomActionEntry
     friend class DCustomActionBuilder;
 public:
     explicit DCustomActionEntry();
-    DCustomActionEntry(const DCustomActionEntry &other);
+    explicit DCustomActionEntry(const DCustomActionEntry &other);
     DCustomActionEntry &operator=(const DCustomActionEntry &other);
     QString package() const;
     QString version() const;

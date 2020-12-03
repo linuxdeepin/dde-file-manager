@@ -47,8 +47,8 @@ private:
     static gboolean update_model_cb(gpointer user_data, gpointer sender);
 private:
     FsearchApplication *app = nullptr;
-    callbackFunc cbFunc;
-    GPtrArray *results;
+    callbackFunc cbFunc = nullptr;
+    GPtrArray *results = nullptr;
     uint  num_results = 0;
     void *caller = nullptr;
 };

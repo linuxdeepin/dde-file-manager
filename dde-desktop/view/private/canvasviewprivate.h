@@ -50,14 +50,12 @@ private:
 public:
     CanvasViewPrivate()
     {
-        cellMargins = QMargins(2, 2, 2, 2);
-        selectRect = QRect(-1, -1, 1, 1);
         mousePressed = false;
         bReloadItem = false;
         dodgeDelayTimer.setInterval(200);
 
         touchTimer.setTimerType(Qt::PreciseTimer);
-        QObject::connect(&touchTimer,&QTimer::timeout,&touchTimer,&QTimer::stop);
+        QObject::connect(&touchTimer, &QTimer::timeout, &touchTimer, &QTimer::stop);
 
         if (qgetenv("_DDE_DESKTOP_DEBUG_SHOW_GRID") == "TRUE") {
             _debug_log = true;
@@ -76,12 +74,11 @@ public:
         auto miniCellWidth = szItem.width() + miniMargin.left() + miniMargin.right();
         colCount = (szSceeen.width() - dockReserveArea.width()) / miniCellWidth;
 
-        if (colCount < 1){
+        if (colCount < 1) {
             qCritical() << "!!!!! colCount is 0!!! set it 1 and set cellWidth to " << szCanvas.width();
             cellWidth = szCanvas.width();
             colCount = 1;
-        }
-        else {
+        } else {
             cellWidth = szCanvas.width() / colCount;
         }
         if (cellWidth < 1)
@@ -89,11 +86,11 @@ public:
 
         auto miniCellHeigh = szItem.height() + miniMargin.top() + miniMargin.bottom();
         rowCount = (szSceeen.height() - dockReserveArea.height()) / miniCellHeigh;
-        if (rowCount < 1){
+        if (rowCount < 1) {
             qCritical() << "!!!!! rowCount is 0!!! set it and set cellHeight to" << szCanvas.height();
             cellHeight = szCanvas.height();
             rowCount = 1;
-        }else {
+        } else {
             cellHeight = szCanvas.height() / rowCount;
         }
 
@@ -136,20 +133,20 @@ public:
 public:
     QRect    dockReserveArea = QRect(0, 0, 80, 80);
     QMargins viewMargins;
-    QMargins cellMargins;
+    QMargins cellMargins = QMargins(2, 2, 2, 2);
 
     bool hideItems  = false;
 
-    int rowCount;
-    int colCount;
-    int cellWidth;
-    int cellHeight;
+    int rowCount = 0;
+    int colCount = 0;
+    int cellWidth = 0;
+    int cellHeight = 0;
 
     QTimer              dodgeDelayTimer;
     QStringList         dodgeItems;
     bool                dodgeAnimationing   = false;
     double              dodgeDuration       = 0;
-    GridCore            *dodgeTargetGrid;
+    GridCore            *dodgeTargetGrid = nullptr;
     bool                startDodge            = false;
     QPoint              dragTargetGrid   = QPoint(-1, -1);
 
@@ -160,11 +157,11 @@ public:
     QString             lastMenuNewFilepath;
 
     QPoint              lastPos;
-    QPoint              beginPos{QPoint(-1,-1)};
+    QPoint              beginPos{QPoint(-1, -1)};
 
     QItemSelection      beforeMoveSelection;
     bool                showSelectRect  = false;
-    QRect               selectRect      = QRect();
+    QRect               selectRect       = QRect(-1, -1, 1, 1);
 
     bool                mousePressed;
 

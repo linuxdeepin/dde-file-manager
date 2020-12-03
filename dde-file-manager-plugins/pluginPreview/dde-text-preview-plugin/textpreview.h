@@ -75,7 +75,7 @@ private:
     //! 用来控制m_textBrowser中使用appendPlainText追加数据后会发送valueChanged信号导致在
     //! 重复调用曹函数valueChange导致程序崩溃，所以m_flg为true时valueChanged曹函数中的逻辑
     //! 可以执行，否则不执行
-    bool m_flg;
+    bool m_flg = false;
 };
 
 DFM_END_NAMESPACE
