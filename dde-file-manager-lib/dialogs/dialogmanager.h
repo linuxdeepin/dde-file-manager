@@ -62,29 +62,30 @@ class DialogManager : public QObject
 {
     Q_OBJECT
 public:
-    enum messageType
-    {
+    enum messageType {
         msgInfo = 1,
         msgWarn = 2,
         msgErr = 3
     };
 
 public:
-    explicit DialogManager(QObject *parent = 0);
+    explicit DialogManager(QObject *parent = nullptr);
     ~DialogManager();
-    void initData();
-    void initTaskDialog();
-    void initCloseIndicatorDialog();
-    void initConnect();
     QPoint getPropertyPos(int dialogWidth, int dialogHeight);
     QPoint getPerportyPos(int dialogWidth, int dialogHeight, int count, int index);
     bool isTaskDialogEmpty();
     DTaskDialog *taskDialog() const;
 
+private:
+    void initData();
+    void initTaskDialog();
+    void initCloseIndicatorDialog();
+    void initConnect();
+
 public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob *job);
-    void removeJob(const QString &jobId,bool clearAllbuffer = false);
+    void removeJob(const QString &jobId, bool clearAllbuffer = false);
     QString getJobIdByUrl(const DUrl &url);
     void removeAllJobs();
     void updateJob();

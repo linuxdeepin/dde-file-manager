@@ -51,16 +51,16 @@ void ToolBarFrame::initUI()
     m_playControlButton = new QPushButton(this);
     m_playControlButton->setFixedSize(24, 24);
     m_playControlButton->setStyleSheet("QPushButton{"
-                                            "border: none;"
-                                            "image: url(:/icons/icons/start_normal.png);"
+                                       "border: none;"
+                                       "image: url(:/icons/icons/start_normal.png);"
                                        "}"
                                        "QPushButton::pressed{"
-                                            "image: url(:/icons/icons/start_pressed.png);"
+                                       "image: url(:/icons/icons/start_pressed.png);"
                                        "}"
                                        "QPushButton::hover{"
-                                            "image: url(:/icons/icons/start_hover.png);"
+                                       "image: url(:/icons/icons/start_hover.png);"
                                        "}"
-                                       );
+                                      );
 
     m_progressSlider = new QSlider(this);
     m_progressSlider->setOrientation(Qt::Horizontal);
@@ -68,7 +68,7 @@ void ToolBarFrame::initUI()
 
     m_durationLabel = new QLabel(this);
 
-    QHBoxLayout* layout = new QHBoxLayout;
+    QHBoxLayout *layout = new QHBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_playControlButton, 0, Qt::AlignVCenter);
     layout->addWidget(m_progressSlider, 0, Qt::AlignVCenter);
@@ -99,37 +99,37 @@ void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
     }
 
     QString iconName;
-    if(state == QMediaPlayer::StoppedState || state == QMediaPlayer::PausedState){
+    if (state == QMediaPlayer::StoppedState || state == QMediaPlayer::PausedState) {
         iconName = "start";
     } else {
         iconName = "pause";
     }
 
     m_playControlButton->setStyleSheet("QPushButton{"
-                                            "border: none;"
-                                            "image: url(:/icons/icons/" + iconName + "_normal.png);"
+                                       "border: none;"
+                                       "image: url(:/icons/icons/" + iconName + "_normal.png);"
                                        "}"
                                        "QPushButton::pressed{"
-                                            "image: url(:/icons/icons/" + iconName + "_pressed.png);"
+                                       "image: url(:/icons/icons/" + iconName + "_pressed.png);"
                                        "}"
                                        "QPushButton::hover{"
-                                            "image: url(:/icons/icons/" + iconName + "_hover.png);"
+                                       "image: url(:/icons/icons/" + iconName + "_hover.png);"
                                        "}"
-                                       );
+                                      );
 }
 
 void ToolBarFrame::onPlayStatusChanged(const QMediaPlayer::MediaStatus &status)
 {
-    if(status == QMediaPlayer::LoadedMedia || status == QMediaPlayer::BufferedMedia){
+    if (status == QMediaPlayer::LoadedMedia || status == QMediaPlayer::BufferedMedia) {
         durationToLabel(m_player->duration());
     }
 }
 
 void ToolBarFrame::onPlayControlButtonClicked()
 {
-    if(m_player->state() == QMediaPlayer::PlayingState){
+    if (m_player->state() == QMediaPlayer::PlayingState) {
         pause();
-    } else if (m_player->state() == QMediaPlayer::StoppedState){
+    } else if (m_player->state() == QMediaPlayer::StoppedState) {
         m_progressSlider->setValue(0);
         play();
     } else {
@@ -144,7 +144,7 @@ void ToolBarFrame::updateProgress()
 
 void ToolBarFrame::seekPosition(const int &pos)
 {
-    if(qAbs(pos - m_player->position()) > 3){
+    if (qAbs(pos - m_player->position()) > 3) {
         m_player->setPosition(pos);
     }
 }
@@ -176,12 +176,12 @@ void ToolBarFrame::durationToLabel(qint64 duration)
     int seconds = sDurations % 60;
     QString minutesStr;
     QString secondsStr;
-    if(minutes < 10){
+    if (minutes < 10) {
         minutesStr = "0" + QString::number(minutes);
     } else {
         minutesStr = QString::number(minutes);
     }
-    if(seconds < 10){
+    if (seconds < 10) {
         secondsStr = "0" + QString::number(seconds);
     } else {
         secondsStr = QString::number(seconds);
