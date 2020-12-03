@@ -1,5 +1,4 @@
 #include "interfaceactivevault.h"
-#include "operatorcenter.h"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
@@ -7,8 +6,16 @@
 #include <QPixmap>
 #include <QStandardPaths>
 #include "QtTest/QTest"
+#include <QTextStream>
 
 #include "controllers/vaultcontroller.h"
+
+#include "stub.h"
+
+#define private public
+#include "operatorcenter.h"
+#undef private
+
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -35,6 +42,18 @@ namespace  {
 TEST_F(TestOperatorCenter, createDirAndFile)
 {
     EXPECT_TRUE(m_opCenter->createDirAndFile());
+
+
+    QString (*stubFun)(const QString &before, const QString &behind) = [](const QString &before, const QString &behind)->QString{
+        Q_UNUSED(before)
+        Q_UNUSED(behind)
+        //do nothing.
+        return "";
+    };
+
+    Stub stub;
+    stub.set(ADDR(OperatorCenter, makeVaultLocalPath), stubFun);
+    EXPECT_FALSE(m_opCenter->createDirAndFile());
 }
 
 /**
@@ -42,10 +61,17 @@ TEST_F(TestOperatorCenter, createDirAndFile)
  */
 TEST_F(TestOperatorCenter, saveSaltAndClipher)
 {
-    QSKIP("this test will change vault password on local machine.");
-    // this will modify the vault password.
     QString pswd("123456");
     QString hint("unit test.");
+
+    void (*st_operator)(void* obj, const QString &str) = [](void* obj, const QString &str){
+        Q_UNUSED(obj)
+        Q_UNUSED(str)
+        //do nothing.
+    };
+
+    Stub stub;
+    stub.set((QTextStream&(QTextStream::*)(const QString &)) ADDR(QTextStream, operator<<), st_operator);
     EXPECT_TRUE(m_opCenter->saveSaltAndClipher(pswd, hint));
 }
 
@@ -54,7 +80,19 @@ TEST_F(TestOperatorCenter, saveSaltAndClipher)
  */
 TEST_F(TestOperatorCenter, createKey)
 {
-    QSKIP("this test will change vault password on local machine.");
+    QString pswd("123456");
+    QString hint("unit test.");
+
+    void (*st_operator)(void* obj, const QString &str) = [](void* obj, const QString &str){
+        Q_UNUSED(obj)
+        Q_UNUSED(str)
+        //do nothing.
+    };
+
+    Stub stub;
+    stub.set((QTextStream&(QTextStream::*)(const QString &)) ADDR(QTextStream, operator<<), st_operator);
+    EXPECT_TRUE(m_opCenter->createKey(pswd, 0));
+    EXPECT_FALSE(m_opCenter->createKey(pswd, 2048));
 }
 
 /**
@@ -74,10 +112,24 @@ TEST_F(TestOperatorCenter, checkUserKey)
 {
     QString userKey("");
     QString cliper("");
-    EXPECT_FALSE(m_opCenter->checkPassword(userKey, cliper));
+    EXPECT_FALSE(m_opCenter->checkUserKey(userKey, cliper));
 
     userKey.resize(USER_KEY_LENGTH);
-    EXPECT_FALSE(m_opCenter->checkPassword(userKey, cliper));
+    EXPECT_FALSE(m_opCenter->checkUserKey(userKey, cliper));
+
+    QString (*st_makeVaultLocalPath)(const QString &before, const QString &behind) =
+            [](const QString &before, const QString &behind)->QString{
+        Q_UNUSED(before)
+        Q_UNUSED(behind)
+        //do nothing.
+        return "";
+    };
+
+    Stub stub;
+    stub.set(ADDR(OperatorCenter, makeVaultLocalPath), st_makeVaultLocalPath);
+    EXPECT_FALSE(m_opCenter->checkUserKey(userKey, cliper));
+
+
 }
 
 /**
@@ -193,4 +245,17 @@ TEST_F(TestOperatorCenter, executionShellCommand)
     EXPECT_EQ(-1, m_opCenter->executionShellCommand("", msgOut));
     EXPECT_EQ(32512, m_opCenter->executionShellCommand("errorCmd", msgOut));
     EXPECT_NE(-1, m_opCenter->executionShellCommand("ls", msgOut));
+}
+
+/**
+ * @brief TEST_F 执行进程
+ */
+TEST_F(TestOperatorCenter, tst_exeuteProcess)
+{
+    QStringList msgOut;
+
+    m_opCenter->executeProcess("sudo ls");
+    m_opCenter->executeProcess("ls");
+
+    m_opCenter->executeProcess("lu");
 }
