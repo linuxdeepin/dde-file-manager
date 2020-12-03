@@ -114,6 +114,9 @@ QString rsam::rsa_pub_decrypt_base64(const QString &strDecryptData, const QStrin
         pRsa = PEM_read_bio_RSA_PUBKEY(pKeyBio, &pRsa, nullptr, nullptr);
     }
 
+    if (!pRsa)
+        return "";
+
     int nLen = RSA_size(pRsa);
     char *pClearBuf = new char[nLen];
     memset(pClearBuf, 0, size_t(nLen));

@@ -126,11 +126,6 @@ protected:
      */
     quint64 dbusGetSelfTime() const;
 
-    /**
-     * @brief dbusClearLockEvent 清除锁定事件
-     */
-    void dbusClearLockEvent();
-
 private:
     explicit VaultLockManager(QObject *parent = nullptr);
     QSharedPointer<VaultLockManagerPrivate> d_ptr;
