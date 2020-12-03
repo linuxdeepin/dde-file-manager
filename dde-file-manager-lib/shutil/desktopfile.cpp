@@ -32,11 +32,9 @@
  * @brief Loads desktop file
  * @param fileName
  */
-DesktopFile::DesktopFile(const QString &fileName) {
-
-    // Store file name
-    m_fileName = fileName;
-
+DesktopFile::DesktopFile(const QString &fileName)
+    : m_fileName(fileName)
+{
     // File validity
     if (m_fileName.isEmpty() || !QFile::exists(fileName)) {
         return;
@@ -47,36 +45,37 @@ DesktopFile::DesktopFile(const QString &fileName) {
     // Loads .desktop file (read from 'Desktop Entry' group)
     Properties desktop(fileName, "Desktop Entry");
 
-    if(desktop.contains("X-Deepin-AppID")){
+    if (desktop.contains("X-Deepin-AppID")) {
         m_deepinId = desktop.value("X-Deepin-AppID", settings.value("X-Deepin-AppID")).toString();
     }
 
-    if(desktop.contains("X-Deepin-Vendor")){
+    if (desktop.contains("X-Deepin-Vendor")) {
         m_deepinVendor = desktop.value("X-Deepin-Vendor", settings.value("X-Deepin-Vendor")).toString();
     }
 
-    if(desktop.contains("NoDisplay")){
+    if (desktop.contains("NoDisplay")) {
         m_noDisplay = desktop.value("NoDisplay", settings.value("NoDisplay").toBool()).toBool();
     }
-    if(desktop.contains("Hidden")){
+    if (desktop.contains("Hidden")) {
         m_hidden = desktop.value("Hidden", settings.value("Hidden").toBool()).toBool();
     }
 
     //由于获取的系统语言简写与.desktop的语言简写存在不对应关系，经决定先采用获取的系统值匹配
     //若没匹配到则采用系统值"_"左侧的字符串进行匹配，均为匹配到，才走原未匹配流程
-    auto getValueFromSys = [&desktop,&settings](const QString &type, const QString &sysName)->QString {
+    auto getValueFromSys = [&desktop, &settings](const QString & type, const QString & sysName)->QString {
         const QString key = QString("%0[%1]").arg(type).arg(sysName);
         return desktop.value(key, settings.value(key)).toString();
     };
 
-    auto getNameByType = [&desktop,&settings,&getValueFromSys](const QString &type)->QString{
+    auto getNameByType = [&desktop, &settings, &getValueFromSys](const QString & type)->QString{
         QString tempSysName = QLocale::system().name();
         QString targetName = getValueFromSys(type, tempSysName);
-        if (targetName.isEmpty()) {
+        if (targetName.isEmpty())
+        {
             auto strSize = tempSysName.trimmed().split("_");
-            if (!strSize.isEmpty()){
+            if (!strSize.isEmpty()) {
                 tempSysName = strSize.first();
-                targetName = getValueFromSys(type,tempSysName);
+                targetName = getValueFromSys(type, tempSysName);
             }
 
             if (targetName.isEmpty())
@@ -104,21 +103,25 @@ DesktopFile::DesktopFile(const QString &fileName) {
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getFileName() const {
+QString DesktopFile::getFileName() const
+{
     return m_fileName;
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getPureFileName() const {
+QString DesktopFile::getPureFileName() const
+{
     return m_fileName.split("/").last().remove(".desktop");
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getName() const {
+QString DesktopFile::getName() const
+{
     return m_name;
 }
 
-QString DesktopFile::getLocalName() const {
+QString DesktopFile::getLocalName() const
+{
     return m_localName;
 }
 
@@ -131,17 +134,20 @@ QString DesktopFile::getDisplayName() const
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getExec() const {
+QString DesktopFile::getExec() const
+{
     return m_exec;
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getIcon() const {
+QString DesktopFile::getIcon() const
+{
     return m_icon;
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getType() const {
+QString DesktopFile::getType() const
+{
     return m_type;
 }
 
@@ -162,12 +168,14 @@ bool DesktopFile::getNoShow() const
 
 //---------------------------------------------------------------------------
 
-QStringList DesktopFile::getCategories() const {
+QStringList DesktopFile::getCategories() const
+{
     return m_categories;
 }
 //---------------------------------------------------------------------------
 
-QStringList DesktopFile::getMimeType() const {
+QStringList DesktopFile::getMimeType() const
+{
     return m_mimeType;
 }
 //---------------------------------------------------------------------------

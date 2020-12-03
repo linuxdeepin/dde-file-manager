@@ -32,29 +32,6 @@
 DFM_BEGIN_NAMESPACE
 #define SEARCH_RESULT_NUM   100000
 
-//search
-class OneNormsReader : public FilterIndexReader
-{
-public:
-    OneNormsReader(const IndexReaderPtr &in, const String &field) : FilterIndexReader(in)
-    {
-        this->field = field;
-    }
-
-    virtual ~OneNormsReader()
-    {
-    }
-
-protected:
-    String field;
-
-public:
-    virtual ByteArray norms(const String &field)
-    {
-        return in->norms(this->field);
-    }
-};
-
 DFMFullTextSearchManager::DFMFullTextSearchManager(QObject *parent)
     : QObject(parent)
 {

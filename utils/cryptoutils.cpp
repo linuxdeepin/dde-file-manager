@@ -52,14 +52,14 @@ void aes_128_encrypt(const byte key[], const byte iv[], const secure_string &pte
     ctext.resize(ptext.size() + AES_128_BLOCK_SIZE);
     int out_len1 = (int)ctext.size();
 
-    rc = EVP_EncryptUpdate(ctx.get(), (byte*)&ctext[0], &out_len1, (const byte*)&ptext[0], (int)ptext.size());
+    rc = EVP_EncryptUpdate(ctx.get(), (byte *)&ctext[0], &out_len1, (const byte *)&ptext[0], (int)ptext.size());
     if (rc != 1)
-      throw std::runtime_error("EVP_EncryptUpdate failed");
+        throw std::runtime_error("EVP_EncryptUpdate failed");
 
     int out_len2 = (int)ctext.size() - out_len1;
-    rc = EVP_EncryptFinal_ex(ctx.get(), (byte*)&ctext[0]+out_len1, &out_len2);
+    rc = EVP_EncryptFinal_ex(ctx.get(), (byte *)&ctext[0] + out_len1, &out_len2);
     if (rc != 1)
-      throw std::runtime_error("EVP_EncryptFinal_ex failed");
+        throw std::runtime_error("EVP_EncryptFinal_ex failed");
 
     // Set cipher text size now that we know it
     ctext.resize(out_len1 + out_len2);
@@ -77,13 +77,13 @@ void aes_128_decrypt(const byte key[], const byte iv[], const secure_string &cte
     rtext.resize(ctext.size());
     int out_len1 = (int)rtext.size();
 
-    rc = EVP_DecryptUpdate(ctx.get(), (byte*)&rtext[0], &out_len1, (const byte*)&ctext[0], (int)ctext.size());
+    rc = EVP_DecryptUpdate(ctx.get(), (byte *)&rtext[0], &out_len1, (const byte *)&ctext[0], (int)ctext.size());
     if (rc != 1) {
         throw std::runtime_error("EVP_DecryptUpdate failed");
     }
 
     int out_len2 = (int)rtext.size() - out_len1;
-    rc = EVP_DecryptFinal_ex(ctx.get(), (byte*)&rtext[0]+out_len1, &out_len2);
+    rc = EVP_DecryptFinal_ex(ctx.get(), (byte *)&rtext[0] + out_len1, &out_len2);
     if (rc != 1) {
         throw std::runtime_error("EVP_DecryptFinal_ex failed");
     }
@@ -105,10 +105,10 @@ secure_string bin_to_hex(const CryptoUtils::byte *bin, const int length)
 
 void hex_to_bin(const secure_string &hexStr, byte *outputBuffer, const size_t length)
 {
-    const char * hex = hexStr.c_str();
+    const char *hex = hexStr.c_str();
     memset(outputBuffer, 0, length);
     for (unsigned int i = 0; i < length; i++) {
-        int d;
+        unsigned int d;
         sscanf(hex + i * 2, "%02X", &d);
         outputBuffer[i] = (byte)d;
     }

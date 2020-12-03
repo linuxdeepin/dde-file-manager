@@ -51,9 +51,9 @@ private:
 };
 
 DefaultDiriterator::DefaultDiriterator(const DAbstractFileController *controller, const QSharedPointer<DFMCreateDiriterator> &event)
+    : m_event(event)
 {
     m_controller = const_cast<DAbstractFileController *>(controller);
-    m_event = event;
 }
 
 DUrl DefaultDiriterator::next()
