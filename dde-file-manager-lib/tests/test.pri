@@ -122,6 +122,7 @@ SOURCES += \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
     $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    $$PWD/views/ut_dtabbar.cpp \
     $$PWD/views/ut_dstatusbar.cpp \
     $$PWD/views/ut_droundbutton.cpp \
     $$PWD/views/ut_drenamebar.cpp \
