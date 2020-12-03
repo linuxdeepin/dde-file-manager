@@ -181,12 +181,11 @@ private:
     static QPair<DUrl, quint64> selectionAndRenameFile;        //###: for creating new file.
     static QPair<DUrl, quint64> selectionFile;                //###: rename a file which must be existance.
 
-    StartManagerInterface *m_startManagerInterface;
-    IntrospectableInterface *m_introspectableInterface;
-    bool m_hasLaunchAppInterface = false;
+    StartManagerInterface *m_startManagerInterface = nullptr;
+    IntrospectableInterface *m_introspectableInterface = nullptr;
     QThread m_unmountThread;
     UnmountWorker *m_unmountWorker;
-    bool m_creatingDBusInterface = false; //是否正在创建dbus接口
+    volatile enum {UnkownIFS,NoneIFS,CreatingIFS,VaildIFS} m_statDBusInterface = UnkownIFS; //dbus接口创建状态
 
     friend class FileController;
     friend class MergedDesktopController;
@@ -202,8 +201,7 @@ public:
     static std::atomic<bool> flagForDDesktopRenameBar;
 
     StartManagerInterface *startManagerInterface() const;
-    bool hasLaunchAppInterface() const;
-    void setHasLaunchAppInterface(bool hasLaunchAppInterface);
+    bool checkLaunchAppInterface();
 };
 
 #endif // APPCONTROLLER_H
