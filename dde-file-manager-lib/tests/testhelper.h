@@ -14,11 +14,21 @@ class TestHelper
 public:
     TestHelper();
 
+    static QString createTmpSymlinkFile(const QString &src) {
+        int index = src.lastIndexOf("/");
+        QString symFilePath(src);
+        symFilePath.insert(index + 1, "sym_");
+
+        QProcess::execute("ln -s " + src + " " + symFilePath);
+        return symFilePath;
+    }
+
     static QString createTmpFileName(QString name, QString dirPath = "/tmp") {
         QString tempFilePath =  dirPath + "/" + name;
         QProcess::execute("touch " + tempFilePath);
         return tempFilePath;
     }
+
     static QString createTmpFile(QString suffix = "", QStandardPaths::StandardLocation location = QStandardPaths::TempLocation) {
         qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
         int random = qrand()%1000;
