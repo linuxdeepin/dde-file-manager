@@ -27,6 +27,14 @@
 #include "dfileviewhelper.h"
 #include "../third-party/cpp-stub/addr_pri.h"
 #include "../third-party/cpp-stub/stub.h"
+#include "diconitemdelegate.h"
+#include <QWidget>
+#include "dfmsettings.h"
+#include "dfmglobal.h"
+#include "dfmapplication.h"
+#include "dfileservices.h"
+#include "../models/desktopfileinfo.h"
+#include <QEvent>
 
 using namespace std;
 
@@ -54,6 +62,7 @@ public:
         }
     }
     virtual void TearDown()override{
+
     }
 public:
     QScopedPointer<CanvasViewManager> m_cvmgr{new CanvasViewManager(new BackgroundManager())};
@@ -75,6 +84,7 @@ TEST_F(CanvasGridViewTest, TEST_CanvasGridViewTest_indexAt){
             //拿到对应Rect
             auto tgRect = m_canvasGridView->visualRect(tempIndex);
             QPoint tpPos(tgRect.x() + 5,tgRect.y() + 5);
+
             auto tgIndex = m_canvasGridView->indexAt(tpPos);
             if(tgIndex.isValid()){
                 auto tempTg = tempIndex == tgIndex;
@@ -288,8 +298,12 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_mousePressEvent){
 
     QMouseEvent me(QEvent::User, QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::KeyboardModifiers());
     QMouseEvent(QEvent::MouseButtonPress, QPoint(30, 30), m_canvasGridView->mapToGlobal(QPoint(30, 30)), Qt::LeftButton, Qt::LeftButton, Qt::KeyboardModifiers());
+    QMouseEvent event(QEvent::MouseButtonPress, QPointF(), QPointF(), QPointF(), Qt::LeftButton, Qt::LeftButton, Qt::ControlModifier, Qt::MouseEventSynthesizedByQt);
+    bool(*select)() = [](){return true;};
+    Stub stu;
+    stu.set(ADDR(CanvasGridView, isSelected), select);
     m_canvasGridView->mousePressEvent(&me);
-
+    m_canvasGridView->mousePressEvent(&event);
     EXPECT_TRUE(m_canvasGridView->d->mousePressed);
 }
 
@@ -298,7 +312,20 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_mouseReleaseEvent){
     ASSERT_NE(m_canvasGridView, nullptr);
     QMouseEvent me(QEvent::User, QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::KeyboardModifiers());
     QMouseEvent(QEvent::MouseButtonRelease, QPoint(30, 30), m_canvasGridView->mapToGlobal(QPoint(30, 30)), Qt::LeftButton, Qt::LeftButton, Qt::KeyboardModifiers());
+
+    m_canvasGridView->d->showSelectRect = true;
+    m_canvasGridView->d->selectRect = QRect(QPoint(0, 0), QPoint(100, 100));
+    bool(*judge)() = [](){return true;};
+    static QModelIndex index = m_canvasGridView->property("lastPressedIndex").toModelIndex();
+    QModelIndex(*indx)() = [](){return index;};
+
+    Stub stu,stu1;
+    stu.set(ADDR(QModelIndex, isValid), judge);
+    stu.set(ADDR(DFMGlobal, keyCtrlIsPressed), judge);
+    stu.set(ADDR(CanvasGridView, isSelected), judge);
     m_canvasGridView->mouseReleaseEvent(&me);
+    EXPECT_EQ(m_canvasGridView->d->selectRect, QRect());
+
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_contextMenuEvent){
@@ -411,6 +438,22 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
     qApp->processEvents();
     //Up
     QKeyEvent keyPressEvt_Up(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+    //添加文件
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    path = path + '/' + "test.txt";
+    QFile file(path);
+    if (!file.exists()) {
+        file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+        file.close();
+    }
+
+    static QModelIndexList mlist;
+    mlist << m_canvasGridView->firstIndex() << QModelIndex() << m_canvasGridView->model()->index(DUrl::fromLocalFile(path));
+    QModelIndexList(*list)() = [](){return mlist;};
+
+    Stub stu;
+    stu.set(ADDR(DFileSelectionModel, selectedIndexes), list);
+
     m_canvasGridView->keyPressEvent(&keyPressEvt_Up);
 
     //Tab
@@ -426,9 +469,14 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
     m_canvasGridView->keyPressEvent(&keyPressEvt_Esc);
 
     //Key_pad
-    //Enter//会的打开文件或者文件夹暂时也不覆盖
-//    QKeyEvent keyPressEvt_Enter(QEvent::KeyPress, Qt::Key_Enter, Qt::KeypadModifier);
-//    m_canvasGridView->keyPressEvent(&keyPressEvt_Enter);
+    //Enter
+    QKeyEvent keyPressEvt_Enter(QEvent::KeyPress, Qt::Key_Enter, Qt::KeypadModifier);
+    //为了避免打开太多文件,对openfiles进行函数转换
+    bool(*openf)() = [](){return true;};
+    Stub tub;
+    tub.set(ADDR(DFileService, openFiles), openf);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Enter);
+
 
     //pad F5
     QKeyEvent keyPressEvt_padF5(QEvent::KeyPress, Qt::Key_F5, Qt::KeypadModifier);
@@ -440,12 +488,31 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
 
     //pad Space
     QKeyEvent keyPressEvt_Key_Space(QEvent::KeyPress, Qt::Key_Space, Qt::KeypadModifier);
+    static bool spacejudge = false;
+    void(*myspace)() = [](){spacejudge = true;};
+    tub.set(ADDR(DFMGlobal, showFilePreviewDialog), myspace);
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Space);
+    EXPECT_TRUE(spacejudge);
+
+    //other 直接break
+    QKeyEvent keyPressEvt_Key_D(QEvent::KeyPress, Qt::Key_D, Qt::KeypadModifier);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_D);
 
     //Qt::ShiftModifier:
     //Delete
     QKeyEvent keyPressEvt_Key_ShiftDelete(QEvent::KeyPress, Qt::Key_Delete, Qt::ShiftModifier);
+    QString depath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    depath = depath + '/' + "test.txt";
+    QFile dfile(depath);
+    if (!file.exists()) {
+        file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+        file.close();
+    }
+    mlist.clear();
+    mlist << m_canvasGridView->model()->index(DUrl::fromLocalFile(depath));
+    stu.set(ADDR(DFileSelectionModel, selectedIndexes), list);
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_ShiftDelete);
+
     //T
     QKeyEvent keyPressEvt_Key_ShiftT(QEvent::KeyPress, Qt::Key_T, Qt::ShiftModifier);
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_ShiftT);
@@ -454,6 +521,45 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
     //Key_H
     QKeyEvent keyPressEvt_Key_CrlH(QEvent::KeyPress, Qt::Key_H, Qt::ControlModifier);
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_CrlH);
+
+    //Key_Minus
+    QKeyEvent keyPressEvt_Key_Minus(QEvent::KeyPress, Qt::Key_Minus, Qt::ControlModifier);
+    m_canvasGridView->setIconByLevel(3);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Minus);
+    int level = m_canvasGridView->itemDelegate()->iconSizeLevel();
+    EXPECT_TRUE(2 == level);
+
+    //Key_Equal
+    QKeyEvent keyPressEvt_Key_Equal(QEvent::KeyPress, Qt::Key_Equal, Qt::ControlModifier);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Equal);
+    level = m_canvasGridView->itemDelegate()->iconSizeLevel();
+    EXPECT_TRUE(3 == level);
+
+    //Key_I
+    QKeyEvent keyPressEvt_Key_I(QEvent::KeyPress, Qt::Key_I, Qt::ControlModifier);
+    void(*dig)() = [](){return;};
+    stu.set(ADDR(DFMGlobal, showPropertyDialog), dig);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_I);
+
+
+    //Key_7
+    QKeyEvent keyPressEvt_Key_7(QEvent::KeyPress, Qt::Key_7, Qt::ControlModifier);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_7);
+
+    //Qt::ControlModifier | Qt::ShiftModifier
+    //Qt::Key_N
+    QKeyEvent keyPressEvt_Key_N(QEvent::KeyPress, Qt::Key_N, Qt::ControlModifier | Qt::ShiftModifier);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_N);
+
+    //Qt::Key_Question
+    QKeyEvent keyPressEvt_Key_Question(QEvent::KeyPress, Qt::Key_Question, Qt::ControlModifier | Qt::ShiftModifier);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Question);
+
+    //Qt::Qt::Key_Plus
+    QKeyEvent keyPressEvt_Key_Plus(QEvent::KeyPress, Qt::Key_Plus, Qt::ControlModifier | Qt::ShiftModifier);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Plus);
+    level = m_canvasGridView->itemDelegate()->iconSizeLevel();
+    EXPECT_TRUE(4 == level);
 
     //Qt::AltModifier:
     //Key_M
@@ -466,7 +572,20 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
           tempWdg.close();
     });
     timer.start(1000);
+    bool(*boo)() = [](){return true;};
+    stu.set(ADDR(QVariant, isValid), boo);
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
+
+    //key_10
+    QKeyEvent keyPressEvt_Key_9(QEvent::KeyPress, Qt::Key_9, Qt::AltModifier);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_9);
+
+    //
+    QKeyEvent keyPressEvt_Key(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+    stu.set(ADDR(QVariant, toBool), boo);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key);
+    QKeyEvent keyPressEvt_Key_8(QEvent::KeyPress, Qt::Key_8, Qt::NoModifier);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_8);
 }
 
 
@@ -491,6 +610,8 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
         m_canvasGridView->d->currentCursorIndex = current;
     }
 
+    tpCursorActon = QAbstractItemView::CursorAction::MoveHome;
+    m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
     tpCursorActon = QAbstractItemView::CursorAction::MoveLeft;
     m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
     tpCursorActon = QAbstractItemView::CursorAction::MoveRight;
@@ -707,7 +828,13 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayArrage)
     EXPECT_TRUE(!GridManager().instance()->autoMerge());
 
     //why twice?
+    m_canvasGridView->delayArrage(0);
     m_canvasGridView->delayArrage(5);
+    QEventLoop loop;
+    QTimer::singleShot(50, &loop, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_refresh)
@@ -855,6 +982,13 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_moveCursor)
     m_canvasGridView->d->currentCursorIndex = m_canvasGridView->firstIndex();
     ret = m_canvasGridView->moveCursor(QAbstractItemView::CursorAction::MoveDown, Qt::NoModifier);
     EXPECT_EQ(ret, m_canvasGridView->firstIndex());
+
+    bool(*mymode)() = [](){return true;};
+    Stub tub;
+    tub.set(ADDR(QModelIndex, isValid), mymode);
+    ret = m_canvasGridView->moveCursor(QAbstractItemView::CursorAction::MoveDown, Qt::NoModifier);
+    QModelIndex inx = m_canvasGridView->moveCursorGrid(QAbstractItemView::CursorAction::MoveDown, Qt::NoModifier);
+    EXPECT_EQ(ret, inx);
 }
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_decreaseIcon)
@@ -1139,38 +1273,121 @@ TEST_F(CanvasGridViewTest, test_dragMoveEvent)
     QDragMoveEvent event(pos, Qt::MoveAction, &data, Qt::LeftButton, Qt::NoModifier);
     m_canvasGridView->dragMoveEvent(&event);
 }
+
 //stub
 QWidget* mywidget = nullptr;
 static bool judge = false;
-QWidget* myviewport()
+QRect myviewport()
 {
-    if(nullptr == mywidget) {
-        mywidget = new QWidget;
-    }
     QRect rect;
-    rect.setLeft(10000);
-    rect.setTop(10000);
-    rect.setBottom(-1);
-    rect.setRight(-1);
-    mywidget->setGeometry(rect);
+    if (!judge) {
+        rect.setTop(10000);
+        rect.setBottom(10000);
+        rect.setLeft(10000);
+        rect.setRight(10000);
+    } else {
+        rect.setTop(-1);
+        rect.setBottom(-1);
+        rect.setLeft(-1);
+        rect.setRight(-1);
+    }
     judge = true;
-    return mywidget;
+    return rect;
 }
 
 TEST_F(CanvasGridViewTest, test_scrollTo)
 {
     Stub stu;
-    stu.set(ADDR(QAbstractScrollArea, viewport), myviewport);
+    stu.set(ADDR(QWidget, rect), myviewport);
     QModelIndex index = m_canvasGridView->firstIndex();
+    m_canvasGridView->scrollTo(index);
     m_canvasGridView->scrollTo(index);
     EXPECT_TRUE(judge);
     delete mywidget;
 }
 
+TEST_F(CanvasGridViewTest, test_indexAt)
+{
+    static QModelIndex index = m_canvasGridView->firstIndex();
+    QRect rect = m_canvasGridView->visualRect(index);
+    QPoint pos(rect.x() + 10, rect.y() + 10);
+    static QModelIndexList mlist;
+    static QWidget* widget = nullptr;
+    mlist << index;
+    QString myf = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    myf += '/' + "new.txt";
+    QFile file(myf);
+    if (!file.exists()) {
+        file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+        file.close();
+    }
+    QModelIndexList(*mylist)() = [](){
+        return mlist;
+    };
+    QModelIndex(*myindex)() = [](){
+        return index;
+    };
+    bool(*judge)() = [](){
+        return true;
+    };
+    QWidget*(*mywidget)() = [](){
+        widget = new QWidget;
+        widget->setGeometry(0, 0, 1600, 1000);
+        return widget;
+    };
+    bool(*visible)() = [](){
+        return true;
+    };
+    QRect(*myrect)() = [](){
+        QRect rect(QPoint(0,0), QPoint(1000, 800));
+        return rect;
+    };
+    Stub tub, tub1;
+    typedef int (*fplist)(DIconItemDelegate*, QModelIndexList);
+    fplist list = (fplist)(&DIconItemDelegate::hasWidgetIndexs);
+
+    typedef int (*fpwidget)(CanvasGridView*, QWidget*);
+    fpwidget mwidget = (fpwidget)(&CanvasGridView::indexWidget);
+    tub.set(list, mylist);
+    tub.set(mwidget, mywidget);
+    tub.set(ADDR(QWidget, isVisible), visible);
+    m_canvasGridView->indexAt(pos);
+
+    tub1.set(ADDR(DIconItemDelegate, editingIndex), myindex);
+    QModelIndex ret = m_canvasGridView->indexAt(pos);
+    EXPECT_TRUE(index == index);
+}
+
+TEST_F(CanvasGridViewTest, test_dropEvent)
+{
+    QMimeData data;
+    QDropEvent event(QPointF(), Qt::DropAction::MoveAction, &data, Qt::LeftButton, Qt::NoModifier);
+    Stub tub;
+    static QModelIndexList indexlist;
+    indexlist << m_canvasGridView->firstIndex();
+    QModelIndexList(*myindex)() = [](){return indexlist;};
+    tub.set(ADDR(DFileSelectionModel, selectedIndexes), myindex);
+    bool(*vaild)() = [](){return true;};
+    tub.set(ADDR(QModelIndex, isValid), vaild);
+    bool(*myfalse)() = [](){return false;};
+    tub.set(ADDR(QModelIndex, isValid), myfalse);
+    m_canvasGridView->dropEvent(&event);
+
+
+    static DUrl url = DesktopFileInfo::homeDesktopFileUrl();
+    DUrl(*myurl)() = [](){return url;};
+    typedef int (*furl)(DAbstractFileInfo*, DUrl);
+    furl fdurl = (furl)(&DAbstractFileInfo::fileUrl);
+    tub.set(fdurl, myurl);
+    m_canvasGridView->m_urlsForDragEvent << url;
+    m_canvasGridView->dropEvent(&event);
+    EXPECT_EQ(event.dropAction(), Qt::IgnoreAction);
+}
 TEST_F(CanvasGridViewTest, delete_file)
 {
     QFile file(path);
     if (file.exists()) {
-        QProcess::execute("rm" + path);
+        QProcess::execute("rm " + path);
     }
+    delete m_canvasGridView;
 }
