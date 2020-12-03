@@ -903,7 +903,7 @@ bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePat
 
 bool FileUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-    if (appController->hasLaunchAppInterface()) {
+    if (appController->checkLaunchAppInterface()) {
         qDebug() << "launchApp by dbus:" << desktopFile << filePaths;
         //多个wps文件同时打开应用会报出文件不存在的错误，而单个打开不会
         //对wps文件做特殊处理，一个一个分别打开
@@ -1299,7 +1299,7 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
 bool FileUtils::runCommand(const QString &cmd, const QStringList &args, const QString &wd)
 {
     bool result = false;
-    if (appController->hasLaunchAppInterface()) {
+    if (appController->checkLaunchAppInterface()) {
         qDebug() << "launch cmd by dbus:" << cmd << args;
         if (wd.length()) {
             QVariantMap opt = {{"dir", wd}};

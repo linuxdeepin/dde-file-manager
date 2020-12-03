@@ -1385,30 +1385,51 @@ void AppController::createUserShareManager()
 
 void AppController::createDBusInterface()
 {
-    m_startManagerInterface = new StartManagerInterface("com.deepin.SessionManager",
-                                                        "/com/deepin/StartManager",
+    static const QString SessionManagerService = "com.deepin.SessionManager";
+    static const QString SessionManagerPath = "/com/deepin/StartManager";
+
+    //创建中不再响应
+    if (m_statDBusInterface == CreatingIFS )
+        return;
+    m_statDBusInterface = CreatingIFS;
+
+    if (!m_startManagerInterface)
+        m_startManagerInterface = new StartManagerInterface(SessionManagerService,
+                                                        SessionManagerPath,
                                                         QDBusConnection::sessionBus(),
                                                         this);
-    m_introspectableInterface = new IntrospectableInterface("com.deepin.SessionManager",
-                                                            "/com/deepin/StartManager",
+    if (!m_introspectableInterface) {
+        m_introspectableInterface = new IntrospectableInterface(SessionManagerService,
+                                                            SessionManagerPath,
                                                             QDBusConnection::sessionBus(),
                                                             this);
+        m_introspectableInterface->setTimeout(1000);
+    }
 
-    QtConcurrent::run(QThreadPool::globalInstance(), [&] {
-        m_creatingDBusInterface = true;
+    QtConcurrent::run(QThreadPool::globalInstance(),[this]() {
         QDBusPendingReply<QString> reply = m_introspectableInterface->Introspect();
         reply.waitForFinished();
-        if (reply.isFinished())
-        {
+        if (!reply.isFinished() || reply.isError()) {
+            qWarning() << "dbus connect error" << QDBusError::errorString(reply.error().type()) << m_introspectableInterface->service();
+            m_statDBusInterface = UnkownIFS;
+        } else {
             QString xmlCode = reply.argumentAt(0).toString();
-            if (xmlCode.contains("LaunchApp")) {
-                qDebug() << "com.deepin.SessionManager : StartManager has LaunchApp interface";
-                setHasLaunchAppInterface(true);
+            //Introspect会返回空的接口信息，不能作为判断依据，需置为UnkownIFS再次判断
+            if (xmlCode.contains("com.deepin.StartManager")) {
+                if (xmlCode.contains("LaunchApp")) {
+                    m_statDBusInterface = VaildIFS;
+                    qInfo() << "com.deepin.SessionManager : StartManager has LaunchApp interface";
+                } else {
+                    m_statDBusInterface = NoneIFS;
+                    qWarning() << "com.deepin.SessionManager : StartManager doesn't have LaunchApp interface.";
+                }
             } else {
-                qDebug() << "com.deepin.SessionManager : StartManager doesn't have LaunchApp interface";
+                qWarning() << "com.deepin.SessionManager Introspect error" << xmlCode;
+                m_statDBusInterface = UnkownIFS;
             }
-            m_creatingDBusInterface = false;
+
         }
+        return;
     });
 }
 
@@ -1417,22 +1438,25 @@ void AppController::showErrorDialog(const QString &title, const QString &content
     dialogManager->showErrorDialog(title, content);
 }
 
-void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
+bool AppController::checkLaunchAppInterface()
 {
-    m_hasLaunchAppInterface = hasLaunchAppInterface;
-}
+    //再次尝试获取接口状态
+    qDebug() << "LaunchAppInterface state " << m_statDBusInterface;
+    if (m_statDBusInterface == UnkownIFS)
+        createDBusInterface();
 
-bool AppController::hasLaunchAppInterface() const
-{
     //如果正在加载dbus接口，则稍等
     int times = 10;
-    while (m_creatingDBusInterface && times > 0) {
+    while ((m_statDBusInterface == CreatingIFS) && times > 0) {
         qDebug() << "LaunchAppInterface is loading...";
         QThread::msleep(100);
         times--;
     }
 
-    return m_hasLaunchAppInterface;
+    bool ret = m_statDBusInterface == VaildIFS;
+    if (!ret)
+        qWarning() << "LaunchAppInterface is invaild, state:" << m_statDBusInterface;
+    return ret;
 }
 
 StartManagerInterface *AppController::startManagerInterface() const
