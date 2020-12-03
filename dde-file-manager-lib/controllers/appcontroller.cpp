@@ -1057,7 +1057,6 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
     if (fi && fi->suffix() == SUFFIX_GVFSMP) {
         path = QUrl(fi->extraProperties()["rooturi"].toString()).toString();
     }
-
     QJsonObject smbObj = secretManager->getLoginData(path);
     if (smbObj.empty()) {
         if (path.endsWith("/")) {

@@ -265,7 +265,7 @@ private:
         return false;
     }
 
-private:
+protected:
 #ifdef _WIN32
     //LLP64
     long long m_pagesize;
