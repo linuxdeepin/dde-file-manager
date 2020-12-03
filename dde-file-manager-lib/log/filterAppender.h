@@ -73,9 +73,6 @@ class CUTELOGGERSHARED_EXPORT FilterAppender : public DTK_CORE_NAMESPACE::FileAp
     void setLogFilesLimit(int limit);
     int logFilesLimit() const;
 
-    void setLogSizeLimit(int qint64);
-    qint64 logSizeLimit() const;
-
     /**
      * @brief addFilter     添加过滤关键字
      * @param filterField   需要过滤的关键字
