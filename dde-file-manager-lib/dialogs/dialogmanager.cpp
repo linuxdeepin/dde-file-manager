@@ -1597,9 +1597,9 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
     renameDialog.setDialogTitle(QObject::tr("Rename %1 Files").arg(QString::fromStdString(std::to_string(selectedUrls.size()))));
 
 #ifndef UTest
-    std::size_t code{ static_cast<size_t>(renameDialog.exec()) };
+    std::size_t code { static_cast<size_t>(renameDialog.exec()) };
 #else
-    std::size_t code{1};
+    std::size_t code {1};
 #endif
     AppController::flagForDDesktopRenameBar.store(true, std::memory_order_seq_cst);
 

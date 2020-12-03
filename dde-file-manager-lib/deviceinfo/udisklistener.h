@@ -57,8 +57,6 @@ class UDiskListener : public DAbstractFileController
 
 public:
     explicit UDiskListener(QObject *parent = nullptr);
-    void initDiskManager();
-    void initConnect();
     UDiskDeviceInfoPointer getDevice(const QString &id);
     void addDevice(UDiskDeviceInfoPointer device);
     void removeDevice(UDiskDeviceInfoPointer device);
@@ -101,6 +99,10 @@ public:
     bool isFileFromDisc(const QString &filePath); // 文件是否来自光盘
     void appendHiddenDirs(const QString &path);
     QStringList hiddenDirs();
+
+private:
+    void initDiskManager();
+    void initConnect();
 
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);

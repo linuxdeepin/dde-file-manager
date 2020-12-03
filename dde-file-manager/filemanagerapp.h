@@ -45,20 +45,21 @@ public:
 
     ~FileManagerApp();
 
-    void initApp();
-    void initView();
     void initManager();
     void initTranslation();
+    static void initService();
+
+private:
+    void initApp();
+    void initView();
     void lazyRunInitServiceTask();
     void initSysPathWatcher();
     void initConnect();
 
-    static void initService();
-
 //    QString getFileJobConfigPath();
 
 public slots:
-    void show(const DUrl& url);
+    void show(const DUrl &url);
     void showPropertyDialog(const QStringList paths);
     void openWithDialog(const QStringList files);
 
@@ -66,8 +67,8 @@ protected:
     explicit FileManagerApp(QObject *parent = nullptr);
 
 private:
-    WindowManager* m_windowManager = nullptr;
-    QFileSystemWatcher* m_sysPathWatcher;
+    WindowManager *m_windowManager = nullptr;
+    QFileSystemWatcher *m_sysPathWatcher;
 };
 
 #endif // FILEMANAGERAPP_H
