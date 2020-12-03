@@ -304,12 +304,12 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     : DDirIterator()
     , parent(parent)
     , m_fileUrl(url)
+    , targetUrl(url.searchTargetUrl())
+    , keyword(DFMRegularExpression::checkWildcardAndToRegularExpression(url.searchKeyword()))
     , m_nameFilters(nameFilters)
     , m_filter(filter)
     , m_flags(flags)
 {
-    targetUrl = url.searchTargetUrl();
-    keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(url.searchKeyword());
     regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;
 

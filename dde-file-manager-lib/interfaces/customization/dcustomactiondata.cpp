@@ -10,16 +10,17 @@ DCustomActionData::DCustomActionData() :
 }
 
 DCustomActionData::DCustomActionData(const DCustomActionData &other)
+    : m_comboPos(other.m_comboPos)
+    , m_position(other.m_position)
+    , m_nameArg(other.m_nameArg)
+    , m_cmdArg(other.m_cmdArg)
+    , m_name(other.m_name)
+    , m_icon(other.m_icon)
+    , m_command(other.m_command)
+    , m_separator(other.m_separator)
+    , m_childrenActions(other.m_childrenActions)
 {
-    m_nameArg = other.m_nameArg;
-    m_cmdArg = other.m_cmdArg;
-    m_name = other.m_name;
-    m_icon = other.m_icon;
-    m_position = other.m_position;
-    m_comboPos = other.m_comboPos;
-    m_separator = other.m_separator;
-    m_command = other.m_command;
-    m_childrenActions = other.m_childrenActions;
+
 }
 
 DCustomActionData &DCustomActionData::operator=(const DCustomActionData &other)
@@ -32,6 +33,7 @@ DCustomActionData &DCustomActionData::operator=(const DCustomActionData &other)
     m_comboPos = other.m_comboPos;
     m_position = other.m_position;
     m_separator = other.m_separator;
+    m_icon = other.m_icon;
     m_command = other.m_command;
     m_childrenActions = other.m_childrenActions;
     return *this;
