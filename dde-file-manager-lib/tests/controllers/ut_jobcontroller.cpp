@@ -1,4 +1,9 @@
 #include <gtest/gtest.h>
+#include <QTimer>
+#include <QElapsedTimer>
+
+#define protected public
+#define private public
 
 #include "controllers/jobcontroller.h"
 #include "controllers/filecontroller.h"
@@ -35,3 +40,53 @@ public:
         jobcontroller.reset(new JobController(url,director));
     }
 };
+
+TEST_F(JobControllerTest,start_JobController){
+    DUrl url;
+    url.fromLocalFile("~/Videos");
+    jobcontroller->timer = new QElapsedTimer();
+    jobcontroller.reset(new JobController(url,QStringList(),QDir::AllEntries));
+    EXPECT_EQ(2000,jobcontroller->timeCeiling());
+    jobcontroller->setTimeCeiling(10);
+    EXPECT_EQ(10,jobcontroller->timeCeiling());
+    jobcontroller->setCountCeiling(100);
+    EXPECT_EQ(100,jobcontroller->countCeiling());
+    jobcontroller->stopAndDeleteLater();
+}
+
+TEST_F(JobControllerTest,start_start){
+    jobcontroller->setState(JobController::Started);
+    jobcontroller->start();
+    jobcontroller->setState(JobController::Paused);
+    jobcontroller->start();
+    jobcontroller->setState(JobController::Stoped);
+    jobcontroller->pause();
+    jobcontroller->setState(JobController::Started);
+    jobcontroller->pause();
+    jobcontroller->setState(JobController::Stoped);
+    jobcontroller->start();
+    while (jobcontroller->isRunning()) {
+        jobcontroller->setTimeCeiling(10);
+        jobcontroller->setCountCeiling(10);
+        jobcontroller->stopAndDeleteLater();
+        QThread::msleep(100);
+    }
+}
+
+TEST_F(JobControllerTest,start_run){
+    DUrl url;
+    url.fromLocalFile("~/Pictures/Wallpapers");
+    init("~/Pictures/Wallpapers",true);
+    jobcontroller->start();
+    while (jobcontroller->isRunning()) {
+        jobcontroller->stop();
+        QThread::msleep(100);
+    }
+    jobcontroller->setCountCeiling(5);
+    jobcontroller->start();
+    while (jobcontroller->isRunning()) {
+        QThread::msleep(100);
+    }
+    jobcontroller->run();
+
+}

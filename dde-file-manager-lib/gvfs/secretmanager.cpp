@@ -217,7 +217,15 @@ QString SecretManager::cachePath()
 void SecretManager::cacheSambaLoginData(const QJsonObject &obj)
 {
     QJsonValue v(obj);
-    m_smbLoginObjs.insert(obj.value("id").toString(), v);
+    QString path = obj.value("id").toString();
+    if (!path.isEmpty() && (path.startsWith("smb://") || path.startsWith("smb-share://"))){
+        bool bend = path.endsWith("/");
+        QString tmppath = bend ? path.left(path.length() - 1) : path;
+        QString tmppathprev = tmppath.left(tmppath.lastIndexOf("/")+1);
+        QString tmppathname = tmppath.mid(tmppath.lastIndexOf("/")+1);
+        path = bend ? tmppathprev + tmppathname.toLower() + "/" : tmppathprev + tmppathname.toLower();
+    }
+    m_smbLoginObjs.insert(path, v);
     saveCache();
 }
 
