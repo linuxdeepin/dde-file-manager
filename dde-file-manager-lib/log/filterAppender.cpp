@@ -205,8 +205,6 @@ void FilterAppender::computeRollOverTime()
     }
 
     m_rollOverSuffix = start.toString(m_datePatternString);
-    Q_ASSERT_X(now.toString(m_datePatternString) == m_rollOverSuffix,
-               "DailyRollingFileAppender::computeRollOverTime()", "File name changes within interval");
     Q_ASSERT_X(m_rollOverSuffix != m_rollOverTime.toString(m_datePatternString),
                "DailyRollingFileAppender::computeRollOverTime()", "File name does not change with rollover");
 }

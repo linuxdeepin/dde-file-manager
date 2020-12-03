@@ -13,7 +13,6 @@ namespace  {
         virtual void SetUp() override
         {
             DFMLogManager::registerConsoleAppender();
-            DFMLogManager::registerFileAppender();
             std::cout << "start TestDFMLogManager" << std::endl;
         }
 
@@ -45,5 +44,9 @@ TEST_F(TestDFMLogManager, get_logger)
 TEST_F(TestDFMLogManager, get_appender)
 {
     EXPECT_NE(nullptr, DFMLogManager::getFilterAppender());
+
+    DFMLogManager::registerFileAppender();
+    EXPECT_NE(nullptr, DFMLogManager::getFilterAppender());
+
 }
 
