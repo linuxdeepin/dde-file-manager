@@ -21,7 +21,8 @@ class DFMEventDispatcherPrivate
 {
 public:
     explicit DFMEventDispatcherPrivate(DFMEventDispatcher *qq)
-        : q_ptr(qq) {}
+        : q_ptr(qq)
+        , state(DFMEventDispatcher::Normal) {}
 
     DFMEventDispatcher *q_ptr;
     DFMEventDispatcher::State state;

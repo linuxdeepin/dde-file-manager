@@ -2,8 +2,9 @@
 
 DCustomActionData::DCustomActionData() :
     m_position(0)
-    ,m_nameArg(DCustomActionDefines::NoneArg)
-    ,m_cmdArg(DCustomActionDefines::NoneArg)
+    , m_nameArg(DCustomActionDefines::NoneArg)
+    , m_cmdArg(DCustomActionDefines::NoneArg)
+    , m_separator(DCustomActionDefines::None)
 {
 
 }
@@ -102,14 +103,15 @@ DCustomActionEntry::DCustomActionEntry()
 }
 
 DCustomActionEntry::DCustomActionEntry(const DCustomActionEntry &other)
+    : m_package(other.m_package)
+    , m_version(other.m_version)
+    , m_comment(other.m_comment)
+    , m_sign(other.m_sign)
+    , m_fileCombo(other.m_fileCombo)
+    , m_mimeTypes(other.m_mimeTypes)
+    , m_data(other.m_data)
 {
-    m_package = other.m_package;
-    m_version = other.m_version;
-    m_comment = other.m_comment;
-    m_fileCombo = other.m_fileCombo;
-    m_mimeTypes = other.m_mimeTypes;
-    m_sign = other.m_sign;
-    m_data = other.m_data;
+
 }
 
 DCustomActionEntry &DCustomActionEntry::operator=(const DCustomActionEntry &other)

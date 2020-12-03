@@ -34,19 +34,19 @@ public:
     void setDevice(const QString &device);
 private:
     BurnOptDialog *q_ptr;
-    QWidget *w_content;
-    QLabel *lb_volname;
-    QLineEdit *le_volname;
-    QLabel *lb_writespeed;
-    QComboBox *cb_writespeed;
-    QCheckBox *cb_iclose;
-    QLabel *lb_postburn;
-    QCheckBox *cb_checkdisc;
-    QCheckBox *cb_eject;
+    QWidget *w_content = nullptr;
+    QLabel *lb_volname = nullptr;
+    QLineEdit *le_volname = nullptr;
+    QLabel *lb_writespeed = nullptr;
+    QComboBox *cb_writespeed = nullptr;
+    QCheckBox *cb_iclose = nullptr;
+    QLabel *lb_postburn = nullptr;
+    QCheckBox *cb_checkdisc = nullptr;
+    QCheckBox *cb_eject = nullptr;
     QString dev{""};
     QHash<QString, int> speedmap;
     DUrl image_file;
-    int window_id;
+    int window_id = 0;
     QString lastVolName;
 
     Q_DECLARE_PUBLIC(BurnOptDialog)

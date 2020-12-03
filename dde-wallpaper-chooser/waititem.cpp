@@ -5,7 +5,7 @@
 #include <QLabel>
 #define WAITITEM_ICON_CONTANT_SPACE 10  //gap
 #define MARGIN_OF_WAITICON 6
-WaitItem::WaitItem(QWidget* parent)
+WaitItem::WaitItem(QWidget *parent)
     : QFrame(parent)
 {
     //set window and transparency
@@ -18,7 +18,7 @@ WaitItem::~WaitItem()
 
 }
 
-void WaitItem::initSize(const QSize& size)
+void WaitItem::initSize(const QSize &size)
 {
     //set window size and the son size
     this->setFixedSize(size);
@@ -50,7 +50,7 @@ void WaitItem::initSize(const QSize& size)
             m_contant->move(static_cast<int>(m_movedistance) + WAITITEM_ICON_CONTANT_SPACE + m_icon->width(), size.height() / 3 + MARGIN_OF_WAITICON);
             m_contant->setFixedSize(m_contantsize);
         }
-    }else {
+    } else {
         qDebug() << "the parent widget is too small that can not to display the son widget";
         m_icon = new QLabel(this);
         m_icon->setFixedSize(QSize(0, 0));

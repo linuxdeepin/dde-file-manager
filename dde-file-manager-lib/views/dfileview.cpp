@@ -185,25 +185,25 @@ public:
 public:
     DFileView *q_ptr;
 
-    DFileMenuManager *fileMenuManager;
+    DFileMenuManager *fileMenuManager = nullptr;
     DFMHeaderView *headerView = nullptr;
     QWidget *headerViewHolder = nullptr;
     DFMOpticalMediaWidget *headerOpticalDisc = nullptr;
     DStatusBar *statusBar = nullptr;
 
-    QActionGroup *displayAsActionGroup;
-    QActionGroup *sortByActionGroup;
-    QActionGroup *openWithActionGroup;
+    QActionGroup *displayAsActionGroup = nullptr;
+    QActionGroup *sortByActionGroup = nullptr;
+    QActionGroup *openWithActionGroup = nullptr;
 
-    FileViewHelper *fileViewHelper;
+    FileViewHelper *fileViewHelper = nullptr;
 
-    QTimer *updateStatusBarTimer;
+    QTimer *updateStatusBarTimer = nullptr;
 
     QScrollBar *verticalScrollBar = nullptr;
 
-    DDiskManager *diskmgr;
+    DDiskManager *diskmgr = nullptr;
 
-    QActionGroup *toolbarActionGroup;
+    QActionGroup *toolbarActionGroup = nullptr;
 
 
     // 用于实现触屏滚动视图和框选文件不冲突，手指在屏幕上按下短时间内就开始移动
@@ -258,7 +258,7 @@ public:
     bool allowedAdjustColumnSize = true;
     bool adjustFileNameCol = false; // mac finder style half-auto col size adjustment flag.
 
-    char justAvoidWaringOfAlignmentBoundary[2];//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
+    char justAvoidWaringOfAlignmentBoundary[2] = {0};//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
 
     bool isVaultDelSigConnected = false; //is vault delete signal connected.
 
@@ -1976,22 +1976,22 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
 #ifndef CLASSICAL_SECTION
         // sp4-task:文管框选内容不正确问题
         // 判断是否是图标模式
-        if(isIconViewMode()) {
+        if (isIconViewMode()) {
             DFileSystemModel *pModel = model();
-            if(pModel) {
+            if (pModel) {
                 // ListView中的文件摆放逻辑是一列多行，所以行的数量就是文件的数量
                 int nRowNum = pModel->rowCount();
                 // 用来存放鼠标框选中的文件项
                 QVector<QModelIndex> selectItems;
-                for(int i = 0; i < nRowNum; ++i) {
+                for (int i = 0; i < nRowNum; ++i) {
                     QModelIndex index = pModel->index(i, 0);
                     QRect itemRect = rectForIndex(index);
                     QPoint offset(-horizontalOffset() + ICON_X_OFFSET, ICON_Y_OFFSET);
                     // 判断文件是否在鼠标框选区域内
-                    if(rect.contains((itemRect.topLeft()+offset))
-                            || rect.contains(itemRect.topRight()+offset+QPoint(ICON_HEIGHT_OFFSET, 0))
-                            || rect.contains(itemRect.bottomLeft()+offset+QPoint(0, ICON_WIDTH_OFFSET))
-                            || rect.contains(itemRect.bottomRight()+offset+QPoint(ICON_HEIGHT_OFFSET, ICON_WIDTH_OFFSET))) {
+                    if (rect.contains((itemRect.topLeft() + offset))
+                            || rect.contains(itemRect.topRight() + offset + QPoint(ICON_HEIGHT_OFFSET, 0))
+                            || rect.contains(itemRect.bottomLeft() + offset + QPoint(0, ICON_WIDTH_OFFSET))
+                            || rect.contains(itemRect.bottomRight() + offset + QPoint(ICON_HEIGHT_OFFSET, ICON_WIDTH_OFFSET))) {
                         selectItems.push_back(index);
                     }
                 }
@@ -1999,7 +1999,7 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
                 clearSelection();
                 // 将当前选中项设置成选中状态
                 QVector<QModelIndex>::const_iterator itr = selectItems.begin();
-                for(; itr != selectItems.end(); ++itr) {
+                for (; itr != selectItems.end(); ++itr) {
                     // 将文件设置选中状态
                     selectionModel()->select(*itr, QItemSelectionModel::Select);
                 }
@@ -2982,8 +2982,8 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
     //扩展菜单
     const DUrl &viewRootUrl = rootUrl();
-    if (!viewRootUrl.isVaultFile() && !viewRootUrl.isTrashFile() )
-        DFileMenuManager::extendCustomMenu(menu, false, rootUrl() ,{},{});
+    if (!viewRootUrl.isVaultFile() && !viewRootUrl.isTrashFile())
+        DFileMenuManager::extendCustomMenu(menu, false, rootUrl(), {}, {});
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
 
@@ -3063,7 +3063,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
 
     //扩展菜单,保险箱-回收站无扩展菜单
     const DUrl &viewRootUrl = rootUrl();
-    if (!viewRootUrl.isVaultFile() && !viewRootUrl.isTrashFile() )
+    if (!viewRootUrl.isVaultFile() && !viewRootUrl.isTrashFile())
         DFileMenuManager::extendCustomMenu(menu, true, viewRootUrl, info->fileUrl(), list);
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this, index);

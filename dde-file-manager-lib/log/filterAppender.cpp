@@ -27,9 +27,10 @@
 DCORE_USE_NAMESPACE
 
 FilterAppender::FilterAppender(const QString &fileName)
-    : FileAppender(fileName),
-      m_logFilesLimit(0),
-      m_logSizeLimit(1024 * 1024 * 20)
+    : FileAppender(fileName)
+    , m_frequency(MinutelyRollover)
+    , m_logFilesLimit(0)
+    , m_logSizeLimit(1024 * 1024 * 20)
 {}
 
 void FilterAppender::append(const QDateTime &timeStamp, Logger::LogLevel logLevel, const char *file, int line,

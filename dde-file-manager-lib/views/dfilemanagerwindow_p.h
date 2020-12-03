@@ -46,7 +46,7 @@ class DFileManagerWindow;
 class DFileManagerWindowPrivate
 {
 public:
-    DFileManagerWindowPrivate(DFileManagerWindow *qq)
+    explicit DFileManagerWindowPrivate(DFileManagerWindow *qq)
         : q_ptr(qq) {}
 
     void setCurrentView(DFMBaseView *view);
@@ -86,7 +86,7 @@ public:
 
     QMap<DUrl, QWidget *> views;
 
-    bool move;
+    bool move = false;
     QPoint startPoint;
     QPoint windowPoint;
 
