@@ -73,9 +73,6 @@ int getProcIdByName(string procName)
 
     return pid;
 }
-extern void startProcessDetached(const QString &program,
-                                 const QStringList &arguments = QStringList(),
-                                 QIODevice::OpenMode mode = QIODevice::ReadWrite);
 
 class DFMSocketInterfacePrivate
 {
