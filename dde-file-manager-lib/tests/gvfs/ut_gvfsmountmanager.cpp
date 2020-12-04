@@ -26,13 +26,25 @@
 #define private public
 #define protected public
 #include "gvfs/gvfsmountmanager.h"
+#include "stub.h"
+#include <DDialog>
 
 static bool inited = false;
+
+int stub_DDialog_exec(void* obj)
+{
+    return 0;
+}
+
 namespace {
 class TestGvfsMountManager: public testing::Test
 {
 public:
+    typedef int(*fptr)(Dtk::Widget::DDialog*);
     GvfsMountManager *m_manager = GvfsMountManager::instance();
+    fptr pDDialogExec = (fptr)(&Dtk::Widget::DDialog::exec);
+
+    Stub stub;
     void SetUp() override
     {
         if(!inited)
@@ -40,10 +52,13 @@ public:
             m_manager->startMonitor();
             inited = true;
         }
+
+        stub.set(pDDialogExec, stub_DDialog_exec);
     }
 
     void TearDown() override
     {
+        stub.reset(pDDialogExec);
     }
 };
 }
@@ -141,7 +156,6 @@ TEST_F(TestGvfsMountManager, eject)
     GvfsMountManager::eject("/dev/sdno");
 }
 
-
 TEST_F(TestGvfsMountManager, monitor_mount_changed)
 {
     GVolumeMonitor *volume_monitor = GvfsMountManager::instance()->m_gVolumeMonitor;
@@ -170,8 +184,6 @@ TEST_F(TestGvfsMountManager, printVolumeMounts)
     GvfsMountManager::printVolumeMounts();
 }
 
-#include <DDialog>
-//DWIDGET_BEGIN_NAMESPACE
 TEST_F(TestGvfsMountManager, mount_device)
 {
     QString unix_device = "/dev/sdno";
@@ -186,8 +198,6 @@ TEST_F(TestGvfsMountManager, mount_device)
 
     GvfsMountManager::unmount_mounted("smb:///");
 }
-
-//DWIDGET_END_NAMESPACE
 
 TEST_F(TestGvfsMountManager, eject_device)
 {
@@ -207,5 +217,5 @@ TEST_F(TestGvfsMountManager, stop_device)
     GvfsMountManager::stop_device(drive_unix_device);
 }
 
-//ACCESS_PRIVATE_FIELD(A, int, a);
+
 

@@ -1664,9 +1664,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
             error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
             error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
             error_dilaog.setModal(true);
-#ifndef UTest
             error_dilaog.exec();
-#endif
             return;
         }
 
@@ -1675,9 +1673,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
-#ifndef UTest
         error_dilaog.exec();
-#endif
         return;
     }
 
@@ -1704,9 +1700,7 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
-#ifndef UTest
         error_dilaog.exec();
-#endif
     } else {
         char *local_mount_point = reinterpret_cast<char *>(user_data);
 
@@ -1825,9 +1819,7 @@ void GvfsMountManager::eject_with_device_file_cb(GObject *object, GAsyncResult *
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
-#ifndef UTest
         error_dilaog.exec();
-#endif
     } else {
         qCDebug(mountManager()) << "eject" <<  g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE) << "succeeded";
     }
@@ -1851,9 +1843,7 @@ void GvfsMountManager::eject_mounted(const QString &mounted_root_uri)
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
-#ifndef UTest
         error_dilaog.exec();
-#endif
         return;
     }
 
