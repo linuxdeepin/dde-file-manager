@@ -199,11 +199,6 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         }
     }
 
-    // 选中保险箱中的文件，则屏蔽掉共享菜单选项
-    if (VaultController::isVaultFile(currentUrl.path()) || VaultController::isVaultFile(currentUrl.fragment()) || VaultController::isVaultFile(info->toQFileInfo().canonicalFilePath())) {
-        unusedList << MenuAction::Share << MenuAction::UnShare;
-    }
-
     DUrlList redirectedUrlList;
     if (urls.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
@@ -454,14 +449,14 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         else {
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
-                if (bluetoothManager->model()->adapters().count() > 0) { // 如果有蓝牙设备
-                    QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
-                    sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
-                    sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
-                    connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
-
-                    if (!enableSendToBluetooth)
-                        sendToBluetooth->setEnabled(false);
+                // 如果有蓝牙设备并且当前文件不在保险箱内
+                if ((bluetoothManager->model()->adapters().count() > 0) && !VaultController::isVaultFile(currentUrl.toLocalFile())) {
+                        QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
+                        sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
+                        sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
+                        connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
+                        if (!enableSendToBluetooth)
+                            sendToBluetooth->setEnabled(false);
                 }
 
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
@@ -491,7 +486,10 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk, Qt::QueuedConnection); //改为队列，防止exec无法退出，关联bug#25613
                 }
             }
-
+            // 如果子菜单中没有内容，移除父菜单
+            if(sendToMountedRemovableDiskMenu->actions().count() < 1) {
+                menu->removeAction(sendToMountedRemovableDiskAction);
+            }
         }
     }
     if (menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
@@ -558,8 +556,10 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             || currentUrl == DesktopFileInfo::homeDesktopFileUrl()) {
         return menu;
     }
-
-    loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
+    // 保险箱不需要其它非文管的插件菜单
+    if(!VaultController::isVaultFile(currentUrl.toLocalFile())) {
+        loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
+    }
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
 
