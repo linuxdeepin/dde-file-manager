@@ -138,11 +138,6 @@ public slots:
 
     int showMessageDialog(int messageLevel, const QString &message);
 
-    /**
-    * DUrlListCompare 用于判断传入url列表是否与m_urlList一样
-    */
-    bool DUrlListCompare(DUrlList urls);
-
 #ifdef SW_LABEL
     void onJobFailed_SW(int nRet, const QString &jobType, const QString &srcfilename);
     int showPrivilegeDialog_SW(int nRet, const QString &srcfilename);
@@ -165,9 +160,6 @@ private:
     Dtk::Widget::DDialog *m_noPemesrsionDialog {nullptr};
 
     std::unique_ptr<DMultiFilePropertyDialog> m_multiFilesPropertyDialog;
-
-    //! wayland视频预览当前预览列表
-    DUrlList m_urlList;
 };
 
 #endif // DIALOGMANAGER_H

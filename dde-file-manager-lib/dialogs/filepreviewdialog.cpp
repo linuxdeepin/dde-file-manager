@@ -303,16 +303,10 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
 
 void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
-    emit signalCloseEvent();
     if (m_preview) {
         m_preview->stop();
-        if(DFMGlobal::isWayLand()){
-            m_preview->DoneCurrent();
-        }
-        else {
-            m_preview->deleteLater();
-            m_preview = nullptr;
-        }
+        m_preview->deleteLater();
+        m_preview = nullptr;
     }
 
     return DAbstractDialog::closeEvent(event);
@@ -494,7 +488,17 @@ void FilePreviewDialog::switchToPage(int index)
         preview = DFMFilePreviewFactory::create(key);
 
         if (!preview && general_key != key) {
-            preview = DFMFilePreviewFactory::create(general_key);
+            // 修复bug-45814
+            // 当预览视频文件时，当时普通文管预览处理
+            if(DFMGlobal::isWayLand()){
+                if("video/*" == general_key) {
+                    preview = DFMFilePreviewFactory::create("application/*");
+                } else {
+                    preview = DFMFilePreviewFactory::create(general_key);
+                }
+            } else {
+                preview = DFMFilePreviewFactory::create(general_key);
+            }
         }
 
         if (preview) {
@@ -570,20 +574,8 @@ void FilePreviewDialog::done(int r)
 
     if (m_preview) {
         m_preview->stop();
-        if(DFMGlobal::isWayLand()){
-            m_preview->DoneCurrent();
-        }
-        else {
-            m_preview->deleteLater();
-            m_preview = nullptr;
-        }
-    }
-}
-
-void FilePreviewDialog::DoneCurrent()
-{
-    if(m_preview){
-        m_preview->DoneCurrent();
+        m_preview->deleteLater();
+        m_preview = nullptr;
     }
 }
 
