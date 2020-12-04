@@ -9,7 +9,7 @@
 #include <QAbstractScrollArea>
 
 #include <dfilemenu.h>
-#include "stub.h"
+#include "stubext.h"
 #define private public
 #define protected public
 
@@ -39,7 +39,7 @@
 #include <QEvent>
 
 using namespace std;
-
+using namespace stub_ext;
 
 class QAbstractItemModel;
 class CanvasGridViewTest : public testing::Test
@@ -330,32 +330,51 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_mouseReleaseEvent){
 
 }
 
-TEST_F(CanvasGridViewTest, CanvasGridViewTest_contextMenuEvent){
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_contextMenuEvent_empty){
     ASSERT_NE(m_canvasGridView, nullptr);
-    //根据Desktop文件夹下文件以及桌面排序情况可能会触发两种右键菜单的某一种
-    QTimer timer;
-    QObject::connect(&timer, &QTimer::timeout, [&]{
-        timer.stop();
-          QWidget tempWdg;
-          tempWdg.show();
-          tempWdg.close();
-    });
-    QContextMenuEvent ent(QContextMenuEvent::Reason::Mouse,QPoint(10, 10),m_canvasGridView->mapToGlobal(QPoint(100, 100)),Qt::KeyboardModifiers());
-    timer.start(2000);
-    m_canvasGridView->contextMenuEvent(&ent);
 
-    QTimer timer2;
-    QObject::connect(&timer2, &QTimer::timeout, [&]{
-        timer.stop();
-          QWidget tempWdg;
-          tempWdg.show();
-          tempWdg.close();
-    });
-    QContextMenuEvent ent2(QContextMenuEvent::Reason::Mouse,QPoint(60, 60),m_canvasGridView->mapToGlobal(QPoint(100, 100)),Qt::KeyboardModifiers());
-    timer2.start(2000);
-    m_canvasGridView->contextMenuEvent(&ent2);
+    stub_ext::StubExt st;
+    st.set_lamda(VADDR(CanvasGridView,indexAt),[](){return QModelIndex();});
+    st.set_lamda(ADDR(DFileViewHelper,isEmptyArea),[](){return true;});
+
+    int menu = 0;
+    st.set_lamda(ADDR(CanvasGridView,showEmptyAreaMenu),[&menu](){menu = 1;return;});
+    st.set_lamda(ADDR(CanvasGridView,showNormalMenu),[&menu](){menu = 2;return;});
+
+    //根据Desktop文件夹下文件以及桌面排序情况可能会触发两种右键菜单的某一种
+    QContextMenuEvent ent(QContextMenuEvent::Reason::Mouse,QPoint(10, 10),m_canvasGridView->mapToGlobal(QPoint(100, 100)),Qt::KeyboardModifiers());
+    m_canvasGridView->contextMenuEvent(&ent);
+    EXPECT_EQ(1,menu);
 }
 
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_contextMenuEvent_normal){
+    ASSERT_NE(m_canvasGridView, nullptr);
+
+    while (m_canvasGridView->model()->state() == DFileSystemModel::Busy) {
+        qApp->processEvents();
+    }
+
+    auto urls = m_canvasGridView->model()->sortedUrls();
+    if (urls.isEmpty())
+        return;
+
+    auto index = m_canvasGridView->model()->index(urls.first());
+    if (!index.isValid())
+        return;
+
+    stub_ext::StubExt st;
+    st.set_lamda(VADDR(CanvasGridView,indexAt),[=](){return index;});
+    st.set_lamda(ADDR(DFileViewHelper,isEmptyArea),[](){return false;});
+
+    int menu = 0;
+    st.set_lamda(ADDR(CanvasGridView,showEmptyAreaMenu),[&menu](){menu = 1;return;});
+    st.set_lamda(ADDR(CanvasGridView,showNormalMenu),[&menu](){menu = 2;return;});
+
+    //根据Desktop文件夹下文件以及桌面排序情况可能会触发两种右键菜单的某一种
+    QContextMenuEvent ent(QContextMenuEvent::Reason::Mouse,QPoint(10, 10),m_canvasGridView->mapToGlobal(QPoint(100, 100)),Qt::KeyboardModifiers());
+    m_canvasGridView->contextMenuEvent(&ent);
+    EXPECT_EQ(2,menu);
+}
 
 static int stubRet = 0;
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_showNormalMenu){
