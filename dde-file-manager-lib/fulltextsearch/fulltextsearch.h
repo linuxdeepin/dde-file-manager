@@ -36,6 +36,12 @@ class DFMFullTextSearchManager : public QObject
     Q_OBJECT
 
 public:
+    enum CharType {
+        CH,
+        EN,
+        NUM
+    };
+
     static DFMFullTextSearchManager *getInstance();
 
     /**
@@ -43,7 +49,7 @@ public:
      * @param keyword 搜索关键字
      * @return 搜索结果
      */
-    QStringList fullTextSearch(const QString &keyword);
+    QStringList fullTextSearch(const QString &keyword, const QString &searchPath);
 
     /**
      * @brief fulltextIndex 创建索引接口
@@ -90,11 +96,23 @@ private:
      * @param keyword 搜索关键字
      * @return
      */
-    bool searchByKeyworld(const QString &keyword);
+    bool searchByKeyworld(const QString &keyword, const QString &searchPath);
 
-    void doPagingSearch(const SearcherPtr &searcher, const QueryPtr &query, int32_t hitsPerPage, bool raw, bool interactive);
+    void doSearch(const SearcherPtr &searcher, const QueryPtr &query, const QString &searchPath);
 
-    void readFileName(const char *filePath, QStringList &result);
+    /**
+     * @brief traverseFloder 遍历文件夹，获取文件名
+     * @param filePath 需要遍历的文件夹
+     * @param result 遍历结果
+     */
+    void traverseFloder(const char *filePath, QStringList &result);
+
+    /**
+     * @brief dealKeyWorld 对搜索关键字进行处理，不同类型之间以空格隔开
+     * @param keyWorld 搜索关键字
+     * @return
+     */
+    QString dealKeyWorld(const QString &keyWorld);
 private:
     bool status;
 
