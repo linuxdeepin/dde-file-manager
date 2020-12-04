@@ -397,32 +397,30 @@ DUrl SearchDiriterator::next()
 // 全文搜索
 void SearchDiriterator::fullTextSearch(const QString &searchPath) const
 {
-    QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
+    QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword(), searchPath);
     for (QString res : searchResult) {
         if (DFMFullTextSearchManager::getInstance()->getSearchState() == JobController::Stoped) {
             return;
         }
-        if (res.startsWith(searchPath.endsWith("/") ? searchPath : (searchPath + "/"))) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
-            // 隐藏文件不显示
-            if (searchFileIsHidden(res)) {
+        // 隐藏文件不显示
+        if (searchFileIsHidden(res)) {
+            continue;
+        }
+
+        DUrl url = m_fileUrl;
+        DUrl realUrl = DUrl::fromUserInput(res);
+        // 回收站的文件右键菜单比较特殊，需要将文件url转换为回收站类型的URL
+        if (targetUrl.isTrashFile()) {
+            realUrl = DUrl::fromTrashFile(realUrl.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+        }
+        url.setSearchedFileUrl(realUrl);
+
+        if (!childrens.contains(url)) {
+            // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
+            if (!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())) {
                 continue;
             }
-
-            DUrl url = m_fileUrl;
-            DUrl realUrl = DUrl::fromUserInput(res);
-            // 回收站的文件右键菜单比较特殊，需要将文件url转换为回收站类型的URL
-            if (targetUrl.isTrashFile()) {
-                realUrl = DUrl::fromTrashFile(realUrl.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
-            }
-            url.setSearchedFileUrl(realUrl);
-
-            if (!childrens.contains(url)) {
-                // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
-                if (!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())) {
-                    continue;
-                }
-                childrens << url;
-            }
+            childrens << url;
         }
     }
 }

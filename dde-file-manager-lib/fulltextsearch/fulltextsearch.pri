@@ -29,10 +29,14 @@ PKGCONFIG += liblucene++ liblucene++-contrib
 
 include($$PWD/../3rdParty/doctotext/doctotext.pri)
 HEADERS += \
-    $$PWD/fulltextsearch.h
+    $$PWD/fulltextsearch.h \
+    $$PWD/chinesetokenizer.h \
+    $$PWD/chineseanalyzer.h
 
 SOURCES += \
-    $$PWD/fulltextsearch.cpp
+    $$PWD/fulltextsearch.cpp \
+    $$PWD/chinesetokenizer.cpp \
+    $$PWD/chineseanalyzer.cpp
 
 INCLUDEPATH += $$PWD
 INCLUDEPATH += $$PWD/../3rdParty/doctotext
