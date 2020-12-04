@@ -1,10 +1,15 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include <QTest>
 #define private public
 #include "screen/screenhelper.h"
 #include <view/canvasviewmanager.h>
 #include <view/backgroundmanager.h>
 #include <presenter/gridmanager.h>
+#include "../third-party/cpp-stub/stub.h"
+#include "desktopitemdelegate.h"
+#include "dfilesystemmodel.h"
+#include "AbstractStringAppender.h"
 
 TEST(CanvasViewManager_Constructor,Test_CanvasViewManager_Constructor)
 {
@@ -167,3 +172,51 @@ TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_init){
 //    //backgroundEnable这种情况由于不好模拟条件,所以暂时无法覆盖，若需要强行覆盖则需要改动源码
 //    m_cvmgr->arrageEditDeal(QString());
 //}
+
+TEST_F(CanvasViewManagerTest, test_arrageEditDeal)
+{
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    path = path + '/' + "test.txt";
+    QFile file(path);
+    if (!file.exists()) {
+        file.open(QIODevice::NewOnly | QIODevice::ReadWrite);
+        file.close();
+    }
+    bool (*myfind)() = [](){return true;};
+    int (*myscreennum)() =[](){return 0;};
+    Stub tub, tub1;
+    tub.set(ADDR(GridManager, find), myfind);
+    tub1.set(ADDR(CanvasGridView, screenNum), myscreennum);
+    m_cvmgr->arrageEditDeal(path);
+}
+
+TEST_F(CanvasViewManagerTest, test_onSyncOperation)
+{
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    path = path + '/' + "test.txt";
+    QFile file(path);
+    if (!file.exists()) {
+        file.open(QIODevice::NewOnly | QIODevice::ReadWrite);
+        file.close();
+    }
+
+    m_cvmgr->onSyncOperation(GridManager::soHideEditing, 0);
+    m_cvmgr->onSyncOperation(GridManager::soUpdate, 0);
+    m_cvmgr->onSyncOperation(GridManager::soHidenSwitch, 0);
+    m_cvmgr->onSyncOperation(GridManager::soIconSize, QVariant(2));
+    for (CanvasViewPointer view : m_cvmgr->m_canvasMap.values()){
+        EXPECT_EQ(2, view->itemDelegate()->iconSizeLevel());
+    }
+    m_cvmgr->onSyncOperation(GridManager::soGsettingUpdate, 0);
+    m_cvmgr->onSyncOperation(GridManager::soAutoMerge, 0);
+    m_cvmgr->onSyncOperation(GridManager::soRename, 0);
+    m_cvmgr->onSyncOperation(GridManager::soSort, QPoint(0, 1));
+    for (CanvasViewPointer view : m_cvmgr->m_canvasMap.values()){
+        EXPECT_EQ(0, view->model()->sortRole());
+        EXPECT_EQ(1, view->model()->sortOrder());
+    }
+
+    if (file.exists()) {
+        QProcess::execute("rm" + path);
+    }
+}

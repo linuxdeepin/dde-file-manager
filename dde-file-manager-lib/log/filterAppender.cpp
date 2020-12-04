@@ -27,9 +27,10 @@
 DCORE_USE_NAMESPACE
 
 FilterAppender::FilterAppender(const QString &fileName)
-    : FileAppender(fileName),
-      m_logFilesLimit(0),
-      m_logSizeLimit(1024 * 1024 * 20)
+    : FileAppender(fileName)
+    , m_frequency(MinutelyRollover)
+    , m_logFilesLimit(0)
+    , m_logSizeLimit(1024 * 1024 * 20)
 {}
 
 void FilterAppender::append(const QDateTime &timeStamp, Logger::LogLevel logLevel, const char *file, int line,
@@ -204,8 +205,6 @@ void FilterAppender::computeRollOverTime()
     }
 
     m_rollOverSuffix = start.toString(m_datePatternString);
-    Q_ASSERT_X(now.toString(m_datePatternString) == m_rollOverSuffix,
-               "DailyRollingFileAppender::computeRollOverTime()", "File name changes within interval");
     Q_ASSERT_X(m_rollOverSuffix != m_rollOverTime.toString(m_datePatternString),
                "DailyRollingFileAppender::computeRollOverTime()", "File name does not change with rollover");
 }

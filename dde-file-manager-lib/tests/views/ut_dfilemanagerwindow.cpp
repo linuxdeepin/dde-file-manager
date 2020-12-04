@@ -1,6 +1,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+#define private public
+#define protected public
+
+#include "views/dfilemanagerwindow_p.h"
 #include "views/dfilemanagerwindow.h"
 #include "dfmapplication.h"
 #include "dapplication.h"
@@ -8,7 +12,7 @@
 #include "singleton.h"
 #include "app/define.h"
 #include <QDesktopWidget>
-
+#include "stub.h"
 
 DFM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -22,21 +26,28 @@ namespace  {
         {
             m_fileManagerWindow = new DFileManagerWindow(DUrl(COMPUTER_ROOT));
             m_fileManagerWindow->openNewTab(DUrl(DFMMD_ROOT));
-            std::cout << "start DFileManagerWindow" << std::endl;
         }
 
         virtual void TearDown() override
         {
             delete m_fileManagerWindow;
             m_fileManagerWindow = nullptr;
-            std::cout << "end DFileManagerWindow" << std::endl;
         }
     };
 }
 
+TEST_F(TestFileManagerWindow, can_get_current_url)
+{
+    DUrl result = m_fileManagerWindow->currentUrl();
+    DUrl expect = m_fileManagerWindow->d_func()->currentView ? m_fileManagerWindow->d_func()->currentView->rootUrl() : DUrl();
+    EXPECT_EQ(expect, result);
+}
+
 TEST_F(TestFileManagerWindow, can_get_currentViewState)
 {
-    EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->currentViewState());
+    DFMBaseView::ViewState result = m_fileManagerWindow->currentViewState();
+    DFMBaseView::ViewState expect = m_fileManagerWindow->d_func()->currentView ? m_fileManagerWindow->d_func()->currentView->viewState() : DFMBaseView::ViewIdle;
+    EXPECT_EQ(expect, result);
 }
 
 TEST_F(TestFileManagerWindow, tst_isCurrentUrlSupportSearch)
@@ -87,12 +98,32 @@ TEST_F(TestFileManagerWindow, tst_hideRenameBar)
 
 TEST_F(TestFileManagerWindow, tst_requestToSelectUrls)
 {
-    EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->requestToSelectUrls());
+    Stub stub;
+    bool (*ut_isVisible)() = [](){return true;};
+    stub.set(ADDR(QWidget, isVisible), ut_isVisible);
+
+    m_fileManagerWindow->requestToSelectUrls();
+
+    if (!m_fileManagerWindow->d_func()->renameBar) {
+        m_fileManagerWindow->d_ptr->initRenameBar();
+        m_fileManagerWindow->onReuqestCacheRenameBarState();
+        m_fileManagerWindow->requestToSelectUrls();
+    }
 }
 
 TEST_F(TestFileManagerWindow, tst_isAdvanceSearchBarVisible)
 {
     EXPECT_FALSE(m_fileManagerWindow->isAdvanceSearchBarVisible());
+}
+
+TEST_F(TestFileManagerWindow, tst_toggleAdvanceSearchBar)
+{
+    m_fileManagerWindow->toggleAdvanceSearchBar();
+}
+
+TEST_F(TestFileManagerWindow, tst_showFilterButton)
+{
+    m_fileManagerWindow->showFilterButton();
 }
 
 TEST_F(TestFileManagerWindow, tst_moveCenter)
@@ -143,7 +174,9 @@ TEST_F(TestFileManagerWindow, tst_moveTopRightByRect)
 }
 
 TEST_F(TestFileManagerWindow, tst_cd)
-{
+{    
+    m_fileManagerWindow->d_func()->tabBar->m_currentIndex = -1;
+
     DUrl tstUrl(COMPUTER_ROOT);
     m_fileManagerWindow->cd(tstUrl);
     EXPECT_EQ(tstUrl, m_fileManagerWindow->currentUrl());
@@ -161,6 +194,12 @@ TEST_F(TestFileManagerWindow, tst_cdForTabByView)
     DUrl tstUrl(COMPUTER_ROOT);
     EXPECT_FALSE(m_fileManagerWindow->cdForTabByView(nullptr, tstUrl));
     EXPECT_TRUE(m_fileManagerWindow->cdForTabByView(m_fileManagerWindow->getFileView(), tstUrl));
+}
+
+TEST_F(TestFileManagerWindow, tst_openNewTab)
+{
+    DUrl tstUrl;
+    EXPECT_TRUE(m_fileManagerWindow->openNewTab(tstUrl));
 }
 
 TEST_F(TestFileManagerWindow, tst_switchToView)
@@ -195,6 +234,7 @@ TEST_F(TestFileManagerWindow, tst_onRequestCloseTab)
 TEST_F(TestFileManagerWindow, tst_closeCurrentTab)
 {
     EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->closeCurrentTab(0));
+    EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->closeCurrentTab(m_fileManagerWindow->windowId()));
 }
 
 TEST_F(TestFileManagerWindow, tst_closeAllTabOfVault)
@@ -217,16 +257,30 @@ TEST_F(TestFileManagerWindow, can_show_hide_emptyTrashButton)
 
 TEST_F(TestFileManagerWindow, tst_onNewTabButtonClicked)
 {
+    Stub stub;
+    bool (*ut_isValid)() = [](){return false;};
+    stub.set(ADDR(DUrl, isValid), ut_isValid);
+
     DUrl url(COMPUTER_ROOT);
     DFMApplication::instance()->setAppAttribute(DFMApplication::AA_UrlOfNewTab, url);
     m_fileManagerWindow->onNewTabButtonClicked();
+}
 
-    EXPECT_EQ(url, m_fileManagerWindow->currentUrl());
+TEST_F(TestFileManagerWindow, tst_requestEmptyTrashFiles)
+{
+    Stub stub;
+    void (*ut_clearTrash)() = [](){};
+    stub.set(ADDR(DFMGlobal, clearTrash), ut_clearTrash);
+
+    m_fileManagerWindow->requestEmptyTrashFiles();
 }
 
 TEST_F(TestFileManagerWindow, tst_onTrashStateChanged)
 {
     m_fileManagerWindow->cd(DUrl::fromTrashFile("/"));
+    EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->onTrashStateChanged());
+
+    m_fileManagerWindow->cd(DUrl::fromTrashFile("/home/"));
     EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->onTrashStateChanged());
 }
 
@@ -240,12 +294,26 @@ TEST_F(TestFileManagerWindow, tst_onShowRenameBar)
 
 TEST_F(TestFileManagerWindow, tst_onTabBarCurrentIndexChange)
 {
+    if (!m_fileManagerWindow->d_func()->renameBar) {
+        m_fileManagerWindow->d_ptr->initRenameBar();
+    }
+
+    Stub stub;
+    bool (*ut_isRenameBarVisible)() = [](){return true;};
+    stub.set(ADDR(DFileManagerWindowPrivate, isRenameBarVisible), ut_isRenameBarVisible);
+
     EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->onTabBarCurrentIndexChange(0));
+}
+
+TEST_F(TestFileManagerWindow, tst_onReuqestCacheRenameBarState)
+{
+    m_fileManagerWindow->d_ptr->initRenameBar();
+    m_fileManagerWindow->onReuqestCacheRenameBarState();
 }
 
 TEST_F(TestFileManagerWindow, can_RequestRedirectUrl)
 {
-    EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->onRequestRedirectUrl(DUrl(), DUrl()));
+    EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->onRequestRedirectUrl(DUrl("/"), DUrl("/home")));
 }
 
 TEST_F(TestFileManagerWindow, can_RequestCloseTabByUrl)
@@ -255,4 +323,100 @@ TEST_F(TestFileManagerWindow, can_RequestCloseTabByUrl)
     m_fileManagerWindow->openNewTab(DUrl(COMPUTER_ROOT));
     m_fileManagerWindow->openNewTab(DUrl(COMPUTER_ROOT));
     EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->onRequestCloseTabByUrl(m_fileManagerWindow->currentUrl()));
+}
+
+TEST_F(TestFileManagerWindow, tst_show_close)
+{
+    m_fileManagerWindow->show();
+    m_fileManagerWindow->close();
+}
+
+TEST_F(TestFileManagerWindow, tst_show_hide)
+{
+    m_fileManagerWindow->show();
+    m_fileManagerWindow->hide();
+}
+
+TEST_F(TestFileManagerWindow, tst_doubleClick_event)
+{
+    QMouseEvent event(QEvent::MouseButtonDblClick,{0,0},Qt::LeftButton,Qt::LeftButton,Qt::NoModifier);
+    m_fileManagerWindow->mouseDoubleClickEvent(&event);
+}
+
+TEST_F(TestFileManagerWindow, tst_move_event)
+{
+    QMoveEvent event(QPoint(0, 0), QPoint(1, 1));
+    m_fileManagerWindow->moveEvent(&event);
+}
+
+TEST_F(TestFileManagerWindow, tst_keyPress_event)
+{
+    QKeyEvent keyPressEvt_Tab(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier);
+    m_fileManagerWindow->keyPressEvent(&keyPressEvt_Tab);
+}
+
+TEST_F(TestFileManagerWindow, tst_filter_event)
+{
+    DTitlebar *watched = m_fileManagerWindow->titlebar();
+    QKeyEvent keyPressEvt_Tab(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier);
+    m_fileManagerWindow->eventFilter((QObject*)watched, &keyPressEvt_Tab);
+
+    DFMBaseView *temp = m_fileManagerWindow->d_func()->currentView;
+    m_fileManagerWindow->d_func()->currentView = nullptr;
+    m_fileManagerWindow->eventFilter(nullptr, &keyPressEvt_Tab);
+
+    m_fileManagerWindow->d_func()->currentView = temp;
+    m_fileManagerWindow->eventFilter(nullptr, &keyPressEvt_Tab);
+
+    QKeyEvent keyReleaseEvt_Tab(QEvent::KeyRelease, Qt::Key_Tab, Qt::NoModifier);
+    m_fileManagerWindow->eventFilter(nullptr, &keyPressEvt_Tab);
+}
+
+TEST_F(TestFileManagerWindow, tst_resize_event)
+{
+    QResizeEvent event(QSize(100, 100), QSize(50, 50));
+    m_fileManagerWindow->resizeEvent(&event);
+}
+
+TEST_F(TestFileManagerWindow, tst_fm_event)
+{
+    QSharedPointer<DFMEvent> event = QSharedPointer<DFMEvent>(new DFMEvent);
+    event->setType(DFMEvent::Back);
+    m_fileManagerWindow->fmEvent(event);
+
+    event->setType(DFMEvent::Forward);
+    m_fileManagerWindow->fmEvent(event);
+
+    event->setType(DFMEvent::OpenNewTab);
+    m_fileManagerWindow->fmEvent(event);
+
+    event->setType(DFMEvent::UnknowType);
+    m_fileManagerWindow->fmEvent(event);
+}
+
+TEST_F(TestFileManagerWindow, tst_get_object)
+{
+    EXPECT_NE(nullptr, m_fileManagerWindow->object());
+}
+
+TEST_F(TestFileManagerWindow, tst_handle_newView)
+{
+    m_fileManagerWindow->handleNewView(nullptr);
+}
+
+TEST_F(TestFileManagerWindow, can_initRenameBarState)
+{
+    m_fileManagerWindow->initRenameBarState();
+
+    DFileManagerWindow::flagForNewWindowFromTab.store(true, std::memory_order_seq_cst);
+    m_fileManagerWindow->initRenameBarState();
+}
+
+TEST_F(TestFileManagerWindow, can_initConnect)
+{
+    emit m_fileManagerWindow->d_func()->toolbar->detailButtonClicked();
+
+    QList<DUrl> urlList;
+    urlList.append(DUrl("/home"));
+    emit m_fileManagerWindow->selectUrlChanged(urlList);
 }

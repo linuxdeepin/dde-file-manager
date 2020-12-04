@@ -2,13 +2,17 @@
 #include <gmock/gmock-matchers.h>
 
 #include "dfmevent.h"
+#include "shutil/fileutils.h"
+#include "stub.h"
 #include <QComboBox>
 
 #define private public
+#define protected public
 #include <views/dstatusbar.h>
 
 
-TEST(DstatusbarTest,init){
+TEST(DstatusbarTest,init)
+{
     DStatusBar w;
 
     EXPECT_NE(nullptr, w.m_scaleSlider);
@@ -19,7 +23,8 @@ TEST(DstatusbarTest,init){
 //    EXPECT_TRUE(nullptr == w.m_comboBoxLabel);
 }
 
-TEST(DstatusbarTest, mode){
+TEST(DstatusbarTest, mode)
+{
     DStatusBar w;
     w.m_mode = DStatusBar::Mode::Normal;
     auto temp1 = w.mode() == DStatusBar::Mode::Normal;
@@ -34,13 +39,26 @@ TEST(DstatusbarTest, mode){
     EXPECT_TRUE(temp3);
 }
 
-TEST(DstatusbarTest, setMode){
+TEST(DstatusbarTest, setMode)
+{
     DStatusBar w;
+
+    w.setMode(DStatusBar::Mode::DialogOpen);
+    auto tempOpen = w.mode() == DStatusBar::Mode::DialogOpen;
+    EXPECT_TRUE(tempOpen);
+
+    w.setMode(DStatusBar::Mode::DialogSave);
+    auto tempSave = w.mode() == DStatusBar::Mode::DialogSave;
+    EXPECT_TRUE(tempSave);
+
+    w.m_label = nullptr;
+    w.setMode(DStatusBar::Mode::Normal);
     auto temp1 = w.mode() == DStatusBar::Mode::Normal;
     EXPECT_TRUE(temp1);
 }
 
-TEST(DstatusbarTest, setComBoxItems){
+TEST(DstatusbarTest, setComBoxItems)
+{
     DStatusBar w;
 
     w.setMode(DStatusBar::Mode::Normal);
@@ -54,26 +72,30 @@ TEST(DstatusbarTest, setComBoxItems){
 
 }
 
-TEST(DstatusbarTest, scalingSlider){
+TEST(DstatusbarTest, scalingSlider)
+{
     DStatusBar w;
     EXPECT_TRUE(w.scalingSlider() == w.m_scaleSlider);
 }
 
-TEST(DstatusbarTest, acceptButton){
+TEST(DstatusbarTest, acceptButton)
+{
     DStatusBar w;
     EXPECT_TRUE(w.acceptButton() == w.m_acceptButton);
     w.m_mode = DStatusBar::Mode::DialogSave;
     EXPECT_TRUE(w.acceptButton() == w.m_acceptButton);
 }
 
-TEST(DstatusbarTest, rejectButton){
+TEST(DstatusbarTest, rejectButton)
+{
     DStatusBar w;
     EXPECT_TRUE(w.rejectButton() == w.m_rejectButton);
     w.m_mode = DStatusBar::Mode::DialogSave;
     EXPECT_TRUE(w.rejectButton() == w.m_rejectButton);
 }
 
-TEST(DstatusbarTest, lineEdit){
+TEST(DstatusbarTest, lineEdit)
+{
     DStatusBar w;
     EXPECT_TRUE(w.lineEdit() == w.m_lineEdit);
     w.m_mode = DStatusBar::Mode::DialogSave;
@@ -87,7 +109,8 @@ TEST(DstatusbarTest, comboBox){
     EXPECT_TRUE(w.comboBox() == w.m_comboBox);
 }
 
-TEST(DstatusbarTest, sizeHint){
+TEST(DstatusbarTest, sizeHint)
+{
 
     QWidget wgt;
     DStatusBar w;
@@ -97,13 +120,15 @@ TEST(DstatusbarTest, sizeHint){
     EXPECT_TRUE(actualValue == expectedValue);
 }
 
-TEST(DFMElidLabelTest, setText){
+TEST(DFMElidLabelTest, setText)
+{
     DFMElidLabel ww;
     ww.setText("aa");
     EXPECT_TRUE(ww.m_text == "aa");
 }
 
-TEST(DstatusbarTest, computerSize){
+TEST(DstatusbarTest, computerSize)
+{
     int pid = getpid();
     const QString path = QString("file:///proc/%0/exe").arg(pid);
     DStatusBar w;
@@ -111,7 +136,8 @@ TEST(DstatusbarTest, computerSize){
     EXPECT_NE(0,w.computerSize(list));
 }
 
-TEST(DstatusbarTest, computerFolderContains){
+TEST(DstatusbarTest, computerFolderContains)
+{
     int pid = getpid();
     const QString path = QString("file:///proc/%0").arg(pid);
     DStatusBar w;
@@ -120,7 +146,8 @@ TEST(DstatusbarTest, computerFolderContains){
     EXPECT_NE(0,w.computerFolderContains(list));
 }
 
-TEST(DstatusbarTest, setLoadingIncatorVisible){
+TEST(DstatusbarTest, setLoadingIncatorVisible)
+{
     DStatusBar w;
     w.setLoadingIncatorVisible(false,"ok");
     EXPECT_TRUE(w.m_label->text().isEmpty());
@@ -129,7 +156,8 @@ TEST(DstatusbarTest, setLoadingIncatorVisible){
     EXPECT_EQ(QString("ok"),w.m_label->text());
 }
 
-TEST(DstatusbarTest, updateStatusMessage){
+TEST(DstatusbarTest, updateStatusMessage)
+{
     DStatusBar w;
     w.updateStatusMessage();
     EXPECT_TRUE(w.m_label->text().isEmpty());
@@ -144,7 +172,8 @@ TEST(DstatusbarTest, updateStatusMessage){
     EXPECT_FALSE(w.m_label->text().isEmpty());
 }
 
-TEST(DstatusbarTest, itemSelected_with_empty){
+TEST(DstatusbarTest, itemSelected_with_empty)
+{
     DStatusBar w;
     DFMEvent event(&w);
     event.setWindowId(0);
@@ -154,6 +183,77 @@ TEST(DstatusbarTest, itemSelected_with_empty){
     EXPECT_NE(nullptr,w.m_fileStatisticsJob);
 }
 
+TEST(DstatusbarTest, itemSelected_with_one)
+{
+    DStatusBar w;
+    DFMEvent event(&w);
+    event.setWindowId(0);
+    event.setData({});
+    Stub stub;
+    auto utFileUrlList = (DUrlList(*)())([]{
+        DUrlList tp;
+        tp.append(DUrl("/home/utTest/one"));
+        return tp;
+    });
+    stub.set(ADDR(DFMEvent, fileUrlList), utFileUrlList);
+    w.itemSelected(event, 1);
+
+    EXPECT_NE(nullptr,w.m_fileStatisticsJob);
+}
+
+static bool inThere = false;
+//TEST(DstatusbarTest, handdle_computer_folder_containsFinished)
+//{
+//    Stub stub;
+//    auto utFun = (void(*)())([]{
+//        inThere = true;
+//    });
+//    stub.set(ADDR(DStatusBar, updateStatusMessage), utFun);
+//    DStatusBar w;
+
+//    w.handdleComputerFolderContainsFinished();
+//    EXPECT_TRUE(inThere);
+//}
+
+//TEST(DstatusbarTest, handdle_computer_fileSize_finished)
+//{
+//    Stub stub;
+//    auto utFun = (void(*)())([]{
+//        inThere = true;
+//    });
+//    stub.set(ADDR(DStatusBar, updateStatusMessage), utFun);
+
+//    DStatusBar w;
+//    w.handdleComputerFileSizeFinished();
+//    EXPECT_TRUE(inThere);
+//}
+
+TEST(DstatusbarTest, item_counted)
+{
+    DFMEvent event(nullptr);
+
+    DStatusBar w;
+    w.itemCounted(event,1);
+    auto tt = w.m_label->text();
+    EXPECT_TRUE("1 item" == w.m_label->text());
+    w.itemCounted(event,2);
+    auto t2 =w.m_label->text();
+    EXPECT_TRUE("2 items" == w.m_label->text());
+}
+
+TEST(DFMElidLabel, resize_event)
+{
+    Stub stub;
+    inThere = false;
+    auto utFun = (void(*)())([]{
+        inThere = true;
+    });
+    stub.set(ADDR(DFMElidLabel, setElidText), utFun);
+    QResizeEvent event(QSize(10, 10), QSize(20, 20));
+    DFMElidLabel w;
+    w.resizeEvent(&event);
+    EXPECT_TRUE(inThere);
+}
 
 
 

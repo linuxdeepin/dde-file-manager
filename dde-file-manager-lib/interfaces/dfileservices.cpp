@@ -1266,7 +1266,7 @@ QString DFileService::getSymlinkFileName(const DUrl &fileUrl, const QDir &target
 {
     const DAbstractFileInfoPointer &pInfo = instance()->createFileInfo(Q_NULLPTR, fileUrl);
 
-    if (pInfo->exists()) {
+    if (pInfo && pInfo->exists()) {
         QString baseName = pInfo->fileDisplayName() == pInfo->fileName() ? pInfo->baseName() : pInfo->fileDisplayName();
         QString shortcut = QObject::tr("Shortcut");
         QString linkBaseName;

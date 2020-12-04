@@ -197,7 +197,7 @@ ComputerModel::ComputerModel(QObject *parent)
                 if (ndisksIndex == -1 ) {
                     addItem(makeSplitterUrl(tr("Disks")));
                 }
-                auto r = std::upper_bound(m_items.begin() + 1, m_items.end(), fi,
+                auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
                                           [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                     return DFMRootFileInfo::typeCompare(a, b.fi);
                 });
@@ -604,6 +604,8 @@ void ComputerModel::removeItem(const DUrl &url)
 
 void ComputerModel::onGetRootFile(const DAbstractFileInfoPointer &chi)
 {
+    if (!chi)
+        return;
     bool splt = false;
     if(!chi->exists())
     {
@@ -630,12 +632,9 @@ void ComputerModel::onGetRootFile(const DAbstractFileInfoPointer &chi)
 
 void ComputerModel::onOpticalChanged()
 {
-    std::thread thread(
-                []()
-    {
+    std::thread thread([](){
         DeviceInfoParser::Instance().refreshDabase();
-    }
-    );
+    });
     thread.detach();
 }
 

@@ -262,6 +262,9 @@ public:
     void close() override;
     void fullTextSearch(const QString &searchPath) const;
 
+    // fix bug23761 新增搜索结果是否为隐藏文件判断
+    bool searchFileIsHidden(const QString &fileName) const;
+
     SearchController *parent;
     DAbstractFileInfoPointer currentFileInfo;
     mutable QQueue<DUrl> childrens;
@@ -275,7 +278,7 @@ public:
     QDirIterator::IteratorFlags m_flags;
     mutable QList<DUrl> searchPathList;
     mutable DDirIteratorPointer it;
-    mutable bool m_hasIteratorByKeywordOfCurrentIt;
+    mutable bool m_hasIteratorByKeywordOfCurrentIt = false;
 
 #ifndef DISABLE_QUICK_SEARCH
     // 所有支持快速搜索的子目录(可包含待搜索目录本身)
@@ -292,6 +295,7 @@ public:
     bool closed = false;
     mutable bool hasExecuteFullTextSearch = false;/*全文搜索状态判断，false表示搜索未开始，true表示搜索已经完成。全文搜索只运行一次就出结果，其他搜索需要多次运行*/
     mutable bool hasUpdateIndex = false;
+    mutable QMap<QString, QSet<QString>> hiddenFileMap; // 隐藏文件信息
 };
 
 SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFilters,
@@ -300,12 +304,12 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     : DDirIterator()
     , parent(parent)
     , m_fileUrl(url)
+    , targetUrl(url.searchTargetUrl())
+    , keyword(DFMRegularExpression::checkWildcardAndToRegularExpression(url.searchKeyword()))
     , m_nameFilters(nameFilters)
     , m_filter(filter)
     , m_flags(flags)
 {
-    targetUrl = url.searchTargetUrl();
-    keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(url.searchKeyword());
     regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;
 
@@ -393,59 +397,62 @@ DUrl SearchDiriterator::next()
 // 全文搜索
 void SearchDiriterator::fullTextSearch(const QString &searchPath) const
 {
-    // 判断文件是否为隐藏文件
-    std::function<bool(const DUrl &)> isHidden;
-    isHidden = [ =, &isHidden](const DUrl & fileUrl) ->bool {
-        DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
-        DUrl parentUrl = fileUrl.parentUrl();
-
-        QString targetPath = targetUrl.toLocalFile();
-        QString filePath = parentUrl.toLocalFile();
-        DFMFileListFile hiddenFiles(parentUrl.toLocalFile());
-        if (fileInfo->isHidden() || hiddenFiles.contains(fileInfo->fileName()))
-        {
-            return true;
-        } else if (targetPath.startsWith(filePath))
-        {
-            return false;
-        } else if (isHidden(parentUrl))
-        {
-            return true;
-        }
-
-        return false;
-    };
-
-    QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword());
+    QStringList searchResult = DFMFullTextSearchManager::getInstance()->fullTextSearch(m_fileUrl.searchKeyword(), searchPath);
     for (QString res : searchResult) {
         if (DFMFullTextSearchManager::getInstance()->getSearchState() == JobController::Stoped) {
             return;
         }
-        if (res.startsWith(searchPath.endsWith("/") ? searchPath : (searchPath + "/"))) { /*对搜索结果进行匹配，只匹配到搜索的当前目录下*/
-            // 隐藏文件不显示
-            if (isHidden(DUrl::fromLocalFile(res))) {
+        // 隐藏文件不显示
+        if (searchFileIsHidden(res)) {
+            continue;
+        }
+
+        DUrl url = m_fileUrl;
+        DUrl realUrl = DUrl::fromUserInput(res);
+        // 回收站的文件右键菜单比较特殊，需要将文件url转换为回收站类型的URL
+        if (targetUrl.isTrashFile()) {
+            realUrl = DUrl::fromTrashFile(realUrl.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+        }
+        url.setSearchedFileUrl(realUrl);
+
+        if (!childrens.contains(url)) {
+            // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
+            if (!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())) {
                 continue;
             }
-
-            DUrl url = m_fileUrl;
-            DUrl realUrl = DUrl::fromUserInput(res);
-            // 回收站的文件右键菜单比较特殊，需要将文件url转换为回收站类型的URL
-            if (targetUrl.isTrashFile()) {
-                realUrl = DUrl::fromTrashFile(realUrl.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
-            }
-            url.setSearchedFileUrl(realUrl);
-
-            if (!childrens.contains(url)) {
-                // 修复bug-51754 增加条件判断，保险箱内的文件不能被检索到
-                if (!VaultController::isVaultFile(targetUrl.toLocalFile()) && VaultController::isVaultFile(url.fragment())) {
-                    continue;
-                }
-                childrens << url;
-            }
+            childrens << url;
         }
     }
 }
+
 #endif
+
+bool SearchDiriterator::searchFileIsHidden(const QString &fileName) const
+{
+    QFileInfo fileInfo(fileName);
+    QString fileParentPath = fileInfo.absolutePath();
+    DFMFileListFile flf(fileParentPath);
+
+    // 判断.hidden文件是否存在，不存在说明该路径下没有隐藏文件
+    QFileInfo localHiddenFileInfo(flf.filePath());
+    if (!localHiddenFileInfo.exists()) {
+        return false;
+    }
+
+    if (hiddenFileMap[fileParentPath].isEmpty()) {
+        // 判断.hidden文件中的内容是否为空，空则表示该路径下没有隐藏文件
+        auto hiddenFiles = flf.getHiddenFiles();
+        if (!hiddenFiles.isEmpty()) {
+            hiddenFileMap[fileParentPath] = hiddenFiles;
+            return hiddenFiles.contains(fileInfo.fileName());
+        }
+
+        return false;
+    }
+
+    return hiddenFileMap[fileParentPath].contains(fileInfo.fileName());
+}
+
 bool SearchDiriterator::hasNext() const
 {
     if (!childrens.isEmpty()) {
@@ -540,7 +547,8 @@ bool SearchDiriterator::hasNext() const
             fileInfo->makeAbsolute();
 
             //隐藏文件不支持索引和搜索
-            if (fileInfo->isHidden() == true) {
+            // fileInfo->isHidden()判断是否为系统隐藏文件，searchFileIsHidden判断是否为文管设置的隐藏文件
+            if (fileInfo->isHidden() || searchFileIsHidden(fileInfo->absoluteFilePath())) {
                 continue;
             }
 

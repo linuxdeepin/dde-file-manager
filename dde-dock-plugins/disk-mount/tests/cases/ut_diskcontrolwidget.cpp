@@ -1,3 +1,4 @@
+#include "ut_mock_stub_disk_gio.h"
 #include "diskcontrolwidget.h"
 
 #include <QWidget>
@@ -9,8 +10,14 @@
 #include <dfmsettings.h>
 #include <dgiosettings.h>
 #include <DDesktopServices>
+#include <dgiovolumemanager.h>
 
+#include "dattachedvfsdevice.h"
+#include <dfmsettings.h>
 
+#include "stub.h"
+#include "ut_mock_stub_diskdevice.h"
+DFM_USE_NAMESPACE
 namespace  {
     class TestDiskControlWidget : public testing::Test {
     public:
@@ -30,7 +37,15 @@ namespace  {
     };
 }
 
-static const QString BLK_DEVICE_MOUNT_POINT = "/midea/max";
+QVariant value_true_stub(const QString &group, const QString &key, const QVariant &defaultValue)
+{
+    return true;
+}
+
+QVariant value_false_stub(const QString &group, const QString &key, const QVariant &defaultValue)
+{
+    return false;
+}
 
 TEST_F(TestDiskControlWidget, can_send_notifymsg)
 {
@@ -38,7 +53,249 @@ TEST_F(TestDiskControlWidget, can_send_notifymsg)
     mCtrlWidget->NotifyMsg("title", "msg informations");
 }
 
+TEST_F(TestDiskControlWidget, can_do_StartupAutoMount)
+{
+    bool (DBlockDevice::*fileSystem)() const = &DBlockDevice::hasFileSystem;
+    QStringList (*blockDevices)(QVariantMap) = &DDiskManager::blockDevices;
+
+    Stub stub;
+    stub.set(blockDevices, blockDevices_DDiskManager_stub);
+
+    stub.set(ADDR(DDiskDevice, ejectable), ejectable_stub);
+    stub.set(fileSystem, hasFileSystem_stub);
+    stub.set(ADDR(DBlockDevice,mountPoints), gio_mountPoints_more_stub);
+    stub.set(ADDR(DBlockDevice,hintIgnore), hintIgnore_stub);
+    stub.set(ADDR(DBlockDevice,hintSystem), hintSystem_stub);
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+    stub.set(ADDR(DDiskDevice,canPowerOff), canPowerOff_stub);
+
+    mCtrlWidget->doStartupAutoMount();
+}
+
+TEST_F(TestDiskControlWidget, can_monitor_DriveConnected)
+{
+    Stub stub;
+
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+
+    emit mDiskManager->diskDeviceAdded(dgio_devpath_stub());
+}
+
+TEST_F(TestDiskControlWidget, can_monitor_DriveDisconnected)
+{
+    Stub stub;
+
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+
+    emit mDiskManager->diskDeviceRemoved(dgio_devpath_stub());
+}
+
+TEST_F(TestDiskControlWidget, can_monitor_onMountRemoved)
+{
+    Stub stub;
+
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+
+    emit mDiskManager->mountRemoved(dgio_devpath_stub(),dgio_devpath_stub().toUtf8());
+}
+
+TEST_F(TestDiskControlWidget, can_monitor_onVolumeAdded)
+{
+    Stub stub;
+
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+
+    emit mDiskManager->fileSystemAdded(dgio_devpath_stub());
+}
+
+TEST_F(TestDiskControlWidget, can_monitor_onVolumeRemoved)
+{
+    Stub stub;
+
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+
+    emit mDiskManager->fileSystemRemoved(dgio_devpath_stub());
+}
+
+TEST_F(TestDiskControlWidget, can_monitor_blockDeviceAdded_with_normalset)
+{
+    Stub stub;
+
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+
+    emit mDiskManager->blockDeviceAdded(dgio_devpath_stub());
+}
+
+TEST_F(TestDiskControlWidget, can_monitor_blockDeviceAdded_without_automount_and_open)
+{
+    QVariant (DFMSettings::*func_value)(const QString &group, const QString &key, const QVariant &defaultValue) const = & DFMSettings::value;
+
+    Stub stub;
+
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+
+    stub.set(func_value, value_false_stub);
+
+    emit mDiskManager->blockDeviceAdded(dgio_devpath_stub());
+}
+
+TEST_F(TestDiskControlWidget, can_monitor_blockDeviceAdded_with_automount_and_open)
+{
+    QVariant (DFMSettings::*func_value)(const QString &group, const QString &key, const QVariant &defaultValue) const = & DFMSettings::value;
+    bool (DBlockDevice::*fileSystem)() const = &DBlockDevice::hasFileSystem;
+
+    Stub stub;
+
+    stub.set(fileSystem, hasFileSystem_stub);
+    stub.set(ADDR(DBlockDevice,mount), getDummyMountPoint);
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+
+    stub.set(func_value, value_true_stub);
+
+    emit mDiskManager->blockDeviceAdded(dgio_devpath_stub());
+}
+
+TEST_F(TestDiskControlWidget, can_monitor_blockDeviceAdded_automount_and_open_but_mountpoint_is_empty)
+{
+    QVariant (DFMSettings::*func_value)(const QString &group, const QString &key, const QVariant &defaultValue) const = & DFMSettings::value;
+    bool (DBlockDevice::*fileSystem)() const = &DBlockDevice::hasFileSystem;
+
+    Stub stub;
+
+    stub.set(fileSystem, hasFileSystem_stub);
+    stub.set(ADDR(DBlockDevice,mount), get_empty_string_stub);
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+
+    stub.set(func_value, value_true_stub);
+
+    emit mDiskManager->blockDeviceAdded(dgio_devpath_stub());
+}
+
 TEST_F(TestDiskControlWidget, can_monitor_diskDeviceRemoved)
 {
-    emit mDiskManager->diskDeviceRemoved(BLK_DEVICE_MOUNT_POINT);
+    bool (DBlockDevice::*fileSystem)() const = &DBlockDevice::hasFileSystem;
+    QStringList (*blockDevices)(QVariantMap) = &DDiskManager::blockDevices;
+
+    Stub stub;
+    stub.set(blockDevices, blockDevices_DDiskManager_stub);
+
+    stub.set(ADDR(DDiskDevice, ejectable), ejectable_stub);
+    stub.set(fileSystem, hasFileSystem_stub);
+    stub.set(ADDR(DBlockDevice,mountPoints), gio_mountPoints_more_stub);
+    stub.set(ADDR(DBlockDevice,hintIgnore), hintIgnore_stub);
+    stub.set(ADDR(DBlockDevice,hintSystem), hintSystem_stub);
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+    stub.set(ADDR(DDiskDevice,canPowerOff), canPowerOff_stub);
+
+    stub.set(ADDR(DGioVolumeManager,getMounts), get_gvfs_Mounts_stub);
+    stub.set(ADDR(DGioMount, getRootFile), get_gvfs_RootFile_stub);
+    stub.set(ADDR(QUrl, scheme), scheme_burn_stub);
+    stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
+    stub.set(ADDR(DGioMount, name), name_stub);
+
+    emit mDiskManager->diskDeviceRemoved(dgio_devpath_stub());
+}
+
+
+TEST_F(TestDiskControlWidget, can_unmountall_u_blk_device)
+{
+    bool (DBlockDevice::*fileSystem)() const = &DBlockDevice::hasFileSystem;
+    QStringList (*blockDevices)(QVariantMap) = &DDiskManager::blockDevices;
+
+    Stub stub;
+    stub.set(blockDevices, blockDevices_DDiskManager_stub);
+
+    stub.set(ADDR(DDiskDevice, ejectable), ejectable_stub);
+    stub.set(fileSystem, hasFileSystem_stub);
+    stub.set(ADDR(DBlockDevice,mountPoints), gio_mountPoints_more_stub);
+    stub.set(ADDR(DBlockDevice,hintIgnore), hintIgnore_stub);
+    stub.set(ADDR(DBlockDevice,hintSystem), hintSystem_stub);
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+    stub.set(ADDR(DDiskDevice,canPowerOff), canPowerOff_stub);
+
+    stub.set(ADDR(DGioVolumeManager,getMounts), get_gvfs_Mounts_stub);
+    stub.set(ADDR(DGioMount, getRootFile), get_gvfs_RootFile_stub);
+    stub.set(ADDR(QUrl, scheme), scheme_burn_stub);
+    stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
+    stub.set(ADDR(DGioMount, name), name_stub);
+
+    mCtrlWidget->unmountAll();
+    sleep(nTimeout_udisk);
+}
+
+TEST_F(TestDiskControlWidget, cant_unmountall_u_blk_device)
+{
+    bool (DBlockDevice::*fileSystem)() const = &DBlockDevice::hasFileSystem;
+    QStringList (*blockDevices)(QVariantMap) = &DDiskManager::blockDevices;
+
+    Stub stub;
+    stub.set(blockDevices, blockDevices_DDiskManager_stub);
+
+    stub.set(ADDR(DDiskDevice, ejectable), ejectable_stub);
+    stub.set(fileSystem, hasFileSystem_stub);
+    stub.set(ADDR(DBlockDevice,mountPoints), gio_mountPoints_more_stub);
+    stub.set(ADDR(DBlockDevice,hintIgnore), hintIgnore_stub);
+    stub.set(ADDR(DBlockDevice,hintSystem), hintSystem_stub);
+    stub.set(ADDR(DDiskDevice,removable), removable_stub);
+    stub.set(ADDR(DDiskDevice,lastError), lastError_stub);
+
+    stub.set(ADDR(DGioVolumeManager,getMounts), get_gvfs_Mounts_stub);
+    stub.set(ADDR(DGioMount, getRootFile), get_gvfs_RootFile_stub);
+    stub.set(ADDR(QUrl, scheme), scheme_burn_stub);
+    stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
+    stub.set(ADDR(DGioMount, name), name_stub);
+
+    mCtrlWidget->unmountAll();
+    sleep(nTimeout_udisk);
+}
+
+TEST_F(TestDiskControlWidget, can_unmountall_optical_blk_device)
+{
+    bool (DBlockDevice::*fileSystem)() const = &DBlockDevice::hasFileSystem;
+    QStringList (*blockDevices)(QVariantMap) = &DDiskManager::blockDevices;
+
+    Stub stub;
+    stub.set(blockDevices, blockDevices_DDiskManager_stub);
+
+    stub.set(ADDR(DDiskDevice, ejectable), ejectable_stub);
+    stub.set(fileSystem, hasFileSystem_stub);
+    stub.set(ADDR(DBlockDevice,mountPoints), gio_mountPoints_more_stub);
+    stub.set(ADDR(DBlockDevice,hintIgnore), hintIgnore_stub);
+    stub.set(ADDR(DBlockDevice,hintSystem), hintSystem_stub);
+    stub.set(ADDR(DDiskDevice,optical), optical_stub);
+
+    stub.set(ADDR(DGioVolumeManager,getMounts), get_gvfs_Mounts_stub);
+    stub.set(ADDR(DGioMount, getRootFile), get_gvfs_RootFile_stub);
+    stub.set(ADDR(QUrl, scheme), scheme_burn_stub);
+    stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
+    stub.set(ADDR(DGioMount, name), name_stub);
+
+    mCtrlWidget->unmountAll();
+    sleep(nTimeout_udisk);
+}
+
+TEST_F(TestDiskControlWidget, cant_unmountall_optical_blk_device)
+{
+    bool (DBlockDevice::*fileSystem)() const = &DBlockDevice::hasFileSystem;
+    QStringList (*blockDevices)(QVariantMap) = &DDiskManager::blockDevices;
+
+    Stub stub;
+    stub.set(blockDevices, blockDevices_DDiskManager_stub);
+
+    stub.set(ADDR(DDiskDevice, ejectable), ejectable_stub);
+    stub.set(fileSystem, hasFileSystem_stub);
+    stub.set(ADDR(DBlockDevice,mountPoints), gio_mountPoints_more_stub);
+    stub.set(ADDR(DBlockDevice,hintIgnore), hintIgnore_stub);
+    stub.set(ADDR(DBlockDevice,hintSystem), hintSystem_stub);
+    stub.set(ADDR(DDiskDevice,lastError), lastError_stub);
+    stub.set(ADDR(DDiskDevice,optical), optical_stub);
+
+    stub.set(ADDR(DGioVolumeManager,getMounts), get_gvfs_Mounts_stub);
+    stub.set(ADDR(DGioMount, getRootFile), get_gvfs_RootFile_stub);
+    stub.set(ADDR(QUrl, scheme), scheme_burn_stub);
+    stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
+    stub.set(ADDR(DGioMount, name), name_stub);
+
+    mCtrlWidget->unmountAll();
+    sleep(nTimeout_udisk);
 }

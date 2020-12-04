@@ -11,8 +11,8 @@ static constexpr const char *const path{ "/com/deepin/filemanager/daemon/TagMana
 std::atomic<bool> flagForLockingBackend{ false };
 
 TagManagerDaemonController::TagManagerDaemonController(QObject *const parent)
-    : QObject{ parent },
-      m_daemonInterface{ nullptr}
+    : QObject{ parent }
+    , m_daemonInterface{ nullptr}
 {
     m_daemonInterface = std::unique_ptr<TagManagerDaemonInterface> { new TagManagerDaemonInterface {
             service,

@@ -64,7 +64,7 @@ class VaultControllerPrivate
 public:
     explicit VaultControllerPrivate(VaultController *CryFs);
 
-    CryFsHandle *m_cryFsHandle;
+    CryFsHandle *m_cryFsHandle = nullptr;
 
 private:
     VaultController *q_ptr;

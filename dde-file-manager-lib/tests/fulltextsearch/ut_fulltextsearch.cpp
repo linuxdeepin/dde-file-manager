@@ -14,7 +14,7 @@ class TestFullTextSearch: public testing::Test
 public:
     virtual void SetUp() override
     {
-        std::cout << "start TestVaultHelper" << std::endl;
+        std::cout << "start TestFullTextSearch" << std::endl;
         searchPath = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/fulltextsearch";
         filePath = searchPath + "/1.txt";
         QProcess::execute("mkdir " + searchPath);
@@ -27,7 +27,7 @@ public:
 
     virtual void TearDown() override
     {
-        std::cout << "end TestVaultHelper" << std::endl;
+        std::cout << "end TestFullTextSearch" << std::endl;
         QProcess::execute("rm -rf " + searchPath);
     }
 
@@ -35,6 +35,7 @@ public:
     QString searchPath;
     QString filePath;
 };
+}
 
 TEST_F(TestFullTextSearch, fulltextIndex)
 {
@@ -45,13 +46,13 @@ TEST_F(TestFullTextSearch, fulltextIndex)
 TEST_F(TestFullTextSearch, fullTextSearch)
 {
     QThread::sleep(1);
-    QStringList searchResult = filetextSearch->fullTextSearch("你好");
+    QStringList searchResult = filetextSearch->fullTextSearch("你好", searchPath);
     EXPECT_TRUE(searchResult.contains(filePath));
-    searchResult = filetextSearch->fullTextSearch("謝謝");
+    searchResult = filetextSearch->fullTextSearch("謝謝", searchPath);
     EXPECT_TRUE(searchResult.contains(filePath));
-    searchResult = filetextSearch->fullTextSearch("hello");
+    searchResult = filetextSearch->fullTextSearch("hello", searchPath);
     EXPECT_TRUE(searchResult.contains(filePath));
-    searchResult = filetextSearch->fullTextSearch("123");
+    searchResult = filetextSearch->fullTextSearch("123", searchPath);
     EXPECT_TRUE(searchResult.contains(filePath));
 }
 
@@ -65,8 +66,8 @@ TEST_F(TestFullTextSearch, updateIndex)
 
         filetextSearch->setSearchState(JobController::Started);
         filetextSearch->updateIndex(searchPath);
-        QStringList searchResult = filetextSearch->fullTextSearch("知道");
+        QStringList searchResult = filetextSearch->fullTextSearch("知道", searchPath);
         EXPECT_TRUE(searchResult.contains(filePath));
     }
 }
-}
+

@@ -29,8 +29,6 @@
 #include <danchors.h>
 #include <DUtil>
 #include <DApplication>
-#define private public
-#include <private/qhighdpiscaling_p.h>
 
 #include <durl.h>
 #include <dfmglobal.h>
@@ -79,21 +77,6 @@ static const QMap<int, int> kSortActions = {{MenuAction::Name, DFileSystemModel:
     , {MenuAction::Type, DFileSystemModel::FileMimeTypeRole}
     , {MenuAction::LastModifiedDate, DFileSystemModel::FileLastModifiedRole}
 };
-
-void startProcessDetached(const QString &program,
-                          const QStringList &arguments = QStringList(),
-                          QIODevice::OpenMode mode = QIODevice::ReadWrite)
-{
-    QProcess *process = new QProcess();
-    process->start(program, arguments, mode);
-//    qDebug() << process->program() << process->arguments();
-    process->closeReadChannel(QProcess::StandardOutput);
-    process->closeReadChannel(QProcess::StandardError);
-    process->connect(process, static_cast < void(QProcess::*)(int) > (&QProcess::finished),
-    process, [ = ](int) {
-        process->deleteLater();
-    });
-}
 
 DWIDGET_USE_NAMESPACE
 
@@ -2979,11 +2962,8 @@ void CanvasGridView::handleContextMenuAction(int action)
 
     switch (action) {
     case DisplaySettings: {
-        QStringList args;
-        args << "--print-reply" << "--dest=com.deepin.dde.ControlCenter"
-             << "/com/deepin/dde/ControlCenter" << "com.deepin.dde.ControlCenter.ShowModule"
-             << "string:display";
-        startProcessDetached("dbus-send", args);
+        QDBusInterface interface("com.deepin.dde.ControlCenter","/com/deepin/dde/ControlCenter","com.deepin.dde.ControlCenter");
+        interface.asyncCall("ShowModule",QVariant::fromValue(QString("display")));
         break;
     }
     case CornerSettings:
@@ -3184,6 +3164,9 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menu->removeAction(propertyAction);
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
 
+    //扩展菜单
+    DFileMenuManager::extendCustomMenu(menu, false, currentUrl() ,{},{});
+
     connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
         qDebug() << "trigger action" << action->data();
         if (!action->data().isValid()) {
@@ -3244,8 +3227,6 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     }
 
     const DUrlList list = selectedUrls();
-    qDebug() << "selectedUrls" << list;
-
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     if (!info || info->isVirtualEntry()) {
         return;
@@ -3284,15 +3265,23 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     //故重新更改成真实路径传递，可能对action后续的操作是否有影响
     auto curUrl = info->fileUrl();
     DUrlList realList;
-    DFileMenu *menu;
+    DFileMenu *menu = nullptr;
+    auto dirUrl = currentUrl();
     if (curUrl.scheme() == DFMMD_SCHEME) {
         curUrl = MergedDesktopController::convertToRealPath(curUrl);
+        dirUrl = MergedDesktopController::convertToRealPath(dirUrl);
         for (auto url : list) {
             realList.append(MergedDesktopController::convertToRealPath(url));
         }
         menu = DFileMenuManager::createNormalMenu(curUrl, realList, disableList, unusedList, static_cast<int>(winId()), true);
     } else {
+        //realList给后面的扩展菜单使用
+        realList = list;
         menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(winId()), true);
+    }
+
+    if (!menu) {
+        return;
     }
 
     //totally use dde file manager libs for menu actions
@@ -3303,10 +3292,6 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     ignoreActions  << MenuAction::Open;
     menu->setIgnoreMenuActions(ignoreActions);
     menu->setAccessibleInfo(AC_FILE_MENU_DESKTOP);
-
-    if (!menu) {
-        return;
-    }
 
     auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
     if (propertyAction) {
@@ -3319,6 +3304,9 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     menu->addAction(property);
 
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
+
+    //扩展菜单
+    DFileMenuManager::extendCustomMenu(menu, true, dirUrl, curUrl, realList);
 
     //断开连接，桌面优先处理
     //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突，

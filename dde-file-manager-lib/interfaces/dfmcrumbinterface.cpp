@@ -50,11 +50,12 @@ DFM_BEGIN_NAMESPACE
  * \param iconKey the icon key of a crumb item
  */
 CrumbData::CrumbData(DUrl url, QString displayText, QString iconName, QString iconKey)
+    : url(url)
+    , iconName(iconName)
+    , displayText(displayText)
+    , iconKey(iconKey)
 {
-    this->url = url;
-    this->displayText = displayText;
-    this->iconName = iconName;
-    this->iconKey = iconKey;
+
 }
 
 

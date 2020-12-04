@@ -47,6 +47,7 @@ public:
     static QString fmblkDevice;
 
     DFileMenuManager();
+    ~DFileMenuManager();
 
     static DFileMenu *createDefaultBookMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createUserShareMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
@@ -72,6 +73,8 @@ public:
                                          bool isUseCachedAction = true,
                                          bool isRecursiveCall = false);
     static QString getActionString(MenuAction type);
+
+    static void extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected = {});
 
     /// actions filter(global)
     static void addActionWhitelist(MenuAction action);

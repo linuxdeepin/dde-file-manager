@@ -1,8 +1,11 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#include "util/xcb/xcb.h"
+#include <QApplication>
 #include <QWidget>
 #include <QX11Info>
+
+#define private public
+#include "util/xcb/xcb.h"
 
 TEST(xcb,set_window_type_dock)
 {
@@ -66,3 +69,19 @@ TEST(xcb,find_dock_window)
     EXPECT_EQ(false,docks.isEmpty());
 }
 
+TEST(xcb,get_strut_partial)
+{
+    QWidget w;
+    w.setGeometry(20,20,50,50);
+    EXPECT_NO_FATAL_FAILURE(Xcb::XcbMisc::instance().get_strut_partial(w.winId()));
+}
+
+TEST(xcb,set_window_transparent_input)
+{
+    QWidget w;
+    w.setGeometry(20,20,50,50);
+
+    Xcb::XcbMisc xm;
+    EXPECT_NO_FATAL_FAILURE(xm.set_window_transparent_input(w.winId(),false));
+    EXPECT_NO_FATAL_FAILURE(xm.set_window_transparent_input(w.winId(),true));
+}

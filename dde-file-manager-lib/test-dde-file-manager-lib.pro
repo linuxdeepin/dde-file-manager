@@ -76,6 +76,7 @@ isEqual(ARCH, sw_64){
 }
 include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
+include(interfaces/customization/customization.pri)
 include(src.pri)
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
@@ -145,4 +146,5 @@ system(find $$OUT_PWD -name "*.gcda" -print0 | xargs -0 rm -f)
 include(../third-party/googletest/gtest_dependency.pri)
 include(tests/test.pri)
 include(../third-party/cpp-stub/stub.pri)
+INCLUDEPATH += $$top_srcdir/third-party/stubext
 LIBS += -lgcov

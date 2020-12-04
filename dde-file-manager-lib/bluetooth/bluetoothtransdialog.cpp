@@ -215,6 +215,8 @@ void BluetoothTransDialog::initConn()
     });
 
     connect(bluetoothManager->model(), &BluetoothModel::adapterRemoved, this, [this](const BluetoothAdapter *adapter) {
+        if (!adapter)
+            return;
         if (m_connectedAdapter.contains(adapter->id()))
             m_connectedAdapter.removeAll(adapter->id());
 
@@ -504,7 +506,7 @@ QWidget *BluetoothTransDialog::initSuccessPage()
 DStandardItem *BluetoothTransDialog::getStyledItem(const BluetoothDevice *dev)
 {
     // 只有已配对、状态为已连接的设备才显示在设备列表中
-    if (!(dev->paired() && dev->state() == BluetoothDevice::StateConnected))
+    if (!dev || !(dev->paired() && dev->state() == BluetoothDevice::StateConnected))
         return nullptr;
 
     if (findItemByIdRole(dev)) // 列表中已有此设备
@@ -538,7 +540,7 @@ DStandardItem *BluetoothTransDialog::getStyledItem(const BluetoothDevice *dev)
 
 DStandardItem *BluetoothTransDialog::findItemByIdRole(const BluetoothDevice *dev)
 {
-    return findItemByIdRole(dev->id());
+    return dev ? findItemByIdRole(dev->id()) : nullptr;
 }
 
 DStandardItem *BluetoothTransDialog::findItemByIdRole(const QString &devId)
@@ -574,6 +576,8 @@ void BluetoothTransDialog::updateDeviceList()
 
 void BluetoothTransDialog::addDevice(const BluetoothDevice *dev)
 {
+    if (!dev)
+        return;
     // 根据设备的 uuid 或 icon 要对可接收文件的设备进行过滤
     static const QStringList deviceCanRecvFile {"computer", "phone"};
     if (!deviceCanRecvFile.contains(dev->icon())) // 暂时根据 icon 进行判定，以后或可根据 uuid 是否包含 obex 传输服务来判定设备能否接收文件
@@ -590,6 +594,8 @@ void BluetoothTransDialog::addDevice(const BluetoothDevice *dev)
 
 void BluetoothTransDialog::removeDevice(const BluetoothDevice *dev)
 {
+    if (!dev)
+        return;
     removeDevice(dev->id());
 }
 
@@ -734,7 +740,7 @@ void BluetoothTransDialog::onPageChagned(const int &nIdx)
 
 void BluetoothTransDialog::connectAdapter(const BluetoothAdapter *adapter)
 {
-    if (m_connectedAdapter.contains(adapter->id()))
+    if (!adapter || m_connectedAdapter.contains(adapter->id()))
         return;
     m_connectedAdapter.append(adapter->id());
 
@@ -750,6 +756,8 @@ void BluetoothTransDialog::connectAdapter(const BluetoothAdapter *adapter)
 
 void BluetoothTransDialog::connectDevice(const BluetoothDevice *dev)
 {
+    if (!dev)
+        return;
     connect(dev, &BluetoothDevice::stateChanged, this, [this](const BluetoothDevice::State & state) {
         BluetoothDevice *device = dynamic_cast<BluetoothDevice *>(sender());
         if (!device)

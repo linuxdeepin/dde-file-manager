@@ -1,11 +1,14 @@
-#include "models/computermodel.h"
 #include "app/define.h"
 #include "interfaces/drootfilemanager.h"
 #include "dabstractfilewatcher.h"
-
+#include "dfileservices.h"
 #include <gtest/gtest.h>
 #include <QTimer>
 #include <QIcon>
+
+#define private public
+#define protected public
+#include "models/computermodel.h"
 
 
 namespace {
@@ -179,4 +182,32 @@ TEST_F(TestComputerModel, tstSetDataNFlags)
 
     auto flgs = model->flags(idx);
     EXPECT_TRUE(flgs & Qt::ItemFlag::ItemNeverHasChildren);
+}
+
+TEST_F(TestComputerModel, tstOnGetRootFile)
+{
+    DAbstractFileInfoPointer p;
+    model->onGetRootFile(p);
+    p = fileService->createFileInfo(nullptr, DUrl("file:///home"));
+    model->onGetRootFile(p);
+}
+
+TEST_F(TestComputerModel, tstOnOpticalChanged)
+{
+    model->onOpticalChanged();
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
+}
+
+TEST_F(TestComputerModel, tstLambdaSlots)
+{
+    model->m_watcher->fileAttributeChanged(DUrl("file:///home"));
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
 }

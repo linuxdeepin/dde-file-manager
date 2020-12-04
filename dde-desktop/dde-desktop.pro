@@ -16,8 +16,8 @@ include($$PWD/../third-party/accessibility/accessibility-suite.pri)
 DEFINES += DISABLE_ZONE
 
 # 获取标签系统设置
-#AC_FUNC_ENABLE = true
-AC_FUNC_ENABLE = $$(ENABLE_AC_FUNC)
+AC_FUNC_ENABLE = true
+#AC_FUNC_ENABLE = $$(ENABLE_AC_FUNC)
 # 检查集成测试标签
 equals( AC_FUNC_ENABLE, true ){
     DEFINES += ENABLE_ACCESSIBILITY
@@ -108,6 +108,7 @@ HEADERS += \
     dbus/licenceInterface.h \
     screen/abstractscreen.h \
     screen/abstractscreenmanager.h \
+    screen/abstractscreenmanager_p.h \
     screen/screenmanager.h \
     screen/screenobject.h \
     view/backgroundmanager.h \

@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-
+#include "stub.h"
 
 #define private public
+#define protected public
 
 #include <views/drenamebar.h>
 #include <views/drenamebar.cpp>
@@ -21,6 +22,14 @@ namespace  {
     };
 }
 
+TEST_F(RecordRenameBarStateTest, test_clear){
+    DUrlList tp;
+    tp.append(DUrl("/home/"));
+    rrbs.setSelectedUrls(tp);
+    rrbs.clear();
+    auto expectValue = 0 == rrbs.m_selectedUrls.size();
+    EXPECT_TRUE(expectValue);
+}
 
 TEST_F(RecordRenameBarStateTest, setPatternFirstItemContent){
     QPair<QString, QString> testData("aa", "bb");
@@ -127,6 +136,10 @@ TEST(DRenameBarTest, loadState){
 
     auto expectValue = 0 == drb.d_func()->m_currentPattern;
     EXPECT_TRUE(expectValue);
+    std::unique_ptr<RecordRenameBarState>  renameBarState2 {drb.getCurrentState()};
+    drb.loadState(renameBarState2);
+    auto expectValue2 = 0 == drb.d_func()->m_urlList.size();
+    EXPECT_TRUE(expectValue2);
 }
 
 TEST(DRenameBarTest, setVisible){
@@ -135,3 +148,34 @@ TEST(DRenameBarTest, setVisible){
     EXPECT_TRUE(drb.isVisible());
 }
 
+static bool inThere = false;
+TEST(DRenameBarTest, key_press_event){
+    DRenameBar drb;
+    QKeyEvent keA(QEvent::MouseButtonPress, Qt::Key_A, Qt::NoModifier);
+    QKeyEvent keReturn(QEvent::MouseButtonPress, Qt::Key_Return, Qt::NoModifier);
+    QKeyEvent keEnter(QEvent::MouseButtonPress, Qt::Key_Enter, Qt::NoModifier);
+    QKeyEvent keEscape(QEvent::MouseButtonPress, Qt::Key_Escape, Qt::NoModifier);
+
+    Stub stub;
+    auto ut_stubClickCancelButton = (void(*)())([]{
+        inThere = true;
+    });
+    auto ut_stubFunClickRenameButton = (void(*)())([]{
+        inThere = true;
+    });
+    stub.set(ADDR(DRenameBar, clickRenameButton), ut_stubFunClickRenameButton);
+    stub.set(ADDR(DRenameBar, clickCancelButton), ut_stubClickCancelButton);
+    drb.keyPressEvent(&keA);
+    EXPECT_FALSE(inThere);
+    inThere = false;
+    drb.keyPressEvent(&keEnter);
+    EXPECT_TRUE(inThere);
+
+    inThere = false;
+    drb.keyPressEvent(&keReturn);
+    EXPECT_TRUE(inThere);
+
+    inThere = false;
+    drb.keyPressEvent(&keEscape);
+    EXPECT_TRUE(inThere);
+}

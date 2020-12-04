@@ -39,13 +39,14 @@ DFMVfsDevicePrivate::DFMVfsDevicePrivate(const QUrl &url, void *gmountObjectPtr,
     : q_ptr(qq)
 {
     m_setupUrl = url.scheme() == "device" ? url.path() : url.toString();
-    c_GMount.reset((GMount*)gmountObjectPtr);
+    c_GMount.reset((GMount *)gmountObjectPtr);
 }
 
 DFMVfsDevicePrivate::DFMVfsDevicePrivate(const QUrl &url, DFMVfsDevice *qq)
-    : q_ptr(qq)
+    : m_setupUrl(url.scheme() == "device" ? url.path() : url.toString())
+    , q_ptr(qq)
 {
-    m_setupUrl = url.scheme() == "device" ? url.path() : url.toString();
+
 }
 
 DFMVfsDevicePrivate::~DFMVfsDevicePrivate()
@@ -58,7 +59,7 @@ DFMVfsDevicePrivate::~DFMVfsDevicePrivate()
 GMount *DFMVfsDevicePrivate::createGMount() const
 {
     QByteArray urlBa = m_setupUrl.toLatin1();
-    const char* urlCStr = urlBa.data();
+    const char *urlCStr = urlBa.data();
 
     GError *error = nullptr;
     DFMGFile file(g_file_new_for_uri(urlCStr));
@@ -156,21 +157,21 @@ GMountOperation *DFMVfsDevicePrivate::GMountOperationNewMountOp(DFMVfsDevice *de
     g_signal_connect(op, "ask_password", (GCallback)&DFMVfsDevicePrivate::GMountOperationAskPasswordCb, devicePtr);
     g_signal_connect(op, "ask_question", (GCallback)&DFMVfsDevicePrivate::GMountOperationAskQuestionCb, devicePtr);
 
-  /* dragondjf: we *should* also connect to the "aborted" signal but since the
-   *            main thread is blocked handling input we won't get that signal
-   *            anyway...
-   */
+    /* dragondjf: we *should* also connect to the "aborted" signal but since the
+     *            main thread is blocked handling input we won't get that signal
+     *            anyway...
+     */
     return op;
 }
 
 void DFMVfsDevicePrivate::GMountOperationAskPasswordCb(GMountOperation *op, const char *message, const char *default_user,
-                                                        const char *default_domain, GAskPasswordFlags flags, gpointer vfsDevicePtr)
+                                                       const char *default_domain, GAskPasswordFlags flags, gpointer vfsDevicePtr)
 {
-    DFMVfsDevice* device = static_cast<DFMVfsDevice*>(vfsDevicePtr);
+    DFMVfsDevice *device = static_cast<DFMVfsDevice *>(vfsDevicePtr);
     bool anonymous = g_mount_operation_get_anonymous(op);
     GPasswordSave passwordSave = g_mount_operation_get_password_save(op);
 
-    const char* default_password = g_mount_operation_get_password(op);
+    const char *default_password = g_mount_operation_get_password(op);
 
     QJsonObject obj;
     obj.insert("message", message);
@@ -185,7 +186,7 @@ void DFMVfsDevicePrivate::GMountOperationAskPasswordCb(GMountOperation *op, cons
 
     QJsonObject loginObj;
     if (device && device->eventHandler()) {
-        DFMVfsAbstractEventHandler* handler = static_cast<DFMVfsAbstractEventHandler*>(device->eventHandler());
+        DFMVfsAbstractEventHandler *handler = static_cast<DFMVfsAbstractEventHandler *>(device->eventHandler());
         loginObj = handler->handleAskPassword(obj);
     } else {
         qCDebug(vfsDevice()) << "GMountOperationAskPasswordCb(): No event handler registered to DFMVfsManager, use the default action.";
@@ -238,7 +239,7 @@ void DFMVfsDevicePrivate::GMountOperationAskQuestionCb(GMountOperation *op, cons
     char **ptr = choices;
     int choice = 0;
     QStringList choiceList;
-    DFMVfsDevice* device = static_cast<DFMVfsDevice*>(vfsDevicePtr);
+    DFMVfsDevice *device = static_cast<DFMVfsDevice *>(vfsDevicePtr);
 
     QString oneMessage(message);
     qCDebug(vfsDevice()) << "GMountOperationAskQuestionCb() message: " << message;
@@ -250,7 +251,7 @@ void DFMVfsDevicePrivate::GMountOperationAskQuestionCb(GMountOperation *op, cons
     }
 
     if (device && device->eventHandler()) {
-        DFMVfsAbstractEventHandler* handler = static_cast<DFMVfsAbstractEventHandler*>(device->eventHandler());
+        DFMVfsAbstractEventHandler *handler = static_cast<DFMVfsAbstractEventHandler *>(device->eventHandler());
         choice = handler->handleAskQuestion(oneMessage, choiceList);
     } else {
         qCDebug(vfsDevice()) << "GMountOperationAskQuestionCb(): No event handler registered to DFMVfsManager, use the default action.";
@@ -274,7 +275,7 @@ void DFMVfsDevicePrivate::GFileMountDoneCb(GObject *object, GAsyncResult *res, g
 {
     gboolean succeeded;
     GError *error = NULL;
-    DFMVfsDevice* device = static_cast<DFMVfsDevice*>(vfsDevicePtr);
+    DFMVfsDevice *device = static_cast<DFMVfsDevice *>(vfsDevicePtr);
 
     succeeded = g_file_mount_enclosing_volume_finish(G_FILE(object), res, &error);
 
@@ -285,7 +286,7 @@ void DFMVfsDevicePrivate::GFileMountDoneCb(GObject *object, GAsyncResult *res, g
         QString errorMsg(error->message);
 
         if (device->eventHandler()) {
-            DFMVfsAbstractEventHandler* handler = static_cast<DFMVfsAbstractEventHandler*>(device->eventHandler());
+            DFMVfsAbstractEventHandler *handler = static_cast<DFMVfsAbstractEventHandler *>(device->eventHandler());
             handler->handleMountError(errorCode, errorMsg);
         } else {
             qCDebug(vfsDevice()) << "GFileMountDoneCb(): No event handler registered to DFMVfsManager, use the default action.";
@@ -311,7 +312,7 @@ void DFMVfsDevicePrivate::GFileUnmountDoneCb(GObject *object, GAsyncResult *res,
 {
     gboolean succeeded;
     GError *error = NULL;
-    DFMVfsDevice* device = static_cast<DFMVfsDevice*>(vfsDevicePtr);
+    DFMVfsDevice *device = static_cast<DFMVfsDevice *>(vfsDevicePtr);
 
     succeeded = g_mount_unmount_with_operation_finish(G_MOUNT(object), res, &error);
 
@@ -322,7 +323,7 @@ void DFMVfsDevicePrivate::GFileUnmountDoneCb(GObject *object, GAsyncResult *res,
         QString errorMsg(error->message);
 
         if (device->eventHandler()) {
-            DFMVfsAbstractEventHandler* handler = static_cast<DFMVfsAbstractEventHandler*>(device->eventHandler());
+            DFMVfsAbstractEventHandler *handler = static_cast<DFMVfsAbstractEventHandler *>(device->eventHandler());
             handler->handleUnmountError(errorCode, errorMsg);
         } else {
             qCDebug(vfsDevice()) << "GFileUnmountDoneCb(): No event handler registered to DFMVfsManager, use the default action.";
@@ -382,7 +383,7 @@ DFMVfsDevice *DFMVfsDevice::create(const QUrl &url, QObject *parent)
     QString deviceId = url.scheme() == "device" ? url.path() : url.toString();
 
     QByteArray ba = deviceId.toLatin1();
-    const char* urlCStr = ba.data();
+    const char *urlCStr = ba.data();
 
     GError *error = nullptr;
     DFMGFile file(g_file_new_for_uri(urlCStr));
@@ -533,7 +534,7 @@ quint64 DFMVfsDevice::totalBytes() const
 
     try {
         result = g_file_info_get_attribute_uint64(d->getGFileInfo(), G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
-    } catch (const char*) {
+    } catch (const char *) {
         result = 0;
     }
 
@@ -548,7 +549,7 @@ quint64 DFMVfsDevice::usedBytes() const
 
     try {
         result = g_file_info_get_attribute_uint64(d->getGFileInfo(), G_FILE_ATTRIBUTE_FILESYSTEM_USED);
-    } catch (const char*) {
+    } catch (const char *) {
         result = 0;
     }
 
@@ -563,7 +564,7 @@ quint64 DFMVfsDevice::freeBytes() const
 
     try {
         result = g_file_info_get_attribute_uint64(d->getGFileInfo(), G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-    } catch (const char*) {
+    } catch (const char *) {
         result = 0;
     }
 
@@ -631,7 +632,7 @@ QStringList DFMVfsDevice::iconList() const
 
     DFMGIcon icon(g_mount_get_icon(d->getGMount()));
 
-    if (icon && G_IS_THEMED_ICON(icon.data())){
+    if (icon && G_IS_THEMED_ICON(icon.data())) {
         // blumia: QIcon::fromTheme accept the full name and will do the fallback when needed, so
         //         maybe we doesn't need such a list.
         return DFMVfsDevicePrivate::getThemedIconName(G_THEMED_ICON(icon.data()));
@@ -653,7 +654,7 @@ QStringList DFMVfsDevice::symbolicIconList() const
 
     DFMGIcon icon(g_mount_get_symbolic_icon(d->getGMount()));
 
-    if (icon && G_IS_THEMED_ICON(icon.data())){
+    if (icon && G_IS_THEMED_ICON(icon.data())) {
         return DFMVfsDevicePrivate::getThemedIconName(G_THEMED_ICON(icon.data()));
     }
 

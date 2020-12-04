@@ -119,3 +119,29 @@ TEST_F(TestDesktopFileInfo, tstFileIcon)
     EXPECT_TRUE(p.isNull());
 }
 
+TEST_F(TestDesktopFileInfo, tstMenuActionList)
+{
+    info->menuActionList();
+    DesktopFileInfo f(DUrl("trash:///"));
+    f.menuActionList();
+    f.disableMenuActionList();
+}
+
+TEST_F(TestDesktopFileInfo, tstAdditionalIcon)
+{
+    EXPECT_TRUE(0 == info->additionalIcon().count());
+}
+
+TEST_F(TestDesktopFileInfo, tstSupportDragActions)
+{
+    DesktopFileInfo f(DUrl("trash:///"));
+    EXPECT_TRUE(Qt::IgnoreAction == f.supportedDragActions());
+    info->supportedDragActions();
+}
+
+TEST_F(TestDesktopFileInfo, tstCanDrop)
+{
+    DesktopFileInfo f(DUrl("computer:///"));
+    EXPECT_FALSE(f.canDrop());
+    info->canDrop();
+}

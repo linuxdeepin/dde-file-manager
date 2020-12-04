@@ -35,19 +35,21 @@ class ExtendView : public QFrame
 {
     Q_OBJECT
 public:
-    explicit ExtendView(QWidget *parent = 0);
+    explicit ExtendView(QWidget *parent = nullptr);
     ~ExtendView();
-    void initUI();
-    void initConnect();
 
 signals:
 
 public slots:
-    void setStartUrl(const DUrl& url);
+    void setStartUrl(const DUrl &url);
 
 private:
-    QListWidget* m_extendListView = NULL;
-    DDetailView* m_detailView = NULL;
+    void initUI();
+    void initConnect();
+
+private:
+    QListWidget *m_extendListView = nullptr;
+    DDetailView *m_detailView = nullptr;
     DUrl m_startUrl;
     DUrl m_currentUrl;
 };

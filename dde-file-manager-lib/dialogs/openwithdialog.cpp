@@ -161,10 +161,10 @@ OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title,
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
-OpenWithDialog::OpenWithDialog(const QList<DUrl> &urllist, QWidget *parent) :
-    BaseDialog(parent)
+OpenWithDialog::OpenWithDialog(const QList<DUrl> &urllist, QWidget *parent)
+    : BaseDialog(parent)
+    , m_urllist(urllist)
 {
-    m_urllist = urllist;
     setWindowFlags(windowFlags()
                    & ~ Qt::WindowMaximizeButtonHint
                    & ~ Qt::WindowMinimizeButtonHint
@@ -175,10 +175,10 @@ OpenWithDialog::OpenWithDialog(const QList<DUrl> &urllist, QWidget *parent) :
     initData();
 }
 
-OpenWithDialog::OpenWithDialog(const DUrl &url, QWidget *parent) :
-    BaseDialog(parent)
+OpenWithDialog::OpenWithDialog(const DUrl &url, QWidget *parent)
+    : BaseDialog(parent)
+    , m_url(url)
 {
-    m_url = url;
     setWindowFlags(windowFlags()
                    & ~ Qt::WindowMaximizeButtonHint
                    & ~ Qt::WindowMinimizeButtonHint

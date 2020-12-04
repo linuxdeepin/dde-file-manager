@@ -57,8 +57,6 @@ class UDiskListener : public DAbstractFileController
 
 public:
     explicit UDiskListener(QObject *parent = nullptr);
-    void initDiskManager();
-    void initConnect();
     UDiskDeviceInfoPointer getDevice(const QString &id);
     void addDevice(UDiskDeviceInfoPointer device);
     void removeDevice(UDiskDeviceInfoPointer device);
@@ -102,6 +100,10 @@ public:
     void appendHiddenDirs(const QString &path);
     QStringList hiddenDirs();
 
+private:
+    void initDiskManager();
+    void initConnect();
+
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);
     void volumeRemoved(UDiskDeviceInfoPointer device);
@@ -126,6 +128,7 @@ public slots:
 private slots:
     void fileSystemDeviceIdLabelChanged(const QString &path);
     void insertFileSystemDevice(const QString dbusPath);
+    void loopCheckCD();
 
 private:
     DDiskManager *m_diskMgr = nullptr;

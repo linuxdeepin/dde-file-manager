@@ -20,9 +20,12 @@
  */
 #include "vfs/dfmvfsdevice.h"
 #include "vfs/private/dfmvfsdevice_p.h"
+#include "stub.h"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+
+#include <QJsonObject>
 
 using namespace dde_file_manager;
 
@@ -141,12 +144,34 @@ TEST_F(TestDFMVfsDevice, name)
 TEST_F(TestDFMVfsDevice, p_getThemedIconName)
 {
     EXPECT_EQ(d->getThemedIconName(nullptr).size(), 0);
+    DFMGIcon icon;
+    EXPECT_EQ(d->getThemedIconName(G_THEMED_ICON(icon.data())).size(), 0);
+
 }
 
 TEST_F(TestDFMVfsDevice, p_GMountOperationAskPasswordCb)
 {
+    Stub st;
+    bool (*isEmpty_r)(void *) = [] (void *) {return false;};
+    st.set(ADDR(QJsonObject, isEmpty), isEmpty_r);
+
     GMountOperation *op = DFMVfsDevicePrivate::GMountOperationNewMountOp(m_service);
     GAskPasswordFlags f = G_ASK_PASSWORD_NEED_USERNAME ;
+    EXPECT_NO_FATAL_FAILURE (
+        DFMVfsDevicePrivate::GMountOperationAskPasswordCb(op, "test", "root", "localhost", f, m_service);
+    );
+
+    f = G_ASK_PASSWORD_NEED_DOMAIN ;
+    EXPECT_NO_FATAL_FAILURE (
+        DFMVfsDevicePrivate::GMountOperationAskPasswordCb(op, "test", "root", "localhost", f, m_service);
+    );
+
+    f = G_ASK_PASSWORD_NEED_PASSWORD ;
+    EXPECT_NO_FATAL_FAILURE (
+        DFMVfsDevicePrivate::GMountOperationAskPasswordCb(op, "test", "root", "localhost", f, m_service);
+    );
+
+    f = G_ASK_PASSWORD_SAVING_SUPPORTED ;
     EXPECT_NO_FATAL_FAILURE (
         DFMVfsDevicePrivate::GMountOperationAskPasswordCb(op, "test", "root", "localhost", f, m_service);
     );
@@ -171,7 +196,24 @@ TEST_F(TestDFMVfsDevice, p_GFileMountDoneCb)
 
 TEST_F(TestDFMVfsDevice, p_GFileUnmountDoneCb)
 {
+    gboolean (*f)(GMount *, GAsyncResult *, GError **) = [](GMount *, GAsyncResult *, GError **error) {
+        gboolean ret = false;
+        GError *e = new GError;
+        char *m = (char *)malloc(256);
+        strcpy(m, "test");
+        e->message = m;
+        e->domain = G_IO_ERROR;
+        *error = e;
+        return ret;
+    };
+    Stub st;
+    st.set(&g_mount_unmount_with_operation_finish, f);
     EXPECT_NO_FATAL_FAILURE (
         DFMVfsDevicePrivate::GFileUnmountDoneCb(nullptr, nullptr, m_service);
     );
+}
+
+TEST_F(TestDFMVfsDevice, p_createRootFileInfo)
+{
+    EXPECT_NO_FATAL_FAILURE(d->createRootFileInfo());
 }

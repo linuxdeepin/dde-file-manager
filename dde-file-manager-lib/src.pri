@@ -17,6 +17,7 @@ HEADERS += \
     $$PWD/models/dfmrootfileinfo.h \
     $$PWD/views/computerviewitemdelegate.h \
     $$PWD/views/dtoolbar.h \
+    $$PWD/views/dfileview_p.h   \
     $$PWD/views/dfileview.h \
     $$PWD/views/ddetailview.h \
     $$PWD/controllers/filecontroller.h \
@@ -32,6 +33,7 @@ HEADERS += \
     $$PWD/shutil/desktopfile.h \
     $$PWD/shutil/fileutils.h \
     $$PWD/shutil/properties.h \
+    $$PWD/views/dfilemanagerwindow_p.h  \
     $$PWD/views/dfilemanagerwindow.h \
     $$PWD/views/historystack.h\
     $$PWD/dialogs/propertydialog.h \
@@ -196,7 +198,6 @@ HEADERS += \
     $$PWD/controllers/vaultcontroller.h \
     $$PWD/models/vaultfileinfo.h \
     $$PWD/controllers/dfmvaultcrumbcontroller.h \
-    $$PWD/views/interface/dfmvaultcontentinterface.h \
     $$PWD/views/dfmvaultunlockpages.h \
     $$PWD/views/dfmvaultfileview.h \
     $$PWD/views/dfmvaultrecoverykeypages.h \
@@ -230,7 +231,11 @@ HEADERS += \
     $$PWD/shutil/checknetwork.h \
     $$PWD/accessibility/ac-lib-file-manager.h \
     $$PWD/accessibility/acintelfunctions.h \
-    $$PWD/bluetooth/bluetoothmanager_p.h
+    $$PWD/bluetooth/bluetoothmanager_p.h \
+    $$PWD/models/virtualentryinfo.h \
+    $$PWD/models/trashfileinfo_p.h \
+    $$PWD/controllers/mergeddesktopcontroller_p.h \
+    $$PWD/controllers/masteredmediacontroller_p.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -410,7 +415,6 @@ SOURCES += \
     $$PWD/controllers/vaultcontroller.cpp \
     $$PWD/models/vaultfileinfo.cpp \
     $$PWD/controllers/dfmvaultcrumbcontroller.cpp \
-    $$PWD/views/interface/dfmvaultcontentinterface.cpp \
     $$PWD/views/dfmvaultunlockpages.cpp \
     $$PWD/views/dfmvaultfileview.cpp \
     $$PWD/views/dfmvaultrecoverykeypages.cpp \

@@ -48,7 +48,7 @@ void ExtendView::initUI()
     m_extendListView->setFlow(QListWidget::LeftToRight);
     m_detailView = new DDetailView;
     m_detailView->setFixedWidth(200);
-    QHBoxLayout* mainLayout = new QHBoxLayout;
+    QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_extendListView);
     mainLayout->addWidget(m_detailView);
     mainLayout->setSpacing(0);
@@ -63,7 +63,7 @@ void ExtendView::initConnect()
 
 void ExtendView::setStartUrl(const DUrl &url)
 {
-    if (url == m_currentUrl){
+    if (url == m_currentUrl) {
         return;
     }
 //    m_extendListView->clear();

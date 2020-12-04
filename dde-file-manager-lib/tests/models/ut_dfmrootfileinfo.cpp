@@ -1,9 +1,24 @@
+#include <gtest/gtest.h>
+#include "stub.h"
+#include <ddiskmanager.h>
+#include <dblockdevice.h>
+
+#define protected public
 #include "models/dfmrootfileinfo.h"
 #include "interfaces/dfmstandardpaths.h"
 
-#include <gtest/gtest.h>
 
 namespace {
+QString idVersion_stub(void *) {
+    return "FAT32";
+}
+
+QByteArrayList symlinks_stub(void *) {
+    QByteArrayList bal;
+    bal << QByteArray("/dev/disk/by-label/TEST\\x00");
+    return bal;
+}
+
 class TestDFMRootFileInfo : public testing::Test
 {
 public:
@@ -117,6 +132,14 @@ TEST_F(TestDFMRootFileInfo, isDir)
 TEST_F(TestDFMRootFileInfo, fileType)
 {
     EXPECT_EQ(257, info->fileType());
+    DFMRootFileInfo *ftp = new DFMRootFileInfo(DUrl("ftp:///testfile.gvfsmp"));
+    ftp->fileType();
+    DFMRootFileInfo *smb = new DFMRootFileInfo(DUrl("smb:///testfile.gvfsmp"));
+    smb->fileType();
+    DFMRootFileInfo *mtp = new DFMRootFileInfo(DUrl("mtp:///testfile.gvfsmp"));
+    mtp->fileType();
+    DFMRootFileInfo *gphoto = new DFMRootFileInfo(DUrl("gphoto2:///testfile.gvfsmp"));
+    gphoto->fileType();
 }
 
 TEST_F(TestDFMRootFileInfo, filesCount)
@@ -164,4 +187,39 @@ TEST_F(TestDFMRootFileInfo, tstCheckMpsStr)
 TEST_F(TestDFMRootFileInfo, tstMenuActionList)
 {
     EXPECT_TRUE(info->menuActionList().count() > 0);
+    DFMRootFileInfo *gvfs = new DFMRootFileInfo(DUrl("dfmroot:///fakeDisk.gvfsmp"));
+    gvfs->menuActionList();
+}
+
+TEST_F(TestDFMRootFileInfo, tstConstructor)
+{
+    QStringList (*resolveDeviceNode_stub)(QString, QVariantMap) = [](QString, QVariantMap){ return QStringList(); };
+    Stub st;
+    st.set(ADDR(DDiskManager, resolveDeviceNode), resolveDeviceNode_stub);
+    DFMRootFileInfo *localDisk = new DFMRootFileInfo(DUrl("dfmroot:///sdN.localdisk"));
+    localDisk->fileDisplayName();
+    localDisk->fileName();
+    localDisk->redirectedFileUrl();
+    localDisk->extraProperties();
+
+    DFMRootFileInfo *gvfs = new DFMRootFileInfo(DUrl("dfmroot:///fakeFile.gvfsmp"));
+    gvfs->fileDisplayName();
+    gvfs->iconName();
+    gvfs->redirectedFileUrl();
+    gvfs->extraProperties();
+
+    DFMRootFileInfo *fake = new DFMRootFileInfo(DUrl("dfmroot:///fakeFile.fakeSuffix"));
+    fake->fileDisplayName();
+    fake->iconName();
+    fake->redirectedFileUrl();
+    fake->extraProperties();
+}
+
+TEST_F(TestDFMRootFileInfo, tstCheckCache)
+{
+    Stub st;
+    st.set(ADDR(DBlockDevice, idVersion), idVersion_stub);
+    st.set(ADDR(DBlockDevice, symlinks), symlinks_stub);
+    DFMRootFileInfo *fat32 = new DFMRootFileInfo(DUrl("dfmroot:///sda.localdisk"));
+    fat32->checkCache();
 }

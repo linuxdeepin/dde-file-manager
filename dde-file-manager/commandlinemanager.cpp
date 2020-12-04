@@ -151,39 +151,22 @@ void CommandLineManager::processCommand()
 
     foreach (QString path, positionalArguments()) {
         if (!CommandLineManager::instance()->isSet("raw")) {
-
-//            QDir t_dir(path);
-
-//            if (t_dir.exists(path)) {
-//                if (!path.startsWith("file://")) {
-//                    path = "file://" + t_dir.absolutePath();
-//                    QRegExp regexp("[%]");
-//                    if (path.contains(regexp)) {
-//                        QString left, right, encode;
-//                        int idx = path.indexOf(regexp);
-//                        while (idx != -1) {
-//                            left = path.left(idx);
-//                            right = path.mid(idx + 1);
-//                            encode = QUrl::toPercentEncoding(path.mid(idx, 1));
-//                            path = left + encode + right;
-//                            idx = path.indexOf(regexp, idx + 1);
-//                        }
-//                    }
-//                }
-//            }
-
-
-            // 路径中包含特殊字符的全部uri编码
-            QRegExp regexp("[#&@\\!\\?]");
-            if (path.contains(regexp)) {
-                QString left, right, encode;
-                int idx = path.indexOf(regexp);
-                while (idx != -1) {
-                    left = path.left(idx);
-                    right = path.mid(idx + 1);
-                    encode = QUrl::toPercentEncoding(path.mid(idx, 1));
-                    path = left + encode + right;
-                    idx = path.indexOf(regexp);
+            //路径字符串在DUrl::fromUserInput中会处理编码，这里不处理
+            if (!QDir().exists(path) && !path.startsWith("./") &&
+                    !path.startsWith("../") && !path.startsWith("/"))
+            {
+                // 路径中包含特殊字符的全部uri编码
+                QRegExp regexp("[#&@\\!\\?]");
+                if (path.contains(regexp)) {
+                    QString left, right, encode;
+                    int idx = path.indexOf(regexp);
+                    while (idx != -1) {
+                        left = path.left(idx);
+                        right = path.mid(idx + 1);
+                        encode = QUrl::toPercentEncoding(path.mid(idx, 1));
+                        path = left + encode + right;
+                        idx = path.indexOf(regexp);
+                    }
                 }
             }
         }

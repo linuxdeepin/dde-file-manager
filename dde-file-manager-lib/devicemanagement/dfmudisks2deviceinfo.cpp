@@ -31,9 +31,9 @@
 DFM_BEGIN_NAMESPACE
 
 DFMUdisks2DeviceInfo::DFMUdisks2DeviceInfo(const DBlockDevice *blockDevicePointer)
+    : deviceDBusId(blockDevicePointer->path())
+    , mountPoint(blockDevicePointer->mountPoints().first())
 {
-    mountPoint = blockDevicePointer->mountPoints().first();
-    deviceDBusId = blockDevicePointer->path();
     c_blockDevice.reset(DDiskManager::createBlockDevice(deviceDBusId)); // not take the ownership of the passed pointer.
 }
 
@@ -99,7 +99,7 @@ bool DFMUdisks2DeviceInfo::canRename() const
 
 QString DFMUdisks2DeviceInfo::displayName() const
 {
-    static QMap<QString, const char*> i18nMap {
+    static QMap<QString, const char *> i18nMap {
         {"data", "Data Disk"}
     };
 

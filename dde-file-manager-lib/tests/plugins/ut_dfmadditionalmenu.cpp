@@ -4,6 +4,7 @@
 #define protected public
 #include "plugins/dfmadditionalmenu.h"
 #include "plugins/dfmadditionalmenu.cpp"
+#include "stub.h"
 
 DFM_USE_NAMESPACE
 
@@ -67,6 +68,18 @@ TEST_F(DFMAdditionalMenuTest, load_desktop_file)
 
     p_menu->loadDesktopFile();
     EXPECT_NE(p_menu->d_func()->menuActionHolder, nullptr);
+
+    Stub stub;
+
+    bool (*ut_contains)() = [](){return false;};
+    stub.set(ADDR(XdgDesktopFile, contains), ut_contains);
+    p_menu->loadDesktopFile();
+    stub.reset(ADDR(XdgDesktopFile, contains));
+
+    QStringList (*ut_actions)() = [](){return QStringList()<<"new"<<"del";};
+    stub.set(ADDR(XdgDesktopFile, actions), ut_actions);
+    p_menu->loadDesktopFile();
+    stub.reset(ADDR(XdgDesktopFile, actions));
 }
 
 TEST_F(DFMAdditionalMenuTest, test_emptyAreaActoins)
@@ -80,5 +93,17 @@ TEST_F(DFMAdditionalMenuTest, test_emptyAreaActoins)
     }
 
     p_menu->d_func()->emptyAreaActoins(QString("/home/testa"), false);
+}
 
+TEST_F(DFMAdditionalMenuTest, test_single)
+{
+    ASSERT_NE(p_menu, nullptr);
+
+    QMap<QString, QList<QAction *> > &temp = p_menu->d_func()->actionListByType;
+    if (!temp.isEmpty() && !temp.contains(QString("EmptyArea"))) {
+        auto value = temp.first();
+        temp.insert(QString("EmptyArea"), value);
+    }
+
+    p_menu->d_func()->emptyAreaActoins(QString("/home/testa"), false);
 }
