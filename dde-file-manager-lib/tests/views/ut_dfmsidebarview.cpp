@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QDropEvent>
 #include <QTest>
+#include <stub.h>
 #define private public
 #define protected public
 
@@ -19,73 +20,68 @@
 DFM_USE_NAMESPACE
 using namespace testing;
 namespace  {
-    class DFMSideBarViewTest : public Test
+    class TestDFMSideBarView : public Test
     {
     public:
-        DFMSideBarViewTest():Test()
-        {            
-            p_view = nullptr;
-            testPath = QCoreApplication::applicationDirPath();
-        }
-
         virtual void SetUp() override {
-            p_view = new DFMSideBarView;
+            testPath = QCoreApplication::applicationDirPath();
+            m_view = new DFMSideBarView;
         }
 
         virtual void TearDown() override {
-            delete p_view;
+            delete m_view;
         }
 
-        DFMSideBarView * p_view;
+        DFMSideBarView * m_view;
         QString testPath;
     };
 }
 
-TEST_F(DFMSideBarViewTest, get_previous_index)
+TEST_F(TestDFMSideBarView, get_previous_index)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
-    QModelIndex result = p_view->getPreviousIndex();
-    EXPECT_EQ(result, p_view->m_previous);
+    QModelIndex result = m_view->getPreviousIndex();
+    EXPECT_EQ(result, m_view->m_previous);
 }
 
-TEST_F(DFMSideBarViewTest, get_current_index)
+TEST_F(TestDFMSideBarView, get_current_index)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
-    QModelIndex result = p_view->getCurrentIndex();
-    EXPECT_EQ(result, p_view->m_current);
+    QModelIndex result = m_view->getCurrentIndex();
+    EXPECT_EQ(result, m_view->m_current);
 }
 
-TEST_F(DFMSideBarViewTest, set_current_changed)
+TEST_F(TestDFMSideBarView, set_current_changed)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
     QModelIndex newMode;
-    p_view->currentChanged(newMode);
+    m_view->currentChanged(newMode);
 
-    EXPECT_EQ(newMode, p_view->m_previous);
+    EXPECT_EQ(newMode, m_view->m_previous);
 }
 
-TEST_F(DFMSideBarViewTest, get_item_at)
+TEST_F(TestDFMSideBarView, get_item_at)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
     QPoint pt(1,1);
-    DFMSideBarItem *result = p_view->itemAt(pt);
+    DFMSideBarItem *result = m_view->itemAt(pt);
     EXPECT_EQ(result, nullptr);
 }
 
-TEST_F(DFMSideBarViewTest, get_index_at)
+TEST_F(TestDFMSideBarView, get_index_at)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
-    p_view->indexAt(QPoint(1,1));
+    m_view->indexAt(QPoint(1,1));
 }
 
-TEST_F(DFMSideBarViewTest, get_drop_data)
+TEST_F(TestDFMSideBarView, get_drop_data)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
     DFileManagerWindow window;
     const DFMSideBar *bar = window.getLeftSideBar();
@@ -101,12 +97,12 @@ TEST_F(DFMSideBarViewTest, get_drop_data)
     EXPECT_FALSE(resutl);
 }
 
-TEST_F(DFMSideBarViewTest, drop_mime_data)
+TEST_F(TestDFMSideBarView, drop_mime_data)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
-    p_view->m_urlsForDragEvent.clear();
-    Qt::DropAction result = p_view->canDropMimeData(nullptr, nullptr, Qt::IgnoreAction);
+    m_view->m_urlsForDragEvent.clear();
+    Qt::DropAction result = m_view->canDropMimeData(nullptr, nullptr, Qt::IgnoreAction);
     EXPECT_EQ(result, Qt::IgnoreAction);
 
     DFileManagerWindow window;
@@ -128,9 +124,9 @@ TEST_F(DFMSideBarViewTest, drop_mime_data)
     EXPECT_EQ(result, Qt::IgnoreAction);
 }
 
-TEST_F(DFMSideBarViewTest, get_acceptte_drag)
+TEST_F(TestDFMSideBarView, get_acceptte_drag)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
     QPointF pos(1,1);
     Qt::DropActions actions = Qt::MoveAction;
@@ -148,9 +144,9 @@ TEST_F(DFMSideBarViewTest, get_acceptte_drag)
     EXPECT_FALSE(result);
 }
 
-TEST_F(DFMSideBarViewTest, get_row_changed)
+TEST_F(TestDFMSideBarView, get_row_changed)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
     DFileManagerWindow window;
     const DFMSideBar *bar = window.getLeftSideBar();
@@ -163,9 +159,9 @@ TEST_F(DFMSideBarViewTest, get_row_changed)
     t_p->onRowCountChanged();
 }
 
-TEST_F(DFMSideBarViewTest, featch_drag_memory)
+TEST_F(TestDFMSideBarView, featch_drag_memory)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
     DFileManagerWindow window;
     const DFMSideBar *bar = window.getLeftSideBar();
@@ -175,9 +171,9 @@ TEST_F(DFMSideBarViewTest, featch_drag_memory)
     EXPECT_NO_FATAL_FAILURE(t_p->fetchDragEventUrlsFromSharedMemory());
 }
 
-TEST_F(DFMSideBarViewTest, check_op_time)
+TEST_F(TestDFMSideBarView, check_op_time)
 {
-    ASSERT_NE(p_view, nullptr);
+    ASSERT_NE(m_view, nullptr);
 
     DFileManagerWindow window;
     const DFMSideBar *bar = window.getLeftSideBar();
@@ -190,4 +186,3 @@ TEST_F(DFMSideBarViewTest, check_op_time)
     result = t_p->checkOpTime();
     EXPECT_FALSE(result);
 }
-

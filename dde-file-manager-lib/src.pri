@@ -197,7 +197,6 @@ HEADERS += \
     $$PWD/controllers/vaultcontroller.h \
     $$PWD/models/vaultfileinfo.h \
     $$PWD/controllers/dfmvaultcrumbcontroller.h \
-    $$PWD/views/interface/dfmvaultcontentinterface.h \
     $$PWD/views/dfmvaultunlockpages.h \
     $$PWD/views/dfmvaultfileview.h \
     $$PWD/views/dfmvaultrecoverykeypages.h \
@@ -415,7 +414,6 @@ SOURCES += \
     $$PWD/controllers/vaultcontroller.cpp \
     $$PWD/models/vaultfileinfo.cpp \
     $$PWD/controllers/dfmvaultcrumbcontroller.cpp \
-    $$PWD/views/interface/dfmvaultcontentinterface.cpp \
     $$PWD/views/dfmvaultunlockpages.cpp \
     $$PWD/views/dfmvaultfileview.cpp \
     $$PWD/views/dfmvaultrecoverykeypages.cpp \
