@@ -17,6 +17,7 @@ HEADERS += \
     $$PWD/models/dfmrootfileinfo.h \
     $$PWD/views/computerviewitemdelegate.h \
     $$PWD/views/dtoolbar.h \
+    $$PWD/views/dfileview_p.h   \
     $$PWD/views/dfileview.h \
     $$PWD/views/ddetailview.h \
     $$PWD/controllers/filecontroller.h \
