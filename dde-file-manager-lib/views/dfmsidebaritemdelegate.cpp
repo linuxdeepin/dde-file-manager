@@ -23,7 +23,6 @@
 #include "interfaces/dfmsidebaritem.h"
 /*********************************************************/
 //bug 26937 书签目标目录不存在情况下还可以重命名问题。相关头文件添加
-#include "interface/dfmvaultcontentinterface.h"
 #include "interfaces/dfileservices.h"
 #include "dfmsidebarview.h"
 #include "models/dfmsidebarmodel.h"
