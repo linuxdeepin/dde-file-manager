@@ -106,51 +106,7 @@ void UDiskListener::initDiskManager()
     }
 
 // 以下这段定时器代码可解决打开光驱访问文件后，物理弹出光驱，文管界面却没能卸载光驱设备的问题。
-    connect(m_diskTimer, &QTimer::timeout, this, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
-        // 服务器版本会刷系统日志
-        if (DFMGlobal::isServerSys())
-            return;
-        for (int i = 0; i < m_list.size(); i++) {
-            UDiskDeviceInfoPointer info = m_list.at(i);
-            //qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
-            QString t_device = info->getDiskInfo().drive_unix_device();
-
-            //监测光驱托盘是否被弹出
-            if (t_device.contains("/dev/sr")) {
-
-                /* only try to open read/write if not root, since it doesn't seem
-                 * to make a difference for root and can have negative side-effects
-                 */
-                if (geteuid()) {
-                    int t_cdromfd = open(t_device.toLatin1().data(), O_RDWR | O_NONBLOCK);
-                    if (t_cdromfd != -1) {
-                        close(t_cdromfd);
-//                        t_cdromfd = open(t_device.toLatin1().data(), O_RDONLY | O_NONBLOCK);
-//                        if (t_cdromfd == -1) {
-//                            qDebug() << "unable to open" << t_device.toLatin1().data();
-//                        }
-
-//                        int t_status;
-//                        t_status = ioctl(t_cdromfd, CDROM_DRIVE_STATUS);
-//                        qDebug() << "t_cdromfd " << t_status;
-//                        if (t_status == CDS_TRAY_OPEN) {
-////                            unmount(t_device);
-//                            close(t_cdromfd);
-//                        }
-
-//                        close(t_cdromfd);
-                    }
-                }
-
-//                QStringList t_arglst;
-
-//                t_arglst << "-t";
-//                t_arglst << t_device;
-
-//                QProcess::execute("eject", t_arglst);
-            }
-        }
-    });
+    connect(m_diskTimer, &QTimer::timeout, this, &UDiskListener::loopCheckCD);
 }
 
 void UDiskListener::initConnect()
@@ -813,6 +769,32 @@ void UDiskListener::insertFileSystemDevice(const QString dbusPath)
         m_fsDevMap.insert(dbusPath, blDev);
     } else {
         delete blDev;
+    }
+}
+
+void UDiskListener::loopCheckCD()
+{
+    // 服务器版本会刷系统日志
+    if (DFMGlobal::isServerSys())
+        return;
+    for (int i = 0; i < m_list.size(); i++) {
+        UDiskDeviceInfoPointer info = m_list.at(i);
+        //qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
+        QString t_device = info->getDiskInfo().drive_unix_device();
+
+        //监测光驱托盘是否被弹出
+        if (t_device.contains("/dev/sr")) {
+
+            /* only try to open read/write if not root, since it doesn't seem
+             * to make a difference for root and can have negative side-effects
+             */
+            if (geteuid()) {
+                int t_cdromfd = open(t_device.toLatin1().data(), O_RDWR | O_NONBLOCK);
+                if (t_cdromfd != -1) {
+                    close(t_cdromfd);
+                }
+            }
+        }
     }
 }
 
