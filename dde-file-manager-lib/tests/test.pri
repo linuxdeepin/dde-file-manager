@@ -83,6 +83,18 @@ SOURCES += \
     $$PWD/deviceinfo/ut_udisklistener.cpp \
     $$PWD/deviceinfo/ut_udiskdeviceinfo.cpp \
     $$PWD/bluetooth/ut_bluetoothtransdialog.cpp \
+    ####
+    $$PWD/interfaces/pulgins/ut_dfmcrumbfactory.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmviewplugin.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmviewfactory.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmgenericplugin.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmgenericfactory.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmfilepreviewplugin.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmfilepreviewfactory.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmfilecontrollerplugin.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmfilecontrollerfactory.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmfactoryloader.cpp \
+    $$PWD/interfaces/pulgins/ut_dfmcrumbplugin.cpp \
     $$PWD/dialogs/ut_basedialog.cpp \
     $$PWD/dialogs/ut_burnoptdialog.cpp \
     $$PWD/dialogs/ut_closealldialogindicator.cpp \
@@ -99,6 +111,7 @@ SOURCES += \
     $$PWD/dialogs/ut_shareinfoframe.cpp \
     $$PWD/dialogs/ut_trashpropertydialog.cpp \
     $$PWD/dialogs/ut_usersharepasswordsettingdialog.cpp \
+    ####
     $$PWD/plugins/ut_dfmadditionalmenu.cpp \
     $$PWD/plugins/ut_pluginmanager.cpp \
     $$PWD/fulltextsearch/ut_fulltextsearch.cpp \
@@ -228,3 +241,4 @@ SOURCES += \
     #log
     $$PWD/log/ut_dfmlogmanager.cpp \
     $$PWD/log/ut_filterappender.cpp \
+
