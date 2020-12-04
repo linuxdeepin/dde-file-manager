@@ -128,6 +128,7 @@ public slots:
 private slots:
     void fileSystemDeviceIdLabelChanged(const QString &path);
     void insertFileSystemDevice(const QString dbusPath);
+    void loopCheckCD();
 
 private:
     DDiskManager *m_diskMgr = nullptr;
