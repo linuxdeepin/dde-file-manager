@@ -98,9 +98,6 @@ public:
     static QVolume getVolumeByMountedRootUri(const QString& mounted_root_uri);
     static QVolume getVolumeByUnixDevice(const QString& unix_device);
 
-    static void monitor_drive_connected(GVolumeMonitor *volume_monitor, GDrive *drive);
-    static void monitor_drive_disconnected(GVolumeMonitor *volume_monitor, GDrive *drive);
-
     static void monitor_mount_added_root(GVolumeMonitor *volume_monitor, GMount *mount);
     static void monitor_mount_removed_root(GVolumeMonitor *volume_monitor, GMount *mount);
 
@@ -175,12 +172,9 @@ signals:
 public slots:
     void startMonitor();
     void listDrives();
-    void getDrives(GList *drives);
     void listVolumes();
-    void getVolumes(GList *volumes);
     void listMounts();
     void updateDiskInfos();
-    void getMounts(GList *mounts);
 
     void listMountsBylsblk();
 

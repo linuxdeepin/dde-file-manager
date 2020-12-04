@@ -6,6 +6,7 @@
 #define protected public
 
 #include "dbus/dbussysteminfo.h"
+#include "stub.h"
 
 using namespace testing;
 namespace  {
@@ -114,4 +115,23 @@ TEST_F(DBusSystemInfoTest, get_memory_cap)
     QByteArray output = process.readAllStandardOutput();
     QString outputstr(output);
     EXPECT_TRUE(outputstr.contains(QString::number(memoryCap)));
+}
+
+TEST_F(DBusSystemInfoTest, tst_property_changed)
+{
+    QString interfaceName("com.deepin.daemon.SystemInfo");
+
+    QVariantMap changedProps;
+    changedProps.insert(QString("Version"), QString("test"));
+    QDBusArgument dbusArgument;
+    dbusArgument << changedProps;
+    QVariant arg2 = QVariant::fromValue(dbusArgument);
+
+    QList<QVariant> arguments;
+    arguments << QVariant(interfaceName) << arg2 << QVariant("test");
+
+    QDBusMessage msg;
+    msg.setArguments(arguments);
+
+    p_info->__propertyChanged__(msg);
 }

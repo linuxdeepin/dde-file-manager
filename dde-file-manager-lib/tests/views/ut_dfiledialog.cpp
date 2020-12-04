@@ -1,9 +1,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
-#include "views/dfiledialog.h"
 #include "interfaces/dfilesystemmodel.h"
 #include "views/dfmsidebar.h"
+#define private public
+#include "views/dfiledialog.h"
 
 
 namespace  {
@@ -49,10 +50,15 @@ TEST_F(TestDFileDialog, can_set_get_url)
 
 TEST_F(TestDFileDialog, tst_set_get_selectFile)
 {
+    m_fileDialog->show();
+    m_fileDialog->selectedFiles();
 }
 
 TEST_F(TestDFileDialog, tst_set_get_selectUrl)
 {
+    m_fileDialog->selectUrl(QUrl(""));
+    m_fileDialog->setAcceptMode(QFileDialog::AcceptSave);
+    m_fileDialog->selectedUrls();
 }
 
 TEST_F(TestDFileDialog, tst_addDisableUrlScheme)
@@ -102,6 +108,8 @@ TEST_F(TestDFileDialog, tst_set_get_fileterIndex)
     m_fileDialog->selectNameFilterByIndex(0);
     int selectedIndex = m_fileDialog->selectedNameFilterIndex();
     EXPECT_EQ(static_cast<int>(0), selectedIndex);
+
+    m_fileDialog->setAcceptMode(QFileDialog::AcceptSave);
 
     m_fileDialog->selectNameFilterByIndex(1);
     selectedIndex = m_fileDialog->selectedNameFilterIndex();
@@ -192,4 +200,27 @@ TEST_F(TestDFileDialog, tst_slots)
     m_fileDialog->reject();
     EXPECT_TRUE(m_fileDialog->isHidden());
 }
+
+TEST_F(TestDFileDialog, tst_acceptButtonClicked)
+{
+    m_fileDialog->onAcceptButtonClicked();
+    m_fileDialog->setAcceptMode(QFileDialog::AcceptSave);
+    m_fileDialog->onAcceptButtonClicked();
+}
+
+TEST_F(TestDFileDialog, tst_onCurrentInputNameChanged)
+{
+    m_fileDialog->onCurrentInputNameChanged();
+}
+
+TEST_F(TestDFileDialog, tst_handleEnterPressed)
+{
+    m_fileDialog->handleEnterPressed();
+}
+
+TEST_F(TestDFileDialog, tst_updateAcceptButtonState)
+{
+    m_fileDialog->updateAcceptButtonState();
+}
+
 

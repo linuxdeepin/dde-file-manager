@@ -198,15 +198,13 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
     QDBusPendingCall call = m_bluetoothInter->GetDevices(dPath);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
     QObject::connect(watcher, &QDBusPendingCallWatcher::finished, q, [this, watcher, adapterPointer, call] {
-        if (!adapterPointer)
-        {
+        if (!adapterPointer) {
             qDebug() << "adapterPointer released!";
             watcher->deleteLater();
             return;
         }
         BluetoothAdapter *adapter = adapterPointer.data();
-        if (!call.isError())
-        {
+        if (!call.isError()) {
             QStringList tmpList;
 
             QDBusReply<QString> reply = call.reply();
@@ -239,8 +237,7 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
                     }
                 }
             }
-        } else
-        {
+        } else {
             qWarning() << call.error().message();
         }
 

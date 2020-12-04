@@ -18,15 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "deviceinfo/udisklistener.h"
 #include "controllers/subscriber.h"
 #include "dfmevent.h"
+#include "singleton.h"
+#include "app/define.h"
+#include "app/filesignalmanager.h"
+#include "ddiskmanager.h"
 
 #include "stub.h"
 #include "addr_pri.h"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#define private public
+#include "deviceinfo/udisklistener.h"
 
 ACCESS_PRIVATE_FUN(UDiskListener, void(const QString &labelName), fileSystemDeviceIdLabelChanged);
 
@@ -78,6 +83,16 @@ public:
     }
 };
 
+}
+
+
+TEST_F(TestUDiskListener, signal)
+{
+    Stub st;
+    m_listener->m_nCDRomCount = 1;
+    EXPECT_NO_FATAL_FAILURE(fileSignalManager->restartCdScanTimer(""));
+    EXPECT_NO_FATAL_FAILURE(fileSignalManager->stopCdScanTimer(""));
+    EXPECT_NO_FATAL_FAILURE(m_listener->m_diskMgr->fileSystemRemoved(""));
 }
 
 TEST_F(TestUDiskListener, device)
@@ -259,3 +274,73 @@ TEST_F(TestUDiskListener, fileSystemDeviceIdLabelChanged)
         call_private_fun::UDiskListenerfileSystemDeviceIdLabelChanged(*m_listener, "");
     );
 }
+
+TEST_F(TestUDiskListener, loopCheckCD)
+{
+    EXPECT_NO_FATAL_FAILURE(m_listener->loopCheckCD());
+}
+
+TEST_F(TestUDiskListener, getVolumeLetters)
+{
+    EXPECT_EQ(m_listener->getVolumeLetters().size(), 0);
+}
+
+TEST_F(TestUDiskListener, getMountedRemovableDiskDeviceInfos)
+{
+    EXPECT_TRUE(m_listener->getMountedRemovableDiskDeviceInfos().size() > 0);
+}
+
+TEST_F(TestUDiskListener, getCanSendDisksByUrl)
+{
+    EXPECT_NO_FATAL_FAILURE(m_listener->getCanSendDisksByUrl("/"));
+}
+
+TEST_F(TestUDiskListener, isMountedRemovableDiskExits)
+{
+    EXPECT_TRUE(m_listener->isMountedRemovableDiskExits());
+}
+
+
+TEST_F(TestUDiskListener, isFileFromDisc)
+{
+    EXPECT_FALSE(m_listener->isFileFromDisc("/dev/sr0"));
+}
+
+
+TEST_F(TestUDiskListener, appendHiddenDirs)
+{
+    int n1 = m_listener->hiddenDirs().size();
+    m_listener->appendHiddenDirs("/tmp/test");
+    int n2 = m_listener->hiddenDirs().size();
+    bool ret = ((n2 - n1) == 1);
+    EXPECT_TRUE(ret);
+}
+
+TEST_F(TestUDiskListener, addMountDiskInfo)
+{
+    QDiskInfo info;
+    info.setId("123");
+    info.setName("abc");
+    info.setType("dvd");
+    info.setUnix_device("/deb/sdb");
+    info.setUuid("abcd-efgh");
+    info.setMounted_root_uri("/media");
+    info.setIconName(":computer");
+    info.setCan_unmount(true);
+    info.setCan_eject(true);
+    info.setUsed(true);
+    info.setTotal(65536);
+    info.setFree(1024);
+    info.setIsNativeCustom(true);
+    info.setCan_mount(true);
+    info.setRead_only(true);
+    info.setActivation_root_uri("/");
+    info.setIs_removable(true);
+    info.setHas_volume(true);
+    info.setId_filesystem("ntfs");
+    info.setDefault_location("/");
+    info.setDrive_unix_device("0");
+
+    EXPECT_NO_FATAL_FAILURE(m_listener->addMountDiskInfo(info));
+}
+

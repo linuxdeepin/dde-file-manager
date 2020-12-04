@@ -47,7 +47,7 @@ public:
     QMultiMap<QString, QPluginLoader *> keyMap;
     QString suffix;
     Qt::CaseSensitivity cs;
-    bool rki;
+    bool rki = false;
     QStringList loadedPaths;
 
     static QStringList pluginPaths;

@@ -1,8 +1,11 @@
+#define protected public
+
 #include "diskmountplugin.h"
 #include "ut_mock_pluginproxyinterface.h"
 
 #include <QWidget>
 #include <gtest/gtest.h>
+
 
 namespace  {
     class TestDiskMountPlugin : public testing::Test {
@@ -34,6 +37,13 @@ TEST_F(TestDiskMountPlugin, can_normal_uninite_check)
     EXPECT_TRUE( nullptr != mountPlugin.itemWidget("dummy") );
     EXPECT_TRUE( nullptr != mountPlugin.itemTipsWidget("dummy") );
     EXPECT_TRUE( nullptr == mountPlugin.itemPopupApplet("dummy") );
+}
+
+TEST_F(TestDiskMountPlugin, can_notify_tips)
+{
+    TipsWidget tipsWidget;
+    tipsWidget.refreshFont();
+    tipsWidget.paintEvent(nullptr);
 }
 
 TEST_F(TestDiskMountPlugin, can_be_init)

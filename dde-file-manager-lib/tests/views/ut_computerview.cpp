@@ -10,6 +10,9 @@
 #include "models/computermodel.h"
 #include "dfmevent.h"
 #include "views/dfilemanagerwindow.h"
+#include "views/windowmanager.h"
+#include "views/dfmopticalmediawidget.h"
+#include "stub.h"
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -59,7 +62,48 @@ TEST_F(ComputerViewTest, get_view_list)
 
 TEST_F(ComputerViewTest, call_context_menu)
 {
+    QTimer timer;
+    QObject::connect(&timer, &QTimer::timeout, [&]{
+        timer.stop();
+        QWidget w;
+        w.show();
+    });
+    timer.start(200);
     EXPECT_NO_FATAL_FAILURE(m_computerView->contextMenu(QPoint(0, 0)));
+
+    Stub stub;
+    static bool myValid = true;
+    bool (*ut_isValid)() = [](){return myValid;};
+    stub.set(ADDR(QModelIndex, isValid), ut_isValid);
+
+    bool (*ut_tabAddableByWinId)() = [](){return false;};
+    stub.set(ADDR(WindowManager, tabAddableByWinId), ut_tabAddableByWinId);
+
+    static QString mySchemeRole = DFMVAULT_SCHEME;
+    QVariant (*ut_data)(void *, uint64_t) = [](void *obj, uint64_t arole) {
+        switch (arole) {
+        case ComputerModel::DataRoles::ActionVectorRole: {
+            QVector<MenuAction> menus;
+            MenuAction menu;
+            menus.append(menu);
+            return QVariant::fromValue(menus);
+            };
+        case ComputerModel::DataRoles::VolumeTagRole: return QVariant("srTextFile");
+        case ComputerModel::DataRoles::DiscUUIDRole: return QVariant("");
+        case ComputerModel::DataRoles::DiscOpticalRole: return QVariant(false);
+        case ComputerModel::DataRoles::SizeTotalRole: return QVariant(0);
+        case ComputerModel::DataRoles::SchemeRole: return QVariant(mySchemeRole);
+        }
+        return QVariant();
+    };
+    stub.set(ADDR(QModelIndex, data), ut_data);
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[QString("srTextFile")].bBurningOrErasing = true;
+
+    timer.start(200);
+    EXPECT_NO_FATAL_FAILURE(m_computerView->contextMenu(QPoint(100, 100)));
+
+    mySchemeRole = QString("other");
+    timer.start(200);
     EXPECT_NO_FATAL_FAILURE(m_computerView->contextMenu(QPoint(100, 100)));
 }
 
@@ -69,6 +113,12 @@ TEST_F(ComputerViewTest, call_rename_requested)
                                                                   nullptr, m_computerView->rootUrl()).data()));
     EXPECT_NO_FATAL_FAILURE(m_computerView->onRenameRequested(*dMakeEventPointer<DFMUrlBaseEvent>(
                                                                   m_computerView, m_computerView->rootUrl()).data()));
+
+    Stub stub;
+    static bool myValid = true;
+    bool (*ut_isValid)() = [](){return myValid;};
+    stub.set(ADDR(QModelIndex, isValid), ut_isValid);
+
     EXPECT_NO_FATAL_FAILURE(m_computerView->onRenameRequested(*dMakeEventPointer<DFMUrlBaseEvent>(
                                                                   m_computerView, DUrl("C://"))));
 }
@@ -94,4 +144,125 @@ TEST_F(ComputerViewTest, call_event_filter)
 
     QItemSelection selected,deselected;
     emit m_computerView->view()->selectionModel()->selectionChanged(selected, deselected);
+}
+
+TEST_F(ComputerViewTest, mode_view_single_simple)
+{
+    ASSERT_NE(nullptr, m_computerView);
+
+    emit m_computerView->m_model->itemCountChanged(0);
+
+    Stub stub;
+    static bool myHasSelection = true;
+    bool (*ut_hasSelection)() = [](){return myHasSelection;};
+    stub.set(ADDR(QItemSelectionModel, hasSelection), ut_hasSelection);
+
+    QItemSelection selected, deselected;
+    emit m_computerView->m_view->selectionModel()->selectionChanged(selected, deselected);
+}
+
+TEST_F(ComputerViewTest, mode_view_single_click)
+{
+    ASSERT_NE(nullptr, m_computerView);
+
+    QModelIndex index;
+    emit m_computerView->m_view->clicked(index);
+
+    Stub stub;
+    static bool myValid = true;
+    bool (*ut_isValid)() = [](){return myValid;};
+    stub.set(ADDR(DUrl, isValid), ut_isValid);
+
+    static bool myCheckGvfsMountfileBusy = false;
+    bool (*ut_checkGvfsMountfileBusy)() = [](){return myCheckGvfsMountfileBusy;};
+    stub.set((bool(DFileService::*)(const DUrl &, const bool))ADDR(DFileService, checkGvfsMountfileBusy), ut_checkGvfsMountfileBusy);
+
+    static QString myPath = QString("file:/userdir");
+    QString (*ut_path)() = [](){return myPath;};
+    stub.set(ADDR(QUrl, path), ut_path);
+
+    static bool myActinOpen = false;
+    void (*ut_actionOpen)() = [](){myActinOpen = true;};
+    stub.set(ADDR(AppController, actionOpen), ut_actionOpen);
+
+    static bool myActionOpenDisk = false;
+    void (*ut_actionOpenDisk)() = [](){myActionOpenDisk = true;};
+    stub.set(ADDR(AppController, actionOpenDisk), ut_actionOpenDisk);
+
+    emit m_computerView->m_view->doubleClicked(index);
+
+    myPath = QString("file:/home");
+    static QString myScheme = DFMVAULT_SCHEME;
+    QString (*ut_scheme)() = [](){return myScheme;};
+    stub.set(ADDR(QUrl, scheme), ut_scheme);
+    emit m_computerView->m_view->doubleClicked(index);
+
+    myScheme = "file";
+    emit m_computerView->m_view->doubleClicked(index);
+
+    EXPECT_TRUE(myActinOpen);
+    EXPECT_TRUE(myActionOpenDisk);
+
+    myCheckGvfsMountfileBusy = true;
+    emit m_computerView->m_view->doubleClicked(index);
+
+    myValid = false;
+    emit m_computerView->m_view->doubleClicked(index);
+}
+
+TEST_F(ComputerViewTest, mode_view_single_triggered)
+{
+    ASSERT_NE(nullptr, m_computerView);
+
+    Stub stub;
+    static bool myHasSelection = true;
+    bool (*ut_hasSelection)() = [](){return myHasSelection;};
+    stub.set(ADDR(QItemSelectionModel, hasSelection), ut_hasSelection);
+
+    static QString myPath = QString("file:/userdir");
+    QString (*ut_path)() = [](){return myPath;};
+    stub.set(ADDR(QUrl, path), ut_path);
+
+    static bool myActionProperty = false;
+    void (*ut_actionProperty)() = [](){myActionProperty = true;};
+    stub.set(ADDR(AppController, actionProperty), ut_actionProperty);
+
+    static bool myActionOpenInNewTab = false;
+    void (*ut_actionOpenInNewTab)() = [](){myActionOpenInNewTab = true;};
+    stub.set(ADDR(AppController, actionOpenInNewTab), ut_actionOpenInNewTab);
+
+    static bool myActionOpenDiskInNewTab = false;
+    void (*ut_actionOpenDiskInNewTab)() = [](){myActionOpenDiskInNewTab = true;};
+    stub.set(ADDR(AppController, actionOpenDiskInNewTab), ut_actionOpenDiskInNewTab);
+
+    static bool myActionOpenInNewWindow = false;
+    void (*ut_actionOpenInNewWindow)() = [](){myActionOpenInNewWindow = true;};
+    stub.set(ADDR(AppController, actionOpenInNewWindow), ut_actionOpenInNewWindow);
+
+    static bool myActionOpenDiskInNewWindow = false;
+    void (*ut_actionOpenDiskInNewWindow)() = [](){myActionOpenDiskInNewWindow = true;};
+    stub.set(ADDR(AppController, actionOpenDiskInNewWindow), ut_actionOpenDiskInNewWindow);
+
+    QList<QAction*> actions = m_computerView->m_view->actions();
+    for (auto action : actions) {
+        if (action)
+            emit action->triggered();
+    }
+
+    myPath = QString("file:/home");
+    for (auto action : actions) {
+        if (action)
+            emit action->triggered();
+    }
+
+    myHasSelection = false;
+    for (auto action : actions) {
+        if (action)
+            emit action->triggered();
+    }
+    EXPECT_TRUE(myActionProperty);
+    EXPECT_TRUE(myActionOpenInNewTab);
+    EXPECT_TRUE(myActionOpenDiskInNewTab);
+    EXPECT_TRUE(myActionOpenInNewWindow);
+    EXPECT_TRUE(myActionOpenDiskInNewWindow);
 }

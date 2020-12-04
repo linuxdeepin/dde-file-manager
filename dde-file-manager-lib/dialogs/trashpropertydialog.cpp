@@ -37,9 +37,10 @@
 DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
 
-TrashPropertyDialog::TrashPropertyDialog(const DUrl& url, QWidget *parent) : DDialog(parent)
+TrashPropertyDialog::TrashPropertyDialog(const DUrl &url, QWidget *parent)
+    : DDialog(parent)
+    , m_url(url)
 {
-    m_url = url;
     initUI();
 }
 
@@ -50,8 +51,7 @@ TrashPropertyDialog::~TrashPropertyDialog()
 
 void TrashPropertyDialog::initUI()
 {
-    if(DFMGlobal::isWayLand())
-    {
+    if (DFMGlobal::isWayLand()) {
         //设置对话框窗口最大最小化按钮隐藏
         this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
         this->setAttribute(Qt::WA_NativeWindow);
@@ -66,7 +66,7 @@ void TrashPropertyDialog::initUI()
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
     QIcon trashIcon;
-    if(fileInfo->filesCount() > 0) {
+    if (fileInfo->filesCount() > 0) {
         trashIcon = QIcon::fromTheme("user-trash-full");
     } else {
         trashIcon = QIcon::fromTheme("user-trash");
@@ -79,16 +79,16 @@ void TrashPropertyDialog::initUI()
 
     const int fCount = fileInfo->filesCount();
     QString itemStr = tr("item");
-    if(fCount != 1)
+    if (fCount != 1)
         itemStr = tr("items");
 
-    DHorizontalLine* hLine = new DHorizontalLine(this);
-    m_countLabel = new QLabel(tr("Contains %1 %2").arg(QString::number(fCount),itemStr), this);
+    DHorizontalLine *hLine = new DHorizontalLine(this);
+    m_countLabel = new QLabel(tr("Contains %1 %2").arg(QString::number(fCount), itemStr), this);
     m_sizeLabel = new QLabel(this);
 
     QFrame *infoFrame = new QFrame;
     infoFrame->setFixedHeight(48);
-    QHBoxLayout* infoLayout = new QHBoxLayout;
+    QHBoxLayout *infoLayout = new QHBoxLayout;
     infoLayout->addWidget(m_countLabel);
     infoLayout->addStretch();
     infoLayout->addWidget(m_sizeLabel);
@@ -98,9 +98,9 @@ void TrashPropertyDialog::initUI()
     QString backColor = palette().color(QPalette::Base).name();
     infoFrame->setStyleSheet(QString("background-color: %1; border-radius: 8px;").arg(backColor));
 
-    QFrame* contenFrame = new QFrame;
+    QFrame *contenFrame = new QFrame;
 
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_iconLabel, 0, Qt::AlignHCenter);
     mainLayout->addWidget(hLine);
     //mainLayout->addLayout(infoLayout);
@@ -117,7 +117,7 @@ void TrashPropertyDialog::initUI()
 
 void TrashPropertyDialog::startComputerFolderSize(const DUrl &url)
 {
-    DFileStatisticsJob* worker = new DFileStatisticsJob(this);
+    DFileStatisticsJob *worker = new DFileStatisticsJob(this);
 
     connect(worker, &DFileStatisticsJob::finished, worker, &DFileStatisticsJob::deleteLater);
     connect(worker, &DFileStatisticsJob::dataNotify, this, &TrashPropertyDialog::updateFolderSize);

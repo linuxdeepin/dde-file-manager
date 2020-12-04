@@ -204,3 +204,10 @@ TEST(DesktopTest, get_icon_size)
         EXPECT_EQ(list.at(1), 0);
     }
 }
+
+TEST(DesktopTest, show_Screensaverpaper)
+{
+     Desktop* desktop = new Desktop;
+     desktop->ShowScreensaverChooser(qApp->primaryScreen()->name());
+     delete desktop;
+}

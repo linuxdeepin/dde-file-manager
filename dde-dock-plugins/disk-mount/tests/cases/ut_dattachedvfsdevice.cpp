@@ -1,9 +1,17 @@
+#include "ut_mock_stub_disk_gio.h"
+
 #include "dattachedvfsdevice.h"
 
+#include <QFileInfo>
 #include <memory>
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+#include "stub.h"
+#include "ut_mock_stub_diskdevice.h"
+
+
+DAttachedVfsDevice * mDummyVfsDevice = nullptr;
 
 namespace  {
     class TestDAttachedVfsDevice : public testing::Test {
@@ -11,18 +19,182 @@ namespace  {
 
         void SetUp() override
         {
-            mDummyVfsDevice.reset( new DAttachedVfsDevice("/data/home/max/uos.iso"));
+            if(mDummyVfsDevice != nullptr)
+                return;
+
+            Stub stub;
+            stub.set(ADDR(DGioMount, createFromPath), createFromPath_gioMount_stub);
+            mDummyVfsDevice = new DAttachedVfsDevice(getDummyMountPoint());
         }
         void TearDown() override
         {
+
         }
 
     public:
-        std::shared_ptr<DAttachedVfsDevice> mDummyVfsDevice = nullptr;
+
     };
 }
 
-TEST_F(TestDAttachedVfsDevice, dummy_device_cant_mounted)
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_unmounted)
 {
-    EXPECT_FALSE(mDummyVfsDevice->isValid());
+    bool (QFileInfo::*exists)() const = &QFileInfo::exists;
+
+    Stub stub;
+    stub.set(ADDR(DGioMount, canUnmount), canUnmount_stub);
+    stub.set(g_file_find_enclosing_mount, g_file_find_enclosing_mount_stub);
+    stub.set(g_mount_unmount_with_operation, g_mount_unmount_with_operation_stub);
+
+    EXPECT_TRUE(mDummyVfsDevice->isValid());
+    EXPECT_TRUE(mDummyVfsDevice->detachable());
+
+    mDummyVfsDevice->detach();
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_unmounted_nodevice)
+{
+    Stub stub;
+    stub.set( ADDR(DGioMount, canUnmount), canUnmount_stub );
+    stub.set( ADDR(QFileInfo, permission), permission_stub);
+
+    EXPECT_TRUE(mDummyVfsDevice->isValid());
+    EXPECT_TRUE(mDummyVfsDevice->detachable());
+
+    mDummyVfsDevice->detach();
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_cant_unmounted_file_nopermission)
+{
+    bool (QFileInfo::*exists)() const = &QFileInfo::exists;
+
+    Stub stub;
+    stub.set(ADDR(DGioMount, canUnmount), canUnmount_stub);
+    stub.set(g_mount_unmount_with_operation, g_mount_unmount_with_operation_stub);
+    stub.set(exists, exists_true_stub);
+    stub.set(ADDR(QFileInfo, permission), permission_false_stub);
+    stub.set(ADDR(QFileInfo, owner), owner_stub);
+
+    EXPECT_TRUE(mDummyVfsDevice->isValid());
+    EXPECT_TRUE(mDummyVfsDevice->detachable());
+
+    mDummyVfsDevice->detach();
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_cant_unmounted_file_UUIDOK)
+{
+    bool (QFileInfo::*exists)() const = &QFileInfo::exists;
+
+    Stub stub;
+    stub.set(ADDR(DGioMount, canUnmount), canUnmount_stub);
+    stub.set(g_mount_unmount_with_operation, g_mount_unmount_with_operation_stub);
+    stub.set(exists, exists_true_stub);
+    stub.set(ADDR(QFileInfo, permission), permission_false_stub);
+    stub.set(ADDR(QFileInfo, owner), owner_stub);
+    stub.set(ADDR(QFileInfo, ownerId), getuid_stub);
+    stub.set(getuid, getuid_stub);
+
+    EXPECT_TRUE(mDummyVfsDevice->isValid());
+    EXPECT_TRUE(mDummyVfsDevice->detachable());
+
+    mDummyVfsDevice->detach();
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_cant_unmounted_file_GroupIDOK)
+{
+    bool (QFileInfo::*exists)() const = &QFileInfo::exists;
+
+    Stub stub;
+    stub.set(ADDR(DGioMount, canUnmount), canUnmount_stub);
+    stub.set(g_mount_unmount_with_operation, g_mount_unmount_with_operation_stub);
+    stub.set(exists, exists_true_stub);
+    stub.set(ADDR(QFileInfo, permission), permission_false_stub);
+    stub.set(ADDR(QFileInfo, owner), owner_stub);
+    stub.set(ADDR(QFileInfo, groupId), groupId_stub);
+    stub.set(getgid, groupId_stub);
+
+    EXPECT_TRUE(mDummyVfsDevice->isValid());
+    EXPECT_TRUE(mDummyVfsDevice->detachable());
+
+    mDummyVfsDevice->detach();
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_getdisplayname)
+{
+    Stub stub;
+    stub.set(ADDR(DGioMount, name), name_stub);
+    EXPECT_EQ(mDummyVfsDevice->displayName(), gio_dummy_device_name);
+}
+
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_get_iconName)
+{
+    Stub stub;
+    stub.set(ADDR(DGioMount, name), name_stub);
+    stub.set(ADDR(DGioMount, themedIconNames), themedIconNames_stub);
+
+    EXPECT_EQ(mDummyVfsDevice->iconName(), gio_dummy_device_icon_name );
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_cannot_get_iconName)
+{
+    Stub stub;
+    stub.set(ADDR(DGioMount, name), name_stub);
+    stub.set(ADDR(DGioMount, themedIconNames), themedIconNames_empty_stub);
+
+    EXPECT_EQ(mDummyVfsDevice->iconName(), QStringLiteral("drive-network") );
+}
+
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_get_mountpointUrl)
+{
+    Stub stub;
+    stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
+    stub.set(ADDR(DGioFile, path), getDummyMountPoint);
+
+    EXPECT_EQ(mDummyVfsDevice->mountpointUrl(), QUrl::fromLocalFile(getDummyMountPoint() ) );
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_get_accessPointUrl)
+{
+    Stub stub;
+    stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
+    stub.set(ADDR(DGioFile, path), getDummyMountPoint);
+
+    EXPECT_EQ(mDummyVfsDevice->accessPointUrl(), QUrl::fromLocalFile(getDummyMountPoint() ) );
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_deviceUsageValid)
+{
+    Stub stub;
+    stub.set(ADDR(DGioMount, name), name_stub);
+    stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
+    stub.set(ADDR(DGioFile, createFileSystemInfo), createFileSystemInfo_stub);
+    EXPECT_TRUE(mDummyVfsDevice->deviceUsageValid() );
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_getUsageValid)
+{
+    Stub stub;
+    stub.set(ADDR(DGioMount, name), name_stub);
+    stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
+    stub.set(ADDR(DGioFile, createFileSystemInfo), createFileSystemInfo_stub);
+    stub.set(ADDR(DGioFileInfo, fsFreeBytes), fsFreeBytes_1KB_stub);
+    stub.set(ADDR(DGioFileInfo, fsTotalBytes), fsTotalBytes_2KB_stub);
+
+    QPair<quint64, quint64> value = QPair<quint64, quint64>(1024, 2*1024);
+    QPair<quint64, quint64> curValue = mDummyVfsDevice->deviceUsage();
+    EXPECT_EQ(curValue, value );
+}
+
+TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_not_getUsageValid)
+{
+    Stub stub;
+    stub.set(ADDR(DGioMount, name), name_stub);
+    stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
+    stub.set(ADDR(DGioFile, createFileSystemInfo), createFileSystemInfo_return_null_stub);
+
+    QPair<quint64, quint64> value = QPair<quint64, quint64>(0, 0);
+    QPair<quint64, quint64> curValue = mDummyVfsDevice->deviceUsage();
+    EXPECT_EQ(curValue, value );
 }

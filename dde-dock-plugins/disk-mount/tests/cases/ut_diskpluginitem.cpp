@@ -1,9 +1,12 @@
+#define protected public
+
 #include "diskpluginitem.h"
 
 #include <QWidget>
 #include <gtest/gtest.h>
 
 #include <DGuiApplicationHelper>
+
 
 DGUI_USE_NAMESPACE
 
@@ -13,7 +16,7 @@ namespace  {
 
         void SetUp() override
         {
-            mDiskPluginItem.reset( new DiskPluginItem());
+            mDiskPluginItem.reset( new DiskPluginItem(nullptr));
         }
         void TearDown() override
         {
@@ -26,12 +29,14 @@ namespace  {
 
 TEST_F(TestDiskPluginItem, can_set_display_mode)
 {
-    mDiskPluginItem->show();
+    mDiskPluginItem->setVisible(false);
 
     DGuiApplicationHelper::instance()->setThemeType(DGuiApplicationHelper::LightType);
     mDiskPluginItem->setDockDisplayMode(Dock::Fashion);
 
-    mDiskPluginItem->hide();
+    mDiskPluginItem->paintEvent(nullptr);
+
+    mDiskPluginItem->setVisible(true);
 }
 
 TEST_F(TestDiskPluginItem, can_be_updated_from_signals)

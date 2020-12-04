@@ -38,20 +38,21 @@ class ToolBarFrame : public QFrame
 {
     Q_OBJECT
 public:
-    explicit ToolBarFrame(const QString& uri, QWidget *parent = nullptr);
+    explicit ToolBarFrame(const QString &uri, QWidget *parent = nullptr);
 
+private:
     void initUI();
     void initConnections();
 
 signals:
 
 public slots:
-    void onPlayStateChanged(const QMediaPlayer::State& state);
-    void onPlayStatusChanged(const QMediaPlayer::MediaStatus& status);
+    void onPlayStateChanged(const QMediaPlayer::State &state);
+    void onPlayStatusChanged(const QMediaPlayer::MediaStatus &status);
     void onPlayDurationChanged(qint64 duration);
     void onPlayControlButtonClicked();
     void updateProgress();
-    void seekPosition(const int& pos);
+    void seekPosition(const int &pos);
     void play();
     void pause();
     void stop();
@@ -60,11 +61,11 @@ private:
     void durationToLabel(qint64 duration);
 
 private:
-    QMediaPlayer* m_player;
-    QPushButton* m_playControlButton;
-    QSlider* m_progressSlider;
-    QLabel* m_durationLabel;
-    QTimer* m_updateProgressTimer;
+    QMediaPlayer *m_player;
+    QPushButton *m_playControlButton;
+    QSlider *m_progressSlider;
+    QLabel *m_durationLabel;
+    QTimer *m_updateProgressTimer;
 };
 
 #endif // TOOLBARFRAME_H

@@ -121,12 +121,15 @@ DFMEvent::DFMEvent(DFMEvent::Type type, const QObject *sender)
 }
 
 DFMEvent::DFMEvent(const DFMEvent &other)
-    : DFMEvent(static_cast<DFMEvent::Type>(other.m_type), other.m_sender)
+    : m_type(other.m_type)
+    , m_data(other.m_data)
+    , m_cutData(other.m_cutData)
+    , m_properties(other.m_properties)
+    , m_sender(other.m_sender)
+    , m_accept(other.m_accept)
+    , m_id(other.m_id)
 {
-    m_accept = other.m_accept;
-    m_data = other.m_data;
-    m_properties = other.m_properties;
-    m_id = other.m_id;
+
 }
 
 DFMEvent::~DFMEvent()
@@ -140,6 +143,7 @@ DFMEvent &DFMEvent::operator =(const DFMEvent &other)
     m_sender = other.m_sender;
     m_accept = other.m_accept;
     m_data = other.m_data;
+    m_cutData = other.m_cutData;
     m_properties = other.m_properties;
     m_id = other.m_id;
 
@@ -527,7 +531,7 @@ QSharedPointer<DFMDeleteEvent> DFMDeleteEvent::fromJson(const QJsonObject &json)
 DFMMoveToTrashEvent::DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list, bool silent)
     : DFMUrlListBaseEvent(MoveToTrash, sender, list)
 {
-     setProperty(QT_STRINGIFY(DFMMoveToTrashEvent::silent), silent);
+    setProperty(QT_STRINGIFY(DFMMoveToTrashEvent::silent), silent);
 }
 
 bool DFMMoveToTrashEvent::silent() const

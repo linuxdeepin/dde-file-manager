@@ -10,7 +10,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 include(../third-party/googletest/gtest_dependency.pri)
 include(tests/src/test.pri)
+include(../third-party/cpp-stub/stub.pri)
 include(dde-desktop.pri)
+
+QMAKE_CXXFLAGS += -fno-inline
 
 TARGET = test-dde-desktop
 TEMPLATE = app

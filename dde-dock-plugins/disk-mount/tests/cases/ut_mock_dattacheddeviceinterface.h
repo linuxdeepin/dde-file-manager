@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gmock/gmock.h>
+#include <QCoreApplication>
 
 #include "dattacheddeviceinterface.h"
 
@@ -16,4 +17,5 @@ public:
     MOCK_METHOD0(deviceUsage, QPair<quint64, quint64>());
     MOCK_METHOD0(iconName, QString());
     MOCK_METHOD0(mountpointUrl, QUrl());
+    MOCK_METHOD0(accessPointUrl, QUrl());
 };

@@ -53,17 +53,17 @@ public:
     QString getVolTag();
 
     //fix: 根据光盘选择文件状态实时更新状态
-    QTimer *updateBurnStatusTimer;
+    QTimer *updateBurnStatusTimer = nullptr;
 
 private:
     //fix: 根据光盘选择文件状态实时更新状态
     qint64 m_selectBurnFilesSize = 0;
     qint64 m_selectBurnDirCount = 0;
 
-    QLabel *lb_mediatype;
-    QLabel *lb_available;
-    DPushButton *pb_burn;
-    QHBoxLayout *layout;
+    QLabel *lb_mediatype = nullptr;
+    QLabel *lb_available = nullptr;
+    DPushButton *pb_burn = nullptr;
+    QHBoxLayout *layout = nullptr;
     DFMOpticalMediaWidget *q_ptr;
     QString curdev;
     QString strMntPath;

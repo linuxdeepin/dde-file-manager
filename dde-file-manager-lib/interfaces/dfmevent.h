@@ -430,7 +430,7 @@ public:
 class DFMMoveToTrashEvent : public DFMUrlListBaseEvent
 {
 public:
-    explicit DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list,bool silent = false);
+    explicit DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list, bool silent = false);
 
     bool silent() const;
     static QSharedPointer<DFMMoveToTrashEvent> fromJson(const QJsonObject &json);

@@ -50,7 +50,7 @@ protected:
     mutable DFMFileListFile::Status status;
 
 private:
-    bool __padding[4];
+    char __padding[4] = {0};
     DFMFileListFile *q_ptr = nullptr;
 
     Q_DECLARE_PUBLIC(DFMFileListFile)
@@ -235,6 +235,13 @@ bool DFMFileListFile::remove(const QString &fileName)
     Q_D(DFMFileListFile);
 
     return d->fileListSet.remove(fileName);
+}
+
+QSet<QString> DFMFileListFile::getHiddenFiles()
+{
+    Q_D(DFMFileListFile);
+
+    return d->fileListSet;
 }
 
 // Should we show the "Hide this file" checkbox?

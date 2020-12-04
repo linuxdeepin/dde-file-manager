@@ -121,8 +121,8 @@ QLabel *FilePreviewDialogStatusBar::title() const
 
 UnknowFilePreview::UnknowFilePreview(QObject *parent)
     : DFMFilePreview(parent)
+    , m_contentWidget(new QWidget())
 {
-    m_contentWidget = new QWidget();
     m_contentWidget->setFixedSize(550, 200);
     m_iconLabel = new QLabel(m_contentWidget);
     m_iconLabel->setObjectName("IconLabel");
@@ -306,10 +306,9 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
     emit signalCloseEvent();
     if (m_preview) {
         m_preview->stop();
-        if(DFMGlobal::isWayLand()){
+        if (DFMGlobal::isWayLand()) {
             m_preview->DoneCurrent();
-        }
-        else {
+        } else {
             m_preview->deleteLater();
             m_preview = nullptr;
         }
@@ -363,8 +362,7 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 void FilePreviewDialog::initUI()
 {
     //wayland 暂时不用 task 36991
-    if(DFMGlobal::isWayLand())
-    {
+    if (DFMGlobal::isWayLand()) {
         //设置对话框窗口最大最小化按钮隐藏
         this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
         this->setAttribute(Qt::WA_NativeWindow);
@@ -372,8 +370,7 @@ void FilePreviewDialog::initUI()
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
-    }
-    else {
+    } else {
         m_closeButton = new DWindowCloseButton(this);
         m_closeButton->setObjectName("CloseButton");
         m_closeButton->setFocusPolicy(Qt::NoFocus);
@@ -597,10 +594,9 @@ void FilePreviewDialog::done(int r)
 
     if (m_preview) {
         m_preview->stop();
-        if(DFMGlobal::isWayLand()){
+        if (DFMGlobal::isWayLand()) {
             m_preview->DoneCurrent();
-        }
-        else {
+        } else {
             m_preview->deleteLater();
             m_preview = nullptr;
         }
@@ -609,7 +605,7 @@ void FilePreviewDialog::done(int r)
 
 void FilePreviewDialog::DoneCurrent()
 {
-    if(m_preview){
+    if (m_preview) {
         m_preview->DoneCurrent();
     }
 }
@@ -620,7 +616,7 @@ void FilePreviewDialog::playCurrentPreviewFile()
         if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
             m_playingVideo = true;
             // 1s 后才能重新预览视频，原因是快速切换预览视频会因为视频插件内部的崩溃引起文管崩溃
-            QTimer::singleShot(1000, [this] () {
+            QTimer::singleShot(1000, [this]() {
                 m_playingVideo = false;
             });
         }

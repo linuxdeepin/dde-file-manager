@@ -1,10 +1,10 @@
-#include "models/searchfileinfo.h"
 #include "dfilesystemmodel.h"
 
 #include <gtest/gtest.h>
 #include <QProcess>
 #include <QIcon>
 
+#include "models/searchfileinfo.h"
 namespace  {
 class TestSearchFileInfo : public testing::Test
 {

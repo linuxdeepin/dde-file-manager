@@ -20,6 +20,7 @@
  */
 
 #include "mergeddesktopcontroller.h"
+#include "mergeddesktopcontroller_p.h"
 
 #include "dfilewatcher.h"
 #include "dfileservices.h"
@@ -34,50 +35,6 @@
 
 #include <QList>
 #include <QStandardPaths>
-
-
-class MergedDesktopWatcherPrivate;
-class MergedDesktopWatcher : public DAbstractFileWatcher
-{
-public:
-    explicit MergedDesktopWatcher(const DUrl &url, DAbstractFileWatcher *baseWatcher, QObject *parent = nullptr);
-
-    void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true) override;
-
-private:
-    void addWatcher(const DUrl &url);
-    void removeWatcher(const DUrl &url);
-
-    void onFileAttributeChanged(const DUrl &url);
-    void onFileModified(const DUrl &url);
-
-    Q_DECLARE_PRIVATE(MergedDesktopWatcher)
-};
-
-class MergedDesktopWatcherPrivate : public DAbstractFileWatcherPrivate
-{
-public:
-    explicit MergedDesktopWatcherPrivate(DAbstractFileWatcher *qq)
-        : DAbstractFileWatcherPrivate(qq) {}
-
-    bool start() override
-    {
-        started = true;
-
-        return true;
-    }
-
-    bool stop() override
-    {
-        started = false;
-
-        return true;
-    }
-
-    QMap<DUrl, DAbstractFileWatcher *> urlToWatcherMap;
-
-    Q_DECLARE_PUBLIC(MergedDesktopWatcher)
-};
 
 MergedDesktopWatcher::MergedDesktopWatcher(const DUrl &url, DAbstractFileWatcher *baseWatcher, QObject *parent)
     : DAbstractFileWatcher(*new MergedDesktopWatcherPrivate(this), url, parent)

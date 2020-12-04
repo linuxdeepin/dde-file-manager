@@ -59,6 +59,8 @@
 #include "vault/vaulthelper.h"
 #include "app/filesignalmanager.h"
 #include "views/dfilemanagerwindow.h"
+#include "customization/dcustomactionbuilder.h"
+#include "customization/dcustomactionparser.h"
 
 #include <DSysInfo>
 
@@ -92,6 +94,8 @@ static QSet<MenuAction> whitelist;
 static QSet<MenuAction> blacklist;
 static QQueue<MenuAction> availableUserActionQueue;
 static DFMAdditionalMenu *additionalMenu;
+static DCustomActionParser *customMenuParser;
+
 void initData();
 void initActions();
 
@@ -193,11 +197,6 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             if (file_info && file_info->isDir())
                 enableSendToBluetooth = false;
         }
-    }
-
-    // 选中保险箱中的文件，则屏蔽掉共享菜单选项
-    if (VaultController::isVaultFile(currentUrl.path()) || VaultController::isVaultFile(currentUrl.fragment()) || VaultController::isVaultFile(info->toQFileInfo().canonicalFilePath())) {
-        unusedList << MenuAction::Share << MenuAction::UnShare;
     }
 
     DUrlList redirectedUrlList;
@@ -450,14 +449,14 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         else {
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
-                if (bluetoothManager->model()->adapters().count() > 0) { // 如果有蓝牙设备
-                    QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
-                    sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
-                    sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
-                    connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
-
-                    if (!enableSendToBluetooth)
-                        sendToBluetooth->setEnabled(false);
+                // 如果有蓝牙设备并且当前文件不在保险箱内
+                if ((bluetoothManager->model()->adapters().count() > 0) && !VaultController::isVaultFile(currentUrl.toLocalFile())) {
+                        QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
+                        sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
+                        sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
+                        connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
+                        if (!enableSendToBluetooth)
+                            sendToBluetooth->setEnabled(false);
                 }
 
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
@@ -487,7 +486,10 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk, Qt::QueuedConnection); //改为队列，防止exec无法退出，关联bug#25613
                 }
             }
-
+            // 如果子菜单中没有内容，移除父菜单
+            if(sendToMountedRemovableDiskMenu->actions().count() < 1) {
+                menu->removeAction(sendToMountedRemovableDiskAction);
+            }
         }
     }
     if (menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
@@ -554,8 +556,10 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
             || currentUrl == DesktopFileInfo::homeDesktopFileUrl()) {
         return menu;
     }
-
-    loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
+    // 保险箱不需要其它非文管的插件菜单
+    if(!VaultController::isVaultFile(currentUrl.toLocalFile())) {
+        loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
+    }
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
 
@@ -762,6 +766,14 @@ DFileMenuManager::DFileMenuManager()
     qRegisterMetaType<QList<QUrl>>(QT_STRINGIFY(QList<QUrl>));
 }
 
+DFileMenuManager::~DFileMenuManager()
+{
+    if (DFileMenuData::additionalMenu)
+        DFileMenuData::additionalMenu->deleteLater();
+    if (DFileMenuData::customMenuParser)
+        DFileMenuData::customMenuParser->deleteLater();
+}
+
 void DFileMenuData::initData()
 {
     actionKeys[MenuAction::Open] = QObject::tr("Open");
@@ -931,6 +943,7 @@ void DFileMenuData::initActions()
     }
 
     additionalMenu = new DFMAdditionalMenu;
+    customMenuParser = new DCustomActionParser;
 }
 
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
@@ -1040,6 +1053,126 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 QString DFileMenuManager::getActionString(MenuAction type)
 {
     return DFileMenuData::actionKeys.value(type);
+}
+
+//创建自定义菜单
+void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected)
+{
+    const QList<DCustomActionEntry> &rootEntry = DFileMenuData::customMenuParser->getActionFiles();
+    qDebug() << "extendCustomMenu " << isNormal << dir << focusFile << "files" << selected.size() << "entrys" << rootEntry.size();
+
+    if (menu == nullptr || rootEntry.isEmpty())
+        return;
+
+    DCustomActionBuilder builder;
+    //呼出菜单的文件夹
+    builder.setActiveDir(dir);
+
+    //获取文件列表的组合
+    DCustomActionDefines::ComboType fileCombo = DCustomActionDefines::BlankSpace;
+    if (isNormal) {
+        fileCombo = builder.checkFileCombo(selected);
+        if (fileCombo == DCustomActionDefines::BlankSpace)
+            return;
+
+        //右键单击作用的文件
+        builder.setFocusFile(focusFile);
+    }
+
+    //获取支持的菜单项
+    auto usedEntrys = builder.matchFileCombo(rootEntry, fileCombo);
+    qDebug() << "selected combo" << fileCombo << "entry count" << usedEntrys.size();
+
+    if (usedEntrys.isEmpty())
+        return;
+
+    //添加菜单响应所需的数据
+    {
+        QVariant var;
+        var.setValue(dir);
+        menu->setProperty(DCustomActionDefines::kCustomActionDataDir, var);
+
+        var.setValue(focusFile);
+        menu->setProperty(DCustomActionDefines::kCustomActionDataFoucsFile, var);
+
+        var.setValue(selected);
+        menu->setProperty(DCustomActionDefines::kCustomActionDataSelectedFiles, var);
+    }
+
+    //开启tooltips
+    menu->setToolTipsVisible(true);
+
+    //移除所有菜单项
+    auto systemActions = menu->actions();
+    for (auto it = systemActions.begin(); it != systemActions.end(); ++it)
+        menu->removeAction(*it);
+    Q_ASSERT(menu->actions().isEmpty());
+
+    QMap<int, QList<QAction*>> locate;
+    QMap<QAction*, DCustomActionDefines::Separator> actionsSeparator;
+    //根据配置信息创建菜单项
+    for (auto it = usedEntrys.begin(); it != usedEntrys.end(); ++it) {
+        const DCustomActionData &actionData = it->data();
+        auto *action = builder.buildAciton(actionData, menu);
+        if (action == nullptr)
+            continue;
+
+        //自动释放
+        action->setParent(menu);
+
+        //记录分隔线
+        if (actionData.separator() != DCustomActionDefines::None)
+            actionsSeparator.insert(action, actionData.separator());
+
+        //根据组合类型获取插入位置
+        auto pos = actionData.position(fileCombo);
+
+        //位置是否有效
+        if (pos > 0) {
+            auto temp = locate.find(pos);
+            if (temp == locate.end()) {
+                locate.insert(pos, {action});
+            }
+            else { //位置冲突，往后放
+                temp->append(action);
+            }
+        }
+        else {  //没有配置位置，则直接添加
+            systemActions.append(action);
+        }
+    }
+
+    //开始按顺序插入菜单
+    DCustomActionDefines::sortFunc(locate, systemActions, [menu](const QList<QAction *> &acs){
+        menu->addActions(acs);
+    });
+
+    Q_ASSERT(systemActions.isEmpty());
+
+    //插入分隔线
+    for (auto it = actionsSeparator.begin(); it != actionsSeparator.end(); ++it) {
+        //上分割线
+        if (it.value() & DCustomActionDefines::Top) {
+            menu->insertSeparator(it.key());
+        }
+
+        //下分割线
+        if ((it.value() & DCustomActionDefines::Bottom)) {
+            const QList<QAction*> &actionList = menu->actions();
+            int nextIndex = actionList.indexOf(it.key()) + 1;
+
+            //后一个action
+            if (nextIndex < actionList.size()) {
+                auto nextAction = menu->actionAt(nextIndex);
+
+                //不是分割线则插入
+                if (!nextAction->isSeparator()) {
+                    menu->insertSeparator(nextAction);
+                }
+            }
+        }
+
+    }
 }
 
 void DFileMenuManager::addActionWhitelist(MenuAction action)
@@ -1167,6 +1300,27 @@ void DFileMenuManager::actionTriggered(QAction *action)
     if (!(menu->property("ToolBarSettingsMenu").isValid() && menu->property("ToolBarSettingsMenu").toBool())) {
         disconnect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
     }
+
+    //扩展菜单
+    if (action->property(DCustomActionDefines::kCustomActionFlag).isValid()) {
+        QString cmd = action->property(DCustomActionDefines::kCustomActionCommand).toString();
+        DCustomActionDefines::ActionArg argFlag = static_cast<DCustomActionDefines::ActionArg>
+                    (action->property(DCustomActionDefines::kCustomActionCommandArgFlag).toInt());
+        DUrl dir = menu->property(DCustomActionDefines::kCustomActionDataDir).value<DUrl>();
+        DUrl foucs = menu->property(DCustomActionDefines::kCustomActionDataFoucsFile).value<DUrl>();
+        DUrlList selected = menu->property(DCustomActionDefines::kCustomActionDataSelectedFiles).value<DUrlList>();
+
+        qDebug() << "argflag" << argFlag << "dir" << dir << "foucs" << foucs << "selected" << selected;
+        qInfo() << "extend" << action->text() << cmd;
+
+        QPair<QString, QStringList> runable = DCustomActionBuilder::makeCommand(cmd,argFlag,dir,foucs,selected);
+        qInfo () << "exec:" << runable.first << runable.second;
+
+        if (!runable.first.isEmpty())
+            FileUtils::runCommand(runable.first, runable.second);
+        return;
+    }
+
     if (action->data().isValid()) {
         bool flag = false;
         int _type = action->data().toInt(&flag);

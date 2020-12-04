@@ -296,16 +296,3 @@ quint64 VaultLockManager::dbusGetSelfTime() const
     }
     return selfTime;
 }
-
-void VaultLockManager::dbusClearLockEvent()
-{
-    D_DC(VaultLockManager);
-
-    if (d->m_vaultInterface->isValid()) {
-        QDBusPendingReply<> reply = d->m_vaultInterface->clearLockEvent();
-        reply.waitForFinished();
-        if (reply.isError()) {
-            qDebug() << reply.error().message();
-        }
-    }
-}

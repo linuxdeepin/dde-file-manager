@@ -1185,7 +1185,6 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
 
 void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress)
 {
-    qDebug() << "opticalJobUpdated: " << status << progress << jobisom->getInfoMessages();
     m_opticalJobStatus = status;
     if (progress >= 0 && progress <= 100) // DISOMaster 可能抛负值
         m_opticalJobProgress = progress;
@@ -2720,11 +2719,8 @@ bool FileJob::deleteDir(const QString &dir)
             }
         }
     }
-//    qDebug() << "delete dir:" <<sourceDir.path();
     if (!sourceDir.rmdir(QDir::toNativeSeparators(sourceDir.path()))) {
         qDebug() << "Unable to remove dir:" << sourceDir.path();
-//        emit("Unable to remove dir: " + sourceDir.path());
-//        emit fileSignalManager->requestShowNoPermissionDialog(DUrl::fromLocalFile(dir));
         m_noPermissonUrls << DUrl::fromLocalFile(dir);
         return false;
     }
@@ -2892,9 +2888,6 @@ bool FileJob::writeTrashInfo(const QString &fileBaseName, const QString &path, c
 
 bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destination)
 {
-//    UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(destination.path()); // get disk info from mount point
-//    if(!info)
-//        info = deviceListener->getDeviceByFilePath(destination.path()); // get disk infor from mount mount point sub path
     if (FileUtils::isGvfsMountFile(destination.toLocalFile())) {
         m_totalSize = FileUtils::totalSize(files);
         return true;

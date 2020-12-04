@@ -37,8 +37,9 @@ DFM_BEGIN_NAMESPACE
 
 DFMFileCrumbController::DFMFileCrumbController(QObject *parent)
     : DFMCrumbInterface(parent)
+    , homePath(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).last())
 {
-    homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).last();
+
 }
 
 DFMFileCrumbController::~DFMFileCrumbController()
@@ -113,7 +114,7 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
     // Push urls into crumb list (without prefix url)
     DUrlList::const_reverse_iterator iter = urlList.crbegin();
     while (iter != urlList.crend()) {
-        const DUrl & oneUrl = *iter;
+        const DUrl &oneUrl = *iter;
         QString localFile = oneUrl.toLocalFile();
         if (!prefixPath.startsWith(oneUrl.toLocalFile())) {
             QString displayText = oneUrl.fileName();
