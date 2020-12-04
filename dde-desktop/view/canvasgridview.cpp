@@ -78,21 +78,6 @@ static const QMap<int, int> kSortActions = {{MenuAction::Name, DFileSystemModel:
     , {MenuAction::LastModifiedDate, DFileSystemModel::FileLastModifiedRole}
 };
 
-void startProcessDetached(const QString &program,
-                          const QStringList &arguments = QStringList(),
-                          QIODevice::OpenMode mode = QIODevice::ReadWrite)
-{
-    QProcess *process = new QProcess();
-    process->start(program, arguments, mode);
-//    qDebug() << process->program() << process->arguments();
-    process->closeReadChannel(QProcess::StandardOutput);
-    process->closeReadChannel(QProcess::StandardError);
-    process->connect(process, static_cast < void(QProcess::*)(int) > (&QProcess::finished),
-    process, [ = ](int) {
-        process->deleteLater();
-    });
-}
-
 DWIDGET_USE_NAMESPACE
 
 //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时ignoreDropFlag为true，不调用candrop，节省时间,bug#10926
@@ -2977,11 +2962,8 @@ void CanvasGridView::handleContextMenuAction(int action)
 
     switch (action) {
     case DisplaySettings: {
-        QStringList args;
-        args << "--print-reply" << "--dest=com.deepin.dde.ControlCenter"
-             << "/com/deepin/dde/ControlCenter" << "com.deepin.dde.ControlCenter.ShowModule"
-             << "string:display";
-        startProcessDetached("dbus-send", args);
+        QDBusInterface interface("com.deepin.dde.ControlCenter","/com/deepin/dde/ControlCenter","com.deepin.dde.ControlCenter");
+        interface.asyncCall("ShowModule",QVariant::fromValue(QString("display")));
         break;
     }
     case CornerSettings:
