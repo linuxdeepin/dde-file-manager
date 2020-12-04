@@ -101,7 +101,8 @@ DUrl VaultFileInfo::mimeDataUrl() const
 {
     Q_D(const VaultFileInfo);
     if (d->proxy) {
-        return d->proxy->mimeDataUrl();
+        // 自定义保险箱的url
+        return VaultController::makeVaultUrl(d->proxy->fileUrl().toLocalFile());
     }
 
     return DAbstractFileInfo::mimeDataUrl();
@@ -225,12 +226,19 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
         }
     }
 
-    //! 移除提权操作
-    QVector<MenuAction> menuActions = DAbstractFileInfo::menuActionList(type);
-    menuActions.removeAll(MenuAction::OpenAsAdmin);
+    // 保险箱内不使用共享、取消共享、创建链接、发送到桌面、添加书签菜单、标记、提权操作、挂载操作、打开终端
+    QVector<MenuAction> unusedList;
+    unusedList << MenuAction::Share << MenuAction::UnShare << MenuAction::CreateSymlink
+               << MenuAction::SendToDesktop << MenuAction::AddToBookMark << MenuAction::TagInfo
+               << MenuAction::TagFilesUseColor << MenuAction::Compress << MenuAction::Decompress
+               << MenuAction::DecompressHere << MenuAction::OpenAsAdmin << MenuAction::MountImage
+               << MenuAction::OpenInTerminal << MenuAction::SetAsWallpaper;
 
-    //! 禁止保险箱内的挂载操作
-    menuActions.removeAll(MenuAction::MountImage);
+    QVector<MenuAction> menuActions = DAbstractFileInfo::menuActionList(type);
+
+    foreach(MenuAction action, unusedList) {
+        menuActions.removeAll(action);
+    }
 
     return menuActions;
 }
