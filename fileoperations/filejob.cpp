@@ -701,8 +701,9 @@ void FileJob::doOpticalBlank(const DUrl &device)
     m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
 }
 
-void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, int speed, int flag)
+void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, int speed, DISOMasterNS::BurnOptions opts)
 {
+    bool checkDatas = opts.testFlag(DISOMasterNS::BurnOption::VerifyDatas);
     m_tarPath = device.path();
     QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
@@ -759,11 +760,11 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             m_opticalJobPhase = 1;
         }
         job_isomaster->stageFiles({{stagingurl, QUrl("/")}});
-        bool wret = job_isomaster->commit(speed, flag & 1, volname);
+        bool wret = job_isomaster->commit(opts, speed, volname);
         job_isomaster->releaseDevice();
 
         double gud, slo, bad;
-        if ((flag & 4) && wret) {
+        if (checkDatas && wret) {
             m_opticalJobPhase = 2;
             job_isomaster->acquireDevice(device.path());
             job_isomaster->checkmedia(&gud, &slo, &bad);
@@ -830,13 +831,13 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         }
 
         // read bad
-        if ((flag & 4) && (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed)) {
+        if (checkDatas && (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed)) {
             m_opticalJobPhase = 2;
             read(badPipefd[0], &globalBad, sizeof(globalBad));
         }
 
         // make fake progress when child process crashed
-        if ((flag & 4) && (m_opticalJobPhase == 2) && (m_opticalJobProgress > 0 && m_opticalJobProgress < 100)) {
+        if (checkDatas && (m_opticalJobPhase == 2) && (m_opticalJobProgress > 0 && m_opticalJobProgress < 100)) {
             fakeEndTime = QDateTime::currentDateTime();
             qint64 totalSeconds = fakeStartTime.secsTo(fakeEndTime);
             qint64 averageMSeconds = totalSeconds * 1000 / m_opticalJobProgress;
@@ -873,7 +874,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         m_opticalJobStatus = tmpStatus;
 
         // last handle
-        if (flag & 2) {
+        if (opts.testFlag(DISOMasterNS::BurnOption::EjectDisc)) {
             QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
             diskdev->eject({});
         } else {
@@ -881,7 +882,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             ISOMaster->nullifyDevicePropertyCache(device.path());
         }
 
-        bool rst = !((flag & 4) && (globalBad > (2 + 1e-6)));
+        bool rst = !(checkDatas && (globalBad > (2 + 1e-6)));
 
         if (m_isJobAdded)
             jobRemoved();
@@ -893,7 +894,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             //emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
             QThread::msleep(1000);
-            if ((flag & 4) && (m_opticalJobPhase == 2)) {
+            if (checkDatas && (m_opticalJobPhase == 2)) {
                 if (!drive->mediaChangeDetected()) {
                     m_lastError = TR_CONN_ERROR;
                     handleOpticalJobFailure(FileJob::OpticalCheck, m_lastError, m_lastSrcError);
@@ -906,7 +907,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
                 handleOpticalJobFailure(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
             }
         } else {
-            if ((flag & 4)) {
+            if (checkDatas) {
                 // 校验必须成功
                 emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
                 //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
@@ -931,8 +932,9 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
 }
 
 
-void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &image, int speed, int flag)
+void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &image, int speed, DISOMasterNS::BurnOptions opts)
 {
+    bool checkDatas = opts.testFlag(DISOMasterNS::BurnOption::VerifyDatas);
     m_tarPath = device.path();
     QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
@@ -991,7 +993,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         job_isomaster->releaseDevice();
 
         double gud, slo, bad;
-        if ((flag & 4) && wret) {
+        if (checkDatas && wret) {
             m_opticalJobPhase = 2;
             job_isomaster->acquireDevice(device.path());
             job_isomaster->checkmedia(&gud, &slo, &bad);
@@ -1057,13 +1059,13 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         }
 
         // read bad
-        if ((flag & 4) && (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed)) {
+        if (checkDatas && (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed)) {
             m_opticalJobPhase = 2;
             read(badPipefd[0], &globalBad, sizeof(globalBad));
         }
 
         // make fake progress when child process crashed
-        if ((flag & 4) && (m_opticalJobPhase == 2) && (m_opticalJobProgress > 0 && m_opticalJobProgress < 100)) {
+        if (checkDatas && (m_opticalJobPhase == 2) && (m_opticalJobProgress > 0 && m_opticalJobProgress < 100)) {
             fakeEndTime = QDateTime::currentDateTime();
             qint64 totalSeconds = fakeStartTime.secsTo(fakeEndTime);
             qint64 averageMSeconds = totalSeconds * 1000 / m_opticalJobProgress;
@@ -1100,7 +1102,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         m_opticalJobStatus = tmpStatus;
 
         // last handle
-        if (flag & 2) {
+        if (opts.testFlag(DISOMasterNS::BurnOption::EjectDisc)) {
             QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
             diskdev->eject({});
         } else {
@@ -1108,7 +1110,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             ISOMaster->nullifyDevicePropertyCache(device.path());
         }
 
-        bool rst = !((flag & 4) && (globalBad > (2 + 1e-6)));
+        bool rst = !(checkDatas && (globalBad > (2 + 1e-6)));
         Q_UNUSED(rst)
 
         if (m_isJobAdded)
@@ -1124,7 +1126,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             //emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
             QThread::msleep(1000);
-            if ((flag & 4) && (m_opticalJobPhase == 2)) {
+            if (checkDatas && (m_opticalJobPhase == 2)) {
                 if (!drive->mediaChangeDetected()) {
                     m_lastError = TR_CONN_ERROR;
                     handleOpticalJobFailure(FileJob::OpticalCheck, m_lastError, m_lastSrcError);
@@ -1137,7 +1139,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
                 handleOpticalJobFailure(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
             }
         } else {
-            if ((flag & 4)) {
+            if (checkDatas) {
                 // 校验必须成功
                 emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
                 //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示

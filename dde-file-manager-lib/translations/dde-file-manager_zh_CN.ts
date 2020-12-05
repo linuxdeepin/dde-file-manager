@@ -155,6 +155,34 @@
     </message>
 </context>
 <context>
+    <name>BurnOptDialog</name>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="212"/>
+        <source>Advanced settings</source>
+        <translation>高级设置</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="229"/>
+        <source>File System: </source>
+        <translation>文件系统：</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
+        <source>ISO9660 Only</source>
+        <translation>仅 ISO9660</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
+        <source>ISO9660 / Joliet (For Windows)</source>
+        <translation>ISO9660 / Joliet （用于 Windows）</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
+        <source>ISO9660 / RockRidge (For Unix)</source>
+        <translation>ISO9660 / RockRidge （用于 Unix）</translation>
+    </message>
+</context>
+<context>
     <name>CloseAllDialogIndicator</name>
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="56"/>
@@ -180,6 +208,7 @@
         <location filename="../models/computermodel.cpp" line="83"/>
         <location filename="../models/computermodel.cpp" line="187"/>
         <location filename="../models/computermodel.cpp" line="198"/>
+        <location filename="../models/computermodel.cpp" line="200"/>
         <location filename="../models/computermodel.cpp" line="611"/>
         <location filename="../models/computermodel.cpp" line="615"/>
         <location filename="../models/computermodel.cpp" line="652"/>
@@ -399,13 +428,13 @@
 <context>
     <name>DFMOpticalMediaWidget</name>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="116"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="141"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="118"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="143"/>
         <source>No files to burn</source>
         <translation>没有文件需要刻录</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="162"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="164"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>目标磁盘剩余空间不足，无法进行刻录！</translation>
     </message>
@@ -1091,7 +1120,7 @@
         <translation>此光盘中的镜像已损坏，无法挂载，请擦除后使用</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3036"/>
+        <location filename="../views/dfileview.cpp" line="3037"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1723,81 +1752,71 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="757"/>
-        <location filename="../../fileoperations/filejob.cpp" line="970"/>
-        <location filename="../../fileoperations/filejob.cpp" line="979"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1054"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1265"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1274"/>
+        <location filename="../../fileoperations/filejob.cpp" line="903"/>
+        <location filename="../../fileoperations/filejob.cpp" line="912"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1135"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1144"/>
         <source>Data verification successful.</source>
         <translation>数据验证成功。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="757"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1054"/>
-        <source>Data verification failed.</source>
-        <translation>数据验证失败。</translation>
-    </message>
-    <message>
-        <location filename="../../fileoperations/filejob.cpp" line="761"/>
-        <location filename="../../fileoperations/filejob.cpp" line="983"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1058"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1278"/>
+        <location filename="../../fileoperations/filejob.cpp" line="916"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1148"/>
         <source>Burn process completed</source>
         <translation>刻录完成</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1442"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1312"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1446"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1316"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1451"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1321"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1458"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1328"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3173"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3043"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1为重复文件。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3176"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3046"/>
         <source>Insufficient disc space.</source>
         <translation>光盘空间不足。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3179"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3049"/>
         <source>Lost connection to drive.</source>
         <translation>与光驱的连接断开。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3182"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3052"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>光驱未准备好，您可以换一张光盘再试。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3185"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3055"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>光驱被占用，您可以尝试关掉正在使用光驱的程序后重新插入光驱。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3192"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3062"/>
         <source>Unknown error</source>
         <translation>未知错误</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.h" line="300"/>
+        <location filename="../../fileoperations/filejob.h" line="299"/>
         <source>Device disconnected</source>
         <translation>光驱设备未连接</translation>
     </message>
@@ -3096,39 +3115,39 @@
         <translation>卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="154"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="320"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="185"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="329"/>
         <source>Burn</source>
         <translation>刻录</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="161"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="196"/>
         <source>Disc name:</source>
         <translation>光盘名称：</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="180"/>
-        <location filename="../dialogs/burnoptdialog.cpp" line="182"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="241"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="243"/>
         <source>Maximum</source>
         <translation>最大速度</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="193"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="254"/>
         <source>Allow files to be added later</source>
         <translation>允许追加数据</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="202"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="262"/>
         <source>Verify data</source>
         <translation>校验数据</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="176"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="238"/>
         <source>Write speed:</source>
         <translation>写入速度：</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="205"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="265"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
         <source>Eject</source>
         <translation>弹出</translation>
@@ -3464,7 +3483,7 @@
         <translation>提示：根据选择文件的顺序先后排序</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="153"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="184"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="345"/>
         <location filename="../views/drenamebar.cpp" line="288"/>
         <source>Cancel</source>
@@ -3573,7 +3592,7 @@
         <translation>编辑地址</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="349"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="358"/>
         <source>Free Space %1</source>
         <translation>可用空间 %1</translation>
     </message>
