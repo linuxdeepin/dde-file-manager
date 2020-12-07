@@ -3,33 +3,40 @@
 
 #include <QDebug>
 
+ScreenManagerPrivate::~ScreenManagerPrivate()
+{
+    if (m_eventShot)
+        delete m_eventShot;
+    m_eventShot = nullptr;
+}
+
 void ScreenManagerPrivate::readyShot(int wait)
 {
-    if (m_eventShot != nullptr){
+    if (m_eventShot != nullptr) {
         m_eventShot->stop();
         delete m_eventShot;
         m_eventShot = nullptr;
         qDebug() << "shotting later " << wait;
     }
 
-    if (wait < 1){
+    if (wait < 1) {
         wait = 1;
     }
 
     m_eventShot = new QTimer;
-    QObject::connect(m_eventShot,&QTimer::timeout,q,[=](){
+    QObject::connect(m_eventShot,&QTimer::timeout,q,[=]() {
         m_eventShot->stop();
         //事件优先级。由上往下，背景和画布模块在处理上层的事件以及处理过下层事件的涉及的改变，因此直接忽略
-        if (m_events.contains(AbstractScreenManager::Mode)){
+        if (m_events.contains(AbstractScreenManager::Mode)) {
             emit q->sigDisplayModeChanged();
         }
-        else if (m_events.contains(AbstractScreenManager::Screen)){
+        else if (m_events.contains(AbstractScreenManager::Screen)) {
             emit q->sigScreenChanged();
         }
-        else if (m_events.contains(AbstractScreenManager::Geometry)){
+        else if (m_events.contains(AbstractScreenManager::Geometry)) {
             emit q->sigScreenGeometryChanged();
         }
-        else if (m_events.contains(AbstractScreenManager::AvailableGeometry)){
+        else if (m_events.contains(AbstractScreenManager::AvailableGeometry)) {
             emit q->sigScreenAvailableGeometryChanged();
         }
         m_events.clear();

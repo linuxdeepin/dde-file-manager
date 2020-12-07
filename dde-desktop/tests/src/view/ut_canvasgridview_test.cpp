@@ -445,20 +445,22 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_showEmptyAreaMenu){
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setIconByLevel)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
-    m_canvasGridView->setIconByLevel(3);
-    QTimer timer;
-    timer.start(500);
-    QEventLoop loop;
-    QObject::connect(m_canvasGridView, &CanvasGridView::changeIconLevel, [&]{
-        loop.exit();
-    });
-    QObject::connect(&timer, &QTimer::timeout, [&]{
-        timer.stop();
-        loop.exit();
-    });
-    loop.exec();
+
+    m_canvasGridView->setIconByLevel(1);
     DesktopItemDelegate* p =m_canvasGridView->itemDelegate();
+    ASSERT_EQ(1, p->iconSizeLevel());
+
+    StubExt st;
+    int iconLevel = 0;
+    st.set_lamda(ADDR(Presenter,OnIconLevelChanged),[&iconLevel](Presenter *,int lv){iconLevel = lv;});
+    m_canvasGridView->setIconByLevel(1);
+
+    EXPECT_EQ(1, p->iconSizeLevel());
+    EXPECT_EQ(0, iconLevel);
+
+    m_canvasGridView->setIconByLevel(3);
     EXPECT_EQ(3, p->iconSizeLevel());
+    EXPECT_EQ(3, iconLevel);
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_handleContextMenuAction)
@@ -1438,6 +1440,7 @@ TEST_F(CanvasGridViewTest, test_dropEvent)
     m_canvasGridView->dropEvent(&event);
     EXPECT_EQ(event.dropAction(), Qt::IgnoreAction);
 }
+
 TEST_F(CanvasGridViewTest, delete_file)
 {
     QFile file(path);
@@ -1446,3 +1449,4 @@ TEST_F(CanvasGridViewTest, delete_file)
     }
     delete m_canvasGridView;
 }
+

@@ -233,7 +233,7 @@ public:
         
         return;
     }
-private:
+protected:
     char *pageof(char* addr)
     { 
 #ifdef _WIN32
