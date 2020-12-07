@@ -29,16 +29,16 @@
 #include "computerviewitemdelegate.h"
 #include "dfmapplication.h"
 
-ComputerViewItemDelegate::ComputerViewItemDelegate(QObject *parent) : QStyledItemDelegate (parent)
+ComputerViewItemDelegate::ComputerViewItemDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {
-    par = qobject_cast<ComputerView*>(parent);
+    par = qobject_cast<ComputerView *>(parent);
 }
 
 ComputerViewItemDelegate::~ComputerViewItemDelegate()
 {
 }
 
-void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     painter->setRenderHint(QPainter::RenderHint::Antialiasing);
 
@@ -94,7 +94,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
         painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 
         painter->setFont(par->font());
-        painter->setPen(qApp->palette().color(option.state & QStyle::StateFlag::State_Selected ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
+        painter->setPen(qApp->palette().color((option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
         painter->drawText(option.rect.x() + (option.rect.width() - fstw) / 2, option.rect.y() + topmargin + iconsize + text_topmargin, elided_text);
         return;
     }
@@ -172,7 +172,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
 
     QFont smallf(par->font());
     smallf.setPixelSize(int(fontpixelsize * 0.85));
-   // smallf.setPixelSize(int(fontpixelsize * 0.85));
+    // smallf.setPixelSize(int(fontpixelsize * 0.85));
     painter->setFont(smallf);
     textrect.setLeft(option.rect.left() + leftmargin + iconsize + spacing);
     textrect.setRight(option.rect.right() - rightmargin);
@@ -235,7 +235,7 @@ QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, con
     Q_UNUSED(option)
     ComputerModelItemData::Category cat = ComputerModelItemData::Category(index.data(ComputerModel::DataRoles::ICategoryRole).toInt());
     if (cat == ComputerModelItemData::Category::cat_widget) {
-        return static_cast<ComputerModelItemData*>(index.internalPointer())->widget->size();
+        return static_cast<ComputerModelItemData *>(index.internalPointer())->widget->size();
     } else if (cat == ComputerModelItemData::Category::cat_splitter) {
         return QSize(par->width() - 12, 45);
     } else if (cat == ComputerModelItemData::Category::cat_user_directory) {
@@ -251,7 +251,7 @@ QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, con
     return QSize(leftmargin + iconsize + spacing + text_max_width + rightmargin, topmargin + iconsize + topmargin);
 }
 
-QWidget* ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option)
     Q_UNUSED(index)
@@ -266,13 +266,13 @@ QWidget* ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
 
 void ComputerViewItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    QLineEdit *le = qobject_cast<QLineEdit*>(editor);
+    QLineEdit *le = qobject_cast<QLineEdit *>(editor);
     le->setText(index.data(Qt::DisplayRole).toString()); // TODO: implement EditRole
 }
 
 void ComputerViewItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    QLineEdit *le = qobject_cast<QLineEdit*>(editor);
+    QLineEdit *le = qobject_cast<QLineEdit *>(editor);
     model->setData(index, le->text());
 }
 

@@ -60,8 +60,8 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
     XmlParseMode mode = PARSE_XML;
 
     PlainTextExtractor::ParserType parser_type = PlainTextExtractor::PARSER_AUTO;
-    QFileInfo fileInfo(filePath);
-    QString ext = fileInfo.suffix();
+    QFileInfo info(filePath);
+    QString ext = info.suffix();
     if (ext == "rtf")
         parser_type = PlainTextExtractor::PARSER_RTF;
     else if (ext == "odt" || ext == "ods" || ext == "odp" || ext == "odg" || ext == "docx" || ext == "xlsx" || ext == "pptx" || ext == "ppsx")
@@ -105,7 +105,7 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
         qDebug() << "Error processing file " << filePath;
         return "";
     }
-    return text.c_str();
+    return QString(text.c_str());
 }
 
 //先将字段加入到文档,在将文档加入到IndexWriter中
@@ -113,8 +113,8 @@ DocumentPtr DFMFullTextSearchManager::getFileDocument(const QString &filename)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"path", filename.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-    QFileInfo fileInfo(filename);
-    QString modifyTime = fileInfo.lastModified().toString("yyyyMMddHHmmss");
+    QFileInfo info(filename);
+    QString modifyTime = info.lastModified().toString("yyyyMMddHHmmss");
     doc->add(newLucene<Field>(L"modified", modifyTime.toStdWString(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     QString contents = getFileContents(filename);
     doc->add(newLucene<Field>(L"contents", contents.toStdWString(), Field::STORE_YES, Field::INDEX_ANALYZED));

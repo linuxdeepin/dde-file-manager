@@ -558,10 +558,10 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
         // 触发关闭标签的信号
         GFile *root = g_mount_get_root(mount);
         char *path = g_file_get_path(root);
-        DUrl url = DUrl::fromLocalFile(path);
+        DUrl durl = DUrl::fromLocalFile(path);
         g_free(path);
         g_object_unref(root);
-        emit fileSignalManager->requestCloseTab(url);
+        emit fileSignalManager->requestCloseTab(durl);
     }
 }
 

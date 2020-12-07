@@ -53,7 +53,7 @@ class Tab: public QGraphicsObject
     Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry)
 
 public:
-    explicit Tab(QGraphicsObject *parent = 0, DFMBaseView *view = nullptr);
+    explicit Tab(QGraphicsObject *parent = nullptr, DFMBaseView *view = nullptr);
     ~Tab() override;
     void initConnect();
     void setTabText(QString text);

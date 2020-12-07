@@ -80,17 +80,17 @@ void DStatusBar::initUI()
     m_loadingIndicator = new DPictureSequenceView(this);
     m_loadingIndicator->setFixedSize(18, 18);
     AC_SET_OBJECT_NAME(m_loadingIndicator, AC_COMPUTER_STATUS_BAR_LOADING_INDICATOR);
-    AC_SET_ACCESSIBLE_NAME( m_loadingIndicator, AC_COMPUTER_STATUS_BAR_LOADING_INDICATOR);
- #if 0 //性能优化，放到 setLoadingIncatorVisible函数处理
-     {
-         QStringList seq;
-         for (int i(1); i != 91; ++i)
-             seq.append(QString(":/images/images/Spinner/Spinner%1.png").arg(i, 2, 10, QChar('0')));
-         m_loadingIndicator->setPictureSequence(seq, true);
-     }
- #endif
-     m_loadingIndicator->setSpeed(20);
-     m_loadingIndicator->hide();
+    AC_SET_ACCESSIBLE_NAME(m_loadingIndicator, AC_COMPUTER_STATUS_BAR_LOADING_INDICATOR);
+#if 0 //性能优化，放到 setLoadingIncatorVisible函数处理
+    {
+        QStringList seq;
+        for (int i(1); i != 91; ++i)
+            seq.append(QString(":/images/images/Spinner/Spinner%1.png").arg(i, 2, 10, QChar('0')));
+        m_loadingIndicator->setPictureSequence(seq, true);
+    }
+#endif
+    m_loadingIndicator->setSpeed(20);
+    m_loadingIndicator->hide();
 
     m_scaleSlider = new QSlider(this);
     AC_SET_OBJECT_NAME(m_scaleSlider, AC_COMPUTER_STATUS_BAR_SCALE_SLIDER);
@@ -176,7 +176,7 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     m_comboBoxLabel->hide();
 
     m_lineEdit = new QLineEdit(this);
-    AC_SET_OBJECT_NAME( m_lineEdit, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
+    AC_SET_OBJECT_NAME(m_lineEdit, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
     AC_SET_ACCESSIBLE_NAME(m_lineEdit, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
     m_lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_lineEdit->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
@@ -184,7 +184,7 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     m_lineEdit->installEventFilter(this);
     m_lineEditLabel = new QLabel(this);
     m_lineEditLabel->setObjectName("lineEditLabel");
-    AC_SET_OBJECT_NAME( m_lineEditLabel, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
+    AC_SET_OBJECT_NAME(m_lineEditLabel, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
     AC_SET_ACCESSIBLE_NAME(m_lineEditLabel, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
     m_lineEditLabel->setText(tr("Save as:"));
     m_lineEditLabel->hide();
@@ -196,15 +196,15 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     }
     if (!m_acceptButton) {
         m_acceptButton = new QPushButton(QString(), this);
-        AC_SET_OBJECT_NAME( m_acceptButton, AC_COMPUTER_STATUS_BAR_ACCEPT_BUTTON);
-        AC_SET_ACCESSIBLE_NAME( m_acceptButton, AC_COMPUTER_STATUS_BAR_ACCEPT_BUTTON);
+        AC_SET_OBJECT_NAME(m_acceptButton, AC_COMPUTER_STATUS_BAR_ACCEPT_BUTTON);
+        AC_SET_ACCESSIBLE_NAME(m_acceptButton, AC_COMPUTER_STATUS_BAR_ACCEPT_BUTTON);
         m_acceptButton->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
         m_acceptButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
     if (!m_rejectButton) {
         m_rejectButton = new QPushButton(QString(), this);
-        AC_SET_OBJECT_NAME( m_rejectButton, AC_COMPUTER_STATUS_BAR_REJECT_BUTTON);
-        AC_SET_ACCESSIBLE_NAME( m_rejectButton, AC_COMPUTER_STATUS_BAR_REJECT_BUTTON);
+        AC_SET_OBJECT_NAME(m_rejectButton, AC_COMPUTER_STATUS_BAR_REJECT_BUTTON);
+        AC_SET_ACCESSIBLE_NAME(m_rejectButton, AC_COMPUTER_STATUS_BAR_REJECT_BUTTON);
         m_rejectButton->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
         m_rejectButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
@@ -310,11 +310,11 @@ void DStatusBar::initJobConnection()
     };
 
     connect(m_fileStatisticsJob, &DFileStatisticsJob::finished, this,
-            [this] {
-                m_folderContains = m_fileStatisticsJob->filesCount() + m_fileStatisticsJob->directorysCount();
-                updateStatusMessage();
-            }
-    );
+    [this] {
+        m_folderContains = m_fileStatisticsJob->filesCount() + m_fileStatisticsJob->directorysCount();
+        updateStatusMessage();
+    }
+           );
     connect(m_fileStatisticsJob, &DFileStatisticsJob::fileFound, this, onFoundFile);
     connect(m_fileStatisticsJob, &DFileStatisticsJob::directoryFound, this, onFoundFile);
 }
@@ -350,9 +350,9 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
     if (number > 1) {
         DUrl fileUrl;
-        if (event.fileUrlList().count() > 0){
+        if (event.fileUrlList().count() > 0) {
             fileUrl = event.fileUrlList().first();
-        }else{
+        } else {
             fileUrl = event.fileUrl();
         }
         bool isInGVFs = FileUtils::isGvfsMountFile(fileUrl.toLocalFile());
@@ -368,39 +368,35 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                     m_folderCount += 1;
                     folderList << url;
                 } else {
-                    if (!isInGVFs){
-                        m_fileSize += statInfo.st_size;
-                    }
                     m_fileCount += 1;
                 }
             }
-        }
-        else {
+        } else {
             foreach (DUrl url, event.fileUrlList()) {
-                const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
-                if (fileInfo->isDir()) {
+                const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, url);
+                if (info->isDir()) {
                     m_folderCount += 1;
                 } else {
-                    if (!isInGVFs){
-                        m_fileSize += fileInfo->size();
+                    if (!isInGVFs) {
+                        m_fileSize += info->size();
                     }
                     m_fileCount += 1;
                 }
             }
         }
 
-        if (isInGVFs){
-             QFutureWatcher<qint64>* fileWatcher = new QFutureWatcher<qint64>();
-             connect(fileWatcher, SIGNAL(finished()), this, SLOT(handdleComputerFileSizeFinished()));
-             // Start the computation.
-             QFuture<qint64> fileFuture = QtConcurrent::run(this, &DStatusBar::computerSize, event.fileUrlList());
-             fileWatcher->setFuture(fileFuture);
+        if (isInGVFs) {
+            QFutureWatcher<qint64> *fileWatcher = new QFutureWatcher<qint64>();
+            connect(fileWatcher, SIGNAL(finished()), this, SLOT(handdleComputerFileSizeFinished()));
+            // Start the computation.
+            QFuture<qint64> fileFuture = QtConcurrent::run(this, &DStatusBar::computerSize, event.fileUrlList());
+            fileWatcher->setFuture(fileFuture);
 
-             QFutureWatcher<int>* folderWatcher = new QFutureWatcher<int>();
-             connect(folderWatcher, SIGNAL(finished()), this, SLOT(handdleComputerFolderContainsFinished()));
-             // Start the computation.
-             QFuture<int> folderFuture = QtConcurrent::run(this, &DStatusBar::computerFolderContains, event.fileUrlList());
-             folderWatcher->setFuture(folderFuture);
+            QFutureWatcher<int> *folderWatcher = new QFutureWatcher<int>();
+            connect(folderWatcher, SIGNAL(finished()), this, SLOT(handdleComputerFolderContainsFinished()));
+            // Start the computation.
+            QFuture<int> folderFuture = QtConcurrent::run(this, &DStatusBar::computerFolderContains, event.fileUrlList());
+            folderWatcher->setFuture(folderFuture);
         } else {
             m_fileStatisticsJob->start(folderList);
         }
@@ -408,29 +404,29 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
     } else {
         if (number == 1) {
             if (event.fileUrlList().count() == 1) {
-                DUrl url = event.fileUrlList().first();
-                const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
+                DUrl durl = event.fileUrlList().first();
+                const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, durl);
 
                 //check network folder at first
                 QStringList networkSchemeList = {SMB_SCHEME, FTP_SCHEME, SFTP_SCHEME, MTP_SCHEME, DAV_SCHEME};
-                if (networkSchemeList.contains(event.fileUrlList().first().scheme())){
+                if (networkSchemeList.contains(event.fileUrlList().first().scheme())) {
                     m_label->setText(m_selectedNetworkOnlyOneFolder.arg(QString::number(number)));
-                } else if (fileInfo) {
-                    if (fileInfo->isDir()) {
+                } else if (info) {
+                    if (info->isDir()) {
                         m_folderCount = 1;
                         m_label->setText(m_selectOnlyOneFolder.arg(number).arg(m_counted.arg(0)));
                         m_fileStatisticsJob->start(event.fileUrlList());
 
 
-                    } else /*if (fileInfo->isFile())*/ {
+                    } else { /*if (fileInfo->isFile())*/
                         m_fileCount = 1;
-                        m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
+                        m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(info->size())));
 
                         //fix: 动态获取刻录选中文件的字节大小
-                        DFMOpticalMediaWidget::g_selectBurnFilesSize = fileInfo->size();
+                        DFMOpticalMediaWidget::g_selectBurnFilesSize = info->size();
                     }
                 }
-            } else{
+            } else {
                 m_label->setText(m_OnlyOneItemSelected.arg(QString::number(1)));
             }
         }
@@ -461,7 +457,7 @@ void DStatusBar::updateStatusMessage()
         selectedFiles = m_selectOnlyOneFile.arg(QString::number(m_fileCount), FileUtils::formatSize(m_fileSize));
         //fix: 动态获取刻录选中文件的字节大小
         DFMOpticalMediaWidget::g_selectBurnFilesSize = m_fileSize;
-    } else if (m_fileCount > 1 ) {
+    } else if (m_fileCount > 1) {
         selectedFiles = m_selectFiles.arg(QString::number(m_fileCount), FileUtils::formatSize(m_fileSize));
         //fix: 动态获取刻录选中文件的字节大小
         DFMOpticalMediaWidget::g_selectBurnFilesSize = m_fileSize;
@@ -480,7 +476,7 @@ void DStatusBar::updateStatusMessage()
 
 void DStatusBar::handdleComputerFolderContainsFinished()
 {
-    QFutureWatcher<int>* watcher = static_cast<QFutureWatcher<int>*>(sender());
+    QFutureWatcher<int> *watcher = static_cast<QFutureWatcher<int>*>(sender());
     int result = watcher->future().result();
     m_folderContains = result;
     updateStatusMessage();
@@ -488,7 +484,7 @@ void DStatusBar::handdleComputerFolderContainsFinished()
 
 void DStatusBar::handdleComputerFileSizeFinished()
 {
-    QFutureWatcher<qint64>* watcher = static_cast<QFutureWatcher<qint64>*>(sender());
+    QFutureWatcher<qint64> *watcher = static_cast<QFutureWatcher<qint64>*>(sender());
     qint64 result = watcher->future().result();
     m_fileSize = result;
     updateStatusMessage();
@@ -524,8 +520,8 @@ void DStatusBar::setLoadingIncatorVisible(bool visible, const QString &tipText)
 {
     m_loadingIndicator->setVisible(visible);
 
-    if (visible){
-        if (!m_loadingIndicatorInited){
+    if (visible) {
+        if (!m_loadingIndicatorInited) {
             QStringList seq;
             for (int i(1); i != 91; ++i)
                 seq.append(QString(":/images/images/Spinner/Spinner%1.png").arg(i, 2, 10, QChar('0')));
@@ -553,15 +549,15 @@ bool DStatusBar::eventFilter(QObject *watched, QEvent *event)
 
     if (event->type() == QEvent::FocusIn) {
         TIMER_SINGLESHOT_OBJECT(this, 10, {
-                                    QMimeDatabase db;
-                                    const QString &name = m_lineEdit->text();
-                                    const QString &suffix = db.suffixForFileName(name);
+            QMimeDatabase db;
+            const QString &name = m_lineEdit->text();
+            const QString &suffix = db.suffixForFileName(name);
 
-                                    if (suffix.isEmpty())
-                                        m_lineEdit->selectAll();
-                                    else
-                                        m_lineEdit->setSelection(0, name.length() - suffix.length() - 1);
-                                }, this)
+            if (suffix.isEmpty())
+                m_lineEdit->selectAll();
+            else
+                m_lineEdit->setSelection(0, name.length() - suffix.length() - 1);
+        }, this)
     } else if (event->type() == QEvent::Show) {
         TIMER_SINGLESHOT_OBJECT(this, 10, m_lineEdit->setFocus(), this);
     }

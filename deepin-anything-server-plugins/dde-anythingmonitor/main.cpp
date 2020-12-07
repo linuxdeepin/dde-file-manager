@@ -31,7 +31,7 @@ class TagHandlePlugin : public DASPlugin
     Q_PLUGIN_METADATA(IID DASFactoryInterface_iid FILE "dde-anythingmonitor.json")
 
 public:
-    TagHandlePlugin(QObject *const parent = nullptr)
+    explicit TagHandlePlugin(QObject *const parent = nullptr)
         : DASPlugin{ parent } {}
     virtual ~TagHandlePlugin() = default;
 

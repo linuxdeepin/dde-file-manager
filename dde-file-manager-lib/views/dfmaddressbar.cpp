@@ -57,7 +57,7 @@ DCompleterStyledItemDelegate::DCompleterStyledItemDelegate(QObject *parent)
 void DCompleterStyledItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     // prepare
-    QPalette::ColorGroup cg = option.state & QStyle::State_Enabled
+    QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled)
                               ? QPalette::Normal : QPalette::Disabled;
     if (cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
         cg = QPalette::Inactive;
@@ -159,7 +159,7 @@ void DFMAddressBar::setCompleter(QCompleter *c)
 
     completerView->setItemDelegate(&styledItemDelegate);
     //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复，设置这个属性listview就可以拥有地址兰的输入法
-    completerView->setAttribute (Qt::WA_InputMethodEnabled);
+    completerView->setAttribute(Qt::WA_InputMethodEnabled);
 
 }
 

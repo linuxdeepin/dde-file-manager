@@ -1435,9 +1435,6 @@ int DFileSystemModel::columnCount(const QModelIndex &parent) const
     Q_D(const DFileSystemModel);
 
     int columnCount = parent.column() > 0 ? 0 : DEFAULT_COLUMN_COUNT;
-
-//    const AbstractFileInfoPointer &currentFileInfo = fileInfo(d->activeIndex);
-
     if (!d->rootNode) {
         return columnCount;
     }
@@ -1981,7 +1978,7 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
     //int size = static_cast<int>(buffer.size());
     //fix task 21485 分配一个固定的5M内存
     bool bcanwrite = m_smForDragEvent->create(5 * 1024 * 1024);
-    if (bcanwrite || (!bcanwrite && QSharedMemory::AlreadyExists)) {
+    if (bcanwrite || m_smForDragEvent->error() == QSharedMemory::AlreadyExists) {
         //因为创建失败，就没有连接内存，所以写失败
         if (!bcanwrite) {
             m_smForDragEvent->attach();
@@ -2263,7 +2260,7 @@ void DFileSystemModel::setAdvanceSearchFilter(const QMap<int, QVariant> &formDat
 void DFileSystemModel::applyAdvanceSearchFilter()
 {
     Q_D(DFileSystemModel);
-    if(!d->rootNode)
+    if (!d->rootNode)
         return;
     setState(Busy);
     d->rootNode->applyFileFilter(advanceSearchFilter());

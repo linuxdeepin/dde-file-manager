@@ -41,9 +41,9 @@
 class VaultLockManagerPrivate
 {
 public:
-    VaultLockManagerPrivate(VaultLockManager *qq);
+    explicit VaultLockManagerPrivate(VaultLockManager *qq);
 
-    VaultInterface* m_vaultInterface = nullptr; // dbus interface
+    VaultInterface *m_vaultInterface = nullptr; // dbus interface
     VaultLockManager::AutoLockState m_autoLockState; // auto lock state
     QTimer m_alarmClock; // auto lock clock
     bool m_isCacheTimeReloaded;
@@ -73,9 +73,9 @@ VaultLockManager::VaultLockManager(QObject *parent)
     Q_D(VaultLockManager);
 
     d->m_vaultInterface = new VaultInterface("com.deepin.filemanager.daemon",
-                                          "/com/deepin/filemanager/daemon/VaultManager",
-                                          QDBusConnection::systemBus(),
-                                          this);
+                                             "/com/deepin/filemanager/daemon/VaultManager",
+                                             QDBusConnection::systemBus(),
+                                             this);
 
     if (!isValid()) {
         qDebug() << d->m_vaultInterface->lastError().message();
@@ -93,12 +93,12 @@ VaultLockManager::VaultLockManager(QObject *parent)
 
     // monitor screen lock event.
     QDBusConnection::sessionBus().connect(
-                "org.freedesktop.FileManager1",
-                "/org/freedesktop/FileManager1",
-                "org.freedesktop.FileManager1",
-                "lockEventTriggered",
-                this,
-                SLOT(slotLockEvent(QString)));
+        "org.freedesktop.FileManager1",
+        "/org/freedesktop/FileManager1",
+        "org.freedesktop.FileManager1",
+        "lockEventTriggered",
+        this,
+        SLOT(slotLockEvent(QString)));
 }
 
 void VaultLockManager::loadConfig()
@@ -257,7 +257,7 @@ void VaultLockManager::dbusSetRefreshTime(quint64 time)
     if (d->m_vaultInterface->isValid()) {
         QDBusPendingReply<> reply = d->m_vaultInterface->setRefreshTime(time);
         reply.waitForFinished();
-        if(reply.isError()) {
+        if (reply.isError()) {
             qDebug() << reply.error().message();
         }
     }

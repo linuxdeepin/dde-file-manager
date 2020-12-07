@@ -927,7 +927,7 @@ DFMMenuActionEvent::DFMMenuActionEvent(const QObject *sender, const DFileMenu *m
 
 const DFileMenu *DFMMenuActionEvent::menu() const
 {
-    return (const DFileMenu *)property<quintptr>(QT_STRINGIFY(DFMMenuActionEvent::menu), 0);
+    return (const DFileMenu *)(property<quintptr>(QT_STRINGIFY(DFMMenuActionEvent::menu), 0));
 }
 
 const DUrl DFMMenuActionEvent::currentUrl() const

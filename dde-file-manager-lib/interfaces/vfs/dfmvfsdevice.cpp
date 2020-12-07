@@ -134,10 +134,9 @@ GFileInfo *DFMVfsDevicePrivate::getGFileInfo() const
 QStringList DFMVfsDevicePrivate::getThemedIconName(GThemedIcon *icon)
 {
     QStringList iconNames;
-    char **names;
-    char **iter;
-    names = NULL;
     if (icon) {
+        char **names = nullptr;
+        char **iter = nullptr;
         g_object_get(icon, "names", &names, NULL);
         for (iter = names; *iter; iter++) {
             iconNames.append(QString(*iter));

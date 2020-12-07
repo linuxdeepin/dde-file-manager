@@ -25,8 +25,7 @@ QAction *DCustomActionBuilder::buildAciton(const DCustomActionData &actionData, 
     QAction *ret = nullptr;
     if (actionData.isAction()) {
         ret = createAciton(actionData);
-    }
-    else {
+    } else {
         ret = createMenu(actionData, parentForSubmenu);
     }
 
@@ -39,9 +38,9 @@ QAction *DCustomActionBuilder::buildAciton(const DCustomActionData &actionData, 
 void DCustomActionBuilder::setActiveDir(const DUrl &dir)
 {
     m_dirPath = dir;
-    auto fileInfo = DFileService::instance()->createFileInfo(nullptr, dir);
-    if (fileInfo)
-        m_dirName = fileInfo->fileName();
+    auto info = DFileService::instance()->createFileInfo(nullptr, dir);
+    if (info)
+        m_dirName = info->fileName();
 }
 
 /*!
@@ -51,10 +50,10 @@ void DCustomActionBuilder::setActiveDir(const DUrl &dir)
 void DCustomActionBuilder::setFocusFile(const DUrl &file)
 {
     m_filePath = file;
-    auto fileInfo = DFileService::instance()->createFileInfo(nullptr, file);
-    if (fileInfo) {
-        m_fileFullName = fileInfo->fileName();
-        m_fileBaseName = fileInfo->baseName();
+    auto info = DFileService::instance()->createFileInfo(nullptr, file);
+    if (info) {
+        m_fileFullName = info->fileName();
+        m_fileBaseName = info->baseName();
     }
 }
 
@@ -65,11 +64,11 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const DUrlL
 {
     int fileCount = 0;
     int dirCount = 0;
-    for (const DUrl &url : files) {
-        if (url.isEmpty())
+    for (const DUrl &file : files) {
+        if (file.isEmpty())
             continue;
 
-        auto info = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
+        auto info = DFileService::instance()->createFileInfo(Q_NULLPTR, file);
         if (!info)
             continue;
 
@@ -123,62 +122,60 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
     ret.first = args.takeFirst();
     //无参数
     if (args.isEmpty()) {
-         return ret;
+        return ret;
     }
 
-    auto replace = [=](QStringList &args, const QString &before, const QString &after){
-        QStringList ret;
+    auto replace = [ = ](QStringList & args, const QString & before, const QString & after) {
+        QStringList rets;
         while (!args.isEmpty()) {
             QString arg = args.takeFirst();
             //找到在参数中第一个有效的before匹配值，并替换为after。之后的不在处理
             int index = arg.indexOf(before);
             if (index >= 0) {
-                ret << arg.replace(index, before.size(), after);
-                ret << args;
+                rets << arg.replace(index, before.size(), after);
+                rets << args;
                 args.clear();
-            }
-            else{
-                ret << arg;
+            } else {
+                rets << arg;
             }
         }
-        return ret;
+        return rets;
     };
 
-    auto replaceList = [=](QStringList &args, const QString &before, const QStringList &after){
-        QStringList ret;
+    auto replaceList = [ = ](QStringList & args, const QString & before, const QStringList & after) {
+        QStringList rets;
         while (!args.isEmpty()) {
             QString arg = args.takeFirst();
             //仅支持独立参数，有其它组合的不处理
             if (arg == before) {
                 //放入文件路径
-                ret << after;
+                rets << after;
                 //放入原参数
-                ret << args;
+                rets << args;
                 args.clear();
-            }
-            else{
-                ret << arg;
+            } else {
+                rets << arg;
             }
         }
-        return ret;
+        return rets;
     };
 
     //url转为文件路径
-    auto urlListToLocalFile = [](const DUrlList &files) {
-        QStringList ret;
+    auto urlListToLocalFile = [](const DUrlList & files) {
+        QStringList rets;
         for (auto it = files.begin(); it != files.end(); ++it) {
-            ret << it->toLocalFile();
+            rets << it->toLocalFile();
         }
-        return ret;
+        return rets;
     };
 
     //url字符串
-    auto urlListToString = [](const DUrlList &files) {
-        QStringList ret;
+    auto urlListToString = [](const DUrlList & files) {
+        QStringList rets;
         for (auto it = files.begin(); it != files.end(); ++it) {
-            ret << it->toString();
+            rets << it->toString();
         }
-        return ret;
+        return rets;
     };
 
     //传参
@@ -272,14 +269,14 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
     //子项,子项的顺序由解析器保证
     QList<DCustomActionData> subActions = actionData.acitons();
     for (auto it = subActions.begin(); it != subActions.end(); ++it) {
-        QAction *action = buildAciton(*it, parentForSubmenu);
-        if (!action)
+        QAction *ba = buildAciton(*it, parentForSubmenu);
+        if (!ba)
             continue;
 
         auto separator = it->separator();
         //上分割线
         if (separator & DCustomActionDefines::Top) {
-            const QList<QAction*> &actionList = menu->actions();
+            const QList<QAction *> &actionList = menu->actions();
             if (!actionList.isEmpty()) {
                 auto lastAction = menu->actions().last();
 
@@ -290,8 +287,8 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
             }
         }
 
-        action->setParent(menu);
-        menu->addAction(action);
+        ba->setParent(menu);
+        menu->addAction(ba);
 
         //下分割线
         if ((separator & DCustomActionDefines::Bottom) && ((it + 1) != subActions.end())) {
@@ -346,13 +343,13 @@ QIcon DCustomActionBuilder::getIcon(const QString &iconName) const
     QIcon ret;
 
     //通过路径获取图标
-    QFileInfo fileInfo(iconName.startsWith("~") ? (QDir::homePath() + iconName.mid(1)) : iconName);
+    QFileInfo info(iconName.startsWith("~") ? (QDir::homePath() + iconName.mid(1)) : iconName);
 
-    if (!fileInfo.exists())
-        fileInfo.setFile(QUrl::fromUserInput(iconName).toLocalFile());
+    if (!info.exists())
+        info.setFile(QUrl::fromUserInput(iconName).toLocalFile());
 
-    if (fileInfo.exists()) {
-        ret = QIcon(fileInfo.absoluteFilePath());
+    if (info.exists()) {
+        ret = QIcon(info.absoluteFilePath());
     }
 
     //从主题获取
@@ -370,7 +367,7 @@ QIcon DCustomActionBuilder::getIcon(const QString &iconName) const
  */
 QString DCustomActionBuilder::makeName(const QString &name, DCustomActionDefines::ActionArg arg) const
 {
-    auto replace = [](QString input, const QString &before,const QString &after){
+    auto replace = [](QString input, const QString & before, const QString & after) {
         QString ret = input;
         int index = input.indexOf(before);
         if (index >= 0) {
@@ -382,7 +379,7 @@ QString DCustomActionBuilder::makeName(const QString &name, DCustomActionDefines
     QString ret;
     switch (arg) {
     case DCustomActionDefines::DirName:
-        ret = replace(name, DCustomActionDefines::kStrActionArg[arg],m_dirName);
+        ret = replace(name, DCustomActionDefines::kStrActionArg[arg], m_dirName);
         break;
     case DCustomActionDefines::BaseName:
         ret = replace(name, DCustomActionDefines::kStrActionArg[arg], m_fileBaseName);

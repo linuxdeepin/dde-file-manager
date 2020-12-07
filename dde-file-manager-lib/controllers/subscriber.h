@@ -30,14 +30,16 @@ class QString;
 class Subscriber
 {
 public:
+    Subscriber();
+    virtual ~Subscriber();
 
-    virtual void doSubscriberAction(const QString& path) = 0;
+    virtual void doSubscriberAction(const QString &path) = 0;
 
     int eventKey() const;
     void setEventKey(int eventKey);
 
 private:
-    int m_eventKey;
+    int m_eventKey = 0;
 };
 
 #endif // SUBSCRIBER_H
