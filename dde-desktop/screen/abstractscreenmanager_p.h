@@ -10,11 +10,7 @@ class ScreenManagerPrivate
 {
 public:
     explicit ScreenManagerPrivate(AbstractScreenManager *p) : q(p){}
-    ~ScreenManagerPrivate(){
-        if (m_eventShot)
-            delete m_eventShot;
-        m_eventShot = nullptr;
-    }
+    ~ScreenManagerPrivate();
     void readyShot(int wait = 50);
 public:
     QTimer *m_eventShot = nullptr;      //延迟处理定时器
