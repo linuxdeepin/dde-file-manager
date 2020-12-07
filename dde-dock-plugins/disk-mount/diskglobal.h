@@ -6,7 +6,7 @@
 class DiskGlobal : public QObject
 {
 public:
-    DiskGlobal(QObject * parent = nullptr);
+    explicit DiskGlobal(QObject *parent = nullptr);
 
     static bool isWayLand();
 };

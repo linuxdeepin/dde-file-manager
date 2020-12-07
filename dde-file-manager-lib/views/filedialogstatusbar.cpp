@@ -23,15 +23,15 @@
 FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     : QFrame(parent)
 {
-    AC_SET_OBJECT_NAME( this, AC_FD_STATUS_BAR);
-    AC_SET_ACCESSIBLE_NAME( this, AC_FD_STATUS_BAR);
+    AC_SET_OBJECT_NAME(this, AC_FD_STATUS_BAR);
+    AC_SET_ACCESSIBLE_NAME(this, AC_FD_STATUS_BAR);
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setFrameShape(QFrame::NoFrame);
 
     m_titleLabel = new QLabel(this);
-    AC_SET_OBJECT_NAME( m_titleLabel, AC_FD_STATUS_BAR_TITLE_LABEL);
-    AC_SET_ACCESSIBLE_NAME( m_titleLabel, AC_FD_STATUS_BAR_TITLE_LABEL);
+    AC_SET_OBJECT_NAME(m_titleLabel, AC_FD_STATUS_BAR_TITLE_LABEL);
+    AC_SET_ACCESSIBLE_NAME(m_titleLabel, AC_FD_STATUS_BAR_TITLE_LABEL);
 
     QString labelName = tr("File Name");
     QString labelFilters = tr("Format");
@@ -39,17 +39,17 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     m_filtersLabel = new QLabel(labelFilters, this);
 
     m_fileNameLabel->setObjectName(labelName);
-    AC_SET_ACCESSIBLE_NAME( m_fileNameLabel, labelName);
+    AC_SET_ACCESSIBLE_NAME(m_fileNameLabel, labelName);
     m_filtersLabel->setObjectName(labelFilters);
-    AC_SET_ACCESSIBLE_NAME( m_filtersLabel, labelFilters);
+    AC_SET_ACCESSIBLE_NAME(m_filtersLabel, labelFilters);
 
     m_fileNameEdit = new QLineEdit(this);
     m_filtersComboBox = new QComboBox(this);
 
-    AC_SET_OBJECT_NAME( m_fileNameEdit, AC_FD_STATUS_BAR_FILE_NAME_EDIT);
-    AC_SET_ACCESSIBLE_NAME( m_fileNameEdit, AC_FD_STATUS_BAR_FILE_NAME_EDIT);
-    AC_SET_OBJECT_NAME( m_filtersComboBox, AC_FD_STATUS_BAR_FILTERS);
-    AC_SET_ACCESSIBLE_NAME( m_filtersComboBox, AC_FD_STATUS_BAR_FILTERS);
+    AC_SET_OBJECT_NAME(m_fileNameEdit, AC_FD_STATUS_BAR_FILE_NAME_EDIT);
+    AC_SET_ACCESSIBLE_NAME(m_fileNameEdit, AC_FD_STATUS_BAR_FILE_NAME_EDIT);
+    AC_SET_OBJECT_NAME(m_filtersComboBox, AC_FD_STATUS_BAR_FILTERS);
+    AC_SET_ACCESSIBLE_NAME(m_filtersComboBox, AC_FD_STATUS_BAR_FILTERS);
 
     m_fileNameEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_fileNameEdit->installEventFilter(this);
@@ -59,7 +59,7 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     m_rejectButton = new QPushButton(tr("Cancel"), this);
 
     m_rejectButton->setObjectName(tr("Cancel"));
-    AC_SET_ACCESSIBLE_NAME( m_rejectButton, tr("Cancel"));
+    AC_SET_ACCESSIBLE_NAME(m_rejectButton, tr("Cancel"));
 
     m_acceptButton->setMinimumWidth(130);
     m_rejectButton->setMinimumWidth(130);
@@ -84,16 +84,16 @@ void FileDialogStatusBar::setMode(FileDialogStatusBar::Mode mode)
     QString acButton = mode == Save ? tr("Save") : tr("Open");
     m_acceptButton->setText(acButton);
     m_acceptButton->setObjectName(acButton);
-    AC_SET_ACCESSIBLE_NAME( m_acceptButton, acButton);
+    AC_SET_ACCESSIBLE_NAME(m_acceptButton, acButton);
 
     updateLayout();
 
-    if (m_titleLabel->text().isEmpty()){
+    if (m_titleLabel->text().isEmpty()) {
         QString titleLabel = mode == Save ? tr("Save File") : tr("Open File");
         m_titleLabel->setText(titleLabel);
 
         m_titleLabel->setObjectName(titleLabel);
-        AC_SET_ACCESSIBLE_NAME( m_titleLabel, titleLabel);
+        AC_SET_ACCESSIBLE_NAME(m_titleLabel, titleLabel);
     }
 }
 
@@ -136,10 +136,10 @@ QPushButton *FileDialogStatusBar::rejectButton() const
 
 void FileDialogStatusBar::addLineEdit(QLabel *label, QLineEdit *edit)
 {
-    AC_SET_OBJECT_NAME( label, AC_FD_STATUS_BAR_TITLE_CONTENT_LABEL);
-    AC_SET_ACCESSIBLE_NAME( label, AC_FD_STATUS_BAR_TITLE_CONTENT_LABEL);
-    AC_SET_OBJECT_NAME( edit, AC_FD_STATUS_BAR_TITLE_CONTENT_EDIT);
-    AC_SET_ACCESSIBLE_NAME( edit, AC_FD_STATUS_BAR_TITLE_CONTENT_EDIT);
+    AC_SET_OBJECT_NAME(label, AC_FD_STATUS_BAR_TITLE_CONTENT_LABEL);
+    AC_SET_ACCESSIBLE_NAME(label, AC_FD_STATUS_BAR_TITLE_CONTENT_LABEL);
+    AC_SET_OBJECT_NAME(edit, AC_FD_STATUS_BAR_TITLE_CONTENT_EDIT);
+    AC_SET_ACCESSIBLE_NAME(edit, AC_FD_STATUS_BAR_TITLE_CONTENT_EDIT);
     m_customLineEditList << qMakePair(label, edit);
 }
 
@@ -169,10 +169,10 @@ QVariantMap FileDialogStatusBar::allLineEditsValue() const
 
 void FileDialogStatusBar::addComboBox(QLabel *label, QComboBox *box)
 {
-    AC_SET_OBJECT_NAME( label, AC_FD_STATUS_BAR_TITLE_CONTENT_LABEL);
-    AC_SET_ACCESSIBLE_NAME( label, AC_FD_STATUS_BAR_TITLE_CONTENT_LABEL);
-    AC_SET_OBJECT_NAME( box, AC_FD_STATUS_BAR_TITLE_CONTENT_BOX);
-    AC_SET_ACCESSIBLE_NAME( box, AC_FD_STATUS_BAR_TITLE_CONTENT_BOX);
+    AC_SET_OBJECT_NAME(label, AC_FD_STATUS_BAR_TITLE_CONTENT_LABEL);
+    AC_SET_ACCESSIBLE_NAME(label, AC_FD_STATUS_BAR_TITLE_CONTENT_LABEL);
+    AC_SET_OBJECT_NAME(box, AC_FD_STATUS_BAR_TITLE_CONTENT_BOX);
+    AC_SET_ACCESSIBLE_NAME(box, AC_FD_STATUS_BAR_TITLE_CONTENT_BOX);
 
     m_customComboBoxList << qMakePair(label, box);
 }
@@ -226,11 +226,11 @@ void FileDialogStatusBar::showEvent(QShowEvent *event)
 {
     const QString &title = window()->windowTitle();
 
-    if (!title.isEmpty()){
+    if (!title.isEmpty()) {
         m_titleLabel->setText(title);
 
         m_titleLabel->setObjectName(title);
-        AC_SET_ACCESSIBLE_NAME( m_titleLabel, title);
+        AC_SET_ACCESSIBLE_NAME(m_titleLabel, title);
     }
     connect(window(), &QWidget::windowTitleChanged, this, &FileDialogStatusBar::onWindowTitleChanged);
 
@@ -325,7 +325,6 @@ void FileDialogStatusBar::updateLayout()
             if (m_filtersComboBox->count() > 0) {
                 m_filtersLabel->show();
                 m_filtersComboBox->show();
-                ++widget_count;
             }
 
             return;
@@ -397,5 +396,5 @@ void FileDialogStatusBar::onWindowTitleChanged(const QString &title)
     m_titleLabel->setText(title);
 
     m_titleLabel->setObjectName(title);
-    AC_SET_ACCESSIBLE_NAME( m_titleLabel, title);
+    AC_SET_ACCESSIBLE_NAME(m_titleLabel, title);
 }

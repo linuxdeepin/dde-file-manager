@@ -10,7 +10,7 @@ char *toBase64(const unsigned char *data, int size, int options)
                                    "ghijklmn" "opqrstuv" "wxyz0123" "456789+/";
     const char alphabet_base64url[] = "ABCDEFGH" "IJKLMNOP" "QRSTUVWX" "YZabcdef"
                                       "ghijklmn" "opqrstuv" "wxyz0123" "456789-_";
-    const char *const alphabet = options & Base64UrlEncoding ? alphabet_base64url : alphabet_base64;
+    const char *const alphabet = (options & Base64UrlEncoding) ? alphabet_base64url : alphabet_base64;
     const char padchar = '=';
     int padlen = 0;
 

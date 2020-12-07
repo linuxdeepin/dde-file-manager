@@ -24,7 +24,7 @@ class ZoneMainWindow : public QWidget
 {
     Q_OBJECT
 public:
-    ZoneMainWindow(QWidget *parent = nullptr);
+    explicit ZoneMainWindow(QWidget *parent = nullptr);
     ~ZoneMainWindow();
 
     void mousePressEvent(QMouseEvent *);

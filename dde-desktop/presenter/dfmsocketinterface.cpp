@@ -32,7 +32,7 @@ DWIDGET_USE_NAMESPACE
 
 using namespace std;
 
-int getProcIdByName(string procName)
+int getProcIdByName(const string &procName)
 {
     int pid = -1;
 

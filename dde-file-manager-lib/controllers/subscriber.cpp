@@ -25,6 +25,14 @@
 #include "subscriber.h"
 
 
+Subscriber::Subscriber()
+{
+}
+
+Subscriber::~Subscriber()
+{
+}
+
 int Subscriber::eventKey() const
 {
     return m_eventKey;

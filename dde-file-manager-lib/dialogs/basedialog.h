@@ -40,7 +40,7 @@ class BaseDialog : public DAbstractDialog
 {
     Q_OBJECT
 public:
-    explicit BaseDialog(QWidget *parent = 0);
+    explicit BaseDialog(QWidget *parent = nullptr);
     ~BaseDialog();
 
     void setTitle(const QString &title);
@@ -49,7 +49,7 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 private:
-    DTitlebar *m_titlebar;
+    DTitlebar *m_titlebar = nullptr;
 };
 
 #endif // BASEDIALOG_H

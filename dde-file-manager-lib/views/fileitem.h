@@ -43,7 +43,7 @@ class FileIconItem : public QFrame
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
 public:
-    explicit FileIconItem(QWidget *parent = 0);
+    explicit FileIconItem(QWidget *parent = nullptr);
     ~FileIconItem() override;
 
     qreal opacity() const;

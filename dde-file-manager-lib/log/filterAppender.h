@@ -41,32 +41,31 @@
  */
 class CUTELOGGERSHARED_EXPORT FilterAppender : public DTK_CORE_NAMESPACE::FileAppender
 {
-  public:
+public:
     /*!
      * The enum DatePattern defines constants for date patterns.
      * \sa setDatePattern(DatePattern)
      */
-    enum DatePattern
-    {
-      /*! The minutely date pattern string is "'.'yyyy-MM-dd-hh-mm". */
-      MinutelyRollover = 0,
-      /*! The hourly date pattern string is "'.'yyyy-MM-dd-hh". */
-      HourlyRollover,
-      /*! The half-daily date pattern string is "'.'yyyy-MM-dd-a". */
-      HalfDailyRollover,
-      /*! The daily date pattern string is "'.'yyyy-MM-dd". */
-      DailyRollover,
-      /*! The weekly date pattern string is "'.'yyyy-ww". */
-      WeeklyRollover,
-      /*! The monthly date pattern string is "'.'yyyy-MM". */
-      MonthlyRollover
+    enum DatePattern {
+        /*! The minutely date pattern string is "'.'yyyy-MM-dd-hh-mm". */
+        MinutelyRollover = 0,
+        /*! The hourly date pattern string is "'.'yyyy-MM-dd-hh". */
+        HourlyRollover,
+        /*! The half-daily date pattern string is "'.'yyyy-MM-dd-a". */
+        HalfDailyRollover,
+        /*! The daily date pattern string is "'.'yyyy-MM-dd". */
+        DailyRollover,
+        /*! The weekly date pattern string is "'.'yyyy-ww". */
+        WeeklyRollover,
+        /*! The monthly date pattern string is "'.'yyyy-MM". */
+        MonthlyRollover
     };
 
-    FilterAppender(const QString& fileName = QString());
+    explicit FilterAppender(const QString &fileName = QString());
 
     DatePattern datePattern() const;
     void setDatePattern(DatePattern datePattern);
-    void setDatePattern(const QString& datePattern);
+    void setDatePattern(const QString &datePattern);
 
     QString datePatternString() const;
 
@@ -96,16 +95,16 @@ class CUTELOGGERSHARED_EXPORT FilterAppender : public DTK_CORE_NAMESPACE::FileAp
      */
     void clearFilters();
 
-  protected:
-    virtual void append(const QDateTime& timeStamp, DTK_CORE_NAMESPACE::Logger::LogLevel logLevel, const char* file, int line,
-                        const char* function, const QString& category, const QString& message);
+protected:
+    virtual void append(const QDateTime &timeStamp, DTK_CORE_NAMESPACE::Logger::LogLevel logLevel, const char *file, int line,
+                        const char *function, const QString &category, const QString &message);
 
-  private:
+private:
     void rollOver();
     void computeRollOverTime();
     void computeFrequency();
     void removeOldFiles();
-    void setDatePatternString(const QString& datePatternString);
+    void setDatePatternString(const QString &datePatternString);
 
     QString m_datePatternString;
     DatePattern m_frequency;

@@ -41,19 +41,21 @@ public:
     static DFMCrumbManager *instance();
 
     template <class T>
-    void dRegisterCrumbCreator(const QString &scheme) {
+    void dRegisterCrumbCreator(const QString &scheme)
+    {
         if (isRegisted<T>(scheme))
             return;
 
-        insertToCreatorHash(KeyType(scheme), CrumbCreaterType(typeid(T).name(), [=] () {
-            return (DFMCrumbInterface*)new T();
+        insertToCreatorHash(KeyType(scheme), CrumbCreaterType(typeid(T).name(), [ = ]() {
+            return static_cast<DFMCrumbInterface *>(new T());
         }));
     }
 
     bool isRegisted(const QString &scheme, const std::type_info &info) const;
 
     template <class T>
-    bool isRegisted(const QString &scheme) const {
+    bool isRegisted(const QString &scheme) const
+    {
         return isRegisted(scheme, typeid(T));
     }
 
