@@ -24,12 +24,11 @@ INCLUDEPATH += $$PWD
 #    $$GMOCK_SRCDIR \
 #    $$GMOCK_SRCDIR/include
 
-INCLUDEPATH += $$PWD/../stubext
+INCLUDEPATH += $$PWD/../stub-ext
 SOURCES += $$PWD/elfio.hpp
 
 HEADERS += $$PWD/addr_any.h \
             $$PWD/addr_pri.h \
             $$PWD/stub.h \
-    $$PWD/stubext.h \
-    $$PWD/../stubext/stubext.h \
-    $$PWD/../stubext/stub-shadow.h
+            $$PWD/../stub-ext/stubext.h \
+            $$PWD/../stub-ext/stub-shadow.h
