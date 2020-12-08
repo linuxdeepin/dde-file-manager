@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include "stub.h"
 
 #define private public
 #define protected public
@@ -46,4 +47,12 @@ TEST(DFMHeaderViewTest, resizeEvent){
     QResizeEvent re(QSize(100, 100), QSize(200, 200));
     headerV.resizeEvent(&re);
     EXPECT_TRUE(headerV.m_resizeEventDone);
+}
+
+TEST(DFMHeaderView, sizeHint){
+    QWidget wdg;
+    DFMHeaderView headerV(Qt::Horizontal,&wdg);
+    auto expectV = headerV.sizeHint().width() == headerV.length();
+    EXPECT_TRUE(expectV);
+
 }

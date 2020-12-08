@@ -22,6 +22,41 @@ namespace  {
     };
 }
 
+
+TEST(RecordRenameBarState, test_move_structure)
+{
+    RecordRenameBarState older;
+    QPair<QString, QString> testData("aa", "bb");
+    older.setPatternFirstItemContent(testData);
+
+    RecordRenameBarState newer(std::move(older));
+    auto expectValue = newer.m_patternFirst == testData;
+    EXPECT_TRUE(expectValue);
+}
+
+TEST(RecordRenameBarState, test_operator_equal)
+{
+    RecordRenameBarState older;
+    QPair<QString, QString> testData("aa", "bb");
+    older.setPatternFirstItemContent(testData);
+
+    RecordRenameBarState newer;
+    newer = older;
+    auto expectValue = newer.m_patternFirst == testData;
+    EXPECT_TRUE(expectValue);
+}
+
+TEST(RecordRenameBarState, test_operator_move)
+{
+    RecordRenameBarState older;
+    QPair<QString, QString> testData("aa", "bb");
+    older.setPatternFirstItemContent(testData);
+
+    RecordRenameBarState newer =std::move(older);
+    auto expectValue = newer.m_patternFirst == testData;
+    EXPECT_TRUE(expectValue);
+}
+
 TEST_F(RecordRenameBarStateTest, test_clear){
     DUrlList tp;
     tp.append(DUrl("/home/"));
@@ -108,6 +143,44 @@ TEST_F(RecordRenameBarStateTest, getVisibleValue){
     EXPECT_TRUE(expectValue);
 }
 
+TEST(DRenameBarPrivate, set_rename_btn_status)
+{
+    DRenameBar drb;
+    DRenameBarPrivate drbP(&drb);
+
+    QPushButton *button{ std::get<1>(drbP.m_buttonsArea) };
+    button->setEnabled(false);
+    drbP.setRenameBtnStatus(true);
+    EXPECT_TRUE(button->isEnabled());
+}
+
+TEST(DRenameBarPrivate, filtering_text)
+{
+    DRenameBar drb;
+    DRenameBarPrivate drbP(&drb);
+
+    auto tempEmpty = drbP.filteringText("");
+    EXPECT_TRUE(tempEmpty.isEmpty());
+
+    auto temp = drbP.filteringText("\\\\:test\\\\");
+    EXPECT_TRUE("test" == temp);
+}
+
+TEST(DRenameBarPrivate, update_line_edit_text)
+{
+    DRenameBar drb;
+    DRenameBarPrivate drbP(&drb);
+
+    QLineEdit *lineEdit{ std::get<1>(drbP.m_replaceOperatorItems) };
+    drbP.updateLineEditText(lineEdit);
+    EXPECT_TRUE(lineEdit->text().isEmpty());
+
+    auto temp = drbP.filteringText("\\\\:test\\\\");
+    lineEdit->setText(temp);
+    drbP.updateLineEditText(lineEdit);
+    EXPECT_TRUE("test" == temp);
+}
+
 TEST(DRenameBarTest, storeUrlList){
     DRenameBar drb;
     QList<DUrl> testData{DUrl("aa"), DUrl("bb")};
@@ -179,3 +252,57 @@ TEST(DRenameBarTest, key_press_event){
     drb.keyPressEvent(&keEscape);
     EXPECT_TRUE(inThere);
 }
+
+
+TEST(DRenameBarTest, on_custom_operator_file_name_changed) {
+    DRenameBar drb;
+    QLineEdit *lineEditForFileName{ std::get<1>(drb.d_func()->m_customOPeratorItems) };
+    lineEditForFileName->setText("");
+    drb.onCustomOperatorFileNameChanged();
+    EXPECT_FALSE(drb.d_func()->m_renameButtonStates[2]);
+
+    QLineEdit *lineEditForSNNumber{ std::get<3>(drb.d_func()->m_customOPeratorItems) };
+    lineEditForFileName->setText("test");
+    lineEditForSNNumber->setText("test");
+    drb.onCustomOperatorFileNameChanged();
+    EXPECT_TRUE(drb.d_func()->m_renameButtonStates[2]);
+
+    lineEditForSNNumber->setText("");
+    EXPECT_FALSE(drb.d_func()->m_renameButtonStates[2]);
+}
+
+TEST(DRenameBarTest, on_custom_operator_sNNumber_changed) {
+    DRenameBar drb;
+    QLineEdit *lineEditForSNNumber{ std::get<3>(drb.d_func()->m_customOPeratorItems) };
+    lineEditForSNNumber->setText("");
+    drb.onCustomOperatorSNNumberChanged();
+    EXPECT_FALSE(drb.d_func()->m_renameButtonStates[2]);
+
+    QLineEdit *lineEditForFileName{ std::get<3>(drb.d_func()->m_customOPeratorItems) };
+    lineEditForFileName->setText("test");
+    lineEditForSNNumber->setText("test");
+    drb.onCustomOperatorSNNumberChanged();
+    EXPECT_TRUE(drb.d_func()->m_renameButtonStates[2]);
+
+    lineEditForFileName->setText("");
+    EXPECT_FALSE(drb.d_func()->m_renameButtonStates[2]);
+}
+
+TEST(DRenameBarTest, on_replace_operator_file_name_changed) {
+    DRenameBar drb;
+    drb.onReplaceOperatorFileNameChanged("");
+    EXPECT_FALSE(drb.d_func()->m_renameButtonStates[0]);
+
+    drb.onReplaceOperatorFileNameChanged("test");
+    EXPECT_TRUE(drb.d_func()->m_renameButtonStates[0]);
+}
+
+TEST(DRenameBarTest, on_add_operator_added_content_changed) {
+    DRenameBar drb;
+    drb.onAddOperatorAddedContentChanged("");
+    EXPECT_FALSE(drb.d_func()->m_renameButtonStates[1]);
+
+    drb.onAddOperatorAddedContentChanged("test");
+    EXPECT_TRUE(drb.d_func()->m_renameButtonStates[1]);
+}
+

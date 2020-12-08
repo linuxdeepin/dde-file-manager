@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 #include "dfmglobal.h"
+#include "stub.h"
 
 #define private public
 #define protected public
@@ -34,8 +35,10 @@ namespace  {
 
         virtual void TearDown() override {
             delete m_dw;
+            m_dw = nullptr;
             m_dirTest->rmdir(m_utDirUrl);
             delete m_dirTest;
+            m_dirTest = nullptr;
 
         }
         QDir *m_dirTest;
@@ -44,11 +47,39 @@ namespace  {
     };
 }
 
+static bool inThere = false;
+TEST_F(DFMTagWidgetTest, initConnection){
+    Stub stub;
+    auto utLoadTags = static_cast<void(*)(const DUrl &)>([](const DUrl &durl){
+        inThere = true;
+    });
+    stub.set(ADDR(DFMTagWidget, loadTags), utLoadTags);
+    emit m_dw->d_func()->m_tagActionWidget->checkedColorChanged("Red");
+    m_dw->loadTags(DUrl(m_utDirUrl));
+    EXPECT_TRUE(inThere);
+}
 
 TEST_F(DFMTagWidgetTest, loadTags){
     m_dw->loadTags(DUrl(m_utDirUrl));
     auto expectValue = m_dw ->d_func()->m_url.path() == m_utDirUrl;
     EXPECT_TRUE(expectValue);
+
+    Stub stub;
+    auto utGetTagsThroughFiles = static_cast<QList<QString> (*)(const QList<DUrl> &)>([](const QList<DUrl> &){
+        QList<QString> temp{"橙色"};
+        return temp;
+    });
+
+    auto utGetColorByDisplayName = static_cast<QString(*)(const QString &)>([](const QString &tt){
+        QString temp = "Orange";
+        return temp;
+    });
+    stub.set(ADDR(TagManager, getTagsThroughFiles), utGetTagsThroughFiles);
+    stub.set(ADDR(TagManager, getColorByDisplayName), utGetColorByDisplayName);
+    m_dw->loadTags(DUrl(m_utDirUrl));
+
+    auto expectValue1 = m_dw ->d_func()->m_url.path() == m_utDirUrl;
+    EXPECT_TRUE(expectValue1);
 }
 
 TEST_F(DFMTagWidgetTest, shouldShow){
@@ -58,5 +89,29 @@ TEST_F(DFMTagWidgetTest, shouldShow){
     auto expectValue = m_dw->shouldShow(url);
     EXPECT_TRUE(expectValue);
 }
+
+TEST_F(DFMTagWidgetTest, tagTitle){
+    auto tempp = m_utDirUrl;
+    DUrl temppp(m_utDirUrl);
+    DUrl url = m_dw->d_func()->redirectUrl(temppp);
+    auto expectValue = m_dw->d_func()->m_tagLable == m_dw->tagTitle();
+    EXPECT_TRUE(expectValue);
+}
+
+TEST_F(DFMTagWidgetTest, tagLeftTitle){
+    auto expectValue = m_dw->d_func()->m_tagLeftLable == m_dw->tagLeftTitle();
+    EXPECT_TRUE(expectValue);
+}
+
+TEST(DFMCrumbEdit, mouse_double_click_event){
+    DCrumbEdit tempEdit;
+    DFMCrumbEdit temp(&tempEdit);
+    temp.m_isEditByDoubleClick = true;
+    QMouseEvent me(QEvent::User, QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    temp.mouseDoubleClickEvent(&me);
+    EXPECT_FALSE(temp.m_isEditByDoubleClick);
+}
+
+
 
 DFM_END_NAMESPACE
