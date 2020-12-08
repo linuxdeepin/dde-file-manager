@@ -14,7 +14,7 @@
 #include <ddiskdevice.h>
 
 #define private public
-#define  protected public
+#define protected public
 
 #include "tests/testhelper.h"
 #include "stub.h"
@@ -26,11 +26,7 @@
 
 DFM_USE_NAMESPACE
 
-
-
 #include "controllers/appcontroller.h"
-
-
 
 QString createTestIsoFile()
 {
@@ -629,7 +625,6 @@ TEST_F(AppControllerTest, start_createDBusInterface){
 
 TEST_F(AppControllerTest, start_showErrorDialog){
     EXPECT_NO_FATAL_FAILURE(controller->showErrorDialog("test","tet"));
-    EXPECT_NO_FATAL_FAILURE(controller->setHasLaunchAppInterface(true));
 }
 
 
