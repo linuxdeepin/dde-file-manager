@@ -1146,6 +1146,8 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     //开始按顺序插入菜单
     DCustomActionDefines::sortFunc(locate, systemActions, [menu](const QList<QAction *> &acs){
         menu->addActions(acs);
+    },[](QAction *ac) ->bool {
+        return ac && !ac->isSeparator();
     });
 
     Q_ASSERT(systemActions.isEmpty());
