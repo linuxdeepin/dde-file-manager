@@ -22,6 +22,7 @@
 #include "interfaces/dfileservices.h"
 #include "interfaces/dfilemenu.h"
 #include "controllers/appcontroller.h"
+#include "controllers/vaultcontroller.h"
 
 #define private public
 #define protected public
@@ -51,6 +52,20 @@ namespace  {
         }
         DFileView *m_view;
         FileViewHelper *m_fileViewHelper;
+    };
+    class SelectWorkTest : public testing::Test
+    {
+    public:
+        virtual void SetUp() override
+        {
+            m_selectWork = new SelectWork;
+        }
+
+        virtual void TearDown() override
+        {
+            delete m_selectWork;
+        }
+        SelectWork *m_selectWork;
     };
 }
 
@@ -1645,53 +1660,143 @@ TEST_F(DFileViewTest,update_extenheader_viewproperty)
 {
     ASSERT_NE(nullptr,m_view);
 
-    m_view->switchViewMode(DFileView::ListMode);
+    m_view->d_func()->headerView = nullptr;
     m_view->updateExtendHeaderViewProperty();
+
+    m_view->switchViewMode(DFileView::ListMode);
+
+    Stub stub;
+    static bool myCall = false;
+    void (*ut_setSectionResizeMode)() = [](){myCall = true;};
+    stub.set((void(QHeaderView::*)(int, QHeaderView::ResizeMode))ADDR(QHeaderView, setSectionResizeMode), ut_setSectionResizeMode);
+
+    m_view->d_func()->allowedAdjustColumnSize = false;
+    m_view->updateExtendHeaderViewProperty();
+    EXPECT_TRUE(myCall);
 }
 
 TEST_F(DFileViewTest,update_column_width)
 {
     ASSERT_NE(nullptr,m_view);
 
+    QString path("/usr/lib");
+    DUrl url(path);
+    m_view->setRootUrl(url);
     m_view->switchViewMode(DFileView::ListMode);
+
+    Stub stub;
+    int (*ut_count)() = [](){return 3;};
+    stub.set(ADDR(QHeaderView, count), ut_count);
+
+    static bool myHidden = true;
+    bool (*ut_isSectionHidden)() = [](){return myHidden;};
+    stub.set(ADDR(QHeaderView, isSectionHidden), ut_isSectionHidden);
+
+    static bool mySection = false;
+    void (*ut_resizeSection)() = [](){mySection = true;};
+    stub.set(ADDR(QHeaderView, resizeSection), ut_resizeSection);
+
+    int (*ut_columnWidthByRole)() = [](){return 10;};
+    stub.set(ADDR(DFileSystemModel, columnWidthByRole), ut_columnWidthByRole);
+
     m_view->d_func()->allowedAdjustColumnSize = false;
+    m_view->d_func()->firstVisibleColumn = 1;
+    m_view->d_func()->lastVisibleColumn = 1;
     m_view->updateColumnWidth();
+    EXPECT_TRUE(mySection);
+
+    myHidden = false;
+    m_view->updateColumnWidth();
+    EXPECT_TRUE(mySection);
 }
 
 TEST_F(DFileViewTest,popup_header_view_contextmenu)
 {
     ASSERT_NE(nullptr,m_view);
-    QTimer tim;
-    QTimer::singleShot(2000, []{
-        QWidget w;
-        w.show();
-    });
+
+    QString path("dfmroot:///desktop.userdir");
+    DUrl url(path);
+    m_view->setRootUrl(url);
+
+    Stub stub;
+    static bool myCallExec = false;
+    void (*ut_exec)(void *obj, const QPoint&, QAction*) = [](void *obj, const QPoint&, QAction*){
+        myCallExec = true;
+        DFileMenu *menu = (DFileMenu*)obj;
+        QList<QAction*> actions = menu->actions();
+        for(auto action : actions) {
+            action->trigger();
+        }
+    };
+    stub.set((QAction*(DFileMenu::*)(const QPoint&, QAction*))ADDR(DFileMenu, exec), ut_exec);
+
+    static bool myIsCompact = true;
+    bool (*ut_columnIsCompact)() = [](){return myIsCompact;};
+    stub.set(ADDR(DAbstractFileInfo, columnIsCompact), ut_columnIsCompact);
+
+    typedef QList<int> (*fptr)(DAbstractFileInfo*, int);
+    fptr DAbstractFileInfo_userColumnChildRoles = (fptr)(&DAbstractFileInfo::userColumnChildRoles);
+    static QList<int> myList;
+    QList<int> (*ut_userColumnChildRoles)() = [](){return myList;};
+    stub.set(DAbstractFileInfo_userColumnChildRoles, ut_userColumnChildRoles);
 
     QPoint pos(10, 10);
-    m_view->switchViewMode(DFileView::ListMode);
-
-    tim.start();
     m_view->popupHeaderViewContextMenu(pos);
+    EXPECT_FALSE(myCallExec);
+
+    static bool myHidden = false;
+    bool (*ut_isSectionHidden)() = [](){return myHidden;};
+    stub.set(ADDR(QHeaderView, isSectionHidden), ut_isSectionHidden);
+
+    static int myRole = 1;
+    int (*ut_sortRole)() = [](){return myRole++;};
+    stub.set(ADDR(DFileSystemModel, sortRole), ut_sortRole);
+
+    myList << 1 << 2 << 3;
+    m_view->popupHeaderViewContextMenu(pos);
+    EXPECT_TRUE(myCallExec);
+
+    myIsCompact = false;
+    myList.clear();
+    m_view->popupHeaderViewContextMenu(pos);
+    EXPECT_TRUE(myCallExec);
 }
 
 TEST_F(DFileViewTest,on_model_statechanged)
 {
     ASSERT_NE(nullptr,m_view);
 
-    int state = DFileSystemModel::Busy;
+    QString path("dfmroot:///desktop.userdir");
+    DUrl url(path);
+    m_view->setRootUrl(url);
     m_view->switchViewMode(DFileView::ListMode);
-    m_view->onModelStateChanged(state);
 
-    state = DFileSystemModel::Idle;
+    Stub stub;
+    static bool myCallChanged = false;
+    void (*ut_notifyStateChanged)() = [](){myCallChanged = true;};
+    stub.set(ADDR(DFMBaseView, notifyStateChanged), ut_notifyStateChanged);
+
+    int state = DFileSystemModel::Busy;
     m_view->onModelStateChanged(state);
+    EXPECT_TRUE(myCallChanged);
+
+    myCallChanged = false;
+    state = DFileSystemModel::Idle;
+    m_view->d_func()->preSelectionUrls.append(DUrl("/home"));
+    m_view->onModelStateChanged(state);
+    EXPECT_TRUE(myCallChanged);
 }
 
 TEST_F(DFileViewTest,update_content_label)
 {
     ASSERT_NE(nullptr,m_view);
 
-    int state = DFileSystemModel::Idle;
-    m_view->onModelStateChanged(state);
+    DFileSystemModel::State state = DFileSystemModel::Busy;
+    m_view->model()->setState(state);
+    m_view->updateContentLabel();
+
+    state = DFileSystemModel::Idle;
+    m_view->model()->setState(state);
     m_view->updateContentLabel();
 }
 
@@ -1699,7 +1804,15 @@ TEST_F(DFileViewTest,update_toolbar_actions)
 {
     ASSERT_NE(nullptr,m_view);
 
+    QActionGroup actions(nullptr);
+    m_view->d_func()->toolbarActionGroup = &actions;
     m_view->updateToolBarActions(m_view, QString());
+    EXPECT_FALSE(actions.actions().isEmpty());
+
+    actions.addAction(new QAction);
+    actions.addAction(new QAction);
+    m_view->updateToolBarActions(m_view, QString());
+    EXPECT_FALSE(actions.actions().isEmpty());
 }
 
 TEST_F(DFileViewTest,re_fresh_mode)
@@ -1713,5 +1826,91 @@ TEST_F(DFileViewTest,fetch_drag_memory)
 {
     ASSERT_NE(nullptr,m_view);
 
-    m_view->fetchDragEventUrlsFromSharedMemory();
+    Stub stub;
+    static bool myAttach = false;
+    bool (*ut_isAttached)() = [](){return myAttach;};
+    stub.set(ADDR(QSharedMemory, isAttached), ut_isAttached);
+    stub.set(ADDR(QSharedMemory, attach), ut_isAttached);
+    bool result = m_view->fetchDragEventUrlsFromSharedMemory();
+    EXPECT_FALSE(result);
+
+    myAttach = true;
+    result = m_view->fetchDragEventUrlsFromSharedMemory();
+    EXPECT_TRUE(result);
+}
+
+TEST_F(SelectWorkTest,set_init_data)
+{
+    ASSERT_NE(nullptr,m_selectWork);
+
+    Stub stub;
+    bool (*ut_isValutFile)() = [](){return true;};
+    stub.set(ADDR(VaultController, isVaultFile), ut_isValutFile);
+
+    DUrl (*ut_localToVault)() = [](){return DUrl("/home");};
+    stub.set(ADDR(VaultController, localToVault), ut_localToVault);
+
+    QList<DUrl> lst;
+    lst.append(DUrl("/home"));
+
+    m_selectWork->setInitData(lst, nullptr);
+    EXPECT_EQ(m_selectWork->m_lstNoValid, lst);
+    EXPECT_EQ(m_selectWork->m_pModel, nullptr);
+}
+
+TEST_F(SelectWorkTest,start_work)
+{
+    ASSERT_NE(nullptr,m_selectWork);
+
+    Stub stub;
+    static bool myCallStart = false;
+    void (*ut_start)() = [](){myCallStart = true;};
+    stub.set(ADDR(QThread, start), ut_start);
+
+    m_selectWork->startWork();
+    EXPECT_TRUE(myCallStart);
+    EXPECT_FALSE(m_selectWork->m_bStop);
+}
+
+TEST_F(SelectWorkTest,stop_work)
+{
+    ASSERT_NE(nullptr,m_selectWork);
+
+    m_selectWork->stopWork();
+    EXPECT_TRUE(m_selectWork->m_bStop);
+}
+
+TEST_F(SelectWorkTest,tst_run)
+{
+    ASSERT_NE(nullptr,m_selectWork);
+
+    Stub stub;
+    static bool myUpdate = false;
+    void (*ut_update)() = [](){myUpdate = true;};
+    stub.set(ADDR(DFileSystemModel, update), ut_update);
+
+    static bool myValid = true;
+    bool (*ut_isValid)() = [](){return myValid;};
+    stub.set(ADDR(QModelIndex, isValid), ut_isValid);
+
+    QList<DUrl> lst;
+    lst.append(DUrl("/home"));
+    lst.append(DUrl("/usr/bin"));
+    m_selectWork->setInitData(lst, nullptr);
+
+    m_selectWork->m_bStop = true;
+    m_selectWork->run();
+    EXPECT_TRUE(myUpdate);
+
+    myUpdate = false;
+    m_selectWork->m_bStop = false;
+    m_selectWork->run();
+    EXPECT_TRUE(myUpdate);
+
+    myUpdate = false;
+    DFileView view;
+    DFileSystemModel *model = const_cast<DFileSystemModel*>(view.model());
+    m_selectWork->setInitData(lst, model);
+    m_selectWork->run();
+    EXPECT_TRUE(myUpdate);
 }
