@@ -72,8 +72,8 @@ namespace DCustomActionDefines
 
     static const QStringList kStrActionArg = {"%d","%p","%b","%a","%f","%F","%u","%U"};
 
-    template<typename Element, typename AddFunc>
-    void sortFunc(const QMap<int, QList<Element>> &locate, QList<Element> &orgin, AddFunc addfunc) {
+    template<typename Element, typename AddFunc,typename IsCount>
+    void sortFunc(const QMap<int, QList<Element>> &locate, QList<Element> &orgin, AddFunc addfunc,IsCount countFunc) {
         int maxPos = locate.isEmpty() ? 0 : locate.lastKey();
         int currentCount = 0;
         auto nextIter = locate.begin();
@@ -90,12 +90,17 @@ namespace DCustomActionDefines
                 } else {
                     //用原有数据占位
                     int added = i - currentCount;
-                    for (int j = 0; j < added; ++j) {
+                    for (int j = 0; j < added;) {
                         if (orgin.isEmpty())
                             break;
+                        auto el = orgin.takeFirst();
+                        addfunc({el});
 
-                        addfunc({orgin.takeFirst()});
-                        ++currentCount;
+                        //是否记数
+                        if (countFunc(el)) {
+                            ++j;
+                            ++currentCount;
+                        }
                     }
                 }
             } else {

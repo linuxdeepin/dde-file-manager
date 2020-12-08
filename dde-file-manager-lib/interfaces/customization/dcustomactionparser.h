@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QTimer>
 
 class QSettings;
 class QFileSystemWatcher;
@@ -58,7 +59,9 @@ public:
 signals:
     void customMenuChanged();
 public slots:
+    void delayRefresh();
 private:
+    QTimer *m_refreshTimer = nullptr;
     QFileSystemWatcher  *m_fileWatcher  = nullptr;
     QList<DCustomActionEntry> m_actionEntry;
     QHash<QString, DCustomActionDefines::ComboType> m_combos;

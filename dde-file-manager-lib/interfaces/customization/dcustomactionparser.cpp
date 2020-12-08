@@ -10,11 +10,11 @@ using namespace DCustomActionDefines;
 DCustomActionParser::DCustomActionParser(QObject *parent) : QObject(parent)
 {
     m_fileWatcher = new QFileSystemWatcher;
+    //监听目录
     m_fileWatcher->addPath(kCustomMenuPath);
-    connect(m_fileWatcher, &QFileSystemWatcher::directoryChanged, [this]{
-        m_actionEntry.clear();
-        loadDir(kCustomMenuPath);
-    });
+    connect(m_fileWatcher, &QFileSystemWatcher::directoryChanged, this, &DCustomActionParser::delayRefresh);
+    connect(m_fileWatcher, &QFileSystemWatcher::fileChanged, this, &DCustomActionParser::delayRefresh);
+
     initHash();
     loadDir(kCustomMenuPath);
     //暂时不考虑效率，todo后续优化考虑开线程处理此loadDir
@@ -27,8 +27,6 @@ DCustomActionParser::~DCustomActionParser()
         m_fileWatcher = nullptr;
     }
 }
-
-
 
 /*!
     根据给定的文件夹路径\a dirPath 遍历解析该文件夹下的.conf文件,
@@ -43,8 +41,13 @@ bool DCustomActionParser::loadDir(const QString &dirPath)
     if (!dir.exists())
         return false;
     m_actionEntry.clear();
+
+    m_fileWatcher->removePaths(m_fileWatcher->files());
+
     //以时间先后遍历
     for (const QFileInfo &actionFileInfo : dir.entryInfoList({"*.conf"}, QDir::Files, QDir::Time)) {
+        //监听每个conf文件的修改
+        m_fileWatcher->addPath(actionFileInfo.absoluteFilePath());
 
         //解析文件字段
         QSettings actionSetting(actionFileInfo.filePath(), QSettings::IniFormat);
@@ -332,4 +335,27 @@ bool DCustomActionParser::comboPosForTopAction(QSettings &actionSetting, const Q
         }
     }
     return true;
+}
+
+void DCustomActionParser::delayRefresh()
+{
+    if (m_refreshTimer) {
+        m_refreshTimer->start(300);
+        qDebug() << "restart refresh timer" << this;
+        return;
+    }
+
+    qDebug() << "create refresh timer" << this;
+    m_refreshTimer = new QTimer;
+    connect(m_refreshTimer,&QTimer::timeout,this,[this](){
+        m_actionEntry.clear();
+
+        qInfo() << "loading custom menus" << this;
+        loadDir(kCustomMenuPath);
+
+        m_refreshTimer->stop();
+        m_refreshTimer->deleteLater();
+        m_refreshTimer = nullptr;
+    });
+    m_refreshTimer->start(300);
 }
