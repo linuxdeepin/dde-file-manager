@@ -22,6 +22,7 @@ SOURCES += \
     $$PWD/dde-wallpaper-chooser/ut-thumbnailmanager-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-frame-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-checkbox-test.cpp \
+    $$PWD/dde-wallpaper-chooser/ut-screensavercontrol-test.cpp\
     $$PWD/config/ut-dfmdesktopsettings-test.cpp \
     $$PWD/view/ut-canvasviewhelper-test.cpp \
     $$PWD/util/ut-util-test.cpp

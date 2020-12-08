@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <DIconButton>
 #include <QLabel>
+#include <QDBusAbstractInterface>
 
 #define private public
 #define protected public
@@ -19,6 +20,10 @@
 #include "../dde-wallpaper-chooser/frame.h"
 #include "../dde-wallpaper-chooser/dbus/deepin_wm.h"
 #include "screen/screenhelper.h"
+#include "desktopinfo.h"
+#include "../third-party/cpp-stub/stub.h"
+#include "../stub-ext/stubext.h"
+#include "appearance_interface.h"
 
 using namespace testing;
 
@@ -48,34 +53,27 @@ TEST_F(FrameTest, test_frame)
 {
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
+
     m_frame->show();
+
     m_frame->m_wallpaperList->setCurrentIndex(0);
     qApp->processEvents();
-    QEventLoop loop1;
-    QTimer::singleShot(1000, &loop1, [&loop1](){
-        loop1.exit();
-    });
-    loop1.exec();
 
     //模拟翻页，看显示情况
-    qApp->processEvents();
-    QEventLoop loop;
-    QTimer::singleShot(500, &loop, [this] {
-        qApp->processEvents();
-        if (m_frame->m_wallpaperList->nextButton) {
-        QVariant firstvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
-        this->m_frame->m_mouseArea->buttonPress(QPoint(0, 0), 5);
-        QVariant secondvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
-        if (firstvalue == secondvalue) {
+     qApp->processEvents();
+     if (m_frame->m_wallpaperList->nextButton) {
+         QVariant firstvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
+         this->m_frame->m_mouseArea->buttonPress(QPoint(0, 0), 5);
+         QVariant secondvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
+         if (firstvalue == secondvalue) {
                 QVariant endvalue1 = m_frame->m_wallpaperList->scrollAnimation.endValue();
                 QVariant endvalue = m_frame->m_wallpaperList->scrollAnimation.endValue();
                 EXPECT_EQ(endvalue1, endvalue);
-        }
-        }
-    });
-    QTimer::singleShot(1000, &loop, [this] {
-        qApp->processEvents();
-        if (m_frame->m_wallpaperList->prevButton) {
+         }
+     }
+
+     qApp->processEvents();
+     if (m_frame->m_wallpaperList->prevButton) {
         QVariant firstvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
         this->m_frame->m_mouseArea->buttonPress(QPoint(0, 0), 4);
         QVariant secondvalue = m_frame->m_wallpaperList->scrollAnimation.startValue();
@@ -84,13 +82,11 @@ TEST_F(FrameTest, test_frame)
                 QVariant endvalue = m_frame->m_wallpaperList->scrollAnimation.endValue();
                 EXPECT_EQ(endvalue1, endvalue);
         }
-        }
-    });
-    QTimer::singleShot(1500, &loop, [&loop, this] {
-        this->m_frame->m_mouseArea->buttonPress(QPoint(0, 0), 1);
-        loop.exit();
-    });
-    loop.exec();
+    }
+
+
+    this->m_frame->m_mouseArea->buttonPress(QPoint(0, 0), 1);
+
 
     EXPECT_TRUE(m_frame->isTopLevel());
     m_frame->hide();
@@ -104,14 +100,9 @@ TEST_F(FrameTest, test_show)
     m_frame->show();
     bool status = false;
 
-    QEventLoop loop;
     if (!m_frame->isHidden()) {
         status = true;
     }
-    QTimer::singleShot(1000, &loop, [&loop](){
-       loop.exit();
-    });
-    loop.exec();
 
     EXPECT_NE(m_frame->m_backgroundManager, nullptr);
     EXPECT_TRUE(status);
@@ -128,15 +119,9 @@ TEST_F(FrameTest, test_hide)
     m_frame->hide();
 
     bool status = false;
-    QEventLoop loop;
     if (m_frame->isHidden()) {
         status = true;
     }
-    QTimer::singleShot(1000, &loop, [&loop](){
-        loop.exit();
-    });
-    loop.exec();
-
     EXPECT_TRUE(status);
 }
 
@@ -145,12 +130,9 @@ TEST_F(FrameTest, test_onrest)
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
 
-    m_frame->show();
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop](){
-        loop.exit();
-    });
-    loop.exec();
+    WallpaperItem* item = new WallpaperItem;
+    m_frame->m_wallpaperList->m_items << item;
+    m_frame->m_backgroundManager = new BackgroundManager(true);
     m_frame->onRest();
     ScreenPointer testscreen = ScreenMrg->screen(m_frame->m_screenName);
     BackgroundWidgetPointer pointer = m_frame->m_backgroundManager->backgroundWidget(testscreen);
@@ -160,19 +142,18 @@ TEST_F(FrameTest, test_onrest)
     }
 
     EXPECT_TRUE(m_frame->isTopLevel());
-    m_frame->hide();
+    delete item;
+    delete m_frame->m_backgroundManager;
 }
 
 TEST_F(FrameTest, test_refreshlist)
 {
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
-    m_frame->show();
 
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop](){loop.exit();});
-    loop.exec();
-
+    WallpaperItem* item1 = new WallpaperItem;
+    m_frame->m_wallpaperList->m_items << item1;
+    m_frame->m_backgroundManager = new BackgroundManager(true);
     m_frame->m_mode = Frame::ScreenSaverMode;
     QString currentPath = QString(m_frame->m_backgroundManager->backgroundImages().value(m_frame->m_screenName));
     WallpaperItem* item = m_frame->m_wallpaperList->addWallpaper(currentPath);
@@ -182,35 +163,36 @@ TEST_F(FrameTest, test_refreshlist)
     emit itemsingnal->tab();
 
     EXPECT_NE(m_frame->m_wallpaperList->count(), 0);
-    m_frame->hide();
+    delete item1;
+    delete m_frame->m_backgroundManager;
 }
 
 TEST_F(FrameTest, test_onitemispressed)
 {
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
-    m_frame->show();
+    WallpaperItem* item = new WallpaperItem;
+    m_frame->m_wallpaperList->m_items << item;
+    m_frame->m_backgroundManager = new BackgroundManager(true);
 
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
     QString data = QString("/usr/share/backgrounds/default_background.jpg");
+    item->setData(data);
+
     m_frame->onItemPressed(data);
     QMap<QString, QString> path = m_frame->m_backgroundManager->backgroundImages();
     QString backgroundpath = path[qApp->primaryScreen()->name()];
 
     EXPECT_EQ(data, backgroundpath);
     EXPECT_EQ(m_frame->m_desktopWallpaper, m_frame->m_lockWallpaper);
-    m_frame->hide();
+
+    delete item;
+    delete m_frame->m_backgroundManager;
 }
 
 TEST_F(FrameTest, test_onitembuttonisclicked)
 {
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
-    m_frame->show();
 
     m_frame->m_wallpaperList->addItem(new WallpaperItem);
     m_frame->m_wallpaperList->addItem(new WallpaperItem);
@@ -222,7 +204,6 @@ TEST_F(FrameTest, test_onitembuttonisclicked)
 
     emit item->buttonClicked("lock-screen");
     EXPECT_TRUE(m_frame->m_desktopWallpaper.isEmpty());
-    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_setmode)
@@ -234,16 +215,6 @@ TEST_F(FrameTest, test_setmode)
    m_frame->setMode(Frame::WallpaperMode);
 
    EXPECT_EQ(m, m_frame->m_mode);
-   QTimer timer;
-   timer.start(300);
-   QEventLoop loop;
-   QObject::connect(&timer, &QTimer::timeout, [&]{
-       m_frame->hide();
-       timer.stop();
-       loop.exit();
-   });
-   loop.exec();
-
 }
 
 TEST_F(FrameTest, test_loading)
@@ -262,70 +233,56 @@ TEST_F(FrameTest, test_keypressevent)
 {
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
-    m_frame->show();
 
+    WallpaperItem* temp = new WallpaperItem;
+    m_frame->m_wallpaperList->m_items << temp;
+
+    qApp->processEvents();
     //触发事件看显示结果
     QKeyEvent* eventesc = new QKeyEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
     QKeyEvent* eventright = new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier);
     QKeyEvent* eventleft = new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier);
 
-    QTimer timer,timer1;
-    timer.start(2500);
-    QEventLoop loop;
-    QTimer::singleShot(500, &loop, [&](){
-        if (m_frame->m_wallpaperList->m_index != m_frame->m_wallpaperList->count() - 1) {
-            m_frame->m_wallpaperCarouselControl->setVisible(true);
-            WallpaperItem* firstitem = m_frame->m_wallpaperList->getCurrentItem();
-            m_frame->keyPressEvent(eventright);
-            m_frame->keyPressEvent(eventright);
-            EXPECT_FALSE(firstitem->hasFocus());
-        }
-        else {
-            m_frame->m_wallpaperCarouselControl->setVisible(true);
-            WallpaperItem* firstitem = m_frame->m_wallpaperList->getCurrentItem();
-            m_frame->keyPressEvent(eventright);
-            m_frame->keyPressEvent(eventright);
-            EXPECT_FALSE(firstitem->hasFocus());
-        }
-    });
-    QTimer::singleShot(1000, &loop, [&](){
-        if (m_frame->m_wallpaperList->m_index != 0) {
+    if (m_frame->m_wallpaperList->m_index != m_frame->m_wallpaperList->count() - 1) {
+        m_frame->m_wallpaperCarouselControl->setVisible(true);
+        WallpaperItem* firstitem = m_frame->m_wallpaperList->getCurrentItem();
+        m_frame->keyPressEvent(eventright);
+        m_frame->keyPressEvent(eventright);
+        EXPECT_FALSE(firstitem->hasFocus());
+    }
+    else {
+        m_frame->m_wallpaperCarouselControl->setVisible(true);
+        WallpaperItem* firstitem = m_frame->m_wallpaperList->getCurrentItem();
+        m_frame->keyPressEvent(eventright);
+        m_frame->keyPressEvent(eventright);
+        EXPECT_FALSE(firstitem->hasFocus());
+    }
+
+    qApp->processEvents();
+    if (m_frame->m_wallpaperList->m_index != 0) {
             m_frame->m_wallpaperCarouselControl->setVisible(true);
             WallpaperItem* firstitem = m_frame->m_wallpaperList->getCurrentItem();
             m_frame->keyPressEvent(eventleft);
             EXPECT_FALSE(firstitem->hasFocus());
-        }
-        else {
+    }
+    else {
             m_frame->m_wallpaperCarouselControl->setVisible(true);
             WallpaperItem* firstitem = m_frame->m_wallpaperList->getCurrentItem();
             m_frame->keyPressEvent(eventleft);
             m_frame->keyPressEvent(eventleft);
             EXPECT_FALSE(firstitem->hasFocus());
-        }
-    });
-    QObject::connect(&timer, &QTimer::timeout, [&]{
-        timer.stop();
-        loop.exit();
-    });
-    loop.exec();
+    }
+    qApp->processEvents();
     m_frame->show();
     m_frame->setMode(Frame::ScreenSaverMode);
-    timer1.start(2000);
-    QEventLoop loop1;
-    QTimer::singleShot(1000, &loop, [&](){
-        m_frame->keyPressEvent(eventesc);
-        EXPECT_TRUE(m_frame->isHidden());
-    });
-    QObject::connect(&timer1, &QTimer::timeout, [&]{
-        timer1.stop();
-        loop1.exit();
-    });
-    loop1.exec();
+    m_frame->keyPressEvent(eventesc);
+    qApp->processEvents();
+    EXPECT_TRUE(m_frame->isHidden());
 
     delete eventesc;
     delete eventright;
     delete eventleft;
-    m_frame->hide();
+    delete temp;
 }
 
 TEST_F(FrameTest, test_eventfilter)
@@ -334,55 +291,44 @@ TEST_F(FrameTest, test_eventfilter)
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
     m_frame->show();
 
-    QEventLoop loop1;
-    QTimer::singleShot(1000, &loop1, [&loop1](){
-        loop1.exit();
-    });
-    loop1.exec();
+    qApp->processEvents();
 
     QKeyEvent* eventtab = new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier);
     QKeyEvent* eventbacktab = new QKeyEvent(QEvent::KeyPress, Qt::Key_Backtab, Qt::NoModifier);
     QKeyEvent* eventkeyright = new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier);
 
-    QEventLoop loop;
-    QTimer::singleShot(500, m_frame, [this, eventtab] {
-         QCoreApplication::sendEvent(m_frame,static_cast<QEvent*>(eventtab));
-         QCoreApplication::sendEvent(m_frame->m_lockScreenBox,static_cast<QEvent*>(eventtab));
-         QCoreApplication::sendEvent(m_frame->m_waitControl->buttonList().at(0),static_cast<QEvent*>(eventtab));
-         EXPECT_TRUE(m_frame->m_switchModeControl->buttonList().at(0)->hasFocus());
-    });
-    QTimer::singleShot(1000, m_frame, [this, eventbacktab] {
-        QCoreApplication::sendEvent(m_frame->m_wallpaperCarouselCheckBox,static_cast<QEvent*>(eventbacktab));
-        EXPECT_TRUE(m_frame->m_wallpaperList->getCurrentItem()->findChildren<Button*>().at(0)->hasFocus());
-    });
-    QTimer::singleShot(1500, m_frame, [this, eventbacktab] {
-        m_frame->m_mode = Frame::WallpaperMode;
-        QCoreApplication::sendEvent(m_frame->m_switchModeControl->buttonList().first(),static_cast<QEvent*>(eventbacktab));
-        EXPECT_TRUE(m_frame->m_wallpaperCarouselCheckBox->hasFocus());
-    });
-    QTimer::singleShot(2000, m_frame, [this, eventbacktab] {
-        m_frame->m_mode = Frame::ScreenSaverMode;
-        QCoreApplication::sendEvent(m_frame->m_switchModeControl->buttonList().first(),static_cast<QEvent*>(eventbacktab));
-        EXPECT_TRUE(m_frame->m_waitControl->buttonList().first()->hasFocus());
-    });
-    QTimer::singleShot(2200, m_frame, [this, eventkeyright] {
-        if (m_frame->m_wallpaperList->m_index != m_frame->m_wallpaperList->count() -1) {
+    QCoreApplication::sendEvent(m_frame,static_cast<QEvent*>(eventtab));
+    QCoreApplication::sendEvent(m_frame->m_lockScreenBox,static_cast<QEvent*>(eventtab));
+    QCoreApplication::sendEvent(m_frame->m_waitControl->buttonList().at(0),static_cast<QEvent*>(eventtab));
+    EXPECT_TRUE(m_frame->m_switchModeControl->buttonList().at(0)->hasFocus());
+
+    qApp->processEvents();
+    QCoreApplication::sendEvent(m_frame->m_wallpaperCarouselCheckBox,static_cast<QEvent*>(eventbacktab));
+    EXPECT_TRUE(m_frame->m_wallpaperList->getCurrentItem()->findChildren<Button*>().at(0)->hasFocus());
+
+    qApp->processEvents();
+    m_frame->m_mode = Frame::WallpaperMode;
+    QCoreApplication::sendEvent(m_frame->m_switchModeControl->buttonList().first(),static_cast<QEvent*>(eventbacktab));
+    EXPECT_TRUE(m_frame->m_wallpaperCarouselCheckBox->hasFocus());
+
+    qApp->processEvents();
+    m_frame->m_mode = Frame::ScreenSaverMode;
+    QCoreApplication::sendEvent(m_frame->m_switchModeControl->buttonList().first(),static_cast<QEvent*>(eventbacktab));
+    EXPECT_TRUE(m_frame->m_waitControl->buttonList().first()->hasFocus());
+
+    if (m_frame->m_wallpaperList->m_index != m_frame->m_wallpaperList->count() -1) {
             m_frame->m_wallpaperCarouselControl->setVisible(true);
             WallpaperItem* itemfirst = m_frame->m_wallpaperList->getCurrentItem();
             QCoreApplication::sendEvent(m_frame->m_wallpaperCarouselCheckBox,static_cast<QEvent*>(eventkeyright));
             EXPECT_FALSE(itemfirst->hasFocus());
-        }
-        else {
+    }
+    else {
             m_frame->m_wallpaperCarouselControl->setVisible(true);
             WallpaperItem* itemfirst = m_frame->m_wallpaperList->getCurrentItem();
             QCoreApplication::sendEvent(m_frame->m_wallpaperCarouselCheckBox,static_cast<QEvent*>(eventkeyright));
             EXPECT_FALSE(itemfirst->hasFocus());
-        }
-    });
-    QTimer::singleShot(4000, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
+    }
+    qApp->processEvents();
 
     delete eventtab;
     delete eventbacktab;
@@ -408,22 +354,20 @@ TEST_F(FrameTest, test_handleNeedclosebutton)
 {
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
-    m_frame->show();
 
+    m_frame->m_backgroundManager = new BackgroundManager(true);
     QString currentPath = QString(m_frame->m_backgroundManager->backgroundImages().value(m_frame->m_screenName));
     WallpaperItem* item = m_frame->m_wallpaperList->addWallpaper(currentPath);
     QPoint pos = item->pos();
 
     m_frame->handleNeedCloseButton(currentPath, pos);
     EXPECT_TRUE(!m_frame->m_closeButton->isHidden());
-    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_reLayoutTools)
 {
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
-    m_frame->show();
 
     m_frame->m_mode = Frame::ScreenSaverMode;
     int count = m_frame->layout()->count();
@@ -440,42 +384,35 @@ TEST_F(FrameTest, test_reLayoutTools)
     EXPECT_TRUE(m_frame->m_waitControl->isHidden());
     EXPECT_TRUE(m_frame->m_lockScreenBox->isHidden());
     EXPECT_EQ(m_frame->layout()->count(), count);
-    m_frame->hide();
 }
 
 TEST_F(FrameTest, test_desktopbackground)
 {
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
-    m_frame->show();
 
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop](){
-        loop.exit();
-    });
-    loop.exec();
-
+    WallpaperItem* temp = new WallpaperItem;
+    m_frame->m_wallpaperList->m_items << temp;
     WallpaperItem* item = m_frame->m_wallpaperList->getCurrentItem();
     m_frame->onItemPressed(item->data());
     QPair<QString, QString> pair = m_frame->desktopBackground();
     QPair<QString, QString> compare = QPair<QString, QString>(m_frame->m_screenName, m_frame->m_desktopWallpaper);
 
     EXPECT_EQ(pair, compare);
-    m_frame->hide();
+    delete temp;
 }
 
 TEST_F(FrameTest, test_setwallpaperslideshow)
 {
-    m_frame->show();
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
 
     QString temp("30");
+    stub_ext::StubExt stu;
+    bool judge = false;
+    stu.set_lamda(ADDR(ComDeepinDaemonAppearanceInterface, SetWallpaperSlideShow), [&judge](){judge = true; return QDBusPendingReply<QString>();});
+
     if (m_frame->m_dbusAppearance != nullptr) {
         m_frame->setWallpaperSlideShow(temp);
+        EXPECT_TRUE(judge);
     }
     m_frame->m_dbusAppearance = nullptr;
     if (m_frame->m_dbusAppearance == nullptr) {
@@ -487,22 +424,14 @@ TEST_F(FrameTest, test_setwallpaperslideshow)
 
 TEST_F(FrameTest, test_setbackground)
 {
-    m_frame->show();
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
-
     m_frame->m_wallpaperList->setCurrentIndex(0);
-    m_frame->m_desktopWallpaper = m_frame->m_wallpaperList->getCurrentItem()->getPath();
+    m_frame->m_desktopWallpaper = QString("/usr/share/backgrounds/default_background.jpg");
 
     m_frame->setBackground();
-    WallpaperItem* item1 = m_frame->m_wallpaperList->getCurrentItem();
-    WallpaperItem* item2 = dynamic_cast<WallpaperItem*>(m_frame->m_wallpaperList->item(0));
+    EXPECT_TRUE(m_frame->desktopBackground().second == QString("/usr/share/backgrounds/default_background.jpg"));
 
-    EXPECT_EQ(item1->getPath(), item2->getPath());
-    m_frame->hide();
+    m_frame->m_dbusAppearance = nullptr;
+    m_frame->setBackground();
 }
 
 TEST_F(FrameTest, test_getwallpaperslideshow)
@@ -512,9 +441,7 @@ TEST_F(FrameTest, test_getwallpaperslideshow)
 
     m_frame->m_wallpaperList->setCurrentIndex(1);
     QString str;
-    m_frame->show();
     qApp->processEvents();
-
     QString temp1 = m_frame->getWallpaperSlideShow();
 
     if (m_frame->m_dbusAppearance != nullptr) {
@@ -523,5 +450,18 @@ TEST_F(FrameTest, test_getwallpaperslideshow)
     else {
         EXPECT_EQ(temp1, str);
     }
-    m_frame->hide();
+}
+
+TEST_F(FrameTest, test_wayland)
+{
+    stub_ext::StubExt stu;
+    bool judge = false;
+    stu.set_lamda(ADDR(DesktopInfo, waylandDectected), [&judge](){judge = true; return true;});
+    Frame* temp1 = new Frame(qApp->primaryScreen()->name());
+    delete temp1;
+
+    stu.set_lamda(ADDR(QWidget, windowHandle), [](){return nullptr;});
+    temp1 = new Frame(qApp->primaryScreen()->name());
+    delete temp1;
+    EXPECT_TRUE(judge);
 }

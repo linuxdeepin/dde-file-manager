@@ -5,13 +5,18 @@
 #include <QEventLoop>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QObject>
+#include <QFuture>
+#include <QPixmap>
+#include <QQueue>
 
 #define private public
 #define protected public
 
 #include "../dde-wallpaper-chooser/wallpaperitem.h"
-#include "../dde-wallpaper-chooser/frame.h"
-#include "../dde-wallpaper-chooser/wallpaperlist.h"
+#include "../stub-ext/stubext.h"
+
+class WrapperWidget;
 using namespace testing;
 
 namespace  {
@@ -19,145 +24,131 @@ namespace  {
        public:
 
            void SetUp() override {
-               m_frame = new Frame(qApp->primaryScreen()->name());
+               if (m_item == nullptr) {
+                    m_item = new WallpaperItem;
+               }
+
            }
 
            void TearDown() override {
-               m_frame->hide();
-               delete m_frame;
+               delete m_item;
            }
 
        private:
 
-           Frame* m_frame = nullptr;
+           WallpaperItem* m_item = nullptr;
        };
 }
 
 TEST_F(WallpaperItemTest, test_addbutton)
 {
-    m_frame->show();
-
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop](){
-         loop.exit();
-    });
-    loop.exec();
-
-    WallpaperItem* item = dynamic_cast<WallpaperItem*>(m_frame->m_wallpaperList->getCurrentItem());
-    QPushButton* btn = item->addButton("desktop", "comming_test");
-    QString string = QString("comming_test");
-
-    EXPECT_EQ(string, btn->text());
-    m_frame->hide();
+    int first = m_item->m_buttonLayout->count();
+    m_item->addButton("1", "test");
+    int second = m_item->m_buttonLayout->count();
+    EXPECT_NE(first, second);
 }
 
 TEST_F(WallpaperItemTest, test_keyevent)
 {
-    m_frame->show();
     QKeyEvent* eventup = new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
     QKeyEvent* eventdown = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
-    m_frame->refreshList();
+    QKeyEvent* eventdefault = new QKeyEvent(QEvent::KeyPress, Qt::Key_0, Qt::NoModifier);
 
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop](){
-        loop.exit();
-    });
-    loop.exec();
+    m_item->addButton("1", "test01");
+    m_item->addButton("2", "test02");
 
-    m_frame->m_wallpaperList->setCurrentIndex(1);
-    WallpaperItem* temp = m_frame->m_wallpaperList->getCurrentItem();
-    temp->keyPressEvent(eventup);
+    stub_ext::StubExt stu;
+    bool judge = false;
 
-    EXPECT_TRUE(temp->m_buttonLayout->itemAt(0)->widget()->hasFocus());
-    temp->keyPressEvent(eventdown);
+    stu.set_lamda(ADDR(QWidget, hasFocus), [](){return true;});
+    m_item->keyPressEvent(eventup);
+    EXPECT_TRUE(m_item->m_buttonLayout->itemAt(0)->widget()->hasFocus());
 
-    EXPECT_TRUE(temp->m_buttonLayout->itemAt(temp->m_buttonLayout->count() - 1)->widget()->hasFocus());
-    m_frame->hide();
+    m_item->keyPressEvent(eventdown);
+    EXPECT_TRUE(m_item->m_buttonLayout->itemAt(m_item->m_buttonLayout->count() - 1)->widget()->hasFocus());
 
-    delete eventup;
-    delete eventdown;
-}
+    m_item->focusLastButton();
+    EXPECT_TRUE(m_item->m_buttonLayout->itemAt(m_item->m_buttonLayout->count() - 1)->widget()->hasFocus());
 
-TEST_F(WallpaperItemTest, test_focuslastbutton)
-{
-    m_frame->show();
-
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop](){
-        loop.exit();
-    });
-    loop.exec();
-
-    if (m_frame->m_wallpaperList->m_index < m_frame->m_wallpaperList->count() - 1) {
-        m_frame->m_wallpaperList->m_index ++;
-    }
-    m_frame->m_wallpaperList->setCurrentIndex(m_frame->m_wallpaperList->m_index);
-    m_frame->m_wallpaperList->setCurrentIndex(1);
-    WallpaperItem* temp = m_frame->m_wallpaperList->getCurrentItem();
-    temp->focusLastButton();
-
-    EXPECT_TRUE(temp->m_buttonLayout->itemAt(temp->m_buttonLayout->count()-1)->widget()->hasFocus());
-    m_frame->hide();
+    stu.set_lamda(ADDR(QKeyEvent, ignore), [&judge](){judge = true;});
+    m_item->keyPressEvent(eventdefault);
+    EXPECT_TRUE(judge == true);
 }
 
 TEST_F(WallpaperItemTest, test_setdata)
 {
-    m_frame->show();
-
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop](){
-        loop.exit();
-    });
-    loop.exec();
-
-    if (m_frame->m_wallpaperList->m_index < m_frame->m_wallpaperList->count() - 1) {
-        m_frame->m_wallpaperList->m_index ++;
-    }
-    m_frame->m_wallpaperList->setCurrentIndex(m_frame->m_wallpaperList->m_index);
-    WallpaperItem* item = dynamic_cast<WallpaperItem*>(m_frame->m_wallpaperList->getCurrentItem());
-    item->setData("ceshi");
-
-    EXPECT_EQ(item->data(), QString("ceshi"));
-    m_frame->hide();
+    m_item->setData(QString("test"));
+    EXPECT_EQ(m_item->m_data, QString("test"));
 }
 
 TEST_F(WallpaperItemTest, test_getdeleteable)
 {
-    m_frame->show();
-
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop](){
-        loop.exit();
-    });
-    loop.exec();
-
-    if (m_frame->m_wallpaperList->m_index < m_frame->m_wallpaperList->count() - 1) {
-        m_frame->m_wallpaperList->m_index ++;
-    }
-    m_frame->m_wallpaperList->setCurrentIndex(m_frame->m_wallpaperList->m_index);
-    WallpaperItem* item = dynamic_cast<WallpaperItem*>(m_frame->m_wallpaperList->getCurrentItem());
-    bool able = item->getDeletable();
-
-    EXPECT_EQ(able, item->m_deletable);
+    m_item->setDeletable(false);
+    EXPECT_FALSE(m_item->getDeletable());
 }
 
 TEST_F(WallpaperItemTest, test_setusethumbnailmanager)
 {
-    m_frame->show();
-
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop](){
-        loop.exit();
-    });
-    loop.exec();
-
-    if (m_frame->m_wallpaperList->m_index < m_frame->m_wallpaperList->count() - 1) {
-        m_frame->m_wallpaperList->m_index ++;
-    }
-    m_frame->m_wallpaperList->setCurrentIndex(m_frame->m_wallpaperList->m_index);
-    WallpaperItem* item = dynamic_cast<WallpaperItem*>(m_frame->m_wallpaperList->getCurrentItem());
-    item->setUseThumbnailManager(false);
-
-    EXPECT_FALSE(item->m_useThumbnailManager);
+   m_item->setUseThumbnailManager(false);
+   EXPECT_FALSE(m_item->m_useThumbnailManager);
 }
 
+TEST_F(WallpaperItemTest, test_enterEvent)
+{
+    QEvent event(QEvent::KeyPress);
+    bool judge = false;
+    QObject::connect(m_item, &WallpaperItem::hoverIn, m_item, [&judge](){judge = true;});
+    m_item->enterEvent(&event);
+    EXPECT_TRUE(judge);
+}
+
+TEST_F(WallpaperItemTest, test_leaveEvent)
+{
+    QEvent event(QEvent::KeyPress);
+    bool judge = false;
+    QObject::connect(m_item, &WallpaperItem::hoverOut, m_item, [&judge](){judge = true;});
+    m_item->leaveEvent(&event);
+    qApp->processEvents();
+    EXPECT_TRUE(judge);
+}
+
+TEST_F(WallpaperItemTest, test_onFindAborted)
+{
+     QQueue<QString> que;
+     que.push_back("string");
+     stub_ext::StubExt stu;
+     bool judge = false;
+     stu.set_lamda(ADDR(QList<QString>, contains), [&judge](){judge = true; return true;});
+     m_item->onFindAborted(que);
+     EXPECT_TRUE(judge);
+}
+
+TEST_F(WallpaperItemTest, test_mousePressEvent)
+{
+     QMouseEvent event(QEvent::KeyPress, QPointF(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+     bool judge = false;
+     QObject::connect(m_item, &WallpaperItem::pressed, m_item, [&judge](){judge = true;});
+     m_item->mousePressEvent(&event);
+     qApp->processEvents();
+     EXPECT_TRUE(judge);
+}
+
+TEST_F(WallpaperItemTest, test_thumbnailFinished)
+{
+     stub_ext::StubExt stu;
+     stu.set_lamda(ADDR(QFuture<QPixmap>, result), [](){return QPixmap();});
+     m_item->thumbnailFinished();
+     qApp->processEvents();
+     EXPECT_FALSE(m_item->m_wrapper == nullptr);
+}
+
+TEST_F(WallpaperItemTest, test_setpath)
+{
+    m_item->setPath(QString("test"));
+    EXPECT_TRUE(m_item->m_path == QString("test"));
+
+    m_item->contentImageGeometry();
+    m_item->setUseThumbnailManager(false);
+    m_item->useThumbnailManager();
+    EXPECT_EQ(m_item->m_useThumbnailManager, false);
+}
