@@ -70,7 +70,8 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
         return;
 
     // 鼠标按下时记录当前点击item的唯一key
-    m_strItemUniqueKey = model()->data(indexAt(event->pos()), DFMSideBarItem::ItemUniqueKeyRole).toString();
+    if (model())
+        m_strItemUniqueKey = model()->data(indexAt(event->pos()), DFMSideBarItem::ItemUniqueKeyRole).toString();
 
     if (event->button() == Qt::RightButton) {
 #if 1   //fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上

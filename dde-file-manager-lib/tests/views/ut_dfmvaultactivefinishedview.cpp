@@ -4,6 +4,13 @@
 #include <QPushButton>
 #include <DWaterProgress>
 
+#include "stub.h"
+#include "vaultlockmanager.h"
+#include <DDialog>
+#include <DSecureString>
+#include "controllers/vaultcontroller.h"
+#include <DWaterProgress>
+
 #define private public
 #include "views/dfmvaultactivefinishedview.h"
 
@@ -49,8 +56,39 @@ TEST_F(TestDFMVaultActiveFinishedView, tst_slotEncryptComplete)
 
 TEST_F(TestDFMVaultActiveFinishedView, tst_slotTimeout)
 {
+    DDialog *parent = new DDialog();
+    m_view->setParent(parent);
+    parent->deleteLater();
+
     m_view->slotTimeout();
     EXPECT_FALSE(m_view->m_pWidget1->isVisible());
     EXPECT_FALSE(m_view->m_pWidget2->isVisible());
     EXPECT_TRUE(m_view->m_pFinishedBtn->isEnabled());
+}
+
+TEST_F(TestDFMVaultActiveFinishedView, tst_slotEncryptVault)
+{
+    bool (*st_checkAuthentication)(QString) = [](QString)->bool {
+        return true;
+    };
+
+    Stub stub;
+    stub.set(ADDR(VaultLockManager, checkAuthentication), st_checkAuthentication);
+
+    DDialog *parent = new DDialog();
+    m_view->setParent(parent);
+    parent->deleteLater();
+
+    void (*st_createVault)(const Dtk::DCORE_NAMESPACE::DSecureString &, QString, QString) =
+            [](const Dtk::DCORE_NAMESPACE::DSecureString &, QString, QString){
+        // do nothing.
+    };
+    stub.set(ADDR(VaultController, createVault), st_createVault);
+
+    void (*st_start)() = [](){
+        // do nothing.
+    };
+    stub.set(ADDR(DWaterProgress, start), st_start);
+
+    m_view->slotEncryptVault();
 }

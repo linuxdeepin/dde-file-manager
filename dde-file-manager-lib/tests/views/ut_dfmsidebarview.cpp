@@ -5,6 +5,8 @@
 #include <QDropEvent>
 #include <QTest>
 #include <stub.h>
+#include <models/computermodel.h>
+#include "../stub-ext/stubext.h"
 #define private public
 #define protected public
 
@@ -16,9 +18,12 @@
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmsidebar.h"
 #include "interfaces/dfmsidebaritem.h"
+#include "models/computermodel.h"
+#include "interfaces/dfmstandardpaths.h"
 
 DFM_USE_NAMESPACE
 using namespace testing;
+using namespace stub_ext;
 namespace  {
     class TestDFMSideBarView : public Test
     {
@@ -88,13 +93,40 @@ TEST_F(TestDFMSideBarView, get_drop_data)
     DFMSideBarView *t_p = bar->m_sidebarView;
 
     DUrlList srcUrls;
-    srcUrls << DUrl("test1")<<DUrl("test2");
-    DUrl dstUrl("/home/test/");
-    TrashFileInfo *info = new TrashFileInfo(dstUrl);
-    Q_UNUSED(info)
+    DUrl url1("test1");
+    DUrl url2("test2");
+    url1.setScheme(BURN_SCHEME);
+    url2.setScheme(BURN_SCHEME);
+    srcUrls << url1 << url2;
+    DUrl dstUrl("/home/");
 
-    bool resutl = t_p->onDropData(srcUrls, dstUrl, Qt::IgnoreAction);
-    EXPECT_FALSE(resutl);
+    // replace dfileservice::createfileinfo
+    const DAbstractFileInfoPointer (*st_createFileInfo)(const QObject, const DUrl &) =
+            [](const QObject, const DUrl &)->const DAbstractFileInfoPointer
+    {
+        return QExplicitlySharedDataPointer<DAbstractFileInfo>(new DFileInfo("/home"));
+    };
+    Stub stub;
+    stub.set(&DFileService::createFileInfo, st_createFileInfo);
+
+    // replace dfileservice::pastfile
+    DUrlList (*st_pasteFile)(const QObject *, DFMGlobal::ClipboardAction, const DUrl &, const DUrlList &) =
+            [](const QObject *, DFMGlobal::ClipboardAction, const DUrl &, const DUrlList &)->DUrlList {
+        return DUrlList();
+    };
+    stub.set(&DFileService::pasteFile, st_pasteFile);
+
+    bool result = t_p->onDropData(srcUrls, dstUrl, Qt::IgnoreAction);
+    EXPECT_FALSE(result);
+
+    result = t_p->onDropData(srcUrls, dstUrl, Qt::CopyAction);
+    EXPECT_TRUE(result);
+
+    result = t_p->onDropData(srcUrls, dstUrl, Qt::LinkAction);
+    EXPECT_TRUE(result);
+
+    result = t_p->onDropData(srcUrls, dstUrl, Qt::MoveAction);
+    EXPECT_TRUE(result);
 }
 
 TEST_F(TestDFMSideBarView, drop_mime_data)
@@ -120,6 +152,14 @@ TEST_F(TestDFMSideBarView, drop_mime_data)
     QMimeData data;
     t_p->m_urlsForDragEvent << QUrl("/home/test/aaa") << QUrl("/home/test/bbb");
 
+    const DAbstractFileInfoPointer (*st_createFileInfo)(const QObject, const DUrl &) =
+            [](const QObject, const DUrl &)->const DAbstractFileInfoPointer
+    {
+        return QExplicitlySharedDataPointer<DAbstractFileInfo>(new DFileInfo("/home"));
+    };
+    Stub stub;
+    stub.set(&DFileService::createFileInfo, st_createFileInfo);
+
     result = t_p->canDropMimeData(item, &data, Qt::IgnoreAction);
     EXPECT_EQ(result, Qt::IgnoreAction);
 }
@@ -142,6 +182,16 @@ TEST_F(TestDFMSideBarView, get_acceptte_drag)
 
     bool result = t_p->isAccepteDragEvent(&event);
     EXPECT_FALSE(result);
+
+    Qt::DropAction (*st_canDropMimeData)(DFMSideBarItem *, const QMimeData *, Qt::DropActions) =
+            [](DFMSideBarItem *, const QMimeData *, Qt::DropActions)->Qt::DropAction {
+        return Qt::CopyAction;
+    };
+
+    Stub stub;
+    stub.set(ADDR(DFMSideBarView, canDropMimeData), st_canDropMimeData);
+    result = t_p->isAccepteDragEvent(&event);
+    EXPECT_TRUE(result);
 }
 
 TEST_F(TestDFMSideBarView, get_row_changed)
@@ -169,6 +219,14 @@ TEST_F(TestDFMSideBarView, featch_drag_memory)
     ASSERT_NE(t_p, nullptr);
 
     EXPECT_NO_FATAL_FAILURE(t_p->fetchDragEventUrlsFromSharedMemory());
+
+    bool (*st_isAttached)() = []()->bool {
+        return true;
+    };
+
+    Stub stub;
+    stub.set(ADDR(QSharedMemory, isAttached), st_isAttached);
+    EXPECT_TRUE(t_p->fetchDragEventUrlsFromSharedMemory());
 }
 
 TEST_F(TestDFMSideBarView, check_op_time)
@@ -185,4 +243,98 @@ TEST_F(TestDFMSideBarView, check_op_time)
     EXPECT_TRUE(result);
     result = t_p->checkOpTime();
     EXPECT_FALSE(result);
+}
+
+TEST_F(TestDFMSideBarView, tst_mousePressEvent)
+{
+    QSharedPointer<QMouseEvent> event = dMakeEventPointer<QMouseEvent>(
+                QMouseEvent::KeyPress, QPointF(0,0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    m_view->mousePressEvent(event.get());
+
+    QSharedPointer<QMouseEvent> event2 = dMakeEventPointer<QMouseEvent>(
+                QMouseEvent::KeyPress, QPointF(0,0), Qt::RightButton, Qt::RightButton, Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(m_view->mousePressEvent(event2.get()));
+}
+
+TEST_F(TestDFMSideBarView, tst_mouseMoveEvent)
+{
+    QSharedPointer<QMouseEvent> event = dMakeEventPointer<QMouseEvent>(
+                QMouseEvent::MouseMove, QPointF(0,0), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    m_view->mouseMoveEvent(event.get());
+
+    QSharedPointer<QMouseEvent> event2 = dMakeEventPointer<QMouseEvent>(
+                QMouseEvent::MouseMove, QPointF(0,0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    m_view->setState(DFMSideBarView::DraggingState);
+    EXPECT_NO_FATAL_FAILURE(m_view->mouseMoveEvent(event2.get()));
+}
+
+TEST_F(TestDFMSideBarView, tst_dragEnterEvent)
+{
+    QSharedPointer<QDragEnterEvent> event = dMakeEventPointer<QDragEnterEvent>(
+                QPoint(), Qt::CopyAction, nullptr, Qt::NoButton, Qt::NoModifier);
+
+    ComputerModel computerModel;
+    m_view->setModel((QAbstractItemModel*)&computerModel);
+
+    bool (*st_isAccepteDragEvent_true)(DFMDragEvent *event) = [](DFMDragEvent *event)->bool {
+        Q_UNUSED(event)
+        return true;
+    };
+
+    bool (*st_isAccepteDragEvent_false)(DFMDragEvent *event) = [](DFMDragEvent *event)->bool {
+        Q_UNUSED(event)
+        return false;
+    };
+
+    Stub stub;
+    stub.set(&DFMSideBarView::isAccepteDragEvent, st_isAccepteDragEvent_true);
+    m_view->dragEnterEvent(event.get());
+
+    stub.set(&DFMSideBarView::isAccepteDragEvent, st_isAccepteDragEvent_false);
+    EXPECT_NO_FATAL_FAILURE(m_view->dragEnterEvent(event.get()));
+}
+
+TEST_F(TestDFMSideBarView, tst_dragMoveEvent)
+{
+    QSharedPointer<QDragEnterEvent> event = dMakeEventPointer<QDragEnterEvent>(
+                QPoint(), Qt::CopyAction, nullptr, Qt::NoButton, Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(m_view->dragMoveEvent(event.get()));
+}
+
+TEST_F(TestDFMSideBarView, tst_dropEvent)
+{
+    QSharedPointer<QDropEvent> event = dMakeEventPointer<QDropEvent>(
+                QPointF(), Qt::CopyAction, nullptr, Qt::NoButton, Qt::NoModifier);
+    m_view->dropEvent(event.get());
+
+    DFMSideBarItem *(*st_itemAt)(const QPoint &pt) = [](const QPoint &pt)->DFMSideBarItem* {
+        return new DFMSideBarItem();
+    };
+
+    Stub stub;
+    stub.set(&DFMSideBarView::itemAt, st_itemAt);
+
+    const QMimeData *(*st_mimeData)() = []()->const QMimeData *{
+        return new QMimeData();
+    };
+    stub.set(&QDropEvent::mimeData, st_mimeData);
+    m_view->dropEvent(event.get());
+
+    QRect (*st_visualRect)(const QModelIndex &index) = [](const QModelIndex &index)->QRect{
+        Q_UNUSED(index)
+        return QRect(-1, -1, 10, 10);
+    };
+    stub_ext::StubExt st;
+    st.set(VADDR(DFMSideBarView, visualRect), st_visualRect);
+
+    QList<QUrl> (*st_urls)() = []()->QList<QUrl>{
+        QList<QUrl> urls;
+        urls << QUrl("/home");
+        urls << QUrl(DFMVAULT_ROOT);
+        urls << DFMStandardPaths::location(DFMStandardPaths::MusicPath);
+        return urls;
+    };
+    stub.set(ADDR(QMimeData, urls), st_urls);
+
+    EXPECT_NO_FATAL_FAILURE(m_view->dropEvent(event.get()));
 }

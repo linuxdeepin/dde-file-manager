@@ -3,7 +3,12 @@
 
 #include "interfaces/dfilesystemmodel.h"
 #include "views/dfmsidebar.h"
+#include "interfaces/dfmstandardpaths.h"
+#include "stub.h"
+#include <QEventLoop>
+
 #define private public
+#define protected public
 #include "views/dfiledialog.h"
 
 
@@ -51,6 +56,16 @@ TEST_F(TestDFileDialog, can_set_get_url)
 TEST_F(TestDFileDialog, tst_set_get_selectFile)
 {
     m_fileDialog->show();
+
+    QList<QUrl> (*st_selectedUrls)() = []()->QList<QUrl> {
+        QList<QUrl> urls;
+        urls << QUrl("/home");
+        urls << QUrl("/");
+        return  urls;
+    };
+
+    Stub stub;
+    stub.set(ADDR(DFileDialog, selectedUrls), st_selectedUrls);
     m_fileDialog->selectedFiles();
 }
 
@@ -58,6 +73,19 @@ TEST_F(TestDFileDialog, tst_set_get_selectUrl)
 {
     m_fileDialog->selectUrl(QUrl(""));
     m_fileDialog->setAcceptMode(QFileDialog::AcceptSave);
+
+    m_fileDialog->setDirectory(DFMStandardPaths::location(DFMStandardPaths::HomePath));
+
+#if 0 // stub will be broken.
+    QModelIndexList (*st_selectedIndexes)() = []()->QModelIndexList{
+        QModelIndexList indexList;
+        indexList << QModelIndex();
+        return indexList;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileView, selectedIndexes), st_selectedIndexes);
+#endif
+
     m_fileDialog->selectedUrls();
 }
 
@@ -175,10 +203,13 @@ TEST_F(TestDFileDialog, tst_customWidget)
 {
     m_fileDialog->beginAddCustomWidget();
     //! add widget.
+    m_fileDialog->addCustomWidget(DFileDialog::LineEditType, "");
+    m_fileDialog->addCustomWidget(DFileDialog::ComboBoxType, "");
     m_fileDialog->endAddCustomWidget();
-    EXPECT_TRUE(m_fileDialog->getCustomWidgetValue(DFileDialog::LineEditType, "").isNull());
+    EXPECT_FALSE(m_fileDialog->getCustomWidgetValue(DFileDialog::LineEditType, "").isNull());
     EXPECT_TRUE(m_fileDialog->getCustomWidgetValue(DFileDialog::ComboBoxType, "").isNull());
-    EXPECT_TRUE(m_fileDialog->allCustomWidgetsValue(DFileDialog::LineEditType).isEmpty());
+    EXPECT_FALSE(m_fileDialog->allCustomWidgetsValue(DFileDialog::LineEditType).isEmpty());
+    EXPECT_FALSE(m_fileDialog->allCustomWidgetsValue(DFileDialog::ComboBoxType).isEmpty());
 }
 
 TEST_F(TestDFileDialog, tst_set_get_onAccept)
@@ -223,4 +254,81 @@ TEST_F(TestDFileDialog, tst_updateAcceptButtonState)
     m_fileDialog->updateAcceptButtonState();
 }
 
+TEST_F(TestDFileDialog, tst_exec)
+{
+    int (*st_exec)(QEventLoop::ProcessEventsFlags) = [](QEventLoop::ProcessEventsFlags)->int {
+        // do nothing.
+        return 0;
+    };
+
+
+    Stub stub;
+    stub.set(ADDR(QEventLoop, exec), st_exec);
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->exec());
+}
+
+TEST_F(TestDFileDialog, tst_closeEvent)
+{
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->show());
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->close());
+}
+
+TEST_F(TestDFileDialog, tst_eventFilter)
+{
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_T, Qt::ControlModifier);
+
+    QWindow* (*st_windowHandle)() = []()->QWindow* {
+        return nullptr;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileDialog, windowHandle), st_windowHandle);
+
+    m_fileDialog->eventFilter(nullptr, &event);
+
+    QKeyEvent event2(QEvent::KeyPress, QKeySequence::Cancel, Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->eventFilter(nullptr, &event2));
+
+    QKeyEvent event3(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->eventFilter(nullptr, &event3));
+}
+
+TEST_F(TestDFileDialog, tst_fmEventFilter)
+{
+    QSharedPointer<DFMEvent> pointer = dMakeEventPointer<DFMEvent>(DFMEvent::OpenFile, nullptr);
+
+    bool (*st_isActiveWindow)() = []()->bool {
+        return true;
+    };
+
+    Stub stub;
+    stub.set(ADDR(DFileDialog, isActiveWindow), st_isActiveWindow);
+    m_fileDialog->fmEventFilter(pointer, nullptr, nullptr);
+    pointer->setType(DFMEvent::OpenFiles);
+    m_fileDialog->fmEventFilter(pointer, nullptr, nullptr);
+    pointer->setType(DFMEvent::OpenFileByApp);
+    m_fileDialog->fmEventFilter(pointer, nullptr, nullptr);
+}
+
+TEST_F(TestDFileDialog, tst_handleNewView)
+{
+    DFileView view;
+    m_fileDialog->handleNewView(&view);
+    view.setRootUrl(DUrl("/home"));
+    view.selectAll();
+    QEventLoop loop;
+    QTimer::singleShot(100, nullptr, [&loop]{
+        loop.exit();
+    });
+    loop.exec();
+}
+
+TEST_F(TestDFileDialog, tst_selectFile)
+{
+    m_fileDialog->selectFile("/home");
+}
+
+TEST_F(TestDFileDialog, tst_get_directory)
+{
+    EXPECT_FALSE(m_fileDialog->directoryUrl().isEmpty());
+}
 
