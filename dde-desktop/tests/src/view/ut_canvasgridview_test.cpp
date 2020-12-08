@@ -9,7 +9,8 @@
 #include <QAbstractScrollArea>
 
 #include <dfilemenu.h>
-#include "stubext.h"
+#include "../stub-ext/stubext.h"
+
 #define private public
 #define protected public
 
@@ -1419,23 +1420,18 @@ TEST_F(CanvasGridViewTest, test_dropEvent)
 {
     QMimeData data;
     QDropEvent event(QPointF(), Qt::DropAction::MoveAction, &data, Qt::LeftButton, Qt::NoModifier);
-    Stub tub;
+    stub_ext::StubExt tub;
     static QModelIndexList indexlist;
     indexlist << m_canvasGridView->firstIndex();
-    QModelIndexList(*myindex)() = [](){return indexlist;};
-    tub.set(ADDR(DFileSelectionModel, selectedIndexes), myindex);
-    bool(*vaild)() = [](){return true;};
-    tub.set(ADDR(QModelIndex, isValid), vaild);
-    bool(*myfalse)() = [](){return false;};
-    tub.set(ADDR(QModelIndex, isValid), myfalse);
+    tub.set_lamda(ADDR(DFileSelectionModel, selectedIndexes), [](){return indexlist;});
+    tub.set_lamda(ADDR(QModelIndex, isValid), [](){return true;});
+    tub.set_lamda(ADDR(QModelIndex, isValid), [](){return false;});
     m_canvasGridView->dropEvent(&event);
 
 
     static DUrl url = DesktopFileInfo::homeDesktopFileUrl();
-    DUrl(*myurl)() = [](){return url;};
-    typedef int (*furl)(DAbstractFileInfo*, DUrl);
-    furl fdurl = (furl)(&DAbstractFileInfo::fileUrl);
-    tub.set(fdurl, myurl);
+    tub.set_lamda(VADDR(DAbstractFileInfo, fileUrl), [](){return url;});
+    tub.set_lamda(ADDR(QModelIndex, isValid), [](){return true;});
     m_canvasGridView->m_urlsForDragEvent << url;
     m_canvasGridView->dropEvent(&event);
     EXPECT_EQ(event.dropAction(), Qt::IgnoreAction);
