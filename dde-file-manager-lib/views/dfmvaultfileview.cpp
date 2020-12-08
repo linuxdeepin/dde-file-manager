@@ -18,7 +18,7 @@
 #include "dfmvaultfileview.h"
 #include "controllers/vaultcontroller.h"
 #include "vault/vaultlockmanager.h"
-
+#include "dfmsettings.h"
 #include "views/dfmvaultunlockpages.h"
 #include "views/dfmvaultrecoverykeypages.h"
 #include "views/dfmvaultremovepages.h"
@@ -64,6 +64,12 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     } else {
         if (url.host() == "delete") {
             page = DFMVaultRemovePages::instance();
+        }
+
+        //! 记录访问保险箱时间
+        if(VaultController::isRootDirectory(url.toLocalFile())){
+            DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+            setting.setValue(QString("VaultTime"), QString("InterviewTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
         }
     }
 

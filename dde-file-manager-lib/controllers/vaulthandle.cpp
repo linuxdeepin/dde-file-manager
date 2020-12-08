@@ -23,6 +23,7 @@
 
 #include "vaulthandle.h"
 #include "vaulterrorcode.h"
+#include "dfmsettings.h"
 
 #include <QStandardPaths>
 #include <QProcess>
@@ -31,6 +32,7 @@
 #include <QFile>
 #include <QDir>
 #include <QMutex>
+#include <QDateTime>
 #include <unistd.h>
 
 CryFsHandle::CryFsHandle(QObject *parent) : QObject(parent)
@@ -51,8 +53,12 @@ void CryFsHandle::createVault(QString lockBaseDir, QString unlockFileDir, QStrin
     int flg = runVaultProcess(lockBaseDir, unlockFileDir,passWord);
     if(m_activeState.value(1) != static_cast<int>(ErrorCode::Success))
         emit signalCreateVault(m_activeState.value(1));
-    else
+    else{
         emit signalCreateVault(flg);
+        //! 记录保险箱创建时间
+        DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+        setting.setValue(QString("VaultTime"), QString("CreateTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    }
     m_activeState.clear();
     m_mutex->unlock();
 }
@@ -78,8 +84,12 @@ void CryFsHandle::lockVault(QString unlockFileDir)
     int flg = lockVaultProcess(unlockFileDir);
     if(m_activeState.value(7) != static_cast<int>(ErrorCode::Success))
         emit signalLockVault(m_activeState.value(7));
-    else
+    else{
         emit signalLockVault(flg);
+        //! 记录保险箱上锁时间
+        DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+        setting.setValue(QString("VaultTime"), QString("ChangeTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    }
     m_activeState.clear();
     m_mutex->unlock();
 }
