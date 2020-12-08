@@ -63,6 +63,7 @@
 #include "views/dfmsidebar.h"
 #include "dfmapplication.h"
 #include "dstorageinfo.h"
+#include "dfmsettings.h"
 
 #include <DDrawer>
 #include <DDrawerGroup>
@@ -1184,9 +1185,25 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
-    SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->createdDisplayName());
-    SectionValueLabel *timeReadLabel = new SectionValueLabel(info->lastReadDisplayName());
-    SectionValueLabel *timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
+    SectionValueLabel *timeCreatedLabel = nullptr;
+    SectionValueLabel *timeReadLabel = nullptr;
+    SectionValueLabel *timeModifiedLabel = nullptr;
+    if(VaultController::isRootDirectory(info->fileUrl().toLocalFile())){
+        //! 保险箱根目录创建、访问、修改时间的读取
+        DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+        timeCreatedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("CreateTime")).toString());
+        timeReadLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("InterviewTime")).toString());
+        if(setting.value(QString("VaultTime"), QString("ChangeTime")).toString().isNull())
+            timeModifiedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("InterviewTime")).toString());
+        else
+            timeModifiedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("ChangeTime")).toString());
+    }
+    else{
+        timeCreatedLabel = new SectionValueLabel(info->createdDisplayName());
+        timeReadLabel = new SectionValueLabel(info->lastReadDisplayName());
+        timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
+    }
+
 
     QFormLayout *layout = new QFormLayout;
     layout->setHorizontalSpacing(12);

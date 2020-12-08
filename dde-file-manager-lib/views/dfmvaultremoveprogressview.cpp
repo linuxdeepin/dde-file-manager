@@ -19,6 +19,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dfmvaultremoveprogressview.h"
+#include "dfmsettings.h"
 
 #include <thread>
 
@@ -66,6 +67,9 @@ void DFMVaultRemoveProgressView::removeVault(const QString &vaultLockPath, const
                 dir.rmdir(vaultUnlockPath);
 
                 emit removeFinished(true);
+                //! 清除保险箱所有时间
+                DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+                setting.removeGroup(QString("VaultTime"));
             }else {
                 emit removeFinished(false);
             }
