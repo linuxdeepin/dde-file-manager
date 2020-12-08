@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+#include "stub.h"
+
 #include <QWindow>
 #include <QTest>
 #include <QPlainTextEdit>
@@ -8,7 +10,6 @@
 
 #define private public
 #include "views/dfmvaultrecoverykeypages.h"
-
 
 namespace  {
     class TestDFMVaultRecoveryKeyPages : public testing::Test
@@ -46,13 +47,28 @@ TEST_F(TestDFMVaultRecoveryKeyPages, tst_recoveryKeyChanged)
     EXPECT_NO_FATAL_FAILURE(QTest::keyClicks(m_view->m_recoveryKeyEdit, "123465678aA!"));
     EXPECT_NO_FATAL_FAILURE(QTest::keyClicks(m_view->m_recoveryKeyEdit,
                      "12346567891011121314151611234656789101112131415161aA!"));
+
+    QString (*st_toPlainText)() = []()->QString {
+        return "0123456789012345678901234567890123456789";
+    };
+    Stub stub;
+    stub.set(ADDR(QPlainTextEdit, toPlainText), st_toPlainText);
+    m_view->recoveryKeyChanged();
 }
 
 TEST_F(TestDFMVaultRecoveryKeyPages, tst_onUnlockVault)
 {
-//    m_view->m_bUnlockByKey = true;
-//    m_view->onUnlockVault(0);
-//    EXPECT_TRUE(m_view->isHidden());
+#if 0 // VADDR will be broken.
+    void (*st_exec)() = [](){
+        // do nothing.
+    };
+    stub_ext::StubExt stub;
+    stub.set(VADDR(DDialog, exec), st_exec);
+
+    m_view->m_bUnlockByKey = true;
+    m_view->onUnlockVault(0);
+    EXPECT_TRUE(m_view->isHidden());
+#endif
 }
 
 TEST_F(TestDFMVaultRecoveryKeyPages, tst_eventFilter)
@@ -60,5 +76,10 @@ TEST_F(TestDFMVaultRecoveryKeyPages, tst_eventFilter)
     QTest::keyClick(m_view->m_recoveryKeyEdit, Qt::Key_Enter);
 }
 
-
-
+TEST_F(TestDFMVaultRecoveryKeyPages, tst_afterRecoveryKeyChanged)
+{
+    QString key("");
+    m_view->afterRecoveryKeyChanged(key);
+    key = "key";
+    m_view->afterRecoveryKeyChanged(key);
+}
