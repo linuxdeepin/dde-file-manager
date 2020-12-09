@@ -33,8 +33,11 @@
 #include <QMutex>
 #include <QFuture>
 #include <QQueue>
+#include <QFileDevice>
 
 #include "dfiledevice.h"
+
+typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
 
 DFM_BEGIN_NAMESPACE
 
@@ -66,16 +69,19 @@ public:
     struct FileCopyInfo {
         bool closeflag;
         bool isdir;
+        int tofd;
         QSharedPointer<DFileDevice> fromdevice;
         QSharedPointer<DFileDevice> todevice;
-        DFileHandler *handler;
+        QSharedPointer<DFileHandler> handler;
         DAbstractFileInfoPointer frominfo;
         DAbstractFileInfoPointer toinfo;
         char *buffer;
         qint64 size;
         qint64 currentpos;
+        QFileDevice::Permissions permission;
         FileCopyInfo() : closeflag(true)
             , isdir(false)
+            , tofd(-1)
             , fromdevice(nullptr)
             , todevice(nullptr)
             , handler(nullptr)
@@ -134,18 +140,21 @@ public:
     static QString getNewFileName(const DAbstractFileInfoPointer sourceFileInfo, const DAbstractFileInfoPointer targetDirectory);
 
     bool doProcess(const DUrl &from, const DAbstractFileInfoPointer source_info, const DAbstractFileInfoPointer target_info, const bool isNew = false);
-    bool mergeDirectory(DFileHandler *handler, const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo);
-    bool doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, DFileHandler *handler, int blockSize = 1048576);
-    bool doRemoveFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo);
-    bool doRenameFile(DFileHandler *handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
-    bool doLinkFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
+    bool mergeDirectory(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo);
+    bool doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    bool doCopyFileBig(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    bool doCopyFileSmall(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    bool doCopyFileU(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    bool doRemoveFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo);
+    bool doRenameFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
+    bool doLinkFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
 
     bool process(const DUrl from, const DAbstractFileInfoPointer target_info);
     bool process(const DUrl from, const DAbstractFileInfoPointer source_info, const DAbstractFileInfoPointer target_info, const bool isNew = false);
-    bool copyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, DFileHandler *handler, int blockSize = 1048576);
-    bool removeFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo);
-    bool renameFile(DFileHandler *handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
-    bool linkFile(DFileHandler *handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
+    bool copyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    bool removeFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo);
+    bool renameFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
+    bool linkFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
 
     void beginJob(JobInfo::Type type, const DUrl from, const DUrl target, const bool isNew = false);
     void endJob(const bool isNew = false);
@@ -161,8 +170,19 @@ public:
     void countrefinesize(const qint64 &size);
 
     //第二版优化
+    bool writeRefineThread();
+    bool writeRefine();
+    bool writeRefineEx();
+    bool skipReadFileDealWriteThread(const QSharedPointer<FileCopyInfo> copyinfo);
+    void cancelReadFileDealWriteThread();
     void countAllCopyFile();
+    void setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
+    bool checkRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     void checkTagetNeedSync();//检测目标目录是网络文件就每次拷贝去同步，否则网络很卡时会因为同步卡死
+    void checkTagetIsFromBlockDevice();//检查目标文件是否是块设备
+    bool checkWritQueueEmpty();
+    QSharedPointer<FileCopyInfo> writeQueueDequeue();
+    void writeQueueEnqueue(const QSharedPointer<FileCopyInfo> &copyinfo);
     /**
      * @brief setCutTrashData    保存剪切回收站文件路径
      * @param fileNameList       文件路径
@@ -198,7 +218,10 @@ public:
     qint64 m_tatol = 0;
     qint64 m_sart = 0;
 
-    QFuture<void> syncresult;
+    QQueue<FileCopyInfoPointer> m_writeFileQueue;
+    QAtomicInt m_copyRefineFlag = DFileCopyMoveJob::NoProccess;
+    QAtomicInt m_fileRefineFd = 0;
+    QFuture<void> m_writeResult, m_syncResult;
 
 
     // 是否可以使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
@@ -210,9 +233,9 @@ public:
     // 记录任务开始时目标磁盘设备已写入扇区数
     qint64 targetDeviceStartSectorsWritten;
     // /sys/dev/block/x:x
-    QString targetSysDevPath = QString();
+    QString targetSysDevPath;
     // 目标设备所挂载的根目录
-    QString targetRootPath = QString();
+    QString targetRootPath;
 
     QPointer<QThread> threadOfErrorHandle;
     DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError] = {DFileCopyMoveJob::NoAction};
@@ -239,28 +262,42 @@ public:
     QAtomicInteger<bool> countStatisticsFinished = false;
     // 线程id
     long tid = -1;
-//    QScopedPointer<DFileDevice> m_toDevice;
 
     qreal lastProgress = 0.01; // 上次刷新的进度
 
-    int currentthread = 0;
+    int currentThread = 0;
 
-    QAtomicInteger<bool> btaskdailogclose = false;
+    QAtomicInteger<bool> m_bTaskDailogClose = false;
 
 
-    QAtomicInt refinestat = DFileCopyMoveJob::Refine;
+    QAtomicInt m_refineStat = DFileCopyMoveJob::Refine;
+    //优化盘内拷贝，启用的线程池
+    QThreadPool m_pool;
     //优化拷贝时异步线程状态
-    QAtomicInteger<bool> bsysncstate = false;
+    QAtomicInteger<bool> m_bSyncState = false;
     //异步线程是否可以退出状体
-    QAtomicInteger<bool> bsysncquitstate = false;
-    QAtomicInteger<bool> bdestLocal = false;
-    qint64 refinecpsize = 0;
-    QMutex m_refinemutex, m_errormutex;
+    QAtomicInteger<bool> m_bSyncQuitState = false;
+    QAtomicInteger<bool> m_bDestLocal = false;
+    qint64 m_refineCopySize = 0;
+    QMutex m_refineMutex, m_errorMutex;
+    QList<DUrl> m_errorUrlList;
     //是否可以现实进度条
-    QAtomicInteger<bool> m_iscanshowprogress = false;
+    QAtomicInteger<bool> m_isShowProgress = false;
     //是否需要每读写一次同步
     bool m_isEveryReadAndWritesSnc = false;
     bool m_isVfat = false;
+    //分断拷贝的线程数量
+    QAtomicInt m_count = -1;
+    QAtomicInteger<bool> m_isWriteThreadStart = false;
+    //目标目录是否是来自块设备
+    QAtomicInteger<bool> m_isTagFromBlockDevice = false;
+    //读线程跳过的文件
+    QQueue<QSharedPointer<DFileDevice>> m_skipFileQueue;
+    //目标文件是否是gvfs目录
+    QAtomicInteger<bool> m_isTagGvfsFile = false;
+    //拷贝信息的队列锁
+    QMutex m_copyInfoQueueMutex;
+    QMutex m_skipFileQueueMutex;
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
 

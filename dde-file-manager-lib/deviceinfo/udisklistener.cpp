@@ -521,6 +521,18 @@ QStringList UDiskListener::hiddenDirs()
     return m_hiddenDirs;
 }
 
+bool UDiskListener::isBlockFile(const QString &filePath)
+{
+    const QMap<QString, UDiskDeviceInfoPointer> &&devices = getMountedRemovableDiskDeviceInfos();
+    foreach (auto d, devices) {
+        if (filePath.startsWith(d->getMountPointUrl().path())) {
+            qDebug() << "copy src file from block device!";
+            return true;
+        }
+    }
+    return false;
+}
+
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
 {
     qDebug() << diskInfo;

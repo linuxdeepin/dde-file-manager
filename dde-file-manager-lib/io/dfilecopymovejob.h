@@ -67,6 +67,14 @@ public:
 
     Q_ENUM(RefineState)
 
+    enum RefineCopyProccessSate {
+        NoProccess,
+        OpenFromFileProccessOver,
+        ReadFileProccessOver,
+    };
+
+    Q_ENUM(RefineCopyProccessSate)
+
 
     enum Error {
         NoError,
@@ -81,6 +89,7 @@ public:
         SymlinkError,
         MkdirError,
         ResizeError,
+        MmapError,
         RemoveError,
         RenameError,
         UnknowUrlError,
@@ -173,6 +182,8 @@ public:
     bool isFromLocalFile(const DUrlList &urls);
     void setRefine(const RefineState &refinestat);
     void waitSysncEnd();
+    void waitRefineThreadFinish();
+
     void setCurTrashData(QVariant fileNameList);
 
     static Actions supportActions(Error error);
