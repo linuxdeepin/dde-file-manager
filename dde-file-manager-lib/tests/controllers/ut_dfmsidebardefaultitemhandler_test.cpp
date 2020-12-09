@@ -5,6 +5,7 @@
 #include "views/dfmsidebar.h"
 #include "interfaces/dfmsidebaritem.h"
 #include "controllers/dfmsidebardefaultitemhandler.h"
+#include "stub.h"
 DFM_USE_NAMESPACE
 
 using namespace testing;
@@ -43,7 +44,14 @@ TEST_F(DFMSideBarDefaultItemHandlerTest, cd_action)
 {
     ASSERT_NE(p_handler, nullptr);
 
+    Stub stub;
+    static bool myCallOpen = false;
+    void (*ut_openNewTab)() = [](){myCallOpen = true;};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
     DFileManagerWindow window;
+    EXPECT_TRUE(myCallOpen);
+
     const DFMSideBar *bar = window.getLeftSideBar();
 
     DFMSideBarItem *item = DFMSideBarItem::createSeparatorItem(QString("test"));
@@ -58,7 +66,14 @@ TEST_F(DFMSideBarDefaultItemHandlerTest, context_menu)
 {
     ASSERT_NE(p_handler, nullptr);
 
+    Stub stub;
+    static bool myCallOpen = false;
+    void (*ut_openNewTab)() = [](){myCallOpen = true;};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
     DFileManagerWindow window;
+    EXPECT_TRUE(myCallOpen);
+
     const DFMSideBar *bar = window.getLeftSideBar();
 
     DFMSideBarItem *item = DFMSideBarItem::createSeparatorItem(QString("Trash"));
