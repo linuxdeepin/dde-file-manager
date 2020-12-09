@@ -6,7 +6,6 @@ extract_path="*/dde-dock-plugins/*"
 remove_path="*/third-party/* *tests*"
 
 #dde-dock-plugins/disk-mount 测试报告
-cp test-dde-disk-mount-plugin $build_dir/disk-mount
 ./../third-party/test-prj-running.sh $build_dir/disk-mount test-dde-disk-mount-plugin "$extract_path" "$remove_path"
 
 
