@@ -558,9 +558,9 @@ TEST_F(TestDialogManager, testShowMessageDialog3)
 
 TEST_F(TestDialogManager, testShowBluetoothTransferDlg)
 {
-    DUrlList files;
-    files.push_back(DUrl("file:///home"));
-    m_pTester->showBluetoothTransferDlg(files);
+//    DUrlList files;
+//    files.push_back(DUrl("file:///home"));
+//    m_pTester->showBluetoothTransferDlg(files);
 }
 
 TEST_F(TestDialogManager, testShowFormatDialog)
