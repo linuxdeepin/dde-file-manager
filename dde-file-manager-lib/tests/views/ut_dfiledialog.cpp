@@ -6,6 +6,9 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "stub.h"
 #include <QEventLoop>
+#include <QLineEdit>
+#include <DDialog>
+#include "../stub-ext/stubext.h"
 
 #define private public
 #define protected public
@@ -236,7 +239,32 @@ TEST_F(TestDFileDialog, tst_acceptButtonClicked)
 {
     m_fileDialog->onAcceptButtonClicked();
     m_fileDialog->setAcceptMode(QFileDialog::AcceptSave);
-    m_fileDialog->onAcceptButtonClicked();
+
+    // replace QLineEdit::text
+    QString (*st_text)() = []()->QString {
+         return "123.file";
+    };
+    Stub stub;
+    stub.set(ADDR(QLineEdit, text), st_text);
+
+    m_fileDialog->onAcceptButtonClicked();    
+
+    // replace QLineEdit::text
+    QString (*st_text_2)() = []()->QString {
+         return ".file";
+    };
+    stub.set(ADDR(QLineEdit, text), st_text_2);
+
+    // replace DDialog::exec
+    int (*st_exec)() = []()->int{
+        // do nothing.
+        return DDialog::Accepted;
+    };
+    stub_ext::StubExt stubext;
+    stubext.set(VADDR(DDialog, exec), st_exec);
+
+    m_fileDialog->setOption(QFileDialog::DontConfirmOverwrite);
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->onAcceptButtonClicked());
 }
 
 TEST_F(TestDFileDialog, tst_onCurrentInputNameChanged)
@@ -330,5 +358,10 @@ TEST_F(TestDFileDialog, tst_selectFile)
 TEST_F(TestDFileDialog, tst_get_directory)
 {
     EXPECT_FALSE(m_fileDialog->directoryUrl().isEmpty());
+}
+
+TEST_F(TestDFileDialog, tst_onRejectButtonClicked)
+{
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->onRejectButtonClicked());
 }
 
