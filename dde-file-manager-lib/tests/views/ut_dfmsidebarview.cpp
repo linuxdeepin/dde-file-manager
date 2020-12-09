@@ -88,7 +88,14 @@ TEST_F(TestDFMSideBarView, get_drop_data)
 {
     ASSERT_NE(m_view, nullptr);
 
+    Stub stub;
+    static bool myCallOpen = false;
+    void (*ut_openNewTab)() = [](){myCallOpen = true;};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
     DFileManagerWindow window;
+    EXPECT_TRUE(myCallOpen);
+
     const DFMSideBar *bar = window.getLeftSideBar();
     DFMSideBarView *t_p = bar->m_sidebarView;
 
@@ -106,7 +113,7 @@ TEST_F(TestDFMSideBarView, get_drop_data)
     {
         return QExplicitlySharedDataPointer<DAbstractFileInfo>(new DFileInfo("/home"));
     };
-    Stub stub;
+
     stub.set(&DFileService::createFileInfo, st_createFileInfo);
 
     // replace dfileservice::pastfile
@@ -137,7 +144,14 @@ TEST_F(TestDFMSideBarView, drop_mime_data)
     Qt::DropAction result = m_view->canDropMimeData(nullptr, nullptr, Qt::IgnoreAction);
     EXPECT_EQ(result, Qt::IgnoreAction);
 
+    Stub stub;
+    static bool myCallOpen = false;
+    void (*ut_openNewTab)() = [](){myCallOpen = true;};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
     DFileManagerWindow window;
+    EXPECT_TRUE(myCallOpen);
+
     const DFMSideBar *bar = window.getLeftSideBar();
     DFMSideBarView *t_p = bar->m_sidebarView;
     DFMSideBarItem *item = DFMSideBarItem::createSeparatorItem(QString("Trash"));
@@ -157,7 +171,7 @@ TEST_F(TestDFMSideBarView, drop_mime_data)
     {
         return QExplicitlySharedDataPointer<DAbstractFileInfo>(new DFileInfo("/home"));
     };
-    Stub stub;
+
     stub.set(&DFileService::createFileInfo, st_createFileInfo);
 
     result = t_p->canDropMimeData(item, &data, Qt::IgnoreAction);
@@ -175,7 +189,14 @@ TEST_F(TestDFMSideBarView, get_acceptte_drag)
     Qt::KeyboardModifiers modifiers = Qt::NoModifier;
     QDropEvent event(pos, actions, &data, buttons, modifiers);
 
+    Stub stub;
+    static bool myCallOpen = false;
+    void (*ut_openNewTab)() = [](){myCallOpen = true;};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
     DFileManagerWindow window;
+    EXPECT_TRUE(myCallOpen);
+
     const DFMSideBar *bar = window.getLeftSideBar();
     DFMSideBarView *t_p = bar->m_sidebarView;
     ASSERT_NE(t_p, nullptr);
@@ -188,7 +209,6 @@ TEST_F(TestDFMSideBarView, get_acceptte_drag)
         return Qt::CopyAction;
     };
 
-    Stub stub;
     stub.set(ADDR(DFMSideBarView, canDropMimeData), st_canDropMimeData);
     result = t_p->isAccepteDragEvent(&event);
     EXPECT_TRUE(result);
@@ -198,7 +218,14 @@ TEST_F(TestDFMSideBarView, get_row_changed)
 {
     ASSERT_NE(m_view, nullptr);
 
+    Stub stub;
+    static bool myCallOpen = false;
+    void (*ut_openNewTab)() = [](){myCallOpen = true;};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
     DFileManagerWindow window;
+    EXPECT_TRUE(myCallOpen);
+
     const DFMSideBar *bar = window.getLeftSideBar();
     DFMSideBarView *t_p = bar->m_sidebarView;
     ASSERT_NE(t_p, nullptr);
@@ -213,7 +240,14 @@ TEST_F(TestDFMSideBarView, featch_drag_memory)
 {
     ASSERT_NE(m_view, nullptr);
 
+    Stub stub;
+    static bool myCallOpen = false;
+    void (*ut_openNewTab)() = [](){myCallOpen = true;};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
     DFileManagerWindow window;
+    EXPECT_TRUE(myCallOpen);
+
     const DFMSideBar *bar = window.getLeftSideBar();
     DFMSideBarView *t_p = bar->m_sidebarView;
     ASSERT_NE(t_p, nullptr);
@@ -224,7 +258,6 @@ TEST_F(TestDFMSideBarView, featch_drag_memory)
         return true;
     };
 
-    Stub stub;
     stub.set(ADDR(QSharedMemory, isAttached), st_isAttached);
     EXPECT_TRUE(t_p->fetchDragEventUrlsFromSharedMemory());
 }
@@ -233,7 +266,14 @@ TEST_F(TestDFMSideBarView, check_op_time)
 {
     ASSERT_NE(m_view, nullptr);
 
+    Stub stub;
+    static bool myCallOpen = false;
+    void (*ut_openNewTab)() = [](){myCallOpen = true;};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
     DFileManagerWindow window;
+    EXPECT_TRUE(myCallOpen);
+
     const DFMSideBar *bar = window.getLeftSideBar();
     DFMSideBarView *t_p = bar->m_sidebarView;
     ASSERT_NE(t_p, nullptr);

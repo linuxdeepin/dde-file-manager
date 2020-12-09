@@ -17,9 +17,10 @@ namespace  {
     {
     public:
         void SetUp() override {
-            p_manager = PluginManager::instance();
+            p_manager = new PluginManager;
         }
         void TearDown() override {
+            delete p_manager;
             p_manager = nullptr;
         }
 

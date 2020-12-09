@@ -1717,6 +1717,7 @@ TEST_F(DFileViewTest,popup_header_view_contextmenu)
     QString path("dfmroot:///desktop.userdir");
     DUrl url(path);
     m_view->setRootUrl(url);
+    m_view->switchViewMode(DFileView::ListMode);
 
     Stub stub;
     static bool myCallExec = false;
