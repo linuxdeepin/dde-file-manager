@@ -485,11 +485,12 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                     sendToMountedRemovableDiskMenu->addAction(action);
                     connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk, Qt::QueuedConnection); //改为队列，防止exec无法退出，关联bug#25613
                 }
+                // 如果子菜单中没有内容，移除父菜单
+                if(sendToMountedRemovableDiskMenu->actions().count() < 1) {
+                    menu->removeAction(sendToMountedRemovableDiskAction);
+                }
             }
-            // 如果子菜单中没有内容，移除父菜单
-            if(sendToMountedRemovableDiskMenu->actions().count() < 1) {
-                menu->removeAction(sendToMountedRemovableDiskAction);
-            }
+
         }
     }
     if (menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
