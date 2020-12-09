@@ -99,7 +99,7 @@ public:
     bool isFileFromDisc(const QString &filePath); // 文件是否来自光盘
     void appendHiddenDirs(const QString &path);
     QStringList hiddenDirs();
-
+    bool isBlockFile(const QString &filePath); // 文件是否来自块设备
 private:
     void initDiskManager();
     void initConnect();

@@ -702,7 +702,7 @@ TEST_F(DFileCopyMoveJobTest,start_mergeDirectory) {
     DAbstractFileInfoPointer toinfo = DFileService::instance()->createFileInfo(nullptr,to);
     st.set(ADDR(VaultController,isVaultFile),isVaultFile);
     EXPECT_FALSE(jobd->mergeDirectory(nullptr,frominfo,toinfo));
-    DFileHandler * handler = DFileService::instance()->createFileHandler(nullptr,from);
+    QSharedPointer<DFileHandler>  handler(DFileService::instance()->createFileHandler(nullptr,from));
     to.setPath("/zut_mergeDirectory_kk");
     toinfo = DFileService::instance()->createFileInfo(nullptr,to);
     EXPECT_TRUE(jobd->mergeDirectory(handler,frominfo,toinfo));
@@ -816,7 +816,7 @@ TEST_F(DFileCopyMoveJobTest,start_doRemoveFile) {
     from.setScheme(FILE_SCHEME);
     QString path = TestHelper::createTmpFile();
     from.setPath(path+"_ooo");
-    DFileHandler * handler = DFileService::instance()->createFileHandler(nullptr,from);
+    QSharedPointer<DFileHandler>  handler(DFileService::instance()->createFileHandler(nullptr,from));
     DAbstractFileInfoPointer frominfo = DFileService::instance()->createFileInfo(nullptr,from);
     EXPECT_TRUE(jobd->doRemoveFile(handler,frominfo));
 
@@ -824,7 +824,7 @@ TEST_F(DFileCopyMoveJobTest,start_doRemoveFile) {
     bool (*isVaultFile)(QString) = [](QString){return true;};
     st.set(ADDR(VaultController,isVaultFile),isVaultFile);
     from.setPath(path);
-    handler = DFileService::instance()->createFileHandler(nullptr,from);
+    handler.reset(DFileService::instance()->createFileHandler(nullptr,from));
     frominfo = DFileService::instance()->createFileInfo(nullptr,from);
     VaultController::FileBaseInfo (*getFileInfo)(const DUrl &) = [](const DUrl &){
         VaultController::FileBaseInfo stl;
@@ -853,7 +853,7 @@ TEST_F(DFileCopyMoveJobTest,start_doRenameFile) {
     QProcess::execute("ln -s " + from.toLocalFile() + linkurl.toLocalFile());
     QProcess::execute("ln -s " + to.toLocalFile() + linkurlnew.toLocalFile());
     QProcess::execute("chmod 0000 " + to.toLocalFile());
-    DFileHandler * handler = DFileService::instance()->createFileHandler(nullptr,linkurl);
+    QSharedPointer<DFileHandler>  handler(DFileService::instance()->createFileHandler(nullptr,linkurl));
     DAbstractFileInfoPointer oldinfo = DFileService::instance()->createFileInfo(nullptr,linkurl);
     DAbstractFileInfoPointer newinfo = DFileService::instance()->createFileInfo(nullptr,linkurlnew);
     jobd->enterDirectory(linkurl, linkurlnew);
@@ -873,7 +873,7 @@ TEST_F(DFileCopyMoveJobTest,start_doLinkFile) {
     from.setScheme(FILE_SCHEME);
     from.setPath("/bin");
     QString linkpath = "/tmp/zut_syslink_tset";
-    DFileHandler * handler = DFileService::instance()->createFileHandler(nullptr,from);
+    QSharedPointer<DFileHandler>  handler(DFileService::instance()->createFileHandler(nullptr,from));
     DAbstractFileInfoPointer fileinfo = DFileService::instance()->createFileInfo(nullptr,from);
     EXPECT_FALSE(jobd->doLinkFile(handler,fileinfo,linkpath));
     from.setPath("/tmp/zut_syslink_tset");
@@ -898,7 +898,7 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFile) {
         return device;
     };
     stl.set(ADDR(DFileService, createFileDevice),createFileDevice);
-    DFileHandler * handler = DFileService::instance()->createFileHandler(nullptr,from);
+    QSharedPointer<DFileHandler>  handler(DFileService::instance()->createFileHandler(nullptr,from));
     DAbstractFileInfoPointer frominfo = DFileService::instance()->createFileInfo(nullptr,from);
     to = from;
     to.setPath("/tmp/zut_test_file_device");

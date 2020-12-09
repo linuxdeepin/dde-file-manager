@@ -283,7 +283,6 @@ TEST_F(AppControllerTest,start_actionCut){
             ADDR(DFMEventDispatcher,processEvent),processEvent);
     EXPECT_NO_FATAL_FAILURE(controller->actionCut(dMakeEventPointer<DFMUrlListBaseEvent>
                                                   (nullptr, DUrlList() << url)));
-
 }
 
 TEST_F(AppControllerTest,start_actionCopy){
@@ -295,11 +294,11 @@ TEST_F(AppControllerTest,start_actionCopy){
     };
     stl.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
             ADDR(DFMEventDispatcher,processEvent),processEvent);
+
     EXPECT_NO_FATAL_FAILURE(controller->actionCopy(dMakeEventPointer<DFMUrlListBaseEvent>
                                                    (nullptr, DUrlList() << url)));
-    EXPECT_NO_FATAL_FAILURE(controller->actionPaste(dMakeEventPointer<DFMUrlBaseEvent>
-                                                   (nullptr, url)));
-
+//        EXPECT_NO_FATAL_FAILURE(controller->actionPaste(dMakeEventPointer<DFMUrlBaseEvent>
+//                                                       (nullptr, url)));
 }
 
 TEST_F(AppControllerTest,start_actionRename1){
@@ -347,7 +346,7 @@ TEST_F(AppControllerTest,start_actionBookmarkandother){
 //        return DUrlList();
 //    };
 //    stl.set(ADDR(DFileService,moveToTrash),moveToTrash);
-//    TestHelper::runInLoop([=](){
+//    TestHelper::([=](){
 //    EXPECT_NO_FATAL_FAILURE(controller->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>
 //                                                     (nullptr, DUrlList() << temp)));
 //    });
@@ -389,6 +388,7 @@ TEST_F(AppControllerTest,start_actionNewFolder){
     stl.set(ADDR(DFileService,deleteFiles),deleteFiles);
     EXPECT_NO_FATAL_FAILURE(controller->actionClearTrash(nullptr));
     DFileService::instance()->setDoClearTrashState(false);
+
 }
 
 TEST_F(AppControllerTest,start_actionNewFile){
@@ -424,6 +424,7 @@ TEST_F(AppControllerTest,start_actionNewFile){
 
     QString isoPath = createTestIsoFile();
     url = DUrl("file://" + isoPath);
+
     TestHelper::runInLoop([=](){
         EXPECT_NO_FATAL_FAILURE(controller->actionMountImage(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
         EXPECT_NO_FATAL_FAILURE(controller->actionMountImage(dMakeEventPointer<DFMUrlBaseEvent>
@@ -625,6 +626,8 @@ TEST_F(AppControllerTest, start_createDBusInterface){
 
 TEST_F(AppControllerTest, start_showErrorDialog){
     EXPECT_NO_FATAL_FAILURE(controller->showErrorDialog("test","tet"));
+    TestHelper::runInLoop([=](){
+    });
 }
 
 
