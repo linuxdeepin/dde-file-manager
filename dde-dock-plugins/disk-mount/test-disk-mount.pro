@@ -11,7 +11,7 @@ INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
 TARGET = test-dde-disk-mount-plugin
 TEMPLATE = app
 
-DESTDIR          = $$_PRO_FILE_PWD_/../
+#DESTDIR          = $$_PRO_FILE_PWD_/../
 DISTFILES       += disk-mount.json
 
 DEFINES += QT_MESSAGELOGCONTEXT DFM_NO_FILE_WATCHER
