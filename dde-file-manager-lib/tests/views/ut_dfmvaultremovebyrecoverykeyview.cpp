@@ -5,6 +5,10 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <DToolTip>
+#include <DDialog>
+#include "dfmevent.h"
+
+#include "stub.h"
 
 #define private public
 #include "views/dfmvaultremovebyrecoverykeyview.h"
@@ -49,6 +53,34 @@ TEST_F(TestDFMVaultRemoveByRecoverykeyView, tst_getPassword)
 
 TEST_F(TestDFMVaultRemoveByRecoverykeyView, tst_eventFilter)
 {
-    QTest::keyClick(m_view->m_keyEdit, Qt::Key_Enter);
+    QSharedPointer<QKeyEvent> event = dMakeEventPointer<QKeyEvent>(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+
+    EXPECT_FALSE(m_view->eventFilter(nullptr, event.get()));
+    EXPECT_TRUE(m_view->eventFilter(m_view->m_keyEdit, event.get()));
 }
 
+TEST_F(TestDFMVaultRemoveByRecoverykeyView, tst_showAlertMessage)
+{
+    DTK_WIDGET_NAMESPACE::DDialog *dialog = new DTK_WIDGET_NAMESPACE::DDialog();
+    m_view->setParent(dialog);
+    m_view->showAlertMessage("");
+    dialog->deleteLater();
+}
+
+TEST_F(TestDFMVaultRemoveByRecoverykeyView, tst_onRecoveryKeyChanged)
+{
+    m_view->onRecoveryKeyChanged();
+    int pos = m_view->m_keyEdit->textCursor().position();
+    EXPECT_EQ(static_cast<int>(0), pos);
+
+    QString (*st_toPlainText)() = []()->QString {
+        return "12346567891111213141516112346567891113333141516112aA!";
+    };
+
+    Stub stub;
+    stub.set(ADDR(QPlainTextEdit, toPlainText), st_toPlainText);
+
+    m_view->onRecoveryKeyChanged();
+    int pos2 = m_view->m_keyEdit->textCursor().position();
+    EXPECT_EQ(pos2, 38);
+}

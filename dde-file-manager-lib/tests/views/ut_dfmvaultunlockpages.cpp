@@ -7,6 +7,8 @@
 #include <DToolTip>
 #include <DPasswordEdit>
 
+#include "../stub-ext/stubext.h"
+
 #define private public
 #include "views/dfmvaultunlockpages.h"
 
@@ -15,11 +17,11 @@ namespace  {
     class TestDFMVaultUnlockPages: public testing::Test
     {
     public:
-        QSharedPointer<DFMVaultUnlockPages> m_view;
+        DFMVaultUnlockPages* m_view;
 
         virtual void SetUp() override
         {
-            m_view = QSharedPointer<DFMVaultUnlockPages>(new DFMVaultUnlockPages());
+            m_view = DFMVaultUnlockPages::instance();
             m_view->show();
             std::cout << "start TestDFMVaultUnlockPages" << std::endl;
         }
@@ -53,4 +55,20 @@ TEST_F(TestDFMVaultUnlockPages, tst_onVaultUlocked)
     m_view->m_bUnlockByPwd = true;
     EXPECT_NO_FATAL_FAILURE(m_view->onVaultUlocked(1));
     EXPECT_NO_FATAL_FAILURE(m_view->onVaultUlocked(0));
+
+    // replace DDialog::exec
+    int (*st_exec)() = []()->int{
+        // do nothing.
+        return DDialog::Accepted;
+    };
+    stub_ext::StubExt stub;
+    stub.set(VADDR(DDialog, exec), st_exec);
+
+    m_view->m_bUnlockByPwd = true;
+    EXPECT_NO_FATAL_FAILURE(m_view->onVaultUlocked(2));
+}
+
+TEST_F(TestDFMVaultUnlockPages, tst_tipsButtonClicked)
+{
+    QTest::mouseClick(m_view->m_tipsButton, Qt::LeftButton);
 }

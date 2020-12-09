@@ -104,6 +104,17 @@ TEST_F(TestDFMVaultFileView, tst_setRootUrl)
 
     EXPECT_NO_FATAL_FAILURE(m_view->setRootUrl(url));
     closeWindow(url);
+
+    // replace VaultController::state
+    VaultController::VaultState (*st_state_encrypted)(QString lockBaseDir) =
+            [](QString lockBaseDir)->VaultController::VaultState {
+        Q_UNUSED(lockBaseDir)
+        return VaultController::Encrypted;
+    };
+    stub.set(ADDR(VaultController, state), st_state_encrypted);
+
+    EXPECT_NO_FATAL_FAILURE(m_view->setRootUrl(url));
+    closeWindow(url);
 }
 
 TEST_F(TestDFMVaultFileView, tst_onFileDeleted)

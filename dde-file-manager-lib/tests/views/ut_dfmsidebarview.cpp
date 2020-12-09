@@ -311,6 +311,7 @@ TEST_F(TestDFMSideBarView, tst_dropEvent)
         return new DFMSideBarItem();
     };
 
+    // replace QDropEvent::mimeData
     Stub stub;
     stub.set(&DFMSideBarView::itemAt, st_itemAt);
 
@@ -320,6 +321,7 @@ TEST_F(TestDFMSideBarView, tst_dropEvent)
     stub.set(&QDropEvent::mimeData, st_mimeData);
     m_view->dropEvent(event.get());
 
+    // replace DFMSideBarView::visualRect
     QRect (*st_visualRect)(const QModelIndex &index) = [](const QModelIndex &index)->QRect{
         Q_UNUSED(index)
         return QRect(-1, -1, 10, 10);
@@ -327,6 +329,7 @@ TEST_F(TestDFMSideBarView, tst_dropEvent)
     stub_ext::StubExt st;
     st.set(VADDR(DFMSideBarView, visualRect), st_visualRect);
 
+    // replace QMimeData::urls
     QList<QUrl> (*st_urls)() = []()->QList<QUrl>{
         QList<QUrl> urls;
         urls << QUrl("/home");
@@ -335,6 +338,13 @@ TEST_F(TestDFMSideBarView, tst_dropEvent)
         return urls;
     };
     stub.set(ADDR(QMimeData, urls), st_urls);
+
+    // replace DFMSideBarView::onDropData
+    bool (*st_onDropData)(DUrlList, DUrl, Qt::DropAction) = [](DUrlList, DUrl, Qt::DropAction)->bool{
+        // do nothing.
+        return true;
+    };
+    stub.set(ADDR(DFMSideBarView, onDropData), st_onDropData);
 
     EXPECT_NO_FATAL_FAILURE(m_view->dropEvent(event.get()));
 }

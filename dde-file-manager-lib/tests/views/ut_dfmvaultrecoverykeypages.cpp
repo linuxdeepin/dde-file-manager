@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include "dfmevent.h"
 
 #include "stub.h"
+#include "../stub-ext/stubext.h"
 
 #include <QWindow>
 #include <QTest>
@@ -58,22 +60,24 @@ TEST_F(TestDFMVaultRecoveryKeyPages, tst_recoveryKeyChanged)
 
 TEST_F(TestDFMVaultRecoveryKeyPages, tst_onUnlockVault)
 {
-#if 0 // VADDR will be broken.
-    void (*st_exec)() = [](){
+    int (*st_exec)() = []()->int{
         // do nothing.
+        return DDialog::Accepted;
     };
     stub_ext::StubExt stub;
     stub.set(VADDR(DDialog, exec), st_exec);
 
     m_view->m_bUnlockByKey = true;
-    m_view->onUnlockVault(0);
-    EXPECT_TRUE(m_view->isHidden());
-#endif
+    m_view->onUnlockVault(1);
+    EXPECT_FALSE(m_view->isHidden());
 }
 
 TEST_F(TestDFMVaultRecoveryKeyPages, tst_eventFilter)
 {
-    QTest::keyClick(m_view->m_recoveryKeyEdit, Qt::Key_Enter);
+    QSharedPointer<QKeyEvent> event = dMakeEventPointer<QKeyEvent>(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+
+    EXPECT_FALSE(m_view->eventFilter(nullptr, event.get()));
+    EXPECT_TRUE(m_view->eventFilter(m_view->m_recoveryKeyEdit, event.get()));
 }
 
 TEST_F(TestDFMVaultRecoveryKeyPages, tst_afterRecoveryKeyChanged)
@@ -83,3 +87,13 @@ TEST_F(TestDFMVaultRecoveryKeyPages, tst_afterRecoveryKeyChanged)
     key = "key";
     m_view->afterRecoveryKeyChanged(key);
 }
+
+TEST_F(TestDFMVaultRecoveryKeyPages, tst_showAlertMessage)
+{
+    DTK_WIDGET_NAMESPACE::DDialog *dialog = new DTK_WIDGET_NAMESPACE::DDialog();
+    m_view->setParent(dialog);
+    m_view->showAlertMessage("");
+    dialog->deleteLater();
+}
+
+

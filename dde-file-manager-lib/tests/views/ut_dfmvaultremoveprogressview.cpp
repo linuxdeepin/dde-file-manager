@@ -7,6 +7,7 @@
 #include <DWaterProgress>
 #include <qprocess.h>
 #include <interfaces/dfmstandardpaths.h>
+#include "stub.h"
 
 #define private public
 #include "views/dfmvaultremoveprogressview.h"
@@ -36,6 +37,7 @@ namespace  {
 
 TEST_F(TestDFMVaultRemoveProgressView, tst_clear)
 {
+    m_view->clear();
     EXPECT_EQ(static_cast<int>(0), m_view->m_vaultRmProgressBar->value());
     EXPECT_EQ(static_cast<int>(0), m_view->m_iFiles);
     EXPECT_EQ(static_cast<int>(0), m_view->m_iRmFiles);
@@ -82,4 +84,29 @@ TEST_F(TestDFMVaultRemoveProgressView, tst_onFileRemove)
 {
     m_view->onFileRemove(10);
     EXPECT_EQ(10, m_view->m_vaultRmProgressBar->value());
+}
+
+TEST_F(TestDFMVaultRemoveProgressView, tst_removeVault)
+{
+    bool (*st_statisticsFiles)(const QString &) = [](const QString &)->bool {
+        // do nothing.
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFMVaultRemoveProgressView, statisticsFiles), st_statisticsFiles);
+
+    void (*st_removeFileInDir)(const QString &) = [](const QString &){
+        // do nothing.
+    };
+    stub.set(ADDR(DFMVaultRemoveProgressView, removeFileInDir), st_removeFileInDir);
+
+    bool (*st_rmdir)(const QString &) = [](const QString &)->bool {
+        // do nothing.
+        return true;
+    };
+    stub.set(ADDR(QDir, rmdir), st_rmdir);
+
+#if 0 // will be broken in thread occasionally
+    m_view->removeVault("", "");
+#endif
 }
