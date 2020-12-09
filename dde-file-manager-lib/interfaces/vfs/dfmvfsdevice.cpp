@@ -77,6 +77,16 @@ GMount *DFMVfsDevicePrivate::createGMount() const
     return mount.take();
 }
 
+QUrl DFMVfsDevice::defaultUri() const
+{
+    Q_D(const DFMVfsDevice);
+
+    DFMGFile defaultUriFile(g_mount_get_default_location(d->getGMount()));
+    DFMGCChar defaultUriCStr(g_file_get_uri(defaultUriFile.data()));
+    return QUrl(QString::fromLocal8Bit(defaultUriCStr.data()));
+}
+
+
 // caller should free the return value by calling `g_object_unref` or using `DFMGFile`.
 GFile *DFMVfsDevicePrivate::createRootFile() const
 {
@@ -571,6 +581,19 @@ quint64 DFMVfsDevice::freeBytes() const
 }
 
 /*!
+ * \brief Get the root path of the mount point
+ *
+ * e.g. "/run/user/1002/gvfs/smb-share:server=10.0.12.161,share=share"
+ */
+QString DFMVfsDevice::rootPath() const
+{
+    Q_D(const DFMVfsDevice);
+
+    DFMGCChar rootUriCStr(g_file_get_path(d->getGFile()));
+    return QString::fromLocal8Bit(rootUriCStr.data());
+}
+
+/*!
  * \brief Get the root uri of the mount point
  *
  * e.g. QUrl("smb://10.0.12.161/share/")
@@ -583,27 +606,8 @@ QUrl DFMVfsDevice::rootUri() const
     return QUrl(QString::fromLocal8Bit(rootUriCStr.data()));
 }
 
-QUrl DFMVfsDevice::defaultUri() const
-{
-    Q_D(const DFMVfsDevice);
 
-    DFMGFile defaultUriFile(g_mount_get_default_location(d->getGMount()));
-    DFMGCChar defaultUriCStr(g_file_get_uri(defaultUriFile.data()));
-    return QUrl(QString::fromLocal8Bit(defaultUriCStr.data()));
-}
 
-/*!
- * \brief Get the root path of the mount point
- *
- * e.g. "/run/user/1002/gvfs/smb-share:server=10.0.12.161,share=share"
- */
-QString DFMVfsDevice::rootPath() const
-{
-    Q_D(const DFMVfsDevice);
-
-    DFMGCChar rootUriCStr(g_file_get_path(d->getGFile()));
-    return QString::fromLocal8Bit(rootUriCStr.data());
-}
 
 QString DFMVfsDevice::defaultPath() const
 {

@@ -112,36 +112,6 @@ void DFMVfsManagerPrivate::initConnect()
     }
 }
 
-/*! \class DFMVfsManager
-
-    \brief DFMVfsManager manage all virtual filesystem.
-
-    Virtual filesystem here means it's not a physical device in local computer, i.e. it's a remote/network
-    device. DFMVfsManager manage the state of already mounted devices and provide signal when a new vfs is
-    mounted(attached) to the computer or a vfs mount point get unmounted(detached).
-
-    We use the word attach and detach rather than mount and unmount because one *network* location will
-    always comes with one available mount point, so a drive / partition / volume mount / unmount event will
-    always consider as a same event.
-
-    We use the URI which is used to mount the device as a identifier, use DFMVfsManager::getVfsList() to
-    get a list of already attached vfs list, and use DFMVfsDevice to manage them when needed.
-
-    \sa DFMVfsDevice, DDiskManager
- */
-
-DFMVfsManager::DFMVfsManager(QObject *parent)
-    : QObject(parent)
-    , d_ptr(new DFMVfsManagerPrivate(this))
-{
-
-}
-
-DFMVfsManager::~DFMVfsManager()
-{
-
-}
-
 /*!
  * \brief Get a list of all attached virtual filesystem.
  *
@@ -174,6 +144,37 @@ const QList<QUrl> DFMVfsManager::getVfsList()
 
     return result.toList();
 }
+
+/*! \class DFMVfsManager
+
+    \brief DFMVfsManager manage all virtual filesystem.
+
+    Virtual filesystem here means it's not a physical device in local computer, i.e. it's a remote/network
+    device. DFMVfsManager manage the state of already mounted devices and provide signal when a new vfs is
+    mounted(attached) to the computer or a vfs mount point get unmounted(detached).
+
+    We use the word attach and detach rather than mount and unmount because one *network* location will
+    always comes with one available mount point, so a drive / partition / volume mount / unmount event will
+    always consider as a same event.
+
+    We use the URI which is used to mount the device as a identifier, use DFMVfsManager::getVfsList() to
+    get a list of already attached vfs list, and use DFMVfsDevice to manage them when needed.
+
+    \sa DFMVfsDevice, DDiskManager
+ */
+
+DFMVfsManager::DFMVfsManager(QObject *parent)
+    : QObject(parent)
+    , d_ptr(new DFMVfsManagerPrivate(this))
+{
+
+}
+
+DFMVfsManager::~DFMVfsManager()
+{
+
+}
+
 
 bool DFMVfsManager::attach(const QUrl &url)
 {
