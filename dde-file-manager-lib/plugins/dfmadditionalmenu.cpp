@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "dfmadditionalmenu_p.h"
 #include "dfmadditionalmenu.h"
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
@@ -42,44 +43,6 @@ DFM_BEGIN_NAMESPACE
     }while(false)
 
 #define MIME_TYPE_KEY "MimeType"
-
-class DFMAdditionalMenuPrivate : public QSharedData
-{
-    Q_DECLARE_PUBLIC(DFMAdditionalMenu)
-public:
-    const QStringList AllMenuTypes {
-        "SingleFile",
-        "SingleDir",
-        "MultiFileDirs",
-        "EmptyArea"
-    };
-
-    const QLatin1String MENU_TYPE_KEY {"X-DFM-MenuTypes"};
-    const QLatin1String MIMETYPE_EXCLUDE_KEY {"X-DFM-ExcludeMimeTypes"};
-    const QLatin1String MENU_HIDDEN_KEY {"X-DFM-NotShowIn"};     // "Desktop", "Filemanager"
-    const QLatin1String SUPPORT_SCHEMES_KEY {"X-DFM-SupportSchemes"}; // file, trash, tag..
-    const QLatin1String SUPPORT_SUFFIX_KEY {"X-DFM-SupportSuffix"}; // for deepin-compress *.7z.001,*.7z.002,*.7z.003...
-
-    explicit DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq);
-
-    QStringList getValues(XdgDesktopFile &file, const QLatin1String &key, const QStringList &whiteList = {});
-    bool isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes);
-    bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
-    bool isActionShouldShow(QAction *action, bool onDesktop);
-    bool isSchemeSupport(QAction *action, const DUrl &url);
-    bool isSuffixSupport(QAction *action, const DUrl &url, const bool ballEx7z = false);
-    //都是7z分卷压缩文件
-    bool isAllEx7zFile(const QStringList &files);
-    QList<QAction *> emptyAreaActoins(const QString &currentDir, bool onDesktop);
-private:
-    QList<QAction *> actionList;
-    QMap<QString, QList<QAction *> > actionListByType;
-    QObject *menuActionHolder {nullptr};
-    QList<DFileMenu *> menuList;
-    QTimer *m_delayedLoadFileTimer;
-
-    DFMAdditionalMenu *q_ptr;
-};
 
 DFMAdditionalMenuPrivate::DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq)
     : q_ptr(qq)

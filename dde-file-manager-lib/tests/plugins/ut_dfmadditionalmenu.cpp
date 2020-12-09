@@ -2,9 +2,11 @@
 
 #define private public
 #define protected public
+#include "plugins/dfmadditionalmenu_p.h"
 #include "plugins/dfmadditionalmenu.h"
 #include "plugins/dfmadditionalmenu.cpp"
 #include "stub.h"
+#include "../stub-ext/stubext.h"
 
 DFM_USE_NAMESPACE
 
@@ -29,6 +31,8 @@ TEST_F(DFMAdditionalMenuTest, test_appendParentMineType)
     ASSERT_NE(p_menu, nullptr);
 
     QStringList files;
+    p_menu->appendParentMineType(files, files);
+
     files << ".txt" ;
     p_menu->appendParentMineType(files, files);
 }
@@ -37,9 +41,13 @@ TEST_F(DFMAdditionalMenuTest, testActions_ZeroSize)
 {
     ASSERT_NE(p_menu, nullptr);
 
+    stub_ext::StubExt st;
+    bool called = false;
+    st.set_lamda(ADDR(DFMAdditionalMenuPrivate, emptyAreaActoins), [&called]()->QList<QAction *>{called = true;return QList<QAction*>();});
+
     QStringList files;
     QList<QAction *> result = p_menu->actions(files);
-    EXPECT_TRUE(result.isEmpty());
+    EXPECT_TRUE(called);
 }
 
 TEST_F(DFMAdditionalMenuTest, testActions_OneSize)
@@ -47,9 +55,9 @@ TEST_F(DFMAdditionalMenuTest, testActions_OneSize)
     ASSERT_NE(p_menu, nullptr);
 
     QStringList files;
-    files << "file:///test1";
+    files << "/home";
     QList<QAction *> result = p_menu->actions(files);
-    EXPECT_EQ(result.count(), 1);
+    EXPECT_FALSE(result.isEmpty());
 }
 
 TEST_F(DFMAdditionalMenuTest, testActions_TwoSize)
@@ -59,7 +67,7 @@ TEST_F(DFMAdditionalMenuTest, testActions_TwoSize)
     QStringList files;
     files << "file:///test1" << "file:///test2";
     QList<QAction *> result = p_menu->actions(files);
-    EXPECT_EQ(result.count(), 1);
+    EXPECT_FALSE(result.isEmpty());
 }
 
 TEST_F(DFMAdditionalMenuTest, load_desktop_file)

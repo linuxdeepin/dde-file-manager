@@ -201,6 +201,7 @@ HEADERS += \
     $$PWD/views/dfmvaultunlockpages.h \
     $$PWD/views/dfmvaultfileview.h \
     $$PWD/views/dfmvaultrecoverykeypages.h \
+    $$PWD/plugins/dfmadditionalmenu_p.h \
     $$PWD/plugins/dfmadditionalmenu.h \
     $$PWD/dialogs/connecttoserverdialog.h \
     $$PWD/shutil/dfmfilelistfile.h \

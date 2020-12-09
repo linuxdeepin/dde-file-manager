@@ -14,13 +14,16 @@ namespace  {
     public:
         LlsDeepinLabelLibraryTest():Test()
         {
-            p_library = LlsDeepinLabelLibrary::instance();
+
         }
 
         virtual void SetUp() override {
+            p_library = new LlsDeepinLabelLibrary;
         }
 
         virtual void TearDown() override {
+            delete p_library;
+            p_library = nullptr;
         }
 
         LlsDeepinLabelLibrary * p_library;

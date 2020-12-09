@@ -9,6 +9,7 @@
 #include "views/computerview.h"
 #include "models/computermodel.h"
 #include "dfmevent.h"
+#include "dfilemenu.h"
 #include "views/dfilemanagerwindow.h"
 #include "views/windowmanager.h"
 #include "views/dfmopticalmediawidget.h"
@@ -62,13 +63,6 @@ TEST_F(ComputerViewTest, get_view_list)
 
 TEST_F(ComputerViewTest, call_context_menu)
 {
-    QTimer timer;
-    QObject::connect(&timer, &QTimer::timeout, [&]{
-        timer.stop();
-        QWidget w;
-        w.show();
-    });
-    timer.start(200);
     EXPECT_NO_FATAL_FAILURE(m_computerView->contextMenu(QPoint(0, 0)));
 
     Stub stub;
@@ -97,14 +91,32 @@ TEST_F(ComputerViewTest, call_context_menu)
         return QVariant();
     };
     stub.set(ADDR(QModelIndex, data), ut_data);
+
+    static bool myCallExec = false;
+    void (*ut_exec)() = [](){myCallExec = true;};
+    stub.set((QAction*(DFileMenu::*)(const QPoint&, QAction*))ADDR(DFileMenu, exec), ut_exec);
+
+    bool t_isContains = false;
+    bool t_tstValue = false;
+    if (DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(QString("srTextFile"))) {
+        t_isContains = true;
+        t_tstValue = DFMOpticalMediaWidget::g_mapCdStatusInfo[QString("srTextFile")].bBurningOrErasing;
+    }
     DFMOpticalMediaWidget::g_mapCdStatusInfo[QString("srTextFile")].bBurningOrErasing = true;
 
-    timer.start(200);
     EXPECT_NO_FATAL_FAILURE(m_computerView->contextMenu(QPoint(100, 100)));
+    EXPECT_TRUE(myCallExec);
 
+    myCallExec = false;
     mySchemeRole = QString("other");
-    timer.start(200);
     EXPECT_NO_FATAL_FAILURE(m_computerView->contextMenu(QPoint(100, 100)));
+    EXPECT_TRUE(myCallExec);
+
+    if (t_isContains) {
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[QString("srTextFile")].bBurningOrErasing = t_tstValue;
+    } else {
+        DFMOpticalMediaWidget::g_mapCdStatusInfo.remove(QString("srTextFile"));
+    }
 }
 
 TEST_F(ComputerViewTest, call_rename_requested)
