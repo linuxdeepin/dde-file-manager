@@ -274,7 +274,8 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     }
 
     const ComputerModelItemData *pitmdata = &m_items[index.row()];
-
+    if (!pitmdata || !pitmdata->fi)
+        return QVariant();
     if (role == Qt::DisplayRole) {
         if (index.data(DataRoles::ICategoryRole) == ComputerModelItemData::Category::cat_splitter) {
             return pitmdata->sptext;
