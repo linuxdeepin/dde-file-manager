@@ -155,6 +155,7 @@ SOURCES += \
     $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
     $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
+    $$PWD/controllers/ut_dfmsidebartagitemhandler.cpp \
     $$PWD/controllers/ut_tagmanagerdaemon_interface.cpp \
     $$PWD/controllers/ut_dfmavfscrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmbookmarkcrumbcontroller.cpp \
