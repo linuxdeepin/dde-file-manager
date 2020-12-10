@@ -19,6 +19,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dfmvaultremovebyrecoverykeyview.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <dtkwidget_global.h>
 #include <QPlainTextEdit>
@@ -55,6 +56,7 @@ DFMVaultRemoveByRecoverykeyView::DFMVaultRemoveByRecoverykeyView(QWidget *parent
     , d_ptr(new DFMVaultRemoveByRecoverykeyViewPrivate(this))
 {
     m_keyEdit = new QPlainTextEdit(this);
+    AC_SET_ACCESSIBLE_NAME(m_keyEdit, AC_VAULT_DELETE_KEY_EDIT);
     m_keyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
     m_keyEdit->installEventFilter(this);
 

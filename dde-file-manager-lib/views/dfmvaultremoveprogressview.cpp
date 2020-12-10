@@ -20,6 +20,7 @@
 */
 #include "dfmvaultremoveprogressview.h"
 #include "dfmsettings.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <thread>
 
@@ -36,6 +37,7 @@ DFMVaultRemoveProgressView::DFMVaultRemoveProgressView(QWidget *parent)
     , m_vaultRmProgressBar(new DWaterProgress(this))
 {
     m_vaultRmProgressBar->setFixedSize(72, 72);
+    AC_SET_ACCESSIBLE_NAME(m_vaultRmProgressBar, AC_VAULT_DELETE_PROGRESS);
     QHBoxLayout *layout = new QHBoxLayout();
     layout->setMargin(0);
     layout->addWidget(m_vaultRmProgressBar, 1, Qt::AlignCenter);
