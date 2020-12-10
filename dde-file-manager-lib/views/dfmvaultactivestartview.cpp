@@ -1,4 +1,5 @@
 #include "dfmvaultactivestartview.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -15,6 +16,7 @@ DFMVaultActiveStartView::DFMVaultActiveStartView(QWidget *parent)
 {
     // 标题
     DLabel *pLabel1 = new DLabel(tr("File Vault"), this);
+    AC_SET_ACCESSIBLE_NAME(pLabel1, AC_VAULT_ACTIVE_START_TITLE_LABEL);
     QFont font = pLabel1->font();
     font.setPixelSize(18);
     pLabel1->setFont(font);
@@ -23,13 +25,16 @@ DFMVaultActiveStartView::DFMVaultActiveStartView(QWidget *parent)
     DLabel *pLabel2 = new DLabel(tr("Create your secure private space") + '\n' +
                                  tr("Advanced encryption technology") + '\n' +
                                  tr("Convenient and easy to use"), this);
+    AC_SET_ACCESSIBLE_NAME(pLabel2, AC_VAULT_ACTIVE_START_CONTENT_LABEL);
     pLabel2->setAlignment(Qt::AlignHCenter);
 
     DLabel *pLabel3 = new DLabel();
+    AC_SET_ACCESSIBLE_NAME(pLabel3, AC_VAULT_ACTIVE_START_PICTURE);
     pLabel3->setPixmap(QIcon::fromTheme("dfm_vault_active_start").pixmap(88, 100));
     pLabel3->setAlignment(Qt::AlignHCenter);
 
     m_pStartBtn = new QPushButton(tr("Create"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pStartBtn, AC_VAULT_ACTIVE_START_BUTTON);
     m_pStartBtn->setFixedSize(452, 30);
     connect(m_pStartBtn, &QPushButton::clicked,
             this, &DFMVaultActiveStartView::slotStartBtnClicked);

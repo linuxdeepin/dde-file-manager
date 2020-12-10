@@ -20,6 +20,7 @@
 */
 #include "dfmvaultremovebypasswordview.h"
 #include "interfaceactivevault.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -33,11 +34,13 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
 {
     //密码输入框
     m_pwdEdit = new DPasswordEdit(this);
+    AC_SET_ACCESSIBLE_NAME(m_pwdEdit, AC_VAULT_DELETE_PASSWORD_EDIT);
     m_pwdEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     // 提示按钮
     m_tipsBtn = new QPushButton(this);
+    AC_SET_ACCESSIBLE_NAME(m_tipsBtn, AC_VAULT_DELETE_HINT_BUTTON);
     m_tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     QHBoxLayout *layout = new QHBoxLayout();

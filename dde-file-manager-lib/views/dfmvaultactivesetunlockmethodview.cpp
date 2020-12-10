@@ -1,5 +1,6 @@
 #include "dfmvaultactivesetunlockmethodview.h"
 #include "operatorcenter.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QLineEdit>
 #include <QPushButton>
@@ -28,6 +29,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 {
     // 设置开锁方式标签
     QLabel *pLabel = new QLabel(tr("Set Vault Password"), this);
+    AC_SET_ACCESSIBLE_NAME(pLabel, AC_VAULT_ACTIVE_SET_PASSWORD_TITLE);
     QFont font = pLabel->font();
     font.setPixelSize(18);
     pLabel->setFont(font);
@@ -35,7 +37,9 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     // 类型
     DLabel *pTypeLabel = new DLabel(tr("Method"), this);
+    AC_SET_ACCESSIBLE_NAME(pTypeLabel, AC_VAULT_ACTIVE_SET_PASSWORD_TYPE_LABEL);
     m_pTypeCombo = new QComboBox(this);
+    AC_SET_ACCESSIBLE_NAME(m_pTypeCombo, AC_VAULT_ACTIVE_SET_PASSWORD_TYPE_COMBOX);
     QStringList lstItems;
     lstItems << tr("Manual")/* << tr("Random")*/;
     m_pTypeCombo->addItems(lstItems);
@@ -49,7 +53,9 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     // 设置密码
     m_pPasswordLabel = new DLabel(tr("Password"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pPasswordLabel, AC_VAULT_ACTIVE_SET_PASSWORD_PASSWORD_LABEL);
     m_pPassword = new DPasswordEdit(this);
+    AC_SET_ACCESSIBLE_NAME(m_pPassword, AC_VAULT_ACTIVE_SET_PASSWORD_PASSWORD_EDIT);
     m_pPassword->lineEdit()->setValidator(validator);   // 设置验证器
     m_pPassword->lineEdit()->setPlaceholderText(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"));
     m_pPassword->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
@@ -65,7 +71,9 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     // 重复密码
     m_pRepeatPasswordLabel = new DLabel(tr("Repeat password"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pRepeatPasswordLabel, AC_VAULT_ACTIVE_SET_PASSWORD_REPASSWORD_LABEL);
     m_pRepeatPassword = new DPasswordEdit(this);
+    AC_SET_ACCESSIBLE_NAME(m_pRepeatPassword, AC_VAULT_ACTIVE_SET_PASSWORD_REPASSWORD_EDIT);
     m_pRepeatPassword->lineEdit()->setValidator(validator);   // 设置验证器
     m_pRepeatPassword->lineEdit()->setPlaceholderText(tr("Input the password again"));
     m_pRepeatPassword->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
@@ -80,7 +88,9 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     // 提示信息
     m_pPasswordHintLabel = new DLabel(tr("Password hint"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pPasswordHintLabel, AC_VAULT_ACTIVE_SET_PASSWORD_HINT_LABEL);
     m_pTips = new QLineEdit(this);
+    AC_SET_ACCESSIBLE_NAME(m_pTips, AC_VAULT_ACTIVE_SET_PASSWORD_HINT_EDIT);
     m_pTips->setMaxLength(14);
     m_pTips->setPlaceholderText(tr("Optional"));
 
@@ -88,6 +98,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pNext, AC_VAULT_ACTIVE_SET_PASSWORD_NEXT_BUTTON);
     m_pNext->setFixedSize(452, 30);
     m_pNext->setEnabled(false);
     connect(m_pNext, &QPushButton::clicked,

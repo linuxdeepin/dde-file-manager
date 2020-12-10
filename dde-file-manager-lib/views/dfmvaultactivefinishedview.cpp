@@ -3,6 +3,7 @@
 #include "../../controllers/vaultcontroller.h"
 #include "vault/vaultlockmanager.h"
 #include "app/define.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -25,6 +26,7 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
 {
     // 标题
     QLabel *pLabelTitle = new QLabel(tr("Encrypt File Vault"), this);
+    AC_SET_ACCESSIBLE_NAME(pLabelTitle, AC_VAULT_ACTIVE_ENCRYPT_TITLE);
     QFont font = pLabelTitle->font();
     font.setPixelSize(18);
     pLabelTitle->setFont(font);
@@ -32,31 +34,38 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
 
     // 加密提示
     m_pTips = new DLabel(tr("Click 'Encrypt' and input the user password."), this);
+    AC_SET_ACCESSIBLE_NAME(m_pTips, AC_VAULT_ACTIVE_ENCRYPT_CONTENT);
     m_pTips->setAlignment(Qt::AlignHCenter);
 
     // 加密保险箱图片
     m_pEncryVaultImage = new DLabel(this);
+    AC_SET_ACCESSIBLE_NAME(m_pEncryVaultImage, AC_VAULT_ACTIVE_ENCRYPT_IMAGE);
     m_pEncryVaultImage->setPixmap(QIcon::fromTheme("dfm_vault_active_encrypt").pixmap(98, 88));
     m_pEncryVaultImage->setAlignment(Qt::AlignHCenter);
 
     // 进度条
     m_pWaterProgress = new DWaterProgress(this);
+    AC_SET_ACCESSIBLE_NAME(m_pWaterProgress, AC_VAULT_ACTIVE_ENCRYPT_PROGRESS);
     m_pWaterProgress->setValue(1);
     m_pWaterProgress->setFixedSize(98, 98);
     // 进度条提示
     m_pTips3 = new DLabel(tr("Encrypting..."), this);
+    AC_SET_ACCESSIBLE_NAME(m_pTips3, AC_VAULT_ACTIVE_ENCRYPT_PROGRESS_HINT);
     m_pTips3->setAlignment(Qt::AlignHCenter);
 
     // 加密完成完成图片
     m_pEncryptFinishedImage = new DLabel(this);
+    AC_SET_ACCESSIBLE_NAME(m_pEncryptFinishedImage, AC_VAULT_ACTIVE_ENCRYPT_FINISH_IMAGE);
     m_pEncryptFinishedImage->setPixmap(QIcon::fromTheme("dfm_vault_active_finish").pixmap(128, 128));
     m_pEncryptFinishedImage->setAlignment(Qt::AlignHCenter);
     // 加密完成提示
     m_pTips4 = new DLabel(tr("The setup is complete"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pTips4, AC_VAULT_ACTIVE_ENCRYPT_FINISH_HINT);
     m_pTips4->setAlignment(Qt::AlignHCenter);
 
     // 加密保险箱按钮
     m_pFinishedBtn = new QPushButton(tr("Encrypt") , this);
+    AC_SET_ACCESSIBLE_NAME(m_pFinishedBtn, AC_VAULT_ACTIVE_ENCRYPT_BUTTON);
     m_pFinishedBtn->setFixedSize(452, 30);
     connect(m_pFinishedBtn, &QPushButton::clicked,
             this, &DFMVaultActiveFinishedView::slotEncryptVault);

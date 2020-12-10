@@ -1,5 +1,6 @@
 #include "dfmvaultactivesavekeyview.h"
 #include "operatorcenter.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -20,6 +21,7 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
 {
     // 标题名
     QLabel *pLabelTitle = new QLabel(tr("Recovery Key"), this);
+    AC_SET_ACCESSIBLE_NAME(pLabelTitle, AC_VAULT_ACTIVE_KEY_TITLE);
     QFont font = pLabelTitle->font();
     font.setPixelSize(18);
     pLabelTitle->setFont(font);
@@ -27,26 +29,31 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
 
     // 提示标签
     m_pTipsLabel = new DLabel(tr("Generate a recovery key in case that you forgot the password"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pTipsLabel, AC_VAULT_ACTIVE_KEY_CONTENT);
 
     DButtonBox *m_pButtonBox = new DButtonBox(this);
     m_pButtonBox->setFixedSize(200, 36);
 
     // 密钥
     m_pKeyBtn = new DButtonBoxButton(tr("Key"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pKeyBtn, AC_VAULT_ACTIVE_KEY_KEY_BUTTON);
     m_pKeyBtn->setCheckable(true);
     m_pKeyBtn->setChecked(true);
     connect(m_pKeyBtn, &DButtonBoxButton::clicked,
             this, &DFMVaultActiveSaveKeyView::slotKeyBtnClicked);
     m_pKeyText = new QPlainTextEdit(this);
+    AC_SET_ACCESSIBLE_NAME(m_pKeyText, AC_VAULT_ACTIVE_KEY_KEY_EDIT);
     m_pKeyText->setReadOnly(true);
     m_pKeyText->setFixedSize(452, 134);
 
     // 二维码
     m_pQRCodeBtn = new DButtonBoxButton(tr("QR code"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pQRCodeBtn, AC_VAULT_ACTIVE_KEY_QRCODE_BUTTON);
     m_pQRCodeBtn->setCheckable(true);
     connect(m_pQRCodeBtn, &DButtonBoxButton::clicked,
             this, &DFMVaultActiveSaveKeyView::slotQRCodeBtnClicked);
     m_pQRCodeImage = new DLabel(this);
+    AC_SET_ACCESSIBLE_NAME(m_pQRCodeImage, AC_VAULT_ACTIVE_KEY_QRCODE_IMAGE);
     m_pQRCodeImage->setFixedSize(120, 120);
     m_pQRCodeImage->setVisible(false);
 
@@ -57,6 +64,7 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
 
     // 扫描提示
     m_pScanTipsLabel = new DLabel(tr("Scan QR code and save the key to another device"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pScanTipsLabel, AC_VAULT_ACTIVE_KEY_QRCODE_HINT);
     QFont font2 = m_pScanTipsLabel->font();
     font2.setPixelSize(12);
     m_pScanTipsLabel->setFont(font2);
@@ -64,6 +72,7 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
 
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
+    AC_SET_ACCESSIBLE_NAME(m_pNext, AC_VAULT_ACTIVE_KEY_NEXT_BUTTON);
     m_pNext->setFixedSize(452, 30);
     connect(m_pNext, &QPushButton::clicked,
             this, &DFMVaultActiveSaveKeyView::slotNextBtnClicked);

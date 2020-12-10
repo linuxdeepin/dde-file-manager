@@ -22,6 +22,7 @@
 #include "vault/interfaceactivevault.h"
 #include "controllers/vaultcontroller.h"
 #include "dfilemanagerwindow.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -43,6 +44,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
 
     // 标题
     QLabel *pTitle = new QLabel(tr("Unlock File Vault"), this);
+    AC_SET_ACCESSIBLE_NAME(pTitle, AC_VAULT_PASSWORD_UNLOCK_TITLE);
     QFont font = pTitle->font();
     font.setPixelSize(18);
     pTitle->setFont(font);
@@ -50,16 +52,19 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
 
     // 信息
     QLabel *pMessage = new QLabel(tr("Verify your password"), this);
+    AC_SET_ACCESSIBLE_NAME(pMessage, AC_VAULT_PASSWORD_UNLOCK_CONTENT);
     pMessage->setAlignment(Qt::AlignHCenter);
 
     // 密码编辑框
     m_passwordEdit = new DPasswordEdit(this);
+    AC_SET_ACCESSIBLE_NAME(m_passwordEdit, AC_VAULT_PASSWORD_UNLOCK_EDIT);
     m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_passwordEdit->lineEdit()->installEventFilter(this);
     m_passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     // 提示按钮
     m_tipsButton = new QPushButton(this);
+    AC_SET_ACCESSIBLE_NAME(m_tipsButton, AC_VAULT_PASSWORD_UNLOCK_HINT_BUTTON);
     m_tipsButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     // 主视图
@@ -87,6 +92,9 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     addButton(btnList[0], false);
     addButton(btnList[1], true, ButtonType::ButtonRecommend);
     getButton(1)->setEnabled(false);
+
+    AC_SET_ACCESSIBLE_NAME(getButton(0), AC_VAULT_PASSWORD_UNLOCK_CANCEL_BUTTON);
+    AC_SET_ACCESSIBLE_NAME(getButton(1), AC_VAULT_PASSWORD_UNLOCK_OK_BUTTON);
 
     connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);

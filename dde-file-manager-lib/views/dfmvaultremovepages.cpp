@@ -7,6 +7,7 @@
 #include "dfmvaultremoveprogressview.h"
 #include "dfmvaultremovebypasswordview.h"
 #include "dfmvaultremovebyrecoverykeyview.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QFrame>
 #include <QRegExpValidator>
@@ -31,11 +32,13 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
 
     // 标题
     DLabel *pTitle = new DLabel(tr("Delete File Vault"), this);
+    AC_SET_ACCESSIBLE_NAME(pTitle, AC_VAULT_DELETE_TITLE);
     // 文本水平并垂直居中
     pTitle->setAlignment(Qt::AlignCenter);
 
     // 信息
     m_pInfo = new QLabel(this);
+    AC_SET_ACCESSIBLE_NAME(m_pInfo, AC_VAULT_DELETE_CONTENT);
     // 文本水平并垂直居中
     m_pInfo->setAlignment(Qt::AlignCenter);
     // 修复bug-41001 提示信息显示不全
@@ -88,6 +91,10 @@ void DFMVaultRemovePages::showVerifyWidget()
     addButton(buttonTexts[2], true, DDialog::ButtonWarning);
     setDefaultButton(2);
     m_stackedWidget->setCurrentIndex(0);
+
+    AC_SET_ACCESSIBLE_NAME(getButton(0), AC_VAULT_DELETE_CANCEL_BUTTON);
+    AC_SET_ACCESSIBLE_NAME(getButton(1), AC_VAULT_DELETE_CHANGE_BUTTON);
+    AC_SET_ACCESSIBLE_NAME(getButton(2), AC_VAULT_DELETE_DELETE_BUTTON);
 
     // 如果密码提示信息为空，则隐藏提示按钮
     QString strPwdHint("");

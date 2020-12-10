@@ -21,6 +21,7 @@
 #include "dfmvaultrecoverykeypages.h"
 #include "vault/interfaceactivevault.h"
 #include "controllers/vaultcontroller.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QPlainTextEdit>
 #include <QAbstractButton>
@@ -54,6 +55,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
 
     // 标题
     QLabel *pTitle = new QLabel(tr("Unlock by Key"), this);
+    AC_SET_ACCESSIBLE_NAME(pTitle, AC_VAULT_KEY_UNLOCK_TITLE);
     QFont font = pTitle->font();
     font.setPixelSize(16);
     pTitle->setFont(font);
@@ -61,6 +63,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
 
     // 密钥编辑框
     m_recoveryKeyEdit = new QPlainTextEdit(this);
+    AC_SET_ACCESSIBLE_NAME(m_recoveryKeyEdit, AC_VAULT_KEY_UNLOCK_EDIT);
     m_recoveryKeyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
     m_recoveryKeyEdit->setMaximumBlockCount(MAX_KEY_LENGTH + 3);
     m_recoveryKeyEdit->installEventFilter(this);
@@ -81,6 +84,8 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     addButton(btnList[1], true, ButtonType::ButtonRecommend);
     getButton(1)->setEnabled(false);
 
+    AC_SET_ACCESSIBLE_NAME(getButton(0), AC_VAULT_KEY_UNLOCK_CANCEL_BUTTON);
+    AC_SET_ACCESSIBLE_NAME(getButton(1), AC_VAULT_KEY_UNLOCK_OK_BUTTON);
 
     // 防止点击按钮后界面隐藏
     setOnButtonClickedClose(false);
