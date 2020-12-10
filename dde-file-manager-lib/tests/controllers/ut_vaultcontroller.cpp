@@ -10,10 +10,20 @@
 #include <interfaces/dfmstandardpaths.h>
 #include <io/dfilestatisticsjob.h>
 #include <QTimer>
+#include "shutil/fileutils.h"
 
 #include "controllers/vaultcontroller.h"
 #include "vault/vaultglobaldefine.h"
 #include "controllers/vaulterrorcode.h"
+#include <QDirIterator>
+#include "dfmstandardpaths.h"
+#include <interfaces/dfileservices.h>
+#include "dfmevent.h"
+#include "models/vaultfileinfo.h"
+#include <QProcess>
+
+#include "stub.h"
+#include "../stub-ext/stubext.h"
 
 
 DFM_USE_NAMESPACE
@@ -49,17 +59,34 @@ namespace  {
 
 TEST_F(TestVaultController, tst_createFileInfo)
 {
-//    DUrl fileUrl = DUrl::fromVaultFile("/");
-//    const QSharedPointer<DFMCreateFileInfoEvent> &&event = dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, fileUrl);
-//    const auto &&pt = m_controller->createFileInfo(event);
+#if 0 // those code will cause broen occasionally
+    DUrl fileUrl = DUrl::fromVaultFile("/");
+    const QSharedPointer<DFMCreateFileInfoEvent> &&event =
+            dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, fileUrl);
+    const auto &&pt = m_controller->createFileInfo(event);
 
-//    EXPECT_NE(nullptr, pt.data());
+    EXPECT_NE(nullptr, pt.data());
+#endif
 }
 
 TEST_F(TestVaultController, tst_createDirIterator)
 {
-//    const DDirIteratorPointer &iterator = createDirIterator(dMakeEventPointer<DFMCreateDiriterator>(nullptr, event->url(), event->nameFilters(),
-//                                                                                                    event->filters(), event->flags()));
+    QStringList nameFilters;
+    nameFilters << "filter";
+
+
+    const DDirIteratorPointer &iterator = m_controller->createDirIterator(
+                dMakeEventPointer<DFMCreateDiriterator>(nullptr,
+                                                        DUrl(DFMStandardPaths::location(DFMStandardPaths::HomePath)),
+                                                        nameFilters,
+                                                        QDir::NoFilter,
+                                                        QDirIterator::NoIteratorFlags));
+    iterator->next();
+    iterator->hasNext();
+    iterator->fileName();
+    iterator->fileUrl();
+    iterator->fileInfo();
+    iterator->url();
 }
 
 TEST_F(TestVaultController, tst_createFileWatcher)
@@ -72,12 +99,58 @@ TEST_F(TestVaultController, tst_createFileWatcher)
 TEST_F(TestVaultController, tst_open_file_files)
 {
     QSharedPointer<DFMOpenFileEvent> event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, DUrl::fromVaultFile("/"));
-    EXPECT_NO_FATAL_FAILURE(m_controller->openFile(event));
+
+    bool (*st_openFile)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &){
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, openFile), st_openFile);
+    EXPECT_TRUE(m_controller->openFile(event));
 
     DUrlList urls;
     urls << DUrl::fromVaultFile("/");
     QSharedPointer<DFMOpenFilesEvent> events = dMakeEventPointer<DFMOpenFilesEvent>(nullptr, urls);
-    EXPECT_NO_FATAL_FAILURE(m_controller->openFiles(events));
+
+    // replace openFiles to avoid dialogs pop
+    bool (*st_openFiles)(const QStringList &) = [](const QStringList &) {
+        return true;
+    };
+    stub.set(ADDR(FileUtils, openFiles), st_openFiles);
+
+    // replace isExecutableScript
+    bool (*st_isExecutableScript)(const QString &) = [](const QString &) {
+        return true;
+    };
+    stub.set(ADDR(FileUtils, isExecutableScript), st_isExecutableScript);
+
+    EXPECT_FALSE(m_controller->openFiles(events));
+
+    // repalce isFileRunnable
+    stub.reset(ADDR(FileUtils, isExecutableScript));
+    bool (*st_isFileRunnable)(const QString &) = [](const QString &) {
+        return true;
+    };
+
+    stub.set(ADDR(FileUtils, isFileRunnable), st_isFileRunnable);
+    EXPECT_FALSE(m_controller->openFiles(events));
+
+    // replace shouldAskUserToAddExecutableFlag
+    stub.reset(ADDR(FileUtils, isFileRunnable));
+    bool (*st_shouldAskUserToAddExecutableFlag)(const QString &) = [](const QString &) {
+        return true;
+    };
+
+    stub.set(ADDR(FileUtils, shouldAskUserToAddExecutableFlag), st_shouldAskUserToAddExecutableFlag);
+    EXPECT_FALSE(m_controller->openFiles(events));
+
+    // replace isFileWindowUrlShortcut
+    stub.reset(ADDR(FileUtils, shouldAskUserToAddExecutableFlag));
+    bool (*st_isFileWindowsUrlShortcut)(const QString &) = [](const QString &) {
+        return true;
+    };
+    stub.set(ADDR(FileUtils, isFileWindowsUrlShortcut), st_isFileWindowsUrlShortcut);
+
+    EXPECT_TRUE(m_controller->openFiles(events));
 }
 
 /// --------------------------------------------------
@@ -266,5 +339,271 @@ TEST_F(TestVaultController, tst_slotLockVault)
     EXPECT_EQ(VaultController::Encrypted, m_controller->m_enVaultState);
 }
 
+TEST_F(TestVaultController, tst_openFileByApp)
+{
+    QString appName("deepin-editor");
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+    QString testLnFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utLink";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdLink = QString("ln -s ") + testFile + " " + testLnFile;
+    QString cmdRm = QString("rm ") + testFile + " " + testLnFile;
+
+    QProcess::execute(cmdTouch);
+    QProcess::execute(cmdLink);
+    QSharedPointer<DFMOpenFileByAppEvent> event = dMakeEventPointer<DFMOpenFileByAppEvent>(nullptr, appName, DUrl(testLnFile));
 
 
+    bool (*st_isSymLink)() = [](){
+        return true;
+    };
+    stub_ext::StubExt stub;
+    stub.set(VADDR(VaultFileInfo, isSymLink), st_isSymLink);
+
+    EXPECT_FALSE(m_controller->openFileByApp(event));
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_deleteFiles)
+{
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+
+    QProcess::execute(cmdTouch);
+    DUrlList urls;
+    urls << DUrl(testFile);
+    QSharedPointer<DFMDeleteEvent> event = dMakeEventPointer<DFMDeleteEvent>(nullptr, urls);
+
+    EXPECT_TRUE(m_controller->deleteFiles(event));
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_moveToTrash)
+{
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+
+    QProcess::execute(cmdTouch);
+    DUrlList urls;
+    urls << DUrl(testFile);
+    QSharedPointer<DFMMoveToTrashEvent> event = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, urls, false);
+
+    m_controller->moveToTrash(event);
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_pasteFile)
+{
+    DUrl picPath(DFMStandardPaths::location(DFMStandardPaths::PicturesPath));
+    QSharedPointer<DFMPasteEvent> event = dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CopyAction, picPath, DUrlList() << picPath);
+    m_controller->pasteFile(event);
+}
+
+TEST_F(TestVaultController, tst_writeFilsToClipboard)
+{
+    DUrl picPath(DFMStandardPaths::location(DFMStandardPaths::PicturesPath));
+    QSharedPointer<DFMWriteUrlsToClipboardEvent> event = dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CopyAction, DUrlList() << picPath);
+    m_controller->writeFilesToClipboard(event);
+}
+
+TEST_F(TestVaultController, tst_renameFile)
+{
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+    QString testRenameFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utRename";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile + " " + testRenameFile;
+
+    QProcess::execute(cmdTouch);
+
+    QSharedPointer<DFMRenameEvent> event = dMakeEventPointer<DFMRenameEvent>(nullptr, testFile, testRenameFile);
+    m_controller->renameFile(event);
+
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_share_unshare_Folder)
+{
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+
+    QProcess::execute(cmdTouch);
+
+    QSharedPointer<DFMFileShareEvent> event = dMakeEventPointer<DFMFileShareEvent>(nullptr, testFile, "utFile");
+    EXPECT_FALSE(m_controller->shareFolder(event));
+
+    QSharedPointer<DFMCancelFileShareEvent> cancelEvent = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, testFile);
+    EXPECT_TRUE(m_controller->unShareFolder(cancelEvent));
+
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_openTerminal)
+{
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+
+    QProcess::execute(cmdTouch);
+
+    bool (*st_startDetached)(void *, const QString &) = [](void *, const QString &){
+        return true;
+    };
+
+    typedef bool(*FunPtr)(const QString &);
+    Stub stub;
+    stub.set(FunPtr(&QProcess::startDetached), st_startDetached);
+
+    QSharedPointer<DFMOpenInTerminalEvent> event = dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, testFile);
+    EXPECT_TRUE(m_controller->openInTerminal(event));
+
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_add_remove_Bookmark)
+{
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+    testFile = "file://" + testFile;
+
+    QProcess::execute(cmdTouch);
+
+    QSharedPointer<DFMAddToBookmarkEvent> eventAdd = dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, testFile);
+    EXPECT_FALSE(m_controller->addToBookmark(eventAdd));
+
+    QSharedPointer<DFMRemoveBookmarkEvent> eventRemove = dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, testFile);
+    EXPECT_FALSE(m_controller->removeBookmark(eventRemove));
+
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_createSymlink)
+{
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+    QString testLnFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utLink";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdLink = QString("ln -s ") + testFile + " " + testLnFile;
+    QString cmdRm = QString("rm ") + testFile + " " + testLnFile;
+
+    QProcess::execute(cmdTouch);
+
+
+    QSharedPointer<DFMCreateSymlinkEvent> event = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, testFile, testLnFile);
+    EXPECT_FALSE(m_controller->createSymlink(event));
+
+    QString vaultTestFile = "file://" + testFile;
+    QString vaultTestLnFile = "file://" + testLnFile;
+    QSharedPointer<DFMCreateSymlinkEvent> event2 = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, vaultTestFile, vaultTestLnFile);
+    EXPECT_TRUE(m_controller->createSymlink(event2));
+
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_set_remove_FileTag)
+{
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+
+    QProcess::execute(cmdTouch);
+
+    QList<QString> qstring;
+    QSharedPointer<DFMSetFileTagsEvent> event = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, testFile, qstring);
+    m_controller->setFileTags(event);
+
+    QList<DUrl> qUrls;
+    QSharedPointer<DFMGetTagsThroughFilesEvent> event2 = dMakeEventPointer<DFMGetTagsThroughFilesEvent>(nullptr, qUrls);
+    m_controller->getTagsThroughFiles(event2);
+
+    QSharedPointer<DFMRemoveTagsOfFileEvent> event3 = dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, testFile, qstring);
+    m_controller->removeTagsOfFile(event3);
+
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_updateFileInfo)
+{
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+
+    DUrlList urls;
+    urls << DUrl(testFile);
+
+    // file not exist
+    m_controller->updateFileInfo(urls);
+    // create file
+    QProcess::execute(cmdTouch);
+    // insert to map
+    m_controller->updateFileInfo(urls);
+    // use map info
+    m_controller->updateFileInfo(urls);
+
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_getFileInfo)
+{
+    VaultController::FileBaseInfo info;
+    info.isExist = false;
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+    m_controller->m_mapVaultFileInfo.insert(DUrl(testFile), info);
+    VaultController::FileBaseInfo ret = m_controller->getFileInfo(DUrl(testFile));
+    EXPECT_FALSE(ret.isExist);
+}
+
+TEST_F(TestVaultController, tst_createVault)
+{
+    QString utDir1 = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utDir1";
+    QString utDir2 = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utDir2";
+
+    QString cmdTouch = QString("mkdir ") + utDir1 + " " + utDir2;
+    QString cmdRm = QString("rm -r ") + utDir1 + " " + utDir2;
+
+    void (*st_sigCreateVault)(QString, QString, QString) = [](QString, QString, QString){
+        // do nothing
+    };
+    Stub stub;
+    stub.set(ADDR(VaultController, sigCreateVault), st_sigCreateVault);
+
+    m_controller->createVault("password", utDir1, utDir2);
+    m_controller->createVault("password", utDir1, utDir2);
+
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_unLockVault)
+{
+    QString utDir1 = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utDir1";
+    QString utDir2 = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utDir2";
+
+    QString cmdRm = QString("rm -r ") + utDir1 + " " + utDir2;
+
+    m_controller->unlockVault("password", utDir1, utDir2);
+    m_controller->unlockVault("password", utDir1, utDir2);
+
+    QProcess::execute(cmdRm);
+}
+
+TEST_F(TestVaultController, tst_lockVault)
+{
+    QString utDir1 = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utDir1";
+    QString utDir2 = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utDir2";
+
+    QString cmdRm = QString("rm -r ") + utDir1 + " " + utDir2;
+
+    m_controller->lockVault();
+    m_controller->lockVault(utDir1, utDir2);
+}

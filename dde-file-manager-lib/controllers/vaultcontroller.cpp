@@ -174,7 +174,6 @@ bool VaultDirIterator::hasNext() const
     }
 
     return false;
-    //    return iterator->hasNext();
 }
 
 QString VaultDirIterator::fileName() const
@@ -374,8 +373,10 @@ bool VaultController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> 
 
     if (pfile->isSymLink()) {
         const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
+        if (!linkInfo.data())
+            return false;
 
-        if (linkInfo && !linkInfo->exists()) {
+        if (!linkInfo->exists()) {
             dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
             return false;
         }
@@ -1007,7 +1008,7 @@ void VaultController::unlockVault(const DSecureString &password, QString lockBas
 {
     // 修复bug-52351
     // 保险箱解锁前,创建挂载目录
-    QString strPath = makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME);
+    QString strPath = unlockFileDir;
     if (QFile::exists(strPath)) {   // 如果存在,则清空目录
         QDir dir(strPath);
         if (!dir.isEmpty()) {

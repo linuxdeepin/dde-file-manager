@@ -5,7 +5,10 @@
 #include "views/dfmsidebar.h"
 #include "interfaces/dfmsidebaritem.h"
 #include "controllers/dfmsidebardefaultitemhandler.h"
+#include "controllers/pathmanager.h"
+
 #include "stub.h"
+
 DFM_USE_NAMESPACE
 
 using namespace testing;
@@ -64,8 +67,6 @@ TEST_F(DFMSideBarDefaultItemHandlerTest, cd_action)
 
 TEST_F(DFMSideBarDefaultItemHandlerTest, context_menu)
 {
-    ASSERT_NE(p_handler, nullptr);
-
     Stub stub;
     static bool myCallOpen = false;
     void (*ut_openNewTab)() = [](){myCallOpen = true;};
@@ -79,7 +80,17 @@ TEST_F(DFMSideBarDefaultItemHandlerTest, context_menu)
     DFMSideBarItem *item = DFMSideBarItem::createSeparatorItem(QString("Trash"));
     ASSERT_NE(item, nullptr);
 
+    QString (*st_getSystemPathDisplayName)(QString) = [](QString) {
+        return QString("displayName");
+    };
+
+    stub.set(ADDR(PathManager, getSystemPathDisplayName), st_getSystemPathDisplayName);
+
     QMenu *menu = p_handler->contextMenu(bar, item);
+    QList<QAction *> actions = menu->actions();
+    for (auto action : actions) {
+        action->trigger();
+    }
 
     EXPECT_NE(menu, nullptr);
 
