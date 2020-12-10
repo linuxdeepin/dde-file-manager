@@ -171,7 +171,7 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
     return menu;
 }
 
-DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop)
+DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop)
 {
     // remove compress/decompress action
     unusedList << MenuAction::Compress << MenuAction::Decompress << MenuAction::DecompressHere;
@@ -1176,6 +1176,17 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
         }
 
     }
+}
+
+bool DFileMenuManager::isCustomMenuSupported(const DUrl &viewRootUrl)
+{
+    //判断保险箱 回收站 smb ftp 光盘 U盘 手机
+    const QString &path = viewRootUrl.toLocalFile();
+    DStorageInfo st(path);
+    return st.isLocalDevice() //过滤 手机 网络 smb ftp
+            && !deviceListener->isBlockFile(path) //过滤 U盘 光盘 移动硬盘
+            && !viewRootUrl.isVaultFile() //过滤 保险箱
+            && !viewRootUrl.isTrashFile();//过滤 回收站
 }
 
 void DFileMenuManager::addActionWhitelist(MenuAction action)
