@@ -8,96 +8,126 @@
 #include "views/dfmsidebar.h"
 #include "interfaces/dfmsidebaritem.h"
 #include "controllers/dfmsidebardeviceitemhandler.h"
+#include "dfmstandardpaths.h"
+#include "stub.h"
+
 DFM_USE_NAMESPACE
 
 using namespace testing;
 namespace  {
-    class DFMSideBarDeviceItemHandlerTest : public Test
+    class TestDFMSideBarDeviceItemHandler : public Test
     {
     public:
-        DFMSideBarDeviceItemHandlerTest():Test()
+        TestDFMSideBarDeviceItemHandler():Test()
         {
-            p_handler = nullptr;
+            m_handler = nullptr;
         }
 
         virtual void SetUp() override {
-            p_handler = new DFMSideBarDeviceItemHandler;
+            m_handler = new DFMSideBarDeviceItemHandler;
         }
 
         virtual void TearDown() override {
-            delete  p_handler;
+            delete  m_handler;
         }
 
-        DFMSideBarDeviceItemHandler * p_handler;
+        DFMSideBarDeviceItemHandler * m_handler;
     };
 }
 
-TEST_F(DFMSideBarDeviceItemHandlerTest, create_unmount_action)
+TEST_F(TestDFMSideBarDeviceItemHandler, create_unmount_action)
 {
-    ASSERT_NE(p_handler, nullptr);
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
 
-    DUrl url("Trash");
-    bool withTest = true;
-    DViewItemAction *action = p_handler->createUnmountOrEjectAction(url, withTest);
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+
+    QProcess::execute(cmdTouch);
+
+    testFile = "file://" + testFile;
+    DViewItemAction *action = m_handler->createUnmountOrEjectAction(testFile, true);
+    action->trigger();
     ASSERT_NE(action, nullptr);
 
     action->deleteLater();
+
+    QProcess::execute(cmdRm);
 }
 
-TEST_F(DFMSideBarDeviceItemHandlerTest, create_item)
+TEST_F(TestDFMSideBarDeviceItemHandler, create_item)
 {
-    ASSERT_NE(p_handler, nullptr);
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
 
-    DUrl url("dfmroot:///sda5.localdisk");
-    DFMSideBarItem *item = p_handler->createItem(url);
-    ASSERT_NE(item, nullptr);
-    EXPECT_EQ(item->url(), url);
-    delete item;
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+
+    QProcess::execute(cmdTouch);
+
+    testFile = "file://" + testFile;
+    DFMSideBarItem *item = m_handler->createItem(testFile);
+    EXPECT_NE(nullptr, item);
+
+    if (item)
+        delete item;
+
+    QProcess::execute(cmdRm);
 }
 
-TEST_F(DFMSideBarDeviceItemHandlerTest, cd_action)
+TEST_F(TestDFMSideBarDeviceItemHandler, context_menu)
 {
-    ASSERT_NE(p_handler, nullptr);
-
-//    DFileManagerWindow window;
-//    const DFMSideBar *bar = window.getLeftSideBar();
-
-//    DUrl url("dfmroot:///sda5.localdisk");
-//    DFMSideBarItem *item = p_handler->createItem(url);
-//    ASSERT_NE(item, nullptr);
-
-    //线程挂起无法结束
-//    p_handler->cdAction(bar, item);
-
-//    delete item;
-}
-
-TEST_F(DFMSideBarDeviceItemHandlerTest, context_menu)
-{
-    ASSERT_NE(p_handler, nullptr);
+    Stub stub;
+    void (*ut_openNewTab)() = [](){};
+    // to avoid broken in DFileManagerWindow
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
 
     DFileManagerWindow window;
     const DFMSideBar *bar = window.getLeftSideBar();
 
-    DUrl url("dfmroot:///sda5.localdisk");
-    DFMSideBarItem *item = p_handler->createItem(url);
-    ASSERT_NE(item, nullptr);
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
 
-    QMenu *menu = p_handler->contextMenu(bar, item);
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
 
-    EXPECT_NE(menu, nullptr);
+    QProcess::execute(cmdTouch);
 
-    delete item;
-    delete menu;
+    testFile = "file://" + testFile;
+    DFMSideBarItem *item = m_handler->createItem(testFile);
+    EXPECT_NE(nullptr, item);
+
+    if (item) {
+        QMenu *menu = m_handler->contextMenu(bar, item);
+
+        EXPECT_NE(menu, nullptr);
+
+        delete item;
+        delete menu;
+    }
+    QProcess::execute(cmdRm);
 }
 
-TEST_F(DFMSideBarDeviceItemHandlerTest, reset_name)
+TEST_F(TestDFMSideBarDeviceItemHandler, reset_name)
 {
-    ASSERT_NE(p_handler, nullptr);
+    Stub stub;
+    void (*ut_openNewTab)() = [](){};
+    // to avoid broken in DFileManagerWindow
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
 
-    DUrl url("dfmroot:///sda5.localdisk");
-    DFMSideBarItem *item = p_handler->createItem(url);
-    ASSERT_NE(item, nullptr);
+    DFileManagerWindow window;
 
-    p_handler->rename(item, QString("test"));
+    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
+
+    QString cmdTouch = QString("touch ") + testFile;
+    QString cmdRm = QString("rm ") + testFile;
+
+    QProcess::execute(cmdTouch);
+
+    testFile = "file://" + testFile;
+    DFMSideBarItem *item = m_handler->createItem(testFile);
+    EXPECT_NE(nullptr, item);
+
+    if (item) {
+        m_handler->rename(item, "renamed");
+        delete item;
+    }
+    QProcess::execute(cmdRm);
 }

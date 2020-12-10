@@ -4,7 +4,10 @@
 #include <interfaces/dfmsidebaritem.h>
 #include <views/dfmsidebar.h>
 #include <views/dfilemanagerwindow.h>
+#include <DDialog>
+#include "vault/vaultlockmanager.h"
 
+#include "stub.h"
 
 #define private public
 #include "controllers/dfmsidebarvaultitemhandler.h"
@@ -31,10 +34,53 @@ namespace  {
 }
 
 
-TEST_F(TestDFMSideBarVaultItemHandler, tst_createItem)
+TEST_F(TestDFMSideBarVaultItemHandler, tst_contextMenu)
 {
-//    DFMSideBarItem *item = m_controller->createItem(DFMVAULT_ROOT);
- //   EXPECT_NE(nullptr, item);
- //   delete item;
+    DFMSideBarItem item;
+    Stub stub;
+    void (*ut_openNewTab)() = [](){};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
+    DFileManagerWindow window;
+
+    EXPECT_NE(nullptr, m_controller->contextMenu(window.getLeftSideBar(), &item));
 }
 
+TEST_F(TestDFMSideBarVaultItemHandler, tst_lockNow)
+{
+    Stub stub;
+    void (*ut_openNewTab)() = [](){};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
+    DFileManagerWindow window;
+
+    m_controller->lockNow(&window);
+}
+
+TEST_F(TestDFMSideBarVaultItemHandler, tst_autoLock)
+{
+    bool (*st_autoLock)(VaultLockManager::AutoLockState) = [](VaultLockManager::AutoLockState){
+        // do nothing.
+        return  true;
+    };
+    Stub stub;
+    stub.set(ADDR(VaultLockManager, autoLock), st_autoLock);
+
+    m_controller->autoLock(0);
+}
+
+TEST_F(TestDFMSideBarVaultItemHandler, tst_showView)
+{
+    Stub stub;
+    void (*ut_openNewTab)() = [](){};
+    stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
+    DFileManagerWindow window;
+
+    bool (*st_cd)(const DUrl &) = [](const DUrl &){
+        return true;
+    };
+    stub.set(ADDR(DFileManagerWindow, cd), st_cd);
+
+    m_controller->showView(&window, "");
+}
