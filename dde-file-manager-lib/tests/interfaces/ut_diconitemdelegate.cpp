@@ -17,23 +17,26 @@ namespace  {
 class TestDIconItemDelegate : public testing::Test
 {
 public:
-    DIconItemDelegate *DIconIdl;
+    DIconItemDelegate *iconItemDelegate;
+    DFileView *fileview；
     void SetUp() override
     {
-        DFileView *dfileview = new DFileView();
-        dfileview->initDelegate();
-        dfileview->increaseIcon();
-        dfileview->decreaseIcon();
-        dfileview ->setIconSizeBySizeIndex(0);
+        fileview = new DFileView();
+        fileview->initDelegate();
+        fileview->increaseIcon();
+        fileview->decreaseIcon();
+        fileview ->setIconSizeBySizeIndex(0);
 
-        DIconIdl = qobject_cast<DIconItemDelegate *>(dfileview->itemDelegate());
+        iconItemDelegate = qobject_cast<DIconItemDelegate *>(dfileview->itemDelegate());
 
         std::cout << "start TestDIconItemDelegate";
     }
     void TearDown() override
     {
-        delete  DIconIdl;
-        DIconIdl = nullptr;
+        delete  iconItemDelegate;
+        iconItemDelegate = nullptr;
+        delete fileview;
+        fileview = nullptr;
         std::cout << "end TestDIconItemDelegate";
     }
 };
@@ -42,8 +45,8 @@ TEST_F(TestDIconItemDelegate, test_paint)
 {
     QPainter *painter = new QPainter();
     QStyleOptionViewItem option;
-    const QModelIndex &index =  DIconIdl->expandedIndex();
-    DIconIdl->paint(painter, option, index);
+    const QModelIndex &index =  iconItemDelegate->expandedIndex();
+    iconItemDelegate->paint(painter, option, index);
     delete painter;
     painter = nullptr;
 }
@@ -51,31 +54,31 @@ TEST_F(TestDIconItemDelegate, test_paint)
 TEST_F(TestDIconItemDelegate, test_sizeHint)
 {
     QStyleOptionViewItem viewItem;
-    const QModelIndex &index =  DIconIdl->expandedIndex();
-    DIconIdl->sizeHint(viewItem, index);
+    const QModelIndex &index =  iconItemDelegate->expandedIndex();
+    iconItemDelegate->sizeHint(viewItem, index);
 }
 
 TEST_F(TestDIconItemDelegate, test_createEditor)
 {
     QWidget w;
     QStyleOptionViewItem viewItem;
-    const QModelIndex &index =  DIconIdl->expandedIndex();
-    DIconIdl->createEditor(&w, viewItem, index);
+    const QModelIndex &index =  iconItemDelegate->expandedIndex();
+    iconItemDelegate->createEditor(&w, viewItem, index);
 }
 
 TEST_F(TestDIconItemDelegate, test_updateEditorGeometry)
 {
-    QWidget *editor = DIconIdl->expandedIndexWidget();
+    QWidget *editor = iconItemDelegate->expandedIndexWidget();
     QStyleOptionViewItem option;
-    QModelIndex index = DIconIdl->expandedIndex();
-    DIconIdl->updateEditorGeometry(editor, option, index);
+    QModelIndex index = iconItemDelegate->expandedIndex();
+    iconItemDelegate->updateEditorGeometry(editor, option, index);
 }
 
 TEST_F(TestDIconItemDelegate, test_setEditorData)
 {
-    QWidget *editor = DIconIdl->expandedIndexWidget();
-    QModelIndex index =  DIconIdl->expandedIndex();
-    DIconIdl->setEditorData(editor,  index);
+    QWidget *editor = iconItemDelegate->expandedIndexWidget();
+    QModelIndex index =  iconItemDelegate->expandedIndex();
+    iconItemDelegate->setEditorData(editor,  index);
 }
 
 TEST_F(TestDIconItemDelegate, test_paintGeomertys)
@@ -84,8 +87,8 @@ TEST_F(TestDIconItemDelegate, test_paintGeomertys)
     QStyleOptionViewItem option;
 
     option.init(&w);
-    QModelIndex index =  DIconIdl->expandedIndex();
-    DIconIdl->paintGeomertys(option, index);
+    QModelIndex index =  iconItemDelegate->expandedIndex();
+    iconItemDelegate->paintGeomertys(option, index);
 }
 
 TEST_F(TestDIconItemDelegate, test_paintGeomertys2)
@@ -94,84 +97,84 @@ TEST_F(TestDIconItemDelegate, test_paintGeomertys2)
     QStyleOptionViewItem option;
 
     option.init(&w);
-    QModelIndex index = DIconIdl->expandedIndex();
-    DIconIdl->paintGeomertys(option, index);
+    QModelIndex index = iconItemDelegate->expandedIndex();
+    iconItemDelegate->paintGeomertys(option, index);
 }
 
 TEST_F(TestDIconItemDelegate, test_hasWidgetIndexs)
 {
-    DIconIdl->hasWidgetIndexs();
+    iconItemDelegate->hasWidgetIndexs();
 }
 
 TEST_F(TestDIconItemDelegate, test_hideNotEditingIndexWidget)
 {
-    DIconIdl->hideNotEditingIndexWidget();
+    iconItemDelegate->hideNotEditingIndexWidget();
 }
 
 TEST_F(TestDIconItemDelegate, test_expandedIndex)
 {
-    DIconIdl->expandedIndex();
+    iconItemDelegate->expandedIndex();
 }
 
 TEST_F(TestDIconItemDelegate, test_expandedIndexWidget)
 {
-    DIconIdl->expandedIndexWidget();
+    iconItemDelegate->expandedIndexWidget();
 }
 
 TEST_F(TestDIconItemDelegate, test_iconSizeLevel)
 {
-    EXPECT_TRUE(DIconIdl->iconSizeLevel() == 0);
+    EXPECT_TRUE(iconItemDelegate->iconSizeLevel() == 0);
 }
 
 TEST_F(TestDIconItemDelegate, test_minimumIconSizeLevel)
 {
-    EXPECT_TRUE(DIconIdl->minimumIconSizeLevel() == 0);
+    EXPECT_TRUE(iconItemDelegate->minimumIconSizeLevel() == 0);
 }
 
 TEST_F(TestDIconItemDelegate, test_maximumIconSizeLevel)
 {
-    EXPECT_TRUE(DIconIdl->maximumIconSizeLevel() != 0);
+    EXPECT_TRUE(iconItemDelegate->maximumIconSizeLevel() != 0);
 }
 
 TEST_F(TestDIconItemDelegate, test_increaseIcon)
 {
-    EXPECT_TRUE(DIconIdl->increaseIcon() != 0);
+    EXPECT_TRUE(iconItemDelegate->increaseIcon() != 0);
 }
 
 TEST_F(TestDIconItemDelegate, test_decreaseIcon)
 {
-    EXPECT_TRUE(DIconIdl->decreaseIcon() != 0);
+    EXPECT_TRUE(iconItemDelegate->decreaseIcon() != 0);
 }
 
 TEST_F(TestDIconItemDelegate, test_setIconSizeByIconSizeLevel)
 {
-    EXPECT_TRUE(DIconIdl->setIconSizeByIconSizeLevel(1) == 1);
+    EXPECT_TRUE(iconItemDelegate->setIconSizeByIconSizeLevel(1) == 1);
 }
 
 TEST_F(TestDIconItemDelegate, test_setIconSizeByIconSizeLevel2)
 {
-    EXPECT_TRUE(DIconIdl->setIconSizeByIconSizeLevel(2) == 2);
+    EXPECT_TRUE(iconItemDelegate->setIconSizeByIconSizeLevel(2) == 2);
 }
 
 TEST_F(TestDIconItemDelegate, test_updateItemSizeHint)
 {
-    DIconIdl->updateItemSizeHint();
+    iconItemDelegate->updateItemSizeHint();
 }
 
 TEST_F(TestDIconItemDelegate, test_FocusTextBackgroundBorderColor)
 {
-    DIconIdl->focusTextBackgroundBorderColor();
+    iconItemDelegate->focusTextBackgroundBorderColor();
 }
 
 TEST_F(TestDIconItemDelegate, test_setEnabledTextShadow)
 {
-    DIconIdl->setEnabledTextShadow(true);
-    DIconIdl->setEnabledTextShadow(false);
+    iconItemDelegate->setEnabledTextShadow(true);
+    iconItemDelegate->setEnabledTextShadow(false);
 }
 
 TEST_F(TestDIconItemDelegate, test_setFocusTextBackgroundBorderColor)
 {
-    DIconIdl->setFocusTextBackgroundBorderColor(QColor::fromRgbF(1, 1, 1, 0.1));
+    iconItemDelegate->setFocusTextBackgroundBorderColor(QColor::fromRgbF(1, 1, 1, 0.1));
 }
 
 TEST_F(TestDIconItemDelegate, test_initTextLayout)
@@ -180,23 +183,23 @@ TEST_F(TestDIconItemDelegate, test_initTextLayout)
     QStyleOptionViewItem option;
 
     option.init(&w);
-    QModelIndex index = DIconIdl->expandedIndex();
-    DIconIdl->paintGeomertys(option, index);
+    QModelIndex index = iconItemDelegate->expandedIndex();
+    iconItemDelegate->paintGeomertys(option, index);
     QTextLayout layout;
-    DIconIdl->initTextLayout(index, &layout);
+    iconItemDelegate->initTextLayout(index, &layout);
 }
 
 TEST_F(TestDIconItemDelegate, test_eventFilter)
 {
     QObject *object = new QObject();
     QEvent *event = new QEvent(QEvent::KeyPress);
-    DIconIdl->eventFilter(object, event);
+    iconItemDelegate->eventFilter(object, event);
 }
 
 
 TEST_F(TestDIconItemDelegate, test_drawText)
 {
-    QModelIndex index = DIconIdl->expandedIndex();
+    QModelIndex index = iconItemDelegate->expandedIndex();
     QPainter *painter = new QPainter();
     QTextLayout *layout = new QTextLayout();
     QRectF boundingRect(0, 0, 100, 100);
@@ -206,7 +209,7 @@ TEST_F(TestDIconItemDelegate, test_drawText)
     QColor shadowColor(QColor(0xFFFFAE00));
     QTextOption::WrapMode wordWrap = QTextOption::WrapMode::WordWrap;
     Qt::TextElideMode mode = Qt::TextElideMode::ElideLeft;
-    DIconIdl->drawText(index, painter, layout, boundingRect, radius, background, wordWrap, mode, flag, shadowColor)  ;
+    iconItemDelegate->drawText(index, painter, layout, boundingRect, radius, background, wordWrap, mode, flag, shadowColor)  ;
 }
 
 TEST_F(TestDIconItemDelegate, test_helpEvent)
@@ -214,11 +217,11 @@ TEST_F(TestDIconItemDelegate, test_helpEvent)
     QHelpEvent *event = new QHelpEvent(QEvent::ToolTip, QPoint(10, 10), QPoint(10, 10));
     QAbstractItemView *view = nullptr;
     QStyleOptionViewItem option;
-    QModelIndex index =  DIconIdl->expandedIndex();
-    DIconIdl->helpEvent(event, view, option, index);
+    QModelIndex index =  iconItemDelegate->expandedIndex();
+    iconItemDelegate->helpEvent(event, view, option, index);
 }
 
 TEST_F(TestDIconItemDelegate, test_iconSizeByIconSizeLevel)
 {
-    DIconIdl->iconSizeByIconSizeLevel();
+    iconItemDelegate->iconSizeByIconSizeLevel();
 }
