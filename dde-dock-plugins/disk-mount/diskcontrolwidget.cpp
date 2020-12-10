@@ -39,6 +39,7 @@
 #include <dfmsettings.h>
 #include <dgiosettings.h>
 #include <DDesktopServices>
+#include <DGuiApplicationHelper>
 
 #include <QDebug>
 #include <QProcess>
@@ -62,6 +63,9 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
     m_centralWidget->setLayout(m_centralLayout);
     m_centralWidget->setFixedWidth(WIDTH);
+
+    m_centralLayout->setMargin(0);
+    m_centralLayout->setSpacing(0);
 
     m_vfsManager.reset(new DGioVolumeManager);
 
@@ -96,6 +100,10 @@ void DiskControlWidget::initConnect()
     connect(m_vfsManager.data(), &DGioVolumeManager::mountAdded, this, &DiskControlWidget::onVfsMountChanged);
 //    connect(m_vfsManager.data(), &DGioVolumeManager::mountChanged, this, &DiskControlWidget::onVfsMountChanged);
     connect(m_vfsManager.data(), &DGioVolumeManager::mountRemoved, this, &DiskControlWidget::onVfsMountChanged);
+
+    // 系统主题改变，重新刷新控件列表以适应新主题下的文字颜色
+    connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
+            this, [this]{ this->onDiskListChanged(); });
 }
 
 DDiskManager*  DiskControlWidget::startMonitor()
@@ -275,10 +283,39 @@ const QList<QExplicitlySharedDataPointer<DGioMount> > DiskControlWidget::getVfsM
 
 void DiskControlWidget::onDiskListChanged()
 {
+    auto addSeparateLine = [this](int width = 1){
+        QFrame *line = new QFrame(this);
+        line->setLineWidth(width);
+        line->setFrameStyle(QFrame::HLine);
+        line->setFrameShadow(QFrame::Plain);
+        m_centralLayout->addWidget(line);
+    };
+
     while (QLayoutItem *item = m_centralLayout->takeAt(0)) {
         delete item->widget();
         delete item;
     }
+
+    QVBoxLayout *headerLay = new QVBoxLayout(this);
+    QWidget *header = new QWidget(this);
+    header->setLayout(headerLay);
+    headerLay->setSpacing(0);
+    headerLay->setContentsMargins(20, 9, 0, 8);
+    QLabel *headerTitle = new QLabel(tr("Disks"), this);
+    QFont f = headerTitle->font();
+    f.setPixelSize(20);
+    f.setWeight(QFont::Medium);
+    headerTitle->setFont(f);
+    QPalette pal = headerTitle->palette();
+    QColor color = Dtk::Gui::DGuiApplicationHelper::instance()->themeType() == Dtk::Gui::DGuiApplicationHelper::LightType
+            ? Qt::black
+            : Qt::white;
+    pal.setColor(QPalette::WindowText, color);
+    headerTitle->setPalette(pal);
+
+    headerLay->addWidget(headerTitle);
+    m_centralLayout->addWidget(header);
+    addSeparateLine(2);
 
     int mountedCount = 0;
 
@@ -311,6 +348,7 @@ void DiskControlWidget::onDiskListChanged()
             dad->setErrorHandler(new ErrHandle(item));
 
             m_centralLayout->addWidget(item);
+            addSeparateLine(1);
         }
     }
 
@@ -326,15 +364,23 @@ void DiskControlWidget::onDiskListChanged()
             mountedCount++;
             DiskControlItem *item = new DiskControlItem(dad, this);
             m_centralLayout->addWidget(item);
+            addSeparateLine(1);
         } else {
             delete dad;
             dad = nullptr; //指针指空 防止野指针崩溃不好找
         }
     }
 
+    // 移除最下面的分割线
+    QLayoutItem *last = m_centralLayout->takeAt(m_centralLayout->count() - 1);
+    if (last) {
+        delete last->widget();
+        delete last;
+    }
+
     emit diskCountChanged(mountedCount);
 
-    const int contentHeight = mountedCount * 70;
+    const int contentHeight = mountedCount * 70 + 46;
     const int maxHeight = std::min(contentHeight, 70 * 6);
 
     m_centralWidget->setFixedHeight(contentHeight);

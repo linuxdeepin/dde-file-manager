@@ -71,10 +71,30 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
       m_capacityValueBar(new QProgressBar),
       m_unmountButton(new DIconButton(this))
 {
+    int colorValue = Dtk::Gui::DGuiApplicationHelper::instance()->themeType() == Dtk::Gui::DGuiApplicationHelper::LightType
+            ? 0
+            : 1;
+
     attachedDevice.reset(attachedDevicePtr);
 
     m_diskName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_diskName->setTextFormat(Qt::PlainText);
+
+    QFont f = m_diskName->font();
+    f.setPixelSize(14);
+    f.setWeight(QFont::Medium);
+    m_diskName->setFont(f);
+    QPalette pal = m_diskName->palette();
+    pal.setColor(QPalette::WindowText, QColor::fromRgbF(colorValue, colorValue, colorValue, 0.8));
+    m_diskName->setPalette(pal);
+
+    f = m_diskCapacity->font();
+    f.setPixelSize(12);
+    f.setWeight(QFont::Normal);
+    m_diskCapacity->setFont(f);
+    pal = m_diskCapacity->palette();
+    pal.setColor(QPalette::WindowText, QColor::fromRgbF(colorValue, colorValue, colorValue, 0.6));
+    m_diskCapacity->setPalette(pal);
 
     m_capacityValueBar->setTextVisible(false);
     m_capacityValueBar->setFixedHeight(2);
@@ -83,31 +103,38 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
     m_unmountButton->setIconSize({20, 20});
     m_unmountButton->setFlat(true);
 
-    QVBoxLayout *infoLayout = new QVBoxLayout;
-    infoLayout->addWidget(m_diskName);
-    infoLayout->addWidget(m_diskCapacity);
-    infoLayout->setSpacing(0);
-    infoLayout->setContentsMargins(3, 6, 0, 8);
+    QVBoxLayout *leftLay = new QVBoxLayout;
+    leftLay->addWidget(m_diskIcon);
+    leftLay->setContentsMargins(10, 8, 0, 8);
+    leftLay->setSpacing(0);
 
-    QHBoxLayout *unmountLayout = new QHBoxLayout;
-    unmountLayout->addLayout(infoLayout);
-    unmountLayout->addWidget(m_unmountButton);
-    unmountLayout->setSpacing(0);
-    unmountLayout->setMargin(0);
+    QWidget *info = new QWidget(this);
+    QVBoxLayout *centLay = new QVBoxLayout;
+    QVBoxLayout *subCentLay = new QVBoxLayout;
+    subCentLay->setSpacing(2);
+    subCentLay->setContentsMargins(0, 0, 0, 0);
+    subCentLay->addWidget(m_diskName);
+    subCentLay->addWidget(m_diskCapacity);
+    centLay->addItem(subCentLay);
+    centLay->addWidget(m_capacityValueBar);
+    info->setLayout(centLay);
+    centLay->setSpacing(5);
+    centLay->setContentsMargins(10, 11, 0, 10);
 
-    QVBoxLayout *progressLayout = new QVBoxLayout;
-    progressLayout->addLayout(unmountLayout);
-    progressLayout->addWidget(m_capacityValueBar);
-    progressLayout->setSpacing(0);
-    progressLayout->setContentsMargins(10, 0, 0, 5);
 
-    QHBoxLayout *centralLayout = new QHBoxLayout;
-    centralLayout->addWidget(m_diskIcon);
-    centralLayout->addLayout(progressLayout);
-    centralLayout->setSpacing(0);
-    centralLayout->setContentsMargins(0, 0, 5, 0);
+    QVBoxLayout *rigtLay = new QVBoxLayout;
+    rigtLay->addWidget(m_unmountButton);
+    rigtLay->setContentsMargins(19, 22, 12, 22);
 
-    setLayout(centralLayout);
+    QHBoxLayout *mainLay = new QHBoxLayout;
+    mainLay->addLayout(leftLay);
+    mainLay->addWidget(info);
+    mainLay->addLayout(rigtLay);
+    mainLay->setContentsMargins(10, 8, 8, 12);
+    mainLay->setMargin(0);
+    mainLay->setSpacing(0);
+
+    setLayout(mainLay);
     setObjectName("DiskItem");
 
     connect(m_unmountButton, &DIconButton::clicked, this, [this] {
@@ -218,6 +245,11 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 void DiskControlItem::showEvent(QShowEvent *e)
 {
     m_diskName->setText(attachedDevice->displayName());
+    QString name = attachedDevice->displayName();
+    QFont f = m_diskName->font();
+    QFontMetrics fm(f);
+    QString elideText = fm.elidedText(name, Qt::ElideRight, m_diskName->width());
+    m_diskName->setText(elideText);
 
     if (attachedDevice->deviceUsageValid()) {
         QString iconName = attachedDevice->iconName();
