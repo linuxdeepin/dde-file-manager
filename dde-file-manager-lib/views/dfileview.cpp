@@ -68,6 +68,8 @@
 
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
+#include "models/desktopfileinfo.h"
+#include "dfmstandardpaths.h"
 
 #include <QApplication>
 #include <DFileDragClient>
@@ -2884,8 +2886,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     DFileMenuManager::loadEmptyAreaPluginMenu(menu, rootUrl(), false);
 
     //扩展菜单
-    const DUrl &viewRootUrl = rootUrl();
-    if (!viewRootUrl.isVaultFile() && !viewRootUrl.isTrashFile())
+    if (DFileMenuManager::isCustomMenuSupported(rootUrl()))
         DFileMenuManager::extendCustomMenu(menu, false, rootUrl(), {}, {});
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
@@ -2964,10 +2965,31 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         return;
     }
 
-    //扩展菜单,保险箱-回收站无扩展菜单
-    const DUrl &viewRootUrl = rootUrl();
-    if (!viewRootUrl.isVaultFile() && !viewRootUrl.isTrashFile())
-        DFileMenuManager::extendCustomMenu(menu, true, viewRootUrl, info->fileUrl(), list);
+    //扩展菜单
+    {
+        //是否显示自定义菜单
+        const DUrl &viewRootUrl = rootUrl();
+        bool customMenu = DFileMenuManager::isCustomMenuSupported(viewRootUrl);
+        if (customMenu && (viewRootUrl == DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath)))) {
+            //判断计算机 回收站 主目录
+            const DUrl &computerDesktopFile = DesktopFileInfo::computerDesktopFileUrl();
+            const DUrl &trashDesktopFile = DesktopFileInfo::trashDesktopFileUrl();
+            const DUrl &homeDesktopFile = DesktopFileInfo::homeDesktopFileUrl();
+
+            //多选文件中包含以下文件时 则不展示扩展菜单项
+            for (const DUrl &url : list) {
+                if (url == computerDesktopFile
+                        || url == trashDesktopFile
+                        || url == homeDesktopFile) {
+                    customMenu = false;
+                    break;
+                }
+            }
+        }
+
+        if (customMenu)
+            DFileMenuManager::extendCustomMenu(menu, true, viewRootUrl, info->fileUrl(), list);
+    }
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this, index);
 

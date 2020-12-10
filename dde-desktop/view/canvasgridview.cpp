@@ -3266,17 +3266,49 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     auto curUrl = info->fileUrl();
     DUrlList realList;
     DFileMenu *menu = nullptr;
+
+    //是否显示自定义菜单
+    bool customMenu = true;
+
     auto dirUrl = currentUrl();
     if (curUrl.scheme() == DFMMD_SCHEME) {
         curUrl = MergedDesktopController::convertToRealPath(curUrl);
         dirUrl = MergedDesktopController::convertToRealPath(dirUrl);
-        for (auto url : list) {
-            realList.append(MergedDesktopController::convertToRealPath(url));
+
+        //判断计算机 回收站 主目录
+        const DUrl &computerDesktopFile = DesktopFileInfo::computerDesktopFileUrl();
+        const DUrl &trashDesktopFile = DesktopFileInfo::trashDesktopFileUrl();
+        const DUrl &homeDesktopFile = DesktopFileInfo::homeDesktopFileUrl();
+
+        for (const DUrl &url : list) {
+            auto cUrl = MergedDesktopController::convertToRealPath(url);
+            realList.append(cUrl);
+            //多选文件中包含以下文件时 则不展示扩展菜单项
+            if (customMenu && (cUrl == computerDesktopFile
+                    || cUrl == trashDesktopFile
+                    || cUrl == homeDesktopFile)) {
+                customMenu = false;
+            }
         }
         menu = DFileMenuManager::createNormalMenu(curUrl, realList, disableList, unusedList, static_cast<int>(winId()), true);
     } else {
         //realList给后面的扩展菜单使用
         realList = list;
+
+        //判断计算机 回收站 主目录
+        const DUrl &computerDesktopFile = DesktopFileInfo::computerDesktopFileUrl();
+        const DUrl &trashDesktopFile = DesktopFileInfo::trashDesktopFileUrl();
+        const DUrl &homeDesktopFile = DesktopFileInfo::homeDesktopFileUrl();
+
+        //多选文件中包含以下文件时 则不展示扩展菜单项
+        for (const DUrl &cUrl : realList) {
+            if (cUrl == computerDesktopFile
+                    || cUrl == trashDesktopFile
+                    || cUrl == homeDesktopFile) {
+                customMenu = false;
+                break;
+            }
+        }
         menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(winId()), true);
     }
 
@@ -3306,7 +3338,8 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
 
     //扩展菜单
-    DFileMenuManager::extendCustomMenu(menu, true, dirUrl, curUrl, realList);
+    if (customMenu)
+        DFileMenuManager::extendCustomMenu(menu, true, dirUrl, curUrl, realList);
 
     //断开连接，桌面优先处理
     //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突，
