@@ -274,8 +274,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     }
 
     const ComputerModelItemData *pitmdata = &m_items[index.row()];
-    if (!pitmdata || !pitmdata->fi)
-        return QVariant();
+
     if (role == Qt::DisplayRole) {
         if (index.data(DataRoles::ICategoryRole) == ComputerModelItemData::Category::cat_splitter) {
             return pitmdata->sptext;
@@ -305,7 +304,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     }
 
     if (role == DataRoles::IconNameRole) {
-        return pitmdata->fi->iconName();
+        return pitmdata->fi ? pitmdata->fi->iconName() : QVariant();
     }
 
     if (role == DataRoles::FileSystemRole) {
@@ -461,11 +460,15 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         }
     }
     if (role == DataRoles::DiscUUIDRole) {
+        if (!pitmdata->fi)
+            return QVariant();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
         return blkdev->idUUID();
     }
 
     if (role == DataRoles::DiscOpticalRole) {
+        if (!pitmdata->fi)
+            return QVariant();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
         return drv->opticalBlank();
