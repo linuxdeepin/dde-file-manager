@@ -64,6 +64,7 @@
 #include "usershare/usersharemanager.h"
 
 #include "fileoperations/sort.h"
+#include "vaultcontroller.h"
 
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
@@ -85,6 +86,9 @@
 #include "dfmapplication.h"
 #ifndef DISABLE_QUICK_SEARCH
 #include "anything_interface.h"
+#endif
+#ifdef DISABLE_QUICK_SEARCH
+#include "./search/dfsearch.h"
 #endif
 
 class DFMQDirIterator : public DDirIterator
@@ -350,6 +354,172 @@ private:
     QFileInfo currentFileInfo;
 };
 #endif // DISABLE_QUICK_SEARCH
+
+#ifdef DISABLE_QUICK_SEARCH
+QString printList(BTreeNode *pNode)
+{
+
+    QString fullPath("");
+    int i = 0;
+    if (pNode == nullptr) {
+        return "";
+    } else {
+        while (pNode != nullptr) {
+            if (pNode->name != nullptr) {
+                fullPath.insert(0, pNode->name);
+                if (strcmp(pNode->name, "") != 0) {
+                    fullPath.insert(0, "/");
+                }
+            }
+            pNode = pNode->parent;
+            i++;
+        }
+    }
+
+    // 防止后续pathList越界，先判断
+    QStringList pathList = fullPath.split('/');
+    if (pathList.isEmpty() || pathList.size() < 2) {
+        return "";
+    }
+    QString t_prefix = pathList.at(1);
+
+    if (t_prefix == "boot" || t_prefix == "dev" || t_prefix == "proc" || t_prefix == "sys"
+            || t_prefix == "root" || t_prefix == "run") {
+        return "";
+    }
+
+    return fullPath;
+}
+
+class DFMFSearchDirIterator : public DDirIterator
+{
+public:
+    DFMFSearchDirIterator(const QString &path, const QString &k)
+        : keyword(k)
+        , dir(path)
+    {
+        dfsearch = new DFSearch(path, this);
+    }
+
+    ~DFMFSearchDirIterator() override
+    {
+        if (dfsearch) {
+            delete dfsearch;
+            dfsearch = nullptr;
+        }
+    }
+    static void callbackFunc(void *back, void *self)
+    {
+        if (!self || !back) {
+            return;
+        }
+        DFMFSearchDirIterator *it = static_cast<DFMFSearchDirIterator *>(self);
+        uint32_t num_folders;
+        uint32_t num_files;
+        uint32_t num_results = 0;
+        DatabaseSearch *result = static_cast<DatabaseSearch *>(back);
+        if (!result)
+            return;
+        GPtrArray *results = result->results;
+        if (results && results->len > 0) {
+            num_folders = result->num_folders;;
+            num_files = result->num_files;
+            num_results = results->len;
+            for (uint32_t j = 0; j < num_results; j++) {
+                if (results->len > 0 && results->pdata) {
+                    DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
+                    QString strResult = "";
+                    if (entry && entry->node) {
+                        strResult = printList(entry->node);
+                    }
+
+                    if (!strResult.isEmpty()) {
+                        /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
+                        QFileInfo fileInfo(strResult);
+                        QString fullPath = fileInfo.absoluteFilePath();
+                        QString filePath = fileInfo.absolutePath();
+                        if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath)) {
+                            // 修复wayland-bug-51754
+                            // 刷选出保险箱内的文件,使其不被检索出来
+                            if (!VaultController::isVaultFile(it->dir.absolutePath()) && VaultController::isVaultFile(fullPath))
+                                continue;
+                            it->searchResults.append(strResult);
+                        }
+                    }
+                }
+            }
+            it->mDone = true;
+            qDebug() << "-------callback:" << num_results;
+        }
+    }
+    DUrl next() override
+    {
+        currentFileInfo.setFile(searchResults.takeFirst());
+
+        return fileUrl();
+    }
+
+    bool hasNext() const override
+    {
+        if (!initialized) {
+            const QString &dir_path = dir.absolutePath();
+
+            if (searchDirList.isEmpty() || searchDirList.first() != dir_path) {
+                searchDirList.prepend(dir_path);
+                dfsearch->searchByKeyWord(keyword, callbackFunc);
+                qDebug() << "*******************************find";
+                mDone = false;
+            }
+            searchResults.clear();
+            initialized = true;
+        }
+        if (!resultinit) {
+            int i = 0;
+            while (1) {
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+                if (mDone || i++ > 10) {
+                    break;
+                }
+            }
+        }
+
+        resultinit = true;
+        searchDirList.removeAt(0);
+        return !searchResults.isEmpty();
+    }
+
+    QString fileName() const override
+    {
+        return currentFileInfo.fileName();
+    }
+
+    DUrl fileUrl() const override
+    {
+        return DUrl::fromLocalFile(currentFileInfo.filePath());
+    }
+
+    const DAbstractFileInfoPointer fileInfo() const override
+    {
+        return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
+    }
+
+    DUrl url() const override
+    {
+        return DUrl::fromLocalFile(dir.absolutePath());
+    }
+private:
+    QString keyword;
+    mutable bool resultinit = false;
+    mutable bool initialized = false;
+    mutable QStringList searchDirList;
+    mutable QStringList searchResults;
+
+    mutable bool mDone = false;
+    DFSearch *dfsearch = nullptr;
+    QDir dir;
+    QFileInfo currentFileInfo;
+};
+#endif // DISABLE_FSEARCH
 
 class FileDirIterator : public DDirIterator
 {
@@ -1616,7 +1786,7 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
 #ifdef DISABLE_QUICK_SEARCH
     Q_UNUSED(keyword);
-    return false;
+//    return false;
 #else // !DISABLE_QUICK_SEARCH
     QString pathForSearching = iterator->url().toLocalFile();
 
@@ -1646,6 +1816,16 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 
     return true;
 #endif // DISABLE_QUICK_SEARCH
+
+#ifdef DISABLE_QUICK_SEARCH
+    const QString pathForSearching = iterator->url().toLocalFile();
+    if (iterator)
+        delete iterator;
+
+    iterator = new DFMFSearchDirIterator(pathForSearching, keyword);
+
+    return true;
+#endif
 }
 
 bool FileDirIterator::hasSymLinkDir(QString &path, QString &tmp, QString &oldPrefix)
