@@ -3,29 +3,80 @@
 
 #define private public
 #include "controllers/filecontroller.cpp"
+#include "stub.h"
+#include "testhelper.h"
 #include "dfmevent.h"
 #include "gvfs/gvfsmountmanager.h"
 
 namespace  {
+    static Stub *stub;
+
     class FileControllerTest : public testing::Test
     {
     public:
+
+        static void SetUpTestCase()
+        {
+            typedef bool (*OpenFileWithFlag)(const QString &path, int flag);
+            typedef bool (*OpenFile)(const QString &path);
+            typedef bool (*OpenFiles)(const QStringList &filePaths);
+            typedef bool (*OpenFilesWithArgs)(const QString &file, const QStringList &filePaths);
+            typedef QString (*GetPath)();
+
+            // 打桩，避免弹框
+            OpenFileWithFlag openFileWithFlag = [](const QString &path, int flag) {
+                Q_UNUSED(path);
+                Q_UNUSED(flag);
+                return true;
+            };
+            OpenFile openFile = [](const QString &path) {
+                Q_UNUSED(path);
+                return true;
+            };
+            OpenFiles openFiles = [](const QStringList &filePaths) {
+                Q_UNUSED(filePaths);
+                return true;
+            };
+            OpenFilesWithArgs openFilesWithArgs = [](const QString &file, const QStringList &filePaths) {
+                Q_UNUSED(file);
+                Q_UNUSED(filePaths);
+                return true;
+            };
+            GetPath getPath = []() {
+                return QString("/bin/touch");
+            };
+
+            stub = new Stub;
+            stub->set(static_cast<OpenFileWithFlag>(&FileUtils::openExcutableScriptFile), openFileWithFlag);
+            stub->set(static_cast<OpenFileWithFlag>(&FileUtils::openExcutableFile), openFileWithFlag);
+            stub->set(static_cast<OpenFileWithFlag>(&FileUtils::addExecutableFlagAndExecuse), openFileWithFlag);
+            stub->set(static_cast<OpenFile>(&FileUtils::openFile), openFile);
+            stub->set(static_cast<OpenFiles>(&FileUtils::openFiles), openFiles);
+            stub->set(static_cast<OpenFilesWithArgs>(&FileUtils::openFilesByApp), openFilesWithArgs);
+            stub->set(static_cast<GetPath>(&FileUtils::defaultTerminalPath), getPath);
+        }
+
+        static void TearDownTestCase()
+        {
+            if (stub) {
+                delete stub;
+                stub = nullptr;
+            }
+        }
+
         virtual void SetUp() override
         {
             controller = new FileController();
 
-            curDir = QDir::currentPath();
+            fileName = TestHelper::createTmpFile("normal_file");
+            linkName = TestHelper::createTmpSymlinkFile(fileName);
 
-            chdir("/tmp/");
-            system("touch /tmp/A");
-            system("ln -s /tmp/A /tmp/B");
-            system("touch /tmp/C");
-            system("chmod u+x /tmp/C");
-            system("cp /bin/ls /tmp/ls");
-            system("mkdir /tmp/Paste/");
-            system("mkdir /tmp/Share/");
-            system("rm /tmp/cp_dst");
-            system("cp /bin/ls /tmp/file-roller"); // fake roller for test
+            scriptName = TestHelper::createTmpFile("script_file.sh");
+            chmod(scriptName.toStdString().c_str(), 0700);
+
+            pasteDir = TestHelper::createTmpDir();
+            shareDir = TestHelper::createTmpDir();
+            cpDstFileName = TestHelper::createTmpDir();
         }
 
         virtual void TearDown() override
@@ -35,13 +86,13 @@ namespace  {
             delete controller;
             controller = nullptr;
 
-            system("rm /tmp/A /tmp/B /tmp/C /tmp/ls /tmp/file-roller /tmp/cp_dst");
-            system("rm -rf /tmp/Paste/");
-            system("rm -rf /tmp/Share/");
-
-            QDir dir;
-            dir.cd(curDir);
-            chdir(curDir.toStdString().c_str());
+            TestHelper::deleteTmpFiles({linkName,
+                                        fileName,
+                                        scriptName,
+                                        pasteDir,
+                                        shareDir,
+                                        cpDstFileName
+                                       });
         }
 
         void DumpDirector(DDirIteratorPointer director)
@@ -60,27 +111,26 @@ namespace  {
         }
 
         FileController *controller;
-        QString curDir;
-        QString fileName = "/tmp/A";
-        QString linkName = "/tmp/B";
-        QString exeName = "/tmp/ls";
-        QString scriptName = "/tmp/C";
-        QString pasteDir = "/tmp/Paste/";
-        QString shareDir = "/tmp/Share/";
-        QString cpDstFileName = "/tmp/cp_dst";
+        QString fileName;
+        QString linkName;
+        QString exeName = "/bin/touch";
+        QString scriptName;
+        QString pasteDir;
+        QString shareDir;
+        QString cpDstFileName;
         QString noPermissionDir = "/Permisson/";
         QString noPermissionFile = "/Permisson";
         QString desktopFile = "/usr/share/applications/dde-computer.desktop";
     };
 }
 
-TEST_F(FileControllerTest, find_executable)
+TEST_F(FileControllerTest, tst_find_executable)
 {
-    bool find = controller->findExecutable("bash", {"/usr/bin/"});
-    EXPECT_TRUE(find == true);
+    bool found = controller->findExecutable("bash", {"/usr/bin/"});
+    EXPECT_TRUE(found);
 }
 
-TEST_F(FileControllerTest, create_file_info)
+TEST_F(FileControllerTest, tst_create_file_info)
 {
     // 普通文件
     DUrl url = DUrl::fromLocalFile("/tmp/");
@@ -101,26 +151,26 @@ TEST_F(FileControllerTest, create_file_info)
     EXPECT_TRUE(fp3 != nullptr);
 }
 
-TEST_F(FileControllerTest, create_director)
+TEST_F(FileControllerTest, tst_create_director)
 {
     // sorted
     DUrl url = DUrl::fromLocalFile("/tmp/");
-    bool isgvfs = false;
+    bool gvfsFile = false;
     QDirIterator::IteratorFlags flags = static_cast<QDirIterator::IteratorFlags>(DDirIterator::SortINode);
-    auto event = dMakeEventPointer<DFMCreateDiriterator>(nullptr, url, QStringList(), QDir::AllEntries, flags, false, isgvfs);
-    DDirIteratorPointer director = controller->createDirIterator(event);
-    EXPECT_TRUE(director != nullptr);
-    DumpDirector(director);
+    auto event = dMakeEventPointer<DFMCreateDiriterator>(nullptr, url, QStringList(), QDir::AllEntries, flags, false, gvfsFile);
+    DDirIteratorPointer dirIterator = controller->createDirIterator(event);
+    EXPECT_TRUE(dirIterator != nullptr);
+    DumpDirector(dirIterator);
 
     // no sort
     flags = QDirIterator::NoIteratorFlags;
-    event = dMakeEventPointer<DFMCreateDiriterator>(nullptr, url, QStringList(), QDir::AllEntries, flags, false, isgvfs);
-    director = controller->createDirIterator(event);
-    EXPECT_TRUE(director != nullptr);
-    DumpDirector(director);
+    event = dMakeEventPointer<DFMCreateDiriterator>(nullptr, url, QStringList(), QDir::AllEntries, flags, false, gvfsFile);
+    dirIterator = controller->createDirIterator(event);
+    EXPECT_TRUE(dirIterator != nullptr);
+    DumpDirector(dirIterator);
 }
 
-TEST_F(FileControllerTest, open_file)
+TEST_F(FileControllerTest, tst_open_file)
 {
     DUrl url = DUrl::fromLocalFile(linkName);
     auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, url);
@@ -135,15 +185,15 @@ TEST_F(FileControllerTest, open_file)
     url = DUrl::fromLocalFile(scriptName);
     event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, url);
     open = controller->openFile(event);
-    EXPECT_TRUE(!open);
+    EXPECT_TRUE(open);
 
     url = DUrl::fromLocalFile(exeName);
     event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, url);
     open = controller->openFile(event);
-    EXPECT_TRUE(!open);
+    EXPECT_TRUE(open);
 }
 
-TEST_F(FileControllerTest, open_files)
+TEST_F(FileControllerTest, tst_open_files)
 {
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
@@ -155,25 +205,25 @@ TEST_F(FileControllerTest, open_files)
     EXPECT_TRUE(open);
 }
 
-TEST_F(FileControllerTest, open_file_by_app)
+TEST_F(FileControllerTest, tst_open_file_by_app)
 {
     DUrl url = DUrl::fromLocalFile(linkName);
     auto event = dMakeEventPointer<DFMOpenFileByAppEvent>(nullptr, exeName, url);
     bool open = controller->openFileByApp(event);
-    EXPECT_TRUE(!open);
+    EXPECT_TRUE(open);
 }
 
-TEST_F(FileControllerTest, open_files_by_app)
+TEST_F(FileControllerTest, tst_open_files_by_app)
 {
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
     list.append(DUrl::fromLocalFile(linkName));
     auto event = dMakeEventPointer<DFMOpenFilesByAppEvent>(nullptr, exeName, list);
     bool open = controller->openFilesByApp(event);
-    EXPECT_TRUE(!open);
+    EXPECT_TRUE(open);
 }
 
-TEST_F(FileControllerTest, open_compress_files)
+TEST_F(FileControllerTest, tst_open_compress_files)
 {
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
@@ -183,7 +233,7 @@ TEST_F(FileControllerTest, open_compress_files)
     EXPECT_TRUE(!compressed);
 }
 
-TEST_F(FileControllerTest, decompress_files)
+TEST_F(FileControllerTest, tst_decompress_files)
 {
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
@@ -193,7 +243,7 @@ TEST_F(FileControllerTest, decompress_files)
     EXPECT_TRUE(!decompressed);
 }
 
-TEST_F(FileControllerTest, decompress_file_here)
+TEST_F(FileControllerTest, tst_decompress_file_here)
 {
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
@@ -203,8 +253,7 @@ TEST_F(FileControllerTest, decompress_file_here)
     EXPECT_TRUE(!decompressed);
 }
 
-
-TEST_F(FileControllerTest, write_files_to_clipboard)
+TEST_F(FileControllerTest, tst_write_files_to_clipboard)
 {
     DUrlList list;
     list << DUrl::fromLocalFile(fileName);
@@ -212,7 +261,7 @@ TEST_F(FileControllerTest, write_files_to_clipboard)
     EXPECT_TRUE(result);
 }
 
-TEST_F(FileControllerTest, rename_file)
+TEST_F(FileControllerTest, tst_rename_file)
 {
     DUrl from = DUrl::fromLocalFile(fileName).toAbsolutePathUrl();
     DUrl to = DUrl::fromLocalFile(cpDstFileName).toAbsolutePathUrl();
@@ -225,7 +274,7 @@ TEST_F(FileControllerTest, rename_file)
     EXPECT_TRUE(!result);
 }
 
-TEST_F(FileControllerTest, delete_files)
+TEST_F(FileControllerTest, tst_delete_files)
 {
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
@@ -234,7 +283,7 @@ TEST_F(FileControllerTest, delete_files)
     EXPECT_TRUE(result);
 }
 
-TEST_F(FileControllerTest, move_to_trash)
+TEST_F(FileControllerTest, tst_move_to_trash)
 {
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
@@ -243,7 +292,7 @@ TEST_F(FileControllerTest, move_to_trash)
     EXPECT_TRUE(!rList.empty());
 }
 
-TEST_F(FileControllerTest, paste_file)
+TEST_F(FileControllerTest, tst_paste_file)
 {
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
@@ -252,7 +301,7 @@ TEST_F(FileControllerTest, paste_file)
     EXPECT_TRUE(rList.empty());
 }
 
-TEST_F(FileControllerTest, paste_file_v1)
+TEST_F(FileControllerTest, tst_paste_file_v1)
 {
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
@@ -261,7 +310,7 @@ TEST_F(FileControllerTest, paste_file_v1)
     EXPECT_TRUE(!rList.empty());
 }
 
-TEST_F(FileControllerTest, mkdir)
+TEST_F(FileControllerTest, tst_mkdir)
 {
     DUrl dir = DUrl::fromLocalFile(pasteDir);
     bool result = controller->mkdir(dMakeEventPointer<DFMMkdirEvent>(nullptr, dir));
@@ -272,7 +321,7 @@ TEST_F(FileControllerTest, mkdir)
     EXPECT_TRUE(!result);
 }
 
-TEST_F(FileControllerTest, touch)
+TEST_F(FileControllerTest, tst_touch)
 {
     DUrl url = DUrl::fromLocalFile(fileName);
     bool result = controller->touch(dMakeEventPointer<DFMTouchFileEvent>(nullptr, url));
@@ -283,14 +332,14 @@ TEST_F(FileControllerTest, touch)
     EXPECT_TRUE(!result);
 }
 
-TEST_F(FileControllerTest, set_permissions)
+TEST_F(FileControllerTest, tst_set_permissions)
 {
     DUrl url = DUrl::fromLocalFile(fileName).toAbsolutePathUrl();
     bool result = controller->setPermissions(dMakeEventPointer<DFMSetPermissionEvent>(nullptr, url, QFileDevice::ReadOwner | QFileDevice::WriteOwner));
     EXPECT_TRUE(result);
 }
 
-TEST_F(FileControllerTest, share_folder)
+TEST_F(FileControllerTest, tst_share_folder)
 {
     DUrl url = DUrl::fromLocalFile(shareDir).toAbsolutePathUrl();
     bool result = controller->shareFolder(dMakeEventPointer<DFMFileShareEvent>(nullptr, url, "share_name"));
@@ -300,14 +349,14 @@ TEST_F(FileControllerTest, share_folder)
     EXPECT_TRUE(result);
 }
 
-TEST_F(FileControllerTest, open_in_terminal)
+TEST_F(FileControllerTest, tst_open_in_terminal)
 {
     DUrl url = DUrl::fromLocalFile(fileName);
     bool result = controller->openInTerminal(dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, url));
     EXPECT_TRUE(result);
 }
 
-TEST_F(FileControllerTest, test_book_mark)
+TEST_F(FileControllerTest, tst_book_mark)
 {
     DUrl url = DUrl::fromLocalFile(fileName);
     bool result = controller->addToBookmark(dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, url));
@@ -317,7 +366,7 @@ TEST_F(FileControllerTest, test_book_mark)
     EXPECT_TRUE(!result);
 }
 
-TEST_F(FileControllerTest, create_symlink)
+TEST_F(FileControllerTest, tst_create_symlink)
 {
     DUrl fromUrl = DUrl::fromLocalFile(fileName).toAbsolutePathUrl();
     DUrl toUrl = DUrl::fromLocalFile(linkName).toAbsolutePathUrl();
@@ -331,47 +380,47 @@ TEST_F(FileControllerTest, create_symlink)
     EXPECT_TRUE(result);
 }
 
-TEST_F(FileControllerTest, create_file_watcher)
+TEST_F(FileControllerTest, tst_create_file_watcher)
 {
     DUrl url = DUrl::fromLocalFile("/tmp/");
     DAbstractFileWatcher *watcher = controller->createFileWatcher(dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, url));
     EXPECT_TRUE(watcher != nullptr);
 }
 
-TEST_F(FileControllerTest, create_file_device)
+TEST_F(FileControllerTest, tst_create_file_device)
 {
     DUrl url = DUrl::fromLocalFile("/dev/urandom");
     auto *device = controller->createFileDevice(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
     EXPECT_TRUE(device != nullptr);
 }
 
-TEST_F(FileControllerTest, create_file_handler)
+TEST_F(FileControllerTest, tst_create_file_handler)
 {
     DUrl url = DUrl::fromLocalFile(fileName);
     auto *handler = controller->createFileHandler(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
     EXPECT_TRUE(handler != nullptr);
 }
 
-TEST_F(FileControllerTest, create_storage_info)
+TEST_F(FileControllerTest, tst_create_storage_info)
 {
     DUrl url = DUrl::fromLocalFile("/dev/urandom");
     auto *info = controller->createStorageInfo(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
     EXPECT_TRUE(info != nullptr);
 }
 
-TEST_F(FileControllerTest, custom_hideen_file_match)
+TEST_F(FileControllerTest, tst_custom_hideen_file_match)
 {
     bool result = FileController::customHiddenFileMatch("/tmp/", "test");
     EXPECT_TRUE(!result);
 }
 
-TEST_F(FileControllerTest, private_file_match)
+TEST_F(FileControllerTest, tst_private_file_match)
 {
     bool result = FileController::privateFileMatch("/tmp/", "test");
     EXPECT_TRUE(!result);
 }
 
-TEST_F(FileControllerTest, tags_manage)
+TEST_F(FileControllerTest, tst_tags_manage)
 {
     DUrl url = DUrl::fromLocalFile(fileName);
     QList<QString> tags;
@@ -388,13 +437,13 @@ TEST_F(FileControllerTest, tags_manage)
     EXPECT_TRUE(result2);
 }
 
-TEST_F(FileControllerTest, check_duplicate_name)
+TEST_F(FileControllerTest, tst_check_duplicate_name)
 {
     auto result = controller->checkDuplicateName(fileName);
     EXPECT_TRUE(!result.isEmpty());
 }
 
-TEST_F(FileControllerTest, file_added)
+TEST_F(FileControllerTest, tst_file_added)
 {
     DUrl url = DUrl::fromMTPFile("/mtp:");
     auto result = controller->fileAdded(url);
