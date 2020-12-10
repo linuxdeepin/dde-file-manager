@@ -87,12 +87,23 @@ TEST_F(DFMSideBarDefaultItemHandlerTest, context_menu)
     stub.set(ADDR(PathManager, getSystemPathDisplayName), st_getSystemPathDisplayName);
 
     QMenu *menu = p_handler->contextMenu(bar, item);
+    EXPECT_NE(menu, nullptr);
     QList<QAction *> actions = menu->actions();
     for (auto action : actions) {
         action->trigger();
     }
 
+
+    QString (*st_getSystemPathDisplayName2)(QString) = [](QString) {
+        return QString("");
+    };
+    stub.set(ADDR(PathManager, getSystemPathDisplayName), st_getSystemPathDisplayName2);
+    menu = p_handler->contextMenu(bar, item);
     EXPECT_NE(menu, nullptr);
+    actions = menu->actions();
+    for (auto action : actions) {
+        action->trigger();
+    }
 
     delete item;
     delete menu;
