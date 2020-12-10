@@ -77,6 +77,7 @@
 #include <QRegularExpression>
 
 #include <unistd.h>
+#include <gio/gio.h>
 
 #include <QQueue>
 #include <QMutex>
@@ -837,6 +838,54 @@ bool FileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToCl
     return true;
 }
 
+bool FileController::renameFileByGio(const DUrl &oldUrl, const DUrl &newUrl) const
+{
+    bool result = false;
+    QString fname = oldUrl.fileName();
+    QString tname = newUrl.fileName();
+    QString from = oldUrl.parentUrl().toLocalFile();
+    QString to = newUrl.parentUrl().toLocalFile();
+
+    if (to.compare(from) != 0) {
+        qDebug()<<"gio API can not rename file or directory those are not under same path!";
+        return false;
+    }
+
+    //获取当前目录
+    QString curd = QDir::current().path();
+
+    GError *error = nullptr;
+    if (!QDir::setCurrent(to)) {
+        qDebug()<<"failed to chdir " << to;
+        return false;
+    }
+
+    GFile *file = g_file_new_for_path (fname.toStdString().c_str());
+    GFile *new_file = g_file_set_display_name (file, tname.toStdString().c_str(), nullptr, &error);
+    if (new_file == nullptr) {
+        qDebug()<< error->message;
+        g_error_free (error);
+    } else {
+        char *path = g_file_get_path(new_file);
+        qDebug()<< "Rename successful. New path: "<<path;
+        g_object_unref (new_file);
+        g_free (path);
+        result = true;
+    }
+
+    g_object_unref (file);
+
+    if (result) {
+        emit fileSignalManager->fileMoved(from, fname, to, tname);
+    }
+
+    if (!QDir::setCurrent(curd)) {
+        qDebug()<<"failed to return to directory " << curd;
+    }
+
+    return result;
+}
+
 bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
     const DUrl &oldUrl = event->fromUrl();
@@ -873,12 +922,17 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
             DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRenameEvent>(nullptr, oldUrl, DUrl::fromLocalFile(path)));
         }
     } else {
-        result = file.rename(newFilePath);
+        if (newFilePath.contains("gvfs/mtp")) {
+            result = renameFileByGio(oldUrl, newUrl);
+        }
+
+        if (!result) {
+            result = file.rename(newFilePath);
+        }
 
         if (!result) {
             result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
         }
-
         // mtp 目录无法删除，因此采用复制再删除的模式
         if (!result && QFileInfo(file).isDir()) {
             result = QProcess::execute("cp -r \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
