@@ -130,7 +130,7 @@ void AcessControlManager::onFileCreated(const QString &path, const QString &name
             }
         }
         // ACL
-        QString aclCmd = QString("setfacl -m o:rwx %1").arg(mountBaseName);
+        QString aclCmd = QString("setfacl -m o:rx %1").arg(mountBaseName);
         QProcess::execute(aclCmd);
         qDebug() << "acl:" << aclCmd;
     }
