@@ -49,6 +49,10 @@
         <source>The device is busy, cannot eject now</source>
         <translation>磁盘文件被占用，无法弹出</translation>
     </message>
+    <message>
+        <source>Disks</source>
+        <translation>磁盘列表</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

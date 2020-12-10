@@ -49,6 +49,10 @@
         <source>The device is busy, cannot eject now</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Disks</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
