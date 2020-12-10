@@ -162,6 +162,8 @@ void DListItemDelegate::paint(QPainter *painter,
 
     rect.setRight(qMin(column_x, opt.rect.right()));
 
+    if (columnRoleList.isEmpty())
+        return;
     int role = columnRoleList.at(0);
 
     if (index != d->editingIndex || (role != DFileSystemModel::FileNameRole && role != DFileSystemModel::FileDisplayNameRole)) {

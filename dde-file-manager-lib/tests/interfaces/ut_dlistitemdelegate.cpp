@@ -18,22 +18,25 @@ class TestDListItemDelegate : public testing::Test
 {
 public:
     DListItemDelegate *dlistIdl;
+    DFileView *dfileview;
     void SetUp() override
     {
-        DFileView *dfileview = new DFileView();
+        dfileview = new DFileView();
         dfileview->initDelegate();
         dfileview->increaseIcon();
         dfileview->decreaseIcon();
         dfileview ->setIconSizeBySizeIndex(0);
         dfileview->fileViewHelper()->model()   ;
         dlistIdl = new DListItemDelegate(dfileview->fileViewHelper());
-        std::cout << "start TestDFMGlobal";
+        std::cout << "start TestDListItemDelegate";
     }
     void TearDown() override
     {
         delete dlistIdl;
         dlistIdl = nullptr;
-        std::cout << "end TestDFMGlobal";
+        delete dfileview;
+        dfileview = nullptr;
+        std::cout << "end TestDListItemDelegate";
     }
 };
 }
