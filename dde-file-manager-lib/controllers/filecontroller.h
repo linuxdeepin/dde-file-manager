@@ -82,6 +82,7 @@ public:
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
     QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const override;
 
+    bool renameFileByGio(const DUrl &oldUrl, const DUrl &newUrl) const;
 private:
     QString checkDuplicateName(const QString &name) const;
     //修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程

@@ -16,7 +16,9 @@
 #include "private/dfilesystemwatcher_p.h"
 #include "../vault/vaultglobaldefine.h"
 #include "controllers/vaultcontroller.h"
-
+#include "app/filesignalmanager.h"
+#include "utils/singleton.h"
+#include "app/define.h"
 #include <QDir>
 #include <QDebug>
 
@@ -139,6 +141,8 @@ bool DFileWatcherPrivate::start()
     q->connect(watcher_file_private, &DFileSystemWatcher::fileSystemUMount,
                q, &DFileWatcher::onFileSystemUMount);
 
+    q->connect(fileSignalManager, &FileSignalManager::fileMoved,
+               q, &DFileWatcher::onFileMoved);
     return true;
 }
 

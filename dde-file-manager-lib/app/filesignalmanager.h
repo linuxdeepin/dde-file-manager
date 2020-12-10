@@ -239,6 +239,8 @@ signals:
     //隐藏系统盘状态发生改变消息
     void requestHideSystemPartition(bool ishide);
 
+    //手动发送文件移动信号 gio专用
+    void fileMoved(const QString &from, const QString &fname, const QString &to, const QString &tname);
 
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
