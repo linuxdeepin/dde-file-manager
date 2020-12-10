@@ -1,13 +1,16 @@
+#include <gtest/gtest.h>
+#include <gmock/gmock-matchers.h>
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
 
-#include "dfileiconprovider.h"
+#define private public
+#include "stub.h"
+#include "dfileiconprovider.cpp"
 #include "dfileinfo.h"
 #include "dgvfsfileinfo.h"
-#include <gtest/gtest.h>
-#include <gmock/gmock-matchers.h>
 
 using DFM_NAMESPACE::DFileIconProvider;
+using DFM_NAMESPACE::DFileIconProviderPrivate;
 namespace  {
     class DFileIconProviderTest : public testing::Test
     {
@@ -23,43 +26,121 @@ namespace  {
             provider = nullptr;
         }
 
+        QString invalidFileName = "/tmp/invalid";
+        QString ftpFileName = "ftp://ftp.freebsd.org";
         DFileIconProvider *provider;
     };
 }
 
-TEST_F(DFileIconProviderTest, global_instance)
+// 由于下面lambda函数类型转换不能捕获局部变量，故用全局静态变量
+static QStringList list {"application-vnd.debian.binary-package",
+                    "application-vnd.rar",
+                    "application-vnd.ms-htmlhelp",
+                    "Zoom.png"
+};
+TEST_F(DFileIconProviderTest, tst_private)
+{
+    Stub stub;
+    QStringList (*themedIconNames)() = []() {
+        return QStringList();
+    };
+    stub.set(ADDR(DGioFileInfo, themedIconNames), themedIconNames);
+
+    QIcon (*fromTheme)(const QString &name) = [](const QString &name) {
+        if (std::find(list.begin(), list.end(), name) == list.end()) {
+            return QIcon(name);
+        } else {
+            return QIcon();
+        }
+    };
+    stub.set(static_cast<QIcon (*)(const QString &name)>(&QIcon::fromTheme), fromTheme);
+
+    DFileIconProviderPrivate pri;
+    QFileInfo fileinfo;
+    fileinfo.setFile("/");
+    QIcon icon = pri.getFilesystemIcon(fileinfo);
+    EXPECT_FALSE(icon.isNull());
+
+    foreach(const QString var, list) {
+        QIcon themeIcon = pri.fromTheme(var);
+        EXPECT_FALSE(themeIcon.isNull());
+    }
+}
+
+TEST_F(DFileIconProviderTest, tst_global_instance)
 {
     auto instance = DFileIconProvider::globalProvider();
     EXPECT_TRUE(instance != nullptr);
 }
 
-TEST_F(DFileIconProviderTest, qicon)
+TEST_F(DFileIconProviderTest, tst_qicon)
 {
-    QFileInfo qfileinfo;
-    qfileinfo.setFile("/usr/");
-    QIcon qicon = provider->icon(qfileinfo);
-    EXPECT_TRUE(!qicon.isNull());
-    qfileinfo.setFile("/invliad");
-    qicon = provider->icon(qfileinfo);
-    EXPECT_TRUE(qicon.isNull());
+    QFileInfo fileinfo;
+    fileinfo.setFile("/usr/");
+    QIcon icon = provider->icon(fileinfo);
+    EXPECT_FALSE(icon.isNull());
+
+    fileinfo.setFile(invalidFileName);
+    icon = provider->icon(fileinfo);
+    EXPECT_TRUE(icon.isNull());
+
+    Stub stub;
+    QIcon (*fromTheme)(const QString &iconName) = [](const QString &) {
+        return QIcon();
+    };
+    stub.set(ADDR(DFileIconProviderPrivate, fromTheme), fromTheme);
+
+    fileinfo.setFile("/usr/");
+    icon = provider->icon(fileinfo);
+    EXPECT_FALSE(icon.isNull());
+
+    fileinfo.setFile(invalidFileName);
+    icon = provider->icon(fileinfo);
+    EXPECT_TRUE(icon.isNull());
 }
 
-TEST_F(DFileIconProviderTest, dicon)
+TEST_F(DFileIconProviderTest, tst_dicon)
 {
-    const DFileInfo dfileinfo("/home/");
-    QIcon dicon = provider->icon(dfileinfo);
-    EXPECT_TRUE(!dicon.isNull());
-    const DFileInfo dfileinfo2("/invlide");
-    dicon = provider->icon(dfileinfo2);
-    EXPECT_TRUE(!dicon.isNull());
+    DFileInfo fileinfo("/home/");
+    QIcon icon = provider->icon(fileinfo);
+    EXPECT_FALSE(icon.isNull());
+
+    DFileInfo fileinfo2(invalidFileName);
+    icon = provider->icon(fileinfo2);
+    EXPECT_FALSE(icon.isNull());
+
+    Stub stub;
+    QIcon (*fromTheme)(const QString &iconName) = [](const QString &) {
+        return QIcon();
+    };
+    stub.set(ADDR(DFileIconProviderPrivate, fromTheme), fromTheme);
+
+    icon = provider->icon(fileinfo, QIcon::fromTheme("dialog-warning"));
+    EXPECT_FALSE(icon.isNull());
+
+    icon = provider->icon(fileinfo2, QIcon::fromTheme("dialog-warning"));
+    EXPECT_FALSE(icon.isNull());
 }
 
-TEST_F(DFileIconProviderTest, gvfsicon)
+TEST_F(DFileIconProviderTest, tst_gvfsicon)
 {
-    const DGvfsFileInfo info("ftp://ftp.freebsd.org");
-    QIcon ftpIcon = provider->icon(info);
-    EXPECT_TRUE(!ftpIcon.isNull());
-    const DGvfsFileInfo info2("/invalid");
-    QIcon icon = provider->icon(info2);
-    EXPECT_TRUE(!icon.isNull());
+    const DGvfsFileInfo fileinfo(ftpFileName);
+    QIcon icon = provider->icon(fileinfo);
+    EXPECT_FALSE(icon.isNull());
+
+    const DGvfsFileInfo fileinfo2(invalidFileName);
+    icon = provider->icon(fileinfo2);
+    EXPECT_FALSE(icon.isNull());
+
+    Stub stub;
+    QIcon (*fromTheme)(const QString &iconName) = [](const QString &) {
+        return QIcon();
+    };
+    stub.set(ADDR(DFileIconProviderPrivate, fromTheme), fromTheme);
+
+    icon = provider->icon(fileinfo, QIcon::fromTheme("dialog-warning"));
+    EXPECT_FALSE(icon.isNull());
+
+    icon = provider->icon(fileinfo2, QIcon::fromTheme("dialog-warning"));
+    EXPECT_FALSE(icon.isNull());
 }
