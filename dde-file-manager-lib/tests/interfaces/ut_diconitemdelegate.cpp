@@ -18,7 +18,7 @@ class TestDIconItemDelegate : public testing::Test
 {
 public:
     DIconItemDelegate *iconItemDelegate;
-    DFileView *fileview；
+    DFileView *fileview;
     void SetUp() override
     {
         fileview = new DFileView();
@@ -27,7 +27,7 @@ public:
         fileview->decreaseIcon();
         fileview ->setIconSizeBySizeIndex(0);
 
-        iconItemDelegate = qobject_cast<DIconItemDelegate *>(dfileview->itemDelegate());
+        iconItemDelegate = qobject_cast<DIconItemDelegate *>(fileview->itemDelegate());
 
         std::cout << "start TestDIconItemDelegate";
     }
