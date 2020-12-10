@@ -15,6 +15,7 @@
 #include <QFlag>
 #include <dfiledragclient.h>
 #include "stub.h"
+#include "../stub-ext/stubext.h"
 #include "interfaces/diconitemdelegate.h"
 #include "models/mergeddesktopfileinfo.h"
 #include "models/masteredmediafileinfo.h"
@@ -174,11 +175,18 @@ TEST_F(DFileViewTest,set_column_width)
 {
     ASSERT_NE(nullptr,m_view);
 
+    stub_ext::StubExt st;
+    bool isCalled = false;
+    st.set_lamda(ADDR(QHeaderView, resizeSection), [&isCalled](){isCalled = true;});
+
     m_view->switchViewMode(DFileView::ListMode);
     m_view->setColumnWidth(0, 100);
+    EXPECT_TRUE(isCalled);
 
+    isCalled = false;
     m_view->d_func()->headerView = nullptr;
     m_view->setColumnWidth(0, 100);
+    EXPECT_FALSE(isCalled);
 }
 
 TEST_F(DFileViewTest,get_column_count)
@@ -219,8 +227,6 @@ TEST_F(DFileViewTest,get_itemcount_row)
     result = m_view->itemCountForRow();
     expectResult = 1;
     EXPECT_EQ(result, expectResult);
-
-
 }
 
 TEST_F(DFileViewTest,get_index_row)
@@ -571,10 +577,15 @@ TEST_F(DFileViewTest,get_select)
 {
     ASSERT_NE(nullptr,m_view);
 
+    stub_ext::StubExt st;
+    bool isCalled = false;
+    st.set_lamda(ADDR(DFileView, clearSelection), [&isCalled](){isCalled = true;});
+
     DUrl url(QString("/test"));
     QList<DUrl> list;
     list << url;
     m_view->select(list);
+    EXPECT_TRUE(isCalled);
 }
 
 TEST_F(DFileViewTest,select_cut_copy)
@@ -585,10 +596,15 @@ TEST_F(DFileViewTest,select_cut_copy)
     void (*ut_startWork)() = [](){};
     stub.set(ADDR(SelectWork, startWork), ut_startWork);
 
+    static bool isCalled = false;
+    void (*ut_clearSelection)() = [](){isCalled = true;};
+    stub.set(ADDR(DFileView, clearSelection), ut_clearSelection);
+
     DUrl url(QString("/test"));
     QList<DUrl> list;
     list << url;
     m_view->selectAllAfterCutOrCopy(list);
+    EXPECT_TRUE(isCalled);
 }
 
 TEST_F(DFileViewTest,slot_set_select)
@@ -662,9 +678,18 @@ TEST_F(DFileViewTest,sort_by_role)
 {
     ASSERT_NE(nullptr,m_view);
 
+    Stub stub;
+    static bool isCalled = false;
+    void (*ut_sort)() = [](){isCalled = true;};
+    stub.set((bool(DFileSystemModel::*)())ADDR(DFileSystemModel, sort), ut_sort);
+
     m_view->switchViewMode(DFileView::ListMode);
     m_view->sortByRole(0, Qt::AscendingOrder);
+    EXPECT_TRUE(isCalled);
+
+    isCalled = false;
     m_view->sortByRole(1, Qt::DescendingOrder);
+    EXPECT_TRUE(isCalled);
 }
 
 TEST_F(DFileViewTest,set_name_filters)
@@ -717,7 +742,12 @@ TEST_F(DFileViewTest,clear_selection)
 {
     ASSERT_NE(nullptr,m_view);
 
+    stub_ext::StubExt st;
+    bool isCalled = false;
+    st.set_lamda(ADDR(QListView, clearSelection), [&isCalled](){isCalled = true;});
+
     m_view->clearSelection();
+    EXPECT_TRUE(isCalled);
 }
 
 TEST_F(DFileViewTest,set_content_label)
@@ -769,17 +799,22 @@ TEST_F(DFileViewTest,delay_update_statusbar)
 {
     ASSERT_NE(nullptr,m_view);
 
+    Stub stub;
+    static bool isBusy = true;
+    bool (*ut_checkGvfsMountfileBysy)() = [](){return isBusy;};
+    stub.set((bool(DFileService::*)(const DUrl&, const bool))ADDR(DFileService, checkGvfsMountfileBusy), ut_checkGvfsMountfileBysy);
+
     m_view->m_destroyFlag = true;
     m_view->delayUpdateStatusBar();
+    EXPECT_FALSE(m_view->d_func()->updateStatusBarTimer->isActive());
 
     m_view->m_destroyFlag = false;
     m_view->delayUpdateStatusBar();
+    EXPECT_FALSE(m_view->d_func()->updateStatusBarTimer->isActive());
 
-    Stub stub;
-    bool (*ut_checkGvfsMountfileBysy)() = [](){return true;};
-    stub.set((bool(DFileService::*)(const DUrl&, const bool))ADDR(DFileService, checkGvfsMountfileBusy), ut_checkGvfsMountfileBysy);
+    isBusy = false;
     m_view->delayUpdateStatusBar();
-
+    EXPECT_TRUE(m_view->d_func()->updateStatusBarTimer->isActive());
 }
 
 TEST_F(DFileViewTest,update_status_bar)
@@ -787,17 +822,25 @@ TEST_F(DFileViewTest,update_status_bar)
     ASSERT_NE(nullptr,m_view);
 
     Stub stub;
+    static bool isNotifyChanged = false;
+    void (*ut_notifySelectUrlChanged)() = [](){isNotifyChanged = true;};
+    stub.set(ADDR(DFileView, notifySelectUrlChanged), ut_notifySelectUrlChanged);
+
     static DFileSystemModel::State myState = DFileSystemModel::Unknow;
     DFileSystemModel::State (*ut_state)() = [](){return myState;};
     stub.set(ADDR(DFileSystemModel, state), ut_state);
     m_view->updateStatusBar();
+    EXPECT_FALSE(isNotifyChanged);
 
+    isNotifyChanged = false;
     myState = DFileSystemModel::Idle;
     static bool myHasScroller = true;
     bool (*ut_hasScroller)() = [](){return myHasScroller;};
     stub.set(ADDR(QScroller, hasScroller), ut_hasScroller);
     m_view->updateStatusBar();
+    EXPECT_FALSE(isNotifyChanged);
 
+    isNotifyChanged = false;
     myHasScroller = false;
     QList<DUrl> (*ut_selectedUrls)() = [](){
         QList<DUrl> list;
@@ -812,15 +855,20 @@ TEST_F(DFileViewTest,update_status_bar)
     bool (*ut_checkGvfsMountfileBysy)() = [](){return myBusy;};
     stub.set((bool(DFileService::*)(const DUrl&, const bool))ADDR(DFileService, checkGvfsMountfileBusy), ut_checkGvfsMountfileBysy);
     m_view->updateStatusBar();
+    EXPECT_FALSE(isNotifyChanged);
 
+    isNotifyChanged = false;
     myBusy = false;
     static int myCount = 0;
     int (*ut_selectedIndexCount)() = [](){return myCount;};
     stub.set(ADDR(DFileView, selectedIndexCount), ut_selectedIndexCount);
     m_view->updateStatusBar();
+    EXPECT_TRUE(isNotifyChanged);
 
+    isNotifyChanged = false;
     myCount = 1;
     m_view->updateStatusBar();
+    EXPECT_TRUE(isNotifyChanged);
 }
 
 TEST_F(DFileViewTest,open_index_openAction)
@@ -931,45 +979,76 @@ TEST_F(DFileViewTest,open_action_triggered)
 {
     ASSERT_NE(nullptr,m_view);
 
+    stub_ext::StubExt st;
+    bool isCallOpen = false;
+    st.set_lamda(ADDR(DFileService, openFileByApp), [&isCallOpen](){return isCallOpen=true;});
+
     QAction action;
     m_view->openWithActionTriggered(&action);
+    EXPECT_TRUE(isCallOpen);
 }
 
 TEST_F(DFileViewTest,row_count_changed)
 {
     ASSERT_NE(nullptr,m_view);
 
+    stub_ext::StubExt st;
+    bool isCallUpdate = false;
+    st.set_lamda(ADDR(DFileView, updateModelActiveIndex), [&isCallUpdate](){isCallUpdate = true;});
+
     m_view->onRowCountChanged();
+    EXPECT_TRUE(isCallUpdate);
 }
 
 TEST_F(DFileViewTest,update_model_index)
 {
     ASSERT_NE(nullptr,m_view);
 
+    m_view->m_isRemovingCase = false;
     m_view->updateModelActiveIndex();
+    EXPECT_FALSE(m_view->m_isRemovingCase);
 }
 
 TEST_F(DFileViewTest,handle_data_changed)
 {
     ASSERT_NE(nullptr,m_view);
 
+    Stub stub;
+    static bool isCalledChanged = false;
+    void (*ut_dataChanged)() = [](){isCalledChanged = true;};
+
+    typedef void (*fptr)(QListView*,const QModelIndex&, const QModelIndex&, const QVector<int>&);
+    fptr QListView_dataChanged = (fptr)(&QListView::dataChanged);
+    stub.set(QListView_dataChanged, ut_dataChanged);
+
     QModelIndex topLeft,bottomRight;
     m_view->handleDataChanged(topLeft, bottomRight);
+    EXPECT_TRUE(isCalledChanged);
 }
 
 TEST_F(DFileViewTest,root_url_deleted)
 {
     ASSERT_NE(nullptr,m_view);
 
+    stub_ext::StubExt st;
+    bool isCalledCdTo = false;
+    st.set_lamda(ADDR(DFMBaseView, requestCdTo), [&isCalledCdTo](){isCalledCdTo = true;});
+
     DUrl url;
     m_view->onRootUrlDeleted(url);
+    EXPECT_TRUE(isCalledCdTo);
 }
 
 TEST_F(DFileViewTest,fresh_view)
 {
     ASSERT_NE(nullptr,m_view);
 
+    stub_ext::StubExt st;
+    bool isCalledRefresh = false;
+    st.set_lamda(ADDR(DFileSystemModel, refresh), [&isCalledRefresh](){isCalledRefresh = true;});
+
     m_view->freshView();
+    EXPECT_TRUE(isCalledRefresh);
 }
 
 TEST_F(DFileViewTest,load_view_state)
@@ -980,7 +1059,13 @@ TEST_F(DFileViewTest,load_view_state)
     QString path("dfmroot:///desktop.userdir");
     DUrl url(path);
     m_view->setRootUrl(url);
+
+    stub_ext::StubExt st;
+    bool isCalledSwitchMode = false;
+    st.set_lamda(ADDR(DFileView, switchViewMode), [&isCalledSwitchMode](){isCalledSwitchMode = true;});
+
     m_view->loadViewState(url);
+    EXPECT_TRUE(isCalledSwitchMode);
 }
 
 TEST_F(DFileViewTest,save_view_state)
@@ -994,9 +1079,15 @@ TEST_F(DFileViewTest,sort_indicator_changed)
 {
     ASSERT_NE(nullptr,m_view);
 
+    Stub stub;
+    static bool isCalled = false;
+    void (*ut_sort)() = [](){isCalled = true;};
+    stub.set((bool(DFileSystemModel::*)())ADDR(DFileSystemModel, sort), ut_sort);
+
     int logicalIndex = 0;
     Qt::SortOrder order = Qt::DescendingOrder;
     m_view->onSortIndicatorChanged(logicalIndex, order);
+    EXPECT_TRUE(isCalled);
 }
 
 TEST_F(DFileViewTest,drive_optical_changed)
@@ -1011,15 +1102,33 @@ TEST_F(DFileViewTest,re_set)
 {
     ASSERT_NE(nullptr,m_view);
 
+    stub_ext::StubExt st;
+    bool isCalledReset = false;
+
+    typedef void (*fptr)(QListView*);
+    fptr QListView_reset = (fptr)(&QListView::reset);
+
+    st.set_lamda(QListView_reset, [&isCalledReset](){isCalledReset = true;});
+
     m_view->reset();
+    EXPECT_TRUE(isCalledReset);
 }
 
 TEST_F(DFileViewTest,set_root_index)
 {
     ASSERT_NE(nullptr,m_view);
 
+    stub_ext::StubExt st;
+    bool isCalledSet = false;
+
+    typedef void (*fptr)(QListView*, const QModelIndex&);
+    fptr QListView_setRootIndex = (fptr)(&QListView::setRootIndex);
+
+    st.set_lamda(QListView_setRootIndex, [&isCalledSet](){isCalledSet = true;});
+
     QModelIndex index;
     m_view->setRootIndex(index);
+    EXPECT_TRUE(isCalledSet);
 }
 
 TEST_F(DFileViewTest,tst_wheel_event)
