@@ -24,9 +24,10 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "ddiskmanager.h"
+#include "deviceinfo/udiskdeviceinfo.h"
 
-#include "stub.h"
 #include "addr_pri.h"
+#include "stubext.h"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
@@ -34,6 +35,8 @@
 #include "deviceinfo/udisklistener.h"
 
 ACCESS_PRIVATE_FUN(UDiskListener, void(const QString &labelName), fileSystemDeviceIdLabelChanged);
+
+using namespace stub_ext;
 
 namespace {
 class TestUDiskListener: public testing::Test {
@@ -265,7 +268,9 @@ TEST_F(TestUDiskListener, stopDrive)
 
 TEST_F(TestUDiskListener, forceUnmount)
 {
-    EXPECT_NO_FATAL_FAILURE(m_listener->forceUnmount(""));
+    UDiskListener listener;
+    listener.m_map["a"] = new UDiskDeviceInfo;
+    EXPECT_NO_FATAL_FAILURE(listener.forceUnmount("a"));
 }
 
 TEST_F(TestUDiskListener, fileSystemDeviceIdLabelChanged)
@@ -318,6 +323,7 @@ TEST_F(TestUDiskListener, appendHiddenDirs)
 
 TEST_F(TestUDiskListener, addMountDiskInfo)
 {
+    UDiskListener listener;
     QDiskInfo info;
     info.setId("123");
     info.setName("abc");
@@ -341,6 +347,52 @@ TEST_F(TestUDiskListener, addMountDiskInfo)
     info.setDefault_location("/");
     info.setDrive_unix_device("0");
 
-    EXPECT_NO_FATAL_FAILURE(m_listener->addMountDiskInfo(info));
+    listener.m_subscribers.append(new TestSubscriber);
+
+    EXPECT_NO_FATAL_FAILURE(listener.addMountDiskInfo(info));
+
+    StubExt st;
+    st.set_lamda(&DDiskManager::resolveDeviceNode, []() {
+        return  QStringList() << "test";
+    });
+
+    EXPECT_NO_FATAL_FAILURE(listener.addMountDiskInfo(info));
 }
+
+TEST_F(TestUDiskListener, mount)
+{
+    EXPECT_NO_FATAL_FAILURE(m_listener->mount("/dev/sdb*"));
+}
+
+TEST_F(TestUDiskListener, removeVolumeDiskInfo)
+{
+    UDiskListener listener;
+    QDiskInfo info;
+    info.setId("not_exists");
+    info.setUuid("test");
+    listener.addMountDiskInfo(info);
+
+    UDiskDeviceInfoPointer device;
+    device = new UDiskDeviceInfo();
+    listener.m_list.append(device);
+    listener.m_map.clear();
+
+    EXPECT_NO_FATAL_FAILURE(listener.removeVolumeDiskInfo(info));
+}
+
+TEST_F(TestUDiskListener, changeVolumeDiskInfo)
+{
+    UDiskListener listener;
+    QDiskInfo info;
+
+    EXPECT_NO_FATAL_FAILURE(listener.changeVolumeDiskInfo(info));
+
+    info.setId("not_exists");
+    listener.addMountDiskInfo(info);
+    EXPECT_NO_FATAL_FAILURE(listener.changeVolumeDiskInfo(info));
+
+    listener.m_map.clear();
+    EXPECT_NO_FATAL_FAILURE(listener.changeVolumeDiskInfo(info));
+}
+
 

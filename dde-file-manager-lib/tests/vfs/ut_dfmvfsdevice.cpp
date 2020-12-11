@@ -197,6 +197,22 @@ TEST_F(TestDFMVfsDevice, p_GMountOperationAskQuestionCb)
 
 TEST_F(TestDFMVfsDevice, p_GFileMountDoneCb)
 {
+
+    StubExt stub;
+    stub.set_lamda(&g_file_mount_enclosing_volume_finish,
+                   [](GFile                      *,
+                   GAsyncResult               *,
+                   GError                    **error) {
+
+        GError *e = new GError;
+        char *m = (char *)malloc(256);
+        strcpy(m, "test");
+        e->message = m;
+        e->domain = G_IO_ERROR;
+        *error = e;
+
+        return false;
+    });
     EXPECT_NO_FATAL_FAILURE (
         DFMVfsDevicePrivate::GFileMountDoneCb(nullptr, nullptr, m_service);
     );
