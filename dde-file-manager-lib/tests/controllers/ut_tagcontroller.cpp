@@ -8,6 +8,9 @@
 #include <QFile>
 #include "dfmevent.h"
 
+#include "testhelper.h"
+#include "stubext.h"
+
 #define private public
 #include "tag/tagmanager.h"
 #include "controllers/tagcontroller.cpp"
@@ -16,7 +19,9 @@
 #define TAG_NAME_A "a"
 #define TAG_NAME_B "b"
 #define TAG_TXT_FILE "tag_test.txt";
-#define NEW_TAG_TXT_FILE "new_tag_test.txt";
+#define NEW_TAG_TXT_FILE "new_tag_test.txt"; 
+
+using namespace stub_ext;
 
 namespace  {
 class TestTagController : public testing::Test
@@ -39,6 +44,11 @@ public:
 
         m_tagFileUrl.setScheme(TAG_SCHEME);
         m_tagFileUrl.setTaggedFileUrl(tempTxtFilePath);
+
+        m_stExt.set_lamda(&TagManagerDaemonController::onAddNewTags, [](){});
+        m_stExt.set_lamda(&TagManagerDaemonController::onDeleteTags, [](){});
+        m_stExt.set_lamda(&TagManagerDaemonController::filesWereTagged, [](){});
+        m_stExt.set_lamda(&TagManagerDaemonController::untagFiles, [](){});
     }
 
     void TearDown() override
@@ -60,7 +70,9 @@ public:
     QString tempTxtFilePath;
     DUrl m_tagUrl;
     DUrl m_tagFileUrl;
+    StubExt m_stExt;
 };
+}
 
 TEST_F(TestTagController, test_prepare)
 {
@@ -70,7 +82,7 @@ TEST_F(TestTagController, test_prepare)
     ASSERT_NE(m_pManager, nullptr);
     QStringList tags { TAG_NAME_A, TAG_NAME_B };
     DUrlList files { DUrl::fromLocalFile(tempDirPath_A), DUrl::fromLocalFile(tempDirPath_B) };
-    m_pManager->makeFilesTags(tags, files);
+    EXPECT_NO_FATAL_FAILURE(m_pManager->makeFilesTags(tags, files));
 }
 
 TEST_F(TestTagController, can_create_file_info)
@@ -112,7 +124,11 @@ TEST_F(TestTagController, can_open_file)
 
     m_tagUrl.setTaggedFileUrl(tempDirPath_A);
     auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, m_tagUrl);
-    EXPECT_TRUE(m_pController->openFile(event));
+
+    StubExt st;
+    st.set_lamda(&DFileService::openFile, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->openFile(event));
 }
 
 TEST_F(TestTagController, can_open_files)
@@ -126,50 +142,74 @@ TEST_F(TestTagController, can_open_files)
     list.append(m_tagUrl);
 
     auto event = dMakeEventPointer<DFMOpenFilesEvent>(nullptr, list);
-    EXPECT_TRUE(m_pController->openFiles(event));
+
+    StubExt st;
+    st.set_lamda(&FileUtils::openFiles, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->openFiles(event));
 }
 
 TEST_F(TestTagController, can_setFileTags)
 {
     auto event = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, m_tagFileUrl, QList<QString>({"红色"}));
-    EXPECT_TRUE(m_pController->setFileTags(event));
+
+    StubExt st;
+    st.set_lamda(&DFileService::setFileTags, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->setFileTags(event));
 }
 
 TEST_F(TestTagController, can_getTagsThroughFiles)
 {
     auto event = dMakeEventPointer<DFMGetTagsThroughFilesEvent>(nullptr, QList<DUrl>({m_tagFileUrl}));
-    EXPECT_TRUE(!m_pController->getTagsThroughFiles(event).isEmpty());
+
+    StubExt st;
+    st.set_lamda(&DFileService::getTagsThroughFiles, [](){ return QList<QString>(); });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->getTagsThroughFiles(event));
 }
 
 TEST_F(TestTagController, can_removeTagsOfFile)
 {
     auto event = dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, m_tagFileUrl, QList<QString>({"红色"}));
-    EXPECT_TRUE(m_pController->removeTagsOfFile(event));
+
+    StubExt st;
+    st.set_lamda(&DFileService::removeTagsOfFile, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->removeTagsOfFile(event));
 }
 
 TEST_F(TestTagController, can_openFileByApp)
 {
     auto event = dMakeEventPointer<DFMOpenFileByAppEvent>(nullptr, "/usr/share/applications/deepin-editor.desktop", m_tagFileUrl);
-    EXPECT_TRUE(m_pController->openFileByApp(event));
-}
 
-TEST_F(TestTagController, can_openFilesByApp)
-{
-    auto event = dMakeEventPointer<DFMOpenFilesByAppEvent>(nullptr, "/usr/share/applications/deepin-editor.desktop", DUrlList() << m_tagFileUrl);
-    EXPECT_TRUE(m_pController->openFilesByApp(event));
+    StubExt st;
+    st.set_lamda(&DFileService::openFileByApp, [](){ return true; });
+
+    EXPECT_TRUE(m_pController->openFileByApp(event));
 }
 
 TEST_F(TestTagController, can_openFileLocation)
 {
-    auto event = dMakeEventPointer<DFMOpenFileLocation>(nullptr, m_tagUrl);
-    EXPECT_TRUE(m_pController->openFileLocation(event));
+    auto tagEvent = dMakeEventPointer<DFMOpenFileLocation>(nullptr, m_tagUrl);
+    auto fileEvent = dMakeEventPointer<DFMOpenFileLocation>(nullptr, m_tagFileUrl);
+
+    StubExt st;
+    st.set_lamda(&DFileService::openFileLocation, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->openFileLocation(tagEvent));
+    EXPECT_NO_FATAL_FAILURE(m_pController->openFileLocation(fileEvent));
 }
 
-//TEST_F(TestTagController, can_writeFilesToClipboard)
-//{
-//    auto event = dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CopyAction, DUrlList() << m_tagFileUrl);
-//    EXPECT_TRUE(m_pController->writeFilesToClipboard(event));
-//}
+TEST_F(TestTagController, can_writeFilesToClipboard)
+{
+    auto event = dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CopyAction, DUrlList() << m_tagFileUrl);
+
+    StubExt st;
+    st.set_lamda(&DFileService::writeFilesToClipboard, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->writeFilesToClipboard(event));
+}
 
 TEST_F(TestTagController, can_setPermissions)
 {
@@ -199,23 +239,39 @@ TEST_F(TestTagController, can_createSymlink)
 
 TEST_F(TestTagController, can_shareFolder)
 {
-    auto event = dMakeEventPointer<DFMFileShareEvent>(nullptr, m_tagUrl, "tag_test");
-    EXPECT_TRUE(m_pController->shareFolder(event));
+    auto tagEvent = dMakeEventPointer<DFMFileShareEvent>(nullptr, m_tagUrl, "tag_test");
+    auto fileEvent = dMakeEventPointer<DFMFileShareEvent>(nullptr, m_tagFileUrl, "tag_file_test");
+
+    StubExt st;
+    st.set_lamda(&DFileService::shareFolder, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->shareFolder(tagEvent));
+    EXPECT_NO_FATAL_FAILURE(m_pController->shareFolder(fileEvent));
 }
 
 TEST_F(TestTagController, can_unShareFolder)
 {
-    auto event = dMakeEventPointer<DFMFileShareEvent>(nullptr, m_tagUrl, "tag_test");
-    m_pController->shareFolder(event);
+    auto tagEvent = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, m_tagUrl);
+    auto fileEvent = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, m_tagFileUrl);
 
-    auto unShareFolderEvent = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, m_tagUrl);
-    EXPECT_TRUE(m_pController->unShareFolder(unShareFolderEvent));
+    StubExt st;
+    st.set_lamda(&DFileService::unShareFolder, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->unShareFolder(tagEvent));
+    EXPECT_NO_FATAL_FAILURE(m_pController->unShareFolder(fileEvent));
+
 }
 
 TEST_F(TestTagController, can_openInTerminal)
 {
-    auto event = dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, m_tagUrl);
-    EXPECT_TRUE(m_pController->openInTerminal(event));
+    auto tagEvent = dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, m_tagUrl);
+    auto fileEvent = dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, m_tagFileUrl);
+
+    StubExt st;
+    st.set_lamda(&DFileService::openInTerminal, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->openInTerminal(tagEvent));
+    EXPECT_NO_FATAL_FAILURE(m_pController->openInTerminal(fileEvent));
 }
 
 TEST_F(TestTagController, can_renameFile)
@@ -225,18 +281,20 @@ TEST_F(TestTagController, can_renameFile)
     to.setScheme(SEARCH_SCHEME);
     to.setTaggedFileUrl(temp);
     auto event = dMakeEventPointer<DFMRenameEvent>(nullptr, m_tagFileUrl, to);
-    EXPECT_TRUE(m_pController->renameFile(event));
+
+    StubExt st;
+    st.set_lamda(&DFileService::renameFile, [](){ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->renameFile(event));
 }
 
 TEST_F(TestTagController, test_wind_up)
 {
     ASSERT_NE(m_pManager, nullptr);
     QStringList tags { TAG_NAME_A, TAG_NAME_B };
-    m_pManager->deleteTags(tags);
+    EXPECT_NO_FATAL_FAILURE(m_pManager->deleteTags(tags));
 
     QString temp = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/" + NEW_TAG_TXT_FILE;
     QProcess::execute("rm " + temp);
     QProcess::execute("rm -rf " + tempDirPath_A + " " + tempDirPath_B);
-}
-
 }
