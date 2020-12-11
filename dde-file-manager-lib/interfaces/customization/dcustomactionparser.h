@@ -45,6 +45,7 @@ public:
                    , QSettings &actionSetting
                    , const QString &group
                    , const DCustomActionDefines::FileBasicInfos& basicInfos
+                   , bool &isSort
                    , bool isTop = false);
 
 

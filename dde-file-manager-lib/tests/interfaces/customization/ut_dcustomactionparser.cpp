@@ -137,7 +137,7 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
         << QString("Comment=This is a test file!!!").toUtf8() << endl
         << QString("Comment[zh_CN]=这是一个测试文件").toUtf8() << endl
         << QString("Version=Uos1.0").toUtf8() << endl
-        << QString("Actions=Groupzero").toUtf8() << endl;
+        << QString("Actions=Groupzero:GroupzeroT").toUtf8() << endl;
 
     QList<DCustomActionData> childrenActions;
     FileBasicInfos basicInfos;
@@ -148,13 +148,14 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     tsm.flush();
     invalidFile.flush();
 
+    bool needSort = true;
     //无name
     m_parser.m_hierarchyNum = 0;
     m_parser.m_actionEntry.clear();
     m_parser.m_topActionCount = 0;
     QSettings actionSetting1(invalidFilePath, QSettings::IniFormat);
     actionSetting1.setIniCodec("UTF-8");
-    m_parser.parseFile(childrenActions, actionSetting1, "Menu Action Groupzero", basicInfos, true);
+    m_parser.parseFile(childrenActions, actionSetting1, "Menu Action Groupzero", basicInfos, needSort, true);
     auto expectValue1 = m_parser.m_actionEntry.isEmpty();
     EXPECT_TRUE(expectValue1);
 
@@ -168,7 +169,7 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser.m_hierarchyNum = 0;
     m_parser.m_actionEntry.clear();
     m_parser.m_topActionCount = 0;
-    m_parser.parseFile(childrenActions, actionSetting2, "Menu Action Groupzero", basicInfos, true);
+    m_parser.parseFile(childrenActions, actionSetting2, "Menu Action Groupzero", basicInfos, needSort, true);
     auto expectValue2 = m_parser.m_actionEntry.isEmpty();
     EXPECT_TRUE(expectValue2);
 
@@ -186,7 +187,7 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser.m_hierarchyNum = 0;
     m_parser.m_actionEntry.clear();
     m_parser.m_topActionCount = 0;
-    m_parser.parseFile(childrenActions, actionSetting3, "Menu Action Groupzero", basicInfos, true);
+    m_parser.parseFile(childrenActions, actionSetting3, "Menu Action Groupzero", basicInfos, needSort, true);
     auto expectValue3 = m_parser.m_actionEntry.isEmpty();
     EXPECT_TRUE(expectValue3);
 
@@ -201,12 +202,12 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser.m_hierarchyNum = 0;
     m_parser.m_actionEntry.clear();
     m_parser.m_topActionCount = 0;
-    m_parser.parseFile(childrenActions, actionSetting4, "Menu Action Groupzero", basicInfos, true);
+    m_parser.parseFile(childrenActions, actionSetting4, "Menu Action Groupzero", basicInfos, needSort, true);
     auto expectValue4 = m_parser.m_actionEntry.isEmpty();
     EXPECT_TRUE(expectValue4);
 
-    //有combo
-    tsm << QString("X-DFM-MenuTypes=SingleFile:aaaa").toUtf8() <<endl;
+    //有combo包含多个,一个有效，一个无效，无效的忽略
+    tsm << QString("X-DFM-MenuTypes=SingleFile:aaaaa").toUtf8() <<endl;
     tsm.flush();
     invalidFile.flush();
     QSettings actionSetting5(invalidFilePath, QSettings::IniFormat);
@@ -215,12 +216,49 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser.m_hierarchyNum = 0;
     m_parser.m_actionEntry.clear();
     m_parser.m_topActionCount = 0;
-    m_parser.parseFile(childrenActions, actionSetting5, "Menu Action Groupzero", basicInfos, true);
+    m_parser.parseFile(childrenActions, actionSetting5, "Menu Action Groupzero", basicInfos, needSort, true);
     auto expectValue5 = m_parser.m_actionEntry.isEmpty();
     EXPECT_FALSE(expectValue5);
 
-    //有子级，子级无效
-    tsm << QString("Actions=GroupOne").toUtf8() <<endl;//无combo
+    //一级菜单未指明支持的combo类型，默认无效
+    tsm << QString("[Menu Action GroupzeroT]").toUtf8() << endl
+        << QString("GenericName=app-one").toUtf8() << endl
+        << QString("GenericName[zh_CN]=应用1级二").toUtf8() << endl
+        << QString("Name=app-one").toUtf8() << endl
+        << QString("Name[zh_CN]=应用1级二").toUtf8() << endl
+        << QString("PosNum=1").toUtf8() << endl
+        << QString("Separator=None").toUtf8() << endl
+        << QString("Exec=/opt/apps/xxxxxx %U").toUtf8() <<endl;
+    //        << QString("X-DFM-MenuTypes=SingleFile").toUtf8() <<endl;
+    tsm.flush();
+    invalidFile.flush();
+
+    QSettings actionSetting5_1(invalidFilePath, QSettings::IniFormat);
+    actionSetting5_1.setIniCodec("UTF-8");
+    m_parser.m_hierarchyNum = 0;
+    m_parser.m_actionEntry.clear();
+    m_parser.m_topActionCount = 0;
+    m_parser.parseFile(childrenActions, actionSetting5_1, "Menu Action Groupzero", basicInfos, needSort, true);
+    auto expectValue5_1= (1 == m_parser.m_actionEntry.size()) && ("应用1级" == m_parser.m_actionEntry.first().m_data.m_name);
+    EXPECT_TRUE(expectValue5_1);
+
+    tsm<< QString("X-DFM-MenuTypes=SingleFile").toUtf8() <<endl;
+    tsm.flush();
+    invalidFile.flush();
+
+    QSettings actionSetting5_2(invalidFilePath, QSettings::IniFormat);
+    actionSetting5_2.setIniCodec("UTF-8");
+    m_parser.m_hierarchyNum = 0;
+    m_parser.m_actionEntry.clear();
+    m_parser.m_topActionCount = 0;
+    //    m_parser.parseFile(childrenActions, actionSetting5_2, "Menu Action Groupzero", basicInfos, true);
+    m_parser.parseFile(actionSetting5_2);
+    auto expectValue5_2= 2 == m_parser.m_actionEntry.size();
+    EXPECT_TRUE(expectValue5_2);
+
+
+    //有子级分组，子级信息却未设置，连带一级也被忽略
+    tsm << QString("Actions=GroupOne:GroupTwo").toUtf8() <<endl;
     tsm.flush();
     invalidFile.flush();
     QSettings actionSetting6(invalidFilePath, QSettings::IniFormat);
@@ -228,42 +266,83 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser.m_hierarchyNum = 0;
     m_parser.m_actionEntry.clear();
     m_parser.m_topActionCount = 0;
-    m_parser.parseFile(childrenActions, actionSetting6, "Menu Action Groupzero", basicInfos, true);
-    auto expectValue6 = m_parser.m_actionEntry.isEmpty();
+    m_parser.parseFile(actionSetting6);
+    auto expectValue6= (1 == m_parser.m_actionEntry.size()) && ("应用1级" == m_parser.m_actionEntry.first().m_data.m_name);
     EXPECT_TRUE(expectValue6);
 
-
+    //有子级,但是全部子级无动作，连带一级也忽略
     tsm << QString("[Menu Action GroupOne]").toUtf8() << endl
         << QString("GenericName=app-one").toUtf8() << endl
-        << QString("GenericName[zh_CN]=应用2级").toUtf8() << endl
+        << QString("GenericName[zh_CN]=应用2级菜单项一").toUtf8() << endl
         << QString("Name=app-one").toUtf8() << endl
-        << QString("Name[zh_CN]=应用2级").toUtf8() << endl
-        << QString("PosNum=1").toUtf8() << endl
+        << QString("Name[zh_CN]=应用2级菜单项一").toUtf8() << endl
+        << QString("PosNum=3").toUtf8() << endl
         << QString("Separator=None").toUtf8() << endl;
     tsm.flush();
     invalidFile.flush();
-    QSettings actionSetting7(invalidFilePath, QSettings::IniFormat);
-    actionSetting7.setIniCodec("UTF-8");
+    QSettings actionSetting6_1(invalidFilePath, QSettings::IniFormat);
+    actionSetting6_1.setIniCodec("UTF-8");
     m_parser.m_hierarchyNum = 0;
     m_parser.m_actionEntry.clear();
     m_parser.m_topActionCount = 0;
-    m_parser.parseFile(childrenActions, actionSetting7, "Menu Action Groupzero", basicInfos, true);
-    auto expectValue7 = m_parser.m_actionEntry.isEmpty();
-    EXPECT_TRUE(expectValue7);
+    m_parser.parseFile(actionSetting6_1);
+    auto expectValue6_1 = (1 == m_parser.m_actionEntry.size()) && ("应用1级" == m_parser.m_actionEntry.first().m_data.m_name);
+    EXPECT_TRUE(expectValue6_1);
 
-    tsm << QString("Exec=/opt/apps/xxxxxx %f").toUtf8() << endl;
+    //部分子级有效，一级有效，但是仅有有效子级
+    tsm << QString("Exec=/opt/apps/xxxxxx %U").toUtf8() <<endl
+        << QString("[Menu Action GroupTwo]").toUtf8() << endl
+        << QString("GenericName=app-one").toUtf8() << endl
+        << QString("GenericName[zh_CN]=应用2级菜单项二").toUtf8() << endl
+        << QString("Name=app-one").toUtf8() << endl
+        << QString("Name[zh_CN]=应用2级菜单项二").toUtf8() << endl
+//        << QString("PosNum=1").toUtf8() << endl
+        << QString("Separator=None").toUtf8() << endl;
+
     tsm.flush();
     invalidFile.flush();
-    QSettings actionSetting8(invalidFilePath, QSettings::IniFormat);
-    actionSetting8.setIniCodec("UTF-8");
+    QSettings actionSetting6_2(invalidFilePath, QSettings::IniFormat);
+    actionSetting6_2.setIniCodec("UTF-8");
     m_parser.m_hierarchyNum = 0;
     m_parser.m_actionEntry.clear();
     m_parser.m_topActionCount = 0;
-    m_parser.parseFile(childrenActions, actionSetting8, "Menu Action Groupzero", basicInfos, true);
-    auto expectValue8 = m_parser.m_actionEntry.isEmpty();
-    EXPECT_FALSE(expectValue8);
-    EXPECT_TRUE(m_parser.m_actionEntry.first().data().m_command.isEmpty());
+    m_parser.parseFile(actionSetting6_2);
+    auto expectValue6_2 = (2 == m_parser.m_actionEntry.size())
+            && ("应用1级二" == m_parser.m_actionEntry.last().m_data.m_name
+                && "应用2级菜单项一" == m_parser.m_actionEntry.last().m_data.m_childrenActions.first().name()
+                && 1 == m_parser.m_actionEntry.last().m_data.m_childrenActions.size());
+    EXPECT_TRUE(expectValue6_2);
 
+    //有子级且子级均有效，子级的顺序自动排序
+    tsm << QString("Exec=/opt/apps/xxxxxx %f").toUtf8() << endl;//未指定位置,当前层级顺排序
+    tsm.flush();
+    invalidFile.flush();
+    QSettings actionSetting6_3(invalidFilePath, QSettings::IniFormat);
+    actionSetting6_3.setIniCodec("UTF-8");
+    m_parser.m_hierarchyNum = 0;
+    m_parser.m_actionEntry.clear();
+    m_parser.m_topActionCount = 0;
+    m_parser.parseFile(actionSetting6_3);
+    auto expectValue6_3 = (2 == m_parser.m_actionEntry.size())
+            && ("应用1级二" == m_parser.m_actionEntry.last().m_data.m_name
+                && "应用2级菜单项一" == m_parser.m_actionEntry.last().m_data.m_childrenActions.first().name()
+                && "应用2级菜单项二" == m_parser.m_actionEntry.last().m_data.m_childrenActions.last().name());
+    EXPECT_TRUE(expectValue6_3);
+
+    tsm << QString("PosNum=1").toUtf8() << endl;//所有位置都指定了,以位置排序
+    tsm.flush();
+    invalidFile.flush();
+    QSettings actionSetting6_4(invalidFilePath, QSettings::IniFormat);
+    actionSetting6_4.setIniCodec("UTF-8");
+    m_parser.m_hierarchyNum = 0;
+    m_parser.m_actionEntry.clear();
+    m_parser.m_topActionCount = 0;
+    m_parser.parseFile(actionSetting6_4);
+    auto expectValue6_4 = (2 == m_parser.m_actionEntry.size())
+            && ("应用1级二" == m_parser.m_actionEntry.last().m_data.m_name
+                && "应用2级菜单项二" == m_parser.m_actionEntry.last().m_data.m_childrenActions.first().name()
+                && "应用2级菜单项一" == m_parser.m_actionEntry.last().m_data.m_childrenActions.last().name());
+    EXPECT_TRUE(expectValue6_4);
 
     invalidFile.close();
 
