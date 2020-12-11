@@ -90,8 +90,9 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
         if (m_topActionCount == kCustomMaxNumOne) //一级数量限制
             break;
         QList<DCustomActionData> childrenActions;//这个实际上一级时没用
+        bool needSort;//一级用不到
         QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
-        parseFile(childrenActions, actionSetting, targetGroup, basicInfos, true);
+        parseFile(childrenActions, actionSetting, targetGroup, basicInfos, needSort, true);
         m_topActionCount++;
     }
     return true;
@@ -101,10 +102,10 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
     该方法用于递归解析对应组下的菜单信息，\a childrenActions 获取菜单项，\a actionSetting 为解析对象，\a group 为待解析分组，
 \a basicInfos 是为一级菜单项准备的基本信息，\a isTop 表示当前解析的是否是一级菜单
 */
-void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, QSettings &actionSetting, const QString &group, const FileBasicInfos &basicInfos, bool isTop)
+void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, QSettings &actionSetting, const QString &group, const FileBasicInfos &basicInfos, bool &isSort, bool isTop)
 {
     m_hierarchyNum++;
-    if (4 < m_hierarchyNum) //超过三级不解（待与产品沟通，是否需要）
+    if (4 < m_hierarchyNum) //超过三级不解
         return;
 
     DCustomActionData actData;
@@ -122,6 +123,8 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 
     //pos
     actData.m_position =  getValue(actionSetting, group, kActionPos).toInt();
+    if (0 == actData.m_position && isSort) //未定义pos行为当前层级以上级指定顺序
+        isSort = false;
 
     //separator
     QString separator = getValue(actionSetting, group, kActionSeparator).toString().trimmed();
@@ -146,10 +149,11 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         auto actList = actStr.toString().trimmed().split(":", QString::SkipEmptyParts);
 
         int actCount = 0;
+        bool needSort = true;
         for(auto &once : actList) {
             actCount++;
             QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
-            parseFile(tpChildrenActions, actionSetting, targetGroup, basicInfos);
+            parseFile(tpChildrenActions, actionSetting, targetGroup, basicInfos, needSort, false);
             m_hierarchyNum--;
             if (2 == m_hierarchyNum && actCount == kCustomMaxNumTwo) //二级数量限制
                 break;
@@ -158,6 +162,14 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         }
         if (0 == tpChildrenActions.size())
             return; //作为无动作无子级，不再为其添加已有动作
+//        actData.m_childrenActions = tpChildrenActions;
+        if (needSort)//全量二三级才排序,否则按照写入actions顺序
+            std::stable_sort(tpChildrenActions.begin()
+                        , tpChildrenActions.end()
+                        , [](const DCustomActionData& a
+                        , const DCustomActionData& b){
+                return a.m_position < b.m_position;
+            });
         actData.m_childrenActions = tpChildrenActions;
     }
 
@@ -182,7 +194,7 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         //todo支持的文件类型(mimeTypes)，目前无需求暂不判断
 
         //comboPos
-        if (comboPosForTopAction(actionSetting, group, actData))
+        if (!comboPosForTopAction(actionSetting, group, actData))
             return;//没有指明该一级菜单项支持的类型，自动作为无效废弃项
         tpEntry.m_package = basicInfos.m_package;
         tpEntry.m_version = basicInfos.m_version;
@@ -321,6 +333,7 @@ bool DCustomActionParser::comboPosForTopAction(QSettings &actionSetting, const Q
     QStringList comboList = comboStr.split(":", QString::SkipEmptyParts);
 
     QString cPos;
+    bool hasCombo = false;
     for (auto temp : comboList) {
         cPos = QString("%1-%2").arg(kActionPos, temp.trimmed());
         auto ret = getValue(actionSetting, group, cPos);    //取出对应选中类型的pos
@@ -329,12 +342,10 @@ bool DCustomActionParser::comboPosForTopAction(QSettings &actionSetting, const Q
             if (ret.isValid())
                 pos = ret.toInt();
             act.m_comboPos.insert(m_combos.value(temp), pos);
-        }
-        else {
-            return false;   //未指明一级菜单支持的选中类型，做无效处理
+            hasCombo = true;
         }
     }
-    return true;
+    return hasCombo;
 }
 
 void DCustomActionParser::delayRefresh()
