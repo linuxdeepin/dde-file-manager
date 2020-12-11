@@ -54,7 +54,7 @@ TEST_F(TestOperatorRevocation, test_clear_operation)
     ASSERT_NE(m_pController, nullptr);
 
     auto event = dMakeEventPointer<DFMCleanSaveOperatorEvent>(nullptr);
-    EXPECT_TRUE(m_pController->fmEvent(event));
+    EXPECT_FALSE(m_pController->fmEvent(event));
 }
 
 TEST_F(TestOperatorRevocation, test_instance)

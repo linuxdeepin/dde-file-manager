@@ -7,19 +7,19 @@
 #include <QFile>
 #include <QDir>
 #include "dfmevent.h"
+#include "testhelper.h"
 
 #define private public
 #include "controllers/tagcontroller.h"
 #include "tag/tagmanager.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
+#include "stub.h"
 
 #define TAG_FILE_PATH_STR "test_tag_"
 #define TAG_NAME_A "a"
 #define TAG_NAME_A_NEW "a_new"
 #define TAG_NAME_B "b"
 #define TAG_TXT_FILE "tag_test.txt";
-
-
 
 namespace  {
     class TestTagManager : public testing::Test
@@ -42,6 +42,19 @@ namespace  {
 
             m_tagFileUrl.setScheme(TAG_SCHEME);
             m_tagFileUrl.setTaggedFileUrl(tempTxtFilePath);
+
+            void (*onAddNewTags)(const QDBusVariant &) = [](const QDBusVariant &){};
+            m_st.set(ADDR(TagManagerDaemonController, onAddNewTags), onAddNewTags);
+            void (*onDeleteTags)(const QDBusVariant &) = [](const QDBusVariant &){};
+            m_st.set(ADDR(TagManagerDaemonController, onDeleteTags), onDeleteTags);
+            void (*filesWereTagged)(const QVariantMap &) = [](const QVariantMap &){};
+            m_st.set(ADDR(TagManagerDaemonController, filesWereTagged), filesWereTagged);
+            void (*untagFiles)(const QVariantMap &) = [](const QVariantMap &){};
+            m_st.set(ADDR(TagManagerDaemonController, untagFiles), untagFiles);
+            void (*changeTagColor)(const QVariantMap &) = [](const QVariantMap &){};
+            m_st.set(ADDR(TagManagerDaemonController, changeTagColor), changeTagColor);
+            void (*changeTagName)(const QVariantMap &) = [](const QVariantMap &){};
+            m_st.set(ADDR(TagManagerDaemonController, changeTagName), changeTagName);
         }
         void TearDown() override
         {
@@ -60,6 +73,7 @@ namespace  {
         QString tempTxtFilePath;
         DUrl m_tagUrl;
         DUrl m_tagFileUrl;
+        Stub m_st;
     };
 }
 
@@ -176,7 +190,7 @@ TEST_F(TestTagManager, can_makeFilesTagThroughColor)
 {
     ASSERT_NE(m_pManager, nullptr);
 
-    EXPECT_TRUE(m_pManager->makeFilesTagThroughColor("Red", {DUrl::fromLocalFile(tempDirPath_A)}));
+    EXPECT_TRUE(m_pManager->makeFilesTagThroughColor("#ff1c49", {DUrl::fromLocalFile(tempDirPath_A)}));
 }
 
 TEST_F(TestTagManager, can_remove_tags_of_files)
@@ -210,12 +224,12 @@ TEST_F(TestTagManager, test_daemon)
 {
     ASSERT_NE(m_pDaemon, nullptr);
 
-    m_pDaemon->onAddNewTags(QDBusVariant());
-    m_pDaemon->onChangeTagColor(QVariantMap());
-    m_pDaemon->onChangeTagName(QVariantMap());
-    m_pDaemon->onDeleteTags(QDBusVariant());
-    m_pDaemon->onFilesWereTagged(QVariantMap());
-    m_pDaemon->onUntagFiles(QVariantMap());
+    EXPECT_NO_FATAL_FAILURE(m_pDaemon->onAddNewTags(QDBusVariant()));
+    EXPECT_NO_FATAL_FAILURE(m_pDaemon->onChangeTagColor(QVariantMap()));
+    EXPECT_NO_FATAL_FAILURE(m_pDaemon->onChangeTagName(QVariantMap()));
+    EXPECT_NO_FATAL_FAILURE(m_pDaemon->onDeleteTags(QDBusVariant()));
+    EXPECT_NO_FATAL_FAILURE(m_pDaemon->onFilesWereTagged(QVariantMap()));
+    EXPECT_NO_FATAL_FAILURE(m_pDaemon->onUntagFiles(QVariantMap()));
 }
 
 TEST_F(TestTagManager, test_wind_up)
