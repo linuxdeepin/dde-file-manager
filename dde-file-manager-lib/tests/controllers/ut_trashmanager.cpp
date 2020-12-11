@@ -3,6 +3,11 @@
 #include "controllers/trashmanager.h"
 #include "dfmstandardpaths.h"
 #include "dfmevent.h"
+#include "dfmeventdispatcher.h"
+#include "dialogs/dialogmanager.h"
+#include "dfileservices.h"
+#include "models/trashfileinfo.h"
+#include "stub.h"
 
 #include <QProcess>
 
@@ -54,50 +59,169 @@ TEST_F(TestTrashManager, createFileInfo)
 
 TEST_F(TestTrashManager, openFile)
 {
-    QProcess::execute("mkdir " + DUrl::fromTrashFile("/test").toLocalFile());
-    auto res = m_trash->openFile(dMakeEventPointer<DFMOpenFileEvent>(nullptr, DUrl::fromTrashFile("/test")));
-    QProcess::execute("rm -r " + DUrl::fromTrashFile("/test").toLocalFile());
-    EXPECT_TRUE(res);
+    // is file
+    {
+        bool (*stub_isFile)() = []() {
+            return true;
+        };
+
+        int (*stub_showMessageDialog)(DialogManager::messageType, const QString &, const QString &, QString)
+        = [](DialogManager::messageType, const QString &, const QString &, QString) {
+            return 1;
+        };
+
+        Stub stub;
+        stub.set(ADDR(QFileInfo, isFile), stub_isFile);
+        stub.set(ADDR(DialogManager, showMessageDialog), stub_showMessageDialog);
+
+        auto res = m_trash->openFile(dMakeEventPointer<DFMOpenFileEvent>(nullptr, DUrl::fromTrashFile("/test")));
+        EXPECT_FALSE(res);
+    }
+
+    // is dir
+    {
+        bool (*stub_isFile)() = []() {
+            return false;
+        };
+
+        bool (*stub_openFile)(const QObject, const DUrl &) = [](const QObject, const DUrl &) {
+            return true;
+        };
+
+        Stub stub;
+        stub.set(ADDR(QFileInfo, isFile), stub_isFile);
+        stub.set(ADDR(DFileService, openFile), stub_openFile);
+
+        auto res = m_trash->openFile(dMakeEventPointer<DFMOpenFileEvent>(nullptr, DUrl::fromTrashFile("/test")));
+        EXPECT_TRUE(res);
+    }
 }
 
 TEST_F(TestTrashManager, openFiles)
 {
-//    QProcess::execute("mkdir " + DUrl::fromTrashFile("/test").toLocalFile());
-//    auto res = m_trash->openFiles(dMakeEventPointer<DFMOpenFilesEvent>(nullptr, DUrlList() << DUrl::fromTrashFile("/test")));
-//    QProcess::execute("rm -r " + DUrl::fromTrashFile("/test").toLocalFile());
-//    EXPECT_TRUE(res);
+    int (*stub_showMessageDialog)(DialogManager::messageType, const QString &, const QString &, QString)
+    = [](DialogManager::messageType, const QString &, const QString &, QString) {
+        return 1;
+    };
+
+    Stub stub;
+    stub.set(ADDR(DialogManager, showMessageDialog), stub_showMessageDialog);
+
+    auto res = m_trash->openFiles(dMakeEventPointer<DFMOpenFilesEvent>(nullptr, DUrlList() << DUrl::fromTrashFile("/test")));
+    EXPECT_FALSE(res);
 }
 
 TEST_F(TestTrashManager, moveToTrash)
 {
+    bool (*stub_deleteFiles)(const QObject *, const DUrlList &, bool, bool, bool)
+    = [](const QObject *, const DUrlList &, bool, bool, bool) {
+        return true;
+    };
+
+    Stub stub;
+    stub.set(ADDR(DFileService, deleteFiles), stub_deleteFiles);
+
     auto res = m_trash->moveToTrash(dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList()));
     EXPECT_TRUE(res.isEmpty());
 }
 
 TEST_F(TestTrashManager, writeFilesToClipboard)
 {
-    auto res = m_trash->writeFilesToClipboard(dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CutAction, DUrlList() << trashFileUrl));
-    EXPECT_TRUE(res);
+    // not cutaction or copyaction
+    {
+        auto res = m_trash->writeFilesToClipboard(dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::UnknowAction, DUrlList() << trashFileUrl));
+        EXPECT_FALSE(res);
+    }
+
+    // cut
+    {
+        bool (*stub_writeFilesToClipboard)(const QObject *, DFMGlobal::ClipboardAction, const DUrlList &)
+        = [](const QObject *, DFMGlobal::ClipboardAction, const DUrlList &) {
+            return true;
+        };
+
+        Stub stub;
+        stub.set(ADDR(DFileService, writeFilesToClipboard), stub_writeFilesToClipboard);
+
+        auto res = m_trash->writeFilesToClipboard(dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CutAction, DUrlList() << trashFileUrl));
+        EXPECT_TRUE(res);
+    }
 }
 
 TEST_F(TestTrashManager, pasteFile)
 {
-    QProcess::execute("touch /tmp/1.txt");
-    auto res = m_trash->pasteFile(dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromTrashFile("/"), DUrlList() << DUrl("file:///tmp/1.txt")));
-    EXPECT_TRUE(!res.isEmpty());
+    // action is not cut action or target url is not trash
+    {
+        auto res = m_trash->pasteFile(dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::UnknowAction, DUrl::fromTrashFile("/test"), DUrlList() << DUrl("file:///tmp/1.txt")));
+        EXPECT_TRUE(res.isEmpty());
+    }
+
+    // url list is empty
+    {
+        auto res = m_trash->pasteFile(dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromTrashFile("/"), DUrlList()));
+        EXPECT_TRUE(res.isEmpty());
+    }
+
+    // normal
+    {
+        DUrlList(*stub_moveToTrash)(const QObject *, const DUrlList &)
+        = [](const QObject *, const DUrlList &) {
+            return DUrlList() << DUrl::fromTrashFile("/1.txt");
+        };
+
+        Stub stub;
+        stub.set(ADDR(DFileService, moveToTrash), stub_moveToTrash);
+
+        auto res = m_trash->pasteFile(dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromTrashFile("/"), DUrlList() << DUrl("file:///tmp/1.txt")));
+        EXPECT_TRUE(!res.isEmpty());
+    }
 }
 
 TEST_F(TestTrashManager, restoreFile)
 {
-    auto res = m_trash->restoreFile(dMakeEventPointer<DFMRestoreFromTrashEvent>(nullptr, DUrlList() << DUrl::fromTrashFile("/1.txt")));
-    QProcess::execute("rm -f 1.txt");
+    QList<DAbstractFileInfoPointer>(*stub_getChildren)(const QObject *, const DUrl &, const QStringList &, QDir::Filters, QDirIterator::IteratorFlags, bool, bool)
+    = [](const QObject *, const DUrl &, const QStringList &, QDir::Filters, QDirIterator::IteratorFlags, bool, bool) {
+        DAbstractFileInfoPointer info(new DAbstractFileInfo(DUrl::fromTrashFile("/1.txt")));
+        return QList<DAbstractFileInfoPointer>() << info;
+    };
+
+    bool (*stub_restore)(FileJob *) = [](FileJob *) {
+        return true;
+    };
+
+    QVariant(*stub_processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = [](const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        return QVariant(true);
+    };
+
+    Stub stub;
+    stub.set(ADDR(DFileService, getChildren), stub_getChildren);
+    stub.set(ADDR(TrashFileInfo, restore), stub_restore);
+    stub.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))ADDR(DFMEventDispatcher, processEvent), stub_processEvent);
+
+    auto res = m_trash->restoreFile(dMakeEventPointer<DFMRestoreFromTrashEvent>(nullptr, DUrlList() << DUrl::fromTrashFile("/")));
     EXPECT_TRUE(res);
 }
 
 TEST_F(TestTrashManager, deleteFiles)
 {
-    auto res = m_trash->deleteFiles(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << trashFileUrl, true, true));
-    EXPECT_TRUE(res);
+    bool (*stub_deleteFiles)(const QObject *, const DUrlList &, bool, bool, bool)
+    = [](const QObject *, const DUrlList &, bool, bool, bool) {
+        return true;
+    };
+
+    Stub stub;
+    stub.set(ADDR(DFileService, deleteFiles), stub_deleteFiles);
+
+    // is trash root
+    {
+        auto res = m_trash->deleteFiles(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << DUrl::fromTrashFile("/"), true, true));
+        EXPECT_TRUE(res);
+    }
+    // other
+    {
+        auto res = m_trash->deleteFiles(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << trashFileUrl, true, true));
+        EXPECT_TRUE(res);
+    }
 }
 
 TEST_F(TestTrashManager, createDirIterator)
@@ -112,16 +236,6 @@ TEST_F(TestTrashManager, createFileWatcher)
 {
     auto res = m_trash->createFileWatcher(dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromTrashFile("/")));
     EXPECT_TRUE(res != nullptr);
-}
-
-TEST_F(TestTrashManager, restoreTrashFile)
-{
-    QProcess::execute("touch /tmp/1.txt");
-    m_trash->pasteFile(dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromTrashFile("/"), DUrlList() << DUrl("file:///tmp/1.txt")));
-
-    auto res = m_trash->restoreTrashFile(DUrlList() << DUrl::fromTrashFile("/1.txt"));
-    QProcess::execute("rm -f /tmp/1.txt");
-    EXPECT_TRUE(res);
 }
 
 TEST_F(TestTrashManager, isEmpty)

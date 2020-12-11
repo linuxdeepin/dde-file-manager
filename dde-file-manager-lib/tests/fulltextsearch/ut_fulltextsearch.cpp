@@ -1,10 +1,12 @@
-#include "fulltextsearch.h"
-
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 #include <QProcess>
 #include <QStandardPaths>
 #include <QFile>
+#include "stub.h"
+
+#define private public
+#include "fulltextsearch.h"
 
 #define filetextSearch DFMFullTextSearchManager::getInstance()
 DFM_USE_NAMESPACE
@@ -19,7 +21,7 @@ public:
         filePath = searchPath + "/1.txt";
         QProcess::execute("mkdir " + searchPath);
         QFile file(filePath);
-        if (file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+        if (file.open(QIODevice::WriteOnly)) {
             file.write("你好謝謝hello123");
             file.close();
         }
@@ -43,16 +45,27 @@ TEST_F(TestFullTextSearch, fulltextIndex)
     EXPECT_EQ(0, filetextSearch->fulltextIndex(searchPath));
 }
 
+TEST_F(TestFullTextSearch, createFileIndex)
+{
+    QProcess::execute("rm -rf " + filetextSearch->indexStorePath);
+    // Source directory doesn't exist
+    EXPECT_FALSE(filetextSearch->createFileIndex("/123646"));
+    // Unable to create index directory
+    {
+        bool (*stub_mkpath)(const QString &) = [](const QString &)->bool{
+            return false;
+        };
+        Stub stub;
+        stub.set(ADDR(QDir, mkpath), stub_mkpath);
+        EXPECT_FALSE(filetextSearch->createFileIndex(searchPath));
+    }
+}
+
 TEST_F(TestFullTextSearch, fullTextSearch)
 {
-    QThread::sleep(1);
-    QStringList searchResult = filetextSearch->fullTextSearch("你好", searchPath);
-    EXPECT_TRUE(searchResult.contains(filePath));
-    searchResult = filetextSearch->fullTextSearch("謝謝", searchPath);
-    EXPECT_TRUE(searchResult.contains(filePath));
-    searchResult = filetextSearch->fullTextSearch("hello", searchPath);
-    EXPECT_TRUE(searchResult.contains(filePath));
-    searchResult = filetextSearch->fullTextSearch("123", searchPath);
+    filetextSearch->fulltextIndex(searchPath);
+    QThread::sleep(2);
+    QStringList searchResult = filetextSearch->fullTextSearch("你好謝謝hello123", searchPath);
     EXPECT_TRUE(searchResult.contains(filePath));
 }
 
@@ -60,14 +73,20 @@ TEST_F(TestFullTextSearch, updateIndex)
 {
     QThread::sleep(2);
     QFile file(filePath);
-    if (file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+    if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
         file.write("知道");
         file.close();
-
-        filetextSearch->setSearchState(JobController::Started);
-        filetextSearch->updateIndex(searchPath);
-        QStringList searchResult = filetextSearch->fullTextSearch("知道", searchPath);
-        EXPECT_TRUE(searchResult.contains(filePath));
     }
+
+    QFile file2("/tmp/fulltextsearch/2.txt");
+    if (file2.open(QIODevice::ReadWrite)) {
+        file2.write("知道123");
+        file2.close();
+    }
+
+    filetextSearch->setSearchState(JobController::Started);
+    filetextSearch->updateIndex(searchPath);
+    QStringList searchResult = filetextSearch->fullTextSearch("知道", searchPath);
+    EXPECT_TRUE(searchResult.contains(filePath));
 }
 

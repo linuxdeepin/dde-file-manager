@@ -2,8 +2,12 @@
 
 #include "dabstractfilecontroller.h"
 #include "dfmevent.h"
+#include "stub.h"
 
+#include <DDesktopServices>
 #include <QProcess>
+
+DWIDGET_USE_NAMESPACE
 
 namespace  {
 class TestDAbstractFileController : public testing::Test
@@ -130,14 +134,35 @@ TEST_F(TestDAbstractFileController, setPermissions)
 
 TEST_F(TestDAbstractFileController, openFileLocation)
 {
+    // not root user
+    bool (*stub_showFileItem)(QUrl, const QString &) = [](QUrl, const QString &) {
+        return true;
+    };
+
+    Stub stub;
+    auto addr = (bool(*)(QUrl, const QString &))ADDR(DDesktopServices, showFileItem);
+    stub.set(addr, stub_showFileItem);
     auto res = controller->openFileLocation(dMakeEventPointer<DFMOpenFileLocation>(nullptr, fileUrl));
+    EXPECT_TRUE(res);
+
+    // root user
+    bool (*stub_isRootUser)() = []() {
+        return true;
+    };
+    stub.set(ADDR(DFMGlobal, isRootUser), stub_isRootUser);
+
+    bool (*stub_startDetached)(const QString &, const QStringList &) = [](const QString &, const QStringList &) {
+        return true;
+    };
+    stub.set((bool(*)(const QString &, const QStringList &))ADDR(QProcess, startDetached), stub_startDetached);
+    res = controller->openFileLocation(dMakeEventPointer<DFMOpenFileLocation>(nullptr, fileUrl));
     EXPECT_TRUE(res);
 }
 
 TEST_F(TestDAbstractFileController, getChildren)
 {
     auto flags = static_cast<QDirIterator::IteratorFlags>(DDirIterator::SortINode);
-    auto res = controller->getChildren(dMakeEventPointer<DFMGetChildrensEvent>(nullptr, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries, flags));
+    auto res = controller->getChildren(dMakeEventPointer<DFMGetChildrensEvent>(nullptr, DUrl("file:///home"), QStringList(), QDir::AllEntries, flags));
     EXPECT_TRUE(res.isEmpty());
 }
 
