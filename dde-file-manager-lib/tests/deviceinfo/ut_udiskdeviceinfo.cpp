@@ -115,7 +115,44 @@ TEST_F(TestUDiskDeviceInfo, single_interfaces)
 
 TEST_F(TestUDiskDeviceInfo, getMediaType)
 {
-    EXPECT_EQ(m_devInfo->getMediaType(), UDiskDeviceInfo::dvd);
+    UDiskDeviceInfo dev;
+    QDiskInfo disk;
+
+    disk.setType("native");
+    dev.setDiskInfo(disk);
+    EXPECT_EQ(dev.getMediaType(), UDiskDeviceInfo::native);
+
+    disk.setType("removable");
+    dev.setDiskInfo(disk);
+    EXPECT_EQ(dev.getMediaType(), UDiskDeviceInfo::removable);
+
+    disk.setType("network");
+    dev.setDiskInfo(disk);
+    EXPECT_EQ(dev.getMediaType(), UDiskDeviceInfo::network);
+
+    disk.setType("smb");
+    dev.setDiskInfo(disk);
+    EXPECT_EQ(dev.getMediaType(), UDiskDeviceInfo::network);
+
+    disk.setType("phone");
+    dev.setDiskInfo(disk);
+    EXPECT_EQ(dev.getMediaType(), UDiskDeviceInfo::phone);
+
+    disk.setType("iphone");
+    dev.setDiskInfo(disk);
+    EXPECT_EQ(dev.getMediaType(), UDiskDeviceInfo::iphone);
+
+    disk.setType("camera");
+    dev.setDiskInfo(disk);
+    EXPECT_EQ(dev.getMediaType(), UDiskDeviceInfo::camera);
+
+    disk.setType("dvd");
+    dev.setDiskInfo(disk);
+    EXPECT_EQ(dev.getMediaType(), UDiskDeviceInfo::dvd);
+
+    disk.setType("");
+    dev.setDiskInfo(disk);
+    EXPECT_EQ(dev.getMediaType(), UDiskDeviceInfo::unknown);
 }
 
 TEST_F(TestUDiskDeviceInfo, extraProperties)
@@ -126,12 +163,78 @@ TEST_F(TestUDiskDeviceInfo, extraProperties)
 
 TEST_F(TestUDiskDeviceInfo, fileIcon)
 {
-    EXPECT_FALSE(m_devInfo->fileIcon().isNull());
+    UDiskDeviceInfo dev;
+    QDiskInfo disk;
+
+    disk.setType("native");
+    dev.setDiskInfo(disk);
+    EXPECT_FALSE(dev.fileIcon().isNull());
+
+    disk.setType("removable");
+    dev.setDiskInfo(disk);
+    EXPECT_FALSE(dev.fileIcon().isNull());
+
+    disk.setType("network");
+    dev.setDiskInfo(disk);
+    EXPECT_FALSE(dev.fileIcon().isNull());
+
+    disk.setType("phone");
+    dev.setDiskInfo(disk);
+    EXPECT_FALSE(dev.fileIcon().isNull());
+
+    disk.setType("iphone");
+    dev.setDiskInfo(disk);
+    EXPECT_FALSE(dev.fileIcon().isNull());
+
+    disk.setType("camera");
+    dev.setDiskInfo(disk);
+    EXPECT_FALSE(dev.fileIcon().isNull());
+
+    disk.setType("dvd");
+    dev.setDiskInfo(disk);
+    EXPECT_FALSE(dev.fileIcon().isNull());
+
+    disk.setType("");
+    dev.setDiskInfo(disk);
+    EXPECT_FALSE(dev.fileIcon().isNull());
 }
 
 TEST_F(TestUDiskDeviceInfo, deviceTypeDisplayName)
 {
-    EXPECT_STREQ("DVD", m_devInfo->deviceTypeDisplayName().toStdString().c_str());
+    UDiskDeviceInfo dev;
+    QDiskInfo disk;
+
+    disk.setType("native");
+    dev.setDiskInfo(disk);
+    EXPECT_STREQ(dev.deviceTypeDisplayName().toStdString().c_str(), "Local disk");
+
+    disk.setType("removable");
+    dev.setDiskInfo(disk);
+    EXPECT_STREQ(dev.deviceTypeDisplayName().toStdString().c_str(), "Removable disk");
+
+    disk.setType("network");
+    dev.setDiskInfo(disk);
+    EXPECT_STREQ(dev.deviceTypeDisplayName().toStdString().c_str(), "Network shared directory");
+
+    disk.setType("phone");
+    dev.setDiskInfo(disk);
+    EXPECT_STREQ(dev.deviceTypeDisplayName().toStdString().c_str(), "Android mobile device");
+
+    disk.setType("iphone");
+    dev.setDiskInfo(disk);
+    EXPECT_STREQ(dev.deviceTypeDisplayName().toStdString().c_str(), "Apple mobile device");
+
+    disk.setType("camera");
+    dev.setDiskInfo(disk);
+    EXPECT_STREQ(dev.deviceTypeDisplayName().toStdString().c_str(), "Camera");
+
+    disk.setType("dvd");
+    dev.setDiskInfo(disk);
+    EXPECT_STREQ(dev.deviceTypeDisplayName().toStdString().c_str(), "DVD");
+
+    disk.setType("");
+    dev.setDiskInfo(disk);
+    EXPECT_STREQ(dev.deviceTypeDisplayName().toStdString().c_str(), "Unknown device");
 }
 
 TEST_F(TestUDiskDeviceInfo, menuActionList)
@@ -181,3 +284,5 @@ TEST_F(TestUDiskDeviceInfo, getUrlByChildFileName)
     const DUrl &url = info.getUrlByChildFileName("tmp");
     EXPECT_TRUE(url.isValid());
 }
+
+
