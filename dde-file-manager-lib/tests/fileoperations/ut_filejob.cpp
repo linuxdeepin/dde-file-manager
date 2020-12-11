@@ -217,7 +217,9 @@ TEST_F(FileJobTest,start_doMoveToTrash) {
 TEST_F(FileJobTest, doOpticalBurnByChildProcess)
 {
     DUrl url = DUrl::fromLocalFile("/dev/sr*");
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(url, "test", 10, 4));
+    DISOMasterNS::BurnOptions opts;
+    opts |= DISOMasterNS::BurnOption::VerifyDatas;
+    EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(url, "test", 10, opts));
 }
 
 TEST_F(FileJobTest, doOpticalBlank)
@@ -230,7 +232,9 @@ TEST_F(FileJobTest, doOpticalImageBurnByChildProcess)
 {
     DUrl url = DUrl::fromLocalFile("/dev/sr*");
     DUrl image;
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, 4));
+    DISOMasterNS::BurnOptions opts;
+    opts |= DISOMasterNS::BurnOption::VerifyDatas;
+    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
 }
 
 TEST_F(FileJobTest, opticalJobUpdated)

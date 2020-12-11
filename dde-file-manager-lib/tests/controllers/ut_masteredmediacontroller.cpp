@@ -10,6 +10,7 @@
 #include "stub.h"
 #include "addr_pri.h"
 #include "disomaster.h"
+#include "dfileservices.h"
 
 #define private public
 #define protected public
@@ -67,11 +68,16 @@ TEST_F(TestMasteredMediaController, tstEventsFuncs)
     auto e4 = dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CopyAction, DUrlList() << testUrl);
     EXPECT_TRUE(ctrl->writeFilesToClipboard(e4));
 
+    Stub st;
+    DUrlList (*pastFile_stub)(void *, const QObject *, DFMGlobal::ClipboardAction , const DUrl &, const DUrlList &) = [](void *, const QObject *, DFMGlobal::ClipboardAction , const DUrl &, const DUrlList &){
+        return DUrlList();
+    };
+    st.set(&DFileService::pasteFile, pastFile_stub);
+
     auto e5 = dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CopyAction, testUrl, DUrlList() << testUrl);
     EXPECT_EQ(int(0), ctrl->pasteFile(e5).count());
     e5 = dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CopyAction, testUrl, DUrlList() << testUrl << testUrl);
     EXPECT_EQ(int(0), ctrl->pasteFile(e5).count());
-    Stub st;
     st.set(ADDR(DBlockDevice, mountPoints), mountPoints_stub);
     EXPECT_EQ(int(0), ctrl->pasteFile(e5).count());
     DISOMasterNS::DeviceProperty (*getDevicePropertyCached_stub)(void *, QString) = [](void *, QString) {
