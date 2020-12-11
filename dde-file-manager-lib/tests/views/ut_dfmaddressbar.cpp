@@ -184,13 +184,22 @@ TEST_F(DFMAddressBarTest,update_completion_state)
 TEST_F(DFMAddressBarTest,append_complete_model)
 {
     ASSERT_NE(nullptr,m_bar);
-    m_bar->show();
-    ASSERT_TRUE(QTest::qWaitForWindowExposed(m_bar));
+
+    Stub stub;
+    bool (*ut_insertRow)() = [](){return true;};
+    stub.set(ADDR(QAbstractItemModel, insertRow), ut_insertRow);
+
+    static bool isCallSetData = false;
+    void (*ut_setData)() = [](){isCallSetData = true;};
+
+    typedef bool (*fptr)(QStringListModel*,const QModelIndex&, const QVariant&, int);
+    fptr mode_setData = (fptr)(&QStringListModel::setData);
+    stub.set(mode_setData, ut_setData);
 
     QStringList stringList;
     stringList << QString("test1") << QString("test2");
     m_bar->appendToCompleterModel(stringList);
-    EXPECT_GE(m_bar->completerModel.rowCount(), 2);
+    EXPECT_TRUE(isCallSetData);
 }
 
 TEST_F(DFMAddressBarTest,tst_insert_completion)
