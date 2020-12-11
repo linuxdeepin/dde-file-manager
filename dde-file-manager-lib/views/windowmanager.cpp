@@ -175,7 +175,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
         for(int i=0; i< m_windows.count(); i++){
             QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
             DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
-            if (currentUrl == url){
+            if (currentUrl.path() == url.path()){
                 DFileManagerWindow * wd = static_cast<DFileManagerWindow *>(window);
                 qDebug() << currentUrl << wd;
                 if (wd->isMinimized()) {
