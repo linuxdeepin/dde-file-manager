@@ -584,19 +584,26 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
 {
     DUrl url = event->url();
     QString localFile = url.toLocalFile();
-    QFileInfo info(localFile);
-    bool isnotsyslink = !info.isSymLink();
+
     //父目录是gvfs目录，那么子目录和子文件必须是gvfs文件
     bool currentisgvfs = FileUtils::isGvfsMountFile(url.toLocalFile(), true);
+
     QMimeType mimetype;
     bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(localFile, mimetype) :
                      FileUtils::isDesktopFile(localFile);
-    if (isnotsyslink && isdesktop) {
-        return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
+
+    if (isdesktop) {
+        QFileInfo info(localFile); // time cost is about 100 ms
+        if (!info.isSymLink()) {
+            return  DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
+        }
     }
+
     if (currentisgvfs) {
+        //TODO: create FileInfo cost about 1000 ms on andriod mobile
         return DAbstractFileInfoPointer(new DGvfsFileInfo(event->url(), false));
     }
+
     return DAbstractFileInfoPointer(new DFileInfo(event->url()));
 }
 
