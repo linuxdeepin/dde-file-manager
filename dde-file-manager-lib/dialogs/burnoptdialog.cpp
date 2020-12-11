@@ -40,6 +40,11 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
     connect(this, &BurnOptDialog::buttonClicked, this,
     [ = ](int index, const QString &text) {
         Q_UNUSED(text);
+        QFile opticalDevice(d->dev);
+        if (!opticalDevice.exists()) {
+            dialogManager->showErrorDialog(tr("Device error"), tr("Optical device %1 doesn't exist").arg(d->dev));
+            return;
+        }
         DISOMasterNS::BurnOptions opts;
         if (d->cb_checkdisc->isChecked())
             opts |= DISOMasterNS::VerifyDatas;
