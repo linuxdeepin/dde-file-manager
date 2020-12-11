@@ -3,6 +3,7 @@
 
 #include "dfmevent.h"
 #include "dfilemenu.h"
+#include "stub.h"
 
 #define private public
 #include "controllers/fileeventprocessor.cpp"
@@ -355,8 +356,16 @@ TEST_F(FileEventProcessorTest, menu_setting)
     }
 }
 
+static void actionExitStub(quint64 winId)
+{
+    Q_UNUSED(winId);
+};
+
 TEST_F(FileEventProcessorTest, menu_exit)
 {
+    Stub stub;
+    stub.set(ADDR(AppController, actionExit), actionExitStub);
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Exit);
     foreach (DFMGlobal::MenuAction action, actions) {
