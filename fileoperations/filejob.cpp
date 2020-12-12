@@ -705,7 +705,12 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
 {
     bool checkDatas = opts.testFlag(DISOMasterNS::BurnOption::VerifyDatas);
     m_tarPath = device.path();
-    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
+    auto nodes = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (nodes.count() == 0) {
+        qInfo() << "before burn deviceNodes is empty!";
+        return;
+    }
+    QString udiskspath = nodes.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {
