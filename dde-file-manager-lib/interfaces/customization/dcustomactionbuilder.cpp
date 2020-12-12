@@ -39,8 +39,14 @@ void DCustomActionBuilder::setActiveDir(const DUrl &dir)
 {
     m_dirPath = dir;
     auto info = DFileService::instance()->createFileInfo(nullptr, dir);
-    if (info)
+    if (info) {
         m_dirName = info->fileName();
+
+        //解决根目录没有名称问题
+        if (m_dirName.isEmpty() && dir.toLocalFile() == "/") {
+            m_dirName = "/";
+        }
+    }
 }
 
 /*!
@@ -54,6 +60,10 @@ void DCustomActionBuilder::setFocusFile(const DUrl &file)
     if (info) {
         m_fileFullName = info->fileName();
         m_fileBaseName = info->baseName();
+
+        //解决 .xx 一类的隐藏文件
+        if (m_fileBaseName.isEmpty())
+            m_fileBaseName = m_fileFullName;
     }
 }
 
