@@ -27,7 +27,7 @@ TEST(DCustomActionBuilder, set_active_dir_root)
     DCustomActionBuilder builder;
     DUrl url("file:///");
     builder.setActiveDir(url);
-    EXPECT_EQ(builder.m_dirName, "");
+    EXPECT_EQ(builder.m_dirName, "/");
     EXPECT_EQ(builder.m_dirPath, url);
 }
 
@@ -75,6 +75,23 @@ TEST(DCustomActionBuilder, set_foucus_file_empty)
     builder.setFocusFile(url);
     EXPECT_EQ(builder.m_fileFullName, "");
     EXPECT_EQ(builder.m_fileBaseName, "");
+    EXPECT_EQ(builder.m_filePath, url);
+}
+
+TEST(DCustomActionBuilder, set_foucus_file_hidden)
+{
+    DCustomActionBuilder builder;
+
+    DUrl url("file:///.tar.gz");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, ".tar.gz");
+    EXPECT_EQ(builder.m_fileBaseName, ".tar");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///.tar");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, ".tar");
+    EXPECT_EQ(builder.m_fileBaseName, ".tar");
     EXPECT_EQ(builder.m_filePath, url);
 }
 
