@@ -21,55 +21,69 @@ static DUrl urlConvertFun(const DUrl& url)
 
 typedef decltype(testFileWatcher::urlConvertFun) callBack_t;
 
-class DFileProxyWatcherTest: public testing::Test
+class TestDFileProxyWatcher: public testing::Test
 {
 public:
-    DFileProxyWatcher *watcher = nullptr;
+
     std::function<callBack_t> callBack = testFileWatcher::urlConvertFun;
     QString RunPath = QCoreApplication::applicationDirPath();
-    QString mkBefFileName = "/testFile0.txt";
-    QString mvBefFileName = "/testFile1.txt";
-    QString rnBefFileName = "/testFile2.txt";
-    QString rmAftFileName = "/testFile2.txt";
+    QString creatFileName = "/testFile0.txt";
+    QString moveFileName  = "/testFile1.txt";
 
     virtual void SetUp() override
     {
-        qDebug() << __PRETTY_FUNCTION__;
-        watcher = new DFileProxyWatcher(DUrl(RunPath),
-                                        new DFileWatcher(RunPath),
-                                        callBack);
+
     }
 
     virtual void TearDown() override
     {
-        qDebug() << __PRETTY_FUNCTION__;
+
     }
 
 public:
 
 };
 
-TEST_F(DFileProxyWatcherTest,start)
+
+TEST_F(TestDFileProxyWatcher,start)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    DFileWatcher* fileWatcher = new DFileWatcher(RunPath);
+    DFileProxyWatcher* proxyWatcher = new DFileProxyWatcher(DUrl(RunPath),fileWatcher,callBack);
 
-    EXPECT_TRUE(watcher->startWatcher());
+    EXPECT_TRUE(proxyWatcher->startWatcher()); //start
 
-    qDebug() << "start watcher and path? >> "
-             << qobject_cast<DAbstractFileWatcher*>(watcher)->fileUrl().toString();
+    if (0 == QProcess::execute("touch", { RunPath + creatFileName })) {
+        qDebug() << "touch file ok:" << creatFileName;
+    }
 
-    if(0 == QProcess::execute("touch", { RunPath + mkBefFileName })) //0
-        qDebug() << "touch file ok:" << mkBefFileName;
+    if (0 == QProcess::execute("echo", { "123123123",">>", RunPath + creatFileName })) {
+        qDebug() << "write file ok:" << creatFileName;
+    }
 
-    if(0 == QProcess::execute("echo", { "123123123",">>", RunPath + mkBefFileName })) // t > 0
-        qDebug() << "write file ok:" << mkBefFileName;
+    if (0 == QProcess::execute("mv", { RunPath + creatFileName, RunPath + moveFileName })) {
+        qDebug() << "move" << creatFileName << "to" << moveFileName;
+    }
 
-    if(0 == QProcess::execute("mv", { RunPath + mkBefFileName, RunPath + mvBefFileName })) // 0 > 1
-        qDebug() << "move" << mkBefFileName << "to" << mvBefFileName;
+    if (0 == QProcess::execute("rm", { "-rf", RunPath + moveFileName })) {
+        qDebug() << "remove file ok:" << moveFileName;
+    }
 
-    if(0 == QProcess::execute("rm", { "-rf", RunPath + rmAftFileName })) // N < 1
-        qDebug() << "remove file ok:" << rmAftFileName;
+    emit fileWatcher->fileModified(DUrl("RunPath"));
 
     qApp->processEvents(); //wait the callback function exectue
+
+    EXPECT_TRUE(proxyWatcher->stopWatcher()); //stop
+
+    if (fileWatcher) {
+        delete fileWatcher;
+        fileWatcher = nullptr;
+    }
+
+    if (proxyWatcher) {
+        delete proxyWatcher;
+        proxyWatcher = nullptr;
+    }
+
 }
+
 }
