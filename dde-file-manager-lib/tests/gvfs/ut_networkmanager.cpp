@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include <gio/gio.h>
 #include <gtest/gtest.h>
 #define private public
 #define protected public
@@ -26,12 +26,15 @@
 #include "gvfs/networkmanager.h"
 #include "utils/singleton.h"
 #include "app/define.h"
+#include "stubext.h"
 
 namespace {
 class TestNetworkManager: public testing::Test
 {
 public:
     NetworkManager *m_manager = Singleton<NetworkManager>::instance();
+    stub_ext::StubExt stubx;
+
     void SetUp() override
     {
     }
@@ -43,11 +46,70 @@ public:
 };
 }
 
-TEST_F(TestNetworkManager, fetchNetworks)
+
+GFileInfo *new_g_file_info (void)
 {
-    Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(nullptr, DUrl("smb:///")));
+  GFileInfo *info = g_file_info_new ();
+
+#define TEST_NAME			"Prilis zlutoucky kun"
+#define TEST_DISPLAY_NAME	        "UTF-8 p\xc5\x99\xc3\xadli\xc5\xa1 \xc5\xbelu\xc5\xa5ou\xc4\x8dk\xc3\xbd k\xc5\xaf\xc5\x88"
+#define TEST_SIZE			0xFFFFFFF0
+
+  g_file_info_set_attribute_byte_string (info, G_FILE_ATTRIBUTE_STANDARD_NAME, TEST_NAME);
+  g_file_info_set_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, TEST_DISPLAY_NAME);
+  g_file_info_set_attribute_uint64 (info, G_FILE_ATTRIBUTE_STANDARD_SIZE, TEST_SIZE);
+  g_file_info_set_file_type (info, G_FILE_TYPE_DIRECTORY);
+
+  //g_object_unref (info);
+   return info;
 }
 
+
+#include <deviceinfo/udiskdeviceinfo.h>
+#include <deviceinfo/udisklistener.h>
+TEST_F(TestNetworkManager, fetchNetworks)
+{
+    QEventLoop event_loop;
+
+    Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(nullptr, DUrl("smb:///")));
+
+    stubx.set_lamda(&UDiskListener::getDeviceByMountPoint, []{
+        UDiskDeviceInfo* device = new UDiskDeviceInfo();
+        return UDiskDeviceInfoPointer(device);
+    });
+    stubx.set_lamda(&UDiskDeviceInfo::getMountPointUrl, []{
+        return DUrl("smb:///");
+    });
+    Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(nullptr, DUrl("smb:///")));
+    stubx.reset(&UDiskListener::getDeviceByMountPoint);
+    stubx.reset(&UDiskDeviceInfo::getMountPointUrl);
+
+
+    stubx.set_lamda(&UDiskListener::getDeviceByMountPoint, []{
+        UDiskDeviceInfo* device = new UDiskDeviceInfo();
+        return UDiskDeviceInfoPointer(device);
+    });
+    stubx.set_lamda(&UDiskDeviceInfo::getMountPointUrl, []{
+        return DUrl("notsmb:///");
+    });
+    Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(nullptr, DUrl("smb:///")));
+    stubx.reset(&UDiskListener::getDeviceByMountPoint);
+    stubx.reset(&UDiskDeviceInfo::getMountPointUrl);
+
+    GObject *source_object = nullptr;
+    GAsyncResult *res = nullptr;
+    gpointer user_data = nullptr;
+    Singleton<NetworkManager>::instance()->network_enumeration_finished(source_object, res, user_data);
+
+    GFileEnumerator *enumerator = nullptr;
+    GFileInfo *info = new_g_file_info();
+    GList *detected_networks = g_list_alloc();
+    detected_networks->data = info;
+    user_data = new DFMUrlBaseEvent(nullptr, DUrl("smb:///"));
+    Singleton<NetworkManager>::instance()->populate_networks(enumerator, detected_networks, user_data);
+    Singleton<NetworkManager>::instance()->eventLoop = &event_loop;
+    Singleton<NetworkManager>::instance()->cancelFeatchNetworks();
+}
 
 
 namespace {
@@ -78,4 +140,6 @@ TEST_F(TestNetworkNode, url)
     EXPECT_STREQ(node.url().toStdString().c_str(), urlname.toStdString().c_str());
     EXPECT_STREQ(node.displayName().toStdString().c_str(), displayname.toStdString().c_str());
     EXPECT_STREQ(node.iconType().toStdString().c_str(), icontype.toStdString().c_str());
+
+    qDebug() << node;
 }
