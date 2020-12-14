@@ -366,6 +366,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                 const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
                 if (fileInfo->isDir()) {
                     m_folderCount += 1;
+                    folderList << url;
                 } else {
                     if (!isInGVFs){
                         m_fileSize += fileInfo->size();
