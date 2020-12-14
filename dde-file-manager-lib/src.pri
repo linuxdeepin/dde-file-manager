@@ -236,7 +236,12 @@ HEADERS += \
     $$PWD/models/virtualentryinfo.h \
     $$PWD/models/trashfileinfo_p.h \
     $$PWD/controllers/mergeddesktopcontroller_p.h \
-    $$PWD/controllers/masteredmediacontroller_p.h
+    $$PWD/controllers/masteredmediacontroller_p.h \
+    $$PWD/interfaces/plugins/private/dfmfactoryloader_p.h \
+    $$PWD/interfaces/plugins/private/dfmfilepreviewfactory_p.h \
+    $$PWD/dialogs/private/ddesktoprenamedialog_p.h \
+    $$PWD/dialogs/private/dfmsettingdialog_p.h \
+    $$PWD/interfaces/plugins/private/dfmviewfactory_p.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \

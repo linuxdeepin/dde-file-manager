@@ -1,8 +1,18 @@
-
-
 #include <gtest/gtest.h>
 #include <QWidget>
 #include <QHBoxLayout>
+#include <QPushButton>
+
+#include "stub.h"
+#include "dfmglobal.h"
+#include "io/dfilestatisticsjob.h"
+#include "views/windowmanager.h"
+#include "views/dfilemanagerwindow.h"
+#include "plugins/pluginmanager.h"
+#include "../plugininterfaces/menu/menuinterface.h"
+#include "interfaces/dabstractfileinfo.h"
+#include "io/dstorageinfo.h"
+#include "controllers/vaultcontroller.h"
 
 #define protected public
 #define private public
@@ -37,13 +47,13 @@ namespace  {
 
 TEST_F(TestDFMRoundBackground, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 
 TEST_F(TestDFMRoundBackground, testEventFilter)
 {
     QEvent event(QEvent::Paint);
-    m_pTester->eventFilter(m_pWidget, &event);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->eventFilter(m_pWidget, &event));
 }
 
 namespace  {
@@ -68,7 +78,7 @@ namespace  {
 
 TEST_F(TestNameTextEdit, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 
 TEST_F(TestNameTextEdit, testSetOrGerIsCanceled)
@@ -83,24 +93,28 @@ TEST_F(TestNameTextEdit, testSetPlainText)
 {
     QString str("unit test");
     m_pTester->setPlainText(str);
+    QString str1 = m_pTester->toPlainText();
+    EXPECT_TRUE(str1 == "unit test");
 }
 
 TEST_F(TestNameTextEdit, testFocusOutEvent)
 {
     QFocusEvent event(QEvent::FocusOut);
-    m_pTester->focusOutEvent(&event);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->focusOutEvent(&event));
 }
 
 TEST_F(TestNameTextEdit, testKeyPressEvent_Escape)
 {
     QKeyEvent event(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
     m_pTester->keyPressEvent(&event);
+    EXPECT_EQ(m_pTester->m_isCanceled, true);
 }
 
 TEST_F(TestNameTextEdit, testKeyPressEvent_Enter)
 {
     QKeyEvent event(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier);
     m_pTester->keyPressEvent(&event);
+    EXPECT_EQ(m_pTester->m_isCanceled, false);
 }
 
 namespace  {
@@ -125,7 +139,7 @@ namespace  {
 
 TEST_F(TestGroupTitleLabel, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 
 namespace  {
@@ -150,7 +164,7 @@ namespace  {
 
 TEST_F(TestSectionKeyLabel, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 
 namespace  {
@@ -175,7 +189,7 @@ namespace  {
 
 TEST_F(TestSectionValueLabel, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 
 namespace  {
@@ -200,7 +214,7 @@ namespace  {
 
 TEST_F(TestLinkSectionValueLabel, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 
 TEST_F(TestLinkSectionValueLabel, testSetOrGetLinkTargetUrl)
@@ -215,7 +229,7 @@ TEST_F(TestLinkSectionValueLabel, testSetOrGetLinkTargetUrl)
 TEST_F(TestLinkSectionValueLabel, testMouseReleaseEvent)
 {
     QMouseEvent event(QEvent::MouseButtonRelease, QPointF(0, 0),Qt::RightButton, Qt::RightButton, Qt::NoModifier);
-    m_pTester->mouseReleaseEvent(&event);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->mouseReleaseEvent(&event));
 }
 
 namespace  {
@@ -253,39 +267,114 @@ namespace  {
 
 TEST_F(TestPropertyDialog, testInit)
 {
+    bool(*stub_isWayLand)() = []()->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
 
+    m_pWidget = new QWidget();
+    DFMEvent event(DFMEvent::OpenFile, m_pWidget);
+    PropertyDialog dlg(event, DUrl("file:///test1"));
+    QString str = dlg.m_url.toString();
+    EXPECT_TRUE(str == "file:///test1");
+}
+
+TEST_F(TestPropertyDialog, testInit2)
+{
+    m_pWidget = new QWidget();
+    DFMEvent event(DFMEvent::OpenFile, m_pWidget);
+    PropertyDialog dlg(event, DUrl("dfmroot:///test1"));
+    QString str = dlg.m_url.toString();
+    EXPECT_TRUE(str == "dfmroot:///test1");
 }
 
 TEST_F(TestPropertyDialog, testStartComputerFolderSize)
 {
     QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
-    m_pTester->startComputerFolderSize(url);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->startComputerFolderSize(url));
 }
 
 TEST_F(TestPropertyDialog, testToggleFileExecutable)
 {
-    m_pTester->toggleFileExecutable(false);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->toggleFileExecutable(false));
+}
+
+TEST_F(TestPropertyDialog, testToggleFileExecutable2)
+{
+    EXPECT_NO_FATAL_FAILURE(m_pTester->toggleFileExecutable(true));
 }
 
 TEST_F(TestPropertyDialog, testUpdateInfo)
 {
     m_pTester->updateInfo();
+    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    DUrl url("file://" + strPath);
+    QString str = m_pTester->m_url.toString();
+    EXPECT_TRUE(str == url.toString());
 }
 
 TEST_F(TestPropertyDialog, testUpdateFolderSize)
 {
+    DFM_NAMESPACE::DFileStatisticsJob job;
+    m_pTester->m_sizeWorker = &job;
     m_pTester->updateFolderSize(1);
+    qint64 size = m_pTester->m_size;
+    EXPECT_TRUE(size == 1);
 }
 
 TEST_F(TestPropertyDialog, testRenameFile)
 {
     m_pTester->renameFile();
+    QString str = m_pTester->m_edit->placeholderText();
+    EXPECT_TRUE(str == "");
+}
+
+TEST_F(TestPropertyDialog, testRenameFile2)
+{
+    m_pTester->m_url = DUrl("file:///home");
+    m_pTester->renameFile();
+    QString str = m_pTester->m_edit->placeholderText();
+    EXPECT_TRUE(str == "");
 }
 
 TEST_F(TestPropertyDialog, testShowTextShowFrame)
 {
     m_pTester->showTextShowFrame();
+    QString str = m_pTester->m_edit->toPlainText();
+    EXPECT_TRUE(str == "TestPropertyDialog.txt");
+}
+
+TEST_F(TestPropertyDialog, testShowTextShowFrame2)
+{
+    m_pTester->m_edit->setPlainText("");
+    m_pTester->showTextShowFrame();
+    QString str = m_pTester->m_edit->toPlainText();
+    EXPECT_TRUE(str == "");
+}
+
+TEST_F(TestPropertyDialog, testShowTextShowFrame3)
+{
+    m_pTester->m_url = DUrl("file:///home");
+    m_pTester->showTextShowFrame();
+    QString str = m_pTester->m_edit->toPlainText();
+    EXPECT_TRUE(str == "TestPropertyDialog.txt");
+}
+
+TEST_F(TestPropertyDialog, testShowTextShowFrame4)
+{
+    m_pTester->m_url = DUrl("file:///home");
+
+    bool(*stu_renameFile)(const QObject *, const DUrl &, const DUrl &, const bool) = [](const QObject *, const DUrl &, const DUrl &, const bool)->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(DFileService, renameFile), stu_renameFile);
+
+    m_pTester->showTextShowFrame();
+    QString str = m_pTester->m_edit->toPlainText();
+    EXPECT_TRUE(str == "TestPropertyDialog.txt");
 }
 
 TEST_F(TestPropertyDialog, testOnChildrenRemoved)
@@ -295,75 +384,128 @@ TEST_F(TestPropertyDialog, testOnChildrenRemoved)
     m_pTester->onChildrenRemoved(url);
 }
 
+TEST_F(TestPropertyDialog, testOnChildrenRemoved2)
+{
+    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    DUrl url("file://" + strPath);
+    m_pTester->m_url = DUrl("usershare:///test1");
+    EXPECT_NO_FATAL_FAILURE(m_pTester->onChildrenRemoved(url));
+}
+
 TEST_F(TestPropertyDialog, testFlickFolderToSidebar)
 {
     QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
-    m_pTester->flickFolderToSidebar(url);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->flickFolderToSidebar(url));
+}
+
+TEST_F(TestPropertyDialog, testFlickFolderToSidebar2)
+{
+    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    DUrl url("file://" + strPath);
+
+    QWidget*(*stub_getWindowById)(quint64) = [](quint64)->QWidget*{
+        DFileManagerWindow * w = new DFileManagerWindow();
+        return w;
+    };
+    Stub stub;
+    stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
+
+    EXPECT_NO_FATAL_FAILURE(m_pTester->flickFolderToSidebar(url));
 }
 
 TEST_F(TestPropertyDialog, testOnOpenWithBntsChecked)
 {
-    QAbstractButton *w(nullptr);
-    m_pTester->onOpenWithBntsChecked(w);
+    QPushButton w;
+    EXPECT_NO_FATAL_FAILURE(m_pTester->onOpenWithBntsChecked(&w));
 }
 
 TEST_F(TestPropertyDialog, testOnHideFileCheckboxChecked)
 {
-    m_pTester->onHideFileCheckboxChecked(true);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->onHideFileCheckboxChecked(true));
+}
+
+TEST_F(TestPropertyDialog, testOnHideFileCheckboxChecked2)
+{
+    EXPECT_NO_FATAL_FAILURE(m_pTester->onHideFileCheckboxChecked(false));
 }
 
 TEST_F(TestPropertyDialog, testOnCancelShare)
 {
-    m_pTester->onCancelShare();
+    EXPECT_NO_FATAL_FAILURE(m_pTester->onCancelShare());
 }
 
 TEST_F(TestPropertyDialog, testMousePressEvent)
 {
     QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-    m_pTester->mousePressEvent(&event);
+
+    bool(*stub_isVisible)() = []()->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(QWidget, isVisible), stub_isVisible);
+
+    EXPECT_NO_FATAL_FAILURE(m_pTester->mousePressEvent(&event));
 }
 
 TEST_F(TestPropertyDialog, testGetFileCount)
 {
-    m_pTester->getFileCount();
+    int count = m_pTester->getFileCount();
+    EXPECT_EQ(count, 1);
 }
 
 TEST_F(TestPropertyDialog, testGetFileSize)
 {
-    m_pTester->getFileSize();
+    qint64 size = m_pTester->getFileSize();
+    EXPECT_EQ(size, 0);
 }
 
 TEST_F(TestPropertyDialog, testRaise)
 {
-    m_pTester->raise();
+    EXPECT_NO_FATAL_FAILURE(m_pTester->raise());
 }
 
 TEST_F(TestPropertyDialog, testHideEvent)
 {
     QHideEvent event;
-    m_pTester->hideEvent(&event);
+
+    QPointer<QVariantAnimation> xani(new QVariantAnimation());
+    m_pTester->m_xani = xani;
+
+    QPointer<QVariantAnimation> gani(new QVariantAnimation());
+    m_pTester->m_gani = gani;
+
+    QPointer<QLabel> aniLabel(new QLabel(""));
+    m_pTester->m_aniLabel = aniLabel;
+
+    DFM_NAMESPACE::DFileStatisticsJob job;
+    m_pTester->m_sizeWorker = &job;
+
+    EXPECT_NO_FATAL_FAILURE(m_pTester->hideEvent(&event));
 }
 
 TEST_F(TestPropertyDialog, testResizeEvent)
 {
     QResizeEvent event(QSize(350, 120), QSize(350, 120));
-    m_pTester->resizeEvent(&event);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->resizeEvent(&event));
 }
 
 TEST_F(TestPropertyDialog, testExpandGroup)
 {
-    m_pTester->expandGroup();
+    QList<DDrawer *> lst = m_pTester->expandGroup();
+    EXPECT_EQ(lst.count(), 3);
 }
 
 TEST_F(TestPropertyDialog, testContentHeight)
 {
-    m_pTester->contentHeight();
+    int height = m_pTester->contentHeight();
+    EXPECT_NE(height, 0);
 }
 
 TEST_F(TestPropertyDialog, testGetDialogHeight)
 {
-    m_pTester->getDialogHeight();
+    int height = m_pTester->getDialogHeight();
+    EXPECT_NE(height, 0);
 }
 
 TEST_F(TestPropertyDialog, testCreateShareInfoFrame)
@@ -371,7 +513,8 @@ TEST_F(TestPropertyDialog, testCreateShareInfoFrame)
     QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-    m_pTester->createShareInfoFrame(info);
+    ShareInfoFrame * pframe = m_pTester->createShareInfoFrame(info);
+    EXPECT_NE(pframe, nullptr);
 }
 
 TEST_F(TestPropertyDialog, testCreateLocalDeviceInfoWidget)
@@ -379,7 +522,24 @@ TEST_F(TestPropertyDialog, testCreateLocalDeviceInfoWidget)
     QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-    m_pTester->createLocalDeviceInfoWidget(info);
+    QList<QPair<QString, QString> > lst = m_pTester->createLocalDeviceInfoWidget(info);
+    EXPECT_NE(lst.count(), 0);
+}
+
+TEST_F(TestPropertyDialog, testCreateLocalDeviceInfoWidget2)
+{
+    DAbstractFileInfoPointer info = DAbstractFileInfo::getFileInfo(DUrl("file:///test1"));
+    QList<QPair<QString, QString> > lst = m_pTester->createLocalDeviceInfoWidget(info);
+    EXPECT_EQ(lst.count(), 0);
+}
+
+TEST_F(TestPropertyDialog, testCreateLocalDeviceInfoWidget3)
+{
+    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    DUrl url("file://" + strPath);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+    QList<QPair<QString, QString> > lst = m_pTester->createLocalDeviceInfoWidget(info);
+    EXPECT_NE(lst.count(), 0);
 }
 
 TEST_F(TestPropertyDialog, testCreateInfoFrame)
@@ -388,5 +548,119 @@ TEST_F(TestPropertyDialog, testCreateInfoFrame)
     QPair<QString, QString> pair1("key1", "value1");
     QPair<QString, QString> pair2("key2", "value2");
     properties << pair1 << pair2;
-    m_pTester->createInfoFrame(properties);
+    QFrame *pframe = m_pTester->createInfoFrame(properties);
+    EXPECT_NE(pframe, nullptr);
+
+}
+
+TEST_F(TestPropertyDialog, testGetRealUrl)
+{
+    m_pTester->m_url = DUrl("recent:///test1");
+    DUrl url = m_pTester->getRealUrl();
+    QString str = url.toString();
+    EXPECT_TRUE(str == "file:///test1");
+}
+
+TEST_F(TestPropertyDialog, testCanChmod)
+{
+    DAbstractFileInfoPointer info(new DAbstractFileInfo(DUrl("burn:///test/test1")));
+    bool b = m_pTester->canChmod(info);
+    EXPECT_GE(b, false);
+}
+
+TEST_F(TestPropertyDialog, testLoadPluginExpandWidgets)
+{
+    QList<PropertyDialogExpandInfoInterface*>(*stub_getExpandInfoInterfaces)() = []()->QList<PropertyDialogExpandInfoInterface*>{
+        QList<PropertyDialogExpandInfoInterface*> lst;
+            PropertyDialogExpandInfoInterface* p1 = new PropertyDialogExpandInfoInterface();
+            PropertyDialogExpandInfoInterface* p2 = new PropertyDialogExpandInfoInterface();
+            PropertyDialogExpandInfoInterface* p3 = new PropertyDialogExpandInfoInterface();
+            lst << p1 << p2 << p3;
+            return lst;
+    };
+    Stub stu;
+    stu.set(ADDR(PluginManager, getExpandInfoInterfaces), stub_getExpandInfoInterfaces);
+
+    EXPECT_NO_FATAL_FAILURE(m_pTester->loadPluginExpandWidgets());
+}
+
+TEST_F(TestPropertyDialog, testCreateBasicInfoWidget)
+{
+    DAbstractFileInfoPointer info = DAbstractFileInfo::getFileInfo(DUrl("file:///home"));
+
+    bool(*stub_isSymLink)() = []()->bool{
+        return true;
+    };
+    typedef bool(*fptr)();
+    Stub stu;
+    stu.set((fptr)&DFileInfo::isSymLink, stub_isSymLink);
+
+    EXPECT_NO_FATAL_FAILURE(m_pTester->createBasicInfoWidget(info));
+}
+
+TEST_F(TestPropertyDialog, testCreateBasicInfoWidget2)
+{
+    bool(*stub_isEmpty)() = []()->bool{
+        return false;
+    };
+    Stub stu;
+    stu.set(ADDR(QString, isEmpty), stub_isEmpty);
+
+    DAbstractFileInfoPointer info = DAbstractFileInfo::getFileInfo(DUrl("file:///home"));
+    QFrame *pframe = m_pTester->createBasicInfoWidget(info);
+    EXPECT_NE(pframe, nullptr);
+}
+
+TEST_F(TestPropertyDialog, testCreateBasicInfoWidget3)
+{
+    bool(*stub_isRecentFile)() = []()->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(DUrl, isRecentFile), stub_isRecentFile);
+
+    DAbstractFileInfoPointer info = DAbstractFileInfo::getFileInfo(DUrl("file:///home"));
+    QFrame *pframe = m_pTester->createBasicInfoWidget(info);
+    EXPECT_NE(pframe, nullptr);
+}
+
+TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget)
+{
+    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    DUrl url("file://" + strPath);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+    QFrame *pframe = m_pTester->createAuthorityManagementWidget(info);
+    EXPECT_NE(pframe, nullptr);
+}
+
+TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget2)
+{
+    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    DUrl url("file://" + strPath);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+
+    QByteArray(*stub_fileSystemType)() = []()->QByteArray{
+        return QByteArray("vfat");
+    };
+    Stub stu;
+    stu.set(ADDR(DStorageInfo, fileSystemType), stub_fileSystemType);
+
+    QFrame *pframe = m_pTester->createAuthorityManagementWidget(info);
+    EXPECT_NE(pframe, nullptr);
+}
+
+TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget3)
+{
+    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    DUrl url("file://" + strPath);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+
+    bool(*stub_isVaultFile)(QString) = [](QString)->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(VaultController, isVaultFile), stub_isVaultFile);
+
+    QFrame *pframe = m_pTester->createAuthorityManagementWidget(info);
+    EXPECT_NE(pframe, nullptr);
 }

@@ -44,5 +44,5 @@ namespace  {
 
 TEST_F(TestDFMGenericPlugin, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }

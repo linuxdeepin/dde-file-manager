@@ -27,7 +27,7 @@ namespace  {
 
 TEST_F(TestDMultiFilePropertyDialog, testInit)
 {
-//    m_pTester->show();
+    EXPECT_NE(nullptr, m_pTester);
 }
 
 TEST_F(TestDMultiFilePropertyDialog, testStartComputingFolderSize)

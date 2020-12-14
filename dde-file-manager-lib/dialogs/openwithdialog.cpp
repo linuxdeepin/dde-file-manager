@@ -376,11 +376,7 @@ void OpenWithDialog::checkItem(OpenWithDialogListItem *item)
 
 void OpenWithDialog::useOtherApplication()
 {
-#ifndef UTest
     const QString &file_path = QFileDialog::getOpenFileName(this);
-#else
-    const QString &file_path = "/usr/bin/deepin-movie.desktop";
-#endif
 
     if (file_path.isEmpty())
         return;

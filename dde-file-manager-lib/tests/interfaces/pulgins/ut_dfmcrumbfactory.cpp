@@ -1,6 +1,9 @@
 #include <gtest/gtest.h>
 
 #include "interfaces/plugins/dfmcrumbfactory.h"
+#include "interfaces/dfmcrumbinterface.h"
+
+DFM_USE_NAMESPACE
 
 namespace  {
     class TestDFMCrumbFactory : public testing::Test
@@ -21,10 +24,12 @@ namespace  {
 
 TEST_F(TestDFMCrumbFactory, testCreate)
 {
-    DFM_NAMESPACE::DFMCrumbFactory::create("video/*");
+    DFMCrumbInterface *pobject = DFM_NAMESPACE::DFMCrumbFactory::create("video/*");
+    EXPECT_EQ(pobject, nullptr);
 }
 
 TEST_F(TestDFMCrumbFactory, testKeys)
 {
-    DFM_NAMESPACE::DFMCrumbFactory::keys();
+    QStringList lst = DFM_NAMESPACE::DFMCrumbFactory::keys();
+    EXPECT_EQ(lst.count(), 0);
 }
