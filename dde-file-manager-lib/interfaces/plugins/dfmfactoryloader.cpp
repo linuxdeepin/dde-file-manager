@@ -7,51 +7,18 @@
  * (at your option) any later version.
  **/
 #include "dfmfactoryloader.h"
+#include "private/dfmfactoryloader_p.h"
 
-#include <QMutex>
 #include <QDir>
 #include <QJsonArray>
 #include <QPluginLoader>
 #include <QDebug>
-
-#include <private/qobject_p.h>
-#include <private/qcoreapplication_p.h>
 
 DFM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QList<DFMFactoryLoader *>, qt_factory_loaders)
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMutex, qt_factoryloader_mutex, (QMutex::Recursive))
-
-namespace {
-
-// avoid duplicate QStringLiteral data:
-inline QString iidKeyLiteral() { return QStringLiteral("IID"); }
-#ifdef QT_SHARED
-inline QString versionKeyLiteral() { return QStringLiteral("version"); }
-#endif
-inline QString metaDataKeyLiteral() { return QStringLiteral("MetaData"); }
-inline QString keysKeyLiteral() { return QStringLiteral("Keys"); }
-
-}
-
-class DFMFactoryLoaderPrivate : public QObjectPrivate
-{
-    Q_DECLARE_PUBLIC(DFMFactoryLoader)
-public:
-    DFMFactoryLoaderPrivate();
-    ~DFMFactoryLoaderPrivate();
-    mutable QMutex mutex;
-    QByteArray iid;
-    QList<QPluginLoader *> pluginLoaderList;
-    QMultiMap<QString, QPluginLoader *> keyMap;
-    QString suffix;
-    Qt::CaseSensitivity cs;
-    bool rki = false;
-    QStringList loadedPaths;
-
-    static QStringList pluginPaths;
-};
 
 QStringList DFMFactoryLoaderPrivate::pluginPaths;
 

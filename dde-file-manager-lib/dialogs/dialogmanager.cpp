@@ -414,10 +414,7 @@ void DialogManager::showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDe
     d.setDefaultButton(0);
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     QTimer::singleShot(200, &d, &DDialog::raise);
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     qDebug() << code;
     if (code == 0) {
         qDebug() << "close CopyMoveToSelf dialog" << jobDetail;
@@ -449,10 +446,7 @@ int DialogManager::showRunExcutableScriptDialog(const DUrl &url, quint64 winId)
     d.addButton(buttonTexts[3], false, DDialog::ButtonRecommend);
     d.setDefaultButton(3);
     d.setFixedWidth(480);
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -471,10 +465,7 @@ int DialogManager::showRunExcutableFileDialog(const DUrl &url, quint64 winId)
     d.setTitle(message);
     d.setMessage(tipMessage);
     d.setIconPixmap(pfileInfo->fileIcon().pixmap(64, 64));
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -488,10 +479,7 @@ int DialogManager::showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint6
     d.addButton(tr("Run"), true, DDialog::ButtonRecommend);
     d.setTitle(message);
     d.setIconPixmap(pfileInfo->fileIcon().pixmap(64, 64));
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -506,10 +494,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -525,10 +510,7 @@ int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
     d.setDefaultButton(0);
     // 设置对话框icon
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -555,10 +537,7 @@ int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &eve
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
     d.moveToCenter();
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -584,10 +563,7 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
     d.setDefaultButton(2);
     d.getButton(2)->setFocus();
     d.moveToCenter();
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -640,10 +616,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
-#ifndef UTest
     d.exec();
-#endif
-
 }
 
 void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)
@@ -654,9 +627,7 @@ void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QSt
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.getButton(0)->setFocus();
-#ifndef UTest
     d.exec();
-#endif
 }
 
 int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event)
@@ -711,10 +682,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
     d.moveToCenter();
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -729,10 +697,7 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
     d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
     d.setIconPixmap(QIcon::fromTheme("folder-bookmark", QIcon::fromTheme("folder")).pixmap(64, 64));
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -836,8 +801,8 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
         m_trashDialog = NULL;
     });
     QPoint pos = getPerportyPos(m_trashDialog->size().width(), m_trashDialog->size().height(), 1, 0);
-    m_trashDialog->show();
     m_trashDialog->move(pos);
+    m_trashDialog->show();
 #ifndef UTest
     TIMER_SINGLESHOT(100, {
         m_trashDialog->raise();
@@ -924,10 +889,7 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
     d.setIcon(fileInfo->fileIcon(), QSize(64, 64));
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     if (code == 1) {
         DUrlList urls;
         urls << linkfile;
@@ -1013,9 +975,7 @@ void DialogManager::showDiskSpaceOutOfUsedDialog()
     QRect rect = d.geometry();
     rect.moveCenter(qApp->desktop()->geometry().center());
     d.move(rect.x(), rect.y());
-#ifndef UTest
     d.exec();
-#endif
 }
 
 void DialogManager::show4gFat32Dialog()
@@ -1024,9 +984,7 @@ void DialogManager::show4gFat32Dialog()
     d.setTitle(tr("Failed, file size must be less than 4GB."));
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-#ifndef UTest
     d.exec();
-#endif
 }
 
 void DialogManager::showFailToCreateSymlinkDialog(const QString &errorString)
@@ -1035,18 +993,13 @@ void DialogManager::showFailToCreateSymlinkDialog(const QString &errorString)
     d.setTitle(tr("Fail to create symlink, cause:") + errorString);
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-#ifndef UTest
     d.exec();
-#endif
 }
 
 void DialogManager::showMoveToTrashConflictDialog(const DUrlList &urls)
 {
     MoveToTrashConflictDialog d(0, urls);
-    int code(1);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     if (code == 1) {
         fileService->deleteFiles(this, urls, false);
     }
@@ -1058,9 +1011,7 @@ void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
     d.setTitle(tr("The selected files contain system file/directory, and it cannot be deleted"));
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-#ifndef UTest
     d.exec();
-#endif
 }
 
 void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList &entryUrls)
@@ -1136,9 +1087,7 @@ void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)
     }
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-#ifndef UTest
     d.exec();
-#endif
 }
 
 void DialogManager::showRestoreFailedPerssionDialog(const QString &srcPath, const QString &targetPath)
@@ -1149,9 +1098,7 @@ void DialogManager::showRestoreFailedPerssionDialog(const QString &srcPath, cons
     d.setMessage(tr("You do not have permission to operate file/folder!"));
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-#ifndef UTest
     d.exec();
-#endif
 }
 
 void DialogManager::showRestoreFailedSourceNotExists(const DUrlList &urlList)
@@ -1165,9 +1112,7 @@ void DialogManager::showRestoreFailedSourceNotExists(const DUrlList &urlList)
     }
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-#ifndef UTest
     d.exec();
-#endif
 }
 
 void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
@@ -1233,9 +1178,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
     }
 
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-#ifndef UTest
     d.exec();
-#endif
 }
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
@@ -1330,9 +1273,7 @@ void DialogManager::showErrorDialog(const QString &title, const QString &message
     d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
     d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
     d.setMaximumWidth(640);
-#ifndef UTest
     d.exec();
-#endif
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)
@@ -1431,10 +1372,7 @@ int DialogManager::showUnableToLocateDir(const QString &dir)
     d.addButton(buttonTexts[0], true);
     d.setDefaultButton(0);
     d.setIconPixmap(QIcon::fromTheme("folder").pixmap(64, 64));
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     return code;
 }
 
@@ -1499,10 +1437,7 @@ int DialogManager::showMessageDialog(messageType messageLevel, const QString &ti
     } else {
         d.setIcon(m_dialogInfoIcon, QSize(64, 64));
     }
-    int code(0);
-#ifndef UTest
-    code = d.exec();
-#endif
+    int code = d.exec();
     qDebug() << code;
     return code;
 }
@@ -1560,10 +1495,7 @@ void DialogManager::showFormatDialog(const QString &devId)
     dlg.addButton(tr("Cancel"));
     dlg.addButton(tr("Format"), true, DDialog::ButtonRecommend);
     dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
-    int code(1);
-#ifndef UTest
-    code = dlg.exec();
-#endif
+    int code = dlg.exec();
     if (code == 1) {
         qDebug() << "start format " << devId;
         // 显示格式化窗口
@@ -1633,9 +1565,7 @@ void DialogManager::showAddUserShareFailedDialog(const QString &sharePath)
     d.setTitle(tr("Share folder can't be named after the current username"));
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-#ifndef UTest
     d.exec();
-#endif
 }
 
 

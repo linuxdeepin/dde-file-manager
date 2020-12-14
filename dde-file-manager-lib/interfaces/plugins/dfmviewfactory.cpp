@@ -12,6 +12,7 @@
 
 #include "durl.h"
 #include "dfmbaseview.h"
+#include "private/dfmviewfactory_p.h"
 
 #include <QWidget>
 
@@ -21,12 +22,6 @@ DFM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC_WITH_ARGS(DFMFactoryLoader, loader,
     (DFMViewFactoryInterface_iid, QLatin1String("/views"), Qt::CaseInsensitive))
 #endif
-
-class DFMViewFactoryPrivate
-{
-public:
-    static QMap<const DFMBaseView*, int> viewToLoaderIndex;
-};
 
 QMap<const DFMBaseView*, int> DFMViewFactoryPrivate::viewToLoaderIndex;
 

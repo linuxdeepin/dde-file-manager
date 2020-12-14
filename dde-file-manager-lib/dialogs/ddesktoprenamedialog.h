@@ -31,7 +31,6 @@
 #include "ddialog.h"
 #include "interfaces/dfileservices.h"
 
-
 using namespace Dtk::Widget;
 
 class DDesktopRenameDialogPrivate;
@@ -83,6 +82,7 @@ private:
     QSharedPointer<DDesktopRenameDialogPrivate> d_ptr{ nullptr };
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DDesktopRenameDialog)
 };
+
 
 
 #endif // DDESKTOPRENAMEDIALOG_H

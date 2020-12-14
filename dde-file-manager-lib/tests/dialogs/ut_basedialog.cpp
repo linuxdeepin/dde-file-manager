@@ -1,6 +1,11 @@
-#include "dialogs/basedialog.h"
-
 #include <gtest/gtest.h>
+#include <DTitlebar>
+
+#include "stub.h"
+
+#include "dfmglobal.h"
+#define private public
+#include "dialogs/basedialog.h"
 
 namespace  {
     class TestBaseDialog : public testing::Test
@@ -24,11 +29,19 @@ namespace  {
 
 TEST_F(TestBaseDialog, testInit)
 {
-//    m_pTester->show();
+    bool(*stub_isWayLand)() = []()->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
+    BaseDialog dlg;
+    EXPECT_NE(nullptr, m_pTester->m_titlebar);
 }
 
 TEST_F(TestBaseDialog, testSetTitle)
 {
     QString strTitle("TitleName");
     m_pTester->setTitle(strTitle);
+    QString str = m_pTester->m_titlebar->windowTitle();
+    EXPECT_TRUE(str.isEmpty());
 }

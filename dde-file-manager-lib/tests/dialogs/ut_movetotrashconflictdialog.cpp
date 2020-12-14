@@ -1,4 +1,6 @@
 #include "dialogs/movetotrashconflictdialog.h"
+#include "stub.h"
+#include "dfmglobal.h"
 
 #include <gtest/gtest.h>
 
@@ -24,5 +26,21 @@ namespace  {
 
 TEST_F(TestMoveToTrashConflictDialog, testInit)
 {
-//    m_pTester->show();
+    EXPECT_NE(m_pTester, nullptr);
 }
+
+TEST_F(TestMoveToTrashConflictDialog, testInit2)
+{
+    bool(*stub_isWayLand)() = []()->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
+
+    DUrlList lst;
+    lst << DUrl("file:///jerry");
+    MoveToTrashConflictDialog dlg(nullptr, lst);
+    QString str = dlg.title();
+    EXPECT_TRUE(str == "This file is too big for the trash");
+}
+

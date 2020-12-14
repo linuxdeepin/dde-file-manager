@@ -45,5 +45,5 @@ namespace  {
 
 TEST_F(TestDFMViewPlugin, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }

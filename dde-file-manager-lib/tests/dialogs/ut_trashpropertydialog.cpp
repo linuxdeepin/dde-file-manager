@@ -1,6 +1,8 @@
-#include "dialogs/trashpropertydialog.h"
-
 #include <gtest/gtest.h>
+#include <QLabel>
+
+#define private public
+#include "dialogs/trashpropertydialog.h"
 
 namespace  {
     class TestTrashPropertyDialog : public testing::Test
@@ -24,10 +26,12 @@ namespace  {
 
 TEST_F(TestTrashPropertyDialog, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 
 TEST_F(TestTrashPropertyDialog, testUpdateFolderSize)
 {
     m_pTester->updateFolderSize(1);
+    QString str = m_pTester->m_sizeLabel->text();
+    EXPECT_TRUE(str == "1 B");
 }

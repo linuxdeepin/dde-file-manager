@@ -22,10 +22,12 @@ namespace  {
 
 TEST_F(TestDFMFileControllerFactory, testCreate)
 {
-    DFMFileControllerFactory::create("video/*");
+    DAbstractFileController *pr = DFMFileControllerFactory::create("video/*");
+    EXPECT_EQ(pr, nullptr);
 }
 
 TEST_F(TestDFMFileControllerFactory, testKeys)
 {
-    DFMFileControllerFactory::keys();
+    QStringList lst = DFMFileControllerFactory::keys();
+    EXPECT_EQ(lst.count(), 0);
 }

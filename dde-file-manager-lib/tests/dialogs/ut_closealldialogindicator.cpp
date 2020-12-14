@@ -1,8 +1,10 @@
-#include "dialogs/closealldialogindicator.h"
-
 #include <gtest/gtest.h>
 #include <QTest>
 #include <QDebug>
+
+#define protected public
+#define private public
+#include "dialogs/closealldialogindicator.h"
 
 namespace  {
     class TestCloseAllDialogIndicator : public testing::Test{
@@ -25,7 +27,7 @@ namespace  {
 
 TEST_F(TestCloseAllDialogIndicator, testInit)
 {
-//    m_pTester->show();
+    EXPECT_NE(nullptr, m_pTester);
 }
 
 TEST_F(TestCloseAllDialogIndicator, testSetTotalMessage)
@@ -33,9 +35,24 @@ TEST_F(TestCloseAllDialogIndicator, testSetTotalMessage)
     qint64 size = 1024;
     int count = 2048;
     m_pTester->setTotalMessage(size, count);
+    QString str = m_pTester->m_messageLabel->text();
+    EXPECT_NE("", str.toStdString().c_str());
 }
 
 TEST_F(TestCloseAllDialogIndicator, testKeyPressEvent_Escape)
 {
-    QTest::keyPress(m_pTester, Qt::Key_Escape);
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->keyPressEvent(&event));
+}
+
+TEST_F(TestCloseAllDialogIndicator, testKeyPressEvent_Escape2)
+{
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->keyPressEvent(&event));
+}
+
+TEST_F(TestCloseAllDialogIndicator, testShowEvent)
+{
+    QShowEvent event;
+    EXPECT_NO_FATAL_FAILURE(m_pTester->showEvent(&event));
 }

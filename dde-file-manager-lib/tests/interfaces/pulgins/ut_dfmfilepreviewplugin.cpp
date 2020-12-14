@@ -44,5 +44,5 @@ namespace  {
 
 TEST_F(TestDFMFilePreviewPlugin, testCreate)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }

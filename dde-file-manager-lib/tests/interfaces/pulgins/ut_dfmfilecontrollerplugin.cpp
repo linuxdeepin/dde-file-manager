@@ -43,6 +43,6 @@ namespace  {
 
 TEST_F(TestDFMFileControllerPlugin, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 

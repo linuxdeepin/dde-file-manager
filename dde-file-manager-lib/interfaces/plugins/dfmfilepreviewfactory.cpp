@@ -7,6 +7,7 @@
  * (at your option) any later version.
  **/
 #include "dfmfilepreviewfactory.h"
+#include "private/dfmfilepreviewfactory_p.h"
 #include "dfmfilepreviewplugin.h"
 #include "dfmfactoryloader.h"
 #include "dfmfilepreview.h"
@@ -17,12 +18,6 @@ DFM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC_WITH_ARGS(DFMFactoryLoader, loader,
     (DFMFilePreviewFactoryInterface_iid, QLatin1String("/previews"), Qt::CaseInsensitive))
 #endif
-
-class DFMFilePreviewFactoryPrivate
-{
-public:
-    static QMap<const DFMFilePreview*, int> previewToLoaderIndex;
-};
 
 QMap<const DFMFilePreview*, int> DFMFilePreviewFactoryPrivate::previewToLoaderIndex;
 

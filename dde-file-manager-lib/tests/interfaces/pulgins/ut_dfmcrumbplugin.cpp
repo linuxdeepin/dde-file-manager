@@ -38,5 +38,5 @@ namespace  {
 
 TEST_F(TestDFMCrumbPlugin, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }

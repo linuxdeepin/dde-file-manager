@@ -3,6 +3,11 @@
 #include <QEvent>
 #include <QRect>
 #include <QPaintEvent>
+#include <QFileDialog>
+
+#include "stub.h"
+#include "dfmglobal.h"
+#include "interfaces/dfileservices.h"
 
 #define protected public
 #define private public
@@ -30,40 +35,43 @@ namespace  {
 
 TEST_F(TestOpenWithDialogListItem, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 
 TEST_F(TestOpenWithDialogListItem, testSetCheckedTrue)
 {
     m_pTester->setChecked(true);
+    EXPECT_NE(m_pTester->m_checkButton, nullptr);
 }
 
 TEST_F(TestOpenWithDialogListItem, testSetCheckedFalse)
 {
     m_pTester->setChecked(false);
+    EXPECT_NE(m_pTester->m_checkButton, nullptr);
 }
 
 TEST_F(TestOpenWithDialogListItem, testText)
 {
-    m_pTester->text();
+    QString str = m_pTester->text();
+    EXPECT_TRUE(str == "OpenWithDialogListItem");
 }
 
 TEST_F(TestOpenWithDialogListItem, testEnterEvent)
 {
     QEvent event(QEvent::KeyPress);
-    m_pTester->enterEvent(&event);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->enterEvent(&event));
 }
 
 TEST_F(TestOpenWithDialogListItem, testLeaveEvent)
 {
     QEvent event(QEvent::KeyPress);
-    m_pTester->leaveEvent(&event);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->leaveEvent(&event));
 }
 
 TEST_F(TestOpenWithDialogListItem, testPaintEvent)
 {
     QPaintEvent event(QRect(0, 0, 100, 100));
-    m_pTester->paintEvent(&event);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->paintEvent(&event));
 }
 
 namespace  {
@@ -89,7 +97,7 @@ namespace  {
 
 TEST_F(TestOpenWithDialog, testInit)
 {
-
+    EXPECT_NE(m_pTester, nullptr);
 }
 
 TEST_F(TestOpenWithDialog, testInit2)
@@ -98,32 +106,138 @@ TEST_F(TestOpenWithDialog, testInit2)
     urllist << DUrl("file:///test1") << DUrl("file:///test2");
     OpenWithDialog dlg(urllist);
     dlg.show();
+    int count = dlg.m_urllist.count();
+    EXPECT_EQ(count, 2);
+}
+
+TEST_F(TestOpenWithDialog, testInit3)
+{
+    bool(*stub_isWayLand)() = []()->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
+
+    DUrl url("file:///test3");
+    OpenWithDialog  dlg(url);
+    QString str = dlg.m_url.toString();
+    EXPECT_TRUE(str == "file:///test3");
 }
 
 TEST_F(TestOpenWithDialog, testOpenFileByApp)
 {
     m_pTester->openFileByApp();
+    EXPECT_EQ(m_pTester->m_checkedItem, nullptr);
+}
+
+TEST_F(TestOpenWithDialog, testOpenFileByApp2)
+{
+    OpenWithDialogListItem item(QIcon::fromTheme("media-optical"), "utest");
+    m_pTester->m_checkedItem = &item;
+    m_pTester->openFileByApp();
+    EXPECT_NE(m_pTester->m_checkedItem, nullptr);
+}
+
+TEST_F(TestOpenWithDialog, testOpenFileByApp3)
+{
+    OpenWithDialogListItem item(QIcon::fromTheme("media-optical"), "utest");
+    m_pTester->m_checkedItem = &item;
+    m_pTester->m_urllist.push_back(DUrl("file:///test1"));
+
+    bool(*stub_openFileByApp)(const QObject *, const QString &, const DUrl &) = [](const QObject *, const QString &, const DUrl &)->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(DFileService, openFileByApp), stub_openFileByApp);
+
+    m_pTester->openFileByApp();
+    EXPECT_NE(m_pTester->m_checkedItem, nullptr);
+}
+
+TEST_F(TestOpenWithDialog, testOpenFileByApp4)
+{
+    OpenWithDialogListItem item(QIcon::fromTheme("media-optical"), "utest");
+    m_pTester->m_checkedItem = &item;
+    m_pTester->m_urllist.push_back(DUrl("file:///test1"));
+
+    m_pTester->m_url = DUrl("");
+
+    bool(*stub_openFileByApp)(const QObject *, const QString &, const DUrl &) = [](const QObject *, const QString &, const DUrl &)->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(DFileService, openFileByApp), stub_openFileByApp);
+
+    m_pTester->openFileByApp();
+    EXPECT_NE(m_pTester->m_checkedItem, nullptr);
+}
+
+TEST_F(TestOpenWithDialog, testOpenFileByApp5)
+{
+    OpenWithDialogListItem item(QIcon::fromTheme("media-optical"), "utest");
+    m_pTester->m_checkedItem = &item;
+    m_pTester->m_urllist.push_back(DUrl("file:///test1"));
+    m_pTester->m_urllist.push_back(DUrl("file:///test2"));
+
+    m_pTester->m_url = DUrl("");
+    bool(*stub_openFilesByApp)(const QObject *, const QString &, const QList<DUrl> &, const bool) = [](const QObject *, const QString &, const QList<DUrl> &, const bool)->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(DFileService, openFilesByApp), stub_openFilesByApp);
+
+    m_pTester->openFileByApp();
+    EXPECT_NE(m_pTester->m_checkedItem, nullptr);
 }
 
 TEST_F(TestOpenWithDialog, testUseOtherApplication)
 {
-    m_pTester->useOtherApplication();
+    QString(*stu_getOpenFileName)(QWidget*, const QString &, const QString &, const QString &, QString *, QFileDialog::Options)
+            = [](QWidget*, const QString &, const QString &, const QString &, QString *, QFileDialog::Options)->QString{
+        return "/usr/bin/deepin-movie.desktop";
+    };
+    Stub stu;
+    stu.set(ADDR(QFileDialog, getOpenFileName), stu_getOpenFileName);
+
+    EXPECT_NO_FATAL_FAILURE(m_pTester->useOtherApplication());
+}
+
+TEST_F(TestOpenWithDialog, testUseOtherApplication2)
+{
+    QString(*stu_getOpenFileName)(QWidget*, const QString &, const QString &, const QString &, QString *, QFileDialog::Options)
+            = [](QWidget*, const QString &, const QString &, const QString &, QString *, QFileDialog::Options)->QString{
+        return "/test1";
+    };
+    Stub stu;
+    stu.set(ADDR(QFileDialog, getOpenFileName), stu_getOpenFileName);
+
+//    bool isExecutable() const;
+    bool(*stu_isExecutable)() = []()->bool{
+        return true;
+    };
+    Stub stu2;
+    stu2.set(ADDR(QFileInfo, isExecutable), stu_isExecutable);
+
+    EXPECT_NO_FATAL_FAILURE(m_pTester->useOtherApplication());
 }
 
 TEST_F(TestOpenWithDialog, testCreateItem)
 {
-    m_pTester->createItem(QIcon::fromTheme("application-x-desktop"), "appName", "/appname");
+    OpenWithDialogListItem *item = m_pTester->createItem(QIcon::fromTheme("application-x-desktop"), "appName", "/appname");
+    EXPECT_NE(item, nullptr);
 }
 
 TEST_F(TestOpenWithDialog, testShowEvent)
 {
     QShowEvent event;
     m_pTester->showEvent(&event);
+    int width = m_pTester->m_recommandLayout->parentWidget()->width();
+    EXPECT_NE(width, 0);
 }
 
 TEST_F(TestOpenWithDialog, testEventFilter)
 {
     OpenWithDialogListItem item(QIcon(), "testItem");
     QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-    m_pTester->eventFilter(&item, &event);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->eventFilter(&item, &event));
 }
