@@ -31,7 +31,6 @@
 #include "dfiledevice.h"
 #include "dfilehandler.h"
 #include "dstorageinfo.h"
-
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
 #include "app/define.h"
@@ -47,18 +46,14 @@
 #include "dfmstandardpaths.h"
 #include "views/windowmanager.h"
 #include "models/avfsfileinfo.h"
-
 #include "shutil/fileutils.h"
 #include "shutil/filebatchprocess.h"
-
 #include "dialogs/dialogmanager.h"
-
 #include "deviceinfo/udisklistener.h"
 #include "interfaces/dfmglobal.h"
 #include "singleton.h"
 #include "models/dfmrootfileinfo.h"
 #include "shutil/checknetwork.h"
-
 #include <ddialog.h>
 #include "execinfo.h"
 #include "math.h"
@@ -158,7 +153,7 @@ QVariant eventProcess(DFileService *service, const QSharedPointer<DFMEvent> &eve
         }
 
         for (DAbstractFileController *controller : list) {
-            if (controller_set.contains(controller)) {
+            if (!controller || controller_set.contains(controller)) {
                 continue;
             }
 
@@ -315,18 +310,6 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 continue;
             }
         }
-
-
-//        if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) == DDialog::Accepted) {
-//            result = CALL_CONTROLLER(deleteFiles);
-
-//            if (result.toBool()) {
-//                for (const DUrl &url : event->fileUrlList()) {
-//                    emit fileDeleted(url);
-//                }
-//            }
-
-//        }
         break;
 
     }
@@ -340,24 +323,6 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
             }
         }
 
-        //handle files whom could not be moved to trash
-//        DUrlList enableList;
-//        DUrlList disableList;
-//        foreach (const DUrl& url, event->fileUrlList()) {
-//            const DAbstractFileInfoPointer& info = createFileInfo(this, url);
-//            if(info->isDir() && !info->isWritable()){
-//                disableList << url;
-//                continue;
-//            }
-//            enableList << url;
-//        }
-//        if (!disableList.isEmpty()){
-//            DFMUrlListBaseEvent noPermissionEvent{event->sender(), disableList};
-//            noPermissionEvent.setWindowId(event->windowId());
-//            emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
-//        }
-
-//        event->setData(enableList);
         result = CALL_CONTROLLER(moveToTrash);
 
         const DUrlList &list = event->fileUrlList();
@@ -368,7 +333,6 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 continue;
 
             emit fileMovedToTrash(list.at(i), new_list.at(i));
-            //        emit fileRenamed(list.at(i), result.at(i));
         }
 
         break;
@@ -379,33 +343,6 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     }
     case DFMEvent::PasteFile: {
         result = CALL_CONTROLLER(pasteFile);
-        //fix bug 35855修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程
-#if 0
-        if (event->isAccepted()) {
-            DFMUrlListBaseEvent e(event->sender(), qvariant_cast<DUrlList>(result));
-
-            e.setWindowId(event->windowId());
-            laterRequestSelectFiles(e);
-        }
-
-        const DUrlList &list = event->fileUrlList();
-        const DUrlList new_list = qvariant_cast<DUrlList>(result);
-
-        for (int i = 0; i < new_list.count(); ++i) {
-            const DUrl &url = new_list.at(i);
-
-            if (url.isEmpty())
-                continue;
-
-            DFMGlobal::ClipboardAction action = event.staticCast<DFMPasteEvent>()->action();
-
-            if (action == DFMGlobal::ClipboardAction::CopyAction) {
-                emit fileCopied(list.at(i), url);
-            } else if (action == DFMGlobal::ClipboardAction::CutAction) {
-                emit fileRenamed(list.at(i), url);
-            }
-        }
-#endif
         break;
     }
     case DFMEvent::Mkdir:
@@ -492,9 +429,6 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 emit fileOpened(durl);
             }
         }
-//        if (result.toBool()) {
-//            emit fileOpened(event->fileUrl());
-//        }
         break;
     case DFMEvent::OpenFilesByApp:
         result = CALL_CONTROLLER(openFilesByApp);
@@ -503,9 +437,6 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 emit fileOpened(durl);
             }
         }
-//        if (result.toBool()) {
-//            emit fileOpened(event->fileUrl());
-//        }
 
         break;
     default:
@@ -1138,16 +1069,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
 
     bvist = d->m_checknetwork.isHostAndPortConnect(host, port);
 
-    bonline = isNetWorkOnline();
-    if (!bonline) {
-        setCursorBusyState(false);
-        //文件不存在弹提示框
-        if (showdailog) {
-            dialogManager->showUnableToLocateDir(rootfilename);
-        }
-        return true;
-    }
-
     setCursorBusyState(false);
 
     //文件不存在弹提示框
@@ -1277,6 +1198,7 @@ QString DFileService::getSymlinkFileName(const DUrl &fileUrl, const QDir &target
             if (pInfo->isFile()) {
                 if (pInfo->suffix().isEmpty()) {
                     if (number == 1) {
+
                         linkBaseName = QString("%1 %2").arg(baseName, shortcut);
                     } else {
                         linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));

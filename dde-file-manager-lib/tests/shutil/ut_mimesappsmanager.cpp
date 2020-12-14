@@ -65,6 +65,7 @@ namespace  {
 
 TEST_F(TestMimesAppsManager, get_app_info_from_mimetype)
 {
+    ASSERT_FALSE(getPicturelist().isEmpty());
     QString onePicture = getPicturelist().first();
     QMimeType mimetype = MimesAppsManager::getMimeType(onePicture);
     QString strMimetype = MimesAppsManager::getMimeTypeByFileName(onePicture);
@@ -88,6 +89,7 @@ TEST_F(TestMimesAppsManager, get_app_info_from_mimetype)
 
 TEST_F(TestMimesAppsManager, get_app_info_from_mimetype_func2)
 {
+    ASSERT_FALSE(getPicturelist().isEmpty());
     QString onePicture = getPicturelist().first();
     QMimeType mimetype = MimesAppsManager::getMimeType(onePicture);
     QString strMimetype = MimesAppsManager::getMimeTypeByFileName(onePicture);
