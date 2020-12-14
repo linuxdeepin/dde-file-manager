@@ -432,6 +432,9 @@ TEST_F(AppControllerTest,start_actionNewFile){
     },1000);
     QProcess::execute("rm", QStringList() << isoPath);
 
+    Stub st;
+    void (*doUnmount_stub)(void *, const QString &) = [](void *, const QString &){};
+    st.set(&UnmountWorker::doUnmount, doUnmount_stub);
     url = DUrl("dfmroot:///fakeDisk.gvfsmp");
     EXPECT_NO_FATAL_FAILURE(controller->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
     url = DUrl("dfmroot:///sda1.localdisk");
