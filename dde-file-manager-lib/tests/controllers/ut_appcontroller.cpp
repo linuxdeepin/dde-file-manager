@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
-
 #include <QProcess>
 #include <QStandardPaths>
 #include <QDateTime>
@@ -16,6 +15,7 @@
 #define private public
 #define protected public
 
+#include "tag/tagmanager.h"
 #include "tests/testhelper.h"
 #include "stub.h"
 #include "interfaces/dfmeventdispatcher.h"
@@ -211,6 +211,10 @@ TEST_F(AppControllerTest,start_actionOpenDiskInNewWindow){
 TEST_F(AppControllerTest,start_actionOpenAsAdmin){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/Videos");
+    bool (*startDetached)(const QString &, const QStringList &) = [](const QString &, const QStringList &){
+        return true;
+    };
+    stl.set((bool(*)(const QString &, const QStringList &))ADDR(QProcess,startDetached),startDetached);
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenAsAdmin(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
 }
 
@@ -484,6 +488,7 @@ TEST_F(AppControllerTest, start_actionOpenInTerminal){
 TEST_F(AppControllerTest, start_actionProperty){
     url.setScheme(FILE_SCHEME);
     url.setPath("./");
+    controller->disconnect();
     EXPECT_NO_FATAL_FAILURE(controller->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>
                                                        (nullptr,DUrlList() << url)));
 }
@@ -592,9 +597,30 @@ TEST_F(AppControllerTest, start_actionStageFileForBurning){
 }
 
 TEST_F(AppControllerTest, start_actionGetTagsThroughFiles){
+    QList<QString> (*getTagsThroughFiles)(const QObject *, const QList<DUrl> &, const bool) = []
+            (const QObject *, const QList<DUrl> &, const bool){
+        QList<QString> tt;
+        return tt;
+    };
+    stl.set(ADDR(DFileService,getTagsThroughFiles),getTagsThroughFiles);
     QStringList list = controller->actionGetTagsThroughFiles(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(nullptr,DUrlList() << url));
     EXPECT_TRUE(list.isEmpty());
-    controller->actionRemoveTagsOfFile(dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr,url, list));
+
+    bool (*removeTagsOfFile)(const QObject *, const DUrl &, const QList<QString> &) = []
+            (const QObject *, const DUrl &, const QList<QString> &){
+        return true;
+    };
+    stl.set(ADDR(DFileService,removeTagsOfFile),removeTagsOfFile);
+    EXPECT_FALSE(controller->actionRemoveTagsOfFile(dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr,url, list)));
+    bool (*changeTagColor)(const QString &, const QString &) = []
+            (const QString &, const QString &){
+        return true;
+    };
+    stl.set((bool(TagManager::*)(const QString &, const QString &))ADDR(TagManager,changeTagColor),changeTagColor);
+    QString (*getColorNameByColor)(const QColor &) = [](const QColor &){
+        return QString();
+    };
+    stl.set(ADDR(TagManager,getColorNameByColor),getColorNameByColor);
     controller->actionChangeTagColor(dMakeEventPointer<DFMChangeTagColorEvent>(nullptr,Qt::red, url));
     controller->showTagEdit(QRect(0,0,0,0),QPoint(0,0),DUrlList() << url);
 }

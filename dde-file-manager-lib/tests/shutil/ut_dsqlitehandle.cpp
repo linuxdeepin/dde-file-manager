@@ -74,6 +74,7 @@ TEST_F(TestDSqliteHandle, can_dispose_clientDatas)
     QString fileName = "sql1.txt";
     QStringList pictureList = FileUtils::filesList(QString("%1/Pictures/Wallpapers").arg(QDir::homePath()));
     EXPECT_TRUE( pictureList.count() > 3 );
+    ASSERT_TRUE( pictureList.count() > 3 );
 
     QList<QString> tags;
     tags << "tag1" << "tag2";

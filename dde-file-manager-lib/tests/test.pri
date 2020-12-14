@@ -16,6 +16,7 @@ HEADERS += \
 SOURCES += \
     $$PWD/main.cpp \
     # vault
+    $$PWD/interfaces/ut_dfmbaseview.cpp \
     $$PWD/vault/ut_interfaceactivevault.cpp \
     $$PWD/shutil/ut_checknetwork.cpp \
     $$PWD/io/ut_dfilecopymovejob.cpp \
@@ -202,9 +203,7 @@ SOURCES += \
     $$PWD/interfaces/ut_dfilemenu.cpp   \
     $$PWD/io/ut_dfiledevice.cpp \
     $$PWD/fileoperations/ut_sort.cpp \
-    $$PWD/interfaces/ut_dfileservices.cpp \
     $$PWD/controllers/ut_jobcontroller.cpp \
-    $$PWD/interfaces/ut_dfmbaseview.cpp \
     $$PWD/io/ut_dfilehandler.cpp \
     $$PWD/controllers/ut_trashmanager.cpp \
     $$PWD/controllers/ut_sharecontroller.cpp \
@@ -243,4 +242,5 @@ SOURCES += \
     #log
     $$PWD/log/ut_dfmlogmanager.cpp \
     $$PWD/log/ut_filterappender.cpp \
+    $$PWD/interfaces/ut_dfileservices.cpp \
 

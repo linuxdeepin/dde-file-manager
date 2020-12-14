@@ -338,6 +338,7 @@ TEST_F(TestFileUtils, can_encode_string)
     QString sysPicturePath = QString("%1/Pictures/Wallpapers").arg(QDir::homePath());//"/home/max/Pictures/Wallpapers";
     QStringList listPicutures = FileUtils::filesList(sysPicturePath);
     EXPECT_FALSE(listPicutures.empty());
+    ASSERT_FALSE(listPicutures.empty());
 
     QString onePicture = listPicutures.at(0);
     QFile bigfile(onePicture);
