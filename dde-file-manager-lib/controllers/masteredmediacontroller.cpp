@@ -384,7 +384,11 @@ const DDirIteratorPointer MasteredMediaController::createDirIterator(const QShar
 {
     //Make sure the staging folder exists. Otherwise the staging watcher won't work.
     if (event->url().burnFilePath().contains(QRegularExpression("^/*$"))) {
-        FileUtils::mkpath(getStagingFolder(event->url()));
+        // 不走文管的事件机制创建 staging folter, 不需要撤销处理
+        DUrl &&stagingUrl = getStagingFolder(event->url());
+        if (!QDir().mkpath(stagingUrl.toLocalFile())) {
+            FileUtils::mkpath(stagingUrl);
+        }
     }
     return DDirIteratorPointer(new DFMShadowedDirIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
 }
