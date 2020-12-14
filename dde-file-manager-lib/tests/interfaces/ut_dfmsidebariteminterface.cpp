@@ -16,57 +16,59 @@
 #include "interfaces/dfmsidebariteminterface.h"
 #include "interfaces/dfmcrumbbar.h"
 
-namespace testDFMSideBarItemInterface
-{
-
 DFM_USE_NAMESPACE
 
-class DFMSideBarItemInterfaceTest: public testing::Test
+class TestDFMSideBarItemInterface: public testing::Test
 {
 
 public:
-    DFMSideBarItemInterface *SBIitfs = nullptr;
-    DFileManagerWindow* FMWindow = new DFileManagerWindow;
-    DFMSideBarItem* item = new DFMSideBarItem;
-    DFMSideBar sidebar;
+    DFMSideBarItemInterface interface;
+    DFileManagerWindow window;
+    DFMSideBarItem item;
 
     virtual void SetUp() override
     {
-        qDebug() << __PRETTY_FUNCTION__;
 
-        SBIitfs = new DFMSideBarItemInterface();
-        item->appendColumn({new QStandardItem("Action1"),
-                            new QStandardItem("Action2")});
-        item->setText("testAction");
-        item->setUrl(QCoreApplication::applicationDirPath());
-        item->setGroupName(DFMSideBar::groupName(DFMSideBar::GroupName::Network));
     }
 
     virtual void TearDown() override
     {
-        qDebug() << __PRETTY_FUNCTION__;
+
     }
 };
 
 
 //in Search-Widget from toolbar,setting the search text have a string from QCoreApplication::applicationDirPath();
-TEST_F(DFMSideBarItemInterfaceTest,cdAction)
+TEST_F(TestDFMSideBarItemInterface,cdAction)
 {
-    SBIitfs->cdAction(FMWindow->getLeftSideBar(),item);
-    EXPECT_TRUE(0 <= FMWindow->currentUrl().toString().indexOf(QCoreApplication::applicationDirPath()));
-//    FMWindow->show(); //should't to show
+    item.appendColumn({ new QStandardItem("Action1"),
+                        new QStandardItem("Action2")});
+
+    item.setText("testAction");
+    item.setUrl(QCoreApplication::applicationDirPath());
+    item.setGroupName(DFMSideBar::groupName(DFMSideBar::GroupName::Network));
+
+    interface.cdAction(window.getLeftSideBar(),&item);
+
+    EXPECT_TRUE(0 <= window.currentUrl().toString().indexOf(QCoreApplication::applicationDirPath()));
+    //    FMWindow->show(); //should't to show
 }
 
 //cause new QMenu class is not empty, set lambda to widget class.
-TEST_F(DFMSideBarItemInterfaceTest,contextMenu)
+TEST_F(TestDFMSideBarItemInterface,contextMenu)
 {
-    EXPECT_TRUE(SBIitfs->contextMenu(FMWindow->getLeftSideBar(),item));
+    interface.contextMenu(window.getLeftSideBar(),&item);
+    auto menu = interface.contextMenu(window.getLeftSideBar(),&item);
+    EXPECT_TRUE(menu->actions().size() > 0);
+
+    for (auto action : menu->actions()) {
+        emit action->triggered(); //to call regiest lambda fuction
+    }
 }
 
 //if can't carsh, nothing to do.
 TEST_F(DFMSideBarItemInterfaceTest,rename)
 {
-    SBIitfs->rename(item,"rename-Funning");
-}
-
+    interface.rename(&item,"newName");
+    EXPECT_TRUE(item.groupName() != "newName");
 }
