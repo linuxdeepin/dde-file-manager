@@ -907,15 +907,19 @@ bool FileUtils::launchAppByDBus(const QString &desktopFile, const QStringList &f
         qDebug() << "launchApp by dbus:" << desktopFile << filePaths;
         //多个wps文件同时打开应用会报出文件不存在的错误，而单个打开不会
         //对wps文件做特殊处理，一个一个分别打开
-        if (desktopFile.endsWith("wps-office-wps.desktop")) {
-            DesktopFile deskfile(desktopFile);
-            if (deskfile.getExec().contains("%U")) { //exc标志 为%F时也可以打开多个 %U不行
-                for (const QString &path : filePaths) {
-                    appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), {path});
-                }
-                return true;
-            }
-        }
+//        if (desktopFile.endsWith("wps-office-wps.desktop")) {
+//            DesktopFile deskfile(desktopFile);
+//            if (deskfile.getExec().contains("%U")) { //exc标志 为%F时也可以打开多个 %U不行
+//                if (!filePaths.isEmpty())
+//                {
+//                    for (const QString &path : filePaths) {
+//                        appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), {path});
+//                    }
+//                    return true;
+//                }
+//            }
+//        }
+        //以上改动有问题，暂时撤销
 
         appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), filePaths);
         return true;
