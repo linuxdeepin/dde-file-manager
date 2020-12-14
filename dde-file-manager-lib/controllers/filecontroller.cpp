@@ -543,12 +543,14 @@ public:
 
     ///
     /// \brief hasSymLinkDir 用于判断当前路径中是否存在快捷方式
-    /// \param path 路径
-    /// \param tmp 临时变量，存储快捷方式之后的路径
-    /// \param oldPrefix 链接目录
+    /// \param path 需要判断的路径
     /// \return
     ///
-    bool hasSymLinkDir(QString &path, QString &tmp, QString &oldPrefix);
+    bool hasSymLinkDir(const QString &path);
+
+    QString realSearchPath; // 真实的搜索路径
+    QString oldPrefix;      // 记录链接路径
+    QString newPrefix;      // 记录链接指向的路径
 
     DFMFileListFile *hiddenFiles = nullptr;
 
@@ -1793,19 +1795,17 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
     static ComDeepinAnythingInterface anything("com.deepin.anything", "/com/deepin/anything",
                                                QDBusConnection::systemBus());
 
-    // fix bug#48091 当文件路径中存在快捷方式时，将其转换为真实地址
-    QString tmp, oldPrefix, newPrefix;
-    bool hasLink = false;
-    if (hasSymLinkDir(pathForSearching, tmp, oldPrefix)) {
-        hasLink = true;
-        newPrefix = pathForSearching;
-        pathForSearching.append(tmp);
-    }
-
     if (!anything.hasLFT(pathForSearching)) {
         return false;
     } else {
         qDebug() << "support quick search for: " << pathForSearching;
+    }
+
+    // fix bug#48091 当文件路径中存在快捷方式时，将其转换为真实地址
+    bool hasLink = false;
+    if (hasSymLinkDir(pathForSearching)) {
+        hasLink = true;
+        pathForSearching = realSearchPath;
     }
 
     if (iterator)
@@ -1828,20 +1828,25 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 #endif
 }
 
-bool FileDirIterator::hasSymLinkDir(QString &path, QString &tmp, QString &oldPrefix)
+bool FileDirIterator::hasSymLinkDir(const QString &path)
 {
     QFileInfo info(path);
     if (info.isSymLink()) {
         oldPrefix = path;
-        path = info.symLinkTarget();
+        newPrefix = info.symLinkTarget();
+        realSearchPath.prepend(newPrefix);
+        if (oldPrefix.startsWith("/data") && newPrefix.startsWith("/home")) {
+            realSearchPath.prepend("/data");
+            newPrefix.prepend("/data");
+        }
         return true;
     } else {
         int last_dir_split_pos = path.lastIndexOf('/');
         if (last_dir_split_pos <= 0)
             return false;
 
-        tmp.prepend(path.mid(last_dir_split_pos));
-        path = path.left(last_dir_split_pos);
-        return hasSymLinkDir(path, tmp, oldPrefix);
+        realSearchPath.prepend(path.mid(last_dir_split_pos));
+        QString tmp = path.left(last_dir_split_pos);
+        return hasSymLinkDir(tmp);
     }
 }
