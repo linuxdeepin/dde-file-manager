@@ -44,11 +44,6 @@ public:
 
         m_tagFileUrl.setScheme(TAG_SCHEME);
         m_tagFileUrl.setTaggedFileUrl(tempTxtFilePath);
-
-        m_stExt.set_lamda(&TagManagerDaemonController::onAddNewTags, [](){});
-        m_stExt.set_lamda(&TagManagerDaemonController::onDeleteTags, [](){});
-        m_stExt.set_lamda(&TagManagerDaemonController::filesWereTagged, [](){});
-        m_stExt.set_lamda(&TagManagerDaemonController::untagFiles, [](){});
     }
 
     void TearDown() override
@@ -70,7 +65,6 @@ public:
     QString tempTxtFilePath;
     DUrl m_tagUrl;
     DUrl m_tagFileUrl;
-    StubExt m_stExt;
 };
 }
 
@@ -82,6 +76,8 @@ TEST_F(TestTagController, test_prepare)
     ASSERT_NE(m_pManager, nullptr);
     QStringList tags { TAG_NAME_A, TAG_NAME_B };
     DUrlList files { DUrl::fromLocalFile(tempDirPath_A), DUrl::fromLocalFile(tempDirPath_B) };
+    StubExt stExt;
+    stExt.set_lamda(&TagManagerDaemonController::disposeClientData, []{return QVariant(true);});
     EXPECT_NO_FATAL_FAILURE(m_pManager->makeFilesTags(tags, files));
 }
 
@@ -98,10 +94,14 @@ TEST_F(TestTagController, can_getChildren)
     ASSERT_NE(m_pController, nullptr);
 
     QSharedPointer<DFMGetChildrensEvent> event = dMakeEventPointer<DFMGetChildrensEvent>(nullptr, m_tagUrl, QStringList(), QDir::AllEntries | QDir::Hidden);
+    StubExt stExt;
+    stExt.set_lamda(&TagManagerDaemonController::disposeClientData, [&]{return QVariant(QStringList({tempDirPath_A, tempDirPath_B}));});
     EXPECT_TRUE(!m_pController->getChildren(event).isEmpty());
 
     m_tagUrl.setPath("/");
     auto eventRoot = dMakeEventPointer<DFMGetChildrensEvent>(nullptr, m_tagUrl, QStringList(), QDir::AllEntries | QDir::Hidden);
+    stExt.reset(&TagManagerDaemonController::disposeClientData);
+    stExt.set_lamda(&TagManagerDaemonController::disposeClientData, [&]{return QVariant(QMap<QString, QVariant>({{QString("a"), QVariant(QString("Red"))}, {QString("b"), QVariant(QString("Orange"))}}));});
     EXPECT_TRUE(!m_pController->getChildren(eventRoot).isEmpty());
 }
 
@@ -214,19 +214,25 @@ TEST_F(TestTagController, can_writeFilesToClipboard)
 TEST_F(TestTagController, can_setPermissions)
 {
     auto event = dMakeEventPointer<DFMSetPermissionEvent>(nullptr, m_tagFileUrl, (QFileDevice::ReadOther | QFileDevice::ReadGroup | QFileDevice::ReadOwner));
-    EXPECT_TRUE(m_pController->setPermissions(event));
+    StubExt st;
+    st.set_lamda(&DFileService::setPermissions, [](){ return true; });
+    EXPECT_NO_FATAL_FAILURE(m_pController->setPermissions(event));
 }
 
 TEST_F(TestTagController, can_addToBookmark)
 {
     auto event = dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, m_tagUrl);
-    EXPECT_TRUE(!m_pController->addToBookmark(event));
+    StubExt st;
+    st.set_lamda(&DFileService::addToBookmark, [](){ return true; });
+    EXPECT_NO_FATAL_FAILURE(m_pController->addToBookmark(event));
 }
 
 TEST_F(TestTagController, can_removeBookmark)
 {
     auto event = dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, m_tagUrl);
-    EXPECT_TRUE(!m_pController->removeBookmark(event));
+    StubExt st;
+    st.set_lamda(&DFileService::removeBookmark, [](){ return true; });
+    EXPECT_NO_FATAL_FAILURE(m_pController->removeBookmark(event));
 }
 
 TEST_F(TestTagController, can_createSymlink)
@@ -292,6 +298,8 @@ TEST_F(TestTagController, test_wind_up)
 {
     ASSERT_NE(m_pManager, nullptr);
     QStringList tags { TAG_NAME_A, TAG_NAME_B };
+    StubExt st;
+    st.set_lamda(&TagManagerDaemonController::disposeClientData, [](){ return QVariant(true); });
     EXPECT_NO_FATAL_FAILURE(m_pManager->deleteTags(tags));
 
     QString temp = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/" + NEW_TAG_TXT_FILE;
