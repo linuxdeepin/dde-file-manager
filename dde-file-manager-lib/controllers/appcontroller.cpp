@@ -733,6 +733,11 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                     blk->unmount({});
                     QDBusError lastError = blk->lastError();
 
+                    if (lastError.message().contains("target is busy")) {
+                        dialogManager->showErrorDialog(tr("The device was not ejected"), tr("Disk is busy, cannot eject now"));
+                        return;
+                    }
+
                     if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
                         qDebug() << "blk action has been canceled";
                         return;
