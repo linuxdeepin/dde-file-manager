@@ -407,7 +407,7 @@ QDiskInfo GvfsMountManager::qMountToqDiskinfo(const QMount &mount)
 
     if (diskInfo.mounted_root_uri().startsWith("smb://")) {
         diskInfo.setType("smb");
-    } else if (diskInfo.iconName() == "drive-optical" && diskInfo.iconName().startsWith("CD")) {
+    } else if (diskInfo.iconName() == "drive-optical" || diskInfo.iconName().startsWith("CD")) {
         diskInfo.setType("dvd");
     } else {
         diskInfo.setType("network");
@@ -789,7 +789,7 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
     qCDebug(mountManager()) << "ask_question_cb() user choice(start at 0): " << choice;
 
     // check if choose is invalid
-    if (choice < 0 && choice >= choiceList.count()) {
+    if (choice < 0 || choice >= choiceList.count()) {
         g_mount_operation_reply(op, G_MOUNT_OPERATION_ABORTED);
         return;
     }
@@ -1682,7 +1682,6 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
     mount_op = new_mount_op();
     g_mount_unmount_with_operation(mount, G_MOUNT_UNMOUNT_NONE, mount_op, nullptr, &GvfsMountManager::unmount_done_cb, local_mount_point);
     g_object_unref(mount_op);
-
     g_object_unref(file);
 }
 
@@ -1730,11 +1729,11 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
                 NetworkManager::NetworkNodes.remove(durl);
         }
 
-        g_free(root_uri);
-        g_object_unref(root_file);
+        if (root_uri) g_free(root_uri);
+        if (root_file) g_object_unref(root_file);
     }
 
-    g_object_unref(G_MOUNT(object));
+    if (G_IS_MOUNT(object)) g_object_unref(G_MOUNT(object));
 }
 
 void GvfsMountManager::eject(const QString &path)
