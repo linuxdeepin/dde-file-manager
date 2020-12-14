@@ -177,9 +177,11 @@ void JobController::run()
             mutex.unlock();
         }
 
-        if (m_state == Stoped || !m_iterator->next().isValid()) {
+        if (m_state == Stoped) {
             break;
         }
+        if (!m_iterator->next().isValid())
+            continue;
 
         DAbstractFileInfoPointer fileinfo;
         fileinfo = m_iterator->fileInfo();
