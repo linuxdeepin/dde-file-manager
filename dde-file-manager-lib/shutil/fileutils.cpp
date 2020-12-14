@@ -924,6 +924,7 @@ bool FileUtils::launchAppByDBus(const QString &desktopFile, const QStringList &f
         appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), filePaths);
         return true;
     }
+
     return false;
 }
 
