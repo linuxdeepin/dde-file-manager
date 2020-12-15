@@ -43,6 +43,7 @@
 #include "disomaster.h"
 #include "views/dfmopticalmediawidget.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/masteredmediacontroller.h"
 
 #include "tag/tagmanager.h"
 
@@ -698,6 +699,10 @@ void FileJob::doOpticalBlank(const DUrl &device)
 
     //fix: 空白光盘擦除处理完后需要对当前刻录的全局状态机置恢复位，便于其它地方调用状态机完整性
     m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+
+    // 光盘擦除完成后，清空暂存区文件
+    DUrl stagingUrl = MasteredMediaController::getStagingFolder(blkdev->device());
+    doDelete({stagingUrl});
 }
 
 void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, int speed, DISOMasterNS::BurnOptions opts)
