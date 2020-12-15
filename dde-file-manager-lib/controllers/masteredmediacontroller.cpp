@@ -472,6 +472,13 @@ DUrl MasteredMediaController::getStagingFolder(DUrl dst)
                                + dst.burnFilePath());
 }
 
+DUrl MasteredMediaController::getStagingFolder(QString dev)
+{
+    return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)   // ~/.cache
+                  + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"                           // ~/.cache/deepin/discburn/
+                  + dev.replace('/','_'));                                                              // ~/.cache/deepin/discburn/_dev_srN
+}
+
 QFileDevice::Permissions MasteredMediaController::getPermissionsCopyToLocal()
 {
     // 基础的 rw-rw-r-- 权限
