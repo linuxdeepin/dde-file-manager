@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QMap>
 #include <QIcon>
+#include <QPointer>
 
 #include "durl.h"
 #include "dfmglobal.h"
@@ -173,7 +174,7 @@ private:
     TrashPropertyDialog *m_trashDialog {nullptr};
     ComputerPropertyDialog *m_computerDialog {nullptr};
     QMap<QString, FileJob *> m_jobs {};
-    QMap<QString, FileJob *> m_Opticaljobs {};
+    QMap<QString, QPointer<FileJob>> m_Opticaljobs {};
     QMap<DUrl, PropertyDialog *> m_propertyDialogs {};
     QTimer *m_closeIndicatorTimer {nullptr};
     QTimer *m_updateJobTaskTimer {nullptr};
