@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <QDebug>
 #include <QApplication>
+#include <QProcess>
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +13,9 @@ int main(int argc, char *argv[])
     int ret = RUN_ALL_TESTS();
 
     qDebug() << "end disk-mount test cases ..............";
+
+    QProcess::execute("killall dde-file-manager");
+    QProcess::execute("killall deepin-editor");
 
     return ret;
 }
