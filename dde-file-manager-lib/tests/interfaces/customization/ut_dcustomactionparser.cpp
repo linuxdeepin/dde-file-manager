@@ -344,8 +344,56 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
                 && "应用2级菜单项一" == m_parser.m_actionEntry.last().m_data.m_childrenActions.last().name());
     EXPECT_TRUE(expectValue6_4);
 
-    invalidFile.close();
+    //三级菜单
+    tsm << QString("Actions=GroupOne_Three").toUtf8() << endl
+        << QString("[Menu Action GroupOne_Three]").toUtf8() << endl
+        << QString("GenericName=app-one").toUtf8() << endl
+        << QString("GenericName[zh_CN]=应用3级菜单项一").toUtf8() << endl
+        << QString("Name=app-one").toUtf8() << endl
+        << QString("Name[zh_CN]=应用3级菜单项一").toUtf8() << endl
+        << QString("PosNum=1").toUtf8() << endl
+        << QString("Separator=None").toUtf8() << endl
+        << QString("Exec=/opt/apps/xxxxxx %U").toUtf8() <<endl;
 
+    tsm.flush();
+    invalidFile.flush();
+    QSettings actionSetting7(invalidFilePath, QSettings::IniFormat);
+    actionSetting7.setIniCodec("UTF-8");
+    m_parser.m_hierarchyNum = 0;
+    m_parser.m_actionEntry.clear();
+    m_parser.m_topActionCount = 0;
+    m_parser.parseFile(actionSetting7);
+    auto expectValue7 = (2 == m_parser.m_actionEntry.size())
+            && ("应用1级二" == m_parser.m_actionEntry.last().m_data.m_name
+                && "应用2级菜单项二" == m_parser.m_actionEntry.last().m_data.m_childrenActions.first().name()
+                && "应用2级菜单项一" == m_parser.m_actionEntry.last().m_data.m_childrenActions.last().name())
+                && "应用3级菜单项一" == m_parser.m_actionEntry.last().m_data.m_childrenActions.first().m_childrenActions.first().name();
+    EXPECT_TRUE(expectValue7);
+
+    //4级
+    tsm << QString("Actions=GroupOneThree_Four").toUtf8() << endl
+        << QString("[Menu Action GroupOneThree_Four]").toUtf8() << endl
+        << QString("GenericName=app-one").toUtf8() << endl
+        << QString("GenericName[zh_CN]=应用4级菜单项一").toUtf8() << endl
+        << QString("Name=app-one").toUtf8() << endl
+        << QString("Name[zh_CN]=应用4级菜单项一").toUtf8() << endl
+        << QString("PosNum=1").toUtf8() << endl
+        << QString("Separator=None").toUtf8() << endl
+        << QString("Exec=/opt/apps/xxxxxx %U").toUtf8() <<endl;
+
+    tsm.flush();
+    invalidFile.flush();
+    QSettings actionSetting8(invalidFilePath, QSettings::IniFormat);
+    actionSetting8.setIniCodec("UTF-8");
+    m_parser.m_hierarchyNum = 0;
+    m_parser.m_actionEntry.clear();
+    m_parser.m_topActionCount = 0;
+    m_parser.parseFile(actionSetting7);
+    auto expectValue8 = (2 == m_parser.m_actionEntry.size())
+            && ("应用1级二" == m_parser.m_actionEntry.last().m_data.m_name
+                && "应用2级菜单项一" == m_parser.m_actionEntry.last().m_data.m_childrenActions.last().name());
+    EXPECT_TRUE(expectValue8);
+    invalidFile.close();
 }
 
 TEST_F(TestDCustomActionParser, test_init_hash)

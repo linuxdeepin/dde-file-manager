@@ -85,13 +85,14 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
 
     auto actStr = getValue(actionSetting, kMenuPrefix, kActionGroups);
     auto actList = actStr.toString().trimmed().split(":", QString::SkipEmptyParts);
-    m_hierarchyNum = 1;
+
     for(auto &once : actList) {
         if (m_topActionCount == kCustomMaxNumOne) //一级数量限制
             break;
         QList<DCustomActionData> childrenActions;//这个实际上一级时没用
         bool needSort;//一级用不到
         QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
+        m_hierarchyNum = 1;
         parseFile(childrenActions, actionSetting, targetGroup, basicInfos, needSort, true);
         m_topActionCount++;
     }
