@@ -1,7 +1,11 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
-#include "interfaces/dfmapplication.h"
+#define private public
+#include "interfaces/dfmapplication.cpp"
+#undef private
+
+#include <QSignalSpy>
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -10,12 +14,12 @@ namespace  {
     {
         void SetUp() override
         {
-            std::cout << "start DFMApplication" << std::endl;
+            std::cout << "start TestDFMApplication" << std::endl;
         }
 
         void TearDown() override
         {
-            std::cout << "end DFMApplication" << std::endl;
+            std::cout << "end TestDFMApplication" << std::endl;
         }
     };
 
@@ -87,6 +91,69 @@ TEST_F(TestDFMApplication, test_enericObtuselySetting)
 TEST_F(TestDFMApplication, test_appObtuselySetting)
 {
     EXPECT_NE(m_application.appObtuselySetting(), nullptr);
+}
+
+TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_applicationAttribute_edited)
+{
+    QSignalSpy spy(&m_application, SIGNAL(appAttributeEdited(ApplicationAttribute , const QVariant &)));
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(ApplicationAttribute), QT_STRINGIFY(AllwayOpenOnNewWindow), true);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_iconSizeLevelChanged)
+{
+    QSignalSpy spy(&m_application, SIGNAL(iconSizeLevelChanged(int)));
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(ApplicationAttribute), QT_STRINGIFY(IconSizeLevel), 0);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_viewModeChanged)
+{
+    QSignalSpy spy(&m_application, SIGNAL(viewModeChanged(int)));
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(ApplicationAttribute), QT_STRINGIFY(  ViewMode), 0);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_genericAttribute_edited)
+{
+    QSignalSpy spy(&m_application, SIGNAL(genericAttributeChanged(GenericAttribute, const QVariant &)));
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(IndexInternal), true);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_previewAttributeChanged)
+{
+    QSignalSpy spy(&m_application, SIGNAL(previewAttributeChanged(GenericAttribute, bool)));
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(PreviewImage), true);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_showedHiddenFilesChanged)
+{
+    QSignalSpy spy(&m_application, SIGNAL(showedHiddenFilesChanged(bool)));
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(ShowedHiddenFiles), true);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_recentDisplayChanged)
+{
+    QSignalSpy spy(&m_application, SIGNAL(recentDisplayChanged(bool)));
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(ShowRecentFileEntry), true);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_previewCompressFileChanged)
+{
+    QSignalSpy spy(&m_application, SIGNAL(previewCompressFileChanged(bool)));
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(PreviewCompressFile), true);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_csdClickableAreaAttributeChanged)
+{
+    QSignalSpy spy(&m_application, SIGNAL(csdClickableAreaAttributeChanged(bool)));
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(ShowCsdCrumbBarClickableArea), true);
+    EXPECT_EQ(spy.count(), 1);
 }
 
 }
