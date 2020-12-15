@@ -29,6 +29,7 @@
 #include "usershare/usersharemanager.h"
 #include "acesscontrol/acesscontrolmanager.h"
 #include "vault/vaultmanager.h"
+#include "revocation/revocationmanager.h"
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
@@ -47,6 +48,7 @@ void AppController::initControllers()
     m_userShareManager = new UserShareManager(this);
     m_tagManagerDaemon = new TagManagerDaemon{ this };
     m_vaultManager = new VaultManager(this);
+    m_revocationManager = new RevocationManager(this);
 }
 
 void AppController::initConnect()

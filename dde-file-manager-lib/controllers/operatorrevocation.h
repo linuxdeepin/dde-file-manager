@@ -25,12 +25,25 @@
 #include "dfmevent.h"
 
 #include <QStack>
+class RevocationMgrInterface;
 
 DFM_BEGIN_NAMESPACE
 
-class OperatorRevocation : public DFMAbstractEventHandler
+class OperatorRevocation : public QObject, public DFMAbstractEventHandler
 {
+    Q_OBJECT
 public:
+    /**
+     * @brief The RevocationEventType enum
+     *  撤销事件类型
+     */
+    enum RevocationEventType
+    {
+        DFM_NO_EVENT = -1,
+        DFM_FILE_MGR_EVENT = 0,
+        DFM_DESKTOP_EVENT = 1
+    };
+
     static OperatorRevocation *instance();
 
 protected:
@@ -38,8 +51,18 @@ protected:
 
     OperatorRevocation();
 
+protected slots:
+    void slotRevocationEvent();
+
 private:
+    bool revocation();
+    QString getProcessName();
+
     QStack<DFMEvent> operatorStack;
+
+    RevocationMgrInterface *m_dbusInterface = nullptr;
+
+    RevocationEventType m_eventType = DFM_NO_EVENT;
 };
 
 DFM_END_NAMESPACE

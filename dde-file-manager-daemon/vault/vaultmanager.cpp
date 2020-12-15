@@ -16,8 +16,8 @@
  ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-#include "vault/vaultmanager.h"
-#include "dbusservice/dbusadaptor/vault_adaptor.h"
+#include "vaultmanager.h"
+#include "dbusadaptor/vault_adaptor.h"
 #include "app/policykithelper.h"
 #include "vaultclock.h"
 

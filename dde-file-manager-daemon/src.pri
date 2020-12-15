@@ -47,7 +47,10 @@ HEADERS += \
     $$PWD/vault/vaultmanager.h \
     $$PWD/dbusservice/dbusadaptor/vault_adaptor.h \
     $$PWD/dbusservice/dbusinterface/vault_interface.h \
-    $$PWD/vault/vaultclock.h
+    $$PWD/vault/vaultclock.h \
+    $$PWD/revocation/revocationmanager.h \
+    $$PWD/dbusservice/dbusadaptor/revocationmgr_adaptor.h \
+    $$PWD/dbusservice/dbusinterface/revocationmgr_interface.h
 
 SOURCES += \
     $$PWD/app/filemanagerdaemon.cpp \
@@ -89,4 +92,7 @@ SOURCES += \
     $$PWD/vault/vaultmanager.cpp \
     $$PWD/dbusservice/dbusadaptor/vault_adaptor.cpp \
     $$PWD/dbusservice/dbusinterface/vault_interface.cpp \
-    $$PWD/vault/vaultclock.cpp
+    $$PWD/vault/vaultclock.cpp \
+    $$PWD/revocation/revocationmanager.cpp \
+    $$PWD/dbusservice/dbusadaptor/revocationmgr_adaptor.cpp \
+    $$PWD/dbusservice/dbusinterface/revocationmgr_interface.cpp

@@ -1,0 +1,15 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="com.deepin.filemanager.daemon.RevocationManager">
+    <signal name="fmgrRevocationAction">
+    </signal>
+    <signal name="deskRevocationAction">
+    </signal>
+    <method name="pushEvent">
+      <arg name="event" type="i" direction="in"/>
+    </method>
+    <method name="popEvent">
+      <arg type="i" direction="out"/>
+    </method>
+  </interface>
+</node>
