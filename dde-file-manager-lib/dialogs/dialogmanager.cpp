@@ -1391,9 +1391,11 @@ void DialogManager::showTaskProgressDlgOnActive()
     m_taskDialog->raise();
     m_taskDialog->activateWindow();
 
-    QMapIterator<QString, FileJob *> iter(m_Opticaljobs);
+    QMapIterator<QString, QPointer<FileJob>> iter(m_Opticaljobs);
     while (iter.hasNext()) {
         iter.next();
+        if (iter.value().isNull())
+            continue;
         if (iter.value()->getIsFinished())
             continue;
         addJob(iter.value());
