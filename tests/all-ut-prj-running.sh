@@ -7,54 +7,139 @@ echo $PROJECT_FOLDER
 # 定位脚本所在父目录下的某文件
 BUILD_DIR=${2}
 
+#运行UT类型 ut_all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins
+UT_PRJ_TYPE=${3}
+UT_TYPE_ALL="ut_all"
+UT_TYPE_FILE_MANAGER="dde_file_manager"
+UT_TYPE_FILE_MANAGER_LIB="dde-file-manager-lib"
+UT_TYPE_DDE_DESKTOP="dde-desktop"
+UT_TYPE_DOCK_PLUGINS="dde-dock-plugins"
+UT_TYPE_FILE_MANAGER_PLUGINS="dde-file-manager-plugins"
+UT_TYPE_FILE_THUMBNAIL_TOOL="dde-file-thumbnail-tool"
+UT_TYPE_ANYTHING_SERVER_PLUGINS="deepin-anything-server-plugins"
+
 # 打印当前目录，当前目录应当是 build-ut
 echo `pwd`
-echo "start dde-file-manager all UT cases"
+echo "start dde-file-manager all UT cases:" $UT_PRJ_TYPE
 
 # 下面是编译和工程测试
 
 # 1. 编译test-dde-file-manager-lib工程
-DIR_TEST_DDE_FILE_MANAGER_LIB=$BUILD_DIR/test-dde-file-manager-lib
-mkdir -p $DIR_TEST_DDE_FILE_MANAGER_LIB
-cd $DIR_TEST_DDE_FILE_MANAGER_LIB
-qmake $PROJECT_FOLDER/dde-file-manager-lib/test-dde-file-manager-lib.pro
-make -j4
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANAGER_LIB" ] ; then
+        echo $UT_TYPE_FILE_MANAGER_LIB "test case is running"
 
-extract_path_dde_file_manager_lib="*/dde-file-manager-lib/*"
-remove_path_dde_file_manager_lib="*/tests/* */3rdParty/* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/*"
+	DIR_TEST_DDE_FILE_MANAGER_LIB=$BUILD_DIR/test-dde-file-manager-lib
+	mkdir -p $DIR_TEST_DDE_FILE_MANAGER_LIB
+	cd $DIR_TEST_DDE_FILE_MANAGER_LIB
+	qmake $PROJECT_FOLDER/dde-file-manager-lib/test-dde-file-manager-lib.pro
+	make -j4
 
-./../../tests/ut-target-running.sh $BUILD_DIR dde-file-manager-lib $DIR_TEST_DDE_FILE_MANAGER_LIB test-dde-file-manager-lib "$extract_path_dde_file_manager_lib" "$remove_path_dde_file_manager_lib"
-
+	extract_path_dde_file_manager_lib="*/dde-file-manager-lib/*"
+	remove_path_dde_file_manager_lib="*/tests/* */3rdParty/* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/*"
+        # report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
+	./../../tests/ut-target-running.sh $BUILD_DIR dde-file-manager-lib $DIR_TEST_DDE_FILE_MANAGER_LIB test-dde-file-manager-lib "$extract_path_dde_file_manager_lib" "$remove_path_dde_file_manager_lib"
+fi
 # 2 编译lib库用于支持其他项目
-DIR_DDE_FILE_MANAGER_LIB=$BUILD_DIR/dde-file-manager-lib
-mkdir -p $DIR_DDE_FILE_MANAGER_LIB
-cd $DIR_DDE_FILE_MANAGER_LIB
-qmake $PROJECT_FOLDER/dde-file-manager-lib/dde-file-manager-lib.pro
-make -j4
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" != "$UT_TYPE_FILE_MANAGER_LIB" ] ; then
+        echo $UT_TYPE_FILE_MANAGER_LIB "common lib is building for all sub projects"
+
+	DIR_DDE_FILE_MANAGER_LIB=$BUILD_DIR/dde-file-manager-lib
+	mkdir -p $DIR_DDE_FILE_MANAGER_LIB
+	cd $DIR_DDE_FILE_MANAGER_LIB
+	qmake $PROJECT_FOLDER/dde-file-manager-lib/dde-file-manager-lib.pro
+	make -j4
+fi
 
 # 3 编译并测试dde-desktop/test-dde-desktop
-DIR_TEST_DDE_DESKTOP=$BUILD_DIR/dde-desktop
-mkdir -p $DIR_TEST_DDE_DESKTOP
-cd $DIR_TEST_DDE_DESKTOP
-qmake $PROJECT_FOLDER/dde-desktop/test-dde-desktop.pro
-make -j4
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DDE_DESKTOP" ] ; then
+        echo $UT_TYPE_DDE_DESKTOP "test case is running"
 
-dde_desktop_extract_path="*/dde-desktop/*"
-dde_desktop_remove_path="*/third-party/* *tests* *moc_* *qrc_*"
-# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
-./../../tests/ut-target-running.sh $BUILD_DIR dde-desktop $DIR_TEST_DDE_DESKTOP test-dde-desktop "$dde_desktop_extract_path" "$dde_desktop_remove_path"
+	DIR_TEST_DDE_DESKTOP=$BUILD_DIR/dde-desktop
+	mkdir -p $DIR_TEST_DDE_DESKTOP
+	cd $DIR_TEST_DDE_DESKTOP
+	qmake $PROJECT_FOLDER/dde-desktop/test-dde-desktop.pro
+	make -j4
 
+	dde_desktop_extract_path="*/dde-desktop/*"
+	dde_desktop_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
+	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
+	./../../tests/ut-target-running.sh $BUILD_DIR dde-desktop $DIR_TEST_DDE_DESKTOP test-dde-desktop "$dde_desktop_extract_path" "$dde_desktop_remove_path"
+fi
 
 # 4. 子项目 dde-dock-plugins/disk-mount 单元测试与覆盖率测试
-DIR_TEST_DDE_DOCK=$BUILD_DIR/dde-dock-plugins
-mkdir -p $DIR_TEST_DDE_DOCK
-cd $DIR_TEST_DDE_DOCK
-qmake $PROJECT_FOLDER/dde-dock-plugins/test-dde-dock-plugins.pro
-make -j4
-disk_mount_extract_path="*/dde-dock-plugins/*"
-disk_mount_remove_path="*/third-party/* *tests* *moc_* *qrc_*"
-# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
-./../../tests/ut-target-running.sh $BUILD_DIR disk-mount $DIR_TEST_DDE_DOCK/disk-mount test-dde-disk-mount-plugin "$disk_mount_extract_path" "$disk_mount_remove_path"
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DOCK_PLUGINS" ] ; then
+	echo $UT_TYPE_DOCK_PLUGINS "test case is running"
+
+        DIR_TEST_DDE_DOCK=$BUILD_DIR/dde-dock-plugins
+	mkdir -p $DIR_TEST_DDE_DOCK
+	cd $DIR_TEST_DDE_DOCK
+	qmake $PROJECT_FOLDER/dde-dock-plugins/test-dde-dock-plugins.pro
+	make -j4
+	disk_mount_extract_path="*/dde-dock-plugins/*"
+	disk_mount_remove_path="*/third-party/* *tests* *moc_* *qrc_*"
+	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
+	./../../tests/ut-target-running.sh $BUILD_DIR disk-mount $DIR_TEST_DDE_DOCK/disk-mount test-dde-disk-mount-plugin "$disk_mount_extract_path" "$disk_mount_remove_path"
+fi
+
+# 5. 子项目 dde-file-manager 单元测试与覆盖率测试
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANAGER" ] ; then
+	echo $UT_TYPE_FILE_MANAGER "test case is running"
+
+        DIR_TEST_DDE_FILE_MANAGER=$BUILD_DIR/dde-file-manager
+	mkdir -p $DIR_TEST_DDE_FILE_MANAGER
+	cd $DIR_TEST_DDE_FILE_MANAGER
+	qmake $PROJECT_FOLDER/dde-file-manager/test-dde-file-manager.pro
+	make -j4
+	dde_file_manager_extract_path="*/dde-file-manager/*"
+	dde_file_manager_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
+	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
+	./../../tests/ut-target-running.sh $BUILD_DIR file-manager $DIR_TEST_DDE_FILE_MANAGER test-file-manager "$dde_file_manager_extract_path" "$dde_file_manager_remove_path"
+fi
+
+# 6. 子项目 dde-file-manager-plugins 单元测试与覆盖率测试
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANAGER_PLUGINS" ] ; then
+	echo $UT_TYPE_FILE_MANAGER_PLUGINS "test case is running"
+
+        DIR_TEST_DDE_FILE_MANAGER_PLUGINS=$BUILD_DIR/dde-file-manager-plugins
+	mkdir -p $DIR_TEST_DDE_FILE_MANAGER_PLUGINS
+	cd $DIR_TEST_DDE_FILE_MANAGER_PLUGINS
+	qmake $PROJECT_FOLDER/dde-file-manager-plugins/test-dde-file-manager-plugins.pro
+	make -j4
+	dde_file_manager_plugins_extract_path="*/dde-file-manager/*"
+	dde_file_manager_plugins_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
+	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
+	./../../tests/ut-target-running.sh $BUILD_DIR dde-image-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-image-preview-plugin test-dde-image-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path"
+fi
+
+# 7. 子项目 dde-file-thumbnail-tool 单元测试与覆盖率测试
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_THUMBNAIL_TOOL" ] ; then
+	echo $UT_TYPE_FILE_THUMBNAIL_TOOL "test case is running"
+
+        DIR_TEST_DDE_FILE_THUMBNAIL=$BUILD_DIR/dde-file-thumbnail-tool
+	mkdir -p $DIR_TEST_DDE_FILE_THUMBNAIL
+	cd $DIR_TEST_DDE_FILE_THUMBNAIL
+	qmake $PROJECT_FOLDER/dde-file-thumbnail-tool/test-dde-file-thumbnail-tool.pro
+	make -j4
+	dde_file_thumbnail_extract_path="*/dde-file-thumbnail-tool/*"
+	dde_file_thumbnail_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
+	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
+	./../../tests/ut-target-running.sh $BUILD_DIR video $DIR_TEST_DDE_FILE_THUMBNAIL/video test-video "$dde_file_thumbnail_extract_path" "$dde_file_thumbnail_remove_path"
+fi
+
+# 8. 子项目 deepin-anything-server-plugins 单元测试与覆盖率测试
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_ANYTHING_SERVER_PLUGINS" ] ; then
+	echo $UT_TYPE_ANYTHING_SERVER_PLUGINS "test case is running"
+
+        DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS=$BUILD_DIR/deepin-anything-server-plugins
+	mkdir -p $DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS
+	cd $DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS
+	qmake $PROJECT_FOLDER/deepin-anything-server-plugins/test-deepin-anything-server-plugins.pro
+	make -j4
+	deepin_anything_server_plugins_extract_path="*/deepin-anything-server-plugins/*"
+	deepin_anything_server_plugins_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
+	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
+	./../../tests/ut-target-running.sh $BUILD_DIR dde-anythingmonitor $DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS/dde-anythingmonitor test-dde-anythingmonitor  "$deepin_anything_server_plugins_extract_path" "$deepin_anything_server_plugins_remove_path"
+fi
 
 echo "end dde-file-manager all UT cases"
 
