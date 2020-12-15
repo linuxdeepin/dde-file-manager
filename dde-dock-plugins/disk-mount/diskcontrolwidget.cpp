@@ -212,6 +212,7 @@ void DiskControlWidget::unmountAll()
                     if (diskDev->lastError().isValid()) {
                         qWarning() << diskDev->lastError().name() << blockDevices;
                         NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
+                        continue;
                     }
                 }
                 if (diskDev->optical()) { // is optical
