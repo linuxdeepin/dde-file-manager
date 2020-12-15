@@ -56,7 +56,8 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                            << QString(SFTP_SCHEME)
                            << QString(DAV_SCHEME)
                            << QString(TAG_SCHEME)
-                           << QString(DFMVAULT_SCHEME); // 文件保险柜
+                           << QString(DFMVAULT_SCHEME) // 文件保险柜
+                           << QString(BURN_SCHEME);
 
 DUrl::DUrl()
     : QUrl()
