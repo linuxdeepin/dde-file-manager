@@ -935,7 +935,13 @@ process_file:
 
             ok = copyFile(source_info, new_file_info, handler);
         } else {
-            ok = renameFile(handler, source_info, new_file_info);
+            // 光盘中的文件不能进行写操作，因此复制它
+            const QString &sourcePath = source_info->fileUrl().toLocalFile();
+            if (deviceListener->isFileFromDisc(sourcePath)) {
+                ok = copyFile(source_info, new_file_info, handler);
+            } else {
+                ok = renameFile(handler, source_info, new_file_info);
+            }
         }
 
         if (ok) {
