@@ -1008,7 +1008,12 @@ void VaultController::unlockVault(const DSecureString &password, QString lockBas
 {
     // 修复bug-52351
     // 保险箱解锁前,创建挂载目录
-    QString strPath = unlockFileDir;
+    QString strPath;
+    if (unlockFileDir.isEmpty()) {
+        strPath = makeVaultLocalPath("", VAULT_DECRYPT_DIR_NAME);
+    } else {
+        strPath = unlockFileDir;
+    }
     if (QFile::exists(strPath)) {   // 如果存在,则清空目录
         QDir dir(strPath);
         if (!dir.isEmpty()) {
