@@ -16,7 +16,7 @@ REMOVE_INFO=${6} #排除当前目录进行覆盖率操作
 
 if [ ! $# -eq 6 ]; then
   echo "param number set err: "$# ": "$*
-  echo "wrong param set,usage: <编译路径> <可执行程序> <期望覆盖的路径> <不期望覆盖的路径>"
+  echo "wrong param set,usage: <报告路径> <报告项目名> <编译路径> <可执行程序> <期望覆盖的路径> <不期望覆盖的路径>"
   exit 0
 fi
 
