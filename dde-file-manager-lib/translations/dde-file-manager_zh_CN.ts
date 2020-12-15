@@ -25,18 +25,28 @@
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="726"/>
-        <location filename="../controllers/appcontroller.cpp" line="762"/>
+        <location filename="../controllers/appcontroller.cpp" line="767"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="726"/>
-        <location filename="../controllers/appcontroller.cpp" line="762"/>
+        <location filename="../controllers/appcontroller.cpp" line="767"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="743"/>
+        <location filename="../controllers/appcontroller.cpp" line="737"/>
+        <source>The device was not ejected</source>
+        <translation>设备没有正常弹出</translation>
+    </message>
+    <message>
+        <location filename="../controllers/appcontroller.cpp" line="737"/>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>设备正忙，现在无法弹出</translation>
+    </message>
+    <message>
+        <location filename="../controllers/appcontroller.cpp" line="748"/>
         <source>Authentication timed out</source>
         <translation>认证超时</translation>
     </message>
@@ -157,27 +167,37 @@
 <context>
     <name>BurnOptDialog</name>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="212"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="69"/>
+        <source>Device error</source>
+        <translation>设备错误</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="69"/>
+        <source>Optical device %1 doesn&apos;t exist</source>
+        <translation>光驱设备 %1 不存在</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="217"/>
         <source>Advanced settings</source>
         <translation>高级设置</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="229"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="234"/>
         <source>File System: </source>
         <translation>文件系统：</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="236"/>
         <source>ISO9660 Only</source>
         <translation>仅 ISO9660</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="236"/>
         <source>ISO9660 / Joliet (For Windows)</source>
         <translation>ISO9660 / Joliet （用于 Windows）</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="236"/>
         <source>ISO9660 / RockRidge (For Unix)</source>
         <translation>ISO9660 / RockRidge （用于 Unix）</translation>
     </message>
@@ -1116,8 +1136,8 @@
     <name>DFileView</name>
     <message>
         <location filename="../views/dfileview.cpp" line="2382"/>
-        <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
-        <translation>此光盘中的镜像已损坏，无法挂载，请擦除后使用</translation>
+        <source>Failed while mounting the disc</source>
+        <translation>挂载光盘失败</translation>
     </message>
     <message>
         <location filename="../views/dfileview.cpp" line="3037"/>
@@ -1343,7 +1363,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1072"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1086"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1152"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1519"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1521"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
@@ -1368,7 +1388,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="862"/>
         <location filename="../dialogs/dialogmanager.cpp" line="891"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1222"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1465"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1467"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -1411,8 +1431,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="621"/>
         <location filename="../dialogs/dialogmanager.cpp" line="891"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1246"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1341"/>
-        <location filename="../dialogs/dialogmanager.h" line="149"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
+        <location filename="../dialogs/dialogmanager.h" line="150"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -1564,27 +1584,27 @@
         <translation>3. 重启时选择%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1338"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1340"/>
         <source>Unable to access %1</source>
         <translation>访问%1失败</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1418"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1420"/>
         <source>Sending files now, please try later</source>
         <translation>当前已有发送中的文件，请稍后再试</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1466"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1468"/>
         <source>Format</source>
         <translation>格式化</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1467"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1469"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>需要格式化磁盘才能访问此设备，是否继续？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1517"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1519"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>共享文件夹不能和当前用户名重名</translation>
     </message>
@@ -1673,27 +1693,27 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="599"/>
-        <location filename="../controllers/filecontroller.cpp" line="618"/>
-        <location filename="../controllers/filecontroller.cpp" line="637"/>
+        <location filename="../controllers/filecontroller.cpp" line="771"/>
+        <location filename="../controllers/filecontroller.cpp" line="790"/>
+        <location filename="../controllers/filecontroller.cpp" line="809"/>
         <source>Kindly Reminder</source>
         <translation>温馨提示</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="599"/>
-        <location filename="../controllers/filecontroller.cpp" line="618"/>
-        <location filename="../controllers/filecontroller.cpp" line="637"/>
+        <location filename="../controllers/filecontroller.cpp" line="771"/>
+        <location filename="../controllers/filecontroller.cpp" line="790"/>
+        <location filename="../controllers/filecontroller.cpp" line="809"/>
         <source>Please install File Roller first and then continue</source>
         <translation>请先安装归档管理器然后继续</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1220"/>
-        <location filename="../controllers/filecontroller.cpp" line="1242"/>
+        <location filename="../controllers/filecontroller.cpp" line="1392"/>
+        <location filename="../controllers/filecontroller.cpp" line="1414"/>
         <source>Unable to create files here: %1</source>
         <translation>不能在此创建文件：%1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1222"/>
+        <location filename="../controllers/filecontroller.cpp" line="1394"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -1752,66 +1772,66 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="903"/>
-        <location filename="../../fileoperations/filejob.cpp" line="912"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1135"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1144"/>
+        <location filename="../../fileoperations/filejob.cpp" line="908"/>
+        <location filename="../../fileoperations/filejob.cpp" line="917"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1140"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1149"/>
         <source>Data verification successful.</source>
         <translation>数据验证成功。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="916"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1148"/>
+        <location filename="../../fileoperations/filejob.cpp" line="921"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1153"/>
         <source>Burn process completed</source>
         <translation>刻录完成</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1312"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1317"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1316"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1321"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1321"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1326"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1328"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1333"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3043"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3048"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1为重复文件。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3046"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3051"/>
         <source>Insufficient disc space.</source>
         <translation>光盘空间不足。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3049"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3054"/>
         <source>Lost connection to drive.</source>
         <translation>与光驱的连接断开。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3052"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3057"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>光驱未准备好，您可以换一张光盘再试。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3055"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3060"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>光驱被占用，您可以尝试关掉正在使用光驱的程序后重新插入光驱。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3062"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3067"/>
         <source>Unknown error</source>
         <translation>未知错误</translation>
     </message>
@@ -3115,39 +3135,39 @@
         <translation>卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="185"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="190"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="329"/>
         <source>Burn</source>
         <translation>刻录</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="196"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="201"/>
         <source>Disc name:</source>
         <translation>光盘名称：</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="241"/>
-        <location filename="../dialogs/burnoptdialog.cpp" line="243"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="246"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="248"/>
         <source>Maximum</source>
         <translation>最大速度</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="254"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="259"/>
         <source>Allow files to be added later</source>
         <translation>允许追加数据</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="262"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="267"/>
         <source>Verify data</source>
         <translation>校验数据</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="238"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="243"/>
         <source>Write speed:</source>
         <translation>写入速度：</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="265"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="270"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
         <source>Eject</source>
         <translation>弹出</translation>
@@ -3483,14 +3503,14 @@
         <translation>提示：根据选择文件的顺序先后排序</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="184"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="189"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="345"/>
         <location filename="../views/drenamebar.cpp" line="288"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1483"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1485"/>
         <source>Rename %1 Files</source>
         <translation>给%1个文件重命名</translation>
     </message>
@@ -3602,7 +3622,7 @@
         <translation>正在处理文件</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="500"/>
+        <location filename="../shutil/fileutils.cpp" line="496"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
@@ -4114,34 +4134,34 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1461"/>
+        <location filename="../controllers/appcontroller.cpp" line="1490"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1454"/>
-        <location filename="../controllers/appcontroller.cpp" line="1478"/>
+        <location filename="../controllers/appcontroller.cpp" line="1483"/>
+        <location filename="../controllers/appcontroller.cpp" line="1507"/>
         <source>Authentication timed out</source>
         <translation>认证超时</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1461"/>
+        <location filename="../controllers/appcontroller.cpp" line="1490"/>
         <source>The device was not safely unmounted</source>
         <translation>设备没有正常卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1482"/>
-        <location filename="../controllers/appcontroller.cpp" line="1496"/>
+        <location filename="../controllers/appcontroller.cpp" line="1511"/>
+        <location filename="../controllers/appcontroller.cpp" line="1525"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1482"/>
+        <location filename="../controllers/appcontroller.cpp" line="1511"/>
         <source>Disk is busy, cannot remove now</source>
         <translation>磁盘文件被占用，无法移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1496"/>
+        <location filename="../controllers/appcontroller.cpp" line="1525"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
