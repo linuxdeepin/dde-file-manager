@@ -7,9 +7,9 @@ echo $PROJECT_FOLDER
 # 定位脚本所在父目录下的某文件
 BUILD_DIR=${2}
 
-#运行UT类型 ut_all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins
+#运行UT类型 all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins
 UT_PRJ_TYPE=${3}
-UT_TYPE_ALL="ut_all"
+UT_TYPE_ALL="all"
 UT_TYPE_FILE_MANAGER="dde_file_manager"
 UT_TYPE_FILE_MANAGER_LIB="dde-file-manager-lib"
 UT_TYPE_DDE_DESKTOP="dde-desktop"
@@ -17,6 +17,9 @@ UT_TYPE_DOCK_PLUGINS="dde-dock-plugins"
 UT_TYPE_FILE_MANAGER_PLUGINS="dde-file-manager-plugins"
 UT_TYPE_FILE_THUMBNAIL_TOOL="dde-file-thumbnail-tool"
 UT_TYPE_ANYTHING_SERVER_PLUGINS="deepin-anything-server-plugins"
+
+REBUILD_PRJ=${4}
+REBUILD_TYPE_YES="yes"
 
 # 打印当前目录，当前目录应当是 build-ut
 echo `pwd`
@@ -31,8 +34,12 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
 	DIR_TEST_DDE_FILE_MANAGER_LIB=$BUILD_DIR/test-dde-file-manager-lib
 	mkdir -p $DIR_TEST_DDE_FILE_MANAGER_LIB
 	cd $DIR_TEST_DDE_FILE_MANAGER_LIB
-	qmake $PROJECT_FOLDER/dde-file-manager-lib/test-dde-file-manager-lib.pro
-	make -j4
+
+        if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
+                echo $UT_TYPE_FILE_MANAGER_LIB "is making"
+		qmake $PROJECT_FOLDER/dde-file-manager-lib/test-dde-file-manager-lib.pro
+		make -j4
+        fi
 
 	extract_path_dde_file_manager_lib="*/dde-file-manager-lib/*"
 	remove_path_dde_file_manager_lib="*/tests/* */3rdParty/* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/*"
@@ -41,13 +48,17 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
 fi
 # 2 编译lib库用于支持其他项目
 if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" != "$UT_TYPE_FILE_MANAGER_LIB" ] ; then
-        echo $UT_TYPE_FILE_MANAGER_LIB "common lib is building for all sub projects"
+        echo "common dde-file-manager lib is building for all sub projects"
 
 	DIR_DDE_FILE_MANAGER_LIB=$BUILD_DIR/dde-file-manager-lib
 	mkdir -p $DIR_DDE_FILE_MANAGER_LIB
 	cd $DIR_DDE_FILE_MANAGER_LIB
-	qmake $PROJECT_FOLDER/dde-file-manager-lib/dde-file-manager-lib.pro
-	make -j4
+
+        if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
+                echo "common dde-file-manager lib is making"
+		qmake $PROJECT_FOLDER/dde-file-manager-lib/dde-file-manager-lib.pro
+		make -j4
+        fi
 fi
 
 # 3 编译并测试dde-desktop/test-dde-desktop
@@ -57,8 +68,12 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DDE_DESKT
 	DIR_TEST_DDE_DESKTOP=$BUILD_DIR/dde-desktop
 	mkdir -p $DIR_TEST_DDE_DESKTOP
 	cd $DIR_TEST_DDE_DESKTOP
-	qmake $PROJECT_FOLDER/dde-desktop/test-dde-desktop.pro
-	make -j4
+
+        if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
+                echo $UT_TYPE_DDE_DESKTOP "is making"
+		qmake $PROJECT_FOLDER/dde-desktop/test-dde-desktop.pro
+		make -j4
+        fi
 
 	dde_desktop_extract_path="*/dde-desktop/*"
 	dde_desktop_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
@@ -73,8 +88,13 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DOCK_PLUG
         DIR_TEST_DDE_DOCK=$BUILD_DIR/dde-dock-plugins
 	mkdir -p $DIR_TEST_DDE_DOCK
 	cd $DIR_TEST_DDE_DOCK
-	qmake $PROJECT_FOLDER/dde-dock-plugins/test-dde-dock-plugins.pro
-	make -j4
+
+        if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
+                echo $UT_TYPE_DOCK_PLUGINS "is making"
+		qmake $PROJECT_FOLDER/dde-dock-plugins/test-dde-dock-plugins.pro
+		make -j4
+        fi
+
 	disk_mount_extract_path="*/dde-dock-plugins/*"
 	disk_mount_remove_path="*/third-party/* *tests* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
@@ -88,8 +108,13 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
         DIR_TEST_DDE_FILE_MANAGER=$BUILD_DIR/dde-file-manager
 	mkdir -p $DIR_TEST_DDE_FILE_MANAGER
 	cd $DIR_TEST_DDE_FILE_MANAGER
-	qmake $PROJECT_FOLDER/dde-file-manager/test-dde-file-manager.pro
-	make -j4
+
+        if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
+                echo $UT_TYPE_FILE_MANAGER "is making"
+		qmake $PROJECT_FOLDER/dde-file-manager/test-dde-file-manager.pro
+		make -j4
+        fi
+
 	dde_file_manager_extract_path="*/dde-file-manager/*"
 	dde_file_manager_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
@@ -103,8 +128,13 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
         DIR_TEST_DDE_FILE_MANAGER_PLUGINS=$BUILD_DIR/dde-file-manager-plugins
 	mkdir -p $DIR_TEST_DDE_FILE_MANAGER_PLUGINS
 	cd $DIR_TEST_DDE_FILE_MANAGER_PLUGINS
-	qmake $PROJECT_FOLDER/dde-file-manager-plugins/test-dde-file-manager-plugins.pro
-	make -j4
+
+        if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
+                echo $UT_TYPE_FILE_MANAGER_PLUGINS "is making"
+		qmake $PROJECT_FOLDER/dde-file-manager-plugins/test-dde-file-manager-plugins.pro
+		make -j4
+        fi
+
 	dde_file_manager_plugins_extract_path="*/dde-file-manager/*"
 	dde_file_manager_plugins_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
@@ -118,8 +148,13 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_THUM
         DIR_TEST_DDE_FILE_THUMBNAIL=$BUILD_DIR/dde-file-thumbnail-tool
 	mkdir -p $DIR_TEST_DDE_FILE_THUMBNAIL
 	cd $DIR_TEST_DDE_FILE_THUMBNAIL
-	qmake $PROJECT_FOLDER/dde-file-thumbnail-tool/test-dde-file-thumbnail-tool.pro
-	make -j4
+
+        if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
+                echo $UT_TYPE_FILE_THUMBNAIL_TOOL "is making"
+		qmake $PROJECT_FOLDER/dde-file-thumbnail-tool/test-dde-file-thumbnail-tool.pro
+		make -j4
+        fi
+
 	dde_file_thumbnail_extract_path="*/dde-file-thumbnail-tool/*"
 	dde_file_thumbnail_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
@@ -133,8 +168,13 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_ANYTHING_
         DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS=$BUILD_DIR/deepin-anything-server-plugins
 	mkdir -p $DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS
 	cd $DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS
-	qmake $PROJECT_FOLDER/deepin-anything-server-plugins/test-deepin-anything-server-plugins.pro
-	make -j4
+
+        if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
+                echo $UT_TYPE_ANYTHING_SERVER_PLUGINS "is making"
+		qmake $PROJECT_FOLDER/deepin-anything-server-plugins/test-deepin-anything-server-plugins.pro
+		make -j4
+        fi
+
 	deepin_anything_server_plugins_extract_path="*/deepin-anything-server-plugins/*"
 	deepin_anything_server_plugins_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
