@@ -292,8 +292,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     , m_url(url)
     , m_icon(new QLabel)
     , m_edit(new NameTextEdit)
+    , m_platformWindowHandle(new DPlatformWindowHandle(this, this))
 {
-    setSizeGripEnabled(true);
+    //允许窗口拖拽缩放
+    m_platformWindowHandle->setEnableSystemResize(true);
 
     if (DFMGlobal::isWayLand()) {
         //设置对话框窗口最大最小化按钮隐藏
