@@ -328,7 +328,7 @@ public:
                                 QTextOption::WrapMode wrapMode,
                                 const QFont &font,
                                 qreal lineHeight,
-                                qreal *height = 0);
+                                qreal *height = nullptr);
 
     static QString elideText(const QString &text, const QSizeF &size,
                              QTextOption::WrapMode wordWrap,
@@ -340,18 +340,18 @@ public:
     static void wordWrapText(QTextLayout *layout, qreal width,
                              QTextOption::WrapMode wrapMode,
                              qreal lineHeight,
-                             QStringList *lines = 0);
+                             QStringList *lines = nullptr);
 
     static void elideText(QTextLayout *layout, const QSizeF &size,
                           QTextOption::WrapMode wordWrap,
                           Qt::TextElideMode mode, qreal lineHeight,
-                          int flags = 0, QStringList *lines = 0,
-                          QPainter *painter = 0, QPointF offset = QPoint(0, 0),
+                          int flags = 0, QStringList *lines = nullptr,
+                          QPainter *painter = nullptr, QPointF offset = QPoint(0, 0),
                           const QColor &shadowColor = QColor(),
                           const QPointF &shadowOffset = QPointF(0, 1),
                           const QBrush &background = QBrush(Qt::NoBrush),
                           qreal backgroundRadius = 4,
-                          QList<QRectF> *boundingRegion = 0);
+                          QList<QRectF> *boundingRegion = nullptr);
 
     static QString toPinyin(const QString &text);
     static bool startWithHanzi(const QString &text);
