@@ -1,8 +1,22 @@
 #!/bin/bash
 
 # 获取参数
-CLEAR_BUILD="clear" #是否清场 not_clear 就不清场
-UT_PRJ_TYPE=${1} #运行UT类型 ut_all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins
+CLEAR_COMMAND="yes"; #是否清场 no 就不清场
+UT_COMMAND=""; #运行UT类型 all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins
+CPP_CHECK_COMMAND="";
+
+while [ $# -ge 2 ] ; do
+        case "$1" in
+                --clear) CLEAR_COMMAND="$2"; shift 2;;
+                --ut) UT_COMMAND="$2"; shift 2;;
+                --cpp-check) CPP_CHECK_COMMAND="$2"; shift 2;;
+                *) echo "Unknown command parameter $1 $2, break the process!" ; exit 0; break;;
+        esac
+done
+
+echo $CLEAR_COMMAND
+echo $UT_COMMAND
+echo $CPP_CHECK_COMMAND
 
 # 定位脚本所在当前目录
 TESTS_FOLDER=$(cd "$(dirname "$0")";pwd)
@@ -17,7 +31,7 @@ BUILD_DIR=$PROJECT_FOLDER/build-ut
 echo $BUILD_DIR
 
 # 清场,删除编译文件夹
-if [ "$CLEAR_BUILD" != "not_clear" ] ; then
+if [ "$CLEAR_COMMAND" = "yes" ] ; then
     rm -rf $BUILD_DIR
     echo "clear " $BUILD_DIR
 fi
@@ -29,12 +43,12 @@ echo `pwd`
 echo "start dde-file-manager project all CI cases"
 
 # 下面是UT相关的case
-if [ ! -n "$UT_PRJ_TYPE" ] ; then
+if [ ! -n "$UT_COMMAND" ] ; then
     echo "ut case type is all"
-    ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR "ut_all"
+    ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR "all" $CLEAR_COMMAND
 else
-    echo "ut case type is " $UT_PRJ_TYPE
-    ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR $UT_PRJ_TYPE
+    echo "ut case type is " $UT_COMMAND
+    ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR $UT_COMMAND $CLEAR_COMMAND
 fi
 
 exit 0
