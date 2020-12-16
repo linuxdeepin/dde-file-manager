@@ -287,7 +287,8 @@ public:
     bool m_isEveryReadAndWritesSnc = false;
     bool m_isVfat = false;
     //分断拷贝的线程数量
-    QAtomicInt m_count = -1;
+    QAtomicInt m_count = 0;
+    QVector<QAtomicInt> m_countVetor;
     QAtomicInteger<bool> m_isWriteThreadStart = false;
     //目标目录是否是来自块设备
     QAtomicInteger<bool> m_isTagFromBlockDevice = false;
