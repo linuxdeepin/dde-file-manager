@@ -833,7 +833,7 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
             realTargetUrl = info->rootSymLinkTarget();
         }
 
-        if (info->scheme() == DFMROOT_SCHEME && info->suffix() == SUFFIX_USRDIR) {
+        if (info && info->scheme() == DFMROOT_SCHEME && info->suffix() == SUFFIX_USRDIR) {
             url = info->redirectedFileUrl();
         }
 
@@ -865,7 +865,7 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
             url = gvfsmpurl;
         }
 
-        if (info->scheme() == BURN_SCHEME && info->fileUrl().burnFilePath().contains(QRegularExpression("^/*$"))) {
+        if (info && info->scheme() == BURN_SCHEME && info->fileUrl().burnFilePath().contains(QRegularExpression("^/*$"))) {
             url = DUrl(DFMROOT_ROOT + info->fileUrl().burnDestDevice().mid(QString("/dev/").length()) + "." + SUFFIX_UDISKS);
         }
 
