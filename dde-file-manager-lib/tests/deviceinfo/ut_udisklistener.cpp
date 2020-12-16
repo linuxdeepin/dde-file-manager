@@ -33,6 +33,7 @@
 #include <gmock/gmock-matchers.h>
 #define private public
 #include "deviceinfo/udisklistener.h"
+#include "gvfs/gvfsmountmanager.h"
 
 ACCESS_PRIVATE_FUN(UDiskListener, void(const QString &labelName), fileSystemDeviceIdLabelChanged);
 
@@ -395,4 +396,15 @@ TEST_F(TestUDiskListener, changeVolumeDiskInfo)
     EXPECT_NO_FATAL_FAILURE(listener.changeVolumeDiskInfo(info));
 }
 
+TEST_F(TestUDiskListener, isBlockFile)
+{
+    StubExt st;
+    st.set_lamda(ADDR(UDiskListener, getMountedRemovableDiskDeviceInfos), []() {
+        QMap<QString, UDiskDeviceInfoPointer> infos;
+        UDiskDeviceInfoPointer p(new UDiskDeviceInfo);
+        infos["test"] = p;
+        return infos;
+    });
+    EXPECT_TRUE(m_listener->isBlockFile("/test/_test_/_test_path_"));
+}
 
