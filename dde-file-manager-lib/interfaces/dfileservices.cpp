@@ -31,6 +31,8 @@
 #include "dfiledevice.h"
 #include "dfilehandler.h"
 #include "dstorageinfo.h"
+#include "dfmapplication.h"
+
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
 #include "app/define.h"
@@ -320,6 +322,14 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog, event->windowId());
                 result = QVariant::fromValue(event->fileUrlList());
                 goto end;
+            }
+        }
+
+        //! 显示删除确认对话框
+        bool bShowConfimDlg = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowDeleteConfirmDialog).toBool();
+        if (bShowConfimDlg && !event->fileUrlList().first().isTrashFile()) {
+            if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showNormalDeleteConfirmDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) != DDialog::Accepted) {
+                break;
             }
         }
 

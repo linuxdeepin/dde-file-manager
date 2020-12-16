@@ -109,6 +109,8 @@ public slots:
     void showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details);
     void showOpticalJobCompletionDialog(const QString &msg, const QString &icon);
     int showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event);
+    //! 显示普通删除确认对话框
+    int showNormalDeleteConfirmDialog(const DFMUrlListBaseEvent &event);
     int showRemoveBookMarkDialog(const DFMEvent &event);
     void showOpenWithDialog(const DFMEvent &event);
     void showOpenFilesWithDialog(const DFMEvent &event);

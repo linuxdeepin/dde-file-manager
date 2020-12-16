@@ -256,6 +256,12 @@
                             "text": qsTranslate("GenerateSettingTranslate", "Use the file chooser dialog of File Manager"),
                             "type": "checkbox",
                             "default": true
+                        },
+                        {
+                            "key": "delete_confirmation_dialog",
+                            "text": qsTranslate("GenerateSettingTranslate", "Ask for my confirmation when deleting files"),
+                            "type": "checkbox",
+                            "default": false
                         }
                     ]
                 },
