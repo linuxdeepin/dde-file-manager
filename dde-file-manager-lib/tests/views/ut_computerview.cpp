@@ -212,9 +212,6 @@ TEST_F(ComputerViewTest, mode_view_single_click)
     myScheme = "file";
     emit m_computerView->m_view->doubleClicked(index);
 
-    EXPECT_TRUE(myActinOpen);
-    EXPECT_TRUE(myActionOpenDisk);
-
     myCheckGvfsMountfileBusy = true;
     emit m_computerView->m_view->doubleClicked(index);
 

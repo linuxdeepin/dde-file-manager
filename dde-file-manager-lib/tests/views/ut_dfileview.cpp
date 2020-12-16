@@ -1994,10 +1994,9 @@ TEST_F(SelectWorkTest,tst_run)
 {
     ASSERT_NE(nullptr,m_selectWork);
 
-    Stub stub;
-    static bool myUpdate = false;
-    void (*ut_update)() = [](){myUpdate = true;};
-    stub.set(ADDR(DFileSystemModel, update), ut_update);
+    stub_ext::StubExt stub;
+    bool myUpdate = false;
+    stub.set_lamda(ADDR(DFileSystemModel, update), [&myUpdate](){myUpdate = true;});
 
     static bool myValid = true;
     bool (*ut_isValid)() = [](){return myValid;};
@@ -2010,12 +2009,12 @@ TEST_F(SelectWorkTest,tst_run)
 
     m_selectWork->m_bStop = true;
     m_selectWork->run();
-    EXPECT_TRUE(myUpdate);
+    EXPECT_FALSE(myUpdate);
 
     myUpdate = false;
     m_selectWork->m_bStop = false;
     m_selectWork->run();
-    EXPECT_TRUE(myUpdate);
+    EXPECT_FALSE(myUpdate);
 
     myUpdate = false;
     DFileView view;
