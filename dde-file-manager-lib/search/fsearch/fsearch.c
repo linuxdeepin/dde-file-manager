@@ -170,15 +170,16 @@ load_database (FsearchApplication*app)
         bool loaded = false;
         bool build_new = false;
         for (GList *l = app->config->locations; l != NULL; l = l->next) {
+            char *data = strdup(l->data);
             if (app->config->update_database_on_launch) {
-                if (db_location_add (app->db, l->data, app->config, build_location_callback)) {
+                if (db_location_add (app->db, data, app->config, build_location_callback)) {
                     loaded = true;
                     build_new = true;
                 }
             }
             else {
-                if (!db_location_load (app->db, l->data)) {
-                    if (db_location_add (app->db, l->data, app->config, build_location_callback)) {
+                if (!db_location_load (app->db, data)) {
+                    if (db_location_add (app->db, data, app->config, build_location_callback)) {
                         loaded = true;
                         build_new = true;
                     }
@@ -186,6 +187,11 @@ load_database (FsearchApplication*app)
                 else {
                     loaded = true;
                 }
+            }
+
+            if (data){
+                free(data);
+                data = NULL;
             }
         }
         if (loaded) {
@@ -202,7 +208,13 @@ load_database (FsearchApplication*app)
         timer_start ();
         if (app->config->locations) {
             for (GList *l = app->config->locations; l != NULL; l = l->next) {
-                db_location_add (app->db, l->data, app->config, build_location_callback);
+                char *data = strdup(l->data);
+                db_location_add (app->db, data, app->config, build_location_callback);
+
+                if (data){
+                    free(data);
+                    data = NULL;
+                }
             }
             db_build_initial_entries_list (app->db);
         }
