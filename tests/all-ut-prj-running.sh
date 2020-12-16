@@ -61,6 +61,9 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" != "$UT_TYPE_FILE_MAN
         fi
 fi
 
+# dde-file-manager-lib 动态库依赖
+export LD_LIBRARY_PATH=$BUILD_DIR/dde-file-manager-lib/:$LD_LIBRARY_PATH
+
 # 3 编译并测试dde-desktop/test-dde-desktop
 if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DDE_DESKTOP" ] ; then
         echo $UT_TYPE_DDE_DESKTOP "test case is running"
