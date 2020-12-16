@@ -1595,7 +1595,7 @@ TEST_F(TestDialogManager, testShowBluetoothTransferDlg)
     };
     stub_ext::StubExt stub;
     stub.set(VADDR(QDialog, exec), stub_exec);
-
+    stub.set_lamda(ADDR(QWidget, show), []{});
     EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
 }
 
