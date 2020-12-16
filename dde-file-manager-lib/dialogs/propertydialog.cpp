@@ -615,6 +615,11 @@ bool PropertyDialog::canChmod(const DAbstractFileInfoPointer &info)
     if (parentScheme == BURN_SCHEME) {
         ret = false;
     }
+    //修改bug 57819 是光驱共享的文件不能修改权限
+    if (info->scheme() == USERSHARE_SCHEME && info->canRedirectionFileUrl()
+            && deviceListener->isFileFromDisc(info->redirectedFileUrl().toLocalFile())) {
+        ret = false;
+    }
 
     return ret;
 }
