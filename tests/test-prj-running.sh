@@ -2,14 +2,14 @@
 
 # 获取参数
 CLEAR_COMMAND="yes"; #是否清场 no 就不清场
-UT_COMMAND=""; #运行UT类型 all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins
-CPP_CHECK_COMMAND="";
+UT_COMMAND=""; #运行UT类型 no all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins
+CPP_CHECK_COMMAND="yes"; #是否运行cppcheck，no就不运行
 
 while [ $# -ge 2 ] ; do
         case "$1" in
                 --clear) CLEAR_COMMAND="$2"; shift 2;;
                 --ut) UT_COMMAND="$2"; shift 2;;
-                --cpp-check) CPP_CHECK_COMMAND="$2"; shift 2;;
+                --cppcheck) CPP_CHECK_COMMAND="$2"; shift 2;;
                 *) echo "Unknown command parameter $1 $2, break the process!" ; exit 0; break;;
         esac
 done
@@ -46,9 +46,15 @@ echo "start dde-file-manager project all CI cases"
 if [ ! -n "$UT_COMMAND" ] ; then
     echo "ut case type is all"
     ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR "all" $CLEAR_COMMAND
-else
+elif [ $UT_COMMAND != "no" ] ; then
     echo "ut case type is " $UT_COMMAND
     ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR $UT_COMMAND $CLEAR_COMMAND
+fi
+
+# 下面是cppcheck相关case
+if [ ! -n "$CPP_CHECK_COMMAND" ] || [ "$CPP_CHECK_COMMAND" = "yes" ] ; then
+    echo "cppcheck case"
+    ./cppcheck-prj-running.sh $PROJECT_FOLDER $BUILD_DIR
 fi
 
 exit 0
