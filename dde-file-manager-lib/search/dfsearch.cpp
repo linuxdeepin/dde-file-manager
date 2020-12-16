@@ -42,8 +42,7 @@ DFSearch::DFSearch(const QString &searchPath, void *parent)
     app->search = nullptr;
     app->config->locations = nullptr;
     g_mutex_init(&app->mutex);
-    QByteArray by = searchPath.toLatin1();
-    app->config->locations = g_list_append(app->config->locations, by.data());
+    app->config->locations = g_list_append(app->config->locations, searchPath.toLocal8Bit().data());
     load_database(app);//更新数据库
     app->pool = fsearch_thread_pool_init(); //初始化线程池
     app->search = db_search_new(fsearch_application_get_thread_pool(app));
