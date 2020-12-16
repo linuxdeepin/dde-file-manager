@@ -10,8 +10,11 @@
 #include <QDebug>
 #include <QWidget>
 #include <QSharedPointer>
+#include <QAction>
 #include <ddiskdevice.h>
 
+#include <ddiskmanager.h>
+#include <dblockdevice.h>
 #define private public
 #define protected public
 
@@ -23,6 +26,10 @@
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "interfaces/dfileinfo.h"
+#include "dialogs/dialogmanager.h"
+#include "shutil/fileutils.h"
+#include "views/dtoolbar.h"
+#include "gvfs/secretmanager.h"
 
 DFM_USE_NAMESPACE
 
@@ -77,15 +84,20 @@ namespace  {
             stl.set(ADDR(WindowManager,showNewWindow),showNewWindow);
             bool (*cd)(const DUrl &) = [](const DUrl &){return false;};
             stl.set(ADDR(DFileManagerWindow,cd),cd);
+            void (*show)(void *) = [](void *){};
+            stl.set(ADDR(QWidget,show),show);
+
+            void (*showErrorDialog)(const QString &, const QString &) = []
+                    (const QString &, const QString &){};
+            stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
+
             controller = AppController::instance();
             QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
             tempFilePath =  QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/" + fileName;
-            QProcess::execute("touch " + tempFilePath);
         }
         void TearDown()
         {
             QProcess::execute("rm -f " + tempFilePath);
-            QProcess::execute("killall dde-file-manager");
         }
     };
 }
@@ -102,14 +114,16 @@ TEST_F(AppControllerTest,start_manager_interface){
 
 TEST_F(AppControllerTest,create_file_no_target_file){
     QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
-    QString filePath = AppController::instance()->createFile(tempFilePath + 123, "/tmp", fileName,0);
+    QString filePath = controller->createFile(tempFilePath + 123, "/tmp", fileName,0);
     EXPECT_EQ(filePath, "");
 }
 
 
 TEST_F(AppControllerTest,can_create_file){
     QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch() + 1);
+    QProcess::execute("touch " + tempFilePath);
     QString filePath = AppController::instance()->createFile(tempFilePath, "/tmp",fileName,0);
+    TestHelper::deleteTmpFile(tempFilePath);
     QUrl url = QUrl::fromLocalFile(filePath);
     QFile file(url.toLocalFile());
     EXPECT_EQ(true, file.exists());
@@ -134,6 +148,26 @@ TEST_F(AppControllerTest,start_openAction){
     stl.set(ADDR(DFileService,createFileInfo),createFileInfo);
     bool (*isVaultFile)(void *) = [](void *){return true;};
     stl.set(ADDR(DUrl,isVaultFile),isVaultFile);
+    EXPECT_NO_FATAL_FAILURE(controller->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList() << url << burnurl)));
+    class testFileInfo1 : public DFileInfo {
+    public:
+        explicit testFileInfo1(const DUrl &fileUrl) :
+            DFileInfo(fileUrl)
+        {
+
+        }
+        bool canRedirectionFileUrl() const override {
+            return true;
+        }
+        DUrl redirectedFileUrl() const override {
+            return fileUrl();
+        }
+    };
+
+    DAbstractFileInfoPointer (*createFileInfo2)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &){
+        return DAbstractFileInfoPointer(new testFileInfo1(DUrl()));
+    };
+    stl.set(ADDR(DFileService,createFileInfo),createFileInfo2);
     EXPECT_NO_FATAL_FAILURE(controller->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList() << url << burnurl)));
     stl.reset(ADDR(DFileService,createFileInfo));
     stl.reset(ADDR(DUrl,isVaultFile));
@@ -165,10 +199,63 @@ TEST_F(AppControllerTest,start_actionOpenDisk){
     Stub stl;
 
     DUrl rooturl("dfmroot:///sdb1.localdisk");
+    QString (*scheme)(void *) = [](void *){
+        return QString(DFMROOT_SCHEME);
+    };
+    stl.set(ADDR(DAbstractFileInfo,scheme),scheme);
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenDisk(
                                 dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
+    stl.reset(ADDR(DAbstractFileInfo,scheme));
+
+    QString (*scheme1)(void *) = [](void *){
+        return QString(BURN_SCHEME);
+    };
+    stl.set(ADDR(QUrl,scheme),scheme1);
+    QString (*burnDestDevice)(void *) = [](void *){ return QString("oo");};
+    stl.set(ADDR(DUrl,burnDestDevice),burnDestDevice);
+
+    class testFileInfo : public DFileInfo {
+    public:
+        explicit testFileInfo(const DUrl &fileUrl) :
+            DFileInfo(fileUrl)
+        {
+
+        }
+        bool isGvfsMountFile() const override {
+            return true;
+        }
+    };
+
+    DAbstractFileInfoPointer (*createFileInfo1)(void *,const QObject *, const DUrl &) = [](void *,const QObject *, const DUrl &url){
+        return DAbstractFileInfoPointer(new testFileInfo(url));
+    };
+    stl.set(ADDR(DFileService,createFileInfo),createFileInfo1);
+
+    QStringList (*resolveDeviceNode)(QString, QVariantMap) = [](QString, QVariantMap){
+        return QStringList() << QString("ooo");
+    };
+    stl.set(ADDR(DDiskManager,resolveDeviceNode),resolveDeviceNode);
+
+    QByteArrayList (*mountPoints)(void *)= [](void *){
+        return QByteArrayList() << QByteArray("oooo");
+    };
+    stl.set(ADDR(DBlockDevice,mountPoints),mountPoints) ;
+
+    EXPECT_NO_FATAL_FAILURE(controller->actionOpenDisk(
+                                dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
+    stl.reset(ADDR(QUrl,scheme));
+    stl.reset(ADDR(DUrl,burnDestDevice));
+    stl.reset(ADDR(DDiskManager,resolveDeviceNode));
+    stl.reset(ADDR(DBlockDevice,mountPoints));
+
+    EXPECT_NO_FATAL_FAILURE(controller->actionOpenDisk(
+                                dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
+    stl.reset(ADDR(DFileService,createFileInfo));
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenDisk(
                                 dMakeEventPointer<DFMUrlBaseEvent>(nullptr, DUrl())));
+    void (*actionMount)(const QSharedPointer<DFMUrlBaseEvent> &) = [](const QSharedPointer<DFMUrlBaseEvent> &){};
+    stl.set(ADDR(AppController,actionMount),actionMount);
+
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenDisk(
                                 dMakeEventPointer<DFMUrlBaseEvent>(nullptr, rooturl)));
 
@@ -186,23 +273,38 @@ TEST_F(AppControllerTest,start_asyncOpenDisk){
 TEST_F(AppControllerTest,start_actionOpenInNewWindow){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/Music");
-    EXPECT_NO_FATAL_FAILURE(controller->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList())));
+    void (*actionMount)(const QSharedPointer<DFMUrlBaseEvent> &) = [](const QSharedPointer<DFMUrlBaseEvent> &){};
+    stl.set(ADDR(AppController,actionMount),actionMount);
+    QVariant (*processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = []
+            (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        return QVariant();
+    };
+    stl.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
+            ADDR(DFMEventDispatcher,processEvent),processEvent);
 
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << url)));
     DUrl temp;
     temp.setScheme(FILE_SCHEME);
     temp.setPath("~/Videos");
-    EXPECT_NO_FATAL_FAILURE(controller->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr, DUrlList() << url << temp)));
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,  url)));
 }
 
 TEST_F(AppControllerTest,start_actionOpenDiskInNewWindow){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/Videos");
+    void (*actionMount)(const QSharedPointer<DFMUrlBaseEvent> &) = [](const QSharedPointer<DFMUrlBaseEvent> &){};
+     stl.set(ADDR(AppController,actionMount),actionMount);
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, DUrl())));
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, DUrl())));
+    QString (*scheme)(void *) = [](void *){
+        return QString(DFMROOT_SCHEME);
+    };
+    stl.set(ADDR(DAbstractFileInfo,scheme),scheme);
+    EXPECT_NO_FATAL_FAILURE(controller->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
+    EXPECT_NO_FATAL_FAILURE(controller->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
+    stl.reset(ADDR(DAbstractFileInfo,scheme));
     DUrl rooturl("dfmroot:///sdb1.localdisk");
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, rooturl)));
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, rooturl)));
@@ -242,9 +344,12 @@ TEST_F(AppControllerTest,start_actionOpenFilesWithCustom){
     DUrl temp;
     temp.setScheme(FILE_SCHEME);
     temp.setPath(TestHelper::createTmpFile());
-
+    void (*showOpenFilesWithDialog)(const DFMEvent &) = [](const DFMEvent &){};
+    stl.set(ADDR(DialogManager,showOpenFilesWithDialog),showOpenFilesWithDialog);
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenFilesWithCustom(dMakeEventPointer<DFMUrlListBaseEvent>
                                                                   (nullptr, DUrlList() << url << temp)));
+    bool (*openFileLocation)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &){return true;};
+    stl.set(ADDR(DFileService,openFileLocation),openFileLocation);
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenFileLocation(dMakeEventPointer<DFMUrlListBaseEvent>
                                                                (nullptr, DUrlList() << url << temp)));
     TestHelper::deleteTmpFile(temp.toLocalFile());
@@ -253,6 +358,8 @@ TEST_F(AppControllerTest,start_actionOpenFilesWithCustom){
 TEST_F(AppControllerTest,start_actionOpenWithCustom){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/Videos");
+    void (*showOpenWithDialog)(const DFMEvent &) = [](const DFMEvent &){};
+    stl.set(ADDR(DialogManager,showOpenWithDialog),showOpenWithDialog);
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>
                                                                (nullptr, url)));
 }
@@ -301,8 +408,6 @@ TEST_F(AppControllerTest,start_actionCopy){
 
     EXPECT_NO_FATAL_FAILURE(controller->actionCopy(dMakeEventPointer<DFMUrlListBaseEvent>
                                                    (nullptr, DUrlList() << url)));
-//        EXPECT_NO_FATAL_FAILURE(controller->actionPaste(dMakeEventPointer<DFMUrlBaseEvent>
-//                                                       (nullptr, url)));
 }
 
 TEST_F(AppControllerTest,start_actionRename1){
@@ -354,7 +459,6 @@ TEST_F(AppControllerTest,start_actionBookmarkandother){
 //    EXPECT_NO_FATAL_FAILURE(controller->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>
 //                                                     (nullptr, DUrlList() << temp)));
 //    });
-//    QThread::msleep(500);
     bool (*createSymlink)(const QObject *, const DUrl &) = []
             (const QObject *, const DUrl &){
         return true;
@@ -363,17 +467,40 @@ TEST_F(AppControllerTest,start_actionBookmarkandother){
     EXPECT_NO_FATAL_FAILURE(controller->actionCreateSymlink(dMakeEventPointer<DFMUrlBaseEvent>
                                                             (nullptr, temp1)));
     stl.reset((bool(DFileService::*)(const QObject *, const DUrl &) const)ADDR(DFileService,createSymlink));
+
+    bool (*sendToDesktop)(const QObject *, const DUrlList &) = [](const QObject *, const DUrlList &){return true;};
+    stl.set(ADDR(DFileService,sendToDesktop),sendToDesktop);
     EXPECT_NO_FATAL_FAILURE(controller->actionSendToDesktop(dMakeEventPointer<DFMUrlListBaseEvent>
                                                             (nullptr, DUrlList() << temp)));
     EXPECT_NO_FATAL_FAILURE(controller->actionSendToBluetooth());
+    QAction action;
+    action.connect(&action,&QAction::triggered,controller,&AppController::actionSendToBluetooth);
+    emit action.triggered();
+    void (*sendToBluetooth)(const DUrlList &) = [](const DUrlList &){};
+    stl.set(ADDR(DFileService,sendToBluetooth),sendToBluetooth);
+    EXPECT_NO_FATAL_FAILURE(controller->actionSendToBluetooth());
+    bool (*deleteFiles)(const QObject *, const DUrlList &, bool, bool, bool) = []
+            (const QObject *, const DUrlList &, bool, bool, bool){
+        return true;
+    };
+    stl.set(ADDR(DFileService,deleteFiles),deleteFiles);
     EXPECT_NO_FATAL_FAILURE(controller->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>
                                                                (nullptr, DUrlList())));
-    QProcess::execute("rm " + temp.toLocalFile() + " " + temp1.toLocalFile());
+    TestHelper::deleteTmpFiles(QStringList() << temp.toLocalFile() << temp1.toLocalFile());
 }
 
 TEST_F(AppControllerTest,start_actionNewFolder){
     url.setScheme(FILE_SCHEME);
     url.setPath("./ooooooooooo");
+    QVariant (*processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = []
+            (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        return QVariant();
+    };
+    stl.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
+            ADDR(DFMEventDispatcher,processEvent),processEvent);
+    DUrl (*newDocumentUrl)(const DAbstractFileInfoPointer, const QString &, const QString &) = []
+            (const DAbstractFileInfoPointer, const QString &, const QString &){return DUrl();};
+    stl.set(ADDR(FileUtils,newDocumentUrl),newDocumentUrl);
     EXPECT_NO_FATAL_FAILURE(controller->actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
     EXPECT_NO_FATAL_FAILURE(controller->actionSelectAll(29489851231423));
     EXPECT_NO_FATAL_FAILURE(controller->actionClearRecent(dMakeEventPointer<DFMMenuActionEvent>
@@ -383,13 +510,13 @@ TEST_F(AppControllerTest,start_actionNewFolder){
     QProcess::execute("mv "+ QDir::homePath() + "/.local/share/recently-used.xbel.bak " + QDir::homePath() + "/.local/share/recently-used.xbel");
     QProcess::execute("rm -rf " + url.toLocalFile());
     DFileService::instance()->setDoClearTrashState(true);
-    EXPECT_NO_FATAL_FAILURE(controller->actionClearTrash(nullptr));
-    DFileService::instance()->setDoClearTrashState(false);
     bool (*deleteFiles)(const QObject *, const DUrlList &, bool, bool, bool) = []
             (const QObject *, const DUrlList &, bool, bool, bool){
         return true;
     };
     stl.set(ADDR(DFileService,deleteFiles),deleteFiles);
+    EXPECT_NO_FATAL_FAILURE(controller->actionClearTrash(nullptr));
+    DFileService::instance()->setDoClearTrashState(false);
     EXPECT_NO_FATAL_FAILURE(controller->actionClearTrash(nullptr));
     DFileService::instance()->setDoClearTrashState(false);
 
@@ -401,6 +528,9 @@ TEST_F(AppControllerTest,start_actionNewFile){
     DUrl tmp(url);
     tmp.setPath(TestHelper::createTmpDir());
     url.setPath(tmp.toLocalFile() + "/ztt_test_appkkk");
+    bool (*cpTemplateFileToTargetDir)(const QString &, const QString &, const QString &, WId ) =
+            [](const QString &, const QString &, const QString &, WId ){return true;};
+    stl.set(ADDR(FileUtils,cpTemplateFileToTargetDir),cpTemplateFileToTargetDir);
     EXPECT_NO_FATAL_FAILURE(controller->actionNewText(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url)));
     EXPECT_NO_FATAL_FAILURE(controller->actionNewWord(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url)));
     EXPECT_NO_FATAL_FAILURE(controller->actionNewExcel(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url)));
@@ -436,9 +566,6 @@ TEST_F(AppControllerTest,start_actionNewFile){
     },1000);
     QProcess::execute("rm", QStringList() << isoPath);
 
-    Stub st;
-    void (*doUnmount_stub)(void *, const QString &) = [](void *, const QString &){};
-    st.set(&UnmountWorker::doUnmount, doUnmount_stub);
     url = DUrl("dfmroot:///fakeDisk.gvfsmp");
     EXPECT_NO_FATAL_FAILURE(controller->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
     url = DUrl("dfmroot:///sda1.localdisk");
@@ -489,6 +616,42 @@ TEST_F(AppControllerTest, start_actionProperty){
     url.setScheme(FILE_SCHEME);
     url.setPath("./");
     controller->disconnect();
+    void (*showTrashPropertyDialog)(const DFMEvent &) = [](const DFMEvent &){};
+    stl.set(ADDR(DialogManager,showTrashPropertyDialog),showTrashPropertyDialog);
+    void (*showComputerPropertyDialog)(void *) = [](void*){};
+    stl.set(ADDR(DialogManager,showComputerPropertyDialog),showComputerPropertyDialog);
+    void (*showPropertyDialog)(const DFMUrlListBaseEvent &) = [](const DFMUrlListBaseEvent &){};
+    stl.set(ADDR(DialogManager,showPropertyDialog),showPropertyDialog);
+    EXPECT_NO_FATAL_FAILURE(controller->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>
+                                                       (nullptr,DUrlList() << url)));
+    url.setPath("/bin");
+    EXPECT_NO_FATAL_FAILURE(controller->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>
+                                                       (nullptr,DUrlList() << url)));
+
+//    QString (*scheme)(void *) = [](void *){return QString()};
+//    stl.set(ADDR(DAbstractFileInfo,scheme),scheme);
+    url.setUrl("dfmroot:///Desktop.userdir");
+    EXPECT_NO_FATAL_FAILURE(controller->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>
+                                                       (nullptr,DUrlList() << url)));
+
+    url.setScheme(FILE_SCHEME);
+    url.setPath("~/Desktop/dde-computer.desktop");
+    EXPECT_NO_FATAL_FAILURE(controller->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>
+                                                       (nullptr,DUrlList() << url)));
+    url.setPath("~/Desktop/dde-trash.desktop");
+    EXPECT_NO_FATAL_FAILURE(controller->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>
+                                                       (nullptr,DUrlList() << url)));
+    url = DUrl::fromTrashFile("/");
+    EXPECT_NO_FATAL_FAILURE(controller->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>
+                                                       (nullptr,DUrlList() << url)));
+    url = DUrl::fromComputerFile("/");
+    EXPECT_NO_FATAL_FAILURE(controller->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>
+                                                       (nullptr,DUrlList() << url)));
+
+    QString (*burnFilePath)(void *) = [](void *){ return QString("///");};
+    stl.set(ADDR(DUrl,burnFilePath),burnFilePath);
+    url.setScheme(BURN_SCHEME);
+    url.setPath("/testes/dfds//");
     EXPECT_NO_FATAL_FAILURE(controller->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>
                                                        (nullptr,DUrlList() << url)));
 }
@@ -504,15 +667,23 @@ TEST_F(AppControllerTest, start_actionNewWindow){
             ADDR(DFMEventDispatcher,processEvent),processEvent);
     EXPECT_NO_FATAL_FAILURE(controller->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>
                                                         (nullptr,DUrlList() << url)));
+
 }
 
 TEST_F(AppControllerTest, start_actionExit){
+    void (*onLastActivedWindowClosed)(quint64) = [](quint64){};
+    stl.set(ADDR(WindowManager,onLastActivedWindowClosed),onLastActivedWindowClosed);
     EXPECT_NO_FATAL_FAILURE(controller->actionExit(53561231655));
 }
 
 TEST_F(AppControllerTest, start_actionSetAsWallpaper){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/Pictures/Pictures/Wallpapers/abc-123.jpg");
+    bool (*setBackground)(const QString &) = [](const QString &){return true;};
+    stl.set(ADDR(FileUtils,setBackground),setBackground);
+    EXPECT_NO_FATAL_FAILURE(controller->actionSetAsWallpaper(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url)));
+    bool (*isLocalFile)(void *) = [](void *){return true;};
+    stl.set(ADDR(DUrl,isLocalFile),isLocalFile);
     EXPECT_NO_FATAL_FAILURE(controller->actionSetAsWallpaper(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url)));
 }
 
@@ -520,27 +691,42 @@ TEST_F(AppControllerTest, start_actionShare){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/ut_share_test");
     QProcess::execute("mkdir " + url.toLocalFile());
+    void (*showShareOptionsInPropertyDialog)(const DFMUrlListBaseEvent &) = []
+            (const DFMUrlListBaseEvent &){};
+    stl.set(ADDR(DialogManager,showShareOptionsInPropertyDialog),showShareOptionsInPropertyDialog);
     EXPECT_NO_FATAL_FAILURE(controller->actionShare(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList() << url)));
 }
 
 TEST_F(AppControllerTest, start_actionUnShare){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/ut_share_test");
+    QVariant (*processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = []
+            (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        return QVariant();
+    };
+    stl.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
+            ADDR(DFMEventDispatcher,processEvent),processEvent);
     EXPECT_NO_FATAL_FAILURE(controller->actionUnShare(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url)));
     TestHelper::deleteTmpFile(url.toLocalFile());
 }
 
 TEST_F(AppControllerTest, start_actionConnectToServer){
+    void (*showConnectToServerDialog)(quint64) = [](quint64){};
+    stl.set(ADDR(DialogManager,showConnectToServerDialog),showConnectToServerDialog);
     EXPECT_NO_FATAL_FAILURE(controller->actionConnectToServer(
                                 static_cast<quint64>(QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
 
 TEST_F(AppControllerTest, start_actionSetUserSharePassword){
+    void (*showUserSharePasswordSettingDialog)(quint64) = [](quint64){};
+    stl.set(ADDR(DialogManager,showUserSharePasswordSettingDialog),showUserSharePasswordSettingDialog);
     EXPECT_NO_FATAL_FAILURE(controller->actionSetUserSharePassword(static_cast<quint64>
                                                                    (QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
 
 TEST_F(AppControllerTest, start_actionSettings){
+    void (*showGlobalSettingsDialog)(quint64) = [](quint64){};
+    stl.set(ADDR(DialogManager,showGlobalSettingsDialog),showGlobalSettingsDialog);
     EXPECT_NO_FATAL_FAILURE(controller->actionSettings(static_cast<quint64>
                                                        (QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
@@ -554,46 +740,82 @@ TEST_F(AppControllerTest, start_actionOpticalBlank){
 }
 
 TEST_F(AppControllerTest, start_actionctrlL){
+    void (*handleHotkeyCtrlL)(quint64 ) = [](quint64 ){};
+    stl.set(ADDR(DToolBar,handleHotkeyCtrlL),handleHotkeyCtrlL);
     EXPECT_NO_FATAL_FAILURE(controller->actionctrlL(static_cast<quint64>
                                                     (QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
 
 TEST_F(AppControllerTest, start_actionctrlF){
+    void (*handleHotkeyCtrlF)(quint64 ) = [](quint64 ){};
+    stl.set(ADDR(DToolBar,handleHotkeyCtrlF),handleHotkeyCtrlF);
     EXPECT_NO_FATAL_FAILURE(controller->actionctrlF(static_cast<quint64>
                                                     (QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
-
+QWidget *getWindowById(quint64 winId) {
+    return new QWidget();
+}
 TEST_F(AppControllerTest, start_actionExitCurrentWindow){
+    stl.set(ADDR(WindowManager,getWindowById),&getWindowById);
     EXPECT_NO_FATAL_FAILURE(controller->actionExitCurrentWindow(static_cast<quint64>
                                                                 (QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
 
 TEST_F(AppControllerTest, start_actionShowHotkeyHelp){
-    controller->actionShowHotkeyHelp(static_cast<quint64>(QDateTime::currentDateTime().toMSecsSinceEpoch()));
+
+    EXPECT_NO_FATAL_FAILURE(controller->actionShowHotkeyHelp(static_cast<quint64>
+                                                             (QDateTime::currentDateTime().toMSecsSinceEpoch())));
+    stl.set(ADDR(WindowManager,getWindowById),&getWindowById);
+    bool (*startDetached)(const QString &, const QStringList &) = []
+            (const QString &, const QStringList &){return true;};
+    stl.set((bool (*)(const QString &, const QStringList &))ADDR(QProcess,startDetached),startDetached);
+    EXPECT_NO_FATAL_FAILURE(controller->actionShowHotkeyHelp(static_cast<quint64>
+                                                             (QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
 
 TEST_F(AppControllerTest, start_actionBack){
-    controller->actionBack(static_cast<quint64>(QDateTime::currentDateTime().toMSecsSinceEpoch()));
+    QVariant (*processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = []
+            (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        return QVariant();
+    };
+    stl.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
+            ADDR(DFMEventDispatcher,processEvent),processEvent);
+    EXPECT_NO_FATAL_FAILURE(controller->actionBack(static_cast<quint64>
+                                                   (QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
 
 TEST_F(AppControllerTest, start_actionForward){
-    controller->actionForward(static_cast<quint64>(QDateTime::currentDateTime().toMSecsSinceEpoch()));
+    QVariant (*processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = []
+            (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        return QVariant();
+    };
+    stl.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
+            ADDR(DFMEventDispatcher,processEvent),processEvent);
+    EXPECT_NO_FATAL_FAILURE(controller->actionForward(
+                                static_cast<quint64>(QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
 
 TEST_F(AppControllerTest, start_actionForgetPassword){
-    controller->actionForgetPassword(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url));
+
+
+
+    void (*actionUnmount)(const QSharedPointer<DFMUrlBaseEvent> &) = [](const QSharedPointer<DFMUrlBaseEvent> &){};
+    stl.set(ADDR(AppController,actionUnmount),actionUnmount);
+    void (*clearPasswordByLoginObj)(const QJsonObject &) = [](const QJsonObject &){};
+    stl.set(ADDR(SecretManager,clearPasswordByLoginObj),clearPasswordByLoginObj);
+    EXPECT_NO_FATAL_FAILURE(controller->actionForgetPassword(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url)));
 }
 
 TEST_F(AppControllerTest, start_actionOpenFileByApp){
-    controller->actionOpenFileByApp();
+    EXPECT_NO_FATAL_FAILURE(controller->actionOpenFileByApp());
 }
 
 TEST_F(AppControllerTest, start_actionSendToRemovableDisk){
-    controller->actionSendToRemovableDisk();
+    EXPECT_NO_FATAL_FAILURE(controller->actionSendToRemovableDisk());
 }
 
 TEST_F(AppControllerTest, start_actionStageFileForBurning){
-    controller->actionStageFileForBurning();
+    EXPECT_NO_FATAL_FAILURE(controller->actionStageFileForBurning());
 }
 
 TEST_F(AppControllerTest, start_actionGetTagsThroughFiles){
@@ -631,6 +853,12 @@ TEST_F(AppControllerTest, start_doSubscriberAction){
     if (!controller->m_fmEvent ) {
         controller->m_fmEvent = dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList() << url);
     }
+    void (*asyncOpenDisk)(const QString &) = [](const QString &){};
+    stl.set(ADDR(AppController,asyncOpenDisk),asyncOpenDisk);
+    void (*asyncOpenDiskInNewWindow)(const QString &) = [](const QString &){};
+    stl.set(ADDR(AppController,asyncOpenDiskInNewWindow),asyncOpenDiskInNewWindow);
+    void (*asyncOpenDiskInNewTab)(const QString &) = [](const QString &){};
+    stl.set(ADDR(AppController,asyncOpenDiskInNewTab),asyncOpenDiskInNewTab);
     EXPECT_NO_FATAL_FAILURE(controller->setEventKey(AppController::Open));
     EXPECT_NO_FATAL_FAILURE(controller->doSubscriberAction(url.toString()));
     EXPECT_NO_FATAL_FAILURE(controller->setEventKey(AppController::OpenNewWindow));
@@ -658,5 +886,3 @@ TEST_F(AppControllerTest, start_showErrorDialog){
     TestHelper::runInLoop([=](){
     });
 }
-
-

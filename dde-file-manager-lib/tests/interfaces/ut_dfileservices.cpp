@@ -57,6 +57,17 @@ public:
         stl.set(ADDR(WindowManager,showNewWindow),showNewWindow);
         bool (*cd)(const DUrl &) = [](const DUrl &){return false;};
         stl.set(ADDR(DFileManagerWindow,cd),cd);
+
+        void (*showErrorDialog)(const QString &, const QString &) = []
+                (const QString &, const QString &){};
+        stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
+        void (*showUnableToLocateDir)(const QString &) = []
+                (const QString &){};
+        stl.set(ADDR(DialogManager,showUnableToLocateDir),showUnableToLocateDir);
+        void (*showRenameNameSameErrorDialog)(const QString &,const DFMEvent &) = []
+                (const QString &,const DFMEvent &){};
+        stl.set(ADDR(DialogManager,showRenameNameSameErrorDialog),showRenameNameSameErrorDialog);
+
         std::cout << "start DFileSeviceTest" << std::endl;
     }
 
@@ -106,6 +117,9 @@ TEST_F(DFileSeviceTest, sart_fmevent){
 
     url.setPath(to.toLocalFile()+"/tmpj");
     to.setPath("/tmp");
+    int (*showRenameNameDotDotErrorDialog)(const DFMEvent &) = [](const DFMEvent &){return 0;};
+    stl.set(ADDR(DialogManager,showRenameNameDotDotErrorDialog),
+            showRenameNameDotDotErrorDialog);
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMRenameEvent>
                                  (nullptr, url, to, false),nullptr));
     url.setPath(urlpath);
@@ -145,6 +159,8 @@ TEST_F(DFileSeviceTest, sart_fmevent){
         return true;
     };
     stl.set(ADDR(PathManager,isSystemPath),isSystemPath);
+    void (*showDeleteSystemPathWarnDialog)(quint64 ) = [](quint64 ){};
+    stl.set(ADDR(DialogManager,showDeleteSystemPathWarnDialog),showDeleteSystemPathWarnDialog);
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMMoveToTrashEvent>
                                  (nullptr, DUrlList() << url),nullptr));
     stl.reset(ADDR(PathManager,isSystemPath));
@@ -252,6 +268,10 @@ TEST_F(DFileSeviceTest, sart_fmevent){
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMOpenFilesByAppEvent>
                                  (nullptr, "deepin-editor", DUrlList() << url, false),nullptr));
     EXPECT_FALSE(service->fmEvent(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url),nullptr));
+    url.setScheme(FILE_SCHEME);
+    url.setPath(urlpath);
+    to.setScheme(FILE_SCHEME);
+    to.setPath(topath);
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile() << to.toLocalFile());
 }
 
@@ -388,6 +408,8 @@ TEST_F(DFileSeviceTest, start_deleteFiles){
     EXPECT_FALSE(service->deleteFiles(nullptr,DUrlList() << url,true));
     bool (*isSystemPath)(QString) = [](QString){return true;};
     stl.set(ADDR(PathManager,isSystemPath),isSystemPath);
+    void (*showDeleteSystemPathWarnDialog)(quint64 ) = [](quint64 ){};
+    stl.set(ADDR(DialogManager,showDeleteSystemPathWarnDialog),showDeleteSystemPathWarnDialog);
     EXPECT_FALSE(service->deleteFiles(nullptr,DUrlList() << url,true));
 
     DUrlList rmd;
@@ -444,7 +466,7 @@ TEST_F(DFileSeviceTest, start_pasteFileByClipboard){
     url.setScheme(SEARCH_SCHEME);
     stl.reset(ADDR(DFMGlobal,clipboardAction));
     ASSERT_NO_FATAL_FAILURE(service->pasteFileByClipboard(nullptr,url));
-
+    TestHelper::runInLoop([=](){});
     url.setScheme(FILE_SCHEME);
     DFMGlobal::ClipboardAction (*clipboardAction1)(void *) = [](void *){ return DFMGlobal::CutAction;};
     stl.set(ADDR(DFMGlobal,clipboardAction),clipboardAction1);
@@ -455,7 +477,6 @@ TEST_F(DFileSeviceTest, start_pasteFileByClipboard){
 TEST_F(DFileSeviceTest, start_pasteFile){
     DUrl url,to;
     url.setScheme(FILE_SCHEME);
-    QString filepath = TestHelper::createTmpDir();
     url.setPath(TestHelper::createTmpDir());
     to.setScheme(FILE_SCHEME);
     to.setPath(TestHelper::createTmpFile(".txt"));
@@ -463,14 +484,15 @@ TEST_F(DFileSeviceTest, start_pasteFile){
             (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
         return QVariant();
     };
-
+    TestHelper::runInLoop([=](){});
     stl.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
             ADDR(DFMEventDispatcher,processEventWithEventLoop),processEventWithEventLoop);
     EXPECT_TRUE(service->pasteFile(nullptr,DFMGlobal::CopyAction,url,DUrlList() << to).isEmpty());
-    TestHelper::deleteTmpFile(url.toLocalFile());
+    TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile() << to.toLocalFile());
 }
 
 TEST_F(DFileSeviceTest, start_fileOperations){
+    TestHelper::runInLoop([=](){});
     DUrl url,to,linkurl,testfileinfo,destinfo;
     url.setScheme(FILE_SCHEME);
     QString filename = "ut_test_defileservice";
@@ -524,6 +546,8 @@ TEST_F(DFileSeviceTest, start_fileOperations){
     stl.set(ADDR(DFileService,getSymlinkFileName),getSymlinkFileName);
     bool (*isVaultFile)(void *) = [](void *){return true;};
     stl.set(ADDR(VaultController,isVaultFile),isVaultFile);
+    void (*showFailToCreateSymlinkDialog)(const QString &) = [](const QString &){};
+    stl.set(ADDR(DialogManager,showFailToCreateSymlinkDialog),showFailToCreateSymlinkDialog);
     EXPECT_FALSE(service->createSymlink(nullptr,to));
     stl.reset(ADDR(VaultController,isVaultFile));
     QString (*getSaveFileName1)(QWidget *,
@@ -610,6 +634,7 @@ TEST_F(DFileSeviceTest, start_fileOperations){
 }
 
 TEST_F(DFileSeviceTest, start_otherOperations){
+    TestHelper::runInLoop([=](){});
     QVariant (*processEventWithEventLoop)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = []
             (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
         return QVariant();
