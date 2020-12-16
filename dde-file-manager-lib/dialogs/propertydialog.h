@@ -30,6 +30,8 @@
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "dfmevent.h"
 
+#include <dplatformwindowhandle.h>
+
 #include <QLabel>
 #include <QCloseEvent>
 #include <QTextEdit>
@@ -241,6 +243,8 @@ private:
     QFrame *createInfoFrame(const QList<QPair<QString, QString> > &properties);
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
     QFrame *createAuthorityManagementWidget(const DAbstractFileInfoPointer &info);
+
+    QPointer<DPlatformWindowHandle> m_platformWindowHandle {nullptr};
 };
 
 #endif // PROPERTYDIALOG_H
