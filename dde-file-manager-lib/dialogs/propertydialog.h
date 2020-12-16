@@ -29,6 +29,9 @@
 #include "dabstractfileinfo.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "dfmevent.h"
+#include <views/dfmactionbutton.h>
+
+#include <dplatformwindowhandle.h>
 
 #include <QLabel>
 #include <QCloseEvent>
@@ -39,7 +42,6 @@
 #include <QScrollArea>
 #include <QVariantAnimation>
 
-#include <views/dfmactionbutton.h>
 #define EXTEND_FRAME_MAXHEIGHT 160
 
 QT_BEGIN_NAMESPACE
@@ -246,6 +248,8 @@ private:
     QFrame *createInfoFrame(const QList<QPair<QString, QString> > &properties);
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
     QFrame *createAuthorityManagementWidget(const DAbstractFileInfoPointer &info);
+
+    QPointer<DPlatformWindowHandle> m_platformWindowHandle {nullptr};
 };
 
 #endif // PROPERTYDIALOG_H
