@@ -814,7 +814,7 @@ bool DAbstractFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) 
 QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
-    Q_D(const DAbstractFileInfo);
+//    Q_D(const DAbstractFileInfo); 未使用
     if (type == SpaceArea) {
         actionKeys.reserve(9);
 

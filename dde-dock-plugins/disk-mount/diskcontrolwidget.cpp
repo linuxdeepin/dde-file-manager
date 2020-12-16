@@ -327,6 +327,7 @@ void DiskControlWidget::onDiskListChanged()
             m_centralLayout->addWidget(item);
         } else {
             delete dad;
+            dad = nullptr; //指针指空 防止野指针崩溃不好找
         }
     }
 

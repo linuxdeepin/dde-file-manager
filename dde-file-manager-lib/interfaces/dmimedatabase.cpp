@@ -97,7 +97,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     return result;
 }
 
-QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase::MatchMode mode, const QString inod, const bool isgvfs) const
+QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase::MatchMode mode, const QString& inod, const bool isgvfs) const
 {
 
     if (!inod.isEmpty() && inodmimetypecache.contains(inod)) {
@@ -107,8 +107,9 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase:
 
 }
 
-QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode, const QString inod, const bool isgvfs) const
+QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode, const QString& inod, const bool isgvfs) const
 {
+    Q_UNUSED(isgvfs)
     // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
     bool cancache = !inod.isEmpty();
     if (!inod.isEmpty() && inodmimetypecache.contains(inod)) {
