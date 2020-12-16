@@ -188,7 +188,7 @@ bool DFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFile
     if (!targetUrl.isLocalFile() && !arg1.isMTPFile()) // 华为版本，MTP删除文件自行刷新
         return false;
 
-    Q_Q(DFileWatcher);
+//    Q_Q(DFileWatcher); //没有被使用
 
     if (signal == &DAbstractFileWatcher::fileDeleted) {
         if (arg1.isMTPFile()) {

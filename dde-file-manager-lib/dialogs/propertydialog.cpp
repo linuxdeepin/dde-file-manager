@@ -206,7 +206,9 @@ void NameTextEdit::focusOutEvent(QFocusEvent *event)
 void NameTextEdit::keyPressEvent(QKeyEvent *event)
 {
     QEvent::Type ty = event->type();
+    Q_UNUSED(ty)
     Qt::KeyboardModifiers modifiers = event->modifiers();
+    Q_UNUSED(modifiers)
     if (event->key() == Qt::Key_Escape) {
         setIsCanceled(true);
         emit editFinished();

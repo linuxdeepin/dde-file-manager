@@ -1279,7 +1279,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
 void DFileView::mouseMoveEvent(QMouseEvent *event)
 {
-    Q_D(const DFileView);
+//    Q_D(const DFileView);
 
     // source为此类型时认为是触屏事件
 //    if (event->source() == Qt::MouseEventSynthesizedByQt) {
