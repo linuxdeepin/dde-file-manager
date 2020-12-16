@@ -175,6 +175,7 @@ bool DFMRootFileInfo::exists() const
             return false;
         }
     }
+    return false;
 }
 
 QString DFMRootFileInfo::suffix() const
