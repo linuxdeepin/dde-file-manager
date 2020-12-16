@@ -6,6 +6,7 @@
 #include <DListView>
 
 #include "stub.h"
+#include "stubext.h"
 
 DGUI_USE_NAMESPACE
 
@@ -16,24 +17,6 @@ DGUI_USE_NAMESPACE
 #include "bluetooth/bluetoothmanager.h"
 #include "bluetooth/bluetoothadapter.h"
 #include "bluetooth/bluetoothmodel.h"
-
-namespace BluetoothUnitTest {
-    QMap<QString, const BluetoothAdapter *> (*adapters_stub)(void *) = [](void *) {
-        BluetoothAdapter *adapter = new BluetoothAdapter;
-        adapter->setId("1");
-        adapter->setName("local");
-        adapter->setPowered(true);
-
-        BluetoothDevice *dev = new BluetoothDevice;
-        dev->setId("1234");
-        dev->setIcon("phone");
-        adapter->addDevice(dev);
-
-        QMap<QString, const BluetoothAdapter *> map;
-        map.insert(adapter->id(), adapter);
-        return map;
-    };
-}
 
 namespace {
 class TestBluetoothTransDialog : public testing::Test
@@ -87,6 +70,8 @@ TEST_F(TestBluetoothTransDialog, tstCanSendFiles)
 
 TEST_F(TestBluetoothTransDialog, tstLambdaSlots)
 {
+    stub_ext::StubExt st;
+    st.set_lamda(VADDR(DDialog, exec), []{return 1;});
     dlg->m_currSessionPath = "123";
     BluetoothManager::instance()->transferProgressUpdated("1234", 123, 1234, 0);
 
@@ -142,8 +127,22 @@ TEST_F(TestBluetoothTransDialog, tstFindItemByIdRole)
 TEST_F(TestBluetoothTransDialog, tstSendFilesToDevice)
 {
     void (*sendFiles_stub)(void *, QString, QStringList) = [](void *, QString, QStringList) {;};
+
+    BluetoothAdapter *adapter0 = new BluetoothAdapter;
+    adapter0->setId("1");
+    adapter0->setName("local");
+    adapter0->setPowered(true);
+    BluetoothDevice *dev0 = new BluetoothDevice;
+    dev0->setId("1234");
+    dev0->setIcon("phone");
+    adapter0->addDevice(dev0);
+    QMap<QString, const BluetoothAdapter *> map;
+    map.insert(adapter0->id(), adapter0);
+
+    stub_ext::StubExt stExt;
+    stExt.set_lamda(ADDR(BluetoothModel, adapters), [&map]{return map;});
+
     Stub st;
-    st.set(ADDR(BluetoothModel, adapters), BluetoothUnitTest::adapters_stub);
     st.set(static_cast<void(BluetoothManager::*)(const QString &, const QStringList &)>(&BluetoothManager::sendFiles), sendFiles_stub);
 
     dlg->m_finishedUrls << "/usr/bin/dde-file-manager";
@@ -170,10 +169,14 @@ TEST_F(TestBluetoothTransDialog, tstSendFilesToDevice)
     dev->setPaired(true);
     dev->setIcon("phone");
     dev->setState(BluetoothDevice::StateConnected);
-    dlg->getStyledItem(dev);
+    DStandardItem *item = dlg->getStyledItem(dev);
 
+    if (item)
+        delete item;
     delete dev;
     delete adapter;
+    delete dev0;
+    delete adapter0;
 
     dlg->close();
 }
