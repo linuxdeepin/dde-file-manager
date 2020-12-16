@@ -67,7 +67,7 @@ TEST_F(TestDFMSideBarItemInterface,contextMenu)
 }
 
 //if can't carsh, nothing to do.
-TEST_F(DFMSideBarItemInterfaceTest,rename)
+TEST_F(TestDFMSideBarItemInterface,rename)
 {
     interface.rename(&item,"newName");
     EXPECT_TRUE(item.groupName() != "newName");
