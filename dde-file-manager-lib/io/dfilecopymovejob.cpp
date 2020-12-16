@@ -1765,20 +1765,26 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
     QMutex mutex;
     qint64 fromSize = fromInfo->size();
     __off_t len = lseek(fromFd,0,SEEK_END);
+    m_countVetor.push_back(QAtomicInt(-1));
+    if (m_countVetor.count() <= 0 || m_countVetor.count() <= m_count.load() ) {
+        close(fromFd);
+        close(toFd);
+        return false;
+    }
     for (int i = 0;i < 10; ++i)
     {
         futrueArray[i] = QtConcurrent::run([&mutex,&fromSize,&fromPoint,&toPoint,&len,&blockSize,this]() {
             mutex.lock();
-            m_count++;
-            m_count = m_count%10;
-            __off_t srcpoint = ((fromSize)/10)*m_count;   //获取对应线程的拷贝起始点
+            m_countVetor[m_count].store(m_countVetor[m_count].load() + 1);
+            __off_t srcpoint = ((fromSize)/10)*m_countVetor[m_count].load();   //获取对应线程的拷贝起始点
             __off_t destpoint = srcpoint;
-            qDebug() << destpoint << srcpoint << m_count << fromSize << fromSize/10 << static_cast<size_t>(fromSize/10) << len;
+            qDebug() << destpoint << srcpoint << m_count\
+                     << m_countVetor[m_count].load() << fromSize << fromSize/10 << static_cast<size_t>(fromSize/10) << len;
             mutex.unlock();
             qint64 everySize = (fromSize)/10;
             qint64 copySize = everySize > blockSize ? blockSize : everySize;
             qint64 lastSize = 0;
-            if(m_count != 9)
+            if(m_countVetor[m_count].load() != 9)
             {
                 while(everySize > 0) {
                     if (Q_UNLIKELY(!stateCheck())) {
@@ -2335,7 +2341,9 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer fromInfo, 
     }
     //判读目标目录和本地目录是不是同盘，并且是大文件
     if (m_bDestLocal && isFromLocalUrls && fromInfo->size() > 500 * 1024 * 1024) {
-        return doCopyFileBig(fromInfo, toInfo, handler, blockSize);
+        bool ok = doCopyFileBig(fromInfo, toInfo, handler, blockSize);
+        m_count.store(m_count.load() + 1);
+        return ok;
     }
     //1.判断源文件是本地，目标文件也是本地执行读写线程分离处理
     //2.判断源文件是本地，目标文件是（除光盘外的）块设备，
