@@ -637,7 +637,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
     QString DeleteFileName = tr("Permanently delete %1?");
     QString DeleteFileItems = tr("Permanently delete %1 items?");
 
-    const int maxFileNameWidth = 250;
+    const int maxFileNameWidth = MAX_FILE_NAME_CHAR_COUNT;
 
     DUrlList urlList = event.urlList();
     QStringList buttonTexts;
@@ -684,6 +684,44 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
     d.moveToCenter();
     int code = d.exec();
     return code;
+}
+
+int DialogManager::showNormalDeleteConfirmDialog(const DFMUrlListBaseEvent &event)
+{
+    DDialog d;
+
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
+
+    QFontMetrics fm(d.font());
+    d.setIcon(QIcon::fromTheme("user-trash-full-opened"));
+
+    QString deleteFileName = tr("Do you want to delete %1?");
+    QString deleteFileItems = tr("Do you want to delete the selected %1 items?");
+
+    DUrlList urlList = event.urlList();
+
+    if (urlList.first().isLocalFile()) { // delete local file
+        if (urlList.size() == 1) {
+            DFileInfo f(urlList.first());
+            d.setTitle(deleteFileName.arg(fm.elidedText(f.fileDisplayName(), Qt::ElideMiddle, MAX_FILE_NAME_CHAR_COUNT)));
+        } else {
+            d.setTitle(deleteFileItems.arg(urlList.size()));
+        }
+    } else {
+        d.setTitle(deleteFileItems.arg(urlList.size()));
+    }
+
+    QStringList buttonTexts;
+    buttonTexts << tr("Cancel") << tr("Delete");
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
+    d.moveToCenter();
+
+    return d.exec();
 }
 
 int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
