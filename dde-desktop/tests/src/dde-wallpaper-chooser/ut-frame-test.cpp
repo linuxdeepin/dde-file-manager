@@ -410,16 +410,14 @@ TEST_F(FrameTest, test_setwallpaperslideshow)
     bool judge = false;
     stu.set_lamda(ADDR(ComDeepinDaemonAppearanceInterface, SetWallpaperSlideShow), [&judge](){judge = true; return QDBusPendingReply<QString>();});
 
-    if (m_frame->m_dbusAppearance != nullptr) {
-        m_frame->setWallpaperSlideShow(temp);
-        EXPECT_TRUE(judge);
-    }
+    m_frame->setWallpaperSlideShow(temp);
+    EXPECT_TRUE(judge);
+
+    delete m_frame->m_dbusAppearance;
     m_frame->m_dbusAppearance = nullptr;
-    if (m_frame->m_dbusAppearance == nullptr) {
-        m_frame->setWallpaperSlideShow(temp);
-        QString ret = m_frame->getWallpaperSlideShow();
-        EXPECT_EQ(ret, QString());
-    }
+    m_frame->setWallpaperSlideShow(temp);
+    QString ret = m_frame->getWallpaperSlideShow();
+    EXPECT_EQ(ret, QString());
 }
 
 TEST_F(FrameTest, test_setbackground)
@@ -430,6 +428,7 @@ TEST_F(FrameTest, test_setbackground)
     m_frame->setBackground();
     EXPECT_TRUE(m_frame->desktopBackground().second == QString("/usr/share/backgrounds/default_background.jpg"));
 
+    delete m_frame->m_dbusAppearance;
     m_frame->m_dbusAppearance = nullptr;
     m_frame->setBackground();
 }
@@ -439,17 +438,19 @@ TEST_F(FrameTest, test_getwallpaperslideshow)
     ASSERT_EQ(m_frame->m_dbusDeepinWM, nullptr);
     ASSERT_EQ(m_frame->m_backgroundManager, nullptr);
 
+    stub_ext::StubExt stu;
+    bool isshow = false;
+    stu.set_lamda(ADDR(ComDeepinDaemonAppearanceInterface, GetWallpaperSlideShow), [&isshow](){isshow = true; return QDBusPendingReply<QString>();});
     m_frame->m_wallpaperList->setCurrentIndex(1);
     QString str;
     qApp->processEvents();
     QString temp1 = m_frame->getWallpaperSlideShow();
+    EXPECT_TRUE(isshow);
 
-    if (m_frame->m_dbusAppearance != nullptr) {
-        EXPECT_NE(temp1, str);
-    }
-    else {
-        EXPECT_EQ(temp1, str);
-    }
+    delete m_frame->m_dbusAppearance;
+    m_frame->m_dbusAppearance = nullptr;
+    temp1 = m_frame->getWallpaperSlideShow();
+    EXPECT_EQ(temp1, str);
 }
 
 TEST_F(FrameTest, test_wayland)
