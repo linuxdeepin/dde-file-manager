@@ -145,6 +145,10 @@ TEST_F(TestDFMGlobal, test_initGvfsMountManager)
 static bool called = false;
 TEST_F(TestDFMGlobal, test_initTagManagerConnect)
 {
+    StubExt stExt;
+    TagManager *tagManager = new TagManager();
+    stExt.set_lamda(&TagManager::instance, [&](){return tagManager;});
+
     TagManager::instance()->makeFilesTagThroughColor("Red", {DUrl::fromLocalFile(m_filePath)});
     DFMGlobal::initTagManagerConnect();
 
@@ -179,6 +183,11 @@ TEST_F(TestDFMGlobal, test_initTagManagerConnect)
     called = false;
     TagManager::instance()->untagFiles({{m_filePath, {"Blue"}}});
     EXPECT_TRUE(called);
+
+    if (tagManager) {
+        delete tagManager;
+        tagManager = nullptr;
+    }
 }
 
 TEST_F(TestDFMGlobal, test_initThumbnailConnection)

@@ -311,7 +311,7 @@ bool TagManager::deleteFiles(const QList<DUrl> &fileList)
 #ifndef DDE_ANYTHINGMONITOR
 void TagManager::init_connect()noexcept
 {
-    connect(DFileService::instance(), &DFileService::fileCopied, this, [this](const DUrl & source, const DUrl & target) {
+    connect(DFileService::instance(), &DFileService::fileCopied, this, [ = ](const DUrl & source, const DUrl & target) {
         const QStringList &tags = DFileService::instance()->getTagsThroughFiles(this, {source});
 
         if (tags.isEmpty()) {
@@ -327,7 +327,7 @@ void TagManager::init_connect()noexcept
 //        }
 //    });
 
-    connect(DFileService::instance(), &DFileService::fileRenamed, this, [this](const DUrl & from, const DUrl & to) {
+    connect(DFileService::instance(), &DFileService::fileRenamed, this, [ = ](const DUrl & from, const DUrl & to) {
         QFileInfo from_info{ from.toLocalFile() };
         QFileInfo to_info{ to.toLocalFile() };
         DUrl from_backup{ from };
@@ -362,7 +362,7 @@ void TagManager::init_connect()noexcept
         DFileService::instance()->setFileTags(this, to, tags);
     });
 
-    QObject::connect(DFileService::instance(), &DFileService::fileMovedToTrash, [this](const DUrl & from, const DUrl & to) {
+    connect(DFileService::instance(), &DFileService::fileMovedToTrash, this, [ = ](const DUrl & from, const DUrl & to) {
         (void)from;
 
         if (from.isLocalFile()) {
@@ -375,24 +375,24 @@ void TagManager::init_connect()noexcept
         });
     });
 
-    QObject::connect(DFileService::instance(), &DFileService::fileDeleted, [this](const DUrl & from) {
+    connect(DFileService::instance(), &DFileService::fileDeleted, this, [](const DUrl & from) {
         (void)from;
         if (from.isLocalFile() ) {
             deleteFiles({from});
         }
     });
 
-    QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::addNewTags, [this](const QVariant & new_tags) {
+    connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::addNewTags, this, [ = ](const QVariant & new_tags) {
 
         emit this->addNewTag(new_tags.toStringList());
     });
 
-    QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::deleteTags, [this](const QVariant & be_deleted_tags) {
+    connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::deleteTags, this, [ = ](const QVariant & be_deleted_tags) {
 
         emit this->deleteTag(be_deleted_tags.toStringList());
     });
 
-    QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::changeTagColor, [this](const QVariantMap & old_and_new_color) {
+    connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::changeTagColor, this, [ = ](const QVariantMap & old_and_new_color) {
 
         QMap<QString, QString> old_and_new{};
         QMap<QString, QVariant>::const_iterator c_beg{ old_and_new_color.cbegin() };
@@ -405,7 +405,7 @@ void TagManager::init_connect()noexcept
         emit this->changeTagColor(old_and_new);
     });
 
-    QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::changeTagName, [this](const QVariantMap & old_and_new_name) {
+    connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::changeTagName, this, [ = ](const QVariantMap & old_and_new_name) {
         QMap<QString, QString> old_and_new{};
         QMap<QString, QVariant>::const_iterator c_beg{ old_and_new_name.cbegin() };
         QMap<QString, QVariant>::const_iterator c_end{ old_and_new_name.cend() };
@@ -417,7 +417,7 @@ void TagManager::init_connect()noexcept
         emit this->changeTagName(old_and_new);
     });
 
-    QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::filesWereTagged, [this](const QVariantMap & files_were_tagged) {
+    connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::filesWereTagged, this, [ = ](const QVariantMap & files_were_tagged) {
         QMap<QString, QList<QString>> file_and_tags{};
         QMap<QString, QVariant>::const_iterator the_beg{ files_were_tagged.cbegin() };
         QMap<QString, QVariant>::const_iterator the_end{ files_were_tagged.cend() };
@@ -429,7 +429,7 @@ void TagManager::init_connect()noexcept
         emit this->filesWereTagged(file_and_tags);
     });
 
-    QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::untagFiles, [this](const QVariantMap & tag_be_removed_files) {
+    connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::untagFiles, this, [ = ](const QVariantMap & tag_be_removed_files) {
         QMap<QString, QList<QString>> file_and_tags{};
         QMap<QString, QVariant>::const_iterator the_beg{ tag_be_removed_files.cbegin() };
         QMap<QString, QVariant>::const_iterator the_end{ tag_be_removed_files.cend() };

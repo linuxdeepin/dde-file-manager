@@ -85,6 +85,7 @@ SOURCES += \
     $$PWD/deviceinfo/ut_udiskdeviceinfo.cpp \
     $$PWD/bluetooth/ut_bluetoothtransdialog.cpp \
     ####
+    $$PWD/interfaces/ut_dfileinfo.cpp \
     $$PWD/interfaces/pulgins/ut_dfmcrumbfactory.cpp \
     $$PWD/interfaces/pulgins/ut_dfmviewplugin.cpp \
     $$PWD/interfaces/pulgins/ut_dfmviewfactory.cpp \
@@ -157,6 +158,7 @@ SOURCES += \
     $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebartagitemhandler.cpp \
+    $$PWD/controllers/ut_dfmsidebarbookmarkitemhandler.cpp \
     $$PWD/controllers/ut_tagmanagerdaemon_interface.cpp \
     $$PWD/controllers/ut_dfmavfscrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmbookmarkcrumbcontroller.cpp \
@@ -233,7 +235,6 @@ SOURCES += \
     $$PWD/gvfs/ut_qvolume.cpp \
     $$PWD/interfaces/ut_dfilesystemmodel.cpp \
     $$PWD/controllers/ut_pathmanager.cpp \
-    $$PWD/interfaces/ut_dfileinfo.cpp \
     # custom
     $$PWD/interfaces/customization/ut_customaction_sort.cpp \
     $$PWD/interfaces/customization/ut-dcustomactionbuilder.cpp \
