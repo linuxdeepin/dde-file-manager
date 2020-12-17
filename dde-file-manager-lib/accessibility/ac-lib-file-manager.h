@@ -128,10 +128,14 @@
     #define AC_TAG_ACTION_WIDGET_TOOL_TIP QObject::tr("tag_action_tool_tip") //tag 面板 提示
     #define AC_TAG_CRUMB_EDIT QObject::tr("tag_crumb_edit") //tag 编辑区域
 
+    #define AC_VAULT_ACTIVE_WIDGET                          QObject::tr("vault_active_widget")          // 保险箱激活页面
+    #define AC_VAULT_ACTIVE_STACK                           QObject::tr("vault_active_stack")           // 保险箱激活 功能页面容器
+    #define AC_VAULT_ACTIVE_START_WIDGET                    QObject::tr("vault_active_start_widget")    // 保险箱激活 开始页面
     #define AC_VAULT_ACTIVE_START_TITLE_LABEL               QObject::tr("vault_active_start_title")     // 保险箱激活 开始页面 标题
     #define AC_VAULT_ACTIVE_START_CONTENT_LABEL             QObject::tr("vault_active_start_content")   // 保险箱激活 开始页面 内容
     #define AC_VAULT_ACTIVE_START_PICTURE                   QObject::tr("vault_active_start_picture")   // 保险箱激活 开始页面 图片
     #define AC_VAULT_ACTIVE_START_BUTTON                    QObject::tr("vault_active_start_button")    // 保险箱激活 开始页面 开启按钮
+    #define AC_VAULT_ACTIVE_SET_PASSWORD_WIDGET             QObject::tr("vault_active_set_password_widget")             // 保险箱激活 设置密码页面
     #define AC_VAULT_ACTIVE_SET_PASSWORD_TITLE              QObject::tr("vault_active_set_password_title")              // 保险箱激活 设置密码页面 标题
     #define AC_VAULT_ACTIVE_SET_PASSWORD_TYPE_LABEL         QObject::tr("vault_active_set_password_type_label")         // 保险箱激活 设置密码页面 类型 标签
     #define AC_VAULT_ACTIVE_SET_PASSWORD_TYPE_COMBOX        QObject::tr("vault_active_set_password_type_combox")        // 保险箱激活 设置密码页面 类型 组合框
@@ -142,6 +146,7 @@
     #define AC_VAULT_ACTIVE_SET_PASSWORD_HINT_LABEL         QObject::tr("vault_active_set_password_hint_label")         // 保险箱激活 设置密码页面 提示 标签
     #define AC_VAULT_ACTIVE_SET_PASSWORD_HINT_EDIT          QObject::tr("vault_active_set_password_hint_edit")          // 保险箱激活 设置密码页面 提示 编辑框
     #define AC_VAULT_ACTIVE_SET_PASSWORD_NEXT_BUTTON        QObject::tr("vault_active_set_password_next_button")        // 保险箱激活 设置密码页面 下一步 按钮
+    #define AC_VAULT_ACTIVE_KEY_WIDGET                      QObject::tr("vault_active_key_widget")          // 保险箱激活 密钥页面
     #define AC_VAULT_ACTIVE_KEY_TITLE                       QObject::tr("vault_active_key_title")           // 保险箱激活 密钥页面 标题
     #define AC_VAULT_ACTIVE_KEY_CONTENT                     QObject::tr("vault_active_key_content")         // 保险箱激活 密钥页面 内容
     #define AC_VAULT_ACTIVE_KEY_KEY_BUTTON                  QObject::tr("vault_active_key_key_button")      // 保险箱激活 密钥页面 密钥 按钮
@@ -150,6 +155,7 @@
     #define AC_VAULT_ACTIVE_KEY_QRCODE_IMAGE                QObject::tr("vault_active_key_qrcode_image")    // 保险箱激活 密钥页面 二维码 图片
     #define AC_VAULT_ACTIVE_KEY_QRCODE_HINT                 QObject::tr("vault_active_key_qrcode_hint")     // 保险箱激活 密钥页面 二维码 提示
     #define AC_VAULT_ACTIVE_KEY_NEXT_BUTTON                 QObject::tr("vault_active_key_next_button")     // 保险箱激活 密钥页面 下一步 按钮
+    #define AC_VAULT_ACTIVE_ENCRYPT_WIDGET                  QObject::tr("vault_active_encrypy_widget")          // 保险箱激活 加密页面
     #define AC_VAULT_ACTIVE_ENCRYPT_TITLE                   QObject::tr("vault_active_encrypy_title")           // 保险箱激活 加密页面 标题
     #define AC_VAULT_ACTIVE_ENCRYPT_CONTENT                 QObject::tr("vault_active_encrypy_content")         // 保险箱激活 加密页面 内容
     #define AC_VAULT_ACTIVE_ENCRYPT_IMAGE                   QObject::tr("vault_active_encrypy_image")           // 保险箱激活 加密页面 图片
@@ -158,16 +164,19 @@
     #define AC_VAULT_ACTIVE_ENCRYPT_FINISH_IMAGE            QObject::tr("vault_active_encrypy_finish_image")    // 保险箱激活 加密页面 加密完成图片
     #define AC_VAULT_ACTIVE_ENCRYPT_FINISH_HINT             QObject::tr("vault_active_encrypy_finish_hint")     // 保险箱激活 加密页面 加密完成提示
     #define AC_VAULT_ACTIVE_ENCRYPT_BUTTON                  QObject::tr("vault_active_encrypy_button")          // 保险箱激活 加密页面 按钮
+    #define AC_VAULT_PASSWORD_UNLOCK_WIDGET                 QObject::tr("vault_password_unlock_widget")             // 保险箱解锁 密码解锁页面
     #define AC_VAULT_PASSWORD_UNLOCK_TITLE                  QObject::tr("vault_password_unlock_title")              // 保险箱解锁 密码解锁页面 标题
     #define AC_VAULT_PASSWORD_UNLOCK_CONTENT                QObject::tr("vault_password_unlock_content")            // 保险箱解锁 密码解锁页面 内容
     #define AC_VAULT_PASSWORD_UNLOCK_EDIT                   QObject::tr("vault_password_unlock_edit")               // 保险箱解锁 密码解锁页面 编辑框
     #define AC_VAULT_PASSWORD_UNLOCK_HINT_BUTTON            QObject::tr("vault_password_unlock_hint_button")        // 保险箱解锁 密码解锁页面 密码提示按钮
     #define AC_VAULT_PASSWORD_UNLOCK_CANCEL_BUTTON          QObject::tr("vault_password_unlock_cancel_button")      // 保险箱解锁 密码解锁页面 取消按钮
     #define AC_VAULT_PASSWORD_UNLOCK_OK_BUTTON              QObject::tr("vault_password_unlock_ok_button")          // 保险箱解锁 密码解锁页面 确认按钮
-    #define AC_VAULT_KEY_UNLOCK_TITLE                       QObject::tr("vault_key_unlock_title")            // 保险箱解锁 密钥解锁页面 标题
-    #define AC_VAULT_KEY_UNLOCK_EDIT                        QObject::tr("vault_key_unlock_edit")             // 保险箱解锁 密钥解锁页面 编辑框
-    #define AC_VAULT_KEY_UNLOCK_CANCEL_BUTTON               QObject::tr("vault_key_unlock_cancel_button")    // 保险箱解锁 密钥解锁页面 取消按钮
-    #define AC_VAULT_KEY_UNLOCK_OK_BUTTON                   QObject::tr("vault_key_unlock_ok_button")        // 保险箱解锁 密钥解锁页面 确认按钮
+    #define AC_VAULT_KEY_UNLOCK_WIDGET                      QObject::tr("vault_key_unlock_widget")          // 保险箱解锁 密钥解锁页面
+    #define AC_VAULT_KEY_UNLOCK_TITLE                       QObject::tr("vault_key_unlock_title")           // 保险箱解锁 密钥解锁页面 标题
+    #define AC_VAULT_KEY_UNLOCK_EDIT                        QObject::tr("vault_key_unlock_edit")            // 保险箱解锁 密钥解锁页面 编辑框
+    #define AC_VAULT_KEY_UNLOCK_CANCEL_BUTTON               QObject::tr("vault_key_unlock_cancel_button")   // 保险箱解锁 密钥解锁页面 取消按钮
+    #define AC_VAULT_KEY_UNLOCK_OK_BUTTON                   QObject::tr("vault_key_unlock_ok_button")       // 保险箱解锁 密钥解锁页面 确认按钮
+    #define AC_VAULT_DELETE_WIDGET                          QObject::tr("vault_delete_widget")          // 保险箱删除 删除页面
     #define AC_VAULT_DELETE_TITLE                           QObject::tr("vault_delete_title")           // 保险箱删除 删除页面 标题
     #define AC_VAULT_DELETE_CONTENT                         QObject::tr("vault_delete_content")         // 保险箱删除 删除页面 内容
     #define AC_VAULT_DELETE_CANCEL_BUTTON                   QObject::tr("vault_delete_cancel_button")   // 保险箱删除 删除页面 取消按钮
@@ -279,10 +288,14 @@
     #define AC_TAG_ACTION_WIDGET_TOOL_TIP "" //tag 面板 提示
     #define AC_TAG_CRUMB_EDIT "" //tag 编辑区域
 
+    #define AC_VAULT_ACTIVE_WIDGET                          ""  // 保险箱激活页面
+    #define AC_VAULT_ACTIVE_STACK                           ""  // 保险箱激活 功能页面容器
+    #define AC_VAULT_ACTIVE_START_WIDGET                    ""  // 保险箱激活 开始页面
     #define AC_VAULT_ACTIVE_START_TITLE_LABEL               ""  // 保险箱激活 开始页面 标题
     #define AC_VAULT_ACTIVE_START_CONTENT_LABEL             ""  // 保险箱激活 开始页面 内容
     #define AC_VAULT_ACTIVE_START_PICTURE                   ""  // 保险箱激活 开始页面 图片
     #define AC_VAULT_ACTIVE_START_BUTTON                    ""  // 保险箱激活 开始页面 开启按钮
+    #define AC_VAULT_ACTIVE_SET_PASSWORD_WIDGET             ""  // 保险箱激活 设置密码页面
     #define AC_VAULT_ACTIVE_SET_PASSWORD_TITLE              ""  // 保险箱激活 设置密码页面 标题
     #define AC_VAULT_ACTIVE_SET_PASSWORD_TYPE_LABEL         ""  // 保险箱激活 设置密码页面 类型 标签
     #define AC_VAULT_ACTIVE_SET_PASSWORD_TYPE_COMBOX        ""  // 保险箱激活 设置密码页面 类型 组合框
@@ -293,6 +306,7 @@
     #define AC_VAULT_ACTIVE_SET_PASSWORD_HINT_LABEL         ""  // 保险箱激活 设置密码页面 提示 标签
     #define AC_VAULT_ACTIVE_SET_PASSWORD_HINT_EDIT          ""  // 保险箱激活 设置密码页面 提示 编辑框
     #define AC_VAULT_ACTIVE_SET_PASSWORD_NEXT_BUTTON        ""  // 保险箱激活 设置密码页面 下一步 按钮
+    #define AC_VAULT_ACTIVE_KEY_WIDGET                      ""  // 保险箱激活 密钥页面
     #define AC_VAULT_ACTIVE_KEY_TITLE                       ""  // 保险箱激活 密钥页面 标题
     #define AC_VAULT_ACTIVE_KEY_CONTENT                     ""  // 保险箱激活 密钥页面 内容
     #define AC_VAULT_ACTIVE_KEY_KEY_BUTTON                  ""  // 保险箱激活 密钥页面 密钥 按钮
@@ -301,6 +315,7 @@
     #define AC_VAULT_ACTIVE_KEY_QRCODE_IMAGE                ""  // 保险箱激活 密钥页面 二维码 图片
     #define AC_VAULT_ACTIVE_KEY_QRCODE_HINT                 ""  // 保险箱激活 密钥页面 二维码 提示
     #define AC_VAULT_ACTIVE_KEY_NEXT_BUTTON                 ""  // 保险箱激活 密钥页面 下一步 按钮
+    #define AC_VAULT_ACTIVE_ENCRYPT_WIDGET                  ""  // 保险箱激活 加密页面
     #define AC_VAULT_ACTIVE_ENCRYPT_TITLE                   ""  // 保险箱激活 加密页面 标题
     #define AC_VAULT_ACTIVE_ENCRYPT_CONTENT                 ""  // 保险箱激活 加密页面 内容
     #define AC_VAULT_ACTIVE_ENCRYPT_IMAGE                   ""  // 保险箱激活 加密页面 图片
@@ -309,16 +324,19 @@
     #define AC_VAULT_ACTIVE_ENCRYPT_FINISH_IMAGE            ""  // 保险箱激活 加密页面 加密完成图片
     #define AC_VAULT_ACTIVE_ENCRYPT_FINISH_HINT             ""  // 保险箱激活 加密页面 加密完成提示
     #define AC_VAULT_ACTIVE_ENCRYPT_BUTTON                  ""  // 保险箱激活 加密页面 按钮
+    #define AC_VAULT_PASSWORD_UNLOCK_WIDGET                 ""  // 保险箱解锁 密码解锁页面
     #define AC_VAULT_PASSWORD_UNLOCK_TITLE                  ""  // 保险箱解锁 密码解锁页面 标题
     #define AC_VAULT_PASSWORD_UNLOCK_CONTENT                ""  // 保险箱解锁 密码解锁页面 内容
     #define AC_VAULT_PASSWORD_UNLOCK_EDIT                   ""  // 保险箱解锁 密码解锁页面 编辑框
     #define AC_VAULT_PASSWORD_UNLOCK_HINT_BUTTON            ""  // 保险箱解锁 密码解锁页面 密码提示按钮
     #define AC_VAULT_PASSWORD_UNLOCK_CANCEL_BUTTON          ""  // 保险箱解锁 密码解锁页面 取消按钮
     #define AC_VAULT_PASSWORD_UNLOCK_OK_BUTTON              ""  // 保险箱解锁 密码解锁页面 确认按钮
+    #define AC_VAULT_KEY_UNLOCK_WIDGET                      ""  // 保险箱解锁 密钥解锁页面
     #define AC_VAULT_KEY_UNLOCK_TITLE                       ""  // 保险箱解锁 密钥解锁页面 标题
     #define AC_VAULT_KEY_UNLOCK_EDIT                        ""  // 保险箱解锁 密钥解锁页面 编辑框
     #define AC_VAULT_KEY_UNLOCK_CANCEL_BUTTON               ""  // 保险箱解锁 密钥解锁页面 取消按钮
     #define AC_VAULT_KEY_UNLOCK_OK_BUTTON                   ""  // 保险箱解锁 密钥解锁页面 确认按钮
+    #define AC_VAULT_DELETE_WIDGET                          ""  // 保险箱删除 删除页面
     #define AC_VAULT_DELETE_TITLE                           ""  // 保险箱删除 删除页面 标题
     #define AC_VAULT_DELETE_CONTENT                         ""  // 保险箱删除 删除页面 内容
     #define AC_VAULT_DELETE_CANCEL_BUTTON                   ""  // 保险箱删除 删除页面 取消按钮

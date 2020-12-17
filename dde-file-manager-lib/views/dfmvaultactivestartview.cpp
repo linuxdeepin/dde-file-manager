@@ -14,6 +14,8 @@ DFMVaultActiveStartView::DFMVaultActiveStartView(QWidget *parent)
     : QWidget(parent)
     , m_pStartBtn(nullptr)
 {
+    AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_START_WIDGET);
+
     // 标题
     DLabel *pLabel1 = new DLabel(tr("File Vault"), this);
     AC_SET_ACCESSIBLE_NAME(pLabel1, AC_VAULT_ACTIVE_START_TITLE_LABEL);
