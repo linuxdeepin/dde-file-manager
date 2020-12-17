@@ -1699,3 +1699,19 @@ TEST_F(TestDialogManager, testDUrlListCompare4)
     bool b = m_pTester->DUrlListCompare(urls);
     EXPECT_EQ(b, false);
 }
+
+TEST_F(TestDialogManager, testShowNormalDeleteConfirmDialog)
+{
+    DUrlList urls;
+    urls << DUrl("");
+    DFMUrlListBaseEvent event(nullptr, urls);
+
+    int(*stub_exec)() = []()->int{
+        return 0;
+    };
+    stub_ext::StubExt stu;
+    stu.set(VADDR(Dtk::Widget::DDialog, exec), stub_exec);
+
+    int result = m_pTester->showNormalDeleteConfirmDialog(event);
+    EXPECT_TRUE(result == 0);
+}

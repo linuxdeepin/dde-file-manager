@@ -3,7 +3,9 @@
 #include "dfmevent.h"
 
 #define protected public
+#define private public
 #include "controllers/operatorrevocation.h"
+#include "stub.h"
 
 DFM_BEGIN_NAMESPACE
 namespace  {
@@ -60,6 +62,23 @@ TEST_F(TestOperatorRevocation, test_clear_operation)
 TEST_F(TestOperatorRevocation, test_instance)
 {
     EXPECT_NE(OperatorRevocation::instance(), nullptr);
+}
+
+TEST_F(TestOperatorRevocation, test_slotRevocationEvent)
+{
+    ASSERT_NE(m_pController, nullptr);
+
+    auto event = dMakeEventPointer<DFMSaveOperatorEvent>();
+    event->setProperty(QT_STRINGIFY(DFMSaveOperatorEvent::split), false);
+    m_pController->operatorStack.push(*event.data());
+
+    QSharedPointer<DFMEvent> (*st_event)() = []()->QSharedPointer<DFMEvent> {
+        return QSharedPointer<DFMEvent>(new DFMEvent());
+    };
+    Stub stub;
+    stub.set(ADDR(DFMSaveOperatorEvent, event), st_event);
+
+    EXPECT_NO_FATAL_FAILURE(m_pController->slotRevocationEvent());
 }
 
 DFM_END_NAMESPACE
