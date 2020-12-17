@@ -49,6 +49,7 @@ public:
             m_manager->startMonitor();
             inited = true;
         }
+        gioError.message = errBuffer;
 
         int (*stub_DDialog_exec)(void) = [](void)->int{return Dtk::Widget::DDialog::Accepted;};
         stub.set(pDDialogExec, stub_DDialog_exec);
@@ -58,6 +59,9 @@ public:
     {
         stub.reset(pDDialogExec);
     }
+
+    GError gioError;
+    char errBuffer[2];
 };
 }
 
@@ -525,11 +529,12 @@ TEST_F(TestGvfsMountManager, mount_device)
     stubx.reset(permission);
 
     //g_file_find_enclosing_mount
-    stubx.set_lamda(g_file_find_enclosing_mount, [](GFile                      *file,
+    stubx.set_lamda(g_file_find_enclosing_mount, [this](GFile                      *file,
                     GCancellable               *cancellable,
                     GError                    **error)->GMount*{
 
         GMount* mt = get_fisrt_usable_mount();
+        *error = &(this->gioError);
         return mt;
     });
 
@@ -586,11 +591,13 @@ TEST_F(TestGvfsMountManager, eject_mounted)
 
     stub_ext::StubExt stubx;
     //g_file_find_enclosing_mount
-    stubx.set_lamda(g_file_find_enclosing_mount, [](GFile                      *file,
+    stubx.set_lamda(g_file_find_enclosing_mount, [this](GFile                      *file,
                     GCancellable               *cancellable,
                     GError                    **error)->GMount*{
 
         GMount* mt = get_fisrt_usable_mount();
+
+        *error = &(this->gioError);
         return mt;
     });
 
