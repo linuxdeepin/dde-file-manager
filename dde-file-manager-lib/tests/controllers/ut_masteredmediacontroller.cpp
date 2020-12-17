@@ -3,11 +3,12 @@
 #include <QDir>
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
-
+#include <QDialog>
 
 #include "dfmevent.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "stub.h"
+#include "stubext.h"
 #include "addr_pri.h"
 #include "disomaster.h"
 #include "dfileservices.h"
@@ -92,6 +93,8 @@ TEST_F(TestMasteredMediaController, tstEventsFuncs)
     auto e6 = dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << testUrl, true, true);
     EXPECT_FALSE(ctrl->deleteFiles(e6));
 
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return 1; }); // 避免某些机器没有 file-roller 而弹框阻塞ut运行
     auto e7 = dMakeEventPointer<DFMCompressEvent>(nullptr, DUrlList() << testUrl);
     EXPECT_FALSE(ctrl->compressFiles(e7));
 
