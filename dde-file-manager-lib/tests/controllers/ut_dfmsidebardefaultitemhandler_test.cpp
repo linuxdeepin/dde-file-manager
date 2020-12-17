@@ -93,11 +93,16 @@ TEST_F(DFMSideBarDefaultItemHandlerTest, context_menu)
         action->trigger();
     }
 
+    void (*st_actionClearTrash)(const QObject *) = [](const QObject *){
+        // do nothing.
+    };
+    stub.set(ADDR(AppController, actionClearTrash), st_actionClearTrash);
 
     QString (*st_getSystemPathDisplayName2)(QString) = [](QString) {
         return QString("");
     };
     stub.set(ADDR(PathManager, getSystemPathDisplayName), st_getSystemPathDisplayName2);
+
     menu = p_handler->contextMenu(bar, item);
     EXPECT_NE(menu, nullptr);
     actions = menu->actions();

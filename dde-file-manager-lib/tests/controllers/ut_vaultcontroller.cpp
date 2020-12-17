@@ -11,6 +11,7 @@
 #include <io/dfilestatisticsjob.h>
 #include <QTimer>
 #include "shutil/fileutils.h"
+#include "dialogs/dialogmanager.h"
 
 #include "controllers/vaultcontroller.h"
 #include "vault/vaultglobaldefine.h"
@@ -122,6 +123,13 @@ TEST_F(TestVaultController, tst_open_file_files)
         return true;
     };
     stub.set(ADDR(FileUtils, isExecutableScript), st_isExecutableScript);
+
+    int (*st_showRunDialog)(const DUrl &, quint64) = [](const DUrl &, quint64) {
+        return 0;
+    };
+    stub.set(ADDR(DialogManager, showRunExcutableScriptDialog), st_showRunDialog);
+    stub.set(ADDR(DialogManager, showRunExcutableFileDialog), st_showRunDialog);
+    stub.set(ADDR(DialogManager, showAskIfAddExcutableFlagAndRunDialog), st_showRunDialog);
 
     EXPECT_FALSE(m_controller->openFiles(events));
 
@@ -497,6 +505,11 @@ TEST_F(TestVaultController, tst_createSymlink)
 
     QProcess::execute(cmdTouch);
 
+    int (*st_showDialog)(const QString &) = [](const QString &) {
+        return 0;
+    };
+    Stub stub;
+    stub.set(ADDR(DialogManager, showFailToCreateSymlinkDialog), st_showDialog);
 
     QSharedPointer<DFMCreateSymlinkEvent> event = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, testFile, testLnFile);
     EXPECT_FALSE(m_controller->createSymlink(event));
