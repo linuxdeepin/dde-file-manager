@@ -57,6 +57,8 @@ public:
     QSet<MenuAction> disableMenuActionList() const override;
     void refresh(const bool isForce = false) override;
 
+    virtual QString subtitleForEmptyFloder() const override;
+
 private:
     QString getVolTag(const QString &burnPath) const;
 

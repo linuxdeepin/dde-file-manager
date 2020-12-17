@@ -261,6 +261,11 @@ void MasteredMediaFileInfo::refresh(const bool isForce)
     backupInfo(fileUrl());
 }
 
+QString MasteredMediaFileInfo::subtitleForEmptyFloder() const
+{
+    return QObject::tr("Folder is empty");
+}
+
 
 QString MasteredMediaFileInfo::getVolTag(const QString &burnPath) const
 {
