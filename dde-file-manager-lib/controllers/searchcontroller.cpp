@@ -543,6 +543,10 @@ bool SearchDiriterator::hasNext() const
             it->next();
 
             DAbstractFileInfoPointer fileInfo = it->fileInfo();
+            // fix bug58348 搜索结果中存在本地不存在的文件
+            if (!fileInfo->exists()) {
+                continue;
+            }
 
             fileInfo->makeAbsolute();
 
