@@ -50,6 +50,8 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     : DFMVaultPageBase(parent)
     , d_ptr(new DFMVaultRecoveryKeyPagesPrivate())
 {
+    AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_KEY_UNLOCK_WIDGET);
+
     this->setIcon(QIcon::fromTheme("dfm_vault"));
     this->setFixedSize(396, 218);
 

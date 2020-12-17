@@ -19,6 +19,8 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     , m_pQRCodeImage(nullptr)
     , m_pNext(nullptr)
 {
+    AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_KEY_WIDGET);
+
     // 标题名
     QLabel *pLabelTitle = new QLabel(tr("Recovery Key"), this);
     AC_SET_ACCESSIBLE_NAME(pLabelTitle, AC_VAULT_ACTIVE_KEY_TITLE);

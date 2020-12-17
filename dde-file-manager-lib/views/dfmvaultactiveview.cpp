@@ -3,6 +3,7 @@
 #include "dfmvaultactivesetunlockmethodview.h"
 #include "dfmvaultactivesavekeyview.h"
 #include "dfmvaultactivefinishedview.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QDebug>
 #include <QStackedWidget>
@@ -20,10 +21,12 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     , m_SaveKeyWidget(nullptr)
     , m_ActiveVaultFinishedWidget(nullptr)
 {
+    AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_WIDGET);
     this->setIcon(QIcon::fromTheme("dfm_vault"));
 
     // 初始化试图容器
     m_pStackedWidget = new QStackedWidget(this);
+    AC_SET_ACCESSIBLE_NAME(m_pStackedWidget, AC_VAULT_ACTIVE_STACK);
 
     // 初始化内部窗体
     m_pStartVaultWidget = new DFMVaultActiveStartView(this);

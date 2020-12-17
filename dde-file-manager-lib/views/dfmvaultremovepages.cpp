@@ -26,6 +26,8 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     , m_progressView(new DFMVaultRemoveProgressView(this))
     , m_stackedWidget(new QStackedWidget(this))
 {
+    AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_DELETE_WIDGET);
+
     setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
     // 修复bug-41001 提示信息显示不全
     this->setFixedWidth(396);

@@ -27,6 +27,8 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 //    , m_pOtherMethod(nullptr)
     , m_pNext(nullptr)
 {
+    AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_SET_PASSWORD_WIDGET);
+
     // 设置开锁方式标签
     QLabel *pLabel = new QLabel(tr("Set Vault Password"), this);
     AC_SET_ACCESSIBLE_NAME(pLabel, AC_VAULT_ACTIVE_SET_PASSWORD_TITLE);
