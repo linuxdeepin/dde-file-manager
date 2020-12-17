@@ -1110,6 +1110,11 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
         return true;
     }
 
+    //  光盘中的目录不能被删除
+    if (deviceListener->isFileFromDisc(fromInfo->fileUrl().toLocalFile())) {
+        qInfo() << "remove file from disc, reject.";
+        return true;
+    }
     // 完成操作后删除原目录
     return removeFile(handler, fromInfo);
 }
