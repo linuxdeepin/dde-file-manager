@@ -2700,14 +2700,15 @@ void CanvasGridView::updateCanvas()
 
     GridManager::instance()->updateGridSize(m_screenNum, d->colCount, d->rowCount);
 
-    updateEditorGeometries();
-
     auto expandedWidget = reinterpret_cast<QWidget *>(itemDelegate()->expandedIndexWidget());
     if (expandedWidget) {
         int offset = -1 * ((d->cellWidth - itemSize.width()) % 2);
         QMargins margins(offset, d->cellMargins.top(), 0, 0);
-        expandedWidget ->setContentsMargins(margins);
+        expandedWidget->setContentsMargins(margins);
     }
+
+    //需在expandedWidget->setContentsMargins(margins)之后在更新，否则在计算时没有将Margins纳入计算，导致显示错误
+    updateEditorGeometries();
     update();
 }
 
