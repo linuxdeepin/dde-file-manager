@@ -166,8 +166,10 @@ void SelectWork::run()
             }
         }
     }
-    // 刷新模型
-    m_pModel->update();
+    if (m_pModel) {
+        // 刷新模型
+        m_pModel->update();
+    }
 }
 
 DFileView::DFileView(QWidget *parent)
