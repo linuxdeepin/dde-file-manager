@@ -4,9 +4,10 @@
 #include <QDebug>
 #include <QUrl>
 #include <QProcess>
-//#include <QStanardItem>
+#include <QApplication>
 
 #include "durl.h"
+#include "testhelper.h"
 
 #include "../views/dfmsidebar.h"
 #include "../views/dfilemanagerwindow.h"
@@ -24,7 +25,6 @@ class TestDFMSideBarItemInterface: public testing::Test
 public:
     DFMSideBarItemInterface interface;
     DFileManagerWindow window;
-    DFMSideBarItem item;
 
     virtual void SetUp() override
     {
@@ -41,34 +41,59 @@ public:
 //in Search-Widget from toolbar,setting the search text have a string from QCoreApplication::applicationDirPath();
 TEST_F(TestDFMSideBarItemInterface,cdAction)
 {
-    item.appendColumn({ new QStandardItem("Action1"),
+
+    DFMSideBarItem* item = new DFMSideBarItem;
+    item->appendColumn({ new QStandardItem("Action1"),
                         new QStandardItem("Action2")});
 
-    item.setText("testAction");
-    item.setUrl(QCoreApplication::applicationDirPath());
-    item.setGroupName(DFMSideBar::groupName(DFMSideBar::GroupName::Network));
+    item->setText("testAction");
+    item->setUrl(QCoreApplication::applicationDirPath());
+    item->setGroupName(DFMSideBar::groupName(DFMSideBar::GroupName::Network));
 
-    interface.cdAction(window.getLeftSideBar(),&item);
+    interface.cdAction(window.getLeftSideBar(),item);
 
     EXPECT_TRUE(0 <= window.currentUrl().toString().indexOf(QCoreApplication::applicationDirPath()));
+
     //    FMWindow->show(); //should't to show
+
+    if (item) {
+        delete item;
+        item = nullptr;
+    }
 }
 
 //cause new QMenu class is not empty, set lambda to widget class.
 TEST_F(TestDFMSideBarItemInterface,contextMenu)
 {
-    interface.contextMenu(window.getLeftSideBar(),&item);
-    auto menu = interface.contextMenu(window.getLeftSideBar(),&item);
+    DFMSideBarItem* item = new DFMSideBarItem;
+    item->setUrl(DUrl(QApplication::applicationDirPath()));
+    interface.contextMenu(window.getLeftSideBar(),item);
+    auto menu = interface.contextMenu(window.getLeftSideBar(),item);
     EXPECT_TRUE(menu->actions().size() > 0);
 
+    //to call regiest lambda fuction
     for (auto action : menu->actions()) {
-        emit action->triggered(); //to call regiest lambda fuction
+        emit action->triggered(true);
     }
+
+    if (item) {
+        delete item;
+        item = nullptr;
+    }
+
 }
 
 //if can't carsh, nothing to do.
 TEST_F(TestDFMSideBarItemInterface,rename)
 {
-    interface.rename(&item,"newName");
-    EXPECT_TRUE(item.groupName() != "newName");
+    DFMSideBarItem* item = new DFMSideBarItem;
+    item->setGroupName("Funning");
+
+    interface.rename(item,"newName");
+    EXPECT_TRUE(item->groupName() != "newName");
+
+    if (item) {
+        delete item;
+        item = nullptr;
+    }
 }
