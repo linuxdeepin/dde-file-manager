@@ -1,8 +1,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include "stub.h"
+#include "../stub-ext/stubext.h"
+
 
 #define private public
 #define protected public
+#include <mediainfo/dfmmediainfo.h>
 #include <views/dfmfilebasicinfowidget.h>
 #include <views/dfmfilebasicinfowidget.cpp>
 #include <QStandardPaths>
@@ -15,11 +19,13 @@ namespace  {
     class DFMFileBasicInfoWidgetTest : public Test
     {
     public:
-        virtual void SetUp() override{
+        virtual void SetUp() override
+        {
             m_biw = new DFMFileBasicInfoWidget(nullptr);
         }
 
-        virtual void TearDown() override{
+        virtual void TearDown() override
+        {
             delete  m_biw;
             m_biw = nullptr;
         }
@@ -29,8 +35,8 @@ namespace  {
 
 }
 
-
-TEST_F(DFMFileBasicInfoWidgetTest, setUrl){
+TEST_F(DFMFileBasicInfoWidgetTest, setUrl)
+{
 
     QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
     DUrl desktopUrl = DUrl::fromLocalFile(desktopPath);
@@ -42,65 +48,97 @@ TEST_F(DFMFileBasicInfoWidgetTest, setUrl){
     auto expectValue = m_biw->d_func()->m_url == desktopUrl;
     EXPECT_TRUE(expectValue);
 
-    QString imageUrl = QString("file://%1/forUtTest.jpg").arg(desktopPath);
+    QString imageUrl = QString("%1/forUtTest.jpg").arg(desktopPath);
+    QString imageLink = QString("%1/forUtTest_link.jpg").arg(desktopPath);
+
     QFile imageFile(imageUrl);
-    if (!imageFile.exists())
-        imageFile.open(QFile::WriteOnly);
+    if (!imageFile.exists()) {
+        ASSERT_TRUE(imageFile.open(QIODevice::WriteOnly));//创建一个测试图片备用
+        ASSERT_TRUE(imageFile.link(imageLink));//创建一个测试图片link文件备用
+    }
+    stub_ext::StubExt stu;
+    QPointer<DFMMediaInfo> tg = nullptr;
+    stu.set_lamda(ADDR(DFMMediaInfo, startReadInfo), [&tg](void* obj){tg = static_cast<DFMMediaInfo*>(obj);});
+    //普通图片
+    m_biw->setShowFileName(true);
+    m_biw->setShowMediaInfo(true);
+    m_biw->d_func()->m_url = DUrl("");
+    m_biw->setUrl(DUrl(QString("file://%1").arg(imageUrl)));
+    if (!tg.isNull()) {
+        emit tg->Finished();
+    }
+
+    auto expectValue2 = m_biw->d_func()->m_url == DUrl(QString("file://%1").arg(imageUrl));
+    EXPECT_TRUE(expectValue2);
+
+    //链接文件
+    m_biw->setShowFileName(true);
+    m_biw->setShowMediaInfo(true);
+    m_biw->d_func()->m_url = DUrl("");
+    m_biw->setUrl(DUrl(QString("file://%1").arg(imageLink)));
+
+    auto expectValueLink = m_biw->d_func()->m_url == DUrl(QString("file://%1").arg(imageLink));
+    EXPECT_TRUE(expectValueLink);
+
+    //移除为ut测试创建的文件
+    imageFile.remove(imageUrl);
+    imageFile.remove(imageLink);
     imageFile.close();
+
+    //回收站文件
+    desktopPath = desktopPath.left(desktopPath.size() - 8);
+    QString userName = desktopPath.split("/").last();
+    QString targetPath = QString("/home/%1/.local/share/Trash/files/forUtTest.jpg").arg(userName);
+    QFile TrushFile(targetPath);
+    if (!imageFile.exists()) {
+        ASSERT_TRUE(TrushFile.open(QIODevice::WriteOnly));//创建一个测试图片备用
+    }
 
     m_biw->setShowFileName(true);
     m_biw->setShowMediaInfo(true);
     m_biw->d_func()->m_url = DUrl("");
-    m_biw->setUrl(DUrl(imageUrl));
+    m_biw->setUrl(DUrl(QString("trash://%1").arg(targetPath)));
 
-    auto expectValue2 = m_biw->d_func()->m_url == DUrl(imageUrl);
-    EXPECT_TRUE(expectValue2);
-
-    if (imageFile.link("linkForUtTest.jpg")) {
-        QString imageLinkUrl = QString("file://%1/forUtTest.jpg").arg(desktopPath);
-        m_biw->setShowFileName(true);
-        m_biw->setShowMediaInfo(true);
-        m_biw->d_func()->m_url = DUrl("");
-        m_biw->setUrl(DUrl(imageLinkUrl));
-
-        auto expectValueLink = m_biw->d_func()->m_url == DUrl(imageLinkUrl);
-        EXPECT_TRUE(expectValueLink);
-        QFile linkFile(imageLinkUrl);
-        if (linkFile.exists())
-            linkFile.remove();
-    }
-
-    imageFile.remove();
+    auto expectValueTrush = m_biw->d_func()->m_url == DUrl(QString("trash://%1").arg(targetPath));
+    EXPECT_TRUE(expectValueTrush);
+    TrushFile.remove(targetPath);
+    TrushFile.close();
 }
 
-TEST_F(DFMFileBasicInfoWidgetTest, showFileName){
+TEST_F(DFMFileBasicInfoWidgetTest, showFileName)
+{
     auto expectValue = m_biw->showFileName() == m_biw->d_func()->m_showFileName;
     EXPECT_TRUE(expectValue);
 }
 
-TEST_F(DFMFileBasicInfoWidgetTest, setShowFileName){
+TEST_F(DFMFileBasicInfoWidgetTest, setShowFileName)
+{
     m_biw->setShowFileName(false);
     auto expectValue = false == m_biw->d_func()->m_showFileName;
     EXPECT_TRUE(expectValue);
 }
 
-TEST_F(DFMFileBasicInfoWidgetTest, showMediaInfo){
+TEST_F(DFMFileBasicInfoWidgetTest, showMediaInfo)
+{
     auto expectValue = m_biw->showMediaInfo() == m_biw->d_func()->m_showMediaInfo;
     EXPECT_TRUE(expectValue);
 }
 
-TEST_F(DFMFileBasicInfoWidgetTest, setShowMediaInfo){
+TEST_F(DFMFileBasicInfoWidgetTest, setShowMediaInfo)
+{
     m_biw->setShowMediaInfo(false);
     auto expectValue = false == m_biw->d_func()->m_showMediaInfo;
     EXPECT_TRUE(expectValue);
 }
 
-TEST_F(DFMFileBasicInfoWidgetTest, showSummary){
+TEST_F(DFMFileBasicInfoWidgetTest, showSummary)
+{
     auto expectValue = m_biw->showSummary() == m_biw->d_func()->m_showSummaryOnly;
     EXPECT_TRUE(expectValue);
 }
 
-TEST_F(DFMFileBasicInfoWidgetTest, setShowSummary){
+TEST_F(DFMFileBasicInfoWidgetTest, setShowSummary)
+{
     m_biw->setShowSummary(false);
     auto expectValue = false == m_biw->d_func()->m_showSummaryOnly;
     EXPECT_TRUE(expectValue);
@@ -111,16 +149,23 @@ TEST_F(DFMFileBasicInfoWidgetTest, setShowSummary){
 //    EXPECT_TRUE(expectValue);
 //}
 
-TEST_F(DFMFileBasicInfoWidgetTest, startCalcFolderSize){
+
+TEST_F(DFMFileBasicInfoWidgetTest, startCalcFolderSize)
+{
+    Stub stub;
+    auto ut_start = static_cast<void(*)()>([](){});
+    auto target = static_cast<void(DFileStatisticsJob::*)(const DUrlList &)>(ADDR(DFileStatisticsJob, start));
+    stub.set(target, ut_start);
+
     m_biw->d_func()->m_showSummaryOnly = true;
     m_biw->d_func()->m_sizeWorker = nullptr;
     m_biw->d_func()->startCalcFolderSize();
     EXPECT_EQ(nullptr, m_biw->d_func()->m_sizeWorker);
 
-//    m_biw->d_func()->m_url = DUrl("/home");
-//    m_biw->d_func()->m_showSummaryOnly = false;
-//    m_biw->d_func()->startCalcFolderSize();
-//    EXPECT_NE(nullptr, m_biw->d_func()->m_sizeWorker);
+    m_biw->d_func()->m_url = DUrl("file:///home");
+    m_biw->d_func()->m_showSummaryOnly = false;
+    m_biw->d_func()->startCalcFolderSize();
+    EXPECT_NE(nullptr, m_biw->d_func()->m_sizeWorker);
 }
 
 TEST(SectionValueLabel, test_event){
@@ -159,6 +204,25 @@ TEST(LinkSectionValueLabel, set_link_target_url){
     EXPECT_TRUE(expectValue);
 }
 
+TEST(LinkSectionValueLabel, mouseReleaseEvent)
+{
+    bool inThere = false;
+    stub_ext::StubExt stu;
+//    stu.set_lamda(ADDR(QAbstractSlider, minimum), [&ismini](){ismini = true; return -1;});
+//    typedef int (*fptr)(A*,int);
+//       fptr A_foo = (fptr)(&A::foo);
 
+
+    typedef void (*fptr)(SectionValueLabel*,QMouseEvent *);
+    fptr target = (fptr)(&SectionValueLabel::mouseReleaseEvent);
+    stu.set_lamda(target, [&inThere]()->void {
+        inThere = true;
+        return;
+    });
+    LinkSectionValueLabel lsvlab;
+    QMouseEvent event(QEvent::User, QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::KeyboardModifiers());
+    lsvlab.mouseReleaseEvent(&event);
+    EXPECT_TRUE(inThere);
+}
 
 DFM_END_NAMESPACE
