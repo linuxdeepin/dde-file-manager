@@ -169,10 +169,10 @@ void BurnOptDialogPrivate::setupUi()
     q->addButton(QObject::tr("Cancel"));
     q->addButton(QObject::tr("Burn"), true, DDialog::ButtonType::ButtonRecommend);
 
-    q->layout()->setContentsMargins(0, 10, 0, 0);
+    q->layout()->setContentsMargins(0, 0, 0, 0);
     w_content = new QWidget(q);
     QVBoxLayout *contentLay = new QVBoxLayout;
-    QMargins mg(0, 10, 0, 0);
+    QMargins mg(0, 15, 0, 0);
     contentLay->setContentsMargins(mg);
     w_content->setLayout(contentLay);
     q->addContent(w_content, Qt::AlignTop);
@@ -180,6 +180,11 @@ void BurnOptDialogPrivate::setupUi()
     // 光盘名称
     lb_volname = new QLabel(QObject::tr("Disc name:"));
     contentLay->addWidget(lb_volname, 0, Qt::AlignTop);
+    QFont f13 = lb_volname->font();
+    f13.setPixelSize(13);
+    f13.setFamily("SourceHanSansSC");
+    f13.setWeight(QFont::Medium);
+    lb_volname->setFont(f13);
 
     le_volname = new QLineEdit();
     QRegExp regx("[^\\\\/\':\\*\\?\"<>|%&.]+"); //屏蔽特殊字符
@@ -193,9 +198,19 @@ void BurnOptDialogPrivate::setupUi()
         }
     });
     contentLay->addWidget(le_volname, 0, Qt::AlignTop);
+    QFont f14 = le_volname->font();
+    f14.setPixelSize(14);
+    f14.setWeight(QFont::Medium);
+    f14.setFamily("SourceHanSansSC");
+    le_volname->setFont(f14);
 
     // 高级设置内容
     DCommandLinkButton *advanceBtn = new DCommandLinkButton(BurnOptDialog::tr("Advanced settings"), q);
+    QFont f12 = advanceBtn->font();
+    f12.setPixelSize(12);
+    f12.setWeight(QFont::Normal);
+    f12.setFamily("SourceHanSansSC");
+
     QHBoxLayout *advanceBtnLay = new QHBoxLayout(w_content);
     advanceBtnLay->setMargin(0);
     advanceBtnLay->setSpacing(0);
@@ -209,6 +224,7 @@ void BurnOptDialogPrivate::setupUi()
 
     QVBoxLayout *vLay = new QVBoxLayout(advancedSettings);
     vLay->setMargin(0);
+    vLay->setSpacing(8);
     advancedSettings->setLayout(vLay);
 
     // 文件系统
@@ -219,6 +235,11 @@ void BurnOptDialogPrivate::setupUi()
     cb_fs->addItems(fsTypes);
     cb_fs->setCurrentIndex(1); // 默认使用 i + j 的方式刻录
     vLay->addWidget(cb_fs);
+    lb_fs->setFont(f13);
+    cb_fs->setFont(f14);
+
+    // 控制间距
+    vLay->addItem(new QSpacerItem(1, 20));
 
     // 刻录速度
     lb_writespeed = new QLabel(QObject::tr("Write speed:"));
@@ -235,6 +256,8 @@ void BurnOptDialogPrivate::setupUi()
         speedmap[QString::number(speed, 'f', 1) + 'x'] = speedk;
         cb_writespeed->addItem(QString::number(speed, 'f', 1) + 'x');
     }
+    lb_writespeed->setFont(f13);
+    cb_writespeed->setFont(f14);
 
     // 刻录选项-允许追加
     cb_donotclose = new QCheckBox(QObject::tr("Allow files to be added later"));
@@ -244,11 +267,15 @@ void BurnOptDialogPrivate::setupUi()
     wpostburn->setLayout(new QHBoxLayout);
     vLay->addWidget(wpostburn, 0, Qt::AlignTop);
     wpostburn->layout()->setMargin(0);
+    cb_donotclose->setFont(f12);
+
     // 刻录选项-校验数据
     cb_checkdisc = new QCheckBox(QObject::tr("Verify data"));
+    cb_checkdisc->setFont(f12);
     wpostburn->layout()->addWidget(cb_checkdisc);
     // 刻录选项-弹出光盘（目前禁用）
     cb_eject = new QCheckBox(QObject::tr("Eject"));
+    cb_eject->setFont(f12);
     cb_eject->setChecked(true);
     wpostburn->layout()->addWidget(cb_eject);
     cb_eject->setVisible(false); // 20200430 xust 与产品沟通后决定隐藏弹出的配置项，默认刻录完成后弹出光盘仓
