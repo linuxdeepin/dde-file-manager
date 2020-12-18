@@ -143,6 +143,7 @@ QString DThumbnailProviderPrivate::sizeToFilePath(DThumbnailProvider::Size size)
     case DThumbnailProvider::Large:
         return DFMStandardPaths::location(DFMStandardPaths::ThumbnailLargePath);
     }
+    return ""; //默认返回空字符 warning项
 }
 
 class DFileThumbnailProviderPrivate : public DThumbnailProvider {};
