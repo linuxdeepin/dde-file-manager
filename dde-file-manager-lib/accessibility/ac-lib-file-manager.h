@@ -26,8 +26,6 @@
 #include <QObject>
 #include "acintelfunctions.h"
 
-// 使用宏定义，方便国际化操作
-#ifdef ENABLE_ACCESSIBILITY
     #define AC_FILE_MENU_DEFAULT                            "default_file_menu" //默认菜单
     #define AC_FILE_MENU_DEFAULT_SIDEBAR                    "default_sidebar_menu" //侧边栏默认菜单
     #define AC_FILE_MENU_SIDEBAR_TAGITEM                    "sidebar_tagitem_menu" //侧边栏标签菜单
@@ -186,7 +184,5 @@
     #define AC_VAULT_DELETE_HINT_BUTTON                     "vault_delete_hint_button"     // 保险箱删除 删除页面 密码提示按钮
     #define AC_VAULT_DELETE_KEY_EDIT                        "vault_delete_key_edit"        // 保险箱删除 删除页面 密钥编辑框
     #define AC_VAULT_DELETE_PROGRESS                        "vault_delete_progress"        // 保险箱删除 删除页面 删除操作进度条
-
-#endif // #ifdef ENABLE_ACCESSIBILITY
 
 #endif // LIB_FRAME_ACCESSIBLE_DEFINE_H
