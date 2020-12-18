@@ -2010,17 +2010,14 @@ TEST_F(SelectWorkTest,tst_run)
 
     m_selectWork->m_bStop = true;
     m_selectWork->run();
-    EXPECT_TRUE(myUpdate);
+    EXPECT_FALSE(myUpdate);
 
     myUpdate = false;
     m_selectWork->m_bStop = false;
     m_selectWork->run();
-    EXPECT_TRUE(myUpdate);
+    EXPECT_FALSE(myUpdate);
 
     myUpdate = false;
-    DFileView view;
-    DFileSystemModel *model = const_cast<DFileSystemModel*>(view.model());
-    m_selectWork->setInitData(lst, model);
     m_selectWork->run();
-    EXPECT_TRUE(myUpdate);
+    EXPECT_FALSE(myUpdate);
 }
