@@ -2008,10 +2008,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
                     this->delayArrage();
 #endif
             } else {
-                //fix bug57628 归档管理器压缩成功后在桌面不显示,需要刷新才能显示
-                //原因是执行zip.tmp移动为zip文件时，zip.tmp在之前已经删除。这里修改为和model一样的处理流程，即直接创建文件。
-                qWarning()<<"Recive watcher signal fileMoved and not found oriUrl:"<<oriUrl<<".So create dstUrl:"<<dstUrl;
-                Q_EMIT itemCreated(dstUrl);
+                //Q_EMIT itemCreated(dstUrl);
             }
         }
 
