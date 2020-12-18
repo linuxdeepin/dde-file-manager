@@ -305,7 +305,9 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
     switch (ee->type()) {
     case QEvent::Resize:
         if (obj == icon || obj == edit) {
-            resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING);
+            int marginsHeight = contentsMargins().top();
+            //计算高度时需加上marginsHeight，否则文字会显示不全
+            resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING + marginsHeight);
         }
 
         break;
