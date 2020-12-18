@@ -142,12 +142,12 @@ TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_recentDisplayChanged)
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_previewCompressFileChanged)
-{
-    QSignalSpy spy(&m_application, SIGNAL(previewCompressFileChanged(bool)));
-    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(PreviewCompressFile), true);
-    EXPECT_EQ(spy.count(), 1);
-}
+//TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_previewCompressFileChanged)
+//{
+//    QSignalSpy spy(&m_application, SIGNAL(previewCompressFileChanged(bool)));
+//    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(PreviewCompressFile), true);
+//    EXPECT_EQ(spy.count(), 1);
+//}
 
 TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_csdClickableAreaAttributeChanged)
 {
