@@ -4,11 +4,21 @@
 #include <QSharedPointer>
 #include <QDebug>
 
+#include "interfaces/dfilesystemmodel.h"
+#include "testhelper.h"
+#include "dialogs/dialogmanager.h"
+#include "dialogs/shareinfoframe.h"
+#include "../dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
+#include "ddialog.h"
+#define private public
 #include "stub.h"
+#include "stubext.h"
 #include "usershare/usersharemanager.h"
 #include "testhelper.h"
 
 using namespace testing;
+using namespace stub_ext;
+DWIDGET_USE_NAMESPACE
 class UserShareManagerTest:public testing::Test{
 
 public:
@@ -46,101 +56,284 @@ TEST_F(UserShareManagerTest,can_getCacehPath){
 
 TEST_F(UserShareManagerTest,can_getOldShareInfoByNewInfo){
     EXPECT_FALSE(sharemanager->getOldShareInfoByNewInfo(ShareInfo()).isValid());
+    ShareInfo info;
+    info.setShareName("share_ut_test");
+    info.setPath("rand_key");
+    sharemanager->m_sharePathToNames.insert("rand_key",QStringList() << "rand_value");
+    EXPECT_FALSE(sharemanager->getOldShareInfoByNewInfo(info).isValid());
 }
 
 TEST_F(UserShareManagerTest,can_getShareInfoByPath){
+    Stub stl;
+    QString (*getShareNameByPath)(const QString &) = [](const QString &){return QString("share_manager");};
+    stl.set(ADDR(UserShareManager,getShareNameByPath),getShareNameByPath);
+    sharemanager->m_shareInfos.insert("share_manager",ShareInfo());
     EXPECT_FALSE(sharemanager->getShareInfoByPath(QString()).isValid());
 }
 
 TEST_F(UserShareManagerTest,can_getShareNameByPath){
-    EXPECT_TRUE(sharemanager->getShareNameByPath(QString()).isEmpty());
+    EXPECT_TRUE(sharemanager->getShareNameByPath(QString("rand_key")).isEmpty());
+    sharemanager->m_sharePathToNames.insert("rand_key",QStringList() << "rand_value");
+    EXPECT_FALSE(sharemanager->getShareNameByPath(QString("rand_key")).isEmpty());
 }
 
 TEST_F(UserShareManagerTest,can_shareInfoList){
-    EXPECT_TRUE(sharemanager->shareInfoList().isEmpty());
+    sharemanager->m_shareInfos.insert("share_manager",ShareInfo());
+    EXPECT_FALSE(sharemanager->shareInfoList().isEmpty());
+    ASSERT_NO_FATAL_FAILURE(sharemanager->initSamaServiceSettings());
 }
 
 TEST_F(UserShareManagerTest,can_validShareInfoCount){
-    EXPECT_TRUE(sharemanager->validShareInfoCount() == 0);
+    ShareInfo info;
+    info.setPath("/bin");
+    info.setShareName("share_test_manager");
+    sharemanager->m_shareInfos.insert("share_manager",info);
+    EXPECT_TRUE(sharemanager->validShareInfoCount() != 0);
+}
+
+TEST_F(UserShareManagerTest,can_hasValidShareFolders){
+    EXPECT_FALSE(sharemanager->hasValidShareFolders());
+    ShareInfo info;
+    info.setPath("/bin");
+    info.setShareName("share_test_manager");
+    sharemanager->m_shareInfos.insert("share_manager",info);
+    EXPECT_TRUE(sharemanager->hasValidShareFolders());
+}
+
+TEST_F(UserShareManagerTest,can_isShareFile){
+    EXPECT_FALSE(sharemanager->isShareFile("/share_test_sharemanager"));
+}
+
+TEST_F(UserShareManagerTest,can_handleShareChanged){
+    ASSERT_NO_FATAL_FAILURE(sharemanager->handleShareChanged("/jfej:tmp"));
+    void (*refresh)(const DUrl &) = [](const DUrl &){};
+    Stub stl;
+    stl.set(ADDR(DFileSystemModel,refresh),refresh);
+    TestHelper::runInLoop([=](){
+        ASSERT_NO_FATAL_FAILURE(sharemanager->handleShareChanged("/jfej23"));
+    });
+}
+TEST_F(UserShareManagerTest,can_updateUserShareInfo){
+    StubExt stlext;
+    typedef bool (*openfile)(QFile *,QFile::OpenMode);
+    stlext.set_lamda((openfile)((bool (QFile::*)(QFile::OpenMode))(&QFile::open)),[](){return false;});
+    ASSERT_NO_FATAL_FAILURE(sharemanager->updateUserShareInfo(false));
+    stlext.reset((openfile)((bool (QFile::*)(QFile::OpenMode))(&QFile::open)));
+
+    DUrl dirurl,fileurl,fileurl1;
+    dirurl.setScheme(FILE_SCHEME);
+    dirurl.setPath("/tmp/ut_sharemange");
+    QProcess::execute("mkdir " + dirurl.toLocalFile());
+    fileurl.setScheme(FILE_SCHEME);
+    fileurl1.setScheme(FILE_SCHEME);
+    fileurl.setUrl(dirurl.toString() + "/ut_sharemangaer_1.txt");
+    fileurl1.setUrl(dirurl.toString() + "/ut_sharemangaer_2.txt");
+    QProcess::execute("touch "+ fileurl.toLocalFile() + " " + fileurl1.toLocalFile());
+    QFile file1(fileurl.toLocalFile()),file2(fileurl1.toLocalFile());
+    QProcess::execute("mkdir /tmp/ut_sharemange_1 /tmp/ut_sharemange_2");
+    if(file1.open(QIODevice::WriteOnly )) {
+        file1.write("#VERSION 2\npath=/tmp/ut_sharemange_1\ncomment= \nusershare_acl=S-1-1-0:f\nguest_ok=y\nsharename=ut_share_manager_1",112);
+        file1.close();
+    }
+    if(file2.open(QIODevice::WriteOnly )) {
+        file2.write("#VERSION 2\npath=/tmp/ut_sharemange_2\ncomment= \nusershare_acl=S-1-1-0:r\nguest_ok=y\nsharename=ut_share_manager_2",112);
+        file2.close();
+    }
+    sharemanager->m_sharePathToNames.insert("/tmp/ut_sharemange_2",QStringList());
+    QString (*UserSharePath)(void *) = [](void *){return QString("/tmp/ut_sharemange");};
+    Stub stl;
+    stl.set(ADDR(UserShareManager,UserSharePath),UserSharePath);
+
+    ASSERT_NO_FATAL_FAILURE(sharemanager->updateUserShareInfo(false));
+    stl.reset(ADDR(UserShareManager,UserSharePath));
+    ASSERT_NO_FATAL_FAILURE(sharemanager->updateUserShareInfo(true));
+    EXPECT_FALSE(sharemanager->UserSharePath().isEmpty());
+    TestHelper::deleteTmpFiles(QStringList() << dirurl.toLocalFile()
+                               << "/tmp/ut_sharemange_1" << "/tmp/ut_sharemange_2");
+}
+TEST_F(UserShareManagerTest,can_setSambaPassword){
+    QDBusPendingReply<bool> (*setUserSharePassword)(const QString &, const QString &) = []
+            (const QString &, const QString &){
+        QDBusMessage reply;
+        reply.setArguments(QList<QVariant>() << QVariant(true));
+        return QDBusPendingReply<bool>(reply);
+    };
+    Stub stl;
+    void (*waitForFinished)(void *) = [](void *){};
+    stl.set(ADDR(QDBusPendingCall,waitForFinished),waitForFinished);
+    stl.set(ADDR(UserShareInterface,setUserSharePassword),setUserSharePassword);
+    ASSERT_NO_FATAL_FAILURE(sharemanager->setSambaPassword(QString(),QString()));
+    QDBusPendingReply<bool> (*setUserSharePassword1)(const QString &, const QString &) = []
+            (const QString &, const QString &){
+        QDBusMessage reply;
+        reply.setArguments(QList<QVariant>() << QVariant());
+        return QDBusPendingReply<bool>(reply);
+    };
+    stl.set(ADDR(UserShareInterface,setUserSharePassword),setUserSharePassword1);
+    ASSERT_NO_FATAL_FAILURE(sharemanager->setSambaPassword(QString(),QString()));
 }
 
 TEST_F(UserShareManagerTest,can_addUserShare){
 
     ShareInfo info;
     DUrl url;
-    url.setPath("./share");
+    url.setPath("/tmp/ut_share_manager");
     url.setScheme(FILE_SCHEME);
+    TestHelper::deleteTmpFile(url.toLocalFile());
     QProcess::execute("mkdir "+url.toLocalFile());
     info.setPath(url.path());
 
-    info.setShareName("share");
+    info.setShareName("ut_share_manager");
     info.setIsGuestOk(true);
     info.setIsWritable(true);
-    EXPECT_TRUE(sharemanager->addUserShare(info));
-    EXPECT_FALSE(sharemanager->getOldShareInfoByNewInfo(info).isValid());
-    sharemanager->testUpdateUserShareInfo();
-    sharemanager->usershareCountchanged();
-    sharemanager->initSamaServiceSettings();
-}
-
-TEST_F(UserShareManagerTest,can_addUserShare_false){
-
-    ShareInfo info;
-    info.setPath("~/share/share");
-
-    info.setShareName("share");
-    info.setIsGuestOk(true);
-    info.setIsWritable(true);
+    StubExt stl;
+    void (*showErrorDialog)(const QString &, const QString &) = []
+            (const QString &, const QString &){};
+    stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
+    void (*showAddUserShareFailedDialog)(const QString &) = []
+            (const QString &){};
+    stl.set(ADDR(DialogManager,showAddUserShareFailedDialog),showAddUserShareFailedDialog);
+    QString (*findExecutable)(const QString &, const QStringList &) = []
+            (const QString &, const QStringList &){return QString();};
+    stl.set(ADDR(QStandardPaths,findExecutable),findExecutable);
     EXPECT_FALSE(sharemanager->addUserShare(info));
-}
+    QString (*findExecutable1)(const QString &, const QStringList &) = []
+            (const QString &, const QStringList &){return QString("net");};
+    stl.set(ADDR(QStandardPaths,findExecutable),findExecutable1);
+    ShareInfo (*getOldShareInfoByNewInfo)(const ShareInfo &) = [](const ShareInfo &){
+        return ShareInfo();
+    };
+    stl.set(ADDR(UserShareManager,getOldShareInfoByNewInfo),getOldShareInfoByNewInfo);
+    EXPECT_FALSE(sharemanager->addUserShare(ShareInfo()));
+    ShareInfo (*getOldShareInfoByNewInfo1)(const ShareInfo &) = [](const ShareInfo &){
+        ShareInfo info;
 
-TEST_F(UserShareManagerTest,can_addUserShare_same){
-    ShareInfo info;
-    info.setPath("~/share");
-    info.setShareName("share");
-    info.setIsGuestOk(true);
-    info.setIsWritable(true);
+        info.setShareName("ut_share_manager");
+        info.setPath("/tmp/ut_share_manager");
+        return info;
+    };
+    stl.set(ADDR(UserShareManager,getOldShareInfoByNewInfo),getOldShareInfoByNewInfo1);
+
+    void (*start)(const QString &, const QStringList&, QIODevice::OpenMode) = []
+            (const QString &, const QStringList&, QIODevice::OpenMode){
+
+    };
+    stl.set((void (QProcess::*)(const QString &,const QStringList &,QIODevice::OpenMode))ADDR(QProcess,start),start);
+    bool (*waitForFinished)(int) = [](int){return true;};
+    stl.set(ADDR(QProcess,waitForFinished),waitForFinished);
+    int (*exitCode)(void *) = [](void *){return 0;};
+    stl.set(ADDR(QProcess,exitCode),exitCode);
+    EXPECT_TRUE(sharemanager->addUserShare(info));
+    int (*exitCode1)(void *) = [](void *){return 1;};
+    stl.set(ADDR(QProcess,exitCode),exitCode1);
+    QByteArray (*readAllStandardError)(void *) = [](void *){
+        return QByteArray("is already a valid system user name");
+    };
+    stl.set(ADDR(QProcess,readAllStandardError),readAllStandardError);
+
     EXPECT_FALSE(sharemanager->addUserShare(info));
-}
+    info.setIsWritable(false);
+    QByteArray (*readAllStandardError1)(void *) = [](void *){
+        return QByteArray("as we are restricted to only sharing directories we own.");
+    };
+    stl.set(ADDR(QProcess,readAllStandardError),readAllStandardError1);
+    EXPECT_FALSE(sharemanager->addUserShare(info));
 
-TEST_F(UserShareManagerTest,can_addUserShare_changepath){
-    ShareInfo info;
-    DUrl url,urlone;
-    url.setPath("./share_other");
-    url.setScheme(FILE_SCHEME);
-    urlone = url;
-    QProcess::execute("mkdir "+url.toLocalFile());
-    info.setPath(url.path());
-    info.setShareName("share");
-    info.setIsGuestOk(true);
-    info.setIsWritable(true);
-    EXPECT_TRUE(sharemanager->addUserShare(info));
-    EXPECT_FALSE(sharemanager->getOldShareInfoByNewInfo(info).isValid());
-    EXPECT_FALSE(sharemanager->getShareInfoByPath(url.toLocalFile()).isValid());
-    EXPECT_TRUE(sharemanager->getShareNameByPath(url.toLocalFile()).isEmpty());
-    urlone.setPath("./share");
-    info.setPath(urlone.path());
-    info.setShareName("share_other");
-    EXPECT_TRUE(sharemanager->addUserShare(info));
-    EXPECT_TRUE(sharemanager->getShareInfoByPath(urlone.toLocalFile()).isValid());
-    EXPECT_FALSE(sharemanager->getShareNameByPath(urlone.toLocalFile()).isEmpty());
-    EXPECT_FALSE(sharemanager->shareInfoList().isEmpty());
-    EXPECT_FALSE(sharemanager->getCurrentUserName().isEmpty());
-    EXPECT_FALSE(sharemanager->validShareInfoCount() == 0);
-    sharemanager->testUpdateUserShareInfo();
-    sharemanager->usershareCountchanged();
-    sharemanager->initSamaServiceSettings();
-    EXPECT_TRUE(sharemanager->isShareFile(urlone.path()));
+    QByteArray (*readAllStandardError2)(void *) = [](void *){
+        return QByteArray("contains invalid characters");
+    };
+    stl.set(ADDR(QProcess,readAllStandardError),readAllStandardError2);
+    EXPECT_FALSE(sharemanager->addUserShare(info));
 
+    QByteArray (*readAllStandardError3)(void *) = [](void *){
+        return QByteArray("net usershare add: failed to add share ut_share_manager. Error was");
+    };
+    stl.set(ADDR(QProcess,readAllStandardError),readAllStandardError3);
+    EXPECT_FALSE(sharemanager->addUserShare(info));
+
+    QByteArray (*readAllStandardError4)(void *) = [](void *){
+        return QByteArray("__________");
+    };
+    stl.set(ADDR(QProcess,readAllStandardError),readAllStandardError4);
+    EXPECT_FALSE(sharemanager->addUserShare(info));
+    TestHelper::deleteTmpFile(url.toLocalFile());
 }
 
 TEST_F(UserShareManagerTest,can_deleteUserShareByPath){
-    DUrl url;
-    url.setPath("./share");
-    url.setScheme(FILE_SCHEME);
-    TestHelper::deleteTmpFile(url.toLocalFile());
-    url.setPath("./share_other");
-    sharemanager->deleteUserShareByPath(url.toLocalFile());
-    TestHelper::deleteTmpFile(url.toLocalFile());
+    TestHelper::runInLoop([]{});
+    QString (*getShareNameByPath)(const QString &) = [](const QString &){return QString("test");};
+    Stub stl;
+    stl.set(ADDR(UserShareManager,getShareNameByPath),getShareNameByPath);
+    void (*deleteUserShareByShareName)(const QString &) = [](const QString &){};
+    stl.set(ADDR(UserShareManager,deleteUserShareByShareName),deleteUserShareByShareName);
+    ASSERT_NO_FATAL_FAILURE(sharemanager->deleteUserShareByPath(QString()));
 }
 
+
+TEST_F(UserShareManagerTest,can_removeFiledeleteUserShareByPath){
+    QString (*getShareNameByPath)(const QString &) = [](const QString &){
+        return QString();
+    };
+    Stub stl;
+    TestHelper::runInLoop([]{});
+    sharemanager->removeFiledeleteUserShareByPath("f");
+    stl.set(ADDR(UserShareManager,getShareNameByPath),getShareNameByPath);
+    ASSERT_NO_FATAL_FAILURE(sharemanager->removeFiledeleteUserShareByPath("f"));
+    QString (*getShareNameByPath1)(const QString &) = [](const QString &){
+        return QString("test");
+    };
+    stl.set(ADDR(UserShareManager,getShareNameByPath),getShareNameByPath1);
+    void (*start)(const QString &, const QStringList&, QIODevice::OpenMode) = []
+            (const QString &, const QStringList&, QIODevice::OpenMode){};
+    stl.set((void (QProcess::*)(const QString &,const QStringList &,QIODevice::OpenMode))ADDR(QProcess,start),start);
+    bool (*waitForFinished)(int) = [](int){return true;};
+    stl.set(ADDR(QProcess,waitForFinished),waitForFinished);
+    ASSERT_NO_FATAL_FAILURE(sharemanager->removeFiledeleteUserShareByPath(QString("test")));
+}
+
+TEST_F(UserShareManagerTest,can_usershareCountchanged){
+    ASSERT_NO_FATAL_FAILURE(sharemanager->usershareCountchanged());
+}
+
+TEST_F(UserShareManagerTest,can_onFileDeleted){
+    void (*handleShareChanged)(const QString &) = [](const QString &){};
+    Stub stl;
+    stl.set(ADDR(UserShareManager,handleShareChanged),handleShareChanged);
+    void (*removeFiledeleteUserShareByPath)(const QString &) = [](const QString &){};
+    stl.set(ADDR(UserShareManager,removeFiledeleteUserShareByPath),removeFiledeleteUserShareByPath);
+    ASSERT_NO_FATAL_FAILURE(sharemanager->onFileDeleted(QString()));
+    ASSERT_NO_FATAL_FAILURE(sharemanager->onFileDeleted(QString("/var/lib/samba/usershares/dd")));
+}
+
+TEST_F(UserShareManagerTest,can_deleteUserShareByShareName){
+    QDBusPendingReply<bool> (*closeSmbShareByShareName)(const QString &,bool) = []
+            (const QString &, bool){
+        QDBusMessage reply;
+        reply.setArguments(QList<QVariant>() << QVariant(false));
+        return QDBusPendingReply<bool>(reply);
+    };
+    Stub stl;
+    void (*waitForFinished)(void *) = [](void *){};
+    stl.set(ADDR(QDBusPendingCall,waitForFinished),waitForFinished);
+    stl.set((QDBusPendingReply<bool> (UserShareInterface::*)(const QString &,bool))\
+            ADDR(UserShareInterface,closeSmbShareByShareName),closeSmbShareByShareName);
+    void (*updateShareInfo)(const QString &) = [](const QString &){};
+    stl.set(ADDR(ShareInfoFrame,updateShareInfo),updateShareInfo);
+    sharemanager->m_shareInfos.insert("testee",ShareInfo());
+    ASSERT_NO_FATAL_FAILURE(sharemanager->deleteUserShareByShareName(QString("testee")));
+    QDBusPendingReply<bool> (*closeSmbShareByShareName1)(const QString &,bool) = []
+            (const QString &, bool){
+        QDBusMessage reply;
+        reply.setArguments(QList<QVariant>() << QVariant(true));
+        return QDBusPendingReply<bool>(reply);
+    };
+    stl.set((QDBusPendingReply<bool> (UserShareInterface::*)(const QString &,bool))\
+            ADDR(UserShareInterface,closeSmbShareByShareName),closeSmbShareByShareName1);
+    void (*start)(const QString &, const QStringList&, QIODevice::OpenMode) = []
+            (const QString &, const QStringList&, QIODevice::OpenMode){};
+    stl.set((void (QProcess::*)(const QString &,const QStringList &,QIODevice::OpenMode))ADDR(QProcess,start),start);
+    bool (*waitForFinished1)(int) = [](int){return true;};
+    stl.set(ADDR(QProcess,waitForFinished),waitForFinished1);
+    sharemanager->m_shareInfos.clear();
+    ASSERT_NO_FATAL_FAILURE(sharemanager->deleteUserShareByShareName(QString("testee")));
+}

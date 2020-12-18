@@ -15,9 +15,9 @@
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
+#include "deviceinfo/udisklistener.h"
 #define private public
 #define protected public
-
 #include "tag/tagmanager.h"
 #include "tests/testhelper.h"
 #include "stub.h"
@@ -91,6 +91,11 @@ namespace  {
                     (const QString &, const QString &){};
             stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
 
+            void (*mount)(const QString &) = [](const QString &){};
+            stl.set(ADDR(UDiskListener,mount),mount);
+            void (*unmount)(const QString &) = [](const QString &){};
+            stl.set(ADDR(UDiskListener,unmount),unmount);
+
             controller = AppController::instance();
             QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
             tempFilePath =  QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/" + fileName;
@@ -133,6 +138,13 @@ TEST_F(AppControllerTest,can_create_file){
 }
 
 TEST_F(AppControllerTest,start_openAction){
+
+    bool (*openFiles)(const QObject *, const DUrlList &, const bool ) = []
+            (const QObject *, const DUrlList &, const bool ){return true;};
+    stl.set(ADDR(DFileService,openFiles),openFiles);
+    bool (*openFile)(const QObject *, const DUrl &) = []
+            (const QObject *, const DUrl &){return true;};
+    stl.set(ADDR(DFileService,openFiles),openFile);
     url.setScheme(FILE_SCHEME);
     url.setPath("~/Music");
     EXPECT_NO_FATAL_FAILURE(controller->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList())));
@@ -197,7 +209,9 @@ TEST_F(AppControllerTest,start_actionOpenDisk){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/Music");
     Stub stl;
-
+    void (*actionOpen)(const QSharedPointer<DFMUrlListBaseEvent> &, const bool) = []
+            (const QSharedPointer<DFMUrlListBaseEvent> &, const bool){};
+    stl.set(ADDR(AppController,actionOpen),actionOpen);
     DUrl rooturl("dfmroot:///sdb1.localdisk");
     QString (*scheme)(void *) = [](void *){
         return QString(DFMROOT_SCHEME);
@@ -267,6 +281,9 @@ TEST_F(AppControllerTest,start_asyncOpenDisk){
     if (!controller->m_fmEvent ) {
         controller->m_fmEvent = dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList() << url);
     }
+    void (*actionOpen)(const QSharedPointer<DFMUrlListBaseEvent> &, const bool) = []
+            (const QSharedPointer<DFMUrlListBaseEvent> &, const bool){};
+    stl.set(ADDR(AppController,actionOpen),actionOpen);
     EXPECT_NO_FATAL_FAILURE(controller->asyncOpenDisk(url.toString()));
 }
 
@@ -549,7 +566,6 @@ TEST_F(AppControllerTest,start_actionNewFile){
             ADDR(DFMEventDispatcher,processEventWithEventLoop));
     bool (*optical_stub)(void *obj) = [](void *obj){return true;};
     stl.set(ADDR(DDiskDevice, optical), optical_stub);
-
     url = DUrl("dfmroot:///sda1.localdisk");
     EXPECT_NO_FATAL_FAILURE(controller->actionMount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
 
@@ -558,6 +574,9 @@ TEST_F(AppControllerTest,start_actionNewFile){
 
     QString isoPath = createTestIsoFile();
     url = DUrl("file://" + isoPath);
+    void (*actionOpen)(const QSharedPointer<DFMUrlListBaseEvent> &, const bool) = []
+            (const QSharedPointer<DFMUrlListBaseEvent> &, const bool){};
+    stl.set(ADDR(AppController,actionOpen),actionOpen);
 
     TestHelper::runInLoop([=](){
         EXPECT_NO_FATAL_FAILURE(controller->actionMountImage(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));

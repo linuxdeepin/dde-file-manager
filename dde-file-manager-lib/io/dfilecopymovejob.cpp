@@ -1736,10 +1736,12 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
         } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
         if (action == DFileCopyMoveJob::SkipAction) {
+            munmap(fromPoint,static_cast<size_t>(fromInfo->size()));
             close(fromFd);
             close(toFd);
             return true;
         } else if (action != DFileCopyMoveJob::NoAction) {
+            munmap(fromPoint,static_cast<size_t>(fromInfo->size()));
             close(fromFd);
             close(toFd);
             return false;
@@ -1763,6 +1765,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
     __off_t len = lseek(fromFd,0,SEEK_END);
     m_countVetor.push_back(QAtomicInt(-1));
     if (m_countVetor.count() <= 0 || m_countVetor.count() <= m_count.load() ) {
+        munmap(fromPoint,static_cast<size_t>(fromInfo->size()));
+        munmap(toPoint,static_cast<size_t>(fromInfo->size()));
         close(fromFd);
         close(toFd);
         return false;
@@ -1814,6 +1818,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
     for ( auto futrue : futrueArray) {
         futrue.waitForFinished();
     }
+    munmap(fromPoint,static_cast<size_t>(fromInfo->size()));
+    munmap(toPoint,static_cast<size_t>(fromInfo->size()));
     close(fromFd);
     close(toFd);
     //对文件加权
