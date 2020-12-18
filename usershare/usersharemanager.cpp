@@ -367,25 +367,6 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
     usershareCountchanged();
 }
 
-void UserShareManager::testUpdateUserShareInfo()
-{
-    QProcess net_usershare_info;
-    net_usershare_info.start("net usershare info");
-    if (net_usershare_info.waitForFinished()) {
-        QString content(net_usershare_info.readAll());
-        writeCacheToFile(getCacehPath(), content);
-        qDebug() << content;
-        QSettings settings(getCacehPath(), QSettings::IniFormat);
-        settings.setIniCodec("utf-8");
-        qDebug() << settings.childGroups();
-        foreach (QString group, settings.childGroups()) {
-            settings.beginGroup(group);
-            qDebug() << settings.value("path").toString();
-            settings.endGroup();
-        }
-    }
-}
-
 void UserShareManager::setSambaPassword(const QString &userName, const QString &password)
 {
     QDBusReply<bool> reply = m_userShareInterface->setUserSharePassword(userName, password);
@@ -409,8 +390,6 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
     ShareInfo oldInfo = getOldShareInfoByNewInfo(info);
     qDebug() << oldInfo << info;
     if (!info.shareName().isEmpty() && QFile(info.path()).exists()) {
-
-
         QString cmd = "net";
         QStringList args;
         ShareInfo _info = info;
@@ -426,9 +405,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
 
 
         QProcess process;
-        process.setProgram(cmd);
-        process.setArguments(args);
-        process.start();
+        process.start(cmd, args);
         // Wait for process to finish without timeout.
         process.waitForFinished(-1);
 
@@ -442,31 +419,13 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
 
             //root权限文件分享会报这个错误信息
             if (err.contains("as we are restricted to only sharing directories we own.")) {
-                DDialog dialog;
-
-                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-                dialog.setTitle(tr("To protect the files, you cannot share this folder."));
-                dialog.addButton(tr("OK"), true);
-
-                if (dialog.exec() == DDialog::Accepted) {
-                    return false;
-                }
-
+                dialogManager->showErrorDialog(tr("To protect the files, you cannot share this folder."), "");
                 return false;
             }
 
             // 共享文件的共享名输入特殊字符会报这个错误信息
             if (err.contains("contains invalid characters")) {
-                DDialog dialog;
-                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
-                QFontMetrics fontMetrics(dialog.font());
-                dialog.setTitle(tr("The share name must not contain %<>*?|/\\+=;:,\""));
-                dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-
-                if (dialog.exec() == DDialog::Accepted) {
-                    return false;
-                }
-
+                dialogManager->showErrorDialog(tr("The share name must not contain %<>*?|/\\+=;:,\""), "");
                 return false;
             }
 
@@ -475,16 +434,9 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             QString strErr = "net usershare add: failed to add share %1. Error was";
             if (err.contains(strErr.arg(_info.shareName()))) {
                 DDialog dialog;
-                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
                 QFontMetrics fontMetrics(dialog.font());
                 QString shareName = fontMetrics.elidedText(_info.shareName(), Qt::ElideMiddle, 150);
-                dialog.setTitle(tr("Failed to share %1. The share name is too long.").arg(shareName));
-                dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-
-                if (dialog.exec() == DDialog::Accepted) {
-                    return false;
-                }
-
+                dialogManager->showErrorDialog(tr("Failed to share %1. The share name is too long.").arg(shareName), "");
                 return false;
             }
 

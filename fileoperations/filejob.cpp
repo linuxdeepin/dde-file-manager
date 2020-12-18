@@ -319,7 +319,6 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             UDiskDeviceInfoPointer pSrc = deviceListener->getDeviceByFilePath(files.at(0).toLocalFile());
             UDiskDeviceInfoPointer pDes = deviceListener->getDeviceByFilePath(destination.toLocalFile());
             if (pSrc && pDes) {
-                qDebug() << pSrc->getMountPointUrl() << pDes->getMountPointUrl();
                 if (pSrc->getMountPointUrl() != pDes->getMountPointUrl()) {
                     m_isInSameDisk = false;
                 }
@@ -2904,7 +2903,7 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
     QMap<QString, QString> jobDataDetail;
 
     jobDataDetail.insert("status", "calculating");
-    jobDataDetail.insert("file", files.first().fileName());
+    jobDataDetail.insert("file", files.isEmpty() ? "" : files.first().fileName());
     jobDataDetail.insert("progress", m_progress);
     jobDataDetail.insert("destination", destination.fileName());
 

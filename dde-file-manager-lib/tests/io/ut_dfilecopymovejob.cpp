@@ -13,8 +13,8 @@
 #include "stub.h"
 #include "controllers/vaultcontroller.h"
 #include "dgiofiledevice.h"
+#include "dabstractfilewatcher.h"
 #include "dlocalfiledevice.h"
-
 
 #include <QThread>
 #include <QProcess>
@@ -33,6 +33,19 @@ public:
     QSharedPointer<DFileCopyMoveJob> job;
     virtual void SetUp() override{
         job.reset(new DFileCopyMoveJob());
+        Stub stl;
+        bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+                (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
+        stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+                ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal);
+        bool (*ghostSignal1)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &) = []
+                (const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &){return true;};
+        bool (*ghostSignal2)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &) = []
+                (const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &){return true;};
+        stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &))\
+                ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal1);
+        stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
+                ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
         std::cout << "start DFileCopyMoveJobTest" << std::endl;
     }
 
