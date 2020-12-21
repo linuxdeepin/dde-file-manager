@@ -17,6 +17,7 @@
 #include "singleton.h"
 #include "app/filesignalmanager.h"
 #include "utils/desktopinfo.h"
+#include "burnoptdialog_p.h"
 
 DWIDGET_USE_NAMESPACE
 

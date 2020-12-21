@@ -146,3 +146,6 @@ include(tests/test.pri)
 include(../third-party/cpp-stub/stub.pri)
 INCLUDEPATH += $$top_srcdir/third-party/stubext
 LIBS += -lgcov
+
+HEADERS += \
+    dialogs/burnoptdialog_p.h

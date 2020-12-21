@@ -1,79 +1,104 @@
 #include <gtest/gtest.h>
 #include "stub.h"
-
+#include "stubext.h"
+#include "testhelper.h"
 #include "desktopinfo.h"
 #include "dfmglobal.h"
+#include "fileoperations/filejob.h"
+#include "disomaster.h"
+
+#include <QDialog>
+#include <QFile>
+
+using namespace DISOMasterNS;
 
 #define private public
 #include "dialogs/burnoptdialog.h"
+#include "dialogs/burnoptdialog_p.h"
 
 namespace  {
     class TestBurnOptDialog : public testing::Test{
     public:
         void SetUp() override
         {
-            m_pTester = new BurnOptDialog("file:///file");
+            dlg = new BurnOptDialog("/dev/sr999");
             std::cout << "start TestBurnOptDialog";
         }
         void TearDown() override
         {
-            delete m_pTester;
-            m_pTester = nullptr;
+            delete dlg;
+            dlg = nullptr;
             std::cout << "end TestBurnOptDialog";
         }
     public:
-        BurnOptDialog *m_pTester;
+        BurnOptDialog *dlg;
     };
 }
 
-TEST_F(TestBurnOptDialog, testInit)
-{
-    bool(*stub_isWayLand)() = []()->bool{
-        return true;
-    };
-    Stub stu;
-    stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
-    BurnOptDialog dlg("file:///file");
-    EXPECT_NE(nullptr, m_pTester);
+TEST_F(TestBurnOptDialog, tstConstructWithWayland) {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(DFMGlobal, isWayLand), []{ return true; });
+    stext.set_lamda(&DISOMasterNS::DISOMaster::getDevicePropertyCached, []{
+        DISOMasterNS::DeviceProperty dp;
+        dp.writespeed << "16x";
+        return dp;
+    });
+    BurnOptDialog lDlg("/dev/srnnn");
 }
 
-TEST_F(TestBurnOptDialog, testInit2)
-{
-    emit m_pTester->buttonClicked(0, "");
-}
+TEST_F(TestBurnOptDialog, tstInnerSlot) {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return QDialog::Rejected; });
 
-TEST_F(TestBurnOptDialog, testInit3)
-{
-    emit m_pTester->buttonClicked(1, "");
-}
+    dlg->d_ptr->cb_checkdisc->setChecked(true);
+    dlg->d_ptr->cb_eject->setChecked(true);
+    dlg->d_ptr->cb_donotclose->setChecked(true);
 
-TEST_F(TestBurnOptDialog, testSetIOSImage)
-{
-    DUrl image("file:///test1/image");
-    m_pTester->setISOImage(image);
-    QString str = m_pTester->d_ptr->image_file.toString();
-    EXPECT_TRUE(str == "file:///test1/image");
-}
+    dlg->buttonClicked(0, "tst");
+    TestHelper::runInLoop([]{;}, 300);
 
-TEST_F(TestBurnOptDialog, testSetJobWindowId)
-{
-    int wid(12345678);
-    m_pTester->setJobWindowId(wid);
-    EXPECT_EQ(wid, m_pTester->d_ptr->window_id);
-}
+    bool (QFile::*exists_ori)() const = &QFile::exists;
+    stext.set_lamda(exists_ori, []{ return true; });
+    dlg->buttonClicked(0, "tst");
+    TestHelper::runInLoop([]{;}, 300);
 
-TEST_F(TestBurnOptDialog, testSetDefaultVolName)
-{
-    bool(*stub_waylandDectected)() = []()->bool{
-            return true;
-    };
+    int idx = 0;
+    stext.set_lamda(ADDR(QComboBox, currentIndex), [&idx]{ return idx; });
+    dlg->buttonClicked(0, "tst");
+    TestHelper::runInLoop([]{;}, 300);
 
-    Stub stu;
-    stu.set(ADDR(DesktopInfo, waylandDectected), stub_waylandDectected);
+    idx = 1;
+    dlg->buttonClicked(0, "tst");
+    TestHelper::runInLoop([]{;}, 300);
 
-    QString volName("test UT");
-    m_pTester->setDefaultVolName(volName);
-    QString str = m_pTester->d_ptr->le_volname->text();
-    EXPECT_TRUE(str == "test UT");
+    idx = 2;
+    dlg->buttonClicked(0, "tst");
+    TestHelper::runInLoop([]{;}, 300);
+
+    idx = 3;
+    dlg->buttonClicked(0, "tst");
+    TestHelper::runInLoop([]{;}, 300);
+
+    dlg->d_ptr->le_volname->setText("");
+    dlg->buttonClicked(0, "tst");
+    TestHelper::runInLoop([]{;}, 300);
+
+    dlg->d_ptr->le_volname->setText("111");
+    dlg->buttonClicked(0, "tst");
+    TestHelper::runInLoop([]{;}, 300);
+
+    stext.set_lamda(ADDR(FileJob, doOpticalBurnByChildProcess), []{ return; });
+    stext.set_lamda(ADDR(FileJob, doOpticalImageBurnByChildProcess), []{ return; });
+    dlg->buttonClicked(1, "tst");
+    TestHelper::runInLoop([]{;}, 300);
+
+    dlg->setISOImage(DUrl("file:///HelloUrl"));
+    dlg->buttonClicked(1, "tst");
+    TestHelper::runInLoop([]{;}, 300);
+
+    dlg->setJobWindowId(idx);
+
+    stext.set_lamda(ADDR(DesktopInfo, waylandDectected), []{ return true; });
+    dlg->setDefaultVolName("hello iso");
 }
 
