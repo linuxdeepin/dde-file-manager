@@ -18,9 +18,11 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
+#include <QtDBus/QDBusReply>
 
 #include "controllers/appcontroller.h"
 #include "stub.h"
+#include "stubext.h"
 
 #undef signals
 extern "C" {
@@ -455,19 +457,77 @@ TEST_F(TestFileUtils, can_not_run_normalfile_as_ex)
     EXPECT_FALSE(FileUtils::openExcutableFile(filePath,3));
 }
 
-TEST_F(TestFileUtils, can_set_the_background)
+QDBusPendingCall asyncCall_true_stub(const QDBusMessage &message, int timeout)
+{
+    return QDBusPendingCall::fromCompletedCall(message);
+}
+
+TEST_F(TestFileUtils, can_set_the_background_outof_wayland_set)
 {
     Stub stub;
-    stub.set(g_app_info_launch, g_app_info_launch_stub);
-    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
-    stub.set(ADDR(StartManagerInterface,RunCommandWithOptions), RunCommandWithOptions_stub);
-    stub.set(ADDR(StartManagerInterface,RunCommand), RunCommand_stub);
+    stub.set(ADDR(QDBusConnection,asyncCall), asyncCall_true_stub);
+
+    stub_ext::StubExt stu;
+    stu.set_lamda(&QDBusPendingCall::isFinished, [](){return true;});
+    stu.set_lamda(&QDBusPendingCall::reply, [](){return QDBusMessage::createError("SetBackground","SetMonitorBackground");});
+    stu.set_lamda(&QDBusReply<QString>::value, [](){return "SetMonitorBackground";});
+    stu.set_lamda(&DesktopInfo::waylandDectected, [](){return false;});
 
     QString sysPicturePath = QString("%1/Pictures/Wallpapers").arg(QDir::homePath());//"/home/max/Pictures/Wallpapers";
     EXPECT_TRUE(FileUtils::displayPath(sysPicturePath).contains("~"));
 
     EXPECT_EQ("png", FileUtils::imageFormatName(QImage::Format_ARGB32) );
     EXPECT_EQ("jpeg", FileUtils::imageFormatName(QImage::Format_RGB32));
+
+    QStringList listPicutures = FileUtils::filesList(sysPicturePath);
+    EXPECT_FALSE(listPicutures.empty());
+
+    foreach (QString onefile, listPicutures) {
+        if(FileUtils::getRealSuffix(onefile).contains("jpg")){
+            EXPECT_TRUE(FileUtils::setBackground(onefile) );
+            break;
+        }
+    }
+}
+
+TEST_F(TestFileUtils, can_set_the_background_in_wayland_set)
+{
+    Stub stub;
+    stub.set(ADDR(QDBusConnection,asyncCall), asyncCall_true_stub);
+
+    stub_ext::StubExt stu;
+    stu.set_lamda(&QDBusPendingCall::isFinished, [](){return true;});
+    stu.set_lamda(&QDBusPendingCall::reply, [](){return QDBusMessage::createError("SetBackground","SetMonitorBackground");});
+    stu.set_lamda(&QDBusReply<QString>::value, [](){return "SetMonitorBackground";});
+    stu.set_lamda(&DesktopInfo::waylandDectected, [](){return true;});
+
+    QString sysPicturePath = QString("%1/Pictures/Wallpapers").arg(QDir::homePath());//"/home/max/Pictures/Wallpapers";
+    EXPECT_TRUE(FileUtils::displayPath(sysPicturePath).contains("~"));
+
+    EXPECT_EQ("png", FileUtils::imageFormatName(QImage::Format_ARGB32) );
+    EXPECT_EQ("jpeg", FileUtils::imageFormatName(QImage::Format_RGB32));
+
+    QStringList listPicutures = FileUtils::filesList(sysPicturePath);
+    EXPECT_FALSE(listPicutures.empty());
+
+    foreach (QString onefile, listPicutures) {
+        if(FileUtils::getRealSuffix(onefile).contains("jpg")){
+            EXPECT_TRUE(FileUtils::setBackground(onefile) );
+            break;
+        }
+    }
+}
+
+TEST_F(TestFileUtils, cannot_set_the_background)
+{
+    Stub stub;
+    stub.set(ADDR(QDBusConnection,asyncCall), asyncCall_true_stub);
+
+    stub_ext::StubExt stu;
+    stu.set_lamda(&QDBusPendingCall::isFinished, [](){return false;});
+
+    QString sysPicturePath = QString("%1/Pictures/Wallpapers").arg(QDir::homePath());//"/home/max/Pictures/Wallpapers";
+    EXPECT_TRUE(FileUtils::displayPath(sysPicturePath).contains("~"));
 
     QStringList listPicutures = FileUtils::filesList(sysPicturePath);
     EXPECT_FALSE(listPicutures.empty());
