@@ -24,18 +24,21 @@
 #include <gtest/gtest.h>
 
 #include <QDir>
-
-#ifdef GTEST
-#define private public
-#define protected public
-#endif
+#include <QSize>
+#include <QResizeEvent>
 
 #include "musicmessageview.h"
 #include "durl.h"
+#include "stub.h"
+#include "addr_pri.h"
+
+#include <unicode/ucnv.h>
+#include <unicode/ucsdet.h>
 #include <taglib/tag.h>
 #include <taglib/fileref.h>
 #include <taglib/taglib.h>
 #include <taglib/tpropertymap.h>
+#include <QTextCodec>
 
 namespace {
 class TestMusicMessageView : public testing::Test
@@ -44,7 +47,7 @@ public:
 
     void SetUp() override
     {
-        m_url = "file:./../../../../dde-file-manager/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/tests/bensound-sunny.mp3";
+        m_url = "file:/usr/share/music/bensound-sunny.mp3";
         m_musicMessageView = new MusicMessageView(m_url);
     }
 
@@ -61,13 +64,21 @@ public:
 };
 }
 
+ACCESS_PRIVATE_FUN(MusicMessageView, MediaMeta(const QString &), tagOpenMusicFile);
+MediaMeta PrivatetagOpenMusicFile(MusicMessageView * musicView, const QString & path){
+    return call_private_fun::MusicMessageViewtagOpenMusicFile(*musicView, path);
+}
 TEST_F(TestMusicMessageView, can_tag_open_music_file)
 {
-    EXPECT_TRUE(m_musicMessageView->tagOpenMusicFile(m_url).title.toStdString().c_str());
-    EXPECT_TRUE(m_musicMessageView->tagOpenMusicFile(m_url).album.toStdString().c_str());
-    EXPECT_TRUE(m_musicMessageView->tagOpenMusicFile(m_url).artist.toStdString().c_str());
+    EXPECT_TRUE(PrivatetagOpenMusicFile(m_musicMessageView, m_url).title.toStdString().c_str());
+    EXPECT_TRUE(PrivatetagOpenMusicFile(m_musicMessageView, m_url).album.toStdString().c_str());
+    EXPECT_TRUE(PrivatetagOpenMusicFile(m_musicMessageView, m_url).artist.toStdString().c_str());
 }
 
+ACCESS_PRIVATE_FUN(MusicMessageView, void(MediaMeta &, void *), characterEncodingTransform);
+void PrivatecharacterEncodingTransform(MusicMessageView * musicView, MediaMeta & meta, void * tag){
+    return call_private_fun::MusicMessageViewcharacterEncodingTransform(*musicView, meta, tag);
+}
 TEST_F(TestMusicMessageView, can_characterEncodingTransform)
 {
     MediaMeta meta;
@@ -75,12 +86,16 @@ TEST_F(TestMusicMessageView, can_characterEncodingTransform)
     TagLib::FileRef f(url.toLocalFile().toLocal8Bit());
 
     TagLib::Tag *tag = f.tag();
-    m_musicMessageView->characterEncodingTransform(meta, static_cast<void*>(tag));
+    PrivatecharacterEncodingTransform(m_musicMessageView, meta, static_cast<void*>(tag));
     EXPECT_TRUE(meta.title.toStdString().c_str());
     EXPECT_TRUE(meta.album.toStdString().c_str());
     EXPECT_TRUE(meta.artist.toStdString().c_str());
 }
 
+ACCESS_PRIVATE_FUN(MusicMessageView, QList<QByteArray>(const QByteArray &), detectEncodings);
+QList<QByteArray> PrivateDetectEncodings(MusicMessageView *musicView, const QByteArray & detectByte){
+    return call_private_fun::MusicMessageViewdetectEncodings(*musicView, detectByte);
+}
 TEST_F(TestMusicMessageView, can_detect_encodings)
 {
     MediaMeta meta;
@@ -101,11 +116,28 @@ TEST_F(TestMusicMessageView, can_detect_encodings)
             detectByte += tag->title().toCString();
             detectByte += tag->artist().toCString();
             detectByte += tag->album().toCString();
-            EXPECT_TRUE(!m_musicMessageView->detectEncodings(detectByte).isEmpty());
+            EXPECT_FALSE(PrivateDetectEncodings(m_musicMessageView,detectByte).isEmpty());
+
+            void (*st_ucsdet_setText) (UCharsetDetector * UCD, const char* data, int len, UErrorCode * code) = [](UCharsetDetector*, const char*, int, UErrorCode *code){
+                *code = U_ILLEGAL_ARGUMENT_ERROR;
+            };
+
+            Stub stub;
+            stub.set(ucsdet_setText, st_ucsdet_setText);
+            EXPECT_FALSE(PrivateDetectEncodings(m_musicMessageView,detectByte).isEmpty());
         }
     }
 }
 
+typedef QMap<QString, QByteArray> mapType;
+ACCESS_PRIVATE_FIELD(MusicMessageView,  mapType, localeCodes);
+mapType PrivateLocaleCodes(MusicMessageView * musicView){
+    return access_private_field::MusicMessageViewlocaleCodes(*musicView);
+};
+ACCESS_PRIVATE_FUN(MusicMessageView, bool(const QChar &), isChinese);
+bool PrivateIsChinese(MusicMessageView *musicView, const QChar & data){
+    return call_private_fun::MusicMessageViewisChinese(*musicView, data);
+};
 TEST_F(TestMusicMessageView, can_is_chinese)
 {
     MediaMeta meta;
@@ -126,8 +158,8 @@ TEST_F(TestMusicMessageView, can_is_chinese)
             detectByte += tag->title().toCString();
             detectByte += tag->artist().toCString();
             detectByte += tag->album().toCString();
-            auto allDetectCodecs = m_musicMessageView->detectEncodings(detectByte);
-            auto localeCode = m_musicMessageView->localeCodes.value(QLocale::system().name());
+            auto allDetectCodecs = PrivateDetectEncodings(m_musicMessageView, detectByte);
+            auto localeCode = PrivateLocaleCodes(m_musicMessageView).value(QLocale::system().name());
 
             for (auto curDetext : allDetectCodecs)
             {
@@ -147,8 +179,8 @@ TEST_F(TestMusicMessageView, can_is_chinese)
                 curStr = QString::fromLocal8Bit(tag->album().toCString());
             for (auto ch : curStr)
             {
-                EXPECT_TRUE(m_musicMessageView->isChinese(ch));
-                if (m_musicMessageView->isChinese(ch))
+                EXPECT_TRUE(PrivateIsChinese(m_musicMessageView, ch));
+                if (PrivateIsChinese(m_musicMessageView, ch))
                 {
                     detectCodec = "GB18030";
                     break;
@@ -158,7 +190,17 @@ TEST_F(TestMusicMessageView, can_is_chinese)
     }
 }
 
+ACCESS_PRIVATE_FIELD(MusicMessageView,  QMediaPlayer*, m_player);
+QMediaPlayer* PrivatePlayer(MusicMessageView * musicView){
+    return access_private_field::MusicMessageViewm_player(*musicView);
+};
 TEST_F(TestMusicMessageView, can_play)
 {
-    emit m_musicMessageView->m_player->mediaStatusChanged(QMediaPlayer::LoadedMedia);
+    emit PrivatePlayer(m_musicMessageView)->mediaStatusChanged(QMediaPlayer::LoadedMedia);
+}
+
+TEST_F(TestMusicMessageView, use_resizeEvent)
+{
+    m_musicMessageView->setFixedSize(200, 300);
+    m_musicMessageView->setFixedSize(400, 600);
 }

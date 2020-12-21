@@ -23,6 +23,8 @@
 #include <gtest/gtest.h>
 
 #include <QDir>
+#include <QPrinter>
+#include <QPainter>
 
 #include "pdfwidget.h"
 #include "pdfpreview.h"
@@ -35,14 +37,25 @@ class TestPDFpreview : public testing::Test
 public:
     void SetUp() override
     {
-        m_url = DUrl("file:./../../../../dde-file-manager/dde-file-manager-plugins/pluginPreview/dde-pdf-preview-plugin/tests/test.pdf");
+        QPrinter text_printer;
+        text_printer.setOutputFormat(QPrinter::PdfFormat);
+        text_printer.setOutputFileName("./test.pdf");
+        QPainter painter_pixmap;
+        painter_pixmap.begin(&text_printer);
+        painter_pixmap.drawText(10, 30, "hello world");
+        painter_pixmap.end();
+
+        m_url = DUrl("file:./test.pdf");
         m_pdfPreview = new PDFPreview(nullptr);
     }
 
     void TearDown() override
     {
+        QThread::sleep(2);
         delete m_pdfPreview;
         m_pdfPreview = nullptr;
+        QFile file("./test.pdf");
+        file.remove();
     }
 
 public:

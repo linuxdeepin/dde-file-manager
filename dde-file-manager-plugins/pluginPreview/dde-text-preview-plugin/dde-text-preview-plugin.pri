@@ -1,8 +1,9 @@
 SOURCES += \
-    main.cpp \
-    textpreview.cpp
+    textpreview.cpp \
+    $$PWD/textpreviewplugin.cpp
 
 HEADERS += \
-    textpreview.h
+    textpreview.h \
+    $$PWD/textpreviewplugin.h
 
 

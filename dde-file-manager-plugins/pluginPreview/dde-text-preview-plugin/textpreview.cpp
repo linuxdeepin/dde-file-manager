@@ -35,7 +35,7 @@
 #include <QDebug>
 #include <QScrollBar>
 
-DFM_BEGIN_NAMESPACE
+DFM_USE_NAMESPACE
 
 TextPreview::TextPreview(QObject *parent):
     DFMFilePreview(parent)
@@ -166,5 +166,3 @@ void TextPreview::valueChanged(int index)
         m_flg = true; //! 设置为true使得下次需要分段加载数据能够被执行
     }
 }
-
-DFM_END_NAMESPACE

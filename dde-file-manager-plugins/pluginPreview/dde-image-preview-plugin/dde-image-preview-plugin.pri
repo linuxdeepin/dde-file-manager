@@ -1,8 +1,9 @@
 SOURCES += \
     imageview.cpp \
     imagepreview.cpp \
-    main.cpp
+    $$PWD/imagepreviewplugin.cpp
 
 HEADERS += \
     imageview.h \
-    imagepreview.h
+    imagepreview.h \
+    $$PWD/imagepreviewplugin.h

@@ -13,4 +13,5 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/test-main.cpp \
-    $$PWD/ut_textpreview.cpp
+    $$PWD/ut_textpreview.cpp \
+    $$PWD/ut_textpreviewplugin.cpp

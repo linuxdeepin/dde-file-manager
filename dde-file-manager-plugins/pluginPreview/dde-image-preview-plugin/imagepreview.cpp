@@ -41,7 +41,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-DFM_BEGIN_NAMESPACE
+DFM_USE_NAMESPACE
 
 ImagePreview::ImagePreview(QObject *parent)
     : DFMFilePreview(parent)
@@ -163,5 +163,3 @@ void ImagePreview::copyFile() const
 
     DFMGlobal::setUrlsToClipboard({m_url}, DFMGlobal::CopyAction, data);
 }
-
-DFM_END_NAMESPACE

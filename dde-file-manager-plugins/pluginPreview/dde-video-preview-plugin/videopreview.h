@@ -23,18 +23,15 @@
 
 #include "dfmfilepreview.h"
 #include "durl.h"
+#include "videowidget.h"
+#include "videostatusbar.h"
 
 #include <playlist_model.h>
 
 #include <QFileInfo>
 #include <QPointer>
 
-DFM_BEGIN_NAMESPACE
-
-class VideoWidget;
-class VideoStatusBar;
-
-class VideoPreview : public DFMFilePreview
+class VideoPreview : public DFM_NAMESPACE::DFMFilePreview
 {
     Q_OBJECT
 
@@ -57,8 +54,6 @@ public:
     void pause() override;
     void stop() override;
 
-
-
 private:
     QUrl videoUrl;
     QPointer<VideoWidget> playerWidget;
@@ -68,7 +63,5 @@ private:
     friend class VideoWidget;
     friend class VideoStatusBar;
 };
-
-DFM_END_NAMESPACE
 
 #endif // VIDEOPREVIEW_H

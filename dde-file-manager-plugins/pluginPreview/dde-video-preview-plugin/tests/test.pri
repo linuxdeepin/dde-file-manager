@@ -13,4 +13,5 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/test-main.cpp \
-    $$PWD/ut_videopreview.cpp
+    $$PWD/ut_videopreview.cpp \
+    $$PWD/ut_videopreviewplugin.cpp

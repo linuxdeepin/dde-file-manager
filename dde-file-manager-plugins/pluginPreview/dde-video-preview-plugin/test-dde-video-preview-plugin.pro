@@ -26,15 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
-LIBS += -L$$OUT_PWD/../../../../build-filemanager-unknown-Debug/dde-file-manager-lib -ldde-file-manager -licui18n
+LIBS += -L$$OUT_PWD/../../../dde-file-manager-lib -ldde-file-manager -licui18n
 
 DISTFILES += \
     dde-video-preview-plugin.json
-
 
 QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 include(dde-video-preview-plugin.pri)
 include(../../../third-party/googletest/gtest_dependency.pri)
+include(../../../third-party/cpp-stub/stub.pri)
 include(tests/test.pri)

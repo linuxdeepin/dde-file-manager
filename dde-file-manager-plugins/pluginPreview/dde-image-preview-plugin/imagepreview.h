@@ -22,8 +22,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef IMAGEPREVIEWPLUGIN_H
-#define IMAGEPREVIEWPLUGIN_H
+#ifndef IMAGEPREVIEW_H
+#define IMAGEPREVIEW_H
 
 #include <QWidget>
 #include <QImage>
@@ -32,15 +32,11 @@
 #include "dfmfilepreview.h"
 #include "durl.h"
 
-QT_BEGIN_NAMESPACE
 class QLabel;
-QT_END_NAMESPACE
 
 class ImageView;
 
-DFM_BEGIN_NAMESPACE
-
-class ImagePreview : public DFMFilePreview
+class ImagePreview : public DFM_NAMESPACE::DFMFilePreview
 {
     Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-image-preview-plugin.json")
     Q_INTERFACES(PreviewInterface)
@@ -68,6 +64,4 @@ private:
     QString m_title;
 };
 
-DFM_END_NAMESPACE
-
-#endif // IMAGEPREVIEWPLUGIN_H
+#endif // IMAGEPREVIEW_H

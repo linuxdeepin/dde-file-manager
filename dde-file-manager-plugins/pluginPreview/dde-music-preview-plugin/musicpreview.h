@@ -22,8 +22,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MUSICPREVIEWPLUGIN_H
-#define MUSICPREVIEWPLUGIN_H
+#ifndef MUSICPREVIEW_H
+#define MUSICPREVIEW_H
 
 #include "dfmfilepreview.h"
 #include "durl.h"
@@ -33,9 +33,7 @@
 class MusicMessageView;
 class ToolBarFrame;
 
-DFM_BEGIN_NAMESPACE
-
-class MusicPreview : public DFMFilePreview
+class MusicPreview : public DFM_NAMESPACE::DFMFilePreview
 {
     Q_OBJECT
 
@@ -62,7 +60,5 @@ private:
     QPointer<MusicMessageView> m_musicView;
     QPointer<ToolBarFrame> m_statusBarFrame;
 };
-
-DFM_END_NAMESPACE
 
 #endif // MUSICPREVIEWPLUGIN_H

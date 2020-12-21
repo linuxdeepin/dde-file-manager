@@ -22,8 +22,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TEXTPREVIEWPLUGIN_H
-#define TEXTPREVIEWPLUGIN_H
+#ifndef TEXTPREVIEW_H
+#define TEXTPREVIEW_H
 
 #include <QObject>
 #include <QWidget>
@@ -36,9 +36,7 @@ QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
 QT_END_NAMESPACE
 
-DFM_BEGIN_NAMESPACE
-
-class TextPreview : public DFMFilePreview
+class TextPreview : public DFM_NAMESPACE::DFMFilePreview
 {
     Q_OBJECT
 
@@ -78,6 +76,4 @@ private:
     bool m_flg = false;
 };
 
-DFM_END_NAMESPACE
-
-#endif // TEXTPREVIEWPLUGIN_H
+#endif // TEXTPREVIEW_H

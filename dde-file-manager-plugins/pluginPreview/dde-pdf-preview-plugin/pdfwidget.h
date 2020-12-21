@@ -86,7 +86,7 @@ class PdfInitWorker: public QObject
 {
     Q_OBJECT
 public:
-    explicit PdfInitWorker(QSharedPointer<poppler::document> doc, QObject *parent = 0);
+    explicit PdfInitWorker(QSharedPointer<poppler::document> doc, QObject *parent = nullptr);
 
     void startGetPageThumb(int index);
     void startGetPageImage(int index);
@@ -109,10 +109,9 @@ class DListWidget: public QListWidget
 {
     Q_OBJECT
 public:
-    explicit DListWidget(QWidget *parent = 0);
+    explicit DListWidget(QWidget *parent = nullptr);
 protected:
     void mouseMoveEvent(QMouseEvent *e) override;
-
 };
 
 

@@ -27,142 +27,142 @@
 #include <danchors.h>
 #include <dimagebutton.h>
 
-DWIDGET_USE_NAMESPACE
+//DWIDGET_USE_NAMESPACE
 
-DFM_BEGIN_NAMESPACE
+//DFM_USE_NAMESPACE
 
-class VideoWidget : public dmr::PlayerWidget
-{
-public:
-    explicit VideoWidget(VideoPreview *preview)
-        : dmr::PlayerWidget(nullptr)
-        , p(preview)
-        , title(new QLabel(this))
-    {
-        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+//class VideoWidget : public dmr::PlayerWidget
+//{
+//public:
+//     VideoWidget(VideoPreview *preview)
+//        : dmr::PlayerWidget(nullptr)
+//        , p(preview)
+//        , title(new QLabel(this))
+//    {
+//        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-        QPalette pa;
-        pa.setColor(QPalette::Foreground, Qt::white);
+//        QPalette pa;
+//        pa.setColor(QPalette::Foreground, Qt::white);
 
-        title->setPalette(pa);
+//        title->setPalette(pa);
 
-        DAnchorsBase::setAnchor(title, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
+//        DAnchorsBase::setAnchor(title, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
 
-        engine().setBackendProperty("keep-open", "yes");
-    }
+//        engine().setBackendProperty("keep-open", "yes");
+//    }
 
-    QSize sizeHint() const override
-    {
-        QSize screen_size;
+//    QSize sizeHint() const override
+//    {
+//        QSize screen_size;
 
-        if (window()->windowHandle()) {
-            screen_size = window()->windowHandle()->screen()->availableSize();
-        } else {
-            screen_size = qApp->desktop()->size();
-        }
+//        if (window()->windowHandle()) {
+//            screen_size = window()->windowHandle()->screen()->availableSize();
+//        } else {
+//            screen_size = qApp->desktop()->size();
+//        }
 
-        return QSize(p->info.width, p->info.height).scaled(qMin(p->info.width, int(screen_size.width() * 0.5)),
-                                                           qMin(p->info.height, int(screen_size.height() * 0.5)), Qt::KeepAspectRatio);
-    }
+//        return QSize(p->info.width, p->info.height).scaled(qMin(p->info.width, int(screen_size.width() * 0.5)),
+//                                                           qMin(p->info.height, int(screen_size.height() * 0.5)), Qt::KeepAspectRatio);
+//    }
 
-    void mouseReleaseEvent(QMouseEvent *event) override
-    {
-        p->pause();
+//    void mouseReleaseEvent(QMouseEvent *event) override
+//    {
+//        p->pause();
 
-        dmr::PlayerWidget::mouseReleaseEvent(event);
-    }
+//        dmr::PlayerWidget::mouseReleaseEvent(event);
+//    }
 
-    VideoPreview *p;
-    QLabel *title;
-};
+//    VideoPreview *p;
+//    QLabel *title;
+//};
 
-class VideoStatusBar : public QWidget
-{
-public:
-    explicit VideoStatusBar(VideoPreview *preview)
-        : QWidget(nullptr)
-        , p(preview)
-        , slider(new QSlider(this))
-        , timeLabel(new QLabel(this))
-    {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+//class VideoStatusBar : public QWidget
+//{
+//public:
+//    explicit VideoStatusBar(VideoPreview *preview)
+//        : QWidget(nullptr)
+//        , p(preview)
+//        , slider(new QSlider(this))
+//        , timeLabel(new QLabel(this))
+//    {
+//        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-        DImageButton *control_button = new DImageButton(this);
-//        QWidget *button_mask = new QWidget(control_button);
+//        DImageButton *control_button = new DImageButton(this);
+////        QWidget *button_mask = new QWidget(control_button);
 
-        control_button->setNormalPic(":/icons/icons/start_normal.png");
-        control_button->setPressPic(":/icons/icons/start_pressed.png");
-        control_button->setHoverPic(":/icons/icons/start_hover.png");
-//        button_mask->setAutoFillBackground(true);
+//        control_button->setNormalPic(":/icons/icons/start_normal.png");
+//        control_button->setPressPic(":/icons/icons/start_pressed.png");
+//        control_button->setHoverPic(":/icons/icons/start_hover.png");
+////        button_mask->setAutoFillBackground(true);
 
-//        DAnchorsBase(button_mask).setFill(control_button);
+////        DAnchorsBase(button_mask).setFill(control_button);
 
-        QPalette pa_label;
+//        QPalette pa_label;
 
-        pa_label.setColor(QPalette::Foreground, QColor("#303030"));
-        timeLabel->setPalette(pa_label);
+//        pa_label.setColor(QPalette::Foreground, QColor("#303030"));
+//        timeLabel->setPalette(pa_label);
 
-        slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        slider->setMinimum(0);
-        slider->setOrientation(Qt::Horizontal);
+//        slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+//        slider->setMinimum(0);
+//        slider->setOrientation(Qt::Horizontal);
 
-        QHBoxLayout *layout = new QHBoxLayout(this);
+//        QHBoxLayout *layout = new QHBoxLayout(this);
 
-        layout->setContentsMargins(0, 0, 20, 0);
-        layout->addWidget(control_button);
-        layout->addWidget(slider);
-        layout->addWidget(timeLabel);
+//        layout->setContentsMargins(0, 0, 20, 0);
+//        layout->addWidget(control_button);
+//        layout->addWidget(slider);
+//        layout->addWidget(timeLabel);
 
-        connect(control_button, &DImageButton::clicked, this, [this] {
-            // 由于调用了setBackendProperty("keep-open", "yes")
-            // 导致视频播放状态不对（要暂停到最后一帧，所以视频播放完毕后状态还是暂停）
-            // 如果是暂停状态，调用pause一定会播放，之后再调用play也没有影响
-            // 反之，如果是停止状态，调用pause无反应，之后再调用play肯定会播放
-            p->pause();
-            p->playerWidget->engine().play();
+//        connect(control_button, &DImageButton::clicked, this, [this] {
+//            // 由于调用了setBackendProperty("keep-open", "yes")
+//            // 导致视频播放状态不对（要暂停到最后一帧，所以视频播放完毕后状态还是暂停）
+//            // 如果是暂停状态，调用pause一定会播放，之后再调用play也没有影响
+//            // 反之，如果是停止状态，调用pause无反应，之后再调用play肯定会播放
+//            p->pause();
+//            p->playerWidget->engine().play();
 
-//            button_mask->show();
-        });
-        connect(&p->playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, [this, control_button] {
-            if (p->playerWidget->engine().state() == dmr::PlayerEngine::Playing)
-            {
-//                button_mask->show();
-                control_button->setNormalPic(":/icons/icons/pause_normal.png");
-                control_button->setPressPic(":/icons/icons/pause_pressed.png");
-                control_button->setHoverPic(":/icons/icons/pause_hover.png");
-            } else
-            {
-                control_button->setNormalPic(":/icons/icons/start_normal.png");
-                control_button->setPressPic(":/icons/icons/start_pressed.png");
-                control_button->setHoverPic(":/icons/icons/start_hover.png");
-//                button_mask->hide();
-            }
-        });
-        connect(slider, &QSlider::valueChanged, this, [this] {
-            p->playerWidget->engine().seekAbsolute(slider->value());
-        });
-        connect(slider, &QSlider::sliderPressed, this, [this] {
-            sliderIsPressed = true;
-        });
-        connect(slider, &QSlider::sliderReleased, this, [this] {
-            sliderIsPressed = false;
-        });
-        connect(&p->playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, [this] {
-            if (!sliderIsPressed)
-            {
-                QSignalBlocker blocker(slider);
-                Q_UNUSED(blocker)
-                slider->setValue(static_cast<int>(p->playerWidget->engine().elapsed()));
-            }
-            timeLabel->setText(dmr::utils::Time2str(p->playerWidget->engine().elapsed()));
-        });
-    }
+////            button_mask->show();
+//        });
+//        connect(&p->playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, [this, control_button] {
+//            if (p->playerWidget->engine().state() == dmr::PlayerEngine::Playing)
+//            {
+////                button_mask->show();
+//                control_button->setNormalPic(":/icons/icons/pause_normal.png");
+//                control_button->setPressPic(":/icons/icons/pause_pressed.png");
+//                control_button->setHoverPic(":/icons/icons/pause_hover.png");
+//            } else
+//            {
+//                control_button->setNormalPic(":/icons/icons/start_normal.png");
+//                control_button->setPressPic(":/icons/icons/start_pressed.png");
+//                control_button->setHoverPic(":/icons/icons/start_hover.png");
+////                button_mask->hide();
+//            }
+//        });
+//        connect(slider, &QSlider::valueChanged, this, [this] {
+//            p->playerWidget->engine().seekAbsolute(slider->value());
+//        });
+//        connect(slider, &QSlider::sliderPressed, this, [this] {
+//            sliderIsPressed = true;
+//        });
+//        connect(slider, &QSlider::sliderReleased, this, [this] {
+//            sliderIsPressed = false;
+//        });
+//        connect(&p->playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, [this] {
+//            if (!sliderIsPressed)
+//            {
+//                QSignalBlocker blocker(slider);
+//                Q_UNUSED(blocker)
+//                slider->setValue(static_cast<int>(p->playerWidget->engine().elapsed()));
+//            }
+//            timeLabel->setText(dmr::utils::Time2str(p->playerWidget->engine().elapsed()));
+//        });
+//    }
 
-    VideoPreview *p;
-    QSlider *slider;
-    QLabel *timeLabel;
-    bool sliderIsPressed = false;
-};
+//    VideoPreview *p;
+//    QSlider *slider;
+//    QLabel *timeLabel;
+//    bool sliderIsPressed = false;
+//};
 
 VideoPreview::VideoPreview(QObject *parent)
     : DFMFilePreview(parent)
@@ -258,5 +258,3 @@ void VideoPreview::stop()
 {
     playerWidget->engine().stop();
 }
-
-DFM_END_NAMESPACE

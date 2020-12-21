@@ -13,5 +13,6 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/test-main.cpp \
-    $$PWD/ut_musicprevoew.cpp \
-    $$PWD/ut_musicmessageview.cpp
+    $$PWD/ut_musicmessageview.cpp \
+    $$PWD/ut_musicpreview.cpp \
+    $$PWD/ut_musicpreviewplugin.cpp
