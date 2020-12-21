@@ -2,12 +2,13 @@ SOURCES += \
     toolbarframe.cpp \
     musicpreview.cpp \
     musicmessageview.cpp \
-    main.cpp
+    $$PWD/musicpreviewplugin.cpp
 
 HEADERS += \
     toolbarframe.h \
     musicmessageview.h \
-    musicpreview.h
+    musicpreview.h \
+    $$PWD/musicpreviewplugin.h
 
 RESOURCES += \
     dde-music-preview-plugin.qrc

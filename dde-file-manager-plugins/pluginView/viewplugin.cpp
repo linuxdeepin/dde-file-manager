@@ -26,7 +26,7 @@
 #include <QLabel>
 
 ViewPlugin::ViewPlugin(QObject *parent) :
-    QObject(parent)
+    ViewInterface(parent)
 {
     Q_INIT_RESOURCE(pluginview);
 }

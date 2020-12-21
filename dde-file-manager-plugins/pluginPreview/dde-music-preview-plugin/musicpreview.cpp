@@ -57,8 +57,6 @@
 #include "taglib/mp4coverart.h"
 #include "taglib/mp4properties.h"
 
-DFM_BEGIN_NAMESPACE
-
 MusicPreview::MusicPreview(QObject *parent)
     : DFMFilePreview(parent)
 {
@@ -143,5 +141,3 @@ bool MusicPreview::canPreview(const DUrl &url) const
 
     return QMediaPlayer::hasSupport(info->mimeTypeName(QMimeDatabase::MatchContent)) != QMultimedia::NotSupported;
 }
-
-DFM_END_NAMESPACE

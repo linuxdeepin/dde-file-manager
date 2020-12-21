@@ -41,33 +41,9 @@
 #include <QPainter>
 #include <QPen>
 #include <QTimer>
-#include <QButtonGroup>
 #include <QPushButton>
 
-class PdfWidgetPrivate{
-public:
-    explicit PdfWidgetPrivate(PdfWidget* qq):
-        q_ptr(qq){}
-
-    DListWidget* thumbListWidget = nullptr;
-    DListWidget* pageListWidget = nullptr;
-    QHBoxLayout* mainLayout = nullptr;
-    QScrollBar* thumbScrollBar = nullptr;
-    QScrollBar* pageScrollBar = nullptr;
-    QButtonGroup* thumbButtonGroup = nullptr;
-
-    QTimer* pageWorkTimer = nullptr;
-    QTimer* thumbWorkTimer = nullptr;
-    bool isBadDoc = false;
-
-    QSharedPointer<poppler::document> doc;
-
-    PdfInitWorker* pdfInitWorker = nullptr;
-    QMap<int, QImage> pageMap;
-
-    PdfWidget* q_ptr = nullptr;
-    Q_DECLARE_PUBLIC(PdfWidget)
-};
+#include "pdfwidget_p.h"
 
 PdfWidget::PdfWidget(const QString &file, QWidget *parent) :
     QWidget(parent),
@@ -75,7 +51,7 @@ PdfWidget::PdfWidget(const QString &file, QWidget *parent) :
 {
     Q_D(PdfWidget);
 
-    d->pageWorkTimer = new QTimer(this);;
+    d->pageWorkTimer = new QTimer(this);
     d->pageWorkTimer->setSingleShot(true);
     d->pageWorkTimer->setInterval(50);
     d->thumbWorkTimer = new QTimer(this);

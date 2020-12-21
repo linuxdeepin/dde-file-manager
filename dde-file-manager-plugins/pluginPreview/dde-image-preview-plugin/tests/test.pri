@@ -14,4 +14,5 @@ HEADERS += \
 SOURCES += \
     $$PWD/test-main.cpp \
     $$PWD/ut_imagepreview.cpp \
-    $$PWD/ut_imageview.cpp
+    $$PWD/ut_imageview.cpp \
+    $$PWD/ut_imagepreviewplugin.cpp

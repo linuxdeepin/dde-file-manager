@@ -138,10 +138,15 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
 		make -j4
         fi
 
-	dde_file_manager_plugins_extract_path="*/dde-file-manager/*"
-	dde_file_manager_plugins_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
+	dde_file_manager_plugins_extract_path="*/dde-file-manager-plugins/*"
+	dde_file_manager_plugins_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_* */dde-file-manager-plugins/plugininterfaces/view/*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
-	./../../tests/ut-target-running.sh $BUILD_DIR dde-image-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-image-preview-plugin test-dde-image-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path"
+    ./../../tests/ut-target-running.sh $BUILD_DIR dde-image-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-image-preview-plugin test-dde-image-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path"
+    ./../../tests/ut-target-running.sh $BUILD_DIR dde-music-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-music-preview-plugin test-dde-music-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path"
+    ./../../tests/ut-target-running.sh $BUILD_DIR dde-pdf-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-pdf-preview-plugin test-dde-pdf-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path"
+    ./../../tests/ut-target-running.sh $BUILD_DIR dde-text-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-text-preview-plugin test-dde-text-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path"
+    ./../../tests/ut-target-running.sh $BUILD_DIR dde-video-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-video-preview-plugin test-dde-video-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path"
+    ./../../tests/ut-target-running.sh $BUILD_DIR pluginView $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginView test-pluginView  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path"
 fi
 
 # 7. 子项目 dde-file-thumbnail-tool 单元测试与覆盖率测试

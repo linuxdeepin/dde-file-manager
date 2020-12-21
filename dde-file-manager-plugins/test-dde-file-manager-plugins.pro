@@ -8,4 +8,5 @@ isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
 }
 
 SUBDIRS += \
-    pluginPreview/test-pluginPreview.pro
+    pluginPreview/test-pluginPreview.pro \
+    pluginView/test-pluginView.pro

@@ -28,7 +28,7 @@
 #include  "../plugininterfaces/view/viewinterface.h"
 
 
-class ViewPlugin : public QObject, public ViewInterface
+class ViewPlugin : /*public QObject, */public ViewInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID ViewInterface_iid FILE "pluginView.json")

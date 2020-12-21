@@ -14,4 +14,5 @@ HEADERS += \
 SOURCES += \
     $$PWD/main-test.cpp \
     $$PWD/ut_pdfpreview.cpp \
-    $$PWD/ut_pdfwidget.cpp
+    $$PWD/ut_pdfwidget.cpp \
+    $$PWD/ut_pdfpreviewplugin.cpp

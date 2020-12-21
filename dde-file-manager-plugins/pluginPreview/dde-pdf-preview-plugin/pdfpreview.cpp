@@ -31,7 +31,7 @@
 
 #include "pdfwidget.h"
 
-DFM_BEGIN_NAMESPACE
+DFM_USE_NAMESPACE
 
 PDFPreview::PDFPreview(QObject *parent)
     : DFMFilePreview(parent)
@@ -85,5 +85,3 @@ bool PDFPreview::showStatusBarSeparator() const
 {
     return true;
 }
-
-DFM_END_NAMESPACE

@@ -1,11 +1,13 @@
 SOURCES += \
     pdfwidget.cpp \
-    main.cpp \
-    pdfpreview.cpp
+    pdfpreview.cpp \
+    $$PWD/pdfpreviewplugin.cpp
 
 HEADERS += \
     pdfwidget.h \
-    pdfpreview.h
+    pdfpreview.h \
+    $$PWD/pdfwidget_p.h \
+    $$PWD/pdfpreviewplugin.h
 
 RESOURCES += \
     theme.qrc

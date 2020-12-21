@@ -22,8 +22,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PDFPREVIEWPLUGIN_H
-#define PDFPREVIEWPLUGIN_H
+#ifndef PDFPREVIEW_H
+#define PDFPREVIEW_H
 
 #include <QObject>
 #include <QPointer>
@@ -33,9 +33,7 @@
 
 class PdfWidget;
 
-DFM_BEGIN_NAMESPACE
-
-class PDFPreview : public DFMFilePreview
+class PDFPreview : public DFM_NAMESPACE::DFMFilePreview
 {
     Q_OBJECT
 
@@ -57,7 +55,5 @@ private:
 
     QPointer<PdfWidget> m_pdfWidget;
 };
-
-DFM_END_NAMESPACE
 
 #endif // PDFPREVIEWPLUGIN_H

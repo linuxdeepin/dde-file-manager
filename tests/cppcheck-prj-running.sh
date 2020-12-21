@@ -19,10 +19,10 @@ DDE_DESKTOP_FILTER_PATH=$FILTER_SYMBOL$PROJECT_FOLDER/dde-desktop/tests/
 DDE_FILE_MANAGER_FILTER_PATH=$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager/tests/
 DDE_FILE_MANAGER_LIB_FILTER_PATH=$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-lib/3rdParty/$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-lib/search/fsearch/$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-lib/vault/openssl/$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-lib/vault/qrencode/
 DDE_FILE_MANAGER_DAEMON_FILTER_PATH=$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-daemon/tests/
-DDE_FILE_MANAGER_PLUGINS=
+DDE_FILE_MANAGER_PLUGINS_FILTER_PATH=$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-plugins/pluginPreview/dde-image-preview-plugin/tests$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/tests$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-plugins/pluginPreview/dde-pdf-preview-plugin/tests$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin/tests$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-plugins/pluginPreview/dde-video-preview-plugin/tests$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-manager-plugins/pluginView/tests
 DDE_DOCK_PLUGINS_FILTER_PATH=$FILTER_SYMBOL$PROJECT_FOLDER/dde-dock-plugins/disk-mount/tests/
 DDE_FILE_THUMBNAIL_TOOL_FILTER_PATH=$FILTER_SYMBOL$PROJECT_FOLDER/dde-file-thumbnail-tool/video/tests/
-DEEPIN_ANYTHING_SERVER_PLUGINS=$FILTER_SYMBOL$PROJECT_FOLDER/deepin-anything-server-plugins/dde-anythingmonitor/tests/
+DEEPIN_ANYTHING_SERVER_PLUGINS_FILTER_PATH=$FILTER_SYMBOL$PROJECT_FOLDER/deepin-anything-server-plugins/dde-anythingmonitor/tests/
 OTHER_FILTER_PATH=$FILTER_SYMBOL$BUILD_DIR$FILTER_SYMBOL$PROJECT_FOLDER/third-party/
 
 # report目录
