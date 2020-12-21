@@ -1231,4 +1231,5 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFile) {
     EXPECT_TRUE(jobd->doCopyFile(frominfo,toinfo,handler));
 
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile());
+    QProcess::execute("killall dde-file-manager");
 }

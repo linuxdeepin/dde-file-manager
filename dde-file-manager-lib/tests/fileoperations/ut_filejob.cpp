@@ -49,6 +49,9 @@ public:
         fptr pQDialogExec = (fptr)(&QDialog::exec);
         int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
         stl.set(pQDialogExec, stub_DDialog_exec);
+        void (*showErrorDialog)(const QString &, const QString &) = []
+                (const QString &, const QString &){};
+        stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
         std::cout << "start FileJobTest" << std::endl;
     }
 
@@ -1624,4 +1627,5 @@ TEST_F(FileJobTest, start_getStorageInfo){
     source.setPath(TestHelper::createTmpFile(".txt"));
     EXPECT_TRUE(job->getStorageInfo(source.toLocalFile()).isValid());
     TestHelper::deleteTmpFile(source.toLocalFile());
+    QProcess::execute("killall dde-file-manager");
 }
