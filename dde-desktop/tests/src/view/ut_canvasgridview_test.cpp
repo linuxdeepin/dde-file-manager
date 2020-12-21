@@ -7,9 +7,12 @@
 #include <QTest>
 #include <QEventLoop>
 #include <QAbstractScrollArea>
+#include <QEvent>
+#include <QWidget>
 
 #include <dfilemenu.h>
 #include "../stub-ext/stubext.h"
+
 
 #define private public
 #define protected public
@@ -31,13 +34,13 @@
 #include "../third-party/cpp-stub/addr_pri.h"
 #include "../third-party/cpp-stub/stub.h"
 #include "diconitemdelegate.h"
-#include <QWidget>
 #include "dfmsettings.h"
 #include "dfmglobal.h"
 #include "dfmapplication.h"
 #include "dfileservices.h"
 #include "../models/desktopfileinfo.h"
-#include <QEvent>
+#include "qdbusabstractinterface.h"
+#include "qabstractitemview.h"
 
 using namespace std;
 using namespace stub_ext;
@@ -509,7 +512,8 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
     mlist << m_canvasGridView->firstIndex() << QModelIndex() << m_canvasGridView->model()->index(DUrl::fromLocalFile(path));
     QModelIndexList(*list)() = [](){return mlist;};
 
-    Stub stu;
+    stub_ext::StubExt stu;
+
     stu.set(ADDR(DFileSelectionModel, selectedIndexes), list);
 
     m_canvasGridView->keyPressEvent(&keyPressEvt_Up);
@@ -632,8 +636,13 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
     timer.start(1000);
     bool(*boo)() = [](){return true;};
     stu.set(ADDR(QVariant, isValid), boo);
-    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
 
+    stub_ext::StubExt stu1;
+    bool judge = false;
+    stu1.set_lamda(ADDR(CanvasGridView, showNormalMenu),[&judge](){judge = !judge; return;});
+    stu1.set_lamda(ADDR(CanvasGridView, showEmptyAreaMenu),[&judge](){judge = !judge; return;});
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
+    EXPECT_TRUE(judge);
     //key_10
     QKeyEvent keyPressEvt_Key_9(QEvent::KeyPress, Qt::Key_9, Qt::AltModifier);
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_9);
@@ -682,11 +691,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
     m_canvasGridView->moveCursorGrid(tpCursorActon, Qt::ShiftModifier);
     tpCursorActon = QAbstractItemView::CursorAction::MovePageDown;
     m_canvasGridView->moveCursorGrid(tpCursorActon, Qt::ShiftModifier);
-}
-
-TEST_F(CanvasGridViewTest, CanvasGridViewTest_initConnection_animation_finish)
-{
-
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_dragMoveEvent)
@@ -943,7 +947,11 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_startDrag)
         QTest::mouseRelease(m_canvasGridView, Qt::LeftButton);
     });
     timer.start(200);
+    bool judge = false;
+    stub_ext::StubExt stu;
+    stu.set_lamda(VADDR(QAbstractItemView, startDrag), [&judge](){judge = !judge; return;});
     m_canvasGridView->startDrag(Qt::MoveAction);
+    EXPECT_TRUE(judge);
 }
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_fetchDragEventUrlsFromSharedMemory)
@@ -966,24 +974,23 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_delayCustom)
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_handleContextMenuAction)
 {
+    stub_ext::StubExt stu;
+    bool judge = false;
+    stu.set_lamda(ADDR(Desktop, showWallpaperSettings), [&judge](){judge = !judge; return;});
     m_canvasGridView->handleContextMenuAction(CanvasGridView::WallpaperSettings);
-    QEventLoop loop;
-    QTimer::singleShot(200, &loop, [this, &loop]{
-        Desktop* desktop = Desktop::instance();
-        char *base = (char *)(desktop->d.data());
-        char *wpVar = base + sizeof (void *) * 2;
-        desktop->preInit();
-        QTest::qSleep(1000);
-        void *wallpaper1 = (void *)*(long * )(wpVar);
-        void *wallpaper2 = (void *)*(long * )(wpVar);
-        Frame *wallpaper = (Frame *)wallpaper2;
-        if (wallpaper)
-           wallpaper->hide();
-        loop.exit();
-    });
-    loop.exec();
+    EXPECT_TRUE(judge);
+    Desktop* desktop = Desktop::instance();
+    char *base = (char *)(desktop->d.data());
+    char *wpVar = base + sizeof (void *) * 2;
+    desktop->preInit();
+    QTest::qSleep(1000);
+    void *wallpaper1 = (void *)*(long * )(wpVar);
+    void *wallpaper2 = (void *)*(long * )(wpVar);
+    Frame *wallpaper = (Frame *)wallpaper2;
+    if (wallpaper)
+        wallpaper->hide();
 
-
+    stu.set_lamda(ADDR(QDBusAbstractInterface, asyncCall), [&judge]{judge = !judge; return QDBusPendingCall(nullptr);});
     m_canvasGridView->handleContextMenuAction(CanvasGridView::DisplaySettings);
     QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     path = path + '/' + "test.txt";
@@ -1116,6 +1123,9 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_openUrls)
     if (ulist.size() > 0) list << ulist[0];
     if (list.size() <= 0) list << path;
     if (list.size() > 0) {
+        stub_ext::StubExt stu;
+        bool judge = false;
+        stu.set_lamda(ADDR(DFileService, openFiles), [&judge](){judge = true; return false;});
         m_canvasGridView->openUrls(list);
         const QModelIndex &index = m_canvasGridView->model()->index(list[0]);
         QRect rect = m_canvasGridView->rectForIndex(index);
@@ -1315,7 +1325,11 @@ TEST_F(CanvasGridViewTest, test_openUrl)
     }
     DUrlList ulist = m_canvasGridView->selectedUrls();
     DUrl url(DUrl::fromLocalFile(path));
+    stub_ext::StubExt stu;
+    bool judge = false;
+    stu.set_lamda(ADDR(DFileService, openFile), [&judge](){judge = true; return true;});
     m_canvasGridView->openUrl(url);
+    EXPECT_TRUE(judge);
 }
 
 TEST_F(CanvasGridViewTest, test_screenName)

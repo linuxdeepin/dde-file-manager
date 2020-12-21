@@ -12,6 +12,7 @@
 #include "../dde-wallpaper-chooser/frame.h"
 #include "view/canvasviewmanager.h"
 #include "screen/screenhelper.h"
+#include "../stub-ext/stubext.h"
 
 TEST(DesktopTest,init)
 {
@@ -40,22 +41,28 @@ TEST(DesktopTest,load_view)
 
 TEST(DesktopTest,show_wallpaper_chooser)
 {
+    stub_ext::StubExt stu;
+    bool isshow = false;
     Desktop desktop;
     char *base = (char *)(desktop.d.data());
     char *wpVar = base + sizeof (void *) * 2;
     void *wallperper1 = (void *)*(long * )(wpVar);
     desktop.preInit();
+
+    stu.set_lamda(ADDR(DBlurEffectWidget, show), [&isshow](){isshow = true; return;});
     desktop.ShowWallpaperChooser(qApp->primaryScreen()->name());
+    EXPECT_TRUE(isshow);
+
     void *wallperper2 = (void *)*(long * )(wpVar);
     EXPECT_EQ(wallperper1,nullptr);
     ASSERT_NE(wallperper2,nullptr);
-    QEventLoop loop;
-    QTimer::singleShot(100,&loop,[&loop,wallperper2](){
-        Frame *wallperper = (Frame *)wallperper2;
-        wallperper->hide();
-        loop.exit();
-    });
-    loop.exec();
+
+    qApp->processEvents();
+    Frame *wallperper = (Frame *)wallperper2;
+    bool ishide = false;
+    stu.set_lamda(ADDR(DBlurEffectWidget, hide), [&ishide](){ishide = !ishide; return;});
+    wallperper->hide();
+    EXPECT_TRUE(ishide);
 }
 
 #ifndef DISABLE_ZONE
@@ -126,21 +133,23 @@ TEST(DesktopTest, print_info)
 TEST(DesktopTest, show_wallpaper_setting)
 {
     Desktop desktop;
+    stub_ext::StubExt stu;
+    bool isshow = false;
     char *base = (char *)(desktop.d.data());
     char *view = base + sizeof (void *) * 2;
     void *wset1 = (void *)*(long *)(view);
     EXPECT_EQ(wset1, nullptr);
+
+    stu.set_lamda(ADDR(DBlurEffectWidget, show), [&isshow](){isshow = true; return;});
     desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
+    EXPECT_TRUE(isshow);
+
     void *wset2 = (void *)*(long *)(view);
     EXPECT_NE(wset2, nullptr);
 
     Frame *wset3 = (Frame *)*(long *)(view);
     emit wset3->done();
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
+    qApp->processEvents();
 
     void *wset4 = (void *)*(long *)(view);
     EXPECT_EQ(wset4, nullptr);
@@ -207,7 +216,11 @@ TEST(DesktopTest, get_icon_size)
 
 TEST(DesktopTest, show_Screensaverpaper)
 {
-     Desktop* desktop = new Desktop;
-     desktop->ShowScreensaverChooser(qApp->primaryScreen()->name());
-     delete desktop;
+    stub_ext::StubExt stu;
+    bool isshow = false;
+    Desktop* desktop = new Desktop;
+    stu.set_lamda(ADDR(DBlurEffectWidget, show), [&isshow](){isshow = true; return;});
+    desktop->ShowScreensaverChooser(qApp->primaryScreen()->name());
+    EXPECT_TRUE(isshow);
+    delete desktop;
 }
