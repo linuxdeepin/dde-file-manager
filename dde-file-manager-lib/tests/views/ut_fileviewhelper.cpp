@@ -2,6 +2,7 @@
 #include <gmock/gmock-matchers.h>
 
 #include <QStandardPaths>
+#include "stubext.h"
 #include "views/dfileview.h"
 #include "interfaces/dfilesystemmodel.h"
 #include "app/filesignalmanager.h"
@@ -176,7 +177,8 @@ TEST_F(FileViewHelperTest,preHandleCd_smb)
     var.setValue(to);
 
     bool net = false;
-    m_fileViewHelper->connect(fileSignalManager,&FileSignalManager::requestFetchNetworks,m_fileViewHelper,[&net](){
+    stub_ext::StubExt stu;
+    stu.set_lamda(&FileSignalManager::requestFetchNetworks,[&net](){
         net = true;
     });
     qApp->processEvents();
@@ -194,7 +196,8 @@ TEST_F(FileViewHelperTest,preHandleCd_net)
     var.setValue(to);
 
     bool net = false;
-    m_fileViewHelper->connect(fileSignalManager,&FileSignalManager::requestFetchNetworks,m_fileViewHelper,[&net](){
+    stub_ext::StubExt stu;
+    stu.set_lamda(&FileSignalManager::requestFetchNetworks,[&net](){
         net = true;
     });
     qApp->processEvents();
