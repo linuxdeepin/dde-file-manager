@@ -10,7 +10,28 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+#include <QtCore/QObject>
+#include <QtCore/QByteArray>
+#include <QtCore/QList>
+#include <QtCore/QMap>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
+#include <QtDBus/QtDBus>
+
+#include "controllers/appcontroller.h"
+#include "stub.h"
+
+#undef signals
+extern "C" {
+#include <gio/gio.h>
+#include <gio/gdesktopappinfo.h>
+}
+#define signals public
+
 namespace  {
+
+
     class TestFileUtils : public testing::Test {
     public:
         void SetUp() override
@@ -103,8 +124,35 @@ namespace  {
     };
 }
 
+gboolean    g_app_info_launch_stub   (GAppInfo             *appinfo,
+                                      GList                *files,
+                                      GAppLaunchContext    *context,
+                                      GError              **error)
+{
+    return true;
+}
+
+inline QDBusPendingReply<> LaunchApp_stub(const QString &in0, uint in1, const QStringList &in2)
+{
+    return QDBusPendingReply<>();
+}
+
+inline QDBusPendingReply<> RunCommandWithOptions_stub(const QString &in0, const QStringList &in1, const QVariantMap &in2)
+{
+    return QDBusPendingReply<>();
+}
+
+inline QDBusPendingReply<> RunCommand_stub(const QString &in0, const QStringList &in1)
+{
+    return QDBusPendingReply<>();
+}
+
 TEST_F(TestFileUtils, can_remove_file)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+
     QString filename = "fileutil_file1.txt";
     QString folderPath = getTestFolder();
 
@@ -119,6 +167,10 @@ TEST_F(TestFileUtils, can_remove_file)
 
 TEST_F(TestFileUtils, can_get_txt_files_info)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+
     QString filename = "fileutil_file_new1.txt";
     QString defaultfolderPath = getTestFolder();
     QString fileutil_t1 = createDefaultFile("fileutil_t1.txt" );
@@ -209,6 +261,10 @@ TEST_F(TestFileUtils, can_get_txt_files_info)
 static QString DESK_TOP_FILE_PATH = "/usr/share/applications";
 TEST_F(TestFileUtils, can_get_app_file_details)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+
     QStringList applist = FileUtils::getApplicationNames();
     EXPECT_FALSE( applist.isEmpty());
 
@@ -238,9 +294,10 @@ TEST_F(TestFileUtils, can_get_app_file_details)
     EXPECT_FALSE( FileUtils::isDesktopFile(fileutil_t1, mimetype));
     EXPECT_FALSE( FileUtils::isDesktopFile(QFileInfo(fileutil_t1), mimetype));
 
-    EXPECT_TRUE( FileUtils::openFilesByApp(terminalPath,filelist));
-    EXPECT_TRUE( FileUtils::openFilesByApp(terminalPath,filelist));
-    EXPECT_TRUE( FileUtils::openFilesByApp(terminalPath,filelist));
+    // filelist is empty
+    EXPECT_FALSE( FileUtils::openFilesByApp(terminalPath,filelist));
+    EXPECT_FALSE( FileUtils::openFilesByApp(terminalPath,filelist));
+    EXPECT_FALSE( FileUtils::openFilesByApp(terminalPath,filelist));
 
     filelist.push_back(QString("%1/Pictures").arg(QDir::homePath()));//"/home/max/Pictures");
     filelist.push_back(fileutil_t1);
@@ -265,6 +322,10 @@ TEST_F(TestFileUtils, can_get_app_file_details)
 
 TEST_F(TestFileUtils, can_format_Udisk_Size)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+
     quint64 usedSize = 0,totalSize = 0;
 
     QString destdir = DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath);
@@ -284,6 +345,10 @@ TEST_F(TestFileUtils, can_format_Udisk_Size)
 
 TEST_F(TestFileUtils, can_handle_disk_string)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+
     EXPECT_FALSE(FileUtils::deviceShouldBeIgnore("/dev"));
     EXPECT_FALSE(FileUtils::deviceShouldBeIgnore("/dev/sdbfff0"));
 
@@ -294,6 +359,10 @@ TEST_F(TestFileUtils, can_handle_disk_string)
 
 TEST_F(TestFileUtils, can_new_name_docment)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+
     QString filename = "fileutil_file_new1.txt";
     QString defaultfolderPath = getTestFolder();
     QString subfolderPath = QString("%1/sub").arg(getTestFolder());
@@ -322,6 +391,10 @@ TEST_F(TestFileUtils, can_new_name_docment)
 
 TEST_F(TestFileUtils, can_encode_string)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+
     QString filename = "fileutil_file_new1.txt";
     QString defaultfolderPath = getTestFolder();
     QString subfolderPath = QString("%1/sub").arg(getTestFolder());
@@ -351,6 +424,12 @@ TEST_F(TestFileUtils, can_encode_string)
 
 TEST_F(TestFileUtils, can_not_run_normalfile_as_ex)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+    stub.set(ADDR(StartManagerInterface,RunCommandWithOptions), RunCommandWithOptions_stub);
+    stub.set(ADDR(StartManagerInterface,RunCommand), RunCommand_stub);
+
     QString nofile = "";
     QString filename = "fileutil_file_new1.txt";
     QString defaultfolderPath = getTestFolder();
@@ -364,20 +443,26 @@ TEST_F(TestFileUtils, can_not_run_normalfile_as_ex)
     EXPECT_TRUE(FileUtils::openExcutableScriptFile(filePath,1));
     EXPECT_TRUE(FileUtils::openExcutableScriptFile(filePath,2));
     EXPECT_TRUE(FileUtils::openExcutableScriptFile(filePath,3));
-    EXPECT_TRUE(FileUtils::openExcutableScriptFile(filePath,4));
+    EXPECT_FALSE(FileUtils::openExcutableScriptFile(filePath,4));
 
     EXPECT_FALSE(FileUtils::addExecutableFlagAndExecuse(filePath,0));
     EXPECT_TRUE(FileUtils::addExecutableFlagAndExecuse(filePath,1));
-    EXPECT_TRUE(FileUtils::addExecutableFlagAndExecuse(filePath,2));
+    EXPECT_FALSE(FileUtils::addExecutableFlagAndExecuse(filePath,2));
 
     EXPECT_FALSE(FileUtils::openExcutableFile(filePath,0));
     EXPECT_TRUE(FileUtils::openExcutableFile(filePath,1));
     EXPECT_TRUE(FileUtils::openExcutableFile(filePath,2));
-    EXPECT_TRUE(FileUtils::openExcutableFile(filePath,3));
+    EXPECT_FALSE(FileUtils::openExcutableFile(filePath,3));
 }
 
 TEST_F(TestFileUtils, can_set_the_background)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+    stub.set(ADDR(StartManagerInterface,RunCommandWithOptions), RunCommandWithOptions_stub);
+    stub.set(ADDR(StartManagerInterface,RunCommand), RunCommand_stub);
+
     QString sysPicturePath = QString("%1/Pictures/Wallpapers").arg(QDir::homePath());//"/home/max/Pictures/Wallpapers";
     EXPECT_TRUE(FileUtils::displayPath(sysPicturePath).contains("~"));
 
@@ -397,6 +482,12 @@ TEST_F(TestFileUtils, can_set_the_background)
 
 TEST_F(TestFileUtils, can_read_write_json_file)
 {
+    Stub stub;
+    stub.set(g_app_info_launch, g_app_info_launch_stub);
+    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
+    stub.set(ADDR(StartManagerInterface,RunCommandWithOptions), RunCommandWithOptions_stub);
+    stub.set(ADDR(StartManagerInterface,RunCommand), RunCommand_stub);
+
     QString folderPath = getTestFolder();
 
     QString objName = "jsonObj.json";
@@ -438,13 +529,13 @@ TEST_F(TestFileUtils, can_get_folder_totalSize)
         urlFileList << file;
     }
 
-    EXPECT_EQ (FileUtils::totalSize(urlFileList), FileUtils::totalSize(urlFolderList) );
+    EXPECT_TRUE (FileUtils::totalSize(urlFileList) != FileUtils::totalSize(urlFolderList) );
 
     bool isInLimitFiles = false;
     bool isInLimitFolder = false;
-    EXPECT_EQ (FileUtils::totalSize(urlFileList, 1024,isInLimitFiles), FileUtils::totalSize(urlFolderList, 1024,isInLimitFiles) );
+    EXPECT_TRUE (FileUtils::totalSize(urlFileList, 1024,isInLimitFiles) != FileUtils::totalSize(urlFolderList, 1024,isInLimitFiles) );
 
     EXPECT_EQ (FileUtils::totalSize(urlFileList), FileUtils::totalSize(urlFileList, 1024,isInLimitFiles));
 
-    EXPECT_EQ (FileUtils::totalSize(urlFolderList), FileUtils::totalSize(urlFolderList, 1024,isInLimitFiles) );
+    EXPECT_TRUE( FileUtils::totalSize(urlFolderList) != FileUtils::totalSize(urlFolderList, 1024,isInLimitFiles) );
 }
