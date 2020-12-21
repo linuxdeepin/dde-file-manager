@@ -1,8 +1,13 @@
+#include "stub.h"
+#include "io/dfilestatisticsjob.h"
+
 #include <gtest/gtest.h>
 #include <QLabel>
 
 #define private public
 #include "dialogs/trashpropertydialog.h"
+
+DFM_USE_NAMESPACE
 
 namespace  {
     class TestTrashPropertyDialog : public testing::Test
@@ -10,6 +15,10 @@ namespace  {
     public:
         void SetUp() override
         {
+            void(*stu_start)(const DUrlList &) = [](const DUrlList &){
+            };
+            Stub stu;
+            stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
             m_pTester = new TrashPropertyDialog(DUrl::fromTrashFile("/"));
             std::cout << "start TestTrashPropertyDialog";
         }

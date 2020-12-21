@@ -1,4 +1,5 @@
 #include "dialogs/dmultifilepropertydialog.h"
+#include "stub.h"
 
 #include <gtest/gtest.h>
 
@@ -11,6 +12,11 @@ namespace  {
         {
             QList<DUrl> urlList;
             urlList << DUrl("file:///test1") << DUrl("file:///test2");
+
+            void(*stu_startComputingFolderSize)() = [](){};
+            Stub stu;
+            stu.set(ADDR(DMultiFilePropertyDialog, startComputingFolderSize), stu_startComputingFolderSize);
+
             m_pTester = new DMultiFilePropertyDialog(urlList);
             std::cout << "start TestDMultiFilePropertyDialog";
         }

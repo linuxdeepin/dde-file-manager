@@ -37,6 +37,16 @@ TEST_F(TestBurnOptDialog, testInit)
     EXPECT_NE(nullptr, m_pTester);
 }
 
+TEST_F(TestBurnOptDialog, testInit2)
+{
+    emit m_pTester->buttonClicked(0, "");
+}
+
+TEST_F(TestBurnOptDialog, testInit3)
+{
+    emit m_pTester->buttonClicked(1, "");
+}
+
 TEST_F(TestBurnOptDialog, testSetIOSImage)
 {
     DUrl image("file:///test1/image");

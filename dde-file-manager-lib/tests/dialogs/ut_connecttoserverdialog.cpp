@@ -1,5 +1,7 @@
 #include <QComboBox>
 #include <gtest/gtest.h>
+
+#include "dfilestatisticsjob.h"
 #include "stub.h"
 #include "views/dfilemanagerwindow.h"
 #include <dlistview.h>
@@ -13,6 +15,9 @@ namespace  {
     public:
         void SetUp() override
         {
+            void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+            Stub stu;
+            stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
             m_pMainwindow = new DFileManagerWindow();
             m_pTester = new ConnectToServerDialog(m_pMainwindow);
             std::cout << "start TestConnectToServerDialog";

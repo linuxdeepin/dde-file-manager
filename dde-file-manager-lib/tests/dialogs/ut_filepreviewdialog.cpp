@@ -81,6 +81,12 @@ TEST_F(TestUnknowFilePreView, testSetFileInfo)
     Stub stu;
     stu.set((fptr)(&DFileInfo::isFile), stub_isFile);
 
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){
+        int a = 0;
+    };
+    Stub stu2;
+    stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
     m_pTester->setFileInfo(info);
     EXPECT_EQ(m_pTester->m_iconLabel->text(), "");
@@ -96,6 +102,13 @@ TEST_F(TestUnknowFilePreView, testSetFileInfo2)
     typedef bool (*fptr)();
     Stub stu;
     stu.set((fptr)(&DFileInfo::isDir), stub_isFile);
+
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){
+        int a = 0;
+    };
+    Stub stu2;
+    stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
 
     DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
     m_pTester->setFileInfo(info);

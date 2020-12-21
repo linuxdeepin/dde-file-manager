@@ -955,9 +955,7 @@ void PropertyDialog::startComputerFolderSize(const DUrl &url)
         m_sizeWorker = new DFileStatisticsJob(this);
 
     connect(m_sizeWorker, &DFileStatisticsJob::dataNotify, this, &PropertyDialog::updateFolderSize);
-#ifndef UTest
     m_sizeWorker->start(urls);
-#endif
 }
 
 void PropertyDialog::toggleFileExecutable(bool isChecked)

@@ -60,9 +60,7 @@
 SettingBackend::SettingBackend(QObject *parent)
     : DSettingsBackend(parent)
 {
-#ifndef UTest
     Q_ASSERT(DFMApplication::instance());
-#endif
 
     connect(DFMApplication::instance(), &DFMApplication::appAttributeEdited, this, &SettingBackend::onValueChanged);
     connect(DFMApplication::instance(), &DFMApplication::genericAttributeEdited, this, &SettingBackend::onValueChanged);

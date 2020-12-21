@@ -1,5 +1,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "stub.h"
+#include "app/define.h"
+#include "dfileservices.h"
 
 #include <gtest/gtest.h>
 #include <QLineEdit>
@@ -135,7 +137,7 @@ TEST_F(TestShareInfoFrame, testDoShareInfoSetting)
 
 TEST_F(TestShareInfoFrame, testUpdateShareInfo)
 {
-    DAbstractFileInfoPointer fileinfo = DAbstractFileInfo::getFileInfo(DUrl("file:///home"));
+    DAbstractFileInfoPointer fileinfo = fileService->createFileInfo(nullptr, DUrl("file:///home"));
     m_pTester->m_fileinfo = fileinfo;
 
     bool(*stub_isEmpty)() = []()->bool{

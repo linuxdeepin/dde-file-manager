@@ -13,6 +13,9 @@
 #include "dialogs/closealldialogindicator.h"
 #include "bluetooth/bluetoothtransdialog.h"
 #include "dialogs/ddesktoprenamedialog.h"
+#include "interfaces/dfmapplication.h"
+#include "io/dfilestatisticsjob.h"
+#include "bluetooth/bluetoothtransdialog.h"
 
 #include <gtest/gtest.h>
 #include <QWidget>
@@ -26,6 +29,7 @@
 #include <QGuiApplication>
 #include <QApplication>
 #include <ddiskdevice.h>
+#include <QTimer>
 
 
 using namespace stub_ext;
@@ -714,7 +718,16 @@ TEST_F(TestDialogManager, testShowPropertyDialog)
     DUrlList list;
     list << DUrl("file:///home");
     DFMUrlListBaseEvent event(nullptr, list);
+
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu2;
+    stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
+
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowPropertyDialog2)
@@ -722,7 +735,16 @@ TEST_F(TestDialogManager, testShowPropertyDialog2)
     DUrlList list;
     list << DUrl::fromComputerFile("/");
     DFMUrlListBaseEvent event(nullptr, list);
+
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu2;
+    stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
+
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowPropertyDialog3)
@@ -730,7 +752,16 @@ TEST_F(TestDialogManager, testShowPropertyDialog3)
     DUrlList list;
     list << DUrl::fromTrashFile("/");
     DFMUrlListBaseEvent event(nullptr, list);
+
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu2;
+    stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
+
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowPropertyDialog4)
@@ -739,10 +770,20 @@ TEST_F(TestDialogManager, testShowPropertyDialog4)
     list << DUrl("file:///home") << DUrl("file:///jerry2");
     DFMUrlListBaseEvent event(nullptr, list);
     DFMEvent e;
+
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu2;
+    stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     PropertyDialog dlg(e, DUrl("file:///home"));
     m_pTester->m_propertyDialogs.insert(DUrl("file:///home"), &dlg);
 
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
+
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowPropertyDialog5)
@@ -760,7 +801,15 @@ TEST_F(TestDialogManager, testShowPropertyDialog5)
         << DUrl("file:///home") << DUrl("file:///jerry2");
     DFMUrlListBaseEvent event(nullptr, list);
 
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu2;
+    stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
+
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowShareOptionsInPropertyDialog)
@@ -768,22 +817,39 @@ TEST_F(TestDialogManager, testShowShareOptionsInPropertyDialog)
     DUrlList list;
     list.push_back(DUrl("file:///home"));
     DFMUrlListBaseEvent event(nullptr, list);
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu;
+    stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showShareOptionsInPropertyDialog(event));
 }
 
 TEST_F(TestDialogManager, testShowTrashPropertyDialog)
 {
     DFMEvent event;
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu2;
+    stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
     EXPECT_NO_FATAL_FAILURE(m_pTester->showTrashPropertyDialog(event));
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowTrashPropertyDialog2)
 {
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu3;
+    stu3.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     TrashPropertyDialog* pdlg = new TrashPropertyDialog(DUrl::fromTrashFile("/"));
     m_pTester->m_trashDialog = pdlg;
     DFMEvent event;
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showTrashPropertyDialog(event));
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowTrashPropertyDialog3)
@@ -796,19 +862,33 @@ TEST_F(TestDialogManager, testShowTrashPropertyDialog3)
     Stub stu;
     stu.set(ADDR(QWidget, show), stub_show);
 
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu2;
+    stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showTrashPropertyDialog(event));
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowComputerPropertyDialog)
 {
     EXPECT_NO_FATAL_FAILURE(m_pTester->showComputerPropertyDialog());
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowComputerPropertyDialog2)
 {
     ComputerPropertyDialog dlg;
     m_pTester->m_computerDialog = &dlg;
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showComputerPropertyDialog());
+    QEventLoop loop;
+    QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowDevicePropertyDialog)
@@ -919,6 +999,13 @@ TEST_F(TestDialogManager, testShowGlobalSettingsDialog)
     Stub stub;
     stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
 
+    QObject*(*stu_instance)() = []()->QObject*{
+        QObject * obj = new QObject();
+        return obj;
+    };
+    Stub stu2;
+    stu2.set(ADDR(DFMApplication, instance), stu_instance);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showGlobalSettingsDialog(winId));
 }
 
@@ -939,7 +1026,15 @@ TEST_F(TestDialogManager, testShowGlobalSettingsDialog2)
 
 TEST_F(TestDialogManager, testShowDiskSpaceOutOfUsedDialogLater)
 {
+    int(*stub_exec)() = []()->int{
+        return 1;
+    };
+    stub_ext::StubExt stub;
+    stub.set(VADDR(QDialog, exec), stub_exec);
     EXPECT_NO_FATAL_FAILURE(m_pTester->showDiskSpaceOutOfUsedDialogLater());
+    QEventLoop loop;
+    QTimer::singleShot(300, nullptr, [&loop](){loop.exit();});
+    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowDiskSpaceOutOfUsedDialog)
@@ -1152,7 +1247,13 @@ TEST_F(TestDialogManager, testShowMultiFilesRenameDialog)
     Stub stu;
     stu.set(ADDR(DDesktopRenameDialog, getCurrentModeIndex), stub_getCurrentModeIndex);
 
-//    EXPECT_NO_FATAL_FAILURE(m_pTester->showMultiFilesRenameDialog(selectedUrls));
+    int(*stub_exec)() = []()->int{
+        return 1;
+    };
+    stub_ext::StubExt stub;
+    stub.set(VADDR(QDialog, exec), stub_exec);
+
+    EXPECT_NO_FATAL_FAILURE(m_pTester->showMultiFilesRenameDialog(selectedUrls));
 }
 
 TEST_F(TestDialogManager, testShowMultiFilesRenameDialog2)
@@ -1165,6 +1266,12 @@ TEST_F(TestDialogManager, testShowMultiFilesRenameDialog2)
     };
     Stub stu;
     stu.set(ADDR(DDesktopRenameDialog, getCurrentModeIndex), stub_getCurrentModeIndex);
+
+    int(*stub_exec)() = []()->int{
+        return 1;
+    };
+    stub_ext::StubExt stub;
+    stub.set(VADDR(QDialog, exec), stub_exec);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showMultiFilesRenameDialog(selectedUrls));
 }
@@ -1179,6 +1286,12 @@ TEST_F(TestDialogManager, testShowMultiFilesRenameDialog3)
     };
     Stub stu;
     stu.set(ADDR(DDesktopRenameDialog, getCurrentModeIndex), stub_getCurrentModeIndex);
+
+    int(*stub_exec)() = []()->int{
+        return 1;
+    };
+    stub_ext::StubExt stub;
+    stub.set(VADDR(QDialog, exec), stub_exec);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showMultiFilesRenameDialog(selectedUrls));
 }
@@ -1343,6 +1456,11 @@ TEST_F(TestDialogManager, testCloseAllPropertyDialog)
     list << DUrl("file:///home") << DUrl("file:///jerry2");
     DFMUrlListBaseEvent event(nullptr, list);
     DFMEvent e;
+
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu;
+    stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     PropertyDialog dlg(e, DUrl("file:///home"));
     m_pTester->m_propertyDialogs.insert(DUrl("file:///home"), &dlg);
 
@@ -1361,6 +1479,11 @@ TEST_F(TestDialogManager, testUpdateCloseIndicator)
     list << DUrl("file:///home") << DUrl("file:///jerry2");
     DFMUrlListBaseEvent event(nullptr, list);
     DFMEvent e;
+
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu;
+    stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     PropertyDialog dlg(e, DUrl("file:///home"));
     m_pTester->m_propertyDialogs.insert(DUrl("file:///home"), &dlg);
 
@@ -1374,6 +1497,11 @@ TEST_F(TestDialogManager, testRaiseAllPropertyDialog)
     list << DUrl("file:///home") << DUrl("file:///jerry2");
     DFMUrlListBaseEvent event(nullptr, list);
     DFMEvent e;
+
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu;
+    stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     PropertyDialog dlg(e, DUrl("file:///home"));
     m_pTester->m_propertyDialogs.insert(DUrl("file:///home"), &dlg);
 
@@ -1463,6 +1591,11 @@ TEST_F(TestDialogManager, testRefreshPropertyDialogs)
     list << DUrl("file:///home") << DUrl("file:///jerry2");
     DFMUrlListBaseEvent event(nullptr, list);
     DFMEvent e;
+
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu;
+    stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
     PropertyDialog dlg(e, DUrl("file:///home"));
     m_pTester->m_propertyDialogs.insert(DUrl("file:///home"), &dlg);
 
@@ -1596,8 +1729,9 @@ TEST_F(TestDialogManager, testShowBluetoothTransferDlg)
     stub_ext::StubExt stub;
     stub.set(VADDR(QDialog, exec), stub_exec);
     stub.set_lamda(ADDR(QWidget, show), []{});
-//    EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
+    EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
 }
+
 
 TEST_F(TestDialogManager, testShowBluetoothTransferDlg2)
 {
@@ -1613,7 +1747,7 @@ TEST_F(TestDialogManager, testShowBluetoothTransferDlg2)
     Stub stu;
     stu.set(ADDR(BluetoothTransDialog, canSendFiles), stub_canSendFiles);
 
-//    EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
+    EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
 }
 
 TEST_F(TestDialogManager, testShowFormatDialog)
