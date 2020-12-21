@@ -228,9 +228,9 @@ void BurnOptDialogPrivate::setupUi()
     advancedSettings->setLayout(vLay);
 
     // 文件系统
-    lb_fs = new QLabel(BurnOptDialog::tr("File System: "));
+    lb_fs = new QLabel(BurnOptDialog::tr("File system: "));
     vLay->addWidget(lb_fs);
-    static QStringList fsTypes{BurnOptDialog::tr("ISO9660 Only"), BurnOptDialog::tr("ISO9660 / Joliet (For Windows)"), BurnOptDialog::tr("ISO9660 / RockRidge (For Unix)")};
+    static QStringList fsTypes{BurnOptDialog::tr("ISO9660 Only"), BurnOptDialog::tr("ISO9660/Joliet (For Windows)"), BurnOptDialog::tr("ISO9660/Rock Ridge (For Unix)")};
     cb_fs = new QComboBox;
     cb_fs->addItems(fsTypes);
     cb_fs->setCurrentIndex(1); // 默认使用 i + j 的方式刻录
