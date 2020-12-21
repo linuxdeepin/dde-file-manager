@@ -19,8 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "gvfs/secretmanager.h"
+#include "stubext.h"
 
 #include <gtest/gtest.h>
+
+#include <QFile>
+
+using namespace stub_ext;
 
 namespace  {
 class TestSecretManager: public testing::Test
@@ -55,4 +60,89 @@ TEST_F(TestSecretManager, VaultSecretSchema)
 {
     const SecretSchema *schema = m_secreat->VaultSecretSchema();
     EXPECT_TRUE(schema);
+}
+
+
+TEST_F(TestSecretManager, on_password_cleared)
+{
+    StubExt st;
+    st.set_lamda(&secret_password_clear_finish, [](GAsyncResult *result, GError **error) {
+        return  true;
+    });
+    EXPECT_NO_FATAL_FAILURE(m_secreat->on_password_cleared(nullptr, nullptr, nullptr));
+
+    st.set_lamda(&secret_password_clear_finish, [](GAsyncResult *result, GError **error) {
+        *error = new _GError;
+        return  true;
+    });
+    EXPECT_NO_FATAL_FAILURE(m_secreat->on_password_cleared(nullptr, nullptr, nullptr));
+}
+
+TEST_F(TestSecretManager, storeVaultPassword)
+{
+    EXPECT_NO_FATAL_FAILURE(m_secreat->storeVaultPassword(""));
+}
+
+TEST_F(TestSecretManager, lookupVaultPassword)
+{
+    EXPECT_NO_FATAL_FAILURE(m_secreat->lookupVaultPassword());
+}
+
+TEST_F(TestSecretManager, clearVaultPassword)
+{
+    EXPECT_NO_FATAL_FAILURE(m_secreat->clearVaultPassword());
+}
+
+TEST_F(TestSecretManager, clearPasswordByLoginObj)
+{
+    QJsonObject obj1;
+    obj1["protocol"] = "smb";
+    EXPECT_NO_FATAL_FAILURE(m_secreat->clearPasswordByLoginObj(obj1));
+
+    QJsonObject obj2;
+    obj2["protocol"] = "ftp";
+    EXPECT_NO_FATAL_FAILURE(m_secreat->clearPasswordByLoginObj(obj2));
+
+}
+
+TEST_F(TestSecretManager, getLoginData)
+{
+    EXPECT_NO_FATAL_FAILURE(m_secreat->getLoginData(""));
+}
+
+TEST_F(TestSecretManager, getLoginDatas)
+{
+    EXPECT_NO_FATAL_FAILURE(m_secreat->getLoginDatas());
+}
+
+TEST_F(TestSecretManager, cachePath)
+{
+    QString path = m_secreat->cachePath();
+    QFile file(path);
+    EXPECT_TRUE(file.open(QIODevice::ReadOnly));
+    QFile::remove(path);
+}
+
+TEST_F(TestSecretManager, cacheSambaLoginData)
+{
+    QString cachePath = m_secreat->cachePath();
+    QJsonObject obj;
+    obj["id"] = "smb://";
+    EXPECT_NO_FATAL_FAILURE(m_secreat->cacheSambaLoginData(obj));
+    QFile::remove(cachePath);
+}
+
+TEST_F(TestSecretManager, loadCache)
+{
+    QString cachePath = m_secreat->cachePath();
+    EXPECT_NO_FATAL_FAILURE(m_secreat->loadCache());
+    QFile::remove(cachePath);
+}
+
+TEST_F(TestSecretManager, saveCache)
+{
+    QString cachePath = m_secreat->cachePath();
+    EXPECT_NO_FATAL_FAILURE(m_secreat->saveCache());
+
+    QFile::remove(cachePath);
 }
