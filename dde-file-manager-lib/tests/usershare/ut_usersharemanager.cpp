@@ -27,6 +27,11 @@ public:
     virtual void SetUp() override{
         sharemanager.reset(new UserShareManager());
         std::cout << "start UserShareManagerTest" << std::endl;
+        Stub stl;
+        typedef int(*fptr)(QDialog*);
+        fptr pQDialogExec = (fptr)(&QDialog::exec);
+        int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
+        stl.set(pQDialogExec, stub_DDialog_exec);
     }
 
     virtual void TearDown() override{
