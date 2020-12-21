@@ -24,10 +24,11 @@ class UserShareManagerTest:public testing::Test{
 
 public:
     QSharedPointer<UserShareManager> sharemanager = nullptr;
+    StubExt stl;
     virtual void SetUp() override{
         sharemanager.reset(new UserShareManager());
         std::cout << "start UserShareManagerTest" << std::endl;
-        Stub stl;
+
         typedef int(*fptr)(QDialog*);
         fptr pQDialogExec = (fptr)(&QDialog::exec);
         int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
@@ -48,7 +49,6 @@ TEST_F(UserShareManagerTest,start_initMonitorPath){
         infolist << info;
         return infolist;
     };
-    Stub stl;
     stl.set(ADDR(UserShareManager,shareInfoList),shareInfoList);
     ASSERT_NO_FATAL_FAILURE(sharemanager->initMonitorPath());
 }
@@ -71,7 +71,6 @@ TEST_F(UserShareManagerTest,can_getOldShareInfoByNewInfo){
 }
 
 TEST_F(UserShareManagerTest,can_getShareInfoByPath){
-    Stub stl;
     QString (*getShareNameByPath)(const QString &) = [](const QString &){return QString("share_manager");};
     stl.set(ADDR(UserShareManager,getShareNameByPath),getShareNameByPath);
     sharemanager->m_shareInfos.insert("share_manager",ShareInfo());
@@ -114,7 +113,6 @@ TEST_F(UserShareManagerTest,can_isShareFile){
 TEST_F(UserShareManagerTest,can_handleShareChanged){
     ASSERT_NO_FATAL_FAILURE(sharemanager->handleShareChanged("/jfej:tmp"));
     void (*refresh)(const DUrl &) = [](const DUrl &){};
-    Stub stl;
     stl.set(ADDR(DFileSystemModel,refresh),refresh);
     TestHelper::runInLoop([=](){
         ASSERT_NO_FATAL_FAILURE(sharemanager->handleShareChanged("/jfej23"));
@@ -148,7 +146,6 @@ TEST_F(UserShareManagerTest,can_updateUserShareInfo){
     }
     sharemanager->m_sharePathToNames.insert("/tmp/ut_sharemange_2",QStringList());
     QString (*UserSharePath)(void *) = [](void *){return QString("/tmp/ut_sharemange");};
-    Stub stl;
     stl.set(ADDR(UserShareManager,UserSharePath),UserSharePath);
 
     ASSERT_NO_FATAL_FAILURE(sharemanager->updateUserShareInfo(false));
@@ -165,7 +162,6 @@ TEST_F(UserShareManagerTest,can_setSambaPassword){
         reply.setArguments(QList<QVariant>() << QVariant(true));
         return QDBusPendingReply<bool>(reply);
     };
-    Stub stl;
     void (*waitForFinished)(void *) = [](void *){};
     stl.set(ADDR(QDBusPendingCall,waitForFinished),waitForFinished);
     stl.set(ADDR(UserShareInterface,setUserSharePassword),setUserSharePassword);
@@ -269,7 +265,6 @@ TEST_F(UserShareManagerTest,can_addUserShare){
 TEST_F(UserShareManagerTest,can_deleteUserShareByPath){
     TestHelper::runInLoop([]{});
     QString (*getShareNameByPath)(const QString &) = [](const QString &){return QString("test");};
-    Stub stl;
     stl.set(ADDR(UserShareManager,getShareNameByPath),getShareNameByPath);
     void (*deleteUserShareByShareName)(const QString &) = [](const QString &){};
     stl.set(ADDR(UserShareManager,deleteUserShareByShareName),deleteUserShareByShareName);
@@ -281,7 +276,6 @@ TEST_F(UserShareManagerTest,can_removeFiledeleteUserShareByPath){
     QString (*getShareNameByPath)(const QString &) = [](const QString &){
         return QString();
     };
-    Stub stl;
     TestHelper::runInLoop([]{});
     sharemanager->removeFiledeleteUserShareByPath("f");
     stl.set(ADDR(UserShareManager,getShareNameByPath),getShareNameByPath);
@@ -304,7 +298,6 @@ TEST_F(UserShareManagerTest,can_usershareCountchanged){
 
 TEST_F(UserShareManagerTest,can_onFileDeleted){
     void (*handleShareChanged)(const QString &) = [](const QString &){};
-    Stub stl;
     stl.set(ADDR(UserShareManager,handleShareChanged),handleShareChanged);
     void (*removeFiledeleteUserShareByPath)(const QString &) = [](const QString &){};
     stl.set(ADDR(UserShareManager,removeFiledeleteUserShareByPath),removeFiledeleteUserShareByPath);
@@ -319,7 +312,6 @@ TEST_F(UserShareManagerTest,can_deleteUserShareByShareName){
         reply.setArguments(QList<QVariant>() << QVariant(false));
         return QDBusPendingReply<bool>(reply);
     };
-    Stub stl;
     void (*waitForFinished)(void *) = [](void *){};
     stl.set(ADDR(QDBusPendingCall,waitForFinished),waitForFinished);
     stl.set((QDBusPendingReply<bool> (UserShareInterface::*)(const QString &,bool))\
@@ -347,7 +339,6 @@ TEST_F(UserShareManagerTest,can_deleteUserShareByShareName){
 
 TEST_F(UserShareManagerTest,can_loadUserShareInfoPathNames){
     QString (*readCacheFromFile)(const QString &) = [](const QString &){return QString("rwwa");};
-    Stub stl;
     stl.set(ADDR(UserShareManager,readCacheFromFile),readCacheFromFile);
     ASSERT_NO_FATAL_FAILURE(sharemanager->loadUserShareInfoPathNames());
     QString (*readCacheFromFile1)(const QString &) = [](const QString &){
@@ -358,7 +349,6 @@ TEST_F(UserShareManagerTest,can_loadUserShareInfoPathNames){
 }
 
 TEST_F(UserShareManagerTest,can_saveUserShareInfoPathNames){
-    Stub stl;
     void (*writeCacheToFile)(const QString &, const QString &) = [](const QString &, const QString &){};
 
     stl.set(ADDR(UserShareManager,writeCacheToFile),writeCacheToFile);
@@ -367,7 +357,6 @@ TEST_F(UserShareManagerTest,can_saveUserShareInfoPathNames){
 }
 
 TEST_F(UserShareManagerTest,can_updateFileAttributeInfo){
-    Stub stl;
     bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
             (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
     stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\

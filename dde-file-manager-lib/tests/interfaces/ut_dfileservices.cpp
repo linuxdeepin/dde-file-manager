@@ -89,7 +89,7 @@ public:
     }
 
     DUrl urlvideos;
-    Stub stl;
+    StubExt stl;
 };
 
 TEST_F(DFileSeviceTest, sart_fmevent){
