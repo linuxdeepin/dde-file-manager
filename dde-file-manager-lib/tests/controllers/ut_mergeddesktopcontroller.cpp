@@ -1,5 +1,6 @@
 #include <QProcess>
 #include <QTimer>
+#include <QDialog>
 #include "stub.h"
 #include <QMutex>
 #include <gtest/gtest.h>
@@ -15,6 +16,7 @@
 #include "dabstractfilewatcher.h"
 #include "dfileservices.h"
 #include "dfmglobal.h"
+#include "stubext.h"
 
 #define private public
 #define protected public
@@ -157,6 +159,8 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     EXPECT_TRUE(ctrl->setPermissions(e16));
 //    QProcess::execute("rm", QStringList() << "/tmp/dde-file-manager-unit-test.txt");
 
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return QDialog::Rejected; });
     auto e17 = dMakeEventPointer<DFMCompressEvent>(nullptr, DUrlList() << DUrl("file:///tmp/dde-file-manager-unit-test.txt"));
     EXPECT_TRUE(ctrl->compressFiles(e17));
 
