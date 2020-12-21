@@ -4,6 +4,7 @@
 #define private public
 #include "controllers/filecontroller.cpp"
 #include "stub.h"
+#include "stubext.h"
 #include "testhelper.h"
 #include "dfmevent.h"
 #include "gvfs/gvfsmountmanager.h"
@@ -146,7 +147,7 @@ TEST_F(FileControllerTest, tst_create_file_info)
     url = DUrl("smb://127.0.0.1/");
     url.setScheme(SMB_SCHEME);
     DFMUrlBaseEvent event(nullptr, url);
-    GvfsMountManager::mount_sync(event);
+    // GvfsMountManager::mount_sync(event);
     DAbstractFileInfoPointer fp3 =controller->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, url));
     EXPECT_TRUE(fp3 != nullptr);
 }
@@ -172,6 +173,9 @@ TEST_F(FileControllerTest, tst_create_director)
 
 TEST_F(FileControllerTest, tst_open_file)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+
     DUrl url = DUrl::fromLocalFile(linkName);
     auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, url);
     bool open = controller->openFile(event);
@@ -195,6 +199,9 @@ TEST_F(FileControllerTest, tst_open_file)
 
 TEST_F(FileControllerTest, tst_open_files)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
     list.append(DUrl::fromLocalFile(linkName));
@@ -225,6 +232,9 @@ TEST_F(FileControllerTest, tst_open_files_by_app)
 
 TEST_F(FileControllerTest, tst_open_compress_files)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
     list.append(DUrl::fromLocalFile(linkName));
@@ -235,6 +245,9 @@ TEST_F(FileControllerTest, tst_open_compress_files)
 
 TEST_F(FileControllerTest, tst_decompress_files)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
     list.append(DUrl::fromLocalFile(linkName));
@@ -245,6 +258,9 @@ TEST_F(FileControllerTest, tst_decompress_files)
 
 TEST_F(FileControllerTest, tst_decompress_file_here)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
     list.append(DUrl::fromLocalFile(linkName));
@@ -323,6 +339,9 @@ TEST_F(FileControllerTest, tst_mkdir)
 
 TEST_F(FileControllerTest, tst_touch)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+
     DUrl url = DUrl::fromLocalFile(fileName);
     bool result = controller->touch(dMakeEventPointer<DFMTouchFileEvent>(nullptr, url));
     EXPECT_TRUE(result);
@@ -351,6 +370,14 @@ TEST_F(FileControllerTest, tst_share_folder)
 
 TEST_F(FileControllerTest, tst_open_in_terminal)
 {
+    bool (*st_startDetached)(void *, const QString &) = [](void *, const QString &){
+        return true;
+    };
+
+    typedef bool(*FunPtr)(const QString &);
+    Stub stub;
+    stub.set(FunPtr(&QProcess::startDetached), st_startDetached);
+
     DUrl url = DUrl::fromLocalFile(fileName);
     bool result = controller->openInTerminal(dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, url));
     EXPECT_TRUE(result);
@@ -368,6 +395,9 @@ TEST_F(FileControllerTest, tst_book_mark)
 
 TEST_F(FileControllerTest, tst_create_symlink)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+
     DUrl fromUrl = DUrl::fromLocalFile(fileName).toAbsolutePathUrl();
     DUrl toUrl = DUrl::fromLocalFile(linkName).toAbsolutePathUrl();
     bool result = controller->createSymlink(dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, fromUrl, toUrl));
