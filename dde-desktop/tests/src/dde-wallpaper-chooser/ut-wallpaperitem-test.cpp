@@ -15,6 +15,8 @@
 
 #include "../dde-wallpaper-chooser/wallpaperitem.h"
 #include "../stub-ext/stubext.h"
+#include "../dde-wallpaper-chooser/thumbnailmanager.h"
+#include "../dde-wallpaper-chooser/frame.h"
 
 class WrapperWidget;
 using namespace testing;
@@ -38,14 +40,6 @@ namespace  {
 
            WallpaperItem* m_item = nullptr;
        };
-}
-
-TEST_F(WallpaperItemTest, test_addbutton)
-{
-    int first = m_item->m_buttonLayout->count();
-    m_item->addButton("1", "test");
-    int second = m_item->m_buttonLayout->count();
-    EXPECT_NE(first, second);
 }
 
 TEST_F(WallpaperItemTest, test_keyevent)
@@ -151,4 +145,104 @@ TEST_F(WallpaperItemTest, test_setpath)
     m_item->setUseThumbnailManager(false);
     m_item->useThumbnailManager();
     EXPECT_EQ(m_item->m_useThumbnailManager, false);
+}
+
+TEST_F(WallpaperItemTest, test_initpixmap)
+{
+    stub_ext::StubExt stu;
+    m_item->m_useThumbnailManager = true;
+    bool isfind = false;
+    stu.set_lamda(ADDR(ThumbnailManager, find), [&isfind](){isfind = true; return;});
+    m_item->initPixmap();
+    EXPECT_TRUE(isfind);
+
+    m_item->m_useThumbnailManager = false;
+    m_item->initPixmap();
+}
+
+TEST_F(WallpaperItemTest, test_setOpacity)
+{
+    stub_ext::StubExt stu;
+    m_item->setOpacity(1.0000000001);
+    m_item->setOpacity(1.5);
+    QResizeEvent event(QSize(200, 200), QSize(100, 100));
+    m_item->resizeEvent(&event);
+    m_item->onThumbnailFounded("1", QPixmap(200, 200));
+}
+
+TEST_F(WallpaperItemTest, test_slideup)
+{
+    stub_ext::StubExt stu;
+    bool isy = false;
+    bool isstate = false;
+    m_item->addButton("desktop", "test01");
+    m_item->slideUp();
+    EXPECT_EQ(m_item->m_buttonLayout->itemAt(0)->widget()->focusPolicy(), Qt::StrongFocus);
+
+    stu.set_lamda(ADDR(QWidget, y), [&isy](){isy = true; return -1;});
+    stu.set_lamda(ADDR(QAbstractAnimation, state), [&isstate](){isstate = true; return QAbstractAnimation::Stopped;});
+    m_item->slideUp();
+    EXPECT_TRUE(isy);
+    EXPECT_TRUE(isstate);
+}
+
+TEST_F(WallpaperItemTest, test_slidedown)
+{
+    stub_ext::StubExt stu;
+    bool isy = false;
+    bool isstate = false;
+    m_item->addButton("desktop", "test01");
+    m_item->slideDown();
+    EXPECT_EQ(m_item->m_buttonLayout->itemAt(0)->widget()->focusPolicy(), Qt::NoFocus);
+
+    stu.set_lamda(ADDR(QWidget, y), [&isy](){isy = true; return 0;});
+    stu.set_lamda(ADDR(QAbstractAnimation, state), [&isstate](){isstate = true; return QAbstractAnimation::Stopped;});
+    m_item->slideDown();
+    EXPECT_TRUE(isy);
+    EXPECT_TRUE(isstate);
+}
+
+TEST_F(WallpaperItemTest, test_getpath)
+{
+    QString path("usr/bin");
+    m_item->m_path = path;
+    QString ret = m_item->getPath();
+    EXPECT_EQ(ret, "");
+    QString path2("/usr/bin");
+    m_item->m_path = path2;
+    ret = m_item->getPath();
+    EXPECT_EQ(path2, ret);
+}
+
+TEST_F(WallpaperItemTest, test_data)
+{
+    QString temp = m_item->m_data;
+    QString ret = m_item->data();
+    EXPECT_EQ(temp, ret);
+}
+
+TEST_F(WallpaperItemTest, test_addbutton)
+{
+    QString contant("test01");
+    int count = m_item->m_buttonLayout->count();
+    QPushButton* btn = m_item->addButton("desktop", contant);
+    int secount = m_item->m_buttonLayout->count();
+    emit btn->click();
+    qApp->processEvents();
+    EXPECT_EQ(btn->text(), contant);
+    EXPECT_NE(count, secount);
+}
+
+TEST_F(WallpaperItemTest, test_eventfilter)
+{
+    QKeyEvent eventtab(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier);
+    QKeyEvent eventbacktab(QEvent::KeyPress, Qt::Key_Backtab, Qt::NoModifier);
+    QKeyEvent eventother(QEvent::MouseMove, Qt::Key_Backtab, Qt::NoModifier);
+
+    bool ret = m_item->eventFilter(m_item, &eventtab);
+    EXPECT_TRUE(ret);
+    ret = m_item->eventFilter(m_item, &eventbacktab);
+    EXPECT_TRUE(ret);
+    ret = m_item->eventFilter(m_item, &eventother);
+    EXPECT_FALSE(ret);
 }
