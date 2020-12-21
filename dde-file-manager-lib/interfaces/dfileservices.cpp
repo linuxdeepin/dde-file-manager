@@ -1032,7 +1032,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
     return isbusy;
 }
 
-bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog)
+bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootFileName, const bool bShowDailog)
 {
     Q_D(DFileService);
 
@@ -1046,19 +1046,19 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     if (!bonline) {
         setCursorBusyState(false);
         //文件不存在弹提示框
-        if (showdailog) {
-            dialogManager->showUnableToLocateDir(rootfilename);
+        if (bShowDailog) {
+            dialogManager->showUnableToLocateDir(rootFileName);
         }
         return true;
     }
 
-    if (rootfilename.startsWith(SMB_SCHEME)) {
+    if (rootFileName.startsWith(SMB_SCHEME)) {
         DAbstractFileInfoPointer rootptr = createFileInfo(nullptr, rootUrl);
         bool fileexit = rootptr->exists();
         setCursorBusyState(false);
         //文件不存在弹提示框
-        if (!fileexit && showdailog) {
-            dialogManager->showUnableToLocateDir(rootfilename);
+        if (!fileexit && bShowDailog) {
+            dialogManager->showUnableToLocateDir(rootFileName);
         }
         return !fileexit;
     }
@@ -1066,15 +1066,17 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     //是网络文件，就去确定host和port端口号
     bool bvist = true;
     QString host, port;
-    QStringList ipinfolist = rootfilename.split(",");
-    if (ipinfolist.count() >= 1) {
-        host = ipinfolist[0].replace(FTP_HOST, "");
+    QStringList ipInfoList = rootFileName.split(",");
+    if (ipInfoList.isEmpty()) {
+        int spliteIndex = ipInfoList[0].indexOf("=");
+        host = ipInfoList[0].mid((spliteIndex >= 0 && spliteIndex < ipInfoList[0].length() - 1)
+                ? spliteIndex + 1 : 0);
     } else {
         return true;
     }
 
-    if (ipinfolist.count() >= 2 && -1 != ipinfolist[1].indexOf("port=")) {
-        port = ipinfolist[1].replace("port=", "");
+    if (ipInfoList.count() >= 2 && -1 != ipInfoList[1].indexOf("port=")) {
+        port = ipInfoList[1].replace("port=", "");
     }
 
     bvist = d->m_checknetwork.isHostAndPortConnect(host, port);
@@ -1082,8 +1084,8 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     setCursorBusyState(false);
 
     //文件不存在弹提示框
-    if (!bvist && showdailog) {
-        dialogManager->showUnableToLocateDir(rootfilename);
+    if (!bvist && bShowDailog) {
+        dialogManager->showUnableToLocateDir(rootFileName);
     }
     qDebug() << bvist;
     return !bvist;

@@ -173,7 +173,7 @@ public:
     void setCursorBusyState(const bool bbusy);
     //check networkfile is busy(or network is unline)
     bool checkGvfsMountfileBusy(const DUrl &url, const bool showdailog = true);
-    bool checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog = true);
+    bool checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootFileName, const bool bShowDailog = true);
     //judge me net work is online
     bool isNetWorkOnline();
     //获取是否是正在清空回收站 fix bug 31324,
