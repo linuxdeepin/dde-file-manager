@@ -4,9 +4,12 @@
 #include "dfmevent.h"
 #include "dfilemenu.h"
 #include "stub.h"
+#include "stubext.h"
 
 #define private public
 #include "controllers/fileeventprocessor.cpp"
+#include <QDialog>
+
 using DFM_NAMESPACE::FileEventProcessor;
 
 namespace  {
@@ -61,20 +64,20 @@ namespace  {
     };
 }
 
-TEST_F(FileEventProcessorTest, is_avfs_mounted)
+TEST_F(FileEventProcessorTest, tst_is_avfs_mounted)
 {
     bool mounted = isAvfsMounted();
     EXPECT_FALSE(mounted);
 }
 
-TEST_F(FileEventProcessorTest, menu_event_rename_tag)
+TEST_F(FileEventProcessorTest, tst_menu_event_rename_tag)
 {
     auto event = makeTestMenuAction(DFMGlobal::MenuAction::RenameTag);
     bool result = processMenuEvent(event);
     EXPECT_TRUE(result);
 }
 
-TEST_F(FileEventProcessorTest, menu_event_change_tag_color)
+TEST_F(FileEventProcessorTest, tst_menu_event_change_tag_color)
 {
     DFMGlobal::MenuAction action = DFMGlobal::MenuAction::ChangeTagColor;
     const QObject *sender = nullptr;
@@ -104,8 +107,12 @@ TEST_F(FileEventProcessorTest, menu_event_change_tag_color)
     EXPECT_TRUE(result);
 }
 
-TEST_F(FileEventProcessorTest, menu_event_tag_files_use_color)
+TEST_F(FileEventProcessorTest, tst_menu_event_tag_files_use_color)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), [](){ return (int)QDialog::Rejected; });
+    stext.set_lamda(VADDR(DFileService, makeTagsOfFiles), [](){ return true; });
+
     DFMGlobal::MenuAction action = DFMGlobal::MenuAction::TagFilesUseColor;
     const QObject *sender = nullptr;
 
@@ -134,16 +141,29 @@ TEST_F(FileEventProcessorTest, menu_event_tag_files_use_color)
     EXPECT_TRUE(result);
 }
 
-TEST_F(FileEventProcessorTest, menu_delete_tag)
+TEST_F(FileEventProcessorTest, tst_menu_delete_tag)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(DFileService, deleteFiles), [](){ return true; });
+
     auto menuEvent = makeTestMenuAction(DFMGlobal::MenuAction::DeleteTags);
     QVariant data;
     bool ret = processMenuEvent(menuEvent);
     EXPECT_FALSE(ret);
 }
 
-TEST_F(FileEventProcessorTest, menu_open_functions)
+TEST_F(FileEventProcessorTest, tst_menu_open_functions)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionOpen), [](){});
+    stext.set_lamda(ADDR(AppController, actionOpenDisk), [](){});
+    stext.set_lamda(ADDR(AppController, actionOpenInNewWindow), [](){});
+    stext.set_lamda(ADDR(AppController, actionOpenInNewTab), [](){});
+    stext.set_lamda(ADDR(AppController, actionOpenDiskInNewTab), [](){});
+    stext.set_lamda(ADDR(AppController, actionOpenDiskInNewWindow), [](){});
+    stext.set_lamda(ADDR(AppController, actionOpenWithCustom), [](){});
+    stext.set_lamda(ADDR(AppController, actionOpenFileLocation), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Open);
     actions.append(DFMGlobal::MenuAction::OpenDisk);
@@ -162,8 +182,11 @@ TEST_F(FileEventProcessorTest, menu_open_functions)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_compress_functions)
+TEST_F(FileEventProcessorTest, tst_menu_compress_functions)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(VADDR(QDialog, exec), [](){ return (int)QDialog::Rejected; });
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Compress);
     actions.append(DFMGlobal::MenuAction::Decompress);
@@ -175,8 +198,16 @@ TEST_F(FileEventProcessorTest, menu_compress_functions)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_paste_functions)
+TEST_F(FileEventProcessorTest, tst_menu_paste_functions)
 {
+    Stub stub;
+    QVariant (*ut_processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = []
+            (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        return QVariant();
+    };
+    stub.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
+            ADDR(DFMEventDispatcher, processEvent), ut_processEvent);
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Cut);
     actions.append(DFMGlobal::MenuAction::Copy);
@@ -192,8 +223,13 @@ TEST_F(FileEventProcessorTest, menu_paste_functions)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_bookmark_functions)
+TEST_F(FileEventProcessorTest, tst_menu_bookmark_functions)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionBookmarkRemove), [](){});
+    stext.set_lamda(ADDR(AppController, actionBookmarkRename), [](){});
+    stext.set_lamda(ADDR(AppController, actionAddToBookMark), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::BookmarkRemove);
     actions.append(DFMGlobal::MenuAction::BookmarkRename);
@@ -205,19 +241,25 @@ TEST_F(FileEventProcessorTest, menu_bookmark_functions)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_create_symlink)
+TEST_F(FileEventProcessorTest, tst_menu_create_symlink)
 {
-//    QList<DFMGlobal::MenuAction> actions;
-//    actions.append(DFMGlobal::MenuAction::CreateSymlink);
-//    foreach (DFMGlobal::MenuAction action, actions) {
-//        auto menuEvent = makeTestMenuAction(action);
-//        bool ret = processMenuEvent(menuEvent);
-//        EXPECT_TRUE(ret);
-//    }
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionCreateSymlink), [](){});
+
+    QList<DFMGlobal::MenuAction> actions;
+    actions.append(DFMGlobal::MenuAction::CreateSymlink);
+    foreach (DFMGlobal::MenuAction action, actions) {
+        auto menuEvent = makeTestMenuAction(action);
+        bool ret = processMenuEvent(menuEvent);
+        EXPECT_TRUE(ret);
+    }
 }
 
-TEST_F(FileEventProcessorTest, menu_send_to_desktop)
+TEST_F(FileEventProcessorTest, tst_menu_send_to_desktop)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionSendToDesktop), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::SendToDesktop);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -227,8 +269,11 @@ TEST_F(FileEventProcessorTest, menu_send_to_desktop)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_property)
+TEST_F(FileEventProcessorTest, tst_menu_property)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionProperty), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Property);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -238,8 +283,11 @@ TEST_F(FileEventProcessorTest, menu_property)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_new_folder)
+TEST_F(FileEventProcessorTest, tst_menu_new_folder)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionNewFolder), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::NewFolder);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -249,8 +297,11 @@ TEST_F(FileEventProcessorTest, menu_new_folder)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_new_window)
+TEST_F(FileEventProcessorTest, tst_menu_new_window)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionOpenInNewWindow), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::NewWindow);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -260,8 +311,11 @@ TEST_F(FileEventProcessorTest, menu_new_window)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_select_all)
+TEST_F(FileEventProcessorTest, tst_menu_select_all)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionSelectAll), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::SelectAll);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -271,8 +325,15 @@ TEST_F(FileEventProcessorTest, menu_select_all)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_clear_recent_trash)
+TEST_F(FileEventProcessorTest, tst_menu_clear_recent_trash)
 {
+    Stub stub;
+    void (*ut_actionClearRecent)() = [](){};
+    void (*ut_actionClearTrash)() = [](){};
+    typedef void (AppController::*ActionClearRecent)(const QSharedPointer<DFMMenuActionEvent> &event);
+    stub.set((ActionClearRecent)&AppController::actionClearRecent, ut_actionClearRecent);
+    stub.set(ADDR(AppController, actionClearTrash), ut_actionClearTrash);
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::ClearRecent);
     actions.append(DFMGlobal::MenuAction::ClearTrash);
@@ -283,8 +344,14 @@ TEST_F(FileEventProcessorTest, menu_clear_recent_trash)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_new_office)
+TEST_F(FileEventProcessorTest, tst_menu_new_office)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionNewWord), [](){});
+    stext.set_lamda(ADDR(AppController, actionNewExcel), [](){});
+    stext.set_lamda(ADDR(AppController, actionNewPowerpoint), [](){});
+    stext.set_lamda(ADDR(AppController, actionNewText), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::NewWord);
     actions.append(DFMGlobal::MenuAction::NewExcel);
@@ -297,8 +364,11 @@ TEST_F(FileEventProcessorTest, menu_new_office)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_open_in_terminal)
+TEST_F(FileEventProcessorTest, tst_menu_open_in_terminal)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionOpenInTerminal), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::OpenInTerminal);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -308,8 +378,12 @@ TEST_F(FileEventProcessorTest, menu_open_in_terminal)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_restore)
+TEST_F(FileEventProcessorTest, tst_menu_restore)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionRestore), [](){});
+    stext.set_lamda(ADDR(AppController, actionRestoreAll), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Restore);
     actions.append(DFMGlobal::MenuAction::RestoreAll);
@@ -320,8 +394,12 @@ TEST_F(FileEventProcessorTest, menu_restore)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_complete_deletion)
+TEST_F(FileEventProcessorTest, tst_menu_complete_deletion)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionCompleteDeletion), [](){});
+    stext.set_lamda(ADDR(AppController, actionDelete), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::CompleteDeletion);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -331,8 +409,14 @@ TEST_F(FileEventProcessorTest, menu_complete_deletion)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_disk)
+TEST_F(FileEventProcessorTest, tst_menu_disk)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionMount), [](){});
+    stext.set_lamda(ADDR(AppController, actionMountImage), [](){});
+    stext.set_lamda(ADDR(AppController, actionUnmount), [](){});
+    stext.set_lamda(ADDR(AppController, actionEject), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Mount);
     actions.append(DFMGlobal::MenuAction::Unmount);
@@ -345,8 +429,11 @@ TEST_F(FileEventProcessorTest, menu_disk)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_setting)
+TEST_F(FileEventProcessorTest, tst_menu_setting)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionSettings), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Settings);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -361,10 +448,10 @@ static void actionExitStub(quint64 winId)
     Q_UNUSED(winId);
 };
 
-TEST_F(FileEventProcessorTest, menu_exit)
+TEST_F(FileEventProcessorTest, tst_menu_exit)
 {
-    Stub stub;
-    stub.set(ADDR(AppController, actionExit), actionExitStub);
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionExit), [](){});
 
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Exit);
@@ -375,8 +462,11 @@ TEST_F(FileEventProcessorTest, menu_exit)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_set_as_wallpaper)
+TEST_F(FileEventProcessorTest, tst_menu_set_as_wallpaper)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionSetAsWallpaper), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::SetAsWallpaper);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -386,8 +476,11 @@ TEST_F(FileEventProcessorTest, menu_set_as_wallpaper)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_forget_password)
+TEST_F(FileEventProcessorTest, tst_menu_forget_password)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(AppController, actionForgetPassword), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::ForgetPassword);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -397,8 +490,14 @@ TEST_F(FileEventProcessorTest, menu_forget_password)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_share)
+TEST_F(FileEventProcessorTest, tst_menu_share)
 {
+    stub_ext::StubExt stubex;
+    stubex.set_lamda(ADDR(AppController, actionShare), [](){});
+    stubex.set_lamda(ADDR(AppController, actionUnShare), [](){});
+    stubex.set_lamda(ADDR(AppController, actionConnectToServer), [](){});
+    stubex.set_lamda(ADDR(AppController, actionSetUserSharePassword), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Share);
     actions.append(DFMGlobal::MenuAction::UnShare);
@@ -411,8 +510,11 @@ TEST_F(FileEventProcessorTest, menu_share)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_format_device)
+TEST_F(FileEventProcessorTest, tst_menu_format_device)
 {
+    stub_ext::StubExt stubex;
+    stubex.set_lamda(ADDR(AppController, actionFormatDevice), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::FormatDevice);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -422,8 +524,11 @@ TEST_F(FileEventProcessorTest, menu_format_device)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_optical_blank)
+TEST_F(FileEventProcessorTest, tst_menu_optical_blank)
 {
+    stub_ext::StubExt stubex;
+    stubex.set_lamda(ADDR(AppController, actionOpticalBlank), [](){});
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::OpticalBlank);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -433,8 +538,11 @@ TEST_F(FileEventProcessorTest, menu_optical_blank)
     }
 }
 
-TEST_F(FileEventProcessorTest, menu_remove_from_recent)
+TEST_F(FileEventProcessorTest, tst_menu_remove_from_recent)
 {
+    stub_ext::StubExt stubex;
+    stubex.set_lamda(ADDR(DFileService, deleteFiles), [](){ return true; });
+
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::RemoveFromRecent);
     foreach (DFMGlobal::MenuAction action, actions) {
@@ -444,8 +552,11 @@ TEST_F(FileEventProcessorTest, menu_remove_from_recent)
     }
 }
 
-TEST_F(FileEventProcessorTest, open_window_event)
+TEST_F(FileEventProcessorTest, tst_open_window_event)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(WindowManager, showNewWindow), [](){});
+
     DUrl url = DUrl::fromLocalFile(getTestPath());
     DUrlList list;
     list.append(url);
@@ -456,8 +567,11 @@ TEST_F(FileEventProcessorTest, open_window_event)
     EXPECT_TRUE(ret);
 }
 
-TEST_F(FileEventProcessorTest, change_current_url)
+TEST_F(FileEventProcessorTest, tst_change_current_url)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(DFileManagerWindow, cd), [](){ return true; });
+
     // 目录处理
     DUrl url = DUrl::fromLocalFile(getTestPath());
     auto event = dMakeEventPointer<DFMChangeCurrentUrlEvent>(nullptr, url, nullptr);
@@ -471,8 +585,11 @@ TEST_F(FileEventProcessorTest, change_current_url)
     EXPECT_TRUE(ret);
 }
 
-TEST_F(FileEventProcessorTest, change_open_url)
+TEST_F(FileEventProcessorTest, tst_change_open_url)
 {
+    stub_ext::StubExt stext;
+    stext.set_lamda(ADDR(WindowManager, showNewWindow), [](){});
+
     DUrl url = DUrl::fromLocalFile(getTestPath());
     DUrlList list;
     list.append(url);
