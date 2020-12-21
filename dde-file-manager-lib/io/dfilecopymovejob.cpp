@@ -1810,7 +1810,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
             }
             else
             { //考虑最后一个线程拷贝的可能不足一块
-//                memcpy(toPoint+destpoint,fromPoint+srcpoint,static_cast<size_t>(fromSize-srcpoint));
                 everySize = fromSize-srcpoint;
                 copySize = everySize > blockSize ? blockSize : everySize;
                 while(everySize > 0) {

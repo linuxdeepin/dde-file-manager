@@ -11,11 +11,13 @@
 #include <QWidget>
 #include <QSharedPointer>
 #include <QAction>
+#include <QDialog>
 #include <ddiskdevice.h>
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
 #include "deviceinfo/udisklistener.h"
+#include "dabstractfilewatcher.h"
 #define private public
 #define protected public
 #include "tag/tagmanager.h"
@@ -95,6 +97,22 @@ namespace  {
             stl.set(ADDR(UDiskListener,mount),mount);
             void (*unmount)(const QString &) = [](const QString &){};
             stl.set(ADDR(UDiskListener,unmount),unmount);
+            bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+                    (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
+            stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+                    ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal);
+            bool (*ghostSignal1)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &) = []
+                    (const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &){return true;};
+            bool (*ghostSignal2)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &) = []
+                    (const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &){return true;};
+            stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &))\
+                    ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal1);
+            stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
+                    ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
+            typedef int(*fptr)(QDialog*);
+            fptr pQDialogExec = (fptr)(&QDialog::exec);
+            int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
+            stl.set(pQDialogExec, stub_DDialog_exec);
 
             controller = AppController::instance();
             QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());

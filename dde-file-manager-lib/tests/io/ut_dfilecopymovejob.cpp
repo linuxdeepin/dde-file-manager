@@ -22,6 +22,7 @@
 #include <QByteArray>
 #include <QtDebug>
 #include <QVariant>
+#include <QDialog>
 
 using namespace testing;
 DFM_USE_NAMESPACE
@@ -46,6 +47,11 @@ public:
                 ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal1);
         stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
                 ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
+
+        typedef int(*fptr)(QDialog*);
+        fptr pQDialogExec = (fptr)(&QDialog::exec);
+        int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
+        stl.set(pQDialogExec, stub_DDialog_exec);
         std::cout << "start DFileCopyMoveJobTest" << std::endl;
     }
 

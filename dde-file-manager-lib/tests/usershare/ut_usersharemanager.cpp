@@ -10,6 +10,7 @@
 #include "dialogs/shareinfoframe.h"
 #include "../dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
 #include "ddialog.h"
+#include "dabstractfilewatcher.h"
 #define private public
 #include "stub.h"
 #include "stubext.h"
@@ -29,6 +30,7 @@ public:
     }
 
     virtual void TearDown() override{
+        TestHelper::deleteTmpFile("/tmp/ut_share_manager");
         std::cout << "end UserShareManagerTest" << std::endl;
     }
 };
@@ -256,7 +258,7 @@ TEST_F(UserShareManagerTest,can_addUserShare){
     };
     stl.set(ADDR(QProcess,readAllStandardError),readAllStandardError4);
     EXPECT_FALSE(sharemanager->addUserShare(info));
-    TestHelper::deleteTmpFile(url.toLocalFile());
+    TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile() << "/tmp/ut_share_manager");
 }
 
 TEST_F(UserShareManagerTest,can_deleteUserShareByPath){
@@ -336,4 +338,52 @@ TEST_F(UserShareManagerTest,can_deleteUserShareByShareName){
     stl.set(ADDR(QProcess,waitForFinished),waitForFinished1);
     sharemanager->m_shareInfos.clear();
     ASSERT_NO_FATAL_FAILURE(sharemanager->deleteUserShareByShareName(QString("testee")));
+}
+
+TEST_F(UserShareManagerTest,can_loadUserShareInfoPathNames){
+    QString (*readCacheFromFile)(const QString &) = [](const QString &){return QString("rwwa");};
+    Stub stl;
+    stl.set(ADDR(UserShareManager,readCacheFromFile),readCacheFromFile);
+    ASSERT_NO_FATAL_FAILURE(sharemanager->loadUserShareInfoPathNames());
+    QString (*readCacheFromFile1)(const QString &) = [](const QString &){
+        return QString("{\"ut_share_test1\":{}}");
+    };
+    stl.set(ADDR(UserShareManager,readCacheFromFile),readCacheFromFile1);
+    ASSERT_NO_FATAL_FAILURE(sharemanager->loadUserShareInfoPathNames());
+}
+
+TEST_F(UserShareManagerTest,can_saveUserShareInfoPathNames){
+    Stub stl;
+    void (*writeCacheToFile)(const QString &, const QString &) = [](const QString &, const QString &){};
+
+    stl.set(ADDR(UserShareManager,writeCacheToFile),writeCacheToFile);
+    sharemanager->m_sharePathByFilePath.insert("ut_share_manger",QString());
+    ASSERT_NO_FATAL_FAILURE(sharemanager->saveUserShareInfoPathNames());
+}
+
+TEST_F(UserShareManagerTest,can_updateFileAttributeInfo){
+    Stub stl;
+    bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal);
+    ASSERT_NO_FATAL_FAILURE(sharemanager->updateFileAttributeInfo(QString()));
+    ASSERT_NO_FATAL_FAILURE(sharemanager->updateFileAttributeInfo(QString("~/")));
+}
+
+TEST_F(UserShareManagerTest,can_writeCacheToFile){
+    DUrl url;
+    url.setScheme(FILE_SCHEME);
+    url.setPath(TestHelper::createTmpFile());
+    ASSERT_NO_FATAL_FAILURE(sharemanager->writeCacheToFile(url.toLocalFile(),"mniah"));
+    TestHelper::deleteTmpFile(url.toLocalFile());
+}
+
+TEST_F(UserShareManagerTest,can_readCacheFromFile){
+    EXPECT_TRUE(sharemanager->readCacheFromFile("file:///utueutndfnsndfh").isEmpty());
+    DUrl url;
+    url.setScheme(FILE_SCHEME);
+    url.setPath(TestHelper::createTmpFile());
+    EXPECT_TRUE(sharemanager->readCacheFromFile(url.toLocalFile()).isEmpty());
+    TestHelper::deleteTmpFile(url.toLocalFile());
 }

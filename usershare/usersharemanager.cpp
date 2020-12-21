@@ -203,15 +203,6 @@ QString UserShareManager::readCacheFromFile(const QString &path)
 
 QString UserShareManager::getCurrentUserName()
 {
-    //    if(CurrentUser.isEmpty()){
-    //        QProcess up;
-    //        up.start("id",QStringList() << "-u" << "-n");
-    //        up.waitForFinished();
-    //        QByteArray data = up.readAll();
-    //        QString userName = data.data();
-    //        // throw out '\n' string
-    //        CurrentUser = userName.trimmed();
-    //    }
     CurrentUser = getpwuid(getuid())->pw_name; //getpwuid get password uid，pw_name password name，这个用来获取uid对应的用户名
     return CurrentUser;
 }

@@ -31,8 +31,15 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+typedef struct
+{
+  char *name;
+  ino_t ino;
+} direntry_t;
 
 char *savedir (char const *dir);
+int direntry_cmp_name (void const *a, void const *b);
+int direntry_cmp_inode (void const *a, void const *b);
 
 
 #endif // SORT_H
