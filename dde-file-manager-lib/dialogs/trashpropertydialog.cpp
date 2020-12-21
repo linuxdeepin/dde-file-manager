@@ -121,9 +121,7 @@ void TrashPropertyDialog::startComputerFolderSize(const DUrl &url)
 
     connect(worker, &DFileStatisticsJob::finished, worker, &DFileStatisticsJob::deleteLater);
     connect(worker, &DFileStatisticsJob::dataNotify, this, &TrashPropertyDialog::updateFolderSize);
-#ifndef UTest
     worker->start({url});
-#endif
 }
 
 void TrashPropertyDialog::updateFolderSize(qint64 size)

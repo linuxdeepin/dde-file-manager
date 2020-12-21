@@ -14,6 +14,12 @@ namespace  {
     public:
         void SetUp() override
         {
+            QObject*(*stu_instance)() = []()->QObject*{
+                QObject * obj = new QObject();
+                return obj;
+            };
+            Stub stu2;
+            stu2.set(ADDR(DFMApplication, instance), stu_instance);
             m_pTesting = new DFMSettingDialog();
             std::cout << "start TestDFMSettingDialog";
         }
@@ -40,6 +46,13 @@ TEST_F(TestDFMSettingDialog, testInit2)
     };
     Stub stu;
     stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
+
+    QObject*(*stu_instance)() = []()->QObject*{
+        QObject * obj = new QObject();
+        return obj;
+    };
+    Stub stu2;
+    stu2.set(ADDR(DFMApplication, instance), stu_instance);
 
     DFMSettingDialog dlg;
     EXPECT_EQ(dlg.width(), 700);
@@ -113,6 +126,13 @@ namespace  {
     public:
         void SetUp() override
         {
+            QObject*(*stu_instance)() = []()->QObject*{
+                QObject * obj = new QObject();
+                return obj;
+            };
+            Stub stu2;
+            stu2.set(ADDR(DFMApplication, instance), stu_instance);
+
             m_pTesting = new SettingBackend();
             std::cout << "start TestSettingBackend";
         }

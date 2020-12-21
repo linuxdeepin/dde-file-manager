@@ -841,11 +841,11 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
     QPoint pos = getPerportyPos(m_trashDialog->size().width(), m_trashDialog->size().height(), 1, 0);
     m_trashDialog->move(pos);
     m_trashDialog->show();
-#ifndef UTest
+
     TIMER_SINGLESHOT(100, {
-        m_trashDialog->raise();
+        if(m_trashDialog)
+            m_trashDialog->raise();
     }, this)
-#endif
 }
 
 void DialogManager::showComputerPropertyDialog()
@@ -859,12 +859,11 @@ void DialogManager::showComputerPropertyDialog()
     QPoint pos = getPerportyPos(m_computerDialog->size().width(), m_computerDialog->size().height(), 1, 0);
     m_computerDialog->show();
     m_computerDialog->move(pos);
-#ifndef UTest
+
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
     },
     this)
-#endif
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
@@ -996,11 +995,9 @@ void DialogManager::showGlobalSettingsDialog(quint64 winId)
 
 void DialogManager::showDiskSpaceOutOfUsedDialogLater()
 {
-#ifndef UTest
     QTimer::singleShot(200, [ = ] {
         showDiskSpaceOutOfUsedDialog();
     });
-#endif
 }
 
 void DialogManager::showDiskSpaceOutOfUsedDialog()
@@ -1568,11 +1565,8 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
     renameDialog.moveToCenter();
     renameDialog.setDialogTitle(QObject::tr("Rename %1 Files").arg(QString::fromStdString(std::to_string(selectedUrls.size()))));
 
-#ifndef UTest
     std::size_t code { static_cast<size_t>(renameDialog.exec()) };
-#else
-    std::size_t code {1};
-#endif
+
     AppController::flagForDDesktopRenameBar.store(true, std::memory_order_seq_cst);
 
     if (static_cast<bool>(code) == true) { //###: yes!
