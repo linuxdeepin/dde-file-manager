@@ -56,29 +56,7 @@
 #include <qpa/qplatformtheme.h>
 #include <qpa/qplatformdialoghelper.h>
 
-class DFileDialogPrivate
-{
-public:
-    int result = 0;
-    bool hideOnAccept = true;
-    bool allowMixedSelection = false;
-
-    QFileDialog::FileMode fileMode = QFileDialog::AnyFile;
-    QFileDialog::AcceptMode acceptMode = QFileDialog::AcceptOpen;
-    QFileDialog::Options options;
-    QEventLoop *eventLoop = Q_NULLPTR;
-    QStringList nameFilters;
-
-    DFileView *view = Q_NULLPTR;
-    int currentNameFilterIndex = -1;
-    QDir::Filters filters = nullptr;
-    QString currentInputName;
-    mutable QModelIndexList orderedSelectedList;
-    FileDialogStatusBar *statusBar;
-
-public:
-    QList<DUrl> orderedSelectedUrls() const;
-};
+#include "private/dfiledialog_p.h"
 
 QList<DUrl> DFileDialogPrivate::orderedSelectedUrls() const
 {
@@ -470,7 +448,7 @@ void DFileDialog::selectNameFilterByIndex(int index)
     // when d->fileMode == QFileDialog::DirectoryOnly or d->fileMode == QFileDialog::Directory
     // we use setNameFilters("/") to filter files (can't select file, select dir is ok)
     if ((d->fileMode == QFileDialog::DirectoryOnly ||
-            d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters) { //是目录？
+            d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters) {
         newNameFilters = QStringList("/");
     }
 

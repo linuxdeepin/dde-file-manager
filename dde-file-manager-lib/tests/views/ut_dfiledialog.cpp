@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <DDialog>
 #include "../stub-ext/stubext.h"
+#include "../views/private/dfiledialog_p.h"
 
 #define private public
 #define protected public
@@ -145,6 +146,12 @@ TEST_F(TestDFileDialog, tst_set_get_fileterIndex)
     m_fileDialog->selectNameFilterByIndex(1);
     selectedIndex = m_fileDialog->selectedNameFilterIndex();
     EXPECT_EQ(1, selectedIndex);
+
+    m_fileDialog->setAcceptMode(QFileDialog::AcceptOpen);
+    m_fileDialog->setFileMode(QFileDialog::DirectoryOnly);
+    m_fileDialog->selectNameFilterByIndex(1);
+    selectedIndex = m_fileDialog->selectedNameFilterIndex();
+    EXPECT_EQ(1, selectedIndex);
 }
 
 TEST_F(TestDFileDialog, tst_set_get_filter)
@@ -183,6 +190,9 @@ TEST_F(TestDFileDialog, tst_set_get_labelText)
 {
     m_fileDialog->setLabelText(QFileDialog::Accept, "label");
     EXPECT_EQ("label", m_fileDialog->labelText(QFileDialog::Accept));
+
+    m_fileDialog->setLabelText(QFileDialog::Reject, "label");
+    EXPECT_EQ("label", m_fileDialog->labelText(QFileDialog::Reject));
 }
 
 TEST_F(TestDFileDialog, tst_options)
@@ -237,8 +247,12 @@ TEST_F(TestDFileDialog, tst_slots)
 
 TEST_F(TestDFileDialog, tst_acceptButtonClicked)
 {
-    m_fileDialog->onAcceptButtonClicked();
-    m_fileDialog->setAcceptMode(QFileDialog::AcceptSave);
+    m_fileDialog->setFileMode(QFileDialog::AnyFile);
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->onAcceptButtonClicked());
+    m_fileDialog->setFileMode(QFileDialog::ExistingFiles);
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->onAcceptButtonClicked());
+    m_fileDialog->setFileMode(QFileDialog::Directory);
+    EXPECT_NO_FATAL_FAILURE(m_fileDialog->onAcceptButtonClicked());
 
     // replace QLineEdit::text
     QString (*st_text)() = []()->QString {
@@ -247,7 +261,8 @@ TEST_F(TestDFileDialog, tst_acceptButtonClicked)
     Stub stub;
     stub.set(ADDR(QLineEdit, text), st_text);
 
-    m_fileDialog->onAcceptButtonClicked();    
+    m_fileDialog->setAcceptMode(QFileDialog::AcceptSave);
+    m_fileDialog->onAcceptButtonClicked();
 
     // replace QLineEdit::text
     QString (*st_text_2)() = []()->QString {
@@ -265,6 +280,8 @@ TEST_F(TestDFileDialog, tst_acceptButtonClicked)
 
     m_fileDialog->setOption(QFileDialog::DontConfirmOverwrite);
     EXPECT_NO_FATAL_FAILURE(m_fileDialog->onAcceptButtonClicked());
+
+    m_fileDialog->onAcceptButtonClicked();
 }
 
 TEST_F(TestDFileDialog, tst_onCurrentInputNameChanged)
@@ -363,5 +380,44 @@ TEST_F(TestDFileDialog, tst_get_directory)
 TEST_F(TestDFileDialog, tst_onRejectButtonClicked)
 {
     EXPECT_NO_FATAL_FAILURE(m_fileDialog->onRejectButtonClicked());
+}
+
+TEST_F(TestDFileDialog, tst_selectedUrls)
+{
+    m_fileDialog->setAcceptMode(QFileDialog::AcceptSave);
+    m_fileDialog->selectedUrls();
+    m_fileDialog->setAcceptMode(QFileDialog::AcceptOpen);
+    m_fileDialog->selectedUrls();
+}
+
+TEST_F(TestDFileDialog, tst_orderedSelectedUrls)
+{
+    m_fileDialog->d_ptr->orderedSelectedList << QModelIndex() << QModelIndex();
+    EXPECT_TRUE(m_fileDialog->d_ptr->orderedSelectedUrls().size() == 0);
+
+    QModelIndexList (*st_selectedIndexes)() = []()->QModelIndexList {
+        QModelIndexList index;
+        index.append(QModelIndex());
+        index.append(QModelIndex());
+        return index;
+    };
+    stub_ext::StubExt stubext;
+    stubext.set(VADDR(DFileView, selectedIndexes), st_selectedIndexes);
+
+    m_fileDialog->d_ptr->orderedSelectedList << QModelIndex();
+    m_fileDialog->d_ptr->orderedSelectedUrls();
+    EXPECT_TRUE(m_fileDialog->d_ptr->orderedSelectedUrls().size() == 0);
+}
+
+TEST_F(TestDFileDialog, tst_adjustPostion)
+{
+    QPoint pt0 = m_fileDialog->pos();
+
+    QWidget w;
+    w.move(100,100);
+    m_fileDialog->adjustPosition(&w);
+    QPoint pt1 = m_fileDialog->pos();
+
+    EXPECT_NE(pt0, pt1);
 }
 

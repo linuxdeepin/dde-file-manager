@@ -49,14 +49,13 @@ TEST_F(TestVaultLockManager, autoLock)
 
 TEST_F(TestVaultLockManager, tst_checkAuthentication)
 {
-#if 0 // this will cause pop dialog.
+    // those code may cause pop dialog.
     QDBusPendingReply<bool> (*st_checkAuthentication)() = []()->QDBusPendingReply<bool>{
             return  QDBusPendingCall::fromCompletedCall(QDBusMessage());
     };
     Stub stub;
     stub.set(ADDR(VaultInterface, checkAuthentication), st_checkAuthentication);
     m_vaultLockManager->checkAuthentication(VAULT_CREATE);
-#endif
 }
 
 TEST_F(TestVaultLockManager, tst_processAutoLock)
@@ -84,16 +83,34 @@ TEST_F(TestVaultLockManager, tst_slotLockVault)
 
 TEST_F(TestVaultLockManager, tst_dbusSetRefreshTIme)
 {
+    bool (*st_isValid)() = [](){
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(VaultInterface, isValid), st_isValid);
+
     EXPECT_NO_FATAL_FAILURE(m_vaultLockManager->dbusSetRefreshTime(0));
 }
 
 TEST_F(TestVaultLockManager, tst_dbusGetLastestTime)
 {
+    bool (*st_isValid)() = [](){
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(VaultInterface, isValid), st_isValid);
+
     EXPECT_NO_FATAL_FAILURE(m_vaultLockManager->dbusGetLastestTime());
 }
 
 TEST_F(TestVaultLockManager, tst_dbusGetSelfTime)
 {
+    bool (*st_isValid)() = [](){
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(VaultInterface, isValid), st_isValid);
+
     EXPECT_NO_FATAL_FAILURE(m_vaultLockManager->dbusGetSelfTime());
 }
 
@@ -129,5 +146,35 @@ TEST_F(TestVaultLockManager, tst_slotLockEvent)
     EXPECT_NO_FATAL_FAILURE(m_vaultLockManager->slotLockEvent(loginUser));
 }
 
+TEST_F(TestVaultLockManager, tst_construct)
+{
+    bool (*st_isValid)() = [](){
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(VaultLockManager, isValid), st_isValid);
 
-// The rest will be add later.
+    QSharedPointer<VaultLockManager> ptr = QSharedPointer<VaultLockManager>(new VaultLockManager());
+    EXPECT_TRUE(ptr->isValid());
+}
+
+TEST_F(TestVaultLockManager, tst_refreshAccessTime)
+{
+    bool (*st_isValid)() = [](){
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(VaultLockManager, isValid), st_isValid);
+    m_vaultLockManager->refreshAccessTime();
+}
+
+TEST_F(TestVaultLockManager, tst_isValid)
+{
+    bool (*st_isValid)() = [](){
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(VaultInterface, isValid), st_isValid);
+
+    EXPECT_FALSE(m_vaultLockManager->isValid());
+}

@@ -22,5 +22,5 @@
 ./test-prj-running.sh --ut no 或者 ./test-prj-running.sh --ut no --cppcheck yes
 
 5. 直接运行dde_file_manager UT case，并查看case 与 覆盖率情况
-  ./test-prj-running.sh --clear no --ut dde_file_manager --rebuild no --cppcheck no
+  ./test-prj-running.sh --clear no --ut dde-file-manager --rebuild no --cppcheck no
 

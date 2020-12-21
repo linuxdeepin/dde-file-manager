@@ -384,6 +384,18 @@ TEST_F(TestVaultController, tst_deleteFiles)
     urls << DUrl(testFile);
     QSharedPointer<DFMDeleteEvent> event = dMakeEventPointer<DFMDeleteEvent>(nullptr, urls);
 
+    bool (*st_deleteFiles)(const QObject *, const DUrlList &, bool, bool, bool) =
+            [](const QObject *, const DUrlList &, bool, bool, bool){
+        return false;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, deleteFiles), st_deleteFiles);
+
+    void (*st_signalFileDeleted)() = [](){
+        // do nothing.
+    };
+    stub.set(ADDR(VaultController, signalFileDeleted), st_signalFileDeleted);
+
     EXPECT_TRUE(m_controller->deleteFiles(event));
     QProcess::execute(cmdRm);
 }
@@ -400,6 +412,18 @@ TEST_F(TestVaultController, tst_moveToTrash)
     urls << DUrl(testFile);
     QSharedPointer<DFMMoveToTrashEvent> event = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, urls, false);
 
+    bool (*st_deleteFiles)(const QObject *, const DUrlList &, bool, bool, bool) =
+            [](const QObject *, const DUrlList &, bool, bool, bool){
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, deleteFiles), st_deleteFiles);
+
+    void (*st_signalFileDeleted)() = [](){
+        // do nothing.
+    };
+    stub.set(ADDR(VaultController, signalFileDeleted), st_signalFileDeleted);
+
     m_controller->moveToTrash(event);
     QProcess::execute(cmdRm);
 }
@@ -408,7 +432,17 @@ TEST_F(TestVaultController, tst_pasteFile)
 {
     DUrl picPath(DFMStandardPaths::location(DFMStandardPaths::PicturesPath));
     QSharedPointer<DFMPasteEvent> event = dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CopyAction, picPath, DUrlList() << picPath);
-    m_controller->pasteFile(event);
+
+    DUrlList (*st_pasteFile)(const QObject *, DFMGlobal::ClipboardAction, const DUrl &, const DUrlList &) =
+            [](const QObject *, DFMGlobal::ClipboardAction, const DUrl &, const DUrlList &)->DUrlList {
+        DUrlList urls;
+        urls << DUrl(DFMStandardPaths::location(DFMStandardPaths::MusicPath));
+        return urls;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, pasteFile), st_pasteFile);
+
+    EXPECT_NE(m_controller->pasteFile(event).size(), 0);
 }
 
 TEST_F(TestVaultController, tst_writeFilsToClipboard)
@@ -488,8 +522,15 @@ TEST_F(TestVaultController, tst_add_remove_Bookmark)
     QSharedPointer<DFMAddToBookmarkEvent> eventAdd = dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, testFile);
     EXPECT_FALSE(m_controller->addToBookmark(eventAdd));
 
+    bool (*st_deleteFiles)(const QObject *, const DUrlList &, bool, bool, bool) =
+            [](const QObject *, const DUrlList &, bool, bool, bool){
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, deleteFiles), st_deleteFiles);
+
     QSharedPointer<DFMRemoveBookmarkEvent> eventRemove = dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, testFile);
-    EXPECT_FALSE(m_controller->removeBookmark(eventRemove));
+    EXPECT_TRUE(m_controller->removeBookmark(eventRemove));
 
     QProcess::execute(cmdRm);
 }
