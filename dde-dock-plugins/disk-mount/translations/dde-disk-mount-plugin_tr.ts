@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Bir daha ki sefer &quot;Güvenle Kaldıra&quot; tıklayın bağlantısını kesin</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Aygıtın bağı ayrılamadı</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Diski &quot;%1&quot; kullanıcısı bağlamış, siz bu bağı ayıramazsınız.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounting device</source>
+        <translation>Bağlanacak aygıt bulunamadı</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Diskler</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

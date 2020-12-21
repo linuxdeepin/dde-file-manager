@@ -3,7 +3,7 @@
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>
-        <translation>%1 توم</translation>
+        <translation>%1 رايۇن</translation>
     </message>
 </context>
 <context>
@@ -17,7 +17,7 @@
     <name>DiskControlWidget</name>
     <message>
         <source>dde-file-manager</source>
-        <translation>dde ھۆججەت باشقۇرغۇچ</translation>
+        <translation>ھۆججەت باشقۇرغۇچ</translation>
     </message>
     <message>
         <source>The device was not safely removed</source>
@@ -26,6 +26,30 @@
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>«بىخەتەر ئۆچۈرۈش» نى باسقاندىن كېيىن ئۇلىنىشنى ئۈزۈڭ</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>ئۈسكۈنىنى چىقىرالمىدى</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>دىسكىغا “%1” ئىشلەتكۈچى ئاغدۇرۇلغان، ئۆچۈرۈش ھوقۇقىڭىز يوق.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounting device</source>
+        <translation>ماس ئاغدۇرۇش ئۈسكۈنىسى تېپىلمىدى</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>دىسكا</translation>
     </message>
 </context>
 <context>

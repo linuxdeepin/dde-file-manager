@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Clique em &quot;Remover com segurança&quot; e então desconecte-o na próxima vez</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Impossível desmontar o dispositivo</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>O disco foi montado pelo usuário &quot;%1&quot;, você não pode desmontá-lo.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounting device</source>
+        <translation>Não foi possível encontrar o dispositivo montado</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Dispositivos</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

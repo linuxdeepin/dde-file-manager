@@ -2,39 +2,49 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="484"/>
+        <location filename="../controllers/appcontroller.cpp" line="487"/>
         <source>New Folder</source>
         <translation>नयाँ फोल्डर</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="570"/>
+        <location filename="../controllers/appcontroller.cpp" line="573"/>
         <source>Mounting device error</source>
         <translation>माउन्टिंग उपकरण त्रुटि</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="603"/>
+        <location filename="../controllers/appcontroller.cpp" line="606"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>डिस्क छवि बिग्रेको थियो, अहिले चढ्न सक्दैन, कृपया पहिले डिस्कलाई मेटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="645"/>
+        <location filename="../controllers/appcontroller.cpp" line="648"/>
         <source>Mount error: unsupported image format</source>
         <translation>माउन्ट त्रुटि: असमर्थित छवि ढाँचा</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="723"/>
-        <location filename="../controllers/appcontroller.cpp" line="759"/>
+        <location filename="../controllers/appcontroller.cpp" line="726"/>
+        <location filename="../controllers/appcontroller.cpp" line="767"/>
         <source>The device was not safely removed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="723"/>
-        <location filename="../controllers/appcontroller.cpp" line="759"/>
+        <location filename="../controllers/appcontroller.cpp" line="726"/>
+        <location filename="../controllers/appcontroller.cpp" line="767"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="740"/>
+        <location filename="../controllers/appcontroller.cpp" line="737"/>
+        <source>The device was not ejected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../controllers/appcontroller.cpp" line="737"/>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>डिस्क व्यस्त छ, अब निकाल्न सक्दैन</translation>
+    </message>
+    <message>
+        <location filename="../controllers/appcontroller.cpp" line="748"/>
         <source>Authentication timed out</source>
         <translation type="unfinished"/>
     </message>
@@ -42,104 +52,152 @@
 <context>
     <name>BluetoothTransDialog</name>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="24"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="26"/>
         <source>Bluetooth File Transfer</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="25"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="27"/>
         <source>File Transfer Successful</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="26"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="28"/>
         <source>File Transfer Failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="28"/>
-        <source>Sending files to &quot;%1&quot;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="29"/>
-        <source>Failed to send files to &quot;%1&quot;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="30"/>
-        <source>Sent to &quot;%1&quot; successfully</source>
+        <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
-        <source>Select a Bluetooth device to receive files</source>
+        <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
-        <source>Cannot find the connected Bluetooth device</source>
+        <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
-        <source>Waiting to be received...</source>
+        <source>Select a Bluetooth device to receive files</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="34"/>
-        <source>Go to Bluetooth Settings</source>
+        <source>Cannot find the connected Bluetooth device</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="35"/>
-        <source>%1/%2 Sent</source>
+        <source>Waiting to be received...</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="36"/>
-        <source>Error: the Bluetooth device is disconnected</source>
+        <source>Go to Bluetooth Settings</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="37"/>
-        <source>Unable to send the file more than 2 GB</source>
+        <source>%1/%2 Sent</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
-        <source>Unable to send 0 KB files</source>
+        <source>Error: the Bluetooth device is disconnected</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
-        <source>File doesn&apos;t exist</source>
+        <source>Unable to send the file more than 2 GB</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
+        <source>Unable to send 0 KB files</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
+        <source>File doesn&apos;t exist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
         <source>Next</source>
         <translation>अर्को </translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
         <source>Cancel</source>
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
         <source>Done</source>
         <translation>भयो</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="46"/>
         <source>Retry</source>
         <translation>पुनःप्रयास गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="47"/>
         <source>OK</source>
         <translation>ठिक छ</translation>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="129"/>
+        <source>File sending request timed out</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="131"/>
+        <source>The service is busy and unable to process the request</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>BurnOptDialog</name>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="69"/>
+        <source>Device error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="69"/>
+        <source>Optical device %1 doesn&apos;t exist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="227"/>
+        <source>Advanced settings</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="250"/>
+        <source>File system: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="252"/>
+        <source>ISO9660/Joliet (For Windows)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="252"/>
+        <source>ISO9660/Rock Ridge (For Unix)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="252"/>
+        <source>ISO9660 Only</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -158,20 +216,21 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="57"/>
-        <location filename="../models/computermodel.cpp" line="119"/>
+        <location filename="../models/computermodel.cpp" line="61"/>
+        <location filename="../models/computermodel.cpp" line="135"/>
         <source>My Directories</source>
         <translation>मेरो निर्देशिका</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="75"/>
         <location filename="../models/computermodel.cpp" line="79"/>
-        <location filename="../models/computermodel.cpp" line="171"/>
-        <location filename="../models/computermodel.cpp" line="182"/>
-        <location filename="../models/computermodel.cpp" line="595"/>
-        <location filename="../models/computermodel.cpp" line="599"/>
-        <location filename="../models/computermodel.cpp" line="636"/>
-        <location filename="../models/computermodel.cpp" line="640"/>
+        <location filename="../models/computermodel.cpp" line="83"/>
+        <location filename="../models/computermodel.cpp" line="187"/>
+        <location filename="../models/computermodel.cpp" line="198"/>
+        <location filename="../models/computermodel.cpp" line="200"/>
+        <location filename="../models/computermodel.cpp" line="611"/>
+        <location filename="../models/computermodel.cpp" line="615"/>
+        <location filename="../models/computermodel.cpp" line="652"/>
+        <location filename="../models/computermodel.cpp" line="656"/>
         <source>Disks</source>
         <translation>डिस्कहरू</translation>
     </message>
@@ -387,13 +446,13 @@
 <context>
     <name>DFMOpticalMediaWidget</name>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="106"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="131"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="118"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="143"/>
         <source>No files to burn</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="149"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="164"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation type="unfinished"/>
     </message>
@@ -409,7 +468,7 @@
 <context>
     <name>DFMTagWidget</name>
     <message>
-        <location filename="../views/dfmtagwidget.cpp" line="129"/>
+        <location filename="../views/dfmtagwidget.cpp" line="133"/>
         <source>Tag</source>
         <translation>ट्याग</translation>
     </message>
@@ -582,7 +641,7 @@
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="54"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="188"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="191"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation type="unfinished"/>
     </message>
@@ -612,8 +671,8 @@
         <translation>अर्को </translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="209"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="225"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="214"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="230"/>
         <source>Passwords do not match</source>
         <translation type="unfinished"/>
     </message>
@@ -664,12 +723,12 @@
         <translation>अनलक गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="261"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="264"/>
         <source>Failed to unlock file vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="265"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="268"/>
         <source>OK</source>
         <translation>ठिक छ</translation>
     </message>
@@ -679,7 +738,7 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="151"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="154"/>
         <source>Wrong recovery key</source>
         <translation type="unfinished"/>
     </message>
@@ -700,7 +759,7 @@
 <context>
     <name>DFMVaultRemoveByRecoverykeyView</name>
     <message>
-        <location filename="../views/dfmvaultremovebyrecoverykeyview.cpp" line="57"/>
+        <location filename="../views/dfmvaultremovebyrecoverykeyview.cpp" line="58"/>
         <source>Input the 32-digit recovery key</source>
         <translation type="unfinished"/>
     </message>
@@ -708,69 +767,69 @@
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="32"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="33"/>
         <source>Delete File Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="76"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="81"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
         <source>Cancel</source>
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="152"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="157"/>
         <source>Use Key</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="80"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
         <source>Delete</source>
         <translation>हटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="104"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="209"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="109"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="214"/>
         <source>OK</source>
         <translation>ठिक छ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="149"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="154"/>
         <source>Use Password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="164"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="169"/>
         <source>Wrong password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="174"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="179"/>
         <source>Wrong recovery key</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="205"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="210"/>
         <source>Failed to delete file vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="219"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="224"/>
         <source>Deleted successfully</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="221"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="226"/>
         <source>Failed to delete</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="100"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="105"/>
         <source>Removing...</source>
         <translation type="unfinished"/>
     </message>
@@ -803,12 +862,12 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="230"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="233"/>
         <source>Failed to unlock file vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="234"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
         <source>OK</source>
         <translation>ठिक छ</translation>
     </message>
@@ -818,8 +877,8 @@
         <translation>पासवर्ड</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="180"/>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="225"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="184"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="228"/>
         <source>Wrong password</source>
         <translation type="unfinished"/>
     </message>
@@ -827,148 +886,148 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="206"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="210"/>
         <source>Permission error</source>
         <translation>अनुमति त्रुटि</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="208"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="212"/>
         <source>The action is denied</source>
         <translation>कार्य अस्वीकृत गरिएको छ</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="214"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="218"/>
         <source>Failed to open the file</source>
         <translation>फाईल खोल्न असफल भयो</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="216"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
         <source>Failed to read the file</source>
         <translation>फाईल पढ्न असफल भयो</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="218"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
         <source>Failed to write the file</source>
         <translation>फाईल लेख्न असफल भयो</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
         <source>Failed to create the directory</source>
         <translation>निर्देशिका बनाउन असफल</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
         <source>Failed to delete the file</source>
         <translation>फाईल हटाउन असफल भयो</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
         <source>Failed to move the file</source>
         <translation>फाईल सार्न असफल भयो</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
         <source>Original file does not exist</source>
         <translation>मूल फाईल अवस्थित छैन</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>असफल भयो, फाईल आकार 4GB जीबी भन्दा कम हुनुपर्दछ</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
         <source>Not enough free space on the target disk</source>
         <translation>लक्ष्य डिस्कमा पर्याप्त खाली ठाउँ छैन</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
         <source>File integrity was damaged</source>
         <translation>फाईल अखण्डता बिग्रियो</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="238"/>
         <source>The target device is read only</source>
         <translation>लक्षित उपकरण मात्र पढ्न सकिन्छ</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="240"/>
         <source>Target folder is inside the source folder</source>
         <translation>लक्ष्य फोल्डर स्रोत फोल्डर भित्र छ</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="646"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="654"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>कपी </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="996"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2047"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1010"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2059"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1144"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2537"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2676"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3149"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1163"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2551"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2690"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3163"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1006"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2057"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1020"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2069"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>डाइरेक्टरी सिर्जना गर्न असफल भयो, कारण:% 1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1156"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1187"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2550"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2689"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2715"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3163"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3492"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1175"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1206"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2564"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2703"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2729"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3177"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3506"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>फाइल खोल्न असफल भयो, कारण:% 1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1183"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1202"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1277"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2604"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2793"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3289"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1296"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2618"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2807"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3303"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>फाइल पढ्न असफल भयो, कारण:% 1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1331"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1406"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2846"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2916"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3559"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3638"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1350"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1425"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2860"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2930"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3573"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3652"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>फाइल लेख्न असफल भयो, कारण:% 1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1536"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3019"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1557"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3033"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>फाईल अखण्डता बिग्रियो, कारण:% 1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1610"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1631"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>फाइल हटाउन असफल भयो, कारण:% 1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1713"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1725"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>स्य्मलिंक सिर्जना गर्न असफल भयो, कारण:% 1</translation>
     </message>
@@ -1016,12 +1075,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1167"/>
         <source>Trash</source>
         <translation>रद्दी टोकरी</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1168"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1175"/>
         <source>Empty</source>
         <translation>खाली</translation>
     </message>
@@ -1029,41 +1088,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1652"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1655"/>
         <location filename="../models/trashfileinfo.cpp" line="339"/>
         <source>Name</source>
         <translation>नाम</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1102"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1654"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1096"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1657"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
         <translation>समय परिमार्जित</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1656"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1659"/>
         <source>Size</source>
         <translation>आकार</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1658"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1661"/>
         <source>Type</source>
         <translation>प्रकार</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1660"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1663"/>
         <source>Time created</source>
         <translation>समय सिर्जना गरियो</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1662"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1665"/>
         <source>Last access</source>
         <translation>अन्तिम पहुँच</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1664"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1667"/>
         <location filename="../models/recentfileinfo.cpp" line="200"/>
         <location filename="../models/searchfileinfo.cpp" line="129"/>
         <location filename="../models/searchfileinfo.cpp" line="134"/>
@@ -1074,12 +1133,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2372"/>
-        <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
-        <translation>डिस्क छवि बिग्रेको थियो, अहिले चढ्न सक्दैन, कृपया पहिले डिस्कलाई मेटाउनुहोस्</translation>
+        <location filename="../views/dfileview.cpp" line="2382"/>
+        <source>Mounting failed</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3026"/>
+        <location filename="../views/dfileview.cpp" line="3037"/>
         <source>(Reverse)</source>
         <translation>(उल्टो)</translation>
     </message>
@@ -1095,62 +1154,62 @@
 <context>
     <name>DStatusBar</name>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="66"/>
+        <location filename="../views/dstatusbar.cpp" line="67"/>
         <source>%1 item</source>
         <translation>% 1 वस्तु</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="67"/>
+        <location filename="../views/dstatusbar.cpp" line="68"/>
         <source>%1 items</source>
         <translation>% 1 वस्तुहरू</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="68"/>
+        <location filename="../views/dstatusbar.cpp" line="69"/>
         <source>%1 item selected</source>
         <translation>% 1 वस्तु चयन गरियो</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="69"/>
+        <location filename="../views/dstatusbar.cpp" line="70"/>
         <source>%1 items selected</source>
         <translation>% 1 वस्तुहरू चयन गरियो</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="70"/>
+        <location filename="../views/dstatusbar.cpp" line="71"/>
         <source>%1 folder selected (contains %2)</source>
         <translation>% 1 फोल्डर चयन गरियो (% 2 समावेश गर्दछ)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="71"/>
+        <location filename="../views/dstatusbar.cpp" line="72"/>
         <source>%1 folders selected (contains %2)</source>
         <translation>% 1 फोल्डरहरू चयन गरियो (% 2 समावेश गर्दछ)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="72"/>
+        <location filename="../views/dstatusbar.cpp" line="73"/>
         <source>%1 file selected (%2)</source>
         <translation>% 1 फाइल चयन गरियो (% 2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="73"/>
+        <location filename="../views/dstatusbar.cpp" line="74"/>
         <source>%1 files selected (%2)</source>
         <translation>% 1 फाइलहरू चयन गरियो (% 2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="74"/>
+        <location filename="../views/dstatusbar.cpp" line="75"/>
         <source>%1 folder selected</source>
         <translation>% 1 फोल्डर चयन गरियो</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="168"/>
+        <location filename="../views/dstatusbar.cpp" line="169"/>
         <source>Filter</source>
         <translation>फिल्टर</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="178"/>
+        <location filename="../views/dstatusbar.cpp" line="179"/>
         <source>Save as:</source>
         <translation>बचत गर्नुहोस् जब:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="519"/>
+        <location filename="../views/dstatusbar.cpp" line="530"/>
         <source>Loading...</source>
         <translation>लोड हुँदैछ ...</translation>
     </message>
@@ -1250,7 +1309,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="724"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="727"/>
         <source>%1 Volume</source>
         <translation>% 1 खण्ड</translation>
     </message>
@@ -1261,17 +1320,17 @@
         <translation>डाटा डिस्क</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="719"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="722"/>
         <source>%1 Drive</source>
         <translation>% 1 ड्राइभ</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="703"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="706"/>
         <source>Blank %1 Disc</source>
         <translation>खाली% 1 डिस्क</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="722"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="725"/>
         <source>%1 Encrypted</source>
         <translation>% 1 ईन्क्रिप्टेड</translation>
     </message>
@@ -1279,352 +1338,352 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1053"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1068"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1078"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1054"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1069"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1079"/>
         <source>Operation failed!</source>
         <translation>सञ्चालन असफल!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="414"/>
         <source>Target folder is inside the source folder!</source>
         <translation>लक्ष्य फोल्डर स्रोत फोल्डर भित्र छ!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="415"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="631"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="974"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="987"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="996"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1014"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1060"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1071"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1085"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1151"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1506"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="416"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="632"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="975"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="988"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="997"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1015"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1061"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1072"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1086"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1152"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1521"/>
         <source>OK</source>
         <translation>ठिक छ</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="438"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>के तपाइँ% 1 चलाउन चाहानुहुन्छ वा यसको सामग्री प्रदर्शन गर्न चाहानुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
         <source>It is an executable text file.</source>
         <translation>यो एक कार्यान्वयन योग्य पाठ फाइल हो।</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="648"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="699"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="861"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="890"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1221"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1453"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="483"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="529"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="555"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="649"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="700"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="862"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="891"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1222"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1467"/>
         <source>Cancel</source>
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="483"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="469"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
         <source>Run</source>
         <translation>चलाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
         <source>Run in terminal</source>
         <translation>टर्मिनलमा चलाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
         <source>Display</source>
         <translation>प्रदर्शन</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="465"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
         <source>It is an executable file.</source>
         <translation>यो एक कार्यान्वयन योग्य फाईल हो।</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>यो फाईल कार्यान्वयन योग्य छैन, के तपाईं कार्यान्वयन अनुमति थप्न र चलाउन चाहानुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="495"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="496"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;% 1&quot; पहिले नै अवस्थित छ, कृपया अर्को नाम प्रयोग गर्नुहोस्।</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="497"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="512"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="620"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="890"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1245"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1340"/>
-        <location filename="../dialogs/dialogmanager.h" line="149"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="498"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="513"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="621"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="891"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1246"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
+        <location filename="../dialogs/dialogmanager.h" line="150"/>
         <source>Confirm</source>
         <translation>पुष्टि गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="523"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="524"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>के तपाईं निश्चित रूपमा डिस्कमा सबै डाटा मेटाउन चाहानुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="529"/>
         <source>Erase</source>
         <translation>मेटाउनु</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="550"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="551"/>
         <source>How do you want to use this disc?</source>
         <translation>तपाईं यो डिस्क कसरी प्रयोग गर्न चाहनुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="555"/>
         <source>Burn image</source>
         <translation>छवि बर्न गर्नुहोस् </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="555"/>
         <source>Burn files</source>
         <translation>फाईलहरू बर्न गर्नुहोस् </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="582"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="583"/>
         <source>Disc erase failed</source>
         <translation>डिस्क मेट्न असफल भयो</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="586"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="587"/>
         <source>Burn process failed</source>
         <translation>बर्न प्रक्रिया असफल भयो</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="592"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="593"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="609"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="619"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="610"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="620"/>
         <source>Show details</source>
         <translation>विवरण देखाऊ</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="613"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="614"/>
         <source>Hide details</source>
         <translation>विवरण लुकाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="614"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
         <source>Error</source>
         <translation>त्रुटि</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="641"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="642"/>
         <source>Permanently delete %1?</source>
         <translation>% 1 लाई स्थायी रूपमा हटाउने हो?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="642"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
         <source>Permanently delete %1 items?</source>
         <translation>स्थायी रूपमा% 1 आईटमहरू हटाउने हो?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="648"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="649"/>
         <source>Delete</source>
         <translation>हटाउनु होस् </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="659"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="660"/>
         <source>Empty</source>
         <translation>खाली</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="696"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="697"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>माफ गर्नुहोस्, तपाईंको बुकमार्क डाइरेक्टरी पत्ता लगाउन असमर्थ हुनुहुन्छ, यसलाई हटाउनुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="699"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="700"/>
         <source>Remove</source>
         <translation>हटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="859"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="860"/>
         <source>Name: </source>
         <translation>नाम:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="861"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="862"/>
         <source>Force unmount</source>
         <translation>बल अनमाउन्ट गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="884"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="885"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>% 1 जुन यो सर्टकटले जनाउँछ परिवर्तन गरिएको छ वा सारियो</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="888"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="889"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>के तपाइँ यो सर्टकट मेटाउन चाहानुहुन्छ？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="985"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="986"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>असफल भयो, फाईल आकार 4GB जीबी भन्दा कम हुनुपर्दछ।</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="994"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="995"/>
         <source>Fail to create symlink, cause:</source>
         <translation>सिमलिंक सिर्जना गर्न असफल, कारण:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1012"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1013"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>चयनित फाईलहरूले प्रणाली फाइल / निर्देशिका समावेश गर्दछ, र यसलाई मेटाउन सकिदैन</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1069"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1105"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1070"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1106"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>तपाईंसँग फाईल / फोल्डर अपरेट गर्न अनुमति छैन!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1080"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1081"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1122"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1123"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>माफ गर्नुहोस्, तपाईंसँग निम्न% 1 फाइल / फोल्डर (हरू) सञ्चालन गर्न अनुमति छैन!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1204"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1205"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
         <translation>2. शटडाउन सेटिंग्स र रिबुटमा &quot;छिटो सुरु गर्नुहोस्&quot; र &quot;हाइबरनेट&quot; अनचेक गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1205"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1206"/>
         <source>3. Reboot and enter %1</source>
         <translation>3. रिबुट गर्नुहोस् र % 1 प्रविष्ट गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1337"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1340"/>
         <source>Unable to access %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1417"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1420"/>
         <source>Sending files now, please try later</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1454"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1468"/>
         <source>Format</source>
         <translation>फरम्याट गर्नुहोस </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1455"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1469"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1519"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>सेयर फोल्डर वर्तमान प्रयोगकर्ता नाम पछि नामकरण गर्न सकिदैन</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="464"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="465"/>
         <source>Do you want to run %1?</source>
         <translation>के तपाइँ % 1 चलाउन चाहानुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="639"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="640"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>के तपाईं % 1 आईटम खाली गर्न निश्चित हुनुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="640"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="641"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>के तपाईं% 1 आईटमहरू खाली गर्न निश्चित हुनुहुन्छ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="537"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="683"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="538"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="684"/>
         <source>This action cannot be undone</source>
         <translation>यो कार्य पूर्ववत गर्न सकिदैन</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="510"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="511"/>
         <source>The file name must not contain two dots(..)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="589"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="590"/>
         <source>Data verification failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="858"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="859"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>डिस्क व्यस्त छ, अब अनमाउन्ट गर्न सक्दैन</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="973"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="974"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>प्रतिलिपि गर्न असमर्थ। लक्ष्य डिस्कमा पर्याप्त खाली ठाउँ छैन।</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1055"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1056"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>% 1 फाईल पुनर्स्थापित गर्न असफल भयो, लक्ष्य फोल्डर पढ्ने मात्र हो</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1057"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1058"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>% 1 फाईलहरू पुन: भण्डारण गर्न असफल भयो, लक्ष्य फोल्डर पढ्नको लागि मात्र हो</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1082"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1083"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1190"/>
         <source>Mount partition%1 to be read only</source>
         <translation>माउन्ट विभाजन% 1 मात्र पढ्नको लागि</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1193"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1194"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation>विन्डोजमा डिस्कहरू सामान्य रूपमा पढ्न र लेख्न असक्षम हुन्छन् यदि शटडाउन सेटिंग्समा &quot;द्रुत सुरुआत (सिफारिस गरिएको)&quot; जाँच गरियो भने।</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1197"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1198"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation>कृपया तलका चरणहरू द्वारा सामान्य रूपमा विन्डोज डिस्क पहुँच गर्न पुनःस्थापना गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1203"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1204"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. विन्डोज प्रविष्ट गर्न पुनःबुट गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1222"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1223"/>
         <source>Reboot</source>
         <translation>रिबुट</translation>
     </message>
@@ -1632,27 +1691,27 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="596"/>
-        <location filename="../controllers/filecontroller.cpp" line="615"/>
-        <location filename="../controllers/filecontroller.cpp" line="634"/>
+        <location filename="../controllers/filecontroller.cpp" line="771"/>
+        <location filename="../controllers/filecontroller.cpp" line="790"/>
+        <location filename="../controllers/filecontroller.cpp" line="809"/>
         <source>Kindly Reminder</source>
         <translation>कृपया अनुस्मारक</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="596"/>
-        <location filename="../controllers/filecontroller.cpp" line="615"/>
-        <location filename="../controllers/filecontroller.cpp" line="634"/>
+        <location filename="../controllers/filecontroller.cpp" line="771"/>
+        <location filename="../controllers/filecontroller.cpp" line="790"/>
+        <location filename="../controllers/filecontroller.cpp" line="809"/>
         <source>Please install File Roller first and then continue</source>
         <translation>कृपया पहिले फाइल रोलर स्थापना गर्नुहोस् र त्यसपछि जारी राख्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1251"/>
-        <location filename="../controllers/filecontroller.cpp" line="1273"/>
+        <location filename="../controllers/filecontroller.cpp" line="1392"/>
+        <location filename="../controllers/filecontroller.cpp" line="1414"/>
         <source>Unable to create files here: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1253"/>
+        <location filename="../controllers/filecontroller.cpp" line="1394"/>
         <source>Confirm</source>
         <translation>पुष्टि गर्नुहोस्</translation>
     </message>
@@ -1706,86 +1765,76 @@
 <context>
     <name>FileJob</name>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="173"/>
+        <location filename="../../fileoperations/filejob.cpp" line="174"/>
         <source>copy</source>
         <translation>प्रतिलिपी </translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="757"/>
-        <location filename="../../fileoperations/filejob.cpp" line="970"/>
-        <location filename="../../fileoperations/filejob.cpp" line="979"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1054"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1265"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1274"/>
+        <location filename="../../fileoperations/filejob.cpp" line="913"/>
+        <location filename="../../fileoperations/filejob.cpp" line="922"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1145"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1154"/>
         <source>Data verification successful.</source>
         <translation>डाटा प्रमाणीकरण सफल।</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="757"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1054"/>
-        <source>Data verification failed.</source>
-        <translation>डाटा प्रमाणीकरण असफल भयो।</translation>
-    </message>
-    <message>
-        <location filename="../../fileoperations/filejob.cpp" line="761"/>
-        <location filename="../../fileoperations/filejob.cpp" line="983"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1058"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1278"/>
+        <location filename="../../fileoperations/filejob.cpp" line="926"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1158"/>
         <source>Burn process completed</source>
         <translation>बर्न प्रक्रिया पूरा भयो</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1442"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1322"/>
         <source>%1 s</source>
         <translation>%1 सेकेन्ड</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1446"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1326"/>
         <source>%1 m %2 s</source>
         <translation>% 1 मिनेट% 2 सेकेन्ड</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1451"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1331"/>
         <source>%1 h %2 m %3 s</source>
         <translation>% 1 घण्टा% 2 मिनेट% 3 सेकेन्ड</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1458"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1338"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>% 1 दिन% 2 घण्टा%3 मिनेट% 4 सेकेन्ड</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3173"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3053"/>
         <source>%1 is a duplicate file.</source>
         <translation>% 1 डुप्लिकेट फाईल हो।</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3176"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3056"/>
         <source>Insufficient disc space.</source>
         <translation>अपर्याप्त डिस्क ठाउँ।</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3179"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3059"/>
         <source>Lost connection to drive.</source>
         <translation>ड्राइभमा जडान हरायो।</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3182"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3062"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>CD / DVD ड्राइव तयार छैन। अर्को डिस्क प्रयोग गर्नुहोस्।</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3185"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3065"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>CD / DVD ड्राइभ व्यस्त छ। ड्राइभको प्रयोग गरेर कार्यक्रमबाट बाहिर निस्कनुहोस् र फेरि ड्राइभ घुसाउनुहोस्।</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3192"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3072"/>
         <source>Unknown error</source>
         <translation>अज्ञात त्रुटि</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.h" line="300"/>
+        <location filename="../../fileoperations/filejob.h" line="299"/>
         <source>Device disconnected</source>
         <translation type="unfinished"/>
     </message>
@@ -2202,44 +2251,50 @@
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="854"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1486"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1492"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1495"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1503"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1508"/>
         <source>Mounting device error</source>
         <translation>माउन्टिंग उपकरण त्रुटि</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1633"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="854"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1492"/>
+        <source>Wrong username or password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1616"/>
         <source>No key available to unlock device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1721"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1704"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>डिस्क &quot;% 1&quot; प्रयोगकर्ता द्वारा माउन्ट गरिएको छ, तपाईं यसलाई अनमाउन्ट गर्न सक्नुहुन्न।</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1724"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1734"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1762"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1883"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1914"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1707"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1717"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1745"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1864"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1895"/>
         <source>Confirm</source>
         <translation>पुष्टि गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1731"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1911"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1714"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1892"/>
         <source>Cannot find the mounting device</source>
         <translation>माउन्टिंग उपकरण फेला पार्न सक्दैन</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1759"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1742"/>
         <source>Cannot unmount the device</source>
         <translation>उपकरण अनमाउन्ट गर्न सक्दैन</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1879"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1860"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>&quot;% 1&quot; उपकरण निकाल्न सक्दैन</translation>
     </message>
@@ -2533,8 +2588,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="668"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="696"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="671"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="699"/>
         <source>System Disk</source>
         <translation>प्रणाली डिस्क</translation>
     </message>
@@ -2567,52 +2622,52 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="294"/>
+        <location filename="../dialogs/propertydialog.cpp" line="298"/>
         <source>Basic info</source>
         <translation>आधारभूत जानकारी</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="295"/>
+        <location filename="../dialogs/propertydialog.cpp" line="299"/>
         <source>Open with</source>
         <translation>खोल्नुहोस्  संग</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="296"/>
+        <location filename="../dialogs/propertydialog.cpp" line="300"/>
         <source>Sharing</source>
         <translation>शरिंग </translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="297"/>
+        <location filename="../dialogs/propertydialog.cpp" line="301"/>
         <source>Permissions</source>
         <translation>अनुमतिहरू</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="352"/>
+        <location filename="../dialogs/propertydialog.cpp" line="375"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="352"/>
+        <location filename="../dialogs/propertydialog.cpp" line="375"/>
         <source>%1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="362"/>
+        <location filename="../dialogs/propertydialog.cpp" line="385"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1184"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1229"/>
         <source>Hide this folder</source>
         <translation>यस फोल्डरलाई लुकाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1184"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1229"/>
         <source>Hide this file</source>
         <translation>यो फाईल लुकाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1536"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1581"/>
         <source>Allow to execute as program</source>
         <translation>प्रोग्रामको रूपमा कार्यान्वयन गर्न अनुमति दिनुहोस्</translation>
     </message>
@@ -2620,147 +2675,147 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1095"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="225"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1140"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="223"/>
         <source>Size</source>
         <translation>आकार</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1115"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1305"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="234"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1160"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1350"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="232"/>
         <source>Contains</source>
         <translation>समावेश</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1096"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="226"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1141"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="224"/>
         <source>Type</source>
         <translation>प्रकार</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1099"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="342"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1144"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="340"/>
         <source>Time modified</source>
         <translation>समय परिमार्जित</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1308"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1353"/>
         <source>Free space</source>
         <translation>खाली ठाउँ</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1301"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1346"/>
         <source>Total space</source>
         <translation>कुल ठाउँ</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1436"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1481"/>
         <source>Access denied</source>
         <translation>प्रवेश अस्वीकृत</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1437"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1449"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1482"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1494"/>
         <source>Executable</source>
         <translation>कार्यान्वयन योग्य</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1438"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1439"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1483"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1484"/>
         <source>Write only</source>
         <translation>मात्र लेख्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1440"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1441"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1485"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1486"/>
         <source>Read only</source>
         <translation>पढ्न मात्र मिल्ने</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1442"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1443"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1487"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1488"/>
         <source>Read-write</source>
         <translation>पढ्न-लेख्ननुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1532"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1577"/>
         <source>Others</source>
         <translation>अन्य</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1530"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1575"/>
         <source>Owner</source>
         <translation>मालिक</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1285"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1330"/>
         <source>Device type</source>
         <translation>उपकरण प्रकार</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1303"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1348"/>
         <source>File system</source>
         <translation>फाइल प्रणाली</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1531"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1576"/>
         <source>Group</source>
         <translation>समूह</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="82"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="772"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="763"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="766"/>
         <source>Open</source>
         <translation>खोल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
         <source>Lock</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
         <source>Auto lock</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
         <source>Never</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
         <source>5 minutes</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
         <source>10 minutes</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>20 minutes</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Delete File Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
         <source>Unlock</source>
         <translation>अनलक गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <source>Unlock by key</source>
         <translation type="unfinished"/>
     </message>
@@ -2789,8 +2844,8 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="85"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="65"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="776"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="764"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="767"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="601"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="56"/>
         <source>Open in new window</source>
@@ -2800,45 +2855,45 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="95"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="89"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="69"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="777"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="768"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="605"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="60"/>
         <source>Open in new tab</source>
         <translation>नयाँ ट्याबमा खोल्नुहोस्:</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="770"/>
         <source>Open with</source>
         <translation>खोल्नुहोस्  संग</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="782"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
         <source>Compress</source>
         <translation>कम्प्रेस गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
         <source>Extract</source>
         <translation>निकाल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="784"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
         <source>Extract here</source>
         <translation>यहाँ निकाल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="785"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="776"/>
         <source>Cut</source>
         <translation>काट्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="786"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="777"/>
         <source>Copy</source>
         <translation>प्रतिलिपी </translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="787"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
         <source>Paste</source>
         <translation>टाँस्नुहोस्</translation>
     </message>
@@ -2846,9 +2901,9 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="101"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="75"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="346"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="789"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
         <location filename="../views/drenamebar.cpp" line="290"/>
         <source>Rename</source>
         <translation>नाम बदल्नुहोस्</translation>
@@ -2856,202 +2911,202 @@
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="108"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="82"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
         <source>Remove</source>
         <translation>हटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="791"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="782"/>
         <source>Create link</source>
         <translation>लिंक सिर्जना गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
         <source>Send to desktop</source>
         <translation>डेस्कटपमा पठाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="784"/>
         <source>Send to</source>
         <translation>लाई पठाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="785"/>
         <source>Send to Bluetooth</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="786"/>
         <source>Add to bookmark</source>
         <translation>बुकमार्कमा थप्नुहोस्</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="114"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="118"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="789"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="66"/>
         <source>Properties</source>
         <translation>गुणहरू</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="791"/>
         <source>New folder</source>
         <translation>नयाँ फोल्डर</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
         <source>New window</source>
         <translation>नयाँ विन्डो</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
         <source>Select all</source>
         <translation>सबै छान्नु</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="96"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
         <source>Clear recent history</source>
         <translation>हालको ईतिहास खाली गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="106"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1169"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1176"/>
         <source>Empty Trash</source>
         <translation>रद्दी टोकरी खाली गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <source>Display as</source>
         <translation>को रूपमा प्रदर्शन गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
         <source>Sort by</source>
         <translation>द्वारा क्रमबद्ध गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
         <source>New document</source>
         <translation>नयाँ डोकुम्नेन्त </translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1097"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1142"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
         <source>Time created</source>
         <translation>समय सिर्जना गरियो</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
         <source>Log out and unmount</source>
         <translation>लग आउट र अनमाउन्ट गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1100"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="356"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1145"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="354"/>
         <source>Source path</source>
         <translation>स्रोत मार्ग</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
         <source>Share folder</source>
         <translation>फोल्डर साझेदारी गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
         <source>Cancel sharing</source>
         <translation>साझेदारी रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
         <source>Connect to Server</source>
         <translation>सर्भरमा जडान गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
         <source>Set share password</source>
         <translation>शेयर पासवर्ड सेट गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
         <source>Format</source>
         <translation>फरम्याट गर्नुहोस </translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
         <source>Tag information</source>
         <translation>ट्याग जानकारी</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="769"/>
         <source>Open in new window as admin</source>
         <translation>प्रशासकको रूपमा नयाँ विन्डोमा खोल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <source>Select default program</source>
         <translation>पूर्वनिर्धारित कार्यक्रम चयन गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="772"/>
         <source>Open file location</source>
         <translation>फाईल स्थान खोल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
         <source>Remove bookmark</source>
         <translation>बुकमार्क हटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="787"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
         <source>Delete</source>
         <translation>हटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Office Text</source>
         <translation>अफिस टेक्स्ट</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
         <source>Spreadsheets</source>
         <translation>स्प्रिडशिटहरू</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
         <source>Plain Text</source>
         <translation>प्लैन टेक्स्ट</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
         <source>Open in terminal</source>
         <translation>टर्मिनलमा खोल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
         <source>Restore</source>
         <translation> पुनर्स्थापना गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
         <source>Restore all</source>
         <translation>  सबै पुनर्स्थापना गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
-        <location filename="../models/computermodel.cpp" line="111"/>
-        <location filename="../models/computermodel.cpp" line="126"/>
-        <location filename="../models/computermodel.cpp" line="145"/>
-        <location filename="../models/computermodel.cpp" line="166"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
+        <location filename="../models/computermodel.cpp" line="119"/>
+        <location filename="../models/computermodel.cpp" line="143"/>
+        <location filename="../models/computermodel.cpp" line="163"/>
+        <location filename="../models/computermodel.cpp" line="182"/>
         <source>File Vault</source>
         <translation>फाईल भल्ट</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
         <source>Add to disc</source>
         <translation type="unfinished"/>
     </message>
@@ -3066,202 +3121,203 @@
         <translation>स्वत: माउन्ट पछि खोल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
         <source>Mount</source>
         <translation>माउन्ट</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="47"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
         <source>Unmount</source>
         <translation>अनमाउन्ट</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="149"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="296"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="190"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="329"/>
         <source>Burn</source>
         <translation>बर्न</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="156"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="201"/>
         <source>Disc name:</source>
         <translation>डिस्क नाम:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="175"/>
-        <location filename="../dialogs/burnoptdialog.cpp" line="177"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="267"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="269"/>
         <source>Maximum</source>
         <translation>अधिकतम</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="188"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="282"/>
         <source>Allow files to be added later</source>
         <translation>फाइलहरूलाई पछि थप्न अनुमति दिनुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="197"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="292"/>
         <source>Verify data</source>
         <translation>डाटा प्रमाणित गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="171"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="264"/>
         <source>Write speed:</source>
         <translation>गति लेख्नुहोस्:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="200"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="296"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
         <source>Eject</source>
         <translation>निकाल्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
         <source>Safely Remove</source>
         <translation>सुरक्षित रूपले हटाउनुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="215"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="213"/>
         <source>Name</source>
         <translation>नाम</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
         <source>Settings</source>
         <translation>सेटिंग्स</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
         <source>Exit</source>
         <translation>बाहिर निस्कनुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
         <source>Icon</source>
         <translation>आइकन</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
         <source>List</source>
         <translation>सूची</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
         <source>Extend</source>
         <translation>विस्तार गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
         <source>Set as wallpaper</source>
         <translation>वालपेपरको रूपमा सेट गर्नुहोस्</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="295"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1258"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1259"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1260"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1303"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1304"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1305"/>
         <source>Local disk</source>
         <translation>स्थानीय डिस्क</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="297"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1261"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1306"/>
         <source>Removable disk</source>
         <translation>हटाउन योग्य डिस्क</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="299"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1263"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1264"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1308"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1309"/>
         <source>Network shared directory</source>
         <translation>नेटवर्क साझा निर्देशिका</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="301"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1265"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1310"/>
         <source>Android mobile device</source>
         <translation>एन्ड्रोइड मोबाइल उपकरण</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="303"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1266"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1311"/>
         <source>Apple mobile device</source>
         <translation>एप्पल मोबाइल उपकरण</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="305"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1267"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1312"/>
         <source>Camera</source>
         <translation>क्यामेरा</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="307"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1262"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1307"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="309"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1285"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1330"/>
         <source>Unknown device</source>
         <translation>अज्ञात उपकरण</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1305"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1350"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="694"/>
         <source>%1 item</source>
         <translation>% 1 वस्तु</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1305"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1350"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="696"/>
         <source>%1 items</source>
         <translation>% 1 वस्तुहरू</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1294"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1288"/>
         <source>Shortcut</source>
         <translation>सर्टकट</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="776"/>
+        <location filename="../interfaces/dfileservices.cpp" line="788"/>
         <source>Create symlink</source>
         <translation>स्य्म्लिंक   सिर्जना गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
         <source>Path</source>
         <translation>पथ</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
         <location filename="../models/trashfileinfo.cpp" line="343"/>
         <location filename="../models/trashfileinfo.cpp" line="351"/>
         <source>Time deleted</source>
         <translation>समय हटाइयो</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1311"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1305"/>
         <source>Loading...</source>
         <translation>लोड हुँदैछ ...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="793"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="828"/>
         <source>File has been moved or deleted</source>
         <translation>फाईल सारियो वा हटाईयो</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="795"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="803"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="809"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="830"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="838"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="844"/>
         <source>You do not have permission to access this folder</source>
         <translation>तपाईंसँग यो फोल्डर पहुँच गर्न अनुमति छैन</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="813"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="848"/>
+        <location filename="../models/masteredmediafileinfo.cpp" line="268"/>
         <location filename="../models/recentfileinfo.cpp" line="253"/>
         <location filename="../models/trashfileinfo.cpp" line="384"/>
         <location filename="../models/vaultfileinfo.cpp" line="138"/>
@@ -3285,23 +3341,23 @@
         <translation>स्रोत मार्ग</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="526"/>
+        <location filename="../controllers/appcontroller.cpp" line="529"/>
         <source>Document</source>
         <translation>डोकुमेन्त </translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="533"/>
+        <location filename="../controllers/appcontroller.cpp" line="536"/>
         <source>Spreadsheet</source>
         <translation>स्प्रिडशिटहरू</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="540"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
+        <location filename="../controllers/appcontroller.cpp" line="543"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
         <source>Presentation</source>
         <translation>प्रेसेंतेशन </translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="547"/>
+        <location filename="../controllers/appcontroller.cpp" line="550"/>
         <source>Text</source>
         <translation>टेक्स्ट </translation>
     </message>
@@ -3419,8 +3475,8 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1126"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1171"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="325"/>
         <location filename="../views/drenamebar.cpp" line="264"/>
         <source>Location</source>
         <translation>स्थान</translation>
@@ -3431,12 +3487,12 @@
         <translation>फाईल नाम</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="308"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="306"/>
         <source>Dimension</source>
         <translation>आयाम</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="296"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="294"/>
         <source>Duration</source>
         <translation>अवधि</translation>
     </message>
@@ -3446,14 +3502,14 @@
         <translation>सुझावहरू: चयनित फाइल अर्डर द्वारा क्रमबद्ध गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="148"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="189"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="345"/>
         <location filename="../views/drenamebar.cpp" line="288"/>
         <source>Cancel</source>
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1470"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1485"/>
         <source>Rename %1 Files</source>
         <translation>% 1 फाईलहरूको नाम बदल्नुहोस्</translation>
     </message>
@@ -3484,8 +3540,8 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1098"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="341"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1143"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="339"/>
         <source>Time accessed</source>
         <translation>समय पहुँच गरियो</translation>
     </message>
@@ -3540,7 +3596,7 @@
         <translation>बुकमार्कहरू</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
         <source>Erase</source>
         <translation>मेटाउनु</translation>
     </message>
@@ -3555,7 +3611,7 @@
         <translation>ठेगाना सम्पादन गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="325"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="358"/>
         <source>Free Space %1</source>
         <translation>खाली ठाउँ% 1</translation>
     </message>
@@ -3565,19 +3621,19 @@
         <translation>फाईलहरू प्रक्रियामा छन्</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="476"/>
+        <location filename="../shutil/fileutils.cpp" line="496"/>
         <source>Unknown</source>
         <translation>अज्ञात</translation>
     </message>
     <message>
-        <location filename="../models/vaultfileinfo.cpp" line="257"/>
+        <location filename="../models/vaultfileinfo.cpp" line="264"/>
         <source>My Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="169"/>
-        <location filename="../models/computermodel.cpp" line="180"/>
-        <location filename="../models/computermodel.cpp" line="571"/>
+        <location filename="../models/computermodel.cpp" line="185"/>
+        <location filename="../models/computermodel.cpp" line="196"/>
+        <location filename="../models/computermodel.cpp" line="587"/>
         <source>Disks</source>
         <translation>डिस्कहरू</translation>
     </message>
@@ -3625,32 +3681,32 @@
         <translation>अनुमति दिनुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="160"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="272"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="282"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="288"/>
         <source>The share name is used by another user.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="283"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="289"/>
         <source>OK</source>
         <translation>ठिक छ</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="285"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="291"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="286"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="292"/>
         <source>Cancel</source>
         <translation>रद्द गर्नुहोस्</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="287"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="293"/>
         <source>Replace</source>
         <translation>बदल्नुहोस्</translation>
     </message>
@@ -4069,7 +4125,7 @@
 <context>
     <name>UDiskListener</name>
     <message>
-        <location filename="../deviceinfo/udisklistener.cpp" line="270"/>
+        <location filename="../deviceinfo/udisklistener.cpp" line="273"/>
         <source>Failed to rename the label</source>
         <translation>लेबलको नाम बदल्न असफल भयो</translation>
     </message>
@@ -4077,30 +4133,34 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1458"/>
-        <location filename="../controllers/appcontroller.cpp" line="1479"/>
+        <location filename="../controllers/appcontroller.cpp" line="1490"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>डिस्क व्यस्त छ, अब अनमाउन्ट गर्न सक्दैन</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1451"/>
-        <location filename="../controllers/appcontroller.cpp" line="1475"/>
+        <location filename="../controllers/appcontroller.cpp" line="1483"/>
+        <location filename="../controllers/appcontroller.cpp" line="1507"/>
         <source>Authentication timed out</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1458"/>
+        <location filename="../controllers/appcontroller.cpp" line="1490"/>
         <source>The device was not safely unmounted</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1479"/>
-        <location filename="../controllers/appcontroller.cpp" line="1493"/>
+        <location filename="../controllers/appcontroller.cpp" line="1511"/>
+        <location filename="../controllers/appcontroller.cpp" line="1525"/>
         <source>The device was not safely removed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1493"/>
+        <location filename="../controllers/appcontroller.cpp" line="1511"/>
+        <source>Disk is busy, cannot remove now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../controllers/appcontroller.cpp" line="1525"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation type="unfinished"/>
     </message>

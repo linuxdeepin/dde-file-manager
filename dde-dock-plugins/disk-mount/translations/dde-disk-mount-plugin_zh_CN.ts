@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>DeepinStorage</name>
     <message>
@@ -30,6 +28,10 @@
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
     <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>光驱正忙，无法安全移除</translation>
+    </message>
+    <message>
         <source>Cannot unmount the device</source>
         <translation>无法卸载设备</translation>
     </message>
@@ -42,16 +44,12 @@
         <translation>找不到对应的挂载设备</translation>
     </message>
     <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation>磁盘文件被占用，无法移除</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>磁盘文件被占用，无法弹出</translation>
+        <translation>光驱正忙，无法弹出</translation>
     </message>
     <message>
         <source>Disks</source>
-        <translation>磁盘列表</translation>
+        <translation>磁盘</translation>
     </message>
 </context>
 <context>

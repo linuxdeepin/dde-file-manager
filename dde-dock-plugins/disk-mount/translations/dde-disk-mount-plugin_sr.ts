@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Следећи пут кликните на &quot;Безбедно уклони&quot;, затим уклоните уређај</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Не могу да демонтирам уређај</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Диск је монтирао корисник &quot;%1&quot;, не можете га демонтирати.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounting device</source>
+        <translation>Не могу да пронађем уређај монтирања</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Дискови</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

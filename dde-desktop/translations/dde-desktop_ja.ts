@@ -2,38 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3095"/>
+        <location filename="../view/canvasgridview.cpp" line="3100"/>
         <source>Icon size</source>
         <translation>アイコンサイズ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3103"/>
+        <location filename="../view/canvasgridview.cpp" line="3108"/>
         <source>Auto merge</source>
         <translation>自動的にまとめる</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3115"/>
+        <location filename="../view/canvasgridview.cpp" line="3120"/>
         <source>Auto arrange</source>
         <translation>自動整列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3170"/>
-        <location filename="../view/canvasgridview.cpp" line="3175"/>
+        <location filename="../view/canvasgridview.cpp" line="3168"/>
+        <source>Corner Settings</source>
+        <translation>コーナーの設定</translation>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="3177"/>
+        <location filename="../view/canvasgridview.cpp" line="3182"/>
         <source>Set Wallpaper</source>
         <translation>壁紙を設定</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3173"/>
+        <location filename="../view/canvasgridview.cpp" line="3180"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁紙とスクリーンセーバー</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3317"/>
+        <location filename="../view/canvasgridview.cpp" line="3324"/>
         <source>Properties</source>
-        <translation>プロパテイ</translation>
+        <translation>プロパティ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3154"/>
+        <location filename="../view/canvasgridview.cpp" line="3159"/>
         <source>Display Settings</source>
         <translation>ディスプレイの設定</translation>
     </message>
@@ -69,7 +74,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="136"/>
+        <location filename="../main.cpp" line="135"/>
         <source>Desktop</source>
         <translation>デスクトップ</translation>
     </message>
@@ -77,57 +82,67 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="655"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="661"/>
         <source>Wallpaper Slideshow</source>
         <translation>壁紙をスライドショーにする</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="700"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="706"/>
         <source>When login</source>
         <translation>ログイン時</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="702"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="708"/>
         <source>When wakeup</source>
-        <translation>スリープ復帰時</translation>
+        <translation>サスペンド復帰時</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="757"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="763"/>
         <source>Require a password on wakeup</source>
-        <translation>スリープ復帰時にパスワードを入力</translation>
+        <translation>サスペンド復帰時にパスワードを必要とする</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="789"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="795"/>
         <source>Never</source>
         <translation>使用しない</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="791"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="797"/>
         <source>Wait:</source>
         <translation>開始まで:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="824"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="830"/>
         <source>Wallpaper</source>
         <translation>壁紙</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="838"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="842"/>
         <source>Screensaver</source>
         <translation>スクリーンセーバー</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="914"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="909"/>
+        <source>Loading wallpapers...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="912"/>
+        <source>Loading screensavers...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="967"/>
         <source>Only desktop</source>
         <translation>デスクトップのみ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="915"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="968"/>
         <source>Only lock screen</source>
         <translation>ロック画面のみ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="969"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1030"/>
         <source>Apply</source>
         <translation>適用</translation>
     </message>
@@ -137,45 +152,12 @@
     <message>
         <location filename="../view/watermaskframe.cpp" line="253"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>未認証</translation>
     </message>
     <message>
         <location filename="../view/watermaskframe.cpp" line="261"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>ZoneMainWindow</name>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>Fast Screen Off</source>
-        <translation>すぐに画面を切る</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>All Windows</source>
-        <translation>すべてのウィンドウ</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>Launcher</source>
-        <translation>ランチャー</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>Desktop</source>
-        <translation>デスクトップ</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>None</source>
-        <translation>何もしない</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="58"/>
-        <source>Close Window</source>
-        <translation>ウィンドウを閉じる</translation>
+        <translation>トライアル期間</translation>
     </message>
 </context>
 </TS>

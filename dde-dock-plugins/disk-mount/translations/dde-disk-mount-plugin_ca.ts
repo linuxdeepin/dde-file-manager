@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>A la propera, cliqueu a &quot;Extreu-lo amb seguretat&quot; i després desconnecteu-lo.</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>No es pot desmuntar el dispositiu.</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>El disc està muntat per l&apos;usuari %1, no podeu desmuntar-lo.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounting device</source>
+        <translation>No es pot trobar el dispositiu de muntatge.</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Discs</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>請點擊“安全移除”後，再斷開連接</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>光驅正忙，無法安全移除</translation>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>無法卸載設備</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>磁盤由用戶“%1”掛載，您沒有卸載權限。</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounting device</source>
+        <translation>找不到對應的掛載設備</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>光驅正忙，無法彈出</translation>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>磁盤</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

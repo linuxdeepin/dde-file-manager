@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>DeepinStorage</name>
     <message>
@@ -31,27 +29,27 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"></translation>
+        <translation>The device is busy, cannot remove now</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot unmount the device</translation>
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation type="unfinished"></translation>
+        <translation>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</translation>
     </message>
     <message>
         <source>Cannot find the mounting device</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot find the mounting device</translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"></translation>
+        <translation>The device is busy, cannot eject now</translation>
     </message>
     <message>
         <source>Disks</source>
-        <translation type="unfinished"></translation>
+        <translation>Disks</translation>
     </message>
 </context>
 <context>

@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Kann das Gerät nicht aushängen</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Das Laufwerk ist bereits vom Benutzer &quot;%1&quot; eingehängt, Sie können es nicht aushängen.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounting device</source>
+        <translation>Kann das eingehängte Gerät nicht finden</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Festplatten</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Napsauta ensin &quot;Poista turvallisesti&quot; ja irrota se sitten</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Laitteen irrottaminen ei onnistu</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Levyä käyttää käyttäjä &quot;%1&quot;, et voi irrottaa sitä.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounting device</source>
+        <translation>Liitettävää laitetta ei löydy</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Levyt</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

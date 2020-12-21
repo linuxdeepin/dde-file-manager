@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CanvasGridView</name>
     <message>
@@ -21,7 +19,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3168"/>
         <source>Corner Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>热区设置</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3177"/>
@@ -126,12 +124,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="909"/>
         <source>Loading wallpapers...</source>
-        <translation>壁纸加载中...</translation>
+        <translation>壁纸加载中…</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="912"/>
         <source>Loading screensavers...</source>
-        <translation>屏保加载中...</translation>
+        <translation>屏保加载中…</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="967"/>
