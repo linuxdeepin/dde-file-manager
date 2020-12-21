@@ -2467,7 +2467,7 @@ bool DFileView::setRootUrl(const DUrl &url)
                     diskdev->eject({});
                     qDebug() << "setRootUrl failed:" << blkdev->drive();
                     if (diskdev->optical())
-                        QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("Failed while mounting the disc"), QString()), Qt::ConnectionType::QueuedConnection);
+                        QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("Mounting failed"), QString()), Qt::ConnectionType::QueuedConnection);
 
                     return false;
                 }

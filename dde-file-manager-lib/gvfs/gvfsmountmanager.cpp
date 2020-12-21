@@ -825,7 +825,7 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
         askPasswordDialog->deleteLater();
         askPasswordDialog = nullptr;
         DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                     tr("Mounting device error"), tr("Wrong username or password, please enter again"));
+                                     tr("Mounting device error"), tr("Wrong username or password"));
         return;
     }
 
@@ -1447,7 +1447,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
             //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
             if (status == MOUNT_PASSWORD_WRONG && bshow) {
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                             tr("Mounting device error"), tr("Wrong username or password, please enter again"));
+                                             tr("Mounting device error"), tr("Wrong username or password"));
             } else if (status == MOUNT_CANCEL) {
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr(error->message));
