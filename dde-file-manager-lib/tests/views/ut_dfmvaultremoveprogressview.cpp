@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+#include <DWaterProgress>
 #include <QTest>
 #include <QPlainTextEdit>
 #include <QPushButton>
@@ -106,7 +107,17 @@ TEST_F(TestDFMVaultRemoveProgressView, tst_removeVault)
     };
     stub.set(ADDR(QDir, rmdir), st_rmdir);
 
-#if 0 // will be broken in thread occasionally
-    m_view->removeVault("", "");
-#endif
+    void (*st_removeFinished)(bool) = [](bool) {
+        // do nothing.
+    };
+    stub.set(ADDR(DFMVaultRemoveProgressView, removeFinished), st_removeFinished);
+
+    void (*st_start)() = [](){
+        // do nothing.
+    };
+    stub.set(ADDR(DWaterProgress, start), st_start);
+
+    // recored: these code will cause broken occasionally
+    // but has been solved.
+    EXPECT_NO_FATAL_FAILURE(m_view->removeVault("", ""));
 }

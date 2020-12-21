@@ -7,6 +7,8 @@
 #include "views/dfilemanagerwindow.h"
 #include "interfaces/dfmsidebaritem.h"
 
+#include <QMessageBox>
+
 #include "stub.h"
 
 #define private public
@@ -72,6 +74,16 @@ TEST_F(TestDFMSideBarTagItemHandler, tst_contextMenu)
 
     DFMSideBarItem *item = DFMSideBarItem::createSeparatorItem(QString("Trash"));
     ASSERT_NE(item, nullptr);
+
+    typedef QMessageBox::StandardButton(*FunPtr)(
+                QWidget *, const QString &, const QString &, QMessageBox::StandardButtons, QMessageBox::StandardButton);
+
+    QMessageBox::StandardButton (*st_warning)(
+                QWidget *, const QString &, const QString &, QMessageBox::StandardButtons, QMessageBox::StandardButton) =
+            [](QWidget *, const QString &, const QString &, QMessageBox::StandardButtons, QMessageBox::StandardButton) {
+        return  QMessageBox::NoButton;
+    };
+    stub.set(FunPtr(&QMessageBox::warning), st_warning);
 
     QMenu *menu = m_handler->contextMenu(bar, item);
     QList<QAction *> actions = menu->actions();
