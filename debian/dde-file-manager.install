@@ -18,4 +18,4 @@ usr/share/dbus-1/services/com.deepin.filemanager.filedialog.service
 usr/share/dbus-1/services/org.freedesktop.FileManager.service
 usr/share/dbus-1/system-services/com.deepin.filemanager.daemon.service
 
-usr/lib/systemd/system/dde-filemanager-daemon.service lib/systemd/system/dde-filemanager-daemon.service
+usr/lib/systemd/system/ lib/systemd/
