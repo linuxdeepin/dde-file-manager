@@ -23,6 +23,7 @@
 #include "tag/tagmanager.h"
 #include "tests/testhelper.h"
 #include "stub.h"
+#include "stubext.h"
 #include "interfaces/dfmeventdispatcher.h"
 #include "interfaces/dfmabstracteventhandler.h"
 #include "views/windowmanager.h"
@@ -32,10 +33,12 @@
 #include "shutil/fileutils.h"
 #include "views/dtoolbar.h"
 #include "gvfs/secretmanager.h"
+#include "controllers/appcontroller.h"
+
 
 DFM_USE_NAMESPACE
 
-#include "controllers/appcontroller.h"
+using namespace stub_ext;
 
 QString createTestIsoFile()
 {
@@ -71,7 +74,7 @@ namespace  {
         QString tempFilePath;
         AppController *controller;
         DUrl url;
-        Stub stl;
+        StubExt stl;
     protected:
         void SetUp()
         {
@@ -93,10 +96,6 @@ namespace  {
                     (const QString &, const QString &){};
             stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
 
-            void (*mount)(const QString &) = [](const QString &){};
-            stl.set(ADDR(UDiskListener,mount),mount);
-            void (*unmount)(const QString &) = [](const QString &){};
-            stl.set(ADDR(UDiskListener,unmount),unmount);
             bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
                     (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
             stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
@@ -113,6 +112,11 @@ namespace  {
             fptr pQDialogExec = (fptr)(&QDialog::exec);
             int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
             stl.set(pQDialogExec, stub_DDialog_exec);
+
+            void (*mount)(const QString &) = [](const QString &){};
+            stl.set(ADDR(UDiskListener,mount),mount);
+            void (*unmount)(const QString &) = [](const QString &){};
+            stl.set(ADDR(UDiskListener,unmount),unmount);
 
             controller = AppController::instance();
             QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
@@ -561,6 +565,10 @@ TEST_F(AppControllerTest,start_actionNewFile){
     url.setScheme(FILE_SCHEME);
     url.setPath("./ztt_test_app.txt");
     DUrl tmp(url);
+    void (*mount)(const QString &) = [](const QString &){};
+    stl.set(ADDR(UDiskListener,mount),mount);
+    void (*unmount)(const QString &) = [](const QString &){};
+    stl.set(ADDR(UDiskListener,unmount),unmount);
     tmp.setPath(TestHelper::createTmpDir());
     url.setPath(tmp.toLocalFile() + "/ztt_test_appkkk");
     bool (*cpTemplateFileToTargetDir)(const QString &, const QString &, const QString &, WId ) =

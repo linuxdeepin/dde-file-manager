@@ -34,13 +34,12 @@ DFM_USE_NAMESPACE
 class FileJobTest:public testing::Test{
 
 public:
-
     QSharedPointer<FileJob> job;
+    StubExt stl;
     virtual void SetUp() override{
         job.reset(new FileJob(FileJob::Copy));
         source.setScheme(FILE_SCHEME);
         dst.setScheme(FILE_SCHEME);
-        Stub stl;
         void (*delayRemoveTask)(const QMap<QString, QString> &) = []
                 (const QMap<QString, QString> &){};
         stl.set(ADDR(DTaskDialog,delayRemoveTask),delayRemoveTask);
@@ -193,7 +192,6 @@ TEST_F(FileJobTest,can_isCanShowProgress) {
 TEST_F(FileJobTest,start_doCopy) {
     source.setPath("~/Pictures/Wallpapers");
     dst.setPath("./");
-    Stub stl;
     void (*showNoPermissionDialog)(const DFMUrlListBaseEvent &) = [](const DFMUrlListBaseEvent &){};
     stl.set(ADDR(DialogManager,showNoPermissionDialog),showNoPermissionDialog);
 
@@ -212,7 +210,6 @@ TEST_F(FileJobTest,start_doMove) {
     DUrl url(source);
     url.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
-    Stub stl;
     void (*showNoPermissionDialog)(const DFMUrlListBaseEvent &) = [](const DFMUrlListBaseEvent &){};
     stl.set(ADDR(DialogManager,showNoPermissionDialog),showNoPermissionDialog);
     DUrlList (*doMoveCopyJob)(const DUrlList &, const DUrl &) = []
@@ -233,7 +230,6 @@ DUrl getMountPointUrl(){
     return DUrl();
 }
 TEST_F(FileJobTest,start_doMoveCopyJob) {
-    Stub stl;
     source.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
     DUrl tmpdst(dst),linkurl(source),copydir(dst);
@@ -330,7 +326,6 @@ TEST_F(FileJobTest,start_doDelete) {
     source.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
     job->jobAdded();
-    Stub stl;
     void (*clear)(void*) = [](void *){};
     stl.set(ADDR(QList<DUrl>,clear),clear);
     job->m_noPermissonUrls.append(DUrl());
@@ -352,7 +347,6 @@ TEST_F(FileJobTest,start_doMoveToTrash) {
     bool (*mkpath)(void *,const QString &) = [](void *,const QString &){
         return false;
     };
-    Stub stl;
     stl.set(ADDR(QDir,mkpath),mkpath);
 
     EXPECT_TRUE(job->doMoveToTrash(DUrlList()).isEmpty());
@@ -385,7 +379,6 @@ TEST_F(FileJobTest, start_doTrashRestore){
     source.setPath(TestHelper::createTmpFile());
     bool (*restoreTrashFile)(const QString &, const QString &) = []
             (const QString &, const QString &){return true;};
-    Stub stl;
     stl.set(ADDR(FileJob,restoreTrashFile),restoreTrashFile);
     DUrl linkurl(source),tmpdir(source);
     linkurl.setPath(linkurl.toLocalFile()+"sys_link");
@@ -426,7 +419,6 @@ TEST_F(FileJobTest, start_doOpticalBlank)
 {
     DUrl url = DUrl::fromLocalFile("/dev/sr*");
     void (*unmount)(const QVariantMap &) = [](const QVariantMap &){};
-    Stub stl;
     stl.set(ADDR(DBlockDevice,unmount),unmount);
     bool (*opticalBlank)(void *) = [](void *){return true;};
     stl.set(ADDR(DDiskDevice,opticalBlank),opticalBlank);
@@ -466,7 +458,6 @@ TEST_F(FileJobTest, start_doOpticalBurnByChildProcess)
     EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(DUrl(), "test", 10, opts));
 
     QStringList (*resolveDeviceNode)(QString, QVariantMap) = [](QString, QVariantMap){return QStringList();};
-    Stub stl;
 
     stl.set(ADDR(DDiskManager,resolveDeviceNode),resolveDeviceNode);
     EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(url, "test", 10, opts));
@@ -508,7 +499,6 @@ TEST_F(FileJobTest, doOpticalImageBurnByChildProcess)
     EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(DUrl(), image, 10, opts));
 
     QStringList (*resolveDeviceNode)(QString, QVariantMap) = [](QString, QVariantMap){return QStringList();};
-    Stub stl;
 
     stl.set(ADDR(DDiskManager,resolveDeviceNode),resolveDeviceNode);
     EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
@@ -549,7 +539,6 @@ TEST_F(FileJobTest, opticalJobUpdated)
     EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdated(&master, status, progress));
 
     progress = 50;
-    Stub stl;
     void (*handleOpticalJobFailure)(int, const QString &, const QStringList &) = []
            (int, const QString &, const QStringList &){};
     stl.set(ADDR(FileJob,handleOpticalJobFailure),handleOpticalJobFailure);
@@ -574,7 +563,6 @@ TEST_F(FileJobTest, opticalJobUpdatedByParentProcess)
 
     EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess( status, progress, speed, msgs));
     progress = 50;
-    Stub stl;
     void (*handleOpticalJobFailure)(int, const QString &, const QStringList &) = []
             (int, const QString &, const QStringList &){};
     stl.set(ADDR(FileJob,handleOpticalJobFailure),handleOpticalJobFailure);
@@ -589,8 +577,6 @@ TEST_F(FileJobTest, opticalJobUpdatedByParentProcess)
 }
 
 TEST_F(FileJobTest, start_handleOpticalJobFailure) {
-    Stub stl;
-
     void (*showOpticalJobFailureDialog)(int, const QString &, const QStringList &) = []
             (int, const QString &, const QStringList &){};
     stl.set(ADDR(DialogManager,showOpticalJobFailureDialog),showOpticalJobFailureDialog);
@@ -608,7 +594,6 @@ TEST_F(FileJobTest, start_otherOp) {
     EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
     void (*handleUpdateTaskWidget)(const QMap<QString, QString> &,const QMap<QString, QString> &) = []
             (const QMap<QString, QString> &,const QMap<QString, QString> &){};
-    Stub stl;
     stl.set(ADDR(DTaskDialog,handleUpdateTaskWidget),handleUpdateTaskWidget);
     job->m_status = FileJob::Run;
     job->m_isCheckingDisk = true;
@@ -704,7 +689,6 @@ TEST_F(FileJobTest, start_copyFile) {
     linkfile.setPath(source.toLocalFile() + "sys_link");
     fileurl.setPath(TestHelper::createTmpFile());
     QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
-    Stub stl;
     bool (*copyFileByGio)(void *,const QString &, const QString &, bool, QString *) = []
             (void *,const QString &, const QString &, bool, QString *targetFile){
         *targetFile = QString("kdek");
@@ -811,7 +795,6 @@ TEST_F(FileJobTest, start_copyFile) {
 }
 
 TEST_F(FileJobTest, start_showProgress) {
-    Stub stl;
     bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
             (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
     stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
@@ -837,8 +820,6 @@ TEST_F(FileJobTest, start_copyFileByGio) {
     linkfile.setPath(source.toLocalFile() + "sys_link");
     fileurl.setPath(TestHelper::createTmpFile());
     QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
-
-    Stub stl;
 
     bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
             (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
@@ -966,7 +947,6 @@ TEST_F(FileJobTest, start_copyFileByGio) {
 }
 
 TEST_F(FileJobTest, start_copyDir) {
-    Stub stl;
     source.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
     QString dstdirpath = dst.toLocalFile();
@@ -1058,14 +1038,12 @@ TEST_F(FileJobTest, start_copyDir) {
 }
 
 TEST_F(FileJobTest, start_moveFile) {
-    Stub stl;
     bool (*handleMoveJob)(const QString &, const QString &, QString *) = []
             (const QString &, const QString &, QString *){return false;};
     stl.set(ADDR(FileJob,handleMoveJob),handleMoveJob);
     EXPECT_FALSE(job->moveFile("",""));
 }
 TEST_F(FileJobTest, start_moveFileByGio) {
-    Stub stl;
     source.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
     QString dstdirpath = dst.toLocalFile();
@@ -1092,6 +1070,14 @@ TEST_F(FileJobTest, start_moveFileByGio) {
             ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal1);
     stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
             ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
+
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    void (*showErrorDialog)(const QString &, const QString &) = []
+            (const QString &, const QString &){};
+    stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
     QString targetpath;
     void (*showCopyMoveToSelfDialog)(const QMap<QString, QString> &) = []
             (const QMap<QString, QString> &){};
@@ -1139,9 +1125,6 @@ TEST_F(FileJobTest, start_moveFileByGio) {
         return gboolean(false);
     };
     stl.set(g_file_move,g_file_move1);
-    void (*showErrorDialog)(const QString &, const QString &) = []
-            (const QString &, const QString &){};
-    stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
     QFuture<void> future = QtConcurrent::run([=]() {
         QThread::msleep(150);
         qDebug() << "00000" << job->m_status;
@@ -1184,7 +1167,6 @@ TEST_F(FileJobTest, start_moveFileByGio) {
 }
 
 TEST_F(FileJobTest, start_moveDir) {
-    Stub stl;
     bool (*handleMoveJob)(const QString &, const QString &, QString *) = []
             (const QString &, const QString &, QString *){return true;};
     stl.set(ADDR(FileJob,handleMoveJob),handleMoveJob);
@@ -1192,7 +1174,6 @@ TEST_F(FileJobTest, start_moveDir) {
 }
 
 TEST_F(FileJobTest, start_handleMoveJob) {
-    Stub stl;
     source.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
     QString dstdirpath = dst.toLocalFile();
@@ -1315,7 +1296,6 @@ TEST_F(FileJobTest, start_handleMoveJob) {
 }
 
 TEST_F(FileJobTest, start_handleSymlinkFile) {
-    Stub stl;
     job->m_isAborted = true;
     EXPECT_FALSE(job->handleSymlinkFile("",""));
     source.setPath(TestHelper::createTmpFile());
@@ -1365,7 +1345,6 @@ TEST_F(FileJobTest, start_handleSymlinkFile) {
 }
 
 TEST_F(FileJobTest, start_restoreTrashFile) {
-    Stub stl;
     void (*jobConflicted)(void *) = [](void *){};
     stl.set(ADDR(FileJob,jobConflicted),jobConflicted);
     source.setPath(TestHelper::createTmpFile());
@@ -1424,7 +1403,6 @@ TEST_F(FileJobTest, start_) {
 TEST_F(FileJobTest, start_checkDiskSpaceAvailable) {
     source.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
-    Stub stl;
     bool (*isGvfsMountFile)(void *,const QString &, const bool &) = [](void *,const QString &, const bool &){return true;};
     stl.set(ADDR(FileUtils,isGvfsMountFile),isGvfsMountFile);
     EXPECT_TRUE(job->checkDiskSpaceAvailable(DUrlList() << source,dst));
@@ -1453,7 +1431,6 @@ TEST_F(FileJobTest, start_checkFat32FileOutof4G) {
     source.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
 
-    Stub stl;
     void (*show4gFat32Dialog)(void *) = [](void *){};
     stl.set(ADDR(DialogManager,show4gFat32Dialog),show4gFat32Dialog);
     qint64 (*size)(void*) = [](void *){
@@ -1499,7 +1476,6 @@ TEST_F(FileJobTest, start_getXorrisoErrorMsg){
 
 TEST_F(FileJobTest, start_canMove){
     source.setPath(TestHelper::createTmpFile());
-    Stub stl;
     bool (*isVaultFile)(QString) = [](QString){return true;};
     stl.set(ADDR(VaultController,isVaultFile),isVaultFile);
     QFileDevice::Permissions (*getPermissions)(QString) = [](QString){
@@ -1554,7 +1530,6 @@ TEST_F(FileJobTest, start_moveFileToTrash){
         return false;
     };
     EXPECT_TRUE(job->moveFileToTrash(QString("mnfeingienfjdj"),&targetPath));
-    Stub stl;
     stl.set(ADDR(FileJob,writeTrashInfo),writeTrashInfo);
     EXPECT_FALSE(job->moveFileToTrash(QString("mnfeingienfjdj"),&targetPath));
 }
@@ -1571,7 +1546,6 @@ TEST_F(FileJobTest, start_moveDirToTrash){
         return false;
     };
     EXPECT_TRUE(job->moveDirToTrash(source.toLocalFile(),&targetPath));
-    Stub stl;
     stl.set(ADDR(FileJob,writeTrashInfo),writeTrashInfo);
     EXPECT_FALSE(job->moveDirToTrash(source.toLocalFile(),&targetPath));
     TestHelper::deleteTmpFile(source.toLocalFile());
@@ -1593,7 +1567,6 @@ TEST_F(FileJobTest, start_deleteDir){
     QProcess::execute("mkdir "+ source.toLocalFile() + "/temp2");
     QProcess::execute("touch "+ source.toLocalFile() + "/temp1/teste");
 
-    Stub stl;
     bool (*deleteFile)(const QString &) = [](const QString &){return false;};
     stl.set(ADDR(FileJob,deleteFile),deleteFile);
 
