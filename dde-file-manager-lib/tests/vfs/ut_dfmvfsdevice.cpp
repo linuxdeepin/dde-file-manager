@@ -188,10 +188,9 @@ TEST_F(TestDFMVfsDevice, p_GMountOperationAskPasswordCb)
 TEST_F(TestDFMVfsDevice, p_GMountOperationAskQuestionCb)
 {
     GMountOperation *op = DFMVfsDevicePrivate::GMountOperationNewMountOp(m_service);
-    char *array[] = {"aaa", "bbb"};
-    GStrv strs = array;
+
     EXPECT_NO_FATAL_FAILURE (
-        DFMVfsDevicePrivate::GMountOperationAskQuestionCb(op, "test", strs, m_service);
+        DFMVfsDevicePrivate::GMountOperationAskQuestionCb(op, "test", NULL, m_service);
     );
 }
 
