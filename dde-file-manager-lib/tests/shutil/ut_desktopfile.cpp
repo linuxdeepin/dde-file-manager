@@ -44,6 +44,7 @@ TEST_F(TestDesktopFile, can_parse_the_desktop_trash)
     DesktopFile trashfile(desktop_test_file);
     trashfile.getCategories();
     trashfile.getMimeType();
+    trashfile.getName();
     EXPECT_EQ(desktop_test_file, trashfile.getFileName());
     EXPECT_EQ("Trash", trashfile.getName());
     EXPECT_EQ("user-trash", trashfile.getIcon());
