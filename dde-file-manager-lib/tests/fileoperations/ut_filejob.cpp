@@ -19,10 +19,13 @@
 #include "ddiskdevice.h"
 #include "dabstractfilewatcher.h"
 #include "ddiskmanager.h"
+#include "stubext.h"
+#include "tag/tagmanager.h"
 #define private public
 #include "fileoperations/filejob.h"
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
+#include "fileoperations/sort.h"
 
 using namespace testing;
 using namespace stub_ext;
@@ -42,6 +45,10 @@ public:
                 (const QMap<QString, QString> &){};
         stl.set(ADDR(DTaskDialog,delayRemoveTask),delayRemoveTask);
         stl.set(ADDR(DTaskDialog,addTask),delayRemoveTask);
+        typedef int(*fptr)(QDialog*);
+        fptr pQDialogExec = (fptr)(&QDialog::exec);
+        int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
+        stl.set(pQDialogExec, stub_DDialog_exec);
         std::cout << "start FileJobTest" << std::endl;
     }
 
@@ -311,8 +318,8 @@ TEST_F(FileJobTest,start_doMoveCopyJob) {
 
     EXPECT_FALSE(job->doMoveCopyJob(DUrlList() << DUrl() << source << copydir, dst).isEmpty());
 
-    TestHelper::deleteTmpFiles(QStringList() << source.toLocalFile() << dst.toLocalFile() <<
-                               linkurl.toLocalFile() << dstfileurl.toLocalFile() <<
+    TestHelper::deleteTmpFiles(QStringList() << linkurl.toLocalFile() << source.toLocalFile() << dst.toLocalFile() <<
+                                dstfileurl.toLocalFile() << copydir.toLocalFile() <<
                                dstdirurl.toLocalFile());
 }
 
@@ -386,6 +393,7 @@ TEST_F(FileJobTest, start_doTrashRestore){
     stl.set(ADDR(FileJob,doMove),doMove);
     job->m_isJobAdded = true;
     job->m_isManualRemoveJob = false;
+    job->m_isInSameDisk = true;
     EXPECT_TRUE(job->doTrashRestore(linkurl.toLocalFile(),dst.toLocalFile()));
 
     bool (*copyDir)(const QString &, const QString &, QString *) = []
@@ -485,8 +493,7 @@ TEST_F(FileJobTest, start_doOpticalBurnByChildProcess)
     stl.reset(pipe);
     TestHelper::runInLoop([=](){
         EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(url, "test", 10, opts));
-    },3000);
-
+    },5000);
 }
 
 TEST_F(FileJobTest, doOpticalImageBurnByChildProcess)
@@ -495,7 +502,39 @@ TEST_F(FileJobTest, doOpticalImageBurnByChildProcess)
     DUrl image;
     DISOMasterNS::BurnOptions opts;
     opts |= DISOMasterNS::BurnOption::VerifyDatas;
+    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(DUrl(), image, 10, opts));
+
+    QStringList (*resolveDeviceNode)(QString, QVariantMap) = [](QString, QVariantMap){return QStringList();};
+    Stub stl;
+
+    stl.set(ADDR(DDiskManager,resolveDeviceNode),resolveDeviceNode);
     EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
+    stl.reset(ADDR(DDiskManager,resolveDeviceNode));
+    bool (*opticalBlank)(void *) = [](void *){return false;};
+    stl.set(ADDR(DDiskDevice,opticalBlank),opticalBlank);
+    bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+       (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+       ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal);
+    int (*pipe1)(int[]) = [](int[]){return -1;};
+    stl.set(pipe,pipe1);
+    QStringList (*resolveDeviceNode1)(QString, QVariantMap) = [](QString, QVariantMap){
+    return QStringList() << QString("test");
+    };
+    stl.set(ADDR(DDiskManager,resolveDeviceNode),resolveDeviceNode1);
+    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
+
+    void (*unmount)(const QVariantMap &) = [](const QVariantMap &){};
+    stl.set(ADDR(DBlockDevice,unmount),unmount);
+    bool (*opticalBlank1)(void *) = [](void *){return true;};
+    stl.set(ADDR(DDiskDevice,opticalBlank),opticalBlank1);
+    stl.set(pipe,&pipe3);
+    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
+
+    stl.reset(pipe);
+    TestHelper::runInLoop([=](){
+    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
+    },5000);
 }
 
 TEST_F(FileJobTest, opticalJobUpdated)
@@ -503,10 +542,18 @@ TEST_F(FileJobTest, opticalJobUpdated)
     DISOMasterNS::DISOMaster master;
     int status = DISOMasterNS::DISOMaster::JobStatus::Failed;
     int progress = 50;
-
+    progress = 110;
     EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdated(&master, status, progress));
 
+    progress = 50;
+    Stub stl;
+    void (*handleOpticalJobFailure)(int, const QString &, const QStringList &) = []
+           (int, const QString &, const QStringList &){};
+    stl.set(ADDR(FileJob,handleOpticalJobFailure),handleOpticalJobFailure);
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdated(&master, status, progress));
     status = DISOMasterNS::DISOMaster::JobStatus::Running;
+    job->m_jobType = FileJob::OpticalImageBurn;
+    job->m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
     EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdated(&master, status, progress));
 
     status = DISOMasterNS::DISOMaster::JobStatus::Stalled;
@@ -519,51 +566,856 @@ TEST_F(FileJobTest, opticalJobUpdatedByParentProcess)
     int progress = 50;
     QString speed("8x");
     QStringList msgs;
-    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess(status, progress, speed, msgs));
 
-    status = DISOMasterNS::DISOMaster::JobStatus::Running;
+    progress = 110;
+
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess( status, progress, speed, msgs));
+    progress = 50;
+    Stub stl;
+    void (*handleOpticalJobFailure)(int, const QString &, const QStringList &) = []
+            (int, const QString &, const QStringList &){};
+    stl.set(ADDR(FileJob,handleOpticalJobFailure),handleOpticalJobFailure);
     EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess(status, progress, speed, msgs));
+    status = DISOMasterNS::DISOMaster::JobStatus::Running;
+    job->m_jobType = FileJob::OpticalImageBurn;
+    job->m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess( status, progress, speed, msgs));
 
     status = DISOMasterNS::DISOMaster::JobStatus::Stalled;
-    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess(status, progress, speed, msgs));
+    EXPECT_NO_FATAL_FAILURE(job->opticalJobUpdatedByParentProcess( status, progress, speed, msgs));
+}
+
+TEST_F(FileJobTest, start_handleOpticalJobFailure) {
+    Stub stl;
+
+    void (*showOpticalJobFailureDialog)(int, const QString &, const QStringList &) = []
+            (int, const QString &, const QStringList &){};
+    stl.set(ADDR(DialogManager,showOpticalJobFailureDialog),showOpticalJobFailureDialog);
+    int typei = 5;
+    EXPECT_NO_FATAL_FAILURE(job->handleOpticalJobFailure(typei,QString(),QStringList()));
+}
+
+TEST_F(FileJobTest, start_otherOp) {
+    EXPECT_NO_FATAL_FAILURE(job->paused());
+    EXPECT_NO_FATAL_FAILURE(job->started());
+    EXPECT_NO_FATAL_FAILURE(job->cancelled());
+    job->m_status = FileJob::Paused;
+    EXPECT_NO_FATAL_FAILURE(job->handleJobFinished());
+    job->m_status = FileJob::Paused;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    void (*handleUpdateTaskWidget)(const QMap<QString, QString> &,const QMap<QString, QString> &) = []
+            (const QMap<QString, QString> &,const QMap<QString, QString> &){};
+    Stub stl;
+    stl.set(ADDR(DTaskDialog,handleUpdateTaskWidget),handleUpdateTaskWidget);
+    job->m_status = FileJob::Run;
+    job->m_isCheckingDisk = true;
+    job->m_jobType = FileJob::OpticalBlank;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_jobType = FileJob::Restore;
+    job->m_isInSameDisk = true;
+    job->m_isFinished = false;
+    job->m_status = FileJob::Run;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_isFinished = true;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_jobType = FileJob::Trash;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_isFinished = false;
+    job->m_finishedCount = 4;
+    job->m_allCount = 6;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_isFinished = false;
+    job->m_isInSameDisk = false;
+    job->m_lastMsec = 10000;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    qint64 (*elapsed)(void *) = [](void *){return qint64(0);};
+    stl.set(ADDR(QElapsedTimer,elapsed),elapsed);
+    job->m_lastMsec = -1000;
+    job->m_bytesPerSec = 0;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_bytesPerSec = 100;
+    job->m_totalSize = 100;
+    job->m_bytesCopied = 102;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_totalSize = 150;
+    job->m_lastMsec = -1000;
+    job->m_bytesPerSec = 1;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_totalSize = 1000;
+    job->m_lastMsec = -1000;
+    job->m_bytesPerSec = 1;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_totalSize = 5000;
+    job->m_lastMsec = -1000;
+    job->m_bytesPerSec = 1;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_lastMsec = -1000;
+    job->m_bytesPerSec = 1;
+    job->m_totalSize = 100000;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_lastMsec = -1000;
+    job->m_bytesPerSec = 4*ONE_MB_SIZE;
+    job->m_totalSize = 100000;
+    EXPECT_NO_FATAL_FAILURE(job->jobUpdated());
+    job->m_isJobAdded = false;
+    EXPECT_NO_FATAL_FAILURE(job->jobAdded());
+    EXPECT_NO_FATAL_FAILURE(job->jobRemoved());
+    EXPECT_NO_FATAL_FAILURE(job->jobAdded());
+    void (*handleTaskClose)(const QMap<QString, QString> &) = [](const QMap<QString, QString> &){};
+    stl.set(ADDR(DTaskDialog,handleTaskClose),handleTaskClose);
+    EXPECT_NO_FATAL_FAILURE(job->jobAborted());
+    EXPECT_NO_FATAL_FAILURE(job->jobPrepared());
+    job->m_applyToAll = true;
+    EXPECT_NO_FATAL_FAILURE(job->jobConflicted());
+    job->m_applyToAll = false;
+    EXPECT_NO_FATAL_FAILURE(job->jobConflicted());
+}
+static int read2new = 0;
+qint64 read2(char *, qint64){
+    if (read2new%2 == 0) {
+        read2new++;
+        return 100;
+    }
+    read2new++;
+    return 0;
+}
+
+qint64 read3(char *, qint64){
+    qDebug() << "read3 read2new == " << read2new;
+    QThread::msleep(500);
+    qDebug() << "read3 read2new2 == " << read2new;
+    if (read2new%2 == 0) {
+        read2new++;
+        return 100;
+    }
+    read2new++;
+    return 0;
 }
 
 TEST_F(FileJobTest, start_copyFile) {
     job->m_isGvfsFileOperationUsed = true;
     source.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
-    EXPECT_NO_FATAL_FAILURE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+    QString dstdirpath = dst.toLocalFile();
+    DUrl linkfile(source),fileurl(source);
+    linkfile.setPath(source.toLocalFile() + "sys_link");
+    fileurl.setPath(TestHelper::createTmpFile());
+    QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
+    Stub stl;
+    bool (*copyFileByGio)(void *,const QString &, const QString &, bool, QString *) = []
+            (void *,const QString &, const QString &, bool, QString *targetFile){
+        *targetFile = QString("kdek");
+        return true;
+    };
+    stl.set(ADDR(FileJob,copyFileByGio),copyFileByGio);
+    QString targetpaht("");
+    EXPECT_NO_FATAL_FAILURE(job->copyFile(source.toLocalFile(),dst.toLocalFile(), false, &targetpaht));
     job->m_isGvfsFileOperationUsed = false;
-    QtConcurrent::run([=](){
-        job->setStatus(FileJob::Started);
-        EXPECT_NO_FATAL_FAILURE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+    bool (*checkFat32FileOutof4G)(const QString &, const QString &) = []
+            (const QString &, const QString &){return true;};
+    stl.set(ADDR(FileJob,checkFat32FileOutof4G),checkFat32FileOutof4G);
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+
+    stl.reset(ADDR(FileJob,checkFat32FileOutof4G));
+    job->m_isAborted = true;
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+
+    job->m_isAborted = false;
+    job->m_applyToAll = true;
+    job->m_status = FileJob::Cancelled;
+    EXPECT_TRUE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    job->m_applyToAll = false;
+    job->m_skipandApplyToAll = false;
+    job->m_status = FileJob::Cancelled;
+    void (*jobConflicted)(void *) = [](void *){};
+    stl.set(ADDR(FileJob,jobConflicted),jobConflicted);
+    job->m_isSkip = true;
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+
+    job->m_isSkip = false;
+    job->m_isCoExisted = true;
+    job->m_isReplaced = false;
+    EXPECT_FALSE(job->copyFile("",dst.toLocalFile()));
+
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    dst.setPath(dstdirpath);
+    QString (*checkDuplicateName)(void *,const QString &) = []
+            (void *,const QString &name){return name;};
+    stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateName);
+    EXPECT_TRUE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),linkfile.toLocalFile()));
+
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),fileurl.toLocalFile()));
+
+    qint64 (*read1)(char *, qint64) = [](char *, qint64){return qint64(-1);};
+    stl.set((qint64 (QIODevice::*)(char *, qint64))ADDR(QIODevice,read),read1);
+    stl.reset(ADDR(FileJob,checkDuplicateName));
+    QFileDevice::FileError (*error1)(void *) = [](void *){return QFileDevice::ReadError;};
+    stl.set(ADDR(QFileDevice,error),error1);
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+
+    stl.set((qint64 (QIODevice::*)(char *, qint64))ADDR(QIODevice,read),&read2);
+    EXPECT_TRUE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    stl.set((qint64 (QIODevice::*)(char *, qint64))ADDR(QIODevice,read),&read3);
+    read2new = read2new%2 == 0 ? read2new : read2new + 1;
+    QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "00000" << job->m_status;
+        job->m_status = FileJob::Cancelled;
+        job->m_isSkip = true;
     });
-    QThread::msleep(100);
-    job->setStatus(FileJob::Cancelled);
-    QThread::msleep(100);
-    QtConcurrent::run([=](){
-        EXPECT_NO_FATAL_FAILURE(job->setStatus(FileJob::Run));
-        EXPECT_NO_FATAL_FAILURE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+    EXPECT_TRUE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    qDebug() << "copyFile 0" << read2new;
+    read2new = read2new%2 == 0 ? read2new : read2new + 1;
+    job->m_isSkip = false;
+    job->m_status = FileJob::Started;
+    QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "000001" << job->m_status;
+        job->m_status = FileJob::Cancelled;
+        job->m_isSkip = false;
     });
-    QThread::msleep(100);
-    job->setStatus(FileJob::Started);
-    QThread::msleep(100);
-    QtConcurrent::run([=](){
-        job->setStatus(FileJob::Run);
-        EXPECT_NO_FATAL_FAILURE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    qDebug() << "copyFile 1" << read2new;
+    read2new = read2new%2 == 0 ? read2new : read2new + 1;
+    job->m_isSkip = false;
+    job->m_status = FileJob::Started;
+    QFuture<void> future = QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "000002" << job->m_status;
+        job->m_status = FileJob::Paused;
+        QThread::msleep(400);
+        qDebug() << "000003" << job->m_status;
+        job->m_status = FileJob::Conflicted;
     });
-    QThread::msleep(100);
-    job->setStatus(FileJob::Cancelled);
-    QThread::msleep(100);
-    TestHelper::deleteTmpFiles(QStringList() << dst.toLocalFile() << source.toLocalFile());
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    qDebug() << "copyFile 1" << read2new;
+    future.waitForFinished();
+
+    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
+                               << source.toLocalFile() << fileurl.toLocalFile());
+
+}
+
+TEST_F(FileJobTest, start_showProgress) {
+    Stub stl;
+    bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal);
+    bool (*ghostSignal1)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &){return true;};
+    bool (*ghostSignal2)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal1);
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
+    job->m_isGvfsFileOperationUsed = true;
+    job->m_needGhostFileCreateSignal = true;
+    EXPECT_NO_FATAL_FAILURE(job->showProgress(100,100,job.data()));
+}
+
+TEST_F(FileJobTest, start_copyFileByGio) {
+    source.setPath(TestHelper::createTmpFile());
+    dst.setPath(TestHelper::createTmpDir());
+    QString dstdirpath = dst.toLocalFile();
+    DUrl linkfile(source),fileurl(source);
+    linkfile.setPath(source.toLocalFile() + "sys_link");
+    fileurl.setPath(TestHelper::createTmpFile());
+    QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
+
+    Stub stl;
+
+    bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal);
+    bool (*ghostSignal1)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &){return true;};
+    bool (*ghostSignal2)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal1);
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
+
+    bool (*checkFat32FileOutof4G)(const QString &, const QString &) = []
+            (const QString &, const QString &){return true;};
+    stl.set(ADDR(FileJob,checkFat32FileOutof4G),checkFat32FileOutof4G);
+    EXPECT_FALSE(job->copyFileByGio(source.toLocalFile(),dstdirpath));
+
+    stl.reset(ADDR(FileJob,checkFat32FileOutof4G));
+    job->m_isAborted = true;
+    EXPECT_FALSE(job->copyFileByGio(source.toLocalFile(),dst.toLocalFile()));
+
+    QString targetpaht;
+
+    job->m_isAborted = false;
+    job->m_applyToAll = true;
+    job->m_status = FileJob::Cancelled;
+    QProcess::execute("touch " + dst.toLocalFile() + "/" + source.fileName());
+    EXPECT_FALSE(job->copyFileByGio(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    job->m_applyToAll = false;
+    job->m_skipandApplyToAll = false;
+    job->m_status = FileJob::Cancelled;
+    void (*jobConflicted)(void *) = [](void *){};
+    stl.set(ADDR(FileJob,jobConflicted),jobConflicted);
+    job->m_isSkip = true;
+    EXPECT_TRUE(job->copyFileByGio(source.toLocalFile(),dst.toLocalFile()));
+
+    gboolean (*g_file_copypre)(GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+                             GFileProgressCallback,gpointer,GError **) = []
+            (GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+            GFileProgressCallback,gpointer,GError **error){
+        *error = g_error_new(G_IO_ERROR,G_IO_ERROR_CANCELLED,"nihao");
+        return gboolean(true);
+    };
+    stl.set(g_file_copy,g_file_copypre);
+    job->m_isSkip = false;
+    job->m_isCoExisted = true;
+    job->m_isReplaced = false;
+    EXPECT_TRUE(job->copyFileByGio("",dst.toLocalFile()));
+
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    dst.setPath(dstdirpath);
+    QString (*checkDuplicateName)(void *,const QString &) = []
+            (void *,const QString &name){return name;};
+    stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateName);
+    EXPECT_TRUE(job->copyFileByGio(source.toLocalFile(),dst.toLocalFile()));
+
+    job->m_isCoExisted = true;
+    job->m_isReplaced = true;
+    EXPECT_TRUE(job->copyFileByGio(source.toLocalFile(),linkfile.toLocalFile()));
+
+    job->m_isCoExisted = true;
+    job->m_isReplaced = true;
+    job->m_applyToAll = false;
+    EXPECT_TRUE(job->copyFileByGio(source.toLocalFile(),fileurl.toLocalFile()));
+
+
+    stl.reset(ADDR(FileJob,checkDuplicateName));
+    gboolean (*g_file_copy1)(GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+                             GFileProgressCallback,gpointer,GError **) = []
+            (GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+            GFileProgressCallback,gpointer,GError **error){
+        QThread::msleep(400);
+        *error = g_error_new(G_IO_ERROR,G_IO_ERROR_PERMISSION_DENIED,"nihao");
+        return gboolean(false);
+    };
+    stl.set(g_file_copy,g_file_copy1);
+    void (*showErrorDialog)(const QString &, const QString &) = []
+            (const QString &, const QString &){};
+    stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
+    QFuture<void> future = QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "00000" << job->m_status;
+        job->m_status = FileJob::Cancelled;
+    });
+    EXPECT_FALSE(job->copyFileByGio(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    gboolean (*g_file_copy2)(GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+                             GFileProgressCallback,gpointer,GError **) = []
+            (GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+            GFileProgressCallback,gpointer,GError **error){
+        QThread::msleep(400);
+        *error = g_error_new(G_IO_ERROR,G_IO_ERROR_CLOSED,"nihao");
+        return gboolean(false);
+    };
+    stl.set(g_file_copy,g_file_copy2);
+    QFuture<void> future1 = QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "000001" << job->m_status;
+        job->m_status = FileJob::Paused;
+        QThread::msleep(300);
+        qDebug() << "000002" << job->m_status;
+        job->m_status = FileJob::Conflicted;
+    });
+    EXPECT_FALSE(job->copyFileByGio(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    gboolean (*g_file_copy3)(GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+                             GFileProgressCallback,gpointer,GError **) = []
+            (GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+            GFileProgressCallback,gpointer,GError **error){
+        *error = g_error_new(G_IO_ERROR,G_IO_ERROR_CANCELLED,"nihao");
+        return gboolean(true);
+    };
+    stl.set(g_file_copy,g_file_copy3);
+    EXPECT_TRUE(job->copyFileByGio(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    future.waitForFinished();
+    future1.waitForFinished();
+
+    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
+                               << source.toLocalFile() << fileurl.toLocalFile());
+}
+
+TEST_F(FileJobTest, start_copyDir) {
+    Stub stl;
+    source.setPath(TestHelper::createTmpFile());
+    dst.setPath(TestHelper::createTmpDir());
+    QString dstdirpath = dst.toLocalFile();
+    DUrl linkfile(source),fileurl(source);
+    linkfile.setPath(source.toLocalFile() + "sys_link");
+    fileurl.setPath(TestHelper::createTmpFile());
+    QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
+
+    bool (*copyFile)(const QString &, const QString &,bool, QString *) = []
+            (const QString &, const QString &,bool, QString *){return false;};
+    stl.set(ADDR(FileJob,copyFile),copyFile);
+    bool (*setDirPermissions)(const QString &, const QString &) = []
+            (const QString &, const QString &){return false;};
+    stl.set(ADDR(FileJob,setDirPermissions),setDirPermissions);
+    DUrlList (*childrenList)(const DUrl &) = [](const DUrl &){
+        return DUrlList() << DUrl("file:///tmp");
+    };
+    stl.set(ADDR(DUrl,childrenList),childrenList);
+    void (*showCopyMoveToSelfDialog)(const QMap<QString, QString> &) = []
+            (const QMap<QString, QString> &){};
+    stl.set(ADDR(DialogManager,showCopyMoveToSelfDialog),showCopyMoveToSelfDialog);
+    QString targetpaht;
+    EXPECT_FALSE(job->copyDir(source.toLocalFile(),"/tmp",false,&targetpaht));
+
+    stl.reset(ADDR(DUrl,childrenList));
+    job->m_isAborted = true;
+    EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    job->m_isAborted = false;
+    job->m_applyToAll = true;
+    job->m_status = FileJob::Cancelled;
+    EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    job->m_applyToAll = false;
+    job->m_skipandApplyToAll = false;
+    job->m_status = FileJob::Cancelled;
+    void (*jobConflicted)(void *) = [](void *){};
+    stl.set(ADDR(FileJob,jobConflicted),jobConflicted);
+    job->m_isSkip = true;
+    EXPECT_TRUE(job->copyDir(source.toLocalFile(),dst.toLocalFile()));
+
+    job->m_isSkip = false;
+    job->m_isCoExisted = true;
+    job->m_isReplaced = false;
+    EXPECT_FALSE(job->copyDir("",dst.toLocalFile()));
+
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    dst.setPath(dstdirpath);
+    QString (*checkDuplicateName)(void *,const QString &) = []
+            (void *,const QString &name){return name;};
+    stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateName);
+    EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    EXPECT_FALSE(job->copyDir(source.toLocalFile(),linkfile.toLocalFile(),false,&targetpaht));
+
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    job->m_applyToAll = false;
+    EXPECT_FALSE(job->copyDir(source.toLocalFile(),fileurl.toLocalFile(),false,&targetpaht));
+
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    job->m_applyToAll = false;
+    bool (*mkdir)(const QString &) = [](const QString &){return false;};
+    stl.set(ADDR(QDir,mkdir),mkdir);
+    EXPECT_FALSE(job->copyDir(source.toLocalFile(),"/tmp/ut_copydir_filejob",false,&targetpaht));
+    stl.reset(ADDR(QDir,mkdir));
+    stl.reset(ADDR(FileJob,checkDuplicateName));
+
+    char *(*savedir1)(char const *) = [](char const *){
+        char * ptr = nullptr;
+        return ptr;};
+    stl.set(savedir,savedir1);
+    EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    stl.reset(savedir);
+    EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    bool (*handleSymlinkFile)(const QString &, const QString &, QString *) = []
+            (const QString &, const QString &, QString *){return false;};
+    stl.set(ADDR(FileJob,handleSymlinkFile),handleSymlinkFile);
+    EXPECT_FALSE(job->copyDir(linkfile.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+
+    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
+                               << source.toLocalFile() << fileurl.toLocalFile() <<
+                               dst.toLocalFile()+"(copy)" << source.toLocalFile()+"(copy)");
+}
+
+TEST_F(FileJobTest, start_moveFile) {
+    Stub stl;
+    bool (*handleMoveJob)(const QString &, const QString &, QString *) = []
+            (const QString &, const QString &, QString *){return false;};
+    stl.set(ADDR(FileJob,handleMoveJob),handleMoveJob);
+    EXPECT_FALSE(job->moveFile("",""));
+}
+TEST_F(FileJobTest, start_moveFileByGio) {
+    Stub stl;
+    source.setPath(TestHelper::createTmpFile());
+    dst.setPath(TestHelper::createTmpDir());
+    QString dstdirpath = dst.toLocalFile();
+    DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst);
+    linkfile.setPath(source.toLocalFile() + "sys_link");
+    fileurl.setPath(TestHelper::createTmpFile());
+    dirurl.setPath("/tmp/ut_jobfile_moveFileByGio");
+    targetdirurl.setPath(dst.toLocalFile() + "/" + dst.fileName());
+    QProcess::execute("mkdir " + dirurl.toLocalFile() + " " + targetdirurl.toLocalFile());
+    QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
+    DUrlList (*childrenList)(const DUrl &) = [](const DUrl &){
+        return DUrlList() << DUrl("file:///tmp/ut_jobfile_moveFileByGio");
+    };
+    stl.set(ADDR(DUrl,childrenList),childrenList);
+    bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal);
+    bool (*ghostSignal1)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &){return true;};
+    bool (*ghostSignal2)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal1);
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
+    QString targetpath;
+    void (*showCopyMoveToSelfDialog)(const QMap<QString, QString> &) = []
+            (const QMap<QString, QString> &){};
+    stl.set(ADDR(DialogManager,showCopyMoveToSelfDialog),showCopyMoveToSelfDialog);
+    EXPECT_TRUE(job->moveFileByGio(dst.toLocalFile(),"/tmp/ut_jobfile_moveFileByGio"));
+
+    job->m_isAborted = true;
+    EXPECT_FALSE(job->moveFileByGio(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_isAborted = false;
+    job->m_applyToAll = true;
+    job->m_status = FileJob::Cancelled;
+    EXPECT_FALSE(job->moveFileByGio(dst.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_isAborted = false;
+    job->m_applyToAll = true;
+    job->m_status = FileJob::Cancelled;
+    EXPECT_TRUE(job->moveFileByGio(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_applyToAll = false;
+    void (*jobConflicted)(void *) = [](void *){};
+    stl.set(ADDR(FileJob,jobConflicted),jobConflicted);
+    job->m_status = FileJob::Cancelled;
+    EXPECT_TRUE(job->moveFileByGio(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_applyToAll = false;
+    job->m_status = FileJob::Cancelled;
+    job->m_isCoExisted = true;
+    job->m_isReplaced = false;
+    EXPECT_TRUE(job->moveFileByGio(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_applyToAll = false;
+    job->m_status = FileJob::Cancelled;
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    EXPECT_TRUE(job->moveFileByGio(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    stl.reset(ADDR(FileJob,checkDuplicateName));
+    gboolean (*g_file_move1)(GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+                             GFileProgressCallback,gpointer,GError **) = []
+            (GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+            GFileProgressCallback,gpointer,GError **error){
+        QThread::msleep(400);
+        *error = g_error_new(G_IO_ERROR,G_IO_ERROR_PERMISSION_DENIED,"nihao");
+        return gboolean(false);
+    };
+    stl.set(g_file_move,g_file_move1);
+    void (*showErrorDialog)(const QString &, const QString &) = []
+            (const QString &, const QString &){};
+    stl.set(ADDR(DialogManager,showErrorDialog),showErrorDialog);
+    QFuture<void> future = QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "00000" << job->m_status;
+        job->m_status = FileJob::Cancelled;
+    });
+    EXPECT_TRUE(job->moveFileByGio(source.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    gboolean (*g_file_move2)(GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+                             GFileProgressCallback,gpointer,GError **) = []
+            (GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+            GFileProgressCallback,gpointer,GError **error){
+        QThread::msleep(400);
+        *error = g_error_new(G_IO_ERROR,G_IO_ERROR_CLOSED,"nihao");
+        return gboolean(false);
+    };
+    stl.set(g_file_move,g_file_move2);
+    QFuture<void> future1 = QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "000001" << job->m_status;
+        job->m_status = FileJob::Paused;
+        QThread::msleep(300);
+        qDebug() << "000002" << job->m_status;
+        job->m_status = FileJob::Conflicted;
+    });
+    EXPECT_TRUE(job->moveFileByGio(source.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    gboolean (*g_file_move3)(GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+                             GFileProgressCallback,gpointer,GError **) = []
+            (GFile *,GFile *,GFileCopyFlags ,GCancellable *,
+            GFileProgressCallback,gpointer,GError **error){
+        *error = g_error_new(G_IO_ERROR,G_IO_ERROR_CANCELLED,"nihao");
+        return gboolean(true);
+    };
+    stl.set(g_file_move,g_file_move3);
+    EXPECT_TRUE(job->moveFileByGio(source.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
+                               << source.toLocalFile() << fileurl.toLocalFile() <<
+                               dirurl.toLocalFile());
+}
+
+TEST_F(FileJobTest, start_moveDir) {
+    Stub stl;
+    bool (*handleMoveJob)(const QString &, const QString &, QString *) = []
+            (const QString &, const QString &, QString *){return true;};
+    stl.set(ADDR(FileJob,handleMoveJob),handleMoveJob);
+    EXPECT_TRUE(job->moveDir("",""));
+}
+
+TEST_F(FileJobTest, start_handleMoveJob) {
+    Stub stl;
+    source.setPath(TestHelper::createTmpFile());
+    dst.setPath(TestHelper::createTmpDir());
+    QString dstdirpath = dst.toLocalFile();
+    DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst),targetfile(source);
+    linkfile.setPath(source.toLocalFile() + "sys_link");
+    fileurl.setPath(TestHelper::createTmpFile());
+    dirurl.setPath("/tmp/ut_jobfile_moveFileByGio");
+    targetfile.setPath(dst.toLocalFile() + "/jfieit.txt");
+    targetdirurl.setPath(dst.toLocalFile() + "/" + dst.fileName());
+    QProcess::execute("touch " + targetfile.toLocalFile());
+    QProcess::execute("mkdir " + dirurl.toLocalFile() + " " + targetdirurl.toLocalFile());
+    QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
+    DUrlList (*childrenList)(const DUrl &) = [](const DUrl &){
+        return DUrlList() << DUrl("file:///tmp/ut_jobfile_moveFileByGio");
+    };
+    stl.set(ADDR(DUrl,childrenList),childrenList);
+    bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal);
+    bool (*ghostSignal1)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &){return true;};
+    bool (*ghostSignal2)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &) = []
+            (const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &){return true;};
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal1);
+    stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
+            ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
+
+    bool (*handleSymlinkFile)(const QString &, const QString &, QString *) = []
+            (const QString &, const QString &, QString *){return false;};
+    stl.set(ADDR(FileJob,handleSymlinkFile),handleSymlinkFile);
+    stl.set(ADDR(FileJob,moveDir),handleSymlinkFile);
+    stl.set(ADDR(FileJob,moveFile),handleSymlinkFile);
+
+    QString targetpath;
+    void (*showCopyMoveToSelfDialog)(const QMap<QString, QString> &) = []
+            (const QMap<QString, QString> &){};
+    stl.set(ADDR(DialogManager,showCopyMoveToSelfDialog),showCopyMoveToSelfDialog);
+    EXPECT_TRUE(job->handleMoveJob(dst.toLocalFile(),"/tmp/ut_jobfile_moveFileByGio"));
+
+    stl.reset(ADDR(DUrl,childrenList));
+
+    job->m_isAborted = true;
+    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_isAborted = false;
+    job->m_applyToAll = true;
+    job->m_status = FileJob::Cancelled;
+    EXPECT_FALSE(job->handleMoveJob(dst.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_isAborted = false;
+    job->m_applyToAll = true;
+    job->m_status = FileJob::Cancelled;
+    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_applyToAll = false;
+    void (*jobConflicted)(void *) = [](void *){};
+    stl.set(ADDR(FileJob,jobConflicted),jobConflicted);
+    job->m_status = FileJob::Cancelled;
+    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_applyToAll = false;
+    job->m_status = FileJob::Cancelled;
+    job->m_isCoExisted = true;
+    job->m_isReplaced = false;
+    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_applyToAll = false;
+    job->m_status = FileJob::Cancelled;
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    job->m_applyToAll = false;
+    job->m_status = FileJob::Cancelled;
+    job->m_isCoExisted = false;
+    job->m_isReplaced = true;
+    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),source.toLocalFile(),&targetpath));
+
+    DUrl tmpfile(source);
+    tmpfile.setPath(TestHelper::createTmpFile());
+    EXPECT_FALSE(job->handleMoveJob(source.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    EXPECT_FALSE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile(),&targetpath));
+    bool (*handleSymlinkFile1)(const QString &, const QString &, QString *) = []
+            (const QString &, const QString &, QString *){
+        QThread::msleep(400);
+        return false;
+    };
+    stl.set(ADDR(FileJob,handleSymlinkFile),handleSymlinkFile1);
+    stl.set(ADDR(FileJob,moveDir),handleSymlinkFile1);
+    stl.set(ADDR(FileJob,moveFile),handleSymlinkFile1);
+    QFuture<void> future1 = QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "000001" << job->m_status;
+        job->m_status = FileJob::Paused;
+        QThread::msleep(300);
+        qDebug() << "000002" << job->m_status;
+        job->m_status = FileJob::Conflicted;
+    });
+    EXPECT_FALSE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile(),&targetpath));
+    future1.waitForFinished();
+
+    QFuture<void> future = QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "000000" << job->m_status;
+        job->m_status = FileJob::Cancelled;
+    });
+    EXPECT_FALSE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile(),&targetpath));
+    future.waitForFinished();
+
+    EXPECT_FALSE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile() + "/ut_dir",&targetpath));
+
+    EXPECT_FALSE(job->handleMoveJob(dst.toLocalFile(),dst.toLocalFile(),&targetpath));
+
+    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
+                               << source.toLocalFile() << fileurl.toLocalFile() <<
+                               dirurl.toLocalFile() << tmpfile.toLocalFile());
+}
+
+TEST_F(FileJobTest, start_handleSymlinkFile) {
+    Stub stl;
+    job->m_isAborted = true;
+    EXPECT_FALSE(job->handleSymlinkFile("",""));
+    source.setPath(TestHelper::createTmpFile());
+    job->m_isAborted = false;
+    dst.setPath(source.toLocalFile()+"_sys_link");
+    job->m_applyToAll = false;
+    QString target;
+    EXPECT_FALSE(job->handleSymlinkFile(source.toLocalFile(),dst.toLocalFile(),&target));
+
+    job.reset(new FileJob(FileJob::Trash));
+    bool (*moveFileToTrash)(const QString &, QString *) = []
+            (const QString &, QString *){return true;};
+    stl.set(ADDR(FileJob,moveFileToTrash),moveFileToTrash);
+    EXPECT_FALSE(job->handleSymlinkFile(source.toLocalFile(),dst.toLocalFile(),&target));
+
+    DUrl tmplink(dst);
+    tmplink.setPath(source.toLocalFile() + "oo_ut_link");
+    EXPECT_FALSE(job->handleSymlinkFile(source.toLocalFile(),tmplink.toLocalFile(),&target));
+
+    bool (*moveFileToTrash1)(const QString &, QString *) = []
+            (const QString &, QString *){
+        QThread::msleep(400);
+        return true;
+    };
+    stl.set(ADDR(FileJob,moveFileToTrash),moveFileToTrash1);
+    QFuture<void> future1 = QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "000001" << job->m_status;
+        job->m_status = FileJob::Paused;
+        QThread::msleep(300);
+        qDebug() << "000002" << job->m_status;
+        job->m_status = FileJob::Conflicted;
+    });
+    EXPECT_FALSE(job->handleSymlinkFile(source.toLocalFile(),tmplink.toLocalFile(),&target));
+    future1.waitForFinished();
+
+    QFuture<void> future = QtConcurrent::run([=]() {
+        QThread::msleep(150);
+        qDebug() << "000000" << job->m_status;
+        job->m_status = FileJob::Cancelled;
+    });
+    EXPECT_FALSE(job->handleSymlinkFile(source.toLocalFile(),tmplink.toLocalFile(),&target));
+    future.waitForFinished();
+
+    TestHelper::deleteTmpFiles(QStringList() << dst.toLocalFile() << tmplink.toLocalFile()
+                               << source.toLocalFile());
+}
+
+TEST_F(FileJobTest, start_restoreTrashFile) {
+    Stub stl;
+    void (*jobConflicted)(void *) = [](void *){};
+    stl.set(ADDR(FileJob,jobConflicted),jobConflicted);
+    source.setPath(TestHelper::createTmpFile());
+    dst.setPath(TestHelper::createTmpFile());
+
+    job->m_isAborted = true;
+    job->m_isSkip = true;
+    EXPECT_FALSE(job->restoreTrashFile(source.toLocalFile(),dst.toLocalFile()));
+
+    job->m_isAborted = false;
+    job->m_isCoExisted = true;
+    job->m_isReplaced = false;
+    EXPECT_FALSE(job->restoreTrashFile(source.toLocalFile(),"/tmp/ut_testtttt_rest"));
+
+    job->m_isCoExisted = true;
+    job->m_isReplaced = true;
+    EXPECT_FALSE(job->restoreTrashFile("",dst.toLocalFile()));
+
+    job->m_isReplaced = true;
+    EXPECT_FALSE(job->restoreTrashFile(source.toLocalFile(),dst.toLocalFile()));
+
+    QString tmpdir = TestHelper::createTmpDir();
+    job->m_isReplaced = true;
+    EXPECT_FALSE(job->restoreTrashFile(tmpdir,dst.toLocalFile()));
+
+    EXPECT_FALSE(job->restoreTrashFile("/tmp/ut_testtttt_rest",dst.toLocalFile()));
+
+    TestHelper::deleteTmpFiles(QStringList() << "/tmp/ut_testtttt_rest" << dst.toLocalFile()
+                               << source.toLocalFile() << tmpdir );
+}
+TEST_F(FileJobTest, start_deleteFile) {
+    source.setPath(TestHelper::createTmpFile());
+    TestHelper::deleteTmpFiles(QStringList() << source.toLocalFile() );
+    EXPECT_FALSE(job->deleteFile(source.toLocalFile()));
+    EXPECT_FALSE(job->deleteFile(source.toLocalFile()));
+    TestHelper::deleteTmpFile(source.toLocalFile());
+}
+
+TEST_F(FileJobTest, start_deleteFileByGio) {
+    source.setPath(TestHelper::createTmpFile());
+    EXPECT_TRUE(job->deleteFileByGio(source.toLocalFile()));
+    EXPECT_FALSE(job->deleteFileByGio(source.toLocalFile()));
+    TestHelper::deleteTmpFile(source.toLocalFile());
 }
 
 TEST_F(FileJobTest, start_) {
     source.setPath("/run/user/1000/gvfs/smb-share:server=10.8.11.190,share=test");
     dst.setPath("~/Desktop");
+    EXPECT_FALSE(job->checkUseGvfsFileOperation(dst.toLocalFile()));
     EXPECT_TRUE(job->checkUseGvfsFileOperation(DUrlList() << source << DUrl(), dst));
     dst.setPath("/run/user/1000/gvfs/smb-share:server=10.8.11.190,share=test");
     EXPECT_TRUE(job->checkUseGvfsFileOperation(DUrlList() << source << DUrl(), dst));
+
 }
 
 TEST_F(FileJobTest, start_checkDiskSpaceAvailable) {
@@ -575,8 +1427,9 @@ TEST_F(FileJobTest, start_checkDiskSpaceAvailable) {
     EXPECT_TRUE(job->checkDiskSpaceAvailable(DUrlList() << source,dst));
     stl.reset(ADDR(FileUtils,isGvfsMountFile));
     qint64 (*totalSize)(void *,const DUrlList &, const qint64 &, bool &)= []\
-            (void *,const DUrlList &, const qint64 &, bool &){
+            (void *,const DUrlList &, const qint64 &, bool &isInLimit){
         qint64 oo = 10000;
+        isInLimit = false;
         return oo;
     };
     stl.set(static_cast<qint64 (*)(const DUrlList &, const qint64 &, bool &)>(&FileUtils::totalSize),totalSize);
@@ -671,12 +1524,20 @@ TEST_F(FileJobTest, start_canMove){
 }
 
 TEST_F(FileJobTest, start_writeTrashInfo){
-//    Stub stl;
-//    bool (*opentmp)(QIODevice::OpenMode) = [](QIODevice::OpenMode) {return false;};
-//    typedef bool (*fptr)(void *,QIODevice::OpenMode);
-//    fptr A_foo = (fptr)(&QFile::open);   //obtaining an address
-//    stl.set(A_foo,opentmp);
-    EXPECT_TRUE(job->writeTrashInfo("ifue_98jfei_8e8f","jfaskjdf","kfek"));
+    StubExt stl;
+    typedef bool (*openfile)(QFile *,QFile::OpenMode);
+    stl.set_lamda((openfile)((bool (QFile::*)(QFile::OpenMode))(&QFile::open)),[](){return false;});
+    EXPECT_FALSE(job->writeTrashInfo("ifue_98jfei_8e8f","jfaskjdf","kfek"));
+
+    stl.reset((openfile)((bool (QFile::*)(QFile::OpenMode))(&QFile::open)));
+    QList<QString> (*getTagsThroughFiles)(const QList<DUrl>&) = [](const QList<DUrl>&){
+        QList<QString> tt;
+        return tt << "ut_oireoirsfsdj";
+    };
+    stl.set(ADDR(TagManager,getTagsThroughFiles),getTagsThroughFiles);
+    qint64 (*write1)(const QByteArray &) = [](const QByteArray &){return qint64(-1);};
+    stl.set((qint64 (QIODevice::*)(const QByteArray &))ADDR(QIODevice,write),write1);
+    EXPECT_FALSE(job->writeTrashInfo("ifue_98jfei_8e8f","jfaskjdf","kfek"));
 }
 
 TEST_F(FileJobTest, start_moveFileToTrash){
@@ -699,17 +1560,17 @@ TEST_F(FileJobTest, start_moveDirToTrash){
     EXPECT_NO_FATAL_FAILURE(job->setStatus(FileJob::Cancelled));
     QString targetPath;
     source.setPath(TestHelper::createTmpDir());
-    EXPECT_FALSE(job->moveFileToTrash(source.toLocalFile(),&targetPath));
+    EXPECT_FALSE(job->moveDirToTrash(source.toLocalFile(),&targetPath));
     EXPECT_NO_FATAL_FAILURE(job->setStatus(FileJob::Run));
     bool (*writeTrashInfo)(void *,const QString &, const QString &, const QString &) =[]
             (void *,const QString &, const QString &, const QString &)
     {
         return false;
     };
-    EXPECT_TRUE(job->moveFileToTrash(source.toLocalFile(),&targetPath));
+    EXPECT_TRUE(job->moveDirToTrash(source.toLocalFile(),&targetPath));
     Stub stl;
     stl.set(ADDR(FileJob,writeTrashInfo),writeTrashInfo);
-    EXPECT_FALSE(job->moveFileToTrash(source.toLocalFile(),&targetPath));
+    EXPECT_FALSE(job->moveDirToTrash(source.toLocalFile(),&targetPath));
     TestHelper::deleteTmpFile(source.toLocalFile());
 }
 
@@ -728,9 +1589,39 @@ TEST_F(FileJobTest, start_deleteDir){
     QProcess::execute("mkdir "+ source.toLocalFile() + "/temp1");
     QProcess::execute("mkdir "+ source.toLocalFile() + "/temp2");
     QProcess::execute("touch "+ source.toLocalFile() + "/temp1/teste");
+
+    Stub stl;
+    bool (*deleteFile)(const QString &) = [](const QString &){return false;};
+    stl.set(ADDR(FileJob,deleteFile),deleteFile);
+
     EXPECT_NO_FATAL_FAILURE(job->setStatus(FileJob::Cancelled));
     EXPECT_FALSE(job->deleteDir(source.toLocalFile()));
     EXPECT_NO_FATAL_FAILURE(job->setStatus(FileJob::Run));
+    EXPECT_FALSE(job->deleteDir(source.toLocalFile()));
+    stl.reset(ADDR(FileJob,deleteFile));
+    QProcess::execute("mkdir "+ source.toLocalFile() + "/temp1");
+    QProcess::execute("mkdir "+ source.toLocalFile() + "/temp2");
+    QProcess::execute("touch "+ source.toLocalFile() + "/temp1/teste");
+    stl.set(ADDR(FileJob,deleteDir),deleteFile);
+    EXPECT_FALSE(job->deleteDir(source.toLocalFile()));
+    stl.reset(ADDR(FileJob,deleteDir));
     EXPECT_TRUE(job->deleteDir(source.toLocalFile()));
+
+    bool (*rmdir)(const QString &) = [](const QString &){return false;};
+    stl.set(ADDR(QDir,rmdir),rmdir);
+    QProcess::execute("mkdir "+source.toLocalFile());
+    EXPECT_FALSE(job->deleteDir(source.toLocalFile()));
+    TestHelper::deleteTmpFile(source.toLocalFile());
+}
+
+TEST_F(FileJobTest, start_getNotExistsTrashFileName){
+    source.setPath(TestHelper::createTmpFile(".txt"));
+    EXPECT_FALSE(job->getNotExistsTrashFileName(source.toLocalFile()).isEmpty());
+    TestHelper::deleteTmpFile(source.toLocalFile());
+}
+
+TEST_F(FileJobTest, start_getStorageInfo){
+    source.setPath(TestHelper::createTmpFile(".txt"));
+    EXPECT_TRUE(job->getStorageInfo(source.toLocalFile()).isValid());
     TestHelper::deleteTmpFile(source.toLocalFile());
 }

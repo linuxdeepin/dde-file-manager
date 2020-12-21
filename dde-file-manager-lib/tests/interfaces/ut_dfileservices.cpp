@@ -16,6 +16,7 @@
 #include "ddesktopservices.h"
 #include "usershare/usersharemanager.h"
 #include "fileoperations/filejob.h"
+#include "dabstractfilewatcher.h"
 #define private public
 #include "testhelper.h"
 #include "stub.h"
@@ -68,6 +69,18 @@ public:
                 (const QString &,const DFMEvent &){};
         stl.set(ADDR(DialogManager,showRenameNameSameErrorDialog),showRenameNameSameErrorDialog);
 
+        bool (*ghostSignal)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+                (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int){return true;};
+        stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+                ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal);
+        bool (*ghostSignal1)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &) = []
+                (const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &){return true;};
+        bool (*ghostSignal2)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &) = []
+                (const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &){return true;};
+        stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType1, const DUrl &))\
+                ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal1);
+        stl.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType2 , const DUrl &, const DUrl &))\
+                ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
         std::cout << "start DFileSeviceTest" << std::endl;
     }
 
@@ -166,9 +179,7 @@ TEST_F(DFileSeviceTest, sart_fmevent){
     stl.reset(ADDR(PathManager,isSystemPath));
     url.setPath(urlpath);
     DUrlList (*doMoveToTrash)(const DUrlList &) = [](const DUrlList &){
-        DUrlList tt;
-        DUrl url("file:///home/gg/.local/share/Trash/files/1608087868376228");
-        return tt << url << DUrl();
+        return DUrlList() << DUrl();
     };
     stl.set(ADDR(FileJob,doMoveToTrash),doMoveToTrash);
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMMoveToTrashEvent>

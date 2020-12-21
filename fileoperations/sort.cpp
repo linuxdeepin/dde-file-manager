@@ -23,12 +23,6 @@
  */
 #include "sort.h"
 
-typedef struct
-{
-  char *name;
-  ino_t ino;
-} direntry_t;
-
 void *
 x2nrealloc (void *p, size_t *pn, size_t s)
 {
@@ -66,7 +60,7 @@ x2nrealloc (void *p, size_t *pn, size_t s)
 
 /* Compare the names of two directory entries */
 
-static int
+int
 direntry_cmp_name (void const *a, void const *b)
 {
   direntry_t const *dea = static_cast<direntry_t const *>(a);
@@ -75,11 +69,11 @@ direntry_cmp_name (void const *a, void const *b)
   return strcmp (dea->name, deb->name);
 }
 
-static int
+int
 direntry_cmp_inode (void const *a, void const *b)
 {
-  direntry_t const *dea = (direntry_t const *)a;
-  direntry_t const *deb = (direntry_t const *)b;
+  direntry_t const *dea = static_cast<direntry_t const *>(a);
+  direntry_t const *deb = static_cast<direntry_t const *>(b);
 
   return dea->ino < deb->ino ? -1 : dea->ino > deb->ino;
 }

@@ -12,6 +12,5 @@ int main(int argc, char *argv[])
     qDebug() << "end test cases ..............";
     QProcess::execute("killall dde-file-manager");
     QProcess::execute("killall deepin-editor");
-//    QProcess::execute("killall deepin-terminal");
     return ret;
 }
