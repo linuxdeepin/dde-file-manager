@@ -50,9 +50,10 @@ TEST_F(TestVaultLockManager, autoLock)
 TEST_F(TestVaultLockManager, tst_checkAuthentication)
 {
     // those code may cause pop dialog.
-    QDBusPendingReply<bool> (*st_checkAuthentication)() = []()->QDBusPendingReply<bool>{
+    QDBusPendingReply<bool> (*st_checkAuthentication)(const QString &) = [](const QString &)->QDBusPendingReply<bool>{
             return  QDBusPendingCall::fromCompletedCall(QDBusMessage());
     };
+
     Stub stub;
     stub.set(ADDR(VaultInterface, checkAuthentication), st_checkAuthentication);
     m_vaultLockManager->checkAuthentication(VAULT_CREATE);
@@ -176,5 +177,5 @@ TEST_F(TestVaultLockManager, tst_isValid)
     Stub stub;
     stub.set(ADDR(VaultInterface, isValid), st_isValid);
 
-    EXPECT_FALSE(m_vaultLockManager->isValid());
+    EXPECT_TRUE(m_vaultLockManager->isValid());
 }
