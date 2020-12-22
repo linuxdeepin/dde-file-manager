@@ -149,10 +149,6 @@ int main(int argc, char *argv[])
         DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
     }
 
-    if (!DFMGlobal::isWayLand()){
-        //wayland下不加载xcb
-        SingleApplication::loadDXcbPlugin();
-    }
     // fix "Error mounting location: volume doesn't implement mount” when ope as admin (bug-42653)
     if (DFMGlobal::isOpenAsAdmin()) {
         handleEnvOfOpenAsAdmin();
