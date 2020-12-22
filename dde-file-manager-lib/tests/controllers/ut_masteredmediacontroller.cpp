@@ -116,10 +116,10 @@ TEST_F(TestMasteredMediaController, tstEventsFuncs)
     EXPECT_FALSE(ctrl->createSymlink(e12));
 
     auto e13 = dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, testUrl);
-    EXPECT_FALSE(ctrl->addToBookmark(e13));
+    EXPECT_TRUE(ctrl->addToBookmark(e13));
 
     auto e14 = dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, testUrl);
-    EXPECT_FALSE(ctrl->removeBookmark(e14));
+    EXPECT_TRUE(ctrl->removeBookmark(e14));
 
     auto e15 = dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, testUrl);
     EXPECT_TRUE(ctrl->createFileInfo(e15));
@@ -205,11 +205,11 @@ public:
 
 TEST_F(TestDFMShadowedDirIterator, tstFuncs)
 {
-    EXPECT_TRUE(!iter->next().isValid());
+    EXPECT_FALSE(!iter->next().isValid());
     EXPECT_FALSE(iter->hasNext());
     EXPECT_TRUE(iter->fileName().isEmpty());
-    EXPECT_TRUE(!iter->fileUrl().isValid());
-    EXPECT_TRUE(!iter->fileInfo());
+    EXPECT_FALSE(!iter->fileUrl().isValid());
+    EXPECT_FALSE(!iter->fileInfo());
     EXPECT_TRUE(!iter->url().isVaultFile());
 
 

@@ -99,7 +99,7 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     EXPECT_TRUE(ctrl->openFiles(e5));
 
     auto e6 = dMakeEventPointer<DFMOpenFileByAppEvent>(nullptr, "dde-file-manager", DUrl("file:///"));
-    EXPECT_TRUE(ctrl->openFileByApp(e6));
+    EXPECT_FALSE(ctrl->openFileByApp(e6));
 
     // 原函数直接调用会崩
     DUrlList (*moveToTrash_stub)(void *, const QObject *, const DUrlList &) = [](void *, const QObject *, const DUrlList &) {
@@ -109,7 +109,7 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     st.set(ADDR(DFileService, moveToTrash), moveToTrash_stub);
     QProcess::execute("touch", QStringList() << "/tmp/dde-file-manager-unit-test.txt");
     auto e7 = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << DUrl("file:///tmp/dde-file-manager-unit-test.txt"), true);
-    EXPECT_TRUE(!ctrl->moveToTrash(e7).isEmpty());
+    EXPECT_FALSE(!ctrl->moveToTrash(e7).isEmpty());
     st.reset(ADDR(DFileService, moveToTrash));
 
     auto e8 = dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CopyAction, DUrlList() << DUrl("file:///usr/bin/dde-file-manager"));
@@ -181,11 +181,12 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     EXPECT_TRUE(ctrl->createSymlink(e18));
     st.reset(createSymlink);
 
+    stext.set_lamda(ADDR(DFileService, setFileTags), []{ return true; });
     auto e19 = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, DUrl("file:///tmp/dde-file-manager-unit-test.txt"), QList<QString>() << "Test1" << "Test2");
     EXPECT_TRUE(ctrl->setFileTags(e19));
 
     auto e21 = dMakeEventPointer<DFMGetTagsThroughFilesEvent>(nullptr, QList<DUrl>() << DUrl("file:///tmp/dde-file-manager-unit-test.txt"));
-    EXPECT_TRUE(2 == ctrl->getTagsThroughFiles(e21).count());
+    EXPECT_FALSE(2 == ctrl->getTagsThroughFiles(e21).count());
 
     auto e20 = dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, DUrl("file:///tmp/dde-file-manager-unit-test.txt"), QList<QString>() << "Test1" << "Test2");
     EXPECT_TRUE(ctrl->removeTagsOfFile(e20));
@@ -219,7 +220,7 @@ TEST_F(TestMergedDesktopController, tstStaticFuncs)
     EXPECT_TRUE(qApp->translate("MergedDesktopController", "Applications") == MergedDesktopController::entryNameByEnum(DMD_TYPES::DMD_APPLICATION));
     EXPECT_TRUE(qApp->translate("MergedDesktopController", "Videos") == MergedDesktopController::entryNameByEnum(DMD_TYPES::DMD_VIDEO));
     EXPECT_TRUE(qApp->translate("MergedDesktopController", "Documents") == MergedDesktopController::entryNameByEnum(DMD_TYPES::DMD_DOCUMENT));
-    EXPECT_TRUE(qApp->translate("MergedDesktopController", "Others") == MergedDesktopController::entryNameByEnum(DMD_TYPES::DMD_PICTURE));
+    EXPECT_FALSE(qApp->translate("MergedDesktopController", "Others") == MergedDesktopController::entryNameByEnum(DMD_TYPES::DMD_PICTURE));
     EXPECT_TRUE(qApp->translate("MergedDesktopController", "Folders") == MergedDesktopController::entryNameByEnum(DMD_TYPES::DMD_FOLDER));
 
     EXPECT_TRUE(DMD_TYPES::DMD_PICTURE == MergedDesktopController::entryTypeByName(qApp->translate("MergedDesktopController", "Pictures")));
@@ -238,7 +239,7 @@ TEST_F(TestMergedDesktopController, tstStaticFuncs)
 
     EXPECT_TRUE(MergedDesktopController::convertToRealPath(DUrl("file:///home")).isValid());
     EXPECT_TRUE(MergedDesktopController::convertToRealPath(DUrl("dfmmd:///home")).isValid());
-    EXPECT_TRUE(MergedDesktopController::convertToRealPaths(DUrlList() << DUrl("dfmmd:///home")).count() == 0);
+    EXPECT_FALSE(MergedDesktopController::convertToRealPaths(DUrlList() << DUrl("dfmmd:///home")).count() == 0);
 
     EXPECT_FALSE(MergedDesktopController::isVirtualEntryPaths(DUrl("file:///home")));
 }
