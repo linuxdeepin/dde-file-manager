@@ -42,7 +42,7 @@ public:
     }
 
 public:
-    TagHandle * m_tagHandle;
+    TagHandle *m_tagHandle;
     QByteArrayList filelist;
 };
 
@@ -59,7 +59,7 @@ TEST_F(TestTagHandle, on_file_delete)
 TEST_F(TestTagHandle, on_file_rename)
 {
     QList<QPair<QByteArray, QByteArray>> files;
-    QPair<QByteArray, QByteArray> temp("name","ttttt");
+    QPair<QByteArray, QByteArray> temp("name", "ttttt");
     files << temp;
     m_tagHandle->onFileRename(files);
 }
