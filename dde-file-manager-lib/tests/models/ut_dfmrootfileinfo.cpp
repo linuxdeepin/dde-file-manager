@@ -1,11 +1,15 @@
 #include <gtest/gtest.h>
 #include "stub.h"
+#include "stubext.h"
 #include <ddiskmanager.h>
+#include <ddiskdevice.h>
 #include <dblockdevice.h>
 
-#define protected public
-#include "models/dfmrootfileinfo.h"
 #include "interfaces/dfmstandardpaths.h"
+#define protected public
+#define private public
+#include "models/dfmrootfileinfo.h"
+#include "models/dfmrootfileinfo_p.h"
 
 
 namespace {
@@ -47,6 +51,9 @@ TEST_F(TestDFMRootFileInfo, exist)
 TEST_F(TestDFMRootFileInfo, canRename)
 {
     ASSERT_FALSE(info->canRename());
+    DFMRootFileInfo *sda1 = new DFMRootFileInfo(DUrl("dfmroot:///sda1.localdisk"));
+    EXPECT_FALSE(sda1->canRename());
+    delete sda1;
 }
 
 TEST_F(TestDFMRootFileInfo, suffix)
@@ -150,6 +157,21 @@ TEST_F(TestDFMRootFileInfo, filesCount)
 TEST_F(TestDFMRootFileInfo, iconName)
 {
     EXPECT_STREQ("user-desktop", info->iconName().toStdString().c_str());
+    DFMRootFileInfo *sda1 = new DFMRootFileInfo(DUrl("dfmroot:///sda1.localdisk"));
+    sda1->iconName();
+    stub_ext::StubExt st;
+    st.set_lamda(ADDR(DDiskDevice, mediaCompatibility), []{ return QStringList{"optical"}; });
+    sda1->iconName();
+    st.reset(ADDR(DDiskDevice, mediaCompatibility));
+    st.set_lamda(VADDR(DFMRootFileInfo, fileType), []{
+        DFMRootFileInfo::ItemType type = DFMRootFileInfo::ItemType::UDisksRemovable;
+        return static_cast<DFMRootFileInfo::FileType>(type);
+    });
+    sda1->iconName();
+    sda1->d_ptr->mps << QByteArray("/\0", 2);
+    sda1->iconName();
+
+    delete sda1;
 }
 
 TEST_F(TestDFMRootFileInfo, canRedirectionFileUrl)
@@ -178,7 +200,6 @@ TEST_F(TestDFMRootFileInfo, tstGetVoltag)
     EXPECT_TRUE(!info->getVolTag().isEmpty());
 }
 
-
 TEST_F(TestDFMRootFileInfo, tstCheckMpsStr)
 {
     EXPECT_FALSE(info->checkMpsStr("Test"));
@@ -189,6 +210,22 @@ TEST_F(TestDFMRootFileInfo, tstMenuActionList)
     EXPECT_TRUE(info->menuActionList().count() > 0);
     DFMRootFileInfo *gvfs = new DFMRootFileInfo(DUrl("dfmroot:///fakeDisk.gvfsmp"));
     gvfs->menuActionList();
+
+    stub_ext::StubExt st;
+    st.set_lamda(ADDR(QVariant, toBool), []{ return true; });
+    DFMRootFileInfo *sda1 = new DFMRootFileInfo(DUrl("dfmroot:///sda1.localdisk"));
+    sda1->menuActionList();
+    delete sda1;
+
+    st.set_lamda(ADDR(DBlockDevice, readOnly), []{ return false; });
+    st.set_lamda(ADDR(DDiskDevice, optical), []{ return true; });
+    st.set_lamda(ADDR(DDiskDevice, media), []{ return "_rw"; });
+    st.set_lamda(ADDR(DDiskDevice, ejectable), []{ return true; });
+    st.set_lamda(ADDR(DDiskDevice, canPowerOff), []{ return true; });
+    st.set_lamda(ADDR(DDiskDevice, mediaCompatibility), []{ return QStringList{"optical"}; });
+    DFMRootFileInfo *sda = new DFMRootFileInfo(DUrl("dfmroot:///sda.localdisk"));
+    sda->menuActionList();
+    delete sda;
 }
 
 TEST_F(TestDFMRootFileInfo, tstConstructor)

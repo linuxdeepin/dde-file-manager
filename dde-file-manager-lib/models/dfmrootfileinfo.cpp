@@ -24,6 +24,7 @@
 #include "utils/singleton.h"
 #include "controllers/pathmanager.h"
 #include "app/filesignalmanager.h"
+#include "dfmrootfileinfo_p.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -45,30 +46,6 @@
 #include <QJsonArray>
 
 #include <QTimer>
-
-
-class DFMRootFileInfoPrivate
-{
-public:
-    QStandardPaths::StandardLocation stdloc;
-    QSharedPointer<DBlockDevice> blk;
-    QSharedPointer<DBlockDevice> ctblk;
-    QExplicitlySharedDataPointer<DGioMount> gmnt;
-    QExplicitlySharedDataPointer<DGioFileInfo> gfsi;
-    QString backer_url;
-    QByteArrayList mps;
-    qulonglong size;
-    QString label;
-    QString fs;
-    QString udispname;
-    QString idUUID;
-    QString currentUUID;
-    QString backupUUID;
-    bool isod;
-    bool encrypted;
-    DFMRootFileInfo *q_ptr;
-    Q_DECLARE_PUBLIC(DFMRootFileInfo)
-};
 
 QMap<QString, DiskInfoStr> DFMRootFileInfo::DiskInfoMap = QMap<QString, DiskInfoStr>();
 

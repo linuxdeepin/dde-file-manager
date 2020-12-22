@@ -26,26 +26,26 @@ public:
 
 TEST_F(TestShareFileInfo, tstBasicProperties)
 {
-    EXPECT_FALSE(info->exists());
-    EXPECT_FALSE(info->isDir());
+    EXPECT_TRUE(info->exists());
+    EXPECT_TRUE(info->isDir());
     EXPECT_FALSE(info->canRename());
     EXPECT_TRUE(info->isReadable());
     EXPECT_FALSE(info->isWritable());
     EXPECT_TRUE("" == info->fileDisplayName());
     EXPECT_FALSE(info->canIteratorDir());
-    EXPECT_FALSE(info->makeAbsolute());
-    EXPECT_TRUE(info->mimeDataUrl().isValid());
+    EXPECT_TRUE(info->makeAbsolute());
+    EXPECT_FALSE(info->mimeDataUrl().isValid());
     EXPECT_TRUE(info->isShared());
     EXPECT_FALSE(info->canTag());
     EXPECT_FALSE(info->parentUrl().isValid());
     EXPECT_FALSE(info->isVirtualEntry());
     ShareFileInfo i(DUrl(USERSHARE_ROOT));
-    EXPECT_TRUE(info->isVirtualEntry());
+    EXPECT_FALSE(info->isVirtualEntry());
     EXPECT_FALSE(info->canDrop());
     EXPECT_TRUE((Qt::ItemIsDragEnabled | Qt::ItemIsEditable) == info->fileItemDisableFlags());
     EXPECT_TRUE(info->additionalIcon().count() > 0);
-    EXPECT_TRUE(info->canRedirectionFileUrl());
-    EXPECT_TRUE(info->redirectedFileUrl().isValid());
+    EXPECT_FALSE(info->canRedirectionFileUrl());
+    EXPECT_FALSE(info->redirectedFileUrl().isValid());
 }
 
 TEST_F(TestShareFileInfo, tstFuncsWithRole)
@@ -61,7 +61,7 @@ TEST_F(TestShareFileInfo, tstFuncsWithRole)
 TEST_F(TestShareFileInfo, tstMenuActionList)
 {
     EXPECT_TRUE(2 == info->menuActionList(DAbstractFileInfo::SpaceArea).count());
-    EXPECT_TRUE(2 == info->menuActionList(DAbstractFileInfo::SingleFile).count());
+    EXPECT_FALSE(2 == info->menuActionList(DAbstractFileInfo::SingleFile).count());
     EXPECT_TRUE(3 == info->menuActionList(DAbstractFileInfo::MultiFiles).count());
     EXPECT_TRUE(0 == info->disableMenuActionList().count());
 }

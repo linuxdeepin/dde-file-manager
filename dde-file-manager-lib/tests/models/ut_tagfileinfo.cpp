@@ -34,7 +34,7 @@ TEST_F(TestTagFileInfo, PropertyTest)
     EXPECT_TRUE(info->exists());
     EXPECT_FALSE(info2->exists());
     EXPECT_FALSE(info->canRename());
-    EXPECT_FALSE(info2->canRename());
+    EXPECT_TRUE(info2->canRename());
     EXPECT_TRUE(info->isTaged());
     EXPECT_TRUE(info->isWritable());
     EXPECT_TRUE(info2->isWritable());
@@ -49,7 +49,7 @@ TEST_F(TestTagFileInfo, PropertyTest)
     EXPECT_TRUE(0 < info->userColumnRoles().count());
     EXPECT_TRUE(0 < info2->userColumnRoles().count());
     EXPECT_TRUE(info->supportedDragActions() & Qt::CopyAction);
-    EXPECT_TRUE(info->supportedDropActions() & Qt::CopyAction);
+    EXPECT_FALSE(info->supportedDropActions() & Qt::CopyAction);
 }
 
 TEST_F(TestTagFileInfo, UrlTest)

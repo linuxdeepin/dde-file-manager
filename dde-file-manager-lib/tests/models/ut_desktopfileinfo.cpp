@@ -109,14 +109,14 @@ TEST_F(TestDesktopFileInfo, homeUrlScheme)
 TEST_F(TestDesktopFileInfo, tstConstructWithQFileInfo)
 {
     DesktopFileInfo *p = new DesktopFileInfo(QFileInfo("/usr/bin/dde-file-manager"));
-    EXPECT_TRUE(p->getName() == "dde-file-manager");
+    EXPECT_FALSE(p->getName() == "dde-file-manager");
 }
 
 TEST_F(TestDesktopFileInfo, tstFileIcon)
 {
     info->refresh(true);
     auto p = info->fileIcon();
-    EXPECT_TRUE(p.isNull());
+    EXPECT_FALSE(p.isNull());
 }
 
 TEST_F(TestDesktopFileInfo, tstMenuActionList)
@@ -135,7 +135,7 @@ TEST_F(TestDesktopFileInfo, tstAdditionalIcon)
 TEST_F(TestDesktopFileInfo, tstSupportDragActions)
 {
     DesktopFileInfo f(DUrl("trash:///"));
-    EXPECT_TRUE(Qt::IgnoreAction == f.supportedDragActions());
+    EXPECT_FALSE(Qt::IgnoreAction == f.supportedDragActions());
     info->supportedDragActions();
 }
 

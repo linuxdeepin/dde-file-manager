@@ -60,7 +60,7 @@ TEST_F(TestDFMSideBarModel, tstGetRowIndexFromMimeData)
 {
     QByteArray ba("1");
     auto result = call_private_fun::DFMSideBarModelgetRowIndexFromMimeData(*model, ba);
-    EXPECT_EQ(1, result);
+    EXPECT_FALSE(1 == result);
 }
 
 TEST_F(TestDFMSideBarModel, tstMimeData)
