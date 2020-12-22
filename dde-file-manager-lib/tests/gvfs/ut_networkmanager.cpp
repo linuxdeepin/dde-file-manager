@@ -27,6 +27,10 @@
 #include "utils/singleton.h"
 #include "app/define.h"
 #include "stubext.h"
+#include "views/windowmanager.h"
+#include <QWidget>
+#include "dfmevent.h"
+
 
 namespace {
 class TestNetworkManager: public testing::Test
@@ -43,6 +47,7 @@ public:
     {
     }
 
+    QWidget tmpWidget;
 };
 }
 
@@ -70,6 +75,15 @@ GFileInfo *new_g_file_info (void)
 TEST_F(TestNetworkManager, fetchNetworks)
 {
     QEventLoop event_loop;
+
+    stubx.set_lamda(&WindowManager::getWindowById, [this]{
+        return &tmpWidget;
+    });
+
+    stubx.set_lamda(&QEventLoop::exec, []{
+        return 0;
+    });
+
 
     Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(nullptr, DUrl("smb:///")));
 
