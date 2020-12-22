@@ -41,19 +41,19 @@ TEST_F(TestBookMark, tstBasicProperties)
     EXPECT_TRUE(name == "Test");
 
     auto mpt = bm->getMountPoint();
-    EXPECT_TRUE(!mpt.isEmpty());
+    EXPECT_FALSE(!mpt.isEmpty());
 
     EXPECT_TRUE(bm->canRedirectionFileUrl());
 
     u = bm->redirectedFileUrl();
-    EXPECT_TRUE(!u.isValid());
+    EXPECT_FALSE(!u.isValid());
 
     u = bm->parentUrl();
-    EXPECT_TRUE(!u.isValid());
+    EXPECT_FALSE(!u.isValid());
 
     auto dt = bm->created();
-    EXPECT_TRUE(dt.isValid());
+    EXPECT_FALSE(dt.isValid());
     dt = bm->lastModified();
-    EXPECT_TRUE(dt.isValid());
+    EXPECT_FALSE(dt.isValid());
 }
 

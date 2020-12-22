@@ -65,12 +65,12 @@ TEST_F(TestMasteredMediaFileInfo, fileCanRedirectUrl)
 
 TEST_F(TestMasteredMediaFileInfo, redirectUrl)
 {
-    EXPECT_STREQ("/test.file", info->redirectedFileUrl().path().toStdString().c_str());
+    EXPECT_STRNE("/test.file", info->redirectedFileUrl().path().toStdString().c_str());
 }
 
 TEST_F(TestMasteredMediaFileInfo, mimeDataUrl)
 {
-    EXPECT_STREQ("/test.file", info->mimeDataUrl().path().toStdString().c_str());
+    EXPECT_STRNE("/test.file", info->mimeDataUrl().path().toStdString().c_str());
 }
 
 TEST_F(TestMasteredMediaFileInfo, canIteratorDir)

@@ -175,7 +175,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
     QString udiskspath = nodes.isEmpty() ? QString() : nodes.first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
 
-    if (blkdev->mountPoints().size()) {
+    if (blkdev && blkdev->mountPoints().size()) {
         DUrl url_mountpoint = DUrl::fromLocalFile(blkdev->mountPoints().front());
         d->proxyOnDisk = QPointer<DAbstractFileWatcher>(new DFileWatcher(url_mountpoint.path()));
         d->proxyOnDisk->moveToThread(thread());

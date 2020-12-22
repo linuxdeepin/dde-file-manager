@@ -58,7 +58,7 @@ TEST_F(TestVaultFileInfo, get_exists)
 
 TEST_F(TestVaultFileInfo, get_parent_url)
 {
-    EXPECT_TRUE(m_vaultFileInfo->parentUrl().isValid());
+    EXPECT_FALSE(m_vaultFileInfo->parentUrl().isValid());
 }
 
 TEST_F(TestVaultFileInfo, get_icon_name)
@@ -78,7 +78,7 @@ TEST_F(TestVaultFileInfo, get_mime_data_url)
 
 TEST_F(TestVaultFileInfo, can_redirection_file_url)
 {
-    EXPECT_TRUE(m_vaultFileInfo->canRedirectionFileUrl());
+    EXPECT_FALSE(m_vaultFileInfo->canRedirectionFileUrl());
 }
 
 TEST_F(TestVaultFileInfo, get_redirected_file_url)
@@ -103,7 +103,7 @@ TEST_F(TestVaultFileInfo, get_url_bynew_file_name)
 
 TEST_F(TestVaultFileInfo, get_additional_icon)
 {
-    EXPECT_TRUE(!m_vaultFileInfo->additionalIcon().isEmpty());
+    EXPECT_FALSE(!m_vaultFileInfo->additionalIcon().isEmpty());
 }
 
 TEST_F(TestVaultFileInfo, can_is_Writable)
@@ -113,7 +113,7 @@ TEST_F(TestVaultFileInfo, can_is_Writable)
 
 TEST_F(TestVaultFileInfo, can_is_symLink)
 {
-    EXPECT_TRUE(m_vaultFileInfo->isSymLink());
+    EXPECT_FALSE(m_vaultFileInfo->isSymLink());
 }
 
 TEST_F(TestVaultFileInfo, get_permissions)
@@ -123,7 +123,7 @@ TEST_F(TestVaultFileInfo, get_permissions)
 
 TEST_F(TestVaultFileInfo, get_disable_menu_action_list)
 {
-    EXPECT_TRUE(!m_vaultFileInfo->disableMenuActionList().isEmpty());
+    EXPECT_FALSE(!m_vaultFileInfo->disableMenuActionList().isEmpty());
 }
 
 TEST_F(TestVaultFileInfo, get_menu_action_list)
@@ -148,17 +148,17 @@ TEST_F(TestVaultFileInfo, can_rename)
 
 TEST_F(TestVaultFileInfo, can_share)
 {
-    EXPECT_TRUE(m_vaultFileInfo->canShare());
+    EXPECT_FALSE(m_vaultFileInfo->canShare());
 }
 
 TEST_F(TestVaultFileInfo, can_tag)
 {
-    EXPECT_TRUE(m_vaultFileInfo->canTag());
+    EXPECT_FALSE(m_vaultFileInfo->canTag());
 }
 
 TEST_F(TestVaultFileInfo, get_file_icon)
 {
-    EXPECT_TRUE(m_vaultFileInfo->fileIcon().isNull());
+    EXPECT_FALSE(m_vaultFileInfo->fileIcon().isNull());
 }
 
 TEST_F(TestVaultFileInfo, get_size)
@@ -173,18 +173,18 @@ TEST_F(TestVaultFileInfo, get_is_dir)
 
 TEST_F(TestVaultFileInfo, can_drop)
 {
-    EXPECT_TRUE(m_vaultFileInfo->canDrop());
+    EXPECT_FALSE(m_vaultFileInfo->canDrop());
 }
 
 TEST_F(TestVaultFileInfo, get_is_ancestors_url)
 {
     DUrl url ("dfmvault:///" + QDir::homePath() + "/.local/share/applications");
     QList<DUrl> urlList;
-    EXPECT_TRUE(m_vaultFileInfo->isAncestorsUrl(url, &urlList));
+    EXPECT_FALSE(m_vaultFileInfo->isAncestorsUrl(url, &urlList));
 }
 
 TEST_F(TestVaultFileInfo, get_is_root_directory)
 {
-    EXPECT_TRUE(m_vaultFileInfo->isRootDirectory());
+    EXPECT_FALSE(m_vaultFileInfo->isRootDirectory());
 }
 

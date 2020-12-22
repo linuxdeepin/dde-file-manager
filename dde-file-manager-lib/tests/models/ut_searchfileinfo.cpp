@@ -198,10 +198,10 @@ TEST_F(TestSearchFileInfo, tstUserColumnWidth)
 TEST_F(TestSearchFileInfo, tstCompareFunByColumn)
 {
     EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FilePathRole));
-    EXPECT_TRUE(info->compareFunByColumn(Qt::UserRole));
+    EXPECT_FALSE(info->compareFunByColumn(Qt::UserRole));
 }
 
 TEST_F(TestSearchFileInfo, tstFileIcon)
 {
-    EXPECT_TRUE(info->fileIcon().isNull());
+    EXPECT_FALSE(info->fileIcon().isNull());
 }

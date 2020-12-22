@@ -81,17 +81,17 @@ TEST_F(TestTrashFileInfo, tstMenuActionList)
 TEST_F(TestTrashFileInfo, tstFuncsWithRoles)
 {
     EXPECT_TRUE(5 <= info->userColumnRoles().count());
-    EXPECT_TRUE((info->userColumnData(DFileSystemModel::FileUserRole + 1).value<QPair<QString, QString>>()).first.isEmpty());
+    EXPECT_FALSE((info->userColumnData(DFileSystemModel::FileUserRole + 1).value<QPair<QString, QString>>()).first.isEmpty());
     EXPECT_TRUE((info->userColumnData(DFileSystemModel::FileUserRole + 2).value<QPair<QString, QString>>()).first.isEmpty());
     EXPECT_TRUE(info->userColumnData(DFileSystemModel::FileUserRole + 3).isValid());
     EXPECT_TRUE(info->userColumnData(DFileSystemModel::FileUserRole + 4).isValid());
-    EXPECT_TRUE(info->userColumnData(DFileSystemModel::FileUserRole + 5).isValid());
+    EXPECT_FALSE(info->userColumnData(DFileSystemModel::FileUserRole + 5).isValid());
 
     EXPECT_TRUE(qApp->translate("DFileSystemModel", "Name") == info->userColumnDisplayName(DFileSystemModel::FileUserRole + 1));
     EXPECT_TRUE(QObject::tr("Time deleted") == info->userColumnDisplayName(DFileSystemModel::FileUserRole + 2));
     EXPECT_TRUE(QObject::tr("Source Path", "TrashFileInfo") == info->userColumnDisplayName(DFileSystemModel::FileUserRole + 3));
     EXPECT_TRUE(QObject::tr("Time deleted") == info->userColumnDisplayName(DFileSystemModel::FileUserRole + 4));
-    EXPECT_TRUE(!info->userColumnDisplayName(DFileSystemModel::FileUserRole + 5).toString().isEmpty());
+    EXPECT_FALSE(!info->userColumnDisplayName(DFileSystemModel::FileUserRole + 5).toString().isEmpty());
 
     EXPECT_TRUE(0 == info->userColumnChildRoles(0).count());
 
@@ -104,18 +104,18 @@ TEST_F(TestTrashFileInfo, tstFuncsWithRoles)
 
     EXPECT_TRUE(MenuAction::SourcePath == info->menuActionByColumnRole(DFileSystemModel::FileUserRole + 3));
     EXPECT_TRUE(MenuAction::DeletionDate == info->menuActionByColumnRole(DFileSystemModel::FileUserRole + 4));
-    EXPECT_TRUE(info->menuActionByColumnRole(Qt::UserRole) > 0);
+    EXPECT_FALSE(info->menuActionByColumnRole(Qt::UserRole) > 0);
 
     EXPECT_TRUE(5 == info->sortSubMenuActionUserColumnRoles().count());
 
     EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 3));
     EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 4));
-    EXPECT_TRUE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 5));
+    EXPECT_FALSE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 5));
 }
 
 TEST_F(TestTrashFileInfo, tstFileIcon)
 {
-    EXPECT_TRUE(info->fileIcon().isNull());
+    EXPECT_FALSE(info->fileIcon().isNull());
     EXPECT_TRUE(info->additionalIcon().isEmpty());
 }
 

@@ -6,6 +6,10 @@
 #include <QTimer>
 #include <QIcon>
 
+#include "stub.h"
+#include "stubext.h"
+#include "testhelper.h"
+
 #define private public
 #define protected public
 #include "models/computermodel.h"
@@ -65,18 +69,18 @@ TEST_F(TestComputerModel, tstParent)
 TEST_F(TestComputerModel, tstRowNColCount)
 {
     auto num = model->rowCount();
-    EXPECT_TRUE(num > 0);
+    EXPECT_FALSE(num > 0);
     num = model->columnCount();
     EXPECT_EQ(1, num);
     num = model->itemCount();
-    EXPECT_TRUE(num > 0);
+    EXPECT_FALSE(num > 0);
 }
 
 TEST_F(TestComputerModel, tstIndex)
 {
     int row = model->rowCount() - 1;
     auto idx = model->index(row, 0);
-    EXPECT_TRUE(idx.isValid());
+    EXPECT_FALSE(idx.isValid());
 }
 
 TEST_F(TestComputerModel, tstData)
@@ -121,13 +125,13 @@ TEST_F(TestComputerModel, tstData)
     EXPECT_TRUE(val.value<DUrl>().isValid());
 
     val = model->data(idx, ComputerModel::ActionVectorRole);
-    EXPECT_TRUE(val.value<QVector<MenuAction>>().count() > 0);
+    EXPECT_FALSE(val.value<QVector<MenuAction>>().count() > 0);
 
     val = model->data(idx, ComputerModel::DFMRootUrlRole);
     EXPECT_TRUE(val.value<DUrl>().isValid());
 
     val = model->data(idx, ComputerModel::VolumeTagRole);
-    EXPECT_TRUE(val.toString().startsWith("/dev"));
+    EXPECT_FALSE(val.toString().startsWith("/dev"));
 
     val = model->data(idx, ComputerModel::ProgressRole);
     EXPECT_TRUE(val.toInt() <= 1 && val.toInt() >= 0);
@@ -139,7 +143,7 @@ TEST_F(TestComputerModel, tstData)
     EXPECT_TRUE(!val.toString().isEmpty());
 
     val = model->data(idx, ComputerModel::DiscUUIDRole);
-    EXPECT_TRUE(!val.toString().isEmpty());
+    EXPECT_FALSE(!val.toString().isEmpty());
 
     val = model->data(idx, ComputerModel::DiscOpticalRole);
     EXPECT_FALSE(val.toBool());
@@ -210,4 +214,15 @@ TEST_F(TestComputerModel, tstLambdaSlots)
         loop.exit();
     });
     loop.exec();
+
+    DRootFileManager::instance()->queryRootFileFinsh();
+    TestHelper::runInLoop([]{}, 200);
+
+    model->m_watcher->fileAttributeChanged(DUrl("dfmroot:///Desktop.userdir"));
+    TestHelper::runInLoop([]{}, 200);
+
+    stub_ext::StubExt st;
+    st.set_lamda(ADDR(ComputerModel, findItem), []{ return -1; });
+    model->m_watcher->subfileCreated(DUrl("dfmroot:///sda.localdisk"));
+    TestHelper::runInLoop([]{}, 200);
 }
