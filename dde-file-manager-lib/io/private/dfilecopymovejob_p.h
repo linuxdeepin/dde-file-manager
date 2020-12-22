@@ -90,11 +90,13 @@ public:
             , buffer(nullptr)
             , size(0)
             , currentpos(0)
+            , permission(QFileDevice::ReadOwner)
         {
 
         }
         FileCopyInfo(const FileCopyInfo &other) : closeflag(other.closeflag)
             , isdir(other.isdir)
+            , tofd(other.tofd)
             , fromdevice(other.fromdevice)
             , todevice(other.todevice)
             , handler(other.handler)
@@ -103,6 +105,7 @@ public:
             , buffer(other.buffer)
             , size(other.size)
             , currentpos(other.currentpos)
+            , permission(other.permission)
         {
 
         }
