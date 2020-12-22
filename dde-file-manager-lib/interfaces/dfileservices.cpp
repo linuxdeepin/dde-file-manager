@@ -1067,7 +1067,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     bool bvist = true;
     QString host, port;
     QStringList ipInfoList = rootFileName.split(",");
-    if (ipInfoList.isEmpty()) {
+    if (!ipInfoList.isEmpty()) {
         int spliteIndex = ipInfoList[0].indexOf("=");
         host = ipInfoList[0].mid((spliteIndex >= 0 && spliteIndex < ipInfoList[0].length() - 1)
                 ? spliteIndex + 1 : 0);
