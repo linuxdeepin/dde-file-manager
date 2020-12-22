@@ -52,11 +52,11 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             operatorStack.pop_front();
         }
         operatorStack.push(*event.data());
-        m_dbusInterface->pushEvent(m_eventType);
+        pushEvent();
         return true;
     }
     case DFMEvent::Revocation: {
-        m_dbusInterface->popEvent();
+        popEvent();
         return true;
     }
     case DFMEvent::CleanSaveOperator:
@@ -71,6 +71,21 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
 OperatorRevocation::OperatorRevocation()
 {
+
+}
+
+void OperatorRevocation::slotRevocationEvent()
+{
+    revocation();
+}
+
+bool OperatorRevocation::initialize()
+{
+    if (m_dbusInterface) {
+        delete m_dbusInterface;
+        m_dbusInterface = nullptr;
+    }
+
     m_dbusInterface = new RevocationMgrInterface("com.deepin.filemanager.daemon",
                                                  "/com/deepin/filemanager/daemon/RevocationManager",
                                                  QDBusConnection::systemBus(),
@@ -78,7 +93,11 @@ OperatorRevocation::OperatorRevocation()
 
     if (!m_dbusInterface->isValid()) {
         qDebug() << "RevocationMgerInterface cannot linked!";
-        return;
+
+        delete m_dbusInterface;
+        m_dbusInterface = nullptr;
+
+        return false;
     }
 
     //! Get revocation event type.
@@ -90,16 +109,25 @@ OperatorRevocation::OperatorRevocation()
     }
 
     //! Monitor revocation event from dde-file-manager-daemon
-    if (m_eventType == DFM_FILE_MGR_EVENT) {
-        connect(m_dbusInterface, &RevocationMgrInterface::fmgrRevocationAction, this, &OperatorRevocation::slotRevocationEvent);
-    } else {
-        connect(m_dbusInterface, &RevocationMgrInterface::deskRevocationAction, this, &OperatorRevocation::slotRevocationEvent);
+    QString sigName = "fmgrRevocationAction";
+    if (m_eventType == DFM_DESKTOP_EVENT) {
+        sigName = "deskRevocationAction";
     }
-}
 
-void OperatorRevocation::slotRevocationEvent()
-{
-    revocation();
+    bool bConnected = QDBusConnection::systemBus().connect(
+                "com.deepin.filemanager.daemon",
+                "/com/deepin/filemanager/daemon/RevocationManager",
+                "com.deepin.filemanager.daemon.RevocationManager",
+                sigName,
+                this,
+                SLOT(slotRevocationEvent()));
+    if (!bConnected) {
+        qDebug() << "connect to daemon failed!";
+        return false;
+    }
+
+    qDebug() << "OperatorRevocation initialize successful.";
+    return true;
 }
 
 bool OperatorRevocation::revocation()
@@ -147,6 +175,32 @@ QString OperatorRevocation::getProcessName()
     }
     DUrl url(processPath);
     return url.fileName();
+}
+
+void OperatorRevocation::pushEvent()
+{
+    if (m_dbusInterface && m_dbusInterface->isValid()) {
+        m_dbusInterface->pushEvent(m_eventType);
+    } else {
+        bool bSuccess = initialize();
+        if (bSuccess) {
+            m_dbusInterface->pushEvent(m_eventType);
+        }
+    }
+}
+
+void OperatorRevocation::popEvent()
+{
+    if (m_dbusInterface && m_dbusInterface->isValid()) {
+        m_dbusInterface->popEvent();
+    } else {
+        bool bSuccess = initialize();
+        if (bSuccess) {
+            m_dbusInterface->popEvent();
+        } else {
+            revocation();
+        }
+    }
 }
 
 

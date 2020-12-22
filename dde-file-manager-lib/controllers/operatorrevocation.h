@@ -55,8 +55,33 @@ protected slots:
     void slotRevocationEvent();
 
 private:
+    /**
+     * @brief initialize 建立dbus连接，获取程序类型
+     * @return
+     */
+    bool initialize();
+
+    /**
+     * @brief revocation 执行恢复操作
+     * @return
+     */
     bool revocation();
+
+    /**
+     * @brief getProcessName 获取当前进程名
+     * @return
+     */
     QString getProcessName();
+
+    /**
+     * @brief pushEvent 存储对文件、文件夹的操作事件
+     */
+    void pushEvent();
+
+    /**
+     * @brief popEvent 恢复对文件、文件夹的操作事件
+     */
+    void popEvent();
 
     QStack<DFMEvent> operatorStack;
 
