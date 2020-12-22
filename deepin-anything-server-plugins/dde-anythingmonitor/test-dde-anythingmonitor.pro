@@ -62,7 +62,7 @@ DEFINES += QT_DEPRECATED_WARNINGS DDE_ANYTHINGMONITOR DFM_NO_FILE_WATCHER
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 include(src.pri)
-include($$PWD/../../dde-file-manager-lib/fulltextsearch/fulltextsearch.pri)
+#include($$PWD/../../dde-file-manager-lib/fulltextsearch/fulltextsearch.pri)
 DISTFILES += dde-anythingmonitor.json
 
 
@@ -72,3 +72,20 @@ QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 include(../../common/common.pri)
 include(../../third-party/googletest/gtest_dependency.pri)
 include(tests/test.pri)
+
+#内存检测标签
+TSAN_TOOL_ENABLE = true
+equals(TSAN_TOOL_ENABLE, true ){
+    #DEFINES += TSAN_THREAD #互斥
+    DEFINES += ENABLE_TSAN_TOOL
+    message("deepin-screen-recorder enabled TSAN function with set: " $$TSAN_TOOL_ENABLE)
+    contains(DEFINES, TSAN_THREAD){
+       QMAKE_CXXFLAGS+="-fsanitize=thread"
+       QMAKE_CFLAGS+="-fsanitize=thread"
+       QMAKE_LFLAGS+="-fsanitize=thread"
+    } else {
+       QMAKE_CXXFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_CFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_LFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+    }
+}
