@@ -70,12 +70,6 @@ TEST_F(TestSecretManager, on_password_cleared)
         return  true;
     });
     EXPECT_NO_FATAL_FAILURE(m_secreat->on_password_cleared(nullptr, nullptr, nullptr));
-
-    st.set_lamda(&secret_password_clear_finish, [](GAsyncResult *result, GError **error) {
-        *error = new _GError;
-        return  true;
-    });
-    EXPECT_NO_FATAL_FAILURE(m_secreat->on_password_cleared(nullptr, nullptr, nullptr));
 }
 
 TEST_F(TestSecretManager, storeVaultPassword)
