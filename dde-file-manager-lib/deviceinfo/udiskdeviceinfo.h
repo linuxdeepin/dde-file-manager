@@ -55,7 +55,7 @@ public:
     explicit UDiskDeviceInfo(const DUrl &url);
     explicit UDiskDeviceInfo(const QString &url);
 
-    ~UDiskDeviceInfo();
+    ~UDiskDeviceInfo() override;
     void setDiskInfo(QDiskInfo diskInfo);
     QDiskInfo getDiskInfo() const;
     QString getId() const;
