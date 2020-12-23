@@ -47,7 +47,7 @@
 #include "singleton.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "drootfilemanager.h"
-
+#include "accessible/accessiblelist.h"
 #include "dfmapplication.h"
 
 #include <QApplication>
@@ -158,6 +158,14 @@ int main(int argc, char *argv[])
                                                 "trash, compression/decompression, file property "
                                                 "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+    // 集成测试标签
+#ifdef ENABLE_ACCESSIBILITY
+    QAccessible::installFactory(accessibleFactory);
+    QAccessible::setActive(true);
+#else
+    QAccessible::setActive(false);
+#endif
 
     DApplicationSettings setting;
 

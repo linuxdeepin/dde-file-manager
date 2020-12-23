@@ -54,6 +54,15 @@ CONFIG(DISABLE_ANYTHING) {
     DEFINES += DISABLE_TAG_SUPPORT
 }
 
+# 获取标签系统设置
+AC_FUNC_ENABLE = true
+#AC_FUNC_ENABLE = $$(ENABLE_AC_FUNC)
+# 检查集成测试标签
+equals( AC_FUNC_ENABLE, true ){
+    DEFINES += ENABLE_ACCESSIBILITY
+    message("lib-dde-file-manager enabled accessibility function with set: " $$AC_FUNC_ENABLE)
+}
+
 include(../dialogs/dialogs.pri)
 include(../utils/utils.pri)
 include(../chinese2pinyin/chinese2pinyin.pri)

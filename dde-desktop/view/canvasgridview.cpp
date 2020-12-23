@@ -67,6 +67,8 @@
 #include "controllers/mergeddesktopcontroller.h"
 #include "../dde-wallpaper-chooser/screensavercontrol.h"
 
+#include "accessibility/ac-desktop-define.h"
+
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
 
 std::atomic<bool> CanvasGridView::m_flag{ false };
@@ -120,6 +122,8 @@ CanvasGridView::CanvasGridView(const QString &screen, QWidget *parent)
     , d(new CanvasViewPrivate)
     , m_screenName(screen)
 {
+    AC_SET_OBJECT_NAME( this, AC_CANVAS_GRID_VIEW);
+    AC_SET_ACCESSIBLE_NAME( this, AC_CANVAS_GRID_VIEW);
     initUI();
     initConnection();
 }
@@ -3309,6 +3313,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     QSet<MenuAction> ignoreActions;
     ignoreActions  << MenuAction::Open;
     menu->setIgnoreMenuActions(ignoreActions);
+    menu->setAccessibleInfo(AC_FILE_MENU_DESKTOP);
 
     if (!menu) {
         return;

@@ -3,6 +3,7 @@
 #include "../../controllers/vaultcontroller.h"
 #include "vault/vaultlockmanager.h"
 #include "app/define.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -23,6 +24,8 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     , m_pTips4(nullptr)
     , m_pFinishedBtn(nullptr)
 {
+    AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_ENCRYPT_WIDGET);
+
     // 标题
     QLabel *pLabelTitle = new QLabel(tr("Encrypt File Vault"), this);
     QFont font = pLabelTitle->font();

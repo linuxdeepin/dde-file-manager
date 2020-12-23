@@ -5,6 +5,7 @@
 #include "darrowrectangle.h"
 #include "dtagactionwidget.h"
 #include "views/droundbutton.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QColor>
 #include <QDebug>
@@ -94,6 +95,11 @@ void DTagActionWidgetPrivate::initUiElement()
     for (std::size_t index = 0; index != 8; ++index) {
         m_roundButtons[index]->setContentsMargins(0, 0, 0, 0);
         m_roundButtons[index]->setRadius(20);
+
+        QString objMark = QString("Color%1").arg(index + 1);
+        m_roundButtons[index]->setObjectName(objMark);
+        AC_SET_ACCESSIBLE_NAME( m_roundButtons[index], objMark);
+
         m_HBoxLayout->addWidget(m_roundButtons[index], Qt::AlignCenter);
     }
 
@@ -109,6 +115,8 @@ void DTagActionWidgetPrivate::initUiElement()
     toolTip = new QLabel();
     toolTip->setText(QStringLiteral(" "));
     toolTip->setStyleSheet("color: #707070; font-size: 10px");
+    toolTip->setObjectName("tool_tip");
+    AC_SET_ACCESSIBLE_NAME( toolTip, AC_TAG_ACTION_WIDGET_TOOL_TIP);
 
     mainLayout->addWidget(toolTip, 0, Qt::AlignHCenter);
 }
@@ -119,6 +127,8 @@ DTagActionWidget::DTagActionWidget(QWidget *const parent)
     : QFrame{ parent },
       d_ptr{ new DTagActionWidgetPrivate{ this } }
 {
+    this->setObjectName("tagActionWidget");
+    AC_SET_ACCESSIBLE_NAME( this, AC_TAG_ACTION_WIDGET);
     this->setCentralLayout();
     this->initConnect();
 }

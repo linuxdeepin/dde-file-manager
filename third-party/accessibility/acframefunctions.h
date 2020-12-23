@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ACCESSIBLE_H
-#define ACCESSIBLE_H
+#ifndef ACCESSIBLE_FUNCTIONS_H
+#define ACCESSIBLE_FUNCTIONS_H
 
 // 为了方便使用,把相关定义独立出来,如有需要,直接包含这个头文件,然后使用SET_*的宏去设置,USE_*宏开启即可
 /* 宏参数说明
@@ -273,4 +273,4 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, QString fallba
     FUNC_TEXT(classname,accessiblename)
 /************************************************************************************************/
 
-#endif // ACCESSIBLE_H
+#endif // ACCESSIBLE_FUNCTIONS_H

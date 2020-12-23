@@ -37,6 +37,7 @@
 #include "dfileservices.h"
 #include "dfilestatisticsjob.h"
 #include <sys/stat.h>
+#include "accessibility/ac-lib-file-manager.h"
 
 #include "singleton.h"
 #include <QComboBox>
@@ -56,6 +57,7 @@ DStatusBar::DStatusBar(QWidget *parent)
     : QFrame(parent)
 {
     setObjectName("DStatusBar");
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_STATUS_BAR);
 
     initUI();
     initConnect();
@@ -77,6 +79,8 @@ void DStatusBar::initUI()
 
     m_loadingIndicator = new DPictureSequenceView(this);
     m_loadingIndicator->setFixedSize(18, 18);
+    AC_SET_OBJECT_NAME(m_loadingIndicator, AC_COMPUTER_STATUS_BAR_LOADING_INDICATOR);
+    AC_SET_ACCESSIBLE_NAME( m_loadingIndicator, AC_COMPUTER_STATUS_BAR_LOADING_INDICATOR);
  #if 0 //性能优化，放到 setLoadingIncatorVisible函数处理
      {
          QStringList seq;
@@ -89,6 +93,8 @@ void DStatusBar::initUI()
      m_loadingIndicator->hide();
 
     m_scaleSlider = new QSlider(this);
+    AC_SET_OBJECT_NAME(m_scaleSlider, AC_COMPUTER_STATUS_BAR_SCALE_SLIDER);
+    AC_SET_ACCESSIBLE_NAME(m_scaleSlider, AC_COMPUTER_STATUS_BAR_SCALE_SLIDER);
     m_scaleSlider->setOrientation(Qt::Horizontal);
     m_scaleSlider->adjustSize();
     m_scaleSlider->setFixedWidth(120);
@@ -170,12 +176,16 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     m_comboBoxLabel->hide();
 
     m_lineEdit = new QLineEdit(this);
+    AC_SET_OBJECT_NAME( m_lineEdit, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
+    AC_SET_ACCESSIBLE_NAME(m_lineEdit, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
     m_lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_lineEdit->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
     m_lineEdit->setVisible(mode == DialogSave);
     m_lineEdit->installEventFilter(this);
     m_lineEditLabel = new QLabel(this);
     m_lineEditLabel->setObjectName("lineEditLabel");
+    AC_SET_OBJECT_NAME( m_lineEditLabel, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
+    AC_SET_ACCESSIBLE_NAME(m_lineEditLabel, AC_COMPUTER_STATUS_BAR_LINE_EDIT);
     m_lineEditLabel->setText(tr("Save as:"));
     m_lineEditLabel->hide();
 
@@ -186,11 +196,15 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     }
     if (!m_acceptButton) {
         m_acceptButton = new QPushButton(QString(), this);
+        AC_SET_OBJECT_NAME( m_acceptButton, AC_COMPUTER_STATUS_BAR_ACCEPT_BUTTON);
+        AC_SET_ACCESSIBLE_NAME( m_acceptButton, AC_COMPUTER_STATUS_BAR_ACCEPT_BUTTON);
         m_acceptButton->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
         m_acceptButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
     if (!m_rejectButton) {
         m_rejectButton = new QPushButton(QString(), this);
+        AC_SET_OBJECT_NAME( m_rejectButton, AC_COMPUTER_STATUS_BAR_REJECT_BUTTON);
+        AC_SET_ACCESSIBLE_NAME( m_rejectButton, AC_COMPUTER_STATUS_BAR_REJECT_BUTTON);
         m_rejectButton->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
         m_rejectButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }

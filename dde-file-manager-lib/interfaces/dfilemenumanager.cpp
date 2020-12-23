@@ -144,7 +144,9 @@ DFileMenu *DFileMenuManager::createUserShareMarkMenu(const QSet<MenuAction> &dis
     actionKeys << MenuAction::OpenInNewWindow
                << MenuAction::OpenInNewTab;
 
-    return genereteMenuByKeys(actionKeys, disableList);
+    DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList);
+    menu->setAccessibleInfo(AC_FILE_MENU_USER_SHARE);
+    return menu;
 }
 
 DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &disableList)
@@ -160,7 +162,9 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
 
-    return genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
+    DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
+    menu->setAccessibleInfo(AC_FILE_MENU_TOOLBAR_SEETINGS);
+    return menu;
 }
 
 DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop)
@@ -581,6 +585,7 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
 
     menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disableList, true, infoPointer->subMenuActionList(), false);
     menu->setEventData(DUrl(), {url}, WindowManager::getWindowId(wnd), sender);
+    menu->setAccessibleInfo(AC_FILE_MENU_VAULT);
 
     auto lockNow = [](DFileManagerWindow * wnd)->bool {
         //! Is there a vault task, top it if exist.

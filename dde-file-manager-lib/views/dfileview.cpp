@@ -208,6 +208,9 @@ DFileView::DFileView(QWidget *parent)
     d_ptr->touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 #endif
 
+    AC_SET_OBJECT_NAME(this, AC_FILE_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_FILE_VIEW);
+
     initUI();
     initModel();
     initDelegate();
@@ -2863,6 +2866,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         menu = DFileMenuManager::createVaultMenu(this->topLevelWidget());
     } else {
         menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(windowId()), false);
+        menu->setAccessibleInfo(AC_FILE_MENU_FILEVIEW);
     }
     lock = true;
 

@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dcompleterlistview.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QDebug>
 #include <QScrollBar>
@@ -36,6 +37,9 @@ DFM_BEGIN_NAMESPACE
 DCompleterListView::DCompleterListView(QWidget *parent)
     : QListView(parent)
 {
+    AC_SET_OBJECT_NAME(this, AC_COMPUTER_COMPLETER_LIST_VIEW);
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_COMPLETER_LIST_VIEW);
+
     overrideWindowFlags(Qt::Tool /*| Qt::WindowDoesNotAcceptFocus*/);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);

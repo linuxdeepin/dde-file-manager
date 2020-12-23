@@ -1,4 +1,5 @@
 #include "dfmvaultactivestartview.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -13,6 +14,8 @@ DFMVaultActiveStartView::DFMVaultActiveStartView(QWidget *parent)
     : QWidget(parent)
     , m_pStartBtn(nullptr)
 {
+    AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_START_WIDGET);
+
     // 标题
     DLabel *pLabel1 = new DLabel(tr("File Vault"), this);
     QFont font = pLabel1->font();

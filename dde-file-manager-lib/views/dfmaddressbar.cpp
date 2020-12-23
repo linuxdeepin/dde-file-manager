@@ -27,6 +27,7 @@
 #include "interfaces/dfmcrumbinterface.h"
 #include "controllers/searchhistroymanager.h"
 #include "controllers/vaultcontroller.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include "singleton.h"
 #include "dfileservices.h"
@@ -101,6 +102,9 @@ QSize DCompleterStyledItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 DFMAddressBar::DFMAddressBar(DFMCrumbBar *parent)
     : QLineEdit(parent)
 {
+    AC_SET_OBJECT_NAME(this, AC_COMPUTER_TITLE_BAR_ADRESS);
+    AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_TITLE_BAR_ADRESS);
+
     initUI();
     initConnections();
     initData();

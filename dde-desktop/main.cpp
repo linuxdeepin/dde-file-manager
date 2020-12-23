@@ -37,7 +37,7 @@
 #include "dbusfiledialogmanager.h"
 #include "filemanager1_adaptor.h"
 #include "dbusfilemanager1.h"
-#include "accessible/accessiblelist.h"
+#include "accessibility/acobjectlist.h"
 
 using namespace Dtk::Core;
 using namespace Dtk::Widget;
@@ -105,8 +105,13 @@ int main(int argc, char *argv[])
     DApplication::loadDXcbPlugin();
     DApplication app(argc, argv);
 
-//    AppController::instance();
-    //QAccessible::installFactory(accessibleFactory);
+    // 集成测试标签
+#ifdef ENABLE_ACCESSIBILITY
+    QAccessible::installFactory(accessibleFactory);
+    QAccessible::setActive(true);
+#else
+    QAccessible::setActive(false);
+#endif
 
     bool preload = false;
     bool fileDialogOnly = false;

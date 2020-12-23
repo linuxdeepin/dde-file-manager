@@ -1,5 +1,6 @@
 #include "dfmvaultactivesavekeyview.h"
 #include "operatorcenter.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -18,6 +19,8 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     , m_pQRCodeImage(nullptr)
     , m_pNext(nullptr)
 {
+    AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_KEY_WIDGET);
+
     // 标题名
     QLabel *pLabelTitle = new QLabel(tr("Recovery Key"), this);
     QFont font = pLabelTitle->font();

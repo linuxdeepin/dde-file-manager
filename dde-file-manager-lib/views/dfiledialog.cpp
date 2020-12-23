@@ -32,6 +32,7 @@
 #include "views/dstatusbar.h"
 #include "views/filedialogstatusbar.h"
 #include "controllers/vaultcontroller.h"
+#include "accessibility/ac-lib-file-manager.h"
 
 #include <DTitlebar>
 #include <DDialog>
@@ -133,6 +134,8 @@ DFileDialog::DFileDialog(QWidget *parent)
     }
 
     d_ptr->statusBar = new FileDialogStatusBar(this);
+    AC_SET_OBJECT_NAME(d_ptr->statusBar, AC_FD_STATUS_BAR_INTEL);
+    AC_SET_ACCESSIBLE_NAME(d_ptr->statusBar, AC_FD_STATUS_BAR_INTEL);
     centralWidget()->layout()->addWidget(d_ptr->statusBar);
 
     setAcceptMode(QFileDialog::AcceptOpen);
