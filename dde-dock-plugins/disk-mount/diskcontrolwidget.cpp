@@ -486,6 +486,8 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
         }
     }
 
+    qInfo() << "try to convert blkdev from path: " << path ;
+
     QScopedPointer<DBlockDevice> blkDev(DDiskManager::createBlockDevice(path));
 
     // 如果已经在 onDriveConnected 函数中挂载上了的设备直接忽略
@@ -497,11 +499,15 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
     if (!blkDev->hasFileSystem()) return;
 
     QString mountPoint = blkDev->mount({});
+
     if (mountPoint.isEmpty() || blkDev->lastError().type() != QDBusError::NoError) {
         qDebug() << "auto mount error: " << blkDev->lastError().type() << blkDev->lastError().message();
         qDebug() << msg + "mount error occured";
         return;
     }
+
+    qInfo() << "auto mount drive[ " << blkDev->drive() << " ] with path[" << path << " ] on point:" << mountPoint;
+
     if (m_autoMountAndOpenEnable) {
         // 不太明白为什么要保留这段代码
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
