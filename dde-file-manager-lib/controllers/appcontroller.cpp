@@ -246,6 +246,9 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
                 if (mountPoint.length() > 0) {
                     QFile file(mountPoint);
                     if (!(QFile::ExeUser & file.permissions())) {
+                        DThreadUtil::runInMainThread([]{
+                            dialogManager->showErrorDialog(QObject::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
+                        });
                         return;
                     }
                 }
