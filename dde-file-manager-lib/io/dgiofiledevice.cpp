@@ -101,7 +101,7 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
         d->input_stream = g_io_stream_get_input_stream(d->total_stream);
         d->output_stream = g_io_stream_get_output_stream(d->total_stream);
 
-        return true;
+        return DFileDevice::open(mode);
     }
 
     if (mode.testFlag(ReadOnly)) {
