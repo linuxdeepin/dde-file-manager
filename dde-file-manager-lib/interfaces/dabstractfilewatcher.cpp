@@ -13,7 +13,7 @@
 #include <QEvent>
 #include <QDebug>
 
-QList<DAbstractFileWatcher*> DAbstractFileWatcherPrivate::watcherList;
+QList<DAbstractFileWatcher *> DAbstractFileWatcherPrivate::watcherList;
 DAbstractFileWatcherPrivate::DAbstractFileWatcherPrivate(DAbstractFileWatcher *qq)
     : q_ptr(qq)
 {

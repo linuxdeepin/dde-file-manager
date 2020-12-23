@@ -19,7 +19,7 @@ class DAbstractFileWatcher : public QObject
     Q_OBJECT
 
 public:
-    ~DAbstractFileWatcher();
+    virtual ~DAbstractFileWatcher();
 
     DUrl fileUrl() const;
 
@@ -29,9 +29,9 @@ public:
 
     virtual void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true);
 
-    using SignalType1 = void(DAbstractFileWatcher::*)(const DUrl&);
-    using SignalType2 = void(DAbstractFileWatcher::*)(const DUrl&, const DUrl&);
-    using SignalType3 = void(DAbstractFileWatcher::*)(const DUrl&, const int&);
+    using SignalType1 = void(DAbstractFileWatcher::*)(const DUrl &);
+    using SignalType2 = void(DAbstractFileWatcher::*)(const DUrl &, const DUrl &);
+    using SignalType3 = void(DAbstractFileWatcher::*)(const DUrl &, const int &);
     static bool ghostSignal(const DUrl &targetUrl, SignalType1 signal, const DUrl &arg1);
     static bool ghostSignal(const DUrl &targetUrl, SignalType2 signal, const DUrl &arg1, const DUrl &arg2);
     static bool ghostSignal(const DUrl &targetUrl, SignalType3 signal, const DUrl &arg1, const int isExternalSource = 1);

@@ -246,7 +246,7 @@ public:
     virtual DUrl parentUrl() const;
     /// from parentUrl() to top level parent url
     virtual DUrlList parentUrlList() const;
-    virtual bool isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors = 0) const;
+    virtual bool isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors = nullptr) const;
     virtual QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
     virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList(MenuType type = SingleFile) const;
     virtual QSet<MenuAction> disableMenuActionList() const;

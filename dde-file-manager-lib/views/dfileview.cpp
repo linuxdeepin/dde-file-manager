@@ -994,6 +994,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         default:
             break;
         }
+        break;
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
@@ -2108,6 +2109,7 @@ bool DFileView::event(QEvent *e)
         break;
     case QEvent::ParentChange:
         window()->installEventFilter(this);
+        break;
     case QEvent::FontChange:
         // blumia: to trigger DIconItemDelegate::updateItemSizeHint() to update its `d->itemSizeHint` ...
         emit iconSizeChanged(iconSize());
