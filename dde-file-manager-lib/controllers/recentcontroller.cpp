@@ -26,6 +26,7 @@
 #include "dialogs/dialogmanager.h"
 #include "shutil/fileutils.h"
 #include "app/define.h"
+#include "vaultcontroller.h"
 
 #include <QFileSystemWatcher>
 #include <QXmlStreamReader>
@@ -513,19 +514,22 @@ void RecentController::handleFileChanged()
 
                     DThreadUtil::runInMainThread([ = ]() {
 //                        RecentPointer fileInfo();
-                        if (!recentNodes.contains(recentUrl)) {
-                            recentNodes[recentUrl] = new RecentFileInfo(recentUrl);
-                            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
-                                                              &DAbstractFileWatcher::subfileCreated,
-                                                              recentUrl);
-                        }
-                        //如果readtime变更了，需要通知filesystemmodel重新排序
-                        else if (recentNodes[recentUrl]->readDateTime().toSecsSinceEpoch() != QDateTime::fromString(readTime.toString(), Qt::ISODate).toSecsSinceEpoch()) {
-                            //先更新info数据
-                            recentNodes[recentUrl]->updateInfo();
-                            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
-                                                              &DAbstractFileWatcher::fileModified,
-                                                              recentUrl);
+                        // 保险箱内文件不显示到最近使用页面
+                        if(!VaultController::isVaultFile(location.toString())) {
+                            if (!recentNodes.contains(recentUrl)) {
+                                recentNodes[recentUrl] = new RecentFileInfo(recentUrl);
+                                DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                                                  &DAbstractFileWatcher::subfileCreated,
+                                                                  recentUrl);
+                            }
+                            //如果readtime变更了，需要通知filesystemmodel重新排序
+                            else if (recentNodes[recentUrl]->readDateTime().toSecsSinceEpoch() != QDateTime::fromString(readTime.toString(), Qt::ISODate).toSecsSinceEpoch()) {
+                                //先更新info数据
+                                recentNodes[recentUrl]->updateInfo();
+                                DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                                                  &DAbstractFileWatcher::fileModified,
+                                                                  recentUrl);
+                            }
                         }
                     });
                 }
