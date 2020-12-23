@@ -100,6 +100,7 @@ public:
     CheckNetwork m_checknetwork;
     DUrlList m_tagEditorFiles;
     QStringList m_tagEditorTags;
+    bool m_isMoveToTrashOver = true; //! 移除事件是否已处理完成，避免嵌套调用
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
@@ -316,6 +317,9 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 
     }
     case DFMEvent::MoveToTrash: {
+        if (event->fileUrlList().isEmpty())
+            break;
+
         //handle system files should not be able to move to trash
         foreach (const DUrl &url, event->fileUrlList()) {
             if (systemPathManager->isSystemPath(url.toLocalFile())) {
@@ -327,13 +331,16 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 
         //! 显示删除确认对话框
         bool bShowConfimDlg = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowDeleteConfirmDialog).toBool();
-        if (bShowConfimDlg && !event->fileUrlList().first().isTrashFile()) {
+        DUrl url = event->fileUrlList().first();
+        if (bShowConfimDlg && d_ptr->m_isMoveToTrashOver && !url.isTrashFile() && !url.isRecentFile() && url.scheme() != BURN_SCHEME) {
             if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showNormalDeleteConfirmDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) != DDialog::Accepted) {
                 break;
             }
         }
 
+        d_ptr->m_isMoveToTrashOver = false;
         result = CALL_CONTROLLER(moveToTrash);
+        d_ptr->m_isMoveToTrashOver = true;
 
         const DUrlList &list = event->fileUrlList();
         const DUrlList new_list = qvariant_cast<DUrlList>(result);
