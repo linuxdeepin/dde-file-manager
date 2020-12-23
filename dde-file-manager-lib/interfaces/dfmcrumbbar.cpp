@@ -609,7 +609,9 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
 
     menu->addAction(copyIcon, QObject::tr("Copy path"), [ = ]() {
-        QGuiApplication::clipboard()->setText(url.toString());
+        // 如果为保险箱路径则进行路径转换
+        QString virtualUrl = VaultController::toExternalPath(url.toString());
+        QGuiApplication::clipboard()->setText(virtualUrl);
     });
 
     menu->addAction(newWndIcon, QObject::tr("Open in new window"), [url]() {
