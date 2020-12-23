@@ -207,6 +207,13 @@ public:
     static QString toExternalPath(const QString &internalPath);
 
     /**
+    * @brief localPathToVirtualPath 本地路径转虚拟路径
+    * @param localPath
+    * @return
+    */
+    static QString localPathToVirtualPath(const QString &localPath);
+
+    /**
      * @brief totalsize 保险箱大小
      * @return
      */

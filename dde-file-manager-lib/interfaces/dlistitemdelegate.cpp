@@ -13,6 +13,7 @@
 #include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
 #include "dfmapplication.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -264,7 +265,14 @@ void DListItemDelegate::paint(QPainter *painter,
         const QVariant &data = index.data(rol);
 
         if (data.canConvert<QString>()) {
-            const QString &text = DFMGlobal::elideText(index.data(rol).toString(), rec.size(),
+            QString strInfo(index.data(rol).toString());
+            // 如果是文件路径项
+            if(rol == DFileSystemModel::FilePathRole) {
+                // 如果是保险箱路径,则不显示真实路径
+                if(VaultController::isVaultFile(strInfo))
+                    strInfo = VaultController::localPathToVirtualPath(index.data(rol).toString());
+            }
+            const QString &text = DFMGlobal::elideText(strInfo, rec.size(),
                                                        QTextOption::NoWrap, opt.font,
                                                        Qt::ElideRight, d->textLineHeight);
 
