@@ -502,8 +502,11 @@ bool UDiskListener::isFileFromDisc(const QString &filePath)
 {
     const QMap<QString, UDiskDeviceInfoPointer> &&devices = getMountedRemovableDiskDeviceInfos();
     foreach (auto d, devices) {
-        if (d->optical() && filePath.startsWith(d->getMountPointUrl().path())) {
-            qDebug() << "copy src file from disc!";
+        // mountPath will be '/' if device is a blank disk
+        QString mountPath = d->getMountPointUrl().path();
+        if (d->optical() && !d->opticalBlank() && mountPath != "/"
+                && !mountPath.isEmpty() && filePath.startsWith(mountPath)) {
+            qInfo() << filePath << "is belong to disc, mount point" << mountPath;
             return true;
         }
     }
@@ -525,8 +528,13 @@ bool UDiskListener::isBlockFile(const QString &filePath)
 {
     const QMap<QString, UDiskDeviceInfoPointer> &&devices = getMountedRemovableDiskDeviceInfos();
     foreach (auto d, devices) {
-        if (filePath.startsWith(d->getMountPointUrl().path())) {
-            qDebug() << "copy src file from block device!";
+        // mountPath will be '/' if device is a blank disk
+        // always return true if mountPath is '/'
+        if (d->optical() && d->opticalBlank())
+            continue;
+
+        QString mountPath = d->getMountPointUrl().path();
+        if (!mountPath.isEmpty() && mountPath != "/" && filePath.startsWith(mountPath)) {
             return true;
         }
     }
