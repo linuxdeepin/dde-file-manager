@@ -33,6 +33,7 @@
 #include <QDebug>
 #include <QStorageInfo>
 #include <QProcess>
+#include <DDialog>
 
 #include <dgiosettings.h>
 #include <ddiskmanager.h>
@@ -223,6 +224,20 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 
     DGioSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
     if (gsettings.value("filemanager-integration").toBool()) {
+        // 光盘文件系统剥离 RockRidge 后，udisks 的默认挂载权限为 500，为遵从 linux 权限限制，在这里添加访问目录的权限校验
+        DUrl mountPoint = DUrl(attachedDevice->mountpointUrl());
+        QFile f(mountPoint.path());
+        if (f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
+            DDialog d(QObject::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
+            Qt::WindowFlags flags = d.windowFlags();
+            d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+            d.setIcon(QIcon::fromTheme("dialog-error"));
+            d.addButton(QObject::tr("Confirm"), true, DDialog::ButtonRecommend);
+            d.setMaximumWidth(640);
+            d.exec();
+            return;
+        }
+
         DUrl url = DUrl(attachedDevice->accessPointUrl());
         if (url.scheme() == BURN_SCHEME) {
             // 1. 当前熊默认文件管理器为 dde-file-manager 时，使用它打开光盘
