@@ -88,7 +88,7 @@ void CryFsHandle::lockVault(QString unlockFileDir)
         emit signalLockVault(flg);
         //! 记录保险箱上锁时间
         DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
-        setting.setValue(QString("VaultTime"), QString("ChangeTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+        setting.setValue(QString("VaultTime"), QString("LockTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
     }
     m_activeState.clear();
     m_mutex->unlock();
