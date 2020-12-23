@@ -1197,16 +1197,18 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     SectionValueLabel *timeReadLabel = nullptr;
     SectionValueLabel *timeModifiedLabel = nullptr;
     if(VaultController::isRootDirectory(info->fileUrl().toLocalFile())){
+        TimeModifiedSectionLabel->setText(QObject::tr("Time locked"));
         //! 保险箱根目录创建、访问、修改时间的读取
         DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
         timeCreatedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("CreateTime")).toString());
         timeReadLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("InterviewTime")).toString());
-        if(setting.value(QString("VaultTime"), QString("ChangeTime")).toString().isNull())
+        if(setting.value(QString("VaultTime"), QString("LockTime")).toString().isEmpty())
             timeModifiedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("InterviewTime")).toString());
         else
-            timeModifiedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("ChangeTime")).toString());
+            timeModifiedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("LockTime")).toString());
     }
     else{
+        TimeModifiedSectionLabel->setText(QObject::tr("Time modified"));
         timeCreatedLabel = new SectionValueLabel(info->createdDisplayName());
         timeReadLabel = new SectionValueLabel(info->lastReadDisplayName());
         timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
