@@ -2,49 +2,49 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="487"/>
+        <location filename="../controllers/appcontroller.cpp" line="490"/>
         <source>New Folder</source>
         <translation>新建文件夾</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="573"/>
+        <location filename="../controllers/appcontroller.cpp" line="576"/>
         <source>Mounting device error</source>
         <translation>掛載設備出錯</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="606"/>
+        <location filename="../controllers/appcontroller.cpp" line="609"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>此光盤中的鏡像已損壞，無法掛載，請擦除後使用</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="648"/>
+        <location filename="../controllers/appcontroller.cpp" line="651"/>
         <source>Mount error: unsupported image format</source>
         <translation>掛載錯誤，鏡像文件格式不支持</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="726"/>
-        <location filename="../controllers/appcontroller.cpp" line="767"/>
+        <location filename="../controllers/appcontroller.cpp" line="729"/>
+        <location filename="../controllers/appcontroller.cpp" line="770"/>
         <source>The device was not safely removed</source>
         <translation>設備沒有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="726"/>
-        <location filename="../controllers/appcontroller.cpp" line="767"/>
+        <location filename="../controllers/appcontroller.cpp" line="729"/>
+        <location filename="../controllers/appcontroller.cpp" line="770"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>請點擊“安全移除”後，再斷開連接</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="737"/>
+        <location filename="../controllers/appcontroller.cpp" line="740"/>
         <source>The device was not ejected</source>
         <translation>設備未彈出</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="737"/>
+        <location filename="../controllers/appcontroller.cpp" line="740"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>磁盤文件被佔用，無法彈出</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="748"/>
+        <location filename="../controllers/appcontroller.cpp" line="751"/>
         <source>Authentication timed out</source>
         <translation>認證超時</translation>
     </message>
@@ -1435,6 +1435,11 @@
         <translation>確定</translation>
     </message>
     <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="511"/>
+        <source>The file name must not contain two dots (..)</source>
+        <translation>文件名不得含有兩個點（..）</translation>
+    </message>
+    <message>
         <location filename="../dialogs/dialogmanager.cpp" line="524"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>您確定要擦除此光盤的所有內容嗎？</translation>
@@ -1626,11 +1631,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="684"/>
         <source>This action cannot be undone</source>
         <translation>此操作不可以恢復</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="511"/>
-        <source>The file name must not contain two dots(..)</source>
-        <translation>文件名不得含有兩個點（..）</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="590"/>
@@ -2285,7 +2285,7 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1714"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1892"/>
-        <source>Cannot find the mounting device</source>
+        <source>Cannot find the mounted device</source>
         <translation>找不到對應的掛載設備</translation>
     </message>
     <message>
@@ -2714,6 +2714,7 @@
         <translation>總容量</translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="249"/>
         <location filename="../dialogs/propertydialog.cpp" line="1481"/>
         <source>Access denied</source>
         <translation>不可讀不可寫</translation>
@@ -3277,7 +3278,7 @@
         <translation>%1 項</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1288"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1290"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
@@ -3309,6 +3310,7 @@
         <translation>文件已被移動或刪除</translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="249"/>
         <location filename="../interfaces/dfileinfo.cpp" line="830"/>
         <location filename="../interfaces/dfileinfo.cpp" line="838"/>
         <location filename="../interfaces/dfileinfo.cpp" line="844"/>
@@ -3341,23 +3343,23 @@
         <translation>原始路徑</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="529"/>
+        <location filename="../controllers/appcontroller.cpp" line="532"/>
         <source>Document</source>
         <translation>新建Word文檔</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="536"/>
+        <location filename="../controllers/appcontroller.cpp" line="539"/>
         <source>Spreadsheet</source>
         <translation>新建Excel文檔</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="543"/>
+        <location filename="../controllers/appcontroller.cpp" line="546"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
         <source>Presentation</source>
         <translation>演示文檔</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="550"/>
+        <location filename="../controllers/appcontroller.cpp" line="553"/>
         <source>Text</source>
         <translation>文檔</translation>
     </message>
@@ -4133,34 +4135,34 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1490"/>
+        <location filename="../controllers/appcontroller.cpp" line="1493"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁盤文件被佔用，無法卸載</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1483"/>
-        <location filename="../controllers/appcontroller.cpp" line="1507"/>
+        <location filename="../controllers/appcontroller.cpp" line="1486"/>
+        <location filename="../controllers/appcontroller.cpp" line="1510"/>
         <source>Authentication timed out</source>
         <translation>認證超時</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1490"/>
+        <location filename="../controllers/appcontroller.cpp" line="1493"/>
         <source>The device was not safely unmounted</source>
         <translation>設備沒有正常卸載</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1511"/>
-        <location filename="../controllers/appcontroller.cpp" line="1525"/>
+        <location filename="../controllers/appcontroller.cpp" line="1514"/>
+        <location filename="../controllers/appcontroller.cpp" line="1528"/>
         <source>The device was not safely removed</source>
         <translation>設備沒有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1511"/>
+        <location filename="../controllers/appcontroller.cpp" line="1514"/>
         <source>Disk is busy, cannot remove now</source>
         <translation>磁盤文件被佔用，無法安全移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1525"/>
+        <location filename="../controllers/appcontroller.cpp" line="1528"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>請點擊“安全移除”後，再斷開連接</translation>
     </message>

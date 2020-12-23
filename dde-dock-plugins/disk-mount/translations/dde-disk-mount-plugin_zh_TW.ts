@@ -40,16 +40,16 @@
         <translation>此磁碟已被「%1」給掛載，你無法移除它。</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>找不到掛載裝置</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
         <translation>光碟機正忙，無法彈出</translation>
     </message>
     <message>
         <source>Disks</source>
         <translation>磁碟</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>找不到掛載裝置</translation>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>裝置已被安全移除</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>權限被拒</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>無權進入資料夾</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>確定</translation>
     </message>
 </context>
 </TS>

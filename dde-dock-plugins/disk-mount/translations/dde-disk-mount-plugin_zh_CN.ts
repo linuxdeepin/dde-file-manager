@@ -40,16 +40,16 @@
         <translation>磁盘由用户“%1”挂载，您没有卸载权限。</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>找不到对应的挂载设备</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
         <translation>光驱正忙，无法弹出</translation>
     </message>
     <message>
         <source>Disks</source>
         <translation>磁盘</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>找不到对应的挂载设备</translation>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>设备已被安全移除</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>禁止访问</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>您没有权限读取此文件夹</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>确定</translation>
     </message>
 </context>
 </TS>

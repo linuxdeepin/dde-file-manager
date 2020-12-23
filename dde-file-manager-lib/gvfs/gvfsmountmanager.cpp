@@ -1711,7 +1711,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
             return;
         }
 
-        DDialog error_dilaog(tr("Cannot find the mounting device"), QString(error->message));
+        DDialog error_dilaog(tr("Cannot find the mounted device"), QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
@@ -1889,7 +1889,7 @@ void GvfsMountManager::eject_mounted(const QString &mounted_root_uri)
 
     mount = g_file_find_enclosing_mount(file, nullptr, &error);
     if (mount == nullptr) {
-        DDialog error_dilaog(tr("Cannot find the mounting device"), QString(error->message));
+        DDialog error_dilaog(tr("Cannot find the mounted device"), QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
