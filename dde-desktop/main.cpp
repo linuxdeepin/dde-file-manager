@@ -105,15 +105,13 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
     if (DesktopInfo().waylandDectected()) {
-        qputenv("QT_WAYLAND_SHELL_INTEGRATION","kwayland-shell"); //wayland shell
+        qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell"); //wayland shell
 
         //! 以下代码用于视频预览使用
         setenv("PULSE_PROP_media.role", "video", 1);
         QSurfaceFormat format;
         format.setRenderableType(QSurfaceFormat::OpenGLES);
         format.setDefaultFormat(format);
-    } else {
-        DApplication::loadDXcbPlugin();//wayland下不加载xcb
     }
 
     DApplication app(argc, argv);
@@ -185,7 +183,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if  (!preload) {
+    if (!preload) {
         // Notify dde-desktop start up
         if (!fileDialogOnly) {
             Dde::Session::RegisterDdeSession();
@@ -229,7 +227,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    QTimer::singleShot(100,[](){
+    QTimer::singleShot(100, []() {
         AppController::instance();
         DFMGlobal::autoLoadDefaultPlugins();
         DFMGlobal::initPluginManager();

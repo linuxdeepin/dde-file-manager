@@ -50,6 +50,7 @@
 #include "drootfilemanager.h"
 #include "accessible/accessiblelist.h"
 #include "dfmapplication.h"
+#include "views/dfilemanagerwindow.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -124,10 +125,8 @@ void handleEnvOfOpenAsAdmin()
 
 DWIDGET_USE_NAMESPACE
 
-extern QPair<bool, QMutex> winId_mtx;
 int main(int argc, char *argv[])
 {
-
     if (DFMGlobal::isWayLand()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
         //以下代码用于视频预览使用
@@ -268,7 +267,7 @@ int main(int argc, char *argv[])
         } else {
             CommandLineManager::instance()->processCommand();
         }
-        
+
         signal(SIGTERM, handleSIGTERM);
 
 #ifdef ENABLE_PPROF

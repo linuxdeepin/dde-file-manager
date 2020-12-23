@@ -151,7 +151,7 @@ void ShareInfoFrame::handleShareNameChanged()
 {
     // 修复bug-54080
     // 当失去焦点时，判断文件名是否符合规则
-    if(!m_shareNamelineEdit->hasFocus())
+    if (!m_shareNamelineEdit->hasFocus())
         doShareInfoSetting();
     else    // 如果焦点存在，将焦点设置到下一个控件
         m_permissoComBox->setFocus();
@@ -282,7 +282,7 @@ bool ShareInfoFrame::checkShareName() //返回值表示是否继续
     for (QFileInfo info : infolist) {
         if (m_shareNamelineEdit->text().toLower() == info.fileName()) { //查询共享名是否重复，因为程序net保存的文件名统一小写，所以先将共享名转为小写判断
             DDialog dialog(this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"));
 
             if (!info.isWritable()) { //不可则无法替换
                 dialog.setTitle(tr("The share name is used by another user."));
