@@ -874,6 +874,12 @@ QString VaultController::toExternalPath(const QString &internalPath)
     return retPath;
 }
 
+QString VaultController::localPathToVirtualPath(const QString &localPath)
+{
+    QString result(localPath);
+    return result.replace(VaultController::makeVaultLocalPath(), DFMVAULT_ROOT);
+}
+
 qint64 VaultController::totalsize() const
 {
     return m_totalSize;
