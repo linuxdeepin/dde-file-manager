@@ -297,10 +297,8 @@ bool VaultFileInfo::canShare() const
 
 bool VaultFileInfo::canTag() const
 {
-    if (isRootDirectory()) {
-        return false;
-    }
-    return DAbstractFileInfo::canTag();
+    // 修复bug-58965 保险箱文件不能被标记
+    return false;
 }
 
 QIcon VaultFileInfo::fileIcon() const
