@@ -71,6 +71,7 @@ public:
     bool canStop() const;
     bool canUnmount() const;
     bool optical() const;
+    bool opticalBlank() const;
     bool opticalReuseable() const;
     qulonglong getFree();
     qulonglong getTotal();

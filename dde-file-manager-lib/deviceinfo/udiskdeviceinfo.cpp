@@ -183,6 +183,13 @@ bool UDiskDeviceInfo::optical() const
     return diskdev->optical();
 }
 
+bool UDiskDeviceInfo::opticalBlank() const
+{
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(getDBusPath()));
+    QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+    return  diskdev->opticalBlank();
+}
+
 bool UDiskDeviceInfo::opticalReuseable() const
 {
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(getDBusPath()));
