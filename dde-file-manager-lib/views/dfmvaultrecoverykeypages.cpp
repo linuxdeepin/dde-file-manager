@@ -270,7 +270,7 @@ void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
             // others
             QString errMsg = tr("Failed to unlock file vault");
             DDialog dialog(this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"));
             dialog.setTitle(errMsg);
             dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
             dialog.exec();

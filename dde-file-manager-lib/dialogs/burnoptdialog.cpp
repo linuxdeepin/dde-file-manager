@@ -39,7 +39,7 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
     d->setDevice(device);
     d->setupUi();
     connect(this, &BurnOptDialog::buttonClicked, this,
-    [ = ](int index, const QString &text) {
+    [ = ](int index, const QString & text) {
         Q_UNUSED(text);
         QFile opticalDevice(d->dev);
         if (!opticalDevice.exists()) {
@@ -66,8 +66,8 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
 
         int nSpeeds = d->speedmap[d->cb_writespeed->currentText()];
         const QString &volName = d->le_volname->text().trimmed().isEmpty()
-                ? d->lastVolName
-                : d->le_volname->text().trimmed();
+                                 ? d->lastVolName
+                                 : d->le_volname->text().trimmed();
 
         if (index == 1) {
             emit fileSignalManager->stopCdScanTimer(device);
@@ -84,11 +84,11 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                     qDebug() << "start burn files";
 
                     job->doOpticalBurnByChildProcess(dev, volName, nSpeeds, opts);
-                    dialogManager->removeJob(job->getJobId(), true ); // 清除所有数据，防止脏数据出现
+                    dialogManager->removeJob(job->getJobId(), true);  // 清除所有数据，防止脏数据出现
                     job->deleteLater();
                 });
             } else {
-                QtConcurrent::run([=] {
+                QtConcurrent::run([ = ] {
                     FileJob *job = new FileJob(FileJob::OpticalImageBurn);
                     job->moveToThread(qApp->thread());
                     job->setWindowId(d->window_id);
@@ -102,7 +102,7 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                     qDebug() << "start burn image";
 
                     job->doOpticalImageBurnByChildProcess(dev, img, nSpeeds, opts);
-                    dialogManager->removeJob(job->getJobId(), true );// 清除所有数据，防止脏数据出现
+                    dialogManager->removeJob(job->getJobId(), true); // 清除所有数据，防止脏数据出现
                     job->deleteLater();
                 });
             }
@@ -165,7 +165,7 @@ void BurnOptDialogPrivate::setupUi()
     Q_Q(BurnOptDialog);
     q->setModal(true);
     q->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-    q->setIcon(QIcon::fromTheme("media-optical").pixmap(96, 96), QSize(96, 96));
+    q->setIcon(QIcon::fromTheme("media-optical").pixmap(96, 96));
 
     q->addButton(QObject::tr("Cancel"));
     q->addButton(QObject::tr("Burn"), true, DDialog::ButtonType::ButtonRecommend);
@@ -284,7 +284,7 @@ void BurnOptDialogPrivate::setupUi()
     w_content->setFixedWidth(360);
     q->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
-    QObject::connect(advanceBtn, &DCommandLinkButton::clicked, q, [ = ]{
+    QObject::connect(advanceBtn, &DCommandLinkButton::clicked, q, [ = ] {
         advancedSettings->setHidden(!advancedSettings->isHidden());
     });
 

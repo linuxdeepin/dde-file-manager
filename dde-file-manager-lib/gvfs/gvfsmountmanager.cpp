@@ -1392,7 +1392,7 @@ MountStatus GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
         oldEventLoop->exit(ret);
     }
 
-    return (MountStatus)ret;
+    return static_cast<MountStatus>(ret);
 }
 
 void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data)
@@ -1661,7 +1661,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
 
             DDialog error_dilaog(tr("The disk is mounted by user \"%1\", you cannot unmount it.").arg(user_name), QString(" "));
 
-            error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
+            error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
             error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
             error_dilaog.setModal(true);
             error_dilaog.exec();
@@ -1670,7 +1670,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
 
         DDialog error_dilaog(tr("Cannot find the mounting device"), QString(error->message));
 
-        error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
+        error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
         error_dilaog.exec();
@@ -1696,7 +1696,7 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
     if (!succeeded) {
         DDialog error_dilaog(tr("Cannot unmount the device"), QString(error->message));
 
-        error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
+        error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
         error_dilaog.exec();
@@ -1815,7 +1815,7 @@ void GvfsMountManager::eject_with_device_file_cb(GObject *object, GAsyncResult *
         DDialog error_dilaog(tr("Cannot eject the device \"%1\"").arg(g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)),
                              QString(error->message));
 
-        error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
+        error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
         error_dilaog.exec();
@@ -1839,7 +1839,7 @@ void GvfsMountManager::eject_mounted(const QString &mounted_root_uri)
     if (mount == nullptr) {
         DDialog error_dilaog(tr("Cannot find the mounting device"), QString(error->message));
 
-        error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
+        error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
         error_dilaog.exec();

@@ -12,7 +12,7 @@ class BurnOptDialog : public Dtk::Widget::DDialog
 {
     Q_OBJECT
 public:
-    BurnOptDialog(QString device, QWidget *parent = 0);
+    BurnOptDialog(QString device, QWidget *parent = nullptr);
     ~BurnOptDialog();
 
     void setISOImage(DUrl image);

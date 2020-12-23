@@ -44,7 +44,7 @@ class FileSignalManager : public QObject
     Q_OBJECT
 
 public:
-    explicit FileSignalManager(QObject *parent = 0);
+    explicit FileSignalManager(QObject *parent = nullptr);
 
 signals:
     /* emit usershare status changed*/
@@ -74,38 +74,38 @@ signals:
     void iconChanged(const DUrl &url, const QIcon &icon) const;
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
-    void jobAdded(const QMap<QString, QString>& jobDetail);
+    void jobAdded(const QMap<QString, QString> &jobDetail);
 
     /*remove copy/move/delete job to taskdialog when copy/move/delete job finished*/
-    void jobRemoved(const QMap<QString, QString>& jobDetail);
+    void jobRemoved(const QMap<QString, QString> &jobDetail);
 
     /*update copy/move/delete job taskdialog ui*/
-    void jobDataUpdated(const QMap<QString, QString>& jobDetail,
-                           const QMap<QString, QString>& data);
+    void jobDataUpdated(const QMap<QString, QString> &jobDetail,
+                        const QMap<QString, QString> &data);
 
     /*abort copy/move/delete job taskdialog from ui*/
-    void abortTask(const QMap<QString, QString>& jobDetail);
+    void abortTask(const QMap<QString, QString> &jobDetail);
 
     /*copy/move job conflict dialog show */
-    void conflictDialogShowed(const QMap<QString, QString>& jobDetail);
+    void conflictDialogShowed(const QMap<QString, QString> &jobDetail);
 
     /*request rename to DFileView*/
     void requestRename(const DFMUrlBaseEvent &event);
 
     /*request to rename multi files */
-    void requestMultiFilesRename(const DFMUrlListBaseEvent& event);
+    void requestMultiFilesRename(const DFMUrlListBaseEvent &event);
 
     /* view select all */
     void requestViewSelectAll(int windowId);
 
     /*requst open new window by given url*/
-    void requestOpenNewWindowByUrl(const DUrl& url, bool isAlwaysOpen);
+    void requestOpenNewWindowByUrl(const DUrl &url, bool isAlwaysOpen);
 
     /*request active window*/
     void requestActiveWindow();
 
     /*request show url wrong dialog*/
-    void requestShowUrlWrongDialog(const DUrl& url);
+    void requestShowUrlWrongDialog(const DUrl &url);
 
     /*request show PropertyDialog*/
     void requestShowOpenWithDialog(const DFMEvent &event);
@@ -166,7 +166,7 @@ signals:
     void requestSearchCtrlL(quint64 winId);
 
     /*request cache samba login data*/
-    void requsetCacheLoginData(const QJsonObject& obj);
+    void requsetCacheLoginData(const QJsonObject &obj);
 
     /*quit application if taskdialog close*/
     void requestQuitApplication();
@@ -176,10 +176,10 @@ signals:
     void requestFreshAllFileView();
 
     /*request abort copy/move job*/
-    void requestAbortJob(const DUrl& url);
+    void requestAbortJob(const DUrl &url);
 
     /*request abort copy/move job for DFileCopyMoveJob*/
-    void requestAsynAbortJob(const DUrl& url);
+    void requestAsynAbortJob(const DUrl &url);
 
     /*request start file job task update timer*/
     void requestStartUpdateJobTimer();
@@ -187,36 +187,36 @@ signals:
     void requestStopUpdateJobTimer();
 
     /*icon size changed by setting dialog*/
-    void requestChangeIconSizeBySizeIndex(const int& sizeIndex);
+    void requestChangeIconSizeBySizeIndex(const int &sizeIndex);
 
     /*trash state changed when trash is empty or is filled*/
     void trashStateChanged();
 
     /*show file preview dialog*/
-    void requestShowFilePreviewDialog(const DUrlList &selectUrls, const DUrlList& entryUrls);
+    void requestShowFilePreviewDialog(const DUrlList &selectUrls, const DUrlList &entryUrls);
 
     /*show 4G warning dialog if file copy to removal devicve which type is fat32*/
     void requestShow4GFat32Dialog();
 
     /*show restore failed dialog for tagart removed*/
-    void requestShowRestoreFailedDialog(const DUrlList& urlList);
+    void requestShowRestoreFailedDialog(const DUrlList &urlList);
 
     /*show retore failed dialog for permission*/
-    void requestShowRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
+    void requestShowRestoreFailedPerssionDialog(const QString &srcPath, const QString &targetPath);
 
     /*show restore failed dialog for ource file does not exist*/
-    void requestShowRestoreFailedSourceNotExist(const DUrlList& urlList);
+    void requestShowRestoreFailedSourceNotExist(const DUrlList &urlList);
 
     /*show dialog for no permission operation*/
-    void requestShowNoPermissionDialog(const DFMUrlListBaseEvent& event);
+    void requestShowNoPermissionDialog(const DFMUrlListBaseEvent &event);
 
     /*show add user share failed dialog for share name same as system uername*/
-    void requestShowAddUserShareFailedDialog(const QString& sharePath);
+    void requestShowAddUserShareFailedDialog(const QString &sharePath);
 
     void requestShowErrorDialog(const QString &title, const QString &message);
 
     /*rename a tag*/
-    void requestRenameTag(const DUrl& oldTagUrl);
+    void requestRenameTag(const DUrl &oldTagUrl);
 
     /*stop cd scan timer，擦除光盘、刻录光盘时停止定时器*/
     void stopCdScanTimer(const QString &strDevice);
@@ -244,7 +244,7 @@ signals:
 
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
-    void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);
+    void jobFailed(int nRet, const QString &jobType, const QString &srcFileName);
 #endif
 };
 

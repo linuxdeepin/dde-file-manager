@@ -1234,7 +1234,7 @@ void DFileDialog::onAcceptButtonClicked()
                 //文件名以点开头的文件会被视为隐藏文件，需要确认
                 DDialog dialog(this);
 
-                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+                dialog.setIcon(QIcon::fromTheme("dialog-warning"));
                 dialog.setTitle(tr("This file will be hidden if the file name starts with a dot (.). Do you want to hide it?"));
                 dialog.addButton(tr("Cancel"), true);
                 dialog.addButton(tr("Confirm"), false, DDialog::ButtonWarning);
@@ -1251,7 +1251,7 @@ void DFileDialog::onAcceptButtonClicked()
 //            {
 //                DDialog dialog(this);
 
-//                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+//                dialog.setIcon(QIcon::fromTheme("dialog-warning"));
 //                dialog.setTitle(tr("The file name length is too long!"));
 //                dialog.addButton(tr("Confirm"), true);
 
@@ -1275,7 +1275,7 @@ void DFileDialog::onAcceptButtonClicked()
                         dialog.setWindowModality(Qt::WindowModal);
                     }
 
-                    dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+                    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
                     dialog.setTitle(tr("%1 already exists, do you want to replace it?").arg(file_name));
                     dialog.addButton(tr("Cancel"), true);
                     dialog.addButton(tr("Replace"), false, DDialog::ButtonWarning);

@@ -101,9 +101,10 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
     connect(VaultController::ins(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
-    connect(m_tipsButton, &QPushButton::clicked, [this]{
+    connect(m_tipsButton, &QPushButton::clicked, [this] {
         QString strPwdHint("");
-        if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
+        if (InterfaceActiveVault::getPasswordHint(strPwdHint))
+        {
             QString hint = tr("Password hint: %1").arg(strPwdHint);
             showToolTip(hint, 3000, EN_ToolTip::Information);
         }
@@ -123,8 +124,8 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
 
     // 如果密码提示信息为空，则隐藏提示按钮
     QString strPwdHint("");
-    if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
-        if (strPwdHint.isEmpty()){
+    if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {
+        if (strPwdHint.isEmpty()) {
             m_tipsButton->hide();
         } else {
             m_tipsButton->show();
@@ -135,7 +136,7 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
 
 void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaultUnlockPages::EN_ToolTip enType)
 {
-    if (!m_tooltip){
+    if (!m_tooltip) {
         m_tooltip = new DToolTip(text);
         m_tooltip->setObjectName("AlertTooltip");
         m_tooltip->setWordWrap(true);
@@ -145,7 +146,7 @@ void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaul
         m_frame->setStyleSheet("background-color: rgba(247, 247, 247, 0.6);");
         m_frame->setWidget(m_tooltip);
     }
-    if(EN_ToolTip::Warning == enType)
+    if (EN_ToolTip::Warning == enType)
         m_tooltip->setForegroundRole(DPalette::TextWarning);
     else
         m_tooltip->setForegroundRole(DPalette::TextTitle);
@@ -153,7 +154,7 @@ void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaul
     m_frame->setParent(this);
 
     m_tooltip->setText(text);
-    if(m_frame->parent()){
+    if (m_frame->parent()) {
         m_frame->setGeometry(8, 154, 68, 26);
         m_frame->show();
         m_frame->adjustSize();
@@ -164,30 +165,30 @@ void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaul
         return;
     }
 
-    QTimer::singleShot(duration, this, [=] {
+    QTimer::singleShot(duration, this, [ = ] {
         m_frame->close();
     });
 }
 
 DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
-{    
+{
     static DFMVaultUnlockPages s_instance;
     return &s_instance;
 }
 
 void DFMVaultUnlockPages::onButtonClicked(const int &index)
 {
-    if (index == 1){
+    if (index == 1) {
         // 点击解锁后,灰化解锁按钮
         getButton(1)->setEnabled(false);
 
         QString strPwd = m_passwordEdit->text();
 
         QString strClipher("");
-        if (InterfaceActiveVault::checkPassword(strPwd, strClipher)){
+        if (InterfaceActiveVault::checkPassword(strPwd, strClipher)) {
             m_bUnlockByPwd = true;
             VaultController::ins()->unlockVault(strClipher);
-        }else {
+        } else {
             // 设置密码输入框颜色
             // 修复bug-51508 激活密码框警告状态
             m_passwordEdit->setAlert(true);
@@ -201,35 +202,35 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
 
 void DFMVaultUnlockPages::onPasswordChanged(const QString &pwd)
 {
-    if (!pwd.isEmpty()){
+    if (!pwd.isEmpty()) {
         getButton(1)->setEnabled(true);
         // 修复bug-51508 取消密码框警告状态
         m_passwordEdit->setAlert(false);
-    }else {
+    } else {
         getButton(1)->setEnabled(false);
     }
 }
 
 void DFMVaultUnlockPages::onVaultUlocked(int state)
 {
-    if (m_bUnlockByPwd){
-        if (state == 0){
+    if (m_bUnlockByPwd) {
+        if (state == 0) {
             emit accepted();
             close();
-        } else if(state == 1) { // cryfs没有成功卸载挂载目录
+        } else if (state == 1) { // cryfs没有成功卸载挂载目录
             // 解决sp3bug-38885:注销系统时，cryfs卸载挂载目录会概率性失败
             // 卸载挂载目录
             QProcess process;
             QString fusermountBinary = QStandardPaths::findExecutable("fusermount");
-            process.start(fusermountBinary, {"-zu", QString(VAULT_BASE_PATH)+QDir::separator()+QString(VAULT_DECRYPT_DIR_NAME)});
+            process.start(fusermountBinary, {"-zu", QString(VAULT_BASE_PATH) + QDir::separator() + QString(VAULT_DECRYPT_DIR_NAME)});
             process.waitForStarted();
             process.waitForFinished();
             process.terminate();
-            if(process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0){
+            if (process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0) {
                 QString strPwd = m_passwordEdit->text();
                 QString strClipher("");
                 // 判断密码是否正确
-                if(InterfaceActiveVault::checkPassword(strPwd, strClipher)){
+                if (InterfaceActiveVault::checkPassword(strPwd, strClipher)) {
                     VaultController::ins()->unlockVault(strClipher);
                     return;
                 } else {    // 密码不正确
@@ -242,7 +243,7 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
             // error tips
             QString errMsg = tr("Failed to unlock file vault");
             DDialog dialog(this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"));
             dialog.setTitle(errMsg);
             dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
             dialog.exec();

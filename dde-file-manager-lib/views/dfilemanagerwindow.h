@@ -73,6 +73,8 @@ DFM_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
 
+extern QPair<bool, QMutex> winId_mtx;
+
 class DFileManagerWindowPrivate;
 class DFileManagerWindow : public DMainWindow, public DFMAbstractEventHandler
 {
