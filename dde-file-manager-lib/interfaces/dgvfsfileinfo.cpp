@@ -73,10 +73,8 @@ int countFileCount(const char *name, bool isloop = false)
 
     if (!(dir = opendir(name)))
         return fileCount;
-    if (!(entry = readdir(dir)))
-        return fileCount;
 
-    do {
+    while ((entry = readdir(dir))) {
         char path[1024];
         int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
         path[len] = 0;
@@ -93,7 +91,8 @@ int countFileCount(const char *name, bool isloop = false)
         else {
             fileCount++;
         }
-    } while ((entry = readdir(dir)));
+    }
+
     closedir(dir);
     return fileCount;
 }
