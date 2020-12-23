@@ -122,7 +122,7 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     if (!fileSysType.isEmpty()) {
         text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width - fstw - 7);
     } else {
-        text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
+        text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width - 5);
     }
 
     painter->drawText(textrect, Qt::TextWrapAnywhere, text, &otextrect);
