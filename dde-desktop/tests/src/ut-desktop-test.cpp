@@ -13,6 +13,7 @@
 #include "view/canvasviewmanager.h"
 #include "screen/screenhelper.h"
 #include "../stub-ext/stubext.h"
+#include "screen/screenmanager.h"
 
 TEST(DesktopTest,init)
 {
@@ -146,13 +147,22 @@ TEST(DesktopTest, show_wallpaper_setting)
 
     void *wset2 = (void *)*(long *)(view);
     EXPECT_NE(wset2, nullptr);
+    Frame* setting = (Frame* )wset2;
+    delete setting;
+    setting = new Frame(qApp->primaryScreen()->name(), Frame::WallpaperMode);
+    desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
 
     Frame *wset3 = (Frame *)*(long *)(view);
     emit wset3->done();
     qApp->processEvents();
-
     void *wset4 = (void *)*(long *)(view);
     EXPECT_EQ(wset4, nullptr);
+
+    desktop.showWallpaperSettings("", Frame::Mode::WallpaperMode);
+    bool isset = false;
+    stu.set_lamda(VADDR(ScreenManager, primaryScreen), [&isset](){isset = true; return nullptr;});
+    desktop.showWallpaperSettings("", Frame::Mode::WallpaperMode);
+    delete setting;
 }
 
 TEST(DesktopTest, refresh)
