@@ -40,16 +40,16 @@
         <translation>Disk je připojený (mount) uživatelem „%1“ – vy ho odpojit nemůžete.</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>Nedaří se najít připojované zařízení</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Disks</source>
         <translation>Disky</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>Zařízení je možné bezpečně odebrat</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Přístup odepřen</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>Nemáte oprávnění pro přistupování k této složce</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Potvrdit</translation>
     </message>
 </context>
 </TS>

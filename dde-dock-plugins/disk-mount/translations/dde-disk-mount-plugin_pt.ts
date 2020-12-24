@@ -29,27 +29,27 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está ocupado, não é possível remover agora</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
-        <translation>Impossível desmontar o dispositivo</translation>
+        <translation>Não é possível desmontar o dispositivo</translation>
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>O disco foi montado pelo utilizador &quot;%1&quot;, não o pode desmontar.</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>Impossível encontrar o dispositivo a montar</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está ocupado, não é possível ejectar agora</translation>
     </message>
     <message>
         <source>Disks</source>
         <translation>Discos</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Não é possível localizar o dispositivo montado</translation>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>O dispositivo foi removido com segurança</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Acesso negado</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>Não possui permissões para aceder a esta pasta</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirmar</translation>
     </message>
 </context>
 </TS>

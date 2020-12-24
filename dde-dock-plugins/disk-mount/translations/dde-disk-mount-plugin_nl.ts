@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>Schijf is in gebruik; je kunt nu niet afkoppelen</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -40,16 +40,16 @@
         <translation>De schijf is aangekoppeld door gebruiker &quot;%1&quot;. Je kunt deze daarom niet afkoppelen.</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>Kan aan te koppelen apparaat niet vinden</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>Schijf is in gebruik; je kunt nu niet uitwerpen</translation>
     </message>
     <message>
         <source>Disks</source>
         <translation>Schijven</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Het aangekoppelde apparaat is niet aangetroffen</translation>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>Het apparaat is veilig verwijderd</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Toegang geweigerd</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>Je bent niet gemachtigd om deze map te openen</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Oké</translation>
     </message>
 </context>
 </TS>

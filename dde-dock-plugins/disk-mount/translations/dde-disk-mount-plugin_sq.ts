@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>Pajisja është e zënë, s’mund të hiqet tani</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -40,16 +40,16 @@
         <translation>Disku është montuar nga përdoruesi &quot;%1&quot;, s’mund të çmontoni.</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>S’gjendet pajisje montimi</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>Pajisja është e zënë, s’mund të nxirret tani</translation>
     </message>
     <message>
         <source>Disks</source>
         <translation>Disqe</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>Pajisja u hoq në mënyrë të parrezik</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Hyrja u mohua</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>S’keni leje të hyni te kjo dosje</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Ripohojeni</translation>
     </message>
 </context>
 </TS>

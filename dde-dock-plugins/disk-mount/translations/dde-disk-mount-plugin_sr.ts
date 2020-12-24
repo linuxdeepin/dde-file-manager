@@ -40,16 +40,16 @@
         <translation>Диск је монтирао корисник &quot;%1&quot;, не можете га демонтирати.</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>Не могу да пронађем уређај монтирања</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Disks</source>
         <translation>Дискови</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>Уређај је безбедно уклоњен</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Приступ забрањен</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>Немате дозволу да приступите овој фасцикли</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Потврди</translation>
     </message>
 </context>
 </TS>

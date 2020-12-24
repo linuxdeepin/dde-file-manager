@@ -45,7 +45,7 @@
     </message>
     <message>
         <source>Disks</source>
-        <translation>磁盤</translation>
+        <translation>磁盤列表</translation>
     </message>
     <message>
         <source>Cannot find the mounted device</source>
@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Access denied</source>
-        <translation>禁止访问</translation>
+        <translation>禁止訪問</translation>
     </message>
     <message>
         <source>You do not have permission to access this folder</source>

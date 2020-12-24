@@ -45,7 +45,7 @@
     </message>
     <message>
         <source>Disks</source>
-        <translation>磁盘</translation>
+        <translation>磁盘列表</translation>
     </message>
     <message>
         <source>Cannot find the mounted device</source>

@@ -40,16 +40,16 @@
         <translation>སྡུད་སྡེར་ནི་སྤྱོད་མཁན་“%1”གྱིས་བཅུག་པས། ཁྱོད་ལ་བཤིག་འདོན་བྱེད་དབང་མེད།</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>བལྟོས་བཅས་ཀྱི་འཇུག་ཆས་མི་རྙེད་པ།</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Disks</source>
         <translation>སྡུད་སྡེར།</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>སྒྲིག་ཆས་བདེ་འཇགས་ངང་སྤོ་འབུད་བྱས་སོང་།</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>ཀློག་མི་རུང་བ་དང་འབྲི་མི་རུང་བ།</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>ཁྱོད་ལ་ཡིག་ཁུག་འདི་ཀློག་དབང་མེད།</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>ཆོག</translation>
     </message>
 </context>
 </TS>

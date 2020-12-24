@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está ocupado; é impossível removê-lo agora</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -37,19 +37,19 @@
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation>O disco foi montado pelo usuário &quot;%1&quot;, você não pode desmontá-lo.</translation>
-    </message>
-    <message>
-        <source>Cannot find the mounting device</source>
-        <translation>Não foi possível encontrar o dispositivo montado</translation>
+        <translation>O disco foi montado pelo usuário &quot;%1&quot;; e você não pode desmontá-lo.</translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está ocupado; é impossível ejetá-lo agora</translation>
     </message>
     <message>
         <source>Disks</source>
         <translation>Dispositivos</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Impossível encontrar o dispositivo montado</translation>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>O dispositivo foi removido com segurança</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Acesso negado</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>Você não tem permissão para acessar esta pasta</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirmar</translation>
     </message>
 </context>
 </TS>

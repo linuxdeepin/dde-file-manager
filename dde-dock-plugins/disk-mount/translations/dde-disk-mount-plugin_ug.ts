@@ -40,16 +40,16 @@
         <translation>دىسكىغا “%1” ئىشلەتكۈچى ئاغدۇرۇلغان، ئۆچۈرۈش ھوقۇقىڭىز يوق.</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>ماس ئاغدۇرۇش ئۈسكۈنىسى تېپىلمىدى</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Disks</source>
         <translation>دىسكا</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>ئۈسكۈنە بىخەتەر ئۆچۈرۈلدى</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>ئوقۇغىلى، يازغىلى بولمايدۇ</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>بۇ ھۆججەتنى ئوقۇش ھوقۇقىڭىز يوق</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>جەزملەشتۈرۈش</translation>
     </message>
 </context>
 </TS>

@@ -40,16 +40,16 @@
         <translation>El disco fue montado por el usuario «%1», no puedes desmontarlo.</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>No se puede encontrar el dispositivo de montaje</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Disks</source>
         <translation>Discos</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>El dispositivo ha sido retirado de forma segura</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Acceso denegado</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>No tienes permiso para acceder a esta carpeta</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirmar</translation>
     </message>
 </context>
 </TS>

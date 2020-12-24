@@ -40,16 +40,16 @@
         <translation>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</translation>
     </message>
     <message>
-        <source>Cannot find the mounting device</source>
-        <translation>Cannot find the mounting device</translation>
-    </message>
-    <message>
         <source>The device is busy, cannot eject now</source>
         <translation>The device is busy, cannot eject now</translation>
     </message>
     <message>
         <source>Disks</source>
         <translation>Disks</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Cannot find the mounted device</translation>
     </message>
 </context>
 <context>
@@ -72,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>The device has been safely removed</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Access denied</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>You do not have permission to access this folder</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirm</translation>
     </message>
 </context>
 </TS>
