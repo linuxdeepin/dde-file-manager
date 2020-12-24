@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon_暂停</title>
+    <g id="空格预览" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="文件管理器_空格预览_视频" transform="translate(-658.000000, -620.000000)">
+            <g id="icon_暂停" transform="translate(658.000000, 620.000000)">
+                <rect id="矩形" x="0" y="0" width="16" height="16"></rect>
+                <rect id="矩形" fill="#536076" x="11" y="3" width="1" height="10" rx="0.5"></rect>
+                <rect id="矩形" fill="#536076" x="4" y="3" width="1" height="10" rx="0.5"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

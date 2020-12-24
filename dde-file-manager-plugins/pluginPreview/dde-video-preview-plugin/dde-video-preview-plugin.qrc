@@ -1,10 +1,6 @@
 <RCC>
-    <qresource prefix="/icons">
-        <file>icons/start_pressed.png</file>
-        <file>icons/start_normal.png</file>
-        <file>icons/start_hover.png</file>
-        <file>icons/pause_pressed.png</file>
-        <file>icons/pause_normal.png</file>
-        <file>icons/pause_hover.png</file>
+    <qresource prefix="/">
+        <file>icons/deepin/builtin/actions/dfm_pause_16px.svg</file>
+        <file>icons/deepin/builtin/actions/dfm_start_16px.svg</file>
     </qresource>
 </RCC>
