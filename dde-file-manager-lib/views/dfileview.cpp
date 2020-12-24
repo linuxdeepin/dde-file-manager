@@ -1895,11 +1895,12 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
                     QModelIndex index = pModel->index(i, 0);
                     QRect itemRect = rectForIndex(index);
                     QPoint offset(-horizontalOffset() + ICON_X_OFFSET, ICON_Y_OFFSET);
-                    // 判断文件是否在鼠标框选区域内
-                    if (rect.contains((itemRect.topLeft() + offset))
-                            || rect.contains(itemRect.topRight() + offset + QPoint(ICON_HEIGHT_OFFSET, 0))
-                            || rect.contains(itemRect.bottomLeft() + offset + QPoint(0, ICON_WIDTH_OFFSET))
-                            || rect.contains(itemRect.bottomRight() + offset + QPoint(ICON_HEIGHT_OFFSET, ICON_WIDTH_OFFSET))) {
+                    // 判断文件是否在鼠标框选区域内(注意：rect只是view的框选位置，并不是画布的框选位置，所以加上滚动偏移)
+                    QRect actualRect(rect.left(), rect.top()+verticalOffset(), rect.width(), rect.height());
+                    if (actualRect.contains((itemRect.topLeft() + offset))
+                            || actualRect.contains(itemRect.topRight() + offset + QPoint(ICON_HEIGHT_OFFSET, 0))
+                            || actualRect.contains(itemRect.bottomLeft() + offset + QPoint(0, ICON_WIDTH_OFFSET))
+                            || actualRect.contains(itemRect.bottomRight() + offset + QPoint(ICON_HEIGHT_OFFSET, ICON_WIDTH_OFFSET))) {
                         selectItems.push_back(index);
                     }
                 }
