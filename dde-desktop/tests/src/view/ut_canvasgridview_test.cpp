@@ -42,7 +42,8 @@
 #include "../models/desktopfileinfo.h"
 #include "qdbusabstractinterface.h"
 #include "qabstractitemview.h"
-
+#include "dapplication.h"
+#include "dfiledragclient.h"
 using namespace std;
 using namespace stub_ext;
 
@@ -298,6 +299,11 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayModelRefresh){
     m_canvasGridView->delayModelRefresh(10);//will reset timer
     int interval = m_canvasGridView->m_refreshTimer->interval();
     EXPECT_EQ(interval, 10);
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(GridManager, delaySyncAllProfile), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, onSyncOperation), [](){return;});
+    m_canvasGridView->m_refreshTimer->start(1);
+    qApp->processEvents();
 }
 
 
@@ -453,6 +459,29 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_showEmptyAreaMenu){
     st.set(ADDR(QEventLoop,exec), execlop_stub);
     m_canvasGridView->showEmptyAreaMenu(tempFlags);
     EXPECT_EQ(stubRet, 1);
+
+    DFileMenu* menu = new DFileMenu;
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(DFileMenuManager, genereteMenuByKeys), [&menu](){return menu;});
+    stu.set_lamda(ADDR(DesktopInfo, waylandDectected), [](){return true;});
+    QAction action;
+    stu.set_lamda(ADDR(CanvasGridView, handleContextMenuAction), [](){return;});
+    emit menu->triggered(&action);
+    emit menu->QMenu::aboutToHide();
+    qApp->processEvents();
+    m_canvasGridView->showEmptyAreaMenu(tempFlags);
+
+
+    stu.set_lamda(ADDR(QWidget, parentWidget), [](){return nullptr;});
+    qApp->processEvents();
+    m_canvasGridView->showEmptyAreaMenu(tempFlags);
+
+    stu.set_lamda(ADDR(QSize, width), [](){return 10;});
+    stu.set_lamda(ADDR(QSize, height), [](){return 10;});
+    stu.set_lamda(ADDR(QRect, bottom), [](){return 5;});
+    stu.set_lamda(ADDR(QRect, right), [](){return 5;});
+    m_canvasGridView->showEmptyAreaMenu(tempFlags);
+    if (menu) delete menu;
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setIconByLevel)
@@ -537,18 +566,29 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
 
     //ESC
     QKeyEvent keyPressEvt_Esc(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    QString str = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+    QList<QUrl> lurl;
+    lurl << QUrl::fromLocalFile(str);
+    bool isfetch = false;
+    stu.set_lamda(ADDR(DFMGlobal, fetchUrlsFromClipboard), [lurl, &isfetch](){isfetch = true; return lurl;});
+    stu.set_lamda(VADDR(DAbstractFileInfo, path), [str](){return str;});
     m_canvasGridView->keyPressEvent(&keyPressEvt_Esc);
+    EXPECT_TRUE(isfetch);
 
     //Key_pad
     //Enter
     QKeyEvent keyPressEvt_Enter(QEvent::KeyPress, Qt::Key_Enter, Qt::KeypadModifier);
     //为了避免打开太多文件,对openfiles进行函数转换
-    bool(*openf)() = [](){return true;};
-    Stub tub;
-    tub.set(ADDR(DFileService, openFiles), openf);
-    m_canvasGridView->keyPressEvent(&keyPressEvt_Enter);
+    {
+        stub_ext::StubExt tub;
+        tub.set_lamda(ADDR(DFileService, openFiles), [](){return true;});
+        tub.set_lamda(VADDR(DAbstractFileInfo, isVirtualEntry), [](){return true;});
+        m_canvasGridView->keyPressEvent(&keyPressEvt_Enter);
 
-
+        bool myValid = false;
+        tub.set_lamda(VADDR(QModelIndex, isValid), [&myValid](){myValid = true; return true;});
+        m_canvasGridView->keyPressEvent(&keyPressEvt_Enter);
+    }
     //pad F5
     QKeyEvent keyPressEvt_padF5(QEvent::KeyPress, Qt::Key_F5, Qt::KeypadModifier);
     m_canvasGridView->keyPressEvent(&keyPressEvt_padF5);
@@ -558,12 +598,15 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_padDelete);
 
     //pad Space
-    QKeyEvent keyPressEvt_Key_Space(QEvent::KeyPress, Qt::Key_Space, Qt::KeypadModifier);
-    static bool spacejudge = false;
-    void(*myspace)() = [](){spacejudge = true;};
-    tub.set(ADDR(DFMGlobal, showFilePreviewDialog), myspace);
-    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Space);
-    EXPECT_TRUE(spacejudge);
+    {
+        stub_ext::StubExt tub;
+        QKeyEvent keyPressEvt_Key_Space(QEvent::KeyPress, Qt::Key_Space, Qt::KeypadModifier);
+        static bool spacejudge = false;
+        void(*myspace)() = [](){spacejudge = true;};
+        tub.set(ADDR(DFMGlobal, showFilePreviewDialog), myspace);
+        m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Space);
+        EXPECT_TRUE(spacejudge);
+    }
 
     //other 直接break
     QKeyEvent keyPressEvt_Key_D(QEvent::KeyPress, Qt::Key_D, Qt::KeypadModifier);
@@ -634,34 +677,46 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
 
     //Qt::AltModifier:
     //Key_M
-    QKeyEvent keyPressEvt_Key_AltM(QEvent::KeyPress, Qt::Key_M, Qt::AltModifier);
-    QTimer timer;
-    QObject::connect(&timer, &QTimer::timeout, [&]{
-        timer.stop();
-          QWidget tempWdg;
-          tempWdg.show();
-          tempWdg.close();
-    });
-    timer.start(1000);
-    bool(*boo)() = [](){return true;};
-    stu.set(ADDR(QVariant, isValid), boo);
+    {
+        stub_ext::StubExt stu;
+        QKeyEvent keyPressEvt_Key_AltM(QEvent::KeyPress, Qt::Key_M, Qt::AltModifier);
+        QTimer timer;
+        QObject::connect(&timer, &QTimer::timeout, [&]{
+            timer.stop();
+              QWidget tempWdg;
+              tempWdg.show();
+              tempWdg.close();
+        });
+        timer.start(1000);
+        stu.set_lamda(ADDR(QVariant, isValid), [](){return true;});
 
-    stub_ext::StubExt stu1;
-    bool judge = false;
-    stu1.set_lamda(ADDR(CanvasGridView, showNormalMenu),[&judge](){judge = !judge; return;});
-    stu1.set_lamda(ADDR(CanvasGridView, showEmptyAreaMenu),[&judge](){judge = !judge; return;});
-    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
-    EXPECT_TRUE(judge);
+        bool judge = false;
+        stu.set_lamda(ADDR(CanvasGridView, showNormalMenu),[&judge](){judge = !judge; return;});
+        stu.set_lamda(ADDR(CanvasGridView, showEmptyAreaMenu),[&judge](){judge = !judge; return;});
+        m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
+        EXPECT_TRUE(judge);
+
+        bool isgset = false;
+        stu.set_lamda(ADDR(GridManager, isGsettingShow), [&isgset](){isgset = true; return false;});
+        m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
+        EXPECT_TRUE(isgset);
+
+        stu.set_lamda(ADDR(QVariant, isValid), [](){return false;});
+        m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
+    }
     //key_10
-    QKeyEvent keyPressEvt_Key_9(QEvent::KeyPress, Qt::Key_9, Qt::AltModifier);
-    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_9);
+    QKeyEvent keyPressEvt_Key_R(QEvent::KeyPress, Qt::Key_R, Qt::AltModifier);
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_R);
 
     //
-    QKeyEvent keyPressEvt_Key(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
-    stu.set(ADDR(QVariant, toBool), boo);
-    m_canvasGridView->keyPressEvent(&keyPressEvt_Key);
-    QKeyEvent keyPressEvt_Key_8(QEvent::KeyPress, Qt::Key_8, Qt::NoModifier);
-    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_8);
+    {
+        stub_ext::StubExt stu;
+        QKeyEvent keyPressEvt_Key(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+        stu.set_lamda(ADDR(QVariant, toBool), [](){return true;});
+        m_canvasGridView->keyPressEvent(&keyPressEvt_Key);
+        QKeyEvent keyPressEvt_Key_8(QEvent::KeyPress, Qt::Key_8, Qt::NoModifier);
+        m_canvasGridView->keyPressEvent(&keyPressEvt_Key_8);
+    }
 }
 
 
@@ -955,8 +1010,9 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayArrage)
     EXPECT_TRUE(!GridManager().instance()->autoMerge());
 
     //why twice?
-    m_canvasGridView->delayArrage(0);
-    m_canvasGridView->delayArrage(5);
+    m_canvasGridView->delayArrage(5);//第一次内部创建Static Qtimer
+
+    m_canvasGridView->delayArrage(0);//实现覆盖
     QEventLoop loop;
     QTimer::singleShot(50, &loop, [&loop]{
         loop.exit();
@@ -989,9 +1045,14 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_refresh)
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_autoMergeSelectedUrls)
 {
+
     ASSERT_NE(m_canvasGridView, nullptr);
     m_canvasGridView->selectAll();
     qApp->processEvents();
+    stub_ext::StubExt stu;
+    DFileSelectionModel* model = new DFileSelectionModel;
+    model->m_currentCommand = QItemSelectionModel::SelectionFlags(QItemSelectionModel::Current | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
+    stu.set_lamda(ADDR(CanvasGridView, selectionModel), [model](){return model;});
     auto tpLst = m_canvasGridView->autoMergeSelectedUrls();
     qApp->processEvents();
 }
@@ -1023,6 +1084,11 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_fetchDragEventUrlsFromSharedMemory
 {
     bool ret = m_canvasGridView->fetchDragEventUrlsFromSharedMemory();
     EXPECT_EQ(ret, true);
+    stub_ext::StubExt stu;
+
+    stu.set_lamda(ADDR(QSharedMemory, attach), [](){return false;});
+    ret = m_canvasGridView->fetchDragEventUrlsFromSharedMemory();
+    EXPECT_EQ(ret, false);
 }
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_delayCustom)
@@ -1035,6 +1101,10 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_delayCustom)
         loop.exit();
     });
     loop.exec();
+
+    stub_ext::StubExt stu;
+    bool ismerge = false;
+    stu.set_lamda(ADDR(GridManager, autoMerge), [&ismerge](){ismerge = true; return true;});
 }
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_handleContextMenuAction)
@@ -1377,6 +1447,12 @@ TEST_F(CanvasGridViewTest, test_dragEnterEvent)
     m_canvasGridView->dragEnterEvent(&event);
     data.setData("XdndDirectSave0", "XdndDirectSave0");
     m_canvasGridView->dragEnterEvent(&event);
+
+    stub_ext::StubExt stu;
+    bool ischeck = false;
+    stu.set_lamda(ADDR(DFileDragClient, checkMimeData), [&ischeck](){ischeck = true; return true;});
+    m_canvasGridView->dragEnterEvent(&event);
+    EXPECT_TRUE(ischeck);
 }
 
 TEST_F(CanvasGridViewTest, test_openUrl)
