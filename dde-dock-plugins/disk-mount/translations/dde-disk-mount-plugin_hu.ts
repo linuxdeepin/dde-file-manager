@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Kattintson a &quot;Biztonságos eltávolítás&quot; gombra, majd csatlakoztassa le később</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Az eszköz használatban van, jelenleg nem választható le</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Az eszköz használatban van, jelenleg nem távolítható el</translation>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Eszköz nem leválasztható</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>A lemez &quot;%1&quot; felhasználó által felcsatolva, a leválasztása nem lehetséges.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Lemezek</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
@@ -48,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>Az eszköz biztonságosan eltávolítva</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Hozzáférés megtagadva</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>Nincs jogosultsága a mappához való hozzáféréséhez</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Megerősítés</translation>
     </message>
 </context>
 </TS>

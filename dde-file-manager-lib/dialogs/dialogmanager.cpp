@@ -503,7 +503,7 @@ int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
     // 获取父对话框字体特性
     DDialog d(WindowManager::getWindowById(event.windowId()));
     QFontMetrics fm(d.font());
-    d.setTitle(tr("The file name must not contain two dots(..)"));
+    d.setTitle(tr("The file name must not contain two dots (..)"));
     QStringList buttonTexts;
     buttonTexts << tr("Confirm");
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);

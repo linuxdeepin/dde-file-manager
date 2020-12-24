@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Clicca su &quot;Rimozione sicura&quot; e rimuovilo solo successivamente</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Disco occupato, impossibile espellerlo ora</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Disco occupato, impossibile espellerlo ora</translation>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Impossibile smontare il dispositivo</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Il disco è stato montato dall&apos;utente &quot;%1&quot;, non puoi smontarlo.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Impossibile trovare il dispositivo montato</translation>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Dischi</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
@@ -48,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>Il dispositivo è stato rimosso in sicurezza</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Accesso negato</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>Non hai i permessi per accedere a questa cartella</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Conferma</translation>
     </message>
 </context>
 </TS>

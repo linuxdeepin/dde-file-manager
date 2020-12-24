@@ -124,12 +124,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="925"/>
         <source>Loading wallpapers...</source>
-        <translation type="unfinished"/>
+        <translation>Hintergrundbilder werden geladen ...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="928"/>
         <source>Loading screensavers...</source>
-        <translation type="unfinished"/>
+        <translation>Bildschirmschoner werden geladen ...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="983"/>

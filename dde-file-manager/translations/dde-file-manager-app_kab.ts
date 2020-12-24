@@ -1,15 +1,15 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="sl" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="kab" version="2.1">
 <context>
     <name>Application</name>
     <message>
         <location filename="../main.cpp" line="167"/>
         <source>File Manager</source>
-        <translation>Upravitelj datotek</translation>
+        <translation>Amsefrek n ifuyla</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="171"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation>Upravitelj datotek je zmogljivo in enostavno orodje za upravljanje datotek, s funkcijami iskanja, kopiranja, košem, stiskanjem/ razširjanjem, lastnostmi datotek in drugimi uporabnimi zadevami.</translation>
+        <translation>Amsefrak n yifuyla d afecku n usefrek n yifuyla yelhan i isehlen i useqdec, deg-s unadi, anɣal, iḍumman, askussem/asefruri, taɣara n ufaylu akked tmahilin-nniḍen.</translation>
     </message>
 </context>
 </TS>

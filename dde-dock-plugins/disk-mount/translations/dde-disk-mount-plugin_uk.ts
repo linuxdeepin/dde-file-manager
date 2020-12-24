@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Наступного разу натисніть кнопку «Вилучити безпечно», а вже потім від&apos;єднуйте пристрій</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Пристрій зайнято, його не можна виштовхнути зараз</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Пристрій зайнято, зараз вилучення неможливе</translation>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Не вдалося демонтувати пристрій</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Диск змонтовано користувачем %1, ви не можете розмонтувати його.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Не вдалося знайти змонтований пристрій</translation>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Диски</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
@@ -48,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>Пристрій було безпечно вилучено</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Доступ заборонено</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>У вас немає дозволу на доступ до цієї теки</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Підтвердити</translation>
     </message>
 </context>
 </TS>

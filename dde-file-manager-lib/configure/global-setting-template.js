@@ -284,7 +284,7 @@
                         },
                         {
                             "key": "show_filesystemtag_on_diskicon",
-                            "text": qsTranslate("GenerateSettingTranslate", "Show file system tag on disk icon"),
+                            "text": qsTranslate("GenerateSettingTranslate", "Show file system on disk icon"),
                             "type": "checkbox",
                             "default": false
                         }
