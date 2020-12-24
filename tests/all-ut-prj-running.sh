@@ -21,6 +21,9 @@ UT_TYPE_ANYTHING_SERVER_PLUGINS="deepin-anything-server-plugins"
 REBUILD_PRJ=${4}
 REBUILD_TYPE_YES="yes"
 
+#qmake 参数
+QMAKE_ARGS="-spec linux-g++ CONFIG+=debug"
+
 # 打印当前目录，当前目录应当是 build-ut
 echo `pwd`
 echo "start dde-file-manager all UT cases:" $UT_PRJ_TYPE
@@ -37,7 +40,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
 
         if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
                 echo $UT_TYPE_FILE_MANAGER_LIB "is making"
-		qmake $PROJECT_FOLDER/dde-file-manager-lib/test-dde-file-manager-lib.pro
+		qmake $PROJECT_FOLDER/dde-file-manager-lib/test-dde-file-manager-lib.pro $QMAKE_ARGS
 		make -j4
         fi
 
@@ -56,7 +59,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" != "$UT_TYPE_FILE_MAN
 
         if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
                 echo "common dde-file-manager lib is making"
-		qmake $PROJECT_FOLDER/dde-file-manager-lib/dde-file-manager-lib.pro
+		qmake $PROJECT_FOLDER/dde-file-manager-lib/dde-file-manager-lib.pro $QMAKE_ARGS
 		make -j4
         fi
 fi
@@ -74,7 +77,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DDE_DESKT
 
         if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
                 echo $UT_TYPE_DDE_DESKTOP "is making"
-		qmake $PROJECT_FOLDER/dde-desktop/test-dde-desktop.pro
+		qmake $PROJECT_FOLDER/dde-desktop/test-dde-desktop.pro $QMAKE_ARGS
 		make -j4
         fi
 
@@ -94,7 +97,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DOCK_PLUG
 
         if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
                 echo $UT_TYPE_DOCK_PLUGINS "is making"
-		qmake $PROJECT_FOLDER/dde-dock-plugins/test-dde-dock-plugins.pro
+		qmake $PROJECT_FOLDER/dde-dock-plugins/test-dde-dock-plugins.pro $QMAKE_ARGS
 		make -j4
         fi
 
@@ -114,7 +117,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
 
         if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
                 echo $UT_TYPE_FILE_MANAGER "is making"
-		qmake $PROJECT_FOLDER/dde-file-manager/test-dde-file-manager.pro
+		qmake $PROJECT_FOLDER/dde-file-manager/test-dde-file-manager.pro $QMAKE_ARGS
 		make -j4
         fi
 
@@ -134,7 +137,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
 
         if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
                 echo $UT_TYPE_FILE_MANAGER_PLUGINS "is making"
-		qmake $PROJECT_FOLDER/dde-file-manager-plugins/test-dde-file-manager-plugins.pro
+		qmake $PROJECT_FOLDER/dde-file-manager-plugins/test-dde-file-manager-plugins.pro $QMAKE_ARGS
 		make -j4
         fi
 
@@ -159,7 +162,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_THUM
 
         if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
                 echo $UT_TYPE_FILE_THUMBNAIL_TOOL "is making"
-		qmake $PROJECT_FOLDER/dde-file-thumbnail-tool/test-dde-file-thumbnail-tool.pro
+		qmake $PROJECT_FOLDER/dde-file-thumbnail-tool/test-dde-file-thumbnail-tool.pro $QMAKE_ARGS
 		make -j4
         fi
 
@@ -179,7 +182,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_ANYTHING_
 
         if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
                 echo $UT_TYPE_ANYTHING_SERVER_PLUGINS "is making"
-		qmake $PROJECT_FOLDER/deepin-anything-server-plugins/test-deepin-anything-server-plugins.pro
+		qmake $PROJECT_FOLDER/deepin-anything-server-plugins/test-deepin-anything-server-plugins.pro $QMAKE_ARGS
 		make -j4
         fi
 

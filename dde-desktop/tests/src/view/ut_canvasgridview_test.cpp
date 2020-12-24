@@ -11,6 +11,7 @@
 #include <QWidget>
 
 #include <dfilemenu.h>
+#include <DFileDragClient>
 #include "../stub-ext/stubext.h"
 
 
@@ -50,6 +51,19 @@ class CanvasGridViewTest : public testing::Test
 {
 public:
     CanvasGridViewTest():Test(){
+    }
+    virtual void SetUp() override{
+        //以防桌面没文件
+        path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+        QFile file(path + '/' + tstFile);
+        file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+        file.write("test");
+        file.close();
+
+        QDir dir;
+        dir.mkpath(path + '/' + tstDir);
+
+        m_cvmgr.reset(new CanvasViewManager(new BackgroundManager()));
         for(auto tpCanvas : m_cvmgr->m_canvasMap.values()){
             if(1 == tpCanvas->screenNum()){
                 m_canvasGridView = tpCanvas.data();
@@ -57,22 +71,17 @@ public:
             }
         }
     }
-    virtual void SetUp() override{
-        //以防桌面没文件
-        path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-        path = path + '/' + "test.txt";
-        QFile file(path);
-        if (!file.exists()) {
-            file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
-            file.close();
-        }
-    }
-    virtual void TearDown()override{
 
+    virtual void TearDown()override{
+        QDir dir(path);
+        dir.remove(tstFile);
+        dir.rmpath(dir.filePath(tstDir));
     }
 public:
-    QScopedPointer<CanvasViewManager> m_cvmgr{new CanvasViewManager(new BackgroundManager())};
+    QScopedPointer<CanvasViewManager> m_cvmgr;
     CanvasGridView *m_canvasGridView{nullptr};
+    QString tstFile = "testutxxxxxxxxxxx.txt";
+    QString tstDir = "test-dir-utxxxxxxxxxx";
     QString path;
 };
 
@@ -715,32 +724,88 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_dragMoveEvent)
     m_canvasGridView->dragMoveEvent(&devent1);
     QDragMoveEvent devent2(QPoint(66, 200), Qt::DropAction::MoveAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
     m_canvasGridView->dragMoveEvent(&devent2);
-    QDropEvent dropevent(QPoint(64, 150), Qt::DropAction::IgnoreAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
-    m_canvasGridView->dropEvent(&dropevent);
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_dropEvent)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
-    //但是会有一个问题。需要桌面对应这两个点位必须有图标才行
-    //先设置选中
-    QList<DUrl> lst;
-    QString urlPath = GridManager::instance()->firstItemId(m_canvasGridView->m_screenNum);
-    lst << DUrl(urlPath);
-    m_canvasGridView->select(lst);
-    qApp->processEvents();
+
+    QString urlPath = "file://" + path + "/" + tstFile;
+    DUrl urlFile(urlPath);
+    DUrl urlDir("file://" + path + "/" + tstDir);
     //模拟拖拽数据
-    auto tgIndex = m_canvasGridView->model()->index(DUrl(urlPath));
+    auto tgIndex = m_canvasGridView->model()->index(urlFile);
     QModelIndexList tpIndexes;
     tpIndexes.append(tgIndex);
     QMimeData *tgData = m_canvasGridView->model()->mimeData(tpIndexes);
-    //虽然能伪造mimedata但是无法设置drag的source
-    //(Qt::CopyAction | Qt::MoveAction | Qt::LinkAction) (0x0007)
-//    m_canvasGridView->startDrag(Qt::CopyAction | Qt::MoveAction | Qt::LinkAction);
 
-    QDropEvent dropevent(QPoint(64, 200), Qt::MoveAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
-    m_canvasGridView->dropEvent(&dropevent);
+    //回收站,计算机等
+    {
+        auto dropIndex = m_canvasGridView->model()->index(urlDir);
+        StubExt stu;
+        QDropEvent dropevent(QPoint(64, 150), Qt::DropAction::CopyAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
+        stu.set_lamda(ADDR(DFileSelectionModel,selectedIndexes),[=](){return tpIndexes;});
+        stu.set_lamda(VADDR(CanvasGridView,indexAt),[=](){return dropIndex;});
+        m_canvasGridView->m_urlsForDragEvent.append(DesktopFileInfo::computerDesktopFileUrl());
+        m_canvasGridView->m_urlsForDragEvent.append(DesktopFileInfo::homeDesktopFileUrl());
+        m_canvasGridView->m_urlsForDragEvent.append(DesktopFileInfo::trashDesktopFileUrl());
+        m_canvasGridView->dropEvent(&dropevent);
+        EXPECT_EQ(dropevent.dropAction(), Qt::IgnoreAction);
+        m_canvasGridView->m_urlsForDragEvent.clear();
+    }
 
+    //外部拖入
+    {
+        StubExt stu;
+        stu.set_lamda(&QDropEvent::source,[this](){return nullptr;});
+        stu.set_lamda(VADDR(CanvasGridView,indexAt),[=](){return QModelIndex();});
+        stu.set_lamda(ADDR(DFileSelectionModel,selectedIndexes),[=](){return tpIndexes;});
+        bool droped = false;
+        stu.set_lamda(VADDR(DFileSystemModel,dropMimeData),[&](){droped = true;return true;});
+        stu.set_lamda(&DFileDragClient::checkMimeData,[](){return false;});
+
+        {
+            QDropEvent dropevent(QPoint(64, 200), Qt::MoveAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
+            m_canvasGridView->dropEvent(&dropevent);
+            EXPECT_FALSE(tgData->property("DirectSaveUrl").isValid());
+            EXPECT_TRUE(droped);
+        }
+
+        //DirectSaveMode
+        {
+            droped = false;
+            QDropEvent dropevent(QPoint(64, 200), Qt::MoveAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
+            stu.reset(&DFileDragClient::checkMimeData);
+            bool checkMimeData = false;
+            stu.set_lamda(&DFileDragClient::checkMimeData,[&checkMimeData](){checkMimeData = true;return true;});
+            tgData->setProperty("IsDirectSaveMode",true);
+            m_canvasGridView->dropEvent(&dropevent);
+
+            EXPECT_TRUE(checkMimeData);
+            EXPECT_TRUE(tgData->property("DirectSaveUrl").isValid());
+            EXPECT_FALSE(droped);
+            tgData->setProperty("IsDirectSaveMode",false);
+        }
+    }
+
+    //内部拖动
+    {
+        QDropEvent dropevent(QPoint(64, 200), Qt::MoveAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
+        StubExt stu;
+        stu.set_lamda(&QDropEvent::source,[this](){return m_canvasGridView;});
+        stu.set_lamda(VADDR(CanvasGridView,indexAt),[=](){return QModelIndex();});
+        stu.set_lamda(ADDR(DFileSelectionModel,selectedIndexes),[=](){return tpIndexes;});
+
+        bool move = false;
+        stu.set_lamda(ADDR(GridManager,sigSyncOperation),[&move](){move = true;});
+
+        bool checkMimeData = false;
+        stu.set_lamda(&DFileDragClient::checkMimeData,[&checkMimeData](){checkMimeData = true;return true;});
+
+        m_canvasGridView->dropEvent(&dropevent);
+        EXPECT_TRUE(move);
+        EXPECT_FALSE(checkMimeData);
+    }
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_toggleEntryExpandedState)
@@ -1451,12 +1516,4 @@ TEST_F(CanvasGridViewTest, test_dropEvent)
     EXPECT_EQ(event.dropAction(), Qt::IgnoreAction);
 }
 
-TEST_F(CanvasGridViewTest, delete_file)
-{
-    QFile file(path);
-    if (file.exists()) {
-        QProcess::execute("rm " + path);
-    }
-    delete m_canvasGridView;
-}
 
