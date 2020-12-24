@@ -160,6 +160,7 @@ TEST_F(FileEventProcessorTest, tst_menu_open_functions)
     stext.set_lamda(ADDR(AppController, actionOpenInNewWindow), [](){});
     stext.set_lamda(ADDR(AppController, actionOpenInNewTab), [](){});
     stext.set_lamda(ADDR(AppController, actionOpenDiskInNewTab), [](){});
+    stext.set_lamda(ADDR(AppController, actionOpenAsAdmin), [](){});
     stext.set_lamda(ADDR(AppController, actionOpenDiskInNewWindow), [](){});
     stext.set_lamda(ADDR(AppController, actionOpenWithCustom), [](){});
     stext.set_lamda(ADDR(AppController, actionOpenFileLocation), [](){});
@@ -171,7 +172,7 @@ TEST_F(FileEventProcessorTest, tst_menu_open_functions)
     actions.append(DFMGlobal::MenuAction::OpenInNewTab);
     actions.append(DFMGlobal::MenuAction::OpenDiskInNewWindow);
     actions.append(DFMGlobal::MenuAction::OpenDiskInNewTab);
-    // actions.append(DFMGlobal::MenuAction::OpenAsAdmin);
+    actions.append(DFMGlobal::MenuAction::OpenAsAdmin);
     actions.append(DFMGlobal::MenuAction::OpenWithCustom);
     actions.append(DFMGlobal::MenuAction::OpenFileLocation);
 
@@ -419,6 +420,7 @@ TEST_F(FileEventProcessorTest, tst_menu_disk)
 
     QList<DFMGlobal::MenuAction> actions;
     actions.append(DFMGlobal::MenuAction::Mount);
+    actions.append(DFMGlobal::MenuAction::MountImage);
     actions.append(DFMGlobal::MenuAction::Unmount);
     actions.append(DFMGlobal::MenuAction::Eject);
     actions.append(DFMGlobal::MenuAction::SafelyRemoveDrive);
