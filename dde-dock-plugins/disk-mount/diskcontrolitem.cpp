@@ -228,13 +228,14 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
         DUrl mountPoint = DUrl(attachedDevice->mountpointUrl());
         QFile f(mountPoint.path());
         if (f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
-            DDialog d(QObject::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
-            Qt::WindowFlags flags = d.windowFlags();
-            d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
-            d.setIcon(QIcon::fromTheme("dialog-error"));
-            d.addButton(QObject::tr("Confirm"), true, DDialog::ButtonRecommend);
-            d.setMaximumWidth(640);
-            d.exec();
+            DDialog *d = new DDialog(QObject::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
+            d->setAttribute(Qt::WA_DeleteOnClose);
+            Qt::WindowFlags flags = d->windowFlags();
+            d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+            d->setIcon(QIcon::fromTheme("dialog-error"));
+            d->addButton(QObject::tr("Confirm"), true, DDialog::ButtonRecommend);
+            d->setMaximumWidth(640);
+            d->show();
             return;
         }
 
