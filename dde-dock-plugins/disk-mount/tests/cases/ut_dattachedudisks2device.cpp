@@ -137,7 +137,7 @@ TEST_F(TestDAttachedUdisks2Device, dummy_blkdevice_name_notEmpty)
     EXPECT_TRUE(name.contains("dummy"));
 }
 
-TEST_F(TestDAttachedUdisks2Device, dummy_blkdevice_not_Valid)
+TEST_F(TestDAttachedUdisks2Device, dummy_blkdevice_not_Valid_storage_is_ok)
 {
     Stub stub;
     stub.set(ADDR(DBlockDevice,isValid), isValid_false_stub);
@@ -147,6 +147,7 @@ TEST_F(TestDAttachedUdisks2Device, dummy_blkdevice_not_Valid)
     QString name = mUdisks2Device->displayName();
     EXPECT_TRUE(name.contains("1 KB"));
 }
+
 
 TEST_F(TestDAttachedUdisks2Device, dummy_deviceUsage_can_get)
 {

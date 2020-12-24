@@ -11,12 +11,16 @@
 #include <dgiosettings.h>
 #include <DDesktopServices>
 #include <dgiovolumemanager.h>
+#include <DDBusSender>
 
 #include "dattachedvfsdevice.h"
 #include <dfmsettings.h>
 
 #include "stub.h"
+#include "stubext.h"
 #include "ut_mock_stub_diskdevice.h"
+#include <QProcess>
+
 DFM_USE_NAMESPACE
 namespace  {
     class TestDiskControlWidget : public testing::Test {
@@ -49,6 +53,9 @@ QVariant value_false_stub(const QString &group, const QString &key, const QVaria
 
 TEST_F(TestDiskControlWidget, can_send_notifymsg)
 {
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     mCtrlWidget->NotifyMsg("msg details");
     mCtrlWidget->NotifyMsg("title", "msg informations");
 }
@@ -57,6 +64,9 @@ TEST_F(TestDiskControlWidget, can_do_StartupAutoMount)
 {
     bool (DBlockDevice::*fileSystem)() const = &DBlockDevice::hasFileSystem;
     QStringList (*blockDevices)(QVariantMap) = &DDiskManager::blockDevices;
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     Stub stub;
     stub.set(blockDevices, blockDevices_DDiskManager_stub);
@@ -74,8 +84,10 @@ TEST_F(TestDiskControlWidget, can_do_StartupAutoMount)
 
 TEST_F(TestDiskControlWidget, can_monitor_DriveConnected)
 {
-    Stub stub;
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
+    Stub stub;
     stub.set(ADDR(DDiskDevice,removable), removable_stub);
 
     emit mDiskManager->diskDeviceAdded(dgio_devpath_stub());
@@ -83,8 +95,10 @@ TEST_F(TestDiskControlWidget, can_monitor_DriveConnected)
 
 TEST_F(TestDiskControlWidget, can_monitor_DriveDisconnected)
 {
-    Stub stub;
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
+    Stub stub;
     stub.set(ADDR(DDiskDevice,removable), removable_stub);
 
     emit mDiskManager->diskDeviceRemoved(dgio_devpath_stub());
@@ -92,8 +106,10 @@ TEST_F(TestDiskControlWidget, can_monitor_DriveDisconnected)
 
 TEST_F(TestDiskControlWidget, can_monitor_onMountRemoved)
 {
-    Stub stub;
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
+    Stub stub;
     stub.set(ADDR(DDiskDevice,removable), removable_stub);
 
     emit mDiskManager->mountRemoved(dgio_devpath_stub(),dgio_devpath_stub().toUtf8());
@@ -101,8 +117,10 @@ TEST_F(TestDiskControlWidget, can_monitor_onMountRemoved)
 
 TEST_F(TestDiskControlWidget, can_monitor_onVolumeAdded)
 {
-    Stub stub;
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
+    Stub stub;
     stub.set(ADDR(DDiskDevice,removable), removable_stub);
 
     emit mDiskManager->fileSystemAdded(dgio_devpath_stub());
@@ -110,8 +128,10 @@ TEST_F(TestDiskControlWidget, can_monitor_onVolumeAdded)
 
 TEST_F(TestDiskControlWidget, can_monitor_onVolumeRemoved)
 {
-    Stub stub;
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
+    Stub stub;
     stub.set(ADDR(DDiskDevice,removable), removable_stub);
 
     emit mDiskManager->fileSystemRemoved(dgio_devpath_stub());
@@ -119,8 +139,10 @@ TEST_F(TestDiskControlWidget, can_monitor_onVolumeRemoved)
 
 TEST_F(TestDiskControlWidget, can_monitor_blockDeviceAdded_with_normalset)
 {
-    Stub stub;
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
+    Stub stub;
     stub.set(ADDR(DDiskDevice,removable), removable_stub);
 
     emit mDiskManager->blockDeviceAdded(dgio_devpath_stub());
@@ -131,10 +153,11 @@ TEST_F(TestDiskControlWidget, can_monitor_blockDeviceAdded_without_automount_and
     QVariant (DFMSettings::*func_value)(const QString &group, const QString &key, const QVariant &defaultValue) const = & DFMSettings::value;
 
     Stub stub;
-
     stub.set(ADDR(DDiskDevice,removable), removable_stub);
-
     stub.set(func_value, value_false_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     emit mDiskManager->blockDeviceAdded(dgio_devpath_stub());
 }
@@ -149,8 +172,10 @@ TEST_F(TestDiskControlWidget, can_monitor_blockDeviceAdded_with_automount_and_op
     stub.set(fileSystem, hasFileSystem_stub);
     stub.set(ADDR(DBlockDevice,mount), getDummyMountPoint);
     stub.set(ADDR(DDiskDevice,removable), removable_stub);
-
     stub.set(func_value, value_true_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     emit mDiskManager->blockDeviceAdded(dgio_devpath_stub());
 }
@@ -167,6 +192,9 @@ TEST_F(TestDiskControlWidget, can_monitor_blockDeviceAdded_automount_and_open_bu
     stub.set(ADDR(DDiskDevice,removable), removable_stub);
 
     stub.set(func_value, value_true_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     emit mDiskManager->blockDeviceAdded(dgio_devpath_stub());
 }
@@ -192,6 +220,9 @@ TEST_F(TestDiskControlWidget, can_monitor_diskDeviceRemoved)
     stub.set(ADDR(QUrl, scheme), scheme_burn_stub);
     stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
     stub.set(ADDR(DGioMount, name), name_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     emit mDiskManager->diskDeviceRemoved(dgio_devpath_stub());
 }
@@ -219,6 +250,9 @@ TEST_F(TestDiskControlWidget, can_unmountall_u_blk_device)
     stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
     stub.set(ADDR(DGioMount, name), name_stub);
 
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     mCtrlWidget->unmountAll();
     sleep(nTimeout_udisk);
 }
@@ -245,6 +279,9 @@ TEST_F(TestDiskControlWidget, cant_unmountall_u_blk_device)
     stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
     stub.set(ADDR(DGioMount, name), name_stub);
 
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     mCtrlWidget->unmountAll();
     sleep(nTimeout_udisk);
 }
@@ -269,6 +306,9 @@ TEST_F(TestDiskControlWidget, can_unmountall_optical_blk_device)
     stub.set(ADDR(QUrl, scheme), scheme_burn_stub);
     stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
     stub.set(ADDR(DGioMount, name), name_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     mCtrlWidget->unmountAll();
     sleep(nTimeout_udisk);
@@ -295,6 +335,9 @@ TEST_F(TestDiskControlWidget, cant_unmountall_optical_blk_device)
     stub.set(ADDR(QUrl, scheme), scheme_burn_stub);
     stub.set(ADDR(DGioMount, isShadowed), isShadowed_stub);
     stub.set(ADDR(DGioMount, name), name_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     mCtrlWidget->unmountAll();
     sleep(nTimeout_udisk);

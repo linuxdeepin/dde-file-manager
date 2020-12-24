@@ -92,13 +92,11 @@ QString DAttachedUdisks2Device::displayName()
     };
 
     QStorageInfo storage_info(mountPoint);
-    bool hasLabelName = true;
     QString result;
 
     if (blockDevice()->isValid()) {
         QString devName = blockDevice()->idLabel();
         if (devName.isEmpty()) {
-            hasLabelName = false;
             devName = qApp->translate("DeepinStorage", "%1 Volume").arg(DiskControlItem::formatDiskSize(blockDevice()->size()));
         }
 
@@ -110,10 +108,8 @@ QString DAttachedUdisks2Device::displayName()
 
         result = devName;
     } else if (storage_info.isValid()) {
-        if (!hasLabelName) {
-            qint64 bytesTotal = storage_info.bytesTotal();
-            result = qApp->translate("DeepinStorage", "%1 Volume").arg(DiskControlItem::formatDiskSize(static_cast<quint64>(bytesTotal)));
-        }
+        qint64 bytesTotal = storage_info.bytesTotal();
+        result = qApp->translate("DeepinStorage", "%1 Volume").arg(DiskControlItem::formatDiskSize(static_cast<quint64>(bytesTotal)));
     }
 
     return result;
