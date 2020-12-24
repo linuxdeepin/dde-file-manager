@@ -37,7 +37,7 @@ public:
         m_diskInfo.setId("123");
         m_diskInfo.setName("abc");
         m_diskInfo.setType("dvd");
-        m_diskInfo.setUnix_device("/deb/sdb");
+        m_diskInfo.setUnix_device("/deb/sd*");
         m_diskInfo.setUuid("abcd-efgh");
         m_diskInfo.setMounted_root_uri("/media/root/ntfs");
         m_diskInfo.setIconName(":computer");
@@ -285,4 +285,18 @@ TEST_F(TestUDiskDeviceInfo, getUrlByChildFileName)
     EXPECT_TRUE(url.isValid());
 }
 
+TEST_F(TestUDiskDeviceInfo, optical)
+{
+    EXPECT_FALSE(m_devInfo->optical());
+}
+
+TEST_F(TestUDiskDeviceInfo, opticalBlank)
+{
+    EXPECT_FALSE(m_devInfo->opticalBlank());
+}
+
+TEST_F(TestUDiskDeviceInfo, opticalReuseable)
+{
+    EXPECT_FALSE(m_devInfo->opticalReuseable());
+}
 
