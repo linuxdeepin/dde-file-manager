@@ -413,6 +413,10 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
         if (targetUrl.isTrashFile()) {
             realUrl = DUrl::fromTrashFile(realUrl.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
         }
+        // 如果是保险箱文件，则设置成保险箱文件路径
+        if(VaultController::isVaultFile(res)) {
+            realUrl = VaultController::localToVault(res);
+        }
         url.setSearchedFileUrl(realUrl);
 
         if (!childrens.contains(url)) {
