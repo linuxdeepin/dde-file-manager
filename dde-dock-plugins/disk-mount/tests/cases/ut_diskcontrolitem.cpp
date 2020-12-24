@@ -46,7 +46,7 @@ TEST_F(TestDiskControlItem, can_set_tag_name)
 
 TEST_F(TestDiskControlItem, can_be_showed)
 {
-    EXPECT_CALL(*mockInterface,displayName).WillOnce(testing::Return("displayName"));
+    //EXPECT_CALL(*mockInterface,displayName).WillOnce(testing::Return("displayName"));
     EXPECT_CALL(*mockInterface,deviceUsageValid).WillOnce(testing::Return(false));
     ON_CALL(*mockInterface,iconName).WillByDefault(testing::Return("iconName"));
 
@@ -58,7 +58,7 @@ TEST_F(TestDiskControlItem, can_be_showed)
 
 TEST_F(TestDiskControlItem, showed_with_deviceUsageValid)
 {
-    EXPECT_CALL(*mockInterface,displayName).WillOnce(testing::Return("displayName"));
+    //EXPECT_CALL(*mockInterface,displayName).WillOnce(testing::Return("displayName"));
     EXPECT_CALL(*mockInterface,iconName).WillOnce(testing::Return("iconName"));
 
     EXPECT_CALL(*mockInterface,deviceUsageValid).WillOnce(testing::Return(true));
@@ -71,7 +71,7 @@ TEST_F(TestDiskControlItem, showed_with_deviceUsageValid)
 
 TEST_F(TestDiskControlItem, showed_with_deviceUsageValid_and_media_optical)
 {
-    EXPECT_CALL(*mockInterface,displayName).WillOnce(testing::Return("displayName"));
+    //EXPECT_CALL(*mockInterface,displayName).WillOnce(testing::Return("displayName"));
     EXPECT_CALL(*mockInterface,iconName).WillOnce(testing::Return("media-optical"));
 
     EXPECT_CALL(*mockInterface,deviceUsageValid).WillOnce(testing::Return(true));
@@ -84,7 +84,7 @@ TEST_F(TestDiskControlItem, showed_with_deviceUsageValid_and_media_optical)
 
 TEST_F(TestDiskControlItem, showed_with_tagname_and_media_optical)
 {
-    EXPECT_CALL(*mockInterface,displayName).WillOnce(testing::Return("displayName"));
+    //EXPECT_CALL(*mockInterface,displayName).WillOnce(testing::Return("displayName"));
     EXPECT_CALL(*mockInterface,iconName).WillOnce(testing::Return("media-optical"));
 
     EXPECT_CALL(*mockInterface,deviceUsageValid).WillOnce(testing::Return(true));
@@ -115,10 +115,12 @@ TEST_F(TestDiskControlItem, kick_mouse_open_optical_path)
 
 TEST_F(TestDiskControlItem, kick_mouse_open_optical_path_filemanager_notready)
 {
-    EXPECT_CALL(*mockInterface,accessPointUrl).WillOnce(testing::Return(QUrl("burn:/dev/sr0/disc_files/")));
-    EXPECT_CALL(*mockInterface,mountpointUrl).WillOnce(testing::Return(QUrl(getAppRunPath())));
     Stub stub;
     stub.set(ADDR(QStandardPaths, findExecutable), findExecutable_QStandardPaths_return_empty_stub);
+
+    EXPECT_CALL(*mockInterface,accessPointUrl).WillRepeatedly(testing::Return(QUrl("burn:/dev/sr0/disc_files/")));
+    EXPECT_CALL(*mockInterface,mountpointUrl).WillRepeatedly(testing::Return(QUrl(getAppRunPath())));
+
 
     QTest::mouseRelease(mDiskContrlItem.get(), Qt::MouseButton::LeftButton);
 }

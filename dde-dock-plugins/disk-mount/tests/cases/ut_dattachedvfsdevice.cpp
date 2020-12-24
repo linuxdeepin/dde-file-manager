@@ -6,8 +6,10 @@
 #include <memory>
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include <DDBusSender>
 
 #include "stub.h"
+#include "stubext.h"
 #include "ut_mock_stub_diskdevice.h"
 
 
@@ -46,6 +48,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_unmounted)
     stub.set(g_file_find_enclosing_mount, g_file_find_enclosing_mount_stub);
     stub.set(g_mount_unmount_with_operation, g_mount_unmount_with_operation_stub);
 
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     EXPECT_TRUE(mDummyVfsDevice->isValid());
     EXPECT_TRUE(mDummyVfsDevice->detachable());
 
@@ -57,6 +62,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_unmounted_nodevice)
     Stub stub;
     stub.set( ADDR(DGioMount, canUnmount), canUnmount_stub );
     stub.set( ADDR(QFileInfo, permission), permission_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     EXPECT_TRUE(mDummyVfsDevice->isValid());
     EXPECT_TRUE(mDummyVfsDevice->detachable());
@@ -74,6 +82,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_cant_unmounted_file_nopermission)
     stub.set(exists, exists_true_stub);
     stub.set(ADDR(QFileInfo, permission), permission_false_stub);
     stub.set(ADDR(QFileInfo, owner), owner_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     EXPECT_TRUE(mDummyVfsDevice->isValid());
     EXPECT_TRUE(mDummyVfsDevice->detachable());
@@ -94,6 +105,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_cant_unmounted_file_UUIDOK)
     stub.set(ADDR(QFileInfo, ownerId), getuid_stub);
     stub.set(getuid, getuid_stub);
 
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     EXPECT_TRUE(mDummyVfsDevice->isValid());
     EXPECT_TRUE(mDummyVfsDevice->detachable());
 
@@ -113,6 +127,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_cant_unmounted_file_GroupIDOK)
     stub.set(ADDR(QFileInfo, groupId), groupId_stub);
     stub.set(getgid, groupId_stub);
 
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     EXPECT_TRUE(mDummyVfsDevice->isValid());
     EXPECT_TRUE(mDummyVfsDevice->detachable());
 
@@ -123,6 +140,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_getdisplayname)
 {
     Stub stub;
     stub.set(ADDR(DGioMount, name), name_stub);
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     EXPECT_EQ(mDummyVfsDevice->displayName(), gio_dummy_device_name);
 }
 
@@ -133,6 +153,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_get_iconName)
     stub.set(ADDR(DGioMount, name), name_stub);
     stub.set(ADDR(DGioMount, themedIconNames), themedIconNames_stub);
 
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     EXPECT_EQ(mDummyVfsDevice->iconName(), gio_dummy_device_icon_name );
 }
 
@@ -141,6 +164,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_cannot_get_iconName)
     Stub stub;
     stub.set(ADDR(DGioMount, name), name_stub);
     stub.set(ADDR(DGioMount, themedIconNames), themedIconNames_empty_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     EXPECT_EQ(mDummyVfsDevice->iconName(), QStringLiteral("drive-network") );
 }
@@ -152,6 +178,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_get_mountpointUrl)
     stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
     stub.set(ADDR(DGioFile, path), getDummyMountPoint);
 
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     EXPECT_EQ(mDummyVfsDevice->mountpointUrl(), QUrl::fromLocalFile(getDummyMountPoint() ) );
 }
 
@@ -160,6 +189,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_get_accessPointUrl)
     Stub stub;
     stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
     stub.set(ADDR(DGioFile, path), getDummyMountPoint);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     EXPECT_EQ(mDummyVfsDevice->accessPointUrl(), QUrl::fromLocalFile(getDummyMountPoint() ) );
 }
@@ -170,6 +202,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_deviceUsageValid)
     stub.set(ADDR(DGioMount, name), name_stub);
     stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
     stub.set(ADDR(DGioFile, createFileSystemInfo), createFileSystemInfo_stub);
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     EXPECT_TRUE(mDummyVfsDevice->deviceUsageValid() );
 }
 
@@ -182,6 +217,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_getUsageValid)
     stub.set(ADDR(DGioFileInfo, fsFreeBytes), fsFreeBytes_1KB_stub);
     stub.set(ADDR(DGioFileInfo, fsTotalBytes), fsTotalBytes_2KB_stub);
 
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
+
     QPair<quint64, quint64> value = QPair<quint64, quint64>(1024, 2*1024);
     QPair<quint64, quint64> curValue = mDummyVfsDevice->deviceUsage();
     EXPECT_EQ(curValue, value );
@@ -193,6 +231,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_not_getUsageValid)
     stub.set(ADDR(DGioMount, name), name_stub);
     stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
     stub.set(ADDR(DGioFile, createFileSystemInfo), createFileSystemInfo_return_null_stub);
+
+    stub_ext::StubExt stue;
+    stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
     QPair<quint64, quint64> value = QPair<quint64, quint64>(0, 0);
     QPair<quint64, quint64> curValue = mDummyVfsDevice->deviceUsage();
