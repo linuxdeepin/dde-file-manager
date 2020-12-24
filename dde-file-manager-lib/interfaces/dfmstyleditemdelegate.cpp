@@ -229,6 +229,10 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
     if (icon.isNull())
         return QPixmap();
 
+    //确保当前参数参入获取图片大小大于0
+    if (size.width() <= 0 || size.height() <= 0)
+        return QPixmap();
+
     QSize icon_size = icon.actualSize(size, mode, state);
     //取出icon的真实大小
     QList<QSize> iconSizeList = icon.availableSizes();

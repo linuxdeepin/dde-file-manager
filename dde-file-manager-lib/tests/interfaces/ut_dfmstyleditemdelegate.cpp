@@ -16,14 +16,14 @@ class inhDFileViewHelper;
 class inhDFMStyledItemDelegat;
 class QListView;
 
-class inhDFileViewHelper :public DFileViewHelper
+class DFileViewHelperInherit :public DFileViewHelper
 {
 public:
-    explicit inhDFileViewHelper(QListView *parent):DFileViewHelper(parent){}
+    explicit DFileViewHelperInherit(QListView *parent):DFileViewHelper(parent){}
 
-    inhDFileViewHelper() = delete;
+    DFileViewHelperInherit() = delete;
 
-    virtual ~inhDFileViewHelper() override {}
+    virtual ~DFileViewHelperInherit() override {}
 
     virtual const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const override { return DAbstractFileInfoPointer();}
 
@@ -37,21 +37,20 @@ public:
 };
 
 
-
-class inhDFMStyledItemDelegat :public DFMStyledItemDelegate
+#include <QPainter>
+class DFMStyledItemDelegateInherit :public DFMStyledItemDelegate
 {
 public:
-    inhDFMStyledItemDelegat(DFileViewHelper *parent):DFMStyledItemDelegate(parent)
+    DFMStyledItemDelegateInherit(DFileViewHelper *parent):DFMStyledItemDelegate(parent)
     {
-        this->initTextLayout(QModelIndex(),new QTextLayout());
+        this->initTextLayout(QModelIndex(), new QTextLayout());
         this->initStyleOption(new QStyleOptionViewItem(), QModelIndex());
-        this->getCornerGeometryList(QRectF(),QSizeF());
-        //        this->paintIcon(new QPainter(),QIcon(),QRectF());
+        this->getCornerGeometryList(QRectF(), QSizeF());
     }
 
-    inhDFMStyledItemDelegat() = delete;
+    DFMStyledItemDelegateInherit() = delete;
 
-    virtual ~inhDFMStyledItemDelegat() override {}
+    virtual ~DFMStyledItemDelegateInherit() override {}
 
     virtual void updateItemSizeHint() override {}
 
@@ -62,24 +61,42 @@ public:
         return {};
     }
 
+    //此处封装父类 Delegate 以暴露接口 方便外部调用
+    void paintIconMine(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
+                       QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off)
+    {
+        DFMStyledItemDelegate::paintIcon(painter,icon,rect,alignment,mode,state);
+    }
 };
-
 
 namespace {
 
-class DFMStyledItemDelegateTest : public testing::Test
+class DFMStyledItemDelegateTest : public testing::Test, public QListView
 {
 public:
     DFMStyledItemDelegate * delegate = nullptr;
-    inhDFileViewHelper* helper = nullptr;
-    QListView* listView = new QListView;
+    DFileViewHelperInherit* helper = nullptr;
+    QStandardItemModel itemModel;
 
     void SetUp() override
     {
         qDebug() << __PRETTY_FUNCTION__;
-        listView->setModel(new QStandardItemModel());
-        if(!helper) helper = new inhDFileViewHelper(listView);
-        if(!delegate) delegate = new inhDFMStyledItemDelegat(helper);
+        if (!this->model()) {
+            this->setModel(&itemModel);
+        }
+
+        if (!helper) {
+            helper = new DFileViewHelperInherit(this);
+        }
+
+        if (!delegate){
+            delegate = new DFMStyledItemDelegateInherit(helper);
+        }
+
+        //此类必须继承QWidget 否则无法测试 DFMStyledItemDelegate:：paintIcon
+        QPainter painter(this);
+        ((DFMStyledItemDelegateInherit*)(delegate))->paintIconMine(&painter,QIcon::fromTheme("edit-undo"),QRectF(QPointF(0,0),QPointF(16,16)));
+
     }
 
     void TearDown() override
@@ -97,26 +114,30 @@ TEST_F(DFMStyledItemDelegateTest, parent)
 
 TEST_F(DFMStyledItemDelegateTest, editingIndex)
 {
-    //cause not edit index model,should QModelIndex(QObject(0x0),(-1,-1))
-    qDebug() << delegate->editingIndex();
+    auto indexModel = delegate->editingIndex();
+    EXPECT_TRUE(indexModel.row() == -1);
+    EXPECT_TRUE(indexModel.column() == -1);
 }
 
 TEST_F(DFMStyledItemDelegateTest, editingIndexWidget)
 {
-    //cause not edit index model,should QModelIndex(QObject(0x0),(-1,-1))
-    qDebug() << delegate->editingIndexWidget();
+    auto pointer = delegate->editingIndexWidget();
+    EXPECT_TRUE(pointer == nullptr);
 }
 
 TEST_F(DFMStyledItemDelegateTest, sizeHint)
 {
-    //cause not edit index model,should QModelIndex(QObject(0x0),(-1,-1))
-    qDebug() << delegate->sizeHint(QStyleOptionViewItem(),QModelIndex());
+    auto size = delegate->sizeHint(QStyleOptionViewItem(), QModelIndex());
+    EXPECT_TRUE(size == QSize(-1,-1));
 }
 
 TEST_F(DFMStyledItemDelegateTest, destroyEditor)
 {
-    //cause not edit index model,should QModelIndex(QObject(0x0),(-1,-1))
-    qDebug() << delegate->sizeHint(QStyleOptionViewItem(),QModelIndex());
+    auto widget = new QWidget ;
+    QStyleOptionViewItem styleItem;
+    QModelIndex modelIndex;
+    delegate->createEditor(widget, styleItem, modelIndex);
+    delegate->destroyEditor(widget, modelIndex);
 }
 
 TEST_F(DFMStyledItemDelegateTest, hasWidgetIndexs)
@@ -128,80 +149,94 @@ TEST_F(DFMStyledItemDelegateTest, hasWidgetIndexs)
 TEST_F(DFMStyledItemDelegateTest, hideAllIIndexWidget)
 {
     //model is empty to call
+    auto widget = new QWidget ;
+    QStyleOptionViewItem styleItem;
+    QModelIndex modelIndex;
+    delegate->createEditor(widget, styleItem, modelIndex);
+
     delegate->hideAllIIndexWidget();
+
+    EXPECT_TRUE(widget->isHidden());
+
+    delegate->destroyEditor(widget, modelIndex);
 }
 
 TEST_F(DFMStyledItemDelegateTest,hideNotEditingIndexWidget)
 {
-    //model is empty to call
+    //hideNotEditingIndexWidget method is pass
     delegate->hideNotEditingIndexWidget();
 }
 
 TEST_F(DFMStyledItemDelegateTest,commitDataAndCloseActiveEditor)
 {
-    //model is empty to call
     delegate->commitDataAndCloseActiveEditor();
 }
 
 TEST_F(DFMStyledItemDelegateTest,fileNameRect)
 {
     //get item filename rect in view, arguments is empty const class;
-    qWarning() << delegate->fileNameRect(QStyleOptionViewItem(),QModelIndex());
-    //    EXPECT_TRUE(QRect(-1,-1,-1,-1) == delegate->fileNameRect(QStyleOptionViewItem(),QModelIndex()));
+    EXPECT_TRUE(QRect(QPoint(0,0),QPoint(-1,-1)) == delegate->fileNameRect(QStyleOptionViewItem(),QModelIndex()));
 }
 
 TEST_F(DFMStyledItemDelegateTest,paintGeomertys)
 {
-    //overload vritual method return list is empty
+    //model is empty to call,cause overload the only-virtual method; noting to do
     EXPECT_TRUE(delegate->paintGeomertys(QStyleOptionViewItem(),QModelIndex()).isEmpty());
 }
 
 TEST_F(DFMStyledItemDelegateTest,iconSizeLevel)
 {
-    qDebug() << delegate->iconSizeLevel();
+    //defualt return -1
+    EXPECT_TRUE(-1 == delegate->iconSizeLevel());
 }
 
 TEST_F(DFMStyledItemDelegateTest,minimumIconSizeLevel)
 {
-    qDebug() << delegate->iconSizeLevel();
+    //defualt return -1
+    EXPECT_TRUE(-1 == delegate->minimumIconSizeLevel());
 }
 
 TEST_F(DFMStyledItemDelegateTest,maximumIconSizeLevel)
 {
-    qDebug() << delegate->iconSizeLevel();
+    //defualt return -1
+    EXPECT_TRUE(-1 == delegate->maximumIconSizeLevel());
 }
 
 TEST_F(DFMStyledItemDelegateTest,increaseIcon)
 {
-    qDebug() << delegate->iconSizeLevel();
+    //defualt return -1
+    EXPECT_TRUE(-1 == delegate->increaseIcon());
 }
 
 TEST_F(DFMStyledItemDelegateTest,decreaseIcon)
 {
-    qDebug() << delegate->iconSizeLevel();
+    //defualt return -1
+    EXPECT_TRUE(-1 == delegate->decreaseIcon());
 }
 
 TEST_F(DFMStyledItemDelegateTest,setIconSizeByIconSizeLevel)
 {
-    qDebug() << delegate->setIconSizeByIconSizeLevel(0);
+    //defualt return -1
+    EXPECT_TRUE(-1 == delegate->setIconSizeByIconSizeLevel(0));
 }
 
 TEST_F(DFMStyledItemDelegateTest,updateItemSizeHint)
 {
+    //(noting to do)pass method and overload updateItemSizeHint
     delegate->updateItemSizeHint();
 }
 
 #include <QPainter>
+#include <QtGlobal>
+
 TEST_F(DFMStyledItemDelegateTest,drawText)
 {
-    qDebug() << delegate->drawText(QModelIndex(),new QPainter,new QTextLayout(""),
-                                   QRectF(),0.0,QBrush());
+    EXPECT_TRUE(1 == delegate->drawText(QModelIndex(),new QPainter(), new QTextLayout(),QRectF(),0.0,QBrush()).size());
 }
 
 TEST_F(DFMStyledItemDelegateTest,drawTest2)
 {
-    qDebug() << delegate->drawText(QModelIndex(),new QPainter,"",
-                                   QRectF(),0.0,QBrush());
+    EXPECT_TRUE(1 == delegate->drawText(QModelIndex(),new QPainter(),QString("testString"),QRectF(),0.0,QBrush()).size());
 }
 
 #include <QColor>
@@ -211,9 +246,45 @@ TEST_F(DFMStyledItemDelegateTest,paintCircleList)
 }
 
 #include <QIcon>
+#include <QLabel>
+#include <testhelper.h>
+
 TEST_F(DFMStyledItemDelegateTest,getIconPixmap)
 {
-    delegate->getIconPixmap(QIcon(),{0,0},0.0);
+    //program return empty pixmap
+    QString longwidthImg = QCoreApplication::applicationDirPath() + "/test_long_width.png";
+
+    //check source image
+    if (!QFileInfo::exists(longwidthImg)) {
+
+        QLabel label("long width image");
+        label.setFixedSize(1024,1);
+
+        QPixmap loadPixmap = QIcon::fromTheme("edit-undo").pixmap(QSize(16,16));
+        QPixmap fitpixmap = loadPixmap.scaled(1024, 40, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+        label.setPixmap(fitpixmap);
+        label.setStyleSheet("QLabel{background-color:green;}");
+
+        if (!label.pixmap()->isNull()) {
+            label.pixmap()->save(longwidthImg);
+        }
+//        label.show();
+//        qApp->exec();
+    }
+
+    EXPECT_TRUE(delegate->getIconPixmap(QIcon(),{0,0},0.0).isNull());
+
+    //forever while loop
+    delegate->getIconPixmap(QIcon::fromTheme("edit-undo"),{0,0},0.0);
+
+    auto lwPixmap = delegate->getIconPixmap(QIcon(longwidthImg),QSize(1024,40),1.0);
+
+    //get edit-undo pixmap
+    QIcon icon = QIcon::fromTheme("edit-undo");
+    auto pixmap = delegate->getIconPixmap(icon,QSize(16,16),1.0);
+    EXPECT_FALSE(pixmap.isNull());
+
 }
 
 
