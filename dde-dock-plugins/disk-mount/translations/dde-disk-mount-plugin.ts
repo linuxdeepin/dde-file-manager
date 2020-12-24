@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>The device is busy, cannot eject now</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>The device is busy, cannot remove now</translation>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Cannot unmount the device</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Cannot find the mounted device</translation>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Disks</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
@@ -48,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>The device has been safely removed</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Access denied</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>You do not have permission to access this folder</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirm</translation>
     </message>
 </context>
 </TS>

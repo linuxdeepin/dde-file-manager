@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Cliquez sur &quot;Supprimer en toute sécurité&quot; et ensuite déconnectez-le </translation>
     </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>L&apos;appareil est occupé et ne peut pas être éjecté maintenant</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>L&apos;appareil est occupé et ne peut pas être retiré maintenant</translation>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Impossible de démonter l&apos;appareil</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Le disque est monté par l&apos;utilisateur &quot;% 1&quot;, vous ne pouvez pas le démonter.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Impossible de trouver le périphérique monté</translation>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Disques</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
@@ -48,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>L&apos;appareil a été retiré en toute sécurité</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Accès refusé</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>Vous n&apos;êtes pas autorisé à accéder à ce dossier</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirmer</translation>
     </message>
 </context>
 </TS>

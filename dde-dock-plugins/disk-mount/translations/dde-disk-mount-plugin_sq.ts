@@ -27,6 +27,30 @@
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Herës tjetër klikoni mbi “Hiqe Në Mënyrë të Parrezik” dhe mandej shkëputeni</translation>
     </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Pajisja është e zënë, s’mund të nxirret tani</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Pajisja është e zënë, s’mund të hiqet tani</translation>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Nuk çmontohet dot pajisja</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Disku është montuar nga përdoruesi &quot;%1&quot;, s’mund të çmontoni.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Disqe</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
@@ -48,6 +72,18 @@
     <message>
         <source>The device has been safely removed</source>
         <translation>Pajisja u hoq në mënyrë të parrezik</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Hyrja u mohua</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>S’keni leje të hyni te kjo dosje</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Ripohojeni</translation>
     </message>
 </context>
 </TS>

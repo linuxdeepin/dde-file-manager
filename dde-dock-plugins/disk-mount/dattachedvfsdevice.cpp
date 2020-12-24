@@ -84,7 +84,7 @@ void unmount_mounted(const QString &mount_path)
             return;
         }
 
-        DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Cannot find the mounting device"), DiskControlWidget::tr("") );
+        DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Cannot find the mounted device"), DiskControlWidget::tr("") );
         return;
     }
 
