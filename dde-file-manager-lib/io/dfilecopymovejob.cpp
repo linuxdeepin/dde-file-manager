@@ -2349,7 +2349,10 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer fromInfo, 
         updateSpeedElapsedTimer->elapsed();
     }
     beginJob(JobInfo::Copy, fromInfo->fileUrl(), toInfo->fileUrl());
-    if (m_refineStat != DFileCopyMoveJob::Refine) {
+    if (m_refineStat != DFileCopyMoveJob::Refine
+            //! 为避免卡顿，保险箱用之前的拷贝方式
+            || VaultController::isVaultFile(fromInfo->toLocalFile())
+            || VaultController::isVaultFile(toInfo->toLocalFile())) {
         return doCopyFile(fromInfo, toInfo, handler, blockSize);
     }
     //判读目标目录和本地目录是不是同盘，并且是大文件
