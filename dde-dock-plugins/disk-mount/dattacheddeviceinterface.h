@@ -38,7 +38,6 @@ public:
     virtual QString iconName() = 0; // device icon (theme) name.
     virtual QUrl mountpointUrl() = 0; // path to the device mount point.
     virtual QUrl accessPointUrl() = 0; // path to the open filemanger.
-    virtual ~DAttachedDeviceInterface();
 };
 
 #endif // DATTACHEDDEVICEINTERFACE_H
