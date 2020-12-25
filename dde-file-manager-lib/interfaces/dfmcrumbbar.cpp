@@ -32,6 +32,7 @@
 
 #include "dfmapplication.h"
 #include "dfmcrumbbar.h"
+#include "private/dfmcrumbbar_p.h"
 #include "dfmcrumbmanager.h"
 #include "dfmsettings.h"
 #include "views/windowmanager.h"
@@ -54,41 +55,6 @@
 DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
-
-class DFMCrumbBarPrivate
-{
-    Q_DECLARE_PUBLIC(DFMCrumbBar)
-
-public:
-    explicit DFMCrumbBarPrivate(DFMCrumbBar *qq);
-
-    // UI
-    QPushButton leftArrow;
-    QPushButton rightArrow;
-    DListView crumbListView;
-    DFMCrumbListviewModel *crumbListviewModel = nullptr;
-    QHBoxLayout *crumbBarLayout;
-    QPoint clickedPos;
-    DFMAddressBar *addressBar = nullptr;
-
-    // Scheme support
-    DFMCrumbInterface *crumbController = nullptr;
-
-    // Misc
-    bool clickableAreaEnabled = false;
-
-    DFMCrumbBar *q_ptr = nullptr;
-
-    void clearCrumbs();
-    void checkArrowVisiable();
-    void updateController(const DUrl &url);
-    void setClickableAreaEnabled(bool enabled);
-
-private:
-    void initUI();
-    void initData();
-    void initConnections();
-};
 
 DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
     : q_ptr(qq)
