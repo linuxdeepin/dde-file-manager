@@ -3,8 +3,10 @@
 
 #include <QTimer>
 #include <dfmevent.h>
+#include "stubext.h"
 #define private public
 #include "interfaces/dfilesystemmodel.h"
+#include "interfaces/dfilesystemmodel_p.h"
 #undef private
 #include "views/dfileview.h"
 #include "views/fileviewhelper.h"
@@ -346,4 +348,54 @@ TEST_F(TestDFileSystemModel, test_setAdvanceSearchFilter)
     ASSERT_TRUE(m_model->advanceSearchFilter());
 
 }
+
+TEST(FileSystemNodeTest, setNodeVisible)
+{
+    QReadWriteLock lk;
+    DAbstractFileInfoPointer info;
+    FileSystemNode node(nullptr, info, nullptr, &lk);
+    FileSystemNodePointer data;
+    node.visibleChildren.append(data);
+    node.setNodeVisible(data, false);
+    EXPECT_TRUE(node.visibleChildren.isEmpty());
+
+    node.setNodeVisible(data, true);
+    EXPECT_FALSE(node.visibleChildren.isEmpty());
+}
+
+TEST(FileSystemNodeTest, noLockAppendChildren)
+{
+    QReadWriteLock lk;
+    DAbstractFileInfoPointer info;
+    FileSystemNode node(nullptr, info, nullptr, &lk);
+    FileSystemNodePointer data;
+    DUrl url("/usr/bin");
+    node.noLockAppendChildren(url, data);
+    EXPECT_FALSE(node.visibleChildren.isEmpty());
+}
+
+TEST(FileSystemNodeTest, appendChildren)
+{
+    QReadWriteLock lk;
+    DAbstractFileInfoPointer info;
+    FileSystemNode node(nullptr, info, nullptr, &lk);
+    FileSystemNodePointer data;
+    DUrl url("/usr/bin");
+    node.appendChildren(url, data);
+    EXPECT_FALSE(node.visibleChildren.isEmpty());
+}
+
+TEST(FileSystemNodeTest, takeNodeByUrl)
+{
+    QReadWriteLock lk;
+    DAbstractFileInfoPointer info;
+    FileSystemNode node(nullptr, info, nullptr, &lk);
+    FileSystemNodePointer data;
+    DUrl url("/usr/bin");
+    node.children.insert(url, data);
+
+    auto ret = node.takeNodeByUrl(url);
+    EXPECT_EQ(ret, data);
+}
+
 }

@@ -42,12 +42,7 @@
 //处理自动整理的路径问题
 #include "controllers/mergeddesktopcontroller.h"
 #include "shutil/dfmfilelistfile.h"
-
-#include "interfaces/durl.h"
-#include "interfaces/dfileviewhelper.h"
-#include "shutil/fileutils.h"
-#include "deviceinfo/udisklistener.h"
-#include "shutil/dfmfilelistfile.h"
+#include "dfilesystemmodel_p.h"
 
 #include <memory>
 #include <QList>
@@ -61,341 +56,324 @@
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 0
 
-class FileSystemNode : public QSharedData
-{
-public:
-    DAbstractFileInfoPointer fileInfo;
-    FileSystemNode *parent = Q_NULLPTR;
-    bool populatedChildren = false;
-
-    FileSystemNode(FileSystemNode *parent,
+FileSystemNode::FileSystemNode(FileSystemNode *parent,
                    const DAbstractFileInfoPointer &info,
                    DFileSystemModel *dFileSystemModel,
-                   QReadWriteLock *lock = nullptr)
+                   QReadWriteLock *lock)
         : fileInfo(info)
         , parent(parent)
         , m_dFileSystemModel(dFileSystemModel)
         , rwLock(lock)
+{
+
+}
+
+FileSystemNode::~FileSystemNode()
+{
+    visibleChildren.clear();
+    children.clear();
+}
+
+QVariant FileSystemNode::dataByRole(int role)
+{
+    using Role = DFileSystemModel::Roles;
+
+    switch (role)
     {
-    }
-
-    ~FileSystemNode()
-    {
-        visibleChildren.clear();
-        children.clear();
-////        rwLock->lockForWrite();
-//        qDebug()<< m_dFileSystemModel->m_allFileSystemNodes[this];
-//        m_dFileSystemModel->m_allFileSystemNodes.remove(this);
-////        rwLock->unlock();
-    }
-
-//    inline bool operator==(const FileSystemNode *other)
-//    {
-//        if ( == other)
-//            return true;
-//        else
-//            return false;
-//    }
-
-    QVariant dataByRole(int role)
-    {
-        using Role = DFileSystemModel::Roles;
-
-        switch (role) {
-        case Role::FilePathRole:
-            return fileInfo->absoluteFilePath();
-        case Role::FileDisplayNameRole:
-            return fileInfo->fileDisplayName();
-        case Role::FileNameRole:
-            return fileInfo->fileName();
-        case Role::FileNameOfRenameRole:
-            return fileInfo->fileNameOfRename();
-        case Role::FileBaseNameRole:
-            return fileInfo->baseName();
-        case Role::FileBaseNameOfRenameRole:
-            return fileInfo->baseNameOfRename();
-        case Role::FileSuffixRole:
-            return fileInfo->suffix();
-        case Role::FileSuffixOfRenameRole:
-            return fileInfo->suffixOfRename();
-        case Qt::TextAlignmentRole:
-            return Qt::AlignVCenter;
-        case Role::FileLastModifiedRole:
-            return fileInfo->lastModifiedDisplayName();
-        case Role::FileLastModifiedDateTimeRole:
-            return fileInfo->lastModified();
-        case Role::FileSizeRole:
-            return fileInfo->sizeDisplayName();
-        case Role::FileSizeInKiloByteRole:
-            return fileInfo->size();
-        case Role::FileMimeTypeRole:
-            return fileInfo->mimeTypeDisplayName();
-        case Role::FileCreatedRole:
-            return fileInfo->createdDisplayName();
-        case Role::FilePinyinName:
-            return fileInfo->fileDisplayPinyinName();
-        case Role::ExtraProperties:
-            return fileInfo->extraProperties();
-        case Role::FileLastReadDateTimeRole:
-            return fileInfo->lastRead();
-        case Role::FileCreatedDateTimeRole:
-            return fileInfo->created();
-        default: {
-            return QVariant();
-        }
+    case Role::FilePathRole:
+        return fileInfo->absoluteFilePath();
+    case Role::FileDisplayNameRole:
+        return fileInfo->fileDisplayName();
+    case Role::FileNameRole:
+        return fileInfo->fileName();
+    case Role::FileNameOfRenameRole:
+        return fileInfo->fileNameOfRename();
+    case Role::FileBaseNameRole:
+        return fileInfo->baseName();
+    case Role::FileBaseNameOfRenameRole:
+        return fileInfo->baseNameOfRename();
+    case Role::FileSuffixRole:
+        return fileInfo->suffix();
+    case Role::FileSuffixOfRenameRole:
+        return fileInfo->suffixOfRename();
+    case Qt::TextAlignmentRole:
+        return Qt::AlignVCenter;
+    case Role::FileLastModifiedRole:
+        return fileInfo->lastModifiedDisplayName();
+    case Role::FileLastModifiedDateTimeRole:
+        return fileInfo->lastModified();
+    case Role::FileSizeRole:
+        return fileInfo->sizeDisplayName();
+    case Role::FileSizeInKiloByteRole:
+        return fileInfo->size();
+    case Role::FileMimeTypeRole:
+        return fileInfo->mimeTypeDisplayName();
+    case Role::FileCreatedRole:
+        return fileInfo->createdDisplayName();
+    case Role::FilePinyinName:
+        return fileInfo->fileDisplayPinyinName();
+    case Role::ExtraProperties:
+        return fileInfo->extraProperties();
+    case Role::FileLastReadDateTimeRole:
+        return fileInfo->lastRead();
+    case Role::FileCreatedDateTimeRole:
+        return fileInfo->created();
+    default: {
+        return QVariant();
         }
     }
+}
 
-    void setNodeVisible(const FileSystemNodePointer &node, bool visible)
-    {
-        if (visible) {
-            if (!visibleChildren.contains(node)) {
-                visibleChildren.append(node);
-            }
-        } else {
-            if (visibleChildren.contains(node)) {
-                visibleChildren.removeOne(node);
-            }
+void FileSystemNode::setNodeVisible(const FileSystemNodePointer &node, bool visible)
+{
+    if (visible) {
+        if (!visibleChildren.contains(node)) {
+            visibleChildren.append(node);
+        }
+    } else {
+        if (visibleChildren.contains(node)) {
+            visibleChildren.removeOne(node);
         }
     }
+}
 
-    void applyFileFilter(std::shared_ptr<FileFilter> filter)
-    {
-        if (!filter) return;
+void FileSystemNode::applyFileFilter(std::shared_ptr<FileFilter> filter)
+{
+    if (!filter) return;
 
-        // fix bug 54887 【专业版1030】【文管5.2.0.82】搜索结果页多次筛选后，再重置筛选结果，重置搜索界面页面，出现重复搜索界面
-        // 点击重置按钮，会触发所有combox的change信号，都会访问visibleChildren资源，因此加锁限制
-        static QMutex locker;
-        locker.lock();
-        visibleChildren.clear();
+    // fix bug 54887 【专业版1030】【文管5.2.0.82】搜索结果页多次筛选后，再重置筛选结果，重置搜索界面页面，出现重复搜索界面
+    // 点击重置按钮，会触发所有combox的change信号，都会访问visibleChildren资源，因此加锁限制
+    static QMutex locker;
+    locker.lock();
+    visibleChildren.clear();
 
-        for (auto node : children) {
-            if (!node->shouldHideByFilterRule(filter)) {
-                visibleChildren.append(node);
-            }
+    for (auto node : children) {
+        if (!node->shouldHideByFilterRule(filter)) {
+            visibleChildren.append(node);
         }
-        locker.unlock();
+    }
+    locker.unlock();
+}
+
+bool FileSystemNode::shouldHideByFilterRule(std::shared_ptr<FileFilter> filter)
+{
+    if (!filter) return false;
+
+    if (filter->f_comboValid[SEARCH_RANGE] && !filter->f_includeSubDir) {
+        DUrl parentUrl = fileInfo->parentUrl().isSearchFile() ? fileInfo->parentUrl().searchTargetUrl() : fileInfo->parentUrl();
+        QString filePath = dataByRole(DFileSystemModel::FilePathRole).toString();
+        // fix bug 44185 【专业版 sp3】【文件管理器】【5.2.0.28-1】多标签操作筛选搜索结果，回退路径时出现空白页面
+        filePath.remove(parentUrl.toLocalFile().endsWith("/") ?  parentUrl.toLocalFile() : parentUrl.toLocalFile() + '/');
+        if (filePath.contains('/')) return true;
     }
 
-    bool shouldHideByFilterRule(std::shared_ptr<FileFilter> filter)
-    {
-        if (!filter) return false;
-
-        if (filter->f_comboValid[SEARCH_RANGE] && !filter->f_includeSubDir) {
-            DUrl parentUrl = fileInfo->parentUrl().isSearchFile() ? fileInfo->parentUrl().searchTargetUrl() : fileInfo->parentUrl();
-            QString filePath = dataByRole(DFileSystemModel::FilePathRole).toString();
-            // fix bug 44185 【专业版 sp3】【文件管理器】【5.2.0.28-1】多标签操作筛选搜索结果，回退路径时出现空白页面
-            filePath.remove(parentUrl.toLocalFile().endsWith("/") ?  parentUrl.toLocalFile() : parentUrl.toLocalFile() + '/');
-            if (filePath.contains('/')) return true;
-        }
-
-        if (filter->f_comboValid[FILE_TYPE]) {
-            QString fileTypeStr = dataByRole(DFileSystemModel::FileMimeTypeRole).toString();
-            if (!fileTypeStr.startsWith(filter->f_typeString)) return true;
-        }
-
-        if (filter->f_comboValid[SIZE_RANGE]) {
-            // note: FileSizeInKiloByteRole is the size of Byte, not KB!
-            quint64 fileSize = dataByRole(DFileSystemModel::FileSizeInKiloByteRole).toULongLong();
-            quint32 blockSize = 1 << 10;
-            quint64 lower = filter->f_sizeRange.first * blockSize;
-            quint64 upper = filter->f_sizeRange.second * blockSize;
-            // filter file size in Bytes, not Kilobytes
-            if (fileSize < lower || fileSize > upper) return true;
-        }
-
-        if (filter->f_comboValid[DATE_RANGE]) {
-            QDateTime filemtime = dataByRole(DFileSystemModel::FileLastModifiedDateTimeRole).toDateTime();
-            if (filemtime < filter->f_dateRangeStart || filemtime > filter->f_dateRangeEnd) return true;
-        }
-
-        if (filter->f_comboValid[ACCESS_DATE_RANGE]) {
-            QDateTime filemtime = dataByRole(DFileSystemModel::FileLastReadDateTimeRole).toDateTime();
-            if (filemtime < filter->f_accessDateRangeStart || filemtime > filter->f_accessDateRangeEnd) return true;
-        }
-
-        if (filter->f_comboValid[CREATE_DATE_RANGE]) {
-            QDateTime filemtime = dataByRole(DFileSystemModel::FileCreatedDateTimeRole).toDateTime();
-            if (filemtime < filter->f_createDateRangeStart || filemtime > filter->f_createDateRangeEnd) return true;
-        }
-
-        return false;
+    if (filter->f_comboValid[FILE_TYPE]) {
+        QString fileTypeStr = dataByRole(DFileSystemModel::FileMimeTypeRole).toString();
+        if (!fileTypeStr.startsWith(filter->f_typeString)) return true;
     }
 
-    void noLockInsertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
-    {
-        children[url] = node;
-        visibleChildren.insert(index, node);
+    if (filter->f_comboValid[SIZE_RANGE]) {
+        // note: FileSizeInKiloByteRole is the size of Byte, not KB!
+        quint64 fileSize = dataByRole(DFileSystemModel::FileSizeInKiloByteRole).toULongLong();
+        quint32 blockSize = 1 << 10;
+        quint64 lower = filter->f_sizeRange.first * blockSize;
+        quint64 upper = filter->f_sizeRange.second * blockSize;
+        // filter file size in Bytes, not Kilobytes
+        if (fileSize < lower || fileSize > upper) return true;
     }
 
-    void insertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
-    {
+    if (filter->f_comboValid[DATE_RANGE]) {
+        QDateTime filemtime = dataByRole(DFileSystemModel::FileLastModifiedDateTimeRole).toDateTime();
+        if (filemtime < filter->f_dateRangeStart || filemtime > filter->f_dateRangeEnd) return true;
+    }
+
+    if (filter->f_comboValid[ACCESS_DATE_RANGE]) {
+        QDateTime filemtime = dataByRole(DFileSystemModel::FileLastReadDateTimeRole).toDateTime();
+        if (filemtime < filter->f_accessDateRangeStart || filemtime > filter->f_accessDateRangeEnd) return true;
+    }
+
+    if (filter->f_comboValid[CREATE_DATE_RANGE]) {
+        QDateTime filemtime = dataByRole(DFileSystemModel::FileCreatedDateTimeRole).toDateTime();
+        if (filemtime < filter->f_createDateRangeStart || filemtime > filter->f_createDateRangeEnd) return true;
+    }
+
+    return false;
+}
+
+void FileSystemNode::noLockInsertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
+{
+    children[url] = node;
+    visibleChildren.insert(index, node);
+}
+
+void FileSystemNode::insertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
+{
+    rwLock->lockForWrite();
+    noLockInsertChildren(index, url, node);
+    rwLock->unlock();
+}
+
+void FileSystemNode::noLockAppendChildren(const DUrl &url, const FileSystemNodePointer &node)
+{
+    children[url] = node;
+    visibleChildren.append(node);
+}
+
+void FileSystemNode::appendChildren(const DUrl &url, const FileSystemNodePointer &node)
+{
+    rwLock->lockForWrite();
+    noLockAppendChildren(url, node);
+    rwLock->unlock();
+}
+
+FileSystemNodePointer FileSystemNode::getNodeByUrl(const DUrl &url)
+{
+    rwLock->lockForRead();
+    FileSystemNodePointer node = children.value(url);
+    rwLock->unlock();
+
+    return node;
+}
+
+FileSystemNodePointer FileSystemNode::getNodeByIndex(int index)
+{
+    rwLock->lockForRead();
+    FileSystemNodePointer node = visibleChildren.value(index);
+    rwLock->unlock();
+    return node;
+}
+
+FileSystemNodePointer FileSystemNode::takeNodeByUrl(const DUrl &url)
+{
+    rwLock->lockForWrite();
+    FileSystemNodePointer node = children.take(url);
+    visibleChildren.removeOne(node);
+    rwLock->unlock();
+
+    return node;
+}
+
+FileSystemNodePointer FileSystemNode::takeNodeByIndex(const int index)
+{
+    rwLock->lockForWrite();
+    FileSystemNodePointer node;
+    if (index >= 0 && visibleChildren.size() > index) {
+        node = visibleChildren.takeAt(index);
+        children.remove(node->fileInfo->fileUrl());
+    } else {
+        qWarning() << "index [" << index << "] out of range [" << visibleChildren.size() << "]";
+    }
+    rwLock->unlock();
+
+    return node;
+}
+
+int FileSystemNode::indexOfChild(const FileSystemNodePointer &node)
+{
+    rwLock->lockForRead();
+    int index = visibleChildren.indexOf(node);
+    rwLock->unlock();
+
+    return index;
+}
+
+int FileSystemNode::indexOfChild(const DUrl &url)
+{
+    rwLock->lockForRead();
+    const FileSystemNodePointer &node = children.value(url);
+    int index = visibleChildren.indexOf(node);
+    rwLock->unlock();
+
+    return index;
+}
+
+int FileSystemNode::childrenCount()
+{
+    QReadLocker rl(rwLock);
+
+    return visibleChildren.count();
+}
+
+QList<FileSystemNodePointer> FileSystemNode::getChildrenList() const
+{
+    return visibleChildren;
+}
+
+DUrlList FileSystemNode::getChildrenUrlList()
+{
+    DUrlList list;
+
+    rwLock->lockForRead();
+
+    list.reserve(visibleChildren.size());
+
+    for (const FileSystemNodePointer &node : visibleChildren)
+        list << node->fileInfo->fileUrl();
+
+    rwLock->unlock();
+
+    return list;
+}
+
+void FileSystemNode::setChildrenList(const QList<FileSystemNodePointer> &list)
+{
+    rwLock->lockForWrite();
+    visibleChildren = list;
+
+    rwLock->unlock();
+}
+
+void FileSystemNode::setChildrenMap(const QHash<DUrl, FileSystemNodePointer> &map)
+{
+    rwLock->lockForWrite();
+    children = map;
+    rwLock->unlock();
+}
+
+void FileSystemNode::clearChildren()
+{
+    rwLock->lockForWrite();
+    visibleChildren.clear();
+    children.clear();
+    rwLock->unlock();
+}
+
+bool FileSystemNode::childContains(const DUrl &url)
+{
+    QReadLocker rl(rwLock);
+
+    return children.contains(url);
+}
+
+
+void FileSystemNode::addFileSystemNode(const FileSystemNodePointer &node)
+{
+    if (nullptr != node->parent) {
+        QString url = node->fileInfo->filePath();
         rwLock->lockForWrite();
-        noLockInsertChildren(index, url, node);
-        rwLock->unlock();
-    }
-
-    void noLockAppendChildren(const DUrl &url, const FileSystemNodePointer &node)
-    {
-        children[url] = node;
-        visibleChildren.append(node);
-    }
-
-    void appendChildren(const DUrl &url, const FileSystemNodePointer &node)
-    {
-        rwLock->lockForWrite();
-        noLockAppendChildren(url, node);
-        rwLock->unlock();
-    }
-
-    FileSystemNodePointer getNodeByUrl(const DUrl &url)
-    {
-        rwLock->lockForRead();
-        FileSystemNodePointer node = children.value(url);
-        rwLock->unlock();
-
-        return node;
-    }
-
-    FileSystemNodePointer getNodeByIndex(int index)
-    {
-        rwLock->lockForRead();
-        FileSystemNodePointer node = visibleChildren.value(index);
-        rwLock->unlock();
-        return node;
-    }
-
-    FileSystemNodePointer takeNodeByUrl(const DUrl &url)
-    {
-        rwLock->lockForWrite();
-        FileSystemNodePointer node = children.take(url);
-        visibleChildren.removeOne(node);
-        rwLock->unlock();
-
-        return node;
-    }
-
-    FileSystemNodePointer takeNodeByIndex(const int index)
-    {
-        rwLock->lockForWrite();
-        FileSystemNodePointer node;
-        if (index >= 0 && visibleChildren.size() > index) {
-            node = visibleChildren.takeAt(index);
-            children.remove(node->fileInfo->fileUrl());
-        } else {
-            qWarning() << "index [" << index << "] out of range [" << visibleChildren.size() << "]";
+        if (!m_dFileSystemModel->m_allFileSystemNodes.contains(url)) {
+            m_dFileSystemModel->m_allFileSystemNodes[url] = node;
         }
         rwLock->unlock();
-
-        return node;
     }
+}
 
-    int indexOfChild(const FileSystemNodePointer &node)
-    {
-        rwLock->lockForRead();
-        int index = visibleChildren.indexOf(node);
-        rwLock->unlock();
-
-        return index;
-    }
-
-    int indexOfChild(const DUrl &url)
-    {
-        rwLock->lockForRead();
-        const FileSystemNodePointer &node = children.value(url);
-        int index = visibleChildren.indexOf(node);
-        rwLock->unlock();
-
-        return index;
-    }
-
-    int childrenCount()
-    {
-        QReadLocker rl(rwLock);
-
-        return visibleChildren.count();
-    }
-
-    QList<FileSystemNodePointer> getChildrenList() const
-    {
-        return visibleChildren;
-    }
-
-    DUrlList getChildrenUrlList()
-    {
-        DUrlList list;
-
-        rwLock->lockForRead();
-
-        list.reserve(visibleChildren.size());
-
-        for (const FileSystemNodePointer &node : visibleChildren)
-            list << node->fileInfo->fileUrl();
-
-        rwLock->unlock();
-
-        return list;
-    }
-
-    void setChildrenList(const QList<FileSystemNodePointer> &list)
-    {
+void FileSystemNode::removeFileSystemNode(const FileSystemNodePointer &node)
+{
+    if (nullptr != node->parent) {
+        QString url = node->fileInfo->filePath();
         rwLock->lockForWrite();
-        visibleChildren = list;
-
+        qDebug() << m_dFileSystemModel->m_allFileSystemNodes[url];
+        m_dFileSystemModel->m_allFileSystemNodes.remove(url);
         rwLock->unlock();
     }
+}
 
-    void setChildrenMap(const QHash<DUrl, FileSystemNodePointer> &map)
-    {
-        rwLock->lockForWrite();
-        children = map;
-        rwLock->unlock();
+const FileSystemNodePointer FileSystemNode::getFileSystemNode(FileSystemNode *parent)
+{
+    if (nullptr == parent) {
+        return FileSystemNodePointer();
     }
-
-    void clearChildren()
-    {
-        rwLock->lockForWrite();
-        visibleChildren.clear();
-        children.clear();
-        rwLock->unlock();
-    }
-
-    bool childContains(const DUrl &url)
-    {
-        QReadLocker rl(rwLock);
-
-        return children.contains(url);
-    }
-
-
-    void addFileSystemNode(const FileSystemNodePointer &node)
-    {
-        if (nullptr != node->parent) {
-            QString url = node->fileInfo->filePath();
-            rwLock->lockForWrite();
-            if (!m_dFileSystemModel->m_allFileSystemNodes.contains(url)) {
-                m_dFileSystemModel->m_allFileSystemNodes[url] = node;
-            }
-            rwLock->unlock();
-        }
-    }
-
-    void removeFileSystemNode(const FileSystemNodePointer &node)
-    {
-        if (nullptr != node->parent) {
-            QString url = node->fileInfo->filePath();
-            rwLock->lockForWrite();
-            qDebug() << m_dFileSystemModel->m_allFileSystemNodes[url];
-            m_dFileSystemModel->m_allFileSystemNodes.remove(url);
-            rwLock->unlock();
-        }
-    }
-
-    const FileSystemNodePointer getFileSystemNode(FileSystemNode *parent)
-    {
-        if (nullptr == parent) {
-            return FileSystemNodePointer();
-        }
 
 //        return FileSystemNodePointer(parent);
 
@@ -417,584 +395,376 @@ public:
 //            qDebug() << "key = " << t_node;
 //        }
 
-        QString url = parent->fileInfo->filePath();
+    QString url = parent->fileInfo->filePath();
 
-        rwLock->lockForWrite();
-        if (!m_dFileSystemModel->m_allFileSystemNodes.contains(url)) {
-            FileSystemNodePointer tmpNode(parent);
-            m_dFileSystemModel->m_allFileSystemNodes[url] = tmpNode;
-            rwLock->unlock();
-            return tmpNode;
-        }
-
-        FileSystemNodePointer tmpNode1(m_dFileSystemModel->m_allFileSystemNodes[url]);
+    rwLock->lockForWrite();
+    if (!m_dFileSystemModel->m_allFileSystemNodes.contains(url)) {
+        FileSystemNodePointer tmpNode(parent);
+        m_dFileSystemModel->m_allFileSystemNodes[url] = tmpNode;
         rwLock->unlock();
-        return tmpNode1;
+        return tmpNode;
     }
 
-private:
-    QHash<DUrl, FileSystemNodePointer> children;
-    //fix bug 31225,if children clear,another thread useing visibleChildren will crush,so use FileSystemNodePointer
-    QList<FileSystemNodePointer> visibleChildren;
-    DFileSystemModel *m_dFileSystemModel = nullptr;
-    QReadWriteLock *rwLock = nullptr;
-};
+    FileSystemNodePointer tmpNode1(m_dFileSystemModel->m_allFileSystemNodes[url]);
+    rwLock->unlock();
+    return tmpNode1;
+}
 
-template<typename T>
-class LockFreeQueue
+
+
+FileNodeManagerThread::FileNodeManagerThread(DFileSystemModel *parent)
+    : QThread(parent)
+    , waitTimer(new QTimer(this))
+    , enable(true)
 {
-public:
-    struct Node {
-        T data;
-        QAtomicPointer<Node> next;
-    };
+    waitTimer->setSingleShot(true);
+    waitTimer->setInterval(50);
 
-    LockFreeQueue()
-    {
-        m_head.store(new Node());
-        m_head.load()->next.store(nullptr);
-        m_tail.store(m_head.load());
-    }
+    connect(waitTimer, &QTimer::timeout, this, &FileNodeManagerThread::start);
+}
 
-    ~LockFreeQueue()
-    {
-        clear();
-
-        delete m_head.load();
-    }
-
-    void clear()
-    {
-        while (!isEmpty()) {
-            dequeue();
-        }
-    }
-
-    bool isEmpty() const
-    {
-        Node *_head = m_head.load();
-
-        return _head->next == nullptr;
-    }
-
-    T dequeue()
-    {
-        Node *_head;
-
-        do {
-            _head = m_head.load();
-
-            if (_head->next == nullptr) {
-                std::abort();
-            }
-        } while (!m_head.testAndSetAcquire(_head, _head->next.load()));
-
-        const T &data = _head->next.load()->data;
-        delete _head;
-
-        return data;
-    }
-
-    void enqueue(const T &t)
-    {
-        Node *node = new Node();
-
-        node->data = t;
-        node->next = nullptr;
-
-        Node *_tail = nullptr;
-
-        do {
-            _tail = m_tail.load();
-        } while (!_tail->next.testAndSetAcquire(nullptr, node));
-
-        m_tail = node;
-    }
-
-    T &head()
-    {
-        return m_head.load();
-    }
-
-    const T &head() const
-    {
-        return m_head.load();
-    }
-
-    Node *headNode()
-    {
-        return m_head.load()->next.load();
-    }
-
-    void removeNode(Node *node)
-    {
-        auto _head = &m_head;
-
-        do {
-            if (!_head->load()->next.load()) {
-                std::abort();
-            }
-
-            _head = &_head->load()->next;
-        } while (!_head->testAndSetAcquire(node, node->next.load()));
-
-        delete node;
-    }
-
-private:
-    QAtomicPointer<Node> m_head;
-    QAtomicPointer<Node> m_tail;
-};
-
-class FileNodeManagerThread : public QThread
+FileNodeManagerThread::~FileNodeManagerThread()
 {
-public:
-    enum EventType {
-        AddFile, // 在需要排序时会插入到对应位置
-        AppendFile, // 直接放到列表末尾，不管当前列表的顺序，不过文件和文件夹还是分开的
-        RmFile
-    };
+    stop();
+}
 
-    explicit FileNodeManagerThread(DFileSystemModel *parent)
-        : QThread(parent)
-        , waitTimer(new QTimer(this))
-        , enable(true)
-    {
-        waitTimer->setSingleShot(true);
-        waitTimer->setInterval(50);
+void FileNodeManagerThread::start()
+{
+    if (fileQueue.isEmpty())
+        return;
 
-        connect(waitTimer, &QTimer::timeout, this, &FileNodeManagerThread::start);
-    }
+    QThread::start();
+}
 
-    ~FileNodeManagerThread() override
-    {
-        stop();
-    }
+void FileNodeManagerThread::addFile(const DAbstractFileInfoPointer &info, bool append)
+{
+    if (!enable)
+        return;
 
-    void start()
-    {
-        if (fileQueue.isEmpty())
-            return;
+    fileQueue.enqueue(qMakePair(append ? AppendFile : AddFile, info));
 
-        QThread::start();
-    }
-
-    inline DFileSystemModel *model() const
-    {
-        return static_cast<DFileSystemModel *>(parent());
-    }
-
-    void addFile(const DAbstractFileInfoPointer &info, bool append = false)
-    {
-        if (!enable)
-            return;
-
-        fileQueue.enqueue(qMakePair(append ? AppendFile : AddFile, info));
-
-        if (!isRunning()) {
-            if (!waitTimer->isActive()) {
-                // 确保从第一个文件操作开始，处理此文件操作做多不应超过1s
-                QTimer::singleShot(1000, this, &FileNodeManagerThread::start);
-            }
-
-            waitTimer->start();
+    if (!isRunning()) {
+        if (!waitTimer->isActive()) {
+            // 确保从第一个文件操作开始，处理此文件操作做多不应超过1s
+            QTimer::singleShot(1000, this, &FileNodeManagerThread::start);
         }
+
+        waitTimer->start();
     }
+}
 
-    void removeFile(const DAbstractFileInfoPointer &info)
-    {
-        if (!enable)
-            return;
+void FileNodeManagerThread::removeFile(const DAbstractFileInfoPointer &info)
+{
+    if (!enable)
+        return;
 
-        fileQueue.enqueue(qMakePair(RmFile, info));
+    fileQueue.enqueue(qMakePair(RmFile, info));
 
-        if (!isRunning()) {
-            if (!waitTimer->isActive()) {
-                // 确保从第一个文件操作开始，处理此文件操作做多不应超过1s
-                QTimer::singleShot(1000, this, &FileNodeManagerThread::start);
-            }
-
-            waitTimer->start();
+    if (!isRunning()) {
+        if (!waitTimer->isActive()) {
+            // 确保从第一个文件操作开始，处理此文件操作做多不应超过1s
+            QTimer::singleShot(1000, this, &FileNodeManagerThread::start);
         }
+
+        waitTimer->start();
     }
+}
 
-    void setRootNode(const FileSystemNodePointer &node)
-    {
-        rootNode = node;
-    }
+void FileNodeManagerThread::setRootNode(const FileSystemNodePointer &node)
+{
+    rootNode = node;
+}
 
-    void setEnable(bool enable)
-    {
-        this->enable = enable;
-    }
+void FileNodeManagerThread::setEnable(bool enable)
+{
+    this->enable = enable;
+}
 
-    void stop()
-    {
-        enable = false;
-        // 确保在timer的所在线程停止它
-        waitTimer->metaObject()->invokeMethod(waitTimer, "stop");
-        // 取消工作线程的等待，防止产生死锁
-        semaphore.release();
-        wait();
+void FileNodeManagerThread::stop()
+{
+    enable = false;
+    // 确保在timer的所在线程停止它
+    waitTimer->metaObject()->invokeMethod(waitTimer, "stop");
+    // 取消工作线程的等待，防止产生死锁
+    semaphore.release();
+    wait();
 
-        // 消除释放出的多余信号量
-        if (semaphore.available() == 1)
-            semaphore.acquire();
+    // 消除释放出的多余信号量
+    if (semaphore.available() == 1)
+        semaphore.acquire();
 
-        fileQueue.clear();
-    }
+    fileQueue.clear();
+}
 
-private:
-    void run() override
-    {
-        // 缓存需要批量插入的文件信息列表
-        QList<DAbstractFileInfoPointer> backlogFileInfoList;
-        QList<DAbstractFileInfoPointer> backlogDirInfoList;
-        // 使用计时器避免文件在批量插入列表中等待太久
-        QTime timerOfFileList, timerOfDirList;
+void FileNodeManagerThread::run()
+{
+    // 缓存需要批量插入的文件信息列表
+    QList<DAbstractFileInfoPointer> backlogFileInfoList;
+    QList<DAbstractFileInfoPointer> backlogDirInfoList;
+    // 使用计时器避免文件在批量插入列表中等待太久
+    QTime timerOfFileList, timerOfDirList;
 
-        auto insertInfoList = [&](int index, const QList<DAbstractFileInfoPointer> &list) {
-            DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::beginInsertRows,
-                                     model()->createIndex(rootNode, 0), index, index + list.count() - 1);
+    auto insertInfoList = [&](int index, const QList<DAbstractFileInfoPointer> &list) {
+        DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::beginInsertRows,
+                                 model()->createIndex(rootNode, 0), index, index + list.count() - 1);
 
-            if (!enable)
-                return false;
-
-            for (const DAbstractFileInfoPointer &fileInfo : list) {
-                if (!enable) {
-                    return false;
-                }
-
-                FileSystemNodePointer node = model()->createNode(rootNode.data(), fileInfo);
-                rootNode->insertChildren(index++, fileInfo->fileUrl(), node);
-                if (node->shouldHideByFilterRule(model()->advanceSearchFilter())) {
-                    rootNode->setNodeVisible(node, false);
-                }
-            }
-
-            DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::endInsertRows);
-
-            return enable.load();
-        };
-
-        auto disposeBacklogFileList = [&] {
-            if (backlogFileInfoList.isEmpty())
-            {
-                return true;
-            }
-
-            int row = rootNode->childrenCount();
-
-            if (!insertInfoList(row, backlogFileInfoList))
-                return false;
-
-            backlogFileInfoList.clear();
-
-            return true;
-        };
-
-        auto disposeBacklogDirList = [&] {
-            if (backlogDirInfoList.isEmpty())
-            {
-                return true;
-            }
-
-            int row = 0;
-
-            forever
-            {
-                if (!enable) {
-                    return false;
-                }
-
-                if (row >= rootNode->childrenCount()) {
-                    break;
-                }
-
-                const FileSystemNodePointer &node = rootNode->getNodeByIndex(row);
-
-                //因在自动整理时，超时会在次判定，导致文件夹以及分类文件夹会出现在扩展分类之前，
-                //所以加一个node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME规避掉
-                if (node->fileInfo->isFile() && node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME) {
-                    break;
-                }
-
-                ++row;
-            }
-
-            if (!insertInfoList(row, backlogDirInfoList))
-                return false;
-
-            backlogDirInfoList.clear();
-
-            return true;
-        };
-
-        auto removeInList = [&](QList<DAbstractFileInfoPointer> &list, const DUrl & url) {
-            for (int i = 0; i < list.count(); ++i) {
-                if (list.at(i)->fileUrl() == url) {
-                    list.removeAt(i);
-
-                    return true;
-                }
-            }
-
+        if (!enable)
             return false;
-        };
 
-    begin:
-
-        while (!fileQueue.isEmpty()) {
+        for (const DAbstractFileInfoPointer &fileInfo : list) {
             if (!enable) {
-                return;
+                return false;
             }
 
-            const QPair<EventType, DAbstractFileInfoPointer> &v = fileQueue.dequeue();
-            const DAbstractFileInfoPointer &fileInfo = v.second;
-            if (!fileInfo) {
+            FileSystemNodePointer node = model()->createNode(rootNode.data(), fileInfo);
+            rootNode->insertChildren(index++, fileInfo->fileUrl(), node);
+            if (node->shouldHideByFilterRule(model()->advanceSearchFilter())) {
+                rootNode->setNodeVisible(node, false);
+            }
+        }
+
+        DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::endInsertRows);
+
+        return enable.load();
+    };
+
+    auto disposeBacklogFileList = [&] {
+        if (backlogFileInfoList.isEmpty())
+        {
+            return true;
+        }
+
+        int row = rootNode->childrenCount();
+
+        if (!insertInfoList(row, backlogFileInfoList))
+            return false;
+
+        backlogFileInfoList.clear();
+
+        return true;
+    };
+
+    auto disposeBacklogDirList = [&] {
+        if (backlogDirInfoList.isEmpty())
+        {
+            return true;
+        }
+
+        int row = 0;
+
+        forever
+        {
+            if (!enable) {
+                return false;
+            }
+
+            if (row >= rootNode->childrenCount()) {
+                break;
+            }
+
+            const FileSystemNodePointer &node = rootNode->getNodeByIndex(row);
+
+            //因在自动整理时，超时会在次判定，导致文件夹以及分类文件夹会出现在扩展分类之前，
+            //所以加一个node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME规避掉
+            if (node->fileInfo->isFile() && node->fileInfo->fileUrl().scheme() != DFMMD_SCHEME) {
+                break;
+            }
+
+            ++row;
+        }
+
+        if (!insertInfoList(row, backlogDirInfoList))
+            return false;
+
+        backlogDirInfoList.clear();
+
+        return true;
+    };
+
+    auto removeInList = [&](QList<DAbstractFileInfoPointer> &list, const DUrl & url) {
+        for (int i = 0; i < list.count(); ++i) {
+            if (list.at(i)->fileUrl() == url) {
+                list.removeAt(i);
+
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+begin:
+
+    while (!fileQueue.isEmpty()) {
+        if (!enable) {
+            return;
+        }
+
+        const QPair<EventType, DAbstractFileInfoPointer> &v = fileQueue.dequeue();
+        const DAbstractFileInfoPointer &fileInfo = v.second;
+        if (!fileInfo) {
+            continue;
+        }
+        const DUrl &fileUrl = fileInfo->fileUrl();
+
+        if (v.first == AddFile || v.first == AppendFile) {
+            if (rootNode->childContains(fileUrl))
                 continue;
-            }
-            const DUrl &fileUrl = fileInfo->fileUrl();
 
-            if (v.first == AddFile || v.first == AppendFile) {
-                if (rootNode->childContains(fileUrl))
-                    continue;
+            int row = -1;
 
-                int row = -1;
+            if (model()->enabledSort()) {
+                row = 0;
 
-                if (model()->enabledSort()) {
-                    row = 0;
+                if (fileInfo->hasOrderly() && v.first == AddFile) {
+                    DAbstractFileInfo::CompareFunction compareFun = fileInfo->compareFunByColumn(model()->sortRole());
 
-                    if (fileInfo->hasOrderly() && v.first == AddFile) {
-                        DAbstractFileInfo::CompareFunction compareFun = fileInfo->compareFunByColumn(model()->sortRole());
+                    if (compareFun) {
+                        forever {
+                            if (!enable) {
+                                return;
+                            }
 
-                        if (compareFun) {
-                            forever {
-                                if (!enable) {
-                                    return;
-                                }
+                            if (row >= rootNode->childrenCount()) {
+                                break;
+                            }
 
-                                if (row >= rootNode->childrenCount()) {
+                            const FileSystemNodePointer &node = rootNode->getNodeByIndex(row);
+                            if (node) {
+                                if (compareFun(fileInfo, node->fileInfo, model()->sortOrder())) {
                                     break;
                                 }
-
-                                const FileSystemNodePointer &node = rootNode->getNodeByIndex(row);
-                                if (node) {
-                                    if (compareFun(fileInfo, node->fileInfo, model()->sortOrder())) {
-                                        break;
-                                    }
-                                }
-
-                                ++row;
                             }
-                        } else {
-                            row = -1;
+
+                            ++row;
                         }
                     } else {
                         row = -1;
                     }
-                }
-
-                if (row < 0) {
-                    bool isFile = fileInfo->isFile();
-
-                    // 先加到待插入列表
-                    if (isFile) {
-                        if (backlogFileInfoList.isEmpty()) {
-                            timerOfFileList.start();
-                        } else if (timerOfFileList.elapsed() > 1000) {
-                            disposeBacklogFileList();
-                            timerOfFileList.start();
-                        }
-
-                        backlogFileInfoList << fileInfo;
-                    } else {
-                        if (backlogDirInfoList.isEmpty()) {
-                            timerOfDirList.start();
-                        } else if (timerOfDirList.elapsed() > 1000) {
-                            disposeBacklogDirList();
-                            timerOfDirList.start();
-                        }
-
-                        backlogDirInfoList << fileInfo;
-                    }
                 } else {
-                    if (!enable) {
-                        return;
+                    row = -1;
+                }
+            }
+
+            if (row < 0) {
+                bool isFile = fileInfo->isFile();
+
+                // 先加到待插入列表
+                if (isFile) {
+                    if (backlogFileInfoList.isEmpty()) {
+                        timerOfFileList.start();
+                    } else if (timerOfFileList.elapsed() > 1000) {
+                        disposeBacklogFileList();
+                        timerOfFileList.start();
                     }
 
-                    DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::beginInsertRows,
-                                             model()->createIndex(rootNode, 0), row, row);
-
-                    if (!enable) {
-                        return;
+                    backlogFileInfoList << fileInfo;
+                } else {
+                    if (backlogDirInfoList.isEmpty()) {
+                        timerOfDirList.start();
+                    } else if (timerOfDirList.elapsed() > 1000) {
+                        disposeBacklogDirList();
+                        timerOfDirList.start();
                     }
 
-                    FileSystemNodePointer node = model()->createNode(rootNode.data(), fileInfo);
-                    rootNode->insertChildren(row, fileUrl, node);
-
-                    DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::endInsertRows);
+                    backlogDirInfoList << fileInfo;
                 }
             } else {
-                // 先尝试从待插入列表中删除
-                if (fileInfo->isFile()) {
-                    if (removeInList(backlogFileInfoList, fileUrl)) {
-                        continue;
-                    }
-                } else if (removeInList(backlogDirInfoList, fileUrl)) {
-                    continue;
+                if (!enable) {
+                    return;
                 }
 
-                int row = rootNode->indexOfChild(fileUrl);
+                DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::beginInsertRows,
+                                         model()->createIndex(rootNode, 0), row, row);
 
                 if (!enable) {
                     return;
                 }
 
-                if (row < 0) {
+                FileSystemNodePointer node = model()->createNode(rootNode.data(), fileInfo);
+                rootNode->insertChildren(row, fileUrl, node);
+
+                DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::endInsertRows);
+            }
+        } else {
+            // 先尝试从待插入列表中删除
+            if (fileInfo->isFile()) {
+                if (removeInList(backlogFileInfoList, fileUrl)) {
                     continue;
                 }
+            } else if (removeInList(backlogDirInfoList, fileUrl)) {
+                continue;
+            }
 
-                if (DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::beginRemoveRows,
-                                             model()->createIndex(rootNode, 0), row, row)) {
-                    if (!enable) {
-                        return;
-                    }
+            int row = rootNode->indexOfChild(fileUrl);
 
-                    Q_UNUSED(rootNode->takeNodeByIndex(row));
-                    DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::endRemoveRows);
+            if (!enable) {
+                return;
+            }
+
+            if (row < 0) {
+                continue;
+            }
+
+            if (DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::beginRemoveRows,
+                                         model()->createIndex(rootNode, 0), row, row)) {
+                if (!enable) {
+                    return;
                 }
+
+                Q_UNUSED(rootNode->takeNodeByIndex(row));
+                DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::endRemoveRows);
             }
-        }
-
-        // 退出前确保所有文件都被处理
-        disposeBacklogFileList();
-        disposeBacklogDirList();
-
-        if (!enable) {
-            return;
-        }
-
-        // 先等待一秒看是否还有数据
-        QThread::msleep(300);
-
-        if (!enable) {
-            return;
-        }
-
-        if (!fileQueue.isEmpty()) {
-            goto begin;
         }
     }
 
-    QTimer *waitTimer;
-    LockFreeQueue<QPair<EventType, DAbstractFileInfoPointer>> fileQueue;
-    FileSystemNodePointer rootNode;
-    QAtomicInteger<bool> enable;
-    QSemaphore semaphore;
-};
+    // 退出前确保所有文件都被处理
+    disposeBacklogFileList();
+    disposeBacklogDirList();
 
-class DFileSystemModelPrivate
+    if (!enable) {
+        return;
+    }
+
+    // 先等待一秒看是否还有数据
+    QThread::msleep(300);
+
+    if (!enable) {
+        return;
+    }
+
+    if (!fileQueue.isEmpty()) {
+        goto begin;
+    }
+}
+
+DFileSystemModelPrivate::DFileSystemModelPrivate(DFileSystemModel *qq)
+    : q_ptr(qq)
+    , rootNodeManager(new FileNodeManagerThread(qq))
+    , needQuitUpdateChildren(false)
 {
-public:
-    enum EventType {
-        AddFile,
-        RmFile
-    };
-
-    explicit DFileSystemModelPrivate(DFileSystemModel *qq)
-        : q_ptr(qq)
-        , rootNodeManager(new FileNodeManagerThread(qq))
-        , needQuitUpdateChildren(false)
-    {
-        _q_processFileEvent_runing.store(false);
-        if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool()) {
-            filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
-        } else {
-            filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
-        }
-
-        columnCompact = DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewComppactMode).toBool();
-
-        qq->connect(rootNodeManager, &FileNodeManagerThread::finished, qq, [this, qq] {
-            // 在此线程结束时判断是否需要将model的状态设置为空闲
-            if (!jobController || !jobController->isRunning())
-            {
-                qq->setState(DFileSystemModel::Idle);
-            }
-
-            //当遍历文件的耗时超过JobController::m_timeCeiling时，
-            //onJobFinished函数中拿到的文件不足，因为rootNodeManager还要处理剩余文件
-            //因此在这里rootNodeManager处理完后，再次发送信号 关联bug#24863
-            emit qq->sigJobFinished();
-        });
+    _q_processFileEvent_runing.store(false);
+    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool()) {
+        filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+    } else {
+        filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
     }
 
-    ~DFileSystemModelPrivate();
+    columnCompact = DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewComppactMode).toBool();
 
-    DFileSystemModelPrivate(DFileSystemModelPrivate &) = delete;
-    DFileSystemModelPrivate &operator=(DFileSystemModelPrivate &) = delete;
+    qq->connect(rootNodeManager, &FileNodeManagerThread::finished, qq, [this, qq] {
+        // 在此线程结束时判断是否需要将model的状态设置为空闲
+        if (!jobController || !jobController->isRunning())
+        {
+            qq->setState(DFileSystemModel::Idle);
+        }
 
-    bool passNameFilters(const FileSystemNodePointer &node) const;
-    bool passFileFilters(const DAbstractFileInfoPointer &info) const;
-
-    void _q_onFileCreated(const DUrl &fileUrl, bool isPickUpQueue = false);
-    void _q_onFileDeleted(const DUrl &fileUrl);
-    void _q_onFileUpdated(const DUrl &fileUrl);
-    void _q_onFileUpdated(const DUrl &fileUrl, const int &isExternalSource);
-    void _q_onFileRename(const DUrl &from, const DUrl &to);
-
-    /// add/rm file event
-    void _q_processFileEvent();
-    bool checkFileEventQueue();
-
-    DFileSystemModel *q_ptr;
-
-    FileSystemNodePointer rootNode;
-    QReadWriteLock rootNodeRWLock;
-    QReadWriteLock queueWLock;
-    FileNodeManagerThread *rootNodeManager;
-    // 是否支持一列中包含多个元素
-    bool columnCompact = false;
-
-//    QHash<DUrl, FileSystemNodePointer> d->urlToNode;
-
-    int sortRole = DFileSystemModel::FileDisplayNameRole;
-    QStringList nameFilters;
-    QDir::Filters filters;
-    Qt::SortOrder srotOrder = Qt::AscendingOrder;
-//    QModelIndex d->activeIndex;
-
-    QPointer<JobController> jobController;
-    QEventLoop *eventLoop = Q_NULLPTR;
-    QFuture<void> updateChildrenFuture;
-    QAtomicInteger<bool> needQuitUpdateChildren;
-    DAbstractFileWatcher *watcher = Q_NULLPTR;
-    std::shared_ptr<FileFilter> advanceSearchFilter;
-
-    DFileSystemModel::State state = DFileSystemModel::Idle;
-
-    bool childrenUpdated = false;
-    bool readOnly = false;
-
-    /// add/rm file event
-    std::atomic<bool> _q_processFileEvent_runing;
-    QQueue<QPair<EventType, DUrl>> fileEventQueue;
-    QQueue<QPair<EventType, DUrl>> laterFileEventQueue;
-
-    bool enabledSort = true;
-
-    bool beginRemoveRowsFlag = false;
-    QMutex mutex;
-    //防止析构后，添加flags崩溃锁
-    QMutex mutexFlags;
-    QAtomicInteger<bool> currentRemove = false;
-
-    // 每列包含多个role时，存储此列活跃的role
-    QMap<int, int> columnActiveRole;
-
-    Q_DECLARE_PUBLIC(DFileSystemModel)
-};
+        //当遍历文件的耗时超过JobController::m_timeCeiling时，
+        //onJobFinished函数中拿到的文件不足，因为rootNodeManager还要处理剩余文件
+        //因此在这里rootNodeManager处理完后，再次发送信号 关联bug#24863
+        emit qq->sigJobFinished();
+    });
+}
 
 DFileSystemModelPrivate::~DFileSystemModelPrivate()
 {
