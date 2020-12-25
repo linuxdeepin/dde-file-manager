@@ -8,6 +8,7 @@
 #include "dfmvaultremovebypasswordview.h"
 #include "dfmvaultremovebyrecoverykeyview.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "vaulthelper.h"
 
 #include <QFrame>
 #include <QRegExpValidator>
@@ -100,8 +101,8 @@ void DFMVaultRemovePages::showVerifyWidget()
 
     // 如果密码提示信息为空，则隐藏提示按钮
     QString strPwdHint("");
-    if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
-        if (strPwdHint.isEmpty()){
+    if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {
+        if (strPwdHint.isEmpty()) {
             m_passwordView->setTipsButtonVisible(false);
         } else {
             m_passwordView->setTipsButtonVisible(true);
@@ -144,7 +145,7 @@ DFMVaultRemovePages *DFMVaultRemovePages::instance()
 }
 
 void DFMVaultRemovePages::showTop()
-{    
+{
     activateWindow();
     show();
     raise();
@@ -158,46 +159,51 @@ void DFMVaultRemovePages::onButtonClicked(int index)
     case 0: //点击取消按钮
         close();
         break;
-    case 1:{ // 切换验证方式
-        if (m_stackedWidget->currentIndex() == 0){
+    case 1: { // 切换验证方式
+        if (m_stackedWidget->currentIndex() == 0) {
             getButton(1)->setText(tr("Use Password"));
             m_stackedWidget->setCurrentIndex(1);
-        }else {
+        } else {
             getButton(1)->setText(tr("Use Key"));
             m_stackedWidget->setCurrentIndex(0);
         }
     }
-        break;
-    case 2:{// 删除
-        if (m_stackedWidget->currentIndex() == 0){
+    break;
+    case 2: { // 删除
+        if (m_stackedWidget->currentIndex() == 0) {
             // 密码验证
             QString strPwd = m_passwordView->getPassword();
             QString strClipher("");
 
-            if (!InterfaceActiveVault::checkPassword(strPwd, strClipher)){
+            if (!InterfaceActiveVault::checkPassword(strPwd, strClipher)) {
                 m_passwordView->showToolTip(tr("Wrong password"), 3000, DFMVaultRemoveByPasswordView::EN_ToolTip::Warning);
                 return;
             }
-        }else {
+        } else {
             // 密钥验证
             QString strKey = m_recoverykeyView->getRecoverykey();
             strKey.replace("-", "");
             QString strClipher("");
 
-            if (!InterfaceActiveVault::checkUserKey(strKey, strClipher)){
+            if (!InterfaceActiveVault::checkUserKey(strKey, strClipher)) {
                 m_recoverykeyView->showAlertMessage(tr("Wrong recovery key"));
                 return;
             }
         }
 
         // 管理员权限认证
-        if (VaultLockManager::getInstance().checkAuthentication(VAULT_REMOVE)){
+        if (VaultLockManager::getInstance().checkAuthentication(VAULT_REMOVE)) {
             m_bRemoveVault = true;
-            // 验证成功，先对保险箱进行上锁
-            VaultController::ins()->lockVault();
+            // 删除前，先置顶保险箱内拷贝、剪贴、压缩任务
+            if (DFM_NAMESPACE::VaultHelper::topVaultTasks()) {
+                qDebug() << "当前保险箱内是否有拷贝、剪贴、压缩任务，不能删除保险箱！";
+            } else {
+                // 验证成功，先对保险箱进行上锁
+                VaultController::ins()->lockVault();
+            }
         }
     }
-        break;
+    break;
     default:
         break;
     }
@@ -205,8 +211,8 @@ void DFMVaultRemovePages::onButtonClicked(int index)
 
 void DFMVaultRemovePages::onLockVault(int state)
 {
-    if (m_bRemoveVault){
-        if (state == 0){
+    if (m_bRemoveVault) {
+        if (state == 0) {
             // 切换至删除界面
             showRemoveWidget();
             emit accepted();
@@ -214,7 +220,7 @@ void DFMVaultRemovePages::onLockVault(int state)
             QString vaultLockPath = VaultController::ins()->vaultLockPath();
             QString vaultUnlockPath = VaultController::ins()->vaultUnlockPath();
             m_progressView->removeVault(vaultLockPath, vaultUnlockPath);
-        }else{
+        } else {
             // error tips
             QString errMsg = tr("Failed to delete file vault");
             DDialog dialog(this);
@@ -229,9 +235,9 @@ void DFMVaultRemovePages::onLockVault(int state)
 
 void DFMVaultRemovePages::onVualtRemoveFinish(bool result)
 {
-    if (result){
+    if (result) {
         setInfo(tr("Deleted successfully"));
-    }else {
+    } else {
         setInfo(tr("Failed to delete"));
     }
 
