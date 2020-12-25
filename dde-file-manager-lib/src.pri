@@ -243,7 +243,7 @@ HEADERS += \
     $$PWD/dialogs/private/dfmsettingdialog_p.h \
     $$PWD/interfaces/plugins/private/dfmviewfactory_p.h \
     $$PWD/models/dfmrootfileinfo_p.h \
-    $$PWD/interfaces/dfilesystemmodel_p.h
+    $$PWD/interfaces/private/dfmcrumbbar_p.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \

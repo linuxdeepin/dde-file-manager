@@ -113,6 +113,7 @@ SOURCES += \
     $$PWD/dialogs/ut_shareinfoframe.cpp \
     $$PWD/dialogs/ut_trashpropertydialog.cpp \
     $$PWD/dialogs/ut_usersharepasswordsettingdialog.cpp \
+    $$PWD/interfaces/ut_dfmcrumbbar.cpp \
     ####
     $$PWD/plugins/ut_dfmadditionalmenu.cpp \
     $$PWD/plugins/ut_pluginmanager.cpp \
