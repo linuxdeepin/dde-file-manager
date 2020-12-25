@@ -1,19 +1,23 @@
 #include "views/fileviewhelper.h"
 #include "interfaces/dfmviewmanager.h"
 
-#include <gtest/gtest.h>
-#include <gmock/gmock-matchers.h>
+#include <DMainWindow>
+
+#include <QEvent>
 #include <QIcon>
 #include <QPainter>
 #include <QTextDocument>
-#include <QEvent>
 
-#define protected public
+#include <gmock/gmock-matchers.h>
+#include <gtest/gtest.h>
+
 #define private public
-#include "interfaces/diconitemdelegate.h"
+#define protected public
 #include "views/dfileview.h"
+#include "interfaces/diconitemdelegate.cpp"
 
-namespace  {
+namespace {
+
 class TestDIconItemDelegate : public testing::Test
 {
 public:
@@ -25,36 +29,161 @@ public:
         fileview->initDelegate();
         fileview->increaseIcon();
         fileview->decreaseIcon();
-        fileview ->setIconSizeBySizeIndex(0);
+        fileview->setIconSizeBySizeIndex(0);
 
         iconItemDelegate = qobject_cast<DIconItemDelegate *>(fileview->itemDelegate());
-
-        std::cout << "start TestDIconItemDelegate";
     }
+
     void TearDown() override
     {
-        delete  iconItemDelegate;
+        delete iconItemDelegate;
         iconItemDelegate = nullptr;
         delete fileview;
         fileview = nullptr;
-        std::cout << "end TestDIconItemDelegate";
     }
 };
+
+} // namespace
+
+TEST_F(TestDIconItemDelegate, test_boundingrect)
+{
+    QList<QRectF> rects;
+    rects.append(QRectF { QPointF { 0, 0 }, QPointF { 100, 100 } });
+    rects.append(QRectF { QPointF { 100, 100 }, QPointF { 200, 200 } });
+
+    boundingRect(rects);
+
+    rects.clear();
+
+    rects.append(QRectF { QPointF { 100, 100 }, QPointF { 200, 200 } });
+    rects.append(QRectF { QPointF { 0, 0 }, QPointF { 300, 300 } });
+
+    boundingRect({});
+    boundingRect(rects);
+
+    rects.clear();
 }
+
+TEST_F(TestDIconItemDelegate, test_boundPath)
+{
+    QList<QRectF> rects;
+    rects.append(QRectF { QPointF { 0, 0 }, QPointF { 100, 100 } });
+    rects.append(QRectF { QPointF { 100, 100 }, QPointF { 200, 200 } });
+
+    boundingPath(rects, 1.0, 1);
+
+    rects.clear();
+
+    rects.append(QRectF { QPointF { 100, 100 }, QPointF { 200, 200 } });
+    rects.append(QRectF { QPointF { 0, 0 }, QPointF { 300, 300 } });
+
+    boundingPath(rects, 1.0, 1);
+}
+
+class DFileViewHelperInh : public DFileViewHelper
+{
+public:
+    explicit DFileViewHelperInh(QAbstractItemView *parent = nullptr) : DFileViewHelper(parent) {}
+
+    virtual ~DFileViewHelperInh() {}
+
+    inline virtual const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const
+    {
+        Q_UNUSED(index)
+        return {};
+    }
+
+    inline virtual DFMStyledItemDelegate *itemDelegate() const { return nullptr; }
+
+    inline virtual DFileSystemModel *model() const { return nullptr; }
+
+    inline virtual const DUrlList selectedUrls() const { return {}; }
+
+    inline virtual void select(const QList<DUrl> &list)
+    {
+        Q_UNUSED(list)
+        return;
+    }
+};
+
+TEST_F(TestDIconItemDelegate, test_textFormat)
+{
+    TagTextFormat noObjFormat(0, { QColor("red"), QColor("blue") }, QColor("green"));
+
+    noObjFormat.colors();
+    noObjFormat.borderColor();
+    noObjFormat.diameter();
+
+    TagTextFormat imgFormat(1, { QColor("red"), QColor("blue") }, QColor("green"));
+    imgFormat.colors();
+    imgFormat.borderColor();
+    imgFormat.diameter();
+
+    FileTagObjectInterface interface;
+    interface.intrinsicSize(nullptr, 0, noObjFormat);
+
+    QPainter *painter = new QPainter;
+    interface.drawObject(painter, { 0, 0, 0, 0 }, nullptr, 0, imgFormat);
+
+    QListView fileView;
+    DFileViewHelperInh *helper = new DFileViewHelperInh(&fileView);
+    DFileSystemModel *model = new DFileSystemModel(helper);
+    fileView.setModel(model);
+    DIconItemDelegate *delegate = new DIconItemDelegate(helper);
+    ExpandedItem *item = new ExpandedItem(delegate);
+    DIconItemDelegatePrivate *delegatePrivate = new DIconItemDelegatePrivate(delegate);
+
+    item->opacity();
+
+    item->setOpacity(0.0);
+    item->setOpacity(3.0);
+
+    auto event = new QPaintEvent(QRect(0, 0, 0, 0));
+
+    item->paintEvent(event);
+
+    item->option.text = "testString";
+
+    item->iconPixmap = QIcon::fromTheme("edit-undo").pixmap(QSize(16, 16));
+
+    item->sizeHint();
+
+    item->heightForWidth(10);
+
+    item->heightForWidth(item->width());
+
+    item->paintEvent(event);
+
+    item->textGeometry();
+
+    qApp->processEvents();
+
+    delegatePrivate->textSize("testString", QFontMetrics(QFont()), 20);
+
+    QModelIndex modelIndex;
+    delegatePrivate->getFileIconPixmap(modelIndex,
+                                       QIcon::fromTheme("edit-undo").pixmap(QSize(16, 16)),
+                                       QSize(16, 16), QIcon::Mode::Normal, 0.0);
+}
+
 TEST_F(TestDIconItemDelegate, test_paint)
 {
     QPainter *painter = new QPainter();
     QStyleOptionViewItem option;
-    const QModelIndex &index =  iconItemDelegate->expandedIndex();
+    option.widget = new DMainWindow();
+    auto val = option.widget->palette().base().color();
+    const QModelIndex &index = iconItemDelegate->expandedIndex();
     iconItemDelegate->paint(painter, option, index);
     delete painter;
     painter = nullptr;
+
+    delete option.widget;
 }
 
 TEST_F(TestDIconItemDelegate, test_sizeHint)
 {
     QStyleOptionViewItem viewItem;
-    const QModelIndex &index =  iconItemDelegate->expandedIndex();
+    const QModelIndex &index = iconItemDelegate->expandedIndex();
     iconItemDelegate->sizeHint(viewItem, index);
 }
 
@@ -62,7 +191,7 @@ TEST_F(TestDIconItemDelegate, test_createEditor)
 {
     QWidget w;
     QStyleOptionViewItem viewItem;
-    const QModelIndex &index =  iconItemDelegate->expandedIndex();
+    const QModelIndex &index = iconItemDelegate->expandedIndex();
     iconItemDelegate->createEditor(&w, viewItem, index);
 }
 
@@ -77,8 +206,8 @@ TEST_F(TestDIconItemDelegate, test_updateEditorGeometry)
 TEST_F(TestDIconItemDelegate, test_setEditorData)
 {
     QWidget *editor = iconItemDelegate->expandedIndexWidget();
-    QModelIndex index =  iconItemDelegate->expandedIndex();
-    iconItemDelegate->setEditorData(editor,  index);
+    QModelIndex index = iconItemDelegate->expandedIndex();
+    iconItemDelegate->setEditorData(editor, index);
 }
 
 TEST_F(TestDIconItemDelegate, test_paintGeomertys)
@@ -87,7 +216,7 @@ TEST_F(TestDIconItemDelegate, test_paintGeomertys)
     QStyleOptionViewItem option;
 
     option.init(&w);
-    QModelIndex index =  iconItemDelegate->expandedIndex();
+    QModelIndex index = iconItemDelegate->expandedIndex();
     iconItemDelegate->paintGeomertys(option, index);
 }
 
@@ -196,7 +325,6 @@ TEST_F(TestDIconItemDelegate, test_eventFilter)
     iconItemDelegate->eventFilter(object, event);
 }
 
-
 TEST_F(TestDIconItemDelegate, test_drawText)
 {
     QModelIndex index = iconItemDelegate->expandedIndex();
@@ -209,7 +337,8 @@ TEST_F(TestDIconItemDelegate, test_drawText)
     QColor shadowColor(QColor(0xFFFFAE00));
     QTextOption::WrapMode wordWrap = QTextOption::WrapMode::WordWrap;
     Qt::TextElideMode mode = Qt::TextElideMode::ElideLeft;
-    iconItemDelegate->drawText(index, painter, layout, boundingRect, radius, background, wordWrap, mode, flag, shadowColor)  ;
+    iconItemDelegate->drawText(index, painter, layout, boundingRect, radius, background, wordWrap,
+                               mode, flag, shadowColor);
 }
 
 TEST_F(TestDIconItemDelegate, test_helpEvent)
@@ -217,7 +346,7 @@ TEST_F(TestDIconItemDelegate, test_helpEvent)
     QHelpEvent *event = new QHelpEvent(QEvent::ToolTip, QPoint(10, 10), QPoint(10, 10));
     QAbstractItemView *view = nullptr;
     QStyleOptionViewItem option;
-    QModelIndex index =  iconItemDelegate->expandedIndex();
+    QModelIndex index = iconItemDelegate->expandedIndex();
     iconItemDelegate->helpEvent(event, view, option, index);
 }
 
