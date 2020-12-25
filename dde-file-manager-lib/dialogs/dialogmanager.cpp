@@ -1161,7 +1161,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
     QFont f;
     f.setPixelSize(16);
     QFontMetrics fm(f);
-    int maxWith = qApp->primaryScreen()->size().width() * 3 / 4;
+
     DDialog d;
 
     if (urls.count() == 1) {
@@ -1169,8 +1169,8 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         d.setTitle(tr("You do not have permission to operate file/folder!"));
         QString message = urls.at(0).toLocalFile();
 
-        if (fm.width(message) > maxWith) {
-            message = fm.elidedText(message, Qt::ElideMiddle, maxWith - 10);
+        if (fm.width(message) > MAX_FILE_NAME_CHAR_COUNT) {
+            message = fm.elidedText(message, Qt::ElideMiddle, MAX_FILE_NAME_CHAR_COUNT);
         }
 
         d.setMessage(message);
@@ -1194,8 +1194,8 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
                 break;
             }
             QString s = QString("%1.%2").arg(QString::number(i + 1), urls.at(i).toLocalFile());
-            if (fm.width(s) > maxWith) {
-                s = fm.elidedText(s, Qt::ElideMiddle, maxWith - 10);
+            if (fm.width(s) > MAX_FILE_NAME_CHAR_COUNT) {
+                s = fm.elidedText(s, Qt::ElideMiddle, MAX_FILE_NAME_CHAR_COUNT);
             }
             message += s + "\n";
         }
