@@ -65,7 +65,7 @@ public:
 };
 
 TEST_F(DfmBaseViewTest,start_deleteLater) {
-    ASSERT_NO_FATAL_FAILURE(baseview->deleteLater());
+    EXPECT_NO_FATAL_FAILURE(baseview->deleteLater());
 }
 
 TEST_F(DfmBaseViewTest,start_widget) {
@@ -89,7 +89,7 @@ TEST_F(DfmBaseViewTest,start_toolBarActionList) {
 }
 
 TEST_F(DfmBaseViewTest,start_reflesh) {
-    ASSERT_NO_FATAL_FAILURE(baseview->refresh());
+    EXPECT_NO_FATAL_FAILURE(baseview->refresh());
 }
 
 QWidget * window(){
@@ -110,12 +110,12 @@ TEST_F(DfmBaseViewTest,start_other) {
         ASSERT_NO_FATAL_FAILURE(baseview->notifyUrlChanged());
     });
     TestHelper::runInLoop([=]{
-        ASSERT_NO_FATAL_FAILURE(baseview->notifyStateChanged());
+        EXPECT_NO_FATAL_FAILURE(baseview->notifyStateChanged());
     });
-    ASSERT_NO_FATAL_FAILURE(baseview->requestCdTo(DUrl()));
+    EXPECT_NO_FATAL_FAILURE(baseview->requestCdTo(DUrl()));
 
     TestHelper::runInLoop([=]{
-        ASSERT_NO_FATAL_FAILURE(baseview->notifySelectUrlChanged(DUrlList()));
+        EXPECT_NO_FATAL_FAILURE(baseview->notifySelectUrlChanged(DUrlList()));
     });
     if (testbaseviewptr) {
         delete testbaseviewptr;
