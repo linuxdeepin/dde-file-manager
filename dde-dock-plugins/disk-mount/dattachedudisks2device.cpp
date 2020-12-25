@@ -31,6 +31,11 @@
 
 DFM_USE_NAMESPACE
 
+ErrorHandleInfc::~ErrorHandleInfc()
+{
+}
+
+
 /*!
  * \class DAttachedUdisks2Device
  *

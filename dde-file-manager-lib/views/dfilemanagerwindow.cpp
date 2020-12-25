@@ -1306,7 +1306,6 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->newTabButton, &QPushButton::clicked, this, &DFileManagerWindow::onNewTabButtonClicked);
 
     QObject::connect(fileSignalManager, &FileSignalManager::trashStateChanged, this, &DFileManagerWindow::onTrashStateChanged);
-    QObject::connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
 
     QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d] {
@@ -1323,7 +1322,8 @@ void DFileManagerWindow::initConnect()
             }
         }
         d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, url));
-        emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, url));
+        d->toolbar->currentUrlChanged(DFMUrlBaseEvent(this, url));
+        this->onTrashStateChanged();
 
         if (info)
         {
