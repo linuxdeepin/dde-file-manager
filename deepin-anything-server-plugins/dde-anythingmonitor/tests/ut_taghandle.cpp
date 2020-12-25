@@ -20,6 +20,7 @@
 
  */
 
+#include <QFile>
 
 #include <gtest/gtest.h>
 
@@ -32,13 +33,19 @@ public:
     void SetUp() override
     {
         m_tagHandle = new TagHandle(nullptr);
-        filelist << "./../../../../dde-file-manager/deepin-anything-server-plugins/dde-anythingmonitor/tests/test.txt";
+        QFile file("./test.txt");
+        file.open(QIODevice::ReadWrite|QIODevice::Text);
+        file.write("I am writing file");
+        file.close();
+        filelist << "./test.txt";
     }
 
     void TearDown() override
     {
         delete m_tagHandle;
         m_tagHandle = nullptr;
+        QFile fp("./test.txt");
+        fp.remove();
     }
 
 public:

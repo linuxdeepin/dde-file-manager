@@ -8,7 +8,6 @@ SOURCES += \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmapplication.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmsettings.cpp \
     taghandle.cpp \
-    main.cpp
 
 
 HEADERS += \

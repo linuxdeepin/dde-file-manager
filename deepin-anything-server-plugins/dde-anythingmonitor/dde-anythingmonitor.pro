@@ -71,7 +71,7 @@ SOURCES += \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmapplication.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmsettings.cpp \
     taghandle.cpp \
-    main.cpp
+    taghandleplugin.cpp
 
 
 HEADERS += \
@@ -84,7 +84,8 @@ HEADERS += \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmstandardpaths.h \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmapplication.h \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmsettings.h \
-    taghandle.h
+    taghandle.h \
+    taghandleplugin.h
 
 
 
