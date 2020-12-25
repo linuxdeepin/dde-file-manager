@@ -62,7 +62,6 @@ public:
     static QAction *getAction(MenuAction action);
     static QString getActionText(MenuAction action);
 
-    static QString checkDuplicateName(const QString &name);
     static QSet<MenuAction> getDisableActionList(const DUrl &fileUrl);
     static QSet<MenuAction> getDisableActionList(const DUrlList &urlList);
 
