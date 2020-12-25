@@ -14,4 +14,5 @@ SOURCES += \
     $$PWD/dfmvfsdeviceinfo.cpp \
     $$PWD/dfmdeviceinfo.cpp \
     $$PWD/dfminvaliddeviceinfo.cpp \
-    $$PWD/dfmdevicecontroller.cpp
+    $$PWD/dfmdevicecontroller.cpp \
+    $$PWD/dfmabstractdeviceinterface.cpp

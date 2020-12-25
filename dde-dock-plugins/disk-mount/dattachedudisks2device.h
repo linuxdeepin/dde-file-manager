@@ -25,9 +25,11 @@
 #include "dattacheddeviceinterface.h"
 
 #include <dfmglobal.h>
-class ErrorHandleInfc {
+class ErrorHandleInfc
+{
 public:
-    virtual void onError(DAttachedDeviceInterface * device)=0;
+    virtual void onError(DAttachedDeviceInterface *device) = 0;
+    virtual ~ErrorHandleInfc() = 0;
 };
 
 class DBlockDevice;
@@ -36,7 +38,7 @@ class DAttachedUdisks2Device : public DAttachedDeviceInterface
 {
 public:
     explicit DAttachedUdisks2Device(const DBlockDevice *blockDevicePointer);
-
+    virtual ~DAttachedUdisks2Device() override {}
     bool isValid() override;
     bool detachable() override;
     void detach() override;
@@ -47,8 +49,9 @@ public:
     QUrl mountpointUrl() override;
     QUrl accessPointUrl() override;
 
-    DBlockDevice* blockDevice();
-    void setErrorHandler(ErrorHandleInfc *handle){
+    DBlockDevice *blockDevice();
+    void setErrorHandler(ErrorHandleInfc *handle)
+    {
         errhandle = handle;
     }
 
@@ -56,7 +59,7 @@ private:
     QScopedPointer<DBlockDevice> c_blockDevice;
     QString deviceDBusId;
     QString mountPoint;
-    ErrorHandleInfc *errhandle=nullptr;
+    ErrorHandleInfc *errhandle = nullptr;
 
     const QString ddeI18nSym = QStringLiteral("_dde_");
 };

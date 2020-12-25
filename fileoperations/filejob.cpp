@@ -766,7 +766,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
             QByteArray bytes = QJsonDocument(obj).toJson();
             if (bytes.size() < BUFFERSIZE)
             {
-                char progressBuf[BUFFERSIZE] = {0};
+                char progressBuf[BUFFERSIZE + 1] = {0};
                 strncpy(progressBuf, bytes.data(), BUFFERSIZE);
                 write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
             }
@@ -1007,7 +1007,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             QByteArray bytes = QJsonDocument(obj).toJson();
             if (bytes.size() < BUFFERSIZE)
             {
-                char progressBuf[BUFFERSIZE] = {0};
+                char progressBuf[BUFFERSIZE + 1] = {0};
                 strncpy(progressBuf, bytes.data(), BUFFERSIZE);
                 write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
             }

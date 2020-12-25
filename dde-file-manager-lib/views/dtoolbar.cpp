@@ -215,7 +215,6 @@ void DToolBar::initConnect()
     connect(m_crumbWidget, &DFMCrumbBar::addressBarShown, this, &DToolBar::searchBarActivated);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarHidden, this, &DToolBar::searchBarDeactivated);
     connect(m_searchButton, &QPushButton::clicked, this, &DToolBar::onSearchButtonClicked);
-    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::currentUrlChanged);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
     connect(this, &DToolBar::toolbarUrlChanged, m_crumbWidget, &DFMCrumbBar::updateCurrentUrl);

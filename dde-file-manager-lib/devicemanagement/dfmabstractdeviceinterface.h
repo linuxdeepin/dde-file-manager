@@ -57,6 +57,7 @@ public:
     virtual QString mountpointPath() const = 0; // "/media/blumia/xxx"
 
     virtual enum DeviceClassType deviceClassType() { return invalid; } // gio / udisks2, for casting?
+    virtual ~DFMAbstractDeviceInterface() = 0;
 };
 
 DFM_END_NAMESPACE

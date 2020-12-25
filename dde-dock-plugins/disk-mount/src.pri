@@ -31,4 +31,5 @@ SOURCES += \
     $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.cpp \
     $$PWD/../../dde-file-manager-lib/interfaces/dfmstandardpaths.cpp \
     $$PWD/../../dde-file-manager-lib/interfaces/durl.cpp \
+    $$PWD/dattacheddeviceinterface.cpp
 
