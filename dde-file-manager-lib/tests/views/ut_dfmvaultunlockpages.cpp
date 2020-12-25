@@ -6,6 +6,9 @@
 #include <QPushButton>
 #include <DToolTip>
 #include <DPasswordEdit>
+#include <DSecureString>
+#include "interfaceactivevault.h"
+#include "controllers/vaultcontroller.h"
 
 #include "../stub-ext/stubext.h"
 
@@ -13,30 +16,51 @@
 #include "views/dfmvaultunlockpages.h"
 
 DWIDGET_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 namespace  {
-    class TestDFMVaultUnlockPages: public testing::Test
+class TestDFMVaultUnlockPages: public testing::Test
+{
+public:
+    DFMVaultUnlockPages *m_view;
+
+    virtual void SetUp() override
     {
-    public:
-        DFMVaultUnlockPages* m_view;
+        m_view = DFMVaultUnlockPages::instance();
+        m_view->show();
+        std::cout << "start TestDFMVaultUnlockPages" << std::endl;
+    }
 
-        virtual void SetUp() override
-        {
-            m_view = DFMVaultUnlockPages::instance();
-            m_view->show();
-            std::cout << "start TestDFMVaultUnlockPages" << std::endl;
-        }
-
-        virtual void TearDown() override
-        {
-            m_view->close();
-            std::cout << "end TestDFMVaultUnlockPages" << std::endl;
-        }
-    };
+    virtual void TearDown() override
+    {
+        m_view->close();
+        std::cout << "end TestDFMVaultUnlockPages" << std::endl;
+    }
+};
 }
 
 
 TEST_F(TestDFMVaultUnlockPages, tst_onButtonClicked)
 {
+    bool (*st_checkPassword)(const QString &, QString &) = [](const QString &, QString &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(InterfaceActiveVault, checkPassword), st_checkPassword);
+
+    void (*st_unlockVault)(const DSecureString &, QString lockBaseDir, QString unlockFileDir) =
+    [](const DSecureString &, QString lockBaseDir, QString unlockFileDir) {
+        Q_UNUSED(lockBaseDir)
+        Q_UNUSED(unlockFileDir)
+        // do nothing.
+    };
+    stub.set(ADDR(VaultController, unlockVault), st_unlockVault);
+
+    void (*st_showToolTip)(const QString &, int, DFMVaultUnlockPages::EN_ToolTip) =
+            [](const QString &, int, DFMVaultUnlockPages::EN_ToolTip) {
+        // do nothing.
+    };
+    stub.set(ADDR(DFMVaultUnlockPages, showToolTip), st_showToolTip);
+
     m_view->onButtonClicked(1);
     m_view->onButtonClicked(0);
 }
