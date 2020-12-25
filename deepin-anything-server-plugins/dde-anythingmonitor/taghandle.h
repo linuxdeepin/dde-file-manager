@@ -31,8 +31,7 @@ class TagHandle : public DASInterface
     Q_OBJECT
 
 public:
-    explicit TagHandle(QObject *const parent = nullptr)
-        : DASInterface{ parent } {}
+    explicit TagHandle(QObject *const parent = nullptr);
     virtual ~TagHandle() = default;
 
     TagHandle(const TagHandle &other) = delete;

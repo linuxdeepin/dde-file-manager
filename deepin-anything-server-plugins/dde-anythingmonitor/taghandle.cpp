@@ -25,7 +25,11 @@
 #include <tag/tagmanager.h>
 #include <shutil/danythingmonitorfilter.h>
 
+TagHandle::TagHandle(QObject *const parent)
+: DASInterface{ parent } 
+{
 
+}
 
 void TagHandle::onFileCreate(const QByteArrayList &files)
 {
