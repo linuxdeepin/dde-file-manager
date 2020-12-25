@@ -1,10 +1,15 @@
 #include <gtest/gtest.h>
-
-#include "interfaces/dgvfsfileinfo.h"
 #include "testhelper.h"
+#include "stub.h"
+#include "stubext.h"
 
 #include <QStandardPaths>
 #include <QIcon>
+#define protected public
+#define private public
+#include "interfaces/dgvfsfileinfo.h"
+#include "private/dgvfsfileinfo_p.h"
+#include "private/dfileinfo_p.h"
 
 namespace {
 class DGvfsFileInfoTest : public testing::Test
@@ -142,8 +147,51 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_inode)
 
 TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
 {
+    DFileInfo *parent = static_cast<DFileInfo *>(m_fileinfo.data());
     EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
     TestHelper::runInLoop([](){});
-    EXPECT_TRUE(m_fileinfo->additionalIcon().isEmpty());
+
+    parent->d_func()->needThumbnail = true;
+    stub_ext::StubExt st;
+    st.set_lamda(&QIcon::isNull, []{ return false; });
+    EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
     TestHelper::runInLoop([](){});
+    st.reset(&QIcon::isNull);
+
+    st.set_lamda(&DAbstractFileInfo::isActive, []{ return true; });
+    parent->d_func()->needThumbnail = true;
+    EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
+    TestHelper::runInLoop([](){});
+    st.reset(&DAbstractFileInfo::isActive);
+
+    DGvfsFileInfo *info = new DGvfsFileInfo("/tmp/");
+    parent->d_func()->needThumbnail = false;
+    st.set_lamda(&QIcon::isNull, []{ return true; });
+    st.set_lamda(VADDR(DGvfsFileInfo, isSymLink), []{ return true; });
+    st.set_lamda(VADDR(DGvfsFileInfo, symLinkTarget), []{ return DUrl("file:///home"); });
+    EXPECT_TRUE(info->fileIcon().isNull());
+    TestHelper::runInLoop([](){});
+    delete info;
+
+    info = new DGvfsFileInfo("file:///home");
+    EXPECT_TRUE(info->fileIcon().isNull());
+    TestHelper::runInLoop([](){});
+    st.reset(&QIcon::isNull);
+    st.reset(VADDR(DGvfsFileInfo, isSymLink));
+    st.reset(VADDR(DGvfsFileInfo, symLinkTarget));
+    delete info;
+
+    st.set_lamda(VADDR(DGvfsFileInfo, isShared), []{ return true; });
+    info = new DGvfsFileInfo("/tmp");
+    EXPECT_TRUE(info->additionalIcon().isEmpty());
+    TestHelper::runInLoop([](){});
+    delete info;
+
+    st.set_lamda(VADDR(DGvfsFileInfo, isSymLink), []{ return true; });
+    info = new DGvfsFileInfo("/tmp");
+    EXPECT_FALSE(info->additionalIcon().isEmpty());
+    TestHelper::runInLoop([](){});
+    delete info;
+    st.reset(VADDR(DGvfsFileInfo, isShared));
+    st.reset(VADDR(DGvfsFileInfo, isSymLink));
 }
