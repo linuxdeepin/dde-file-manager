@@ -9,24 +9,24 @@
 
 DFM_USE_NAMESPACE
 namespace  {
-    static DFMApplication m_application;
-    class TestDFMApplication : public testing::Test
+static DFMApplication m_application;
+class TestDFMApplication : public testing::Test
+{
+    void SetUp() override
     {
-        void SetUp() override
-        {
-            std::cout << "start TestDFMApplication" << std::endl;
-        }
+        std::cout << "start TestDFMApplication" << std::endl;
+    }
 
-        void TearDown() override
-        {
-            std::cout << "end TestDFMApplication" << std::endl;
-        }
-    };
+    void TearDown() override
+    {
+        std::cout << "end TestDFMApplication" << std::endl;
+    }
+};
 
 
 TEST_F(TestDFMApplication, test_appAttribute)
 {
-   EXPECT_FALSE(m_application.appAttribute(DFMApplication::ApplicationAttribute::AA_AllwayOpenOnNewWindow).toBool());
+    EXPECT_FALSE(m_application.appAttribute(DFMApplication::ApplicationAttribute::AA_AllwayOpenOnNewWindow).toBool());
 }
 
 TEST_F(TestDFMApplication, test_appUrlAttribute)
@@ -51,7 +51,7 @@ TEST_F(TestDFMApplication, test_syncAppAttribute)
 
 TEST_F(TestDFMApplication, test_genericAttribute)
 {
-   EXPECT_TRUE(m_application.genericAttribute(DFMApplication::GenericAttribute::GA_AutoMount).toBool());
+    EXPECT_TRUE(m_application.genericAttribute(DFMApplication::GenericAttribute::GA_AutoMount).toBool());
 }
 
 TEST_F(TestDFMApplication, test_setGenericAttribute)
@@ -95,7 +95,7 @@ TEST_F(TestDFMApplication, test_appObtuselySetting)
 
 TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_applicationAttribute_edited)
 {
-    QSignalSpy spy(&m_application, SIGNAL(appAttributeEdited(ApplicationAttribute , const QVariant &)));
+    QSignalSpy spy(&m_application, SIGNAL(appAttributeEdited(ApplicationAttribute, const QVariant &)));
     m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(ApplicationAttribute), QT_STRINGIFY(AllwayOpenOnNewWindow), true);
     EXPECT_EQ(spy.count(), 1);
 }
@@ -110,7 +110,7 @@ TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_iconSizeLevelChanged)
 TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_viewModeChanged)
 {
     QSignalSpy spy(&m_application, SIGNAL(viewModeChanged(int)));
-    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(ApplicationAttribute), QT_STRINGIFY(  ViewMode), 0);
+    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(ApplicationAttribute), QT_STRINGIFY(ViewMode), 0);
     EXPECT_EQ(spy.count(), 1);
 }
 
@@ -149,11 +149,11 @@ TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_recentDisplayChanged)
 //    EXPECT_EQ(spy.count(), 1);
 //}
 
-TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_csdClickableAreaAttributeChanged)
-{
-    QSignalSpy spy(&m_application, SIGNAL(csdClickableAreaAttributeChanged(bool)));
-    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(ShowCsdCrumbBarClickableArea), true);
-    EXPECT_EQ(spy.count(), 1);
-}
+//TEST_F(TestDFMApplication, test_q_onSettingsValueChanged_csdClickableAreaAttributeChanged)
+//{
+//    QSignalSpy spy(&m_application, SIGNAL(csdClickableAreaAttributeChanged(bool)));
+//    m_application.d_func()->_q_onSettingsValueEdited(QT_STRINGIFY(GenericAttribute), QT_STRINGIFY(ShowCsdCrumbBarClickableArea), true);
+//    EXPECT_EQ(spy.count(), 1);
+//}
 
 }
