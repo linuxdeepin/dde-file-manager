@@ -723,7 +723,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
-    //由于测试桌面的图标排列以及图标个数不明确所以这里不做判断，暂时只是调用
 
     QAbstractItemView::CursorAction  tpCursorActon;
     Qt::KeyboardModifiers tpModifiers;
@@ -735,26 +734,177 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
     m_canvasGridView->select(lst);
     qApp->processEvents();
 
+    tpCursorActon = QAbstractItemView::CursorAction::MoveLeft;
+    m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+
     auto current = m_canvasGridView->d->currentCursorIndex;
     if (!current.isValid()) {
         current = m_canvasGridView->firstIndex();
         m_canvasGridView->d->currentCursorIndex = current;
     }
 
-    tpCursorActon = QAbstractItemView::CursorAction::MoveHome;
-    m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    //主屏第一个index,如果主屏没有图标index为无效，反之为第一个图标index
+    auto firstIndex = m_canvasGridView->firstIndex();
+    ASSERT_TRUE(firstIndex.isValid()) << "primary screen no valid index";
+
+    bool leftIndex = false;
+    bool rightIndex = false;
+    bool upIndex = false;
+    bool downIndex = false;
+
+    m_canvasGridView->d->currentCursorIndex = firstIndex;
     tpCursorActon = QAbstractItemView::CursorAction::MoveLeft;
-    m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    auto targetLeft = m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    if(!targetLeft.isValid()) {
+        auto expectLeft = m_canvasGridView->firstIndex() == targetLeft;
+        EXPECT_TRUE(expectLeft);
+    }else {
+        leftIndex = true;
+    }
+
+
+    m_canvasGridView->d->currentCursorIndex = firstIndex;
     tpCursorActon = QAbstractItemView::CursorAction::MoveRight;
-    m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    auto targetRight = m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    if (!targetRight.isValid()) {
+        auto expectRight = m_canvasGridView->firstIndex() == targetRight;
+        EXPECT_TRUE(expectRight);
+    }else {
+        rightIndex = true;
+    }
+
+
+    m_canvasGridView->d->currentCursorIndex = m_canvasGridView->firstIndex();
     tpCursorActon = QAbstractItemView::CursorAction::MoveUp;
-    m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    auto targetUp = m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    if (!targetUp.isValid()) {
+        auto expectUp = m_canvasGridView->firstIndex() == targetUp;
+        EXPECT_TRUE(expectUp);
+    }else {
+        upIndex = true;
+    }
+
+    m_canvasGridView->d->currentCursorIndex = firstIndex;
     tpCursorActon = QAbstractItemView::CursorAction::MoveDown;
-    m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    auto targetDown = m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    if (!targetDown.isValid()) {
+        auto expectDown = m_canvasGridView->firstIndex() == targetDown;
+        EXPECT_TRUE(expectDown);
+    }else {
+        downIndex = true;
+    }
+
+    auto url = m_canvasGridView->model()->getUrlByIndex(current);
+    auto pos = GridManager::instance()->position(1, url.toString());
+    auto newCoord = Coordinate(pos);
+    auto row = m_canvasGridView->d->rowCount;
+    auto colCount = m_canvasGridView->d->colCount;
+    int conut = 1;
+    bool inThere = false;
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(QModelIndex, isValid), []{
+        return true;});
+
+    if(leftIndex) {
+        stub.set_lamda(ADDR(Coordinate, moveLeft), [&inThere, &newCoord]{
+            inThere = true;
+            return Coordinate(newCoord.d.x - 1, newCoord.d.y);
+        });
+        stub.set_lamda(ADDR(Coordinate, position), [&colCount, &conut]{
+            conut++;
+            if (conut >= 3)
+                return QPoint(colCount, colCount);
+            return QPoint(0, 1);
+        });
+        m_canvasGridView->select({url});
+        tpCursorActon = QAbstractItemView::CursorAction::MoveLeft;
+        m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+        EXPECT_TRUE(inThere);
+    }
+
+    inThere = false;
+    if(rightIndex) {
+        stub.set_lamda(ADDR(Coordinate, moveRight), [&inThere, &newCoord]{
+            inThere = true;
+            return Coordinate(newCoord.d.x + 1, newCoord.d.y);
+        });
+        conut = 1;
+        stub.set_lamda(ADDR(Coordinate, position), [&colCount, &conut]{
+            conut++;
+            if (conut >= 3)
+                return QPoint(colCount, colCount);
+            return QPoint(0, 1);
+        });
+        tpCursorActon = QAbstractItemView::CursorAction::MoveRight;
+        m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+        EXPECT_TRUE(inThere);
+    }
+
+    inThere = false;
+    stub.set_lamda(ADDR(Coordinate, moveUp), [&inThere, &newCoord]{
+        inThere = true;
+        return Coordinate(newCoord.d.x, newCoord.d.y - 1);
+    });
+    if(upIndex) {
+        tpCursorActon = QAbstractItemView::CursorAction::MoveUp;
+        m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+        EXPECT_TRUE(inThere);
+    }
+
+    inThere = false;
+    stub.set_lamda(ADDR(Coordinate, moveDown), [&inThere, &newCoord]{
+        inThere = true;
+        return Coordinate(newCoord.d.x, newCoord.d.y + 1);
+    });
+    if(downIndex) {
+        tpCursorActon = QAbstractItemView::CursorAction::MoveDown;
+        m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+        EXPECT_TRUE(inThere);
+    }
+
     tpCursorActon = QAbstractItemView::CursorAction::MovePageUp;
-    m_canvasGridView->moveCursorGrid(tpCursorActon, Qt::ShiftModifier);
+    auto targetPageUp = m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    auto expectPageUp = m_canvasGridView->firstIndex() == targetPageUp;
+    EXPECT_TRUE(expectPageUp);
+
     tpCursorActon = QAbstractItemView::CursorAction::MovePageDown;
-    m_canvasGridView->moveCursorGrid(tpCursorActon, Qt::ShiftModifier);
+    auto targetPageDown = m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    auto expectPageDown = m_canvasGridView->lastIndex() == targetPageDown;
+    EXPECT_TRUE(expectPageDown);
+
+    tpModifiers = Qt::ShiftModifier;
+    inThere = false;
+    tpCursorActon = QAbstractItemView::CursorAction::MovePageUp;
+    stub.set_lamda(ADDR(Coordinate, position), []{
+        return QPoint(-1, -1);
+    });
+    auto targetPageUpShift = m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    auto expectPageUpShift = m_canvasGridView->firstIndex() == targetPageUpShift;
+    EXPECT_TRUE(expectPageUpShift);
+    EXPECT_TRUE(inThere);
+
+    inThere = false;
+    conut = 1;
+    stub.set_lamda(ADDR(Coordinate, moveDown), [&inThere, &newCoord, &conut]{
+        inThere = true;
+        conut++;
+        if (conut >= 3)
+            return Coordinate(newCoord.d.x, newCoord.d.y + 50);
+        return Coordinate(newCoord.d.x, newCoord.d.y + 1);
+    });
+
+    stub.set_lamda(ADDR(Coordinate, position), [&row, &colCount, &conut]{
+        conut++;
+        if (conut >= 3)
+            return QPoint(row, colCount);
+        return QPoint(0, 1);
+    });
+
+    tpCursorActon = QAbstractItemView::CursorAction::MovePageDown;
+    auto targetPageDownShift = m_canvasGridView->moveCursorGrid(tpCursorActon, tpModifiers);
+    auto expectPageDownShift = m_canvasGridView->lastIndex() == targetPageDownShift;
+    EXPECT_TRUE(expectPageDownShift);
+    EXPECT_TRUE(inThere);
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_dragMoveEvent)
@@ -1429,6 +1579,25 @@ TEST_F(CanvasGridViewTest, test_itemIconGeomerty)
         QRect rect = m_canvasGridView->itemIconGeomerty(index);
         EXPECT_NE(QRect(), rect);
     }
+    stub_ext::StubExt stub;
+    typedef QList<QRect> (*fptr)(DIconItemDelegate*,const QStyleOptionViewItem &, const QModelIndex &, bool);
+    fptr myPaintGeomertys = (fptr)&DIconItemDelegate::paintGeomertys;
+    stub.set_lamda(myPaintGeomertys, []()->QList<QRect>{return {};});
+
+//    stub.set_lamda(ADDR(QRect, marginsRemoved), [](const QMargins &)->QRect{return QRect(10, 10, 10, 10);});//why ?
+    Stub stu;
+    QRect(*temppp)(const QMargins &) = [](const QMargins &)->QRect{
+        QRect  aaa(10, 10, 10, 10);
+        return aaa;
+    };
+    stu.set(ADDR(QRect, marginsRemoved),temppp);
+
+    QRect rect = m_canvasGridView->itemIconGeomerty(index);
+    EXPECT_TRUE(QRect(10, 10, 10, 10) == rect);
+
+    stub.set_lamda(myPaintGeomertys, []()->QList<QRect>{return {QRect(9, 9, 9, 9)};});
+    QRect rect2 = m_canvasGridView->itemIconGeomerty(index);
+    EXPECT_TRUE(QRect(9, 9, 9, 9) == rect2);
 }
 
 TEST_F(CanvasGridViewTest, test_fakeDropEvent)
@@ -1592,4 +1761,19 @@ TEST_F(CanvasGridViewTest, test_dropEvent)
     EXPECT_EQ(event.dropAction(), Qt::IgnoreAction);
 }
 
+TEST_F(CanvasGridViewTest, test_EnableUIDebug)
+{
+    m_canvasGridView->EnableUIDebug(true);
+    EXPECT_TRUE(m_canvasGridView->d->_debug_log);
+    EXPECT_TRUE(m_canvasGridView->d->_debug_show_grid);
+
+    m_canvasGridView->EnableUIDebug(false);
+    EXPECT_FALSE(m_canvasGridView->d->_debug_log);
+    EXPECT_FALSE(m_canvasGridView->d->_debug_show_grid);
+}
+
+TEST_F(CanvasGridViewTest, test_isIndexHidden)
+{
+    EXPECT_FALSE(m_canvasGridView->isIndexHidden(QModelIndex()));
+}
 
