@@ -242,7 +242,8 @@ HEADERS += \
     $$PWD/dialogs/private/ddesktoprenamedialog_p.h \
     $$PWD/dialogs/private/dfmsettingdialog_p.h \
     $$PWD/interfaces/plugins/private/dfmviewfactory_p.h \
-    $$PWD/models/dfmrootfileinfo_p.h
+    $$PWD/models/dfmrootfileinfo_p.h \
+    $$PWD/interfaces/dfilesystemmodel_p.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
