@@ -12,12 +12,14 @@
 #include <QSharedPointer>
 #include <QAction>
 #include <QDialog>
+#include <QVariant>
 #include <ddiskdevice.h>
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
 #include "deviceinfo/udisklistener.h"
 #include "dabstractfilewatcher.h"
+#include "ddialog.h"
 #define private public
 #define protected public
 #include "tag/tagmanager.h"
@@ -110,8 +112,10 @@ namespace  {
                     ADDR(DAbstractFileWatcher,ghostSignal),ghostSignal2);
             typedef int(*fptr)(QDialog*);
             fptr pQDialogExec = (fptr)(&QDialog::exec);
+            fptr pDDialogExec = (fptr)(&DDialog::exec);
             int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
             stl.set(pQDialogExec, stub_DDialog_exec);
+            stl.set(pDDialogExec, stub_DDialog_exec);
 
             void (*mount)(const QString &) = [](const QString &){};
             stl.set(ADDR(UDiskListener,mount),mount);
@@ -569,6 +573,12 @@ TEST_F(AppControllerTest,start_actionNewFile){
     stl.set(ADDR(UDiskListener,mount),mount);
     void (*unmount)(const QString &) = [](const QString &){};
     stl.set(ADDR(UDiskListener,unmount),unmount);
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
     tmp.setPath(TestHelper::createTmpDir());
     url.setPath(tmp.toLocalFile() + "/ztt_test_appkkk");
     bool (*cpTemplateFileToTargetDir)(const QString &, const QString &, const QString &, WId ) =
@@ -660,6 +670,12 @@ TEST_F(AppControllerTest, start_actionOpenInTerminal){
 TEST_F(AppControllerTest, start_actionProperty){
     url.setScheme(FILE_SCHEME);
     url.setPath("./");
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
     controller->disconnect();
     void (*showTrashPropertyDialog)(const DFMEvent &) = [](const DFMEvent &){};
     stl.set(ADDR(DialogManager,showTrashPropertyDialog),showTrashPropertyDialog);
@@ -841,26 +857,90 @@ TEST_F(AppControllerTest, start_actionForward){
 }
 
 TEST_F(AppControllerTest, start_actionForgetPassword){
-
-
-
     void (*actionUnmount)(const QSharedPointer<DFMUrlBaseEvent> &) = [](const QSharedPointer<DFMUrlBaseEvent> &){};
     stl.set(ADDR(AppController,actionUnmount),actionUnmount);
     void (*clearPasswordByLoginObj)(const QJsonObject &) = [](const QJsonObject &){};
     stl.set(ADDR(SecretManager,clearPasswordByLoginObj),clearPasswordByLoginObj);
+    url.setUrl("dfmroot:///%252Frun%252Fuser%252F1000%252Fgvfs%252Fsmb-share%253Aserver%253D10.8.12.125%252Cshare%253D%25E9%25");
     EXPECT_NO_FATAL_FAILURE(controller->actionForgetPassword(dMakeEventPointer<DFMUrlBaseEvent>(nullptr,url)));
 }
 
 TEST_F(AppControllerTest, start_actionOpenFileByApp){
     EXPECT_NO_FATAL_FAILURE(controller->actionOpenFileByApp());
+    QAction *myAction = new QAction("actionNametests");
+    myAction->connect(myAction,&QAction::triggered,controller,
+                      &AppController::actionOpenFileByApp);
+
+    stl.set_lamda(&DFileService::openFileByApp,[](){return false;});
+    bool (*openFilesByApp)(const QString &, const QStringList &) = []
+            (const QString &, const QStringList &){
+        return true;
+    };
+    stl.set(&FileUtils::openFilesByApp,openFilesByApp);
+    stl.set_lamda(&DFileService::pasteFile,[](){return DUrlList();});
+    DUrl url1,url2;
+    url1.setScheme(TAG_SCHEME);
+    url1.setPath(TestHelper::createTmpFile());
+
+    myAction->setProperty("url",QVariant::fromValue(url1));
+    myAction->setProperty("app",QVariant::fromValue(
+                              QString("deepin-editor")));
+
+    emit myAction->triggered();
+
+    myAction->setProperty("urls",QVariant::fromValue(DUrlList() << url1 << url2));
+    emit myAction->triggered();
+    myAction->disconnect();
+    myAction->deleteLater();
+    TestHelper::deleteTmpFile(url1.toLocalFile());
 }
 
 TEST_F(AppControllerTest, start_actionSendToRemovableDisk){
     EXPECT_NO_FATAL_FAILURE(controller->actionSendToRemovableDisk());
+    QAction *myAction = new QAction("actionNametests");
+    myAction->connect(myAction,&QAction::triggered,controller,
+                      &AppController::actionSendToRemovableDisk);
+    QVariant targetUrl("test_appcon");
+    myAction->setProperty("mounted_root_uri",targetUrl);
+    DUrl url1,url2;
+    url1.setScheme(TAG_SCHEME);
+    url1.setPath(TestHelper::createTmpFile());
+    myAction->setProperty("urlList",QVariant::fromValue(QStringList() <<
+                                                        url1.toString()
+                                                        << url2.toString()));
+    myAction->setProperty("blkDevice",QVariant("sr0"));
+
+    stl.set_lamda(&DFileService::pasteFile,[](){return DUrlList();});
+    emit myAction->triggered();
+    TestHelper::runInLoop([](){});
+    myAction->disconnect();
+    myAction->deleteLater();
+    TestHelper::deleteTmpFile(url1.toLocalFile());
 }
 
 TEST_F(AppControllerTest, start_actionStageFileForBurning){
     EXPECT_NO_FATAL_FAILURE(controller->actionStageFileForBurning());
+
+    QAction *myAction = new QAction("actionNametests");
+    myAction->connect(myAction,&QAction::triggered,controller,
+                      &AppController::actionStageFileForBurning);
+    stl.set_lamda(&DDiskDevice::eject,[](){});
+    stl.set_lamda(&DFileService::pasteFile,[](){return DUrlList();});
+    myAction->setProperty("dest_drive",QVariant("sr0"));
+    DUrl url1,url2;
+    url1.setScheme(TAG_SCHEME);
+    url1.setPath(TestHelper::createTmpFile());
+    myAction->setProperty("urlList",QVariant::fromValue(
+                              QStringList() << url1.toString() << url2.toString()));
+    emit myAction->triggered();
+    TestHelper::runInLoop([](){});
+
+    stl.set_lamda(&DBlockDevice::drive,[](){return "sr0";});
+    stl.set_lamda(&DDiskDevice::optical,[](){return true;});
+    emit myAction->triggered();
+    TestHelper::runInLoop([](){});
+    myAction->deleteLater();
+    TestHelper::deleteTmpFile(url1.toLocalFile());
 }
 
 TEST_F(AppControllerTest, start_actionGetTagsThroughFiles){

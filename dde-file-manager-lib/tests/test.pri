@@ -245,4 +245,5 @@ SOURCES += \
     $$PWD/log/ut_dfmlogmanager.cpp \
     $$PWD/log/ut_filterappender.cpp \
     $$PWD/interfaces/ut_dfileservices.cpp \
-    $$PWD/interfaces/ut_dabstractfileinfo.cpp
+    $$PWD/interfaces/ut_dabstractfileinfo.cpp \
+    $$PWD/interfaces/ut_dgvfsfileinfo.cpp
