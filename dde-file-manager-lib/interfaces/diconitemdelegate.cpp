@@ -58,7 +58,7 @@ DFM_USE_NAMESPACE
 #define ICON_MODE_RECT_RADIUS TEXT_PADDING
 #define ICON_MODE_BACK_RADIUS 18
 
-QRectF boundingRect(const QList<QRectF> rects)
+QRectF boundingRect(const QList<QRectF> &rects)
 {
     QRectF bounding;
 
