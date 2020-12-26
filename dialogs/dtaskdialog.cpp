@@ -471,6 +471,11 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
         wid->setSpeedText(sp, rmTime);
     });
 
+    //! 任务对话框中显示数据同步种与即将完成
+    connect(job, &DFileCopyMoveJob::sendDataSyncing, wid, [wid](QString synctip, QString over){
+        wid->setSpeedText(synctip, over);
+    });
+
     connect(job, &DFileCopyMoveJob::errorCanClear, wid, [job, this]() {
         if (iserroroc.contains(QString::number(quintptr(job), 16))) {
             iserroroc.remove(QString::number(quintptr(job), 16));

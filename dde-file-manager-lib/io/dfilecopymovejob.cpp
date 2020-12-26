@@ -3855,6 +3855,8 @@ end:
         d->setState(IOWaitState);
         int syncRet = 0;
         d->m_syncResult = QtConcurrent::run([me, &d, &syncRet]() {
+            //! 外设或远程设备在同步数据时发送sendDataSyncing信号在拷贝任务对话框中显示数据同步种与即将完成
+            Q_EMIT me->sendDataSyncing(tr("Syncing data"), tr("Ready to complete"));
             qDebug() << "sync >>>>>>>>>>>>>>";
             syncRet = QProcess::execute("sync", {"-f", d->targetRootPath});
         });
