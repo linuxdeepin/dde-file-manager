@@ -164,9 +164,9 @@ void DFileViewHelperPrivate::init()
     });
     QObject::connect(qApp, &DApplication::iconThemeChanged, q->parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {
-        if (q->itemDelegate()) {
-            for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs())
-            {
+        if (q->itemDelegate())
+        {
+            for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs()) {
                 QWidget *item = q->indexWidget(index);
 
                 if (item) {
@@ -792,6 +792,8 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
                 event->setDropAction(Qt::CopyAction);
             } else if (TRASH_SCHEME == info->fileUrl().scheme()) {  // 修复BUG-47739 保险箱拖拽到回收站时，忽略该操作
                 event->setDropAction(Qt::IgnoreAction);
+            } else if (strFromPath.startsWith("/run") && strFromPath.contains("/smb-share:server=")) {  // 修复BUG-59333 如果是smb拖拽到保险箱
+                event->setDropAction(Qt::CopyAction);
             } else {
                 if (!DFMGlobal::keyCtrlIsPressed()) {
                     event->setDropAction(Qt::MoveAction);
