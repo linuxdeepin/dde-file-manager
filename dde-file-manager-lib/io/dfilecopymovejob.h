@@ -213,6 +213,9 @@ Q_SIGNALS:
     void speedUpdated(qint64 speed);
     void stopAllGioDervic();
 
+    // 拷贝进度条显示100%时提示数据同步 信号
+    void sendDataSyncing(QString syncTip, QString over);
+
 protected:
     DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent);
 

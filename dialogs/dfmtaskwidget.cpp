@@ -378,8 +378,16 @@ void DFMTaskWidget::setMsgText(const QString &srcMsg, const QString &dstMsg)
 void DFMTaskWidget::setSpeedText(const QString &speed, const QString &rmtime)
 {
     Q_D(DFMTaskWidget);
-    d->m_lbSpeed->setText(speed);
-    d->m_lbRmTime->setText(rmtime);
+    if(d->m_progress->value() >= 100)
+    {
+        //! 进度条100%后任务对话框中显示数据同步种与即将完成
+        d->m_lbSpeed->setText(tr("Syncing data"));
+        d->m_lbRmTime->setText(tr("Ready to complete"));
+    }
+    else {
+        d->m_lbSpeed->setText(speed);
+        d->m_lbRmTime->setText(rmtime);
+    }
 }
 
 void DFMTaskWidget::setProgressValue(int value)
