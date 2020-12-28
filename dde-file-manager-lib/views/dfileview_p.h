@@ -139,6 +139,8 @@ public:
 
     bool isVaultDelSigConnected = false; //is vault delete signal connected.
 
+    bool isAlwaysOpenInCurrentWindow = false;
+
     Q_DECLARE_PUBLIC(DFileView)
 };
 

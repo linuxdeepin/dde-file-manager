@@ -163,6 +163,9 @@ public:
     // 设置已被销毁标志
     void setDestroyFlag(bool flag);
 
+    // 设置总是在当前窗口打开子目录
+    void setAlwaysOpenInCurrentWindow(bool openInCurrentWindow);
+
 public slots:
     bool cd(const DUrl &url);
     bool cdUp();
@@ -287,6 +290,7 @@ private:
     // 处理选择文件的子线程对象
     SelectWork  *m_pSelectWork{nullptr};
     bool m_destroyFlag = false;
+
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
     Q_PRIVATE_SLOT(d_ptr, void _q_onSectionHandleDoubleClicked(int))
 };
