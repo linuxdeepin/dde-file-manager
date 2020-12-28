@@ -67,6 +67,7 @@
 
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>
@@ -856,7 +857,7 @@ bool FileController::renameFileByGio(const DUrl &oldUrl, const DUrl &newUrl) con
     QString to = newUrl.parentUrl().toLocalFile();
 
     if (to.compare(from) != 0) {
-        qDebug()<<"gio API can not rename file or directory those are not under same path!";
+        qDebug() << "gio API can not rename file or directory those are not under same path!";
         return false;
     }
 
@@ -865,31 +866,31 @@ bool FileController::renameFileByGio(const DUrl &oldUrl, const DUrl &newUrl) con
 
     GError *error = nullptr;
     if (!QDir::setCurrent(to)) {
-        qDebug()<<"failed to chdir " << to;
+        qDebug() << "failed to chdir " << to;
         return false;
     }
 
-    GFile *file = g_file_new_for_path (fname.toStdString().c_str());
-    GFile *new_file = g_file_set_display_name (file, tname.toStdString().c_str(), nullptr, &error);
+    GFile *file = g_file_new_for_path(fname.toStdString().c_str());
+    GFile *new_file = g_file_set_display_name(file, tname.toStdString().c_str(), nullptr, &error);
     if (new_file == nullptr) {
-        qDebug()<< error->message;
-        g_error_free (error);
+        qDebug() << error->message;
+        g_error_free(error);
     } else {
         char *path = g_file_get_path(new_file);
-        qDebug()<< "Rename successful. New path: "<<path;
-        g_object_unref (new_file);
-        g_free (path);
+        qDebug() << "Rename successful. New path: " << path;
+        g_object_unref(new_file);
+        g_free(path);
         result = true;
     }
 
-    g_object_unref (file);
+    g_object_unref(file);
 
     if (result) {
         emit fileSignalManager->fileMoved(from, fname, to, tname);
     }
 
     if (!QDir::setCurrent(curd)) {
-        qDebug()<<"failed to return to directory " << curd;
+        qDebug() << "failed to return to directory " << curd;
     }
 
     return result;
@@ -1729,6 +1730,11 @@ bool FileController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &even
 
         return tags.isEmpty() || TagManager::instance()->removeTagsOfFiles(tags, {event->url()});
     }
+
+    // 修复bug-59180
+    // 保险箱文件不要创建标签
+    if (VaultController::isVaultFile(event->url().toLocalFile()))
+        return true;
 
     return TagManager::instance()->makeFilesTags(event->tags(), {event->url()});
 }
