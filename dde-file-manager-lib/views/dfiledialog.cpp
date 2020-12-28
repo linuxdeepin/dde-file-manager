@@ -22,6 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "private/dfiledialog_p.h"
 #include "dfiledialog.h"
 #include "dfilesystemmodel.h"
 #include "dfileservices.h"
@@ -55,8 +56,6 @@
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
 #include <qpa/qplatformdialoghelper.h>
-
-#include "private/dfiledialog_p.h"
 
 QList<DUrl> DFileDialogPrivate::orderedSelectedUrls() const
 {
@@ -103,6 +102,10 @@ DFileDialog::DFileDialog(QWidget *parent)
     , m_acceptCanOpenOnSave(false)
 {
     d_ptr->view = qobject_cast<DFileView *>(DFileManagerWindow::getFileView()->widget());
+    // 文件对话框只能在本窗口打开新目录
+    if (d_ptr->view) {
+        d_ptr->view->setAlwaysOpenInCurrentWindow(true);
+    }
 
     setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog);
 

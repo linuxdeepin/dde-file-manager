@@ -866,6 +866,13 @@ void DFileView::setDestroyFlag(bool flag)
     m_destroyFlag = flag;
 }
 
+void DFileView::setAlwaysOpenInCurrentWindow(bool openInCurrentWindow)
+{
+    Q_D(DFileView);
+
+    d->isAlwaysOpenInCurrentWindow = openInCurrentWindow;
+}
+
 void DFileView::setFilters(QDir::Filters filters)
 {
     model()->setFilters(filters);
@@ -2329,14 +2336,22 @@ void DFileView::decreaseIcon()
 
 void DFileView::openIndex(const QModelIndex &index)
 {
+    Q_D(DFileView);
+
     const DUrl &url = model()->getUrlByIndex(index);
     //判断网络文件是否可以到达
     if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
         return;
     }
-    DFMOpenUrlEvent::DirOpenMode mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()
-                                        ? DFMOpenUrlEvent::ForceOpenNewWindow
-                                        : DFMOpenUrlEvent::OpenInCurrentWindow;
+
+    DFMOpenUrlEvent::DirOpenMode mode;
+    if (d->isAlwaysOpenInCurrentWindow) {
+        mode = DFMOpenUrlEvent::OpenInCurrentWindow;
+    } else {
+        mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()
+                                            ? DFMOpenUrlEvent::ForceOpenNewWindow
+                                            : DFMOpenUrlEvent::OpenInCurrentWindow;
+    }
 
     if (mode == DFMOpenUrlEvent::OpenInCurrentWindow)
         DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(this, DUrlList() << url, mode);
