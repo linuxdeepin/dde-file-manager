@@ -37,6 +37,7 @@
 #include "vaultcontroller.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
+#include "models/vaultfileinfo.h"
 
 #ifndef DISABLE_QUICK_SEARCH
 #include "anything_interface.h"
@@ -414,7 +415,7 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
             realUrl = DUrl::fromTrashFile(realUrl.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
         }
         // 如果是保险箱文件，则设置成保险箱文件路径
-        if(VaultController::isVaultFile(res)) {
+        if (VaultController::isVaultFile(res)) {
             realUrl = VaultController::localToVault(res);
         }
         url.setSearchedFileUrl(realUrl);
@@ -668,6 +669,12 @@ const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPoi
         url.setSearchKeyword(event->url().searchKeyword());
     } else {
         url = event->url();
+    }
+
+    // 修复bug-59006
+    // 当搜索到的文件在保险箱内时，创建保险箱对象
+    if (url.searchedFileUrl().isValid() && VaultController::isVaultFile(url.searchedFileUrl().toLocalFile())) {
+        return DAbstractFileInfoPointer(new VaultFileInfo(url.searchedFileUrl()));
     }
 
     return DAbstractFileInfoPointer(new SearchFileInfo(url));
