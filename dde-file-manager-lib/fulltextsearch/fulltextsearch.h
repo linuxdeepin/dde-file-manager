@@ -37,9 +37,10 @@ class DFMFullTextSearchManager : public QObject
 
 public:
     enum CharType {
-        CH,
+        CN,
         EN,
-        NUM
+        DIGIT,
+        SPACE
     };
 
     static DFMFullTextSearchManager *getInstance();
