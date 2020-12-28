@@ -236,7 +236,7 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
 
     QVector<MenuAction> menuActions = DAbstractFileInfo::menuActionList(type);
 
-    foreach(MenuAction action, unusedList) {
+    foreach (MenuAction action, unusedList) {
         menuActions.removeAll(action);
     }
 
