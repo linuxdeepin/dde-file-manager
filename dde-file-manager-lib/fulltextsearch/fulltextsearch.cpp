@@ -277,23 +277,31 @@ void DFMFullTextSearchManager::traverseFloder(const char *filePath, QStringList 
 
 QString DFMFullTextSearchManager::dealKeyWorld(const QString &keyWorld)
 {
-    QRegExp chReg("^[\u4e00-\u9fa5]"), enReg("^[A-Za-z]+$"), numReg("^[0-9]$");
-    CharType old = CH, now = CH;
+    QRegExp cnReg("^[\u4e00-\u9fa5]"), enReg("^[A-Za-z]+$"), numReg("^[0-9]$");
+    CharType oldType = CN, currType = CN;
     QString newStr;
     for (auto c : keyWorld) {
-        if (chReg.exactMatch(c)) {
-            now = CH;
-            newStr += c;
+        if (cnReg.exactMatch(c)) {
+            currType = CN;
         } else if (enReg.exactMatch(c)) {
-            now = EN;
-            newStr += c;
+            currType = EN;
         } else if (numReg.exactMatch(c)) {
-            now = NUM;
-            newStr += c;
+            currType = DIGIT;
+        } else if (c == ' ') {
+            currType = SPACE;
+        } else {
+            continue;
         }
 
-        if (old != now) {
-            old = now;
+        newStr += c;
+        // 如果当前字符或者上一个字符是空格，则不需要再加空格
+        if (oldType == SPACE || currType == SPACE) {
+            oldType = currType;
+            continue;
+        }
+
+        if (oldType != currType) {
+            oldType = currType;
             newStr.insert(newStr.length() - 1, " ");
         }
     }
