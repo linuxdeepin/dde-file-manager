@@ -468,6 +468,7 @@ bool SearchDiriterator::hasNext() const
         DAbstractFileInfoPointer fileInfo = fileService->createFileInfo(nullptr, targetUrl);
         if (fileInfo->isVirtualEntry()) {
             hasExecuteFullTextSearch = true;
+            return true;
         }
 
         QString searchPath = fileInfo->filePath();
