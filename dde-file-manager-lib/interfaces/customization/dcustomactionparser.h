@@ -41,7 +41,7 @@ public:
     QList<DCustomActionEntry> getActionFiles();
 
     bool parseFile(QSettings &actionSetting);
-    void parseFile(QList<DCustomActionData> &childrenActions
+    bool parseFile(QList<DCustomActionData> &childrenActions
                    , QSettings &actionSetting
                    , const QString &group
                    , const DCustomActionDefines::FileBasicInfos& basicInfos

@@ -93,8 +93,11 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
         bool needSort;//一级用不到
         QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
         m_hierarchyNum = 1;
-        parseFile(childrenActions, actionSetting, targetGroup, basicInfos, needSort, true);
-        m_topActionCount++;
+        bool isVisible = parseFile(childrenActions, actionSetting, targetGroup, basicInfos, needSort, true);
+        //bug-59348 解决解析失败 count++ 导致不能显示50个有效文件(一级菜单)
+        if (isVisible) {
+            m_topActionCount++;
+        }
     }
     return true;
 }
@@ -103,11 +106,11 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
     该方法用于递归解析对应组下的菜单信息，\a childrenActions 获取菜单项，\a actionSetting 为解析对象，\a group 为待解析分组，
 \a basicInfos 是为一级菜单项准备的基本信息，\a isTop 表示当前解析的是否是一级菜单
 */
-void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, QSettings &actionSetting, const QString &group, const FileBasicInfos &basicInfos, bool &isSort, bool isTop)
+bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, QSettings &actionSetting, const QString &group, const FileBasicInfos &basicInfos, bool &isSort, bool isTop)
 {
     m_hierarchyNum++;
     if (4 < m_hierarchyNum) //超过三级不解
-        return;
+        return false;
 
     DCustomActionData actData;
     //暂时用localname 和name,方式有些不确定，oem和之前的自定义右键是localName，打开方式又好像是genaricName
@@ -117,7 +120,7 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     if (name.isEmpty()) {
         name =  getValue(actionSetting, group, kActionName).toString();
         if (name.isEmpty())
-            return; //无name无action
+            return false; //无name无action
     }
     actData.m_name = name;
     actionNameDynamicArg(actData);
@@ -139,7 +142,7 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         //无级联检查是否有动作
         QString command = getValue(actionSetting, group, kActionCmd).toString().trimmed();
         if (command.isEmpty())
-            return; //无动作无子级
+            return false; //无动作无子级
         actData.m_command = command;
         execDynamicArg(actData);
     }
@@ -152,17 +155,20 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         int actCount = 0;
         bool needSort = true;
         for(auto &once : actList) {
-            actCount++;
             QString targetGroup = QString("%1 %2").arg(kActionPrefix).arg(once);
-            parseFile(tpChildrenActions, actionSetting, targetGroup, basicInfos, needSort, false);
+            //解决二三级存在的count问题
+            bool isVisible = parseFile(tpChildrenActions, actionSetting, targetGroup, basicInfos, needSort, false);
             m_hierarchyNum--;
+            if(isVisible) {
+                actCount++;
+            }
             if (2 == m_hierarchyNum && actCount == kCustomMaxNumTwo) //二级数量限制
                 break;
             if (3 == m_hierarchyNum && actCount == kCustomMaxNumThree) //三级数量限制
                 break;
         }
         if (0 == tpChildrenActions.size())
-            return; //作为无动作无子级，不再为其添加已有动作
+            return false; //作为无动作无子级，不再为其添加已有动作
 //        actData.m_childrenActions = tpChildrenActions;
         if (needSort)//全量二三级才排序,否则按照写入actions顺序
             std::stable_sort(tpChildrenActions.begin()
@@ -180,7 +186,7 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         //支持类型combo
         auto comboStr = getValue(actionSetting, group, kConfCombo).toString().trimmed();
         if (comboStr.isEmpty()) {
-            return;//无支持选中类型默认该一级无效
+            return false;//无支持选中类型默认该一级无效
         }
         else {
             QStringList comboList = comboStr.split(":", QString::SkipEmptyParts);
@@ -196,7 +202,7 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 
         //comboPos
         if (!comboPosForTopAction(actionSetting, group, actData))
-            return;//没有指明该一级菜单项支持的类型，自动作为无效废弃项
+            return false;//没有指明该一级菜单项支持的类型，自动作为无效废弃项
         tpEntry.m_package = basicInfos.m_package;
         tpEntry.m_version = basicInfos.m_version;
         tpEntry.m_comment = basicInfos.m_comment;
@@ -206,6 +212,7 @@ void DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     else {
         childrenActions.append(actData);
     }
+    return true;
 }
 
 /*!
