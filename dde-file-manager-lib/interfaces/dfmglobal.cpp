@@ -110,7 +110,12 @@ void onClipboardDataChanged()
 {
     clipboardFileUrls.clear();
     clipbordFileinode.clear();
-    const QByteArray &data = qApp->clipboard()->mimeData()->data("x-special/gnome-copied-files");
+    const QMimeData *mimeData = qApp->clipboard()->mimeData();
+    if (!mimeData) {
+        qWarning() << "get null mimeData from QClipBoard!";
+        return;
+    }
+    const QByteArray &data = mimeData->data("x-special/gnome-copied-files");
 
     if (data.startsWith("cut")) {
         clipboardAction = DFMGlobal::CutAction;
@@ -119,8 +124,8 @@ void onClipboardDataChanged()
     } else {
         clipboardAction = DFMGlobal::UnknowAction;
     }
-    clipboardFileUrls = qApp->clipboard()->mimeData()->urls();
-    for (QUrl _url : qApp->clipboard()->mimeData()->urls()) {
+    clipboardFileUrls = mimeData->urls();
+    for (const QUrl &_url : clipboardFileUrls) {
         //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
         struct stat statInfo;
         int fileStat = stat(_url.path().toStdString().c_str(), &statInfo);
