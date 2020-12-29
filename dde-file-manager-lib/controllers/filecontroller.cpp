@@ -657,7 +657,11 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
 
     bool result = FileUtils::openFile(url);
     if (!result) {
-        AppController::instance()->actionOpenWithCustom(event); // requestShowOpenWithDialog
+        QFile file(url);
+        if (file.exists()) {//! 文件打开失败，排除已被删除的原因
+            AppController::instance()->actionOpenWithCustom(event); // requestShowOpenWithDialog
+        }
+        file.close();
     }
 
     return result;
