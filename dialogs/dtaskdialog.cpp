@@ -411,6 +411,7 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
         switch (bt) {
         case DFMTaskWidget::PAUSE:
             emit job->togglePause();
+            emit paused(job->sourceUrlList(), job->targetUrl());
             break;
         case DFMTaskWidget::STOP:
 
