@@ -295,6 +295,13 @@ public slots:
      */
     void onFinishCalcSize();
 
+    /**
+     * @brief taskPaused 处理任务暂停信号
+     * @param src 任务源路径
+     * @param dst 任务目的路径
+     */
+    void taskPaused(const DUrlList &src, const DUrl &dst);
+
 private slots:
     // 创建保险箱，执行该槽函数,通知保险箱创建成功与否，并更新保险箱的状态
     void slotCreateVault(int state);

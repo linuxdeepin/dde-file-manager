@@ -94,6 +94,12 @@ signals:
     void abortTask(const QMap<QString, QString> &jobDetail);
     void conflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void closed();
+    /**
+     * @brief paused 暂停任务
+     * @param src 任务源路径
+     * @param dst 任务目的路径
+     */
+    void paused(const DUrlList &src, const DUrl &dst);
 
     // 结束当前未完成任务
     void sigStopJob();

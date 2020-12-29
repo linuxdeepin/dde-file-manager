@@ -42,6 +42,7 @@
 #include "app/define.h"
 #include "usershare/usersharemanager.h"
 #include "dialogs/dialogmanager.h"
+#include "dialogs/dtaskdialog.h"
 
 #include "dfmevent.h"
 #include "../vault/vaultglobaldefine.h"
@@ -49,10 +50,10 @@
 #include <QProcess>
 #include <QStandardPaths>
 #include <QStorageInfo>
-
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 #include <qplatformdefs.h>
+
 #include <unistd.h>
 
 
@@ -233,6 +234,11 @@ VaultController::VaultController(QObject *parent)
 
     // 初始化时，记录保险箱状态
     m_enVaultState = state();
+
+    DTaskDialog *pTaskDlg = dialogManager->taskDialog();
+    if (pTaskDlg) {
+        connect(pTaskDlg, &DTaskDialog::paused, this, &VaultController::taskPaused);
+    }
 }
 
 VaultController *VaultController::ins()
@@ -1103,13 +1109,19 @@ void VaultController::refreshTotalSize()
 void VaultController::onFinishCalcSize()
 {
     // 但保险箱大小计算完成后，再次计算一次保险箱的大小
-    if (m_bNeedRefreshSize) {
+    if (m_bNeedRefreshSize && !m_sizeWorker->isRunning()) {
         DUrl url = vaultToLocalUrl(makeVaultUrl());
         // 修复BUG-47507 增加判断，如果该线程正在启动，不要再次进入该线程
-        if (!m_sizeWorker->isRunning())
-            m_sizeWorker->start({url});
+        m_sizeWorker->start({url});
+        m_bNeedRefreshSize = false;
     }
-    m_bNeedRefreshSize = false;
+}
+
+void VaultController::taskPaused(const DUrlList &src, const DUrl &dst)
+{
+    if (isVaultFile(dst.toLocalFile()) || (src.size() > 0 && isVaultFile(src.front().toLocalFile()))) {
+        refreshTotalSize();
+    }
 }
 
 // 创建保险箱，执行该槽函数,通知保险箱创建成功与否，并更新保险箱的状态
