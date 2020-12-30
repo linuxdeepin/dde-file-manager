@@ -28,11 +28,10 @@ AcessControlManager::AcessControlManager(QObject *parent)
 {
     qDebug() << "register:" << ObjectPath;
     if (!QDBusConnection::systemBus().registerObject(ObjectPath, this)) {
-        qFatal("=======AcessControlManager Register Object Failed.");
+        qFatal("AcessControlManager Register Object Failed.");
     }
     m_diskMnanager = new DDiskManager(this);
     m_diskMnanager->setWatchChanges(true);
-    qDebug() << "=======AcessControlManager() ";
 
     m_watcher->addPath("/home");
     onFileCreated("/home", "root");
@@ -41,14 +40,11 @@ AcessControlManager::AcessControlManager(QObject *parent)
 
 AcessControlManager::~AcessControlManager()
 {
-    qDebug() << "~AcessControlManager()";
 }
 
 
 void AcessControlManager::initConnect()
 {
-    qDebug() << "AcessControlManager::initConnect()";
-    connect(m_diskMnanager, &DDiskManager::mountAdded, this, &AcessControlManager::chmodMountpoints);
     connect(m_watcher, &DFileSystemWatcher::fileCreated, this, &AcessControlManager::onFileCreated);
 }
 
@@ -71,42 +67,6 @@ bool AcessControlManager::checkAuthentication()
         qDebug() << "failed policy id:" << PolicyKitActionId;
     }
     return ret;
-}
-
-
-void AcessControlManager::chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint)
-{
-    Q_UNUSED(blockDevicePath);
-    qDebug() << "chmod ==>" << mountPoint;
-    struct stat fileStat;
-    stat(mountPoint.data(), &fileStat);
-    chmod(mountPoint.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH));
-#if 0
-    // system call
-    struct mntent *ent = NULL;
-    FILE *aFile = NULL;
-
-    aFile = setmntent("/proc/mounts", "r");
-    if (aFile == NULL) {
-      perror("setmntent()");
-      return;
-    }
-    while (NULL != (ent = getmntent(aFile))) {
-        QString fsName(ent->mnt_fsname);
-        QString mntDir(ent->mnt_dir);
-        if (fsName.startsWith("/")) {
-            qDebug() << "mount fs name: " << fsName << ", mount path:" << mntDir;
-            struct stat fileStat;
-            stat(ent->mnt_dir, &fileStat);
-            if (chmod(ent->mnt_dir, (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH)) == 0) {
-                qDebug() << "chmod " << mntDir << "success";
-            } else {
-                qDebug() << "chmod " << mntDir << "faild";
-            }
-        }
-    }
-    endmntent(aFile);
-#endif
 }
 
 

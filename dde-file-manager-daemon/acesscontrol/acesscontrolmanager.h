@@ -24,12 +24,9 @@ public:
 
 protected:
     bool checkAuthentication();
-signals:
-
 
 private slots:
     void onFileCreated(const QString &path, const QString &name);
-    void chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint);
 
 private:
     AcessControlAdaptor *m_acessControlAdaptor = nullptr;
