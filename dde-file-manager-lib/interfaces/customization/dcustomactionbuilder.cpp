@@ -258,23 +258,14 @@ QStringList DCustomActionBuilder::splitCommand(const QString &cmd)
 */
 QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, QWidget *parentForSubmenu) const
 {
-    QAction *action = new QAction;
+    //fix-bug 59298
+    //createAction 构造action 图标等, 把关于构造action参数放在createAction中
+    QAction *action = createAciton(actionData);
     QMenu *menu = new DFileMenu(parentForSubmenu);
     menu->setToolTipsVisible(true);
 
     action->setMenu(menu);
     action->setProperty(DCustomActionDefines::kCustomActionFlag, true);
-
-    //标题
-    action->setText(makeName(actionData.name(), actionData.nameArg()));
-
-    //图标
-    const QString &iconName = actionData.icon();
-    if (!iconName.isEmpty()) {
-        const QIcon &&icon = getIcon(iconName);
-        if (!icon.isNull())
-            action->setIcon(icon);
-    }
 
     //子项,子项的顺序由解析器保证
     QList<DCustomActionData> subActions = actionData.acitons();
