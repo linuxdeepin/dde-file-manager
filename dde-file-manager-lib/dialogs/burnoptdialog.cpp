@@ -137,14 +137,12 @@ void BurnOptDialog::setJobWindowId(int wid)
 
 void BurnOptDialog::setDefaultVolName(const QString &volName)
 {
-    if (DesktopInfo().waylandDectected()) { // 该需求仅针对华为分支
-        Q_D(BurnOptDialog);
-        d->le_volname->clear();
-        d->le_volname->setText(volName);
-        d->le_volname->setSelection(0, volName.length());
-        d->le_volname->setFocus();
-        d->lastVolName = volName;
-    }
+    Q_D(BurnOptDialog);
+    d->le_volname->clear();
+    d->le_volname->setText(volName);
+    d->le_volname->setSelection(0, volName.length());
+    d->le_volname->setFocus();
+    d->lastVolName = volName;
 }
 
 BurnOptDialog::~BurnOptDialog()
