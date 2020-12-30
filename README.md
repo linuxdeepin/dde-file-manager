@@ -28,6 +28,13 @@ _The **master** branch is current development branch, build dependencies may cha
 * dde-dock-dev(>=4.0.5)
 * deepin-gettext-tools
 * libdtkcore-dev
+* libudisks2-qt5-dev
+* libdisomaster-dev
+* libgio-qt-dev
+* libqt5xdg-dev
+* libmediainfo-dev
+* libdde-file-manager-dev
+* libssl-dev
 * ffmpeg module(s):
   - libffmpegthumbnailer-dev
 * Qt5(>= 5.6) with modules:
