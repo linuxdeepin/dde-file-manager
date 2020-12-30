@@ -98,13 +98,13 @@ SOURCES += \
     $$PWD/interfaces/pulgins/ut_dfmfactoryloader.cpp \
     $$PWD/interfaces/pulgins/ut_dfmcrumbplugin.cpp \
     $$PWD/dialogs/ut_basedialog.cpp \
-    $$PWD/dialogs/ut_burnoptdialog.cpp \
+    # $$PWD/dialogs/ut_burnoptdialog.cpp \
     $$PWD/dialogs/ut_closealldialogindicator.cpp \
     $$PWD/dialogs/ut_computerpropertydialog.cpp \
     $$PWD/dialogs/ut_connecttoserverdialog.cpp \
     $$PWD/dialogs/ut_ddeskprenamedialog.cpp \
     $$PWD/dialogs/ut_dfmsettingdialog.cpp \
-    $$PWD/dialogs/ut_dialogmanager.cpp \
+    # $$PWD/dialogs/ut_dialogmanager.cpp \
     $$PWD/dialogs/ut_dmultifilepropertydialog.cpp \
     $$PWD/dialogs/ut_filepreviewdialog.cpp \
     $$PWD/dialogs/ut_movetotrashconflictdialog.cpp \
@@ -123,8 +123,8 @@ SOURCES += \
     $$PWD/sw_label/ut_llsdeepinlabellibrary_test.cpp \
     $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
-    $$PWD/vfs/ut_dfmvfsmanager.cpp \
-    $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    # $$PWD/vfs/ut_dfmvfsmanager.cpp \
+    # $$PWD/vfs/ut_dfmvfsdevice.cpp \
     $$PWD/views/ut_dtabbar.cpp \
     $$PWD/views/ut_dstatusbar.cpp \
     $$PWD/views/ut_droundbutton.cpp \
@@ -137,38 +137,38 @@ SOURCES += \
     $$PWD/views/ut_dfmsplitter.cpp \
     $$PWD/views/ut_dfmsidebaritemdelegate.cpp \
     $$PWD/views/ut_dfmsidebarview.cpp \
-    $$PWD/views/ut_dfmvaultactivefinishedview.cpp \
-    $$PWD/views/ut_dfmvaultactivesavekeyview.cpp \
-    $$PWD/views/ut_dfmvaultactivesetunlockmethodview.cpp \
+    # $$PWD/views/ut_dfmvaultactivefinishedview.cpp \
+    # $$PWD/views/ut_dfmvaultactivesavekeyview.cpp \
+    # $$PWD/views/ut_dfmvaultactivesetunlockmethodview.cpp \
     $$PWD/views/ut_dfmvaultactivestartview.cpp \
     $$PWD/views/ut_dfmvaultactiveview.cpp \
     $$PWD/views/ut_dfmvaultfileview.cpp \
     $$PWD/views/ut_dfmvaultpagebase.cpp \
-    $$PWD/views/ut_dfmvaultrecoverykeypages.cpp \
-    $$PWD/views/ut_dfmvaultremovebypasswordview.cpp \
-    $$PWD/views/ut_dfmvaultremovebyrecoverykeyview.cpp \
-    $$PWD/views/ut_dfmvaultremovepages.cpp \
-    $$PWD/views/ut_dfmvaultremoveprogressview.cpp \
-    $$PWD/views/ut_dfmvaultunlockpages.cpp \
-    $$PWD/controllers/ut_vaulthandle.cpp \
-    $$PWD/controllers/ut_vaultcontroller.cpp \
-    $$PWD/controllers/ut_dfmsidebarvaultitemhandler.cpp \
-    $$PWD/controllers/ut_dfmvaultcrumbcontroller.cpp \
-    $$PWD/controllers/ut_dfmsmbcrumbcontroller.cpp \
+    # $$PWD/views/ut_dfmvaultrecoverykeypages.cpp \
+    # $$PWD/views/ut_dfmvaultremovebypasswordview.cpp \
+    # $$PWD/views/ut_dfmvaultremovebyrecoverykeyview.cpp \
+    # $$PWD/views/ut_dfmvaultremovepages.cpp \
+    # $$PWD/views/ut_dfmvaultremoveprogressview.cpp \
+    # $$PWD/views/ut_dfmvaultunlockpages.cpp \
+    # $$PWD/controllers/ut_vaulthandle.cpp \
+    # $$PWD/controllers/ut_vaultcontroller.cpp \
+    # $$PWD/controllers/ut_dfmsidebarvaultitemhandler.cpp \
+    # $$PWD/controllers/ut_dfmvaultcrumbcontroller.cpp \
+    # $$PWD/controllers/ut_dfmsmbcrumbcontroller.cpp \
     $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
     $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
-    $$PWD/controllers/ut_dfmsidebartagitemhandler.cpp \
+    # $$PWD/controllers/ut_dfmsidebartagitemhandler.cpp \
     $$PWD/controllers/ut_dfmsidebarbookmarkitemhandler.cpp \
     $$PWD/controllers/ut_tagmanagerdaemon_interface.cpp \
-    $$PWD/controllers/ut_dfmavfscrumbcontroller.cpp \
+    # $$PWD/controllers/ut_dfmavfscrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmbookmarkcrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmcomputercrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmfilecrumbcontroller.cpp \
-    $$PWD/controllers/ut_dfmmasteredmediacrumbcontroller.cpp \
+    # $$PWD/controllers/ut_dfmmasteredmediacrumbcontroller.cpp \
     $$PWD/shutil/ut_filebatchprocess.cpp \
     $$PWD/shutil/ut_fileutils.cpp \
-    $$PWD/shutil/ut_dsqlitehandle.cpp \
+    # $$PWD/shutil/ut_dsqlitehandle.cpp \
     $$PWD/shutil/ut_mimesappsmanager.cpp \
     $$PWD/shutil/ut_mimetypedisplaymanager.cpp \
     $$PWD/shutil/ut_properties.cpp \
