@@ -836,6 +836,11 @@ bool FileUtils::openEnterFiles(const QStringList &filePaths)
         }
     }
 
+    //未找到默认打开应用，需要返回false，让上层逻辑走选择默认打开程序的流程
+    if (openinfo.isEmpty()) {
+        return false;
+    }
+
     QStringList appAgrs;
     for (const QString &tmp : rePath)
         appAgrs << DUrl::fromLocalFile(tmp).toString();

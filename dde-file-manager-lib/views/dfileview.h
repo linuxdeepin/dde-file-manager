@@ -277,6 +277,13 @@ private:
     void onModelStateChanged(int state);
     void updateContentLabel();
     void updateToolBarActions(QWidget *widget = nullptr, QString theme = "");
+    /**
+     * @brief normalKeyPressEvent 一般键盘事件
+     * 只允许被keyPressEvent调用，用于消除noMotify与keypadMotify之间无break时会产生警告的问题
+     * @param event 键盘时间
+     * @return 在keyPressEvent是否需要return
+     */
+    bool normalKeyPressEvent(const QKeyEvent *event);
 
     using DListView::setOrientation;
 

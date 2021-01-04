@@ -994,59 +994,17 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
     switch (event->modifiers()) {
     case Qt::NoModifier:
-        switch (event->key()) {
-        case Qt::Key_Space:
+        if (event->key() == Qt::Key_Space) {
             emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
             return;
-        default:
-            break;
+        } else if (normalKeyPressEvent(event)) {
+            return;
         }
         break;
     case Qt::KeypadModifier:
-        switch (event->key()) {
-        case Qt::Key_Return:
-        case Qt::Key_Enter:
-            if (!itemDelegate()->editingIndex().isValid()) {
-                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls), true);
-
-                return;
-            }
-
-            break;
-        case Qt::Key_Backspace: {
-            // blmark: revert commit vbfdf8e575447249ba284402bfac8a512bae2d10e
-            cdUp();
+        if (normalKeyPressEvent(event)) {
+            return;
         }
-        return;
-        case Qt::Key_Delete: {
-            QString rootPath = rootUrl().toLocalFile();
-            if (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath) || VaultController::isVaultFile(rootPath)) {
-                appController->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
-            } else {
-                //! refresh after vault file deleted.
-                if (urls.size() > 0) {
-                    QString filepath = urls.front().toLocalFile();
-                    if (VaultController::isVaultFile(filepath) && !d->isVaultDelSigConnected) {
-                        connect(VaultController::ins(), &VaultController::signalFileDeleted, this, [&]() {
-                            if (VaultController::isBigFileDeleting())
-                                refresh();
-                        }, Qt::DirectConnection);
-                        d->isVaultDelSigConnected = true;
-                    }
-                }
-                appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
-            }
-            break;
-        }
-        case Qt::Key_End:
-            if (urls.isEmpty()) {
-                setCurrentIndex(model()->index(count() - 1, 0));
-                return;
-            }
-        default:
-            break;
-        }
-
         break;
     case Qt::ControlModifier:
         switch (event->key()) {
@@ -3337,6 +3295,56 @@ void DFileView::updateToolBarActions(QWidget *widget, QString theme)
         icon_view_mode_action->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
         list_view_mode_action->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
     }
+}
+
+bool DFileView::normalKeyPressEvent(const QKeyEvent *event)
+{
+    D_D(DFileView);
+
+    const DUrlList urls = selectedUrls();
+    switch (event->key()) {
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+        if (!itemDelegate()->editingIndex().isValid()) {
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls), true);
+            return true;
+        }
+        break;
+    case Qt::Key_Backspace: {
+        // blmark: revert commit vbfdf8e575447249ba284402bfac8a512bae2d10e
+        cdUp();
+        return true;
+    }
+    case Qt::Key_Delete: {
+        QString rootPath = rootUrl().toLocalFile();
+        if (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath) || VaultController::isVaultFile(rootPath)) {
+            appController->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+        } else {
+            //! refresh after vault file deleted.
+            if (urls.size() > 0) {
+                QString filepath = urls.front().toLocalFile();
+                if (VaultController::isVaultFile(filepath) && !d->isVaultDelSigConnected) {
+                    connect(VaultController::ins(), &VaultController::signalFileDeleted, this, [&]() {
+                        if (VaultController::isBigFileDeleting())
+                            refresh();
+                    }, Qt::DirectConnection);
+                    d->isVaultDelSigConnected = true;
+                }
+            }
+            appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+        }
+        break;
+    }
+    case Qt::Key_End:
+        if (urls.isEmpty()) {
+            setCurrentIndex(model()->index(count() - 1, 0));
+            return true;
+        }
+    default:
+        break;
+    }
+
+    return false;
 }
 
 void DFileView::refresh()
