@@ -273,7 +273,7 @@ public:
     QAtomicInteger<bool> m_bTaskDailogClose = false;
 
 
-    QAtomicInt m_refineStat = DFileCopyMoveJob::Refine;
+    QAtomicInt m_refineStat = DFileCopyMoveJob::NoRefine;
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
     //优化拷贝时异步线程状态
