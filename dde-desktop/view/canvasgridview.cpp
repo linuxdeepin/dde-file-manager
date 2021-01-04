@@ -1005,7 +1005,11 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                     }
                     lst << url;
                 }
-                DFileService::instance()->openFiles(this, lst, true);
+                if (1 == lst.count()) {
+                    DFileService::instance()->openFile(this, lst.first());
+                } else {
+                    DFileService::instance()->openFiles(this, lst, true);
+                }
                 return;
             }
             break;
