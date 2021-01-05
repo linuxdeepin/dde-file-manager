@@ -85,6 +85,7 @@ class ComputerListView : public QListView
     Q_OBJECT
 public:
     explicit ComputerListView(QWidget *parent = nullptr);
+    void closeEditingEditor();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;

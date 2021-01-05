@@ -299,7 +299,10 @@ void ComputerView::contextMenu(const QPoint &pos)
     if (!idx.isValid()) {
         return;
     }
+
+    m_view->closeEditingEditor();
     const QVector<MenuAction> &av = idx.data(ComputerModel::DataRoles::ActionVectorRole).value<QVector<MenuAction>>();
+
     QSet<MenuAction> disabled;
     if (!WindowManager::tabAddableByWinId(WindowManager::getWindowId(this))) {
         disabled.insert(MenuAction::OpenInNewTab);
@@ -390,6 +393,15 @@ ComputerListView::ComputerListView(QWidget *parent)
     AC_SET_OBJECT_NAME(this, AC_COMPUTER_LIST_VIEW);
     AC_SET_ACCESSIBLE_NAME(this, AC_COMPUTER_LIST_VIEW);
     setMouseTracking(true);
+}
+
+void ComputerListView::closeEditingEditor()
+{
+    auto delegate = qobject_cast<ComputerViewItemDelegate*>(itemDelegate());
+    if (!delegate)
+        return;
+
+    delegate->closeEditingEditor(this);
 }
 
 void ComputerListView::mouseMoveEvent(QMouseEvent *event)
