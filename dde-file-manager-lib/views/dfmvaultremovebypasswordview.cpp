@@ -22,15 +22,16 @@
 #include "interfaceactivevault.h"
 #include "accessibility/ac-lib-file-manager.h"
 
-#include <QPushButton>
-#include <QHBoxLayout>
 #include <DToolTip>
 #include <DPasswordEdit>
 #include <DFloatingWidget>
+
+#include <QPushButton>
+#include <QHBoxLayout>
 #include <QTimer>
 
 DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
-    : QWidget (parent)
+    : QWidget(parent)
 {
     //密码输入框
     m_pwdEdit = new DPasswordEdit(this);
@@ -50,9 +51,10 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     this->setLayout(layout);
 
     connect(m_pwdEdit->lineEdit(), &QLineEdit::textChanged, this, &DFMVaultRemoveByPasswordView::onPasswordChanged);
-    connect(m_tipsBtn, &QPushButton::clicked, [this]{
+    connect(m_tipsBtn, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
-        if (InterfaceActiveVault::getPasswordHint(strPwdHint)){
+        if (InterfaceActiveVault::getPasswordHint(strPwdHint))
+        {
             QString hint = tr("Password hint: %1").arg(strPwdHint);
             showToolTip(hint, 3000, EN_ToolTip::Information);
         }
@@ -88,7 +90,7 @@ void DFMVaultRemoveByPasswordView::showAlertMessage(const QString &text, int dur
 
 void DFMVaultRemoveByPasswordView::showToolTip(const QString &text, int duration, DFMVaultRemoveByPasswordView::EN_ToolTip enType)
 {
-    if (!m_tooltip){
+    if (!m_tooltip) {
         m_tooltip = new DToolTip(text);
         m_tooltip->setObjectName("AlertTooltip");
         m_tooltip->setWordWrap(true);
@@ -98,28 +100,24 @@ void DFMVaultRemoveByPasswordView::showToolTip(const QString &text, int duration
         m_frame->setStyleSheet("background-color: rgba(247, 247, 247, 0.6);");
         m_frame->setWidget(m_tooltip);
     }
-    if(EN_ToolTip::Warning == enType){
+    if (EN_ToolTip::Warning == enType) {
         // 修复bug-51508 激活密码框的警告状态
         m_pwdEdit->setAlert(true);
         m_tooltip->setForegroundRole(DPalette::TextWarning);
-    }
-    else{
+    } else {
         m_tooltip->setForegroundRole(DPalette::TextTitle);
     }
 
-    if(parentWidget()){
-        if(parentWidget()->parentWidget()){
-            if(parentWidget()->parentWidget()->parentWidget())
-            m_frame->setParent(parentWidget()->parentWidget()->parentWidget());
-        }
+    if (parentWidget() && parentWidget()->parentWidget() && parentWidget()->parentWidget()->parentWidget()) {
+        m_frame->setParent(parentWidget()->parentWidget()->parentWidget());
     }
 
     m_tooltip->setText(text);
-    if(m_frame->parent()){
+    if (m_frame->parent()) {
         // 优化调整 调整悬浮框的显示位置
-        QWidget *pWidget = static_cast<QWidget*>(m_frame->parent());
-        if(pWidget){
-            m_frame->setGeometry(6, pWidget->height()-78, 68, 26);
+        QWidget *pWidget = static_cast<QWidget *>(m_frame->parent());
+        if (pWidget) {
+            m_frame->setGeometry(6, pWidget->height() - 78, 68, 26);
         }
         m_frame->show();
         m_frame->adjustSize();
@@ -130,7 +128,7 @@ void DFMVaultRemoveByPasswordView::showToolTip(const QString &text, int duration
         return;
     }
 
-    QTimer::singleShot(duration, this, [=] {
+    QTimer::singleShot(duration, this, [ = ] {
         m_frame->close();
     });
 }
@@ -142,7 +140,7 @@ void DFMVaultRemoveByPasswordView::setTipsButtonVisible(bool visible)
 
 void DFMVaultRemoveByPasswordView::onPasswordChanged(const QString &password)
 {
-    if (!password.isEmpty()){
+    if (!password.isEmpty()) {
         // 修复bug-51508 取消密码框的警告状态
         m_pwdEdit->setAlert(false);
     }

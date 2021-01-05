@@ -1,7 +1,29 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #include "operatorcenter.h"
 #include "openssl/pbkdf2.h"
 #include "openssl/rsam.h"
 #include "qrencode/qrencode.h"
+#include "vaultconfig.h"
 
 #include <QDir>
 #include <QDebug>
@@ -15,8 +37,11 @@
 
 OperatorCenter::OperatorCenter(QObject *parent)
     : QObject(parent)
+    , m_strCryfsPassword("")
+    , m_strUserKey("")
+    , m_standOutput("")
 {
-    m_strUserKey.clear();
+
 }
 
 QString OperatorCenter::makeVaultLocalPath(const QString &before, const QString &behind)
@@ -29,16 +54,16 @@ QString OperatorCenter::makeVaultLocalPath(const QString &before, const QString 
 
 bool OperatorCenter::runCmd(const QString &cmd)
 {
-    QProcess process_;
+    QProcess process;
     int mescs = 10000;
     if (cmd.startsWith(ROOT_PROXY)) {
         mescs = -1;
     }
-    process_.start(cmd);
+    process.start(cmd);
 
-    bool res = process_.waitForFinished(mescs);
-    standOutput_ = process_.readAllStandardOutput();
-    int exitCode = process_.exitCode();
+    bool res = process.waitForFinished(mescs);
+    m_standOutput = process.readAllStandardOutput();
+    int exitCode = process.exitCode();
     if (cmd.startsWith(ROOT_PROXY) && (exitCode == 127 || exitCode == 126)) {
         QString strOut = "Run \'" + cmd + "\' fauled: Password Error! " + QString::number(exitCode) + "\n";
         qDebug() << strOut;
@@ -60,7 +85,7 @@ bool OperatorCenter::executeProcess(const QString &cmd)
     }
 
     runCmd("id -un");
-    if (standOutput_.trimmed() == "root") {
+    if (m_standOutput.trimmed() == "root") {
         return runCmd(cmd);
     }
 
@@ -69,6 +94,28 @@ bool OperatorCenter::executeProcess(const QString &cmd)
     newCmd += "\"";
     newCmd.remove("sudo");
     return runCmd(newCmd);
+}
+
+bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt)
+{
+    // 密文
+    QString strCiphertext = pbkdf2::pbkdf2EncrypyPassword(ciphertext, salt, ITERATION_TWO, PASSWORD_CIPHER_LENGTH);
+    if (strCiphertext.isEmpty())
+        return false;
+    // 写入文件
+    QString strSaltAndCiphertext = salt + strCiphertext;
+    VaultConfig config;
+    config.set(CONFIG_NODE_NAME, CONFIG_KEY_CIPHER, QVariant(strSaltAndCiphertext));
+    // 更新保险箱版本信息
+    config.set(CONFIG_NODE_NAME, CONFIG_KEY_VERSION, QVariant(CONFIG_VAULT_VERSION));
+
+    return true;
+}
+
+OperatorCenter *OperatorCenter::getInstance()
+{
+    static OperatorCenter instance;
+    return &instance;
 }
 
 OperatorCenter::~OperatorCenter()
@@ -88,15 +135,6 @@ bool OperatorCenter::createDirAndFile()
         }
     }
 
-    // 创建密码文件
-    QString strPasswordFile = makeVaultLocalPath(PASSWORD_FILE_NAME);
-    QFile passwordFile(strPasswordFile);
-    if (!passwordFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
-        qDebug() << "create password file failure!";
-        return false;
-    }
-    passwordFile.close();
-
     // 创建存放rsa公钥的文件
     QString strPriKeyFile = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile prikeyFile(strPriKeyFile);
@@ -107,13 +145,13 @@ bool OperatorCenter::createDirAndFile()
     prikeyFile.close();
 
     // 创建存放rsa公钥加密后密文的文件
-    QString strRsaClipher = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
-    QFile rsaClipherFile(strRsaClipher);
-    if (!rsaClipherFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
-        qDebug() << "create rsa clipher file failure!";
+    QString strRsaCiphertext = makeVaultLocalPath(RSA_CIPHERTEXT_FILE_NAME);
+    QFile rsaCiphertextFile(strRsaCiphertext);
+    if (!rsaCiphertextFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
+        qDebug() << "create rsa ciphertext file failure!";
         return false;
     }
-    rsaClipherFile.close();
+    rsaCiphertextFile.close();
 
     // 创建密码提示信息文件
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
@@ -127,24 +165,18 @@ bool OperatorCenter::createDirAndFile()
     return true;
 }
 
-bool OperatorCenter::saveSaltAndClipher(const QString &password, const QString &passwordHint)
+bool OperatorCenter::saveSaltAndCiphertext(const QString &password, const QString &passwordHint)
 {
     // 加密密码，并将盐和密文写入密码文件
     // 随机盐
     QString strRandomSalt = pbkdf2::createRandomSalt(RANDOM_SALT_LENGTH);
     // 密文
-    QString strClipherText = pbkdf2::pbkdf2EncrypyPassword(password, strRandomSalt, ITERATION, PASSWORD_CLIPHER_LENGTH);
-    // 写入文件
-    QString strSaltAndClipherText = strRandomSalt + strClipherText;
-    QString strPasswordFile = makeVaultLocalPath(PASSWORD_FILE_NAME);
-    QFile passwordFile(strPasswordFile);
-    if (!passwordFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qDebug() << "write cliphertext failure!";
-        return false;
-    }
-    QTextStream out(&passwordFile);
-    out << strSaltAndClipherText;
-    passwordFile.close();
+    QString strCiphertext = pbkdf2::pbkdf2EncrypyPassword(password, strRandomSalt, ITERATION, PASSWORD_CIPHER_LENGTH);
+    // 组合盐值与密文
+    QString strSaltAndCiphertext = strRandomSalt + strCiphertext;
+
+    // 保存第二次加密后的密文,并更新保险箱版本信息
+    secondSaveSaltAndCiphertext(strSaltAndCiphertext, strRandomSalt);
 
     // 保存密码提示信息
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
@@ -156,6 +188,9 @@ bool OperatorCenter::saveSaltAndClipher(const QString &password, const QString &
     QTextStream out2(&passwordHintFile);
     out2 << passwordHint;
     passwordHintFile.close();
+
+    // 缓存cryfs密码
+    m_strCryfsPassword = strSaltAndCiphertext;
 
     return true;
 }
@@ -171,7 +206,7 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     rsam::createRsaKey(strPubKey, strPriKey);
 
     // 私钥加密
-    QString strClipher = rsam::rsa_pri_encrypt_base64(password, strPriKey);
+    QString strCipher = rsam::rsa_pri_encrypt_base64(password, strPriKey);
 
     // 将公钥分成两部分（一部分用于保存到本地，一部分生成二维码，提供给用户）
     QString strSaveToLocal("");
@@ -197,47 +232,78 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     publicFile.close();
 
     // 保存密文
-    QString strClipherFilePath = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
-    QFile clipherFile(strClipherFilePath);
-    if (!clipherFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qDebug() << "open rsa clipher file failure!";
+    QString strCipherFilePath = makeVaultLocalPath(RSA_CIPHERTEXT_FILE_NAME);
+    QFile cipherFile(strCipherFilePath);
+    if (!cipherFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
+        qDebug() << "open rsa cipher file failure!";
         return false;
     }
-    QTextStream out2(&clipherFile);
-    out2 << strClipher;
-    clipherFile.close();
+    QTextStream out2(&cipherFile);
+    out2 << strCipher;
+    cipherFile.close();
 
     return true;
 }
 
-bool OperatorCenter::checkPassword(const QString &password, QString &clipher)
+bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
 {
-    // 获得本地盐及密文
-    QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
-    QFile file(strfilePath);
-    if (!file.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        qDebug() << "open pbkdf2clipher file failure!";
-        return false;
+    // 获得版本信息
+    VaultConfig config;
+    QString strVersion = config.get(CONFIG_NODE_NAME, CONFIG_KEY_VERSION).toString();
+
+    if (CONFIG_VAULT_VERSION == strVersion) {   // 如果是新版本，验证第二次加密的结果
+        // 获得本地盐及密文
+        QString strSaltAndCipher = config.get(CONFIG_NODE_NAME, CONFIG_KEY_CIPHER).toString();
+        QString strSalt = strSaltAndCipher.mid(0, RANDOM_SALT_LENGTH);
+        QString strCipher = strSaltAndCipher.mid(RANDOM_SALT_LENGTH);
+        // pbkdf2第一次加密密码,获得密文
+        QString strNewCipher = pbkdf2::pbkdf2EncrypyPassword(password, strSalt, ITERATION, PASSWORD_CIPHER_LENGTH);
+        // 组合密文和盐值
+        QString strNewSaltAndCipher = strSalt + strNewCipher;
+        // pbkdf2第二次加密密码，获得密文
+        QString strNewCipher2 = pbkdf2::pbkdf2EncrypyPassword(strNewSaltAndCipher, strSalt, ITERATION_TWO, PASSWORD_CIPHER_LENGTH);
+
+        if (strCipher != strNewCipher2) {
+            qDebug() << "password error!";
+            return  false;
+        }
+        cipher = strNewSaltAndCipher;
+    } else {    // 如果是旧版本，验证第一次加密的结果
+        // 获得本地盐及密文
+        QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
+        QFile file(strfilePath);
+        if (!file.open(QIODevice::Text | QIODevice::ReadOnly)) {
+            qDebug() << "open pbkdf2cipher file failure!";
+            return false;
+        }
+        QString strSaltAndCipher = QString(file.readAll());
+        file.close();
+        QString strSalt = strSaltAndCipher.mid(0, RANDOM_SALT_LENGTH);
+        QString strCipher = strSaltAndCipher.mid(RANDOM_SALT_LENGTH);
+
+        // pbkdf2加密密码,获得密文
+        QString strNewCipher = pbkdf2::pbkdf2EncrypyPassword(password, strSalt, ITERATION, PASSWORD_CIPHER_LENGTH);
+        QString strNewSaltAndCipher = strSalt + strNewCipher;
+        if (strNewSaltAndCipher != strSaltAndCipher) {
+            qDebug() << "password error!";
+            return  false;
+        }
+
+        cipher = strNewSaltAndCipher;
+
+        // 保存第二次加密后的密文,并更新保险箱版本信息
+        if (!secondSaveSaltAndCiphertext(strNewSaltAndCipher, strSalt)) {
+            qDebug() << "第二次加密密文失败！";
+            return false;
+        }
+
+        // 删除旧版本遗留的密码文件
+        QFile::remove(strfilePath);
     }
-    QString strSaltAndClipher = QString(file.readAll());
-    file.close();
-    QString strSalt = strSaltAndClipher.mid(0, RANDOM_SALT_LENGTH);
-    QString strClipher = strSaltAndClipher.mid(RANDOM_SALT_LENGTH);
-
-    // pbkdf2加密密码,获得密文
-    QString strNewClipher = pbkdf2::pbkdf2EncrypyPassword(password, strSalt, ITERATION, PASSWORD_CLIPHER_LENGTH);
-    QString strNewSaltAndClipher = strSalt + strNewClipher;
-    if (strNewSaltAndClipher != strSaltAndClipher) {
-        qDebug() << "password error!";
-        return  false;
-    }
-
-    clipher = strNewSaltAndClipher;
-
     return true;
 }
 
-bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
+bool OperatorCenter::checkUserKey(const QString &userKey, QString &cipher)
 {
     if (userKey.length() != USER_KEY_LENGTH) {
         qDebug() << "user key length error!";
@@ -257,19 +323,19 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
     QString strNewPubKey = strLocalPubKey.insert(USER_KEY_INTERCEPT_INDEX, userKey);
 
     // 利用完整公钥解密密文，得到密码
-    QString strRSAClipherFilePath = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
-    QFile rsaClipherfile(strRSAClipherFilePath);
-    if (!rsaClipherfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        qDebug() << "cant't open rsa clipher file!";
+    QString strRSACipherFilePath = makeVaultLocalPath(RSA_CIPHERTEXT_FILE_NAME);
+    QFile rsaCipherfile(strRSACipherFilePath);
+    if (!rsaCipherfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
+        qDebug() << "cant't open rsa cipher file!";
         return false;
     }
-    QString strRsaClipher(rsaClipherfile.readAll());
-    rsaClipherfile.close();
+    QString strRsaCipher(rsaCipherfile.readAll());
+    rsaCipherfile.close();
 
-    QString strNewPassword = rsam::rsa_pub_decrypt_base64(strRsaClipher, strNewPubKey);
+    QString strNewPassword = rsam::rsa_pub_decrypt_base64(strRsaCipher, strNewPubKey);
 
     // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
-    if (!checkPassword(strNewPassword, clipher)) {
+    if (!checkPassword(strNewPassword, cipher)) {
         qDebug() << "user key error!";
         return false;
     }
@@ -359,17 +425,14 @@ EN_VaultState OperatorCenter::vaultState()
     }
 }
 
-QString OperatorCenter::getSaltAndPasswordClipher()
+QString OperatorCenter::getSaltAndPasswordCipher()
 {
-    QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
-    QFile file(strfilePath);
-    if (!file.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        qDebug() << "open pbkdf2clipher file failure!";
-        return "";
-    }
-    QString strSaltAndClipher = QString(file.readAll());
-    file.close();
-    return strSaltAndClipher;
+    return m_strCryfsPassword;
+}
+
+void OperatorCenter::clearSaltAndPasswordCipher()
+{
+    m_strCryfsPassword.clear();
 }
 
 QString OperatorCenter::getEncryptDirPath()
@@ -388,7 +451,7 @@ QStringList OperatorCenter::getConfigFilePath()
 
     lstPath << makeVaultLocalPath(PASSWORD_FILE_NAME);
     lstPath << makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
-    lstPath << makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
+    lstPath << makeVaultLocalPath(RSA_CIPHERTEXT_FILE_NAME);
     lstPath << makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
 
     return lstPath;
@@ -422,7 +485,7 @@ bool OperatorCenter::getRootPassword()
 {
     // 判断当前是否是管理员登陆
     bool res = runCmd("id -un");  // file path is fixed. So write cmd direct
-    if (res == true && standOutput_.trimmed() == "root") {
+    if (res && m_standOutput.trimmed() == "root") {
         return true;
     }
 

@@ -23,10 +23,11 @@
 #include "controllers/vaultcontroller.h"
 #include "accessibility/ac-lib-file-manager.h"
 
-#include <QPlainTextEdit>
-#include <QAbstractButton>
 #include <DToolTip>
 #include <DFloatingWidget>
+
+#include <QPlainTextEdit>
+#include <QAbstractButton>
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -36,8 +37,9 @@ DWIDGET_USE_NAMESPACE
 class DFMVaultRecoveryKeyPagesPrivate
 {
 public:
-    ~DFMVaultRecoveryKeyPagesPrivate(){
-        if (tooltip){
+    ~DFMVaultRecoveryKeyPagesPrivate()
+    {
+        if (tooltip) {
             tooltip->deleteLater();
         }
     }
@@ -113,7 +115,7 @@ void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duratio
 {
     Q_D(DFMVaultRecoveryKeyPages);
 
-    if (!d->tooltip){
+    if (!d->tooltip) {
         d->tooltip = new DToolTip(text);
         d->tooltip->setObjectName("AlertTooltip");
         d->tooltip->setForegroundRole(DPalette::TextWarning);
@@ -128,7 +130,7 @@ void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duratio
     d->frame->setParent(m_recoveryKeyEdit);
 
     d->tooltip->setText(text);
-    if(d->frame->parent()){
+    if (d->frame->parent()) {
         d->frame->setGeometry(0, 25, 68, 26);
         d->frame->show();
         d->frame->adjustSize();
@@ -146,17 +148,17 @@ void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duratio
 
 void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
 {
-    if (index == 1){
+    if (index == 1) {
         // 点击解锁后，灰化解锁按钮
         getButton(1)->setEnabled(false);
 
         QString strKey = m_recoveryKeyEdit->toPlainText();
         strKey.replace("-", "");
 
-        QString strClipher("");
-        if (InterfaceActiveVault::checkUserKey(strKey, strClipher)){
+        QString strCipher("");
+        if (InterfaceActiveVault::checkUserKey(strKey, strCipher)) {
             m_bUnlockByKey = true;
-            VaultController::ins()->unlockVault(strClipher);
+            VaultController::ins()->unlockVault(strCipher);
         } else {
             showAlertMessage(tr("Wrong recovery key"));
         }
@@ -169,7 +171,7 @@ void DFMVaultRecoveryKeyPages::onButtonClicked(const int &index)
 
 int DFMVaultRecoveryKeyPages::afterRecoveryKeyChanged(QString &str)
 {
-    if (str.isEmpty()){
+    if (str.isEmpty()) {
         return -1;
     }
 
@@ -184,7 +186,7 @@ int DFMVaultRecoveryKeyPages::afterRecoveryKeyChanged(QString &str)
 
     int length = str.length();
     while (index < length) {
-        if (index % 4 == 0){
+        if (index % 4 == 0) {
             str.insert(index + minusNum, "-");
             minusNum++;
         }
@@ -218,7 +220,7 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
     int length = key.length();
     int maxLength = MAX_KEY_LENGTH + 7;
 
-    if (key.isEmpty()){
+    if (key.isEmpty()) {
         getButton(1)->setEnabled(false);
     } else {
         getButton(1)->setEnabled(true);
@@ -228,8 +230,7 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
     QRegExp rx("[a-zA-Z0-9-+/]+");
     QString res("");
     int pos = 0;
-    while ((pos = rx.indexIn(key, pos)) != -1)
-    {
+    while ((pos = rx.indexIn(key, pos)) != -1) {
         res += rx.cap(0);
         pos += rx.matchedLength();
     }
@@ -237,12 +238,12 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
 
     m_recoveryKeyEdit->blockSignals(true);
     // 限制输入的最大长度
-    if (length > maxLength){
+    if (length > maxLength) {
         int position = m_recoveryKeyEdit->textCursor().position();
         QTextCursor textCursor = m_recoveryKeyEdit->textCursor();
-        key.remove(position-(length - maxLength), length - maxLength);
+        key.remove(position - (length - maxLength), length - maxLength);
         m_recoveryKeyEdit->setPlainText(key);
-        textCursor.setPosition(position - (length-maxLength));
+        textCursor.setPosition(position - (length - maxLength));
         m_recoveryKeyEdit->setTextCursor(textCursor);
 
         m_recoveryKeyEdit->blockSignals(false);
@@ -261,12 +262,12 @@ void DFMVaultRecoveryKeyPages::recoveryKeyChanged()
 
 void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
 {
-    if (m_bUnlockByKey){
-        if (state == 0){
+    if (m_bUnlockByKey) {
+        if (state == 0) {
             // success
             emit accepted();
             close();
-        }else {
+        } else {
             // others
             QString errMsg = tr("Failed to unlock file vault");
             DDialog dialog(this);
@@ -281,7 +282,7 @@ void DFMVaultRecoveryKeyPages::onUnlockVault(int state)
 
 bool DFMVaultRecoveryKeyPages::eventFilter(QObject *watched, QEvent *event)
 {
-    if (event->type() == QEvent::KeyPress){
+    if (event->type() == QEvent::KeyPress) {
         QPlainTextEdit *edit = qobject_cast<QPlainTextEdit *>(watched);
         if (edit == m_recoveryKeyEdit) {
             QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);

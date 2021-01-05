@@ -21,6 +21,7 @@
 #pragma once
 
 #include "dfmvaultpagebase.h"
+
 #include <QScopedPointer>
 
 QT_BEGIN_NAMESPACE
@@ -44,7 +45,7 @@ private slots:
 
     void onUnlockVault(int state);
 private:
-    explicit DFMVaultRecoveryKeyPages(QWidget * parent = nullptr);
+    explicit DFMVaultRecoveryKeyPages(QWidget *parent = nullptr);
     ~DFMVaultRecoveryKeyPages() override;
 
     bool eventFilter(QObject *watched, QEvent *event) override;

@@ -1,3 +1,24 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #ifndef INTERFACEACTIVEVAULT_H
 #define INTERFACEACTIVEVAULT_H
 
@@ -28,18 +49,18 @@ public:
     /**
      * @brief checkPassword 验证密码是否正确
      * @param password 密码
-     * @param cliper 返回密码的密文
+     * @param cipher 返回密码的密文
      * @return 是否成功
      */
-    static bool checkPassword(const QString &password, QString &cliper);
+    static bool checkPassword(const QString &password, QString &cipher);
 
     /**
      * @brief checkUserKey 验证密钥是否正确
      * @param userKey 密钥
-     * @param cliper 返回密码的密文
+     * @param cipher 返回密码的密文
      * @return 是否成功
      */
-    static bool checkUserKey(const QString &userKey, QString &cliper);
+    static bool checkUserKey(const QString &userKey, QString &cipher);
 
 
     /**

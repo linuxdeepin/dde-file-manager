@@ -5,28 +5,28 @@
 #include <gmock/gmock-matchers.h>
 
 namespace  {
-    class TestInterfaceActiveVault : public testing::Test
+class TestInterfaceActiveVault : public testing::Test
+{
+public:
+    InterfaceActiveVault *m_iActiveVault;
+    OperatorCenter *m_opCenter;
+
+    virtual void SetUp() override
     {
-    public:
-        InterfaceActiveVault *m_iActiveVault;
-        OperatorCenter *m_opCenter;
+        m_iActiveVault = new InterfaceActiveVault();
+        m_opCenter = OperatorCenter::getInstance();
 
-        virtual void SetUp() override
-        {
-            m_iActiveVault = new InterfaceActiveVault();
-            m_opCenter = &OperatorCenter::getInstance();
+        std::cout << "start TestInterfaceActiveVault" << std::endl;
+    }
 
-            std::cout << "start TestInterfaceActiveVault" << std::endl;
-        }
+    virtual void TearDown() override
+    {
+        delete m_iActiveVault;
+        m_iActiveVault = nullptr;
 
-        virtual void TearDown() override
-        {
-            delete m_iActiveVault;
-            m_iActiveVault = nullptr;
-
-            std::cout << "end TestInterfaceActiveVault" << std::endl;
-        }
-    };
+        std::cout << "end TestInterfaceActiveVault" << std::endl;
+    }
+};
 }
 
 /**
@@ -34,7 +34,7 @@ namespace  {
  */
 TEST_F(TestInterfaceActiveVault, getPassword)
 {
-    EXPECT_EQ(m_opCenter->getSaltAndPasswordClipher(), m_iActiveVault->getPassword());
+    EXPECT_EQ(m_opCenter->getSaltAndPasswordCipher(), m_iActiveVault->getPassword());
 }
 
 /**

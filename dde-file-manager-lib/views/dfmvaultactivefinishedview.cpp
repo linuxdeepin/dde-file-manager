@@ -1,3 +1,24 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #include "dfmvaultactivefinishedview.h"
 #include "operatorcenter.h"
 #include "../../controllers/vaultcontroller.h"
@@ -5,17 +26,19 @@
 #include "app/define.h"
 #include "accessibility/ac-lib-file-manager.h"
 
+#include <DLabel>
+#include <DDialog>
+#include <DWaterProgress>
+#include <DIconButton>
+
 #include <QLabel>
 #include <QPushButton>
 #include <QGridLayout>
-#include <DIconButton>
 #include <QDebug>
-#include <DWaterProgress>
 #include <QThread>
 #include <QMessageBox>
 #include <QTimer>
-#include <DLabel>
-#include <DDialog>
+
 
 DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     : QWidget(parent)
@@ -66,7 +89,7 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     m_pTips4->setAlignment(Qt::AlignHCenter);
 
     // 加密保险箱按钮
-    m_pFinishedBtn = new QPushButton(tr("Encrypt") , this);
+    m_pFinishedBtn = new QPushButton(tr("Encrypt"), this);
     AC_SET_ACCESSIBLE_NAME(m_pFinishedBtn, AC_VAULT_ACTIVE_ENCRYPT_BUTTON);
     m_pFinishedBtn->setFixedSize(452, 30);
     connect(m_pFinishedBtn, &QPushButton::clicked,
@@ -108,14 +131,14 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     m_pWidget3->setVisible(false);
 
     // cryfs对象
-    VaultController * pcryfs = VaultController::ins();
+    VaultController *pcryfs = VaultController::ins();
     connect(pcryfs, &VaultController::signalCreateVault,
             this, &DFMVaultActiveFinishedView::slotEncryptComplete);
 
     // 初始化定时器
     m_pTimer = new QTimer(this);
     connect(m_pTimer, &QTimer::timeout,
-             this, &DFMVaultActiveFinishedView::slotTimeout);
+            this, &DFMVaultActiveFinishedView::slotTimeout);
 }
 
 void DFMVaultActiveFinishedView::setFinishedBtnEnabled(bool b)
@@ -129,7 +152,7 @@ void DFMVaultActiveFinishedView::setFinishedBtnEnabled(bool b)
 
 void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 {
-    if(nState == 0){    // 创建保险箱成功
+    if (nState == 0) {  // 创建保险箱成功
         m_pWaterProgress->setValue(100);
         m_pWaterProgress->stop();
         repaint();
@@ -138,25 +161,25 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 
         // Reset autolock time config.
         VaultLockManager::getInstance().resetConfig();
-    }else{
+    } else {
         QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
     }
 }
 
 void DFMVaultActiveFinishedView::slotEncryptVault()
 {
-    if (!VaultLockManager::getInstance().checkAuthentication(VAULT_CREATE)){
+    if (!VaultLockManager::getInstance().checkAuthentication(VAULT_CREATE)) {
         m_pFinishedBtn->setEnabled(true);
         return;
     }
 
-    if(m_pFinishedBtn->text() == tr("Encrypt")){
+    if (m_pFinishedBtn->text() == tr("Encrypt")) {
         // 完成按钮灰化
         m_pFinishedBtn->setEnabled(false);
         // 隐藏右上角关闭按钮
-        if(parentWidget()){
-            DDialog *pParent = static_cast<DDialog*>(parentWidget()->parentWidget());
-            if(pParent){
+        if (parentWidget()) {
+            DDialog *pParent = qobject_cast<DDialog *>(parentWidget()->parentWidget());
+            if (pParent) {
                 pParent->setCloseButtonVisible(false);
             }
         }
@@ -167,14 +190,18 @@ void DFMVaultActiveFinishedView::slotEncryptVault()
         m_pWidget2->setVisible(true);
         m_pWidget3->setVisible(false);
 
-        std::thread t([](){
+        std::thread t([]() {
             // 调用创建保险箱接口
             // 拿到密码
-            QString strPassword = OperatorCenter::getInstance().getSaltAndPasswordClipher();
-            VaultController::ins()->createVault(strPassword);
+            QString strPassword = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
+            if (!strPassword.isEmpty()) {
+                VaultController::ins()->createVault(strPassword);
+                OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
+            } else
+                qDebug() << "获取cryfs密码为空，创建保险箱失败！";
         });
         t.detach();
-    }else{
+    } else {
         // 切换到保险箱主页面
         emit sigAccepted();
     }
@@ -188,9 +215,9 @@ void DFMVaultActiveFinishedView::slotTimeout()
     m_pFinishedBtn->setText(tr("OK"));
     m_pFinishedBtn->setEnabled(true);
     // 显示右上角关闭按钮
-    if(parentWidget()){
-        DDialog *pParent = static_cast<DDialog*>(parentWidget()->parentWidget());
-        if(pParent){
+    if (parentWidget()) {
+        DDialog *pParent = qobject_cast<DDialog *>(parentWidget()->parentWidget());
+        if (pParent) {
             pParent->setCloseButtonVisible(true);
         }
     }

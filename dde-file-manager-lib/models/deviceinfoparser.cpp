@@ -76,7 +76,7 @@ QStringList DeviceInfoParser::getLshwCDRomList()
         return cdromList;
     }
 
-    foreach (const QString &fk, m_toolDatabaseSecondOrder["lshw"] ) {
+    foreach (const QString &fk, m_toolDatabaseSecondOrder["lshw"]) {
         if (fk.contains("cdrom")) {
             cdromList.push_back(fk);
             continue;
@@ -91,7 +91,7 @@ bool DeviceInfoParser::isInternalDevice(const QString &device)
     QStringList cdromList = getLshwCDRomList();
 
     bool isInternalDevice = true;
-    foreach(QString cdrom, cdromList) {
+    foreach (QString cdrom, cdromList) {
         const QString logicalName = queryData("lshw", cdrom, "logical name");
         if (logicalName.contains(device)) {
             if (!cdrom.contains("sata")) {
@@ -119,8 +119,8 @@ bool DeviceInfoParser::loadLshwDatabase()
     QStringList deviceType;
     QMap<QString, QString> DeviceInfoMap;
 
-    for ( int i = 0; i < lshwOut.size(); ++i ) {
-        if ( lshwOut[i] != '\n' && i != lshwOut.size() - 1 ) {
+    for (int i = 0; i < lshwOut.size(); ++i) {
+        if (lshwOut[i] != '\n' && i != lshwOut.size() - 1) {
             continue;
         }
 
@@ -129,7 +129,7 @@ bool DeviceInfoParser::loadLshwDatabase()
         QString line = lshwOut.mid(startIndex, i - startIndex);
         startIndex = i + 1;
 
-        if ( line.trimmed().isEmpty() ) {
+        if (line.trimmed().isEmpty()) {
             dWarning("DeviceInfoParser::loadLshwDatabase lshw output contains empty line!");
             continue;
         }
@@ -158,15 +158,15 @@ bool DeviceInfoParser::loadLshwDatabase()
             QString typeStr =  line;
             DeviceInfoMap["Type"] = typeStr.remove(Devicetype_lshw_Class_Prefix).trimmed();
 
-            while ( deviceType.size() > 0 ) {
-                if ( deviceType.last().indexOf(Devicetype_lshw_Class_Prefix) >= line.indexOf(Devicetype_lshw_Class_Prefix) ) {
+            while (deviceType.size() > 0) {
+                if (deviceType.last().indexOf(Devicetype_lshw_Class_Prefix) >= line.indexOf(Devicetype_lshw_Class_Prefix)) {
                     deviceType.pop_back();
                 } else {
                     break;
                 }
             }
 
-            if ( line.contains(Devicetype_Separator) ) {
+            if (line.contains(Devicetype_Separator)) {
                 QStringList strList = line.split(Devicetype_Separator);
                 if (DeviceInfoMap.contains(strList.first().trimmed().remove(Devicetype_lshw_Class_Prefix))) {
                     DeviceInfoMap[strList.first().trimmed().remove(Devicetype_lshw_Class_Prefix)] += ", ";
@@ -180,9 +180,9 @@ bool DeviceInfoParser::loadLshwDatabase()
         }
 
         int index = line.indexOf(Devicetype_Separator);
-        if ( index > 0 ) {
+        if (index > 0) {
             QString name = line.mid(0, index).trimmed().remove(Devicetype_lshw_Class_Prefix);
-            if (name == "configuration" || name == "resources" ) {
+            if (name == "configuration" || name == "resources") {
                 QChar splitChar = name == "configuration" ? '=' : ':';
 
                 QStringList lst = line.mid(index + 1).trimmed().split(splitChar);
@@ -250,10 +250,10 @@ bool DeviceInfoParser::loadLshwDatabase()
 
 bool DeviceInfoParser::executeProcess(const QString &cmd)
 {
-    QProcess process_;
-    process_.start(cmd);
-    bool res = process_.waitForFinished(10000);
-    m_standOutput = process_.readAllStandardOutput();
+    QProcess process;
+    process.start(cmd);
+    bool res = process.waitForFinished(10000);
+    m_standOutput = process.readAllStandardOutput();
 
     return res;
 }

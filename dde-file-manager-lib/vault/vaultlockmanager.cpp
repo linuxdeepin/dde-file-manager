@@ -17,7 +17,6 @@
  **/
 
 #include "vaultlockmanager.h"
-#include <unistd.h>
 #include "dfileservices.h"
 #include "dfmsettings.h"
 #include "dfmapplication.h"
@@ -28,9 +27,10 @@
 #include "dialogs/dtaskdialog.h"
 #include "interfaceactivevault.h"
 #include "vault/vaulthelper.h"
-
 #include "dbusinterface/vault_interface.h"
 #include "vault/vaulthelper.h"
+
+#include <unistd.h>
 
 #define VAULT_AUTOLOCK_KEY      "AutoLock"
 #define VAULT_GROUP             "Vault/AutoLock"

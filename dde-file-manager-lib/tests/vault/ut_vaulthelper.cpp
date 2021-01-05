@@ -13,23 +13,23 @@ DFM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
 namespace  {
-    class TestVaultHelper : public testing::Test
+class TestVaultHelper : public testing::Test
+{
+public:
+    VaultHelper *m_vaultHelper;
+    virtual void SetUp() override
     {
-    public:
-        VaultHelper *m_vaultHelper;
-        virtual void SetUp() override
-        {
-            m_vaultHelper = new VaultHelper();
-            std::cout << "start TestVaultHelper" << std::endl;
-        }
+        m_vaultHelper = new VaultHelper();
+        std::cout << "start TestVaultHelper" << std::endl;
+    }
 
-        virtual void TearDown() override
-        {
-            delete m_vaultHelper;
-            m_vaultHelper = nullptr;
-            std::cout << "end TestVaultHelper" << std::endl;
-        }
-    };
+    virtual void TearDown() override
+    {
+        delete m_vaultHelper;
+        m_vaultHelper = nullptr;
+        std::cout << "end TestVaultHelper" << std::endl;
+    }
+};
 }
 
 /**
@@ -44,11 +44,11 @@ TEST_F(TestVaultHelper, topVaultTasks)
     };
 
     Stub stub;
-    stub.set(ADDR(DTaskDialog, bHaveNotCompletedVaultTask), st_bHaveVaultTask_true);
+    stub.set(ADDR(DTaskDialog, haveNotCompletedVaultTask), st_bHaveVaultTask_true);
     EXPECT_TRUE(m_vaultHelper->topVaultTasks());
 
     int (*st_executionShellCommand)(const QString &, QStringList &) =
-            [](const QString &strCmd, QStringList &lstShellOutput)->int{
+    [](const QString & strCmd, QStringList & lstShellOutput)->int{
         Q_UNUSED(strCmd)
         lstShellOutput << "ls" << "ls";
         return 0;
@@ -57,7 +57,7 @@ TEST_F(TestVaultHelper, topVaultTasks)
     bool (*st_bHaveVaultTask_false)() = []()->bool{
         return false;
     };
-    stub.set(ADDR(DTaskDialog, bHaveNotCompletedVaultTask), st_bHaveVaultTask_false);
+    stub.set(ADDR(DTaskDialog, haveNotCompletedVaultTask), st_bHaveVaultTask_false);
     stub.set(ADDR(InterfaceActiveVault, executionShellCommand), st_executionShellCommand);
     EXPECT_NO_FATAL_FAILURE(m_vaultHelper->topVaultTasks());
 }
@@ -75,11 +75,11 @@ TEST_F(TestVaultHelper, killVaultTasks)
     };
 
     Stub stub;
-    stub.set(ADDR(DTaskDialog, bHaveNotCompletedVaultTask), st_bHaveVaultTask);
+    stub.set(ADDR(DTaskDialog, haveNotCompletedVaultTask), st_bHaveVaultTask);
     EXPECT_TRUE(m_vaultHelper->topVaultTasks());
 
     int (*st_executionShellCommand)(const QString &, QStringList &) =
-            [](const QString &strCmd, QStringList &lstShellOutput)->int{
+    [](const QString & strCmd, QStringList & lstShellOutput)->int{
         Q_UNUSED(strCmd)
         lstShellOutput << "ls" << "ls";
         return 0;
@@ -93,9 +93,9 @@ TEST_F(TestVaultHelper, killVaultTasks)
  */
 TEST_F(TestVaultHelper, isVaultEnabled)
 {
-    if(!DSysInfo::isCommunityEdition()){
-       DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        if(DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType){
+    if (!DSysInfo::isCommunityEdition()) {
+        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+        if (DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType) {
             EXPECT_TRUE(m_vaultHelper->isVaultEnabled());
         } else {
             EXPECT_FALSE(m_vaultHelper->isVaultEnabled());

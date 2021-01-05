@@ -24,16 +24,16 @@
 #include "dfilemanagerwindow.h"
 #include "accessibility/ac-lib-file-manager.h"
 
+#include <DPushButton>
+#include <DPasswordEdit>
+#include <DFloatingWidget>
+#include <DToolTip>
+
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QFrame>
 #include <QToolTip>
 #include <QEvent>
-
-#include <DPushButton>
-#include <DPasswordEdit>
-#include <DFloatingWidget>
-#include <DToolTip>
 #include <QTimer>
 
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
@@ -101,7 +101,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
     connect(VaultController::ins(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
-    connect(m_tipsButton, &QPushButton::clicked, [this] {
+    connect(m_tipsButton, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint))
         {
@@ -184,10 +184,10 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
 
         QString strPwd = m_passwordEdit->text();
 
-        QString strClipher("");
-        if (InterfaceActiveVault::checkPassword(strPwd, strClipher)) {
+        QString strCipher("");
+        if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
             m_bUnlockByPwd = true;
-            VaultController::ins()->unlockVault(strClipher);
+            VaultController::ins()->unlockVault(strCipher);
         } else {
             // 设置密码输入框颜色
             // 修复bug-51508 激活密码框警告状态
@@ -228,10 +228,10 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
             process.terminate();
             if (process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0) {
                 QString strPwd = m_passwordEdit->text();
-                QString strClipher("");
+                QString strCipher("");
                 // 判断密码是否正确
-                if (InterfaceActiveVault::checkPassword(strPwd, strClipher)) {
-                    VaultController::ins()->unlockVault(strClipher);
+                if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
+                    VaultController::ins()->unlockVault(strCipher);
                     return;
                 } else {    // 密码不正确
                     // 设置密码输入框颜色,并弹出tooltip

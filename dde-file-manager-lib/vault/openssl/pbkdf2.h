@@ -1,8 +1,29 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #ifndef PBKDF2_H
 #define PBKDF2_H
 
 #define SALT_LENGTH_MAX         100
-#define CLIPHER_LENGHT_MAX      100
+#define CIPHER_LENGHT_MAX       100
 
 class QString;
 
@@ -21,7 +42,7 @@ public:
      * @param password 密码
      * @param randSalt 随机盐
      * @param iteration 迭代次数
-     * @param clipherByteNum 生成密文的字节数
+     * @param cipherByteNum 生成密文的字节数
      * @return 加密后的密文
      */
     static QString pbkdf2EncrypyPassword(const QString &password,
@@ -30,7 +51,7 @@ public:
 
                                          int iteration,
 
-                                         int clipherByteNum);
+                                         int cipherByteNum);
 
 private:
     static char nibble_to_hex_char(char nibble);

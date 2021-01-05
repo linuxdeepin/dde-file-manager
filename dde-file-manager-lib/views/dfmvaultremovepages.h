@@ -1,3 +1,24 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #ifndef DFMVAULTREMOVEPAGES_H
 #define DFMVAULTREMOVEPAGES_H
 
@@ -17,8 +38,8 @@ DWIDGET_USE_NAMESPACE
 class DFMVaultRemovePages : public DFMVaultPageBase
 {
     Q_OBJECT
-public:   
-    static DFMVaultRemovePages* instance();
+public:
+    static DFMVaultRemovePages *instance();
 
     void showTop() override;
 
@@ -29,7 +50,7 @@ public slots:
 
     void onVualtRemoveFinish(bool result);
 
-private:    
+private:
     explicit DFMVaultRemovePages(QWidget *parent = nullptr);
     ~DFMVaultRemovePages() override {}
 
@@ -47,7 +68,7 @@ private:
     DFMVaultRemoveByRecoverykeyView *m_recoverykeyView {nullptr};
     DFMVaultRemoveProgressView *m_progressView {nullptr};
 
-    QStackedWidget * m_stackedWidget {nullptr};   //用于页面切换
+    QStackedWidget *m_stackedWidget {nullptr};    //用于页面切换
     bool m_bRemoveVault = false;
 
     QLabel              *m_pInfo;
