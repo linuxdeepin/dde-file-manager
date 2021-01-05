@@ -1,15 +1,19 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock-matchers.h>
+#include "dfmevent.h"
+#include "stub.h"
+#include "dfileservices.h"
 
 #include <QProcess>
 #include <QStandardPaths>
 #include <QDateTime>
 #include <QUrl>
 #include <QFile>
-#include "dfmevent.h"
+
+#include <gtest/gtest.h>
+#include <gmock/gmock-matchers.h>
 
 #define private public
 #include "controllers/searchcontroller.cpp"
+#undef private
 
 namespace  {
 class TestSearchController : public testing::Test
@@ -54,6 +58,7 @@ public:
     DUrl fileUrl_2;
     DUrl dirUrl;
 };
+}
 
 TEST_F(TestSearchController, createFileInfo)
 {
@@ -63,45 +68,91 @@ TEST_F(TestSearchController, createFileInfo)
 
 TEST_F(TestSearchController, openFileLocation)
 {
-//    auto event = dMakeEventPointer<DFMOpenFileLocation>(nullptr, fileUrl_1);
-//    EXPECT_TRUE(controller->openFileLocation(event));
+    auto event = dMakeEventPointer<DFMOpenFileLocation>(nullptr, fileUrl_1);
+
+    bool (*stub_openFileLocation)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, openFileLocation), stub_openFileLocation);
+
+    EXPECT_TRUE(controller->openFileLocation(event));
 }
 
 TEST_F(TestSearchController, openFile)
 {
     auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, fileUrl_1);
+    bool (*stub_openFile)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, openFile), stub_openFile);
+
     EXPECT_TRUE(controller->openFile(event));
 }
 
 TEST_F(TestSearchController, openFileByApp)
 {
     auto event = dMakeEventPointer<DFMOpenFileByAppEvent>(nullptr, "/usr/share/applications/deepin-editor.desktop", fileUrl_1);
+    bool (*stub_openFileByApp)(const QObject *, const QString &, const DUrl &) = [](const QObject *, const QString &, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, openFileByApp), stub_openFileByApp);
+
     EXPECT_TRUE(controller->openFileByApp(event));
 }
 
 TEST_F(TestSearchController, openFilesByApp)
 {
     auto event = dMakeEventPointer<DFMOpenFilesByAppEvent>(nullptr, "/usr/share/applications/deepin-editor.desktop", DUrlList() << fileUrl_1 << fileUrl_2);
+    bool (*stub_openFilesByApp)(const QObject *, const QString &, const QList<DUrl> &, const bool)
+    = [](const QObject *, const QString &, const QList<DUrl> &, const bool) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, openFilesByApp), stub_openFilesByApp);
+
     EXPECT_TRUE(controller->openFilesByApp(event));
 }
 
 TEST_F(TestSearchController, writeFilesToClipboard)
 {
     auto event = dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CopyAction, DUrlList() << fileUrl_1 << fileUrl_2);
+    bool (*stub_writeFilesToClipboard)(const QObject *, DFMGlobal::ClipboardAction, const DUrlList &)
+    = [](const QObject *, DFMGlobal::ClipboardAction, const DUrlList &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, writeFilesToClipboard), stub_writeFilesToClipboard);
+
     EXPECT_TRUE(controller->writeFilesToClipboard(event));
 }
 
 TEST_F(TestSearchController, moveToTrash)
 {
-//    auto event = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << fileUrl_1);
-//    DUrlList resList = controller->moveToTrash(event);
-//    EXPECT_TRUE(!resList.isEmpty());
+    auto event = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << fileUrl_1);
+    DUrlList(*stub_moveToTrash)(const QObject *, const DUrlList &) = [](const QObject *, const DUrlList &) {
+        return DUrlList();
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, moveToTrash), stub_moveToTrash);
+
+    DUrlList resList = controller->moveToTrash(event);
+    EXPECT_TRUE(resList.isEmpty());
 }
 
 TEST_F(TestSearchController, deleteFiles)
 {
-//    auto event = dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << fileUrl_1);
-//    EXPECT_TRUE(controller->deleteFiles(event));
+    auto event = dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << fileUrl_1);
+    bool (*stub_deleteFiles)(const QObject *, const DUrlList &, bool, bool, bool)
+    = [](const QObject *, const DUrlList &, bool, bool, bool) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, deleteFiles), stub_deleteFiles);
+
+    EXPECT_TRUE(controller->deleteFiles(event));
 }
 
 TEST_F(TestSearchController, renameFile)
@@ -111,58 +162,101 @@ TEST_F(TestSearchController, renameFile)
     to.setScheme(SEARCH_SCHEME);
     to.setSearchedFileUrl(DUrl::fromLocalFile(temp));
     auto event = dMakeEventPointer<DFMRenameEvent>(nullptr, fileUrl_1, to);
-    filePath_1 = temp;
+    bool (*stub_renameFile)(const QObject *, const DUrl &, const DUrl &, const bool)
+    = [](const QObject *, const DUrl &, const DUrl &, const bool) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, renameFile), stub_renameFile);
+
     EXPECT_TRUE(controller->renameFile(event));
 }
 
 TEST_F(TestSearchController, setPermissions)
 {
     auto event = dMakeEventPointer<DFMSetPermissionEvent>(nullptr, fileUrl_1, (QFileDevice::ReadOther | QFileDevice::ReadGroup | QFileDevice::ReadOwner));
+    bool (*stub_setPermissions)(const QObject *, const DUrl &, const QFileDevice::Permissions)
+    = [](const QObject *, const DUrl &, const QFileDevice::Permissions) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, setPermissions), stub_setPermissions);
+
     EXPECT_TRUE(controller->setPermissions(event));
 }
 
 TEST_F(TestSearchController, addToBookmark)
 {
-    // 阻塞CI
-    // auto event = dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, dirUrl);
-    // EXPECT_TRUE(!controller->addToBookmark(event));
+    auto event = dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, dirUrl);
+    bool (*stub_addToBookmark)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, addToBookmark), stub_addToBookmark);
+
+    EXPECT_TRUE(controller->addToBookmark(event));
 }
 
 TEST_F(TestSearchController, removeBookmark)
 {
-    // 阻塞CI
-    // auto event = dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, dirUrl);
-    // EXPECT_TRUE(!controller->removeBookmark(event));
+    auto event = dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, dirUrl);
+    bool (*stub_removeBookmark)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, removeBookmark), stub_removeBookmark);
+
+    EXPECT_TRUE(controller->removeBookmark(event));
 }
 
 TEST_F(TestSearchController, createSymlink)
 {
     QString symlinkPath = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/3.txt";
     auto event = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, fileUrl_1, DUrl::fromLocalFile(symlinkPath));
+    bool (*stub_createSymlink)(const QObject *, const DUrl &, const DUrl &, bool)
+    = [](const QObject *, const DUrl &, const DUrl &, bool) {
+        return true;
+    };
+    Stub stub;
+    stub.set((bool(DFileService::*)(const QObject *, const DUrl &, const DUrl &, bool) const)ADDR(DFileService, createSymlink), stub_createSymlink);
+
     EXPECT_TRUE(controller->createSymlink(event));
-    QProcess::execute("rm -f " + symlinkPath);
 }
 
 TEST_F(TestSearchController, shareFolder)
 {
-    // 阻塞CI
-    // auto event = dMakeEventPointer<DFMFileShareEvent>(nullptr, dirUrl, "hello");
-    // EXPECT_TRUE(controller->shareFolder(event));
+    auto event = dMakeEventPointer<DFMFileShareEvent>(nullptr, dirUrl, "hello");
+    bool (*stub_shareFolder)(const QObject *, const DUrl &, const QString &, bool, bool)
+    = [](const QObject *, const DUrl &, const QString &, bool, bool) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, shareFolder), stub_shareFolder);
+
+    EXPECT_TRUE(controller->shareFolder(event));
 }
 
 TEST_F(TestSearchController, unShareFolder)
 {
-    // 阻塞CI
-    // auto event = dMakeEventPointer<DFMFileShareEvent>(nullptr, dirUrl, "hello");
-    // controller->shareFolder(event);
+    auto unShareFolderEvent = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, dirUrl);
+    bool (*stub_unShareFolder)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, unShareFolder), stub_unShareFolder);
 
-    // auto unShareFolderEvent = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, dirUrl);
-    // EXPECT_TRUE(controller->unShareFolder(unShareFolderEvent));
+    EXPECT_TRUE(controller->unShareFolder(unShareFolderEvent));
 }
 
 TEST_F(TestSearchController, openInTerminal)
 {
     auto event = dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, dirUrl);
+    bool (*stub_openInTerminal)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, openInTerminal), stub_openInTerminal);
+
     EXPECT_TRUE(controller->openInTerminal(event));
 }
 
@@ -206,22 +300,35 @@ TEST_F(TestSearchController, createFileWatcher)
 TEST_F(TestSearchController, setFileTags)
 {
     auto event = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, fileUrl_1, QList<QString>({"红色"}));
+    bool (*stub_setFileTags)(const QObject *, const DUrl &, const QList<QString> &) = [](const QObject *, const DUrl &, const QList<QString> &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, setFileTags), stub_setFileTags);
+
     EXPECT_TRUE(controller->setFileTags(event));
 }
 
 TEST_F(TestSearchController, removeTagsOfFile)
 {
-    auto event = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, fileUrl_1, QList<QString>({"红色"}));
-    controller->setFileTags(event);
-    auto event1 = dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, fileUrl_1, QList<QString>({"红色"}));
-    EXPECT_TRUE(controller->removeTagsOfFile(event1));
+    auto event = dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, fileUrl_1, QList<QString>({"红色"}));
+    bool (*stub_removeTagsOfFile)(const QObject *, const DUrl &, const QList<QString> &) = [](const QObject *, const DUrl &, const QList<QString> &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, removeTagsOfFile), stub_removeTagsOfFile);
+
+    EXPECT_TRUE(controller->removeTagsOfFile(event));
 }
 
 TEST_F(TestSearchController, getTagsThroughFiles)
 {
-    auto event = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, fileUrl_1, QList<QString>({"红色"}));
-    controller->setFileTags(event);
-    auto event1 = dMakeEventPointer<DFMGetTagsThroughFilesEvent>(nullptr, QList<DUrl>({fileUrl_1}));
-    EXPECT_TRUE(!controller->getTagsThroughFiles(event1).isEmpty());
-}
+    auto event = dMakeEventPointer<DFMGetTagsThroughFilesEvent>(nullptr, QList<DUrl>({fileUrl_1}));
+    QList<QString> (*stub_getTagsThroughFiles)(const QObject *, const QList<DUrl> &, const bool) = [](const QObject *, const QList<DUrl> &, const bool) {
+        return QList<QString>();
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, getTagsThroughFiles), stub_getTagsThroughFiles);
+
+    EXPECT_TRUE(controller->getTagsThroughFiles(event).isEmpty());
 }
