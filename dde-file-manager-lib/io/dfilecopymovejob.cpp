@@ -2480,11 +2480,13 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl from, cons
     Q_UNUSED(dataSize)
 //    qCDebug(fileJob(), "directory. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(target.toString()), dataSize);
 
-//    completedDataSize += dataSize;
-    completedProgressDataSize += 4096;
+    // warning: isFromLocalUrls 对于外部挂载存储设备返回true，如果要修改 isFromLocalUrls 的含义
+    //          将会影响到以下判断逻辑
+    qint64 dirSize = (isFromLocalUrls && targetUrl.isValid()) ?  FileUtils::singleDirSize(from) : 4096;
+    completedProgressDataSize += dirSize;
     ++completedFilesCount;
 
-    countrefinesize(4096);
+    countrefinesize(dirSize);
 
     Q_EMIT q_ptr->completedFilesCountChanged(completedFilesCount);
 
@@ -3187,6 +3189,8 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
         char *paths[2] = {nullptr, nullptr};
         paths[0] = strdup(url.path().toUtf8().toStdString().data());
         FTS *fts = fts_open(paths, 0, nullptr);
+        if (paths[0])
+            free(paths[0]);
         if (nullptr == fts) {
             perror("fts_open");
             continue;
