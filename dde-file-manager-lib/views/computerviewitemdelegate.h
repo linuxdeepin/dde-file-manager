@@ -39,8 +39,12 @@ public:
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
+    void closeEditingEditor(ComputerListView *view);
+
 private:
     ComputerView *par;
+    mutable QLineEdit *editingEditor {nullptr};
+    mutable QModelIndex editingIndex;
 };
 
 

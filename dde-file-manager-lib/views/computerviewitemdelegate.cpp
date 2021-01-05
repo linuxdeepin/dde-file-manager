@@ -255,12 +255,21 @@ QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
 {
     Q_UNUSED(option)
     Q_UNUSED(index)
+    editingIndex = index;
     QLineEdit *le = new QLineEdit(parent);
+    editingEditor = le;
+
     le->setFrame(false);
     le->setTextMargins(0, 0, 0, 0);
     //消除编辑框背后多余的填充色
 //    le->setAutoFillBackground(true);
     le->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+    connect(le, &QLineEdit::destroyed, this, [this, le] {
+        if (editingEditor == le)
+            editingIndex = QModelIndex();
+    });
+
     return le;
 }
 
@@ -295,3 +304,18 @@ void ComputerViewItemDelegate::updateEditorGeometry(QWidget *editor, const QStyl
     textrect.setHeight(par->fontInfo().pixelSize() * 2);
     editor->setGeometry(textrect);
 }
+
+void ComputerViewItemDelegate::closeEditingEditor(ComputerListView *view)
+{
+    if (!view || !editingIndex.isValid())
+        return;
+
+    QWidget *editor = view->indexWidget(editingIndex);
+    if (!editor)
+        return;
+
+    QMetaObject::invokeMethod(this, "_q_commitDataAndCloseEditor",
+                              Qt::DirectConnection, Q_ARG(QWidget *, editor));
+}
+
+
