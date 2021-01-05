@@ -125,6 +125,11 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     actData.m_name = name;
     actionNameDynamicArg(actData);
 
+    //story#4481,产品变更暂不考虑icon
+#if 0
+    //icon
+    actData.m_icon = getValue(actionSetting, group, kActionIcon).toString();
+#endif
     //pos
     actData.m_position =  getValue(actionSetting, group, kActionPos).toInt();
     if (0 == actData.m_position && isSort) //未定义pos行为当前层级以上级指定顺序
@@ -202,7 +207,7 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 
         //comboPos
         if (!comboPosForTopAction(actionSetting, group, actData))
-            return false;//没有指明该一级菜单项支持的类型，自动作为无效废弃项
+            return false;//有一级菜单项支持的类型，但全无效，自动作为无效废弃项
         tpEntry.m_package = basicInfos.m_package;
         tpEntry.m_version = basicInfos.m_version;
         tpEntry.m_comment = basicInfos.m_comment;
