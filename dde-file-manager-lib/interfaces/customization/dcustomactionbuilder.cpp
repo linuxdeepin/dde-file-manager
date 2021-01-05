@@ -323,7 +323,8 @@ QAction *DCustomActionBuilder::createAciton(const DCustomActionData &actionData)
         if (elidedName != name)
             action->setToolTip(name);
     }
-
+//story#4481,产品变更暂不考虑图标
+#if 0
     //图标
     const QString &iconName = actionData.icon();
     if (!iconName.isEmpty()) {
@@ -331,7 +332,7 @@ QAction *DCustomActionBuilder::createAciton(const DCustomActionData &actionData)
         if (!icon.isNull())
             action->setIcon(icon);
     }
-
+#endif
     return action;
 }
 

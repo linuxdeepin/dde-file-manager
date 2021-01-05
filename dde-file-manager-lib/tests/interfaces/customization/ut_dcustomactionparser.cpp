@@ -178,6 +178,7 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
         << QString("GenericName[zh_CN]=应用1级").toUtf8() << endl
         << QString("Name=app-one").toUtf8() << endl
         << QString("Name[zh_CN]=应用1级").toUtf8() << endl
+        << QString("Icon=/home/ut_test.png") << endl
         << QString("PosNum=1").toUtf8() << endl
         << QString("Separator=None").toUtf8() << endl;
     tsm.flush();
@@ -239,7 +240,13 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser.m_actionEntry.clear();
     m_parser.m_topActionCount = 0;
     m_parser.parseFile(childrenActions, actionSetting5_1, "Menu Action Groupzero", basicInfos, needSort, true);
-    auto expectValue5_1= (1 == m_parser.m_actionEntry.size()) && ("应用1级" == m_parser.m_actionEntry.first().m_data.m_name);
+    auto expectValue5_1 = (1 == m_parser.m_actionEntry.size()) && ("应用1级" == m_parser.m_actionEntry.first().m_data.m_name);
+
+    //产品变更，icon暂不考虑
+#if 0
+    auto expectValueIcon =  "/home/ut_test.png" == m_parser.m_actionEntry.first().m_data.m_icon;
+    EXPECT_TRUE(expectValueIcon);
+#endif
     EXPECT_TRUE(expectValue5_1);
 
     tsm<< QString("X-DFM-MenuTypes=SingleFile").toUtf8() <<endl;

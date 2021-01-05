@@ -135,6 +135,7 @@ namespace DCustomActionDefines
     //菜单基本信息
     static const QLatin1String kActionGenericName("GenericName");
     static const QLatin1String kActionName("Name");
+    static const QLatin1String kActionIcon("Icon");
     static const QLatin1String kActionPos("PosNum");
     static const QLatin1String kActionSeparator("Separator");
     static const QLatin1String kActionCmd("Exec");
