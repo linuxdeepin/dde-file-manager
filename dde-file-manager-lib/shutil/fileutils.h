@@ -54,6 +54,7 @@ public:
                               QStringList *list);
     static int filesCount(const QString &dir);
     static QStringList filesList(const QString &dir);
+    static qint64 singleDirSize(const DUrl &url);
     static qint64 totalSize(const QString &targetFile);
     static qint64 totalSize(const DUrlList &files);
     static qint64 totalSize(const DUrlList &files, const qint64 &maxLimit, bool &isInLimit);

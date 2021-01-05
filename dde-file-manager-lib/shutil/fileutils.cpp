@@ -64,6 +64,7 @@
 
 #include <sys/vfs.h>
 #include <sys/stat.h>
+#include <fts.h>
 
 #undef signals
 extern "C" {
@@ -185,6 +186,33 @@ QStringList FileUtils::filesList(const QString &dir)
         appNames.append(it.filePath());
     }
     return appNames;
+}
+
+/**
+ * @brief 获取一个目录文件的大小
+ *
+ * 通常情况下，一个空目录文件的大小是 4k （有文件的目录的大小随文件数量的增加而增加）
+ * 但是不同的文件系统下，目录的大小是不同的 （如 exfat 是 32k，vfat 是 8k）
+ *
+ * @return fts_* 函数获取的结果，默认为 4096
+ */
+qint64 FileUtils::singleDirSize(const DUrl &url)
+{
+    qint64 size = 0;
+    char *paths[2] = {nullptr, nullptr};
+    paths[0] = strdup(url.path().toUtf8().data());
+    FTS *fts = fts_open(paths, 0, nullptr);
+
+    if (fts) {
+        FTSENT *ent = fts_read(fts);
+        if (ent && ent->fts_info == FTS_D)
+            size = ent->fts_statp->st_size <= 0 ? 4096 : ent->fts_statp->st_size;
+        fts_close(fts);
+    }
+
+    if (paths[0])
+        free(paths[0]);
+    return size;
 }
 
 qint64 FileUtils::totalSize(const QString &targetFile)
