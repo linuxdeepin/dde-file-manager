@@ -31,6 +31,7 @@
 #include "models/trashfileinfo.h"
 #include "controllers/vaultcontroller.h"
 #include "controllers/masteredmediacontroller.h"
+#include "controllers/avfsfilecontroller.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "shutil/fileutils.h"
 #include "dgiofiledevice.h"
@@ -3780,6 +3781,11 @@ void DFileCopyMoveJob::run()
         //! fix: 将保险箱路径转换为本地路径
         if (source.isVaultFile()) {
             source = VaultController::vaultToLocalUrl(source);
+        }
+
+        //! fix: 将avfs转化为本地路径
+        if (source.isAVFSFile()) {
+            source = AVFSFileController::realUrl(source);
         }
 
         const DAbstractFileInfoPointer &source_info = DFileService::instance()->createFileInfo(nullptr, source);
