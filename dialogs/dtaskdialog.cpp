@@ -473,7 +473,7 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
     });
 
     //! 任务对话框中显示数据同步种与即将完成
-    connect(job, &DFileCopyMoveJob::sendDataSyncing, wid, [wid](QString synctip, QString over){
+    connect(job, &DFileCopyMoveJob::sendDataSyncing, wid, [wid](QString synctip, QString over) {
         wid->setSpeedText(synctip, over);
     });
 
@@ -850,7 +850,7 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
     }
 }
 
-bool DTaskDialog::bHaveNotCompletedVaultTask()
+bool DTaskDialog::haveNotCompletedVaultTask()
 {
     return (mapNotCompleteVaultTask.count() > 0) ? true : false;
 }

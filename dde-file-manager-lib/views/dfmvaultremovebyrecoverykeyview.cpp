@@ -22,13 +22,14 @@
 #include "accessibility/ac-lib-file-manager.h"
 
 #include <dtkwidget_global.h>
-#include <QPlainTextEdit>
-
 #include <DToolTip>
 #include <DThemeManager>
+#include <DFloatingWidget>
+
 #include <QVBoxLayout>
 #include <QTimer>
-#include <DFloatingWidget>
+#include <QPlainTextEdit>
+
 
 #define MAX_KEY_LENGTH (32) //凭证最大值，4的倍数
 DWIDGET_USE_NAMESPACE

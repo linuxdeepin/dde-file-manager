@@ -17,7 +17,7 @@
  **/
 #pragma once
 
-#include "dtkwidget_global.h"
+#include <dtkwidget_global.h>
 #include <DDialog>
 
 DWIDGET_USE_NAMESPACE

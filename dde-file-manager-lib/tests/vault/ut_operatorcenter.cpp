@@ -19,21 +19,21 @@
 
 DFM_USE_NAMESPACE
 namespace  {
-    class TestOperatorCenter : public testing::Test
+class TestOperatorCenter : public testing::Test
+{
+public:
+    OperatorCenter *m_opCenter;
+    virtual void SetUp() override
     {
-    public:
-        OperatorCenter *m_opCenter;
-        virtual void SetUp() override
-        {
-            m_opCenter = &OperatorCenter::getInstance();
-            std::cout << "start TestOperatorCenter" << std::endl;
-        }
+        m_opCenter = OperatorCenter::getInstance();
+        std::cout << "start TestOperatorCenter" << std::endl;
+    }
 
-        virtual void TearDown() override
-        {
-            std::cout << "end TestOperatorCenter" << std::endl;
-        }
-    };
+    virtual void TearDown() override
+    {
+        std::cout << "end TestOperatorCenter" << std::endl;
+    }
+};
 }
 
 /**
@@ -44,7 +44,7 @@ TEST_F(TestOperatorCenter, createDirAndFile)
     EXPECT_TRUE(m_opCenter->createDirAndFile());
 
 
-    QString (*stubFun)(const QString &before, const QString &behind) = [](const QString &before, const QString &behind)->QString{
+    QString(*stubFun)(const QString & before, const QString & behind) = [](const QString & before, const QString & behind)->QString{
         Q_UNUSED(before)
         Q_UNUSED(behind)
         //do nothing.
@@ -64,15 +64,15 @@ TEST_F(TestOperatorCenter, saveSaltAndClipher)
     QString pswd("123456");
     QString hint("unit test.");
 
-    void (*st_operator)(void* obj, const QString &str) = [](void* obj, const QString &str){
+    void (*st_operator)(void *obj, const QString & str) = [](void *obj, const QString & str) {
         Q_UNUSED(obj)
         Q_UNUSED(str)
         //do nothing.
     };
 
     Stub stub;
-    stub.set((QTextStream&(QTextStream::*)(const QString &)) ADDR(QTextStream, operator<<), st_operator);
-    EXPECT_TRUE(m_opCenter->saveSaltAndClipher(pswd, hint));
+    stub.set((QTextStream & (QTextStream::*)(const QString &)) ADDR(QTextStream, operator<<), st_operator);
+    EXPECT_TRUE(m_opCenter->saveSaltAndCiphertext(pswd, hint));
 }
 
 /**
@@ -83,14 +83,14 @@ TEST_F(TestOperatorCenter, createKey)
     QString pswd("123456");
     QString hint("unit test.");
 
-    void (*st_operator)(void* obj, const QString &str) = [](void* obj, const QString &str){
+    void (*st_operator)(void *obj, const QString & str) = [](void *obj, const QString & str) {
         Q_UNUSED(obj)
         Q_UNUSED(str)
         //do nothing.
     };
 
     Stub stub;
-    stub.set((QTextStream&(QTextStream::*)(const QString &)) ADDR(QTextStream, operator<<), st_operator);
+    stub.set((QTextStream & (QTextStream::*)(const QString &)) ADDR(QTextStream, operator<<), st_operator);
     EXPECT_TRUE(m_opCenter->createKey(pswd, 0));
     EXPECT_FALSE(m_opCenter->createKey(pswd, 2048));
 }
@@ -117,8 +117,8 @@ TEST_F(TestOperatorCenter, checkUserKey)
     userKey.resize(USER_KEY_LENGTH);
     EXPECT_FALSE(m_opCenter->checkUserKey(userKey, cliper));
 
-    QString (*st_makeVaultLocalPath)(const QString &before, const QString &behind) =
-            [](const QString &before, const QString &behind)->QString{
+    QString(*st_makeVaultLocalPath)(const QString & before, const QString & behind) =
+    [](const QString & before, const QString & behind)->QString{
         Q_UNUSED(before)
         Q_UNUSED(behind)
         //do nothing.
@@ -150,7 +150,7 @@ TEST_F(TestOperatorCenter, getPasswordHint)
     QString strPasswordHintFilePath = VaultController::makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
     QString passwordHint = "";
-    if(passwordHintFile.open(QIODevice::Text | QIODevice::ReadOnly)){
+    if (passwordHintFile.open(QIODevice::Text | QIODevice::ReadOnly)) {
         passwordHint = QString(passwordHintFile.readAll());
     }
     passwordHintFile.close();
@@ -190,7 +190,7 @@ TEST_F(TestOperatorCenter, vaultState)
  */
 TEST_F(TestOperatorCenter, getSaltAndPasswordClipher)
 {
-    EXPECT_NO_FATAL_FAILURE(m_opCenter->getSaltAndPasswordClipher());
+    EXPECT_NO_FATAL_FAILURE(m_opCenter->getSaltAndPasswordCipher());
 }
 
 /**

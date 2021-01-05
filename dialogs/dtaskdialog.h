@@ -76,7 +76,7 @@ public:
     void updateData(DFMTaskWidget *wid, const QMap<QString, QString> &data);
 
     // 是否有未完成的保险箱任务
-    bool bHaveNotCompletedVaultTask();
+    bool haveNotCompletedVaultTask();
     // 置顶显示任务对话框
     void showDialogOnTop();
     // 结束当前未完成的保险箱任务

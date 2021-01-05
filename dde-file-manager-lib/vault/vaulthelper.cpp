@@ -21,15 +21,14 @@
 
 #include "singleton.h"
 #include "app/define.h"
+#include "vault/interfaceactivevault.h"
+#include "vaulthelper.h"
+#include "dialogs/dialogmanager.h"
+#include "dialogs/dtaskdialog.h"
 
 #include <DWindowManagerHelper>
 #include <DForeignWindow>
-#include "dialogs/dialogmanager.h"
-#include "dialogs/dtaskdialog.h"
 #include <DSysInfo>
-
-#include "vault/interfaceactivevault.h"
-#include "vaulthelper.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -47,8 +46,8 @@ bool VaultHelper::topVaultTasks()
 {
     // 如果正在有保险箱的移动、粘贴、删除操作，置顶弹出任务框
     DTaskDialog *pTaskDlg = dialogManager->taskDialog();
-    if(pTaskDlg){
-        if(pTaskDlg->bHaveNotCompletedVaultTask()){
+    if (pTaskDlg) {
+        if (pTaskDlg->haveNotCompletedVaultTask()) {
             // Flashing alert
             pTaskDlg->hide();
             pTaskDlg->showDialogOnTop();
@@ -60,41 +59,41 @@ bool VaultHelper::topVaultTasks()
     QStringList lstShellOutput;
     // 执行shell命令，获得压缩进程PID
     int res = InterfaceActiveVault::executionShellCommand(strCmd, lstShellOutput);
-    if(res == 0){   // shell命令执行成功
+    if (res == 0) { // shell命令执行成功
         QStringList::const_iterator itr = lstShellOutput.begin();
         QSet<QString> setResult;
-        for(; itr != lstShellOutput.end(); ++itr){
+        for (; itr != lstShellOutput.end(); ++itr) {
             setResult.insert(*itr);
         }
-        if(setResult.count() > 0){  // 有压缩任务
+        if (setResult.count() > 0) { // 有压缩任务
             // 遍历桌面窗口
             bool bFlag = false;
-            for(auto window: DWindowManagerHelper::instance()->currentWorkspaceWindows()) {
+            for (auto window : DWindowManagerHelper::instance()->currentWorkspaceWindows()) {
                 QString strWid = QString("%1").arg(window->pid());
                 // 如果当前窗口的进程PID属于压缩进程，则将窗口置顶
-                if(setResult.contains(strWid)){
+                if (setResult.contains(strWid)) {
                     window->raise();
                     bFlag = true;
                 }
             }
-            if(bFlag){
+            if (bFlag) {
                 return true;
             }
         }
-    }else{
+    } else {
         qDebug() << "Failed to execute PID search command!";
     }
 
     //! 如果正在有保险箱的移动、粘贴到桌面的任务，通知桌面进程置顶任务对话框
     QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
-                                                           "/org/freedesktop/FileManager1",
-                                                           "org.freedesktop.FileManager1",
-                                                           "topTaskDialog");
+                                                          "/org/freedesktop/FileManager1",
+                                                          "org.freedesktop.FileManager1",
+                                                          "topTaskDialog");
     // 修复BUG-44055 设置超时等待为1000毫米，提高用户操作流畅度
     QDBusMessage response = QDBusConnection::sessionBus().call(message, QDBus::Block, 1000);
-    if(response.type() == QDBusMessage::ReplyMessage){
+    if (response.type() == QDBusMessage::ReplyMessage) {
         bool bValue = response.arguments().takeFirst().toBool();
-        if(bValue){
+        if (bValue) {
             return true;
         }
     }
@@ -107,7 +106,7 @@ bool VaultHelper::killVaultTasks()
     //! 如果正在有保险箱的移动、粘贴、删除操作，强行结束任务
     DTaskDialog *pTaskDlg = dialogManager->taskDialog();
     if (pTaskDlg) {
-        if (pTaskDlg->bHaveNotCompletedVaultTask()) {
+        if (pTaskDlg->haveNotCompletedVaultTask()) {
             pTaskDlg->stopVaultTask();
         }
     }
@@ -146,10 +145,10 @@ bool VaultHelper::killVaultTasks()
 
 bool VaultHelper::isVaultEnabled()
 {
-    if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
+    if (!DSysInfo::isCommunityEdition()) {  // 如果不是社区版
         DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
         // 如果是专业版
-        if(DSysInfo::DeepinType::DeepinProfessional == deepinType){
+        if (DSysInfo::DeepinType::DeepinProfessional == deepinType) {
             return true;
         }
     }

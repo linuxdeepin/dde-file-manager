@@ -40,12 +40,12 @@ DBusFileManager1::DBusFileManager1(QObject *parent)
 {
     // monitor screen lock event.
     QDBusConnection::sessionBus().connect(
-                "com.deepin.SessionManager",
-                "/com/deepin/SessionManager",
-                "org.freedesktop.DBus.Properties",
-                "PropertiesChanged","sa{sv}as",
-                this,
-                SLOT(lockPropertyChanged(QDBusMessage)));
+        "com.deepin.SessionManager",
+        "/com/deepin/SessionManager",
+        "org.freedesktop.DBus.Properties",
+        "PropertiesChanged", "sa{sv}as",
+        this,
+        SLOT(lockPropertyChanged(QDBusMessage)));
 }
 
 void DBusFileManager1::ShowFolders(const QStringList &URIs, const QString &StartupId)
@@ -81,11 +81,11 @@ void DBusFileManager1::ShowItems(const QStringList &URIs, const QString &Startup
 void DBusFileManager1::Trash(const QStringList &URIs)
 {
     DUrlList urls;
-    foreach (const QString& path, URIs) {
+    foreach (const QString &path, URIs) {
         DUrl tempUrl = DUrl::fromUserInput(path);
         urls << tempUrl;
     }
-   DFileService::instance()->moveToTrash(this, urls);
+    DFileService::instance()->moveToTrash(this, urls);
 
 }
 
@@ -98,11 +98,9 @@ bool DBusFileManager1::topTaskDialog()
 {
     // 如果正在有保险箱的移动、粘贴操作，置顶弹出任务框
     DTaskDialog *pTaskDlg = dialogManager->taskDialog();
-    if(pTaskDlg){
-        if(pTaskDlg->bHaveNotCompletedVaultTask()){
-            pTaskDlg->showDialogOnTop();
-            return true;
-        }
+    if (pTaskDlg && pTaskDlg->haveNotCompletedVaultTask()) {
+        pTaskDlg->showDialogOnTop();
+        return true;
     }
     return false;
 }
@@ -111,10 +109,8 @@ void DBusFileManager1::closeTask()
 {
     // 如果正在有保险箱的移动、粘贴、删除操作，强行结束任务
     DTaskDialog *pTaskDlg = dialogManager->taskDialog();
-    if(pTaskDlg){
-        if(pTaskDlg->bHaveNotCompletedVaultTask()){
-            pTaskDlg->stopVaultTask();
-        }
+    if (pTaskDlg && pTaskDlg->haveNotCompletedVaultTask()) {
+        pTaskDlg->stopVaultTask();
     }
 }
 

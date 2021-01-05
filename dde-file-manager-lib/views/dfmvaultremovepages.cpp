@@ -1,3 +1,25 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
+
 #include "dfmvaultremovepages.h"
 #include "vault/interfaceactivevault.h"
 #include "vault/vaultlockmanager.h"
@@ -10,13 +32,15 @@
 #include "accessibility/ac-lib-file-manager.h"
 #include "vaulthelper.h"
 
+#include <DLabel>
+
 #include <QFrame>
 #include <QRegExpValidator>
 #include <QStackedWidget>
 #include <QAbstractButton>
 #include <QLabel>
 #include <QVBoxLayout>
-#include <DLabel>
+
 
 DWIDGET_USE_NAMESPACE
 
@@ -173,9 +197,9 @@ void DFMVaultRemovePages::onButtonClicked(int index)
         if (m_stackedWidget->currentIndex() == 0) {
             // 密码验证
             QString strPwd = m_passwordView->getPassword();
-            QString strClipher("");
+            QString strCipher("");
 
-            if (!InterfaceActiveVault::checkPassword(strPwd, strClipher)) {
+            if (!InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
                 m_passwordView->showToolTip(tr("Wrong password"), 3000, DFMVaultRemoveByPasswordView::EN_ToolTip::Warning);
                 return;
             }
@@ -183,9 +207,9 @@ void DFMVaultRemovePages::onButtonClicked(int index)
             // 密钥验证
             QString strKey = m_recoverykeyView->getRecoverykey();
             strKey.replace("-", "");
-            QString strClipher("");
+            QString strCipher("");
 
-            if (!InterfaceActiveVault::checkUserKey(strKey, strClipher)) {
+            if (!InterfaceActiveVault::checkUserKey(strKey, strCipher)) {
                 m_recoverykeyView->showAlertMessage(tr("Wrong recovery key"));
                 return;
             }

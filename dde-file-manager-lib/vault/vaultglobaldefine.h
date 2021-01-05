@@ -1,3 +1,24 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #ifndef VAULTGLOBALDEFINE_H
 #define VAULTGLOBALDEFINE_H
 
@@ -11,13 +32,15 @@
 
 #define PASSWORD_FILE_NAME              "pbkdf2clipher"
 #define RSA_PUB_KEY_FILE_NAME           "rsapubkey"
-#define RSA_CLIPHERTEXT_FILE_NAME       "rsaclipher"
+#define RSA_CIPHERTEXT_FILE_NAME        "rsaclipher"
 #define PASSWORD_HINT_FILE_NAME         "passwordHint"
+#define VAULT_CONFIG_FILE_NAME          "vaultConfig.ini"
 
 
 #define RANDOM_SALT_LENGTH              10              // 随机盐的字节数
 #define ITERATION                       1024            // pbkdf2迭代次数
-#define PASSWORD_CLIPHER_LENGTH         50              // 密码密文长度
+#define ITERATION_TWO                   10000           // pbkdf2迭代次数
+#define PASSWORD_CIPHER_LENGTH         50              // 密码密文长度
 #define USER_KEY_LENGTH                 32              // 用户密钥长度
 #define USER_KEY_INTERCEPT_INDEX        50              // 用户密钥从公钥中截取的起始点索引
 

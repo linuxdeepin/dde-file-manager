@@ -1,6 +1,30 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #include "dfmvaultactivesavekeyview.h"
 #include "operatorcenter.h"
 #include "accessibility/ac-lib-file-manager.h"
+
+#include <DButtonBox>
+#include <DLabel>
 
 #include <QLabel>
 #include <QPushButton>
@@ -9,8 +33,6 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QHBoxLayout>
-#include <DButtonBox>
-#include <DLabel>
 #include <QPlainTextEdit>
 
 DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
@@ -59,7 +81,7 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     m_pQRCodeImage->setFixedSize(120, 120);
     m_pQRCodeImage->setVisible(false);
 
-    QList<DButtonBoxButton*> lstBtn;
+    QList<DButtonBoxButton *> lstBtn;
     lstBtn.push_back(m_pKeyBtn);
     lstBtn.push_back(m_pQRCodeBtn);
     m_pButtonBox->setButtonList(lstBtn, true);
@@ -97,7 +119,7 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
 
 void DFMVaultActiveSaveKeyView::showEvent(QShowEvent *event)
 {
-    QString strUserKey = OperatorCenter::getInstance().getUserKey();
+    QString strUserKey = OperatorCenter::getInstance()->getUserKey();
     qDebug() << "user key: " << strUserKey;
 
     QString strKeyShow = strUserKey;
@@ -110,7 +132,7 @@ void DFMVaultActiveSaveKeyView::showEvent(QShowEvent *event)
     strKeyShow.insert(4, '-');
     QString strContent = QString(tr("Recovery Key:")) + strKeyShow;
     QPixmap QRCodePix;
-    if(OperatorCenter::getInstance().createQRCode(strContent, m_pQRCodeImage->width(), m_pQRCodeImage->height(), QRCodePix))
+    if (OperatorCenter::getInstance()->createQRCode(strContent, m_pQRCodeImage->width(), m_pQRCodeImage->height(), QRCodePix))
         m_pQRCodeImage->setPixmap(QRCodePix);
     m_pKeyText->setPlainText(strKeyShow);
 

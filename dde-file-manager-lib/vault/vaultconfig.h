@@ -19,33 +19,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef DFMVAULTACTIVESTARTVIEW_H
-#define DFMVAULTACTIVESTARTVIEW_H
+#ifndef VAULTCONFIG_H
+#define VAULTCONFIG_H
 
-#include <dtkwidget_global.h>
+#define CONFIG_NODE_NAME            "INFO"
+#define CONFIG_KEY_CIPHER           "pbkgcipher"
+#define CONFIG_KEY_VERSION          "version"
+#define CONFIG_VAULT_VERSION        "new"
 
-#include <QWidget>
+#include <QVariant>
 
 QT_BEGIN_NAMESPACE
-class QPushButton;
+class QSettings;
 QT_END_NAMESPACE
 
-class DFMVaultActiveStartView : public QWidget
+class VaultConfig
 {
-    Q_OBJECT
 public:
-    explicit DFMVaultActiveStartView(QWidget *parent = nullptr);
-
-signals:
-    void sigAccepted();
-
-private slots:
-    void slotStartBtnClicked();
-
-public slots:
+    VaultConfig(const QString &filePath = "");
+    ~VaultConfig();
+    void set(const QString &nodeName, const QString &keyName, QVariant value);
+    QVariant get(const QString &nodeName, const QString &keyName);
 
 private:
-    QPushButton         *m_pStartBtn;   // 开启包厢按钮
+    QString m_filePath;
+    QSettings *m_pSetting;
 };
 
-#endif // DFMVAULTACTIVESTARTVIEW_H
+#endif // VAULTCONFIG_H

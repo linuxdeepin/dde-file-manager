@@ -1,6 +1,30 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #include "dfmvaultactivesetunlockmethodview.h"
 #include "operatorcenter.h"
 #include "accessibility/ac-lib-file-manager.h"
+
+#include <DPasswordEdit>
+#include <DLabel>
 
 #include <QLineEdit>
 #include <QPushButton>
@@ -14,8 +38,6 @@
 #include <QComboBox>
 #include <QSlider>
 #include <QVBoxLayout>
-#include <DPasswordEdit>
-#include <DLabel>
 
 DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *parent)
     : QWidget(parent)
@@ -167,7 +189,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     play->addWidget(m_pNext, 0, Qt::AlignCenter);
 
     // 创建文件夹与目录
-    if (!OperatorCenter::getInstance().createDirAndFile()) return;
+    if (!OperatorCenter::getInstance()->createDirAndFile()) return;
 }
 
 void DFMVaultActiveSetUnlockMethodView::clearText()
@@ -269,8 +291,8 @@ void DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked()
 {
     QString strPassword = m_pPassword->text();
     QString strPasswordHint = m_pTips->text();
-    if (OperatorCenter::getInstance().saveSaltAndClipher(strPassword, strPasswordHint)
-            && OperatorCenter::getInstance().createKey(strPassword, USER_KEY_LENGTH))
+    if (OperatorCenter::getInstance()->saveSaltAndCiphertext(strPassword, strPasswordHint)
+            && OperatorCenter::getInstance()->createKey(strPassword, USER_KEY_LENGTH))
         emit sigAccepted();
 }
 

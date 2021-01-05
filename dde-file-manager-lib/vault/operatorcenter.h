@@ -1,19 +1,38 @@
+/**
+ * Copyright (C) 2020 Union Technology Co., Ltd.
+ *
+ * Author:     gong heng <gongheng@uniontech.com>
+ *
+ * Maintainer: gong heng <gongheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
 #ifndef OPERATORCENTER_H
 #define OPERATORCENTER_H
 
-#include <QObject>
-
 #include "vaultglobaldefine.h"
 
+#include <DSecureString>
+
+#include <QObject>
 
 class OperatorCenter : public QObject
 {
     Q_OBJECT
 public:
-    inline static OperatorCenter &getInstance(){
-        static OperatorCenter instance;
-        return instance;
-    }
+    static OperatorCenter *getInstance();
     ~OperatorCenter();
 
     /**
@@ -23,11 +42,12 @@ public:
     bool createDirAndFile();
 
     /**
-     * @brief saveSaltAndClipher pbkdf2加密密码，并将盐和密文写入密码文件
+     * @brief saveSaltAndCiphertext pbkdf2加密密码，并将盐和密文写入密码文件
      * @param password 密码
+     * @param passwordHint 密码提示
      * @return 是否成功
      */
-    bool saveSaltAndClipher(const QString &password, const QString &passwordHint);
+    bool saveSaltAndCiphertext(const QString &password, const QString &passwordHint);
 
     /**
      * @brief createKey rsa生成密钥对，私钥加密密码，将密文写入文件，将一部分公钥写入文件（另一部分公钥提供给用户）
@@ -40,18 +60,18 @@ public:
     /**
      * @brief checkPassword 验证密码是否正确
      * @param password 密码
-     * @param clipher 如果密码正确，返回加密后的密文，用于解锁保险箱
+     * @param cipher 如果密码正确，返回加密后的密文，用于解锁保险箱
      * @return 是否正确
      */
-    bool checkPassword(const QString &password, QString &clipher);
+    bool checkPassword(const QString &password, QString &cipher);
 
     /**
      * @brief checkUserKey 验证用户密钥是否正确
      * @param userKey 用户密钥
-     * @param clipher 如果密钥正确，返回加密后的密文，用于解锁保险箱
+     * @param cipher 如果密钥正确，返回加密后的密文，用于解锁保险箱
      * @return 是否正确
      */
-    bool checkUserKey(const QString &userKey, QString &clipher);
+    bool checkUserKey(const QString &userKey, QString &cipher);
 
     /**
      * @brief getUserKey 获得用户密钥
@@ -80,7 +100,10 @@ public:
     EN_VaultState vaultState();
 
     //! 获取盐值及密码密文
-    QString getSaltAndPasswordClipher();
+    QString getSaltAndPasswordCipher();
+
+    //! 清除盐值及密码密文的缓存
+    void clearSaltAndPasswordCipher();
 
     //! 获得加密文件夹路径
     QString getEncryptDirPath();
@@ -109,10 +132,13 @@ private:
     QString makeVaultLocalPath(const QString &before = "", const QString &behind = "");
     bool runCmd(const QString &cmd);
     bool executeProcess(const QString &cmd);
+    // 保存第二次加密后的密文,并更新保险箱版本信息
+    bool secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt);
 
 private:
-    QString                 m_strUserKey;
-    QString                 standOutput_;
+    Dtk::Core::DSecureString        m_strCryfsPassword; // cryfs密码
+    QString                         m_strUserKey;
+    QString                         m_standOutput;
 };
 
 #endif // OPERATORCENTER_H

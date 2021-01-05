@@ -22,6 +22,7 @@
 #define DFMVAULTREMOVEBYPASSWORDVIEW_H
 
 #include <dtkwidget_global.h>
+
 #include <QWidget>
 
 class QLineEdit;
