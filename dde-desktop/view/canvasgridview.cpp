@@ -888,7 +888,21 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
 
 void CanvasGridView::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    QModelIndex index = indexAt(event->pos());
+    auto pos = event->pos();
+    QModelIndex index = indexAt(pos);
+
+    //bug59277桌面修改文件夹名称，双击进入文件夹，会进入桌面目录
+    //若在编辑中则直接完成编辑，并在重名完成后使用新的名称发送doubleClicked信号
+    if (itemDelegate()->editingIndexWidget() && (index == itemDelegate()->editingIndex())) {
+        //结束重名
+        itemDelegate()->commitDataAndCloseActiveEditor();
+        QTimer::singleShot(200,this,[this,pos]() {
+            //因为重名后原有的index会改变，但所处位置pos不变，因此使用pos重新获取index
+            emit doubleClicked(indexAt(pos));
+        });
+        return;
+    }
+
     QPersistentModelIndex persistent = index;
     emit doubleClicked(persistent);
     if ((event->button() == Qt::LeftButton) && !edit(persistent, DoubleClicked, event)
@@ -2644,8 +2658,7 @@ void CanvasGridView::initConnection()
         }
     });
 
-    connect(this, &CanvasGridView::doubleClicked,
-    this, [this](const QModelIndex & index) {
+    connect(this, &CanvasGridView::doubleClicked, this, [this](const QModelIndex &index) {
         DUrl url = model()->getUrlByIndex(index);
         openUrl(url);
     }, Qt::QueuedConnection);
