@@ -83,6 +83,7 @@ public:
     DHorizontalLine *emptyTrashSplitLine { nullptr };
     DRenameBar *renameBar{ nullptr };
     DFMAdvanceSearchBar *advanceSearchBar = nullptr;
+    QScrollArea *advanceSearchArea = nullptr;
 
     QMap<DUrl, QWidget *> views;
 
