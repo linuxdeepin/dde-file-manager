@@ -433,7 +433,13 @@ void DFileManagerWindowPrivate::initAdvanceSearchBar()
 
     int renameWidgetIndex = rightViewLayout->indexOf(renameBar);
     int advanceSearchBarInsertTo = renameWidgetIndex == -1 ? 0 : renameWidgetIndex + 1;
-    rightViewLayout->insertWidget(advanceSearchBarInsertTo, advanceSearchBar);
+
+    // fix bug 59215 挤压导致界面异常，使用QScrollArea处理
+    advanceSearchArea = new QScrollArea(q);
+    advanceSearchArea->setWidget(advanceSearchBar);
+    advanceSearchArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//隐藏横向滚动条
+    advanceSearchArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//隐藏竖向滚动条
+    rightViewLayout->insertWidget(advanceSearchBarInsertTo, advanceSearchArea);
 
     QObject::connect(advanceSearchBar, &DFMAdvanceSearchBar::optionChanged, q, [ = ](const QMap<int, QVariant> &formData, bool updateView) {
         if (currentView) {
@@ -447,7 +453,7 @@ void DFileManagerWindowPrivate::initAdvanceSearchBar()
 
 bool DFileManagerWindowPrivate::isAdvanceSearchBarVisible() const
 {
-    return advanceSearchBar ? advanceSearchBar->isVisible() : false;
+    return advanceSearchArea ? advanceSearchArea->isVisible() : false;
 }
 
 void DFileManagerWindowPrivate::setAdvanceSearchBarVisible(bool visible)
@@ -457,7 +463,7 @@ void DFileManagerWindowPrivate::setAdvanceSearchBarVisible(bool visible)
         initAdvanceSearchBar();
     }
 
-    advanceSearchBar->setVisible(visible);
+    advanceSearchArea->setVisible(visible);
 }
 
 void DFileManagerWindowPrivate::initRenameBar()
