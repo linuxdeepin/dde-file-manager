@@ -115,13 +115,31 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     DCustomActionData actData;
     //暂时用localname 和name,方式有些不确定，oem和之前的自定义右键是localName，打开方式又好像是genaricName
     //后续确认优化
-    QString localName = QString("Name[%1]").arg(QLocale::system().name());
-    QString name = getValue(actionSetting, group, localName).toString().trimmed();
+    //目前菜单项名的国际化暂支持"语言_地区/国家"或“语言”简写，即支持“zh_CN”或“zh”的方式。若未找到对应国际化信息，则采用兜底信息
+    QString name;
+    auto getNameByType = [this, &name, &actionSetting, group](const QString& type) {
+
+        QString systemName = QLocale::system().name().trimmed();
+        QString localName = QString("%1[%2]").arg(type).arg(systemName);
+        name = getValue(actionSetting, group, localName).toString().trimmed();
+        QStringList localeList = systemName.trimmed().split("_");
+
+        if (name.isEmpty() && localeList.size() > 0) {
+            localName = QString("%1[%2]").arg(type).arg(localeList.first());
+            name = getValue(actionSetting, group, localName).toString().trimmed();
+        }
+
+        if (name.isEmpty()) {
+            name = getValue(actionSetting, group, type).toString().trimmed();
+        }
+    };
+
+    getNameByType(kActionName);
     if (name.isEmpty()) {
-        name =  getValue(actionSetting, group, kActionName).toString();
-        if (name.isEmpty())
-            return false; //无name无action
+        qInfo() << "systemName: " << QLocale::system().name();
+        return false;
     }
+  
     actData.m_name = name;
     actionNameDynamicArg(actData);
 

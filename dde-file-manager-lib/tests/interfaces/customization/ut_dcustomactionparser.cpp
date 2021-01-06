@@ -11,6 +11,7 @@
 #include <QStandardPaths>
 #include <QTextStream>
 #include <QProcess>
+#include "stubext.h"
 using namespace DCustomActionDefines;
 
 namespace  {
@@ -227,6 +228,8 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
         << QString("GenericName[zh_CN]=应用1级二").toUtf8() << endl
         << QString("Name=app-one").toUtf8() << endl
         << QString("Name[zh_CN]=应用1级二").toUtf8() << endl
+        << QString("Name[ko]=韩语").toUtf8() << endl
+        << QString("Name[am_ET]=一种语言").toUtf8() << endl
         << QString("PosNum=1").toUtf8() << endl
         << QString("Separator=None").toUtf8() << endl
         << QString("Exec=/opt/apps/xxxxxx %U").toUtf8() <<endl;
@@ -252,6 +255,48 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     tsm<< QString("X-DFM-MenuTypes=SingleFile").toUtf8() <<endl;
     tsm.flush();
     invalidFile.flush();
+
+    {
+        QSettings actionSetting(invalidFilePath, QSettings::IniFormat);
+        actionSetting.setIniCodec("UTF-8");
+        m_parser.m_hierarchyNum = 0;
+        m_parser.m_actionEntry.clear();
+        m_parser.m_topActionCount = 0;
+        stub_ext::StubExt stu;
+        stu.set_lamda(ADDR(QLocale, name), [](){return "zh_CN";});
+        m_parser.parseFile(childrenActions, actionSetting5_1, "Menu Action GroupzeroT", basicInfos, needSort, true);
+        auto expectValue = ("应用1级二" == m_parser.m_actionEntry.first().m_data.m_name);
+        EXPECT_TRUE(expectValue);
+
+    }
+
+    {
+        QSettings actionSetting(invalidFilePath, QSettings::IniFormat);
+        actionSetting.setIniCodec("UTF-8");
+        m_parser.m_hierarchyNum = 0;
+        m_parser.m_actionEntry.clear();
+        m_parser.m_topActionCount = 0;
+        stub_ext::StubExt stu;
+        stu.set_lamda(ADDR(QLocale, name), [](){return "ko_KR";});
+        m_parser.parseFile(childrenActions, actionSetting5_1, "Menu Action GroupzeroT", basicInfos, needSort, true);
+        auto expectValue = ("韩语" == m_parser.m_actionEntry.first().m_data.m_name);
+        EXPECT_TRUE(expectValue);
+
+    }
+
+    {
+        QSettings actionSetting(invalidFilePath, QSettings::IniFormat);
+        actionSetting.setIniCodec("UTF-8");
+        m_parser.m_hierarchyNum = 0;
+        m_parser.m_actionEntry.clear();
+        m_parser.m_topActionCount = 0;
+        stub_ext::StubExt stu;
+        stu.set_lamda(ADDR(QLocale, name), [](){return "am_ET";});
+        m_parser.parseFile(childrenActions, actionSetting5_1, "Menu Action GroupzeroT", basicInfos, needSort, true);
+        auto expectValue = ("一种语言" == m_parser.m_actionEntry.first().m_data.m_name);
+        EXPECT_TRUE(expectValue);
+
+    }
 
     QSettings actionSetting5_2(invalidFilePath, QSettings::IniFormat);
     actionSetting5_2.setIniCodec("UTF-8");
