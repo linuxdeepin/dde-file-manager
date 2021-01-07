@@ -2026,6 +2026,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
                     this->delayArrage();
 #endif
             } else {
+                //在多屏情况下，该信号会导致文件改名后被移动位置（原因是每个画布对象都有一个watcher，文件改名时每个画布都会处理，从而非文件所在的画布就会发送该信号）
                 //Q_EMIT itemCreated(dstUrl);
             }
         }
