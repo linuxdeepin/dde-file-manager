@@ -153,9 +153,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
     QMultiMap<int, QString> cookieToFileName;
     QSet<int> hasMoveFromByCookie;
 #ifdef QT_DEBUG
-#if 0
     int exist_count = 0;
-#endif
 #endif
     while (at < end) {
         inotify_event *event = reinterpret_cast<inotify_event *>(at);
@@ -174,6 +172,14 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
         }
 
         if (!(event->mask & IN_MOVED_TO) || !hasMoveFromByCookie.contains(event->cookie)) {
+            //fix bug57628归档管理器压缩成功后，桌面不显示
+            //归档管理器使用命令调用7z完成压缩，压缩多个文件不在相同路径时会采用追加的方式，每次追加都会创建zip.tmp文件，追加后删除zip，再移动zip.tmp为zip文件。
+            //多次追加时会创建多次zip.tmp文件，如果丢弃后面的创建事件，会导致移动时找不到原文件。
+            /*!
+             * 经查以下代码提交记录，以及与作者陈可沟通确认，添加去除重复事件的逻辑，是为了处理当时的wps表格保存含有大量数据行时，会收到多次重复的保存事件，导致wps表格卡死。
+             * 在现有的版本（wps表格：11.1.0.9719）测试问题已不存在，谨慎放开。
+            */
+#ifdef QT_DEBUG
             auto it = std::find_if(eventList.begin(), eventList.end(), [event](inotify_event *e){
                     return event->wd == e->wd && event->mask == e->mask &&
                            event->cookie == e->cookie &&
@@ -181,16 +187,14 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
                            !strcmp(event->name, e->name);
             });
 
-            if (it==eventList.end()) {
-                eventList.append(event);
-            }
-#ifdef QT_DEBUG
-            else {
-//                qDebug() << "exist event:" << "event->wd" << event->wd <<
-//                            "event->mask" << event->mask <<
-//                            "event->cookie" << event->cookie << "exist counts " << ++exist_count;
+            if (it != eventList.end()) {
+                qDebug() << "exist event and event->wd:" << event->wd << "event->mask:" << event->mask
+                         << "event->cookie:" << event->cookie << "event->len:" << event->len
+                         << "event->name:" << event->name << "exist counts " << ++exist_count;
             }
 #endif
+            eventList.append(event);
+
             const QList<QString> bps = batch_pathmap.values(id);
             for (auto &path : paths) {
                 if (!bps.contains(path)) {
@@ -210,7 +214,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             hasMoveFromByCookie << event->cookie;
     }
 
-//    qDebug() << "event count:" << eventList.count();
+    qDebug() << "event count:" << eventList.count();
 
     QList<inotify_event *>::const_iterator it = eventList.constBegin();
     while (it != eventList.constEnd()) {
