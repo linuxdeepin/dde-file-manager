@@ -487,7 +487,13 @@ DUrl UDiskDeviceInfo::redirectedFileUrl() const
 {
     DUrl ret = getMountPointUrl();
 
-    QString dbuspath = DDiskManager::resolveDeviceNode(m_diskInfo.unix_device(), {}).first();
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(m_diskInfo.unix_device(), {});
+    if (nodes.isEmpty()) {
+        qWarning() << "can't get the node list from: " << m_diskInfo.unix_device();
+        return ret;
+    }
+
+    QString dbuspath = nodes.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dbuspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {

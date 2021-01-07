@@ -91,8 +91,15 @@ int MasteredMediaFileInfo::filesCount() const
 QString MasteredMediaFileInfo::fileDisplayName() const
 {
     Q_D(const DAbstractFileInfo);
+
     if (fileUrl().burnFilePath().contains(QRegularExpression("^(/*)$"))) {
-        QString udiskspath = DDiskManager::resolveDeviceNode(fileUrl().burnDestDevice(), {}).first();
+        const QStringList &nodes = DDiskManager::resolveDeviceNode(fileUrl().burnDestDevice(), {});
+        if (nodes.isEmpty()) {
+            qWarning() << "can't get the node list from: " << fileUrl().path();
+            return "";
+        }
+
+        QString udiskspath = nodes.first();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         return blkdev->idLabel();
     }

@@ -944,9 +944,15 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
 
 void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &image, int speed, DISOMasterNS::BurnOptions opts)
 {
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (nodes.isEmpty()) {
+        qWarning() << "break the process that caused by can't get the node list from: " << device.path();
+        return;
+    }
+
     bool checkDatas = opts.testFlag(DISOMasterNS::BurnOption::VerifyDatas);
     m_tarPath = device.path();
-    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
+    QString udiskspath = nodes.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {
