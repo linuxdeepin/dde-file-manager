@@ -37,6 +37,7 @@
 #include "dbusfiledialogmanager.h"
 #include "filemanager1_adaptor.h"
 #include "dbusfilemanager1.h"
+#include "util/dde/desktopinfo.h"
 #include "accessibility/acobjectlist.h"
 
 using namespace Dtk::Core;
@@ -107,7 +108,14 @@ int main(int argc, char *argv[])
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    DApplication::loadDXcbPlugin();
+    //fix bug59539 向桌面拖拽文件，进度条框无法拖动
+    //根因：桌面启动时窗管未完全启动，导致xcb插件fallback到不同的分支
+    //方案：设置环境变量来强制指定 使用NO_TITLEBAR
+    if (!DesktopInfo().waylandDectected()) {
+        qputenv("D_DXCB_FORCE_NO_TITLEBAR", "1");
+        DApplication::loadDXcbPlugin();
+    }
+
     DApplication app(argc, argv);
 
     // 集成测试标签
