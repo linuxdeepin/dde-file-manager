@@ -59,6 +59,7 @@ public:
     DUrlList selectedUrls() const;
     void setCanUse(const bool canuse);
     void mouseMoveEvent(QMouseEvent * event) override;
+    void leaveEvent(QEvent *) override;
 
     void setAccessibleInfo(const QString& name);
 
