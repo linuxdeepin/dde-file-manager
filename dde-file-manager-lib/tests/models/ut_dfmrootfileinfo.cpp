@@ -260,3 +260,18 @@ TEST_F(TestDFMRootFileInfo, tstCheckCache)
     DFMRootFileInfo *fat32 = new DFMRootFileInfo(DUrl("dfmroot:///sda.localdisk"));
     fat32->checkCache();
 }
+
+TEST_F(TestDFMRootFileInfo, tstCanSetAlias)
+{
+    EXPECT_FALSE(info->canSetAlias());
+}
+
+TEST_F(TestDFMRootFileInfo, tstUdisksDispalyAlias)
+{
+    EXPECT_STREQ(info->udisksDispalyAlias().toStdString().c_str(), "");
+}
+
+TEST_F(TestDFMRootFileInfo, tstGetUUID)
+{
+    EXPECT_STREQ(info->getUUID().toStdString().c_str(), "");
+}

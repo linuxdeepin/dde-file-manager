@@ -21,12 +21,16 @@
 #include "dfmrootcontroller.h"
 #include "dfmevent.h"
 #include "dfmapplication.h"
+#include "dfmglobal.h"
 #include "models/dfmrootfileinfo.h"
 #include "private/dabstractfilewatcher_p.h"
 #include "utils/singleton.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "shutil/fileutils.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
+
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
 #include <dgiomount.h>
@@ -45,6 +49,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+
+DFM_USE_NAMESPACE
 
 class DFMRootFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
@@ -79,6 +85,10 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
     if (!fi->canRename()) {
         return false;
     }
+
+    DFMRootFileInfo *rootFi = dynamic_cast<DFMRootFileInfo*>(fi.data());
+    if (rootFi && rootFi->canSetAlias())
+        return setLocalDiskAlias(rootFi, event->toUrl().path());
 
     QString udiskspath = fi->extraProperties()["udisksblk"].toString();
     QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
@@ -237,6 +247,50 @@ void DFMRootController::loadDiskInfo(const QString &jsonPath) const
             }
         }
     }
+}
+
+bool DFMRootController::setLocalDiskAlias(DFMRootFileInfo *fi, const QString &alias) const
+{
+    if (!fi || !fi->canRename() || fi->getUUID().isEmpty()) {
+        qWarning() << "params 'fi' exception";
+        return false;
+    }
+
+    QString uuid(fi->getUUID());
+    QString dispalyAlias(alias);
+
+    QVariantList list = DFMApplication::genericSetting()->value(DISKALIAS_GROUP, DISKALIAS_ITEMS).toList();
+
+    // [a] empty alias  -> remove from list
+    // [b] exists alias -> cover it
+    // [c] not exists   -> append
+    bool exists = false;
+    for (int i = 0; i < list.count(); i++) {
+        QVariantMap map = list.at(i).toMap();
+        if (map.value(DISKALIAS_ITEM_UUID).toString() == uuid) {
+            if (alias.isEmpty()) {      // [a]
+                list.removeAt(i);
+            } else {                    // [b]
+                map[DISKALIAS_ITEM_ALIAS] = alias;
+                list[i] = map;
+            }
+            exists = true;
+            break;
+        }
+    }
+
+    // [c]
+    if (!exists && !alias.isEmpty() && !uuid.isEmpty()) {
+        QVariantMap map;
+        map[DISKALIAS_ITEM_UUID] = uuid;
+        map[DISKALIAS_ITEM_ALIAS] = alias;
+        list.append(map);
+        qInfo() << "append setting item: " << map;
+    }
+
+    DFMApplication::genericSetting()->setValue(DISKALIAS_GROUP, DISKALIAS_ITEMS, list);
+    DAbstractFileWatcher::ghostSignal(DUrl(DFMROOT_ROOT), &DAbstractFileWatcher::fileAttributeChanged, fi->fileUrl());
+    return true;
 }
 
 DFMRootFileWatcher::DFMRootFileWatcher(const DUrl &url, QObject *parent):
