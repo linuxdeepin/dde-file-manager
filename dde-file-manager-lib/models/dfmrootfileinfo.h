@@ -27,6 +27,12 @@
 #define SUFFIX_GVFSMP "gvfsmp"
 #define SUFFIX_UDISKS "localdisk"
 
+#define DISKALIAS_GROUP "LocalDiskAlias"
+#define DISKALIAS_ITEMS "Items"
+#define DISKALIAS_ITEM_UUID "uuid"
+#define DISKALIAS_ITEM_ALIAS "alias"
+
+
 class DFMRootFileInfoPrivate;
 
 typedef struct {
@@ -91,9 +97,13 @@ public:
     QVariantHash extraProperties() const override;
 
     void refresh(const bool isForce = false) override;
+
+    bool canSetAlias() const;
     void checkCache();
+    QString udisksDispalyAlias();
     QString udisksDisplayName();
     QString getVolTag(); // ....../dev/sr0 -> sr0
+    QString getUUID();
 
     bool checkMpsStr(const QString &path) const override;
 

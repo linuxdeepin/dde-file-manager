@@ -35,7 +35,7 @@ public:
     QExplicitlySharedDataPointer<DGioMount> gmnt;
     QExplicitlySharedDataPointer<DGioFileInfo> gfsi;
     QString backer_url;
-    QByteArrayList mps;
+    QByteArrayList mps; /* mountpoints */
     qulonglong size;
     QString label;
     QString fs;

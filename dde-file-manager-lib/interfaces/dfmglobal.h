@@ -516,4 +516,25 @@ typename QtPrivate::FunctionPointer<Fun>::ReturnType runInMainThread(typename Qt
 }
 }
 
+// namespace dfm_util: 通用的工具
+namespace dfm_util {
+template <typename T>
+// 工具函数：判断一个值是否在一个集合中
+inline bool isContains(const T &source)
+{
+    (void)source;
+    return false;
+}
+
+template <typename T, typename ...Args>
+inline bool isContains(const T &source, const T &cmp, const Args &...args)
+{
+    if (source == cmp)
+        return true;
+    else
+        return isContains(source, args...);
+}
+}
+
+
 #endif // DFMGLOBAL_H

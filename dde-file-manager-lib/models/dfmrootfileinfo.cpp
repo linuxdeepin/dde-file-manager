@@ -25,6 +25,8 @@
 #include "controllers/pathmanager.h"
 #include "app/filesignalmanager.h"
 #include "dfmrootfileinfo_p.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -46,6 +48,8 @@
 #include <QJsonArray>
 
 #include <QTimer>
+
+DFM_USE_NAMESPACE
 
 QMap<QString, DiskInfoStr> DFMRootFileInfo::DiskInfoMap = QMap<QString, DiskInfoStr>();
 
@@ -184,12 +188,16 @@ QString DFMRootFileInfo::fileDisplayName() const
 bool DFMRootFileInfo::canRename() const
 {
     Q_D(const DFMRootFileInfo);
-    if (suffix() != SUFFIX_UDISKS || !d->blk) {
+
+    if (suffix() != SUFFIX_UDISKS || !d->blk)
         return false;
-    }
-    if (d->blk->readOnly() || d->mps.size() > 0) {
+
+    if (d->blk->readOnly())
         return false;
-    }
+
+    if (d->mps.size() > 0)
+        return canSetAlias();
+
     return true;
 }
 
@@ -400,6 +408,10 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
         }
     }
 
+    if (!ret.contains(MenuAction::Rename) && canRename()) {
+        ret.push_back(MenuAction::Rename);
+    }
+
     if (drv && drv->ejectable() && (!drv->canPowerOff() || drv->mediaCompatibility().join(" ").contains("optical"))) {
         if (!protectUnmountOrEject) {
             ret.push_back(MenuAction::Eject);
@@ -519,6 +531,18 @@ void DFMRootFileInfo::refresh(const bool isForce)
     DAbstractFileInfo::refresh();
 }
 
+bool DFMRootFileInfo::canSetAlias() const
+{
+    // 系统盘、数据盘、其他固定分区可以设置别名
+    if (dfm_util::isContains(static_cast<ItemType>(fileType()),
+                             ItemType::UDisksRoot,
+                             ItemType::UDisksData,
+                             ItemType::UDisksFixed)) {
+        return true;
+    }
+    return false;
+}
+
 void DFMRootFileInfo::checkCache()
 {
     Q_D(DFMRootFileInfo);
@@ -594,7 +618,31 @@ void DFMRootFileInfo::checkCache()
     loadDiskInfo();
     d->fs = blk->idType();
     d->idUUID = blk->idUUID();
-    d->udispname = udisksDisplayName();
+    d->udispname = canSetAlias() ? udisksDispalyAlias() : udisksDisplayName();
+
+    // udisksDispalyAlias 异常情况下可能返回空值，
+    // 这种情况下使用 udisksDisplayName 恢复默认卷名
+    if (Q_UNLIKELY(d->udispname.isEmpty()))
+        d->udispname = udisksDisplayName();
+}
+
+QString DFMRootFileInfo::udisksDispalyAlias()
+{
+    Q_D(DFMRootFileInfo);
+    // read alias
+    const QVariantList &list = DFMApplication::genericSetting()->value(DISKALIAS_GROUP, DISKALIAS_ITEMS).toList();
+    QString name;
+
+    for (const QVariant &v : list) {
+        const QVariantMap &map = v.toMap();
+        if (map.value(DISKALIAS_ITEM_UUID).toString() == d->idUUID) {
+            name= map.value(DISKALIAS_ITEM_ALIAS).toString();
+            // todo : check by RegExp
+            break;
+        }
+    }
+
+    return name;
 }
 
 QString DFMRootFileInfo::udisksDisplayName()
@@ -713,6 +761,12 @@ QString DFMRootFileInfo::getVolTag()
     Q_D(DFMRootFileInfo);
     int nIdx = d->backer_url.lastIndexOf("/");
     return nIdx < 0 ? QString() : d->backer_url.mid(nIdx + 1);
+}
+
+QString DFMRootFileInfo::getUUID()
+{
+    Q_D(DFMRootFileInfo);
+    return d->idUUID;
 }
 
 bool DFMRootFileInfo::checkMpsStr(const QString &path) const

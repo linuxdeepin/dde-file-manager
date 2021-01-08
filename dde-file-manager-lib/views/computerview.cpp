@@ -140,7 +140,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     m_view->setFlow(QListView::Flow::LeftToRight);
     m_view->setResizeMode(QListView::ResizeMode::Adjust);
     m_view->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
-    m_view->setEditTriggers(QAbstractItemView::EditTrigger::NoEditTriggers);
+    m_view->setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));
     m_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
     m_view->setFrameShape(QFrame::Shape::NoFrame);
@@ -342,7 +342,8 @@ void ComputerView::contextMenu(const QPoint &pos)
     menu->setEventData(DUrl(), {idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>()}, WindowManager::getWindowId(this), this);
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
     QPointer<ComputerView> me = this;
-    menu->exec(this->mapToGlobal(pos));
+    if (!menu->actions().isEmpty())
+        menu->exec(this->mapToGlobal(pos));
     menu->deleteLater(me);
 }
 

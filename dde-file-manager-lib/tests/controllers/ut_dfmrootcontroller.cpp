@@ -4,6 +4,9 @@
 #define private public
 #include "controllers/dfmrootcontroller.h"
 #include "dfmevent.h"
+#include "app/define.h"
+#include "interfaces/drootfilemanager.h"
+#include "models/dfmrootfileinfo.h"
 
 namespace  {
     class DFMRootControllerTest : public testing::Test
@@ -91,4 +94,26 @@ TEST_F(DFMRootControllerTest, load_disk_info)
 {
     QString json;
     controller->loadDiskInfo(json);
+}
+
+TEST_F(DFMRootControllerTest, setLocalDiskAlias)
+{
+    EXPECT_FALSE(controller->setLocalDiskAlias(nullptr, ""));
+    QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
+
+    for (auto c : ch) {
+        if (static_cast<DFMRootFileInfo::ItemType>(c->fileType()) == DFMRootFileInfo::UDisksRoot) {
+            auto rfi = dynamic_cast<DFMRootFileInfo *>(c.data());
+            if (!rfi)
+                continue;
+
+            bool r = controller->setLocalDiskAlias(rfi, "test");
+            EXPECT_TRUE(r);
+            EXPECT_STREQ(rfi->udisksDispalyAlias().toStdString().c_str(), "test");
+
+            r = controller->setLocalDiskAlias(dynamic_cast<DFMRootFileInfo *>(c.data()), "");
+            EXPECT_TRUE(r);
+            EXPECT_STREQ(rfi->udisksDispalyAlias().toStdString().c_str(), "");
+        }
+    }
 }
