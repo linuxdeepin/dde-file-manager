@@ -28,6 +28,8 @@
 #include "app/define.h"
 #include "singleton.h"
 #include "shutil/mimetypedisplaymanager.h"
+#include "controllers/vaultcontroller.h"
+#include "dfmsettings.h"
 
 #include <QBoxLayout>
 #include <QFormLayout>
@@ -337,9 +339,23 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 
     if (!info->isVirtualEntry()) {
         SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time accessed"));
-        SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
-        SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
-        SectionValueLabel *timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
+        SectionValueLabel *timeCreatedLabel = nullptr;
+        SectionKeyLabel *TimeModifiedSectionLabel = nullptr;
+        SectionValueLabel *timeModifiedLabel = nullptr;
+        if (VaultController::isRootDirectory(info->fileUrl().toLocalFile())) {
+            TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time locked"));
+            //! 保险箱根目录创建、访问、修改时间的读取
+            DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+            timeCreatedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("InterviewTime")).toString());
+            if (setting.value(QString("VaultTime"), QString("LockTime")).toString().isEmpty())
+                timeModifiedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("InterviewTime")).toString());
+            else
+                timeModifiedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("LockTime")).toString());
+        }else {
+            TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
+            timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
+            timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
+        }
         layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
         layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
     }
