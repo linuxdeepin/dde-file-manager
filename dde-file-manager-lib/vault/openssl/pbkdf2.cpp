@@ -94,7 +94,9 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
     uchar *out = reinterpret_cast<uchar *>(malloc(size_t(cipherByteNum / 2 + 1)));
     memset(out, 0, size_t(cipherByteNum / 2 + 1));
     // 修复wayland-bug-51478
-    const char *pwd = password.toStdString().c_str();
+    // 修复bug-60724 mips64el上，需要如下写法才能得到正确的结果
+    std::string strpwd = password.toStdString();
+    const char *pwd = strpwd.c_str();
     if (PKCS5_PBKDF2_HMAC_SHA1(pwd, password.length(),
                                salt_value, randSalt.length(),
                                iteration,
