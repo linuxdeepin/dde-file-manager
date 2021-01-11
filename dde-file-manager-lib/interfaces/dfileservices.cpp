@@ -332,10 +332,18 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         //! 显示删除确认对话框
         bool bShowConfimDlg = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowDeleteConfirmDialog).toBool();
         DUrl url = event->fileUrlList().first();
-        if (bShowConfimDlg && d_ptr->m_isMoveToTrashOver && !url.isTrashFile() && !url.isRecentFile() && url.scheme() != BURN_SCHEME) {
-            if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showNormalDeleteConfirmDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) != DDialog::Accepted) {
+        if (bShowConfimDlg
+                && d_ptr->m_isMoveToTrashOver
+                && !url.isTrashFile()
+                && !url.isRecentFile()
+                && url.scheme() != BURN_SCHEME
+                && !VaultController::isVaultFile(url.toLocalFile())) {
+
+            if (DThreadUtil::runInMainThread(
+                        dialogManager,
+                        &DialogManager::showNormalDeleteConfirmDialog,
+                        DFMUrlListBaseEvent(nullptr, event->fileUrlList())) != DDialog::Accepted)
                 break;
-            }
         }
 
         d_ptr->m_isMoveToTrashOver = false;
