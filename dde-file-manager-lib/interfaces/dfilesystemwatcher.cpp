@@ -210,7 +210,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             hasMoveFromByCookie << event->cookie;
     }
 
-    qDebug() << "event count:" << eventList.count();
+//    qDebug() << "event count:" << eventList.count();
 
     QList<inotify_event *>::const_iterator it = eventList.constBegin();
     while (it != eventList.constEnd()) {
