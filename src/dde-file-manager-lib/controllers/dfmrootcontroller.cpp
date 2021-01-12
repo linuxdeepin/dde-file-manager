@@ -257,7 +257,7 @@ bool DFMRootController::setLocalDiskAlias(DFMRootFileInfo *fi, const QString &al
     }
 
     QString uuid(fi->getUUID());
-    QString dispalyAlias(alias);
+    QString dispalyAlias(alias.trimmed());
 
     QVariantList list = DFMApplication::genericSetting()->value(DISKALIAS_GROUP, DISKALIAS_ITEMS).toList();
 
@@ -268,10 +268,10 @@ bool DFMRootController::setLocalDiskAlias(DFMRootFileInfo *fi, const QString &al
     for (int i = 0; i < list.count(); i++) {
         QVariantMap map = list.at(i).toMap();
         if (map.value(DISKALIAS_ITEM_UUID).toString() == uuid) {
-            if (alias.isEmpty()) {      // [a]
+            if (dispalyAlias.isEmpty()) {      // [a]
                 list.removeAt(i);
             } else {                    // [b]
-                map[DISKALIAS_ITEM_ALIAS] = alias;
+                map[DISKALIAS_ITEM_ALIAS] = dispalyAlias;
                 list[i] = map;
             }
             exists = true;
@@ -280,10 +280,10 @@ bool DFMRootController::setLocalDiskAlias(DFMRootFileInfo *fi, const QString &al
     }
 
     // [c]
-    if (!exists && !alias.isEmpty() && !uuid.isEmpty()) {
+    if (!exists && !dispalyAlias.isEmpty() && !uuid.isEmpty()) {
         QVariantMap map;
         map[DISKALIAS_ITEM_UUID] = uuid;
-        map[DISKALIAS_ITEM_ALIAS] = alias;
+        map[DISKALIAS_ITEM_ALIAS] = dispalyAlias;
         list.append(map);
         qInfo() << "append setting item: " << map;
     }

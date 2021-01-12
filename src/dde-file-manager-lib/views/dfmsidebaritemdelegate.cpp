@@ -96,6 +96,7 @@ QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptio
         QRegExp regx("[^\\\\/\':\\*\\?\"<>|%&]+"); //屏蔽特殊字符
         QValidator *validator = new QRegExpValidator(regx, qle);
         qle->setValidator(validator);
+        qle->setMaxLength(40);  // 限制最长输入字符为 40
     }
 
     return editor;
