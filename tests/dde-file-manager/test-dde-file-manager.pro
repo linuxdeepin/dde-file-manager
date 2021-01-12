@@ -4,9 +4,10 @@
 #
 #-------------------------------------------------
 
-include(../common/common.pri)
+include(../../src/common/common.pri)
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 QT += network concurrent
 
 TARGET = test-file-manager
@@ -32,8 +33,6 @@ isEmpty(PREFIX){
     PREFIX = /usr
 }
 
-
-
 CONFIG(release, debug|release) {
     !system($$PWD/translate_ts2desktop.sh): error("Failed to generate translation")
 }
@@ -44,9 +43,9 @@ CONFIG(debug, debug|release) {
 }
 
 
-INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
-               $$PWD/../utils \
-               $$PWD/../dde-file-manager-lib/interfaces
+INCLUDEPATH += $$PWD/../../src/dde-file-manager-lib $$PWD/.. \
+               $$PWD/../../src/utils \
+               $$PWD/../../src/dde-file-manager-lib/interfaces
 
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
@@ -62,21 +61,21 @@ CONFIG(debug, debug|release) {
 }
 
 HEADERS += \
-    filemanagerapp.h \
-    logutil.h \
-    singleapplication.h \
-    commandlinemanager.h
+    $$PWD/../../src/dde-file-manager/filemanagerapp.h \
+    $$PWD/../../src/dde-file-manager/logutil.h \
+    $$PWD/../../src/dde-file-manager/singleapplication.h \
+    $$PWD/../../src/dde-file-manager/commandlinemanager.h
 
 SOURCES += \
-    filemanagerapp.cpp \
-    logutil.cpp \
-    singleapplication.cpp \
-    commandlinemanager.cpp
+    $$PWD/../../src/dde-file-manager/filemanagerapp.cpp \
+    $$PWD/../../src/dde-file-manager/logutil.cpp \
+    $$PWD/../../src/dde-file-manager/singleapplication.cpp \
+    $$PWD/../../src/dde-file-manager/commandlinemanager.cpp
 
 
 QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
-include(../third-party/googletest/gtest_dependency.pri)
-include(tests/test.pri)
+include(../../3rdparty/googletest/gtest_dependency.pri)
+include(test.pri)
 
