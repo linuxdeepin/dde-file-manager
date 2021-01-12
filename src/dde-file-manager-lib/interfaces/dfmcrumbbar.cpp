@@ -407,6 +407,10 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
     DUrl fileUrl = url;
     if (url.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
         fileUrl = DUrl::fromTrashFile(url.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+    } else if (VaultController::isVaultFile(url.toLocalFile())) {
+        // 修复bug-60781
+        // 如果是保险箱文件，转化为保险箱路径，以便创建保险箱的面包屑
+        fileUrl = VaultController::localToVault(url.toLocalFile());
     }
 
     QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(fileUrl);
