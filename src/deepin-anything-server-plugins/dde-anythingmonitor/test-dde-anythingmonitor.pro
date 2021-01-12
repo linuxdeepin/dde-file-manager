@@ -1,42 +1,76 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-04-24T16:11:22
+# Project created by QtCreator 2018-06-22T11:31:57
 #
 #-------------------------------------------------
 
-QT       += core gui widgets quick
 
-TARGET = test-dde-video-preview-plugin
+TARGET = test-dde-anythingmonitor
+
 TEMPLATE = app
 
-PKGCONFIG += libdmr dtkgui
-CONFIG += console link_pkgconfig c++11
+QT += core \
+      dbus \
+      concurrent
 
-include(../../../common/common.pri)
+CONFIG += c++11 \
+          console \
+          link_pkgconfig \
+          plugin
+
+CONFIG -= app_bundle \
+          create_pc \
+          create_prl \
+          no_install_prl
+
+
+isEmpty(DDE_FILE_MANAGER_LIB_DIR){
+    DDE_FILE_MANAGER_LIB_DIR = $$PWD/../../dde-file-manager-lib
+}
+
+isEmpty(DDE_FILE_MANAGER_DIR){
+    DDE_FILE_MANAGER_DIR = $$PWD/../..
+}
+
+
+PKGCONFIG += deepin-anything-server-lib
+
+
+INCLUDEPATH += $$PWD/../../dde-file-manager-lib \
+               $$PWD/../../dde-file-manager-lib/interfaces \
+               $$PWD/../../dde-file-manager-lib/shutil \
+               $$PWD/../../utils
+
+unix{
+      PKG_CONFIG = pkg-config
+      target.path = $$system($$PKG_CONFIG --variable libdir deepin-anything-server-lib)/deepin-anything-server-lib/plugins/handlers
+      INSTALLS += target
+}
+
+
+#DESTDIR = $$[QT_INSTALL_PLUGINS]/generic
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QT_DEPRECATED_WARNINGS DDE_ANYTHINGMONITOR DFM_NO_FILE_WATCHER
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+include(src.pri)
+#include($$PWD/../../dde-file-manager-lib/fulltextsearch/fulltextsearch.pri)
+DISTFILES += dde-anythingmonitor.json
 
-LIBS += -L$$OUT_PWD/../../../dde-file-manager-lib -ldde-file-manager -licui18n
-
-DISTFILES += \
-    dde-video-preview-plugin.json
 
 QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
-include(dde-video-preview-plugin.pri)
-include(../../../third-party/googletest/gtest_dependency.pri)
-include(../../../third-party/cpp-stub/stub.pri)
+include(../../common/common.pri)
+include(../../../3rdparty/googletest/gtest_dependency.pri)
 include(tests/test.pri)
 
 #内存检测标签

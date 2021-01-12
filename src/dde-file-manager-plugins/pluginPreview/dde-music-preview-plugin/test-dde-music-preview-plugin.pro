@@ -26,8 +26,8 @@ QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0 -DGTEST
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 include(dde-music-preview-plugin.pri)
-include(../../../third-party/googletest/gtest_dependency.pri)
-include(../../../third-party/cpp-stub/stub.pri)
+include(../../../../3rdparty/googletest/gtest_dependency.pri)
+include(../../../../3rdparty/cpp-stub/stub.pri)
 include(tests/test.pri)
 
 #内存检测标签

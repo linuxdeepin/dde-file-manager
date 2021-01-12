@@ -30,6 +30,6 @@ RESOURCES += \
 QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
-include(../../third-party/googletest/gtest_dependency.pri)
+include(../../../3rdparty/googletest/gtest_dependency.pri)
 include(../../third-party/cpp-stub/stub.pri)
 include(tests/test.pri)

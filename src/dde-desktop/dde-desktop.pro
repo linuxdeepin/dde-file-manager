@@ -10,7 +10,7 @@ include($$PWD/dbus/dbus.pri)
 
 include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
 # 集成测试标签
-include($$PWD/../third-party/accessibility/accessibility-suite.pri)
+include($$PWD/../../3rdparty/accessibility/accessibility-suite.pri)
 #无热区设置
 #include($$PWD/../dde-zone/dde-zone.pri)
 DEFINES += DISABLE_ZONE
