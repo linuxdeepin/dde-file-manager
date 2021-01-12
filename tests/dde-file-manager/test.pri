@@ -6,7 +6,8 @@
 #system($$PWD/../vendor/prebuild)
 #include($$PWD/../vendor/vendor.pri)
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD \
+               $$PWD/../../src/dde-file-manager
 
 
 SOURCES += \
