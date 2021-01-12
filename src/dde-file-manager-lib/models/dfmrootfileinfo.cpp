@@ -538,6 +538,17 @@ bool DFMRootFileInfo::canSetAlias() const
                              ItemType::UDisksRoot,
                              ItemType::UDisksData,
                              ItemType::UDisksFixed)) {
+        // todo : 需求 -> Windows 和其他系统分区不支持别名
+        //       可以通过读取 fstab 判断 ?
+        //       struct mntent *m;
+        //       FILE *f = NULL;
+        //       f = setmntent("/etc/fstab","r"); //open file for describing the mounted filesystems
+        //       if(!f)
+        //           printf("error:%s\n",strerror(errno));
+        //       while ((m = getmntent(f)))        //read next line
+        //         printf("Drive %s, name %s,type  %s,opt  %s\n", m->mnt_dir, m->mnt_fsname,m->mnt_type,m->mnt_opts );
+        //       endmntent(f);   //close file for describing the mounted filesystems
+        // warning : getmntent 是不可重入函数, 可以用getmntent_r函数来替代
         return true;
     }
     return false;
@@ -637,7 +648,6 @@ QString DFMRootFileInfo::udisksDispalyAlias()
         const QVariantMap &map = v.toMap();
         if (map.value(DISKALIAS_ITEM_UUID).toString() == d->idUUID) {
             name= map.value(DISKALIAS_ITEM_ALIAS).toString();
-            // todo : check by RegExp
             break;
         }
     }

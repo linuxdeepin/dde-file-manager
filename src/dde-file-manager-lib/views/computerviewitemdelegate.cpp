@@ -264,6 +264,10 @@ QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
     //消除编辑框背后多余的填充色
 //    le->setAutoFillBackground(true);
     le->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+    QRegExp regx("[^\\\\/\':\\*\\?\"<>|%&]+"); //屏蔽特殊字符
+    QValidator *validator = new QRegExpValidator(regx, le);
+    le->setValidator(validator);
+    le->setMaxLength(40);  // 限制最长输入字符为 40
 
     connect(le, &QLineEdit::destroyed, this, [this, le] {
         if (editingEditor == le)

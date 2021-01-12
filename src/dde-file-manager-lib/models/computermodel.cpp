@@ -486,7 +486,10 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
         if (!pitmdata->fi->canRename()) {
             return false;
         }
-        fileService->renameFile(this, pitmdata->fi->fileUrl(), DUrl(value.toString()));
+
+        DUrl newUrl;
+        newUrl.setPath(value.toString()); // 直接构造 URL 会忽略掉一些特殊符号，因此使用 setPath
+        fileService->renameFile(this, pitmdata->fi->fileUrl(), newUrl);
         emit dataChanged(index, index, {Qt::DisplayRole});
         return true;
     }

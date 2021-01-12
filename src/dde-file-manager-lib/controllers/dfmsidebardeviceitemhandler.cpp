@@ -147,7 +147,9 @@ void DFMSideBarDeviceItemHandler::rename(const DFMSideBarItem *item, QString nam
 {
     const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(this, item->url());
     if (infoPointer->fileDisplayName() != name) {
-        DFileService::instance()->renameFile(this, item->url(), DUrl(name));
+        DUrl newUrl;
+        newUrl.setPath(name); // 直接构造 URL 会忽略掉一些特殊符号，因此使用 setPath
+        DFileService::instance()->renameFile(this, item->url(), newUrl);
     }
 }
 
