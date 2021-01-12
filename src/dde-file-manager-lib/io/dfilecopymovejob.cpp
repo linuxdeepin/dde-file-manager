@@ -1256,12 +1256,12 @@ open_file: {
     DGIOFileDevice *fromgio = qobject_cast<DGIOFileDevice *>(fromDevice.data());
     DGIOFileDevice *togio = qobject_cast<DGIOFileDevice *>(toDevice.data());
     if (fromgio) {
-        fromgio->connect(q_ptr, &DFileCopyMoveJob::stopAllGioDervic, q_ptr, [fromgio]() {
+        fromgio->connect(q_ptr, &DFileCopyMoveJob::stopAllGioDervic, fromgio, [fromgio]() {
             fromgio->cancelAllOperate();
         });
     }
     if (togio) {
-        togio->connect(q_ptr, &DFileCopyMoveJob::stopAllGioDervic, q_ptr, [togio]() {
+        togio->connect(q_ptr, &DFileCopyMoveJob::stopAllGioDervic, togio, [togio]() {
             togio->cancelAllOperate();
         });
     }
