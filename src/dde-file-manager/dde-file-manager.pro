@@ -49,7 +49,7 @@ CONFIG(debug, debug|release) {
 }
 
 # 集成测试标签
-include($$PWD/../third-party/accessibility/accessibility-suite.pri)
+include($$PWD/../../3rdparty/accessibility/accessibility-suite.pri)
 
 SOURCES += \
     main.cpp \
