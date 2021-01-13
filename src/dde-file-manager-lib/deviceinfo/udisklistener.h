@@ -100,6 +100,8 @@ public:
     void appendHiddenDirs(const QString &path);
     QStringList hiddenDirs();
     bool isBlockFile(const QString &filePath); // 文件是否来自块设备
+    bool isFromNativeDisk(const QString &uuid); // 是否为本地分区
+
 private:
     void initDiskManager();
     void initConnect();
@@ -145,6 +147,7 @@ private:
     int m_nCDRomCount = 0; // 光驱接入个数
 
     QStringList m_hiddenDirs; // feature: hide specified dirs of unremovable devices
+    QStringList m_uuids; // from /etc/fstab
 };
 
 #endif // UDISKLISTENER_H
