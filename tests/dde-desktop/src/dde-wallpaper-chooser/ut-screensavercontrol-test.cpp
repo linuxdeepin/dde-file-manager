@@ -10,7 +10,7 @@
 #include <QString>
 #include <QProcessEnvironment>
 #include "../dde-wallpaper-chooser/screensavercontrol.h"
-#include "../third-party/cpp-stub/stub.h"
+#include "stub.h"
 
 using namespace testing;
 using namespace ScreenSaverCtrlFunction;

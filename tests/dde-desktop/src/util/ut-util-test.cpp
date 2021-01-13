@@ -8,7 +8,7 @@
 #include <QWindow>
 #include <QWidget>
 #include "util/util.h"
-#include "../third-party/cpp-stub/stub.h"
+#include "stub.h"
 #include "desktopinfo.h"
 
 QWindow* mywindowhandle()

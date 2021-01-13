@@ -6,7 +6,7 @@ CONFIG += ordered
 
 SUBDIRS += \
     src/dde-file-manager-lib/dde-file-manager-lib.pro\
-    src/dde-desktop/test-dde-desktop.pro \
+    tests/dde-desktop/test-dde-desktop.pro \
     src/dde-dock-plugins/test-dde-dock-plugins.pro \
     src/dde-file-manager-daemon/test-dde-file-manager-daemon.pro \
     tests/dde-file-manager/test-dde-file-manager.pro \

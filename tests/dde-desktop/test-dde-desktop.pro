@@ -9,9 +9,9 @@ QT       += core gui testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 include(../../3rdparty/googletest/gtest_dependency.pri)
-include(tests/src/test.pri)
+include(src/test.pri)
 include(../../3rdparty/cpp-stub/stub.pri)
-include(dde-desktop.pri)
+include(../../src/dde-desktop/dde-desktop.pri)
 
 QMAKE_CXXFLAGS += -fno-inline
 
@@ -34,7 +34,7 @@ DEFINES += UT_DDE_DESKTOP_UNIONTECH
 CONFIG += c++11
 
 SOURCES += \
-        $$PWD/tests/main.cpp
+        $$PWD/main.cpp
 
 HEADERS += \
 
