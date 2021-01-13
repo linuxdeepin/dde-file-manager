@@ -48,6 +48,7 @@
 #include <linux/cdrom.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <mntent.h>
 
 #include <QSettings>
 #include <QProcess>
@@ -539,6 +540,37 @@ bool UDiskListener::isBlockFile(const QString &filePath)
         }
     }
     return false;
+}
+
+bool UDiskListener::isFromNativeDisk(const QString &uuid)
+{
+    bool ret = false;
+    static std::once_flag flag;
+
+    // 线程安全: getmntent 不是可重入函数, call_once 能保证线程安全
+    // 性能: /etc/fstab 不是频繁变化的配置文件, 且配置后一般会重启才生效, 所以不必多次读取
+    std::call_once(flag, [this]() {
+        FILE *f = nullptr;
+        f = setmntent(_PATH_FSTAB, "r");
+        if (f) {
+            struct mntent *m = nullptr;
+            while ((m = getmntent(f))) {
+                QString name(m->mnt_fsname);
+                QStringList group(name.split("="));
+                if (name.startsWith("UUID", Qt::CaseInsensitive) && group.size() == 2) {
+                    m_uuids.append(group.at(1));
+                }
+            }
+            endmntent(f);
+        }
+    });
+
+    if (m_uuids.contains(uuid))
+        ret = true;
+    else
+        qInfo() << "/etc/fstab not contains" << uuid;
+
+    return ret;
 }
 
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)

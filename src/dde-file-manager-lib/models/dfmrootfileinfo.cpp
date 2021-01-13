@@ -24,6 +24,7 @@
 #include "utils/singleton.h"
 #include "controllers/pathmanager.h"
 #include "app/filesignalmanager.h"
+#include "deviceinfo/udisklistener.h"
 #include "dfmrootfileinfo_p.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
@@ -533,25 +534,16 @@ void DFMRootFileInfo::refresh(const bool isForce)
 
 bool DFMRootFileInfo::canSetAlias() const
 {
+    bool ret = false;
     // 系统盘、数据盘、其他固定分区可以设置别名
     if (dfm_util::isContains(static_cast<ItemType>(fileType()),
                              ItemType::UDisksRoot,
                              ItemType::UDisksData,
                              ItemType::UDisksFixed)) {
-        // todo : 需求 -> Windows 和其他系统分区不支持别名
-        //       可以通过读取 fstab 判断 ?
-        //       struct mntent *m;
-        //       FILE *f = NULL;
-        //       f = setmntent("/etc/fstab","r"); //open file for describing the mounted filesystems
-        //       if(!f)
-        //           printf("error:%s\n",strerror(errno));
-        //       while ((m = getmntent(f)))        //read next line
-        //         printf("Drive %s, name %s,type  %s,opt  %s\n", m->mnt_dir, m->mnt_fsname,m->mnt_type,m->mnt_opts );
-        //       endmntent(f);   //close file for describing the mounted filesystems
-        // warning : getmntent 是不可重入函数, 可以用getmntent_r函数来替代
-        return true;
+        // 非本地分区不可设置别名
+        ret = deviceListener->isFromNativeDisk(d_ptr->idUUID);
     }
-    return false;
+    return ret;
 }
 
 void DFMRootFileInfo::checkCache()
