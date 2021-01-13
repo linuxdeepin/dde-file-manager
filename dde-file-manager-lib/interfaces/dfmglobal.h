@@ -313,6 +313,12 @@ public:
     static bool isTrashDesktopFileUrl(const DUrl &url);
     static bool isComputerDesktopFileUrl(const DUrl &url);
 
+    /**
+     * @brief isTablet 判断是否是平板环境
+     * @return true or false
+     */
+    static bool isTablet();
+
     QList<QUrl> clipboardFileUrlList() const;
     QList<quint64> clipboardFileInodeList() const;
     ClipboardAction clipboardAction() const;
