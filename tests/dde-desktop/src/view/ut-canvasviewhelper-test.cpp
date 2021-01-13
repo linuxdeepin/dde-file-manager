@@ -12,7 +12,7 @@
 #include "view/backgroundmanager.h"
 #include "view/canvasviewmanager.h"
 #include "durl.h"
-#include "../third-party/cpp-stub/stub.h"
+#include "stub.h"
 #include "dfileviewhelper.h"
 #include "dfilesystemmodel.h"
 using namespace testing;

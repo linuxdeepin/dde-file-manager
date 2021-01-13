@@ -6,7 +6,7 @@
 #include <view/canvasviewmanager.h>
 #include <view/backgroundmanager.h>
 #include <presenter/gridmanager.h>
-#include "../third-party/cpp-stub/stub.h"
+#include "stub.h"
 #include "desktopitemdelegate.h"
 #include "dfilesystemmodel.h"
 #include "AbstractStringAppender.h"

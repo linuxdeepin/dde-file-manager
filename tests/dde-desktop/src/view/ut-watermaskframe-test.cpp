@@ -3,7 +3,7 @@
 #define protected public
 #define private public
 #include "view/watermaskframe.h"
-#include "../third-party/cpp-stub/stub.h"
+#include "stub.h"
 #include "config/config.h"
 
 using namespace testing;

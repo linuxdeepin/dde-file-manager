@@ -21,8 +21,8 @@
 #include "../dde-wallpaper-chooser/dbus/deepin_wm.h"
 #include "screen/screenhelper.h"
 #include "desktopinfo.h"
-#include "../third-party/cpp-stub/stub.h"
-#include "../stub-ext/stubext.h"
+#include "stub.h"
+#include "stubext.h"
 #include "appearance_interface.h"
 
 using namespace testing;
