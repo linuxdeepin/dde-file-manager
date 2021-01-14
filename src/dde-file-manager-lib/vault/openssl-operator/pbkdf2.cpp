@@ -26,7 +26,7 @@
 #include <QDebug>
 #include <openssl/evp.h>
 
-char pbkdf2::nibble_to_hex_char(char nibble)
+char pbkdf2::charToHexadecimalChar(char nibble)
 {
     char buf[16] = {'0', '1', '2', '3', '4', '5', '6', '7',
                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
@@ -34,7 +34,7 @@ char pbkdf2::nibble_to_hex_char(char nibble)
     return buf[nibble & 0xF];
 }
 
-char *pbkdf2::octet_string_hex_string(const char *str, int length)
+char *pbkdf2::octalToHexadecimal(const char *str, int length)
 {
     const char *s = str;
     int i = 0;
@@ -46,8 +46,8 @@ char *pbkdf2::octet_string_hex_string(const char *str, int length)
     char *bit_string = reinterpret_cast<char *>(malloc(size_t(length + 1)));
 
     for (i = 0; i < length; i += 2) {
-        bit_string[i] = nibble_to_hex_char(*s >> 4);
-        bit_string[i + 1] = nibble_to_hex_char(*s & 0xF);
+        bit_string[i] = charToHexadecimalChar(*s >> 4);
+        bit_string[i + 1] = charToHexadecimalChar(*s & 0xF);
         s++;
     }
     bit_string[i] = 0;
@@ -94,15 +94,13 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
     uchar *out = reinterpret_cast<uchar *>(malloc(size_t(cipherByteNum / 2 + 1)));
     memset(out, 0, size_t(cipherByteNum / 2 + 1));
     // 修复wayland-bug-51478
-    // 修复bug-60724 mips64el上，需要如下写法才能得到正确的结果
-    std::string strpwd = password.toStdString();
-    const char *pwd = strpwd.c_str();
+    const char *pwd = password.toStdString().c_str();
     if (PKCS5_PBKDF2_HMAC_SHA1(pwd, password.length(),
                                salt_value, randSalt.length(),
                                iteration,
                                nCipherLength,
                                out) != 0) {
-        char *pstr = octet_string_hex_string(reinterpret_cast<char *>(out), nCipherLength);
+        char *pstr = octalToHexadecimal(reinterpret_cast<char *>(out), nCipherLength);
         // 修复wayland-bug-51478
         strCipherText = QString(pstr);
     } else {

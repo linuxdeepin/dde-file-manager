@@ -11,8 +11,8 @@ SOURCES += \
     $$PWD/qrencode/rscode.c \
     $$PWD/qrencode/split.c \
     $$PWD/qrencode/qrspec.c \
-    $$PWD/openssl/pbkdf2.cpp \
-    $$PWD/openssl/rsam.cpp \
+    $$PWD/openssl-operator/pbkdf2.cpp \
+    $$PWD/openssl-operator/rsam.cpp \
     $$PWD/interfaceactivevault.cpp \
     $$PWD/operatorcenter.cpp \
     $$PWD/vaultlockmanager.cpp \
@@ -31,8 +31,8 @@ HEADERS += \
     $$PWD/qrencode/rscode.h \
     $$PWD/qrencode/split.h \
     $$PWD/qrencode/qrspec.h \
-    $$PWD/openssl/pbkdf2.h \
-    $$PWD/openssl/rsam.h \
+    $$PWD/openssl-operator/pbkdf2.h \
+    $$PWD/openssl-operator/rsam.h \
     $$PWD/interfaceactivevault.h \
     $$PWD/operatorcenter.h \
     $$PWD/vaultglobaldefine.h \
