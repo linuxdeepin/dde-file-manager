@@ -61,6 +61,7 @@
 #include "views/dfilemanagerwindow.h"
 #include "customization/dcustomactionbuilder.h"
 #include "customization/dcustomactionparser.h"
+#include "gvfs/gvfsmountmanager.h"
 
 #include <DSysInfo>
 
@@ -1366,7 +1367,14 @@ void DFileMenuManager::actionTriggered(QAction *action)
                 const DUrlList &selUrls = event->selectedUrls();
                 if (selUrls.count() > 0) {
                     const DUrl &u = selUrls.first();
-                    if (u.isValid() && !DStorageInfo::isLowSpeedDevice(u.path())) { // 这里只针对非低速设备做判定，否则可能导致正常情况下的右键菜单响应过慢
+                    // fix bug 60949 如果url是网络文件的挂载文件的rootpath，就要解密路径,不解密路径isLowSpeedDevice返回true
+                    // 网络设备不走这个流程
+                    QString path  = u.path();
+                    if (u.scheme() == DFMROOT_SCHEME && path.endsWith(SUFFIX_GVFSMP)) {
+                        path = QUrl::fromPercentEncoding(u.path().toUtf8());
+                        path = path.startsWith("//") ? path.mid(1) : path;
+                    }
+                    if (u.isValid() && !DStorageInfo::isLowSpeedDevice(path)) { // 这里只针对非低速设备做判定，否则可能导致正常情况下的右键菜单响应过慢
                         DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
                         if (info && !info->exists())
                             return;

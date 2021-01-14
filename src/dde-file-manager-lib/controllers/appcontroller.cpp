@@ -843,6 +843,12 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
         if (info && info->scheme() == DFMROOT_SCHEME && info->suffix() == SUFFIX_USRDIR) {
             url = info->redirectedFileUrl();
         }
+        // filx bug 60949 当共享文件夹的权限，被服务器改变去掉执行时，计算机界面选中共享文件，
+        // 再右键属性，选择属性，是不能显示的，调用checkGvfsMountfileBusy检查一下，弹提示。
+        if (url.scheme() == DFMROOT_SCHEME && info->suffix() == SUFFIX_GVFSMP &&
+                DFileService::instance()->checkGvfsMountfileBusy(url)) {
+            urlList.removeAll(url);
+        }
 
         if (url.isLocalFile()) {
             QString urlSrcPath = url.path();
