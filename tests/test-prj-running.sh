@@ -7,7 +7,7 @@ do
         echo "--clear:默认情况为yes删除当前build-ut下所有数据， 使用 --clear no 不进行清除操作"
         echo "--rebuild：默认为yes进行重新编译， 使用--rebuild no 不进行重新编译"
         echo "--ut:指定ut项目类型，可以使用类型：no all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins"
-        echo "--cppcheck：默认为yes进行项目cpp-check文件扫描， 使用--cppcheck no 不进行cpp-check扫描"
+        echo "--cppcheck：默认为no 不进行项目cpp-check文件扫描， 使用--cppcheck no 不进行cpp-check扫描"
         echo "--cpu：当前使用CPU数目，默认为16"
         exit 0
   fi
@@ -18,7 +18,7 @@ done
 CLEAR_COMMAND="yes"; #是否清场 no 就不清场
 UT_COMMAND="all"; #运行UT类型 no all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins
 REBUILD_PTJ="yes";
-CPP_CHECK_COMMAND="yes"; #是否运行cppcheck，no就不运行
+CPP_CHECK_COMMAND="no"; #是否运行cppcheck，no就不运行
 CPU_NUMBER=16; #当前使用CPU数目，默认为16
 
 while [ $# -ge 2 ] ; do
