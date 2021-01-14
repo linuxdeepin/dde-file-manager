@@ -54,8 +54,8 @@ public:
                                          int cipherByteNum);
 
 private:
-    static char nibble_to_hex_char(char nibble);
-    static char *octet_string_hex_string(const char *str, int length);
+    static char charToHexadecimalChar(char nibble);
+    static char *octalToHexadecimal(const char *str, int length);
 
 };
 

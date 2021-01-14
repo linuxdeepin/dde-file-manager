@@ -20,8 +20,8 @@
  **/
 
 #include "operatorcenter.h"
-#include "openssl/pbkdf2.h"
-#include "openssl/rsam.h"
+#include "openssl-operator/pbkdf2.h"
+#include "openssl-operator/rsam.h"
 #include "qrencode/qrencode.h"
 #include "vaultconfig.h"
 
@@ -203,10 +203,10 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     // 创建密钥对
     QString strPriKey("");
     QString strPubKey("");
-    rsam::createRsaKey(strPubKey, strPriKey);
+    rsam::createPublicAndPrivateKey(strPubKey, strPriKey);
 
     // 私钥加密
-    QString strCipher = rsam::rsa_pri_encrypt_base64(password, strPriKey);
+    QString strCipher = rsam::privateKeyEncrypt(password, strPriKey);
 
     // 将公钥分成两部分（一部分用于保存到本地，一部分生成二维码，提供给用户）
     QString strSaveToLocal("");
@@ -332,7 +332,7 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &cipher)
     QString strRsaCipher(rsaCipherfile.readAll());
     rsaCipherfile.close();
 
-    QString strNewPassword = rsam::rsa_pub_decrypt_base64(strRsaCipher, strNewPubKey);
+    QString strNewPassword = rsam::publicKeyDecrypt(strRsaCipher, strNewPubKey);
 
     // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
     if (!checkPassword(strNewPassword, cipher)) {
