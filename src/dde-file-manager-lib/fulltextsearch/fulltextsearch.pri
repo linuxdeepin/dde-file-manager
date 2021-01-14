@@ -27,7 +27,7 @@ QT += widgets
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += liblucene++ liblucene++-contrib
 
-include($$PWD/../3rdParty/doctotext/doctotext.pri)
+include($$PWD/../../../3rdparty/doctotext/doctotext.pri)
 HEADERS += \
     $$PWD/fulltextsearch.h \
     $$PWD/chinesetokenizer.h \
