@@ -186,7 +186,8 @@ bool ShareInfoFrame::doShareInfoSetting()
     if (m_permissoComBox->currentIndex() == 0 && m_anonymityCombox->currentIndex() != 0) {
         fileService->setPermissions(nullptr, m_fileinfo->fileUrl(),
                                     m_fileinfo->permissions() | QFileDevice::ReadOther | QFileDevice::WriteOther
-                                    | QFileDevice::ReadGroup | QFileDevice::WriteGroup);
+                                    | QFileDevice::ExeOther | QFileDevice::ReadGroup | QFileDevice::WriteGroup |
+                                    QFileDevice::ExeGroup);
     }
 
     bool ret = DFileService::instance()->shareFolder(this, m_fileinfo->fileUrl(), m_shareNamelineEdit->text(),
