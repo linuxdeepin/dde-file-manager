@@ -60,7 +60,7 @@ char *toBase64(const unsigned char *data, int size, int options)
     }
 
     if (options & OmitTrailingEquals) {
-        int new_size = out - tmp;
+        int new_size = static_cast<int>(out - tmp);
         char *new_tmp = new char[static_cast<unsigned int>(new_size) + 1];
 
         memcpy(new_tmp, tmp, static_cast<unsigned int>(new_size));
