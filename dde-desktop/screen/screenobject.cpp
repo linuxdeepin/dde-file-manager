@@ -59,8 +59,8 @@ QRect ScreenObject::availableGeometry() const
 
 #ifndef UNUSED_SMARTDOCK
     qreal ratio = qApp->primaryScreen()->devicePixelRatio();
-    QRect t_rect = ret;
-    t_rect.setSize(t_rect.size() * ratio);  //原始geometry大小
+    //bug 52241
+    QRect t_rect = handleGeometry();
 
     if (!t_rect.contains(dockrectI)) //使用原始大小判断的dock区所在的屏幕
         return ret;
