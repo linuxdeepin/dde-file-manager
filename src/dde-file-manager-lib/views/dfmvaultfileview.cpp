@@ -30,7 +30,6 @@
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
-    connect(VaultController::ins(), &VaultController::signalFileDeleted, this, &DFMVaultFileView::onFileDeleted);
     connect(VaultController::ins(), &VaultController::signalLockVault, this, &DFMVaultFileView::onLeaveVault);
 }
 
@@ -67,7 +66,7 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
         }
 
         //! 记录访问保险箱时间
-        if(VaultController::isRootDirectory(url.toLocalFile())){
+        if (VaultController::isRootDirectory(url.toLocalFile())) {
             DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
             setting.setValue(QString("VaultTime"), QString("InterviewTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
         }
@@ -84,11 +83,6 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     }
 
     return DFileView::setRootUrl(url);
-}
-
-void DFMVaultFileView::onFileDeleted()
-{
-    this->model()->refresh();
 }
 
 void DFMVaultFileView::onLeaveVault(int state)

@@ -339,11 +339,6 @@ signals:
      */
     void signalLockVault(int state);
 
-    /**
-     * @brief signalFileDeleted 文件删除完成信号
-     */
-    void signalFileDeleted();
-
 signals:
     /**
     * @brief 下列信号为本类内部使用，请勿外用
