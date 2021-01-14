@@ -146,9 +146,14 @@ void AppController::registerUrlHandle()
     DFileService::setFileUrlHandler(TRASH_SCHEME, "", tempTrashMgr);
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
-    DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
-    DFileService::dRegisterUrlHandler<NetworkController>(SFTP_SCHEME, "");
-    DFileService::dRegisterUrlHandler<NetworkController>(FTP_SCHEME, "");
+
+    // 针对平板，过滤掉smb、ftp、sftp相应的处理
+    if (!DFMGlobal::isTablet()) {
+        DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
+        DFileService::dRegisterUrlHandler<NetworkController>(SFTP_SCHEME, "");
+        DFileService::dRegisterUrlHandler<NetworkController>(FTP_SCHEME, "");
+    }
+
     DFileService::dRegisterUrlHandler<NetworkController>(DAV_SCHEME, "");
     DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
     DFileService::dRegisterUrlHandler<AVFSFileController>(AVFS_SCHEME, "");
@@ -245,7 +250,7 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
                 if (mountPoint.length() > 0) {
                     QFile file(mountPoint);
                     if (!(QFile::ExeUser & file.permissions())) {
-                        DThreadUtil::runInMainThread([]{
+                        DThreadUtil::runInMainThread([] {
                             dialogManager->showErrorDialog(DialogManager::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
                         });
                         return;
@@ -1169,7 +1174,7 @@ void AppController::actionStageFileForBurning()
     DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
     for (DUrl &u : urlList) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(sender(), u);
-        if(fi){ // MasteredMediaFileInfo::canRedirectionFileUrl() 有问题，现在暂时不知道怎么修改
+        if (fi) { // MasteredMediaFileInfo::canRedirectionFileUrl() 有问题，现在暂时不知道怎么修改
             u = fi->redirectedFileUrl();
         }
     }
@@ -1397,24 +1402,24 @@ void AppController::createDBusInterface()
     static const QString SessionManagerPath = "/com/deepin/StartManager";
 
     //创建中不再响应
-    if (m_statDBusInterface == CreatingIFS )
+    if (m_statDBusInterface == CreatingIFS)
         return;
     m_statDBusInterface = CreatingIFS;
 
     if (!m_startManagerInterface)
         m_startManagerInterface = new StartManagerInterface(SessionManagerService,
-                                                        SessionManagerPath,
-                                                        QDBusConnection::sessionBus(),
-                                                        this);
-    if (!m_introspectableInterface) {
-        m_introspectableInterface = new IntrospectableInterface(SessionManagerService,
                                                             SessionManagerPath,
                                                             QDBusConnection::sessionBus(),
                                                             this);
+    if (!m_introspectableInterface) {
+        m_introspectableInterface = new IntrospectableInterface(SessionManagerService,
+                                                                SessionManagerPath,
+                                                                QDBusConnection::sessionBus(),
+                                                                this);
         m_introspectableInterface->setTimeout(1000);
     }
 
-    QtConcurrent::run(QThreadPool::globalInstance(),[this]() {
+    QtConcurrent::run(QThreadPool::globalInstance(), [this]() {
         QDBusPendingReply<QString> reply = m_introspectableInterface->Introspect();
         reply.waitForFinished();
         if (!reply.isFinished() || reply.isError()) {

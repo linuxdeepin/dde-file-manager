@@ -420,6 +420,14 @@ bool SearchDiriterator::searchFileIsHidden(const QString &fileName) const
 
 bool SearchDiriterator::hasNext() const
 {
+    // 平板环境下，搜索smb、ftp、ip，直接返回无搜索结果界面
+    if (DFMGlobal::isTablet()) {
+        auto key = m_fileUrl.searchKeyword();
+        QRegExp reg(R"(^((smb:/|ftp:/|sftp:/).*)|(((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})$)");
+        if (reg.exactMatch(key))
+            return false;
+    }
+
     if (!childrens.isEmpty()) {
         return true;
     }

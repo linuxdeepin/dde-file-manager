@@ -24,6 +24,7 @@
 
 #include "durl.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "dfmglobal.h"
 
 #include <utility>
 
@@ -250,6 +251,14 @@ QString DUrl::toString(QUrl::FormattingOptions options) const
 
     if (isLocalFile() || !schemeList.contains(scheme())) {
         return QUrl::toString(options);
+    }
+
+    // 针对平板进行特殊处理，防止地址栏输入smb:/后enter会追加//
+    if (DFMGlobal::isTablet()) {
+        auto sc = scheme();
+        if (sc == SMB_SCHEME || sc == FTP_SCHEME || sc == SFTP_SCHEME) {
+            return QUrl::toString(options);
+        }
     }
 
     QUrl url(*this);
