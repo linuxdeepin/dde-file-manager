@@ -1123,11 +1123,13 @@ void DFileManagerWindow::initSplitter()
 {
     D_D(DFileManagerWindow);
 
-    initLeftSideBar();
     initRightView();
 
     d->splitter = new DFMSplitter(Qt::Horizontal, this);
-    d->splitter->addWidget(d->sideBar);
+    if (!DFMGlobal::isTablet()) {
+        initLeftSideBar();
+        d->splitter->addWidget(d->sideBar);
+    }
     d->splitter->addWidget(d->rightView);
     d->splitter->setChildrenCollapsible(false);
 }
