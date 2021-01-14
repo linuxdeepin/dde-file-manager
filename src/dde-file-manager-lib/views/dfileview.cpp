@@ -1861,7 +1861,7 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
                     QRect itemRect = rectForIndex(index);
                     QPoint offset(-horizontalOffset() + ICON_X_OFFSET, ICON_Y_OFFSET);
                     // 判断文件是否在鼠标框选区域内(注意：rect只是view的框选位置，并不是画布的框选位置，所以加上滚动偏移)
-                    QRect actualRect(rect.left(), rect.top()+verticalOffset(), rect.width(), rect.height());
+                    QRect actualRect(rect.left(), rect.top() + verticalOffset(), rect.width(), rect.height());
                     if (actualRect.contains((itemRect.topLeft() + offset))
                             || actualRect.contains(itemRect.topRight() + offset + QPoint(ICON_HEIGHT_OFFSET, 0))
                             || actualRect.contains(itemRect.bottomLeft() + offset + QPoint(0, ICON_WIDTH_OFFSET))
@@ -2307,8 +2307,8 @@ void DFileView::openIndex(const QModelIndex &index)
         mode = DFMOpenUrlEvent::OpenInCurrentWindow;
     } else {
         mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()
-                                            ? DFMOpenUrlEvent::ForceOpenNewWindow
-                                            : DFMOpenUrlEvent::OpenInCurrentWindow;
+               ? DFMOpenUrlEvent::ForceOpenNewWindow
+               : DFMOpenUrlEvent::OpenInCurrentWindow;
     }
 
     if (mode == DFMOpenUrlEvent::OpenInCurrentWindow)
@@ -3324,10 +3324,6 @@ bool DFileView::normalKeyPressEvent(const QKeyEvent *event)
             if (urls.size() > 0) {
                 QString filepath = urls.front().toLocalFile();
                 if (VaultController::isVaultFile(filepath) && !d->isVaultDelSigConnected) {
-                    connect(VaultController::ins(), &VaultController::signalFileDeleted, this, [&]() {
-                        if (VaultController::isBigFileDeleting())
-                            refresh();
-                    }, Qt::DirectConnection);
                     d->isVaultDelSigConnected = true;
                 }
             }

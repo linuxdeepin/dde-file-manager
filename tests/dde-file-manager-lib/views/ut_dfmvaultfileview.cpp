@@ -14,30 +14,30 @@
 
 
 namespace  {
-    class TestDFMVaultFileView : public testing::Test
+class TestDFMVaultFileView : public testing::Test
+{
+public:
+    QSharedPointer<DFMVaultFileView> m_view;
+
+    virtual void SetUp() override
     {
-    public:
-        QSharedPointer<DFMVaultFileView> m_view;
+        m_view = QSharedPointer<DFMVaultFileView>(new DFMVaultFileView());
+        m_view->show();
+        std::cout << "start TestDFMVaultFileView" << std::endl;
+    }
 
-        virtual void SetUp() override
-        {
-            m_view = QSharedPointer<DFMVaultFileView>(new DFMVaultFileView());
-            m_view->show();
-            std::cout << "start TestDFMVaultFileView" << std::endl;
-        }
-
-        virtual void TearDown() override
-        {
-            m_view->close();
-            std::cout << "end TestDFMVaultFileView" << std::endl;
-        }
-    };
+    virtual void TearDown() override
+    {
+        m_view->close();
+        std::cout << "end TestDFMVaultFileView" << std::endl;
+    }
+};
 }
 
 
 TEST_F(TestDFMVaultFileView, tst_setRootUrl)
 {
-    auto closeWindow = [] (DUrl &url) {
+    auto closeWindow = [](DUrl & url) {
         VaultController::VaultState enState = VaultController::ins()->state();
         if (enState != VaultController::Unlocked) {
             switch (enState) {
@@ -81,8 +81,8 @@ TEST_F(TestDFMVaultFileView, tst_setRootUrl)
     closeWindow(url);
 
     // replace VaultController::state
-    VaultController::VaultState (*st_state)(QString lockBaseDir) =
-            [](QString lockBaseDir)->VaultController::VaultState {
+    VaultController::VaultState(*st_state)(QString lockBaseDir) =
+    [](QString lockBaseDir)->VaultController::VaultState {
         Q_UNUSED(lockBaseDir)
         return VaultController::NotAvailable;
     };
@@ -95,8 +95,8 @@ TEST_F(TestDFMVaultFileView, tst_setRootUrl)
     url.setHost("delete");
 
     // replace VaultController::state
-    VaultController::VaultState (*st_state_unLocked)(QString lockBaseDir) =
-            [](QString lockBaseDir)->VaultController::VaultState {
+    VaultController::VaultState(*st_state_unLocked)(QString lockBaseDir) =
+    [](QString lockBaseDir)->VaultController::VaultState {
         Q_UNUSED(lockBaseDir)
         return VaultController::Unlocked;
     };
@@ -106,8 +106,8 @@ TEST_F(TestDFMVaultFileView, tst_setRootUrl)
     closeWindow(url);
 
     // replace VaultController::state
-    VaultController::VaultState (*st_state_encrypted)(QString lockBaseDir) =
-            [](QString lockBaseDir)->VaultController::VaultState {
+    VaultController::VaultState(*st_state_encrypted)(QString lockBaseDir) =
+    [](QString lockBaseDir)->VaultController::VaultState {
         Q_UNUSED(lockBaseDir)
         return VaultController::Encrypted;
     };
@@ -115,11 +115,6 @@ TEST_F(TestDFMVaultFileView, tst_setRootUrl)
 
     EXPECT_NO_FATAL_FAILURE(m_view->setRootUrl(url));
     closeWindow(url);
-}
-
-TEST_F(TestDFMVaultFileView, tst_onFileDeleted)
-{
-    EXPECT_NO_FATAL_FAILURE(m_view->onFileDeleted());
 }
 
 TEST_F(TestDFMVaultFileView, tst_onLeaveVault)
@@ -130,7 +125,7 @@ TEST_F(TestDFMVaultFileView, tst_onLeaveVault)
 TEST_F(TestDFMVaultFileView, tst_eventFilter)
 {
     QSharedPointer<QMouseEvent> event = dMakeEventPointer<QMouseEvent>(
-                QMouseEvent::KeyPress, QPointF(0,0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+                                            QMouseEvent::KeyPress, QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
 
     m_view->eventFilter(nullptr, event.get());
 }
