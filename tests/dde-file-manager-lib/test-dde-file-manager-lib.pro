@@ -6,7 +6,11 @@
 #system($$PWD/../vendor/prebuild)
 #include($$PWD/../vendor/vendor.pri)
 
-include(../common/common.pri)
+PRJ_FOLDER = $$PWD/../../
+SRC_FOLDER = $$PRJ_FOLDER/src
+LIB_DFM_SRC_FOLDER = $$SRC_FOLDER/dde-file-manager-lib
+
+include($$SRC_FOLDER/common/common.pri)
 
 QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs network
 #private
@@ -54,30 +58,31 @@ CONFIG(DISABLE_ANYTHING) {
     DEFINES += DISABLE_TAG_SUPPORT
 }
 
-include(../dialogs/dialogs.pri)
-include(../utils/utils.pri)
-include(../chinese2pinyin/chinese2pinyin.pri)
-include(../fileoperations/fileoperations.pri)
-include(deviceinfo/deviceinfo.pri)
-include(dbusinterface/dbusinterface.pri)
-include(../usershare/usershare.pri)
-include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
-include(tag/tag.pri)
-include(mediainfo/mediainfo.pri)
-include(vault/vault.pri)
-include(fulltextsearch/fulltextsearch.pri)
-include(log/log.pri)
+
+include($$SRC_FOLDER/dialogs/dialogs.pri)
+include($$SRC_FOLDER/utils/utils.pri)
+include($$SRC_FOLDER/chinese2pinyin/chinese2pinyin.pri)
+include($$SRC_FOLDER/fileoperations/fileoperations.pri)
+include($$LIB_DFM_SRC_FOLDER/deviceinfo/deviceinfo.pri)
+include($$LIB_DFM_SRC_FOLDER/dbusinterface/dbusinterface.pri)
+include($$SRC_FOLDER/usershare/usershare.pri)
+include($$SRC_FOLDER/dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
+include($$LIB_DFM_SRC_FOLDER/tag/tag.pri)
+include($$LIB_DFM_SRC_FOLDER/mediainfo/mediainfo.pri)
+include($$LIB_DFM_SRC_FOLDER/vault/vault.pri)
+include($$LIB_DFM_SRC_FOLDER/fulltextsearch/fulltextsearch.pri)
+include($$LIB_DFM_SRC_FOLDER/log/log.pri)
 
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL
-        include(./sw_label/sw_label.pri)
+        include($$LIB_DFM_SRC_FOLDER/sw_label/sw_label.pri)
 #    }
 }
-include(io/io.pri)
-include(interfaces/vfs/vfs.pri)
-include(interfaces/customization/customization.pri)
-include(src.pri)
+include($$LIB_DFM_SRC_FOLDER/io/io.pri)
+include($$LIB_DFM_SRC_FOLDER/interfaces/vfs/vfs.pri)
+include($$LIB_DFM_SRC_FOLDER/interfaces/customization/customization.pri)
+include($$LIB_DFM_SRC_FOLDER/src.pri)
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
@@ -89,10 +94,10 @@ isEmpty(INCLUDE_INSTALL_DIR) {
     includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager
 }
 
-includes.files += $$PWD/interfaces/*.h $$PWD/interfaces/plugins/*.h
+includes.files += $$LIB_DFM_SRC_FOLDER/interfaces/*.h $$LIB_DFM_SRC_FOLDER/interfaces/plugins/*.h
 
 includes_private.path = $${includes.path}/private
-includes_private.files += $$PWD/interfaces/private/*.h
+includes_private.files += $$LIB_DFM_SRC_FOLDER/interfaces/private/*.h
 
 isEmpty(INCLUDE_INSTALL_DIR) {
     gvfs_includes.path = $$PREFIX/include/dde-file-manager/gvfs
@@ -100,7 +105,7 @@ isEmpty(INCLUDE_INSTALL_DIR) {
     gvfs_includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager/gvfs
 }
 
-gvfs_includes.files += $$PWD/gvfs/*.h
+gvfs_includes.files += $$LIB_DFM_SRC_FOLDER/gvfs/*.h
 
 isEmpty(INCLUDE_INSTALL_DIR) {
     plugin_includes.path = $$PREFIX/include/dde-file-manager/dde-file-manager-plugins
@@ -108,29 +113,29 @@ isEmpty(INCLUDE_INSTALL_DIR) {
     plugin_includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager/dde-file-manager-plugins
 }
 
-plugin_includes.files += $$PWD/../dde-file-manager-plugins/plugininterfaces/menu/*.h
-plugin_includes.files += $$PWD/../dde-file-manager-plugins/plugininterfaces/preview/*.h
-plugin_includes.files += $$PWD/../dde-file-manager-plugins/plugininterfaces/view/*.h
+plugin_includes.files += $$SRC_FOLDER/dde-file-manager-plugins/plugininterfaces/menu/*.h
+plugin_includes.files += $$SRC_FOLDER/dde-file-manager-plugins/plugininterfaces/preview/*.h
+plugin_includes.files += $$SRC_FOLDER/dde-file-manager-plugins/plugininterfaces/view/*.h
 
 
 templateFiles.path = $$APPSHAREDIR/templates
 
 mimetypeFiles.path = $$APPSHAREDIR/mimetypes
 mimetypeFiles.files += \
-    mimetypes/archive.mimetype \
-    mimetypes/text.mimetype \
-    mimetypes/video.mimetype \
-    mimetypes/audio.mimetype \
-    mimetypes/image.mimetype \
-    mimetypes/executable.mimetype \
-    mimetypes/backup.mimetype
+    $$LIB_DFM_SRC_FOLDER/mimetypes/archive.mimetype \
+    $$LIB_DFM_SRC_FOLDER/mimetypes/text.mimetype \
+    $$LIB_DFM_SRC_FOLDER/mimetypes/video.mimetype \
+    $$LIB_DFM_SRC_FOLDER/mimetypes/audio.mimetype \
+    $$LIB_DFM_SRC_FOLDER/mimetypes/image.mimetype \
+    $$LIB_DFM_SRC_FOLDER/mimetypes/executable.mimetype \
+    $$LIB_DFM_SRC_FOLDER/mimetypes/backup.mimetype
 
 mimetypeAssociations.path = $$APPSHAREDIR/mimetypeassociations
 mimetypeAssociations.files += \
-    mimetypeassociations/mimetypeassociations.json
+    $$LIB_DFM_SRC_FOLDER/mimetypeassociations/mimetypeassociations.json
 
 
-include($$PWD/settings_dialog_json.pri)
+include($$LIB_DFM_SRC_FOLDER/settings_dialog_json.pri)
 
 TEMPLATE = app
 CONFIG += console
@@ -141,11 +146,12 @@ QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 # resolve .gcda merge issue.
 system(find $$OUT_PWD -name "*.gcda" -print0 | xargs -0 rm -f)
 
-include(../third-party/googletest/gtest_dependency.pri)
-include(tests/test.pri)
-include(../third-party/cpp-stub/stub.pri)
-INCLUDEPATH += $$top_srcdir/third-party/stubext
+include($$PRJ_FOLDER/3rdparty/googletest/gtest_dependency.pri)
+include($$PRJ_FOLDER/3rdparty/cpp-stub/stub.pri)
+INCLUDEPATH += $$PRJ_FOLDER/3rdparty/stubext
 LIBS += -lgcov
 
 HEADERS += \
     dialogs/burnoptdialog_p.h
+
+include(test.pri)
