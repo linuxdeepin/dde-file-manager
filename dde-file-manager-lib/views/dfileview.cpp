@@ -1374,7 +1374,7 @@ void DFileView::updateStatusBar()
     }
     if (model()->state() != DFileSystemModel::Idle)
         return;
-  
+
     //若处于触摸滑动中，延时该更新，因为当前版本QT加速回弹动画会被子节点setText打断
     if (QScroller::hasScroller(this)) {
         d_ptr->updateStatusBarTimer->stop();
@@ -2719,6 +2719,25 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
 
+    // 针对平板，对空白区域右键菜单进行特殊处理
+    if (DFMGlobal::isTablet()) {
+        QSet<MenuAction> unusedList;
+        unusedList << MenuAction::OpenAsAdmin
+                   << MenuAction::OpenInTerminal
+                   << MenuAction::Property;
+
+        if (rootUrl().isTrashFile()) {
+            unusedList << MenuAction::SortBy
+                       << MenuAction::DisplayAs;
+        }
+
+        for (MenuAction action : unusedList) {
+            if (actions.contains(action)) {
+                actions.remove(actions.indexOf(action));
+            }
+        }
+    }
+
     if (actions.isEmpty())
         return;
     // sp3 feature: root用户, 服务器版本用户, 非开发者模式均不需要以管理员身份打开的功能
@@ -2792,8 +2811,10 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
             action->setChecked(true);
     }
 
-
-    DFileMenuManager::loadEmptyAreaPluginMenu(menu, rootUrl(), false);
+    // 针对平板去掉外部插件菜单
+    if (!DFMGlobal::isTablet()) {
+        DFileMenuManager::loadEmptyAreaPluginMenu(menu, rootUrl(), false);
+    }
 
     if (!menu) {
         return;
@@ -2832,6 +2853,34 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     QSet<MenuAction> disableList;
     QSet<MenuAction> unusedList;
 
+    // 针对平板，对文件右键菜单进行特殊处理
+    if (DFMGlobal::isTablet()) {
+        unusedList << MenuAction::UnShare
+                   << MenuAction::Share
+                   << MenuAction::OpenInNewWindow
+                   << MenuAction::OpenInNewTab
+                   << MenuAction::OpenAsAdmin
+                   << MenuAction::Compress
+                   << MenuAction::Decompress
+                   << MenuAction::DecompressHere
+                   << MenuAction::CreateSymlink
+                   << MenuAction::SendToDesktop
+                   << MenuAction::OpenInTerminal
+                   << MenuAction::OpenFileLocation
+                   << MenuAction::Property
+                   << MenuAction::TagInfo
+                   << MenuAction::TagFilesUseColor
+                   << MenuAction::SetAsWallpaper
+                   << MenuAction::AddToBookMark;
+        if (info->isDir()) {
+            unusedList << MenuAction::OpenWith;
+            // 回收站文件夹去除打开菜单
+            if (rootUrl().isTrashFile()) {
+                unusedList << MenuAction::Open;
+            }
+        }
+    }
+
     // blumia: when touching this part, do the same change in canvasgridview.cpp
     if (list.size() == 1) {
         if (!info->isReadable() && !info->isSymLink()) {
@@ -2845,6 +2894,10 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         if (!indexFlags.testFlag(Qt::ItemIsEditable)) {
             disableList << MenuAction::Rename;
         }
+    } else if (DFMGlobal::isTablet() && list.size() > 1) {
+        unusedList << MenuAction::Open
+                   << MenuAction::OpenWith
+                   << MenuAction::Rename;
     }
 
     // 在上一个菜单没有结束前，拒绝下一个菜单

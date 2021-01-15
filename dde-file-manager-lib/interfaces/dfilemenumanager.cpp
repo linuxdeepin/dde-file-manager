@@ -167,7 +167,7 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
     return menu;
 }
 
-DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop)
+DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop)
 {
     // remove compress/decompress action
     unusedList << MenuAction::Compress << MenuAction::Decompress << MenuAction::DecompressHere;
@@ -217,6 +217,7 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
                 disableList << MenuAction::UnShare << MenuAction::Share; //设置取消共享、取消共享不可选
             }
         }
+
         foreach (MenuAction action, unusedList) {
             if (actions.contains(action)) {
                 actions.remove(actions.indexOf(action));
@@ -556,7 +557,10 @@ DFileMenu *DFileMenuManager:: createNormalMenu(const DUrl &currentUrl, const DUr
         return menu;
     }
 
-    loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
+    // 针对平板去掉外部插件菜单
+    if (!DFMGlobal::isTablet()) {
+        loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
+    }
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
 

@@ -89,7 +89,8 @@ namespace FileSortFunction {
 class DCollator : public QCollator
 {
 public:
-    DCollator() : QCollator() {
+    DCollator() : QCollator()
+    {
         setNumericMode(true);
         setCaseSensitivity(Qt::CaseInsensitive);
     }
@@ -1014,8 +1015,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
         } else {
             actionKeys << MenuAction::Delete;
         }
-        actionKeys << MenuAction::Separator
-                   << MenuAction::Property;
+        actionKeys << MenuAction::Separator;
 
         ///###: tag protocol.
         actionKeys << MenuAction::TagInfo;
@@ -1881,14 +1881,13 @@ bool DAbstractFileInfo::parseEmblemString(QIcon &emblem, QString &pos, const QSt
             QStringList emStrList = emblemStr.split(";");
             imgPath = emStrList.at(0);
             pos = emStrList.at(1);
-        }
-        else {
+        } else {
             imgPath = emblemStr;
         }
 
         //修正主目录为标准路径
         if (imgPath.startsWith("~/")) {
-             imgPath.replace(0, 1, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+            imgPath.replace(0, 1, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         }
 
 //        QFile imgFile(imgPath);
