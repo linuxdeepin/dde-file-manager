@@ -74,7 +74,7 @@ TEST_F(TestImagePerview, can_preview){
 
     format.clear();
     Stub stub;
-    stub.set(ADDR(QByteArray,isEmpty), st_isEmpty);
+    stub.set(&QByteArray::isEmpty, st_isEmpty);
     EXPECT_TRUE(m_imagePreview->canPreview(m_url, &format));
     EXPECT_FALSE(format.isEmpty());
 }

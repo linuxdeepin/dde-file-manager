@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     qDebug() << "end test cases ..............";
 
 #ifdef ENABLE_TSAN_TOOL
-    __sanitizer_set_report_path("../../../build-ut/asan_video.log");
+    __sanitizer_set_report_path("../build-ut/asan-dde-file-thumbnail-tool.log");
 #endif
     return ret;
 }

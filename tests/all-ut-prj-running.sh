@@ -181,7 +181,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_THUM
 	dde_file_thumbnail_extract_path="*/src/dde-file-thumbnail-tool/*"
 	dde_file_thumbnail_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
-	./../../tests/ut-target-running.sh $BUILD_DIR video $DIR_TEST_DDE_FILE_THUMBNAIL/video test-video "$dde_file_thumbnail_extract_path" "$dde_file_thumbnail_remove_path"
+	./../../tests/ut-target-running.sh $BUILD_DIR dde-file-thumbnail-tool $DIR_TEST_DDE_FILE_THUMBNAIL test-video "$dde_file_thumbnail_extract_path" "$dde_file_thumbnail_remove_path"
 fi
 
 # 8. 子项目 deepin-anything-server-plugins 单元测试与覆盖率测试
@@ -201,7 +201,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_ANYTHING_
 	deepin_anything_server_plugins_extract_path="*/src/deepin-anything-server-plugins/*"
 	deepin_anything_server_plugins_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */build-ut/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
-	./../../tests/ut-target-running.sh $BUILD_DIR dde-anythingmonitor $DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS/dde-anythingmonitor test-dde-anythingmonitor  "$deepin_anything_server_plugins_extract_path" "$deepin_anything_server_plugins_remove_path"
+	./../../tests/ut-target-running.sh $BUILD_DIR dde-anythingmonitor $DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS test-dde-anythingmonitor  "$deepin_anything_server_plugins_extract_path" "$deepin_anything_server_plugins_remove_path"
 fi
 
 echo "end dde-file-manager all UT cases"
