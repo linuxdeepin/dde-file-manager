@@ -45,7 +45,8 @@ void AppController::initControllers()
 {
     m_acessController = new AcessControlManager(this);
     m_userShareManager = new UserShareManager(this);
-    m_tagManagerDaemon = new TagManagerDaemon{ this };
+    if (!DFMGlobal::isTablet())
+        m_tagManagerDaemon = new TagManagerDaemon(this);
     m_vaultManager = new VaultManager(this);
 }
 

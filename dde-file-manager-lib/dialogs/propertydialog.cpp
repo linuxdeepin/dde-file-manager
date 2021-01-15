@@ -553,9 +553,9 @@ void PropertyDialog::initUI()
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
     layout->addLayout(scrolllayout, 1);
 
-    QFrame *tagFrame = initTagFrame(m_url);
-    if (tagFrame != nullptr) {
-        scrollWidgetLayout->addWidget(tagFrame);
+    if (!DFMGlobal::isTablet()) {
+        if (QFrame *tagFrame = initTagFrame(m_url))
+            scrollWidgetLayout->addWidget(tagFrame);
     }
 
     setFixedWidth(350);

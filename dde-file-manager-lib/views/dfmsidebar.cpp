@@ -563,7 +563,8 @@ void DFMSideBar::initConnection()
     initDeviceConnection();
 #endif
 
-    initTagsConnection();
+    if (!DFMGlobal::isTablet())
+        initTagsConnection();
 }
 
 void DFMSideBar::initUserShareItem()

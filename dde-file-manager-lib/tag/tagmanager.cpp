@@ -73,6 +73,9 @@ QMap<QString, QString> TagManager::getAllTags()
 
 QList<QString> TagManager::getTagsThroughFiles(const QList<DUrl> &files)
 {
+    if (DFMGlobal::isTablet())
+        return {};
+
     QMap<QString, QVariant> string_var{};
 
     if (!files.isEmpty()) {
@@ -85,7 +88,7 @@ QList<QString> TagManager::getTagsThroughFiles(const QList<DUrl> &files)
         return var.toStringList();
     }
 
-    return QList<QString> {};
+    return {};
 }
 
 QMap<QString, QColor> TagManager::getTagColor(const QList<QString> &tags) const

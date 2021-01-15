@@ -39,38 +39,34 @@
 
 DWIDGET_USE_NAMESPACE
 
-class DFMRightDetailViewPrivate{
+class DFMRightDetailViewPrivate
+{
 public:
-    explicit DFMRightDetailViewPrivate(DFMRightDetailView *qq, const DUrl& url);
+    explicit DFMRightDetailViewPrivate(DFMRightDetailView *qq, const DUrl &url);
     virtual ~DFMRightDetailViewPrivate();
 
-    DUrl    m_url;
-    QVBoxLayout *mainLayout  {nullptr};
-    QLabel      *iconLabel  {nullptr};
-    QFrame      *baseInfoWidget {nullptr};
-    QFrame      *separatorLine2 {nullptr};
-    DFMTagWidget *tagInfoWidget{ nullptr };
+    DUrl m_url;
+    QVBoxLayout *mainLayout { nullptr };
+    QLabel *iconLabel { nullptr };
+    QFrame *baseInfoWidget { nullptr };
+    QFrame *separatorLine2 { nullptr };
+    DFMTagWidget *tagInfoWidget { nullptr };
 
-    QScrollArea *scrollArea{ nullptr };
+    QScrollArea *scrollArea { nullptr };
 
-    DFMRightDetailView *q_ptr{ nullptr };
+    DFMRightDetailView *q_ptr { nullptr };
     D_DECLARE_PUBLIC(DFMRightDetailView)
 };
 
-DFMRightDetailViewPrivate::DFMRightDetailViewPrivate(DFMRightDetailView *qq, const DUrl& url)
-    :m_url(url)
-    ,q_ptr(qq)
+DFMRightDetailViewPrivate::DFMRightDetailViewPrivate(DFMRightDetailView *qq, const DUrl &url)
+    : m_url(url), q_ptr(qq)
 {
-
 }
 
-DFMRightDetailViewPrivate::~DFMRightDetailViewPrivate()
-{
-
-}
+DFMRightDetailViewPrivate::~DFMRightDetailViewPrivate() {}
 
 DFMRightDetailView::DFMRightDetailView(const DUrl &fileUrl, QWidget *parent)
-    :QFrame(parent)
+    : QFrame(parent)
     , d_private(new DFMRightDetailViewPrivate(this, fileUrl))
 {
     AC_SET_OBJECT_NAME(this, AC_DM_RIGHT_VIEW_DETAIL_VIEW);
@@ -80,12 +76,9 @@ DFMRightDetailView::DFMRightDetailView(const DUrl &fileUrl, QWidget *parent)
     setUrl(fileUrl);
 }
 
-DFMRightDetailView::~DFMRightDetailView()
-{
+DFMRightDetailView::~DFMRightDetailView() {}
 
-}
-
-static QFrame* createLine()
+static QFrame *createLine()
 {
     DHorizontalLine *line = new DHorizontalLine();
     AC_SET_OBJECT_NAME(line, AC_DM_RIGHT_VIEW_MAIN_FRAME_LINE);
@@ -131,7 +124,8 @@ void DFMRightDetailView::initUI()
     d->mainLayout->addWidget(createLine());
     d->mainLayout->addWidget(d->separatorLine2 = createLine());
 
-    initTagWidget();
+    if (!DFMGlobal::isTablet())
+        initTagWidget();
 
     d->mainLayout->addStretch();
 
@@ -174,7 +168,7 @@ void DFMRightDetailView::setUrl(const DUrl &url)
             iconName = systemPathManager->getSystemPathIconName("Recent");
         } else if (url == DUrl(TRASH_ROOT)) {
             iconName = systemPathManager->getSystemPathIconName("Trash");
-        } else if (url.isNetWorkFile() || url.isSMBFile() ) {
+        } else if (url.isNetWorkFile() || url.isSMBFile()) {
             iconName = systemPathManager->getSystemPathIconName("Network");
         } else if (url.isUserShareFile()) {
             iconName = systemPathManager->getSystemPathIconName("UserShare");
@@ -184,7 +178,7 @@ void DFMRightDetailView::setUrl(const DUrl &url)
         QIcon fileIcon = iconName.isEmpty() ? fileInfo->fileIcon() : QIcon::fromTheme(iconName);
         d->iconLabel->setPixmap(fileIcon.pixmap(256, 160));
     }
-    if (d->baseInfoWidget){
+    if (d->baseInfoWidget) {
         d->mainLayout->removeWidget(d->baseInfoWidget);
         d->baseInfoWidget->setHidden(true);
         d->baseInfoWidget->deleteLater();

@@ -1138,6 +1138,9 @@ bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
     return false;
 #endif // DISABLE_TAG_SUPPORT
 
+    if (DFMGlobal::isTablet())
+        return false;
+
     for (const DUrl &url : urls) {
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, url);
 

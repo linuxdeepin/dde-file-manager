@@ -159,12 +159,13 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<AVFSFileController>(AVFS_SCHEME, "");
     DFileService::dRegisterUrlHandler<MountController>(MOUNT_SCHEME, "");
     DFileService::dRegisterUrlHandler<MasteredMediaController>(BURN_SCHEME, "");
-
-    DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
     DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
     DFileService::dRegisterUrlHandler<MergedDesktopController>(DFMMD_SCHEME, "");
     DFileService::dRegisterUrlHandler<DFMRootController>(DFMROOT_SCHEME, "");
     DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "");
+
+    if (!DFMGlobal::isTablet())
+        DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event, const bool isEnter)
