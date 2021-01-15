@@ -74,8 +74,8 @@ ComputerModel::ComputerModel(QObject *parent)
                 if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(chi)) {
                     continue;
                 }
-
-                if (chi->suffix() != SUFFIX_USRDIR && !splt) {
+                //平板不现实磁盘
+                if (chi->suffix() != SUFFIX_USRDIR && !splt && !DFMGlobal::isTablet() ) {
                     addItem(makeSplitterUrl(tr("Disks")));
                     splt = true;
                 }
@@ -170,6 +170,9 @@ ComputerModel::ComputerModel(QObject *parent)
         m_watcher = DRootFileManager::instance()->rootFileWather();
         connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
         connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
+            //平板不实现外设添加
+            if (DFMGlobal::isTablet())
+                return;
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
             if (!fi->exists()) {
                 return;
@@ -698,6 +701,9 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
         } else {
             data.cat = ComputerModelItemData::Category::cat_internal_storage;
         }
+        //平板显示回收站为cat_user_directory
+        if (DFMGlobal::isTablet() && data.fi->fileUrl().isTrashFile())
+            data.cat = ComputerModelItemData::Category::cat_user_directory;
     }
 }
 

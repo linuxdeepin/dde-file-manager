@@ -1448,7 +1448,8 @@ void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, rootUrl);
     DUrl new_url = fileInfo ? fileInfo->goToUrlWhenDeleted() : DUrl::fromLocalFile(QDir::homePath());
-
+    //平板默认的是进入计算机界面
+    new_url = DFMGlobal::isTablet() ? DUrl() : new_url;
     requestCdTo(new_url);
 }
 

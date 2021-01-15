@@ -75,6 +75,7 @@ public:
     Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;
+    QString iconName() const override;
     QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;
 
     DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;

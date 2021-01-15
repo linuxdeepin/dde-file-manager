@@ -467,6 +467,14 @@ QIcon TrashFileInfo::fileIcon() const
 
     return DAbstractFileInfo::fileIcon();
 }
+//平板显示回收站图标
+QString TrashFileInfo::iconName() const
+{
+    if (DFMGlobal::isTablet())
+        return TrashManager::isEmpty() ? "user-trash" : "user-trash-full";
+
+    return DAbstractFileInfo::iconName();
+}
 
 QList<QIcon> TrashFileInfo::additionalIcon() const
 {

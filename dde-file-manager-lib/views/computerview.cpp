@@ -177,7 +177,9 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
         this->m_statusbar->itemCounted(event, this->m_model->itemCount());
     });
 
-    connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView::contextMenu);
+    //平板去掉菜单栏
+    if (!DFMGlobal::isTablet())
+        connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView::contextMenu);
     auto enterfunc = [this](const QModelIndex & idx, int triggermatch) {
         if (~triggermatch) {
             if (DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt() != triggermatch) {

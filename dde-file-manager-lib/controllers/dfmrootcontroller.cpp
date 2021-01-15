@@ -22,6 +22,7 @@
 #include "dfmevent.h"
 #include "dfmapplication.h"
 #include "models/dfmrootfileinfo.h"
+#include "models/trashfileinfo.h"
 #include "private/dabstractfilewatcher_p.h"
 #include "utils/singleton.h"
 #include "app/define.h"
@@ -101,10 +102,20 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
 
     static const QList<QString> udir = {"desktop", "videos", "music", "pictures", "documents", "downloads"};
     for (auto d : udir) {
+        //平板去掉desktop
+        if (DFMGlobal::isTablet() && d.contains("desktop"))
+            continue;
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + d + "." SUFFIX_USRDIR)));
         if (fp->exists()) {
             ret.push_back(fp);
         }
+    }
+    //判断是否是回收站
+    if (DFMGlobal::isTablet()){
+        DAbstractFileInfoPointer fp(new TrashFileInfo(DUrl::fromUserInput(TRASH_ROOT)));
+        if (fp->exists())
+            ret.push_back(fp);
+        return ret;
     }
 
     bool iswWayland = false;
