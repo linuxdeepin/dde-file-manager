@@ -171,7 +171,8 @@ bool WindowManager::enableAutoQuit() const
 
 void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 {
-    if (!isNewWindow){
+    //平板单例窗口后台或者最小化，打开以前的
+    if (!isNewWindow || (DFMGlobal::isTablet() && m_windows.count() == 1)){
         for(int i=0; i< m_windows.count(); i++){
             QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
             DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
@@ -186,7 +187,10 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
             }
         }
     }
-
+    // 判断是否是平板，并且当前已有窗口
+    if (DFMGlobal::isTablet() && m_windows.count() > 0) {
+        return;
+    }
     QX11Info::setAppTime(QX11Info::appUserTime());
     DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow) : url);
     loadWindowState(window);

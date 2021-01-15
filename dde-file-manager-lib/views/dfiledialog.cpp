@@ -163,6 +163,10 @@ DFileDialog::DFileDialog(QWidget *parent)
             statusBar()->lineEdit()->setText(statusBar()->lineEdit()->text().chopped(1));
         }
     });
+    //平板上另存为对话框要关闭
+    if (DFMGlobal::isTablet()) {
+        setWindowFlags(windowFlags() | Qt::WindowCloseButtonHint);
+    }
 }
 
 DFileDialog::~DFileDialog()

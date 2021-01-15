@@ -592,7 +592,13 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
             newurl = fileUrl.parentUrl();
         }
     }
-
+    //平板去掉最大最小和关闭按钮
+    if (DFMGlobal::isTablet()) {
+        setWindowFlags(windowFlags()
+                       & ~ Qt::WindowMaximizeButtonHint
+                       & ~ Qt::WindowMinimizeButtonHint
+                       & ~ Qt::WindowCloseButtonHint);
+    }
     openNewTab(newurl);
 }
 
@@ -843,6 +849,7 @@ quint64 DFileManagerWindow::windowId()
 bool DFileManagerWindow::tabAddable() const
 {
     D_DC(DFileManagerWindow);
+
     return d->tabBar->tabAddable();
 }
 
@@ -895,7 +902,8 @@ bool DFileManagerWindow::openNewTab(DUrl fileUrl)
     }
 
     if (fileUrl.isEmpty()) {
-        fileUrl = DUrl::fromLocalFile(QDir::homePath());
+        fileUrl = DFMGlobal::isTablet() ? DUrl::fromUserInput(DFMStandardPaths::location(DFMStandardPaths::ComputerRootPath))
+                                        : DUrl::fromLocalFile(QDir::homePath());
     }
 
     d->toolbar->addHistoryStack();

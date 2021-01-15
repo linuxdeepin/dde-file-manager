@@ -688,7 +688,8 @@ int TabBar::currentIndex() const
 
 bool TabBar::tabAddable() const
 {
-    return count() < TAB_MAX_COUNT;
+    //平板实现不能多标签
+    return DFMGlobal::isTablet() ? count() < TAB_MAX_COUNT_TABLEOS : count() < TAB_MAX_COUNT;
 }
 
 Tab *TabBar::currentTab()

@@ -47,6 +47,7 @@
 #define TAB_CLOSE_BUTTON_WIDTH 18
 #define TAB_CLOSE_BUTTON_HEIGHT 24
 #define TAB_MAX_COUNT 8
+#define TAB_MAX_COUNT_TABLEOS 1
 
 class Tab:public QGraphicsObject{
     Q_OBJECT
