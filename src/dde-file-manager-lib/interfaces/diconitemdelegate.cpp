@@ -1236,9 +1236,7 @@ QList<QRectF> DIconItemDelegate::drawText(const QModelIndex &index, QPainter *pa
 
 void DIconItemDelegate::onEditWidgetFocusOut()
 {
-    if (qApp->focusWidget() && qApp->focusWidget()->window() == parent()->parent()->window()
-            && qApp->focusWidget() != parent()->parent()) {
-
+    if (qApp->focusWidget() && qApp->focusWidget() != parent()->parent()) {
         hideAllIIndexWidget();
     }
 }
