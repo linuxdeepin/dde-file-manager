@@ -73,7 +73,11 @@ public:
                                          bool isRecursiveCall = false);
     static QString getActionString(MenuAction type);
 
-    static void extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected = {});
+    static void extendCustomMenu(DFileMenu *menu, bool isNormal,
+                                 const DUrl &dir,
+                                 const DUrl &focusFile,
+                                 const DUrlList &selected = {},
+                                 bool onDesktop = false);
     static bool isCustomMenuSupported(const DUrl &viewRootUrl);
 
     /// actions filter(global)

@@ -41,10 +41,21 @@ public:
     void setFocusFile(const DUrl &file);
     static DCustomActionDefines::ComboType checkFileCombo(const DUrlList &files);
     static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
-                                                 DCustomActionDefines::ComboTypes type);
+                                                    DCustomActionDefines::ComboTypes type);
+    static void matchActions(const DUrlList &selects,
+                             QList<DCustomActionEntry> &targetActions,
+                             bool onDesktop = false);
     static QPair<QString, QStringList> makeCommand(const QString &cmd, DCustomActionDefines::ActionArg arg,
                                const DUrl &dir, const DUrl& foucs, const DUrlList &files);
     static QStringList splitCommand(const QString &cmd);
+private:
+    static bool isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes);
+    static bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
+    static bool isActionShouldShow(const DCustomActionEntry &action, bool onDesktop);
+    static bool isSchemeSupport(const DCustomActionEntry &action, const DUrl &url);
+    static bool isSuffixSupport(const DCustomActionEntry &action, const DUrl &url, const bool ballEx7z = false);
+    static bool isAllEx7zFile(const DUrlList &files);
+    static void appendParentMimeType(const QStringList &parentmimeTypes,  QStringList& mimeTypes);
 protected:
     QAction *createMenu(const DCustomActionData &actionData, QWidget *parentForSubmenu) const;
     QAction *createAciton(const DCustomActionData &actionData) const;

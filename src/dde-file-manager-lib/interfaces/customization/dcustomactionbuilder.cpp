@@ -104,15 +104,106 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const DUrlL
 /*!
     筛选 \a rootActions 中支持 \a type 文件组合的菜单项
  */
-QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCustomActionEntry> &rootActions, DCustomActionDefines::ComboTypes type)
+QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCustomActionEntry> &rootActions,
+                                                               DCustomActionDefines::ComboTypes type)
 {
     QList<DCustomActionEntry> ret;
+    //无自定义菜单项
+    if(0 == rootActions.size())
+        return ret;
+
     for (auto it = rootActions.begin(); it != rootActions.end(); ++it) {
         if (it->fileCombo() & type)
             ret << *it;
     }
-
     return ret;
+}
+
+void DCustomActionBuilder::matchActions(const DUrlList &selects,
+                                        QList<DCustomActionEntry> &targetActions,
+                                        bool onDesktop)
+{
+    //todo：细化功能颗粒度，一个函数尽量专职一件事
+    /*
+     *根据选中内容、配置项、选中项类型匹配合适的菜单项
+     *是否全为7zfile
+     *是否桌面显示isActionShouldShow
+     *是否action支持的协议
+     *是否action支持的后缀
+     *action不支持类型过滤（不加上父类型过滤，todo: 为何不支持项不考虑?）
+     *action支持类型过滤(类型过滤要加上父类型一起过滤)
+    */
+    //todo：这种特殊处理是否可以干掉
+    bool bex7x = DCustomActionBuilder::isAllEx7zFile(selects);
+
+    //具体配置过滤
+    for (auto &singleUrl : selects) {
+        //协议、后缀
+        DAbstractFileInfoPointer fileInfo;
+        fileInfo = DFileService::instance()->createFileInfo(nullptr, singleUrl);
+        if (!fileInfo) {
+            qWarning() << "create selected FileInfo failed: " << singleUrl.toString();
+            continue;
+        }
+
+        /*
+         * 选中文件类型过滤：
+         * fileMimeTypes:包括所有父类型的全量类型集合
+         * fileMimeTypesNoParent:不包含父类mimetype的集合
+         * 目的是在一些应用对文件的识别支持上有差异：比如xlsx的 parentMimeTypes 是application/zip
+         * 归档管理器打开则会被作为解压
+        */
+
+        QStringList fileMimeTypes, fileMimeTypesNoParent;
+        fileMimeTypes.append(fileInfo->mimeType().name());
+        fileMimeTypes.append(fileInfo->mimeType().aliases());
+        const QMimeType &mt = fileInfo->mimeType();
+        fileMimeTypesNoParent = fileMimeTypes;
+        appendParentMimeType(mt.parentMimeTypes(), fileMimeTypes);
+        fileMimeTypes.removeAll({});
+        fileMimeTypesNoParent.removeAll({});
+
+        for (auto it = targetActions.begin(); it != targetActions.end();) {
+            DCustomActionEntry &tempAction = *it;
+            auto temppppp = QString("%1_%2").arg(it->data().name()).arg(it->fileCombo());
+            //协议，仅桌面显示，后缀；todo: only 桌面和文管是否必要...
+            if (!isSchemeSupport(tempAction, singleUrl)
+                || !isActionShouldShow(tempAction, onDesktop)
+                || !isSuffixSupport(tempAction, singleUrl, bex7x)) {
+                it = targetActions.erase(it);   //不支持的action移除
+                continue;
+            }
+
+            //不支持的mimetypes,使用不包含父类型的mimetype集合过滤
+            if (isMimeTypeMatch(fileMimeTypesNoParent, tempAction.excludeMimeTypes())) {
+                it = targetActions.erase(it);
+                continue;
+            }
+
+            // MimeType在原有oem中，未指明或Mimetype=*都作为支持所有类型
+            if (tempAction.mimeTypes().isEmpty()) {
+                ++it;
+                continue;
+            }
+
+            //支持的mimetype,使用包含父类型的mimetype集合过滤
+            QStringList supportMimeTypes =  tempAction.mimeTypes();
+            supportMimeTypes.removeAll({});
+            auto match = isMimeTypeMatch(fileMimeTypes, supportMimeTypes);
+
+            //todo：这种特殊处理是否可以干掉
+             //部分mtp挂载设备目录下文件属性不符合规范(普通目录mimetype被认为是octet-stream)，暂时做特殊处理
+            if (singleUrl.path().contains("/mtp:host") && supportMimeTypes.contains("application/octet-stream") && fileMimeTypes.contains("application/octet-stream"))
+                match = false;
+
+            if (!match) {
+                it = targetActions.erase(it);
+                continue;
+            }
+            ++it;
+        }
+
+    }
 }
 
 /*!
@@ -249,6 +340,113 @@ QStringList DCustomActionBuilder::splitCommand(const QString &cmd)
         }
     }
     return args;
+}
+
+bool DCustomActionBuilder::isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes)
+{
+    foreach (const QString &fmt, fileMimeTypes) {
+        if (fmt.contains(mt, Qt::CaseInsensitive)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool DCustomActionBuilder::isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes)
+{
+    bool match = false;
+    for (const QString &mt : supportMimeTypes) {
+        if (fileMimeTypes.contains(mt, Qt::CaseInsensitive)) {
+            match = true;
+            break;
+        }
+
+        int starPos = mt.indexOf("*");
+        if (starPos >= 0 && isMimeTypeSupport(mt.left(starPos), fileMimeTypes)) {
+            match = true;
+            break;
+        }
+    }
+    return match;
+}
+
+bool DCustomActionBuilder::isActionShouldShow(const DCustomActionEntry &action, bool onDesktop)
+{
+    // X-DFM-NotShowIn not exist
+    auto notShowInList = action.notShowIn();
+    if (notShowInList.isEmpty())
+        return true;    //未明确指明仅显示在桌面或者文管窗口默认都显示
+
+    // is menu triggered on desktop
+    return (onDesktop && !notShowInList.contains("Desktop", Qt::CaseInsensitive)) ||
+           (!onDesktop && !notShowInList.contains("Filemanager", Qt::CaseInsensitive));
+}
+
+bool DCustomActionBuilder::isSchemeSupport(const DCustomActionEntry &action, const DUrl &url)
+{
+    // X-DFM-SupportSchemes not exist
+    auto supportList = action.surpportSchemes();
+    if (supportList.isEmpty())
+        return true;    //未特殊指明默认支持所有相关协议
+    return supportList.contains(url.scheme(), Qt::CaseInsensitive);
+}
+
+bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, const DUrl &url, const bool ballEx7z)
+{
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
+    auto supportList =  action.supportStuffix();
+    if (!fileInfo || fileInfo->isDir() || supportList.isEmpty()) {
+        //todo:理解ballEx7z = true时为何要return false
+        return !ballEx7z;
+    }
+    QFileInfo info(url.toLocalFile());
+
+    // 7z.001,7z.002, 7z.003 ... 7z.xxx
+    QString cs = info.completeSuffix();
+    if (supportList.contains(cs, Qt::CaseInsensitive)) {
+        return true;
+    }
+
+    bool match = false;
+    for (const QString &suffix : supportList) {
+        int endPos = suffix.lastIndexOf("*"); // 7z.*
+        if (endPos >= 0 && cs.length() > endPos && suffix.left(endPos) == cs.left(endPos)) {
+            match = true;
+            break;
+        }
+    }
+    return match;
+}
+
+bool DCustomActionBuilder::isAllEx7zFile(const DUrlList &files)
+{
+    if (files.size() <= 1) {
+        return false;
+    }
+    for (const DUrl &f : files) {
+        QFileInfo info(f.toString());
+        // 7z.001,7z.002, 7z.003 ... 7z.xxx
+        QString cs = info.completeSuffix();
+        if (!cs.startsWith(QString("7z."))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void DCustomActionBuilder::appendParentMimeType(const QStringList &parentmimeTypes, QStringList &mimeTypes)
+{
+    if (parentmimeTypes.size() == 0)
+        return;
+
+    for (const QString &mtName : parentmimeTypes) {
+        QMimeDatabase db;
+        QMimeType mt = db.mimeTypeForName(mtName);
+        mimeTypes.append(mt.name());
+        mimeTypes.append(mt.aliases());
+        QStringList pmts = mt.parentMimeTypes();
+        appendParentMimeType(pmts, mimeTypes);
+    }
 }
 
 /*!

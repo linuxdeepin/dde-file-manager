@@ -221,7 +221,31 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
             }
             tpEntry.m_fileCombo = target;
         }
-        //todo支持的文件类型(mimeTypes)，目前无需求暂不判断
+
+        //MimeType
+        QString mimeTypeStr = getValue(actionSetting, group, kConfMimeType).toString().trimmed();
+        if (!mimeTypeStr.isEmpty())
+            tpEntry.m_mimeTypes = mimeTypeStr.split(":");
+
+        //X-DFM-ExcludeMimeTypes
+        QString excludeMimeTypesStr = getValue(actionSetting, group, kConfExcludeMimeTypes).toString().trimmed();
+        if (!excludeMimeTypesStr.isEmpty())
+            tpEntry.m_excludeMimeTypes= excludeMimeTypesStr.split(":");
+
+        //X-DFM-SupportSchemes
+        QString supportSchemesStr = getValue(actionSetting, group, kConfSupportSchemes).toString().trimmed();
+        if (!supportSchemesStr.isEmpty())
+            tpEntry.m_supportSchemes = supportSchemesStr.split(":");
+
+        //X-DFM-NotShowIn
+        QString supportNotShowInStr = getValue(actionSetting, group, kConfNotShowIn).toString().trimmed();
+        if (!supportNotShowInStr.isEmpty())
+            tpEntry.m_notShowIn = supportNotShowInStr.split(":");
+
+        //X-DFM-SupportSuffix
+        QString supportSuffixStr = getValue(actionSetting, group, kConfSupportSuffix).toString().trimmed();
+        if (!supportSuffixStr.isEmpty())
+            tpEntry.m_supportSuffix = supportSuffixStr.split(":");
 
         //comboPos
         if (!comboPosForTopAction(actionSetting, group, actData))

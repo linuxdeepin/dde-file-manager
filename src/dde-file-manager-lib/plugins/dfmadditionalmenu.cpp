@@ -123,7 +123,7 @@ bool DFMAdditionalMenuPrivate::isActionShouldShow(QAction *action, bool onDeskto
 
     // is menu triggered on desktop
     QStringList notShowInList =  action->property(MENU_HIDDEN_KEY.data()).toStringList();
-    return (onDesktop  && !notShowInList.contains("Desktop", Qt::CaseInsensitive)) ||
+    return (onDesktop && !notShowInList.contains("Desktop", Qt::CaseInsensitive)) ||
            (!onDesktop && !notShowInList.contains("Filemanager", Qt::CaseInsensitive));
 }
 
@@ -378,7 +378,7 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
             supportMimeTypes.removeAll({});
             match = d->isMimeTypeMatch(fileMimeTypes, supportMimeTypes);
 
-            //部分mtp挂载设备目录下文件属性不符合规范，暂时做特殊处理
+            //部分mtp挂载设备目录下文件属性不符合规范(普通目录mimetype被认为是octet-stream)，暂时做特殊处理
             if (url.path().contains("/mtp:host") && supportMimeTypes.contains("application/octet-stream") && fileMimeTypes.contains("application/octet-stream")) {
                 match = false;
             }

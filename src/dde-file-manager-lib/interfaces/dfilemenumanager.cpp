@@ -1058,7 +1058,7 @@ QString DFileMenuManager::getActionString(MenuAction type)
 }
 
 //创建自定义菜单
-void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected)
+void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected, bool  onDesktop)
 {
     const QList<DCustomActionEntry> &rootEntry = DFileMenuData::customMenuParser->getActionFiles();
     qDebug() << "extendCustomMenu " << isNormal << dir << focusFile << "files" << selected.size() << "entrys" << rootEntry.size();
@@ -1083,6 +1083,7 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
 
     //获取支持的菜单项
     auto usedEntrys = builder.matchFileCombo(rootEntry, fileCombo);
+    builder.matchActions(selected, usedEntrys, onDesktop);
     qDebug() << "selected combo" << fileCombo << "entry count" << usedEntrys.size();
 
     if (usedEntrys.isEmpty())

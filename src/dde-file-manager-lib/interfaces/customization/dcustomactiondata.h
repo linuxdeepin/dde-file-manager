@@ -75,6 +75,10 @@ public:
     QString comment() const;
     DCustomActionDefines::ComboTypes fileCombo() const;
     QStringList mimeTypes() const;
+    QStringList excludeMimeTypes() const;
+    QStringList surpportSchemes() const;
+    QStringList notShowIn() const;
+    QStringList supportStuffix() const;
     DCustomActionData data() const;
 protected:
     QString m_package;  //配置文件名
@@ -82,7 +86,11 @@ protected:
     QString m_comment;  //描述
     QString m_sign;     //签名
     DCustomActionDefines::ComboTypes m_fileCombo;     //支持的选中项类型
-    QStringList m_mimeTypes;    //支持的文件类型，目前需求不判断
+    QStringList m_mimeTypes;    //支持的文件类型
+    QStringList m_excludeMimeTypes; //不支持文件类型
+    QStringList m_supportSchemes;   //支持协议：file、trash, tag...
+    QStringList m_notShowIn;    //仅桌面或文管展示："Desktop", "Filemanager"
+    QStringList m_supportSuffix; //支持后缀: 归档管理器 *.7z.001,*.7z.002,*.7z.003...
     DCustomActionData m_data;    //一级菜单项的数据
 };
 #endif // DCUSTOMACTIONDATA_H

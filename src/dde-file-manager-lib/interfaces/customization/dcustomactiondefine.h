@@ -130,6 +130,11 @@ namespace DCustomActionDefines
     static const QLatin1String kConfFileVersion("Version");
     static const QLatin1String kConfComment("Comment");
     static const QLatin1String kConfCombo("X-DFM-MenuTypes");
+    static const QLatin1String kConfMimeType("MimeType");
+    static const QLatin1String kConfExcludeMimeTypes("X-DFM-ExcludeMimeTypes");
+    static const QLatin1String kConfSupportSchemes("X-DFM-SupportSchemes");
+    static const QLatin1String kConfNotShowIn("X-DFM-NotShowIn");     // "Desktop", "Filemanager"
+    static const QLatin1String kConfSupportSuffix("X-DFM-SupportSuffix"); // for deepin-compress *.7z.001,*.7z.002,*.7z.003...
     static const QLatin1String kConfSign("Sign");
 
     //菜单基本信息
