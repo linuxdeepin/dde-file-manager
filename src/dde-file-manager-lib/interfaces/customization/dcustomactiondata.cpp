@@ -111,6 +111,10 @@ DCustomActionEntry::DCustomActionEntry(const DCustomActionEntry &other)
     , m_sign(other.m_sign)
     , m_fileCombo(other.m_fileCombo)
     , m_mimeTypes(other.m_mimeTypes)
+    , m_excludeMimeTypes(other.m_excludeMimeTypes)
+    , m_supportSchemes(other.m_supportSchemes)
+    , m_notShowIn(other.m_notShowIn)
+    , m_supportSuffix(other.m_supportSuffix)
     , m_data(other.m_data)
 {
 
@@ -125,6 +129,10 @@ DCustomActionEntry &DCustomActionEntry::operator=(const DCustomActionEntry &othe
     m_comment = other.m_comment;
     m_fileCombo = other.m_fileCombo;
     m_mimeTypes = other.m_mimeTypes;
+    m_excludeMimeTypes = other.m_excludeMimeTypes;
+    m_supportSchemes = other.m_supportSchemes;
+    m_notShowIn = other.m_notShowIn;
+    m_supportSuffix = other.m_supportSuffix;
     m_sign = other.m_sign;
     m_data = other.m_data;
     return *this;
@@ -153,6 +161,26 @@ DCustomActionDefines::ComboTypes DCustomActionEntry::fileCombo() const
 QStringList DCustomActionEntry::mimeTypes() const
 {
     return m_mimeTypes;
+}
+
+QStringList DCustomActionEntry::excludeMimeTypes() const
+{
+    return m_excludeMimeTypes;
+}
+
+QStringList DCustomActionEntry::surpportSchemes() const
+{
+    return m_supportSchemes;
+}
+
+QStringList DCustomActionEntry::notShowIn() const
+{
+    return m_notShowIn;
+}
+
+QStringList DCustomActionEntry::supportStuffix() const
+{
+    return m_supportSuffix;
 }
 
 DCustomActionData DCustomActionEntry::data() const
