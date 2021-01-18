@@ -595,8 +595,7 @@ void DRenameBar::onCustomOperatorSNNumberChanged()
         ///###: renew from exception.
         std::string content{ lineEditForSNNumber->text().toStdString() };
         try {
-            std::stoull(content);
-
+            Q_UNUSED(std::stoull(content));
         } catch (const std::out_of_range &err) {
             (void)err;
             lineEditForSNNumber->setText(QString{"1"});

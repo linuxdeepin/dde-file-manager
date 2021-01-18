@@ -32,7 +32,7 @@ DAdvancedInfoPlugin::DAdvancedInfoPlugin(QObject *parent)
 
 QWidget *DAdvancedInfoPlugin::expandWidget(const QString &file)
 {
-    return new DAdvancedInfoWidget(0, file);
+    return new DAdvancedInfoWidget(nullptr, file);
 }
 
 QString DAdvancedInfoPlugin::expandWidgetTitle(const QString &file)

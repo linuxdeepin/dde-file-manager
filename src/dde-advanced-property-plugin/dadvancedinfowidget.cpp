@@ -38,9 +38,10 @@
 #include "interfaces/dfileservices.h"
 #include "models/avfsfileinfo.h"
 
-DAdvancedInfoWidget::DAdvancedInfoWidget(QWidget *parent, const QString &file) : QWidget(parent)
+DAdvancedInfoWidget::DAdvancedInfoWidget(QWidget *parent, const QString &file) :
+    QWidget(parent),
+    m_url(QUrl::fromUserInput(file))
 {
-    m_url = QUrl::fromUserInput(file);
     initData();
     initUI();
 }
@@ -57,12 +58,11 @@ void DAdvancedInfoWidget::initData()
     QProcess p;
 
     if(isAvfsFile){
-        if(isAvfsFile){
-            realParentPath = AVFSFileInfo::realFileUrl(info->fileUrl()).parentUrl().path();
-            realFilePath = AVFSFileInfo::realFileUrl(info->fileUrl()).path();
-            realFileUri = AVFSFileInfo::realFileUrl(info->fileUrl()).toString();
-        }
+        realParentPath = AVFSFileInfo::realFileUrl(info->fileUrl()).parentUrl().path();
+        realFilePath = AVFSFileInfo::realFileUrl(info->fileUrl()).path();
+        realFileUri = AVFSFileInfo::realFileUrl(info->fileUrl()).toString();
     }
+
 
     //qio mime type
     m_InfoList << QStringPair("QMimeType:", info->mimeTypeName());
@@ -110,10 +110,10 @@ void DAdvancedInfoWidget::initUI()
     setLayout(mainLayout);
 
     foreach (const QStringPair& pair, m_InfoList) {
-        QFrame* frame = NULL;
-        QFormLayout* fLayout = NULL;
-        QLineEdit* valLabel = NULL;
-        QListWidgetItem* item = NULL;
+        QFrame *frame = nullptr;
+        QFormLayout *fLayout = nullptr;
+        QLineEdit *valLabel = nullptr;
+        QListWidgetItem *item = nullptr;
 
         valLabel = new QLineEdit(frame);
         valLabel->setText(pair.second);

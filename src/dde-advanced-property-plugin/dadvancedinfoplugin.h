@@ -37,11 +37,11 @@ class DAdvancedInfoPlugin : public PropertyDialogExpandInfoInterface
     Q_PLUGIN_METADATA(IID PropertyDialogExpandInfoInterface_iid FILE "dde-advanced-property-plugin.json")
 
 public:
-    explicit DAdvancedInfoPlugin(QObject *parent = 0);
+    explicit DAdvancedInfoPlugin(QObject *parent = nullptr);
 
-    QWidget* expandWidget(const QString& file);
+    QWidget* expandWidget(const QString &file) override;
 
-    QString expandWidgetTitle(const QString& file);
+    QString expandWidgetTitle(const QString &file) override;
 };
 
 #endif // DADVANCEDINFOPLUGIN_H
