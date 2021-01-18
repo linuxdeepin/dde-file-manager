@@ -23,6 +23,10 @@ struct CdStatusInfo {
     bool bLoading = false; // sp3 feature 35，光盘加载时显示光标为繁忙状态
 };
 
+/**
+ * todo : 此类作为一个视图类，包含了太多职责/临时方案代码，应该拆分重构
+ */
+
 class DFMOpticalMediaWidgetPrivate;
 class DFMOpticalMediaWidget : public QWidget
 {
